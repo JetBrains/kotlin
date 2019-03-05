@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.psi.KtImportInfo
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.ImportPath
-import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
 import org.jetbrains.kotlin.resolve.extensions.ExtraImportsProviderExtension
 import org.jetbrains.kotlin.resolve.scopes.*
@@ -40,13 +40,13 @@ data class FileScopes(val lexicalScope: LexicalScope, val importingScope: Import
 class FileScopeFactory(
     private val topLevelDescriptorProvider: TopLevelDescriptorProvider,
     private val bindingTrace: BindingTrace,
-    private val targetPlatform: TargetPlatform,
+    private val compilerServices: PlatformDependentCompilerServices,
     private val components: ImportResolutionComponents
 ) {
     private val defaultImports =
-        targetPlatform.getDefaultImports(components.languageVersionSettings, includeLowPriorityImports = false).map(::DefaultImportImpl)
+        compilerServices.getDefaultImports(components.languageVersionSettings, includeLowPriorityImports = false).map(::DefaultImportImpl)
 
-    private val defaultLowPriorityImports = targetPlatform.defaultLowPriorityImports.map(::DefaultImportImpl)
+    private val defaultLowPriorityImports = compilerServices.defaultLowPriorityImports.map(::DefaultImportImpl)
 
     private class DefaultImportImpl(private val importPath: ImportPath) : KtImportInfo {
         override val isAllUnder: Boolean get() = importPath.isAllUnder
@@ -95,7 +95,7 @@ class FileScopeFactory(
             tempTrace,
             packageFragment = null,
             aliasImportNames = aliasImportNames,
-            excludedImports = targetPlatform.excludedImports
+            excludedImports = compilerServices.excludedImports
         )
         val lowPriority = createDefaultImportResolver(
             AllUnderImportsIndexed(defaultLowPriorityImports.also { imports ->

@@ -23,6 +23,10 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.StorageManager
 
 object JvmPlatform : TargetPlatform("JVM") {
+    override val platform = MultiTargetPlatform.Specific(platformName)
+}
+
+object JvmPlatformCompilerServices : PlatformDependentCompilerServices() {
     override fun computePlatformSpecificDefaultImports(storageManager: StorageManager, result: MutableList<ImportPath>) {
         result.add(ImportPath.fromString("kotlin.jvm.*"))
 
@@ -40,6 +44,4 @@ object JvmPlatform : TargetPlatform("JVM") {
     override val defaultLowPriorityImports: List<ImportPath> = listOf(ImportPath.fromString("java.lang.*"))
 
     override val platformConfigurator: PlatformConfigurator = JvmPlatformConfigurator
-
-    override val multiTargetPlatform = MultiTargetPlatform.Specific(platformName)
 }

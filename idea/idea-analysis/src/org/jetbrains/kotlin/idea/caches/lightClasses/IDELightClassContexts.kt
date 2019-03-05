@@ -64,6 +64,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformCompilerServices
 import org.jetbrains.kotlin.resolve.lazy.FileScopeProviderImpl
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
@@ -307,11 +308,11 @@ internal object IDELightClassContexts {
         moduleDescriptor.setDependencies(moduleDescriptor, moduleDescriptor.builtIns.builtInsModule)
 
         val moduleInfo = files.first().getModuleInfo()
-        val container = createContainer("LightClassStub", JvmPlatform) {
+        val container = createContainer("LightClassStub", JvmPlatformCompilerServices) {
             val jvmTarget = IDELanguageSettingsProvider.getTargetPlatform(moduleInfo, project) as? JvmTarget
             configureModule(
                 ModuleContext(moduleDescriptor, project), JvmPlatform,
-                jvmTarget ?: JvmTarget.DEFAULT, trace
+                jvmTarget ?: JvmTarget.DEFAULT, JvmPlatformCompilerServices, trace
             )
 
             useInstance(GlobalSearchScope.EMPTY_SCOPE)
