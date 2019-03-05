@@ -14,7 +14,7 @@ import java.io.File
 
 /**
  * The task generates a podspec file which allows a user to
- * integrate a Kotlin/Native framework into a Cocoapods project.
+ * integrate a Kotlin/Native framework into a CocoaPods project.
  */
 open class PodspecTask : DefaultTask() {
 
@@ -25,6 +25,7 @@ open class PodspecTask : DefaultTask() {
     lateinit var settings: CocoapodsExtension
 
     // TODO: Handle Framework name customization - rename the framework during sync process.
+    // TODO: Support fat arm32/arm64 frameworks.
     @TaskAction
     fun generate() {
         val frameworkDir = project.cocoapodsBuildDirs.framework.relativeTo(outputFile.parentFile).path
@@ -82,12 +83,12 @@ open class PodspecTask : DefaultTask() {
 /**
  * Creates a dummy framework in the target directory.
  *
- * We represent a Kotlin/Native module to Cocoapods as a vendored framework.
- * Cocoapods needs access to such frameworks during installation process to obtain
+ * We represent a Kotlin/Native module to CocoaPods as a vendored framework.
+ * CocoaPods needs access to such frameworks during installation process to obtain
  * their type (static or dynamic) and configure the XCode project accordingly.
  * But we cannot build the real framework before installation because it may
- * depend on Cocoapods libraries which are not downloaded and built at this stage.
- * So we create a dummy static framework to allow Cocoapods install our pod correctly
+ * depend on CocoaPods libraries which are not downloaded and built at this stage.
+ * So we create a dummy static framework to allow CocoaPods install our pod correctly
  * and then replace it with the real one during a real build process.
  */
 open class DummyFrameworkTask : DefaultTask() {
@@ -158,7 +159,7 @@ open class DummyFrameworkTask : DefaultTask() {
 }
 
 /**
- * Generates a def-file for the given Cocoapods dependency.
+ * Generates a def-file for the given CocoaPods dependency.
  */
 open class DefFileTask : DefaultTask() {
 

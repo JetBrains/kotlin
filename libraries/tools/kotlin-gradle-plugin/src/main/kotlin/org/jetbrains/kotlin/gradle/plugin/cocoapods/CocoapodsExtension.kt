@@ -62,7 +62,7 @@ open class CocoapodsExtension(private val project: Project) {
         get() = _pods
 
     /**
-     * Add a Cocoapods dependency to the pod built from this project.
+     * Add a CocoaPods dependency to the pod built from this project.
      */
     @JvmOverloads
     fun pod(name: String, version: String? = null, moduleName: String = name) {
