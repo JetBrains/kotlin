@@ -62,8 +62,7 @@ class UastAnalysisHandlerExtension : AnalysisHandlerExtension {
         val typeMapper = KotlinTypeMapper(
             bindingContext, ClassBuilderMode.LIGHT_CLASSES,
             IncompatibleClassTracker.DoNothing, JvmAbi.DEFAULT_MODULE_NAME, JvmTarget.DEFAULT,
-            KotlinTypeMapper.LANGUAGE_VERSION_SETTINGS_DEFAULT, // TODO use proper LanguageVersionSettings
-            false
+            KotlinTypeMapper.LANGUAGE_VERSION_SETTINGS_DEFAULT // TODO use proper LanguageVersionSettings
         )
         this.typeMapper = typeMapper
         return typeMapper

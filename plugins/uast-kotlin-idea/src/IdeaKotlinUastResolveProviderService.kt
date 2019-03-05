@@ -49,8 +49,7 @@ class IdeaKotlinUastResolveProviderService : KotlinUastResolveProviderService {
         return KotlinTypeMapper(
             getBindingContext(element), ClassBuilderMode.LIGHT_CLASSES,
             IncompatibleClassTracker.DoNothing, JvmAbi.DEFAULT_MODULE_NAME, JvmTarget.DEFAULT,
-            element.languageVersionSettings,
-            false
+            element.languageVersionSettings
         )
     }
 

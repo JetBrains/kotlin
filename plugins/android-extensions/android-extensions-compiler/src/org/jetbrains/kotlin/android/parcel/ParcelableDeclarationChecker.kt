@@ -184,8 +184,7 @@ class ParcelableDeclarationChecker : DeclarationChecker {
             IncompatibleClassTracker.DoNothing,
             descriptor.module.name.asString(),
             JvmTarget.DEFAULT,
-            languageVersionSettings,
-            false
+            languageVersionSettings
         )
 
         for (parameter in primaryConstructor?.valueParameters.orEmpty()) {

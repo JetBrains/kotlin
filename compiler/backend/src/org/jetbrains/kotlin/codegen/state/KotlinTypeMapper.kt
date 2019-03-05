@@ -82,8 +82,8 @@ class KotlinTypeMapper @JvmOverloads constructor(
     private val moduleName: String,
     val jvmTarget: JvmTarget,
     private val languageVersionSettings: LanguageVersionSettings,
-    private val isIrBackend: Boolean,
-    private val typePreprocessor: Function1<KotlinType, KotlinType>? = null
+    private val isIrBackend: Boolean = false,
+    private val typePreprocessor: Function1<KotlinType, KotlinType?>? = null
 ) {
     private val isReleaseCoroutines = languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
 
