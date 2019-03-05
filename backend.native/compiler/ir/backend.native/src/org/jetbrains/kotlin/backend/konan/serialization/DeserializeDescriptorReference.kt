@@ -14,45 +14,42 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 // Then the rest of the fields allow to find the needed descriptor relative to the one with index.
 class DescriptorReferenceDeserializer(val currentModule: ModuleDescriptor, val resolvedForwardDeclarations: MutableMap<UniqIdKey, UniqIdKey>) {
 
-    private val cache = mutableMapOf<String, Collection<DeclarationDescriptor>>()
+    private fun getContributedDescriptors(packageFqNameString: String, name: String): Collection<DeclarationDescriptor> {
+        val packageFqName = packageFqNameString.let {
+            if (it == "<root>") FqName.ROOT else FqName(it)
+        }// TODO: whould we store an empty string in the protobuf?
 
-    private fun getContributedDescriptors(packageFqNameString: String): Collection<DeclarationDescriptor> =
-            cache.getOrPut(packageFqNameString) {
-                val packageFqName = packageFqNameString.let {
-                    if (it == "<root>") FqName.ROOT else FqName(it)
-                }// TODO: whould we store an empty string in the protobuf?
-
-                currentModule.getPackage(packageFqName).memberScope.getContributedDescriptors()
-            }
-
-    private data class ClassName(val packageFqName: String, val classFqName: String)
+        val contributedName = if (name.startsWith("<get-") || name.startsWith("<set-")) {
+            name.substring(5, name.length - 1) // FIXME: rework serialization format.
+        } else {
+            name
+        }
+        return currentModule.getPackage(packageFqName).memberScope
+                .getContributedDescriptors(nameFilter = { it.asString() == contributedName })
+    }
 
     private class ClassMembers(val defaultConstructor: ClassConstructorDescriptor?,
                                val members: Map<Long, DeclarationDescriptor>,
                                val realMembers: Map<Long, DeclarationDescriptor>)
 
-    private val membersCache = mutableMapOf<ClassName, ClassMembers>()
+    private fun getMembers(members: Collection<DeclarationDescriptor>): ClassMembers {
+        val allMembersMap = mutableMapOf<Long, DeclarationDescriptor>()
+        val realMembersMap = mutableMapOf<Long, DeclarationDescriptor>()
+        var classConstructorDescriptor: ClassConstructorDescriptor? = null
+        members.forEach { member ->
+            if (member is ClassConstructorDescriptor)
+                classConstructorDescriptor = member
+            val realMembers =
+                    if (member is CallableMemberDescriptor && member.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE)
+                        member.resolveFakeOverrideMaybeAbstract()
+                    else
+                        setOf(member)
 
-    private fun getMembers(packageFqNameString: String, classFqNameString: String,
-                           members: Collection<DeclarationDescriptor>): ClassMembers =
-            membersCache.getOrPut(ClassName(packageFqNameString, classFqNameString)) {
-                val allMembersMap = mutableMapOf<Long, DeclarationDescriptor>()
-                val realMembersMap = mutableMapOf<Long, DeclarationDescriptor>()
-                var classConstructorDescriptor: ClassConstructorDescriptor? = null
-                members.forEach { member ->
-                    if (member is ClassConstructorDescriptor)
-                        classConstructorDescriptor = member
-                    val realMembers =
-                            if (member is CallableMemberDescriptor && member.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE)
-                                member.resolveFakeOverrideMaybeAbstract()
-                            else
-                                setOf(member)
-
-                    member.getUniqId()?.index?.let { allMembersMap[it] = member }
-                    realMembers.mapNotNull { it.getUniqId()?.index }.forEach { realMembersMap[it] = member }
-                }
-                ClassMembers(classConstructorDescriptor, allMembersMap, realMembersMap)
-            }
+            member.getUniqId()?.index?.let { allMembersMap[it] = member }
+            realMembers.mapNotNull { it.getUniqId()?.index }.forEach { realMembersMap[it] = member }
+        }
+        return ClassMembers(classConstructorDescriptor, allMembersMap, realMembersMap)
+    }
 
     fun deserializeDescriptorReference(
         packageFqNameString: String,
@@ -74,7 +71,7 @@ class DescriptorReferenceDeserializer(val currentModule: ModuleDescriptor, val r
         val protoIndex = index
 
         val (clazz, members) = if (classFqNameString == "") {
-            Pair(null, getContributedDescriptors(packageFqNameString))
+            Pair(null, getContributedDescriptors(packageFqNameString, name))
         } else {
             val clazz = currentModule.findClassAcrossModuleDependencies(ClassId(packageFqName, classFqName, false))!!
             Pair(clazz, clazz.unsubstitutedMemberScope.getContributedDescriptors() + clazz.getConstructors())
@@ -110,7 +107,7 @@ class DescriptorReferenceDeserializer(val currentModule: ModuleDescriptor, val r
                 .getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BACKEND).single()
         }
 
-        val membersWithIndices = getMembers(packageFqNameString, classFqNameString, members)
+        val membersWithIndices = getMembers(members)
 
         return when {
             isDefaultConstructor -> membersWithIndices.defaultConstructor
