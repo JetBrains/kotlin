@@ -252,7 +252,7 @@ internal fun KtClassOrObject.toPsiType(): PsiType {
     return PsiTypesUtil.getClassType(lightClass)
 }
 
-internal fun PsiElement.getMaybeLightElement(context: UElement? = null /* TODO: remove */): PsiElement? {
+internal fun PsiElement.getMaybeLightElement(): PsiElement? {
     return when (this) {
         is KtDeclaration -> {
             val lightElement = toLightElements().firstOrNull()
@@ -279,7 +279,7 @@ internal fun KtElement.resolveCallToDeclaration(
         resolvedCall.resultingDescriptor
     }
 
-    return descriptor.toSource()?.getMaybeLightElement(context)
+    return descriptor.toSource()?.getMaybeLightElement()
 }
 
 internal fun KtExpression.unwrapBlockOrParenthesis(): KtExpression {
