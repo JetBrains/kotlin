@@ -10,7 +10,6 @@ import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.codegen.ClassBuilderFactory
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.SignatureCollectingClassBuilderFactory
-import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DELEGATION
@@ -56,8 +55,8 @@ class BuilderFactoryForDuplicateSignatureDiagnostics(
 
     // Avoid errors when some classes are not loaded for some reason
     private val typeMapper = KotlinTypeMapper(
-        bindingContext, ClassBuilderMode.LIGHT_CLASSES, IncompatibleClassTracker.DoNothing, moduleName, JvmTarget.DEFAULT,
-        languageVersionSettings, isIrBackend
+        bindingContext, ClassBuilderMode.LIGHT_CLASSES, moduleName, languageVersionSettings,
+        isIrBackend = isIrBackend
     )
     private val reportDiagnosticsTasks = ArrayList<() -> Unit>()
 

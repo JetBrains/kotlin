@@ -23,9 +23,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider.Result
 import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
-import org.jetbrains.kotlin.codegen.state.IncompatibleClassTracker
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
-import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -48,8 +46,7 @@ class IdeaKotlinUastResolveProviderService : KotlinUastResolveProviderService {
     override fun getTypeMapper(element: KtElement): KotlinTypeMapper? {
         return KotlinTypeMapper(
             getBindingContext(element), ClassBuilderMode.LIGHT_CLASSES,
-            IncompatibleClassTracker.DoNothing, JvmAbi.DEFAULT_MODULE_NAME, JvmTarget.DEFAULT,
-            element.languageVersionSettings
+            JvmAbi.DEFAULT_MODULE_NAME, element.languageVersionSettings
         )
     }
 

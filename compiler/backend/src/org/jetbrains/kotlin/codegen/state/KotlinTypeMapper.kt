@@ -78,12 +78,12 @@ import kotlin.collections.*
 class KotlinTypeMapper @JvmOverloads constructor(
     val bindingContext: BindingContext,
     val classBuilderMode: ClassBuilderMode,
-    private val incompatibleClassTracker: IncompatibleClassTracker,
     private val moduleName: String,
-    val jvmTarget: JvmTarget,
     private val languageVersionSettings: LanguageVersionSettings,
+    private val incompatibleClassTracker: IncompatibleClassTracker = IncompatibleClassTracker.DoNothing,
+    val jvmTarget: JvmTarget = JvmTarget.DEFAULT,
     private val isIrBackend: Boolean = false,
-    private val typePreprocessor: Function1<KotlinType, KotlinType?>? = null
+    private val typePreprocessor: ((KotlinType) -> KotlinType?)? = null
 ) {
     private val isReleaseCoroutines = languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
 
@@ -114,10 +114,6 @@ class KotlinTypeMapper @JvmOverloads constructor(
         override fun preprocessType(kotlinType: KotlinType): KotlinType? {
             return typePreprocessor?.invoke(kotlinType)
         }
-    }
-
-    fun getLanguageVersionSettings(): LanguageVersionSettings {
-        return languageVersionSettings
     }
 
     fun mapOwner(descriptor: DeclarationDescriptor): Type {

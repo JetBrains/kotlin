@@ -459,7 +459,7 @@ public class FunctionCodegen {
                     new Label(),
                     new Label(),
                     contextKind,
-                    typeMapper,
+                    state,
                     Collections.emptyList(),
                     0);
 
@@ -695,7 +695,7 @@ public class FunctionCodegen {
         }
 
         generateLocalVariableTable(
-                mv, signature, functionDescriptor, thisType, methodBegin, methodEnd, context.getContextKind(), typeMapper,
+                mv, signature, functionDescriptor, thisType, methodBegin, methodEnd, context.getContextKind(), parentCodegen.state,
                 destructuredParametersForSuspendLambda, (functionFakeIndex >= 0 ? 1 : 0) + (lambdaFakeIndex >= 0 ? 1 : 0)
         );
 
@@ -756,7 +756,7 @@ public class FunctionCodegen {
             @NotNull Label methodBegin,
             @NotNull Label methodEnd,
             @NotNull OwnerKind ownerKind,
-            @NotNull KotlinTypeMapper typeMapper,
+            @NotNull GenerationState state,
             @NotNull List<ValueParameterDescriptor> destructuredParametersForSuspendLambda,
             int shiftForDestructuringVariables
     ) {
@@ -776,7 +776,7 @@ public class FunctionCodegen {
                                )
                         ),
                         unwrapped,
-                        thisType, methodBegin, methodEnd, ownerKind, typeMapper, destructuredParametersForSuspendLambda,
+                        thisType, methodBegin, methodEnd, ownerKind, state, destructuredParametersForSuspendLambda,
                         shiftForDestructuringVariables
                 );
                 return;
@@ -787,7 +787,7 @@ public class FunctionCodegen {
                                             jvmMethodSignature, functionDescriptor,
                                             thisType, methodBegin, methodEnd, functionDescriptor.getValueParameters(),
                                             destructuredParametersForSuspendLambda,
-                                            AsmUtil.isStaticMethod(ownerKind, functionDescriptor), typeMapper, shiftForDestructuringVariables
+                                            AsmUtil.isStaticMethod(ownerKind, functionDescriptor), state, shiftForDestructuringVariables
         );
     }
 
@@ -800,11 +800,11 @@ public class FunctionCodegen {
             @NotNull Label methodEnd,
             Collection<ValueParameterDescriptor> valueParameters,
             boolean isStatic,
-            KotlinTypeMapper typeMapper
+            @NotNull GenerationState state
     ) {
         generateLocalVariablesForParameters(
                 mv, jvmMethodSignature, functionDescriptor,
-                thisType, methodBegin, methodEnd, valueParameters, Collections.emptyList(), isStatic, typeMapper,
+                thisType, methodBegin, methodEnd, valueParameters, Collections.emptyList(), isStatic, state,
                 0);
     }
 
@@ -818,7 +818,7 @@ public class FunctionCodegen {
             Collection<ValueParameterDescriptor> valueParameters,
             @NotNull List<ValueParameterDescriptor> destructuredParametersForSuspendLambda,
             boolean isStatic,
-            KotlinTypeMapper typeMapper,
+            @NotNull GenerationState state,
             int shiftForDestructuringVariables
     ) {
         Iterator<ValueParameterDescriptor> valueParameterIterator = valueParameters.iterator();
@@ -836,6 +836,7 @@ public class FunctionCodegen {
             shift++;
         }
 
+        KotlinTypeMapper typeMapper = state.getTypeMapper();
         for (int i = 0; i < params.size(); i++) {
             JvmMethodParameterSignature param = params.get(i);
             JvmMethodParameterKind kind = param.getKind();
@@ -852,7 +853,7 @@ public class FunctionCodegen {
             }
             else if (kind == JvmMethodParameterKind.RECEIVER) {
                 parameterName = AsmUtil.getNameForReceiverParameter(
-                        functionDescriptor, typeMapper.getBindingContext(), typeMapper.getLanguageVersionSettings());
+                        functionDescriptor, typeMapper.getBindingContext(), state.getLanguageVersionSettings());
             }
             else {
                 String lowercaseKind = kind.name().toLowerCase();
