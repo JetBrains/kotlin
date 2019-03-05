@@ -9,6 +9,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin
+import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.cocoapodsBuildDirs
 import java.io.File
 
@@ -33,7 +34,7 @@ open class PodspecTask : DefaultTask() {
             val versionSuffix = if (pod.version != null) ", '${pod.version}'" else ""
             "|    spec.dependency '${pod.name}'$versionSuffix"
         }.joinToString(separator = "\n")
-        val specName = project.name.replace('-', '_')
+        val specName = project.name.asValidFrameworkName()
 
         outputFile.writeText("""
             |Pod::Spec.new do |spec|
@@ -97,7 +98,7 @@ open class DummyFrameworkTask : DefaultTask() {
 
     @get:Input
     val frameworkName
-        get() = project.name.replace('-', '_')
+        get() = project.name.asValidFrameworkName()
 
     private val frameworkDir: File
         get() = destinationDir.resolve("$frameworkName.framework")
