@@ -922,6 +922,11 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
         public void testStopInlineCallInLocalFunInSecondaryConstructor() throws Exception {
             runTest("idea/testData/debugger/tinyApp/src/stepping/stepOver/stopInlineCallInLocalFunInSecondaryConstructor.kt");
         }
+
+        @TestMetadata("whenWithoutExpression.kt")
+        public void testWhenWithoutExpression() throws Exception {
+            runTest("idea/testData/debugger/tinyApp/src/stepping/stepOver/whenWithoutExpression.kt");
+        }
     }
 
     @TestMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOverForce")
