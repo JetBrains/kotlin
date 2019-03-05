@@ -23,19 +23,31 @@ public abstract class AbstractHighlightingTest extends KotlinLightCodeInsightFix
         boolean checkInfos = !InTextDirectivesUtils.isDirectiveDefined(fileText, "// NO_CHECK_INFOS");
         boolean checkWeakWarnings = !InTextDirectivesUtils.isDirectiveDefined(fileText, "// NO_CHECK_WEAK_WARNINGS");
         boolean checkWarnings = !InTextDirectivesUtils.isDirectiveDefined(fileText, "// NO_CHECK_WARNINGS");
+        boolean expectedDuplicatedHighlighting = InTextDirectivesUtils.isDirectiveDefined(fileText, "// EXPECTED_DUPLICATED_HIGHLIGHTING");
 
         myFixture.configureByFile(filePath);
 
-        try {
-            myFixture.checkHighlighting(checkWarnings, checkInfos, checkWeakWarnings);
-        }
-        catch (FileComparisonFailure e) {
-            List<HighlightInfo> highlights =
-                    DaemonCodeAnalyzerImpl.getHighlights(myFixture.getDocument(myFixture.getFile()), null, myFixture.getProject());
-            String text = myFixture.getFile().getText();
+        withExpectedDuplicatedHighlighting(expectedDuplicatedHighlighting, () -> {
+            try {
+                myFixture.checkHighlighting(checkWarnings, checkInfos, checkWeakWarnings);
+            }
+            catch (FileComparisonFailure e) {
+                List<HighlightInfo> highlights =
+                        DaemonCodeAnalyzerImpl.getHighlights(myFixture.getDocument(myFixture.getFile()), null, myFixture.getProject());
+                String text = myFixture.getFile().getText();
 
-            System.out.println(TagsTestDataUtil.insertInfoTags(highlights, text));
-            throw e;
+                System.out.println(TagsTestDataUtil.insertInfoTags(highlights, text));
+                throw e;
+            }
+        });
+    }
+
+    private static void withExpectedDuplicatedHighlighting(boolean expectedDuplicatedHighlighting, Runnable runnable) {
+        if (!expectedDuplicatedHighlighting) {
+            runnable.run();
+            return;
         }
+
+        DuplicateHighlightingKt.expectedDuplicatedHighlighting(runnable);
     }
 }

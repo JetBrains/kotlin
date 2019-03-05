@@ -1,3 +1,5 @@
+// EXPECTED_DUPLICATED_HIGHLIGHTING
+
 var <info textAttributesKey="KOTLIN_MUTABLE_VARIABLE"><info textAttributesKey="KOTLIN_PACKAGE_PROPERTY">x</info></info> = 5
 
 val <info textAttributesKey="KOTLIN_CLASS">Int</info>.<info textAttributesKey="KOTLIN_EXTENSION_PROPERTY">sq</info> : <info textAttributesKey="KOTLIN_CLASS">Int</info>
