@@ -19,10 +19,10 @@ package org.jetbrains.kotlin.codegen.context;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.OwnerKind;
+import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
+import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
-
-import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.anonymousClassForCallable;
 
 public class ClosureContext extends ClassContext {
     private final FunctionDescriptor functionDescriptor;
@@ -37,12 +37,25 @@ public class ClosureContext extends ClassContext {
             @Nullable FunctionDescriptor originalSuspendLambdaDescriptor
     ) {
         super(typeMapper,
-              anonymousClassForCallable(
-                      typeMapper.getBindingContext(), originalSuspendLambdaDescriptor != null ? originalSuspendLambdaDescriptor : functionDescriptor),
+              getClassForCallable(typeMapper, functionDescriptor, originalSuspendLambdaDescriptor),
               OwnerKind.IMPLEMENTATION, parentContext, localLookup);
 
         this.functionDescriptor = functionDescriptor;
         this.originalSuspendLambdaDescriptor = originalSuspendLambdaDescriptor;
+    }
+
+    @NotNull
+    private static ClassDescriptor getClassForCallable(
+            @NotNull KotlinTypeMapper typeMapper,
+            @NotNull FunctionDescriptor functionDescriptor,
+            @Nullable FunctionDescriptor originalSuspendLambdaDescriptor
+    ) {
+        FunctionDescriptor callable = originalSuspendLambdaDescriptor != null ? originalSuspendLambdaDescriptor : functionDescriptor;
+        ClassDescriptor classDescriptor = typeMapper.getBindingContext().get(CodegenBinding.CLASS_FOR_CALLABLE, callable);
+        if (classDescriptor == null) {
+            throw new IllegalStateException("Class for callable is not found: " + functionDescriptor);
+        }
+        return classDescriptor;
     }
 
     public ClosureContext(

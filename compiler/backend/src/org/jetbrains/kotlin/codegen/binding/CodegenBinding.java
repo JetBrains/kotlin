@@ -113,15 +113,6 @@ public class CodegenBinding {
     }
 
     @NotNull
-    public static ClassDescriptor anonymousClassForCallable(
-            @NotNull BindingContext bindingContext,
-            @NotNull CallableDescriptor descriptor
-    ) {
-        //noinspection ConstantConditions
-        return bindingContext.get(CLASS_FOR_CALLABLE, descriptor);
-    }
-
-    @NotNull
     public static Type asmTypeForAnonymousClass(@NotNull BindingContext bindingContext, @NotNull KtElement expression) {
         Type result = asmTypeForAnonymousClassOrNull(bindingContext, expression);
         if (result == null) {
@@ -168,7 +159,11 @@ public class CodegenBinding {
 
     @Nullable
     public static Type asmTypeForAnonymousClassOrNull(@NotNull BindingContext bindingContext, @NotNull CallableDescriptor descriptor) {
-        return bindingContext.get(ASM_TYPE, anonymousClassForCallable(bindingContext, descriptor));
+        ClassDescriptor classForCallable = bindingContext.get(CLASS_FOR_CALLABLE, descriptor);
+        if (classForCallable == null) {
+            return null;
+        }
+        return bindingContext.get(ASM_TYPE, classForCallable);
     }
 
     public static boolean canHaveOuter(@NotNull BindingContext bindingContext, @NotNull ClassDescriptor classDescriptor) {
