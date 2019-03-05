@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches.Computed
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches.ComputedClassNames.Companion.Cached
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches.ComputedClassNames.Companion.EMPTY
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches.ComputedClassNames.Companion.NonCached
-import org.jetbrains.kotlin.idea.debugger.evaluate.LOG
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -192,20 +191,14 @@ class DebuggerClassNameProvider(
             is KtNamedFunction -> {
                 val classNamesOfContainingDeclaration = getOuterClassNamesForElement(element.relevantParentInReadAction)
 
-                val nonInlineClasses: ComputedClassNames =
-                    if (runReadAction { element.name == null || element.isLocal }) {
-                        val nameOfAnonymousClass = runReadAction { getClassType(element) }
+                var nonInlineClasses: ComputedClassNames = classNamesOfContainingDeclaration
 
-                        if (nameOfAnonymousClass == null) {
-                            val parentText = runReadAction { getRelevantElement(element.parent)?.text } ?: "<parent was null>"
-                            LOG.error("Can not get type for ${runReadAction { element.text }}, parent: $parentText")
-                            classNamesOfContainingDeclaration
-                        } else {
-                            classNamesOfContainingDeclaration + Cached(nameOfAnonymousClass)
-                        }
-                    } else {
-                        classNamesOfContainingDeclaration
+                if (runReadAction { element.name == null || element.isLocal }) {
+                    val nameOfAnonymousClass = runReadAction { getClassType(element) }
+                    if (nameOfAnonymousClass != null) {
+                        nonInlineClasses += Cached(nameOfAnonymousClass)
                     }
+                }
 
                 if (!findInlineUseSites || !element.isInlineInReadAction) {
                     return NonCached(nonInlineClasses.classNames)
