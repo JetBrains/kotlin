@@ -218,7 +218,7 @@ class KotlinClassViaConstructorUSimpleReferenceExpression(
     private val resolved by lazy {
         when (val resultingDescriptor = psi.getResolvedCall(psi.analyze())?.resultingDescriptor) {
             is ConstructorDescriptor -> {
-                resultingDescriptor.constructedClass.toSource()?.getMaybeLightElement(this)
+                resultingDescriptor.constructedClass.toSource()?.getMaybeLightElement()
                     ?: (resultingDescriptor as? DeserializedCallableMemberDescriptor)?.let { resolveContainingDeserializedClass(psi, it) }
             }
             is SamConstructorDescriptor ->

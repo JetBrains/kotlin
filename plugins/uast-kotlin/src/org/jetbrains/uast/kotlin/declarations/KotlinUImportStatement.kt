@@ -65,7 +65,7 @@ class KotlinUImportStatement(
             val reference = psi.getQualifiedElementSelector() as? KtReferenceExpression ?: return null
             val bindingContext = reference.analyze()
             val referenceTarget = bindingContext[BindingContext.REFERENCE_TARGET, reference] ?: return null
-            return referenceTarget.toSource()?.getMaybeLightElement(this)
+            return referenceTarget.toSource()?.getMaybeLightElement()
         }
     }
 }

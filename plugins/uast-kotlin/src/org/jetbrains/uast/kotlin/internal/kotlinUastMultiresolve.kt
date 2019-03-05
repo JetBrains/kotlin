@@ -34,7 +34,7 @@ internal fun UElement.getResolveResultVariants(ktExpression: KtExpression?): Ite
     val referenceVariants = getReferenceVariants(ktExpression, ktExpression.name ?: ktExpression.text)
 
     fun asCandidateInfo(descriptor: DeclarationDescriptor): CandidateInfo? =
-        descriptor.toSource()?.getMaybeLightElement(this)?.let { CandidateInfo(it, PsiSubstitutor.EMPTY) }
+        descriptor.toSource()?.getMaybeLightElement()?.let { CandidateInfo(it, PsiSubstitutor.EMPTY) }
 
     return referenceVariants.mapNotNull(::asCandidateInfo).asIterable()
 }
