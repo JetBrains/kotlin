@@ -186,12 +186,52 @@ public class Byte private constructor() : Number(), Comparable<Byte> {
      /** Creates a range from this value to the specified [other] value. */
     public operator fun rangeTo(other: Long): LongRange
 
+    /** Returns this value. */
     public override fun toByte(): Byte
+    /**
+     * Converts this [Byte] value to [Char].
+     *
+     * Returns the `Char` with the numeric value equal to this value sign-extended to 16 bits.
+     */
     public override fun toChar(): Char
+    /**
+     * Converts this [Byte] value to [Short].
+     *
+     * The resulting `Short` value represents the same numerical value as this `Byte`.
+     *
+     * The least significant 8 bits of the resulting `Short` value are the same as the binary representation of this `Byte` value,
+     * whereas the most significant 8 bits are filled with the bit sign of this value.
+     */
     public override fun toShort(): Short
+    /**
+     * Converts this [Byte] value to [Int].
+     *
+     * The resulting `Int` value represents the same numerical value as this `Byte`.
+     *
+     * The least significant 8 bits of the resulting `Int` value are the same as the binary representation of this `Byte` value,
+     * whereas the most significant 24 bits are filled with the bit sign of this value.
+     */
     public override fun toInt(): Int
+    /**
+     * Converts this [Byte] value to [Long].
+     *
+     * The resulting `Long` value represents the same numerical value as this `Byte`.
+     *
+     * The least significant 8 bits of the resulting `Long` value are the same as the binary representation of this `Byte` value,
+     * whereas the most significant 56 bits are filled with the bit sign of this value.
+     */
     public override fun toLong(): Long
+    /**
+     * Converts this [Byte] value to [Float].
+     *
+     * The resulting `Float` value represents the same numerical value as this `Byte`.
+     */
     public override fun toFloat(): Float
+    /**
+     * Converts this [Byte] value to [Double].
+     *
+     * The resulting `Double` value represents the same numerical value as this `Byte`.
+     */
     public override fun toDouble(): Double
 }
 
@@ -374,12 +414,52 @@ public class Short private constructor() : Number(), Comparable<Short> {
      /** Creates a range from this value to the specified [other] value. */
     public operator fun rangeTo(other: Long): LongRange
 
+    /**
+     * Converts this [Short] value to [Byte].
+     *
+     * If this value is in [Byte.MIN_VALUE]..[Byte.MAX_VALUE], the resulting `Byte` value represents
+     * the same numerical value as this `Short`.
+     *
+     * The resulting `Byte` value is represented by the least significant 8 bits of this `Short` value.
+     */
     public override fun toByte(): Byte
+    /**
+     * Converts this [Short] value to [Char].
+     *
+     * Returns the `Char` with the numeric value equal to this value.
+     */
     public override fun toChar(): Char
+    /** Returns this value. */
     public override fun toShort(): Short
+    /**
+     * Converts this [Short] value to [Int].
+     *
+     * The resulting `Int` value represents the same numerical value as this `Short`.
+     *
+     * The least significant 16 bits of the resulting `Int` value are the same as the binary representation of this `Short` value,
+     * whereas the most significant 16 bits are filled with the bit sign of this value.
+     */
     public override fun toInt(): Int
+    /**
+     * Converts this [Short] value to [Long].
+     *
+     * The resulting `Long` value represents the same numerical value as this `Short`.
+     *
+     * The least significant 16 bits of the resulting `Long` value are the same as the binary representation of this `Short` value,
+     * whereas the most significant 48 bits are filled with the bit sign of this value.
+     */
     public override fun toLong(): Long
+    /**
+     * Converts this [Short] value to [Float].
+     *
+     * The resulting `Float` value represents the same numerical value as this `Short`.
+     */
     public override fun toFloat(): Float
+    /**
+     * Converts this [Short] value to [Double].
+     *
+     * The resulting `Double` value represents the same numerical value as this `Short`.
+     */
     public override fun toDouble(): Double
 }
 
@@ -577,12 +657,54 @@ public class Int private constructor() : Number(), Comparable<Int> {
     /** Inverts the bits in this value. */
     public fun inv(): Int
 
+    /**
+     * Converts this [Int] value to [Byte].
+     *
+     * If this value is in [Byte.MIN_VALUE]..[Byte.MAX_VALUE], the resulting `Byte` value represents
+     * the same numerical value as this `Int`.
+     *
+     * The resulting `Byte` value is represented by the least significant 8 bits of this `Int` value.
+     */
     public override fun toByte(): Byte
+    /**
+     * Converts this [Int] value to [Char].
+     *
+     * Returns the `Char` with the numeric value equal to this value truncated to 16 bits.
+     */
     public override fun toChar(): Char
+    /**
+     * Converts this [Int] value to [Short].
+     *
+     * If this value is in [Short.MIN_VALUE]..[Short.MAX_VALUE], the resulting `Short` value represents
+     * the same numerical value as this `Int`.
+     *
+     * The resulting `Short` value is represented by the least significant 16 bits of this `Int` value.
+     */
     public override fun toShort(): Short
+    /** Returns this value. */
     public override fun toInt(): Int
+    /**
+     * Converts this [Int] value to [Long].
+     *
+     * The resulting `Long` value represents the same numerical value as this `Int`.
+     *
+     * The least significant 32 bits of the resulting `Long` value are the same as the binary representation of this `Int` value,
+     * whereas the most significant 32 bits are filled with the bit sign of this value.
+     */
     public override fun toLong(): Long
+    /**
+     * Converts this [Int] value to [Float].
+     *
+     * The resulting value is the closest `Float` to this `Int` value.
+     * In case when this `Int` value is exactly between two `Float`s,
+     * the one with zero at least significant bit of mantissa is selected.
+     */
     public override fun toFloat(): Float
+    /**
+     * Converts this [Int] value to [Double].
+     *
+     * The resulting `Double` value represents the same numerical value as this `Int`.
+     */
     public override fun toDouble(): Double
 }
 
@@ -780,12 +902,56 @@ public class Long private constructor() : Number(), Comparable<Long> {
     /** Inverts the bits in this value. */
     public fun inv(): Long
 
+    /**
+     * Converts this [Long] value to [Byte].
+     *
+     * If this value is in [Byte.MIN_VALUE]..[Byte.MAX_VALUE], the resulting `Byte` value represents
+     * the same numerical value as this `Long`.
+     *
+     * The resulting `Byte` value is represented by the least significant 8 bits of this `Long` value.
+     */
     public override fun toByte(): Byte
+    /**
+     * Converts this [Long] value to [Char].
+     *
+     * Returns the `Char` with the numeric value equal to this value truncated to 16 bits.
+     */
     public override fun toChar(): Char
+    /**
+     * Converts this [Long] value to [Short].
+     *
+     * If this value is in [Short.MIN_VALUE]..[Short.MAX_VALUE], the resulting `Short` value represents
+     * the same numerical value as this `Long`.
+     *
+     * The resulting `Short` value is represented by the least significant 16 bits of this `Long` value.
+     */
     public override fun toShort(): Short
+    /**
+     * Converts this [Long] value to [Int].
+     *
+     * If this value is in [Int.MIN_VALUE]..[Int.MAX_VALUE], the resulting `Int` value represents
+     * the same numerical value as this `Long`.
+     *
+     * The resulting `Int` value is represented by the least significant 32 bits of this `Long` value.
+     */
     public override fun toInt(): Int
+    /** Returns this value. */
     public override fun toLong(): Long
+    /**
+     * Converts this [Long] value to [Float].
+     *
+     * The resulting value is the closest `Float` to this `Long` value.
+     * In case when this `Long` value is exactly between two `Float`s,
+     * the one with zero at least significant bit of mantissa is selected.
+     */
     public override fun toFloat(): Float
+    /**
+     * Converts this [Long] value to [Double].
+     *
+     * The resulting value is the closest `Double` to this `Long` value.
+     * In case when this `Long` value is exactly between two `Double`s,
+     * the one with zero at least significant bit of mantissa is selected.
+     */
     public override fun toDouble(): Double
 }
 
@@ -963,12 +1129,47 @@ public class Float private constructor() : Number(), Comparable<Float> {
     public operator fun unaryMinus(): Float
 
 
+    /**
+     * Converts this [Float] value to [Byte].
+     *
+     * The resulting `Byte` value is equal to `this.toInt().toByte()`.
+     */
     public override fun toByte(): Byte
+    /**
+     * Converts this [Float] value to [Char].
+     *
+     * The resulting `Char` value is equal to `this.toInt().toChar()`.
+     */
     public override fun toChar(): Char
+    /**
+     * Converts this [Float] value to [Short].
+     *
+     * The resulting `Short` value is equal to `this.toInt().toShort()`.
+     */
     public override fun toShort(): Short
+    /**
+     * Converts this [Float] value to [Int].
+     *
+     * The fractional part, if any, is rounded down.
+     * Returns zero if this `Float` value is `NaN`, [Int.MIN_VALUE] if it's less than `Int.MIN_VALUE`,
+     * [Int.MAX_VALUE] if it's bigger than `Int.MAX_VALUE`.
+     */
     public override fun toInt(): Int
+    /**
+     * Converts this [Float] value to [Long].
+     *
+     * The fractional part, if any, is rounded down.
+     * Returns zero if this `Float` value is `NaN`, [Long.MIN_VALUE] if it's less than `Long.MIN_VALUE`,
+     * [Long.MAX_VALUE] if it's bigger than `Long.MAX_VALUE`.
+     */
     public override fun toLong(): Long
+    /** Returns this value. */
     public override fun toFloat(): Float
+    /**
+     * Converts this [Float] value to [Double].
+     *
+     * The resulting `Double` value represents the same numerical value as this `Float`.
+     */
     public override fun toDouble(): Double
 }
 
@@ -1146,12 +1347,49 @@ public class Double private constructor() : Number(), Comparable<Double> {
     public operator fun unaryMinus(): Double
 
 
+    /**
+     * Converts this [Double] value to [Byte].
+     *
+     * The resulting `Byte` value is equal to `this.toInt().toByte()`.
+     */
     public override fun toByte(): Byte
+    /**
+     * Converts this [Double] value to [Char].
+     *
+     * The resulting `Char` value is equal to `this.toInt().toChar()`.
+     */
     public override fun toChar(): Char
+    /**
+     * Converts this [Double] value to [Short].
+     *
+     * The resulting `Short` value is equal to `this.toInt().toShort()`.
+     */
     public override fun toShort(): Short
+    /**
+     * Converts this [Double] value to [Int].
+     *
+     * The fractional part, if any, is rounded down.
+     * Returns zero if this `Double` value is `NaN`, [Int.MIN_VALUE] if it's less than `Int.MIN_VALUE`,
+     * [Int.MAX_VALUE] if it's bigger than `Int.MAX_VALUE`.
+     */
     public override fun toInt(): Int
+    /**
+     * Converts this [Double] value to [Long].
+     *
+     * The fractional part, if any, is rounded down.
+     * Returns zero if this `Double` value is `NaN`, [Long.MIN_VALUE] if it's less than `Long.MIN_VALUE`,
+     * [Long.MAX_VALUE] if it's bigger than `Long.MAX_VALUE`.
+     */
     public override fun toLong(): Long
+    /**
+     * Converts this [Double] value to [Float].
+     *
+     * The resulting value is the closest `Float` to this `Double` value.
+     * In case when this `Double` value is exactly between two `Float`s,
+     * the one with zero at least significant bit of mantissa is selected.
+     */
     public override fun toFloat(): Float
+    /** Returns this value. */
     public override fun toDouble(): Double
 }
 
