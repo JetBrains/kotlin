@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.codegen.inline
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure
-import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding.*
 import org.jetbrains.kotlin.codegen.binding.MutableClosure
 import org.jetbrains.kotlin.codegen.context.EnclosedValueDescriptor
@@ -225,7 +224,7 @@ class PsiExpressionLambda(
 
     private val labels: Set<String>
 
-    private lateinit var closure: CalculatedClosure
+    private var closure: CalculatedClosure
 
     init {
         val bindingContext = typeMapper.bindingContext
@@ -234,8 +233,9 @@ class PsiExpressionLambda(
         if (function == null && expression is KtCallableReferenceExpression) {
             val variableDescriptor =
                 bindingContext.get(BindingContext.VARIABLE, functionWithBodyOrCallableReference) as? VariableDescriptorWithAccessors
-                    ?: throw AssertionError("""Reference expression not resolved to variable descriptor with accessors: ${expression.getText()}""")
-            classDescriptor = CodegenBinding.anonymousClassForCallable(bindingContext, variableDescriptor)
+                    ?: throw AssertionError("Reference expression not resolved to variable descriptor with accessors: ${expression.getText()}")
+            classDescriptor = bindingContext.get(CLASS_FOR_CALLABLE, variableDescriptor)
+                ?: throw IllegalStateException("Class for callable not found: $variableDescriptor\n${expression.text}")
             lambdaClassType = typeMapper.mapClass(classDescriptor)
             val getFunction = PropertyReferenceCodegen.findGetFunction(variableDescriptor)
             invokeMethodDescriptor = PropertyReferenceCodegen.createFakeOpenDescriptor(getFunction, classDescriptor)
@@ -246,7 +246,8 @@ class PsiExpressionLambda(
         } else {
             propertyReferenceInfo = null
             invokeMethodDescriptor = function ?: throw AssertionError("Function is not resolved to descriptor: " + expression.text)
-            classDescriptor = anonymousClassForCallable(bindingContext, invokeMethodDescriptor)
+            classDescriptor = bindingContext.get(CLASS_FOR_CALLABLE, invokeMethodDescriptor)
+                ?: throw IllegalStateException("Class for invoke method not found: $invokeMethodDescriptor\n${expression.text}")
             lambdaClassType = asmTypeForAnonymousClass(bindingContext, invokeMethodDescriptor)
         }
 

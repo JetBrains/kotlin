@@ -3145,7 +3145,12 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             @NotNull VariableDescriptor target,
             @Nullable StackValue receiverValue
     ) {
-        ClassDescriptor classDescriptor = CodegenBinding.anonymousClassForCallable(bindingContext, variableDescriptor);
+        ClassDescriptor classDescriptor = bindingContext.get(CLASS_FOR_CALLABLE, variableDescriptor);
+        if (classDescriptor == null) {
+            throw new IllegalStateException(
+                    "Property reference class was not found: " + variableDescriptor +
+                    "\nTried to generate: " + element.getText());
+        }
 
         ClassBuilder classBuilder = state.getFactory().newVisitor(
                 JvmDeclarationOriginKt.OtherOrigin(element),
