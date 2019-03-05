@@ -141,7 +141,7 @@ private fun loadBuildableElements(project: Project): CachedBuildableElements {
             }
 
             configurations.firstOrNull { it.isTests }?.apply {
-                listOf(this).createBuildTarget(moduleId, originalTargetName + "Tests", moduleName)
+                buildTargets += listOf(this).createBuildTarget(moduleId, originalTargetName + "Tests", moduleName)
             }
         }
     }
