@@ -26,6 +26,7 @@ import com.sun.jdi.ObjectCollectedException
 import com.sun.jdi.ReferenceType
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding.asmTypeForAnonymousClass
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding.asmTypeForAnonymousClassOrNull
+import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.idea.debugger.breakpoints.getLambdasAtLineIfAny
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches
@@ -120,6 +121,10 @@ class DebuggerClassNameProvider(
         if (element == null) return EMPTY
 
         return when (element) {
+            is KtScript -> {
+                getClassType(element)?.let { return Cached(it) }
+                return EMPTY
+            }
             is KtFile -> {
                 val fileClassName = runReadAction { JvmFileClassUtil.getFileClassInternalName(element) }.toJdiName()
                 ComputedClassNames.Cached(fileClassName)
@@ -190,20 +195,18 @@ class DebuggerClassNameProvider(
                 }
             }
             is KtNamedFunction -> {
-                val typeMapper = KotlinDebuggerCaches.getOrCreateTypeMapper(element)
-
                 val classNamesOfContainingDeclaration = getOuterClassNamesForElement(element.relevantParentInReadAction)
 
                 val nonInlineClasses: ComputedClassNames =
                     if (runReadAction { element.name == null || element.isLocal }) {
-                        val typeForAnonymousClass = asmTypeForAnonymousClassOrNull(typeMapper.bindingContext, element)
+                        val nameOfAnonymousClass = runReadAction { getClassType(element) }
 
-                        if (typeForAnonymousClass == null) {
+                        if (nameOfAnonymousClass == null) {
                             val parentText = runReadAction { getRelevantElement(element.parent)?.text } ?: "<parent was null>"
                             LOG.error("Can not get type for ${runReadAction { element.text }}, parent: $parentText")
                             classNamesOfContainingDeclaration
                         } else {
-                            classNamesOfContainingDeclaration + ComputedClassNames.Cached(typeForAnonymousClass.internalName.toJdiName())
+                            classNamesOfContainingDeclaration + Cached(nameOfAnonymousClass)
                         }
                     } else {
                         classNamesOfContainingDeclaration
@@ -241,6 +244,26 @@ class DebuggerClassNameProvider(
             }
             else -> getOuterClassNamesForElement(element.relevantParentInReadAction)
         }
+    }
+
+    // Should be called in a read action
+    private fun getClassType(element: KtElement): String? {
+        val typeMapper = KotlinDebuggerCaches.getOrCreateTypeMapper(element)
+        asmTypeForAnonymousClassOrNull(typeMapper.bindingContext, element)?.let { return it.className }
+
+        val descriptor = typeMapper.bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, element]
+        if (descriptor is ScriptDescriptor) {
+            return typeMapper.mapClass(descriptor).className
+        }
+
+        if (descriptor != null) {
+            val containingDeclaration = descriptor.containingDeclaration
+            if (containingDeclaration is ScriptDescriptor) {
+                return typeMapper.mapClass(containingDeclaration).className
+            }
+        }
+
+        return null
     }
 
     private fun getNameForNonLocalClass(nonLocalClassOrObject: KtClassOrObject): String? {
