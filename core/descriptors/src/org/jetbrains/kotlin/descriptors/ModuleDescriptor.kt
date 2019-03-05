@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.descriptors
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.Platform
+import org.jetbrains.kotlin.resolve.TargetPlatform
 
 interface ModuleDescriptor : DeclarationDescriptor {
     override fun getContainingDeclaration(): DeclarationDescriptor? = null
@@ -33,7 +33,7 @@ interface ModuleDescriptor : DeclarationDescriptor {
 
     // NB: this field should actually be non-null, but making it so implies a LOT of work, so we postpone it for a moment
     // TODO: make it non-null
-    val platform: Platform?
+    val platform: TargetPlatform?
 
     fun shouldSeeInternalsOf(targetModule: ModuleDescriptor): Boolean
 

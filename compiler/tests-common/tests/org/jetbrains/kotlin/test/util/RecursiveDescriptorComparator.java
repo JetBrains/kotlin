@@ -22,6 +22,7 @@ import kotlin.Unit;
 import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.analyzer.common.CommonPlatform;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.contracts.description.*;
 import org.jetbrains.kotlin.descriptors.*;
@@ -31,7 +32,6 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.renderer.*;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.MemberComparator;
-import org.jetbrains.kotlin.resolve.Platform;
 import org.jetbrains.kotlin.resolve.scopes.ChainedMemberScope;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
@@ -243,7 +243,7 @@ public class RecursiveDescriptorComparator {
 
         // 'expected' declarations do not belong to the platform-specific module, even though they participate in the analysis
         if (descriptor instanceof MemberDescriptor && ((MemberDescriptor) descriptor).isExpect() &&
-            module.getPlatform() != Platform.Common.INSTANCE) return false;
+            module.getPlatform() != CommonPlatform.INSTANCE) return false;
 
         return module.equals(DescriptorUtils.getContainingModule(descriptor));
     }

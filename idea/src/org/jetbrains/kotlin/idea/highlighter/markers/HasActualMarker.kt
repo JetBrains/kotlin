@@ -19,13 +19,13 @@ package org.jetbrains.kotlin.idea.highlighter.markers
 import com.intellij.ide.util.DefaultPsiElementCellRenderer
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analyzer.ModuleInfo
+import org.jetbrains.kotlin.analyzer.common.CommonPlatform
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.core.isAndroidModule
 import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.util.actualsForExpected
 import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.resolve.Platform
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 private fun ModuleDescriptor?.getPlatformName(): String? {
@@ -36,10 +36,8 @@ private fun ModuleDescriptor?.getPlatformName(): String? {
     }
     val platform = platform ?: return null
     return when (platform) {
-        is Platform.Specific ->
-            platform.platform
-        Platform.Common ->
-            "common"
+        is CommonPlatform -> "common" // TODO: change CommonPlatform name to something sane
+        else -> platform.platformName
     }
 }
 

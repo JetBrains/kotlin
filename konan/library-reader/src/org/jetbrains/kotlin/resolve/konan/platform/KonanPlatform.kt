@@ -9,9 +9,7 @@ import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.storage.StorageManager
 
-object KonanPlatform : TargetPlatform("Native") {
-    override val platform = Platform.Specific(platformName)
-}
+object KonanPlatform : TargetPlatform("Native")
 
 object NativePlatformCompilerServices : PlatformDependentCompilerServices() {
     override fun computePlatformSpecificDefaultImports(storageManager: StorageManager, result: MutableList<ImportPath>) {

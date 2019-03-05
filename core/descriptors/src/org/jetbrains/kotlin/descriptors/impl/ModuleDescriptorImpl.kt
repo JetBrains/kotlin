@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.Platform
+import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.sure
 import java.lang.IllegalArgumentException
@@ -34,7 +34,7 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
     private val storageManager: StorageManager,
     override val builtIns: KotlinBuiltIns,
     // May be null in compiler context, should be not-null in IDE context
-    override val platform: Platform? = null,
+    override val platform: TargetPlatform? = null,
     private val capabilities: Map<ModuleDescriptor.Capability<*>, Any?> = emptyMap(),
     override val stableName: Name? = null
 ) : DeclarationDescriptorImpl(Annotations.EMPTY, moduleName), ModuleDescriptor {

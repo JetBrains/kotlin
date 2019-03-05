@@ -11,6 +11,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.containers.Stack
+import org.jetbrains.kotlin.analyzer.common.CommonPlatform
 import org.jetbrains.kotlin.checkers.*
 import org.jetbrains.kotlin.checkers.diagnostics.*
 import org.jetbrains.kotlin.checkers.diagnostics.factories.DebugInfoDiagnosticFactory
@@ -27,7 +28,7 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.Platform
+import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
@@ -48,7 +49,7 @@ object CheckerTestUtil {
 
     fun getDiagnosticsIncludingSyntaxErrors(
         bindingContext: BindingContext,
-        implementingModulesBindings: List<Pair<Platform, BindingContext>>,
+        implementingModulesBindings: List<Pair<TargetPlatform, BindingContext>>,
         root: PsiElement,
         markDynamicCalls: Boolean,
         dynamicCallDescriptors: MutableList<DeclarationDescriptor>,
@@ -70,10 +71,11 @@ object CheckerTestUtil {
             moduleDescriptor,
             diagnosedRanges
         )
-        val sortedBindings = implementingModulesBindings.sortedBy { it.first }
+
+        val sortedBindings = implementingModulesBindings.sortedBy { it.first.platformName }
 
         for ((platform, second) in sortedBindings) {
-            assert(platform is Platform.Specific) { "Implementing module must have a specific platform: $platform" }
+            assert(platform !is CommonPlatform) { "Implementing module must have a specific platform: $platform" }
 
             result.addAll(
                 getDiagnosticsIncludingSyntaxErrors(
@@ -81,7 +83,7 @@ object CheckerTestUtil {
                     root,
                     markDynamicCalls,
                     dynamicCallDescriptors,
-                    (platform as Platform.Specific).platform,
+                    platform.platformName,
                     withNewInference,
                     languageVersionSettings,
                     dataFlowValueFactory,

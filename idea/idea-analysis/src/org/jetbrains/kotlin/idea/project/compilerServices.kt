@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.idea.project
 
+import org.jetbrains.kotlin.analyzer.common.CommonPlatform
+import org.jetbrains.kotlin.analyzer.common.CommonPlatformCompilerServices
 import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.js.resolve.JsPlatformCompilerServices
 import org.jetbrains.kotlin.resolve.PlatformDependentCompilerServices
@@ -21,5 +23,6 @@ val TargetPlatform.findCompilerServices: PlatformDependentCompilerServices
             is JvmPlatform -> JvmPlatformCompilerServices
             is JsPlatform -> JsPlatformCompilerServices
             is KonanPlatform -> NativePlatformCompilerServices
+            is CommonPlatform -> CommonPlatformCompilerServices
             else -> throw IllegalStateException("Unknown platform $this")
         }

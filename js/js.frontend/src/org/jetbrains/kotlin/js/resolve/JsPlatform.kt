@@ -23,10 +23,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.storage.StorageManager
 
-object JsPlatform : TargetPlatform("JS") {
-
-    override val platform = Platform.Specific(platformName)
-}
+object JsPlatform : TargetPlatform("JS")
 
 object JsPlatformCompilerServices : PlatformDependentCompilerServices() {
     override fun computePlatformSpecificDefaultImports(storageManager: StorageManager, result: MutableList<ImportPath>) {
