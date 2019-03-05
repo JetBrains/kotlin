@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.resolve.unsubstitutedUnderlyingType
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
+import org.jetbrains.kotlin.types.typeUtil.representativeUpperBound
 import org.jetbrains.kotlin.utils.DO_NOTHING_3
 
 interface JvmTypeFactory<T : Any> {
@@ -181,7 +182,7 @@ fun <T : Any> mapType(
 
         descriptor is TypeParameterDescriptor -> {
             val type = mapType(
-                getRepresentativeUpperBound(descriptor),
+                descriptor.representativeUpperBound,
                 factory,
                 mode,
                 typeMappingConfiguration,
@@ -255,7 +256,7 @@ internal fun computeUnderlyingType(inlineClassType: KotlinType): KotlinType? {
 
     val descriptor = inlineClassType.unsubstitutedUnderlyingType()?.constructor?.declarationDescriptor ?: return null
     return if (descriptor is TypeParameterDescriptor)
-        getRepresentativeUpperBound(descriptor)
+        descriptor.representativeUpperBound
     else
         inlineClassType.substitutedUnderlyingType()
 }
@@ -270,7 +271,7 @@ internal fun computeExpandedTypeInner(kotlinType: KotlinType, visitedClassifiers
 
     return when {
         classifier is TypeParameterDescriptor ->
-            computeExpandedTypeInner(getRepresentativeUpperBound(classifier), visitedClassifiers)
+            computeExpandedTypeInner(classifier.representativeUpperBound, visitedClassifiers)
                 ?.let { expandedUpperBound ->
                     if (expandedUpperBound.isNullable() || !kotlinType.isMarkedNullable)
                         expandedUpperBound
@@ -337,16 +338,6 @@ fun computeInternalName(
 
 private fun getContainer(container: DeclarationDescriptor?): DeclarationDescriptor? =
     container as? ClassDescriptor ?: container as? PackageFragmentDescriptor ?: container?.let { getContainer(it.containingDeclaration) }
-
-fun getRepresentativeUpperBound(descriptor: TypeParameterDescriptor): KotlinType {
-    val upperBounds = descriptor.upperBounds
-    assert(!upperBounds.isEmpty()) { "Upper bounds should not be empty: $descriptor" }
-
-    return upperBounds.firstOrNull {
-        val classDescriptor = it.constructor.declarationDescriptor as? ClassDescriptor ?: return@firstOrNull false
-        classDescriptor.kind != ClassKind.INTERFACE && classDescriptor.kind != ClassKind.ANNOTATION_CLASS
-    } ?: upperBounds.first()
-}
 
 open class JvmDescriptorTypeWriter<T : Any>(private val jvmTypeFactory: JvmTypeFactory<T>) {
     private var jvmCurrentTypeArrayLevel: Int = 0
