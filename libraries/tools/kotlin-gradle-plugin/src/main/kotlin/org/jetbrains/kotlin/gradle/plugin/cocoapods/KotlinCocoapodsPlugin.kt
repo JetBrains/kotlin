@@ -128,7 +128,7 @@ open class KotlinCocoapodsPlugin: Plugin<Project> {
                     interop.packageName = "cocoapods.${pod.moduleName}"
 
                     project.findProperty(CFLAGS_PROPERTY)?.toString()?.let { args ->
-                        // XCode quotes around paths with spaces.
+                        // Xcode quotes around paths with spaces.
                         // Here and below we need to split such paths taking this into account.
                         interop.compilerOpts.addAll(args.splitQuotedArgs())
                     }
