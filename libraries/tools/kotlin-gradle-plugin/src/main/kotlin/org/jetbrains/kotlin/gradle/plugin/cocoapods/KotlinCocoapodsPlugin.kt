@@ -37,6 +37,8 @@ internal class CocoapodsBuildDirs(val project: Project) {
         get() = root.resolve("defs")
 }
 
+internal fun String.asValidFrameworkName() = replace('-', '_')
+
 open class KotlinCocoapodsPlugin: Plugin<Project> {
 
     private fun KotlinMultiplatformExtension.supportedTargets() = targets
