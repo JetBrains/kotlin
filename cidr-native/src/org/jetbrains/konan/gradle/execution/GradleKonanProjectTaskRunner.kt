@@ -25,6 +25,7 @@ import org.jetbrains.konan.KonanBundle.message
 import org.jetbrains.konan.gradle.GradleKonanWorkspace
 import org.jetbrains.konan.gradle.KonanModel
 import org.jetbrains.konan.gradle.KonanProjectDataService
+import org.jetbrains.konan.gradle.execution.GradleBuildTasksOrigin.*
 import org.jetbrains.kotlin.idea.configuration.externalProjectPath
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.platform.impl.isKotlinNative
@@ -64,28 +65,22 @@ class GradleKonanProjectTaskRunner : ProjectTaskRunner() {
     override fun run(project: Project, context: ProjectTaskContext, notification: ProjectTaskNotification?, tasks: Collection<ProjectTask>) {
         if (tasks.isEmpty()) return
 
-        val gradleTasksMap = mutableMapOf<String, GradleBuildTasks>()
-        val consumer = { projectPath: String, compileTask: String?, cleanupTask: String? ->
-            with(gradleTasksMap.computeIfAbsent(projectPath) { GradleBuildTasks() }) {
-                compileTasks.addIfNotNull(compileTask)
-                cleanupTasks.addIfNotNull(cleanupTask)
-            }
-        }
-
+        val buildTasksMap = GradleBuildTasksMap()
         tasks.forEach { task ->
             when (task) {
-                is ModuleBuildTask -> task.collectGradleTasks(consumer)
-                is GradleKonanCleanTask -> task.collectGradleTasks(consumer)
-                is ProjectModelBuildTask<*> -> task.collectGradleTasks(consumer)
+                is ModuleBuildTask -> task.collectGradleTasks(buildTasksMap)
+                is GradleKonanCleanTask -> task.collectGradleTasks(buildTasksMap)
+                is ProjectModelBuildTask<*> -> task.collectGradleTasks(buildTasksMap)
+                else -> error("Unexpected task type: $task")
             }
         }
 
-        val toExecute = gradleTasksMap.entries.mapNotNull { (projectPath, buildTasks) ->
-            val executionName = evaluateExecutionName(project, buildTasks) ?: return@mapNotNull null
+        if (buildTasksMap.isEmpty()) return
+
+        val toExecute = buildTasksMap.entries.mapNotNull { (projectPath, buildTasks) ->
+            val executionName = guessExecutionName(buildTasks) ?: return@mapNotNull null
             Triple(executionName, buildTasks.allTasks, projectPath)
         }
-
-        if (toExecute.isEmpty()) return
 
         ApplicationManager.getApplication().executeOnPooledThread {
             toExecute.forEach { (executionName, buildTasks, projectPath) ->
@@ -105,9 +100,7 @@ class GradleKonanProjectTaskRunner : ProjectTaskRunner() {
     private fun isNativeModule(module: Module): Boolean =
             KotlinFacet.get(module)?.configuration?.settings?.platform?.isKotlinNative == true
 
-    private fun ModuleBuildTask.collectGradleTasks(
-            consumer: (String, String?, String?) -> Unit
-    ) {
+    private fun ModuleBuildTask.collectGradleTasks(buildTasksMap: GradleBuildTasksMap) {
         val linkedExternalProjectPath = module.externalProjectPath ?: return
         val project = module.project
 
@@ -117,58 +110,92 @@ class GradleKonanProjectTaskRunner : ProjectTaskRunner() {
                         KonanProjectDataService.forEachKonanProject(project) { konanModel: KonanModel, moduleNode: DataNode<ModuleData>, projectPath: String ->
                             this[moduleNode.data.linkedExternalProjectPath] = konanModel to projectPath
                         }
-                    }.toMap(),
+                    } as Map<String, Pair<KonanModel, String>>,
                     ProjectRootModificationTracker.getInstance(project)
             )
         }
 
         val (konanModel, projectPath) = cache[linkedExternalProjectPath] ?: return
 
-        val compileTask = konanModel.buildTaskPath
         val cleanupTask = if (!isIncrementalBuild) konanModel.cleanTaskPath else null
+        val compileTask = konanModel.buildTaskPath
 
-        consumer(projectPath, compileTask, cleanupTask)
+        buildTasksMap.consume(FromProject(project), projectPath, cleanupTask = cleanupTask, compileTask = compileTask)
     }
 
-    private fun GradleKonanCleanTask.collectGradleTasks(
-            consumer: (String, String?, String?) -> Unit
-    ) {
-        (buildConfiguration as? GradleKonanConfiguration)?.let { konanConfiguration ->
-            val projectPath = konanConfiguration.projectPath
-            val cleanupTask = konanConfiguration.artifactCleanTaskPath
+    private fun GradleKonanCleanTask.collectGradleTasks(buildTasksMap: GradleBuildTasksMap) {
+        (buildConfiguration as? GradleKonanConfiguration)?.let { buildConfiguration ->
+            val projectPath = buildConfiguration.projectPath
+            val cleanupTask = buildConfiguration.artifactCleanTaskPath
 
-            consumer(projectPath, null, cleanupTask)
+            buildTasksMap.consume(FromConfiguration(buildConfiguration), projectPath, cleanupTask = cleanupTask)
         }
     }
 
-    private fun ProjectModelBuildTask<*>.collectGradleTasks(
-            consumer: (String, String?, String?) -> Unit
-    ) {
-        (buildableElement as? GradleKonanConfiguration)?.let { konanConfiguration ->
-            val projectPath = konanConfiguration.projectPath
-            val compileTask = konanConfiguration.artifactBuildTaskPath
-            val cleanupTask = if (!isIncrementalBuild) konanConfiguration.artifactCleanTaskPath else null
+    private fun ProjectModelBuildTask<*>.collectGradleTasks(buildTasksMap: GradleBuildTasksMap) {
+        (buildableElement as? GradleKonanConfiguration)?.let { buildConfiguration ->
+            val projectPath = buildConfiguration.projectPath
+            val cleanupTask = if (!isIncrementalBuild) buildConfiguration.artifactCleanTaskPath else null
+            val compileTask = buildConfiguration.artifactBuildTaskPath
 
-            consumer(projectPath, compileTask, cleanupTask)
+            buildTasksMap.consume(FromConfiguration(buildConfiguration), projectPath, cleanupTask = cleanupTask, compileTask = compileTask)
         }
     }
 
-    private fun evaluateExecutionName(project: Project, gradleBuildTasks: GradleBuildTasks) =
-            when (gradleBuildTasks.compileTasks.isEmpty()) {
-                true -> when (gradleBuildTasks.cleanupTasks.isEmpty()) {
-                    true -> null
-                    else -> message("execution.cleanProject.name", project.name)
-                }
-                false -> when (gradleBuildTasks.cleanupTasks.isEmpty()) {
-                    true -> message("execution.buildProject.name", project.name)
-                    false -> message("execution.rebuildProject.name", project.name)
-                }
+    private fun guessExecutionName(buildTasks: GradleBuildTasks): String? {
+        return when (buildTasks.compileTasks.isEmpty()) {
+            true -> when (buildTasks.cleanupTasks.isEmpty()) {
+                true -> null
+                else -> buildTasks.origins.first().cleanExecutionName
             }
-
-    private data class GradleBuildTasks(
-            val cleanupTasks: MutableCollection<String> = mutableSetOf(),
-            val compileTasks: MutableCollection<String> = mutableSetOf()
-    ) {
-        val allTasks get() = (cleanupTasks.asSequence() + compileTasks.asSequence()).toList()
+            false -> when (buildTasks.cleanupTasks.isEmpty()) {
+                true -> buildTasks.origins.first().buildExecutionName
+                false -> buildTasks.origins.first().rebuildExecutionName
+            }
+        }
     }
+}
+
+private class GradleBuildTasksMap {
+    private val data = mutableMapOf<String, GradleBuildTasks>()
+
+    val entries get() = (data as Map<String, GradleBuildTasks>).entries
+
+    fun consume(origin: GradleBuildTasksOrigin, projectPath: String, cleanupTask: String? = null, compileTask: String? = null) {
+        if (cleanupTask == null && compileTask == null) return
+
+        with(data.computeIfAbsent(projectPath) { GradleBuildTasks() }) {
+            compileTasks.addIfNotNull(compileTask)
+            cleanupTasks.addIfNotNull(cleanupTask)
+            origins += origin
+        }
+    }
+
+    fun isEmpty() = data.values.none { it.cleanupTasks.isNotEmpty() || it.compileTasks.isNotEmpty() }
+}
+
+private sealed class GradleBuildTasksOrigin {
+    abstract val buildExecutionName: String
+    abstract val rebuildExecutionName: String
+    abstract val cleanExecutionName: String
+
+    class FromProject(private val project: Project): GradleBuildTasksOrigin() {
+        override val buildExecutionName get() = message("execution.buildProject.name", project.name)
+        override val rebuildExecutionName get() = message("execution.rebuildProject.name", project.name)
+        override val cleanExecutionName get() = message("execution.cleanProject.name", project.name)
+    }
+
+    class FromConfiguration(private val buildConfiguration: GradleKonanConfiguration): GradleBuildTasksOrigin() {
+        override val buildExecutionName get() = message("execution.buildConfiguration.name", buildConfiguration.name)
+        override val rebuildExecutionName get() = message("execution.rebuildConfiguration.name", buildConfiguration.name)
+        override val cleanExecutionName get() = message("execution.cleanConfiguration.name", buildConfiguration.name)
+    }
+}
+
+private class GradleBuildTasks {
+    val cleanupTasks = mutableSetOf<String>()
+    val compileTasks = mutableSetOf<String>()
+    val origins = mutableListOf<GradleBuildTasksOrigin>()
+
+    val allTasks get() = (cleanupTasks.asSequence() + compileTasks.asSequence()).toList()
 }
