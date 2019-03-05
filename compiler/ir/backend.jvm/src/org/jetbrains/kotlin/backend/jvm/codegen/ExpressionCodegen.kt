@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.codegen.inline.ReifiedTypeParametersUsages
 import org.jetbrains.kotlin.codegen.inline.TypeParameterMappings
 import org.jetbrains.kotlin.codegen.intrinsics.JavaClassProperty
 import org.jetbrains.kotlin.codegen.pseudoInsns.fakeAlwaysFalseIfeq
+import org.jetbrains.kotlin.codegen.pseudoInsns.fakeAlwaysTrueIfeq
 import org.jetbrains.kotlin.codegen.pseudoInsns.fixStackAndJump
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -881,28 +882,34 @@ class ExpressionCodegen(
         }
     }
 
+    // Avoid true condition generation for tailrec
+    // ASM and the Java verifier assume that L1 is reachable which causes several verifications to fail.
+    // To avoid them, trivial jump elimination is required.
+    // L0
+    // ICONST_1 //could be eliminated
+    // IFEQ L1 //could be eliminated
+    // .... // no jumps
+    // GOTO L0
+    // L1
+    //TODO: write elimination lower
+    private fun generateLoopJump(condition: IrExpression, data: BlockInfo, label: Label, jumpIfFalse: Boolean) {
+        condition.markLineNumber(true)
+        if (condition is IrConst<*> && condition.value == true) {
+            if (jumpIfFalse) {
+                mv.fakeAlwaysFalseIfeq(label)
+            } else {
+                mv.fakeAlwaysTrueIfeq(label)
+            }
+        } else {
+            gen(condition, data)
+            BranchedValue.condJump(StackValue.onStack(condition.asmType), label, jumpIfFalse, mv)
+        }
+    }
+
     override fun visitWhileLoop(loop: IrWhileLoop, data: BlockInfo): StackValue {
         val continueLabel = markNewLabel()
         val endLabel = Label()
-        val condition = loop.condition
-
-        // Avoid true condition generation for tailrec
-        // ASM and Java verifier assumes that L1 is reachable that cause several verification to fail,
-        // to avoid them trivial jump elumination is required
-        // L0
-        // ICONST_1 //could be eliminated
-        // IFEQ L1 //could be eliminated
-        // .... // no jumps
-        // GOTO L0
-        // L1
-        //TODO: write elimination lower
-        condition.markLineNumber(startOffset = true)
-        if (!(condition is IrConst<*> && condition.value == true)) {
-            gen(condition, data)
-            BranchedValue.condJump(StackValue.onStack(condition.asmType), endLabel, true, mv)
-        } else {
-            mv.fakeAlwaysFalseIfeq(endLabel)
-        }
+        generateLoopJump(loop.condition, data, endLabel, true)
 
         with(LoopInfo(loop, continueLabel, endLabel)) {
             data.addInfo(this)
@@ -973,10 +980,7 @@ class ExpressionCodegen(
         }
 
         mv.visitLabel(continueLabel)
-        val condition = loop.condition
-        condition.markLineNumber(startOffset = true)
-        gen(condition, data)
-        BranchedValue.condJump(StackValue.onStack(condition.asmType), entry, false, mv)
+        generateLoopJump(loop.condition, data, entry, false)
         mv.mark(endLabel)
 
         return loop.onStack
