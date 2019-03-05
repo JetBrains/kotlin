@@ -48,18 +48,19 @@ import org.jetbrains.org.objectweb.asm.Type
 import java.util.*
 
 class DebuggerClassNameProvider(
-        private val debugProcess: DebugProcess,
-        val findInlineUseSites: Boolean = true,
-        val alwaysReturnLambdaParentClass: Boolean = true
+    private val debugProcess: DebugProcess,
+    val findInlineUseSites: Boolean = true,
+    val alwaysReturnLambdaParentClass: Boolean = true
 ) {
     companion object {
-        internal val CLASS_ELEMENT_TYPES = arrayOf<Class<out PsiElement>>(
-                KtFile::class.java,
-                KtClassOrObject::class.java,
-                KtProperty::class.java,
-                KtNamedFunction::class.java,
-                KtFunctionLiteral::class.java,
-                KtAnonymousInitializer::class.java)
+        private val CLASS_ELEMENT_TYPES = arrayOf<Class<out PsiElement>>(
+            KtFile::class.java,
+            KtClassOrObject::class.java,
+            KtProperty::class.java,
+            KtNamedFunction::class.java,
+            KtFunctionLiteral::class.java,
+            KtAnonymousInitializer::class.java
+        )
 
         internal fun getRelevantElement(element: PsiElement?): PsiElement? {
             if (element == null) {
@@ -82,12 +83,12 @@ class DebuggerClassNameProvider(
     /**
      * Returns classes in which the given line number *is* present.
      */
-    fun getClassesForPosition(position: SourcePosition): List<ReferenceType> = with (debugProcess) {
+    fun getClassesForPosition(position: SourcePosition): List<ReferenceType> = with(debugProcess) {
         val lineNumber = runReadAction { position.line }
 
         return doGetClassesForPosition(position)
-                .flatMap { className -> virtualMachineProxy.classesByName(className) }
-                .flatMap { referenceType -> findTargetClasses(referenceType, lineNumber) }
+            .flatMap { className -> virtualMachineProxy.classesByName(className) }
+            .flatMap { referenceType -> findTargetClasses(referenceType, lineNumber) }
     }
 
     /**
@@ -127,7 +128,7 @@ class DebuggerClassNameProvider(
             }
             is KtFile -> {
                 val fileClassName = runReadAction { JvmFileClassUtil.getFileClassInternalName(element) }.toJdiName()
-                ComputedClassNames.Cached(fileClassName)
+                Cached(fileClassName)
             }
             is KtClassOrObject -> {
                 val enclosingElementForLocal = runReadAction { KtPsiUtil.getEnclosingElementForLocalDeclaration(element) }
@@ -139,17 +140,16 @@ class DebuggerClassNameProvider(
                         getOuterClassNamesForElement(element.relevantParentInReadAction)
                     else ->
                         // Guaranteed to be non-local class or object
-                        element.readAction {
-                            if (it is KtClass && runReadAction { it.isInterface() }) {
-                                val name = getNameForNonLocalClass(it)
+                        element.readAction { _ ->
+                            if (element is KtClass && runReadAction { element.isInterface() }) {
+                                val name = getNameForNonLocalClass(element)
 
                                 if (name != null)
                                     Cached(listOf(name, name + JvmAbi.DEFAULT_IMPLS_SUFFIX))
                                 else
-                                    ComputedClassNames.EMPTY
-                            }
-                            else {
-                                getNameForNonLocalClass(it)?.let { ComputedClassNames.Cached(it) } ?: ComputedClassNames.EMPTY
+                                    EMPTY
+                            } else {
+                                getNameForNonLocalClass(element)?.let { Cached(it) } ?: EMPTY
                             }
                         }
                 }
@@ -158,14 +158,12 @@ class DebuggerClassNameProvider(
                 val nonInlineClasses = if (runReadAction { element.isTopLevel }) {
                     // Top level property
                     getOuterClassNamesForElement(element.relevantParentInReadAction)
-                }
-                else {
+                } else {
                     val enclosingElementForLocal = runReadAction { KtPsiUtil.getEnclosingElementForLocalDeclaration(element) }
                     if (enclosingElementForLocal != null) {
                         // Local class
                         getOuterClassNamesForElement(enclosingElementForLocal)
-                    }
-                    else {
+                    } else {
                         val containingClassOrFile = runReadAction {
                             PsiTreeUtil.getParentOfType(element, KtFile::class.java, KtClassOrObject::class.java)
                         }
@@ -174,23 +172,20 @@ class DebuggerClassNameProvider(
                             // Properties from the companion object can be placed in the companion object's containing class
                             (getOuterClassNamesForElement(containingClassOrFile.relevantParentInReadAction) +
                                     getOuterClassNamesForElement(containingClassOrFile)).distinct()
-                        }
-                        else if (containingClassOrFile != null) {
+                        } else if (containingClassOrFile != null) {
                             getOuterClassNamesForElement(containingClassOrFile)
-                        }
-                        else {
+                        } else {
                             getOuterClassNamesForElement(element.relevantParentInReadAction)
                         }
                     }
                 }
 
                 if (findInlineUseSites && (
-                        element.isInlineInReadAction ||
-                        runReadAction { element.accessors.any { it.hasModifier(KtTokens.INLINE_KEYWORD) } })
+                            element.isInlineInReadAction ||
+                                    runReadAction { element.accessors.any { it.hasModifier(KtTokens.INLINE_KEYWORD) } })
                 ) {
                     nonInlineClasses + inlineUsagesSearcher.findInlinedCalls(element) { this.getOuterClassNamesForElement(it) }
-                }
-                else {
+                } else {
                     return NonCached(nonInlineClasses.classNames)
                 }
             }
@@ -237,10 +232,10 @@ class DebuggerClassNameProvider(
                 }
 
                 if (!alwaysReturnLambdaParentClass && !InlineUtil.isInlinedArgument(element, typeMapper.bindingContext, true)) {
-                    return ComputedClassNames.Cached(nonInlinedLambdaClassName)
+                    return Cached(nonInlinedLambdaClassName)
                 }
 
-                ComputedClassNames.Cached(nonInlinedLambdaClassName) + getOuterClassNamesForElement(element.relevantParentInReadAction)
+                Cached(nonInlinedLambdaClassName) + getOuterClassNamesForElement(element.relevantParentInReadAction)
             }
             else -> getOuterClassNamesForElement(element.relevantParentInReadAction)
         }
@@ -336,8 +331,8 @@ private fun DebugProcess.findTargetClasses(outerClass: ReferenceType, lineAt: In
         for (nested in nestedTypes) {
             targetClasses += findTargetClasses(nested, lineAt)
         }
+    } catch (_: AbsentInformationException) {
     }
-    catch (_: AbsentInformationException) {}
 
     return targetClasses
 }
