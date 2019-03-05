@@ -2,6 +2,7 @@ module kotlin.stdlib {
     exports kotlin;
     exports kotlin.annotation;
     exports kotlin.collections;
+    exports kotlin.collections.unsigned;
     exports kotlin.comparisons;
     exports kotlin.concurrent;
     exports kotlin.contracts;

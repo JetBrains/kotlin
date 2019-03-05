@@ -5,10 +5,10 @@
 
 package templates
 
-enum class SourceFile(jvmClassName: String? = null, val multifile: Boolean = true, val packageName: String? = null) {
+enum class SourceFile(jvmClassName: String? = null, val multifile: Boolean = true, val packageName: String? = null, val jvmPackageName: String? = null) {
 
     Arrays(packageName = "kotlin.collections"),
-    UArrays(packageName = "kotlin.collections"),
+    UArrays(packageName = "kotlin.collections", jvmPackageName = "kotlin.collections.unsigned"),
     Collections(packageName = "kotlin.collections"),
     UCollections(packageName = "kotlin.collections"),
     Sets(packageName = "kotlin.collections"),

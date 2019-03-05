@@ -5,6 +5,7 @@
 
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("UArraysKt")
+@file:kotlin.jvm.JvmPackageName("kotlin.collections.unsigned")
 
 package kotlin.collections
 
