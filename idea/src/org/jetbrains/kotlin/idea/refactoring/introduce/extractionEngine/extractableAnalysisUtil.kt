@@ -107,11 +107,12 @@ private fun List<Instruction>.getVarDescriptorsAccessedAfterwards(bindingContext
     fun doTraversal(instruction: Instruction) {
         traverseFollowingInstructions(instruction, visitedInstructions) {
             when {
-                it is AccessValueInstruction && it !in this ->
-                    PseudocodeUtil.extractVariableDescriptorIfAny(it, bindingContext)?.let { accessedAfterwards.add(it) }
+                it is AccessValueInstruction && it !in this -> PseudocodeUtil.extractVariableDescriptorIfAny(
+                    it,
+                    bindingContext
+                )?.let { descriptor -> accessedAfterwards.add(descriptor) }
 
-                it is LocalFunctionDeclarationInstruction ->
-                    doTraversal(it.body.enterInstruction)
+                it is LocalFunctionDeclarationInstruction -> doTraversal(it.body.enterInstruction)
             }
 
             TraverseInstructionResult.CONTINUE
@@ -238,26 +239,18 @@ private fun ExtractionData.analyzeControlFlow(
     val jumpExits = ArrayList<AbstractJumpInstruction>()
     exitPoints.forEach {
         val e = (it as? UnconditionalJumpInstruction)?.element
-        val inst =
-            when {
-                it !is ReturnValueInstruction && it !is ReturnNoValueInstruction && it.owner != pseudocode ->
-                    null
-                it is UnconditionalJumpInstruction && it.targetLabel.isJumpToError ->
-                    it
-                e != null && e !is KtBreakExpression && e !is KtContinueExpression ->
-                    it.previousInstructions.firstOrNull()
-                else ->
-                    it
-            }
 
-        when (inst) {
-            is ReturnValueInstruction -> {
-                if (inst.owner == pseudocode) {
-                    if (inst.returnExpressionIfAny == null) {
-                        defaultExits.add(inst)
-                    } else {
-                        valuedReturnExits.add(inst)
-                    }
+        when (val inst = when {
+            it !is ReturnValueInstruction && it !is ReturnNoValueInstruction && it.owner != pseudocode -> null
+            it is UnconditionalJumpInstruction && it.targetLabel.isJumpToError -> it
+            e != null && e !is KtBreakExpression && e !is KtContinueExpression -> it.previousInstructions.firstOrNull()
+            else -> it
+        }) {
+            is ReturnValueInstruction -> if (inst.owner == pseudocode) {
+                if (inst.returnExpressionIfAny == null) {
+                    defaultExits.add(inst)
+                } else {
+                    valuedReturnExits.add(inst)
                 }
             }
 
@@ -266,16 +259,10 @@ private fun ExtractionData.analyzeControlFlow(
                 if ((element is KtReturnExpression && inst.owner == pseudocode)
                     || element is KtBreakExpression
                     || element is KtContinueExpression
-                ) {
-                    jumpExits.add(inst)
-                } else if (element !is KtThrowExpression && !inst.targetLabel.isJumpToError) {
-                    defaultExits.add(inst)
-                }
+                ) jumpExits.add(inst) else if (element !is KtThrowExpression && !inst.targetLabel.isJumpToError) defaultExits.add(inst)
             }
 
-            else -> if (inst != null && inst !is LocalFunctionDeclarationInstruction) {
-                defaultExits.add(inst)
-            }
+            else -> if (inst != null && inst !is LocalFunctionDeclarationInstruction) defaultExits.add(inst)
         }
     }
 
@@ -306,9 +293,7 @@ private fun ExtractionData.analyzeControlFlow(
 
     val controlFlow = if (defaultReturnType.isMeaningful()) {
         emptyControlFlow.copy(outputValues = Collections.singletonList(ExpressionValue(false, defaultResultExpressions, defaultReturnType)))
-    } else {
-        emptyControlFlow
-    }
+    } else emptyControlFlow
 
     if (declarationsToReport.isNotEmpty()) {
         val localVarStr = declarationsToReport.map { it.renderForMessage(bindingContext)!! }.distinct().sorted()
@@ -670,16 +655,16 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
     val modifiedVarDescriptorsForControlFlow = HashMap(modifiedVarDescriptorsWithExpressions)
     modifiedVarDescriptorsForControlFlow.keys.retainAll(localInstructions.getVarDescriptorsAccessedAfterwards(bindingContext))
     val (controlFlow, controlFlowMessage) =
-            analyzeControlFlow(
-                localInstructions,
-                pseudocode,
-                originalFile.findModuleDescriptor(),
-                bindingContext,
-                modifiedVarDescriptorsForControlFlow,
-                options,
-                targetScope,
-                paramsInfo.parameters
-            )
+        analyzeControlFlow(
+            localInstructions,
+            pseudocode,
+            originalFile.findModuleDescriptor(),
+            bindingContext,
+            modifiedVarDescriptorsForControlFlow,
+            options,
+            targetScope,
+            paramsInfo.parameters
+        )
     controlFlowMessage?.let { messages.add(it) }
 
     val returnType = controlFlow.outputValueBoxer.returnType

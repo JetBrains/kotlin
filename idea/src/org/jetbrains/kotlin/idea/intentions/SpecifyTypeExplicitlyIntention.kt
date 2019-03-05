@@ -185,7 +185,8 @@ class SpecifyTypeExplicitlyIntention : SelfTargetingRangeIntention<KtCallableDec
         private class TypeChooseValueExpression(
             items: List<KotlinType>, defaultItem: KotlinType
         ) : ChooseValueExpression<KotlinType>(items, defaultItem) {
-            override fun getLookupString(element: KotlinType) = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(element)
+            override fun getLookupString(element: KotlinType) =
+                IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(element)
 
             override fun getResult(element: KotlinType): String {
                 val renderType = IdeDescriptorRenderers.SOURCE_CODE.renderType(element)

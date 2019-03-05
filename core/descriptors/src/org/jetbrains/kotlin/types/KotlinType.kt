@@ -82,7 +82,7 @@ abstract class WrappedType : KotlinType() {
     override val isMarkedNullable: Boolean get() = delegate.isMarkedNullable
     override val memberScope: MemberScope get() = delegate.memberScope
 
-    override final fun unwrap(): UnwrappedType {
+    final override fun unwrap(): UnwrappedType {
         var result = delegate
         while (result is WrappedType) {
             result = result.delegate
@@ -93,8 +93,7 @@ abstract class WrappedType : KotlinType() {
     override fun toString(): String {
         return if (isComputed()) {
             delegate.toString()
-        }
-        else {
+        } else {
             "<Not computed yet>"
         }
     }
@@ -111,11 +110,11 @@ abstract class WrappedType : KotlinType() {
  *
  * todo: specify what happens with internal structure when we apply some [TypeSubstitutor]
  */
-sealed class UnwrappedType: KotlinType() {
+sealed class UnwrappedType : KotlinType() {
     abstract fun replaceAnnotations(newAnnotations: Annotations): UnwrappedType
     abstract fun makeNullableAsSpecified(newNullability: Boolean): UnwrappedType
 
-    override final fun unwrap(): UnwrappedType = this
+    final override fun unwrap(): UnwrappedType = this
 }
 
 /**
@@ -134,7 +133,7 @@ abstract class SimpleType : UnwrappedType(), SimpleTypeMarker, TypeArgumentListM
             }
 
             append(constructor)
-            if (!arguments.isEmpty()) arguments.joinTo(this, separator = ", ", prefix = "<", postfix = ">")
+            if (arguments.isNotEmpty()) arguments.joinTo(this, separator = ", ", prefix = "<", postfix = ">")
             if (isMarkedNullable) append("?")
         }
     }
@@ -142,7 +141,7 @@ abstract class SimpleType : UnwrappedType(), SimpleTypeMarker, TypeArgumentListM
 
 // lowerBound is a subtype of upperBound
 abstract class FlexibleType(val lowerBound: SimpleType, val upperBound: SimpleType) :
-        UnwrappedType(), SubtypingRepresentatives, FlexibleTypeMarker {
+    UnwrappedType(), SubtypingRepresentatives, FlexibleTypeMarker {
 
     abstract val delegate: SimpleType
 
@@ -167,5 +166,5 @@ abstract class FlexibleType(val lowerBound: SimpleType, val upperBound: SimpleTy
 val KotlinType.isError: Boolean
     get() = unwrap().let { unwrapped ->
         unwrapped is ErrorType ||
-        (unwrapped is FlexibleType && unwrapped.delegate is ErrorType)
+                (unwrapped is FlexibleType && unwrapped.delegate is ErrorType)
     }
