@@ -4861,6 +4861,10 @@ The "returned" value of try expression with no finally is either the last expres
             KtProperty subjectVariable = expression.getSubjectVariable();
             KtExpression subjectExpression = expression.getSubjectExpression();
 
+            if (subjectVariable == null && subjectExpression == null) {
+                v.nop();
+            }
+
             SwitchCodegen switchCodegen = switchCodegenProvider.buildAppropriateSwitchCodegenIfPossible(
                     expression, isStatement, CodegenUtil.isExhaustive(bindingContext, expression, isStatement)
             );
