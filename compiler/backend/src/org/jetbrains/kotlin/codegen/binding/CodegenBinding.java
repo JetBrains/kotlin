@@ -116,7 +116,8 @@ public class CodegenBinding {
     public static Type asmTypeForAnonymousClass(@NotNull BindingContext bindingContext, @NotNull KtElement expression) {
         Type result = asmTypeForAnonymousClassOrNull(bindingContext, expression);
         if (result == null) {
-            throw new IllegalStateException("Type must not be null: " + expression.getText());
+            throw new KotlinExceptionWithAttachments("Couldn't compute ASM type for expression")
+                    .withAttachment("expression.kt", PsiUtilsKt.getElementTextWithContext(expression));
         }
 
         return result;
@@ -143,8 +144,7 @@ public class CodegenBinding {
             return asmTypeForAnonymousClassOrNull(bindingContext, variableDescriptor);
         }
 
-        throw new KotlinExceptionWithAttachments("Couldn't compute ASM type for expression")
-              .withAttachment("expression.kt", PsiUtilsKt.getElementTextWithContext(expression));
+        return null;
     }
 
     @NotNull
