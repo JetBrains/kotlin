@@ -80,7 +80,10 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         configuration.configureExplicitContentRoots(arguments)
         configuration.configureStandardLibs(paths, arguments)
 
-        if (arguments.buildFile == null && arguments.freeArgs.isEmpty() && !arguments.version) {
+        // in case of IC we need to run compiler even
+        // when there are no files to compile (to update caches & metadata when a file is removed)
+        val isICEnabled = configuration[JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS] != null
+        if (arguments.buildFile == null && arguments.freeArgs.isEmpty() && !(arguments.version || isICEnabled)) {
             if (arguments.script) {
                 messageCollector.report(ERROR, "Specify script source path to evaluate")
                 return COMPILATION_ERROR
@@ -141,13 +144,6 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 val module = ModuleBuilder(moduleName, destination?.path ?: ".", "java-production")
                 module.configureFromArgs(arguments)
 
-                if (module.getSourceFiles().isEmpty()) {
-                    if (arguments.version) return OK
-
-                    messageCollector.report(ERROR, "No source files")
-                    return COMPILATION_ERROR
-                }
-
                 ModuleChunk(listOf(module))
             }
 
@@ -157,6 +153,14 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             environment.registerJavacIfNeeded(arguments).let {
                 if (!it) return COMPILATION_ERROR
             }
+
+            if (environment.getSourceFiles().isEmpty() && !isICEnabled && buildFile == null) {
+                if (arguments.version) return OK
+
+                messageCollector.report(ERROR, "No source files")
+                return COMPILATION_ERROR
+            }
+
             KotlinToJVMBytecodeCompiler.compileModules(environment, buildFile, moduleChunk.modules)
             return OK
         } catch (e: CompilationException) {

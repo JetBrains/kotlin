@@ -101,6 +101,11 @@ public class IncrementalJsCompilerRunnerTestGenerated extends AbstractIncrementa
             runTest("jps-plugin/testData/incremental/pureKotlin/classRecreated/");
         }
 
+        @TestMetadata("classRemoved")
+        public void testClassRemoved() throws Exception {
+            runTest("jps-plugin/testData/incremental/pureKotlin/classRemoved/");
+        }
+
         @TestMetadata("classSignatureChanged")
         public void testClassSignatureChanged() throws Exception {
             runTest("jps-plugin/testData/incremental/pureKotlin/classSignatureChanged/");
