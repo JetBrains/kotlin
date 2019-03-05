@@ -6,16 +6,21 @@
 package org.jetbrains.kotlin.fir.symbols
 
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.Name
 
 interface ConeSymbol
 
-interface ConeTypeParameterSymbol : ConeSymbol {
-    val name: Name
+interface ConeClassifierSymbol : ConeSymbol {
+    fun toLookupTag(): ConeClassifierLookupTag
 }
 
-interface ConeClassLikeSymbol : ConeSymbol {
+interface ConeTypeParameterSymbol : ConeClassifierSymbol, ConeTypeParameterLookupTag {
+    override fun toLookupTag(): ConeTypeParameterLookupTag = this
+}
+
+interface ConeClassLikeSymbol : ConeClassifierSymbol {
     val classId: ClassId
+
+    override fun toLookupTag(): ConeClassLikeLookupTag
 }
 
 interface ConeTypeAliasSymbol : ConeClassLikeSymbol

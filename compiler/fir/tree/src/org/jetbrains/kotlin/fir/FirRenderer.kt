@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license 
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,9 +10,12 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.impl.*
+import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
+import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
+import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
+import org.jetbrains.kotlin.fir.expressions.impl.FirWhenSubjectExpression
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeSymbol
+import org.jetbrains.kotlin.fir.symbols.ConeClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
@@ -608,7 +611,7 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         visitTypeRefWithNullability(functionTypeRef)
     }
 
-    private fun ConeSymbol.asString(): String {
+    private fun ConeClassifierSymbol.asString(): String {
         return when (this) {
             is ConeClassLikeSymbol -> classId.asString()
             is FirTypeParameterSymbol -> fir.name.asString()
@@ -622,7 +625,7 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
             is ConeClassErrorType -> "class error: $reason"
             is ConeClassLikeType -> {
                 val sb = StringBuilder()
-                sb.append(symbol.classId.asString())
+                sb.append(lookupTag.classId.asString())
                 if (typeArguments.isNotEmpty()) {
                     sb.append(typeArguments.joinToString(prefix = "<", postfix = ">") {
                         when (it) {
@@ -639,7 +642,7 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
                 sb.toString()
             }
             is ConeTypeParameterType -> {
-                symbol.asString()
+                lookupTag.name.asString()
             }
             is ConeFunctionType -> {
                 buildString {

@@ -6,16 +6,16 @@
 package org.jetbrains.kotlin.fir.scopes
 
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction.NEXT
+import org.jetbrains.kotlin.fir.symbols.ConeClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.ConePropertySymbol
-import org.jetbrains.kotlin.fir.symbols.ConeSymbol
 import org.jetbrains.kotlin.name.Name
 
 interface FirScope {
     fun processClassifiersByName(
         name: Name,
         position: FirPosition,
-        processor: (ConeSymbol) -> Boolean
+        processor: (ConeClassifierSymbol) -> Boolean
     ): Boolean = true
 
     fun processFunctionsByName(

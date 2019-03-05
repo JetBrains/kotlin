@@ -14,9 +14,11 @@ import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.FirTypeResolver
 import org.jetbrains.kotlin.fir.scopes.FirPosition
 import org.jetbrains.kotlin.fir.scopes.impl.*
-import org.jetbrains.kotlin.fir.symbols.*
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
+import org.jetbrains.kotlin.fir.service
+import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.ConeClassifierSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.transformSingle
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirErrorTypeRefImpl
@@ -29,8 +31,11 @@ import org.jetbrains.kotlin.fir.visitors.compose
 open class FirTypeResolveTransformer(
     private val traversedClassifiers: Set<FirMemberDeclaration> = setOf()
 ) : FirAbstractTreeTransformerWithSuperTypes(reversedScopePriority = true) {
+    private lateinit var firProvider: FirProvider
+
     override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirFile> {
         val session = file.session
+        firProvider = session.getService(FirProvider::class)
         return withScopeCleanup {
             towerScope.scopes += listOf(
                 // from low priority to high priority
@@ -63,11 +68,13 @@ open class FirTypeResolveTransformer(
             }
         }
         return withScopeCleanup {
-            val firProvider = FirProvider.getInstance(regularClass.session)
+            val session = regularClass.session
+            val firProvider = FirProvider.getInstance(session)
             val classId = regularClass.symbol.classId
-            lookupSuperTypes(regularClass, lookupInterfaces = false, deep = true).asReversed().mapTo(towerScope.scopes) {
-                FirNestedClassifierScope(it.symbol.classId, FirSymbolProvider.getInstance(regularClass.session))
-            }
+            lookupSuperTypes(regularClass, lookupInterfaces = false, deep = true, useSiteSession = session)
+                .asReversed().mapTo(towerScope.scopes) {
+                    FirNestedClassifierScope(it.lookupTag.classId, FirSymbolProvider.getInstance(session))
+                }
             val companionObjects = regularClass.declarations.filterIsInstance<FirRegularClass>().filter { it.isCompanion }
             for (companionObject in companionObjects) {
                 towerScope.scopes += FirNestedClassifierScope(companionObject.symbol.classId, firProvider)
@@ -173,40 +180,29 @@ open class FirTypeResolveTransformer(
         }
 
 
-        private fun walkSymbols(symbol: ConeSymbol) {
-            if (symbol is ConeClassLikeSymbol) {
-                if (symbol is FirBasedSymbol<*>) {
-                    val classId = symbol.classId
+        private fun walkSymbols(symbol: ConeClassifierSymbol) {
+            if (symbol !is ConeClassLikeSymbol || symbol !is FirBasedSymbol<*>) return
+            val classId = symbol.classId
+            val classes = generateSequence(classId) { it.outerClassId }.toList().asReversed()
 
-                    if (symbol is ConeTypeAliasSymbol) {
-                        val fir = symbol.fir as FirTypeAlias
-                        if (fir.expandedTypeRef is FirResolvedTypeRef) return
-                    } else if (symbol is ConeClassSymbol) {
-                        val fir = symbol.fir as FirClass
-                        if (fir.superTypeRefs.all { it is FirResolvedTypeRef }) return
-                    }
-                    val firProvider = FirProvider.getInstance(symbol.fir.session)
-                    val classes = generateSequence(classId) { it.outerClassId }.toList().asReversed()
-
-                    val file = firProvider.getFirClassifierContainerFile(classes.first())
-
-                    val firElementsToVisit = classes.asSequence().map {
-                        firProvider.getFirClassifierByFqName(it)!!
-                    }
-
-                    val transformer = SuperTypeResolveTransformer(
-                        firElementsToVisit.iterator(), traversedClassifiers
-                    )
-                    file.transformSingle(transformer, null)
-
-                } else {
-                    if (symbol is FirTypeAliasSymbol) {
-                        symbol.fir.expandedConeType?.let { if (it !is ConeClassErrorType) walkSymbols(it.symbol) }
-                    } else if (symbol is FirClassSymbol) {
-                        symbol.fir.superConeTypes.forEach { if (it !is ConeClassErrorType) walkSymbols(it.symbol) }
-                    }
-                }
+            val fir = symbol.fir
+            if (fir is FirTypeAlias) {
+                if (fir.expandedTypeRef is FirResolvedTypeRef) return
+            } else if (fir is FirClass) {
+                if (fir.superTypeRefs.all { it is FirResolvedTypeRef }) return
             }
+
+            val firProvider = fir.session.service<FirProvider>()
+            val file = firProvider.getFirClassifierContainerFile(classes.first())
+
+            val firElementsToVisit = classes.asSequence().map {
+                firProvider.getFirClassifierByFqName(it)!!
+            }
+
+            val transformer = SuperTypeResolveTransformer(
+                firElementsToVisit.iterator(), traversedClassifiers
+            )
+            file.transformSingle(transformer, null)
         }
 
         override fun transformTypeRef(typeRef: FirTypeRef, data: Nothing?): CompositeTransformResult<FirTypeRef> {

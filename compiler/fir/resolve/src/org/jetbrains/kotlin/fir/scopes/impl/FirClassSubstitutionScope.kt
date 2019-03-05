@@ -63,9 +63,13 @@ class FirClassSubstitutionScope(
             return when (this) {
                 is ConeKotlinErrorType -> error("Trying to substitute arguments for error type")
                 is ConeTypeParameterType -> error("Trying to substitute arguments for type parameter")
-                is ConeClassTypeImpl -> ConeClassTypeImpl(symbol, newArguments as Array<ConeKotlinTypeProjection>, nullability.isNullable)
+                is ConeClassTypeImpl -> ConeClassTypeImpl(
+                    lookupTag,
+                    newArguments as Array<ConeKotlinTypeProjection>,
+                    nullability.isNullable
+                )
                 is ConeAbbreviatedTypeImpl -> ConeAbbreviatedTypeImpl(
-                    abbreviationSymbol,
+                    abbreviationLookupTag,
                     newArguments as Array<ConeKotlinTypeProjection>,
                     directExpansion.substitute() as? ConeClassLikeType ?: directExpansion,
                     nullability.isNullable

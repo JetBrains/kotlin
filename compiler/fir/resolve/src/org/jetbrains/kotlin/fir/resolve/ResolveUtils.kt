@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.fir.resolve
 
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
+import org.jetbrains.kotlin.fir.symbols.ConeClassifierSymbol
 import org.jetbrains.kotlin.fir.declarations.expandedConeType
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -29,17 +30,20 @@ inline fun <K, V, VA : V> MutableMap<K, V>.getOrPut(key: K, defaultValue: (K) ->
     }
 }
 
-fun ConeSymbol.constructType(typeArguments: Array<ConeKotlinTypeProjection>, isNullable: Boolean): ConeKotlinType {
+fun ConeClassLikeLookupTag.toSymbol(useSiteSession: FirSession): ConeClassifierSymbol? =
+    useSiteSession.getService(FirSymbolProvider::class).getSymbolByLookupTag(this)
+
+fun ConeClassifierSymbol.constructType(typeArguments: Array<ConeKotlinTypeProjection>, isNullable: Boolean): ConeKotlinType {
     return when (this) {
         is ConeTypeParameterSymbol -> {
             ConeTypeParameterTypeImpl(this, isNullable)
         }
         is ConeClassSymbol -> {
-            ConeClassTypeImpl(this, typeArguments, isNullable)
+            ConeClassTypeImpl(this.toLookupTag(), typeArguments, isNullable)
         }
         is FirTypeAliasSymbol -> {
             ConeAbbreviatedTypeImpl(
-                abbreviationSymbol = this as ConeClassLikeSymbol,
+                abbreviationLookupTag = this.toLookupTag(),
                 typeArguments = typeArguments,
                 directExpansion = fir.expandedConeType ?: ConeClassErrorType("Unresolved expansion"),
                 isNullable = isNullable
@@ -49,7 +53,7 @@ fun ConeSymbol.constructType(typeArguments: Array<ConeKotlinTypeProjection>, isN
     }
 }
 
-fun ConeSymbol.constructType(parts: List<FirQualifierPart>, isNullable: Boolean): ConeKotlinType =
+fun ConeClassifierSymbol.constructType(parts: List<FirQualifierPart>, isNullable: Boolean): ConeKotlinType =
     constructType(parts.toTypeProjections(), isNullable)
 
 fun ConeKotlinType.toTypeProjection(variance: Variance): ConeKotlinTypeProjection =

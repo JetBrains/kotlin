@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.fir.types
 
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.*
 
 sealed class ConeKotlinTypeProjection {
     abstract val kind: ProjectionKind
@@ -79,7 +77,7 @@ class ConeKotlinErrorType(val reason: String) : ConeKotlinType() {
 }
 
 class ConeClassErrorType(val reason: String) : ConeClassLikeType() {
-    override val symbol: ConeClassLikeSymbol
+    override val lookupTag: ConeClassLikeLookupTag
         get() = error("!")
 
     override val typeArguments: Array<out ConeKotlinTypeProjection>
@@ -93,28 +91,28 @@ class ConeClassErrorType(val reason: String) : ConeClassLikeType() {
     }
 }
 
-sealed class ConeSymbolBasedType : ConeKotlinType() {
-    abstract val symbol: ConeSymbol
+sealed class ConeLookupTagBasedType : ConeKotlinType() {
+    abstract val lookupTag: ConeClassifierLookupTag
 }
 
-abstract class ConeClassLikeType : ConeSymbolBasedType() {
-    abstract override val symbol: ConeClassLikeSymbol
+abstract class ConeClassLikeType : ConeLookupTagBasedType() {
+    abstract override val lookupTag: ConeClassLikeLookupTag
 }
 
 abstract class ConeAbbreviatedType : ConeClassLikeType() {
-    abstract val abbreviationSymbol: ConeClassLikeSymbol
+    abstract val abbreviationLookupTag: ConeClassLikeLookupTag
 
     abstract val directExpansion: ConeClassLikeType
 }
 
-abstract class ConeTypeParameterType : ConeSymbolBasedType() {
-    abstract override val symbol: ConeTypeParameterSymbol
+abstract class ConeTypeParameterType : ConeLookupTagBasedType() {
+    abstract override val lookupTag: ConeTypeParameterLookupTag
 }
 
 
 abstract class ConeFunctionType : ConeClassLikeType() {
 
-    abstract override val symbol: ConeClassLikeSymbol
+    abstract override val lookupTag: ConeClassLikeLookupTag
     abstract val receiverType: ConeKotlinType?
     abstract val parameterTypes: List<ConeKotlinType>
     abstract val returnType: ConeKotlinType

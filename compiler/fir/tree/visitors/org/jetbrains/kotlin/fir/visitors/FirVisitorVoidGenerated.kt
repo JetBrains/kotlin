@@ -72,8 +72,12 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitNamedDeclaration(memberDeclaration, null)
     }
 
+    open fun visitClassLikeDeclaration(classLikeDeclaration: FirClassLikeDeclaration) {
+        visitMemberDeclaration(classLikeDeclaration, null)
+    }
+
     open fun visitRegularClass(regularClass: FirRegularClass) {
-        visitMemberDeclaration(regularClass, null)
+        visitClassLikeDeclaration(regularClass, null)
     }
 
     open fun visitEnumEntry(enumEntry: FirEnumEntry) {
@@ -81,7 +85,7 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
     }
 
     open fun visitTypeAlias(typeAlias: FirTypeAlias) {
-        visitMemberDeclaration(typeAlias, null)
+        visitClassLikeDeclaration(typeAlias, null)
     }
 
     open fun visitTypeParameter(typeParameter: FirTypeParameter) {
@@ -418,6 +422,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitClass(klass: FirClass, data: Nothing?) {
         visitClass(klass)
+    }
+
+    final override fun visitClassLikeDeclaration(classLikeDeclaration: FirClassLikeDeclaration, data: Nothing?) {
+        visitClassLikeDeclaration(classLikeDeclaration)
     }
 
     final override fun visitClassReferenceExpression(classReferenceExpression: FirClassReferenceExpression, data: Nothing?) {

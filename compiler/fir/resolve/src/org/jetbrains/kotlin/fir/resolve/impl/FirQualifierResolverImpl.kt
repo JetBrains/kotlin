@@ -8,14 +8,14 @@ package org.jetbrains.kotlin.fir.resolve.impl
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.FirQualifierResolver
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
-import org.jetbrains.kotlin.fir.symbols.ConeSymbol
+import org.jetbrains.kotlin.fir.symbols.ConeClassifierSymbol
 import org.jetbrains.kotlin.fir.types.FirQualifierPart
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
 class FirQualifierResolverImpl(val session: FirSession) : FirQualifierResolver {
 
-    override fun resolveSymbolWithPrefix(parts: List<FirQualifierPart>, prefix: ClassId): ConeSymbol? {
+    override fun resolveSymbolWithPrefix(parts: List<FirQualifierPart>, prefix: ClassId): ConeClassifierSymbol? {
         val symbolProvider = FirSymbolProvider.getInstance(session)
 
         val fqName = ClassId(
@@ -23,10 +23,10 @@ class FirQualifierResolverImpl(val session: FirSession) : FirQualifierResolver {
             parts.drop(1).fold(prefix.relativeClassName) { prefix, suffix -> prefix.child(suffix.name) },
             false
         )
-        return symbolProvider.getClassLikeSymbolByFqName(fqName) ?: return null
+        return symbolProvider.getClassLikeSymbolByFqName(fqName)
     }
 
-    override fun resolveSymbol(parts: List<FirQualifierPart>): ConeSymbol? {
+    override fun resolveSymbol(parts: List<FirQualifierPart>): ConeClassifierSymbol? {
         val firProvider = FirSymbolProvider.getInstance(session)
 
         if (parts.isNotEmpty()) {

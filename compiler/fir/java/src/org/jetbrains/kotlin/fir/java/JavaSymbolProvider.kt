@@ -19,10 +19,7 @@ import org.jetbrains.kotlin.fir.references.FirResolvedCallableReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.AbstractFirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.service
-import org.jetbrains.kotlin.fir.symbols.CallableId
-import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeClassSymbol
+import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
@@ -53,7 +50,7 @@ class JavaSymbolProvider(
             annotationTypeRef = FirResolvedTypeRefImpl(
                 session = session,
                 psi = null,
-                type = ConeClassTypeImpl(FirClassSymbol(classId!!), emptyArray(), isNullable = false),
+                type = ConeClassTypeImpl(FirClassSymbol(classId!!).toLookupTag(), emptyArray(), isNullable = false),
                 isMarkedNullable = true,
                 annotations = emptyList()
             )
@@ -146,9 +143,8 @@ class JavaSymbolProvider(
     private fun JavaClassifierType.toFirResolvedTypeRef(): FirResolvedTypeRef {
         val coneType = when (val classifier = classifier) {
             is JavaClass -> {
-                val symbol = session.service<FirSymbolProvider>().getClassLikeSymbolByFqName(classifier.classId!!) as? ConeClassSymbol
-                if (symbol == null) ConeKotlinErrorType("Symbol not found, for `${classifier.classId}`")
-                else flexibleType { isNullable ->
+                val symbol = ConeClassLikeLookupTagImpl(classifier.classId!!)
+                flexibleType { isNullable ->
                     ConeClassTypeImpl(symbol, typeArguments.map { it.toConeProjection() }.toTypedArray(), isNullable)
                 }
             }

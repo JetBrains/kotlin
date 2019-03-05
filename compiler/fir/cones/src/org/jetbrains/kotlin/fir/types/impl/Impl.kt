@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.fir.types.impl
 
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
+import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.types.*
 
 open class ConeClassTypeImpl(
-    override val symbol: ConeClassLikeSymbol,
+    override val lookupTag: ConeClassLikeLookupTag,
     override val typeArguments: Array<ConeKotlinTypeProjection>,
     isNullable: Boolean
 ) : ConeClassLikeType() {
@@ -18,19 +18,19 @@ open class ConeClassTypeImpl(
 }
 
 class ConeAbbreviatedTypeImpl(
-    override val abbreviationSymbol: ConeClassLikeSymbol,
+    override val abbreviationLookupTag: ConeClassLikeLookupTag,
     override val typeArguments: Array<ConeKotlinTypeProjection>,
     override val directExpansion: ConeClassLikeType,
     isNullable: Boolean
 ) : ConeAbbreviatedType() {
-    override val symbol: ConeClassLikeSymbol
-        get() = abbreviationSymbol
+    override val lookupTag: ConeClassLikeLookupTag
+        get() = abbreviationLookupTag
 
     override val nullability: ConeNullability = ConeNullability.create(isNullable)
 }
 
 class ConeTypeParameterTypeImpl(
-    override val symbol: ConeTypeParameterSymbol,
+    override val lookupTag: ConeTypeParameterLookupTag,
     isNullable: Boolean
 ) : ConeTypeParameterType() {
     override val typeArguments: Array<out ConeKotlinTypeProjection>

@@ -72,8 +72,12 @@ abstract class FirVisitor<out R, in D> {
         return visitNamedDeclaration(memberDeclaration, data)
     }
 
+    open fun visitClassLikeDeclaration(classLikeDeclaration: FirClassLikeDeclaration, data: D): R {
+        return visitMemberDeclaration(classLikeDeclaration, data)
+    }
+
     open fun visitRegularClass(regularClass: FirRegularClass, data: D): R {
-        return visitMemberDeclaration(regularClass, data)
+        return visitClassLikeDeclaration(regularClass, data)
     }
 
     open fun visitEnumEntry(enumEntry: FirEnumEntry, data: D): R {
@@ -81,7 +85,7 @@ abstract class FirVisitor<out R, in D> {
     }
 
     open fun visitTypeAlias(typeAlias: FirTypeAlias, data: D): R {
-        return visitMemberDeclaration(typeAlias, data)
+        return visitClassLikeDeclaration(typeAlias, data)
     }
 
     open fun visitTypeParameter(typeParameter: FirTypeParameter, data: D): R {

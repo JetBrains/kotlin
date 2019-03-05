@@ -6,11 +6,8 @@
 package org.jetbrains.kotlin.fir.deserialization
 
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
+import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.resolve.toTypeProjection
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterSymbol
-import org.jetbrains.kotlin.fir.symbols.LibraryTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -32,10 +29,10 @@ class FirTypeDeserializer(
     val parent: FirTypeDeserializer?
 ) {
 
-    private fun computeClassifier(fqNameIndex: Int): ConeSymbol? {
+    private fun computeClassifier(fqNameIndex: Int): ConeClassLikeLookupTag? {
         try {
             val id = nameResolver.getClassId(fqNameIndex)
-            return symbolProvider.getClassLikeSymbolByFqName(id)
+            return ConeClassLikeLookupTagImpl(id)
         } catch (e: Throwable) {
             throw RuntimeException("Looking up for ${nameResolver.getClassId(fqNameIndex)}", e)
         }
@@ -54,21 +51,21 @@ class FirTypeDeserializer(
     }
 
 
-    private fun typeParameterSymbol(typeParameterId: Int): ConeTypeParameterSymbol? =
+    private fun typeParameterSymbol(typeParameterId: Int): ConeTypeParameterLookupTag? =
         typeParameterDescriptors[typeParameterId] ?: parent?.typeParameterSymbol(typeParameterId)
 
     private val typeParameterDescriptors =
         if (typeParameterProtos.isEmpty()) {
-            mapOf<Int, ConeTypeParameterSymbol>()
+            mapOf<Int, ConeTypeParameterLookupTag>()
         } else {
-            val result = LinkedHashMap<Int, ConeTypeParameterSymbol>()
+            val result = LinkedHashMap<Int, ConeTypeParameterLookupTag>()
             for ((index, proto) in typeParameterProtos.withIndex()) {
                 result[proto.id] = LibraryTypeParameterSymbol(nameResolver.getName(proto.name))
             }
             result
         }
 
-    val ownTypeParameters: List<ConeTypeParameterSymbol>
+    val ownTypeParameters: List<ConeTypeParameterLookupTag>
         get() = typeParameterDescriptors.values.toList()
 
 
@@ -82,7 +79,7 @@ class FirTypeDeserializer(
 
     fun classLikeType(proto: ProtoBuf.Type): ConeClassLikeType? {
 
-        val constructor = typeSymbol(proto) as? ConeClassLikeSymbol ?: return null
+        val constructor = typeSymbol(proto) as? ConeClassLikeLookupTag ?: return null
 //        if (ErrorUtils.isError(constructor.declarationDescriptor)) {
 //            return ErrorUtils.createErrorTypeWithCustomConstructor(constructor.toString(), constructor)
 //        }
@@ -90,9 +87,7 @@ class FirTypeDeserializer(
         fun ProtoBuf.Type.collectAllArguments(): List<ProtoBuf.Type.Argument> =
             argumentList + outerType(typeTable)?.collectAllArguments().orEmpty()
 
-        val arguments = proto.collectAllArguments().mapIndexed { index, proto ->
-            typeArgument(constructor.typeParameters().getOrNull(index), proto)
-        }.toTypedArray()
+        val arguments = proto.collectAllArguments().map(this::typeArgument).toTypedArray()
 
         val simpleType = if (Flags.SUSPEND_TYPE.get(proto.flags)) {
             //createSuspendFunctionType(annotations, constructor, arguments, proto.nullable)
@@ -103,11 +98,11 @@ class FirTypeDeserializer(
 
         val abbreviatedTypeProto = proto.abbreviatedType(typeTable) ?: return simpleType
 
-        return ConeAbbreviatedTypeImpl(typeSymbol(abbreviatedTypeProto) as ConeClassLikeSymbol, arguments, simpleType, isNullable = false)
+        return ConeAbbreviatedTypeImpl(typeSymbol(abbreviatedTypeProto) as ConeClassLikeLookupTag, arguments, simpleType, isNullable = false)
 
     }
 
-    private fun typeSymbol(proto: ProtoBuf.Type): ConeSymbol? {
+    private fun typeSymbol(proto: ProtoBuf.Type): ConeClassifierLookupTag? {
 
         return when {
             proto.hasClassName() -> computeClassifier(proto.className)
@@ -124,7 +119,7 @@ class FirTypeDeserializer(
     }
 
 
-    private fun typeArgument(parameter: ConeTypeParameterSymbol?, typeArgumentProto: ProtoBuf.Type.Argument): ConeKotlinTypeProjection {
+    private fun typeArgument(typeArgumentProto: ProtoBuf.Type.Argument): ConeKotlinTypeProjection {
         if (typeArgumentProto.projection == ProtoBuf.Type.Argument.Projection.STAR) {
             return StarProjection
         }

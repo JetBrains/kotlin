@@ -72,8 +72,12 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformNamedDeclaration(memberDeclaration, data)
     }
 
+    open fun transformClassLikeDeclaration(classLikeDeclaration: FirClassLikeDeclaration, data: D): CompositeTransformResult<FirDeclaration> {
+        return transformMemberDeclaration(classLikeDeclaration, data)
+    }
+
     open fun transformRegularClass(regularClass: FirRegularClass, data: D): CompositeTransformResult<FirDeclaration> {
-        return transformMemberDeclaration(regularClass, data)
+        return transformClassLikeDeclaration(regularClass, data)
     }
 
     open fun transformEnumEntry(enumEntry: FirEnumEntry, data: D): CompositeTransformResult<FirDeclaration> {
@@ -81,7 +85,7 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
     }
 
     open fun transformTypeAlias(typeAlias: FirTypeAlias, data: D): CompositeTransformResult<FirDeclaration> {
-        return transformMemberDeclaration(typeAlias, data)
+        return transformClassLikeDeclaration(typeAlias, data)
     }
 
     open fun transformTypeParameter(typeParameter: FirTypeParameter, data: D): CompositeTransformResult<FirDeclaration> {
@@ -418,6 +422,10 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
 
     final override fun visitClass(klass: FirClass, data: D): CompositeTransformResult<FirElement> {
         return transformClass(klass, data)
+    }
+
+    final override fun visitClassLikeDeclaration(classLikeDeclaration: FirClassLikeDeclaration, data: D): CompositeTransformResult<FirElement> {
+        return transformClassLikeDeclaration(classLikeDeclaration, data)
     }
 
     final override fun visitClassReferenceExpression(classReferenceExpression: FirClassReferenceExpression, data: D): CompositeTransformResult<FirElement> {

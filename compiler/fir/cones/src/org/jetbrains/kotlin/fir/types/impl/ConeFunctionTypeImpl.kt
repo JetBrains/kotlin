@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.types.impl
 
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.types.ConeFunctionType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeKotlinTypeProjection
@@ -15,7 +15,7 @@ class ConeFunctionTypeImpl(
     override val receiverType: ConeKotlinType?,
     override val parameterTypes: List<ConeKotlinType>,
     override val returnType: ConeKotlinType,
-    override val symbol: ConeClassLikeSymbol,
+    override val lookupTag: ConeClassLikeLookupTag,
     isNullable: Boolean
 ) : ConeFunctionType() {
     override val typeArguments: Array<out ConeKotlinTypeProjection>

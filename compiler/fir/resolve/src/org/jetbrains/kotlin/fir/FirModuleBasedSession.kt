@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.FirQualifierResolver
-import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.FirTypeResolver
 import org.jetbrains.kotlin.fir.resolve.impl.*
 
@@ -17,6 +16,6 @@ abstract class FirModuleBasedSession(override val moduleInfo: ModuleInfo) : FirS
         val firProvider = FirProviderImpl(this)
         registerComponent(FirProvider::class, firProvider)
         registerComponent(FirQualifierResolver::class, FirQualifierResolverImpl(this))
-        registerComponent(FirTypeResolver::class, FirTypeResolverImpl())
+        registerComponent(FirTypeResolver::class, FirTypeResolverImpl(this))
     }
 }

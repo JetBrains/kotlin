@@ -15,15 +15,6 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
 class FirProviderImpl(val session: FirSession) : FirProvider {
-
-    override fun getFirClassifierBySymbol(symbol: ConeSymbol): FirNamedDeclaration? {
-        return when (symbol) {
-            is FirBasedSymbol<*> -> symbol.fir as? FirNamedDeclaration
-            is ConeClassLikeSymbol -> getFirClassifierByFqName(symbol.classId)
-            else -> error("!")
-        }
-    }
-
     override fun getClassLikeSymbolByFqName(classId: ClassId): ConeClassLikeSymbol? {
         return (getFirClassifierByFqName(classId) as? FirSymbolOwner<*>)?.symbol as? ConeClassLikeSymbol
     }
@@ -84,7 +75,7 @@ class FirProviderImpl(val session: FirSession) : FirProvider {
     }
 
     private val fileMap = mutableMapOf<FqName, List<FirFile>>()
-    private val classifierMap = mutableMapOf<ClassId, FirMemberDeclaration>()
+    private val classifierMap = mutableMapOf<ClassId, FirClassLikeDeclaration>()
     private val classifierContainerFileMap = mutableMapOf<ClassId, FirFile>()
     private val callableMap = mutableMapOf<CallableId, List<FirNamedDeclaration>>()
 
@@ -92,7 +83,7 @@ class FirProviderImpl(val session: FirSession) : FirProvider {
         return fileMap[fqName].orEmpty()
     }
 
-    override fun getFirClassifierByFqName(fqName: ClassId): FirMemberDeclaration? {
+    override fun getFirClassifierByFqName(fqName: ClassId): FirClassLikeDeclaration? {
         return classifierMap[fqName]
     }
 
