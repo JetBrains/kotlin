@@ -17,24 +17,28 @@
 package org.jetbrains.kotlin.generators.builtins
 
 import org.jetbrains.kotlin.generators.builtins.ProgressionKind.*
-import kotlin.properties.Delegates
 
-enum class PrimitiveType(val byteSize: Int?) {
+enum class PrimitiveType(val byteSize: Int) {
     BYTE(1),
     CHAR(2),
     SHORT(2),
     INT(4),
     LONG(8),
-    FLOAT(null),
-    DOUBLE(null),
-    BOOLEAN(null);
+    FLOAT(4),
+    DOUBLE(8),
+    BOOLEAN(1);
 
     val capitalized: String get() = name.toLowerCase().capitalize()
+    val bitSize = byteSize * 8
+
+    val isFloatingPoint: Boolean get() = this in floatingPoint
+    val isIntegral: Boolean get() = this in integral
 
     companion object {
         val exceptBoolean = PrimitiveType.values().filterNot { it == BOOLEAN }
         val onlyNumeric = PrimitiveType.values().filterNot { it == BOOLEAN || it == CHAR }
         val floatingPoint = listOf(FLOAT, DOUBLE)
+        val integral = exceptBoolean - floatingPoint
     }
 }
 
