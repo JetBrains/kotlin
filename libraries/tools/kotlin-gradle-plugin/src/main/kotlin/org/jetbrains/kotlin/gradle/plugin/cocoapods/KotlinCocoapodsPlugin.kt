@@ -80,7 +80,7 @@ open class KotlinCocoapodsPlugin: Plugin<Project> {
         val framework =  targets.single().binaries.getFramework(requestedBuildType)
         project.tasks.create("syncFramework", Sync::class.java) {
             it.group = TASK_GROUP
-            it.description = "Copies a framework for given platform and build type into the cocoapods build directory"
+            it.description = "Copies a framework for given platform and build type into the CocoaPods build directory"
 
             it.dependsOn(framework.linkTask)
             it.from(framework.linkTask.destinationDir)
@@ -96,7 +96,7 @@ open class KotlinCocoapodsPlugin: Plugin<Project> {
 
         project.tasks.create("podspec", PodspecTask::class.java) {
             it.group = TASK_GROUP
-            it.description = "Generates a podspec file for Cocoapods import"
+            it.description = "Generates a podspec file for CocoaPods import"
             it.settings = cocoapodsExtension
             it.dependsOn(dummyFrameworkTask)
         }
@@ -116,7 +116,7 @@ open class KotlinCocoapodsPlugin: Plugin<Project> {
                         DefFileTask::class.java
                     ) {
                         it.pod = pod
-                        it.description = "Generates a def file for Cocoapods dependency ${pod.name} for target ${target.name}"
+                        it.description = "Generates a def file for CocoaPods dependency ${pod.name} for target ${target.name}"
                         // This task is an implementation detail so we don't add it in any group
                         // to avoid showing it in the `tasks` output.
                     }
@@ -156,7 +156,7 @@ open class KotlinCocoapodsPlugin: Plugin<Project> {
 
     companion object {
         const val EXTENSION_NAME = "cocoapods"
-        const val TASK_GROUP = "cocoapods"
+        const val TASK_GROUP = "CocoaPods"
 
         // We don't move these properties in PropertiesProvider because
         // they are not intended to be overridden in local.properties.
