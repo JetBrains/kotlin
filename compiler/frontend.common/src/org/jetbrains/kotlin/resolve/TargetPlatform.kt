@@ -14,6 +14,11 @@ import org.jetbrains.kotlin.storage.StorageManager
 import java.util.*
 
 abstract class TargetPlatform(val platformName: String) {
+    override fun toString() = platformName
+    abstract val platform: MultiTargetPlatform
+}
+
+abstract class PlatformDependentCompilerServices {
     private data class DefaultImportsKey(val includeKotlinComparisons: Boolean, val includeLowPriorityImports: Boolean)
 
     private val defaultImports = LockBasedStorageManager("TargetPlatform").let { storageManager ->
@@ -42,8 +47,6 @@ abstract class TargetPlatform(val platformName: String) {
         }
     }
 
-    override fun toString() = platformName
-
     abstract val platformConfigurator: PlatformConfigurator
 
     open val defaultLowPriorityImports: List<ImportPath> get() = emptyList()
@@ -59,8 +62,6 @@ abstract class TargetPlatform(val platformName: String) {
     protected abstract fun computePlatformSpecificDefaultImports(storageManager: StorageManager, result: MutableList<ImportPath>)
 
     open val excludedImports: List<FqName> get() = emptyList()
-
-    abstract val multiTargetPlatform: MultiTargetPlatform
 
     // This function is used in "cat.helm.clean:0.1.1-SNAPSHOT": https://plugins.jetbrains.com/plugin/index?xmlId=cat.helm.clean
     @Suppress("DeprecatedCallableAddReplaceWith", "unused")

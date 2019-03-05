@@ -23,8 +23,10 @@ import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveTransformer
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.MultiTargetPlatform
+import org.jetbrains.kotlin.resolve.PlatformDependentCompilerServices
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformCompilerServices
 import java.io.File
 import java.util.*
 
@@ -144,6 +146,9 @@ abstract class AbstractFirDiagnosticsSmokeTest : BaseDiagnosticsTest() {
         override val platform: TargetPlatform?
             get() = JvmPlatform
 
+        override val compilerServices: PlatformDependentCompilerServices
+            get() = JvmPlatformCompilerServices
+
         override fun dependencies(): List<ModuleInfo> {
             return listOf(this)
         }
@@ -152,6 +157,9 @@ abstract class AbstractFirDiagnosticsSmokeTest : BaseDiagnosticsTest() {
     protected class TestModuleInfo(override val name: Name) : ModuleInfo {
         override val platform: TargetPlatform?
             get() = JvmPlatform
+
+        override val compilerServices: PlatformDependentCompilerServices
+            get() = JvmPlatformCompilerServices
 
         val dependencies = mutableListOf<ModuleInfo>(this)
         override fun dependencies(): List<ModuleInfo> {
