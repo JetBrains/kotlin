@@ -2442,7 +2442,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             return intrinsic.toCallable(fd, superCall, resolvedCall, this);
         }
 
-        return typeMapper.mapToCallableMethod(SamCodegenUtil.resolveSamAdapter(fd), resolvedCall, superCall, null);
+        return typeMapper.mapToCallableMethod(SamCodegenUtil.resolveSamAdapter(fd), superCall, null, resolvedCall);
     }
 
     public void invokeMethodWithArguments(
