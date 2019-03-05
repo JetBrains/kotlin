@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager
 import org.jetbrains.kotlin.idea.core.script.dependencies.ScriptRelatedModulesProvider
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.PlatformDependentCompilerServices
+import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import java.io.File
 import kotlin.script.experimental.dependencies.ScriptDependencies
@@ -57,6 +59,12 @@ data class ScriptModuleInfo(
             dependenciesInfo.sdk?.let { add(SdkInfo(project, it)) }
         }
     }
+
+    override val platform: TargetPlatform?
+        get() = null
+
+    override val compilerServices: PlatformDependentCompilerServices?
+        get() = null
 }
 
 fun findJdk(dependencies: ScriptDependencies?, project: Project): Sdk? {
@@ -91,6 +99,12 @@ sealed class ScriptDependenciesInfo(val project: Project) : IdeaModuleInfo, Bina
 
     override val sourcesModuleInfo: SourceForBinaryModuleInfo?
         get() = ScriptDependenciesSourceInfo.ForProject(project)
+
+    override val platform: TargetPlatform?
+        get() = null
+
+    override val compilerServices: PlatformDependentCompilerServices?
+        get() = null
 
     class ForFile(
         project: Project,
@@ -134,6 +148,12 @@ sealed class ScriptDependenciesSourceInfo(val project: Project) : IdeaModuleInfo
     override fun hashCode() = project.hashCode()
 
     override fun equals(other: Any?): Boolean = other is ScriptDependenciesSourceInfo && this.project == other.project
+
+    override val platform: TargetPlatform?
+        get() = null
+
+    override val compilerServices: PlatformDependentCompilerServices?
+        get() = null
 
     class ForProject(project: Project) : ScriptDependenciesSourceInfo(project)
 }

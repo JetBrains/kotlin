@@ -37,14 +37,17 @@ import org.jetbrains.kotlin.idea.core.isInTestSourceContentKotlinAware
 import org.jetbrains.kotlin.idea.framework.getLibraryPlatform
 import org.jetbrains.kotlin.idea.project.KotlinModuleModificationTracker
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
+import org.jetbrains.kotlin.idea.project.findCompilerServices
 import org.jetbrains.kotlin.idea.project.getStableName
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.idea.util.isInSourceContentWithoutInjected
 import org.jetbrains.kotlin.idea.util.rootManager
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.idePlatformKind
+import org.jetbrains.kotlin.resolve.PlatformDependentCompilerServices
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.GlobalSearchScopeWithModuleSources
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
@@ -138,6 +141,9 @@ interface ModuleSourceInfo : IdeaModuleInfo, TrackableModuleInfo {
 
     override val platform: TargetPlatform
         get() = TargetPlatformDetector.getPlatform(module)
+
+    override val compilerServices: PlatformDependentCompilerServices
+        get() = platform.findCompilerServices
 
     override fun createModificationTracker(): ModificationTracker =
         KotlinModuleModificationTracker(module)
@@ -281,6 +287,9 @@ open class LibraryInfo(val project: Project, val library: Library) : IdeaModuleI
     override val platform: TargetPlatform
         get() = getLibraryPlatform(project, library)
 
+    override val compilerServices: PlatformDependentCompilerServices
+        get() = platform.findCompilerServices
+
     override val sourcesModuleInfo: SourceForBinaryModuleInfo
         get() = LibrarySourceInfo(project, library, this)
 
@@ -314,6 +323,9 @@ data class LibrarySourceInfo(val project: Project, val library: Library, overrid
     override val platform: TargetPlatform?
         get() = binariesModuleInfo.platform
 
+    override val compilerServices: PlatformDependentCompilerServices?
+        get() = binariesModuleInfo.compilerServices
+
     override fun toString() = "LibrarySourceInfo(libraryName=${library.name})"
 }
 
@@ -339,6 +351,12 @@ object NotUnderContentRootModuleInfo : IdeaModuleInfo {
 
     //TODO: (module refactoring) dependency on runtime can be of use here
     override fun dependencies(): List<IdeaModuleInfo> = listOf(this)
+
+    override val platform: TargetPlatform?
+        get() = null
+
+    override val compilerServices: PlatformDependentCompilerServices?
+        get() = null
 }
 
 private class LibraryWithoutSourceScope(project: Project, private val library: Library) :
@@ -427,6 +445,9 @@ data class PlatformModuleInfo(
 
     override val moduleOrigin: ModuleOrigin
         get() = platformModule.moduleOrigin
+
+    override val compilerServices: PlatformDependentCompilerServices?
+        get() = platform?.findCompilerServices
 
     override fun dependencies() = platformModule.dependencies()
 

@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentProvider;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.incremental.components.LookupTracker;
 import org.jetbrains.kotlin.js.resolve.JsPlatform;
+import org.jetbrains.kotlin.js.resolve.JsPlatformCompilerServices;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration;
 import org.jetbrains.kotlin.serialization.js.*;
@@ -251,7 +252,7 @@ public class JsConfig {
             LanguageVersionSettings languageVersionSettings = CommonConfigurationKeysKt.getLanguageVersionSettings(configuration);
             for (JsModuleDescriptor<KotlinJavaScriptLibraryParts> cached : metadataCache) {
                 ModuleDescriptorImpl moduleDescriptor = new ModuleDescriptorImpl(
-                        Name.special("<" + cached.getName() + ">"), storageManager, JsPlatform.INSTANCE.getBuiltIns()
+                        Name.special("<" + cached.getName() + ">"), storageManager, JsPlatformCompilerServices.INSTANCE.getBuiltIns()
                 );
 
                 KotlinJavaScriptLibraryParts parts = cached.getData();
@@ -310,7 +311,7 @@ public class JsConfig {
                     "Expected JS metadata version " + JsMetadataVersion.INSTANCE + ", but actual metadata version is " + m.getVersion();
 
             ModuleDescriptorImpl moduleDescriptor = new ModuleDescriptorImpl(
-                    Name.special("<" + m.getModuleName() + ">"), storageManager, JsPlatform.INSTANCE.getBuiltIns()
+                    Name.special("<" + m.getModuleName() + ">"), storageManager, JsPlatformCompilerServices.INSTANCE.getBuiltIns()
             );
 
             LookupTracker lookupTracker = configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER, LookupTracker.DO_NOTHING.INSTANCE);
@@ -327,6 +328,6 @@ public class JsConfig {
     }
 
     private static void setDependencies(ModuleDescriptorImpl module, List<ModuleDescriptorImpl> modules) {
-        module.setDependencies(CollectionsKt.plus(modules, JsPlatform.INSTANCE.getBuiltIns().getBuiltInsModule()));
+        module.setDependencies(CollectionsKt.plus(modules, JsPlatformCompilerServices.INSTANCE.getBuiltIns().getBuiltInsModule()));
     }
 }

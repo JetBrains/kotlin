@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer
 import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.konan.platform.KonanPlatform
+import org.jetbrains.kotlin.resolve.konan.platform.NativePlatformCompilerServices
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService.Companion.createDeclarationProviderFactory
 
@@ -48,6 +49,7 @@ object NativeResolverForModuleFactory : ResolverForModuleFactory() {
             CodeAnalyzerInitializer.getInstance(moduleContext.project).createTrace(),
             KonanPlatform,
             TargetPlatformVersion.NoVersion,
+            NativePlatformCompilerServices,
             targetEnvironment,
             languageVersionSettings
         )

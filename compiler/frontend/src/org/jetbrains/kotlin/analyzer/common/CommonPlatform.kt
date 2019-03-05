@@ -18,14 +18,8 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.DynamicTypesSettings
 
 object CommonPlatform : TargetPlatform("Default") {
-    override fun computePlatformSpecificDefaultImports(storageManager: StorageManager, result: MutableList<ImportPath>) {}
-
-    override val multiTargetPlatform: MultiTargetPlatform
+    override val platform: MultiTargetPlatform
         get() = MultiTargetPlatform.Common
-
-    override val platformConfigurator: PlatformConfigurator = CommonPlatformConfigurator
-
-    override fun dependencyOnBuiltIns(): ModuleInfo.DependencyOnBuiltIns = ModuleInfo.DependencyOnBuiltIns.AFTER_SDK
 }
 
 private object CommonPlatformConfigurator : PlatformConfiguratorBase(
@@ -41,3 +35,10 @@ private object CommonPlatformConfigurator : PlatformConfiguratorBase(
     }
 }
 
+object CommonPlatformCompilerServices : PlatformDependentCompilerServices() {
+    override fun computePlatformSpecificDefaultImports(storageManager: StorageManager, result: MutableList<ImportPath>) {}
+
+    override val platformConfigurator: PlatformConfigurator = CommonPlatformConfigurator
+
+    override fun dependencyOnBuiltIns(): ModuleInfo.DependencyOnBuiltIns = ModuleInfo.DependencyOnBuiltIns.AFTER_SDK
+}

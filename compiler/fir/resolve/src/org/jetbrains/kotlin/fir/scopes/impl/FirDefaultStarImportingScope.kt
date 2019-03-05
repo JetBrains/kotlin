@@ -14,7 +14,7 @@ class FirDefaultStarImportingScope(session: FirSession, lookupInFir: Boolean = f
     FirAbstractStarImportingScope(session, lookupInFir) {
 
     // TODO: put languageVersionSettings into FirSession?
-    override val starImports = session.moduleInfo?.platform?.getDefaultImports(LanguageVersionSettingsImpl.DEFAULT, true)
+    override val starImports = session.moduleInfo?.compilerServices?.getDefaultImports(LanguageVersionSettingsImpl.DEFAULT, true)
         ?.filter { it.isAllUnder }
         ?.map {
             FirResolvedImportImpl(

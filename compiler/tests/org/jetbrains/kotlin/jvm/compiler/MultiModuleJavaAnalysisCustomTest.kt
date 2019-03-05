@@ -34,11 +34,15 @@ import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.PlatformDependentCompilerServices
+import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.JvmResolverForModuleFactory
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformCompilerServices
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
@@ -56,6 +60,12 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
     ) : ModuleInfo {
         override fun dependencies() = _dependencies()
         override val name = Name.special("<$_name>")
+
+        override val platform: TargetPlatform
+            get() = JvmPlatform
+
+        override val compilerServices: PlatformDependentCompilerServices?
+            get() = JvmPlatformCompilerServices
     }
 
     fun testJavaEntitiesBelongToCorrectModule() {

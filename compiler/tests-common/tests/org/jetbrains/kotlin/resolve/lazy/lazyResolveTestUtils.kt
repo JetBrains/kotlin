@@ -22,11 +22,15 @@ import org.jetbrains.kotlin.analyzer.LanguageSettingsProvider
 import org.jetbrains.kotlin.analyzer.ModuleContent
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.ResolverForProjectImpl
+import org.jetbrains.kotlin.analyzer.common.CommonPlatform
+import org.jetbrains.kotlin.analyzer.common.CommonPlatformCompilerServices
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.PlatformDependentCompilerServices
+import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.JvmResolverForModuleFactory
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
 
@@ -61,4 +65,10 @@ private class TestModule(val dependsOnBuiltIns: Boolean) : ModuleInfo {
                 ModuleInfo.DependencyOnBuiltIns.LAST
             else
                 ModuleInfo.DependencyOnBuiltIns.NONE
+
+    override val platform: TargetPlatform
+        get() = CommonPlatform
+
+    override val compilerServices: PlatformDependentCompilerServices?
+        get() = CommonPlatformCompilerServices
 }

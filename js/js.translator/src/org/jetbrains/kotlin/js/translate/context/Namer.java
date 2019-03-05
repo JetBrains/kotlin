@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.js.config.JsConfig;
 import org.jetbrains.kotlin.js.naming.NameSuggestion;
 import org.jetbrains.kotlin.js.naming.SuggestedName;
 import org.jetbrains.kotlin.js.resolve.JsPlatform;
+import org.jetbrains.kotlin.js.resolve.JsPlatformCompilerServices;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.factories.ArrayFIF;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils;
@@ -57,8 +58,8 @@ public final class Namer {
     public static final String KOTLIN_NAME = KotlinLanguage.NAME;
     public static final String KOTLIN_LOWER_NAME = KOTLIN_NAME.toLowerCase();
 
-    public static final String EQUALS_METHOD_NAME = getStableMangledNameForDescriptor(JsPlatform.INSTANCE.getBuiltIns().getAny(), "equals");
-    public static final String COMPARE_TO_METHOD_NAME = getStableMangledNameForDescriptor(JsPlatform.INSTANCE.getBuiltIns().getComparable(), "compareTo");
+    public static final String EQUALS_METHOD_NAME = getStableMangledNameForDescriptor(JsPlatformCompilerServices.INSTANCE.getBuiltIns().getAny(), "equals");
+    public static final String COMPARE_TO_METHOD_NAME = getStableMangledNameForDescriptor(JsPlatformCompilerServices.INSTANCE.getBuiltIns().getComparable(), "compareTo");
     public static final String LONG_FROM_NUMBER = "fromNumber";
     public static final String LONG_TO_NUMBER = "toNumber";
     public static final String LONG_FROM_INT = "fromInt";

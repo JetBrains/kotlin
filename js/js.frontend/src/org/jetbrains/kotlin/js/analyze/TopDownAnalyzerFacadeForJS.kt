@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.resolve.JsPlatform
+import org.jetbrains.kotlin.js.resolve.JsPlatformCompilerServices
 import org.jetbrains.kotlin.js.resolve.MODULE_KIND
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
@@ -60,7 +61,7 @@ object TopDownAnalyzerFacadeForJS {
         val builtIns = when {
             thisIsBuiltInsModule -> object : KotlinBuiltIns(projectContext.storageManager) {}
             customBuiltInsModule != null -> customBuiltInsModule.builtIns
-            else -> JsPlatform.builtIns
+            else -> JsPlatformCompilerServices.builtIns
         }
 
         val moduleName = configuration[CommonConfigurationKeys.MODULE_NAME]!!
