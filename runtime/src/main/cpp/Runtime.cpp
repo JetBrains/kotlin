@@ -167,4 +167,60 @@ void CheckIsMainThread() {
     ThrowIncorrectDereferenceException();
 }
 
+int Konan_Platform_canAccessUnaligned() {
+#if KONAN_NO_UNALIGNED_ACCESS
+  return 0;
+#else
+  return 1;
+#endif
+}
+
+int Konan_Platform_isLittleEndian() {
+#ifdef __BIG_ENDIAN__
+  return 0;
+#else
+  return 1;
+#endif
+}
+
+int Konan_Platform_getOsFamily() {
+#if KONAN_MACOSX
+  return 1;
+#elif KONAN_IOS
+  return 2;
+#elif KONAN_LINUX
+  return 3;
+#elif KONAN_WINDOWS
+  return 4;
+#elif KONAN_ANDROID
+  return 5;
+#elif KONAN_WASM
+  return 6;
+#else
+#warning "Unknown platform"
+  return 0;
+#endif
+}
+
+int Konan_Platform_getCpuArchitecture() {
+#if KONAN_ARM32
+  return 1;
+#elif KONAN_ARM64
+  return 2;
+#elif KONAN_X86
+  return 3;
+#elif KONAN_X64
+  return 4;
+#elif KONAN_MIPS
+  return 5;
+#elif KONAN_MIPSEL
+  return 6;
+#elif KONAN_WASM
+  return 7;
+#else
+#warning "Unknown CPU"
+  return 0;
+#endif
+}
+
 }  // extern "C"

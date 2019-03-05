@@ -53,3 +53,4 @@ public typealias SharedImmutable = kotlin.native.concurrent.SharedImmutable
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.BINARY)
 public annotation class CName(val externName: String = "", val shortName: String = "")
+

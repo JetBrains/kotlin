@@ -123,18 +123,24 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
         get() = when (target) {
             KonanTarget.LINUX_X64 ->
                 listOf("-DUSE_GCC_UNWIND=1",
+                        "-DKONAN_LINUX=1",
+                        "-DKONAN_X64=1",
                         "-DUSE_ELF_SYMBOLS=1",
                         "-DELFSIZE=64",
                         "-DKONAN_HAS_CXX11_EXCEPTION_FUNCTIONS=1")
 
             KonanTarget.LINUX_ARM32_HFP ->
                 listOf("-DUSE_GCC_UNWIND=1",
+                        "-DKONAN_LINUX=1",
+                        "-DKONAN_ARM32=1",
                         "-DUSE_ELF_SYMBOLS=1",
                         "-DELFSIZE=32",
                         "-DKONAN_NO_UNALIGNED_ACCESS=1")
 
             KonanTarget.LINUX_MIPS32 ->
                 listOf("-DUSE_GCC_UNWIND=1",
+                        "-DKONAN_LINUX=1",
+                        "-DKONAN_MIPS32=1",
                         "-DUSE_ELF_SYMBOLS=1",
                         "-DELFSIZE=32",
                         // TODO: reconsider, once target MIPS can do proper 64-bit load/store/CAS.
@@ -143,6 +149,8 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
 
             KonanTarget.LINUX_MIPSEL32 ->
                 listOf("-DUSE_GCC_UNWIND=1",
+                        "-DKONAN_LINUX=1",
+                        "-DKONAN_MIPSEL32=1",
                         "-DUSE_ELF_SYMBOLS=1",
                         "-DELFSIZE=32",
                         // TODO: reconsider, once target MIPS can do proper 64-bit load/store/CAS.
@@ -153,17 +161,22 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
                 listOf("-DUSE_GCC_UNWIND=1",
                         "-DUSE_PE_COFF_SYMBOLS=1",
                         "-DKONAN_WINDOWS=1",
+                        if (target == KonanTarget.MINGW_X64) "-DKONAN_X64=1" else "-DKONAN_X86=1",
                         "-DKONAN_NO_MEMMEM=1",
                         "-DKONAN_HAS_CXX11_EXCEPTION_FUNCTIONS=1")
 
             KonanTarget.MACOS_X64 ->
                 listOf("-DKONAN_OSX=1",
+                        "-DKONAN_MACOSX=1",
+                        "-DKONAN_X64=1",
                         "-DKONAN_OBJC_INTEROP=1",
                         "-DKONAN_CORE_SYMBOLICATION=1",
                         "-DKONAN_HAS_CXX11_EXCEPTION_FUNCTIONS=1")
 
             KonanTarget.IOS_ARM32 ->
                 listOf("-DKONAN_OBJC_INTEROP=1",
+                        "-DKONAN_IOS",
+                        "-DKONAN_ARM32=1",
                         "-DKONAN_HAS_CXX11_EXCEPTION_FUNCTIONS=1",
                         "-DKONAN_REPORT_BACKTRACE_TO_IOS_CRASH_LOG=1",
                         "-DMACHSIZE=32",
@@ -176,12 +189,16 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
 
             KonanTarget.IOS_ARM64 ->
                 listOf("-DKONAN_OBJC_INTEROP=1",
+                        "-DKONAN_IOS=1",
+                        "-DKONAN_ARM64=1",
                         "-DKONAN_HAS_CXX11_EXCEPTION_FUNCTIONS=1",
                         "-DKONAN_REPORT_BACKTRACE_TO_IOS_CRASH_LOG=1",
                         "-DMACHSIZE=64")
 
             KonanTarget.IOS_X64 ->
                 listOf("-DKONAN_OBJC_INTEROP=1",
+                        "-DKONAN_IOS=1",
+                        "-DKONAN_X64=1",
                         "-DKONAN_CORE_SYMBOLICATION=1",
                         "-DKONAN_HAS_CXX11_EXCEPTION_FUNCTIONS=1")
 
@@ -190,7 +207,8 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
                         "-DUSE_GCC_UNWIND=1",
                         "-DUSE_ELF_SYMBOLS=1",
                         "-DELFSIZE=32",
-                        "-DKONAN_ANDROID",
+                        "-DKONAN_ANDROID=1",
+                        "-DKONAN_ARM32=1",
                         "-DKONAN_NO_UNALIGNED_ACCESS=1")
 
             KonanTarget.ANDROID_ARM64 ->
@@ -198,7 +216,8 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
                         "-DUSE_GCC_UNWIND=1",
                         "-DUSE_ELF_SYMBOLS=1",
                         "-DELFSIZE=64",
-                        "-DKONAN_ANDROID",
+                        "-DKONAN_ANDROID=1",
+                        "-DKONAN_ARM64=1",
                         "-DKONAN_HAS_CXX11_EXCEPTION_FUNCTIONS=1")
 
             KonanTarget.WASM32 ->
