@@ -99,6 +99,7 @@ class SpecifyTypeExplicitlyIntention : SelfTargetingRangeIntention<KtCallableDec
             val callable = declaration.resolveToDescriptorIfAny() as? CallableDescriptor ?: return null
             if (publicAPIOnly && !callable.visibility.isPublicAPI) return null
             val type = callable.returnType ?: return null
+            if (type.isDynamic()) return null
             if (reportPlatformArguments) {
                 if (!type.isFlexibleRecursive()) return null
             } else {
