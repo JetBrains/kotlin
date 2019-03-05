@@ -718,6 +718,7 @@ class ResolveElementCache(
             targetPlatform,
             statementFilter,
             file.jvmTarget,
+            targetPlatform.findCompilerServices,
             file.languageVersionSettings
         ).get()
     }

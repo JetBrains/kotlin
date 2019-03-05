@@ -96,5 +96,5 @@ abstract class PlatformConfiguratorBase(
     }
 }
 
-fun createContainer(id: String, platform: TargetPlatform, init: StorageComponentContainer.() -> Unit) =
-    composeContainer(id, platform.platformConfigurator.platformSpecificContainer, init)
+fun createContainer(id: String, compilerServices: PlatformDependentCompilerServices, init: StorageComponentContainer.() -> Unit) =
+    composeContainer(id, compilerServices.platformConfigurator.platformSpecificContainer, init)

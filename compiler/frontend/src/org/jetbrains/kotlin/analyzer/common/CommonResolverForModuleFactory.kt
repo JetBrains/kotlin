@@ -64,6 +64,9 @@ object CommonResolverForModuleFactory : ResolverForModuleFactory() {
 
         override fun dependencyOnBuiltIns(): ModuleInfo.DependencyOnBuiltIns =
             if (dependOnOldBuiltIns) ModuleInfo.DependencyOnBuiltIns.LAST else ModuleInfo.DependencyOnBuiltIns.NONE
+
+        override val compilerServices: PlatformDependentCompilerServices
+            get() = CommonPlatformCompilerServices
     }
 
     fun analyzeFiles(
@@ -151,8 +154,8 @@ object CommonResolverForModuleFactory : ResolverForModuleFactory() {
         targetEnvironment: TargetEnvironment,
         metadataPartProvider: MetadataPartProvider,
         languageVersionSettings: LanguageVersionSettings
-    ): StorageComponentContainer = createContainer("ResolveCommonCode", CommonPlatform) {
-        configureModule(moduleContext, CommonPlatform, TargetPlatformVersion.NoVersion, bindingTrace)
+    ): StorageComponentContainer = createContainer("ResolveCommonCode", CommonPlatformCompilerServices) {
+        configureModule(moduleContext, CommonPlatform, TargetPlatformVersion.NoVersion, CommonPlatformCompilerServices, bindingTrace)
 
         useInstance(moduleContentScope)
         useInstance(LookupTracker.DO_NOTHING)
@@ -170,8 +173,6 @@ object CommonResolverForModuleFactory : ResolverForModuleFactory() {
         val metadataFinderFactory = ServiceManager.getService(moduleContext.project, MetadataFinderFactory::class.java)
                 ?: error("No MetadataFinderFactory in project")
         useInstance(metadataFinderFactory.create(moduleContentScope))
-
-
 
         targetEnvironment.configure(this)
     }

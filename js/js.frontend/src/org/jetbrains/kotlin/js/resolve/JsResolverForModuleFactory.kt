@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.frontend.di.createContainerForLazyResolve
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.TargetEnvironment
-import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
@@ -61,6 +60,7 @@ object JsResolverForModuleFactory : ResolverForModuleFactory() {
             BindingTraceContext(/* allowSliceRewrite = */ true),
             JsPlatform,
             TargetPlatformVersion.NoVersion,
+            JsPlatformCompilerServices,
             targetEnvironment,
             languageVersionSettings
         )

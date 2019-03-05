@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.idea.imports.ImportPathComparator
 import org.jetbrains.kotlin.idea.imports.getImportableTargets
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
+import org.jetbrains.kotlin.idea.project.findCompilerServices
 import org.jetbrains.kotlin.idea.refactoring.fqName.isImported
 import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -60,19 +61,19 @@ class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper(
     override fun isImportedWithDefault(importPath: ImportPath, contextFile: KtFile): Boolean {
         val languageVersionSettings = contextFile.getResolutionFacade().frontendService<LanguageVersionSettings>()
         val platform = TargetPlatformDetector.getPlatform(contextFile)
-        val allDefaultImports = platform.getDefaultImports(languageVersionSettings, includeLowPriorityImports = true)
+        val allDefaultImports = platform.findCompilerServices.getDefaultImports(languageVersionSettings, includeLowPriorityImports = true)
 
         val scriptExtraImports = contextFile.takeIf { it.isScript() }?.let { ktFile ->
             val scriptDependencies = ScriptDependenciesProvider.getInstance(ktFile.project)?.getScriptDependencies(ktFile.originalFile)
             scriptDependencies?.imports?.map { ImportPath.fromString(it) }
         }.orEmpty()
 
-        return importPath.isImported(allDefaultImports + scriptExtraImports, platform.excludedImports)
+        return importPath.isImported(allDefaultImports + scriptExtraImports, platform.findCompilerServices.excludedImports)
     }
 
     override fun isImportedWithLowPriorityDefaultImport(importPath: ImportPath, contextFile: KtFile): Boolean {
         val platform = TargetPlatformDetector.getPlatform(contextFile)
-        return importPath.isImported(platform.defaultLowPriorityImports, platform.excludedImports)
+        return importPath.isImported(platform.findCompilerServices.defaultLowPriorityImports, platform.findCompilerServices.excludedImports)
     }
 
     override fun mayImportOnShortenReferences(descriptor: DeclarationDescriptor): Boolean {
