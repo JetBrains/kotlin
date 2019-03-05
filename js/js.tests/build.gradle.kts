@@ -43,11 +43,16 @@ dependencies {
     testRuntime(project(":compiler:backend-common"))
     testRuntime(commonDep("org.fusesource.jansi", "jansi"))
 
+    val currentOs = OperatingSystem.current()
+
     when {
-        OperatingSystem.current().isWindows() -> testCompile("com.eclipsesource.j2v8:j2v8_win32_x86:4.6.0")
-        OperatingSystem.current().isLinux() -> testCompile("com.eclipsesource.j2v8:j2v8_linux_x86_64:4.8.0")
-        OperatingSystem.current().isMacOsX() -> testCompile("com.eclipsesource.j2v8:j2v8_macosx_x86_64:4.6.0")
-        else -> logger.error("unsupported platform - can not compile com.eclipsesource.j2v8 dependency")
+        currentOs.isWindows -> {
+            val suffix = if (currentOs.toString().endsWith("64")) "_64" else ""
+            testCompile("com.eclipsesource.j2v8:j2v8_win32_x86$suffix:4.6.0")
+        }
+        currentOs.isMacOsX -> testCompile("com.eclipsesource.j2v8:j2v8_macosx_x86_64:4.6.0")
+        currentOs.run { isLinux || isUnix } -> testCompile("com.eclipsesource.j2v8:j2v8_linux_x86_64:4.8.0")
+        else -> logger.error("unsupported platform $currentOs - can not compile com.eclipsesource.j2v8 dependency")
     }
     
     antLauncherJar(commonDep("org.apache.ant", "ant"))
