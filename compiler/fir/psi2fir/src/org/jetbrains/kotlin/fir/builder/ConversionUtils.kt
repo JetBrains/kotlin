@@ -17,10 +17,13 @@ import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirExplicitThisReference
 import org.jetbrains.kotlin.fir.references.FirSimpleNamedReference
+import org.jetbrains.kotlin.fir.symbols.CallableId
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.constants.evaluate.*
@@ -280,9 +283,11 @@ internal fun generateDestructuringBlock(
                 entry.typeReference.toFirOrImplicitTypeRef(), isVar,
                 FirComponentCallImpl(session, entry, index + 1).apply {
                     arguments += generateAccessExpression(session, entry, container.name)
-                }
+                },
+                FirVariableSymbol(entry.nameAsSafeName) // TODO?
             ).apply {
                 entry.extractAnnotationsTo(this)
+                symbol.bind(this)
             }
         }
     }
@@ -290,7 +295,10 @@ internal fun generateDestructuringBlock(
 
 internal fun generateTemporaryVariable(
     session: FirSession, psi: PsiElement?, name: Name, initializer: FirExpression
-): FirVariable = FirVariableImpl(session, psi, name, FirImplicitTypeRefImpl(session, psi), false, initializer)
+): FirVariable =
+    FirVariableImpl(session, psi, name, FirImplicitTypeRefImpl(session, psi), false, initializer, FirVariableSymbol(name)).apply {
+        symbol.bind(this)
+    }
 
 internal fun generateTemporaryVariable(
     session: FirSession, psi: PsiElement?, specialName: String, initializer: FirExpression

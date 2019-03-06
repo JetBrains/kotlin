@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeAbbreviatedTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
@@ -129,7 +130,8 @@ class FirClassSubstitutionScope(
                         FirValueParameterImpl(
                             this@FirClassSubstitutionScope.session, psi,
                             name, this.returnTypeRef.withReplacedConeType(this@FirClassSubstitutionScope.session, newType),
-                            defaultValue, isCrossinline, isNoinline, isVararg
+                            defaultValue, isCrossinline, isNoinline, isVararg,
+                            FirVariableSymbol(valueParameter.symbol.callableId)
                         )
                     }
                 }

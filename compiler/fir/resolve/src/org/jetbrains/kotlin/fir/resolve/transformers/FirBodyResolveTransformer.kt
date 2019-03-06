@@ -161,7 +161,7 @@ class FirBodyResolveTransformer(val session: FirSession) : FirTransformer<Any?>(
                 ?: return CandidateApplicability.HIDDEN
             declaration as FirDeclaration
 
-            if (declaration is FirCallableMember) {
+            if (declaration is FirCallableDeclaration) {
                 if ((declaration.receiverTypeRef == null) != (explicitReceiverType == null)) return CandidateApplicability.PARAMETER_MAPPING_ERROR
             }
 
@@ -288,7 +288,7 @@ class FirBodyResolveTransformer(val session: FirSession) : FirTransformer<Any?>(
                 val lastCandidate = variableChecker.candidates.lastOrNull()
                 if (variableChecker.currentApplicability == CandidateApplicability.RESOLVED && lastCandidate == symbol) {
                     val receiverScope =
-                        (lastCandidate as FirBasedSymbol<FirCallableMember>).fir.returnTypeRef.coneTypeUnsafe().scope(session)
+                        (lastCandidate as FirBasedSymbol<FirCallableDeclaration>).fir.returnTypeRef.coneTypeUnsafe().scope(session)
 
 
                     lookupInvoke = true
@@ -393,7 +393,7 @@ class FirBodyResolveTransformer(val session: FirSession) : FirTransformer<Any?>(
                 is FirErrorNamedReference ->
                     FirErrorTypeRefImpl(session, access.psi, newCallee.errorReason)
                 is FirResolvedCallableReference ->
-                    (newCallee.callableSymbol as FirBasedSymbol<FirCallableMember>).fir.returnTypeRef
+                    (newCallee.callableSymbol as FirBasedSymbol<FirCallableDeclaration>).fir.returnTypeRef
                 else -> return
             }
     }

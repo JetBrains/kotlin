@@ -56,20 +56,20 @@ class FirProviderImpl(val session: FirSession) : FirProvider {
                 classifierContainerFileMap[classId] = file
             }
 
-            override fun visitCallableMember(callableMember: FirCallableMember) {
+            override fun visitCallableMemberDeclaration(callableMemberDeclaration: FirCallableMemberDeclaration) {
                 val callableId = when (containerFqName) {
-                    FqName.ROOT -> CallableId(packageName, callableMember.name)
-                    else -> CallableId(packageName, containerFqName, callableMember.name)
+                    FqName.ROOT -> CallableId(packageName, callableMemberDeclaration.name)
+                    else -> CallableId(packageName, containerFqName, callableMemberDeclaration.name)
                 }
-                callableMap.merge(callableId, listOf(callableMember)) { a, b -> a + b }
+                callableMap.merge(callableId, listOf(callableMemberDeclaration)) { a, b -> a + b }
             }
 
             override fun visitNamedFunction(namedFunction: FirNamedFunction) {
-                visitCallableMember(namedFunction)
+                visitCallableMemberDeclaration(namedFunction)
             }
 
             override fun visitProperty(property: FirProperty) {
-                visitCallableMember(property)
+                visitCallableMemberDeclaration(property)
             }
         })
     }

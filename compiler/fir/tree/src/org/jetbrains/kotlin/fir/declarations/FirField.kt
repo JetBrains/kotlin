@@ -11,12 +11,12 @@ import org.jetbrains.kotlin.fir.expressions.FirVariable
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 @BaseTransformedType
-interface FirField : @VisitedSupertype FirDeclaration, FirCallableMember, FirVariable {
+interface FirField : @VisitedSupertype FirDeclaration, FirCallableMemberDeclaration, FirVariable {
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitField(this, data)
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        super<FirCallableMember>.acceptChildren(visitor, data)
+        super<FirCallableMemberDeclaration>.acceptChildren(visitor, data)
         initializer?.accept(visitor, data)
         delegate?.accept(visitor, data)
     }

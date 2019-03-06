@@ -12,12 +12,12 @@ import org.jetbrains.kotlin.fir.declarations.FirField
 import org.jetbrains.kotlin.fir.declarations.impl.FirAbstractCallableMember
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.java.types.FirJavaTypeRef
-import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.name.Name
 
 class FirJavaField(
     session: FirSession,
-    symbol: FirFieldSymbol,
+    override val symbol: FirPropertySymbol,
     name: Name,
     visibility: Visibility,
     modality: Modality?,
@@ -25,11 +25,15 @@ class FirJavaField(
     override val isVar: Boolean,
     isStatic: Boolean
 ) : FirAbstractCallableMember(
-    session, psi = null, symbol = symbol, name = name,
+    session, psi = null, name = name,
     visibility = visibility, modality = modality,
     isExpect = false, isActual = false, isOverride = false,
     receiverTypeRef = null, returnTypeRef = returnTypeRef
 ), FirField {
+    init {
+        symbol.bind(this)
+    }
+
     override val delegate: FirExpression?
         get() = null
 

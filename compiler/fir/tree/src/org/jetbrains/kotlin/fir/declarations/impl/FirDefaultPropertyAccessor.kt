@@ -13,9 +13,16 @@ import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
+import org.jetbrains.kotlin.fir.symbols.CallableId
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.transformInplace
+import org.jetbrains.kotlin.fir.transformSingle
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 
 abstract class FirDefaultPropertyAccessor(
     session: FirSession,
@@ -64,7 +71,15 @@ class FirDefaultPropertySetter(
     propertyTypeRef: FirTypeRef,
     visibility: Visibility
 ) : FirDefaultPropertyAccessor(session, psi, isGetter = false, visibility = visibility) {
-    override val valueParameters = mutableListOf(FirDefaultSetterValueParameter(session, psi, propertyTypeRef))
+    override val valueParameters = mutableListOf(
+        FirDefaultSetterValueParameter(
+            session, psi, propertyTypeRef, FirVariableSymbol(
+                CallableId(
+                    FqName.ROOT, Name.special("<default-setter-parameter>")
+                )
+            )
+        )
+    )
 
     override var returnTypeRef: FirTypeRef = FirImplicitUnitTypeRef(session, psi)
 

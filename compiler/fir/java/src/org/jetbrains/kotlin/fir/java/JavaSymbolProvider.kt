@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.java
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirCallableMember
+import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.java.declarations.*
@@ -49,13 +49,13 @@ class JavaSymbolProvider(
                     is FirConstructor -> {
                         CallableId(callableId.packageName, callableId.className, firClass.name)
                     }
-                    is FirCallableMember -> {
+                    is FirCallableMemberDeclaration -> {
                         CallableId(callableId.packageName, callableId.className, declaration.name)
                     }
                     else -> null
                 }
                 if (declarationId == callableId) {
-                    val symbol = (declaration as FirCallableMember).symbol as ConeCallableSymbol
+                    val symbol = (declaration as FirCallableMemberDeclaration).symbol as ConeCallableSymbol
                     callableSymbols += symbol
                 }
             }

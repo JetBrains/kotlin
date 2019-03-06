@@ -19,13 +19,26 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 
 class FirJavaConstructor(
     session: FirSession,
-    symbol: FirFunctionSymbol,
+    override val symbol: FirFunctionSymbol,
     visibility: Visibility,
     delegatedSelfTypeRef: FirTypeRef
 ) : FirAbstractCallableMember(
-    session, psi = null, symbol = symbol, name = NAME, visibility = visibility, modality = Modality.FINAL,
-    isExpect = false, isActual = false, isOverride = false, receiverTypeRef = null, returnTypeRef = delegatedSelfTypeRef
+    session,
+    psi = null,
+    name = NAME,
+    visibility = visibility,
+    modality = Modality.FINAL,
+    isExpect = false,
+    isActual = false,
+    isOverride = false,
+    receiverTypeRef = null,
+    returnTypeRef = delegatedSelfTypeRef
 ), FirConstructor {
+
+    init {
+        symbol.bind(this)
+    }
+
     override val delegatedConstructor: FirDelegatedConstructorCall?
         get() = null
 

@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirCallableMember
-import org.jetbrains.kotlin.fir.declarations.FirConstructor
-import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
-import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction.NEXT
@@ -60,18 +57,18 @@ class FirClassUseSiteScope(
             }
         }
 
-        fun similarFunctionsOrBothProperties(member: FirCallableMember, self: FirCallableMember): Boolean {
-            return when (member) {
-                is FirNamedFunction -> self is FirNamedFunction && isOverriddenFunCheck(member, self)
+        fun similarFunctionsOrBothProperties(declaration: FirCallableDeclaration, self: FirCallableDeclaration): Boolean {
+            return when (declaration) {
+                is FirNamedFunction -> self is FirNamedFunction && isOverriddenFunCheck(declaration, self)
                 is FirConstructor -> false
                 is FirProperty -> self is FirProperty
-                else -> error("Unknown fir callable type: $member, $self")
+                else -> error("Unknown fir callable type: $declaration, $self")
             }
         }
 
-        val self = (this as AbstractFirBasedSymbol<*>).fir as FirCallableMember
+        val self = (this as AbstractFirBasedSymbol<*>).fir as FirCallableMemberDeclaration
         val overriding = seen.firstOrNull {
-            val member = (it as AbstractFirBasedSymbol<*>).fir as FirCallableMember
+            val member = (it as AbstractFirBasedSymbol<*>).fir as FirCallableMemberDeclaration
             self.modality != Modality.FINAL
                     && sameReceivers(member.receiverTypeRef, self.receiverTypeRef)
                     && similarFunctionsOrBothProperties(member, self)

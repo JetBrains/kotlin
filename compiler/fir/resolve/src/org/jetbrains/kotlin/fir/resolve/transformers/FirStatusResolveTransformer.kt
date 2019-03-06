@@ -33,7 +33,7 @@ class FirStatusResolveTransformer : FirAbstractTreeTransformer() {
         return when (this) {
             is FirEnumEntry -> Modality.FINAL
             is FirRegularClass -> if (classKind == ClassKind.INTERFACE) Modality.ABSTRACT else Modality.FINAL
-            is FirCallableMember -> {
+            is FirCallableMemberDeclaration -> {
                 val containingClass = classes.lastOrNull()
                 when {
                     containingClass == null -> Modality.FINAL

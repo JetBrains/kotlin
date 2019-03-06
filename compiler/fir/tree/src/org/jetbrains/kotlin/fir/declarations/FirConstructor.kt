@@ -11,14 +11,17 @@ import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 @BaseTransformedType
-interface FirConstructor : @VisitedSupertype FirFunction, FirCallableMember {
+interface FirConstructor : @VisitedSupertype FirFunction, FirCallableMemberDeclaration {
+
+    override val isOverride: Boolean get() = status.isOverride
+
     val delegatedConstructor: FirDelegatedConstructorCall?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitConstructor(this, data)
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        super<FirCallableMember>.acceptChildren(visitor, data)
+        super<FirCallableMemberDeclaration>.acceptChildren(visitor, data)
         delegatedConstructor?.accept(visitor, data)
         for (parameter in valueParameters) {
             parameter.accept(visitor, data)

@@ -7,16 +7,17 @@ package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.fir.BaseTransformedType
 import org.jetbrains.kotlin.fir.VisitedSupertype
-import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirVariable
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 // May be should not inherit FirVariable
 @BaseTransformedType
-interface FirProperty : @VisitedSupertype FirDeclaration, FirCallableMember, FirVariable {
+interface FirProperty : @VisitedSupertype FirDeclaration, FirCallableMemberDeclaration, FirVariable, FirMemberDeclaration {
     val isConst: Boolean get() = status.isConst
 
     val isLateInit: Boolean get() = status.isLateInit
+
+    override val isOverride: Boolean get() = status.isOverride
 
     // Should it be nullable or have some default?
     val getter: FirPropertyAccessor
@@ -27,7 +28,7 @@ interface FirProperty : @VisitedSupertype FirDeclaration, FirCallableMember, Fir
         visitor.visitProperty(this, data)
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        super<FirCallableMember>.acceptChildren(visitor, data)
+        super<FirCallableMemberDeclaration>.acceptChildren(visitor, data)
         initializer?.accept(visitor, data)
         delegate?.accept(visitor, data)
         getter.accept(visitor, data)

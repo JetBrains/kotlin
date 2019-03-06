@@ -24,8 +24,8 @@ abstract class FirVisitor<out R, in D> {
         return visitElement(declaration, data)
     }
 
-    open fun visitCallableMember(callableMember: FirCallableMember, data: D): R {
-        return visitDeclaration(callableMember, data)
+    open fun visitCallableDeclaration(callableDeclaration: FirCallableDeclaration, data: D): R {
+        return visitDeclaration(callableDeclaration, data)
     }
 
     open fun visitDeclarationWithBody(declarationWithBody: FirDeclarationWithBody, data: D): R {
@@ -74,6 +74,10 @@ abstract class FirVisitor<out R, in D> {
 
     open fun visitMemberDeclaration(memberDeclaration: FirMemberDeclaration, data: D): R {
         return visitNamedDeclaration(memberDeclaration, data)
+    }
+
+    open fun visitCallableMemberDeclaration(callableMemberDeclaration: FirCallableMemberDeclaration, data: D): R {
+        return visitMemberDeclaration(callableMemberDeclaration, data)
     }
 
     open fun visitClassLikeDeclaration(classLikeDeclaration: FirClassLikeDeclaration, data: D): R {

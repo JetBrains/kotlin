@@ -33,7 +33,9 @@ interface ConeCallableSymbol : ConeSymbol {
     val callableId: CallableId
 }
 
-interface ConePropertySymbol : ConeCallableSymbol
+interface ConePropertySymbol : ConeVariableSymbol
+
+interface ConeVariableSymbol : ConeCallableSymbol
 
 interface ConeFunctionSymbol : ConeCallableSymbol {
     val parameters: List<ConeKotlinType>

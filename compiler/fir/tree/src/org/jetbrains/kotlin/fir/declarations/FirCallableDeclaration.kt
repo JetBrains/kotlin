@@ -11,21 +11,17 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 // Good name needed (something with receiver, type parameters, return type, and name)
-interface FirCallableMember :
-    @VisitedSupertype FirDeclaration, FirMemberDeclaration,
-    FirTypedDeclaration, FirSymbolOwner<FirCallableMember> {
-    val isOverride: Boolean get() = status.isOverride
-
-    val isStatic: Boolean get() = status.isStatic
+interface FirCallableDeclaration :
+    @VisitedSupertype FirDeclaration,
+    FirTypedDeclaration, FirSymbolOwner<FirCallableDeclaration> {
 
     val receiverTypeRef: FirTypeRef?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
-        visitor.visitCallableMember(this, data)
+        visitor.visitCallableDeclaration(this, data)
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         receiverTypeRef?.accept(visitor, data)
-        super<FirMemberDeclaration>.acceptChildren(visitor, data)
-        returnTypeRef.accept(visitor, data)
+        super<FirTypedDeclaration>.acceptChildren(visitor, data)
     }
 }

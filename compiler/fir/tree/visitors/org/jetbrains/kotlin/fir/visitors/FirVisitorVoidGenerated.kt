@@ -24,8 +24,8 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(declaration, null)
     }
 
-    open fun visitCallableMember(callableMember: FirCallableMember) {
-        visitDeclaration(callableMember, null)
+    open fun visitCallableDeclaration(callableDeclaration: FirCallableDeclaration) {
+        visitDeclaration(callableDeclaration, null)
     }
 
     open fun visitDeclarationWithBody(declarationWithBody: FirDeclarationWithBody) {
@@ -74,6 +74,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitMemberDeclaration(memberDeclaration: FirMemberDeclaration) {
         visitNamedDeclaration(memberDeclaration, null)
+    }
+
+    open fun visitCallableMemberDeclaration(callableMemberDeclaration: FirCallableMemberDeclaration) {
+        visitMemberDeclaration(callableMemberDeclaration, null)
     }
 
     open fun visitClassLikeDeclaration(classLikeDeclaration: FirClassLikeDeclaration) {
@@ -416,8 +420,12 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitCall(call)
     }
 
-    final override fun visitCallableMember(callableMember: FirCallableMember, data: Nothing?) {
-        visitCallableMember(callableMember)
+    final override fun visitCallableDeclaration(callableDeclaration: FirCallableDeclaration, data: Nothing?) {
+        visitCallableDeclaration(callableDeclaration)
+    }
+
+    final override fun visitCallableMemberDeclaration(callableMemberDeclaration: FirCallableMemberDeclaration, data: Nothing?) {
+        visitCallableMemberDeclaration(callableMemberDeclaration)
     }
 
     final override fun visitCallableReferenceAccess(callableReferenceAccess: FirCallableReferenceAccess, data: Nothing?) {
