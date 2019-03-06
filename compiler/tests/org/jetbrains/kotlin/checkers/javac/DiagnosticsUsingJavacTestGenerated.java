@@ -9800,6 +9800,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     runTest("compiler/testData/diagnostics/tests/inference/coercionToUnit/indirectCoercionWithExpectedType.kt");
                 }
 
+                @TestMetadata("kt30242.kt")
+                public void testKt30242() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/coercionToUnit/kt30242.kt");
+                }
+
                 @TestMetadata("noCoercion.kt")
                 public void testNoCoercion() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/coercionToUnit/noCoercion.kt");

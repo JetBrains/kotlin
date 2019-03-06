@@ -31,13 +31,12 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategyImpl
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
-import org.jetbrains.kotlin.types.IndexedParametersSubstitution
-import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.UnwrappedType
-import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.expressions.DoubleColonExpressionResolver
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
+import org.jetbrains.kotlin.types.typeUtil.isUnit
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class ResolvedAtomCompleter(
     private val resultSubstitutor: NewTypeSubstitutor,
@@ -108,8 +107,27 @@ class ResolvedAtomCompleter(
         return resolvedCall
     }
 
+    private val ResolvedLambdaAtom.isCoercedToUnit: Boolean
+        get() {
+            val returnTypes =
+                resultArguments.mapNotNull {
+                    val type = it.safeAs<SimpleKotlinCallArgument>()?.receiver?.receiverValue?.type ?: return@mapNotNull null
+                    val unwrappedType = when (type) {
+                        is WrappedType -> type.unwrap()
+                        is UnwrappedType -> type
+                    }
+                    resultSubstitutor.safeSubstitute(unwrappedType)
+                }
+            val commonReturnType = CommonSupertypes.commonSupertype(returnTypes)
+            return commonReturnType.isUnit()
+        }
+
     private fun completeLambda(lambda: ResolvedLambdaAtom) {
-        val returnType = resultSubstitutor.safeSubstitute(lambda.returnType)
+        val returnType = if (lambda.isCoercedToUnit) {
+            builtIns.unitType
+        } else {
+            resultSubstitutor.safeSubstitute(lambda.returnType)
+        }
 
         updateTraceForLambda(lambda, topLevelTrace, returnType)
 
