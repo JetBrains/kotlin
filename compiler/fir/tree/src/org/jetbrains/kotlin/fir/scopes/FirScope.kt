@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.scopes
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction.NEXT
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.ConePropertySymbol
+import org.jetbrains.kotlin.fir.symbols.ConeVariableSymbol
 import org.jetbrains.kotlin.name.Name
 
 interface FirScope {
@@ -25,7 +25,7 @@ interface FirScope {
 
     fun processPropertiesByName(
         name: Name,
-        processor: (ConePropertySymbol) -> ProcessorAction
+        processor: (ConeVariableSymbol) -> ProcessorAction
     ): ProcessorAction = NEXT
 }
 

@@ -10,9 +10,11 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirBlock
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.transformInplace
 import org.jetbrains.kotlin.fir.transformSingle
@@ -22,6 +24,8 @@ import org.jetbrains.kotlin.name.Name
 
 open class FirMemberFunctionImpl : FirAbstractCallableMember, FirNamedFunction, FirModifiableFunction {
 
+    override val symbol: FirFunctionSymbol
+
     constructor(
         session: FirSession,
         psi: PsiElement?,
@@ -29,7 +33,10 @@ open class FirMemberFunctionImpl : FirAbstractCallableMember, FirNamedFunction, 
         name: Name,
         receiverTypeRef: FirTypeRef?,
         returnTypeRef: FirTypeRef
-    ) : super(session, psi, symbol, name, receiverTypeRef, returnTypeRef)
+    ) : super(session, psi, name, receiverTypeRef, returnTypeRef) {
+        this.symbol = symbol
+        symbol.bind(this)
+    }
 
     constructor(
         session: FirSession,
@@ -50,7 +57,7 @@ open class FirMemberFunctionImpl : FirAbstractCallableMember, FirNamedFunction, 
         receiverTypeRef: FirTypeRef?,
         returnTypeRef: FirTypeRef
     ) : super(
-        session, psi, symbol, name, visibility, modality,
+        session, psi, name, visibility, modality,
         isExpect, isActual, isOverride, receiverTypeRef, returnTypeRef
     ) {
         status.isOperator = isOperator
@@ -59,6 +66,8 @@ open class FirMemberFunctionImpl : FirAbstractCallableMember, FirNamedFunction, 
         status.isTailRec = isTailRec
         status.isExternal = isExternal
         status.isSuspend = isSuspend
+        this.symbol = symbol
+        symbol.bind(this)
     }
 
     override val valueParameters = mutableListOf<FirValueParameter>()

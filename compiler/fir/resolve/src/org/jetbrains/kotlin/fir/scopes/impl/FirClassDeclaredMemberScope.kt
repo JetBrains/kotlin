@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.scopes.ProcessorAction.STOP
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.ConeFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.ConePropertySymbol
+import org.jetbrains.kotlin.fir.symbols.ConeVariableSymbol
 import org.jetbrains.kotlin.name.Name
 
 class FirClassDeclaredMemberScope(
@@ -32,7 +33,7 @@ class FirClassDeclaredMemberScope(
         return NEXT
     }
 
-    override fun processPropertiesByName(name: Name, processor: (ConePropertySymbol) -> ProcessorAction): ProcessorAction {
+    override fun processPropertiesByName(name: Name, processor: (ConeVariableSymbol) -> ProcessorAction): ProcessorAction {
         val symbols = provider.getCallableSymbols(CallableId(classId.packageFqName, classId.relativeClassName, name))
         for (symbol in symbols) {
             if (symbol is ConePropertySymbol && !processor(symbol)) {

@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.fir.VisitedSupertype
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 interface FirVariable : @VisitedSupertype FirDeclaration, FirTypedDeclaration, FirCallableDeclaration, FirNamedDeclaration, FirStatement {
@@ -18,6 +20,8 @@ interface FirVariable : @VisitedSupertype FirDeclaration, FirTypedDeclaration, F
     val initializer: FirExpression?
 
     val delegate: FirExpression?
+
+    override val symbol: FirVariableSymbol
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitVariable(this, data)

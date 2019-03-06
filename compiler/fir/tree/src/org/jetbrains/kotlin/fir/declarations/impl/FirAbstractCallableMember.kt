@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.name.Name
 
 abstract class FirAbstractCallableMember : FirAbstractMemberDeclaration, FirCallableMemberDeclaration {
 
-    final override val symbol: FirBasedSymbol<FirCallableDeclaration>
+//    final override val symbol: FirBasedSymbol<FirCallableDeclaration>
     final override var receiverTypeRef: FirTypeRef?
     final override var returnTypeRef: FirTypeRef
 
@@ -31,13 +31,10 @@ abstract class FirAbstractCallableMember : FirAbstractMemberDeclaration, FirCall
     constructor(
         session: FirSession,
         psi: PsiElement?,
-        symbol: FirBasedSymbol<FirCallableDeclaration>,
         name: Name,
         receiverTypeRef: FirTypeRef?,
         returnTypeRef: FirTypeRef
     ) : super(session, psi, name) {
-        this.symbol = symbol
-        symbol.bind(this)
         this.receiverTypeRef = receiverTypeRef
         this.returnTypeRef = returnTypeRef
     }
@@ -45,7 +42,6 @@ abstract class FirAbstractCallableMember : FirAbstractMemberDeclaration, FirCall
     constructor(
         session: FirSession,
         psi: PsiElement?,
-        symbol: FirBasedSymbol<FirCallableDeclaration>,
         name: Name,
         visibility: Visibility,
         modality: Modality?,
@@ -55,8 +51,6 @@ abstract class FirAbstractCallableMember : FirAbstractMemberDeclaration, FirCall
         receiverTypeRef: FirTypeRef?,
         returnTypeRef: FirTypeRef
     ) : super(session, psi, name, visibility, modality, isExpect, isActual) {
-        this.symbol = symbol
-        symbol.bind(this)
         this.receiverTypeRef = receiverTypeRef
         this.returnTypeRef = returnTypeRef
         status.isOverride = isOverride

@@ -10,10 +10,12 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.transformInplace
 import org.jetbrains.kotlin.fir.transformSingle
@@ -24,16 +26,21 @@ import org.jetbrains.kotlin.name.Name
 open class FirConstructorImpl(
     session: FirSession,
     psi: PsiElement?,
-    symbol: FirFunctionSymbol,
+    override val symbol: FirFunctionSymbol,
     visibility: Visibility,
     isExpect: Boolean,
     isActual: Boolean,
     delegatedSelfTypeRef: FirTypeRef,
     final override var delegatedConstructor: FirDelegatedConstructorCall?
 ) : FirAbstractCallableMember(
-    session, psi, symbol, NAME, visibility, Modality.FINAL,
+    session, psi, NAME, visibility, Modality.FINAL,
     isExpect, isActual, isOverride = false, receiverTypeRef = null, returnTypeRef = delegatedSelfTypeRef
 ), FirConstructor {
+
+    init {
+        symbol.bind(this)
+    }
+
     override val valueParameters = mutableListOf<FirValueParameter>()
 
     override var body: FirBlock? = null

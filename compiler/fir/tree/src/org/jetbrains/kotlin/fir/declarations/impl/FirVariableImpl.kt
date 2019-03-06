@@ -25,7 +25,7 @@ class FirVariableImpl(
     override var returnTypeRef: FirTypeRef,
     override val isVar: Boolean,
     override var initializer: FirExpression?,
-    override val symbol: FirBasedSymbol<FirCallableDeclaration> = FirVariableSymbol(name),
+    override val symbol: FirVariableSymbol = FirVariableSymbol(name),
     override var delegate: FirExpression? = null
 ) : FirAbstractNamedAnnotatedDeclaration(session, psiElement, name), FirVariable {
 

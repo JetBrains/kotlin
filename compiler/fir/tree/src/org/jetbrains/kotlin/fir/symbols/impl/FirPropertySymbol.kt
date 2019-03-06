@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.fir.symbols.ConeVariableSymbol
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-class FirPropertySymbol(override val callableId: CallableId) : ConePropertySymbol, AbstractFirBasedSymbol<FirCallableDeclaration>()
+class FirPropertySymbol(callableId: CallableId) : FirVariableSymbol(callableId), ConePropertySymbol
 
-class FirVariableSymbol(override val callableId: CallableId) : ConeVariableSymbol, AbstractFirBasedSymbol<FirCallableDeclaration>() {
+open class FirVariableSymbol(override val callableId: CallableId) : ConeVariableSymbol, AbstractFirBasedSymbol<FirCallableDeclaration>() {
     constructor(name: Name) : this(CallableId(FqName("var"), name))  // TODO?
 }

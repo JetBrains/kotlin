@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractProviderBasedScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassDeclaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.ConePropertySymbol
+import org.jetbrains.kotlin.fir.symbols.ConeVariableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
@@ -103,8 +103,8 @@ class JavaClassUseSiteScope(
         }
     }
 
-    override fun processPropertiesByName(name: Name, processor: (ConePropertySymbol) -> ProcessorAction): ProcessorAction {
-        val seen = mutableSetOf<ConePropertySymbol>()
+    override fun processPropertiesByName(name: Name, processor: (ConeVariableSymbol) -> ProcessorAction): ProcessorAction {
+        val seen = mutableSetOf<ConeVariableSymbol>()
         if (!declaredMemberScope.processPropertiesByName(name) {
                 seen += it
                 processor(it)
