@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.codegen.binding.CodegenBinding.asmTypeForAnonymousCl
 import org.jetbrains.kotlin.codegen.coroutines.DO_RESUME_METHOD_NAME
 import org.jetbrains.kotlin.codegen.coroutines.INVOKE_SUSPEND_METHOD_NAME
 import org.jetbrains.kotlin.codegen.coroutines.continuationAsmTypes
+import org.jetbrains.kotlin.codegen.inline.KOTLIN_STRATA_NAME
+import org.jetbrains.kotlin.idea.KotlinFileTypeFactory
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches
 import org.jetbrains.kotlin.idea.refactoring.getLineEndOffset
@@ -29,6 +31,14 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.org.objectweb.asm.Type as AsmType
 import java.util.*
+
+fun Location.isInKotlinSources(): Boolean {
+    val declaringType = declaringType()
+    val fileExtension = declaringType.safeSourceName()?.substringAfterLast('.')?.toLowerCase() ?: ""
+    return fileExtension in KotlinFileTypeFactory.KOTLIN_EXTENSIONS || declaringType.containsKotlinStrata()
+}
+
+fun ReferenceType.containsKotlinStrata() = availableStrata().contains(KOTLIN_STRATA_NAME)
 
 fun isInsideInlineArgument(
     inlineArgument: KtFunction,

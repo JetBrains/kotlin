@@ -91,9 +91,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
     }
 
     override fun createStackFrame(frame: StackFrameProxyImpl, debugProcess: DebugProcessImpl, location: Location): XStackFrame? {
-        val declaringType = location.declaringType()
-        val fileExtension = declaringType.safeSourceName()?.toLowerCase()?.substringAfterLast('.') ?: ""
-        if (fileExtension in KotlinFileTypeFactory.KOTLIN_EXTENSIONS || declaringType.containsKotlinStrata()) {
+        if (location.isInKotlinSources()) {
             return KotlinStackFrame(frame)
         }
         return null
@@ -354,8 +352,6 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
             }
         })
     }
-
-    private fun ReferenceType.containsKotlinStrata() = availableStrata().contains(KOTLIN_STRATA_NAME)
 }
 
 inline fun <U, V> U.readAction(crossinline f: (U) -> V): V {
