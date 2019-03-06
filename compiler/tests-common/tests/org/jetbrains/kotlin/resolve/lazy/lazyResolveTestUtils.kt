@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.analyzer.LanguageSettingsProvider
 import org.jetbrains.kotlin.analyzer.ModuleContent
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.ResolverForProjectImpl
-import org.jetbrains.kotlin.resolve.CommonPlatform
 import org.jetbrains.kotlin.analyzer.common.CommonPlatformCompilerServices
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ProjectContext
@@ -34,6 +33,7 @@ import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.JvmResolverForModuleFactory
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
 import org.jetbrains.kotlin.resolve.JvmPlatform
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformCompilerServices
 
 fun createResolveSessionForFiles(
         project: Project,
@@ -41,7 +41,8 @@ fun createResolveSessionForFiles(
         addBuiltIns: Boolean
 ): ResolveSession {
     val projectContext = ProjectContext(project)
-    val testModule = TestModule(addBuiltIns)
+    val testModule =
+        TestModule(addBuiltIns)
     val resolverForProject = ResolverForProjectImpl(
         "test",
         projectContext, listOf(testModule),
@@ -69,8 +70,8 @@ private class TestModule(val dependsOnBuiltIns: Boolean) : ModuleInfo {
                 ModuleInfo.DependencyOnBuiltIns.NONE
 
     override val platform: TargetPlatform
-        get() = CommonPlatform
+        get() = JvmPlatform
 
     override val compilerServices: PlatformDependentCompilerServices?
-        get() = CommonPlatformCompilerServices
+        get() = JvmPlatformCompilerServices
 }
