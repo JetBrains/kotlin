@@ -19,10 +19,12 @@ package org.jetbrains.kotlin.idea.caches.resolve
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.project.ResolveElementCache
+import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypes2
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoAfter
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
@@ -135,16 +137,15 @@ class CodeFragmentAnalyzer(
             }
             is KtElement -> {
                 bindingContext = resolutionFactory(context)
-                scope = bindingContext[BindingContext.LEXICAL_SCOPE, context]
+                scope = context.getResolutionScope(bindingContext)
                 dataFlowInfo = bindingContext.getDataFlowInfoAfter(context)
             }
         }
 
         if (scope == null) {
-            val containingKtFile = context?.containingFile as? KtFile
-            if (containingKtFile != null) {
-                bindingContext = resolveSession.bindingContext
-                scope = resolveSession.fileScopeProvider.getFileResolutionScope(containingKtFile)
+            val parentDeclaration = context?.getParentOfTypes2<KtDeclaration, KtFile>()
+            if (parentDeclaration != null) {
+                return getContextInfo(parentDeclaration, resolutionFactory)
             }
         }
 
