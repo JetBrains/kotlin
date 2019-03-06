@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.name.ClassId
 
-class FirTypeResolverImpl(session: FirSession) : FirTypeResolver {
+class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver {
 
     private val symbolProvider by lazy {
         session.getService(FirSymbolProvider::class)
@@ -48,7 +48,7 @@ class FirTypeResolverImpl(session: FirSession) : FirTypeResolver {
             is FirResolvedTypeRef -> typeRef.coneTypeSafe<ConeLookupTagBasedType>()?.lookupTag?.let(symbolProvider::getSymbolByLookupTag)
             is FirUserTypeRef -> {
 
-                val qualifierResolver = FirQualifierResolver.getInstance(typeRef.session)
+                val qualifierResolver = FirQualifierResolver.getInstance(session)
 
                 var resolvedSymbol: ConeClassifierSymbol? = null
                 scope.processClassifiersByName(typeRef.qualifier.first().name, position) { symbol ->
@@ -73,7 +73,7 @@ class FirTypeResolverImpl(session: FirSession) : FirTypeResolver {
                 resolvedSymbol ?: qualifierResolver.resolveSymbol(typeRef.qualifier)
             }
             is FirImplicitBuiltinTypeRef -> {
-                resolveBuiltInQualified(typeRef.id, typeRef.session)
+                resolveBuiltInQualified(typeRef.id, session)
             }
             else -> null
         }
@@ -102,7 +102,7 @@ class FirTypeResolverImpl(session: FirSession) : FirTypeResolver {
                     (typeRef.receiverTypeRef as FirResolvedTypeRef?)?.type,
                     typeRef.valueParameters.map { it.returnTypeRef.coneTypeUnsafe() },
                     typeRef.returnTypeRef.coneTypeUnsafe(),
-                    resolveBuiltInQualified(KotlinBuiltIns.getFunctionClassId(typeRef.parametersCount), typeRef.session).toLookupTag(),
+                    resolveBuiltInQualified(KotlinBuiltIns.getFunctionClassId(typeRef.parametersCount), session).toLookupTag(),
                     typeRef.isMarkedNullable
                 )
             }

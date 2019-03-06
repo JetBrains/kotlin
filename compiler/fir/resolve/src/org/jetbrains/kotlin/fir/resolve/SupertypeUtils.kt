@@ -46,7 +46,7 @@ private fun FirRegularClass.buildDefaultUseSiteScope(useSiteSession: FirSession)
             val symbol = useSiteSuperType.lookupTag.toSymbol(useSiteSession)
             if (symbol is FirClassSymbol) {
                 val useSiteScope = symbol.fir.buildUseSiteScope(useSiteSession)
-                useSiteSuperType.buildSubstitutionScope(useSiteScope, symbol.fir) ?: useSiteScope
+                useSiteSuperType.buildSubstitutionScope(useSiteSession, useSiteScope, symbol.fir) ?: useSiteScope
             } else {
                 null
             }
@@ -55,6 +55,7 @@ private fun FirRegularClass.buildDefaultUseSiteScope(useSiteSession: FirSession)
 }
 
 private fun ConeClassLikeType.buildSubstitutionScope(
+    session: FirSession,
     useSiteScope: FirScope,
     regularClass: FirRegularClass
 ): FirClassSubstitutionScope? {
@@ -65,7 +66,7 @@ private fun ConeClassLikeType.buildSubstitutionScope(
         typeParameter.symbol to (typeArgument as? ConeTypedProjection)?.type
     }.filter { (_, type) -> type != null }.toMap() as Map<ConeTypeParameterSymbol, ConeKotlinType>
 
-    return FirClassSubstitutionScope(useSiteScope, substitution)
+    return FirClassSubstitutionScope(session, useSiteScope, substitution)
 }
 
 private tailrec fun ConeClassLikeType.computePartialExpansion(useSiteSession: FirSession): ConeClassLikeType? {

@@ -113,7 +113,7 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider 
 
                     superTypesDeserialized.mapNotNullTo(superTypeRefs) {
                         if (it == null) return@mapNotNullTo null
-                        FirResolvedTypeRefImpl(session, null, it, false, emptyList())
+                        FirResolvedTypeRefImpl(this@BuiltInsPackageFragment.session, null, it, false, emptyList())
                     }
                     // TODO: declarations (probably should be done later)
                 }
