@@ -26,7 +26,7 @@ import org.gradle.api.tasks.JavaExec
 import org.gradle.kotlin.dsl.*
 import java.io.File
 
-private fun Project.intellijRepoDir() = File("${project.rootDir.absoluteFile}/dependencies/repo")
+private fun Project.kotlinBuildRepoDir() = File("${project.rootDir.absoluteFile}/dependencies/repo")
 
 private fun Project.ideModuleName() = when (IdeVersionConfigurator.currentIde.kind) {
     Ide.Kind.AndroidStudio -> "android-studio-ide"
@@ -40,10 +40,11 @@ private fun Project.ideModuleVersion() = when (IdeVersionConfigurator.currentIde
     Ide.Kind.IntelliJ -> rootProject.findProperty("versions.intellijSdk")
 }
 
-fun RepositoryHandler.intellijSdkRepo(project: Project): IvyArtifactRepository = ivy {
-    val baseDir = project.intellijRepoDir()
+fun RepositoryHandler.kotlinBuildRepo(project: Project): IvyArtifactRepository = ivy {
+    val baseDir = project.kotlinBuildRepoDir()
     setUrl(baseDir)
 
+    ivyPattern("${baseDir.canonicalPath}/[organisation]/[module]/[revision]/[module].ivy.xml")
     ivyPattern("${baseDir.canonicalPath}/[organisation]/[module]/[revision]/ivy/[module].ivy.xml")
     ivyPattern("${baseDir.canonicalPath}/[organisation]/${project.ideModuleName()}/[revision]/ivy/[module].ivy.xml") // bundled plugins
 
@@ -51,6 +52,7 @@ fun RepositoryHandler.intellijSdkRepo(project: Project): IvyArtifactRepository =
     artifactPattern("${baseDir.canonicalPath}/[organisation]/[module]/[revision]/artifacts/[artifact](-[classifier]).[ext]")
     artifactPattern("${baseDir.canonicalPath}/[organisation]/${project.ideModuleName()}/[revision]/artifacts/plugins/[module]/lib/[artifact](-[classifier]).[ext]") // bundled plugins
     artifactPattern("${baseDir.canonicalPath}/[organisation]/sources/[artifact]-[revision](-[classifier]).[ext]")
+    artifactPattern("${baseDir.canonicalPath}/[organisation]/[module]/[revision]/[artifact](-[classifier]).[ext]")
 
     metadataSources {
         ivyDescriptor()
@@ -66,6 +68,8 @@ fun Project.jpsStandalone() = "kotlin.build:jps-standalone:${rootProject.extra["
 fun Project.jpsBuildTest() = "kotlin.build:jps-build-test:${rootProject.extra["versions.intellijSdk"]}"
 
 fun Project.nodeJSPlugin() = "kotlin.build:NodeJS:${rootProject.extra["versions.idea.NodeJS"]}"
+
+fun Project.androidDxJar() = "kotlin.build:android-dx:${rootProject.extra["versions.androidBuildTools"]}"
 
 /**
  * Runtime version of annotations that are already in Kotlin stdlib (historically Kotlin has older version of this one).
@@ -106,7 +110,7 @@ fun ModuleDependency.includeJars(vararg names: String, rootProject: Project? = n
 // Workaround. Top-level Kotlin function in a default package can't be called from a non-default package
 object IntellijRootUtils {
     fun getRepositoryRootDir(project: Project): File = with(project.rootProject) {
-        return File(intellijRepoDir(), "kotlin.build")
+        return File(kotlinBuildRepoDir(), "kotlin.build")
     }
 
     fun getIntellijRootDir(project: Project): File = with(project.rootProject) {
@@ -135,7 +139,7 @@ fun Project.intellijRootDir() = IntellijRootUtils.getIntellijRootDir(project)
 
 fun Project.intellijUltimateRootDir() =
     if (isIntellijUltimateSdkAvailable())
-        File(intellijRepoDir(), "kotlin.build/ideaIU/${rootProject.extra["versions.intellijSdk"]}/artifacts")
+        File(kotlinBuildRepoDir(), "kotlin.build/ideaIU/${rootProject.extra["versions.intellijSdk"]}/artifacts")
     else
         throw GradleException("intellij ultimate SDK is not available")
 
