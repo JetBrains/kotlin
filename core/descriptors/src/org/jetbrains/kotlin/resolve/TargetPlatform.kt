@@ -10,6 +10,6 @@ abstract class TargetPlatform(val platformName: String) {
 }
 
 object KonanPlatform : TargetPlatform("Native")
-object CommonPlatform : TargetPlatform("Default")
+object CommonPlatform : TargetPlatform("Common")
 object JvmPlatform : TargetPlatform("JVM")
 object JsPlatform : TargetPlatform("JS")
