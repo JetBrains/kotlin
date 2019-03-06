@@ -33,6 +33,11 @@ object Filtering : TemplateGroupBase() {
         }
     }
 
+    private fun sampleClass(f: Family): String = when(f) {
+        Strings, CharSequences -> "samples.text.Strings"
+        else -> "samples.collections.Collections.Transformations"
+    }
+
     private fun toResult(f: Family): String = if (f == CharSequences) "" else ".toString()"
 
     private fun takeAll(f: Family): String = if (f == Strings) "this" else subsequence(f, "0")
@@ -47,7 +52,7 @@ object Filtering : TemplateGroupBase() {
             Returns a list containing all elements except first [n] elements.
             """
         }
-        sample("samples.collections.Collections.Transformations.drop")
+        sample("${sampleClass(f)}.drop")
         returns("List<T>")
         body {
             """
@@ -133,9 +138,7 @@ object Filtering : TemplateGroupBase() {
             Returns a list containing first [n] elements.
             """
         }
-        specialFor(Iterables, Sequences, ArraysOfObjects, ArraysOfPrimitives) {
-            sample("samples.collections.Collections.Transformations.take")
-        }
+        sample("${sampleClass(f)}.take")
         returns("List<T>")
         body {
             """
@@ -157,7 +160,6 @@ object Filtering : TemplateGroupBase() {
         }
 
         specialFor(Strings, CharSequences) {
-            sample("samples.text.Strings.take")
             returns("SELF")
             specialFor(Strings) {
                 doc { "Returns a string containing the first [n] characters from this string, or the entire string if this string is shorter." }
@@ -216,7 +218,7 @@ object Filtering : TemplateGroupBase() {
             Returns a list containing all elements except last [n] elements.
             """
         }
-        sample("samples.collections.Collections.Transformations.drop")
+        sample("${sampleClass(f)}.drop")
         returns("List<T>")
         body {
             """
@@ -245,8 +247,7 @@ object Filtering : TemplateGroupBase() {
             Returns a list containing last [n] elements.
             """
         }
-        sample("samples.collections.Collections.Transformations.take")
-
+        sample("${sampleClass(f)}.take")
         returns("List<T>")
         specialFor(Strings, CharSequences) {
             returns("SELF")
@@ -312,7 +313,7 @@ object Filtering : TemplateGroupBase() {
             Returns a list containing all elements except first elements that satisfy the given [predicate].
             """
         }
-        sample("samples.collections.Collections.Transformations.drop")
+        sample("${sampleClass(f)}.drop")
         returns("List<T>")
         body {
             """
@@ -369,7 +370,7 @@ object Filtering : TemplateGroupBase() {
             Returns a list containing first elements satisfying the given [predicate].
             """
         }
-        sample("samples.collections.Collections.Transformations.take")
+        sample("${sampleClass(f)}.take")
         returns("List<T>")
         body {
             """
@@ -421,7 +422,7 @@ object Filtering : TemplateGroupBase() {
             Returns a list containing all elements except last elements that satisfy the given [predicate].
             """
         }
-        sample("samples.collections.Collections.Transformations.drop")
+        sample("${sampleClass(f)}.drop")
         returns("List<T>")
 
         body {
@@ -479,7 +480,7 @@ object Filtering : TemplateGroupBase() {
             Returns a list containing last elements satisfying the given [predicate].
             """
         }
-        sample("samples.collections.Collections.Transformations.take")
+        sample("${sampleClass(f)}.take")
         returns("List<T>")
 
         body {
