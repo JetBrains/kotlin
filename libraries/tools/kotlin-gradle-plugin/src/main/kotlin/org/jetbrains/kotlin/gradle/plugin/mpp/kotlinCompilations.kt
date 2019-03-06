@@ -465,7 +465,6 @@ class KotlinNativeCompilation(
             linkerOptsNoWarn = value
         }
 
-    fun cinterops(action: NamedDomainObjectContainer<DefaultCInteropSettings>.() -> Unit) = cinterops.action()
     fun cinterops(action: Closure<Unit>) = cinterops(ConfigureUtil.configureUsing(action))
     fun cinterops(action: Action<NamedDomainObjectContainer<DefaultCInteropSettings>>) = action.execute(cinterops)
 
