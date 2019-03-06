@@ -65,6 +65,9 @@ class KotlinCoroutinesAsyncStackTraceProvider : KotlinCoroutinesAsyncStackTraceP
 
     fun getAsyncStackTrace(frameProxy: StackFrameProxyImpl, suspendContext: SuspendContextImpl): List<StackFrameItem>? {
         val location = frameProxy.location()
+        if (!location.isInKotlinSources()) {
+            return null
+        }
         val method = location.safeMethod() ?: return null
         val currentThread = frameProxy.threadProxy().threadReference
         if (currentThread == null || !currentThread.isSuspended || !currentThread.isAtBreakpoint) {
