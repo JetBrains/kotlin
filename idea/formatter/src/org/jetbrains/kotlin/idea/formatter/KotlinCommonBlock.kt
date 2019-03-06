@@ -221,10 +221,8 @@ abstract class KotlinCommonBlock(
         val childParent = child.treeParent
         val childType = child.elementType
 
-        if (childParent?.treeParent != null) {
-            if (childParent.elementType === KtNodeTypes.BLOCK && childParent.treeParent.elementType === KtNodeTypes.SCRIPT) {
-                return Indent.getNoneIndent()
-            }
+        if (childParent != null && isInCodeChunk(childParent)) {
+            return Indent.getNoneIndent()
         }
 
         // do not indent child after heading comments inside declaration
@@ -266,10 +264,24 @@ abstract class KotlinCommonBlock(
         return Indent.getNoneIndent()
     }
 
+    private fun isInCodeChunk(node: ASTNode): Boolean {
+        val parent = node.treeParent ?: return false
+
+        if (node.elementType != KtNodeTypes.BLOCK) {
+            return false
+        }
+
+        val parentType = parent.elementType
+        return parentType == KtNodeTypes.SCRIPT
+                || parentType == KtNodeTypes.BLOCK_CODE_FRAGMENT
+                || parentType == KtNodeTypes.EXPRESSION_CODE_FRAGMENT
+                || parentType == KtNodeTypes.TYPE_CODE_FRAGMENT
+    }
+
     fun getChildAttributes(newChildIndex: Int): ChildAttributes {
         val type = node.elementType
 
-        if (node.elementType == KtNodeTypes.BLOCK && node.treeParent.elementType == KtNodeTypes.SCRIPT) {
+        if (isInCodeChunk(node)) {
             return ChildAttributes(Indent.getNoneIndent(), null)
         }
 
