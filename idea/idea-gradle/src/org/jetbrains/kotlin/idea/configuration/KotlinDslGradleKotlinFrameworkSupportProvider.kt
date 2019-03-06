@@ -115,7 +115,7 @@ abstract class KotlinDslGradleKotlinFrameworkSupportProvider(
 }
 
 class KotlinDslGradleKotlinJavaFrameworkSupportProvider :
-    KotlinDslGradleKotlinFrameworkSupportProvider("KOTLIN", "Kotlin (Java)", KotlinIcons.SMALL_LOGO) {
+    KotlinDslGradleKotlinFrameworkSupportProvider("KOTLIN", "Kotlin/JVM", KotlinIcons.SMALL_LOGO) {
 
     override fun getOldSyntaxPluginDefinition() = "plugin(\"${KotlinGradleModuleConfigurator.KOTLIN}\")"
     override fun getPluginDefinition() = "kotlin(\"jvm\")"
@@ -141,7 +141,7 @@ class KotlinDslGradleKotlinJavaFrameworkSupportProvider :
 }
 
 class KotlinDslGradleKotlinJSFrameworkSupportProvider :
-    KotlinDslGradleKotlinFrameworkSupportProvider("KOTLIN_JS", "Kotlin (JavaScript)", KotlinIcons.JS) {
+    KotlinDslGradleKotlinFrameworkSupportProvider("KOTLIN_JS", "Kotlin/JS", KotlinIcons.JS) {
 
     override fun getOldSyntaxPluginDefinition(): String = "plugin(\"${KotlinJsGradleModuleConfigurator.KOTLIN_JS}\")"
     override fun getPluginDefinition(): String = "id(\"kotlin2js\")"
