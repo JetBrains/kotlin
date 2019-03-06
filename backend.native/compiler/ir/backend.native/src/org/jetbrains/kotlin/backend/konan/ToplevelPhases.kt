@@ -102,10 +102,6 @@ internal val psiToIrPhase = konanUnitPhase(
             val symbols = KonanSymbols(this, generatorContext.symbolTable, generatorContext.symbolTable.lazyWrapper)
             val module = translator.generateModuleFragment(generatorContext, environment.getSourceFiles(), deserializer)
 
-            modules.values.forEach {
-                it.patchDeclarationParents()
-            }
-
             irModule = module
             irModules = modules
             ir.symbols = symbols
