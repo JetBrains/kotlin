@@ -34,7 +34,7 @@ internal data class KotlinPluginVersion(
     val patchNumber: String // usually '1'
 ) {
     companion object {
-        private val KOTLIN_VERSION_REGEX = "^([\\d\\.]+)\\-([A-Za-z]+)\\-(\\d+)\\-([A-Za-z0-9\\.]+)\\-(\\d+)$".toRegex()
+        private val KOTLIN_VERSION_REGEX = "^([\\d.]+)-([A-Za-z]+)-(\\d+)-([A-Za-z0-9.]+)-(\\d+)$".toRegex()
 
         fun parse(version: String): KotlinPluginVersion? {
             val matchResult = KOTLIN_VERSION_REGEX.matchEntire(version) ?: return null

@@ -84,7 +84,7 @@ sealed class PluginUpdateStatus {
     }
 }
 
-class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Disposable {
+class KotlinPluginUpdater(private val propertiesComponent: PropertiesComponent) : Disposable {
     private var updateDelay = INITIAL_UPDATE_DELAY
     private val alarm = Alarm(Alarm.ThreadToUse.POOLED_THREAD, this)
     private val notificationGroup = NotificationGroup("Kotlin plugin updates", NotificationDisplayType.STICKY_BALLOON, true)
@@ -200,12 +200,10 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
             return PluginUpdateStatus.LatestVersionInstalled
         }
         val newVersion = responseDoc.getChild("category")?.getChild("idea-plugin")?.getChild("version")?.text
-        if (newVersion == null) {
-            return PluginUpdateStatus.CheckFailed(
+            ?: return PluginUpdateStatus.CheckFailed(
                 "Couldn't find plugin version in repository response",
                 JDOMUtil.writeElement(responseDoc, "\n")
             )
-        }
         val pluginDescriptor = initPluginDescriptor(newVersion)
         return updateIfNotLatest(pluginDescriptor, null)
     }
@@ -274,6 +272,8 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
 
                 if (prepareResult) {
                     val pluginDescriptor = pluginDownloader.descriptor
+                    // BUNCH: 181 Not null since 182.
+                    @Suppress("SENSELESS_COMPARISON")
                     if (pluginDescriptor != null) {
                         installed = true
                         pluginDownloader.install()
