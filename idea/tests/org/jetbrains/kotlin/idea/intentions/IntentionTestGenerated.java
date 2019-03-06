@@ -9884,6 +9884,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/insertExplicitTypeArguments/insertTypeWithVarargs.kt");
         }
 
+        @TestMetadata("notApplicableGenericType.kt")
+        public void testNotApplicableGenericType() throws Exception {
+            runTest("idea/testData/intentions/insertExplicitTypeArguments/notApplicableGenericType.kt");
+        }
+
         @TestMetadata("simpleInsertTypeClass.kt")
         public void testSimpleInsertTypeClass() throws Exception {
             runTest("idea/testData/intentions/insertExplicitTypeArguments/simpleInsertTypeClass.kt");
