@@ -175,7 +175,7 @@ internal fun IElementType.toFirOperation(): FirOperation =
         else -> throw AssertionError(this.toString())
     }
 
-internal fun FirExpression.generateNotNullOrOther(other: FirExpression, caseId: String, basePsi: KtElement): FirWhenExpression {
+internal fun FirExpression.generateNotNullOrOther(session: FirSession, other: FirExpression, caseId: String, basePsi: KtElement): FirWhenExpression {
     val subjectName = Name.special("<$caseId>")
     val subjectVariable = generateTemporaryVariable(session, psi, subjectName, this)
     val subjectExpression = FirWhenSubjectExpression(session, psi)
