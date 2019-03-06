@@ -11,4 +11,4 @@ pluginManagement {
     }
 }
 
-include "prepare-deps:intellij-sdk"
+include "prepare-deps"
