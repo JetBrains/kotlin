@@ -50,6 +50,7 @@ fun RepositoryHandler.intellijSdkRepo(project: Project): IvyArtifactRepository =
     artifactPattern("${baseDir.canonicalPath}/[organisation]/[module]/[revision]/artifacts/lib/[artifact](-[classifier]).[ext]")
     artifactPattern("${baseDir.canonicalPath}/[organisation]/[module]/[revision]/artifacts/[artifact](-[classifier]).[ext]")
     artifactPattern("${baseDir.canonicalPath}/[organisation]/${project.ideModuleName()}/[revision]/artifacts/plugins/[module]/lib/[artifact](-[classifier]).[ext]") // bundled plugins
+    artifactPattern("${baseDir.canonicalPath}/[organisation]/sources/[artifact]-[revision](-[classifier]).[ext]")
 
     metadataSources {
         ivyDescriptor()

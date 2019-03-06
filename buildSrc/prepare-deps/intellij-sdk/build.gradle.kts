@@ -18,6 +18,9 @@ val intellijSeparateSdks: Boolean by rootProject.extra
 val installIntellijCommunity = !intellijUltimateEnabled || intellijSeparateSdks
 val installIntellijUltimate = intellijUltimateEnabled
 
+val androidBuildToolsVersion = rootProject.extra["versions.androidBuildTools"] as String
+val androidDxSourcesVersion = rootProject.extra["versions.androidDxSources"] as String
+
 val intellijVersionDelimiterIndex = intellijVersion.indexOfAny(charArrayOf('.', '-'))
 if (intellijVersionDelimiterIndex == -1) {
     error("Invalid IDEA version $intellijVersion")
@@ -35,7 +38,7 @@ logger.info("intellijSeparateSdks: $intellijSeparateSdks")
 logger.info("installIntellijCommunity: $installIntellijCommunity")
 logger.info("installIntellijUltimate: $installIntellijUltimate")
 
-val studioOs by lazy {
+val androidStudioOs by lazy {
     when {
         OperatingSystem.current().isWindows -> "windows"
         OperatingSystem.current().isMacOsX -> "mac"
@@ -47,17 +50,38 @@ val studioOs by lazy {
     }
 }
 
+val androidToolsOs by lazy {
+    when {
+        OperatingSystem.current().isWindows -> "windows"
+        OperatingSystem.current().isMacOsX -> "macosx"
+        OperatingSystem.current().isLinux -> "linux"
+        else -> {
+            logger.error("Unknown operating system for android tools: ${OperatingSystem.current().name}")
+            ""
+        }
+    }
+}
+
+
 repositories {
     if (androidStudioRelease != null) {
         ivy {
             if (cacheRedirectorEnabled) {
-                artifactPattern("https://cache-redirector.jetbrains.com/dl.google.com/dl/android/studio/ide-zips/$androidStudioRelease/[artifact]-[revision]-$studioOs.zip")
+                artifactPattern("https://cache-redirector.jetbrains.com/dl.google.com/dl/android/studio/ide-zips/$androidStudioRelease/[artifact]-[revision]-$androidStudioOs.zip")
             }
 
-            artifactPattern("https://dl.google.com/dl/android/studio/ide-zips/$androidStudioRelease/[artifact]-[revision]-$studioOs.zip")
+            artifactPattern("https://dl.google.com/dl/android/studio/ide-zips/$androidStudioRelease/[artifact]-[revision]-$androidStudioOs.zip")
             metadataSources {
                 artifact()
             }
+        }
+    }
+
+    ivy {
+        artifactPattern("https://dl.google.com/android/repository/[artifact]_[revision](-[classifier]).[ext]")
+        artifactPattern("https://android.googlesource.com/platform/dalvik/+archive/android-$androidDxSourcesVersion/[artifact].[ext]")
+        metadataSources {
+            artifact()
         }
     }
 
@@ -80,6 +104,8 @@ val jpsStandalone by configurations.creating
 val jpsBuildTest by configurations.creating
 val intellijCore by configurations.creating
 val nodeJS by configurations.creating
+val androidBuildTools by configurations.creating
+val androidDxSources by configurations.creating
 
 /**
  * Special repository for annotations.jar required for idea runtime only.
@@ -92,6 +118,10 @@ val customDepsRepoDir = rootProject.rootDir.parentFile.resolve("dependencies/rep
 val customDepsOrg: String by rootProject.extra
 val customDepsRevision = intellijVersion
 val repoDir = File(customDepsRepoDir, customDepsOrg)
+
+val androidDxModuleName = "android-dx"
+val androidDxRevision = androidBuildToolsVersion
+val androidDxRepoModuleDir = File(repoDir, "$androidDxModuleName/$androidDxRevision")
 
 dependencies {
     if (androidStudioRelease != null) {
@@ -115,6 +145,66 @@ dependencies {
     intellijCore("com.jetbrains.intellij.idea:intellij-core:$intellijVersion")
     if (intellijUltimateEnabled) {
         nodeJS("com.jetbrains.plugins:NodeJS:${rootProject.extra["versions.idea.NodeJS"]}@zip")
+    }
+
+    androidBuildTools("google:build-tools:$androidBuildToolsVersion:$androidToolsOs@zip")
+    androidDxSources("google:dx:0@tar.gz")
+}
+
+val dxSourcesTargetDir = File(buildDir, "dx_src")
+
+val untarDxSources by tasks.creating {
+    dependsOn(androidDxSources)
+    inputs.files(androidDxSources)
+    outputs.dir(dxSourcesTargetDir)
+    doFirst {
+        project.copy {
+            from(tarTree(androidDxSources.singleFile))
+            include("src/**")
+            includeEmptyDirs = false
+            into(dxSourcesTargetDir)
+        }
+    }
+}
+
+val prepareDxSourcesJar by tasks.creating(Jar::class) {
+    dependsOn(untarDxSources)
+    from("$dxSourcesTargetDir/src")
+    destinationDir = File(repoDir, sources.name)
+    baseName = androidDxModuleName
+    classifier = "sources"
+    version = androidBuildToolsVersion
+}
+
+val unzipDxJar by tasks.creating {
+    dependsOn(androidBuildTools)
+    inputs.files(androidBuildTools)
+    outputs.files(File(androidDxRepoModuleDir, "dx.jar"))
+    doFirst {
+        project.copy {
+            from(zipTree(androidBuildTools.singleFile).files)
+            include("**/dx.jar")
+            into(androidDxRepoModuleDir)
+        }
+    }
+}
+
+val buildIvyRepoForAndroidDx by tasks.creating {
+    dependsOn(unzipDxJar, prepareDxSourcesJar)
+    inputs.files(unzipDxJar, prepareDxSourcesJar)
+    outputs.file(File(androidDxRepoModuleDir, "$androidDxModuleName.ivy.xml"))
+
+    doLast {
+        writeIvyXml(
+            customDepsOrg,
+            androidDxModuleName,
+            androidBuildToolsVersion,
+            androidDxModuleName,
+            androidDxRepoModuleDir,
+            androidDxRepoModuleDir,
+            androidDxRepoModuleDir,
+            prepareDxSourcesJar.outputs.files.singleFile
+        )
     }
 }
 
@@ -161,7 +251,7 @@ val makeIde = if (androidStudioBuild != null) {
         androidStudio,
         customDepsOrg,
         customDepsRepoDir,
-        if (studioOs == "mac") 
+        if (androidStudioOs == "mac")
             ::skipContentsDirectory 
         else 
             ::skipToplevelDirectory
@@ -186,7 +276,8 @@ val build by tasks.creating {
         makeIde,
         buildIvyRepositoryTask(jpsStandalone, customDepsOrg, customDepsRepoDir, null, sourcesFile),
         buildIvyRepositoryTask(jpsBuildTest, customDepsOrg, customDepsRepoDir, null, sourcesFile),
-        makeIntellijAnnotations
+        makeIntellijAnnotations,
+        buildIvyRepoForAndroidDx
     )
 
     if (installIntellijUltimate) {

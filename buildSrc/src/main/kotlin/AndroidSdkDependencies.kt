@@ -10,6 +10,7 @@ fun RepositoryHandler.androidDxJarRepo(project: Project): IvyArtifactRepository 
     val baseDir = File("${project.rootDir}/dependencies/repo")
     ivyPattern("${baseDir.canonicalPath}/[organisation]/[module]/[revision]/[module].ivy.xml")
     artifactPattern("${baseDir.canonicalPath}/[organisation]/[module]/[revision]/[artifact](-[classifier]).jar")
+    artifactPattern("${baseDir.canonicalPath}/[organisation]/sources/[artifact]-[revision](-[classifier]).[ext]")
 }
 
 fun Project.androidDxJar() = "kotlin.build:android-dx:${rootProject.extra["versions.androidBuildTools"]}"
