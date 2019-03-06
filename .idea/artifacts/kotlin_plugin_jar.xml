@@ -50,6 +50,7 @@
       <element id="module-output" name="kotlin.compiler.serialization.main" />
       <element id="module-output" name="kotlin.core.util.runtime.main" />
       <element id="module-output" name="kotlin.compiler.util.main" />
+      <element id="module-output" name="kotlin.core.type-system.main" />
       <element id="file-copy" path="$PROJECT_DIR$/resources/kotlinManifest.properties" />
       <element id="module-output" name="kotlin.compiler.frontend.common.main" />
     </root>
