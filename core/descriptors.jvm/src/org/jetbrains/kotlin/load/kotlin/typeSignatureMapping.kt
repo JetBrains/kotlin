@@ -44,7 +44,7 @@ interface TypeMappingConfiguration<out T : Any> {
     // returns null when type doesn't need to be preprocessed
     fun preprocessType(kotlinType: KotlinType): KotlinType? = null
 
-    fun releaseCoroutines(): Boolean
+    fun releaseCoroutines(): Boolean = true
 }
 
 const val NON_EXISTENT_CLASS_NAME = "error/NonExistentClass"

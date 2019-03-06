@@ -1241,10 +1241,6 @@ class KotlinTypeMapper @JvmOverloads constructor(
                 throw IllegalStateException(generateErrorMessageForErrorType(kotlinType, descriptor))
             }
 
-            override fun releaseCoroutines(): Boolean {
-                return false
-            }
-
             override fun preprocessType(kotlinType: KotlinType): KotlinType? {
                 return null
             }
