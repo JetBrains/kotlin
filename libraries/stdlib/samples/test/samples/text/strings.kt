@@ -193,8 +193,20 @@ class Strings {
 
     @Sample
     fun take() {
-        val string = "Lorem Ipsum"
-        assertPrints(string.take(5), "Lorem")
+        val string = "<<<First Grade>>>"
+        assertPrints(string.take(8), "<<<First")
+        assertPrints(string.takeLast(8), "Grade>>>")
+        assertPrints(string.takeWhile { !it.isLetter() }, "<<<")
+        assertPrints(string.takeLastWhile { !it.isLetter() }, ">>>")
+    }
+
+    @Sample
+    fun drop() {
+        val string = "<<<First Grade>>>"
+        assertPrints(string.drop(6), "st Grade>>>")
+        assertPrints(string.dropLast(6), "<<<First Gr")
+        assertPrints(string.dropWhile { !it.isLetter() }, "First Grade>>>")
+        assertPrints(string.dropLastWhile { !it.isLetter() }, "<<<First Grade")
     }
 
 }
