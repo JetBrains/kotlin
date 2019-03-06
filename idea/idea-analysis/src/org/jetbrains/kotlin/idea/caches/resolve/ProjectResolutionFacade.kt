@@ -25,7 +25,6 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.SLRUCache
 import org.jetbrains.kotlin.analyzer.*
 import org.jetbrains.kotlin.analyzer.common.CommonAnalysisParameters
-import org.jetbrains.kotlin.resolve.CommonPlatform
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
 import org.jetbrains.kotlin.caches.resolve.resolution
@@ -46,6 +45,8 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.CompositeBindingContext
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
 import org.jetbrains.kotlin.resolve.JvmPlatform
+import org.jetbrains.kotlin.resolve.isCommon
+import org.jetbrains.kotlin.resolve.isJvm
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 internal class ProjectResolutionFacade(
@@ -157,9 +158,9 @@ internal class ProjectResolutionFacade(
                 platform.idePlatformKind.resolution.resolverForModuleFactory
             },
             platformParameters = { platform ->
-                when (platform) {
-                    is JvmPlatform -> jvmPlatformParameters
-                    is CommonPlatform -> commonPlatformParameters
+                when {
+                    platform.isJvm() -> jvmPlatformParameters
+                    platform.isCommon() -> commonPlatformParameters
                     else -> PlatformAnalysisParameters.Empty
                 }
             },
@@ -228,7 +229,6 @@ internal class ProjectResolutionFacade(
     private companion object {
         private fun createBuiltIns(settings: PlatformAnalysisSettings, projectContext: ProjectContext): KotlinBuiltIns {
 //            return settings.platform.idePlatformKind.resolution.createBuiltIns(settings, projectContext)
-            // TODO: what we do about built-ins?
             return JvmPlatform.idePlatformKind.resolution.createBuiltIns(settings, projectContext)
         }
     }

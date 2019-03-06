@@ -64,7 +64,7 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
 import org.jetbrains.kotlin.resolve.calls.callUtil.getParentCall
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.resolve.JvmPlatform
+import org.jetbrains.kotlin.resolve.isJvm
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.ExplicitImportsScope
 import org.jetbrains.kotlin.resolve.scopes.utils.addImportingScope
@@ -329,7 +329,7 @@ internal class ImportFix(expression: KtSimpleNameExpression) : OrdinaryImportFix
                 processor = processor
         )
 
-        if (TargetPlatformDetector.getPlatform(element.containingKtFile) == JvmPlatform) {
+        if (TargetPlatformDetector.getPlatform(element.containingKtFile).isJvm()) {
             indicesHelper.processJvmCallablesByName(
                     name,
                     filter = { it.hasModifierProperty(PsiModifier.STATIC) },
@@ -622,13 +622,15 @@ internal object ImportForMissingOperatorFactory : ImportFixBase.Factory() {
 }
 
 
-private fun KotlinIndicesHelper.getClassesByName(expressionForPlatform: KtExpression, name: String) =
-    when (TargetPlatformDetector.getPlatform(expressionForPlatform.containingKtFile)) {
-        JvmPlatform -> getJvmClassesByName(name)
+private fun KotlinIndicesHelper.getClassesByName(expressionForPlatform: KtExpression, name: String): Collection<ClassDescriptor> {
+    val platform = TargetPlatformDetector.getPlatform(expressionForPlatform.containingKtFile)
+    return when {
+        platform.isJvm() -> getJvmClassesByName(name)
         else -> getKotlinClasses({ it == name },
             // Enum entries should be contributes with members import fix
                                  psiFilter = { ktDeclaration -> ktDeclaration !is KtEnumEntry },
                                  kindFilter = { kind -> kind != ClassKind.ENUM_ENTRY })
     }
+}
 
 private fun CallTypeAndReceiver<*, *>.toFilter() = { descriptor: DeclarationDescriptor -> this.callType.descriptorKindFilter.accepts(descriptor) }

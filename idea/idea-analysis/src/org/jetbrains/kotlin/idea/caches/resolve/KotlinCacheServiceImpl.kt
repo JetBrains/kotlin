@@ -53,9 +53,7 @@ import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.contains
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.diagnostics.KotlinSuppressCache
-import org.jetbrains.kotlin.resolve.JvmPlatform
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.sumByLong
@@ -97,7 +95,6 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
         syntheticFiles: Collection<KtFile> = listOf()
     ): ProjectResolutionFacade {
         val sdk = dependenciesModuleInfo.sdk
-        val platform = JvmPlatform // TODO: Js scripts?
         val settings = PlatformAnalysisSettings(
             sdk, true,
             LanguageFeature.ReleaseCoroutines.defaultState == LanguageFeature.State.ENABLED
@@ -175,7 +172,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
         )
     }
 
-    private fun IdeaModuleInfo.platformSettings(targetPlatform: TargetPlatform) = PlatformAnalysisSettings(
+    private fun IdeaModuleInfo.platformSettings() = PlatformAnalysisSettings(
         sdk,
         supportsAdditionalBuiltInsMembers(),
         isReleaseCoroutines()
@@ -209,7 +206,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
         // we assume that all files come from the same module
         val targetPlatform = files.map { TargetPlatformDetector.getPlatform(it) }.toSet().single()
         val specialModuleInfo = files.map(KtFile::getModuleInfo).toSet().single()
-        val settings = specialModuleInfo.platformSettings(specialModuleInfo.platform ?: targetPlatform)
+        val settings = specialModuleInfo.platformSettings()
 
         // File copies are created during completion and receive correct modification events through POM.
         // Dummy files created e.g. by J2K do not receive events.
@@ -428,10 +425,10 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
         }
 
         val platform = TargetPlatformDetector.getPlatform(file)
-        return getResolutionFacadeByModuleInfo(moduleInfo, platform).createdFor(emptyList(), moduleInfo, platform)
+        return getResolutionFacadeByModuleInfo(moduleInfo).createdFor(emptyList(), moduleInfo, platform)
     }
 
-    override fun getResolutionFacadeByFile(file: PsiFile, platform: TargetPlatform): ResolutionFacade? {
+    override fun getResolutionFacadeByFile(file: PsiFile): ResolutionFacade? {
         if (!ProjectRootsUtil.isInProjectOrLibraryContent(file)) {
             return null
         }
@@ -439,11 +436,11 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
         assert(file !is PsiCodeFragment)
 
         val moduleInfo = file.getModuleInfo()
-        return getResolutionFacadeByModuleInfo(moduleInfo, platform)
+        return getResolutionFacadeByModuleInfo(moduleInfo)
     }
 
-    private fun getResolutionFacadeByModuleInfo(moduleInfo: IdeaModuleInfo, platform: TargetPlatform): ResolutionFacade {
-        val settings = moduleInfo.platformSettings(platform)
+    private fun getResolutionFacadeByModuleInfo(moduleInfo: IdeaModuleInfo): ResolutionFacade {
+        val settings = moduleInfo.platformSettings()
         val projectFacade = when (moduleInfo) {
             is ScriptDependenciesInfo.ForProject,
             is ScriptDependenciesSourceInfo.ForProject -> facadeForScriptDependenciesForProject
@@ -453,8 +450,8 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
         return ModuleResolutionFacadeImpl(projectFacade, moduleInfo)
     }
 
-    override fun getResolutionFacadeByModuleInfo(moduleInfo: ModuleInfo, platform: TargetPlatform): ResolutionFacade? =
-        (moduleInfo as? IdeaModuleInfo)?.let { getResolutionFacadeByModuleInfo(it, platform) }
+    override fun getResolutionFacadeByModuleInfo(moduleInfo: ModuleInfo): ResolutionFacade? =
+        (moduleInfo as? IdeaModuleInfo)?.let { getResolutionFacadeByModuleInfo(it) }
 
     private fun Collection<KtFile>.filterNotInProjectSource(moduleInfo: IdeaModuleInfo): Set<KtFile> {
         return mapNotNull {

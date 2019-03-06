@@ -118,7 +118,7 @@ val ModuleDescriptor.implementedDescriptors: List<ModuleDescriptor>
     }
 
 private fun ModuleSourceInfo.toDescriptor() = KotlinCacheService.getInstance(module.project)
-    .getResolutionFacadeByModuleInfo(this, platform)?.moduleDescriptor
+    .getResolutionFacadeByModuleInfo(this)?.moduleDescriptor
 
 /** This function used to emulate a behaviour somewhat similar to projection (on module-level):
  *      Given a module, get a platform-view of that module

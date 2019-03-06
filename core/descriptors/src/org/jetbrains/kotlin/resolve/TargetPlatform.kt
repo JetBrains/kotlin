@@ -13,3 +13,8 @@ object KonanPlatform : TargetPlatform("Native")
 object CommonPlatform : TargetPlatform("Common")
 object JvmPlatform : TargetPlatform("JVM")
 object JsPlatform : TargetPlatform("JS")
+
+fun TargetPlatform?.isNative(): Boolean = this === KonanPlatform
+fun TargetPlatform?.isCommon(): Boolean = this === CommonPlatform
+fun TargetPlatform?.isJvm(): Boolean = this === JvmPlatform
+fun TargetPlatform?.isJs(): Boolean = this === JsPlatform

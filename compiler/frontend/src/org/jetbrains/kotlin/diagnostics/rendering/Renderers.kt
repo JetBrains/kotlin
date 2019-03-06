@@ -21,7 +21,6 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analyzer.ModuleInfo
-import org.jetbrains.kotlin.resolve.CommonPlatform
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cfg.WhenMissingCase
 import org.jetbrains.kotlin.cfg.hasUnknown
@@ -81,8 +80,8 @@ object Renderers {
     @JvmField
     val PLATFORM = Renderer<ModuleDescriptor> {
         val platform = it.platform
-        " ${it.getCapability(ModuleInfo.Capability)?.displayedName ?: ""}" + when (platform) {
-            CommonPlatform, null -> ""
+        " ${it.getCapability(ModuleInfo.Capability)?.displayedName ?: ""}" + when {
+            platform == null || platform.isCommon() -> ""
             else -> " for " + platform.platformName
         }
     }

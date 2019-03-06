@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.highlighter.markers
 import com.intellij.ide.util.DefaultPsiElementCellRenderer
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analyzer.ModuleInfo
-import org.jetbrains.kotlin.resolve.CommonPlatform
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.core.isAndroidModule
@@ -35,10 +34,7 @@ private fun ModuleDescriptor?.getPlatformName(): String? {
         return "Android"
     }
     val platform = platform ?: return null
-    return when (platform) {
-        is CommonPlatform -> "common" // TODO: change CommonPlatform name to something sane
-        else -> platform.platformName
-    }
+    return platform.platformName
 }
 
 fun getPlatformActualTooltip(declaration: KtDeclaration): String? {

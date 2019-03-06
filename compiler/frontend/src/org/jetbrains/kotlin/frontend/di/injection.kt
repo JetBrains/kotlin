@@ -186,6 +186,7 @@ fun createContainerForLazyResolve(
     useImpl<LazyTopDownAnalyzer>()
 }
 
+// TODO: remove it
 fun createLazyResolveSession(moduleContext: ModuleContext, files: Collection<KtFile>): ResolveSession =
     createContainerForLazyResolve(
         moduleContext,

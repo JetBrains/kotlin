@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer
 import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
 import org.jetbrains.kotlin.resolve.JvmPlatform
+import org.jetbrains.kotlin.resolve.isJvm
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
 
@@ -72,7 +73,7 @@ object JvmResolverForModuleFactory : ResolverForModuleFactory() {
             val resolverForReferencedModule = referencedClassModule?.let { resolverForProject.tryGetResolverForModule(it as M) }
 
             val resolverForModule = resolverForReferencedModule?.takeIf {
-                referencedClassModule.platform == JvmPlatform || referencedClassModule.platform == null
+                referencedClassModule.platform.isJvm() || referencedClassModule.platform == null
             } ?: run {
                 // in case referenced class lies outside of our resolver, resolve the class as if it is inside our module
                 // this leads to java class being resolved several times

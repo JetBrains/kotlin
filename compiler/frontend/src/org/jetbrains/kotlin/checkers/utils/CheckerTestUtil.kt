@@ -11,7 +11,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.containers.Stack
-import org.jetbrains.kotlin.resolve.CommonPlatform
 import org.jetbrains.kotlin.checkers.*
 import org.jetbrains.kotlin.checkers.diagnostics.*
 import org.jetbrains.kotlin.checkers.diagnostics.factories.DebugInfoDiagnosticFactory
@@ -32,6 +31,7 @@ import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
+import org.jetbrains.kotlin.resolve.isCommon
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.noTypeInfo
 import java.util.*
@@ -75,7 +75,7 @@ object CheckerTestUtil {
         val sortedBindings = implementingModulesBindings.sortedBy { it.first.platformName }
 
         for ((platform, second) in sortedBindings) {
-            assert(platform !is CommonPlatform) { "Implementing module must have a specific platform: $platform" }
+            assert(!platform.isCommon()) { "Implementing module must have a specific platform: $platform" }
 
             result.addAll(
                 getDiagnosticsIncludingSyntaxErrors(

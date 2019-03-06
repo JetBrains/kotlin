@@ -25,7 +25,7 @@ import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider
 import org.jetbrains.kotlin.idea.roots.migrateNonJvmSourceFolders
 import org.jetbrains.kotlin.resolve.TargetPlatform
-import org.jetbrains.kotlin.resolve.JvmPlatform
+import org.jetbrains.kotlin.resolve.isJvm
 import javax.swing.Icon
 
 class KotlinModuleBuilder(
@@ -49,14 +49,14 @@ class KotlinModuleBuilder(
         return KotlinModuleSettingStep(targetPlatform, this, settingsStep, wizardContext)
     }
 
-    override fun isSuitableSdkType(sdkType: SdkTypeId?) = when (targetPlatform) {
-        is JvmPlatform -> super.isSuitableSdkType(sdkType)
+    override fun isSuitableSdkType(sdkType: SdkTypeId?) = when  {
+        targetPlatform.isJvm() -> super.isSuitableSdkType(sdkType)
         else -> sdkType is KotlinSdkType
     }
 
     override fun setupRootModel(rootModel: ModifiableRootModel) {
         super.setupRootModel(rootModel)
-        if (targetPlatform !is JvmPlatform) {
+        if (!targetPlatform.isJvm()) {
             migrateNonJvmSourceFolders(rootModel)
         }
     }

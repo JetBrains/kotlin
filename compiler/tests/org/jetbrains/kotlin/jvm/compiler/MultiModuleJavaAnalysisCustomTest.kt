@@ -78,7 +78,7 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
             "test",
             projectContext, modules,
             modulesContent = { module -> ModuleContent(module, module.kotlinFiles, module.javaFilesScope) },
-            modulePlatforms = { JvmPlatform.platform },
+            modulePlatforms = { JvmPlatform },
             moduleLanguageSettingsProvider = LanguageSettingsProvider.Default,
             resolverForModuleFactoryByPlatform = { JvmResolverForModuleFactory },
             platformParameters = { _ ->

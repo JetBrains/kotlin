@@ -47,12 +47,9 @@ import org.jetbrains.kotlin.idea.framework.KotlinSdkType
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import org.jetbrains.kotlin.idea.util.projectStructure.sdk
-import org.jetbrains.kotlin.resolve.JsPlatform
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.isCommon
 import org.jetbrains.kotlin.platform.impl.isJavaScript
-import org.jetbrains.kotlin.resolve.TargetPlatform
-import org.jetbrains.kotlin.resolve.JvmPlatform
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Assert
 import org.junit.Test
@@ -2192,9 +2189,9 @@ compileTestKotlin {
         )
         importProject()
 
-        checkStableModuleName("project_main", "project", JsPlatform, isProduction = true)
+        checkStableModuleName("project_main", "project", isProduction = true)
         // Note "_test" suffix: this is current behavior of K2JS Compiler
-        checkStableModuleName("project_test", "project_test", JsPlatform, isProduction = false)
+        checkStableModuleName("project_test", "project_test", isProduction = false)
 
         assertAllModulesConfigured()
     }
@@ -2230,8 +2227,8 @@ compileTestKotlin {
         )
         importProject()
 
-        checkStableModuleName("project_main", "project", JvmPlatform, isProduction = true)
-        checkStableModuleName("project_test", "project", JvmPlatform, isProduction = false)
+        checkStableModuleName("project_main", "project", isProduction = true)
+        checkStableModuleName("project_test", "project", isProduction = false)
 
         assertAllModulesConfigured()
     }
@@ -2493,11 +2490,11 @@ compileTestKotlin {
         TestCase.assertEquals("1.1", holder.settings.languageVersion)
     }
 
-    private fun checkStableModuleName(projectName: String, expectedName: String, platform: TargetPlatform, isProduction: Boolean) {
+    private fun checkStableModuleName(projectName: String, expectedName: String, isProduction: Boolean) {
         val module = getModule(projectName)
         val moduleInfo = if (isProduction) module.productionSourceInfo() else module.testSourceInfo()
 
-        val resolutionFacade = KotlinCacheService.getInstance(myProject).getResolutionFacadeByModuleInfo(moduleInfo!!, platform)!!
+        val resolutionFacade = KotlinCacheService.getInstance(myProject).getResolutionFacadeByModuleInfo(moduleInfo!!)!!
         val moduleDescriptor = resolutionFacade.moduleDescriptor
 
         Assert.assertEquals("<$expectedName>", moduleDescriptor.stableName?.asString())

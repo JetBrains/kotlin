@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.quickfix.expectactual
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.psi.JavaDirectoryService
-import org.jetbrains.kotlin.resolve.CommonPlatform
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.project.implementedDescriptors
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
@@ -38,6 +37,7 @@ import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.ExperimentalUsageChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.resolve.isCommon
 import org.jetbrains.kotlin.types.AbbreviatedType
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -287,7 +287,7 @@ private fun KotlinType.checkAccessibility(accessibleClasses: List<KtClassOrObjec
     }
     val classifierDescriptor = constructor.declarationDescriptor as? ClassifierDescriptorWithTypeParameters ?: return
     val moduleDescriptor = classifierDescriptor.module
-    if (moduleDescriptor.platform is CommonPlatform) {
+    if (moduleDescriptor.platform.isCommon()) {
         // Common classes are Ok; unfortunately this check does not work correctly for simple (non-expect) classes from common module
         return
     }

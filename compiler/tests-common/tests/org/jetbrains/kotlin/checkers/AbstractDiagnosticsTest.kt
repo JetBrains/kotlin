@@ -12,7 +12,6 @@ import com.intellij.psi.search.GlobalSearchScope
 import junit.framework.TestCase
 import org.jetbrains.kotlin.TestsCompilerError
 import org.jetbrains.kotlin.analyzer.AnalysisResult
-import org.jetbrains.kotlin.resolve.CommonPlatform
 import org.jetbrains.kotlin.analyzer.common.CommonResolverForModuleFactory
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
@@ -36,7 +35,6 @@ import org.jetbrains.kotlin.frontend.java.di.createContainerForTopDownAnalyzerFo
 import org.jetbrains.kotlin.frontend.java.di.initJvmBuiltInsForTopDownAnalysis
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.resolve.JsPlatform
 import org.jetbrains.kotlin.load.java.lazy.SingleModuleClassResolver
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -46,7 +44,6 @@ import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
-import org.jetbrains.kotlin.resolve.JvmPlatform
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 import org.jetbrains.kotlin.serialization.deserialization.MetadataPartProvider
@@ -170,13 +167,13 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         val actualText = StringBuilder()
         for (testFile in files) {
             val module = testFile.module
-            val isCommonModule = modules[module]!!.platform == CommonPlatform
+            val isCommonModule = modules[module]!!.platform.isCommon()
             val implementingModules =
                 if (!isCommonModule) emptyList()
                 else modules.entries.filter { (testModule) -> module in testModule?.getDependencies().orEmpty() }
             val implementingModulesBindings = implementingModules.mapNotNull { (testModule, moduleDescriptor) ->
                 val platform = moduleDescriptor.platform
-                if (platform != null && platform !is CommonPlatform) platform to moduleBindings[testModule]!!
+                if (platform != null && platform.isCommon()) platform to moduleBindings[testModule]!!
                 else null
             }
             val moduleDescriptor = modules[module]!!
@@ -359,7 +356,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         val moduleDescriptor = moduleContext.module as ModuleDescriptorImpl
 
         val platform = moduleDescriptor.platform
-        if (platform is CommonPlatform) {
+        if (platform.isCommon()) {
             return CommonResolverForModuleFactory.analyzeFiles(
                 files, moduleDescriptor.name, true, languageVersionSettings,
                 mapOf(
@@ -417,7 +414,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         // E.g. "<!JVM:ACTUAL_WITHOUT_EXPECT!>...<!>
         val result = ArrayList<KtFile>(0)
         for (dependency in dependencies) {
-            if (dependency.platform is CommonPlatform) {
+            if (dependency.platform.isCommon()) {
                 val files = dependency.getCapability(MODULE_FILES)
                         ?: error("MODULE_FILES should have been set for the common module: $dependency")
                 result.addAll(files)
@@ -592,7 +589,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
                 nameSuffix == "COMMON" -> CommonPlatform
                 nameSuffix == "JVM" -> JvmPlatform
                 nameSuffix == "JS" -> JsPlatform
-                nameSuffix == "NATIVE" -> TODO("Move native to core?")
+                nameSuffix == "NATIVE" -> KonanPlatform
                 else -> throw IllegalStateException("Can't determine platform by name $nameSuffix")
             }
         return ModuleDescriptorImpl(Name.special("<$moduleName>"), storageManager, JvmBuiltIns(storageManager), platform)

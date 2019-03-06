@@ -33,9 +33,9 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.frontend.di.createContainerForLazyBodyResolve
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
-import org.jetbrains.kotlin.idea.caches.resolve.util.compilerServices
 import org.jetbrains.kotlin.idea.compiler.IDELanguageSettingsProvider
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
+import org.jetbrains.kotlin.idea.project.findCompilerServices
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
@@ -190,7 +190,7 @@ private object KotlinResolveDataProvider {
 
             val targetPlatform = moduleInfo.platform ?: TargetPlatformDetector.getPlatform(analyzableElement.containingKtFile)
             val targetPlatformVersion = IDELanguageSettingsProvider.getTargetPlatform(moduleInfo, project).let {
-                if (targetPlatform == JvmPlatform && it !is JvmTarget) JvmTarget.DEFAULT else it
+                if (targetPlatform.isJvm() && it !is JvmTarget) JvmTarget.DEFAULT else it
             }
 
             val lazyTopDownAnalyzer = createContainerForLazyBodyResolve(
@@ -201,7 +201,7 @@ private object KotlinResolveDataProvider {
                 targetPlatform,
                 bodyResolveCache,
                 targetPlatformVersion,
-                targetPlatform.compilerServices,
+                targetPlatform.findCompilerServices,
                 analyzableElement.languageVersionSettings
             ).get<LazyTopDownAnalyzer>()
 
