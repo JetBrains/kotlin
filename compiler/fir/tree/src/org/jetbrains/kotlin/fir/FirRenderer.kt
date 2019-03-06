@@ -629,7 +629,7 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
                 if (typeArguments.isNotEmpty()) {
                     sb.append(typeArguments.joinToString(prefix = "<", postfix = ">") {
                         when (it) {
-                            StarProjection -> "*"
+                            ConeStarProjection -> "*"
                             is ConeKotlinTypeProjectionIn -> "in ${it.type.asString()}"
                             is ConeKotlinTypeProjectionOut -> "out ${it.type.asString()}"
                             is ConeKotlinType -> it.asString()

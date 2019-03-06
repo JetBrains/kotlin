@@ -20,9 +20,11 @@ import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.ConePropertySymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeTypeContext
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.AbstractStrictEqualityTypeChecker
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 class FirClassUseSiteScope(
@@ -34,22 +36,16 @@ class FirClassUseSiteScope(
     //base symbol as key
     val overrides = mutableMapOf<ConeCallableSymbol, ConeCallableSymbol?>()
 
-    @Suppress("UNUSED_PARAMETER")
-    private fun isSubtypeOf(subType: ConeKotlinType, superType: ConeKotlinType): Boolean {
-        // TODO: introduce normal sub-typing
-        return true
+
+    val context = object : ConeTypeContext {
+        override val session: FirSession
+            get() = session
     }
 
-    private fun isSubtypeOf(subType: FirTypeRef, superType: FirTypeRef) =
-        isSubtypeOf(subType.cast<FirResolvedTypeRef>().type, superType.cast<FirResolvedTypeRef>().type)
+    private fun isEqualTypes(a: ConeKotlinType, b: ConeKotlinType) = AbstractStrictEqualityTypeChecker.strictEqualTypes(context, a, b)
 
-    @Suppress("UNUSED_PARAMETER")
-    private fun isEqualTypes(a: ConeKotlinType, b: ConeKotlinType): Boolean {
-        // TODO: introduce normal type comparison
-        return true
-    }
-
-    private fun isEqualTypes(a: FirTypeRef, b: FirTypeRef) = isEqualTypes(a.cast<FirResolvedTypeRef>().type, b.cast<FirResolvedTypeRef>().type)
+    private fun isEqualTypes(a: FirTypeRef, b: FirTypeRef) =
+        isEqualTypes(a.cast<FirResolvedTypeRef>().type, b.cast<FirResolvedTypeRef>().type)
 
     private fun isOverriddenFunCheck(member: FirNamedFunction, self: FirNamedFunction): Boolean {
         return member.valueParameters.size == self.valueParameters.size &&
@@ -82,7 +78,6 @@ class FirClassUseSiteScope(
             val member = (it as AbstractFirBasedSymbol<*>).fir as FirCallableMember
             member.isOverride && self.modality != Modality.FINAL
                     && sameReceivers(member.receiverTypeRef, self.receiverTypeRef)
-                    && isSubtypeOf(member.returnTypeRef, self.returnTypeRef)
                     && similarFunctionsOrBothProperties(member, self)
         } // TODO: two or more overrides for one fun?
         overrides[this] = overriding

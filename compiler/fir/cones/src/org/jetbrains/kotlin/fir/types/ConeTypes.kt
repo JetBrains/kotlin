@@ -6,8 +6,9 @@
 package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.fir.symbols.*
+import org.jetbrains.kotlin.types.model.*
 
-sealed class ConeKotlinTypeProjection {
+sealed class ConeKotlinTypeProjection : TypeArgumentMarker {
     abstract val kind: ProjectionKind
 
     companion object {
@@ -19,7 +20,7 @@ enum class ProjectionKind {
     STAR, IN, OUT, INVARIANT
 }
 
-object StarProjection : ConeKotlinTypeProjection() {
+object ConeStarProjection : ConeKotlinTypeProjection() {
     override val kind: ProjectionKind
         get() = ProjectionKind.STAR
 }
@@ -52,7 +53,7 @@ enum class ConeNullability(val suffix: String) {
 
 // We assume type IS an invariant type projection to prevent additional wrapper here
 // (more exactly, invariant type projection contains type)
-sealed class ConeKotlinType : ConeKotlinTypeProjection(), ConeTypedProjection {
+sealed class ConeKotlinType : ConeKotlinTypeProjection(), ConeTypedProjection, KotlinTypeMarker, TypeArgumentListMarker {
     override val kind: ProjectionKind
         get() = ProjectionKind.INVARIANT
 
@@ -91,13 +92,15 @@ class ConeClassErrorType(val reason: String) : ConeClassLikeType() {
     }
 }
 
-sealed class ConeLookupTagBasedType : ConeKotlinType() {
+sealed class ConeLookupTagBasedType : ConeKotlinType(), SimpleTypeMarker {
     abstract val lookupTag: ConeClassifierLookupTag
 }
 
-abstract class ConeClassLikeType : ConeLookupTagBasedType() {
+sealed class ConeClassLikeType : ConeLookupTagBasedType() {
     abstract override val lookupTag: ConeClassLikeLookupTag
 }
+
+abstract class ConeClassType : ConeClassLikeType()
 
 abstract class ConeAbbreviatedType : ConeClassLikeType() {
     abstract val abbreviationLookupTag: ConeClassLikeLookupTag
@@ -118,7 +121,7 @@ abstract class ConeFunctionType : ConeClassLikeType() {
     abstract val returnType: ConeKotlinType
 }
 
-class ConeFlexibleType(val lowerBound: ConeKotlinType, val upperBound: ConeKotlinType) : ConeKotlinType() {
+class ConeFlexibleType(val lowerBound: ConeLookupTagBasedType, val upperBound: ConeLookupTagBasedType) : ConeKotlinType(), FlexibleTypeMarker {
     override val typeArguments: Array<out ConeKotlinTypeProjection>
         get() = emptyArray()
 

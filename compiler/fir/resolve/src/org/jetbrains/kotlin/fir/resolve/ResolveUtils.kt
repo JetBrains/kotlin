@@ -6,12 +6,10 @@
 package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
-import org.jetbrains.kotlin.fir.symbols.ConeClassifierSymbol
 import org.jetbrains.kotlin.fir.declarations.expandedConeType
-import org.jetbrains.kotlin.fir.symbols.ConeClassSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeAbbreviatedTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
@@ -32,6 +30,14 @@ inline fun <K, V, VA : V> MutableMap<K, V>.getOrPut(key: K, defaultValue: (K) ->
 
 fun ConeClassLikeLookupTag.toSymbol(useSiteSession: FirSession): ConeClassifierSymbol? =
     useSiteSession.getService(FirSymbolProvider::class).getSymbolByLookupTag(this)
+
+fun ConeClassifierLookupTag.toSymbol(useSiteSession: FirSession): ConeClassifierSymbol? =
+    when (this) {
+        is ConeClassLikeLookupTag -> toSymbol(useSiteSession)
+        is FirTypeParameterSymbol -> this.symbol
+        else -> error("sealed")
+    }
+
 
 fun ConeClassifierSymbol.constructType(typeArguments: Array<ConeKotlinTypeProjection>, isNullable: Boolean): ConeKotlinType {
     return when (this) {
@@ -66,7 +72,7 @@ fun ConeKotlinType.toTypeProjection(variance: Variance): ConeKotlinTypeProjectio
 private fun List<FirQualifierPart>.toTypeProjections(): Array<ConeKotlinTypeProjection> = flatMap {
     it.typeArguments.map { typeArgument ->
         when (typeArgument) {
-            is FirStarProjection -> StarProjection
+            is FirStarProjection -> ConeStarProjection
             is FirTypeProjectionWithVariance -> {
                 val type = (typeArgument.typeRef as FirResolvedTypeRef).type
                 type.toTypeProjection(typeArgument.variance)

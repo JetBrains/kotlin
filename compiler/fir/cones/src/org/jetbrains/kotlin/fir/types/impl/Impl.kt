@@ -11,15 +11,15 @@ import org.jetbrains.kotlin.fir.types.*
 
 open class ConeClassTypeImpl(
     override val lookupTag: ConeClassLikeLookupTag,
-    override val typeArguments: Array<ConeKotlinTypeProjection>,
+    override val typeArguments: Array<out ConeKotlinTypeProjection>,
     isNullable: Boolean
-) : ConeClassLikeType() {
+) : ConeClassType() {
     override val nullability: ConeNullability = ConeNullability.create(isNullable)
 }
 
 class ConeAbbreviatedTypeImpl(
     override val abbreviationLookupTag: ConeClassLikeLookupTag,
-    override val typeArguments: Array<ConeKotlinTypeProjection>,
+    override val typeArguments: Array<out ConeKotlinTypeProjection>,
     override val directExpansion: ConeClassLikeType,
     isNullable: Boolean
 ) : ConeAbbreviatedType() {

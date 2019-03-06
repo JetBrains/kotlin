@@ -10,6 +10,10 @@ FILE: simple.kt
             return@@@bar this#
         }
 
+        public open function buz(p: R|A|): R|A| {
+            return@@@buz this#
+        }
+
     }
     public final class B : R|A| {
         public constructor(): super<R|A|>()
@@ -22,9 +26,14 @@ FILE: simple.kt
             return@@@bar this#
         }
 
+        public final override function buz(p: R|B|): R|B| {
+            return@@@buz this#
+        }
+
         public final function test(): R|kotlin/Unit| {
             R|/B.foo|()
             <Ambiguity: bar, [/B.bar, /A.bar]>#()
+            <Ambiguity: buz, [/B.buz, /A.buz]>#()
         }
 
     }
