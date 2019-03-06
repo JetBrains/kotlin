@@ -38,8 +38,16 @@ import org.jetbrains.kotlin.types.AbstractStrictEqualityTypeChecker
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
+internal class IndexedJavaTypeQualifiers(private val data: Array<JavaTypeQualifiers>) {
+    constructor(size: Int, compute: (Int) -> JavaTypeQualifiers) : this(Array(size) { compute(it) })
+
+    operator fun invoke(index: Int) = data.getOrElse(index) { JavaTypeQualifiers.NONE }
+
+    val size: Int get() = data.size
+}
+
 internal fun FirJavaTypeRef.enhance(
-    qualifiers: (Int) -> JavaTypeQualifiers
+    qualifiers: IndexedJavaTypeQualifiers
 ): FirResolvedTypeRef {
     return type.enhancePossiblyFlexible(session, annotations, qualifiers, 0)
 }
@@ -51,7 +59,7 @@ internal fun FirJavaTypeRef.enhance(
 private fun JavaType?.enhancePossiblyFlexible(
     session: FirSession,
     annotations: List<FirAnnotationCall>,
-    qualifiers: (Int) -> JavaTypeQualifiers,
+    qualifiers: IndexedJavaTypeQualifiers,
     index: Int
 ): FirResolvedTypeRef {
     val type = this
@@ -117,7 +125,7 @@ private fun JavaClassifierType.enhanceInflexibleType(
     annotations: List<FirAnnotationCall>,
     arguments: List<JavaType?>,
     position: TypeComponentPosition,
-    qualifiers: (Int) -> JavaTypeQualifiers,
+    qualifiers: IndexedJavaTypeQualifiers,
     index: Int
 ): ConeLookupTagBasedType {
     val originalSymbol = when (val classifier = classifier) {

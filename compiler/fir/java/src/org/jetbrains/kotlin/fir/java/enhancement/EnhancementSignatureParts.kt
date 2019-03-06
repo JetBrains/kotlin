@@ -46,8 +46,8 @@ internal class EnhancementSignatureParts(
     ): PartEnhancementResult {
         val qualifiers = computeIndexedQualifiersForOverride(jsr305State)
 
-        val qualifiersWithPredefined: ((Int) -> JavaTypeQualifiers)? = predefined?.let {
-            { index ->
+        val qualifiersWithPredefined = predefined?.let {
+            IndexedJavaTypeQualifiers(qualifiers.size) { index ->
                 predefined.map[index] ?: qualifiers(index)
             }
         }
@@ -260,7 +260,7 @@ internal class EnhancementSignatureParts(
         )
     }
 
-    private fun computeIndexedQualifiersForOverride(jsr305State: Jsr305State): (Int) -> JavaTypeQualifiers {
+    private fun computeIndexedQualifiersForOverride(jsr305State: Jsr305State): IndexedJavaTypeQualifiers {
         val indexedFromSupertypes = fromOverridden.map { it.toIndexed(typeQualifierResolver, jsr305State, context) }
         val indexedThisType = current.toIndexed(typeQualifierResolver, jsr305State, context)
 
@@ -283,7 +283,7 @@ internal class EnhancementSignatureParts(
             qualifiers.computeQualifiersForOverride(verticalSlice, defaultQualifiers, isHeadTypeConstructor, jsr305State)
         }
 
-        return { index -> computedResult.getOrElse(index) { JavaTypeQualifiers.NONE } }
+        return IndexedJavaTypeQualifiers(computedResult)
     }
 
     @Suppress("unused")
