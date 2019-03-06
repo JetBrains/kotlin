@@ -547,16 +547,25 @@ open class KotlinNativeTargetConfigurator(
 
                 val interopOutput = project.files(outputFileProvider).builtBy(this)
                 with(compilation) {
+                    // Register the interop library as a dependency of the compilation to make IDE happy.
                     project.dependencies.add(compileDependencyConfigurationName, interopOutput)
                     if (isMainCompilation) {
-                        target.compilations.findByName(TEST_COMPILATION_NAME)?.let {
-                            project.dependencies.add(it.compileDependencyConfigurationName, interopOutput)
+                        // Register the interop library as an outgoing klib to allow depending on projects with cinterops.
+                        project.dependencies.add(target.apiElementsConfigurationName, interopOutput)
+                        // Add the interop library in publication.
+                        createCInteropKlibArtifact(interop, this@apply)
+                        // We cannot add the interop library in an compilation output because in this case
+                        // IDE doesn't see this library in module dependencies. So we have to manually add
+                        // main interop libraries in dependencies of the default test compilation.
+                        target.compilations.findByName(TEST_COMPILATION_NAME)?.let { testCompilation ->
+                            project.dependencies.add(testCompilation.compileDependencyConfigurationName, interopOutput)
+                            testCompilation.cinterops.all {
+                                it.dependencyFiles += interopOutput
+                            }
                         }
                     }
-                    project.dependencies.add(target.apiElementsConfigurationName, interopOutput)
                 }
             }
-            createCInteropKlibArtifact(interop, interopTask)
         }
     }
     // endregion.
