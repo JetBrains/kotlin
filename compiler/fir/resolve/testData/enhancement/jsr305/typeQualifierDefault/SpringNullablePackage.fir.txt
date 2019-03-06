@@ -3,7 +3,7 @@ public open class A : R|java/lang/Object| {
         public get(): R|ft<kotlin/String, kotlin/String?>|!
         public set(value: R|ft<kotlin/String, kotlin/String?>|!): kotlin/Unit
 
-    public open operator function foo(x: R|ft<kotlin/String, kotlin/String?>|!, @R|spr/Nullable|() y: R|ft<kotlin/CharSequence?, kotlin/CharSequence?>|?): R|ft<kotlin/String, kotlin/String?>|!
+    public open operator function foo(x: R|ft<kotlin/String, kotlin/String?>|!, @R|spr/Nullable|() y: R|kotlin/CharSequence|?): R|ft<kotlin/String, kotlin/String?>|!
 
     public open operator function bar(): R|ft<kotlin/String, kotlin/String?>|!
 

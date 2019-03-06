@@ -1,4 +1,4 @@
 public open class Some : R|java/lang/Object|, R|Strange<*>| {
-    public open operator function foo(): R|ft<kotlin/Any, kotlin/Any>|
+    public open operator function foo(): R|kotlin/Any|
 
 }

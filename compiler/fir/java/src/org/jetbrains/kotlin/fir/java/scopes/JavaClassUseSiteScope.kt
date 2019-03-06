@@ -34,15 +34,6 @@ class JavaClassUseSiteScope(
     private val overriddenByBase = mutableMapOf<ConeFunctionSymbol, ConeFunctionSymbol?>()
 
     @Suppress("UNUSED_PARAMETER")
-    private fun isSubtypeOf(subType: ConeKotlinType, superType: ConeKotlinType): Boolean {
-        // TODO: introduce normal sub-typing
-        return true
-    }
-
-    private fun isSubtypeOf(subType: FirTypeRef, superType: FirTypeRef) =
-        isSubtypeOf(subType.toNotNullConeKotlinType(), superType.toNotNullConeKotlinType())
-
-    @Suppress("UNUSED_PARAMETER")
     private fun isEqualTypes(a: ConeKotlinType, b: ConeKotlinType): Boolean {
         // TODO: introduce normal type comparison
         return true
@@ -73,7 +64,6 @@ class JavaClassUseSiteScope(
             val member = (it as FirFunctionSymbol).fir as FirNamedFunction
             self.modality != Modality.FINAL
                     && sameReceivers(member.receiverTypeRef, self.receiverTypeRef)
-                    && isSubtypeOf(member.returnTypeRef, self.returnTypeRef)
                     && isOverriddenFunCheck(member, self)
         } // TODO: two or more overrides for one fun?
         overriddenByBase[this] = overriding

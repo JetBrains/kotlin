@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.service
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.load.java.typeEnhancement.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.types.AbstractStrictEqualityTypeChecker
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -65,7 +67,7 @@ private fun JavaType?.enhancePossiblyFlexible(
 
             FirResolvedTypeRefImpl(
                 session, psi = null,
-                type = ConeFlexibleType(lowerResult, upperResult),
+                type = coneFlexibleOrSimpleType(session, lowerResult, upperResult),
                 isMarkedNullable = false, annotations = annotations
             )
         }
@@ -79,6 +81,17 @@ private fun JavaType?.enhancePossiblyFlexible(
 private fun JavaType?.subtreeSize(): Int {
     if (this !is JavaClassifierType) return 1
     return 1 + typeArguments.sumBy { it?.subtreeSize() ?: 0 }
+}
+
+private fun coneFlexibleOrSimpleType(
+    session: FirSession,
+    lowerBound: ConeLookupTagBasedType,
+    upperBound: ConeLookupTagBasedType
+): ConeKotlinType {
+    if (AbstractStrictEqualityTypeChecker.strictEqualTypes(session.typeContext, lowerBound, upperBound)) {
+        return lowerBound
+    }
+    return ConeFlexibleType(lowerBound, upperBound)
 }
 
 private val KOTLIN_COLLECTIONS = FqName("kotlin.collections")

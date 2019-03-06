@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.ConePropertySymbol
+import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeContext
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
@@ -35,11 +36,7 @@ class FirClassUseSiteScope(
     //base symbol as key
     val overrides = mutableMapOf<ConeCallableSymbol, ConeCallableSymbol?>()
 
-
-    val context = object : ConeTypeContext {
-        override val session: FirSession
-            get() = session
-    }
+    val context: ConeTypeContext = session.typeContext
 
     private fun isEqualTypes(a: ConeKotlinType, b: ConeKotlinType) = AbstractStrictEqualityTypeChecker.strictEqualTypes(context, a, b)
 

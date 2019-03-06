@@ -1,13 +1,13 @@
 @R|NonNullApi|() public open class A : R|java/lang/Object| {
-    public open property field(var): R|ft<kotlin/String, kotlin/String>|
-        public get(): R|ft<kotlin/String, kotlin/String>|
-        public set(value: R|ft<kotlin/String, kotlin/String>|): kotlin/Unit
+    public open property field(var): R|kotlin/String|
+        public get(): R|kotlin/String|
+        public set(value: R|kotlin/String|): kotlin/Unit
 
-    public open operator function foo(x: R|ft<kotlin/String, kotlin/String>|, @R|javax/annotation/CheckForNull|() y: R|ft<kotlin/CharSequence?, kotlin/CharSequence?>|?): R|ft<kotlin/String, kotlin/String>|
+    public open operator function foo(x: R|kotlin/String|, @R|javax/annotation/CheckForNull|() y: R|kotlin/CharSequence|?): R|kotlin/String|
 
-    @R|NullableApi|() public open operator function foobar(x: R|ft<kotlin/String?, kotlin/String?>|?, @R|NonNullApi|() y: R|ft<kotlin/CharSequence, kotlin/CharSequence>|): R|ft<kotlin/String?, kotlin/String?>|?
+    @R|NullableApi|() public open operator function foobar(x: R|kotlin/String|?, @R|NonNullApi|() y: R|kotlin/CharSequence|): R|kotlin/String|?
 
-    public open operator function bar(): R|ft<kotlin/String, kotlin/String>|
+    public open operator function bar(): R|kotlin/String|
 
     @R|javax/annotation/Nullable|() public open operator function baz(): R|ft<kotlin/collections/MutableList<ft<kotlin/String, kotlin/String?>>?, kotlin/collections/List<ft<kotlin/String, kotlin/String?>>?>|?
 
