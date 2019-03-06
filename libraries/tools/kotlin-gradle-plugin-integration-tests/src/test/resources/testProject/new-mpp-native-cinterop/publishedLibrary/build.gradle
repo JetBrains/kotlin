@@ -34,10 +34,13 @@ kotlin {
         fromPreset(presets.mingwX64, 'mingw64')
 
         configure([macos64, linux64, mingw64]) {
-            compilations.main.cinterops {
-                stdio {
-                    packageName 'example.cinterop.published.stdio'
-                    extraOpts '-nodefaultlibs'
+            compilations.all {
+                // Add interop in the test compilation too as a regression test for KT-30290.
+                cinterops {
+                    stdio {
+                        packageName 'example.cinterop.published.stdio'
+                        extraOpts '-nodefaultlibs'
+                    }
                 }
             }
         }
