@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.idea.framework.JsLibraryStdDetectionUtil
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.versions.LibraryJarDescriptor
 import org.jetbrains.kotlin.js.JavaScript
-import org.jetbrains.kotlin.js.resolve.JsPlatform
+import org.jetbrains.kotlin.resolve.JsPlatform
 import org.jetbrains.kotlin.resolve.TargetPlatform
 
 open class KotlinJsModuleConfigurator : KotlinWithLibraryConfigurator() {

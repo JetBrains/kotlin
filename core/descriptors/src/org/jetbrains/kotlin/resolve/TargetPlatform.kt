@@ -9,3 +9,7 @@ abstract class TargetPlatform(val platformName: String) {
     override fun toString() = platformName
 }
 
+object KonanPlatform : TargetPlatform("Native")
+object CommonPlatform : TargetPlatform("Default")
+object JvmPlatform : TargetPlatform("JVM")
+object JsPlatform : TargetPlatform("JS")

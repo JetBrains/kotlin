@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.js.backend.ast.metadata.TypeCheck;
 import org.jetbrains.kotlin.js.config.JsConfig;
 import org.jetbrains.kotlin.js.naming.NameSuggestion;
 import org.jetbrains.kotlin.js.naming.SuggestedName;
-import org.jetbrains.kotlin.js.resolve.JsPlatform;
 import org.jetbrains.kotlin.js.resolve.JsPlatformCompilerServices;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.factories.ArrayFIF;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;

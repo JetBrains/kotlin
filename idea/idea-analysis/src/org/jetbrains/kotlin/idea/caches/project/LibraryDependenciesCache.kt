@@ -17,7 +17,7 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.containers.MultiMap
-import org.jetbrains.kotlin.analyzer.common.CommonPlatform
+import org.jetbrains.kotlin.resolve.CommonPlatform
 import org.jetbrains.kotlin.idea.core.util.CachedValue
 import org.jetbrains.kotlin.idea.core.util.getValue
 import org.jetbrains.kotlin.idea.framework.getLibraryPlatform

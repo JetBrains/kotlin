@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.idea.versions.SuppressNotificationState
 import org.jetbrains.kotlin.idea.versions.UnsupportedAbiVersionNotificationPanelProvider
 import org.jetbrains.kotlin.idea.versions.createComponentActionLabel
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.resolve.JvmPlatform
 
 // Code is partially copied from com.intellij.codeInsight.daemon.impl.SetupSDKNotificationProvider
 class KotlinSetupEnvironmentNotificationProvider(
@@ -65,7 +65,8 @@ class KotlinSetupEnvironmentNotificationProvider(
         }
 
         if (ModuleRootManager.getInstance(module).sdk == null &&
-            TargetPlatformDetector.getPlatform(psiFile) == JvmPlatform) {
+            TargetPlatformDetector.getPlatform(psiFile) == JvmPlatform
+        ) {
             return createSetupSdkPanel(myProject, psiFile)
         }
 

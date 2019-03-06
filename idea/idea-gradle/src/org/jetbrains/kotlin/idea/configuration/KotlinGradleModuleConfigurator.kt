@@ -22,7 +22,7 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.core.isAndroidModule
 import org.jetbrains.kotlin.idea.versions.getDefaultJvmTarget
 import org.jetbrains.kotlin.resolve.TargetPlatform
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.resolve.JvmPlatform
 
 class KotlinGradleModuleConfigurator : KotlinWithGradleConfigurator() {
 

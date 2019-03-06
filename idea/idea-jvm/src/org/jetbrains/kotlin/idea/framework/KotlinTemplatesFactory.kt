@@ -24,8 +24,8 @@ import com.intellij.platform.ProjectTemplate
 import com.intellij.platform.ProjectTemplatesFactory
 import com.intellij.platform.templates.BuilderBasedTemplate
 import org.jetbrains.kotlin.idea.KotlinIcons
-import org.jetbrains.kotlin.js.resolve.JsPlatform
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.resolve.JsPlatform
+import org.jetbrains.kotlin.resolve.JvmPlatform
 
 class KotlinTemplatesFactory : ProjectTemplatesFactory() {
     companion object {
@@ -39,14 +39,16 @@ class KotlinTemplatesFactory : ProjectTemplatesFactory() {
 
     override fun createTemplates(group: String?, context: WizardContext?): Array<out ProjectTemplate> {
         val result = mutableListOf<ProjectTemplate>(
-                BuilderBasedTemplate(KotlinModuleBuilder(JvmPlatform,
-                                                         "Kotlin/JVM",
-                                                         "Kotlin module for JVM target",
-                                                         KotlinIcons.SMALL_LOGO)),
+                BuilderBasedTemplate(KotlinModuleBuilder(
+                    JvmPlatform,
+                    "Kotlin/JVM",
+                    "Kotlin module for JVM target",
+                    KotlinIcons.SMALL_LOGO)),
 
-                BuilderBasedTemplate(KotlinModuleBuilder(JsPlatform, "Kotlin/JS",
-                                                         "Kotlin module for JavaScript target",
-                                                         KotlinIcons.JS)
+                BuilderBasedTemplate(KotlinModuleBuilder(
+                    JsPlatform, "Kotlin/JS",
+                    "Kotlin module for JavaScript target",
+                    KotlinIcons.JS)
                 )
         )
         result.addAll(Extensions.getExtensions(EP_NAME).map { BuilderBasedTemplate(it) })

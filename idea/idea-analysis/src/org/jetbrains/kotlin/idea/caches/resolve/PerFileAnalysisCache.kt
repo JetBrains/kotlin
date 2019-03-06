@@ -37,18 +37,12 @@ import org.jetbrains.kotlin.idea.caches.resolve.util.compilerServices
 import org.jetbrains.kotlin.idea.compiler.IDELanguageSettingsProvider
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
-import org.jetbrains.kotlin.js.resolve.JsPlatform
-import org.jetbrains.kotlin.js.resolve.JsPlatformCompilerServices
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.*
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformCompilerServices
-import org.jetbrains.kotlin.resolve.konan.platform.KonanPlatform
-import org.jetbrains.kotlin.resolve.konan.platform.NativePlatformCompilerServices
+import org.jetbrains.kotlin.resolve.JvmPlatform
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
-import java.lang.IllegalStateException
 import java.util.*
 
 internal class PerFileAnalysisCache(val file: KtFile, componentProvider: ComponentProvider) {

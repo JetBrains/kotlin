@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.idea.util.projectStructure.version
 import org.jetbrains.kotlin.idea.versions.LibraryJarDescriptor
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
 import org.jetbrains.kotlin.resolve.TargetPlatform
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.resolve.JvmPlatform
 
 open class KotlinJavaModuleConfigurator protected constructor() : KotlinWithLibraryConfigurator() {
     override fun isApplicable(module: Module): Boolean {

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analyzer.common
 
-import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.builtins.PlatformToKotlinClassMap
 import org.jetbrains.kotlin.container.StorageComponentContainer
@@ -17,8 +16,6 @@ import org.jetbrains.kotlin.resolve.lazy.DelegationFilter
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.DynamicTypesSettings
-
-object CommonPlatform : TargetPlatform("Default")
 
 private object CommonPlatformConfigurator : PlatformConfiguratorBase(
     DynamicTypesSettings(), listOf(), listOf(), listOf(), listOf(), listOf(),

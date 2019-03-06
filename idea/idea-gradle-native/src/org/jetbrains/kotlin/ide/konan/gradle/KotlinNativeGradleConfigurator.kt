@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.ide.konan.hasKotlinNativeRuntimeInScope
 import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinStatus
 import org.jetbrains.kotlin.idea.configuration.KotlinWithGradleConfigurator
 import org.jetbrains.kotlin.idea.configuration.ModuleSourceRootGroup
-import org.jetbrains.kotlin.resolve.konan.platform.KonanPlatform
+import org.jetbrains.kotlin.resolve.KonanPlatform
 
 
 open class KotlinNativeGradleConfigurator : KotlinWithGradleConfigurator() {

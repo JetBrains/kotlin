@@ -9,7 +9,7 @@ import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.test.KotlinStdJSProjectDescriptor;
-import org.jetbrains.kotlin.js.resolve.JsPlatform;
+import org.jetbrains.kotlin.resolve.JsPlatform;
 import org.jetbrains.kotlin.resolve.TargetPlatform;
 
 public abstract class AbstractJSBasicCompletionTest extends KotlinFixtureCompletionBaseTestCase {

@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.platform.impl.NativeIdePlatformKind
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
 import org.jetbrains.kotlin.resolve.ImplicitIntegerCoercion
 import org.jetbrains.kotlin.resolve.TargetPlatform
-import org.jetbrains.kotlin.resolve.konan.platform.KonanPlatform
+import org.jetbrains.kotlin.resolve.KonanPlatform
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 class NativePlatformKindResolution : IdePlatformKindResolution {

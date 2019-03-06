@@ -12,8 +12,8 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.util.PlatformUtils
 import org.jetbrains.kotlin.idea.configuration.*
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
-import org.jetbrains.kotlin.js.resolve.JsPlatform
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.resolve.JsPlatform
+import org.jetbrains.kotlin.resolve.JvmPlatform
 
 abstract class ConfigureKotlinInProjectAction : AnAction() {
 

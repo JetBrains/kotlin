@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.frontend.di
 
 import org.jetbrains.kotlin.resolve.TargetPlatform
-import org.jetbrains.kotlin.analyzer.common.CommonPlatform
+import org.jetbrains.kotlin.resolve.CommonPlatform
 import org.jetbrains.kotlin.analyzer.common.CommonPlatformCompilerServices
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl

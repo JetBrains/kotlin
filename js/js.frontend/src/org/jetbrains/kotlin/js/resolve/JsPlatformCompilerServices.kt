@@ -16,14 +16,11 @@
 
 package org.jetbrains.kotlin.js.resolve
 
-import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.storage.StorageManager
-
-object JsPlatform : TargetPlatform("JS")
 
 object JsPlatformCompilerServices : PlatformDependentCompilerServices() {
     override fun computePlatformSpecificDefaultImports(storageManager: StorageManager, result: MutableList<ImportPath>) {
