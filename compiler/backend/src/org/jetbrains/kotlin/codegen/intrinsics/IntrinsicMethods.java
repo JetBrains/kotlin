@@ -64,10 +64,10 @@ public class IntrinsicMethods {
     private final IntrinsicsMap intrinsicsMap = new IntrinsicsMap();
 
     public IntrinsicMethods(JvmTarget jvmTarget) {
-        this(jvmTarget, true);
+        this(jvmTarget, false, true);
     }
 
-    public IntrinsicMethods(JvmTarget jvmTarget, boolean shouldThrowNpeOnExplicitEqualsForBoxedNull) {
+    public IntrinsicMethods(JvmTarget jvmTarget, boolean canReplaceStdlibRuntimeApiBehavior, boolean shouldThrowNpeOnExplicitEqualsForBoxedNull) {
         intrinsicsMap.registerIntrinsic(KOTLIN_JVM, RECEIVER_PARAMETER_FQ_NAME, "javaClass", -1, JavaClassProperty.INSTANCE);
         intrinsicsMap.registerIntrinsic(KOTLIN_JVM, KotlinBuiltIns.FQ_NAMES.kClass, "java", -1, new KClassJavaProperty());
         intrinsicsMap.registerIntrinsic(KOTLIN_JVM, KotlinBuiltIns.FQ_NAMES.kClass, "javaObjectType", -1, new KClassJavaObjectTypeProperty());
@@ -142,6 +142,11 @@ public class IntrinsicMethods {
 
         declareIntrinsicFunction(FQ_NAMES.string, "plus", 1, new Concat());
         declareIntrinsicFunction(FQ_NAMES.string, "get", 1, new StringGetChar());
+
+        if (canReplaceStdlibRuntimeApiBehavior) {
+            intrinsicsMap.registerIntrinsic(TEXT_PACKAGE_FQ_NAME, FQ_NAMES.string, "trimMargin", 1, new TrimMargin());
+            intrinsicsMap.registerIntrinsic(TEXT_PACKAGE_FQ_NAME, FQ_NAMES.string, "trimIndent", 0, new TrimIndent());
+        }
 
         declareIntrinsicFunction(FQ_NAMES.cloneable, "clone", 0, CLONE);
 
