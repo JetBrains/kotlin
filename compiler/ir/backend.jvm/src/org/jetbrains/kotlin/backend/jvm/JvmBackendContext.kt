@@ -143,14 +143,6 @@ class JvmBackendContext(
             override val coroutineSuspendedGetter: IrSimpleFunctionSymbol
                 get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
 
-            override val lateinitIsInitializedPropertyGetter = symbolTable.referenceSimpleFunction(
-                state.module.getPackage(FqName("kotlin")).memberScope.getContributedVariables(
-                    Name.identifier("isInitialized"), NoLookupLocation.FROM_BACKEND
-                ).single {
-                    it.extensionReceiverParameter != null && !it.isExternal
-                }.getter!!
-            )
-
             val lambdaClass = calc { symbolTable.referenceClass(context.getInternalClass("Lambda")) }
 
             fun getKFunction(parameterCount: Int) = symbolTable.referenceClass(reflectionTypes.getKFunction(parameterCount))

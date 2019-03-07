@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -82,7 +83,7 @@ class LateinitLowering(val context: CommonBackendContext) : FileLoweringPass {
             override fun visitCall(expression: IrCall): IrExpression {
                 expression.transformChildrenVoid(this)
 
-                if (expression.symbol != context.ir.symbols.lateinitIsInitializedPropertyGetter) return expression
+                if (!Symbols.isLateinitIsInitializedPropertyGetter(expression.symbol)) return expression
 
                 val receiver = expression.extensionReceiver as IrPropertyReference
 

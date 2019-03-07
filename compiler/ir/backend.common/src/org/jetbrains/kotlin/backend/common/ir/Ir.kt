@@ -6,17 +6,22 @@
 package org.jetbrains.kotlin.backend.common.ir
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
+import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.ir.util.referenceFunction
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -24,7 +29,7 @@ import org.jetbrains.kotlin.resolve.calls.components.isVararg
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-// This is what Context collects about IR.
+ // This is what Context collects about IR.
 abstract class Ir<out T : CommonBackendContext>(val context: T, val irModule: IrModuleFragment) {
 
     abstract val symbols: Symbols<T>
@@ -173,8 +178,6 @@ abstract class Symbols<out T : CommonBackendContext>(val context: T, private val
 
     abstract val coroutineSuspendedGetter: IrSimpleFunctionSymbol
 
-    abstract val lateinitIsInitializedPropertyGetter: IrSimpleFunctionSymbol
-
     fun getFunction(parameterCount: Int) = symbolTable.referenceClass(context.builtIns.getFunction(parameterCount))
 
     val functionReference = calc { symbolTable.referenceClass(context.getInternalClass("FunctionReference")) }
@@ -215,4 +218,17 @@ abstract class Symbols<out T : CommonBackendContext>(val context: T, private val
 
     val intAnd = getBinaryOperator(OperatorNameConventions.AND, builtIns.intType, builtIns.intType)
     val intPlusInt = getBinaryOperator(OperatorNameConventions.PLUS, builtIns.intType, builtIns.intType)
+
+    companion object {
+        fun isLateinitIsInitializedPropertyGetter(symbol: IrFunctionSymbol): Boolean =
+            symbol is IrSimpleFunctionSymbol && symbol.owner.let { function ->
+                function.name.asString() == "<get-isInitialized>" &&
+                        function.parent is IrPackageFragment &&
+                        function.getPackageFragment()!!.fqName.asString() == "kotlin" &&
+                        function.valueParameters.isEmpty() &&
+                        (symbol.owner.extensionReceiverParameter?.type?.classifierOrNull?.owner as? IrClass).let { receiverClass ->
+                            receiverClass?.fqName?.toUnsafe() == KotlinBuiltIns.FQ_NAMES.kProperty0
+                        }
+            }
+    }
 }

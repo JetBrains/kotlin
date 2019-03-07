@@ -7,8 +7,12 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower.inline
 
-import org.jetbrains.kotlin.backend.common.*
+import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
+import org.jetbrains.kotlin.backend.common.ScopeWithIr
+import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.ir.createTemporaryVariableWithWrappedDescriptor
+import org.jetbrains.kotlin.backend.common.isBuiltInIntercepted
+import org.jetbrains.kotlin.backend.common.isBuiltInSuspendCoroutineUninterceptedOrReturn
 import org.jetbrains.kotlin.backend.common.lower.CoroutineIntrinsicLambdaOrigin
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.serialization.fqNameSafe
@@ -56,7 +60,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
 
         val languageVersionSettings = context.configuration.languageVersionSettings
         when {
-            callSite.symbol == context.ir.symbols.lateinitIsInitializedPropertyGetter ->
+            Symbols.isLateinitIsInitializedPropertyGetter(callSite.symbol) ->
                 return callSite
             // Handle coroutine intrinsics
             // TODO These should actually be inlined.
