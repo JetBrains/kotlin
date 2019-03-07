@@ -16,8 +16,8 @@ import org.jetbrains.konan.util.CidrKotlinReleaseType.RELEASE
 import org.jetbrains.kotlin.konan.library.lite.LiteKonanDistributionInfoProvider
 import org.jetbrains.kotlin.utils.addIfNotNull
 
-// Returns Kotlin/Native path.
-fun getKotlinNativePath(project: Project): String? {
+// Returns Kotlin/Native home.
+fun getKotlinNativeHome(project: Project): String? {
     val paths = mutableListOf<String>()
     KonanProjectDataService.forEachKonanProject(project) { konanModel, _, _ ->
         paths.addIfNotNull(konanModel.kotlinNativeHome)
@@ -27,8 +27,11 @@ fun getKotlinNativePath(project: Project): String? {
 }
 
 // Returns Kotlin/Native internal version (not the same as Big Kotlin version).
-fun getKotlinNativeVersion(kotlinNativeHome: String): KotlinVersion? =
-    LiteKonanDistributionInfoProvider(kotlinNativeHome).getDistributionInfo()?.kotlinNativeVersion
+fun getKotlinNativeVersion(kotlinNativeHome: String): CidrKotlinVersion? {
+    val fullVersionString = LiteKonanDistributionInfoProvider(kotlinNativeHome)
+            .getDistributionInfo()?.kotlinNativeVersionString ?: return null
+    return parseFullKotlinVersionString(fullVersionString)
+}
 
 // A descriptor of Kotlin/Native for CLion or Kotlin/Native for AppCode plugin.
 val cidrKotlinPlugin: IdeaPluginDescriptor by lazy {
@@ -45,8 +48,46 @@ val defaultCidrKotlinVersion: CidrKotlinVersion by lazy {
     parseFullKotlinVersionString(fullKotlinVersion) ?: error("Invalid Kotlin/Native plugin version: $pluginVersion")
 }
 
-enum class CidrKotlinReleaseType {
-    RELEASE, DEV, EAP
+sealed class CidrKotlinReleaseType {
+    interface CidrKotlinReleaseTypeProducer<T : CidrKotlinReleaseType> {
+        fun getOrNull(name: String): T?
+    }
+
+    object RELEASE : CidrKotlinReleaseType(), CidrKotlinReleaseTypeProducer<RELEASE> {
+        override fun getOrNull(name: String): RELEASE? = if (isNameEqual(name)) RELEASE else null
+    }
+
+    object DEV : CidrKotlinReleaseType(), CidrKotlinReleaseTypeProducer<DEV> {
+        override fun getOrNull(name: String): DEV? = if (isNameEqual(name)) DEV else null
+    }
+
+    object EAP : CidrKotlinReleaseType(), CidrKotlinReleaseTypeProducer<EAP> {
+        override fun getOrNull(name: String): EAP? = if (isNameEqual(name)) EAP else null
+    }
+
+    class RC(val number: Int?) : CidrKotlinReleaseType() {
+        companion object : CidrKotlinReleaseTypeProducer<RC> {
+            private val prefix = RC::class.simpleName!!.toLowerCase()
+
+            override fun getOrNull(name: String): RC? {
+                if (!name.startsWith(prefix, ignoreCase = true)) return null
+
+                val remainder = name.substring(prefix.length)
+                return if (remainder.isEmpty()) RC(null)
+                else RC(remainder.toIntOrNull() ?: return null)
+            }
+        }
+    }
+
+    companion object {
+        private fun CidrKotlinReleaseType.isNameEqual(name: String) = javaClass.simpleName.equals(name, ignoreCase = true)
+
+        fun findByName(name: String): CidrKotlinReleaseType? =
+                RELEASE.getOrNull(name) as CidrKotlinReleaseType?
+                        ?: DEV.getOrNull(name)
+                        ?: EAP.getOrNull(name)
+                        ?: RC.getOrNull(name)
+    }
 }
 
 data class CidrKotlinVersion(
@@ -64,14 +105,19 @@ private fun parseFullKotlinVersionString(fullKotlinVersion: String): CidrKotlinV
 
     val kotlinVersionString = fullKotlinVersionParts[0]
     val kotlinVersion = kotlinVersionString.split('.')
-            .takeIf { it.size == 3 }
+            .let {
+                when (it.size) {
+                    2 -> listOf(it[0], it[1], "0")
+                    3 -> it
+                    else -> null
+                }
+            }
             ?.mapNotNull { it.toIntOrNull() }
             ?.takeIf { it.size == 3 }
             ?.let { KotlinVersion(it[0], it[1], it[2]) } ?: return null
 
     val releaseTypeString = fullKotlinVersionParts[1]
-    val releaseType = CidrKotlinReleaseType.values()
-            .firstOrNull { it.name.equals(releaseTypeString, ignoreCase = true) } ?: return null
+    val releaseType = CidrKotlinReleaseType.findByName(releaseTypeString) ?: return null
 
     val buildString = when (releaseType) {
         RELEASE -> if (fullKotlinVersionParts.size == 3) return null else null

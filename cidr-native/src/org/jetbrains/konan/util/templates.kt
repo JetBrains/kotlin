@@ -36,12 +36,12 @@ private val pluginVersion get() = when (defaultCidrKotlinVersion.releaseType) {
 }
 
 private val customPluginRepos get() = when (defaultCidrKotlinVersion.releaseType) {
-    RELEASE -> emptyList()
-    EAP -> listOf(
+    is RELEASE -> emptyList()
+    is EAP -> listOf(
             "https://dl.bintray.com/kotlin/kotlin-eap",
             "https://dl.bintray.com/kotlin/kotlin-dev"
     )
-    DEV -> listOf(
+    is DEV, is RC -> listOf(
             "https://dl.bintray.com/kotlin/kotlin-dev",
             "https://teamcity.jetbrains.com/guestAuth/app/rest/builds/buildType:(id:Kotlin_dev_Compiler),number:$defaultCidrKotlinVersion,branch:default:any/artifacts/content/maven/"
     )
