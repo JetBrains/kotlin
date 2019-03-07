@@ -199,7 +199,7 @@ class DelegatedPropertyGenerator(declarationGenerator: DeclarationGenerator) : D
     private fun createCallableReference(
         ktElement: KtElement,
         type: KotlinType,
-        referencedDescriptor: CallableDescriptor,
+        referencedDescriptor: VariableDescriptorWithAccessors,
         scopeOwner: IrSymbol
     ): IrCallableReference =
         createCallableReference(

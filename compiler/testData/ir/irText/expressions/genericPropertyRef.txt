@@ -79,7 +79,7 @@ FILE fqName:<root> fileName:/genericPropertyRef.kt
           CALL 'getValue(Any?, Any): Int' type=kotlin.Int origin=null
             $this: GET_FIELD '`additionalText$delegate`: DVal' type=DVal origin=null
             t: GET_VAR 'this@additionalText: Value<T>' type=Value<T> origin=null
-            p: PROPERTY_REFERENCE 'additionalText: Int on Value<T>' field='additionalText: Int on Value<T>' getter='<get-additionalText>() on Value<T>: Int' setter=null type=kotlin.reflect.KProperty1<Value<T>, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+            p: PROPERTY_REFERENCE 'additionalText: Int on Value<T>' field=null getter='<get-additionalText>() on Value<T>: Int' setter=null type=kotlin.reflect.KProperty1<Value<T>, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
               <T>: <none>
   PROPERTY name:additionalValue visibility:public modality:FINAL flags:delegated,val
     FIELD DELEGATE name:additionalValue$delegate type:DVal visibility:private flags:final,static
@@ -95,7 +95,7 @@ FILE fqName:<root> fileName:/genericPropertyRef.kt
           CALL 'getValue(Any?, Any): Int' type=kotlin.Int origin=null
             $this: GET_FIELD '`additionalValue$delegate`: DVal' type=DVal origin=null
             t: GET_VAR 'this@additionalValue: Value<T>' type=Value<T> origin=null
-            p: PROPERTY_REFERENCE 'additionalValue: Int on Value<T>' field='additionalValue: Int on Value<T>' getter='<get-additionalValue>() on Value<T>: Int' setter=null type=kotlin.reflect.KProperty1<Value<T>, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+            p: PROPERTY_REFERENCE 'additionalValue: Int on Value<T>' field=null getter='<get-additionalValue>() on Value<T>: Int' setter=null type=kotlin.reflect.KProperty1<Value<T>, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
               <T>: <none>
   CLASS CLASS name:DVal modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:DVal flags:

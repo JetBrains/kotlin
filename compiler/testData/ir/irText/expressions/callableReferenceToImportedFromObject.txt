@@ -37,7 +37,7 @@ FILE fqName:test fileName:/callableReferenceToImportedFromObject.kt
   PROPERTY name:test1 visibility:public modality:FINAL flags:val
     FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.reflect.KProperty0<kotlin.String> visibility:public flags:final,static
       EXPRESSION_BODY
-        PROPERTY_REFERENCE 'a: String' field=null getter='<get-a>(): String' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=null
+        PROPERTY_REFERENCE 'a: String' field='a: String' getter='<get-a>(): String' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=null
           $this: GET_OBJECT 'Foo' type=test.Foo
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KProperty0<kotlin.String> flags:
       correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL flags:val
@@ -47,7 +47,7 @@ FILE fqName:test fileName:/callableReferenceToImportedFromObject.kt
   PROPERTY name:test1a visibility:public modality:FINAL flags:val
     FIELD PROPERTY_BACKING_FIELD name:test1a type:kotlin.reflect.KProperty0<kotlin.String> visibility:public flags:final,static
       EXPRESSION_BODY
-        PROPERTY_REFERENCE 'a: String' field=null getter='<get-a>(): String' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=null
+        PROPERTY_REFERENCE 'a: String' field='a: String' getter='<get-a>(): String' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=null
           $this: GET_OBJECT 'Foo' type=test.Foo
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1a> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KProperty0<kotlin.String> flags:
       correspondingProperty: PROPERTY name:test1a visibility:public modality:FINAL flags:val

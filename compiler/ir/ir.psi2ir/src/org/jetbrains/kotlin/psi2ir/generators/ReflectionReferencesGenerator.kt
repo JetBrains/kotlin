@@ -142,9 +142,9 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
 
         return IrPropertyReferenceImpl(
             startOffset, endOffset, type.toIrType(),
-            context.symbolTable.referenceProperty(propertyDescriptor.original),
+            context.symbolTable.referenceProperty(originalProperty),
             propertyDescriptor.typeParametersCount,
-            originalGetter?.run { context.symbolTable.referenceField(originalProperty) },
+            getFieldForPropertyReference(originalProperty),
             originalGetter?.let { context.symbolTable.referenceSimpleFunction(it) },
             originalSetter?.let { context.symbolTable.referenceSimpleFunction(it) },
             origin
@@ -152,6 +152,14 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
             putTypeArguments(typeArguments) { it.toIrType() }
         }
     }
+
+    private fun getFieldForPropertyReference(originalProperty: PropertyDescriptor) =
+        // NB this is a hack, we really don't know if an arbitrary property has a backing field or not
+        when {
+            originalProperty.isDelegated -> null
+            originalProperty.getter != null -> null
+            else -> context.symbolTable.referenceField(originalProperty)
+        }
 
     private fun generateFunctionReference(
         startOffset: Int,
