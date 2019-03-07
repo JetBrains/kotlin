@@ -3,7 +3,7 @@ FILE: simpleFakeOverride.kt
         public constructor(): super<R|kotlin/Any|>()
 
         public final function foo(t: R|T|): R|T| {
-            return@@@foo <Unresolved name: t>#
+            return@@@foo R|<local>/t|
         }
 
     }

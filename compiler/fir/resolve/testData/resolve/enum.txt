@@ -28,7 +28,7 @@ FILE: enum.kt
             public constructor(): super<R|SomeEnum|>(<Unresolved name: O2>#)
 
             public final override function check(y: R|Some|): R|kotlin/Boolean| {
-                return@@@check ==(<Unresolved name: y>#, <Unresolved name: O2>#)
+                return@@@check ==(R|<local>/y|, <Unresolved name: O2>#)
             }
 
         }

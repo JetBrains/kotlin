@@ -45,3 +45,25 @@ FILE: access.kt
     public final function buz(): R|kotlin/Unit| {
         R|/bar|()
     }
+    public final function f(): R|kotlin/Unit| {
+        val a: R|kotlin/Int| = Int(10)
+        val b: R|kotlin/Int| = R|<local>/a|
+        val d: R|kotlin/String| = String()
+        val c: <ERROR TYPE: Unresolved name: c> = <Unresolved name: c>#
+        <Unresolved name: abc>#()
+        public final function bcd(): R|kotlin/Unit| {
+        }
+
+        public final function abc(): R|kotlin/Unit| {
+            val a: R|kotlin/String| = R|<local>/d|
+            val b: R|kotlin/String| = R|<local>/a|
+            R|<local>/bcd|()
+            public final function dcb(): R|kotlin/Unit| {
+            }
+
+            R|<local>/dcb|()
+        }
+
+        <Unresolved name: dcb>#()
+        R|<local>/abc|()
+    }

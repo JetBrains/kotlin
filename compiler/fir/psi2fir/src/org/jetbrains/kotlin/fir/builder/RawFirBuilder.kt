@@ -445,9 +445,12 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
 
         val currentClassId get() = ClassId(packageFqName, className, false)
 
-        fun callableIdForName(name: Name) =
-            if (className == FqName.ROOT) CallableId(packageFqName, name)
-            else CallableId(packageFqName, className, name)
+        fun callableIdForName(name: Name, local: Boolean = false) =
+            when {
+                local -> CallableId(name)
+                className == FqName.ROOT -> CallableId(packageFqName, name)
+                else -> CallableId(packageFqName, className, name)
+            }
 
         fun callableIdForClassConstructor() =
             if (className == FqName.ROOT) CallableId(packageFqName, Name.special("<anonymous-init>"))
@@ -561,10 +564,11 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
             val firFunction = if (function.name == null) {
                 FirAnonymousFunctionImpl(session, function, returnType, receiverType)
             } else {
+
                 FirMemberFunctionImpl(
                     session,
                     function,
-                    FirFunctionSymbol(callableIdForName(function.nameAsSafeName)),
+                    FirFunctionSymbol(callableIdForName(function.nameAsSafeName, function.isLocal)),
                     function.nameAsSafeName,
                     function.visibility,
                     function.modality,

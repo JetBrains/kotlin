@@ -10,7 +10,7 @@ FILE: nestedClass.kt
         public constructor(): super<R|kotlin/Any|>()
 
         public final class Derived : R|Base| {
-            public constructor(s: R|kotlin/String|): super<R|Base|>(R|/Base.s|)
+            public constructor(s: R|kotlin/String|): super<R|Base|>(R|<local>/s|)
 
         }
 

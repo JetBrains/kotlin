@@ -30,3 +30,28 @@ fun bar() {
 fun buz() {
     bar()
 }
+
+fun f() {
+    val a = 10
+    val b = a
+    val d = ""
+    val c = c
+
+    abc()
+
+    fun bcd() {}
+
+    fun abc() {
+        val a = d
+        val b = a
+        bcd()
+
+        fun dcb() {}
+
+        dcb()
+    }
+
+    dcb()
+
+    abc()
+}

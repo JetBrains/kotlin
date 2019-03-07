@@ -44,7 +44,7 @@ class FirBodyResolveTransformer(val session: FirSession) : FirTransformer<Any?>(
     }
 
     override fun transformFile(file: FirFile, data: Any?): CompositeTransformResult<FirFile> {
-        return withScopeCleanup {
+        return withScopeCleanup(scopes) {
             scopes += FirTopLevelDeclaredMemberScope(file, session)
             super.transformFile(file, data)
         }
@@ -55,6 +55,19 @@ class FirBodyResolveTransformer(val session: FirSession) : FirTransformer<Any?>(
             return implicitTypeRef.compose()
         require(data is FirTypeRef)
         return data.compose()
+    }
+
+    override fun transformFunction(function: FirFunction, data: Any?): CompositeTransformResult<FirDeclaration> {
+        return withScopeCleanup(localScopes) {
+            localScopes += FirLocalScope()
+            super.transformFunction(function, data)
+        }
+    }
+
+
+    override fun transformValueParameter(valueParameter: FirValueParameter, data: Any?): CompositeTransformResult<FirDeclaration> {
+        localScopes.lastOrNull()?.storeDeclaration(valueParameter)
+        return super.transformValueParameter(valueParameter, data)
     }
 
 
@@ -99,14 +112,14 @@ class FirBodyResolveTransformer(val session: FirSession) : FirTransformer<Any?>(
     }
 
     override fun transformRegularClass(regularClass: FirRegularClass, data: Any?): CompositeTransformResult<FirDeclaration> {
-        return withScopeCleanup {
+        return withScopeCleanup(scopes) {
             scopes += regularClass.buildUseSiteScope()
             super.transformRegularClass(regularClass, data)
         }
     }
 
 
-    protected inline fun <T> withScopeCleanup(crossinline l: () -> T): T {
+    protected inline fun <T> withScopeCleanup(scopes: MutableList<*>, crossinline l: () -> T): T {
         val sizeBefore = scopes.size
         val result = l()
         val size = scopes.size
@@ -118,7 +131,7 @@ class FirBodyResolveTransformer(val session: FirSession) : FirTransformer<Any?>(
     }
 
     val scopes = mutableListOf<FirScope>()
-    val localScopes = mutableListOf<FirScope>()
+    val localScopes = mutableListOf<FirLocalScope>()
 
     enum class CandidateApplicability {
         HIDDEN,
@@ -215,7 +228,7 @@ class FirBodyResolveTransformer(val session: FirSession) : FirTransformer<Any?>(
         }
 
         override fun consumeCandidate(group: Int, symbol: ConeCallableSymbol) {
-            if (symbol !is ConePropertySymbol) return
+            if (symbol !is ConeVariableSymbol) return
             if (symbol.callableId.callableName != name) return
             super.consumeCandidate(group, symbol)
         }
@@ -562,7 +575,8 @@ class FirBodyResolveTransformer(val session: FirSession) : FirTransformer<Any?>(
 
     override fun transformNamedFunction(namedFunction: FirNamedFunction, data: Any?): CompositeTransformResult<FirDeclaration> {
 
-        return withScopeCleanup {
+        localScopes.lastOrNull()?.storeDeclaration(namedFunction)
+        return withScopeCleanup(scopes) {
             scopes.addIfNotNull(namedFunction.receiverTypeRef?.coneTypeSafe()?.scope(session))
             val body = namedFunction.body
             if (namedFunction.returnTypeRef is FirImplicitTypeRef && body != null) {
@@ -585,6 +599,9 @@ class FirBodyResolveTransformer(val session: FirSession) : FirTransformer<Any?>(
                     variable.transformReturnTypeRef(this, initializer.resultType)
                 }
             }
+        }
+        if (variable !is FirProperty) {
+            localScopes.last().storeDeclaration(variable)
         }
         return super.transformVariable(variable, data)
     }

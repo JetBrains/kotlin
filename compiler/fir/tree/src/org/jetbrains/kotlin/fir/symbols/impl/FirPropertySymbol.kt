@@ -16,5 +16,7 @@ import org.jetbrains.kotlin.name.Name
 class FirPropertySymbol(callableId: CallableId) : FirVariableSymbol(callableId), ConePropertySymbol
 
 open class FirVariableSymbol(override val callableId: CallableId) : ConeVariableSymbol, AbstractFirBasedSymbol<FirCallableDeclaration>() {
-    constructor(name: Name) : this(CallableId(FqName("var"), name))  // TODO?
+
+    @Deprecated("TODO: Better solution for local vars?")
+    constructor(name: Name) : this(CallableId(name))  // TODO?
 }
