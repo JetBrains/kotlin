@@ -115,6 +115,7 @@ object NativeDefinitionsSyntaxHighlighter : SyntaxHighlighterBase() {
             NativeDefinitionsTypes.LIBRARY_PATHS -> KNOWN_PROPERTIES_KEYS
             NativeDefinitionsTypes.LINKER -> KNOWN_PROPERTIES_KEYS
             NativeDefinitionsTypes.LINKER_OPTS -> KNOWN_PROPERTIES_KEYS
+            NativeDefinitionsTypes.MODULES -> KNOWN_PROPERTIES_KEYS
             NativeDefinitionsTypes.NON_STRICT_ENUMS -> KNOWN_PROPERTIES_KEYS
             NativeDefinitionsTypes.NO_STRING_CONVERSION -> KNOWN_PROPERTIES_KEYS
             NativeDefinitionsTypes.PACKAGE -> KNOWN_PROPERTIES_KEYS
