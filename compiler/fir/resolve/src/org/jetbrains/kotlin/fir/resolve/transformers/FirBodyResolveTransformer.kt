@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers
 
+import com.google.common.collect.LinkedHashMultimap
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.fir.visitors.compose
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
+import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirErrorTypeRefImpl
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.name.Name
@@ -103,19 +105,43 @@ class FirBodyResolveTransformer(val session: FirSession) : FirTransformer<Any?>(
     }
 
     fun ConeKotlinType.scope(useSiteSession: FirSession): FirScope {
-        when (this) {
-            is ConeClassTypeImpl -> return (this.lookupTag.toSymbol(useSiteSession) as FirBasedSymbol<FirRegularClass>).fir.buildUseSiteScope(
+        return when (this) {
+            is ConeAbbreviatedType -> directExpansion.scope(useSiteSession)
+            is ConeClassLikeType -> (this.lookupTag.toSymbol(useSiteSession) as FirBasedSymbol<FirRegularClass>).fir.buildUseSiteScope(
                 useSiteSession
             )
             else -> error("Failed type ${this}")
         }
     }
 
+
+    inline fun <T> withLabel(labelName: Name, type: ConeKotlinType, block: () -> T): T {
+        labels.put(labelName, type)
+        val result = block()
+        labels.remove(labelName, type)
+        return result
+    }
+
     override fun transformRegularClass(regularClass: FirRegularClass, data: Any?): CompositeTransformResult<FirDeclaration> {
         return withScopeCleanup(scopes) {
             scopes += regularClass.buildUseSiteScope()
-            super.transformRegularClass(regularClass, data)
+            withLabel(regularClass.name, regularClass.defaultType()) {
+                super.transformRegularClass(regularClass, data)
+            }
         }
+    }
+
+    private fun FirRegularClass.defaultType(): ConeClassTypeImpl {
+        return ConeClassTypeImpl(
+            symbol.toLookupTag(),
+            typeParameters.map {
+                ConeTypeParameterTypeImpl(
+                    it.symbol.toLookupTag(),
+                    isNullable = false
+                )
+            }.toTypedArray(),
+            isNullable = false
+        )
     }
 
 
@@ -132,6 +158,8 @@ class FirBodyResolveTransformer(val session: FirSession) : FirTransformer<Any?>(
 
     val scopes = mutableListOf<FirScope>()
     val localScopes = mutableListOf<FirLocalScope>()
+
+    val labels = LinkedHashMultimap.create<Name, ConeKotlinType>()
 
     enum class CandidateApplicability {
         HIDDEN,
@@ -416,6 +444,15 @@ class FirBodyResolveTransformer(val session: FirSession) : FirTransformer<Any?>(
         data: Any?
     ): CompositeTransformResult<FirStatement> {
 
+        when (val callee = qualifiedAccessExpression.calleeReference) {
+            is FirThisReference -> {
+
+                val labelName = callee.labelName
+                val types = if (labelName == null) labels.values() else labels[Name.identifier(labelName)]
+                val type = types.lastOrNull() ?: ConeKotlinErrorType("Unresolved this@$labelName")
+                bindingContext[qualifiedAccessExpression] = FirResolvedTypeRefImpl(session, null, type, false, emptyList())
+            }
+        }
         val callee = qualifiedAccessExpression.calleeReference as? FirSimpleNamedReference ?: return qualifiedAccessExpression.compose()
 
         qualifiedAccessExpression.explicitReceiver?.visitNoTransform(this, null)
@@ -574,19 +611,26 @@ class FirBodyResolveTransformer(val session: FirSession) : FirTransformer<Any?>(
 
 
     override fun transformNamedFunction(namedFunction: FirNamedFunction, data: Any?): CompositeTransformResult<FirDeclaration> {
+        val receiverTypeRef = namedFunction.receiverTypeRef
+        fun transform(): CompositeTransformResult<FirDeclaration> {
+            localScopes.lastOrNull()?.storeDeclaration(namedFunction)
+            return withScopeCleanup(scopes) {
+                scopes.addIfNotNull(receiverTypeRef?.coneTypeSafe()?.scope(session))
+                val body = namedFunction.body
+                if (namedFunction.returnTypeRef is FirImplicitTypeRef && body != null) {
+                    body.visitNoTransform(this, namedFunction.returnTypeRef)
+                    namedFunction.transformReturnTypeRef(this, body.resultType)
+                }
 
-        localScopes.lastOrNull()?.storeDeclaration(namedFunction)
-        return withScopeCleanup(scopes) {
-            scopes.addIfNotNull(namedFunction.receiverTypeRef?.coneTypeSafe()?.scope(session))
-            val body = namedFunction.body
-            if (namedFunction.returnTypeRef is FirImplicitTypeRef && body != null) {
-                body.visitNoTransform(this, namedFunction.returnTypeRef)
-                namedFunction.transformReturnTypeRef(this, body.resultType)
+                super.transformNamedFunction(namedFunction, data)
             }
-
-            super.transformNamedFunction(namedFunction, data)
         }
 
+        return if (receiverTypeRef != null) {
+            withLabel(namedFunction.name, receiverTypeRef.coneTypeUnsafe()) { transform() }
+        } else {
+            transform()
+        }
     }
 
     override fun transformVariable(variable: FirVariable, data: Any?): CompositeTransformResult<FirDeclaration> {

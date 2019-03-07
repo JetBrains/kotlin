@@ -7,6 +7,6 @@ FILE: noPrimaryConstructor.kt
             this#.x# = x#
         }
 
-        public? constructor(): this<NoPrimary>(String())
+        public? constructor(): this<R|NoPrimary|>(String())
 
     }
