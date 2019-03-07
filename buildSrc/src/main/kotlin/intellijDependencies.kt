@@ -147,7 +147,6 @@ fun Project.runIdeTask(name: String, ideaPluginDir: File, ideaSandboxDir: File, 
             "-XX:ReservedCodeCacheSize=240m",
             "-XX:+HeapDumpOnOutOfMemoryError",
             "-ea",
-            "-Didea.is.internal=true",
             "-Didea.debug.mode=true",
             "-Didea.system.path=$ideaSandboxDir",
             "-Didea.config.path=$ideaSandboxConfigDir",
@@ -164,6 +163,8 @@ fun Project.runIdeTask(name: String, ideaPluginDir: File, ideaSandboxDir: File, 
         if (project.hasProperty("noPCE")) {
             jvmArgs("-Didea.ProcessCanceledException=disabled")
         }
+
+        jvmArgs("-Didea.is.internal=${project.findProperty("idea.is.internal") ?: true}")
 
         project.findProperty("idea.args")?.let { arguments ->
             jvmArgs(arguments.toString().split(" "))
