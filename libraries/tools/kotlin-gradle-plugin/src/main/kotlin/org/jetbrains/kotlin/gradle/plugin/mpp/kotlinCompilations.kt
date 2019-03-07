@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
-import gnu.trove.TLongHashSet
 import groovy.lang.Closure
 import org.gradle.api.Project
 import org.gradle.api.attributes.AttributeContainer
@@ -23,6 +22,7 @@ import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.util.*
 import java.util.concurrent.Callable
+import kotlin.collections.HashSet
 
 internal fun KotlinCompilation<*>.composeName(prefix: String? = null, suffix: String? = null): String {
     val compilationNamePart = compilationName.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME }
@@ -106,7 +106,7 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
             target.project.whenEvaluated {
                 sourceSet.getSourceSetHierarchy().forEach { sourceSet ->
                     val isCommonSource =
-                        CompilationSourceSetUtil.sourceSetsInMultipleCompilations(project)?.contains(sourceSet.id) ?: false
+                        CompilationSourceSetUtil.sourceSetsInMultipleCompilations(project)?.contains(sourceSet.name) ?: false
 
                     addSourcesToCompileTask(sourceSet, addAsCommonSources = isCommonSource)
 
@@ -201,7 +201,7 @@ internal fun KotlinCompilation<*>.disambiguateName(simpleName: String): String {
 
 private object CompilationSourceSetUtil {
     // Cache the results per project
-    private val projectSourceSetsInMultipleCompilationsCache = WeakHashMap<Project, TLongHashSet>()
+    private val projectSourceSetsInMultipleCompilationsCache = WeakHashMap<Project, Set<String>>()
 
     fun sourceSetsInMultipleCompilations(project: Project) =
         projectSourceSetsInMultipleCompilationsCache.computeIfAbsent(project) { _ ->
@@ -215,10 +215,10 @@ private object CompilationSourceSetUtil {
                 .groupingBy { (_, sourceSet) -> sourceSet }
                 .eachCount()
 
-            TLongHashSet().apply {
+            HashSet<String>().apply {
                 for (entry in sources) {
                     if (entry.value > 1) {
-                        add(entry.key.id)
+                        add(entry.key.name)
                     }
                 }
             }

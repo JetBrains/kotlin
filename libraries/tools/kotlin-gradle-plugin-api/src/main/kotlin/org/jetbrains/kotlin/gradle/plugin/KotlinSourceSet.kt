@@ -10,7 +10,6 @@ import org.gradle.api.Named
 import org.gradle.api.file.SourceDirectorySet
 
 interface KotlinSourceSet : Named, HasKotlinDependencies {
-    val id: Long
     val kotlin: SourceDirectorySet
     fun kotlin(configureClosure: Closure<Any?>): SourceDirectorySet
 

@@ -28,13 +28,8 @@ const val METADATA_CONFIGURATION_NAME_SUFFIX = "DependenciesMetadata"
 class DefaultKotlinSourceSet(
     private val project: Project,
     val displayName: String,
-    fileResolver: FileResolver,
-    override val id: Long = idGenerator.incrementAndGet()
+    fileResolver: FileResolver
 ) : KotlinSourceSet {
-    companion object {
-        private val idGenerator = AtomicLong()
-    }
-
     override val apiConfigurationName: String
         get() = disambiguateName("api")
 
