@@ -60,7 +60,7 @@ internal fun ClassId.toConeKotlinType(
     return ConeClassTypeImpl(lookupTag, typeArguments, isNullable)
 }
 
-internal fun FirTypeRef.toNotNullConeKotlinType(): ConeKotlinType =
+internal fun FirTypeRef.toNotNullConeKotlinType(session: FirSession): ConeKotlinType =
     when (this) {
         is FirResolvedTypeRef -> type
         is FirJavaTypeRef -> {
@@ -159,7 +159,7 @@ internal fun JavaAnnotation.toFirAnnotationCall(session: FirSession): FirAnnotat
     return FirAnnotationCallImpl(
         session, psi = null, useSiteTarget = null,
         annotationTypeRef = FirResolvedTypeRefImpl(
-            session = session,
+            session,
             psi = null,
             type = ConeClassTypeImpl(FirClassSymbol(classId!!).toLookupTag(), emptyArray(), isNullable = false),
             isMarkedNullable = true,
@@ -172,7 +172,7 @@ internal fun JavaAnnotation.toFirAnnotationCall(session: FirSession): FirAnnotat
     }
 }
 
-internal fun FirAbstractAnnotatedElement.addAnnotationsFrom(javaAnnotationOwner: JavaAnnotationOwner) {
+internal fun FirAbstractAnnotatedElement.addAnnotationsFrom(session: FirSession, javaAnnotationOwner: JavaAnnotationOwner) {
     for (annotation in javaAnnotationOwner.annotations) {
         annotations += annotation.toFirAnnotationCall(session)
     }
@@ -184,7 +184,7 @@ internal fun JavaValueParameter.toFirValueParameters(session: FirSession): FirVa
         returnTypeRef = type.toFirJavaTypeRef(session),
         isVararg = isVararg
     ).apply {
-        addAnnotationsFrom(this@toFirValueParameters)
+        addAnnotationsFrom(session, this@toFirValueParameters)
     }
 }
 

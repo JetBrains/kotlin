@@ -40,7 +40,7 @@ class JavaClassUseSiteScope(
     }
 
     private fun isEqualTypes(a: FirTypeRef, b: FirTypeRef) =
-        isEqualTypes(a.toNotNullConeKotlinType(), b.toNotNullConeKotlinType())
+        isEqualTypes(a.toNotNullConeKotlinType(session), b.toNotNullConeKotlinType(session))
 
     private fun isOverriddenFunCheck(member: FirNamedFunction, self: FirNamedFunction): Boolean {
         return member.valueParameters.size == self.valueParameters.size &&

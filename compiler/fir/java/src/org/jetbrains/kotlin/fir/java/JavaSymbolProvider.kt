@@ -80,11 +80,11 @@ class JavaSymbolProvider(
                     isTopLevel = classId.relativeClassName.parent().isRoot, isStatic = javaClass.isStatic
                 ).apply {
                     for (typeParameter in javaClass.typeParameters) {
-                        typeParameters += createTypeParameterSymbol(session, typeParameter.name).fir
+                        typeParameters += createTypeParameterSymbol(this@JavaSymbolProvider.session, typeParameter.name).fir
                     }
-                    addAnnotationsFrom(javaClass)
+                    addAnnotationsFrom(this@JavaSymbolProvider.session, javaClass)
                     for (supertype in javaClass.supertypes) {
-                        superTypeRefs += supertype.toFirResolvedTypeRef(session)
+                        superTypeRefs += supertype.toFirResolvedTypeRef(this@JavaSymbolProvider.session)
                     }
                     // TODO: may be we can process fields & methods later.
                     // However, they should be built up to override resolve stage
@@ -94,13 +94,13 @@ class JavaSymbolProvider(
                         val fieldSymbol = FirFieldSymbol(fieldId)
                         val returnType = javaField.type
                         val firJavaField = FirJavaField(
-                            session, fieldSymbol, fieldName,
+                            this@JavaSymbolProvider.session, fieldSymbol, fieldName,
                             javaField.visibility, javaField.modality,
-                            returnTypeRef = returnType.toFirJavaTypeRef(session),
+                            returnTypeRef = returnType.toFirJavaTypeRef(this@JavaSymbolProvider.session),
                             isVar = !javaField.isFinal,
                             isStatic = javaField.isStatic
                         ).apply {
-                            addAnnotationsFrom(javaField)
+                            addAnnotationsFrom(this@JavaSymbolProvider.session, javaField)
                         }
                         declarations += firJavaField
                     }
@@ -110,17 +110,17 @@ class JavaSymbolProvider(
                         val methodSymbol = FirFunctionSymbol(methodId)
                         val returnType = javaMethod.returnType
                         val firJavaMethod = FirJavaMethod(
-                            session, methodSymbol, methodName,
+                            this@JavaSymbolProvider.session, methodSymbol, methodName,
                             javaMethod.visibility, javaMethod.modality,
-                            returnTypeRef = returnType.toFirJavaTypeRef(session),
+                            returnTypeRef = returnType.toFirJavaTypeRef(this@JavaSymbolProvider.session),
                             isStatic = javaMethod.isStatic
                         ).apply {
                             for (typeParameter in javaMethod.typeParameters) {
-                                typeParameters += createTypeParameterSymbol(session, typeParameter.name).fir
+                                typeParameters += createTypeParameterSymbol(this@JavaSymbolProvider.session, typeParameter.name).fir
                             }
-                            addAnnotationsFrom(javaMethod)
+                            addAnnotationsFrom(this@JavaSymbolProvider.session, javaMethod)
                             for (valueParameter in javaMethod.valueParameters) {
-                                valueParameters += valueParameter.toFirValueParameters(session)
+                                valueParameters += valueParameter.toFirValueParameters(this@JavaSymbolProvider.session)
                             }
                         }
                         declarations += firJavaMethod
@@ -129,19 +129,19 @@ class JavaSymbolProvider(
                         val constructorId = CallableId(classId.packageFqName, classId.relativeClassName, classId.shortClassName)
                         val constructorSymbol = FirFunctionSymbol(constructorId)
                         val firJavaConstructor = FirJavaConstructor(
-                            session, constructorSymbol, javaConstructor.visibility,
+                            this@JavaSymbolProvider.session, constructorSymbol, javaConstructor.visibility,
                             FirResolvedTypeRefImpl(
-                                session, null,
+                                this@JavaSymbolProvider.session, null,
                                 firSymbol.constructType(emptyArray(), false),
                                 false, emptyList()
                             )
                         ).apply {
                             for (typeParameter in javaConstructor.typeParameters) {
-                                typeParameters += createTypeParameterSymbol(session, typeParameter.name).fir
+                                typeParameters += createTypeParameterSymbol(this@JavaSymbolProvider.session, typeParameter.name).fir
                             }
-                            addAnnotationsFrom(javaConstructor)
+                            addAnnotationsFrom(this@JavaSymbolProvider.session, javaConstructor)
                             for (valueParameter in javaConstructor.valueParameters) {
-                                valueParameters += valueParameter.toFirValueParameters(session)
+                                valueParameters += valueParameter.toFirValueParameters(this@JavaSymbolProvider.session)
                             }
                         }
                         declarations += firJavaConstructor

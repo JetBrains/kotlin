@@ -37,14 +37,14 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.Jsr305State
 
 class JavaClassEnhancementScope(
-    session: FirSession,
+    private val session: FirSession,
     private val useSiteScope: JavaClassUseSiteScope
 ) : FirScope {
     private val owner: FirRegularClass get() = useSiteScope.symbol.fir
 
     private val jsr305State: Jsr305State = session.jsr305State ?: Jsr305State.DEFAULT
 
-    private val typeQualifierResolver = FirAnnotationTypeQualifierResolver(jsr305State)
+    private val typeQualifierResolver = FirAnnotationTypeQualifierResolver(session, jsr305State)
 
     private val context: FirJavaEnhancementContext =
         FirJavaEnhancementContext(session) { null }.copyWithNewDefaultTypeQualifiers(typeQualifierResolver, jsr305State, owner.annotations)
@@ -83,14 +83,14 @@ class JavaClassEnhancementScope(
         val symbol = FirPropertySymbol(original.callableId)
         with(firField) {
             FirMemberPropertyImpl(
-                session, null, symbol, name,
+                this@JavaClassEnhancementScope.session, null, symbol, name,
                 visibility, modality, isExpect, isActual, isOverride,
                 isConst = false, isLateInit = false,
                 receiverTypeRef = null,
                 returnTypeRef = newReturnTypeRef,
                 isVar = isVar, initializer = null,
-                getter = FirDefaultPropertyGetter(session, null, newReturnTypeRef, visibility),
-                setter = FirDefaultPropertySetter(session, null, newReturnTypeRef, visibility),
+                getter = FirDefaultPropertyGetter(this@JavaClassEnhancementScope.session, null, newReturnTypeRef, visibility),
+                setter = FirDefaultPropertySetter(this@JavaClassEnhancementScope.session, null, newReturnTypeRef, visibility),
                 delegate = null
             ).apply {
                 annotations += firField.annotations
@@ -139,22 +139,20 @@ class JavaClassEnhancementScope(
         }
 
         val symbol = FirFunctionSymbol(original.callableId)
-        with(firMethod) {
-            FirMemberFunctionImpl(
-                session, null, symbol, name,
-                newReceiverTypeRef, newReturnTypeRef
-            ).apply {
-                status = firMethod.status as FirDeclarationStatusImpl
-                annotations += firMethod.annotations
-                valueParameters += firMethod.valueParameters.zip(newValueParameterTypeRefs) { valueParameter, newTypeRef ->
-                    with(valueParameter) {
-                        FirValueParameterImpl(
-                            session, psi,
-                            this.name, newTypeRef,
-                            defaultValue, isCrossinline, isNoinline, isVararg
-                        ).apply {
-                            annotations += valueParameter.annotations
-                        }
+        FirMemberFunctionImpl(
+            this@JavaClassEnhancementScope.session, null, symbol, name,
+            newReceiverTypeRef, newReturnTypeRef
+        ).apply {
+            status = firMethod.status as FirDeclarationStatusImpl
+            annotations += firMethod.annotations
+            valueParameters += firMethod.valueParameters.zip(newValueParameterTypeRefs) { valueParameter, newTypeRef ->
+                with(valueParameter) {
+                    FirValueParameterImpl(
+                        this@JavaClassEnhancementScope.session, psi,
+                        this.name, newTypeRef,
+                        defaultValue, isCrossinline, isNoinline, isVararg
+                    ).apply {
+                        annotations += valueParameter.annotations
                     }
                 }
             }
@@ -198,7 +196,7 @@ class JavaClassEnhancementScope(
             parameterContainer = ownerFunction,
             methodContext = memberContext,
             typeInSignature = TypeInSignature.Receiver
-        ).enhance(jsr305State)
+        ).enhance(session, jsr305State)
         return signatureParts.type
     }
 
@@ -214,7 +212,7 @@ class JavaClassEnhancementScope(
             parameterContainer = ownerParameter,
             methodContext = memberContext,
             typeInSignature = TypeInSignature.ValueParameter(index)
-        ).enhance(jsr305State, predefinedEnhancementInfo?.parametersInfo?.getOrNull(index))
+        ).enhance(session, jsr305State, predefinedEnhancementInfo?.parametersInfo?.getOrNull(index))
         return signatureParts.type
     }
 
@@ -231,7 +229,7 @@ class JavaClassEnhancementScope(
             if (owner is FirJavaField) AnnotationTypeQualifierResolver.QualifierApplicabilityType.FIELD
             else AnnotationTypeQualifierResolver.QualifierApplicabilityType.METHOD_RETURN_TYPE,
             typeInSignature = TypeInSignature.Return
-        ).enhance(jsr305State, predefinedEnhancementInfo?.returnTypeInfo)
+        ).enhance(session, jsr305State, predefinedEnhancementInfo?.returnTypeInfo)
         return signatureParts.type
     }
 

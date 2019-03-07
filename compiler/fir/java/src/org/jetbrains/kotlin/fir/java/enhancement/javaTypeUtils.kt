@@ -46,9 +46,7 @@ internal class IndexedJavaTypeQualifiers(private val data: Array<JavaTypeQualifi
     val size: Int get() = data.size
 }
 
-internal fun FirJavaTypeRef.enhance(
-    qualifiers: IndexedJavaTypeQualifiers
-): FirResolvedTypeRef {
+internal fun FirJavaTypeRef.enhance(session: FirSession, qualifiers: IndexedJavaTypeQualifiers): FirResolvedTypeRef {
     return type.enhancePossiblyFlexible(session, annotations, qualifiers, 0)
 }
 

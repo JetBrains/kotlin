@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.java.enhancement
 
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -16,7 +17,7 @@ import org.jetbrains.kotlin.utils.Jsr305State
 import org.jetbrains.kotlin.utils.ReportLevel
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
-class FirAnnotationTypeQualifierResolver(private val jsr305State: Jsr305State) {
+class FirAnnotationTypeQualifierResolver(private val session: FirSession, private val jsr305State: Jsr305State) {
 
     class TypeQualifierWithApplicability(
         private val typeQualifier: FirAnnotationCall,
@@ -48,7 +49,7 @@ class FirAnnotationTypeQualifierResolver(private val jsr305State: Jsr305State) {
     }
 
     private val FirAnnotationCall.resolvedClass: FirRegularClass?
-        get() = (coneClassLikeType?.lookupTag?.toSymbol(session) as? FirClassSymbol)?.fir
+        get() = (coneClassLikeType?.lookupTag?.toSymbol(this@FirAnnotationTypeQualifierResolver.session) as? FirClassSymbol)?.fir
 
     fun resolveTypeQualifierAnnotation(annotationCall: FirAnnotationCall): FirAnnotationCall? {
         if (jsr305State.disabled) {
