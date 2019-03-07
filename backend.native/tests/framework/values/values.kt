@@ -278,3 +278,5 @@ class Deeply {
         }
     }
 }
+
+data class CKeywords(val float: Float, val `enum`: Int, var goto: Boolean)

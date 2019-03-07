@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.objcexport
 
 import org.jetbrains.kotlin.analyzer.ModuleInfo
+import org.jetbrains.kotlin.backend.konan.cKeywords
 import org.jetbrains.kotlin.backend.konan.descriptors.isArray
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -105,11 +106,13 @@ internal class ObjCExportNamerImpl(
     }
 
     private val propertyNames = object : Mapping<PropertyDescriptor, String>() {
+        override fun reserved(name: String) = name in cKeywords
+
         override fun conflict(first: PropertyDescriptor, second: PropertyDescriptor): Boolean =
                 !mapper.canHaveSameName(first, second)
     }
 
-    private inner open class GlobalNameMapping<in T : Any, N> : Mapping<T, N>() {
+    private open inner class GlobalNameMapping<in T : Any, N> : Mapping<T, N>() {
         final override fun conflict(first: T, second: T): Boolean = true
     }
 
@@ -131,7 +134,7 @@ internal class ObjCExportNamerImpl(
                 "useStoredAccessor"
         )
 
-        override fun reserved(name: String) = name in reserved
+        override fun reserved(name: String) = (name in reserved) || (name in cKeywords)
     }
 
     private val objectInstanceSelectors = object : ClassPropertyNameMapping<ClassDescriptor>() {
