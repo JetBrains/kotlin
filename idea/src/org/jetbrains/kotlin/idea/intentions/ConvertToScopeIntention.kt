@@ -68,30 +68,37 @@ sealed class ConvertToScopeIntention(
             ALSO, APPLY -> property
             else -> first
         } ?: return
-        val parent = element.parent
+        val parent = element.parent.let { if (it is KtBinaryExpression) it.parent else it }
 
         val psiFactory = KtPsiFactory(element)
         val (scopeFunctionCall, block) = psiFactory.createScopeFunctionCall(propertyOrFirst) ?: return
         block.addRange(property?.nextSibling ?: first, last)
-        block.children.forEach { child ->
-            when (child) {
-                is KtDotQualifiedExpression -> {
-                    val replaced = child.deleteFirstReceiver()
-                    if (scopeFunction.isParameterScope) {
-                        replaced.replace(psiFactory.createExpressionByPattern("${scopeFunction.receiver}.$0", replaced))
-                    }
+        block.children.forEach { replace(it, referenceName, psiFactory) }
+        parent.addBefore(scopeFunctionCall, propertyOrFirst)
+        parent.deleteChildRange(propertyOrFirst, last)
+    }
+
+    private fun replace(element: PsiElement, referenceName: String, psiFactory: KtPsiFactory) {
+        when (element) {
+            is KtDotQualifiedExpression -> {
+                val replaced = element.deleteFirstReceiver()
+                if (scopeFunction.isParameterScope) {
+                    replaced.replace(psiFactory.createExpressionByPattern("${scopeFunction.receiver}.$0", replaced))
                 }
-                is KtCallExpression -> {
-                    child.valueArguments.forEach { arg ->
-                        if (arg.getArgumentExpression()?.text == referenceName) {
-                            arg.replace(psiFactory.createArgument(scopeFunction.receiver))
-                        }
+            }
+            is KtCallExpression -> {
+                element.valueArguments.forEach { arg ->
+                    if (arg.getArgumentExpression()?.text == referenceName) {
+                        arg.replace(psiFactory.createArgument(scopeFunction.receiver))
                     }
                 }
             }
+            is KtBinaryExpression -> {
+                listOfNotNull(element.left, element.right).forEach {
+                    replace(it, referenceName, psiFactory)
+                }
+            }
         }
-        parent.addBefore(scopeFunctionCall, propertyOrFirst)
-        parent.deleteChildRange(propertyOrFirst, last)
     }
 
     private fun KtExpression.collectTargetElements(): Pair<List<PsiElement>, String>? {
@@ -100,7 +107,8 @@ sealed class ConvertToScopeIntention(
                 val property = prevProperty() ?: return null
                 val referenceName = property.name ?: return null
                 val targets = property.collectTargetElements(referenceName, forward = true).toList()
-                if (this !is KtProperty && this !in targets) return null
+                val parentOrThis = parent as? KtBinaryExpression ?: this
+                if (this !is KtProperty && parentOrThis !in targets) return null
                 targets to referenceName
             }
             else -> {
@@ -116,7 +124,8 @@ sealed class ConvertToScopeIntention(
     }
 
     private fun KtExpression.collectTargetElements(referenceName: String, forward: Boolean): Sequence<PsiElement> {
-        return siblings(forward, withItself = false)
+        val parentOrThis = parent as? KtBinaryExpression ?: this
+        return parentOrThis.siblings(forward, withItself = false)
             .filter { it !is PsiWhiteSpace && it !is PsiComment }
             .takeWhile { it.isTarget(referenceName) }
     }
@@ -135,6 +144,15 @@ sealed class ConvertToScopeIntention(
                 if (valueArguments.none { it.getArgumentExpression()?.text == referenceName }) return false
                 if (lambdaArguments.isNotEmpty() || valueArguments.any { it.text == scopeFunction.receiver }) return false
             }
+            is KtBinaryExpression -> {
+                val left = this.left ?: return false
+                val right = this.right ?: return false
+                if (left !is KtDotQualifiedExpression && left !is KtCallExpression
+                    && right !is KtDotQualifiedExpression && right !is KtCallExpression
+                ) return false
+                if ((left is KtDotQualifiedExpression || left is KtCallExpression) && !left.isTarget(referenceName)) return false
+                if ((right is KtDotQualifiedExpression || right is KtCallExpression) && !right.isTarget(referenceName)) return false
+            }
             else ->
                 return false
         }
@@ -142,7 +160,8 @@ sealed class ConvertToScopeIntention(
     }
 
     private fun KtExpression.prevProperty(): KtProperty? {
-        return siblings(forward = false, withItself = true).firstOrNull { it is KtProperty && it.isLocal } as? KtProperty
+        val parentOrThis = parent as? KtBinaryExpression ?: this
+        return parentOrThis.siblings(forward = false, withItself = true).firstOrNull { it is KtProperty && it.isLocal } as? KtProperty
     }
 
     private fun KtPsiFactory.createScopeFunctionCall(element: PsiElement): Pair<KtExpression, KtBlockExpression>? {
