@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.frontend.di.createContainerForBodyResolve
 import org.jetbrains.kotlin.idea.caches.resolve.CodeFragmentAnalyzer
-import org.jetbrains.kotlin.idea.caches.resolve.util.compilerServices
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
@@ -721,7 +720,7 @@ class ResolveElementCache(
             targetPlatform,
             statementFilter,
             file.jvmTarget,
-            targetPlatform.compilerServices,
+            targetPlatform.findCompilerServices,
             file.languageVersionSettings
         ).get()
     }

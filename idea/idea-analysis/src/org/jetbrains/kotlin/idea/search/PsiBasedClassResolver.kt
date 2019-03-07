@@ -28,9 +28,9 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.asJava.ImpreciseResolveResult
 import org.jetbrains.kotlin.asJava.ImpreciseResolveResult.*
 import org.jetbrains.kotlin.idea.caches.project.getNullableModuleInfo
-import org.jetbrains.kotlin.idea.caches.resolve.util.compilerServices
 import org.jetbrains.kotlin.idea.compiler.IDELanguageSettingsProvider
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
+import org.jetbrains.kotlin.idea.project.findCompilerServices
 import org.jetbrains.kotlin.idea.stubindex.KotlinTypeAliasShortNameIndex
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.name.FqName
@@ -259,7 +259,7 @@ class PsiBasedClassResolver @TestOnly constructor(private val targetClassFqName:
 
 private fun KtFile.getDefaultImports(): List<ImportPath> {
     val moduleInfo = getNullableModuleInfo() ?: return emptyList()
-    return TargetPlatformDetector.getPlatform(this).compilerServices.getDefaultImports(
+    return TargetPlatformDetector.getPlatform(this).findCompilerServices.getDefaultImports(
         IDELanguageSettingsProvider.getLanguageVersionSettings(moduleInfo, project),
         includeLowPriorityImports = true
     )
