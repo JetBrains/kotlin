@@ -98,13 +98,6 @@ class IrConstructorSymbolImpl(descriptor: ClassConstructorDescriptor) :
     IrBindableSymbolBase<ClassConstructorDescriptor, IrConstructor>(descriptor),
     IrConstructorSymbol
 
-fun createFunctionSymbol(descriptor: CallableMemberDescriptor): IrFunctionSymbol =
-    when (descriptor) {
-        is ClassConstructorDescriptor -> IrConstructorSymbolImpl(descriptor.original)
-        is FunctionDescriptor -> IrSimpleFunctionSymbolImpl(descriptor.original)
-        else -> throw IllegalArgumentException("Unexpected descriptor kind: $descriptor")
-    }
-
 class IrReturnableBlockSymbolImpl(descriptor: FunctionDescriptor) :
     IrBindableSymbolBase<FunctionDescriptor, IrReturnableBlock>(descriptor),
     IrReturnableBlockSymbol
