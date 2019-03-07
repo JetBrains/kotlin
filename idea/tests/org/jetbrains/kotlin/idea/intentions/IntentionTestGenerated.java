@@ -7601,6 +7601,31 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertToScope/convertToApply"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("binaryExpression.kt")
+            public void testBinaryExpression() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToApply/binaryExpression.kt");
+            }
+
+            @TestMetadata("binaryExpression2.kt")
+            public void testBinaryExpression2() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToApply/binaryExpression2.kt");
+            }
+
+            @TestMetadata("binaryExpression3.kt")
+            public void testBinaryExpression3() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToApply/binaryExpression3.kt");
+            }
+
+            @TestMetadata("binaryExpression4.kt")
+            public void testBinaryExpression4() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToApply/binaryExpression4.kt");
+            }
+
+            @TestMetadata("binaryExpression5.kt")
+            public void testBinaryExpression5() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToApply/binaryExpression5.kt");
+            }
+
             @TestMetadata("callExpression.kt")
             public void testCallExpression() throws Exception {
                 runTest("idea/testData/intentions/convertToScope/convertToApply/callExpression.kt");
@@ -7702,6 +7727,21 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
 
             public void testAllFilesPresentInConvertToRun() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertToScope/convertToRun"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("binaryExpression.kt")
+            public void testBinaryExpression() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToRun/binaryExpression.kt");
+            }
+
+            @TestMetadata("binaryExpression2.kt")
+            public void testBinaryExpression2() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToRun/binaryExpression2.kt");
+            }
+
+            @TestMetadata("binaryExpression3.kt")
+            public void testBinaryExpression3() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToRun/binaryExpression3.kt");
             }
 
             @TestMetadata("callExpression.kt")
