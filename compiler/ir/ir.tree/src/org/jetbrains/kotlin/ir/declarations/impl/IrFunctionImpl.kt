@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
@@ -62,6 +61,7 @@ class IrFunctionImpl(
 
     override var correspondingProperty: IrProperty? = null
 
+    // Used by kotlin-native in InteropLowering.kt and IrUtils2.kt
     constructor(
         startOffset: Int,
         endOffset: Int,
@@ -72,17 +72,6 @@ class IrFunctionImpl(
         startOffset, endOffset, origin,
         IrSimpleFunctionSymbolImpl(descriptor), returnType
     )
-
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        descriptor: FunctionDescriptor,
-        returnType: IrType,
-        body: IrBody?
-    ) : this(startOffset, endOffset, origin, descriptor, returnType) {
-        this.body = body
-    }
 
     init {
         symbol.bind(this)

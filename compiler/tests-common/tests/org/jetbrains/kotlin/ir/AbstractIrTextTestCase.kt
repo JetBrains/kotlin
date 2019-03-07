@@ -98,10 +98,6 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
             val copiedTrees = irFileCopy.dumpTreesFromLineNumber(irTreeFileLabel.lineNumber)
             TestCase.assertEquals("IR dump mismatch after deep copy with symbols", actualTrees, copiedTrees)
             verify(irFileCopy)
-
-            val irFileCopyOld = irFile.deepCopyOld()
-            val copiedTreesOld = irFileCopyOld.dumpTreesFromLineNumber(irTreeFileLabel.lineNumber)
-            TestCase.assertEquals("IR dump mismatch after old deep copy", actualTrees, copiedTreesOld)
         }
 
         try {

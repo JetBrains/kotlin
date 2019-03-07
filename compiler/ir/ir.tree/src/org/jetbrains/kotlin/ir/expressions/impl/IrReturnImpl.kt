@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrReturn
 import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.createFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -34,10 +33,6 @@ class IrReturnImpl(
 ) :
     IrExpressionBase(startOffset, endOffset, type),
     IrReturn {
-
-    @Deprecated("Creates unbound symbol")
-    constructor(startOffset: Int, endOffset: Int, type: IrType, returnTargetDescriptor: FunctionDescriptor, value: IrExpression) :
-            this(startOffset, endOffset, type, createFunctionSymbol(returnTargetDescriptor), value)
 
     override val returnTarget: FunctionDescriptor get() = returnTargetSymbol.descriptor
 

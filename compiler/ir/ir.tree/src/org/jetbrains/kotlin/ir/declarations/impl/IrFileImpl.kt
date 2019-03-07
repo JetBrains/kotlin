@@ -51,16 +51,6 @@ class IrFileImpl(
     ) :
             this(fileEntry, IrFileSymbolImpl(packageFragmentDescriptor), packageFragmentDescriptor.fqName)
 
-    constructor(
-        fileEntry: SourceManager.FileEntry,
-        packageFragmentDescriptor: PackageFragmentDescriptor,
-        fileAnnotations: List<AnnotationDescriptor>,
-        declarations: List<IrDeclaration>
-    ) : this(fileEntry, packageFragmentDescriptor) {
-        this.fileAnnotations.addAll(fileAnnotations)
-        this.declarations.addAll(declarations)
-    }
-
     init {
         symbol.bind(this)
     }

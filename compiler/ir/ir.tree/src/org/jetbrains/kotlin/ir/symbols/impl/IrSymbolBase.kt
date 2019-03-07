@@ -70,9 +70,6 @@ class IrClassSymbolImpl(descriptor: ClassDescriptor) :
     IrBindableSymbolBase<ClassDescriptor, IrClass>(descriptor),
     IrClassSymbol
 
-fun createClassSymbolOrNull(descriptor: ClassDescriptor?) =
-    descriptor?.let { IrClassSymbolImpl(it) }
-
 class IrEnumEntrySymbolImpl(descriptor: ClassDescriptor) :
     IrBindableSymbolBase<ClassDescriptor, IrEnumEntry>(descriptor),
     IrEnumEntrySymbol
@@ -92,13 +89,6 @@ class IrValueParameterSymbolImpl(descriptor: ParameterDescriptor) :
 class IrVariableSymbolImpl(descriptor: VariableDescriptor) :
     IrBindableSymbolBase<VariableDescriptor, IrVariable>(descriptor),
     IrVariableSymbol
-
-fun createValueSymbol(descriptor: ValueDescriptor): IrValueSymbol =
-    when (descriptor) {
-        is ParameterDescriptor -> IrValueParameterSymbolImpl(descriptor)
-        is VariableDescriptor -> IrVariableSymbolImpl(descriptor)
-        else -> throw IllegalArgumentException("Unexpected descriptor kind: $descriptor")
-    }
 
 class IrSimpleFunctionSymbolImpl(descriptor: FunctionDescriptor) :
     IrBindableSymbolBase<FunctionDescriptor, IrSimpleFunction>(descriptor),

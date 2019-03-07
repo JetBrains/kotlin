@@ -70,17 +70,6 @@ class IrFieldImpl(
     ) :
             this(startOffset, endOffset, origin, IrFieldSymbolImpl(descriptor), type)
 
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        descriptor: PropertyDescriptor,
-        type: IrType,
-        initializer: IrExpressionBody?
-    ) : this(startOffset, endOffset, origin, descriptor, type) {
-        this.initializer = initializer
-    }
-
     init {
         symbol.bind(this)
     }

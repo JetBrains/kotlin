@@ -23,8 +23,6 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.typeParametersCount
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.createClassSymbolOrNull
-import org.jetbrains.kotlin.ir.symbols.impl.createFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
@@ -55,8 +53,10 @@ class IrCallImpl(
         descriptor: FunctionDescriptor,
         origin: IrStatementOrigin? = null,
         superQualifierSymbol: IrClassSymbol? = null
-    ) : this(startOffset, endOffset, type, symbol, descriptor, descriptor.typeParametersCount,
-             descriptor.valueParameters.size, origin, superQualifierSymbol)
+    ) : this(
+        startOffset, endOffset, type, symbol, descriptor, descriptor.typeParametersCount,
+        descriptor.valueParameters.size, origin, superQualifierSymbol
+    )
 
     constructor(
         startOffset: Int,
@@ -67,27 +67,9 @@ class IrCallImpl(
         typeArgumentsCount: Int,
         origin: IrStatementOrigin? = null,
         superQualifierSymbol: IrClassSymbol? = null
-    ) : this(startOffset, endOffset, type, symbol, descriptor, typeArgumentsCount,
-             descriptor.valueParameters.size, origin, superQualifierSymbol)
-
-    @Deprecated("Creates unbound symbols")
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        type: IrType,
-        descriptor: FunctionDescriptor,
-        typeArgumentsCount: Int,
-        origin: IrStatementOrigin? = null,
-        superQualifierDescriptor: ClassDescriptor? = null
     ) : this(
-        startOffset, endOffset,
-        type,
-        createFunctionSymbol(descriptor),
-        descriptor,
-        typeArgumentsCount,
-        descriptor.valueParameters.size,
-        origin,
-        createClassSymbolOrNull(superQualifierDescriptor)
+        startOffset, endOffset, type, symbol, descriptor, typeArgumentsCount,
+        descriptor.valueParameters.size, origin, superQualifierSymbol
     )
 
     constructor(startOffset: Int, endOffset: Int, type: IrType, symbol: IrFunctionSymbol) :
