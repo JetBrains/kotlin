@@ -12,9 +12,9 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.*
 import java.io.File
 
-// Note: "appcodePluginNumber" property can be used to override the default plugin number (1)
-val Project.appcodePluginNumber: Int
-    get() = findProperty("appcodePluginNumber")?.toString()?.toInt() ?: 1
+// Note: "appcodePluginNumber" property can be used to override the default plugin number (SNAPSHOT)
+val Project.appcodePluginNumber: String
+    get() = findProperty("appcodePluginNumber")?.toString() ?: SNAPSHOT
 
 val Project.appcodePluginVersionFull: String
     get() {
@@ -27,9 +27,9 @@ val Project.appcodePluginZipPath: File
     get() = propertyAsPath("appcodePluginZipPath")
         ?: defaultCidrPluginZipPath(appcodePluginVersionFull)
 
-// Note: "clionPluginNumber" property can be used to override the default plugin number (1)
-val Project.clionPluginNumber: Int
-    get() = findProperty("clionPluginNumber")?.toString()?.toInt() ?: 1
+// Note: "clionPluginNumber" property can be used to override the default plugin number (SNAPSHOT)
+val Project.clionPluginNumber: String
+    get() = findProperty("clionPluginNumber")?.toString() ?: SNAPSHOT
 
 val Project.clionPluginVersionFull: String
     get() {
@@ -42,7 +42,7 @@ val Project.clionPluginZipPath: File
     get() = propertyAsPath("clionPluginZipPath")
         ?: defaultCidrPluginZipPath(clionPluginVersionFull)
 
-private fun Project.cidrPluginVersionFull(productName: String, productVersion: String, cidrPluginNumber: Int): String {
+private fun Project.cidrPluginVersionFull(productName: String, productVersion: String, cidrPluginNumber: String): String {
     val cidrPluginVersion = if (isStandaloneBuild) {
         val ideaPluginForCidrBuildNumber: String by rootProject.extra
         ideaPluginForCidrBuildNumber
@@ -62,3 +62,5 @@ private fun Project.defaultCidrPluginZipPath(cidrProductVersionFull: String): Fi
     val artifactsForCidrDir: File by rootProject.extra
     return artifactsForCidrDir.resolve("kotlin-plugin-$cidrProductVersionFull.zip").canonicalFile
 }
+
+private const val SNAPSHOT = "SNAPSHOT"
