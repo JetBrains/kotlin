@@ -89,7 +89,6 @@ class ResolverForProjectImpl<M : ModuleInfo>(
     private val projectContext: ProjectContext,
     private val modulesFromThisResolver: Collection<M>,
     private val modulesContent: (M) -> ModuleContent<M>,
-    private val modulePlatforms: (M) -> TargetPlatform?, // TODO: remove, pull platforms from ModuleInfo
     private val moduleLanguageSettingsProvider: LanguageSettingsProvider,
     private val resolverForModuleFactoryByPlatform: (TargetPlatform?) -> ResolverForModuleFactory,
     override val builtIns: KotlinBuiltIns = DefaultBuiltIns.Instance,
@@ -258,7 +257,7 @@ class ResolverForProjectImpl<M : ModuleInfo>(
             module.name,
             projectContext.storageManager,
             builtIns,
-            modulePlatforms(module),
+            module.platform ?: TODO("No platform"),
             module.capabilities,
             module.stableName
         )

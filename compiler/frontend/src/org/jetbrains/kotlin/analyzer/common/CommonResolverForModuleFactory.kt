@@ -94,7 +94,6 @@ class CommonResolverForModuleFactory(
             ProjectContext(project),
             listOf(moduleInfo),
             modulesContent = { ModuleContent(it, files, GlobalSearchScope.allScope(project)) },
-            modulePlatforms = { DefaultBuiltInPlatforms.commonPlatform },
             moduleLanguageSettingsProvider = object : LanguageSettingsProvider {
                 override fun getLanguageVersionSettings(
                     moduleInfo: ModuleInfo,
