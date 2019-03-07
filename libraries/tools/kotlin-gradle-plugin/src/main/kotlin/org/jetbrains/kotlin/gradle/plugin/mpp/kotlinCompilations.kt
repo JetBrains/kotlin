@@ -10,9 +10,7 @@ import org.gradle.api.Project
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.file.FileCollection
 import org.gradle.util.ConfigureUtil
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.sources.defaultSourceSetLanguageSettingsChecker
