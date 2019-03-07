@@ -8,8 +8,9 @@ package org.jetbrains.kotlin.ir.types
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.model.*
 
-interface IrType : IrAnnotationContainer {
+interface IrType : KotlinTypeMarker, IrAnnotationContainer {
 
     /**
      * @return true if this type is equal to [other] symbolically. Note that this is NOT EQUIVALENT to the full type checking algorithm
@@ -26,15 +27,15 @@ interface IrType : IrAnnotationContainer {
 
 interface IrErrorType : IrType
 
-interface IrDynamicType : IrType
+interface IrDynamicType : IrType, DynamicTypeMarker
 
-interface IrSimpleType : IrType {
+interface IrSimpleType : IrType, SimpleTypeMarker, TypeArgumentListMarker {
     val classifier: IrClassifierSymbol
     val hasQuestionMark: Boolean
     val arguments: List<IrTypeArgument>
 }
 
-interface IrTypeArgument {
+interface IrTypeArgument: TypeArgumentMarker {
     override fun equals(other: Any?): Boolean
 
     override fun hashCode(): Int
