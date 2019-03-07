@@ -1,0 +1,6 @@
+public open class A : R|java/lang/Object| {
+    public open operator function dollarName(@R|kotlin/annotations/jvm/internal/ParameterName|(String($)) host: R|ft<kotlin/String, kotlin/String?>|!): R|kotlin/Unit|
+
+    public open operator function numberName(@R|kotlin/annotations/jvm/internal/ParameterName|(String(42)) field: R|ft<kotlin/String, kotlin/String?>|!): R|kotlin/Unit|
+
+}

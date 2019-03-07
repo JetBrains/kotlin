@@ -9,14 +9,14 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationContainer
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.impl.FirConstExpressionImpl
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaConstructor
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaValueParameter
+import org.jetbrains.kotlin.fir.java.enhancement.*
 import org.jetbrains.kotlin.fir.java.enhancement.EnhancementSignatureParts
-import org.jetbrains.kotlin.fir.java.enhancement.FirAnnotationTypeQualifierResolver
-import org.jetbrains.kotlin.fir.java.enhancement.FirJavaEnhancementContext
-import org.jetbrains.kotlin.fir.java.enhancement.copyWithNewDefaultTypeQualifiers
 import org.jetbrains.kotlin.fir.java.types.FirJavaTypeRef
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
@@ -28,7 +28,10 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.load.java.AnnotationTypeQualifierResolver
+import org.jetbrains.kotlin.load.java.descriptors.NullDefaultValue
+import org.jetbrains.kotlin.load.java.descriptors.StringDefaultValue
 import org.jetbrains.kotlin.load.java.structure.JavaPrimitiveType
 import org.jetbrains.kotlin.load.java.typeEnhancement.PREDEFINED_FUNCTION_ENHANCEMENT_INFO_BY_SIGNATURE
 import org.jetbrains.kotlin.load.java.typeEnhancement.PredefinedFunctionEnhancementInfo
@@ -130,10 +133,10 @@ class JavaClassEnhancementScope(
             enhanceReturnType(firMethod, memberContext, predefinedEnhancementInfo)
         }
 
-        val newValueParameterTypeRefs = mutableListOf<FirResolvedTypeRef>()
+        val newValueParameterInfo = mutableListOf<EnhanceValueParameterResult>()
 
         for ((index, valueParameter) in firMethod.valueParameters.withIndex()) {
-            newValueParameterTypeRefs += enhanceValueParameterType(
+            newValueParameterInfo += enhanceValueParameter(
                 firMethod, memberContext, predefinedEnhancementInfo, valueParameter as FirJavaValueParameter, index
             )
         }
@@ -145,12 +148,13 @@ class JavaClassEnhancementScope(
         ).apply {
             status = firMethod.status as FirDeclarationStatusImpl
             annotations += firMethod.annotations
-            valueParameters += firMethod.valueParameters.zip(newValueParameterTypeRefs) { valueParameter, newTypeRef ->
+            valueParameters += firMethod.valueParameters.zip(newValueParameterInfo) { valueParameter, newInfo ->
+                val (newTypeRef, newDefaultValue) = newInfo
                 with(valueParameter) {
                     FirValueParameterImpl(
                         this@JavaClassEnhancementScope.session, psi,
                         this.name, newTypeRef,
-                        defaultValue, isCrossinline, isNoinline, isVararg
+                        defaultValue ?: newDefaultValue, isCrossinline, isNoinline, isVararg
                     ).apply {
                         annotations += valueParameter.annotations
                     }
@@ -200,20 +204,29 @@ class JavaClassEnhancementScope(
         return signatureParts.type
     }
 
-    private fun enhanceValueParameterType(
+    private data class EnhanceValueParameterResult(val typeRef: FirResolvedTypeRef, val defaultValue: FirExpression?)
+
+    private fun enhanceValueParameter(
         ownerFunction: FirCallableMember,
         memberContext: FirJavaEnhancementContext,
         predefinedEnhancementInfo: PredefinedFunctionEnhancementInfo?,
         ownerParameter: FirJavaValueParameter,
         index: Int
-    ): FirResolvedTypeRef {
+    ): EnhanceValueParameterResult {
         val signatureParts = ownerFunction.partsForValueParameter(
             typeQualifierResolver,
             parameterContainer = ownerParameter,
             methodContext = memberContext,
             typeInSignature = TypeInSignature.ValueParameter(index)
         ).enhance(session, jsr305State, predefinedEnhancementInfo?.parametersInfo?.getOrNull(index))
-        return signatureParts.type
+        val firResolvedTypeRef = signatureParts.type
+        val defaultValue = ownerParameter.getDefaultValueFromAnnotation()
+        val defaultValueExpression = when (defaultValue) {
+            NullDefaultValue -> FirConstExpressionImpl(session, null, IrConstKind.Null, null)
+            is StringDefaultValue -> firResolvedTypeRef.type.lexicalCastFrom(session, defaultValue.value)
+            null -> null
+        }
+        return EnhanceValueParameterResult(firResolvedTypeRef, defaultValueExpression)
     }
 
     private fun enhanceReturnType(

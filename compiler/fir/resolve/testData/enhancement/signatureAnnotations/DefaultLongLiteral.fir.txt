@@ -1,0 +1,20 @@
+public open class A : R|java/lang/Object| {
+    public open operator function first(@R|kotlin/annotations/jvm/internal/DefaultValue|(String(0x1F)) value: R|ft<kotlin/Long, kotlin/Long?>|! = Long(31)): R|kotlin/Unit|
+
+    public open operator function second(@R|kotlin/annotations/jvm/internal/DefaultValue|(String(0X1F)) value: R|ft<kotlin/Long, kotlin/Long?>|! = Long(31)): R|kotlin/Unit|
+
+    public open operator function third(@R|kotlin/annotations/jvm/internal/DefaultValue|(String(0b1010)) value: R|ft<kotlin/Long, kotlin/Long?>|! = Long(10)): R|kotlin/Unit|
+
+    public open operator function fourth(@R|kotlin/annotations/jvm/internal/DefaultValue|(String(0B1010)) value: R|ft<kotlin/Long, kotlin/Long?>|! = Long(10)): R|kotlin/Unit|
+
+}
+public open class B : R|java/lang/Object| {
+    public open operator function first(@R|kotlin/annotations/jvm/internal/DefaultValue|(String(0x)) value: R|ft<kotlin/Long, kotlin/Long?>|!): R|kotlin/Unit|
+
+    public open operator function second(@R|kotlin/annotations/jvm/internal/DefaultValue|(String(0xZZ)) value: R|ft<kotlin/Long, kotlin/Long?>|!): R|kotlin/Unit|
+
+    public open operator function third(@R|kotlin/annotations/jvm/internal/DefaultValue|(String(0b)) value: R|ft<kotlin/Long, kotlin/Long?>|!): R|kotlin/Unit|
+
+    public open operator function fourth(@R|kotlin/annotations/jvm/internal/DefaultValue|(String(0B1234)) value: R|ft<kotlin/Long, kotlin/Long?>|!): R|kotlin/Unit|
+
+}

@@ -114,4 +114,67 @@ public class OwnFirTypeEnhancementTestGenerated extends AbstractOwnFirTypeEnhanc
             }
         }
     }
+
+    @TestMetadata("compiler/fir/resolve/testData/enhancement/signatureAnnotations")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class SignatureAnnotations extends AbstractOwnFirTypeEnhancementTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInSignatureAnnotations() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/enhancement/signatureAnnotations"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("DefaultEnum.java")
+        public void testDefaultEnum() throws Exception {
+            runTest("compiler/fir/resolve/testData/enhancement/signatureAnnotations/DefaultEnum.java");
+        }
+
+        @TestMetadata("DefaultLongLiteral.java")
+        public void testDefaultLongLiteral() throws Exception {
+            runTest("compiler/fir/resolve/testData/enhancement/signatureAnnotations/DefaultLongLiteral.java");
+        }
+
+        @TestMetadata("DefaultNull.java")
+        public void testDefaultNull() throws Exception {
+            runTest("compiler/fir/resolve/testData/enhancement/signatureAnnotations/DefaultNull.java");
+        }
+
+        @TestMetadata("DefaultNullAndParameter.java")
+        public void testDefaultNullAndParameter() throws Exception {
+            runTest("compiler/fir/resolve/testData/enhancement/signatureAnnotations/DefaultNullAndParameter.java");
+        }
+
+        @TestMetadata("DefaultParameter.java")
+        public void testDefaultParameter() throws Exception {
+            runTest("compiler/fir/resolve/testData/enhancement/signatureAnnotations/DefaultParameter.java");
+        }
+
+        @TestMetadata("EmptyParameterName.java")
+        public void testEmptyParameterName() throws Exception {
+            runTest("compiler/fir/resolve/testData/enhancement/signatureAnnotations/EmptyParameterName.java");
+        }
+
+        @TestMetadata("ReorderedParameterNames.java")
+        public void testReorderedParameterNames() throws Exception {
+            runTest("compiler/fir/resolve/testData/enhancement/signatureAnnotations/ReorderedParameterNames.java");
+        }
+
+        @TestMetadata("SameParameterName.java")
+        public void testSameParameterName() throws Exception {
+            runTest("compiler/fir/resolve/testData/enhancement/signatureAnnotations/SameParameterName.java");
+        }
+
+        @TestMetadata("SpecialCharsParameterName.java")
+        public void testSpecialCharsParameterName() throws Exception {
+            runTest("compiler/fir/resolve/testData/enhancement/signatureAnnotations/SpecialCharsParameterName.java");
+        }
+
+        @TestMetadata("StaticMethodWithDefaultValue.java")
+        public void testStaticMethodWithDefaultValue() throws Exception {
+            runTest("compiler/fir/resolve/testData/enhancement/signatureAnnotations/StaticMethodWithDefaultValue.java");
+        }
+    }
 }

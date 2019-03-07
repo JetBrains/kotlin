@@ -6,26 +6,35 @@
 package org.jetbrains.kotlin.fir.java.enhancement
 
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirCallableMember
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.expressions.FirConstExpression
-import org.jetbrains.kotlin.fir.expressions.resolvedFqName
+import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.impl.FirConstExpressionImpl
+import org.jetbrains.kotlin.fir.expressions.impl.FirQualifiedAccessExpressionImpl
 import org.jetbrains.kotlin.fir.java.createTypeParameterSymbol
+import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
+import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.java.toConeProjection
 import org.jetbrains.kotlin.fir.java.toNotNullConeKotlinType
 import org.jetbrains.kotlin.fir.java.types.FirJavaTypeRef
+import org.jetbrains.kotlin.fir.references.FirResolvedCallableReferenceImpl
+import org.jetbrains.kotlin.fir.references.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.constructType
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.toTypeProjection
 import org.jetbrains.kotlin.fir.service
+import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
+import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.descriptors.AnnotationDefaultValue
 import org.jetbrains.kotlin.load.java.descriptors.NullDefaultValue
@@ -34,9 +43,11 @@ import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.load.java.typeEnhancement.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.AbstractStrictEqualityTypeChecker
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import org.jetbrains.kotlin.utils.extractRadix
 
 internal class IndexedJavaTypeQualifiers(private val data: Array<JavaTypeQualifiers>) {
     constructor(size: Int, compute: (Int) -> JavaTypeQualifiers) : this(Array(size) { compute(it) })
@@ -220,7 +231,56 @@ internal fun FirTypeRef.typeArguments(): List<FirTypeProjection> =
 
 internal fun JavaType.typeArguments(): List<JavaType?> = (this as? JavaClassifierType)?.typeArguments.orEmpty()
 
-fun FirValueParameter.getDefaultValueFromAnnotation(): AnnotationDefaultValue? {
+internal fun ConeKotlinType.lexicalCastFrom(session: FirSession, value: String): FirExpression? {
+    val lookupTagBasedType = when (this) {
+        is ConeLookupTagBasedType -> this
+        is ConeFlexibleType -> return lowerBound.lexicalCastFrom(session, value)
+        else -> return null
+    }
+    val lookupTag = lookupTagBasedType.lookupTag
+    val firElement = (lookupTag.toSymbol(session) as? FirBasedSymbol<*>)?.fir
+    if (firElement is FirRegularClass && firElement.classKind == ClassKind.ENUM_CLASS) {
+        val name = Name.identifier(value)
+        val firEnumEntry = firElement.declarations.filterIsInstance<FirEnumEntry>().find { it.name == name }
+
+        return if (firEnumEntry != null) FirQualifiedAccessExpressionImpl(session, null).apply {
+            calleeReference = FirSimpleNamedReference(
+                session, null, name // TODO: , firEnumEntry.symbol
+            )
+        } else if (firElement is FirJavaClass) {
+            val firStaticProperty = firElement.declarations.filterIsInstance<FirJavaField>().find {
+                it.isStatic && it.modality == Modality.FINAL && it.name == name
+            }
+            if (firStaticProperty != null) {
+                FirQualifiedAccessExpressionImpl(session, null).apply {
+                    calleeReference = FirResolvedCallableReferenceImpl(
+                        session, null, name, firStaticProperty.symbol as ConeCallableSymbol
+                    )
+                }
+            } else null
+        } else null
+    }
+
+    if (lookupTag !is ConeClassLikeLookupTag) return null
+    val classId = lookupTag.classId
+    if (classId.packageFqName != FqName("kotlin")) return null
+
+    val (number, radix) = extractRadix(value)
+    return when (classId.relativeClassName.asString()) {
+        "Boolean" -> FirConstExpressionImpl(session, null, IrConstKind.Boolean, value.toBoolean())
+        "Char" -> FirConstExpressionImpl(session, null, IrConstKind.Char, value.singleOrNull() ?: return null)
+        "Byte" -> FirConstExpressionImpl(session, null, IrConstKind.Byte, number.toByteOrNull(radix) ?: return null)
+        "Short" -> FirConstExpressionImpl(session, null, IrConstKind.Short, number.toShortOrNull(radix) ?: return null)
+        "Int" -> FirConstExpressionImpl(session, null, IrConstKind.Int, number.toIntOrNull(radix) ?: return null)
+        "Long" -> FirConstExpressionImpl(session, null, IrConstKind.Long, number.toLongOrNull(radix) ?: return null)
+        "Float" -> FirConstExpressionImpl(session, null, IrConstKind.Float, value.toFloatOrNull() ?: return null)
+        "Double" -> FirConstExpressionImpl(session, null, IrConstKind.Double, value.toDoubleOrNull() ?: return null)
+        "String" -> FirConstExpressionImpl(session, null, IrConstKind.String, value)
+        else -> null
+    }
+}
+
+internal fun FirValueParameter.getDefaultValueFromAnnotation(): AnnotationDefaultValue? {
     annotations.find { it.resolvedFqName == JvmAnnotationNames.DEFAULT_VALUE_FQ_NAME }
         ?.arguments?.firstOrNull()
         ?.safeAs<FirConstExpression<*>>()?.value?.safeAs<String>()

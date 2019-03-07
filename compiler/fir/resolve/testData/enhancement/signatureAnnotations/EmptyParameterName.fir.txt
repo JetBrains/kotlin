@@ -1,0 +1,8 @@
+public/*package*/ open class A : R|java/lang/Object| {
+    public open operator function emptyName(@R|kotlin/annotations/jvm/internal/ParameterName|(String()) first: R|ft<kotlin/String, kotlin/String?>|!, @R|kotlin/annotations/jvm/internal/ParameterName|(String(ok)) second: R|kotlin/Int|): R|kotlin/Unit|
+
+    public open operator function missingName(@R|kotlin/annotations/jvm/internal/ParameterName|() first: R|ft<kotlin/String, kotlin/String?>|!): R|kotlin/Unit|
+
+    public open operator function numberName(@R|kotlin/annotations/jvm/internal/ParameterName|(Int(42)) first: R|ft<kotlin/String, kotlin/String?>|!): R|kotlin/Unit|
+
+}
