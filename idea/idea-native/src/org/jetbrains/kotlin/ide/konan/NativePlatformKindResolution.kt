@@ -12,6 +12,8 @@ import com.intellij.openapi.roots.libraries.PersistentLibraryKind
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.PathUtil
+import org.jetbrains.kotlin.analyzer.PlatformAnalysisParameters
+import org.jetbrains.kotlin.analyzer.ResolverForModuleFactory
 import org.jetbrains.kotlin.analyzer.getCapability
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -63,12 +65,18 @@ class NativePlatformKindResolution : IdePlatformKindResolution {
         }
     }
 
+    override fun createResolverForModuleFactory(
+        settings: PlatformAnalysisParameters,
+        environment: TargetEnvironment,
+        platform: TargetPlatform
+    ): ResolverForModuleFactory {
+        return NativeResolverForModuleFactory(settings, environment, platform)
+    }
+
     override val libraryKind: PersistentLibraryKind<*>?
         get() = NativeLibraryKind
 
     override val kind get() = NativeIdePlatformKind
-
-    override val resolverForModuleFactory get() = NativeResolverForModuleFactory
 
     override fun createBuiltIns(settings: PlatformAnalysisSettings, projectContext: ProjectContext) =
         createKotlinNativeBuiltIns(settings, projectContext)

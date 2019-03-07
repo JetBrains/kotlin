@@ -144,16 +144,13 @@ internal class ProjectResolutionFacade(
             moduleLanguageSettingsProvider = IDELanguageSettingsProvider,
             resolverForModuleFactoryByPlatform = { modulePlatform ->
                 val platform = modulePlatform ?: TODO()
-                platform.idePlatformKind.resolution.resolverForModuleFactory
-            },
-            platformParameters = { platform ->
-                when {
+                val parameters = when {
                     platform.isJvm() -> jvmPlatformParameters
                     platform.isCommon() -> commonPlatformParameters
                     else -> PlatformAnalysisParameters.Empty
                 }
+                platform.idePlatformKind.resolution.createResolverForModuleFactory(parameters, IdeaEnvironment, platform)
             },
-            targetEnvironment = IdeaEnvironment,
             builtIns = builtIns,
             delegateResolver = delegateResolverForProject,
             firstDependency = settings.sdk?.let { SdkInfo(project, it) },
