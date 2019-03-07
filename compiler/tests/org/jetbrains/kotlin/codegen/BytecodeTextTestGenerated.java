@@ -2545,6 +2545,39 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/bytecodeText/intrinsicsTrim")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class IntrinsicsTrim extends AbstractBytecodeTextTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInIntrinsicsTrim() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/intrinsicsTrim"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+        }
+
+        @TestMetadata("trimIndentNegative.kt")
+        public void testTrimIndentNegative() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/intrinsicsTrim/trimIndentNegative.kt");
+        }
+
+        @TestMetadata("trimIndentPositive.kt")
+        public void testTrimIndentPositive() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/intrinsicsTrim/trimIndentPositive.kt");
+        }
+
+        @TestMetadata("trimMarginNegative.kt")
+        public void testTrimMarginNegative() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/intrinsicsTrim/trimMarginNegative.kt");
+        }
+
+        @TestMetadata("trimMarginPositive.kt")
+        public void testTrimMarginPositive() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/intrinsicsTrim/trimMarginPositive.kt");
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/bytecodeText/jackAndJill")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
