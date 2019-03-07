@@ -8,11 +8,12 @@ package org.jetbrains.kotlin.idea.completion.test
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.resolve.DefaultBuiltInPlatforms
 import org.jetbrains.kotlin.resolve.JvmPlatform
 import java.io.File
 
 abstract class AbstractKotlinSourceInJavaCompletionTest : KotlinFixtureCompletionBaseTestCase() {
-    override fun getPlatform() = JvmPlatform
+    override fun getPlatform() = DefaultBuiltInPlatforms.jvmPlatform
 
     override fun doTest(testPath: String) {
         val mockPath = RELATIVE_COMPLETION_TEST_DATA_BASE_PATH + "/injava/mockLib"

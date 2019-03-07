@@ -586,10 +586,10 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         val platform =
             when {
                 nameSuffix.isEmpty() -> null
-                nameSuffix == "COMMON" -> CommonPlatform
-                nameSuffix == "JVM" -> JvmPlatform
-                nameSuffix == "JS" -> JsPlatform
-                nameSuffix == "NATIVE" -> KonanPlatform
+                nameSuffix == "COMMON" -> DefaultBuiltInPlatforms.commonPlatform
+                nameSuffix == "JVM" -> DefaultBuiltInPlatforms.jvmPlatform
+                nameSuffix == "JS" -> DefaultBuiltInPlatforms.jsPlatform
+                nameSuffix == "NATIVE" -> DefaultBuiltInPlatforms.konanPlatform
                 else -> throw IllegalStateException("Can't determine platform by name $nameSuffix")
             }
         return ModuleDescriptorImpl(Name.special("<$moduleName>"), storageManager, JvmBuiltIns(storageManager), platform)

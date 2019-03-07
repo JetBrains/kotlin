@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.frontend.di.createContainerForLazyResolve
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
+import org.jetbrains.kotlin.resolve.DefaultBuiltInPlatforms
 import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.resolve.JvmPlatform
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformCompilerServices
@@ -62,7 +63,7 @@ abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment() {
             context,
             FileBasedDeclarationProviderFactory(context.storageManager, listOf(psiFile)),
             NoScopeRecordCliBindingTrace(),
-            JvmPlatform,
+            DefaultBuiltInPlatforms.jvmPlatform,
             JvmTarget.JVM_1_6,
             JvmPlatformCompilerServices,
             targetEnvironment,

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.frontend.di.createContainerForLazyResolve
 import org.jetbrains.kotlin.ide.konan.NativeLibraryInfo
 import org.jetbrains.kotlin.ide.konan.createPackageFragmentProvider
 import org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer
+import org.jetbrains.kotlin.resolve.DefaultBuiltInPlatforms
 import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.resolve.KonanPlatform
 import org.jetbrains.kotlin.resolve.konan.platform.NativePlatformCompilerServices
@@ -46,7 +47,7 @@ object NativeResolverForModuleFactory : ResolverForModuleFactory() {
             moduleContext,
             declarationProviderFactory,
             CodeAnalyzerInitializer.getInstance(moduleContext.project).createTrace(),
-            KonanPlatform,
+            DefaultBuiltInPlatforms.konanPlatform,
             TargetPlatformVersion.NoVersion,
             NativePlatformCompilerServices,
             targetEnvironment,

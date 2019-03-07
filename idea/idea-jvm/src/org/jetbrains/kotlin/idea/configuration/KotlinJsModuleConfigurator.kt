@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.idea.framework.JsLibraryStdDetectionUtil
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.versions.LibraryJarDescriptor
 import org.jetbrains.kotlin.js.JavaScript
+import org.jetbrains.kotlin.resolve.DefaultBuiltInPlatforms
 import org.jetbrains.kotlin.resolve.JsPlatform
 import org.jetbrains.kotlin.resolve.TargetPlatform
 
@@ -40,7 +41,7 @@ open class KotlinJsModuleConfigurator : KotlinWithLibraryConfigurator() {
         get() = NAME
 
     override val targetPlatform: TargetPlatform
-        get() = JsPlatform
+        get() = DefaultBuiltInPlatforms.jsPlatform
 
     override val presentableText: String
         get() = JavaScript.FULL_NAME

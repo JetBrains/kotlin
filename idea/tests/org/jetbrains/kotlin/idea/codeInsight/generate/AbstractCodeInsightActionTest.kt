@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.resolve.JsPlatform
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.DefaultBuiltInPlatforms
 import org.jetbrains.kotlin.resolve.JvmPlatform
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -78,9 +79,9 @@ abstract class AbstractCodeInsightActionTest : KotlinLightCodeInsightFixtureTest
             val targetPlatformName = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// PLATFORM: ")
             if (targetPlatformName != null) {
                 val targetPlatform = when (targetPlatformName) {
-                    "JVM" -> JvmPlatform
-                    "JavaScript" -> JsPlatform
-                    "Common" -> CommonPlatform
+                    "JVM" -> DefaultBuiltInPlatforms.jvmPlatform
+                    "JavaScript" -> DefaultBuiltInPlatforms.jsPlatform
+                    "Common" -> DefaultBuiltInPlatforms.commonPlatform
                     else -> error("Unexpected platform name: $targetPlatformName")
                 }
                 mainPsiFile.forcedTargetPlatform = targetPlatform

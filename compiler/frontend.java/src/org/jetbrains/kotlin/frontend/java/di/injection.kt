@@ -93,7 +93,7 @@ fun createContainerForLazyResolveWithJava(
         configureJavaClassFinder: (StorageComponentContainer.() -> Unit)? = null,
         javaClassTracker: JavaClassesTracker? = null
 ): StorageComponentContainer = createContainer("LazyResolveWithJava", JvmPlatformCompilerServices) {
-    configureModule(moduleContext, JvmPlatform, jvmTarget, JvmPlatformCompilerServices, bindingTrace)
+    configureModule(moduleContext, DefaultBuiltInPlatforms.jvmPlatform, jvmTarget, JvmPlatformCompilerServices, bindingTrace)
     configureJavaTopDownAnalysis(moduleContentScope, moduleContext.project, lookupTracker, expectActualTracker)
 
     if (configureJavaClassFinder != null) {

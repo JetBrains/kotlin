@@ -42,11 +42,8 @@ import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.platform.idePlatformKind
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.CompositeBindingContext
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
-import org.jetbrains.kotlin.resolve.JvmPlatform
-import org.jetbrains.kotlin.resolve.isCommon
-import org.jetbrains.kotlin.resolve.isJvm
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 internal class ProjectResolutionFacade(
@@ -229,7 +226,8 @@ internal class ProjectResolutionFacade(
     private companion object {
         private fun createBuiltIns(settings: PlatformAnalysisSettings, projectContext: ProjectContext): KotlinBuiltIns {
 //            return settings.platform.idePlatformKind.resolution.createBuiltIns(settings, projectContext)
-            return JvmPlatform.idePlatformKind.resolution.createBuiltIns(settings, projectContext)
+            // TODO: temporary hack, move builtIns instantiation close to ResolverForModule
+            return DefaultBuiltInPlatforms.jvmPlatform.idePlatformKind.resolution.createBuiltIns(settings, projectContext)
         }
     }
 }

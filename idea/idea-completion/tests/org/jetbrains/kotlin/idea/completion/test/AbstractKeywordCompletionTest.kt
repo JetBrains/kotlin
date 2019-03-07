@@ -10,10 +10,11 @@ import com.intellij.codeInsight.lookup.LookupElement
 import org.jetbrains.kotlin.idea.completion.KeywordLookupObject
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.KotlinProjectDescriptorWithFacet
+import org.jetbrains.kotlin.resolve.DefaultBuiltInPlatforms
 import org.jetbrains.kotlin.resolve.JvmPlatform
 
 abstract class AbstractKeywordCompletionTest : KotlinFixtureCompletionBaseTestCase() {
-    override fun getPlatform() = JvmPlatform
+    override fun getPlatform() = DefaultBuiltInPlatforms.jvmPlatform
 
     override fun defaultCompletionType() = CompletionType.BASIC
 

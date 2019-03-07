@@ -89,7 +89,7 @@ class KotlinNonJvmSourceRootConverterProvider : ConverterProvider("kotlin-non-jv
         val platform by lazy {
             val explicitKind = explicitKind
             val kind = if (explicitKind is KotlinLibraryKind) explicitKind else detectLibraryKind(getRoots())
-            kind?.platform ?: JvmPlatform
+            kind?.platform ?: DefaultBuiltInPlatforms.jvmPlatform // TODO: provide proper default
         }
 
         val isStdlib: Boolean
@@ -158,13 +158,13 @@ class KotlinNonJvmSourceRootConverterProvider : ConverterProvider("kotlin-non-jv
                             }
                         }
 
-                    return if (hasCommonStdlib) CommonPlatform else null
+                    return if (hasCommonStdlib) DefaultBuiltInPlatforms.commonPlatform else null
                 }
 
                 private fun ModuleSettings.detectPlatform(): TargetPlatform {
                     return detectPlatformByFacet()
                             ?: detectPlatformByDependencies()
-                            ?: JvmPlatform
+                            ?: DefaultBuiltInPlatforms.jvmPlatform
                 }
 
                 private fun ModuleSettings.getSourceFolderElements(): List<Element> {

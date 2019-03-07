@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.idea.configuration.hasKotlinJvmRuntimeInScope
 import org.jetbrains.kotlin.idea.maven.PomFile
 import org.jetbrains.kotlin.idea.versions.getDefaultJvmTarget
 import org.jetbrains.kotlin.idea.versions.getStdlibArtifactId
+import org.jetbrains.kotlin.resolve.DefaultBuiltInPlatforms
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.JvmPlatform
 
@@ -68,7 +69,7 @@ class KotlinJavaMavenConfigurator : KotlinMavenConfigurator(
     }
 
     override val targetPlatform: TargetPlatform
-        get() = JvmPlatform
+        get() = DefaultBuiltInPlatforms.jvmPlatform
 
     companion object {
         private const val NAME = "maven"

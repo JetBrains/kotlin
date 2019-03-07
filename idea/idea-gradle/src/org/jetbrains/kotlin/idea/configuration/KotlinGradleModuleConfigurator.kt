@@ -21,6 +21,7 @@ import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.core.isAndroidModule
 import org.jetbrains.kotlin.idea.versions.getDefaultJvmTarget
+import org.jetbrains.kotlin.resolve.DefaultBuiltInPlatforms
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.JvmPlatform
 
@@ -30,7 +31,7 @@ class KotlinGradleModuleConfigurator : KotlinWithGradleConfigurator() {
         get() = NAME
 
     override val targetPlatform: TargetPlatform
-        get() = JvmPlatform
+        get() = DefaultBuiltInPlatforms.jvmPlatform
 
     override val presentableText: String
         get() = "Java with Gradle"

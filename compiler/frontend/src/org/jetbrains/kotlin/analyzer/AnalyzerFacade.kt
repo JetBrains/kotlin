@@ -92,7 +92,7 @@ class ResolverForProjectImpl<M : ModuleInfo>(
     private val projectContext: ProjectContext,
     private val modulesFromThisResolver: Collection<M>,
     private val modulesContent: (M) -> ModuleContent<M>,
-    private val modulePlatforms: (M) -> TargetPlatform?,
+    private val modulePlatforms: (M) -> TargetPlatform?, // TODO: remove, pull platforms from ModuleInfo
     private val moduleLanguageSettingsProvider: LanguageSettingsProvider,
     private val resolverForModuleFactoryByPlatform: (TargetPlatform?) -> ResolverForModuleFactory,
     private val platformParameters: (TargetPlatform) -> PlatformAnalysisParameters,

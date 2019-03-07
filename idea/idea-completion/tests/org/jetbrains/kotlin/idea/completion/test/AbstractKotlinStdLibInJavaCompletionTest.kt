@@ -7,10 +7,11 @@ package org.jetbrains.kotlin.idea.completion.test
 
 import com.intellij.codeInsight.completion.CompletionType
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.resolve.DefaultBuiltInPlatforms
 import org.jetbrains.kotlin.resolve.JvmPlatform
 
 abstract class AbstractKotlinStdLibInJavaCompletionTest : KotlinFixtureCompletionBaseTestCase() {
-    override fun getPlatform() = JvmPlatform
+    override fun getPlatform() = DefaultBuiltInPlatforms.jvmPlatform
     override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
     override fun defaultCompletionType() = CompletionType.BASIC
 }

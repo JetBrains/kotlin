@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.idea.configuration.getBuildSystemType
 import org.jetbrains.kotlin.idea.util.projectStructure.version
 import org.jetbrains.kotlin.idea.versions.MAVEN_STDLIB_ID_JDK7
 import org.jetbrains.kotlin.idea.versions.hasJreSpecificRuntime
+import org.jetbrains.kotlin.resolve.DefaultBuiltInPlatforms
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.JvmPlatform
 
@@ -24,7 +25,7 @@ class KotlinAndroidGradleModuleConfigurator internal constructor() : KotlinWithG
 
     override val name: String = NAME
 
-    override val targetPlatform: TargetPlatform = JvmPlatform
+    override val targetPlatform: TargetPlatform = DefaultBuiltInPlatforms.jvmPlatform
 
     override val presentableText: String = "Android with Gradle"
 

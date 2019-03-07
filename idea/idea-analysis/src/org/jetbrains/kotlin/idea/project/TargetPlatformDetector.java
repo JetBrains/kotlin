@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.platform.DefaultIdeTargetPlatformKindProvider;
 import org.jetbrains.kotlin.psi.KtCodeFragment;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
+import org.jetbrains.kotlin.resolve.DefaultBuiltInPlatforms;
 import org.jetbrains.kotlin.resolve.TargetPlatform;
 import org.jetbrains.kotlin.resolve.JvmPlatform;
 
@@ -52,7 +53,8 @@ public class TargetPlatformDetector {
         PsiElement context = KtPsiFactoryKt.getAnalysisContext(file);
         if (context != null) {
             PsiFile contextFile = context.getContainingFile();
-            return contextFile instanceof KtFile ? getPlatform((KtFile) contextFile) : JvmPlatform.INSTANCE;
+            // TODO: Get proper default platform
+            return contextFile instanceof KtFile ? getPlatform((KtFile) contextFile) : DefaultBuiltInPlatforms.INSTANCE.getJvmPlatform();
         }
 
         VirtualFile virtualFile = file.getOriginalFile().getVirtualFile();

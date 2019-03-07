@@ -310,7 +310,7 @@ internal object IDELightClassContexts {
         val container = createContainer("LightClassStub", JvmPlatformCompilerServices) {
             val jvmTarget = IDELanguageSettingsProvider.getTargetPlatform(moduleInfo, project) as? JvmTarget
             configureModule(
-                ModuleContext(moduleDescriptor, project), JvmPlatform,
+                ModuleContext(moduleDescriptor, project), DefaultBuiltInPlatforms.jvmPlatform,
                 jvmTarget ?: JvmTarget.DEFAULT, JvmPlatformCompilerServices, trace
             )
 

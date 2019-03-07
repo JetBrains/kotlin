@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.DefaultBuiltInPlatforms
 import org.jetbrains.kotlin.resolve.PlatformDependentCompilerServices
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.JvmResolverForModuleFactory
@@ -46,7 +47,7 @@ fun createResolveSessionForFiles(
         "test",
         projectContext, listOf(testModule),
         { ModuleContent(it, syntheticFiles, GlobalSearchScope.allScope(project)) },
-        modulePlatforms = { JvmPlatform },
+        modulePlatforms = { DefaultBuiltInPlatforms.jvmPlatform },
         moduleLanguageSettingsProvider = LanguageSettingsProvider.Default,
         resolverForModuleFactoryByPlatform = { JvmResolverForModuleFactory },
         platformParameters = { _ ->
@@ -69,7 +70,7 @@ private class TestModule(val dependsOnBuiltIns: Boolean) : ModuleInfo {
                 ModuleInfo.DependencyOnBuiltIns.NONE
 
     override val platform: TargetPlatform
-        get() = JvmPlatform
+        get() = DefaultBuiltInPlatforms.jvmPlatform
 
     override val compilerServices: PlatformDependentCompilerServices?
         get() = JvmPlatformCompilerServices

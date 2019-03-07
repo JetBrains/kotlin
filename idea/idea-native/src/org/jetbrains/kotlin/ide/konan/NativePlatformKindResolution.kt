@@ -30,10 +30,7 @@ import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.*
 import org.jetbrains.kotlin.konan.util.KonanFactories
 import org.jetbrains.kotlin.platform.impl.NativeIdePlatformKind
-import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
-import org.jetbrains.kotlin.resolve.ImplicitIntegerCoercion
-import org.jetbrains.kotlin.resolve.TargetPlatform
-import org.jetbrains.kotlin.resolve.KonanPlatform
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 class NativePlatformKindResolution : IdePlatformKindResolution {
@@ -149,7 +146,7 @@ class NativeLibraryInfo(project: Project, library: Library, root: File) : Librar
                 )
 
     override val platform: TargetPlatform
-        get() = KonanPlatform
+        get() = DefaultBuiltInPlatforms.konanPlatform
 
     override fun toString() = "Native" + super.toString()
 

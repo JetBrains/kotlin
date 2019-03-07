@@ -45,8 +45,13 @@ fun createTopDownAnalyzerForJs(
         additionalPackages: List<PackageFragmentProvider>
 ): LazyTopDownAnalyzer {
     val storageComponentContainer = createContainer("TopDownAnalyzerForJs", JsPlatformCompilerServices) {
-        configureModule(moduleContext,
-                        JsPlatform, TargetPlatformVersion.NoVersion, JsPlatformCompilerServices, bindingTrace)
+        configureModule(
+            moduleContext,
+            DefaultBuiltInPlatforms.jsPlatform,
+            TargetPlatformVersion.NoVersion,
+            JsPlatformCompilerServices,
+            bindingTrace
+        )
 
         useInstance(declarationProviderFactory)
         useImpl<AnnotationResolverImpl>()

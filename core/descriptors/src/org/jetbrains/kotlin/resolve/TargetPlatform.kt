@@ -5,16 +5,41 @@
 
 package org.jetbrains.kotlin.resolve
 
-abstract class TargetPlatform(val platformName: String) {
+sealed class TargetPlatform(val platformName: String) {
     override fun toString() = platformName
 }
 
-object KonanPlatform : TargetPlatform("Native")
-object CommonPlatform : TargetPlatform("Common")
-object JvmPlatform : TargetPlatform("JVM")
-object JsPlatform : TargetPlatform("JS")
+abstract class KonanPlatform : TargetPlatform("Native")
+abstract class CommonPlatform : TargetPlatform("Common")
+abstract class JvmPlatform : TargetPlatform("JVM")
+abstract class JsPlatform : TargetPlatform("JS")
 
-fun TargetPlatform?.isNative(): Boolean = this === KonanPlatform
-fun TargetPlatform?.isCommon(): Boolean = this === CommonPlatform
-fun TargetPlatform?.isJvm(): Boolean = this === JvmPlatform
-fun TargetPlatform?.isJs(): Boolean = this === JsPlatform
+interface KotlinBuiltInPlatforms {
+    val konanPlatform: KonanPlatform
+    val commonPlatform: CommonPlatform
+    val jvmPlatform: JvmPlatform
+    val jsPlatform: JsPlatform
+
+    fun areSamePlatforms(first: TargetPlatform, second: TargetPlatform): Boolean
+}
+
+object DefaultBuiltInPlatforms : KotlinBuiltInPlatforms {
+    override val konanPlatform: KonanPlatform = object : KonanPlatform() {}
+    override val commonPlatform: CommonPlatform = object : CommonPlatform() {}
+    override val jvmPlatform: JvmPlatform = object : JvmPlatform() {}
+    override val jsPlatform: JsPlatform = object : JsPlatform() {}
+
+    override fun areSamePlatforms(first: TargetPlatform, second: TargetPlatform): Boolean = first === second
+}
+
+fun TargetPlatform?.isNative(): Boolean =
+    this != null && DefaultBuiltInPlatforms.areSamePlatforms(this, DefaultBuiltInPlatforms.konanPlatform)
+
+fun TargetPlatform?.isCommon(): Boolean =
+    this != null && DefaultBuiltInPlatforms.areSamePlatforms(this, DefaultBuiltInPlatforms.commonPlatform)
+
+fun TargetPlatform?.isJvm(): Boolean =
+    this != null && DefaultBuiltInPlatforms.areSamePlatforms(this, DefaultBuiltInPlatforms.jvmPlatform)
+
+fun TargetPlatform?.isJs(): Boolean =
+    this != null && DefaultBuiltInPlatforms.areSamePlatforms(this, DefaultBuiltInPlatforms.jsPlatform)

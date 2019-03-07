@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.idea.util.projectStructure.sdk
 import org.jetbrains.kotlin.idea.util.projectStructure.version
 import org.jetbrains.kotlin.idea.versions.LibraryJarDescriptor
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
+import org.jetbrains.kotlin.resolve.DefaultBuiltInPlatforms
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.JvmPlatform
 
@@ -71,7 +72,7 @@ open class KotlinJavaModuleConfigurator protected constructor() : KotlinWithLibr
         get() = NAME
 
     override val targetPlatform: TargetPlatform
-        get() = JvmPlatform
+        get() = DefaultBuiltInPlatforms.jvmPlatform
 
     override fun getLibraryJarDescriptors(sdk: Sdk?): List<LibraryJarDescriptor> {
         var result = listOf(

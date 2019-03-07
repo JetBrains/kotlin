@@ -9,6 +9,7 @@ import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.resolve.DefaultBuiltInPlatforms
 import org.jetbrains.kotlin.resolve.JvmPlatform
 
 abstract class AbstractJvmWithLibBasicCompletionTest : KotlinFixtureCompletionBaseTestCase() {
@@ -21,6 +22,6 @@ abstract class AbstractJvmWithLibBasicCompletionTest : KotlinFixtureCompletionBa
         return SdkAndMockLibraryProjectDescriptor(TEST_PATH + "/" + getTestName(false) + "Src", false)
     }
 
-    override fun getPlatform() = JvmPlatform
+    override fun getPlatform() = DefaultBuiltInPlatforms.jvmPlatform
     override fun defaultCompletionType() = CompletionType.BASIC
 }

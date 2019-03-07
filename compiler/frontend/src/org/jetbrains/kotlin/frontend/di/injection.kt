@@ -192,7 +192,7 @@ fun createLazyResolveSession(moduleContext: ModuleContext, files: Collection<KtF
         moduleContext,
         FileBasedDeclarationProviderFactory(moduleContext.storageManager, files),
         BindingTraceContext(),
-        CommonPlatform,
+        DefaultBuiltInPlatforms.commonPlatform,
         TargetPlatformVersion.NoVersion,
         CommonPlatformCompilerServices,
         CompilerEnvironment,

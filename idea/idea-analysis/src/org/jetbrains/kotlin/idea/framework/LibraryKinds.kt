@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.idea.vfilefinder.KnownLibraryKindForIndex
 import org.jetbrains.kotlin.idea.vfilefinder.getLibraryKindForJar
 import org.jetbrains.kotlin.resolve.JsPlatform
 import org.jetbrains.kotlin.platform.DefaultIdeTargetPlatformKindProvider
+import org.jetbrains.kotlin.resolve.DefaultBuiltInPlatforms
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.utils.PathUtil
 import java.util.jar.Attributes
@@ -42,14 +43,14 @@ interface KotlinLibraryKind {
 
 object JSLibraryKind : PersistentLibraryKind<DummyLibraryProperties>("kotlin.js"), KotlinLibraryKind {
     override val compilerPlatform: TargetPlatform
-        get() = JsPlatform
+        get() = DefaultBuiltInPlatforms.jsPlatform
 
     override fun createDefaultProperties() = DummyLibraryProperties.INSTANCE!!
 }
 
 object CommonLibraryKind : PersistentLibraryKind<DummyLibraryProperties>("kotlin.common"), KotlinLibraryKind {
     override val compilerPlatform: TargetPlatform
-        get() = CommonPlatform
+        get() = DefaultBuiltInPlatforms.commonPlatform
 
     override fun createDefaultProperties() = DummyLibraryProperties.INSTANCE!!
 }
