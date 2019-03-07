@@ -43,7 +43,7 @@ class Antlr2FirBuilder(val session: FirSession, val stubMode: Boolean, val fileN
         return file.accept(Visitor()) as FirFile
     }
 
-    inner class Visitor: KotlinParserBaseVisitor<FirElement>() {
+    inner class Visitor : KotlinParserBaseVisitor<FirElement>() {
         private inline fun <reified R : FirElement> ParserRuleContext?.convertSafe(): R? =
             this?.accept(this@Visitor) as? R
 
@@ -229,13 +229,15 @@ class Antlr2FirBuilder(val session: FirSession, val stubMode: Boolean, val fileN
                     typeConstraints?.forEach { typeConstraint ->
                         if (typeConstraint.simpleIdentifier().text == typeParameter.name.identifier) {
                             (typeParameter as FirTypeParameterImpl).bounds += visitTypeConstraint(typeConstraint)
-                            typeParameter.annotations += typeConstraint.annotation().map(this::visitAnnotation).map { it.annotations }.flatten()
+                            typeParameter.annotations += typeConstraint.annotation().map(this::visitAnnotation).map { it.annotations }
+                                .flatten()
                         }
                     }
                 }
 
-                val hasSecondaryConstructor = (classBody != null && classBody.classMemberDeclarations().classMemberDeclaration().any { it.secondaryConstructor() != null }) ||
-                        (enumClassBody != null && enumClassBody.classMemberDeclarations()?.classMemberDeclaration()?.any { it.secondaryConstructor() != null } == true)
+                val hasSecondaryConstructor =
+                    (classBody != null && classBody.classMemberDeclarations().classMemberDeclaration().any { it.secondaryConstructor() != null }) ||
+                            (enumClassBody != null && enumClassBody.classMemberDeclarations()?.classMemberDeclaration()?.any { it.secondaryConstructor() != null } == true)
                 val delegatedSelfType = name.toDelegatedSelfType()
                 val delegatedSuperType = delegationSpecifiers.extractSuperTypeListEntriesTo(
                     firClass,
@@ -266,11 +268,13 @@ class Antlr2FirBuilder(val session: FirSession, val stubMode: Boolean, val fileN
                 }
                 classMemberDeclarations?.classMemberDeclaration()?.forEach { declaration ->
                     firClass.declarations += when {
-                        declaration.secondaryConstructor() != null -> listOf(declaration.secondaryConstructor().toFirConstructor(
-                            delegatedSuperType,
-                            delegatedSelfType,
-                            primaryConstructor != null
-                        ))
+                        declaration.secondaryConstructor() != null -> listOf(
+                            declaration.secondaryConstructor().toFirConstructor(
+                                delegatedSuperType,
+                                delegatedSelfType,
+                                primaryConstructor != null
+                            )
+                        )
                         else -> declaration.visitClassMemberDeclaration()//visitClassMemberDeclaration(declaration)
                     }
                 }
@@ -440,7 +444,8 @@ class Antlr2FirBuilder(val session: FirSession, val stubMode: Boolean, val fileN
                         }
                     }
                     //TODO where to use?
-                    annotationContainer.annotations += superTypeListEntry.annotation().map(this@Visitor::visitAnnotation).map { it.annotations }.flatten()
+                    annotationContainer.annotations += superTypeListEntry.annotation().map(this@Visitor::visitAnnotation)
+                        .map { it.annotations }.flatten()
                 }
             }
             if (isInterface) return delegatedSuperTypeRef
@@ -541,7 +546,8 @@ class Antlr2FirBuilder(val session: FirSession, val stubMode: Boolean, val fileN
             )
             firFunctions += firConstructor
             firConstructor.annotations += modifier.annotations
-            firConstructor.valueParameters += this?.functionValueParameters()?.functionValueParameter()?.map(this@Visitor::visitFunctionValueParameter) ?: listOf()
+            firConstructor.valueParameters += this?.functionValueParameters()?.functionValueParameter()?.map(this@Visitor::visitFunctionValueParameter)
+                ?: listOf()
             firConstructor.body = visitBlock(this?.block())
             firFunctions.removeLast()
             return firConstructor
@@ -810,56 +816,59 @@ class Antlr2FirBuilder(val session: FirSession, val stubMode: Boolean, val fileN
                 //TODO("not implemented")
                 //{ property.initializer }.toFirExpression("Should have initializer")
             } else null
-            val firProperty = if (propertyContext.parent.parent is KotlinParser.StatementsContext) { //TODO how to understand that property is local
-                FirVariableImpl(
-                    session,
-                    null,
-                    propertyName,
-                    propertyType,
-                    isVar,
-                    initializer,
-                    if (propertyContext.propertyDelegate() != null) {
-                        FirExpressionStub(session, null)
-                        //TODO("not implemented")
-                        //{ property.delegate?.expression }.toFirExpression("Should have delegate")
-                    } else null
-                )
-            } else {
-                FirMemberPropertyImpl(
-                    session,
-                    null,
-                    FirPropertySymbol(callableIdForName(propertyName)),
-                    propertyName,
-                    modifier.visibilityModifier.toVisibility(),
-                    modifier.inheritanceModifier?.toModality(),
-                    modifier.platformModifier == PlatformModifier.EXPECT,
-                    modifier.platformModifier == PlatformModifier.ACTUAL,
-                    modifier.memberModifier == MemberModifier.OVERRIDE,
-                    modifier.propertyModifier == PropertyModifier.CONST,
-                    modifier.memberModifier == MemberModifier.LATEINIT,
-                    visitReceiverType(propertyContext.receiverType()),
-                    propertyType,
-                    isVar,
-                    initializer,
-                    propertyContext.getter().toFirPropertyAccessor(modifier.visibilityModifier.toVisibility(), propertyType),
-                    propertyContext.setter().toFirPropertyAccessor(modifier.visibilityModifier.toVisibility(), propertyType),
-                    if (propertyContext.propertyDelegate() != null) {
-                        FirExpressionStub(session, null)
-                        //TODO("not implemented")
-                        //{ property.delegate?.expression }.toFirExpression("Should have delegate")
-                    } else null
-                ).apply {
-                    this.typeParameters += propertyContext.typeParameters()?.typeParameter()?.map(this@Visitor::visitTypeParameter) ?: listOf()
-                    this.typeParameters.forEach { typeParameter ->
-                        propertyContext.typeConstraints()?.typeConstraint()?.forEach { typeConstraint ->
-                            if (typeConstraint.simpleIdentifier().text == typeParameter.name.identifier) {
-                                (typeParameter as FirTypeParameterImpl).bounds += visitTypeConstraint(typeConstraint)
-                                typeParameter.annotations += typeConstraint.annotation().map(this@Visitor::visitAnnotation).map { it.annotations }.flatten()
+            val firProperty =
+                if (propertyContext.parent.parent is KotlinParser.StatementsContext) { //TODO how to understand that property is local
+                    FirVariableImpl(
+                        session,
+                        null,
+                        propertyName,
+                        propertyType,
+                        isVar,
+                        initializer,
+                        if (propertyContext.propertyDelegate() != null) {
+                            FirExpressionStub(session, null)
+                            //TODO("not implemented")
+                            //{ property.delegate?.expression }.toFirExpression("Should have delegate")
+                        } else null
+                    )
+                } else {
+                    FirMemberPropertyImpl(
+                        session,
+                        null,
+                        FirPropertySymbol(callableIdForName(propertyName)),
+                        propertyName,
+                        modifier.visibilityModifier.toVisibility(),
+                        modifier.inheritanceModifier?.toModality(),
+                        modifier.platformModifier == PlatformModifier.EXPECT,
+                        modifier.platformModifier == PlatformModifier.ACTUAL,
+                        modifier.memberModifier == MemberModifier.OVERRIDE,
+                        modifier.propertyModifier == PropertyModifier.CONST,
+                        modifier.memberModifier == MemberModifier.LATEINIT,
+                        visitReceiverType(propertyContext.receiverType()),
+                        propertyType,
+                        isVar,
+                        initializer,
+                        propertyContext.getter().toFirPropertyAccessor(modifier.visibilityModifier.toVisibility(), propertyType),
+                        propertyContext.setter().toFirPropertyAccessor(modifier.visibilityModifier.toVisibility(), propertyType),
+                        if (propertyContext.propertyDelegate() != null) {
+                            FirExpressionStub(session, null)
+                            //TODO("not implemented")
+                            //{ property.delegate?.expression }.toFirExpression("Should have delegate")
+                        } else null
+                    ).apply {
+                        this.typeParameters += propertyContext.typeParameters()?.typeParameter()?.map(this@Visitor::visitTypeParameter)
+                            ?: listOf()
+                        this.typeParameters.forEach { typeParameter ->
+                            propertyContext.typeConstraints()?.typeConstraint()?.forEach { typeConstraint ->
+                                if (typeConstraint.simpleIdentifier().text == typeParameter.name.identifier) {
+                                    (typeParameter as FirTypeParameterImpl).bounds += visitTypeConstraint(typeConstraint)
+                                    typeParameter.annotations += typeConstraint.annotation().map(this@Visitor::visitAnnotation)
+                                        .map { it.annotations }.flatten()
+                                }
                             }
                         }
                     }
                 }
-            }
             firProperty.annotations += modifier.annotations + annotationContainer
             return firProperty
         }
@@ -1090,7 +1099,7 @@ class Antlr2FirBuilder(val session: FirSession, val stubMode: Boolean, val fileN
         }
 
         override fun visitTypeReference(ctx: KotlinParser.TypeReferenceContext): FirTypeRef {
-            if(ctx.DYNAMIC() != null) {
+            if (ctx.DYNAMIC() != null) {
                 return FirDynamicTypeRefImpl(
                     session,
                     null,
@@ -1152,7 +1161,7 @@ class Antlr2FirBuilder(val session: FirSession, val stubMode: Boolean, val fileN
                 null,
                 isNullable(ctx.parent)
             )
-            for (simpleUserType in ctx.simpleUserType()){
+            for (simpleUserType in ctx.simpleUserType()) {
                 val simpleFirUserType = visitSimpleUserType(simpleUserType)
                 firUserTypeRef.qualifier.addAll(simpleFirUserType.qualifier)
             }
@@ -1711,7 +1720,7 @@ class Antlr2FirBuilder(val session: FirSession, val stubMode: Boolean, val fileN
         }
 
         private val KotlinParser.AnnotationUseSiteTargetContext?.annotationUseSiteTarget: AnnotationUseSiteTarget?
-            get() = when(this) {
+            get() = when (this) {
                 null -> null
                 this.AT_FIELD() -> AnnotationUseSiteTarget.FIELD
                 this.AT_PROPERTY() -> AnnotationUseSiteTarget.PROPERTY
@@ -1729,13 +1738,13 @@ class Antlr2FirBuilder(val session: FirSession, val stubMode: Boolean, val fileN
         }
 
         override fun visitUnescapedAnnotation(ctx: KotlinParser.UnescapedAnnotationContext?): FirAnnotationCall {
-            TODO("not implemented")
-            /*return FirAnnotationCallImpl(
+            //TODO("not implemented")
+            return FirAnnotationCallImpl(
                 session,
                 null,
                 null,
-
-            )*/
+                FirErrorTypeRefImpl(session, null, "not implemented")
+            )
         }
 
         private fun KotlinParser.SimpleIdentifierContext?.nameAsSafeName(defaultName: String = ""): Name {
@@ -1748,9 +1757,11 @@ class Antlr2FirBuilder(val session: FirSession, val stubMode: Boolean, val fileN
 
         private fun Name?.toDelegatedSelfType(): FirTypeRef =
             FirUserTypeRefImpl(session, null, isNullable = false).apply {
-                qualifier.add(FirQualifierPartImpl(
-                    this@toDelegatedSelfType ?: SpecialNames.NO_NAME_PROVIDED
-                ))
+                qualifier.add(
+                    FirQualifierPartImpl(
+                        this@toDelegatedSelfType ?: SpecialNames.NO_NAME_PROVIDED
+                    )
+                )
             }
 
         override fun visitSimpleIdentifier(ctx: KotlinParser.SimpleIdentifierContext?): FirElement {
