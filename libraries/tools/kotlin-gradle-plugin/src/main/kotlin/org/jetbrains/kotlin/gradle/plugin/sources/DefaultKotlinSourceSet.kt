@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.lang.reflect.Constructor
 import java.util.*
-import java.util.concurrent.atomic.AtomicLong
 
 const val METADATA_CONFIGURATION_NAME_SUFFIX = "DependenciesMetadata"
 
