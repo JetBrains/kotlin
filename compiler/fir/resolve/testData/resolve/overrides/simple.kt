@@ -8,7 +8,7 @@ open class A {
 
 class B : A() {
     override fun foo(): B = this
-    fun bar(): B = this // Ambiguity, no override here
+    fun bar(): B = this // Ambiguity, no override here (really it's just "missing override" and no ambiguity)
     override fun buz(p: B): B = this //No override as B <!:> A
 
     fun test() {

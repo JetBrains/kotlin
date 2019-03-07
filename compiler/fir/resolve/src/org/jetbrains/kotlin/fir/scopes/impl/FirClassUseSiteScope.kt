@@ -72,7 +72,7 @@ class FirClassUseSiteScope(
         val self = (this as AbstractFirBasedSymbol<*>).fir as FirCallableMember
         val overriding = seen.firstOrNull {
             val member = (it as AbstractFirBasedSymbol<*>).fir as FirCallableMember
-            member.isOverride && self.modality != Modality.FINAL
+            self.modality != Modality.FINAL
                     && sameReceivers(member.receiverTypeRef, self.receiverTypeRef)
                     && similarFunctionsOrBothProperties(member, self)
         } // TODO: two or more overrides for one fun?

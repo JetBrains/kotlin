@@ -32,7 +32,7 @@ FILE: simple.kt
 
         public final function test(): R|kotlin/Unit| {
             R|/B.foo|()
-            <Ambiguity: bar, [/B.bar, /A.bar]>#()
+            R|/B.bar|()
             <Ambiguity: buz, [/B.buz, /A.buz]>#()
         }
 

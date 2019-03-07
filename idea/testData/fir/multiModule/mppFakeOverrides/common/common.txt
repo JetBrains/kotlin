@@ -12,8 +12,12 @@ FILE: common.kt
     public open class C : R|B| {
         public constructor(): super<R|B|>()
 
-        public open function bar(arg: R|kotlin/CharSequence|): R|kotlin/String| {
-            return@@@bar <Unresolved name: arg>#.<Unresolved name: toString>#()
+        public open function bar(arg: R|kotlin/String|): R|kotlin/String| {
+            return@@@bar <Unresolved name: arg>#
+        }
+
+        public open function baz(arg: R|kotlin/CharSequence|): R|kotlin/String| {
+            return@@@baz <Unresolved name: arg>#.<Unresolved name: toString>#()
         }
 
     }

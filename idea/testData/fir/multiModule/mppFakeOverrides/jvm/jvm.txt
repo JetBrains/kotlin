@@ -9,13 +9,18 @@ FILE: jvm.kt
             return@@@bar <Unresolved name: arg>#
         }
 
+        public open function baz(arg: R|T|): R|T| {
+            return@@@baz <Unresolved name: arg>#
+        }
+
     }
     public final class D : R|C| {
         public constructor(): super<R|C|>()
 
         public final function test(): R|kotlin/Unit| {
             R|FakeOverride</A.foo: R|kotlin/Unit|>|(String())
-            <Ambiguity: bar, [/C.bar, /A.bar]>#(String())
+            R|/C.bar|(String())
+            <Ambiguity: baz, [/C.baz, /A.baz]>#(String())
         }
 
     }

@@ -37,7 +37,7 @@ class FirClassSubstitutionScope(
     }
 
     private fun ConeKotlinType.substitute(): ConeKotlinType? {
-        if (this is ConeTypeParameterType) return substitution[this]
+        if (this is ConeTypeParameterType) return substitution[lookupTag]
 
         val newArguments by lazy { arrayOfNulls<ConeKotlinTypeProjection>(typeArguments.size) }
         var initialized = false
