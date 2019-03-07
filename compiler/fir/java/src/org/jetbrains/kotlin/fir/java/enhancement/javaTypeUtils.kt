@@ -222,7 +222,7 @@ private fun ConeClassifierSymbol.enhanceMutability(
 
 
 internal data class TypeAndDefaultQualifiers(
-    val type: FirTypeRef,
+    val type: FirTypeRef?, // null denotes '*' here
     val defaultQualifiers: JavaTypeQualifiers?
 )
 

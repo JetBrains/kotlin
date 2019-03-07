@@ -84,8 +84,8 @@ internal class EnhancementSignatureParts(
     ): List<TypeAndDefaultQualifiers> {
         val list = ArrayList<TypeAndDefaultQualifiers>(1)
 
-        fun add(type: FirTypeRef) {
-            val c = context.copyWithNewDefaultTypeQualifiers(typeQualifierResolver, jsr305State, type.annotations)
+        fun add(type: FirTypeRef?) {
+            val c = context.copyWithNewDefaultTypeQualifiers(typeQualifierResolver, jsr305State, type?.annotations.orEmpty())
 
             list.add(
                 TypeAndDefaultQualifiers(
@@ -98,15 +98,15 @@ internal class EnhancementSignatureParts(
             if (type is FirJavaTypeRef) {
                 for (arg in type.type.typeArguments()) {
                     if (arg is JavaWildcardType || arg == null) {
-                        // TODO: wildcards / raw types
+                        add(null)
                     } else {
                         add(arg.toFirJavaTypeRef(context.session))
                     }
                 }
-            } else {
+            } else if (type != null) {
                 for (arg in type.typeArguments()) {
                     if (arg is FirStarProjection) {
-                        // TODO: wildcards
+                        add(null)
                     } else if (arg is FirTypeProjectionWithVariance) {
                         add(arg.typeRef)
                     }
@@ -166,16 +166,16 @@ internal class EnhancementSignatureParts(
         }
     }
 
-    private fun FirTypeRef.extractQualifiersFromAnnotations(
+    private fun FirTypeRef?.extractQualifiersFromAnnotations(
         isHeadTypeConstructor: Boolean,
         defaultQualifiersForType: JavaTypeQualifiers?,
         jsr305State: Jsr305State
     ): JavaTypeQualifiers {
         val composedAnnotation =
             if (isHeadTypeConstructor && typeContainer != null)
-                composeAnnotations(typeContainer.annotations, annotations)
+                composeAnnotations(typeContainer.annotations, this?.annotations.orEmpty())
             else
-                annotations
+                this?.annotations.orEmpty()
 
         fun <T : Any> List<FqName>.ifPresent(qualifier: T) =
             if (any { fqName ->
@@ -215,7 +215,7 @@ internal class EnhancementSignatureParts(
         )
     }
 
-    private fun FirTypeRef.computeQualifiersForOverride(
+    private fun FirTypeRef?.computeQualifiersForOverride(
         session: FirSession,
         fromSupertypes: Collection<FirTypeRef>,
         defaultQualifiersForType: JavaTypeQualifiers?,
@@ -279,11 +279,11 @@ internal class EnhancementSignatureParts(
             val isHeadTypeConstructor = index == 0
             assert(isHeadTypeConstructor || !onlyHeadTypeConstructor) { "Only head type constructors should be computed" }
 
-            val (qualifiers, defaultQualifiers) = indexedThisType[index]
+            val (type, defaultQualifiers) = indexedThisType[index]
             val verticalSlice = indexedFromSupertypes.mapNotNull { it.getOrNull(index)?.type }
 
             // Only the head type constructor is safely co-variant
-            qualifiers.computeQualifiersForOverride(session, verticalSlice, defaultQualifiers, isHeadTypeConstructor, jsr305State)
+            type.computeQualifiersForOverride(session, verticalSlice, defaultQualifiers, isHeadTypeConstructor, jsr305State)
         }
 
         return IndexedJavaTypeQualifiers(computedResult)
