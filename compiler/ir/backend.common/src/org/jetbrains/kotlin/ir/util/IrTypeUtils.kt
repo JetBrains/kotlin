@@ -11,13 +11,9 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
-import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
-import org.jetbrains.kotlin.ir.types.IrDynamicType
-import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classifierOrNull
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.DFS
@@ -42,19 +38,11 @@ fun IrType.isNameInPackage(prefix: String, packageFqName: FqName): Boolean {
 
 }
 
-
-fun IrType.superTypes(): List<IrType> {
-    val classifier = classifierOrNull?.owner ?: return emptyList()
-    return when(classifier) {
-        is IrClass -> classifier.superTypes
-        is IrTypeParameter -> classifier.superTypes
-        else -> throw IllegalStateException()
-    }
-}
+fun IrType.superTypes() = classifierOrNull?.superTypes() ?: emptyList()
 
 fun IrType.typeParameterSuperTypes(): List<IrType> {
     val classifier = classifierOrNull ?: return emptyList()
-    return when(classifier) {
+    return when (classifier) {
         is IrTypeParameterSymbol -> classifier.owner.superTypes
         is IrClassSymbol -> emptyList()
         else -> throw IllegalStateException()
