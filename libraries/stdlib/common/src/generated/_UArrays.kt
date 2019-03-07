@@ -223,10 +223,7 @@ public inline operator fun UShortArray.component5(): UShort {
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
-@kotlin.internal.InlineOnly
-public inline fun UIntArray.elementAt(index: Int): UInt {
-    return get(index)
-}
+public expect fun UIntArray.elementAt(index: Int): UInt
 
 /**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
@@ -235,10 +232,7 @@ public inline fun UIntArray.elementAt(index: Int): UInt {
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
-@kotlin.internal.InlineOnly
-public inline fun ULongArray.elementAt(index: Int): ULong {
-    return get(index)
-}
+public expect fun ULongArray.elementAt(index: Int): ULong
 
 /**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
@@ -247,10 +241,7 @@ public inline fun ULongArray.elementAt(index: Int): ULong {
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
-@kotlin.internal.InlineOnly
-public inline fun UByteArray.elementAt(index: Int): UByte {
-    return get(index)
-}
+public expect fun UByteArray.elementAt(index: Int): UByte
 
 /**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
@@ -259,10 +250,7 @@ public inline fun UByteArray.elementAt(index: Int): UByte {
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
-@kotlin.internal.InlineOnly
-public inline fun UShortArray.elementAt(index: Int): UShort {
-    return get(index)
-}
+public expect fun UShortArray.elementAt(index: Int): UShort
 
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.

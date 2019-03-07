@@ -1490,6 +1490,16 @@ class ArraysTest {
         array.sortWith(comparator)
         array.iterator().assertSorted { a, b -> comparator.compare(a, b) <= 0 }
     }
+
+    @Test
+    fun elementAt() {
+        expect(0) { byteArrayOf(0, 1, 2).elementAt(0) }
+        expect(1) { shortArrayOf(0, 1, 2).elementAt(1) }
+        expect(2) { intArrayOf(0, 1, 2).elementAt(2) }
+
+        assertFailsWith<IndexOutOfBoundsException> { arrayOf<String>().elementAt(0) }
+        assertFailsWith<IndexOutOfBoundsException> { longArrayOf(0, 1, 2).elementAt(-1) }
+    }
 }
 
 

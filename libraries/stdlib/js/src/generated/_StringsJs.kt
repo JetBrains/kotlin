@@ -3,9 +3,6 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-@file:kotlin.jvm.JvmMultifileClass
-@file:kotlin.jvm.JvmName("StringsKt")
-
 package kotlin.text
 
 //
@@ -13,21 +10,14 @@ package kotlin.text
 // See: https://github.com/JetBrains/kotlin/tree/master/libraries/stdlib
 //
 
+import kotlin.js.*
 
 /**
  * Returns a character at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this char sequence.
  * 
  * @sample samples.collections.Collections.Elements.elementAt
  */
-@kotlin.internal.InlineOnly
-public actual inline fun CharSequence.elementAt(index: Int): Char {
-    return get(index)
-}
-
-/**
- * Returns a [SortedSet][java.util.SortedSet] of all characters.
- */
-public fun CharSequence.toSortedSet(): java.util.SortedSet<Char> {
-    return toCollection(java.util.TreeSet<Char>())
+public actual fun CharSequence.elementAt(index: Int): Char {
+    return elementAtOrElse(index) { throw IndexOutOfBoundsException("index: $index, length: $length}") }
 }
 

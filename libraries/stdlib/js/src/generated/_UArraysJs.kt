@@ -13,6 +13,50 @@ package kotlin.collections
 import kotlin.js.*
 
 /**
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Elements.elementAt
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public actual fun UIntArray.elementAt(index: Int): UInt {
+    return elementAtOrElse(index) { throw IndexOutOfBoundsException("index: $index, size: $size}") }
+}
+
+/**
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Elements.elementAt
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public actual fun ULongArray.elementAt(index: Int): ULong {
+    return elementAtOrElse(index) { throw IndexOutOfBoundsException("index: $index, size: $size}") }
+}
+
+/**
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Elements.elementAt
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public actual fun UByteArray.elementAt(index: Int): UByte {
+    return elementAtOrElse(index) { throw IndexOutOfBoundsException("index: $index, size: $size}") }
+}
+
+/**
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Elements.elementAt
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public actual fun UShortArray.elementAt(index: Int): UShort {
+    return elementAtOrElse(index) { throw IndexOutOfBoundsException("index: $index, size: $size}") }
+}
+
+/**
  * Returns a [List] that wraps the original array.
  */
 @SinceKotlin("1.3")
