@@ -57,11 +57,12 @@ class FirProviderImpl(val session: FirSession) : FirProvider {
             }
 
             override fun visitCallableMemberDeclaration(callableMemberDeclaration: FirCallableMemberDeclaration) {
-                val callableId = when (containerFqName) {
-                    FqName.ROOT -> CallableId(packageName, callableMemberDeclaration.name)
-                    else -> CallableId(packageName, containerFqName, callableMemberDeclaration.name)
-                }
+                val callableId = (callableMemberDeclaration.symbol as ConeCallableSymbol).callableId
                 callableMap.merge(callableId, listOf(callableMemberDeclaration)) { a, b -> a + b }
+            }
+
+            override fun visitConstructor(constructor: FirConstructor) {
+                visitCallableMemberDeclaration(constructor)
             }
 
             override fun visitNamedFunction(namedFunction: FirNamedFunction) {

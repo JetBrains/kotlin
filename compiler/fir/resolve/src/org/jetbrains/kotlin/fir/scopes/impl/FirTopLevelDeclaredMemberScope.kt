@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.ConeFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.ConePropertySymbol
 import org.jetbrains.kotlin.fir.symbols.ConeVariableSymbol
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 class FirTopLevelDeclaredMemberScope(
@@ -24,6 +25,12 @@ class FirTopLevelDeclaredMemberScope(
     private val packageFqName = file.packageFqName
 
     override fun processFunctionsByName(name: Name, processor: (ConeFunctionSymbol) -> ProcessorAction): ProcessorAction {
+        val constructors = provider.getCallableSymbols(CallableId(packageFqName, FqName.topLevel(name), name))
+        for (symbol in constructors) {
+            if (symbol is ConeFunctionSymbol && !processor(symbol)) {
+                return STOP
+            }
+        }
         val symbols = provider.getCallableSymbols(CallableId(packageFqName, name))
         for (symbol in symbols) {
             if (symbol is ConeFunctionSymbol && !processor(symbol)) {

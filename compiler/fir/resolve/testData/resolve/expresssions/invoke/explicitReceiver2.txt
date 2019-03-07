@@ -16,7 +16,7 @@ FILE: explicitReceiver2.kt
             return@@@invoke this#
         }
 
-        public final property x(val): R|Bar| = <Unresolved name: Bar>#()
+        public final property x(val): R|Bar| = R|/Bar.Bar|()
             public get(): R|Bar|
 
         public final function bar(): R|Foo| {
