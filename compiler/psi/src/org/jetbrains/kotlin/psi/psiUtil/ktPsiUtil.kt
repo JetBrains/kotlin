@@ -315,6 +315,16 @@ fun KtQualifiedExpression.isContractDescriptionCallPsiCheck(): Boolean {
     return receiverExpression.text == "kotlin.contracts" && expression.isContractDescriptionCallPsiCheck()
 }
 
+fun KtElement.isFirstStatement(): Boolean {
+    var parent = parent
+    var element = this
+    if (parent is KtDotQualifiedExpression) {
+        element = parent
+        parent = parent.parent
+    }
+    return parent is KtBlockExpression && parent.children.first { it is KtElement } == element
+}
+
 
 // ----------- Other -----------------------------------------------------------------------------------------------------------------------
 

@@ -12,9 +12,8 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.descriptors.isOverridable
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.psi.KtBlockExpression
-import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.psiUtil.isFirstStatement
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
@@ -57,13 +56,7 @@ object ContractNotAllowedCallChecker : CallChecker {
 
         if (functionDescriptor?.isOverridable == true) contractNotAllowed("Contracts are not allowed for open functions")
 
-        var parent = callElement.parent
-        var element = callElement
-        if (parent is KtDotQualifiedExpression) {
-            element = parent
-            parent = parent.parent
-        }
-        if ((parent !is KtBlockExpression || parent.children.first { it is KtElement } != element) && inFunctionBodyBlock) {
+        if (!callElement.isFirstStatement() && inFunctionBodyBlock) {
             contractNotAllowed("Contract should be the first statement")
         }
 
