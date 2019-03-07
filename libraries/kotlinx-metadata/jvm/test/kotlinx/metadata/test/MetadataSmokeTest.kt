@@ -172,4 +172,32 @@ class MetadataSmokeTest {
         assertEquals("kotlin/coroutines/CoroutineContext.Key", coroutineContextKey)
         assertEquals("kotlin/coroutines/CoroutineContext\$Key", coroutineContextKey.jvmInternalName)
     }
+
+    /*
+    // TODO: uncomment after bootstrap compiler has a fix for KT-29790
+    @Test
+    fun lambdaVersionRequirement() {
+        val x: suspend Int.(String, String) -> Unit = { _, _ -> }
+        val annotation = x::class.java.getAnnotation(Metadata::class.java)!!
+        val metadata = KotlinClassMetadata.read(
+            KotlinClassHeader(
+                kind = annotation.kind,
+                metadataVersion = annotation.metadataVersion,
+                bytecodeVersion = annotation.bytecodeVersion,
+                data1 = annotation.data1,
+                data2 = annotation.data2,
+                extraInt = annotation.extraInt,
+                extraString = annotation.extraString,
+                packageName = annotation.packageName
+            )
+        ) as KotlinClassMetadata.SyntheticClass
+        metadata.accept(object : KmLambdaVisitor() {
+            override fun visitFunction(flags: Flags, name: String) =
+                object : KmFunctionVisitor() {
+                    override fun visitVersionRequirement() =
+                        object : KmVersionRequirementVisitor() {}
+                }
+        })
+    }
+    */
 }

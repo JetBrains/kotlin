@@ -63,7 +63,7 @@ abstract class SerializerExtension {
     open fun serializeProperty(
         descriptor: PropertyDescriptor,
         proto: ProtoBuf.Property.Builder,
-        versionRequirementTable: MutableVersionRequirementTable,
+        versionRequirementTable: MutableVersionRequirementTable?,
         childSerializer: DescriptorSerializer
     ) {
     }

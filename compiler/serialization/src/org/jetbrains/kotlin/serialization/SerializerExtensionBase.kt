@@ -65,7 +65,7 @@ abstract class KotlinSerializerExtensionBase(private val protocol: SerializerExt
     override fun serializeProperty(
         descriptor: PropertyDescriptor,
         proto: ProtoBuf.Property.Builder,
-        versionRequirementTable: MutableVersionRequirementTable,
+        versionRequirementTable: MutableVersionRequirementTable?,
         childSerializer: DescriptorSerializer
     ) {
         for (annotation in descriptor.nonSourceAnnotations) {

@@ -75,7 +75,7 @@ class JsKlibMetadataSerializerExtension(
     override fun serializeProperty(
         descriptor: PropertyDescriptor,
         proto: ProtoBuf.Property.Builder,
-        versionRequirementTable: MutableVersionRequirementTable,
+        versionRequirementTable: MutableVersionRequirementTable?,
         childSerializer: DescriptorSerializer
     ) {
         uniqId(descriptor)?.let { proto.setExtension(JsKlibMetadataProtoBuf.propertyUniqId, it) }

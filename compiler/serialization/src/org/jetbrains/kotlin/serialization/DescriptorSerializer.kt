@@ -45,7 +45,7 @@ class DescriptorSerializer private constructor(
     private val typeParameters: Interner<TypeParameterDescriptor>,
     private val extension: SerializerExtension,
     val typeTable: MutableTypeTable,
-    private val versionRequirementTable: MutableVersionRequirementTable,
+    private val versionRequirementTable: MutableVersionRequirementTable?,
     private val serializeTypeTableToFunction: Boolean
 ) {
     private val contractSerializer = ContractSerializer()
@@ -146,7 +146,9 @@ class DescriptorSerializer private constructor(
             builder.typeTable = typeTableProto
         }
 
-        builder.addAllVersionRequirement(serializeVersionRequirements(classDescriptor))
+        if (versionRequirementTable == null) error("Version requirements must be serialized for classes: $classDescriptor")
+
+        builder.addAllVersionRequirement(versionRequirementTable.serializeVersionRequirements(classDescriptor))
 
         extension.serializeClass(classDescriptor, builder, versionRequirementTable, this)
 
@@ -262,14 +264,16 @@ class DescriptorSerializer private constructor(
             }
         }
 
-        builder.addAllVersionRequirement(serializeVersionRequirements(descriptor))
+        versionRequirementTable?.run {
+            builder.addAllVersionRequirement(serializeVersionRequirements(descriptor))
 
-        if (descriptor.isSuspendOrHasSuspendTypesInSignature()) {
-            builder.addVersionRequirement(writeVersionRequirementDependingOnCoroutinesVersion())
-        }
+            if (descriptor.isSuspendOrHasSuspendTypesInSignature()) {
+                builder.addVersionRequirement(writeVersionRequirementDependingOnCoroutinesVersion())
+            }
 
-        if (descriptor.hasInlineClassTypesInSignature()) {
-            builder.addVersionRequirement(writeVersionRequirement(LanguageFeature.InlineClasses))
+            if (descriptor.hasInlineClassTypesInSignature()) {
+                builder.addVersionRequirement(writeVersionRequirement(LanguageFeature.InlineClasses))
+            }
         }
 
         extension.serializeProperty(descriptor, builder, versionRequirementTable, local)
@@ -335,14 +339,16 @@ class DescriptorSerializer private constructor(
             }
         }
 
-        builder.addAllVersionRequirement(serializeVersionRequirements(descriptor))
+        versionRequirementTable?.run {
+            builder.addAllVersionRequirement(serializeVersionRequirements(descriptor))
 
-        if (descriptor.isSuspendOrHasSuspendTypesInSignature()) {
-            builder.addVersionRequirement(writeVersionRequirementDependingOnCoroutinesVersion())
-        }
+            if (descriptor.isSuspendOrHasSuspendTypesInSignature()) {
+                builder.addVersionRequirement(writeVersionRequirementDependingOnCoroutinesVersion())
+            }
 
-        if (descriptor.hasInlineClassTypesInSignature()) {
-            builder.addVersionRequirement(writeVersionRequirement(LanguageFeature.InlineClasses))
+            if (descriptor.hasInlineClassTypesInSignature()) {
+                builder.addVersionRequirement(writeVersionRequirement(LanguageFeature.InlineClasses))
+            }
         }
 
         contractSerializer.serializeContractOfFunctionIfAny(descriptor, builder, this)
@@ -368,14 +374,16 @@ class DescriptorSerializer private constructor(
             builder.addValueParameter(local.valueParameter(valueParameterDescriptor))
         }
 
-        builder.addAllVersionRequirement(serializeVersionRequirements(descriptor))
+        versionRequirementTable?.run {
+            builder.addAllVersionRequirement(serializeVersionRequirements(descriptor))
 
-        if (descriptor.isSuspendOrHasSuspendTypesInSignature()) {
-            builder.addVersionRequirement(writeVersionRequirementDependingOnCoroutinesVersion())
-        }
+            if (descriptor.isSuspendOrHasSuspendTypesInSignature()) {
+                builder.addVersionRequirement(writeVersionRequirementDependingOnCoroutinesVersion())
+            }
 
-        if (descriptor.hasInlineClassTypesInSignature()) {
-            builder.addVersionRequirement(writeVersionRequirement(LanguageFeature.InlineClasses))
+            if (descriptor.hasInlineClassTypesInSignature()) {
+                builder.addVersionRequirement(writeVersionRequirement(LanguageFeature.InlineClasses))
+            }
         }
 
         extension.serializeConstructor(descriptor, builder, local)
@@ -383,8 +391,8 @@ class DescriptorSerializer private constructor(
         return builder
     }
 
-    private fun writeVersionRequirementDependingOnCoroutinesVersion(): Int =
-        writeVersionRequirement(if (this.extension.releaseCoroutines()) LanguageFeature.ReleaseCoroutines else LanguageFeature.Coroutines)
+    private fun MutableVersionRequirementTable.writeVersionRequirementDependingOnCoroutinesVersion(): Int =
+        writeVersionRequirement(if (extension.releaseCoroutines()) LanguageFeature.ReleaseCoroutines else LanguageFeature.Coroutines)
 
     private fun CallableMemberDescriptor.isSuspendOrHasSuspendTypesInSignature(): Boolean {
         if (this is FunctionDescriptor && isSuspend) return true
@@ -436,7 +444,9 @@ class DescriptorSerializer private constructor(
             builder.setExpandedType(local.type(expandedType))
         }
 
-        builder.addAllVersionRequirement(serializeVersionRequirements(descriptor))
+        versionRequirementTable?.run {
+            builder.addAllVersionRequirement(serializeVersionRequirements(descriptor))
+        }
 
         for (annotation in descriptor.nonSourceAnnotations) {
             builder.addAnnotation(extension.annotationSerializer.serializeAnnotation(annotation))
@@ -642,7 +652,7 @@ class DescriptorSerializer private constructor(
             builder.typeTable = typeTableProto
         }
 
-        val versionRequirementTableProto = versionRequirementTable.serialize()
+        val versionRequirementTableProto = versionRequirementTable?.serialize()
         if (versionRequirementTableProto != null) {
             builder.versionRequirementTable = versionRequirementTableProto
         }
@@ -652,17 +662,18 @@ class DescriptorSerializer private constructor(
         return builder
     }
 
-    private fun writeVersionRequirement(languageFeature: LanguageFeature): Int {
-        return writeLanguageVersionRequirement(languageFeature, versionRequirementTable)
+    private fun MutableVersionRequirementTable.writeVersionRequirement(languageFeature: LanguageFeature): Int {
+        return writeLanguageVersionRequirement(languageFeature, this)
     }
 
     // Returns a list of indices into versionRequirementTable, or empty list if there's no @RequireKotlin on the descriptor
-    private fun serializeVersionRequirements(descriptor: DeclarationDescriptor): List<Int> =
+    private fun MutableVersionRequirementTable.serializeVersionRequirements(descriptor: DeclarationDescriptor): List<Int> =
         descriptor.annotations
             .filter { it.fqName == RequireKotlinNames.FQ_NAME }
             .mapNotNull(::serializeVersionRequirementFromRequireKotlin)
+            .map(::get)
 
-    private fun serializeVersionRequirementFromRequireKotlin(annotation: AnnotationDescriptor): Int? {
+    private fun serializeVersionRequirementFromRequireKotlin(annotation: AnnotationDescriptor): ProtoBuf.VersionRequirement.Builder? {
         val args = annotation.allValueArguments
 
         val versionString = (args[RequireKotlinNames.VERSION] as? StringValue)?.value ?: return null
@@ -706,7 +717,7 @@ class DescriptorSerializer private constructor(
             proto.errorCode = errorCode
         }
 
-        return versionRequirementTable[proto]
+        return proto
     }
 
     private fun getClassifierId(descriptor: ClassifierDescriptorWithTypeParameters): Int =
@@ -729,20 +740,16 @@ class DescriptorSerializer private constructor(
 
     companion object {
         @JvmStatic
-        fun createTopLevel(extension: SerializerExtension): DescriptorSerializer {
-            return DescriptorSerializer(
-                null, Interner(), extension, MutableTypeTable(), MutableVersionRequirementTable(),
-                serializeTypeTableToFunction = false
+        fun createTopLevel(extension: SerializerExtension): DescriptorSerializer =
+            DescriptorSerializer(
+                null, Interner(), extension, MutableTypeTable(), MutableVersionRequirementTable(), serializeTypeTableToFunction = false
             )
-        }
 
         @JvmStatic
-        fun createForLambda(extension: SerializerExtension): DescriptorSerializer {
-            return DescriptorSerializer(
-                null, Interner(), extension, MutableTypeTable(), MutableVersionRequirementTable(),
-                serializeTypeTableToFunction = true
+        fun createForLambda(extension: SerializerExtension): DescriptorSerializer =
+            DescriptorSerializer(
+                null, Interner(), extension, MutableTypeTable(), versionRequirementTable = null, serializeTypeTableToFunction = true
             )
-        }
 
         @JvmStatic
         fun create(
