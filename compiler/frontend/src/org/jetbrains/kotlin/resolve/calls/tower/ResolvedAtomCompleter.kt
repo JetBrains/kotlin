@@ -110,14 +110,18 @@ class ResolvedAtomCompleter(
     private val ResolvedLambdaAtom.isCoercedToUnit: Boolean
         get() {
             val returnTypes =
-                resultArguments.mapNotNull {
-                    val type = it.safeAs<SimpleKotlinCallArgument>()?.receiver?.receiverValue?.type ?: return@mapNotNull null
+                resultArguments.map {
+                    val type = it.safeAs<SimpleKotlinCallArgument>()?.receiver?.receiverValue?.type ?: return@map null
                     val unwrappedType = when (type) {
                         is WrappedType -> type.unwrap()
                         is UnwrappedType -> type
                     }
                     resultSubstitutor.safeSubstitute(unwrappedType)
                 }
+            if (returnTypes.isEmpty()) return true
+            val substitutedTypes = returnTypes.filterNotNull()
+            // we have some unsubstituted types
+            if (substitutedTypes.isEmpty()) return false
             val commonReturnType = CommonSupertypes.commonSupertype(returnTypes)
             return commonReturnType.isUnit()
         }
