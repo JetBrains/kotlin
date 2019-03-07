@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScript
+import org.jetbrains.kotlin.resolve.JvmTarget
 import org.jetbrains.kotlin.resolve.isCommon
 import org.jetbrains.kotlin.resolve.isJvm
 import org.jetbrains.kotlin.utils.join

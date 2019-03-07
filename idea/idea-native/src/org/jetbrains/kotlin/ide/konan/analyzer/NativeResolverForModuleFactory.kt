@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.ide.konan.analyzer
 
 import org.jetbrains.kotlin.analyzer.*
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.TargetPlatformVersion
+import org.jetbrains.kotlin.resolve.TargetPlatformVersion
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.ide.konan.createPackageFragmentProvider
 import org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer
 import org.jetbrains.kotlin.resolve.DefaultBuiltInPlatforms
 import org.jetbrains.kotlin.resolve.TargetEnvironment
-import org.jetbrains.kotlin.resolve.KonanPlatform
 import org.jetbrains.kotlin.resolve.konan.platform.NativePlatformCompilerServices
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService.Companion.createDeclarationProviderFactory
@@ -31,8 +30,7 @@ object NativeResolverForModuleFactory : ResolverForModuleFactory() {
         platformParameters: PlatformAnalysisParameters,
         targetEnvironment: TargetEnvironment,
         resolverForProject: ResolverForProject<M>,
-        languageVersionSettings: LanguageVersionSettings,
-        targetPlatformVersion: TargetPlatformVersion
+        languageVersionSettings: LanguageVersionSettings
     ): ResolverForModule {
 
         val declarationProviderFactory = createDeclarationProviderFactory(
@@ -48,7 +46,6 @@ object NativeResolverForModuleFactory : ResolverForModuleFactory() {
             declarationProviderFactory,
             CodeAnalyzerInitializer.getInstance(moduleContext.project).createTrace(),
             DefaultBuiltInPlatforms.konanPlatform,
-            TargetPlatformVersion.NoVersion,
             NativePlatformCompilerServices,
             targetEnvironment,
             languageVersionSettings

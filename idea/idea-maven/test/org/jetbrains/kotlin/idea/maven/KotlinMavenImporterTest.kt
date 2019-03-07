@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.refactoring.toPsiFile
 import org.jetbrains.kotlin.platform.impl.*
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.JvmTarget
 import org.junit.Assert
 import java.io.File
 

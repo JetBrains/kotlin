@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.analyzer.*
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.TargetPlatformVersion
+import org.jetbrains.kotlin.resolve.TargetPlatformVersion
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.container.useImpl
@@ -122,8 +122,7 @@ object CommonResolverForModuleFactory : ResolverForModuleFactory() {
         platformParameters: PlatformAnalysisParameters,
         targetEnvironment: TargetEnvironment,
         resolverForProject: ResolverForProject<M>,
-        languageVersionSettings: LanguageVersionSettings,
-        targetPlatformVersion: TargetPlatformVersion
+        languageVersionSettings: LanguageVersionSettings
     ): ResolverForModule {
         val (moduleInfo, syntheticFiles, moduleContentScope) = moduleContent
         val project = moduleContext.project
@@ -137,7 +136,7 @@ object CommonResolverForModuleFactory : ResolverForModuleFactory() {
         val trace = CodeAnalyzerInitializer.getInstance(project).createTrace()
         val container = createContainerToResolveCommonCode(
             moduleContext, trace, declarationProviderFactory, moduleContentScope, targetEnvironment, metadataPartProvider,
-            languageVersionSettings, moduleInfo.platform!!, targetPlatformVersion, CommonPlatformCompilerServices
+            languageVersionSettings, moduleInfo.platform!!, CommonPlatformCompilerServices
         )
 
         val packageFragmentProviders = listOf(
@@ -157,10 +156,9 @@ object CommonResolverForModuleFactory : ResolverForModuleFactory() {
         metadataPartProvider: MetadataPartProvider,
         languageVersionSettings: LanguageVersionSettings,
         platform: TargetPlatform,
-        targetPlatformVersion: TargetPlatformVersion,
         compilerServices: PlatformDependentCompilerServices
     ): StorageComponentContainer = createContainer("ResolveCommonCode", compilerServices) {
-        configureModule(moduleContext, platform, targetPlatformVersion, compilerServices, bindingTrace)
+        configureModule(moduleContext, platform, compilerServices, bindingTrace)
 
         useInstance(moduleContentScope)
         useInstance(LookupTracker.DO_NOTHING)

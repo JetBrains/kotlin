@@ -11,13 +11,15 @@ sealed class TargetPlatform(val platformName: String) {
 
 abstract class KonanPlatform : TargetPlatform("Native")
 abstract class CommonPlatform : TargetPlatform("Common")
-abstract class JvmPlatform : TargetPlatform("JVM")
+abstract class JvmPlatform(val targetVersion: JvmTarget) : TargetPlatform("JVM")
 abstract class JsPlatform : TargetPlatform("JS")
 
 interface KotlinBuiltInPlatforms {
     val konanPlatform: KonanPlatform
     val commonPlatform: CommonPlatform
     val jvmPlatform: JvmPlatform
+    val jvm16: JvmPlatform
+    val jvm18: JvmPlatform
     val jsPlatform: JsPlatform
 
     fun areSamePlatforms(first: TargetPlatform, second: TargetPlatform): Boolean
@@ -26,8 +28,15 @@ interface KotlinBuiltInPlatforms {
 object DefaultBuiltInPlatforms : KotlinBuiltInPlatforms {
     override val konanPlatform: KonanPlatform = object : KonanPlatform() {}
     override val commonPlatform: CommonPlatform = object : CommonPlatform() {}
-    override val jvmPlatform: JvmPlatform = object : JvmPlatform() {}
+    override val jvmPlatform: JvmPlatform = object : JvmPlatform(JvmTarget.DEFAULT) {}
+    override val jvm16: JvmPlatform = object : JvmPlatform(JvmTarget.JVM_1_6) {}
+    override val jvm18: JvmPlatform = object : JvmPlatform(JvmTarget.JVM_1_8) {}
     override val jsPlatform: JsPlatform = object : JsPlatform() {}
+
+    fun jvmPlatformByTargetVersion(targetVersion: JvmTarget) = when (targetVersion) {
+        JvmTarget.JVM_1_6 -> jvm16
+        JvmTarget.JVM_1_8 -> jvm18
+    }
 
     override fun areSamePlatforms(first: TargetPlatform, second: TargetPlatform): Boolean = first === second
 }
@@ -43,3 +52,25 @@ fun TargetPlatform?.isJvm(): Boolean =
 
 fun TargetPlatform?.isJs(): Boolean =
     this != null && DefaultBuiltInPlatforms.areSamePlatforms(this, DefaultBuiltInPlatforms.jsPlatform)
+
+enum class JvmTarget(override val description: String) : TargetPlatformVersion {
+    JVM_1_6("1.6"),
+    JVM_1_8("1.8"),
+    ;
+
+    companion object {
+        @JvmField
+        val DEFAULT = JVM_1_6
+
+        @JvmStatic
+        fun fromString(string: String) = values().find { it.description == string }
+    }
+}
+
+interface TargetPlatformVersion {
+    val description: String
+
+    object NoVersion : TargetPlatformVersion {
+        override val description = ""
+    }
+}

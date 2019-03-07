@@ -23,7 +23,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analyzer.AnalysisResult
-import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.resolve.JvmTarget
 import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.GlobalContext
@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.*
-import org.jetbrains.kotlin.resolve.JvmPlatform
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import java.util.*
@@ -188,6 +187,7 @@ private object KotlinResolveDataProvider {
 
             val moduleInfo = analyzableElement.containingKtFile.getModuleInfo()
 
+            // TODO: should return proper platform!
             val targetPlatform = moduleInfo.platform ?: TargetPlatformDetector.getPlatform(analyzableElement.containingKtFile)
             val targetPlatformVersion = IDELanguageSettingsProvider.getTargetPlatform(moduleInfo, project).let {
                 if (targetPlatform.isJvm() && it !is JvmTarget) JvmTarget.DEFAULT else it
@@ -200,7 +200,6 @@ private object KotlinResolveDataProvider {
                 trace,
                 targetPlatform,
                 bodyResolveCache,
-                targetPlatformVersion,
                 targetPlatform.findCompilerServices,
                 analyzableElement.languageVersionSettings
             ).get<LazyTopDownAnalyzer>()

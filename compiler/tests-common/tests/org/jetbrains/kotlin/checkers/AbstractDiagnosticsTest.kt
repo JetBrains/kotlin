@@ -375,6 +375,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         val moduleClassResolver = SingleModuleClassResolver()
 
         val container = createContainerForTopDownAnalyzerForJvm(
+            DefaultBuiltInPlatforms.jvmPlatformByTargetVersion(jvmTarget), // TODO(dsavvinov): do not pass JvmTarget around
             moduleContext,
             moduleTrace,
             FileBasedDeclarationProviderFactory(moduleContext.storageManager, files),
@@ -383,7 +384,6 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
             ExpectActualTracker.DoNothing,
             environment.createPackagePartProvider(moduleContentScope),
             moduleClassResolver,
-            jvmTarget,
             languageVersionSettings
         )
 
@@ -585,9 +585,9 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         val nameSuffix = moduleName.substringAfterLast("-", "").toUpperCase()
         val platform =
             when {
-                nameSuffix.isEmpty() -> null
+                nameSuffix.isEmpty() -> null // TODO(dsavvinov): this leads to 'null'-platform in ModuleDescriptor
                 nameSuffix == "COMMON" -> DefaultBuiltInPlatforms.commonPlatform
-                nameSuffix == "JVM" -> DefaultBuiltInPlatforms.jvmPlatform
+                nameSuffix == "JVM" -> DefaultBuiltInPlatforms.jvmPlatform // TODO(dsavvinov): determine JvmTarget precisely
                 nameSuffix == "JS" -> DefaultBuiltInPlatforms.jsPlatform
                 nameSuffix == "NATIVE" -> DefaultBuiltInPlatforms.konanPlatform
                 else -> throw IllegalStateException("Can't determine platform by name $nameSuffix")

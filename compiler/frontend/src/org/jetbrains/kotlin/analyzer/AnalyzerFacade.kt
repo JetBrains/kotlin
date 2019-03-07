@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
-import org.jetbrains.kotlin.config.TargetPlatformVersion
+import org.jetbrains.kotlin.resolve.TargetPlatformVersion
 import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.context.ProjectContext
@@ -188,6 +188,8 @@ class ResolverForProjectImpl<M : ModuleInfo>(
 
                 val languageVersionSettings =
                     moduleLanguageSettingsProvider.getLanguageVersionSettings(module, projectContext.project, isReleaseCoroutines)
+
+                // TODO(dsavvinov): inject into JVM container!
                 val targetPlatformVersion = moduleLanguageSettingsProvider.getTargetPlatform(module, projectContext.project)
 
                 val resolverForModuleFactory = resolverForModuleFactoryByPlatform(module.platform)
@@ -198,8 +200,7 @@ class ResolverForProjectImpl<M : ModuleInfo>(
                     platformParameters(module.platform ?: TODO("Missing platform!")),
                     targetEnvironment,
                     this@ResolverForProjectImpl,
-                    languageVersionSettings,
-                    targetPlatformVersion
+                    languageVersionSettings
                 )
             }
         }
@@ -302,8 +303,7 @@ abstract class ResolverForModuleFactory {
         platformParameters: PlatformAnalysisParameters,
         targetEnvironment: TargetEnvironment,
         resolverForProject: ResolverForProject<M>,
-        languageVersionSettings: LanguageVersionSettings,
-        targetPlatformVersion: TargetPlatformVersion
+        languageVersionSettings: LanguageVersionSettings
     ): ResolverForModule
 }
 

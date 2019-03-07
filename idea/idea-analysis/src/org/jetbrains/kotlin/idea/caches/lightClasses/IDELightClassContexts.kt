@@ -22,7 +22,7 @@ import com.intellij.psi.search.EverythingGlobalScope
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndex
 import org.jetbrains.kotlin.asJava.builder.LightClassConstructionContext
-import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.resolve.JvmTarget
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.container.useImpl
@@ -308,10 +308,10 @@ internal object IDELightClassContexts {
 
         val moduleInfo = files.first().getModuleInfo()
         val container = createContainer("LightClassStub", JvmPlatformCompilerServices) {
-            val jvmTarget = IDELanguageSettingsProvider.getTargetPlatform(moduleInfo, project) as? JvmTarget
+            val jvmTarget = IDELanguageSettingsProvider.getTargetPlatform(moduleInfo, project) as? JvmTarget ?: JvmTarget.DEFAULT
             configureModule(
-                ModuleContext(moduleDescriptor, project), DefaultBuiltInPlatforms.jvmPlatform,
-                jvmTarget ?: JvmTarget.DEFAULT, JvmPlatformCompilerServices, trace
+                ModuleContext(moduleDescriptor, project), DefaultBuiltInPlatforms.jvmPlatformByTargetVersion(jvmTarget),
+                JvmPlatformCompilerServices, trace
             )
 
             useInstance(GlobalSearchScope.EMPTY_SCOPE)

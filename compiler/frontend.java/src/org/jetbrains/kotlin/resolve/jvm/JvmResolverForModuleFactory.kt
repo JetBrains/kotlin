@@ -17,9 +17,7 @@
 package org.jetbrains.kotlin.resolve.jvm
 
 import org.jetbrains.kotlin.analyzer.*
-import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.TargetPlatformVersion
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
@@ -31,9 +29,9 @@ import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolverImpl
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer
+import org.jetbrains.kotlin.resolve.DefaultBuiltInPlatforms
 import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
-import org.jetbrains.kotlin.resolve.JvmPlatform
 import org.jetbrains.kotlin.resolve.isJvm
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
@@ -52,8 +50,7 @@ object JvmResolverForModuleFactory : ResolverForModuleFactory() {
         platformParameters: PlatformAnalysisParameters,
         targetEnvironment: TargetEnvironment,
         resolverForProject: ResolverForProject<M>,
-        languageVersionSettings: LanguageVersionSettings,
-        targetPlatformVersion: TargetPlatformVersion
+        languageVersionSettings: LanguageVersionSettings
     ): ResolverForModule {
         val (moduleInfo, syntheticFiles, moduleContentScope) = moduleContent
         val project = moduleContext.project
@@ -82,12 +79,12 @@ object JvmResolverForModuleFactory : ResolverForModuleFactory() {
             resolverForModule.componentProvider.get<JavaDescriptorResolver>()
         }
 
-        val jvmTarget = targetPlatformVersion as? JvmTarget ?: JvmTarget.JVM_1_6
         val trace = CodeAnalyzerInitializer.getInstance(project).createTrace()
 
         val lookupTracker = LookupTracker.DO_NOTHING
         val packagePartProvider = (platformParameters as JvmPlatformParameters).packagePartProviderFactory(moduleContent)
         val container = createContainerForLazyResolveWithJava(
+            DefaultBuiltInPlatforms.jvmPlatform, // TODO: pass proper TargetVersion, see ResolverForProjectImpl
             moduleContext,
             trace,
             declarationProviderFactory,
@@ -97,7 +94,6 @@ object JvmResolverForModuleFactory : ResolverForModuleFactory() {
             lookupTracker,
             ExpectActualTracker.DoNothing,
             packagePartProvider,
-            jvmTarget,
             languageVersionSettings,
             useBuiltInsProvider = false // TODO: load built-ins from module dependencies in IDE
         )

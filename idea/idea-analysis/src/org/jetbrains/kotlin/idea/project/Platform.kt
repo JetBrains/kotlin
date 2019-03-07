@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.platform.impl.isCommon
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.UserDataProperty
+import org.jetbrains.kotlin.resolve.JvmTarget
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.utils.Jsr305State
 import java.io.File
@@ -209,6 +210,7 @@ private fun Module.computeLanguageVersionSettings(): LanguageVersionSettings {
 val Module.platform: IdePlatform<*, *>?
     get() = KotlinFacetSettingsProvider.getInstance(project).getInitializedSettings(this).platform ?: project.platform
 
+// TODO: check it, it does some madness
 val Project.platform: IdePlatform<*, *>?
     get() {
         val jvmTarget = Kotlin2JvmCompilerArgumentsHolder.getInstance(this).settings.jvmTarget ?: return null
@@ -255,12 +257,4 @@ val PsiElement.languageVersionSettings: LanguageVersionSettings
             return LanguageVersionSettingsImpl.DEFAULT
         }
         return IDELanguageSettingsProvider.getLanguageVersionSettings(this.getModuleInfo(), project)
-    }
-
-val KtElement.jvmTarget: JvmTarget
-    get() {
-        if (ServiceManager.getService(project, ProjectFileIndex::class.java) == null) {
-            return JvmTarget.DEFAULT
-        }
-        return IDELanguageSettingsProvider.getTargetPlatform(this.getModuleInfo(), project) as? JvmTarget ?: JvmTarget.DEFAULT
     }

@@ -17,11 +17,9 @@
 package org.jetbrains.kotlin.frontend.di
 
 import org.jetbrains.kotlin.resolve.TargetPlatform
-import org.jetbrains.kotlin.resolve.CommonPlatform
 import org.jetbrains.kotlin.analyzer.common.CommonPlatformCompilerServices
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
-import org.jetbrains.kotlin.config.TargetPlatformVersion
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.container.useImpl
@@ -45,7 +43,6 @@ import org.jetbrains.kotlin.types.expressions.LocalLazyDeclarationResolver
 fun StorageComponentContainer.configureModule(
     moduleContext: ModuleContext,
     platform: TargetPlatform,
-    platformVersion: TargetPlatformVersion,
     compilerServices: PlatformDependentCompilerServices
 ) {
     useInstance(moduleContext)
@@ -55,8 +52,10 @@ fun StorageComponentContainer.configureModule(
     useInstance(moduleContext.module.builtIns)
 
     useInstance(platform)
-    useInstance(platformVersion)
     useInstance(compilerServices)
+    if (platform is JvmPlatform) {
+        useInstance(platform.targetVersion)
+    }
 
     compilerServices.platformConfigurator.configureModuleComponents(this)
     compilerServices.platformConfigurator.configureModuleDependentCheckers(this)
@@ -81,11 +80,10 @@ private fun StorageComponentContainer.configurePlatformIndependentComponents() {
 fun StorageComponentContainer.configureModule(
     moduleContext: ModuleContext,
     platform: TargetPlatform,
-    platformVersion: TargetPlatformVersion,
     compilerServices: PlatformDependentCompilerServices,
     trace: BindingTrace
 ) {
-    configureModule(moduleContext, platform, platformVersion, compilerServices)
+    configureModule(moduleContext, platform, compilerServices)
     useInstance(trace)
 }
 
@@ -94,11 +92,10 @@ fun createContainerForBodyResolve(
     bindingTrace: BindingTrace,
     platform: TargetPlatform,
     statementFilter: StatementFilter,
-    targetPlatformVersion: TargetPlatformVersion,
     compilerServices: PlatformDependentCompilerServices,
     languageVersionSettings: LanguageVersionSettings
 ): StorageComponentContainer = createContainer("BodyResolve", compilerServices) {
-    configureModule(moduleContext, platform, targetPlatformVersion, compilerServices, bindingTrace)
+    configureModule(moduleContext, platform, compilerServices, bindingTrace)
 
     useInstance(statementFilter)
 
@@ -115,11 +112,10 @@ fun createContainerForLazyBodyResolve(
     bindingTrace: BindingTrace,
     platform: TargetPlatform,
     bodyResolveCache: BodyResolveCache,
-    targetPlatformVersion: TargetPlatformVersion,
     compilerServices: PlatformDependentCompilerServices,
     languageVersionSettings: LanguageVersionSettings
 ): StorageComponentContainer = createContainer("LazyBodyResolve", compilerServices) {
-    configureModule(moduleContext, platform, targetPlatformVersion, compilerServices, bindingTrace)
+    configureModule(moduleContext, platform, compilerServices, bindingTrace)
 
     useInstance(kotlinCodeAnalyzer)
     useInstance(kotlinCodeAnalyzer.fileScopeProvider)
@@ -135,13 +131,12 @@ fun createContainerForLazyLocalClassifierAnalyzer(
     bindingTrace: BindingTrace,
     platform: TargetPlatform,
     lookupTracker: LookupTracker,
-    targetPlatformVersion: TargetPlatformVersion,
     languageVersionSettings: LanguageVersionSettings,
     statementFilter: StatementFilter,
     localClassDescriptorHolder: LocalClassDescriptorHolder,
     compilerServices: PlatformDependentCompilerServices
 ): StorageComponentContainer = createContainer("LocalClassifierAnalyzer", compilerServices) {
-    configureModule(moduleContext, platform, targetPlatformVersion, compilerServices, bindingTrace)
+    configureModule(moduleContext, platform, compilerServices, bindingTrace)
 
     useInstance(localClassDescriptorHolder)
     useInstance(lookupTracker)
@@ -168,12 +163,11 @@ fun createContainerForLazyResolve(
     declarationProviderFactory: DeclarationProviderFactory,
     bindingTrace: BindingTrace,
     platform: TargetPlatform,
-    targetPlatformVersion: TargetPlatformVersion,
     compilerServices: PlatformDependentCompilerServices,
     targetEnvironment: TargetEnvironment,
     languageVersionSettings: LanguageVersionSettings
 ): StorageComponentContainer = createContainer("LazyResolve", compilerServices) {
-    configureModule(moduleContext, platform, targetPlatformVersion, compilerServices, bindingTrace)
+    configureModule(moduleContext, platform, compilerServices, bindingTrace)
 
     useInstance(declarationProviderFactory)
     useInstance(languageVersionSettings)
@@ -193,7 +187,6 @@ fun createLazyResolveSession(moduleContext: ModuleContext, files: Collection<KtF
         FileBasedDeclarationProviderFactory(moduleContext.storageManager, files),
         BindingTraceContext(),
         DefaultBuiltInPlatforms.commonPlatform,
-        TargetPlatformVersion.NoVersion,
         CommonPlatformCompilerServices,
         CompilerEnvironment,
         LanguageVersionSettingsImpl.DEFAULT

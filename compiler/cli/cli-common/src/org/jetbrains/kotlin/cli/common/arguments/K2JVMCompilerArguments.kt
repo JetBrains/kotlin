@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.cli.common.arguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.resolve.JvmTarget
 
 class K2JVMCompilerArguments : CommonCompilerArguments() {
     companion object {

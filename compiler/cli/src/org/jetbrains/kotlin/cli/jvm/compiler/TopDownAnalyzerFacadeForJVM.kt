@@ -56,9 +56,7 @@ import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackagePartProvid
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.LazyTopDownAnalyzer
-import org.jetbrains.kotlin.resolve.TopDownAnalysisMode
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
@@ -171,8 +169,9 @@ object TopDownAnalyzerFacadeForJVM {
             val dependencyScope = GlobalSearchScope.notScope(sourceScope)
 
             val dependenciesContainer = createContainerForTopDownAnalyzerForJvm(
+                DefaultBuiltInPlatforms.jvmPlatformByTargetVersion(jvmTarget), // TODO(dsavvinov): do not pass JvmTarget around
                 dependenciesContext, trace, DeclarationProviderFactory.EMPTY, dependencyScope, lookupTracker, expectActualTracker,
-                packagePartProvider(dependencyScope), moduleClassResolver, jvmTarget, languageVersionSettings, configureJavaClassFinder
+                packagePartProvider(dependencyScope), moduleClassResolver, languageVersionSettings, configureJavaClassFinder
             )
 
             moduleClassResolver.compiledCodeResolver = dependenciesContainer.get()
@@ -199,8 +198,9 @@ object TopDownAnalyzerFacadeForJVM {
         // to be stored in CliLightClassGenerationSupport, and it better be the source one (otherwise light classes would not be found)
         // TODO: get rid of duplicate invocation of CodeAnalyzerInitializer#initialize, or refactor CliLightClassGenerationSupport
         val container = createContainerForTopDownAnalyzerForJvm(
+            DefaultBuiltInPlatforms.jvmPlatformByTargetVersion(jvmTarget),
             moduleContext, trace, declarationProviderFactory(storageManager, files), sourceScope, lookupTracker, expectActualTracker,
-            partProvider, moduleClassResolver, jvmTarget, languageVersionSettings, configureJavaClassFinder,
+            partProvider, moduleClassResolver, languageVersionSettings, configureJavaClassFinder,
             javaClassTracker = configuration[JVMConfigurationKeys.JAVA_CLASSES_TRACKER]
         ).apply {
             initJvmBuiltInsForTopDownAnalysis()

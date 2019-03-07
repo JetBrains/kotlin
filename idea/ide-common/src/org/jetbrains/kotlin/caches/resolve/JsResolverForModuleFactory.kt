@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.caches.resolve
 import org.jetbrains.kotlin.analyzer.*
 import org.jetbrains.kotlin.caches.project.LibraryModuleInfo
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.TargetPlatformVersion
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
@@ -42,8 +41,7 @@ object JsResolverForModuleFactory : ResolverForModuleFactory() {
         platformParameters: PlatformAnalysisParameters,
         targetEnvironment: TargetEnvironment,
         resolverForProject: ResolverForProject<M>,
-        languageVersionSettings: LanguageVersionSettings,
-        targetPlatformVersion: TargetPlatformVersion
+        languageVersionSettings: LanguageVersionSettings
     ): ResolverForModule {
         val (moduleInfo, syntheticFiles, moduleContentScope) = moduleContent
         val project = moduleContext.project
@@ -60,7 +58,6 @@ object JsResolverForModuleFactory : ResolverForModuleFactory() {
             declarationProviderFactory,
             BindingTraceContext(),
             DefaultBuiltInPlatforms.jsPlatform,
-            TargetPlatformVersion.NoVersion,
             JsPlatformCompilerServices,
             targetEnvironment,
             languageVersionSettings
