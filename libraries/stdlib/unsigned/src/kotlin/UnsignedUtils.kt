@@ -62,23 +62,6 @@ internal fun ulongRemainder(v1: ULong, v2: ULong): ULong {
     return ULong(rem - if (ULong(rem) >= ULong(divisor)) divisor else 0)
 }
 
-
-@PublishedApi
-internal fun doubleToUByte(v: Double): UByte = when {
-    v.isNaN() -> 0u
-    v <= UByte.MIN_VALUE.toDouble() -> UByte.MIN_VALUE
-    v >= UByte.MAX_VALUE.toDouble() -> UByte.MAX_VALUE
-    else -> v.toInt().toUByte()
-}
-
-@PublishedApi
-internal fun doubleToUShort(v: Double): UShort = when {
-    v.isNaN() -> 0u
-    v <= UShort.MIN_VALUE.toDouble() -> UShort.MIN_VALUE
-    v >= UShort.MAX_VALUE.toDouble() -> UShort.MAX_VALUE
-    else -> v.toInt().toUShort()
-}
-
 @PublishedApi
 internal fun doubleToUInt(v: Double): UInt = when {
     v.isNaN() -> 0u

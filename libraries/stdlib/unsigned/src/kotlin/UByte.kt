@@ -299,24 +299,3 @@ public inline fun Int.toUByte(): UByte = UByte(this.toByte())
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun Long.toUByte(): UByte = UByte(this.toByte())
-
-/**
- * Converts this [Float] value to [UByte].
- *
- * The fractional part, if any, is rounded down.
- * Returns zero if this `Float` value is negative or `NaN`, [UByte.MAX_VALUE] if it's bigger than `UByte.MAX_VALUE`.
- */
-@SinceKotlin("1.3")
-@ExperimentalUnsignedTypes
-@kotlin.internal.InlineOnly
-public inline fun Float.toUByte(): UByte = doubleToUByte(this.toDouble())
-/**
- * Converts this [Double] value to [UByte].
- *
- * The fractional part, if any, is rounded down.
- * Returns zero if this `Double` value is negative or `NaN`, [UByte.MAX_VALUE] if it's bigger than `UByte.MAX_VALUE`.
- */
-@SinceKotlin("1.3")
-@ExperimentalUnsignedTypes
-@kotlin.internal.InlineOnly
-public inline fun Double.toUByte(): UByte = doubleToUByte(this)

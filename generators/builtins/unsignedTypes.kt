@@ -336,8 +336,11 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
                 else -> "$className(this.to$thisSigned())"
             })
         }
-        out.println()
 
+        if (type == UnsignedType.UBYTE || type == UnsignedType.USHORT)
+            return // conversion from UByte/UShort to Float/Double is not allowed
+
+        out.println()
         for (otherType in PrimitiveType.floatingPoint) {
             val otherName = otherType.capitalized
 

@@ -462,10 +462,8 @@ public abstract interface annotation class kotlin/UnsafeVariance : java/lang/ann
 }
 
 public final class kotlin/UnsignedKt {
-	public static final fun doubleToUByte (D)B
 	public static final fun doubleToUInt (D)I
 	public static final fun doubleToULong (D)J
-	public static final fun doubleToUShort (D)S
 	public static final fun uintCompare (II)I
 	public static final fun uintDivide-J1ME1BU (II)I
 	public static final fun uintRemainder-J1ME1BU (II)I

@@ -300,24 +300,3 @@ public inline fun Int.toUShort(): UShort = UShort(this.toShort())
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun Long.toUShort(): UShort = UShort(this.toShort())
-
-/**
- * Converts this [Float] value to [UShort].
- *
- * The fractional part, if any, is rounded down.
- * Returns zero if this `Float` value is negative or `NaN`, [UShort.MAX_VALUE] if it's bigger than `UShort.MAX_VALUE`.
- */
-@SinceKotlin("1.3")
-@ExperimentalUnsignedTypes
-@kotlin.internal.InlineOnly
-public inline fun Float.toUShort(): UShort = doubleToUShort(this.toDouble())
-/**
- * Converts this [Double] value to [UShort].
- *
- * The fractional part, if any, is rounded down.
- * Returns zero if this `Double` value is negative or `NaN`, [UShort.MAX_VALUE] if it's bigger than `UShort.MAX_VALUE`.
- */
-@SinceKotlin("1.3")
-@ExperimentalUnsignedTypes
-@kotlin.internal.InlineOnly
-public inline fun Double.toUShort(): UShort = doubleToUShort(this)
