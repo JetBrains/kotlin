@@ -3,25 +3,27 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-import com.intellij.testFramework.TestDataPath
+package org.jetbrains.kotlin.fir.antlr2fir
+
 import junit.framework.TestCase
+import org.antlr.v4.runtime.BailErrorStrategy
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
+import org.antlr.v4.runtime.atn.LexerATNSimulator
+import org.antlr.v4.runtime.atn.ParserATNSimulator
+import org.antlr.v4.runtime.atn.PredictionContextCache
+import org.antlr.v4.runtime.atn.PredictionMode
 import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.FirSessionBase
-import org.jetbrains.kotlin.fir.antlr2fir.Antlr2FirBuilder
 import org.jetbrains.kotlin.fir.antlr2fir.antlr4.generated.KotlinLexer
 import org.jetbrains.kotlin.fir.antlr2fir.antlr4.generated.KotlinParser
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.impl.FirFileImpl
 import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
-import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.TargetBackend
-import org.jetbrains.kotlin.test.TestMetadata
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.jetbrains.kotlin.name.FqName
 import java.io.File
+import java.io.FileInputStream
 import java.nio.file.Path
 import java.nio.file.Paths
 
@@ -29,6 +31,11 @@ class Antlr2FirBuilderTest(private val stubMode: Boolean = true) {
     fun buildFirFile(path: Path): FirFile {
         val fileName = path.toString().replaceBeforeLast(File.separator, "").replace(File.separator, "")
         return buildFirFile(KotlinLexer(CharStreams.fromPath(path)), fileName)
+    }
+
+    fun buildFirFile(file: File): FirFile {
+        val lexer = KotlinLexer(CharStreams.fromFileName(file.absolutePath))
+        return buildFirFile(lexer, file.name)
     }
 
     fun buildFirFile(input: String): FirFile {
@@ -41,11 +48,17 @@ class Antlr2FirBuilderTest(private val stubMode: Boolean = true) {
 
         // TODO script
         return Antlr2FirBuilder(object : FirSessionBase() {}, stubMode, fileName).buildFirFile(parser.kotlinFile())
+        /*return FirFileImpl(
+            object : FirSessionBase() {},
+            null,
+            fileName,
+            FqName.ROOT
+        )*/
     }
 
 }
 
-class RawFirBuilderTest: AbstractRawFirBuilderTestCase() {
+class RawFirBuilderTest : AbstractRawFirBuilderTestCase() {
     private fun executeTest(filePath: String) {
         val antlr2FirResult = Antlr2FirBuilderTest(true).buildFirFile(Paths.get(filePath)).render()
 
@@ -59,76 +72,76 @@ class RawFirBuilderTest: AbstractRawFirBuilderTestCase() {
     fun testComplexTypes() {
         executeTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/complexTypes.kt")
     }
-    
+
     fun testDerivedClass() {
         executeTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/derivedClass.kt")
     }
-    
+
     fun testEnums() {
-        executeTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/enums.kt");
+        executeTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/enums.kt")
     }
 
     fun testEnums2() {
-        executeTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/enums2.kt");
+        executeTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/enums2.kt")
     }
-    
+
     fun testExpectActual() {
-        executeTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/expectActual.kt");
+        executeTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/expectActual.kt")
     }
-    
+
     fun testF() {
-        executeTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/F.kt");
+        executeTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/F.kt")
     }
-    
+
     fun testFunctionTypes() {
-        executeTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/functionTypes.kt");
+        executeTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/functionTypes.kt")
     }
-    
+
     fun testGenericFunctions() {
-        executeTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/genericFunctions.kt");
+        executeTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/genericFunctions.kt")
     }
-    
+
     fun testNestedClass() {
-        executeTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/nestedClass.kt");
+        executeTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/nestedClass.kt")
     }
 
     fun testNestedOfAliasedType() {
-        executeTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/NestedOfAliasedType.kt");
+        executeTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/NestedOfAliasedType.kt")
     }
 
     fun testNestedSuperType() {
-        executeTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/NestedSuperType.kt");
+        executeTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/NestedSuperType.kt")
     }
 
     fun testNoPrimaryConstructor() {
-        executeTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/noPrimaryConstructor.kt");
+        executeTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/noPrimaryConstructor.kt")
     }
 
     fun testSimpleClass() {
-        executeTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/simpleClass.kt");
+        executeTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/simpleClass.kt")
     }
 
     fun testSimpleFun() {
-        executeTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/simpleFun.kt");
+        executeTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/simpleFun.kt")
     }
 
     fun testSimpleTypeAlias() {
-        executeTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/simpleTypeAlias.kt");
+        executeTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/simpleTypeAlias.kt")
     }
 
     fun testTypeAliasWithGeneric() {
-        executeTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/typeAliasWithGeneric.kt");
+        executeTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/typeAliasWithGeneric.kt")
     }
 
     fun testTypeParameterVsNested() {
-        executeTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/typeParameterVsNested.kt");
+        executeTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/typeParameterVsNested.kt")
     }
 
     fun testTypeParameters() {
-        executeTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/typeParameters.kt");
+        executeTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/typeParameters.kt")
     }
 
     fun testWhere() {
-        executeTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/where.kt");
+        executeTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/where.kt")
     }
 }
