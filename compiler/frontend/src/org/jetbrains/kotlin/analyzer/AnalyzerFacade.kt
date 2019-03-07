@@ -91,8 +91,6 @@ class ResolverForProjectImpl<M : ModuleInfo>(
     private val modulesContent: (M) -> ModuleContent<M>,
     private val moduleLanguageSettingsProvider: LanguageSettingsProvider,
     private val resolverForModuleFactoryByPlatform: (TargetPlatform?) -> ResolverForModuleFactory,
-    private val platformParameters: (TargetPlatform) -> PlatformAnalysisParameters,
-    private val targetEnvironment: TargetEnvironment = CompilerEnvironment,
     override val builtIns: KotlinBuiltIns = DefaultBuiltIns.Instance,
     private val delegateResolver: ResolverForProject<M> = EmptyResolverForProject(),
     private val firstDependency: M? = null,
@@ -190,8 +188,6 @@ class ResolverForProjectImpl<M : ModuleInfo>(
                     descriptor as ModuleDescriptorImpl,
                     projectContext.withModule(descriptor),
                     moduleContent,
-                    platformParameters(module.platform ?: TODO("Missing platform!")),
-                    targetEnvironment,
                     this@ResolverForProjectImpl,
                     languageVersionSettings
                 )
@@ -288,8 +284,6 @@ abstract class ResolverForModuleFactory {
         moduleDescriptor: ModuleDescriptorImpl,
         moduleContext: ModuleContext,
         moduleContent: ModuleContent<M>,
-        platformParameters: PlatformAnalysisParameters,
-        targetEnvironment: TargetEnvironment,
         resolverForProject: ResolverForProject<M>,
         languageVersionSettings: LanguageVersionSettings
     ): ResolverForModule
