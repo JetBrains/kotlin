@@ -132,8 +132,19 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
             evaluationException("Code fragment evaluation is not available in the dumb mode")
         }
 
+        val frameProxy = context.frameProxy
+            ?: evaluationException("Cannot evaluate a code fragment: frame proxy is not available")
+
+        val operatingThread = context.suspendContext.thread
+            ?: evaluationException("Cannot evaluate a code fragment: thread is not available")
+
+        if (!operatingThread.isSuspended) {
+            evaluationException("Evaluation is available only for the suspended threads")
+        }
+
         try {
-            return evaluateSafe(context)
+            val executionContext = ExecutionContext(context, frameProxy)
+            return evaluateSafe(executionContext)
         } catch (e: EvaluateException) {
             throw e
         } catch (e: ProcessCanceledException) {
@@ -168,37 +179,33 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
         }
     }
 
-    private fun evaluateSafe(context: EvaluationContextImpl): Any? {
+    private fun evaluateSafe(context: ExecutionContext): Any? {
         fun compilerFactory(): CompiledDataDescriptor = compileCodeFragment(context)
 
         val (compiledData, isCompiledDataFromCache) = compileCodeFragmentCacheAware(codeFragment, sourcePosition, ::compilerFactory)
         val classLoaderRef = loadClassesSafely(context, compiledData.classes)
 
-        val thread = context.suspendContext.thread?.threadReference ?: error("Can not find a thread to run evaluation on")
-        val invokePolicy = context.suspendContext.getInvokePolicy()
-        val executionContext = ExecutionContext(context, thread, invokePolicy)
-
         val result = if (classLoaderRef != null) {
-            evaluateWithCompilation(executionContext, compiledData, classLoaderRef)
-                ?: evaluateWithEval4J(executionContext, compiledData, classLoaderRef)
+            evaluateWithCompilation(context, compiledData, classLoaderRef)
+                ?: evaluateWithEval4J(context, compiledData, classLoaderRef)
         } else {
-            evaluateWithEval4J(executionContext, compiledData, classLoaderRef)
+            evaluateWithEval4J(context, compiledData, classLoaderRef)
         }
 
         // If bytecode was taken from cache and exception was thrown - recompile bytecode and run eval4j again
         if (isCompiledDataFromCache && result is ExceptionThrown && result.kind == ExceptionThrown.ExceptionKind.BROKEN_CODE) {
             val (recompiledData, _) = compileCodeFragmentCacheAware(codeFragment, sourcePosition, ::compilerFactory, force = true)
-            return evaluateWithEval4J(executionContext, recompiledData, classLoaderRef).toJdiValue(executionContext)
+            return evaluateWithEval4J(context, recompiledData, classLoaderRef).toJdiValue(context)
         }
 
         return when (result) {
-            is InterpreterResult -> result.toJdiValue(executionContext)
+            is InterpreterResult -> result.toJdiValue(context)
             else -> result
         }
     }
 
-    private fun compileCodeFragment(evaluationContext: EvaluationContextImpl): CompiledDataDescriptor {
-        val debugProcess = evaluationContext.debugProcess
+    private fun compileCodeFragment(context: ExecutionContext): CompiledDataDescriptor {
+        val debugProcess = context.debugProcess
         var analysisResult = checkForErrors(codeFragment, debugProcess)
 
         if (codeFragment.wrapToStringIfNeeded(analysisResult.bindingContext)) {
@@ -215,7 +222,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
 
         val moduleDescriptor = analysisResult.moduleDescriptor
 
-        val result = CodeFragmentCompiler(evaluationContext).compile(codeFragment, bindingContext, moduleDescriptor)
+        val result = CodeFragmentCompiler(context).compile(codeFragment, bindingContext, moduleDescriptor)
         return CompiledDataDescriptor.from(result, sourcePosition)
     }
 
@@ -285,10 +292,10 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
     ): Value? {
         return try {
             runEvaluation(context, compiledData, classLoader) { args ->
-                val mainClassType = context.loadClassType(Type.getObjectType(GENERATED_CLASS_NAME), classLoader) as? ClassType
+                val mainClassType = context.loadClass(Type.getObjectType(GENERATED_CLASS_NAME), classLoader) as? ClassType
                     ?: error("Can not find class \"$GENERATED_CLASS_NAME\"")
                 val mainMethod = mainClassType.methods().single { it.name() == GENERATED_FUNCTION_NAME }
-                val returnValue = context.debugProcess.invokeMethod(context.evaluationContext, mainClassType, mainMethod, args)
+                val returnValue = context.invokeMethod(mainClassType, mainMethod, args)
                 EvaluatorValueConverter(context).unref(returnValue)
             }
         } catch (e: Throwable) {
@@ -307,7 +314,11 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
         val mainMethod = mainClassAsmNode.methods.first { it.name == GENERATED_FUNCTION_NAME }
 
         return runEvaluation(context, compiledData, classLoader ?: context.evaluationContext.classLoader) { args ->
-            val eval = JDIEval(context.vm, classLoader, context.thread, context.invokePolicy)
+            val vm = context.vm.virtualMachine
+            val thread = context.suspendContext.thread?.threadReference?.takeIf { it.isAtBreakpoint }
+                ?: error("Can not find a thread to run evaluation on")
+
+            val eval = JDIEval(vm, classLoader, thread, context.invokePolicy)
             interpreterLoop(mainMethod, makeInitialFrame(mainMethod, args.map { it.asValue() }), eval)
         }
     }
@@ -321,24 +332,24 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
         // Preload additional classes
         compiledData.classes
             .filter { !it.isMainClass }
-            .forEach { context.loadClassType(Type.getObjectType(it.className), classLoader) }
+            .forEach { context.loadClass(Type.getObjectType(it.className), classLoader) }
 
-        return context.vm.executeWithBreakpointsDisabled {
+        return context.vm.virtualMachine.executeWithBreakpointsDisabled {
             for (parameterType in compiledData.mainMethodSignature.parameterTypes) {
-                context.loadClassType(parameterType, classLoader)
+                context.loadClass(parameterType, classLoader)
             }
-            val args = context.calculateMainMethodCallArguments(compiledData)
+            val args = calculateMainMethodCallArguments(context, compiledData)
             block(args)
         }
     }
 
-    private fun ExecutionContext.calculateMainMethodCallArguments(compiledData: CompiledDataDescriptor): List<Value?> {
+    private fun calculateMainMethodCallArguments(context: ExecutionContext, compiledData: CompiledDataDescriptor): List<Value?> {
         val asmValueParameters = compiledData.mainMethodSignature.parameterTypes
         val valueParameters = compiledData.parameters
         require(asmValueParameters.size == valueParameters.size)
 
         val args = valueParameters.zip(asmValueParameters)
-        val variableFinder = VariableFinder.instance(this) ?: error("Frame map is not available")
+        val variableFinder = VariableFinder(context)
 
         return args.map { (parameter, asmType) ->
             val result = variableFinder.find(parameter, asmType)
@@ -347,7 +358,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                 val name = parameter.debugString
 
                 fun isInsideDefaultInterfaceMethod(): Boolean {
-                    val method = evaluationContext.frameProxy?.safeLocation()?.safeMethod() ?: return false
+                    val method = context.frameProxy.safeLocation()?.safeMethod() ?: return false
                     val desc = method.signature()
                     return method.name().endsWith("\$default") && DEFAULT_METHOD_MARKERS.any { desc.contains("I${it.descriptor})") }
                 }
@@ -359,7 +370,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                 } else if (parameter.kind == CodeFragmentParameter.Kind.ORDINARY && isInsideDefaultInterfaceMethod()) {
                     evaluationException("Parameter evaluation is not supported for '\$default' methods")
                 } else {
-                    throw VariableFinder.variableNotFound(evaluationContext, buildString {
+                    throw VariableFinder.variableNotFound(context, buildString {
                         append("Cannot find local variable: name = '").append(name).append("', type = ").append(asmType.className)
                     })
                 }
@@ -376,7 +387,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
 
         private val DEFAULT_METHOD_MARKERS = listOf(AsmTypes.OBJECT_TYPE, AsmTypes.DEFAULT_CONSTRUCTOR_MARKER)
 
-        private fun InterpreterResult.toJdiValue(context: ExecutionContext): com.sun.jdi.Value? {
+        private fun InterpreterResult.toJdiValue(context: ExecutionContext): Value? {
             val jdiValue = when (this) {
                 is ValueReturned -> result
                 is ExceptionThrown -> {
@@ -394,7 +405,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
             }
 
             val sharedVar = if ((jdiValue is AbstractValue<*>)) getValueIfSharedVar(jdiValue, context) else null
-            return sharedVar?.value ?: jdiValue.asJdiValue(context.vm, jdiValue.asmType)
+            return sharedVar?.value ?: jdiValue.asJdiValue(context.vm.virtualMachine, jdiValue.asmType)
         }
 
         private fun getValueIfSharedVar(value: Eval4JValue, context: ExecutionContext): VariableFinder.Result? {

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.idea.debugger.evaluate.variables
 
 import com.intellij.debugger.engine.evaluation.EvaluateExceptionUtil
-import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
 import com.intellij.debugger.jdi.LocalVariableProxyImpl
 import com.intellij.debugger.jdi.StackFrameProxyImpl
 import com.intellij.openapi.diagnostic.Attachment
@@ -33,7 +32,9 @@ import kotlin.coroutines.Continuation
 import org.jetbrains.org.objectweb.asm.Type as AsmType
 import com.sun.jdi.Type as JdiType
 
-class VariableFinder private constructor(private val context: ExecutionContext, private val frameProxy: StackFrameProxyImpl) {
+class VariableFinder(private val context: ExecutionContext) {
+    private val frameProxy = context.frameProxy
+
     companion object {
         private const val USE_UNSAFE_FALLBACK = true
 
@@ -44,14 +45,9 @@ class VariableFinder private constructor(private val context: ExecutionContext, 
             "kotlin.coroutines.jvm.internal.RestrictedSuspendLambda"
         )
 
-        fun instance(context: ExecutionContext): VariableFinder? {
-            val frameProxy = context.evaluationContext.frameProxy ?: return null
-            return VariableFinder(context, frameProxy)
-        }
-
-        fun variableNotFound(context: EvaluationContextImpl, message: String): Exception {
+        fun variableNotFound(context: ExecutionContext, message: String): Exception {
             val frameProxy = context.frameProxy
-            val location = frameProxy?.safeLocation()
+            val location = frameProxy.safeLocation()
             val scope = context.debugProcess.searchScope
 
             val locationText = location?.run { "Location: ${sourceName()}:${lineNumber()}" } ?: "No location available"
@@ -297,7 +293,7 @@ class VariableFinder private constructor(private val context: ExecutionContext, 
     }
 
     private fun findDebugLabel(name: String): Result? {
-        val markupMap = DebugLabelPropertyDescriptorProvider.getMarkupMap(context.evaluationContext.debugProcess)
+        val markupMap = DebugLabelPropertyDescriptorProvider.getMarkupMap(context.debugProcess)
 
         for ((value, markup) in markupMap) {
             if (markup.text == name) {
@@ -408,7 +404,7 @@ class VariableFinder private constructor(private val context: ExecutionContext, 
             .methodsByName("getContext", "()Lkotlin/coroutines/CoroutineContext;").firstOrNull()
             ?: return null
 
-        return context.debugProcess.invokeMethod(context.evaluationContext, continuation, getContextMethod, emptyList()) as? ObjectReference
+        return context.invokeMethod(continuation, getContextMethod, emptyList()) as? ObjectReference
     }
 
     private fun findCapturedVariableInReceiver(variables: List<LocalVariableProxyImpl>, kind: VariableKind): Result? {
@@ -482,7 +478,7 @@ class VariableFinder private constructor(private val context: ExecutionContext, 
             .methodsByName("getValue", "()Ljava/lang/Object;").firstOrNull()
             ?: return rawValue
 
-        return context.debugProcess.invokeMethod(context.evaluationContext, delegateValue, getValueMethod, emptyList())
+        return context.invokeMethod(delegateValue, getValueMethod, emptyList())
     }
 
     private fun isCapturedReceiverFieldName(name: String): Boolean {
