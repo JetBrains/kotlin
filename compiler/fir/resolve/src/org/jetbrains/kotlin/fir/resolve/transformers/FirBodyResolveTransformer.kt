@@ -16,10 +16,8 @@ import org.jetbrains.kotlin.fir.references.FirResolvedCallableReferenceImpl
 import org.jetbrains.kotlin.fir.references.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.ProcessorAction
+import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.*
-import org.jetbrains.kotlin.fir.scopes.lookupSuperTypes
 import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
@@ -181,7 +179,7 @@ class FirBodyResolveTransformer(val session: FirSession) : FirTransformer<Any?>(
     abstract class ApplicabilityChecker {
 
         val groupNumbers = mutableListOf<Int>()
-        val candidates = mutableListOf<ConeCallableSymbol>()
+        val candidates = mutableListOf<ConeSymbol>()
 
 
         var currentApplicability = CandidateApplicability.HIDDEN
@@ -205,7 +203,7 @@ class FirBodyResolveTransformer(val session: FirSession) : FirTransformer<Any?>(
         }
 
 
-        protected open fun getApplicability(group: Int, symbol: ConeCallableSymbol): CandidateApplicability {
+        protected open fun getApplicability(group: Int, symbol: ConeSymbol): CandidateApplicability {
             val declaration = (symbol as? FirBasedSymbol<*>)?.fir
                 ?: return CandidateApplicability.HIDDEN
             declaration as FirDeclaration
@@ -217,7 +215,7 @@ class FirBodyResolveTransformer(val session: FirSession) : FirTransformer<Any?>(
             return CandidateApplicability.RESOLVED
         }
 
-        open fun consumeCandidate(group: Int, symbol: ConeCallableSymbol) {
+        open fun consumeCandidate(group: Int, symbol: ConeSymbol) {
             val applicability = getApplicability(group, symbol)
 
             if (applicability > currentApplicability) {
@@ -235,13 +233,13 @@ class FirBodyResolveTransformer(val session: FirSession) : FirTransformer<Any?>(
 
         abstract fun updateNames(names: LinkedHashSet<Name>)
 
-        open fun isSuccessful(index: Int, candidate: ConeCallableSymbol): Boolean {
+        open fun isSuccessful(index: Int, candidate: ConeSymbol): Boolean {
             return true
         }
 
-        open fun successCandidates(): List<ConeCallableSymbol> {
+        open fun successCandidates(): List<ConeSymbol> {
             if (groupNumbers.isEmpty()) return emptyList()
-            val result = mutableListOf<ConeCallableSymbol>()
+            val result = mutableListOf<ConeSymbol>()
             var bestGroup = groupNumbers.first()
             for ((index, candidate) in candidates.withIndex()) {
                 val group = groupNumbers[index]
@@ -263,7 +261,7 @@ class FirBodyResolveTransformer(val session: FirSession) : FirTransformer<Any?>(
             names.add(name)
         }
 
-        override fun consumeCandidate(group: Int, symbol: ConeCallableSymbol) {
+        override fun consumeCandidate(group: Int, symbol: ConeSymbol) {
             if (symbol !is ConeVariableSymbol) return
             if (symbol.callableId.callableName != name) return
             super.consumeCandidate(group, symbol)
@@ -273,7 +271,7 @@ class FirBodyResolveTransformer(val session: FirSession) : FirTransformer<Any?>(
     inner class VariableInvokeApplicabilityChecker(val variableName: Name) : FunctionApplicabilityChecker(invoke) {
 
         val variableChecker = object : VariableApplicabilityChecker(variableName) {
-            override fun isSuccessful(index: Int, candidate: ConeCallableSymbol): Boolean {
+            override fun isSuccessful(index: Int, candidate: ConeSymbol): Boolean {
                 return matchedProperties[index]
             }
         }
@@ -287,12 +285,13 @@ class FirBodyResolveTransformer(val session: FirSession) : FirTransformer<Any?>(
             }
         }
 
-        private fun isInvokeApplicableOn(propertySymbol: ConeCallableSymbol, invokeSymbol: ConeCallableSymbol): Boolean {
+        private fun isInvokeApplicableOn(propertySymbol: ConeSymbol, invokeSymbol: ConeCallableSymbol): Boolean {
             return true //TODO: Actual type-check here
         }
 
-        override fun getApplicability(group: Int, symbol: ConeCallableSymbol): CandidateApplicability {
+        override fun getApplicability(group: Int, symbol: ConeSymbol): CandidateApplicability {
 
+            symbol as ConeCallableSymbol
             val declaration = (symbol as? FirBasedSymbol<*>)?.fir
                 ?: return CandidateApplicability.HIDDEN
             declaration as FirDeclaration
@@ -303,7 +302,7 @@ class FirBodyResolveTransformer(val session: FirSession) : FirTransformer<Any?>(
 
             var applicable = false
 
-            fun processCandidates(candidates: Iterable<IndexedValue<ConeCallableSymbol>>) {
+            fun processCandidates(candidates: Iterable<IndexedValue<ConeSymbol>>) {
                 for ((index, candidate) in candidates) {
                     val invokeApplicableOn = isInvokeApplicableOn(candidate, symbol)
                     if (invokeApplicableOn) {
@@ -330,8 +329,8 @@ class FirBodyResolveTransformer(val session: FirSession) : FirTransformer<Any?>(
             return currentApplicability == CandidateApplicability.RESOLVED
         }
 
-        override fun consumeCandidate(group: Int, symbol: ConeCallableSymbol) {
-            if (symbol.callableId.callableName == variableName) {
+        override fun consumeCandidate(group: Int, symbol: ConeSymbol) {
+            if (symbol is ConeVariableSymbol && symbol.callableId.callableName == variableName) {
                 variableChecker.consumeCandidate(group, symbol)
 
                 val lastCandidate = variableChecker.candidates.lastOrNull()
@@ -369,6 +368,19 @@ class FirBodyResolveTransformer(val session: FirSession) : FirTransformer<Any?>(
         val invoke = Name.identifier("invoke")
     }
 
+    class ClassifierApplicabilityChecker(val name: Name) : ApplicabilityChecker() {
+        override fun updateNames(names: LinkedHashSet<Name>) {
+            names.add(name)
+        }
+
+        override fun consumeCandidate(group: Int, symbol: ConeSymbol) {
+            if (symbol !is ConeClassifierSymbol) return
+            if (symbol.toLookupTag().name != name) return
+            super.consumeCandidate(group, symbol)
+        }
+
+    }
+
     open class FunctionApplicabilityChecker(val name: Name) : ApplicabilityChecker() {
 
         var parameterCount = 0
@@ -377,7 +389,7 @@ class FirBodyResolveTransformer(val session: FirSession) : FirTransformer<Any?>(
             names.add(name)
         }
 
-        override fun getApplicability(group: Int, symbol: ConeCallableSymbol): CandidateApplicability {
+        override fun getApplicability(group: Int, symbol: ConeSymbol): CandidateApplicability {
             val declaration = (symbol as FirBasedSymbol<*>).fir
 
             if (declaration is FirFunction) {
@@ -386,7 +398,7 @@ class FirBodyResolveTransformer(val session: FirSession) : FirTransformer<Any?>(
             return super.getApplicability(group, symbol)
         }
 
-        override fun consumeCandidate(group: Int, symbol: ConeCallableSymbol) {
+        override fun consumeCandidate(group: Int, symbol: ConeSymbol) {
             if (symbol !is ConeFunctionSymbol) return
             if (symbol.callableId.callableName != name) return
             super.consumeCandidate(group, symbol)
@@ -413,13 +425,14 @@ class FirBodyResolveTransformer(val session: FirSession) : FirTransformer<Any?>(
             processedScopes.add(scope)
 
             names.forEach { name ->
-                fun process(symbol: ConeCallableSymbol): ProcessorAction {
+                fun process(symbol: ConeSymbol): ProcessorAction {
                     for (checker in checkers) {
                         checker.consumeCandidate(index, symbol)
                     }
                     return ProcessorAction.NEXT
                 }
 
+                scope.processClassifiersByNameWithAction(name, FirPosition.OTHER, ::process)
                 scope.processPropertiesByName(name, ::process)
                 scope.processFunctionsByName(name, ::process)
             }
@@ -515,7 +528,7 @@ class FirBodyResolveTransformer(val session: FirSession) : FirTransformer<Any?>(
                         FirQualifiedAccessExpressionImpl(functionCall.session, functionCall.calleeReference.psi, functionCall.safe).apply {
                             calleeReference = createResolvedNamedReference(
                                 functionCall.calleeReference,
-                                result.variableChecker.successCandidates()
+                                result.variableChecker.successCandidates() as List<ConeCallableSymbol>
                             )
                             explicitReceiver = functionCall.explicitReceiver
                         }

@@ -8,18 +8,23 @@ package org.jetbrains.kotlin.fir.symbols
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
-interface ConeClassifierLookupTag
+interface ConeClassifierLookupTag {
+    val name: Name
+}
 
 interface ConeClassifierLookupTagWithFixedSymbol {
     val symbol: ConeClassifierSymbol
 }
 
 interface ConeTypeParameterLookupTag : ConeClassifierLookupTag {
-    val name: Name
+    override val name: Name
 
 }
 interface ConeClassLikeLookupTag : ConeClassifierLookupTag {
     val classId: ClassId
+
+    override val name: Name
+        get() = classId.shortClassName
 }
 
 interface ConeTypeAliasLookupTag : ConeClassLikeLookupTag
