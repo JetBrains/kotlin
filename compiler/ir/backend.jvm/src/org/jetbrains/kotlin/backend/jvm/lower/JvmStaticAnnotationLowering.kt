@@ -167,10 +167,12 @@ private class SingletonObjectJvmStaticLowering(
 
         irClass.declarations.filter(::isJvmStaticFunction).forEach {
             val jvmStaticFunction = it as IrSimpleFunction
-            val oldDispatchReceiverParameter = jvmStaticFunction.dispatchReceiverParameter!!
-            jvmStaticFunction.dispatchReceiverParameter = null
-            modifyBody(jvmStaticFunction, irClass, oldDispatchReceiverParameter)
-            functionsMadeStatic.add(jvmStaticFunction.symbol)
+            // dispatch receiver parameter is already null for synthetic property annotation methods
+            jvmStaticFunction.dispatchReceiverParameter?.let { oldDispatchReceiverParameter ->
+                jvmStaticFunction.dispatchReceiverParameter = null
+                modifyBody(jvmStaticFunction, irClass, oldDispatchReceiverParameter)
+                functionsMadeStatic.add(jvmStaticFunction.symbol)
+            }
         }
     }
 

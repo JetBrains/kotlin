@@ -346,6 +346,8 @@ internal class CallableReferenceLowering(val context: JvmBackendContext) : FileL
                 val function = this
                 parent = functionReferenceClass
                 overriddenSymbols.add(superFunction.symbol)
+                annotations.addAll(callee.annotations)
+
                 dispatchReceiverParameter = functionReferenceClass.thisReceiver?.copyTo(function)
 
                 val unboundArgsSet = unboundCalleeParameters.toSet()

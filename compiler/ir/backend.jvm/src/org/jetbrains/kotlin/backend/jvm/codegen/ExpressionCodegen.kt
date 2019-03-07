@@ -575,7 +575,7 @@ class ExpressionCodegen(
         val hasSpread = arguments.firstIsInstanceOrNull<IrSpreadElement>() != null
 
         if (hasSpread) {
-            val arrayOfReferences = KotlinBuiltIns.isArray(outType.toKotlinType()!!)
+            val arrayOfReferences = KotlinBuiltIns.isArray(outType.toKotlinType())
             if (size == 1) {
                 // Arrays.copyOf(receiverValue, newLength)
                 val argument = (arguments[0] as IrSpreadElement).expression
@@ -633,7 +633,7 @@ class ExpressionCodegen(
         } else {
             mv.iconst(size)
             newArrayInstruction(expression.type.toKotlinType())
-            val elementKotlinType = classCodegen.context.builtIns.getArrayElementType(outType.toKotlinType()!!)
+            val elementKotlinType = classCodegen.context.builtIns.getArrayElementType(outType.toKotlinType())
             for ((i, element) in expression.elements.withIndex()) {
                 mv.dup()
                 StackValue.constant(i).put(mv)

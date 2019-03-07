@@ -46,6 +46,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/annotations/nestedClassesInAnnotations.kt");
         }
 
+        @TestMetadata("parameters.kt")
+        public void testParameters() throws Exception {
+            runTest("compiler/testData/codegen/box/annotations/parameters.kt");
+        }
+
         @TestMetadata("resolveWithLowPriorityAnnotation.kt")
         public void testResolveWithLowPriorityAnnotation() throws Exception {
             runTest("compiler/testData/codegen/box/annotations/resolveWithLowPriorityAnnotation.kt");

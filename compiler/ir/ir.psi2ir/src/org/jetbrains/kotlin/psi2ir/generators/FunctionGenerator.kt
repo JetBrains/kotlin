@@ -18,10 +18,12 @@ package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
 import org.jetbrains.kotlin.psi.*
@@ -31,7 +33,10 @@ import org.jetbrains.kotlin.psi2ir.isConstructorDelegatingToSuper
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
+import org.jetbrains.kotlin.resolve.descriptorUtil.isAnnotationConstructor
 import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class FunctionGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGeneratorExtension(declarationGenerator) {
 
@@ -114,10 +119,10 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
             generateValueParameterDeclarations(irAccessor, ktAccessor ?: ktProperty, ktProperty.receiverTypeReference)
             val ktBodyExpression = ktAccessor?.bodyExpression
             irAccessor.body =
-                    if (ktBodyExpression != null)
-                        createBodyGenerator(irAccessor.symbol).generateFunctionBody(ktBodyExpression)
-                    else
-                        generateDefaultAccessorBody(descriptor, irAccessor)
+                if (ktBodyExpression != null)
+                    createBodyGenerator(irAccessor.symbol).generateFunctionBody(ktBodyExpression)
+                else
+                    generateDefaultAccessorBody(descriptor, irAccessor)
         }
 
     fun generateDefaultAccessorForPrimaryConstructorParameter(
@@ -299,8 +304,13 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
     ): IrValueParameter =
         declareParameter(valueParameterDescriptor, ktParameter, irOwnerElement).also { irValueParameter ->
             if (withDefaultValues) {
-                irValueParameter.defaultValue = ktParameter?.defaultValue?.let {
-                    bodyGenerator.generateExpressionBody(it)
+                irValueParameter.defaultValue = ktParameter?.defaultValue?.let { defaultValue ->
+                    val inAnnotation =
+                        valueParameterDescriptor.containingDeclaration.safeAs<ConstructorDescriptor>()?.isAnnotationConstructor() ?: false
+                    if (inAnnotation) {
+                        generateDefaultAnnotationParameterValue(defaultValue, valueParameterDescriptor)
+                    } else
+                        bodyGenerator.generateExpressionBody(defaultValue)
                 }
             }
         }
@@ -320,4 +330,19 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
             descriptor, descriptor.type.toIrType(),
             (descriptor as? ValueParameterDescriptor)?.varargElementType?.toIrType()
         )
+
+    private fun generateDefaultAnnotationParameterValue(
+        valueExpression: KtExpression,
+        valueParameterDescriptor: ValueParameterDescriptor
+    ): IrExpressionBody {
+        val constantDefaultValue =
+            ConstantExpressionEvaluator.getConstant(valueExpression, context.bindingContext)?.toConstantValue(valueParameterDescriptor.type)
+                ?: error("Constant value expected for default parameter value in annotation, got $valueExpression")
+        return IrExpressionBodyImpl(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+            context.constantValueGenerator.generateConstantValueAsExpression(
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET, constantDefaultValue, valueParameterDescriptor.varargElementType
+            )
+        )
+    }
 }

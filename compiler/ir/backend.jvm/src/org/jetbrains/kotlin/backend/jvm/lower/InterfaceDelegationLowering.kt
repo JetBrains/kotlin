@@ -134,6 +134,7 @@ private class InterfaceDelegationLowering(val context: JvmBackendContext) : IrEl
                     parent = inheritedFun.parent
                     overriddenSymbols.addAll(inheritedFun.overriddenSymbols)
                     copyParameterDeclarationsFrom(inheritedFun)
+                    annotations.addAll(inheritedFun.annotations)
                 }
             } else context.declarationFactory.getDefaultImplsFunction(inheritedFun)
 

@@ -141,6 +141,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             runTest("compiler/testData/codegen/box/annotations/parameterWithPrimitiveType.kt");
         }
 
+        @TestMetadata("parameters.kt")
+        public void testParameters() throws Exception {
+            runTest("compiler/testData/codegen/box/annotations/parameters.kt");
+        }
+
         @TestMetadata("propertyWithPropertyInInitializerAsParameter.kt")
         public void testPropertyWithPropertyInInitializerAsParameter() throws Exception {
             runTest("compiler/testData/codegen/box/annotations/propertyWithPropertyInInitializerAsParameter.kt");

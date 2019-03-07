@@ -84,9 +84,7 @@ class PropertiesLowering(
 
             body = IrBlockBodyImpl(-1, -1)
 
-            // TODO: uncomment this and derive annotations from owner in wrapped descriptors
-            // annotations.addAll(declaration.annotations)
-
+            annotations.addAll(declaration.annotations)
             metadata = declaration.metadata
         }
     }

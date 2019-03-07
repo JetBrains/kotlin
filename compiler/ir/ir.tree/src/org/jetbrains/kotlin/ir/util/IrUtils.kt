@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -278,6 +280,12 @@ val IrClass.isEnumEntry get() = kind == ClassKind.ENUM_ENTRY
 val IrClass.isInterface get() = kind == ClassKind.INTERFACE
 val IrClass.isClass get() = kind == ClassKind.CLASS
 val IrClass.isObject get() = kind == ClassKind.OBJECT
+val IrDeclarationWithName.fqNameWhenAvailable: FqName?
+    get() = when (val parent = parent) {
+        is IrDeclarationWithName -> parent.fqNameWhenAvailable?.child(name)
+        is IrPackageFragment -> parent.fqName.child(name)
+        else -> null
+    }
 
 val IrDeclaration.parentAsClass get() = parent as IrClass
 
