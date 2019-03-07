@@ -60,7 +60,7 @@ class JvmResolverForModuleFactory(
         )
 
         val moduleClassResolver = ModuleClassResolverImpl { javaClass ->
-            val referencedClassModule = (platformParameters as JvmPlatformParameters).moduleByJavaClass(javaClass)
+            val referencedClassModule = platformParameters.moduleByJavaClass(javaClass)
             // We don't have full control over idea resolve api so we allow for a situation which should not happen in Kotlin.
             // For example, type in a java library can reference a class declared in a source root (is valid but rare case)
             // Providing a fallback strategy in this case can hide future problems, so we should at least log to be able to diagnose those
@@ -81,9 +81,9 @@ class JvmResolverForModuleFactory(
         val trace = CodeAnalyzerInitializer.getInstance(project).createTrace()
 
         val lookupTracker = LookupTracker.DO_NOTHING
-        val packagePartProvider = (platformParameters as JvmPlatformParameters).packagePartProviderFactory(moduleContent)
+        val packagePartProvider = platformParameters.packagePartProviderFactory(moduleContent)
         val container = createContainerForLazyResolveWithJava(
-            DefaultBuiltInPlatforms.jvmPlatform, // TODO: pass proper TargetVersion, see ResolverForProjectImpl
+            platform as JvmPlatform,
             moduleContext,
             trace,
             declarationProviderFactory,
