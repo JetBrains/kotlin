@@ -625,10 +625,8 @@ class UnsignedArraysTest {
         expect(1u) { ushortArrayOf(0, 1, 2).elementAt(1) }
         expect(2u) { uintArrayOf(0, 1, 2).elementAt(2) }
 
-        // TODO: Uncomment these tests after KT-30051 gets fixed.
-        // Currently JS does not throw exception on incorrect index.
-//        assertFailsWith<IndexOutOfBoundsException> { uintArrayOf().elementAt(0) }
-//        assertFailsWith<IndexOutOfBoundsException> { ulongArrayOf(0, 1, 2).elementAt(-1) }
+        assertFailsWith<IndexOutOfBoundsException> { uintArrayOf().elementAt(0) }
+        assertFailsWith<IndexOutOfBoundsException> { ulongArrayOf(0, 1, 2).elementAt(-1) }
     }
 
     @Test

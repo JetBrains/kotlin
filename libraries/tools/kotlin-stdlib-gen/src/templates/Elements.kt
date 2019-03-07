@@ -284,6 +284,22 @@ object Elements : TemplateGroupBase() {
             inlineOnly()
             body { "return get(index)" }
         }
+
+        specialFor(CharSequences, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
+            on(Platform.Common) {
+                inline(Inline.No)
+            }
+            on(Platform.JS) {
+                inline(Inline.No)
+
+                val size = if (f == CharSequences) "length" else "size"
+                body {
+                    """
+                    return elementAtOrElse(index) { throw IndexOutOfBoundsException("index: $index, $size: $$size}") }
+                    """
+                }
+            }
+        }
     }
 
     val f_elementAtOrElse = fn("elementAtOrElse(index: Int, defaultValue: (Int) -> T)") {

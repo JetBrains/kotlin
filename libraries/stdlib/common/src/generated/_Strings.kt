@@ -20,10 +20,7 @@ import kotlin.random.*
  * 
  * @sample samples.collections.Collections.Elements.elementAt
  */
-@kotlin.internal.InlineOnly
-public inline fun CharSequence.elementAt(index: Int): Char {
-    return get(index)
-}
+public expect fun CharSequence.elementAt(index: Int): Char
 
 /**
  * Returns a character at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this char sequence.
