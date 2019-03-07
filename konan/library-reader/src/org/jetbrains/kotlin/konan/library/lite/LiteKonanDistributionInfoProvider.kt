@@ -19,7 +19,13 @@ class LiteKonanDistributionInfoProvider(private val konanHomeDir: String) {
         val versionString = stdlibInfo.compilerVersion
         val version = versionString.substringBefore('-')
             .split('.')
-            .takeIf { it.size == 3 }
+            .let {
+                when (it.size) {
+                    2 -> listOf(it[0], it[1], "0")
+                    3 -> it
+                    else -> null
+                }
+            }
             ?.mapNotNull { it.toIntOrNull() }
             ?.takeIf { it.size == 3 }
             ?.let {
