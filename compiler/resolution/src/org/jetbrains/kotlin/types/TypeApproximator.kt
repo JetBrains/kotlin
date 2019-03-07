@@ -206,10 +206,12 @@ class TypeApproximator {
         val baseResult = when (conf.intersection) {
             ALLOWED -> if (!thereIsApproximation) return null else intersectTypes(newTypes)
             TO_FIRST -> if (toSuper) newTypes.first() else return type.defaultResult(toSuper = false)
-        // commonSupertypeCalculator should handle flexible types correctly
-            TO_COMMON_SUPERTYPE -> if (toSuper) NewCommonSuperTypeCalculator.commonSuperType(newTypes) else return type.defaultResult(
-                toSuper = false
-            )
+            // commonSupertypeCalculator should handle flexible types correctly
+            TO_COMMON_SUPERTYPE -> {
+                if (!toSuper) return type.defaultResult(toSuper = false)
+                val resultType = NewCommonSuperTypeCalculator.commonSuperType(newTypes)
+                approximateToSuperType(resultType.unwrap(), conf) ?: resultType.unwrap()
+            }
         }
 
         return if (type.isMarkedNullable) baseResult.makeNullableAsSpecified(true) else baseResult
