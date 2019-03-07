@@ -61,7 +61,7 @@ class AnnotationSerializer(private val stringTable: DescriptorAwareStringTable) 
 
             override fun visitBooleanValue(value: BooleanValue, data: Unit) {
                 type = Type.BOOLEAN
-                setIntValue(if (value.value) 1 else 0)
+                intValue = if (value.value) 1 else 0
             }
 
             override fun visitByteValue(value: ByteValue, data: Unit) {
