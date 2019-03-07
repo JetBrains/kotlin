@@ -5,24 +5,22 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
+import gnu.trove.TLongHashSet
 import groovy.lang.Closure
-import org.gradle.api.Action
-import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.file.FileCollection
-import org.gradle.api.file.SourceDirectorySet
-import org.gradle.api.tasks.SourceSet
 import org.gradle.util.ConfigureUtil
-import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.sources.defaultSourceSetLanguageSettingsChecker
 import org.jetbrains.kotlin.gradle.plugin.sources.getSourceSetHierarchy
-import org.jetbrains.kotlin.gradle.tasks.*
+import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
-import java.io.File
 import java.util.*
 import java.util.concurrent.Callable
 
@@ -108,7 +106,7 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
             target.project.whenEvaluated {
                 sourceSet.getSourceSetHierarchy().forEach { sourceSet ->
                     val isCommonSource =
-                        CompilationSourceSetUtil.sourceSetsInMultipleCompilations(project)?.contains(sourceSet) ?: false
+                        CompilationSourceSetUtil.sourceSetsInMultipleCompilations(project)?.contains(sourceSet.id) ?: false
 
                     addSourcesToCompileTask(sourceSet, addAsCommonSources = isCommonSource)
 
@@ -203,7 +201,7 @@ internal fun KotlinCompilation<*>.disambiguateName(simpleName: String): String {
 
 private object CompilationSourceSetUtil {
     // Cache the results per project
-    private val projectSourceSetsInMultipleCompilationsCache = WeakHashMap<Project, Set<KotlinSourceSet>>()
+    private val projectSourceSetsInMultipleCompilationsCache = WeakHashMap<Project, TLongHashSet>()
 
     fun sourceSetsInMultipleCompilations(project: Project) =
         projectSourceSetsInMultipleCompilationsCache.computeIfAbsent(project) { _ ->
@@ -212,11 +210,17 @@ private object CompilationSourceSetUtil {
             val compilations = (project.kotlinExtension as? KotlinMultiplatformExtension)?.targets?.flatMap { it.compilations }
                 ?: return@computeIfAbsent null
 
-            compilations
+            val sources = compilations
                 .flatMap { compilation -> compilation.allKotlinSourceSets.map { sourceSet -> compilation to sourceSet } }
                 .groupingBy { (_, sourceSet) -> sourceSet }
                 .eachCount()
-                .filterValues { it > 1 }
-                .keys
+
+            TLongHashSet().apply {
+                for (entry in sources) {
+                    if (entry.value > 1) {
+                        add(entry.key.id)
+                    }
+                }
+            }
         }
 }

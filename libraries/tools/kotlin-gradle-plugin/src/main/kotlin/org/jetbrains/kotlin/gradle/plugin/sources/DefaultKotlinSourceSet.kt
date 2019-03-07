@@ -21,14 +21,19 @@ import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.lang.reflect.Constructor
 import java.util.*
+import java.util.concurrent.atomic.AtomicLong
 
 const val METADATA_CONFIGURATION_NAME_SUFFIX = "DependenciesMetadata"
 
 class DefaultKotlinSourceSet(
     private val project: Project,
     val displayName: String,
-    fileResolver: FileResolver
+    fileResolver: FileResolver,
+    override val id: Long = idGenerator.incrementAndGet()
 ) : KotlinSourceSet {
+    companion object {
+        private val idGenerator = AtomicLong()
+    }
 
     override val apiConfigurationName: String
         get() = disambiguateName("api")
