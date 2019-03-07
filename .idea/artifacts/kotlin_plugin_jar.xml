@@ -17,7 +17,7 @@
       <element id="module-output" name="kotlin.core.descriptors.jvm.main" />
       <element id="module-output" name="kotlin.core.descriptors.main" />
       <element id="module-output" name="kotlin.core.deserialization.main" />
-      <element id="module-output" name="kotlin.eval4j.main" />
+      <element id="module-output" name="kotlin.idea.eval4j.main" />
       <element id="module-output" name="kotlin.idea.fir-view.main" />
       <element id="module-output" name="kotlin.compiler.frontend.java.main" />
       <element id="module-output" name="kotlin.compiler.frontend.script.main" />

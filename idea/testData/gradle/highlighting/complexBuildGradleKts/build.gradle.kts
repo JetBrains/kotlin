@@ -381,7 +381,7 @@ tasks {
         dependsOn(":idea:idea-gradle:test",
                   ":idea:idea-maven:test",
                   ":j2k:test",
-                  ":eval4j:test")
+                  ":idea:eval4j:test")
     }
 
     create("idea-plugin-tests") {
