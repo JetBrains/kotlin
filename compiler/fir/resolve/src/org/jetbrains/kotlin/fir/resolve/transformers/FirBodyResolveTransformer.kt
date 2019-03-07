@@ -104,12 +104,19 @@ class FirBodyResolveTransformer(val session: FirSession) : FirTransformer<Any?>(
         return FirClassUseSiteScope(useSiteSession, superTypeScope, declaredScope, true)
     }
 
-    fun ConeKotlinType.scope(useSiteSession: FirSession): FirScope {
+    fun ConeKotlinType.scope(useSiteSession: FirSession): FirScope? {
         return when (this) {
+            is ConeKotlinErrorType -> null
+            is ConeClassErrorType -> null
             is ConeAbbreviatedType -> directExpansion.scope(useSiteSession)
-            is ConeClassLikeType -> (this.lookupTag.toSymbol(useSiteSession) as FirBasedSymbol<FirRegularClass>).fir.buildUseSiteScope(
-                useSiteSession
-            )
+            is ConeClassLikeType -> {
+                val fir = this.lookupTag.toSymbol(useSiteSession)?.firUnsafe<FirRegularClass>() ?: return null
+                fir.buildUseSiteScope(useSiteSession)
+            }
+            is ConeTypeParameterType -> {
+                val fir = this.lookupTag.toSymbol(useSiteSession)?.firUnsafe<FirTypeParameter>() ?: return null
+                FirCompositeScope(fir.bounds.mapNotNullTo(mutableListOf()) { it.coneTypeUnsafe().scope(useSiteSession) })
+            }
             else -> error("Failed type ${this}")
         }
     }
@@ -124,8 +131,9 @@ class FirBodyResolveTransformer(val session: FirSession) : FirTransformer<Any?>(
 
     override fun transformRegularClass(regularClass: FirRegularClass, data: Any?): CompositeTransformResult<FirDeclaration> {
         return withScopeCleanup(scopes) {
-            scopes += regularClass.buildUseSiteScope()
-            withLabel(regularClass.name, regularClass.defaultType()) {
+            val type = regularClass.defaultType()
+            scopes.addIfNotNull(type.scope(session))
+            withLabel(regularClass.name, type) {
                 super.transformRegularClass(regularClass, data)
             }
         }
@@ -334,7 +342,7 @@ class FirBodyResolveTransformer(val session: FirSession) : FirTransformer<Any?>(
 
                     lookupInvoke = true
 
-                    receiverScope.processFunctionsByName(invoke) { candidate ->
+                    receiverScope?.processFunctionsByName(invoke) { candidate ->
                         this.consumeCandidate(-1, candidate)
                         ProcessorAction.NEXT
                     }
@@ -560,17 +568,16 @@ class FirBodyResolveTransformer(val session: FirSession) : FirTransformer<Any?>(
         return super.transformBlock(block, data)
     }
 
-    private fun commonSuperType(types: List<FirTypeRef>): FirTypeRef {
-        return types.first()
+    private fun commonSuperType(types: List<FirTypeRef>): FirTypeRef? {
+        return types.firstOrNull()
     }
 
     override fun transformWhenExpression(whenExpression: FirWhenExpression, data: Any?): CompositeTransformResult<FirStatement> {
-
         val type = commonSuperType(whenExpression.branches.mapNotNull {
             it.result.visitNoTransform(this, data)
             it.result.resultType
         })
-        bindingContext[whenExpression] = type
+        if (type != null) bindingContext[whenExpression] = type
         return super.transformWhenExpression(whenExpression, data)
     }
 
@@ -616,13 +623,16 @@ class FirBodyResolveTransformer(val session: FirSession) : FirTransformer<Any?>(
             localScopes.lastOrNull()?.storeDeclaration(namedFunction)
             return withScopeCleanup(scopes) {
                 scopes.addIfNotNull(receiverTypeRef?.coneTypeSafe()?.scope(session))
-                val body = namedFunction.body
-                if (namedFunction.returnTypeRef is FirImplicitTypeRef && body != null) {
-                    body.visitNoTransform(this, namedFunction.returnTypeRef)
-                    namedFunction.transformReturnTypeRef(this, body.resultType)
-                }
 
-                super.transformNamedFunction(namedFunction, data)
+
+                val result = super.transformNamedFunction(namedFunction, namedFunction.returnTypeRef).single as FirNamedFunction
+                val body = result.body
+                if (result.returnTypeRef is FirImplicitTypeRef && body != null) {
+                    result.transformReturnTypeRef(this, body.resultType)
+                    result
+                } else {
+                    result
+                }.compose()
             }
         }
 
@@ -638,14 +648,14 @@ class FirBodyResolveTransformer(val session: FirSession) : FirTransformer<Any?>(
         initializer?.visitNoTransform(this, variable.returnTypeRef)
         if (variable.returnTypeRef is FirImplicitTypeRef) {
             when {
-                variable.delegate != null -> TODO("!?")
                 initializer != null -> {
                     variable.transformReturnTypeRef(this, initializer.resultType)
                 }
+                variable.delegate != null -> {}
             }
         }
         if (variable !is FirProperty) {
-            localScopes.last().storeDeclaration(variable)
+            localScopes.lastOrNull()?.storeDeclaration(variable)
         }
         return super.transformVariable(variable, data)
     }
@@ -671,4 +681,10 @@ class FirBodyResolveTransformerAdapter : FirTransformer<Nothing?>() {
         val transformer = FirBodyResolveTransformer(file.session)
         return file.transform(transformer, null)
     }
+}
+
+
+inline fun <reified T> ConeSymbol.firUnsafe(): T {
+    this as FirBasedSymbol<*>
+    return this.fir as T
 }
