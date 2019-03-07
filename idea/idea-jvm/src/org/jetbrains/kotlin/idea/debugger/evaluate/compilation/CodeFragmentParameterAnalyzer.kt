@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.idea.debugger.evaluate.compilation
 
 import com.intellij.debugger.engine.evaluation.EvaluateExceptionUtil
-import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.CodeFragmentCodegenInfo
@@ -15,6 +14,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
 import org.jetbrains.kotlin.idea.debugger.evaluate.DebuggerFieldPropertyDescriptor
+import org.jetbrains.kotlin.idea.debugger.evaluate.ExecutionContext
 import org.jetbrains.kotlin.idea.debugger.evaluate.compilation.CodeFragmentParameter.*
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinCodeFragmentFactory.Companion.FAKE_JAVA_CONTEXT_FUNCTION_NAME
 import org.jetbrains.kotlin.idea.debugger.safeLocation
@@ -57,8 +57,8 @@ interface CodeFragmentParameter {
 }
 
 class CodeFragmentParameterInfo(
-    val parameters: List<CodeFragmentParameter.Smart>,
-    val crossingBounds: Set<CodeFragmentParameter.Dumb>
+    val parameters: List<Smart>,
+    val crossingBounds: Set<Dumb>
 )
 
 /*
@@ -66,7 +66,7 @@ class CodeFragmentParameterInfo(
     It handles both directly mentioned names such as local variables or parameters and implicit values (dispatch/extension receivers).
  */
 class CodeFragmentParameterAnalyzer(
-    private val evaluationContext: EvaluationContextImpl,
+    private val context: ExecutionContext,
     private val codeFragment: KtCodeFragment,
     private val bindingContext: BindingContext
 ) {
@@ -76,7 +76,7 @@ class CodeFragmentParameterAnalyzer(
     private val onceUsedChecker = OnceUsedChecker(CodeFragmentParameterAnalyzer::class.java)
 
     private val containingPrimaryConstructor: ConstructorDescriptor? by lazy {
-        evaluationContext.frameProxy?.safeLocation()?.safeMethod()?.takeIf { it.isConstructor } ?: return@lazy null
+        context.frameProxy.safeLocation()?.safeMethod()?.takeIf { it.isConstructor } ?: return@lazy null
         val constructor = codeFragment.context?.getParentOfType<KtPrimaryConstructor>(false) ?: return@lazy null
         bindingContext[BindingContext.CONSTRUCTOR, constructor]
     }

@@ -16,15 +16,12 @@
 
 package org.jetbrains.kotlin.idea.debugger.evaluate.classLoading
 
-import com.intellij.debugger.engine.DebugProcessImpl
 import com.intellij.debugger.engine.evaluation.EvaluateException
-import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
 import com.intellij.debugger.impl.ClassLoadingUtils
-import com.intellij.debugger.impl.DebuggerUtilsEx
-import com.intellij.debugger.ui.impl.watch.CompilingEvaluatorImpl
 import com.intellij.openapi.projectRoots.JavaSdkVersion
 import com.sun.jdi.ClassLoaderReference
 import com.sun.jdi.ClassType
+import org.jetbrains.kotlin.idea.debugger.evaluate.ExecutionContext
 import org.jetbrains.kotlin.idea.debugger.isDexDebug
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
@@ -63,28 +60,28 @@ class OrdinaryClassLoadingAdapter : ClassLoadingAdapter {
             return classWriter.toByteArray()
         }
 
-        fun useMagicAccessor(evaluationContext: EvaluationContextImpl): Boolean {
-            val rawVersion = evaluationContext.debugProcess.virtualMachineProxy.version()?.substringBefore('_') ?: return false
+        fun useMagicAccessor(context: ExecutionContext): Boolean {
+            val rawVersion = context.vm.version()?.substringBefore('_') ?: return false
             val javaVersion = JavaSdkVersion.fromVersionString(rawVersion) ?: return false
             return !javaVersion.isAtLeast(JavaSdkVersion.JDK_1_9)
         }
     }
 
-    override fun isApplicable(context: EvaluationContextImpl, info: ClassLoadingAdapter.Companion.ClassInfoForEvaluator) = with(info) {
-        isCompilingEvaluatorPreferred && context.classLoader != null && !context.debugProcess.isDexDebug()
+    override fun isApplicable(context: ExecutionContext, info: ClassLoadingAdapter.Companion.ClassInfoForEvaluator): Boolean {
+        return info.isCompilingEvaluatorPreferred && context.classLoader != null && !context.debugProcess.isDexDebug()
     }
 
-    override fun loadClasses(context: EvaluationContextImpl, classes: Collection<ClassToLoad>): ClassLoaderReference {
+    override fun loadClasses(context: ExecutionContext, classes: Collection<ClassToLoad>): ClassLoaderReference {
         val process = context.debugProcess
 
         val classLoader = try {
-            ClassLoadingUtils.getClassLoader(context, process)
+            ClassLoadingUtils.getClassLoader(context.evaluationContext, process)
         } catch (e: Exception) {
             throw EvaluateException("Error creating evaluation class loader: $e", e)
         }
 
         try {
-            defineClasses(classes, context, process, classLoader)
+            defineClasses(classes, context, classLoader)
         } catch (e: Exception) {
             throw EvaluateException("Error during classes definition $e", e)
         }
@@ -94,8 +91,7 @@ class OrdinaryClassLoadingAdapter : ClassLoadingAdapter {
 
     private fun defineClasses(
         classes: Collection<ClassToLoad>,
-        context: EvaluationContextImpl,
-        process: DebugProcessImpl,
+        context: ExecutionContext,
         classLoader: ClassLoaderReference
     ) {
         val classesToLoad = if (classes.size == 1) {
@@ -110,31 +106,24 @@ class OrdinaryClassLoadingAdapter : ClassLoadingAdapter {
 
         for ((className, _, bytes) in classesToLoad) {
             val patchedBytes = if (useMagicAccessor(context)) changeSuperToMagicAccessor(bytes) else bytes
-            defineClass(className, patchedBytes, context, process, classLoader)
+            defineClass(className, patchedBytes, context, classLoader)
         }
     }
 
     private fun defineClass(
         name: String,
         bytes: ByteArray,
-        context: EvaluationContextImpl,
-        process: DebugProcessImpl,
+        context: ExecutionContext,
         classLoader: ClassLoaderReference
     ) {
         try {
-            val vm = process.virtualMachineProxy
+            val vm = context.vm
             val classLoaderType = classLoader.referenceType() as ClassType
             val defineMethod = classLoaderType.concreteMethodByName("defineClass", "(Ljava/lang/String;[BII)Ljava/lang/Class;")
             val nameObj = vm.mirrorOf(name)
 
-            // Still actual for older platform versions
-            @Suppress("DEPRECATION")
-            DebuggerUtilsEx.keep(nameObj, context)
-
-            process.invokeMethod(
-                context, classLoader, defineMethod,
-                listOf(nameObj, mirrorOfByteArray(bytes, context, process), vm.mirrorOf(0), vm.mirrorOf(bytes.size))
-            )
+            val args = listOf(nameObj, mirrorOfByteArray(bytes, context), vm.mirrorOf(0), vm.mirrorOf(bytes.size))
+            context.invokeMethod(classLoader, defineMethod, args)
         } catch (e: Exception) {
             throw EvaluateException("Error during class $name definition: $e", e)
         }

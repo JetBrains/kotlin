@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.debugger.evaluate.compilation
 
-import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
 import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.codegen.*
@@ -43,7 +42,7 @@ import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.org.objectweb.asm.Type
 
-class CodeFragmentCompiler(val evaluationContext: EvaluationContextImpl) {
+class CodeFragmentCompiler(private val executionContext: ExecutionContext) {
     data class CompilationResult(
         val classes: List<ClassToLoad>,
         val parameterInfo: CodeFragmentParameterInfo,
@@ -78,7 +77,7 @@ class CodeFragmentCompiler(val evaluationContext: EvaluationContextImpl) {
             bindingContext, listOf(codeFragment), compilerConfiguration
         ).build()
 
-        val parameterInfo = CodeFragmentParameterAnalyzer(evaluationContext, codeFragment, bindingContext).analyze()
+        val parameterInfo = CodeFragmentParameterAnalyzer(executionContext, codeFragment, bindingContext).analyze()
         val (classDescriptor, methodDescriptor) = createDescriptorsForCodeFragment(
             codeFragment, Name.identifier(GENERATED_CLASS_NAME), Name.identifier(GENERATED_FUNCTION_NAME),
             parameterInfo, returnType, moduleDescriptorWrapper.packageFragmentForEvaluator

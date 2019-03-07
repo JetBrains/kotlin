@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.debugger.evaluate.variables
 
-import com.intellij.debugger.impl.DebuggerUtilsEx
 import com.sun.jdi.*
 import org.jetbrains.kotlin.fileClasses.internalNameWithoutInnerClasses
 import org.jetbrains.kotlin.idea.debugger.evaluate.ExecutionContext
@@ -18,7 +17,7 @@ import com.sun.jdi.Type as JdiType
 import kotlin.jvm.internal.Ref
 
 @Suppress("SpellCheckingInspection")
-class EvaluatorValueConverter(private val executionContext: ExecutionContext) {
+class EvaluatorValueConverter(private val context: ExecutionContext) {
     private companion object {
         private val UNBOXING_METHOD_NAMES = mapOf(
             "java/lang/Boolean" to "booleanValue",
@@ -84,7 +83,7 @@ class EvaluatorValueConverter(private val executionContext: ExecutionContext) {
     private fun coerceBoxing(value: Value?, type: AsmType): Result? {
         when {
             value == null -> return Result(value)
-            type == AsmType.VOID_TYPE -> return Result(executionContext.vm.mirrorOfVoid())
+            type == AsmType.VOID_TYPE -> return Result(context.vm.mirrorOfVoid())
             type.isBoxedType -> {
                 if (value.asmType().isBoxedType) {
                     return Result(value)
@@ -131,14 +130,13 @@ class EvaluatorValueConverter(private val executionContext: ExecutionContext) {
         val unboxedType = value.asmType()
         val boxedType = box(unboxedType)
 
-        val boxedTypeClass = (executionContext.loadClassType(boxedType) as ClassType?)
+        val boxedTypeClass = (context.loadClass(boxedType) as ClassType?)
             ?: error("Class $boxedType is not loaded")
 
         val methodDesc = AsmType.getMethodDescriptor(boxedType, unboxedType)
         val valueOfMethod = boxedTypeClass.methodsByName("valueOf", methodDesc).first()
 
-        val debugProcess = executionContext.evaluationContext.debugProcess
-        return debugProcess.invokeMethod(executionContext.evaluationContext, boxedTypeClass, valueOfMethod, listOf(value))
+        return context.invokeMethod(boxedTypeClass, valueOfMethod, listOf(value))
     }
 
     private fun unbox(value: Value?): Value? {
@@ -153,7 +151,7 @@ class EvaluatorValueConverter(private val executionContext: ExecutionContext) {
         val unboxingMethodName = UNBOXING_METHOD_NAMES.getValue(boxedType.internalName)
         val methodDesc = AsmType.getMethodDescriptor(unboxedType)
         val valueMethod = boxedTypeClass.methodsByName(unboxingMethodName, methodDesc).first()
-        return executionContext.debugProcess.invokeMethod(executionContext.evaluationContext, value, valueMethod, emptyList())
+        return context.invokeMethod(value, valueMethod, emptyList())
     }
 
     private fun ref(value: Value?): Value? {
@@ -163,10 +161,8 @@ class EvaluatorValueConverter(private val executionContext: ExecutionContext) {
 
         fun wrapRef(value: Value?, refTypeClass: ClassType): Value? {
             val constructor = refTypeClass.methods().single { it.isConstructor }
-            val ref = refTypeClass.newInstance(executionContext.thread, constructor, emptyList(), executionContext.invokePolicy)
-
-            @Suppress("DEPRECATION")
-            DebuggerUtilsEx.keep(ref, executionContext.evaluationContext)
+            val ref = context.newInstance(refTypeClass, constructor, emptyList())
+            context.keepReference(ref)
 
             val elementField = refTypeClass.fieldByName("element") ?: error("'element' field not found")
             ref.setValue(elementField, value)
@@ -177,13 +173,13 @@ class EvaluatorValueConverter(private val executionContext: ExecutionContext) {
             val primitiveType = value.asmType()
             val refType = PRIMITIVE_TO_REF.getValue(primitiveType)
 
-            val refTypeClass = (executionContext.loadClassType(refType) as ClassType?)
+            val refTypeClass = (context.loadClass(refType) as ClassType?)
                 ?: error("Class $refType is not loaded")
 
             return wrapRef(value, refTypeClass)
         } else {
             val refType = AsmType.getType(Ref.ObjectRef::class.java)
-            val refTypeClass = (executionContext.loadClassType(refType) as ClassType?)
+            val refTypeClass = (context.loadClass(refType) as ClassType?)
                 ?: error("Class $refType is not loaded")
 
             return wrapRef(value, refTypeClass)

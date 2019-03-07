@@ -17,15 +17,15 @@
 package org.jetbrains.kotlin.idea.debugger.evaluate.compilingEvaluator
 
 import com.intellij.debugger.engine.evaluation.EvaluateException
-import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
 import com.sun.jdi.ClassLoaderReference
+import org.jetbrains.kotlin.idea.debugger.evaluate.ExecutionContext
 import org.jetbrains.kotlin.idea.debugger.evaluate.LOG
 import org.jetbrains.kotlin.idea.debugger.evaluate.classLoading.ClassLoadingAdapter
 import org.jetbrains.kotlin.idea.debugger.evaluate.classLoading.ClassToLoad
 
-fun loadClassesSafely(evaluationContext: EvaluationContextImpl, classes: Collection<ClassToLoad>): ClassLoaderReference? {
+fun loadClassesSafely(context: ExecutionContext, classes: Collection<ClassToLoad>): ClassLoaderReference? {
     return try {
-        loadClasses(evaluationContext, classes)
+        loadClasses(context, classes)
     } catch (e: EvaluateException) {
         throw e
     } catch (e: Throwable) {
@@ -34,10 +34,10 @@ fun loadClassesSafely(evaluationContext: EvaluationContextImpl, classes: Collect
     }
 }
 
-fun loadClasses(evaluationContext: EvaluationContextImpl, classes: Collection<ClassToLoad>): ClassLoaderReference? {
+fun loadClasses(context: ExecutionContext, classes: Collection<ClassToLoad>): ClassLoaderReference? {
     if (classes.isEmpty()) {
         return null
     }
 
-    return ClassLoadingAdapter.loadClasses(evaluationContext, classes)
+    return ClassLoadingAdapter.loadClasses(context, classes)
 }
