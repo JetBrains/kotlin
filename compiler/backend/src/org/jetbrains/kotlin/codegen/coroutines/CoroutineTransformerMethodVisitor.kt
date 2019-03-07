@@ -982,7 +982,7 @@ private fun findSafelyReachableReturns(methodNode: MethodNode, sourceFrames: Arr
         if (!insn.isMeaningful || insn.opcode in SAFE_OPCODES || insn.isInvisibleInDebugVarInsn(methodNode) ||
             isInlineMarker(insn)) {
             setOf()
-        } else null
+        } else null as Set<Int>?
     }
 
     var changed: Boolean
