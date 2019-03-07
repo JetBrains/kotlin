@@ -23,6 +23,7 @@ interface KotlinBuiltInPlatforms {
     val jsPlatform: JsPlatform
 
     fun areSamePlatforms(first: TargetPlatform, second: TargetPlatform): Boolean
+    fun jvmPlatformByTargetVersion(targetVersion: JvmTarget): JvmPlatform
 }
 
 object DefaultBuiltInPlatforms : KotlinBuiltInPlatforms {
@@ -33,7 +34,7 @@ object DefaultBuiltInPlatforms : KotlinBuiltInPlatforms {
     override val jvm18: JvmPlatform = object : JvmPlatform(JvmTarget.JVM_1_8) {}
     override val jsPlatform: JsPlatform = object : JsPlatform() {}
 
-    fun jvmPlatformByTargetVersion(targetVersion: JvmTarget) = when (targetVersion) {
+    override fun jvmPlatformByTargetVersion(targetVersion: JvmTarget) = when (targetVersion) {
         JvmTarget.JVM_1_6 -> jvm16
         JvmTarget.JVM_1_8 -> jvm18
     }
