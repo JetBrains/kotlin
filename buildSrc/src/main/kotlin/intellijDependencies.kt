@@ -155,6 +155,10 @@ fun Project.runIdeTask(name: String, ideaPluginDir: File, ideaSandboxDir: File, 
             jvmArgs("-Didea.ProcessCanceledException=disabled")
         }
 
+        project.findProperty("idea.args")?.let { arguments ->
+            jvmArgs(arguments.toString().split(" "))
+        }
+
         args()
 
         doFirst {
