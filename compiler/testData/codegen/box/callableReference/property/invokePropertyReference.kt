@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 var state = ""
 
 var topLevel: Int
