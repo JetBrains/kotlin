@@ -46,6 +46,7 @@ class ReflectionTypes(module: ModuleDescriptor, private val notFoundClasses: Not
     fun getKSuspendFunction(n: Int): ClassDescriptor = find("$K_SUSPEND_FUNCTION_PREFIX$n", n + 1)
 
     val kClass: ClassDescriptor by ClassLookup(1)
+    val kProperty: ClassDescriptor by ClassLookup(1)
     val kProperty0: ClassDescriptor by ClassLookup(1)
     val kProperty1: ClassDescriptor by ClassLookup(2)
     val kProperty2: ClassDescriptor by ClassLookup(3)

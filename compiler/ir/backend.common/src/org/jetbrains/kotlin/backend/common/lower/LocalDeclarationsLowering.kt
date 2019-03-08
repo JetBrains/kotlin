@@ -230,6 +230,9 @@ class LocalDeclarationsLowering(
             }
 
         private inner class FunctionBodiesRewriter(val localContext: LocalContext?) : IrElementTransformerVoid() {
+            override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty) =
+                // Both accessors extracted as closures.
+                declaration.delegate.transform(this, null)
 
             override fun visitClass(declaration: IrClass) = if (declaration in localClasses) {
                 // Replace local class definition with an empty composite.
@@ -741,11 +744,6 @@ class LocalDeclarationsLowering(
 
                     val localClassContext = LocalClassContext(declaration)
                     localClasses[declaration] = localClassContext
-                }
-
-                override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty) {
-                    // Getter and setter of local delegated properties are special generated functions and don't have closure.
-                    declaration.delegate.initializer?.acceptVoid(this)
                 }
             })
         }

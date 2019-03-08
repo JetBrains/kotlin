@@ -33,6 +33,7 @@ interface JvmLoweredDeclarationOrigin : IrDeclarationOrigin {
     object JVM_OVERLOADS_WRAPPER : IrDeclarationOriginImpl("JVM_OVERLOADS_WRAPPER")
     object SYNTHETIC_METHOD_FOR_PROPERTY_ANNOTATIONS :
         IrDeclarationOriginImpl("SYNTHETIC_METHOD_FOR_PROPERTY_ANNOTATIONS", isSynthetic = true)
+    object GENERATED_PROPERTY_REFERENCE : IrDeclarationOriginImpl("GENERATED_PROPERTY_REFERENCE", isSynthetic = true)
 }
 
 interface JvmLoweredStatementOrigin : IrStatementOrigin {
