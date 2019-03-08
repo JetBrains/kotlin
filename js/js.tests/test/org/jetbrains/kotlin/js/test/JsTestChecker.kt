@@ -171,11 +171,19 @@ object V8IrJsTestChecker : AbstractJsTestChecker() {
 
         val v8 = ScriptEngineV8()
 
-        return try {
+        val v = try {
             files.forEach { v8.loadFile(it) }
             v8.f()
-        } finally {
-            v8.release()
+        } catch (t: Throwable) {
+            try {
+                v8.release()
+            } finally {
+                // Don't mask the original exception
+                throw t
+            }
         }
+        v8.release()
+
+        return v
     }
 }
