@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 // FILE: 1.kt
 // SKIP_INLINE_CHECK_IN: inlineFun$default
 package test
