@@ -66,7 +66,7 @@ class AddBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class.ja
         }
 
         // Check for single line if expression
-        if (element is KtIfExpression && expression.isInSingleLine() && element.`else` == null) {
+        if (element is KtIfExpression && element.`else` == null) {
             // Check if a comment is actually underneath (\n) the expression
             val allElements = element.siblings(withItself = false).filterIsInstance<PsiElement>()
             val sibling = allElements.firstOrNull { it is PsiComment }
