@@ -191,7 +191,7 @@ class DelegatedPropertyGenerator(declarationGenerator: DeclarationGenerator) : D
         statementGenerator: StatementGenerator
     ): IrCallableReference =
         ReflectionReferencesGenerator(statementGenerator).generateCallableReference(
-            ktElement.startOffsetSkippingComments, ktElement.endOffset, type,
+            ktElement, type,
             referencedDescriptor,
             null, IrStatementOrigin.PROPERTY_REFERENCE_FOR_DELEGATE
         )

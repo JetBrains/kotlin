@@ -531,11 +531,12 @@ class DoubleColonExpressionResolver(
 
         checkReferenceIsToAllowedMember(descriptor, context.trace, expression)
 
-        val type = createKCallableTypeForReference(descriptor, lhs, reflectionTypes, context.scope.ownerDescriptor) ?: return null
+        val scope = context.scope.ownerDescriptor
+        val type = createKCallableTypeForReference(descriptor, lhs, reflectionTypes, scope) ?: return null
 
         when (descriptor) {
             is FunctionDescriptor -> bindFunctionReference(expression, type, context, descriptor)
-            is PropertyDescriptor -> bindPropertyReference(expression, type, context)
+            is PropertyDescriptor -> bindPropertyReference(expression, type, context, isMutablePropertyReference(descriptor, lhs, scope))
         }
 
         return type
@@ -608,11 +609,12 @@ class DoubleColonExpressionResolver(
     internal fun bindPropertyReference(
         expression: KtCallableReferenceExpression,
         referenceType: KotlinType,
-        context: ResolutionContext<*>
+        context: ResolutionContext<*>,
+        mutable: Boolean = true
     ) {
         val localVariable = LocalVariableDescriptor(
             context.scope.ownerDescriptor, Annotations.EMPTY, Name.special("<anonymous>"), referenceType,
-            expression.toSourceElement()
+            mutable, false, expression.toSourceElement()
         )
 
         context.trace.record(BindingContext.VARIABLE, expression, localVariable)
@@ -777,17 +779,26 @@ class DoubleColonExpressionResolver(
     }
 
     companion object {
+        private fun receiverTypeFor(descriptor: CallableDescriptor, lhs: DoubleColonLHS?): KotlinType? =
+            (descriptor.extensionReceiverParameter ?: descriptor.dispatchReceiverParameter)?.let { (lhs as? DoubleColonLHS.Type)?.type }
+
+        private fun isMutablePropertyReference(
+            descriptor: PropertyDescriptor,
+            lhs: DoubleColonLHS?,
+            scopeOwnerDescriptor: DeclarationDescriptor
+        ): Boolean {
+            val receiver = receiverTypeFor(descriptor, lhs)?.let(::TransientReceiver)
+            val setter = descriptor.setter
+            return descriptor.isVar && (setter == null || Visibilities.isVisible(receiver, setter, scopeOwnerDescriptor))
+        }
+
         fun createKCallableTypeForReference(
             descriptor: CallableDescriptor,
             lhs: DoubleColonLHS?,
             reflectionTypes: ReflectionTypes,
             scopeOwnerDescriptor: DeclarationDescriptor
         ): KotlinType? {
-            val receiverType =
-                if (descriptor.extensionReceiverParameter != null || descriptor.dispatchReceiverParameter != null)
-                    (lhs as? DoubleColonLHS.Type)?.type
-                else null
-
+            val receiverType = receiverTypeFor(descriptor, lhs)
             return when (descriptor) {
                 is FunctionDescriptor -> {
                     val returnType = descriptor.returnType ?: return null
@@ -799,10 +810,7 @@ class DoubleColonExpressionResolver(
                     )
                 }
                 is PropertyDescriptor -> {
-                    val mutable = descriptor.isVar && run {
-                        val setter = descriptor.setter
-                        setter == null || Visibilities.isVisible(receiverType?.let(::TransientReceiver), setter, scopeOwnerDescriptor)
-                    }
+                    val mutable = isMutablePropertyReference(descriptor, lhs, scopeOwnerDescriptor)
                     reflectionTypes.getKPropertyType(Annotations.EMPTY, listOfNotNull(receiverType), descriptor.type, mutable)
                 }
                 is VariableDescriptor -> null

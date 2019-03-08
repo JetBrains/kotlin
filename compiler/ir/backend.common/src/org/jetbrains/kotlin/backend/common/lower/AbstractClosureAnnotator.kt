@@ -159,11 +159,6 @@ class ClosureAnnotator(declaration: IrDeclaration) {
             includeInParent(closureBuilder)
         }
 
-        override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty) {
-            // Getter and setter of local delegated properties are special generated functions and don't have closure.
-            declaration.delegate.initializer?.acceptVoid(this)
-        }
-
         override fun visitVariableAccess(expression: IrValueAccessExpression) {
             closuresStack.peek()?.seeVariable(expression.symbol)
             super.visitVariableAccess(expression)
@@ -199,7 +194,11 @@ class ClosureAnnotator(declaration: IrDeclaration) {
             processMemberAccess(expression.symbol.owner)
         }
 
-//        override fun visitPropertyReference(expression: IrPropertyReference) = processMemberAccess(expression.)
+        override fun visitPropertyReference(expression: IrPropertyReference) {
+            expression.acceptChildrenVoid(this)
+            expression.getter?.let { processMemberAccess(it.owner) }
+            expression.setter?.let { processMemberAccess(it.owner) }
+        }
 
         private fun processMemberAccess(declaration: IrDeclaration) {
             if (DescriptorUtils.isLocal(declaration.descriptor)) {
