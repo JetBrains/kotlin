@@ -2444,6 +2444,49 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/covariantEquals")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class CovariantEquals extends AbstractLocalInspectionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInCovariantEquals() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/covariantEquals"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("basic.kt")
+        public void testBasic() throws Exception {
+            runTest("idea/testData/inspectionsLocal/covariantEquals/basic.kt");
+        }
+
+        @TestMetadata("hasNullableAnyEquals.kt")
+        public void testHasNullableAnyEquals() throws Exception {
+            runTest("idea/testData/inspectionsLocal/covariantEquals/hasNullableAnyEquals.kt");
+        }
+
+        @TestMetadata("local.kt")
+        public void testLocal() throws Exception {
+            runTest("idea/testData/inspectionsLocal/covariantEquals/local.kt");
+        }
+
+        @TestMetadata("override.kt")
+        public void testOverride() throws Exception {
+            runTest("idea/testData/inspectionsLocal/covariantEquals/override.kt");
+        }
+
+        @TestMetadata("topLevel.kt")
+        public void testTopLevel() throws Exception {
+            runTest("idea/testData/inspectionsLocal/covariantEquals/topLevel.kt");
+        }
+
+        @TestMetadata("twoParameters.kt")
+        public void testTwoParameters() throws Exception {
+            runTest("idea/testData/inspectionsLocal/covariantEquals/twoParameters.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/delegationToVarProperty")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
