@@ -3418,6 +3418,11 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/when"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true);
         }
 
+        @TestMetadata("edgeCases.kt")
+        public void testEdgeCases() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/when/edgeCases.kt");
+        }
+
         @TestMetadata("exhaustiveWhenInitialization.kt")
         public void testExhaustiveWhenInitialization() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/when/exhaustiveWhenInitialization.kt");
@@ -3496,6 +3501,11 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         @TestMetadata("subjectValInStringWhenHasLocalVariableSlot.kt")
         public void testSubjectValInStringWhenHasLocalVariableSlot() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/when/subjectValInStringWhenHasLocalVariableSlot.kt");
+        }
+
+        @TestMetadata("switchOptimizationDuplicates.kt")
+        public void testSwitchOptimizationDuplicates() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/when/switchOptimizationDuplicates.kt");
         }
 
         @TestMetadata("tableSwitch.kt")
@@ -3627,6 +3637,16 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         @TestMetadata("duplicatingItemsSameHashCode.kt")
         public void testDuplicatingItemsSameHashCode() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/whenStringOptimization/duplicatingItemsSameHashCode.kt");
+        }
+
+        @TestMetadata("duplicatingItemsSameHashCode2.kt")
+        public void testDuplicatingItemsSameHashCode2() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/whenStringOptimization/duplicatingItemsSameHashCode2.kt");
+        }
+
+        @TestMetadata("duplicatingItemsSameHashCode3.kt")
+        public void testDuplicatingItemsSameHashCode3() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/whenStringOptimization/duplicatingItemsSameHashCode3.kt");
         }
 
         @TestMetadata("expression.kt")
