@@ -185,13 +185,13 @@ class TypeInstantiationItems(
 
             val constructorParenthesis = if (classifier.kind != ClassKind.INTERFACE) "()" else ""
             itemText += constructorParenthesis
-            itemText = "object: $itemText{...}"
+            itemText = "object : $itemText{...}"
             lookupString = "object"
             allLookupStrings = setOf(lookupString, lookupElement.lookupString)
             insertHandler = InsertHandler<LookupElement> { context, _ ->
                 val startOffset = context.startOffset
 
-                val text1 = "object: $typeText"
+                val text1 = "object : $typeText"
                 val text2 = "$constructorParenthesis {}"
                 val text = if (allTypeArgsKnown)
                     text1 + IdeDescriptorRenderers.SOURCE_CODE.renderTypeArguments(typeArgsToUse) + text2
