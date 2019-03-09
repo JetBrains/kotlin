@@ -14,9 +14,9 @@ fun bar() {
     foo(<caret>)
 }
 
-// EXIST: { itemText: "object: I<...>{...}" }
-// EXIST: { itemText: "object: C1<X>(){...}" }
-// EXIST: { itemText: "object: C2(){...}" }
+// EXIST: { itemText: "object : I<...>{...}" }
+// EXIST: { itemText: "object : C1<X>(){...}" }
+// EXIST: { itemText: "object : C2(){...}" }
 
 // all these items shouldn't be proposed, see KT-15479
 // EXIST: { itemText: "enumValueOf" }
