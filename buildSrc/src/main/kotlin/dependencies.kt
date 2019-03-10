@@ -11,6 +11,9 @@ import org.gradle.kotlin.dsl.extra
 import org.gradle.kotlin.dsl.project
 import java.io.File
 
+val Project.isSnapshotIntellij get() = rootProject.extra["versions.intellijSdk"].toString().endsWith("SNAPSHOT")
+
+val Project.intellijRepo get() = "https://www.jetbrains.com/intellij-repository/" + if (isSnapshotIntellij) "snapshots" else "releases"
 
 fun Project.commonDep(coord: String): String {
     val parts = coord.split(':')

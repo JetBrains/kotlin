@@ -101,7 +101,6 @@ val intellijUltimate by configurations.creating
 val androidStudio by configurations.creating
 val sources by configurations.creating
 val jpsStandalone by configurations.creating
-val jpsBuildTest by configurations.creating
 val intellijCore by configurations.creating
 val nodeJS by configurations.creating
 val androidBuildTools by configurations.creating
@@ -141,7 +140,6 @@ dependencies {
 
     sources("com.jetbrains.intellij.idea:ideaIC:$intellijVersion:sources@jar")
     jpsStandalone("com.jetbrains.intellij.idea:jps-standalone:$intellijVersion")
-    jpsBuildTest("com.jetbrains.intellij.idea:jps-build-test:$intellijVersion")
     intellijCore("com.jetbrains.intellij.idea:intellij-core:$intellijVersion")
     if (intellijUltimateEnabled) {
         nodeJS("com.jetbrains.plugins:NodeJS:${rootProject.extra["versions.idea.NodeJS"]}@zip")
@@ -275,7 +273,6 @@ val build by tasks.creating {
         makeIntellijCore,
         makeIde,
         buildIvyRepositoryTask(jpsStandalone, customDepsOrg, customDepsRepoDir, null, sourcesFile),
-        buildIvyRepositoryTask(jpsBuildTest, customDepsOrg, customDepsRepoDir, null, sourcesFile),
         makeIntellijAnnotations,
         buildIvyRepoForAndroidDx
     )

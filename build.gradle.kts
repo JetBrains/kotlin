@@ -307,6 +307,7 @@ allprojects {
         bootstrapKotlinRepo?.let(::maven)
         jcenter()
         maven(protobufRepo)
+        maven(intellijRepo)
     }
 
     configureJvmProject(javaHome!!, jvmTarget!!)

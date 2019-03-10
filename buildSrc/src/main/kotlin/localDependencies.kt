@@ -65,11 +65,11 @@ fun Project.intellijCoreDep() = "kotlin.build:intellij-core:${rootProject.extra[
 
 fun Project.jpsStandalone() = "kotlin.build:jps-standalone:${rootProject.extra["versions.intellijSdk"]}"
 
-fun Project.jpsBuildTest() = "kotlin.build:jps-build-test:${rootProject.extra["versions.intellijSdk"]}"
-
 fun Project.nodeJSPlugin() = "kotlin.build:NodeJS:${rootProject.extra["versions.idea.NodeJS"]}"
 
 fun Project.androidDxJar() = "kotlin.build:android-dx:${rootProject.extra["versions.androidBuildTools"]}"
+
+fun Project.jpsBuildTest() = "com.jetbrains.intellij.idea:jps-build-test:${rootProject.extra["versions.intellijSdk"]}"
 
 /**
  * Runtime version of annotations that are already in Kotlin stdlib (historically Kotlin has older version of this one).
