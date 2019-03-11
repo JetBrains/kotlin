@@ -1,5 +1,4 @@
 // !LANGUAGE: +MultiPlatformProjects
-// IGNORE_BACKEND: JVM_IR
 
 // FILE: lib.kt
 

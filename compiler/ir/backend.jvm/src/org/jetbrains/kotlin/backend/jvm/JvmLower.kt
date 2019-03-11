@@ -37,6 +37,12 @@ private fun makePatchParentsPhase(number: Int) = namedIrFilePhase(
     nlevels = 0
 )
 
+private val expectDeclarationsRemovingPhase = makeIrFilePhase(
+    ::ExpectDeclarationsRemoving,
+    name = "ExpectDeclarationsRemoving",
+    description = "Remove expect declaration from module fragment"
+)
+
 private val propertiesPhase = makeIrFilePhase(
     { context ->
         PropertiesLowering(context, JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_ANNOTATIONS) { propertyName ->
@@ -51,7 +57,8 @@ private val propertiesPhase = makeIrFilePhase(
 internal val jvmPhases = namedIrFilePhase(
     name = "IrLowering",
     description = "IR lowering",
-    lower = jvmCoercionToUnitPhase then
+    lower = expectDeclarationsRemovingPhase then
+            jvmCoercionToUnitPhase then
             fileClassPhase then
             kCallableNamePropertyPhase then
 
