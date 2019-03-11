@@ -4,7 +4,7 @@ interface A
 class B : A
 fun foo1(list: List<A>, arg: B?): Boolean {
     // Type mismatch
-    return arg <!OI;TYPE_INFERENCE_ONLY_INPUT_TYPES!>in<!> list // resolved to extension
+    return arg <!TYPE_INFERENCE_ONLY_INPUT_TYPES!>in<!> list // resolved to extension
 }
 fun foo2(list: List<A>, arg: B?): Boolean {
     // FAKE: no cast needed

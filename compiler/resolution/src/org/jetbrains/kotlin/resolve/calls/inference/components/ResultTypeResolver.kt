@@ -18,13 +18,17 @@ package org.jetbrains.kotlin.resolve.calls.inference.components
 
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
 import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirectionCalculator.ResolveDirection
+import org.jetbrains.kotlin.resolve.calls.inference.model.ArgumentConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
 import org.jetbrains.kotlin.resolve.calls.inference.model.checkConstraint
+import org.jetbrains.kotlin.resolve.calls.model.OnlyInputTypesDiagnostic
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
 import org.jetbrains.kotlin.types.checker.intersectTypes
 import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberType
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class ResultTypeResolver(
     val typeApproximator: TypeApproximator,
@@ -53,7 +57,6 @@ class ResultTypeResolver(
         } else {
             c.resultType(superType, subType, variableWithConstraints)
         }
-
         return result
     }
 
