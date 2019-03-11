@@ -921,7 +921,7 @@ class ExpressionCodegen(
         mv.goTo(continueLabel)
         mv.mark(endLabel)
 
-        return loop.onStack
+        return StackValue.none()
     }
 
     override fun visitBreakContinue(jump: IrBreakContinue, data: BlockInfo): StackValue {
@@ -983,7 +983,7 @@ class ExpressionCodegen(
         generateLoopJump(loop.condition, data, entry, false)
         mv.mark(endLabel)
 
-        return loop.onStack
+        return StackValue.none()
     }
 
     override fun visitTry(aTry: IrTry, data: BlockInfo): StackValue {
