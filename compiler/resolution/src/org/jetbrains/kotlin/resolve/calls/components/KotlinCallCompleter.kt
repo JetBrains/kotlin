@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.resolve.calls.components
 import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode
+import org.jetbrains.kotlin.resolve.calls.inference.components.TrivialConstraintTypeInferenceOracle
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage.Empty.hasContradiction
 import org.jetbrains.kotlin.resolve.calls.inference.model.ExpectedTypeConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.model.*
@@ -21,7 +22,8 @@ import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberType
 
 class KotlinCallCompleter(
     private val postponedArgumentsAnalyzer: PostponedArgumentsAnalyzer,
-    private val kotlinConstraintSystemCompleter: KotlinConstraintSystemCompleter
+    private val kotlinConstraintSystemCompleter: KotlinConstraintSystemCompleter,
+    private val trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle
 ) {
 
     fun runCompletion(
@@ -172,7 +174,7 @@ class KotlinCallCompleter(
             // This means that there will be no new LOWER constraints =>
             //   it's possible to complete call now if there are proper LOWER constraints
             csBuilder.isTypeVariable(currentReturnType) ->
-                if (hasProperLowerConstraints(currentReturnType))
+                if (hasProperNonTrivialLowerConstraints(currentReturnType))
                     ConstraintSystemCompletionMode.FULL
                 else
                     ConstraintSystemCompletionMode.PARTIAL
@@ -181,13 +183,14 @@ class KotlinCallCompleter(
         }
     }
 
-    private fun KotlinResolutionCandidate.hasProperLowerConstraints(typeVariable: UnwrappedType): Boolean {
+    private fun KotlinResolutionCandidate.hasProperNonTrivialLowerConstraints(typeVariable: UnwrappedType): Boolean {
         assert(csBuilder.isTypeVariable(typeVariable)) { "$typeVariable is not a type variable" }
 
         val constructor = typeVariable.constructor
         val variableWithConstraints = csBuilder.currentStorage().notFixedTypeVariables[constructor] ?: return false
         return variableWithConstraints.constraints.any {
-            it.kind.isLower() && csBuilder.isProperType(it.type) && !it.type.isIntegerValueType()
+            !trivialConstraintTypeInferenceOracle.isTrivialConstraint(it) && !it.type.isIntegerValueType() &&
+                    it.kind.isLower() && csBuilder.isProperType(it.type)
         }
     }
 
