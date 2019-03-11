@@ -205,6 +205,11 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
             public void testFarInvokeExtension() throws Exception {
                 runTest("compiler/fir/resolve/testData/resolve/expresssions/invoke/farInvokeExtension.kt");
             }
+
+            @TestMetadata("threeReceivers.kt")
+            public void testThreeReceivers() throws Exception {
+                runTest("compiler/fir/resolve/testData/resolve/expresssions/invoke/threeReceivers.kt");
+            }
         }
     }
 
