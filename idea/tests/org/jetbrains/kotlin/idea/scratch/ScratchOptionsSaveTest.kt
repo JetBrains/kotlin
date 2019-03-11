@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.idea.scratch
 
 import com.intellij.ide.scratch.ScratchFileService
 import com.intellij.ide.scratch.ScratchRootType
-import junit.framework.Assert
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.scratch.ui.ScratchTopPanel
+import org.junit.Assert
 import javax.swing.JCheckBox
 import kotlin.reflect.full.createType
 import kotlin.reflect.full.declaredMemberProperties
