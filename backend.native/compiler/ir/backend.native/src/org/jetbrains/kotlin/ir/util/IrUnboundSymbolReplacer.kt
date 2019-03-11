@@ -46,7 +46,7 @@ internal fun IrModuleFragment.replaceUnboundSymbols(context: Context) {
             context.moduleDescriptor,
             symbolTable = context.psi2IrGeneratorContext.symbolTable,
             irBuiltIns = context.irBuiltIns
-    ).generateUnboundSymbolsAsDependencies(this)
+    ).generateUnboundSymbolsAsDependencies()
 }
 
 private fun IrModuleFragment.mergeFrom(other: IrModuleFragment): Unit {
