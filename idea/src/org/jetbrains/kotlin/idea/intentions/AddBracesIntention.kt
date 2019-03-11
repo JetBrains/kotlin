@@ -17,17 +17,15 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
-import com.intellij.psi.*
-import org.jetbrains.kotlin.idea.intentions.loopToCallChain.nextStatement
-import org.jetbrains.kotlin.idea.intentions.loopToCallChain.previousStatement
-import org.jetbrains.kotlin.idea.refactoring.getLineCount
+import com.intellij.psi.PsiComment
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.idea.refactoring.getLineNumber
 import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.j2k.isInSingleLine
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
-import org.jetbrains.kotlin.resolve.calls.CallExpressionElement
 
 class AddBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class.java, "Add braces") {
     override fun isApplicableTo(element: KtElement, caretOffset: Int): Boolean {
@@ -37,7 +35,7 @@ class AddBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class.ja
         val parent = expression.parent
         return when (parent) {
             is KtContainerNode -> {
-                val description = parent.description()!!
+                val description = parent.description() ?: return false
                 text = "Add braces to '$description' statement"
                 true
             }
@@ -53,7 +51,7 @@ class AddBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class.ja
 
     override fun applyTo(element: KtElement, editor: Editor?) {
         if (editor == null) throw IllegalArgumentException("This intention requires an editor")
-        val expression = element.getTargetExpression(editor.caretModel.offset)!!
+        val expression = element.getTargetExpression(editor.caretModel.offset) ?: return
         var isCommentBeneath = false
         var isCommentInside = false
         val psiFactory = KtPsiFactory(element)
@@ -76,9 +74,9 @@ class AddBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class.ja
                 // Check if \n before first received comment sibling
                 // if false, the normal procedure of adding braces occurs.
                 isCommentBeneath =
-                        sibling.prevSibling is PsiWhiteSpace &&
-                        sibling.prevSibling.textContains('\n') &&
-                        (sibling.prevSibling.prevSibling is PsiComment || sibling.prevSibling.prevSibling is PsiElement)
+                    sibling.prevSibling is PsiWhiteSpace &&
+                            sibling.prevSibling.textContains('\n') &&
+                            (sibling.prevSibling.prevSibling is PsiComment || sibling.prevSibling.prevSibling is PsiElement)
             }
         }
 
@@ -117,7 +115,7 @@ class AddBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class.ja
         when (element) {
             is KtDoWhileExpression ->
                 // remove new line between '}' and while
-                (element.body!!.parent.nextSibling as? PsiWhiteSpace)?.delete()
+                (element.body?.parent?.nextSibling as? PsiWhiteSpace)?.delete()
             is KtIfExpression ->
                 (result?.parent?.nextSibling as? PsiWhiteSpace)?.delete()
         }
@@ -131,7 +129,7 @@ class AddBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class.ja
             is KtIfExpression -> {
                 val thenExpr = then ?: return null
                 val elseExpr = `else`
-                if (elseExpr != null && caretLocation >= elseKeyword!!.startOffset) {
+                if (elseExpr != null && caretLocation >= elseKeyword?.startOffset ?: return null) {
                     elseExpr
                 } else {
                     thenExpr
