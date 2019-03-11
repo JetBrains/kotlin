@@ -614,7 +614,11 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
                             defaultValue = null, isCrossinline = false, isNoinline = false, isVararg = false
                         )
                         destructuringBlock = generateDestructuringBlock(
-                            this@RawFirBuilder.session, multiDeclaration, multiParameter, { extractAnnotationsTo(it) }
+                            this@RawFirBuilder.session,
+                            multiDeclaration,
+                            multiParameter,
+                            tmpVariable = false,
+                            extractAnnotationsTo = { extractAnnotationsTo(it) }
                         ) { toFirOrImplicitType() }
                         multiParameter
                     } else {
@@ -1102,7 +1106,11 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
                         )
                         if (multiDeclaration != null) {
                             val destructuringBlock = generateDestructuringBlock(
-                                this@RawFirBuilder.session, multiDeclaration, firLoopParameter, { extractAnnotationsTo(it) }
+                                this@RawFirBuilder.session,
+                                multiDeclaration,
+                                firLoopParameter,
+                                tmpVariable = true,
+                                extractAnnotationsTo =  { extractAnnotationsTo(it) }
                             ) { toFirOrImplicitType() }
                             if (destructuringBlock is FirBlock) {
                                 for ((index, statement) in destructuringBlock.statements.withIndex()) {
@@ -1348,7 +1356,13 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
                 session, multiDeclaration, "destruct",
                 multiDeclaration.initializer.toFirExpression("Destructuring declaration without initializer")
             )
-            return generateDestructuringBlock(session, multiDeclaration, baseVariable, { extractAnnotationsTo(it) }) {
+            return generateDestructuringBlock(
+                session,
+                multiDeclaration,
+                baseVariable,
+                tmpVariable = true,
+                extractAnnotationsTo = { extractAnnotationsTo(it) }
+            ) {
                 toFirOrImplicitType()
             }
         }
