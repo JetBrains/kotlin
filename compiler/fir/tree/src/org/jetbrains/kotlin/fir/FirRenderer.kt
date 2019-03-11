@@ -105,18 +105,21 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         if (callableDeclaration is FirMemberDeclaration) {
             visitMemberDeclaration(callableDeclaration)
         } else {
+            callableDeclaration.annotations.renderAnnotations()
             visitTypedDeclaration(callableDeclaration)
         }
         val receiverType = callableDeclaration.receiverTypeRef
+        print(" ")
         if (receiverType != null) {
-            print(" ")
             receiverType.accept(this)
             print(".")
         }
+        if (callableDeclaration is FirNamedDeclaration) {
+            print(callableDeclaration.name)
+        }
+
         if (callableDeclaration is FirFunction) {
             callableDeclaration.valueParameters.renderParameters()
-        } else if (callableDeclaration is FirProperty) {
-            print(if (callableDeclaration.isVar) "(var)" else "(val)")
         }
         print(": ")
         callableDeclaration.returnTypeRef.accept(this)
@@ -206,7 +209,9 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
 
     override fun visitNamedDeclaration(namedDeclaration: FirNamedDeclaration) {
         visitDeclaration(namedDeclaration)
-        print(" " + namedDeclaration.name)
+        if (namedDeclaration !is FirCallableDeclaration) { // Handled by visitCallableDeclaration
+            print(" " + namedDeclaration.name)
+        }
     }
 
     override fun visitDeclaration(declaration: FirDeclaration) {
@@ -214,9 +219,9 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
             when (declaration) {
                 is FirRegularClass -> declaration.classKind.name.toLowerCase().replace("_", " ")
                 is FirTypeAlias -> "typealias"
-                is FirNamedFunction -> "function"
-                is FirProperty -> "property"
-                is FirVariable -> if (declaration.isVal) "val" else "var"
+                is FirNamedFunction -> "fun"
+                is FirProperty -> if (declaration.isVal) "val" else "var"
+                is FirVariable -> if (declaration.isVal) "lval" else "lvar"
                 else -> "unknown"
             }
         )
@@ -264,10 +269,7 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
     }
 
     override fun visitVariable(variable: FirVariable) {
-        variable.annotations.renderAnnotations()
-        visitNamedDeclaration(variable)
-        print(": ")
-        variable.returnTypeRef.accept(this)
+        visitCallableDeclaration(variable)
         variable.initializer?.let {
             print(" = ")
             it.accept(this)
@@ -279,17 +281,9 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
     }
 
     override fun visitProperty(property: FirProperty) {
-        visitCallableDeclaration(property)
-        property.initializer?.let {
-            print(" = ")
-            it.accept(this)
-        }
-        pushIndent()
-        property.delegate?.let {
-            print("by ")
-            it.accept(this)
-        }
+        visitVariable(property)
         println()
+        pushIndent()
         property.getter.accept(this)
         if (property.getter.body == null) {
             println()
@@ -338,10 +332,9 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         if (label != null) {
             print("${label.name}@")
         }
-        print("function ")
+        print("fun ")
         val receiverType = anonymousFunction.receiverTypeRef
         if (receiverType != null) {
-            print(" ")
             receiverType.accept(this)
             print(".")
         }
@@ -432,17 +425,14 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
 
     override fun visitReturnExpression(returnExpression: FirReturnExpression) {
         returnExpression.annotations.renderAnnotations()
-        print("return")
+        print("^")
         val target = returnExpression.target
         val labeledElement = target.labeledElement
         if (labeledElement is FirNamedFunction) {
-            print("@@@${labeledElement.name}")
+            print("${labeledElement.name}")
         } else {
             val labelName = target.labelName
             if (labelName != null) {
-                if (labeledElement is FirAnonymousFunction) {
-                    print("@@")
-                }
                 print("@$labelName")
             }
         }

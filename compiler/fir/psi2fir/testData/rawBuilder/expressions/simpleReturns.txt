@@ -1,7 +1,7 @@
 FILE: simpleReturns.kt
-    public? final? function foo(): kotlin/Unit {
-        return@@@foo Unit
+    public? final? fun foo(): kotlin/Unit {
+        ^foo Unit
     }
-    public? final? function bar(): String {
-        return@@@bar String(Hello)
+    public? final? fun bar(): String {
+        ^bar String(Hello)
     }

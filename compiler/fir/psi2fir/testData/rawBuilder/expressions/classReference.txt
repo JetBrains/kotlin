@@ -3,7 +3,7 @@ FILE: classReference.kt
         public? constructor(): super<kotlin/Any>()
 
     }
-    public? final? function test(): kotlin/Unit {
+    public? final? fun test(): kotlin/Unit {
         <getClass>(A#)
         <getClass>(test#.A#)
         <getClass>(A#())

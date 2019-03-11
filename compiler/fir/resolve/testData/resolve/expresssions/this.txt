@@ -6,20 +6,20 @@ FILE: this.kt
     public final class Foo {
         public constructor(): super<R|kotlin/Any|>()
 
-        public final function bar(): R|Foo| {
-            return@@@bar this#
+        public final fun bar(): R|Foo| {
+            ^bar this#
         }
 
-        public final function buz R|Bar|.(): R|Bar| {
-            return@@@buz this#
+        public final fun R|Bar|.buz(): R|Bar| {
+            ^buz this#
         }
 
-        public final function foo R|Bar|.(): R|Foo| {
-            return@@@foo this@Foo
+        public final fun R|Bar|.foo(): R|Foo| {
+            ^foo this@Foo
         }
 
-        public final function foobar R|Bar|.(): R|Bar| {
-            return@@@foobar this@foobar
+        public final fun R|Bar|.foobar(): R|Bar| {
+            ^foobar this@foobar
         }
 
     }

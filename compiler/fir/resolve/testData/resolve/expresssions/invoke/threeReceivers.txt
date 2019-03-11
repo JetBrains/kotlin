@@ -2,8 +2,8 @@ FILE: threeReceivers.kt
     public final class Bar {
         public constructor(): super<R|kotlin/Any|>()
 
-        public final function invoke R|FooBar|.(): R|Bar| {
-            return@@@invoke this#
+        public final fun R|FooBar|.invoke(): R|Bar| {
+            ^invoke this#
         }
 
     }
@@ -18,12 +18,12 @@ FILE: threeReceivers.kt
     public final class Foo {
         public constructor(): super<R|kotlin/Any|>()
 
-        public final property foobar R|Buz|.(val): R|Bar|
+        public final val R|Buz|.foobar: R|Bar|
             public get(): R|Bar| {
-                return R|/Bar.Bar|()
+                ^ R|/Bar.Bar|()
             }
 
-        public final function chk R|FooBar|.(buz: R|Buz|): R|kotlin/Unit| {
+        public final fun R|FooBar|.chk(buz: R|Buz|): R|kotlin/Unit| {
             R|<local>/buz|.R|/Foo.foobar|.R|/Bar.invoke|()
         }
 

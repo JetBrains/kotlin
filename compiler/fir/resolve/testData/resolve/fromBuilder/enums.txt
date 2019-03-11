@@ -21,16 +21,16 @@ FILE: enums.kt
     public final enum class Planet {
         private constructor(m: R|kotlin/Double|, r: R|kotlin/Double|): super<R|kotlin/Enum|>()
 
-        public final property m(val): R|kotlin/Double|
+        public final val m: R|kotlin/Double|
             public get(): R|kotlin/Double|
 
-        internal final property r(val): R|kotlin/Double|
+        internal final val r: R|kotlin/Double|
             internal get(): R|kotlin/Double|
 
         public final enum entry MERCURY : R|Planet| {
             public constructor(): super<R|Planet|>(Double(1.0), Double(2.0))
 
-            public final override function sayHello(): R|kotlin/Unit| {
+            public final override fun sayHello(): R|kotlin/Unit| {
                 <Unresolved name: println>#(String(Hello!!!))
             }
 
@@ -39,7 +39,7 @@ FILE: enums.kt
         public final enum entry VENERA : R|Planet| {
             public constructor(): super<R|Planet|>(Double(3.0), Double(4.0))
 
-            public final override function sayHello(): R|kotlin/Unit| {
+            public final override fun sayHello(): R|kotlin/Unit| {
                 <Unresolved name: println>#(String(Ola!!!))
             }
 
@@ -48,21 +48,21 @@ FILE: enums.kt
         public final enum entry EARTH : R|Planet| {
             public constructor(): super<R|Planet|>(Double(5.0), Double(6.0))
 
-            public final override function sayHello(): R|kotlin/Unit| {
+            public final override fun sayHello(): R|kotlin/Unit| {
                 <Unresolved name: println>#(String(Privet!!!))
             }
 
         }
 
-        public final property g(val): R|kotlin/Double| = <Unresolved name: div>#(<Unresolved name: times>#(<Unresolved name: G>#, R|/Planet.m|), <Unresolved name: times>#(R|/Planet.r|, R|/Planet.r|))
+        public final val g: R|kotlin/Double| = <Unresolved name: div>#(<Unresolved name: times>#(<Unresolved name: G>#, R|/Planet.m|), <Unresolved name: times>#(R|/Planet.r|, R|/Planet.r|))
             public get(): R|kotlin/Double|
 
-        public abstract function sayHello(): R|kotlin/Unit|
+        public abstract fun sayHello(): R|kotlin/Unit|
 
         public final companion object Companion {
             public constructor(): super<R|kotlin/Any|>()
 
-            public final const property G(val): R|kotlin/Double| = Double(6.67E-11)
+            public final const val G: R|kotlin/Double| = Double(6.67E-11)
                 public get(): <implicit>
 
         }

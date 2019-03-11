@@ -2,7 +2,7 @@ FILE: init.kt
     public? final? class WithInit {
         public? constructor(x: Int): super<kotlin/Any>()
 
-        public? final? property x(val): Int
+        public? final? val x: Int
             public? get(): Int
 
         init {

@@ -7,9 +7,9 @@ FILE: lists.kt
         public constructor(): super<R|kotlin/Any|>()
 
     }
-    public final function convert R|kotlin/collections/List<kotlin/String>|.(): R|MyStringList| {
-        return@@@convert as/R|MyStringList|(this#)
+    public final fun R|kotlin/collections/List<kotlin/String>|.convert(): R|MyStringList| {
+        ^convert as/R|MyStringList|(this#)
     }
-    public final function ret(l: R|kotlin/collections/MutableList<kotlin/String>|): R|MyMutableStringList| {
-        return@@@ret as/R|MyMutableStringList|(this#)
+    public final fun ret(l: R|kotlin/collections/MutableList<kotlin/String>|): R|MyMutableStringList| {
+        ^ret as/R|MyMutableStringList|(this#)
     }

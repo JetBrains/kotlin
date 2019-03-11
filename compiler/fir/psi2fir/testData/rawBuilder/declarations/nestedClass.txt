@@ -2,7 +2,7 @@ FILE: nestedClass.kt
     public? abstract class Base {
         public? constructor(s: String): super<kotlin/Any>()
 
-        public? final? property s(val): String
+        public? final? val s: String
             public? get(): String
 
     }

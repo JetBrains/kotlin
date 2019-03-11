@@ -1,8 +1,8 @@
 public open enum class EnumWithSpecializedEntry : R|java/lang/Enum<test/EnumWithSpecializedEntry>| {
-    public final static property E1(val): R|ft<test/EnumWithSpecializedEntry, test/EnumWithSpecializedEntry?>|!
+    public final static val E1: R|ft<test/EnumWithSpecializedEntry, test/EnumWithSpecializedEntry?>|!
         public get(): R|ft<test/EnumWithSpecializedEntry, test/EnumWithSpecializedEntry?>|!
 
-    public final static property E2(val): R|ft<test/EnumWithSpecializedEntry, test/EnumWithSpecializedEntry?>|!
+    public final static val E2: R|ft<test/EnumWithSpecializedEntry, test/EnumWithSpecializedEntry?>|!
         public get(): R|ft<test/EnumWithSpecializedEntry, test/EnumWithSpecializedEntry?>|!
 
 }

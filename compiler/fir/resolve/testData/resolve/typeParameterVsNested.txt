@@ -9,15 +9,15 @@ FILE: typeParameterVsNested.kt
 
         }
 
-        public abstract property x(val): R|T|
+        public abstract val x: R|T|
             public get(): R|T|
 
-        public abstract function foo(arg: R|T|): R|kotlin/Unit|
+        public abstract fun foo(arg: R|T|): R|kotlin/Unit|
 
-        public abstract property y(val): R|test/My.T|
+        public abstract val y: R|test/My.T|
             public get(): R|test/My.T|
 
-        public abstract property z(val): R|test/My.T|
+        public abstract val z: R|test/My.T|
             public get(): R|test/My.T|
 
         public final class Some : R|test/My.T| {

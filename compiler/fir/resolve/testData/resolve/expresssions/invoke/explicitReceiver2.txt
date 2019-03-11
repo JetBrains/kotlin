@@ -2,25 +2,25 @@ FILE: explicitReceiver2.kt
     public final class Bar {
         public constructor(): super<R|kotlin/Any|>()
 
-        public final operator function invoke(): R|Foo| {
-            return@@@invoke this#
+        public final operator fun invoke(): R|Foo| {
+            ^invoke this#
         }
 
     }
-    public final function x(): R|kotlin/Unit| {
+    public final fun x(): R|kotlin/Unit| {
     }
     public final class Foo {
         public constructor(): super<R|kotlin/Any|>()
 
-        public final operator function invoke R|Bar|.(): R|Foo| {
-            return@@@invoke this#
+        public final operator fun R|Bar|.invoke(): R|Foo| {
+            ^invoke this#
         }
 
-        public final property x(val): R|Bar| = R|/Bar.Bar|()
+        public final val x: R|Bar| = R|/Bar.Bar|()
             public get(): R|Bar|
 
-        public final function bar(): R|Foo| {
-            return@@@bar R|/Foo.x|.R|/Bar.invoke|()
+        public final fun bar(): R|Foo| {
+            ^bar R|/Foo.x|.R|/Bar.invoke|()
         }
 
     }

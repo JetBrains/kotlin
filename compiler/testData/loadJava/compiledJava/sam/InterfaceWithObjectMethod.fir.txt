@@ -1,4 +1,4 @@
 public abstract interface InterfaceWithObjectMethod : R|java/lang/Object| {
-    public abstract operator function toString(): R|ft<kotlin/String, kotlin/String?>|!
+    public abstract operator fun toString(): R|ft<kotlin/String, kotlin/String?>|!
 
 }

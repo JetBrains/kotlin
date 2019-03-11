@@ -12,7 +12,7 @@ FILE: companion.kt
 
         }
 
-        public abstract property x(val): R|test/Some.Companion.InCompanion|
+        public abstract val x: R|test/Some.Companion.InCompanion|
             public get(): R|test/Some.Companion.InCompanion|
 
     }
@@ -29,7 +29,7 @@ FILE: companion.kt
 
         }
 
-        public abstract property x(val): R|test/Another.NamedCompanion.InCompanion|
+        public abstract val x: R|test/Another.NamedCompanion.InCompanion|
             public get(): R|test/Another.NamedCompanion.InCompanion|
 
     }

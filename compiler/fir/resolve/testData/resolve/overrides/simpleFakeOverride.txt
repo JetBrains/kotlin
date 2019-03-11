@@ -2,8 +2,8 @@ FILE: simpleFakeOverride.kt
     <T> public open class A {
         public constructor(): super<R|kotlin/Any|>()
 
-        public final function foo(t: R|T|): R|T| {
-            return@@@foo R|<local>/t|
+        public final fun foo(t: R|T|): R|T| {
+            ^foo R|<local>/t|
         }
 
     }
@@ -14,7 +14,7 @@ FILE: simpleFakeOverride.kt
     public final class B : R|A<Some>| {
         public constructor(): super<R|A<Some>|>()
 
-        public final function test(): R|kotlin/Unit| {
+        public final fun test(): R|kotlin/Unit| {
             R|FakeOverride</A.foo: R|Some|>|(R|/Some.Some|())
         }
 

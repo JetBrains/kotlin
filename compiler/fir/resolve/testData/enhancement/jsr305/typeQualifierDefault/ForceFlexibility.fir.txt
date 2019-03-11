@@ -1,7 +1,7 @@
 @R|spr/NonNullApi|() public open class A : R|java/lang/Object| {
-    public open operator function foo(x: R|kotlin/String|, @R|spr/Nullable|() y: R|kotlin/CharSequence|?): R|kotlin/String|
+    public open operator fun foo(x: R|kotlin/String|, @R|spr/Nullable|() y: R|kotlin/CharSequence|?): R|kotlin/String|
 
-    @R|spr/ForceFlexibility|() public open operator function bar(x: R|ft<kotlin/String, kotlin/String?>|!, @R|javax/annotation/Nonnull|() y: R|kotlin/CharSequence|): R|ft<kotlin/String, kotlin/String?>|!
+    @R|spr/ForceFlexibility|() public open operator fun bar(x: R|ft<kotlin/String, kotlin/String?>|!, @R|javax/annotation/Nonnull|() y: R|kotlin/CharSequence|): R|ft<kotlin/String, kotlin/String?>|!
 
 }
 @R|java/lang/annotation/Retention|(R|java/lang/annotation/RetentionPolicy.RUNTIME|()) @R|java/lang/annotation/Documented|() @R|spr/UnknownNullability|() @R|javax/annotation/meta/TypeQualifierDefault|(<implicitArrayOf>(R|java/lang/annotation/ElementType.METHOD|(), R|java/lang/annotation/ElementType.PARAMETER|())) public abstract annotation class ForceFlexibility : R|java/lang/annotation/Annotation| {

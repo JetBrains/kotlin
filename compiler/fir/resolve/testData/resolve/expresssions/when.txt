@@ -1,6 +1,6 @@
 FILE: when.kt
-    public final function foo(): R|kotlin/Int| {
-        return@@@foo when () {
+    public final fun foo(): R|kotlin/Int| {
+        ^foo when () {
             Boolean(true) ->  {
                 Int(1)
             }

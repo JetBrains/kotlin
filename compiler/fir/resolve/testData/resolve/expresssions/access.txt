@@ -2,63 +2,63 @@ FILE: access.kt
     public final class Foo {
         public constructor(): super<R|kotlin/Any|>()
 
-        public final property x(val): R|kotlin/Int| = Int(1)
+        public final val x: R|kotlin/Int| = Int(1)
             public get(): <implicit>
 
-        public final function abc(): R|kotlin/Int| {
-            return@@@abc R|/Foo.x|
+        public final fun abc(): R|kotlin/Int| {
+            ^abc R|/Foo.x|
         }
 
-        public final function cba(): R|kotlin/Int| {
-            return@@@cba R|/Foo.abc|()
+        public final fun cba(): R|kotlin/Int| {
+            ^cba R|/Foo.abc|()
         }
 
     }
     public final class Bar {
         public constructor(): super<R|kotlin/Any|>()
 
-        public final property x(val): R|kotlin/String| = String()
+        public final val x: R|kotlin/String| = String()
             public get(): <implicit>
 
-        public final function abc R|Foo|.(): R|kotlin/Int| {
-            return@@@abc R|/Foo.x|
+        public final fun R|Foo|.abc(): R|kotlin/Int| {
+            ^abc R|/Foo.x|
         }
 
-        public final function bar(): R|Bar| {
-            return@@@bar this#
+        public final fun bar(): R|Bar| {
+            ^bar this#
         }
 
-        public final operator function plus R|kotlin/String|.(bar: R|Bar|): R|kotlin/String| {
-            return@@@plus String()
+        public final operator fun R|kotlin/String|.plus(bar: R|Bar|): R|kotlin/String| {
+            ^plus String()
         }
 
-        public final function check R|Foo|.(): R|kotlin/String| {
-            return@@@check R|/Bar.plus|(R|/Foo.abc|(), R|/Bar.bar|())
+        public final fun R|Foo|.check(): R|kotlin/String| {
+            ^check R|/Bar.plus|(R|/Foo.abc|(), R|/Bar.bar|())
         }
 
     }
-    public final function ext R|Foo|.(): R|kotlin/Int| {
-        return@@@ext R|/Foo.x|
+    public final fun R|Foo|.ext(): R|kotlin/Int| {
+        ^ext R|/Foo.x|
     }
-    public final function bar(): R|kotlin/Unit| {
+    public final fun bar(): R|kotlin/Unit| {
     }
-    public final function buz(): R|kotlin/Unit| {
+    public final fun buz(): R|kotlin/Unit| {
         R|/bar|()
     }
-    public final function f(): R|kotlin/Unit| {
-        val a: R|kotlin/Int| = Int(10)
-        val b: R|kotlin/Int| = R|<local>/a|
-        val d: R|kotlin/String| = String()
-        val c: <ERROR TYPE: Unresolved name: c> = <Unresolved name: c>#
+    public final fun f(): R|kotlin/Unit| {
+        lval a: R|kotlin/Int| = Int(10)
+        lval b: R|kotlin/Int| = R|<local>/a|
+        lval d: R|kotlin/String| = String()
+        lval c: <ERROR TYPE: Unresolved name: c> = <Unresolved name: c>#
         <Unresolved name: abc>#()
-        public final function bcd(): R|kotlin/Unit| {
+        public final fun bcd(): R|kotlin/Unit| {
         }
 
-        public final function abc(): R|kotlin/Unit| {
-            val a: R|kotlin/String| = R|<local>/d|
-            val b: R|kotlin/String| = R|<local>/a|
+        public final fun abc(): R|kotlin/Unit| {
+            lval a: R|kotlin/String| = R|<local>/d|
+            lval b: R|kotlin/String| = R|<local>/a|
             R|<local>/bcd|()
-            public final function dcb(): R|kotlin/Unit| {
+            public final fun dcb(): R|kotlin/Unit| {
             }
 
             R|<local>/dcb|()

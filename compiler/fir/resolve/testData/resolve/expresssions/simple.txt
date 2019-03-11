@@ -1,10 +1,10 @@
 FILE: simple.kt
-    public final function foo(): R|kotlin/Unit| {
-        val x: R|kotlin/Int| = Int(1)
+    public final fun foo(): R|kotlin/Unit| {
+        lval x: R|kotlin/Int| = Int(1)
     }
-    public final property bar(val): R|kotlin/String| = String()
+    public final val bar: R|kotlin/String| = String()
         public get(): <implicit>
-    public final property n(val): R|kotlin/Nothing|? = Null(null)
+    public final val n: R|kotlin/Nothing|? = Null(null)
         public get(): <implicit>
-    public final property g(val): R|kotlin/String|? = Null(null)
+    public final val g: R|kotlin/String|? = Null(null)
         public get(): R|kotlin/String|?

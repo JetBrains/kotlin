@@ -12,14 +12,14 @@ FILE: enums2.kt
     public? final? enum class SomeEnum {
         public? constructor(x: Some): super<kotlin/Enum>()
 
-        public? final? property x(val): Some
+        public? final? val x: Some
             public? get(): Some
 
         public? final enum entry FIRST : SomeEnum {
             public? constructor(): super<SomeEnum>(O1#)
 
-            public? open? override function check(y: Some): Boolean {
-                return@@@check Boolean(true)
+            public? open? override fun check(y: Some): Boolean {
+                ^check Boolean(true)
             }
 
         }
@@ -27,12 +27,12 @@ FILE: enums2.kt
         public? final enum entry SECOND : SomeEnum {
             public? constructor(): super<SomeEnum>(O2#)
 
-            public? open? override function check(y: Some): Boolean {
-                return@@@check ==(y#, O2#)
+            public? open? override fun check(y: Some): Boolean {
+                ^check ==(y#, O2#)
             }
 
         }
 
-        public? abstract function check(y: Some): Boolean
+        public? abstract fun check(y: Some): Boolean
 
     }

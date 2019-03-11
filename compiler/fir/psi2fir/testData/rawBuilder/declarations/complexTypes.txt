@@ -9,7 +9,7 @@ FILE: complexTypes.kt
 
     }
     public? final? interface Test {
-        public? final? property x(val): a.b.C<out CharSequence, *>.D<in List<*>, *>
+        public? final? val x: a.b.C<out CharSequence, *>.D<in List<*>, *>
             public? get(): a.b.C<out CharSequence, *>.D<in List<*>, *>
 
     }

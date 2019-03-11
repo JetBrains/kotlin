@@ -12,14 +12,14 @@ FILE: enum.kt
     public final enum class SomeEnum {
         private constructor(x: R|Some|): super<R|kotlin/Enum|>()
 
-        public final property x(val): R|Some|
+        public final val x: R|Some|
             public get(): R|Some|
 
         public final enum entry FIRST : R|SomeEnum| {
             public constructor(): super<R|SomeEnum|>(<Unresolved name: O1>#)
 
-            public final override function check(y: R|Some|): R|kotlin/Boolean| {
-                return@@@check Boolean(true)
+            public final override fun check(y: R|Some|): R|kotlin/Boolean| {
+                ^check Boolean(true)
             }
 
         }
@@ -27,12 +27,12 @@ FILE: enum.kt
         public final enum entry SECOND : R|SomeEnum| {
             public constructor(): super<R|SomeEnum|>(<Unresolved name: O2>#)
 
-            public final override function check(y: R|Some|): R|kotlin/Boolean| {
-                return@@@check ==(R|<local>/y|, <Unresolved name: O2>#)
+            public final override fun check(y: R|Some|): R|kotlin/Boolean| {
+                ^check ==(R|<local>/y|, <Unresolved name: O2>#)
             }
 
         }
 
-        public abstract function check(y: R|Some|): R|kotlin/Boolean|
+        public abstract fun check(y: R|Some|): R|kotlin/Boolean|
 
     }

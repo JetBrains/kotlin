@@ -1,18 +1,18 @@
 FILE: extension.kt
-    public final function x(): R|kotlin/Unit| {
+    public final fun x(): R|kotlin/Unit| {
     }
     public final class Foo {
         public constructor(): super<R|kotlin/Any|>()
 
-        public final operator function invoke R|kotlin/Int|.(): R|Foo| {
-            return@@@invoke this@Foo
+        public final operator fun R|kotlin/Int|.invoke(): R|Foo| {
+            ^invoke this@Foo
         }
 
-        public final property x(val): R|kotlin/Int| = Int(0)
+        public final val x: R|kotlin/Int| = Int(0)
             public get(): <implicit>
 
-        public final function foo(): R|Foo| {
-            return@@@foo R|/Foo.x|.R|/Foo.invoke|()
+        public final fun foo(): R|Foo| {
+            ^foo R|/Foo.x|.R|/Foo.invoke|()
         }
 
     }

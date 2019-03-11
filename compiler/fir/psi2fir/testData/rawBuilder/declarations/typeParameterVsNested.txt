@@ -9,15 +9,15 @@ FILE: typeParameterVsNested.kt
 
         }
 
-        public? abstract property x(val): T
+        public? abstract val x: T
             public? get(): T
 
-        public? abstract function foo(arg: T): kotlin/Unit
+        public? abstract fun foo(arg: T): kotlin/Unit
 
-        public? abstract property y(val): My.T
+        public? abstract val y: My.T
             public? get(): My.T
 
-        public? abstract property z(val): test.My.T
+        public? abstract val z: test.My.T
             public? get(): test.My.T
 
         public? final? class Some : T {

@@ -2,7 +2,7 @@ FILE: derivedClass.kt
     <T> public open class Base {
         public constructor(x: R|T|): super<R|kotlin/Any|>()
 
-        public final property x(val): R|T|
+        public final val x: R|T|
             public get(): R|T|
 
     }
@@ -10,6 +10,6 @@ FILE: derivedClass.kt
         public constructor(x: R|T|): super<R|Base<T>|>(R|<local>/x|)
 
     }
-    <T : R|kotlin/Any|> public final function create(x: R|T|): R|Derived<T>| {
-        return@@@create R|/Derived.Derived|(R|<local>/x|)
+    <T : R|kotlin/Any|> public final fun create(x: R|T|): R|Derived<T>| {
+        ^create R|/Derived.Derived|(R|<local>/x|)
     }

@@ -9,7 +9,7 @@ FILE: complexTypes.kt
 
     }
     public abstract interface Test {
-        public abstract property x(val): R|a/b/C.D<out kotlin/CharSequence, *, in kotlin/collections/List<*>, *>|
+        public abstract val x: R|a/b/C.D<out kotlin/CharSequence, *, in kotlin/collections/List<*>, *>|
             public get(): R|a/b/C.D<out kotlin/CharSequence, *, in kotlin/collections/List<*>, *>|
 
     }
