@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.KtNodeType
+import com.intellij.psi.tree.IElementType
 
 abstract class KtExpressionImpl(node: ASTNode) : KtElementImpl(node), KtExpression {
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D) = visitor.visitExpression(this, data)
 
-    protected fun findExpressionUnder(type: KtNodeType): KtExpression? {
+    protected fun findExpressionUnder(type: IElementType): KtExpression? {
         val containerNode = findChildByType<KtContainerNode>(type) ?: return null
         return containerNode.findChildByClass<KtExpression>(KtExpression::class.java)
     }
