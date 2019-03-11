@@ -124,8 +124,8 @@ private fun associateDependenciesWithActualModuleDependencies(
 
                     val resolvedToConfiguration = resolved.configuration
                     val dependencyTargetComponent: KotlinTargetComponent = run {
-                        dependencyProjectKotlinExtension.targets.forEach { target ->
-                            target.components.forEach { component ->
+                        dependencyProjectKotlinExtension.targets.withType(AbstractKotlinTarget::class.java).forEach { target ->
+                            target.kotlinComponents.forEach { component ->
                                 if (component.findUsageContext(resolvedToConfiguration) != null)
                                     return@run component
                             }
