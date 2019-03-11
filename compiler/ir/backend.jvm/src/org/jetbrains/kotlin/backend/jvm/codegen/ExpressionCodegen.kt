@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.isReleaseCoroutines
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -703,7 +702,7 @@ class ExpressionCodegen(
         val endLabel = Label()
 
         if (shouldGenerateCondition) {
-            genConditionWithOptimizationsIfPossible(branch, data, elseLabel)
+            genConditionalJumpWithOptimizationsIfPossible(branch.condition, data, elseLabel)
         } else {
             // Even when a condition isn't generated, a linenumber and nop is still required so that a debugger can break on the line of the
             // condition, except for the explicit "else".
@@ -740,16 +739,21 @@ class ExpressionCodegen(
         return if (shouldGenerateBody) resultFromBody else resultFromTail
     }
 
-    private fun genConditionWithOptimizationsIfPossible(branch: IrBranch, data: BlockInfo, elseLabel: Label) {
-        var condition = branch.condition
-        var jumpIfFalse = true
+    private fun genConditionalJumpWithOptimizationsIfPossible(
+        originalCondition: IrExpression,
+        data: BlockInfo,
+        jumpToLabel: Label,
+        originalJumpIfFalse: Boolean = true
+    ) {
+        var condition = originalCondition
+        var jumpIfFalse = originalJumpIfFalse
 
         // Instead of materializing a negated value when used for control flow, flip the branch
         // targets instead. This significantly cuts down the amount of branches and loads of
         // const_0 and const_1 in the generated java bytecode.
         if (isNegation(condition, classCodegen.context)) {
             condition = negationArgument(condition as IrCall)
-            jumpIfFalse = false
+            jumpIfFalse = !jumpIfFalse
         }
 
         // Do not materialize null constants to check for null. Instead use the JVM bytecode
@@ -761,9 +765,9 @@ class ExpressionCodegen(
             val other = if (left.isNullConst()) right else left
             gen(other, data).put(other.asmType, mv)
             if (jumpIfFalse) {
-                mv.ifnonnull(elseLabel)
+                mv.ifnonnull(jumpToLabel)
             } else {
-                mv.ifnull(elseLabel)
+                mv.ifnull(jumpToLabel)
             }
             return
         }
@@ -776,7 +780,7 @@ class ExpressionCodegen(
                 val callable = resolveToCallable(condition, false)
                 (callable as IrIntrinsicFunction).loadArguments(this, data)
                 val stackValue = intrinsic.genStackValue(condition, classCodegen.context)
-                BranchedValue.condJump(stackValue, elseLabel, jumpIfFalse, mv)
+                BranchedValue.condJump(stackValue, jumpToLabel, jumpIfFalse, mv)
                 return
             }
         }
@@ -784,7 +788,8 @@ class ExpressionCodegen(
         // For instance of type operators, branch directly on the instanceof result instead
         // of materializing a boolean and performing an extra jump.
         if (condition is IrTypeOperatorCall &&
-            (condition.operator == IrTypeOperator.NOT_INSTANCEOF || condition.operator == IrTypeOperator.INSTANCEOF)) {
+            (condition.operator == IrTypeOperator.NOT_INSTANCEOF || condition.operator == IrTypeOperator.INSTANCEOF)
+        ) {
             val asmType = condition.typeOperand.toKotlinType().asmType
             gen(condition.argument, OBJECT_TYPE, data)
             val type = boxType(asmType)
@@ -794,12 +799,12 @@ class ExpressionCodegen(
                     onStack(Type.BOOLEAN_TYPE)
                 else
                     StackValue.not(onStack(Type.BOOLEAN_TYPE))
-            BranchedValue.condJump(stackValue, elseLabel, jumpIfFalse, mv)
+            BranchedValue.condJump(stackValue, jumpToLabel, jumpIfFalse, mv)
             return
         }
 
         gen(condition, data).put(condition.asmType, mv)
-        BranchedValue.condJump(onStack(condition.asmType), elseLabel, jumpIfFalse, mv)
+        BranchedValue.condJump(onStack(condition.asmType), jumpToLabel, jumpIfFalse, mv)
     }
 
     private fun isNullCheck(expression: IrExpression): Boolean {
@@ -920,8 +925,7 @@ class ExpressionCodegen(
                 mv.fakeAlwaysTrueIfeq(label)
             }
         } else {
-            gen(condition, data)
-            BranchedValue.condJump(StackValue.onStack(condition.asmType), label, jumpIfFalse, mv)
+            genConditionalJumpWithOptimizationsIfPossible(condition, data, label, jumpIfFalse)
         }
     }
 

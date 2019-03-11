@@ -914,6 +914,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/conditions/negatedDisjunction.kt");
         }
 
+        @TestMetadata("negatedNonZeroCompare.kt")
+        public void testNegatedNonZeroCompare() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/conditions/negatedNonZeroCompare.kt");
+        }
+
         @TestMetadata("negatedNullCompare.kt")
         public void testNegatedNullCompare() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/conditions/negatedNullCompare.kt");
@@ -937,6 +942,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("noBoxingForPrimitiveEqObject.kt")
         public void testNoBoxingForPrimitiveEqObject() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/conditions/noBoxingForPrimitiveEqObject.kt");
+        }
+
+        @TestMetadata("nonZeroCompare.kt")
+        public void testNonZeroCompare() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/conditions/nonZeroCompare.kt");
         }
 
         @TestMetadata("nullCompare.kt")
