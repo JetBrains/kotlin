@@ -117,8 +117,7 @@ class AddExclExclCallFix(psiElement: PsiElement, val checkImplicitReceivers: Boo
         return when (psiElement) {
             is KtArrayAccessExpression -> psiElement.expressionForCall()
             is KtOperationReferenceExpression -> {
-                val parent = psiElement.parent
-                when (parent) {
+                when (val parent = psiElement.parent) {
                     is KtUnaryExpression -> parent.baseExpression.expressionForCall()
                     is KtBinaryExpression -> {
                         val receiver = if (KtPsiUtil.isInOrNotInOperation(parent)) parent.right else parent.left
