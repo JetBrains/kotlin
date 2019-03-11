@@ -575,12 +575,13 @@ class HTMLRender: Render() {
                     }
                     td {
                         val scaledRatio = if (maxRatio == 0.0) null else change.second.mean / maxRatio
-                        attributes["bgcolor"] = ColoredCell(scaledRatio).backgroundStyle
+                        attributes["bgcolor"] = ColoredCell(scaledRatio,
+                                borderPositive = { cellValue -> cellValue > 1.0 / maxRatio }).backgroundStyle
                         +"${change.second}"
                     }
                 }
             }
-        } else {
+        } else if (bucket == null) {
             // Output all values without performance changes.
             val placeholder = "-"
             for ((name, value) in fullSet) {
@@ -650,7 +651,8 @@ class HTMLRender: Render() {
             }
     }
 
-    class ColoredCell(val scaledValue: Double?, val reverse: Boolean = false) {
+    class ColoredCell(val scaledValue: Double?, val reverse: Boolean = false,
+                      val borderPositive: (cellValue: Double) -> Boolean = { cellValue -> cellValue > 0 }) {
         val value: Double
         val neutralColor = Color(1.0,1.0 , 1.0)
         val negativeColor = Color(0.0, 1.0, 0.0)
@@ -667,7 +669,7 @@ class HTMLRender: Render() {
         fun getColor(): Color {
             val currentValue = clamp(value, -1.0, 1.0)
             val cellValue = if (reverse) -currentValue else currentValue
-            val baseColor = if (cellValue < 0) negativeColor else positiveColor
+            val baseColor = if (borderPositive(cellValue)) positiveColor else negativeColor
             // Smooth mapping to put first 20% of change into 50% of range,
             // although really we should compensate for luma.
             val color = sin((abs(cellValue).pow(.477)) * kotlin.math.PI * .5)
