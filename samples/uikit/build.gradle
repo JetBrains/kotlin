@@ -5,8 +5,11 @@ plugins {
 kotlin {
     targets {
         fromPreset(determinePreset(), 'ios') {
-            compilations.main.outputKinds 'EXECUTABLE'
-            compilations.main.entryPoint 'sample.uikit.main'
+            binaries {
+                executable {
+                    entryPoint = 'sample.uikit.main'
+                }
+            }
         }
     }
 }
@@ -16,24 +19,22 @@ kotlin {
 // - uikit.configuration.name=[Release|Debug]
 // - uikit.binary.location
 task buildAppForXcode {
+    if (isCalledFromXcode()) {
+        dependsOn kotlin.targets.ios.binaries.getExecutable(getBuildTypeForXcode()).linkTask
+    }
+
     doLast {
         if (!isCalledFromXcode()) {
             throw new Exception("Please run 'buildAppForXcode' task with all necessary properties!")
         }
 
         copy {
-            from file(kotlin.targets.ios.compilations.main.getBinary('EXECUTABLE', getBuildTypeForXcode()))
+            from file(kotlin.targets.ios.binaries.getExecutable(getBuildTypeForXcode()).outputFile)
             into file(getBinaryLocationForXcode().parentFile)
             rename {
                 getBinaryLocationForXcode().name
             }
         }
-    }
-}
-
-afterEvaluate {
-    if (isCalledFromXcode()) {
-        buildAppForXcode.dependsOn kotlin.targets.ios.compilations.main.linkTaskName('EXECUTABLE', getBuildTypeForXcode())
     }
 }
 

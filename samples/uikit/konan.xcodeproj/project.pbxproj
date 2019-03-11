@@ -13,12 +13,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2C33F7F822378402009209E2 /* src */ = {isa = PBXFileReference; lastKnownFileType = folder; path = src; sourceTree = SOURCE_ROOT; };
 		2CB540391F56C2C4006EE521 /* konan.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = konan.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2CB540461F56C2C4006EE521 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		2CB540481F56C2C4006EE521 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2CB5404B1F56C2C4006EE521 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		2CB5404D1F56C2C4006EE521 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		7FE128BC205852380064CE74 /* main.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.kt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,11 +52,11 @@
 		2CB5403B1F56C2C4006EE521 /* konan */ = {
 			isa = PBXGroup;
 			children = (
+				2C33F7F822378402009209E2 /* src */,
 				2CB540451F56C2C4006EE521 /* Main.storyboard */,
 				2CB540481F56C2C4006EE521 /* Assets.xcassets */,
 				2CB5404A1F56C2C4006EE521 /* LaunchScreen.storyboard */,
 				2CB5404D1F56C2C4006EE521 /* Info.plist */,
-				7FE128B9205852380064CE74 /* src */,
 			);
 			path = konan;
 			sourceTree = "<group>";
@@ -66,30 +66,6 @@
 			children = (
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		7FE128B9205852380064CE74 /* src */ = {
-			isa = PBXGroup;
-			children = (
-				7FE128BA205852380064CE74 /* main */,
-			);
-			path = src;
-			sourceTree = SOURCE_ROOT;
-		};
-		7FE128BA205852380064CE74 /* main */ = {
-			isa = PBXGroup;
-			children = (
-				7FE128BB205852380064CE74 /* kotlin */,
-			);
-			path = main;
-			sourceTree = "<group>";
-		};
-		7FE128BB205852380064CE74 /* kotlin */ = {
-			isa = PBXGroup;
-			children = (
-				7FE128BC205852380064CE74 /* main.kt */,
-			);
-			path = kotlin;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

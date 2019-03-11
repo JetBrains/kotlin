@@ -3,7 +3,9 @@ apply plugin: 'org.jetbrains.kotlin.multiplatform'
 kotlin {
     targets {
         fromPreset(determineIosPreset(), 'ios') {
-            compilations.main.outputKinds 'FRAMEWORK'
+            binaries {
+                framework()
+            }
         }
 
         fromPreset(presets.jvm, 'jvm')
@@ -42,28 +44,27 @@ def determineIosPreset() {
 // - calculator.configuration.name=[Release|Debug]
 // - calculator.framework.location
 task buildFrameworkForXcode {
+
+    if (isCalledFromXcode()) {
+        dependsOn kotlin.targets.ios.binaries.getFramework(getBuildTypeForXcode()).linkTask
+    }
+
     doLast {
         if (!isCalledFromXcode()) {
             throw new Exception("Please run 'buildFrameworkForXcode' task with all necessary properties!")
         }
 
-        println("from: ${kotlin.targets.ios.compilations.main.getBinary('FRAMEWORK', getBuildTypeForXcode()).parentFile}")
+        def frameworkDir = kotlin.targets.ios.binaries.getFramework(getBuildTypeForXcode()).outputFile
+
+        println("from: ${frameworkDir.parentFile}")
         println("into: ${getXcodeConfigurationBuildDir()}")
 
-        File frameworkDir = kotlin.targets.ios.compilations.main.getBinary('FRAMEWORK', getBuildTypeForXcode())
-        
         copy {
             from frameworkDir.parentFile
             into getXcodeConfigurationBuildDir()
             include "${frameworkDir.name}/**"
             include "${frameworkDir.name}.dSYM/**"
         }
-    }
-}
-
-afterEvaluate {
-    if (isCalledFromXcode()) {
-        buildFrameworkForXcode.dependsOn kotlin.targets.ios.compilations.main.linkTaskName('FRAMEWORK', getBuildTypeForXcode())
     }
 }
 
