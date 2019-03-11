@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.load.java
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeSmart
 import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties.getPropertyNameCandidatesBySpecialGetterName
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeSmartForCompiler
 
 
 fun propertyNameByGetMethodName(methodName: Name): Name?
@@ -43,7 +44,7 @@ private fun propertyNameFromAccessorMethodName(methodName: Name, prefix: String,
     }
 
     if (!removePrefix) return methodName
-    val name = identifier.removePrefix(prefix).decapitalizeSmart(asciiOnly = true)
+    val name = identifier.removePrefix(prefix).decapitalizeSmartForCompiler(asciiOnly = true)
     if (!Name.isValidIdentifier(name)) return null
     return Name.identifier(name)
 }

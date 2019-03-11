@@ -38,6 +38,8 @@ class KotlinNameSuggesterTest : KotlinLightCodeInsightFixtureTestCase() {
 
     fun testNameReferenceExpression() = doTest()
 
+    fun testNameReferenceExpressionForConstants() = doTest()
+
     fun testNameString() = doTest()
 
     fun testAnonymousObject() = doTest()

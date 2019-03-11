@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeSmart
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeSmartForCompiler
 import java.util.*
 
 data class ReferenceVariants(val imported: Collection<DeclarationDescriptor>, val notImportedExtensions: Collection<CallableDescriptor>)
@@ -121,7 +122,7 @@ class ReferenceVariantsCollector(
 
         val getOrSetPrefix = GET_SET_PREFIXES.firstOrNull { prefix.startsWith(it) }
         val additionalPropertyNameFilter: ((String) -> Boolean)? = getOrSetPrefix
-                ?.let { prefixMatcher.cloneWithPrefix(prefix.removePrefix(getOrSetPrefix).decapitalizeSmart()).asStringNameFilter() }
+                ?.let { prefixMatcher.cloneWithPrefix(prefix.removePrefix(getOrSetPrefix).decapitalizeSmartForCompiler()).asStringNameFilter() }
 
         val shadowedDeclarationsFilter = if (runtimeReceiver != null)
             ShadowedDeclarationsFilter(bindingContext, resolutionFacade, nameExpression, runtimeReceiver)
