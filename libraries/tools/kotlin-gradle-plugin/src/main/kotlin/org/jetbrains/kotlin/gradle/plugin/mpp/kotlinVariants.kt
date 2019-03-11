@@ -91,7 +91,7 @@ open class KotlinVariantWithCoordinates(
 class KotlinVariantWithMetadataVariant(
     producingCompilation: KotlinCompilation<*>,
     usages: Set<DefaultKotlinUsageContext>,
-    private val metadataTarget: KotlinTarget
+    internal val metadataTarget: AbstractKotlinTarget
 ) : KotlinVariantWithCoordinates(producingCompilation, usages), ComponentWithVariants {
     override fun getVariants() = metadataTarget.components
 }
@@ -99,14 +99,14 @@ class KotlinVariantWithMetadataVariant(
 class KotlinVariantWithMetadataDependency(
     producingCompilation: KotlinCompilation<*>,
     val originalUsages: Set<DefaultKotlinUsageContext>,
-    private val metadataTarget: KotlinTarget
+    private val metadataTarget: AbstractKotlinTarget
 ) : KotlinVariantWithCoordinates(producingCompilation, originalUsages) {
     override fun getUsages(): Set<UsageContext> = originalUsages.mapTo(mutableSetOf()) { usageContext ->
         KotlinUsageContextWithAdditionalDependencies(usageContext, setOf(metadataDependency()))
     }
 
     private fun metadataDependency(): ModuleDependency {
-        val metadataPublication = (metadataTarget.components.single() as KotlinTargetComponentWithPublication).publicationDelegate!!
+        val metadataPublication = (metadataTarget.kotlinComponents.single() as KotlinTargetComponentWithPublication).publicationDelegate!!
         val metadataGroupId = metadataPublication.groupId
         val metadataArtifactId = metadataPublication.artifactId
         val metadataVersion = metadataPublication.version

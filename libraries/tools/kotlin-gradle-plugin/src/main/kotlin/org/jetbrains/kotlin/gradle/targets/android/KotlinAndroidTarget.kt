@@ -86,7 +86,7 @@ open class KotlinAndroidTarget(
             )
     }
 
-    override val components by lazy {
+    override val kotlinComponents by lazy {
         checkPublishLibraryVariantsExist()
 
         KotlinAndroidPlugin.androidTargetHandler(project.getKotlinPluginVersion()!!, this).doCreateComponents()

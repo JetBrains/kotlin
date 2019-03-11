@@ -43,7 +43,7 @@ interface KotlinTarget : Named, HasAttributes {
 
     val publishable: Boolean
 
-    val components: Set<KotlinTargetComponent>
+    val components: Set<SoftwareComponent>
 
     fun mavenPublication(action: Closure<Unit>)
     fun mavenPublication(action: Action<MavenPublication>)

@@ -13,12 +13,12 @@ import org.gradle.api.attributes.Usage
 import org.gradle.api.capabilities.Capability
 import org.gradle.api.component.ComponentWithCoordinates
 import org.gradle.api.component.ComponentWithVariants
+import org.gradle.api.component.SoftwareComponent
 import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.component.UsageContext
 import org.gradle.api.publish.maven.MavenPublication
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
 import org.jetbrains.kotlin.gradle.plugin.ProjectLocalConfigurations
 
 open class KotlinSoftwareComponent(
@@ -28,7 +28,7 @@ open class KotlinSoftwareComponent(
 
     override fun getUsages(): Set<UsageContext> = emptySet()
 
-    override fun getVariants(): Set<KotlinTargetComponent> =
+    override fun getVariants(): Set<SoftwareComponent> =
         kotlinTargets.flatMap { it.components }.toSet()
 
     override fun getName(): String = name

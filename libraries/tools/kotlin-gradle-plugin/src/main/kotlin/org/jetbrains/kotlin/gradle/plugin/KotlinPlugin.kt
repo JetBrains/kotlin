@@ -359,7 +359,7 @@ internal abstract class AbstractKotlinPlugin(
         registry.register(KotlinModelBuilder(kotlinPluginVersion, null))
     }
 
-    private fun rewriteMppDependenciesInPom(target: KotlinTarget) {
+    private fun rewriteMppDependenciesInPom(target: AbstractKotlinTarget) {
         val project = target.project
 
         fun shouldRewritePoms(): Boolean =
@@ -370,7 +370,7 @@ internal abstract class AbstractKotlinPlugin(
                 publishing.publications.withType(MavenPublication::class.java).all { publication ->
                     publication.pom.withXml { xml ->
                         if (shouldRewritePoms())
-                            project.rewritePomMppDependenciesToActualTargetModules(xml, target.components.single())
+                            project.rewritePomMppDependenciesToActualTargetModules(xml, target.kotlinComponents.single())
                     }
                 }
             }
@@ -381,7 +381,7 @@ internal abstract class AbstractKotlinPlugin(
                 uploadTask.repositories.withType(MavenResolver::class.java).all { mavenResolver ->
                     mavenResolver.pom.withXml { xml ->
                         if (shouldRewritePoms())
-                            project.rewritePomMppDependenciesToActualTargetModules(xml, target.components.single())
+                            project.rewritePomMppDependenciesToActualTargetModules(xml, target.kotlinComponents.single())
                     }
                 }
             }

@@ -186,27 +186,28 @@ class KotlinMultiplatformPlugin(
 
     private fun AbstractKotlinTarget.createMavenPublications(publications: PublicationContainer) {
         components
-            .filter { it.publishable }
-            .forEach { variant ->
-                val variantPublication = publications.create(variant.name, MavenPublication::class.java).apply {
+            .map { gradleComponent -> gradleComponent to kotlinComponents.single { it.name == gradleComponent.name } }
+            .filter { (_, kotlinComponent) -> kotlinComponent.publishable }
+            .forEach { (gradleComponent, kotlinComponent) ->
+                val componentPublication = publications.create(kotlinComponent.name, MavenPublication::class.java).apply {
                     // do this in whenEvaluated since older Gradle versions seem to check the files in the variant eagerly:
                     project.whenEvaluated {
-                        from(variant)
-                        variant.sourcesArtifacts.forEach { sourceArtifact ->
+                        from(gradleComponent)
+                        kotlinComponent.sourcesArtifacts.forEach { sourceArtifact ->
                             artifact(sourceArtifact)
                         }
                     }
                     (this as MavenPublicationInternal).publishWithOriginalFileName()
-                    artifactId = variant.defaultArtifactId
+                    artifactId = kotlinComponent.defaultArtifactId
 
                     pom.withXml { xml ->
                         if (PropertiesProvider(project).keepMppDependenciesIntactInPoms != true)
-                            project.rewritePomMppDependenciesToActualTargetModules(xml, variant)
+                            project.rewritePomMppDependenciesToActualTargetModules(xml, kotlinComponent)
                     }
                 }
 
-                (variant as? KotlinTargetComponentWithPublication)?.publicationDelegate = variantPublication
-                publicationConfigureActions.all { it.execute(variantPublication) }
+                (kotlinComponent as? KotlinTargetComponentWithPublication)?.publicationDelegate = componentPublication
+                publicationConfigureActions.all { it.execute(componentPublication) }
             }
     }
 
