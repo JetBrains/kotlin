@@ -3,7 +3,7 @@ package kotlin
 import kotlin.annotation.AnnotationTarget.*
 
 /**
- * The experimental standard library API marker. The API marked with this annotation is not subject to the
+ * This annotation marks the standard library API that is considered experimental and is not subject to the
  * [general compatibility guarantees](https://kotlinlang.org/docs/reference/evolution/components-stability.html) given for the standard library:
  * the behavior of such API may be changed or the API may be removed completely in any further release.
  *
