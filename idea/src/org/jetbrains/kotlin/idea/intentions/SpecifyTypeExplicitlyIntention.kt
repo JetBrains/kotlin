@@ -26,9 +26,7 @@ import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.ShortenReferences
@@ -131,17 +129,8 @@ class SpecifyTypeExplicitlyIntention : SelfTargetingRangeIntention<KtCallableDec
             val bindingContext = resolutionFacade.analyze(contextElement, BodyResolveMode.PARTIAL)
             val scope = contextElement.getResolutionScope(bindingContext, resolutionFacade)
 
-            var checkTypeParameters = true
-            val descriptor = exprType.constructor.declarationDescriptor
-            if (descriptor != null && descriptor is TypeParameterDescriptor) {
-                val owner = descriptor.containingDeclaration
-                if (owner is FunctionDescriptor && owner.typeParameters.contains(descriptor)) {
-                    checkTypeParameters = false
-                }
-            }
-
             fun KotlinType.toResolvableApproximations(): List<KotlinType> =
-                with(getResolvableApproximations(scope, checkTypeParameters).toList()) {
+                with(getResolvableApproximations(scope, checkTypeParameters = false).toList()) {
                     when {
                         exprType.isNullabilityFlexible() -> flatMap {
                             listOf(TypeUtils.makeNotNullable(it), TypeUtils.makeNullable(it))

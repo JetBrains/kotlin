@@ -16296,9 +16296,29 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/specifyTypeExplicitly/genericClass.kt");
         }
 
+        @TestMetadata("genericClassWithTypeParameters.kt")
+        public void testGenericClassWithTypeParameters() throws Exception {
+            runTest("idea/testData/intentions/specifyTypeExplicitly/genericClassWithTypeParameters.kt");
+        }
+
+        @TestMetadata("genericClassWithTypeParameters2.kt")
+        public void testGenericClassWithTypeParameters2() throws Exception {
+            runTest("idea/testData/intentions/specifyTypeExplicitly/genericClassWithTypeParameters2.kt");
+        }
+
         @TestMetadata("genericFunction.kt")
         public void testGenericFunction() throws Exception {
             runTest("idea/testData/intentions/specifyTypeExplicitly/genericFunction.kt");
+        }
+
+        @TestMetadata("innerTypeParameter.kt")
+        public void testInnerTypeParameter() throws Exception {
+            runTest("idea/testData/intentions/specifyTypeExplicitly/innerTypeParameter.kt");
+        }
+
+        @TestMetadata("innerTypeParameter2.kt")
+        public void testInnerTypeParameter2() throws Exception {
+            runTest("idea/testData/intentions/specifyTypeExplicitly/innerTypeParameter2.kt");
         }
 
         @TestMetadata("lambdaParam.kt")
@@ -16311,9 +16331,44 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/specifyTypeExplicitly/localClass.kt");
         }
 
+        @TestMetadata("localClassInSecondTypeParameter.kt")
+        public void testLocalClassInSecondTypeParameter() throws Exception {
+            runTest("idea/testData/intentions/specifyTypeExplicitly/localClassInSecondTypeParameter.kt");
+        }
+
+        @TestMetadata("localClassInSecondTypeParameter2.kt")
+        public void testLocalClassInSecondTypeParameter2() throws Exception {
+            runTest("idea/testData/intentions/specifyTypeExplicitly/localClassInSecondTypeParameter2.kt");
+        }
+
+        @TestMetadata("localClassInSecondTypeParameter3.kt")
+        public void testLocalClassInSecondTypeParameter3() throws Exception {
+            runTest("idea/testData/intentions/specifyTypeExplicitly/localClassInSecondTypeParameter3.kt");
+        }
+
+        @TestMetadata("localClassInTypeParameter.kt")
+        public void testLocalClassInTypeParameter() throws Exception {
+            runTest("idea/testData/intentions/specifyTypeExplicitly/localClassInTypeParameter.kt");
+        }
+
         @TestMetadata("loopParameter.kt")
         public void testLoopParameter() throws Exception {
             runTest("idea/testData/intentions/specifyTypeExplicitly/loopParameter.kt");
+        }
+
+        @TestMetadata("outClass.kt")
+        public void testOutClass() throws Exception {
+            runTest("idea/testData/intentions/specifyTypeExplicitly/outClass.kt");
+        }
+
+        @TestMetadata("outClass2.kt")
+        public void testOutClass2() throws Exception {
+            runTest("idea/testData/intentions/specifyTypeExplicitly/outClass2.kt");
+        }
+
+        @TestMetadata("outClass3.kt")
+        public void testOutClass3() throws Exception {
+            runTest("idea/testData/intentions/specifyTypeExplicitly/outClass3.kt");
         }
 
         @TestMetadata("overriddenAsNull.kt")
