@@ -29,7 +29,10 @@ open class DescriptorReferenceSerializer(
         }
         if (declaration is IrAnonymousInitializer) return null
 
-        if (descriptor is ParameterDescriptor || (descriptor is VariableDescriptor && descriptor !is PropertyDescriptor) || descriptor is TypeParameterDescriptor) return null
+        if (descriptor is ParameterDescriptor ||
+            (descriptor is VariableDescriptor && descriptor !is PropertyDescriptor)
+            || (declaration is IrTypeParameter && declaration.parent !is IrClass)
+        ) return null
 
         val containingDeclaration = descriptor.containingDeclaration!!
 
@@ -49,6 +52,7 @@ open class DescriptorReferenceSerializer(
             descriptor is ClassConstructorDescriptor && containingDeclaration is ClassDescriptor && containingDeclaration.kind == ClassKind.OBJECT
         val isEnumEntry = descriptor is ClassDescriptor && descriptor.kind == ClassKind.ENUM_ENTRY
         val isEnumSpecial = declaration.origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER
+        val isTypeParameter = declaration is IrTypeParameter && declaration.parent is IrClass
 
 
         val realDeclaration = if (isFakeOverride) {
@@ -103,6 +107,8 @@ open class DescriptorReferenceSerializer(
             proto.setIsEnumEntry(true)
         } else if (isEnumSpecial) {
             proto.setIsEnumSpecial(true)
+        } else if (isTypeParameter) {
+            proto.setIsTypeParameter(true)
         }
 
         return proto.build()

@@ -16,6 +16,7 @@ message DescriptorReference {
   optional bool is_default_constructor = 9 [default = false];
   optional bool is_enum_entry = 10 [default = false];
   optional bool is_enum_special = 11 [default = false];
+  optional bool is_type_parameter = 12 [default = false];
 }
 
 message UniqId {

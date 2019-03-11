@@ -177,7 +177,8 @@ abstract class KotlinIrLinker(
             isDefaultConstructor = proto.isDefaultConstructor,
             isFakeOverride = proto.isFakeOverride,
             isGetter = proto.isGetter,
-            isSetter = proto.isSetter
+            isSetter = proto.isSetter,
+            isTypeParameter = proto.isTypeParameter
         )
 
     private val ByteArray.codedInputStream: org.jetbrains.kotlin.protobuf.CodedInputStream

@@ -976,6 +976,15 @@ public final class IrKlibProtoBuf {
      * <code>optional bool is_enum_special = 11 [default = false];</code>
      */
     boolean getIsEnumSpecial();
+
+    /**
+     * <code>optional bool is_type_parameter = 12 [default = false];</code>
+     */
+    boolean hasIsTypeParameter();
+    /**
+     * <code>optional bool is_type_parameter = 12 [default = false];</code>
+     */
+    boolean getIsTypeParameter();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.DescriptorReference}
@@ -1112,6 +1121,11 @@ public final class IrKlibProtoBuf {
             case 88: {
               bitField0_ |= 0x00000400;
               isEnumSpecial_ = input.readBool();
+              break;
+            }
+            case 96: {
+              bitField0_ |= 0x00000800;
+              isTypeParameter_ = input.readBool();
               break;
             }
           }
@@ -1313,6 +1327,21 @@ public final class IrKlibProtoBuf {
       return isEnumSpecial_;
     }
 
+    public static final int IS_TYPE_PARAMETER_FIELD_NUMBER = 12;
+    private boolean isTypeParameter_;
+    /**
+     * <code>optional bool is_type_parameter = 12 [default = false];</code>
+     */
+    public boolean hasIsTypeParameter() {
+      return ((bitField0_ & 0x00000800) == 0x00000800);
+    }
+    /**
+     * <code>optional bool is_type_parameter = 12 [default = false];</code>
+     */
+    public boolean getIsTypeParameter() {
+      return isTypeParameter_;
+    }
+
     private void initFields() {
       packageFqName_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
       classFqName_ = org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.String.getDefaultInstance();
@@ -1325,6 +1354,7 @@ public final class IrKlibProtoBuf {
       isDefaultConstructor_ = false;
       isEnumEntry_ = false;
       isEnumSpecial_ = false;
+      isTypeParameter_ = false;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -1402,6 +1432,9 @@ public final class IrKlibProtoBuf {
       if (((bitField0_ & 0x00000400) == 0x00000400)) {
         output.writeBool(11, isEnumSpecial_);
       }
+      if (((bitField0_ & 0x00000800) == 0x00000800)) {
+        output.writeBool(12, isTypeParameter_);
+      }
       output.writeRawBytes(unknownFields);
     }
 
@@ -1454,6 +1487,10 @@ public final class IrKlibProtoBuf {
       if (((bitField0_ & 0x00000400) == 0x00000400)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeBoolSize(11, isEnumSpecial_);
+      }
+      if (((bitField0_ & 0x00000800) == 0x00000800)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeBoolSize(12, isTypeParameter_);
       }
       size += unknownFields.size();
       memoizedSerializedSize = size;
@@ -1571,6 +1608,8 @@ public final class IrKlibProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000200);
         isEnumSpecial_ = false;
         bitField0_ = (bitField0_ & ~0x00000400);
+        isTypeParameter_ = false;
+        bitField0_ = (bitField0_ & ~0x00000800);
         return this;
       }
 
@@ -1638,6 +1677,10 @@ public final class IrKlibProtoBuf {
           to_bitField0_ |= 0x00000400;
         }
         result.isEnumSpecial_ = isEnumSpecial_;
+        if (((from_bitField0_ & 0x00000800) == 0x00000800)) {
+          to_bitField0_ |= 0x00000800;
+        }
+        result.isTypeParameter_ = isTypeParameter_;
         result.bitField0_ = to_bitField0_;
         return result;
       }
@@ -1676,6 +1719,9 @@ public final class IrKlibProtoBuf {
         }
         if (other.hasIsEnumSpecial()) {
           setIsEnumSpecial(other.getIsEnumSpecial());
+        }
+        if (other.hasIsTypeParameter()) {
+          setIsTypeParameter(other.getIsTypeParameter());
         }
         setUnknownFields(
             getUnknownFields().concat(other.unknownFields));
@@ -2195,6 +2241,38 @@ public final class IrKlibProtoBuf {
       public Builder clearIsEnumSpecial() {
         bitField0_ = (bitField0_ & ~0x00000400);
         isEnumSpecial_ = false;
+        
+        return this;
+      }
+
+      private boolean isTypeParameter_ ;
+      /**
+       * <code>optional bool is_type_parameter = 12 [default = false];</code>
+       */
+      public boolean hasIsTypeParameter() {
+        return ((bitField0_ & 0x00000800) == 0x00000800);
+      }
+      /**
+       * <code>optional bool is_type_parameter = 12 [default = false];</code>
+       */
+      public boolean getIsTypeParameter() {
+        return isTypeParameter_;
+      }
+      /**
+       * <code>optional bool is_type_parameter = 12 [default = false];</code>
+       */
+      public Builder setIsTypeParameter(boolean value) {
+        bitField0_ |= 0x00000800;
+        isTypeParameter_ = value;
+        
+        return this;
+      }
+      /**
+       * <code>optional bool is_type_parameter = 12 [default = false];</code>
+       */
+      public Builder clearIsTypeParameter() {
+        bitField0_ = (bitField0_ & ~0x00000800);
+        isTypeParameter_ = false;
         
         return this;
       }
