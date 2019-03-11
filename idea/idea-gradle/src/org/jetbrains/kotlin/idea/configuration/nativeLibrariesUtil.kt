@@ -67,6 +67,13 @@ internal class KotlinNativeLibrariesDependencySubstitutor(
                     Unexpectedly can't obtain Kotlin Gradle plugin version for ${gradleModule.name} module.
                     Build classpath is ${classpathData.classpathEntries.flatMap { it.classesFile }}.
                     ${KotlinNativeLibrariesDependencySubstitutor::class.java.simpleName} will run in idle mode. No dependencies will be substituted.
+
+                    Hint: Please make sure that you have explicitly specified version of Kotlin Gradle plugin in `plugins { }` section.
+                    Example:
+
+                    plugins {
+                        kotlin("multiplatform") version "1.3.30"
+                    }
                 """.trimIndent()
             )
 
