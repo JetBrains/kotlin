@@ -71,7 +71,6 @@ class FirClassSubstitutionScope(
                 is ConeAbbreviatedTypeImpl -> ConeAbbreviatedTypeImpl(
                     abbreviationLookupTag,
                     newArguments as Array<ConeKotlinTypeProjection>,
-                    directExpansion.substitute() as? ConeClassLikeType ?: directExpansion,
                     nullability.isNullable
                 )
                 is ConeFunctionType -> TODO("Substitute function type properly")

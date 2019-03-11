@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.expandedConeType
 import org.jetbrains.kotlin.fir.declarations.superConeTypes
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.service
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeSymbol
@@ -93,7 +92,6 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext {
             is ConeAbbreviatedType -> ConeAbbreviatedTypeImpl(
                 lookupTag,
                 typeArguments,
-                directExpansion,
                 nullable
             )
             is ConeFunctionType -> ConeFunctionTypeImpl(

@@ -104,8 +104,6 @@ abstract class ConeClassType : ConeClassLikeType()
 
 abstract class ConeAbbreviatedType : ConeClassLikeType() {
     abstract val abbreviationLookupTag: ConeClassLikeLookupTag
-
-    abstract val directExpansion: ConeClassLikeType
 }
 
 abstract class ConeTypeParameterType : ConeLookupTagBasedType() {

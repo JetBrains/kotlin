@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.expandedConeType
 import org.jetbrains.kotlin.fir.declarations.superConeTypes
+import org.jetbrains.kotlin.fir.resolve.directExpansionType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.FirCompositeScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirMemberTypeParameterScope
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.ConeAbbreviatedType
 import org.jetbrains.kotlin.fir.types.ConeClassErrorType
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 abstract class FirAbstractTreeTransformerWithSuperTypes(reversedScopePriority: Boolean) : FirAbstractTreeTransformer() {
     protected val towerScope = FirCompositeScope(mutableListOf(), reversedPriority = reversedScopePriority)
@@ -47,10 +49,10 @@ abstract class FirAbstractTreeTransformerWithSuperTypes(reversedScopePriority: B
         }
     }
 
-    private tailrec fun ConeClassLikeType.computePartialExpansion(): ConeClassLikeType? {
+    private tailrec fun ConeClassLikeType.computePartialExpansion(useSiteSession: FirSession): ConeClassLikeType? {
         return when (this) {
-            is ConeAbbreviatedType -> directExpansion.takeIf { it !is ConeClassErrorType }?.computePartialExpansion()
-            else -> return this
+            is ConeAbbreviatedType -> directExpansionType(useSiteSession)?.computePartialExpansion(useSiteSession)
+            else -> this
         }
     }
 
@@ -62,7 +64,7 @@ abstract class FirAbstractTreeTransformerWithSuperTypes(reversedScopePriority: B
             is FirClassSymbol -> {
                 val superClassType =
                     fir.superConeTypes
-                        .map { it.computePartialExpansion() }
+                        .map { it.computePartialExpansion(useSiteSession) }
                         .firstOrNull {
                             it !is ConeClassErrorType &&
                                     (it?.lookupTag?.toSymbol(useSiteSession) as? FirClassSymbol)?.fir?.classKind == ClassKind.CLASS
@@ -71,7 +73,7 @@ abstract class FirAbstractTreeTransformerWithSuperTypes(reversedScopePriority: B
                 superClassType.lookupTag.toSymbol(useSiteSession)?.collectSuperClasses(list, useSiteSession)
             }
             is FirTypeAliasSymbol -> {
-                val expansion = fir.expandedConeType?.computePartialExpansion() ?: return
+                val expansion = fir.expandedConeType?.computePartialExpansion(useSiteSession) ?: return
                 expansion.lookupTag.toSymbol(useSiteSession)?.collectSuperClasses(list, useSiteSession)
             }
             else -> error("?!id:1")
@@ -86,7 +88,7 @@ abstract class FirAbstractTreeTransformerWithSuperTypes(reversedScopePriority: B
         when (this) {
             is FirClassSymbol -> {
                 val superClassTypes =
-                    fir.superConeTypes.mapNotNull { it.computePartialExpansion() }
+                    fir.superConeTypes.mapNotNull { it.computePartialExpansion(useSiteSession) }
                 list += superClassTypes
                 if (deep)
                     superClassTypes.forEach {
@@ -96,7 +98,7 @@ abstract class FirAbstractTreeTransformerWithSuperTypes(reversedScopePriority: B
                     }
             }
             is FirTypeAliasSymbol -> {
-                val expansion = fir.expandedConeType?.computePartialExpansion() ?: return
+                val expansion = fir.expandedConeType?.computePartialExpansion(useSiteSession) ?: return
                 expansion.lookupTag.toSymbol(useSiteSession)?.collectSuperTypes(list, deep, useSiteSession)
             }
             else -> error("?!id:1")

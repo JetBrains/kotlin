@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.types.impl.ConeAbbreviatedTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 inline fun <K, V, VA : V> MutableMap<K, V>.getOrPut(key: K, defaultValue: (K) -> VA, postCompute: (VA) -> Unit): V {
     val value = get(key)
@@ -30,6 +31,11 @@ inline fun <K, V, VA : V> MutableMap<K, V>.getOrPut(key: K, defaultValue: (K) ->
 
 fun ConeClassLikeLookupTag.toSymbol(useSiteSession: FirSession): ConeClassifierSymbol? =
     useSiteSession.getService(FirSymbolProvider::class).getSymbolByLookupTag(this)
+
+fun ConeAbbreviatedType.directExpansionType(useSiteSession: FirSession): ConeClassLikeType? =
+    abbreviationLookupTag
+        .toSymbol(useSiteSession)
+        ?.safeAs<FirTypeAliasSymbol>()?.fir?.expandedConeType
 
 fun ConeClassifierLookupTag.toSymbol(useSiteSession: FirSession): ConeClassifierSymbol? =
     when (this) {
@@ -51,7 +57,6 @@ fun ConeClassifierSymbol.constructType(typeArguments: Array<ConeKotlinTypeProjec
             ConeAbbreviatedTypeImpl(
                 abbreviationLookupTag = this.toLookupTag(),
                 typeArguments = typeArguments,
-                directExpansion = fir.expandedConeType ?: ConeClassErrorType("Unresolved expansion"),
                 isNullable = isNullable
             )
         }

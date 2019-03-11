@@ -636,9 +636,6 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
                         }
                     })
                 }
-                if (this is ConeAbbreviatedType) {
-                    sb.append(" = ${this.directExpansion.asString()}")
-                }
                 sb.toString()
             }
             is ConeTypeParameterType -> {

@@ -20,7 +20,6 @@ open class ConeClassTypeImpl(
 class ConeAbbreviatedTypeImpl(
     override val abbreviationLookupTag: ConeClassLikeLookupTag,
     override val typeArguments: Array<out ConeKotlinTypeProjection>,
-    override val directExpansion: ConeClassLikeType,
     isNullable: Boolean
 ) : ConeAbbreviatedType() {
     override val lookupTag: ConeClassLikeLookupTag
