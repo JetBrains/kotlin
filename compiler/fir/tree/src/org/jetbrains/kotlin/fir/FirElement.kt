@@ -28,8 +28,9 @@ interface FirElement {
     fun acceptChildren(visitor: FirVisitorVoid) =
         acceptChildren(visitor, null)
 
+    @Suppress("UNCHECKED_CAST")
     fun <E : FirElement, D> transform(visitor: FirTransformer<D>, data: D): CompositeTransformResult<E> =
-        CompositeTransformResult(accept(visitor, data))
+        accept(visitor, data) as CompositeTransformResult<E>
 
     fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement = this
 }

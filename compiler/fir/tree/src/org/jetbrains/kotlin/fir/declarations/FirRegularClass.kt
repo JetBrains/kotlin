@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.BaseTransformedType
 import org.jetbrains.kotlin.fir.VisitedSupertype
 import org.jetbrains.kotlin.fir.symbols.FirSymbolOwner
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 // May be all containers should be properties and not base classes
@@ -32,4 +33,8 @@ interface FirRegularClass : FirClass, @VisitedSupertype FirClassLikeDeclaration,
         super<FirClassLikeDeclaration>.acceptChildren(visitor, data)
         super<FirClass>.acceptChildren(visitor, data)
     }
+
+    fun replaceSupertypes(newSupertypes: List<FirTypeRef>): FirRegularClass
 }
+
+val FirRegularClass.classId get() = symbol.classId

@@ -106,8 +106,8 @@ abstract class AbstractFirMultiModuleResolveTest : AbstractMultiModuleTest() {
         }
 
         val transformer = FirTotalResolveTransformer()
+        transformer.processFiles(firFiles)
         for (file in firFiles) {
-            transformer.processFile(file)
             val firFileDump = StringBuilder().also { file.accept(FirRenderer(it), null) }.toString()
             val expectedPath = expectedTxtPath((file.psi as PsiFile).virtualFile)
             KotlinTestUtils.assertEqualsToFile(File(expectedPath), firFileDump)

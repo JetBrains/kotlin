@@ -32,6 +32,11 @@ class FirTypeAliasImpl(
         symbol.bind(this)
     }
 
+    override fun replaceExpandTypeRef(typeRef: FirTypeRef): FirTypeAlias {
+        expandedTypeRef = typeRef
+        return this
+    }
+
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         expandedTypeRef = expandedTypeRef.transformSingle(transformer, data)
 

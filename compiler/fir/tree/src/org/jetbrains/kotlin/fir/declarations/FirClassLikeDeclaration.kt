@@ -5,8 +5,18 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 
 interface FirClassLikeDeclaration : FirMemberDeclaration {
-    val symbol: ConeClassifierSymbol
+    val symbol: ConeClassLikeSymbol
 }
+
+fun ConeClassifierSymbol.toFirClassLike(): FirClassLikeDeclaration? =
+    when (this) {
+        is FirClassSymbol -> this.fir
+        is FirTypeAliasSymbol -> this.fir
+        else -> null
+    }

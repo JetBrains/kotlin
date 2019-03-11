@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 interface FirTypeAlias : FirClassLikeDeclaration, FirSymbolOwner<FirTypeAlias> {
+    fun replaceExpandTypeRef(typeRef: FirTypeRef): FirTypeAlias
+
     val expandedTypeRef: FirTypeRef
 
     override val symbol: FirTypeAliasSymbol

@@ -10,13 +10,13 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.transformInplace
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.name.Name
 
 open class FirClassImpl(
     session: FirSession,
@@ -46,6 +46,11 @@ open class FirClassImpl(
 
     override val declarations = mutableListOf<FirDeclaration>()
 
+    override fun replaceSupertypes(newSupertypes: List<FirTypeRef>): FirRegularClass {
+        superTypeRefs.clear()
+        superTypeRefs.addAll(newSupertypes)
+        return this
+    }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirRegularClass {
         superTypeRefs.transformInplace(transformer, data)
