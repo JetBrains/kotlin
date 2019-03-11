@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescrip
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.resolve.DefaultBuiltInPlatforms
-import org.jetbrains.kotlin.resolve.JvmPlatform
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 

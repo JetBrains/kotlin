@@ -53,8 +53,8 @@ fun StorageComponentContainer.configureModule(
 
     useInstance(platform)
     useInstance(compilerServices)
-    if (platform is JvmPlatform) {
-        useInstance(platform.targetVersion)
+    if (platform.isJvm()) {
+        useInstance((platform as JvmPlatform).targetVersion)
     }
 
     compilerServices.platformConfigurator.configureModuleComponents(this)

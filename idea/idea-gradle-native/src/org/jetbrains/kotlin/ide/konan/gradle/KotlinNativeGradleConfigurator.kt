@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinStatus
 import org.jetbrains.kotlin.idea.configuration.KotlinWithGradleConfigurator
 import org.jetbrains.kotlin.idea.configuration.ModuleSourceRootGroup
 import org.jetbrains.kotlin.resolve.DefaultBuiltInPlatforms
-import org.jetbrains.kotlin.resolve.KonanPlatform
 
 
 open class KotlinNativeGradleConfigurator : KotlinWithGradleConfigurator() {

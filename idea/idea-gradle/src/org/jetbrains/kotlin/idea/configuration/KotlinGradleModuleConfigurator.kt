@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.idea.core.isAndroidModule
 import org.jetbrains.kotlin.idea.versions.getDefaultJvmTarget
 import org.jetbrains.kotlin.resolve.DefaultBuiltInPlatforms
 import org.jetbrains.kotlin.resolve.TargetPlatform
-import org.jetbrains.kotlin.resolve.JvmPlatform
 
 class KotlinGradleModuleConfigurator : KotlinWithGradleConfigurator() {
 

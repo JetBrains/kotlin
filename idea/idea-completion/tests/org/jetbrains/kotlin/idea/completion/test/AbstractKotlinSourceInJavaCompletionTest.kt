@@ -9,7 +9,6 @@ import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.resolve.DefaultBuiltInPlatforms
-import org.jetbrains.kotlin.resolve.JvmPlatform
 import java.io.File
 
 abstract class AbstractKotlinSourceInJavaCompletionTest : KotlinFixtureCompletionBaseTestCase() {

@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.idea.configuration.hasKotlinJsRuntimeInScope
 import org.jetbrains.kotlin.idea.maven.PomFile
 import org.jetbrains.kotlin.idea.versions.MAVEN_JS_STDLIB_ID
 import org.jetbrains.kotlin.resolve.DefaultBuiltInPlatforms
-import org.jetbrains.kotlin.resolve.JsPlatform
 import org.jetbrains.kotlin.resolve.TargetPlatform
 
 class KotlinJavascriptMavenConfigurator :

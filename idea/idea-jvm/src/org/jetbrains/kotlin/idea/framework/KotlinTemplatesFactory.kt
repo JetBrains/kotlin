@@ -25,8 +25,6 @@ import com.intellij.platform.ProjectTemplatesFactory
 import com.intellij.platform.templates.BuilderBasedTemplate
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.resolve.DefaultBuiltInPlatforms
-import org.jetbrains.kotlin.resolve.JsPlatform
-import org.jetbrains.kotlin.resolve.JvmPlatform
 
 class KotlinTemplatesFactory : ProjectTemplatesFactory() {
     companion object {

@@ -466,3 +466,4 @@ private object DiagnoseUnknownModuleInfoReporter {
 
 @Suppress("UNCHECKED_CAST")
 fun <T> ModuleInfo.getCapability(capability: ModuleDescriptor.Capability<T>) = capabilities[capability] as? T
+

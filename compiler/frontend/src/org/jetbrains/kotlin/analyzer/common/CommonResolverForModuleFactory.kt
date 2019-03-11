@@ -55,7 +55,7 @@ class CommonAnalysisParameters(
  * A facade that is used to analyze common (platform-independent) modules in multi-platform projects.
  * See [CommonPlatform]
  */
-class CommonResolverForModuleFactory(
+open class CommonResolverForModuleFactory(
     private val platformParameters: CommonAnalysisParameters,
     private val targetEnvironment: TargetEnvironment,
     private val targetPlatform: TargetPlatform
@@ -72,51 +72,6 @@ class CommonResolverForModuleFactory(
 
         override val compilerServices: PlatformDependentCompilerServices
             get() = CommonPlatformCompilerServices
-    }
-
-    fun analyzeFiles(
-        files: Collection<KtFile>, moduleName: Name, dependOnBuiltIns: Boolean, languageVersionSettings: LanguageVersionSettings,
-        capabilities: Map<ModuleDescriptor.Capability<*>, Any?> = emptyMap(),
-        metadataPartProviderFactory: (ModuleContent<ModuleInfo>) -> MetadataPartProvider
-    ): AnalysisResult {
-        val moduleInfo = SourceModuleInfo(moduleName, capabilities, dependOnBuiltIns)
-        val project = files.firstOrNull()?.project ?: throw AssertionError("No files to analyze")
-
-        val multiplatformLanguageSettings = object : LanguageVersionSettings by languageVersionSettings {
-            override fun getFeatureSupport(feature: LanguageFeature): LanguageFeature.State =
-                if (feature == LanguageFeature.MultiPlatformProjects) LanguageFeature.State.ENABLED
-                else languageVersionSettings.getFeatureSupport(feature)
-        }
-
-        @Suppress("NAME_SHADOWING")
-        val resolver = ResolverForProjectImpl(
-            "sources for metadata serializer",
-            ProjectContext(project),
-            listOf(moduleInfo),
-            modulesContent = { ModuleContent(it, files, GlobalSearchScope.allScope(project)) },
-            moduleLanguageSettingsProvider = object : LanguageSettingsProvider {
-                override fun getLanguageVersionSettings(
-                    moduleInfo: ModuleInfo,
-                    project: Project,
-                    isReleaseCoroutines: Boolean?
-                ) = multiplatformLanguageSettings
-
-                override fun getTargetPlatform(
-                    moduleInfo: ModuleInfo,
-                    project: Project
-                ) = TargetPlatformVersion.NoVersion
-            },
-            resolverForModuleFactoryByPlatform = {
-                CommonResolverForModuleFactory(CommonAnalysisParameters(metadataPartProviderFactory), CompilerEnvironment, DefaultBuiltInPlatforms.commonPlatform)
-            }
-        )
-
-        val moduleDescriptor = resolver.descriptorForModule(moduleInfo)
-        val container = resolver.resolverForModule(moduleInfo).componentProvider
-
-        container.get<LazyTopDownAnalyzer>().analyzeDeclarations(TopDownAnalysisMode.TopLevelDeclarations, files)
-
-        return AnalysisResult.success(container.get<BindingTrace>().bindingContext, moduleDescriptor)
     }
 
     override fun <M : ModuleInfo> createResolverForModule(
@@ -180,5 +135,56 @@ class CommonResolverForModuleFactory(
         useInstance(metadataFinderFactory.create(moduleContentScope))
 
         targetEnvironment.configure(this)
+    }
+
+    companion object {
+        fun analyzeFiles(
+            files: Collection<KtFile>, moduleName: Name, dependOnBuiltIns: Boolean, languageVersionSettings: LanguageVersionSettings,
+            capabilities: Map<ModuleDescriptor.Capability<*>, Any?> = emptyMap(),
+            metadataPartProviderFactory: (ModuleContent<ModuleInfo>) -> MetadataPartProvider
+        ): AnalysisResult {
+            val moduleInfo = SourceModuleInfo(moduleName, capabilities, dependOnBuiltIns)
+            val project = files.firstOrNull()?.project ?: throw AssertionError("No files to analyze")
+
+            val multiplatformLanguageSettings = object : LanguageVersionSettings by languageVersionSettings {
+                override fun getFeatureSupport(feature: LanguageFeature): LanguageFeature.State =
+                    if (feature == LanguageFeature.MultiPlatformProjects) LanguageFeature.State.ENABLED
+                    else languageVersionSettings.getFeatureSupport(feature)
+            }
+
+            @Suppress("NAME_SHADOWING")
+            val resolver = ResolverForProjectImpl(
+                "sources for metadata serializer",
+                ProjectContext(project),
+                listOf(moduleInfo),
+                modulesContent = { ModuleContent(it, files, GlobalSearchScope.allScope(project)) },
+                moduleLanguageSettingsProvider = object : LanguageSettingsProvider {
+                    override fun getLanguageVersionSettings(
+                        moduleInfo: ModuleInfo,
+                        project: Project,
+                        isReleaseCoroutines: Boolean?
+                    ) = multiplatformLanguageSettings
+
+                    override fun getTargetPlatform(
+                        moduleInfo: ModuleInfo,
+                        project: Project
+                    ) = TargetPlatformVersion.NoVersion
+                },
+                resolverForModuleFactoryByPlatform = {
+                    CommonResolverForModuleFactory(
+                        CommonAnalysisParameters(metadataPartProviderFactory),
+                        CompilerEnvironment,
+                        DefaultBuiltInPlatforms.commonPlatform
+                    )
+                }
+            )
+
+            val moduleDescriptor = resolver.descriptorForModule(moduleInfo)
+            val container = resolver.resolverForModule(moduleInfo).componentProvider
+
+            container.get<LazyTopDownAnalyzer>().analyzeDeclarations(TopDownAnalysisMode.TopLevelDeclarations, files)
+
+            return AnalysisResult.success(container.get<BindingTrace>().bindingContext, moduleDescriptor)
+        }
     }
 }

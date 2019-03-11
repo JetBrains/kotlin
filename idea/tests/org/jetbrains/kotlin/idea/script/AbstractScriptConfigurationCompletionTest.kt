@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.idea.script
 
 import org.jetbrains.kotlin.idea.completion.test.testCompletion
 import org.jetbrains.kotlin.resolve.DefaultBuiltInPlatforms
-import org.jetbrains.kotlin.resolve.JvmPlatform
 
 abstract class AbstractScriptConfigurationCompletionTest : AbstractScriptConfigurationTest() {
     fun doTest(path: String) {

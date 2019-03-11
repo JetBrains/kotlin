@@ -34,6 +34,8 @@ import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.CompilerEnvironment
+import org.jetbrains.kotlin.resolve.DefaultBuiltInPlatforms
 import org.jetbrains.kotlin.resolve.PlatformDependentCompilerServices
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.constants.EnumValue
@@ -41,7 +43,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.JvmResolverForModuleFactory
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
-import org.jetbrains.kotlin.resolve.JvmPlatform
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformCompilerServices
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -62,7 +63,7 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
         override val name = Name.special("<$_name>")
 
         override val platform: TargetPlatform
-            get() = JvmPlatform
+            get() = DefaultBuiltInPlatforms.jvmPlatform
 
         override val compilerServices: PlatformDependentCompilerServices?
             get() = JvmPlatformCompilerServices
@@ -74,20 +75,21 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
         val modules = setupModules(environment, moduleDirs)
         val projectContext = ProjectContext(environment.project)
         val builtIns = JvmBuiltIns(projectContext.storageManager)
+        val platformParameters = JvmPlatformParameters(
+            packagePartProviderFactory = { PackagePartProvider.Empty },
+            moduleByJavaClass = { javaClass ->
+                val moduleName = javaClass.name.asString().toLowerCase().first().toString()
+                modules.first { it._name == moduleName }
+            }
+        )
+
         val resolverForProject = ResolverForProjectImpl(
             "test",
             projectContext, modules,
             modulesContent = { module -> ModuleContent(module, module.kotlinFiles, module.javaFilesScope) },
             moduleLanguageSettingsProvider = LanguageSettingsProvider.Default,
-            resolverForModuleFactoryByPlatform = { JvmResolverForModuleFactory },
-            platformParameters = { _ ->
-                JvmPlatformParameters(
-                    packagePartProviderFactory = { PackagePartProvider.Empty },
-                    moduleByJavaClass = { javaClass ->
-                        val moduleName = javaClass.name.asString().toLowerCase().first().toString()
-                        modules.first { it._name == moduleName }
-                    }
-                )
+            resolverForModuleFactoryByPlatform = {
+                JvmResolverForModuleFactory(platformParameters, CompilerEnvironment, DefaultBuiltInPlatforms.jvmPlatform)
             },
             builtIns = builtIns
         )

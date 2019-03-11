@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.idea.versions.MAVEN_STDLIB_ID_JDK7
 import org.jetbrains.kotlin.idea.versions.hasJreSpecificRuntime
 import org.jetbrains.kotlin.resolve.DefaultBuiltInPlatforms
 import org.jetbrains.kotlin.resolve.TargetPlatform
-import org.jetbrains.kotlin.resolve.JvmPlatform
 
 class KotlinAndroidGradleModuleConfigurator internal constructor() : KotlinWithGradleConfigurator() {
 

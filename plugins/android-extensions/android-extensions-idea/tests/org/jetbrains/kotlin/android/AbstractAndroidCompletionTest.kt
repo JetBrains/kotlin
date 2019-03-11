@@ -20,7 +20,7 @@ import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.idea.completion.test.testCompletion
-import org.jetbrains.kotlin.resolve.JvmPlatform
+import org.jetbrains.kotlin.resolve.DefaultBuiltInPlatforms
 import java.io.File
 
 abstract class AbstractAndroidCompletionTest : KotlinAndroidTestCase() {
@@ -49,7 +49,7 @@ abstract class AbstractAndroidCompletionTest : KotlinAndroidTestCase() {
         myFixture.configureFromExistingVirtualFile(virtualFile)
         val fileText = FileUtil.loadFile(File(path + getTestName(true) + ".kt"), true)
         testCompletion(fileText,
-                       JvmPlatform, { completionType, count -> myFixture.complete(completionType, count) })
+                       DefaultBuiltInPlatforms.jvmPlatform, { completionType, count -> myFixture.complete(completionType, count) })
     }
 
     override fun tearDown() {

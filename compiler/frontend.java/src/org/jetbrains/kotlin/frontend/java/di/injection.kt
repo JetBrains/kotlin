@@ -21,7 +21,6 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsPackageFragmentProvider
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
-import org.jetbrains.kotlin.resolve.JvmTarget
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.*
@@ -77,7 +76,7 @@ private fun StorageComponentContainer.configureJavaTopDownAnalysis(
 }
 
 fun createContainerForLazyResolveWithJava(
-    jvmPlatform: JvmPlatform,
+    jvmPlatform: TargetPlatform,
     moduleContext: ModuleContext,
     bindingTrace: BindingTrace,
     declarationProviderFactory: DeclarationProviderFactory,
@@ -132,7 +131,7 @@ fun createContainerForLazyResolveWithJava(
 
 
 fun createContainerForTopDownAnalyzerForJvm(
-    jvmPlatform: JvmPlatform,
+    jvmPlatform: TargetPlatform,
     moduleContext: ModuleContext,
     bindingTrace: BindingTrace,
     declarationProviderFactory: DeclarationProviderFactory,

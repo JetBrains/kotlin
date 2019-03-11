@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.idea.versions.getDefaultJvmTarget
 import org.jetbrains.kotlin.idea.versions.getStdlibArtifactId
 import org.jetbrains.kotlin.resolve.DefaultBuiltInPlatforms
 import org.jetbrains.kotlin.resolve.TargetPlatform
-import org.jetbrains.kotlin.resolve.JvmPlatform
 
 class KotlinJavaMavenConfigurator : KotlinMavenConfigurator(
     KotlinJavaMavenConfigurator.TEST_LIB_ID,
