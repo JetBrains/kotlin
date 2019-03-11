@@ -138,7 +138,7 @@ public annotation class DslMarker
  * makes it effectively public.
  *
  * Public inline functions cannot use non-public API, since if they are inlined, those non-public API references
- * would violate access restrictions at a call site (http://kotlinlang.org/docs/reference/inline-functions.html#public-inline-restrictions).
+ * would violate access restrictions at a call site (https://kotlinlang.org/docs/reference/inline-functions.html#public-inline-restrictions).
  *
  * To overcome this restriction an `internal` declaration can be annotated with the `@PublishedApi` annotation:
  * - this allows to call that declaration from public inline functions;

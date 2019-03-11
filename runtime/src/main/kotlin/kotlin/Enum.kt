@@ -7,7 +7,7 @@ package kotlin
 
 /**
  * The common base class of all enum classes.
- * See the [Kotlin language documentation](http://kotlinlang.org/docs/reference/enum-classes.html) for more
+ * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/enum-classes.html) for more
  * information on enum classes.
  */
 public abstract class Enum<E: Enum<E>>(public val name: String, public val ordinal: Int): Comparable<E> {
