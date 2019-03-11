@@ -1499,18 +1499,18 @@ class NewMultiplatformIT : BaseGradleIT() {
         val originalBuildscriptContent = gradleBuildScript("app").readText()
 
         fun testDependencies() = testResolveAllConfigurations("app") {
-            assertContains(">> :app:testNonTransitiveStringNotationApi --> junit-4.12.jar")
-            assertEquals(1, (Regex.escape(">> :app:testNonTransitiveStringNotationApi") + " .*").toRegex().findAll(output).count())
+            assertContains(">> :app:testNonTransitiveStringNotationApiDependenciesMetadata --> junit-4.12.jar")
+            assertEquals(1, (Regex.escape(">> :app:testNonTransitiveStringNotationApiDependenciesMetadata") + " .*").toRegex().findAll(output).count())
 
-            assertContains(">> :app:testNonTransitiveDependencyNotationApi --> kotlin-reflect-${defaultBuildOptions().kotlinVersion}.jar")
-            assertEquals(1, (Regex.escape(">> :app:testNonTransitiveStringNotationApi") + " .*").toRegex().findAll(output).count())
+            assertContains(">> :app:testNonTransitiveDependencyNotationApiDependenciesMetadata --> kotlin-reflect-${defaultBuildOptions().kotlinVersion}.jar")
+            assertEquals(1, (Regex.escape(">> :app:testNonTransitiveStringNotationApiDependenciesMetadata") + " .*").toRegex().findAll(output).count())
 
-            assertContains(">> :app:testExplicitKotlinVersionApi --> kotlin-reflect-1.3.0.jar")
-            assertContains(">> :app:testExplicitKotlinVersionImplementation --> kotlin-reflect-1.2.71.jar")
-            assertContains(">> :app:testExplicitKotlinVersionCompileOnly --> kotlin-reflect-1.2.70.jar")
-            assertContains(">> :app:testExplicitKotlinVersionRuntimeOnly --> kotlin-reflect-1.2.60.jar")
+            assertContains(">> :app:testExplicitKotlinVersionApiDependenciesMetadata --> kotlin-reflect-1.3.0.jar")
+            assertContains(">> :app:testExplicitKotlinVersionImplementationDependenciesMetadata --> kotlin-reflect-1.2.71.jar")
+            assertContains(">> :app:testExplicitKotlinVersionCompileOnlyDependenciesMetadata --> kotlin-reflect-1.2.70.jar")
+            assertContains(">> :app:testExplicitKotlinVersionRuntimeOnlyDependenciesMetadata --> kotlin-reflect-1.2.60.jar")
 
-            assertContains(">> :app:testProjectWithConfigurationApi --> output.txt")
+            assertContains(">> :app:testProjectWithConfigurationApiDependenciesMetadata --> output.txt")
         }
 
         testDependencies()
