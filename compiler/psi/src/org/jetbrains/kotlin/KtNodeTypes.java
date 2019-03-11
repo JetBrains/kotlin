@@ -72,11 +72,9 @@ public interface KtNodeTypes {
     IElementType DYNAMIC_TYPE             = KtStubElementTypes.DYNAMIC_TYPE;
     IElementType FUNCTION_TYPE            = KtStubElementTypes.FUNCTION_TYPE;
     IElementType FUNCTION_TYPE_RECEIVER   = KtStubElementTypes.FUNCTION_TYPE_RECEIVER;
-    KtNodeType SELF_TYPE     = new KtNodeType("SELF_TYPE", KtSelfType.class);
     IElementType NULLABLE_TYPE            = KtStubElementTypes.NULLABLE_TYPE;
     IElementType TYPE_PROJECTION          = KtStubElementTypes.TYPE_PROJECTION;
 
-    // TODO: review
     IElementType PROPERTY_ACCESSOR       = KtStubElementTypes.PROPERTY_ACCESSOR;
     IElementType INITIALIZER_LIST        = KtStubElementTypes.INITIALIZER_LIST;
     IElementType TYPE_CONSTRAINT_LIST    = KtStubElementTypes.TYPE_CONSTRAINT_LIST;
@@ -85,7 +83,6 @@ public interface KtNodeTypes {
     IElementType CONSTRUCTOR_DELEGATION_CALL = new KtNodeType.KtLeftBoundNodeType("CONSTRUCTOR_DELEGATION_CALL", KtConstructorDelegationCall.class);
     KtNodeType CONSTRUCTOR_DELEGATION_REFERENCE = new KtNodeType.KtLeftBoundNodeType("CONSTRUCTOR_DELEGATION_REFERENCE", KtConstructorDelegationReferenceExpression.class);
 
-    // TODO: Not sure if we need separate NT for each kind of constants
     IElementType NULL               = KtStubElementTypes.NULL;
     IElementType BOOLEAN_CONSTANT   = KtStubElementTypes.BOOLEAN_CONSTANT;
     IElementType FLOAT_CONSTANT     = KtStubElementTypes.FLOAT_CONSTANT;
@@ -133,7 +130,7 @@ public interface KtNodeTypes {
     KtNodeType SUPER_EXPRESSION          = new KtNodeType("SUPER_EXPRESSION", KtSuperExpression.class);
     KtNodeType BINARY_EXPRESSION         = new KtNodeType("BINARY_EXPRESSION", KtBinaryExpression.class);
     KtNodeType BINARY_WITH_TYPE          = new KtNodeType("BINARY_WITH_TYPE", KtBinaryExpressionWithTypeRHS.class);
-    KtNodeType IS_EXPRESSION = new KtNodeType("IS_EXPRESSION", KtIsExpression.class); // TODO:
+    KtNodeType IS_EXPRESSION = new KtNodeType("IS_EXPRESSION", KtIsExpression.class);
     KtNodeType PREFIX_EXPRESSION         = new KtNodeType("PREFIX_EXPRESSION", KtPrefixExpression.class);
     KtNodeType POSTFIX_EXPRESSION        = new KtNodeType("POSTFIX_EXPRESSION", KtPostfixExpression.class);
     KtNodeType LABELED_EXPRESSION         = new KtNodeType("LABELED_EXPRESSION", KtLabeledExpression.class);
