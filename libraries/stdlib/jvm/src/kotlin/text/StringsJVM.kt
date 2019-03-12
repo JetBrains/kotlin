@@ -351,6 +351,8 @@ public inline fun String.intern(): String = (this as java.lang.String).intern()
 
 /**
  * Returns `true` if this string is empty or consists solely of whitespace characters.
+ *
+ * @sample samples.text.Strings.stringIsBlank
  */
 public actual fun CharSequence.isBlank(): Boolean = length == 0 || indices.all { this[it].isWhitespace() }
 
