@@ -81,7 +81,7 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
             }
         }
 
-        val irWhen = IrWhenImpl(ktIf.startOffsetSkippingComments, ktIf.endOffset, resultType, IrStatementOrigin.WHEN)
+        val irWhen = IrWhenImpl(ktIf.startOffsetSkippingComments, ktIf.endOffset, resultType, IrStatementOrigin.IF)
 
         irWhen.branches.addAll(irBranches)
 
