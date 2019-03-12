@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.codeInsight.CodeInsightBundle
+import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
@@ -34,7 +35,7 @@ import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 class IntroduceVariableIntention : SelfTargetingRangeIntention<PsiElement>(
     PsiElement::class.java, CodeInsightBundle.message("intention.introduce.variable.text")
-) {
+), HighPriorityAction {
     private fun getExpressionToProcess(element: PsiElement): KtExpression? {
         if (element is PsiFileSystemItem) return null
         val startElement = PsiTreeUtil.skipSiblingsBackward(element, PsiWhiteSpace::class.java) ?: element
