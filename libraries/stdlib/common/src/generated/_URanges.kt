@@ -281,3 +281,213 @@ public infix fun UShort.until(to: UShort): UIntRange {
     return this.toUInt() .. (to - 1u).toUInt()
 }
 
+/**
+ * Ensures that this value is not less than the specified [minimumValue].
+ * 
+ * @return this value if it's greater than or equal to the [minimumValue] or the [minimumValue] otherwise.
+ * 
+ * @sample samples.comparisons.ComparableOps.coerceAtLeastUnsigned
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UInt.coerceAtLeast(minimumValue: UInt): UInt {
+    return if (this < minimumValue) minimumValue else this
+}
+
+/**
+ * Ensures that this value is not less than the specified [minimumValue].
+ * 
+ * @return this value if it's greater than or equal to the [minimumValue] or the [minimumValue] otherwise.
+ * 
+ * @sample samples.comparisons.ComparableOps.coerceAtLeastUnsigned
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun ULong.coerceAtLeast(minimumValue: ULong): ULong {
+    return if (this < minimumValue) minimumValue else this
+}
+
+/**
+ * Ensures that this value is not less than the specified [minimumValue].
+ * 
+ * @return this value if it's greater than or equal to the [minimumValue] or the [minimumValue] otherwise.
+ * 
+ * @sample samples.comparisons.ComparableOps.coerceAtLeastUnsigned
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UByte.coerceAtLeast(minimumValue: UByte): UByte {
+    return if (this < minimumValue) minimumValue else this
+}
+
+/**
+ * Ensures that this value is not less than the specified [minimumValue].
+ * 
+ * @return this value if it's greater than or equal to the [minimumValue] or the [minimumValue] otherwise.
+ * 
+ * @sample samples.comparisons.ComparableOps.coerceAtLeastUnsigned
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UShort.coerceAtLeast(minimumValue: UShort): UShort {
+    return if (this < minimumValue) minimumValue else this
+}
+
+/**
+ * Ensures that this value is not greater than the specified [maximumValue].
+ * 
+ * @return this value if it's less than or equal to the [maximumValue] or the [maximumValue] otherwise.
+ * 
+ * @sample samples.comparisons.ComparableOps.coerceAtMostUnsigned
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UInt.coerceAtMost(maximumValue: UInt): UInt {
+    return if (this > maximumValue) maximumValue else this
+}
+
+/**
+ * Ensures that this value is not greater than the specified [maximumValue].
+ * 
+ * @return this value if it's less than or equal to the [maximumValue] or the [maximumValue] otherwise.
+ * 
+ * @sample samples.comparisons.ComparableOps.coerceAtMostUnsigned
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun ULong.coerceAtMost(maximumValue: ULong): ULong {
+    return if (this > maximumValue) maximumValue else this
+}
+
+/**
+ * Ensures that this value is not greater than the specified [maximumValue].
+ * 
+ * @return this value if it's less than or equal to the [maximumValue] or the [maximumValue] otherwise.
+ * 
+ * @sample samples.comparisons.ComparableOps.coerceAtMostUnsigned
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UByte.coerceAtMost(maximumValue: UByte): UByte {
+    return if (this > maximumValue) maximumValue else this
+}
+
+/**
+ * Ensures that this value is not greater than the specified [maximumValue].
+ * 
+ * @return this value if it's less than or equal to the [maximumValue] or the [maximumValue] otherwise.
+ * 
+ * @sample samples.comparisons.ComparableOps.coerceAtMostUnsigned
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UShort.coerceAtMost(maximumValue: UShort): UShort {
+    return if (this > maximumValue) maximumValue else this
+}
+
+/**
+ * Ensures that this value lies in the specified range [minimumValue]..[maximumValue].
+ * 
+ * @return this value if it's in the range, or [minimumValue] if this value is less than [minimumValue], or [maximumValue] if this value is greater than [maximumValue].
+ * 
+ * @sample samples.comparisons.ComparableOps.coerceInUnsigned
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UInt.coerceIn(minimumValue: UInt, maximumValue: UInt): UInt {
+    if (minimumValue > maximumValue) throw IllegalArgumentException("Cannot coerce value to an empty range: maximum $maximumValue is less than minimum $minimumValue.")
+    if (this < minimumValue) return minimumValue
+    if (this > maximumValue) return maximumValue
+    return this
+}
+
+/**
+ * Ensures that this value lies in the specified range [minimumValue]..[maximumValue].
+ * 
+ * @return this value if it's in the range, or [minimumValue] if this value is less than [minimumValue], or [maximumValue] if this value is greater than [maximumValue].
+ * 
+ * @sample samples.comparisons.ComparableOps.coerceInUnsigned
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun ULong.coerceIn(minimumValue: ULong, maximumValue: ULong): ULong {
+    if (minimumValue > maximumValue) throw IllegalArgumentException("Cannot coerce value to an empty range: maximum $maximumValue is less than minimum $minimumValue.")
+    if (this < minimumValue) return minimumValue
+    if (this > maximumValue) return maximumValue
+    return this
+}
+
+/**
+ * Ensures that this value lies in the specified range [minimumValue]..[maximumValue].
+ * 
+ * @return this value if it's in the range, or [minimumValue] if this value is less than [minimumValue], or [maximumValue] if this value is greater than [maximumValue].
+ * 
+ * @sample samples.comparisons.ComparableOps.coerceInUnsigned
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UByte.coerceIn(minimumValue: UByte, maximumValue: UByte): UByte {
+    if (minimumValue > maximumValue) throw IllegalArgumentException("Cannot coerce value to an empty range: maximum $maximumValue is less than minimum $minimumValue.")
+    if (this < minimumValue) return minimumValue
+    if (this > maximumValue) return maximumValue
+    return this
+}
+
+/**
+ * Ensures that this value lies in the specified range [minimumValue]..[maximumValue].
+ * 
+ * @return this value if it's in the range, or [minimumValue] if this value is less than [minimumValue], or [maximumValue] if this value is greater than [maximumValue].
+ * 
+ * @sample samples.comparisons.ComparableOps.coerceInUnsigned
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UShort.coerceIn(minimumValue: UShort, maximumValue: UShort): UShort {
+    if (minimumValue > maximumValue) throw IllegalArgumentException("Cannot coerce value to an empty range: maximum $maximumValue is less than minimum $minimumValue.")
+    if (this < minimumValue) return minimumValue
+    if (this > maximumValue) return maximumValue
+    return this
+}
+
+/**
+ * Ensures that this value lies in the specified [range].
+ * 
+ * @return this value if it's in the [range], or `range.start` if this value is less than `range.start`, or `range.endInclusive` if this value is greater than `range.endInclusive`.
+ * 
+ * @sample samples.comparisons.ComparableOps.coerceInUnsigned
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UInt.coerceIn(range: ClosedRange<UInt>): UInt {
+    if (range is ClosedFloatingPointRange) {
+        return this.coerceIn<UInt>(range)
+    }
+    if (range.isEmpty()) throw IllegalArgumentException("Cannot coerce value to an empty range: $range.")
+    return when {
+        this < range.start -> range.start
+        this > range.endInclusive -> range.endInclusive
+        else -> this
+    }
+}
+
+/**
+ * Ensures that this value lies in the specified [range].
+ * 
+ * @return this value if it's in the [range], or `range.start` if this value is less than `range.start`, or `range.endInclusive` if this value is greater than `range.endInclusive`.
+ * 
+ * @sample samples.comparisons.ComparableOps.coerceInUnsigned
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun ULong.coerceIn(range: ClosedRange<ULong>): ULong {
+    if (range is ClosedFloatingPointRange) {
+        return this.coerceIn<ULong>(range)
+    }
+    if (range.isEmpty()) throw IllegalArgumentException("Cannot coerce value to an empty range: $range.")
+    return when {
+        this < range.start -> range.start
+        this > range.endInclusive -> range.endInclusive
+        else -> this
+    }
+}
+
