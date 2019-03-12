@@ -6,7 +6,11 @@ import org.jetbrains.kotlin.config.CompilerConfigurationKey
 
 class PhaseConfig(private val compoundPhase: CompilerPhase<*, *, *>, config: CompilerConfiguration) {
 
-    val phases = compoundPhase.getNamedSubphases().map { (_, phase) -> phase }.associate { it.name to it }
+    val phases = compoundPhase.getNamedSubphases().fold(mutableMapOf<String, AnyNamedPhase>()) { acc, (_, phase) ->
+        check(phase.name !in acc) { "Duplicate phase name '${phase.name}'"}
+        acc[phase.name] = phase
+        acc
+    }
     private val enabledMut = computeEnabled(config).toMutableSet()
 
     val enabled: Set<AnyNamedPhase> get() = enabledMut
