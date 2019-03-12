@@ -63,10 +63,21 @@ public final class flow/InnerObjectRetransformationKt$check$$inlined$flow$1 {
 }
 
 @kotlin.Metadata
+public final class flow/InnerObjectRetransformationKt$check$$inlined$flowWith$1$1 {
+    field label: int
+    synthetic field result: java.lang.Object
+    synthetic final field this$0: flow.InnerObjectRetransformationKt$check$$inlined$flowWith$1
+    inner class flow/InnerObjectRetransformationKt$check$$inlined$flowWith$1
+    inner class flow/InnerObjectRetransformationKt$check$$inlined$flowWith$1$1
+    public method <init>(p0: flow.InnerObjectRetransformationKt$check$$inlined$flowWith$1, p1: kotlin.coroutines.Continuation): void
+    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+}
+
+@kotlin.Metadata
 public final class flow/InnerObjectRetransformationKt$check$$inlined$flowWith$1 {
     synthetic final field $this_flowWith$inlined: flow.Flow
     inner class flow/InnerObjectRetransformationKt$check$$inlined$flowWith$1
-    inner class flow/InnerObjectRetransformationKt$flowWith$$inlined$flow$2$1
+    inner class flow/InnerObjectRetransformationKt$check$$inlined$flowWith$1$1
     public method <init>(p0: flow.Flow): void
     public @org.jetbrains.annotations.Nullable method collect(@org.jetbrains.annotations.NotNull p0: flow.FlowCollector, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
 }
