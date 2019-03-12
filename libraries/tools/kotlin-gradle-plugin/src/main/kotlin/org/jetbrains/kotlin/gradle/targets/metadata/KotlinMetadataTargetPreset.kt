@@ -7,8 +7,6 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
-import org.gradle.api.internal.file.FileResolver
-import org.gradle.internal.reflect.Instantiator
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -17,13 +15,9 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 
 class KotlinMetadataTargetPreset(
     project: Project,
-    instantiator: Instantiator,
-    fileResolver: FileResolver,
     kotlinPluginVersion: String
 ) : KotlinOnlyTargetPreset<KotlinCommonCompilation>(
     project,
-    instantiator,
-    fileResolver,
     kotlinPluginVersion
 ) {
     override fun getName(): String = PRESET_NAME

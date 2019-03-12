@@ -7,22 +7,16 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
-import org.gradle.api.internal.file.FileResolver
-import org.gradle.internal.reflect.Instantiator
 import org.jetbrains.kotlin.gradle.plugin.Kotlin2JsSourceSetProcessor
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetProcessor
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 
-class KotlinJsTargetPreset(
+open class KotlinJsTargetPreset(
     project: Project,
-    instantiator: Instantiator,
-    fileResolver: FileResolver,
     kotlinPluginVersion: String
 ) : KotlinOnlyTargetPreset<KotlinJsCompilation>(
     project,
-    instantiator,
-    fileResolver,
     kotlinPluginVersion
 ) {
     override fun getName(): String = PRESET_NAME
@@ -41,4 +35,14 @@ class KotlinJsTargetPreset(
     companion object {
         const val PRESET_NAME = "js"
     }
+}
+
+class KotlinJsSingleTargetPreset(
+    project: Project,
+    kotlinPluginVersion: String
+) :
+    KotlinJsTargetPreset(project, kotlinPluginVersion) {
+
+    // In a Kotlin/JS single-platform project, we don't need any disambiguation suffixes or prefixes in the names:
+    override fun provideTargetDisambiguationClassifier(target: KotlinOnlyTarget<KotlinJsCompilation>): String? = null
 }

@@ -6,24 +6,23 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
-import org.gradle.api.internal.file.FileResolver
-import org.gradle.internal.reflect.Instantiator
 import org.jetbrains.kotlin.gradle.plugin.*
 
 abstract class KotlinOnlyTargetPreset<T : KotlinCompilation<*>>(
     protected val project: Project,
-    private val instantiator: Instantiator,
-    private val fileResolver: FileResolver,
     protected val kotlinPluginVersion: String
 ) : KotlinTargetPreset<KotlinOnlyTarget<T>> {
 
     protected open fun createKotlinTargetConfigurator(): KotlinTargetConfigurator<T> =
         KotlinTargetConfigurator(createDefaultSourceSets = true, createTestCompilation = true)
 
+    protected open fun provideTargetDisambiguationClassifier(target: KotlinOnlyTarget<T>): String? =
+        target.targetName
+
     override fun createTarget(name: String): KotlinOnlyTarget<T> {
         val result = KotlinOnlyTarget<T>(project, platformType).apply {
             targetName = name
-            disambiguationClassifier = name
+            disambiguationClassifier = provideTargetDisambiguationClassifier(this@apply)
             preset = this@KotlinOnlyTargetPreset
 
             val compilationFactory = createCompilationFactory(this)

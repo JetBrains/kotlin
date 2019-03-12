@@ -22,6 +22,8 @@ import org.gradle.api.internal.plugins.DslObject
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
 import kotlin.reflect.KClass
 
@@ -70,6 +72,17 @@ open class KotlinJvmProjectExtension : KotlinSingleJavaTargetExtension() {
 open class Kotlin2JsProjectExtension : KotlinSingleJavaTargetExtension() {
     override lateinit var target: KotlinWithJavaTarget<KotlinJsOptions>
         internal set
+}
+
+open class KotlinJsProjectExtension : KotlinSingleTargetExtension() {
+    override lateinit var target: KotlinOnlyTarget<KotlinJsCompilation>
+
+    @Deprecated(
+        "Needed for IDE import using the MPP import mechanism",
+        level = DeprecationLevel.HIDDEN
+    )
+    fun getTargets() =
+        target.project.container(KotlinTarget::class.java).apply { add(target) }
 }
 
 open class KotlinCommonProjectExtension : KotlinSingleJavaTargetExtension() {

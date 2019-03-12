@@ -19,10 +19,10 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.dsl.KotlinSingleJavaTargetExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinSingleTargetExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinJsDce
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -30,14 +30,17 @@ import java.io.File
 
 class KotlinJsDcePlugin : Plugin<Project> {
     override fun apply(project: Project) {
-        val kotlinExtension = project.multiplatformExtensionOrNull ?: run {
-            project.pluginManager.apply(Kotlin2JsPluginWrapper::class.java)
-            project.kotlinExtension as KotlinSingleJavaTargetExtension
-        }
+        val kotlinExtension =
+            project.multiplatformExtensionOrNull
+                ?: project.extensions.getByName("kotlin") as? KotlinSingleTargetExtension
+                ?: run {
+                    project.pluginManager.apply(Kotlin2JsPluginWrapper::class.java)
+                    project.kotlinExtension as KotlinSingleTargetExtension
+                }
 
         fun forEachJsTarget(action: (KotlinTarget) -> Unit) {
             when (kotlinExtension) {
-                is KotlinSingleJavaTargetExtension -> action(kotlinExtension.target)
+                is KotlinSingleTargetExtension -> action(kotlinExtension.target)
                 is KotlinMultiplatformExtension ->
                     kotlinExtension.targets
                         .matching { it.platformType == KotlinPlatformType.js }

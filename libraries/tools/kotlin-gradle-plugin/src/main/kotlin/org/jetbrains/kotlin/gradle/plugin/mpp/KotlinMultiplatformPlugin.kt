@@ -11,7 +11,6 @@ import org.gradle.api.Project
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.internal.FeaturePreviews
-import org.gradle.api.internal.file.FileResolver
 import org.gradle.api.internal.plugins.DslObject
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.publish.PublicationContainer
@@ -20,7 +19,6 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.internal.publication.MavenPublicationInternal
 import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven
 import org.gradle.api.tasks.compile.AbstractCompile
-import org.gradle.internal.reflect.Instantiator
 import org.gradle.jvm.tasks.Jar
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -36,8 +34,6 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.presetName
 
 class KotlinMultiplatformPlugin(
-    private val fileResolver: FileResolver,
-    private val instantiator: Instantiator,
     private val kotlinPluginVersion: String,
     private val featurePreviews: FeaturePreviews // TODO get rid of this internal API usage once we don't need it
 ) : Plugin<Project> {
@@ -83,7 +79,7 @@ class KotlinMultiplatformPlugin(
 
         // set up metadata publishing
         targetsFromPreset.fromPreset(
-            KotlinMetadataTargetPreset(project, instantiator, fileResolver, kotlinPluginVersion),
+            KotlinMetadataTargetPreset(project, kotlinPluginVersion),
             METADATA_TARGET_NAME
         )
         configurePublishingWithMavenPublish(project)
@@ -135,8 +131,8 @@ class KotlinMultiplatformPlugin(
 
     fun setupDefaultPresets(project: Project) {
         with(project.multiplatformExtension.presets) {
-            add(KotlinJvmTargetPreset(project, instantiator, fileResolver, kotlinPluginVersion))
-            add(KotlinJsTargetPreset(project, instantiator, fileResolver, kotlinPluginVersion))
+            add(KotlinJvmTargetPreset(project, kotlinPluginVersion))
+            add(KotlinJsTargetPreset(project, kotlinPluginVersion))
             add(KotlinAndroidTargetPreset(project, kotlinPluginVersion))
             add(KotlinJvmWithJavaTargetPreset(project, kotlinPluginVersion))
             HostManager().targets.forEach { _, target ->
