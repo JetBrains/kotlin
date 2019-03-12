@@ -55,7 +55,7 @@ private class KCallableNamePropertyTransformer(val lower: KCallableNamePropertyL
             (it as? IrSimpleFunction)?.correspondingProperty ?: it
         }
         val irClass = directMember.parent as? IrClass ?: return expression
-        if (irClass.isSubclassOf(lower.context.irBuiltIns.kCallableClass.owner)) return expression
+        if (!irClass.isSubclassOf(lower.context.irBuiltIns.kCallableClass.owner)) return expression
         val name = when (directMember) {
             is IrSimpleFunction -> directMember.name
             is IrProperty -> directMember.name
