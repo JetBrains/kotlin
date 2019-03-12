@@ -7,8 +7,6 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
-import org.gradle.api.internal.file.FileResolver
-import org.gradle.internal.reflect.Instantiator
 import org.jetbrains.kotlin.gradle.plugin.Kotlin2JvmSourceSetProcessor
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetProcessor
@@ -16,13 +14,9 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 
 class KotlinJvmTargetPreset(
     project: Project,
-    instantiator: Instantiator,
-    fileResolver: FileResolver,
     kotlinPluginVersion: String
 ) : KotlinOnlyTargetPreset<KotlinJvmCompilation>(
     project,
-    instantiator,
-    fileResolver,
     kotlinPluginVersion
 ) {
     override fun getName(): String = PRESET_NAME
