@@ -53,10 +53,12 @@ abstract class AbstractFirMultiModuleResolveTest : AbstractMultiModuleTest() {
 
     fun doTest(dirPath: String) {
         setupMppProjectFromDirStructure(File(dirPath))
+        val useFullJdk = "full" in dirPath
+        val jdkKind = if (useFullJdk) TestJdkKind.FULL_JDK else TestJdkKind.MOCK_JDK
         for (module in project.allModules().drop(1)) {
             ConfigLibraryUtil.configureSdk(
                 module,
-                PluginTestCaseBase.addJdk(testRootDisposable) { PluginTestCaseBase.jdk(TestJdkKind.MOCK_JDK) }
+                PluginTestCaseBase.addJdk(testRootDisposable) { PluginTestCaseBase.jdk(jdkKind) }
             )
         }
         doFirResolveTest(dirPath)
