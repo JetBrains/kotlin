@@ -250,6 +250,8 @@ public inline fun CharSequence.singleOrNull(predicate: (Char) -> Boolean): Char?
 /**
  * Returns a subsequence of this char sequence with the first [n] characters removed.
  * 
+ * @throws IllegalArgumentException if [n] is negative.
+ * 
  * @sample samples.text.Strings.drop
  */
 public fun CharSequence.drop(n: Int): CharSequence {
@@ -259,6 +261,8 @@ public fun CharSequence.drop(n: Int): CharSequence {
 
 /**
  * Returns a string with the first [n] characters removed.
+ * 
+ * @throws IllegalArgumentException if [n] is negative.
  * 
  * @sample samples.text.Strings.drop
  */
@@ -270,6 +274,8 @@ public fun String.drop(n: Int): String {
 /**
  * Returns a subsequence of this char sequence with the last [n] characters removed.
  * 
+ * @throws IllegalArgumentException if [n] is negative.
+ * 
  * @sample samples.text.Strings.drop
  */
 public fun CharSequence.dropLast(n: Int): CharSequence {
@@ -279,6 +285,8 @@ public fun CharSequence.dropLast(n: Int): CharSequence {
 
 /**
  * Returns a string with the last [n] characters removed.
+ * 
+ * @throws IllegalArgumentException if [n] is negative.
  * 
  * @sample samples.text.Strings.drop
  */
@@ -452,6 +460,8 @@ public inline fun String.slice(indices: Iterable<Int>): String {
 /**
  * Returns a subsequence of this char sequence containing the first [n] characters from this char sequence, or the entire char sequence if this char sequence is shorter.
  * 
+ * @throws IllegalArgumentException if [n] is negative.
+ * 
  * @sample samples.text.Strings.take
  */
 public fun CharSequence.take(n: Int): CharSequence {
@@ -461,6 +471,8 @@ public fun CharSequence.take(n: Int): CharSequence {
 
 /**
  * Returns a string containing the first [n] characters from this string, or the entire string if this string is shorter.
+ * 
+ * @throws IllegalArgumentException if [n] is negative.
  * 
  * @sample samples.text.Strings.take
  */
@@ -472,6 +484,8 @@ public fun String.take(n: Int): String {
 /**
  * Returns a subsequence of this char sequence containing the last [n] characters from this char sequence, or the entire char sequence if this char sequence is shorter.
  * 
+ * @throws IllegalArgumentException if [n] is negative.
+ * 
  * @sample samples.text.Strings.take
  */
 public fun CharSequence.takeLast(n: Int): CharSequence {
@@ -482,6 +496,8 @@ public fun CharSequence.takeLast(n: Int): CharSequence {
 
 /**
  * Returns a string containing the last [n] characters from this string, or the entire string if this string is shorter.
+ * 
+ * @throws IllegalArgumentException if [n] is negative.
  * 
  * @sample samples.text.Strings.take
  */

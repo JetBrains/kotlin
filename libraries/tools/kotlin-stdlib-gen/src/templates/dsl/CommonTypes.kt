@@ -138,3 +138,5 @@ enum class SequenceClass {
 
 data class Deprecation(val message: String, val replaceWith: String? = null, val level: DeprecationLevel = DeprecationLevel.WARNING)
 val forBinaryCompatibility = Deprecation("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+
+data class ThrowsException(val exceptionType: String, val reason: String)

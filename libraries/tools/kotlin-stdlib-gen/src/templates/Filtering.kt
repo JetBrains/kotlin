@@ -52,6 +52,7 @@ object Filtering : TemplateGroupBase() {
             Returns a list containing all elements except first [n] elements.
             """
         }
+        throws("IllegalArgumentException", "if [n] is negative.")
         sample("${sampleClass(f)}.drop")
         returns("List<T>")
         body {
@@ -138,6 +139,7 @@ object Filtering : TemplateGroupBase() {
             Returns a list containing first [n] elements.
             """
         }
+        throws("IllegalArgumentException", "if [n] is negative.")
         sample("${sampleClass(f)}.take")
         returns("List<T>")
         body {
@@ -218,6 +220,7 @@ object Filtering : TemplateGroupBase() {
             Returns a list containing all elements except last [n] elements.
             """
         }
+        throws("IllegalArgumentException", "if [n] is negative.")
         sample("${sampleClass(f)}.drop")
         returns("List<T>")
         body {
@@ -247,6 +250,7 @@ object Filtering : TemplateGroupBase() {
             Returns a list containing last [n] elements.
             """
         }
+        throws("IllegalArgumentException", "if [n] is negative.")
         sample("${sampleClass(f)}.take")
         returns("List<T>")
         specialFor(Strings, CharSequences) {

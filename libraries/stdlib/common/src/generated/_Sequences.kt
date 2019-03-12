@@ -347,6 +347,8 @@ public inline fun <T> Sequence<T>.singleOrNull(predicate: (T) -> Boolean): T? {
  *
  * The operation is _intermediate_ and _stateless_.
  * 
+ * @throws IllegalArgumentException if [n] is negative.
+ * 
  * @sample samples.collections.Collections.Transformations.drop
  */
 public fun <T> Sequence<T>.drop(n: Int): Sequence<T> {
@@ -477,6 +479,8 @@ public inline fun <T, C : MutableCollection<in T>> Sequence<T>.filterTo(destinat
  * Returns a sequence containing first [n] elements.
  *
  * The operation is _intermediate_ and _stateless_.
+ * 
+ * @throws IllegalArgumentException if [n] is negative.
  * 
  * @sample samples.collections.Collections.Transformations.take
  */

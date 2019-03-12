@@ -64,6 +64,7 @@ class MemberBuilder(
     var toNullableT: Boolean = false
 
     var returns: String? = null; private set
+    val throwsExceptions = mutableListOf<ThrowsException>()
     var body: String? = null; private set
     val annotations: MutableList<String> = mutableListOf()
     val suppressions: MutableList<String> = mutableListOf()
@@ -98,6 +99,8 @@ class MemberBuilder(
     fun returns(type: String) { returns = type }
     @Deprecated("Use specialFor", ReplaceWith("specialFor(*fs) { returns(run(valueBuilder)) }"))
     fun returns(vararg fs: Family, valueBuilder: () -> String) = specialFor(*fs) { returns(run(valueBuilder)) }
+
+    fun throws(exceptionType: String, reason: String) { throwsExceptions += ThrowsException(exceptionType, reason) }
 
     fun typeParam(typeParameterName: String, primary: Boolean = false) {
         typeParams += typeParameterName
@@ -300,9 +303,13 @@ class MemberBuilder(
                 builder.append(" *\n")
                 builder.append(" * The operation is ${sequenceClassification.joinToString(" and ") { "_${it}_" }}.\n")
             }
+            if (throwsExceptions.any()) {
+                builder.append(" * \n")
+                throwsExceptions.forEach { (type, reason) -> builder.append(" * @throws $type $reason\n") }
+            }
             if (samples.any()) {
                 builder.append(" * \n")
-                samples.forEach { builder.append(" * @sample $it\n")}
+                samples.forEach { builder.append(" * @sample $it\n") }
             }
             builder.append(" */\n")
         }

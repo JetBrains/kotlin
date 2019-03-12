@@ -1375,6 +1375,8 @@ public inline fun UShortArray.singleOrNull(predicate: (UShort) -> Boolean): USho
 /**
  * Returns a list containing all elements except first [n] elements.
  * 
+ * @throws IllegalArgumentException if [n] is negative.
+ * 
  * @sample samples.collections.Collections.Transformations.drop
  */
 @SinceKotlin("1.3")
@@ -1386,6 +1388,8 @@ public fun UIntArray.drop(n: Int): List<UInt> {
 
 /**
  * Returns a list containing all elements except first [n] elements.
+ * 
+ * @throws IllegalArgumentException if [n] is negative.
  * 
  * @sample samples.collections.Collections.Transformations.drop
  */
@@ -1399,6 +1403,8 @@ public fun ULongArray.drop(n: Int): List<ULong> {
 /**
  * Returns a list containing all elements except first [n] elements.
  * 
+ * @throws IllegalArgumentException if [n] is negative.
+ * 
  * @sample samples.collections.Collections.Transformations.drop
  */
 @SinceKotlin("1.3")
@@ -1410,6 +1416,8 @@ public fun UByteArray.drop(n: Int): List<UByte> {
 
 /**
  * Returns a list containing all elements except first [n] elements.
+ * 
+ * @throws IllegalArgumentException if [n] is negative.
  * 
  * @sample samples.collections.Collections.Transformations.drop
  */
@@ -1423,6 +1431,8 @@ public fun UShortArray.drop(n: Int): List<UShort> {
 /**
  * Returns a list containing all elements except last [n] elements.
  * 
+ * @throws IllegalArgumentException if [n] is negative.
+ * 
  * @sample samples.collections.Collections.Transformations.drop
  */
 @SinceKotlin("1.3")
@@ -1434,6 +1444,8 @@ public fun UIntArray.dropLast(n: Int): List<UInt> {
 
 /**
  * Returns a list containing all elements except last [n] elements.
+ * 
+ * @throws IllegalArgumentException if [n] is negative.
  * 
  * @sample samples.collections.Collections.Transformations.drop
  */
@@ -1447,6 +1459,8 @@ public fun ULongArray.dropLast(n: Int): List<ULong> {
 /**
  * Returns a list containing all elements except last [n] elements.
  * 
+ * @throws IllegalArgumentException if [n] is negative.
+ * 
  * @sample samples.collections.Collections.Transformations.drop
  */
 @SinceKotlin("1.3")
@@ -1458,6 +1472,8 @@ public fun UByteArray.dropLast(n: Int): List<UByte> {
 
 /**
  * Returns a list containing all elements except last [n] elements.
+ * 
+ * @throws IllegalArgumentException if [n] is negative.
  * 
  * @sample samples.collections.Collections.Transformations.drop
  */
@@ -2071,6 +2087,8 @@ public fun UShortArray.sliceArray(indices: IntRange): UShortArray {
 /**
  * Returns a list containing first [n] elements.
  * 
+ * @throws IllegalArgumentException if [n] is negative.
+ * 
  * @sample samples.collections.Collections.Transformations.take
  */
 @SinceKotlin("1.3")
@@ -2092,6 +2110,8 @@ public fun UIntArray.take(n: Int): List<UInt> {
 
 /**
  * Returns a list containing first [n] elements.
+ * 
+ * @throws IllegalArgumentException if [n] is negative.
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
@@ -2115,6 +2135,8 @@ public fun ULongArray.take(n: Int): List<ULong> {
 /**
  * Returns a list containing first [n] elements.
  * 
+ * @throws IllegalArgumentException if [n] is negative.
+ * 
  * @sample samples.collections.Collections.Transformations.take
  */
 @SinceKotlin("1.3")
@@ -2136,6 +2158,8 @@ public fun UByteArray.take(n: Int): List<UByte> {
 
 /**
  * Returns a list containing first [n] elements.
+ * 
+ * @throws IllegalArgumentException if [n] is negative.
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
@@ -2159,6 +2183,8 @@ public fun UShortArray.take(n: Int): List<UShort> {
 /**
  * Returns a list containing last [n] elements.
  * 
+ * @throws IllegalArgumentException if [n] is negative.
+ * 
  * @sample samples.collections.Collections.Transformations.take
  */
 @SinceKotlin("1.3")
@@ -2177,6 +2203,8 @@ public fun UIntArray.takeLast(n: Int): List<UInt> {
 
 /**
  * Returns a list containing last [n] elements.
+ * 
+ * @throws IllegalArgumentException if [n] is negative.
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
@@ -2197,6 +2225,8 @@ public fun ULongArray.takeLast(n: Int): List<ULong> {
 /**
  * Returns a list containing last [n] elements.
  * 
+ * @throws IllegalArgumentException if [n] is negative.
+ * 
  * @sample samples.collections.Collections.Transformations.take
  */
 @SinceKotlin("1.3")
@@ -2215,6 +2245,8 @@ public fun UByteArray.takeLast(n: Int): List<UByte> {
 
 /**
  * Returns a list containing last [n] elements.
+ * 
+ * @throws IllegalArgumentException if [n] is negative.
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
