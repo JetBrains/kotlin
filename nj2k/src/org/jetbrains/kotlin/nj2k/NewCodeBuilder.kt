@@ -641,6 +641,9 @@ class NewCodeBuilder {
 
         private fun renderType(type: JKType) {
             if (type is JKNoTypeImpl) return
+            if (type.nullability == Nullability.Default) {
+                printer.print("/*UNDEFINED*/")
+            }
             when (type) {
                 is JKClassType -> printer.printWithNoIndent(type.classReference.displayName().escapedAsQualifiedName())
                 is JKContextType -> return
@@ -659,14 +662,11 @@ class NewCodeBuilder {
             }
             if (type is JKParametrizedType && type.parameters.isNotEmpty()) {
                 printer.par(ANGLE) {
-                    renderList(type.parameters, renderElement = ::renderType)
+                    renderList(type.parameters, renderElement = { renderType(it) })
                 }
             }
-            when (type.nullability) {
-                Nullability.Nullable -> printer.printWithNoIndent("?")
-                Nullability.Default -> printer.printWithNoIndent("?")// /* TODO: Default */")
-                else -> {
-                }
+            if (type.nullability == Nullability.Nullable) {
+                printer.printWithNoIndent("?")
             }
         }
 
