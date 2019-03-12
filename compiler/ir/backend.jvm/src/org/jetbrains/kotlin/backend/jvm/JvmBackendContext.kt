@@ -11,12 +11,10 @@ import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmDeclarationFactory
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmSharedVariablesManager
-import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.NotFoundClasses
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -29,7 +27,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi2ir.PsiSourceManager
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
 class JvmBackendContext(
     val state: GenerationState,
@@ -40,9 +37,6 @@ class JvmBackendContext(
     override val builtIns = state.module.builtIns
     override val declarationFactory: JvmDeclarationFactory = JvmDeclarationFactory(state)
     override val sharedVariablesManager = JvmSharedVariablesManager(state.module, builtIns, irBuiltIns)
-
-    // TODO: inject a correct StorageManager instance, or store NotFoundClasses inside ModuleDescriptor
-    internal val reflectionTypes = ReflectionTypes(state.module, NotFoundClasses(LockBasedStorageManager.NO_LOCKS, state.module))
 
     override val ir = JvmIr(irModuleFragment, symbolTable)
 
@@ -107,34 +101,20 @@ class JvmBackendContext(
         override val symbols = JvmSymbols()
 
         inner class JvmSymbols : Symbols<JvmBackendContext>(this@JvmBackendContext, symbolTable.lazyWrapper) {
+            override val ThrowNullPointerException: IrSimpleFunctionSymbol
+                get() = symbolTable.referenceSimpleFunction(context.getInternalFunctions("ThrowNullPointerException").single())
 
-            override val areEqual
-                get () = symbolTable.referenceSimpleFunction(context.getInternalFunctions("areEqual").single())
+            override val ThrowNoWhenBranchMatchedException: IrSimpleFunctionSymbol
+                get() = symbolTable.referenceSimpleFunction(context.getInternalFunctions("ThrowNoWhenBranchMatchedException").single())
 
-            override val ThrowNullPointerException
-                get () = symbolTable.referenceSimpleFunction(
-                    context.getInternalFunctions("ThrowNullPointerException").single()
-                )
+            override val ThrowTypeCastException: IrSimpleFunctionSymbol
+                get() = symbolTable.referenceSimpleFunction(context.getInternalFunctions("ThrowTypeCastException").single())
 
-            override val ThrowNoWhenBranchMatchedException
-                get () = symbolTable.referenceSimpleFunction(
-                    context.getInternalFunctions("ThrowNoWhenBranchMatchedException").single()
-                )
+            override val ThrowUninitializedPropertyAccessException: IrSimpleFunctionSymbol =
+                symbolTable.referenceSimpleFunction(context.getInternalFunctions("ThrowUninitializedPropertyAccessException").single())
 
-            override val ThrowTypeCastException
-                get () = symbolTable.referenceSimpleFunction(
-                    context.getInternalFunctions("ThrowTypeCastException").single()
-                )
-
-            override val ThrowUninitializedPropertyAccessException =
-                symbolTable.referenceSimpleFunction(
-                    context.getInternalFunctions("ThrowUninitializedPropertyAccessException").single()
-                )
-
-            override val stringBuilder
-                get() = symbolTable.referenceClass(
-                    context.getClass(FqName("java.lang.StringBuilder"))
-                )
+            override val stringBuilder: IrClassSymbol
+                get() = symbolTable.referenceClass(context.getClass(FqName("java.lang.StringBuilder")))
 
             override val copyRangeTo: Map<ClassDescriptor, IrSimpleFunctionSymbol>
                 get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
@@ -143,11 +123,15 @@ class JvmBackendContext(
             override val coroutineSuspendedGetter: IrSimpleFunctionSymbol
                 get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
 
-            val lambdaClass = calc { symbolTable.referenceClass(context.getInternalClass("Lambda")) }
+            val lambdaClass: IrClassSymbol =
+                symbolTable.referenceClass(context.getInternalClass("Lambda"))
 
-            fun getKFunction(parameterCount: Int) = symbolTable.referenceClass(reflectionTypes.getKFunction(parameterCount))
+            val functionReference: IrClassSymbol =
+                symbolTable.referenceClass(context.getInternalClass("FunctionReference"))
+
+            fun getFunction(parameterCount: Int): IrClassSymbol =
+                symbolTable.referenceClass(context.builtIns.getFunction(parameterCount))
         }
-
 
         override fun shouldGenerateHandlerParameterForDefaultBodyFun() = true
     }
