@@ -21,19 +21,25 @@ public class Array<T> {
 
     /**
      * Returns the array element at the specified [index]. This method can be called using the
-     * index operator:
+     * index operator.
      * ```
      * value = arr[index]
      * ```
+     *
+     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
+     * where the behavior is unspecified.
      */
     public operator fun get(index: Int): T
 
     /**
      * Sets the array element at the specified [index] to the specified [value]. This method can
-     * be called using the index operator:
+     * be called using the index operator.
      * ```
      * arr[index] = value
      * ```
+     *
+     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
+     * where the behavior is unspecified.
      */
     public operator fun set(index: Int, value: T): Unit
 

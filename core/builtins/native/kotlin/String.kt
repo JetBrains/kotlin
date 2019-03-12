@@ -30,6 +30,12 @@ public class String : Comparable<String>, CharSequence {
 
     public override val length: Int
 
+    /**
+     * Returns the character of this string at the specified [index].
+     *
+     * If the [index] is out of bounds of this string, throws an [IndexOutOfBoundsException] except in Kotlin/JS
+     * where the behavior is unspecified.
+     */
     public override fun get(index: Int): Char
 
     public override fun subSequence(startIndex: Int, endIndex: Int): CharSequence
