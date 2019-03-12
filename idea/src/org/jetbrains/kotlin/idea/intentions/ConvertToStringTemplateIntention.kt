@@ -125,6 +125,17 @@ open class ConvertToStringTemplateIntention : SelfTargetingOffsetIndependentInte
 
                 is KtThisExpression ->
                     return "$" + (if (forceBraces || expression.labelQualifier != null) "{$expressionText}" else expressionText)
+
+                is KtLambdaExpression -> {
+                    if (expression.bodyExpression?.statements?.isNotEmpty() == true) {
+                        var element = expression.bodyExpression!!.statements.first().lastChild
+                        while (element.lastChild != null) {
+                            element = element.lastChild
+                        }
+                        val lambdaValue = element.text
+                        return "\${$lambdaValue@$expressionText}"
+                    }
+                }
             }
 
             return "\${$expressionText}"

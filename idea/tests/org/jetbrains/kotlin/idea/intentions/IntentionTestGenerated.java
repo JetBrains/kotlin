@@ -8031,6 +8031,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/convertToStringTemplate/kt11295.kt");
         }
 
+        @TestMetadata("lambdaExpression.kt")
+        public void testLambdaExpression() throws Exception {
+            runTest("idea/testData/intentions/convertToStringTemplate/lambdaExpression.kt");
+        }
+
         @TestMetadata("longTemplatePlusStringLiteral.kt")
         public void testLongTemplatePlusStringLiteral() throws Exception {
             runTest("idea/testData/intentions/convertToStringTemplate/longTemplatePlusStringLiteral.kt");
