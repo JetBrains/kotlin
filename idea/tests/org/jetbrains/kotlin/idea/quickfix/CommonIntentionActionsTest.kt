@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.lang.jvm.JvmClass
 import com.intellij.lang.jvm.JvmElement
-import com.intellij.lang.jvm.JvmMethod
 import com.intellij.lang.jvm.JvmModifier
 import com.intellij.lang.jvm.actions.*
 import com.intellij.lang.jvm.types.JvmSubstitutor
@@ -19,6 +18,7 @@ import com.intellij.psi.*
 import com.intellij.psi.codeStyle.SuggestedNameInfo
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
+import junit.framework.TestCase
 import org.jetbrains.kotlin.asJava.toLightElements
 import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
@@ -239,6 +239,113 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
                 |}""".trim().trimMargin(), true
         )
     }
+
+
+    fun testAddJavaAnnotationOnFieldWithoutTarget() {
+
+        myFixture.addFileToProject(
+            "pkg/myannotation/JavaAnnotation.java", """
+            package pkg.myannotation
+
+            import java.lang.annotation.ElementType;
+            import java.lang.annotation.Retention;
+            import java.lang.annotation.RetentionPolicy;
+            import java.lang.annotation.Target;
+
+            //no @Target
+            @Retention(RetentionPolicy.RUNTIME)
+            public @interface JavaAnnotation {
+                String value();
+                int param() default 0;
+            }
+        """.trimIndent()
+        )
+
+        myFixture.configureByText(
+            "foo.kt", """class Foo {
+                        |   val bar: String = null
+                        |}""".trim().trimMargin()
+        )
+
+        myFixture.launchAction(
+            createAddAnnotationActions(
+                myFixture.findElementByText("bar", KtModifierListOwner::class.java).toLightElements().single { it is PsiField } as PsiField,
+                annotationRequest("pkg.myannotation.JavaAnnotation")
+            ).single()
+        )
+
+        myFixture.checkResult(
+            """
+                import pkg.myannotation.JavaAnnotation
+
+                class Foo {
+                   @field:JavaAnnotation()
+                   val bar: String = null
+                }
+                """.trimIndent(), true
+        )
+
+        TestCase.assertEquals(
+            "KtLightMethodImpl -> org.jetbrains.annotations.NotNull," +
+                    " KtLightFieldForDeclaration -> pkg.myannotation.JavaAnnotation, org.jetbrains.annotations.NotNull",
+            annotationsString(myFixture.findElementByText("bar", KtModifierListOwner::class.java))
+        )
+    }
+
+
+    fun testAddJavaAnnotationOnField() {
+
+        myFixture.addFileToProject(
+            "pkg/myannotation/JavaAnnotation.java", """
+            package pkg.myannotation
+
+            import java.lang.annotation.ElementType;
+            import java.lang.annotation.Retention;
+            import java.lang.annotation.RetentionPolicy;
+            import java.lang.annotation.Target;
+
+            @Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER, ElementType.TYPE, ElementType.ANNOTATION_TYPE})
+            @Retention(RetentionPolicy.RUNTIME)
+            public @interface JavaAnnotation {
+                String value();
+                int param() default 0;
+            }
+        """.trimIndent()
+        )
+
+        myFixture.configureByText(
+            "foo.kt", """class Foo {
+                        |   val bar: String = null
+                        |}""".trim().trimMargin()
+        )
+
+        myFixture.launchAction(
+            createAddAnnotationActions(
+                myFixture.findElementByText("bar", KtModifierListOwner::class.java).toLightElements().single { it is PsiField } as PsiField,
+                annotationRequest("pkg.myannotation.JavaAnnotation")
+            ).single()
+        )
+
+        myFixture.checkResult(
+            """
+                import pkg.myannotation.JavaAnnotation
+
+                class Foo {
+                   @JavaAnnotation()
+                   val bar: String = null
+                }
+                """.trimIndent(), true
+        )
+
+        TestCase.assertEquals(
+            "KtLightMethodImpl -> org.jetbrains.annotations.NotNull," +
+                    " KtLightFieldForDeclaration -> pkg.myannotation.JavaAnnotation, org.jetbrains.annotations.NotNull",
+            annotationsString(myFixture.findElementByText("bar", KtModifierListOwner::class.java))
+        )
+    }
+
+    private fun annotationsString(findElementByText: KtModifierListOwner) = findElementByText.toLightElements()
+        .joinToString { elem -> "${elem.javaClass.simpleName} -> ${(elem as PsiModifierListOwner).annotations.joinToString { it.qualifiedName!! }}" }
 
     fun testDontMakePublicPublic() {
         myFixture.configureByText(
