@@ -76,6 +76,11 @@
 - [`KT-29912`](https://youtrack.jetbrains.com/issue/KT-29912) Crossinline nonsuspend lambda leads to KNPE during inlining
 - [`KT-29965`](https://youtrack.jetbrains.com/issue/KT-29965) Don't generate annotation on $default  method
 - [`KT-30030`](https://youtrack.jetbrains.com/issue/KT-30030) Extensive 'Rewrite at slice'-exception with contracts in JS module of multiplatform project
+- [`KT-22043`](https://youtrack.jetbrains.com/issue/KT-22043) Report an error when comparing enum (==/!=/when) to any other incompatible type since 1.4
+- [`KT-26150`](https://youtrack.jetbrains.com/issue/KT-26150) KotlinFrontendException is thrown when callsInPlace called twice with different InvocationKind in functions with contracts
+- [`KT-26153`](https://youtrack.jetbrains.com/issue/KT-26153) Contract is allowed when it's at the beginning in control flow terms, but not in tokens order terms (contract doesn't work)
+- [`KT-26191`](https://youtrack.jetbrains.com/issue/KT-26191) Contract may not be the first statement if it's part of the expression
+- [`KT-29178`](https://youtrack.jetbrains.com/issue/KT-29178) Prohibit arrays of reified type parameters in annotation arguments in local classes / anonymous objects
 
 ### IDE
 
@@ -106,6 +111,7 @@
 - [`KT-29464`](https://youtrack.jetbrains.com/issue/KT-29464) Project reopening does not create missing Kotlin SDK for Native modules (like it does for other non-JVM ones)
 - [`KT-29467`](https://youtrack.jetbrains.com/issue/KT-29467) Maven/Gradle re-import does not add missing Kotlin SDK for kotlin2js modules (non-MPP JavaScript)
 - [`KT-29804`](https://youtrack.jetbrains.com/issue/KT-29804) Probable error in the "Kotlin (Mobile Android/iOS)" new project template in IntelliJ
+- [`KT-30033`](https://youtrack.jetbrains.com/issue/KT-30033) UAST: Delegation expression missing from parse tree
 
 ### IDE. Android
 
@@ -136,6 +142,12 @@
 - [`KT-28192`](https://youtrack.jetbrains.com/issue/KT-28192) Exception from KotlinEvaluator: cannot find local variable
 - [`KT-28680`](https://youtrack.jetbrains.com/issue/KT-28680) Missing `this` word completion in "Evaluate expression" window
 - [`KT-28728`](https://youtrack.jetbrains.com/issue/KT-28728) Async stack trace support for Kotlin coroutines
+- [`KT-21650`](https://youtrack.jetbrains.com/issue/KT-21650) Debugger: Can't evaluate value, resolution error
+- [`KT-23828`](https://youtrack.jetbrains.com/issue/KT-23828) Debugger: "Smart cast is impossible" when evaluating expression
+- [`KT-29661`](https://youtrack.jetbrains.com/issue/KT-29661) Evaluate expression: "Cannot find local variable" for variable name escaped with backticks
+- [`KT-29814`](https://youtrack.jetbrains.com/issue/KT-29814) Can't evaluate a property on star-projected type
+- [`KT-29871`](https://youtrack.jetbrains.com/issue/KT-29871) Debugger in IDE does not handle correctly extensions.
+- [`KT-30182`](https://youtrack.jetbrains.com/issue/KT-30182) Incorrect KT elvis expression debugger evaluation
 
 ### IDE. Decompiler
 
@@ -185,6 +197,10 @@
 - [`KT-29001`](https://youtrack.jetbrains.com/issue/KT-29001) Add intention to move variable declaration before when-expression into when's subject
 - [`KT-29113`](https://youtrack.jetbrains.com/issue/KT-29113) Warn about  redundant requireNotNull and checkNotNull usages
 - [`KT-29321`](https://youtrack.jetbrains.com/issue/KT-29321) "Remove empty primary constructor": apply for enum entries
+- [`KT-12134`](https://youtrack.jetbrains.com/issue/KT-12134) Suggest to remove qualifier in FQN name
+- [`KT-17278`](https://youtrack.jetbrains.com/issue/KT-17278) Inspection to replace Java 8 Map.forEach with Kotlin's forEach
+- [`KT-26965`](https://youtrack.jetbrains.com/issue/KT-26965) Add inspection + quickfix for replacing Collection<T>.count() with .size
+- [`KT-30123`](https://youtrack.jetbrains.com/issue/KT-30123) Add intention to replace isEmpty/isNotEmpty method negation
 
 #### Fixes
 
@@ -224,6 +240,18 @@
 - [`KT-29606`](https://youtrack.jetbrains.com/issue/KT-29606) Do not propose to remove unused parameter of property setter
 - [`KT-29763`](https://youtrack.jetbrains.com/issue/KT-29763) False negative "Object literal can be converted to lambda" for block body function with explicit return
 - [`KT-30007`](https://youtrack.jetbrains.com/issue/KT-30007) False negative "Add import for '...'" in UserType
+- [`KT-19944`](https://youtrack.jetbrains.com/issue/KT-19944) multiplatform: Convert expect/actual function to property should keep the caret on the converted function
+- [`KT-27289`](https://youtrack.jetbrains.com/issue/KT-27289) "Create" quick fix on FQN does nothing with KNPE at KotlinRefactoringUtilKt$chooseContainerElement$1.renderText()
+- [`KT-29312`](https://youtrack.jetbrains.com/issue/KT-29312) "Make constructor parameter a property" produces wrong modifier order + exception "Invalid range specified"
+- [`KT-29414`](https://youtrack.jetbrains.com/issue/KT-29414) "Main parameter is not necessary" inspection reports parameter of `main()` in object
+- [`KT-29499`](https://youtrack.jetbrains.com/issue/KT-29499) "Unsafe call of inline function with nullable extension receiver" inspection ignores inferred nullability
+- [`KT-29927`](https://youtrack.jetbrains.com/issue/KT-29927) Missing "Import members from" intention with type check operator in `when` branch
+- [`KT-30010`](https://youtrack.jetbrains.com/issue/KT-30010) Introduce alternative quick-fixes for `map[key]!!`
+- [`KT-30166`](https://youtrack.jetbrains.com/issue/KT-30166) False positive "Redundant companion reference" on companion with the outer class name
+
+### IDE. Multiplatform
+
+- [`KT-29918`](https://youtrack.jetbrains.com/issue/KT-29918) Outdated Ktor version in Kotlin (JS Client/JVM Server) multiplatform project generated via New Project Wizard
 
 ### IDE. Navigation
 
@@ -242,20 +270,32 @@
 - [`KT-23985`](https://youtrack.jetbrains.com/issue/KT-23985) Allow to run Kotlin Worksheet without module classpath
 - [`KT-27955`](https://youtrack.jetbrains.com/issue/KT-27955) Interactive mode for Kotlin Scratch files
 - [`KT-28958`](https://youtrack.jetbrains.com/issue/KT-28958) Exception "Read access is allowed from event dispatch thread or inside read-action only" when running a scratch file with "Use REPL" and "Make before Run" enabled
+- [`KT-30200`](https://youtrack.jetbrains.com/issue/KT-30200) "java.lang.Throwable: Couldn't find expression with start line ..." on edition of a scratch file during its execution with interactive mode enabled
 
 ### IDE. Script
 
 - [`KT-29770`](https://youtrack.jetbrains.com/issue/KT-29770) IntelliJ IDEA makes too many requests for the classpath of a Gradle Kotlin build script
 - [`KT-29893`](https://youtrack.jetbrains.com/issue/KT-29893) IDE is frozen during project configuration because of `ScriptTemplatesFromDependenciesProvider`
+- [`KT-30146`](https://youtrack.jetbrains.com/issue/KT-30146) Preferences from Kotlin scripting section reset to default after project reopening
 
 ### IDE. Tests Support
 
 - [`KT-25956`](https://youtrack.jetbrains.com/issue/KT-25956) With failed test function class gutter icon is "failure", but function icon is "success"
 
+### IDE. Wizards
+
+- [`KT-17829`](https://youtrack.jetbrains.com/issue/KT-17829) Please unify naming of Kotlin projects and frameworks for JVM
+- [`KT-28941`](https://youtrack.jetbrains.com/issue/KT-28941) Tip of the day: obsolete project types from "New project wizard"
+
 ### Libraries
 
 - [`KT-27108`](https://youtrack.jetbrains.com/issue/KT-27108) `.toDouble()` and `.toFloat()` conversions for unsigned types
 - [`KT-29520`](https://youtrack.jetbrains.com/issue/KT-29520) Random.Default cannot be used asJavaRandom
+- [`KT-30109`](https://youtrack.jetbrains.com/issue/KT-30109) Documentation for Result.onSuccess and Result.onFailure are flipped around
+
+### Tools. CLI
+
+- [`KT-26240`](https://youtrack.jetbrains.com/issue/KT-26240) Support JVM bytecode targets 9, 10, 11, 12
 
 ### Tools. Gradle
 
@@ -268,6 +308,8 @@
 - [`KT-29275`](https://youtrack.jetbrains.com/issue/KT-29275) Drop support for Gradle 4.0
 - [`KT-29758`](https://youtrack.jetbrains.com/issue/KT-29758) Gradle build failed with exception on publication of a multiplatform library with Gradle metadata enabled: org.jetbrains.kotlin.gradle.plugin.mpp.HierarchyAttributeContainer cannot be cast to org.gradle.api.internal.attributes.AttributeContainerInternal
 - [`KT-29966`](https://youtrack.jetbrains.com/issue/KT-29966) Fix inter-project IC with new MPP for JS/JVM targets
+- [`KT-27059`](https://youtrack.jetbrains.com/issue/KT-27059) Ensure a dependency on the multiplatform project in the POM when publishing a single-platform module with the `maven` plugin
+- [`KT-29971`](https://youtrack.jetbrains.com/issue/KT-29971) ConcurrentModificationException in Kotlin Gradle plugin (GradleCompilerRunner.buildModulesInfo)
 
 ### Tools. J2K
 
