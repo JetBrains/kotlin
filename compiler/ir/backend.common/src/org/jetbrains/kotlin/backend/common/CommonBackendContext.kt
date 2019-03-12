@@ -20,8 +20,6 @@ interface LoggingContext {
 interface CommonBackendContext : BackendContext, LoggingContext {
     override val ir: Ir<CommonBackendContext>
 
-    fun getClass(fqName: FqName): ClassDescriptor
-
     fun report(element: IrElement?, irFile: IrFile?, message: String, isError: Boolean)
 
     val configuration: CompilerConfiguration

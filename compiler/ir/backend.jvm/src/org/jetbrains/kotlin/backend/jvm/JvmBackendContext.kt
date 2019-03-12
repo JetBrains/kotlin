@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi2ir.PsiSourceManager
-import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
 class JvmBackendContext(
     val state: GenerationState,
@@ -50,20 +49,14 @@ class JvmBackendContext(
         }
     }
 
-    private fun find(memberScope: MemberScope, className: String): ClassDescriptor {
-        return find(memberScope, Name.identifier(className))
-    }
-
-    private fun find(memberScope: MemberScope, name: Name): ClassDescriptor {
-        return memberScope.getContributedClassifier(name, NoLookupLocation.FROM_BACKEND) as ClassDescriptor
-    }
-
     private fun getJvmInternalClass(name: String): ClassDescriptor {
-        return find(state.module.getPackage(FqName("kotlin.jvm.internal")).memberScope, name)
+        return getClass(FqName("kotlin.jvm.internal").child(Name.identifier(name)))
     }
 
-    override fun getClass(fqName: FqName): ClassDescriptor {
-        return find(state.module.getPackage(fqName.parent()).memberScope, fqName.shortName())
+    private fun getClass(fqName: FqName): ClassDescriptor {
+        return state.module.getPackage(fqName.parent()).memberScope.getContributedClassifier(
+            fqName.shortName(), NoLookupLocation.FROM_BACKEND
+        ) as ClassDescriptor? ?: error("Class is not found: $fqName")
     }
 
     fun getIrClass(fqName: FqName): IrClassSymbol {

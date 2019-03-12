@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.ir.backend.js.utils.OperatorNames
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -182,16 +183,12 @@ class JsIrBackendContext(
 
     // classes forced to be loaded
 
-    val primitiveClassesObject = symbolTable.referenceClass(
-        getClass(FqName.fromSegments(listOf("kotlin", "reflect", "js", "internal", "PrimitiveClasses")))
-    )
+    val primitiveClassesObject = getIrClass(FqName("kotlin.reflect.js.internal.PrimitiveClasses"))
 
-    val throwableClass = symbolTable.referenceClass(getClass(JsIrBackendContext.KOTLIN_PACKAGE_FQN.child(Name.identifier("Throwable"))))
+    val throwableClass = getIrClass(JsIrBackendContext.KOTLIN_PACKAGE_FQN.child(Name.identifier("Throwable")))
 
-    val primitiveCompanionObjects = primitivesWithImplicitCompanionObject().associate {
-        it to symbolTable.referenceClass(
-            getClass(JS_INTERNAL_PACKAGE_FQNAME.child(Name.identifier("${it.identifier}CompanionObject")))
-        )
+    val primitiveCompanionObjects = primitivesWithImplicitCompanionObject().associateWith {
+        getIrClass(JS_INTERNAL_PACKAGE_FQNAME.child(Name.identifier("${it.identifier}CompanionObject")))
     }
 
     val coroutineImpl = ir.symbols.coroutineImpl
@@ -275,8 +272,10 @@ class JsIrBackendContext(
     internal fun getJsInternalClass(name: String): ClassDescriptor =
         findClass(internalPackage.memberScope, Name.identifier(name))
 
-    override fun getClass(fqName: FqName): ClassDescriptor =
+    internal fun getClass(fqName: FqName): ClassDescriptor =
         findClass(module.getPackage(fqName.parent()).memberScope, fqName.shortName())
+
+    private fun getIrClass(fqName: FqName): IrClassSymbol = symbolTable.referenceClass(getClass(fqName))
 
     internal fun getJsInternalFunction(name: String): SimpleFunctionDescriptor =
         findFunctions(internalPackage.memberScope, Name.identifier(name)).single()
