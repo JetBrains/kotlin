@@ -14,8 +14,10 @@ suspend inline fun crossinlineMe(crossinline c1: suspend () -> Unit, crossinline
     val o = object : SuspendRunnable {
         override suspend fun run1() {
             c1()
+            c1()
         }
         override suspend fun run2() {
+            c2()
             c2()
         }
     }
@@ -27,19 +29,13 @@ suspend inline fun crossinlineMe(crossinline c1: suspend () -> Unit, crossinline
 // COMMON_COROUTINES_TEST
 
 import COROUTINES_PACKAGE.*
-import COROUTINES_PACKAGE.intrinsics.*
 import helpers.*
 
 fun builder(c: suspend () -> Unit) {
-    c.startCoroutine(EmptyContinuation)
+    c.startCoroutine(CheckStateMachineContinuation)
 }
 
-var i = 0;
-var j = 0;
-
-suspend fun incrementI() {
-    i++
-}
+var j = 0
 
 suspend fun incrementJ() {
     j++
@@ -47,9 +43,10 @@ suspend fun incrementJ() {
 
 fun box(): String {
     builder {
-        crossinlineMe({ incrementI() }) { incrementJ() }
+        crossinlineMe({ StateMachineChecker.suspendHere() }) { incrementJ() }
     }
-    if (i != 1) return "FAIL i $i"
-    if (j != 1) return "FAIL i $i"
+    if (j != 0) return "FAIL j != 0 $j"
+    StateMachineChecker.check(numberOfSuspensions = 2)
+    if (j != 2) return "FAIL j != 2 $j"
     return "OK"
 }
