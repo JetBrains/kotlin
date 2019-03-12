@@ -13,6 +13,9 @@ import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
+import org.jetbrains.kotlin.ir.types.impl.makeTypeIntersection
+import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.checker.convertVariance
 import org.jetbrains.kotlin.types.model.*
 
@@ -116,8 +119,49 @@ interface IrTypeSystemContext : TypeSystemContext {
         return classSymbol.owner.run { modality == Modality.FINAL && kind != ClassKind.ENUM_CLASS && kind != ClassKind.ANNOTATION_CLASS }
     }
 
-    // TODO: is that correct?
-    override fun captureFromArguments(type: SimpleTypeMarker, status: CaptureStatus): SimpleTypeMarker? = type
+    /*
+     * fun <T> foo(x: Array<T>) {}
+     * fun bar(y: Array<out CharSequence>) {
+     *   foo(y)
+     * }
+     *
+     * In this case Captured Type of `y` would be `Array<CharSequence>`
+     *
+     * See https://jetbrains.github.io/kotlin-spec/#type-capturing
+     */
+    override fun captureFromArguments(type: SimpleTypeMarker, status: CaptureStatus): SimpleTypeMarker? {
+        // TODO: is that correct?
+        require(type is IrSimpleType)
+
+        val classifier = type.classifier as IrClassSymbol
+        val typeArguments = type.arguments
+
+        if (!classifier.isBound) return null
+
+        val typeParameters = classifier.owner.typeParameters
+
+        require(typeArguments.size == typeParameters.size)
+
+        if (typeArguments.all { it is IrTypeProjection && it.variance == Variance.INVARIANT }) return type
+
+        val newArguments = mutableListOf<IrTypeArgument>()
+        for (index in typeArguments.indices) {
+            val argument = typeArguments[index]
+            val parameter = typeParameters[index]
+
+            if (argument is IrTypeProjection && argument.variance == Variance.INVARIANT) {
+                newArguments += argument
+                continue
+            }
+
+            val additionalBounds =
+                if (argument is IrTypeProjection && argument.variance == Variance.OUT_VARIANCE) listOf(argument.type) else emptyList()
+
+            newArguments += makeTypeProjection(makeTypeIntersection(parameter.superTypes + additionalBounds), Variance.INVARIANT)
+        }
+
+        return IrSimpleTypeImpl(type.classifier, type.hasQuestionMark, newArguments, type.annotations)
+    }
 
     override fun SimpleTypeMarker.asArgumentList() = this as IrSimpleType
 

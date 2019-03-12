@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.types
 
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.types.impl.makeTypeIntersection
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
 import org.jetbrains.kotlin.types.Variance
@@ -23,11 +24,10 @@ class IrTypeCheckerContext(override val irBuiltIns: IrBuiltIns) : IrTypeSystemCo
         }
     }
 
-    override fun areEqualTypeConstructors(a: TypeConstructorMarker, b: TypeConstructorMarker) = a === b
+    override fun areEqualTypeConstructors(a: TypeConstructorMarker, b: TypeConstructorMarker) = super.isEqualTypeConstructors(a, b)
 
-    override fun intersectTypes(types: List<KotlinTypeMarker>): KotlinTypeMarker {
-        TODO("not implemented")
-    }
+    @Suppress("UNCHECKED_CAST")
+    override fun intersectTypes(types: List<KotlinTypeMarker>) = makeTypeIntersection(types as List<IrType>)
 
     override val isErrorTypeEqualsToAnything = false
     override val KotlinTypeMarker.isAllowedTypeVariable: Boolean
