@@ -50,7 +50,7 @@ object ExpectedActualResolver {
                     // TODO: support non-source definitions (e.g. from Java)
                     actual.source.containingFile != SourceFile.NO_SOURCE_FILE
                 }.groupBy { actual ->
-                    areCompatibleCallables(expected, actual)
+                    areCompatibleCallables(expected, actual, platformModule)
                 }
             }
             is ClassDescriptor -> {
@@ -91,7 +91,7 @@ object ExpectedActualResolver {
                             Substitutor(expectedClass.declaredTypeParameters, container.declaredTypeParameters)
                         }
                         else null
-                    areCompatibleCallables(declaration, actual, parentSubstitutor = substitutor)
+                    areCompatibleCallables(declaration, actual, commonModule, parentSubstitutor = substitutor)
                 }
             }
             is ClassifierDescriptorWithTypeParameters -> {
@@ -113,7 +113,9 @@ object ExpectedActualResolver {
                 listOf(module.getPackage(containingDeclaration.fqName).memberScope)
             }
             is ClassDescriptor -> {
-                val classes = containingDeclaration.findClassifiersFromModule(module).filterIsInstance<ClassDescriptor>()
+                val classes = containingDeclaration.findClassifiersFromModule(module)
+                    .mapNotNull { if (it is TypeAliasDescriptor) it.classDescriptor else it }
+                    .filterIsInstance<ClassDescriptor>()
                 if (this is ConstructorDescriptor) return classes.flatMap { it.constructors }
 
                 classes.map { it.unsubstitutedMemberScope }
@@ -226,7 +228,7 @@ object ExpectedActualResolver {
     private fun areCompatibleCallables(
         a: CallableMemberDescriptor,
         b: CallableMemberDescriptor,
-        platformModule: ModuleDescriptor = b.module,
+        platformModule: ModuleDescriptor,
         parentSubstitutor: Substitutor? = null
     ): Compatibility {
         assert(a.name == b.name) { "This function should be invoked only for declarations with the same name: $a, $b" }
