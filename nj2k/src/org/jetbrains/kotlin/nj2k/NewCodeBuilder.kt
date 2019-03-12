@@ -55,7 +55,7 @@ class NewCodeBuilder {
         private fun List<JKNonCodeElement>.createText(): String {
             val text = joinToString("") { token -> token.createText() }
             val needNewLine = text.lastIndexOf('\n') < text.lastIndexOf("//")
-            return text +"\n".takeIf { needNewLine }.orEmpty()
+            return text + "\n".takeIf { needNewLine }.orEmpty()
         }
 
         private fun JKNonCodeElementsListOwner.needPreserveSpacesAfterLastCommit() =
