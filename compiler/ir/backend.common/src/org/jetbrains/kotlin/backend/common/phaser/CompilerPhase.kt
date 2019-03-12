@@ -81,7 +81,10 @@ abstract class AbstractNamedPhaseWrapper<in Context : CommonBackendContext, Inpu
             return input as Output
         }
 
-        assert(phaserState.alreadyDone.containsAll(prerequisite))
+        assert(phaserState.alreadyDone.containsAll(prerequisite)) {
+            "Lowering $name: phases ${(prerequisite - phaserState.alreadyDone).map { it.name }} are required, but not satisfied"
+        }
+
         context.inVerbosePhase = this in phaseConfig.verbose
 
         runBefore(phaseConfig, context, input)
