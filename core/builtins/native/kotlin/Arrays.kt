@@ -18,9 +18,20 @@ public class ByteArray(size: Int) {
      */
     public inline constructor(size: Int, init: (Int) -> Byte)
 
-    /** Returns the array element at the given [index]. This method can be called using the index operator. */
+    /**
+     * Returns the array element at the given [index].  This method can be called using the index operator.
+     *
+     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
+     * where the behavior is unspecified.
+     */
     public operator fun get(index: Int): Byte
-    /** Sets the element at the given [index] to the given [value]. This method can be called using the index operator. */
+
+    /**
+     * Sets the element at the given [index] to the given [value]. This method can be called using the index operator.
+     *
+     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
+     * where the behavior is unspecified.
+     */
     public operator fun set(index: Int, value: Byte): Unit
 
     /** Returns the number of elements in the array. */
@@ -41,9 +52,20 @@ public class CharArray(size: Int) {
      */
     public inline constructor(size: Int, init: (Int) -> Char)
 
-    /** Returns the array element at the given [index]. This method can be called using the index operator. */
+    /**
+     * Returns the array element at the given [index].  This method can be called using the index operator.
+     *
+     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
+     * where the behavior is unspecified.
+     */
     public operator fun get(index: Int): Char
-    /** Sets the element at the given [index] to the given [value]. This method can be called using the index operator. */
+
+    /**
+     * Sets the element at the given [index] to the given [value]. This method can be called using the index operator.
+     *
+     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
+     * where the behavior is unspecified.
+     */
     public operator fun set(index: Int, value: Char): Unit
 
     /** Returns the number of elements in the array. */
@@ -64,9 +86,20 @@ public class ShortArray(size: Int) {
      */
     public inline constructor(size: Int, init: (Int) -> Short)
 
-    /** Returns the array element at the given [index]. This method can be called using the index operator. */
+    /**
+     * Returns the array element at the given [index].  This method can be called using the index operator.
+     *
+     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
+     * where the behavior is unspecified.
+     */
     public operator fun get(index: Int): Short
-    /** Sets the element at the given [index] to the given [value]. This method can be called using the index operator. */
+
+    /**
+     * Sets the element at the given [index] to the given [value]. This method can be called using the index operator.
+     *
+     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
+     * where the behavior is unspecified.
+     */
     public operator fun set(index: Int, value: Short): Unit
 
     /** Returns the number of elements in the array. */
@@ -87,9 +120,20 @@ public class IntArray(size: Int) {
      */
     public inline constructor(size: Int, init: (Int) -> Int)
 
-    /** Returns the array element at the given [index]. This method can be called using the index operator. */
+    /**
+     * Returns the array element at the given [index].  This method can be called using the index operator.
+     *
+     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
+     * where the behavior is unspecified.
+     */
     public operator fun get(index: Int): Int
-    /** Sets the element at the given [index] to the given [value]. This method can be called using the index operator. */
+
+    /**
+     * Sets the element at the given [index] to the given [value]. This method can be called using the index operator.
+     *
+     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
+     * where the behavior is unspecified.
+     */
     public operator fun set(index: Int, value: Int): Unit
 
     /** Returns the number of elements in the array. */
@@ -110,9 +154,20 @@ public class LongArray(size: Int) {
      */
     public inline constructor(size: Int, init: (Int) -> Long)
 
-    /** Returns the array element at the given [index]. This method can be called using the index operator. */
+    /**
+     * Returns the array element at the given [index].  This method can be called using the index operator.
+     *
+     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
+     * where the behavior is unspecified.
+     */
     public operator fun get(index: Int): Long
-    /** Sets the element at the given [index] to the given [value]. This method can be called using the index operator. */
+
+    /**
+     * Sets the element at the given [index] to the given [value]. This method can be called using the index operator.
+     *
+     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
+     * where the behavior is unspecified.
+     */
     public operator fun set(index: Int, value: Long): Unit
 
     /** Returns the number of elements in the array. */
@@ -133,9 +188,20 @@ public class FloatArray(size: Int) {
      */
     public inline constructor(size: Int, init: (Int) -> Float)
 
-    /** Returns the array element at the given [index]. This method can be called using the index operator. */
+    /**
+     * Returns the array element at the given [index].  This method can be called using the index operator.
+     *
+     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
+     * where the behavior is unspecified.
+     */
     public operator fun get(index: Int): Float
-    /** Sets the element at the given [index] to the given [value]. This method can be called using the index operator. */
+
+    /**
+     * Sets the element at the given [index] to the given [value]. This method can be called using the index operator.
+     *
+     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
+     * where the behavior is unspecified.
+     */
     public operator fun set(index: Int, value: Float): Unit
 
     /** Returns the number of elements in the array. */
@@ -156,9 +222,20 @@ public class DoubleArray(size: Int) {
      */
     public inline constructor(size: Int, init: (Int) -> Double)
 
-    /** Returns the array element at the given [index]. This method can be called using the index operator. */
+    /**
+     * Returns the array element at the given [index].  This method can be called using the index operator.
+     *
+     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
+     * where the behavior is unspecified.
+     */
     public operator fun get(index: Int): Double
-    /** Sets the element at the given [index] to the given [value]. This method can be called using the index operator. */
+
+    /**
+     * Sets the element at the given [index] to the given [value]. This method can be called using the index operator.
+     *
+     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
+     * where the behavior is unspecified.
+     */
     public operator fun set(index: Int, value: Double): Unit
 
     /** Returns the number of elements in the array. */
@@ -179,9 +256,20 @@ public class BooleanArray(size: Int) {
      */
     public inline constructor(size: Int, init: (Int) -> Boolean)
 
-    /** Returns the array element at the given [index]. This method can be called using the index operator. */
+    /**
+     * Returns the array element at the given [index].  This method can be called using the index operator.
+     *
+     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
+     * where the behavior is unspecified.
+     */
     public operator fun get(index: Int): Boolean
-    /** Sets the element at the given [index] to the given [value]. This method can be called using the index operator. */
+
+    /**
+     * Sets the element at the given [index] to the given [value]. This method can be called using the index operator.
+     *
+     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
+     * where the behavior is unspecified.
+     */
     public operator fun set(index: Int, value: Boolean): Unit
 
     /** Returns the number of elements in the array. */
