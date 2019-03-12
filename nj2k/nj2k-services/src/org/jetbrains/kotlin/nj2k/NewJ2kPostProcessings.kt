@@ -97,6 +97,32 @@ object NewJ2KPostProcessingRegistrar {
         SingleOneTimeProcessing(registerGeneralInspectionBasedProcessing(RedundantSetterInspection())),
         SingleOneTimeProcessing(ConvertDataClass()),
         RepeatableProcessingGroup(
+            registerGeneralInspectionBasedProcessing(RedundantModalityModifierInspection()),
+            registerGeneralInspectionBasedProcessing(RedundantVisibilityModifierInspection()),
+            registerDiagnosticBasedProcessing(Errors.REDUNDANT_OPEN_IN_INTERFACE) { element: KtDeclaration, diagnostic ->
+                element.removeModifier(KtTokens.OPEN_KEYWORD)
+            },
+            object : NewJ2kPostProcessing {
+                override val writeActionNeeded: Boolean = true
+
+                override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
+                    if (element !is KtClass) return null
+
+                    fun check(klass: KtClass): Boolean {
+                        return klass.isValid
+                                && klass.isInterface()
+                                && klass.hasModifier(KtTokens.OPEN_KEYWORD)
+                    }
+
+                    if (!check(element)) return null
+                    return {
+                        if (check(element)) {
+                            element.removeModifier(KtTokens.OPEN_KEYWORD)
+                        }
+                    }
+                }
+            },
+
             registerGeneralInspectionBasedProcessing(ExplicitThisInspection()),
             RemoveExplicitTypeArgumentsProcessing(),
             RemoveRedundantOverrideVisibilityProcessing(),
