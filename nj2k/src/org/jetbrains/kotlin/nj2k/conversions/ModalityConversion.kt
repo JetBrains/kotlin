@@ -16,6 +16,7 @@ class ModalityConversion(private val context: ConversionContext) : RecursiveAppl
         when (element) {
             is JKClass -> processClass(element)
             is JKJavaMethod -> processMethod(element)
+            is JKField -> processField(element)
         }
         return recurse(element)
     }
@@ -49,6 +50,13 @@ class ModalityConversion(private val context: ConversionContext) : RecursiveAppl
                     && containingClass.classKind != JKClass.ClassKind.INTERFACE
                     && !context.converter.converterServices.oldServices.referenceSearcher.hasOverrides(psi) -> Modality.FINAL
             else -> method.modality
+        }
+    }
+
+    private fun processField(field: JKField) {
+        val containingClass = field.parentOfType<JKClass>()!!
+        if (containingClass.classKind == JKClass.ClassKind.INTERFACE) {
+            field.modality = Modality.FINAL
         }
     }
 }
