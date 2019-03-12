@@ -873,7 +873,7 @@ class ExpressionCodegen(
                 // Use StringBuilder to concatenate.
                 AsmUtil.genStringBuilderConstructor(mv)
                 expression.arguments.forEach {
-                    val stackValue = gen(it, data)
+                    val stackValue = gen(it, it.asmType, data)
                     AsmUtil.genInvokeAppendMethod(mv, stackValue.type, stackValue.kotlinType)
                 }
                 mv.invokevirtual("java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false)
