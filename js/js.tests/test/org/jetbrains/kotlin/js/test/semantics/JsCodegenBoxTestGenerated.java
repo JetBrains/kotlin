@@ -13444,6 +13444,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             public void testSuperCall() throws Exception {
                 runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/superCall.kt");
             }
+
+            @TestMetadata("typeAlias.kt")
+            public void testTypeAlias() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/typeAlias.kt");
+            }
         }
     }
 
