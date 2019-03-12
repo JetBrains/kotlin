@@ -108,7 +108,7 @@ class CodeFragmentAnalyzer(
                 }
             }
             is KtSecondaryConstructor -> {
-                val expression = context.bodyExpression ?: context.getDelegationCall().calleeExpression
+                val expression = (context.bodyExpression ?: context.getDelegationCall().calleeExpression) as? KtExpression
                 if (expression != null) {
                     bindingContext = resolutionFactory(expression)
                     scope = bindingContext[BindingContext.LEXICAL_SCOPE, expression]

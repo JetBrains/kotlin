@@ -20,6 +20,7 @@ import com.intellij.injected.editor.VirtualFileWindow
 import com.intellij.lang.ASTNode
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
+import com.intellij.psi.impl.source.tree.LazyParseablePsiElement
 import com.intellij.psi.impl.source.tree.TreeUtil
 import com.intellij.psi.search.PsiSearchScopeUtil
 import com.intellij.psi.search.SearchScope
@@ -380,7 +381,7 @@ fun PsiElement.getElementTextWithContext(): String {
 
     // Find parent for element among file children
     val topLevelElement = PsiTreeUtil.findFirstParent(this, { it.parent is PsiFile })
-            ?: throw AssertionError("For non-file element we should always be able to find parent in file children")
+        ?: throw AssertionError("For non-file element we should always be able to find parent in file children")
 
     val startContextOffset = topLevelElement.startOffset
     val elementContextOffset = textRange.startOffset
@@ -465,4 +466,14 @@ fun ASTNode.closestPsiElement(): PsiElement? {
         node = node.treeParent
     }
     return node.psi
+}
+
+fun LazyParseablePsiElement.getContainingKtFile(): KtFile {
+
+    val file = this.containingFile
+
+    if (file is KtFile) return file
+
+    val fileString = if (file != null && file.isValid) file.text else ""
+    throw IllegalStateException("KtElement not inside KtFile: $file with text \"$fileString\" for element $this of type ${this::class.java} node = ${this.node}")
 }

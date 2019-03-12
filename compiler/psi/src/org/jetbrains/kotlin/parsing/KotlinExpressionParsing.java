@@ -17,7 +17,10 @@
 package org.jetbrains.kotlin.parsing;
 
 import com.google.common.collect.ImmutableMap;
+import com.intellij.lang.ASTNode;
+import com.intellij.lang.Language;
 import com.intellij.lang.PsiBuilder;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
@@ -1093,6 +1096,8 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
 
     /**
      * If it has no ->, it's a block, otherwise a function literal
+     *
+     * Please update {@link org.jetbrains.kotlin.BlockExpressionElementType#isParsable(ASTNode, CharSequence, Language, Project)} if any changes occurs!
      */
     public void parseFunctionLiteral(boolean preferBlock, boolean collapse) {
         assert _at(LBRACE);
@@ -1138,7 +1143,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         }
 
         if (collapse) {
-            advanceLambdaBlock();
+            myKotlinParsing.advanceBalancedBlock();
             literal.done(FUNCTION_LITERAL);
             literalExpression.collapse(LAMBDA_EXPRESSION);
         }
@@ -1155,24 +1160,6 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         }
 
         myBuilder.restoreNewlinesState();
-    }
-
-    private void advanceLambdaBlock() {
-        int braceCount = 1;
-        while (!eof()) {
-            if (_at(LBRACE)) {
-                braceCount++;
-            }
-            else if (_at(RBRACE)) {
-                braceCount--;
-            }
-
-            advance();
-
-            if (braceCount == 0) {
-                break;
-            }
-        }
     }
 
     private boolean rollbackOrDropAt(PsiBuilder.Marker rollbackMarker, IElementType dropAt) {

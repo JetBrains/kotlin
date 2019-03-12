@@ -162,6 +162,10 @@ public class KotlinParsing extends AbstractKotlinParsing {
         myExpressionParsing.parseFunctionLiteral(/* preferBlock = */ false, /* collapse = */false);
     }
 
+    void parseBlockExpression() {
+        parseBlock(/* collapse = */ false);
+    }
+
     void parseScript() {
         PsiBuilder.Marker fileMarker = mark();
 
@@ -1725,17 +1729,50 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *   ;
      */
     void parseBlock() {
-        PsiBuilder.Marker block = mark();
+        parseBlock(/*collapse*/ true);
+    }
+
+    private void parseBlock(boolean collapse) {
+
+        PsiBuilder.Marker lazyBlock = mark();
 
         myBuilder.enableNewlines();
+
         expect(LBRACE, "Expecting '{' to open a block");
 
-        myExpressionParsing.parseStatements();
+        if(collapse){
+            advanceBalancedBlock();
+        }else{
+            myExpressionParsing.parseStatements();
+            expect(RBRACE, "Expecting '}'");
+        }
 
-        expect(RBRACE, "Expecting '}'");
         myBuilder.restoreNewlinesState();
 
-        block.done(BLOCK);
+        if(collapse){
+            lazyBlock.collapse(BLOCK);
+        }else{
+            lazyBlock.done(BLOCK);
+        }
+    }
+
+    public void advanceBalancedBlock() {
+
+        int braceCount = 1;
+        while (!eof()) {
+            if (_at(LBRACE)) {
+                braceCount++;
+            }
+            else if (_at(RBRACE)) {
+                braceCount--;
+            }
+
+            advance();
+
+            if (braceCount == 0) {
+                break;
+            }
+        }
     }
 
     /*

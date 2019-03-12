@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.LocalTimeCounter
@@ -853,7 +854,8 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
     }
 
     private class BlockWrapper(fakeBlockExpression: KtBlockExpression, private val expression: KtExpression) :
-        KtBlockExpression(fakeBlockExpression.node), KtPsiUtil.KtExpressionWrapper {
+        KtBlockExpression(fakeBlockExpression.text), KtPsiUtil.KtExpressionWrapper {
+
         override fun getStatements(): List<KtExpression> {
             return listOf(expression)
         }
@@ -861,5 +863,13 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
         override fun getBaseExpression(): KtExpression {
             return expression
         }
+
+        override fun getParent(): PsiElement = expression.parent
+
+        override fun getPsiOrParent(): KtElement = expression.psiOrParent
+
+        override fun getContainingKtFile() = expression.containingKtFile
+
+        override fun getContainingFile(): PsiFile = expression.containingFile
     }
 }

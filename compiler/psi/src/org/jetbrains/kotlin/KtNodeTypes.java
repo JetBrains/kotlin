@@ -112,9 +112,10 @@ public interface KtNodeTypes {
     IElementType DO_WHILE                  = new KtNodeType("DO_WHILE", KtDoWhileExpression.class);
     IElementType LOOP_RANGE                = new KtNodeType("LOOP_RANGE", KtContainerNode.class);
     IElementType BODY                      = new KtNodeType("BODY", KtContainerNodeForControlStructureBody.class);
-    IElementType BLOCK                     = new KtNodeType("BLOCK", KtBlockExpression.class);
 
-    IElementType LAMBDA_EXPRESSION       = new LambdaExpressionElementType();
+    IElementType BLOCK                     = new BlockExpressionElementType();
+
+    IElementType LAMBDA_EXPRESSION         = new LambdaExpressionElementType();
 
     IElementType FUNCTION_LITERAL          = new KtNodeType("FUNCTION_LITERAL", KtFunctionLiteral.class);
     IElementType ANNOTATED_EXPRESSION      = new KtNodeType("ANNOTATED_EXPRESSION", KtAnnotatedExpression.class);
