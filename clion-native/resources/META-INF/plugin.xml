@@ -27,8 +27,6 @@
   <extensions defaultExtensionNs="com.intellij">
     <directoryProjectGenerator implementation="org.jetbrains.konan.KonanGradleProjectGenerator"/>
 
-    <externalProjectDataService implementation="org.jetbrains.konan.gradle.KonanProjectDataService"/>
-
     <configurationType implementation="org.jetbrains.konan.gradle.execution.GradleKonanAppRunConfigurationType"/>
     <runConfigurationProducer implementation="org.jetbrains.konan.gradle.execution.GradleKonanTargetRunConfigurationProducer"/>
     <executionTargetProvider implementation="org.jetbrains.konan.gradle.execution.GradleKonanExecutionTargetProvider"/>
