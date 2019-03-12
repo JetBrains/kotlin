@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isNullable
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.mapToIndex
@@ -188,6 +189,38 @@ object NewJ2KPostProcessingRegistrar {
             registerDiagnosticBasedProcessing(Errors.PLATFORM_CLASS_MAPPED_TO_KOTLIN) { element: KtDotQualifiedExpression, diagnostic ->
                 val parent = element.parent as? KtImportDirective ?: return@registerDiagnosticBasedProcessing
                 parent.delete()
+            },
+
+            registerDiagnosticBasedProcessing(
+                Errors.UNSAFE_CALL,
+                Errors.UNSAFE_INFIX_CALL,
+                Errors.UNSAFE_OPERATOR_CALL
+            ) { element: PsiElement, diagnostic ->
+                val action =
+                    AddExclExclCallFix.createActions(diagnostic).singleOrNull()
+                        ?: return@registerDiagnosticBasedProcessing
+                action.invoke(element.project, null, element.containingFile)
+            },
+
+            registerDiagnosticBasedProcessing(Errors.SMARTCAST_IMPOSSIBLE) { element: PsiElement, diagnostic ->
+                val action =
+                    SmartCastImpossibleExclExclFixFactory.createActions(diagnostic).singleOrNull()
+                        ?: return@registerDiagnosticBasedProcessing
+                action.invoke(element.project, null, element.containingFile)
+            },
+
+            registerDiagnosticBasedProcessing(Errors.TYPE_MISMATCH) { element: PsiElement, diagnostic ->
+                val diagnosticWithParameters = diagnostic as? DiagnosticWithParameters2<KtExpression, KotlinType, KotlinType>
+                    ?: return@registerDiagnosticBasedProcessing
+                val expectedType = diagnosticWithParameters.a
+                val realType = diagnosticWithParameters.b
+                if (realType.makeNotNullable().isSubtypeOf(expectedType.makeNotNullable())
+                    && realType.isNullable()
+                    && !expectedType.isNullable()
+                ) {
+                    val factory = KtPsiFactory(element)
+                    element.replace(factory.createExpressionByPattern("($0)!!", element.text))
+                }
             },
 
             registerDiagnosticBasedProcessing(Errors.CAST_NEVER_SUCCEEDS) { element: KtSimpleNameExpression, diagnostic ->

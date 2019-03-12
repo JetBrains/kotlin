@@ -36,14 +36,11 @@ import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.j2k.ConverterSettings
 import org.jetbrains.kotlin.j2k.PostProcessor
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.nj2k.nullabilityAnalysis.AnalysisContext
-import org.jetbrains.kotlin.nj2k.nullabilityAnalysis.NullabilityAnalysisFacade
-import org.jetbrains.kotlin.nj2k.nullabilityAnalysis.nullabilityByUndefinedNullabilityComment
-import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.nj2k.nullabilityAnalysis.AnalysisScope
 import org.jetbrains.kotlin.nj2k.nullabilityAnalysis.NullabilityAnalysisFacade
 import org.jetbrains.kotlin.nj2k.nullabilityAnalysis.nullabilityByUndefinedNullabilityComment
 import org.jetbrains.kotlin.nj2k.nullabilityAnalysis.prepareTypeElementByMakingAllTypesNullableConsideringNullabilityComment
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
