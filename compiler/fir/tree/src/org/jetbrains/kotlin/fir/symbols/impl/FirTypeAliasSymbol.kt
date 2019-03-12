@@ -16,6 +16,16 @@ class FirTypeAliasSymbol(
     override val classId: ClassId
 ) : ConeTypeAliasSymbol, AbstractFirBasedSymbol<FirTypeAlias>() {
     override fun toLookupTag(): ConeClassLikeLookupTag = TypeAliasLookupTagImpl(classId)
+
+    override fun equals(other: Any?): Boolean =
+        other is FirTypeAliasSymbol && classId == other.classId && fir == other.fir
+
+    override fun hashCode(): Int {
+        var result = 31
+        result = result * 19 + classId.hashCode()
+        result = result * 19 + fir.hashCode()
+        return result
+    }
 }
 
 class TypeAliasLookupTagImpl(

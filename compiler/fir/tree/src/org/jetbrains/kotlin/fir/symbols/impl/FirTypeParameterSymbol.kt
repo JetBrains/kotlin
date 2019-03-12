@@ -19,4 +19,12 @@ class FirTypeParameterSymbol : AbstractFirBasedSymbol<FirTypeParameter>(), ConeT
         get() = this
 
     override fun toLookupTag(): ConeTypeParameterLookupTag = this
+
+    override fun equals(other: Any?): Boolean {
+        return other is FirTypeParameterSymbol && fir == other.fir
+    }
+
+    override fun hashCode(): Int {
+        return fir.hashCode()
+    }
 }

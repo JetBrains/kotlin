@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.java.scopes
 
+import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
@@ -18,8 +19,8 @@ import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.ConePropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.typeContext
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
 
 class JavaClassUseSiteScope(
@@ -33,10 +34,21 @@ class JavaClassUseSiteScope(
     //base symbol as key, overridden as value
     private val overriddenByBase = mutableMapOf<ConeFunctionSymbol, ConeFunctionSymbol?>()
 
-    @Suppress("UNUSED_PARAMETER")
+    private val context: ConeTypeContext = session.typeContext
+
     private fun isEqualTypes(a: ConeKotlinType, b: ConeKotlinType): Boolean {
-        // TODO: introduce normal type comparison
-        return true
+        if (a is ConeFlexibleType) return isEqualTypes(a.lowerBound, b)
+        if (b is ConeFlexibleType) return isEqualTypes(a, b.lowerBound)
+        with(context) {
+            if (a is ConeClassLikeType && b is ConeClassLikeType) {
+                val aId = a.lookupTag.classId
+                val bId = b.lookupTag.classId
+                val aMapped = JavaToKotlinClassMap.mapJavaToKotlin(aId.asSingleFqName()) ?: aId
+                val bMapped = JavaToKotlinClassMap.mapJavaToKotlin(bId.asSingleFqName()) ?: bId
+                return aMapped == bMapped
+            }
+            return isEqualTypeConstructors(a.typeConstructor(), b.typeConstructor())
+        }
     }
 
     private fun isEqualTypes(a: FirTypeRef, b: FirTypeRef) =
