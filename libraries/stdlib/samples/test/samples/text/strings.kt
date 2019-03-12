@@ -1,7 +1,7 @@
 package samples.text
 
 import samples.*
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 class Strings {
 
@@ -175,6 +175,81 @@ class Strings {
         val nonBlank = "abc"
         val sameString = nonBlank.ifBlank { "def" }
         assertTrue(nonBlank === sameString)
+    }
+
+    @Sample
+    fun stringIsBlank() {
+        fun validateName(name: String): String {
+            if (name.isBlank()) throw IllegalArgumentException("Name cannot be blank")
+            return name
+        }
+
+        assertPrints(validateName("Adam"), "Adam")
+        assertFails { validateName("") }
+        assertFails { validateName("  \t\n") }
+    }
+
+    @Sample
+    fun stringIsNotBlank() {
+        fun validateName(name: String): String {
+            require(name.isNotBlank()) { "Name cannot be blank" }
+            return name
+        }
+
+        assertPrints(validateName("Adam"), "Adam")
+        assertFails { validateName("") }
+        assertFails { validateName("  \t\n") }
+    }
+
+    @Sample
+    fun stringIsNullOrBlank() {
+        fun validateName(name: String?): String {
+            if (name.isNullOrBlank()) throw IllegalArgumentException("Name cannot be blank")
+            // name is not nullable here anymore due to a smart cast after calling isNullOrBlank
+            return name
+        }
+
+        assertPrints(validateName("Adam"), "Adam")
+        assertFails { validateName(null) }
+        assertFails { validateName("") }
+        assertFails { validateName("  \t\n") }
+    }
+
+    @Sample
+    fun stringIsEmpty() {
+        fun markdownLink(title: String, url: String) =
+            if (title.isEmpty()) url else "[$title]($url)"
+
+        // plain link
+        assertPrints(markdownLink(title = "", url = "https://kotlinlang.org"), "https://kotlinlang.org")
+
+        // link with custom title
+        assertPrints(markdownLink(title = "Kotlin Language", url = "https://kotlinlang.org"), "[Kotlin Language](https://kotlinlang.org)")
+    }
+
+    @Sample
+    fun stringIsNotEmpty() {
+        fun markdownLink(title: String, url: String) =
+            if (title.isNotEmpty()) "[$title]($url)" else url
+
+        // plain link
+        assertPrints(markdownLink(title = "", url = "https://kotlinlang.org"), "https://kotlinlang.org")
+
+        // link with custom title
+        assertPrints(markdownLink(title = "Kotlin Language", url = "https://kotlinlang.org"), "[Kotlin Language](https://kotlinlang.org)")
+    }
+
+
+    @Sample
+    fun stringIsNullOrEmpty() {
+        fun markdownLink(title: String?, url: String) =
+            if (title.isNullOrEmpty()) url else "[$title]($url)"
+
+        // plain link
+        assertPrints(markdownLink(title = null, url = "https://kotlinlang.org"), "https://kotlinlang.org")
+
+        // link with custom title
+        assertPrints(markdownLink(title = "Kotlin Language", url = "https://kotlinlang.org"), "[Kotlin Language](https://kotlinlang.org)")
     }
 
     @Sample

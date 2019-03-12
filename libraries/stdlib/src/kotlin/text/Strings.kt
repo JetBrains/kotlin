@@ -213,6 +213,8 @@ public fun String.padEnd(length: Int, padChar: Char = ' '): String =
 
 /**
  * Returns `true` if this nullable char sequence is either `null` or empty.
+ *
+ * @sample samples.text.Strings.stringIsNullOrEmpty
  */
 @kotlin.internal.InlineOnly
 public inline fun CharSequence?.isNullOrEmpty(): Boolean {
@@ -225,12 +227,16 @@ public inline fun CharSequence?.isNullOrEmpty(): Boolean {
 
 /**
  * Returns `true` if this char sequence is empty (contains no characters).
+ *
+ * @sample samples.text.Strings.stringIsEmpty
  */
 @kotlin.internal.InlineOnly
 public inline fun CharSequence.isEmpty(): Boolean = length == 0
 
 /**
  * Returns `true` if this char sequence is not empty.
+ *
+ * @sample samples.text.Strings.stringIsNotEmpty
  */
 @kotlin.internal.InlineOnly
 public inline fun CharSequence.isNotEmpty(): Boolean = length > 0
@@ -241,12 +247,16 @@ public inline fun CharSequence.isNotEmpty(): Boolean = length > 0
 
 /**
  * Returns `true` if this char sequence is not empty and contains some characters except of whitespace characters.
+ *
+ * @sample samples.text.Strings.stringIsNotBlank
  */
 @kotlin.internal.InlineOnly
 public inline fun CharSequence.isNotBlank(): Boolean = !isBlank()
 
 /**
  * Returns `true` if this nullable char sequence is either `null` or empty or consists solely of whitespace characters.
+ *
+ * @sample samples.text.Strings.stringIsNullOrBlank
  */
 @kotlin.internal.InlineOnly
 public inline fun CharSequence?.isNullOrBlank(): Boolean {
