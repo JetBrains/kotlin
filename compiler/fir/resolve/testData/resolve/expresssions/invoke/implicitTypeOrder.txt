@@ -1,0 +1,18 @@
+FILE: implicitTypeOrder.kt
+    public final class A {
+        public constructor(): super<R|kotlin/Any|>()
+
+        public final fun bar(): R|A| {
+            ^bar R|/foo|.R|/A.invoke|()
+        }
+
+        public final fun invoke(): R|A| {
+            ^invoke this#
+        }
+
+    }
+    public final fun create(): R|A| {
+        ^create R|/A.A|()
+    }
+    public final val foo: R|A| = R|/create|()
+        public get(): <implicit>

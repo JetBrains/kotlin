@@ -159,6 +159,11 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/expresssions"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("localImplicitBodies.kt")
+        public void testLocalImplicitBodies() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/localImplicitBodies.kt");
+        }
+
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/simple.kt");
@@ -204,6 +209,11 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
             @TestMetadata("farInvokeExtension.kt")
             public void testFarInvokeExtension() throws Exception {
                 runTest("compiler/fir/resolve/testData/resolve/expresssions/invoke/farInvokeExtension.kt");
+            }
+
+            @TestMetadata("implicitTypeOrder.kt")
+            public void testImplicitTypeOrder() throws Exception {
+                runTest("compiler/fir/resolve/testData/resolve/expresssions/invoke/implicitTypeOrder.kt");
             }
 
             @TestMetadata("threeReceivers.kt")

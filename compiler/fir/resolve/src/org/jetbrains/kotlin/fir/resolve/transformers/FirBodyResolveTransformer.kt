@@ -14,12 +14,13 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirQualifiedAccessExpressionImp
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReferenceImpl
 import org.jetbrains.kotlin.fir.references.FirSimpleNamedReference
+import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.resolve.calls.*
+import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.symbols.*
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.compose
@@ -31,10 +32,9 @@ import org.jetbrains.kotlin.fir.types.impl.FirErrorTypeRefImpl
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addIfNotNull
-import java.util.*
-import kotlin.collections.LinkedHashSet
+import org.jetbrains.kotlin.utils.addToStdlib.cast
 
-class FirBodyResolveTransformer(val session: FirSession) : FirTransformer<Any?>() {
+open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOnly: Boolean) : FirTransformer<Any?>() {
 
     val symbolProvider = session.service<FirSymbolProvider>()
 
@@ -68,55 +68,6 @@ class FirBodyResolveTransformer(val session: FirSession) : FirTransformer<Any?>(
     override fun transformValueParameter(valueParameter: FirValueParameter, data: Any?): CompositeTransformResult<FirDeclaration> {
         localScopes.lastOrNull()?.storeDeclaration(valueParameter)
         return super.transformValueParameter(valueParameter, data)
-    }
-
-
-    private fun ConeClassLikeType.buildSubstitutionScope(
-        useSiteSession: FirSession,
-        unsubstituted: FirScope,
-        regularClass: FirRegularClass
-    ): FirClassSubstitutionScope? {
-        if (this.typeArguments.isEmpty()) return null
-
-        val substitution = regularClass.typeParameters.zip(this.typeArguments) { typeParameter, typeArgument ->
-            typeParameter.symbol to (typeArgument as? ConeTypedProjection)?.type
-        }.filter { (_, type) -> type != null }.toMap() as Map<ConeTypeParameterSymbol, ConeKotlinType>
-
-        return FirClassSubstitutionScope(useSiteSession, unsubstituted, substitution, true)
-    }
-
-    private fun FirRegularClass.buildUseSiteScope(useSiteSession: FirSession = session): FirClassUseSiteScope {
-        val superTypeScope = FirCompositeScope(mutableListOf())
-        val declaredScope = FirClassDeclaredMemberScope(this, useSiteSession)
-        lookupSuperTypes(this, lookupInterfaces = true, deep = false, useSiteSession = useSiteSession)
-            .mapNotNullTo(superTypeScope.scopes) { useSiteSuperType ->
-                if (useSiteSuperType is ConeClassErrorType) return@mapNotNullTo null
-                val symbol = useSiteSuperType.lookupTag.toSymbol(useSiteSession)
-                if (symbol is FirClassSymbol) {
-                    val scope = symbol.fir.buildUseSiteScope(useSiteSession)
-                    useSiteSuperType.buildSubstitutionScope(useSiteSession, scope, symbol.fir) ?: scope
-                } else {
-                    null
-                }
-            }
-        return FirClassUseSiteScope(useSiteSession, superTypeScope, declaredScope, true)
-    }
-
-    fun ConeKotlinType.scope(useSiteSession: FirSession): FirScope? {
-        return when (this) {
-            is ConeKotlinErrorType -> null
-            is ConeClassErrorType -> null
-            is ConeAbbreviatedType -> directExpansion.scope(useSiteSession)
-            is ConeClassLikeType -> {
-                val fir = this.lookupTag.toSymbol(useSiteSession)?.firUnsafe<FirRegularClass>() ?: return null
-                fir.buildUseSiteScope(useSiteSession)
-            }
-            is ConeTypeParameterType -> {
-                val fir = this.lookupTag.toSymbol(useSiteSession)?.firUnsafe<FirTypeParameter>() ?: return null
-                FirCompositeScope(fir.bounds.mapNotNullTo(mutableListOf()) { it.coneTypeUnsafe().scope(useSiteSession) })
-            }
-            else -> error("Failed type ${this}")
-        }
     }
 
 
@@ -167,286 +118,18 @@ class FirBodyResolveTransformer(val session: FirSession) : FirTransformer<Any?>(
 
     val labels = LinkedHashMultimap.create<Name, ConeKotlinType>()
 
-    enum class CandidateApplicability {
-        HIDDEN,
-        PARAMETER_MAPPING_ERROR,
-        SYNTHETIC_RESOLVED,
-        RESOLVED
-    }
 
-
-    // TODO: Extract from this transformer
-    abstract class ApplicabilityChecker {
-
-        val groupNumbers = mutableListOf<Int>()
-        val candidates = mutableListOf<ConeSymbol>()
-
-
-        var currentApplicability = CandidateApplicability.HIDDEN
-
-        var expectedType: FirTypeRef? = null
-        var explicitReceiverType: FirTypeRef? = null
-
-
-        fun newDataSet() {
-            groupNumbers.clear()
-            candidates.clear()
-            expectedType = null
-            currentApplicability = CandidateApplicability.HIDDEN
-        }
-
-
-        fun isSubtypeOf(superType: FirTypeRef?, subType: FirTypeRef?): Boolean {
-            if (superType == null && subType == null) return true
-            if (superType != null && subType != null) return true
-            return false
-        }
-
-
-        protected open fun getApplicability(group: Int, symbol: ConeSymbol): CandidateApplicability {
-            val declaration = (symbol as? FirBasedSymbol<*>)?.fir
-                ?: return CandidateApplicability.HIDDEN
-            declaration as FirDeclaration
-
-            if (declaration is FirCallableDeclaration) {
-                if ((declaration.receiverTypeRef == null) != (explicitReceiverType == null)) return CandidateApplicability.PARAMETER_MAPPING_ERROR
-            }
-
-            return CandidateApplicability.RESOLVED
-        }
-
-        open fun consumeCandidate(group: Int, symbol: ConeSymbol) {
-            val applicability = getApplicability(group, symbol)
-
-            if (applicability > currentApplicability) {
-                groupNumbers.clear()
-                candidates.clear()
-                currentApplicability = applicability
-            }
-
-
-            if (applicability == currentApplicability) {
-                candidates.add(symbol)
-                groupNumbers.add(group)
-            }
-        }
-
-        abstract fun updateNames(names: LinkedHashSet<Name>)
-
-        open fun isSuccessful(index: Int, candidate: ConeSymbol): Boolean {
-            return true
-        }
-
-        open fun successCandidates(): List<ConeSymbol> {
-            if (groupNumbers.isEmpty()) return emptyList()
-            val result = mutableListOf<ConeSymbol>()
-            var bestGroup = groupNumbers.first()
-            for ((index, candidate) in candidates.withIndex()) {
-                val group = groupNumbers[index]
-                if (!isSuccessful(index, candidate)) continue
-                if (bestGroup > group) {
-                    bestGroup = group
-                    result.clear()
-                }
-                if (bestGroup == group) {
-                    result.add(candidate)
-                }
-            }
-            return result
-        }
-    }
-
-    open class VariableApplicabilityChecker(val name: Name) : ApplicabilityChecker() {
-        override fun updateNames(names: LinkedHashSet<Name>) {
-            names.add(name)
-        }
-
-        override fun consumeCandidate(group: Int, symbol: ConeSymbol) {
-            if (symbol !is ConeVariableSymbol) return
-            if (symbol.callableId.callableName != name) return
-            super.consumeCandidate(group, symbol)
-        }
-    }
-
-    inner class VariableInvokeApplicabilityChecker(val variableName: Name) : FunctionApplicabilityChecker(invoke) {
-
-        val variableChecker = object : VariableApplicabilityChecker(variableName) {
-            override fun isSuccessful(index: Int, candidate: ConeSymbol): Boolean {
-                return matchedProperties[index]
-            }
-        }
-        private var matchedProperties = BitSet()
-        private var lookupInvoke = false
-
-        override fun updateNames(names: LinkedHashSet<Name>) {
-            names.add(variableName)
-            if (lookupInvoke) {
-                names.add(name)
-            }
-        }
-
-        private fun isInvokeApplicableOn(propertySymbol: ConeSymbol, invokeSymbol: ConeCallableSymbol): Boolean {
-            return true //TODO: Actual type-check here
-        }
-
-        override fun getApplicability(group: Int, symbol: ConeSymbol): CandidateApplicability {
-
-            symbol as ConeCallableSymbol
-            val declaration = (symbol as? FirBasedSymbol<*>)?.fir
-                ?: return CandidateApplicability.HIDDEN
-            declaration as FirDeclaration
-
-            if (declaration is FirFunction) {
-                if (declaration.valueParameters.size != parameterCount) return CandidateApplicability.PARAMETER_MAPPING_ERROR
-            }
-
-            var applicable = false
-
-            fun processCandidates(candidates: Iterable<IndexedValue<ConeSymbol>>) {
-                for ((index, candidate) in candidates) {
-                    val invokeApplicableOn = isInvokeApplicableOn(candidate, symbol)
-                    if (invokeApplicableOn) {
-                        applicable = true
-                    }
-                    matchedProperties[index] = invokeApplicableOn
-
-                }
-            }
-
-            if (group == -1) {
-                processCandidates(listOf(variableChecker.candidates.withIndex().last()))
-            } else {
-                processCandidates(variableChecker.candidates.withIndex())
-            }
-
-            if (applicable) {
-                return CandidateApplicability.RESOLVED
-            }
-            return CandidateApplicability.PARAMETER_MAPPING_ERROR
-        }
-
-        private fun checkSuccess(): Boolean {
-            return currentApplicability == CandidateApplicability.RESOLVED
-        }
-
-        override fun consumeCandidate(group: Int, symbol: ConeSymbol) {
-            if (symbol is ConeVariableSymbol && symbol.callableId.callableName == variableName) {
-                variableChecker.consumeCandidate(group, symbol)
-
-                val lastCandidate = variableChecker.candidates.lastOrNull()
-                if (variableChecker.currentApplicability == CandidateApplicability.RESOLVED && lastCandidate == symbol) {
-                    val receiverScope =
-                        (lastCandidate as FirBasedSymbol<FirCallableDeclaration>).fir.returnTypeRef.coneTypeUnsafe().scope(session)
-
-
-                    lookupInvoke = true
-
-                    receiverScope?.processFunctionsByName(invoke) { candidate ->
-                        this.consumeCandidate(-1, candidate)
-                        ProcessorAction.NEXT
-                    }
-                    if (checkSuccess()) return
-
-                    for ((index, scope) in processedScopes.withIndex()) {
-                        scope.processFunctionsByName(invoke) { candidate ->
-                            this.consumeCandidate(index, candidate)
-                            ProcessorAction.NEXT
-                        }
-                        if (checkSuccess()) return
-                    }
-
-                }
-            }
-
-            super.consumeCandidate(group, symbol)
-        }
-
-
-    }
-
-    companion object {
-        val invoke = Name.identifier("invoke")
-    }
-
-    class ClassifierApplicabilityChecker(val name: Name) : ApplicabilityChecker() {
-        override fun updateNames(names: LinkedHashSet<Name>) {
-            names.add(name)
-        }
-
-        override fun consumeCandidate(group: Int, symbol: ConeSymbol) {
-            if (symbol !is ConeClassifierSymbol) return
-            if (symbol.toLookupTag().name != name) return
-            super.consumeCandidate(group, symbol)
-        }
-
-    }
-
-    open class FunctionApplicabilityChecker(val name: Name) : ApplicabilityChecker() {
-
-        var parameterCount = 0
-
-        override fun updateNames(names: LinkedHashSet<Name>) {
-            names.add(name)
-        }
-
-        override fun getApplicability(group: Int, symbol: ConeSymbol): CandidateApplicability {
-            val declaration = (symbol as FirBasedSymbol<*>).fir
-
-            if (declaration is FirFunction) {
-                if (declaration.valueParameters.size != parameterCount) return CandidateApplicability.PARAMETER_MAPPING_ERROR
-            }
-            return super.getApplicability(group, symbol)
-        }
-
-        override fun consumeCandidate(group: Int, symbol: ConeSymbol) {
-            if (symbol !is ConeFunctionSymbol) return
-            if (symbol.callableId.callableName != name) return
-            super.consumeCandidate(group, symbol)
-        }
-    }
-
-    val processedScopes = mutableListOf<FirScope>()
-
+    val jump = ReturnTypeCalculatorWithJump()
 
     private fun runTowerResolver(
         checkers: List<ApplicabilityChecker>
     ): ApplicabilityChecker? {
+        val callResolver = CallResolver(jump)
+        callResolver.scopes = (scopes + localScopes)
+        callResolver.checkers = checkers
+        callResolver.session = session
 
-        processedScopes.clear()
-
-        val names = LinkedHashSet<Name>()
-
-        var successChecker: ApplicabilityChecker? = null
-
-        for ((index, scope) in (scopes + localScopes).asReversed().withIndex()) {
-            checkers.forEach {
-                it.updateNames(names)
-            }
-            processedScopes.add(scope)
-
-            names.forEach { name ->
-                fun process(symbol: ConeSymbol): ProcessorAction {
-                    for (checker in checkers) {
-                        checker.consumeCandidate(index, symbol)
-                    }
-                    return ProcessorAction.NEXT
-                }
-
-                scope.processClassifiersByNameWithAction(name, FirPosition.OTHER, ::process)
-                scope.processPropertiesByName(name, ::process)
-                scope.processFunctionsByName(name, ::process)
-            }
-
-            successChecker = checkers.maxBy { it.currentApplicability }
-
-            if (successChecker?.currentApplicability == CandidateApplicability.RESOLVED) {
-                break
-            }
-
-        }
-
-        return successChecker
-
+        return callResolver.runTowerResolver()
     }
 
     private fun <T> storeTypeFromCallee(access: T) where T : FirQualifiedAccess, T : FirExpression {
@@ -455,7 +138,7 @@ class FirBodyResolveTransformer(val session: FirSession) : FirTransformer<Any?>(
                 is FirErrorNamedReference ->
                     FirErrorTypeRefImpl(session, access.psi, newCallee.errorReason)
                 is FirResolvedCallableReference ->
-                    (newCallee.callableSymbol as FirBasedSymbol<FirCallableDeclaration>).fir.returnTypeRef
+                    jump.tryCalculateReturnType(newCallee.callableSymbol.firUnsafe())!!
                 else -> return
             }
     }
@@ -631,6 +314,8 @@ class FirBodyResolveTransformer(val session: FirSession) : FirTransformer<Any?>(
 
 
     override fun transformNamedFunction(namedFunction: FirNamedFunction, data: Any?): CompositeTransformResult<FirDeclaration> {
+        if (namedFunction.returnTypeRef !is FirImplicitTypeRef && implicitTypeOnly) return namedFunction.compose()
+
         val receiverTypeRef = namedFunction.receiverTypeRef
         fun transform(): CompositeTransformResult<FirDeclaration> {
             localScopes.lastOrNull()?.storeDeclaration(namedFunction)
@@ -664,7 +349,8 @@ class FirBodyResolveTransformer(val session: FirSession) : FirTransformer<Any?>(
                 initializer != null -> {
                     variable.transformReturnTypeRef(this, initializer.resultType)
                 }
-                variable.delegate != null -> {}
+                variable.delegate != null -> {
+                }
             }
         }
         if (variable !is FirProperty) {
@@ -674,12 +360,75 @@ class FirBodyResolveTransformer(val session: FirSession) : FirTransformer<Any?>(
     }
 
     override fun transformProperty(property: FirProperty, data: Any?): CompositeTransformResult<FirDeclaration> {
+        if (property.returnTypeRef !is FirImplicitTypeRef && implicitTypeOnly) return property.compose()
         return transformVariable(property, data)
     }
 
-    private fun <D> FirElement.visitNoTransform(transformer: FirTransformer<D>, data: D) {
+    fun <D> FirElement.visitNoTransform(transformer: FirTransformer<D>, data: D) {
         val result = this.transform(transformer, data)
         require(result.single === this)
+    }
+
+    inner class ReturnTypeCalculatorWithJump : ReturnTypeCalculator {
+        override fun tryCalculateReturnType(declaration: FirTypedDeclaration): FirResolvedTypeRef? {
+            val returnTypeRef = declaration.returnTypeRef
+            if (returnTypeRef is FirResolvedTypeRef) return returnTypeRef
+            require(declaration is FirCallableMemberDeclaration)
+
+
+            val id = (declaration.symbol as ConeCallableSymbol).callableId
+
+            val provider = session.service<FirProvider>()
+
+            val file = provider.getFirCallableContainerFile(id) ?: FirErrorTypeRefImpl(
+                session,
+                null,
+                "I don't know what todo"
+            )
+
+            val outerClasses = generateSequence(id.classId) { classId ->
+                classId.outerClassId
+            }.mapTo(mutableListOf()) { provider.getFirClassifierByFqName(it)!! }
+
+
+            val transformer = FirDesignatedBodyResolveTransformer(
+                (listOf(file) + outerClasses.asReversed() + listOf(declaration)).iterator(),
+                file.session
+            )
+
+            transformer.transformElement(file, null)
+
+            val newReturnTypeRef = declaration.returnTypeRef
+            require(newReturnTypeRef is FirResolvedTypeRef) { declaration.render() }
+            return newReturnTypeRef
+        }
+
+    }
+}
+
+
+class FirDesignatedBodyResolveTransformer(val designation: Iterator<FirElement>, session: FirSession) :
+    FirBodyResolveTransformer(session, implicitTypeOnly = true) {
+
+    override fun <E : FirElement> transformElement(element: E, data: Any?): CompositeTransformResult<E> {
+        if (designation.hasNext()) {
+            designation.next().visitNoTransform(this, data)
+            return element.compose()
+        }
+        return super.transformElement(element, data)
+    }
+}
+
+
+@Deprecated("It is temp", level = DeprecationLevel.WARNING, replaceWith = ReplaceWith("TODO(\"что-то нормальное\")"))
+class FirImplicitTypeBodyResolveTransformerAdapter : FirTransformer<Nothing?>() {
+    override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
+        return element.compose()
+    }
+
+    override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirFile> {
+        val transformer = FirBodyResolveTransformer(file.session, implicitTypeOnly = true)
+        return file.transform(transformer, null)
     }
 }
 
@@ -691,7 +440,7 @@ class FirBodyResolveTransformerAdapter : FirTransformer<Nothing?>() {
     }
 
     override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirFile> {
-        val transformer = FirBodyResolveTransformer(file.session)
+        val transformer = FirBodyResolveTransformer(file.session, implicitTypeOnly = false)
         return file.transform(transformer, null)
     }
 }
@@ -700,4 +449,9 @@ class FirBodyResolveTransformerAdapter : FirTransformer<Nothing?>() {
 inline fun <reified T> ConeSymbol.firUnsafe(): T {
     this as FirBasedSymbol<*>
     return this.fir as T
+}
+
+
+interface ReturnTypeCalculator {
+    fun tryCalculateReturnType(declaration: FirTypedDeclaration): FirResolvedTypeRef?
 }

@@ -1,0 +1,17 @@
+FILE: localImplicitBodies.kt
+    public final fun foo(): R|kotlin/Unit| {
+        lval x: R|kotlin/Unit| = object :  {
+            public constructor(): super<R|kotlin/Any|>()
+
+            public final fun sss(): <ERROR TYPE: Unresolved name: abc> {
+                ^sss <Unresolved name: abc>#()
+            }
+
+            public final fun abc(): R|kotlin/Int| {
+                ^abc Int(1)
+            }
+
+        }
+
+        lval g: <ERROR TYPE: Unresolved name: abc> = R|<local>/x|.R|/sss|()
+    }

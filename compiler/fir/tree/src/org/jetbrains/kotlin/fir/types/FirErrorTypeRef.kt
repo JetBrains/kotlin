@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
-interface FirErrorTypeRef : FirTypeRef {
+interface FirErrorTypeRef : FirResolvedTypeRef {
     val reason: String
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =

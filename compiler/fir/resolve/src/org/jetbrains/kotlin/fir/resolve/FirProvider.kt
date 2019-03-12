@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationContainer
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.service
@@ -28,6 +29,8 @@ interface FirProvider : FirSymbolProvider {
     }
 
     fun getFirClassifierContainerFile(fqName: ClassId): FirFile
+
+    fun getFirCallableContainerFile(callableId: CallableId): FirFile?
 
     companion object {
         fun getInstance(session: FirSession): FirProvider = session.service()
