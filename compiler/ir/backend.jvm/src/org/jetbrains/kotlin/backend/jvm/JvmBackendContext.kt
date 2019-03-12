@@ -39,7 +39,7 @@ class JvmBackendContext(
 ) : CommonBackendContext {
     override val builtIns = state.module.builtIns
     override val declarationFactory: JvmDeclarationFactory = JvmDeclarationFactory(state)
-    override val sharedVariablesManager = JvmSharedVariablesManager(builtIns, irBuiltIns)
+    override val sharedVariablesManager = JvmSharedVariablesManager(state.module, builtIns, irBuiltIns)
 
     // TODO: inject a correct StorageManager instance, or store NotFoundClasses inside ModuleDescriptor
     internal val reflectionTypes = ReflectionTypes(state.module, NotFoundClasses(LockBasedStorageManager.NO_LOCKS, state.module))
