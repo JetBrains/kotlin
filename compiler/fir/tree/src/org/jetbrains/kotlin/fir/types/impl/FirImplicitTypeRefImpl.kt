@@ -17,3 +17,13 @@ class FirImplicitTypeRefImpl(
     override val annotations: List<FirAnnotationCall>
         get() = emptyList()
 }
+
+object FirComputingImplicitTypeRef : FirImplicitTypeRef {
+    override val psi: PsiElement?
+        get() = null
+    override val session: FirSession
+        get() = error("Session independent")
+    override val annotations: List<FirAnnotationCall>
+        get() = emptyList()
+
+}

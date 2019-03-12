@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.expandedConeType
 import org.jetbrains.kotlin.fir.declarations.superConeTypes
@@ -22,7 +23,13 @@ import org.jetbrains.kotlin.fir.types.impl.ConeAbbreviatedTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeFunctionTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
+import org.jetbrains.kotlin.resolve.calls.inference.CapturedType
+import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
+import org.jetbrains.kotlin.types.DefinitelyNotNullType
+import org.jetbrains.kotlin.types.SimpleType
+import org.jetbrains.kotlin.types.checker.NewCapturedType
 import org.jetbrains.kotlin.types.checker.convertVariance
+import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.model.*
 
 
@@ -176,6 +183,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext {
     }
 
     override fun TypeConstructorMarker.supertypes(): Collection<KotlinTypeMarker> {
+        if (this is ErrorTypeConstructor) return emptyList()
         require(this is ConeSymbol)
         return when (this) {
             is ConeTypeParameterSymbol -> emptyList()
@@ -235,7 +243,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext {
     }
 
     override fun captureFromArguments(type: SimpleTypeMarker, status: CaptureStatus): SimpleTypeMarker? {
-        TODO("not implemented")
+        return type //TODO
     }
 
     override fun SimpleTypeMarker.asArgumentList(): TypeArgumentListMarker {
@@ -264,7 +272,39 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext {
         return typeConstructor().isNothingConstructor() && !this.nullability.isNullable
     }
 
+
+
     override fun SimpleTypeMarker.isSingleClassifierType(): Boolean {
+        require(this is ConeLookupTagBasedType)
+        val symbol = this.lookupTag.toSymbol(session)
+        return !isError() &&
+                (symbol is FirClassSymbol ||
+                        symbol is FirTypeParameterSymbol)
+        // || TODO: (this is CapturedType || this is NewCapturedType || this is DefinitelyNotNullType)
+    }
+}
+
+class ConeTypeCheckerContext(override val isErrorTypeEqualsToAnything: Boolean, override val session: FirSession) :
+    AbstractTypeCheckerContext(), ConeTypeContext {
+    override fun substitutionSupertypePolicy(type: SimpleTypeMarker): SupertypesPolicy.DoCustomTransform {
+        return object : SupertypesPolicy.DoCustomTransform() {
+            override fun transformType(context: AbstractTypeCheckerContext, type: KotlinTypeMarker): SimpleTypeMarker {
+                return type.lowerBoundIfFlexible() //TODO
+            }
+
+        }
+    }
+
+    override fun areEqualTypeConstructors(a: TypeConstructorMarker, b: TypeConstructorMarker): Boolean {
+        return a == b
+    }
+
+    override fun intersectTypes(types: List<KotlinTypeMarker>): KotlinTypeMarker {
         TODO("not implemented")
     }
+
+    override val KotlinTypeMarker.isAllowedTypeVariable: Boolean
+        get() = false
+
+
 }

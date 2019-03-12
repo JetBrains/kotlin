@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 import com.google.common.collect.LinkedHashMultimap
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultSetterValueParameter
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirFunctionCallImpl
 import org.jetbrains.kotlin.fir.expressions.impl.FirQualifiedAccessExpressionImpl
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.fir.references.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.calls.*
+import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.*
@@ -26,10 +28,7 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.compose
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
-import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
-import org.jetbrains.kotlin.fir.types.impl.FirErrorTypeRefImpl
-import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
+import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.cast
@@ -67,6 +66,7 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
 
     override fun transformValueParameter(valueParameter: FirValueParameter, data: Any?): CompositeTransformResult<FirDeclaration> {
         localScopes.lastOrNull()?.storeDeclaration(valueParameter)
+        if (valueParameter.returnTypeRef is FirImplicitTypeRef) return valueParameter.compose() // TODO
         return super.transformValueParameter(valueParameter, data)
     }
 
@@ -88,19 +88,6 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
         }
     }
 
-    private fun FirRegularClass.defaultType(): ConeClassTypeImpl {
-        return ConeClassTypeImpl(
-            symbol.toLookupTag(),
-            typeParameters.map {
-                ConeTypeParameterTypeImpl(
-                    it.symbol.toLookupTag(),
-                    isNullable = false
-                )
-            }.toTypedArray(),
-            isNullable = false
-        )
-    }
-
 
     protected inline fun <T> withScopeCleanup(scopes: MutableList<*>, crossinline l: () -> T): T {
         val sizeBefore = scopes.size
@@ -119,7 +106,7 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
     val labels = LinkedHashMultimap.create<Name, ConeKotlinType>()
 
 
-    val jump = ReturnTypeCalculatorWithJump()
+    val jump = ReturnTypeCalculatorWithJump(session)
 
     private fun runTowerResolver(
         checkers: List<ApplicabilityChecker>
@@ -138,7 +125,7 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
                 is FirErrorNamedReference ->
                     FirErrorTypeRefImpl(session, access.psi, newCallee.errorReason)
                 is FirResolvedCallableReference ->
-                    jump.tryCalculateReturnType(newCallee.callableSymbol.firUnsafe())!!
+                    jump.tryCalculateReturnType(newCallee.callableSymbol.firUnsafe())
                 else -> return
             }
     }
@@ -369,40 +356,74 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
         require(result.single === this)
     }
 
-    inner class ReturnTypeCalculatorWithJump : ReturnTypeCalculator {
-        override fun tryCalculateReturnType(declaration: FirTypedDeclaration): FirResolvedTypeRef? {
-            val returnTypeRef = declaration.returnTypeRef
-            if (returnTypeRef is FirResolvedTypeRef) return returnTypeRef
-            require(declaration is FirCallableMemberDeclaration)
+}
 
 
-            val id = (declaration.symbol as ConeCallableSymbol).callableId
-
-            val provider = session.service<FirProvider>()
-
-            val file = provider.getFirCallableContainerFile(id) ?: FirErrorTypeRefImpl(
-                session,
-                null,
-                "I don't know what todo"
-            )
-
-            val outerClasses = generateSequence(id.classId) { classId ->
-                classId.outerClassId
-            }.mapTo(mutableListOf()) { provider.getFirClassifierByFqName(it)!! }
+class ReturnTypeCalculatorWithJump(val session: FirSession) : ReturnTypeCalculator {
 
 
-            val transformer = FirDesignatedBodyResolveTransformer(
-                (listOf(file) + outerClasses.asReversed() + listOf(declaration)).iterator(),
-                file.session
-            )
-
-            transformer.transformElement(file, null)
-
-            val newReturnTypeRef = declaration.returnTypeRef
-            require(newReturnTypeRef is FirResolvedTypeRef) { declaration.render() }
-            return newReturnTypeRef
+    val storeType = object : FirTransformer<FirTypeRef>() {
+        override fun <E : FirElement> transformElement(element: E, data: FirTypeRef): CompositeTransformResult<E> {
+            return element.compose()
         }
 
+        override fun transformImplicitTypeRef(
+            implicitTypeRef: FirImplicitTypeRef,
+            data: FirTypeRef
+        ): CompositeTransformResult<FirTypeRef> {
+            return data.compose()
+        }
+    }
+
+    private fun cycleErrorType(declaration: FirTypedDeclaration): FirResolvedTypeRef? {
+        if (declaration.returnTypeRef is FirComputingImplicitTypeRef) {
+            declaration.transformReturnTypeRef(storeType, FirErrorTypeRefImpl(session, null, "cycle"))
+            return declaration.returnTypeRef as FirResolvedTypeRef
+        }
+        return null
+    }
+
+    override fun tryCalculateReturnType(declaration: FirTypedDeclaration): FirResolvedTypeRef {
+
+        if (declaration is FirValueParameter && declaration.returnTypeRef is FirImplicitTypeRef) {
+            // TODO?
+            declaration.transformReturnTypeRef(storeType, FirErrorTypeRefImpl(session, null, "Unsupported: implicit VP type"))
+        }
+        val returnTypeRef = declaration.returnTypeRef
+        if (returnTypeRef is FirResolvedTypeRef) return returnTypeRef
+        cycleErrorType(declaration)?.let { return it }
+        require(declaration is FirCallableMemberDeclaration) { "${declaration::class}: ${declaration.render()}" }
+
+
+        val id = (declaration.symbol as ConeCallableSymbol).callableId
+
+        val provider = session.service<FirProvider>()
+
+        val file = provider.getFirCallableContainerFile(id) ?: FirErrorTypeRefImpl(
+            session,
+            null,
+            "I don't know what todo"
+        )
+
+        val outerClasses = generateSequence(id.classId) { classId ->
+            classId.outerClassId
+        }.mapTo(mutableListOf()) { provider.getFirClassifierByFqName(it)!! }
+
+
+        declaration.transformReturnTypeRef(storeType, FirComputingImplicitTypeRef)
+
+        val transformer = FirDesignatedBodyResolveTransformer(
+            (listOf(file) + outerClasses.asReversed() + listOf(declaration)).iterator(),
+            file.session
+        )
+
+        file.transform(transformer, null)
+
+
+        val newReturnTypeRef = declaration.returnTypeRef
+        cycleErrorType(declaration)?.let { return it }
+        require(newReturnTypeRef is FirResolvedTypeRef) { declaration.render() }
+        return newReturnTypeRef
     }
 }
 
@@ -446,12 +467,12 @@ class FirBodyResolveTransformerAdapter : FirTransformer<Nothing?>() {
 }
 
 
-inline fun <reified T> ConeSymbol.firUnsafe(): T {
+inline fun <reified T : FirElement> ConeSymbol.firUnsafe(): T {
     this as FirBasedSymbol<*>
     return this.fir as T
 }
 
 
 interface ReturnTypeCalculator {
-    fun tryCalculateReturnType(declaration: FirTypedDeclaration): FirResolvedTypeRef?
+    fun tryCalculateReturnType(declaration: FirTypedDeclaration): FirResolvedTypeRef
 }

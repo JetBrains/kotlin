@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirCompositeScope
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
+import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 
 fun ConeKotlinType.scope(useSiteSession: FirSession): FirScope? {
     return when (this) {
@@ -32,3 +34,16 @@ fun ConeKotlinType.scope(useSiteSession: FirSession): FirScope? {
 
 
 
+
+fun FirRegularClass.defaultType(): ConeClassTypeImpl {
+    return ConeClassTypeImpl(
+        symbol.toLookupTag(),
+        typeParameters.map {
+            ConeTypeParameterTypeImpl(
+                it.symbol.toLookupTag(),
+                isNullable = false
+            )
+        }.toTypedArray(),
+        isNullable = false
+    )
+}

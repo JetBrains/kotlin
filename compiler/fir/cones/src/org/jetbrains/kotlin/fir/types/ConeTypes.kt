@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.fir.symbols.*
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.model.*
 
 sealed class ConeKotlinTypeProjection : TypeArgumentMarker {
@@ -69,21 +70,11 @@ val ConeKotlinType.isNullable: Boolean get() = nullability != ConeNullability.NO
 
 val ConeKotlinType.isMarkedNullable: Boolean get() = nullability == ConeNullability.NULLABLE
 
-class ConeKotlinErrorType(val reason: String) : ConeKotlinType() {
-    override val typeArguments: Array<out ConeKotlinTypeProjection>
-        get() = EMPTY_ARRAY
-
-    override val nullability: ConeNullability
-        get() = ConeNullability.UNKNOWN
-
-    override fun toString(): String {
-        return "<ERROR TYPE: $reason>"
-    }
-}
+typealias ConeKotlinErrorType = ConeClassErrorType
 
 class ConeClassErrorType(val reason: String) : ConeClassLikeType() {
     override val lookupTag: ConeClassLikeLookupTag
-        get() = error("!")
+        get() = ConeClassLikeLookupTagImpl(ClassId.fromString("<error>"))
 
     override val typeArguments: Array<out ConeKotlinTypeProjection>
         get() = EMPTY_ARRAY

@@ -159,6 +159,11 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/expresssions"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("dispatchReceiver.kt")
+        public void testDispatchReceiver() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/dispatchReceiver.kt");
+        }
+
         @TestMetadata("localImplicitBodies.kt")
         public void testLocalImplicitBodies() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/localImplicitBodies.kt");

@@ -9,6 +9,9 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
+import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
@@ -16,9 +19,15 @@ import org.jetbrains.kotlin.fir.scopes.FirPosition
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.processClassifiersByNameWithAction
+import org.jetbrains.kotlin.fir.service
 import org.jetbrains.kotlin.fir.symbols.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeTypeCheckerContext
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 import java.util.*
 import kotlin.collections.LinkedHashSet
 
@@ -72,7 +81,9 @@ class CallResolver(val typeCalculator: ReturnTypeCalculator) {
 
 enum class CandidateApplicability {
     HIDDEN,
+    WRONG_RECEIVER,
     PARAMETER_MAPPING_ERROR,
+    INAPPLICABLE,
     SYNTHETIC_RESOLVED,
     RESOLVED
 }
@@ -98,15 +109,11 @@ abstract class ApplicabilityChecker {
         currentApplicability = CandidateApplicability.HIDDEN
     }
 
-
-    fun isSubtypeOf(superType: FirTypeRef?, subType: FirTypeRef?): Boolean {
-        if (superType == null && subType == null) return true
-        if (superType != null && subType != null) return true
-        return false
-    }
-
-
-    protected open fun getApplicability(group: Int, symbol: ConeSymbol): CandidateApplicability {
+    protected open fun getApplicability(
+        group: Int,
+        symbol: ConeSymbol,
+        resolver: CallResolver
+    ): CandidateApplicability {
         val declaration = (symbol as? FirBasedSymbol<*>)?.fir
             ?: return CandidateApplicability.HIDDEN
         declaration as FirDeclaration
@@ -119,7 +126,7 @@ abstract class ApplicabilityChecker {
     }
 
     open fun consumeCandidate(group: Int, symbol: ConeSymbol, resolver: CallResolver) {
-        val applicability = getApplicability(group, symbol)
+        val applicability = getApplicability(group, symbol, resolver)
 
         if (applicability > currentApplicability) {
             groupNumbers.clear()
@@ -192,7 +199,11 @@ class VariableInvokeApplicabilityChecker(val variableName: Name) : FunctionAppli
         return true //TODO: Actual type-check here
     }
 
-    override fun getApplicability(group: Int, symbol: ConeSymbol): CandidateApplicability {
+    override fun getApplicability(
+        group: Int,
+        symbol: ConeSymbol,
+        resolver: CallResolver
+    ): CandidateApplicability {
 
         symbol as ConeCallableSymbol
         val declaration = (symbol as? FirBasedSymbol<*>)?.fir
@@ -239,9 +250,10 @@ class VariableInvokeApplicabilityChecker(val variableName: Name) : FunctionAppli
 
             val lastCandidate = variableChecker.candidates.lastOrNull()
             if (variableChecker.currentApplicability == CandidateApplicability.RESOLVED && lastCandidate == symbol) {
+
                 val receiverScope =
-                    resolver.typeCalculator.tryCalculateReturnType(lastCandidate.firUnsafe())?.type
-                        ?.scope(resolver.session)
+                    resolver.typeCalculator.tryCalculateReturnType(lastCandidate.firUnsafe()).type
+                        .scope(resolver.session)
 
 
                 lookupInvoke = true
@@ -294,18 +306,51 @@ open class FunctionApplicabilityChecker(val name: Name) : ApplicabilityChecker()
         names.add(name)
     }
 
-    override fun getApplicability(group: Int, symbol: ConeSymbol): CandidateApplicability {
-        val declaration = (symbol as FirBasedSymbol<*>).fir
+    lateinit var session: FirSession
 
-        if (declaration is FirFunction) {
-            if (declaration.valueParameters.size != parameterCount) return CandidateApplicability.PARAMETER_MAPPING_ERROR
+    override fun getApplicability(
+        group: Int,
+        symbol: ConeSymbol,
+        resolver: CallResolver
+    ): CandidateApplicability {
+        val declaration = symbol.firUnsafe<FirCallableDeclaration>()
+
+        if (declaration is FirFunction && declaration.valueParameters.size != parameterCount) return CandidateApplicability.PARAMETER_MAPPING_ERROR
+
+
+        var extensionReceiver = declaration.receiverTypeRef?.coneTypeUnsafe()
+        var dispatchReceiver = declaration.dispatchReceiverType(session)
+
+        val explicitReceiverType = explicitReceiverType?.coneTypeUnsafe()
+
+
+        if (explicitReceiverType != null) {
+            if (dispatchReceiver != null && explicitReceiverType.isSubtypeOf(dispatchReceiver, session)) {
+                dispatchReceiver = null
+            }
+            if (extensionReceiver != null && explicitReceiverType.isSubtypeOf(extensionReceiver, session)) {
+                extensionReceiver = null
+            }
+            if (extensionReceiver != null || dispatchReceiver != null) return CandidateApplicability.WRONG_RECEIVER
         }
-        return super.getApplicability(group, symbol)
+
+        return CandidateApplicability.RESOLVED
+    }
+
+    fun ConeKotlinType.isSubtypeOf(type: ConeKotlinType, session: FirSession): Boolean {
+        return AbstractTypeChecker.isSubtypeOf(ConeTypeCheckerContext(true, session), this, type)
     }
 
     override fun consumeCandidate(group: Int, symbol: ConeSymbol, resolver: CallResolver) {
         if (symbol !is ConeFunctionSymbol) return
         if (symbol.callableId.callableName != name) return
+        session = resolver.session
         super.consumeCandidate(group, symbol, resolver)
     }
+}
+
+fun FirCallableDeclaration.dispatchReceiverType(session: FirSession): ConeKotlinType? {
+    val id = (this.symbol as ConeCallableSymbol).callableId.classId ?: return null
+    val symbol = session.service<FirSymbolProvider>().getClassLikeSymbolByFqName(id) as? FirClassSymbol ?: return null
+    return symbol.fir.defaultType()
 }
