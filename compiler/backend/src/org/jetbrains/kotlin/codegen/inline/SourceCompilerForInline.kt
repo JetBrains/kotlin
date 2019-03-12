@@ -121,7 +121,7 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
 
             val signature = codegen.state.typeMapper.mapSignatureSkipGeneric(context.functionDescriptor, context.contextKind)
             return InlineCallSiteInfo(
-                parentCodegen.className, signature.asmMethod.name, signature.asmMethod.descriptor
+                parentCodegen.className, signature.asmMethod.name, signature.asmMethod.descriptor, compilationContextFunctionDescriptor.isInlineOrInsideInline()
             )
         }
 
@@ -473,3 +473,7 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
         }
     }
 }
+
+private fun DeclarationDescriptor.isInlineOrInsideInline(): Boolean =
+    if (this is FunctionDescriptor && isInline) true
+    else containingDeclaration?.isInlineOrInsideInline() == true

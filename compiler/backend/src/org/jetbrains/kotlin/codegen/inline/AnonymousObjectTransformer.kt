@@ -276,7 +276,8 @@ class AnonymousObjectTransformer(
             InlineCallSiteInfo(
                 transformationInfo.oldClassName,
                 sourceNode.name,
-                if (isConstructor) transformationInfo.newConstructorDescriptor else sourceNode.desc
+                if (isConstructor) transformationInfo.newConstructorDescriptor else sourceNode.desc,
+                inliningContext.callSiteInfo.isInlineOrInsideInline
             ), null
         )
 
