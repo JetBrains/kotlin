@@ -72,10 +72,7 @@ object ConversionsRunner {
             +BuiltinMembersConversion(context)
             +EqualsOperatorConversion(context)
             +TypeMappingConversion(context)
-            +LowerNullabilityInFunctionParametersConversion(context)
             +ImplicitCastsConversion(context)
-            +DefaultNullabilityToNullableConversion()
-            +NullableQualifierConversion(context)
             +InternalDeclarationConversion()
 
             //Kotlin --> Kotlin conversions

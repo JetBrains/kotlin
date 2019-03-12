@@ -38,7 +38,6 @@ class TypeMappingConversion(val context: ConversionContext) : RecursiveApplicabl
                 val newType = element.type
                     .fixRawType(element)
                     .mapType(element)
-                    .refineNullability(element)
                 JKTypeElementImpl(newType).withNonCodeElementsFrom(element)
             }
             is JKJavaNewExpression -> {
@@ -79,15 +78,6 @@ class TypeMappingConversion(val context: ConversionContext) : RecursiveApplicabl
         }
     }
 
-    private fun JKType.refineNullability(typeElement: JKTypeElement): JKType {
-        if (nullability == Nullability.Default && this is JKClassType) {
-            val newNullability = calculateNullability(typeElement)
-            if (newNullability != nullability) {
-                return JKClassTypeImpl(classReference, parameters, newNullability)
-            }
-        }
-        return this
-    }
 
     private fun JKType.fixRawType(typeElement: JKTypeElement) =
         when (typeElement.parent) {
@@ -157,28 +147,6 @@ class TypeMappingConversion(val context: ConversionContext) : RecursiveApplicabl
             nullability = Nullability.NotNull
         )
     }
-
-    private fun calculateNullability(typeElement: JKTypeElement?): Nullability {
-        val parent = typeElement?.parent ?: return Nullability.Default
-        val psi = parent.psi
-        return when (parent) {
-            is JKMethod ->
-                psi?.let { typeFlavorCalculator.methodNullability(it as PsiMethod) }
-                    .nullToDefault()
-
-            is JKVariable -> psi?.let {
-                typeFlavorCalculator.variableNullability(psi as PsiVariable)
-            }.nullToDefault()
-
-            else -> Nullability.Default
-        }
-    }
-
-    private fun Nullability.defaultToNull() =
-        if (this == Nullability.Default) null else this
-
-    private fun Nullability?.nullToDefault() =
-        this ?: Nullability.Default
 
     private fun calculateStructureMutability(typeElement: JKTypeElement?): Boolean {
         val parent = typeElement?.parent ?: return false
