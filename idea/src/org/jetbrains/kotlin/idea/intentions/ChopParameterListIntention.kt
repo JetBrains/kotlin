@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
-import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiWhiteSpace
@@ -32,7 +31,7 @@ abstract class AbstractChopListIntention<TList : KtElement, TElement : KtElement
     private val listClass: Class<TList>,
     private val elementClass: Class<TElement>,
     text: String
-) : SelfTargetingOffsetIndependentIntention<TList>(listClass, text), LowPriorityAction {
+) : SelfTargetingOffsetIndependentIntention<TList>(listClass, text) {
 
     override fun isApplicableTo(element: TList): Boolean {
         val elements = element.elements()

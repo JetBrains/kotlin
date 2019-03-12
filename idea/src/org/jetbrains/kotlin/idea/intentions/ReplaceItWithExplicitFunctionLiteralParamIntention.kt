@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
-import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -30,7 +29,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 
 class ReplaceItWithExplicitFunctionLiteralParamIntention : SelfTargetingOffsetIndependentIntention<KtNameReferenceExpression>(
     KtNameReferenceExpression::class.java, "Replace 'it' with explicit parameter"
-), LowPriorityAction {
+) {
     override fun isApplicableTo(element: KtNameReferenceExpression) = isAutoCreatedItUsage(element)
 
     override fun applyTo(element: KtNameReferenceExpression, editor: Editor?) {

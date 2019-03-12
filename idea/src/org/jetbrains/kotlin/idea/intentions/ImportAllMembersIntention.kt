@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
+import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -33,7 +34,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ClassQualifier
 
-class ImportAllMembersIntention : SelfTargetingIntention<KtElement>(KtElement::class.java, "Import members with '*'"){
+class ImportAllMembersIntention : SelfTargetingIntention<KtElement>(KtElement::class.java, "Import members with '*'"), HighPriorityAction {
     override fun isApplicableTo(element: KtElement, caretOffset: Int): Boolean {
         val receiverExpression = element.receiverExpression() ?: return false
         if (!receiverExpression.range.containsOffset(caretOffset)) return false
