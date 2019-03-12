@@ -2585,7 +2585,7 @@
                      displayName="'when' has only 'else' branch and can be simplified"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
-                     enabledByDefault="true"
+                     enabledByDefault="false"
                      level="WEAK WARNING"
                      language="kotlin"
     />
