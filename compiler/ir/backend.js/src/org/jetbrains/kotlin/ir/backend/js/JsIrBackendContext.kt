@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrElement
@@ -204,7 +205,7 @@ class JsIrBackendContext(
 
     // Top-level functions forced to be loaded
 
-    val coroutineSuspendOrReturn = symbolTable.referenceSimpleFunction(getInternalFunctions(COROUTINE_SUSPEND_OR_RETURN_JS_NAME).single())
+    val coroutineSuspendOrReturn = symbolTable.referenceSimpleFunction(getJsInternalFunction(COROUTINE_SUSPEND_OR_RETURN_JS_NAME))
     val coroutineSuspendGetter = ir.symbols.coroutineSuspendedGetter
     val coroutineGetContext: IrFunctionSymbol
         get() {
@@ -214,7 +215,7 @@ class JsIrBackendContext(
             return contextGetter.symbol
         }
 
-    val coroutineGetContextJs = symbolTable.referenceSimpleFunction(getInternalFunctions(GET_COROUTINE_CONTEXT_NAME).single())
+    val coroutineGetContextJs = symbolTable.referenceSimpleFunction(getJsInternalFunction(GET_COROUTINE_CONTEXT_NAME))
 
     val coroutineContextProperty: PropertyDescriptor
         get() {
@@ -225,8 +226,8 @@ class JsIrBackendContext(
             return vars.single()
         }
 
-    val captureStackSymbol = symbolTable.referenceSimpleFunction(getInternalFunctions("captureStack").single())
-    val newThrowableSymbol = symbolTable.referenceSimpleFunction(getInternalFunctions("newThrowable").single())
+    val captureStackSymbol = symbolTable.referenceSimpleFunction(getJsInternalFunction("captureStack"))
+    val newThrowableSymbol = symbolTable.referenceSimpleFunction(getJsInternalFunction("newThrowable"))
 
     val throwISEymbol = symbolTable.referenceSimpleFunction(getFunctions(kotlinPackageFqn.child(Name.identifier("THROW_ISE"))).single())
     val throwNPESymbol = ir.symbols.ThrowNullPointerException
@@ -265,23 +266,23 @@ class JsIrBackendContext(
         }
     }.toMap()
 
-    private fun findClass(memberScope: MemberScope, name: Name) =
+    private fun findClass(memberScope: MemberScope, name: Name): ClassDescriptor =
         memberScope.getContributedClassifier(name, NoLookupLocation.FROM_BACKEND) as ClassDescriptor
 
-    private fun findFunctions(memberScope: MemberScope, className: String) =
-        findFunctions(memberScope, Name.identifier(className))
-
-    private fun findFunctions(memberScope: MemberScope, name: Name) =
+    private fun findFunctions(memberScope: MemberScope, name: Name): List<SimpleFunctionDescriptor> =
         memberScope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND).toList()
 
     internal fun getJsInternalClass(name: String): ClassDescriptor =
         findClass(internalPackage.memberScope, Name.identifier(name))
 
-    override fun getClass(fqName: FqName) = findClass(module.getPackage(fqName.parent()).memberScope, fqName.shortName())
+    override fun getClass(fqName: FqName): ClassDescriptor =
+        findClass(module.getPackage(fqName.parent()).memberScope, fqName.shortName())
 
-    override fun getInternalFunctions(name: String) = findFunctions(internalPackage.memberScope, name)
+    internal fun getJsInternalFunction(name: String): SimpleFunctionDescriptor =
+        findFunctions(internalPackage.memberScope, Name.identifier(name)).single()
 
-    fun getFunctions(fqName: FqName) = findFunctions(module.getPackage(fqName.parent()).memberScope, fqName.shortName())
+    fun getFunctions(fqName: FqName): List<SimpleFunctionDescriptor> =
+        findFunctions(module.getPackage(fqName.parent()).memberScope, fqName.shortName())
 
     override fun log(message: () -> String) {
         /*TODO*/

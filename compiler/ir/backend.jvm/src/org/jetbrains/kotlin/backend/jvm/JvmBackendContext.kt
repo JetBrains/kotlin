@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.backend.jvm.descriptors.JvmSharedVariablesManager
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -71,17 +70,6 @@ class JvmBackendContext(
         return ir.symbols.externalSymbolTable.referenceClass(getClass(fqName))
     }
 
-    override fun getInternalFunctions(name: String): List<FunctionDescriptor> {
-        return when (name) {
-            "ThrowUninitializedPropertyAccessException" ->
-                getJvmInternalClass("Intrinsics").staticScope.getContributedFunctions(
-                    Name.identifier("throwUninitializedPropertyAccessException"),
-                    NoLookupLocation.FROM_BACKEND
-                ).toList()
-            else -> TODO(name)
-        }
-    }
-
     override fun log(message: () -> String) {
         /*TODO*/
         if (inVerbosePhase) {
@@ -102,16 +90,21 @@ class JvmBackendContext(
 
         inner class JvmSymbols : Symbols<JvmBackendContext>(this@JvmBackendContext, symbolTable.lazyWrapper) {
             override val ThrowNullPointerException: IrSimpleFunctionSymbol
-                get() = symbolTable.referenceSimpleFunction(context.getInternalFunctions("ThrowNullPointerException").single())
+                get() = error("Unused in JVM IR")
 
             override val ThrowNoWhenBranchMatchedException: IrSimpleFunctionSymbol
-                get() = symbolTable.referenceSimpleFunction(context.getInternalFunctions("ThrowNoWhenBranchMatchedException").single())
+                get() = error("Unused in JVM IR")
 
             override val ThrowTypeCastException: IrSimpleFunctionSymbol
-                get() = symbolTable.referenceSimpleFunction(context.getInternalFunctions("ThrowTypeCastException").single())
+                get() = error("Unused in JVM IR")
 
             override val ThrowUninitializedPropertyAccessException: IrSimpleFunctionSymbol =
-                symbolTable.referenceSimpleFunction(context.getInternalFunctions("ThrowUninitializedPropertyAccessException").single())
+                symbolTable.referenceSimpleFunction(
+                    getJvmInternalClass("Intrinsics").staticScope.getContributedFunctions(
+                        Name.identifier("throwUninitializedPropertyAccessException"),
+                        NoLookupLocation.FROM_BACKEND
+                    ).single()
+                )
 
             override val stringBuilder: IrClassSymbol
                 get() = symbolTable.referenceClass(context.getClass(FqName("java.lang.StringBuilder")))
@@ -120,11 +113,13 @@ class JvmBackendContext(
                 symbolTable.referenceClass(context.getJvmInternalClass("DefaultConstructorMarker"))
 
             override val copyRangeTo: Map<ClassDescriptor, IrSimpleFunctionSymbol>
-                get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+                get() = error("Unused in JVM IR")
+
             override val coroutineImpl: IrClassSymbol
-                get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+                get() = TODO("not implemented")
+
             override val coroutineSuspendedGetter: IrSimpleFunctionSymbol
-                get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+                get() = TODO("not implemented")
 
             val lambdaClass: IrClassSymbol =
                 symbolTable.referenceClass(context.getJvmInternalClass("Lambda"))
