@@ -14,20 +14,42 @@ object ComparableOps : TemplateGroupBase() {
             specialFor(Unsigned) {
                 since("1.3")
                 annotation("@ExperimentalUnsignedTypes")
-                sourceFile(SourceFile.UComparisons)
             }
         }
     }
 
+    private val Family.sourceFileRanges: SourceFile
+        get() = when (this) {
+            Generic, Primitives -> SourceFile.Ranges
+            Unsigned -> SourceFile.URanges
+            else -> error(this)
+        }
+    private val Family.sourceFileComparisons: SourceFile
+        get() = when (this) {
+            Generic, Primitives -> SourceFile.Comparisons
+            Unsigned -> SourceFile.UComparisons
+            else -> error(this)
+        }
+
+    private val Family.sampleSuffix: String
+        get() = when (this) {
+            Primitives -> ""
+            Unsigned -> "Unsigned"
+            Generic -> "Comparable"
+            else -> error(this)
+        }
+
     private val numericPrimitives = PrimitiveType.numericPrimitives.sortedBy { it.capacity }.toSet()
     private val intPrimitives = setOf(PrimitiveType.Int, PrimitiveType.Long)
     private val shortIntPrimitives = setOf(PrimitiveType.Byte, PrimitiveType.Short)
+    private val uintPrimitives = setOf(PrimitiveType.UInt, PrimitiveType.ULong)
 
     val f_coerceAtLeast = fn("coerceAtLeast(minimumValue: SELF)") {
         include(Generic)
         include(Primitives, numericPrimitives)
+        include(Unsigned)
     } builder {
-        sourceFile(SourceFile.Ranges)
+        sourceFile(f.sourceFileRanges)
         returns("SELF")
         typeParam("T : Comparable<T>")
         doc {
@@ -37,7 +59,7 @@ object ComparableOps : TemplateGroupBase() {
             @return this value if it's greater than or equal to the [minimumValue] or the [minimumValue] otherwise.
             """
         }
-        sample("samples.comparisons.ComparableOps.coerceAtLeast${if (f == Generic) "Comparable" else ""}")
+        sample("samples.comparisons.ComparableOps.coerceAtLeast${f.sampleSuffix}")
         body {
             """
             return if (this < minimumValue) minimumValue else this
@@ -48,8 +70,9 @@ object ComparableOps : TemplateGroupBase() {
     val f_coerceAtMost = fn("coerceAtMost(maximumValue: SELF)") {
         include(Generic)
         include(Primitives, numericPrimitives)
+        include(Unsigned)
     } builder {
-        sourceFile(SourceFile.Ranges)
+        sourceFile(f.sourceFileRanges)
         returns("SELF")
         typeParam("T : Comparable<T>")
         doc {
@@ -59,7 +82,7 @@ object ComparableOps : TemplateGroupBase() {
             @return this value if it's less than or equal to the [maximumValue] or the [maximumValue] otherwise.
             """
         }
-        sample("samples.comparisons.ComparableOps.coerceAtMost${if (f == Generic) "Comparable" else ""}")
+        sample("samples.comparisons.ComparableOps.coerceAtMost${f.sampleSuffix}")
         body {
             """
             return if (this > maximumValue) maximumValue else this
@@ -70,8 +93,9 @@ object ComparableOps : TemplateGroupBase() {
     val f_coerceIn_range_primitive = fn("coerceIn(range: ClosedRange<T>)") {
         include(Generic)
         include(Primitives, intPrimitives)
+        include(Unsigned, uintPrimitives)
     } builder {
-        sourceFile(SourceFile.Ranges)
+        sourceFile(f.sourceFileRanges)
         returns("SELF")
         typeParam("T : Comparable<T>")
         doc {
@@ -81,21 +105,8 @@ object ComparableOps : TemplateGroupBase() {
             @return this value if it's in the [range], or `range.start` if this value is less than `range.start`, or `range.endInclusive` if this value is greater than `range.endInclusive`.
             """
         }
-        sample("samples.comparisons.ComparableOps.coerceIn${if (f == Generic) "Comparable" else ""}")
-        body(Generic) {
-            """
-            if (range is ClosedFloatingPointRange) {
-                return this.coerceIn<T>(range)
-            }
-            if (range.isEmpty()) throw IllegalArgumentException("Cannot coerce value to an empty range: ${'$'}range.")
-            return when {
-                this < range.start -> range.start
-                this > range.endInclusive -> range.endInclusive
-                else -> this
-            }
-            """
-        }
-        body(Primitives) {
+        sample("samples.comparisons.ComparableOps.coerceIn${f.sampleSuffix}")
+        body {
             """
             if (range is ClosedFloatingPointRange) {
                 return this.coerceIn<T>(range)
@@ -113,7 +124,7 @@ object ComparableOps : TemplateGroupBase() {
     val f_coerceIn_fpRange = fn("coerceIn(range: ClosedFloatingPointRange<T>)") {
         include(Generic)
     } builder {
-        sourceFile(SourceFile.Ranges)
+        sourceFile(f.sourceFileRanges)
         since("1.1")
         returns("SELF")
         typeParam("T : Comparable<T>")
@@ -145,7 +156,7 @@ object ComparableOps : TemplateGroupBase() {
         include(Primitives, numericPrimitives)
         include(Unsigned)
     } builder {
-        sourceFile(SourceFile.Comparisons)
+        sourceFile(f.sourceFileComparisons)
         since("1.1")
         typeParam("T : Comparable<T>")
         returns("T")
@@ -210,7 +221,7 @@ object ComparableOps : TemplateGroupBase() {
         include(Primitives, numericPrimitives)
         include(Unsigned)
     } builder {
-        sourceFile(SourceFile.Comparisons)
+        sourceFile(f.sourceFileComparisons)
         since("1.1")
         typeParam("T : Comparable<T>")
         returns("T")
@@ -251,7 +262,7 @@ object ComparableOps : TemplateGroupBase() {
     val f_minOf_2_comparator = fn("minOf(a: T, b: T, comparator: Comparator<in T>)") {
         include(Generic)
     } builder {
-        sourceFile(SourceFile.Comparisons)
+        sourceFile(f.sourceFileComparisons)
         since("1.1")
         returns("T")
         receiver("")
@@ -269,7 +280,7 @@ object ComparableOps : TemplateGroupBase() {
     val f_minOf_3_comparator = fn("minOf(a: T, b: T, c: T, comparator: Comparator<in T>)") {
         include(Generic)
     } builder {
-        sourceFile(SourceFile.Comparisons)
+        sourceFile(f.sourceFileComparisons)
         since("1.1")
         returns("T")
         receiver("")
@@ -288,7 +299,7 @@ object ComparableOps : TemplateGroupBase() {
         include(Primitives, numericPrimitives)
         include(Unsigned)
     } builder {
-        sourceFile(SourceFile.Comparisons)
+        sourceFile(f.sourceFileComparisons)
         since("1.1")
         typeParam("T : Comparable<T>")
         returns("T")
@@ -349,7 +360,7 @@ object ComparableOps : TemplateGroupBase() {
         include(Primitives, numericPrimitives)
         include(Unsigned)
     } builder {
-        sourceFile(SourceFile.Comparisons)
+        sourceFile(f.sourceFileComparisons)
         since("1.1")
         typeParam("T : Comparable<T>")
         returns("T")
@@ -390,7 +401,7 @@ object ComparableOps : TemplateGroupBase() {
     val f_maxOf_2_comparator = fn("maxOf(a: T, b: T, comparator: Comparator<in T>)") {
         include(Generic)
     } builder {
-        sourceFile(SourceFile.Comparisons)
+        sourceFile(f.sourceFileComparisons)
         since("1.1")
         returns("T")
         receiver("")
@@ -408,7 +419,7 @@ object ComparableOps : TemplateGroupBase() {
     val f_maxOf_3_comparator = fn("maxOf(a: T, b: T, c: T, comparator: Comparator<in T>)") {
         include(Generic)
     } builder {
-        sourceFile(SourceFile.Comparisons)
+        sourceFile(f.sourceFileComparisons)
         since("1.1")
         returns("T")
         receiver("")
@@ -426,8 +437,9 @@ object ComparableOps : TemplateGroupBase() {
     val f_coerceIn_min_max = fn("coerceIn(minimumValue: SELF, maximumValue: SELF)") {
         include(Generic)
         include(Primitives, numericPrimitives)
+        include(Unsigned)
     } builder {
-        sourceFile(SourceFile.Ranges)
+        sourceFile(f.sourceFileRanges)
 
         specialFor(Generic) { signature("coerceIn(minimumValue: SELF?, maximumValue: SELF?)", notForSorting = true) }
         typeParam("T : Comparable<T>")
@@ -439,8 +451,8 @@ object ComparableOps : TemplateGroupBase() {
             @return this value if it's in the range, or [minimumValue] if this value is less than [minimumValue], or [maximumValue] if this value is greater than [maximumValue].
             """
         }
-        sample("samples.comparisons.ComparableOps.coerceIn${if (f == Generic) "Comparable" else ""}")
-        body(Primitives) {
+        sample("samples.comparisons.ComparableOps.coerceIn${f.sampleSuffix}")
+        body(Primitives, Unsigned) {
             """
             if (minimumValue > maximumValue) throw IllegalArgumentException("Cannot coerce value to an empty range: maximum ${'$'}maximumValue is less than minimum ${'$'}minimumValue.")
             if (this < minimumValue) return minimumValue

@@ -4289,6 +4289,20 @@ public final class kotlin/ranges/ULongRange$Companion {
 }
 
 public final class kotlin/ranges/URangesKt {
+	public static final fun coerceAtLeast-5PvTz6A (SS)S
+	public static final fun coerceAtLeast-J1ME1BU (II)I
+	public static final fun coerceAtLeast-Kr8caGY (BB)B
+	public static final fun coerceAtLeast-eb3DHEI (JJ)J
+	public static final fun coerceAtMost-5PvTz6A (SS)S
+	public static final fun coerceAtMost-J1ME1BU (II)I
+	public static final fun coerceAtMost-Kr8caGY (BB)B
+	public static final fun coerceAtMost-eb3DHEI (JJ)J
+	public static final fun coerceIn-JPwROB0 (JLkotlin/ranges/ClosedRange;)J
+	public static final fun coerceIn-VKSA0NQ (SSS)S
+	public static final fun coerceIn-WZ9TVnA (III)I
+	public static final fun coerceIn-b33U2AM (BBB)B
+	public static final fun coerceIn-sambcqE (JJJ)J
+	public static final fun coerceIn-wuiCnnA (ILkotlin/ranges/ClosedRange;)I
 	public static final fun contains-68kG9v0 (Lkotlin/ranges/UIntRange;B)Z
 	public static final fun contains-Gab390E (Lkotlin/ranges/ULongRange;I)Z
 	public static final fun contains-ULb-yJY (Lkotlin/ranges/ULongRange;B)Z
