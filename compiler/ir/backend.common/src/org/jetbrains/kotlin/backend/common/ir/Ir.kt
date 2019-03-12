@@ -64,6 +64,8 @@ abstract class Symbols<out T : CommonBackendContext>(val context: T, private val
 
     abstract val stringBuilder: IrClassSymbol
 
+    abstract val defaultConstructorMarker: IrClassSymbol
+
     val iterator = symbolTable.referenceClass(
         builtInsPackage("kotlin", "collections").getContributedClassifier(
             Name.identifier("Iterator"), NoLookupLocation.FROM_BACKEND
@@ -85,8 +87,6 @@ abstract class Symbols<out T : CommonBackendContext>(val context: T, private val
     val longProgression = progression("LongProgression")
     val progressionClasses = listOf(charProgression, intProgression, longProgression)
     val progressionClassesTypes = progressionClasses.map { it.descriptor.defaultType }.toSet()
-
-    val defaultConstructorMarker = symbolTable.referenceClass(context.getInternalClass("DefaultConstructorMarker"))
 
     val any = symbolTable.referenceClass(builtIns.any)
     val unit = symbolTable.referenceClass(builtIns.unit)

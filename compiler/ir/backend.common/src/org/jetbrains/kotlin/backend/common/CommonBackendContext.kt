@@ -21,9 +21,6 @@ interface LoggingContext {
 interface CommonBackendContext : BackendContext, LoggingContext {
     override val ir: Ir<CommonBackendContext>
 
-    //TODO move to builtins
-    fun getInternalClass(name: String): ClassDescriptor
-
     fun getClass(fqName: FqName): ClassDescriptor
 
     //TODO move to builtins

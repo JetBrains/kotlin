@@ -59,7 +59,7 @@ class JvmBackendContext(
         return memberScope.getContributedClassifier(name, NoLookupLocation.FROM_BACKEND) as ClassDescriptor
     }
 
-    override fun getInternalClass(name: String): ClassDescriptor {
+    private fun getJvmInternalClass(name: String): ClassDescriptor {
         return find(state.module.getPackage(FqName("kotlin.jvm.internal")).memberScope, name)
     }
 
@@ -74,7 +74,7 @@ class JvmBackendContext(
     override fun getInternalFunctions(name: String): List<FunctionDescriptor> {
         return when (name) {
             "ThrowUninitializedPropertyAccessException" ->
-                getInternalClass("Intrinsics").staticScope.getContributedFunctions(
+                getJvmInternalClass("Intrinsics").staticScope.getContributedFunctions(
                     Name.identifier("throwUninitializedPropertyAccessException"),
                     NoLookupLocation.FROM_BACKEND
                 ).toList()
@@ -116,6 +116,9 @@ class JvmBackendContext(
             override val stringBuilder: IrClassSymbol
                 get() = symbolTable.referenceClass(context.getClass(FqName("java.lang.StringBuilder")))
 
+            override val defaultConstructorMarker: IrClassSymbol =
+                symbolTable.referenceClass(context.getJvmInternalClass("DefaultConstructorMarker"))
+
             override val copyRangeTo: Map<ClassDescriptor, IrSimpleFunctionSymbol>
                 get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
             override val coroutineImpl: IrClassSymbol
@@ -124,10 +127,10 @@ class JvmBackendContext(
                 get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
 
             val lambdaClass: IrClassSymbol =
-                symbolTable.referenceClass(context.getInternalClass("Lambda"))
+                symbolTable.referenceClass(context.getJvmInternalClass("Lambda"))
 
             val functionReference: IrClassSymbol =
-                symbolTable.referenceClass(context.getInternalClass("FunctionReference"))
+                symbolTable.referenceClass(context.getJvmInternalClass("FunctionReference"))
 
             fun getFunction(parameterCount: Int): IrClassSymbol =
                 symbolTable.referenceClass(context.builtIns.getFunction(parameterCount))
