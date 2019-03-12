@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.nj2k.postProcessing
 
+import com.intellij.psi.PsiElement
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.util.parentOfType
@@ -363,7 +364,7 @@ class ConvertGettersAndSetters : NewJ2kPostProcessing {
             this.add(setter) as KtPropertyAccessor
         }
 
-    override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
+    override fun createAction(element: PsiElement, diagnostics: Diagnostics): (() -> Unit)? {
         if (element !is KtClassOrObject) return null
         return {
             val factory = KtPsiFactory(element)

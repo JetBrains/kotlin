@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.nj2k
 
-import com.intellij.codeInsight.actions.OptimizeImportsProcessor
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.command.CommandProcessor
@@ -31,13 +30,15 @@ import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.conversion.copy.range
 import org.jetbrains.kotlin.idea.core.util.EDT
-import org.jetbrains.kotlin.idea.j2k.J2kPostProcessing
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.j2k.ConverterSettings
 import org.jetbrains.kotlin.j2k.PostProcessor
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.nj2k.nullabilityAnalysis.AnalysisContext
+import org.jetbrains.kotlin.nj2k.nullabilityAnalysis.NullabilityAnalysisFacade
+import org.jetbrains.kotlin.nj2k.nullabilityAnalysis.nullabilityByUndefinedNullabilityComment
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.nj2k.nullabilityAnalysis.AnalysisScope
 import org.jetbrains.kotlin.nj2k.nullabilityAnalysis.NullabilityAnalysisFacade
@@ -134,7 +135,7 @@ class NewJ2kPostProcessor(
     }
 
 
-    private data class ActionData(val element: KtElement, val action: () -> Unit, val priority: Int, val writeActionNeeded: Boolean)
+    private data class ActionData(val element: PsiElement, val action: () -> Unit, val priority: Int, val writeActionNeeded: Boolean)
 
     private fun collectAvailableActions(
         processings: Collection<NewJ2kPostProcessing>,
@@ -147,24 +148,22 @@ class NewJ2kPostProcessor(
 
         file.accept(object : PsiRecursiveElementVisitor() {
             override fun visitElement(element: PsiElement) {
-                if (element is KtElement) {
-                    val rangeResult = rangeFilter(element, rangeMarker)
-                    if (rangeResult == RangeFilterResult.SKIP) return
+                val rangeResult = rangeFilter(element, rangeMarker)
+                if (rangeResult == RangeFilterResult.SKIP) return
 
-                    super.visitElement(element)
+                super.visitElement(element)
 
-                    if (rangeResult == RangeFilterResult.PROCESS) {
-                        processings.forEach { processing ->
-                            val action = processing.createAction(element, diagnostics, settings)
-                            if (action != null) {
-                                availableActions.add(
-                                    ActionData(
-                                        element, action,
-                                        NewJ2KPostProcessingRegistrar.priority(processing),
-                                        processing.writeActionNeeded
-                                    )
+                if (rangeResult == RangeFilterResult.PROCESS) {
+                    processings.forEach { processing ->
+                        val action = processing.createAction(element, diagnostics, settings)
+                        if (action != null) {
+                            availableActions.add(
+                                ActionData(
+                                    element, action,
+                                    NewJ2KPostProcessingRegistrar.priority(processing),
+                                    processing.writeActionNeeded
                                 )
-                            }
+                            )
                         }
                     }
                 }

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.nj2k.postProcessing
 
+import com.intellij.psi.PsiElement
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
@@ -63,7 +64,7 @@ class ConvertDataClass : NewJ2kPostProcessing {
                 DataClassInfo(constructorParameter, property, statement)
             }.toList()
 
-    override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
+    override fun createAction(element: PsiElement, diagnostics: Diagnostics): (() -> Unit)? {
         if (element !is KtClass) return null
         return {
             val factory = KtPsiFactory(element)

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
+import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters2
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -46,6 +47,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isNullable
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -53,10 +55,10 @@ import org.jetbrains.kotlin.utils.mapToIndex
 import java.util.*
 
 interface NewJ2kPostProcessing {
-    fun createAction(element: KtElement, diagnostics: Diagnostics, settings: ConverterSettings?): (() -> Unit)? =
+    fun createAction(element: PsiElement, diagnostics: Diagnostics, settings: ConverterSettings?): (() -> Unit)? =
         createAction(element, diagnostics)
 
-    fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? =
+    fun createAction(element: PsiElement, diagnostics: Diagnostics): (() -> Unit)? =
         createAction(element, diagnostics, null)
 
     val writeActionNeeded: Boolean
@@ -91,8 +93,6 @@ object NewJ2KPostProcessingRegistrar {
         SingleOneTimeProcessing(VarToVal()),
         SingleOneTimeProcessing(ConvertGettersAndSetters()),
         SingleOneTimeProcessing(MoveGetterAndSetterAnnotationsToProperty()),
-        SingleOneTimeProcessing(registerGeneralInspectionBasedProcessing(RedundantModalityModifierInspection())),
-        SingleOneTimeProcessing(registerGeneralInspectionBasedProcessing(RedundantVisibilityModifierInspection())),
         SingleOneTimeProcessing(registerGeneralInspectionBasedProcessing(RedundantGetterInspection())),
         SingleOneTimeProcessing(registerGeneralInspectionBasedProcessing(RedundantSetterInspection())),
         SingleOneTimeProcessing(ConvertDataClass()),
@@ -105,7 +105,7 @@ object NewJ2KPostProcessingRegistrar {
             object : NewJ2kPostProcessing {
                 override val writeActionNeeded: Boolean = true
 
-                override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
+                override fun createAction(element: PsiElement, diagnostics: Diagnostics): (() -> Unit)? {
                     if (element !is KtClass) return null
 
                     fun check(klass: KtClass): Boolean {
@@ -143,7 +143,7 @@ object NewJ2KPostProcessingRegistrar {
                 override val writeActionNeeded: Boolean = true
                 private val processing = registerGeneralInspectionBasedProcessing(RedundantExplicitTypeInspection())
 
-                override fun createAction(element: KtElement, diagnostics: Diagnostics, settings: ConverterSettings?): (() -> Unit)? {
+                override fun createAction(element: PsiElement, diagnostics: Diagnostics, settings: ConverterSettings?): (() -> Unit)? {
                     if (settings?.specifyLocalVariableTypeByDefault == true) return null
 
                     return processing.createAction(element, diagnostics)
@@ -168,6 +168,7 @@ object NewJ2KPostProcessingRegistrar {
                     it
                 ) as KtReturnExpression).returnedExpression.isTrivialStatementBody()
             },
+
 
             registerInspectionBasedProcessing(IfThenToSafeAccessInspection()),
             registerInspectionBasedProcessing(IfThenToSafeAccessInspection()),
@@ -283,14 +284,14 @@ object NewJ2KPostProcessingRegistrar {
     }
 
 
-    private inline fun <reified TElement : KtElement, TIntention : SelfTargetingRangeIntention<TElement>> registerIntentionBasedProcessing(
+    private inline fun <reified TElement : PsiElement, TIntention : SelfTargetingRangeIntention<TElement>> registerIntentionBasedProcessing(
         intention: TIntention,
         noinline additionalChecker: (TElement) -> Boolean = { true }
     ) = object : NewJ2kPostProcessing {
         // Intention can either need or not need write action
         override val writeActionNeeded = intention.startInWriteAction()
 
-        override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
+        override fun createAction(element: PsiElement, diagnostics: Diagnostics): (() -> Unit)? {
             if (!TElement::class.java.isInstance(element)) return null
             val tElement = element as TElement
             if (intention.applicabilityRange(tElement) == null) return null
@@ -351,7 +352,7 @@ object NewJ2KPostProcessingRegistrar {
             }
         }
 
-        override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
+        override fun createAction(element: PsiElement, diagnostics: Diagnostics): (() -> Unit)? {
             val holder = ProblemsHolder(InspectionManager.getInstance(element.project), element.containingFile, false)
             val visitor = inspection.buildVisitor(
                 holder,
@@ -374,7 +375,7 @@ object NewJ2KPostProcessingRegistrar {
 
 
     private inline fun
-            <reified TElement : KtElement,
+            <reified TElement : PsiElement,
                     TInspection : AbstractApplicabilityBasedInspection<TElement>> registerInspectionBasedProcessing(
 
         inspection: TInspection,
@@ -388,7 +389,7 @@ object NewJ2KPostProcessingRegistrar {
             return acceptInformationLevel || inspection.inspectionHighlightType(element) != ProblemHighlightType.INFORMATION
         }
 
-        override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
+        override fun createAction(element: PsiElement, diagnostics: Diagnostics): (() -> Unit)? {
             if (!TElement::class.java.isInstance(element)) return null
             val tElement = element as TElement
             if (!isApplicable(tElement)) return null
@@ -401,13 +402,13 @@ object NewJ2KPostProcessingRegistrar {
     }
 
 
-    private inline fun <reified TElement : KtElement> registerDiagnosticBasedProcessing(
+    private inline fun <reified TElement : PsiElement> registerDiagnosticBasedProcessing(
         vararg diagnosticFactory: DiagnosticFactory<*>,
         crossinline fix: (TElement, Diagnostic) -> Unit
     ) = object : NewJ2kPostProcessing {
         override val writeActionNeeded = true
 
-        override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
+        override fun createAction(element: PsiElement, diagnostics: Diagnostics): (() -> Unit)? {
             if (!TElement::class.java.isInstance(element)) return null
             val diagnostic = diagnostics.forElement(element).firstOrNull { it.factory in diagnosticFactory } ?: return null
             return {
@@ -416,13 +417,13 @@ object NewJ2KPostProcessingRegistrar {
         }
     }
 
-    private inline fun <reified TElement : KtElement> registerDiagnosticBasedProcessingFactory(
+    private inline fun <reified TElement : PsiElement> registerDiagnosticBasedProcessingFactory(
         vararg diagnosticFactory: DiagnosticFactory<*>,
         crossinline fixFactory: (TElement, Diagnostic) -> (() -> Unit)?
     ) = object : NewJ2kPostProcessing {
         override val writeActionNeeded = true
 
-        override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
+        override fun createAction(element: PsiElement, diagnostics: Diagnostics): (() -> Unit)? {
             if (!TElement::class.java.isInstance(element)) return null
             val diagnostic = diagnostics.forElement(element).firstOrNull { it.factory in diagnosticFactory } ?: return null
             return fixFactory(element as TElement, diagnostic)
@@ -433,7 +434,7 @@ object NewJ2KPostProcessingRegistrar {
     private class RemoveExplicitPropertyType : NewJ2kPostProcessing {
         override val writeActionNeeded = true
 
-        override fun createAction(element: KtElement, diagnostics: Diagnostics, settings: ConverterSettings?): (() -> Unit)? {
+        override fun createAction(element: PsiElement, diagnostics: Diagnostics, settings: ConverterSettings?): (() -> Unit)? {
             if (element !is KtProperty) return null
             val needFieldTypes = settings?.specifyFieldTypeByDefault == true
             val needLocalVariablesTypes = settings?.specifyLocalVariableTypeByDefault == true
@@ -467,7 +468,7 @@ object NewJ2KPostProcessingRegistrar {
     private class RemoveRedundantNullability : NewJ2kPostProcessing {
         override val writeActionNeeded: Boolean = true
 
-        override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
+        override fun createAction(element: PsiElement, diagnostics: Diagnostics): (() -> Unit)? {
             if (element !is KtProperty) return null
 
             fun check(element: KtProperty): Boolean {
@@ -505,7 +506,7 @@ object NewJ2KPostProcessingRegistrar {
     private class RemoveExplicitTypeArgumentsProcessing : NewJ2kPostProcessing {
         override val writeActionNeeded = true
 
-        override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
+        override fun createAction(element: PsiElement, diagnostics: Diagnostics): (() -> Unit)? {
             if (element !is KtTypeArgumentList || !RemoveExplicitTypeArgumentsIntention.isApplicableTo(
                     element,
                     approximateFlexible = true
@@ -523,7 +524,7 @@ object NewJ2KPostProcessingRegistrar {
     private class RemoveRedundantOverrideVisibilityProcessing : NewJ2kPostProcessing {
         override val writeActionNeeded = true
 
-        override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
+        override fun createAction(element: PsiElement, diagnostics: Diagnostics): (() -> Unit)? {
             if (element !is KtCallableDeclaration || !element.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return null
             val modifier = element.visibilityModifierType() ?: return null
             return { element.setVisibility(modifier) }
@@ -535,7 +536,7 @@ object NewJ2KPostProcessingRegistrar {
 
         private val intention = ConvertToStringTemplateIntention()
 
-        override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
+        override fun createAction(element: PsiElement, diagnostics: Diagnostics): (() -> Unit)? {
             if (element is KtBinaryExpression && intention.isApplicableTo(element) && ConvertToStringTemplateIntention.shouldSuggestToConvert(
                     element
                 )
@@ -552,7 +553,7 @@ object NewJ2KPostProcessingRegistrar {
 
         private val intention = UsePropertyAccessSyntaxIntention()
 
-        override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
+        override fun createAction(element: PsiElement, diagnostics: Diagnostics): (() -> Unit)? {
             if (element !is KtCallExpression) return null
             val propertyName = intention.detectPropertyNameToUse(element) ?: return null
             return { intention.applyTo(element, propertyName, reformat = true) }
@@ -562,7 +563,7 @@ object NewJ2KPostProcessingRegistrar {
     private class RemoveRedundantSamAdaptersProcessing : NewJ2kPostProcessing {
         override val writeActionNeeded = true
 
-        override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
+        override fun createAction(element: PsiElement, diagnostics: Diagnostics): (() -> Unit)? {
             if (element !is KtCallExpression) return null
 
             val expressions = RedundantSamConstructorInspection.samConstructorCallsToBeConverted(element)
@@ -578,7 +579,7 @@ object NewJ2KPostProcessingRegistrar {
     private class UseExpressionBodyProcessing : NewJ2kPostProcessing {
         override val writeActionNeeded = true
 
-        override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
+        override fun createAction(element: PsiElement, diagnostics: Diagnostics): (() -> Unit)? {
             if (element !is KtPropertyAccessor) return null
 
             val inspection = UseExpressionBodyInspection(convertEmptyToUnit = false)
@@ -595,7 +596,7 @@ object NewJ2KPostProcessingRegistrar {
     private class RemoveRedundantCastToNullableProcessing : NewJ2kPostProcessing {
         override val writeActionNeeded = true
 
-        override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
+        override fun createAction(element: PsiElement, diagnostics: Diagnostics): (() -> Unit)? {
             if (element !is KtBinaryExpressionWithTypeRHS) return null
 
             val context = element.analyze()
@@ -616,7 +617,7 @@ object NewJ2KPostProcessingRegistrar {
     private class FixObjectStringConcatenationProcessing : NewJ2kPostProcessing {
         override val writeActionNeeded = true
 
-        override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
+        override fun createAction(element: PsiElement, diagnostics: Diagnostics): (() -> Unit)? {
             if (element !is KtBinaryExpression ||
                 element.operationToken != KtTokens.PLUS ||
                 diagnostics.forElement(element.operationReference).none {
@@ -646,7 +647,7 @@ object NewJ2KPostProcessingRegistrar {
     private class UninitializedVariableReferenceFromInitializerToThisReferenceProcessing : NewJ2kPostProcessing {
         override val writeActionNeeded = true
 
-        override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
+        override fun createAction(element: PsiElement, diagnostics: Diagnostics): (() -> Unit)? {
             if (element !is KtSimpleNameExpression || diagnostics.forElement(element).none { it.factory == Errors.UNINITIALIZED_VARIABLE }) return null
 
             val resolved = element.mainReference.resolve() ?: return null
@@ -666,7 +667,7 @@ object NewJ2KPostProcessingRegistrar {
     private class UnresolvedVariableReferenceFromInitializerToThisReferenceProcessing : NewJ2kPostProcessing {
         override val writeActionNeeded = true
 
-        override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
+        override fun createAction(element: PsiElement, diagnostics: Diagnostics): (() -> Unit)? {
             if (element !is KtSimpleNameExpression || diagnostics.forElement(element).none { it.factory == Errors.UNRESOLVED_REFERENCE }) return null
 
             val anonymousObject = element.getParentOfType<KtClassOrObject>(true) ?: return null
@@ -694,7 +695,7 @@ object NewJ2KPostProcessingRegistrar {
                 } == true
             }
 
-        override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
+        override fun createAction(element: PsiElement, diagnostics: Diagnostics): (() -> Unit)? {
             if (element !is KtProperty) return null
 
             fun check(element: KtProperty): Boolean {
@@ -726,7 +727,7 @@ object NewJ2KPostProcessingRegistrar {
             return topLevelClass == qualifier
         }
 
-        override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
+        override fun createAction(element: PsiElement, diagnostics: Diagnostics): (() -> Unit)? {
             if (element !is KtQualifiedExpression) return null
             if (!check(element)) return null
             return {
@@ -748,7 +749,7 @@ object NewJ2KPostProcessingRegistrar {
             return topLevelClass.isAncestor(qualifierClass)
         }
 
-        override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
+        override fun createAction(element: PsiElement, diagnostics: Diagnostics): (() -> Unit)? {
             if (element !is KtUserType) return null
             if (!check(element)) return null
             return {

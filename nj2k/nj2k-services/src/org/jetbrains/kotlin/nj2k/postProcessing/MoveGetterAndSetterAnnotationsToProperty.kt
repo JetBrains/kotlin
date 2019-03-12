@@ -5,17 +5,17 @@
 
 package org.jetbrains.kotlin.nj2k.postProcessing
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.idea.intentions.addUseSiteTarget
 import org.jetbrains.kotlin.nj2k.NewJ2kPostProcessing
-import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 
 class MoveGetterAndSetterAnnotationsToProperty : NewJ2kPostProcessing {
     override val writeActionNeeded: Boolean = true
 
-    override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
+    override fun createAction(element: PsiElement, diagnostics: Diagnostics): (() -> Unit)? {
         if (element !is KtProperty) return null
         if (element.accessors.isEmpty()) return null
         return {
