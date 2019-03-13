@@ -1,5 +1,4 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import org.gradle.api.internal.artifacts.publish.ArchivePublishArtifact
 import proguard.gradle.ProGuardTask
 
 description = "Kotlin \"main\" script definition"
@@ -59,6 +58,9 @@ publish()
 
 noDefaultJar()
 
+val mainKtsRootPackage = "org.jetbrains.kotlin.mainKts"
+val mainKtsRelocatedDepsRootPackage = "$mainKtsRootPackage.relocatedDeps"
+
 val packJar by task<ShadowJar> {
     configurations = listOf(fatJar)
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
@@ -68,6 +70,10 @@ val packJar by task<ShadowJar> {
 
     from(mainSourceSet.output)
     from(fatJarContents)
+
+    packagesToRelocate.forEach {
+        relocate(it, "$mainKtsRelocatedDepsRootPackage.$it")
+    }
 }
 
 val proguard by task<ProGuardTask> {
