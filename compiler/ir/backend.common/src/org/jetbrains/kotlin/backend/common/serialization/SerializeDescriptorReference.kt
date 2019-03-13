@@ -3,24 +3,28 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir
+package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 
 
-class DescriptorReferenceSerializer(val declarationTable: DeclarationTable, val serializeString: (String) -> IrKlibProtoBuf.String) {
+open class DescriptorReferenceSerializer(
+    val declarationTable: DeclarationTable,
+    val serializeString: (String) -> KotlinIr.String,
+    mangler: KotlinMangler): KotlinMangler by mangler {
 
     // Not all exported descriptors are deserialized, some a synthesized anew during metadata deserialization.
     // Those created descriptors can't carry the uniqIdIndex, since it is available only for deserialized descriptors.
     // So we record the uniq id of some other "discoverable" descriptor for which we know for sure that it will be
     // available as deserialized descriptor, plus the path to find the needed descriptor from that one.
-    fun serializeDescriptorReference(declaration: IrDeclaration): IrKlibProtoBuf.DescriptorReference? {
+    fun serializeDescriptorReference(declaration: IrDeclaration): KotlinIr.DescriptorReference? {
 
         val descriptor = declaration.descriptor
 
-        if (!declaration.isExported() && !((declaration as? IrDeclarationWithVisibility)?.visibility == Visibilities.INVISIBLE_FAKE)) {
+        if (!declaration.isExported() &&
+            !((declaration as? IrDeclarationWithVisibility)?.visibility == Visibilities.INVISIBLE_FAKE)) {
             return null
         }
         if (declaration is IrAnonymousInitializer) return null
@@ -71,7 +75,7 @@ class DescriptorReferenceSerializer(val declarationTable: DeclarationTable, val 
         val uniqId = discoverableDescriptorsDeclaration?.let { declarationTable.uniqIdByDeclaration(it) }
         uniqId?.let { declarationTable.descriptors.put(discoverableDescriptorsDeclaration.descriptor, it) }
 
-        val proto = IrKlibProtoBuf.DescriptorReference.newBuilder()
+        val proto = KotlinIr.DescriptorReference.newBuilder()
             .setPackageFqName(serializeString(packageFqName))
             .setClassFqName(serializeString(classFqName))
             .setName(serializeString(descriptor.name.toString()))

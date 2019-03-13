@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir
 
-class SerializedIr (
-    val module: ByteArray,
-    val declarations: Map<UniqId, ByteArray>,
-    val debugIndex: Map<UniqId, String>
-)
+import org.jetbrains.kotlin.backend.common.serialization.KotlinManglerImpl
+
+object JsMangler: KotlinManglerImpl() {
+    // TODO: think about this
+    override val String.hashMangle: Long get() = this.hashCode().toLong()
+}
+

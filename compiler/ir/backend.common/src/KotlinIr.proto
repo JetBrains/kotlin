@@ -1,7 +1,7 @@
 syntax = "proto2";
-package org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir;
+package org.jetbrains.kotlin.backend.common.serialization;
 
-option java_outer_classname = "IrKlibProtoBuf";
+option java_outer_classname = "KotlinIr";
 option optimize_for = LITE_RUNTIME;
 
 message DescriptorReference {
@@ -74,6 +74,11 @@ message IrDeclarationOrigin {
   }
 }
 
+message Name {
+    required String name = 1;
+    required bool is_special = 2;
+}
+
 /* ------ Top Level---------------------------------------------- */
 
 message IrDeclarationContainer {
@@ -89,10 +94,12 @@ message IrFile {
   repeated UniqId declaration_id = 1;
   required FileEntry file_entry = 2;
   required String fq_name = 3;
+  required Annotations annotations = 4;
+  repeated IrSymbol explicitly_exported_to_compiler = 5;
 }
 
 message IrModule {
-  required String name = 1;
+  required Name name = 1;
   repeated IrFile file = 2;
   required IrSymbolTable symbol_table = 3;
   required IrTypeTable type_table = 4;
@@ -519,7 +526,7 @@ message IrFunction {
 }
 
 message IrFunctionBase {
-  required String name = 1;
+  required Name name = 1;
   required Visibility visibility = 2;
   required bool is_inline = 3;
   required bool is_external = 4;
@@ -541,7 +548,7 @@ message IrConstructor {
 message IrField {
   required IrSymbol symbol = 1;
   optional IrExpression initializer = 2;
-  required String name = 3;
+  required Name name = 3;
   required Visibility visibility = 4;
   required bool is_final = 5;
   required bool is_external = 6;
@@ -551,7 +558,7 @@ message IrField {
 
 message IrProperty {
   optional DescriptorReference descriptor_reference = 1; // IrProperty doesn't have a symbol at all. Preserve this rudiment for now.
-  required String name = 2;
+  required Name name = 2;
   required Visibility visibility = 3;
   required ModalityKind modality = 4;
   required bool is_var = 5;
@@ -565,7 +572,7 @@ message IrProperty {
 }
 
 message IrVariable {
-  required String name = 1;
+  required Name name = 1;
   required IrSymbol symbol = 2;
   required IrTypeIndex type = 3;
   required bool is_var = 4;
@@ -592,7 +599,7 @@ enum ModalityKind { // It is ModalityKind to not clash with Modality in descript
 
 message IrValueParameter {
   required IrSymbol symbol = 1;
-  required String name = 2;
+  required Name name = 2;
   required int32 index = 3;
   required IrTypeIndex type = 4;
   optional IrTypeIndex vararg_element_type = 5;
@@ -603,7 +610,7 @@ message IrValueParameter {
 
 message IrTypeParameter {
   required IrSymbol symbol = 1;
-  required String name = 2;
+  required Name name = 2;
   required int32 index = 3;
   required IrTypeVariance variance = 4;
   repeated IrTypeIndex super_type = 5;
@@ -616,7 +623,7 @@ message IrTypeParameterContainer {
 
 message IrClass {
   required IrSymbol symbol = 1;
-  required String name = 2;
+  required Name name = 2;
   required ClassKind kind = 3;
   required Visibility visibility = 4;
   required ModalityKind modality = 5;
@@ -636,7 +643,7 @@ message IrEnumEntry {
   required IrSymbol symbol = 1;
   optional IrExpression initializer = 2;
   optional IrDeclaration corresponding_class = 3;
-  required String name = 4;
+  required Name name = 4;
 }
 
 message IrAnonymousInit {
