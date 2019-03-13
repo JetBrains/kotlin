@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.types.expressions.FakeCallResolver
 fun createContainerForTests(project: Project, module: ModuleDescriptor): ContainerForTests {
     return ContainerForTests(createContainer("Tests", JvmPlatformCompilerServices) {
         configureModule(ModuleContext(module, project),
-                        JvmPlatforms.defaultJvmPlatform, JvmPlatformCompilerServices)
+                        JvmPlatforms.defaultJvmPlatform, JvmPlatformCompilerServices, BindingTraceContext())
         useInstance(LanguageVersionSettingsImpl.DEFAULT)
         useImpl<SubstitutingScopeProviderImpl>()
         useImpl<AnnotationResolverImpl>()
