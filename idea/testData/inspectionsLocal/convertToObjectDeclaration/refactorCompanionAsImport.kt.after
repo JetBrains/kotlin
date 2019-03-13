@@ -1,0 +1,7 @@
+object Owner {
+    const val some = ""
+}
+
+class User {
+    val anything = Owner.some
+}

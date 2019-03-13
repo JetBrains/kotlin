@@ -1,0 +1,11 @@
+// FIX: Convert to object declaration
+// WITH_RUNTIME
+
+object A {
+    val prop = "test"
+}
+
+fun main() {
+    println(A.prop)
+    println(A.prop)
+}

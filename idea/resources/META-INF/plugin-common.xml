@@ -1793,6 +1793,15 @@
                      language="kotlin"
     />
 
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ConvertToObjectDeclarationInspection"
+                     displayName="Class containing only a companion object can be converted to object declaration"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="true"
+                     level="INFO"
+                     language="kotlin"
+    />
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.conventionNameCalls.ReplaceGetOrSetInspection"
                      displayName="Explicit 'get' or 'set' call"
                      groupPath="Kotlin"

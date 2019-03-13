@@ -1,0 +1,11 @@
+// WITH_RUNTIME
+
+object NotificationItemTypeModel {
+    const val ABC = "ABC"
+    const val CDE = "CDE"
+}
+
+fun main() {
+    println(NotificationItemTypeModel.ABC)
+    println(NotificationItemTypeModel.ABC)
+}

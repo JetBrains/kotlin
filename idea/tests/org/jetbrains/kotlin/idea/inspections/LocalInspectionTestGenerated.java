@@ -2123,6 +2123,84 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/convertToObjectDeclaration")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ConvertToObjectDeclaration extends AbstractLocalInspectionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        @TestMetadata("abortOnAlias.kt")
+        public void testAbortOnAlias() throws Exception {
+            runTest("idea/testData/inspectionsLocal/convertToObjectDeclaration/abortOnAlias.kt");
+        }
+
+        @TestMetadata("abortOnSecondaryConstructorUsage.kt")
+        public void testAbortOnSecondaryConstructorUsage() throws Exception {
+            runTest("idea/testData/inspectionsLocal/convertToObjectDeclaration/abortOnSecondaryConstructorUsage.kt");
+        }
+
+        @TestMetadata("abortOnTypeAlias.kt")
+        public void testAbortOnTypeAlias() throws Exception {
+            runTest("idea/testData/inspectionsLocal/convertToObjectDeclaration/abortOnTypeAlias.kt");
+        }
+
+        @TestMetadata("accompanyingDeclarations.kt")
+        public void testAccompanyingDeclarations() throws Exception {
+            runTest("idea/testData/inspectionsLocal/convertToObjectDeclaration/accompanyingDeclarations.kt");
+        }
+
+        public void testAllFilesPresentInConvertToObjectDeclaration() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/convertToObjectDeclaration"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("existingSuper.kt")
+        public void testExistingSuper() throws Exception {
+            runTest("idea/testData/inspectionsLocal/convertToObjectDeclaration/existingSuper.kt");
+        }
+
+        @TestMetadata("hasConstructorUsages.kt")
+        public void testHasConstructorUsages() throws Exception {
+            runTest("idea/testData/inspectionsLocal/convertToObjectDeclaration/hasConstructorUsages.kt");
+        }
+
+        @TestMetadata("inheritance.kt")
+        public void testInheritance() throws Exception {
+            runTest("idea/testData/inspectionsLocal/convertToObjectDeclaration/inheritance.kt");
+        }
+
+        @TestMetadata("nameCollision.kt")
+        public void testNameCollision() throws Exception {
+            runTest("idea/testData/inspectionsLocal/convertToObjectDeclaration/nameCollision.kt");
+        }
+
+        @TestMetadata("named.kt")
+        public void testNamed() throws Exception {
+            runTest("idea/testData/inspectionsLocal/convertToObjectDeclaration/named.kt");
+        }
+
+        @TestMetadata("refactorCompanionAsImport.kt")
+        public void testRefactorCompanionAsImport() throws Exception {
+            runTest("idea/testData/inspectionsLocal/convertToObjectDeclaration/refactorCompanionAsImport.kt");
+        }
+
+        @TestMetadata("refactorCompanionReference.kt")
+        public void testRefactorCompanionReference() throws Exception {
+            runTest("idea/testData/inspectionsLocal/convertToObjectDeclaration/refactorCompanionReference.kt");
+        }
+
+        @TestMetadata("secondaryConstructor.kt")
+        public void testSecondaryConstructor() throws Exception {
+            runTest("idea/testData/inspectionsLocal/convertToObjectDeclaration/secondaryConstructor.kt");
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            runTest("idea/testData/inspectionsLocal/convertToObjectDeclaration/simple.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/copyWithoutNamedArguments")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

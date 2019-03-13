@@ -1,0 +1,6 @@
+// FIX: Convert to object declaration
+
+object NotificationItemTypeModel {
+    const val ABC = "ABC"
+    const val CDE = "CDE"
+}
