@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.java.toNotNullConeKotlinType
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
@@ -54,29 +55,30 @@ class JavaClassUseSiteScope(
     private fun isEqualTypes(a: FirTypeRef, b: FirTypeRef) =
         isEqualTypes(a.toNotNullConeKotlinType(session), b.toNotNullConeKotlinType(session))
 
-    private fun isOverriddenFunCheck(member: FirNamedFunction, self: FirNamedFunction): Boolean {
-        return member.valueParameters.size == self.valueParameters.size &&
-                member.valueParameters.zip(self.valueParameters).all { (memberParam, selfParam) ->
-                    isEqualTypes(memberParam.returnTypeRef, selfParam.returnTypeRef)
-                }
+    private fun isOverriddenFunCheck(overriddenInJava: FirJavaMethod, base: FirNamedFunction): Boolean {
+        val receiverTypeRef = base.receiverTypeRef
+        if (receiverTypeRef == null) {
+            return overriddenInJava.valueParameters.size == base.valueParameters.size &&
+                    overriddenInJava.valueParameters.zip(base.valueParameters).all { (memberParam, selfParam) ->
+                        isEqualTypes(memberParam.returnTypeRef, selfParam.returnTypeRef)
+                    }
+        } else {
+            if (overriddenInJava.valueParameters.size != base.valueParameters.size + 1) return false
+            val baseParameterTypes = listOf(receiverTypeRef) + base.valueParameters.map { it.returnTypeRef }
+            val javaParameterTypes = overriddenInJava.valueParameters.map { it.returnTypeRef }
+            return baseParameterTypes.zip(javaParameterTypes).all { (baseType, typeFromJava) ->
+                isEqualTypes(baseType, typeFromJava)
+            }
+        }
     }
 
     internal fun ConeFunctionSymbol.getOverridden(candidates: Set<ConeFunctionSymbol>): ConeCallableSymbol? {
         if (overriddenByBase.containsKey(this)) return overriddenByBase[this]
 
-        fun sameReceivers(memberTypeRef: FirTypeRef?, selfTypeRef: FirTypeRef?): Boolean {
-            return when {
-                memberTypeRef != null && selfTypeRef != null -> isEqualTypes(memberTypeRef, selfTypeRef)
-                else -> memberTypeRef == null && selfTypeRef == null
-            }
-        }
-
         val self = (this as FirFunctionSymbol).fir as FirNamedFunction
         val overriding = candidates.firstOrNull {
-            val member = (it as FirFunctionSymbol).fir as FirNamedFunction
-            self.modality != Modality.FINAL
-                    && sameReceivers(member.receiverTypeRef, self.receiverTypeRef)
-                    && isOverriddenFunCheck(member, self)
+            val member = (it as FirFunctionSymbol).fir as FirJavaMethod
+            self.modality != Modality.FINAL && isOverriddenFunCheck(member, self)
         } // TODO: two or more overrides for one fun?
         overriddenByBase[this] = overriding
         return overriding
