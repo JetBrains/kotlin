@@ -276,3 +276,9 @@ fun Type.isSubtype(type: AsmType): Boolean {
 
     return false
 }
+
+val DebuggerContextImpl.canRunEvaluation: Boolean
+    get() = debugProcess?.canRunEvaluation ?: false
+
+val DebugProcessImpl.canRunEvaluation: Boolean
+    get() = suspendManager.pausedContext != null
