@@ -17,11 +17,8 @@
 package org.jetbrains.kotlin.frontend.di
 
 import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.analyzer.common.CommonPlatformCompilerServices
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.container.StorageComponentContainer
-import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.container.useImpl
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.context.ModuleContext
@@ -38,7 +35,6 @@ import org.jetbrains.kotlin.resolve.calls.tower.KotlinResolutionStatelessCallbac
 import org.jetbrains.kotlin.resolve.checkers.ExperimentalUsageChecker
 import org.jetbrains.kotlin.resolve.lazy.*
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
-import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 import org.jetbrains.kotlin.types.expressions.DeclarationScopeProviderForLocalClassifierAnalyzer
 import org.jetbrains.kotlin.types.expressions.LocalClassDescriptorHolder
 import org.jetbrains.kotlin.types.expressions.LocalLazyDeclarationResolver
@@ -173,15 +169,3 @@ fun createContainerForLazyResolve(
     useImpl<ResolveSession>()
     useImpl<LazyTopDownAnalyzer>()
 }
-
-// TODO: remove it
-fun createLazyResolveSession(moduleContext: ModuleContext, files: Collection<KtFile>): ResolveSession =
-    createContainerForLazyResolve(
-        moduleContext,
-        FileBasedDeclarationProviderFactory(moduleContext.storageManager, files),
-        BindingTraceContext(),
-        DefaultBuiltInPlatforms.commonPlatform,
-        CommonPlatformCompilerServices,
-        CompilerEnvironment,
-        LanguageVersionSettingsImpl.DEFAULT
-    ).get<ResolveSession>()
