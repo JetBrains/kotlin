@@ -3,8 +3,8 @@ FILE: jvm.kt
         public constructor(): super<R|AnnotatedDerived|>()
 
         public final function test(): R|kotlin/Unit| {
-            val x: R|error: Not supported: FirImplicitTypeRefImpl| = <Ambiguity: foo, [/AnnotatedDerived.foo, /Annotated.foo]>#(String(123))
-            val y: R|error: Not supported: FirImplicitTypeRefImpl| = <Ambiguity: foo, [/AnnotatedDerived.foo, /Annotated.foo]>#(Null(null))
+            val x: R|error: Not supported: FirImplicitTypeRefImpl| = R|/AnnotatedDerived.foo|(String(123))
+            val y: R|error: Not supported: FirImplicitTypeRefImpl| = R|/AnnotatedDerived.foo|(Null(null))
         }
 
     }

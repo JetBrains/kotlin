@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.name.Name
 
 class FirClassSubstitutionScope(
-    private val useSiteScope: FirClassUseSiteScope,
+    private val useSiteScope: FirScope,
     private val substitution: Map<ConeTypeParameterSymbol, ConeKotlinType>
 ) : FirScope {
 

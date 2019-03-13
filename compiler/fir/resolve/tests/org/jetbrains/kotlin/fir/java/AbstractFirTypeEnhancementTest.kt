@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.fir.java.declarations.FirJavaConstructor
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.java.scopes.JavaClassEnhancementScope
-import org.jetbrains.kotlin.fir.resolve.FirScopeProvider
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirCompositeSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
@@ -171,7 +170,7 @@ abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
             val processedJavaClasses = mutableSetOf<FirJavaClass>()
             for (javaClass in javaProvider.getJavaTopLevelClasses().sortedBy { it.name }) {
                 if (javaClass !is FirJavaClass || javaClass in processedJavaClasses) continue
-                val enhancementScope = session.service<FirScopeProvider>().getDeclaredMemberScope(javaClass, session).let {
+                val enhancementScope = javaClass.buildClassSpecificUseSiteScope(session).let {
                     when (it) {
                         is FirCompositeScope -> it.scopes.filterIsInstance<JavaClassEnhancementScope>().first()
                         is JavaClassEnhancementScope -> it

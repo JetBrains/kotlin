@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.java.scopes.JavaClassEnhancementScope
 import org.jetbrains.kotlin.fir.resolve.FirProvider
-import org.jetbrains.kotlin.fir.resolve.FirScopeProvider
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirCompositeSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
@@ -133,7 +132,7 @@ abstract class AbstractFirMultiModuleResolveTest : AbstractMultiModuleTest() {
                 val javaProvider = symbolProvider.providers.filterIsInstance<JavaSymbolProvider>().first()
                 for (javaClass in javaProvider.getJavaTopLevelClasses().sortedBy { it.name }) {
                     if (javaClass !is FirJavaClass || javaClass in processedJavaClasses) continue
-                    val enhancementScope = session.service<FirScopeProvider>().getDeclaredMemberScope(javaClass, session).let {
+                    val enhancementScope = javaClass.buildClassSpecificUseSiteScope(session).let {
                         when (it) {
                             is FirCompositeScope -> it.scopes.filterIsInstance<JavaClassEnhancementScope>().first()
                             is JavaClassEnhancementScope -> it

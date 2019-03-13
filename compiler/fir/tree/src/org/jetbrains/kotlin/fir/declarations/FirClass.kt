@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
@@ -18,6 +20,8 @@ interface FirClass : FirDeclarationContainer, FirStatement, FirAnnotationContain
     val superTypeRefs: List<FirTypeRef>
 
     val classKind: ClassKind
+
+    fun buildClassSpecificUseSiteScope(useSiteSession: FirSession): FirScope? = null
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitClass(this, data)
