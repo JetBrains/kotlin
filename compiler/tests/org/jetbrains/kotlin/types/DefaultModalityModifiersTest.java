@@ -19,18 +19,22 @@ package org.jetbrains.kotlin.types;
 import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
+import org.jetbrains.kotlin.analyzer.common.CommonPlatformCompilerServices;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl;
+import org.jetbrains.kotlin.container.DslKt;
+import org.jetbrains.kotlin.container.StorageComponentContainer;
 import org.jetbrains.kotlin.context.ContextKt;
+import org.jetbrains.kotlin.context.ModuleContext;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.DescriptorResolver;
-import org.jetbrains.kotlin.resolve.FunctionDescriptorResolver;
+import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfoFactory;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
+import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
 import org.jetbrains.kotlin.resolve.scopes.*;
 import org.jetbrains.kotlin.resolve.scopes.utils.ScopeUtilsKt;
 import org.jetbrains.kotlin.test.ConfigurationKind;
@@ -39,10 +43,11 @@ import org.jetbrains.kotlin.test.KotlinTestWithEnvironment;
 import org.jetbrains.kotlin.tests.di.ContainerForTests;
 import org.jetbrains.kotlin.tests.di.InjectionKt;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.kotlin.frontend.di.InjectionKt.createLazyResolveSession;
+import static org.jetbrains.kotlin.frontend.di.InjectionKt.createContainerForLazyResolve;
 
 public class DefaultModalityModifiersTest extends KotlinTestWithEnvironment {
     private final DefaultModalityModifiersTestCase tc = new DefaultModalityModifiersTestCase();
@@ -102,10 +107,20 @@ public class DefaultModalityModifiersTest extends KotlinTestWithEnvironment {
         }
 
         private ClassDescriptorWithResolutionScopes createClassDescriptor(ClassKind kind, KtClass aClass) {
-            ResolveSession resolveSession = createLazyResolveSession(
-                    ContextKt.ModuleContext(root, getProject()),
-                    Collections.singleton(aClass.getContainingKtFile())
+            ModuleContext moduleContext = ContextKt.ModuleContext(root, getProject());
+            Collection<KtFile> files = Collections.singleton(aClass.getContainingKtFile());
+
+            StorageComponentContainer container = createContainerForLazyResolve(
+                    moduleContext,
+                    new FileBasedDeclarationProviderFactory(moduleContext.getStorageManager(), files),
+                    new BindingTraceContext(),
+                    DefaultBuiltInPlatforms.INSTANCE.getCommonPlatform(),
+                    CommonPlatformCompilerServices.INSTANCE,
+                    CompilerEnvironment.INSTANCE,
+                    LanguageVersionSettingsImpl.DEFAULT
             );
+
+            ResolveSession resolveSession = DslKt.getService(container, ResolveSession.class);
 
             return (ClassDescriptorWithResolutionScopes) resolveSession.getClassDescriptor(aClass, NoLookupLocation.FROM_TEST);
         }
