@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.getValue
 import org.jetbrains.kotlin.container.useImpl
-import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.frontend.di.configureModule
@@ -34,9 +33,13 @@ import org.jetbrains.kotlin.types.expressions.FakeCallResolver
 
 fun createContainerForTests(project: Project, module: ModuleDescriptor): ContainerForTests {
     return ContainerForTests(createContainer("Tests", JvmPlatformCompilerServices) {
-        configureModule(ModuleContext(module, project),
-                        JvmPlatforms.defaultJvmPlatform, JvmPlatformCompilerServices, BindingTraceContext())
-        useInstance(LanguageVersionSettingsImpl.DEFAULT)
+        configureModule(
+            ModuleContext(module, project),
+            JvmPlatforms.defaultJvmPlatform,
+            JvmPlatformCompilerServices,
+            BindingTraceContext(),
+            LanguageVersionSettingsImpl.DEFAULT
+        )
         useImpl<AnnotationResolverImpl>()
         useImpl<ExpressionTypingServices>()
     })
