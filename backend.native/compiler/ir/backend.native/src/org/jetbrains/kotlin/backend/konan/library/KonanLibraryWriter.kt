@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.library
 
 import llvm.LLVMModuleRef
-import org.jetbrains.kotlin.backend.konan.serialization.UniqId
+import org.jetbrains.kotlin.backend.common.serialization.SerializedIr
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.library.KonanLibraryVersioning
 import org.jetbrains.kotlin.konan.properties.Properties
@@ -29,12 +29,6 @@ class LinkData(
     val fragments: List<List<ByteArray>>,
     val fragmentNames: List<String>,
     val ir: SerializedIr? = null
-)
-
-class SerializedIr (
-    val module: ByteArray,
-    val combinedDeclarationFilePath: String,
-    val debugIndex: Map<UniqId, String>
 )
 
 interface MetadataWriter {

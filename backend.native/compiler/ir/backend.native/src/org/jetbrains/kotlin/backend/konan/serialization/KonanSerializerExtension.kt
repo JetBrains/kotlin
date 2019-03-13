@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.konan.KonanProtoBuf
@@ -20,7 +21,8 @@ import org.jetbrains.kotlin.serialization.konan.SourceFileMap
 import org.jetbrains.kotlin.types.KotlinType
 
 internal class KonanSerializerExtension(val context: Context, override val metadataVersion: BinaryVersion,
-                                        val sourceFileMap: SourceFileMap, val declarationTable: DeclarationTable) :
+                                        val sourceFileMap: SourceFileMap, val declarationTable: DeclarationTable
+) :
         KotlinSerializerExtensionBase(KonanSerializerProtocol) {
 
     override val stringTable = KonanStringTable()
@@ -28,7 +30,7 @@ internal class KonanSerializerExtension(val context: Context, override val metad
 
     fun uniqId(descriptor: DeclarationDescriptor): KonanProtoBuf.DescriptorUniqId? {
         val index = declarationTable.descriptorTable.get(descriptor)
-        return index?.let { newDescriptorUniqId(it) }
+        return index?.let { newKonanDescriptorUniqId(it) }
     }
 
     override fun serializeType(type: KotlinType, proto: ProtoBuf.Type.Builder) {

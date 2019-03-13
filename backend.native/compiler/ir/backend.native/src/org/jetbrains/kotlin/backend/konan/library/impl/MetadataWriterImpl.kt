@@ -30,7 +30,5 @@ internal class MetadataWriterImpl(libraryLayout: KonanLibraryLayout): KonanLibra
             // TODO: use Files.move.
             File(it).copyTo(irFile)
         }
-        val lines = linkData.ir?.debugIndex?.map { entry -> "${entry.key}: ${entry.value}" }
-        if (lines != null) irIndex.writeLines(lines)
     }
 }
