@@ -77,6 +77,20 @@ class VariantAwareDependenciesIT : BaseGradleIT() {
                 it.replace("apply plugin: \"kotlin\"", "")
                     .replace("\"org.jetbrains.kotlin:kotlin-stdlib\"", "\"org.jetbrains.kotlin:kotlin-stdlib:\$kotlin_version\"")
             }
+
+            if (testGradleVersionAtLeast("5.3-rc-1")) {
+                gradleBuildScript().appendText(
+                    // In Gradle 5.3, the variants of a Kotlin MPP can't be disambiguated in a pure Java project's deprecated
+                    // configurations that don't have a proper 'org.gradle.usage' attribute value, see KT-30378
+                    "\n" + """
+                    configurations {
+                        configure([compile, runtime, testCompile, testRuntime, getByName('default')]) {
+                            canBeResolved = false
+                        }
+                    }
+                    """.trimIndent()
+                )
+            }
         }
 
         with(outerProject) {
