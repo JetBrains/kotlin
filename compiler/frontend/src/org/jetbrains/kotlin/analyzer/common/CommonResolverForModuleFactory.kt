@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.analyzer.common
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.analyzer.*
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -157,14 +158,13 @@ object CommonResolverForModuleFactory : ResolverForModuleFactory() {
         metadataPartProvider: MetadataPartProvider,
         languageVersionSettings: LanguageVersionSettings
     ): StorageComponentContainer = createContainer("ResolveCommonCode", CommonPlatformCompilerServices) {
-        configureModule(moduleContext, DefaultBuiltInPlatforms.commonPlatform, CommonPlatformCompilerServices, bindingTrace)
+        configureModule(moduleContext, DefaultBuiltInPlatforms.commonPlatform, CommonPlatformCompilerServices, bindingTrace, languageVersionSettings)
 
         useInstance(moduleContentScope)
         useInstance(LookupTracker.DO_NOTHING)
         useInstance(ExpectActualTracker.DoNothing)
         useImpl<ResolveSession>()
         useImpl<LazyTopDownAnalyzer>()
-        useInstance(languageVersionSettings)
         useImpl<AnnotationResolverImpl>()
         useImpl<CompilerDeserializationConfiguration>()
         useInstance(metadataPartProvider)
