@@ -43,7 +43,6 @@ fun createContainerForTests(project: Project, module: ModuleDescriptor): Contain
         )
         useImpl<SubstitutingScopeProviderImpl>()
         useImpl<AnnotationResolverImpl>()
-        useImpl<ExpressionTypingServices>()
     })
 }
 
