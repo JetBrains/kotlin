@@ -368,6 +368,7 @@ class IncrementalJvmCompilerRunner(
         val compiler = K2JVMCompiler()
         val freeArgsBackup = args.freeArgs.toList()
         args.freeArgs += sourcesToCompile.map { it.absolutePath }
+        args.allowNoSourceFiles = true
         val exitCode = compiler.exec(messageCollector, services, args)
         args.freeArgs = freeArgsBackup
         return exitCode

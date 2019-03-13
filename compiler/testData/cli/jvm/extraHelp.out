@@ -2,6 +2,7 @@ Usage: kotlinc-jvm <options> <source files>
 where advanced options include:
   -Xadd-modules=<module[,]>  Root modules to resolve in addition to the initial modules,
                              or all modules on the module path if <module> is ALL-MODULE-PATH
+  -Xallow-no-source-files    Allow no source files
   -Xassertions={always-enable|always-disable|jvm|legacy}
                              Assert calls behaviour
                              -Xassertions=always-enable:  enable, ignore jvm assertion settings;

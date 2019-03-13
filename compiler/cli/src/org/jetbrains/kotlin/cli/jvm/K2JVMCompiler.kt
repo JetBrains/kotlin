@@ -80,10 +80,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         configuration.configureExplicitContentRoots(arguments)
         configuration.configureStandardLibs(paths, arguments)
 
-        // in case of IC we need to run compiler even
-        // when there are no files to compile (to update caches & metadata when a file is removed)
-        val isICEnabled = configuration[JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS] != null
-        if (arguments.buildFile == null && arguments.freeArgs.isEmpty() && !(arguments.version || isICEnabled)) {
+        if (arguments.buildFile == null && arguments.freeArgs.isEmpty() && !arguments.version && !arguments.allowNoSourceFiles) {
             if (arguments.script) {
                 messageCollector.report(ERROR, "Specify script source path to evaluate")
                 return COMPILATION_ERROR
@@ -154,7 +151,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 if (!it) return COMPILATION_ERROR
             }
 
-            if (environment.getSourceFiles().isEmpty() && !isICEnabled && buildFile == null) {
+            if (environment.getSourceFiles().isEmpty() && !arguments.allowNoSourceFiles && buildFile == null) {
                 if (arguments.version) return OK
 
                 messageCollector.report(ERROR, "No source files")

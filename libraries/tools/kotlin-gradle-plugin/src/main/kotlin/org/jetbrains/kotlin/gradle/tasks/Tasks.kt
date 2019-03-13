@@ -405,6 +405,7 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
 
         if (defaultsOnly) return
 
+        args.allowNoSourceFiles = true
         args.classpathAsList = compileClasspath.toList()
         args.destinationAsFile = destinationDir
         parentKotlinOptionsImpl?.updateArguments(args)
