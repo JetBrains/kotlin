@@ -49,7 +49,8 @@ fun createTopDownAnalyzerForJs(
             moduleContext,
             JsPlatforms.defaultJsPlatform,
             JsPlatformCompilerServices,
-            bindingTrace
+            bindingTrace,
+            languageVersionSettings
         )
 
         useInstance(declarationProviderFactory)
@@ -59,7 +60,6 @@ fun createTopDownAnalyzerForJs(
         useInstance(lookupTracker)
         useInstance(expectActualTracker)
 
-        useInstance(languageVersionSettings)
         useImpl<ResolveSession>()
         useImpl<LazyTopDownAnalyzer>()
         useImpl<SubstitutingScopeProviderImpl>()
