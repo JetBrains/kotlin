@@ -69,7 +69,7 @@ FILE fqName:<root> fileName:/genericPropertyRef.kt
     FIELD DELEGATE name:additionalText$delegate type:DVal visibility:private flags:final,static
       EXPRESSION_BODY
         CALL 'constructor DVal(Any)' type=DVal origin=null
-          kmember: PROPERTY_REFERENCE 'text: String?' field='text: String?' getter='<get-text>(): String?' setter='<set-text>(String?): Unit' type=kotlin.reflect.KMutableProperty1<Value<T>, kotlin.String?> origin=null
+          kmember: PROPERTY_REFERENCE 'text: String?' field=null getter='<get-text>(): String?' setter='<set-text>(String?): Unit' type=kotlin.reflect.KMutableProperty1<Value<T>, kotlin.String?> origin=null
     FUN DELEGATED_PROPERTY_ACCESSOR name:<get-additionalText> visibility:public modality:FINAL <T> ($receiver:Value<T>) returnType:kotlin.Int flags:
       correspondingProperty: PROPERTY name:additionalText visibility:public modality:FINAL flags:delegated,val
       TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
@@ -85,7 +85,7 @@ FILE fqName:<root> fileName:/genericPropertyRef.kt
     FIELD DELEGATE name:additionalValue$delegate type:DVal visibility:private flags:final,static
       EXPRESSION_BODY
         CALL 'constructor DVal(Any)' type=DVal origin=null
-          kmember: PROPERTY_REFERENCE 'value: T' field='value: T' getter='<get-value>(): T' setter='<set-value>(T): Unit' type=kotlin.reflect.KMutableProperty1<Value<T>, T> origin=null
+          kmember: PROPERTY_REFERENCE 'value: T' field=null getter='<get-value>(): T' setter='<set-value>(T): Unit' type=kotlin.reflect.KMutableProperty1<Value<T>, T> origin=null
     FUN DELEGATED_PROPERTY_ACCESSOR name:<get-additionalValue> visibility:public modality:FINAL <T> ($receiver:Value<T>) returnType:kotlin.Int flags:
       correspondingProperty: PROPERTY name:additionalValue visibility:public modality:FINAL flags:delegated,val
       TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
@@ -186,7 +186,7 @@ FILE fqName:<root> fileName:/genericPropertyRef.kt
   PROPERTY name:barRef visibility:public modality:FINAL flags:val
     FIELD PROPERTY_BACKING_FIELD name:barRef type:kotlin.reflect.KMutableProperty1<kotlin.String?, kotlin.String?> visibility:public flags:final,static
       EXPRESSION_BODY
-        PROPERTY_REFERENCE 'bar: T on T' field='bar: T on T' getter='<get-bar>() on T: T' setter='<set-bar>(T) on T: Unit' type=kotlin.reflect.KMutableProperty1<kotlin.String?, kotlin.String?> origin=null
+        PROPERTY_REFERENCE 'bar: T on T' field=null getter='<get-bar>() on T: T' setter='<set-bar>(T) on T: Unit' type=kotlin.reflect.KMutableProperty1<kotlin.String?, kotlin.String?> origin=null
           <T>: kotlin.String?
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-barRef> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KMutableProperty1<kotlin.String?, kotlin.String?> flags:
       correspondingProperty: PROPERTY name:barRef visibility:public modality:FINAL flags:val

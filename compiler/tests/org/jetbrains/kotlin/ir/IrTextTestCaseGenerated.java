@@ -1062,6 +1062,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/expressions/primitivesImplicitConversions.kt");
         }
 
+        @TestMetadata("propertyReferences.kt")
+        public void testPropertyReferences() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/propertyReferences.kt");
+        }
+
         @TestMetadata("references.kt")
         public void testReferences() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/references.kt");

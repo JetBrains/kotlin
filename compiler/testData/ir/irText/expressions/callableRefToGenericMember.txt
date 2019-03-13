@@ -45,10 +45,9 @@ FILE fqName:<root> fileName:/callableRefToGenericMember.kt
   PROPERTY name:test2 visibility:public modality:FINAL flags:val
     FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.reflect.KProperty1<A<kotlin.String>, kotlin.Int> visibility:public flags:final,static
       EXPRESSION_BODY
-        PROPERTY_REFERENCE 'bar: Int' field='bar: Int' getter='<get-bar>(): Int' setter=null type=kotlin.reflect.KProperty1<A<kotlin.String>, kotlin.Int> origin=null
+        PROPERTY_REFERENCE 'bar: Int' field=null getter='<get-bar>(): Int' setter=null type=kotlin.reflect.KProperty1<A<kotlin.String>, kotlin.Int> origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KProperty1<A<kotlin.String>, kotlin.Int> flags:
       correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL flags:val
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test2>(): KProperty1<A<String>, Int>'
           GET_FIELD 'test2: KProperty1<A<String>, Int>' type=kotlin.reflect.KProperty1<A<kotlin.String>, kotlin.Int> origin=null
-

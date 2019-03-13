@@ -26,7 +26,7 @@ FILE fqName:<root> fileName:/reflectionLiterals.kt
   PROPERTY name:qux visibility:public modality:FINAL flags:val
     FIELD PROPERTY_BACKING_FIELD name:qux type:kotlin.Int visibility:public flags:final,static
       EXPRESSION_BODY
-        CONST Int type=kotlin.Int value=42
+        CONST Int type=kotlin.Int value=1
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-qux> visibility:public modality:FINAL <> () returnType:kotlin.Int flags:
       correspondingProperty: PROPERTY name:qux visibility:public modality:FINAL flags:val
       BLOCK_BODY
@@ -88,13 +88,3 @@ FILE fqName:<root> fileName:/reflectionLiterals.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test6>(): KFunction0<Unit>'
           GET_FIELD 'test6: KFunction0<Unit>' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null
-  PROPERTY name:test7 visibility:public modality:FINAL flags:val
-    FIELD PROPERTY_BACKING_FIELD name:test7 type:kotlin.reflect.KProperty0<kotlin.Int> visibility:public flags:final,static
-      EXPRESSION_BODY
-        PROPERTY_REFERENCE 'qux: Int' field='qux: Int' getter='<get-qux>(): Int' setter=null type=kotlin.reflect.KProperty0<kotlin.Int> origin=null
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test7> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KProperty0<kotlin.Int> flags:
-      correspondingProperty: PROPERTY name:test7 visibility:public modality:FINAL flags:val
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-test7>(): KProperty0<Int>'
-          GET_FIELD 'test7: KProperty0<Int>' type=kotlin.reflect.KProperty0<kotlin.Int> origin=null
-
