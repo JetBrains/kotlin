@@ -1,0 +1,4 @@
+public open class Inheritor : R|java/lang/Object|, R|Base| {
+    public open operator fun getX(): R|kotlin/Int|
+
+}
