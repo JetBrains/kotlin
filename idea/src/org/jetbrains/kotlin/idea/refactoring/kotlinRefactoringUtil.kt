@@ -65,6 +65,7 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.idea.analysis.analyzeAsReplacement
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
@@ -78,6 +79,7 @@ import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinValVar
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.toValVar
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KtPsiClassWrapper
+import org.jetbrains.kotlin.idea.refactoring.rename.canonicalRender
 import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.idea.util.string.collapseSpaces
 import org.jetbrains.kotlin.j2k.ConverterSettings
@@ -1031,4 +1033,19 @@ fun PsiMethod.checkDeclarationConflict(name: String, conflicts: MultiMap<PsiElem
         // as is necessary here: see KT-10386
         ?.firstOrNull { it.parameterList.parametersCount == 0 && !callables.contains(it.namedUnwrappedElement as PsiElement?) }
         ?.let { reportDeclarationConflict(conflicts, it) { s -> "$s already exists" } }
+}
+
+fun <T : KtExpression> T.replaceWithCopyWithResolveCheck(
+    resolveStrategy: (T, BindingContext) -> DeclarationDescriptor?,
+    context: BindingContext = analyze(),
+    preHook: T.() -> Unit = {},
+    postHook: T.() -> T? = { this }
+): T? {
+    val originDescriptor = resolveStrategy(this, context) ?: return null
+    @Suppress("UNCHECKED_CAST") val elementCopy = copy() as T
+    elementCopy.preHook()
+    val newContext = elementCopy.analyzeAsReplacement(this, context)
+    val newDescriptor = resolveStrategy(elementCopy, newContext) ?: return null
+
+    return if (originDescriptor.canonicalRender() == newDescriptor.canonicalRender()) elementCopy.postHook() else null
 }
