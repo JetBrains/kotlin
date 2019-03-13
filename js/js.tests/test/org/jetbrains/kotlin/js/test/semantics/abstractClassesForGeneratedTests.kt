@@ -57,35 +57,3 @@ abstract class AbstractSourceMapGenerationSmokeTest : BasicBoxTest(
         generateSourceMap = true,
         generateNodeJsRunner = false
 )
-
-abstract class AbstractIrBoxJsTest : BasicIrBoxTest(BasicBoxTest.TEST_DATA_DIR_PATH + "box/", "irBox/")
-
-abstract class AbstractIrJsCodegenBoxTest : BasicIrBoxTest(
-    "compiler/testData/codegen/box/",
-    "codegen/irBox/"
-)
-
-abstract class BorrowedIrInlineTest(relativePath: String) : BasicIrBoxTest(
-    "compiler/testData/codegen/boxInline/$relativePath",
-    "codegen/irBoxInline/$relativePath"
-) {
-    init {
-        additionalCommonFileDirectories += BasicBoxTest.TEST_DATA_DIR_PATH + relativePath + "/_commonFiles/"
-    }
-}
-
-abstract class AbstractIrNonLocalReturnsTest : BorrowedIrInlineTest("nonLocalReturns/")
-
-abstract class AbstractIrPropertyAccessorsInlineTests : BorrowedIrInlineTest("property/")
-
-abstract class AbstractIrNoInlineTests : BorrowedIrInlineTest("noInline/")
-
-abstract class AbstractIrCallableReferenceInlineTests : BorrowedIrInlineTest("callableReference/")
-
-abstract class AbstractIrEnumValuesInlineTests : BorrowedIrInlineTest("enum/")
-
-abstract class AbstractIrInlineDefaultValuesTests : BorrowedIrInlineTest("defaultValues/")
-
-abstract class AbstractIrInlineSuspendTests : BorrowedIrInlineTest("suspend/")
-
-abstract class AbstractIrJsInlineContractsTests : BorrowedIrInlineTest("contracts/")

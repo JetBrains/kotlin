@@ -64,14 +64,19 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-projectTest {
+
+fun Test.setUpBoxTests(jsEnabled: Boolean, jsIrEnabled: Boolean, skipIrKlib: Boolean = false) {
     dependsOn(":dist")
-    dependsOn(testJsRuntime)
-    dependsOn(generateIrRuntimeKlib)
+    if (jsEnabled) dependsOn(testJsRuntime)
+    if (jsIrEnabled && !skipIrKlib) dependsOn(generateIrRuntimeKlib)
+
+    if (jsEnabled && !jsIrEnabled) exclude("org/jetbrains/kotlin/js/test/ir/semantics/*")
+    if (!jsEnabled && jsIrEnabled) include("org/jetbrains/kotlin/js/test/ir/semantics/*")
+
     jvmArgs("-da:jdk.nashorn.internal.runtime.RecompilableScriptFunctionData") // Disable assertion which fails due to a bug in nashorn (KT-23637)
     workingDir = rootDir
     if (findProperty("kotlin.compiler.js.ir.tests.skip")?.toString()?.toBoolean() == true) {
-        exclude("org/jetbrains/kotlin/js/test/semantics/Ir*")
+        exclude("org/jetbrains/kotlin/js/test/ir/semantics/*")
     }
     doFirst {
         systemProperty("kotlin.ant.classpath", antLauncherJar.asPath)
@@ -86,18 +91,28 @@ projectTest {
     }
 }
 
-testsJar {}
+projectTest {
+    setUpBoxTests(jsEnabled = true, jsIrEnabled = true)
+}
+
+projectTest("jsTest") {
+    setUpBoxTests(jsEnabled = true, jsIrEnabled = false)
+}
+
+projectTest("jsIrTest") {
+    setUpBoxTests(jsEnabled = false, jsIrEnabled = true)
+}
 
 projectTest("quickTest") {
-    dependsOn(":dist")
-    dependsOn(testJsRuntime)
-    workingDir = rootDir
+    setUpBoxTests(jsEnabled = true, jsIrEnabled = false)
     systemProperty("kotlin.js.skipMinificationTest", "true")
-    doFirst {
-        systemProperty("kotlin.ant.classpath", antLauncherJar.asPath)
-        systemProperty("kotlin.ant.launcher.class", "org.apache.tools.ant.Main")
-    }
 }
+
+projectTest("quickIrTest") {
+    setUpBoxTests(jsEnabled = false, jsIrEnabled = true, skipIrKlib = true)
+}
+
+testsJar {}
 
 val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateJsTestsKt")
 val testDataDir = project(":js:js.translator").projectDir.resolve("testData")
