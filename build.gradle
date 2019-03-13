@@ -23,10 +23,6 @@ import org.jetbrains.kotlin.konan.*
 buildscript {
     apply from: "gradle/kotlinGradlePlugin.gradle"
     apply from: "gradle/kotlinNativeShared.gradle"
-    
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-native-version:$konanVersion"
-    }
 }
 
 // Allows generating wrappers for the root build and all the samples during execution of the default 'wrapper' task.

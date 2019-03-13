@@ -49,3 +49,7 @@ if (hasProperty("kotlinProjectPath")) {
         }
     }
 }
+
+if (hasProperty("sharedProjectPath")) {
+    includeBuild(sharedProjectPath)
+}

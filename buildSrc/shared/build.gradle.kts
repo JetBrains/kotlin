@@ -14,8 +14,14 @@
  * limitations under the License.
  */
 
-include 'plugins'
+plugins {
+    kotlin("jvm")
+}
 
-if (hasProperty("sharedProjectPath")) {
-    include 'shared'
+val sharedProject = file(property("sharedProjectPath")!!).resolve("src")
+
+kotlin.sourceSets["main"].kotlin.srcDirs.add(sharedProject)
+
+dependencies {
+    implementation(kotlin("stdlib"))
 }
