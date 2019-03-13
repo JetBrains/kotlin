@@ -115,28 +115,6 @@ fun createContainerForLazyResolveWithJava(
 }
 
 
-fun createContainerForTopDownAnalyzerForJvm(
-    jvmPlatform: JvmPlatform,
-    moduleContext: ModuleContext,
-    bindingTrace: BindingTrace,
-    declarationProviderFactory: DeclarationProviderFactory,
-    moduleContentScope: GlobalSearchScope,
-    lookupTracker: LookupTracker,
-    expectActualTracker: ExpectActualTracker,
-    packagePartProvider: PackagePartProvider,
-    moduleClassResolver: ModuleClassResolver,
-    languageVersionSettings: LanguageVersionSettings,
-    configureJavaClassFinder: (StorageComponentContainer.() -> Unit)? = null,
-    javaClassTracker: JavaClassesTracker? = null
-): ComponentProvider = createContainerForLazyResolveWithJava(
-    jvmPlatform, moduleContext, bindingTrace, declarationProviderFactory, moduleContentScope, moduleClassResolver,
-    CompilerEnvironment, lookupTracker, expectActualTracker, packagePartProvider, languageVersionSettings,
-    useBuiltInsProvider = true,
-    configureJavaClassFinder = configureJavaClassFinder,
-    javaClassTracker = javaClassTracker
-)
-
-
 fun ComponentProvider.initJvmBuiltInsForTopDownAnalysis() {
     get<JvmBuiltIns>().initialize(get<ModuleDescriptor>(), get<LanguageVersionSettings>())
 }
