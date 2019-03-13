@@ -33,6 +33,7 @@ import com.sun.jdi.*
 import com.sun.jdi.Type
 import org.jetbrains.kotlin.idea.debugger.KotlinDebuggerSettings
 import org.jetbrains.kotlin.idea.debugger.ToggleKotlinVariablesState
+import org.jetbrains.kotlin.idea.debugger.canRunEvaluation
 import org.jetbrains.kotlin.load.java.JvmAbi
 import java.util.*
 import com.sun.jdi.Type as JdiType
@@ -80,7 +81,7 @@ class KotlinClassWithDelegatedPropertyRenderer(private val rendererSettings: Nod
         listener: DescriptorLabelListener
     ): String? {
         val toStringRenderer = rendererSettings.toStringRenderer
-        if (toStringRenderer.isEnabled && DebuggerManagerEx.getInstanceEx(evaluationContext.project).context.isEvaluationPossible) {
+        if (toStringRenderer.isEnabled && DebuggerManagerEx.getInstanceEx(evaluationContext.project).context.canRunEvaluation) {
             if (toStringRenderer.isApplicable(descriptor.type)) {
                 return toStringRenderer.calcLabel(descriptor, evaluationContext, listener)
             }

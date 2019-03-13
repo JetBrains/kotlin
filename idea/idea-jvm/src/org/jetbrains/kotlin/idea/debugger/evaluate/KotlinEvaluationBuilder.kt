@@ -315,7 +315,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
 
         return runEvaluation(context, compiledData, classLoader ?: context.evaluationContext.classLoader) { args ->
             val vm = context.vm.virtualMachine
-            val thread = context.suspendContext.thread?.threadReference?.takeIf { it.isAtBreakpoint }
+            val thread = context.suspendContext.thread?.threadReference?.takeIf { it.isSuspended }
                 ?: error("Can not find a thread to run evaluation on")
 
             val eval = JDIEval(vm, classLoader, thread, context.invokePolicy)
