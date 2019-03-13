@@ -48,10 +48,10 @@ import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 
 private fun StorageComponentContainer.configureJavaTopDownAnalysis(
-        moduleContentScope: GlobalSearchScope,
-        project: Project,
-        lookupTracker: LookupTracker,
-        expectActualTracker: ExpectActualTracker
+    moduleContentScope: GlobalSearchScope,
+    project: Project,
+    lookupTracker: LookupTracker,
+    expectActualTracker: ExpectActualTracker
 ) {
     useInstance(moduleContentScope)
     useInstance(lookupTracker)
@@ -76,7 +76,7 @@ private fun StorageComponentContainer.configureJavaTopDownAnalysis(
 }
 
 fun createContainerForLazyResolveWithJava(
-    jvmPlatform: TargetPlatform,
+    jvmPlatform: JvmPlatform,
     moduleContext: ModuleContext,
     bindingTrace: BindingTrace,
     declarationProviderFactory: DeclarationProviderFactory,
@@ -96,8 +96,7 @@ fun createContainerForLazyResolveWithJava(
 
     if (configureJavaClassFinder != null) {
         configureJavaClassFinder()
-    }
-    else {
+    } else {
         useImpl<JavaClassFinderImpl>()
         useImpl<LazyResolveBasedCache>()
         useImpl<JavaSourceElementFactoryImpl>()
@@ -131,7 +130,7 @@ fun createContainerForLazyResolveWithJava(
 
 
 fun createContainerForTopDownAnalyzerForJvm(
-    jvmPlatform: TargetPlatform,
+    jvmPlatform: JvmPlatform,
     moduleContext: ModuleContext,
     bindingTrace: BindingTrace,
     declarationProviderFactory: DeclarationProviderFactory,
@@ -144,11 +143,11 @@ fun createContainerForTopDownAnalyzerForJvm(
     configureJavaClassFinder: (StorageComponentContainer.() -> Unit)? = null,
     javaClassTracker: JavaClassesTracker? = null
 ): ComponentProvider = createContainerForLazyResolveWithJava(
-        jvmPlatform, moduleContext, bindingTrace, declarationProviderFactory, moduleContentScope, moduleClassResolver,
-        CompilerEnvironment, lookupTracker, expectActualTracker, packagePartProvider, languageVersionSettings,
-        useBuiltInsProvider = true,
-        configureJavaClassFinder = configureJavaClassFinder,
-        javaClassTracker = javaClassTracker
+    jvmPlatform, moduleContext, bindingTrace, declarationProviderFactory, moduleContentScope, moduleClassResolver,
+    CompilerEnvironment, lookupTracker, expectActualTracker, packagePartProvider, languageVersionSettings,
+    useBuiltInsProvider = true,
+    configureJavaClassFinder = configureJavaClassFinder,
+    javaClassTracker = javaClassTracker
 )
 
 
