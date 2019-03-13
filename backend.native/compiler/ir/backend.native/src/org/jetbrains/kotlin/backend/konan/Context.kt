@@ -316,7 +316,7 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     lateinit var bitcodeFileName: String
     lateinit var library: KonanLibraryWriter
 
-    val cStubsManager = CStubsManager()
+    val cStubsManager = CStubsManager(config.target)
 
     val coverage = CoverageManager(this)
 

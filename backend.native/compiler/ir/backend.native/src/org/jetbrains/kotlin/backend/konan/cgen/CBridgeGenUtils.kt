@@ -127,6 +127,10 @@ private fun createKotlinBridge(
             isSuspend = false
     )
     bridgeDescriptor.bind(bridge)
+    if (isExternal) {
+        bridge.annotations +=
+                irCall(startOffset, endOffset, symbols.filterExceptions.owner.constructors.single(), emptyList())
+    }
     return bridge
 }
 

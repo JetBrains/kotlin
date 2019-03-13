@@ -76,3 +76,47 @@ BOOL unexpectedDeallocation = NO;
   unexpectedDeallocation = YES;
 }
 @end;
+
+static CustomRetainMethodsImpl* retainedCustomRetainMethodsImpl;
+
+@implementation CustomRetainMethodsImpl
+-(id)returnRetained:(id)obj __attribute__((ns_returns_retained)) {
+    return obj;
+}
+
+-(void)consume:(id) __attribute__((ns_consumed)) obj {
+}
+
+-(void)consumeSelf __attribute__((ns_consumes_self)) {
+  retainedCustomRetainMethodsImpl = self; // Retain to detect possible over-release.
+}
+
+-(void (^)(void))returnRetainedBlock:(void (^)(void))block __attribute__((ns_returns_retained)) {
+    return block;
+}
+@end;
+
+@implementation ExceptionThrowerManager
++(void)throwExceptionWith:(id<ExceptionThrower>)thrower {
+    [thrower throwException];
+}
+@end;
+
+@implementation Blocks
++(BOOL)blockIsNull:(void (^)(void))block {
+    return block == nil;
+}
+
++(int (^)(int, int, int, int))same:(int (^)(int, int, int, int))block {
+    return block;
+}
+
++(void (^)(void)) nullBlock {
+    return nil;
+}
+
++(void (^)(void)) notNullBlock {
+    return ^{};
+}
+
+@end;

@@ -113,3 +113,13 @@ internal annotation class TypedIntrinsic(val kind: String)
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.BINARY)
 annotation class Independent
+
+/**
+ * Indicates that `@SymbolName external` function can throw foreign exception to be filtered on callsite.
+ *
+ * Note: this annotation describes rather behaviour of the (direct) call than that of the function.
+ * E.g. it doesn't have any effect when calling the function virtually. TODO: rework.
+ */
+@Target(AnnotationTarget.FUNCTION)
+@Retention(AnnotationRetention.BINARY)
+@PublishedApi internal annotation class FilterExceptions

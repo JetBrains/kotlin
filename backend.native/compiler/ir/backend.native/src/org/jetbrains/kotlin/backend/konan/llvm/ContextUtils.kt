@@ -465,6 +465,12 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
         else -> "__gxx_personality_v0"
     }
 
+    val cxxStdTerminate = externalNounwindFunction(
+            "_ZSt9terminatev", // mangled C++ 'std::terminate'
+            functionType(voidType, false),
+            origin = context.standardLlvmSymbolsOrigin
+    )
+
     val gxxPersonalityFunction = externalNounwindFunction(
             personalityFunctionName,
             functionType(int32Type, true),
@@ -488,6 +494,12 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
             "llvm.trap",
             functionType(voidType, false),
             "cold", "noreturn", "nounwind"
+    )
+
+    val llvmEhTypeidFor = llvmIntrinsic(
+            "llvm.eh.typeid.for",
+            functionType(int32Type, false, int8TypePtr),
+            "nounwind", "readnone"
     )
 
     val usedFunctions = mutableListOf<LLVMValueRef>()

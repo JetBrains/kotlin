@@ -531,6 +531,53 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         return LLVMBuildLandingPad(builder, landingpadType, personalityFunction, numClauses, name)!!
     }
 
+    fun filteringExceptionHandler(codeContext: CodeContext): ExceptionHandler {
+        val lpBlock = basicBlockInFunction("filteringExceptionHandler", position())
+
+        appendingTo(lpBlock) {
+            val landingpad = gxxLandingpad(2)
+            LLVMAddClause(landingpad, kotlinExceptionRtti.llvm)
+            LLVMAddClause(landingpad, LLVMConstNull(kInt8Ptr))
+
+            val fatalForeignExceptionBlock = basicBlock("fatalForeignException", position())
+            val forwardKotlinExceptionBlock = basicBlock("forwardKotlinException", position())
+
+            val isKotlinException = icmpEq(
+                    extractValue(landingpad, 1),
+                    call(context.llvm.llvmEhTypeidFor, listOf(kotlinExceptionRtti.llvm))
+            )
+
+            condBr(isKotlinException, forwardKotlinExceptionBlock, fatalForeignExceptionBlock)
+
+            appendingTo(forwardKotlinExceptionBlock) {
+                // Rethrow Kotlin exception to real handler.
+                codeContext.genThrow(extractKotlinException(landingpad))
+            }
+
+            appendingTo(fatalForeignExceptionBlock) {
+                val exceptionRecord = extractValue(landingpad, 0)
+                call(context.llvm.cxaBeginCatchFunction, listOf(exceptionRecord))
+                terminate()
+            }
+        }
+
+        return object : ExceptionHandler.Local() {
+            override val unwind: LLVMBasicBlockRef
+                get() = lpBlock
+        }
+    }
+
+    fun terminate() {
+        call(context.llvm.cxxStdTerminate, emptyList())
+
+        // Note: unreachable instruction to be generated here, but debug information is improper in this case.
+        val loopBlock = basicBlock("loop", position())
+        br(loopBlock)
+        appendingTo(loopBlock) {
+            br(loopBlock)
+        }
+    }
+
     fun kotlinExceptionHandler(
             block: FunctionGenerationContext.(exception: LLVMValueRef) -> Unit
     ): ExceptionHandler {
@@ -554,6 +601,10 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         // FIXME: properly handle C++ exceptions: currently C++ exception can be thrown out from try-finally
         // bypassing the finally block.
 
+        return extractKotlinException(landingpadResult)
+    }
+
+    private fun extractKotlinException(landingpadResult: LLVMValueRef): LLVMValueRef {
         val exceptionRecord = extractValue(landingpadResult, 0, "er")
 
         // __cxa_begin_catch returns pointer to C++ exception object.
@@ -908,14 +959,8 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
             LLVMSetCleanup(landingpad, 1)
 
             forwardingForeignExceptionsTerminatedWith?.let { terminator ->
-                val kotlinExceptionRtti = constPointer(importGlobal(
-                        "_ZTI9ObjHolder", // typeinfo for ObjHolder
-                        int8TypePtr,
-                        origin = context.stdlibModule.llvmSymbolOrigin
-                ))
-
                 // Catch all but Kotlin exceptions.
-                val clause = ConstArray(int8TypePtr, listOf(kotlinExceptionRtti.bitcast(int8TypePtr)))
+                val clause = ConstArray(int8TypePtr, listOf(kotlinExceptionRtti))
                 LLVMAddClause(landingpad, clause.llvm)
 
                 val bbCleanup = basicBlock("forwardException", null)
@@ -950,6 +995,13 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         returnSlot = null
         slotsPhi = null
     }
+
+    private val kotlinExceptionRtti: ConstPointer
+        get() = constPointer(importGlobal(
+                "_ZTI9ObjHolder", // typeinfo for ObjHolder
+                int8TypePtr,
+                origin = context.stdlibModule.llvmSymbolOrigin
+        )).bitcast(int8TypePtr)
 
     //-------------------------------------------------------------------------//
 

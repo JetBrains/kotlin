@@ -25,7 +25,7 @@ inline fun <R> autoreleasepool(block: () -> R): R {
     }
 }
 
-@Deprecated("Use plain Kotlin cast", ReplaceWith("this as T"), DeprecationLevel.WARNING)
+@Deprecated("Use plain Kotlin cast", ReplaceWith("this as T"), DeprecationLevel.ERROR)
 fun <T : ObjCObject> ObjCObject.reinterpret() = @Suppress("DEPRECATION") this.uncheckedCast<T>()
 
 // TODO: null checks

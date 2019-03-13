@@ -99,6 +99,7 @@ int callPlusOneBlock(id<BlockConsumer> blockConsumer, int argument) {
 -(id)returnRetained:(id)obj __attribute__((ns_returns_retained));
 -(void)consume:(id) __attribute__((ns_consumed)) obj;
 -(void)consumeSelf __attribute__((ns_consumes_self));
+-(void (^)(void))returnRetainedBlock:(void (^)(void))block __attribute__((ns_returns_retained));
 @end;
 
 extern BOOL unexpectedDeallocation;
@@ -106,11 +107,41 @@ extern BOOL unexpectedDeallocation;
 @interface MustNotBeDeallocated : NSObject
 @end;
 
+@interface CustomRetainMethodsImpl : MustNotBeDeallocated <CustomRetainMethods>
+@end;
+
+static MustNotBeDeallocated* retainedObj;
+static void (^retainedBlock)(void);
+
 void useCustomRetainMethods(id<CustomRetainMethods> p) {
   MustNotBeDeallocated* obj = [MustNotBeDeallocated new];
-  CFBridgingRetain(obj); // Over-retain to detect possible over-release.
+  retainedObj = obj; // Retain to detect possible over-release.
   [p returnRetained:obj];
 
   [p consume:p];
   [p consumeSelf];
+
+  MustNotBeDeallocated* capturedObj = [MustNotBeDeallocated new];
+  retainedBlock = ^{ [capturedObj description]; }; // Retain to detect possible over-release.
+  [p returnRetainedBlock:retainedBlock]();
 }
+
+NSObject* createNSObject() {
+  return [NSObject new];
+}
+
+@protocol ExceptionThrower
+-(void)throwException;
+@end;
+
+@interface ExceptionThrowerManager : NSObject
++(void)throwExceptionWith:(id<ExceptionThrower>)thrower;
+@end;
+
+@interface Blocks : NSObject
++(BOOL)blockIsNull:(void (^)(void))block;
++(int (^)(int, int, int, int))same:(int (^)(int, int, int, int))block;
+
+@property (class) void (^nullBlock)(void);
+@property (class) void (^notNullBlock)(void);
+@end;

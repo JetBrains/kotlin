@@ -6,8 +6,10 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.file.*
 import org.jetbrains.kotlin.konan.target.ClangArgs
+import org.jetbrains.kotlin.konan.target.Family
+import org.jetbrains.kotlin.konan.target.KonanTarget
 
-class CStubsManager {
+class CStubsManager(private val target: KonanTarget) {
 
     fun getUniqueName(prefix: String) = "$prefix${counter++}"
 
@@ -18,13 +20,24 @@ class CStubsManager {
     fun compile(clang: ClangArgs, messageCollector: MessageCollector, verbose: Boolean): File? {
         if (stubs.isEmpty()) return null
 
-        val cSource = createTempFile("cstubs", ".c").deleteOnExit()
+        val compilerOptions = mutableListOf<String>()
+        val sourceFileExtension = when (target.family) {
+            Family.OSX, Family.IOS -> {
+                compilerOptions += "-fobjc-arc"
+                ".m" // TODO: consider managing C and Objective-C stubs separately.
+            }
+            else -> ".c"
+        }
+        val cSource = createTempFile("cstubs", sourceFileExtension).deleteOnExit()
         cSource.writeLines(stubs.flatMap { it.lines })
 
         val bitcode = createTempFile("cstubs", ".bc").deleteOnExit()
 
         val cSourcePath = cSource.absolutePath
-        val clangCommand = clang.clangC(cSourcePath, "-emit-llvm", "-c", "-o", bitcode.absolutePath)
+
+        val clangCommand = clang.clangC(*compilerOptions.toTypedArray(), "-O2",
+                cSourcePath, "-emit-llvm", "-c", "-o", bitcode.absolutePath)
+
         val result = Command(clangCommand).getResult(withErrors = true)
         if (result.exitCode != 0) {
             reportCompilationErrors(cSourcePath, result, messageCollector, verbose)

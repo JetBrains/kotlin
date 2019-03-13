@@ -53,7 +53,7 @@ internal enum class IntrinsicType {
     OBJC_GET_MESSENGER,
     OBJC_GET_MESSENGER_STRET,
     OBJC_GET_OBJC_CLASS,
-    OBJC_GET_RECEIVER_OR_SUPER,
+    OBJC_CREATE_SUPER_STRUCT,
     OBJC_INIT_BY,
     OBJC_GET_SELECTOR,
     // Other
@@ -224,7 +224,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
                 IntrinsicType.OBJC_GET_MESSENGER -> emitObjCGetMessenger(args, isStret = false)
                 IntrinsicType.OBJC_GET_MESSENGER_STRET -> emitObjCGetMessenger(args, isStret = true)
                 IntrinsicType.OBJC_GET_OBJC_CLASS -> emitGetObjCClass(callSite)
-                IntrinsicType.OBJC_GET_RECEIVER_OR_SUPER -> emitGetReceiverOrSuper(args)
+                IntrinsicType.OBJC_CREATE_SUPER_STRUCT -> emitObjCCreateSuperStruct(args)
                 IntrinsicType.GET_CLASS_TYPE_INFO -> emitGetClassTypeInfo(callSite)
                 IntrinsicType.INTEROP_READ_BITS -> emitReadBits(args)
                 IntrinsicType.INTEROP_WRITE_BITS -> emitWriteBits(args)
@@ -433,20 +433,16 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
         }
     }
 
-    private fun FunctionGenerationContext.emitGetReceiverOrSuper(args: List<LLVMValueRef>): LLVMValueRef {
+    private fun FunctionGenerationContext.emitObjCCreateSuperStruct(args: List<LLVMValueRef>): LLVMValueRef {
         assert(args.size == 2)
         val receiver = args[0]
         val superClass = args[1]
 
-        val superClassIsNull = icmpEq(superClass, kNullInt8Ptr)
-
-        return ifThenElse(superClassIsNull, receiver) {
-            val structType = structType(kInt8Ptr, kInt8Ptr)
-            val ptr = alloca(structType)
-            store(receiver, LLVMBuildGEP(builder, ptr, cValuesOf(kImmZero, kImmZero), 2, "")!!)
-            store(superClass, LLVMBuildGEP(builder, ptr, cValuesOf(kImmZero, kImmOne), 2, "")!!)
-            bitcast(int8TypePtr, ptr)
-        }
+        val structType = structType(kInt8Ptr, kInt8Ptr)
+        val ptr = alloca(structType)
+        store(receiver, LLVMBuildGEP(builder, ptr, cValuesOf(kImmZero, kImmZero), 2, "")!!)
+        store(superClass, LLVMBuildGEP(builder, ptr, cValuesOf(kImmZero, kImmOne), 2, "")!!)
+        return bitcast(int8TypePtr, ptr)
     }
 
     // TODO: Find better place for these guys.

@@ -643,6 +643,12 @@ extern "C" ALWAYS_INLINE OBJ_GETTER(Kotlin_Interop_refFromObjC, id obj) {
   RETURN_RESULT_OF(Kotlin_ObjCExport_refFromObjC, obj);
 }
 
+extern "C" OBJ_GETTER(Kotlin_Interop_CreateObjCObjectHolder, id obj) {
+  RuntimeAssert(obj != nullptr, "wrapped object must not be null");
+  const TypeInfo* typeInfo = theForeignObjCObjectTypeInfo;
+  RETURN_RESULT_OF(AllocInstanceWithAssociatedObject, typeInfo, objc_retain(obj));
+}
+
 extern "C" OBJ_GETTER(Kotlin_ObjCExport_refFromObjC, id obj) {
   if (obj == nullptr) RETURN_OBJ(nullptr);
   id convertible = (id<ConvertibleToKotlin>)obj;

@@ -14,6 +14,10 @@ internal object CTypes {
     fun function(returnType: CType, parameterTypes: List<CType>, variadic: Boolean): CType =
             FunctionCType(returnType, parameterTypes, variadic)
 
+    fun blockPointer(pointee: CType): CType = object : CType {
+        override fun render(name: String): String = pointee.render("^$name")
+    }
+
     val void = simple("void")
     val voidPtr = pointer(void)
     val signedChar = simple("signed char")
@@ -28,6 +32,8 @@ internal object CTypes {
     val double = simple("double")
     val C99Bool = simple("_Bool")
     val char = simple("char")
+
+    val id = simple("id")
 }
 
 private class SimpleCType(private val type: String) : CType {

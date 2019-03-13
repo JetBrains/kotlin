@@ -3112,13 +3112,14 @@ task interop_opengl_teapot(type: RunStandaloneKonanTest) {
 
 task interop_objc_smoke(type: RunInteropKonanTest) {
     disabled = !isAppleTarget(project)
-    goldValue = "84\nFoo\nHello, World!\nKotlin says: Hello, everybody!\nHello from Kotlin\n2, 1\n" +
+    goldValue = "84\nFoo\nDeallocated\n" +
+            "Hello, World!\nKotlin says: Hello, everybody!\nHello from Kotlin\n2, 1\n" +
             "true\ntrue\n" +
             "Global string\nAnother global string\nnull\nglobal object\n" +
             "5\n" +
             "String macro\n" +
             "CFString macro\n" +
-            "Deallocated\nDeallocated\nDeallocated\n"
+            "Deallocated\nDeallocated\n"
 
     if (isAppleTarget(project)) {
         source = "interop/objc/smoke.kt"
