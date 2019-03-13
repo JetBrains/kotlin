@@ -24,7 +24,8 @@ public actual class StringBuilder(content: String = "") : Appendable, CharSequen
     actual override val length: Int
         get() = string.asDynamic().length
 
-    actual override fun get(index: Int): Char = string[index]
+    actual override fun get(index: Int): Char =
+        string.getOrElse(index) { throw IndexOutOfBoundsException("index: $index, length: $length}") }
 
     actual override fun subSequence(startIndex: Int, endIndex: Int): CharSequence = string.substring(startIndex, endIndex)
 
