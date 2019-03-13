@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.resolve.calls.results
 
 import org.jetbrains.kotlin.container.DefaultImplementation
+import org.jetbrains.kotlin.container.PlatformExtensionsClashResolver
+import org.jetbrains.kotlin.container.PlatformSpecificExtension
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
@@ -30,7 +32,7 @@ interface SpecificityComparisonCallbacks {
 }
 
 @DefaultImplementation(impl = TypeSpecificityComparator.NONE::class)
-interface TypeSpecificityComparator {
+interface TypeSpecificityComparator : PlatformSpecificExtension<TypeSpecificityComparator> {
     fun isDefinitelyLessSpecific(specific: KotlinTypeMarker, general: KotlinTypeMarker): Boolean
 
     object NONE : TypeSpecificityComparator {

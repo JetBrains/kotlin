@@ -29,5 +29,7 @@ import kotlin.reflect.KClass
  *
  * Such configurations may arise, for example, for multiplatform modules: consider analyzing JVM+JS module, where JS contributes
  * default implementation of some particular service, and JVM contributes non-default.
+ *
+ * If you need more fine-grained control of clashes resolution, consider using [PlatformExtensionsClashResolver]
  **/
 annotation class DefaultImplementation(val impl: KClass<*>)

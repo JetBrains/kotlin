@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.container
 import com.intellij.util.containers.MultiMap
 import java.io.Closeable
 import java.io.PrintStream
+import java.lang.IllegalStateException
 import java.lang.reflect.Modifier
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
@@ -37,13 +38,19 @@ internal class InvalidCardinalityException(message: String) : Exception(message)
 
 class ComponentStorage(private val myId: String, parent: ComponentStorage?) : ValueResolver {
     var state = ComponentStorageState.Initial
-    private val registry = ComponentRegistry()
-    init {
-        parent?.let { registry.addAll(it.registry) }
-    }
 
     private val descriptors = LinkedHashSet<ComponentDescriptor>()
     private val dependencies = MultiMap.createLinkedSet<ComponentDescriptor, Type>()
+    private val clashResolvers = ArrayList<PlatformExtensionsClashResolver<*>>()
+    private val registry = ComponentRegistry()
+
+    init {
+        parent?.let {
+            registry.addAll(it.registry)
+            clashResolvers.addAll(it.clashResolvers)
+        }
+    }
+
 
     override fun resolve(request: Type, context: ValueResolveContext): ValueDescriptor? {
         fun ComponentDescriptor.isDefaultComponent(): Boolean =
@@ -107,6 +114,10 @@ class ComponentStorage(private val myId: String, parent: ComponentStorage?) : Va
         return registry.tryGetEntry(request)
     }
 
+    internal fun registerClashResolvers(resolvers: List<PlatformExtensionsClashResolver<*>>) {
+        clashResolvers.addAll(resolvers)
+    }
+
     internal fun registerDescriptors(context: ComponentResolveContext, items: List<ComponentDescriptor>) {
         if (state == ComponentStorageState.Disposed) {
             throw ContainerConsistencyException("Cannot register descriptors in $state state")
@@ -135,6 +146,7 @@ class ComponentStorage(private val myId: String, parent: ComponentStorage?) : Va
 
         val implicits = inspectDependenciesAndRegisterAdhoc(context, descriptors)
 
+        registry.resolveClashesIfAny(context.container, clashResolvers)
         injectProperties(context, descriptors + implicits)
     }
 
