@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.resolve.calls.results
 
+import org.jetbrains.kotlin.container.PlatformExtensionsClashResolver
+import org.jetbrains.kotlin.container.PlatformSpecificExtension
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
@@ -30,13 +32,18 @@ interface SpecificityComparisonCallbacks {
     fun isNonSubtypeNotLessSpecific(specific: KotlinType, general: KotlinType): Boolean
 }
 
-interface TypeSpecificityComparator {
+interface TypeSpecificityComparator : PlatformSpecificExtension<TypeSpecificityComparator> {
     fun isDefinitelyLessSpecific(specific: KotlinType, general: KotlinType): Boolean
 
     object NONE : TypeSpecificityComparator {
         override fun isDefinitelyLessSpecific(specific: KotlinType, general: KotlinType) = false
     }
 }
+
+class TypeSpecificityComparatorClashesResolver : PlatformExtensionsClashResolver.UseAnyOf<TypeSpecificityComparator>(
+    TypeSpecificityComparator.NONE,
+    TypeSpecificityComparator::class.java
+)
 
 class FlatSignature<out T> private constructor(
     val origin: T,

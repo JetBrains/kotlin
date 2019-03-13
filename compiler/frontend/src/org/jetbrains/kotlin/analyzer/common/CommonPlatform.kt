@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.DynamicTypesSettings
 
 private object CommonPlatformConfigurator : PlatformConfiguratorBase(
-    DynamicTypesSettings(), listOf(), listOf(), listOf(), listOf(), listOf(),
+    DynamicTypesSettings(), listOf(), listOf(), listOf(), listOf(), listOf(), listOf(),
     IdentifierChecker.Default, OverloadFilter.Default, PlatformToKotlinClassMap.EMPTY, DelegationFilter.Default,
     OverridesBackwardCompatibilityHelper.Default,
     DeclarationReturnTypeSanitizer.Default

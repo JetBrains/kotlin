@@ -17,11 +17,12 @@
 package org.jetbrains.kotlin.resolve
 
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.container.PlatformExtensionsClashResolver
+import org.jetbrains.kotlin.container.PlatformSpecificExtension
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.WrappedTypeFactory
 
-interface DeclarationReturnTypeSanitizer {
+interface DeclarationReturnTypeSanitizer : PlatformSpecificExtension<DeclarationReturnTypeSanitizer> {
     fun sanitizeReturnType(
         inferred: UnwrappedType,
         wrappedTypeFactory: WrappedTypeFactory,
@@ -38,3 +39,8 @@ interface DeclarationReturnTypeSanitizer {
         ) = inferred
     }
 }
+
+class DeclarationReturnTypeSanitizerClashesResolver : PlatformExtensionsClashResolver.UseAnyOf<DeclarationReturnTypeSanitizer>(
+    DeclarationReturnTypeSanitizer.Default,
+    DeclarationReturnTypeSanitizer::class.java
+)

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useImpl
 import org.jetbrains.kotlin.container.useInstance
+import org.jetbrains.kotlin.load.java.components.SamConversionResolverClashesResolver
 import org.jetbrains.kotlin.load.java.sam.JvmSamConversionTransformer
 import org.jetbrains.kotlin.load.java.sam.SamConversionResolverImpl
 import org.jetbrains.kotlin.resolve.PlatformConfiguratorBase
@@ -72,6 +73,10 @@ object JvmPlatformConfigurator : PlatformConfiguratorBase(
         RepeatableAnnotationChecker,
         FileClassAnnotationsChecker,
         ExplicitMetadataChecker
+    ),
+
+    additionalClashResolvers = listOf(
+        SamConversionResolverClashesResolver()
     ),
 
     identifierChecker = JvmSimpleNameBacktickChecker,
