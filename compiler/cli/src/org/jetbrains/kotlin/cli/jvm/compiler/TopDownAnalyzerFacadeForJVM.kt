@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
-import org.jetbrains.kotlin.frontend.java.di.createContainerForTopDownAnalyzerForJvm
+import org.jetbrains.kotlin.frontend.java.di.createContainerForLazyResolveWithJava
 import org.jetbrains.kotlin.frontend.java.di.initJvmBuiltInsForTopDownAnalysis
 import org.jetbrains.kotlin.frontend.java.di.initialize
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
@@ -166,11 +166,13 @@ object TopDownAnalyzerFacadeForJVM {
             // Scope for the dependency module contains everything except files present in the scope for the source module
             val dependencyScope = GlobalSearchScope.notScope(sourceScope)
 
-            val dependenciesContainer = createContainerForTopDownAnalyzerForJvm(
-                DefaultBuiltInPlatforms.jvmPlatformByTargetVersion(jvmTarget), // TODO(dsavvinov): do not pass JvmTarget around
-                dependenciesContext, trace, DeclarationProviderFactory.EMPTY, dependencyScope, lookupTracker, expectActualTracker,
-                packagePartProvider(dependencyScope), moduleClassResolver, targetEnvironment, languageVersionSettings,
-                configureJavaClassFinder
+            val dependenciesContainer = createContainerForLazyResolveWithJava(
+                DefaultBuiltInPlatforms.jvmPlatformByTargetVersion(jvmTarget),
+                dependenciesContext, trace, DeclarationProviderFactory.EMPTY, dependencyScope, moduleClassResolver,
+                CompilerEnvironment, lookupTracker, expectActualTracker,
+                packagePartProvider(dependencyScope), languageVersionSettings,
+                useBuiltInsProvider = true,
+                configureJavaClassFinder = configureJavaClassFinder
             )
 
             moduleClassResolver.compiledCodeResolver = dependenciesContainer.get()
@@ -196,11 +198,14 @@ object TopDownAnalyzerFacadeForJVM {
         // CliLightClassGenerationSupport#initialize is invoked when container is created, so only the last module descriptor is going
         // to be stored in CliLightClassGenerationSupport, and it better be the source one (otherwise light classes would not be found)
         // TODO: get rid of duplicate invocation of CodeAnalyzerInitializer#initialize, or refactor CliLightClassGenerationSupport
-        val container = createContainerForTopDownAnalyzerForJvm(
+        val container = createContainerForLazyResolveWithJava(
             DefaultBuiltInPlatforms.jvmPlatformByTargetVersion(jvmTarget),
-            moduleContext, trace, declarationProviderFactory(storageManager, files), sourceScope, lookupTracker, expectActualTracker,
-            partProvider, moduleClassResolver, targetEnvironment, languageVersionSettings, configureJavaClassFinder,
-            configuration[JVMConfigurationKeys.JAVA_CLASSES_TRACKER]
+            moduleContext, trace, declarationProviderFactory(storageManager, files), sourceScope, moduleClassResolver,
+            CompilerEnvironment, lookupTracker, expectActualTracker,
+            partProvider, languageVersionSettings,
+            useBuiltInsProvider = true,
+            configureJavaClassFinder = configureJavaClassFinder,
+            javaClassTracker = configuration[JVMConfigurationKeys.JAVA_CLASSES_TRACKER]
         ).apply {
             initJvmBuiltInsForTopDownAnalysis()
             (partProvider as? IncrementalPackagePartProvider)?.deserializationConfiguration = get()

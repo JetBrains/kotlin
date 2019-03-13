@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.diagnostics.Errors.*
-import org.jetbrains.kotlin.frontend.java.di.createContainerForTopDownAnalyzerForJvm
+import org.jetbrains.kotlin.frontend.java.di.createContainerForLazyResolveWithJava
 import org.jetbrains.kotlin.frontend.java.di.initJvmBuiltInsForTopDownAnalysis
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -374,18 +374,18 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         val moduleContentScope = GlobalSearchScope.allScope(moduleContext.project)
         val moduleClassResolver = SingleModuleClassResolver()
 
-        val container = createContainerForTopDownAnalyzerForJvm(
+        val container = createContainerForLazyResolveWithJava(
             DefaultBuiltInPlatforms.jvmPlatformByTargetVersion(jvmTarget), // TODO(dsavvinov): do not pass JvmTarget around
             moduleContext,
             moduleTrace,
             FileBasedDeclarationProviderFactory(moduleContext.storageManager, files),
             moduleContentScope,
-            LookupTracker.DO_NOTHING,
+            moduleClassResolver,
+            CompilerEnvironment, LookupTracker.DO_NOTHING,
             ExpectActualTracker.DoNothing,
             environment.createPackagePartProvider(moduleContentScope),
-            moduleClassResolver,
-            CompilerEnvironment,
-            languageVersionSettings
+            languageVersionSettings,
+            useBuiltInsProvider = true
         )
 
         container.initJvmBuiltInsForTopDownAnalysis()
