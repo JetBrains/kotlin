@@ -1,6 +1,3 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import org.gradle.jvm.tasks.Jar
-
 description = "Kotlin IDEA plugin"
 
 plugins {
@@ -78,6 +75,9 @@ val packedJars by configurations.creating
 val sideJars by configurations.creating
 
 dependencies {
+    projectsToShadow.forEach {
+        packedJars(project(it)) { isTransitive = false }
+    }
     packedJars(protobufFull())
     packedJars(kotlinBuiltins())
     sideJars(project(":kotlin-script-runtime"))
@@ -93,13 +93,12 @@ dependencies {
     sideJars(commonDep("org.jetbrains", "markdown")) { isTransitive = false }
 }
 
-val jar = runtimeJar(task<ShadowJar>("shadowJar")) {
-    from(files("$rootDir/resources/kotlinManifest.properties"))
-    from(packedJars)
-    for (p in projectsToShadow) {
-        dependsOn("$p:classes")
-        from(getSourceSetsFrom(p)["main"].output)
+val jar = runtimeJar {
+    from("$rootDir/resources/kotlinManifest.properties")
+    from {
+        packedJars.files.map(::zipTree)
     }
+
     archiveName = "kotlin-plugin.jar"
 }
 
