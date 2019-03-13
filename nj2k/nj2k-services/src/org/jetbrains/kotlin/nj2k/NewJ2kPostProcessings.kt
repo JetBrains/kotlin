@@ -241,6 +241,7 @@ object NewJ2KPostProcessingRegistrar {
             RemoveRedundantExpressionQualifierProcessing(),
 
             registerDiagnosticBasedProcessing<KtBinaryExpressionWithTypeRHS>(Errors.USELESS_CAST) { element, _ ->
+                if (element.left.isNullExpression()) return@registerDiagnosticBasedProcessing
                 val expression = RemoveUselessCastFix.invoke(element)
 
                 val variable = expression.parent as? KtProperty
