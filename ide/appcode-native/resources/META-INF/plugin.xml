@@ -23,11 +23,23 @@
 <!--    <configurationType implementation="org.jetbrains.konan.tests.AppCodeKonanTestRunConfigurationType"/>-->
 
     <lang.documentationProvider language="kotlin" implementationClass="org.jetbrains.konan.documentation.KonanXcodeDocumentationProvider"/>
+    <projectService serviceImplementation="org.jetbrains.konan.resolve.KonanBridgeFileManager"/>
+    <projectService serviceImplementation="org.jetbrains.konan.resolve.KotlinModificationCount"/>
+
+    <referencesSearch implementation="org.jetbrains.konan.findUsages.KotlinFunctionOCUsagesSearcher"/>
+    <referencesSearch implementation="org.jetbrains.konan.findUsages.KotlinOCUsageSearcher"/>
+
   </extensions>
 
   <extensions defaultExtensionNs="appcode">
     <xcodeTemplatePathsProvider implementation="org.jetbrains.konan.AppCodeKonanTemplatesProvider"/>
     <xcodeExternalBuildProvider implementation="org.jetbrains.konan.gradle.execution.AppCodeGradleKonanExternalBuildProvider"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="cidr.lang">
+    <symbolTableProvider implementation="org.jetbrains.konan.resolve.KonanBridgeSymbolTableProvider" order="before OCSymbolTableProvider"/>
+    <symbolTableProvider implementation="org.jetbrains.konan.resolve.KotlinSymbolTableProvider"/>
+    <customHeaderProvider implementation="org.jetbrains.konan.resolve.KonanFrameworkHeaderProvider"/>
   </extensions>
 
   <application-components>
