@@ -13,13 +13,13 @@ fun doSomething() {}
 
 fun test2() {
     fun f(x: Any?) = x
-    f(null?.let { return })
+    f(null?.<!IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>let<!> { return })
 
     // false unreachable here
     doSomething()
 }
 
 fun test3(x: Any?): Boolean =
-    x?.let { 
+    x?.let {
         return true
     } ?: false

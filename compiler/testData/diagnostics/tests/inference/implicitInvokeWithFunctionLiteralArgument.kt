@@ -8,7 +8,7 @@ class TestClass {
 
 fun <T> test(value: T, test: TestClass): T {
     <!UNREACHABLE_CODE!>val x =<!> test { return value }
-    <!UNREACHABLE_CODE!>x checkType { <!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Nothing>() }<!>
+    <!UNREACHABLE_CODE!>x <!OI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>checkType<!> { <!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Nothing>() }<!>
 
     <!UNREACHABLE_CODE!>return value<!>
 }

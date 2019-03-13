@@ -1661,12 +1661,12 @@ fun Nothing.case_63() {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing"), DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>this<!>.hashCode()
 
         hashCode()
-        apply {
+        <!IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>apply<!> {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing"), DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>this<!>
             <!UNREACHABLE_CODE!>hashCode()<!>
             <!UNREACHABLE_CODE!><!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing"), DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>this<!>.hashCode()<!>
         }
-        also {
+        <!IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>also<!> {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>it<!>
             <!UNREACHABLE_CODE!><!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>it<!>.hashCode()<!>
         }

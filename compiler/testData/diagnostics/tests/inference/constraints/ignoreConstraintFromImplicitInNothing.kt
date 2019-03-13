@@ -9,8 +9,8 @@ inline fun <reified T> foo2(f: (T) -> Unit): Foo<T> = Foo()
 
 fun test1() {
     val f1: Foo<out Int> = foo1 { it checkType { _<Int>() } }
-    val f2: Foo<in Nothing> = foo1 { it <!UNREACHABLE_CODE!>checkType { <!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Nothing>() }<!> }
+    val f2: Foo<in Nothing> = <!OI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>foo1<!> { it <!UNREACHABLE_CODE!><!OI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>checkType<!> { <!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Nothing>() }<!> }
 
     val f3: Foo<out Int> = foo2 { it checkType { _<Int>() } }
-    val f4: Foo<in Nothing> = <!REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>foo2<!> { it <!UNREACHABLE_CODE!>checkType { <!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Nothing>() }<!> }
+    val f4: Foo<in Nothing> = <!OI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER, REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>foo2<!> { it <!UNREACHABLE_CODE!><!OI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>checkType<!> { <!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Nothing>() }<!> }
 }
