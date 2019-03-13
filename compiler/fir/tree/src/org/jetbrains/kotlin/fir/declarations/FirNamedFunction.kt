@@ -27,8 +27,6 @@ interface FirNamedFunction : @VisitedSupertype FirFunction, FirCallableMemberDec
 
     override val isOverride: Boolean get() = status.isOverride
 
-    override val symbol: FirFunctionSymbol
-
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitNamedFunction(this, data)
 

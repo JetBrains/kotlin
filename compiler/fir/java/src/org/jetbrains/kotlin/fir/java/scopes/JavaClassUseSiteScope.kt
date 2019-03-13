@@ -8,17 +8,21 @@ package org.jetbrains.kotlin.fir.java.scopes
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
+import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.java.toNotNullConeKotlinType
-import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractProviderBasedScope
 import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeVariableSymbol
+import org.jetbrains.kotlin.fir.symbols.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
@@ -32,7 +36,7 @@ class JavaClassUseSiteScope(
     internal val symbol = klass.symbol
 
     //base symbol as key, overridden as value
-    private val overriddenByBase = mutableMapOf<ConeFunctionSymbol, ConeFunctionSymbol?>()
+    private val overriddenByBase = mutableMapOf<ConeCallableSymbol, ConeFunctionSymbol?>()
 
     private val context: ConeTypeContext = session.typeContext
 
@@ -71,14 +75,46 @@ class JavaClassUseSiteScope(
         }
     }
 
-    internal fun ConeFunctionSymbol.getOverridden(candidates: Set<ConeFunctionSymbol>): ConeCallableSymbol? {
+    private fun isOverriddenPropertyCheck(overriddenInJava: FirNamedFunction, base: FirProperty): Boolean {
+        val receiverTypeRef = base.receiverTypeRef
+        if (receiverTypeRef == null) {
+            // TODO: setters
+            return overriddenInJava.valueParameters.isEmpty()
+        } else {
+            if (overriddenInJava.valueParameters.size != 1) return false
+            return isEqualTypes(receiverTypeRef, overriddenInJava.valueParameters.single().returnTypeRef)
+        }
+    }
+
+    internal fun ConeCallableSymbol.getOverridden(candidates: Set<ConeFunctionSymbol>): ConeCallableSymbol? {
         if (overriddenByBase.containsKey(this)) return overriddenByBase[this]
 
-        val self = (this as FirFunctionSymbol).fir as FirNamedFunction
-        val overriding = candidates.firstOrNull {
-            val member = (it as FirFunctionSymbol).firUnsafe<FirNamedFunction>()
-            self.modality != Modality.FINAL && isOverriddenFunCheck(member, self)
-        } // TODO: two or more overrides for one fun?
+        val overriding = when (this) {
+            is FirFunctionSymbol -> {
+                val self = fir as FirNamedFunction
+                candidates.firstOrNull {
+                    val member = (it as FirFunctionSymbol).fir as FirNamedFunction
+                    self.modality != Modality.FINAL && isOverriddenFunCheck(member, self)
+                }
+            }
+            is FirPropertySymbol -> {
+                val self = fir as FirProperty
+                candidates.firstOrNull {
+                    val member = (it as FirFunctionSymbol).fir as FirNamedFunction
+                    self.modality != Modality.FINAL && isOverriddenPropertyCheck(member, self)
+
+                }
+            }
+            is FirAccessorSymbol -> {
+                val self = fir as FirNamedFunction
+                candidates.firstOrNull {
+                    val member = (it as FirFunctionSymbol).fir as FirNamedFunction
+                    self.modality != Modality.FINAL && isOverriddenFunCheck(member, self)
+                }
+            }
+            else -> error("Unexpected callable symbol: $this")
+        }
+        // TODO: two or more overrides for one fun?
         overriddenByBase[this] = overriding
         return overriding
     }
@@ -102,14 +138,51 @@ class JavaClassUseSiteScope(
         }
     }
 
+    private fun processAccessorFunctionsByName(
+        propertyName: Name,
+        accessorName: Name,
+        processor: (ConePropertySymbol) -> ProcessorAction
+    ): ProcessorAction {
+        val overrideCandidates = mutableSetOf<ConeFunctionSymbol>()
+        if (!declaredMemberScope.processFunctionsByName(accessorName) { functionSymbol ->
+                overrideCandidates += functionSymbol
+                val accessorSymbol = FirAccessorSymbol(
+                    accessorId = functionSymbol.callableId,
+                    callableId = CallableId(functionSymbol.callableId.packageName, functionSymbol.callableId.className, propertyName)
+                )
+                if (functionSymbol is FirBasedSymbol<*>) {
+                    (functionSymbol.fir as? FirCallableMemberDeclaration)?.let { callableMember -> accessorSymbol.bind(callableMember) }
+                }
+                processor(accessorSymbol)
+            }
+        ) return ProcessorAction.STOP
+
+        return superTypesScope.processPropertiesByName(propertyName) {
+            val firCallableMember = (it as FirBasedSymbol<*>).fir as? FirCallableMemberDeclaration
+            if (firCallableMember?.isStatic == true) {
+                ProcessorAction.NEXT
+            } else {
+                val overriddenBy = it.getOverridden(overrideCandidates)
+                if (overriddenBy == null && it is ConePropertySymbol) {
+                    processor(it)
+                } else {
+                    ProcessorAction.NEXT
+                }
+            }
+        }
+    }
+
     override fun processPropertiesByName(name: Name, processor: (ConeVariableSymbol) -> ProcessorAction): ProcessorAction {
-        val seen = mutableSetOf<ConeVariableSymbol>()
         if (!declaredMemberScope.processPropertiesByName(name) {
-                seen += it
                 processor(it)
             }
         ) return ProcessorAction.STOP
 
-        return ProcessorAction.NEXT
+        val getterName = Name.identifier(getterPrefix + name.asString().capitalize())
+        return processAccessorFunctionsByName(name, getterName, processor)
+    }
+
+    companion object {
+        private const val getterPrefix = "get"
     }
 }

@@ -69,6 +69,11 @@ public class FirMultiModuleResolveTestGenerated extends AbstractFirMultiModuleRe
         runTest("idea/testData/fir/multiModule/javaInheritsKotlinExtension/");
     }
 
+    @TestMetadata("javaInheritsKotlinProperty")
+    public void testJavaInheritsKotlinProperty() throws Exception {
+        runTest("idea/testData/fir/multiModule/javaInheritsKotlinProperty/");
+    }
+
     @TestMetadata("javaInheritsRawKotlin")
     public void testJavaInheritsRawKotlin() throws Exception {
         runTest("idea/testData/fir/multiModule/javaInheritsRawKotlin/");
