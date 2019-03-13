@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.debugger.evaluate
 import com.intellij.debugger.engine.DebugProcessImpl
 import com.intellij.debugger.engine.SuspendContextImpl
 import com.intellij.debugger.engine.evaluation.EvaluateException
+import com.intellij.debugger.engine.evaluation.EvaluateExceptionUtil
 import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
 import com.intellij.debugger.impl.DebuggerUtilsEx
 import com.intellij.debugger.jdi.StackFrameProxyImpl
@@ -53,31 +54,35 @@ class ExecutionContext(val evaluationContext: EvaluationContextImpl, val framePr
         return debugProcess.newInstance(arrayType, dimension)
     }
 
-    @Throws(
-        InvocationException::class,
-        ClassNotLoadedException::class,
-        IncompatibleThreadStateException::class,
-        InvalidTypeException::class,
-        EvaluateException::class
-    )
-    fun loadClass(asmType: Type, classLoader: ClassLoaderReference? = null): ReferenceType? {
-        return loadClass(asmType.className, classLoader)
-    }
+    @Throws(EvaluateException::class)
+    fun findClass(name: String, classLoader: ClassLoaderReference? = null): ReferenceType? {
+        debugProcess.findClass(evaluationContext, name, classLoader)?.let { return it }
 
-    @Throws(
-        InvocationException::class,
-        ClassNotLoadedException::class,
-        IncompatibleThreadStateException::class,
-        InvalidTypeException::class,
-        EvaluateException::class
-    )
-    fun loadClass(name: String, classLoader: ClassLoaderReference? = null): ReferenceType? {
-        return debugProcess.loadClass(evaluationContext, name, classLoader)
+        // If 'isAutoLoadClasses' is true, `findClass()` already did this
+        if (!evaluationContext.isAutoLoadClasses) {
+            try {
+                debugProcess.loadClass(evaluationContext, name, classLoader)
+            } catch (e: InvocationException) {
+                throw EvaluateExceptionUtil.createEvaluateException(e)
+            } catch (e: ClassNotLoadedException) {
+                throw EvaluateExceptionUtil.createEvaluateException(e)
+            } catch (e: IncompatibleThreadStateException) {
+                throw EvaluateExceptionUtil.createEvaluateException(e)
+            } catch (e: InvalidTypeException) {
+                throw EvaluateExceptionUtil.createEvaluateException(e)
+            }
+        }
+
+        return null
     }
 
     @Throws(EvaluateException::class)
-    fun findClass(name: String, classLoader: ClassLoaderReference? = null): ReferenceType? {
-        return debugProcess.findClass(evaluationContext, name, classLoader)
+    fun findClass(asmType: Type, classLoader: ClassLoaderReference? = null): ReferenceType? {
+        if (asmType.sort != Type.OBJECT && asmType.sort != Type.ARRAY) {
+            return null
+        }
+
+        return findClass(asmType.className, classLoader)
     }
 
     fun keepReference(reference: ObjectReference) {

@@ -35,7 +35,7 @@ abstract class AbstractAndroidClassLoadingAdapter : ClassLoadingAdapter {
 
     protected fun tryLoadClass(context: ExecutionContext, fqName: String, classLoader: ClassLoaderReference?): ReferenceType? {
         return try {
-            context.loadClass(fqName, classLoader)
+            context.debugProcess.loadClass(context.evaluationContext, fqName, classLoader)
         } catch (e: Throwable) {
             null
         }

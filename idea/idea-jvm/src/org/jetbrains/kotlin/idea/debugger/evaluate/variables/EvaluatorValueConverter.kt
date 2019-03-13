@@ -130,7 +130,7 @@ class EvaluatorValueConverter(private val context: ExecutionContext) {
         val unboxedType = value.asmType()
         val boxedType = box(unboxedType)
 
-        val boxedTypeClass = (context.loadClass(boxedType) as ClassType?)
+        val boxedTypeClass = (context.findClass(boxedType) as ClassType?)
             ?: error("Class $boxedType is not loaded")
 
         val methodDesc = AsmType.getMethodDescriptor(boxedType, unboxedType)
@@ -173,13 +173,13 @@ class EvaluatorValueConverter(private val context: ExecutionContext) {
             val primitiveType = value.asmType()
             val refType = PRIMITIVE_TO_REF.getValue(primitiveType)
 
-            val refTypeClass = (context.loadClass(refType) as ClassType?)
+            val refTypeClass = (context.findClass(refType) as ClassType?)
                 ?: error("Class $refType is not loaded")
 
             return wrapRef(value, refTypeClass)
         } else {
             val refType = AsmType.getType(Ref.ObjectRef::class.java)
-            val refTypeClass = (context.loadClass(refType) as ClassType?)
+            val refTypeClass = (context.findClass(refType) as ClassType?)
                 ?: error("Class $refType is not loaded")
 
             return wrapRef(value, refTypeClass)
