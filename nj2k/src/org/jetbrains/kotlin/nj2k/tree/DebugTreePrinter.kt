@@ -16,7 +16,9 @@
 
 package org.jetbrains.kotlin.nj2k.tree
 
-import org.jetbrains.kotlin.nj2k.tree.impl.*
+import org.jetbrains.kotlin.nj2k.tree.impl.JKClassSymbol
+import org.jetbrains.kotlin.nj2k.tree.impl.JKSymbol
+import org.jetbrains.kotlin.nj2k.tree.impl.JKUniverseSymbol
 import org.jetbrains.kotlin.nj2k.tree.visitors.JKVisitorVoid
 import org.jetbrains.kotlin.utils.Printer
 
@@ -37,7 +39,7 @@ private class DebugTreePrinter : JKVisitorVoid {
     }
 
     override fun visitJavaMethod(javaMethod: JKJavaMethod) {
-        printer.print(javaMethod.modifiers().joinToString(" ") { it.text })
+        printer.print(javaMethod.modifierElements().joinToString(" ") { it.modifier.text })
         printer.println(javaMethod.describe(), " [")
         printer.indented {
             javaMethod.block.accept(this, null)
