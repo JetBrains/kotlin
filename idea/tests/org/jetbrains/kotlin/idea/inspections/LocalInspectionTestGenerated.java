@@ -1276,6 +1276,21 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/mapWithReturn.kt");
             }
 
+            @TestMetadata("saveComment.kt")
+            public void testSaveComment() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/saveComment.kt");
+            }
+
+            @TestMetadata("saveComment2.kt")
+            public void testSaveComment2() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/saveComment2.kt");
+            }
+
+            @TestMetadata("saveComment3.kt")
+            public void testSaveComment3() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/saveComment3.kt");
+            }
+
             @TestMetadata("idea/testData/inspectionsLocal/collections/simplifiableCallChain/primitiveArray")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
