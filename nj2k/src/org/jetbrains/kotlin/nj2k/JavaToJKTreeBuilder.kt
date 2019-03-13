@@ -28,8 +28,10 @@ import com.intellij.psi.impl.source.tree.java.PsiLabeledStatementImpl
 import com.intellij.psi.impl.source.tree.java.PsiLiteralExpressionImpl
 import com.intellij.psi.impl.source.tree.java.PsiNewExpressionImpl
 import com.intellij.psi.javadoc.PsiDocComment
+import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.InheritanceUtil
+import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.PsiUtil
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.elements.KtLightField
@@ -53,21 +55,38 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class JavaToJKTreeBuilder(
     var symbolProvider: JKSymbolProvider,
-    private val converterServices: NewJavaToKotlinServices
+    converterServices: NewJavaToKotlinServices
 ) {
 
     private val expressionTreeMapper = ExpressionTreeMapper()
 
-    val referenceSearcher: ReferenceSearcher = converterServices.oldServices.referenceSearcher
+    private val referenceSearcher: ReferenceSearcher = converterServices.oldServices.referenceSearcher
 
     private val declarationMapper = DeclarationMapper(expressionTreeMapper)
 
     private fun PsiJavaFile.toJK(): JKFile =
         JKFileImpl(
             packageStatement?.toJK() ?: JKPackageDeclarationImpl(JKNameIdentifierImpl("")),
-            importList?.importStatements?.map { it.toJK() }.orEmpty(),
+            importList?.toJK().orEmpty(),
             with(declarationMapper) { classes.map { it.toJK() } }
         )
+
+    private fun PsiImportList.toJK(): List<JKImportStatement> =
+        importStatements.filter { import ->
+            when {
+                import.isSingleUnusedImport() -> true
+                import.isOnDemand -> true
+                else -> false
+            }
+        }.map { it.toJK() }
+
+
+    private fun PsiImportStatement.isSingleUnusedImport(): Boolean {
+        if (isOnDemand) return false
+        val target = resolve() ?: return true
+        val ussages = ReferencesSearch.search(target).toList()
+        return ussages.size == 1 && PsiTreeUtil.isAncestor(this, ussages.iterator().next().element, true)
+    }
 
     private fun PsiPackageStatement.toJK(): JKPackageDeclaration =
         JKPackageDeclarationImpl(JKNameIdentifierImpl(packageName))

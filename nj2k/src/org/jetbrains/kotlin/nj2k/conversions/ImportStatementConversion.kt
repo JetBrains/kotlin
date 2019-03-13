@@ -12,10 +12,10 @@ package org.jetbrains.kotlin.nj2k.conversions
 
 import com.intellij.psi.CommonClassNames
 import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.JKClassSymbol
 import org.jetbrains.kotlin.nj2k.tree.impl.JKImportStatementImpl
 import org.jetbrains.kotlin.nj2k.tree.impl.JKNameIdentifierImpl
-import org.jetbrains.kotlin.nj2k.tree.impl.JKUniverseClassSymbol
+import org.jetbrains.kotlin.nj2k.tree.impl.JKSymbol
+import org.jetbrains.kotlin.nj2k.tree.impl.fqNameToImport
 import org.jetbrains.kotlin.nj2k.tree.visitors.JKVisitorVoid
 
 
@@ -27,7 +27,6 @@ class ImportStatementConversion : RecursiveApplicableConversionBase() {
                 element.importList += JKImportStatementImpl(JKNameIdentifierImpl(import))
             }
         }
-        element.importList = element.importList.filter { it.name.value !in importExceptionList }
         return recurse(element)
     }
 
@@ -42,9 +41,6 @@ class ImportStatementConversion : RecursiveApplicableConversionBase() {
             "java.util.LinkedHashMap",
             "java.util.LinkedHashSet"
         )
-
-    private fun importIsInPackage(import: String, packageName: String) =
-        '.' !in import.substringAfter(packageName)
 
 
     private fun List<JKImportStatement>.containsImport(import: String) =
@@ -86,9 +82,9 @@ class ImportStatementConversion : RecursiveApplicableConversionBase() {
                 it.substringBeforeLast(".") !in defaultImports && it.contains(".")
             }
 
-        private fun addClassSymbol(symbol: JKClassSymbol) {
-            if (symbol !is JKUniverseClassSymbol) {
-                unfilteredCollectedFqNames += symbol.fqName
+        private fun addSymbol(symbol: JKSymbol) {
+            symbol.fqNameToImport()?.also { fqName ->
+                unfilteredCollectedFqNames += fqName
             }
         }
 
@@ -97,32 +93,32 @@ class ImportStatementConversion : RecursiveApplicableConversionBase() {
         }
 
         override fun visitClassAccessExpression(classAccessExpression: JKClassAccessExpression) {
-            addClassSymbol(classAccessExpression.identifier)
+            addSymbol(classAccessExpression.identifier)
         }
 
         override fun visitJavaNewExpression(javaNewExpression: JKJavaNewExpression) {
-            addClassSymbol(javaNewExpression.classSymbol)
+            addSymbol(javaNewExpression.classSymbol)
             javaNewExpression.acceptChildren(this)
         }
 
-        override fun visitTypeElement(typeElement: JKTypeElement, data: Nothing?) {
+        override fun visitTypeElement(typeElement: JKTypeElement) {
             val classType = typeElement.type as? JKClassType ?: return
-            addClassSymbol(classType.classReference)
+            addSymbol(classType.classReference)
         }
 
         override fun visitFieldAccessExpression(fieldAccessExpression: JKFieldAccessExpression) {
-            unfilteredCollectedFqNames += fieldAccessExpression.identifier.fqName
+            addSymbol(fieldAccessExpression.identifier)
         }
 
         override fun visitMethodCallExpression(methodCallExpression: JKMethodCallExpression) {
-            unfilteredCollectedFqNames += methodCallExpression.identifier.fqName
+            addSymbol(methodCallExpression.identifier)
             methodCallExpression.acceptChildren(this)
         }
 
         override fun visitClassLiteralExpression(classLiteralExpression: JKClassLiteralExpression) {
             val type = classLiteralExpression.classType.type
-            if (type is JKClassType) {
-                addClassSymbol(type.classReference)
+            if (type is JKClassType){
+                addSymbol(type.classReference)
             }
             classLiteralExpression.acceptChildren(this)
         }

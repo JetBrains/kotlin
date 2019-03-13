@@ -52,6 +52,13 @@ abstract class JKUniverseSymbol<T : JKTreeElement> : JKNamedSymbol {
         }
 }
 
+
+fun JKSymbol.fqNameToImport(): String? =
+    when {
+        this is JKClassSymbol && this !is JKUniverseClassSymbol -> fqName
+        else -> null
+    }
+
 interface JKClassSymbol : JKNamedSymbol
 
 
