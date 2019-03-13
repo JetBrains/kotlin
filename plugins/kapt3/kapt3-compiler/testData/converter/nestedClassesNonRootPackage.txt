@@ -164,7 +164,7 @@ public abstract interface IFoo {
         @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
         public static abstract @interface Anno {
 
-            public abstract java.lang.Class<?>[] value();
+            public abstract java.lang.Class[] value();
         }
 
         @kotlin.Metadata()
