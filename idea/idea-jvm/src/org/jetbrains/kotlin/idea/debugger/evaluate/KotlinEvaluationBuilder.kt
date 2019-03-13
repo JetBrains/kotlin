@@ -292,7 +292,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
     ): Value? {
         return try {
             runEvaluation(context, compiledData, classLoader) { args ->
-                val mainClassType = context.loadClass(Type.getObjectType(GENERATED_CLASS_NAME), classLoader) as? ClassType
+                val mainClassType = context.findClass(GENERATED_CLASS_NAME, classLoader) as? ClassType
                     ?: error("Can not find class \"$GENERATED_CLASS_NAME\"")
                 val mainMethod = mainClassType.methods().single { it.name() == GENERATED_FUNCTION_NAME }
                 val returnValue = context.invokeMethod(mainClassType, mainMethod, args)
@@ -332,11 +332,11 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
         // Preload additional classes
         compiledData.classes
             .filter { !it.isMainClass }
-            .forEach { context.loadClass(Type.getObjectType(it.className), classLoader) }
+            .forEach { context.findClass(it.className, classLoader) }
 
         return context.vm.virtualMachine.executeWithBreakpointsDisabled {
             for (parameterType in compiledData.mainMethodSignature.parameterTypes) {
-                context.loadClass(parameterType, classLoader)
+                context.findClass(parameterType, classLoader)
             }
             val args = calculateMainMethodCallArguments(context, compiledData)
             block(args)
