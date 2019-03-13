@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.frontend.java.di
 
-import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsPackageFragmentProvider
@@ -47,34 +46,6 @@ import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 
-private fun StorageComponentContainer.configureJavaTopDownAnalysis(
-    moduleContentScope: GlobalSearchScope,
-    project: Project,
-    lookupTracker: LookupTracker,
-    expectActualTracker: ExpectActualTracker
-) {
-    useInstance(moduleContentScope)
-    useInstance(lookupTracker)
-    useInstance(expectActualTracker)
-    useImpl<ResolveSession>()
-
-    useImpl<LazyTopDownAnalyzer>()
-    useImpl<JavaDescriptorResolver>()
-    useImpl<DeserializationComponentsForJava>()
-
-    useInstance(VirtualFileFinderFactory.getInstance(project).create(moduleContentScope))
-
-    useInstance(JavaPropertyInitializerEvaluatorImpl)
-    useImpl<AnnotationResolverImpl>()
-    useImpl<SignaturePropagatorImpl>()
-    useImpl<TraceBasedErrorReporter>()
-    useInstance(InternalFlexibleTypeTransformer)
-
-    useImpl<CompilerDeserializationConfiguration>()
-
-    useInstance(JavaDeprecationSettings)
-}
-
 fun createContainerForLazyResolveWithJava(
     jvmPlatform: TargetPlatform,
     moduleContext: ModuleContext,
@@ -92,7 +63,22 @@ fun createContainerForLazyResolveWithJava(
     javaClassTracker: JavaClassesTracker? = null
 ): StorageComponentContainer = createContainer("LazyResolveWithJava", JvmPlatformCompilerServices) {
     configureModule(moduleContext, jvmPlatform, JvmPlatformCompilerServices, bindingTrace)
-    configureJavaTopDownAnalysis(moduleContentScope, moduleContext.project, lookupTracker, expectActualTracker)
+
+    useInstance(moduleContentScope)
+    useInstance(lookupTracker)
+    useInstance(expectActualTracker)
+    useImpl<ResolveSession>()
+    useImpl<LazyTopDownAnalyzer>()
+    useImpl<JavaDescriptorResolver>()
+    useImpl<DeserializationComponentsForJava>()
+    useInstance(VirtualFileFinderFactory.getInstance(moduleContext.project).create(moduleContentScope))
+    useInstance(JavaPropertyInitializerEvaluatorImpl)
+    useImpl<AnnotationResolverImpl>()
+    useImpl<SignaturePropagatorImpl>()
+    useImpl<TraceBasedErrorReporter>()
+    useInstance(InternalFlexibleTypeTransformer)
+    useImpl<CompilerDeserializationConfiguration>()
+    useInstance(JavaDeprecationSettings)
 
     if (configureJavaClassFinder != null) {
         configureJavaClassFinder()
