@@ -115,9 +115,14 @@ class ImportStatementConversion : RecursiveApplicableConversionBase() {
             methodCallExpression.acceptChildren(this)
         }
 
+        override fun visitAnnotation(annotation: JKAnnotation) {
+            addSymbol(annotation.classSymbol)
+            annotation.acceptChildren(this)
+        }
+
         override fun visitClassLiteralExpression(classLiteralExpression: JKClassLiteralExpression) {
             val type = classLiteralExpression.classType.type
-            if (type is JKClassType){
+            if (type is JKClassType) {
                 addSymbol(type.classReference)
             }
             classLiteralExpression.acceptChildren(this)
