@@ -42,7 +42,8 @@ fun JKExpression.type(symbolProvider: JKSymbolProvider): JKType? =
         is JKFieldAccessExpressionImpl -> identifier.fieldType
         is JKQualifiedExpressionImpl -> this.selector.type(symbolProvider)
         is JKKtThrowExpression -> kotlinTypeByName(KotlinBuiltIns.FQ_NAMES.nothing.asString(), symbolProvider)
-        is JKClassAccessExpression -> null
+        is JKClassAccessExpression ->
+            JKClassTypeImpl(identifier, emptyList(), Nullability.NotNull)
         is JKJavaNewExpression -> JKClassTypeImpl(classSymbol)
         is JKKtIsExpression -> kotlinTypeByName(KotlinBuiltIns.FQ_NAMES._boolean.asString(), symbolProvider)
         is JKParenthesizedExpression -> expression.type(symbolProvider)
@@ -65,6 +66,8 @@ fun JKExpression.type(symbolProvider: JKSymbolProvider): JKType? =
         }
         is JKKtAnnotationArrayInitializerExpression -> JKNoTypeImpl //TODO
         is JKLambdaExpression -> returnType.type
+        is JKLabeledStatement ->
+            statement.safeAs<JKExpressionStatement>()?.expression?.type(symbolProvider)
         else -> TODO(this::class.java.toString())
     }
 
@@ -372,20 +375,6 @@ fun JKClassSymbol.isInterface(): Boolean {
 fun JKType.isInterface(): Boolean =
     (this as? JKClassType)?.classReference?.isInterface() ?: false
 
-fun JKMethod.nullabilityBySuperMethod(symbolProvider: JKSymbolProvider): Nullability {
-    if (modality != Modality.OVERRIDE) return Nullability.Default
-    val superMethodSymbol = findSuperMethodSymbol(symbolProvider) ?: return Nullability.Default
-    return superMethodSymbol.returnType?.nullability ?: return Nullability.Default
-}
-
-
-private fun JKMethod.findSuperMethodSymbol(symbolProvider: JKSymbolProvider): JKMethodSymbol? =
-    psi<PsiMethod>()
-        ?.findSuperMethods()
-        ?.firstOrNull()
-        ?.let {
-            symbolProvider.provideDirectSymbol(it) as? JKMethodSymbol
-        }
 
 fun JKType.replaceJavaClassWithKotlinClassType(symbolProvider: JKSymbolProvider): JKType =
     applyRecursive { type ->
