@@ -1276,6 +1276,21 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/mapWithReturn.kt");
             }
 
+            @TestMetadata("saveComment.kt")
+            public void testSaveComment() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/saveComment.kt");
+            }
+
+            @TestMetadata("saveComment2.kt")
+            public void testSaveComment2() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/saveComment2.kt");
+            }
+
+            @TestMetadata("saveComment3.kt")
+            public void testSaveComment3() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/saveComment3.kt");
+            }
+
             @TestMetadata("idea/testData/inspectionsLocal/collections/simplifiableCallChain/primitiveArray")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
@@ -6569,39 +6584,6 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
-    @TestMetadata("idea/testData/inspectionsLocal/replaceCollectionCountWithSize")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class ReplaceCollectionCountWithSize extends AbstractLocalInspectionTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInReplaceCollectionCountWithSize() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/replaceCollectionCountWithSize"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
-        }
-
-        @TestMetadata("countOfArray.kt")
-        public void testCountOfArray() throws Exception {
-            runTest("idea/testData/inspectionsLocal/replaceCollectionCountWithSize/countOfArray.kt");
-        }
-
-        @TestMetadata("countOfArrayWithPredicate.kt")
-        public void testCountOfArrayWithPredicate() throws Exception {
-            runTest("idea/testData/inspectionsLocal/replaceCollectionCountWithSize/countOfArrayWithPredicate.kt");
-        }
-
-        @TestMetadata("countOfCollection.kt")
-        public void testCountOfCollection() throws Exception {
-            runTest("idea/testData/inspectionsLocal/replaceCollectionCountWithSize/countOfCollection.kt");
-        }
-
-        @TestMetadata("countOfMap.kt")
-        public void testCountOfMap() throws Exception {
-            runTest("idea/testData/inspectionsLocal/replaceCollectionCountWithSize/countOfMap.kt");
-        }
-    }
-
     @TestMetadata("idea/testData/inspectionsLocal/replaceAssociateFunction")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -6865,6 +6847,39 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             public void testBasic5() throws Exception {
                 runTest("idea/testData/inspectionsLocal/replaceAssociateFunction/associateWithTo/basic5.kt");
             }
+        }
+    }
+
+    @TestMetadata("idea/testData/inspectionsLocal/replaceCollectionCountWithSize")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ReplaceCollectionCountWithSize extends AbstractLocalInspectionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInReplaceCollectionCountWithSize() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/replaceCollectionCountWithSize"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("countOfArray.kt")
+        public void testCountOfArray() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceCollectionCountWithSize/countOfArray.kt");
+        }
+
+        @TestMetadata("countOfArrayWithPredicate.kt")
+        public void testCountOfArrayWithPredicate() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceCollectionCountWithSize/countOfArrayWithPredicate.kt");
+        }
+
+        @TestMetadata("countOfCollection.kt")
+        public void testCountOfCollection() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceCollectionCountWithSize/countOfCollection.kt");
+        }
+
+        @TestMetadata("countOfMap.kt")
+        public void testCountOfMap() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceCollectionCountWithSize/countOfMap.kt");
         }
     }
 
