@@ -47,35 +47,37 @@ enum class ParseContext {
     CODE_BLOCK
 }
 
-class JavaToKotlinConverter(
-    private val project: Project,
-    private val settings: ConverterSettings,
-    private val services: JavaToKotlinConverterServices
-) {
+interface ExternalCodeProcessing {
+    fun prepareWriteOperation(progress: ProgressIndicator): () -> Unit
+}
+
+
+data class ElementResult(val text: String, val importsToAdd: Set<FqName>, val parseContext: ParseContext)
+
+data class Result(val results: List<ElementResult?>, val externalCodeProcessing: ExternalCodeProcessing?)
+
+data class FilesResult(val results: List<String>, val externalCodeProcessing: ExternalCodeProcessing?)
+
+abstract class JavaToKotlinConverter(private val project: Project) {
+    protected abstract fun elementsToKotlin(inputElements: List<PsiElement>, processor: WithProgressProcessor): Result
+
     private val LOG = Logger.getInstance("#org.jetbrains.kotlin.j2k.JavaToKotlinConverter")
 
-    interface ExternalCodeProcessing {
-        fun prepareWriteOperation(progress: ProgressIndicator): () -> Unit
-    }
-
-    data class ElementResult(val text: String, val importsToAdd: Set<FqName>, val parseContext: ParseContext)
-
-    data class Result(val results: List<ElementResult?>, val externalCodeProcessing: ExternalCodeProcessing?)
-
-    data class FilesResult(val results: List<String>, val externalCodeProcessing: ExternalCodeProcessing?)
-
-    fun filesToKotlin(files: List<PsiJavaFile>, postProcessor: PostProcessor, progress: ProgressIndicator = EmptyProgressIndicator()): FilesResult {
+    fun filesToKotlin(
+        files: List<PsiJavaFile>,
+        postProcessor: PostProcessor,
+        progress: ProgressIndicator = EmptyProgressIndicator()
+    ): FilesResult {
         val withProgressProcessor = WithProgressProcessor(progress, files)
         val (results, externalCodeProcessing) = ApplicationManager.getApplication().runReadAction(Computable {
             elementsToKotlin(files, withProgressProcessor)
         })
 
-
         val texts = withProgressProcessor.processItems(0.5, results.withIndex()) { pair ->
             val (i, result) = pair
             try {
                 val kotlinFile = ApplicationManager.getApplication().runReadAction(Computable {
-                    KtPsiFactory(project).createAnalyzableFile("dummy.kt", result!!.text, files[i])
+                    KtPsiFactory(project).createFileWithLightClassSupport("dummy.kt", result!!.text, files[i])
                 })
 
                 result!!.importsToAdd.forEach { postProcessor.insertImport(kotlinFile, it) }
@@ -83,11 +85,9 @@ class JavaToKotlinConverter(
                 AfterConversionPass(project, postProcessor).run(kotlinFile, range = null)
 
                 kotlinFile.text
-            }
-            catch(e: ProcessCanceledException) {
+            } catch (e: ProcessCanceledException) {
                 throw e
-            }
-            catch(t: Throwable) {
+            } catch (t: Throwable) {
                 LOG.error(t)
                 result!!.text
             }
@@ -99,16 +99,22 @@ class JavaToKotlinConverter(
     fun elementsToKotlin(inputElements: List<PsiElement>): Result {
         return elementsToKotlin(inputElements, WithProgressProcessor.DEFAULT)
     }
+}
 
-    private  fun elementsToKotlin(inputElements: List<PsiElement>, processor: WithProgressProcessor): Result {
+class OldJavaToKotlinConverter(
+    project: Project,
+    private val settings: ConverterSettings,
+    private val services: JavaToKotlinConverterServices
+) : JavaToKotlinConverter(project) {
+
+    protected override fun elementsToKotlin(inputElements: List<PsiElement>, processor: WithProgressProcessor): Result {
         try {
             val usageProcessings = LinkedHashMap<PsiElement, MutableCollection<UsageProcessing>>()
             val usageProcessingCollector: (UsageProcessing) -> Unit = {
                 usageProcessings.getOrPut(it.targetElement, { ArrayList() }).add(it)
             }
 
-            fun inConversionScope(element: PsiElement)
-                    = inputElements.any { it.isAncestor(element, strict = false) }
+            fun inConversionScope(element: PsiElement) = inputElements.any { it.isAncestor(element, strict = false) }
 
 
             val intermediateResults = processor.processItems(0.25, inputElements) { inputElement ->
@@ -127,14 +133,12 @@ class JavaToKotlinConverter(
             val externalCodeProcessing = buildExternalCodeProcessing(usageProcessings, ::inConversionScope)
 
             return Result(results, externalCodeProcessing)
-        }
-        catch(e: ElementCreationStackTraceRequiredException) {
+        } catch (e: ElementCreationStackTraceRequiredException) {
             // if we got this exception then we need to turn element creation stack traces on to get better diagnostic
             Element.saveCreationStacktraces = true
             try {
                 return elementsToKotlin(inputElements)
-            }
-            finally {
+            } finally {
                 Element.saveCreationStacktraces = false
             }
         }
@@ -162,7 +166,7 @@ class JavaToKotlinConverter(
             .groupBy { it.targetElement }
         if (map.isEmpty()) return null
 
-        return object: ExternalCodeProcessing {
+        return object : ExternalCodeProcessing {
             override fun prepareWriteOperation(progress: ProgressIndicator): () -> Unit {
                 val refs = ArrayList<ReferenceInfo>()
 
@@ -183,7 +187,8 @@ class JavaToKotlinConverter(
                                 .filterNot { inConversionScope(it.element) }
                                 .mapTo(refs) { ReferenceInfo(it, psiElement, it.element.containingFile, processings) }
                         },
-                        ProgressPortionReporter(progress, i / map.size.toDouble(), 1.0 / map.size))
+                        ProgressPortionReporter(progress, i / map.size.toDouble(), 1.0 / map.size)
+                    )
 
                 }
 
@@ -232,86 +237,89 @@ class JavaToKotlinConverter(
             return -info1.offset.compareTo(info2.offset)
         }
     }
+}
 
-    private class WithProgressProcessor(private val progress: ProgressIndicator?, private val files: List<PsiJavaFile>?) {
-        companion object {
-            val DEFAULT = WithProgressProcessor(null, null)
-        }
 
-        private val progressText = "Converting Java to Kotlin"
-        private val fileCount = files?.size ?: 0
-        private val fileCountText = fileCount.toString() + " " + if (fileCount > 1) "files" else "file"
-        private var fraction = 0.0
-        private var pass = 1
-
-        fun <TInputItem, TOutputItem> processItems(
-            fractionPortion: Double,
-            inputItems: Iterable<TInputItem>,
-            processItem: (TInputItem) -> TOutputItem
-        ): List<TOutputItem> {
-            val outputItems = ArrayList<TOutputItem>()
-            // we use special process with EmptyProgressIndicator to avoid changing text in our progress by inheritors search inside etc
-            ProgressManager.getInstance().runProcess(
-                {
-                    progress?.text = "$progressText ($fileCountText) - pass $pass of 3"
-
-                    for ((i, item) in inputItems.withIndex()) {
-                        progress?.checkCanceled()
-                        progress?.fraction = fraction + fractionPortion * i / fileCount
-
-                        progress?.text2 = files!![i].virtualFile.presentableUrl
-
-                        outputItems.add(processItem(item))
-                    }
-
-                    pass++
-                    fraction += fractionPortion
-                },
-                EmptyProgressIndicator())
-            return outputItems
-        }
+class WithProgressProcessor(private val progress: ProgressIndicator?, private val files: List<PsiJavaFile>?) {
+    companion object {
+        val DEFAULT = WithProgressProcessor(null, null)
     }
 
-    private class ProgressPortionReporter(
-        indicator: ProgressIndicator,
-        private val start: Double,
-        private val portion: Double
-    ) : DelegatingProgressIndicator(indicator) {
+    private val progressText = "Converting Java to Kotlin"
+    private val fileCount = files?.size ?: 0
+    private val fileCountText = fileCount.toString() + " " + if (fileCount > 1) "files" else "file"
+    private var fraction = 0.0
+    private var pass = 1
 
-        init {
-            fraction = 0.0
-        }
+    fun <TInputItem, TOutputItem> processItems(
+        fractionPortion: Double,
+        inputItems: Iterable<TInputItem>,
+        processItem: (TInputItem) -> TOutputItem
+    ): List<TOutputItem> {
+        val outputItems = ArrayList<TOutputItem>()
+        // we use special process with EmptyProgressIndicator to avoid changing text in our progress by inheritors search inside etc
+        ProgressManager.getInstance().runProcess(
+            {
+                progress?.text = "$progressText ($fileCountText) - pass $pass of 3"
 
-        override fun start() {
-            fraction = 0.0
-        }
+                for ((i, item) in inputItems.withIndex()) {
+                    progress?.checkCanceled()
+                    progress?.fraction = fraction + fractionPortion * i / fileCount
 
-        override fun stop() {
-            fraction = portion
-        }
+                    progress?.text2 = files!![i].virtualFile.presentableUrl
 
-        override fun setFraction(fraction: Double) {
-            super.setFraction(start + (fraction * portion))
-        }
+                    outputItems.add(processItem(item))
+                }
 
-        override fun getFraction(): Double {
-            return (super.getFraction() - start) / portion
-        }
+                pass++
+                fraction += fractionPortion
+            },
+            EmptyProgressIndicator()
+        )
+        return outputItems
+    }
+}
 
-        override fun setText(text: String?) {
-        }
+private class ProgressPortionReporter(
+    indicator: ProgressIndicator,
+    private val start: Double,
+    private val portion: Double
+) : DelegatingProgressIndicator(indicator) {
 
-        override fun setText2(text: String?) {
-        }
+    init {
+        fraction = 0.0
     }
 
-    // Copied from com.intellij.ide.util.DelegatingProgressIndicator
-    private open class DelegatingProgressIndicator : WrappedProgressIndicator, StandardProgressIndicator {
-        protected val delegate: ProgressIndicator
+    override fun start() {
+        fraction = 0.0
+    }
 
-        constructor(indicator: ProgressIndicator) {
-            delegate = indicator
-        }
+    override fun stop() {
+        fraction = portion
+    }
+
+    override fun setFraction(fraction: Double) {
+        super.setFraction(start + (fraction * portion))
+    }
+
+    override fun getFraction(): Double {
+        return (super.getFraction() - start) / portion
+    }
+
+    override fun setText(text: String?) {
+    }
+
+    override fun setText2(text: String?) {
+    }
+}
+
+// Copied from com.intellij.ide.util.DelegatingProgressIndicator
+open class DelegatingProgressIndicator : WrappedProgressIndicator, StandardProgressIndicator {
+    protected val delegate: ProgressIndicator
+
+    constructor(indicator: ProgressIndicator) {
+        delegate = indicator
+    }
 
         constructor() {
             // BUNCH: 181
@@ -320,49 +328,48 @@ class JavaToKotlinConverter(
             delegate = indicator ?: EmptyProgressIndicator()
         }
 
-        override fun start() = delegate.start()
-        override fun stop() = delegate.stop()
-        override fun isRunning() = delegate.isRunning
-        override fun cancel() = delegate.cancel()
-        override fun isCanceled() = delegate.isCanceled
+    override fun start() = delegate.start()
+    override fun stop() = delegate.stop()
+    override fun isRunning() = delegate.isRunning
+    override fun cancel() = delegate.cancel()
+    override fun isCanceled() = delegate.isCanceled
 
-        override fun setText(text: String?) {
-            delegate.text = text
-        }
-
-        override fun getText() = delegate.text
-
-        override fun setText2(text: String?) {
-            delegate.text2 = text
-        }
-
-        override fun getText2() = delegate.text2
-        override fun getFraction() = delegate.fraction
-
-        override fun setFraction(fraction: Double) {
-            delegate.fraction = fraction
-        }
-
-        override fun pushState() = delegate.pushState()
-        override fun popState() = delegate.popState()
-        override fun startNonCancelableSection() = delegate.startNonCancelableSection()
-        override fun finishNonCancelableSection() = delegate.finishNonCancelableSection()
-        override fun isModal() = delegate.isModal
-        override fun getModalityState() = delegate.modalityState
-
-        override fun setModalityProgress(modalityProgress: ProgressIndicator?) {
-            delegate.setModalityProgress(modalityProgress)
-        }
-
-        override fun isIndeterminate() = delegate.isIndeterminate
-
-        override fun setIndeterminate(indeterminate: Boolean) {
-            delegate.isIndeterminate = indeterminate
-        }
-
-        override fun checkCanceled() = delegate.checkCanceled()
-        override fun getOriginalProgressIndicator() = delegate
-        override fun isPopupWasShown() = delegate.isPopupWasShown
-        override fun isShowing() = delegate.isShowing
+    override fun setText(text: String?) {
+        delegate.text = text
     }
+
+    override fun getText() = delegate.text
+
+    override fun setText2(text: String?) {
+        delegate.text2 = text
+    }
+
+    override fun getText2() = delegate.text2
+    override fun getFraction() = delegate.fraction
+
+    override fun setFraction(fraction: Double) {
+        delegate.fraction = fraction
+    }
+
+    override fun pushState() = delegate.pushState()
+    override fun popState() = delegate.popState()
+    override fun startNonCancelableSection() = delegate.startNonCancelableSection()
+    override fun finishNonCancelableSection() = delegate.finishNonCancelableSection()
+    override fun isModal() = delegate.isModal
+    override fun getModalityState() = delegate.modalityState
+
+    override fun setModalityProgress(modalityProgress: ProgressIndicator?) {
+        delegate.setModalityProgress(modalityProgress)
+    }
+
+    override fun isIndeterminate() = delegate.isIndeterminate
+
+    override fun setIndeterminate(indeterminate: Boolean) {
+        delegate.isIndeterminate = indeterminate
+    }
+
+    override fun checkCanceled() = delegate.checkCanceled()
+    override fun getOriginalProgressIndicator() = delegate
+    override fun isPopupWasShown() = delegate.isPopupWasShown
+    override fun isShowing() = delegate.isShowing
 }

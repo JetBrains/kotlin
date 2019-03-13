@@ -16,20 +16,21 @@
 
 package org.jetbrains.kotlin.nj2k
 
-import com.intellij.openapi.progress.EmptyProgressIndicator
-import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiJavaFile
-import org.jetbrains.kotlin.j2k.ConverterSettings
+import org.jetbrains.kotlin.j2k.*
 import org.jetbrains.kotlin.nj2k.tree.JKTreeElement
 import org.jetbrains.kotlin.nj2k.tree.prettyDebugPrintTree
+import org.jetbrains.kotlin.psi.KtPsiFactory
 
 class NewJavaToKotlinConverter(
     val project: Project,
     val settings: ConverterSettings,
-    val converterServices: NewJavaToKotlinServices
-) {
+    val oldConverterServices: JavaToKotlinConverterServices
+) : JavaToKotlinConverter(project) {
+    val converterServices = object : NewJavaToKotlinServices {
+        override val oldServices = oldConverterServices
+    }
 
     private fun List<JKTreeElement>.prettyPrintTrees() = buildString {
         for (tree in this@prettyPrintTrees) {
@@ -39,25 +40,25 @@ class NewJavaToKotlinConverter(
         }
     }
 
-    fun filesToKotlin(files: List<PsiJavaFile>, progressIndicator: ProgressIndicator = EmptyProgressIndicator()): List<String> {
+    override fun elementsToKotlin(inputElements: List<PsiElement>, processor: WithProgressProcessor): Result {
         val symbolProvider = JKSymbolProvider()
-        symbolProvider.preBuildTree(files)
+        symbolProvider.preBuildTree(inputElements)
         val treeBuilder = JavaToJKTreeBuilder(symbolProvider, converterServices)
-        val fileTrees = files.mapNotNull(treeBuilder::buildTree)
-
-//        println(fileTrees.prettyPrintTrees())
+        val asts = inputElements.mapNotNull(treeBuilder::buildTree)
+        val factory = KtPsiFactory(project, true)
 
         val context = ConversionContext(
             symbolProvider,
             this,
-            { it: PsiElement -> it.containingFile in files }
+            { it.containingFile in inputElements }
         )
-
-        ConversionsRunner.doApply(fileTrees, context)
-
-//        val resultTree = fileTrees.prettyPrintTrees()
-//        println(resultTree)
-
-        return fileTrees.map { NewCodeBuilder().run { printCodeOut(it) } }
+        ConversionsRunner.doApply(asts, context)
+        val kotlinCodes = asts.map { NewCodeBuilder().run { printCodeOut(it) } }
+        return Result(
+            kotlinCodes.map { code ->
+                ElementResult(code, emptySet(), ParseContext.TOP_LEVEL)
+            },
+            null
+        )
     }
 }

@@ -20,7 +20,7 @@ dependencies {
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 
     testCompile(project(":idea"))
-    compile(project(":nj2k:nj2k-services"))
+    testCompile(project(":nj2k:nj2k-services"))
     testCompile(projectTests(":idea:idea-test-framework"))
     testCompile(project(":compiler:light-classes"))
     testCompile(project(":kotlin-test:kotlin-test-junit"))
@@ -93,3 +93,6 @@ fun configureFreeCompilerArg(isEnabled: Boolean, compilerArgument: String) {
         }
     }
 }
+
+ideaPlugin()
+

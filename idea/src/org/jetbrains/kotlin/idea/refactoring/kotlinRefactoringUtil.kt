@@ -75,6 +75,7 @@ import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.core.util.showYesNoCancelDialog
 import org.jetbrains.kotlin.idea.j2k.IdeaJavaToKotlinServices
+import org.jetbrains.kotlin.idea.j2k.JavaToKotlinConverterFactory
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinValVar
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.toValVar
@@ -644,11 +645,12 @@ fun createJavaClass(klass: KtClass, targetClass: PsiClass?, forcePlainClass: Boo
 fun PsiElement.j2kText(): String? {
     if (language != JavaLanguage.INSTANCE) return null
 
-    val j2kConverter = JavaToKotlinConverter(
-        project,
-        ConverterSettings.defaultSettings,
-        IdeaJavaToKotlinServices
-    )
+    val j2kConverter =
+        JavaToKotlinConverterFactory.createJavaToKotlinConverter(
+            project,
+            ConverterSettings.defaultSettings,
+            IdeaJavaToKotlinServices
+        )
     return j2kConverter.elementsToKotlin(listOf(this)).results.single()?.text ?: return null //TODO: insert imports
 }
 

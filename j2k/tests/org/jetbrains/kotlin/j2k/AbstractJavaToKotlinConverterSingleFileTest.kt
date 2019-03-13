@@ -110,7 +110,7 @@ abstract class AbstractJavaToKotlinConverterSingleFileTest : AbstractJavaToKotli
 
     protected open fun fileToKotlin(text: String, settings: ConverterSettings, project: Project): String {
         val file = createJavaFile(text)
-        val converter = JavaToKotlinConverter(project, settings, IdeaJavaToKotlinServices)
+        val converter = OldJavaToKotlinConverter(project, settings, IdeaJavaToKotlinServices)
         return converter.filesToKotlin(listOf(file), J2kPostProcessor(formatCode = true)).results.single()
     }
 

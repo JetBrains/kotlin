@@ -28,8 +28,8 @@ class JKSymbolProvider {
 
     private val elementVisitor = ElementVisitor()
 
-    fun preBuildTree(files: List<PsiJavaFile>) {
-        files.forEach { it.accept(elementVisitor) }
+    fun preBuildTree(inputElements: List<PsiElement>) {
+        inputElements.forEach { it.accept(elementVisitor) }
     }
 
     private fun symbolForNonKotlinElement(psi: PsiElement) =

@@ -28,6 +28,7 @@ dependencies {
     compile(project(":compiler:plugin-api"))
     compile(project(":eval4j"))
     compile(project(":j2k"))
+    compile(project(":nj2k"))
     compile(project(":idea"))
     compile(project(":idea:formatter"))
     compile(project(":idea:fir-view"))
@@ -74,3 +75,4 @@ sourceSets {
     "main" { projectDefault() }
 }
 
+ideaPlugin()

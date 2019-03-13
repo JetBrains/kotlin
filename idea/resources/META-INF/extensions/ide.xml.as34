@@ -47,6 +47,9 @@
                         interface="org.jetbrains.kotlin.synthetic.SyntheticScopeProviderExtension"
                         area="IDEA_PROJECT"/>
 
+        <extensionPoint qualifiedName="org.jetbrains.kotlin.j2kConverterExtension"
+                        interface="org.jetbrains.kotlin.j2k.J2kConverterExtension"/>
+
         <extensionPoint qualifiedName="org.jetbrains.kotlin.resolveScopeEnlarger"
                         interface="org.jetbrains.kotlin.idea.caches.resolve.util.KotlinResolveScopeEnlarger"/>
     </extensionPoints>
@@ -80,5 +83,14 @@
 
         <scratchFileLanguageProvider language="kotlin" implementationClass="org.jetbrains.kotlin.idea.scratch.KtScratchFileLanguageProvider"/>
         <scriptRelatedModulesProvider implementation="org.jetbrains.kotlin.idea.scratch.ScratchModuleDependencyProvider"/>
+
+        <j2kConverterExtension implementation="org.jetbrains.kotlin.idea.j2k.OldJ2kConverterExtension"/>
+        <j2kConverterExtension implementation="org.jetbrains.kotlin.nj2k.NewJ2kConverterExtension"/>
+    </extensions>
+    <extensions defaultExtensionNs="com.intellij">
+            <registryKey key="kotlin.use.new.j2k"
+                       description="Use new Java to Kotlin Converter (experimental)"
+                       defaultValue="false"
+                       restartRequired="false"/>
     </extensions>
 </idea-plugin>

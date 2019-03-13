@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.nj2k
 
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.idea.nj2k.NewJ2kPostProcessor
+import org.jetbrains.kotlin.idea.j2k.IdeaJavaToKotlinServices
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterSingleFileTest
 import org.jetbrains.kotlin.j2k.ConverterSettings
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -32,14 +32,15 @@ abstract class AbstractNewJavaToKotlinConverterSingleFileTest : AbstractJavaToKo
         val postProcessor = NewJ2kPostProcessor(true, settings)
 
 
-        return NewJavaToKotlinConverter(project, settings, IdeaNewJavaToKotlinServices).filesToKotlin(listOf(file)).map {
-            factory.createFileWithLightClassSupport("Dummy.kt", it, file)
-        }.map {
-            CommandProcessor.getInstance().runUndoTransparentAction {
-                postProcessor.doAdditionalProcessing(it, null)
+        return NewJavaToKotlinConverter(project, settings, IdeaJavaToKotlinServices)
+            .filesToKotlin(listOf(file), NewJ2kPostProcessor(true, settings)).let { (results, _) ->
+                factory.createFileWithLightClassSupport("Dummy.kt", results.single(), file)
+            }.let {
+                CommandProcessor.getInstance().runUndoTransparentAction {
+                    postProcessor.doAdditionalProcessing(it, null)
+                }
+                it.text
             }
-            it.text
-        }.single()
     }
 
     override fun provideExpectedFile(javaPath: String): File =
