@@ -11,18 +11,22 @@ import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtImportDirective
 
 internal fun KtFile.dumpStructureText(): String {
     val sb = StringBuilder()
     this.accept(object : PsiElementVisitor() {
         override fun visitElement(element: PsiElement?) {
-            if (element is PsiComment) {
-                return
-            }
             if (element is PsiWhiteSpace) {
                 if (sb.lastOrNull() !in listOf(' ', '{', '}', '(', ')')) {
                     sb.append(" ")
                 }
+                return
+            }
+            if (element is KtImportDirective) {
+                return
+            }
+            if (element is PsiComment && (element.text.startsWith("// ERROR") || element.text.startsWith("// !"))) {
                 return
             }
             if (element is LeafPsiElement) {
