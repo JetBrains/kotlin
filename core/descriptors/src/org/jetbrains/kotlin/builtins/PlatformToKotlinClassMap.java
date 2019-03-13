@@ -6,12 +6,13 @@
 package org.jetbrains.kotlin.builtins;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.container.PlatformSpecificExtension;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 
 import java.util.Collection;
 import java.util.Collections;
 
-public interface PlatformToKotlinClassMap {
+public interface PlatformToKotlinClassMap extends PlatformSpecificExtension<PlatformToKotlinClassMap> {
     PlatformToKotlinClassMap EMPTY = new PlatformToKotlinClassMap() {
         @NotNull
         @Override
@@ -23,3 +24,4 @@ public interface PlatformToKotlinClassMap {
     @NotNull
     Collection<ClassDescriptor> mapPlatformClass(@NotNull ClassDescriptor classDescriptor);
 }
+

@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.resolve.calls.components
 
+import org.jetbrains.kotlin.container.PlatformExtensionsClashResolver
+import org.jetbrains.kotlin.container.PlatformSpecificExtension
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -55,7 +57,7 @@ interface KotlinResolutionCallbacks {
     fun getExpectedTypeFromAsExpressionAndRecordItInTrace(resolvedAtom: ResolvedCallAtom): UnwrappedType?
 }
 
-interface SamConversionTransformer {
+interface SamConversionTransformer : PlatformSpecificExtension<SamConversionTransformer> {
     fun getFunctionTypeForPossibleSamType(possibleSamType: UnwrappedType): UnwrappedType?
 
     fun shouldRunSamConversionForFunction(candidate: CallableDescriptor): Boolean
@@ -65,3 +67,8 @@ interface SamConversionTransformer {
         override fun shouldRunSamConversionForFunction(candidate: CallableDescriptor): Boolean = false
     }
 }
+
+class SamConversionTransformerClashesResolver : PlatformExtensionsClashResolver.UseAnyOf<SamConversionTransformer>(
+    SamConversionTransformer.Empty,
+    SamConversionTransformer::class.java
+)

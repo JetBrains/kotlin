@@ -16,9 +16,11 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.container.PlatformExtensionsClashResolver
+import org.jetbrains.kotlin.container.PlatformSpecificExtension
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 
-interface OverridesBackwardCompatibilityHelper {
+interface OverridesBackwardCompatibilityHelper : PlatformSpecificExtension<OverridesBackwardCompatibilityHelper> {
     fun overrideCanBeOmitted(overridingDescriptor: CallableMemberDescriptor): Boolean
 
     object Default : OverridesBackwardCompatibilityHelper {
@@ -26,3 +28,8 @@ interface OverridesBackwardCompatibilityHelper {
             false
     }
 }
+
+class OverridesBackwardCompatibilityHelperClashesResolver : PlatformExtensionsClashResolver.UseAnyOf<OverridesBackwardCompatibilityHelper>(
+    OverridesBackwardCompatibilityHelper.Default,
+    OverridesBackwardCompatibilityHelper::class.java
+)

@@ -24,6 +24,7 @@ object KonanPlatformConfigurator : PlatformConfiguratorBase(
     additionalTypeCheckers = listOf(),
     additionalClassifierUsageCheckers = listOf(),
     additionalAnnotationCheckers = listOf(),
+    additionalClashResolvers = listOf(),
     identifierChecker = IdentifierChecker.Default,
     overloadFilter = OverloadFilter.Default,
     platformToKotlinClassMap = PlatformToKotlinClassMap.EMPTY,

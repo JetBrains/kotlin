@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.DefaultImplementation
+import org.jetbrains.kotlin.container.PlatformExtensionsClashResolver
+import org.jetbrains.kotlin.container.PlatformSpecificExtension
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
@@ -823,7 +825,7 @@ class DoubleColonExpressionResolver(
 // By default, function types with big arity are supported. On platforms where they are not supported by default (e.g. JVM),
 // LANGUAGE_VERSION_DEPENDENT should be used which makes the code check if the corresponding language feature is enabled.
 @DefaultImplementation(FunctionWithBigAritySupport::class)
-class FunctionWithBigAritySupport private constructor(val shouldCheckLanguageVersionSettings: Boolean) {
+class FunctionWithBigAritySupport private constructor(val shouldCheckLanguageVersionSettings: Boolean) : PlatformSpecificExtension<FunctionWithBigAritySupport>{
     constructor() : this(false)
 
     companion object {
@@ -831,3 +833,8 @@ class FunctionWithBigAritySupport private constructor(val shouldCheckLanguageVer
         val LANGUAGE_VERSION_DEPENDENT = FunctionWithBigAritySupport(true)
     }
 }
+
+class FunctionWithBigAritySupportClashesResolver : PlatformExtensionsClashResolver.UseAnyOf<FunctionWithBigAritySupport>(
+    FunctionWithBigAritySupport.LANGUAGE_VERSION_DEPENDENT,
+    FunctionWithBigAritySupport::class.java
+)
