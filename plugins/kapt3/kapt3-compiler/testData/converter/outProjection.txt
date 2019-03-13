@@ -1,0 +1,40 @@
+import java.lang.System;
+
+@kotlin.Metadata()
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+public abstract @interface Anno {
+
+    public abstract java.lang.Class baseClass();
+}
+
+////////////////////
+
+
+import java.lang.System;
+
+@kotlin.Metadata()
+public abstract class Base<S extends java.lang.Object, R extends java.lang.Object, A extends java.lang.Object> implements Intf<S, R, A> {
+
+    public Base() {
+        super();
+    }
+}
+
+////////////////////
+
+
+import java.lang.System;
+
+@kotlin.Metadata()
+@Anno(baseClass = Base.class)
+public abstract interface Impl {
+}
+
+////////////////////
+
+
+import java.lang.System;
+
+@kotlin.Metadata()
+public abstract interface Intf<S extends java.lang.Object, R extends java.lang.Object, A extends java.lang.Object> {
+}

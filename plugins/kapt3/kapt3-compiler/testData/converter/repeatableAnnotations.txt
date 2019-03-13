@@ -48,7 +48,7 @@ public abstract @interface AnnoClass {
 
     public abstract int x();
 
-    public abstract java.lang.Class<Color> c();
+    public abstract java.lang.Class c();
 }
 
 ////////////////////
