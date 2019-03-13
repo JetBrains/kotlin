@@ -28,6 +28,7 @@ import java.util.*
 class PropertiesLowering(
     private val context: BackendContext,
     private val originOfSyntheticMethodForAnnotations: IrDeclarationOrigin? = null,
+    private val skipExternalProperties: Boolean = false,
     private val computeSyntheticMethodName: ((Name) -> String)? = null
 ) : IrElementTransformerVoid(), FileLoweringPass {
     override fun lower(irFile: IrFile) {
@@ -48,7 +49,7 @@ class PropertiesLowering(
 
     private fun lowerProperty(declaration: IrDeclaration, kind: ClassKind): List<IrDeclaration>? =
         if (declaration is IrProperty)
-            if (declaration.isEffectivelyExternal()) listOf(declaration) else {
+            if (skipExternalProperties && declaration.isEffectivelyExternal()) listOf(declaration) else {
                 ArrayList<IrDeclaration>(4).apply {
                     // JvmFields in a companion object refer to companion's owners and should not be generated within companion.
                     if (kind != ClassKind.ANNOTATION_CLASS && declaration.backingField?.parent == declaration.parent) {
