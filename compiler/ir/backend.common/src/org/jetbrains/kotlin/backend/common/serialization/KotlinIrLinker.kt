@@ -229,7 +229,9 @@ abstract class KotlinIrLinker(
 
             deserializedModuleDescriptor = key.moduleOfOrigin
             val reachable = deserializeTopLevelDeclaration(key)
-            reversedFileIndex[key]!!.declarations.add(reachable)
+            val file = reversedFileIndex[key]!!
+            file.declarations.add(reachable)
+            reachable.patchDeclarationParents(file)
 
             reachableTopLevels.remove(key)
             deserializedTopLevels.add(key)
