@@ -16,16 +16,33 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.container.PlatformExtensionsClashResolver
+import org.jetbrains.kotlin.container.PlatformSpecificExtension
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 
-interface IdentifierChecker {
+interface IdentifierChecker : PlatformSpecificExtension<IdentifierChecker> {
     fun checkIdentifier(simpleNameExpression: KtSimpleNameExpression, diagnosticHolder: DiagnosticSink)
     fun checkDeclaration(declaration: KtDeclaration, diagnosticHolder: DiagnosticSink)
 
     object Default : IdentifierChecker {
         override fun checkIdentifier(simpleNameExpression: KtSimpleNameExpression, diagnosticHolder: DiagnosticSink) {}
         override fun checkDeclaration(declaration: KtDeclaration, diagnosticHolder: DiagnosticSink) {}
+    }
+}
+
+class IdentifierCheckerClashesResolver : PlatformExtensionsClashResolver<IdentifierChecker>(IdentifierChecker::class.java) {
+    override fun resolveExtensionsClash(extensions: List<IdentifierChecker>): IdentifierChecker = CompositeIdentifierChecker(extensions)
+}
+
+// Launches every underlying checker
+class CompositeIdentifierChecker(private val identifierCheckers: List<IdentifierChecker>) : IdentifierChecker {
+    override fun checkIdentifier(simpleNameExpression: KtSimpleNameExpression, diagnosticHolder: DiagnosticSink) {
+        identifierCheckers.forEach { it.checkIdentifier(simpleNameExpression, diagnosticHolder) }
+    }
+
+    override fun checkDeclaration(declaration: KtDeclaration, diagnosticHolder: DiagnosticSink) {
+        identifierCheckers.forEach { it.checkDeclaration(declaration, diagnosticHolder) }
     }
 }

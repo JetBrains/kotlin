@@ -44,6 +44,7 @@ class ComponentStorage(private val myId: String, parent: ComponentStorage?) : Va
 
     private val descriptors = LinkedHashSet<ComponentDescriptor>()
     private val dependencies = MultiMap.createLinkedSet<ComponentDescriptor, Type>()
+    private val clashResolvers = LinkedHashSet<PlatformExtensionsClashResolver<*>>()
 
     override fun resolve(request: Type, context: ValueResolveContext): ValueDescriptor? {
         if (state == ComponentStorageState.Initial)
@@ -95,6 +96,10 @@ class ComponentStorage(private val myId: String, parent: ComponentStorage?) : Va
     fun resolveMultiple(request: Type, context: ValueResolveContext): Iterable<ValueDescriptor> {
         registerDependency(request, context)
         return registry.tryGetEntry(request)
+    }
+
+    internal fun registerClashResolvers(resolvers: List<PlatformExtensionsClashResolver<*>>) {
+        clashResolvers.addAll(resolvers)
     }
 
     internal fun registerDescriptors(context: ComponentResolveContext, items: List<ComponentDescriptor>) {
