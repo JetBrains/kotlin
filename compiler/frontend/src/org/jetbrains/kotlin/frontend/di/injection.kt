@@ -43,13 +43,15 @@ import org.jetbrains.kotlin.types.expressions.LocalLazyDeclarationResolver
 fun StorageComponentContainer.configureModule(
     moduleContext: ModuleContext,
     platform: TargetPlatform,
-    compilerServices: PlatformDependentCompilerServices
+    compilerServices: PlatformDependentCompilerServices,
+    trace: BindingTrace
 ) {
     useInstance(moduleContext)
     useInstance(moduleContext.module)
     useInstance(moduleContext.project)
     useInstance(moduleContext.storageManager)
     useInstance(moduleContext.module.builtIns)
+    useInstance(trace)
 
     useInstance(platform)
     useInstance(compilerServices)
@@ -73,16 +75,6 @@ private fun StorageComponentContainer.configurePlatformIndependentComponents() {
     useImpl<ExperimentalUsageChecker>()
     useImpl<ExperimentalUsageChecker.Overrides>()
     useImpl<ExperimentalUsageChecker.ClassifierUsage>()
-}
-
-fun StorageComponentContainer.configureModule(
-    moduleContext: ModuleContext,
-    platform: TargetPlatform,
-    compilerServices: PlatformDependentCompilerServices,
-    trace: BindingTrace
-) {
-    configureModule(moduleContext, platform, compilerServices)
-    useInstance(trace)
 }
 
 fun createContainerForBodyResolve(
