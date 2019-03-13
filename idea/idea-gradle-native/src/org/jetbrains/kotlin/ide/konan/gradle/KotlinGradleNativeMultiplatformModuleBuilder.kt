@@ -19,6 +19,9 @@ class KotlinGradleNativeMultiplatformModuleBuilder : KotlinGradleAbstractMultipl
     private val nativeSourceName get() = "$nativeTargetName$productionSuffix"
     val nativeTestName get() = "$nativeTargetName$testSuffix"
 
+    private val nativeReleaseExecutableRunTaskame get() = ":runReleaseExecutable${nativeTargetName.capitalize()}"
+    private val nativeDebugExecutableRunTaskame get() = ":runDebugExecutable${nativeTargetName.capitalize()}"
+
     override fun getNodeIcon(): Icon = KotlinIcons.NATIVE
 
     override fun getBuilderId() = "kotlin.gradle.multiplatform.native"
@@ -75,11 +78,13 @@ class KotlinGradleNativeMultiplatformModuleBuilder : KotlinGradleAbstractMultipl
                 // For MacOS, should be changed to e.g. macosX64
                 // For Windows, should be changed to e.g. mingwX64
                 $nativePresetName("$nativeTargetName") {
-                    compilations.main {
-                        // Comment to generate Kotlin/Native library (KLIB) instead of executable file:
-                        outputKinds("executable")
-                        // Change to specify fully qualified name of your application's entry point:
-                        entryPoint 'sample.main'
+                    binaries {
+                        executable {
+                            // Change to specify fully qualified name of your application's entry point:
+                           entryPoint = 'sample.main'
+                            // Specify command-line arguments, if necessary:
+                            runTask?.args('')
+                        }
                     }
                 }
                 sourceSets {
@@ -92,17 +97,9 @@ class KotlinGradleNativeMultiplatformModuleBuilder : KotlinGradleAbstractMultipl
                 }
             }
 
-            task runProgram {
-                def buildType = 'RELEASE' // Change to 'DEBUG' to run application with debug symbols.
-                dependsOn kotlin.targets.$nativeTargetName.compilations.main.linkTaskName('EXECUTABLE', buildType)
-                doLast {
-                    def programFile = kotlin.targets.$nativeTargetName.compilations.main.getBinary('EXECUTABLE', buildType)
-                    exec {
-                        executable programFile
-                        args ''
-                    }
-                }
-            }
+            // Use the following Gradle tasks to run your application:
+            // $nativeReleaseExecutableRunTaskame - without debug symbols
+            // $nativeDebugExecutableRunTaskame - with debug symbols
         """.trimIndent()
     }
 }
