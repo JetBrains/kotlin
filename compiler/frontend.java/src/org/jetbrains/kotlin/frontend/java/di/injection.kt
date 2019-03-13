@@ -49,10 +49,10 @@ import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 
 private fun StorageComponentContainer.configureJavaTopDownAnalysis(
-        moduleContentScope: GlobalSearchScope,
-        project: Project,
-        lookupTracker: LookupTracker,
-        expectActualTracker: ExpectActualTracker
+    moduleContentScope: GlobalSearchScope,
+    project: Project,
+    lookupTracker: LookupTracker,
+    expectActualTracker: ExpectActualTracker
 ) {
     useInstance(moduleContentScope)
     useInstance(lookupTracker)
@@ -97,8 +97,7 @@ fun createContainerForLazyResolveWithJava(
 
     if (configureJavaClassFinder != null) {
         configureJavaClassFinder()
-    }
-    else {
+    } else {
         useImpl<JavaClassFinderImpl>()
         useImpl<LazyResolveBasedCache>()
         useImpl<JavaSourceElementFactoryImpl>()
@@ -146,11 +145,11 @@ fun createContainerForTopDownAnalyzerForJvm(
     configureJavaClassFinder: (StorageComponentContainer.() -> Unit)? = null,
     javaClassTracker: JavaClassesTracker? = null
 ): ComponentProvider = createContainerForLazyResolveWithJava(
-        jvmPlatform, moduleContext, bindingTrace, declarationProviderFactory, moduleContentScope, moduleClassResolver,
-        targetEnvironment, lookupTracker, expectActualTracker, packagePartProvider, languageVersionSettings,
-        useBuiltInsProvider = true,
-        configureJavaClassFinder = configureJavaClassFinder,
-        javaClassTracker = javaClassTracker
+    jvmPlatform, moduleContext, bindingTrace, declarationProviderFactory, moduleContentScope, moduleClassResolver,
+    targetEnvironment, lookupTracker, expectActualTracker, packagePartProvider, languageVersionSettings,
+    useBuiltInsProvider = true,
+    configureJavaClassFinder = configureJavaClassFinder,
+    javaClassTracker = javaClassTracker
 )
 
 
