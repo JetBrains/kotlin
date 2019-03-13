@@ -3,7 +3,7 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir
+package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.descriptors.*
@@ -24,11 +24,14 @@ import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.ir.util.IrDeserializer
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrStatement.*
-import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrOperation.OperationCase.*
-import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrConst.ValueCase.*
-import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrDeclarator.DeclaratorCase.*
-import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.IrKlibProtoBuf.IrType.KindCase.*
+import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatement.*
+import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrOperation.OperationCase.*
+import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrConst.ValueCase.*
+import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrDeclarator.DeclaratorCase.*
+import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrType.KindCase.*
+import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrVarargElement.VarargElementCase
+import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrTypeArgument.KindCase.*
+
 
 
 import org.jetbrains.kotlin.name.Name
@@ -46,12 +49,18 @@ abstract class IrModuleDeserializer(
     val symbolTable: SymbolTable
 ) : IrDeserializer {
 
-    abstract fun deserializeIrSymbol(proto: IrKlibProtoBuf.IrSymbol): IrSymbol
-    abstract fun deserializeIrType(proto: IrKlibProtoBuf.IrTypeIndex): IrType
-    abstract fun deserializeDescriptorReference(proto: IrKlibProtoBuf.DescriptorReference): DeclarationDescriptor
-    abstract fun deserializeString(proto: IrKlibProtoBuf.String): String
+    abstract fun deserializeIrSymbol(proto: KotlinIr.IrSymbol): IrSymbol
+    abstract fun deserializeIrType(proto: KotlinIr.IrTypeIndex): IrType
+    abstract fun deserializeDescriptorReference(proto: KotlinIr.DescriptorReference): DeclarationDescriptor
+    abstract fun deserializeString(proto: KotlinIr.String): String
+    abstract fun deserializeLoopHeader(loopIndex: Int, loopBuilder: () -> IrLoopBase): IrLoopBase
 
-    private fun deserializeTypeArguments(proto: IrKlibProtoBuf.TypeArguments): List<IrType> {
+    private fun deserializeName(proto: KotlinIr.Name): Name {
+        val name = deserializeString(proto.name)
+        return if (proto.isSpecial) Name.special(name) else Name.identifier(name)
+    }
+
+    private fun deserializeTypeArguments(proto: KotlinIr.TypeArguments): List<IrType> {
         logger.log { "### deserializeTypeArguments" }
         val result = mutableListOf<IrType>()
         proto.typeArgumentList.forEach { typeProto ->
@@ -62,34 +71,35 @@ abstract class IrModuleDeserializer(
         return result
     }
 
-    fun deserializeIrTypeVariance(variance: IrKlibProtoBuf.IrTypeVariance) = when (variance) {
-        IrKlibProtoBuf.IrTypeVariance.IN -> Variance.IN_VARIANCE
-        IrKlibProtoBuf.IrTypeVariance.OUT -> Variance.OUT_VARIANCE
-        IrKlibProtoBuf.IrTypeVariance.INV -> Variance.INVARIANT
+    fun deserializeIrTypeVariance(variance: KotlinIr.IrTypeVariance) = when (variance) {
+        KotlinIr.IrTypeVariance.IN -> Variance.IN_VARIANCE
+        KotlinIr.IrTypeVariance.OUT -> Variance.OUT_VARIANCE
+        KotlinIr.IrTypeVariance.INV -> Variance.INVARIANT
     }
 
-    fun deserializeIrTypeArgument(proto: IrKlibProtoBuf.IrTypeArgument) = when (proto.kindCase) {
-        IrKlibProtoBuf.IrTypeArgument.KindCase.STAR -> IrStarProjectionImpl
-        IrKlibProtoBuf.IrTypeArgument.KindCase.TYPE -> makeTypeProjection(
+    fun deserializeIrTypeArgument(proto: KotlinIr.IrTypeArgument) = when (proto.kindCase) {
+        STAR -> IrStarProjectionImpl
+        TYPE -> makeTypeProjection(
             deserializeIrType(proto.type.type), deserializeIrTypeVariance(proto.type.variance)
         )
         else -> TODO("Unexpected projection kind")
 
     }
 
-    fun deserializeAnnotations(annotations: IrKlibProtoBuf.Annotations): List<IrCall> {
+    fun deserializeAnnotations(annotations: KotlinIr.Annotations): List<IrCall> {
         return annotations.annotationList.map {
             deserializeCall(it, 0, 0, builtIns.unitType) // TODO: need a proper deserialization here
         }
     }
 
-    fun deserializeSimpleType(proto: IrKlibProtoBuf.IrSimpleType): IrSimpleType {
+    open fun getPrimitiveTypeOrNull(symbol: IrClassifierSymbol, hasQuestionMark: Boolean): IrSimpleType? = null
+
+    fun deserializeSimpleType(proto: KotlinIr.IrSimpleType): IrSimpleType {
         val symbol = deserializeIrSymbol(proto.classifier) as? IrClassifierSymbol
-            //?: error("could not convert sym to ClassifierSym ${proto.classifier.kind} ${proto.classifier.uniqId.index} ${proto.classifier.uniqId.isLocal}")
             ?: error("could not convert sym to ClassifierSymbol")
         logger.log { "deserializeSimpleType: symbol=$symbol" }
 
-        val result = builtIns.getPrimitiveTypeOrNullByDescriptor(symbol.descriptor, proto.hasQuestionMark) ?: run {
+        val result = getPrimitiveTypeOrNull(symbol, proto.hasQuestionMark) ?: run {
             val arguments = proto.argumentList.map { deserializeIrTypeArgument(it) }
             val annotations = deserializeAnnotations(proto.annotations)
             IrSimpleTypeImpl(
@@ -105,17 +115,17 @@ abstract class IrModuleDeserializer(
 
     }
 
-    fun deserializeDynamicType(proto: IrKlibProtoBuf.IrDynamicType): IrDynamicType {
+    fun deserializeDynamicType(proto: KotlinIr.IrDynamicType): IrDynamicType {
         val annotations = deserializeAnnotations(proto.annotations)
         return IrDynamicTypeImpl(null, annotations, Variance.INVARIANT)
     }
 
-    fun deserializeErrorType(proto: IrKlibProtoBuf.IrErrorType): IrErrorType {
+    fun deserializeErrorType(proto: KotlinIr.IrErrorType): IrErrorType {
         val annotations = deserializeAnnotations(proto.annotations)
         return IrErrorTypeImpl(null, annotations, Variance.INVARIANT)
     }
 
-    fun deserializeIrTypeData(proto: IrKlibProtoBuf.IrType): IrType {
+    fun deserializeIrTypeData(proto: KotlinIr.IrType): IrType {
         return when (proto.kindCase) {
             SIMPLE -> deserializeSimpleType(proto.simple)
             DYNAMIC -> deserializeDynamicType(proto.dynamic)
@@ -127,7 +137,7 @@ abstract class IrModuleDeserializer(
     /* -------------------------------------------------------------- */
 
     private fun deserializeBlockBody(
-        proto: IrKlibProtoBuf.IrBlockBody,
+        proto: KotlinIr.IrBlockBody,
         start: Int, end: Int
     ): IrBlockBody {
 
@@ -141,7 +151,7 @@ abstract class IrModuleDeserializer(
         return IrBlockBodyImpl(start, end, statements)
     }
 
-    private fun deserializeBranch(proto: IrKlibProtoBuf.IrBranch, start: Int, end: Int): IrBranch {
+    private fun deserializeBranch(proto: KotlinIr.IrBranch, start: Int, end: Int): IrBranch {
 
         val condition = deserializeExpression(proto.condition)
         val result = deserializeExpression(proto.result)
@@ -149,7 +159,7 @@ abstract class IrModuleDeserializer(
         return IrBranchImpl(start, end, condition, result)
     }
 
-    private fun deserializeCatch(proto: IrKlibProtoBuf.IrCatch, start: Int, end: Int): IrCatch {
+    private fun deserializeCatch(proto: KotlinIr.IrCatch, start: Int, end: Int): IrCatch {
         val catchParameter =
             deserializeDeclaration(proto.catchParameter, null) as IrVariable // TODO: we need a proper parent here
         val result = deserializeExpression(proto.result)
@@ -158,15 +168,15 @@ abstract class IrModuleDeserializer(
         return catch
     }
 
-    private fun deserializeSyntheticBody(proto: IrKlibProtoBuf.IrSyntheticBody, start: Int, end: Int): IrSyntheticBody {
+    private fun deserializeSyntheticBody(proto: KotlinIr.IrSyntheticBody, start: Int, end: Int): IrSyntheticBody {
         val kind = when (proto.kind) {
-            IrKlibProtoBuf.IrSyntheticBodyKind.ENUM_VALUES -> IrSyntheticBodyKind.ENUM_VALUES
-            IrKlibProtoBuf.IrSyntheticBodyKind.ENUM_VALUEOF -> IrSyntheticBodyKind.ENUM_VALUEOF
+            KotlinIr.IrSyntheticBodyKind.ENUM_VALUES -> IrSyntheticBodyKind.ENUM_VALUES
+            KotlinIr.IrSyntheticBodyKind.ENUM_VALUEOF -> IrSyntheticBodyKind.ENUM_VALUEOF
         }
         return IrSyntheticBodyImpl(start, end, kind)
     }
 
-    private fun deserializeStatement(proto: IrKlibProtoBuf.IrStatement): IrElement {
+    private fun deserializeStatement(proto: KotlinIr.IrStatement): IrElement {
         val start = proto.coordinates.startOffset
         val end = proto.coordinates.endOffset
         val element = when (proto.statementCase) {
@@ -191,7 +201,7 @@ abstract class IrModuleDeserializer(
         return element
     }
 
-    private fun deserializeBlock(proto: IrKlibProtoBuf.IrBlock, start: Int, end: Int, type: IrType): IrBlock {
+    private fun deserializeBlock(proto: KotlinIr.IrBlock, start: Int, end: Int, type: IrType): IrBlock {
         val statements = mutableListOf<IrStatement>()
         val statementProtos = proto.statementList
         statementProtos.forEach {
@@ -203,7 +213,7 @@ abstract class IrModuleDeserializer(
         return IrBlockImpl(start, end, type, isLambdaOrigin, statements)
     }
 
-    private fun deserializeMemberAccessCommon(access: IrMemberAccessExpression, proto: IrKlibProtoBuf.MemberAccessCommon) {
+    private fun deserializeMemberAccessCommon(access: IrMemberAccessExpression, proto: KotlinIr.MemberAccessCommon) {
 
         proto.valueArgumentList.mapIndexed { i, arg ->
             if (arg.hasExpression()) {
@@ -225,7 +235,7 @@ abstract class IrModuleDeserializer(
     }
 
     private fun deserializeClassReference(
-        proto: IrKlibProtoBuf.IrClassReference,
+        proto: KotlinIr.IrClassReference,
         start: Int,
         end: Int,
         type: IrType
@@ -236,7 +246,7 @@ abstract class IrModuleDeserializer(
         return IrClassReferenceImpl(start, end, type, symbol, classType)
     }
 
-    private fun deserializeCall(proto: IrKlibProtoBuf.IrCall, start: Int, end: Int, type: IrType): IrCall {
+    private fun deserializeCall(proto: KotlinIr.IrCall, start: Int, end: Int, type: IrType): IrCall {
         val symbol = deserializeIrSymbol(proto.symbol) as IrFunctionSymbol
 
         val superSymbol = if (proto.hasSuper()) {
@@ -244,7 +254,7 @@ abstract class IrModuleDeserializer(
         } else null
 
         val call: IrCall = when (proto.kind) {
-            IrKlibProtoBuf.IrCall.Primitive.NOT_PRIMITIVE ->
+            KotlinIr.IrCall.Primitive.NOT_PRIMITIVE ->
                 // TODO: implement the last three args here.
                 IrCallImpl(
                     start, end, type,
@@ -253,11 +263,11 @@ abstract class IrModuleDeserializer(
                     proto.memberAccess.valueArgumentList.size,
                     null, superSymbol
                 )
-            IrKlibProtoBuf.IrCall.Primitive.NULLARY ->
+            KotlinIr.IrCall.Primitive.NULLARY ->
                 IrNullaryPrimitiveImpl(start, end, type, null, symbol)
-            IrKlibProtoBuf.IrCall.Primitive.UNARY ->
+            KotlinIr.IrCall.Primitive.UNARY ->
                 IrUnaryPrimitiveImpl(start, end, type, null, symbol)
-            IrKlibProtoBuf.IrCall.Primitive.BINARY ->
+            KotlinIr.IrCall.Primitive.BINARY ->
                 IrBinaryPrimitiveImpl(start, end, type, null, symbol)
             else -> TODO("Unexpected primitive IrCall.")
         }
@@ -265,7 +275,7 @@ abstract class IrModuleDeserializer(
         return call
     }
 
-    private fun deserializeComposite(proto: IrKlibProtoBuf.IrComposite, start: Int, end: Int, type: IrType): IrComposite {
+    private fun deserializeComposite(proto: KotlinIr.IrComposite, start: Int, end: Int, type: IrType): IrComposite {
         val statements = mutableListOf<IrStatement>()
         val statementProtos = proto.statementList
         statementProtos.forEach {
@@ -275,7 +285,7 @@ abstract class IrModuleDeserializer(
     }
 
     private fun deserializeDelegatingConstructorCall(
-        proto: IrKlibProtoBuf.IrDelegatingConstructorCall,
+        proto: KotlinIr.IrDelegatingConstructorCall,
         start: Int,
         end: Int
     ): IrDelegatingConstructorCall {
@@ -296,7 +306,7 @@ abstract class IrModuleDeserializer(
 
 
     fun deserializeEnumConstructorCall(
-        proto: IrKlibProtoBuf.IrEnumConstructorCall,
+        proto: KotlinIr.IrEnumConstructorCall,
         start: Int,
         end: Int,
         type: IrType
@@ -316,7 +326,7 @@ abstract class IrModuleDeserializer(
 
 
     private fun deserializeFunctionReference(
-        proto: IrKlibProtoBuf.IrFunctionReference,
+        proto: KotlinIr.IrFunctionReference,
         start: Int, end: Int, type: IrType
     ): IrFunctionReference {
 
@@ -336,12 +346,12 @@ abstract class IrModuleDeserializer(
         return callable
     }
 
-    private fun deserializeGetClass(proto: IrKlibProtoBuf.IrGetClass, start: Int, end: Int, type: IrType): IrGetClass {
+    private fun deserializeGetClass(proto: KotlinIr.IrGetClass, start: Int, end: Int, type: IrType): IrGetClass {
         val argument = deserializeExpression(proto.argument)
         return IrGetClassImpl(start, end, type, argument)
     }
 
-    private fun deserializeGetField(proto: IrKlibProtoBuf.IrGetField, start: Int, end: Int, type: IrType): IrGetField {
+    private fun deserializeGetField(proto: KotlinIr.IrGetField, start: Int, end: Int, type: IrType): IrGetField {
         val access = proto.fieldAccess
         val symbol = deserializeIrSymbol(access.symbol) as IrFieldSymbol
         val superQualifier = if (access.hasSuper()) {
@@ -354,24 +364,24 @@ abstract class IrModuleDeserializer(
         return IrGetFieldImpl(start, end, symbol, type, receiver, null, superQualifier)
     }
 
-    private fun deserializeGetValue(proto: IrKlibProtoBuf.IrGetValue, start: Int, end: Int, type: IrType): IrGetValue {
+    private fun deserializeGetValue(proto: KotlinIr.IrGetValue, start: Int, end: Int, type: IrType): IrGetValue {
         val symbol = deserializeIrSymbol(proto.symbol) as IrValueSymbol
         // TODO: origin!
         return IrGetValueImpl(start, end, type, symbol, null)
     }
 
-    private fun deserializeGetEnumValue(proto: IrKlibProtoBuf.IrGetEnumValue, start: Int, end: Int, type: IrType): IrGetEnumValue {
+    private fun deserializeGetEnumValue(proto: KotlinIr.IrGetEnumValue, start: Int, end: Int, type: IrType): IrGetEnumValue {
         val symbol = deserializeIrSymbol(proto.symbol) as IrEnumEntrySymbol
         return IrGetEnumValueImpl(start, end, type, symbol)
     }
 
-    private fun deserializeGetObject(proto: IrKlibProtoBuf.IrGetObject, start: Int, end: Int, type: IrType): IrGetObjectValue {
+    private fun deserializeGetObject(proto: KotlinIr.IrGetObject, start: Int, end: Int, type: IrType): IrGetObjectValue {
         val symbol = deserializeIrSymbol(proto.symbol) as IrClassSymbol
         return IrGetObjectValueImpl(start, end, type, symbol)
     }
 
     private fun deserializeInstanceInitializerCall(
-        proto: IrKlibProtoBuf.IrInstanceInitializerCall,
+        proto: KotlinIr.IrInstanceInitializerCall,
         start: Int,
         end: Int
     ): IrInstanceInitializerCall {
@@ -382,7 +392,7 @@ abstract class IrModuleDeserializer(
     private val getterToPropertyDescriptorMap = mutableMapOf<IrSimpleFunctionSymbol, WrappedPropertyDescriptor>()
 
     private fun deserializePropertyReference(
-        proto: IrKlibProtoBuf.IrPropertyReference,
+        proto: KotlinIr.IrPropertyReference,
         start: Int, end: Int, type: IrType
     ): IrPropertyReference {
 
@@ -409,13 +419,13 @@ abstract class IrModuleDeserializer(
         return callable
     }
 
-    private fun deserializeReturn(proto: IrKlibProtoBuf.IrReturn, start: Int, end: Int, type: IrType): IrReturn {
+    private fun deserializeReturn(proto: KotlinIr.IrReturn, start: Int, end: Int, type: IrType): IrReturn {
         val symbol = deserializeIrSymbol(proto.returnTarget) as IrReturnTargetSymbol
         val value = deserializeExpression(proto.value)
         return IrReturnImpl(start, end, builtIns.nothingType, symbol, value)
     }
 
-    private fun deserializeSetField(proto: IrKlibProtoBuf.IrSetField, start: Int, end: Int): IrSetField {
+    private fun deserializeSetField(proto: KotlinIr.IrSetField, start: Int, end: Int): IrSetField {
         val access = proto.fieldAccess
         val symbol = deserializeIrSymbol(access.symbol) as IrFieldSymbol
         val superQualifier = if (access.hasSuper()) {
@@ -429,19 +439,19 @@ abstract class IrModuleDeserializer(
         return IrSetFieldImpl(start, end, symbol, receiver, value, builtIns.unitType, null, superQualifier)
     }
 
-    private fun deserializeSetVariable(proto: IrKlibProtoBuf.IrSetVariable, start: Int, end: Int): IrSetVariable {
+    private fun deserializeSetVariable(proto: KotlinIr.IrSetVariable, start: Int, end: Int): IrSetVariable {
         val symbol = deserializeIrSymbol(proto.symbol) as IrVariableSymbol
         val value = deserializeExpression(proto.value)
         return IrSetVariableImpl(start, end, builtIns.unitType, symbol, value, null)
     }
 
-    private fun deserializeSpreadElement(proto: IrKlibProtoBuf.IrSpreadElement): IrSpreadElement {
+    private fun deserializeSpreadElement(proto: KotlinIr.IrSpreadElement): IrSpreadElement {
         val expression = deserializeExpression(proto.expression)
         return IrSpreadElementImpl(proto.coordinates.startOffset, proto.coordinates.endOffset, expression)
     }
 
     private fun deserializeStringConcat(
-        proto: IrKlibProtoBuf.IrStringConcat,
+        proto: KotlinIr.IrStringConcat,
         start: Int,
         end: Int,
         type: IrType
@@ -455,11 +465,11 @@ abstract class IrModuleDeserializer(
         return IrStringConcatenationImpl(start, end, type, arguments)
     }
 
-    private fun deserializeThrow(proto: IrKlibProtoBuf.IrThrow, start: Int, end: Int, type: IrType): IrThrowImpl {
+    private fun deserializeThrow(proto: KotlinIr.IrThrow, start: Int, end: Int, type: IrType): IrThrowImpl {
         return IrThrowImpl(start, end, builtIns.nothingType, deserializeExpression(proto.value))
     }
 
-    private fun deserializeTry(proto: IrKlibProtoBuf.IrTry, start: Int, end: Int, type: IrType): IrTryImpl {
+    private fun deserializeTry(proto: KotlinIr.IrTry, start: Int, end: Int, type: IrType): IrTryImpl {
         val result = deserializeExpression(proto.result)
         val catches = mutableListOf<IrCatch>()
         proto.catchList.forEach {
@@ -470,28 +480,28 @@ abstract class IrModuleDeserializer(
         return IrTryImpl(start, end, type, result, catches, finallyExpression)
     }
 
-    private fun deserializeTypeOperator(operator: IrKlibProtoBuf.IrTypeOperator) = when (operator) {
-        IrKlibProtoBuf.IrTypeOperator.CAST
+    private fun deserializeTypeOperator(operator: KotlinIr.IrTypeOperator) = when (operator) {
+        KotlinIr.IrTypeOperator.CAST
         -> IrTypeOperator.CAST
-        IrKlibProtoBuf.IrTypeOperator.IMPLICIT_CAST
+        KotlinIr.IrTypeOperator.IMPLICIT_CAST
         -> IrTypeOperator.IMPLICIT_CAST
-        IrKlibProtoBuf.IrTypeOperator.IMPLICIT_NOTNULL
+        KotlinIr.IrTypeOperator.IMPLICIT_NOTNULL
         -> IrTypeOperator.IMPLICIT_NOTNULL
-        IrKlibProtoBuf.IrTypeOperator.IMPLICIT_COERCION_TO_UNIT
+        KotlinIr.IrTypeOperator.IMPLICIT_COERCION_TO_UNIT
         -> IrTypeOperator.IMPLICIT_COERCION_TO_UNIT
-        IrKlibProtoBuf.IrTypeOperator.IMPLICIT_INTEGER_COERCION
+        KotlinIr.IrTypeOperator.IMPLICIT_INTEGER_COERCION
         -> IrTypeOperator.IMPLICIT_INTEGER_COERCION
-        IrKlibProtoBuf.IrTypeOperator.SAFE_CAST
+        KotlinIr.IrTypeOperator.SAFE_CAST
         -> IrTypeOperator.SAFE_CAST
-        IrKlibProtoBuf.IrTypeOperator.INSTANCEOF
+        KotlinIr.IrTypeOperator.INSTANCEOF
         -> IrTypeOperator.INSTANCEOF
-        IrKlibProtoBuf.IrTypeOperator.NOT_INSTANCEOF
+        KotlinIr.IrTypeOperator.NOT_INSTANCEOF
         -> IrTypeOperator.NOT_INSTANCEOF
-        IrKlibProtoBuf.IrTypeOperator.SAM_CONVERSION
+        KotlinIr.IrTypeOperator.SAM_CONVERSION
         -> IrTypeOperator.SAM_CONVERSION
     }
 
-    private fun deserializeTypeOp(proto: IrKlibProtoBuf.IrTypeOp, start: Int, end: Int, type: IrType): IrTypeOperatorCall {
+    private fun deserializeTypeOp(proto: KotlinIr.IrTypeOp, start: Int, end: Int, type: IrType): IrTypeOperatorCall {
         val operator = deserializeTypeOperator(proto.operator)
         val operand = deserializeIrType(proto.operand)//.brokenIr
         val argument = deserializeExpression(proto.argument)
@@ -501,7 +511,7 @@ abstract class IrModuleDeserializer(
         }
     }
 
-    private fun deserializeVararg(proto: IrKlibProtoBuf.IrVararg, start: Int, end: Int, type: IrType): IrVararg {
+    private fun deserializeVararg(proto: KotlinIr.IrVararg, start: Int, end: Int, type: IrType): IrVararg {
         val elementType = deserializeIrType(proto.elementType)
 
         val elements = mutableListOf<IrVarargElement>()
@@ -511,18 +521,18 @@ abstract class IrModuleDeserializer(
         return IrVarargImpl(start, end, type, elementType, elements)
     }
 
-    private fun deserializeVarargElement(element: IrKlibProtoBuf.IrVarargElement): IrVarargElement {
+    private fun deserializeVarargElement(element: KotlinIr.IrVarargElement): IrVarargElement {
         return when (element.varargElementCase) {
-            IrKlibProtoBuf.IrVarargElement.VarargElementCase.EXPRESSION
+            VarargElementCase.EXPRESSION
             -> deserializeExpression(element.expression)
-            IrKlibProtoBuf.IrVarargElement.VarargElementCase.SPREAD_ELEMENT
+            VarargElementCase.SPREAD_ELEMENT
             -> deserializeSpreadElement(element.spreadElement)
             else
             -> TODO("Unexpected vararg element")
         }
     }
 
-    private fun deserializeWhen(proto: IrKlibProtoBuf.IrWhen, start: Int, end: Int, type: IrType): IrWhen {
+    private fun deserializeWhen(proto: KotlinIr.IrWhen, start: Int, end: Int, type: IrType): IrWhen {
         val branches = mutableListOf<IrBranch>()
 
         proto.branchList.forEach {
@@ -533,12 +543,7 @@ abstract class IrModuleDeserializer(
         return IrWhenImpl(start, end, type, null, branches)
     }
 
-    private val loopIndex = mutableMapOf<Int, IrLoop>()
-
-    private fun deserializeLoop(proto: IrKlibProtoBuf.Loop, loop: IrLoopBase): IrLoopBase {
-        val loopId = proto.loopId
-        loopIndex.getOrPut(loopId) { loop }
-
+    private fun deserializeLoop(proto: KotlinIr.Loop, loop: IrLoopBase): IrLoopBase {
         val label = if (proto.hasLabel()) deserializeString(proto.label) else null
         val body = if (proto.hasBody()) deserializeExpression(proto.body) else null
         val condition = deserializeExpression(proto.condition)
@@ -550,96 +555,88 @@ abstract class IrModuleDeserializer(
         return loop
     }
 
-    private fun deserializeDoWhile(proto: IrKlibProtoBuf.IrDoWhile, start: Int, end: Int, type: IrType): IrDoWhileLoop {
-        // we create the loop before deserializing the body, so that
-        // IrBreak statements have something to put into 'loop' field.
-        val loop = IrDoWhileLoopImpl(start, end, type, null)
-        deserializeLoop(proto.loop, loop)
-        return loop
-    }
+    // we create the loop before deserializing the body, so that
+    // IrBreak statements have something to put into 'loop' field.
+    private fun deserializeDoWhile(proto: KotlinIr.IrDoWhile, start: Int, end: Int, type: IrType) =
+            deserializeLoop(proto.loop, deserializeLoopHeader(proto.loop.loopId) { IrDoWhileLoopImpl(start, end, type, null) })
 
-    private fun deserializeWhile(proto: IrKlibProtoBuf.IrWhile, start: Int, end: Int, type: IrType): IrWhileLoop {
-        // we create the loop before deserializing the body, so that
-        // IrBreak statements have something to put into 'loop' field.
-        val loop = IrWhileLoopImpl(start, end, type, null)
-        deserializeLoop(proto.loop, loop)
-        return loop
-    }
+    private fun deserializeWhile(proto: KotlinIr.IrWhile, start: Int, end: Int, type: IrType) =
+            deserializeLoop(proto.loop, deserializeLoopHeader(proto.loop.loopId) { IrWhileLoopImpl(start, end, type, null) })
 
-    private fun deserializeDynamicMemberExpression(proto: IrKlibProtoBuf.IrDynamicMemberExpression, start: Int, end: Int, type: IrType) =
+    private fun deserializeDynamicMemberExpression(proto: KotlinIr.IrDynamicMemberExpression, start: Int, end: Int, type: IrType) =
         IrDynamicMemberExpressionImpl(start, end, type, deserializeString(proto.memberName), deserializeExpression(proto.receiver))
 
-    private fun deserializeDynamicOperatorExpression(proto: IrKlibProtoBuf.IrDynamicOperatorExpression, start: Int, end: Int, type: IrType) =
+    private fun deserializeDynamicOperatorExpression(proto: KotlinIr.IrDynamicOperatorExpression, start: Int, end: Int, type: IrType) =
         IrDynamicOperatorExpressionImpl(start, end, type, deserializeDynamicOperator(proto.operator)).apply {
             receiver = deserializeExpression(proto.receiver)
             proto.argumentList.mapTo(arguments) { deserializeExpression(it) }
         }
 
-    private fun deserializeDynamicOperator(operator: IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator) = when (operator) {
-        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.UNARY_PLUS -> IrDynamicOperator.UNARY_PLUS
-        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.UNARY_MINUS -> IrDynamicOperator.UNARY_MINUS
+    private fun deserializeDynamicOperator(operator: KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator) = when (operator) {
+        KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.UNARY_PLUS -> IrDynamicOperator.UNARY_PLUS
+        KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.UNARY_MINUS -> IrDynamicOperator.UNARY_MINUS
 
-        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.EXCL -> IrDynamicOperator.EXCL
+        KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.EXCL -> IrDynamicOperator.EXCL
 
-        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.PREFIX_INCREMENT -> IrDynamicOperator.PREFIX_INCREMENT
-        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.PREFIX_DECREMENT -> IrDynamicOperator.PREFIX_DECREMENT
+        KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.PREFIX_INCREMENT -> IrDynamicOperator.PREFIX_INCREMENT
+        KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.PREFIX_DECREMENT -> IrDynamicOperator.PREFIX_DECREMENT
 
-        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.POSTFIX_INCREMENT -> IrDynamicOperator.POSTFIX_INCREMENT
-        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.POSTFIX_DECREMENT -> IrDynamicOperator.POSTFIX_DECREMENT
+        KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.POSTFIX_INCREMENT -> IrDynamicOperator.POSTFIX_INCREMENT
+        KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.POSTFIX_DECREMENT -> IrDynamicOperator.POSTFIX_DECREMENT
 
-        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.BINARY_PLUS -> IrDynamicOperator.BINARY_PLUS
-        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.BINARY_MINUS -> IrDynamicOperator.BINARY_MINUS
-        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.MUL -> IrDynamicOperator.MUL
-        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.DIV -> IrDynamicOperator.DIV
-        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.MOD -> IrDynamicOperator.MOD
+        KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.BINARY_PLUS -> IrDynamicOperator.BINARY_PLUS
+        KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.BINARY_MINUS -> IrDynamicOperator.BINARY_MINUS
+        KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.MUL -> IrDynamicOperator.MUL
+        KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.DIV -> IrDynamicOperator.DIV
+        KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.MOD -> IrDynamicOperator.MOD
 
-        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.GT -> IrDynamicOperator.GT
-        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.LT -> IrDynamicOperator.LT
-        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.GE -> IrDynamicOperator.GE
-        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.LE -> IrDynamicOperator.LE
+        KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.GT -> IrDynamicOperator.GT
+        KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.LT -> IrDynamicOperator.LT
+        KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.GE -> IrDynamicOperator.GE
+        KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.LE -> IrDynamicOperator.LE
 
-        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.EQEQ -> IrDynamicOperator.EQEQ
-        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.EXCLEQ -> IrDynamicOperator.EXCLEQ
+        KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.EQEQ -> IrDynamicOperator.EQEQ
+        KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.EXCLEQ -> IrDynamicOperator.EXCLEQ
 
-        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.EQEQEQ -> IrDynamicOperator.EQEQEQ
-        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.EXCLEQEQ -> IrDynamicOperator.EXCLEQEQ
+        KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.EQEQEQ -> IrDynamicOperator.EQEQEQ
+        KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.EXCLEQEQ -> IrDynamicOperator.EXCLEQEQ
 
-        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.ANDAND -> IrDynamicOperator.ANDAND
-        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.OROR -> IrDynamicOperator.OROR
+        KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.ANDAND -> IrDynamicOperator.ANDAND
+        KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.OROR -> IrDynamicOperator.OROR
 
-        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.EQ -> IrDynamicOperator.EQ
-        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.PLUSEQ -> IrDynamicOperator.PLUSEQ
-        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.MINUSEQ -> IrDynamicOperator.MINUSEQ
-        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.MULEQ -> IrDynamicOperator.MULEQ
-        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.DIVEQ -> IrDynamicOperator.DIVEQ
-        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.MODEQ -> IrDynamicOperator.MODEQ
+        KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.EQ -> IrDynamicOperator.EQ
+        KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.PLUSEQ -> IrDynamicOperator.PLUSEQ
+        KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.MINUSEQ -> IrDynamicOperator.MINUSEQ
+        KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.MULEQ -> IrDynamicOperator.MULEQ
+        KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.DIVEQ -> IrDynamicOperator.DIVEQ
+        KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.MODEQ -> IrDynamicOperator.MODEQ
 
-        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.ARRAY_ACCESS -> IrDynamicOperator.ARRAY_ACCESS
+        KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.ARRAY_ACCESS -> IrDynamicOperator.ARRAY_ACCESS
 
-        IrKlibProtoBuf.IrDynamicOperatorExpression.IrDynamicOperator.INVOKE -> IrDynamicOperator.INVOKE
+        KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.INVOKE -> IrDynamicOperator.INVOKE
     }
 
-    private fun deserializeBreak(proto: IrKlibProtoBuf.IrBreak, start: Int, end: Int, type: IrType): IrBreak {
+    private fun deserializeBreak(proto: KotlinIr.IrBreak, start: Int, end: Int, type: IrType): IrBreak {
         val label = if (proto.hasLabel()) deserializeString(proto.label) else null
         val loopId = proto.loopId
-        val loop = loopIndex[loopId]!!
+        val loop = deserializeLoopHeader(loopId) { error("break clause before loop header") }
         val irBreak = IrBreakImpl(start, end, type, loop)
         irBreak.label = label
 
         return irBreak
     }
 
-    private fun deserializeContinue(proto: IrKlibProtoBuf.IrContinue, start: Int, end: Int, type: IrType): IrContinue {
+    private fun deserializeContinue(proto: KotlinIr.IrContinue, start: Int, end: Int, type: IrType): IrContinue {
         val label = if (proto.hasLabel()) deserializeString(proto.label) else null
         val loopId = proto.loopId
-        val loop = loopIndex[loopId]!!
+        val loop = deserializeLoopHeader(loopId) { error("continue clause before loop header") }
         val irContinue = IrContinueImpl(start, end, type, loop)
         irContinue.label = label
 
         return irContinue
     }
 
-    private fun deserializeConst(proto: IrKlibProtoBuf.IrConst, start: Int, end: Int, type: IrType): IrExpression =
+    private fun deserializeConst(proto: KotlinIr.IrConst, start: Int, end: Int, type: IrType): IrExpression =
         when (proto.valueCase) {
             NULL
             -> IrConstImpl.constNull(start, end, type)
@@ -665,7 +662,7 @@ abstract class IrModuleDeserializer(
             -> error("Const deserialization error: ${proto.valueCase} ")
         }
 
-    private fun deserializeOperation(proto: IrKlibProtoBuf.IrOperation, start: Int, end: Int, type: IrType): IrExpression =
+    private fun deserializeOperation(proto: KotlinIr.IrOperation, start: Int, end: Int, type: IrType): IrExpression =
         when (proto.operationCase) {
             BLOCK
             -> deserializeBlock(proto.block, start, end, type)
@@ -731,7 +728,7 @@ abstract class IrModuleDeserializer(
             -> error("Expression deserialization not implemented: ${proto.operationCase}")
         }
 
-    private fun deserializeExpression(proto: IrKlibProtoBuf.IrExpression): IrExpression {
+    private fun deserializeExpression(proto: KotlinIr.IrExpression): IrExpression {
         val start = proto.coordinates.startOffset
         val end = proto.coordinates.endOffset
         val type = deserializeIrType(proto.type)
@@ -743,13 +740,13 @@ abstract class IrModuleDeserializer(
     }
 
     private fun deserializeIrTypeParameter(
-        proto: IrKlibProtoBuf.IrTypeParameter,
+        proto: KotlinIr.IrTypeParameter,
         start: Int,
         end: Int,
         origin: IrDeclarationOrigin
     ): IrTypeParameter {
         val symbol = deserializeIrSymbol(proto.symbol) as IrTypeParameterSymbol
-        val name = Name.identifier(deserializeString(proto.name))
+        val name = deserializeName(proto.name)
         val variance = deserializeIrTypeVariance(proto.variance)
 
         val parameter = symbolTable.declareGlobalTypeParameter(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irrelevantOrigin,
@@ -765,7 +762,7 @@ abstract class IrModuleDeserializer(
     }
 
     private fun deserializeIrTypeParameterContainer(
-        proto: IrKlibProtoBuf.IrTypeParameterContainer,
+        proto: KotlinIr.IrTypeParameterContainer,
         parent: IrDeclarationParent
     ): List<IrTypeParameter> {
         return proto.typeParameterList.map {
@@ -776,17 +773,17 @@ abstract class IrModuleDeserializer(
         } // TODO: we need proper start, end and origin here?
     }
 
-    private fun deserializeClassKind(kind: IrKlibProtoBuf.ClassKind) = when (kind) {
-        IrKlibProtoBuf.ClassKind.CLASS -> ClassKind.CLASS
-        IrKlibProtoBuf.ClassKind.INTERFACE -> ClassKind.INTERFACE
-        IrKlibProtoBuf.ClassKind.ENUM_CLASS -> ClassKind.ENUM_CLASS
-        IrKlibProtoBuf.ClassKind.ENUM_ENTRY -> ClassKind.ENUM_ENTRY
-        IrKlibProtoBuf.ClassKind.ANNOTATION_CLASS -> ClassKind.ANNOTATION_CLASS
-        IrKlibProtoBuf.ClassKind.OBJECT -> ClassKind.OBJECT
+    private fun deserializeClassKind(kind: KotlinIr.ClassKind) = when (kind) {
+        KotlinIr.ClassKind.CLASS -> ClassKind.CLASS
+        KotlinIr.ClassKind.INTERFACE -> ClassKind.INTERFACE
+        KotlinIr.ClassKind.ENUM_CLASS -> ClassKind.ENUM_CLASS
+        KotlinIr.ClassKind.ENUM_ENTRY -> ClassKind.ENUM_ENTRY
+        KotlinIr.ClassKind.ANNOTATION_CLASS -> ClassKind.ANNOTATION_CLASS
+        KotlinIr.ClassKind.OBJECT -> ClassKind.OBJECT
     }
 
     private fun deserializeIrValueParameter(
-        proto: IrKlibProtoBuf.IrValueParameter,
+        proto: KotlinIr.IrValueParameter,
         start: Int,
         end: Int,
         origin: IrDeclarationOrigin
@@ -798,7 +795,7 @@ abstract class IrModuleDeserializer(
             IrValueParameterImpl(
                 start, end, origin,
                 paramSymbol,
-                deserializeString(proto.name).let { if (paramSymbol.descriptor is ReceiverParameterDescriptor) Name.special(it) else Name.identifier(it) },
+                deserializeName(proto.name),
                 proto.index,
                 deserializeIrType(proto.type),
                 varargElementType,
@@ -814,7 +811,7 @@ abstract class IrModuleDeserializer(
         return parameter
     }
 
-    private fun deserializeIrClass(proto: IrKlibProtoBuf.IrClass, start: Int, end: Int, origin: IrDeclarationOrigin): IrClass {
+    private fun deserializeIrClass(proto: KotlinIr.IrClass, start: Int, end: Int, origin: IrDeclarationOrigin): IrClass {
 
         val symbol = deserializeIrSymbol(proto.symbol) as IrClassSymbol
 
@@ -824,7 +821,7 @@ abstract class IrModuleDeserializer(
             IrClassImpl(
                         start, end, origin,
                         it,
-                        deserializeString(proto.name).let { if (it.startsWith('<')) Name.special(it) else Name.identifier(it) },
+                        deserializeName(proto.name),
                         deserializeClassKind(proto.kind),
                         deserializeVisibility(proto.visibility),
                         modality,
@@ -854,7 +851,7 @@ abstract class IrModuleDeserializer(
     }
 
     private fun deserializeIrFunctionBase(
-        base: IrKlibProtoBuf.IrFunctionBase,
+        base: KotlinIr.IrFunctionBase,
         function: IrFunctionBase,
         start: Int,
         end: Int,
@@ -878,8 +875,8 @@ abstract class IrModuleDeserializer(
     }
 
     private fun deserializeIrFunction(
-        proto: IrKlibProtoBuf.IrFunction,
-        start: Int, end: Int, origin: IrDeclarationOrigin, isAccessor: Boolean
+        proto: KotlinIr.IrFunction,
+        start: Int, end: Int, origin: IrDeclarationOrigin
     ): IrSimpleFunction {
 
         logger.log { "### deserializing IrFunction ${proto.base.name}" }
@@ -889,7 +886,7 @@ abstract class IrModuleDeserializer(
             symbol.descriptor, {
                 IrFunctionImpl(
                     start, end, origin, it,
-                    deserializeString(proto.base.name).let { if (isAccessor) Name.special(it) else Name.identifier(it) },
+                    deserializeName(proto.base.name),
                     deserializeVisibility(proto.base.visibility),
                     deserializeModality(proto.modality),
                     deserializeIrType(proto.base.returnType),
@@ -910,7 +907,7 @@ abstract class IrModuleDeserializer(
     }
 
     private fun deserializeIrVariable(
-        proto: IrKlibProtoBuf.IrVariable,
+        proto: KotlinIr.IrVariable,
         start: Int, end: Int, origin: IrDeclarationOrigin
     ): IrVariable {
 
@@ -926,7 +923,7 @@ abstract class IrModuleDeserializer(
             end,
             origin,
             symbol,
-            Name.identifier(deserializeString(proto.name)),
+            deserializeName(proto.name),
             type,
             proto.isVar,
             proto.isConst,
@@ -937,7 +934,7 @@ abstract class IrModuleDeserializer(
     }
 
     private fun deserializeIrEnumEntry(
-        proto: IrKlibProtoBuf.IrEnumEntry,
+        proto: KotlinIr.IrEnumEntry,
         start: Int, end: Int, origin: IrDeclarationOrigin
     ): IrEnumEntry {
         val symbol = deserializeIrSymbol(proto.symbol) as IrEnumEntrySymbol
@@ -948,7 +945,7 @@ abstract class IrModuleDeserializer(
             irrelevantOrigin,
             symbol.descriptor
         ) {
-            IrEnumEntryImpl(start, end, origin, it, Name.identifier(deserializeString(proto.name)))
+            IrEnumEntryImpl(start, end, origin, it, deserializeName(proto.name))
         }
 
         if (proto.hasCorrespondingClass()) {
@@ -962,7 +959,7 @@ abstract class IrModuleDeserializer(
     }
 
     private fun deserializeIrAnonymousInit(
-        proto: IrKlibProtoBuf.IrAnonymousInit,
+        proto: KotlinIr.IrAnonymousInit,
         start: Int,
         end: Int,
         origin: IrDeclarationOrigin
@@ -973,7 +970,7 @@ abstract class IrModuleDeserializer(
         return initializer
     }
 
-    private fun deserializeVisibility(value: IrKlibProtoBuf.Visibility): Visibility { // TODO: switch to enum
+    private fun deserializeVisibility(value: KotlinIr.Visibility): Visibility { // TODO: switch to enum
         return when (deserializeString(value.name)) {
             "public" -> Visibilities.PUBLIC
             "private" -> Visibilities.PRIVATE
@@ -987,7 +984,7 @@ abstract class IrModuleDeserializer(
     }
 
     private fun deserializeIrConstructor(
-        proto: IrKlibProtoBuf.IrConstructor,
+        proto: KotlinIr.IrConstructor,
         start: Int,
         end: Int,
         origin: IrDeclarationOrigin
@@ -999,7 +996,7 @@ abstract class IrModuleDeserializer(
                 IrConstructorImpl(
                     start, end, origin,
                     it,
-                    Name.special(deserializeString(proto.base.name)),
+                    deserializeName(proto.base.name),
                     deserializeVisibility(proto.base.visibility),
                     deserializeIrType(proto.base.returnType),
                     proto.base.isInline,
@@ -1013,7 +1010,7 @@ abstract class IrModuleDeserializer(
         return constructor
     }
 
-    private fun deserializeIrField(proto: IrKlibProtoBuf.IrField, start: Int, end: Int, origin: IrDeclarationOrigin): IrField {
+    private fun deserializeIrField(proto: KotlinIr.IrField, start: Int, end: Int, origin: IrDeclarationOrigin): IrField {
 
         val symbol = deserializeIrSymbol(proto.symbol) as IrFieldSymbol
         val type = deserializeIrType(proto.type)
@@ -1025,7 +1022,7 @@ abstract class IrModuleDeserializer(
             { IrFieldImpl(
                     start, end, origin,
                     it,
-                    Name.identifier(deserializeString(proto.name)),
+                    deserializeName(proto.name),
                     type,
                     deserializeVisibility(proto.visibility),
                     proto.isFinal,
@@ -1041,23 +1038,23 @@ abstract class IrModuleDeserializer(
         return field
     }
 
-    private fun deserializeModality(modality: IrKlibProtoBuf.ModalityKind) = when (modality) {
-        IrKlibProtoBuf.ModalityKind.OPEN_MODALITY -> Modality.OPEN
-        IrKlibProtoBuf.ModalityKind.SEALED_MODALITY -> Modality.SEALED
-        IrKlibProtoBuf.ModalityKind.FINAL_MODALITY -> Modality.FINAL
-        IrKlibProtoBuf.ModalityKind.ABSTRACT_MODALITY -> Modality.ABSTRACT
+    private fun deserializeModality(modality: KotlinIr.ModalityKind) = when (modality) {
+        KotlinIr.ModalityKind.OPEN_MODALITY -> Modality.OPEN
+        KotlinIr.ModalityKind.SEALED_MODALITY -> Modality.SEALED
+        KotlinIr.ModalityKind.FINAL_MODALITY -> Modality.FINAL
+        KotlinIr.ModalityKind.ABSTRACT_MODALITY -> Modality.ABSTRACT
     }
 
     private fun deserializeIrProperty(
-        proto: IrKlibProtoBuf.IrProperty,
+        proto: KotlinIr.IrProperty,
         start: Int,
         end: Int,
         origin: IrDeclarationOrigin
     ): IrProperty {
 
         val backingField = if (proto.hasBackingField()) deserializeIrField(proto.backingField, start, end, origin) else null
-        val getter = if (proto.hasGetter()) deserializeIrFunction(proto.getter, start, end, origin, true) else null
-        val setter = if (proto.hasSetter()) deserializeIrFunction(proto.setter, start, end, origin, true) else null
+        val getter = if (proto.hasGetter()) deserializeIrFunction(proto.getter, start, end, origin) else null
+        val setter = if (proto.hasSetter()) deserializeIrFunction(proto.setter, start, end, origin) else null
 
         backingField?.let { (it.descriptor as? WrappedFieldDescriptor)?.bind(it) }
         getter?.let { (it.descriptor as? WrappedSimpleFunctionDescriptor)?.bind(it) }
@@ -1073,7 +1070,7 @@ abstract class IrModuleDeserializer(
         val property = IrPropertyImpl(
             start, end, origin,
             descriptor,
-            Name.identifier(deserializeString(proto.name)),
+            deserializeName(proto.name),
             deserializeVisibility(proto.visibility),
             deserializeModality(proto.modality),
             proto.isVar,
@@ -1097,7 +1094,7 @@ abstract class IrModuleDeserializer(
     }
 
     private fun deserializeIrTypeAlias(
-        proto: IrKlibProtoBuf.IrTypeAlias,
+        proto: KotlinIr.IrTypeAlias,
         start: Int,
         end: Int,
         origin: IrDeclarationOrigin
@@ -1109,9 +1106,9 @@ abstract class IrModuleDeserializer(
         IrDeclarationOrigin::class.nestedClasses.toList() + DeclarationFactory.FIELD_FOR_OUTER_THIS::class
     val originIndex = allKnownOrigins.map { it.objectInstance as IrDeclarationOriginImpl }.associateBy { it.name }
     val irrelevantOrigin = object : IrDeclarationOriginImpl("irrelevant") {}
-    fun deserializeIrDeclarationOrigin(proto: IrKlibProtoBuf.IrDeclarationOrigin) = originIndex[deserializeString(proto.custom)]!!
+    fun deserializeIrDeclarationOrigin(proto: KotlinIr.IrDeclarationOrigin) = originIndex[deserializeString(proto.custom)]!!
 
-    protected fun deserializeDeclaration(proto: IrKlibProtoBuf.IrDeclaration, parent: IrDeclarationParent?): IrDeclaration {
+    protected fun deserializeDeclaration(proto: KotlinIr.IrDeclaration, parent: IrDeclarationParent?): IrDeclaration {
 
         val start = proto.coordinates.startOffset
         val end = proto.coordinates.endOffset
@@ -1129,7 +1126,7 @@ abstract class IrModuleDeserializer(
             IR_CLASS
             -> deserializeIrClass(declarator.irClass, start, end, origin)
             IR_FUNCTION
-            -> deserializeIrFunction(declarator.irFunction, start, end, origin, false)
+            -> deserializeIrFunction(declarator.irFunction, start, end, origin)
             IR_PROPERTY
             -> deserializeIrProperty(declarator.irProperty, start, end, origin)
             IR_TYPE_ALIAS

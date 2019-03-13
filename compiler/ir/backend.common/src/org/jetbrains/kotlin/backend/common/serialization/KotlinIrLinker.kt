@@ -3,153 +3,132 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir
+package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.descriptors.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.backend.js.lower.serialization.metadata.JsKlibMetadataSerializerProtocol
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.expressions.impl.IrLoopBase
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import java.io.File
 
-class IrKlibProtoBufModuleDeserializer(
+abstract class KotlinIrLinker(
     currentModule: ModuleDescriptor,
     logger: LoggingContext,
     builtIns: IrBuiltIns,
     symbolTable: SymbolTable,
     private val forwardModuleDescriptor: ModuleDescriptor?)
-        : IrModuleDeserializer(logger, builtIns, symbolTable) {
+        : IrModuleDeserializer(logger, builtIns, symbolTable),
+          DescriptorUniqIdAware {
 
-    private val deserializedSymbols = mutableMapOf<UniqIdKey, IrSymbol>()
-    val knownBuiltInsDescriptors = mutableMapOf<DeclarationDescriptor, UniqId>()
+    protected val deserializedSymbols = mutableMapOf<UniqIdKey, IrSymbol>()
     private val reachableTopLevels = mutableSetOf<UniqIdKey>()
     private val deserializedTopLevels = mutableSetOf<UniqIdKey>()
     private val forwardDeclarations = mutableSetOf<IrSymbol>()
 
     private var deserializedModuleDescriptor: ModuleDescriptor? = null
-    private var deserializedModuleProtoSymbolTables = mutableMapOf<ModuleDescriptor, IrKlibProtoBuf.IrSymbolTable>()
-    private var deserializedModuleProtoStringTables = mutableMapOf<ModuleDescriptor, IrKlibProtoBuf.StringTable>()
-    private var deserializedModuleProtoTypeTables = mutableMapOf<ModuleDescriptor, IrKlibProtoBuf.IrTypeTable>()
+    private var deserializedModuleProtoSymbolTables = mutableMapOf<ModuleDescriptor, KotlinIr.IrSymbolTable>()
+    private var deserializedModuleProtoStringTables = mutableMapOf<ModuleDescriptor, KotlinIr.StringTable>()
+    private var deserializedModuleProtoTypeTables = mutableMapOf<ModuleDescriptor, KotlinIr.IrTypeTable>()
+    private var deserializedModuleLoops = mutableMapOf<Pair<ModuleDescriptor, Int>, IrLoopBase>()
 
     val resolvedForwardDeclarations = mutableMapOf<UniqIdKey, UniqIdKey>()
 
-    private val descriptorReferenceDeserializer = object : DescriptorReferenceDeserializer(currentModule, resolvedForwardDeclarations) {
-        override fun resolveSpecialDescriptor(fqn: FqName) = builtIns.builtIns.getBuiltInClassByFqName(fqn)
-
-        override fun checkIfSpecialDescriptorId(id: Long) =
-            (FUNCTION_INDEX_START + BUILT_IN_UNIQ_ID_CLASS_OFFSET) <= id && id < (FUNCTION_INDEX_START + BUILT_IN_UNIQ_ID_GAP)
-
-        override fun getDescriptorIdOrNull(descriptor: DeclarationDescriptor) =
-            knownBuiltInsDescriptors[descriptor]?.index ?: if (isBuiltInFunction(descriptor))
-                FUNCTION_INDEX_START + builtInFunctionId(descriptor)
-            else null
-
-    }
+    abstract protected val descriptorReferenceDeserializer: DescriptorReferenceDeserializer
 
     private val descriptorToDirectoryMap = mutableMapOf<ModuleDescriptor, File>()
 
     private fun irDirectory(m: ModuleDescriptor): File = descriptorToDirectoryMap[m]!!
 
-    private val FUNCTION_INDEX_START: Long
-
-    init {
-        // TODO: think about order
-        var currentIndex = 0x1_0000_0000L
-        builtIns.knownBuiltins.forEach {
-            require(it is IrFunction)
-            deserializedSymbols.put(UniqIdKey(null, UniqId(currentIndex, isLocal = false)), it.symbol)
-            assert(symbolTable.referenceSimpleFunction(it.descriptor) == it.symbol)
-            currentIndex++
-        }
-
-        FUNCTION_INDEX_START = currentIndex
-    }
-
-    private fun referenceDeserializedSymbol(proto: IrKlibProtoBuf.IrSymbolData, descriptor: DeclarationDescriptor?): IrSymbol = when (proto.kind) {
-        IrKlibProtoBuf.IrSymbolKind.ANONYMOUS_INIT_SYMBOL ->
+    private fun referenceDeserializedSymbol(proto: KotlinIr.IrSymbolData, descriptor: DeclarationDescriptor?): IrSymbol = when (proto.kind) {
+        KotlinIr.IrSymbolKind.ANONYMOUS_INIT_SYMBOL ->
             IrAnonymousInitializerSymbolImpl(
                 descriptor as ClassDescriptor?
                     ?: WrappedClassDescriptor()
             )
-        IrKlibProtoBuf.IrSymbolKind.CLASS_SYMBOL ->
+        KotlinIr.IrSymbolKind.CLASS_SYMBOL ->
             symbolTable.referenceClass(
                 descriptor as ClassDescriptor?
                     ?: WrappedClassDescriptor()
             )
-        IrKlibProtoBuf.IrSymbolKind.CONSTRUCTOR_SYMBOL ->
+        KotlinIr.IrSymbolKind.CONSTRUCTOR_SYMBOL ->
             symbolTable.referenceConstructor(
                 descriptor as ClassConstructorDescriptor?
                     ?: WrappedClassConstructorDescriptor()
             )
-        IrKlibProtoBuf.IrSymbolKind.TYPE_PARAMETER_SYMBOL ->
+        KotlinIr.IrSymbolKind.TYPE_PARAMETER_SYMBOL ->
             symbolTable.referenceTypeParameter(
                 descriptor as TypeParameterDescriptor?
                     ?: WrappedTypeParameterDescriptor()
             )
-        IrKlibProtoBuf.IrSymbolKind.ENUM_ENTRY_SYMBOL ->
+        KotlinIr.IrSymbolKind.ENUM_ENTRY_SYMBOL ->
             symbolTable.referenceEnumEntry(
                 descriptor as ClassDescriptor?
                     ?: WrappedEnumEntryDescriptor()
             )
-        IrKlibProtoBuf.IrSymbolKind.STANDALONE_FIELD_SYMBOL ->
+        KotlinIr.IrSymbolKind.STANDALONE_FIELD_SYMBOL ->
             symbolTable.referenceField(WrappedFieldDescriptor())
 
-        IrKlibProtoBuf.IrSymbolKind.FIELD_SYMBOL ->
+        KotlinIr.IrSymbolKind.FIELD_SYMBOL ->
             symbolTable.referenceField(
                 descriptor as PropertyDescriptor?
                     ?: WrappedPropertyDescriptor()
             )
-        IrKlibProtoBuf.IrSymbolKind.FUNCTION_SYMBOL ->
+        KotlinIr.IrSymbolKind.FUNCTION_SYMBOL ->
             symbolTable.referenceSimpleFunction(
                 descriptor as FunctionDescriptor?
                     ?: WrappedSimpleFunctionDescriptor()
             )
-        IrKlibProtoBuf.IrSymbolKind.VARIABLE_SYMBOL ->
+        KotlinIr.IrSymbolKind.VARIABLE_SYMBOL ->
             IrVariableSymbolImpl(
                 descriptor as VariableDescriptor?
                     ?: WrappedVariableDescriptor()
             )
-        IrKlibProtoBuf.IrSymbolKind.VALUE_PARAMETER_SYMBOL ->
+        KotlinIr.IrSymbolKind.VALUE_PARAMETER_SYMBOL ->
             IrValueParameterSymbolImpl(
                 descriptor as ParameterDescriptor?
                     ?: WrappedValueParameterDescriptor()
             )
-        IrKlibProtoBuf.IrSymbolKind.RECEIVER_PARAMETER_SYMBOL ->
+        KotlinIr.IrSymbolKind.RECEIVER_PARAMETER_SYMBOL ->
             IrValueParameterSymbolImpl(
                 descriptor as ParameterDescriptor? ?: WrappedReceiverParameterDescriptor()
             )
         else -> TODO("Unexpected classifier symbol kind: ${proto.kind}")
     }
 
-    override fun deserializeIrSymbol(proto: IrKlibProtoBuf.IrSymbol): IrSymbol {
+    override fun deserializeIrSymbol(proto: KotlinIr.IrSymbol): IrSymbol {
         val symbolData =
             deserializedModuleProtoSymbolTables[deserializedModuleDescriptor]!!.getSymbols(proto.index)
         return deserializeIrSymbolData(symbolData)
     }
 
-    override fun deserializeIrType(proto: IrKlibProtoBuf.IrTypeIndex): IrType {
+    override fun deserializeIrType(proto: KotlinIr.IrTypeIndex): IrType {
         val typeData =
             deserializedModuleProtoTypeTables[deserializedModuleDescriptor]!!.getTypes(proto.index)
         return deserializeIrTypeData(typeData)
     }
 
-    override fun deserializeString(proto: IrKlibProtoBuf.String) =
+    override fun deserializeString(proto: KotlinIr.String) =
         deserializedModuleProtoStringTables[deserializedModuleDescriptor]!!.getStrings(proto.index)
 
-    fun deserializeIrSymbolData(proto: IrKlibProtoBuf.IrSymbolData): IrSymbol {
+    override fun deserializeLoopHeader(loopIndex: Int, loopBuilder: () -> IrLoopBase) =
+            deserializedModuleLoops.getOrPut(deserializedModuleDescriptor!! to loopIndex, loopBuilder)
+
+    fun deserializeIrSymbolData(proto: KotlinIr.IrSymbolData): IrSymbol {
         val key = proto.uniqId.uniqIdKey(deserializedModuleDescriptor!!)
         val topLevelKey = proto.topLevelUniqId.uniqIdKey(deserializedModuleDescriptor!!)
 
@@ -168,10 +147,9 @@ class IrKlibProtoBufModuleDeserializer(
 
             referenceDeserializedSymbol(proto, descriptor)
         }
-
         if (symbol.descriptor is ClassDescriptor &&
-            symbol.descriptor !is WrappedDeclarationDescriptor<*>/* &&
-            symbol.descriptor.module.isForwardDeclarationModule*/
+            symbol.descriptor !is WrappedDeclarationDescriptor<*> &&
+            symbol.descriptor.module.isForwardDeclarationModule
         ) {
             forwardDeclarations.add(symbol)
         }
@@ -179,7 +157,7 @@ class IrKlibProtoBufModuleDeserializer(
         return symbol
     }
 
-    override fun deserializeDescriptorReference(proto: IrKlibProtoBuf.DescriptorReference) =
+    override fun deserializeDescriptorReference(proto: KotlinIr.DescriptorReference) =
         descriptorReferenceDeserializer.deserializeDescriptorReference(
             deserializeString(proto.packageFqName),
             deserializeString(proto.classFqName),
@@ -209,16 +187,18 @@ class IrKlibProtoBufModuleDeserializer(
         val proto = loadTopLevelDeclarationProto(uniqIdKey)
         return deserializeDeclaration(proto, reversedFileIndex[uniqIdKey]!!)
     }
+    protected abstract fun reader(moduleDescriptor: ModuleDescriptor, uniqId: UniqId): ByteArray
 
-    private fun loadTopLevelDeclarationProto(uniqIdKey: UniqIdKey): IrKlibProtoBuf.IrDeclaration {
-        val file = File(irDirectory(deserializedModuleDescriptor!!), uniqIdKey.uniqId.declarationFileName)
-        return IrKlibProtoBuf.IrDeclaration.parseFrom(file.readBytes().codedInputStream, JsKlibMetadataSerializerProtocol.extensionRegistry)
+    private fun loadTopLevelDeclarationProto(uniqIdKey: UniqIdKey): KotlinIr.IrDeclaration {
+        val stream = reader(uniqIdKey.moduleOfOrigin!!, uniqIdKey.uniqId).codedInputStream
+        return KotlinIr.IrDeclaration.parseFrom(stream, newInstance())
     }
 
     private fun findDeserializedDeclarationForDescriptor(descriptor: DeclarationDescriptor): DeclarationDescriptor? {
         val topLevelDescriptor = descriptor.findTopLevelDescriptor()
 
-//        if (topLevelDescriptor.module.isForwardDeclarationModule) return null
+        // This is Native specific. Try to eliminate.
+        if (topLevelDescriptor.module.isForwardDeclarationModule) return null
 
         if (topLevelDescriptor !is DeserializedClassDescriptor && topLevelDescriptor !is DeserializedCallableMemberDescriptor) {
             return null
@@ -226,7 +206,7 @@ class IrKlibProtoBufModuleDeserializer(
 
         val descriptorUniqId = topLevelDescriptor.getUniqId()
             ?: error("could not get descriptor uniq id for $topLevelDescriptor")
-        val uniqId = UniqId(descriptorUniqId.index, isLocal = false)
+        val uniqId = UniqId(descriptorUniqId, isLocal = false)
         val topLevelKey = UniqIdKey(topLevelDescriptor.module, uniqId)
 
         // This top level descriptor doesn't have a serialized IR declaration.
@@ -313,7 +293,7 @@ class IrKlibProtoBufModuleDeserializer(
         }
     }
 
-    fun deserializeIrFile(fileProto: IrKlibProtoBuf.IrFile, moduleDescriptor: ModuleDescriptor, deserializeAllDeclarations: Boolean): IrFile {
+    fun deserializeIrFile(fileProto: KotlinIr.IrFile, moduleDescriptor: ModuleDescriptor, deseralizationStrategy: DeserializationStrategy): IrFile {
         val fileEntry = NaiveSourceBasedFileEntryImpl(
             deserializeString(fileProto.fileEntry.name),
             fileProto.fileEntry.lineStartOffsetsList.toIntArray()
@@ -331,15 +311,22 @@ class IrKlibProtoBufModuleDeserializer(
             val uniqIdKey = it.uniqIdKey(moduleDescriptor)
             reversedFileIndex.put(uniqIdKey, file)
 
-            if (deserializeAllDeclarations) {
+            if (deseralizationStrategy == DeserializationStrategy.ALL) {
                 file.declarations.add(deserializeTopLevelDeclaration(uniqIdKey))
             }
         }
 
+        val annotations = deserializeAnnotations(fileProto.annotations)
+        file.annotations.addAll(annotations)
+
+
+        if (deseralizationStrategy == DeserializationStrategy.EXPLICITLY_EXPORTED)
+            fileProto.explicitlyExportedToCompilerList.forEach { deserializeIrSymbol(it) }
+
         return file
     }
 
-    fun deserializeIrModule(proto: IrKlibProtoBuf.IrModule, moduleDescriptor: ModuleDescriptor, deserializeAllDeclarations: Boolean): IrModuleFragment {
+    fun deserializeIrModuleHeader(proto: KotlinIr.IrModule, moduleDescriptor: ModuleDescriptor, deserializationStrategy: DeserializationStrategy): IrModuleFragment {
 
         deserializedModuleDescriptor = moduleDescriptor
         deserializedModuleProtoSymbolTables.put(moduleDescriptor, proto.symbolTable)
@@ -347,16 +334,21 @@ class IrKlibProtoBufModuleDeserializer(
         deserializedModuleProtoTypeTables.put(moduleDescriptor, proto.typeTable)
 
         val files = proto.fileList.map {
-            deserializeIrFile(it, moduleDescriptor, deserializeAllDeclarations)
+            deserializeIrFile(it, moduleDescriptor, deserializationStrategy)
         }
         val module = IrModuleFragmentImpl(moduleDescriptor, builtIns, files)
         module.patchDeclarationParents(null)
         return module
     }
 
-    fun deserializeIrModule(moduleDescriptor: ModuleDescriptor, byteArray: ByteArray, klibLocation: File, deserializeAllDeclarations: Boolean = false): IrModuleFragment {
-        descriptorToDirectoryMap[moduleDescriptor] = File(klibLocation, "ir/")
-        val proto = IrKlibProtoBuf.IrModule.parseFrom(byteArray.codedInputStream, JsKlibMetadataSerializerProtocol.extensionRegistry)
-        return deserializeIrModule(proto, moduleDescriptor, deserializeAllDeclarations)
+    fun deserializeIrModuleHeader(moduleDescriptor: ModuleDescriptor, byteArray: ByteArray, deserializationStrategy: DeserializationStrategy = DeserializationStrategy.ONLY_REFERENCED): IrModuleFragment {
+        val proto = KotlinIr.IrModule.parseFrom(byteArray.codedInputStream, newInstance())
+        return deserializeIrModuleHeader(proto, moduleDescriptor, deserializationStrategy)
     }
+}
+
+enum class DeserializationStrategy {
+    ONLY_REFERENCED,
+    ALL,
+    EXPLICITLY_EXPORTED
 }

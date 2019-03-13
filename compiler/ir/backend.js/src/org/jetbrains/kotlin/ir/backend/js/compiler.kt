@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
+import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.functions.functionInterfacePackageFragmentProvider
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -17,8 +18,12 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.backend.common.serialization.DescriptorTable
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.replaceUnboundSymbols
-import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.*
+import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsDeclarationTable
+import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
+import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrModuleSerializer
+import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.newJsDescriptorUniqId
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.metadata.JsKlibMetadataModuleDescriptor
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.metadata.JsKlibMetadataSerializationUtil
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.metadata.JsKlibMetadataVersion
@@ -38,6 +43,9 @@ import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.utils.DFS
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.nio.file.StandardCopyOption
 
 class CompiledModule(
     val moduleName: String,
@@ -56,7 +64,6 @@ enum class CompilationMode(val generateJS: Boolean, val generateKlib: Boolean) {
 
 private val moduleHeaderFileName = "module.kji"
 private val declarationsDirName = "ir/"
-private val debugDataFileName = "debug.txt"
 private val logggg = object : LoggingContext {
     override var inVerbosePhase: Boolean
         get() = TODO("not implemented")
@@ -73,7 +80,7 @@ data class JsKlib(
     val moduleIr: IrModuleFragment,
     val symbolTable: SymbolTable,
     val irBuiltIns: IrBuiltIns,
-    val deserializer: IrKlibProtoBufModuleDeserializer
+    val deserializer: JsIrLinker
 )
 
 
@@ -108,14 +115,14 @@ private fun deserializeModuleFromKlib(
     val irBuiltIns = IrBuiltIns(md.builtIns, typeTranslator, st)
 
     val moduleFile = File(klibDirFile, moduleHeaderFileName)
-    val deserializer = IrKlibProtoBufModuleDeserializer(md, logggg, irBuiltIns, st, null)
+    val deserializer = JsIrLinker(md, logggg, irBuiltIns, st)
 
     dependencies.forEach {
         val dependencyKlibDir = File(it.klibPath, moduleHeaderFileName)
-        deserializer.deserializeIrModule(it.moduleDescriptor!!, dependencyKlibDir.readBytes(), File(it.klibPath), false)
+        deserializer.deserializeIrModuleHeader(it.moduleDescriptor!!, dependencyKlibDir.readBytes(), File(it.klibPath), DeserializationStrategy.ONLY_REFERENCED)
     }
 
-    val moduleFragment = deserializer.deserializeIrModule(md, moduleFile.readBytes(), klibDirFile, true)
+    val moduleFragment = deserializer.deserializeIrModuleHeader(md, moduleFile.readBytes(), klibDirFile, DeserializationStrategy.ALL)
 
     return JsKlib(md, moduleFragment, st, irBuiltIns, deserializer)
 }
@@ -160,11 +167,11 @@ fun compile(
     val psi2IrContext = psi2IrTranslator.createGeneratorContext(moduleDescriptor, analysisResult.bindingContext, symbolTable)
     val irBuiltIns = psi2IrContext.irBuiltIns
 
-    var deserializer = IrKlibProtoBufModuleDeserializer(moduleDescriptor, logggg, irBuiltIns, symbolTable, null)
+    var deserializer = JsIrLinker(moduleDescriptor, logggg, irBuiltIns, symbolTable)
 
     val deserializedModuleFragments = sortedDeps.map {
         val moduleFile = File(it.klibPath, moduleHeaderFileName)
-        deserializer.deserializeIrModule(it.moduleDescriptor!!, moduleFile.readBytes(), File(it.klibPath), false)
+        deserializer.deserializeIrModuleHeader(it.moduleDescriptor!!, moduleFile.readBytes(), File(it.klibPath), DeserializationStrategy.ONLY_REFERENCED)
     }
 
     var moduleFragment = psi2IrTranslator.generateModuleFragment(psi2IrContext, files, deserializer)
@@ -321,9 +328,9 @@ fun serializeModuleIntoKlib(
     dependencies: List<CompiledModule>,
     moduleFragment: IrModuleFragment
 ) {
-    val declarationTable = DeclarationTable(moduleFragment.irBuiltins, DescriptorTable(), symbolTable)
+    val declarationTable = JsDeclarationTable(moduleFragment.irBuiltins, DescriptorTable()).apply { loadKnownBuiltins() }
 
-    val serializedIr = IrModuleSerializer(logggg, declarationTable/*, onlyForInlines = false*/).serializedIrModule(moduleFragment)
+    val serializedIr = JsIrModuleSerializer(logggg, declarationTable).serializedIrModule(moduleFragment)
     val serializer = JsKlibMetadataSerializationUtil
 
     val moduleDescription =
@@ -335,7 +342,7 @@ fun serializeModuleIntoKlib(
         metadataVersion
     ) { declarationDescriptor ->
         val index = declarationTable.descriptorTable.get(declarationDescriptor)
-        index?.let { newDescriptorUniqId(it) }
+        index?.let { newJsDescriptorUniqId(it) }
     }
 
     val klibDir = File(klibPath).also {
@@ -347,20 +354,8 @@ fun serializeModuleIntoKlib(
     moduleFile.writeBytes(serializedIr.module)
 
     val irDeclarationDir = File(klibDir, declarationsDirName).also { it.mkdir() }
-
-    for ((id, data) in serializedIr.declarations) {
-        val file = File(irDeclarationDir, id.declarationFileName)
-        file.writeBytes(data)
-    }
-
-    val debugFile = File(klibDir, debugDataFileName)
-
-    for ((id, data) in serializedIr.debugIndex) {
-        debugFile.appendText(id.toString())
-        debugFile.appendText(" --- ")
-        debugFile.appendText(data)
-        debugFile.appendText("\n")
-    }
+    val irCombinedFile = File(irDeclarationDir, "irCombined.knd")
+    Files.copy(Paths.get(serializedIr.combinedDeclarationFilePath), Paths.get(irCombinedFile.path), StandardCopyOption.REPLACE_EXISTING)
 
     File(klibDir, "${moduleDescription.name}.${JsKlibMetadataSerializationUtil.CLASS_METADATA_FILE_EXTENSION}").also {
         it.writeBytes(serializedData.asByteArray())

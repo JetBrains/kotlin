@@ -5,13 +5,12 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir
 
+import org.jetbrains.kotlin.backend.common.serialization.fqNameSafe
+import org.jetbrains.kotlin.backend.common.serialization.name
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.ir.SourceManager
-import org.jetbrains.kotlin.ir.SourceRangeInfo
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -19,74 +18,7 @@ import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi2ir.findFirstFunction
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import java.io.File
 import java.util.regex.Pattern
-
-internal val IrDeclaration.isAnonymousObject get() = DescriptorUtils.isAnonymousObject(this.descriptor)
-internal val IrDeclaration.isLocal get() = DescriptorUtils.isLocal(this.descriptor)
-
-internal val IrDeclaration.module get() = this.descriptor.module
-
-internal const val SYNTHETIC_OFFSET = -2
-
-val File.lineStartOffsets: IntArray
-    get() {
-        // TODO: could be incorrect, if file is not in system's line terminator format.
-        // Maybe use (0..document.lineCount - 1)
-        //                .map { document.getLineStartOffset(it) }
-        //                .toIntArray()
-        // as in PSI.
-        val separatorLength = System.lineSeparator().length
-        val buffer = mutableListOf<Int>()
-        var currentOffset = 0
-        this.forEachLine { line ->
-            buffer.add(currentOffset)
-            currentOffset += line.length + separatorLength
-        }
-        buffer.add(currentOffset)
-        return buffer.toIntArray()
-    }
-
-val SourceManager.FileEntry.lineStartOffsets
-    get() = File(name).let {
-        if (it.exists() && it.isFile) it.lineStartOffsets else IntArray(0)
-    }
-
-class NaiveSourceBasedFileEntryImpl(override val name: String, val lineStartOffsets: IntArray = IntArray(0)) : SourceManager.FileEntry {
-
-    //-------------------------------------------------------------------------//
-
-    override fun getLineNumber(offset: Int): Int {
-        assert(offset != UNDEFINED_OFFSET)
-        if (offset == SYNTHETIC_OFFSET) return 0
-        val index = lineStartOffsets.binarySearch(offset)
-        return if (index >= 0) index else -index - 2
-    }
-
-    //-------------------------------------------------------------------------//
-
-    override fun getColumnNumber(offset: Int): Int {
-        assert(offset != UNDEFINED_OFFSET)
-        if (offset == SYNTHETIC_OFFSET) return 0
-        var lineNumber = getLineNumber(offset)
-        return offset - lineStartOffsets[lineNumber]
-    }
-
-    //-------------------------------------------------------------------------//
-
-    override val maxOffset: Int
-        //get() = TODO("not implemented")
-        get() = UNDEFINED_OFFSET
-
-    override fun getSourceRangeInfo(beginOffset: Int, endOffset: Int): SourceRangeInfo {
-        //TODO("not implemented")
-        return SourceRangeInfo(name, beginOffset, -1, -1, endOffset, -1, -1)
-
-    }
-}
-
 
 private val functionPattern = Pattern.compile("^K?(Suspend)?Function\\d+$")
 

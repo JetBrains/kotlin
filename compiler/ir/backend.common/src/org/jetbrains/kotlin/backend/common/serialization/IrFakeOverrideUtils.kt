@@ -3,11 +3,11 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir
+package org.jetbrains.kotlin.backend.common.serialization
 
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 
 
 /**
@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.ir.declarations.*
  *
  * TODO: this method is actually a part of resolve and probably duplicates another one
  */
-internal fun IrSimpleFunction.resolveFakeOverride(allowAbstract: Boolean = false): IrSimpleFunction {
+fun IrSimpleFunction.resolveFakeOverride(allowAbstract: Boolean = false): IrSimpleFunction {
     if (this.isReal) {
         return this
     }
@@ -53,34 +53,22 @@ internal fun IrSimpleFunction.resolveFakeOverride(allowAbstract: Boolean = false
     return realSupers.first { allowAbstract || it.modality != Modality.ABSTRACT }
 }
 
-internal val IrClass.isInterface: Boolean
-    get() = (this.kind == ClassKind.INTERFACE)
+/**
+ * Implementation of given method.
+ *
+ * TODO: this method is actually a part of resolve and probably duplicates another one
+ */
+internal fun IrSimpleFunction.resolveFakeOverrideMaybeAbstract() = this.resolveFakeOverride(allowAbstract = true)
 
-internal val IrSimpleFunction.target: IrSimpleFunction
+internal fun IrProperty.resolveFakeOverrideMaybeAbstract() = this.getter!!.resolveFakeOverrideMaybeAbstract().correspondingProperty!!
+
+internal fun IrField.resolveFakeOverrideMaybeAbstract() = this.correspondingProperty!!.getter!!.resolveFakeOverrideMaybeAbstract().correspondingProperty!!.backingField
+
+val IrSimpleFunction.target: IrSimpleFunction
     get() = (if (modality == Modality.ABSTRACT) this else resolveFakeOverride()).original
 
-internal val IrFunction.target: IrFunction get() = when (this) {
+val IrFunction.target: IrFunction get() = when (this) {
     is IrSimpleFunction -> this.target
     is IrConstructor -> this
     else -> error(this)
-}
-
-val IrDeclaration.isPropertyAccessor get() =
-    this is IrSimpleFunction && this.correspondingProperty != null
-
-val IrDeclaration.isPropertyField get() =
-    this is IrField && this.correspondingProperty != null
-
-val IrDeclaration.isTopLevelDeclaration get() =
-    parent !is IrDeclaration && !this.isPropertyAccessor && !this.isPropertyField
-
-fun IrDeclaration.findTopLevelDeclaration(): IrDeclaration = when {
-    this.isTopLevelDeclaration ->
-        this
-    this.isPropertyAccessor ->
-        (this as IrSimpleFunction).correspondingProperty!!.findTopLevelDeclaration()
-    this.isPropertyField ->
-        (this as IrField).correspondingProperty!!.findTopLevelDeclaration()
-    else ->
-        (this.parent as IrDeclaration).findTopLevelDeclaration()
 }
