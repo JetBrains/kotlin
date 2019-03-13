@@ -311,14 +311,14 @@ internal object IDELightClassContexts {
             val jvmTarget = IDELanguageSettingsProvider.getTargetPlatform(moduleInfo, project) as? JvmTarget ?: JvmTarget.DEFAULT
             configureModule(
                 ModuleContext(moduleDescriptor, project), DefaultBuiltInPlatforms.jvmPlatformByTargetVersion(jvmTarget),
-                JvmPlatformCompilerServices, trace
+                JvmPlatformCompilerServices, trace,
+                IDELanguageSettingsProvider.getLanguageVersionSettings(moduleInfo, project)
             )
 
             useInstance(GlobalSearchScope.EMPTY_SCOPE)
             useInstance(LookupTracker.DO_NOTHING)
             useInstance(ExpectActualTracker.DoNothing)
             useImpl<FileScopeProviderImpl>()
-            useInstance(IDELanguageSettingsProvider.getLanguageVersionSettings(moduleInfo, project))
             useInstance(FileBasedDeclarationProviderFactory(sm, files))
 
             useInstance(CodegenAffectingAnnotations(realWorldModule))

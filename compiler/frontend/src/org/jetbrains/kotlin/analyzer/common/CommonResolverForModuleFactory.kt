@@ -115,14 +115,13 @@ open class CommonResolverForModuleFactory(
         platform: TargetPlatform,
         compilerServices: PlatformDependentCompilerServices
     ): StorageComponentContainer = createContainer("ResolveCommonCode", compilerServices) {
-        configureModule(moduleContext, platform, compilerServices, bindingTrace)
+        configureModule(moduleContext, platform, compilerServices, bindingTrace, languageVersionSettings)
 
         useInstance(moduleContentScope)
         useInstance(LookupTracker.DO_NOTHING)
         useInstance(ExpectActualTracker.DoNothing)
         useImpl<ResolveSession>()
         useImpl<LazyTopDownAnalyzer>()
-        useInstance(languageVersionSettings)
         useImpl<AnnotationResolverImpl>()
         useImpl<CompilerDeserializationConfiguration>()
         useInstance(metadataPartProvider)
