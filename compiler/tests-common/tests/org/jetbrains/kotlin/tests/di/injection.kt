@@ -41,7 +41,6 @@ fun createContainerForTests(project: Project, module: ModuleDescriptor): Contain
             LanguageVersionSettingsImpl.DEFAULT
         )
         useImpl<AnnotationResolverImpl>()
-        useImpl<ExpressionTypingServices>()
     })
 }
 
