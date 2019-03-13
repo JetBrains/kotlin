@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.resolve.deprecation
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.DefaultImplementation
+import org.jetbrains.kotlin.container.PlatformExtensionsClashResolver
+import org.jetbrains.kotlin.container.PlatformSpecificExtension
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -61,7 +63,7 @@ internal fun createDeprecationDiagnostic(
 }
 
 @DefaultImplementation(CoroutineCompatibilitySupport::class)
-class CoroutineCompatibilitySupport private constructor(val enabled: Boolean) {
+class CoroutineCompatibilitySupport private constructor(val enabled: Boolean) : PlatformSpecificExtension<CoroutineCompatibilitySupport>{
     @Suppress("unused")
     constructor() : this(true)
 
@@ -71,6 +73,11 @@ class CoroutineCompatibilitySupport private constructor(val enabled: Boolean) {
         val DISABLED = CoroutineCompatibilitySupport(false)
     }
 }
+
+class CoroutineCompatibilitySupportClashesResolver : PlatformExtensionsClashResolver.UseAnyOf<CoroutineCompatibilitySupport>(
+    CoroutineCompatibilitySupport.DISABLED,
+    CoroutineCompatibilitySupport::class.java
+)
 
 @DefaultImplementation(DeprecationSettings.Default::class)
 interface DeprecationSettings {

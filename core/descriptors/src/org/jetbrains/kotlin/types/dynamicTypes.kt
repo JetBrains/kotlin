@@ -17,20 +17,27 @@
 package org.jetbrains.kotlin.types
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.container.PlatformExtensionsClashResolver
+import org.jetbrains.kotlin.container.PlatformSpecificExtension
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.DescriptorRendererOptions
 import org.jetbrains.kotlin.types.model.DynamicTypeMarker
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
-open class DynamicTypesSettings {
+open class DynamicTypesSettings : PlatformSpecificExtension<DynamicTypesSettings> {
     open val dynamicTypesAllowed: Boolean
         get() = false
 }
 
-class DynamicTypesAllowed: DynamicTypesSettings() {
+class DynamicTypesAllowed : DynamicTypesSettings() {
     override val dynamicTypesAllowed: Boolean
         get() = true
+}
+
+class DynamicTypesSettingsClashesResolver : PlatformExtensionsClashResolver<DynamicTypesSettings>(DynamicTypesSettings::class.java) {
+    override fun resolveExtensionsClash(extensions: List<DynamicTypesSettings>): DynamicTypesSettings =
+        if (extensions.any { it.dynamicTypesAllowed }) DynamicTypesAllowed() else DynamicTypesSettings()
 }
 
 fun KotlinType.isDynamic(): Boolean = unwrap() is DynamicType

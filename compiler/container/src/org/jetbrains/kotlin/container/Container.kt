@@ -102,6 +102,11 @@ class StorageComponentContainer(
         return this
     }
 
+    internal fun registerClashResolvers(resolvers: List<PlatformExtensionsClashResolver<*>>): StorageComponentContainer {
+        componentStorage.registerClashResolvers(resolvers)
+        return this
+    }
+
     override fun <T> create(request: Class<T>): T {
         val constructorBinding = request.bindToConstructor(unknownContext)
         val args = constructorBinding.argumentDescriptors.map { it.getValue() }.toTypedArray()
