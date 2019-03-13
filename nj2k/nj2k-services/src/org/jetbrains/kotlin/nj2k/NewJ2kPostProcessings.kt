@@ -756,9 +756,8 @@ object NewJ2KPostProcessingRegistrar {
         private fun check(qualifiedExpression: KtQualifiedExpression): Boolean {
             val qualifier = (qualifiedExpression.receiverExpression as? KtNameReferenceExpression)
                 ?.referenceExpression()
-                ?.resolve() as? KtClassOrObject ?: return false
-            val topLevelClass = qualifiedExpression.getStrictParentOfType<KtClassOrObject>() ?: return false
-            return topLevelClass == qualifier
+                ?.resolve()?.safeAs<KtClassOrObject>()?.parentClassForCompanionOrThis() ?: return false
+            return qualifier.parentClassForCompanionOrThis() in qualifiedExpression.parentsOfType<KtClassOrObject>()
         }
 
         override fun createAction(element: PsiElement, diagnostics: Diagnostics): (() -> Unit)? {
