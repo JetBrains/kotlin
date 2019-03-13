@@ -91,7 +91,7 @@ object ExpectedActualResolver {
                             Substitutor(expectedClass.declaredTypeParameters, container.declaredTypeParameters)
                         }
                         else null
-                    areCompatibleCallables(declaration, actual, commonModule, parentSubstitutor = substitutor)
+                    areCompatibleCallables(declaration, actual, parentSubstitutor = substitutor)
                 }
             }
             is ClassifierDescriptorWithTypeParameters -> {
@@ -228,7 +228,7 @@ object ExpectedActualResolver {
     private fun areCompatibleCallables(
         a: CallableMemberDescriptor,
         b: CallableMemberDescriptor,
-        platformModule: ModuleDescriptor,
+        platformModule: ModuleDescriptor = b.module,
         parentSubstitutor: Substitutor? = null
     ): Compatibility {
         assert(a.name == b.name) { "This function should be invoked only for declarations with the same name: $a, $b" }
