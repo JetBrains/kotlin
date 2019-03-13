@@ -295,3 +295,42 @@ fun IrBuilderWithScope.irSetField(receiver: IrExpression, irField: IrField, valu
         value = value,
         type = context.irBuiltIns.unitType
     )
+
+inline fun IrBuilderWithScope.irBlock(
+    startOffset: Int = this.startOffset,
+    endOffset: Int = this.endOffset,
+    origin: IrStatementOrigin? = null,
+    resultType: IrType? = null,
+    body: IrBlockBuilder.() -> Unit
+): IrExpression =
+    IrBlockBuilder(
+        context, scope,
+        startOffset,
+        endOffset,
+        origin, resultType
+    ).block(body)
+
+inline fun IrBuilderWithScope.irComposite(
+    startOffset: Int = this.startOffset,
+    endOffset: Int = this.endOffset,
+    origin: IrStatementOrigin? = null,
+    resultType: IrType? = null,
+    body: IrBlockBuilder.() -> Unit
+): IrExpression =
+    IrBlockBuilder(
+        context, scope,
+        startOffset,
+        endOffset,
+        origin, resultType, true
+    ).block(body)
+
+inline fun IrBuilderWithScope.irBlockBody(
+    startOffset: Int = this.startOffset,
+    endOffset: Int = this.endOffset,
+    body: IrBlockBodyBuilder.() -> Unit
+): IrBlockBody =
+    IrBlockBodyBuilder(
+        context, scope,
+        startOffset,
+        endOffset
+    ).blockBody(body)
