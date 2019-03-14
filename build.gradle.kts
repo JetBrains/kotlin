@@ -1,11 +1,8 @@
 
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.gradle.api.file.FileCollection
-import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import proguard.gradle.ProGuardTask
 import org.gradle.kotlin.dsl.*
+import org.gradle.plugins.ide.idea.model.IdeaModel
 
 buildscript {
     extra["defaultSnapshotVersion"] = "1.3-SNAPSHOT"
@@ -169,15 +166,16 @@ extra["intellijUltimateEnabled"] = intellijUltimateEnabled
 extra["intellijSeparateSdks"] = intellijSeparateSdks
 
 extra["IntellijCoreDependencies"] =
-        listOf(if (Platform[191].orHigher()) "asm-all-7.0" else "asm-all",
-               "guava",
-               "jdom",
-               "jna",
-               "log4j",
-               "picocontainer",
-               "snappy-in-java",
-               "streamex",
-               "trove4j")
+    listOf(
+        if (Platform[191].orHigher()) "asm-all-7.0.1" else "asm-all",
+        "guava",
+        "jdom",
+        "jna",
+        "log4j",
+        "picocontainer",
+        "snappy-in-java",
+        "streamex",
+        "trove4j")
 
 
 extra["compilerModules"] = arrayOf(

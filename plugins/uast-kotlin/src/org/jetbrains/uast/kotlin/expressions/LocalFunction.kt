@@ -23,7 +23,7 @@ internal class KotlinLocalFunctionUVariable(
         createLocalFunctionLambdaExpression(function, this)
     }
     override val typeReference: UTypeReferenceExpression? = null
-    override val uastAnchor: UElement? = null
+    override val uastAnchor: UIdentifier? = null
     override val annotations: List<UAnnotation> = emptyList()
 }
 
