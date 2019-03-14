@@ -839,8 +839,6 @@ open class IrModuleSerializer(
         return proto.build()
     }
 
-    private fun serializeIrTypeAlias(typeAlias: IrTypeAlias) = KotlinIr.IrTypeAlias.newBuilder().build()
-
     private fun serializeIrValueParameter(parameter: IrValueParameter): KotlinIr.IrValueParameter {
         val proto = KotlinIr.IrValueParameter.newBuilder()
             .setSymbol(serializeIrSymbol(parameter.symbol))
@@ -1057,28 +1055,26 @@ open class IrModuleSerializer(
         val declarator = KotlinIr.IrDeclarator.newBuilder()
 
         when (declaration) {
-            is IrTypeAlias
-            -> declarator.irTypeAlias = serializeIrTypeAlias(declaration)
-            is IrAnonymousInitializer
-            -> declarator.irAnonymousInit = serializeIrAnonymousInit(declaration)
-            is IrConstructor
-            -> declarator.irConstructor = serializeIrConstructor(declaration)
-            is IrField
-            -> declarator.irField = serializeIrField(declaration)
-            is IrSimpleFunction
-            -> declarator.irFunction = serializeIrFunction(declaration)
-            is IrTypeParameter
-            -> declarator.irTypeParameter = serializeIrTypeParameter(declaration)
-            is IrVariable
-            -> declarator.irVariable = serializeIrVariable(declaration)
-            is IrValueParameter
-            -> declarator.irValueParameter = serializeIrValueParameter(declaration)
-            is IrClass
-            -> declarator.irClass = serializeIrClass(declaration)
-            is IrEnumEntry
-            -> declarator.irEnumEntry = serializeIrEnumEntry(declaration)
-            is IrProperty
-            -> declarator.irProperty = serializeIrProperty(declaration)
+            is IrAnonymousInitializer ->
+                declarator.irAnonymousInit = serializeIrAnonymousInit(declaration)
+            is IrConstructor ->
+                declarator.irConstructor = serializeIrConstructor(declaration)
+            is IrField ->
+                declarator.irField = serializeIrField(declaration)
+            is IrSimpleFunction ->
+                declarator.irFunction = serializeIrFunction(declaration)
+            is IrTypeParameter ->
+                declarator.irTypeParameter = serializeIrTypeParameter(declaration)
+            is IrVariable ->
+                declarator.irVariable = serializeIrVariable(declaration)
+            is IrValueParameter ->
+                declarator.irValueParameter = serializeIrValueParameter(declaration)
+            is IrClass ->
+                declarator.irClass = serializeIrClass(declaration)
+            is IrEnumEntry ->
+                declarator.irEnumEntry = serializeIrEnumEntry(declaration)
+            is IrProperty ->
+                declarator.irProperty = serializeIrProperty(declaration)
             else
             -> TODO("Declaration serialization not supported yet: $declaration")
         }
@@ -1114,7 +1110,7 @@ open class IrModuleSerializer(
             .setAnnotations(serializeAnnotations(file.annotations))
 
         file.declarations.forEach {
-            if (it is IrTypeAlias || (it.descriptor.isExpectMember && !it.descriptor.isSerializableExpectClass)) {
+            if (it.descriptor.isExpectMember && !it.descriptor.isSerializableExpectClass) {
                 writer.skipDeclaration()
                 return@forEach
             }

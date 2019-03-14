@@ -200,9 +200,6 @@ open class ClassCodegen protected constructor(
             is IrAnonymousInitializer -> {
                 // skip
             }
-            is IrTypeAlias -> {
-                // skip
-            }
             is IrClass -> {
                 // Nested classes are generated separately
             }

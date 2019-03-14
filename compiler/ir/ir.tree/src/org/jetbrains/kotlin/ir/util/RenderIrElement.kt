@@ -226,10 +226,6 @@ class RenderIrElementVisitor(
             "inline".takeIf { isInline }
         )
 
-    override fun visitTypeAlias(declaration: IrTypeAlias, data: Nothing?): String =
-        "TYPEALIAS ${declaration.renderOriginIfNonTrivial()}${declaration.descriptor.ref()} " +
-                "type=${DECLARATION_RENDERER.renderType(declaration.descriptor.underlyingType)}"
-
     override fun visitVariable(declaration: IrVariable, data: Nothing?): String =
         "VAR ${declaration.renderOriginIfNonTrivial()}" +
                 "name:${declaration.name} type:${declaration.type.render()} flags:${declaration.renderVariableFlags()}"

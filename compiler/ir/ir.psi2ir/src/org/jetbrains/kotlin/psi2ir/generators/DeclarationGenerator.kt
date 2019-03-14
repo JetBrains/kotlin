@@ -16,11 +16,12 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrErrorDeclarationImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrPropertyImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrTypeAliasImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.withScope
@@ -28,8 +29,6 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.psi2ir.endOffsetOrUndefined
-import org.jetbrains.kotlin.psi2ir.pureEndOffsetOrUndefined
-import org.jetbrains.kotlin.psi2ir.pureStartOffsetOrUndefined
 import org.jetbrains.kotlin.psi2ir.startOffsetOrUndefined
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
@@ -41,7 +40,7 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
 
     fun KotlinType.toIrType() = typeTranslator.translateType(this)
 
-    fun generateMemberDeclaration(ktDeclaration: KtDeclaration): IrDeclaration =
+    fun generateMemberDeclaration(ktDeclaration: KtDeclaration): IrDeclaration? =
         when (ktDeclaration) {
             is KtNamedFunction ->
                 FunctionGenerator(this).generateFunctionDeclaration(ktDeclaration)
@@ -50,7 +49,7 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
             is KtClassOrObject ->
                 generateClassOrObjectDeclaration(ktDeclaration)
             is KtTypeAlias ->
-                generateTypeAliasDeclaration(ktDeclaration)
+                null
             else ->
                 IrErrorDeclarationImpl(
                     ktDeclaration.startOffsetSkippingComments, ktDeclaration.endOffset,
@@ -62,7 +61,7 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
         return generateClassOrObjectDeclaration(syntheticDeclaration)
     }
 
-    fun generateClassMemberDeclaration(ktDeclaration: KtDeclaration, irClass: IrClass): IrDeclaration =
+    fun generateClassMemberDeclaration(ktDeclaration: KtDeclaration, irClass: IrClass): IrDeclaration? =
         when (ktDeclaration) {
             is KtAnonymousInitializer ->
                 AnonymousInitializerGenerator(this).generateAnonymousInitializerDeclaration(ktDeclaration, irClass)
@@ -79,12 +78,6 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
 
     fun generateClassOrObjectDeclaration(ktClassOrObject: KtPureClassOrObject): IrClass =
         ClassGenerator(this).generateClass(ktClassOrObject)
-
-    private fun generateTypeAliasDeclaration(ktDeclaration: KtTypeAlias): IrDeclaration =
-        IrTypeAliasImpl(
-            ktDeclaration.startOffsetSkippingComments, ktDeclaration.endOffset, IrDeclarationOrigin.DEFINED,
-            getOrFail(BindingContext.TYPE_ALIAS, ktDeclaration)
-        )
 
 
     fun generateGlobalTypeParametersDeclarations(

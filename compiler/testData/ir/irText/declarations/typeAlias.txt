@@ -1,23 +1,13 @@
 FILE fqName:<root> fileName:/typeAlias.kt
-  TYPEALIAS typealias Test1 = String type=kotlin.String
   FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:[]
     BLOCK_BODY
-      TYPEALIAS typealias TestLocal = String type=kotlin.String
-        annotations:
-          CALL 'CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> (names:kotlin.Array<out kotlin.String>) returnType:kotlin.Suppress flags:[primary]' type=kotlin.Suppress origin=null
-            names: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
-              CONST String type=kotlin.String value="TOPLEVEL_TYPEALIASES_ONLY"
+      BLOCK type=kotlin.Unit origin=null
   CLASS CLASS name:C modality:FINAL visibility:public flags:[] superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C flags:[]
     CONSTRUCTOR visibility:public <> () returnType:<root>.C flags:[primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> () returnType:kotlin.Any flags:[primary]'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public flags:[] superTypes:[kotlin.Any]'
-    TYPEALIAS typealias TestNested = String type=kotlin.String
-      annotations:
-        CALL 'CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> (names:kotlin.Array<out kotlin.String>) returnType:kotlin.Suppress flags:[primary]' type=kotlin.Suppress origin=null
-          names: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
-            CONST String type=kotlin.String value="TOPLEVEL_TYPEALIASES_ONLY"
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:[]
       overridden:
         FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:[]

@@ -31,8 +31,6 @@ FILE fqName:<root> fileName:/delegatingConstructorCallToTypeAliasConstructor.kt
       overridden:
         FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:[]
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:[]
-  TYPEALIAS typealias CT = Cell<T> type=Cell<T>
-  TYPEALIAS typealias CStr = Cell<String> type=Cell<kotlin.String>
   CLASS CLASS name:C1 modality:FINAL visibility:public flags:[] superTypes:[<root>.Cell<kotlin.String>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C1 flags:[]
     CONSTRUCTOR visibility:public <> () returnType:<root>.C1 flags:[primary]

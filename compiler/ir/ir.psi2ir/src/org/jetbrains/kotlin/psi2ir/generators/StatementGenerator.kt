@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.assertCast
 import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.impl.IrTypeAliasImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -472,9 +471,10 @@ class StatementGenerator(
         LocalClassGenerator(this).generateLocalClass(classOrObject)
 
     override fun visitTypeAlias(typeAlias: KtTypeAlias, data: Nothing?): IrStatement =
-        IrTypeAliasImpl(
-            typeAlias.startOffsetSkippingComments, typeAlias.endOffset, IrDeclarationOrigin.DEFINED,
-            getOrFail(BindingContext.TYPE_ALIAS, typeAlias)
+        IrBlockImpl(
+            // Compile local type aliases to empty blocks
+            typeAlias.startOffsetSkippingComments, typeAlias.endOffset,
+            context.irBuiltIns.unitType
         )
 
     override fun visitClassLiteralExpression(expression: KtClassLiteralExpression, data: Nothing?): IrStatement =

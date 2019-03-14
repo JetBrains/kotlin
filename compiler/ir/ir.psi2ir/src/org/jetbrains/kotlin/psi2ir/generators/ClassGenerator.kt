@@ -385,7 +385,7 @@ class ClassGenerator(
     private fun generateMembersDeclaredInClassBody(irClass: IrClass, ktClassOrObject: KtPureClassOrObject) {
         // generate real body declarations
         ktClassOrObject.body?.let { ktClassBody ->
-            ktClassBody.declarations.mapTo(irClass.declarations) { ktDeclaration ->
+            ktClassBody.declarations.mapNotNullTo(irClass.declarations) { ktDeclaration ->
                 declarationGenerator.generateClassMemberDeclaration(ktDeclaration, irClass)
             }
         }

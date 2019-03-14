@@ -141,15 +141,6 @@ open class DeepCopyIrTreeWithSymbols(
             declaration.transformDeclarationsTo(this)
         }
 
-    override fun visitTypeAlias(declaration: IrTypeAlias): IrTypeAlias =
-        IrTypeAliasImpl(
-            declaration.startOffset, declaration.endOffset,
-            mapDeclarationOrigin(declaration.origin),
-            declaration.descriptor
-        ).apply {
-            transformAnnotations(declaration)
-        }
-
     override fun visitSimpleFunction(declaration: IrSimpleFunction): IrSimpleFunction =
         IrFunctionImpl(
             declaration.startOffset, declaration.endOffset,

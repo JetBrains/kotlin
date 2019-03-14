@@ -40,7 +40,6 @@ FILE fqName:<root> fileName:/integerCoercionToT.kt
       overridden:
         FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:[]
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:[]
-  TYPEALIAS typealias CInt32Var = CInt32VarX<Int> type=CInt32VarX<kotlin.Int>
   PROPERTY name:value visibility:public modality:FINAL flags:[var]
     FUN name:<get-value> visibility:public modality:FINAL <T_INT> ($receiver:<root>.CInt32VarX<<root>.<get-value>.T_INT>) returnType:<root>.<get-value>.T_INT flags:[]
       correspondingProperty: PROPERTY name:value visibility:public modality:FINAL flags:[var]

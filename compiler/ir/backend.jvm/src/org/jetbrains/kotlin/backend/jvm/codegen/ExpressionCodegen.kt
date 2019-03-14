@@ -563,10 +563,6 @@ class ExpressionCodegen(
         return none()
     }
 
-    override fun visitTypeAlias(declaration: IrTypeAlias, data: BlockInfo): StackValue {
-        return none()
-    }
-
     override fun visitVararg(expression: IrVararg, data: BlockInfo): StackValue {
         expression.markLineNumber(startOffset = true)
         val outType = expression.type

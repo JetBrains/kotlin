@@ -31,8 +31,6 @@ FILE fqName:<root> fileName:/typeAliasCtorForGenericClass.kt
       overridden:
         FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:[]
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:[]
-  TYPEALIAS typealias B = A<X> type=A<X>
-  TYPEALIAS typealias B2 = A<A<T>> type=A<A<T>>
   FUN name:bar visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:[]
     BLOCK_BODY
       VAR name:b type:<root>.A<kotlin.Int> flags:[val]
