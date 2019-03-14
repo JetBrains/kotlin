@@ -20,6 +20,7 @@ import com.intellij.openapi.externalSystem.service.project.manage.AbstractProjec
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
+import com.intellij.util.PlatformUtils
 import org.jetbrains.konan.gradle.execution.GradleKonanAppRunConfiguration
 import org.jetbrains.konan.gradle.execution.GradleKonanAppRunConfigurationType
 import org.jetbrains.konan.gradle.execution.GradleKonanBuildTarget
@@ -50,7 +51,9 @@ class KonanProjectDataService : AbstractProjectDataService<KonanModel, Module>()
         modelsProvider: IdeModelsProvider
     ) {
         if (projectData?.owner != GradleConstants.SYSTEM_ID) return
-        createRunConfigurations(project)
+        if (PlatformUtils.isCLion()) {
+            createRunConfigurations(project)
+        }
     }
 
     private fun getArtifacts(project: Project): Collection<Pair<String, KonanModelArtifact>> {
