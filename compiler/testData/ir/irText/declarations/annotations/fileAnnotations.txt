@@ -1,6 +1,4 @@
 FILE fqName:test fileName:/fileAnnotations.kt
-  fileAnnotations:
-    @test.A(x = "File annotation")
   annotations:
     CALL 'CONSTRUCTOR visibility:public <> (x:kotlin.String) returnType:test.A flags:[primary]' type=test.A origin=null
       x: CONST String type=kotlin.String value="File annotation"

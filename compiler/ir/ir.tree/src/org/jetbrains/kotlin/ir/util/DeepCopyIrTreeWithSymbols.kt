@@ -110,7 +110,6 @@ open class DeepCopyIrTreeWithSymbols(
             symbolRenamer.getFileName(declaration.symbol)
         ).apply {
             transformAnnotations(declaration)
-            fileAnnotations.addAll(declaration.fileAnnotations)
             declaration.transformDeclarationsTo(this)
         }
 

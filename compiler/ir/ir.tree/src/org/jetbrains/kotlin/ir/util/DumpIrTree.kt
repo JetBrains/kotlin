@@ -80,9 +80,6 @@ class DumpIrTreeVisitor(
 
     override fun visitFile(declaration: IrFile, data: String) {
         declaration.dumpLabeledElementWith(data) {
-            declaration.fileAnnotations.dumpItemsWith("fileAnnotations") {
-                ANNOTATIONS_RENDERER.renderAnnotation(it)
-            }
             dumpAnnotations(declaration)
             declaration.declarations.dumpElements()
         }

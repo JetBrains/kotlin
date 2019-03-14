@@ -186,9 +186,6 @@ class RenderIrElementWithDescriptorsVisitor : IrElementVisitor<String, Nothing?>
         internal fun IrDeclaration.name(): String =
             descriptor.let { it.name.toString() }
 
-        internal fun IrDeclaration.renderDeclared(): String =
-            DECLARATION_RENDERER.render(this.descriptor)
-
         internal fun DeclarationDescriptor.ref(): String =
             if (this is ReceiverParameterDescriptor)
                 "<receiver: ${containingDeclaration.ref()}>"
@@ -198,8 +195,6 @@ class RenderIrElementWithDescriptorsVisitor : IrElementVisitor<String, Nothing?>
         internal fun KotlinType.render(): String =
             DECLARATION_RENDERER.renderType(this)
 
-        internal fun IrDeclaration.renderOrigin(): String =
-            if (origin != IrDeclarationOrigin.DEFINED) origin.toString() + " " else ""
     }
 }
 
@@ -220,11 +215,11 @@ class DumpIrTreeWithDescriptorsVisitor(out: Appendable) : IrElementVisitor<Unit,
 
     override fun visitFile(declaration: IrFile, data: String) {
         declaration.dumpLabeledElementWith(data) {
-            if (declaration.fileAnnotations.isNotEmpty()) {
-                printer.println("fileAnnotations:")
+            if (declaration.annotations.isNotEmpty()) {
+                printer.println("annotations:")
                 indented {
-                    declaration.fileAnnotations.forEach {
-                        printer.println(ANNOTATIONS_RENDERER.renderAnnotation(it))
+                    declaration.annotations.forEach {
+                        it.accept(this, "")
                     }
                 }
             }
