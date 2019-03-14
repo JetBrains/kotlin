@@ -2,6 +2,7 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.api.file.FileCollection
 import org.gradle.kotlin.dsl.*
+import org.jetbrains.kotlin.gradle.tasks.*
 import org.gradle.plugins.ide.idea.model.IdeaModel
 
 buildscript {
@@ -378,13 +379,13 @@ allprojects {
 
 gradle.taskGraph.whenReady {
     if (isTeamcityBuild) {
-        logger.warn("CI build profile is active (IC is off, proguard is on). Use -Pteamcity=false to reproduce local build")
-        for (task in allTasks) {
-            when (task) {
-                is AbstractKotlinCompile<*> -> task.incremental = false
-                is JavaCompile -> task.options.isIncremental = false
-            }
-        }
+//        logger.warn("CI build profile is active (IC is off, proguard is on). Use -Pteamcity=false to reproduce local build")
+//        for (task in allTasks) {
+//            when (task) {
+//                is AbstractKotlinCompile<*> -> task.incremental = false
+//                is JavaCompile -> task.options.isIncremental = false
+//            }
+//        }
     } else {
         logger.warn("Local build profile is active (IC is on, proguard is off). Use -Pteamcity=true to reproduce TC build")
         for (task in allTasks) {
@@ -697,9 +698,9 @@ tasks.create("findShadowJarsInClasspath").doLast {
                 is ShadowJar -> {
                     shadowJars.add(fileFrom(task.archivePath))
                 }
-                is ProGuardTask -> {
-                    shadowJars.addAll(task.outputs.files.toList())
-                }
+//                is ProGuardTask -> {
+//                    shadowJars.addAll(task.outputs.files.toList())
+//                }
             }
         }
     }
