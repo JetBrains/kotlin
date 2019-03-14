@@ -19,8 +19,7 @@ abstract class KaptTask : ConventionTask(), TaskWithLocalState {
         cacheOnlyIfEnabledForKotlin()
 
         if (isBuildCacheSupported()) {
-            val reason = "Caching is disabled by default for kapt because of arbitrary behavior of external " +
-                    "annotation processors. You can enable it by adding 'kapt.useBuildCache = true' to the build script."
+            val reason = "Caching is disabled for kapt with 'kapt.useBuildCache'"
             outputs.cacheIf(reason) { useBuildCache }
         }
     }
