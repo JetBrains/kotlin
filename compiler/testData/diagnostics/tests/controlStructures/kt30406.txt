@@ -1,0 +1,26 @@
+package
+
+public fun test(/*0*/ a: kotlin.Int): Option<kotlin.Any>
+
+public final class None : Option<kotlin.Int> {
+    public constructor None(/*0*/ s: kotlin.String = ...)
+    public open override /*1*/ val s: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Option</*0*/ out T> {
+    public abstract val s: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Some</*0*/ T> : Option<T> {
+    public constructor Some</*0*/ T>(/*0*/ s: kotlin.String)
+    public open override /*1*/ val s: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
