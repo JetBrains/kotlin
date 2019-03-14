@@ -1,18 +1,17 @@
 FILE fqName:<root> fileName:/localFunction.kt
-  FUN name:outer visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:
+  FUN name:outer visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:[]
     BLOCK_BODY
-      VAR name:x type:kotlin.Int flags:var
+      VAR name:x type:kotlin.Int flags:[var]
         CONST Int type=kotlin.Int value=0
-      FUN name:local visibility:local modality:FINAL <> () returnType:kotlin.Unit flags:
+      FUN name:local visibility:local modality:FINAL <> () returnType:kotlin.Unit flags:[]
         BLOCK_BODY
           TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-            typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
+            typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public flags:[] superTypes:[kotlin.Any]
             BLOCK type=kotlin.Int origin=POSTFIX_INCR
-              VAR IR_TEMPORARY_VARIABLE name:tmp0 type:kotlin.Int flags:val
-                GET_VAR 'x: Int' type=kotlin.Int origin=POSTFIX_INCR
-              SET_VAR 'x: Int' type=kotlin.Unit origin=POSTFIX_INCR
-                CALL 'inc(): Int' type=kotlin.Int origin=POSTFIX_INCR
-                  $this: GET_VAR 'tmp0: Int' type=kotlin.Int origin=null
-              GET_VAR 'tmp0: Int' type=kotlin.Int origin=null
-      CALL 'local(): Unit' type=kotlin.Unit origin=null
-
+              VAR IR_TEMPORARY_VARIABLE name:tmp0 type:kotlin.Int flags:[val]
+                GET_VAR 'VAR name:x type:kotlin.Int flags:[var]' type=kotlin.Int origin=POSTFIX_INCR
+              SET_VAR 'VAR name:x type:kotlin.Int flags:[var]' type=kotlin.Unit origin=POSTFIX_INCR
+                CALL 'FUN IR_EXTERNAL_DECLARATION_STUB name:inc visibility:public modality:FINAL <> ($this:kotlin.Int) returnType:kotlin.Int flags:[]' type=kotlin.Int origin=POSTFIX_INCR
+                  $this: GET_VAR 'VAR IR_TEMPORARY_VARIABLE name:tmp0 type:kotlin.Int flags:[val]' type=kotlin.Int origin=null
+              GET_VAR 'VAR IR_TEMPORARY_VARIABLE name:tmp0 type:kotlin.Int flags:[val]' type=kotlin.Int origin=null
+      CALL 'FUN name:local visibility:local modality:FINAL <> () returnType:kotlin.Unit flags:[]' type=kotlin.Unit origin=null

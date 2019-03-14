@@ -1,8 +1,7 @@
 FILE fqName:<root> fileName:/javaNestedClass.kt
-  FUN name:test visibility:public modality:FINAL <> (jj:J.JJ) returnType:kotlin.Unit flags:
-    VALUE_PARAMETER name:jj index:0 type:J.JJ flags:
+  FUN name:test visibility:public modality:FINAL <> (jj:<root>.J.JJ) returnType:kotlin.Unit flags:[]
+    VALUE_PARAMETER name:jj index:0 type:<root>.J.JJ flags:[]
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test(J.JJ): Unit'
-        CALL 'foo(): Unit' type=kotlin.Unit origin=null
-          $this: GET_VAR 'value-parameter jj: J.JJ' type=J.JJ origin=null
-
+      RETURN type=kotlin.Nothing from='FUN name:test visibility:public modality:FINAL <> (jj:<root>.J.JJ) returnType:kotlin.Unit flags:[]'
+        CALL 'FUN IR_EXTERNAL_JAVA_DECLARATION_STUB name:foo visibility:public modality:OPEN <> ($this:<root>.J.JJ) returnType:kotlin.Unit flags:[]' type=kotlin.Unit origin=null
+          $this: GET_VAR 'VALUE_PARAMETER name:jj index:0 type:<root>.J.JJ flags:[]' type=<root>.J.JJ origin=null

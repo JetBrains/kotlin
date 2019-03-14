@@ -1,6 +1,6 @@
 FILE fqName:<root> fileName:/implicitCastOnPlatformType.kt
-  FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.String flags:
+  FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.String flags:[]
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test(): String'
-        CALL 'getProperty(String!): String!' type=kotlin.String? origin=null
+      RETURN type=kotlin.Nothing from='FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.String flags:[]'
+        CALL 'FUN IR_EXTERNAL_JAVA_DECLARATION_STUB name:getProperty visibility:public modality:OPEN <> (key:kotlin.String?) returnType:kotlin.String? flags:[]' type=kotlin.String? origin=null
           key: CONST String type=kotlin.String value="test"

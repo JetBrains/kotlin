@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -29,18 +31,95 @@ import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
 import org.jetbrains.kotlin.renderer.OverrideRenderingPolicy
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addIfNotNull
 
-fun IrElement.render() = accept(RenderIrElementVisitor(), null)
+fun IrElement.render(
+    symbolRenderer: IrSymbolRenderer = IrSymbolRenderer.Default,
+    typeRenderer: IrTypeRenderer = IrTypeRenderer.Default
+) =
+    accept(RenderIrElementVisitor(symbolRenderer, typeRenderer), null)
 
-class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
+interface IrSymbolRenderer {
+    fun render(symbol: IrSymbol): String
+
+    object Default : IrSymbolRenderer {
+        override fun render(symbol: IrSymbol): String =
+            symbol.run {
+                if (isBound) owner.render() else "UNBOUND ${this.javaClass.simpleName}"
+            }
+    }
+}
+
+interface IrTypeRenderer {
+    fun render(type: IrType): String
+
+    object Default : IrTypeRenderer {
+        override fun render(type: IrType): String {
+            return type.run { "${renderTypeAnnotations(annotations)}${renderTypeInner()}" }
+        }
+
+        private fun renderTypeAnnotations(annotations: List<IrCall>) =
+            if (annotations.isEmpty())
+                ""
+            else
+                annotations.joinToString(prefix = "", postfix = " ", separator = " ") { "@[${it.render()}]" }
+
+
+        private fun IrType.renderTypeInner(): String =
+            when (this) {
+                is IrDynamicType -> "dynamic"
+
+                is IrErrorType -> "ERROR"
+
+                is IrSimpleType -> buildString {
+                    append(classifier.renderClassifierFqn())
+                    if (arguments.isNotEmpty()) {
+                        append(
+                            arguments.joinToString(prefix = "<", postfix = ">", separator = ", ") {
+                                it.renderTypeArgument()
+                            }
+                        )
+                    }
+                    if (hasQuestionMark) {
+                        append('?')
+                    }
+                }
+
+                else ->
+                    originalKotlinType?.let {
+                        "$this[=${DECLARATION_RENDERER.renderType(it)}]"
+                    } ?: "IrType without originalKotlinType: $this"
+            }
+
+        private fun IrTypeArgument.renderTypeArgument(): String =
+            when (this) {
+                is IrStarProjection -> "*"
+
+                is IrTypeProjection -> buildString {
+                    append(variance.label)
+                    if (variance != Variance.INVARIANT) append(' ')
+                    append(render(type))
+                }
+
+                else -> "IrTypeArgument[$this]"
+            }
+    }
+}
+
+class RenderIrElementVisitor(
+    private val symbolRenderer: IrSymbolRenderer = IrSymbolRenderer.Default,
+    private val typeRenderer: IrTypeRenderer = IrTypeRenderer.Default
+) : IrElementVisitor<String, Nothing?> {
+
+    private fun IrType.render() = typeRenderer.render(this)
+    private fun IrSymbol.renderReference() = symbolRenderer.render(this)
+
     override fun visitElement(element: IrElement, data: Nothing?): String =
-        "? ${element::class.java.simpleName}"
+        "?ELEMENT? ${element::class.java.simpleName} $this"
 
     override fun visitDeclaration(declaration: IrDeclaration, data: Nothing?): String =
-        "? ${declaration::class.java.simpleName} ${declaration.descriptor.ref()}"
+        "?DECLARATION? ${declaration::class.java.simpleName} $this"
 
     override fun visitModuleFragment(declaration: IrModuleFragment, data: Nothing?): String =
         "MODULE_FRAGMENT name:${declaration.name}"
@@ -52,7 +131,7 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
         "FILE fqName:${declaration.fqName} fileName:${declaration.path}"
 
     override fun visitFunction(declaration: IrFunction, data: Nothing?): String =
-        "FUN ${declaration.renderOriginIfNonTrivial()}${declaration.renderDeclared()}"
+        "FUN ${declaration.renderOriginIfNonTrivial()}"
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction, data: Nothing?): String =
         declaration.run {
@@ -65,7 +144,7 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
         }
 
     private fun renderFlagsList(vararg flags: String?) =
-        flags.filterNotNull().joinToString(separator = ",")
+        flags.filterNotNull().joinToString(prefix = "[", postfix = "]", separator = ",")
 
     private fun IrSimpleFunction.renderSimpleFunctionFlags(): String =
         renderFlagsList(
@@ -149,7 +228,7 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
 
     override fun visitTypeAlias(declaration: IrTypeAlias, data: Nothing?): String =
         "TYPEALIAS ${declaration.renderOriginIfNonTrivial()}${declaration.descriptor.ref()} " +
-                "type=${declaration.descriptor.underlyingType.render()}"
+                "type=${DECLARATION_RENDERER.renderType(declaration.descriptor.underlyingType)}"
 
     override fun visitVariable(declaration: IrVariable, data: Nothing?): String =
         "VAR ${declaration.renderOriginIfNonTrivial()}" +
@@ -166,7 +245,7 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
         "ENUM_ENTRY ${declaration.renderOriginIfNonTrivial()}name:${declaration.name}"
 
     override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer, data: Nothing?): String =
-        "ANONYMOUS_INITIALIZER ${declaration.descriptor.ref()}"
+        "ANONYMOUS_INITIALIZER isStatic=${declaration.isStatic}"
 
     override fun visitTypeParameter(declaration: IrTypeParameter, data: Nothing?): String =
         declaration.run {
@@ -236,41 +315,41 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
         "COMPOSITE type=${expression.type.render()} origin=${expression.origin}"
 
     override fun visitReturn(expression: IrReturn, data: Nothing?): String =
-        "RETURN type=${expression.type.render()} from='${expression.returnTarget.ref()}'"
+        "RETURN type=${expression.type.render()} from='${expression.returnTargetSymbol.renderReference()}'"
 
     override fun visitCall(expression: IrCall, data: Nothing?): String =
-        "CALL '${expression.descriptor.ref()}' ${expression.renderSuperQualifier()}" +
+        "CALL '${expression.symbol.renderReference()}' ${expression.renderSuperQualifier()}" +
                 "type=${expression.type.render()} origin=${expression.origin}"
 
     private fun IrCall.renderSuperQualifier(): String =
-        superQualifier?.let { "superQualifier=${it.name} " } ?: ""
+        superQualifierSymbol?.let { "superQualifier='${it.renderReference()}' " } ?: ""
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: Nothing?): String =
-        "DELEGATING_CONSTRUCTOR_CALL '${expression.descriptor.ref()}'"
+        "DELEGATING_CONSTRUCTOR_CALL '${expression.symbol.renderReference()}'"
 
     override fun visitEnumConstructorCall(expression: IrEnumConstructorCall, data: Nothing?): String =
-        "ENUM_CONSTRUCTOR_CALL '${expression.descriptor.ref()}'"
+        "ENUM_CONSTRUCTOR_CALL '${expression.symbol.renderReference()}'"
 
     override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall, data: Nothing?): String =
-        "INSTANCE_INITIALIZER_CALL classDescriptor='${expression.classDescriptor.ref()}'"
+        "INSTANCE_INITIALIZER_CALL classDescriptor='${expression.classSymbol.renderReference()}'"
 
     override fun visitGetValue(expression: IrGetValue, data: Nothing?): String =
-        "GET_VAR '${expression.descriptor.ref()}' type=${expression.type.render()} origin=${expression.origin}"
+        "GET_VAR '${expression.symbol.renderReference()}' type=${expression.type.render()} origin=${expression.origin}"
 
     override fun visitSetVariable(expression: IrSetVariable, data: Nothing?): String =
-        "SET_VAR '${expression.descriptor.ref()}' type=${expression.type.render()} origin=${expression.origin}"
+        "SET_VAR '${expression.symbol.renderReference()}' type=${expression.type.render()} origin=${expression.origin}"
 
     override fun visitGetField(expression: IrGetField, data: Nothing?): String =
-        "GET_FIELD '${expression.descriptor.ref()}' type=${expression.type.render()} origin=${expression.origin}"
+        "GET_FIELD '${expression.symbol.renderReference()}' type=${expression.type.render()} origin=${expression.origin}"
 
     override fun visitSetField(expression: IrSetField, data: Nothing?): String =
-        "SET_FIELD '${expression.descriptor.ref()}' type=${expression.type.render()} origin=${expression.origin}"
+        "SET_FIELD '${expression.symbol.renderReference()}' type=${expression.type.render()} origin=${expression.origin}"
 
     override fun visitGetObjectValue(expression: IrGetObjectValue, data: Nothing?): String =
-        "GET_OBJECT '${expression.descriptor.ref()}' type=${expression.type.render()}"
+        "GET_OBJECT '${expression.symbol.renderReference()}' type=${expression.type.render()}"
 
     override fun visitGetEnumValue(expression: IrGetEnumValue, data: Nothing?): String =
-        "GET_ENUM '${expression.descriptor.ref()}' type=${expression.type.render()}"
+        "GET_ENUM '${expression.symbol.renderReference()}' type=${expression.type.render()}"
 
     override fun visitStringConcatenation(expression: IrStringConcatenation, data: Nothing?): String =
         "STRING_CONCATENATION type=${expression.type.render()}"
@@ -300,15 +379,15 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
         "THROW type=${expression.type.render()}"
 
     override fun visitFunctionReference(expression: IrFunctionReference, data: Nothing?): String =
-        "FUNCTION_REFERENCE '${expression.descriptor.ref()}' type=${expression.type.render()} origin=${expression.origin}"
+        "FUNCTION_REFERENCE '${expression.symbol.renderReference()}' type=${expression.type.render()} origin=${expression.origin}"
 
     override fun visitPropertyReference(expression: IrPropertyReference, data: Nothing?): String =
         buildString {
             append("PROPERTY_REFERENCE ")
             append("'${expression.descriptor.ref()}' ")
-            appendNullableAttribute("field=", expression.field) { "'${it.descriptor.ref()}'" }
-            appendNullableAttribute("getter=", expression.getter) { "'${it.descriptor.ref()}'" }
-            appendNullableAttribute("setter=", expression.setter) { "'${it.descriptor.ref()}'" }
+            appendNullableAttribute("field=", expression.field) { "'${it.renderReference()}'" }
+            appendNullableAttribute("getter=", expression.getter) { "'${it.renderReference()}'" }
+            appendNullableAttribute("setter=", expression.setter) { "'${it.renderReference()}'" }
             append("type=${expression.type.render()} ")
             append("origin=${expression.origin}")
         }
@@ -327,15 +406,15 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
         buildString {
             append("LOCAL_DELEGATED_PROPERTY_REFERENCE ")
             append("'${expression.descriptor.ref()}' ")
-            append("delegate='${expression.delegate.descriptor.ref()}' ")
-            append("getter='${expression.getter.descriptor.ref()}' ")
-            appendNullableAttribute("setter=", expression.setter) { "'${it.descriptor.ref()}'" }
+            append("delegate='${expression.delegate.renderReference()}' ")
+            append("getter='${expression.getter.renderReference()}' ")
+            appendNullableAttribute("setter=", expression.setter) { "'${it.renderReference()}'" }
             append("type=${expression.type.render()} ")
             append("origin=${expression.origin}")
         }
 
     override fun visitClassReference(expression: IrClassReference, data: Nothing?): String =
-        "CLASS_REFERENCE '${expression.descriptor.ref()}' type=${expression.type.render()}"
+        "CLASS_REFERENCE '${expression.symbol.renderReference()}' type=${expression.type.render()}"
 
     override fun visitGetClass(expression: IrGetClass, data: Nothing?): String =
         "GET_CLASS type=${expression.type.render()}"
@@ -344,7 +423,7 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
         "TRY type=${aTry.type.render()}"
 
     override fun visitCatch(aCatch: IrCatch, data: Nothing?): String =
-        "CATCH parameter=${aCatch.parameter.ref()}"
+        "CATCH parameter=${aCatch.catchParameter.symbol.renderReference()}"
 
     override fun visitDynamicOperatorExpression(expression: IrDynamicOperatorExpression, data: Nothing?): String =
         "DYN_OP operator=${expression.operator} type=${expression.type.render()}"
@@ -362,6 +441,7 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
         "ERROR_CALL '${expression.description}' type=${expression.type.render()}"
 }
 
+@Deprecated("Rewrite descriptor-based code")
 private val DECLARATION_RENDERER = DescriptorRenderer.withOptions {
     withDefinedIn = false
     overrideRenderingPolicy = OverrideRenderingPolicy.RENDER_OPEN_OVERRIDE
@@ -371,6 +451,7 @@ private val DECLARATION_RENDERER = DescriptorRenderer.withOptions {
     modifiers = DescriptorRendererModifier.ALL
 }
 
+@Deprecated("Rewrite descriptor-based code")
 private val REFERENCE_RENDERER = DescriptorRenderer.ONLY_NAMES_WITH_SHORT_TYPES
 
 internal fun IrDeclaration.name(): String =
@@ -382,62 +463,44 @@ internal fun DescriptorRenderer.renderDescriptor(descriptor: DeclarationDescript
     else
         render(descriptor)
 
-internal fun IrDeclaration.renderDeclared(): String =
-    DECLARATION_RENDERER.renderDescriptor(this.descriptor)
-
 internal fun DeclarationDescriptor.ref(): String =
     REFERENCE_RENDERER.renderDescriptor(this.original)
 
-internal fun KotlinType.render(): String =
-    DECLARATION_RENDERER.renderType(this)
-
 internal fun IrDeclaration.renderOriginIfNonTrivial(): String =
-    if (origin != IrDeclarationOrigin.DEFINED) origin.toString() + " " else ""
+    if (origin != IrDeclarationOrigin.DEFINED) "$origin " else ""
 
-internal fun IrType.renderTypeInner(): String =
-    when (this) {
-        is IrDynamicType -> "dynamic"
-
-        is IrErrorType -> "ERROR"
-
-        is IrSimpleType -> buildString {
-            append(DECLARATION_RENDERER.renderClassifierName(classifier.descriptor)) // TODO get rid of descriptors
-            if (arguments.isNotEmpty()) {
-                append(
-                    arguments.joinToString(prefix = "<", postfix = ">", separator = ", ") {
-                        it.renderTypeArgument()
-                    }
-                )
-            }
-            if (hasQuestionMark) {
-                append('?')
-            }
+internal fun IrClassifierSymbol.renderClassifierFqn(): String =
+    if (isBound)
+        when (val owner = owner) {
+            is IrClass -> owner.renderClassFqn()
+            is IrTypeParameter -> owner.renderTypeParameterFqn()
+            else -> "`unexpected classifier: ${owner.render()}`"
         }
+    else "<unbound ${this.javaClass.simpleName}>"
 
-        else ->
-            originalKotlinType?.let {
-                DECLARATION_RENDERER.renderType(it)
-            } ?: "IrType without originalKotlinType: $this"
-    }
+internal fun IrClass.renderClassFqn(): String =
+    StringBuilder().also { renderDeclarationFqn(it) }.toString()
 
-private fun IrTypeArgument.renderTypeArgument(): String =
-    when (this) {
-        is IrStarProjection -> "*"
+internal fun IrTypeParameter.renderTypeParameterFqn(): String =
+    StringBuilder().also { renderDeclarationFqn(it) }.toString()
 
-        is IrTypeProjection -> buildString {
-            append(variance.label)
-            if (variance != Variance.INVARIANT) append(' ')
-            append(type.render())
+private fun IrDeclaration.renderDeclarationFqn(sb: StringBuilder) {
+    try {
+        val parent = this.parent
+        if (parent is IrDeclaration) {
+            parent.renderDeclarationFqn(sb)
+        } else if (parent is IrPackageFragment) {
+            sb.append(parent.fqName.toString())
         }
-
-        else -> "IrTypeArgument[$this]"
+        sb.append('.')
+    } catch (e: UninitializedPropertyAccessException) {
+        sb.append("<uninitialized parent>.")
     }
+    if (this is IrDeclarationWithName) {
+        sb.append(name.asString())
+    } else {
+        sb.append(this)
+    }
+}
 
-internal fun renderTypeAnnotations(annotations: List<IrCall>) =
-    if (annotations.isEmpty())
-        ""
-    else
-        annotations.joinToString(prefix = "", postfix = " ", separator = " ") { "@[${it.render()}]" }
-
-fun IrType.render() = "${renderTypeAnnotations(annotations)}${renderTypeInner()}"
-
+fun IrType.render() = IrTypeRenderer.Default.render(this)

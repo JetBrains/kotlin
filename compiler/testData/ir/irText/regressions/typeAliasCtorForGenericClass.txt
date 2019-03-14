@@ -1,45 +1,45 @@
 FILE fqName:<root> fileName:/typeAliasCtorForGenericClass.kt
-  CLASS CLASS name:A modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:A<Q> flags:
+  CLASS CLASS name:A modality:FINAL visibility:public flags:[] superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A<<root>.A.Q> flags:[]
     TYPE_PARAMETER name:Q index:0 variance: superTypes:[kotlin.Any?]
-    CONSTRUCTOR visibility:public <> (q:Q) returnType:A<Q> flags:primary
-      VALUE_PARAMETER name:q index:0 type:Q flags:
+    CONSTRUCTOR visibility:public <> (q:<root>.A.Q) returnType:<root>.A<<root>.A.Q> flags:[primary]
+      VALUE_PARAMETER name:q index:0 type:<root>.A.Q flags:[]
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
-        INSTANCE_INITIALIZER_CALL classDescriptor='A'
-    PROPERTY name:q visibility:public modality:FINAL flags:val
-      FIELD PROPERTY_BACKING_FIELD name:q type:Q visibility:public flags:final
+        DELEGATING_CONSTRUCTOR_CALL 'CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> () returnType:kotlin.Any flags:[primary]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public flags:[] superTypes:[kotlin.Any]'
+    PROPERTY name:q visibility:public modality:FINAL flags:[val]
+      FIELD PROPERTY_BACKING_FIELD name:q type:<root>.A.Q visibility:public flags:[final]
         EXPRESSION_BODY
-          GET_VAR 'value-parameter q: Q' type=Q origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-q> visibility:public modality:FINAL <> ($this:A<Q>) returnType:Q flags:
-        correspondingProperty: PROPERTY name:q visibility:public modality:FINAL flags:val
-        $this: VALUE_PARAMETER name:<this> type:A<Q> flags:
+          GET_VAR 'VALUE_PARAMETER name:q index:0 type:<root>.A.Q flags:[]' type=<root>.A.Q origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-q> visibility:public modality:FINAL <> ($this:<root>.A<<root>.A.Q>) returnType:<root>.A.Q flags:[]
+        correspondingProperty: PROPERTY name:q visibility:public modality:FINAL flags:[val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.A<<root>.A.Q> flags:[]
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-q>(): Q'
-            GET_FIELD 'q: Q' type=Q origin=null
-              receiver: GET_VAR 'this@A: A<Q>' type=A<Q> origin=null
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+          RETURN type=kotlin.Nothing from='FUN DEFAULT_PROPERTY_ACCESSOR name:<get-q> visibility:public modality:FINAL <> ($this:<root>.A<<root>.A.Q>) returnType:<root>.A.Q flags:[]'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:q type:<root>.A.Q visibility:public flags:[final]' type=<root>.A.Q origin=null
+              receiver: GET_VAR 'VALUE_PARAMETER name:<this> type:<root>.A<<root>.A.Q> flags:[]' type=<root>.A<<root>.A.Q> origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:[]
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:[]
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:[]
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:[]
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:[]
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:[]
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:[]
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:[]
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:[]
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:[]
   TYPEALIAS typealias B = A<X> type=A<X>
   TYPEALIAS typealias B2 = A<A<T>> type=A<A<T>>
-  FUN name:bar visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:
+  FUN name:bar visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:[]
     BLOCK_BODY
-      VAR name:b type:A<kotlin.Int> flags:val
-        CALL 'constructor A(Q)' type=A<kotlin.Int> origin=null
+      VAR name:b type:<root>.A<kotlin.Int> flags:[val]
+        CALL 'CONSTRUCTOR visibility:public <> (q:<root>.A.Q) returnType:<root>.A<<root>.A.Q> flags:[primary]' type=<root>.A<kotlin.Int> origin=null
           <Q>: kotlin.Int
           q: CONST Int type=kotlin.Int value=2
-      VAR name:b2 type:A<A<kotlin.Int>> flags:val
-        CALL 'constructor A(Q)' type=A<A<kotlin.Int>> origin=null
-          <Q>: A<kotlin.Int>
-          q: GET_VAR 'b: B<Int> /* = A<Int> */' type=A<kotlin.Int> origin=null
+      VAR name:b2 type:<root>.A<<root>.A<kotlin.Int>> flags:[val]
+        CALL 'CONSTRUCTOR visibility:public <> (q:<root>.A.Q) returnType:<root>.A<<root>.A.Q> flags:[primary]' type=<root>.A<<root>.A<kotlin.Int>> origin=null
+          <Q>: <root>.A<kotlin.Int>
+          q: GET_VAR 'VAR name:b type:<root>.A<kotlin.Int> flags:[val]' type=<root>.A<kotlin.Int> origin=null

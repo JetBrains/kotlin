@@ -1,19 +1,19 @@
 FILE fqName:<root> fileName:/dynamicUnaryOperator.kt
-  FUN name:testUnaryMinus visibility:public modality:FINAL <> (d:dynamic) returnType:dynamic flags:
-    VALUE_PARAMETER name:d index:0 type:dynamic flags:
+  FUN name:testUnaryMinus visibility:public modality:FINAL <> (d:dynamic) returnType:dynamic flags:[]
+    VALUE_PARAMETER name:d index:0 type:dynamic flags:[]
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='testUnaryMinus(dynamic): dynamic'
+      RETURN type=kotlin.Nothing from='FUN name:testUnaryMinus visibility:public modality:FINAL <> (d:dynamic) returnType:dynamic flags:[]'
         DYN_OP operator=UNARY_MINUS type=dynamic
-          receiver: GET_VAR 'value-parameter d: dynamic' type=dynamic origin=null
-  FUN name:testUnaryPlus visibility:public modality:FINAL <> (d:dynamic) returnType:dynamic flags:
-    VALUE_PARAMETER name:d index:0 type:dynamic flags:
+          receiver: GET_VAR 'VALUE_PARAMETER name:d index:0 type:dynamic flags:[]' type=dynamic origin=null
+  FUN name:testUnaryPlus visibility:public modality:FINAL <> (d:dynamic) returnType:dynamic flags:[]
+    VALUE_PARAMETER name:d index:0 type:dynamic flags:[]
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='testUnaryPlus(dynamic): dynamic'
+      RETURN type=kotlin.Nothing from='FUN name:testUnaryPlus visibility:public modality:FINAL <> (d:dynamic) returnType:dynamic flags:[]'
         DYN_OP operator=UNARY_PLUS type=dynamic
-          receiver: GET_VAR 'value-parameter d: dynamic' type=dynamic origin=null
-  FUN name:testExcl visibility:public modality:FINAL <> (d:dynamic) returnType:dynamic flags:
-    VALUE_PARAMETER name:d index:0 type:dynamic flags:
+          receiver: GET_VAR 'VALUE_PARAMETER name:d index:0 type:dynamic flags:[]' type=dynamic origin=null
+  FUN name:testExcl visibility:public modality:FINAL <> (d:dynamic) returnType:dynamic flags:[]
+    VALUE_PARAMETER name:d index:0 type:dynamic flags:[]
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='testExcl(dynamic): dynamic'
+      RETURN type=kotlin.Nothing from='FUN name:testExcl visibility:public modality:FINAL <> (d:dynamic) returnType:dynamic flags:[]'
         DYN_OP operator=EXCL type=dynamic
-          receiver: GET_VAR 'value-parameter d: dynamic' type=dynamic origin=null
+          receiver: GET_VAR 'VALUE_PARAMETER name:d index:0 type:dynamic flags:[]' type=dynamic origin=null

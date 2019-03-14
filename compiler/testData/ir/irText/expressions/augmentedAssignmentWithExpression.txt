@@ -1,52 +1,52 @@
 FILE fqName:<root> fileName:/augmentedAssignmentWithExpression.kt
-  CLASS CLASS name:Host modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Host flags:
-    CONSTRUCTOR visibility:public <> () returnType:Host flags:primary
+  CLASS CLASS name:Host modality:FINAL visibility:public flags:[] superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Host flags:[]
+    CONSTRUCTOR visibility:public <> () returnType:<root>.Host flags:[primary]
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
-        INSTANCE_INITIALIZER_CALL classDescriptor='Host'
-    FUN name:plusAssign visibility:public modality:FINAL <> ($this:Host, x:kotlin.Int) returnType:kotlin.Unit flags:
-      $this: VALUE_PARAMETER name:<this> type:Host flags:
-      VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
+        DELEGATING_CONSTRUCTOR_CALL 'CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> () returnType:kotlin.Any flags:[primary]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Host modality:FINAL visibility:public flags:[] superTypes:[kotlin.Any]'
+    FUN name:plusAssign visibility:public modality:FINAL <> ($this:<root>.Host, x:kotlin.Int) returnType:kotlin.Unit flags:[]
+      $this: VALUE_PARAMETER name:<this> type:<root>.Host flags:[]
+      VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:[]
       BLOCK_BODY
-    FUN name:test1 visibility:public modality:FINAL <> ($this:Host) returnType:kotlin.Unit flags:
-      $this: VALUE_PARAMETER name:<this> type:Host flags:
+    FUN name:test1 visibility:public modality:FINAL <> ($this:<root>.Host) returnType:kotlin.Unit flags:[]
+      $this: VALUE_PARAMETER name:<this> type:<root>.Host flags:[]
       BLOCK_BODY
-        CALL 'plusAssign(Int): Unit' type=kotlin.Unit origin=PLUSEQ
-          $this: GET_VAR 'this@Host: Host' type=Host origin=PLUSEQ
+        CALL 'FUN name:plusAssign visibility:public modality:FINAL <> ($this:<root>.Host, x:kotlin.Int) returnType:kotlin.Unit flags:[]' type=kotlin.Unit origin=PLUSEQ
+          $this: GET_VAR 'VALUE_PARAMETER name:<this> type:<root>.Host flags:[]' type=<root>.Host origin=PLUSEQ
           x: CONST Int type=kotlin.Int value=1
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:[]
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:[]
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:[]
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:[]
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:[]
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:[]
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:[]
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:[]
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-  FUN name:foo visibility:public modality:FINAL <> () returnType:Host flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:[]
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:[]
+  FUN name:foo visibility:public modality:FINAL <> () returnType:<root>.Host flags:[]
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='foo(): Host'
-        CALL 'constructor Host()' type=Host origin=null
-  FUN name:test2 visibility:public modality:FINAL <> ($receiver:Host) returnType:kotlin.Unit flags:
-    $receiver: VALUE_PARAMETER name:<this> type:Host flags:
+      RETURN type=kotlin.Nothing from='FUN name:foo visibility:public modality:FINAL <> () returnType:<root>.Host flags:[]'
+        CALL 'CONSTRUCTOR visibility:public <> () returnType:<root>.Host flags:[primary]' type=<root>.Host origin=null
+  FUN name:test2 visibility:public modality:FINAL <> ($receiver:<root>.Host) returnType:kotlin.Unit flags:[]
+    $receiver: VALUE_PARAMETER name:<this> type:<root>.Host flags:[]
     BLOCK_BODY
-      CALL 'plusAssign(Int): Unit' type=kotlin.Unit origin=PLUSEQ
-        $this: GET_VAR 'this@test2: Host' type=Host origin=PLUSEQ
+      CALL 'FUN name:plusAssign visibility:public modality:FINAL <> ($this:<root>.Host, x:kotlin.Int) returnType:kotlin.Unit flags:[]' type=kotlin.Unit origin=PLUSEQ
+        $this: GET_VAR 'VALUE_PARAMETER name:<this> type:<root>.Host flags:[]' type=<root>.Host origin=PLUSEQ
         x: CONST Int type=kotlin.Int value=1
-  FUN name:test3 visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:
+  FUN name:test3 visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:[]
     BLOCK_BODY
-      CALL 'plusAssign(Int): Unit' type=kotlin.Unit origin=PLUSEQ
-        $this: CALL 'foo(): Host' type=Host origin=null
+      CALL 'FUN name:plusAssign visibility:public modality:FINAL <> ($this:<root>.Host, x:kotlin.Int) returnType:kotlin.Unit flags:[]' type=kotlin.Unit origin=PLUSEQ
+        $this: CALL 'FUN name:foo visibility:public modality:FINAL <> () returnType:<root>.Host flags:[]' type=<root>.Host origin=null
         x: CONST Int type=kotlin.Int value=1
-  FUN name:test4 visibility:public modality:FINAL <> (a:kotlin.Function0<Host>) returnType:kotlin.Unit flags:
-    VALUE_PARAMETER name:a index:0 type:kotlin.Function0<Host> flags:
+  FUN name:test4 visibility:public modality:FINAL <> (a:kotlin.Function0<<root>.Host>) returnType:kotlin.Unit flags:[]
+    VALUE_PARAMETER name:a index:0 type:kotlin.Function0<<root>.Host> flags:[]
     BLOCK_BODY
-      CALL 'plusAssign(Int): Unit' type=kotlin.Unit origin=PLUSEQ
-        $this: CALL 'invoke(): R' type=Host origin=INVOKE
-          $this: GET_VAR 'value-parameter a: () -> Host' type=kotlin.Function0<Host> origin=VARIABLE_AS_FUNCTION
+      CALL 'FUN name:plusAssign visibility:public modality:FINAL <> ($this:<root>.Host, x:kotlin.Int) returnType:kotlin.Unit flags:[]' type=kotlin.Unit origin=PLUSEQ
+        $this: CALL 'FUN IR_EXTERNAL_DECLARATION_STUB name:invoke visibility:public modality:ABSTRACT <> ($this:kotlin.Function0<kotlin.Function0.R>) returnType:kotlin.Function0.R flags:[]' type=<root>.Host origin=INVOKE
+          $this: GET_VAR 'VALUE_PARAMETER name:a index:0 type:kotlin.Function0<<root>.Host> flags:[]' type=kotlin.Function0<<root>.Host> origin=VARIABLE_AS_FUNCTION
         x: CONST Int type=kotlin.Int value=1

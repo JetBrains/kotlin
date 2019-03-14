@@ -1,30 +1,29 @@
 FILE fqName:<root> fileName:/arrayAccess.kt
-  PROPERTY name:p visibility:public modality:FINAL flags:val
-    FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:public flags:final,static
+  PROPERTY name:p visibility:public modality:FINAL flags:[val]
+    FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:public flags:[final,static]
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value=0
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-p> visibility:public modality:FINAL <> () returnType:kotlin.Int flags:
-      correspondingProperty: PROPERTY name:p visibility:public modality:FINAL flags:val
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-p> visibility:public modality:FINAL <> () returnType:kotlin.Int flags:[]
+      correspondingProperty: PROPERTY name:p visibility:public modality:FINAL flags:[val]
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-p>(): Int'
-          GET_FIELD 'p: Int' type=kotlin.Int origin=null
-  FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Int flags:
+        RETURN type=kotlin.Nothing from='FUN DEFAULT_PROPERTY_ACCESSOR name:<get-p> visibility:public modality:FINAL <> () returnType:kotlin.Int flags:[]'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:public flags:[final,static]' type=kotlin.Int origin=null
+  FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Int flags:[]
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='foo(): Int'
+      RETURN type=kotlin.Nothing from='FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Int flags:[]'
         CONST Int type=kotlin.Int value=1
-  FUN name:test visibility:public modality:FINAL <> (a:kotlin.IntArray) returnType:kotlin.Int flags:
-    VALUE_PARAMETER name:a index:0 type:kotlin.IntArray flags:
+  FUN name:test visibility:public modality:FINAL <> (a:kotlin.IntArray) returnType:kotlin.Int flags:[]
+    VALUE_PARAMETER name:a index:0 type:kotlin.IntArray flags:[]
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test(IntArray): Int'
-        CALL 'plus(Int): Int' type=kotlin.Int origin=PLUS
-          $this: CALL 'plus(Int): Int' type=kotlin.Int origin=PLUS
-            $this: CALL 'get(Int): Int' type=kotlin.Int origin=GET_ARRAY_ELEMENT
-              $this: GET_VAR 'value-parameter a: IntArray' type=kotlin.IntArray origin=null
+      RETURN type=kotlin.Nothing from='FUN name:test visibility:public modality:FINAL <> (a:kotlin.IntArray) returnType:kotlin.Int flags:[]'
+        CALL 'FUN IR_EXTERNAL_DECLARATION_STUB name:plus visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Int) returnType:kotlin.Int flags:[]' type=kotlin.Int origin=PLUS
+          $this: CALL 'FUN IR_EXTERNAL_DECLARATION_STUB name:plus visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Int) returnType:kotlin.Int flags:[]' type=kotlin.Int origin=PLUS
+            $this: CALL 'FUN IR_EXTERNAL_DECLARATION_STUB name:get visibility:public modality:FINAL <> ($this:kotlin.IntArray, index:kotlin.Int) returnType:kotlin.Int flags:[]' type=kotlin.Int origin=GET_ARRAY_ELEMENT
+              $this: GET_VAR 'VALUE_PARAMETER name:a index:0 type:kotlin.IntArray flags:[]' type=kotlin.IntArray origin=null
               index: CONST Int type=kotlin.Int value=0
-            other: CALL 'get(Int): Int' type=kotlin.Int origin=GET_ARRAY_ELEMENT
-              $this: GET_VAR 'value-parameter a: IntArray' type=kotlin.IntArray origin=null
-              index: CALL '<get-p>(): Int' type=kotlin.Int origin=GET_PROPERTY
-          other: CALL 'get(Int): Int' type=kotlin.Int origin=GET_ARRAY_ELEMENT
-            $this: GET_VAR 'value-parameter a: IntArray' type=kotlin.IntArray origin=null
-            index: CALL 'foo(): Int' type=kotlin.Int origin=null
-
+            other: CALL 'FUN IR_EXTERNAL_DECLARATION_STUB name:get visibility:public modality:FINAL <> ($this:kotlin.IntArray, index:kotlin.Int) returnType:kotlin.Int flags:[]' type=kotlin.Int origin=GET_ARRAY_ELEMENT
+              $this: GET_VAR 'VALUE_PARAMETER name:a index:0 type:kotlin.IntArray flags:[]' type=kotlin.IntArray origin=null
+              index: CALL 'FUN DEFAULT_PROPERTY_ACCESSOR name:<get-p> visibility:public modality:FINAL <> () returnType:kotlin.Int flags:[]' type=kotlin.Int origin=GET_PROPERTY
+          other: CALL 'FUN IR_EXTERNAL_DECLARATION_STUB name:get visibility:public modality:FINAL <> ($this:kotlin.IntArray, index:kotlin.Int) returnType:kotlin.Int flags:[]' type=kotlin.Int origin=GET_ARRAY_ELEMENT
+            $this: GET_VAR 'VALUE_PARAMETER name:a index:0 type:kotlin.IntArray flags:[]' type=kotlin.IntArray origin=null
+            index: CALL 'FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Int flags:[]' type=kotlin.Int origin=null

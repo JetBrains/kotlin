@@ -1,34 +1,33 @@
 FILE fqName:<root> fileName:/field.kt
-  PROPERTY name:testSimple visibility:public modality:FINAL flags:var
-    FIELD PROPERTY_BACKING_FIELD name:testSimple type:kotlin.Int visibility:public flags:static
+  PROPERTY name:testSimple visibility:public modality:FINAL flags:[var]
+    FIELD PROPERTY_BACKING_FIELD name:testSimple type:kotlin.Int visibility:public flags:[static]
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value=0
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testSimple> visibility:public modality:FINAL <> () returnType:kotlin.Int flags:
-      correspondingProperty: PROPERTY name:testSimple visibility:public modality:FINAL flags:var
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testSimple> visibility:public modality:FINAL <> () returnType:kotlin.Int flags:[]
+      correspondingProperty: PROPERTY name:testSimple visibility:public modality:FINAL flags:[var]
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-testSimple>(): Int'
-          GET_FIELD 'testSimple: Int' type=kotlin.Int origin=null
-    FUN name:<set-testSimple> visibility:public modality:FINAL <> (value:kotlin.Int) returnType:kotlin.Unit flags:
-      correspondingProperty: PROPERTY name:testSimple visibility:public modality:FINAL flags:var
-      VALUE_PARAMETER name:value index:0 type:kotlin.Int flags:
+        RETURN type=kotlin.Nothing from='FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testSimple> visibility:public modality:FINAL <> () returnType:kotlin.Int flags:[]'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testSimple type:kotlin.Int visibility:public flags:[static]' type=kotlin.Int origin=null
+    FUN name:<set-testSimple> visibility:public modality:FINAL <> (value:kotlin.Int) returnType:kotlin.Unit flags:[]
+      correspondingProperty: PROPERTY name:testSimple visibility:public modality:FINAL flags:[var]
+      VALUE_PARAMETER name:value index:0 type:kotlin.Int flags:[]
       BLOCK_BODY
-        SET_FIELD 'testSimple: Int' type=kotlin.Unit origin=EQ
-          value: GET_VAR 'value-parameter value: Int' type=kotlin.Int origin=null
-  PROPERTY name:testAugmented visibility:public modality:FINAL flags:var
-    FIELD PROPERTY_BACKING_FIELD name:testAugmented type:kotlin.Int visibility:public flags:static
+        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testSimple type:kotlin.Int visibility:public flags:[static]' type=kotlin.Unit origin=EQ
+          value: GET_VAR 'VALUE_PARAMETER name:value index:0 type:kotlin.Int flags:[]' type=kotlin.Int origin=null
+  PROPERTY name:testAugmented visibility:public modality:FINAL flags:[var]
+    FIELD PROPERTY_BACKING_FIELD name:testAugmented type:kotlin.Int visibility:public flags:[static]
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value=0
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testAugmented> visibility:public modality:FINAL <> () returnType:kotlin.Int flags:
-      correspondingProperty: PROPERTY name:testAugmented visibility:public modality:FINAL flags:var
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testAugmented> visibility:public modality:FINAL <> () returnType:kotlin.Int flags:[]
+      correspondingProperty: PROPERTY name:testAugmented visibility:public modality:FINAL flags:[var]
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-testAugmented>(): Int'
-          GET_FIELD 'testAugmented: Int' type=kotlin.Int origin=null
-    FUN name:<set-testAugmented> visibility:public modality:FINAL <> (value:kotlin.Int) returnType:kotlin.Unit flags:
-      correspondingProperty: PROPERTY name:testAugmented visibility:public modality:FINAL flags:var
-      VALUE_PARAMETER name:value index:0 type:kotlin.Int flags:
+        RETURN type=kotlin.Nothing from='FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testAugmented> visibility:public modality:FINAL <> () returnType:kotlin.Int flags:[]'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testAugmented type:kotlin.Int visibility:public flags:[static]' type=kotlin.Int origin=null
+    FUN name:<set-testAugmented> visibility:public modality:FINAL <> (value:kotlin.Int) returnType:kotlin.Unit flags:[]
+      correspondingProperty: PROPERTY name:testAugmented visibility:public modality:FINAL flags:[var]
+      VALUE_PARAMETER name:value index:0 type:kotlin.Int flags:[]
       BLOCK_BODY
-        SET_FIELD 'testAugmented: Int' type=kotlin.Unit origin=PLUSEQ
-          value: CALL 'plus(Int): Int' type=kotlin.Int origin=PLUSEQ
-            $this: GET_FIELD 'testAugmented: Int' type=kotlin.Int origin=PLUSEQ
-            other: GET_VAR 'value-parameter value: Int' type=kotlin.Int origin=null
-
+        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testAugmented type:kotlin.Int visibility:public flags:[static]' type=kotlin.Unit origin=PLUSEQ
+          value: CALL 'FUN IR_EXTERNAL_DECLARATION_STUB name:plus visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Int) returnType:kotlin.Int flags:[]' type=kotlin.Int origin=PLUSEQ
+            $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testAugmented type:kotlin.Int visibility:public flags:[static]' type=kotlin.Int origin=PLUSEQ
+            other: GET_VAR 'VALUE_PARAMETER name:value index:0 type:kotlin.Int flags:[]' type=kotlin.Int origin=null

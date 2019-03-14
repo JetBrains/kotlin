@@ -1,128 +1,128 @@
 FILE fqName:<root> fileName:/breakContinueInLoopHeader.kt
-  FUN name:test1 visibility:public modality:FINAL <> (c:kotlin.Boolean?) returnType:kotlin.Unit flags:
-    VALUE_PARAMETER name:c index:0 type:kotlin.Boolean? flags:
+  FUN name:test1 visibility:public modality:FINAL <> (c:kotlin.Boolean?) returnType:kotlin.Unit flags:[]
+    VALUE_PARAMETER name:c index:0 type:kotlin.Boolean? flags:[]
     BLOCK_BODY
       WHILE label=L origin=WHILE_LOOP
         condition: CONST Boolean type=kotlin.Boolean value=true
         body: BLOCK type=kotlin.Unit origin=null
           WHILE label=L2 origin=WHILE_LOOP
             condition: BLOCK type=kotlin.Boolean origin=ELVIS
-              VAR IR_TEMPORARY_VARIABLE name:tmp0_elvis_lhs type:kotlin.Boolean? flags:val
-                GET_VAR 'value-parameter c: Boolean?' type=kotlin.Boolean? origin=null
+              VAR IR_TEMPORARY_VARIABLE name:tmp0_elvis_lhs type:kotlin.Boolean? flags:[val]
+                GET_VAR 'VALUE_PARAMETER name:c index:0 type:kotlin.Boolean? flags:[]' type=kotlin.Boolean? origin=null
               WHEN type=kotlin.Boolean origin=null
                 BRANCH
-                  if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
-                    arg0: GET_VAR 'tmp0_elvis_lhs: Boolean?' type=kotlin.Boolean? origin=null
+                  if: CALL 'FUN IR_BUILTINS_STUB name:EQEQ visibility:public modality:FINAL <> (arg0:kotlin.Any?, arg1:kotlin.Any?) returnType:kotlin.Boolean flags:[]' type=kotlin.Boolean origin=EQEQ
+                    arg0: GET_VAR 'VAR IR_TEMPORARY_VARIABLE name:tmp0_elvis_lhs type:kotlin.Boolean? flags:[val]' type=kotlin.Boolean? origin=null
                     arg1: CONST Null type=kotlin.Nothing? value=null
                   then: BREAK label=null loop.label=L
                 BRANCH
                   if: CONST Boolean type=kotlin.Boolean value=true
-                  then: GET_VAR 'tmp0_elvis_lhs: Boolean?' type=kotlin.Boolean? origin=null
-  FUN name:test2 visibility:public modality:FINAL <> (c:kotlin.Boolean?) returnType:kotlin.Unit flags:
-    VALUE_PARAMETER name:c index:0 type:kotlin.Boolean? flags:
+                  then: GET_VAR 'VAR IR_TEMPORARY_VARIABLE name:tmp0_elvis_lhs type:kotlin.Boolean? flags:[val]' type=kotlin.Boolean? origin=null
+  FUN name:test2 visibility:public modality:FINAL <> (c:kotlin.Boolean?) returnType:kotlin.Unit flags:[]
+    VALUE_PARAMETER name:c index:0 type:kotlin.Boolean? flags:[]
     BLOCK_BODY
       WHILE label=L origin=WHILE_LOOP
         condition: CONST Boolean type=kotlin.Boolean value=true
         body: BLOCK type=kotlin.Unit origin=null
           WHILE label=L2 origin=WHILE_LOOP
             condition: BLOCK type=kotlin.Boolean origin=ELVIS
-              VAR IR_TEMPORARY_VARIABLE name:tmp0_elvis_lhs type:kotlin.Boolean? flags:val
-                GET_VAR 'value-parameter c: Boolean?' type=kotlin.Boolean? origin=null
+              VAR IR_TEMPORARY_VARIABLE name:tmp0_elvis_lhs type:kotlin.Boolean? flags:[val]
+                GET_VAR 'VALUE_PARAMETER name:c index:0 type:kotlin.Boolean? flags:[]' type=kotlin.Boolean? origin=null
               WHEN type=kotlin.Boolean origin=null
                 BRANCH
-                  if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
-                    arg0: GET_VAR 'tmp0_elvis_lhs: Boolean?' type=kotlin.Boolean? origin=null
+                  if: CALL 'FUN IR_BUILTINS_STUB name:EQEQ visibility:public modality:FINAL <> (arg0:kotlin.Any?, arg1:kotlin.Any?) returnType:kotlin.Boolean flags:[]' type=kotlin.Boolean origin=EQEQ
+                    arg0: GET_VAR 'VAR IR_TEMPORARY_VARIABLE name:tmp0_elvis_lhs type:kotlin.Boolean? flags:[val]' type=kotlin.Boolean? origin=null
                     arg1: CONST Null type=kotlin.Nothing? value=null
                   then: CONTINUE label=null loop.label=L
                 BRANCH
                   if: CONST Boolean type=kotlin.Boolean value=true
-                  then: GET_VAR 'tmp0_elvis_lhs: Boolean?' type=kotlin.Boolean? origin=null
-  FUN name:test3 visibility:public modality:FINAL <> (ss:kotlin.collections.List<kotlin.String>?) returnType:kotlin.Unit flags:
-    VALUE_PARAMETER name:ss index:0 type:kotlin.collections.List<kotlin.String>? flags:
+                  then: GET_VAR 'VAR IR_TEMPORARY_VARIABLE name:tmp0_elvis_lhs type:kotlin.Boolean? flags:[val]' type=kotlin.Boolean? origin=null
+  FUN name:test3 visibility:public modality:FINAL <> (ss:kotlin.collections.List<kotlin.String>?) returnType:kotlin.Unit flags:[]
+    VALUE_PARAMETER name:ss index:0 type:kotlin.collections.List<kotlin.String>? flags:[]
     BLOCK_BODY
       WHILE label=L origin=WHILE_LOOP
         condition: CONST Boolean type=kotlin.Boolean value=true
         body: BLOCK type=kotlin.Unit origin=null
           BLOCK type=kotlin.Unit origin=FOR_LOOP
-            VAR FOR_LOOP_ITERATOR name:tmp1_iterator type:kotlin.collections.Iterator<kotlin.String> flags:val
-              CALL 'iterator(): Iterator<E>' type=kotlin.collections.Iterator<kotlin.String> origin=FOR_LOOP_ITERATOR
+            VAR FOR_LOOP_ITERATOR name:tmp1_iterator type:kotlin.collections.Iterator<kotlin.String> flags:[val]
+              CALL 'FUN IR_EXTERNAL_DECLARATION_STUB name:iterator visibility:public modality:ABSTRACT <> ($this:kotlin.collections.List<kotlin.collections.List.E>) returnType:kotlin.collections.Iterator<kotlin.collections.List.E> flags:[]' type=kotlin.collections.Iterator<kotlin.String> origin=FOR_LOOP_ITERATOR
                 $this: BLOCK type=kotlin.collections.List<kotlin.String> origin=ELVIS
-                  VAR IR_TEMPORARY_VARIABLE name:tmp0_elvis_lhs type:kotlin.collections.List<kotlin.String>? flags:val
-                    GET_VAR 'value-parameter ss: List<String>?' type=kotlin.collections.List<kotlin.String>? origin=null
+                  VAR IR_TEMPORARY_VARIABLE name:tmp0_elvis_lhs type:kotlin.collections.List<kotlin.String>? flags:[val]
+                    GET_VAR 'VALUE_PARAMETER name:ss index:0 type:kotlin.collections.List<kotlin.String>? flags:[]' type=kotlin.collections.List<kotlin.String>? origin=null
                   WHEN type=kotlin.collections.List<kotlin.String> origin=null
                     BRANCH
-                      if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
-                        arg0: GET_VAR 'tmp0_elvis_lhs: List<String>?' type=kotlin.collections.List<kotlin.String>? origin=null
+                      if: CALL 'FUN IR_BUILTINS_STUB name:EQEQ visibility:public modality:FINAL <> (arg0:kotlin.Any?, arg1:kotlin.Any?) returnType:kotlin.Boolean flags:[]' type=kotlin.Boolean origin=EQEQ
+                        arg0: GET_VAR 'VAR IR_TEMPORARY_VARIABLE name:tmp0_elvis_lhs type:kotlin.collections.List<kotlin.String>? flags:[val]' type=kotlin.collections.List<kotlin.String>? origin=null
                         arg1: CONST Null type=kotlin.Nothing? value=null
                       then: CONTINUE label=null loop.label=L
                     BRANCH
                       if: CONST Boolean type=kotlin.Boolean value=true
-                      then: GET_VAR 'tmp0_elvis_lhs: List<String>?' type=kotlin.collections.List<kotlin.String>? origin=null
+                      then: GET_VAR 'VAR IR_TEMPORARY_VARIABLE name:tmp0_elvis_lhs type:kotlin.collections.List<kotlin.String>? flags:[val]' type=kotlin.collections.List<kotlin.String>? origin=null
             WHILE label=L2 origin=FOR_LOOP_INNER_WHILE
-              condition: CALL 'hasNext(): Boolean' type=kotlin.Boolean origin=FOR_LOOP_HAS_NEXT
-                $this: GET_VAR 'tmp1_iterator: Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> origin=null
+              condition: CALL 'FUN IR_EXTERNAL_DECLARATION_STUB name:hasNext visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Iterator<kotlin.collections.Iterator.T>) returnType:kotlin.Boolean flags:[]' type=kotlin.Boolean origin=FOR_LOOP_HAS_NEXT
+                $this: GET_VAR 'VAR FOR_LOOP_ITERATOR name:tmp1_iterator type:kotlin.collections.Iterator<kotlin.String> flags:[val]' type=kotlin.collections.Iterator<kotlin.String> origin=null
               body: BLOCK type=kotlin.Unit origin=FOR_LOOP_INNER_WHILE
-                VAR FOR_LOOP_VARIABLE name:s type:kotlin.String flags:val
-                  CALL 'next(): T' type=kotlin.String origin=FOR_LOOP_NEXT
-                    $this: GET_VAR 'tmp1_iterator: Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> origin=null
-  FUN name:test4 visibility:public modality:FINAL <> (ss:kotlin.collections.List<kotlin.String>?) returnType:kotlin.Unit flags:
-    VALUE_PARAMETER name:ss index:0 type:kotlin.collections.List<kotlin.String>? flags:
+                VAR FOR_LOOP_VARIABLE name:s type:kotlin.String flags:[val]
+                  CALL 'FUN IR_EXTERNAL_DECLARATION_STUB name:next visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Iterator<kotlin.collections.Iterator.T>) returnType:kotlin.collections.Iterator.T flags:[]' type=kotlin.String origin=FOR_LOOP_NEXT
+                    $this: GET_VAR 'VAR FOR_LOOP_ITERATOR name:tmp1_iterator type:kotlin.collections.Iterator<kotlin.String> flags:[val]' type=kotlin.collections.Iterator<kotlin.String> origin=null
+  FUN name:test4 visibility:public modality:FINAL <> (ss:kotlin.collections.List<kotlin.String>?) returnType:kotlin.Unit flags:[]
+    VALUE_PARAMETER name:ss index:0 type:kotlin.collections.List<kotlin.String>? flags:[]
     BLOCK_BODY
       WHILE label=L origin=WHILE_LOOP
         condition: CONST Boolean type=kotlin.Boolean value=true
         body: BLOCK type=kotlin.Unit origin=null
           BLOCK type=kotlin.Unit origin=FOR_LOOP
-            VAR FOR_LOOP_ITERATOR name:tmp1_iterator type:kotlin.collections.Iterator<kotlin.String> flags:val
-              CALL 'iterator(): Iterator<E>' type=kotlin.collections.Iterator<kotlin.String> origin=FOR_LOOP_ITERATOR
+            VAR FOR_LOOP_ITERATOR name:tmp1_iterator type:kotlin.collections.Iterator<kotlin.String> flags:[val]
+              CALL 'FUN IR_EXTERNAL_DECLARATION_STUB name:iterator visibility:public modality:ABSTRACT <> ($this:kotlin.collections.List<kotlin.collections.List.E>) returnType:kotlin.collections.Iterator<kotlin.collections.List.E> flags:[]' type=kotlin.collections.Iterator<kotlin.String> origin=FOR_LOOP_ITERATOR
                 $this: BLOCK type=kotlin.collections.List<kotlin.String> origin=ELVIS
-                  VAR IR_TEMPORARY_VARIABLE name:tmp0_elvis_lhs type:kotlin.collections.List<kotlin.String>? flags:val
-                    GET_VAR 'value-parameter ss: List<String>?' type=kotlin.collections.List<kotlin.String>? origin=null
+                  VAR IR_TEMPORARY_VARIABLE name:tmp0_elvis_lhs type:kotlin.collections.List<kotlin.String>? flags:[val]
+                    GET_VAR 'VALUE_PARAMETER name:ss index:0 type:kotlin.collections.List<kotlin.String>? flags:[]' type=kotlin.collections.List<kotlin.String>? origin=null
                   WHEN type=kotlin.collections.List<kotlin.String> origin=null
                     BRANCH
-                      if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
-                        arg0: GET_VAR 'tmp0_elvis_lhs: List<String>?' type=kotlin.collections.List<kotlin.String>? origin=null
+                      if: CALL 'FUN IR_BUILTINS_STUB name:EQEQ visibility:public modality:FINAL <> (arg0:kotlin.Any?, arg1:kotlin.Any?) returnType:kotlin.Boolean flags:[]' type=kotlin.Boolean origin=EQEQ
+                        arg0: GET_VAR 'VAR IR_TEMPORARY_VARIABLE name:tmp0_elvis_lhs type:kotlin.collections.List<kotlin.String>? flags:[val]' type=kotlin.collections.List<kotlin.String>? origin=null
                         arg1: CONST Null type=kotlin.Nothing? value=null
                       then: BREAK label=null loop.label=L
                     BRANCH
                       if: CONST Boolean type=kotlin.Boolean value=true
-                      then: GET_VAR 'tmp0_elvis_lhs: List<String>?' type=kotlin.collections.List<kotlin.String>? origin=null
+                      then: GET_VAR 'VAR IR_TEMPORARY_VARIABLE name:tmp0_elvis_lhs type:kotlin.collections.List<kotlin.String>? flags:[val]' type=kotlin.collections.List<kotlin.String>? origin=null
             WHILE label=L2 origin=FOR_LOOP_INNER_WHILE
-              condition: CALL 'hasNext(): Boolean' type=kotlin.Boolean origin=FOR_LOOP_HAS_NEXT
-                $this: GET_VAR 'tmp1_iterator: Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> origin=null
+              condition: CALL 'FUN IR_EXTERNAL_DECLARATION_STUB name:hasNext visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Iterator<kotlin.collections.Iterator.T>) returnType:kotlin.Boolean flags:[]' type=kotlin.Boolean origin=FOR_LOOP_HAS_NEXT
+                $this: GET_VAR 'VAR FOR_LOOP_ITERATOR name:tmp1_iterator type:kotlin.collections.Iterator<kotlin.String> flags:[val]' type=kotlin.collections.Iterator<kotlin.String> origin=null
               body: BLOCK type=kotlin.Unit origin=FOR_LOOP_INNER_WHILE
-                VAR FOR_LOOP_VARIABLE name:s type:kotlin.String flags:val
-                  CALL 'next(): T' type=kotlin.String origin=FOR_LOOP_NEXT
-                    $this: GET_VAR 'tmp1_iterator: Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> origin=null
-  FUN name:test5 visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:
+                VAR FOR_LOOP_VARIABLE name:s type:kotlin.String flags:[val]
+                  CALL 'FUN IR_EXTERNAL_DECLARATION_STUB name:next visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Iterator<kotlin.collections.Iterator.T>) returnType:kotlin.collections.Iterator.T flags:[]' type=kotlin.String origin=FOR_LOOP_NEXT
+                    $this: GET_VAR 'VAR FOR_LOOP_ITERATOR name:tmp1_iterator type:kotlin.collections.Iterator<kotlin.String> flags:[val]' type=kotlin.collections.Iterator<kotlin.String> origin=null
+  FUN name:test5 visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:[]
     BLOCK_BODY
-      VAR name:i type:kotlin.Int flags:var
+      VAR name:i type:kotlin.Int flags:[var]
         CONST Int type=kotlin.Int value=0
       WHILE label=Outer origin=WHILE_LOOP
         condition: CONST Boolean type=kotlin.Boolean value=true
         body: BLOCK type=kotlin.Unit origin=null
           TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-            typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
+            typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public flags:[] superTypes:[kotlin.Any]
             BLOCK type=kotlin.Int origin=PREFIX_INCR
-              SET_VAR 'i: Int' type=kotlin.Unit origin=PREFIX_INCR
-                CALL 'inc(): Int' type=kotlin.Int origin=PREFIX_INCR
-                  $this: GET_VAR 'i: Int' type=kotlin.Int origin=PREFIX_INCR
-              GET_VAR 'i: Int' type=kotlin.Int origin=PREFIX_INCR
-          VAR name:j type:kotlin.Int flags:var
+              SET_VAR 'VAR name:i type:kotlin.Int flags:[var]' type=kotlin.Unit origin=PREFIX_INCR
+                CALL 'FUN IR_EXTERNAL_DECLARATION_STUB name:inc visibility:public modality:FINAL <> ($this:kotlin.Int) returnType:kotlin.Int flags:[]' type=kotlin.Int origin=PREFIX_INCR
+                  $this: GET_VAR 'VAR name:i type:kotlin.Int flags:[var]' type=kotlin.Int origin=PREFIX_INCR
+              GET_VAR 'VAR name:i type:kotlin.Int flags:[var]' type=kotlin.Int origin=PREFIX_INCR
+          VAR name:j type:kotlin.Int flags:[var]
             CONST Int type=kotlin.Int value=0
           BLOCK type=kotlin.Unit origin=null
             DO_WHILE label=Inner origin=DO_WHILE_LOOP
               body: COMPOSITE type=kotlin.Unit origin=null
                 TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
+                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public flags:[] superTypes:[kotlin.Any]
                   BLOCK type=kotlin.Int origin=PREFIX_INCR
-                    SET_VAR 'j: Int' type=kotlin.Unit origin=PREFIX_INCR
-                      CALL 'inc(): Int' type=kotlin.Int origin=PREFIX_INCR
-                        $this: GET_VAR 'j: Int' type=kotlin.Int origin=PREFIX_INCR
-                    GET_VAR 'j: Int' type=kotlin.Int origin=PREFIX_INCR
+                    SET_VAR 'VAR name:j type:kotlin.Int flags:[var]' type=kotlin.Unit origin=PREFIX_INCR
+                      CALL 'FUN IR_EXTERNAL_DECLARATION_STUB name:inc visibility:public modality:FINAL <> ($this:kotlin.Int) returnType:kotlin.Int flags:[]' type=kotlin.Int origin=PREFIX_INCR
+                        $this: GET_VAR 'VAR name:j type:kotlin.Int flags:[var]' type=kotlin.Int origin=PREFIX_INCR
+                    GET_VAR 'VAR name:j type:kotlin.Int flags:[var]' type=kotlin.Int origin=PREFIX_INCR
               condition: WHEN type=kotlin.Boolean origin=IF
                 BRANCH
-                  if: CALL 'greaterOrEqual(Int, Int): Boolean' type=kotlin.Boolean origin=GTEQ
-                    arg0: GET_VAR 'j: Int' type=kotlin.Int origin=null
+                  if: CALL 'FUN IR_BUILTINS_STUB name:greaterOrEqual visibility:public modality:FINAL <> (arg0:kotlin.Int, arg1:kotlin.Int) returnType:kotlin.Boolean flags:[]' type=kotlin.Boolean origin=GTEQ
+                    arg0: GET_VAR 'VAR name:j type:kotlin.Int flags:[var]' type=kotlin.Int origin=null
                     arg1: CONST Int type=kotlin.Int value=3
                   then: CONST Boolean type=kotlin.Boolean value=false
                 BRANCH
@@ -130,7 +130,7 @@ FILE fqName:<root> fileName:/breakContinueInLoopHeader.kt
                   then: BREAK label=null loop.label=Inner
           WHEN type=kotlin.Unit origin=IF
             BRANCH
-              if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
-                arg0: GET_VAR 'i: Int' type=kotlin.Int origin=null
+              if: CALL 'FUN IR_BUILTINS_STUB name:EQEQ visibility:public modality:FINAL <> (arg0:kotlin.Any?, arg1:kotlin.Any?) returnType:kotlin.Boolean flags:[]' type=kotlin.Boolean origin=EQEQ
+                arg0: GET_VAR 'VAR name:i type:kotlin.Int flags:[var]' type=kotlin.Int origin=null
                 arg1: CONST Int type=kotlin.Int value=3
               then: BREAK label=null loop.label=Outer

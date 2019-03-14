@@ -1,97 +1,97 @@
 FILE fqName:<root> fileName:/integerCoercionToT.kt
-  CLASS INTERFACE name:CPointed modality:ABSTRACT visibility:public flags: superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:CPointed flags:
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+  CLASS INTERFACE name:CPointed modality:ABSTRACT visibility:public flags:[] superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CPointed flags:[]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:[]
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:[]
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:[]
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:[]
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:[]
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:[]
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:[]
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:[]
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-  FUN name:reinterpret visibility:public modality:FINAL <T> ($receiver:CPointed) returnType:T flags:inline
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[CPointed]
-    $receiver: VALUE_PARAMETER name:<this> type:CPointed flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:[]
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:[]
+  FUN name:reinterpret visibility:public modality:FINAL <T> ($receiver:<root>.CPointed) returnType:<root>.reinterpret.T flags:[inline]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[<root>.CPointed]
+    $receiver: VALUE_PARAMETER name:<this> type:<root>.CPointed flags:[]
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='reinterpret() on CPointed: T'
-        CALL 'TODO(): Nothing' type=kotlin.Nothing origin=null
-  CLASS CLASS name:CInt32VarX modality:FINAL visibility:public flags: superTypes:[CPointed]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:CInt32VarX<T> flags:
+      RETURN type=kotlin.Nothing from='FUN name:reinterpret visibility:public modality:FINAL <T> ($receiver:<root>.CPointed) returnType:<root>.reinterpret.T flags:[inline]'
+        CALL 'FUN IR_EXTERNAL_DECLARATION_STUB name:TODO visibility:public modality:FINAL <> () returnType:kotlin.Nothing flags:[inline]' type=kotlin.Nothing origin=null
+  CLASS CLASS name:CInt32VarX modality:FINAL visibility:public flags:[] superTypes:[<root>.CPointed]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CInt32VarX<<root>.CInt32VarX.T> flags:[]
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
-    CONSTRUCTOR visibility:public <> () returnType:CInt32VarX<T> flags:primary
+    CONSTRUCTOR visibility:public <> () returnType:<root>.CInt32VarX<<root>.CInt32VarX.T> flags:[primary]
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CInt32VarX'
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+        DELEGATING_CONSTRUCTOR_CALL 'CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> () returnType:kotlin.Any flags:[primary]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:CInt32VarX modality:FINAL visibility:public flags:[] superTypes:[<root>.CPointed]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:[]
       overridden:
-        FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+        FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:[]
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:[]
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:[]
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:[]
       overridden:
-        FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+        FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:[]
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:[]
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:[]
       overridden:
-        FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+        FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:[]
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:[]
   TYPEALIAS typealias CInt32Var = CInt32VarX<Int> type=CInt32VarX<kotlin.Int>
-  PROPERTY name:value visibility:public modality:FINAL flags:var
-    FUN name:<get-value> visibility:public modality:FINAL <T_INT> ($receiver:CInt32VarX<T_INT>) returnType:T_INT flags:
-      correspondingProperty: PROPERTY name:value visibility:public modality:FINAL flags:var
+  PROPERTY name:value visibility:public modality:FINAL flags:[var]
+    FUN name:<get-value> visibility:public modality:FINAL <T_INT> ($receiver:<root>.CInt32VarX<<root>.<get-value>.T_INT>) returnType:<root>.<get-value>.T_INT flags:[]
+      correspondingProperty: PROPERTY name:value visibility:public modality:FINAL flags:[var]
       TYPE_PARAMETER name:T_INT index:0 variance: superTypes:[kotlin.Int]
-      $receiver: VALUE_PARAMETER name:<this> type:CInt32VarX<T_INT> flags:
+      $receiver: VALUE_PARAMETER name:<this> type:<root>.CInt32VarX<<root>.<get-value>.T_INT> flags:[]
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-value>() on CInt32VarX<T_INT>: T_INT'
-          CALL 'TODO(): Nothing' type=kotlin.Nothing origin=null
-    FUN name:<set-value> visibility:public modality:FINAL <T_INT> ($receiver:CInt32VarX<T_INT>, value:T_INT) returnType:kotlin.Unit flags:
-      correspondingProperty: PROPERTY name:value visibility:public modality:FINAL flags:var
+        RETURN type=kotlin.Nothing from='FUN name:<get-value> visibility:public modality:FINAL <T_INT> ($receiver:<root>.CInt32VarX<<root>.<get-value>.T_INT>) returnType:<root>.<get-value>.T_INT flags:[]'
+          CALL 'FUN IR_EXTERNAL_DECLARATION_STUB name:TODO visibility:public modality:FINAL <> () returnType:kotlin.Nothing flags:[inline]' type=kotlin.Nothing origin=null
+    FUN name:<set-value> visibility:public modality:FINAL <T_INT> ($receiver:<root>.CInt32VarX<<root>.<set-value>.T_INT>, value:<root>.<set-value>.T_INT) returnType:kotlin.Unit flags:[]
+      correspondingProperty: PROPERTY name:value visibility:public modality:FINAL flags:[var]
       TYPE_PARAMETER name:T_INT index:0 variance: superTypes:[kotlin.Int]
-      $receiver: VALUE_PARAMETER name:<this> type:CInt32VarX<T_INT> flags:
-      VALUE_PARAMETER name:value index:0 type:T_INT flags:
+      $receiver: VALUE_PARAMETER name:<this> type:<root>.CInt32VarX<<root>.<set-value>.T_INT> flags:[]
+      VALUE_PARAMETER name:value index:0 type:<root>.<set-value>.T_INT flags:[]
       BLOCK_BODY
-  CLASS CLASS name:IdType modality:FINAL visibility:public flags: superTypes:[CPointed]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:IdType flags:
-    CONSTRUCTOR visibility:public <> (value:kotlin.Int) returnType:IdType flags:primary
-      VALUE_PARAMETER name:value index:0 type:kotlin.Int flags:
+  CLASS CLASS name:IdType modality:FINAL visibility:public flags:[] superTypes:[<root>.CPointed]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IdType flags:[]
+    CONSTRUCTOR visibility:public <> (value:kotlin.Int) returnType:<root>.IdType flags:[primary]
+      VALUE_PARAMETER name:value index:0 type:kotlin.Int flags:[]
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
-        INSTANCE_INITIALIZER_CALL classDescriptor='IdType'
-    PROPERTY name:value visibility:public modality:FINAL flags:val
-      FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Int visibility:public flags:final
+        DELEGATING_CONSTRUCTOR_CALL 'CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> () returnType:kotlin.Any flags:[primary]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:IdType modality:FINAL visibility:public flags:[] superTypes:[<root>.CPointed]'
+    PROPERTY name:value visibility:public modality:FINAL flags:[val]
+      FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Int visibility:public flags:[final]
         EXPRESSION_BODY
-          GET_VAR 'value-parameter value: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:FINAL <> ($this:IdType) returnType:kotlin.Int flags:
-        correspondingProperty: PROPERTY name:value visibility:public modality:FINAL flags:val
-        $this: VALUE_PARAMETER name:<this> type:IdType flags:
+          GET_VAR 'VALUE_PARAMETER name:value index:0 type:kotlin.Int flags:[]' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:FINAL <> ($this:<root>.IdType) returnType:kotlin.Int flags:[]
+        correspondingProperty: PROPERTY name:value visibility:public modality:FINAL flags:[val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.IdType flags:[]
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-value>(): Int'
-            GET_FIELD 'value: Int' type=kotlin.Int origin=null
-              receiver: GET_VAR 'this@IdType: IdType' type=IdType origin=null
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+          RETURN type=kotlin.Nothing from='FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:FINAL <> ($this:<root>.IdType) returnType:kotlin.Int flags:[]'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Int visibility:public flags:[final]' type=kotlin.Int origin=null
+              receiver: GET_VAR 'VALUE_PARAMETER name:<this> type:<root>.IdType flags:[]' type=<root>.IdType origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:[]
       overridden:
-        FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+        FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:[]
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:[]
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:[]
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:[]
       overridden:
-        FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+        FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:[]
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:[]
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:[]
       overridden:
-        FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-  FUN name:foo visibility:public modality:FINAL <> (value:IdType, cv:CInt32VarX<kotlin.Int>) returnType:kotlin.Unit flags:
-    VALUE_PARAMETER name:value index:0 type:IdType flags:
-    VALUE_PARAMETER name:cv index:1 type:CInt32VarX<kotlin.Int> flags:
+        FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:[]
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:[]
+  FUN name:foo visibility:public modality:FINAL <> (value:<root>.IdType, cv:<root>.CInt32VarX<kotlin.Int>) returnType:kotlin.Unit flags:[]
+    VALUE_PARAMETER name:value index:0 type:<root>.IdType flags:[]
+    VALUE_PARAMETER name:cv index:1 type:<root>.CInt32VarX<kotlin.Int> flags:[]
     BLOCK_BODY
-      CALL '<set-value>(T_INT) on CInt32VarX<T_INT>: Unit' type=kotlin.Unit origin=EQ
+      CALL 'FUN name:<set-value> visibility:public modality:FINAL <T_INT> ($receiver:<root>.CInt32VarX<<root>.<set-value>.T_INT>, value:<root>.<set-value>.T_INT) returnType:kotlin.Unit flags:[]' type=kotlin.Unit origin=EQ
         <`0>: kotlin.Int
-        $receiver: GET_VAR 'value-parameter cv: CInt32Var /* = CInt32VarX<Int> */' type=CInt32VarX<kotlin.Int> origin=null
-        value: CALL '<get-value>(): Int' type=kotlin.Int origin=GET_PROPERTY
-          $this: GET_VAR 'value-parameter value: IdType' type=IdType origin=null
+        $receiver: GET_VAR 'VALUE_PARAMETER name:cv index:1 type:<root>.CInt32VarX<kotlin.Int> flags:[]' type=<root>.CInt32VarX<kotlin.Int> origin=null
+        value: CALL 'FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:FINAL <> ($this:<root>.IdType) returnType:kotlin.Int flags:[]' type=kotlin.Int origin=GET_PROPERTY
+          $this: GET_VAR 'VALUE_PARAMETER name:value index:0 type:<root>.IdType flags:[]' type=<root>.IdType origin=null

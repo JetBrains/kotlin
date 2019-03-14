@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -29,9 +30,12 @@ import org.jetbrains.kotlin.renderer.AnnotationArgumentsRenderingPolicy
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.utils.Printer
 
-fun IrElement.dump(): String {
+fun IrElement.dump(
+    symbolRenderer: IrSymbolRenderer = IrSymbolRenderer.Default,
+    typeRenderer: IrTypeRenderer = IrTypeRenderer.Default
+): String {
     val sb = StringBuilder()
-    accept(DumpIrTreeVisitor(sb), "")
+    accept(DumpIrTreeVisitor(sb, symbolRenderer, typeRenderer), "")
     return sb.toString()
 }
 
@@ -41,10 +45,16 @@ fun IrFile.dumpTreesFromLineNumber(lineNumber: Int): String {
     return sb.toString()
 }
 
-class DumpIrTreeVisitor(out: Appendable) : IrElementVisitor<Unit, String> {
+class DumpIrTreeVisitor(
+    out: Appendable,
+    symbolRenderer: IrSymbolRenderer = IrSymbolRenderer.Default,
+    private val typeRenderer: IrTypeRenderer = IrTypeRenderer.Default
+) : IrElementVisitor<Unit, String> {
+
+    private fun IrType.render() = typeRenderer.render(this)
 
     private val printer = Printer(out, "  ")
-    private val elementRenderer = RenderIrElementVisitor()
+    private val elementRenderer = RenderIrElementVisitor(symbolRenderer, typeRenderer)
 
     companion object {
         val ANNOTATIONS_RENDERER = DescriptorRenderer.withOptions {

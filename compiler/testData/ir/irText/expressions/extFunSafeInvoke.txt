@@ -1,22 +1,22 @@
 FILE fqName:<root> fileName:/extFunSafeInvoke.kt
-  FUN name:test visibility:public modality:FINAL <> (receiver:kotlin.Any?, fn:@[CALL 'constructor ExtensionFunctionType()' type=kotlin.ExtensionFunctionType origin=null] kotlin.Function3<kotlin.Any, kotlin.Int, kotlin.String, kotlin.Unit>) returnType:kotlin.Unit? flags:
-    VALUE_PARAMETER name:receiver index:0 type:kotlin.Any? flags:
-    VALUE_PARAMETER name:fn index:1 type:@[CALL 'constructor ExtensionFunctionType()' type=kotlin.ExtensionFunctionType origin=null] kotlin.Function3<kotlin.Any, kotlin.Int, kotlin.String, kotlin.Unit> flags:
+  FUN name:test visibility:public modality:FINAL <> (receiver:kotlin.Any?, fn:@[CALL 'CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> () returnType:kotlin.ExtensionFunctionType flags:[primary]' type=kotlin.ExtensionFunctionType origin=null] kotlin.Function3<kotlin.Any, kotlin.Int, kotlin.String, kotlin.Unit>) returnType:kotlin.Unit? flags:[]
+    VALUE_PARAMETER name:receiver index:0 type:kotlin.Any? flags:[]
+    VALUE_PARAMETER name:fn index:1 type:@[CALL 'CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> () returnType:kotlin.ExtensionFunctionType flags:[primary]' type=kotlin.ExtensionFunctionType origin=null] kotlin.Function3<kotlin.Any, kotlin.Int, kotlin.String, kotlin.Unit> flags:[]
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test(Any?, Any.(Int, String) -> Unit): Unit?'
+      RETURN type=kotlin.Nothing from='FUN name:test visibility:public modality:FINAL <> (receiver:kotlin.Any?, fn:@[CALL 'CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> () returnType:kotlin.ExtensionFunctionType flags:[primary]' type=kotlin.ExtensionFunctionType origin=null] kotlin.Function3<kotlin.Any, kotlin.Int, kotlin.String, kotlin.Unit>) returnType:kotlin.Unit? flags:[]'
         BLOCK type=kotlin.Unit? origin=SAFE_CALL
-          VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:kotlin.Any? flags:val
-            GET_VAR 'value-parameter receiver: Any?' type=kotlin.Any? origin=null
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:kotlin.Any? flags:[val]
+            GET_VAR 'VALUE_PARAMETER name:receiver index:0 type:kotlin.Any? flags:[]' type=kotlin.Any? origin=null
           WHEN type=kotlin.Unit? origin=null
             BRANCH
-              if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
-                arg0: GET_VAR 'tmp0_safe_receiver: Any?' type=kotlin.Any? origin=null
+              if: CALL 'FUN IR_BUILTINS_STUB name:EQEQ visibility:public modality:FINAL <> (arg0:kotlin.Any?, arg1:kotlin.Any?) returnType:kotlin.Boolean flags:[]' type=kotlin.Boolean origin=EQEQ
+                arg0: GET_VAR 'VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:kotlin.Any? flags:[val]' type=kotlin.Any? origin=null
                 arg1: CONST Null type=kotlin.Nothing? value=null
               then: CONST Null type=kotlin.Nothing? value=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
-              then: CALL 'invoke(P1, P2, P3): R' type=kotlin.Unit origin=INVOKE
-                $this: GET_VAR 'value-parameter fn: Any.(Int, String) -> Unit' type=@[CALL 'constructor ExtensionFunctionType()' type=kotlin.ExtensionFunctionType origin=null] kotlin.Function3<kotlin.Any, kotlin.Int, kotlin.String, kotlin.Unit> origin=VARIABLE_AS_FUNCTION
-                p1: GET_VAR 'tmp0_safe_receiver: Any?' type=kotlin.Any? origin=null
+              then: CALL 'FUN IR_EXTERNAL_DECLARATION_STUB name:invoke visibility:public modality:ABSTRACT <> ($this:kotlin.Function3<kotlin.Function3.P1, kotlin.Function3.P2, kotlin.Function3.P3, kotlin.Function3.R>, p1:kotlin.Function3.P1, p2:kotlin.Function3.P2, p3:kotlin.Function3.P3) returnType:kotlin.Function3.R flags:[]' type=kotlin.Unit origin=INVOKE
+                $this: GET_VAR 'VALUE_PARAMETER name:fn index:1 type:@[CALL 'CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> () returnType:kotlin.ExtensionFunctionType flags:[primary]' type=kotlin.ExtensionFunctionType origin=null] kotlin.Function3<kotlin.Any, kotlin.Int, kotlin.String, kotlin.Unit> flags:[]' type=@[CALL 'CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> () returnType:kotlin.ExtensionFunctionType flags:[primary]' type=kotlin.ExtensionFunctionType origin=null] kotlin.Function3<kotlin.Any, kotlin.Int, kotlin.String, kotlin.Unit> origin=VARIABLE_AS_FUNCTION
+                p1: GET_VAR 'VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:kotlin.Any? flags:[val]' type=kotlin.Any? origin=null
                 p2: CONST Int type=kotlin.Int value=42
                 p3: CONST String type=kotlin.String value="Hello"

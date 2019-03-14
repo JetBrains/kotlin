@@ -1,15 +1,15 @@
 FILE fqName:<root> fileName:/samAdapter.kt
-  FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:
+  FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:[]
     BLOCK_BODY
-      VAR name:hello type:java.lang.Runnable flags:val
+      VAR name:hello type:java.lang.Runnable flags:[val]
         TYPE_OP type=java.lang.Runnable origin=SAM_CONVERSION typeOperand=java.lang.Runnable
-          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Runnable modality:ABSTRACT visibility:public flags: superTypes:[kotlin.Any]
+          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Runnable modality:ABSTRACT visibility:public flags:[] superTypes:[kotlin.Any]
           BLOCK type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit flags:
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit flags:[]
               BLOCK_BODY
-                RETURN type=kotlin.Nothing from='<anonymous>(): Unit'
-                  CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
+                RETURN type=kotlin.Nothing from='FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit flags:[]'
+                  CALL 'FUN IR_EXTERNAL_DECLARATION_STUB name:println visibility:public modality:FINAL <> (message:kotlin.Any?) returnType:kotlin.Unit flags:[inline]' type=kotlin.Unit origin=null
                     message: CONST String type=kotlin.String value="Hello, world!"
-            FUNCTION_REFERENCE '<anonymous>(): Unit' type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
-      CALL 'run(): Unit' type=kotlin.Unit origin=null
-        $this: GET_VAR 'hello: Runnable' type=java.lang.Runnable origin=null
+            FUNCTION_REFERENCE 'FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit flags:[]' type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+      CALL 'FUN IR_EXTERNAL_JAVA_DECLARATION_STUB name:run visibility:public modality:ABSTRACT <> ($this:java.lang.Runnable) returnType:kotlin.Unit flags:[]' type=kotlin.Unit origin=null
+        $this: GET_VAR 'VAR name:hello type:java.lang.Runnable flags:[val]' type=java.lang.Runnable origin=null

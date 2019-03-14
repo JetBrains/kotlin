@@ -1,34 +1,33 @@
 FILE fqName:<root> fileName:/stringPlus.kt
-  FUN name:test1 visibility:public modality:FINAL <> (a:kotlin.String, b:kotlin.Any) returnType:kotlin.String flags:
-    VALUE_PARAMETER name:a index:0 type:kotlin.String flags:
-    VALUE_PARAMETER name:b index:1 type:kotlin.Any flags:
+  FUN name:test1 visibility:public modality:FINAL <> (a:kotlin.String, b:kotlin.Any) returnType:kotlin.String flags:[]
+    VALUE_PARAMETER name:a index:0 type:kotlin.String flags:[]
+    VALUE_PARAMETER name:b index:1 type:kotlin.Any flags:[]
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test1(String, Any): String'
-        CALL 'plus(Any?): String' type=kotlin.String origin=PLUS
-          $this: GET_VAR 'value-parameter a: String' type=kotlin.String origin=null
-          other: GET_VAR 'value-parameter b: Any' type=kotlin.Any origin=null
-  FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.String, b:kotlin.Int) returnType:kotlin.String flags:
-    VALUE_PARAMETER name:a index:0 type:kotlin.String flags:
-    VALUE_PARAMETER name:b index:1 type:kotlin.Int flags:
+      RETURN type=kotlin.Nothing from='FUN name:test1 visibility:public modality:FINAL <> (a:kotlin.String, b:kotlin.Any) returnType:kotlin.String flags:[]'
+        CALL 'FUN IR_EXTERNAL_DECLARATION_STUB name:plus visibility:public modality:FINAL <> ($this:kotlin.String, other:kotlin.Any?) returnType:kotlin.String flags:[]' type=kotlin.String origin=PLUS
+          $this: GET_VAR 'VALUE_PARAMETER name:a index:0 type:kotlin.String flags:[]' type=kotlin.String origin=null
+          other: GET_VAR 'VALUE_PARAMETER name:b index:1 type:kotlin.Any flags:[]' type=kotlin.Any origin=null
+  FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.String, b:kotlin.Int) returnType:kotlin.String flags:[]
+    VALUE_PARAMETER name:a index:0 type:kotlin.String flags:[]
+    VALUE_PARAMETER name:b index:1 type:kotlin.Int flags:[]
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test2(String, Int): String'
-        CALL 'plus(Any?): String' type=kotlin.String origin=PLUS
-          $this: CALL 'plus(Any?): String' type=kotlin.String origin=PLUS
-            $this: GET_VAR 'value-parameter a: String' type=kotlin.String origin=null
+      RETURN type=kotlin.Nothing from='FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.String, b:kotlin.Int) returnType:kotlin.String flags:[]'
+        CALL 'FUN IR_EXTERNAL_DECLARATION_STUB name:plus visibility:public modality:FINAL <> ($this:kotlin.String, other:kotlin.Any?) returnType:kotlin.String flags:[]' type=kotlin.String origin=PLUS
+          $this: CALL 'FUN IR_EXTERNAL_DECLARATION_STUB name:plus visibility:public modality:FINAL <> ($this:kotlin.String, other:kotlin.Any?) returnType:kotlin.String flags:[]' type=kotlin.String origin=PLUS
+            $this: GET_VAR 'VALUE_PARAMETER name:a index:0 type:kotlin.String flags:[]' type=kotlin.String origin=null
             other: CONST String type=kotlin.String value="+"
-          other: GET_VAR 'value-parameter b: Int' type=kotlin.Int origin=null
-  FUN name:test3 visibility:public modality:FINAL <> (a:kotlin.String, b:kotlin.Int) returnType:kotlin.String flags:
-    VALUE_PARAMETER name:a index:0 type:kotlin.String flags:
-    VALUE_PARAMETER name:b index:1 type:kotlin.Int flags:
+          other: GET_VAR 'VALUE_PARAMETER name:b index:1 type:kotlin.Int flags:[]' type=kotlin.Int origin=null
+  FUN name:test3 visibility:public modality:FINAL <> (a:kotlin.String, b:kotlin.Int) returnType:kotlin.String flags:[]
+    VALUE_PARAMETER name:a index:0 type:kotlin.String flags:[]
+    VALUE_PARAMETER name:b index:1 type:kotlin.Int flags:[]
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test3(String, Int): String'
-        CALL 'plus(Any?): String' type=kotlin.String origin=PLUS
-          $this: CALL 'plus(Any?): String' type=kotlin.String origin=PLUS
-            $this: CALL 'plus(Any?): String' type=kotlin.String origin=PLUS
-              $this: GET_VAR 'value-parameter a: String' type=kotlin.String origin=null
+      RETURN type=kotlin.Nothing from='FUN name:test3 visibility:public modality:FINAL <> (a:kotlin.String, b:kotlin.Int) returnType:kotlin.String flags:[]'
+        CALL 'FUN IR_EXTERNAL_DECLARATION_STUB name:plus visibility:public modality:FINAL <> ($this:kotlin.String, other:kotlin.Any?) returnType:kotlin.String flags:[]' type=kotlin.String origin=PLUS
+          $this: CALL 'FUN IR_EXTERNAL_DECLARATION_STUB name:plus visibility:public modality:FINAL <> ($this:kotlin.String, other:kotlin.Any?) returnType:kotlin.String flags:[]' type=kotlin.String origin=PLUS
+            $this: CALL 'FUN IR_EXTERNAL_DECLARATION_STUB name:plus visibility:public modality:FINAL <> ($this:kotlin.String, other:kotlin.Any?) returnType:kotlin.String flags:[]' type=kotlin.String origin=PLUS
+              $this: GET_VAR 'VALUE_PARAMETER name:a index:0 type:kotlin.String flags:[]' type=kotlin.String origin=null
               other: CONST String type=kotlin.String value="+"
-            other: CALL 'plus(Int): Int' type=kotlin.Int origin=PLUS
-              $this: GET_VAR 'value-parameter b: Int' type=kotlin.Int origin=null
+            other: CALL 'FUN IR_EXTERNAL_DECLARATION_STUB name:plus visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Int) returnType:kotlin.Int flags:[]' type=kotlin.Int origin=PLUS
+              $this: GET_VAR 'VALUE_PARAMETER name:b index:1 type:kotlin.Int flags:[]' type=kotlin.Int origin=null
               other: CONST Int type=kotlin.Int value=1
-          other: GET_VAR 'value-parameter a: String' type=kotlin.String origin=null
-
+          other: GET_VAR 'VALUE_PARAMETER name:a index:0 type:kotlin.String flags:[]' type=kotlin.String origin=null

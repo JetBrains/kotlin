@@ -1,38 +1,38 @@
 FILE fqName:<root> fileName:/builtinMap.kt
-  FUN name:plus visibility:public modality:FINAL <K1, V1> ($receiver:kotlin.collections.Map<out K1, V1>, pair:kotlin.Pair<K1, V1>) returnType:kotlin.collections.Map<K1, V1> flags:
+  FUN name:plus visibility:public modality:FINAL <K1, V1> ($receiver:kotlin.collections.Map<out <root>.plus.K1, <root>.plus.V1>, pair:kotlin.Pair<<root>.plus.K1, <root>.plus.V1>) returnType:kotlin.collections.Map<<root>.plus.K1, <root>.plus.V1> flags:[]
     TYPE_PARAMETER name:K1 index:0 variance: superTypes:[kotlin.Any?]
     TYPE_PARAMETER name:V1 index:1 variance: superTypes:[kotlin.Any?]
-    $receiver: VALUE_PARAMETER name:<this> type:kotlin.collections.Map<out K1, V1> flags:
-    VALUE_PARAMETER name:pair index:0 type:kotlin.Pair<K1, V1> flags:
+    $receiver: VALUE_PARAMETER name:<this> type:kotlin.collections.Map<out <root>.plus.K1, <root>.plus.V1> flags:[]
+    VALUE_PARAMETER name:pair index:0 type:kotlin.Pair<<root>.plus.K1, <root>.plus.V1> flags:[]
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='plus(Pair<K1, V1>) on Map<out K1, V1>: Map<K1, V1>'
-        WHEN type=kotlin.collections.Map<K1, V1> origin=IF
+      RETURN type=kotlin.Nothing from='FUN name:plus visibility:public modality:FINAL <K1, V1> ($receiver:kotlin.collections.Map<out <root>.plus.K1, <root>.plus.V1>, pair:kotlin.Pair<<root>.plus.K1, <root>.plus.V1>) returnType:kotlin.collections.Map<<root>.plus.K1, <root>.plus.V1> flags:[]'
+        WHEN type=kotlin.collections.Map<<root>.plus.K1, <root>.plus.V1> origin=IF
           BRANCH
-            if: CALL 'isEmpty(): Boolean' type=kotlin.Boolean origin=null
-              $this: GET_VAR 'this@plus: Map<out K1, V1>' type=kotlin.collections.Map<out K1, V1> origin=null
-            then: CALL 'mapOf(Pair<K, V>): Map<K, V>' type=kotlin.collections.Map<K1, V1> origin=null
-              <K>: K1
-              <V>: V1
-              pair: GET_VAR 'value-parameter pair: Pair<K1, V1>' type=kotlin.Pair<K1, V1> origin=null
+            if: CALL 'FUN IR_EXTERNAL_DECLARATION_STUB name:isEmpty visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<kotlin.collections.Map.K, kotlin.collections.Map.V>) returnType:kotlin.Boolean flags:[]' type=kotlin.Boolean origin=null
+              $this: GET_VAR 'VALUE_PARAMETER name:<this> type:kotlin.collections.Map<out <root>.plus.K1, <root>.plus.V1> flags:[]' type=kotlin.collections.Map<out <root>.plus.K1, <root>.plus.V1> origin=null
+            then: CALL 'FUN IR_EXTERNAL_DECLARATION_STUB name:mapOf visibility:public modality:FINAL <K, V> (pair:kotlin.Pair<kotlin.collections.mapOf.K, kotlin.collections.mapOf.V>) returnType:kotlin.collections.Map<kotlin.collections.mapOf.K, kotlin.collections.mapOf.V> flags:[]' type=kotlin.collections.Map<<root>.plus.K1, <root>.plus.V1> origin=null
+              <K>: <root>.plus.K1
+              <V>: <root>.plus.V1
+              pair: GET_VAR 'VALUE_PARAMETER name:pair index:0 type:kotlin.Pair<<root>.plus.K1, <root>.plus.V1> flags:[]' type=kotlin.Pair<<root>.plus.K1, <root>.plus.V1> origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
-            then: CALL 'apply(T.() -> Unit) on T: T' type=java.util.LinkedHashMap<K1?, V1?> origin=null
-              <T>: java.util.LinkedHashMap<K1?, V1?>
-              $receiver: CALL 'constructor LinkedHashMap((MutableMap<out K!, out V!>..Map<out K!, V!>?))' type=java.util.LinkedHashMap<K1?, V1?> origin=null
-                <K : Any!>: K1?
-                <V : Any!>: V1?
-                p0: GET_VAR 'this@plus: Map<out K1, V1>' type=kotlin.collections.Map<out K1, V1> origin=null
-              block: BLOCK type=@[CALL 'constructor ExtensionFunctionType()' type=kotlin.ExtensionFunctionType origin=null] kotlin.Function1<java.util.LinkedHashMap<K1?, V1?>, kotlin.Unit> origin=LAMBDA
-                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:java.util.LinkedHashMap<K1?, V1?>) returnType:kotlin.Unit flags:
-                  $receiver: VALUE_PARAMETER name:<this> type:java.util.LinkedHashMap<K1?, V1?> flags:
+            then: CALL 'FUN IR_EXTERNAL_DECLARATION_STUB name:apply visibility:public modality:FINAL <T> ($receiver:kotlin.apply.T, block:@[CALL 'CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> () returnType:kotlin.ExtensionFunctionType flags:[primary]' type=kotlin.ExtensionFunctionType origin=null] kotlin.Function1<kotlin.apply.T, kotlin.Unit>) returnType:kotlin.apply.T flags:[inline]' type=java.util.LinkedHashMap<<root>.plus.K1?, <root>.plus.V1?> origin=null
+              <T>: java.util.LinkedHashMap<<root>.plus.K1?, <root>.plus.V1?>
+              $receiver: CALL 'CONSTRUCTOR IR_EXTERNAL_JAVA_DECLARATION_STUB visibility:public <> (p0:kotlin.collections.Map<out java.util.LinkedHashMap.K?, java.util.LinkedHashMap.V?>?) returnType:java.util.LinkedHashMap<java.util.LinkedHashMap.K, java.util.LinkedHashMap.V> flags:[]' type=java.util.LinkedHashMap<<root>.plus.K1?, <root>.plus.V1?> origin=null
+                <K : Any!>: <root>.plus.K1?
+                <V : Any!>: <root>.plus.V1?
+                p0: GET_VAR 'VALUE_PARAMETER name:<this> type:kotlin.collections.Map<out <root>.plus.K1, <root>.plus.V1> flags:[]' type=kotlin.collections.Map<out <root>.plus.K1, <root>.plus.V1> origin=null
+              block: BLOCK type=@[CALL 'CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> () returnType:kotlin.ExtensionFunctionType flags:[primary]' type=kotlin.ExtensionFunctionType origin=null] kotlin.Function1<java.util.LinkedHashMap<<root>.plus.K1?, <root>.plus.V1?>, kotlin.Unit> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:java.util.LinkedHashMap<<root>.plus.K1?, <root>.plus.V1?>) returnType:kotlin.Unit flags:[]
+                  $receiver: VALUE_PARAMETER name:<this> type:java.util.LinkedHashMap<<root>.plus.K1?, <root>.plus.V1?> flags:[]
                   BLOCK_BODY
-                    RETURN type=kotlin.Nothing from='<anonymous>() on LinkedHashMap<K1!, V1!> /* = LinkedHashMap<K1!, V1!> */: Unit'
+                    RETURN type=kotlin.Nothing from='FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:java.util.LinkedHashMap<<root>.plus.K1?, <root>.plus.V1?>) returnType:kotlin.Unit flags:[]'
                       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-                        typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
-                        CALL 'put(K, V): V?' type=V1? origin=null
-                          $this: GET_VAR 'this@<anonymous>: LinkedHashMap<(K1..K1?), (V1..V1?)>' type=java.util.LinkedHashMap<K1?, V1?> origin=null
-                          key: CALL '<get-first>(): A' type=K1 origin=GET_PROPERTY
-                            $this: GET_VAR 'value-parameter pair: Pair<K1, V1>' type=kotlin.Pair<K1, V1> origin=null
-                          value: CALL '<get-second>(): B' type=V1 origin=GET_PROPERTY
-                            $this: GET_VAR 'value-parameter pair: Pair<K1, V1>' type=kotlin.Pair<K1, V1> origin=null
-                FUNCTION_REFERENCE '<anonymous>() on LinkedHashMap<K1!, V1!> /* = LinkedHashMap<K1!, V1!> */: Unit' type=@[CALL 'constructor ExtensionFunctionType()' type=kotlin.ExtensionFunctionType origin=null] kotlin.Function1<java.util.LinkedHashMap<K1?, V1?>, kotlin.Unit> origin=LAMBDA
+                        typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public flags:[] superTypes:[kotlin.Any]
+                        CALL 'FUN FAKE_OVERRIDE name:put visibility:public modality:OPEN <> ($this:java.util.HashMap<java.util.LinkedHashMap.K?, java.util.LinkedHashMap.V?>, key:java.util.LinkedHashMap.K, value:java.util.LinkedHashMap.V) returnType:java.util.LinkedHashMap.V? flags:[]' type=<root>.plus.V1? origin=null
+                          $this: GET_VAR 'VALUE_PARAMETER name:<this> type:java.util.LinkedHashMap<<root>.plus.K1?, <root>.plus.V1?> flags:[]' type=java.util.LinkedHashMap<<root>.plus.K1?, <root>.plus.V1?> origin=null
+                          key: CALL 'FUN IR_EXTERNAL_DECLARATION_STUB name:<get-first> visibility:public modality:FINAL <> ($this:kotlin.Pair<kotlin.Pair.A, kotlin.Pair.B>) returnType:kotlin.Pair.A flags:[]' type=<root>.plus.K1 origin=GET_PROPERTY
+                            $this: GET_VAR 'VALUE_PARAMETER name:pair index:0 type:kotlin.Pair<<root>.plus.K1, <root>.plus.V1> flags:[]' type=kotlin.Pair<<root>.plus.K1, <root>.plus.V1> origin=null
+                          value: CALL 'FUN IR_EXTERNAL_DECLARATION_STUB name:<get-second> visibility:public modality:FINAL <> ($this:kotlin.Pair<kotlin.Pair.A, kotlin.Pair.B>) returnType:kotlin.Pair.B flags:[]' type=<root>.plus.V1 origin=GET_PROPERTY
+                            $this: GET_VAR 'VALUE_PARAMETER name:pair index:0 type:kotlin.Pair<<root>.plus.K1, <root>.plus.V1> flags:[]' type=kotlin.Pair<<root>.plus.K1, <root>.plus.V1> origin=null
+                FUNCTION_REFERENCE 'FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:java.util.LinkedHashMap<<root>.plus.K1?, <root>.plus.V1?>) returnType:kotlin.Unit flags:[]' type=@[CALL 'CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> () returnType:kotlin.ExtensionFunctionType flags:[primary]' type=kotlin.ExtensionFunctionType origin=null] kotlin.Function1<java.util.LinkedHashMap<<root>.plus.K1?, <root>.plus.V1?>, kotlin.Unit> origin=LAMBDA

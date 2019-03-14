@@ -1,16 +1,16 @@
 FILE fqName:<root> fileName:/extensionLambda.kt
-  FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Int flags:
+  FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Int flags:[]
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test1(): Int'
-        CALL 'run(T.() -> R) on T: R' type=kotlin.Int origin=null
+      RETURN type=kotlin.Nothing from='FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Int flags:[]'
+        CALL 'FUN IR_EXTERNAL_DECLARATION_STUB name:run visibility:public modality:FINAL <T, R> ($receiver:kotlin.run.T, block:@[CALL 'CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> () returnType:kotlin.ExtensionFunctionType flags:[primary]' type=kotlin.ExtensionFunctionType origin=null] kotlin.Function1<kotlin.run.T, kotlin.run.R>) returnType:kotlin.run.R flags:[inline]' type=kotlin.Int origin=null
           <T>: kotlin.String
           <R>: kotlin.Int
           $receiver: CONST String type=kotlin.String value="42"
-          block: BLOCK type=@[CALL 'constructor ExtensionFunctionType()' type=kotlin.ExtensionFunctionType origin=null] kotlin.Function1<kotlin.String, kotlin.Int> origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:kotlin.String) returnType:kotlin.Int flags:
-              $receiver: VALUE_PARAMETER name:<this> type:kotlin.String flags:
+          block: BLOCK type=@[CALL 'CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> () returnType:kotlin.ExtensionFunctionType flags:[primary]' type=kotlin.ExtensionFunctionType origin=null] kotlin.Function1<kotlin.String, kotlin.Int> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:kotlin.String) returnType:kotlin.Int flags:[]
+              $receiver: VALUE_PARAMETER name:<this> type:kotlin.String flags:[]
               BLOCK_BODY
-                RETURN type=kotlin.Nothing from='<anonymous>() on String: Int'
-                  CALL '<get-length>(): Int' type=kotlin.Int origin=GET_PROPERTY
-                    $this: GET_VAR 'this@<anonymous>: String' type=kotlin.String origin=null
-            FUNCTION_REFERENCE '<anonymous>() on String: Int' type=@[CALL 'constructor ExtensionFunctionType()' type=kotlin.ExtensionFunctionType origin=null] kotlin.Function1<kotlin.String, kotlin.Int> origin=LAMBDA
+                RETURN type=kotlin.Nothing from='FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:kotlin.String) returnType:kotlin.Int flags:[]'
+                  CALL 'FUN IR_EXTERNAL_DECLARATION_STUB name:<get-length> visibility:public modality:OPEN <> ($this:kotlin.String) returnType:kotlin.Int flags:[]' type=kotlin.Int origin=GET_PROPERTY
+                    $this: GET_VAR 'VALUE_PARAMETER name:<this> type:kotlin.String flags:[]' type=kotlin.String origin=null
+            FUNCTION_REFERENCE 'FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:kotlin.String) returnType:kotlin.Int flags:[]' type=@[CALL 'CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> () returnType:kotlin.ExtensionFunctionType flags:[primary]' type=kotlin.ExtensionFunctionType origin=null] kotlin.Function1<kotlin.String, kotlin.Int> origin=LAMBDA

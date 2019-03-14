@@ -1,108 +1,108 @@
 FILE fqName:<root> fileName:/when.kt
-  CLASS OBJECT name:A modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:A flags:
-    CONSTRUCTOR visibility:private <> () returnType:A flags:primary
+  CLASS OBJECT name:A modality:FINAL visibility:public flags:[] superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A flags:[]
+    CONSTRUCTOR visibility:private <> () returnType:<root>.A flags:[primary]
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
-        INSTANCE_INITIALIZER_CALL classDescriptor='A'
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+        DELEGATING_CONSTRUCTOR_CALL 'CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> () returnType:kotlin.Any flags:[primary]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:A modality:FINAL visibility:public flags:[] superTypes:[kotlin.Any]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:[]
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:[]
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:[]
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:[]
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:[]
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:[]
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:[]
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:[]
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-  FUN name:testWithSubject visibility:public modality:FINAL <> (x:kotlin.Any?) returnType:kotlin.String flags:
-    VALUE_PARAMETER name:x index:0 type:kotlin.Any? flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:[]
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:[]
+  FUN name:testWithSubject visibility:public modality:FINAL <> (x:kotlin.Any?) returnType:kotlin.String flags:[]
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any? flags:[]
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='testWithSubject(Any?): String'
+      RETURN type=kotlin.Nothing from='FUN name:testWithSubject visibility:public modality:FINAL <> (x:kotlin.Any?) returnType:kotlin.String flags:[]'
         BLOCK type=kotlin.String origin=WHEN
-          VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:kotlin.Any? flags:val
-            GET_VAR 'value-parameter x: Any?' type=kotlin.Any? origin=null
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:kotlin.Any? flags:[val]
+            GET_VAR 'VALUE_PARAMETER name:x index:0 type:kotlin.Any? flags:[]' type=kotlin.Any? origin=null
           WHEN type=kotlin.String origin=WHEN
             BRANCH
-              if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
-                arg0: GET_VAR 'tmp0_subject: Any?' type=kotlin.Any? origin=null
+              if: CALL 'FUN IR_BUILTINS_STUB name:EQEQ visibility:public modality:FINAL <> (arg0:kotlin.Any?, arg1:kotlin.Any?) returnType:kotlin.Boolean flags:[]' type=kotlin.Boolean origin=EQEQ
+                arg0: GET_VAR 'VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:kotlin.Any? flags:[val]' type=kotlin.Any? origin=null
                 arg1: CONST Null type=kotlin.Nothing? value=null
               then: CONST String type=kotlin.String value="null"
             BRANCH
-              if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
-                arg0: GET_VAR 'tmp0_subject: Any?' type=kotlin.Any? origin=null
-                arg1: GET_OBJECT 'A' type=A
+              if: CALL 'FUN IR_BUILTINS_STUB name:EQEQ visibility:public modality:FINAL <> (arg0:kotlin.Any?, arg1:kotlin.Any?) returnType:kotlin.Boolean flags:[]' type=kotlin.Boolean origin=EQEQ
+                arg0: GET_VAR 'VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:kotlin.Any? flags:[val]' type=kotlin.Any? origin=null
+                arg1: GET_OBJECT 'CLASS OBJECT name:A modality:FINAL visibility:public flags:[] superTypes:[kotlin.Any]' type=<root>.A
               then: CONST String type=kotlin.String value="A"
             BRANCH
               if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.String
-                typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:String modality:FINAL visibility:public flags: superTypes:[kotlin.Comparable<kotlin.String>; kotlin.CharSequence; java.io.Serializable]
-                GET_VAR 'tmp0_subject: Any?' type=kotlin.Any? origin=null
+                typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:String modality:FINAL visibility:public flags:[] superTypes:[kotlin.Comparable<kotlin.String>; kotlin.CharSequence; java.io.Serializable]
+                GET_VAR 'VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:kotlin.Any? flags:[val]' type=kotlin.Any? origin=null
               then: CONST String type=kotlin.String value="String"
             BRANCH
-              if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCL
+              if: CALL 'FUN IR_BUILTINS_STUB name:NOT visibility:public modality:FINAL <> (arg0:kotlin.Boolean) returnType:kotlin.Boolean flags:[]' type=kotlin.Boolean origin=EXCL
                 arg0: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Number
-                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Number modality:ABSTRACT visibility:public flags: superTypes:[kotlin.Any; java.io.Serializable]
-                  GET_VAR 'tmp0_subject: Any?' type=kotlin.Any? origin=null
+                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Number modality:ABSTRACT visibility:public flags:[] superTypes:[kotlin.Any; java.io.Serializable]
+                  GET_VAR 'VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:kotlin.Any? flags:[val]' type=kotlin.Any? origin=null
               then: CONST String type=kotlin.String value="!Number"
             BRANCH
-              if: CALL 'contains(T) on Iterable<T>: Boolean' type=kotlin.Boolean origin=IN
+              if: CALL 'FUN IR_EXTERNAL_DECLARATION_STUB name:contains visibility:public modality:FINAL <T> ($receiver:kotlin.collections.Iterable<kotlin.collections.contains.T>, element:kotlin.collections.contains.T) returnType:kotlin.Boolean flags:[]' type=kotlin.Boolean origin=IN
                 <T>: kotlin.Number
-                $receiver: CALL 'setOf(): Set<T>' type=kotlin.collections.Set<kotlin.Nothing> origin=null
+                $receiver: CALL 'FUN IR_EXTERNAL_DECLARATION_STUB name:setOf visibility:public modality:FINAL <T> () returnType:kotlin.collections.Set<kotlin.collections.setOf.T> flags:[inline]' type=kotlin.collections.Set<kotlin.Nothing> origin=null
                   <T>: kotlin.Nothing
                 element: TYPE_OP type=kotlin.Number origin=IMPLICIT_CAST typeOperand=kotlin.Number
-                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Number modality:ABSTRACT visibility:public flags: superTypes:[kotlin.Any; java.io.Serializable]
-                  GET_VAR 'tmp0_subject: Any?' type=kotlin.Any? origin=null
+                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Number modality:ABSTRACT visibility:public flags:[] superTypes:[kotlin.Any; java.io.Serializable]
+                  GET_VAR 'VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:kotlin.Any? flags:[val]' type=kotlin.Any? origin=null
               then: CONST String type=kotlin.String value="nothingness?"
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: CONST String type=kotlin.String value="something"
-  FUN name:test visibility:public modality:FINAL <> (x:kotlin.Any?) returnType:kotlin.String flags:
-    VALUE_PARAMETER name:x index:0 type:kotlin.Any? flags:
+  FUN name:test visibility:public modality:FINAL <> (x:kotlin.Any?) returnType:kotlin.String flags:[]
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any? flags:[]
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test(Any?): String'
+      RETURN type=kotlin.Nothing from='FUN name:test visibility:public modality:FINAL <> (x:kotlin.Any?) returnType:kotlin.String flags:[]'
         WHEN type=kotlin.String origin=WHEN
           BRANCH
-            if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
-              arg0: GET_VAR 'value-parameter x: Any?' type=kotlin.Any? origin=null
+            if: CALL 'FUN IR_BUILTINS_STUB name:EQEQ visibility:public modality:FINAL <> (arg0:kotlin.Any?, arg1:kotlin.Any?) returnType:kotlin.Boolean flags:[]' type=kotlin.Boolean origin=EQEQ
+              arg0: GET_VAR 'VALUE_PARAMETER name:x index:0 type:kotlin.Any? flags:[]' type=kotlin.Any? origin=null
               arg1: CONST Null type=kotlin.Nothing? value=null
             then: CONST String type=kotlin.String value="null"
           BRANCH
-            if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
-              arg0: GET_VAR 'value-parameter x: Any?' type=kotlin.Any? origin=null
-              arg1: GET_OBJECT 'A' type=A
+            if: CALL 'FUN IR_BUILTINS_STUB name:EQEQ visibility:public modality:FINAL <> (arg0:kotlin.Any?, arg1:kotlin.Any?) returnType:kotlin.Boolean flags:[]' type=kotlin.Boolean origin=EQEQ
+              arg0: GET_VAR 'VALUE_PARAMETER name:x index:0 type:kotlin.Any? flags:[]' type=kotlin.Any? origin=null
+              arg1: GET_OBJECT 'CLASS OBJECT name:A modality:FINAL visibility:public flags:[] superTypes:[kotlin.Any]' type=<root>.A
             then: CONST String type=kotlin.String value="A"
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.String
-              typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:String modality:FINAL visibility:public flags: superTypes:[kotlin.Comparable<kotlin.String>; kotlin.CharSequence; java.io.Serializable]
-              GET_VAR 'value-parameter x: Any?' type=kotlin.Any? origin=null
+              typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:String modality:FINAL visibility:public flags:[] superTypes:[kotlin.Comparable<kotlin.String>; kotlin.CharSequence; java.io.Serializable]
+              GET_VAR 'VALUE_PARAMETER name:x index:0 type:kotlin.Any? flags:[]' type=kotlin.Any? origin=null
             then: CONST String type=kotlin.String value="String"
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.Number
-              typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Number modality:ABSTRACT visibility:public flags: superTypes:[kotlin.Any; java.io.Serializable]
-              GET_VAR 'value-parameter x: Any?' type=kotlin.Any? origin=null
+              typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Number modality:ABSTRACT visibility:public flags:[] superTypes:[kotlin.Any; java.io.Serializable]
+              GET_VAR 'VALUE_PARAMETER name:x index:0 type:kotlin.Any? flags:[]' type=kotlin.Any? origin=null
             then: CONST String type=kotlin.String value="!Number"
           BRANCH
-            if: CALL 'contains(T) on Iterable<T>: Boolean' type=kotlin.Boolean origin=IN
+            if: CALL 'FUN IR_EXTERNAL_DECLARATION_STUB name:contains visibility:public modality:FINAL <T> ($receiver:kotlin.collections.Iterable<kotlin.collections.contains.T>, element:kotlin.collections.contains.T) returnType:kotlin.Boolean flags:[]' type=kotlin.Boolean origin=IN
               <T>: kotlin.Number
-              $receiver: CALL 'setOf(): Set<T>' type=kotlin.collections.Set<kotlin.Nothing> origin=null
+              $receiver: CALL 'FUN IR_EXTERNAL_DECLARATION_STUB name:setOf visibility:public modality:FINAL <T> () returnType:kotlin.collections.Set<kotlin.collections.setOf.T> flags:[inline]' type=kotlin.collections.Set<kotlin.Nothing> origin=null
                 <T>: kotlin.Nothing
               element: TYPE_OP type=kotlin.Number origin=IMPLICIT_CAST typeOperand=kotlin.Number
-                typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Number modality:ABSTRACT visibility:public flags: superTypes:[kotlin.Any; java.io.Serializable]
-                GET_VAR 'value-parameter x: Any?' type=kotlin.Any? origin=null
+                typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Number modality:ABSTRACT visibility:public flags:[] superTypes:[kotlin.Any; java.io.Serializable]
+                GET_VAR 'VALUE_PARAMETER name:x index:0 type:kotlin.Any? flags:[]' type=kotlin.Any? origin=null
             then: CONST String type=kotlin.String value="nothingness?"
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST String type=kotlin.String value="something"
-  FUN name:testComma visibility:public modality:FINAL <> (x:kotlin.Int) returnType:kotlin.String flags:
-    VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
+  FUN name:testComma visibility:public modality:FINAL <> (x:kotlin.Int) returnType:kotlin.String flags:[]
+    VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:[]
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='testComma(Int): String'
+      RETURN type=kotlin.Nothing from='FUN name:testComma visibility:public modality:FINAL <> (x:kotlin.Int) returnType:kotlin.String flags:[]'
         BLOCK type=kotlin.String origin=WHEN
-          VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:kotlin.Int flags:val
-            GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=null
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:kotlin.Int flags:[val]
+            GET_VAR 'VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:[]' type=kotlin.Int origin=null
           WHEN type=kotlin.String origin=WHEN
             BRANCH
               if: WHEN type=kotlin.Boolean origin=WHEN_COMMA
@@ -111,26 +111,26 @@ FILE fqName:<root> fileName:/when.kt
                     BRANCH
                       if: WHEN type=kotlin.Boolean origin=WHEN_COMMA
                         BRANCH
-                          if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
-                            arg0: GET_VAR 'tmp0_subject: Int' type=kotlin.Int origin=null
+                          if: CALL 'FUN IR_BUILTINS_STUB name:EQEQ visibility:public modality:FINAL <> (arg0:kotlin.Any?, arg1:kotlin.Any?) returnType:kotlin.Boolean flags:[]' type=kotlin.Boolean origin=EQEQ
+                            arg0: GET_VAR 'VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:kotlin.Int flags:[val]' type=kotlin.Int origin=null
                             arg1: CONST Int type=kotlin.Int value=1
                           then: CONST Boolean type=kotlin.Boolean value=true
                         BRANCH
                           if: CONST Boolean type=kotlin.Boolean value=true
-                          then: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
-                            arg0: GET_VAR 'tmp0_subject: Int' type=kotlin.Int origin=null
+                          then: CALL 'FUN IR_BUILTINS_STUB name:EQEQ visibility:public modality:FINAL <> (arg0:kotlin.Any?, arg1:kotlin.Any?) returnType:kotlin.Boolean flags:[]' type=kotlin.Boolean origin=EQEQ
+                            arg0: GET_VAR 'VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:kotlin.Int flags:[val]' type=kotlin.Int origin=null
                             arg1: CONST Int type=kotlin.Int value=2
                       then: CONST Boolean type=kotlin.Boolean value=true
                     BRANCH
                       if: CONST Boolean type=kotlin.Boolean value=true
-                      then: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
-                        arg0: GET_VAR 'tmp0_subject: Int' type=kotlin.Int origin=null
+                      then: CALL 'FUN IR_BUILTINS_STUB name:EQEQ visibility:public modality:FINAL <> (arg0:kotlin.Any?, arg1:kotlin.Any?) returnType:kotlin.Boolean flags:[]' type=kotlin.Boolean origin=EQEQ
+                        arg0: GET_VAR 'VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:kotlin.Int flags:[val]' type=kotlin.Int origin=null
                         arg1: CONST Int type=kotlin.Int value=3
                   then: CONST Boolean type=kotlin.Boolean value=true
                 BRANCH
                   if: CONST Boolean type=kotlin.Boolean value=true
-                  then: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
-                    arg0: GET_VAR 'tmp0_subject: Int' type=kotlin.Int origin=null
+                  then: CALL 'FUN IR_BUILTINS_STUB name:EQEQ visibility:public modality:FINAL <> (arg0:kotlin.Any?, arg1:kotlin.Any?) returnType:kotlin.Boolean flags:[]' type=kotlin.Boolean origin=EQEQ
+                    arg0: GET_VAR 'VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:kotlin.Int flags:[val]' type=kotlin.Int origin=null
                     arg1: CONST Int type=kotlin.Int value=4
               then: CONST String type=kotlin.String value="1234"
             BRANCH
@@ -138,33 +138,33 @@ FILE fqName:<root> fileName:/when.kt
                 BRANCH
                   if: WHEN type=kotlin.Boolean origin=WHEN_COMMA
                     BRANCH
-                      if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
-                        arg0: GET_VAR 'tmp0_subject: Int' type=kotlin.Int origin=null
+                      if: CALL 'FUN IR_BUILTINS_STUB name:EQEQ visibility:public modality:FINAL <> (arg0:kotlin.Any?, arg1:kotlin.Any?) returnType:kotlin.Boolean flags:[]' type=kotlin.Boolean origin=EQEQ
+                        arg0: GET_VAR 'VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:kotlin.Int flags:[val]' type=kotlin.Int origin=null
                         arg1: CONST Int type=kotlin.Int value=5
                       then: CONST Boolean type=kotlin.Boolean value=true
                     BRANCH
                       if: CONST Boolean type=kotlin.Boolean value=true
-                      then: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
-                        arg0: GET_VAR 'tmp0_subject: Int' type=kotlin.Int origin=null
+                      then: CALL 'FUN IR_BUILTINS_STUB name:EQEQ visibility:public modality:FINAL <> (arg0:kotlin.Any?, arg1:kotlin.Any?) returnType:kotlin.Boolean flags:[]' type=kotlin.Boolean origin=EQEQ
+                        arg0: GET_VAR 'VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:kotlin.Int flags:[val]' type=kotlin.Int origin=null
                         arg1: CONST Int type=kotlin.Int value=6
                   then: CONST Boolean type=kotlin.Boolean value=true
                 BRANCH
                   if: CONST Boolean type=kotlin.Boolean value=true
-                  then: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
-                    arg0: GET_VAR 'tmp0_subject: Int' type=kotlin.Int origin=null
+                  then: CALL 'FUN IR_BUILTINS_STUB name:EQEQ visibility:public modality:FINAL <> (arg0:kotlin.Any?, arg1:kotlin.Any?) returnType:kotlin.Boolean flags:[]' type=kotlin.Boolean origin=EQEQ
+                    arg0: GET_VAR 'VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:kotlin.Int flags:[val]' type=kotlin.Int origin=null
                     arg1: CONST Int type=kotlin.Int value=7
               then: CONST String type=kotlin.String value="567"
             BRANCH
               if: WHEN type=kotlin.Boolean origin=WHEN_COMMA
                 BRANCH
-                  if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
-                    arg0: GET_VAR 'tmp0_subject: Int' type=kotlin.Int origin=null
+                  if: CALL 'FUN IR_BUILTINS_STUB name:EQEQ visibility:public modality:FINAL <> (arg0:kotlin.Any?, arg1:kotlin.Any?) returnType:kotlin.Boolean flags:[]' type=kotlin.Boolean origin=EQEQ
+                    arg0: GET_VAR 'VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:kotlin.Int flags:[val]' type=kotlin.Int origin=null
                     arg1: CONST Int type=kotlin.Int value=8
                   then: CONST Boolean type=kotlin.Boolean value=true
                 BRANCH
                   if: CONST Boolean type=kotlin.Boolean value=true
-                  then: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
-                    arg0: GET_VAR 'tmp0_subject: Int' type=kotlin.Int origin=null
+                  then: CALL 'FUN IR_BUILTINS_STUB name:EQEQ visibility:public modality:FINAL <> (arg0:kotlin.Any?, arg1:kotlin.Any?) returnType:kotlin.Boolean flags:[]' type=kotlin.Boolean origin=EQEQ
+                    arg0: GET_VAR 'VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:kotlin.Int flags:[val]' type=kotlin.Int origin=null
                     arg1: CONST Int type=kotlin.Int value=9
               then: CONST String type=kotlin.String value="89"
             BRANCH

@@ -1,58 +1,57 @@
 FILE fqName:<root> fileName:/arrayAugmentedAssignment2.kt
-  CLASS INTERFACE name:IA modality:ABSTRACT visibility:public flags: superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:IA flags:
-    FUN name:get visibility:public modality:ABSTRACT <> ($this:IA, index:kotlin.String) returnType:kotlin.Int flags:
-      $this: VALUE_PARAMETER name:<this> type:IA flags:
-      VALUE_PARAMETER name:index index:0 type:kotlin.String flags:
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+  CLASS INTERFACE name:IA modality:ABSTRACT visibility:public flags:[] superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IA flags:[]
+    FUN name:get visibility:public modality:ABSTRACT <> ($this:<root>.IA, index:kotlin.String) returnType:kotlin.Int flags:[]
+      $this: VALUE_PARAMETER name:<this> type:<root>.IA flags:[]
+      VALUE_PARAMETER name:index index:0 type:kotlin.String flags:[]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:[]
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:[]
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:[]
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:[]
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:[]
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:[]
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:[]
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:[]
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-  CLASS INTERFACE name:IB modality:ABSTRACT visibility:public flags: superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:IB flags:
-    FUN name:set visibility:public modality:ABSTRACT <> ($this:IB, $receiver:IA, index:kotlin.String, value:kotlin.Int) returnType:kotlin.Unit flags:
-      $this: VALUE_PARAMETER name:<this> type:IB flags:
-      $receiver: VALUE_PARAMETER name:<this> type:IA flags:
-      VALUE_PARAMETER name:index index:0 type:kotlin.String flags:
-      VALUE_PARAMETER name:value index:1 type:kotlin.Int flags:
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:[]
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:[]
+  CLASS INTERFACE name:IB modality:ABSTRACT visibility:public flags:[] superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IB flags:[]
+    FUN name:set visibility:public modality:ABSTRACT <> ($this:<root>.IB, $receiver:<root>.IA, index:kotlin.String, value:kotlin.Int) returnType:kotlin.Unit flags:[]
+      $this: VALUE_PARAMETER name:<this> type:<root>.IB flags:[]
+      $receiver: VALUE_PARAMETER name:<this> type:<root>.IA flags:[]
+      VALUE_PARAMETER name:index index:0 type:kotlin.String flags:[]
+      VALUE_PARAMETER name:value index:1 type:kotlin.Int flags:[]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:[]
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:[]
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:[]
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:[]
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:[]
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:[]
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:[]
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:[]
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-  FUN name:test visibility:public modality:FINAL <> ($receiver:IB, a:IA) returnType:kotlin.Unit flags:
-    $receiver: VALUE_PARAMETER name:<this> type:IB flags:
-    VALUE_PARAMETER name:a index:0 type:IA flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:[]
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:[]
+  FUN name:test visibility:public modality:FINAL <> ($receiver:<root>.IB, a:<root>.IA) returnType:kotlin.Unit flags:[]
+    $receiver: VALUE_PARAMETER name:<this> type:<root>.IB flags:[]
+    VALUE_PARAMETER name:a index:0 type:<root>.IA flags:[]
     BLOCK_BODY
       BLOCK type=kotlin.Unit origin=PLUSEQ
-        VAR IR_TEMPORARY_VARIABLE name:tmp0_array type:IA flags:val
-          GET_VAR 'value-parameter a: IA' type=IA origin=null
-        VAR IR_TEMPORARY_VARIABLE name:tmp1_index0 type:kotlin.String flags:val
+        VAR IR_TEMPORARY_VARIABLE name:tmp0_array type:<root>.IA flags:[val]
+          GET_VAR 'VALUE_PARAMETER name:a index:0 type:<root>.IA flags:[]' type=<root>.IA origin=null
+        VAR IR_TEMPORARY_VARIABLE name:tmp1_index0 type:kotlin.String flags:[val]
           CONST String type=kotlin.String value=""
-        CALL 'set(String, Int) on IA: Unit' type=kotlin.Unit origin=PLUSEQ
-          $this: GET_VAR 'this@test: IB' type=IB origin=null
-          $receiver: GET_VAR 'tmp0_array: IA' type=IA origin=null
-          index: GET_VAR 'tmp1_index0: String' type=kotlin.String origin=null
-          value: CALL 'plus(Int): Int' type=kotlin.Int origin=PLUSEQ
-            $this: CALL 'get(String): Int' type=kotlin.Int origin=PLUSEQ
-              $this: GET_VAR 'tmp0_array: IA' type=IA origin=null
-              index: GET_VAR 'tmp1_index0: String' type=kotlin.String origin=null
+        CALL 'FUN name:set visibility:public modality:ABSTRACT <> ($this:<root>.IB, $receiver:<root>.IA, index:kotlin.String, value:kotlin.Int) returnType:kotlin.Unit flags:[]' type=kotlin.Unit origin=PLUSEQ
+          $this: GET_VAR 'VALUE_PARAMETER name:<this> type:<root>.IB flags:[]' type=<root>.IB origin=null
+          $receiver: GET_VAR 'VAR IR_TEMPORARY_VARIABLE name:tmp0_array type:<root>.IA flags:[val]' type=<root>.IA origin=null
+          index: GET_VAR 'VAR IR_TEMPORARY_VARIABLE name:tmp1_index0 type:kotlin.String flags:[val]' type=kotlin.String origin=null
+          value: CALL 'FUN IR_EXTERNAL_DECLARATION_STUB name:plus visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Int) returnType:kotlin.Int flags:[]' type=kotlin.Int origin=PLUSEQ
+            $this: CALL 'FUN name:get visibility:public modality:ABSTRACT <> ($this:<root>.IA, index:kotlin.String) returnType:kotlin.Int flags:[]' type=kotlin.Int origin=PLUSEQ
+              $this: GET_VAR 'VAR IR_TEMPORARY_VARIABLE name:tmp0_array type:<root>.IA flags:[val]' type=<root>.IA origin=null
+              index: GET_VAR 'VAR IR_TEMPORARY_VARIABLE name:tmp1_index0 type:kotlin.String flags:[val]' type=kotlin.String origin=null
             other: CONST Int type=kotlin.Int value=42
-

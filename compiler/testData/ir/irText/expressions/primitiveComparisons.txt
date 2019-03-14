@@ -1,210 +1,209 @@
 FILE fqName:<root> fileName:/primitiveComparisons.kt
-  FUN name:btest1 visibility:public modality:FINAL <> (a:kotlin.Byte, b:kotlin.Byte) returnType:kotlin.Boolean flags:
-    VALUE_PARAMETER name:a index:0 type:kotlin.Byte flags:
-    VALUE_PARAMETER name:b index:1 type:kotlin.Byte flags:
+  FUN name:btest1 visibility:public modality:FINAL <> (a:kotlin.Byte, b:kotlin.Byte) returnType:kotlin.Boolean flags:[]
+    VALUE_PARAMETER name:a index:0 type:kotlin.Byte flags:[]
+    VALUE_PARAMETER name:b index:1 type:kotlin.Byte flags:[]
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='btest1(Byte, Byte): Boolean'
-        CALL 'greater(Int, Int): Boolean' type=kotlin.Boolean origin=GT
-          arg0: CALL 'toInt(): Int' type=kotlin.Int origin=null
-            $this: GET_VAR 'value-parameter a: Byte' type=kotlin.Byte origin=null
-          arg1: CALL 'toInt(): Int' type=kotlin.Int origin=null
-            $this: GET_VAR 'value-parameter b: Byte' type=kotlin.Byte origin=null
-  FUN name:btest2 visibility:public modality:FINAL <> (a:kotlin.Byte, b:kotlin.Byte) returnType:kotlin.Boolean flags:
-    VALUE_PARAMETER name:a index:0 type:kotlin.Byte flags:
-    VALUE_PARAMETER name:b index:1 type:kotlin.Byte flags:
+      RETURN type=kotlin.Nothing from='FUN name:btest1 visibility:public modality:FINAL <> (a:kotlin.Byte, b:kotlin.Byte) returnType:kotlin.Boolean flags:[]'
+        CALL 'FUN IR_BUILTINS_STUB name:greater visibility:public modality:FINAL <> (arg0:kotlin.Int, arg1:kotlin.Int) returnType:kotlin.Boolean flags:[]' type=kotlin.Boolean origin=GT
+          arg0: CALL 'FUN IR_EXTERNAL_DECLARATION_STUB name:toInt visibility:public modality:OPEN <> ($this:kotlin.Byte) returnType:kotlin.Int flags:[]' type=kotlin.Int origin=null
+            $this: GET_VAR 'VALUE_PARAMETER name:a index:0 type:kotlin.Byte flags:[]' type=kotlin.Byte origin=null
+          arg1: CALL 'FUN IR_EXTERNAL_DECLARATION_STUB name:toInt visibility:public modality:OPEN <> ($this:kotlin.Byte) returnType:kotlin.Int flags:[]' type=kotlin.Int origin=null
+            $this: GET_VAR 'VALUE_PARAMETER name:b index:1 type:kotlin.Byte flags:[]' type=kotlin.Byte origin=null
+  FUN name:btest2 visibility:public modality:FINAL <> (a:kotlin.Byte, b:kotlin.Byte) returnType:kotlin.Boolean flags:[]
+    VALUE_PARAMETER name:a index:0 type:kotlin.Byte flags:[]
+    VALUE_PARAMETER name:b index:1 type:kotlin.Byte flags:[]
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='btest2(Byte, Byte): Boolean'
-        CALL 'less(Int, Int): Boolean' type=kotlin.Boolean origin=LT
-          arg0: CALL 'toInt(): Int' type=kotlin.Int origin=null
-            $this: GET_VAR 'value-parameter a: Byte' type=kotlin.Byte origin=null
-          arg1: CALL 'toInt(): Int' type=kotlin.Int origin=null
-            $this: GET_VAR 'value-parameter b: Byte' type=kotlin.Byte origin=null
-  FUN name:btest3 visibility:public modality:FINAL <> (a:kotlin.Byte, b:kotlin.Byte) returnType:kotlin.Boolean flags:
-    VALUE_PARAMETER name:a index:0 type:kotlin.Byte flags:
-    VALUE_PARAMETER name:b index:1 type:kotlin.Byte flags:
+      RETURN type=kotlin.Nothing from='FUN name:btest2 visibility:public modality:FINAL <> (a:kotlin.Byte, b:kotlin.Byte) returnType:kotlin.Boolean flags:[]'
+        CALL 'FUN IR_BUILTINS_STUB name:less visibility:public modality:FINAL <> (arg0:kotlin.Int, arg1:kotlin.Int) returnType:kotlin.Boolean flags:[]' type=kotlin.Boolean origin=LT
+          arg0: CALL 'FUN IR_EXTERNAL_DECLARATION_STUB name:toInt visibility:public modality:OPEN <> ($this:kotlin.Byte) returnType:kotlin.Int flags:[]' type=kotlin.Int origin=null
+            $this: GET_VAR 'VALUE_PARAMETER name:a index:0 type:kotlin.Byte flags:[]' type=kotlin.Byte origin=null
+          arg1: CALL 'FUN IR_EXTERNAL_DECLARATION_STUB name:toInt visibility:public modality:OPEN <> ($this:kotlin.Byte) returnType:kotlin.Int flags:[]' type=kotlin.Int origin=null
+            $this: GET_VAR 'VALUE_PARAMETER name:b index:1 type:kotlin.Byte flags:[]' type=kotlin.Byte origin=null
+  FUN name:btest3 visibility:public modality:FINAL <> (a:kotlin.Byte, b:kotlin.Byte) returnType:kotlin.Boolean flags:[]
+    VALUE_PARAMETER name:a index:0 type:kotlin.Byte flags:[]
+    VALUE_PARAMETER name:b index:1 type:kotlin.Byte flags:[]
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='btest3(Byte, Byte): Boolean'
-        CALL 'greaterOrEqual(Int, Int): Boolean' type=kotlin.Boolean origin=GTEQ
-          arg0: CALL 'toInt(): Int' type=kotlin.Int origin=null
-            $this: GET_VAR 'value-parameter a: Byte' type=kotlin.Byte origin=null
-          arg1: CALL 'toInt(): Int' type=kotlin.Int origin=null
-            $this: GET_VAR 'value-parameter b: Byte' type=kotlin.Byte origin=null
-  FUN name:btest4 visibility:public modality:FINAL <> (a:kotlin.Byte, b:kotlin.Byte) returnType:kotlin.Boolean flags:
-    VALUE_PARAMETER name:a index:0 type:kotlin.Byte flags:
-    VALUE_PARAMETER name:b index:1 type:kotlin.Byte flags:
+      RETURN type=kotlin.Nothing from='FUN name:btest3 visibility:public modality:FINAL <> (a:kotlin.Byte, b:kotlin.Byte) returnType:kotlin.Boolean flags:[]'
+        CALL 'FUN IR_BUILTINS_STUB name:greaterOrEqual visibility:public modality:FINAL <> (arg0:kotlin.Int, arg1:kotlin.Int) returnType:kotlin.Boolean flags:[]' type=kotlin.Boolean origin=GTEQ
+          arg0: CALL 'FUN IR_EXTERNAL_DECLARATION_STUB name:toInt visibility:public modality:OPEN <> ($this:kotlin.Byte) returnType:kotlin.Int flags:[]' type=kotlin.Int origin=null
+            $this: GET_VAR 'VALUE_PARAMETER name:a index:0 type:kotlin.Byte flags:[]' type=kotlin.Byte origin=null
+          arg1: CALL 'FUN IR_EXTERNAL_DECLARATION_STUB name:toInt visibility:public modality:OPEN <> ($this:kotlin.Byte) returnType:kotlin.Int flags:[]' type=kotlin.Int origin=null
+            $this: GET_VAR 'VALUE_PARAMETER name:b index:1 type:kotlin.Byte flags:[]' type=kotlin.Byte origin=null
+  FUN name:btest4 visibility:public modality:FINAL <> (a:kotlin.Byte, b:kotlin.Byte) returnType:kotlin.Boolean flags:[]
+    VALUE_PARAMETER name:a index:0 type:kotlin.Byte flags:[]
+    VALUE_PARAMETER name:b index:1 type:kotlin.Byte flags:[]
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='btest4(Byte, Byte): Boolean'
-        CALL 'lessOrEqual(Int, Int): Boolean' type=kotlin.Boolean origin=LTEQ
-          arg0: CALL 'toInt(): Int' type=kotlin.Int origin=null
-            $this: GET_VAR 'value-parameter a: Byte' type=kotlin.Byte origin=null
-          arg1: CALL 'toInt(): Int' type=kotlin.Int origin=null
-            $this: GET_VAR 'value-parameter b: Byte' type=kotlin.Byte origin=null
-  FUN name:stest1 visibility:public modality:FINAL <> (a:kotlin.Short, b:kotlin.Short) returnType:kotlin.Boolean flags:
-    VALUE_PARAMETER name:a index:0 type:kotlin.Short flags:
-    VALUE_PARAMETER name:b index:1 type:kotlin.Short flags:
+      RETURN type=kotlin.Nothing from='FUN name:btest4 visibility:public modality:FINAL <> (a:kotlin.Byte, b:kotlin.Byte) returnType:kotlin.Boolean flags:[]'
+        CALL 'FUN IR_BUILTINS_STUB name:lessOrEqual visibility:public modality:FINAL <> (arg0:kotlin.Int, arg1:kotlin.Int) returnType:kotlin.Boolean flags:[]' type=kotlin.Boolean origin=LTEQ
+          arg0: CALL 'FUN IR_EXTERNAL_DECLARATION_STUB name:toInt visibility:public modality:OPEN <> ($this:kotlin.Byte) returnType:kotlin.Int flags:[]' type=kotlin.Int origin=null
+            $this: GET_VAR 'VALUE_PARAMETER name:a index:0 type:kotlin.Byte flags:[]' type=kotlin.Byte origin=null
+          arg1: CALL 'FUN IR_EXTERNAL_DECLARATION_STUB name:toInt visibility:public modality:OPEN <> ($this:kotlin.Byte) returnType:kotlin.Int flags:[]' type=kotlin.Int origin=null
+            $this: GET_VAR 'VALUE_PARAMETER name:b index:1 type:kotlin.Byte flags:[]' type=kotlin.Byte origin=null
+  FUN name:stest1 visibility:public modality:FINAL <> (a:kotlin.Short, b:kotlin.Short) returnType:kotlin.Boolean flags:[]
+    VALUE_PARAMETER name:a index:0 type:kotlin.Short flags:[]
+    VALUE_PARAMETER name:b index:1 type:kotlin.Short flags:[]
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='stest1(Short, Short): Boolean'
-        CALL 'greater(Int, Int): Boolean' type=kotlin.Boolean origin=GT
-          arg0: CALL 'toInt(): Int' type=kotlin.Int origin=null
-            $this: GET_VAR 'value-parameter a: Short' type=kotlin.Short origin=null
-          arg1: CALL 'toInt(): Int' type=kotlin.Int origin=null
-            $this: GET_VAR 'value-parameter b: Short' type=kotlin.Short origin=null
-  FUN name:stest2 visibility:public modality:FINAL <> (a:kotlin.Short, b:kotlin.Short) returnType:kotlin.Boolean flags:
-    VALUE_PARAMETER name:a index:0 type:kotlin.Short flags:
-    VALUE_PARAMETER name:b index:1 type:kotlin.Short flags:
+      RETURN type=kotlin.Nothing from='FUN name:stest1 visibility:public modality:FINAL <> (a:kotlin.Short, b:kotlin.Short) returnType:kotlin.Boolean flags:[]'
+        CALL 'FUN IR_BUILTINS_STUB name:greater visibility:public modality:FINAL <> (arg0:kotlin.Int, arg1:kotlin.Int) returnType:kotlin.Boolean flags:[]' type=kotlin.Boolean origin=GT
+          arg0: CALL 'FUN IR_EXTERNAL_DECLARATION_STUB name:toInt visibility:public modality:OPEN <> ($this:kotlin.Short) returnType:kotlin.Int flags:[]' type=kotlin.Int origin=null
+            $this: GET_VAR 'VALUE_PARAMETER name:a index:0 type:kotlin.Short flags:[]' type=kotlin.Short origin=null
+          arg1: CALL 'FUN IR_EXTERNAL_DECLARATION_STUB name:toInt visibility:public modality:OPEN <> ($this:kotlin.Short) returnType:kotlin.Int flags:[]' type=kotlin.Int origin=null
+            $this: GET_VAR 'VALUE_PARAMETER name:b index:1 type:kotlin.Short flags:[]' type=kotlin.Short origin=null
+  FUN name:stest2 visibility:public modality:FINAL <> (a:kotlin.Short, b:kotlin.Short) returnType:kotlin.Boolean flags:[]
+    VALUE_PARAMETER name:a index:0 type:kotlin.Short flags:[]
+    VALUE_PARAMETER name:b index:1 type:kotlin.Short flags:[]
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='stest2(Short, Short): Boolean'
-        CALL 'less(Int, Int): Boolean' type=kotlin.Boolean origin=LT
-          arg0: CALL 'toInt(): Int' type=kotlin.Int origin=null
-            $this: GET_VAR 'value-parameter a: Short' type=kotlin.Short origin=null
-          arg1: CALL 'toInt(): Int' type=kotlin.Int origin=null
-            $this: GET_VAR 'value-parameter b: Short' type=kotlin.Short origin=null
-  FUN name:stest3 visibility:public modality:FINAL <> (a:kotlin.Short, b:kotlin.Short) returnType:kotlin.Boolean flags:
-    VALUE_PARAMETER name:a index:0 type:kotlin.Short flags:
-    VALUE_PARAMETER name:b index:1 type:kotlin.Short flags:
+      RETURN type=kotlin.Nothing from='FUN name:stest2 visibility:public modality:FINAL <> (a:kotlin.Short, b:kotlin.Short) returnType:kotlin.Boolean flags:[]'
+        CALL 'FUN IR_BUILTINS_STUB name:less visibility:public modality:FINAL <> (arg0:kotlin.Int, arg1:kotlin.Int) returnType:kotlin.Boolean flags:[]' type=kotlin.Boolean origin=LT
+          arg0: CALL 'FUN IR_EXTERNAL_DECLARATION_STUB name:toInt visibility:public modality:OPEN <> ($this:kotlin.Short) returnType:kotlin.Int flags:[]' type=kotlin.Int origin=null
+            $this: GET_VAR 'VALUE_PARAMETER name:a index:0 type:kotlin.Short flags:[]' type=kotlin.Short origin=null
+          arg1: CALL 'FUN IR_EXTERNAL_DECLARATION_STUB name:toInt visibility:public modality:OPEN <> ($this:kotlin.Short) returnType:kotlin.Int flags:[]' type=kotlin.Int origin=null
+            $this: GET_VAR 'VALUE_PARAMETER name:b index:1 type:kotlin.Short flags:[]' type=kotlin.Short origin=null
+  FUN name:stest3 visibility:public modality:FINAL <> (a:kotlin.Short, b:kotlin.Short) returnType:kotlin.Boolean flags:[]
+    VALUE_PARAMETER name:a index:0 type:kotlin.Short flags:[]
+    VALUE_PARAMETER name:b index:1 type:kotlin.Short flags:[]
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='stest3(Short, Short): Boolean'
-        CALL 'greaterOrEqual(Int, Int): Boolean' type=kotlin.Boolean origin=GTEQ
-          arg0: CALL 'toInt(): Int' type=kotlin.Int origin=null
-            $this: GET_VAR 'value-parameter a: Short' type=kotlin.Short origin=null
-          arg1: CALL 'toInt(): Int' type=kotlin.Int origin=null
-            $this: GET_VAR 'value-parameter b: Short' type=kotlin.Short origin=null
-  FUN name:stest4 visibility:public modality:FINAL <> (a:kotlin.Short, b:kotlin.Short) returnType:kotlin.Boolean flags:
-    VALUE_PARAMETER name:a index:0 type:kotlin.Short flags:
-    VALUE_PARAMETER name:b index:1 type:kotlin.Short flags:
+      RETURN type=kotlin.Nothing from='FUN name:stest3 visibility:public modality:FINAL <> (a:kotlin.Short, b:kotlin.Short) returnType:kotlin.Boolean flags:[]'
+        CALL 'FUN IR_BUILTINS_STUB name:greaterOrEqual visibility:public modality:FINAL <> (arg0:kotlin.Int, arg1:kotlin.Int) returnType:kotlin.Boolean flags:[]' type=kotlin.Boolean origin=GTEQ
+          arg0: CALL 'FUN IR_EXTERNAL_DECLARATION_STUB name:toInt visibility:public modality:OPEN <> ($this:kotlin.Short) returnType:kotlin.Int flags:[]' type=kotlin.Int origin=null
+            $this: GET_VAR 'VALUE_PARAMETER name:a index:0 type:kotlin.Short flags:[]' type=kotlin.Short origin=null
+          arg1: CALL 'FUN IR_EXTERNAL_DECLARATION_STUB name:toInt visibility:public modality:OPEN <> ($this:kotlin.Short) returnType:kotlin.Int flags:[]' type=kotlin.Int origin=null
+            $this: GET_VAR 'VALUE_PARAMETER name:b index:1 type:kotlin.Short flags:[]' type=kotlin.Short origin=null
+  FUN name:stest4 visibility:public modality:FINAL <> (a:kotlin.Short, b:kotlin.Short) returnType:kotlin.Boolean flags:[]
+    VALUE_PARAMETER name:a index:0 type:kotlin.Short flags:[]
+    VALUE_PARAMETER name:b index:1 type:kotlin.Short flags:[]
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='stest4(Short, Short): Boolean'
-        CALL 'lessOrEqual(Int, Int): Boolean' type=kotlin.Boolean origin=LTEQ
-          arg0: CALL 'toInt(): Int' type=kotlin.Int origin=null
-            $this: GET_VAR 'value-parameter a: Short' type=kotlin.Short origin=null
-          arg1: CALL 'toInt(): Int' type=kotlin.Int origin=null
-            $this: GET_VAR 'value-parameter b: Short' type=kotlin.Short origin=null
-  FUN name:itest1 visibility:public modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:kotlin.Boolean flags:
-    VALUE_PARAMETER name:a index:0 type:kotlin.Int flags:
-    VALUE_PARAMETER name:b index:1 type:kotlin.Int flags:
+      RETURN type=kotlin.Nothing from='FUN name:stest4 visibility:public modality:FINAL <> (a:kotlin.Short, b:kotlin.Short) returnType:kotlin.Boolean flags:[]'
+        CALL 'FUN IR_BUILTINS_STUB name:lessOrEqual visibility:public modality:FINAL <> (arg0:kotlin.Int, arg1:kotlin.Int) returnType:kotlin.Boolean flags:[]' type=kotlin.Boolean origin=LTEQ
+          arg0: CALL 'FUN IR_EXTERNAL_DECLARATION_STUB name:toInt visibility:public modality:OPEN <> ($this:kotlin.Short) returnType:kotlin.Int flags:[]' type=kotlin.Int origin=null
+            $this: GET_VAR 'VALUE_PARAMETER name:a index:0 type:kotlin.Short flags:[]' type=kotlin.Short origin=null
+          arg1: CALL 'FUN IR_EXTERNAL_DECLARATION_STUB name:toInt visibility:public modality:OPEN <> ($this:kotlin.Short) returnType:kotlin.Int flags:[]' type=kotlin.Int origin=null
+            $this: GET_VAR 'VALUE_PARAMETER name:b index:1 type:kotlin.Short flags:[]' type=kotlin.Short origin=null
+  FUN name:itest1 visibility:public modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:kotlin.Boolean flags:[]
+    VALUE_PARAMETER name:a index:0 type:kotlin.Int flags:[]
+    VALUE_PARAMETER name:b index:1 type:kotlin.Int flags:[]
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='itest1(Int, Int): Boolean'
-        CALL 'greater(Int, Int): Boolean' type=kotlin.Boolean origin=GT
-          arg0: GET_VAR 'value-parameter a: Int' type=kotlin.Int origin=null
-          arg1: GET_VAR 'value-parameter b: Int' type=kotlin.Int origin=null
-  FUN name:itest2 visibility:public modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:kotlin.Boolean flags:
-    VALUE_PARAMETER name:a index:0 type:kotlin.Int flags:
-    VALUE_PARAMETER name:b index:1 type:kotlin.Int flags:
+      RETURN type=kotlin.Nothing from='FUN name:itest1 visibility:public modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:kotlin.Boolean flags:[]'
+        CALL 'FUN IR_BUILTINS_STUB name:greater visibility:public modality:FINAL <> (arg0:kotlin.Int, arg1:kotlin.Int) returnType:kotlin.Boolean flags:[]' type=kotlin.Boolean origin=GT
+          arg0: GET_VAR 'VALUE_PARAMETER name:a index:0 type:kotlin.Int flags:[]' type=kotlin.Int origin=null
+          arg1: GET_VAR 'VALUE_PARAMETER name:b index:1 type:kotlin.Int flags:[]' type=kotlin.Int origin=null
+  FUN name:itest2 visibility:public modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:kotlin.Boolean flags:[]
+    VALUE_PARAMETER name:a index:0 type:kotlin.Int flags:[]
+    VALUE_PARAMETER name:b index:1 type:kotlin.Int flags:[]
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='itest2(Int, Int): Boolean'
-        CALL 'less(Int, Int): Boolean' type=kotlin.Boolean origin=LT
-          arg0: GET_VAR 'value-parameter a: Int' type=kotlin.Int origin=null
-          arg1: GET_VAR 'value-parameter b: Int' type=kotlin.Int origin=null
-  FUN name:itest3 visibility:public modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:kotlin.Boolean flags:
-    VALUE_PARAMETER name:a index:0 type:kotlin.Int flags:
-    VALUE_PARAMETER name:b index:1 type:kotlin.Int flags:
+      RETURN type=kotlin.Nothing from='FUN name:itest2 visibility:public modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:kotlin.Boolean flags:[]'
+        CALL 'FUN IR_BUILTINS_STUB name:less visibility:public modality:FINAL <> (arg0:kotlin.Int, arg1:kotlin.Int) returnType:kotlin.Boolean flags:[]' type=kotlin.Boolean origin=LT
+          arg0: GET_VAR 'VALUE_PARAMETER name:a index:0 type:kotlin.Int flags:[]' type=kotlin.Int origin=null
+          arg1: GET_VAR 'VALUE_PARAMETER name:b index:1 type:kotlin.Int flags:[]' type=kotlin.Int origin=null
+  FUN name:itest3 visibility:public modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:kotlin.Boolean flags:[]
+    VALUE_PARAMETER name:a index:0 type:kotlin.Int flags:[]
+    VALUE_PARAMETER name:b index:1 type:kotlin.Int flags:[]
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='itest3(Int, Int): Boolean'
-        CALL 'greaterOrEqual(Int, Int): Boolean' type=kotlin.Boolean origin=GTEQ
-          arg0: GET_VAR 'value-parameter a: Int' type=kotlin.Int origin=null
-          arg1: GET_VAR 'value-parameter b: Int' type=kotlin.Int origin=null
-  FUN name:itest4 visibility:public modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:kotlin.Boolean flags:
-    VALUE_PARAMETER name:a index:0 type:kotlin.Int flags:
-    VALUE_PARAMETER name:b index:1 type:kotlin.Int flags:
+      RETURN type=kotlin.Nothing from='FUN name:itest3 visibility:public modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:kotlin.Boolean flags:[]'
+        CALL 'FUN IR_BUILTINS_STUB name:greaterOrEqual visibility:public modality:FINAL <> (arg0:kotlin.Int, arg1:kotlin.Int) returnType:kotlin.Boolean flags:[]' type=kotlin.Boolean origin=GTEQ
+          arg0: GET_VAR 'VALUE_PARAMETER name:a index:0 type:kotlin.Int flags:[]' type=kotlin.Int origin=null
+          arg1: GET_VAR 'VALUE_PARAMETER name:b index:1 type:kotlin.Int flags:[]' type=kotlin.Int origin=null
+  FUN name:itest4 visibility:public modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:kotlin.Boolean flags:[]
+    VALUE_PARAMETER name:a index:0 type:kotlin.Int flags:[]
+    VALUE_PARAMETER name:b index:1 type:kotlin.Int flags:[]
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='itest4(Int, Int): Boolean'
-        CALL 'lessOrEqual(Int, Int): Boolean' type=kotlin.Boolean origin=LTEQ
-          arg0: GET_VAR 'value-parameter a: Int' type=kotlin.Int origin=null
-          arg1: GET_VAR 'value-parameter b: Int' type=kotlin.Int origin=null
-  FUN name:ltest1 visibility:public modality:FINAL <> (a:kotlin.Long, b:kotlin.Long) returnType:kotlin.Boolean flags:
-    VALUE_PARAMETER name:a index:0 type:kotlin.Long flags:
-    VALUE_PARAMETER name:b index:1 type:kotlin.Long flags:
+      RETURN type=kotlin.Nothing from='FUN name:itest4 visibility:public modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:kotlin.Boolean flags:[]'
+        CALL 'FUN IR_BUILTINS_STUB name:lessOrEqual visibility:public modality:FINAL <> (arg0:kotlin.Int, arg1:kotlin.Int) returnType:kotlin.Boolean flags:[]' type=kotlin.Boolean origin=LTEQ
+          arg0: GET_VAR 'VALUE_PARAMETER name:a index:0 type:kotlin.Int flags:[]' type=kotlin.Int origin=null
+          arg1: GET_VAR 'VALUE_PARAMETER name:b index:1 type:kotlin.Int flags:[]' type=kotlin.Int origin=null
+  FUN name:ltest1 visibility:public modality:FINAL <> (a:kotlin.Long, b:kotlin.Long) returnType:kotlin.Boolean flags:[]
+    VALUE_PARAMETER name:a index:0 type:kotlin.Long flags:[]
+    VALUE_PARAMETER name:b index:1 type:kotlin.Long flags:[]
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='ltest1(Long, Long): Boolean'
-        CALL 'greater(Long, Long): Boolean' type=kotlin.Boolean origin=GT
-          arg0: GET_VAR 'value-parameter a: Long' type=kotlin.Long origin=null
-          arg1: GET_VAR 'value-parameter b: Long' type=kotlin.Long origin=null
-  FUN name:ltest2 visibility:public modality:FINAL <> (a:kotlin.Long, b:kotlin.Long) returnType:kotlin.Boolean flags:
-    VALUE_PARAMETER name:a index:0 type:kotlin.Long flags:
-    VALUE_PARAMETER name:b index:1 type:kotlin.Long flags:
+      RETURN type=kotlin.Nothing from='FUN name:ltest1 visibility:public modality:FINAL <> (a:kotlin.Long, b:kotlin.Long) returnType:kotlin.Boolean flags:[]'
+        CALL 'FUN IR_BUILTINS_STUB name:greater visibility:public modality:FINAL <> (arg0:kotlin.Long, arg1:kotlin.Long) returnType:kotlin.Boolean flags:[]' type=kotlin.Boolean origin=GT
+          arg0: GET_VAR 'VALUE_PARAMETER name:a index:0 type:kotlin.Long flags:[]' type=kotlin.Long origin=null
+          arg1: GET_VAR 'VALUE_PARAMETER name:b index:1 type:kotlin.Long flags:[]' type=kotlin.Long origin=null
+  FUN name:ltest2 visibility:public modality:FINAL <> (a:kotlin.Long, b:kotlin.Long) returnType:kotlin.Boolean flags:[]
+    VALUE_PARAMETER name:a index:0 type:kotlin.Long flags:[]
+    VALUE_PARAMETER name:b index:1 type:kotlin.Long flags:[]
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='ltest2(Long, Long): Boolean'
-        CALL 'less(Long, Long): Boolean' type=kotlin.Boolean origin=LT
-          arg0: GET_VAR 'value-parameter a: Long' type=kotlin.Long origin=null
-          arg1: GET_VAR 'value-parameter b: Long' type=kotlin.Long origin=null
-  FUN name:ltest3 visibility:public modality:FINAL <> (a:kotlin.Long, b:kotlin.Long) returnType:kotlin.Boolean flags:
-    VALUE_PARAMETER name:a index:0 type:kotlin.Long flags:
-    VALUE_PARAMETER name:b index:1 type:kotlin.Long flags:
+      RETURN type=kotlin.Nothing from='FUN name:ltest2 visibility:public modality:FINAL <> (a:kotlin.Long, b:kotlin.Long) returnType:kotlin.Boolean flags:[]'
+        CALL 'FUN IR_BUILTINS_STUB name:less visibility:public modality:FINAL <> (arg0:kotlin.Long, arg1:kotlin.Long) returnType:kotlin.Boolean flags:[]' type=kotlin.Boolean origin=LT
+          arg0: GET_VAR 'VALUE_PARAMETER name:a index:0 type:kotlin.Long flags:[]' type=kotlin.Long origin=null
+          arg1: GET_VAR 'VALUE_PARAMETER name:b index:1 type:kotlin.Long flags:[]' type=kotlin.Long origin=null
+  FUN name:ltest3 visibility:public modality:FINAL <> (a:kotlin.Long, b:kotlin.Long) returnType:kotlin.Boolean flags:[]
+    VALUE_PARAMETER name:a index:0 type:kotlin.Long flags:[]
+    VALUE_PARAMETER name:b index:1 type:kotlin.Long flags:[]
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='ltest3(Long, Long): Boolean'
-        CALL 'greaterOrEqual(Long, Long): Boolean' type=kotlin.Boolean origin=GTEQ
-          arg0: GET_VAR 'value-parameter a: Long' type=kotlin.Long origin=null
-          arg1: GET_VAR 'value-parameter b: Long' type=kotlin.Long origin=null
-  FUN name:ltest4 visibility:public modality:FINAL <> (a:kotlin.Long, b:kotlin.Long) returnType:kotlin.Boolean flags:
-    VALUE_PARAMETER name:a index:0 type:kotlin.Long flags:
-    VALUE_PARAMETER name:b index:1 type:kotlin.Long flags:
+      RETURN type=kotlin.Nothing from='FUN name:ltest3 visibility:public modality:FINAL <> (a:kotlin.Long, b:kotlin.Long) returnType:kotlin.Boolean flags:[]'
+        CALL 'FUN IR_BUILTINS_STUB name:greaterOrEqual visibility:public modality:FINAL <> (arg0:kotlin.Long, arg1:kotlin.Long) returnType:kotlin.Boolean flags:[]' type=kotlin.Boolean origin=GTEQ
+          arg0: GET_VAR 'VALUE_PARAMETER name:a index:0 type:kotlin.Long flags:[]' type=kotlin.Long origin=null
+          arg1: GET_VAR 'VALUE_PARAMETER name:b index:1 type:kotlin.Long flags:[]' type=kotlin.Long origin=null
+  FUN name:ltest4 visibility:public modality:FINAL <> (a:kotlin.Long, b:kotlin.Long) returnType:kotlin.Boolean flags:[]
+    VALUE_PARAMETER name:a index:0 type:kotlin.Long flags:[]
+    VALUE_PARAMETER name:b index:1 type:kotlin.Long flags:[]
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='ltest4(Long, Long): Boolean'
-        CALL 'lessOrEqual(Long, Long): Boolean' type=kotlin.Boolean origin=LTEQ
-          arg0: GET_VAR 'value-parameter a: Long' type=kotlin.Long origin=null
-          arg1: GET_VAR 'value-parameter b: Long' type=kotlin.Long origin=null
-  FUN name:ftest1 visibility:public modality:FINAL <> (a:kotlin.Float, b:kotlin.Float) returnType:kotlin.Boolean flags:
-    VALUE_PARAMETER name:a index:0 type:kotlin.Float flags:
-    VALUE_PARAMETER name:b index:1 type:kotlin.Float flags:
+      RETURN type=kotlin.Nothing from='FUN name:ltest4 visibility:public modality:FINAL <> (a:kotlin.Long, b:kotlin.Long) returnType:kotlin.Boolean flags:[]'
+        CALL 'FUN IR_BUILTINS_STUB name:lessOrEqual visibility:public modality:FINAL <> (arg0:kotlin.Long, arg1:kotlin.Long) returnType:kotlin.Boolean flags:[]' type=kotlin.Boolean origin=LTEQ
+          arg0: GET_VAR 'VALUE_PARAMETER name:a index:0 type:kotlin.Long flags:[]' type=kotlin.Long origin=null
+          arg1: GET_VAR 'VALUE_PARAMETER name:b index:1 type:kotlin.Long flags:[]' type=kotlin.Long origin=null
+  FUN name:ftest1 visibility:public modality:FINAL <> (a:kotlin.Float, b:kotlin.Float) returnType:kotlin.Boolean flags:[]
+    VALUE_PARAMETER name:a index:0 type:kotlin.Float flags:[]
+    VALUE_PARAMETER name:b index:1 type:kotlin.Float flags:[]
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='ftest1(Float, Float): Boolean'
-        CALL 'greater(Float, Float): Boolean' type=kotlin.Boolean origin=GT
-          arg0: GET_VAR 'value-parameter a: Float' type=kotlin.Float origin=null
-          arg1: GET_VAR 'value-parameter b: Float' type=kotlin.Float origin=null
-  FUN name:ftest2 visibility:public modality:FINAL <> (a:kotlin.Float, b:kotlin.Float) returnType:kotlin.Boolean flags:
-    VALUE_PARAMETER name:a index:0 type:kotlin.Float flags:
-    VALUE_PARAMETER name:b index:1 type:kotlin.Float flags:
+      RETURN type=kotlin.Nothing from='FUN name:ftest1 visibility:public modality:FINAL <> (a:kotlin.Float, b:kotlin.Float) returnType:kotlin.Boolean flags:[]'
+        CALL 'FUN IR_BUILTINS_STUB name:greater visibility:public modality:FINAL <> (arg0:kotlin.Float, arg1:kotlin.Float) returnType:kotlin.Boolean flags:[]' type=kotlin.Boolean origin=GT
+          arg0: GET_VAR 'VALUE_PARAMETER name:a index:0 type:kotlin.Float flags:[]' type=kotlin.Float origin=null
+          arg1: GET_VAR 'VALUE_PARAMETER name:b index:1 type:kotlin.Float flags:[]' type=kotlin.Float origin=null
+  FUN name:ftest2 visibility:public modality:FINAL <> (a:kotlin.Float, b:kotlin.Float) returnType:kotlin.Boolean flags:[]
+    VALUE_PARAMETER name:a index:0 type:kotlin.Float flags:[]
+    VALUE_PARAMETER name:b index:1 type:kotlin.Float flags:[]
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='ftest2(Float, Float): Boolean'
-        CALL 'less(Float, Float): Boolean' type=kotlin.Boolean origin=LT
-          arg0: GET_VAR 'value-parameter a: Float' type=kotlin.Float origin=null
-          arg1: GET_VAR 'value-parameter b: Float' type=kotlin.Float origin=null
-  FUN name:ftest3 visibility:public modality:FINAL <> (a:kotlin.Float, b:kotlin.Float) returnType:kotlin.Boolean flags:
-    VALUE_PARAMETER name:a index:0 type:kotlin.Float flags:
-    VALUE_PARAMETER name:b index:1 type:kotlin.Float flags:
+      RETURN type=kotlin.Nothing from='FUN name:ftest2 visibility:public modality:FINAL <> (a:kotlin.Float, b:kotlin.Float) returnType:kotlin.Boolean flags:[]'
+        CALL 'FUN IR_BUILTINS_STUB name:less visibility:public modality:FINAL <> (arg0:kotlin.Float, arg1:kotlin.Float) returnType:kotlin.Boolean flags:[]' type=kotlin.Boolean origin=LT
+          arg0: GET_VAR 'VALUE_PARAMETER name:a index:0 type:kotlin.Float flags:[]' type=kotlin.Float origin=null
+          arg1: GET_VAR 'VALUE_PARAMETER name:b index:1 type:kotlin.Float flags:[]' type=kotlin.Float origin=null
+  FUN name:ftest3 visibility:public modality:FINAL <> (a:kotlin.Float, b:kotlin.Float) returnType:kotlin.Boolean flags:[]
+    VALUE_PARAMETER name:a index:0 type:kotlin.Float flags:[]
+    VALUE_PARAMETER name:b index:1 type:kotlin.Float flags:[]
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='ftest3(Float, Float): Boolean'
-        CALL 'greaterOrEqual(Float, Float): Boolean' type=kotlin.Boolean origin=GTEQ
-          arg0: GET_VAR 'value-parameter a: Float' type=kotlin.Float origin=null
-          arg1: GET_VAR 'value-parameter b: Float' type=kotlin.Float origin=null
-  FUN name:ftest4 visibility:public modality:FINAL <> (a:kotlin.Float, b:kotlin.Float) returnType:kotlin.Boolean flags:
-    VALUE_PARAMETER name:a index:0 type:kotlin.Float flags:
-    VALUE_PARAMETER name:b index:1 type:kotlin.Float flags:
+      RETURN type=kotlin.Nothing from='FUN name:ftest3 visibility:public modality:FINAL <> (a:kotlin.Float, b:kotlin.Float) returnType:kotlin.Boolean flags:[]'
+        CALL 'FUN IR_BUILTINS_STUB name:greaterOrEqual visibility:public modality:FINAL <> (arg0:kotlin.Float, arg1:kotlin.Float) returnType:kotlin.Boolean flags:[]' type=kotlin.Boolean origin=GTEQ
+          arg0: GET_VAR 'VALUE_PARAMETER name:a index:0 type:kotlin.Float flags:[]' type=kotlin.Float origin=null
+          arg1: GET_VAR 'VALUE_PARAMETER name:b index:1 type:kotlin.Float flags:[]' type=kotlin.Float origin=null
+  FUN name:ftest4 visibility:public modality:FINAL <> (a:kotlin.Float, b:kotlin.Float) returnType:kotlin.Boolean flags:[]
+    VALUE_PARAMETER name:a index:0 type:kotlin.Float flags:[]
+    VALUE_PARAMETER name:b index:1 type:kotlin.Float flags:[]
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='ftest4(Float, Float): Boolean'
-        CALL 'lessOrEqual(Float, Float): Boolean' type=kotlin.Boolean origin=LTEQ
-          arg0: GET_VAR 'value-parameter a: Float' type=kotlin.Float origin=null
-          arg1: GET_VAR 'value-parameter b: Float' type=kotlin.Float origin=null
-  FUN name:dtest1 visibility:public modality:FINAL <> (a:kotlin.Double, b:kotlin.Double) returnType:kotlin.Boolean flags:
-    VALUE_PARAMETER name:a index:0 type:kotlin.Double flags:
-    VALUE_PARAMETER name:b index:1 type:kotlin.Double flags:
+      RETURN type=kotlin.Nothing from='FUN name:ftest4 visibility:public modality:FINAL <> (a:kotlin.Float, b:kotlin.Float) returnType:kotlin.Boolean flags:[]'
+        CALL 'FUN IR_BUILTINS_STUB name:lessOrEqual visibility:public modality:FINAL <> (arg0:kotlin.Float, arg1:kotlin.Float) returnType:kotlin.Boolean flags:[]' type=kotlin.Boolean origin=LTEQ
+          arg0: GET_VAR 'VALUE_PARAMETER name:a index:0 type:kotlin.Float flags:[]' type=kotlin.Float origin=null
+          arg1: GET_VAR 'VALUE_PARAMETER name:b index:1 type:kotlin.Float flags:[]' type=kotlin.Float origin=null
+  FUN name:dtest1 visibility:public modality:FINAL <> (a:kotlin.Double, b:kotlin.Double) returnType:kotlin.Boolean flags:[]
+    VALUE_PARAMETER name:a index:0 type:kotlin.Double flags:[]
+    VALUE_PARAMETER name:b index:1 type:kotlin.Double flags:[]
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='dtest1(Double, Double): Boolean'
-        CALL 'greater(Double, Double): Boolean' type=kotlin.Boolean origin=GT
-          arg0: GET_VAR 'value-parameter a: Double' type=kotlin.Double origin=null
-          arg1: GET_VAR 'value-parameter b: Double' type=kotlin.Double origin=null
-  FUN name:dtest2 visibility:public modality:FINAL <> (a:kotlin.Double, b:kotlin.Double) returnType:kotlin.Boolean flags:
-    VALUE_PARAMETER name:a index:0 type:kotlin.Double flags:
-    VALUE_PARAMETER name:b index:1 type:kotlin.Double flags:
+      RETURN type=kotlin.Nothing from='FUN name:dtest1 visibility:public modality:FINAL <> (a:kotlin.Double, b:kotlin.Double) returnType:kotlin.Boolean flags:[]'
+        CALL 'FUN IR_BUILTINS_STUB name:greater visibility:public modality:FINAL <> (arg0:kotlin.Double, arg1:kotlin.Double) returnType:kotlin.Boolean flags:[]' type=kotlin.Boolean origin=GT
+          arg0: GET_VAR 'VALUE_PARAMETER name:a index:0 type:kotlin.Double flags:[]' type=kotlin.Double origin=null
+          arg1: GET_VAR 'VALUE_PARAMETER name:b index:1 type:kotlin.Double flags:[]' type=kotlin.Double origin=null
+  FUN name:dtest2 visibility:public modality:FINAL <> (a:kotlin.Double, b:kotlin.Double) returnType:kotlin.Boolean flags:[]
+    VALUE_PARAMETER name:a index:0 type:kotlin.Double flags:[]
+    VALUE_PARAMETER name:b index:1 type:kotlin.Double flags:[]
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='dtest2(Double, Double): Boolean'
-        CALL 'less(Double, Double): Boolean' type=kotlin.Boolean origin=LT
-          arg0: GET_VAR 'value-parameter a: Double' type=kotlin.Double origin=null
-          arg1: GET_VAR 'value-parameter b: Double' type=kotlin.Double origin=null
-  FUN name:dtest3 visibility:public modality:FINAL <> (a:kotlin.Double, b:kotlin.Double) returnType:kotlin.Boolean flags:
-    VALUE_PARAMETER name:a index:0 type:kotlin.Double flags:
-    VALUE_PARAMETER name:b index:1 type:kotlin.Double flags:
+      RETURN type=kotlin.Nothing from='FUN name:dtest2 visibility:public modality:FINAL <> (a:kotlin.Double, b:kotlin.Double) returnType:kotlin.Boolean flags:[]'
+        CALL 'FUN IR_BUILTINS_STUB name:less visibility:public modality:FINAL <> (arg0:kotlin.Double, arg1:kotlin.Double) returnType:kotlin.Boolean flags:[]' type=kotlin.Boolean origin=LT
+          arg0: GET_VAR 'VALUE_PARAMETER name:a index:0 type:kotlin.Double flags:[]' type=kotlin.Double origin=null
+          arg1: GET_VAR 'VALUE_PARAMETER name:b index:1 type:kotlin.Double flags:[]' type=kotlin.Double origin=null
+  FUN name:dtest3 visibility:public modality:FINAL <> (a:kotlin.Double, b:kotlin.Double) returnType:kotlin.Boolean flags:[]
+    VALUE_PARAMETER name:a index:0 type:kotlin.Double flags:[]
+    VALUE_PARAMETER name:b index:1 type:kotlin.Double flags:[]
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='dtest3(Double, Double): Boolean'
-        CALL 'greaterOrEqual(Double, Double): Boolean' type=kotlin.Boolean origin=GTEQ
-          arg0: GET_VAR 'value-parameter a: Double' type=kotlin.Double origin=null
-          arg1: GET_VAR 'value-parameter b: Double' type=kotlin.Double origin=null
-  FUN name:dtest4 visibility:public modality:FINAL <> (a:kotlin.Double, b:kotlin.Double) returnType:kotlin.Boolean flags:
-    VALUE_PARAMETER name:a index:0 type:kotlin.Double flags:
-    VALUE_PARAMETER name:b index:1 type:kotlin.Double flags:
+      RETURN type=kotlin.Nothing from='FUN name:dtest3 visibility:public modality:FINAL <> (a:kotlin.Double, b:kotlin.Double) returnType:kotlin.Boolean flags:[]'
+        CALL 'FUN IR_BUILTINS_STUB name:greaterOrEqual visibility:public modality:FINAL <> (arg0:kotlin.Double, arg1:kotlin.Double) returnType:kotlin.Boolean flags:[]' type=kotlin.Boolean origin=GTEQ
+          arg0: GET_VAR 'VALUE_PARAMETER name:a index:0 type:kotlin.Double flags:[]' type=kotlin.Double origin=null
+          arg1: GET_VAR 'VALUE_PARAMETER name:b index:1 type:kotlin.Double flags:[]' type=kotlin.Double origin=null
+  FUN name:dtest4 visibility:public modality:FINAL <> (a:kotlin.Double, b:kotlin.Double) returnType:kotlin.Boolean flags:[]
+    VALUE_PARAMETER name:a index:0 type:kotlin.Double flags:[]
+    VALUE_PARAMETER name:b index:1 type:kotlin.Double flags:[]
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='dtest4(Double, Double): Boolean'
-        CALL 'lessOrEqual(Double, Double): Boolean' type=kotlin.Boolean origin=LTEQ
-          arg0: GET_VAR 'value-parameter a: Double' type=kotlin.Double origin=null
-          arg1: GET_VAR 'value-parameter b: Double' type=kotlin.Double origin=null
-
+      RETURN type=kotlin.Nothing from='FUN name:dtest4 visibility:public modality:FINAL <> (a:kotlin.Double, b:kotlin.Double) returnType:kotlin.Boolean flags:[]'
+        CALL 'FUN IR_BUILTINS_STUB name:lessOrEqual visibility:public modality:FINAL <> (arg0:kotlin.Double, arg1:kotlin.Double) returnType:kotlin.Boolean flags:[]' type=kotlin.Boolean origin=LTEQ
+          arg0: GET_VAR 'VALUE_PARAMETER name:a index:0 type:kotlin.Double flags:[]' type=kotlin.Double origin=null
+          arg1: GET_VAR 'VALUE_PARAMETER name:b index:1 type:kotlin.Double flags:[]' type=kotlin.Double origin=null

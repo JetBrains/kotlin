@@ -1,18 +1,17 @@
 FILE fqName:<root> fileName:/javaAnnotation.kt
-  FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:
+  FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:[]
     annotations:
-      CALL 'constructor JavaAnn(String = ..., Int = ...)' type=JavaAnn origin=null
+      CALL 'CONSTRUCTOR IR_EXTERNAL_JAVA_DECLARATION_STUB visibility:public/*package*/ <> (value:kotlin.String, i:kotlin.Int) returnType:<root>.JavaAnn flags:[primary]' type=<root>.JavaAnn origin=null
     BLOCK_BODY
-  FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:
+  FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:[]
     annotations:
-      CALL 'constructor JavaAnn(String = ..., Int = ...)' type=JavaAnn origin=null
+      CALL 'CONSTRUCTOR IR_EXTERNAL_JAVA_DECLARATION_STUB visibility:public/*package*/ <> (value:kotlin.String, i:kotlin.Int) returnType:<root>.JavaAnn flags:[primary]' type=<root>.JavaAnn origin=null
         value: CONST String type=kotlin.String value="abc"
         i: CONST Int type=kotlin.Int value=123
     BLOCK_BODY
-  FUN name:test3 visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:
+  FUN name:test3 visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:[]
     annotations:
-      CALL 'constructor JavaAnn(String = ..., Int = ...)' type=JavaAnn origin=null
+      CALL 'CONSTRUCTOR IR_EXTERNAL_JAVA_DECLARATION_STUB visibility:public/*package*/ <> (value:kotlin.String, i:kotlin.Int) returnType:<root>.JavaAnn flags:[primary]' type=<root>.JavaAnn origin=null
         value: CONST String type=kotlin.String value="abc"
         i: CONST Int type=kotlin.Int value=123
     BLOCK_BODY
-
