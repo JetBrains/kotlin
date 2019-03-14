@@ -182,97 +182,97 @@ class ScriptingHostTest : TestCase() {
         assertNotNull(res.reports.find { it.message == "The following compiler arguments are ignored when configured from refinement callbacks: -no-jdk, -no-stdlib" })
     }
 
-    private fun checkWithCacheSimple(
-        cache: ScriptingCacheWithCountersAndLast, script: String, expectedOutput: List<String>,
-        configurationBuilder: ScriptCompilationConfiguration.Builder.() -> Unit = {}
-    ) {
-        val compiler = JvmScriptCompiler(defaultJvmScriptingHostConfiguration, cache = cache)
-        val evaluator = BasicJvmScriptEvaluator()
-        val host = BasicJvmScriptingHost(compiler = compiler, evaluator = evaluator)
-        Assert.assertEquals(0, cache.storedScripts)
-
-        val output = captureOut { evalScriptWithConfiguration(script, host, configurationBuilder).throwOnFailure() }.lines()
-        Assert.assertEquals(expectedOutput, output)
-
-        Assert.assertEquals(1, cache.storedScripts)
-        val compiled = cache.lastStored!!
-
-        val output2 = captureOut { runBlocking { evaluator(compiled, null) } }.lines()
-        Assert.assertEquals(output, output2)
-
-        Assert.assertEquals(0, cache.retrievedScripts)
-        val output3 = captureOut { evalScriptWithConfiguration(script, host, configurationBuilder).throwOnFailure() }.lines()
-        Assert.assertEquals(1, cache.retrievedScripts)
-        Assert.assertEquals(output, output3)
-    }
-
     @Test
     fun testMemoryCache() {
         val script = "val x = 1\nprintln(\"x = \$x\")"
         val expectedOutput = listOf("x = 1")
         val cache = SimpleMemoryScriptsCache()
-        checkWithCacheSimple(cache, script, expectedOutput)
+        checkWithCache(cache, script, expectedOutput)
     }
 
     @Test
     fun testSimpleImportWithMemoryCache() {
-        val expectedOutput = listOf("Hello from helloWithVal script!", "Hello from imported helloWithVal script!")
         val script = "println(\"Hello from imported \$helloScriptName script!\")"
+        val expectedOutput = listOf("Hello from helloWithVal script!", "Hello from imported helloWithVal script!")
         val cache = SimpleMemoryScriptsCache()
-        checkWithCacheSimple(cache, script, expectedOutput) { makeSimpleConfigurationWithTestImport() }
+        checkWithCache(cache, script, expectedOutput) { makeSimpleConfigurationWithTestImport() }
     }
 
 
     @Test
     fun testFileCache() {
         val script = "val x = 1\nprintln(\"x = \$x\")"
+        val expectedOutput = listOf("x = 1")
         val cacheDir = Files.createTempDirectory("scriptingTestCache").toFile()
         try {
             val cache = FileBasedScriptCache(cacheDir)
-            val compiler = JvmScriptCompiler(defaultJvmScriptingHostConfiguration, cache = cache)
-            val evaluator = BasicJvmScriptEvaluator()
-            val host = BasicJvmScriptingHost(compiler = compiler, evaluator = evaluator)
             Assert.assertTrue(cache.baseDir.listFiles().isEmpty())
 
-            val scriptCompilationConfiguration = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate>()
-
-            var compiledScript: CompiledScript<*>? = null
-            val output = captureOut {
-                runBlocking {
-                    compiler(script.toScriptSource(), scriptCompilationConfiguration).onSuccess {
-                        compiledScript = it
-                        evaluator(it, null)
-                    }.throwOnFailure()
-                }
-            }
-            Assert.assertEquals("x = 1", output)
-
-            val cachedCompiledScript = cache.baseDir.listFiles().let { files ->
-                Assert.assertEquals(1, files.size)
-                files.first().readCompiledScript(scriptCompilationConfiguration)
-            }
-
-            runBlocking {
-                Assert.assertEquals(
-                    compiledScript!!.getClass(null).resultOrNull()?.qualifiedName,
-                    cachedCompiledScript.getClass(null).resultOrNull()?.qualifiedName
-                )
-            }
-
-            val output2 = captureOut {
-                runBlocking {
-                    evaluator(cachedCompiledScript, null).throwOnFailure()
-                }
-            }
-            Assert.assertEquals(output, output2)
-
-            Assert.assertEquals(0, cache.retrievedScripts)
-            val output3 = captureOut { evalScript(script, host).throwOnFailure() }.trim()
-            Assert.assertEquals(1, cache.retrievedScripts)
-            Assert.assertEquals(output, output3)
+            checkWithCache(cache, script, expectedOutput)
         } finally {
             cacheDir.deleteRecursively()
         }
+    }
+
+    @Test
+    fun testSimpleImportWithFileCache() {
+        val script = "println(\"Hello from imported \$helloScriptName script!\")"
+        val expectedOutput = listOf("Hello from helloWithVal script!", "Hello from imported helloWithVal script!")
+        val cacheDir = Files.createTempDirectory("scriptingTestCache").toFile()
+        try {
+            val cache = FileBasedScriptCache(cacheDir)
+            Assert.assertTrue(cache.baseDir.listFiles().isEmpty())
+
+            checkWithCache(cache, script, expectedOutput) { makeSimpleConfigurationWithTestImport() }
+        } finally {
+            cacheDir.deleteRecursively()
+        }
+    }
+
+    private fun checkWithCache(
+        cache: ScriptingCacheWithCounters, script: String, expectedOutput: List<String>,
+        configurationBuilder: ScriptCompilationConfiguration.Builder.() -> Unit = {}
+    ) {
+        val compiler = JvmScriptCompiler(defaultJvmScriptingHostConfiguration, cache = cache)
+        val evaluator = BasicJvmScriptEvaluator()
+        val host = BasicJvmScriptingHost(compiler = compiler, evaluator = evaluator)
+
+        val scriptCompilationConfiguration = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate>(body = configurationBuilder)
+
+        Assert.assertEquals(0, cache.storedScripts)
+        var compiledScript: CompiledScript<*>? = null
+        val output = captureOut {
+            runBlocking {
+                compiler(script.toScriptSource(), scriptCompilationConfiguration).onSuccess {
+                    compiledScript = it
+                    evaluator(it, null)
+                }.throwOnFailure()
+            }
+        }.lines()
+        Assert.assertEquals(expectedOutput, output)
+        Assert.assertEquals(1, cache.storedScripts)
+        Assert.assertEquals(0, cache.retrievedScripts)
+
+        val cachedScript = cache.get(script.toScriptSource(), scriptCompilationConfiguration)
+        Assert.assertNotNull(cachedScript)
+        Assert.assertEquals(1, cache.retrievedScripts)
+
+        val compiledScriptClass = runBlocking { compiledScript!!.getClass(null).resultOrNull() }
+        val cachedScriptClass = runBlocking { cachedScript!!.getClass(null).resultOrNull() }
+
+        Assert.assertEquals(compiledScriptClass!!.qualifiedName, cachedScriptClass!!.qualifiedName)
+        Assert.assertEquals(compiledScriptClass!!.supertypes, cachedScriptClass!!.supertypes)
+
+        val output2 = captureOut {
+            runBlocking {
+                evaluator(cachedScript!!, null).throwOnFailure()
+            }
+        }.lines()
+        Assert.assertEquals(output, output2)
+
+        val output3 = captureOut { evalScriptWithConfiguration(script, host, configurationBuilder).throwOnFailure() }.lines()
+        Assert.assertEquals(2, cache.retrievedScripts)
+        Assert.assertEquals(output, output3)
     }
 
     @Test
@@ -337,27 +337,18 @@ private interface ScriptingCacheWithCounters : CompiledJvmScriptsCache {
     val retrievedScripts: Int
 }
 
-private interface ScriptingCacheWithCountersAndLast : ScriptingCacheWithCounters {
-
-    val lastStored: CompiledScript<*>?
-}
-
-private class SimpleMemoryScriptsCache : ScriptingCacheWithCountersAndLast {
+private class SimpleMemoryScriptsCache : ScriptingCacheWithCounters {
 
     internal val data = hashMapOf<Pair<SourceCode, ScriptCompilationConfiguration>, CompiledScript<*>>()
 
     private var _storedScripts = 0
     private var _retrievedScripts = 0
-    private var _lastStored: CompiledScript<*>? = null
 
     override val storedScripts: Int
         get() = _storedScripts
 
     override val retrievedScripts: Int
         get() = _retrievedScripts
-
-    override val lastStored: CompiledScript<*>?
-        get() = _lastStored
 
     override fun get(script: SourceCode, scriptCompilationConfiguration: ScriptCompilationConfiguration): CompiledScript<*>? =
         data[script to scriptCompilationConfiguration]?.also { _retrievedScripts++ }
@@ -368,7 +359,6 @@ private class SimpleMemoryScriptsCache : ScriptingCacheWithCountersAndLast {
         scriptCompilationConfiguration: ScriptCompilationConfiguration
     ) {
         data[script to scriptCompilationConfiguration] = compiledScript
-        _lastStored = compiledScript
         _storedScripts++
     }
 }
