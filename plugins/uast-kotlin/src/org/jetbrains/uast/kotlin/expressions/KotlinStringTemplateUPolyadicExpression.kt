@@ -16,19 +16,33 @@
 
 package org.jetbrains.uast.kotlin
 
+import com.intellij.psi.PsiLanguageInjectionHost
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
-import org.jetbrains.uast.UElement
-import org.jetbrains.uast.UExpression
-import org.jetbrains.uast.UPolyadicExpression
-import org.jetbrains.uast.UastBinaryOperator
+import org.jetbrains.uast.*
+import org.jetbrains.uast.expressions.UInjectionHost
 
 class KotlinStringTemplateUPolyadicExpression(
-        override val psi: KtStringTemplateExpression,
-        givenParent: UElement?
+    override val psi: KtStringTemplateExpression,
+    givenParent: UElement?
 ) : KotlinAbstractUExpression(givenParent),
-        UPolyadicExpression,
-        KotlinUElementWithType,
-        KotlinEvaluatableUElement {
-    override val operands: List<UExpression> by lz { psi.entries.map { KotlinConverter.convertEntry(it, this)!! } }
+    UPolyadicExpression,
+    KotlinUElementWithType,
+    KotlinEvaluatableUElement,
+    UInjectionHost {
+    override val operands: List<UExpression> by lz {
+        psi.entries.map {
+            KotlinConverter.convertEntry(
+                it,
+                this,
+                DEFAULT_EXPRESSION_TYPES_LIST
+            )!!
+        }
+    }
     override val operator = UastBinaryOperator.PLUS
+
+    override val psiLanguageInjectionHost: PsiLanguageInjectionHost get() = psi
+    override val isString: Boolean get() = true
+
+    override fun asRenderString(): String = if (operands.isEmpty()) "\"\"" else super<UPolyadicExpression>.asRenderString()
+    override fun asLogString(): String = if (operands.isEmpty()) "UPolyadicExpression (value = \"\")" else super.asLogString()
 }

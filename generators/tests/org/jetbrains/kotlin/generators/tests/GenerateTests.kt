@@ -19,16 +19,7 @@ package org.jetbrains.kotlin.generators.tests
 import org.jetbrains.kotlin.AbstractDataFlowValueRenderingTest
 import org.jetbrains.kotlin.addImport.AbstractAddImportTest
 import org.jetbrains.kotlin.allopen.AbstractBytecodeListingTestForAllOpen
-import org.jetbrains.kotlin.android.*
-import org.jetbrains.kotlin.android.annotator.AbstractAndroidGutterIconTest
-import org.jetbrains.kotlin.android.configure.AbstractConfigureProjectTest
-import org.jetbrains.kotlin.android.folding.AbstractAndroidResourceFoldingTest
-import org.jetbrains.kotlin.android.intention.AbstractAndroidIntentionTest
-import org.jetbrains.kotlin.android.intention.AbstractAndroidResourceIntentionTest
-import org.jetbrains.kotlin.android.lint.AbstractKotlinLintTest
 import org.jetbrains.kotlin.android.parcel.AbstractParcelBytecodeListingTest
-import org.jetbrains.kotlin.android.quickfix.AbstractAndroidLintQuickfixTest
-import org.jetbrains.kotlin.android.quickfix.AbstractAndroidQuickFixMultiFileTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidBoxTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidBytecodeShapeTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidSyntheticPropertyDescriptorTest
@@ -652,10 +643,6 @@ fun main(args: Array<String>) {
             model("debugger/tinyApp/src/evaluate/multipleBreakpoints", testMethod = "doMultipleBreakpointsTest")
         }
 
-        testClass<AbstractAsyncStackTraceTest> {
-            model("debugger/tinyApp/src/asyncStackTrace")
-        }
-
         testClass<AbstractFileRankingTest> {
             model("debugger/fileRanking")
         }
@@ -1134,7 +1121,7 @@ fun main(args: Array<String>) {
             model("script", extension = "kts")
         }
     }
-
+/*
     testGroup("plugins/android-extensions/android-extensions-idea/tests", "plugins/android-extensions/android-extensions-idea/testData") {
         testClass<AbstractAndroidCompletionTest> {
             model("android/completion", recursive = false, extension = null)
@@ -1207,4 +1194,5 @@ fun main(args: Array<String>) {
             model("android/gutterIcon")
         }
     }
+*/
 }

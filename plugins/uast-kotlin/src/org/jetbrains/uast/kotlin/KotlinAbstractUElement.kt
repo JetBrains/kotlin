@@ -79,10 +79,14 @@ abstract class KotlinAbstractUElement(private val givenParent: UElement?) : Kotl
             parent = parent.parent
         }
 
-        while (parent is KtStringTemplateEntryWithExpression ||
-               parent is KtStringTemplateExpression && parent.entries.size == 1) {
-            parent = parent.parent
-        }
+        if (KotlinConverter.forceUInjectionHost) {
+            if (parent is KtBlockStringTemplateEntry) {
+                parent = parent.parent
+            }
+        } else
+            while (parent is KtStringTemplateEntryWithExpression || parent is KtStringTemplateExpression && parent.entries.size == 1) {
+                parent = parent.parent
+            }
 
         if (parent is KtWhenConditionWithExpression) {
             parent = parent.parent
@@ -110,7 +114,7 @@ abstract class KotlinAbstractUElement(private val givenParent: UElement?) : Kotl
 
         val result = doConvertParent(this, parent)
         if (result == this) {
-            throw IllegalStateException("Loop in parent structure when converting a $psi of type ${psi?.javaClass} with parent $parent of type ${parent?.javaClass} text: [${parent?.text}]")
+            throw IllegalStateException("Loop in parent structure when converting a $psi of type ${psi?.javaClass} with parent $parent of type ${parent?.javaClass} text: [${parent?.text}], result = $result")
         }
 
         return result

@@ -11,21 +11,16 @@ import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
 
-sealed class KotlinSourceRootType(val isTest: Boolean) : JpsElementTypeBase<JavaSourceRootProperties>(), JpsModuleSourceRootType<JavaSourceRootProperties>, KotlinRootType {
-
+sealed class KotlinSourceRootType() : JpsElementTypeBase<JavaSourceRootProperties>(), JpsModuleSourceRootType<JavaSourceRootProperties> {
 
     override fun createDefaultProperties() = JpsJavaExtensionService.getInstance().createSourceRootProperties("")
 
-
-    override fun isTestRoot() = isTest
-
-    override fun isForTests() = isTest
-
-    override fun equals(other: Any?) = if (super.equals(other)) true else isSameRootType(this, other)
 }
 
-object SourceKotlinRootType : KotlinSourceRootType(false)
+object SourceKotlinRootType : KotlinSourceRootType()
 
-object TestSourceKotlinRootType : KotlinSourceRootType(true)
+object TestSourceKotlinRootType : KotlinSourceRootType() {
+    override fun isForTests() = true
+}
 
 val ALL_KOTLIN_SOURCE_ROOT_TYPES = setOf(SourceKotlinRootType, TestSourceKotlinRootType)

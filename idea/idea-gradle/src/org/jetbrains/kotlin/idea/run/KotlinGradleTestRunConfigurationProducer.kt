@@ -16,6 +16,7 @@
 package org.jetbrains.kotlin.idea.run
 
 import com.intellij.execution.actions.ConfigurationContext
+import com.intellij.execution.actions.ConfigurationFromContext
 import com.intellij.execution.actions.RunConfigurationProducer
 import com.intellij.execution.junit.PatternConfigurationProducer
 import com.intellij.ide.plugins.PluginManager
@@ -28,6 +29,7 @@ import com.intellij.openapi.util.component2
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
+import org.jetbrains.kotlin.idea.caches.project.isMPPModule
 import org.jetbrains.plugins.gradle.execution.test.runner.TestClassGradleConfigurationProducer
 import org.jetbrains.plugins.gradle.execution.test.runner.TestMethodGradleConfigurationProducer
 import org.jetbrains.plugins.gradle.util.GradleConstants
@@ -96,6 +98,15 @@ class KotlinTestClassGradleConfigurationProducer : TestClassGradleConfigurationP
         return true
     }
 
+    override fun onFirstRun(fromContext: ConfigurationFromContext, context: ConfigurationContext, performRunnable: Runnable) {
+        if (context.location?.module?.isMPPModule == true) {
+            // TODO: remove hack when IDEA has new API
+            performRunnable.run()
+        } else {
+            super.onFirstRun(fromContext, context, performRunnable)
+        }
+    }
+
     override fun doIsConfigurationFromContext(configuration: ExternalSystemRunConfiguration, context: ConfigurationContext): Boolean {
         if (!IS_TEST_FRAMEWORK_PLUGIN_ENABLED) return false
 
@@ -152,6 +163,15 @@ class KotlinTestMethodGradleConfigurationProducer : TestMethodGradleConfiguratio
 
         JavaRunConfigurationExtensionManagerUtil.getInstance().extendCreatedConfiguration(configuration, contextLocation)
         return true
+    }
+
+    override fun onFirstRun(fromContext: ConfigurationFromContext, context: ConfigurationContext, performRunnable: Runnable) {
+        if (context.location?.module?.isMPPModule == true) {
+            // TODO: remove hack when IDEA has new API
+            performRunnable.run()
+        } else {
+            super.onFirstRun(fromContext, context, performRunnable)
+        }
     }
 
     override fun doIsConfigurationFromContext(configuration: ExternalSystemRunConfiguration, context: ConfigurationContext): Boolean {
