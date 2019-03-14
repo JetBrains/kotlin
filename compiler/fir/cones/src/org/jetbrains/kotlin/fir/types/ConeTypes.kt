@@ -114,10 +114,33 @@ abstract class ConeFunctionType : ConeClassLikeType() {
     abstract val returnType: ConeKotlinType
 }
 
-class ConeFlexibleType(val lowerBound: ConeLookupTagBasedType, val upperBound: ConeLookupTagBasedType) : ConeKotlinType(), FlexibleTypeMarker {
+class ConeFlexibleType(val lowerBound: ConeLookupTagBasedType, val upperBound: ConeLookupTagBasedType) : ConeKotlinType(),
+    FlexibleTypeMarker {
     override val typeArguments: Array<out ConeKotlinTypeProjection>
         get() = emptyArray()
 
     override val nullability: ConeNullability
         get() = lowerBound.nullability.takeIf { it == upperBound.nullability } ?: ConeNullability.UNKNOWN
+}
+
+class ConeCapturedTypeConstructor(val projection: ConeKotlinTypeProjection) : TypeConstructorMarker {
+    var supertypes: List<ConeKotlinType>? = null
+}
+
+class ConeCapturedType(
+    val captureStatus: CaptureStatus,
+    val lowerType: ConeKotlinType?,
+    override val nullability: ConeNullability = ConeNullability.NOT_NULL,
+    val constructor: ConeCapturedTypeConstructor
+) : ConeKotlinType(), SimpleTypeMarker, CapturedTypeMarker {
+    constructor(captureStatus: CaptureStatus, lowerType: ConeKotlinType?, projection: ConeKotlinTypeProjection) : this(
+        captureStatus,
+        lowerType,
+        constructor = ConeCapturedTypeConstructor(
+            projection
+        )
+    )
+
+    override val typeArguments: Array<out ConeKotlinTypeProjection>
+        get() = emptyArray()
 }
