@@ -42,6 +42,7 @@ class IntrinsicType {
         const val OBJC_GET_OBJC_CLASS           = "OBJC_GET_OBJC_CLASS"
         const val OBJC_GET_RECEIVER_OR_SUPER    = "OBJC_GET_RECEIVER_OR_SUPER"
         const val OBJC_INIT_BY                  = "OBJC_INIT_BY"
+        const val OBJC_GET_SELECTOR             = "OBJC_GET_SELECTOR"
 
         // Other
         const val GET_CLASS_TYPE_INFO           = "GET_CLASS_TYPE_INFO"

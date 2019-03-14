@@ -178,6 +178,7 @@ class ObjCMethodStub(private val stubGenerator: StubGenerator,
 
         val kniReceiverParameter = "kniR"
         val kniSuperClassParameter = "kniSC"
+        val kniSelectorParameter = "kniSEL"
 
         val voidPtr = PointerType(VoidType)
 
@@ -198,6 +199,9 @@ class ObjCMethodStub(private val stubGenerator: StubGenerator,
         nativeBridgeArguments.add(
                 TypedKotlinValue(voidPtr,
                         "getReceiverOrSuper($kniReceiverParameter, $kniSuperClassParameter)"))
+
+        kotlinObjCBridgeParameters.add(KotlinParameter(kniSelectorParameter, KotlinTypes.cOpaquePointer))
+        nativeBridgeArguments.add(TypedKotlinValue(voidPtr, kniSelectorParameter))
 
         val kotlinParameterNames = method.getKotlinParameterNames()
 
@@ -224,7 +228,6 @@ class ObjCMethodStub(private val stubGenerator: StubGenerator,
                 returnType,
                 nativeBridgeArguments
         ) { nativeValues ->
-            val selector = "@selector(${method.selector})"
             val messengerParameterTypes = mutableListOf<String>()
             messengerParameterTypes.add("void*")
             messengerParameterTypes.add("SEL")
@@ -239,7 +242,7 @@ class ObjCMethodStub(private val stubGenerator: StubGenerator,
 
             val messenger = "(($messengerType) ${nativeValues.first()})"
 
-            val messengerArguments = listOf(nativeValues[1]) + selector + nativeValues.drop(2)
+            val messengerArguments = nativeValues.drop(1)
 
             "$messenger(${messengerArguments.joinToString()})"
         }

@@ -14,11 +14,7 @@ internal open class ObjCCodeGenerator(val codegen: CodeGenerator) {
 
     val dataGenerator = codegen.objCDataGenerator!!
 
-    fun FunctionGenerationContext.genSelector(selector: String): LLVMValueRef {
-        val selectorRef = dataGenerator.genSelectorRef(selector)
-        // TODO: clang emits it with `invariant.load` metadata.
-        return load(selectorRef.llvm)
-    }
+    fun FunctionGenerationContext.genSelector(selector: String): LLVMValueRef = genObjCSelector(selector)
 
     fun FunctionGenerationContext.genGetLinkedClass(name: String): LLVMValueRef {
         val classRef = dataGenerator.genClassRef(name)
@@ -42,4 +38,10 @@ internal open class ObjCCodeGenerator(val codegen: CodeGenerator) {
     // TODO: this doesn't support stret.
     fun msgSender(functionType: LLVMTypeRef): LLVMValueRef =
             objcMsgSend.bitcast(pointerType(functionType)).llvm
+}
+
+internal fun FunctionGenerationContext.genObjCSelector(selector: String): LLVMValueRef {
+    val selectorRef = codegen.objCDataGenerator!!.genSelectorRef(selector)
+    // TODO: clang emits it with `invariant.load` metadata.
+    return load(selectorRef.llvm)
 }

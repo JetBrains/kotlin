@@ -233,6 +233,8 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable, val 
     val interopCreateNSStringFromKString =
             symbolTable.referenceSimpleFunction(context.interopBuiltIns.CreateNSStringFromKString)
 
+    val interopObjCGetSelector = interopFunction("objCGetSelector")
+
     val objCExportTrapOnUndeclaredException =
             symbolTable.referenceSimpleFunction(context.builtIns.kotlinNativeInternal.getContributedFunctions(
                     Name.identifier("trapOnUndeclaredException"),

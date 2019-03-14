@@ -125,6 +125,10 @@ annotation class InteropStubs()
 @Retention(AnnotationRetention.SOURCE)
 internal annotation class ObjCMethodImp(val selector: String, val encoding: String)
 
+@PublishedApi
+@TypedIntrinsic(IntrinsicType.OBJC_GET_SELECTOR)
+internal external fun objCGetSelector(selector: String): COpaquePointer
+
 @kotlin.native.internal.ExportForCppRuntime("Kotlin_Interop_getObjCClass")
 private fun getObjCClassByName(name: NativePtr): NativePtr {
     val result = objc_lookUpClass(name)

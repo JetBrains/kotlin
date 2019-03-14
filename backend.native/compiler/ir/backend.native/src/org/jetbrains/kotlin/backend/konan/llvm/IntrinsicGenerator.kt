@@ -4,6 +4,7 @@ import kotlinx.cinterop.cValuesOf
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.descriptors.TypedIntrinsic
 import org.jetbrains.kotlin.backend.konan.descriptors.isTypedIntrinsic
+import org.jetbrains.kotlin.backend.konan.llvm.objc.genObjCSelector
 import org.jetbrains.kotlin.backend.konan.reportCompilationError
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
@@ -51,6 +52,7 @@ internal enum class IntrinsicType {
     OBJC_GET_OBJC_CLASS,
     OBJC_GET_RECEIVER_OR_SUPER,
     OBJC_INIT_BY,
+    OBJC_GET_SELECTOR,
     // Other
     GET_CLASS_TYPE_INFO,
     CREATE_UNINITIALIZED_INSTANCE,
@@ -148,6 +150,10 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
                 environment.evaluateCall(constructorDescriptor, args, Lifetime.IRRELEVANT)
                 receiver
             }
+            IntrinsicType.OBJC_GET_SELECTOR -> {
+                val selector = (callSite.getValueArgument(0) as IrConst<*>).value as String
+                environment.functionGenerationContext.genObjCSelector(selector)
+            }
             IntrinsicType.INIT_INSTANCE -> {
                 val callee = callSite as IrCall
                 val initializer = callee.getValueArgument(1) as IrCall
@@ -232,6 +238,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
                     reportNonLoweredIntrinsic(intrinsicType)
                 IntrinsicType.INIT_INSTANCE,
                 IntrinsicType.OBJC_INIT_BY,
+                IntrinsicType.OBJC_GET_SELECTOR,
                 IntrinsicType.IMMUTABLE_BLOB ->
                     reportSpecialIntrinsic(intrinsicType)
             }

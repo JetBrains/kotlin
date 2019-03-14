@@ -587,10 +587,13 @@ internal class InteropLoweringPart1(val context: Context) : IrBuildingTransforme
         return irCall(bridge, symbolTable.translateErased(info.bridge.returnType!!)).apply {
             putValueArgument(0, superClass)
             putValueArgument(1, receiver)
+            putValueArgument(2, irCall(symbols.interopObjCGetSelector.owner).apply {
+                putValueArgument(0, irString(info.selector))
+            })
 
-            assert(arguments.size + 2 == info.bridge.valueParameters.size)
+            assert(arguments.size + 3 == info.bridge.valueParameters.size)
             arguments.forEachIndexed { index, argument ->
-                putValueArgument(index + 2, argument)
+                putValueArgument(index + 3, argument)
             }
         }
     }
