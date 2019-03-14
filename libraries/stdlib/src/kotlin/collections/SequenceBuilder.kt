@@ -60,7 +60,8 @@ public inline fun <T> buildIterator(@BuilderInference noinline builderAction: su
 @SinceKotlin("1.3")
 public abstract class SequenceScope<in T> internal constructor() {
     /**
-     * Yields a value to the [Iterator] being built.
+     * Yields a value to the [Iterator] being built and suspends
+     * until the next value is requested.
      *
      * @sample samples.collections.Sequences.Building.buildSequenceYieldAll
      * @sample samples.collections.Sequences.Building.buildFibonacciSequence
@@ -68,7 +69,8 @@ public abstract class SequenceScope<in T> internal constructor() {
     public abstract suspend fun yield(value: T)
 
     /**
-     * Yields all values from the `iterator` to the [Iterator] being built.
+     * Yields all values from the `iterator` to the [Iterator] being built
+     * and suspends until all these values are iterated and the next one is requested.
      *
      * The sequence of values returned by the given iterator can be potentially infinite.
      *
@@ -77,7 +79,8 @@ public abstract class SequenceScope<in T> internal constructor() {
     public abstract suspend fun yieldAll(iterator: Iterator<T>)
 
     /**
-     * Yields a collections of values to the [Iterator] being built.
+     * Yields a collections of values to the [Iterator] being built
+     * and suspends until all these values are iterated and the next one is requested.
      *
      * @sample samples.collections.Sequences.Building.buildSequenceYieldAll
      */
@@ -87,7 +90,8 @@ public abstract class SequenceScope<in T> internal constructor() {
     }
 
     /**
-     * Yields potentially infinite sequence of values  to the [Iterator] being built.
+     * Yields potentially infinite sequence of values  to the [Iterator] being built
+     * and suspends until all these values are iterated and the next one is requested.
      *
      * The sequence can be potentially infinite.
      *
