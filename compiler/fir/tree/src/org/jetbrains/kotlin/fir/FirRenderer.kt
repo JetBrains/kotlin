@@ -26,6 +26,11 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.Printer
 
+fun FirElement.renderWithType(): String = buildString {
+    append(this@renderWithType)
+    append(": ")
+    this@renderWithType.accept(FirRenderer(this))
+}
 fun FirElement.render(): String = buildString { this@render.accept(FirRenderer(this)) }
 
 
