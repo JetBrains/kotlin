@@ -66,7 +66,9 @@ interface ExternalSourceCode : SourceCode {
 /**
  * The source code [range] with the the optional [name]
  */
-data class ScriptSourceNamedFragment(val name: String?, val range: SourceCode.Range)
+data class ScriptSourceNamedFragment(val name: String?, val range: SourceCode.Range) : Serializable {
+    companion object { private const val serialVersionUID: Long = 1L }
+}
 
 /**
  * The general interface to the Script dependency (see platform-specific implementations)

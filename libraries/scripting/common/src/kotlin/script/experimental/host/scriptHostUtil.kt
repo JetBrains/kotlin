@@ -6,6 +6,8 @@
 package kotlin.script.experimental.host
 
 import java.io.File
+import java.io.IOError
+import java.io.IOException
 import java.net.URL
 import kotlin.script.experimental.api.*
 
@@ -47,6 +49,11 @@ open class FileScriptSource(val file: File, private val preloadedText: String? =
     override val text: String by lazy { preloadedText ?: file.readText() }
     override val name: String? get() = file.name
     override val locationId: String? get() = file.path
+
+    override fun equals(other: Any?): Boolean =
+        this === other || (other as? FileScriptSource)?.let { file.absolutePath == it.file.absolutePath && textSafe == it.textSafe } == true
+
+    override fun hashCode(): Int = file.absolutePath.hashCode() + textSafe.hashCode() * 23
 }
 
 /**
@@ -56,6 +63,11 @@ open class UrlScriptSource(override val externalLocation: URL) : ExternalSourceC
     override val text: String by lazy { externalLocation.readText() }
     override val name: String? get() = externalLocation.file
     override val locationId: String? get() = externalLocation.toString()
+
+    override fun equals(other: Any?): Boolean =
+        this === other || (other as? UrlScriptSource)?.let { externalLocation == it.externalLocation && textSafe == it.textSafe } == true
+
+    override fun hashCode(): Int = externalLocation.hashCode() + textSafe.hashCode() * 17
 }
 
 /**
@@ -71,9 +83,22 @@ open class StringScriptSource(val source: String, override val name: String? = n
     override val text: String get() = source
 
     override val locationId: String? = null
+
+    override fun equals(other: Any?): Boolean =
+        this === other || (other as? StringScriptSource)?.let { text == it.text && name == it.name && locationId == it.locationId } == true
+
+    override fun hashCode(): Int = text.hashCode() + name.hashCode() * 17 + locationId.hashCode() * 23
 }
 
 /**
  * Converts the String into the SourceCode
  */
 fun String.toScriptSource(name: String? = null): SourceCode = StringScriptSource(this, name)
+
+private val ExternalSourceCode.textSafe: String?
+    get() =
+        try {
+            text
+        } catch (e: Throwable) {
+            null
+        }

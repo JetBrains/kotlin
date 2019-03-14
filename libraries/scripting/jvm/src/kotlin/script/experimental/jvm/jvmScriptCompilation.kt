@@ -15,6 +15,8 @@ import kotlin.script.experimental.util.PropertiesCollection
 data class JvmDependency(val classpath: List<File>) : ScriptDependency {
     @Suppress("unused")
     constructor(vararg classpathEntries: File) : this(classpathEntries.asList())
+
+    companion object { private const val serialVersionUID: Long = 1L }
 }
 
 interface JvmScriptCompilationConfigurationKeys

@@ -48,6 +48,11 @@ open class PropertiesCollection(private val properties: Map<Key<*>, Any?> = empt
 
     fun entries(): Set<Map.Entry<Key<*>, Any?>> = properties.entries
 
+    override fun equals(other: Any?): Boolean =
+        (other as? PropertiesCollection)?.let { it.properties == properties } == true
+
+    override fun hashCode(): Int = properties.hashCode()
+
     companion object {
         fun <T> key(defaultValue: T? = null) = PropertyKeyDelegate(defaultValue)
         fun <T> keyCopy(source: Key<T>) = PropertyKeyCopyDelegate(source)

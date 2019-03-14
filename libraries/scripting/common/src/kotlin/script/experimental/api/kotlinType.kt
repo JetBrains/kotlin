@@ -32,4 +32,13 @@ class KotlinType private constructor(
      * Constructs KotlinType from reflected [ktype]
      */
     constructor(type: KType) : this(type.classifier as KClass<*>)
+
+    override fun equals(other: Any?): Boolean =
+        (other as? KotlinType)?.let { typeName == it.typeName } == true
+
+    override fun hashCode(): Int = typeName.hashCode()
+
+    companion object {
+        private const val serialVersionUID: Long = 1L
+    }
 }
