@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.getMethodAsmFlags
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
+import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.context.ClosureContext
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicArrayConstructors
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -83,7 +84,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
 
     protected val invocationParamBuilder = ParametersBuilder.newBuilder()
 
-    protected val expressionMap = linkedMapOf<Int, LambdaInfo>()
+    protected val expressionMap = linkedMapOf<Int, FunctionalArgument>()
 
     var activeLambda: LambdaInfo? = null
         protected set
@@ -234,7 +235,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
                 extractDefaultLambdaOffsetAndDescriptor(jvmSignature, functionDescriptor)
             )
             for (lambda in defaultLambdas) {
-                invocationParamBuilder.buildParameters().getParameterByDeclarationSlot(lambda.offset).lambda = lambda
+                invocationParamBuilder.buildParameters().getParameterByDeclarationSlot(lambda.offset).functionalArgument = lambda
                 val prev = expressionMap.put(lambda.offset, lambda)
                 assert(prev == null) { "Lambda with offset ${lambda.offset} already exists: $prev" }
             }
@@ -310,7 +311,9 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
 
     private fun generateClosuresBodies() {
         for (info in expressionMap.values) {
-            info.generateLambdaBody(sourceCompiler, reifiedTypeInliner)
+            if (info is LambdaInfo) {
+                info.generateLambdaBody(sourceCompiler, reifiedTypeInliner)
+            }
         }
     }
 
@@ -340,6 +343,9 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
                 info.setRemapValue(remappedValue)
             } else {
                 info = invocationParamBuilder.addNextValueParameter(jvmType, false, remappedValue, parameterIndex)
+                if (kind == ValueKind.NON_INLINEABLE_CALLED_IN_SUSPEND) {
+                    info.functionalArgument = CrossinlineLambdaInSuspendContextAsNoInline
+                }
             }
 
             recordParameterValueInLocalVal(
@@ -395,8 +401,10 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
     private fun putClosureParametersOnStack() {
         for (next in expressionMap.values) {
             //closure parameters for bounded callable references are generated inplace
-            if (next is ExpressionLambda && next.isBoundCallableReference) continue
-            putClosureParametersOnStack(next, null)
+            if (next is LambdaInfo) {
+                if (next is ExpressionLambda && next.isBoundCallableReference) continue
+                putClosureParametersOnStack(next, null)
+            }
         }
     }
 
@@ -730,9 +738,17 @@ class PsiInlineCodegen(
             }
         } else {
             val value = codegen.gen(argumentExpression)
-            putValueIfNeeded(parameterType, value, ValueKind.GENERAL, parameterIndex)
+            putValueIfNeeded(
+                parameterType,
+                value,
+                if (isCallSiteIsSuspend(valueParameterDescriptor)) ValueKind.NON_INLINEABLE_CALLED_IN_SUSPEND else ValueKind.GENERAL,
+                parameterIndex
+            )
         }
     }
+
+    private fun isCallSiteIsSuspend(descriptor: ValueParameterDescriptor): Boolean =
+        state.bindingContext[CodegenBinding.CALL_SITE_IS_SUSPEND_FOR_CROSSINLINE_LAMBDA, descriptor] == true
 
     private fun rememberClosure(expression: KtExpression, type: Type, parameter: ValueParameterDescriptor): LambdaInfo {
         val ktLambda = KtPsiUtil.deparenthesize(expression)
@@ -743,7 +759,7 @@ class PsiInlineCodegen(
             parameter.isCrossinline, getBoundCallableReferenceReceiver(expression) != null
         ).also { lambda ->
             val closureInfo = invocationParamBuilder.addNextValueParameter(type, true, null, parameter.index)
-            closureInfo.lambda = lambda
+            closureInfo.functionalArgument = lambda
             expressionMap.put(closureInfo.index, lambda)
         }
     }

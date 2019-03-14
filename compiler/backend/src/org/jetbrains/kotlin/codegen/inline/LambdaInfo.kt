@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -35,7 +35,9 @@ import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import kotlin.properties.Delegates
 
-abstract class LambdaInfo(@JvmField val isCrossInline: Boolean) : LabelOwner {
+interface FunctionalArgument
+
+abstract class LambdaInfo(@JvmField val isCrossInline: Boolean) : FunctionalArgument, LabelOwner {
 
     abstract val isBoundCallableReference: Boolean
 
@@ -77,6 +79,7 @@ abstract class LambdaInfo(@JvmField val isCrossInline: Boolean) : LabelOwner {
     }
 }
 
+object CrossinlineLambdaInSuspendContextAsNoInline : FunctionalArgument
 
 class DefaultLambda(
     override val lambdaClassType: Type,
