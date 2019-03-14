@@ -1271,11 +1271,6 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
             runTest("js/js.translator/testData/box/dynamic/iterator.kt");
         }
 
-        @TestMetadata("nameClashing.kt")
-        public void testNameClashing() throws Exception {
-            runTest("js/js.translator/testData/box/dynamic/nameClashing.kt");
-        }
-
         @TestMetadata("operationsWithAssignment.kt")
         public void testOperationsWithAssignment() throws Exception {
             runTest("js/js.translator/testData/box/dynamic/operationsWithAssignment.kt");
@@ -5771,11 +5766,6 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
         @TestMetadata("kt2209.kt")
         public void testKt2209() throws Exception {
             runTest("js/js.translator/testData/box/native/kt2209.kt");
-        }
-
-        @TestMetadata("library.kt")
-        public void testLibrary() throws Exception {
-            runTest("js/js.translator/testData/box/native/library.kt");
         }
 
         @TestMetadata("nativeClassAsReifiedTypeArgument.kt")
