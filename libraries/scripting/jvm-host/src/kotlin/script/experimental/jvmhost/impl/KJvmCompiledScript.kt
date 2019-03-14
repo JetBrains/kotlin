@@ -101,7 +101,7 @@ class KJvmCompiledScript<out ScriptBase : Any>(
         _compilationConfiguration = null
         _sourceLocationId = inputStream.readObject() as String?
         _otherScripts = inputStream.readObject() as List<CompiledScript<*>>
-        compiledModule = inputStream.readObject() as KJvmCompiledModule
+        compiledModule = inputStream.readObject() as KJvmCompiledModule?
         scriptClassFQName = inputStream.readObject() as String
     }
 
