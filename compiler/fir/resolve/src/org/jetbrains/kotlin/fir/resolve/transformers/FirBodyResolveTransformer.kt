@@ -495,8 +495,14 @@ class FirBodyResolveTransformerAdapter : FirTransformer<Nothing?>() {
 
 
 inline fun <reified T : FirElement> ConeSymbol.firUnsafe(): T {
-    this as FirBasedSymbol<*>
-    return this.fir as T
+    require(this is FirBasedSymbol<*>) {
+        "Not a fir based symbol: ${this}"
+    }
+    val fir = this.fir
+    require(fir is T) {
+        "Not an expected fir element type = ${T::class}, symbol = ${this}, fir = ${fir.renderWithType()}"
+    }
+    return fir
 }
 
 
