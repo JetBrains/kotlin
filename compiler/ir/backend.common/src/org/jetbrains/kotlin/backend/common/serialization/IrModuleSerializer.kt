@@ -88,12 +88,7 @@ open class IrModuleSerializer(
         return proto.build()
     }
 
-    fun serializeName(name: Name): KotlinIr.Name {
-        val proto = KotlinIr.Name.newBuilder()
-            .setName(serializeString(name.toString()))
-            .setIsSpecial(name.isSpecial)
-        return proto.build()
-    }
+    fun serializeName(name: Name): KotlinIr.String = serializeString(name.toString())
 
     /* ------- IrSymbols -------------------------------------------------------- */
 

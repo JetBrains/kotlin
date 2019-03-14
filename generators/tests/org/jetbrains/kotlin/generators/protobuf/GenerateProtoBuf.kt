@@ -58,7 +58,6 @@ val PROTO_PATHS: List<ProtoPath> = listOf(
         ProtoPath("core/metadata.jvm/src/jvm_metadata.proto"),
         ProtoPath("core/metadata.jvm/src/jvm_module.proto"),
         ProtoPath("build-common/src/java_descriptors.proto"),
-        //ProtoPath("compiler/ir/backend.js/src/ir.proto", false),
         ProtoPath("compiler/ir/backend.js/src/js.proto", false),
         ProtoPath("compiler/ir/backend.common/src/org/jetbrains/kotlin/backend/common/serialization/KotlinIr.proto", false)
 )

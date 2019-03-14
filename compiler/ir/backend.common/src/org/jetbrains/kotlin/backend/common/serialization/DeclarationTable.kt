@@ -22,20 +22,17 @@ class DescriptorTable {
 abstract class DeclarationTable(val builtIns: IrBuiltIns, val descriptorTable: DescriptorTable, mangler: KotlinMangler): KotlinMangler by mangler {
 
     private val table = mutableMapOf<IrDeclaration, UniqId>()
-    val debugIndex = mutableMapOf<UniqId, String>()
     val descriptors = descriptorTable
-    abstract protected var currentIndex: Long
-    protected var initialized: Boolean = false
+    protected abstract var currentIndex: Long
 
-    open fun loadKnownBuiltins() {
+    open fun loadKnownBuiltins(): Long {
         builtIns.knownBuiltins.forEach {
             table.put(it, UniqId(currentIndex++, false))
         }
-        initialized = true
+        return currentIndex
     }
 
     fun uniqIdByDeclaration(value: IrDeclaration) = table.getOrPut(value) {
-        if (!initialized) error("DeclarationTable has not been initialized")
         computeUniqIdByDeclaration(value)
     }
 

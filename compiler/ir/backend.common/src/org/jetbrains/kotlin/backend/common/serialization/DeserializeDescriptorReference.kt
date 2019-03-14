@@ -28,7 +28,7 @@ abstract class DescriptorReferenceDeserializer(
     protected fun getContributedDescriptors(packageFqNameString: String, name: String): Collection<DeclarationDescriptor> {
         val packageFqName = packageFqNameString.let {
             if (it == "<root>") FqName.ROOT else FqName(it)
-        }// TODO: whould we store an empty string in the protobuf?
+        }// TODO: would we store an empty string in the protobuf?
 
         val contributedName = if (name.startsWith("<get-") || name.startsWith("<set-")) {
             name.substring(5, name.length - 1) // FIXME: rework serialization format.

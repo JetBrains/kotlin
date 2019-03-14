@@ -11,11 +11,9 @@ class JsDeclarationTable(builtIns: IrBuiltIns, descriptorTable: DescriptorTable)
 
     override var currentIndex = 0x1_0000_0000L
 
-    private /* lateinit */ var FUNCTION_INDEX_START: Long = 0xdeadbeefL
+    private val FUNCTION_INDEX_START: Long = loadKnownBuiltins()
 
-    override fun loadKnownBuiltins() {
-        super.loadKnownBuiltins()
-        FUNCTION_INDEX_START = currentIndex
+    init {
         currentIndex += BUILT_IN_UNIQ_ID_GAP
     }
 

@@ -18,24 +18,12 @@ class JsIrLinker(
     logger: LoggingContext,
     builtIns: IrBuiltIns,
     symbolTable: SymbolTable) :
-    KotlinIrLinker(currentModule, logger, builtIns, symbolTable, null),
+    KotlinIrLinker(logger, builtIns, symbolTable, null, 0x1_0000_0000L),
     DescriptorUniqIdAware by JsDescriptorUniqIdAware {
 
-    private val FUNCTION_INDEX_START: Long
+    private val FUNCTION_INDEX_START: Long = indexAfterKnownBuiltins
+
     val moduleToReaderMap = mutableMapOf<ModuleDescriptor, CombinedIrFileReader>()
-
-    init {
-        // TODO: think about order
-        var currentIndex = 0x1_0000_0000L
-        builtIns.knownBuiltins.forEach {
-            require(it is IrFunction)
-            deserializedSymbols.put(UniqIdKey(null, UniqId(currentIndex, isLocal = false)), it.symbol)
-            assert(symbolTable.referenceSimpleFunction(it.descriptor) == it.symbol)
-            currentIndex++
-        }
-
-        FUNCTION_INDEX_START = currentIndex
-    }
 
     override fun getPrimitiveTypeOrNull(symbol: IrClassifierSymbol, hasQuestionMark: Boolean) =
         builtIns.getPrimitiveTypeOrNullByDescriptor(symbol.descriptor, hasQuestionMark)
