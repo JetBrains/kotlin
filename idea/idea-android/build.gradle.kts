@@ -90,10 +90,6 @@ projectTest {
     useAndroidSdk()
 }
 
-testsJar {}
+testsJar()
 
-runtimeJar {
-    archiveName = "android-ide.jar"
-}
-
-ideaPlugin()
+runtimeJar()

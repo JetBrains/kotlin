@@ -21,8 +21,4 @@ sourceSets {
     "test" {}
 }
 
-val jar = runtimeJar()
-
-ideaPlugin {
-    from(jar)
-}
+runtimeJar()

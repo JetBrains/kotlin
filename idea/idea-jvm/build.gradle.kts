@@ -31,8 +31,4 @@ sourceSets {
 
 configureFormInstrumentation()
 
-runtimeJar {
-    archiveName = "jvm-ide.jar"
-}
-
-ideaPlugin()
+runtimeJar()

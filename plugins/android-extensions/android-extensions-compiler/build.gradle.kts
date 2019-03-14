@@ -48,8 +48,6 @@ runtimeJar {
 
 dist()
 
-ideaPlugin()
-
 testsJar {}
 
 evaluationDependsOn(":kotlin-android-extensions-runtime")

@@ -23,10 +23,6 @@ sourceSets {
     "test" {}
 }
 
-val jar = runtimeJar {}
+runtimeJar()
 
 dist(targetName = the<BasePluginConvention>().archivesBaseName + ".jar")
-
-ideaPlugin {
-    from(jar)
-}

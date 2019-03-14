@@ -51,7 +51,6 @@ val projectsToShadow by extra(listOf(
         ":idea:idea-core",
         ":idea:idea-gradle",
         ":idea:idea-gradle-native",
-        //":idea-ultimate",
         ":compiler:ir.psi2ir",
         ":compiler:ir.tree",
         ":js:js.ast",
@@ -67,7 +66,34 @@ val projectsToShadow by extra(listOf(
         ":compiler:resolution",
         ":compiler:serialization",
         ":compiler:util",
-        ":core:util.runtime"))
+        ":core:util.runtime",
+        ":allopen-ide-plugin",
+        ":plugins:lint",
+        ":plugins:uast-kotlin",
+        ":plugins:uast-kotlin-idea",
+        ":j2k",
+        ":kotlin-allopen-compiler-plugin",
+        ":kotlin-noarg-compiler-plugin",
+        ":kotlin-sam-with-receiver-compiler-plugin",
+        ":kotlin-scripting-idea",
+        ":kotlinx-serialization-compiler-plugin",
+        ":kotlinx-serialization-ide-plugin",
+        ":noarg-ide-plugin",
+        ":sam-with-receiver-ide-plugin",
+        ":idea:idea-android",
+        ":idea:idea-android-output-parser",
+        ":idea:idea-jvm",
+        ":idea:idea-git",
+        ":idea:idea-jps-common",
+        ":idea:kotlin-gradle-tooling",
+        ":plugins:android-extensions-compiler",
+        ":plugins:android-extensions-ide",
+        ":plugins:kapt3-idea",
+        *if (Ide.IJ())
+            arrayOf(":idea:idea-maven")
+        else
+            emptyArray<String>()
+))
 
 // Do not rename, used in pill importer
 val packedJars by configurations.creating
@@ -94,6 +120,7 @@ dependencies {
 }
 
 val jar = runtimeJar {
+    dependsOn(packedJars)
     from("$rootDir/resources/kotlinManifest.properties")
     from {
         packedJars.files.map(::zipTree)
