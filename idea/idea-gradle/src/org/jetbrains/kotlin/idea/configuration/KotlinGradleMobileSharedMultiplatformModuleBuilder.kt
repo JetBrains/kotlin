@@ -183,6 +183,20 @@ class KotlinGradleMobileSharedMultiplatformModuleBuilder : KotlinGradleAbstractM
                 }
             }
 
+            task $nativeTestName {
+                def device = project.findProperty("${nativeTargetName}Device")?.toString() ?: "iPhone 8"
+                dependsOn kotlin.targets.$nativeTargetName.binaries.getExecutable('test', 'DEBUG').linkTaskName
+                group = JavaBasePlugin.VERIFICATION_GROUP
+                description = "Runs tests for target '$nativeTargetName' on an iOS simulator"
+
+                doLast {
+                    def binary = kotlin.targets.$nativeTargetName.binaries.getExecutable('test', 'DEBUG').outputFile
+                    exec {
+                        commandLine 'xcrun', 'simctl', 'spawn', device, binary.absolutePath
+                    }
+                }
+            }
+
             configurations {
                 compileClasspath
             }
