@@ -74,7 +74,7 @@ class ObjCMethodStub(private val stubGenerator: StubGenerator,
     override fun generate(context: StubGenerationContext): Sequence<String> =
             if (context.nativeBridges.isSupported(this)) {
                 val result = mutableListOf<String>()
-                result.add("@ObjCMethod".applyToStrings(method.selector, bridgeName))
+                result.add(objCMethodAnnotation)
                 if (method.nsConsumesSelf) result.add("@CCall.ConsumesReceiver")
                 if (method.nsReturnsRetained) result.add("@CCall.ReturnsRetained")
                 result.add(header)
@@ -167,6 +167,7 @@ class ObjCMethodStub(private val stubGenerator: StubGenerator,
     private val implementationTemplate: String?
     internal val bridgeName: String
     private val bridgeHeader: String
+    internal val objCMethodAnnotation: String
 
     init {
         val bodyGenerator = KotlinCodeBuilder(scope = stubGenerator.kotlinFile)
@@ -253,6 +254,7 @@ class ObjCMethodStub(private val stubGenerator: StubGenerator,
         this.bodyLines = bodyGenerator.build()
 
         bridgeName = "objcKniBridge${stubGenerator.nextUniqueId()}"
+        objCMethodAnnotation = "@ObjCMethod".applyToStrings(method.selector, bridgeName)
 
         this.bridgeHeader = buildString {
             append("internal fun ")
@@ -711,11 +713,11 @@ class ObjCPropertyStub(
         }
         val result = mutableListOf(
                 "$modifiers$kind $receiver${property.name.asSimpleName()}: $kotlinType",
-                "    get() = ${getterStub.bridgeName}(nativeNullPtr, this.objcPtr())"
+                "    ${getterStub.objCMethodAnnotation} external get"
         )
 
         property.setter?.let {
-            result.add("    set(value) = ${setterStub!!.bridgeName}(nativeNullPtr, this.objcPtr(), value)")
+            result.add("    ${setterStub!!.objCMethodAnnotation} external set")
         }
 
         return result.asSequence()

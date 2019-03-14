@@ -100,7 +100,7 @@ external fun getReceiverOrSuper(receiver: NativePtr, superClass: NativePtr): COp
 @Retention(AnnotationRetention.BINARY)
 annotation class ExternalObjCClass(val protocolGetter: String = "", val binaryName: String = "")
 
-@Target(AnnotationTarget.FUNCTION)
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
 @Retention(AnnotationRetention.BINARY)
 annotation class ObjCMethod(val selector: String, val bridge: String)
 
