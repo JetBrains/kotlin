@@ -190,14 +190,18 @@ class RefineConfigurationBuilder : PropertiesCollection.Builder() {
 typealias RefineScriptCompilationConfigurationHandler =
             (ScriptConfigurationRefinementContext) -> ResultWithDiagnostics<ScriptCompilationConfiguration>
 
-class RefineConfigurationUnconditionallyData(
+data class RefineConfigurationUnconditionallyData(
     val handler: RefineScriptCompilationConfigurationHandler
-) : Serializable
+) : Serializable {
+    companion object { private const val serialVersionUID: Long = 1L }
+}
 
-class RefineConfigurationOnAnnotationsData(
+data class RefineConfigurationOnAnnotationsData(
     val annotations: List<KotlinType>,
     val handler: RefineScriptCompilationConfigurationHandler
-) : Serializable
+) : Serializable {
+    companion object { private const val serialVersionUID: Long = 1L }
+}
 
 
 /**
