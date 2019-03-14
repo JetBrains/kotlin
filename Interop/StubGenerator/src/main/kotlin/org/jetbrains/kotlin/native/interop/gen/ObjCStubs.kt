@@ -226,7 +226,11 @@ class ObjCMethodStub(private val stubGenerator: StubGenerator,
                 bodyGenerator,
                 this@ObjCMethodStub,
                 returnType,
-                nativeBridgeArguments
+                nativeBridgeArguments,
+                independent = when (container) {
+                    is ObjCClassOrProtocol -> true // Every proper instance has this method in its method table.
+                    is ObjCCategory -> false // Method is contributed by native dependency.
+                }
         ) { nativeValues ->
             val messengerParameterTypes = mutableListOf<String>()
             messengerParameterTypes.add("void*")

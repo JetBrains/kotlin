@@ -120,7 +120,8 @@ internal class KotlinObjCClassInfoGenerator(override val context: Context) : Con
                 context.llvm.externalFunction(
                         imp,
                         functionType(voidType),
-                        origin = info.bridge.llvmSymbolOrigin
+                        origin = info.bridge.llvmSymbolOrigin,
+                        independent = true
                 )
         )
     }

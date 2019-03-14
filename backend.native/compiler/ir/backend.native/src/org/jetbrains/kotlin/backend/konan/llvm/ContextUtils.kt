@@ -296,8 +296,13 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
         return LLVMAddFunction(llvmModule, "llvm.memcpy.p0i8.p0i8.i32", functionType)!!
     }
 
-    internal fun externalFunction(name: String, type: LLVMTypeRef, origin: CompiledKonanModuleOrigin): LLVMValueRef {
-        this.imports.add(origin)
+    internal fun externalFunction(
+            name: String,
+            type: LLVMTypeRef,
+            origin: CompiledKonanModuleOrigin,
+            independent: Boolean = false
+    ): LLVMValueRef {
+        this.imports.add(origin, onlyBitcode = independent)
 
         val found = LLVMGetNamedFunction(llvmModule, name)
         if (found != null) {
@@ -336,11 +341,12 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
 
     class ImportsImpl(private val context: Context) : LlvmImports {
 
-        private val usedLibraries = mutableSetOf<KonanLibrary>()
+        private val usedBitcode = mutableSetOf<KonanLibrary>()
+        private val usedNativeDependencies = mutableSetOf<KonanLibrary>()
 
         private val allLibraries by lazy { context.librariesWithDependencies.toSet() }
 
-        override fun add(origin: CompiledKonanModuleOrigin) {
+        override fun add(origin: CompiledKonanModuleOrigin, onlyBitcode: Boolean) {
             val library = when (origin) {
                 CurrentKonanModuleOrigin -> return
                 is DeserializedKonanModuleOrigin -> origin.library
@@ -350,16 +356,28 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
                 error("Library (${library.libraryName}) is used but not requested.\nRequested libraries: ${allLibraries.joinToString { it.libraryName }}")
             }
 
-            usedLibraries.add(library)
+            usedBitcode.add(library)
+            if (!onlyBitcode) {
+                usedNativeDependencies.add(library)
+            }
         }
 
-        override fun isImported(library: KonanLibrary): Boolean = library in usedLibraries
+        override fun bitcodeIsUsed(library: KonanLibrary) = library in usedBitcode
+
+        override fun nativeDependenciesAreUsed(library: KonanLibrary) = library in usedNativeDependencies
     }
 
-    val librariesToLink: List<KonanLibrary> by lazy {
+    val nativeDependenciesToLink: List<KonanLibrary> by lazy {
         context.config.resolvedLibraries
-                .filterRoots { (!it.isDefault && !context.config.purgeUserLibs) || imports.isImported(it.library) }
                 .getFullList(TopologicalLibraryOrder)
+                .filter { (!it.isDefault && !context.config.purgeUserLibs) || imports.nativeDependenciesAreUsed(it) }
+
+    }
+
+    val bitcodeToLink: List<KonanLibrary> by lazy {
+        context.config.resolvedLibraries
+                .getFullList(TopologicalLibraryOrder)
+                .filter { (!it.isDefault && !context.config.purgeUserLibs) || imports.bitcodeIsUsed(it) }
     }
 
     val staticData = StaticData(context)

@@ -15,8 +15,9 @@ import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 internal interface LlvmImports {
-    fun add(origin: CompiledKonanModuleOrigin)
-    fun isImported(library: KonanLibrary): Boolean
+    fun add(origin: CompiledKonanModuleOrigin, onlyBitcode: Boolean = false)
+    fun bitcodeIsUsed(library: KonanLibrary): Boolean
+    fun nativeDependenciesAreUsed(library: KonanLibrary): Boolean
 }
 
 internal val DeclarationDescriptor.llvmSymbolOrigin: CompiledKonanModuleOrigin

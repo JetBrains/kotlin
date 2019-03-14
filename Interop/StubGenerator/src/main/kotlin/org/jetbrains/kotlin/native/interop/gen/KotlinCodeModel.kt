@@ -157,6 +157,8 @@ data class KotlinFunctionType(
 internal val cnamesStructsPackageName = "cnames.structs"
 
 object KotlinTypes {
+    val independent = Classifier.topLevel("kotlin.native.internal", "Independent")
+
     val boolean by BuiltInType
     val byte by BuiltInType
     val short by BuiltInType

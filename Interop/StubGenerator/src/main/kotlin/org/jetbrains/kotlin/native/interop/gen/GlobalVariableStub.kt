@@ -27,7 +27,8 @@ class GlobalVariableStub(global: GlobalDecl, stubGenerator: StubGenerator) : Kot
         stubGenerator.simpleBridgeGenerator.kotlinToNative(
                 nativeBacked = this,
                 returnType = BridgedType.NATIVE_PTR,
-                kotlinValues = emptyList()
+                kotlinValues = emptyList(),
+                independent = false
         ) {
             "&${global.name}"
         }
@@ -58,7 +59,8 @@ class GlobalVariableStub(global: GlobalDecl, stubGenerator: StubGenerator) : Kot
                 getter = mirror.info.argFromBridged(stubGenerator.simpleBridgeGenerator.kotlinToNative(
                         nativeBacked = this,
                         returnType = mirror.info.bridgedType,
-                        kotlinValues = emptyList()
+                        kotlinValues = emptyList(),
+                        independent = false
                 ) {
                     mirror.info.cToBridged(expr = global.name)
                 }, kotlinScope, nativeBacked = this)
@@ -71,7 +73,8 @@ class GlobalVariableStub(global: GlobalDecl, stubGenerator: StubGenerator) : Kot
                     stubGenerator.simpleBridgeGenerator.kotlinToNative(
                             nativeBacked = setterStub,
                             returnType = BridgedType.VOID,
-                            kotlinValues = listOf(bridgedValue)
+                            kotlinValues = listOf(bridgedValue),
+                            independent = false
                     ) { nativeValues ->
                         out("${global.name} = ${mirror.info.cFromBridged(
                                 nativeValues.single(),

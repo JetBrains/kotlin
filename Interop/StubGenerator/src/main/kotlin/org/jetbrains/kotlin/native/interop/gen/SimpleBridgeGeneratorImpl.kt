@@ -71,7 +71,8 @@ class SimpleBridgeGeneratorImpl(
             nativeBacked: NativeBacked,
             returnType: BridgedType,
             kotlinValues: List<BridgeTypedKotlinValue>,
-            block: NativeCodeBuilder.(arguments: List<NativeExpression>) -> NativeExpression
+            independent: Boolean,
+            block: NativeCodeBuilder.(nativeValues: List<NativeExpression>) -> NativeExpression
     ): KotlinExpression {
 
         val kotlinLines = mutableListOf<String>()
@@ -116,6 +117,7 @@ class SimpleBridgeGeneratorImpl(
             }
             KotlinPlatform.NATIVE -> {
                 val functionName = pkgName.replace(INVALID_CLANG_IDENTIFIER_REGEX, "_") + "_$kotlinFunctionName"
+                if (independent) kotlinLines.add("@" + topLevelKotlinScope.reference(KotlinTypes.independent))
                 kotlinLines.add("@SymbolName(${functionName.quoteAsKotlinLiteral()})")
                 "$cReturnType $functionName ($joinedCParameters)"
             }

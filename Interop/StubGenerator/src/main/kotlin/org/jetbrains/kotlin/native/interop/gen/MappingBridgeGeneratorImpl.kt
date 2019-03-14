@@ -35,6 +35,7 @@ class MappingBridgeGeneratorImpl(
             nativeBacked: NativeBacked,
             returnType: Type,
             kotlinValues: List<TypedKotlinValue>,
+            independent: Boolean,
             block: NativeCodeBuilder.(nativeValues: List<NativeExpression>) -> NativeExpression
     ): KotlinExpression {
         val bridgeArguments = mutableListOf<BridgeTypedKotlinValue>()
@@ -70,7 +71,7 @@ class MappingBridgeGeneratorImpl(
         }
 
         val callExpr = simpleBridgeGenerator.kotlinToNative(
-                nativeBacked, bridgeReturnType, bridgeArguments
+                nativeBacked, bridgeReturnType, bridgeArguments, independent
         ) { bridgeNativeValues ->
 
             val nativeValues = mutableListOf<String>()

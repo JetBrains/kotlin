@@ -660,7 +660,8 @@ class StubGenerator(
                         bodyGenerator,
                         this,
                         func.returnType,
-                        bridgeArguments
+                        bridgeArguments,
+                        independent = false
                 ) { nativeValues ->
                     "${func.name}(${nativeValues.joinToString()})"
                 }

@@ -2123,7 +2123,8 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         val protocolGetter = context.llvm.externalFunction(
                 protocolGetterName,
                 functionType(int8TypePtr, false),
-                irClass.llvmSymbolOrigin
+                irClass.llvmSymbolOrigin,
+                independent = true // Protocol is header-only declaration.
         )
 
         return call(protocolGetter, emptyList())

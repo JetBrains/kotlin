@@ -60,6 +60,7 @@ interface SimpleBridgeGenerator {
             nativeBacked: NativeBacked,
             returnType: BridgedType,
             kotlinValues: List<BridgeTypedKotlinValue>,
+            independent: Boolean,
             block: NativeCodeBuilder.(nativeValues: List<NativeExpression>) -> NativeExpression
     ): KotlinExpression
 

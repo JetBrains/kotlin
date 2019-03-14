@@ -307,7 +307,8 @@ sealed class TypeInfo {
                         type.returnType,
                         type.parameterTypes.mapIndexed { index, it ->
                             TypedKotlinValue(it, "p$index")
-                        } + TypedKotlinValue(PointerType(VoidType), "interpretCPointer<COpaque>($kniBlockPtr)")
+                        } + TypedKotlinValue(PointerType(VoidType), "interpretCPointer<COpaque>($kniBlockPtr)"),
+                        independent = true
 
                 ) { nativeValues ->
                     val type = type

@@ -8,4 +8,5 @@ object RuntimeNames {
     val exportForCompilerAnnotation = FqName("kotlin.native.internal.ExportForCompiler")
     val exportTypeInfoAnnotation = FqName("kotlin.native.internal.ExportTypeInfo")
     val cCall = FqName("kotlinx.cinterop.internal.CCall")
+    val independent = FqName("kotlin.native.internal.Independent")
 }

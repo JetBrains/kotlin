@@ -32,6 +32,7 @@ interface MappingBridgeGenerator {
             nativeBacked: NativeBacked,
             returnType: Type,
             kotlinValues: List<TypedKotlinValue>,
+            independent: Boolean,
             block: NativeCodeBuilder.(nativeValues: List<NativeExpression>) -> NativeExpression
     ): KotlinExpression
 
