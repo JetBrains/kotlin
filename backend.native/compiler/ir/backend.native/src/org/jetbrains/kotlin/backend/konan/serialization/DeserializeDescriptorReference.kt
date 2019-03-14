@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 
 // This is all information needed to find a descriptor in the
@@ -19,13 +20,20 @@ class DescriptorReferenceDeserializer(val currentModule: ModuleDescriptor, val r
             if (it == "<root>") FqName.ROOT else FqName(it)
         }// TODO: whould we store an empty string in the protobuf?
 
-        val contributedName = if (name.startsWith("<get-") || name.startsWith("<set-")) {
+        val memberScope = currentModule.getPackage(packageFqName).memberScope
+        return getContributedDescriptors(memberScope, name)
+    }
+
+    private fun getContributedDescriptors(memberScope: MemberScope, name: String): Collection<DeclarationDescriptor> {
+        val contributedNameString = if (name.startsWith("<get-") || name.startsWith("<set-")) {
             name.substring(5, name.length - 1) // FIXME: rework serialization format.
         } else {
             name
         }
-        return currentModule.getPackage(packageFqName).memberScope
-                .getContributedDescriptors(nameFilter = { it.asString() == contributedName })
+        val contributedName = Name.identifier(contributedNameString)
+        return memberScope.getContributedFunctions(contributedName, NoLookupLocation.FROM_BACKEND) +
+                memberScope.getContributedVariables(contributedName, NoLookupLocation.FROM_BACKEND) +
+                listOfNotNull(memberScope.getContributedClassifier(contributedName, NoLookupLocation.FROM_BACKEND))
     }
 
     private class ClassMembers(val defaultConstructor: ClassConstructorDescriptor?,
@@ -74,7 +82,7 @@ class DescriptorReferenceDeserializer(val currentModule: ModuleDescriptor, val r
             Pair(null, getContributedDescriptors(packageFqNameString, name))
         } else {
             val clazz = currentModule.findClassAcrossModuleDependencies(ClassId(packageFqName, classFqName, false))!!
-            Pair(clazz, clazz.unsubstitutedMemberScope.getContributedDescriptors() + clazz.getConstructors())
+            Pair(clazz, getContributedDescriptors(clazz.unsubstitutedMemberScope, name) + clazz.getConstructors())
         }
 
         if (packageFqNameString.startsWith("cnames.") || packageFqNameString.startsWith("objcnames.")) {
