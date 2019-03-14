@@ -54,6 +54,7 @@ object JsPlatformConfigurator : PlatformConfiguratorBase(
         additionalTypeCheckers = listOf(),
         additionalClassifierUsageCheckers = listOf(),
         additionalAnnotationCheckers = listOf(),
+        additionalClashResolvers = listOf(),
         identifierChecker = JsIdentifierChecker,
         overloadFilter = OverloadFilter.Default,
         platformToKotlinClassMap = PlatformToKotlinClassMap.EMPTY,
