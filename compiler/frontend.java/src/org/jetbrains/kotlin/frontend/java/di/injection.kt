@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.contracts.ContractDeserializerImpl
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.frontend.di.configureModule
+import org.jetbrains.kotlin.frontend.di.configurePlatformIndependentIncrementalCompilationComponents
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.java.AbstractJavaClassFinder
@@ -62,24 +63,48 @@ fun createContainerForLazyResolveWithJava(
     configureJavaClassFinder: (StorageComponentContainer.() -> Unit)? = null,
     javaClassTracker: JavaClassesTracker? = null
 ): StorageComponentContainer = createContainer("LazyResolveWithJava", JvmPlatformCompilerServices) {
-    configureModule(moduleContext, targetPlaform, JvmPlatformCompilerServices, bindingTrace, languageVersionSettings)
+    configureModule(moduleContext, moduleContentScope, targetPlaform, JvmPlatformCompilerServices, bindingTrace, languageVersionSettings)
 
-    useInstance(moduleContentScope)
-    useInstance(lookupTracker)
-    useInstance(expectActualTracker)
+    configurePlatformIndependentIncrementalCompilationComponents(lookupTracker, expectActualTracker)
+
     useImpl<ResolveSession>()
     useImpl<LazyTopDownAnalyzer>()
+    useImpl<AnnotationResolverImpl>()
+    useImpl<CompilerDeserializationConfiguration>()
+    useImpl<ContractDeserializerImpl>()
+
+    useInstance(packagePartProvider)
+    useInstance(moduleClassResolver)
+    useInstance(declarationProviderFactory)
+
+    configureJavaSpecificComponents(
+        moduleContext, moduleContentScope, useBuiltInsProvider, languageVersionSettings, configureJavaClassFinder, javaClassTracker
+    )
+
+    targetEnvironment.configure(this)
+
+}.apply {
+    get<AbstractJavaClassFinder>().initialize(bindingTrace, get<KotlinCodeAnalyzer>())
+}
+
+fun StorageComponentContainer.configureJavaSpecificComponents(
+    moduleContext: ModuleContext,
+    moduleContentScope: GlobalSearchScope,
+    useBuiltInsProvider: Boolean,
+    languageVersionSettings: LanguageVersionSettings,
+    configureJavaClassFinder: (StorageComponentContainer.() -> Unit)?,
+    javaClassTracker: JavaClassesTracker?
+) {
     useImpl<JavaDescriptorResolver>()
     useImpl<DeserializationComponentsForJava>()
     useInstance(VirtualFileFinderFactory.getInstance(moduleContext.project).create(moduleContentScope))
     useInstance(JavaPropertyInitializerEvaluatorImpl)
-    useImpl<AnnotationResolverImpl>()
     useImpl<SignaturePropagatorImpl>()
     useImpl<TraceBasedErrorReporter>()
     useInstance(InternalFlexibleTypeTransformer)
-    useImpl<CompilerDeserializationConfiguration>()
     useInstance(JavaDeprecationSettings)
 
+    // configureJavaClassFinder != null <=> javac integration is enabled
     if (configureJavaClassFinder != null) {
         configureJavaClassFinder()
     } else {
@@ -88,12 +113,9 @@ fun createContainerForLazyResolveWithJava(
         useImpl<JavaSourceElementFactoryImpl>()
     }
 
-    useInstance(packagePartProvider)
-    useInstance(moduleClassResolver)
-    useInstance(declarationProviderFactory)
-
     useInstance(languageVersionSettings.getFlag(JvmAnalysisFlags.jsr305))
 
+    // Currently, false in IDE environment (ideally, should be true everywhere)
     if (useBuiltInsProvider) {
         useInstance((moduleContext.module.builtIns as JvmBuiltIns).settings)
         useImpl<JvmBuiltInsPackageFragmentProvider>()
@@ -104,14 +126,8 @@ fun createContainerForLazyResolveWithJava(
         JavaResolverSettings.create(isReleaseCoroutines = languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines))
     )
 
-    targetEnvironment.configure(this)
-
-    useImpl<ContractDeserializerImpl>()
     useImpl<FilesByFacadeFqNameIndexer>()
-}.apply {
-    get<AbstractJavaClassFinder>().initialize(bindingTrace, get<KotlinCodeAnalyzer>())
 }
-
 
 fun ComponentProvider.initJvmBuiltInsForTopDownAnalysis() {
     get<JvmBuiltIns>().initialize(get<ModuleDescriptor>(), get<LanguageVersionSettings>())
