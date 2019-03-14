@@ -248,8 +248,8 @@ public class Intrinsics {
             }
         }
 
-        List<StackTraceElement> list = Arrays.asList(stackTrace).subList(lastIntrinsic + 1, size);
-        throwable.setStackTrace(list.toArray(new StackTraceElement[list.size()]));
+        StackTraceElement[] newStackTrace = Arrays.copyOfRange(stackTrace, lastIntrinsic + 1, size);
+        throwable.setStackTrace(newStackTrace);
         return throwable;
     }
 }
