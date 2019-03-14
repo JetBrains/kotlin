@@ -31,7 +31,7 @@ public final class Modifiers {
     @org.jetbrains.annotations.NotNull()
     private final transient java.lang.String transientField = "";
     @org.jetbrains.annotations.NotNull()
-    private volatile java.lang.String volatileField;
+    private volatile java.lang.String volatileField = "";
 
     @org.jetbrains.annotations.NotNull()
     public final java.lang.String getTransientField() {

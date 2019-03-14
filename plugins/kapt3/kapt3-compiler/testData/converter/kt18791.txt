@@ -130,9 +130,9 @@ public final class MyActivity {
     private final int f = 0;
     public final int propA = app.B.id.textView;
     private final int propB = app.B.id.textView;
-    private int propC;
+    private int propC = app.B.id.textView;
     public final int propD = app.B.id.textView;
-    public int propE;
+    public int propE = app.B.id.textView;
     private final int propF = 0;
 
     @Bind(id = lib.R.id.textView)
