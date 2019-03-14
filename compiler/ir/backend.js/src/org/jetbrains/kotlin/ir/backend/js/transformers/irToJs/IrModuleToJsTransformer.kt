@@ -78,16 +78,6 @@ class IrModuleToJsTransformer(private val backendContext: JsIrBackendContext) : 
             .toList()
     }
 
-    private fun generateModuleInGlobalScope(module: IrModuleFragment): JsProgram {
-        val program = JsProgram()
-        val rootContext = JsGenerationContext(JsRootScope(program), backendContext)
-
-        val moduleBody = generateModuleBody(module, rootContext)
-        program.globalBlock.statements += moduleBody
-
-        return program
-    }
-
     private fun generateModule(module: IrModuleFragment): JsProgram {
         val program = JsProgram()
         val rootContext = JsGenerationContext(JsRootScope(program), backendContext)
@@ -186,9 +176,7 @@ class IrModuleToJsTransformer(private val backendContext: JsIrBackendContext) : 
     }
 
     override fun visitModuleFragment(declaration: IrModuleFragment, data: Nothing?): JsNode =
-        if (backendContext.compilationMode.generateKlib) generateModuleInGlobalScope(declaration)
-        else generateModule(declaration)
-
+        generateModule(declaration)
 
     private fun processClassModels(
         classModelMap: Map<JsName, JsClassModel>,
