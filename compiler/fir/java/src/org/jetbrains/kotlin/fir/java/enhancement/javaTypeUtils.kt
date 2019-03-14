@@ -146,7 +146,9 @@ private fun JavaClassifierType.enhanceInflexibleType(
                     mappedId = mappedId.readOnlyToMutable() ?: mappedId
                 }
             }
-            session.service<FirSymbolProvider>().getClassLikeSymbolByFqName(mappedId ?: classId)!!
+            val kotlinClassId = mappedId ?: classId
+            session.service<FirSymbolProvider>().getClassLikeSymbolByFqName(kotlinClassId)
+                ?: return ConeClassErrorType("Cannot find class-like symbol for $kotlinClassId during enhancement")
         }
         is JavaTypeParameter -> createTypeParameterSymbol(session, classifier.name)
         else -> return toNotNullConeKotlinType(session)

@@ -198,6 +198,7 @@ class JavaClassEnhancementScope(
     }
 
     private fun StringBuilder.appendConeType(coneType: ConeKotlinType) {
+        if (coneType is ConeClassErrorType) return
         append("L")
         when (coneType) {
             is ConeClassLikeType -> {

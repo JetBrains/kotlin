@@ -106,6 +106,19 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
         private fun KtExpression.toFirStatement(): FirStatement =
             convert()
 
+        private fun KtDeclaration.toFirDeclaration(
+            delegatedSuperType: FirTypeRef?, delegatedSelfType: FirTypeRef, hasPrimaryConstructor: Boolean
+        ): FirDeclaration {
+            return when (this) {
+                is KtSecondaryConstructor -> toFirConstructor(
+                    delegatedSuperType,
+                    delegatedSelfType,
+                    hasPrimaryConstructor
+                )
+                else -> convert<FirDeclaration>()
+            }
+        }
+
         private fun KtExpression?.toFirBlock(): FirBlock =
             when (this) {
                 is KtBlockExpression ->
@@ -413,14 +426,9 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
                 val delegatedSelfType = enumEntry.toDelegatedSelfType()
                 val delegatedSuperType = enumEntry.extractSuperTypeListEntriesTo(firEnumEntry, delegatedSelfType)
                 for (declaration in enumEntry.declarations) {
-                    firEnumEntry.declarations += when (declaration) {
-                        is KtSecondaryConstructor -> declaration.toFirConstructor(
-                            delegatedSuperType,
-                            delegatedSelfType,
-                            hasPrimaryConstructor = true
-                        )
-                        else -> declaration.convert<FirDeclaration>()
-                    }
+                    firEnumEntry.declarations += declaration.toFirDeclaration(
+                        delegatedSuperType, delegatedSelfType, hasPrimaryConstructor = true
+                    )
                 }
                 firEnumEntry
             }
@@ -484,14 +492,9 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
                 }
 
                 for (declaration in classOrObject.declarations) {
-                    firClass.declarations += when (declaration) {
-                        is KtSecondaryConstructor -> declaration.toFirConstructor(
-                            delegatedSuperType,
-                            delegatedSelfType,
-                            classOrObject.primaryConstructor != null
-                        )
-                        else -> declaration.convert<FirDeclaration>()
-                    }
+                    firClass.declarations += declaration.toFirDeclaration(
+                        delegatedSuperType, delegatedSelfType, hasPrimaryConstructor = classOrObject.primaryConstructor != null
+                    )
                 }
 
                 firClass
@@ -506,7 +509,9 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
                 objectDeclaration.extractSuperTypeListEntriesTo(this, delegatedSelfType)
 
                 for (declaration in objectDeclaration.declarations) {
-                    declarations += declaration.convert<FirDeclaration>()
+                    declarations += declaration.toFirDeclaration(
+                        delegatedSuperType = null, delegatedSelfType = delegatedSelfType, hasPrimaryConstructor = false
+                    )
                 }
             }
         }
@@ -1278,9 +1283,11 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
         override fun visitQualifiedExpression(expression: KtQualifiedExpression, data: Unit): FirElement {
             val selector = expression.selectorExpression
                 ?: return FirErrorExpressionImpl(session, expression, "Qualified expression without selector")
-            val firSelector = selector.toFirExpression("Incorrect selector expression") as FirModifiableQualifiedAccess
-            firSelector.safe = expression is KtSafeQualifiedExpression
-            firSelector.explicitReceiver = expression.receiverExpression.toFirExpression("Incorrect receiver expression")
+            val firSelector = selector.toFirExpression("Incorrect selector expression")
+            if (firSelector is FirModifiableQualifiedAccess) {
+                firSelector.safe = expression is KtSafeQualifiedExpression
+                firSelector.explicitReceiver = expression.receiverExpression.toFirExpression("Incorrect receiver expression")
+            }
             return firSelector
         }
 
