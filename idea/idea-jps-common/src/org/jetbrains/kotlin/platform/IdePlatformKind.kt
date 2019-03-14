@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.platform.impl.CommonIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.JsIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.NativeIdePlatformKind
-import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 abstract class IdePlatformKind<Kind : IdePlatformKind<Kind>> {
@@ -66,7 +66,13 @@ abstract class IdePlatformKind<Kind : IdePlatformKind<Kind>> {
 }
 
 val TargetPlatform.idePlatformKind: IdePlatformKind<*>
-    get() = IdePlatformKind.IDE_PLATFORMS_BY_COMPILER_PLATFORMS[this] ?: error("Unknown platform $this")
+    //    get() = IdePlatformKind.IDE_PLATFORMS_BY_COMPILER_PLATFORMS[this] ?: error("Unknown platform $this")
+    get() = when (this) {
+        is JvmPlatform -> JvmIdePlatformKind
+        is KonanPlatform -> NativeIdePlatformKind
+        is CommonPlatform -> CommonIdePlatformKind
+        is JsPlatform -> JsIdePlatformKind
+    }
 
 fun IdePlatformKind<*>?.orDefault(): IdePlatformKind<*> {
     return this ?: DefaultIdeTargetPlatformKindProvider.defaultPlatform.kind
