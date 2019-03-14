@@ -27,11 +27,11 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import java.io.File
 
 abstract class KotlinIrLinker(
-    currentModule: ModuleDescriptor,
     logger: LoggingContext,
     builtIns: IrBuiltIns,
     symbolTable: SymbolTable,
-    private val forwardModuleDescriptor: ModuleDescriptor?)
+    private val forwardModuleDescriptor: ModuleDescriptor?, 
+    val firstKnownBuiltinsIndex: Long)
         : IrModuleDeserializer(logger, builtIns, symbolTable),
           DescriptorUniqIdAware {
 
@@ -50,9 +50,18 @@ abstract class KotlinIrLinker(
 
     abstract protected val descriptorReferenceDeserializer: DescriptorReferenceDeserializer
 
-    private val descriptorToDirectoryMap = mutableMapOf<ModuleDescriptor, File>()
+    protected val indexAfterKnownBuiltins = loadKnownBuiltinSymbols()
 
-    private fun irDirectory(m: ModuleDescriptor): File = descriptorToDirectoryMap[m]!!
+    fun loadKnownBuiltinSymbols(): Long {
+        var currentIndex = firstKnownBuiltinsIndex
+        builtIns.knownBuiltins.forEach {
+            require(it is IrFunction)
+            deserializedSymbols.put(UniqIdKey(null, UniqId(currentIndex, isLocal = false)), it.symbol)
+            assert(symbolTable.referenceSimpleFunction(it.descriptor) == it.symbol)
+            currentIndex++
+        }
+        return currentIndex
+    }
 
     private fun referenceDeserializedSymbol(proto: KotlinIr.IrSymbolData, descriptor: DeclarationDescriptor?): IrSymbol = when (proto.kind) {
         KotlinIr.IrSymbolKind.ANONYMOUS_INIT_SYMBOL ->

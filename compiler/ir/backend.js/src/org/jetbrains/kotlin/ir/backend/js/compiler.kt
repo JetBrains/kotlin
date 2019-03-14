@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.utils.DFS
 import java.io.File
-import java.nio.file.Files
+import java.nio.file.Files.move
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 
@@ -328,7 +328,7 @@ fun serializeModuleIntoKlib(
     dependencies: List<CompiledModule>,
     moduleFragment: IrModuleFragment
 ) {
-    val declarationTable = JsDeclarationTable(moduleFragment.irBuiltins, DescriptorTable()).apply { loadKnownBuiltins() }
+    val declarationTable = JsDeclarationTable(moduleFragment.irBuiltins, DescriptorTable())
 
     val serializedIr = JsIrModuleSerializer(logggg, declarationTable).serializedIrModule(moduleFragment)
     val serializer = JsKlibMetadataSerializationUtil
@@ -355,7 +355,7 @@ fun serializeModuleIntoKlib(
 
     val irDeclarationDir = File(klibDir, declarationsDirName).also { it.mkdir() }
     val irCombinedFile = File(irDeclarationDir, "irCombined.knd")
-    Files.copy(Paths.get(serializedIr.combinedDeclarationFilePath), Paths.get(irCombinedFile.path), StandardCopyOption.REPLACE_EXISTING)
+    move(Paths.get(serializedIr.combinedDeclarationFilePath), Paths.get(irCombinedFile.path), StandardCopyOption.REPLACE_EXISTING)
 
     File(klibDir, "${moduleDescription.name}.${JsKlibMetadataSerializationUtil.CLASS_METADATA_FILE_EXTENSION}").also {
         it.writeBytes(serializedData.asByteArray())

@@ -21,7 +21,7 @@ internal val DeclarationDescriptor.isExpectMember: Boolean
 internal val DeclarationDescriptor.isSerializableExpectClass: Boolean
     get() = this is ClassDescriptor && ExpectedActualDeclarationChecker.shouldGenerateExpectClass(this)
 
-tailrec internal fun DeclarationDescriptor.findPackage(): PackageFragmentDescriptor {
+internal tailrec fun DeclarationDescriptor.findPackage(): PackageFragmentDescriptor {
     return if (this is PackageFragmentDescriptor) this
     else this.containingDeclaration!!.findPackage()
 }

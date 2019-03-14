@@ -64,9 +64,7 @@ private const val INDEX_HEADER_SIZE = 4  // sizeof(Int).
 class CombinedIrFileWriter(val declarationCount: Int) {
     private var currentDeclaration = 0
     private var currentPosition = 0
-    private val file =  Files.createTempFile("ir", "").toFile().also {
-        it.deleteOnExit()
-    }
+    private val file =  Files.createTempFile("ir", "").toFile()
     private val randomAccessFile = RandomAccessFile(file.path, "rw")
 
     init {

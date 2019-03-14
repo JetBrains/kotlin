@@ -178,7 +178,7 @@ class NaiveSourceBasedFileEntryImpl(override val name: String, val lineStartOffs
     override fun getColumnNumber(offset: Int): Int {
         assert(offset != UNDEFINED_OFFSET)
         if (offset == SYNTHETIC_OFFSET) return 0
-        var lineNumber = getLineNumber(offset)
+        val lineNumber = getLineNumber(offset)
         return offset - lineStartOffsets[lineNumber]
     }
 

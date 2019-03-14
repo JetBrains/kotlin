@@ -31,9 +31,6 @@ import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrDeclarator.D
 import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrType.KindCase.*
 import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrVarargElement.VarargElementCase
 import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrTypeArgument.KindCase.*
-
-
-
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 
@@ -55,9 +52,9 @@ abstract class IrModuleDeserializer(
     abstract fun deserializeString(proto: KotlinIr.String): String
     abstract fun deserializeLoopHeader(loopIndex: Int, loopBuilder: () -> IrLoopBase): IrLoopBase
 
-    private fun deserializeName(proto: KotlinIr.Name): Name {
-        val name = deserializeString(proto.name)
-        return if (proto.isSpecial) Name.special(name) else Name.identifier(name)
+    private fun deserializeName(proto: KotlinIr.String): Name {
+        val name = deserializeString(proto)
+        return Name.guessByFirstCharacter(name)
     }
 
     private fun deserializeTypeArguments(proto: KotlinIr.TypeArguments): List<IrType> {
