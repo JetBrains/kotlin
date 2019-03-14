@@ -426,21 +426,22 @@ class ReturnTypeCalculatorWithJump(val session: FirSession) : ReturnTypeCalculat
 
         val provider = session.service<FirProvider>()
 
-        val file = provider.getFirCallableContainerFile(id) ?: FirErrorTypeRefImpl(
+        val file = provider.getFirCallableContainerFile(id)
+
+        val outerClasses = generateSequence(id.classId) { classId ->
+            classId.outerClassId
+        }.mapTo(mutableListOf()) { provider.getFirClassifierByFqName(it) }
+
+        if (file == null || outerClasses.any { it == null }) return FirErrorTypeRefImpl(
             session,
             null,
             "I don't know what todo"
         )
 
-        val outerClasses = generateSequence(id.classId) { classId ->
-            classId.outerClassId
-        }.mapTo(mutableListOf()) { provider.getFirClassifierByFqName(it)!! }
-
-
         declaration.transformReturnTypeRef(storeType, FirComputingImplicitTypeRef)
 
         val transformer = FirDesignatedBodyResolveTransformer(
-            (listOf(file) + outerClasses.asReversed() + listOf(declaration)).iterator(),
+            (listOf(file) + outerClasses.filterNotNull().asReversed() + listOf(declaration)).iterator(),
             file.session
         )
 
