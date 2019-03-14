@@ -328,17 +328,6 @@ object AbstractTypeChecker {
     }
 
 
-    private inline fun TypeArgumentListMarker.all(
-        context: AbstractTypeCheckerContext,
-        crossinline predicate: (TypeArgumentMarker) -> Boolean
-    ): Boolean = with(context) {
-        repeat(size()) { index ->
-            if (!predicate(get(index))) return false
-        }
-        return true
-    }
-
-
     private fun AbstractTypeCheckerContext.collectAllSupertypesWithGivenTypeConstructor(
         baseType: SimpleTypeMarker,
         constructor: TypeConstructorMarker

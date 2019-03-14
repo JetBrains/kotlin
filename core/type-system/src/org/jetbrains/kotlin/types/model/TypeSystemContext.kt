@@ -152,3 +152,13 @@ enum class CaptureStatus {
     FOR_INCORPORATION,
     FROM_EXPRESSION
 }
+
+inline fun TypeArgumentListMarker.all(
+    context: TypeSystemContext,
+    crossinline predicate: (TypeArgumentMarker) -> Boolean
+): Boolean = with(context) {
+    repeat(size()) { index ->
+        if (!predicate(get(index))) return false
+    }
+    return true
+}
