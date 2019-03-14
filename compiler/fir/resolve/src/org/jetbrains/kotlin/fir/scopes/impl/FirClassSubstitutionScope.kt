@@ -6,11 +6,14 @@
 package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirConstructor
+import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirMemberFunctionImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorWithJump
+import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.*
@@ -77,6 +80,7 @@ class FirClassSubstitutionScope(
                 is ConeFunctionType -> TODO("Substitute function type properly")
                 is ConeClassLikeType -> error("Unknown class-like type to substitute: $this, ${this::class}")
                 is ConeFlexibleType -> error("Trying to substitute arguments for flexible type")
+                is ConeCapturedType -> error("Not supported")
             }
         }
         return null
@@ -104,7 +108,11 @@ class FirClassSubstitutionScope(
         original: ConeFunctionSymbol,
         name: Name
     ): FirFunctionSymbol {
-        val member = (original as FirBasedSymbol<*>).fir as? FirNamedFunction ?: error("Can't fake override for $original")
+
+        val member = original.firUnsafe<FirFunction>()
+        if (member is FirConstructor) return original as FirFunctionSymbol // TODO: substitution for constructors
+        member as FirNamedFunction
+
         val receiverType = member.receiverTypeRef?.coneTypeUnsafe()
         val newReceiverType = receiverType?.substitute()
 
