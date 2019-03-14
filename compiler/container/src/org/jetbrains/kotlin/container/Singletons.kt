@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.container
 
 import java.io.Closeable
+import java.lang.IllegalStateException
 import java.lang.reflect.Type
 import java.util.*
 
@@ -142,6 +143,29 @@ open class SingletonTypeComponentDescriptor(container: ComponentContainer, val k
     }
 
     override fun toString(): String = "Singleton: ${klass.simpleName}"
+}
+
+internal class ClashResolutionDescriptor<E : PlatformSpecificExtension<E>>(
+    container: ComponentContainer,
+    private val resolver: PlatformExtensionsClashResolver<E>,
+    private val clashedComponents: List<ComponentDescriptor>
+) : SingletonDescriptor(container) {
+
+    override fun createInstance(context: ValueResolveContext): Any {
+        state = ComponentState.Initializing
+        val extensions = computeArguments(clashedComponents) as List<E>
+        val resolution = resolver.resolveExtensionsClash(extensions)
+        state = ComponentState.Initialized
+        return resolution
+    }
+
+    override fun getRegistrations(): Iterable<Type> {
+        throw IllegalStateException("Shouldn't be called")
+    }
+
+    override fun getDependencies(context: ValueResolveContext): Collection<Type> {
+        throw IllegalStateException("Shouldn't be called")
+    }
 }
 
 class ImplicitSingletonTypeComponentDescriptor(container: ComponentContainer, klass: Class<*>) : SingletonTypeComponentDescriptor(container, klass) {

@@ -70,4 +70,20 @@ internal class ComponentRegistry {
         }
         registrationMap += other.registrationMap
     }
+
+    fun resolveClashesIfAny(container: ComponentContainer, clashResolvers: List<PlatformExtensionsClashResolver<*>>) {
+        /*
+        The idea is to create descriptor, which is very similar to other SingletonDescriptor, but instead of calling
+        constructor we call 'resolveExtensionsClash' with values of clashed components as arguments.
+
+        By mimicking the usual descriptors we get lazy evaluation and consistency checks for free.
+         */
+        for (resolver in clashResolvers) {
+            val clashedComponents = registrationMap[resolver.applicableTo] as? Collection<ComponentDescriptor> ?: continue
+            if (clashedComponents.isEmpty()) continue // Shouldn't actually happen, but just in case
+
+            val substituteDescriptor = ClashResolutionDescriptor(container, resolver, clashedComponents.toList())
+            registrationMap[resolver.applicableTo] = substituteDescriptor
+        }
+    }
 }
