@@ -2,7 +2,7 @@ FILE: genericFunctions.kt
     public abstract interface Any {
     }
     <reified T : R|Any|> public final inline fun R|Any|.safeAs(): R|T|? {
-        ^safeAs as?/R|T|(this#)
+        ^safeAs (this# as? R|T|)
     }
     public abstract class Summator {
         public constructor(): super<R|kotlin/Any|>()

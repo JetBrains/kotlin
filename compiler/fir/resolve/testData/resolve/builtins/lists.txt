@@ -8,8 +8,8 @@ FILE: lists.kt
 
     }
     public final fun R|kotlin/collections/List<kotlin/String>|.convert(): R|MyStringList| {
-        ^convert as/R|MyStringList|(this#)
+        ^convert (this# as R|MyStringList|)
     }
     public final fun ret(l: R|kotlin/collections/MutableList<kotlin/String>|): R|MyMutableStringList| {
-        ^ret as/R|MyMutableStringList|(this#)
+        ^ret (this# as R|MyMutableStringList|)
     }

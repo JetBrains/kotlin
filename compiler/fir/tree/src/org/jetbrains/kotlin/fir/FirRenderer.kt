@@ -607,6 +607,16 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         print(")")
     }
 
+    override fun visitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall) {
+        print("(")
+        typeOperatorCall.argument.accept(this)
+        print(" ")
+        print(typeOperatorCall.operation.operator)
+        print(" ")
+        typeOperatorCall.typeRef.accept(this)
+        print(")")
+    }
+
     override fun visitAnnotationCall(annotationCall: FirAnnotationCall) {
         print("@")
         annotationCall.useSiteTarget?.let {

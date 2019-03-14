@@ -11,6 +11,6 @@ FILE: modifications.kt
         this# += String(Omega)
     }
     public? final? fun Any.modify(): kotlin/Unit {
-        lval <complex-set>: <implicit> = as/List<Int>(this#)
+        lval <complex-set>: <implicit> = (this# as List<Int>)
         <complex-set># += Int(42)
     }

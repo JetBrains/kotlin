@@ -2,14 +2,14 @@ FILE: typeOperators.kt
     public? final? interface IThing {
     }
     public? final? fun test1(x: Any): <implicit> {
-        ^test1 is/IThing(x#)
+        ^test1 (x# is IThing)
     }
     public? final? fun test2(x: Any): <implicit> {
-        ^test2 !is/IThing(x#)
+        ^test2 (x# !is IThing)
     }
     public? final? fun test3(x: Any): <implicit> {
-        ^test3 as/IThing(x#)
+        ^test3 (x# as IThing)
     }
     public? final? fun test4(x: Any): <implicit> {
-        ^test4 as?/IThing(x#)
+        ^test4 (x# as? IThing)
     }
