@@ -88,6 +88,33 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
         }
     }
 
+    override fun transformTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: Any?): CompositeTransformResult<FirStatement> {
+        val symbolProvider = session.service<FirSymbolProvider>()
+        val resolved = super.transformTypeOperatorCall(typeOperatorCall, data).single
+        when ((resolved as FirTypeOperatorCall).operation) {
+            FirOperation.IS, FirOperation.NOT_IS -> {
+                bindingContext[resolved] = FirResolvedTypeRefImpl(
+                    session,
+                    null,
+                    StandardClassIds.Boolean(symbolProvider).constructType(emptyArray(), isNullable = false),
+                    false,
+                    emptyList()
+                )
+            }
+            FirOperation.AS -> {
+                bindingContext[resolved] = resolved.typeRef
+            }
+            FirOperation.SAFE_AS -> {
+                bindingContext[resolved] =
+                        resolved.typeRef.withReplacedConeType(
+                        session,
+                        resolved.typeRef.coneTypeUnsafe().withNullability(ConeNullability.NULLABLE)
+                    )
+            }
+            else -> error("Unknown type operator")
+        }
+        return resolved.compose()
+    }
 
     protected inline fun <T> withScopeCleanup(scopes: MutableList<*>, crossinline l: () -> T): T {
         val sizeBefore = scopes.size
@@ -187,7 +214,7 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
         })
 
 
-        val result = runTowerResolver(checkers)
+                val result = runTowerResolver(checkers)
 
         val resultExpression = when (result) {
             is VariableInvokeApplicabilityChecker -> {
