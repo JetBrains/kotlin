@@ -20,6 +20,7 @@ import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 import junit.framework.TestCase
 import org.jetbrains.kotlin.asJava.toLightElements
+import org.jetbrains.kotlin.cli.common.arguments.mergeBeans
 import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.psi.KtModifierListOwner
@@ -663,6 +664,47 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         """.trimIndent(), true
         )
     }
+
+
+
+    fun testAddParameter() {
+        myFixture.configureByText(
+            "foo.kt", """
+        |annotation class Anno(val i: Int)
+        |
+        |class Foo {
+        |    fun ba<caret>r(@Anno(3) a: Int) {}
+        |}
+        """.trim().trimMargin()
+        )
+
+
+        val psiMethod = myFixture.atCaret<UMethod>().javaPsi
+
+        val currentParameters = psiMethod.parameters.map { ChangeParametersRequest.ExistingParameterWrapper(it) }
+
+        myFixture.launchAction(
+            com.intellij.lang.jvm.actions.createChangeParametersActions(
+                psiMethod,
+                object: ChangeParametersRequest {
+                    override fun getExpectedParameters(): List<ExpectedParameter> =
+                        currentParameters + expectedParameter(PsiType.getTypeByName("java.io.File", project, myFixture.file.resolveScope), "file")
+
+                    override fun isValid(): Boolean = true
+                })
+            .findWithText("Change method parameters to '(a: Int, file: File)'")
+        )
+        myFixture.checkResult(
+            """
+        import java.io.File
+
+        class Foo {
+            fun bar(@Anno(3) a: Int, file: File) {}
+        }
+        """.trimIndent(), true
+        )
+    }
+
 
     private fun makeParams(vararg psyTypes: PsiType): List<UParameter> {
         val uastContext = UastContext(myFixture.project)
