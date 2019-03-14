@@ -1,0 +1,118 @@
+import java.lang.System;
+
+@kotlin.Metadata()
+public final class Boo {
+    @org.jetbrains.annotations.NotNull()
+    private static final java.lang.String z = null;
+    public static final Boo INSTANCE = null;
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getZ() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String foo() {
+        return null;
+    }
+
+    private Boo() {
+        super();
+    }
+}
+
+////////////////////
+
+
+import java.lang.System;
+
+@kotlin.Metadata()
+public final class Foo {
+    @org.jetbrains.annotations.NotNull()
+    public static final java.lang.String aString = "foo";
+    public static final int aInt = 3;
+    @org.jetbrains.annotations.NotNull()
+    private static final java.lang.String bString = "bar";
+    private static final int bInt = 5;
+    @org.jetbrains.annotations.NotNull()
+    private static java.lang.String cString = "baz";
+    private static int cInt = 7;
+    @org.jetbrains.annotations.NotNull()
+    private static final java.lang.String d = null;
+    private static final int e = 0;
+    private static final int f = 8;
+    @org.jetbrains.annotations.NotNull()
+    private static final java.lang.String g = "ab";
+    private static final int h = -4;
+    private static final int i = 2147483647;
+    @org.jetbrains.annotations.NotNull()
+    private static final java.lang.String j = null;
+    @org.jetbrains.annotations.NotNull()
+    private static final java.lang.String k = null;
+    public static final Foo INSTANCE = null;
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getBString() {
+        return null;
+    }
+
+    public final int getBInt() {
+        return 0;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getCString() {
+        return null;
+    }
+
+    public final void setCString(@org.jetbrains.annotations.NotNull()
+    java.lang.String p0) {
+    }
+
+    public final int getCInt() {
+        return 0;
+    }
+
+    public final void setCInt(int p0) {
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getD() {
+        return null;
+    }
+
+    public final int getE() {
+        return 0;
+    }
+
+    public final int getF() {
+        return 0;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getG() {
+        return null;
+    }
+
+    public final int getH() {
+        return 0;
+    }
+
+    public final int getI() {
+        return 0;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getJ() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getK() {
+        return null;
+    }
+
+    private Foo() {
+        super();
+    }
+}
