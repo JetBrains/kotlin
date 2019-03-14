@@ -28,6 +28,56 @@ import org.jetbrains.kotlin.utils.Printer
 
 fun FirElement.render(): String = buildString { this@render.accept(FirRenderer(this)) }
 
+
+fun ConeKotlinType.render(): String {
+    return when (this) {
+        is ConeKotlinErrorType -> "error: $reason"
+        is ConeClassErrorType -> "class error: $reason"
+        is ConeCapturedType -> "captured type: lowerType = ${lowerType?.render()}"
+        is ConeClassLikeType -> {
+            val sb = StringBuilder()
+            sb.append(lookupTag.classId.asString())
+            if (typeArguments.isNotEmpty()) {
+                sb.append(typeArguments.joinToString(prefix = "<", postfix = ">") {
+                    when (it) {
+                        ConeStarProjection -> "*"
+                        is ConeKotlinTypeProjectionIn -> "in ${it.type.render()}"
+                        is ConeKotlinTypeProjectionOut -> "out ${it.type.render()}"
+                        is ConeKotlinType -> it.render()
+                    }
+                })
+            }
+            sb.toString()
+        }
+        is ConeTypeParameterType -> {
+            lookupTag.name.asString()
+        }
+        is ConeFunctionType -> {
+            buildString {
+                receiverType?.let {
+                    append(it.render())
+                    append(".")
+                }
+                append("(")
+                parameterTypes.joinTo(this) { it.render() }
+                append(") -> ")
+                append(returnType.render())
+            }
+        }
+        is ConeFlexibleType -> {
+            buildString {
+                append("ft<")
+                append(lowerBound.render())
+                append(lowerBound.nullability.suffix)
+                append(", ")
+                append(upperBound.render())
+                append(upperBound.nullability.suffix)
+                append(">")
+            }
+        }
+    }
+}
+
 class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
     private val printer = Printer(builder)
 
@@ -636,59 +686,13 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         }
     }
 
-    private fun ConeKotlinType.asString(): String {
-        return when (this) {
-            is ConeKotlinErrorType -> "error: $reason"
-            is ConeClassErrorType -> "class error: $reason"
-            is ConeClassLikeType -> {
-                val sb = StringBuilder()
-                sb.append(lookupTag.classId.asString())
-                if (typeArguments.isNotEmpty()) {
-                    sb.append(typeArguments.joinToString(prefix = "<", postfix = ">") {
-                        when (it) {
-                            ConeStarProjection -> "*"
-                            is ConeKotlinTypeProjectionIn -> "in ${it.type.asString()}"
-                            is ConeKotlinTypeProjectionOut -> "out ${it.type.asString()}"
-                            is ConeKotlinType -> it.asString()
-                        }
-                    })
-                }
-                sb.toString()
-            }
-            is ConeTypeParameterType -> {
-                lookupTag.name.asString()
-            }
-            is ConeFunctionType -> {
-                buildString {
-                    receiverType?.let {
-                        append(it.asString())
-                        append(".")
-                    }
-                    append("(")
-                    parameterTypes.joinTo(this) { it.asString() }
-                    append(") -> ")
-                    append(returnType.asString())
-                }
-            }
-            is ConeFlexibleType -> {
-                buildString {
-                    append("ft<")
-                    append(lowerBound.asString())
-                    append(lowerBound.nullability.suffix)
-                    append(", ")
-                    append(upperBound.asString())
-                    append(upperBound.nullability.suffix)
-                    append(">")
-                }
-            }
-        }
-    }
+
 
     override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef) {
         resolvedTypeRef.annotations.renderAnnotations()
         print("R|")
         val coneType = resolvedTypeRef.type
-        print(coneType.asString())
+        print(coneType.render())
         print("|")
         if (coneType !is ConeKotlinErrorType && coneType !is ConeClassErrorType) {
             print(coneType.nullability.suffix)
