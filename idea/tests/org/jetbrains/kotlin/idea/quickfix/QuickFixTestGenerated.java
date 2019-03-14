@@ -933,6 +933,16 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         public void testSubtype() throws Exception {
             runTest("idea/testData/quickfix/addReturnToLastExpressionInFunction/subtype.kt");
         }
+
+        @TestMetadata("typeError.kt")
+        public void testTypeError() throws Exception {
+            runTest("idea/testData/quickfix/addReturnToLastExpressionInFunction/typeError.kt");
+        }
+
+        @TestMetadata("typeError2.kt")
+        public void testTypeError2() throws Exception {
+            runTest("idea/testData/quickfix/addReturnToLastExpressionInFunction/typeError2.kt");
+        }
     }
 
     @TestMetadata("idea/testData/quickfix/addReturnToUnusedLastExpressionInFunction")
@@ -965,6 +975,16 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("subtype.kt")
         public void testSubtype() throws Exception {
             runTest("idea/testData/quickfix/addReturnToUnusedLastExpressionInFunction/subtype.kt");
+        }
+
+        @TestMetadata("typeError.kt")
+        public void testTypeError() throws Exception {
+            runTest("idea/testData/quickfix/addReturnToUnusedLastExpressionInFunction/typeError.kt");
+        }
+
+        @TestMetadata("typeError2.kt")
+        public void testTypeError2() throws Exception {
+            runTest("idea/testData/quickfix/addReturnToUnusedLastExpressionInFunction/typeError2.kt");
         }
     }
 

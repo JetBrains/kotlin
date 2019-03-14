@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
 class AddReturnToLastExpressionInFunctionFix(element: KtDeclarationWithBody) : KotlinQuickFixAction<KtDeclarationWithBody>(element) {
@@ -31,8 +32,9 @@ class AddReturnToLastExpressionInFunctionFix(element: KtDeclarationWithBody) : K
 
         val context = last.analyze(BodyResolveMode.PARTIAL)
         val lastType = last.getType(context) ?: return false
+        if (lastType.isError) return false
         val expectedType = element.resolveToDescriptorIfAny()?.returnType ?: return false
-        if (!lastType.isSubtypeOf(expectedType)) return false
+        if (expectedType.isError || !lastType.isSubtypeOf(expectedType)) return false
 
         return true
     }
