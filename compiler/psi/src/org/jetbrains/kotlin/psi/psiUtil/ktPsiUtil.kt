@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
 
 // NOTE: in this file we collect only Kotlin-specific methods working with PSI and not modifying it
@@ -646,3 +647,25 @@ fun KtModifierKeywordToken.toVisibility(): Visibility {
 }
 
 fun KtFile.getFileOrScriptDeclarations() = if (isScript()) script!!.declarations else declarations
+
+fun KtExpression.getBinaryWithTypeParent(): KtBinaryExpressionWithTypeRHS? {
+    val callExpression = parent.safeAs<KtCallExpression>() ?: return null
+    val possibleQualifiedExpression = callExpression.parent
+
+    val targetExpression = if (possibleQualifiedExpression is KtQualifiedExpression) {
+        if (possibleQualifiedExpression.selectorExpression != callExpression) return null
+        possibleQualifiedExpression
+    } else {
+        callExpression
+    }
+
+    return targetExpression.topParenthesizedParentOrMe().parent as? KtBinaryExpressionWithTypeRHS
+}
+
+fun KtExpression.topParenthesizedParentOrMe(): KtExpression {
+    var result: KtExpression = this
+    while (KtPsiUtil.deparenthesizeOnce(result.parent.safeAs()) == result) {
+        result = result.parent.safeAs() ?: break
+    }
+    return result
+}

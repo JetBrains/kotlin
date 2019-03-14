@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.components
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode
@@ -42,6 +43,7 @@ class KotlinCallCompleter(
         val returnType = candidate.returnTypeWithSmartCastInfo(resolutionCallbacks)
 
         candidate.addExpectedTypeConstraint(returnType, expectedType, resolutionCallbacks)
+        candidate.addExpectedTypeFromCastConstraint(returnType, resolutionCallbacks)
 
         return if (resolutionCallbacks.inferenceSession.shouldRunCompletion(candidate))
             candidate.runCompletion(
@@ -153,6 +155,16 @@ class KotlinCallCompleter(
         if (!resolutionCallbacks.isCompileTimeConstant(resolvedCall, expectedType)) {
             csBuilder.addSubtypeConstraint(returnType, expectedType, ExpectedTypeConstraintPosition(resolvedCall.atom))
         }
+    }
+
+    private fun KotlinResolutionCandidate.addExpectedTypeFromCastConstraint(
+        returnType: UnwrappedType?,
+        resolutionCallbacks: KotlinResolutionCallbacks
+    ) {
+        if (!callComponents.languageVersionSettings.supportsFeature(LanguageFeature.ExpectedTypeFromCast)) return
+        if (returnType == null) return
+        val expectedType = resolutionCallbacks.getExpectedTypeFromAsExpressionAndRecordItInTrace(resolvedCall) ?: return
+        csBuilder.addSubtypeConstraint(returnType, expectedType, ExpectedTypeConstraintPosition(resolvedCall.atom))
     }
 
     private fun KotlinResolutionCandidate.computeCompletionMode(
