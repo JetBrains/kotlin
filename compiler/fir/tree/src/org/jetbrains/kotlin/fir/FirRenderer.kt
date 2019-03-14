@@ -661,7 +661,7 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
 
     override fun visitErrorTypeRef(errorTypeRef: FirErrorTypeRef) {
         visitTypeRef(errorTypeRef)
-        print("<ERROR TYPE: ${errorTypeRef.reason}>")
+        print("<ERROR TYPE REF: ${errorTypeRef.reason}>")
     }
 
     override fun visitImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef) {
@@ -700,7 +700,6 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
             else -> "Unsupported: ${this::class}"
         }
     }
-
 
 
     override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef) {

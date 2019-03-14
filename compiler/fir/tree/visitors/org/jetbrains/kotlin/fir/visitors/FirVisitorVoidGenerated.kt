@@ -28,6 +28,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitDeclaration(callableDeclaration, null)
     }
 
+    open fun visitCallableMemberDeclaration(callableMemberDeclaration: FirCallableMemberDeclaration) {
+        visitDeclaration(callableMemberDeclaration, null)
+    }
+
     open fun visitDeclarationWithBody(declarationWithBody: FirDeclarationWithBody) {
         visitDeclaration(declarationWithBody, null)
     }
@@ -74,10 +78,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitMemberDeclaration(memberDeclaration: FirMemberDeclaration) {
         visitNamedDeclaration(memberDeclaration, null)
-    }
-
-    open fun visitCallableMemberDeclaration(callableMemberDeclaration: FirCallableMemberDeclaration) {
-        visitMemberDeclaration(callableMemberDeclaration, null)
     }
 
     open fun visitClassLikeDeclaration(classLikeDeclaration: FirClassLikeDeclaration) {
@@ -340,10 +340,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitTypeRef(delegatedTypeRef, null)
     }
 
-    open fun visitErrorTypeRef(errorTypeRef: FirErrorTypeRef) {
-        visitTypeRef(errorTypeRef, null)
-    }
-
     open fun visitImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef) {
         visitTypeRef(implicitTypeRef, null)
     }
@@ -362,6 +358,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef) {
         visitTypeRefWithNullability(resolvedTypeRef, null)
+    }
+
+    open fun visitErrorTypeRef(errorTypeRef: FirErrorTypeRef) {
+        visitResolvedTypeRef(errorTypeRef, null)
     }
 
     open fun visitResolvedFunctionTypeRef(resolvedFunctionTypeRef: FirResolvedFunctionTypeRef) {

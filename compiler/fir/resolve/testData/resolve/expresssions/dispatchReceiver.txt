@@ -10,7 +10,7 @@ FILE: dispatchReceiver.kt
             public get(): R|Base|
             public set(value: R|Base|): R|kotlin/Unit|
 
-        public final fun check(): <ERROR TYPE: cycle> {
+        public final fun check(): <ERROR TYPE REF: cycle> {
             ^check R|/My.delegate|.R|/My.check|()
         }
 
