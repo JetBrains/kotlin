@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.scope
@@ -36,17 +36,28 @@ class CallResolver(val typeCalculator: ReturnTypeCalculator) {
     lateinit var checkers: List<ApplicabilityChecker>
     lateinit var scopes: List<FirScope>
 
+    private val names = LinkedHashSet<Name>()
+    private val newNames = mutableSetOf<Name>()
+
+    fun pushName(name: Name) {
+        newNames += name
+    }
+
     fun runTowerResolver(): ApplicabilityChecker? {
         processedScopes.clear()
-
-        val names = LinkedHashSet<Name>()
+        newNames.clear()
+        names.clear()
 
         var successChecker: ApplicabilityChecker? = null
 
+        checkers.forEach {
+            it.initNames(this.names)
+        }
+
         for ((index, scope) in scopes.asReversed().withIndex()) {
-            checkers.forEach {
-                it.updateNames(names)
-            }
+            names.addAll(newNames)
+            newNames.clear()
+
             processedScopes.add(scope)
 
             names.forEach { name ->
@@ -141,7 +152,7 @@ abstract class ApplicabilityChecker {
         }
     }
 
-    abstract fun updateNames(names: LinkedHashSet<Name>)
+    abstract fun initNames(names: LinkedHashSet<Name>)
 
     open fun isSuccessful(index: Int, candidate: ConeSymbol): Boolean {
         return true
@@ -167,7 +178,7 @@ abstract class ApplicabilityChecker {
 }
 
 open class VariableApplicabilityChecker(val name: Name) : ApplicabilityChecker() {
-    override fun updateNames(names: LinkedHashSet<Name>) {
+    override fun initNames(names: LinkedHashSet<Name>) {
         names.add(name)
     }
 
@@ -188,11 +199,11 @@ class VariableInvokeApplicabilityChecker(val variableName: Name) : FunctionAppli
     private var matchedProperties = BitSet()
     private var lookupInvoke = false
 
-    override fun updateNames(names: LinkedHashSet<Name>) {
+    override fun initNames(names: LinkedHashSet<Name>) {
         names.add(variableName)
-        if (lookupInvoke) {
-            names.add(name)
-        }
+//        if (lookupInvoke) {
+//            names.add(name)
+//        }
     }
 
     private fun isInvokeApplicableOn(propertySymbol: ConeSymbol, invokeSymbol: ConeCallableSymbol): Boolean {
@@ -256,6 +267,7 @@ class VariableInvokeApplicabilityChecker(val variableName: Name) : FunctionAppli
                         .scope(resolver.session)
 
 
+                if (!lookupInvoke) resolver.pushName(invoke)
                 lookupInvoke = true
 
                 receiverScope?.processFunctionsByName(invoke) { candidate ->
@@ -286,7 +298,7 @@ class VariableInvokeApplicabilityChecker(val variableName: Name) : FunctionAppli
 
 
 class ClassifierApplicabilityChecker(val name: Name) : ApplicabilityChecker() {
-    override fun updateNames(names: LinkedHashSet<Name>) {
+    override fun initNames(names: LinkedHashSet<Name>) {
         names.add(name)
     }
 
@@ -302,7 +314,7 @@ open class FunctionApplicabilityChecker(val name: Name) : ApplicabilityChecker()
 
     var parameterCount = 0
 
-    override fun updateNames(names: LinkedHashSet<Name>) {
+    override fun initNames(names: LinkedHashSet<Name>) {
         names.add(name)
     }
 
@@ -338,7 +350,12 @@ open class FunctionApplicabilityChecker(val name: Name) : ApplicabilityChecker()
     }
 
     fun ConeKotlinType.isSubtypeOf(type: ConeKotlinType, session: FirSession): Boolean {
-        return AbstractTypeChecker.isSubtypeOf(ConeTypeCheckerContext(true, session), this, type)
+        return try {
+            AbstractTypeChecker.isSubtypeOf(ConeTypeCheckerContext(true, session), this, type)
+        } catch (e: IllegalStateException) {
+
+            throw RuntimeException("Sub-typing error: subType = ${this.render()}, superType = ${type.render()}", e)
+        }
     }
 
     override fun consumeCandidate(group: Int, symbol: ConeSymbol, resolver: CallResolver) {
