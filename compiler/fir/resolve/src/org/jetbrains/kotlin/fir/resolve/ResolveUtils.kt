@@ -6,18 +6,15 @@
 package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.expandedConeType
-import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
-import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.impl.FirCompositeScope
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeAbbreviatedTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
+import org.jetbrains.kotlin.fir.types.impl.ConeFunctionTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -93,3 +90,41 @@ private fun List<FirQualifierPart>.toTypeProjections(): Array<ConeKotlinTypeProj
 }.toTypedArray()
 
 
+fun <T : ConeKotlinType> T.withNullability(nullability: ConeNullability): T {
+    if (this.nullability == nullability) {
+        return this
+    }
+
+    return when (this) {
+        is ConeClassErrorType -> this
+        is ConeClassTypeImpl -> ConeClassTypeImpl(lookupTag, typeArguments, nullability.isNullable) as T
+        is ConeAbbreviatedTypeImpl -> ConeAbbreviatedTypeImpl(
+            abbreviationLookupTag,
+            typeArguments,
+            nullability.isNullable
+        ) as T
+        is ConeFunctionTypeImpl -> ConeFunctionTypeImpl(receiverType, parameterTypes, returnType, lookupTag, nullability.isNullable) as T
+        is ConeTypeParameterTypeImpl -> ConeTypeParameterTypeImpl(lookupTag, nullability.isNullable) as T
+        is ConeFlexibleType -> ConeFlexibleType(lowerBound.withNullability(nullability), upperBound.withNullability(nullability)) as T
+        else -> TODO("FIX KOTLIN COMPILER")
+    }
+}
+
+
+fun <T : ConeKotlinType> T.withArguments(arguments: Array<ConeKotlinTypeProjection>): T {
+    if (this.typeArguments === arguments) {
+        return this
+    }
+
+    return when (this) {
+        is ConeClassErrorType -> this
+        is ConeClassTypeImpl -> ConeClassTypeImpl(lookupTag, arguments, nullability.isNullable) as T
+        is ConeAbbreviatedTypeImpl -> ConeAbbreviatedTypeImpl(
+            abbreviationLookupTag,
+            arguments,
+            nullability.isNullable
+        ) as T
+        //is ConeFunctionTypeImpl -> ConeFunctionTypeImpl(receiverType, parameterTypes, returnType, lookupTag, nullability.isNullable) as T
+        else -> error("Not supported: $this: ${this.render()}")
+    }
+}
