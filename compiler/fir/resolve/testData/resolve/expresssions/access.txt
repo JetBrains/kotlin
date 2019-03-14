@@ -3,7 +3,7 @@ FILE: access.kt
         public constructor(): super<R|kotlin/Any|>()
 
         public final val x: R|kotlin/Int| = Int(1)
-            public get(): <implicit>
+            public get(): R|kotlin/Int|
 
         public final fun abc(): R|kotlin/Int| {
             ^abc R|/Foo.x|
@@ -18,7 +18,7 @@ FILE: access.kt
         public constructor(): super<R|kotlin/Any|>()
 
         public final val x: R|kotlin/String| = String()
-            public get(): <implicit>
+            public get(): R|kotlin/String|
 
         public final fun R|Foo|.abc(): R|kotlin/Int| {
             ^abc R|/Foo.x|

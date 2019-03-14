@@ -10,7 +10,7 @@ FILE: simpleClass.kt
         public constructor(): super<R|kotlin/Any|>()
 
         private final val baz: R|kotlin/Int| = Int(42)
-            private get(): <implicit>
+            private get(): R|kotlin/Int|
 
         public final override fun foo(x: R|kotlin/Int|, y: R|kotlin/String|): R|kotlin/String| {
             ^foo <Unresolved name: plus>#(<Unresolved name: plus>#(R|<local>/y|, R|<local>/x|), R|/SomeClass.baz|)

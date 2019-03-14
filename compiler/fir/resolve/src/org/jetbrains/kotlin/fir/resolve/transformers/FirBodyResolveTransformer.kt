@@ -8,18 +8,14 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 import com.google.common.collect.LinkedHashMultimap
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultSetterValueParameter
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirFunctionCallImpl
 import org.jetbrains.kotlin.fir.expressions.impl.FirQualifiedAccessExpressionImpl
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReferenceImpl
 import org.jetbrains.kotlin.fir.references.FirSimpleNamedReference
-import org.jetbrains.kotlin.fir.resolve.FirProvider
-import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
-import org.jetbrains.kotlin.fir.resolve.defaultType
-import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.symbols.*
@@ -31,7 +27,6 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOnly: Boolean) : FirTransformer<Any?>() {
 
@@ -148,13 +143,13 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
 
     private fun <T> storeTypeFromCallee(access: T) where T : FirQualifiedAccess, T : FirExpression {
         bindingContext[access] =
-            when (val newCallee = access.calleeReference) {
-                is FirErrorNamedReference ->
-                    FirErrorTypeRefImpl(session, access.psi, newCallee.errorReason)
-                is FirResolvedCallableReference ->
-                    jump.tryCalculateReturnType(newCallee.callableSymbol.firUnsafe())
-                else -> return
-            }
+                when (val newCallee = access.calleeReference) {
+                    is FirErrorNamedReference ->
+                        FirErrorTypeRefImpl(session, access.psi, newCallee.errorReason)
+                    is FirResolvedCallableReference ->
+                        jump.tryCalculateReturnType(newCallee.callableSymbol.firUnsafe())
+                    else -> return
+                }
     }
 
     override fun transformQualifiedAccessExpression(
@@ -191,26 +186,28 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
 
     override fun transformFunctionCall(functionCall: FirFunctionCall, data: Any?): CompositeTransformResult<FirStatement> {
 
+        val functionCall = functionCall.transformChildren(this, null) as FirFunctionCall
+
         if (functionCall.calleeReference !is FirSimpleNamedReference) return functionCall.compose()
 
         val name = functionCall.calleeReference.name
 
         val expectedTypeRef = data as FirTypeRef?
 
-        functionCall.explicitReceiver?.visitNoTransform(this, null)
-        functionCall.arguments.forEach { it.visitNoTransform(this, null) }
+        val receiver = functionCall.explicitReceiver
+        val arguments = functionCall.arguments
 
         val checkers = listOf(FunctionApplicabilityChecker(name).apply {
             expectedType = expectedTypeRef
-            explicitReceiverType = functionCall.explicitReceiver?.resultType
-            parameterCount = functionCall.arguments.size
+            explicitReceiverType = receiver?.resultType
+            parameterCount = arguments.size
         }, VariableInvokeApplicabilityChecker(name).apply {
             expectedType = expectedTypeRef
             variableChecker.apply {
                 expectedType = expectedTypeRef
-                explicitReceiverType = functionCall.explicitReceiver?.resultType
+                explicitReceiverType = receiver?.resultType
             }
-            parameterCount = functionCall.arguments.size
+            parameterCount = arguments.size
         })
 
 
@@ -220,15 +217,19 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
             is VariableInvokeApplicabilityChecker -> {
                 FirFunctionCallImpl(functionCall.session, functionCall.psi, safe = functionCall.safe).apply {
                     calleeReference =
-                        functionCall.calleeReference.transformSingle(this@FirBodyResolveTransformer, result.successCandidates())
+                            functionCall.calleeReference.transformSingle(this@FirBodyResolveTransformer, result.successCandidates())
                     explicitReceiver =
-                        FirQualifiedAccessExpressionImpl(functionCall.session, functionCall.calleeReference.psi, functionCall.safe).apply {
-                            calleeReference = createResolvedNamedReference(
-                                functionCall.calleeReference,
-                                result.variableChecker.successCandidates() as List<ConeCallableSymbol>
-                            )
-                            explicitReceiver = functionCall.explicitReceiver
-                        }
+                            FirQualifiedAccessExpressionImpl(
+                                functionCall.session,
+                                functionCall.calleeReference.psi,
+                                functionCall.safe
+                            ).apply {
+                                calleeReference = createResolvedNamedReference(
+                                    functionCall.calleeReference,
+                                    result.variableChecker.successCandidates() as List<ConeCallableSymbol>
+                                )
+                                explicitReceiver = functionCall.explicitReceiver
+                            }
                 }
             }
             is ApplicabilityChecker -> {
@@ -356,21 +357,37 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
     }
 
     override fun transformVariable(variable: FirVariable, data: Any?): CompositeTransformResult<FirDeclaration> {
+        val variable = super.transformVariable(variable, variable.returnTypeRef).single as FirVariable
         val initializer = variable.initializer
-        initializer?.visitNoTransform(this, variable.returnTypeRef)
         if (variable.returnTypeRef is FirImplicitTypeRef) {
             when {
                 initializer != null -> {
-                    variable.transformReturnTypeRef(this, initializer.resultType)
+                    variable.transformReturnTypeRef(
+                        this,
+                        initializer.resultType ?: FirErrorTypeRefImpl(
+                            session,
+                            null,
+                            "No result type for initializer"
+                        )
+                    )
                 }
                 variable.delegate != null -> {
+                    // TODO: type from delegate
+                    variable.transformReturnTypeRef(
+                        this,
+                        FirErrorTypeRefImpl(
+                            session,
+                            null,
+                            "Not supported: type from delegate"
+                        )
+                    )
                 }
             }
         }
         if (variable !is FirProperty) {
             localScopes.lastOrNull()?.storeDeclaration(variable)
         }
-        return super.transformVariable(variable, data)
+        return variable.compose()
     }
 
     override fun transformProperty(property: FirProperty, data: Any?): CompositeTransformResult<FirDeclaration> {
@@ -380,7 +397,7 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
 
     fun <D> FirElement.visitNoTransform(transformer: FirTransformer<D>, data: D) {
         val result = this.transform(transformer, data)
-        require(result.single === this)
+        require(result.single === this) { "become ${result.single}: `${result.single.render()}`, was ${this}: `${this.render()}`" }
     }
 
 }

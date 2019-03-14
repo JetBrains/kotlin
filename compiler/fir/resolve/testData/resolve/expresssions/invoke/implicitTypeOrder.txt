@@ -15,4 +15,4 @@ FILE: implicitTypeOrder.kt
         ^create R|/A.A|()
     }
     public final val foo: R|A| = R|/create|()
-        public get(): <implicit>
+        public get(): R|A|

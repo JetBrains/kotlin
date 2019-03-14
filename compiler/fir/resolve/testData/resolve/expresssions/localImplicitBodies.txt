@@ -1,6 +1,6 @@
 FILE: localImplicitBodies.kt
     public final fun foo(): R|kotlin/Unit| {
-        lval x: R|kotlin/Unit| = object :  {
+        lval x: <ERROR TYPE: No result type for initializer> = object :  {
             public constructor(): super<R|kotlin/Any|>()
 
             public final fun sss(): <ERROR TYPE: Unresolved name: abc> {

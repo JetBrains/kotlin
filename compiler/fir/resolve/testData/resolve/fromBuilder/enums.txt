@@ -63,7 +63,7 @@ FILE: enums.kt
             public constructor(): super<R|kotlin/Any|>()
 
             public final const val G: R|kotlin/Double| = Double(6.67E-11)
-                public get(): <implicit>
+                public get(): R|kotlin/Double|
 
         }
 

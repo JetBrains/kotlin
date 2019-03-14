@@ -8,7 +8,7 @@ FILE: farInvokeExtension.kt
         public constructor(): super<R|kotlin/Any|>()
 
         public final val x: R|kotlin/Int| = Int(0)
-            public get(): <implicit>
+            public get(): R|kotlin/Int|
 
         public final fun foo(): R|kotlin/Unit| {
             ^foo R|/x|()
