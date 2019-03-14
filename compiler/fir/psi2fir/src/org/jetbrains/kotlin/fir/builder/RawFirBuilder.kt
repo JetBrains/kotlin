@@ -411,10 +411,27 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
             return firFile
         }
 
-        private fun KtClassOrObject.toDelegatedSelfType(): FirTypeRef =
-            FirUserTypeRefImpl(session, this, isMarkedNullable = false).apply {
+        private fun KtClassOrObject.toDelegatedSelfType(firClass: FirRegularClass): FirTypeRef {
+            return FirResolvedTypeRefImpl(
+                session,
+                this,
+                ConeClassTypeImpl(
+                    firClass.symbol.toLookupTag(),
+                    firClass.typeParameters.map { ConeTypeParameterTypeImpl(it.symbol, false) }.toTypedArray(),
+                    false
+                ),
+                isMarkedNullable = false,
+                annotations = emptyList()
+            )
+        }
+
+        @Deprecated("TODO, proper type")
+        private fun KtObjectDeclaration.toDelegatedSelfType(): FirTypeRef {
+            return FirUserTypeRefImpl(session, this, isMarkedNullable = false).apply {
                 qualifier.add(FirQualifierPartImpl(nameAsSafeName))
             }
+        }
+
 
         override fun visitEnumEntry(enumEntry: KtEnumEntry, data: Unit): FirElement {
             return withChildClassName(enumEntry.nameAsSafeName) {
@@ -425,7 +442,7 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
                     enumEntry.nameAsSafeName
                 )
                 enumEntry.extractAnnotationsTo(firEnumEntry)
-                val delegatedSelfType = enumEntry.toDelegatedSelfType()
+                val delegatedSelfType = enumEntry.toDelegatedSelfType(firEnumEntry)
                 val delegatedSuperType = enumEntry.extractSuperTypeListEntriesTo(firEnumEntry, delegatedSelfType)
                 for (declaration in enumEntry.declarations) {
                     firEnumEntry.declarations += declaration.toFirDeclaration(
@@ -488,7 +505,7 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
                 )
                 classOrObject.extractAnnotationsTo(firClass)
                 classOrObject.extractTypeParametersTo(firClass)
-                val delegatedSelfType = classOrObject.toDelegatedSelfType()
+                val delegatedSelfType = classOrObject.toDelegatedSelfType(firClass)
                 val delegatedSuperType = classOrObject.extractSuperTypeListEntriesTo(firClass, delegatedSelfType)
                 classOrObject.primaryConstructor?.valueParameters?.forEach {
                     if (it.hasValOrVar()) {
