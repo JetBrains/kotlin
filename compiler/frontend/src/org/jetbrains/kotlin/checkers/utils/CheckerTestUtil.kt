@@ -72,7 +72,7 @@ object CheckerTestUtil {
             diagnosedRanges
         )
 
-        val sortedBindings = implementingModulesBindings.sortedBy { it.first.platformName }
+        val sortedBindings = implementingModulesBindings.sortedBy { it.first.convertToOldPlatforms().platformName }
 
         for ((platform, second) in sortedBindings) {
             assert(!platform.isCommon()) { "Implementing module must have a specific platforms: $platform" }
@@ -83,7 +83,7 @@ object CheckerTestUtil {
                     root,
                     markDynamicCalls,
                     dynamicCallDescriptors,
-                    platform.platformName,
+                    platform.convertToOldPlatforms().platformName,
                     withNewInference,
                     languageVersionSettings,
                     dataFlowValueFactory,

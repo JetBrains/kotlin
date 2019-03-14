@@ -51,10 +51,10 @@ fun StorageComponentContainer.configureModule(
     useInstance(languageVersionSettings)
 
     useInstance(platform)
+    platform.subplatformOfType<JdkPlatform>()?.let { useInstance(it.targetVersion) }
+
+
     useInstance(compilerServices)
-    if (platform.isJvm()) {
-        useInstance((platform as JvmPlatform).targetVersion)
-    }
 
     compilerServices.platformConfigurator.configureModuleComponents(this)
     compilerServices.platformConfigurator.configureModuleDependentCheckers(this)

@@ -47,7 +47,7 @@ import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 
 fun createContainerForLazyResolveWithJava(
-    jvmPlatform: JvmPlatform,
+    targetPlaform: TargetPlatform,
     moduleContext: ModuleContext,
     bindingTrace: BindingTrace,
     declarationProviderFactory: DeclarationProviderFactory,
@@ -62,7 +62,7 @@ fun createContainerForLazyResolveWithJava(
     configureJavaClassFinder: (StorageComponentContainer.() -> Unit)? = null,
     javaClassTracker: JavaClassesTracker? = null
 ): StorageComponentContainer = createContainer("LazyResolveWithJava", JvmPlatformCompilerServices) {
-    configureModule(moduleContext, jvmPlatform, JvmPlatformCompilerServices, bindingTrace, languageVersionSettings)
+    configureModule(moduleContext, targetPlaform, JvmPlatformCompilerServices, bindingTrace, languageVersionSettings)
 
     useInstance(moduleContentScope)
     useInstance(lookupTracker)

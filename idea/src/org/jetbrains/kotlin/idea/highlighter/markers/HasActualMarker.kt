@@ -34,7 +34,7 @@ private fun ModuleDescriptor?.getPlatformName(): String? {
         return "Android"
     }
     val platform = platforms ?: return null
-    return platform.platformName
+    return platform.convertToOldPlatforms().platformName
 }
 
 fun getPlatformActualTooltip(declaration: KtDeclaration): String? {

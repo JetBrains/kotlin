@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.resolve.TargetPlatformVersion
 import org.jetbrains.kotlin.platform.IdePlatform
 import org.jetbrains.kotlin.platform.IdePlatformKind
 import org.jetbrains.kotlin.resolve.DefaultBuiltInPlatforms
+import org.jetbrains.kotlin.resolve.toTargetPlatform
 
 object NativeIdePlatformKind : IdePlatformKind<NativeIdePlatformKind>() {
 

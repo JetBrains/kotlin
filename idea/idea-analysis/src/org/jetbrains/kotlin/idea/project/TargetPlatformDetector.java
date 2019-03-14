@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
 import org.jetbrains.kotlin.resolve.DefaultBuiltInPlatforms;
 import org.jetbrains.kotlin.resolve.TargetPlatform;
+import org.jetbrains.kotlin.resolve.TargetPlatformKt;
 
 public class TargetPlatformDetector {
     public static final TargetPlatformDetector INSTANCE = new TargetPlatformDetector();
@@ -53,7 +54,9 @@ public class TargetPlatformDetector {
         if (context != null) {
             PsiFile contextFile = context.getContainingFile();
             // TODO: Get proper default platforms
-            return contextFile instanceof KtFile ? getPlatform((KtFile) contextFile) : DefaultBuiltInPlatforms.INSTANCE.getJvmPlatform();
+            return contextFile instanceof KtFile
+                   ? getPlatform((KtFile) contextFile)
+                   : DefaultBuiltInPlatforms.INSTANCE.getJvmPlatform();
         }
 
         VirtualFile virtualFile = file.getOriginalFile().getVirtualFile();

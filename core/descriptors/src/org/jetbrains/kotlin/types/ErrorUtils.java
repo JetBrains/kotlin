@@ -83,7 +83,7 @@ public class ErrorUtils {
 
             @Nullable
             @Override
-            public TargetPlatform getPlatform() {
+            public TargetPlatform getPlatforms() {
                 return null;
             }
 

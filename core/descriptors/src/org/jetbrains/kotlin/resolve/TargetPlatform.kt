@@ -5,40 +5,51 @@
 
 package org.jetbrains.kotlin.resolve
 
-sealed class TargetPlatform(val platformName: String) {
-    override fun toString() = platformName
+class TargetPlatform(val componentPlatforms: Set<SimplePlatform>) : Collection<SimplePlatform> by componentPlatforms {
+    init {
+        if (componentPlatforms.isEmpty()) throw IllegalArgumentException("Don't instantiate TargetPlatform with empty set of platforms")
+    }
+
+    @Deprecated("Introduces legacy CommonPlatform, use just 'single' or 'singleOrNull' extensions instead")
+    fun convertToOldPlatforms(): SimplePlatform = componentPlatforms.singleOrNull() ?: DefaultBuiltInPlatforms.commonPlatform.single()
+
+    inline fun <reified T : SimplePlatform> subplatformOfType(): T? = componentPlatforms.filterIsInstance<T>().singleOrNull()
 }
 
-abstract class KonanPlatform : TargetPlatform("Native")
-abstract class CommonPlatform : TargetPlatform("Common")
+sealed class SimplePlatform(val platformName: String) {
+    override fun toString(): String = platformName
+}
 
-abstract class JvmPlatform : TargetPlatform("JVM")
+abstract class KonanPlatform : SimplePlatform("Native")
+abstract class CommonPlatform : SimplePlatform("Common")
+
+abstract class JvmPlatform : SimplePlatform("JVM")
 data class JdkPlatform(val targetVersion: JvmTarget) : JvmPlatform()
 
 
-abstract class JsPlatform : TargetPlatform("JS")
+abstract class JsPlatform : SimplePlatform("JS")
 
 interface KotlinBuiltInPlatforms {
-    val konanPlatform: KonanPlatform
-    val commonPlatform: CommonPlatform
-    val jvmPlatform: JvmPlatform
-    val jvm16: JdkPlatform
-    val jvm18: JdkPlatform
-    val jsPlatform: JsPlatform
+    val konanPlatform: TargetPlatform
+    val commonPlatform: TargetPlatform
+    val jvmPlatform: TargetPlatform
+    val jvm16: TargetPlatform
+    val jvm18: TargetPlatform
+    val jsPlatform: TargetPlatform
 
-    fun jvmPlatformByTargetVersion(targetVersion: JvmTarget): JvmPlatform
+    fun jvmPlatformByTargetVersion(targetVersion: JvmTarget): TargetPlatform
 }
 
 object DefaultBuiltInPlatforms : KotlinBuiltInPlatforms {
-    override val konanPlatform: KonanPlatform = object : KonanPlatform() {}
+    override val konanPlatform: TargetPlatform = object : KonanPlatform() {}.toTargetPlatform()
 
-    override val commonPlatform: CommonPlatform = object : CommonPlatform() {}
+    override val commonPlatform: TargetPlatform = object : CommonPlatform() {}.toTargetPlatform()
 
-    override val jvmPlatform: JvmPlatform = JdkPlatform(JvmTarget.DEFAULT)
-    override val jvm16: JdkPlatform = JdkPlatform(JvmTarget.JVM_1_6)
-    override val jvm18: JdkPlatform = JdkPlatform(JvmTarget.JVM_1_8)
+    override val jvmPlatform: TargetPlatform = JdkPlatform(JvmTarget.DEFAULT).toTargetPlatform()
+    override val jvm16: TargetPlatform = JdkPlatform(JvmTarget.JVM_1_6).toTargetPlatform()
+    override val jvm18: TargetPlatform = JdkPlatform(JvmTarget.JVM_1_8).toTargetPlatform()
 
-    override val jsPlatform: JsPlatform = object : JsPlatform() {}
+    override val jsPlatform: TargetPlatform = object : JsPlatform() {}.toTargetPlatform()
 
     override fun jvmPlatformByTargetVersion(targetVersion: JvmTarget) = when (targetVersion) {
         JvmTarget.JVM_1_6 -> jvm16
@@ -47,16 +58,34 @@ object DefaultBuiltInPlatforms : KotlinBuiltInPlatforms {
 }
 
 fun TargetPlatform?.isNative(): Boolean =
-    this is KonanPlatform
-
-fun TargetPlatform?.isCommon(): Boolean =
-    this is CommonPlatform
+    this?.singleOrNull() is KonanPlatform
 
 fun TargetPlatform?.isJvm(): Boolean =
-    this is JvmPlatform
+    this?.singleOrNull() is JvmPlatform
 
 fun TargetPlatform?.isJs(): Boolean =
-    this is JsPlatform
+    this?.singleOrNull() is JsPlatform
+
+fun TargetPlatform?.isCommon(): Boolean = when (this?.size) {
+    0 -> false
+    1 -> this == DefaultBuiltInPlatforms.commonPlatform
+    else -> false
+}
+
+fun SimplePlatform.toTargetPlatform(): TargetPlatform = TargetPlatform(setOf(this))
+
+//fun SimplePlatform?.isNative(): Boolean =
+//    this is KonanPlatform
+//
+//fun SimplePlatform?.isCommon(): Boolean =
+//    this is CommonPlatform
+//
+//fun SimplePlatform?.isJvm(): Boolean =
+//    this is JvmPlatform
+//
+//fun SimplePlatform?.isJs(): Boolean =
+//    this is JsPlatform
+
 
 enum class JvmTarget(override val description: String) : TargetPlatformVersion {
     JVM_1_6("1.6"),

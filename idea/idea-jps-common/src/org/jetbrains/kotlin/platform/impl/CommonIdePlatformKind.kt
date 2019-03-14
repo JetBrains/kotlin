@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.resolve.TargetPlatformVersion
 import org.jetbrains.kotlin.platform.IdePlatform
 import org.jetbrains.kotlin.platform.IdePlatformKind
 import org.jetbrains.kotlin.resolve.DefaultBuiltInPlatforms
+import org.jetbrains.kotlin.resolve.toTargetPlatform
 
 object CommonIdePlatformKind : IdePlatformKind<CommonIdePlatformKind>() {
 
@@ -20,7 +21,7 @@ object CommonIdePlatformKind : IdePlatformKind<CommonIdePlatformKind>() {
         else null
     }
 
-    override val compilerPlatform get() = DefaultBuiltInPlatforms.commonPlatform
+    override val compilerPlatform get() = DefaultBuiltInPlatforms.commonPlatform // TODO
 
     override val platforms get() = listOf(Platform)
     override val defaultPlatform get() = Platform

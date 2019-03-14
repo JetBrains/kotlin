@@ -82,7 +82,7 @@ object Renderers {
         val platform = it.platforms
         " ${it.getCapability(ModuleInfo.Capability)?.displayedName ?: ""}" + when {
             platform == null || platform.isCommon() -> ""
-            else -> " for " + platform.platformName
+            else -> " for " + platform.single().platformName
         }
     }
 

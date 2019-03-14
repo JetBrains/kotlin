@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.idea.vfilefinder.getLibraryKindForJar
 import org.jetbrains.kotlin.platform.DefaultIdeTargetPlatformKindProvider
 import org.jetbrains.kotlin.resolve.DefaultBuiltInPlatforms
 import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.resolve.toTargetPlatform
 import org.jetbrains.kotlin.utils.PathUtil
 import java.util.jar.Attributes
 import java.util.regex.Pattern
