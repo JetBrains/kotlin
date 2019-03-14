@@ -7,7 +7,7 @@ import org.gradle.api.publish.ivy.internal.publisher.IvyDescriptorFileGenerator
 import org.gradle.internal.os.OperatingSystem
 
 val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
-
+val verifyDependencyOutput: Boolean by rootProject.extra
 val intellijUltimateEnabled: Boolean by rootProject.extra
 val intellijReleaseType: String by rootProject.extra
 val intellijVersion = rootProject.extra["versions.intellijSdk"] as String
@@ -28,12 +28,11 @@ if (intellijVersionDelimiterIndex == -1) {
 
 val platformBaseVersion = intellijVersion.substring(0, intellijVersionDelimiterIndex)
 
+logger.info("verifyDependencyOutput: $verifyDependencyOutput")
 logger.info("intellijUltimateEnabled: $intellijUltimateEnabled")
-
 logger.info("intellijVersion: $intellijVersion")
 logger.info("androidStudioRelease: $androidStudioRelease")
 logger.info("androidStudioBuild: $androidStudioBuild")
-
 logger.info("intellijSeparateSdks: $intellijSeparateSdks")
 logger.info("installIntellijCommunity: $installIntellijCommunity")
 logger.info("installIntellijUltimate: $installIntellijUltimate")
@@ -298,10 +297,16 @@ fun buildIvyRepositoryTask(
     dependsOn(configuration)
     inputs.files(configuration)
 
-    outputs.upToDateWhen {
-        configuration.resolvedConfiguration.resolvedArtifacts.single()
-            .let { it.moduleDirectory() }
-            .exists()
+    if (verifyDependencyOutput) {
+        outputs.dir(provider {
+            configuration.resolvedConfiguration.resolvedArtifacts.single().moduleDirectory()
+        })
+    } else {
+        outputs.upToDateWhen {
+            configuration.resolvedConfiguration.resolvedArtifacts.single()
+                .moduleDirectory()
+                .exists()
+        }
     }
 
     doFirst {
