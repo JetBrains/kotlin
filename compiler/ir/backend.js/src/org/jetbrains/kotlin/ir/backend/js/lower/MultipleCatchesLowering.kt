@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.utils.commonSupertype
-import org.jetbrains.kotlin.backend.common.utils.isSubtypeOf
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
@@ -19,11 +17,12 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrBranchImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCatchImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrElseBranchImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrTryImpl
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
-import org.jetbrains.kotlin.ir.types.IrDynamicType
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classifierOrNull
+import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
+import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 
 /**
@@ -39,7 +38,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
  * is converted into
  *
  * try {}
- * catch (ex: Ex = LCA(Ex1, Ex2, Ex3) {
+ * catch (ex: Ex = LCA(Ex1, Ex2, Ex3)) {
  *   when (ex) {
  *     ex is Ex1 -> catch1((Ex1)ex)
  *     ex is Ex2 -> catch2((Ex2)ex)
@@ -125,8 +124,21 @@ class MultipleCatchesLowering(val context: JsIrBackendContext) : FileLoweringPas
             private fun buildImplicitCast(value: IrExpression, toType: IrType, toTypeSymbol: IrClassifierSymbol) =
                 JsIrBuilder.buildTypeOperator(toType, IrTypeOperator.IMPLICIT_CAST, value, toType, toTypeSymbol)
 
-            private fun mergeTypes(types: List<IrType>) = types.commonSupertype(context.symbolTable).also {
-                assert(it.isSubtypeOf(context.irBuiltIns.throwableType) || it is IrDynamicType)
+            private fun mergeTypes(types: List<IrType>): IrType {
+
+                return types.firstOrNull { it is IrDynamicType } ?: run {
+
+                    val superClassifier =
+                        types.map { (it as IrSimpleType).classifier }.commonSuperclass().also {
+                            assert(it.isSubtypeOfClass(context.irBuiltIns.throwableClass))
+                        }
+
+                    val typeArguments = if (superClassifier is IrClassSymbol) {
+                        superClassifier.owner.typeParameters.map { IrStarProjectionImpl }
+                    } else emptyList<IrTypeArgument>()
+
+                    return IrSimpleTypeImpl(superClassifier, false, typeArguments, emptyList())
+                }
             }
 
         }, irFile)

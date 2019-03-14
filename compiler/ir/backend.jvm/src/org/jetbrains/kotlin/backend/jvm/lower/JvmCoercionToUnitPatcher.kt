@@ -7,12 +7,12 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
-import org.jetbrains.kotlin.backend.common.utils.isSubtypeOf
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensions
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.types.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.util.coerceToUnitIfNeeded
@@ -38,7 +38,7 @@ class JvmCoercionToUnitPatcher(val context: JvmBackendContext) :
     }
 
     override fun IrExpression.coerceToUnit(): IrExpression {
-        if (type.isSubtypeOf(context.irBuiltIns.unitType) && this is IrCall) {
+        if (type.isSubtypeOfClass(context.irBuiltIns.unitClass) && this is IrCall) {
             return coerceToUnitIfNeeded(symbol.owner.returnType.toKotlinType(), context.irBuiltIns)
         }
 
