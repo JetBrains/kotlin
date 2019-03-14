@@ -192,54 +192,6 @@ class KotlinElementActionsFactory : JvmElementActionsFactory() {
                         .toTypedArray()
             }
 
-    private fun PsiType.collectTypeParameters(): List<PsiTypeParameter> {
-        val results = ArrayList<PsiTypeParameter>()
-        accept(
-                object : PsiTypeVisitor<Unit>() {
-                    override fun visitArrayType(arrayType: PsiArrayType) {
-                        arrayType.componentType.accept(this)
-                    }
-
-                    override fun visitClassType(classType: PsiClassType) {
-                        (classType.resolve() as? PsiTypeParameter)?.let { results += it }
-                        classType.parameters.forEach { it.accept(this) }
-                    }
-
-                    override fun visitWildcardType(wildcardType: PsiWildcardType) {
-                        wildcardType.bound?.accept(this)
-                    }
-                }
-        )
-        return results
-    }
-
-    private fun PsiType.resolveToKotlinType(resolutionFacade: ResolutionFacade): KotlinType? {
-        val typeParameters = collectTypeParameters()
-        val components = resolutionFacade.getFrontendService(JavaResolverComponents::class.java)
-        val rootContext = LazyJavaResolverContext(components, TypeParameterResolver.EMPTY) { null }
-        val dummyPackageDescriptor = MutablePackageFragmentDescriptor(resolutionFacade.moduleDescriptor, FqName("dummy"))
-        val dummyClassDescriptor = ClassDescriptorImpl(
-                dummyPackageDescriptor,
-                Name.identifier("Dummy"),
-                Modality.FINAL,
-                ClassKind.CLASS,
-                emptyList(),
-                SourceElement.NO_SOURCE,
-                false,
-                LockBasedStorageManager.NO_LOCKS
-        )
-        val typeParameterResolver = object : TypeParameterResolver {
-            override fun resolveTypeParameter(javaTypeParameter: JavaTypeParameter): TypeParameterDescriptor? {
-                val psiTypeParameter = (javaTypeParameter as JavaTypeParameterImpl).psi
-                val index = typeParameters.indexOf(psiTypeParameter)
-                if (index < 0) return null
-                return LazyJavaTypeParameterDescriptor(rootContext.child(this), javaTypeParameter, index, dummyClassDescriptor)
-            }
-        }
-        val typeResolver = JavaTypeResolver(rootContext, typeParameterResolver)
-        val attributes = JavaTypeAttributes(TypeUsage.COMMON)
-        return typeResolver.transformJavaType(JavaTypeImpl.create(this), attributes).approximateFlexibleTypes(preferNotNull = true)
-    }
 
     private fun ExpectedTypes.toKotlinTypeInfo(resolutionFacade: ResolutionFacade): TypeInfo {
         val candidateTypes = flatMapTo(LinkedHashSet<KotlinType>()) {
@@ -532,20 +484,60 @@ class KotlinElementActionsFactory : JvmElementActionsFactory() {
 
     override fun createChangeParametersActions(target: JvmMethod, request: ChangeParametersRequest): List<IntentionAction> {
         val ktNamedFunction = (target as? KtLightElement<*, *>)?.kotlinOrigin as? KtNamedFunction ?: return emptyList()
-
-        val helper = JvmPsiConversionHelper.getInstance(target.project)
-
-        val params = request.expectedParameters.map { ep ->
-            val name = ep.semanticNames.singleOrNull() ?: return emptyList()
-            val expectedType = ep.expectedTypes.singleOrNull() ?: return emptyList()
-
-            val kotlinType =
-                helper.convertType(expectedType.theType).resolveToKotlinType(ktNamedFunction.getResolutionFacade()) ?: return emptyList()
-            Name.identifier(name) to kotlinType
-        }
-        return listOf(ChangeMethodParameters(ktNamedFunction, params, { request.isValid }))
+        return listOfNotNull(ChangeMethodParameters.create(ktNamedFunction,request ))
     }
 }
+
+private fun PsiType.collectTypeParameters(): List<PsiTypeParameter> {
+    val results = ArrayList<PsiTypeParameter>()
+    accept(
+        object : PsiTypeVisitor<Unit>() {
+            override fun visitArrayType(arrayType: PsiArrayType) {
+                arrayType.componentType.accept(this)
+            }
+
+            override fun visitClassType(classType: PsiClassType) {
+                (classType.resolve() as? PsiTypeParameter)?.let { results += it }
+                classType.parameters.forEach { it.accept(this) }
+            }
+
+            override fun visitWildcardType(wildcardType: PsiWildcardType) {
+                wildcardType.bound?.accept(this)
+            }
+        }
+    )
+    return results
+}
+
+
+internal fun PsiType.resolveToKotlinType(resolutionFacade: ResolutionFacade): KotlinType? {
+    val typeParameters = collectTypeParameters()
+    val components = resolutionFacade.getFrontendService(JavaResolverComponents::class.java)
+    val rootContext = LazyJavaResolverContext(components, TypeParameterResolver.EMPTY) { null }
+    val dummyPackageDescriptor = MutablePackageFragmentDescriptor(resolutionFacade.moduleDescriptor, FqName("dummy"))
+    val dummyClassDescriptor = ClassDescriptorImpl(
+        dummyPackageDescriptor,
+        Name.identifier("Dummy"),
+        Modality.FINAL,
+        ClassKind.CLASS,
+        emptyList(),
+        SourceElement.NO_SOURCE,
+        false,
+        LockBasedStorageManager.NO_LOCKS
+    )
+    val typeParameterResolver = object : TypeParameterResolver {
+        override fun resolveTypeParameter(javaTypeParameter: JavaTypeParameter): TypeParameterDescriptor? {
+            val psiTypeParameter = (javaTypeParameter as JavaTypeParameterImpl).psi
+            val index = typeParameters.indexOf(psiTypeParameter)
+            if (index < 0) return null
+            return LazyJavaTypeParameterDescriptor(rootContext.child(this), javaTypeParameter, index, dummyClassDescriptor)
+        }
+    }
+    val typeResolver = JavaTypeResolver(rootContext, typeParameterResolver)
+    val attributes = JavaTypeAttributes(TypeUsage.COMMON)
+    return typeResolver.transformJavaType(JavaTypeImpl.create(this), attributes).approximateFlexibleTypes(preferNotNull = true)
+}
+
 
 private fun JvmPsiConversionHelper.asPsiType(param: Pair<SuggestedNameInfo, List<ExpectedType>>): PsiType? =
     param.second.firstOrNull()?.theType?.let { convertType(it) }
