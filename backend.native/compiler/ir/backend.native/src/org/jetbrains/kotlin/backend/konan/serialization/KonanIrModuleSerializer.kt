@@ -15,8 +15,7 @@ class KonanIrModuleSerializer(
 ) : IrModuleSerializer(logger, declarationTable, KonanMangler, bodiesOnlyForInlines) {
 
     override fun backendSpecificExplicitRoot(declaration: IrFunction) =
-        declaration.descriptor.annotations.hasAnnotation(RuntimeNames.exportForCppRuntime) ||
-                declaration.descriptor.annotations.hasAnnotation(RuntimeNames.exportForCompilerAnnotation)
+        declaration.descriptor.annotations.hasAnnotation(RuntimeNames.exportForCppRuntime)
 
     override fun backendSpecificExplicitRoot(declaration: IrClass) =
         declaration.descriptor.annotations.hasAnnotation(RuntimeNames.exportTypeInfoAnnotation)

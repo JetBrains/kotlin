@@ -53,7 +53,7 @@ class KonanDescriptorReferenceDeserializer(
             Pair(null, getContributedDescriptors(packageFqNameString, name))
         } else {
             val clazz = currentModule.findClassAcrossModuleDependencies(ClassId(packageFqName, classFqName, false))!!
-            Pair(clazz, getContributedDescriptors(clazz.unsubstitutedMemberScope, name) + clazz.getConstructors())
+            Pair(clazz, clazz.unsubstitutedMemberScope.getContributedDescriptors() + clazz.getConstructors())
         }
 
         if (packageFqNameString.startsWith("cnames.") || packageFqNameString.startsWith("objcnames.")) {

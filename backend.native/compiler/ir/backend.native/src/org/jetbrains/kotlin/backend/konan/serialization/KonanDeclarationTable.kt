@@ -11,8 +11,11 @@ class KonanDeclarationTable(builtIns: IrBuiltIns, descriptorTable: DescriptorTab
     DeclarationTable(builtIns, descriptorTable, KonanMangler) {
     override var currentIndex = 0L
 
+    init {
+        loadKnownBuiltins()
+    }
 }
 
-// This is what we pre-populate tables with
+// This is what we pre-populate tables with.
 val IrBuiltIns.knownBuiltins
     get() = irBuiltInsExternalPackageFragment.declarations

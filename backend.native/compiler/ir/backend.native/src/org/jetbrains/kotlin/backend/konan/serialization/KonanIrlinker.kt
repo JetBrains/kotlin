@@ -34,7 +34,7 @@ class KonanIrLinker(
     builtIns: IrBuiltIns,
     symbolTable: SymbolTable,
     val forwardModuleDescriptor: ModuleDescriptor?)
-    : KotlinIrLinker(currentModule, logger, builtIns, symbolTable, forwardModuleDescriptor),
+    : KotlinIrLinker(logger, builtIns, symbolTable, forwardModuleDescriptor, 0L),
     DescriptorUniqIdAware by KonanDescriptorUniqIdAware {
 
     private val forwardDeclarations = mutableSetOf<IrSymbol>()
@@ -42,14 +42,4 @@ class KonanIrLinker(
     override val descriptorReferenceDeserializer = KonanDescriptorReferenceDeserializer(currentModule, resolvedForwardDeclarations)
 
     override fun reader(moduleDescriptor: ModuleDescriptor, uniqId: UniqId) = moduleDescriptor.konanLibrary!!.irDeclaration(uniqId.index, uniqId.isLocal)
-
-    init {
-        var currentIndex = 0L
-        builtIns.knownBuiltins.forEach {
-            require(it is IrFunction)
-            deserializedSymbols.put(UniqIdKey(null, UniqId(currentIndex, isLocal = false)), it.symbol)
-            assert(symbolTable.referenceSimpleFunction(it.descriptor) == it.symbol)
-            currentIndex++
-        }
-    }
 }

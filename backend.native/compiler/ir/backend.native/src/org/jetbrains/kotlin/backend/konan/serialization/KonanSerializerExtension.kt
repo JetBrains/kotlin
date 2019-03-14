@@ -81,7 +81,7 @@ internal class KonanSerializerExtension(val context: Context, override val metad
     }
 
     override fun serializeProperty(descriptor: PropertyDescriptor, proto: ProtoBuf.Property.Builder,
-                                   versionRequirementTable: MutableVersionRequirementTable,
+                                   versionRequirementTable: MutableVersionRequirementTable?,
                                    childSerializer: DescriptorSerializer) {
         proto.setExtension(KonanProtoBuf.propertyFile, sourceFileMap.assign(descriptor.source.containingFile))
         uniqId(descriptor) ?.let { proto.setExtension(KonanProtoBuf.propertyUniqId, it) }

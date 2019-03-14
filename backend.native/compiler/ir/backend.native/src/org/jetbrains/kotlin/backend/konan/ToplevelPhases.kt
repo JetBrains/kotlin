@@ -146,7 +146,7 @@ internal val patchDeclarationParents0Phase = konanUnitPhase(
 
 internal val serializerPhase = konanUnitPhase(
         op = {
-            val declarationTable = KonanDeclarationTable(irModule!!.irBuiltins, DescriptorTable()).apply { loadKnownBuiltins() }
+            val declarationTable = KonanDeclarationTable(irModule!!.irBuiltins, DescriptorTable())
             val serializedIr = KonanIrModuleSerializer(this, declarationTable).serializedIrModule(irModule!!)
             val serializer = KonanSerializationUtil(this, config.configuration.get(CommonConfigurationKeys.METADATA_VERSION)!!, declarationTable)
             serializedLinkData =
