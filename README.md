@@ -37,6 +37,13 @@ against it, use the `kotlinProjectPath` project property:
 
     ./gradlew dist -PkotlinProjectPath=path/to/kotlin/project
 
+To include [Kotlin/Native Shared](https://github.com/JetBrains/kotlin-native-shared) in a composite build and build against
+it, use the `sharedProjectPath` project property:
+
+    ./gradlew dist -PsharedProjectPath=path/to/kotlin/native/shared
+
+It's possible to include in a composite build both Kotlin compiler and Kotlin/Native Shared simultaneously.
+
 After that, you should be able to compile your programs like this:
 
     export PATH=./dist/bin:$PATH
