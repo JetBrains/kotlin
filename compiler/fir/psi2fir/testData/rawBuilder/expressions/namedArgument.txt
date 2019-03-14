@@ -1,0 +1,10 @@
+FILE: namedArgument.kt
+    public? final? function foo(first: String = String(), second: Boolean = Boolean(true), third: Double = Double(3.1415)): kotlin/Unit {
+    }
+    public? final? function test(): kotlin/Unit {
+        foo#()
+        foo#(String(Alpha), Boolean(false), Double(2.71))
+        foo#(first = String(Hello), second = Boolean(true))
+        foo#(third = unaryMinus#(Double(1.0)), first = String(123))
+        foo#(ERROR_EXPR(Argument is absent))
+    }

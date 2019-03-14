@@ -256,6 +256,10 @@ abstract class FirVisitor<out R, in D> {
         return visitJump(returnExpression, data)
     }
 
+    open fun visitNamedArgumentExpression(namedArgumentExpression: FirNamedArgumentExpression, data: D): R {
+        return visitExpression(namedArgumentExpression, data)
+    }
+
     open fun visitThrowExpression(throwExpression: FirThrowExpression, data: D): R {
         return visitExpression(throwExpression, data)
     }

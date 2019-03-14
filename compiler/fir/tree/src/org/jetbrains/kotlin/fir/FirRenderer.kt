@@ -551,6 +551,12 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         print("${constExpression.kind}(${constExpression.value})")
     }
 
+    override fun visitNamedArgumentExpression(namedArgumentExpression: FirNamedArgumentExpression) {
+        print(namedArgumentExpression.name)
+        print(" = ")
+        namedArgumentExpression.expression.accept(this)
+    }
+
     override fun visitCall(call: FirCall) {
         print("(")
         call.arguments.renderSeparated()

@@ -256,6 +256,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitJump(returnExpression, null)
     }
 
+    open fun visitNamedArgumentExpression(namedArgumentExpression: FirNamedArgumentExpression) {
+        visitExpression(namedArgumentExpression, null)
+    }
+
     open fun visitThrowExpression(throwExpression: FirThrowExpression) {
         visitExpression(throwExpression, null)
     }
@@ -562,6 +566,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitModifiableQualifiedAccess(modifiableQualifiedAccess: FirModifiableQualifiedAccess, data: Nothing?) {
         visitModifiableQualifiedAccess(modifiableQualifiedAccess)
+    }
+
+    final override fun visitNamedArgumentExpression(namedArgumentExpression: FirNamedArgumentExpression, data: Nothing?) {
+        visitNamedArgumentExpression(namedArgumentExpression)
     }
 
     final override fun visitNamedDeclaration(namedDeclaration: FirNamedDeclaration, data: Nothing?) {

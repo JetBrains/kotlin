@@ -191,8 +191,9 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
 
         private fun ValueArgument?.toFirExpression(): FirExpression {
             this ?: return FirErrorExpressionImpl(session, this as? KtElement, "No argument given")
+            val name = this.getArgumentName()?.asName
             val expression = this.getArgumentExpression()
-            return when (expression) {
+            val firExpression = when (expression) {
                 is KtConstantExpression, is KtStringTemplateExpression -> {
                     expression.accept(this@Visitor, Unit) as FirExpression
                 }
@@ -201,6 +202,7 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
                     { expression }.toFirExpression("Argument is absent")
                 }
             }
+            return if (name != null) FirNamedArgumentExpressionImpl(session, expression, name, firExpression) else firExpression
         }
 
         private fun KtPropertyAccessor?.toFirPropertyAccessor(
@@ -1262,7 +1264,7 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
                 this.calleeReference = calleeReference
                 firFunctionCalls += this
                 for (argument in expression.valueArguments) {
-                    arguments += argument.getArgumentExpression().toFirExpression("No argument expression")
+                    arguments += argument.toFirExpression()
                 }
                 for (typeArgument in expression.typeArguments) {
                     typeArguments += typeArgument.convert<FirTypeProjection>()

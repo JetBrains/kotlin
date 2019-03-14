@@ -88,8 +88,7 @@ class FirAnnotationTypeQualifierResolver(private val session: FirSession, privat
                 .annotations.find { it.resolvedFqName == TYPE_QUALIFIER_DEFAULT_FQNAME }!!
                 .arguments
                 .flatMap { argument ->
-                    // TODO: replace after implementation of KT-24081
-                    if (true /*parameter == JvmAnnotationNames.DEFAULT_ANNOTATION_MEMBER_NAME*/)
+                    if (argument !is FirNamedArgumentExpression || argument.name == JvmAnnotationNames.DEFAULT_ANNOTATION_MEMBER_NAME)
                         argument.mapConstantToQualifierApplicabilityTypes()
                     else
                         emptyList()

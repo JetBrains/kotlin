@@ -256,6 +256,10 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformJump(returnExpression, data)
     }
 
+    open fun transformNamedArgumentExpression(namedArgumentExpression: FirNamedArgumentExpression, data: D): CompositeTransformResult<FirStatement> {
+        return transformExpression(namedArgumentExpression, data)
+    }
+
     open fun transformThrowExpression(throwExpression: FirThrowExpression, data: D): CompositeTransformResult<FirStatement> {
         return transformExpression(throwExpression, data)
     }
@@ -562,6 +566,10 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
 
     final override fun visitModifiableQualifiedAccess(modifiableQualifiedAccess: FirModifiableQualifiedAccess, data: D): CompositeTransformResult<FirElement> {
         return transformModifiableQualifiedAccess(modifiableQualifiedAccess, data)
+    }
+
+    final override fun visitNamedArgumentExpression(namedArgumentExpression: FirNamedArgumentExpression, data: D): CompositeTransformResult<FirElement> {
+        return transformNamedArgumentExpression(namedArgumentExpression, data)
     }
 
     final override fun visitNamedDeclaration(namedDeclaration: FirNamedDeclaration, data: D): CompositeTransformResult<FirElement> {

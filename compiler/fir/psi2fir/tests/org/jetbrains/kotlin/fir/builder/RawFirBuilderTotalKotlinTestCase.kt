@@ -232,7 +232,6 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
                         it is KtValueArgumentList || it is KtParameterList || it is KtTypeParameterList || it is KtTypeArgumentList ||
                         it is KtTypeReference && it.parent.parent.parent is KtCallExpression ||
                         it is KtSuperTypeList || it is KtSuperTypeListEntry ||
-                        // TODO: may be we should look at argument after KT-24081
                         it is KtValueArgument || it is KtLambdaArgument || it is KtValueArgumentName ||
                         it is KtContainerNodeForControlStructureBody || it is KtContainerNode ||
                         it is KtStringTemplateEntry ||
