@@ -635,15 +635,30 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
                 ifNonError = { signatureParser.parseFieldSignature(field.signature, treeMaker.Type(type)) }
             )
 
-        val value = field.value
-
-        val initializer = explicitInitializer
-            ?: convertValueOfPrimitiveTypeOrString(value)
-            ?: if (isFinal(field.access)) convertLiteralExpression(getDefaultValue(type)) else null
-
         lineMappings.registerField(containingClass, field)
 
+        val initializer = explicitInitializer ?: convertPropertyInitializer(field)
         return treeMaker.VarDef(modifiers, treeMaker.name(name), typeExpression, initializer).keepKdocComments(field)
+    }
+
+    private fun convertPropertyInitializer(field: FieldNode): JCExpression? {
+        val value = field.value
+
+        if (value != null) {
+            val propertyInitializer = (kaptContext.origins[field]?.element as? KtProperty)?.initializer
+            if (propertyInitializer != null) {
+                return convertConstantValueArguments(value, listOf(propertyInitializer))
+            }
+
+            return convertValueOfPrimitiveTypeOrString(value)
+        }
+
+        if (isFinal(field.access)) {
+            val type = Type.getType(field.desc)
+            return convertLiteralExpression(getDefaultValue(type))
+        }
+
+        return null
     }
 
     private fun convertMethod(
@@ -987,12 +1002,12 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
 
     private fun convertAnnotationArgumentWithName(constantValue: Any?, value: ResolvedValueArgument?, name: String): JCExpression? {
         if (!isValidIdentifier(name)) return null
-        val expr = convertAnnotationArgument(constantValue, value) ?: return null
+        val args = value?.arguments?.mapNotNull { it.getArgumentExpression() } ?: emptyList()
+        val expr = convertConstantValueArguments(constantValue, args) ?: return null
         return treeMaker.Assign(treeMaker.SimpleName(name), expr)
     }
 
-    private fun convertAnnotationArgument(constantValue: Any?, value: ResolvedValueArgument?): JCExpression? {
-        val args = value?.arguments?.mapNotNull { it.getArgumentExpression() } ?: emptyList()
+    private fun convertConstantValueArguments(constantValue: Any?, args: List<KtExpression>): JCExpression? {
         val singleArg = args.singleOrNull()
 
         if (constantValue.isOfPrimitiveType()) {
