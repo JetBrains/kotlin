@@ -4,6 +4,7 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
 // NO_CHECK_LAMBDA_INLINING
+// CHECK_STATE_MACHINE
 
 suspend inline fun crossinlineMe(crossinline c: suspend () -> Unit) {
     c()

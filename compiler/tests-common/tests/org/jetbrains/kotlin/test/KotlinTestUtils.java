@@ -806,9 +806,11 @@ public class KotlinTestUtils {
                     !coroutinesPackage.contains("experimental") &&
                     !isDirectiveDefined(expectedText, "!LANGUAGE: -ReleaseCoroutines");
 
+            boolean checkStateMachine = isDirectiveDefined(expectedText, "CHECK_STATE_MACHINE");
+
             testFiles.add(factory.createFile(supportModule,
                                              "CoroutineUtil.kt",
-                                             CoroutineTestUtilKt.createTextForHelpers(isReleaseCoroutines),
+                                             CoroutineTestUtilKt.createTextForHelpers(isReleaseCoroutines, checkStateMachine),
                                              directives
             ));
         }

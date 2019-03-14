@@ -7,7 +7,7 @@ package org.jetbrains.kotlin
 
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
-fun createTextForHelpers(isReleaseCoroutines: Boolean): String {
+fun createTextForHelpers(isReleaseCoroutines: Boolean, checkStateMachine: Boolean): String {
     val coroutinesPackage =
         if (isReleaseCoroutines)
             DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME_RELEASE.asString()
@@ -76,7 +76,7 @@ fun createTextForHelpers(isReleaseCoroutines: Boolean): String {
         else
             ""
 
-    val checkStateMachine = """
+    val checkStateMachineString = """
     object StateMachineChecker {
         private var counter = 0
         var finished = false
@@ -141,6 +141,6 @@ fun createTextForHelpers(isReleaseCoroutines: Boolean): String {
             |    $continuationAdapterBody
             |}
             |
-            |$checkStateMachine
+            |${if (checkStateMachine) checkStateMachineString else ""}
         """.trimMargin()
 }
