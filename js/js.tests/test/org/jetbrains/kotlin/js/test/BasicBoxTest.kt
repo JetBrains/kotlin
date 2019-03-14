@@ -121,6 +121,10 @@ abstract class BasicBoxTest(
                     .map { it.module }.distinct()
                     .map { it.name to it }.toMap()
 
+            fun TestModule.allTransitiveDependencies(): Set<String> {
+                return dependencies.toSet() + dependencies.flatMap { modules[it]!!.allTransitiveDependencies() }
+            }
+
             val orderedModules = DFS.topologicalOrder(modules.values) { module -> module.dependencies.mapNotNull { modules[it] } }
 
             val testPackage = testFactory.testPackage
@@ -131,12 +135,13 @@ abstract class BasicBoxTest(
 
             val generatedJsFiles = orderedModules.asReversed().mapNotNull { module ->
                 val dependencies = module.dependencies.map { modules[it]?.outputFileName(outputDir) + ".meta.js" }
+                val allDependencies = module.allTransitiveDependencies().map { modules[it]?.outputFileName(outputDir) + ".meta.js" }
                 val friends = module.friends.map { modules[it]?.outputFileName(outputDir) + ".meta.js" }
 
                 val outputFileName = module.outputFileName(outputDir) + ".js"
                 val isMainModule = mainModuleName == module.name
                 generateJavaScriptFile(
-                    file.parent, module, outputFileName, dependencies, friends, modules.size > 1,
+                    file.parent, module, outputFileName, dependencies, allDependencies, friends, modules.size > 1,
                     !SKIP_SOURCEMAP_REMAPPING.matcher(fileContent).find(),
                     outputPrefixFile, outputPostfixFile, actualMainCallParameters, testPackage, testFunction,
                     runtimeType, isMainModule
@@ -314,6 +319,7 @@ abstract class BasicBoxTest(
         module: TestModule,
         outputFileName: String,
         dependencies: List<String>,
+        allDependencies: List<String>,
         friends: List<String>,
         multiModule: Boolean,
         remap: Boolean,
@@ -339,7 +345,7 @@ abstract class BasicBoxTest(
         val psiFiles = createPsiFiles(allSourceFiles.sortedBy { it.canonicalPath }.map { it.canonicalPath })
 
         val sourceDirs = (testFiles + additionalFiles).map { File(it).parent }.distinct()
-        val config = createConfig(sourceDirs, module, dependencies, friends, multiModule, incrementalData = null)
+        val config = createConfig(sourceDirs, module, dependencies, allDependencies, friends, multiModule, incrementalData = null)
         val outputFile = File(outputFileName)
 
         val incrementalData = IncrementalData()
@@ -350,7 +356,7 @@ abstract class BasicBoxTest(
 
         if (incrementalCompilationChecksEnabled && module.hasFilesToRecompile) {
             checkIncrementalCompilation(
-                sourceDirs, module, kotlinFiles, dependencies, friends, multiModule, remap,
+                sourceDirs, module, kotlinFiles, dependencies, allDependencies, friends, multiModule, remap,
                 outputFile, outputPrefixFile, outputPostfixFile, mainCallParameters, incrementalData, testPackage, testFunction, runtime
             )
         }
@@ -361,6 +367,7 @@ abstract class BasicBoxTest(
         module: TestModule,
         kotlinFiles: List<TestFile>,
         dependencies: List<String>,
+        allDependencies: List<String>,
         friends: List<String>,
         multiModule: Boolean,
         remap: Boolean,
@@ -388,7 +395,7 @@ abstract class BasicBoxTest(
                 .sortedBy { it.canonicalPath }
                 .map { sourceToTranslationUnit[it]!! }
 
-        val recompiledConfig = createConfig(sourceDirs, module, dependencies, friends, multiModule, incrementalData)
+        val recompiledConfig = createConfig(sourceDirs, module, dependencies, allDependencies, friends, multiModule, incrementalData)
         val recompiledOutputFile = File(outputFile.parentFile, outputFile.nameWithoutExtension + "-recompiled.js")
 
         translateFiles(
@@ -593,7 +600,7 @@ abstract class BasicBoxTest(
     private fun createPsiFiles(fileNames: List<String>): List<KtFile> = fileNames.map(this::createPsiFile)
 
     private fun createConfig(
-            sourceDirs: List<String>, module: TestModule, dependencies: List<String>, friends: List<String>,
+            sourceDirs: List<String>, module: TestModule, dependencies: List<String>, allDependencies: List<String>, friends: List<String>,
             multiModule: Boolean, incrementalData: IncrementalData?
     ): JsConfig {
         val configuration = environment.configuration.copy()
@@ -603,7 +610,14 @@ abstract class BasicBoxTest(
             configuration.languageVersionSettings = languageVersionSettings
         }
 
-        configuration.put(JSConfigurationKeys.LIBRARIES, JsConfig.JS_STDLIB + JsConfig.JS_KOTLIN_TEST + dependencies)
+        val libraries = when (targetBackend) {
+            TargetBackend.JS_IR -> dependencies
+            TargetBackend.JS -> JsConfig.JS_STDLIB + JsConfig.JS_KOTLIN_TEST + dependencies
+            else -> error("Unsupported target backend: $targetBackend")
+        }
+
+        configuration.put(JSConfigurationKeys.LIBRARIES, libraries)
+        configuration.put(JSConfigurationKeys.TRANSITIVE_LIBRARIES, allDependencies)
         configuration.put(JSConfigurationKeys.FRIEND_PATHS, friends)
 
         configuration.put(CommonConfigurationKeys.MODULE_NAME, module.name.removeSuffix(OLD_MODULE_SUFFIX))

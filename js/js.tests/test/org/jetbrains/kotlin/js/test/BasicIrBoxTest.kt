@@ -5,14 +5,15 @@
 
 package org.jetbrains.kotlin.js.test
 
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.ir.backend.js.CompilationMode
-import org.jetbrains.kotlin.ir.backend.js.CompiledModule
+import org.jetbrains.kotlin.ir.backend.js.KlibModuleRef
+import org.jetbrains.kotlin.ir.backend.js.TranslationResult
 import org.jetbrains.kotlin.ir.backend.js.compile
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.facade.MainCallParameters
 import org.jetbrains.kotlin.js.facade.TranslationUnit
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.TargetBackend
 import java.io.File
 
@@ -21,8 +22,8 @@ private val defaultRuntimeKlibPath = "js/js.translator/testData/out/klibs/runtim
 
 private val JS_IR_RUNTIME_MODULE_NAME = "JS_IR_RUNTIME"
 
-private val fullRuntimeKlib = CompiledModule(JS_IR_RUNTIME_MODULE_NAME, null, null, fullRuntimeKlibPath, emptyList(), true)
-private val defaultRuntimeKlib = CompiledModule(JS_IR_RUNTIME_MODULE_NAME, null, null, defaultRuntimeKlibPath, emptyList(), true)
+private val fullRuntimeKlib = KlibModuleRef(JS_IR_RUNTIME_MODULE_NAME, fullRuntimeKlibPath)
+private val defaultRuntimeKlib = KlibModuleRef(JS_IR_RUNTIME_MODULE_NAME, defaultRuntimeKlibPath)
 
 abstract class BasicIrBoxTest(
     pathToTestDir: String,
@@ -45,7 +46,7 @@ abstract class BasicIrBoxTest(
     // TODO Design incremental compilation for IR and add test support
     override val incrementalCompilationChecksEnabled = false
 
-    private val compilationCache = mutableMapOf<String, CompiledModule>()
+    private val compilationCache = mutableMapOf<String, KlibModuleRef>()
 
     override fun doTest(filePath: String, expectedResult: String, mainCallParameters: MainCallParameters, coroutinesPackage: String) {
         compilationCache.clear()
@@ -84,11 +85,18 @@ abstract class BasicIrBoxTest(
 //            )
 //        )
 
-        val runtimeKlib = runtimes[runtime]
+        val runtimeKlib = runtimes[runtime]!!
 
-        val dependencyNames = config.configuration[JSConfigurationKeys.LIBRARIES]!!.map { File(it).name }
-        val dependencies = listOfNotNull(runtimeKlib) + dependencyNames.mapNotNull {
-            compilationCache[it]
+        val libraries = config.configuration[JSConfigurationKeys.LIBRARIES]!!.map { File(it).name }
+        val transitiveLibraries = config.configuration[JSConfigurationKeys.TRANSITIVE_LIBRARIES]!!.map { File(it).name }
+
+        // TODO: Add proper depencencies
+        val dependencies = listOf(runtimeKlib) + libraries.map {
+            compilationCache[it] ?: error("Can't find compiled module for dependency $it")
+        }
+
+        val allDependencies = listOf(runtimeKlib) + transitiveLibraries.map {
+            compilationCache[it] ?: error("Can't find compiled module for dependency $it")
         }
 
 //        config.configuration.put(CommonConfigurationKeys.PHASES_TO_DUMP_STATE, setOf("UnitMaterializationLowering"))
@@ -100,21 +108,23 @@ abstract class BasicIrBoxTest(
             if (!isMainModule) it.replace("_v5.js", "/") else it
         }
 
-        val result = compile(
-            config.project,
-            filesToCompile,
-            config.configuration,
-            listOf(FqName((testPackage?.let { "$it." } ?: "") + testFunction)),
-            if (isMainModule) CompilationMode.JS_AGAINST_KLIB else CompilationMode.KLIB,
-            dependencies,
-            actualOutputFile
+        val result: TranslationResult = compile(
+            project = config.project,
+            files = filesToCompile,
+            configuration = config.configuration,
+            compileMode = if (isMainModule) CompilationMode.JS else CompilationMode.KLIB,
+            immediateDependencies = dependencies,
+            allDependencies = allDependencies,
+            outputKlibPath = actualOutputFile
         )
 
-        compilationCache[outputFile.name.replace(".js", ".meta.js")] = result
+        val moduleName = config.configuration.get(CommonConfigurationKeys.MODULE_NAME) as String
+        val module = KlibModuleRef(moduleName, actualOutputFile)
 
-        val generatedCode = result.generatedCode
-        if (generatedCode != null) {
-            val wrappedCode = wrapWithModuleEmulationMarkers(generatedCode, moduleId = config.moduleId, moduleKind = config.moduleKind)
+        compilationCache[outputFile.name.replace(".js", ".meta.js")] = module
+
+        if (result is TranslationResult.CompiledJsCode) {
+            val wrappedCode = wrapWithModuleEmulationMarkers(result.jsCode, moduleId = config.moduleId, moduleKind = config.moduleKind)
             outputFile.write(wrappedCode)
         }
     }

@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.test.JsIrTestRuntime
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.serialization.js.ModuleKind
-import java.io.File
 
 fun buildConfiguration(environment: KotlinCoreEnvironment): CompilerConfiguration {
     val runtimeConfiguration = environment.configuration.copy()
@@ -58,17 +57,15 @@ fun main() {
 
 
     fun buildKlib(sources: List<String>, outputPath: String) {
-        val result = compile(
-            environment.project,
-            sources.map(::createPsiFile),
-            buildConfiguration(environment),
-            emptyList(),
-            CompilationMode.KLIB_WITH_JS,
-            emptyList(),
-            outputPath
+        compile(
+            project = environment.project,
+            files = sources.map(::createPsiFile),
+            configuration = buildConfiguration(environment),
+            compileMode = CompilationMode.KLIB,
+            immediateDependencies = emptyList(),
+            allDependencies = emptyList(),
+            outputKlibPath = outputPath
         )
-
-        result.generatedCode?.let { File(outputPath, "result.js").writeText(it) }
     }
 
     buildKlib(JsIrTestRuntime.FULL.sources, fullRuntimeKlibPath)
