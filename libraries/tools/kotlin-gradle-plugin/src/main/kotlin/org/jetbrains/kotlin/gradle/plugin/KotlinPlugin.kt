@@ -734,6 +734,10 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
         }
 
         val kotlinOptions = KotlinJvmOptionsImpl()
+        project.whenEvaluated {
+            applyAndroidJavaVersion(project.extensions.getByType(BaseExtension::class.java), kotlinOptions)
+        }
+
         kotlinOptions.noJdk = true
         ext.addExtension(KOTLIN_OPTIONS_DSL_NAME, kotlinOptions)
 
@@ -776,6 +780,13 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
         project.whenEvaluated {
             checkAndroidAnnotationProcessorDependencyUsage(project)
         }
+    }
+
+    private fun applyAndroidJavaVersion(baseExtension: BaseExtension, kotlinOptions: KotlinJvmOptions) {
+        val javaVersion =
+            listOf(baseExtension.compileOptions.sourceCompatibility, baseExtension.compileOptions.targetCompatibility).min()!!
+        if (javaVersion >= JavaVersion.VERSION_1_8)
+            kotlinOptions.jvmTarget = "1.8"
     }
 
     private fun processVariant(

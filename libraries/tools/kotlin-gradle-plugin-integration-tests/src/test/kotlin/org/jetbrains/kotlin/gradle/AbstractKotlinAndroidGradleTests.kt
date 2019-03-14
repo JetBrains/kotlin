@@ -673,4 +673,30 @@ fun getSomething() = 10
             assertFileExists("libAndroid/build/tmp/kotlin-classes/debugUnitTest/foo/PlatformTest.class")
         }
     }
+
+    @Test
+    fun testDetectAndroidJava8() = with(Project("AndroidProject")) {
+        setupWorkingDir()
+
+        val kotlinJvmTarget18Regex = Regex("Kotlin compiler args: .* -jvm-target 1.8")
+
+        build(":Lib:assemble") {
+            assertSuccessful()
+            assertNotContains(kotlinJvmTarget18Regex)
+        }
+
+        gradleBuildScript("Lib").appendText(
+            "\n" + """
+            android.compileOptions {
+                sourceCompatibility JavaVersion.VERSION_1_8
+                targetCompatibility JavaVersion.VERSION_1_8
+            }
+            """.trimIndent()
+        )
+
+        build(":Lib:assemble") {
+            assertSuccessful()
+            assertContainsRegex(kotlinJvmTarget18Regex)
+        }
+    }
 }
