@@ -64,8 +64,9 @@ object KotlinIntroduceImportAliasHandler : RefactoringActionHandler {
             val isExtension = descriptor.isExtension
             findPsiElements(project, file, descriptor).flatMap {
                 ReferencesSearch.search(it, file.useScope)
-                    .findAll()
+                    .findAll().asSequence().filter { reference -> reference.element.containingFile == file }
                     .map { reference -> UsageContext(reference as KtSimpleNameReference, isExtension = isExtension) }
+                    .toList()
             }
         }
 
