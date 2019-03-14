@@ -229,7 +229,7 @@ abstract class AbstractKotlinNativeCompile : AbstractCompile(), KotlinCompile<Ko
 
     private fun buildCommonArgs(defaultsOnly: Boolean = false): List<String> = mutableListOf<String>().apply {
 
-        add("-Xmulti-platform")
+        add("-Xmulti-platforms")
 
         // Language features.
         addArgIfNotNull("-language-version", languageVersion)

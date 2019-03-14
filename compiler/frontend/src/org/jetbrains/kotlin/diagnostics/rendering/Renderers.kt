@@ -79,7 +79,7 @@ object Renderers {
 
     @JvmField
     val PLATFORM = Renderer<ModuleDescriptor> {
-        val platform = it.platform
+        val platform = it.platforms
         " ${it.getCapability(ModuleInfo.Capability)?.displayedName ?: ""}" + when {
             platform == null || platform.isCommon() -> ""
             else -> " for " + platform.platformName

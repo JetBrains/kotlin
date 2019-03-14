@@ -252,7 +252,7 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
             ExternalProjectSystemRegistry.MAVEN_EXTERNAL_SOURCE_ID
         )
 
-        // TODO There should be a way to figure out the correct platform version
+        // TODO There should be a way to figure out the correct platforms version
         val platform = detectPlatform(mavenProject)?.defaultPlatform
 
         kotlinFacet.configureFacet(compilerVersion, LanguageFeature.Coroutines.defaultState, platform, modifiableModelsProvider)

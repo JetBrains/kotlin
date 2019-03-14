@@ -107,7 +107,7 @@ abstract class AbstractMultiPlatformIntegrationTest : KtUsefulTestCase() {
         val (output, exitCode) = AbstractCliTest.executeCompilerGrabOutput(
             this@compile,
             listOfNotNull(sources.absolutePath, commonSources?.absolutePath, commonSources?.absolutePath?.let("-Xcommon-sources="::plus)) +
-                    "-Xmulti-platform" + mainArguments +
+                    "-Xmulti-platforms" + mainArguments +
                     loadExtraArguments(listOfNotNull(sources, commonSources))
         )
         appendln("Exit code: $exitCode")

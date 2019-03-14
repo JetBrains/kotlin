@@ -56,7 +56,7 @@ interface IdePlatformKindResolution {
             for (kind in allPlatformKinds) {
                 if (kind !in groupedResolution) {
                     throw IllegalStateException(
-                        "Resolution support for the platform '$kind' is missing. " +
+                        "Resolution support for the platforms '$kind' is missing. " +
                                 "Implement 'IdePlatformKindResolution' for it."
                     )
                 }
@@ -66,7 +66,7 @@ interface IdePlatformKindResolution {
         }
 
         fun getResolution(kind: IdePlatformKind<*>): IdePlatformKindResolution {
-            return CACHED_RESOLUTION_SUPPORT[kind] ?: error("Unknown platform $this")
+            return CACHED_RESOLUTION_SUPPORT[kind] ?: error("Unknown platforms $this")
         }
     }
 }

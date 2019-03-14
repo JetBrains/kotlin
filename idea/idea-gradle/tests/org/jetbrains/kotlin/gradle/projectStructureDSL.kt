@@ -112,7 +112,7 @@ class ModuleInfo(
         val actualPlatform = module.platform
         if (actualPlatform != platform) {
             projectInfo.messageCollector.report(
-                "Module '${module.name}': expected platform '${platform.description}' but found '${actualPlatform?.description}'"
+                "Module '${module.name}': expected platforms '${platform.description}' but found '${actualPlatform?.description}'"
             )
         }
     }

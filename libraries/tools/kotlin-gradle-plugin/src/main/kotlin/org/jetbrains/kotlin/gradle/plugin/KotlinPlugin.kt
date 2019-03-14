@@ -450,8 +450,8 @@ internal abstract class AbstractKotlinPlugin(
             }
 
             // Setup the published configurations:
-            // Don't set the attributes for common module; otherwise their 'common' platform won't be compatible with the one in
-            // platform-specific modules
+            // Don't set the attributes for common module; otherwise their 'common' platforms won't be compatible with the one in
+            // platforms-specific modules
             if (kotlinTarget.platformType != KotlinPlatformType.common) {
                 project.configurations.getByName(kotlinTarget.apiElementsConfigurationName).run {
                     attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerApiUsage(kotlinTarget))

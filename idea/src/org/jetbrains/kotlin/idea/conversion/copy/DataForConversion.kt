@@ -248,7 +248,7 @@ data class DataForConversion private constructor(
                         }
                         else {
                             val fqName = FqNameUnsafe(qualifiedName)
-                            // skip explicit imports of platform classes mapped into Kotlin classes
+                            // skip explicit imports of platforms classes mapped into Kotlin classes
                             if (fqName.isSafe && JavaToKotlinClassMap.isJavaPlatformClass(fqName.toSafe())) continue
                             append("import $qualifiedName\n")
                         }

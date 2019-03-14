@@ -2045,7 +2045,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *   : simpleUserType{"."}
      *   ;
      *
-     *   recovers on platform types:
+     *   recovers on platforms types:
      *    - Foo!
      *    - (Mutable)List<Foo>!
      *    - Array<(out) Foo>!
@@ -2132,7 +2132,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
     }
 
     private void recoverOnPlatformTypeSuffix() {
-        // Recovery for platform types
+        // Recovery for platforms types
         if (at(EXCL)) {
             PsiBuilder.Marker error = mark();
             advance(); // EXCL

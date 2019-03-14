@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 interface ContentRoot
 
 /**
- * @param isCommon whether this source root contains sources of a common module in a multi-platform project
+ * @param isCommon whether this source root contains sources of a common module in a multi-platforms project
  */
 data class KotlinSourceRoot(val path: String, val isCommon: Boolean): ContentRoot
 

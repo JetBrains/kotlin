@@ -237,8 +237,8 @@ class IDEKotlinAsJavaSupport(private val project: Project): KotlinAsJavaSupport(
     // NOTE: this is a hacky solution to the following problem:
     // when building this light class resolver will be built by the first file in the list
     // (we could assume that files are in the same module before)
-    // thus we need to ensure that resolver will be built by the file from platform part of the module
-    // (resolver built by a file from the common part will have no knowledge of the platform part)
+    // thus we need to ensure that resolver will be built by the file from platforms part of the module
+    // (resolver built by a file from the common part will have no knowledge of the platforms part)
     // the actual of order of files that resolver receives is controlled by *findFilesForFacade* method
     private fun Collection<KtFile>.platformSourcesFirst() = sortedByDescending { it.platform.isJvm() }
 

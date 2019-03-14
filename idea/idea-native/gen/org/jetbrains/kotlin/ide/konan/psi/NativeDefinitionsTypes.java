@@ -61,7 +61,7 @@ public interface NativeDefinitionsTypes {
   IElementType STATIC_LIBRARIES = new NativeDefinitionsTokenType("staticLibraries");
   IElementType STRICT_ENUMS = new NativeDefinitionsTokenType("strictEnums");
   IElementType UNKNOWN_KEY = new NativeDefinitionsTokenType("<unknown key>");
-  IElementType UNKNOWN_PLATFORM = new NativeDefinitionsTokenType("<unknown platform>");
+  IElementType UNKNOWN_PLATFORM = new NativeDefinitionsTokenType("<unknown platforms>");
   IElementType VALUE = new NativeDefinitionsTokenType("VALUE");
   IElementType WASM = new NativeDefinitionsTokenType("wasm");
   IElementType WASM32 = new NativeDefinitionsTokenType("wasm32");

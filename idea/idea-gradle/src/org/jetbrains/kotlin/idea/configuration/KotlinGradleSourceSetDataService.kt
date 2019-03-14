@@ -221,9 +221,9 @@ fun detectPlatformKindByPlugin(moduleNode: DataNode<ModuleData>): IdePlatformKin
 )
 fun detectPlatformByPlugin(moduleNode: DataNode<ModuleData>): TargetPlatformKind<*>? {
     return when (moduleNode.platformPluginId) {
-        "kotlin-platform-jvm" -> TargetPlatformKind.Jvm[JvmTarget.JVM_1_6]
-        "kotlin-platform-js" -> TargetPlatformKind.JavaScript
-        "kotlin-platform-common" -> TargetPlatformKind.Common
+        "kotlin-platforms-jvm" -> TargetPlatformKind.Jvm[JvmTarget.JVM_1_6]
+        "kotlin-platforms-js" -> TargetPlatformKind.JavaScript
+        "kotlin-platforms-common" -> TargetPlatformKind.Common
         else -> null
     }
 }
@@ -269,7 +269,7 @@ fun configureFacetByGradleModule(
         ?: return null
     val platformKind = detectPlatformKindByPlugin(moduleNode) ?: detectPlatformByLibrary(moduleNode)
 
-    // TODO there should be a way to figure out the correct platform version
+    // TODO there should be a way to figure out the correct platforms version
     val platform = platformKind?.defaultPlatform
 
     val coroutinesProperty = CoroutineSupport.byCompilerArgument(

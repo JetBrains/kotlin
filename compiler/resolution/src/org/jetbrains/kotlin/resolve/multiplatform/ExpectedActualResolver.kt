@@ -222,7 +222,7 @@ object ExpectedActualResolver {
         object Compatible : Compatibility()
     }
 
-    // a is the declaration in common code, b is the definition in the platform-specific code
+    // a is the declaration in common code, b is the definition in the platforms-specific code
     private fun areCompatibleCallables(
         a: CallableMemberDescriptor,
         b: CallableMemberDescriptor,

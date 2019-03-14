@@ -146,7 +146,7 @@ abstract class CompletionSession(
             { CompletionBenchmarkSink.instance.onFlush(this) },
             prefixMatcher, parameters, resultSet,
             createSorter(), (file as? KtCodeFragment)?.extraCompletionFilter,
-            moduleDescriptor.platform.isCommon()
+            moduleDescriptor.platforms.isCommon()
         )
     }
 

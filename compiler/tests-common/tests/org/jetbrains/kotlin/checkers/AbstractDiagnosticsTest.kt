@@ -167,12 +167,12 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         val actualText = StringBuilder()
         for (testFile in files) {
             val module = testFile.module
-            val isCommonModule = modules[module]!!.platform.isCommon()
+            val isCommonModule = modules[module]!!.platforms.isCommon()
             val implementingModules =
                 if (!isCommonModule) emptyList()
                 else modules.entries.filter { (testModule) -> module in testModule?.getDependencies().orEmpty() }
             val implementingModulesBindings = implementingModules.mapNotNull { (testModule, moduleDescriptor) ->
-                val platform = moduleDescriptor.platform
+                val platform = moduleDescriptor.platforms
                 if (platform != null && platform.isCommon()) platform to moduleBindings[testModule]!!
                 else null
             }
@@ -355,7 +355,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
 
         val moduleDescriptor = moduleContext.module as ModuleDescriptorImpl
 
-        val platform = moduleDescriptor.platform
+        val platform = moduleDescriptor.platforms
         if (platform.isCommon()) {
             return CommonResolverForModuleFactory.analyzeFiles(
                 files, moduleDescriptor.name, true, languageVersionSettings,
@@ -367,7 +367,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
                 MetadataPartProvider.Empty
             }
         } else if (platform != null) {
-            // TODO: analyze with the correct platform, not always JVM
+            // TODO: analyze with the correct platforms, not always JVM
             files += getCommonCodeFilesForPlatformSpecificModule(moduleDescriptor)
         }
 
@@ -406,16 +406,16 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
     }
 
     private fun getCommonCodeFilesForPlatformSpecificModule(moduleDescriptor: ModuleDescriptorImpl): List<KtFile> {
-        // We assume that a platform-specific module _implements_ all declarations from common modules which are immediate dependencies.
-        // So we collect all sources from such modules to analyze in the platform-specific module as well
+        // We assume that a platforms-specific module _implements_ all declarations from common modules which are immediate dependencies.
+        // So we collect all sources from such modules to analyze in the platforms-specific module as well
         @Suppress("DEPRECATION")
         val dependencies = moduleDescriptor.testOnly_AllDependentModules
 
-        // TODO: diagnostics on common code reported during the platform module analysis should be distinguished somehow
+        // TODO: diagnostics on common code reported during the platforms module analysis should be distinguished somehow
         // E.g. "<!JVM:ACTUAL_WITHOUT_EXPECT!>...<!>
         val result = ArrayList<KtFile>(0)
         for (dependency in dependencies) {
-            if (dependency.platform.isCommon()) {
+            if (dependency.platforms.isCommon()) {
                 val files = dependency.getCapability(MODULE_FILES)
                         ?: error("MODULE_FILES should have been set for the common module: $dependency")
                 result.addAll(files)
@@ -586,12 +586,12 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         val nameSuffix = moduleName.substringAfterLast("-", "").toUpperCase()
         val platform =
             when {
-                nameSuffix.isEmpty() -> null // TODO(dsavvinov): this leads to 'null'-platform in ModuleDescriptor
+                nameSuffix.isEmpty() -> null // TODO(dsavvinov): this leads to 'null'-platforms in ModuleDescriptor
                 nameSuffix == "COMMON" -> DefaultBuiltInPlatforms.commonPlatform
                 nameSuffix == "JVM" -> DefaultBuiltInPlatforms.jvmPlatform // TODO(dsavvinov): determine JvmTarget precisely
                 nameSuffix == "JS" -> DefaultBuiltInPlatforms.jsPlatform
                 nameSuffix == "NATIVE" -> DefaultBuiltInPlatforms.konanPlatform
-                else -> throw IllegalStateException("Can't determine platform by name $nameSuffix")
+                else -> throw IllegalStateException("Can't determine platforms by name $nameSuffix")
             }
         return ModuleDescriptorImpl(Name.special("<$moduleName>"), storageManager, JvmBuiltIns(storageManager), platform)
     }

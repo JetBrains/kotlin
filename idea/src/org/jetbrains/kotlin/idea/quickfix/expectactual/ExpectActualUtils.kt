@@ -287,7 +287,7 @@ private fun KotlinType.checkAccessibility(accessibleClasses: List<KtClassOrObjec
     }
     val classifierDescriptor = constructor.declarationDescriptor as? ClassifierDescriptorWithTypeParameters ?: return
     val moduleDescriptor = classifierDescriptor.module
-    if (moduleDescriptor.platform.isCommon()) {
+    if (moduleDescriptor.platforms.isCommon()) {
         // Common classes are Ok; unfortunately this check does not work correctly for simple (non-expect) classes from common module
         return
     }

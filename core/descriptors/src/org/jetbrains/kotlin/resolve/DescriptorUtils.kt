@@ -59,7 +59,7 @@ val DeclarationDescriptor.module: ModuleDescriptor
     get() = DescriptorUtils.getContainingModule(this)
 
 val DeclarationDescriptor.platform: TargetPlatform?
-    get() = module.platform
+    get() = module.platforms
 
 fun ModuleDescriptor.resolveTopLevelClass(topLevelClassFqName: FqName, location: LookupLocation): ClassDescriptor? {
     assert(!topLevelClassFqName.isRoot)

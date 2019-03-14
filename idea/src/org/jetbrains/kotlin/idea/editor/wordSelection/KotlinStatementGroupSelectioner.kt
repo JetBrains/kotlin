@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 
 /**
- * Originally from IDEA platform: StatementGroupSelectioner
+ * Originally from IDEA platforms: StatementGroupSelectioner
  */
 class KotlinStatementGroupSelectioner : ExtendWordSelectionHandlerBase() {
     override fun canSelect(e: PsiElement): Boolean {

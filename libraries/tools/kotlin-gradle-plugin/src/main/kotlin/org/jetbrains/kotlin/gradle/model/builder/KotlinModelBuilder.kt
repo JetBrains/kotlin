@@ -61,11 +61,11 @@ class KotlinModelBuilder(private val kotlinPluginVersion: String, private val an
         }
 
         private fun getProjectType(project: Project): KotlinProject.ProjectType {
-            return if (project.plugins.hasPlugin("kotlin") || project.plugins.hasPlugin("kotlin-platform-jvm") ||
+            return if (project.plugins.hasPlugin("kotlin") || project.plugins.hasPlugin("kotlin-platforms-jvm") ||
                 project.isAndroid()
             ) {
                 KotlinProject.ProjectType.PLATFORM_JVM
-            } else if (project.plugins.hasPlugin("kotlin2js") || project.plugins.hasPlugin("kotlin-platform-js")) {
+            } else if (project.plugins.hasPlugin("kotlin2js") || project.plugins.hasPlugin("kotlin-platforms-js")) {
                 KotlinProject.ProjectType.PLATFORM_JS
             } else {
                 KotlinProject.ProjectType.PLATFORM_COMMON

@@ -84,13 +84,13 @@ private val expectDeclarationsRemovingPhase = makeJsModulePhase(
 private val coroutineIntrinsicLoweringPhase = makeJsModulePhase(
     ::CoroutineIntrinsicLowering,
     name = "CoroutineIntrinsicLowering",
-    description = "Replace common coroutine intrinsics with platform specific ones"
+    description = "Replace common coroutine intrinsics with platforms specific ones"
 )
 
 private val arrayInlineConstructorLoweringPhase = makeJsModulePhase(
     ::ArrayInlineConstructorLowering,
     name = "ArrayInlineConstructorLowering",
-    description = "Replace array constructor with platform specific factory functions"
+    description = "Replace array constructor with platforms specific factory functions"
 )
 
 private val lateinitLoweringPhase = makeJsModulePhase(
@@ -127,7 +127,7 @@ private val removeInlineFunctionsWithReifiedTypeParametersLoweringPhase = makeJs
 private val throwableSuccessorsLoweringPhase = makeJsModulePhase(
     ::ThrowableSuccessorsLowering,
     name = "ThrowableSuccessorsLowering",
-    description = "Link kotlin.Throwable and JavaScript Error together to provide proper interop between language and platform exceptions"
+    description = "Link kotlin.Throwable and JavaScript Error together to provide proper interop between language and platforms exceptions"
 )
 
 private val tailrecLoweringPhase = makeJsModulePhase(
@@ -333,7 +333,7 @@ private val classReferenceLoweringPhase = makeJsModulePhase(
 private val primitiveCompanionLoweringPhase = makeJsModulePhase(
     ::PrimitiveCompanionLowering,
     name = "PrimitiveCompanionLowering",
-    description = "Replace common companion object access with platform one"
+    description = "Replace common companion object access with platforms one"
 )
 
 private val constLoweringPhase = makeJsModulePhase(

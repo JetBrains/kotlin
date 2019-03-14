@@ -222,7 +222,7 @@ public class ResourceReferenceAnnotatorUtil {
                 public void actionPerformed(AnActionEvent e) {
                     final Editor editor = CommonDataKeys.EDITOR.getData(e.getDataContext());
                     if (editor != null) {
-                        // Need ARGB support in platform color chooser; see
+                        // Need ARGB support in platforms color chooser; see
                         //  https://youtrack.jetbrains.com/issue/IDEA-123498
                         //final Color color =
                         //  ColorChooser.chooseColor(editor.getComponent(), AndroidBundle.message("android.choose.color"), getCurrentColor());

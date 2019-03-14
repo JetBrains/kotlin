@@ -89,7 +89,7 @@ class LibraryDependenciesCacheImpl(private val project: Project) : LibraryDepend
     }
 
     /**
-     * @return true if it's OK to add a dependency from a library with platform [from] to a library with platform [to]
+     * @return true if it's OK to add a dependency from a library with platforms [from] to a library with platforms [to]
      */
     private fun compatiblePlatforms(from: TargetPlatform, to: TargetPlatform): Boolean {
         return from == to || to.isCommon()

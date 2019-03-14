@@ -105,7 +105,7 @@ abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
         val facetSettings = KotlinFacetSettingsProvider.getInstance(project).getInitializedSettings(this)
         facetSettings.useProjectSettings = false
         facetSettings.compilerSettings = CompilerSettings().apply {
-            additionalArguments += " -Xmulti-platform"
+            additionalArguments += " -Xmulti-platforms"
         }
     }
 

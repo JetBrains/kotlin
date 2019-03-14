@@ -29,9 +29,9 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContextUtils
 
 /**
- * A platform-independent logic for generating data class synthetic methods.
+ * A platforms-independent logic for generating data class synthetic methods.
  * TODO: data class with zero components gets no toString/equals/hashCode methods. This is inconsistent and should be
- * changed here with the platform backends adopted.
+ * changed here with the platforms backends adopted.
  */
 abstract class DataClassMethodGenerator(
     declaration: KtClassOrObject,

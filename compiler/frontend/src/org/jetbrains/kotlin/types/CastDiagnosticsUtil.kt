@@ -63,10 +63,10 @@ object CastDiagnosticsUtil {
     /**
      * Two types are related, roughly, when one of them is a subtype of the other constructing class
      *
-     * Note that some types have platform-specific counterparts, i.e. kotlin.String is mapped to java.lang.String,
+     * Note that some types have platforms-specific counterparts, i.e. kotlin.String is mapped to java.lang.String,
      * such types (and all their sub- and supertypes) are related too.
      *
-     * Due to limitations in PlatformToKotlinClassMap, we only consider mapping of platform classes to Kotlin classed
+     * Due to limitations in PlatformToKotlinClassMap, we only consider mapping of platforms classes to Kotlin classed
      * (i.e. java.lang.String -> kotlin.String) and ignore mappings that go the other way.
      */
     private fun isRelated(a: KotlinType, b: KotlinType, platformToKotlinClassMap: PlatformToKotlinClassMap): Boolean {

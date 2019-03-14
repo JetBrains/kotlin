@@ -121,12 +121,12 @@ private fun ModuleSourceInfo.toDescriptor() = KotlinCacheService.getInstance(mod
     .getResolutionFacadeByModuleInfo(this)?.moduleDescriptor
 
 /** This function used to emulate a behaviour somewhat similar to projection (on module-level):
- *      Given a module, get a platform-view of that module
+ *      Given a module, get a platforms-view of that module
  *
  *  This was implemented by following algo:
- *  - if it is a common-module, they find along its children a module with required platform.
+ *  - if it is a common-module, they find along its children a module with required platforms.
  *    Then, build a PlatformModuleInfo for that children (it will include a given module, but will provide a semantic
- *    of platform-view of that given module)
+ *    of platforms-view of that given module)
  *  - otherwise, build a PlatformModuleInfo straightforwardly. This function returns null if requested module hadn't childs,
  *    seems like it is just for consistency.
  *
@@ -134,12 +134,12 @@ private fun ModuleSourceInfo.toDescriptor() = KotlinCacheService.getInstance(mod
  *  Each client should be dealt with on case-by-case basis
  */
 //fun PsiElement.getPlatformModuleInfo(desiredPlatform: TargetPlatform): PlatformModuleInfo? {
-//    assert(desiredPlatform !is CommonPlatform) { "Platform module cannot have Common platform" }
+//    assert(desiredPlatform !is CommonPlatform) { "Platform module cannot have Common platforms" }
 //    val moduleInfo = getNullableModuleInfo() as? ModuleSourceInfo ?: return null
-//    return when (moduleInfo.platform) {
+//    return when (moduleInfo.platforms) {
 //        is CommonPlatform -> {
 //            val correspondingImplementingModule = moduleInfo.module.implementingModules.map { it.toInfo(moduleInfo.sourceType) }
-//                .firstOrNull { it?.platform == desiredPlatform } ?: return null
+//                .firstOrNull { it?.platforms == desiredPlatform } ?: return null
 //            PlatformModuleInfo(correspondingImplementingModule, correspondingImplementingModule.expectedBy)
 //        }
 //        desiredPlatform -> {

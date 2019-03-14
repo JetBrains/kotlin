@@ -32,7 +32,7 @@ fun KType.withNullability(nullable: Boolean): KType {
         return if (nullable) this else KTypeImpl(TypeUtils.makeNotNullable((this as KTypeImpl).type)) { javaType }
     }
 
-    // If the type is not marked nullable, it's either a non-null type or a platform type.
+    // If the type is not marked nullable, it's either a non-null type or a platforms type.
     val kotlinType = (this as KTypeImpl).type
     if (kotlinType.isFlexible()) return KTypeImpl(TypeUtils.makeNullableAsSpecified(kotlinType, nullable)) { javaType }
 

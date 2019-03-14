@@ -39,7 +39,7 @@ object ProjectLocalConfigurations {
 
 internal fun Configuration.setupAsLocalTargetSpecificConfigurationIfSupported(target: KotlinTarget) {
     // don't setup in old MPP common modules, as their output configurations with KotlinPlatformType attribute would
-    // fail to resolve as transitive dependencies of the platform modules, just as we don't mark their
+    // fail to resolve as transitive dependencies of the platforms modules, just as we don't mark their
     // `api/RuntimeElements` with the KotlinPlatformType
     if ((target !is KotlinWithJavaTarget<*> || target.platformType != KotlinPlatformType.common)) {
         usesPlatformOf(target)

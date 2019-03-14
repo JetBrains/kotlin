@@ -48,11 +48,11 @@ fun launchProcessWithFallback(processBuilder: ProcessBuilder, reportingTargets: 
             null
         }
         catch (e: NoClassDefFoundError) {
-            reportingTargets.report(DaemonReportCategory.DEBUG, "net.rubygrapefruit.platform library is not in the classpath, falling back to ProcessBuilder#start ($e)", reportingSource)
+            reportingTargets.report(DaemonReportCategory.DEBUG, "net.rubygrapefruit.platforms library is not in the classpath, falling back to ProcessBuilder#start ($e)", reportingSource)
             null
         }
         catch (e: ClassNotFoundException) {
-            reportingTargets.report(DaemonReportCategory.DEBUG, "net.rubygrapefruit.platform library is not in the classpath, falling back to ProcessBuilder#start ($e)", reportingSource)
+            reportingTargets.report(DaemonReportCategory.DEBUG, "net.rubygrapefruit.platforms library is not in the classpath, falling back to ProcessBuilder#start ($e)", reportingSource)
             null
         }
         ?: processBuilder.start()

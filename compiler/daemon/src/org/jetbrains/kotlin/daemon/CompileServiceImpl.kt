@@ -471,7 +471,7 @@ class CompileServiceImpl(
                                 }
                             }
                         }
-                        else -> throw IllegalStateException("Incremental compilation is not supported for target platform: $targetPlatform")
+                        else -> throw IllegalStateException("Incremental compilation is not supported for target platforms: $targetPlatform")
 
                     }
                 }
@@ -612,7 +612,7 @@ class CompileServiceImpl(
         operationsTracer: RemoteOperationsTracer?
     ): CompileService.CallResult<Int> = ifAlive(minAliveness = Aliveness.Alive) {
         if (targetPlatform != CompileService.TargetPlatform.JVM)
-            CompileService.CallResult.Error("Sorry, only JVM target platform is supported now")
+            CompileService.CallResult.Error("Sorry, only JVM target platforms is supported now")
         else {
             val disposable = Disposer.newDisposable()
             val compilerMessagesStream = PrintStream(
@@ -671,7 +671,7 @@ class CompileServiceImpl(
         templateClassName: String
     ): CompileService.CallResult<Int> = ifAlive(minAliveness = Aliveness.Alive) {
         if (compilationOptions.targetPlatform != CompileService.TargetPlatform.JVM)
-            CompileService.CallResult.Error("Sorry, only JVM target platform is supported now")
+            CompileService.CallResult.Error("Sorry, only JVM target platforms is supported now")
         else {
             val disposable = Disposer.newDisposable()
             val messageCollector = CompileServicesFacadeMessageCollector(servicesFacade, compilationOptions)

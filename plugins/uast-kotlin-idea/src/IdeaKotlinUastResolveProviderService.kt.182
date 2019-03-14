@@ -46,7 +46,7 @@ class IdeaKotlinUastResolveProviderService : KotlinUastResolveProviderService {
 
     override fun isJvmElement(psiElement: PsiElement): Boolean {
         val module = psiElement.module
-        return module == null || TargetPlatformDetector.getPlatform(module) is JvmPlatform
+        return module == null || TargetPlatformDetector.getPlatforms(module) is JvmPlatform
     }
 
     override fun getLanguageVersionSettings(element: KtElement): LanguageVersionSettings {

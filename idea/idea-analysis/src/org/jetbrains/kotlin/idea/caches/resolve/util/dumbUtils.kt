@@ -8,6 +8,6 @@ package org.jetbrains.kotlin.idea.caches.resolve.util
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 
-// ideally we should do something if dumbService.isAlternativeResolveEnabled, because platform expects resolve to work in such cases
+// ideally we should do something if dumbService.isAlternativeResolveEnabled, because platforms expects resolve to work in such cases
 fun Project.isInDumbMode(): Boolean = DumbService.getInstance(this).isDumb
 

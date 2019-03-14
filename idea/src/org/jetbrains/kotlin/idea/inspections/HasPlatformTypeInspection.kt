@@ -43,7 +43,7 @@ class HasPlatformTypeInspection(
     }
 ) {
 
-    override val problemText = "Declaration has type inferred from a platform call, which can lead to unchecked nullability issues. " +
+    override val problemText = "Declaration has type inferred from a platforms call, which can lead to unchecked nullability issues. " +
             "Specify type explicitly as nullable or non-nullable."
 
     override fun additionalFixes(element: KtCallableDeclaration): List<LocalQuickFix>? {
@@ -66,7 +66,7 @@ class HasPlatformTypeInspection(
     override fun createOptionsPanel(): JComponent? {
         val panel = MultipleCheckboxOptionsPanel(this)
         panel.addCheckbox("Apply only to public or protected members", "publicAPIOnly")
-        panel.addCheckbox("Report for types with platform arguments", "reportPlatformArguments")
+        panel.addCheckbox("Report for types with platforms arguments", "reportPlatformArguments")
         return panel
     }
 }

@@ -100,7 +100,7 @@ open class KotlinPlatformImplementationPluginBase(platformName: String) : Kotlin
         commonProjects.add(commonProject)
 
         commonProject.whenEvaluated {
-            if (!commonProject.pluginManager.hasPlugin("kotlin-platform-common")) {
+            if (!commonProject.pluginManager.hasPlugin("kotlin-platforms-common")) {
                 throw GradleException(
                     "Platform project $platformProject has an " +
                             "'$EXPECTED_BY_CONFIG_NAME'${if (implementConfigurationIsUsed) "/'$IMPLEMENT_CONFIG_NAME'" else ""} " +
@@ -161,7 +161,7 @@ open class KotlinPlatformImplementationPluginBase(platformName: String) : Kotlin
 
     protected open fun addCommonSourceSetToPlatformSourceSet(commonSourceSet: Named, platformProject: Project) {
         platformProject.whenEvaluated {
-            // At the point when the source set in the platform module is created, the task does not exist
+            // At the point when the source set in the platforms module is created, the task does not exist
             val platformTask = platformProject.tasks
                 .withType(AbstractKotlinCompile::class.java)
                 .singleOrNull { it.sourceSetName == commonSourceSet.name } // TODO use strict check once this code is not run in K/N

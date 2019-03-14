@@ -51,7 +51,7 @@ public class MessageUtil {
 
     @NotNull
     public static String virtualFileToPath(@NotNull VirtualFile virtualFile) {
-        // Convert path to platform-dependent format when virtualFile is local file.
+        // Convert path to platforms-dependent format when virtualFile is local file.
         if (virtualFile instanceof CoreLocalVirtualFile || virtualFile instanceof CoreJarVirtualFile) {
             return toSystemDependentName(virtualFile.getPath());
         }

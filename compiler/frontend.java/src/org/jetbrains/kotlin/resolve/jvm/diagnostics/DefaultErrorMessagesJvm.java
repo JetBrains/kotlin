@@ -37,7 +37,7 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
     static {
         MAP.put(CONFLICTING_JVM_DECLARATIONS, "Platform declaration clash: {0}", CONFLICTING_JVM_DECLARATIONS_DATA);
         MAP.put(ACCIDENTAL_OVERRIDE, "Accidental override: {0}", CONFLICTING_JVM_DECLARATIONS_DATA);
-        MAP.put(CONFLICTING_INHERITED_JVM_DECLARATIONS, "Inherited platform declarations clash: {0}", CONFLICTING_JVM_DECLARATIONS_DATA);
+        MAP.put(CONFLICTING_INHERITED_JVM_DECLARATIONS, "Inherited platforms declarations clash: {0}", CONFLICTING_JVM_DECLARATIONS_DATA);
 
         MAP.put(JVM_STATIC_NOT_IN_OBJECT_OR_CLASS_COMPANION, "Only members in named objects and companion objects of classes can be annotated with '@JvmStatic'");
         MAP.put(JVM_STATIC_NOT_IN_OBJECT_OR_COMPANION, "Only members in named objects and companion objects can be annotated with '@JvmStatic'");

@@ -263,7 +263,7 @@ class KotlinNativeTargetPreset(
     // We declare default K/N dependencies as files to avoid searching them in remote repos (see KT-28128).
     private fun defaultLibs(target: KonanTarget? = null): List<Dependency> = with(project) {
 
-        val relPath = if (target != null) "platform/${target.name}" else "common"
+        val relPath = if (target != null) "platforms/${target.name}" else "common"
 
         file("$konanHome/klib/$relPath")
             .listFiles { file -> file.isDirectory }
@@ -292,7 +292,7 @@ class KotlinNativeTargetPreset(
             defaultLibs().forEach {
                 project.dependencies.add(compilation.compileDependencyConfigurationName, it)
             }
-            // Then, platform-specific libs:
+            // Then, platforms-specific libs:
             defaultLibs(target).forEach {
                 project.dependencies.add(compilation.compileDependencyConfigurationName, it)
             }
@@ -306,7 +306,7 @@ class KotlinNativeTargetPreset(
                         "a ${supportedHosts.single()} host" else
                         "one of the host platforms: ${supportedHosts.joinToString(", ")}"
                 project.logger.warn(
-                    "Target '$name' for platform ${konanTarget} is ignored during build on this ${HostManager.host} machine. " +
+                    "Target '$name' for platforms ${konanTarget} is ignored during build on this ${HostManager.host} machine. " +
                             "You can build it with $supportedHostsString."
                 )
             }

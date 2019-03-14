@@ -53,7 +53,7 @@ class LiteKonanLibraryInfoProvider(customKonanHomeDir: String? = null) {
             else -> {
                 val grandParentName = parentPath.parent?.toFile()?.name ?: return null
                 when (grandParentName) {
-                    "platform" -> parentName
+                    "platforms" -> parentName
                     else -> return null
                 }
             }

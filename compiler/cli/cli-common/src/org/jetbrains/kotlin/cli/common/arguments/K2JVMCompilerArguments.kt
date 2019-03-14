@@ -87,12 +87,12 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     )
     var additionalJavaModules: Array<String>? by FreezableVar(null)
 
-    @Argument(value = "-Xno-call-assertions", description = "Don't generate not-null assertions for arguments of platform types")
+    @Argument(value = "-Xno-call-assertions", description = "Don't generate not-null assertions for arguments of platforms types")
     var noCallAssertions: Boolean by FreezableVar(false)
 
     @Argument(
         value = "-Xno-receiver-assertions",
-        description = "Don't generate not-null assertion for extension receiver arguments of platform types"
+        description = "Don't generate not-null assertion for extension receiver arguments of platforms types"
     )
     var noReceiverAssertions: Boolean by FreezableVar(false)
 
@@ -225,7 +225,7 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
 
     @Argument(
         value = "-Xno-exception-on-explicit-equals-for-boxed-null",
-        description = "Do not throw NPE on explicit 'equals' call for null receiver of platform boxed primitive type"
+        description = "Do not throw NPE on explicit 'equals' call for null receiver of platforms boxed primitive type"
     )
     var noExceptionOnExplicitEqualsForBoxedNull by FreezableVar(false)
 

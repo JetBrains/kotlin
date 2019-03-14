@@ -187,7 +187,7 @@ private object KotlinResolveDataProvider {
 
             val moduleInfo = analyzableElement.containingKtFile.getModuleInfo()
 
-            // TODO: should return proper platform!
+            // TODO: should return proper platforms!
             val targetPlatform = moduleInfo.platform ?: TargetPlatformDetector.getPlatform(analyzableElement.containingKtFile)
             val targetPlatformVersion = IDELanguageSettingsProvider.getTargetPlatform(moduleInfo, project).let {
                 if (targetPlatform.isJvm() && it !is JvmTarget) JvmTarget.DEFAULT else it

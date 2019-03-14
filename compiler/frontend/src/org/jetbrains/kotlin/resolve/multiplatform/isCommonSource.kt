@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.UserDataProperty
 
 /**
- * Returns true if this file is a part of the common module in a multi-platform project.
+ * Returns true if this file is a part of the common module in a multi-platforms project.
  * This setting only makes sense in the compiler, not in the IDE where sources from common modules are analyzed as common
  */
 var KtFile.isCommonSource: Boolean? by UserDataProperty(Key.create("IS_COMMON_SOURCE"))

@@ -55,7 +55,7 @@ internal open class KtUltraLightField(
 
     override fun getModifierList(): PsiModifierList = modList
     override fun hasModifierProperty(name: String): Boolean =
-        modifierList.hasModifierProperty(name) //can be removed after IDEA platform does the same
+        modifierList.hasModifierProperty(name) //can be removed after IDEA platforms does the same
 
     override fun getLanguage(): Language = KotlinLanguage.INSTANCE
 

@@ -36,7 +36,7 @@ object CommonIdePlatformKindTooling : IdePlatformKindTooling() {
 //    override val resolverForModuleFactory = CommonResolverForModuleFactory()
 
     override val mavenLibraryIds = listOf(MAVEN_COMMON_STDLIB_ID)
-    override val gradlePluginId = "kotlin-platform-common"
+    override val gradlePluginId = "kotlin-platforms-common"
     override val gradlePlatformIds: List<KotlinPlatform> get() = listOf(KotlinPlatform.COMMON)
 
     override val libraryKind = CommonLibraryKind

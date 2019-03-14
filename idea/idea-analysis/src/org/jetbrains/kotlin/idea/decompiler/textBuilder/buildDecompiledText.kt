@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.types.isFlexible
 
 private val DECOMPILED_CODE_COMMENT = "/* compiled code */"
 private val DECOMPILED_COMMENT_FOR_PARAMETER = "/* = compiled code */"
-private val FLEXIBLE_TYPE_COMMENT = "/* platform type */"
+private val FLEXIBLE_TYPE_COMMENT = "/* platforms type */"
 private val DECOMPILED_CONTRACT_STUB = "contract { /* compiled contract */ }"
 
 fun DescriptorRendererOptions.defaultDecompilerRendererOptions() {

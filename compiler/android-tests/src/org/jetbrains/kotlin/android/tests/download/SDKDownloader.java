@@ -47,10 +47,10 @@ public class SDKDownloader {
 
     public SDKDownloader(PathManager pathManager) {
         this.pathManager = pathManager;
-        platformZipPath = pathManager.getRootForDownload() + "/platform" + ANDROID_VERSION + ".zip";
+        platformZipPath = pathManager.getRootForDownload() + "/platforms" + ANDROID_VERSION + ".zip";
         armImage = pathManager.getRootForDownload() + "/arm-image.zip";
         x86Image = pathManager.getRootForDownload() + "/x86-image.zip";
-        platformToolsZipPath = pathManager.getRootForDownload() + "/platform-tools" + PLATFORM_TOOLS + ".zip";
+        platformToolsZipPath = pathManager.getRootForDownload() + "/platforms-tools" + PLATFORM_TOOLS + ".zip";
         skdToolsZipPath = pathManager.getRootForDownload() + "/tools" + SDK_TOOLS + ".zip";
         buildToolsZipPath = pathManager.getRootForDownload() + "/build-tools" + BUILD_TOOLS + ".zip";
         gradleZipPath = pathManager.getRootForDownload() + "/gradle" + GRADLE_VERSION + ".zip";

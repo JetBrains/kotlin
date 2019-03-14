@@ -33,7 +33,7 @@ private fun ModuleDescriptor?.getPlatformName(): String? {
     if (moduleInfo != null && moduleInfo.module.isAndroidModule()) {
         return "Android"
     }
-    val platform = platform ?: return null
+    val platform = platforms ?: return null
     return platform.platformName
 }
 

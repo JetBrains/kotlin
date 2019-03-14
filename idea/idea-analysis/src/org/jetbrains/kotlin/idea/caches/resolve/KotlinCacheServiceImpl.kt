@@ -147,7 +147,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
 
         private val librariesContext = sdkContext.contextWithNewLockAndCompositeExceptionTracker()
         val facadeForLibraries = ProjectResolutionFacade(
-            "facadeForLibraries", "$resolverForLibrariesName for platform ${settings.sdk}",
+            "facadeForLibraries", "$resolverForLibrariesName for platforms ${settings.sdk}",
             project, librariesContext, settings,
             reuseDataFrom = facadeForSdk,
             moduleFilter = { it is LibraryInfo },
@@ -227,7 +227,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
             )
 
         val resolverDebugName =
-            "$resolverForSpecialInfoName $specialModuleInfo for files ${files.joinToString { it.name }} for platform $targetPlatform"
+            "$resolverForSpecialInfoName $specialModuleInfo for files ${files.joinToString { it.name }} for platforms $targetPlatform"
 
         fun makeProjectResolutionFacade(
             debugName: String,

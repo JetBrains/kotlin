@@ -12,6 +12,6 @@ fun initializeScriptModificationListener(project: Project) {
 
 }
 
-// This service was a workaround for the bug in the platform: the notification 'Gradle project needs to be imported' wasn't shown
+// This service was a workaround for the bug in the platforms: the notification 'Gradle project needs to be imported' wasn't shown
 // after the changes in .gradle.kts files
 // It was fixed in >183 (see GradleAutoImportAware.getAffectedExternalProjectFiles)

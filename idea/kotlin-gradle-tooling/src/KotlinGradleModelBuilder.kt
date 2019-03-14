@@ -65,10 +65,10 @@ abstract class AbstractKotlinGradleModelBuilder : ModelBuilderService {
         val kotlinCompileTaskClasses = listOf("org.jetbrains.kotlin.gradle.tasks.KotlinCompile_Decorated",
                                               "org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile_Decorated",
                                               "org.jetbrains.kotlin.gradle.tasks.KotlinCompileCommon_Decorated")
-        val platformPluginIds = listOf("kotlin-platform-jvm", "kotlin-platform-js", "kotlin-platform-common")
+        val platformPluginIds = listOf("kotlin-platforms-jvm", "kotlin-platforms-js", "kotlin-platforms-common")
         val pluginToPlatform = linkedMapOf(
-                "kotlin" to "kotlin-platform-jvm",
-                "kotlin2js" to "kotlin-platform-js"
+                "kotlin" to "kotlin-platforms-jvm",
+                "kotlin2js" to "kotlin-platforms-js"
         )
         val kotlinPluginIds = listOf("kotlin", "kotlin2js", "kotlin-android")
         val ABSTRACT_KOTLIN_COMPILE_CLASS = "org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile"

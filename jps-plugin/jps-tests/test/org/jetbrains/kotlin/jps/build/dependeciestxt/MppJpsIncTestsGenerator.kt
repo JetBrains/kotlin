@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.jps.build.dependeciestxt
 import java.io.File
 
 /**
- * Utility for generating common/platform module stub contents based on it's dependencies.
+ * Utility for generating common/platforms module stub contents based on it's dependencies.
  */
 fun actualizeMppJpsIncTestCaseDirs(rootDir: String, dir: String) {
     val rootDirFile = File("$rootDir/$dir")
@@ -293,7 +293,7 @@ class MppJpsIncTestsGenerator(val txt: ModulesTxt, val testCaseDirProvider: (Tes
                     generatePlatformFile(module)
                 }
                 else -> {
-                    // common module platform implementation
+                    // common module platforms implementation
                     generatePlatformFile(module)
                 }
             }
@@ -411,7 +411,7 @@ class MppJpsIncTestsGenerator(val txt: ModulesTxt, val testCaseDirProvider: (Tes
                         appendln("  ${thisOrDependent.platformDependentFunName}()")
                     }
                 } else {
-                    // platform module
+                    // platforms module
                     appendln("  ${thisOrDependent.platformOnlyFunName}()")
 
                     if (thisOrDependent.isJvmModule && thisOrDependent.contentsSettings.generateJavaFile) {

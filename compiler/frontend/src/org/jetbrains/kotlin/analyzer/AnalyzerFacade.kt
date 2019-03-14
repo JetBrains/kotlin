@@ -184,7 +184,7 @@ class ResolverForProjectImpl<M : ModuleInfo>(
                     moduleLanguageSettingsProvider.getLanguageVersionSettings(module, projectContext.project, isReleaseCoroutines)
                 val targetPlatformVersion = moduleLanguageSettingsProvider.getTargetPlatform(module, projectContext.project)
 
-                // FIXME(dsavvinov): temporary hack; ideally, module.platform should already return JvmPlatform with proper target.
+                // FIXME(dsavvinov): temporary hack; ideally, module.platforms should already return JvmPlatform with proper target.
                 // (maybe it does already, have to check out)
                 val platform = module.platform?.let {
                     if (it.isJvm() && targetPlatformVersion is JvmTarget)
@@ -257,7 +257,7 @@ class ResolverForProjectImpl<M : ModuleInfo>(
             module.name,
             projectContext.storageManager,
             builtIns,
-            module.platform ?: TODO("No platform"),
+            module.platform ?: TODO("No platforms"),
             module.capabilities,
             module.stableName
         )

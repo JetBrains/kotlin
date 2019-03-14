@@ -79,7 +79,7 @@ abstract class AbstractCodeInsightActionTest : KotlinLightCodeInsightFixtureTest
                     "JVM" -> DefaultBuiltInPlatforms.jvmPlatform
                     "JavaScript" -> DefaultBuiltInPlatforms.jsPlatform
                     "Common" -> DefaultBuiltInPlatforms.commonPlatform
-                    else -> error("Unexpected platform name: $targetPlatformName")
+                    else -> error("Unexpected platforms name: $targetPlatformName")
                 }
                 mainPsiFile.forcedTargetPlatform = targetPlatform
             }

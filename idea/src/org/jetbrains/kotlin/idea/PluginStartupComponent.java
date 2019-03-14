@@ -82,7 +82,7 @@ public class PluginStartupComponent implements ApplicationComponent {
 
         KotlinPluginCompatibilityVerifier.checkCompatibility();
 
-        //todo[Sedunov]: wait for fix in platform to avoid misunderstood from Java newbies (also ConfigureKotlinInTempDirTest)
+        //todo[Sedunov]: wait for fix in platforms to avoid misunderstood from Java newbies (also ConfigureKotlinInTempDirTest)
         //KotlinSdkType.Companion.setUpIfNeeded();
     }
 

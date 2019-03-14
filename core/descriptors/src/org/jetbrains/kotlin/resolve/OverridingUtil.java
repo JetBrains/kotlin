@@ -677,7 +677,7 @@ public class OverridingUtil {
         // Fake overrides of abstract members in non-abstract expected classes should not be abstract, because otherwise it would be
         // impossible to inherit a non-expected class from that expected class in common code.
         // We're making their modality that of the containing class, because this is the least confusing behavior for the users.
-        // However, it may cause problems if we reuse resolution results of common code when compiling platform code (see KT-15220)
+        // However, it may cause problems if we reuse resolution results of common code when compiling platforms code (see KT-15220)
         boolean transformAbstractToClassModality =
                 current.isExpect() && (current.getModality() != Modality.ABSTRACT && current.getModality() != Modality.SEALED);
 

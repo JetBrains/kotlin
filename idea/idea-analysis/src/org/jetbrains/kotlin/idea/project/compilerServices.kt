@@ -19,5 +19,5 @@ val TargetPlatform.findCompilerServices: PlatformDependentCompilerServices
             isJs() -> JsPlatformCompilerServices
             isNative() -> NativePlatformCompilerServices
             isCommon() -> CommonPlatformCompilerServices
-            else -> throw IllegalStateException("Unknown platform $this")
+            else -> throw IllegalStateException("Unknown platforms $this")
         }

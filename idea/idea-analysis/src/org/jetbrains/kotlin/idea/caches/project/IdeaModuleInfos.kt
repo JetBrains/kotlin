@@ -445,8 +445,8 @@ interface SourceForBinaryModuleInfo : IdeaModuleInfo {
 //
 //    override val containedModules: List<ModuleSourceInfo> = listOf(platformModule) + commonModules
 //
-//    override val platform: TargetPlatform?
-//        get() = platformModule.platform
+//    override val platforms: TargetPlatform?
+//        get() = platformModule.platforms
 //
 //    override val moduleOrigin: ModuleOrigin
 //        get() = platformModule.moduleOrigin

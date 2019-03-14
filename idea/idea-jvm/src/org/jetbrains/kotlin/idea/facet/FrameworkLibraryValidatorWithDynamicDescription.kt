@@ -79,7 +79,7 @@ class FrameworkLibraryValidatorWithDynamicDescription(
 
             if (conflictingPlatforms.isNotEmpty()) {
                 val platformText = conflictingPlatforms.mapTo(LinkedHashSet()) { it.name }.joinToString()
-                return ValidationResult("Libraries for the following platform are also present in the module dependencies: $platformText")
+                return ValidationResult("Libraries for the following platforms are also present in the module dependencies: $platformText")
             }
 
             return ValidationResult.OK

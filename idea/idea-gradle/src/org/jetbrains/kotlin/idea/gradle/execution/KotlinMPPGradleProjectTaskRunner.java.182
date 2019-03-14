@@ -291,7 +291,7 @@ class KotlinMPPGradleProjectTaskRunner extends ProjectTaskRunner
         final KotlinFacet kotlinFacet = KotlinFacet.Companion.get(module);
         if (kotlinFacet == null) return false;
 
-        final IdePlatform platform = kotlinFacet.getConfiguration().getSettings().getPlatform();
+        final IdePlatform platform = kotlinFacet.getConfiguration().getSettings().getPlatforms();
         if (platform == null) return false;
 
         return NativeIdePlatformUtil.isKotlinNative(platform);
@@ -304,7 +304,7 @@ class KotlinMPPGradleProjectTaskRunner extends ProjectTaskRunner
         final KotlinFacetSettings facetSettings = kotlinFacet.getConfiguration().getSettings();
         if (facetSettings.isTestModule()) return false;
 
-        final IdePlatform platform = facetSettings.getPlatform();
+        final IdePlatform platform = facetSettings.getPlatforms();
         if (platform == null) return false;
 
         return CommonIdePlatformUtil.isCommon(platform);

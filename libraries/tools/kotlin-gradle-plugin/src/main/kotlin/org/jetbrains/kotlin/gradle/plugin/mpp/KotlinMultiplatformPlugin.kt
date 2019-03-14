@@ -167,7 +167,7 @@ class KotlinMultiplatformPlugin(
 
         project.extensions.configure(PublishingExtension::class.java) { publishing ->
 
-            // The root publication that references the platform specific publications as its variants:
+            // The root publication that references the platforms specific publications as its variants:
             val rootPublication = publishing.publications.create("kotlinMultiplatform", MavenPublication::class.java).apply {
                 from(kotlinSoftwareComponent)
                 (this as MavenPublicationInternal).publishWithOriginalFileName()

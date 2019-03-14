@@ -34,7 +34,7 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
     private val storageManager: StorageManager,
     override val builtIns: KotlinBuiltIns,
     // May be null in compiler context, should be not-null in IDE context
-    override val platform: TargetPlatform? = null,
+    override val platforms: TargetPlatform? = null,
     private val capabilities: Map<ModuleDescriptor.Capability<*>, Any?> = emptyMap(),
     override val stableName: Name? = null
 ) : DeclarationDescriptorImpl(Annotations.EMPTY, moduleName), ModuleDescriptor {

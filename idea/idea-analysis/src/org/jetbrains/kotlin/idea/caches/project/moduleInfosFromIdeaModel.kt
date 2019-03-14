@@ -48,23 +48,23 @@ private fun collectModuleInfosFromIdeaModel(
 /** This function used to:
  * a) Introduce PlatformModuleInfo, on which other hacks heavily rely (see how we essentially re-wrap ModuleInfo + expectedBy-list
  *    into PlatformModuleInfo)
- * b) Remove common modules from platform resolvers (see how we remove from allModules all contained modules (this will include
+ * b) Remove common modules from platforms resolvers (see how we remove from allModules all contained modules (this will include
  *    expectedBy's)
  *
  * Now, common modules should be properly resolved by common resolver (remember that "common" resolver now actually is a more complex
  * thing, essentially it is a "MixedPlatform", not just "Common")
  *
- * Visibility of common symbols from platform modules should be also added.
+ * Visibility of common symbols from platforms modules should be also added.
  */
 //private fun mergePlatformModules(
 //    allModules: List<ModuleSourceInfo>,
-//    platform: TargetPlatform
+//    platforms: TargetPlatform
 //): List<IdeaModuleInfo> {
-//    if (platform is CommonPlatform) return allModules
+//    if (platforms is CommonPlatform) return allModules
 //
 //    val platformModules =
 //        allModules.flatMap { module ->
-//            if (module.platform == platform && module.expectedBy.isNotEmpty())
+//            if (module.platforms == platforms && module.expectedBy.isNotEmpty())
 //                listOf(module to module.expectedBy)
 //            else emptyList()
 //        }.map { (module, expectedBys) ->

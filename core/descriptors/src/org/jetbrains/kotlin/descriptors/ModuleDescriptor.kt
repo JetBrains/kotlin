@@ -33,7 +33,7 @@ interface ModuleDescriptor : DeclarationDescriptor {
 
     // NB: this field should actually be non-null, but making it so implies a LOT of work, so we postpone it for a moment
     // TODO: make it non-null
-    val platform: TargetPlatform?
+    val platforms: TargetPlatform?
 
     fun shouldSeeInternalsOf(targetModule: ModuleDescriptor): Boolean
 

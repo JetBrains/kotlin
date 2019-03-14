@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import java.util.*
 
 /**
- * Originally from IDEA platform: CodeBlockOrInitializerSelectioner
+ * Originally from IDEA platforms: CodeBlockOrInitializerSelectioner
  */
 class KotlinCodeBlockSelectioner : ExtendWordSelectionHandlerBase() {
 

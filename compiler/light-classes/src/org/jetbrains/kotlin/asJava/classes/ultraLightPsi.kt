@@ -129,7 +129,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
     override fun buildTypeParameterList(): PsiTypeParameterList =
         if (tooComplex) super.buildTypeParameterList() else buildTypeParameterList(classOrObject, this, support)
 
-    // the following logic should be in the platform (super), overrides can be removed once that happens
+    // the following logic should be in the platforms (super), overrides can be removed once that happens
     override fun getInterfaces(): Array<PsiClass> = PsiClassImplUtil.getInterfaces(this)
 
     override fun getSuperClass(): PsiClass? = PsiClassImplUtil.getSuperClass(this)

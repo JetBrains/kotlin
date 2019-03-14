@@ -89,8 +89,8 @@ abstract class AbstractKotlinTarget(
             KotlinVariantWithMetadataVariant(compilation, usageContexts, separateMetadataTarget)
         } else {
             // we should only add the Kotlin metadata dependency if we publish no Gradle metadata related to Kotlin MPP;
-            // with metadata, such a dependency would get invalid, since a platform module should only depend on modules for that
-            // same platform, not Kotlin metadata modules
+            // with metadata, such a dependency would get invalid, since a platforms module should only depend on modules for that
+            // same platforms, not Kotlin metadata modules
             KotlinVariantWithMetadataDependency(compilation, usageContexts, separateMetadataTarget)
         }
 

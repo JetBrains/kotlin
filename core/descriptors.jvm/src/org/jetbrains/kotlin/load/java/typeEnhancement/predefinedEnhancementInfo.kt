@@ -32,7 +32,7 @@ class PredefinedFunctionEnhancementInfo(
 
 /** Type is always nullable: `T?` */
 private val NULLABLE = JavaTypeQualifiers(NullabilityQualifier.NULLABLE, null, isNotNullTypeParameter = false)
-/** Nullability depends on substitution, but the type is not platform: `T` */
+/** Nullability depends on substitution, but the type is not platforms: `T` */
 private val NOT_PLATFORM = JavaTypeQualifiers(NullabilityQualifier.NOT_NULL, null, isNotNullTypeParameter = false)
 /** Type is always non-nullable: `T & Any` */
 private val NOT_NULLABLE = JavaTypeQualifiers(NullabilityQualifier.NOT_NULL, null, isNotNullTypeParameter = true)

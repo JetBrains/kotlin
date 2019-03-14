@@ -657,7 +657,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
             }
         }
 
-        /** Checks if our IDE doesn't support such platform */
+        /** Checks if our IDE doesn't support such platforms */
         private fun KotlinPlatform.isNotSupported() = IdePlatformKindTooling.getToolingIfAny(this) == null
 
         private fun KotlinSourceSetInfo.addSourceSets(

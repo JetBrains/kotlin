@@ -102,7 +102,7 @@ private fun DeclarationDescriptor.actualsForExpected(): Collection<DeclarationDe
     return emptyList()
 }
 
-// null means "any platform" here
+// null means "any platforms" here
 fun KtDeclaration.actualsForExpected(module: Module? = null): Set<KtDeclaration> =
     resolveToDescriptorIfAny(BodyResolveMode.FULL)
         ?.actualsForExpected()

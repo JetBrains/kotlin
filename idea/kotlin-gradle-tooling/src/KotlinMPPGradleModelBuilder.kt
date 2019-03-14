@@ -147,7 +147,7 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
             (it as? FileCollectionDependency)?.files?.singleOrNull()
         }
         // Workaround for duplicated dependencies specified as a file collection (KT-26675)
-        // Drop this code when the issue is fixed in the platform
+        // Drop this code when the issue is fixed in the platforms
         return resolvedDependencies.filter { dependency ->
             if (dependency !is FileCollectionDependency) return@filter true
             val files = dependency.files

@@ -99,7 +99,7 @@ private fun readV1Config(element: Element): KotlinFacetSettings {
 }
 
 fun Element.getFacetPlatformByConfigurationElement(): IdePlatform<*, *> {
-    val platformName = getAttributeValue("platform")
+    val platformName = getAttributeValue("platforms")
     return IdePlatformKind.All_PLATFORMS
         .firstOrNull { it.description == platformName }
         .orDefault()
@@ -268,7 +268,7 @@ private fun KotlinFacetSettings.writeLatestConfig(element: Element) {
     val filter = SkipDefaultsSerializationFilter()
 
     platform?.let {
-        element.setAttribute("platform", it.description)
+        element.setAttribute("platforms", it.description)
     }
     if (!useProjectSettings) {
         element.setAttribute("useProjectSettings", useProjectSettings.toString())

@@ -52,7 +52,7 @@ public class TargetPlatformDetector {
         PsiElement context = KtPsiFactoryKt.getAnalysisContext(file);
         if (context != null) {
             PsiFile contextFile = context.getContainingFile();
-            // TODO: Get proper default platform
+            // TODO: Get proper default platforms
             return contextFile instanceof KtFile ? getPlatform((KtFile) contextFile) : DefaultBuiltInPlatforms.INSTANCE.getJvmPlatform();
         }
 

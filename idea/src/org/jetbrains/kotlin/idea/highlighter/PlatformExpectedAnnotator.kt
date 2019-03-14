@@ -50,7 +50,7 @@ class PlatformExpectedAnnotator : Annotator {
         val descriptor = declaration.toDescriptor() as? MemberDescriptor ?: return
         if (!descriptor.isExpect) return
 
-        // TODO: obtain the list of annotation argument extractors from platform somehow
+        // TODO: obtain the list of annotation argument extractors from platforms somehow
         val checker = ExpectedActualDeclarationChecker(listOf(JavaActualAnnotationArgumentExtractor()))
 
         val trace = BindingTraceContext()

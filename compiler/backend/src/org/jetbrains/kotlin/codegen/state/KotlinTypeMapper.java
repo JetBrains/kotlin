@@ -787,7 +787,7 @@ public class KotlinTypeMapper {
         return Variance.OUT_VARIANCE;
     }
 
-    //NB: similar platform agnostic code in DescriptorUtils.unwrapFakeOverride
+    //NB: similar platforms agnostic code in DescriptorUtils.unwrapFakeOverride
     private FunctionDescriptor findSuperDeclaration(@NotNull FunctionDescriptor descriptor, boolean isSuperCall) {
         while (descriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
             Collection<? extends FunctionDescriptor> overridden = descriptor.getOverriddenDescriptors();

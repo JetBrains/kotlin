@@ -77,7 +77,7 @@ class DelegatedPropertyFieldDescriptor(
         val returnType = try {
             getter.returnType()
         } catch (e: ClassNotLoadedException) {
-            // Behavior copied from LocalVariableDescriptorImpl (in platform)
+            // Behavior copied from LocalVariableDescriptorImpl (in platforms)
             return "<unknown>"
         }
         return returnType?.name()

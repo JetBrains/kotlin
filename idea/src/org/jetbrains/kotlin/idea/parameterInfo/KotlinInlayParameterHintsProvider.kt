@@ -89,7 +89,7 @@ enum class HintType(val desc: String, defaultEnabled: Boolean) {
             // Will be painted with ReturnHintLinePainter
 
             // Enable/Disable setting will be present in the list with other hints.
-            // Enable action will be provided by the platform.
+            // Enable action will be provided by the platforms.
             // Disable action need to be reimplemented as hints are not actually added, see DisableReturnLambdaHintOptionAction.
 
             return emptyList()

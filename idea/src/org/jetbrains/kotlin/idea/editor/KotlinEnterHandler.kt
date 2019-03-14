@@ -84,7 +84,7 @@ class KotlinEnterHandler : EnterHandlerDelegateAdapter() {
         return EnterHandlerDelegate.Result.Continue
     }
 
-    // We can't use the core platform logic (EnterInStringLiteralHandler) because it assumes that the string
+    // We can't use the core platforms logic (EnterInStringLiteralHandler) because it assumes that the string
     // is a single token and the first character of the token is an opening quote. In the case of Kotlin,
     // the opening quote is a separate token and the first character of the string token is just a random letter.
     private fun preprocessEnterInStringLiteral(

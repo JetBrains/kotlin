@@ -52,7 +52,7 @@ class JavaNullabilityChecker : AdditionalTypeChecker {
         when (expression) {
             is KtWhenExpression ->
                 if (expression.elseExpression == null) {
-                    // Check for conditionally-exhaustive when on platform enums, see KT-6399
+                    // Check for conditionally-exhaustive when on platforms enums, see KT-6399
                     val subjectExpression = expression.subjectExpression ?: return
                     val type = c.trace.getType(subjectExpression) ?: return
                     if (type.isFlexible() && TypeUtils.isNullableType(type.asFlexibleType().upperBound)) {

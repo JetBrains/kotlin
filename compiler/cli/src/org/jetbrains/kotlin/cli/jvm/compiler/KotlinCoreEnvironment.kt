@@ -614,7 +614,7 @@ class KotlinCoreEnvironment private constructor(
 
             // On IBM JDK, XMLInputFactory does not support "report-cdata-event" property, but JDOMUtil sets it unconditionally in the
             // static XML_INPUT_FACTORY field and fails with an exception (Logger.error throws exception in the compiler) if unsuccessful.
-            // Until this is fixed in the platform, we workaround the issue by setting that field to a value that does not attempt
+            // Until this is fixed in the platforms, we workaround the issue by setting that field to a value that does not attempt
             // to set the unsupported property.
             // See IDEA-206446 for more information
             val field = JDOMUtil::class.java.getDeclaredField("XML_INPUT_FACTORY")

@@ -43,7 +43,7 @@ class JvmIdePlatformKindTooling : IdePlatformKindTooling() {
         PathUtil.KOTLIN_JAVA_RUNTIME_JDK8_NAME
     )
 
-    override val gradlePluginId = "kotlin-platform-jvm"
+    override val gradlePluginId = "kotlin-platforms-jvm"
     override val gradlePlatformIds: List<KotlinPlatform> get() = listOf(KotlinPlatform.JVM, KotlinPlatform.ANDROID)
 
     override val libraryKind: PersistentLibraryKind<*>? = null

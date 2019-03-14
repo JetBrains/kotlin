@@ -42,7 +42,7 @@ class IdePackageOracleFactory(val project: Project) : PackageOracleFactory {
             }
             else -> when (moduleInfo.moduleOrigin) {
                 ModuleOrigin.MODULE -> KotlinSourceFilesOracle(moduleInfo as ModuleSourceInfo, project)
-                else -> PackageOracle.Optimistic // binaries for non-jvm platform need some oracles based on their structure
+                else -> PackageOracle.Optimistic // binaries for non-jvm platforms need some oracles based on their structure
             }
         }
     }

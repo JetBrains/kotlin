@@ -2772,9 +2772,9 @@ public class JvmRuntimeDescriptorLoaderTestGenerated extends AbstractJvmRuntimeD
                 runTest("compiler/testData/loadJava/compiledKotlin/type/NothingQ.kt");
             }
 
-            @TestMetadata("platform.kt")
+            @TestMetadata("platforms.kt")
             public void testPlatform() throws Exception {
-                runTest("compiler/testData/loadJava/compiledKotlin/type/platform.kt");
+                runTest("compiler/testData/loadJava/compiledKotlin/type/platforms.kt");
             }
 
             @TestMetadata("String.kt")

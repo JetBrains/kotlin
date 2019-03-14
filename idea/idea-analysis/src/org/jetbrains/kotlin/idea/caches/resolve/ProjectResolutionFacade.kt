@@ -126,7 +126,7 @@ internal class ProjectResolutionFacade(
              *     JavaClass -> ModuleInfo -> ResolverForModule -> Container -> JavaDescriptorResolver
              *  (in particular, it is used to implement transition "JavaClass -> ModuleInfo")
              *
-             *  In CMI world, we'll return platform module for JavaClass from CommonModule (don't even ask me
+             *  In CMI world, we'll return platforms module for JavaClass from CommonModule (don't even ask me
              *  where the fuck we've found JavaClass in common module), which emulates compiler' behaviour
              *
              *  I don't know what should we do in new world, because use-case is completely not clear and needs
@@ -221,7 +221,7 @@ internal class ProjectResolutionFacade(
 
     private companion object {
         private fun createBuiltIns(settings: PlatformAnalysisSettings, projectContext: ProjectContext): KotlinBuiltIns {
-//            return settings.platform.idePlatformKind.resolution.createBuiltIns(settings, projectContext)
+//            return settings.platforms.idePlatformKind.resolution.createBuiltIns(settings, projectContext)
             // TODO: temporary hack, move builtIns instantiation close to ResolverForModule
             return DefaultBuiltInPlatforms.jvmPlatform.idePlatformKind.resolution.createBuiltIns(settings, projectContext)
         }

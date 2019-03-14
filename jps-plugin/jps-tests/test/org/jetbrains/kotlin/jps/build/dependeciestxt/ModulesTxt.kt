@@ -241,7 +241,7 @@ class ModulesTxtBuilder {
 
         settings.useProjectSettings = false
         settings.compilerSettings = CompilerSettings().also {
-            it.additionalArguments = "-version -Xmulti-platform"
+            it.additionalArguments = "-version -Xmulti-platforms"
         }
 
         val moduleRef = moduleRef(name)

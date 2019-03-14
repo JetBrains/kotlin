@@ -857,7 +857,7 @@ compileTestKotlin {
                 }
             }
 
-            apply plugin: 'kotlin-platform-jvm'
+            apply plugin: 'kotlin-platforms-jvm'
         """
         )
         importProject()
@@ -899,7 +899,7 @@ compileTestKotlin {
                 }
             }
 
-            apply plugin: 'kotlin-platform-js'
+            apply plugin: 'kotlin-platforms-js'
 
             repositories {
                 mavenCentral()
@@ -958,7 +958,7 @@ compileTestKotlin {
                 }
             }
 
-            apply plugin: 'kotlin-platform-common'
+            apply plugin: 'kotlin-platforms-common'
 
             repositories {
                 mavenCentral()
@@ -1014,7 +1014,7 @@ compileTestKotlin {
                 }
             }
 
-            apply plugin: 'kotlin-platform-common'
+            apply plugin: 'kotlin-platforms-common'
 
             repositories {
                     mavenCentral()
@@ -1160,7 +1160,7 @@ compileTestKotlin {
                 }
             }
 
-            apply plugin: 'kotlin-platform-jvm'
+            apply plugin: 'kotlin-platforms-jvm'
 
             compileKotlin {
                 kotlinOptions.freeCompilerArgs = ["-module", "module with spaces"]
@@ -1702,7 +1702,7 @@ compileTestKotlin {
                     }
                 }
 
-                apply plugin: 'kotlin-platform-common'
+                apply plugin: 'kotlin-platforms-common'
 
                 repositories {
                         mavenCentral()
@@ -1739,7 +1739,7 @@ compileTestKotlin {
                     }
                 }
 
-                apply plugin: 'kotlin-platform-js'
+                apply plugin: 'kotlin-platforms-js'
 
                 repositories {
                         mavenCentral()
@@ -1770,7 +1770,7 @@ compileTestKotlin {
                     }
                 }
 
-                apply plugin: 'kotlin-platform-jvm'
+                apply plugin: 'kotlin-platforms-jvm'
 
                 repositories {
                         mavenCentral()
@@ -1812,7 +1812,7 @@ compileTestKotlin {
                     }
                 }
 
-                apply plugin: 'kotlin-platform-common'
+                apply plugin: 'kotlin-platforms-common'
 
                 sourceSets {
                     myMain {
@@ -1862,7 +1862,7 @@ compileTestKotlin {
                     }
                 }
 
-                apply plugin: 'kotlin-platform-js'
+                apply plugin: 'kotlin-platforms-js'
 
                 sourceSets {
                     myMain {
@@ -1906,7 +1906,7 @@ compileTestKotlin {
                     }
                 }
 
-                apply plugin: 'kotlin-platform-jvm'
+                apply plugin: 'kotlin-platforms-jvm'
 
                 sourceSets {
                     myMain {
@@ -2042,7 +2042,7 @@ compileTestKotlin {
                 }
             }
 
-            apply plugin: 'kotlin-platform-common'
+            apply plugin: 'kotlin-platforms-common'
 
             repositories {
                 mavenCentral()
@@ -2289,7 +2289,7 @@ compileTestKotlin {
                     }
                 }
 
-                apply plugin: 'kotlin-platform-common'
+                apply plugin: 'kotlin-platforms-common'
 
                 repositories {
                         mavenCentral()
@@ -2320,7 +2320,7 @@ compileTestKotlin {
                     }
                 }
 
-                apply plugin: 'kotlin-platform-js'
+                apply plugin: 'kotlin-platforms-js'
 
                 sourceSets {
                     myMain {
@@ -2358,7 +2358,7 @@ compileTestKotlin {
                     }
                 }
 
-                apply plugin: 'kotlin-platform-jvm'
+                apply plugin: 'kotlin-platforms-jvm'
 
                 repositories {
                     mavenCentral()
@@ -2395,7 +2395,7 @@ compileTestKotlin {
                     }
                 }
 
-                apply plugin: 'kotlin-platform-common'
+                apply plugin: 'kotlin-platforms-common'
 
                 repositories {
                     mavenCentral()
@@ -2430,7 +2430,7 @@ compileTestKotlin {
                     }
                 }
 
-                apply plugin: 'kotlin-platform-js'
+                apply plugin: 'kotlin-platforms-js'
 
                 repositories {
                     mavenCentral()
@@ -2455,7 +2455,7 @@ compileTestKotlin {
                     }
                 }
 
-                apply plugin: 'kotlin-platform-jvm'
+                apply plugin: 'kotlin-platforms-jvm'
 
                 sourceSets {
                     myMain {

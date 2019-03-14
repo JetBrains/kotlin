@@ -70,7 +70,7 @@ sealed class CreateActualFix<D : KtNamedDeclaration>(
             if (compatibility.isNotEmpty() && declaration !is KtFunction) return null
             val actualModuleDescriptor = d.b
             val actualModule = (actualModuleDescriptor.getCapability(ModuleInfo.Capability) as? ModuleSourceInfo)?.module ?: return null
-            val actualPlatform = actualModuleDescriptor.platform ?: return null
+            val actualPlatform = actualModuleDescriptor.platforms ?: return null
             return when (declaration) {
                 is KtClassOrObject -> CreateActualClassFix(declaration, actualModule, actualPlatform)
                 is KtFunction -> CreateActualFunctionFix(declaration, actualModule, actualPlatform)

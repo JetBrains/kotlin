@@ -181,7 +181,7 @@ public class ValueArgumentsToParametersMapper {
                     if (candidate instanceof MemberDescriptor && ((MemberDescriptor) candidate).isExpect() &&
                         candidate.getContainingDeclaration() instanceof ClassDescriptor) {
                         // We do not allow named arguments for members of expected classes until we're able to use both
-                        // expected and actual definitions when compiling platform code
+                        // expected and actual definitions when compiling platforms code
                         report(NAMED_ARGUMENTS_NOT_ALLOWED.on(nameReference, EXPECTED_CLASS_MEMBER));
                     }
                     else if (!candidate.hasStableParameterNames()) {
