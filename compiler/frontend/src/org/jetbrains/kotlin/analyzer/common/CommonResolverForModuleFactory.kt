@@ -53,7 +53,6 @@ class CommonAnalysisParameters(
 
 /**
  * A facade that is used to analyze common (platform-independent) modules in multi-platform projects.
- * See [CommonPlatform]
  */
 open class CommonResolverForModuleFactory(
     private val platformParameters: CommonAnalysisParameters,

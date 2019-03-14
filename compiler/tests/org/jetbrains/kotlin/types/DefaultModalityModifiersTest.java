@@ -19,10 +19,9 @@ package org.jetbrains.kotlin.types;
 import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
-import org.jetbrains.kotlin.analyzer.common.CommonPlatform;
+import org.jetbrains.kotlin.analyzer.common.CommonPlatformCompilerServices;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl;
-import org.jetbrains.kotlin.config.TargetPlatformVersion;
 import org.jetbrains.kotlin.container.DslKt;
 import org.jetbrains.kotlin.container.StorageComponentContainer;
 import org.jetbrains.kotlin.context.ContextKt;
@@ -115,8 +114,8 @@ public class DefaultModalityModifiersTest extends KotlinTestWithEnvironment {
                     moduleContext,
                     new FileBasedDeclarationProviderFactory(moduleContext.getStorageManager(), files),
                     new BindingTraceContext(),
-                    CommonPlatform.INSTANCE,
-                    TargetPlatformVersion.NoVersion.INSTANCE,
+                    DefaultBuiltInPlatforms.INSTANCE.getCommonPlatform(),
+                    CommonPlatformCompilerServices.INSTANCE,
                     CompilerEnvironment.INSTANCE,
                     LanguageVersionSettingsImpl.DEFAULT
             );
