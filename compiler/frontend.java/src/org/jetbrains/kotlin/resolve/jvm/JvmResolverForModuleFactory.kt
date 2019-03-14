@@ -83,7 +83,7 @@ class JvmResolverForModuleFactory(
         val lookupTracker = LookupTracker.DO_NOTHING
         val packagePartProvider = platformParameters.packagePartProviderFactory(moduleContent)
         val container = createContainerForLazyResolveWithJava(
-            platform,
+            platform as JvmPlatform,
             moduleContext,
             trace,
             declarationProviderFactory,
