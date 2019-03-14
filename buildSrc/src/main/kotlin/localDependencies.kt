@@ -26,7 +26,7 @@ import org.gradle.api.tasks.JavaExec
 import org.gradle.kotlin.dsl.*
 import java.io.File
 
-private fun Project.kotlinBuildRepoDir() = File("${project.rootDir.absoluteFile}/dependencies/repo")
+private fun Project.kotlinBuildLocalRepoDir() = File("${project.rootDir.absoluteFile}/dependencies/repo")
 
 private fun Project.ideModuleName() = when (IdeVersionConfigurator.currentIde.kind) {
     Ide.Kind.AndroidStudio -> "android-studio-ide"
@@ -40,8 +40,8 @@ private fun Project.ideModuleVersion() = when (IdeVersionConfigurator.currentIde
     Ide.Kind.IntelliJ -> rootProject.findProperty("versions.intellijSdk")
 }
 
-fun RepositoryHandler.kotlinBuildRepo(project: Project): IvyArtifactRepository = ivy {
-    val baseDir = project.kotlinBuildRepoDir()
+fun RepositoryHandler.kotlinBuildLocalRepo(project: Project): IvyArtifactRepository = ivy {
+    val baseDir = project.kotlinBuildLocalRepoDir()
     setUrl(baseDir)
 
     ivyPattern("${baseDir.canonicalPath}/[organisation]/[module]/[revision]/[module].ivy.xml")
@@ -110,7 +110,7 @@ fun ModuleDependency.includeJars(vararg names: String, rootProject: Project? = n
 // Workaround. Top-level Kotlin function in a default package can't be called from a non-default package
 object IntellijRootUtils {
     fun getRepositoryRootDir(project: Project): File = with(project.rootProject) {
-        return File(kotlinBuildRepoDir(), "kotlin.build")
+        return File(kotlinBuildLocalRepoDir(), "kotlin.build")
     }
 
     fun getIntellijRootDir(project: Project): File = with(project.rootProject) {
@@ -139,7 +139,7 @@ fun Project.intellijRootDir() = IntellijRootUtils.getIntellijRootDir(project)
 
 fun Project.intellijUltimateRootDir() =
     if (isIntellijUltimateSdkAvailable())
-        File(kotlinBuildRepoDir(), "kotlin.build/ideaIU/${rootProject.extra["versions.intellijSdk"]}/artifacts")
+        File(kotlinBuildLocalRepoDir(), "kotlin.build/ideaIU/${rootProject.extra["versions.intellijSdk"]}/artifacts")
     else
         throw GradleException("intellij ultimate SDK is not available")
 

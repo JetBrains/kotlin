@@ -302,7 +302,7 @@ allprojects {
     val mirrorRepo: String? = findProperty("maven.repository.mirror")?.toString()
 
     repositories {
-        kotlinBuildRepo(project)
+        kotlinBuildLocalRepo(project)
         mirrorRepo?.let(::maven)
         bootstrapKotlinRepo?.let(::maven)
         jcenter()
