@@ -98,6 +98,12 @@ internal abstract class KonanCliRunner(
             project.jvmArgs.none { it.startsWith("-Xmx") }) {
             add("-Xmx3G")
         }
+        // Disable C2 compiler for HotSpot VM to improve compilation speed.
+        System.getProperty("java.vm.name")?.let {
+            if (it.contains("HotSpot", true)) {
+                add("-XX:TieredStopAtLevel=1")
+            }
+        }
         addAll(additionalJvmArgs)
         addAll(project.jvmArgs)
     }
