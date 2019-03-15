@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.fir.VisitedSupertype
 import org.jetbrains.kotlin.fir.symbols.FirSymbolOwner
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
@@ -14,6 +15,8 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 interface FirCallableDeclaration :
     @VisitedSupertype FirDeclaration,
     FirTypedDeclaration, FirSymbolOwner<FirCallableDeclaration> {
+
+    override val symbol: FirCallableSymbol
 
     val receiverTypeRef: FirTypeRef?
 
