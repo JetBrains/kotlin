@@ -45,6 +45,18 @@ class FirSupertypeResolverTransformer : FirAbstractTreeTransformer() {
         return resolveSupertypesOrExpansions(typeAlias).compose()
     }
 
+    // This and transformProperty functions are required to forbid supertype resolving for local classes
+    override fun transformDeclarationWithBody(
+        declarationWithBody: FirDeclarationWithBody,
+        data: Nothing?
+    ): CompositeTransformResult<FirDeclaration> {
+        return declarationWithBody.compose()
+    }
+
+    override fun transformProperty(property: FirProperty, data: Nothing?): CompositeTransformResult<FirDeclaration> {
+        return property.compose()
+    }
+
     private fun resolveSupertypesOrExpansions(classLikeDeclaration: FirClassLikeDeclaration): FirDeclaration {
         val classId = classLikeDeclaration.symbol.classId
 
