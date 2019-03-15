@@ -14,6 +14,6 @@ fun test(n: Int): I? {
     else null
 }
 
-class AAA(s: String) : I() {
+class <caret>AAA(s: String) : I() {
 
 }

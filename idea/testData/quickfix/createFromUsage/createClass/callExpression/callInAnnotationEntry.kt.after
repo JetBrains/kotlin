@@ -5,4 +5,4 @@
 
 }
 
-annotation class bar(val s: String, val i: Int)
+annotation class <caret>bar(val s: String, val i: Int)
