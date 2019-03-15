@@ -9,15 +9,17 @@ import com.sun.source.tree.*
 import com.sun.source.util.SimpleTreeVisitor
 import com.sun.source.util.TaskEvent
 import com.sun.source.util.TaskListener
-import com.sun.source.util.Trees
 import com.sun.tools.javac.code.Symbol
 import com.sun.tools.javac.tree.JCTree
+import java.io.File
 import javax.lang.model.element.ElementKind
 import javax.lang.model.element.Modifier
+import javax.lang.model.element.TypeElement
+import javax.lang.model.util.Elements
 
 class MentionedTypesTaskListener(
     private val cache: JavaClassCache,
-    private val trees: Trees
+    private val elementUtils: Elements
 ) : TaskListener {
 
     var time = 0L
@@ -33,7 +35,7 @@ class MentionedTypesTaskListener(
 
         val structure = SourceFileStructure(e.sourceFile.toUri())
 
-        val treeVisitor = TypeTreeVisitor(compilationUnit, trees, structure)
+        val treeVisitor = TypeTreeVisitor(elementUtils, structure)
         compilationUnit.typeDecls.forEach {
             it.accept(treeVisitor, Visibility.ABI)
         }
@@ -46,13 +48,24 @@ private enum class Visibility {
     ABI, NON_ABI
 }
 
-private class TypeTreeVisitor(val unit: CompilationUnitTree, val trees: Trees, val sourceStructure: SourceFileStructure) :
+private class TypeTreeVisitor(val elementUtils: Elements, val sourceStructure: SourceFileStructure) :
     SimpleTreeVisitor<Void, Visibility>() {
+
+    /** Handle annotations on this class, including the @Inherited ones as those are not visible using Tree APIs. */
+    private fun handleClassAnnotations(classSymbol: Symbol.ClassSymbol) {
+        elementUtils.getAllAnnotationMirrors(classSymbol).forEach {
+            (it.annotationType.asElement() as? TypeElement)?.let {
+                sourceStructure.addMentionedAnnotations(it.qualifiedName.toString())
+            }
+        }
+    }
 
     override fun visitClass(node: ClassTree, visibility: Visibility): Void? {
         node as JCTree.JCClassDecl
         sourceStructure.addDeclaredType(node.sym.fullname.toString())
         sourceStructure.addMentionedType(node.sym.fullname.toString())
+
+        handleClassAnnotations(node.sym)
 
         node.modifiers.annotations.forEach { visit(it, visibility) }
         node.typeParameters.forEach { visit(it, visibility) }
