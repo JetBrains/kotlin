@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
 abstract class DescriptorReferenceDeserializer(
     val currentModule: ModuleDescriptor,
@@ -30,13 +31,22 @@ abstract class DescriptorReferenceDeserializer(
             if (it == "<root>") FqName.ROOT else FqName(it)
         }// TODO: would we store an empty string in the protobuf?
 
-        val contributedName = if (name.startsWith("<get-") || name.startsWith("<set-")) {
+        val memberScope = currentModule.getPackage(packageFqName).memberScope
+        return getContributedDescriptors(memberScope, name)
+    }
+
+    protected fun getContributedDescriptors(memberScope: MemberScope, name: String): Collection<DeclarationDescriptor> {
+        val contributedNameString = if (name.startsWith("<get-") || name.startsWith("<set-")) {
+
             name.substring(5, name.length - 1) // FIXME: rework serialization format.
         } else {
             name
         }
-        return currentModule.getPackage(packageFqName).memberScope
-                .getContributedDescriptors(nameFilter = { it.asString() == contributedName })
+        val contributedName = Name.identifier(contributedNameString)
+        return memberScope.getContributedFunctions(contributedName, NoLookupLocation.FROM_BACKEND) +
+                memberScope.getContributedVariables(contributedName, NoLookupLocation.FROM_BACKEND) +
+                listOfNotNull(memberScope.getContributedClassifier(contributedName, NoLookupLocation.FROM_BACKEND))
+ 
     }
 
     protected class ClassMembers(val defaultConstructor: ClassConstructorDescriptor?,
@@ -87,7 +97,7 @@ abstract class DescriptorReferenceDeserializer(
             Pair(null, getContributedDescriptors(packageFqNameString, name))
         } else {
             val clazz = currentModule.findClassAcrossModuleDependencies(ClassId(packageFqName, classFqName, false))!!
-            Pair(clazz, clazz.unsubstitutedMemberScope.getContributedDescriptors() + clazz.getConstructors())
+            Pair(clazz, getContributedDescriptors(clazz.unsubstitutedMemberScope, name) + clazz.getConstructors())
         }
 
         // TODO: This is still native specific. Eliminate.
