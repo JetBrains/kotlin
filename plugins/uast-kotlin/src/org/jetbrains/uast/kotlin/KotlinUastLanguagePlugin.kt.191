@@ -143,6 +143,7 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
 
     @Suppress("UNCHECKED_CAST")
     fun <T : UElement> convertElement(element: PsiElement, parent: UElement?, expectedTypes: Array<out Class<out T>>): T? {
+        if (!element.isJvmElement) return null
         val nonEmptyExpectedTypes = expectedTypes.nonEmptyOr(DEFAULT_TYPES_LIST)
         return (convertDeclaration(element, parent, nonEmptyExpectedTypes)
             ?: KotlinConverter.convertPsiElement(element, parent, nonEmptyExpectedTypes)) as? T
@@ -153,13 +154,15 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
     }
 
     @Suppress("UNCHECKED_CAST")
-    override fun <T : UElement> convertToAlternatives(element: PsiElement, requiredTypes: Array<out Class<out T>>): Sequence<T> = when {
-        element is KtFile -> KotlinConverter.convertKtFile(element, null, requiredTypes) as Sequence<T>
-        (element is KtProperty && !element.isLocal) -> KotlinConverter.convertNonLocalProperty(element, null, requiredTypes) as Sequence<T>
-        element is KtParameter -> KotlinConverter.convertParameter(element, null, requiredTypes) as Sequence<T>
-        element is KtClassOrObject -> KotlinConverter.convertClassOrObject(element, null, requiredTypes) as Sequence<T>
-        else -> sequenceOf(convertElementWithParent(element, requiredTypes.nonEmptyOr(DEFAULT_TYPES_LIST)) as? T).filterNotNull()
-    }
+    override fun <T : UElement> convertToAlternatives(element: PsiElement, requiredTypes: Array<out Class<out T>>): Sequence<T> =
+        if (!element.isJvmElement) emptySequence() else when {
+            element is KtFile -> KotlinConverter.convertKtFile(element, null, requiredTypes) as Sequence<T>
+            (element is KtProperty && !element.isLocal) ->
+                KotlinConverter.convertNonLocalProperty(element, null, requiredTypes) as Sequence<T>
+            element is KtParameter -> KotlinConverter.convertParameter(element, null, requiredTypes) as Sequence<T>
+            element is KtClassOrObject -> KotlinConverter.convertClassOrObject(element, null, requiredTypes) as Sequence<T>
+            else -> sequenceOf(convertElementWithParent(element, requiredTypes.nonEmptyOr(DEFAULT_TYPES_LIST)) as? T).filterNotNull()
+        }
 }
 
 internal inline fun <reified ActualT : UElement> Class<*>?.el(f: () -> UElement?): UElement? {
