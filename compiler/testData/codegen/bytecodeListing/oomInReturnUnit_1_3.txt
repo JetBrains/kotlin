@@ -17,28 +17,6 @@ public final class OomInReturnUnitKt {
 }
 
 @kotlin.Metadata
-final class helpers/CheckStateMachineContinuation$resume$1 {
-    public final static field INSTANCE: helpers.CheckStateMachineContinuation$resume$1
-    inner class helpers/CheckStateMachineContinuation$resume$1
-    static method <clinit>(): void
-    method <init>(): void
-    public synthetic method invoke(): java.lang.Object
-    public final method invoke(): void
-}
-
-@kotlin.Metadata
-public final class helpers/CheckStateMachineContinuation {
-    public final static field INSTANCE: helpers.CheckStateMachineContinuation
-    inner class helpers/CheckStateMachineContinuation$resume$1
-    static method <clinit>(): void
-    private method <init>(): void
-    public @org.jetbrains.annotations.NotNull method getContext(): kotlin.coroutines.CoroutineContext
-    public method resume(@org.jetbrains.annotations.NotNull p0: kotlin.Unit): void
-    public synthetic method resume(p0: java.lang.Object): void
-    public method resumeWithException(@org.jetbrains.annotations.NotNull p0: java.lang.Throwable): void
-}
-
-@kotlin.Metadata
 public abstract class helpers/ContinuationAdapter {
     private final @org.jetbrains.annotations.NotNull field context: kotlin.coroutines.CoroutineContext
     public method <init>(): void
@@ -96,42 +74,4 @@ public class helpers/EmptyContinuation {
     public synthetic method <init>(p0: kotlin.coroutines.CoroutineContext, p1: int, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
     public @org.jetbrains.annotations.NotNull method getContext(): kotlin.coroutines.CoroutineContext
     public method resumeWith(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
-}
-
-@kotlin.Metadata
-final class helpers/StateMachineChecker$proceed$1 {
-    public final static field INSTANCE: helpers.StateMachineChecker$proceed$1
-    inner class helpers/StateMachineChecker$proceed$1
-    static method <clinit>(): void
-    method <init>(): void
-    public synthetic method invoke(): java.lang.Object
-    public final method invoke(): void
-}
-
-@kotlin.Metadata
-final class helpers/StateMachineChecker$suspendHere$2$1 {
-    synthetic final field $c: kotlin.coroutines.Continuation
-    inner class helpers/StateMachineChecker$suspendHere$2$1
-    method <init>(p0: kotlin.coroutines.Continuation): void
-    public synthetic method invoke(): java.lang.Object
-    public final method invoke(): void
-}
-
-@kotlin.Metadata
-public final class helpers/StateMachineChecker {
-    public final static field INSTANCE: helpers.StateMachineChecker
-    private static field counter: int
-    private static field finished: boolean
-    private static @org.jetbrains.annotations.NotNull field proceed: kotlin.jvm.functions.Function0
-    inner class helpers/StateMachineChecker$proceed$1
-    static method <clinit>(): void
-    private method <init>(): void
-    public synthetic final static method access$getCounter$p(p0: helpers.StateMachineChecker): int
-    public synthetic final static method access$setCounter$p(p0: helpers.StateMachineChecker, p1: int): void
-    public final method check(p0: int): void
-    public final method getFinished(): boolean
-    public final @org.jetbrains.annotations.NotNull method getProceed(): kotlin.jvm.functions.Function0
-    public final method setFinished(p0: boolean): void
-    public final method setProceed(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): void
-    public final @org.jetbrains.annotations.Nullable method suspendHere(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
 }
