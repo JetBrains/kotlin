@@ -7,11 +7,7 @@ package org.jetbrains.kotlin.kapt3.base.incremental
 
 import com.sun.tools.javac.code.Symbol
 import java.io.File
-import java.io.InputStream
 import java.net.URI
-import java.util.*
-import java.util.zip.ZipEntry
-import java.util.zip.ZipFile
 import javax.annotation.processing.Filer
 import javax.annotation.processing.ProcessingEnvironment
 import javax.annotation.processing.Processor
@@ -117,7 +113,6 @@ internal class AnnotationProcessorDependencyCollector(private val runtimeProcTyp
             }
         }
     }
-
 
     internal fun getGeneratedToSources(): Map<File, File?> = if (isFullRebuild) emptyMap() else generatedToSource
     internal fun getRuntimeType(): RuntimeProcType {

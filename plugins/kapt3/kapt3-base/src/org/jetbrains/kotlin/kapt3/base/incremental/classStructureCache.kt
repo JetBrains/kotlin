@@ -51,7 +51,7 @@ class JavaClassCache() : Serializable {
     internal fun getStructure(sourceFile: File) = sourceCache[sourceFile.toURI()]
 
     /**
-     * Invalidate cache entires for the specified files, and any files that depend on the changed ones. It returns the set of files that
+     * Invalidate cache entries for the specified files, and any files that depend on the changed ones. It returns the set of files that
      * should be re-processed.
      * */
     fun invalidateEntriesForChangedFiles(changes: Changes): SourcesToReprocess {

@@ -32,7 +32,7 @@ class JavaClassCacheManager(private val file: File, private val classpathFqNames
         }
 
         val dirtyFqNames = mutableSetOf<String>()
-        after.forEach{ file ->
+        after.forEach { file ->
             ObjectInputStream(file.inputStream().buffered()).use {
                 @Suppress("UNCHECKED_CAST")
                 dirtyFqNames.addAll(it.readObject() as Collection<String>)
@@ -90,7 +90,7 @@ class JavaClassCacheManager(private val file: File, private val classpathFqNames
         }
     }
 
-    private fun maybeGetAptCacheFromFile(): IncrementalAptCache{
+    private fun maybeGetAptCacheFromFile(): IncrementalAptCache {
 
         return if (aptCacheFile.exists()) {
             try {

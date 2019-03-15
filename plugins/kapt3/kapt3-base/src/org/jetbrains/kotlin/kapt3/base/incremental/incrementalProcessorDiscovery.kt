@@ -17,7 +17,8 @@ private const val INCREMENTAL_ANNOTATION_FLAG = "META-INF/gradle/incremental.ann
 
 /** Checks the incremental annotation processor information for the annotation processor classpath. */
 fun getIncrementalProcessorsFromClasspath(
-    names: Set<String>, classpath: Iterable<File>): Map<String, DeclaredProcType> {
+    names: Set<String>, classpath: Iterable<File>
+): Map<String, DeclaredProcType> {
     val finalValues = mutableMapOf<String, DeclaredProcType>()
 
     classpath.forEach { entry ->

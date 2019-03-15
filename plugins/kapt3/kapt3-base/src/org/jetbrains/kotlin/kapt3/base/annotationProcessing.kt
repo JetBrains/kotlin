@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.kapt3.base
 
-import com.sun.source.util.Trees
 import com.sun.tools.javac.comp.CompileStates.CompileState
 import com.sun.tools.javac.main.JavaCompiler
 import com.sun.tools.javac.processing.AnnotationProcessingError
@@ -54,7 +53,7 @@ fun KaptContext.doAnnotationProcessing(
         val listener = cacheManager?.let {
             if (processors.any { it.kind == DeclaredProcType.NON_INCREMENTAL}) return@let null
 
-            val recordTypesListener = MentionedTypesTaskListener(cacheManager.javaCache, Trees.instance(processingEnvironment))
+            val recordTypesListener = MentionedTypesTaskListener(cacheManager.javaCache, processingEnvironment.elementUtils)
             compiler.getTaskListeners().add(recordTypesListener)
             recordTypesListener
         }
@@ -67,7 +66,6 @@ fun KaptContext.doAnnotationProcessing(
 
             listener?.let { compiler.getTaskListeners().remove(it) }
 
-            val l = System.currentTimeMillis()
             if (isJava9OrLater()) {
                 val processAnnotationsMethod = compiler.javaClass.getMethod("processAnnotations", JavacList::class.java)
                 processAnnotationsMethod.invoke(compiler, analyzedFiles)
