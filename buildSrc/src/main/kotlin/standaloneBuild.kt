@@ -42,25 +42,26 @@ fun Project.addIdeaNativeModuleDeps() {
             }
             add("compile", ideaPluginJars)
 
-            // IntelliJ platform (out of CLion distribution)
-            val clionDir: String by rootProject.extra
-            val cidrPlatform = fileTree(clionDir) {
+            // IntelliJ platform (out of CIDR IDE distribution)
+            val cidrIdeDir: String by rootProject.extra
+            val cidrPlatform = fileTree(cidrIdeDir) {
                 include("lib/*.jar")
                 exclude("lib/kotlin*.jar") // because Kotlin should be taken from Kotlin plugin
-                exclude("lib/clion*.jar") // don't take scrambled CLion JAR
+                exclude("lib/clion*.jar") // don't take scrambled JARs
+                exclude("lib/appcode*.jar")
             }
             add("compile", cidrPlatform)
 
             // standard CIDR plugins
-            val cidrPlugins = fileTree(clionDir) {
+            val cidrPlugins = fileTree(cidrIdeDir) {
                 include("plugins/cidr-*/lib/*.jar")
                 include("plugins/gradle/lib/*.jar")
             }
             add("compile", cidrPlugins)
 
-            // Java APIs (private artifact that goes together with CLion builds)
-            val clionPlatformDepsDir: String by rootProject.extra
-            val cidrPlatformDeps = fileTree(clionPlatformDepsDir) { include(PLATFORM_DEPS_JAR_NAME) }
+            // Java APIs (private artifact that goes together with CIDR IDEs)
+            val cidrPlatformDepsDir: String by rootProject.extra
+            val cidrPlatformDeps = fileTree(cidrPlatformDepsDir) { include(PLATFORM_DEPS_JAR_NAME) }
             add("compile", cidrPlatformDeps)
         } else {
             // Gradle projects with Kotlin/Native-specific logic

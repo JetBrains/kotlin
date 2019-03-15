@@ -16,31 +16,44 @@ repositories {
     }
 }
 
-val clionRepo: String by rootProject.extra
-val clionVersion: String by rootProject.extra
-val clionDir: File by rootProject.extra
+val cidrIdeArtifact: String by rootProject.extra
+val cidrIdeDir: File by rootProject.extra
 
-val clion: Configuration by configurations.creating
+val cidrIde: Configuration by configurations.creating
 
 dependencies {
-    clion(tc("$clionRepo:$clionVersion:CLion-$clionVersion.tar.gz"))
+    cidrIde(tc(cidrIdeArtifact))
 }
 
-val downloadCLion: Task by downloading(
-        clion,
-        clionDir,
-        pathRemap = { it.substringAfter('/') }
+val downloadCidrIde: Task by downloading(
+    cidrIde,
+    cidrIdeDir,
+    pathRemap = { it.substringAfter('/').substringAfter("Contents/") }
 ) {
-    tarTree(it.singleFile).matching {
-        include("*/lib/*.jar")
-        exclude("*/lib/clion*.jar")
-        exclude("*/lib/kotlin*.jar")
-        include("*/plugins/cidr-*/lib/*.jar")
-        include("*/plugins/gradle/lib/*.jar")
+    val file = it.singleFile
+    if (file.name.endsWith(".sit")) {
+        zipTree(file).matching {
+            include("*/Contents/lib/*.jar")
+            exclude("*/Contents/lib/clion*.jar")
+            exclude("*/Contents/lib/appcode*.jar")
+            exclude("*/Contents/lib/kotlin*.jar")
+            include("*/Contents/plugins/cidr-*/lib/*.jar")
+            include("*/Contents/plugins/gradle/lib/*.jar")
+        }
+    }
+    else {
+        tarTree(file).matching {
+            include("*/lib/*.jar")
+            exclude("*/lib/clion*.jar")
+            exclude("*/lib/appcode*.jar")
+            exclude("*/lib/kotlin*.jar")
+            include("*/plugins/cidr-*/lib/*.jar")
+            include("*/plugins/gradle/lib/*.jar")
+        }
     }
 }
 
-tasks["build"].dependsOn(downloadCLion)
+tasks["build"].dependsOn(downloadCidrIde)
 
 fun Project.downloading(
         sourceConfiguration: Configuration,
