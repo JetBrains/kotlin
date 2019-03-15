@@ -1,3 +1,4 @@
+// !LANGUAGE: +ReleaseCoroutines
 // SKIP_TXT
 
 fun <R> suspend(block: suspend () -> R): suspend () -> R = block
@@ -7,6 +8,7 @@ class A {
 }
 
 @Target(AnnotationTarget.EXPRESSION)
+@Retention(AnnotationRetention.SOURCE)
 annotation class Ann
 
 fun bar() {

@@ -1,3 +1,4 @@
+// !LANGUAGE: -JvmStaticInInterface
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 interface B {
     companion object {
@@ -44,7 +45,7 @@ interface B {
             <!JVM_STATIC_NOT_IN_OBJECT_OR_CLASS_COMPANION!>@JvmStatic get<!>
 
         private var foo8 = 1
-        <!JVM_STATIC_NOT_IN_OBJECT_OR_CLASS_COMPANION!>@JvmStatic <!SETTER_VISIBILITY_INCONSISTENT_WITH_PROPERTY_VISIBILITY!>public<!> set<!>
+        <!JVM_STATIC_NOT_IN_OBJECT_OR_CLASS_COMPANION!><!ANNOTATION_TARGETS_NON_EXISTENT_ACCESSOR!>@JvmStatic<!> <!SETTER_VISIBILITY_INCONSISTENT_WITH_PROPERTY_VISIBILITY!>public<!> set<!>
 
         public var foo9 = 1
         <!JVM_STATIC_NOT_IN_OBJECT_OR_CLASS_COMPANION!>@JvmStatic private set<!>

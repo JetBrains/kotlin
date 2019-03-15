@@ -34,7 +34,8 @@ import java.io.IOException;
 
 public abstract class AbstractModuleXmlParserTest extends TestCase {
 
-    protected static void doTest(String xmlPath) throws IOException {
+    @SuppressWarnings("MethodMayBeStatic")
+    protected void doTest(String xmlPath) throws IOException {
         File txtFile = new File(FileUtil.getNameWithoutExtension(xmlPath) + ".txt");
 
         ModuleChunk result = ModuleXmlParser.parseModuleScript(xmlPath, new MessageCollector() {

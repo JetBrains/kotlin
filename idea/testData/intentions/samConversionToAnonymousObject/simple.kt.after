@@ -1,0 +1,7 @@
+fun foo(s: String) {}
+
+val s = object : Sam {
+    override fun test(it: String) {
+        foo(it)
+    }
+}

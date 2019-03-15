@@ -61,13 +61,15 @@ class KotlinStepActionFactory(private val debuggerProcess: DebugProcessImpl) {
     // TODO: ask for better API
     // Should be safe to use reflection as method is protected and not obfuscated
     private fun doStep(
-            suspendContext: SuspendContextImpl,
-            stepThread: ThreadReferenceProxyImpl,
-            size: Int, depth: Int, hint: RequestHint) {
+        suspendContext: SuspendContextImpl,
+        stepThread: ThreadReferenceProxyImpl,
+        size: Int, depth: Int, hint: RequestHint
+    ) {
         val doStepMethod = DebugProcessImpl::class.java.getDeclaredMethod(
-                "doStep",
-                SuspendContextImpl::class.java, ThreadReferenceProxyImpl::class.java,
-                Integer.TYPE, Integer.TYPE, RequestHint::class.java)
+            "doStep",
+            SuspendContextImpl::class.java, ThreadReferenceProxyImpl::class.java,
+            Integer.TYPE, Integer.TYPE, RequestHint::class.java
+        )
 
         doStepMethod.isAccessible = true
 
@@ -89,7 +91,8 @@ class KotlinStepActionFactory(private val debuggerProcess: DebugProcessImpl) {
         return field.get(debuggerProcess) as T
     }
 
-    private inner class StepOverInlineCommand(private val mySmartStepFilter: KotlinMethodFilter, private val myStepSize: Int) : KotlinStepAction() {
+    private inner class StepOverInlineCommand(private val mySmartStepFilter: KotlinMethodFilter, private val myStepSize: Int) :
+        KotlinStepAction() {
         private fun getContextThread(suspendContext: SuspendContextImpl): ThreadReferenceProxyImpl? {
             val contextThread = debuggerContext.threadProxy
             return contextThread ?: suspendContext.thread
@@ -114,8 +117,7 @@ class KotlinStepActionFactory(private val debuggerProcess: DebugProcessImpl) {
             }
             if (isResumeOnlyCurrentThread && suspendContext.suspendPolicy == EventRequest.SUSPEND_ALL) {
                 suspendManager.resumeThread(suspendContext, thread)
-            }
-            else {
+            } else {
                 suspendManager.resume(suspendContext)
             }
         }
@@ -136,8 +138,7 @@ class KotlinStepActionFactory(private val debuggerProcess: DebugProcessImpl) {
 
             try {
                 session.setIgnoreStepFiltersFlag(stepThread.frameCount())
-            }
-            catch (e: EvaluateException) {
+            } catch (e: EvaluateException) {
                 LOG.info(e)
             }
 

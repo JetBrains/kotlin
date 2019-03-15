@@ -16,16 +16,20 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
+import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.util.render
 import java.lang.AssertionError
 
-class JvmBackend(context: JvmBackendContext) {
+class JvmBackend(val context: JvmBackendContext) {
     private val lower = JvmLower(context)
     private val codegen = JvmCodegen(context)
 
     fun generateFile(irFile: IrFile) {
+        val extensions = IrGenerationExtension.getInstances(context.state.project)
+        extensions.forEach { it.generate(irFile, context, context.state.bindingContext) }
+
         lower.lower(irFile)
 
         for (loweredClass in irFile.declarations) {

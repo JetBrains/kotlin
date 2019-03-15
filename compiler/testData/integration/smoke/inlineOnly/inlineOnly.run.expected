@@ -1,6 +1,6 @@
 
 ERR:
-Exception in thread "main" java.lang.IllegalStateException: my error
+Exception in thread "main" java.lang.IllegalStateException: my error: 0
 	at InlineOnly.InlineOnlyKt.main(inlineOnly.kt:4)
 
 Return code: 1

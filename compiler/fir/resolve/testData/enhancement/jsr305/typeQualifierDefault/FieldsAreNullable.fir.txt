@@ -1,0 +1,16 @@
+@R|FieldsAreNullable|() public open class A : R|java/lang/Object| {
+    public open property field(var): R|kotlin/String|?
+        public get(): R|kotlin/String|?
+        public set(value: R|kotlin/String|?): kotlin/Unit
+
+    @R|javax/annotation/Nonnull|() public open property nonNullField(var): R|kotlin/String|
+        public get(): R|kotlin/String|
+        public set(value: R|kotlin/String|): kotlin/Unit
+
+    public open operator function foo(q: R|ft<kotlin/String, kotlin/String?>|!, @R|javax/annotation/Nonnull|() x: R|kotlin/String|, @R|javax/annotation/CheckForNull|() y: R|kotlin/CharSequence|?): R|ft<kotlin/String, kotlin/String?>|!
+
+    @R|javax/annotation/Nonnull|() public open operator function bar(): R|kotlin/String|
+
+}
+@R|java/lang/annotation/Retention|(R|java/lang/annotation/RetentionPolicy.RUNTIME|()) @R|java/lang/annotation/Documented|() @R|javax/annotation/CheckForNull|() @R|javax/annotation/meta/TypeQualifierDefault|(<implicitArrayOf>(R|java/lang/annotation/ElementType.FIELD|())) public abstract annotation class FieldsAreNullable : R|java/lang/annotation/Annotation| {
+}

@@ -1,0 +1,6 @@
+public final class UnboundWildcard : R|java/lang/Object| {
+    public final operator function foo(): R|ft<test/UnboundWildcard.MyClass<*>, test/UnboundWildcard.MyClass<*>?>|!
+
+    public final operator function collection(): R|ft<kotlin/collections/MutableCollection<*>, kotlin/collections/Collection<*>?>|!
+
+}

@@ -16,10 +16,10 @@ public final class Delegate {
 public final class PropertyHolder {
     public constructor PropertyHolder()
     @kotlin.Deprecated(message = "text") public final var name: kotlin.String
-    public final val test1: kotlin.String = ""
-    public final var test2: kotlin.String
-    public final var test3: kotlin.String
-    public final var test4: kotlin.String
+    @get:kotlin.Deprecated(message = "val-getter") public final val test1: kotlin.String = ""
+    @get:kotlin.Deprecated(message = "var-getter") @set:kotlin.Deprecated(message = "var-setter") public final var test2: kotlin.String
+    @get:kotlin.Deprecated(message = "var-getter") public final var test3: kotlin.String
+    @set:kotlin.Deprecated(message = "var-setter") public final var test4: kotlin.String
     public final val valDelegate: kotlin.Int
     public final var varDelegate: kotlin.Int
     @kotlin.Deprecated(message = "text") public final val x: kotlin.Int = 1

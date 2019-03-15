@@ -18,11 +18,13 @@ package kotlin
 
 /**
  * Represents a 16-bit Unicode character.
+ *
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `char`.
  */
 public class Char private constructor() : Comparable<Char> {
     /**
      * Compares this value with the specified value for order.
+     *
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
@@ -61,6 +63,18 @@ public class Char private constructor() : Comparable<Char> {
 
     companion object {
         /**
+         * The minimum value of a character code unit.
+         */
+        @SinceKotlin("1.3")
+        public const val MIN_VALUE: Char = '\u0000'
+
+        /**
+         * The maximum value of a character code unit.
+         */
+        @SinceKotlin("1.3")
+        public const val MAX_VALUE: Char = '\uFFFF'
+
+        /**
          * The minimum value of a Unicode high-surrogate code unit.
          */
         public const val MIN_HIGH_SURROGATE: Char = '\uD800'
@@ -89,6 +103,18 @@ public class Char private constructor() : Comparable<Char> {
          * The maximum value of a Unicode surrogate code unit.
          */
         public const val MAX_SURROGATE: Char = MAX_LOW_SURROGATE
+
+        /**
+         * The number of bytes used to represent a Char in a binary form.
+         */
+        @SinceKotlin("1.3")
+        public const val SIZE_BYTES: Int = 2
+
+        /**
+         * The number of bits used to represent a Char in a binary form.
+         */
+        @SinceKotlin("1.3")
+        public const val SIZE_BITS: Int = 16
     }
 
 }

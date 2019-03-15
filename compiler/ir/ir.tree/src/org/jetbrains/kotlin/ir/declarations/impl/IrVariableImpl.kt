@@ -22,10 +22,10 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.KotlinType
 
 class IrVariableImpl(
     startOffset: Int,
@@ -33,21 +33,23 @@ class IrVariableImpl(
     origin: IrDeclarationOrigin,
     override val symbol: IrVariableSymbol,
     override val name: Name,
-    override val type: KotlinType,
+    override val type: IrType,
     override val isVar: Boolean,
     override val isConst: Boolean,
     override val isLateinit: Boolean
-) : IrDeclarationBase(startOffset, endOffset, origin),
+) :
+    IrDeclarationBase(startOffset, endOffset, origin),
     IrVariable {
 
     constructor(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        symbol: IrVariableSymbol
+        symbol: IrVariableSymbol,
+        type: IrType
     ) : this(
         startOffset, endOffset, origin, symbol,
-        symbol.descriptor.name, symbol.descriptor.type,
+        symbol.descriptor.name, type,
         isVar = symbol.descriptor.isVar,
         isConst = symbol.descriptor.isConst,
         isLateinit = symbol.descriptor.isLateInit
@@ -57,16 +59,18 @@ class IrVariableImpl(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        descriptor: VariableDescriptor
-    ) : this(startOffset, endOffset, origin, IrVariableSymbolImpl(descriptor))
+        descriptor: VariableDescriptor,
+        type: IrType
+    ) : this(startOffset, endOffset, origin, IrVariableSymbolImpl(descriptor), type)
 
     constructor(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
         descriptor: VariableDescriptor,
+        type: IrType,
         initializer: IrExpression?
-    ) : this(startOffset, endOffset, origin, descriptor) {
+    ) : this(startOffset, endOffset, origin, descriptor, type) {
         this.initializer = initializer
     }
 

@@ -27,6 +27,7 @@ import com.intellij.javascript.protractor.ProtractorUtil
 import com.intellij.openapi.project.Project
 import com.intellij.util.PathUtil
 import org.jdom.Element
+import org.jetbrains.kotlin.idea.run.LocatableConfigurationBaseAny
 import java.io.File
 
 // Based on com.intellij.javascript.protractor.ProtractorRunConfiguration
@@ -34,7 +35,7 @@ class KotlinProtractorRunConfiguration(
         project: Project,
         factory: ConfigurationFactory,
         name: String
-) : LocatableConfigurationBase(project, factory, name) {
+) : LocatableConfigurationBaseAny(project, factory, name) {
     var runSettings = KotlinProtractorRunSettings()
 
     val protractorPackage: NodePackage

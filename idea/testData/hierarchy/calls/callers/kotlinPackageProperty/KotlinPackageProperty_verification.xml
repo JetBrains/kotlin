@@ -5,7 +5,7 @@
   <node text="KClient  ()"/>
   <node text="KClient.bar()  ()"/>
   <node text="KClient.bar(2 usages)  ()"/>
+  <node text="KClient.bar.localFun()  ()"/>
   <node text="KClientObj(2 usages)  ()"/>
-  <node text="bar.localFun()  ()"/>
   <node text="packageFun(String)  ()"/>
 </node>

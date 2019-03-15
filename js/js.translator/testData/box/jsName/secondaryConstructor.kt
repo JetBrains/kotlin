@@ -1,12 +1,12 @@
-// EXPECTED_REACHABLE_NODES: 1120
-package foo
+// IGNORE_BACKEND: JS_IR
+// EXPECTED_REACHABLE_NODES: 1288
 
 class A(val x: String) {
     @JsName("A_int") constructor(x: Int) : this("int $x")
 }
 
 fun test() = js("""
-return JS_TESTS.foo.A_int(23).x;
+return JS_TESTS.A_int(23).x;
 """)
 
 fun box(): String {

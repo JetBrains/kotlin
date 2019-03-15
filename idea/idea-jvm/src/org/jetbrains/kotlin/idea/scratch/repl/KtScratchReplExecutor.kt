@@ -19,11 +19,13 @@ package org.jetbrains.kotlin.idea.scratch.repl
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.process.OSProcessHandler
 import com.intellij.execution.process.ProcessOutputTypes
+import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.util.Key
-import com.intellij.openapi.util.text.StringUtil
+import org.jetbrains.kotlin.cli.common.repl.replInputAsXml
+import org.jetbrains.kotlin.cli.common.repl.replNormalizeLineBreaks
+import org.jetbrains.kotlin.cli.common.repl.replRemoveLineBreaksInTheEnd
+import org.jetbrains.kotlin.cli.common.repl.replUnescapeLineBreaks
 import org.jetbrains.kotlin.console.KotlinConsoleKeeper
-import org.jetbrains.kotlin.console.SOURCE_CHARS
-import org.jetbrains.kotlin.console.XML_REPLACEMENTS
 import org.jetbrains.kotlin.console.actions.logError
 import org.jetbrains.kotlin.idea.scratch.*
 import org.jetbrains.kotlin.idea.scratch.output.ScratchOutput
@@ -34,16 +36,14 @@ import java.io.ByteArrayInputStream
 import java.nio.charset.Charset
 import javax.xml.parsers.DocumentBuilderFactory
 
-private val XML_PREAMBLE = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-
 class KtScratchReplExecutor(file: ScratchFile) : ScratchExecutor(file) {
     private val history: ReplHistory = ReplHistory()
     private lateinit var osProcessHandler: OSProcessHandler
 
     override fun execute() {
-        handlers.forEach { it.onStart(file) }
+        handler.onStart(file)
 
-        val module = file.getModule() ?: return error(file, "Module should be selected")
+        val module = file.getModule()
         val cmdLine = KotlinConsoleKeeper.createCommandLine(module)
 
         LOG.printDebugMessage("Execute REPL: ${cmdLine.commandLineString}")
@@ -53,10 +53,18 @@ class KtScratchReplExecutor(file: ScratchFile) : ScratchExecutor(file) {
 
         file.getExpressions().forEach { expression ->
             history.addEntry(expression)
-            sendCommandToProcess(expression.element.text)
+            sendCommandToProcess(runReadAction { expression.element.text })
         }
 
         sendCommandToProcess(":quit")
+    }
+
+    override fun stop() {
+        try {
+            osProcessHandler.process.destroy()
+        } finally {
+            handler.onFinish(file)
+        }
     }
 
     private fun sendCommandToProcess(command: String) {
@@ -65,21 +73,11 @@ class KtScratchReplExecutor(file: ScratchFile) : ScratchExecutor(file) {
         val processInputOS = osProcessHandler.processInput ?: return logError(this::class.java, "<p>Broken execute stream</p>")
         val charset = osProcessHandler.charset ?: Charsets.UTF_8
 
-        val xmlRes = XML_PREAMBLE +
-                "<input>" +
-                StringUtil.escapeXml(
-                    StringUtil.replace(command, SOURCE_CHARS, XML_REPLACEMENTS)
-                ) +
-                "</input>"
+        val xmlRes = command.replInputAsXml()
 
         val bytes = ("$xmlRes\n").toByteArray(charset)
         processInputOS.write(bytes)
         processInputOS.flush()
-    }
-
-    private fun error(file: ScratchFile, message: String) {
-        handlers.forEach { it.error(file, message) }
-        handlers.forEach { it.onFinish(file) }
     }
 
     private class ReplHistory {
@@ -116,7 +114,7 @@ class KtScratchReplExecutor(file: ScratchFile) : ScratchExecutor(file) {
         }
 
         override fun notifyProcessTerminated(exitCode: Int) {
-            handlers.forEach { it.onFinish(file) }
+            handler.onFinish(file)
         }
 
         private fun strToSource(s: String, encoding: Charset = Charsets.UTF_8) = InputSource(ByteArrayInputStream(s.toByteArray(encoding)))
@@ -126,13 +124,12 @@ class KtScratchReplExecutor(file: ScratchFile) : ScratchExecutor(file) {
             val output = try {
                 factory.newDocumentBuilder().parse(strToSource(text))
             } catch (e: Exception) {
-                handlers.forEach { it.error(file, "Couldn't parse REPL output: $text") }
-                return
+                return handler.error(file, "Couldn't parse REPL output: $text")
             }
 
             val root = output.firstChild as Element
             val outputType = root.getAttribute("type")
-            val content = StringUtil.replace(root.textContent, XML_REPLACEMENTS, SOURCE_CHARS)
+            val content = root.textContent.replUnescapeLineBreaks().replNormalizeLineBreaks().replRemoveLineBreaksInTheEnd()
 
             LOG.printDebugMessage("REPL output: $outputType $content")
 
@@ -150,7 +147,7 @@ class KtScratchReplExecutor(file: ScratchFile) : ScratchExecutor(file) {
                 }
 
                 if (lastExpression != null) {
-                    handlers.forEach { it.handle(file, lastExpression, result) }
+                    handler.handle(file, lastExpression, result)
                 }
             }
         }

@@ -19,14 +19,13 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
-import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatchStatus
-import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument
 
 class AddNamesToCallArgumentsIntention : SelfTargetingRangeIntention<KtCallElement>(
-        KtCallElement::class.java,
-        "Add names to call arguments"
+    KtCallElement::class.java,
+    "Add names to call arguments"
 ) {
     override fun applicabilityRange(element: KtCallElement): TextRange? {
         val arguments = element.valueArguments
@@ -35,17 +34,14 @@ class AddNamesToCallArgumentsIntention : SelfTargetingRangeIntention<KtCallEleme
         val resolvedCall = element.resolveToCall() ?: return null
         if (!resolvedCall.resultingDescriptor.hasStableParameterNames()) return null
 
-        for (argument in arguments) {
-            val argumentMatch = resolvedCall.getArgumentMapping(argument) as? ArgumentMatch ?: return null
-            if (argumentMatch.status != ArgumentMatchStatus.SUCCESS) return null
-
-            if (argumentMatch.valueParameter.varargElementType != null) {
-                val varargArgument = resolvedCall.valueArguments[argumentMatch.valueParameter] as? VarargValueArgument ?: return null
-                if (varargArgument.arguments.size != 1) return null
+        if (arguments.all {
+                AddNameToArgumentIntention.argumentMatchedAndCouldBeNamedInCall(it, resolvedCall, element.languageVersionSettings)
             }
+        ) {
+            return element.calleeExpression?.textRange
         }
 
-        return element.calleeExpression?.textRange
+        return null
     }
 
     override fun applyTo(element: KtCallElement, editor: Editor?) {
@@ -55,9 +51,11 @@ class AddNamesToCallArgumentsIntention : SelfTargetingRangeIntention<KtCallEleme
             if (argument !is KtValueArgument || argument is KtLambdaArgument) continue
             val argumentMatch = resolvedCall.getArgumentMapping(argument) as? ArgumentMatch ?: continue
             val name = argumentMatch.valueParameter.name
-            val newArgument = KtPsiFactory(element).createArgument(argument.getArgumentExpression()!!,
-                                                                   name,
-                                                                   argument.getSpreadElement() != null)
+            val newArgument = KtPsiFactory(element).createArgument(
+                argument.getArgumentExpression()!!,
+                name,
+                argument.getSpreadElement() != null
+            )
             argument.replace(newArgument)
         }
     }

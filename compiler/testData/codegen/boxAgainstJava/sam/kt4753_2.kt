@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // FILE: ParamBase.java
 
 class ParamBase<T> {}

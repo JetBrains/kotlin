@@ -38,11 +38,11 @@ public class SDKDownloader {
 
     private final PathManager pathManager;
 
-    private static final String PLATFORM_TOOLS = "27.0.1";
-    private static final String SDK_TOOLS = "25.1.6";
-    public static final String BUILD_TOOLS = "27.0.3";
+    private static final String PLATFORM_TOOLS = "28.0.1";
+    private static final String SDK_TOOLS = "25.2.5";
+    public static final String BUILD_TOOLS = "28.0.3";
     private static final int ANDROID_VERSION = 19;
-    public static final String GRADLE_VERSION = "4.5.1";
+    public static final String GRADLE_VERSION = "4.6";
 
 
     public SDKDownloader(PathManager pathManager) {
@@ -126,7 +126,7 @@ public class SDKDownloader {
         String buildToolsFolder = buildTools + BUILD_TOOLS + "/";
         new File(buildToolsFolder).delete();
         unzip(buildToolsZipPath, buildTools);
-        new File(buildTools + "/android-8.1.0").renameTo(new File(buildToolsFolder));
+        new File(buildTools + "/android-9").renameTo(new File(buildToolsFolder));
     }
 
     public void deleteAll() {

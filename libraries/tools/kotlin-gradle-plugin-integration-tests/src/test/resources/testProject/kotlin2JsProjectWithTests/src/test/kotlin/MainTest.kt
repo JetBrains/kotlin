@@ -1,6 +1,6 @@
 package test
 
-import org.junit.Test
+import kotlin.test.Test
 import example.MyProductionClass
 
 class MyTest {

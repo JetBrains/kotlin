@@ -1,8 +1,8 @@
 
-apply { plugin("kotlin") }
-apply { plugin("jps-compatible") }
-
-jvmTarget = "1.6"
+plugins {
+    kotlin("jvm")
+    id("jps-compatible")
+}
 
 dependencies {
     compile(project(":core:util.runtime"))

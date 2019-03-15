@@ -1,4 +1,4 @@
 package
 
 public fun foo(/*0*/ a: kotlin.Boolean): kotlin.Boolean
-public fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+public fun main(): kotlin.Unit

@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
+import org.jetbrains.kotlin.idea.util.expectedDescriptors
+import org.jetbrains.kotlin.js.descriptorUtils.hasPrimaryConstructor
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtEnumEntry
@@ -32,7 +34,7 @@ import org.jetbrains.kotlin.resolve.OverrideResolver
 open class ImplementMembersHandler : OverrideImplementMembersHandler(), IntentionAction {
     override fun collectMembersToGenerate(descriptor: ClassDescriptor, project: Project): Collection<OverrideMemberChooserObject> {
         return OverrideResolver.getMissingImplementations(descriptor)
-                .map { OverrideMemberChooserObject.create(project, it, it, OverrideMemberChooserObject.BodyType.EMPTY) }
+            .map { OverrideMemberChooserObject.create(project, it, it, OverrideMemberChooserObject.BodyType.FROM_TEMPLATE) }
     }
 
     override fun getChooserTitle() = "Implement Members"
@@ -51,12 +53,20 @@ class ImplementAsConstructorParameter : ImplementMembersHandler() {
     override fun isValidForClass(classOrObject: KtClassOrObject): Boolean {
         if (classOrObject !is KtClass || classOrObject is KtEnumEntry || classOrObject.isInterface()) return false
         val classDescriptor = classOrObject.resolveToDescriptorIfAny() ?: return false
+        if (classDescriptor.isActual) {
+            if (classDescriptor.expectedDescriptors().any {
+                    it is ClassDescriptor && it.hasPrimaryConstructor()
+                }
+            ) {
+                return false
+            }
+        }
         return OverrideResolver.getMissingImplementations(classDescriptor).any { it is PropertyDescriptor }
     }
 
     override fun collectMembersToGenerate(descriptor: ClassDescriptor, project: Project): Collection<OverrideMemberChooserObject> {
         return OverrideResolver.getMissingImplementations(descriptor)
-                .filter { it is PropertyDescriptor }
-                .map { OverrideMemberChooserObject.create(project, it, it, OverrideMemberChooserObject.BodyType.EMPTY, true) }
+            .filter { it is PropertyDescriptor }
+            .map { OverrideMemberChooserObject.create(project, it, it, OverrideMemberChooserObject.BodyType.FROM_TEMPLATE, true) }
     }
 }

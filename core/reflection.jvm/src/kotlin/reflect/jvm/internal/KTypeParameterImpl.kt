@@ -45,11 +45,11 @@ internal class KTypeParameterImpl(override val descriptor: TypeParameterDescript
         get() = descriptor.isReified
 
     override fun equals(other: Any?) =
-            other is KTypeParameterImpl && descriptor == other.descriptor
+        other is KTypeParameterImpl && descriptor == other.descriptor
 
     override fun hashCode() =
-            descriptor.hashCode()
+        descriptor.hashCode()
 
     override fun toString() =
-            ReflectionObjectRenderer.renderTypeParameter(descriptor)
+        ReflectionObjectRenderer.renderTypeParameter(descriptor)
 }

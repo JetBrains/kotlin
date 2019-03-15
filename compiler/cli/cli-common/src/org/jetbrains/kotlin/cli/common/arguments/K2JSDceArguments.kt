@@ -27,7 +27,7 @@ class K2JSDceArguments : CommonToolArguments() {
             description = "Output directory"
     )
     @GradleOption(DefaultValues.StringNullDefault::class)
-    var outputDirectory: String? by FreezableVar(null)
+    var outputDirectory: String? by NullableStringFreezableVar(null)
 
     @Argument(
             value = "-keep",

@@ -1,0 +1,2 @@
+// INSPECTION_CLASS: org.jetbrains.kotlin.idea.inspections.ForEachParameterNotUsedInspection
+// WITH_RUNTIME

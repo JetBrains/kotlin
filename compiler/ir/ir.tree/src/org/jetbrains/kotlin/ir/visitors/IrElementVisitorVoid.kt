@@ -92,6 +92,12 @@ interface IrElementVisitorVoid : IrElementVisitor<Unit, Nothing?> {
     fun visitSyntheticBody(body: IrSyntheticBody) = visitBody(body)
     override fun visitSyntheticBody(body: IrSyntheticBody, data: Nothing?) = visitSyntheticBody(body)
 
+    fun visitSuspendableExpression(expression: IrSuspendableExpression) = visitExpression(expression)
+    override fun visitSuspendableExpression(expression: IrSuspendableExpression, data: Nothing?) = visitSuspendableExpression(expression)
+
+    fun visitSuspensionPoint(expression: IrSuspensionPoint) = visitExpression(expression)
+    override fun visitSuspensionPoint(expression: IrSuspensionPoint, data: Nothing?) = visitSuspensionPoint(expression)
+
     fun visitExpression(expression: IrExpression) = visitElement(expression)
     override fun visitExpression(expression: IrExpression, data: Nothing?) = visitExpression(expression)
 
@@ -226,6 +232,17 @@ interface IrElementVisitorVoid : IrElementVisitor<Unit, Nothing?> {
 
     fun visitThrow(expression: IrThrow) = visitExpression(expression)
     override fun visitThrow(expression: IrThrow, data: Nothing?) = visitThrow(expression)
+
+    fun visitDynamicExpression(expression: IrDynamicExpression) = visitExpression(expression)
+    override fun visitDynamicExpression(expression: IrDynamicExpression, data: Nothing?) = visitDynamicExpression(expression)
+
+    fun visitDynamicOperatorExpression(expression: IrDynamicOperatorExpression) = visitDynamicExpression(expression)
+    override fun visitDynamicOperatorExpression(expression: IrDynamicOperatorExpression, data: Nothing?) =
+        visitDynamicOperatorExpression(expression)
+
+    fun visitDynamicMemberExpression(expression: IrDynamicMemberExpression) = visitDynamicExpression(expression)
+    override fun visitDynamicMemberExpression(expression: IrDynamicMemberExpression, data: Nothing?) =
+        visitDynamicMemberExpression(expression)
 
     fun visitErrorDeclaration(declaration: IrErrorDeclaration) = visitDeclaration(declaration)
     override fun visitErrorDeclaration(declaration: IrErrorDeclaration, data: Nothing?) = visitErrorDeclaration(declaration)

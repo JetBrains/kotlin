@@ -276,7 +276,7 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
     }
 
     fun createDestructuringDeclaration(text: String): KtDestructuringDeclaration {
-        return (createFunction("fun foo() {$text}").bodyExpression as KtBlockExpression).statements.first() as KtDestructuringDeclaration
+        return createFunction("fun foo() {$text}").bodyBlockExpression!!.statements.first() as KtDestructuringDeclaration
     }
 
     fun createDestructuringParameter(text: String): KtParameter {
@@ -337,7 +337,7 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
     }
 
     fun createEmptyBody(): KtBlockExpression {
-        return createFunction("fun foo() {}").bodyExpression as KtBlockExpression
+        return createFunction("fun foo() {}").bodyBlockExpression!!
     }
 
     fun createAnonymousInitializer(): KtAnonymousInitializer {
@@ -404,6 +404,11 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
         return stringTemplateExpression.entries[0] as KtSimpleNameStringTemplateEntry
     }
 
+    fun createLiteralStringTemplateEntry(literal: String): KtLiteralStringTemplateEntry {
+        val stringTemplateExpression = createExpression("\"$literal\"") as KtStringTemplateExpression
+        return stringTemplateExpression.entries[0] as KtLiteralStringTemplateEntry
+    }
+
     fun createStringTemplate(content: String) = createExpression("\"$content\"") as KtStringTemplateExpression
 
     fun createPackageDirective(fqName: FqName): KtPackageDirective {
@@ -437,6 +442,7 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
         }
     }
 
+    @Deprecated("function is not used in the kotlin plugin/compiler and will be removed soon")
     fun createImportDirectives(paths: Collection<ImportPath>): List<KtImportDirective> {
         val fileContent = buildString {
             for (path in paths) {
@@ -481,13 +487,19 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
             createExpressionByPattern("if ($0) $1", condition, thenExpr)) as KtIfExpression
     }
 
-    fun createArgument(expression: KtExpression?, name: Name? = null, isSpread: Boolean = false): KtValueArgument {
-        val argumentList = buildByPattern({ pattern, args -> createByPattern(pattern, *args) { createCallArguments(it) } }) {
+    fun createArgument(
+        expression: KtExpression?,
+        name: Name? = null,
+        isSpread: Boolean = false,
+        reformat: Boolean = true
+    ): KtValueArgument {
+        val argumentList = buildByPattern(
+            { pattern, args -> createByPattern(pattern, *args, reformat = reformat) { createCallArguments(it) } }) {
             appendFixedText("(")
 
             if (name != null) {
                 appendName(name)
-                appendFixedText("=")
+                appendFixedText(" = ")
             }
 
             if (isSpread) {
@@ -809,13 +821,13 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
     }
 
     fun createBlock(bodyText: String): KtBlockExpression {
-        return createFunction("fun foo() {\n$bodyText\n}").bodyExpression as KtBlockExpression
+        return createFunction("fun foo() {\n$bodyText\n}").bodyBlockExpression!!
     }
 
     fun createSingleStatementBlock(statement: KtExpression, prevComment: String? = null, nextComment: String? = null): KtBlockExpression {
         val prev = if (prevComment == null) "" else " $prevComment "
         val next = if (nextComment == null) "" else " $nextComment "
-        return createDeclarationByPattern<KtNamedFunction>("fun foo() {\n$prev$0$next\n}", statement).bodyExpression as KtBlockExpression
+        return createDeclarationByPattern<KtNamedFunction>("fun foo() {\n$prev$0$next\n}", statement).bodyBlockExpression!!
     }
 
     fun createComment(text: String): PsiComment {

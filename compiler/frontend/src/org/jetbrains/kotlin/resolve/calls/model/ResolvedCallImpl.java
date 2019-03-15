@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.resolve.calls.model;
 
-import com.google.common.collect.Maps;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.util.SmartList;
 import kotlin.Unit;
@@ -28,6 +27,7 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.psi.Call;
 import org.jetbrains.kotlin.psi.ValueArgument;
+import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace;
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.CallResolverUtilKt;
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem;
@@ -132,17 +132,17 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
 
     @NotNull
     private static Map<ValueParameterDescriptor, ResolvedValueArgument> createValueArgumentsMap(CallableDescriptor descriptor) {
-        return descriptor.getValueParameters().isEmpty() ? Collections.emptyMap() : Maps.newLinkedHashMap();
+        return descriptor.getValueParameters().isEmpty() ? Collections.emptyMap() : new LinkedHashMap<>();
     }
 
     @NotNull
     private static Map<ValueArgument, ArgumentMatchImpl> createArgumentsToParameterMap(CallableDescriptor descriptor) {
-        return descriptor.getValueParameters().isEmpty() ? Collections.emptyMap() : Maps.newHashMap();
+        return descriptor.getValueParameters().isEmpty() ? Collections.emptyMap() : new HashMap<>();
     }
 
     @NotNull
     private static Map<TypeParameterDescriptor, KotlinType> createTypeArgumentsMap(CallableDescriptor descriptor) {
-        return descriptor.getTypeParameters().isEmpty() ? Collections.emptyMap() : Maps.newLinkedHashMap();
+        return descriptor.getTypeParameters().isEmpty() ? Collections.emptyMap() : new LinkedHashMap<>();
     }
 
     @Override
@@ -195,9 +195,17 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void setResultingSubstitutor(@NotNull TypeSubstitutor substitutor) {
         resultingDescriptor = (D) candidateDescriptor.substitute(substitutor);
-        assert resultingDescriptor != null : candidateDescriptor;
+        //noinspection ConstantConditions
+        if (resultingDescriptor == null) {
+            throw new AssertionError(
+                    "resultingDescriptor shouldn't be null:\n" +
+                    "candidateDescriptor: " + DescriptorRenderer.COMPACT_WITH_SHORT_TYPES.render(candidateDescriptor) + "\n" +
+                    "substitution: " + substitutor.getSubstitution()
+            );
+        }
 
         for (TypeParameterDescriptor typeParameter : candidateDescriptor.getTypeParameters()) {
             TypeProjection typeArgumentProjection = substitutor.getSubstitution().get(typeParameter.getDefaultType());

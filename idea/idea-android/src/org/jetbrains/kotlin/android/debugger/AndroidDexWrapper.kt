@@ -23,9 +23,11 @@ import com.android.dx.dex.cf.CfOptions
 import com.android.dx.dex.cf.CfTranslator
 import com.android.dx.dex.file.ClassDefItem
 import com.android.dx.dex.file.DexFile
+import com.intellij.ide.plugins.DynamicallyLoaded
 import org.jetbrains.kotlin.idea.debugger.evaluate.classLoading.ClassToLoad
 import java.lang.reflect.Modifier
 
+@DynamicallyLoaded
 class AndroidDexWrapper {
     @Suppress("unused") // Used in AndroidOClassLoadingAdapter#dex
     fun dex(classes: Collection<ClassToLoad>): ByteArray? {

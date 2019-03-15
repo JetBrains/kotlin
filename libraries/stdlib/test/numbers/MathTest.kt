@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package test.numbers
@@ -144,7 +133,7 @@ class DoubleMathTest {
         assertEquals(0.25, 2.0.pow(-2))
         assertTrue(0.0.pow(Double.NaN).isNaN())
         assertTrue(Double.NaN.pow(-1).isNaN())
-        assertTrue((-7.0).pow(1/3.0).isNaN())
+        assertTrue((-7.0).pow(1 / 3.0).isNaN())
         assertTrue(1.0.pow(Double.POSITIVE_INFINITY).isNaN())
         assertTrue((-1.0).pow(Double.NEGATIVE_INFINITY).isNaN())
 
@@ -333,8 +322,7 @@ class DoubleMathTest {
             val prev = value.nextDown()
             if (prev > 0) {
                 assertEquals(value, prev + prev.ulp)
-            }
-            else {
+            } else {
                 assertEquals(prev, value - value.ulp)
             }
 
@@ -378,7 +366,7 @@ class FloatMathTest {
         assertAlmostEquals(0.0F, sin(PI))
 
         assertEquals(0.0F, asin(0.0F))
-        assertAlmostEquals(PI / 2, asin(1.0F))
+        assertAlmostEquals(PI / 2, asin(1.0F), 0.0000002)
 
         assertEquals(1.0F, cos(0.0F))
         assertAlmostEquals(-1.0F, cos(PI))
@@ -483,7 +471,7 @@ class FloatMathTest {
         assertEquals(0.25F, 2.0F.pow(-2))
         assertTrue(0.0F.pow(Float.NaN).isNaN())
         assertTrue(Float.NaN.pow(-1).isNaN())
-        assertTrue((-7.0F).pow(1/3.0F).isNaN())
+        assertTrue((-7.0F).pow(1 / 3.0F).isNaN())
         assertTrue(1.0F.pow(Float.POSITIVE_INFINITY).isNaN())
         assertTrue((-1.0F).pow(Float.NEGATIVE_INFINITY).isNaN())
 

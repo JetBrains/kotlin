@@ -1,21 +1,11 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.types.expressions;
 
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,15 +17,14 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue;
-import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
-import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind;
-import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
-import org.jetbrains.kotlin.resolve.scopes.TraceBasedLocalRedeclarationChecker;
+import org.jetbrains.kotlin.resolve.calls.tower.KotlinResolutionCallbacksImpl;
+import org.jetbrains.kotlin.resolve.scopes.*;
 import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
@@ -44,8 +33,7 @@ import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
 import java.util.Iterator;
 import java.util.List;
 
-import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
-import static org.jetbrains.kotlin.types.TypeUtils.UNIT_EXPECTED_TYPE;
+import static org.jetbrains.kotlin.types.TypeUtils.*;
 import static org.jetbrains.kotlin.types.expressions.CoercionStrategy.COERCION_TO_UNIT;
 
 public class ExpressionTypingServices {
@@ -267,12 +255,7 @@ public class ExpressionTypingServices {
         boolean isFirstStatement = true;
         for (Iterator<? extends KtElement> iterator = block.iterator(); iterator.hasNext(); ) {
             // Use filtering trace to keep effect system cache only for one statement
-            AbstractFilteringTrace traceForSingleStatement = new AbstractFilteringTrace(context.trace, "trace for single statement") {
-                @Override
-                protected <K, V> boolean shouldBeHiddenFromParent(@NotNull WritableSlice<K, V> slice, K key) {
-                    return slice == BindingContext.EXPRESSION_EFFECTS;
-                }
-            };
+            AbstractFilteringTrace traceForSingleStatement = new EffectsFilteringTrace(context.trace);
 
             newContext = newContext.replaceBindingTrace(traceForSingleStatement);
 
@@ -306,15 +289,14 @@ public class ExpressionTypingServices {
                 beforeJumpInfo = result.getJumpFlowInfo();
                 jumpOutPossible = result.getJumpOutPossible();
             }
-            if (newDataFlowInfo != context.dataFlowInfo) {
+            if (newDataFlowInfo != newContext.dataFlowInfo) {
                 newContext = newContext.replaceDataFlowInfo(newDataFlowInfo);
                 // We take current data flow info if jump there is not possible
             }
             blockLevelVisitor = new ExpressionTypingVisitorDispatcher.ForBlock(expressionTypingComponents, annotationChecker, scope);
 
-            expressionTypingComponents.contractParsingServices.checkContractAndRecordIfPresent(statementExpression, context.trace, scope, isFirstStatement);
-
             if (isFirstStatement) {
+                expressionTypingComponents.contractParsingServices.checkContractAndRecordIfPresent(statementExpression, context.trace, scope);
                 isFirstStatement = false;
             }
         }
@@ -344,6 +326,20 @@ public class ExpressionTypingServices {
 
             return blockLevelVisitor.getTypeInfo(statementExpression, context.replaceExpectedType(expectedType).replaceContextDependency(dependency), true);
         }
+        if (context.languageVersionSettings.supportsFeature(LanguageFeature.NewInference) &&
+            statementExpression instanceof KtLambdaExpression) {
+            PsiElement parent = PsiUtilsKt.getNonStrictParentOfType(statementExpression, KtFunctionLiteral.class);
+            if (parent != null) {
+                KtFunctionLiteral functionLiteral = (KtFunctionLiteral) parent;
+                KotlinResolutionCallbacksImpl.LambdaInfo info =
+                        context.trace.getBindingContext().get(BindingContext.NEW_INFERENCE_LAMBDA_INFO, functionLiteral);
+                if (info != null) {
+                    info.getLastExpressionInfo().setLexicalScope(context.scope);
+                    info.getLastExpressionInfo().setTrace(context.trace);
+                    return new KotlinTypeInfo(DONT_CARE, context.dataFlowInfo);
+                }
+            }
+        }
         KotlinTypeInfo result = blockLevelVisitor.getTypeInfo(statementExpression, context, true);
         if (coercionStrategyForLastExpression == COERCION_TO_UNIT) {
             boolean mightBeUnit = false;
@@ -370,4 +366,18 @@ public class ExpressionTypingServices {
         return result;
     }
 
+    private static class EffectsFilteringTrace extends AbstractFilteringTrace {
+        public EffectsFilteringTrace(BindingTrace parentTrace) {
+            super(parentTrace, "Effects filtering trace");
+        }
+
+        @Override
+        protected <K, V> boolean shouldBeHiddenFromParent(@NotNull WritableSlice<K, V> slice, K key) {
+            return slice == BindingContext.EXPRESSION_EFFECTS;
+        }
+    }
+
+    public LocalRedeclarationChecker createLocalRedeclarationChecker(BindingTrace trace) {
+        return new TraceBasedLocalRedeclarationChecker(trace, expressionTypingComponents.overloadChecker);
+    }
 }

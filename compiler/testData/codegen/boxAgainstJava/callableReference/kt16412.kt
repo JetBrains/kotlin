@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // FILE: MFunction.java
 
 public interface MFunction<T, R> {

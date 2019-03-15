@@ -296,7 +296,7 @@ public class GenerateMockJdk {
 
         List<JarEntry> sourceList = Collections.list(sourceJar.entries());
         for (JarEntry entry : sourceList) {
-            // For Map$Entry.class we want to check Map.class presense
+            // For Map$Entry.class we want to check Map.class presence
             String topLevelClassFile = entry.getName().replaceAll("\\$.+\\.class$", ".class");
 
             if (entryNamesToInclude.contains(topLevelClassFile) && foundEntries.add(entry.getName())) {

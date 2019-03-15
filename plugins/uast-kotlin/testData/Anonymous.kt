@@ -10,3 +10,7 @@ fun foo() {
     val closeableRunnable = object : Runnable, Closeable { override fun close() {} override fun run() {} }
     val runnableIs = object : InputStream(), Runnable { override fun read(): Int = 0; override fun run() {} }
 }
+
+fun withErr() {
+    val runnable = object  Runnable {} // EA-122644
+}

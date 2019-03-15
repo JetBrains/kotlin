@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.jvm.repl
 
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
@@ -29,9 +30,9 @@ import org.jetbrains.kotlin.cli.jvm.repl.KOTLIN_REPL_JVM_TARGET_PROPERTY
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JvmTarget
-import org.jetbrains.kotlin.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
 import org.jetbrains.kotlin.script.StandardScriptDefinition
+import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
@@ -56,6 +57,7 @@ class ReplCompilerJava8Test : KtUsefulTestCase() {
             addKotlinSourceRoot(tmpdir!!.absolutePath)
             put(JVMConfigurationKeys.OUTPUT_DIRECTORY, tmpdir!!)
             put(JVMConfigurationKeys.JVM_TARGET, JvmTarget.JVM_1_8)
+            loadScriptingPlugin(this)
         }
 
         val environment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
@@ -106,7 +108,9 @@ class ReplCompilerJava8Test : KtUsefulTestCase() {
 
     private fun makeConfiguration() = KotlinTestUtils.newConfiguration(
             ConfigurationKind.ALL, TestJdkKind.FULL_JDK, File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-stdlib.jar"), tmpdir
-    )
+    ).also {
+        loadScriptingPlugin(it)
+    }
 
     private fun runTest(configuration: CompilerConfiguration): ReplCompileResult {
         val collector = PrintingMessageCollector(System.out, MessageRenderer.WITHOUT_PATHS, false)

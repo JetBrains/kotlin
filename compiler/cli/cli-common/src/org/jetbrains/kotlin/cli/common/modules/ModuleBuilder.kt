@@ -21,11 +21,12 @@ import org.jetbrains.kotlin.modules.Module
 import java.util.*
 
 class ModuleBuilder(
-        private val name: String,
-        private val outputDir: String,
-        private val type: String
+    private val name: String,
+    private val outputDir: String,
+    private val type: String
 ) : Module {
     private val sourceFiles = ArrayList<String>()
+    private val commonSourceFiles = ArrayList<String>()
     private val classpathRoots = ArrayList<String>()
     private val javaSourceRoots = ArrayList<JavaRootPath>()
     private val friendDirs = ArrayList<String>()
@@ -33,6 +34,10 @@ class ModuleBuilder(
 
     fun addSourceFiles(path: String) {
         sourceFiles.add(path)
+    }
+
+    fun addCommonSourceFiles(path: String) {
+        commonSourceFiles.add(path)
     }
 
     fun addClasspathEntry(path: String) {
@@ -51,6 +56,7 @@ class ModuleBuilder(
     override fun getFriendPaths(): List<String> = friendDirs
     override fun getJavaSourceRoots(): List<JavaRootPath> = javaSourceRoots
     override fun getSourceFiles(): List<String> = sourceFiles
+    override fun getCommonSourceFiles(): List<String> = commonSourceFiles
     override fun getClasspathRoots(): List<String> = classpathRoots
     override fun getModuleName(): String = name
     override fun getModuleType(): String = type

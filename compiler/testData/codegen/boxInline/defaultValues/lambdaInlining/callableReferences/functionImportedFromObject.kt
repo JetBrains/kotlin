@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // FILE: 1.kt
 package test
 
@@ -11,7 +12,6 @@ inline fun stub() {}
 
 
 // FILE: 2.kt
-// LANGUAGE_VERSION: 1.2
 // SKIP_INLINE_CHECK_IN: inlineFun$default
 import test.A.ok
 

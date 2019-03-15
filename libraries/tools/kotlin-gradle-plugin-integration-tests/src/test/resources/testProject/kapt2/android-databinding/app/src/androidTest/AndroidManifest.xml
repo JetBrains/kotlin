@@ -1,0 +1,5 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.example.databinding.test">
+  <application>
+    <activity android:name="com.example.databinding.test.BlankActivity"/>
+  </application>
+</manifest>

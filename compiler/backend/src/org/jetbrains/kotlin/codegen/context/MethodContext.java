@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.Type;
 
@@ -64,8 +65,9 @@ public class MethodContext extends CodegenContext<CallableMemberDescriptor> {
     public StackValue getReceiverExpression(KotlinTypeMapper typeMapper) {
         assert getCallableDescriptorWithReceiver() != null;
         @SuppressWarnings("ConstantConditions")
-        Type asmType = typeMapper.mapType(getCallableDescriptorWithReceiver().getExtensionReceiverParameter().getType());
-        return StackValue.local(AsmUtil.getReceiverIndex(this, getContextDescriptor()), asmType);
+        KotlinType kotlinType = getCallableDescriptorWithReceiver().getExtensionReceiverParameter().getType();
+        Type asmType = typeMapper.mapType(kotlinType);
+        return StackValue.local(AsmUtil.getReceiverIndex(this, getContextDescriptor()), asmType, kotlinType);
     }
 
     @Override
@@ -85,7 +87,7 @@ public class MethodContext extends CodegenContext<CallableMemberDescriptor> {
     public StackValue generateReceiver(@NotNull CallableDescriptor descriptor, @NotNull GenerationState state, boolean ignoreNoOuter) {
         // When generating bytecode of some suspend function, we replace the original descriptor with one that reflects how it should look on JVM.
         // But when we looking for receiver parameter in resolved call, it still references the initial function, so we unwrap it here
-        // before comparision.
+        // before comparison.
         if (CoroutineCodegenUtilKt.unwrapInitialDescriptorForSuspendFunction(getCallableDescriptorWithReceiver()) == descriptor) {
             return getReceiverExpression(state.getTypeMapper());
         }

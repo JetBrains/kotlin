@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.intentions.loopToCallChain.result
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.*
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.FilterTransformationBase
@@ -83,7 +82,7 @@ class CountTransformation(
 
             if (initialization.variable.countUsages(state.outerLoop) != 1) return null // this should be the only usage of this variable inside the loop
 
-            val variableType = (initialization.variable.resolveToDescriptorIfAny() as? VariableDescriptor)?.type ?: return null
+            val variableType = initialization.variable.resolveToDescriptorIfAny()?.type ?: return null
             if (!KotlinBuiltIns.isInt(variableType)) return null
 
             val transformation = CountTransformation(state.outerLoop, state.inputVariable, initialization, null)

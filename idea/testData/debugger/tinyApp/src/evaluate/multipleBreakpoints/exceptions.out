@@ -9,12 +9,15 @@ Connected to the target VM
 exceptions.kt:9
 Compile bytecode for fail()
 exceptions.kt:14
+Compile bytecode for fail()
 exceptions.kt:26
 Compile bytecode for o as Derived
 exceptions.kt:31
+Compile bytecode for o as Derived
 exceptions.kt:42
 Compile bytecode for c.get(0)
 exceptions.kt:51
+Compile bytecode for c.get(0) + 1
 Disconnected from the target VM
 
 Process finished with exit code 0

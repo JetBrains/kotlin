@@ -21,6 +21,7 @@ import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.openapi.module.ModuleUtilCore
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.*
 import com.intellij.psi.filters.*
 import com.intellij.psi.filters.position.LeftNeighbour
@@ -40,8 +41,10 @@ import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.ModifierCheckerCore
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
@@ -55,10 +58,13 @@ object KeywordCompletion {
 
     private val COMPOUND_KEYWORDS = mapOf<KtKeywordToken, KtKeywordToken>(
             COMPANION_KEYWORD to OBJECT_KEYWORD,
+            DATA_KEYWORD to CLASS_KEYWORD,
             ENUM_KEYWORD to CLASS_KEYWORD,
             ANNOTATION_KEYWORD to CLASS_KEYWORD,
             SEALED_KEYWORD to CLASS_KEYWORD,
-            LATEINIT_KEYWORD to VAR_KEYWORD
+            LATEINIT_KEYWORD to VAR_KEYWORD,
+            CONST_KEYWORD to VAL_KEYWORD,
+            SUSPEND_KEYWORD to FUN_KEYWORD
     )
 
     private val KEYWORD_CONSTRUCTS = mapOf<KtKeywordToken, String>(
@@ -70,8 +76,7 @@ object KeywordCompletion {
             FINALLY_KEYWORD to "fun foo() { try {\n}\nfinally{\ncaret\n}",
             DO_KEYWORD to "fun foo() { do {\ncaret\n}",
             INIT_KEYWORD to "class C { init {\ncaret\n}",
-            CONSTRUCTOR_KEYWORD to "class C { constructor(caret)",
-            COMPANION_KEYWORD to "class C { companion object {\ncaret\n}"
+            CONSTRUCTOR_KEYWORD to "class C { constructor(caret)"
     )
 
     private val NO_SPACE_AFTER = listOf(THIS_KEYWORD,
@@ -95,7 +100,10 @@ object KeywordCompletion {
         for (keywordToken in ALL_KEYWORDS) {
             var keyword = keywordToken.value
 
-            val nextKeyword = COMPOUND_KEYWORDS[keywordToken]
+            val nextKeyword = when {
+                keywordToken == SUSPEND_KEYWORD && ((position.containingFile as? KtFile)?.isScript() == true) -> null
+                else -> COMPOUND_KEYWORDS[keywordToken]
+            }
             var applicableAsCompound = false
             if (nextKeyword != null) {
                 fun PsiElement.isSpace() = this is PsiWhiteSpace && '\n' !in getText()
@@ -123,27 +131,45 @@ object KeywordCompletion {
                 consumer(element)
             }
             else {
-                var element = LookupElementBuilder.create(KeywordLookupObject(), keyword).bold()
-
-                val isUseSiteAnnotationTarget = position.prevLeaf()?.node?.elementType == KtTokens.AT
-
-                val insertHandler = when {
-                    isUseSiteAnnotationTarget -> UseSiteAnnotationTargetInsertHandler
-
-                    keyword in NO_SPACE_AFTER -> null
-
-                    else -> SpaceAfterInsertHandler
+                if (listOf(CLASS_KEYWORD, OBJECT_KEYWORD, INTERFACE_KEYWORD).any { keyword.endsWith(it.value) }) {
+                    val topLevelClassName = getTopLevelClassName(position)
+                    if (topLevelClassName != null) {
+                        consumer(createLookupElementBuilder("$keyword $topLevelClassName", position))
+                    }
                 }
-
-                element = element.withInsertHandler(insertHandler)
-
-                if (isUseSiteAnnotationTarget) {
-                    element = element.withPresentableText(keyword + ":")
-                }
-
-                consumer(element)
+                consumer(createLookupElementBuilder(keyword, position))
             }
         }
+    }
+
+    private fun createLookupElementBuilder(
+        keyword: String,
+        position: PsiElement
+    ): LookupElementBuilder {
+        val isUseSiteAnnotationTarget = position.prevLeaf()?.node?.elementType == AT
+        val insertHandler = when {
+            isUseSiteAnnotationTarget -> UseSiteAnnotationTargetInsertHandler
+            keyword in NO_SPACE_AFTER -> null
+            else -> SpaceAfterInsertHandler
+        }
+        val element = LookupElementBuilder.create(KeywordLookupObject(), keyword).bold().withInsertHandler(insertHandler)
+        return if (isUseSiteAnnotationTarget) {
+            element.withPresentableText("$keyword:")
+        } else {
+            element
+        }
+    }
+
+    private fun getTopLevelClassName(position: PsiElement): String? {
+        if (position.parents.any { it is KtDeclaration }) return null
+        val file = position.containingFile as? KtFile ?: return null
+        val name = FileUtil.getNameWithoutExtension(file.name)
+        if (!Name.isValidIdentifier(name)
+            || Name.identifier(name).render() != name
+            || !name[0].isUpperCase()
+            || file.declarations.any { it is KtClassOrObject && it.name == name }
+        ) return null
+        return name
     }
 
     private object UseSiteAnnotationTargetInsertHandler : InsertHandler<LookupElement> {
@@ -385,10 +411,26 @@ object KeywordCompletion {
 
                         is KtObjectDeclaration -> if (ownerDeclaration.isObjectLiteral()) KotlinTarget.OBJECT_LITERAL else KotlinTarget.OBJECT
 
-                        else -> return true
+                        else -> return keywordTokenType != CONST_KEYWORD
                     }
 
                     if (!ModifierCheckerCore.isPossibleParentTarget(keywordTokenType, parentTarget, languageVersionSettings)) return false
+
+                    if (keywordTokenType == CONST_KEYWORD) {
+                        return when (parentTarget) {
+                            KotlinTarget.OBJECT -> true
+                            KotlinTarget.FILE -> {
+                                val prevSiblings = elementAt.parent.siblings(withItself = false, forward = false)
+                                val hasLineBreak = prevSiblings
+                                    .takeWhile { it is PsiWhiteSpace || it.isSemicolon() }
+                                    .firstOrNull { it.text.contains("\n") || it.isSemicolon() } != null
+                                hasLineBreak || prevSiblings.none {
+                                    it !is PsiWhiteSpace && !it.isSemicolon() && it !is KtImportList && it !is KtPackageDirective
+                                }
+                            }
+                            else -> false
+                        }
+                    }
 
                     return true
                 }
@@ -400,6 +442,8 @@ object KeywordCompletion {
             return files.any { file -> isKeywordCorrectlyApplied(keywordTokenType, file); }
         }
     }
+
+    private fun PsiElement.isSemicolon() = node.elementType == KtTokens.SEMICOLON
 
     private fun isErrorElementBefore(token: PsiElement): Boolean {
         for (leaf in token.prevLeafs) {
@@ -448,20 +492,18 @@ object KeywordCompletion {
         }
     }
 
-    private fun isModifierParentSupportedAtLanguageLevel(
-            keyword: KtKeywordToken,
-            target: KotlinTarget,
-            languageVersionSettings: LanguageVersionSettings
-    ): Boolean {
-        if (keyword == KtTokens.INNER_KEYWORD && target == ENUM_ENTRY) {
-            return languageVersionSettings.supportsFeature(LanguageFeature.InnerClassInEnumEntryClass)
-        }
-        return true
-    }
-
     // builds text within scope (or from the start of the file) before position element excluding almost all declarations
     private fun buildReducedContextBefore(builder: StringBuilder, position: PsiElement, scope: PsiElement?) {
         if (position == scope) return
+
+        if (position is KtCodeFragment) {
+            val ktContext = position.context as? KtElement ?: return
+            buildReducedContextBefore(builder, ktContext, scope)
+            return
+        } else if (position is PsiFile) {
+            return
+        }
+
         val parent = position.parent ?: return
 
         buildReducedContextBefore(builder, parent, scope)

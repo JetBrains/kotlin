@@ -101,7 +101,7 @@ class KotlinFunctionCallUsage(
         if (resolvedCall == null || resolvedCall.isReallySuccess()) return false
 
         // TODO: investigate why arguments are not recorded for enum constructor call
-        if (element is KtSuperTypeCallEntry && element.parent.parent is KtEnumEntry) return false
+        if (element is KtSuperTypeCallEntry && element.parent.parent is KtEnumEntry && element.valueArguments.isEmpty()) return false
 
         if (skipUnmatchedArgumentsCheck) return false
 
@@ -335,7 +335,7 @@ class KotlinFunctionCallUsage(
         // Do not add extension receiver to calls with explicit dispatch receiver
         if (newReceiverInfo != null && fullCallElement is KtQualifiedExpression && dispatchReceiver is ExpressionReceiver) return element
 
-        val newArgumentInfos = newParameters.withIndex().map {
+        val newArgumentInfos = newParameters.asSequence().withIndex().map {
             val (index, param) = it
             val oldIndex = param.oldIndex
             val resolvedArgument = if (oldIndex >= 0) getResolvedValueArgument(oldIndex) else null
@@ -346,7 +346,7 @@ class KotlinFunctionCallUsage(
                 receiverValue = receiverValue.wrapInvalidated(element)
             }
             ArgumentInfo(param, index, resolvedArgument, receiverValue)
-        }
+        }.toList()
 
         val lastParameterIndex = newParameters.lastIndex
         var firstNamedIndex = newArgumentInfos.firstOrNull {

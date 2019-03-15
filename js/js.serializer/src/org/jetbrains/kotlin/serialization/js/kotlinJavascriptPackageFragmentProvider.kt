@@ -28,18 +28,20 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.parentOrNull
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.utils.JsMetadataVersion
 
 fun createKotlinJavascriptPackageFragmentProvider(
-        storageManager: StorageManager,
-        module: ModuleDescriptor,
-        header: JsProtoBuf.Header,
-        packageFragmentProtos: List<ProtoBuf.PackageFragment>,
-        configuration: DeserializationConfiguration,
-        lookupTracker: LookupTracker
+    storageManager: StorageManager,
+    module: ModuleDescriptor,
+    header: JsProtoBuf.Header,
+    packageFragmentProtos: List<ProtoBuf.PackageFragment>,
+    metadataVersion: JsMetadataVersion,
+    configuration: DeserializationConfiguration,
+    lookupTracker: LookupTracker
 ): PackageFragmentProvider {
     val packageFragments: MutableList<PackageFragmentDescriptor> = packageFragmentProtos.mapNotNullTo(mutableListOf()) { proto ->
         proto.fqName?.let { fqName ->
-            KotlinJavascriptPackageFragment(fqName, storageManager, module, proto, header, configuration)
+            KotlinJavascriptPackageFragment(fqName, storageManager, module, proto, header, metadataVersion, configuration)
         }
     }
 
@@ -62,25 +64,25 @@ fun createKotlinJavascriptPackageFragmentProvider(
     val notFoundClasses = NotFoundClasses(storageManager, module)
 
     val components = DeserializationComponents(
-            storageManager,
-            module,
-            configuration,
-            DeserializedClassDataFinder(provider),
-            AnnotationAndConstantLoaderImpl(module, notFoundClasses, JsSerializerProtocol),
-            provider,
-            LocalClassifierTypeSettings.Default,
-            ErrorReporter.DO_NOTHING,
-            lookupTracker,
-            DynamicTypeDeserializer,
-            emptyList(),
-            notFoundClasses,
-            ContractDeserializerImpl(configuration),
-            platformDependentDeclarationFilter = PlatformDependentDeclarationFilter.NoPlatformDependent,
-            extensionRegistryLite = JsSerializerProtocol.extensionRegistry
+        storageManager,
+        module,
+        configuration,
+        DeserializedClassDataFinder(provider),
+        AnnotationAndConstantLoaderImpl(module, notFoundClasses, JsSerializerProtocol),
+        provider,
+        LocalClassifierTypeSettings.Default,
+        ErrorReporter.DO_NOTHING,
+        lookupTracker,
+        DynamicTypeDeserializer,
+        emptyList(),
+        notFoundClasses,
+        ContractDeserializerImpl(configuration, storageManager),
+        platformDependentDeclarationFilter = PlatformDependentDeclarationFilter.NoPlatformDependent,
+        extensionRegistryLite = JsSerializerProtocol.extensionRegistry
     )
 
     for (packageFragment in packageFragments.filterIsInstance<KotlinJavascriptPackageFragment>()) {
-        packageFragment.components = components
+        packageFragment.initialize(components)
     }
 
     return provider

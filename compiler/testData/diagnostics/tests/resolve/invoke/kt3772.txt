@@ -3,7 +3,7 @@ package
 package bar {
     public val bar.C.attr: bar.A
     public val bar.D.attr: bar.B
-    public fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+    public fun main(): kotlin.Unit
 
     public open class A {
         public constructor A()

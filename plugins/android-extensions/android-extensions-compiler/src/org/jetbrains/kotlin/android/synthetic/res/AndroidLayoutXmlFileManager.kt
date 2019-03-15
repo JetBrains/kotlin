@@ -27,6 +27,7 @@ import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.android.synthetic.AndroidConst
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import java.util.*
 
 class AndroidVariantData(val variant: AndroidVariant, val layouts: Map<String, List<PsiFile>>)
@@ -93,10 +94,11 @@ abstract class AndroidLayoutXmlFileManager(val project: Project) {
     protected abstract fun doExtractResources(layoutGroup: AndroidLayoutGroupData, module: ModuleDescriptor): AndroidLayoutGroup
 
     protected fun parseAndroidResource(id: ResourceIdentifier, tag: String, sourceElement: PsiElement?): AndroidResource {
+        val sourceElementPointer = sourceElement?.createSmartPointer()
         return when (tag) {
-            "fragment" -> AndroidResource.Fragment(id, sourceElement)
-            "include" -> AndroidResource.Widget(id, AndroidConst.VIEW_FQNAME, sourceElement)
-            else -> AndroidResource.Widget(id, tag, sourceElement)
+            "fragment" -> AndroidResource.Fragment(id, sourceElementPointer)
+            "include" -> AndroidResource.Widget(id, AndroidConst.VIEW_FQNAME, sourceElementPointer)
+            else -> AndroidResource.Widget(id, tag, sourceElementPointer)
         }
     }
 

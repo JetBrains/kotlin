@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.incremental.components.LookupLocation;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.resolve.DescriptorFactory;
 import org.jetbrains.kotlin.resolve.NonReportingOverrideStrategy;
 import org.jetbrains.kotlin.resolve.OverridingUtil;
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
@@ -32,7 +31,6 @@ import java.util.*;
 
 public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
     private final TypeConstructor typeConstructor;
-    private final ClassConstructorDescriptor primaryConstructor;
     private final MemberScope scope;
     private final NotNullLazyValue<Set<Name>> enumMemberNames;
     private final Annotations annotations;
@@ -69,15 +67,11 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
 
         this.annotations = annotations;
         this.typeConstructor = new ClassTypeConstructorImpl(
-                this, Collections.<TypeParameterDescriptor>emptyList(), Collections.singleton(supertype)
+                this, Collections.<TypeParameterDescriptor>emptyList(), Collections.singleton(supertype), storageManager
         );
 
         this.scope = new EnumEntryScope(storageManager);
         this.enumMemberNames = enumMemberNames;
-
-        ClassConstructorDescriptorImpl primaryConstructor = DescriptorFactory.createPrimaryConstructorForObject(this, source);
-        primaryConstructor.setReturnType(getDefaultType());
-        this.primaryConstructor = primaryConstructor;
     }
 
     @NotNull
@@ -95,7 +89,7 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
     @NotNull
     @Override
     public Collection<ClassConstructorDescriptor> getConstructors() {
-        return Collections.singleton(primaryConstructor);
+        return Collections.emptyList();
     }
 
     @NotNull
@@ -161,7 +155,7 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
     @Nullable
     @Override
     public ClassConstructorDescriptor getUnsubstitutedPrimaryConstructor() {
-        return primaryConstructor;
+        return null;
     }
 
     @NotNull
@@ -188,21 +182,21 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
     }
 
     private class EnumEntryScope extends MemberScopeImpl {
-        private final MemoizedFunctionToNotNull<Name, Collection<SimpleFunctionDescriptor>> functions;
-        private final MemoizedFunctionToNotNull<Name, Collection<PropertyDescriptor>> properties;
+        private final MemoizedFunctionToNotNull<Name, Collection<? extends SimpleFunctionDescriptor>> functions;
+        private final MemoizedFunctionToNotNull<Name, Collection<? extends PropertyDescriptor>> properties;
         private final NotNullLazyValue<Collection<DeclarationDescriptor>> allDescriptors;
 
         public EnumEntryScope(@NotNull StorageManager storageManager) {
-            this.functions = storageManager.createMemoizedFunction(new Function1<Name, Collection<SimpleFunctionDescriptor>>() {
+            this.functions = storageManager.createMemoizedFunction(new Function1<Name, Collection<? extends SimpleFunctionDescriptor>>() {
                 @Override
-                public Collection<SimpleFunctionDescriptor> invoke(Name name) {
+                public Collection<? extends SimpleFunctionDescriptor> invoke(Name name) {
                     return computeFunctions(name);
                 }
             });
 
-            this.properties = storageManager.createMemoizedFunction(new Function1<Name, Collection<PropertyDescriptor>>() {
+            this.properties = storageManager.createMemoizedFunction(new Function1<Name, Collection<? extends PropertyDescriptor>>() {
                 @Override
-                public Collection<PropertyDescriptor> invoke(Name name) {
+                public Collection<? extends PropertyDescriptor> invoke(Name name) {
                     return computeProperties(name);
                 }
             });
@@ -216,32 +210,23 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
 
         @NotNull
         @Override
-        // TODO: Convert to Kotlin or add @JvmWildcard to MemberScope declarations
-        // method is covariantly overridden in Kotlin, but collections in Java are invariant
-        @SuppressWarnings({"unchecked"})
-        public Collection getContributedVariables(@NotNull Name name, @NotNull LookupLocation location) {
+        public Collection<? extends PropertyDescriptor> getContributedVariables(@NotNull Name name, @NotNull LookupLocation location) {
             return properties.invoke(name);
         }
 
         @NotNull
-        // TODO: Convert to Kotlin or add @JvmWildcard to MemberScope declarations
-        // method is covariantly overridden in Kotlin, but collections in Java are invariant
-        @SuppressWarnings({"unchecked"})
-        private Collection<PropertyDescriptor> computeProperties(@NotNull Name name) {
-            return resolveFakeOverrides(name, (Collection) getSupertypeScope().getContributedVariables(name, NoLookupLocation.FOR_NON_TRACKED_SCOPE));
+        private Collection<? extends PropertyDescriptor> computeProperties(@NotNull Name name) {
+            return resolveFakeOverrides(name, getSupertypeScope().getContributedVariables(name, NoLookupLocation.FOR_NON_TRACKED_SCOPE));
         }
 
         @NotNull
         @Override
-        // TODO: Convert to Kotlin or add @JvmWildcard to MemberScope declarations
-        // method is covariantly overridden in Kotlin, but collections in Java are invariant
-        @SuppressWarnings({"unchecked"})
-        public Collection getContributedFunctions(@NotNull Name name, @NotNull LookupLocation location) {
+        public Collection<? extends SimpleFunctionDescriptor> getContributedFunctions(@NotNull Name name, @NotNull LookupLocation location) {
             return functions.invoke(name);
         }
 
         @NotNull
-        private Collection<SimpleFunctionDescriptor> computeFunctions(@NotNull Name name) {
+        private Collection<? extends SimpleFunctionDescriptor> computeFunctions(@NotNull Name name) {
             return resolveFakeOverrides(name, getSupertypeScope().getContributedFunctions(name, NoLookupLocation.FOR_NON_TRACKED_SCOPE));
         }
 
@@ -253,9 +238,9 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
         }
 
         @NotNull
-        private <D extends CallableMemberDescriptor> Collection<D> resolveFakeOverrides(
+        private <D extends CallableMemberDescriptor> Collection<? extends D> resolveFakeOverrides(
                 @NotNull Name name,
-                @NotNull Collection<D> fromSupertypes
+                @NotNull Collection<? extends D> fromSupertypes
         ) {
             final Set<D> result = new LinkedHashSet<D>();
 

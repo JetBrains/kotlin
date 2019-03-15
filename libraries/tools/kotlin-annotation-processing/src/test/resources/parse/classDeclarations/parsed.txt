@@ -1,3 +1,0 @@
-example.ExampleAnnotation example.TestClass
-example.AncestorClass
-example.TestClass

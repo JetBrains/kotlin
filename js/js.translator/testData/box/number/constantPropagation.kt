@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1126
+// EXPECTED_REACHABLE_NODES: 1266
 
 // MODULE: lib1
 // FILE: lib1.kt
@@ -25,13 +25,25 @@ fun testLongVal() {
     assertEquals(46L, twiceLongValue)
 }
 
+private const val privateLongConst = 10 * 10L
+
+internal const val internalLongConst = 10 * 100L
+
 const val longConst = 42L
 
+// PROPERTY_READ_COUNT: name=privateLongConst count=1 scope=testLongConst
+// PROPERTY_READ_COUNT: name=L100 count=1 scope=testLongConst
+// PROPERTY_READ_COUNT: name=internalLongConst count=1 scope=testLongConst
+// PROPERTY_READ_COUNT: name=L1000 count=1 scope=testLongConst
 // PROPERTY_READ_COUNT: name=longConst count=1 scope=testLongConst
 // PROPERTY_READ_COUNT: name=L42 count=1 scope=testLongConst
 // PROPERTY_READ_COUNT: name=L_42 count=4 scope=testLongConst
 // PROPERTY_READ_COUNT: name=L84 count=2 scope=testLongConst
 fun testLongConst() {
+    assertEquals(100L, privateLongConst)
+
+    assertEquals(1000L, internalLongConst)
+
     val longConstCopy = longConst
     assertEquals(42L, longConstCopy)
 
@@ -133,14 +145,31 @@ inline fun testImportedLongConstInlineFunLib1() {
     assertEquals(123456789012345L, bigLongConstCopy)
 }
 
-// PROPERTY_READ_COUNT: name=longConst_0 count=1 scope=testImportedLongConstInlinedLocally
+// PROPERTY_READ_COUNT: name=longConst count=1 scope=testImportedLongConstInlinedLocally
 // PROPERTY_READ_COUNT: name=L42 count=1 scope=testImportedLongConstInlinedLocally
 // PROPERTY_READ_COUNT: name=L_42 count=4 scope=testImportedLongConstInlinedLocally
 // PROPERTY_READ_COUNT: name=L84 count=2 scope=testImportedLongConstInlinedLocally
-// PROPERTY_READ_COUNT: name=bigLongConst_0 count=1 scope=testImportedLongConstInlinedLocally
+// PROPERTY_READ_COUNT: name=bigLongConst count=1 scope=testImportedLongConstInlinedLocally
 // PROPERTY_READ_COUNT: name=L123456789012345 count=1 scope=testImportedLongConstInlinedLocally
 private fun testImportedLongConstInlinedLocally() {
     testImportedLongConstInlineFunLib1()
+}
+
+class A {
+    companion object {
+        private const val a = 10L
+
+        const val b = 20L
+    }
+
+    fun testCompanion() {
+        assertEquals(10L, a)
+        assertEquals(20L, b)
+    }
+}
+
+fun testCompanionVal() {
+    A().testCompanion()
 }
 
 fun testLib1() {
@@ -153,6 +182,8 @@ fun testLib1() {
     testIntMaxMinValue()
 
     testImportedLongConstInlinedLocally()
+
+    testCompanionVal()
 }
 
 // MODULE: lib2(lib1)
@@ -229,6 +260,8 @@ fun testLib2() {
 
     testImportedLongConst()
     testImportedLongConstInlinedLocallyFromOtherModule()
+
+    assertEquals(20L, A.b)
 }
 
 // MODULE: main(lib2)

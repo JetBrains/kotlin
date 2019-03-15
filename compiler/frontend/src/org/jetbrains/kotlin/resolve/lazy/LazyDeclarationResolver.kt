@@ -61,8 +61,8 @@ open class LazyDeclarationResolver @Deprecated("") constructor(
     open fun getClassDescriptor(classOrObject: KtClassOrObject, location: LookupLocation): ClassDescriptor =
         findClassDescriptor(classOrObject, location)
 
-    fun getScriptDescriptor(script: KtScript, location: LookupLocation): ScriptDescriptor =
-        findClassDescriptor(script, location) as ScriptDescriptor
+    fun getScriptDescriptor(script: KtScript, location: LookupLocation): ClassDescriptorWithResolutionScopes =
+        findClassDescriptor(script, location) as ClassDescriptorWithResolutionScopes
 
     private fun findClassDescriptorIfAny(
         classObjectOrScript: KtNamedDeclaration,

@@ -1,0 +1,2 @@
+public abstract interface ReturnInnerSubclassOfSupersInner : R|java/lang/Object| {
+}

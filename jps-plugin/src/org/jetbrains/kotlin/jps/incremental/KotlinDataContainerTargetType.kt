@@ -30,9 +30,9 @@ object KotlinDataContainerTargetType : BuildTargetType<KotlinDataContainerTarget
     override fun computeAllTargets(model: JpsModel): List<KotlinDataContainerTarget> = listOf(KotlinDataContainerTarget)
 
     override fun createLoader(model: JpsModel): BuildTargetLoader<KotlinDataContainerTarget> =
-            object : BuildTargetLoader<KotlinDataContainerTarget>() {
-                override fun createTarget(targetId: String): KotlinDataContainerTarget? = KotlinDataContainerTarget
-            }
+        object : BuildTargetLoader<KotlinDataContainerTarget>() {
+            override fun createTarget(targetId: String): KotlinDataContainerTarget? = KotlinDataContainerTarget
+        }
 }
 
 // Fake target to store data per project for incremental compilation
@@ -41,10 +41,10 @@ object KotlinDataContainerTarget : BuildTarget<BuildRootDescriptor>(KotlinDataCo
     override fun getPresentableName(): String = KOTLIN_DATA_CONTAINER
 
     override fun computeRootDescriptors(
-            model: JpsModel?,
-            index: ModuleExcludeIndex?,
-            ignoredFileIndex: IgnoredFileIndex?,
-            dataPaths: BuildDataPaths?
+        model: JpsModel?,
+        index: ModuleExcludeIndex?,
+        ignoredFileIndex: IgnoredFileIndex?,
+        dataPaths: BuildDataPaths?
     ): List<BuildRootDescriptor> = listOf()
 
     override fun getOutputRoots(context: CompileContext): Collection<File> {
@@ -56,7 +56,7 @@ object KotlinDataContainerTarget : BuildTarget<BuildRootDescriptor>(KotlinDataCo
     override fun findRootDescriptor(rootId: String?, rootIndex: BuildRootIndex?): BuildRootDescriptor? = null
 
     override fun computeDependencies(
-            targetRegistry: BuildTargetRegistry?,
-            outputIndex: TargetOutputIndex?
+        targetRegistry: BuildTargetRegistry?,
+        outputIndex: TargetOutputIndex?
     ): Collection<BuildTarget<*>>? = listOf()
 }

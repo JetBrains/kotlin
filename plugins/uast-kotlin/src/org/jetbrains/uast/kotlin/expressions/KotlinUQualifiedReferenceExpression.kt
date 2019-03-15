@@ -16,20 +16,17 @@
 
 package org.jetbrains.uast.kotlin
 
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
-import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.uast.UElement
-import org.jetbrains.uast.UExpression
 import org.jetbrains.uast.UQualifiedReferenceExpression
 import org.jetbrains.uast.UastQualifiedExpressionAccessType
+import org.jetbrains.uast.kotlin.internal.DelegatedMultiResolve
 
 class KotlinUQualifiedReferenceExpression(
         override val psi: KtDotQualifiedExpression,
         givenParent: UElement?
-) : KotlinAbstractUExpression(givenParent), UQualifiedReferenceExpression,
+) : KotlinAbstractUExpression(givenParent), UQualifiedReferenceExpression, DelegatedMultiResolve,
         KotlinUElementWithType, KotlinEvaluatableUElement {
     override val receiver by lz { KotlinConverter.convertOrEmpty(psi.receiverExpression, this) }
     override val selector by lz { KotlinConverter.convertOrEmpty(psi.selectorExpression, this) }
@@ -39,27 +36,4 @@ class KotlinUQualifiedReferenceExpression(
 
     override val resolvedName: String?
         get() = (resolve() as? PsiNamedElement)?.name
-}
-
-class KotlinUComponentQualifiedReferenceExpression(
-        override val psi: KtDestructuringDeclarationEntry,
-        givenParent: UElement?
-) : KotlinAbstractUExpression(givenParent), UQualifiedReferenceExpression,
-        KotlinUElementWithType, KotlinEvaluatableUElement {
-    override val accessType = UastQualifiedExpressionAccessType.SIMPLE
-    
-    override lateinit var receiver: UExpression
-        internal set
-
-    override lateinit var selector: UExpression
-        internal set
-
-    override val resolvedName: String?
-        get() = psi.analyze()[BindingContext.COMPONENT_RESOLVED_CALL, psi]?.resultingDescriptor?.name?.asString()
-    
-    override fun resolve(): PsiElement? {
-        val bindingContext = psi.analyze()
-        val descriptor = bindingContext[BindingContext.COMPONENT_RESOLVED_CALL, psi]?.resultingDescriptor ?: return null
-        return descriptor.toSource()?.getMaybeLightElement(this)
-    }
 }

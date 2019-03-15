@@ -1,4 +1,4 @@
-@file:Suppress("unused") // usages in build scripts are not tracked properly
+@file:Suppress("unused")
 
 /*
  * Copyright 2010-2017 JetBrains s.r.o.
@@ -23,13 +23,12 @@ import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.ConventionTask
 import org.gradle.api.plugins.ExtensionAware
-import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.kotlin.dsl.*
 import java.io.File
 
-fun Project.configureInstrumentation() {
+fun Project.configureFormInstrumentation() {
     plugins.matching { it::class.java.canonicalName.startsWith("org.jetbrains.kotlin.gradle.plugin") }.all {
         // When we change the output classes directory, Gradle will automatically configure
         // the test compile tasks to use the instrumented classes. Normally this is fine,
@@ -45,21 +44,20 @@ fun Project.configureInstrumentation() {
         // classes from the "friendly directory" to the compile classpath.
         val testCompile = tasks.findByName("compileTestKotlin") as AbstractCompile?
         testCompile?.doFirst {
-            val mainSourceSet = the<JavaPluginConvention>().sourceSets.getByName("main")
             testCompile.classpath = (testCompile.classpath
-                                     - mainSourceSet.output.classesDirs
-                                     + files((mainSourceSet as ExtensionAware).extra.get("classesDirsCopy")))
+                    - mainSourceSet.output.classesDirs
+                    + files((mainSourceSet as ExtensionAware).extra.get("classesDirsCopy")))
         }
     }
 
     val instrumentationClasspathCfg = configurations.create("instrumentationClasspath")
 
     dependencies {
-        instrumentationClasspathCfg(intellijDep()) { includeJars("javac2", "jdom", "asm-all", "jgoodies-forms") }
+        instrumentationClasspathCfg(intellijDep()) { includeJars("javac2", "jdom", "asm-all", rootProject = rootProject) }
     }
 
     afterEvaluate {
-        the<JavaPluginConvention>().sourceSets.all { sourceSetParam ->
+        sourceSets.all { sourceSetParam ->
             // This copy will ignore filters, but they are unlikely to be used.
             val classesDirs = (sourceSetParam.output.classesDirs as ConfigurableFileCollection).from as Collection<Any>
 
@@ -69,7 +67,8 @@ fun Project.configureInstrumentation() {
             logger.info("Saving old sources dir for project ${project.name}")
             val instrumentedClassesDir = File(project.buildDir, "classes/${sourceSetParam.name}-instrumented")
             (sourceSetParam.output.classesDirs as ConfigurableFileCollection).setFrom(instrumentedClassesDir)
-            val instrumentTask = project.tasks.create(sourceSetParam.getTaskName("instrument", "classes"), IntelliJInstrumentCodeTask::class.java)
+            val instrumentTask =
+                project.tasks.create(sourceSetParam.getTaskName("instrument", "classes"), IntelliJInstrumentCodeTask::class.java)
             instrumentTask.apply {
                 dependsOn(sourceSetParam.classesTaskName).onlyIf { !classesDirsCopy.isEmpty }
                 sourceSet = sourceSetParam
@@ -101,30 +100,42 @@ open class IntelliJInstrumentCodeTask : ConventionTask() {
     @Input
     var originalClassesDirs: FileCollection? = null
 
+    @get:Input
+    var instrumentNotNull: Boolean = false
+
     @get:InputFiles
     val sourceDirs: FileCollection
         get() = project.files(sourceSet!!.allSource.srcDirs.filter { !sourceSet!!.resources.contains(it) && it.exists() })
 
     @get:OutputDirectory
-    var output: File? = null
+    lateinit var output: File
 
     @TaskAction
     fun instrumentClasses() {
-        logger.info("input files are: ${originalClassesDirs?.joinToString("; ", transform = { "'${it.name}'${if (it.exists()) "" else " (does not exists)" }"})}")
-        output?.deleteRecursively()
+        logger.info(
+            "input files are: ${originalClassesDirs?.joinToString(
+                "; ",
+                transform = { "'${it.name}'${if (it.exists()) "" else " (does not exists)"}" })}"
+        )
+        output.deleteRecursively()
         copyOriginalClasses()
 
         val classpath = instrumentationClasspath!!
 
         ant.withGroovyBuilder {
-            "taskdef"("name" to "instrumentIdeaExtensions",
-                      "classpath" to classpath.asPath,
-                      "loaderref" to LOADER_REF,
-                      "classname" to "com.intellij.ant.InstrumentIdeaExtensions")
+            "taskdef"(
+                "name" to "instrumentIdeaExtensions",
+                "classpath" to classpath.asPath,
+                "loaderref" to LOADER_REF,
+                "classname" to "com.intellij.ant.InstrumentIdeaExtensions"
+            )
         }
 
         logger.info("Compiling forms and instrumenting code with nullability preconditions")
-        val instrumentNotNull = prepareNotNullInstrumenting(classpath.asPath)
+        if (instrumentNotNull) {
+            prepareNotNullInstrumenting(classpath.asPath)
+        }
+
         instrumentCode(sourceDirs, instrumentNotNull)
     }
 
@@ -135,14 +146,15 @@ open class IntelliJInstrumentCodeTask : ConventionTask() {
         }
     }
 
-    private fun prepareNotNullInstrumenting(classpath: String): Boolean {
+    private fun prepareNotNullInstrumenting(classpath: String) {
         ant.withGroovyBuilder {
-            "typedef"("name"  to "skip",
-                      "classpath" to classpath,
-                      "loaderref" to LOADER_REF,
-                      "classname" to FILTER_ANNOTATION_REGEXP_CLASS)
+            "typedef"(
+                "name" to "skip",
+                "classpath" to classpath,
+                "loaderref" to LOADER_REF,
+                "classname" to FILTER_ANNOTATION_REGEXP_CLASS
+            )
         }
-        return true
     }
 
     private fun instrumentCode(srcDirs: FileCollection, instrumentNotNull: Boolean) {
@@ -150,20 +162,22 @@ open class IntelliJInstrumentCodeTask : ConventionTask() {
 
         // Instrumentation needs to have access to sources of forms for inclusion
         val depSourceDirectorySets = project.configurations["compile"].dependencies.withType(ProjectDependency::class.java)
-                .map { p -> p.dependencyProject.the<JavaPluginConvention>().sourceSets.getByName("main").allSource.sourceDirectories }
+            .map { p -> p.dependencyProject.mainSourceSet.allSource.sourceDirectories }
         val instrumentationClasspath =
-                depSourceDirectorySets.fold(sourceSet!!.compileClasspath) { acc, v -> acc + v }.asPath.also {
-                    logger.info("Using following dependency source dirs: $it")
-                }
+            depSourceDirectorySets.fold(sourceSet!!.compileClasspath) { acc, v -> acc + v }.asPath.also {
+                logger.info("Using following dependency source dirs: $it")
+            }
 
         logger.info("Running instrumentIdeaExtensions with srcdir=${srcDirs.asPath}}, destdir=$output and classpath=$instrumentationClasspath")
 
         ant.withGroovyBuilder {
-            "instrumentIdeaExtensions"("srcdir" to srcDirs.asPath,
-                                       "destdir" to output,
-                                       "classpath" to instrumentationClasspath,
-                                       "includeantruntime" to false,
-                                       "instrumentNotNull" to instrumentNotNull) {
+            "instrumentIdeaExtensions"(
+                "srcdir" to srcDirs.asPath,
+                "destdir" to output,
+                "classpath" to instrumentationClasspath,
+                "includeantruntime" to false,
+                "instrumentNotNull" to instrumentNotNull
+            ) {
                 if (instrumentNotNull) {
                     ant.withGroovyBuilder {
                         "skip"("pattern" to "kotlin/Metadata")

@@ -1,0 +1,84 @@
+FILE fqName:<root> fileName:/genericClassInDifferentModule_m2.kt
+  CLASS CLASS name:Derived1 modality:FINAL visibility:public flags: superTypes:[Base<T>]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Derived1<T> flags:
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+    CONSTRUCTOR visibility:public <> (x:T) returnType:Derived1<T> flags:primary
+      VALUE_PARAMETER name:x index:0 type:T flags:
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Base(T)'
+          <T>: T
+          x: GET_VAR 'value-parameter x: T' type=T origin=null
+        INSTANCE_INITIALIZER_CALL classDescriptor='Derived1'
+    FUN name:foo visibility:public modality:OPEN <Y> ($this:Derived1<T>, y:Y) returnType:T flags:
+      overridden:
+        FUN name:foo visibility:public modality:ABSTRACT <Y> ($this:Base<T>, y:Y) returnType:T flags:
+      TYPE_PARAMETER name:Y index:0 variance: superTypes:[kotlin.Any?]
+      $this: VALUE_PARAMETER name:<this> type:Derived1<T> flags:
+      VALUE_PARAMETER name:y index:0 type:Y flags:
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='foo(Y): T'
+          CALL '<get-x>(): T' type=T origin=GET_PROPERTY
+            $this: GET_VAR 'this@Derived1: Derived1<T>' type=Derived1<T> origin=null
+    PROPERTY name:bar visibility:public modality:OPEN flags:var
+      FIELD PROPERTY_BACKING_FIELD name:bar type:T visibility:public flags:
+        EXPRESSION_BODY
+          GET_VAR 'value-parameter x: T' type=T origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-bar> visibility:public modality:OPEN <> ($this:Derived1<T>) returnType:T flags:
+        correspondingProperty: PROPERTY name:bar visibility:public modality:OPEN flags:var
+        overridden:
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-bar> visibility:public modality:ABSTRACT <> ($this:Base<T>) returnType:T flags:
+        $this: VALUE_PARAMETER name:<this> type:Derived1<T> flags:
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-bar>(): T'
+            GET_FIELD 'bar: T' type=T origin=null
+              receiver: GET_VAR 'this@Derived1: Derived1<T>' type=Derived1<T> origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-bar> visibility:public modality:OPEN <> ($this:Derived1<T>, <set-?>:T) returnType:kotlin.Unit flags:
+        correspondingProperty: PROPERTY name:bar visibility:public modality:OPEN flags:var
+        overridden:
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<set-bar> visibility:public modality:ABSTRACT <> ($this:Base<T>, <set-?>:T) returnType:kotlin.Unit flags:
+        $this: VALUE_PARAMETER name:<this> type:Derived1<T> flags:
+        VALUE_PARAMETER name:<set-?> index:0 type:T flags:
+        BLOCK_BODY
+          SET_FIELD 'bar: T' type=kotlin.Unit origin=null
+            receiver: GET_VAR 'this@Derived1: Derived1<T>' type=Derived1<T> origin=null
+            value: GET_VAR 'value-parameter <set-?>: T' type=T origin=null
+    PROPERTY name:exn visibility:public modality:OPEN flags:var
+      FUN name:<get-exn> visibility:public modality:OPEN <Z> ($this:Derived1<T>, $receiver:Z) returnType:T flags:
+        correspondingProperty: PROPERTY name:exn visibility:public modality:OPEN flags:var
+        overridden:
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-exn> visibility:public modality:ABSTRACT <Z> ($this:Base<T>, $receiver:Z) returnType:T flags:
+        TYPE_PARAMETER name:Z index:0 variance: superTypes:[kotlin.Any?]
+        $this: VALUE_PARAMETER name:<this> type:Derived1<T> flags:
+        $receiver: VALUE_PARAMETER name:<this> type:Z flags:
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-exn>() on Z: T'
+            CALL '<get-x>(): T' type=T origin=GET_PROPERTY
+              $this: GET_VAR 'this@Derived1: Derived1<T>' type=Derived1<T> origin=null
+      FUN name:<set-exn> visibility:public modality:OPEN <Z> ($this:Derived1<T>, $receiver:Z, value:T) returnType:kotlin.Unit flags:
+        correspondingProperty: PROPERTY name:exn visibility:public modality:OPEN flags:var
+        overridden:
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<set-exn> visibility:public modality:ABSTRACT <Z> ($this:Base<T>, $receiver:Z, <set-?>:T) returnType:kotlin.Unit flags:
+        TYPE_PARAMETER name:Z index:0 variance: superTypes:[kotlin.Any?]
+        $this: VALUE_PARAMETER name:<this> type:Derived1<T> flags:
+        $receiver: VALUE_PARAMETER name:<this> type:Z flags:
+        VALUE_PARAMETER name:value index:0 type:T flags:
+        BLOCK_BODY
+    PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL flags:val
+      FUN FAKE_OVERRIDE name:<get-x> visibility:public modality:FINAL <> ($this:Base<T>) returnType:T flags:
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL flags:val
+        overridden:
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:Base<T>) returnType:T flags:
+        $this: VALUE_PARAMETER name:<this> type:Base<T> flags:
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+      overridden:
+        FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+      overridden:
+        FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+      overridden:
+        FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:

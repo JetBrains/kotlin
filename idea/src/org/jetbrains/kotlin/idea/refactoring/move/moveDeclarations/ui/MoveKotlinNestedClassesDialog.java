@@ -20,8 +20,8 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.ide.util.ClassFilter;
 import com.intellij.ide.util.TreeClassChooser;
 import com.intellij.ide.util.TreeJavaClassChooserDialog;
-import com.intellij.openapi.editor.event.DocumentAdapter;
 import com.intellij.openapi.editor.event.DocumentEvent;
+import com.intellij.openapi.editor.event.DocumentListener;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.JavaPsiFacade;
@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.asJava.LightClassUtilsKt;
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration;
 import org.jetbrains.kotlin.idea.completion.CompletionUtilsKt;
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject;
+import org.jetbrains.kotlin.idea.core.completion.PackageLookupObject;
 import org.jetbrains.kotlin.idea.projectView.KtClassOrObjectTreeNode;
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringUtilKt;
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo;
@@ -58,6 +59,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
+
+import static org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.MoveKotlinDeclarationsProcessorKt.MoveSource;
 
 public class MoveKotlinNestedClassesDialog extends RefactoringDialog {
     private static final String RECENTS_KEY = MoveKotlinNestedClassesDialog.class.getName() + ".RECENTS_KEY";
@@ -167,16 +170,16 @@ public class MoveKotlinNestedClassesDialog extends RefactoringDialog {
                             Object lookupObject = lookupElement.getObject();
                             if (!(lookupObject instanceof DeclarationLookupObject)) return false;
                             PsiElement psiElement = ((DeclarationLookupObject) lookupObject).getPsiElement();
-                            if (!(psiElement instanceof KtClassOrObject)) return false;
-                            return KotlinRefactoringUtilKt.canRefactor(psiElement);
+                            if (lookupObject instanceof PackageLookupObject) return true;
+                            return (psiElement instanceof KtClassOrObject) && KotlinRefactoringUtilKt.canRefactor(psiElement);
                         }
                     }
             );
         }
         targetClassChooser.getChildComponent().getDocument().addDocumentListener(
-                new DocumentAdapter() {
+                new DocumentListener() {
                     @Override
-                    public void documentChanged(DocumentEvent e) {
+                    public void documentChanged(@NotNull DocumentEvent e) {
                         PsiClass aClass = JavaPsiFacade
                                 .getInstance(myProject)
                                 .findClass(targetClassChooser.getText(), GlobalSearchScope.projectScope(myProject));
@@ -262,7 +265,15 @@ public class MoveKotlinNestedClassesDialog extends RefactoringDialog {
         KotlinMoveTarget target = new KotlinMoveTargetForExistingElement((KtClassOrObject) targetClass);
         MoveDeclarationsDelegate.NestedClass delegate = new MoveDeclarationsDelegate.NestedClass();
         MoveDeclarationsDescriptor descriptor = new MoveDeclarationsDescriptor(
-                myProject, elementsToMove, target, delegate, false, false, false, false, moveCallback, openInEditorCheckBox.isSelected()
+                myProject,
+                MoveSource(elementsToMove),
+                target,
+                delegate,
+                false,
+                false,
+                false,
+                moveCallback,
+                openInEditorCheckBox.isSelected()
         );
         invokeRefactoring(new MoveKotlinDeclarationsProcessor(descriptor, Mover.Default.INSTANCE));
     }

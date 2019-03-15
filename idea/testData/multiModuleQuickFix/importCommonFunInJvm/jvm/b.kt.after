@@ -1,0 +1,9 @@
+// "Import" "true"
+// ERROR: Unresolved reference: foo
+package bar
+
+import foo.foo
+
+fun use() {
+    foo()
+}

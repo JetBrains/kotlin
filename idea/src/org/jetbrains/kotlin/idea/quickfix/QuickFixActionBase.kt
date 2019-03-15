@@ -22,7 +22,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import org.jetbrains.kotlin.psi.CREATEBYPATTERN_MAY_NOT_REFORMAT
+import org.jetbrains.kotlin.psi.CREATE_BY_PATTERN_MAY_NOT_REFORMAT
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
@@ -39,18 +39,18 @@ abstract class QuickFixActionBase<out T : PsiElement>(element: T) : IntentionAct
 
     final override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
         if (ApplicationManager.getApplication().isUnitTestMode) {
-            CREATEBYPATTERN_MAY_NOT_REFORMAT = true
+            CREATE_BY_PATTERN_MAY_NOT_REFORMAT = true
         }
         try {
             val element = element ?: return false
             return element.isValid &&
                    !element.project.isDisposed &&
-                   (file.manager.isInProject(file) || file is KtCodeFragment) &&
+                   (file.manager.isInProject(file) || file is KtCodeFragment || (file is KtFile && file.isScript())) &&
                    (file is KtFile || isCrossLanguageFix) &&
                    isAvailableImpl(project, editor, file)
         }
         finally {
-            CREATEBYPATTERN_MAY_NOT_REFORMAT = false
+            CREATE_BY_PATTERN_MAY_NOT_REFORMAT = false
         }
     }
 

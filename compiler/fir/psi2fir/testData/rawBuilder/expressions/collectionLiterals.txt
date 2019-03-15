@@ -1,0 +1,38 @@
+FILE: collectionLiterals.kt
+    public? final? annotation class Ann1 {
+        public? constructor(arr: IntArray): super<kotlin/Any>()
+
+        public? final? property arr(val): IntArray
+            public? get(): IntArray
+
+    }
+    public? final? annotation class Ann2 {
+        public? constructor(arr: DoubleArray): super<kotlin/Any>()
+
+        public? final? property arr(val): DoubleArray
+            public? get(): DoubleArray
+
+    }
+    public? final? annotation class Ann3 {
+        public? constructor(arr: Array<String>): super<kotlin/Any>()
+
+        public? final? property arr(val): Array<String>
+            public? get(): Array<String>
+
+    }
+    @Ann1(<implicitArrayOf>()) @Ann2(<implicitArrayOf>()) @Ann3(<implicitArrayOf>()) public? final? class Zero {
+        public? constructor(): super<kotlin/Any>()
+
+    }
+    @Ann1(<implicitArrayOf>(Int(1), Int(2))) public? final? class First {
+        public? constructor(): super<kotlin/Any>()
+
+    }
+    @Ann2(<implicitArrayOf>(Double(3.14))) public? final? class Second {
+        public? constructor(): super<kotlin/Any>()
+
+    }
+    @Ann3(<implicitArrayOf>(String(Alpha), String(Omega))) public? final? class Third {
+        public? constructor(): super<kotlin/Any>()
+
+    }

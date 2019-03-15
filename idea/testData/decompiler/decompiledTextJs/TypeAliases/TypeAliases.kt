@@ -26,3 +26,5 @@ class TypeAliases {
     @Suppress("TOPLEVEL_TYPEALIASES_ONLY")
     private typealias Parametrized<E, F> = Map<E, F>
 }
+
+// CHECK_PACKAGE

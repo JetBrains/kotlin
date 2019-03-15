@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS, NATIVE
+// TARGET_BACKEND: JVM
 // WITH_REFLECT
 
 import kotlin.reflect.KClass

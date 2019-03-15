@@ -32,21 +32,24 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.*
 
 private data class Condition(
-        val mask: Int, val constant: Int,
-        val maskInstruction: VarInsnNode,
-        val jumpInstruction: JumpInsnNode,
-        val varInsNode: VarInsnNode?
+    val mask: Int, val constant: Int,
+    val maskInstruction: VarInsnNode,
+    val jumpInstruction: JumpInsnNode,
+    val varInsNode: VarInsnNode?
 ) {
     val expandNotDelete = mask and constant != 0
     val varIndex = varInsNode?.`var` ?: 0
 }
 
-fun extractDefaultLambdaOffsetAndDescriptor(jvmSignature: JvmMethodSignature, functionDescriptor: FunctionDescriptor): Map<Int, ValueParameterDescriptor> {
+fun extractDefaultLambdaOffsetAndDescriptor(
+    jvmSignature: JvmMethodSignature,
+    functionDescriptor: FunctionDescriptor
+): Map<Int, ValueParameterDescriptor> {
     val valueParameters = jvmSignature.valueParameters
     val containingDeclaration = functionDescriptor.containingDeclaration
     val kind =
-            if (DescriptorUtils.isInterface(containingDeclaration)) OwnerKind.DEFAULT_IMPLS
-            else OwnerKind.getMemberOwnerKind(containingDeclaration)
+        if (DescriptorUtils.isInterface(containingDeclaration)) OwnerKind.DEFAULT_IMPLS
+        else OwnerKind.getMemberOwnerKind(containingDeclaration)
     val parameterOffsets = parameterOffsets(AsmUtil.isStaticMethod(kind, functionDescriptor), valueParameters)
     val valueParameterOffset = valueParameters.takeWhile { it.kind != JvmMethodParameterKind.VALUE }.size
 
@@ -59,11 +62,11 @@ fun extractDefaultLambdaOffsetAndDescriptor(jvmSignature: JvmMethodSignature, fu
 
 
 fun expandMaskConditionsAndUpdateVariableNodes(
-        node: MethodNode,
-        maskStartIndex: Int,
-        masks: List<Int>,
-        methodHandlerIndex: Int,
-        defaultLambdas: Map<Int, ValueParameterDescriptor>
+    node: MethodNode,
+    maskStartIndex: Int,
+    masks: List<Int>,
+    methodHandlerIndex: Int,
+    defaultLambdas: Map<Int, ValueParameterDescriptor>
 ): List<DefaultLambda> {
     fun isMaskIndex(varIndex: Int): Boolean {
         return maskStartIndex <= varIndex && varIndex < maskStartIndex + masks.size
@@ -74,8 +77,7 @@ fun expandMaskConditionsAndUpdateVariableNodes(
             if (isMaskIndex(it.`var`)) {
                 /*if slot for default mask is updated than we occurred in actual function body*/
                 return@takeWhile it.opcode == Opcodes.ILOAD
-            }
-            else if (methodHandlerIndex == it.`var`) {
+            } else if (methodHandlerIndex == it.`var`) {
                 return@takeWhile it.opcode == Opcodes.ALOAD
             }
         }
@@ -85,24 +87,24 @@ fun expandMaskConditionsAndUpdateVariableNodes(
     val conditions = maskProcessingHeader.filterIsInstance<VarInsnNode>().mapNotNull {
         if (isMaskIndex(it.`var`) &&
             it.next?.next?.opcode == Opcodes.IAND &&
-            it.next.next.next?.opcode == Opcodes.IFEQ) {
+            it.next.next.next?.opcode == Opcodes.IFEQ
+        ) {
             val jumpInstruction = it.next?.next?.next as JumpInsnNode
             Condition(
-                    masks[it.`var` - maskStartIndex],
-                    getConstant(it.next),
-                    it,
-                    jumpInstruction,
-                    jumpInstruction.label.previous as VarInsnNode
+                masks[it.`var` - maskStartIndex],
+                getConstant(it.next),
+                it,
+                jumpInstruction,
+                jumpInstruction.label.previous as VarInsnNode
             )
-        }
-        else if (methodHandlerIndex == it.`var` &&
-                 it.next?.opcode == Opcodes.IFNULL &&
-                 it.next.next?.opcode == Opcodes.NEW) {
+        } else if (methodHandlerIndex == it.`var` &&
+            it.next?.opcode == Opcodes.IFNULL &&
+            it.next.next?.opcode == Opcodes.NEW
+        ) {
             //Always delete method handle for now
             //This logic should be updated when method handles would be supported
             Condition(0, 0, it, it.next as JumpInsnNode, null)
-        }
-        else null
+        } else null
     }.toList()
 
     val toDelete = linkedSetOf<AbstractInsnNode>()
@@ -136,10 +138,10 @@ fun expandMaskConditionsAndUpdateVariableNodes(
 
 
 private fun extractDefaultLambdasInfo(
-        conditions: List<Condition>,
-        defaultLambdas: Map<Int, ValueParameterDescriptor>,
-        toDelete: MutableCollection<AbstractInsnNode>,
-        toInsert: MutableList<Pair<AbstractInsnNode, AbstractInsnNode>>
+    conditions: List<Condition>,
+    defaultLambdas: Map<Int, ValueParameterDescriptor>,
+    toDelete: MutableCollection<AbstractInsnNode>,
+    toInsert: MutableList<Pair<AbstractInsnNode, AbstractInsnNode>>
 ): List<DefaultLambda> {
     val defaultLambdaConditions = conditions.filter { it.expandNotDelete && defaultLambdas.contains(it.varIndex) }
     return defaultLambdaConditions.map {
@@ -166,14 +168,16 @@ private fun extractDefaultLambdasInfo(
                     addAll(InsnSequence(instanceInstuction, varAssignmentInstruction.next).toList())
                 }
 
-                val needReification = instanceCreation.previous.takeIf { isNeedClassReificationMarker(it) }?.let { toDelete.add(it) } != null
+                val needReification =
+                    instanceCreation.previous.takeIf { isNeedClassReificationMarker(it) }?.let { toDelete.add(it) } != null
                 Triple(Type.getObjectType(instanceInstuction.owner), Type.getArgumentTypes(instanceInstuction.desc), needReification)
             }
 
             is FieldInsnNode -> {
                 toDelete.addAll(InsnSequence(instanceInstuction, varAssignmentInstruction.next).toList())
 
-                val needReification = instanceInstuction.previous.takeIf { isNeedClassReificationMarker(it) }?.let { toDelete.add(it) } != null
+                val needReification =
+                    instanceInstuction.previous.takeIf { isNeedClassReificationMarker(it) }?.let { toDelete.add(it) } != null
 
                 Triple(Type.getObjectType(instanceInstuction.owner), emptyArray<Type>(), needReification)
             }
@@ -190,10 +194,10 @@ private fun extractDefaultLambdasInfo(
 //at inlining it would be substituted with parameters store
 private fun defaultLambdaFakeCallStub(args: Array<Type>, lambdaOffset: Int): MethodInsnNode {
     return MethodInsnNode(
-            Opcodes.INVOKESTATIC,
-            DEFAULT_LAMBDA_FAKE_CALL,
-            DEFAULT_LAMBDA_FAKE_CALL + lambdaOffset,
-            Type.getMethodDescriptor(Type.VOID_TYPE, *args),
-            false
+        Opcodes.INVOKESTATIC,
+        DEFAULT_LAMBDA_FAKE_CALL,
+        DEFAULT_LAMBDA_FAKE_CALL + lambdaOffset,
+        Type.getMethodDescriptor(Type.VOID_TYPE, *args),
+        false
     )
 }

@@ -22,7 +22,8 @@ import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
 import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableTypeConstructor
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration.IntersectionStrategy.*
 import org.jetbrains.kotlin.types.checker.*
-import org.jetbrains.kotlin.types.checker.CaptureStatus.*
+import org.jetbrains.kotlin.types.model.CaptureStatus
+import org.jetbrains.kotlin.types.model.CaptureStatus.*
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.typeUtil.isNothing
@@ -205,10 +206,12 @@ class TypeApproximator {
         val baseResult = when (conf.intersection) {
             ALLOWED -> if (!thereIsApproximation) return null else intersectTypes(newTypes)
             TO_FIRST -> if (toSuper) newTypes.first() else return type.defaultResult(toSuper = false)
-        // commonSupertypeCalculator should handle flexible types correctly
-            TO_COMMON_SUPERTYPE -> if (toSuper) NewCommonSuperTypeCalculator.commonSuperType(newTypes) else return type.defaultResult(
-                toSuper = false
-            )
+            // commonSupertypeCalculator should handle flexible types correctly
+            TO_COMMON_SUPERTYPE -> {
+                if (!toSuper) return type.defaultResult(toSuper = false)
+                val resultType = NewCommonSuperTypeCalculator.commonSuperType(newTypes)
+                approximateToSuperType(resultType.unwrap(), conf) ?: resultType.unwrap()
+            }
         }
 
         return if (type.isMarkedNullable) baseResult.makeNullableAsSpecified(true) else baseResult

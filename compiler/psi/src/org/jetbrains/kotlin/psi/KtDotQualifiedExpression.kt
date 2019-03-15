@@ -57,9 +57,11 @@ class KtDotQualifiedExpression : KtExpressionImplStub<KotlinPlaceHolderStub<KtDo
 
     private fun getChildExpressionsByStub(stub: KotlinPlaceHolderStub<KtDotQualifiedExpression>): Array<KtExpression>? {
         if (stub.getParentStubOfType(KtImportDirective::class.java) == null &&
-            stub.getParentStubOfType(KtPackageDirective::class.java) == null) {
+            stub.getParentStubOfType(KtPackageDirective::class.java) == null &&
+            stub.getParentStubOfType(KtValueArgument::class.java) == null
+        ) {
             LOG.error(
-                "KtDotQualifiedExpression should only have stubs inside import or package directives.\n" +
+                "KtDotQualifiedExpression should only have stubs inside import, argument or package directives.\n" +
                         "Stubs were created for:\n$text\nFile text:\n${containingFile.text}"
             )
             return null

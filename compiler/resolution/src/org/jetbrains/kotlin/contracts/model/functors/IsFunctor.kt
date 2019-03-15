@@ -16,35 +16,34 @@
 
 package org.jetbrains.kotlin.contracts.model.functors
 
+import org.jetbrains.kotlin.contracts.model.Computation
+import org.jetbrains.kotlin.contracts.model.ConditionalEffect
+import org.jetbrains.kotlin.contracts.model.ESEffect
+import org.jetbrains.kotlin.contracts.model.ESValue
+import org.jetbrains.kotlin.contracts.model.structure.ESConstants
+import org.jetbrains.kotlin.contracts.model.structure.ESIs
 import org.jetbrains.kotlin.contracts.model.structure.ESReturns
-import org.jetbrains.kotlin.contracts.model.*
-import org.jetbrains.kotlin.contracts.model.structure.*
 import org.jetbrains.kotlin.types.KotlinType
 
-class IsFunctor(val type: KotlinType, val isNegated: Boolean) : AbstractReducingFunctor() {
+class IsFunctor(constants: ESConstants, val type: KotlinType, val isNegated: Boolean) : AbstractReducingFunctor(constants) {
     override fun doInvocation(arguments: List<Computation>): List<ESEffect> {
-        assert(arguments.size == 1, { "Wrong size of arguments list for Unary operator: expected 1, got ${arguments.size}" })
+        assert(arguments.size == 1) { "Wrong size of arguments list for Unary operator: expected 1, got ${arguments.size}" }
         return invokeWithArguments(arguments[0])
     }
 
     fun invokeWithArguments(arg: Computation): List<ESEffect> {
         return if (arg is ESValue)
-            invokeWithValue(arg, null)
+            invokeWithValue(arg)
         else
-            arg.effects.flatMap {
-                if (it !is ConditionalEffect || it.simpleEffect !is ESReturns || it.simpleEffect.value == ESConstant.WILDCARD)
-                    listOf(it)
-                else
-                    invokeWithValue(it.simpleEffect.value, it.condition)
-            }
+            emptyList()
     }
 
-    private fun invokeWithValue(value: ESValue, additionalCondition: ESExpression?): List<ConditionalEffect> {
+    private fun invokeWithValue(value: ESValue): List<ConditionalEffect> {
         val trueIs = ESIs(value, this)
-        val falseIs = ESIs(value, IsFunctor(type, isNegated.not()))
+        val falseIs = ESIs(value, IsFunctor(constants, type, isNegated.not()))
 
-        val trueResult = ConditionalEffect(trueIs.and(additionalCondition), ESReturns(true.lift()))
-        val falseResult = ConditionalEffect(falseIs.and(additionalCondition), ESReturns(false.lift()))
+        val trueResult = ConditionalEffect(trueIs, ESReturns(constants.trueValue))
+        val falseResult = ConditionalEffect(falseIs, ESReturns(constants.falseValue))
         return listOf(trueResult, falseResult)
     }
 }

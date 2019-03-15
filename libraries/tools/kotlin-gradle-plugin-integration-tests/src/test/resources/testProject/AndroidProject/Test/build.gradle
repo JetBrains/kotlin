@@ -1,3 +1,5 @@
+import org.gradle.util.VersionNumber
+
 apply plugin: 'com.android.test'
 apply plugin: 'kotlin-android'
 
@@ -27,4 +29,5 @@ android {
             }
         }
     }
+    lintOptions.abortOnError = false
 }

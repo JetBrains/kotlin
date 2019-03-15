@@ -1,0 +1,24 @@
+FILE: functionX.kt
+    public final property x(val): R|kotlin/jvm/functions/Function0<kotlin/Int>| = function  R|error: Not supported: FirImplicitTypeRefImpl|.<anonymous>(): R|error: Not supported: FirImplicitTypeRefImpl| {
+        return  {
+            Int(42)
+        }
+
+    }
+
+        public get(): R|kotlin/jvm/functions/Function0<kotlin/Int>|
+    public final property y(val): R|kotlin/Function1<kotlin/String, kotlin/String>| = function  R|error: Not supported: FirImplicitTypeRefImpl|.<anonymous>(): R|error: Not supported: FirImplicitTypeRefImpl| {
+        return  {
+            <Unresolved name: it>#
+        }
+
+    }
+
+        public get(): R|kotlin/Function1<kotlin/String, kotlin/String>|
+    public final class MyFunction : R|kotlin/Function2<kotlin/Int, kotlin/String, kotlin/Unit>| {
+        public constructor(): super<R|kotlin/Any|>()
+
+        public final override function invoke(p1: R|kotlin/Int|, p2: R|kotlin/String|): R|kotlin/Unit| {
+        }
+
+    }

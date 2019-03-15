@@ -1,0 +1,24 @@
+buildscript {
+    repositories {
+        jcenter()
+        mavenCentral()
+        maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.0-rc-6"
+    }
+}
+apply plugin: "kotlin"
+repositories {
+    jcenter()
+    mavenCentral()
+    maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
+}
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib"
+}
+compileKotlin {
+    kotlinOptions {
+        freeCompilerArgs = ["-XXLanguage:+InlineClasses"]
+    }
+}

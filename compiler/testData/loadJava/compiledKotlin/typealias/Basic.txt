@@ -1,16 +1,16 @@
 package test
 
-public val x1: test.S /* = kotlin.String */ = ""
+public val x1: test.S /* = kotlin.String */
     public fun <get-x1>(): test.S /* = kotlin.String */
-public val x2: test.SS /* = kotlin.String */ = ""
+public val x2: test.SS /* = kotlin.String */
     public fun <get-x2>(): test.SS /* = kotlin.String */
-public val x3: test.SSS /* = kotlin.String */ = ""
+public val x3: test.SSS /* = kotlin.String */
     public fun <get-x3>(): test.SSS /* = kotlin.String */
-public val x4: test.S? /* = kotlin.String? */ = ""
+public val x4: test.S? /* = kotlin.String? */
     public fun <get-x4>(): test.S? /* = kotlin.String? */
-public val x5: test.SS? /* = kotlin.String? */ = ""
+public val x5: test.SS? /* = kotlin.String? */
     public fun <get-x5>(): test.SS? /* = kotlin.String? */
-public val x6: test.SSS? /* = kotlin.String? */ = ""
+public val x6: test.SSS? /* = kotlin.String? */
     public fun <get-x6>(): test.SSS? /* = kotlin.String? */
 public typealias S = kotlin.String
 public typealias SS = test.S

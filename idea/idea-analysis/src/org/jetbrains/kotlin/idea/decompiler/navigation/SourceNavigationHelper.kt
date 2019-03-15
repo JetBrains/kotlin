@@ -18,6 +18,7 @@ import com.intellij.psi.stubs.StringStubIndexExtension
 import com.intellij.util.containers.ContainerUtil
 import gnu.trove.THashSet
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.analyzer.common.CommonPlatform
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.idea.caches.project.BinaryModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.getBinaryLibrariesModuleInfos
@@ -29,11 +30,13 @@ import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionFqnNameIndex
 import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelPropertyFqnNameIndex
 import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelTypeAliasFqNameIndex
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
+import org.jetbrains.kotlin.idea.util.isExpectDeclaration
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.debugText.getDebugText
 import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 object SourceNavigationHelper {
     private val LOG = Logger.getInstance(SourceNavigationHelper::class.java)
@@ -50,23 +53,18 @@ object SourceNavigationHelper {
         SourceNavigationHelper.forceResolve = forceResolve
     }
 
-    private fun targetScope(declaration: KtNamedDeclaration, navigationKind: NavigationKind): GlobalSearchScope? {
+    private fun targetScopes(declaration: KtNamedDeclaration, navigationKind: NavigationKind): List<GlobalSearchScope> {
         val containingFile = declaration.containingKtFile
-        val vFile = containingFile.virtualFile ?: return null
+        val vFile = containingFile.virtualFile ?: return emptyList()
 
         return when (navigationKind) {
             NavigationKind.CLASS_FILES_TO_SOURCES -> {
                 val binaryModuleInfos = getBinaryLibrariesModuleInfos(declaration.project, vFile)
-                binaryModuleInfos.map { binaryModuleInfo ->
-                    val platform = binaryModuleInfo.platform
-                    if (platform == null || platform == TargetPlatform.Common) {
-                        listOf(binaryModuleInfo)
-                    } else {
-                        binaryModuleInfo.dependencies().filterIsInstance<BinaryModuleInfo>().filter {
-                            it.platform == TargetPlatform.Common
-                        } + binaryModuleInfo
-                    }
-                }.flatten().mapNotNull { it.sourcesModuleInfo?.sourceScope() }.union()
+                val primaryScope = binaryModuleInfos.mapNotNull { it.sourcesModuleInfo?.sourceScope() }.union()
+                val additionalScope = binaryModuleInfos.flatMap {
+                    it.associatedCommonLibraries()
+                }.mapNotNull { it.sourcesModuleInfo?.sourceScope() }.union()
+                primaryScope + additionalScope
             }
 
             NavigationKind.SOURCES_TO_CLASS_FILES -> getLibrarySourcesModuleInfos(
@@ -76,7 +74,17 @@ object SourceNavigationHelper {
         }
     }
 
-    private fun Collection<GlobalSearchScope>.union() = if (this.isNotEmpty()) GlobalSearchScope.union(this.toTypedArray()) else null
+    private fun BinaryModuleInfo.associatedCommonLibraries(): List<BinaryModuleInfo> {
+        val platform = platform
+        if (platform == null || platform is CommonPlatform) return emptyList()
+
+        return dependencies().filterIsInstance<BinaryModuleInfo>().filter {
+            it.platform is CommonPlatform
+        }
+    }
+
+    private fun Collection<GlobalSearchScope>.union(): List<GlobalSearchScope> =
+        if (this.isNotEmpty()) listOf(GlobalSearchScope.union(this.toTypedArray())) else emptyList()
 
     private fun haveRenamesInImports(files: Collection<KtFile>) = files.any { it.importDirectives.any { it.aliasName != null } }
 
@@ -183,8 +191,9 @@ object SourceNavigationHelper {
         index: StringStubIndexExtension<T>
     ): T? {
         val classFqName = entity.fqName ?: return null
-        val scope = targetScope(entity, navigationKind) ?: return null
-        return index.get(classFqName.asString(), entity.project, scope).firstOrNull()
+        return targetScopes(entity, navigationKind).firstNotNullResult {
+            index.get(classFqName.asString(), entity.project, it).firstOrNull()
+        }
     }
 
     private fun findClassOrObject(decompiledClassOrObject: KtClassOrObject, navigationKind: NavigationKind): KtClassOrObject? {
@@ -195,17 +204,17 @@ object SourceNavigationHelper {
         declaration: KtNamedDeclaration,
         navigationKind: NavigationKind
     ): Collection<KtNamedDeclaration> {
-        val scope = targetScope(declaration, navigationKind) ?: return emptyList()
-        val index = getIndexForTopLevelPropertyOrFunction(declaration)
-        return index.get(declaration.fqName!!.asString(), declaration.project, scope)
-    }
+        val scopes = targetScopes(declaration, navigationKind)
 
-    private fun getIndexForTopLevelPropertyOrFunction(
-        decompiledDeclaration: KtNamedDeclaration
-    ): StringStubIndexExtension<out KtNamedDeclaration> = when (decompiledDeclaration) {
-        is KtNamedFunction -> KotlinTopLevelFunctionFqnNameIndex.getInstance()
-        is KtProperty -> KotlinTopLevelPropertyFqnNameIndex.getInstance()
-        else -> throw IllegalArgumentException("Neither function nor declaration: " + decompiledDeclaration::class.java.name)
+        val index: StringStubIndexExtension<out KtNamedDeclaration> = when (declaration) {
+            is KtNamedFunction -> KotlinTopLevelFunctionFqnNameIndex.getInstance()
+            is KtProperty -> KotlinTopLevelPropertyFqnNameIndex.getInstance()
+            else -> throw IllegalArgumentException("Neither function nor declaration: " + declaration::class.java.name)
+        }
+
+        return scopes.flatMap { scope ->
+            index.get(declaration.fqName!!.asString(), declaration.project, scope).sortedBy { it.isExpectDeclaration() }
+        }
     }
 
     private fun getInitialMemberCandidates(
@@ -265,7 +274,7 @@ object SourceNavigationHelper {
             SourceNavigationHelper.NavigationKind.SOURCES_TO_CLASS_FILES -> {
                 val file = from.containingFile
                 if (file is KtFile && file.isCompiled) return from
-                if (!ProjectRootsUtil.isInContent(from, false, true, false, true)) return from
+                if (!ProjectRootsUtil.isInContent(from, false, true, false, true, false)) return from
                 if (KtPsiUtil.isLocal(from)) return from
             }
         }

@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.script
 
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
@@ -45,7 +44,9 @@ class ScriptContentLoader(private val project: Project) {
                     // TODO: consider advanced matching using semantic similar to actual resolving
                     scriptDefinition.acceptedAnnotations.find { ann ->
                         psiAnn.typeName.let { it == ann.simpleName || it == ann.qualifiedName }
-                    }?.let { constructAnnotation(psiAnn, classLoader.loadClass(it.qualifiedName).kotlin as KClass<out Annotation>) }
+                    }?.let {
+                        constructAnnotation(psiAnn, classLoader.loadClass(it.qualifiedName).kotlin as KClass<out Annotation>, project)
+                    }
                 }
         }
     }
@@ -59,8 +60,8 @@ class ScriptContentLoader(private val project: Project) {
 
     class BasicScriptContents(virtualFile: VirtualFile, getAnnotations: () -> Iterable<Annotation>) : ScriptContents {
         override val file: File = File(virtualFile.path)
-        override val annotations: Iterable<Annotation> by lazy { getAnnotations() }
-        override val text: CharSequence? by lazy { virtualFile.inputStream.reader(charset = virtualFile.charset).readText() }
+        override val annotations: Iterable<Annotation> by lazy(LazyThreadSafetyMode.PUBLICATION) { getAnnotations() }
+        override val text: CharSequence? by lazy(LazyThreadSafetyMode.PUBLICATION) { virtualFile.inputStream.reader(charset = virtualFile.charset).readText() }
     }
 
     fun loadContentsAndResolveDependencies(
@@ -78,7 +79,6 @@ class ScriptContentLoader(private val project: Project) {
         catch (e: Throwable) {
             e.asResolveFailure(scriptDef)
         }
-        ServiceManager.getService(project, ScriptReportSink::class.java)?.attachReports(file, result.reports)
         return result
     }
 

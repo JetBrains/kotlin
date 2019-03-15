@@ -22,6 +22,10 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.DescriptorRendererOptions
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.checker.StrictEqualityTypeChecker
+import org.jetbrains.kotlin.types.model.FlexibleTypeMarker
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.SimpleTypeMarker
+import org.jetbrains.kotlin.types.model.TypeArgumentListMarker
 
 /**
  * [KotlinType] has only two direct subclasses: [WrappedType] and [UnwrappedType].
@@ -40,7 +44,7 @@ import org.jetbrains.kotlin.types.checker.StrictEqualityTypeChecker
  *
  * For type creation see [KotlinTypeFactory].
  */
-sealed class KotlinType : Annotated {
+sealed class KotlinType : Annotated, KotlinTypeMarker {
 
     abstract val constructor: TypeConstructor
     abstract val arguments: List<TypeProjection>
@@ -78,7 +82,7 @@ abstract class WrappedType : KotlinType() {
     override val isMarkedNullable: Boolean get() = delegate.isMarkedNullable
     override val memberScope: MemberScope get() = delegate.memberScope
 
-    override final fun unwrap(): UnwrappedType {
+    final override fun unwrap(): UnwrappedType {
         var result = delegate
         while (result is WrappedType) {
             result = result.delegate
@@ -89,8 +93,7 @@ abstract class WrappedType : KotlinType() {
     override fun toString(): String {
         return if (isComputed()) {
             delegate.toString()
-        }
-        else {
+        } else {
             "<Not computed yet>"
         }
     }
@@ -107,11 +110,11 @@ abstract class WrappedType : KotlinType() {
  *
  * todo: specify what happens with internal structure when we apply some [TypeSubstitutor]
  */
-sealed class UnwrappedType: KotlinType() {
+sealed class UnwrappedType : KotlinType() {
     abstract fun replaceAnnotations(newAnnotations: Annotations): UnwrappedType
     abstract fun makeNullableAsSpecified(newNullability: Boolean): UnwrappedType
 
-    override final fun unwrap(): UnwrappedType = this
+    final override fun unwrap(): UnwrappedType = this
 }
 
 /**
@@ -119,18 +122,18 @@ sealed class UnwrappedType: KotlinType() {
  * then all your types are simple.
  * Or more precisely, all instances are subclasses of [SimpleType] or [WrappedType] (which contains [SimpleType] inside).
  */
-abstract class SimpleType : UnwrappedType() {
+abstract class SimpleType : UnwrappedType(), SimpleTypeMarker, TypeArgumentListMarker {
     abstract override fun replaceAnnotations(newAnnotations: Annotations): SimpleType
     abstract override fun makeNullableAsSpecified(newNullability: Boolean): SimpleType
 
     override fun toString(): String {
         return buildString {
-            for ((annotation, target) in annotations.getAllAnnotations()) {
-                append("[", DescriptorRenderer.DEBUG_TEXT.renderAnnotation(annotation, target), "] ")
+            for (annotation in annotations) {
+                append("[", DescriptorRenderer.DEBUG_TEXT.renderAnnotation(annotation), "] ")
             }
 
             append(constructor)
-            if (!arguments.isEmpty()) arguments.joinTo(this, separator = ", ", prefix = "<", postfix = ">")
+            if (arguments.isNotEmpty()) arguments.joinTo(this, separator = ", ", prefix = "<", postfix = ">")
             if (isMarkedNullable) append("?")
         }
     }
@@ -138,7 +141,7 @@ abstract class SimpleType : UnwrappedType() {
 
 // lowerBound is a subtype of upperBound
 abstract class FlexibleType(val lowerBound: SimpleType, val upperBound: SimpleType) :
-        UnwrappedType(), SubtypingRepresentatives {
+    UnwrappedType(), SubtypingRepresentatives, FlexibleTypeMarker {
 
     abstract val delegate: SimpleType
 
@@ -163,5 +166,5 @@ abstract class FlexibleType(val lowerBound: SimpleType, val upperBound: SimpleTy
 val KotlinType.isError: Boolean
     get() = unwrap().let { unwrapped ->
         unwrapped is ErrorType ||
-        (unwrapped is FlexibleType && unwrapped.delegate is ErrorType)
+                (unwrapped is FlexibleType && unwrapped.delegate is ErrorType)
     }

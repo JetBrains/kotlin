@@ -1,0 +1,54 @@
+plugins {
+    id("org.jetbrains.kotlin.multiplatform").version("<pluginMarkerVersion>")
+}
+
+repositories {
+    mavenLocal()
+    jcenter()
+    maven { setUrl("https://dl.bintray.com/kotlin/kotlinx.html/") }
+}
+
+kotlin {
+    val jvmWithoutJava = jvm("jvmWithoutJava")
+    val jvmWithJava = targetFromPreset(presets["jvmWithJava"])
+    val js = js()
+    val macos64 = macosX64("macos64")
+    val linux64 = linuxX64("linux64")
+    val mingw64 = mingwX64("mingw64")
+    
+    sourceSets {
+        val commonTest by getting {
+        	dependencies {
+        		implementation(kotlin("test-common"))
+        		implementation(kotlin("test-annotations-common"))
+        	}
+        }
+
+        val main by getting
+        val jvmWithoutJavaMain = jvmWithoutJava.compilations["main"].defaultSourceSet
+        configure(listOf(main, jvmWithoutJavaMain)) {
+        	dependencies {
+        		implementation(kotlin("stdlib"))
+        	}
+        }
+
+        val test by getting
+        val jvmWithoutJavaTest = jvmWithoutJava.compilations["test"].defaultSourceSet
+        configure(listOf(test, jvmWithoutJavaTest)) {
+        	dependencies {
+        		implementation(kotlin("test-junit"))
+        	}
+        }
+
+        js.compilations["test"].defaultSourceSet {
+        	dependencies {
+        		implementation(kotlin("test-js"))
+        	}
+        }
+
+		val nativeMain by creating
+		configure(listOf(macos64, linux64, mingw64)) {
+            compilations["main"].defaultSourceSet.dependsOn(nativeMain)
+		}
+    }
+}

@@ -1,0 +1,2 @@
+public final class InheritMethodsDifferentReturnTypesGeneric : R|java/lang/Object| {
+}

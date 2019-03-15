@@ -19,16 +19,20 @@ package org.jetbrains.kotlin.codegen.inline
 import gnu.trove.TIntIntHashMap
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.SourceInfo
+import org.jetbrains.kotlin.codegen.inline.SMAP.Companion.END
+import org.jetbrains.kotlin.codegen.inline.SMAP.Companion.FILE_SECTION
+import org.jetbrains.kotlin.codegen.inline.SMAP.Companion.LINE_SECTION
+import org.jetbrains.kotlin.codegen.inline.SMAP.Companion.STRATA_SECTION
 import java.util.*
 
-val KOTLIN_STRATA_NAME = "Kotlin"
-val KOTLIN_DEBUG_STRATA_NAME = "KotlinDebug"
+const val KOTLIN_STRATA_NAME = "Kotlin"
+const val KOTLIN_DEBUG_STRATA_NAME = "KotlinDebug"
 
 //TODO join parameter
 class SMAPBuilder(
-        val source: String,
-        val path: String,
-        private val fileMappings: List<FileMapping>
+    val source: String,
+    val path: String,
+    private val fileMappings: List<FileMapping>
 ) {
     private val header = "SMAP\n$source\nKotlin"
 
@@ -49,27 +53,29 @@ class SMAPBuilder(
     }
 
     private fun generateDefaultStrata(realMappings: List<FileMapping>): String {
-        val fileIds = "*F" + realMappings.mapIndexed { id, file -> "\n${file.toSMAPFile(id + 1)}" }.joinToString("")
-        val lineMappings = "*L" + realMappings.joinToString("") { it.toSMAPMapping() }
-        return "*S $KOTLIN_STRATA_NAME\n$fileIds\n$lineMappings\n*E\n"
+        val fileIds = FILE_SECTION + realMappings.mapIndexed { id, file -> "\n${file.toSMAPFile(id + 1)}" }.joinToString("")
+        val lineMappings = LINE_SECTION + realMappings.joinToString("") { it.toSMAPMapping() }
+        return "$STRATA_SECTION $KOTLIN_STRATA_NAME\n$fileIds\n$lineMappings\n$END\n"
     }
 
     private fun generateDebugStrata(realMappings: List<FileMapping>): String {
         val combinedMapping = FileMapping(source, path)
         realMappings.forEach { fileMapping ->
             fileMapping.lineMappings.filter { it.callSiteMarker != null }.forEach { (_, dest, range, callSiteMarker) ->
-                combinedMapping.addRangeMapping(RangeMapping(
+                combinedMapping.addRangeMapping(
+                    RangeMapping(
                         callSiteMarker!!.lineNumber, dest, range
-                ))
+                    )
+                )
             }
         }
 
         if (combinedMapping.lineMappings.isEmpty()) return ""
 
         val newMappings = listOf(combinedMapping)
-        val fileIds = "*F" + newMappings.mapIndexed { id, file -> "\n${file.toSMAPFile(id + 1)}" }.joinToString("")
-        val lineMappings = "*L" + newMappings.joinToString("") { it.toSMAPMapping() }
-        return "*S $KOTLIN_DEBUG_STRATA_NAME\n$fileIds\n$lineMappings\n*E\n"
+        val fileIds = FILE_SECTION + newMappings.mapIndexed { id, file -> "\n${file.toSMAPFile(id + 1)}" }.joinToString("")
+        val lineMappings = LINE_SECTION + newMappings.joinToString("") { it.toSMAPMapping() }
+        return "$STRATA_SECTION $KOTLIN_DEBUG_STRATA_NAME\n$fileIds\n$lineMappings\n$END\n"
     }
 
     private fun RangeMapping.toSMAP(fileId: Int): String {
@@ -88,7 +94,7 @@ class SMAPBuilder(
 }
 
 open class NestedSourceMapper(
-        override val parent: SourceMapper, val ranges: List<RangeMapping>, sourceInfo: SourceInfo
+    override val parent: SourceMapper, val ranges: List<RangeMapping>, sourceInfo: SourceInfo
 ) : DefaultSourceMapper(sourceInfo) {
 
     private val visitedLines = TIntIntHashMap()
@@ -100,10 +106,9 @@ open class NestedSourceMapper(
 
         return if (mappedLineNumber > 0) {
             mappedLineNumber
-        }
-        else {
+        } else {
             val rangeForMapping =
-                    (if (lastVisitedRange?.contains(lineNumber) ?: false) lastVisitedRange!! else findMappingIfExists(lineNumber))
+                (if (lastVisitedRange?.contains(lineNumber) == true) lastVisitedRange!! else findMappingIfExists(lineNumber))
                     ?: error("Can't find range to map line $lineNumber in ${sourceInfo.source}: ${sourceInfo.pathOrCleanFQN}")
             val sourceLineNumber = rangeForMapping.mapDestToSource(lineNumber)
             val newLineNumber = parent.mapLineNumber(sourceLineNumber, rangeForMapping.parent!!.name, rangeForMapping.parent!!.path)
@@ -116,8 +121,7 @@ open class NestedSourceMapper(
     }
 
     private fun findMappingIfExists(lineNumber: Int): RangeMapping? {
-        val index = ranges.binarySearch(RangeMapping(lineNumber, lineNumber, 1), Comparator {
-            value, key ->
+        val index = ranges.binarySearch(RangeMapping(lineNumber, lineNumber, 1), Comparator { value, key ->
             if (key.dest in value) 0 else RangeMapping.Comparator.compare(value, key)
         })
         return if (index < 0) null else ranges[index]
@@ -125,7 +129,7 @@ open class NestedSourceMapper(
 }
 
 open class InlineLambdaSourceMapper(
-        parent: SourceMapper, smap: SMAPAndMethodNode
+    parent: SourceMapper, smap: SMAPAndMethodNode
 ) : NestedSourceMapper(parent, smap.sortedRanges, smap.classSMAP.sourceInfo) {
 
     init {
@@ -135,7 +139,7 @@ open class InlineLambdaSourceMapper(
     }
 
     override fun mapLineNumber(lineNumber: Int): Int {
-        if (ranges.firstOrNull()?.contains(lineNumber) ?: false) {
+        if (ranges.firstOrNull()?.contains(lineNumber) == true) {
             //don't remap origin lambda line numbers
             return lineNumber
         }
@@ -208,14 +212,14 @@ open class DefaultSourceMapper(val sourceInfo: SourceInfo) : SourceMapper {
 
     constructor(sourceInfo: SourceInfo, fileMappings: List<FileMapping>) : this(sourceInfo) {
         fileMappings.asSequence().drop(1)
-                //default one mapped through sourceInfo
-                .forEach { fileMapping ->
-                    val newFileMapping = getOrRegisterNewSource(fileMapping.name, fileMapping.path)
-                    fileMapping.lineMappings.forEach {
-                        newFileMapping.mapNewInterval(it.source, it.dest, it.range)
-                        maxUsedValue = Math.max(it.maxDest, maxUsedValue)
-                    }
+            //default one mapped through sourceInfo
+            .forEach { fileMapping ->
+                val newFileMapping = getOrRegisterNewSource(fileMapping.name, fileMapping.path)
+                fileMapping.lineMappings.forEach {
+                    newFileMapping.mapNewInterval(it.source, it.dest, it.range)
+                    maxUsedValue = Math.max(it.maxDest, maxUsedValue)
                 }
+            }
     }
 
     private fun createKey(name: String, path: String) = "$name#$path"
@@ -271,6 +275,7 @@ class SMAP(val fileMappings: List<FileMapping>) {
     companion object {
         const val FILE_SECTION = "*F"
         const val LINE_SECTION = "*L"
+        const val STRATA_SECTION = "*S"
         const val END = "*E"
     }
 }
@@ -282,11 +287,11 @@ class RawFileMapping(val name: String, val path: String) {
     private var lastMappedWithNewIndex = -1000
 
     fun toFileMapping() =
-            FileMapping(name, path).apply {
-                for (range in rangeMappings) {
-                    addRangeMapping(range)
-                }
+        FileMapping(name, path).apply {
+            for (range in rangeMappings) {
+                addRangeMapping(range)
             }
+        }
 
     fun initRange(start: Int, end: Int) {
         assert(rangeMappings.isEmpty()) { "initRange should only be called for empty mapping" }
@@ -301,8 +306,7 @@ class RawFileMapping(val name: String, val path: String) {
             rangeMapping = rangeMappings.last()
             rangeMapping.range += source - lastMappedWithNewIndex
             dest = rangeMapping.mapSourceToDest(source)
-        }
-        else {
+        } else {
             dest = currentIndex + 1
             rangeMapping = RangeMapping(source, dest, callSiteMarker = callSiteMarker)
             rangeMappings.add(rangeMapping)

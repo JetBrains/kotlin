@@ -2,6 +2,15 @@
 <templateSet group="Kotlin">
     <template resource-bundle="org.jetbrains.kotlin.idea.KotlinBundle" key="livetemplate.description.main"
               name="main" toReformat="true" toShortenFQNames="true"
+              value="fun main($ARGS$) {&#10;  $END$&#10;}">
+        <variable name="ARGS" expression="kotlinMainArguments()" defaultValue="" alwaysStopAt="false" />
+        <context>
+            <option name="KOTLIN_TOPLEVEL" value="true" />
+        </context>
+    </template>
+
+    <template resource-bundle="org.jetbrains.kotlin.idea.KotlinBundle" key="livetemplate.description.main"
+              name="maina" toReformat="true" toShortenFQNames="true"
               value="fun main(args: Array&lt;String&gt;) {&#10;  $END$&#10;}">
         <context>
             <option name="KOTLIN_TOPLEVEL" value="true" />
@@ -34,7 +43,7 @@
               value="println(&quot;$EXPR_COPY$ = $DOLLAR${$EXPR$}&quot;)">
         <variable alwaysStopAt="false" defaultValue="&quot;$&quot;" expression="" name="DOLLAR" />
         <variable alwaysStopAt="true" defaultValue="&quot;expr&quot;" expression="kotlinVariable()" name="EXPR" />
-        <variable alwaysStopAt="false" defaultValue="" expression="EXPR" name="EXPR_COPY" />
+        <variable alwaysStopAt="false" defaultValue="" expression="escapeString(EXPR)" name="EXPR_COPY" />
         <context>
             <option name="KOTLIN_STATEMENT" value="true" />
         </context>
@@ -209,6 +218,15 @@
     <!-- Synonym for main -->
     <template resource-bundle="org.jetbrains.kotlin.idea.KotlinBundle" key="livetemplate.description.main"
               name="psvm" toReformat="true" toShortenFQNames="true"
+              value="fun main($ARGS$) {&#10;  $END$&#10;}">
+        <variable name="ARGS" expression="kotlinMainArguments()" defaultValue="" alwaysStopAt="false" />
+        <context>
+            <option name="KOTLIN_TOPLEVEL" value="true" />
+        </context>
+    </template>
+
+    <template resource-bundle="org.jetbrains.kotlin.idea.KotlinBundle" key="livetemplate.description.main"
+              name="psvma" toReformat="true" toShortenFQNames="true"
               value="fun main(args: Array&lt;String&gt;) {&#10;  $END$&#10;}">
         <context>
             <option name="KOTLIN_TOPLEVEL" value="true" />

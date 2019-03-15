@@ -1,5 +1,5 @@
 package pkg
 
-fun main(args : Array<String>) {
+fun main() {
     println("A.main Ok")
 }

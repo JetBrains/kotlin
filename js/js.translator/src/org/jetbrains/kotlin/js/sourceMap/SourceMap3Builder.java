@@ -70,6 +70,7 @@ public class SourceMap3Builder implements SourceMapBuilder {
 
     @Override
     public String build() {
+        @SuppressWarnings("unchecked")
         JsonObject json = new JsonObject();
         json.getProperties().put("version", new JsonNumber(3));
         json.getProperties().put("file", new JsonString(generatedFile.getName()));

@@ -1,0 +1,27 @@
+FILE fqName:<root> fileName:/typeParametersWithAnnotations.kt
+  CLASS ANNOTATION_CLASS name:Anno modality:FINAL visibility:public flags: superTypes:[kotlin.Annotation]
+    annotations:
+      CALL 'constructor Target(vararg AnnotationTarget)' type=kotlin.annotation.Target origin=null
+        allowedTargets: VARARG type=kotlin.Array<out kotlin.annotation.AnnotationTarget> varargElementType=kotlin.annotation.AnnotationTarget
+          GET_ENUM 'TYPE_PARAMETER' type=kotlin.annotation.AnnotationTarget
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Anno flags:
+    CONSTRUCTOR visibility:public <> () returnType:Anno flags:primary
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+      overridden:
+        FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+      overridden:
+        FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+      overridden:
+        FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+  FUN name:foo visibility:public modality:FINAL <T> () returnType:kotlin.Unit flags:
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+      annotations:
+        CALL 'constructor Anno()' type=Anno origin=null
+    BLOCK_BODY
+

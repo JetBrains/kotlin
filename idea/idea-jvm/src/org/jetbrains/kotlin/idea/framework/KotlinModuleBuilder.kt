@@ -21,7 +21,9 @@ import com.intellij.ide.util.projectWizard.ModuleWizardStep
 import com.intellij.ide.util.projectWizard.SettingsStep
 import com.intellij.ide.util.projectWizard.WizardContext
 import com.intellij.openapi.projectRoots.SdkTypeId
+import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider
+import org.jetbrains.kotlin.idea.roots.migrateNonJvmSourceFolders
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import javax.swing.Icon
@@ -29,20 +31,33 @@ import javax.swing.Icon
 class KotlinModuleBuilder(
         val targetPlatform: TargetPlatform, val builderName: String, val builderDescription: String, val icon: Icon
 ) : JavaModuleBuilder() {
+    private var wizardContext: WizardContext? = null
+
     override fun getBuilderId() = "kotlin.module.builder"
     override fun getName() = builderName
     override fun getPresentableName() = builderName
     override fun getDescription() = builderDescription
     override fun getNodeIcon() = icon
     override fun getGroupName() = KotlinTemplatesFactory.KOTLIN_GROUP_NAME
-    override fun createWizardSteps(wizardContext: WizardContext, modulesProvider: ModulesProvider) = ModuleWizardStep.EMPTY_ARRAY
+
+    override fun createWizardSteps(wizardContext: WizardContext, modulesProvider: ModulesProvider): Array<out ModuleWizardStep>? {
+        this.wizardContext = wizardContext
+        return ModuleWizardStep.EMPTY_ARRAY
+    }
 
     override fun modifySettingsStep(settingsStep: SettingsStep): ModuleWizardStep {
-        return KotlinModuleSettingStep(targetPlatform, this, settingsStep)
+        return KotlinModuleSettingStep(targetPlatform, this, settingsStep, wizardContext)
     }
 
     override fun isSuitableSdkType(sdkType: SdkTypeId?) = when (targetPlatform) {
         is JvmPlatform -> super.isSuitableSdkType(sdkType)
         else -> sdkType is KotlinSdkType
+    }
+
+    override fun setupRootModel(rootModel: ModifiableRootModel) {
+        super.setupRootModel(rootModel)
+        if (targetPlatform !is JvmPlatform) {
+            migrateNonJvmSourceFolders(rootModel)
+        }
     }
 }

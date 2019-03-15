@@ -10,15 +10,25 @@ repositories {
 
 dependencies {
     compile project(':kotlin-gradle-plugin-api')
+    compile project(':kotlin-gradle-plugin-model')
 
-    compile project(':kotlin-stdlib')
+    compile kotlinStdlib()
     compileOnly project(path: ':kotlin-compiler-embeddable', configuration: 'runtimeJar')
     compileOnly project(':kotlin-allopen-compiler-plugin')
 
     compileOnly gradleApi()
+
+    testCompile gradleApi()
+    testCompile "junit:junit:4.12"
 }
 
 evaluationDependsOn(":kotlin-allopen-compiler-plugin")
+
+tasks.withType(project.compileKotlin.class) {
+    kotlinOptions.languageVersion = "1.2"
+    kotlinOptions.apiVersion = "1.2"
+    kotlinOptions.freeCompilerArgs += ["-Xskip-metadata-version-check"]
+}
 
 jar {
     from(project(":kotlin-allopen-compiler-plugin").sourceSets.main.output.classesDirs)
@@ -30,8 +40,9 @@ ArtifactsKt.runtimeJar(project, EmbeddableKt.rewriteDepsToShadedCompiler(project
 
 artifacts {
     archives sourcesJar
-    archives javadocJar
 }
+
+javadocJar()
 
 pluginBundle {
     plugins {
@@ -45,3 +56,5 @@ pluginBundle {
         }
     }
 }
+
+test.executable = "${JDK_18}/bin/java"

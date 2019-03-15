@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.metadata.ProtoBuf.QualifiedNameTable.QualifiedName
 import org.jetbrains.kotlin.metadata.serialization.Interner
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import java.io.OutputStream
 
 open class StringTableImpl : DescriptorAwareStringTable {
     private class FqNameProto(val fqName: QualifiedName.Builder) {
@@ -38,8 +37,8 @@ open class StringTableImpl : DescriptorAwareStringTable {
 
             val otherFqName = other.fqName
             return fqName.parentQualifiedName == otherFqName.parentQualifiedName
-                   && fqName.shortName == otherFqName.shortName
-                   && fqName.kind == otherFqName.kind
+                    && fqName.shortName == otherFqName.shortName
+                    && fqName.kind == otherFqName.kind
         }
     }
 
@@ -51,12 +50,12 @@ open class StringTableImpl : DescriptorAwareStringTable {
     override fun getQualifiedClassNameIndex(className: String, isLocal: Boolean): Int =
         getQualifiedClassNameIndex(ClassId.fromString(className, isLocal))
 
-    private fun getQualifiedClassNameIndex(classId: ClassId): Int {
+    override fun getQualifiedClassNameIndex(classId: ClassId): Int {
         val builder = QualifiedName.newBuilder()
         builder.kind = QualifiedName.Kind.CLASS
 
         builder.parentQualifiedName =
-                classId.outerClassId?.let(this::getQualifiedClassNameIndex)
+            classId.outerClassId?.let(this::getQualifiedClassNameIndex)
                 ?: getPackageFqNameIndex(classId.packageFqName)
 
         builder.shortName = getStringIndex(classId.shortClassName.asString())
@@ -89,11 +88,5 @@ open class StringTableImpl : DescriptorAwareStringTable {
         }
 
         return Pair(strings.build(), qualifiedNames.build())
-    }
-
-    override fun serializeTo(output: OutputStream) {
-        val (strings, qualifiedNames) = buildProto()
-        strings.writeDelimitedTo(output)
-        qualifiedNames.writeDelimitedTo(output)
     }
 }

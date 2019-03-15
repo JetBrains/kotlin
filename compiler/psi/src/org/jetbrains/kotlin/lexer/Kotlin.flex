@@ -83,7 +83,7 @@ LETTER = [:letter:]|_
 IDENTIFIER_PART=[:digit:]|{LETTER}
 PLAIN_IDENTIFIER={LETTER} {IDENTIFIER_PART}*
 // TODO: this one MUST allow everything accepted by the runtime
-// TODO: Replace backticks by one backslash in the begining
+// TODO: Replace backticks with one backslash at the beginning
 ESCAPED_IDENTIFIER = `[^`\n]+`
 IDENTIFIER = {PLAIN_IDENTIFIER}|{ESCAPED_IDENTIFIER}
 FIELD_IDENTIFIER = \${IDENTIFIER}
@@ -92,10 +92,12 @@ EOL_COMMENT="/""/"[^\n]*
 SHEBANG_COMMENT="#!"[^\n]*
 
 INTEGER_LITERAL={DECIMAL_INTEGER_LITERAL}|{HEX_INTEGER_LITERAL}|{BIN_INTEGER_LITERAL}
-DECIMAL_INTEGER_LITERAL=(0|([1-9]({DIGIT_OR_UNDERSCORE})*))({LONG_SUFFIX})?
-HEX_INTEGER_LITERAL=0[Xx]({HEX_DIGIT_OR_UNDERSCORE})*({LONG_SUFFIX})?
-BIN_INTEGER_LITERAL=0[Bb]({DIGIT_OR_UNDERSCORE})*({LONG_SUFFIX})?
+DECIMAL_INTEGER_LITERAL=(0|([1-9]({DIGIT_OR_UNDERSCORE})*)){TYPED_INTEGER_SUFFIX}
+HEX_INTEGER_LITERAL=0[Xx]({HEX_DIGIT_OR_UNDERSCORE})*{TYPED_INTEGER_SUFFIX}
+BIN_INTEGER_LITERAL=0[Bb]({DIGIT_OR_UNDERSCORE})*{TYPED_INTEGER_SUFFIX}
 LONG_SUFFIX=[Ll]
+UNSIGNED_SUFFIX=[Uu]
+TYPED_INTEGER_SUFFIX = {UNSIGNED_SUFFIX}?{LONG_SUFFIX}?
 
 //FLOAT_LITERAL=(({FLOATING_POINT_LITERAL1})[Ff])|(({FLOATING_POINT_LITERAL2})[Ff])|(({FLOATING_POINT_LITERAL3})[Ff])|(({FLOATING_POINT_LITERAL4})[Ff])
 //DOUBLE_LITERAL=(({FLOATING_POINT_LITERAL1})[Dd]?)|(({FLOATING_POINT_LITERAL2})[Dd]?)|(({FLOATING_POINT_LITERAL3})[Dd]?)|(({FLOATING_POINT_LITERAL4})[Dd])
@@ -213,7 +215,7 @@ LONELY_BACKTICK=`
         }
     }
 
-    .|{WHITE_SPACE_CHAR} {}
+    [\s\S] {}
 }
 
 // Mere mortals
@@ -312,7 +314,7 @@ LONELY_BACKTICK=`
 ">"          { return KtTokens.GT        ; }
 "?"          { return KtTokens.QUEST     ; }
 ":"          { return KtTokens.COLON     ; }
-";;"          { return KtTokens.DOUBLE_SEMICOLON;}
+";;"         { return KtTokens.DOUBLE_SEMICOLON;}
 ";"          { return KtTokens.SEMICOLON ; }
 "="          { return KtTokens.EQ        ; }
 ","          { return KtTokens.COMMA     ; }
@@ -322,7 +324,7 @@ LONELY_BACKTICK=`
 {LONELY_BACKTICK} { pushState(UNMATCHED_BACKTICK); return TokenType.BAD_CHARACTER; }
 
 // error fallback
-.            { return TokenType.BAD_CHARACTER; }
+[\s\S]       { return TokenType.BAD_CHARACTER; }
 // error fallback for exclusive states
 <STRING, RAW_STRING, SHORT_TEMPLATE_ENTRY, BLOCK_COMMENT, DOC_COMMENT> .
              { return TokenType.BAD_CHARACTER; }

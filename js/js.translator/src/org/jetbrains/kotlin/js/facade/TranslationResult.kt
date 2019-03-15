@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.js.facade
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import org.jetbrains.kotlin.backend.common.output.*
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.js.backend.JsToStringGenerationVisitor
@@ -39,6 +40,7 @@ import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.serialization.js.JsModuleDescriptor
 import org.jetbrains.kotlin.serialization.js.JsSerializerProtocol
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
+import org.jetbrains.kotlin.utils.JsMetadataVersion
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import java.io.File
 import java.util.*
@@ -109,16 +111,18 @@ abstract class TranslationResult protected constructor(val diagnostics: Diagnost
                     kind = config.moduleKind,
                     imported = importedModules
                 )
-                val settings = config.configuration.languageVersionSettings
-                val serializedMetadata = KotlinJavascriptSerializationUtil.serializeMetadata(bindingContext, moduleDescription, settings)
+                val serializedMetadata = KotlinJavascriptSerializationUtil.serializeMetadata(
+                    bindingContext, moduleDescription,
+                    config.configuration.languageVersionSettings,
+                    config.configuration.get(CommonConfigurationKeys.METADATA_VERSION) as? JsMetadataVersion ?: JsMetadataVersion.INSTANCE
+                )
                 val metaFileContent = serializedMetadata.asString()
                 val sourceFilesForMetaFile = ArrayList(sourceFiles)
                 val jsMetaFile = SimpleOutputFile(sourceFilesForMetaFile, metaFileName, metaFileContent)
                 outputFiles.add(jsMetaFile)
 
                 for (serializedPackage in serializedMetadata.serializedPackages()) {
-                    val outputBinaryFile = kjsmFileForPackage(serializedPackage.fqName, serializedPackage.bytes)
-                    outputFiles.add(outputBinaryFile)
+                    outputFiles.add(kjsmFileForPackage(serializedPackage.fqName, serializedPackage.bytes))
                 }
             }
 

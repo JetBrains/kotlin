@@ -56,7 +56,7 @@ import outer.*
         fun Any?.equals1(<!UNUSED_PARAMETER!>other<!> : Any?) : Boolean = true
         fun Any.equals2(<!UNUSED_PARAMETER!>other<!> : Any?) : Boolean = true
 
-        fun main(args: Array<String>) {
+        fun main() {
 
             System.out.print(1)
 

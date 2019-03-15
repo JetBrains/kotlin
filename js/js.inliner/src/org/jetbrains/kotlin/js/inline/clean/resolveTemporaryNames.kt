@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.js.inline.clean
 
 import org.jetbrains.kotlin.js.backend.ast.*
-import org.jetbrains.kotlin.js.backend.ast.metadata.coroutineMetadata
 
 fun JsNode.resolveTemporaryNames() {
     val renamings = resolveNames()
@@ -30,14 +29,6 @@ fun JsNode.resolveTemporaryNames() {
                     renamings[name]?.let { node.name = it }
                 }
             }
-        }
-
-        override fun visitFunction(x: JsFunction) {
-            x.coroutineMetadata?.apply {
-                accept(suspendObjectRef)
-                accept(baseClassRef)
-            }
-            super.visitFunction(x)
         }
     })
 }
@@ -71,34 +62,6 @@ private fun JsNode.resolveNames(): Map<JsName, JsName> {
 
     traverse(rootScope)
 
-    // Labels in JS are in separate scope from local variables. It's only important that nested labels don't clash.
-    // Adjacent labels in one function is OK
-    accept(object : RecursiveJsVisitor() {
-        var labels = mutableSetOf<String>()
-
-        override fun visitLabel(x: JsLabel) {
-            val addedNames = mutableSetOf<String>()
-            if (x.name.isTemporary) {
-                var resolvedName = x.name.ident
-                var suffix = 0
-                while (!labels.add(resolvedName)) {
-                    resolvedName = "${x.name.ident}_${suffix++}"
-                }
-                replacements[x.name] = JsDynamicScope.declareName(resolvedName)
-                addedNames += resolvedName
-            }
-            super.visitLabel(x)
-            labels.removeAll(addedNames)
-        }
-
-        override fun visitFunction(x: JsFunction) {
-            val oldLabels = labels
-            labels = mutableSetOf<String>()
-            super.visitFunction(x)
-            labels = oldLabels
-        }
-    })
-
     return replacements
 }
 
@@ -106,7 +69,7 @@ private fun JsNode.resolveNames(): Map<JsName, JsName> {
 private fun Scope.liftUsedNames(): Scope {
     fun traverse(scope: Scope) {
         scope.children.forEach { child ->
-            scope.usedNames += scope.declaredNames
+            scope.usedNames += child.declaredNames
             traverse(child)
             scope.usedNames += child.usedNames
         }

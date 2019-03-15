@@ -2,7 +2,7 @@ package
 
 package sum {
     public fun </*0*/ T : kotlin.Any> assertEquals(/*0*/ actual: T?, /*1*/ expected: T?, /*2*/ message: kotlin.Any? = ...): kotlin.Unit
-    public fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+    public fun main(): kotlin.Unit
     public fun sum(/*0*/ a: kotlin.IntArray): kotlin.Int
     public fun test(/*0*/ expectedSum: kotlin.Int, /*1*/ vararg data: kotlin.Int /*kotlin.IntArray*/): kotlin.Unit
 }

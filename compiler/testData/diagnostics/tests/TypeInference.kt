@@ -6,7 +6,7 @@ class C<T>() {
 fun foo(<!UNUSED_PARAMETER!>c<!>: C<Int>) {}
 fun <T> bar() : C<T> {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 
-fun main(args : Array<String>) {
+fun main() {
   val <!UNUSED_VARIABLE!>a<!> : C<Int> = C();
   val <!UNUSED_VARIABLE!>x<!> : C<in String> = C()
   val <!UNUSED_VARIABLE!>y<!> : C<out String> = C()

@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1110
+// EXPECTED_REACHABLE_NODES: 1282
 fun foo(x: Int) = "int: $x"
 
 fun foo(x: String) = "string: $x"

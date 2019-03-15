@@ -23,7 +23,13 @@ where possible options include:
   -language-version <version> Provide source compatibility with specified language version
   -P plugin:<pluginId>:<optionName>=<value>
                              Pass an option to a plugin
+  -progressive               Enable progressive compiler mode.
+                             In this mode, deprecations and bug fixes for unstable code take effect immediately,
+                             instead of going through a graceful migration cycle.
+                             Code written in the progressive mode is backward compatible; however, code written in
+                             non-progressive mode may cause compilation errors in the progressive mode.
   -nowarn                    Generate no warnings
   -verbose                   Enable verbose logging output
   -version                   Display compiler version
+  @<argfile>                 Expand compiler arguments from the given file, containing one argument or file path per line
 OK

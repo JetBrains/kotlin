@@ -134,7 +134,7 @@ fun main(a: A, b: A.B, c: A.C) {
     a.foo("", null).length
     a.foo(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>, "").length
 
-    <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.foobar(null, "")<!>.length
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.foobar(null, "")<!>.length
     a.foobar("", <!NULL_FOR_NONNULL_TYPE!>null<!>)?.length
 
     a.bar().length
@@ -149,17 +149,17 @@ fun main(a: A, b: A.B, c: A.C) {
 
     // b
     b.foo("", <!NULL_FOR_NONNULL_TYPE!>null<!>)?.length
-    <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>b.foo("", <!NULL_FOR_NONNULL_TYPE!>null<!>)<!>.length
-    <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>b.foo(null, "")<!>.length
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>b.foo("", <!NULL_FOR_NONNULL_TYPE!>null<!>)<!>.length
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>b.foo(null, "")<!>.length
 
     b.foobar(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>, "").length
     b.foobar("", null)<!UNNECESSARY_SAFE_CALL!>?.<!>length
 
-    <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>b.bar()<!>.length
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>b.bar()<!>.length
     b.bar()!!.length
 
     b.field?.length
-    <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>b.field<!>.length
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>b.field<!>.length
 
     b.baz()<!UNSAFE_CALL!>.<!>get(0)
     b.baz()!!.get(0).get(0)
@@ -170,14 +170,14 @@ fun main(a: A, b: A.B, c: A.C) {
     c.foo("", null).length
     c.foo(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>, "").length
 
-    <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>c.foobar(null, "")<!>.length
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>c.foobar(null, "")<!>.length
     c.foobar("", null)?.length
 
     c.bar().length
     c.bar()<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.length
 
     c.field?.length
-    <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>c.field<!>.length
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>c.field<!>.length
 
     c.baz()<!UNSAFE_CALL!>.<!>get(0)
     c.baz()!!.get(0).get(0)

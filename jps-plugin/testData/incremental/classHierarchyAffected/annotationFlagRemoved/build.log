@@ -2,6 +2,7 @@
 
 Cleaning output files:
   out/production/module/Ann1.class
+  out/production/module/META-INF/module.kotlin_module
 End of files
 Compiling files:
   src/Ann1.kt

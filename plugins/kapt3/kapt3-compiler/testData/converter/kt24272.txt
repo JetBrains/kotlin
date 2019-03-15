@@ -1,0 +1,41 @@
+import java.lang.System;
+
+@kotlin.Metadata()
+public final class Foo {
+    @org.jetbrains.annotations.NotNull()
+    private final Foo.Bar bar = null;
+    private final java.lang.String string = null;
+
+    @org.jetbrains.annotations.NotNull()
+    public final Foo.Bar getBar() {
+        return null;
+    }
+
+    public Foo(@org.jetbrains.annotations.NotNull()
+    java.lang.String string) {
+        super();
+    }
+
+    @kotlin.Metadata()
+    public static final class Bar {
+        @org.jetbrains.annotations.NotNull()
+        private final java.util.ArrayList<Foo.Bar.Bar> bars = null;
+        @org.jetbrains.annotations.NotNull()
+        private final java.lang.String string = null;
+
+        @org.jetbrains.annotations.NotNull()
+        public final java.util.ArrayList<Foo.Bar.Bar> getBars() {
+            return null;
+        }
+
+        @org.jetbrains.annotations.NotNull()
+        public final java.lang.String getString() {
+            return null;
+        }
+
+        public Bar(@org.jetbrains.annotations.NotNull()
+        java.lang.String string) {
+            super();
+        }
+    }
+}

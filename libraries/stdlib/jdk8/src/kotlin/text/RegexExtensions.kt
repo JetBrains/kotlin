@@ -23,12 +23,13 @@ package kotlin.text
  * Returns a named group with the specified [name].
  *
  * @return An instance of [MatchGroup] if the group with the specified [name] was matched or `null` otherwise.
- * @throws [UnsupportedOperationException] if getting named groups isn't supported on the current platform.
+ * @throws IllegalArgumentException if there is no group with the specified [name] defined in the regex pattern.
+ * @throws UnsupportedOperationException if getting named groups isn't supported on the current platform.
  */
 @SinceKotlin("1.2")
 public operator fun MatchGroupCollection.get(name: String): MatchGroup? {
-    val namedGroups = this as? MatchNamedGroupCollection ?:
-            throw UnsupportedOperationException("Retrieving groups by name is not supported on this platform.")
+    val namedGroups = this as? MatchNamedGroupCollection
+            ?: throw UnsupportedOperationException("Retrieving groups by name is not supported on this platform.")
 
     return namedGroups[name]
 }

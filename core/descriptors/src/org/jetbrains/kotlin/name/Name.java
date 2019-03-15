@@ -56,7 +56,15 @@ public final class Name implements Comparable<Name> {
     }
 
     public static boolean isValidIdentifier(@NotNull String name) {
-        return !name.isEmpty() && !name.startsWith("<") && !name.contains(".") && !name.contains("/");
+        if (name.isEmpty() || name.startsWith("<")) return false;
+        for (int i = 0; i < name.length(); i++) {
+            char ch = name.charAt(i);
+            if (ch == '.' || ch == '/' || ch == '\\') {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     @NotNull

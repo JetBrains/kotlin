@@ -25,16 +25,16 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
 sealed class ProtoContainer(
-        val nameResolver: NameResolver,
-        val typeTable: TypeTable,
-        val source: SourceElement?
+    val nameResolver: NameResolver,
+    val typeTable: TypeTable,
+    val source: SourceElement?
 ) {
     class Class(
-            val classProto: ProtoBuf.Class,
-            nameResolver: NameResolver,
-            typeTable: TypeTable,
-            source: SourceElement?,
-            val outerClass: ProtoContainer.Class?
+        val classProto: ProtoBuf.Class,
+        nameResolver: NameResolver,
+        typeTable: TypeTable,
+        source: SourceElement?,
+        val outerClass: ProtoContainer.Class?
     ) : ProtoContainer(nameResolver, typeTable, source) {
         val classId: ClassId = nameResolver.getClassId(classProto.fqName)
 
@@ -45,10 +45,10 @@ sealed class ProtoContainer(
     }
 
     class Package(
-            val fqName: FqName,
-            nameResolver: NameResolver,
-            typeTable: TypeTable,
-            source: SourceElement?
+        val fqName: FqName,
+        nameResolver: NameResolver,
+        typeTable: TypeTable,
+        source: SourceElement?
     ) : ProtoContainer(nameResolver, typeTable, source) {
         override fun debugFqName(): FqName = fqName
     }

@@ -4,6 +4,6 @@ actual class Foo {
     }
 }
 
-fun Foo.test() {
+fun Foo.testJvm() {
     foo(1, "2")
 }

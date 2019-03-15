@@ -1,9 +1,12 @@
-// WITH_RUNTIME
+// !LANGUAGE: -ReleaseCoroutines
+// IGNORE_BACKEND: JVM_IR
 // WITH_COROUTINES
-import helpers.*
 // TREAT_AS_ONE_FILE
+
+import helpers.*
 import kotlin.coroutines.experimental.*
 import kotlin.coroutines.experimental.intrinsics.*
+
 suspend fun suspendHere() = ""
 
 fun builder(c: suspend () -> Unit) {
@@ -23,5 +26,4 @@ fun box(): String {
 
 // 2 GETSTATIC kotlin/Unit.INSTANCE
 // 1 GETSTATIC helpers/EmptyContinuation.Companion
-// 3 GETSTATIC kotlin\/coroutines\/experimental\/EmptyCoroutineContext.INSTANCE
-// 6 GETSTATIC
+// 3 GETSTATIC

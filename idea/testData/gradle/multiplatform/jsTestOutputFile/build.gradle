@@ -1,0 +1,30 @@
+buildscript {
+    repositories {
+        jcenter()
+        maven { url 'https://maven.google.com' }
+    }
+
+    dependencies {
+        apply from: "include.gradle"
+        def kotlinVersion = gradleKotlinPluginVersion('1.1.51')
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+        classpath 'com.android.tools.build:gradle:2.3.3'
+    }
+}
+
+project('project1') {
+    apply plugin: 'kotlin-platform-common'
+}
+
+project('project2') {
+    repositories {
+        mavenCentral()
+    }
+
+    apply plugin: 'kotlin-platform-js'
+
+    dependencies {
+        implement project(':project1')
+    }
+}
+        

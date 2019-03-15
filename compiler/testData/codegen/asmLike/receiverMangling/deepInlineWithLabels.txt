@@ -1,0 +1,25 @@
+public final class DeepInlineWithLabelsKt : java/lang/Object {
+    public final static void block(kotlin.jvm.functions.Function1 block) {
+        Local variables:
+            0 block: Lkotlin/jvm/functions/Function1;
+            1 $i$f$block: I
+    }
+
+    public final static void foo(java.lang.String $this$b3, int $i$a$-block-DeepInlineWithLabelsKt$foo$1$1$1) {
+        Local variables:
+            14 $this$b3: J
+            16 $i$a$-block-DeepInlineWithLabelsKt$foo$1$1$1: I
+            13 $i$f$block: I
+            12 z: Z
+            9 $this$b2: J
+            11 $i$a$-block-DeepInlineWithLabelsKt$foo$1$1: I
+            8 $i$f$block: I
+            7 y: Z
+            4 $this$b1: J
+            6 $i$a$-block-DeepInlineWithLabelsKt$foo$1: I
+            3 $i$f$block: I
+            2 x: Z
+            0 $this$foo: Ljava/lang/String;
+            1 count: I
+    }
+}

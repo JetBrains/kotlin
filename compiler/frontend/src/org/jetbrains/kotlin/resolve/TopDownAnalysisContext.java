@@ -24,14 +24,10 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.lazy.DeclarationScopeProvider;
-import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyScriptDescriptor;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 
 import java.io.PrintStream;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class TopDownAnalysisContext implements BodiesResolveContext {
 
@@ -44,12 +40,12 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
 
     private final Map<KtNamedFunction, SimpleFunctionDescriptor> functions = Maps.newLinkedHashMap();
     private final Map<KtProperty, PropertyDescriptor> properties = Maps.newLinkedHashMap();
-    private final Map<KtParameter, PropertyDescriptor> primaryConstructorParameterProperties = Maps.newHashMap();
+    private final Map<KtParameter, PropertyDescriptor> primaryConstructorParameterProperties = new HashMap<>();
     private final Map<KtTypeAlias, TypeAliasDescriptor> typeAliases = Maps.newLinkedHashMap();
     private final Map<KtDestructuringDeclarationEntry, PropertyDescriptor> destructuringDeclarationEntries = Maps.newLinkedHashMap();
     private Map<KtCallableDeclaration, CallableMemberDescriptor> members = null;
 
-    private final Map<KtScript, LazyScriptDescriptor> scripts = Maps.newLinkedHashMap();
+    private final Map<KtScript, ClassDescriptorWithResolutionScopes> scripts = Maps.newLinkedHashMap();
 
     private final TopDownAnalysisMode topDownAnalysisMode;
     private final DeclarationScopeProvider declarationScopeProvider;
@@ -117,7 +113,7 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
 
     @Override
     @NotNull
-    public Map<KtScript, LazyScriptDescriptor> getScripts() {
+    public Map<KtScript, ClassDescriptorWithResolutionScopes> getScripts() {
         return scripts;
     }
 

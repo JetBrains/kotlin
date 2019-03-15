@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-@file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-
 package kotlin.reflect.jvm
 
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.metadata.deserialization.TypeTable
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.serialization.deserialization.MemberDeserializer
 import kotlin.reflect.KFunction
@@ -33,11 +33,16 @@ import kotlin.reflect.jvm.internal.deserializeToDescriptor
  */
 fun <R> Function<R>.reflect(): KFunction<R>? {
     val annotation = javaClass.getAnnotation(Metadata::class.java) ?: return null
-    val data = annotation.d1.takeUnless(Array<String>::isEmpty) ?: return null
-    val (nameResolver, proto) = JvmProtoBufUtil.readFunctionDataFrom(data, annotation.d2)
+    val data = annotation.data1.takeUnless(Array<String>::isEmpty) ?: return null
+    val (nameResolver, proto) = JvmProtoBufUtil.readFunctionDataFrom(data, annotation.data2)
+    val metadataVersion = JvmMetadataVersion(
+        annotation.metadataVersion,
+        (annotation.extraInt and JvmAnnotationNames.METADATA_STRICT_VERSION_SEMANTICS_FLAG) != 0
+    )
 
-    val descriptor = deserializeToDescriptor(javaClass, proto, nameResolver, TypeTable(proto.typeTable), MemberDeserializer::loadFunction)
-                     ?: return null
+    val descriptor = deserializeToDescriptor(
+        javaClass, proto, nameResolver, TypeTable(proto.typeTable), metadataVersion, MemberDeserializer::loadFunction
+    ) ?: return null
 
     @Suppress("UNCHECKED_CAST")
     return KFunctionImpl(EmptyContainerForLocal, descriptor) as KFunction<R>

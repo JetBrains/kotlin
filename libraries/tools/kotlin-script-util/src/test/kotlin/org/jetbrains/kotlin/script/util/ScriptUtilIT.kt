@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.script.util
 
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -25,15 +26,16 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.codegen.CompilationException
+import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
 import org.jetbrains.kotlin.script.util.templates.BindingsScriptTemplateWithLocalResolving
 import org.jetbrains.kotlin.script.util.templates.StandardArgsScriptTemplateWithLocalResolving
 import org.jetbrains.kotlin.script.util.templates.StandardArgsScriptTemplateWithMavenResolving
+import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCompilerConfigurationComponentRegistrar
 import org.jetbrains.kotlin.utils.PathUtil.getResourcePathForClass
 import org.junit.Assert
 import org.junit.Test
@@ -97,9 +99,6 @@ done
         }
 
         val scriptClass = compileScript("args-junit-hello-world.kts", StandardArgsScriptTemplateWithMavenResolving::class)
-        if (scriptClass == null) {
-            System.err.println(classpathFromClassloader(Thread.currentThread().contextClassLoader)?.takeIfContainsAll(KOTLIN_JAVA_RUNTIME_JAR)?.joinToString())
-        }
         Assert.assertNotNull(scriptClass)
         captureOut {
             scriptClass!!.getConstructor(Array<String>::class.java)!!.newInstance(arrayOf("a1"))
@@ -129,7 +128,7 @@ done
         val rootDisposable = Disposer.newDisposable()
         try {
             val configuration = CompilerConfiguration().apply {
-                classpathFromClassloader(Thread.currentThread().contextClassLoader)?.takeIfContainsAll(KOTLIN_JAVA_RUNTIME_JAR)?.let {
+                scriptCompilationClasspathFromContextOrNull(KOTLIN_JAVA_RUNTIME_JAR)?.let {
                     addJvmClasspathRoots(it)
                 }
 
@@ -143,6 +142,8 @@ done
                 put(CommonConfigurationKeys.MODULE_NAME, "kotlin-script-util-test")
                 add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, scriptDefinition)
                 put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
+
+                add(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS, ScriptingCompilerConfigurationComponentRegistrar())
             }
 
             val environment = KotlinCoreEnvironment.createForTests(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)

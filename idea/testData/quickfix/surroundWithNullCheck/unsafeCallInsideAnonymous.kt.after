@@ -1,8 +1,10 @@
 // "Surround with null check" "true"
 // WITH_RUNTIME
 
+fun Int.bar() = this
+
 fun foo(arg: Int?) {
     if (arg != null) {
-        run(fun() = arg.hashCode())
+        run(fun() = arg.bar())
     }
 }

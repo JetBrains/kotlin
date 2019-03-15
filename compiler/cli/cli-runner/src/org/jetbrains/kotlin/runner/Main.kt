@@ -96,7 +96,7 @@ object Main {
             classpath.addPath(".")
         }
 
-        classpath.addPath(KOTLIN_HOME.toString() + "/lib/kotlin-runtime.jar")
+        classpath.addPath(KOTLIN_HOME.toString() + "/lib/kotlin-stdlib.jar")
 
         if (!noReflect) {
             classpath.addPath(KOTLIN_HOME.toString() + "/lib/kotlin-reflect.jar")

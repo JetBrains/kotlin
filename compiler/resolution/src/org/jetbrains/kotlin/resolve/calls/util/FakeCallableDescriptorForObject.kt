@@ -76,4 +76,6 @@ open class FakeCallableDescriptorForObject(
     override fun getContainingDeclaration() = classDescriptor.getClassObjectReferenceTarget().containingDeclaration
 
     override fun substitute(substitutor: TypeSubstitutor) = this
+
+    override fun <V> getUserData(key: CallableDescriptor.UserDataKey<V>?): V? = null
 }

@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.reflect
@@ -21,7 +10,7 @@ package kotlin.reflect
  *
  * @param R return type of the callable.
  */
-public interface KCallable<out R> : KAnnotatedElement {
+public actual interface KCallable<out R> : KAnnotatedElement {
     /**
      * The name of this callable as it was declared in the source code.
      * If the callable has no name, a special invented name is created.
@@ -30,7 +19,7 @@ public interface KCallable<out R> : KAnnotatedElement {
      * - property accessors: the getter for a property named "foo" will have the name "<get-foo>",
      *   the setter, similarly, will have the name "<set-foo>".
      */
-    public val name: String
+    public actual val name: String
 
     /**
      * Parameters required to make a call to this callable.
@@ -87,4 +76,10 @@ public interface KCallable<out R> : KAnnotatedElement {
      */
     @SinceKotlin("1.1")
     public val isAbstract: Boolean
+
+    /**
+     * `true` if this is a suspending function.
+     */
+    @SinceKotlin("1.3")
+    public val isSuspend: Boolean
 }

@@ -70,8 +70,7 @@ abstract class AbstractReferenceSubstitutionRenameHandler(
         // Can't provide new name for inplace refactoring in unit test mode
         if (!ApplicationManager.getApplication().isUnitTestMode && delegateHandler.isAvailableOnDataContext(wrappingContext)) {
             delegateHandler.invoke(project, editor, file, wrappingContext)
-        }
-        else {
+        } else {
             super.invoke(project, editor, file, wrappingContext)
         }
     }

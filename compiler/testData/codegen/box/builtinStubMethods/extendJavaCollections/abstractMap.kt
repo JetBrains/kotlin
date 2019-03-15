@@ -1,4 +1,5 @@
 // TARGET_BACKEND: JVM
+// IGNORE_BACKEND: JVM_IR
 
 import java.util.AbstractMap
 import java.util.Collections

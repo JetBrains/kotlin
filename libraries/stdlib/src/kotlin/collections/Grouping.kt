@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
 @file:kotlin.jvm.JvmName("GroupingKt")
 @file:kotlin.jvm.JvmMultifileClass
 
@@ -39,10 +44,11 @@ public interface Grouping<T, out K> {
  *  - `first`: indicates whether it's the first `element` encountered in the group.
  *
  * @return a [Map] associating the key of each group with the result of aggregation of the group elements.
+ * @sample samples.collections.Grouping.aggregateByRadix
  */
 @SinceKotlin("1.1")
 public inline fun <T, K, R> Grouping<T, K>.aggregate(
-        operation: (key: K, accumulator: R?, element: T, first: Boolean) -> R
+    operation: (key: K, accumulator: R?, element: T, first: Boolean) -> R
 ): Map<K, R> {
     return aggregateTo(mutableMapOf<K, R>(), operation)
 }
@@ -64,11 +70,12 @@ public inline fun <T, K, R> Grouping<T, K>.aggregate(
  * then the elements being aggregated for that key are never considered as `first`.
  *
  * @return the [destination] map associating the key of each group with the result of aggregation of the group elements.
+ * @sample samples.collections.Grouping.aggregateByRadixTo
  */
 @SinceKotlin("1.1")
 public inline fun <T, K, R, M : MutableMap<in K, R>> Grouping<T, K>.aggregateTo(
-        destination: M,
-        operation: (key: K, accumulator: R?, element: T, first: Boolean) -> R
+    destination: M,
+    operation: (key: K, accumulator: R?, element: T, first: Boolean) -> R
 ): M {
     for (e in this.sourceIterator()) {
         val key = keyOf(e)
@@ -94,14 +101,15 @@ public inline fun <T, K, R, M : MutableMap<in K, R>> Grouping<T, K>.aggregateTo(
  *  - `element`: the element from the source being accumulated.
  *
  * @return a [Map] associating the key of each group with the result of accumulating the group elements.
+ * @sample samples.collections.Grouping.foldByEvenLengthWithComputedInitialValue
  */
 @SinceKotlin("1.1")
 public inline fun <T, K, R> Grouping<T, K>.fold(
-        initialValueSelector: (key: K, element: T) -> R,
-        operation: (key: K, accumulator: R, element: T) -> R
+    initialValueSelector: (key: K, element: T) -> R,
+    operation: (key: K, accumulator: R, element: T) -> R
 ): Map<K, R> =
-        @Suppress("UNCHECKED_CAST")
-        aggregate { key, acc, e, first -> operation(key, if (first) initialValueSelector(key, e) else acc as R, e) }
+    @Suppress("UNCHECKED_CAST")
+    aggregate { key, acc, e, first -> operation(key, if (first) initialValueSelector(key, e) else acc as R, e) }
 
 /**
  * Groups elements from the [Grouping] source by key and applies [operation] to the elements of each group sequentially,
@@ -123,15 +131,16 @@ public inline fun <T, K, R> Grouping<T, K>.fold(
  *  - `element`: the element from the source being accumulated.
  *
  * @return the [destination] map associating the key of each group with the result of accumulating the group elements.
+ * @sample samples.collections.Grouping.foldByEvenLengthWithComputedInitialValueTo
  */
 @SinceKotlin("1.1")
 public inline fun <T, K, R, M : MutableMap<in K, R>> Grouping<T, K>.foldTo(
-        destination: M,
-        initialValueSelector: (key: K, element: T) -> R,
-        operation: (key: K, accumulator: R, element: T) -> R
+    destination: M,
+    initialValueSelector: (key: K, element: T) -> R,
+    operation: (key: K, accumulator: R, element: T) -> R
 ): M =
-        @Suppress("UNCHECKED_CAST")
-        aggregateTo(destination) { key, acc, e, first -> operation(key, if (first) initialValueSelector(key, e) else acc as R, e) }
+    @Suppress("UNCHECKED_CAST")
+    aggregateTo(destination) { key, acc, e, first -> operation(key, if (first) initialValueSelector(key, e) else acc as R, e) }
 
 
 /**
@@ -144,14 +153,15 @@ public inline fun <T, K, R, M : MutableMap<in K, R>> Grouping<T, K>.foldTo(
  *  - `element`: the element from the source being accumulated.
  *
  * @return a [Map] associating the key of each group with the result of accumulating the group elements.
+ * @sample samples.collections.Grouping.foldByEvenLengthWithConstantInitialValue
  */
 @SinceKotlin("1.1")
 public inline fun <T, K, R> Grouping<T, K>.fold(
-        initialValue: R,
-        operation: (accumulator: R, element: T) -> R
+    initialValue: R,
+    operation: (accumulator: R, element: T) -> R
 ): Map<K, R> =
-        @Suppress("UNCHECKED_CAST")
-        aggregate { _, acc, e, first -> operation(if (first) initialValue else acc as R, e) }
+    @Suppress("UNCHECKED_CAST")
+    aggregate { _, acc, e, first -> operation(if (first) initialValue else acc as R, e) }
 
 /**
  * Groups elements from the [Grouping] source by key and applies [operation] to the elements of each group sequentially,
@@ -167,15 +177,16 @@ public inline fun <T, K, R> Grouping<T, K>.fold(
  *  - `element`: the element from the source being accumulated.
  *
  * @return the [destination] map associating the key of each group with the result of accumulating the group elements.
+ * @sample samples.collections.Grouping.foldByEvenLengthWithConstantInitialValueTo
  */
 @SinceKotlin("1.1")
 public inline fun <T, K, R, M : MutableMap<in K, R>> Grouping<T, K>.foldTo(
-        destination: M,
-        initialValue: R,
-        operation: (accumulator: R, element: T) -> R
+    destination: M,
+    initialValue: R,
+    operation: (accumulator: R, element: T) -> R
 ): M =
-        @Suppress("UNCHECKED_CAST")
-        aggregateTo(destination) { _, acc, e, first -> operation(if (first) initialValue else acc as R, e) }
+    @Suppress("UNCHECKED_CAST")
+    aggregateTo(destination) { _, acc, e, first -> operation(if (first) initialValue else acc as R, e) }
 
 
 /**
@@ -191,15 +202,16 @@ public inline fun <T, K, R, M : MutableMap<in K, R>> Grouping<T, K>.foldTo(
  *  - `element`: the element from the source being accumulated.
  *
  * @return a [Map] associating the key of each group with the result of accumulating the group elements.
+ * @sample samples.collections.Grouping.reduceByMaxVowels
  */
 @SinceKotlin("1.1")
 public inline fun <S, T : S, K> Grouping<T, K>.reduce(
-        operation: (key: K, accumulator: S, element: T) -> S
+    operation: (key: K, accumulator: S, element: T) -> S
 ): Map<K, S> =
-        aggregate { key, acc, e, first ->
-            @Suppress("UNCHECKED_CAST")
-            if (first) e else operation(key, acc as S, e)
-        }
+    aggregate { key, acc, e, first ->
+        @Suppress("UNCHECKED_CAST")
+        if (first) e else operation(key, acc as S, e)
+    }
 
 /**
  * Groups elements from the [Grouping] source by key and applies the reducing [operation] to the elements of each group
@@ -217,16 +229,17 @@ public inline fun <S, T : S, K> Grouping<T, K>.reduce(
  *  - `element`: the element from the source being folded;
  *
  * @return the [destination] map associating the key of each group with the result of accumulating the group elements.
+ * @sample samples.collections.Grouping.reduceByMaxVowelsTo
  */
 @SinceKotlin("1.1")
 public inline fun <S, T : S, K, M : MutableMap<in K, S>> Grouping<T, K>.reduceTo(
-        destination: M,
-        operation: (key: K, accumulator: S, element: T) -> S
+    destination: M,
+    operation: (key: K, accumulator: S, element: T) -> S
 ): M =
-        aggregateTo(destination) { key, acc, e, first ->
-            @Suppress("UNCHECKED_CAST")
-            if (first) e else operation(key, acc as S, e)
-        }
+    aggregateTo(destination) { key, acc, e, first ->
+        @Suppress("UNCHECKED_CAST")
+        if (first) e else operation(key, acc as S, e)
+    }
 
 
 /**
@@ -237,11 +250,11 @@ public inline fun <S, T : S, K, M : MutableMap<in K, S>> Grouping<T, K>.reduceTo
  *
  * @return the [destination] map associating the key of each group with the count of elements in the group.
  *
- * @sample samples.collections.Collections.Transformations.groupingByEachCount
+ * @sample samples.collections.Grouping.groupingByEachCount
  */
 @SinceKotlin("1.1")
 public fun <T, K, M : MutableMap<in K, Int>> Grouping<T, K>.eachCountTo(destination: M): M =
-        foldTo(destination, 0) { acc, _ -> acc + 1 }
+    foldTo(destination, 0) { acc, _ -> acc + 1 }
 
 /*
 /**

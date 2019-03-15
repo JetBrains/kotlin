@@ -1,265 +1,437 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
+import org.jetbrains.kotlin.backend.common.IrElementVisitorVoidWithContext
+import org.jetbrains.kotlin.backend.common.ScopeWithIr
+import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
+import org.jetbrains.kotlin.backend.common.ir.copyValueParametersToStatic
+import org.jetbrains.kotlin.backend.common.ir.remapTypeParameters
+import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.intrinsics.receiverAndArgs
-import org.jetbrains.kotlin.codegen.*
-import org.jetbrains.kotlin.codegen.context.ClassContext
-import org.jetbrains.kotlin.codegen.context.CodegenContext
-import org.jetbrains.kotlin.codegen.descriptors.FileClassDescriptor
-import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
-import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
+import org.jetbrains.kotlin.codegen.OwnerKind
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
-import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
+import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
+import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
+import org.jetbrains.kotlin.ir.builders.declarations.buildFun
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.createFunctionSymbol
-import org.jetbrains.kotlin.ir.util.usesDefaultArguments
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
+import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.types.KotlinType
 
-interface StubContext {
-    val irClassContext: IrClassContext
-}
-
-class StubCodegenContext(
-        contextDescriptor: ClassDescriptor,
-        parentContext: CodegenContext<*>?,
-        override val irClassContext: IrClassContext
-) :StubContext, CodegenContext<DeclarationDescriptor>(
-        if (contextDescriptor is FileClassDescriptor) contextDescriptor.containingDeclaration else contextDescriptor,
-        OwnerKind.IMPLEMENTATION, parentContext, null,
-        if (contextDescriptor is FileClassDescriptor) null else contextDescriptor,
-        null
+internal val syntheticAccessorPhase = makeIrFilePhase(
+    ::SyntheticAccessorLowering,
+    name = "SyntheticAccessor",
+    description = "Introduce synthetic accessors",
+    prerequisite = setOf(objectClassPhase)
 )
 
-class ClassStubContext(
-        contextDescriptor: ClassDescriptor,
-        parentContext: CodegenContext<*>?,
-        override val irClassContext: IrClassContext,
-        typeMapper: KotlinTypeMapper
-) : StubContext, ClassContext( typeMapper, contextDescriptor, OwnerKind.IMPLEMENTATION, parentContext, null)
-
-class ContextAnnotator(val state: GenerationState) : ClassLowerWithContext() {
-
-    val context2Codegen = hashMapOf<IrClassContext, CodegenContext<*>>()
-    val class2Codegen = hashMapOf<ClassDescriptor, CodegenContext<*>>()
-
-    private val IrClassContext.codegenContext: CodegenContext<*>
-        get() = context2Codegen[this]!!
-
-    private val ClassDescriptor.codegenContext: CodegenContext<*>
-        get() = class2Codegen[this]!!
-
-
-    override fun lowerBefore(irClass: IrClass, data: IrClassContext) {
-        val descriptor = irClass.descriptor
-        val newContext: CodegenContext<*> = if (descriptor is FileClassDescriptor) {
-            StubCodegenContext(descriptor, data.parent?.codegenContext, data)
-        }
-        else {
-            ClassStubContext(descriptor, data.parent?.codegenContext, data, state.typeMapper)
-        }
-        newContext.apply {
-            context2Codegen.put(data, this)
-            class2Codegen.put(descriptor, this)
-        }
-    }
-
-    override fun lower(irCLass: IrClass, data: IrClassContext) {
-
-    }
-}
-
-class SyntheticAccessorLowering(val context: JvmBackendContext) : FileLoweringPass, IrElementTransformer<IrClassContext?> {
-
-    private val state = context.state
-
-    var pendingTransformations = mutableListOf<Function0<Unit>>()
-
-    private val IrClassContext.codegenContext: CodegenContext<*>
-        get() = contextAnnotator.context2Codegen[this]!!
-
-    private lateinit var contextAnnotator: ContextAnnotator
-
-    private val ClassDescriptor.codegenContext: CodegenContext<*>
-        get() = contextAnnotator.class2Codegen[this]!!
+private class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElementTransformerVoidWithContext(), FileLoweringPass {
+    private val pendingTransformations = mutableListOf<Function0<Unit>>()
+    private val inlinedLambdasCollector = InlinedLambdasCollector()
 
     override fun lower(irFile: IrFile) {
-        contextAnnotator = ContextAnnotator(state)
-        contextAnnotator.lower(irFile)
-        irFile.transform(this, null)
-
+        irFile.acceptVoid(inlinedLambdasCollector)
+        irFile.transformChildrenVoid(this)
         pendingTransformations.forEach { it() }
     }
 
-    override fun visitClass(declaration: IrClass, data: IrClassContext?): IrStatement {
-        val classContext = (declaration.descriptor.codegenContext as StubContext).irClassContext
-        return super.visitClass(declaration, classContext).apply {
-            pendingTransformations.add { lower(classContext) }
+    private val functionMap = mutableMapOf<IrFunctionSymbol, IrFunctionSymbol>()
+    private val getterMap = mutableMapOf<IrFieldSymbol, IrSimpleFunctionSymbol>()
+    private val setterMap = mutableMapOf<IrFieldSymbol, IrSimpleFunctionSymbol>()
+
+    override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
+        if (expression.usesDefaultArguments()) {
+            return super.visitFunctionAccess(expression)
         }
+        return super.visitExpression(
+            handleAccess(expression, expression.symbol, functionMap, ::makeFunctionAccessorSymbol, ::modifyFunctionAccessExpression)
+        )
     }
 
-    fun lower(data: IrClassContext) {
-        val codegenContext = data.codegenContext
-        val accessors = codegenContext.accessors
-        val allAccessors =
-                (
-                        accessors.filterIsInstance<FunctionDescriptor>() +
-                        accessors.filterIsInstance<AccessorForPropertyDescriptor>().flatMap {
-                            listOfNotNull(if (it.isWithSyntheticGetterAccessor) it.getter else null, if (it.isWithSyntheticSetterAccessor) it.setter else null)
-                        }
-                ).filterIsInstance<AccessorForCallableDescriptor<*>>()
+    override fun visitGetField(expression: IrGetField) = super.visitExpression(
+        handleAccess(expression, expression.symbol, getterMap, ::makeGetterAccessorSymbol, ::modifyGetterExpression)
+    )
 
-        val irClassToAddAccessor = data.irClass
-        allAccessors.forEach { accessor ->
-            addAccessorToClass(accessor, irClassToAddAccessor, context)
+    override fun visitSetField(expression: IrSetField) = super.visitExpression(
+        handleAccess(expression, expression.symbol, setterMap, ::makeSetterAccessorSymbol, ::modifySetterExpression)
+    )
+
+    private inline fun <ExprT : IrDeclarationReference, reified FromSyT : IrSymbol, ToSyT : IrSymbol> handleAccess(
+        expression: ExprT,
+        symbol: FromSyT,
+        accumMap: MutableMap<FromSyT, ToSyT>,
+        symbolConverter: (FromSyT) -> ToSyT,
+        exprConverter: (ExprT, ToSyT) -> IrDeclarationReference
+    ): IrExpression =
+        if (!symbol.isAccessible()) {
+            val accessorSymbol = accumMap.getOrPut(symbol) { symbolConverter(symbol) }
+            exprConverter(expression, accessorSymbol)
+        } else {
+            expression
         }
+
+    private fun makeFunctionAccessorSymbol(functionSymbol: IrFunctionSymbol): IrFunctionSymbol = when (functionSymbol) {
+        is IrConstructorSymbol -> functionSymbol.owner.makeConstructorAccessor().symbol
+        is IrSimpleFunctionSymbol -> functionSymbol.owner.makeSimpleFunctionAccessor().symbol
+        else -> error("Unknown subclass of IrFunctionSymbol")
     }
 
+    private fun IrConstructor.makeConstructorAccessor(): IrConstructor {
+        val source = this
 
-    override fun visitMemberAccess(expression: IrMemberAccessExpression, data: IrClassContext?): IrElement {
-        val superResult = super.visitMemberAccess(expression, data)
-        return createSyntheticAccessorCallForFunction(superResult, expression, data?.codegenContext, context)
-    }
+        return buildConstructor {
+            origin = JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
+            name = source.name
+            visibility = Visibilities.PUBLIC
 
-    companion object {
-        fun createSyntheticAccessorCallForFunction(superResult: IrElement, expression: IrMemberAccessExpression, codegenContext: CodegenContext<*>?, context: JvmBackendContext): IrElement {
+        }.also { accessor ->
+            accessor.parent = source.parent
+            pendingTransformations.add { (accessor.parent as IrDeclarationContainer).declarations.add(accessor) }
 
-            val descriptor = expression.descriptor
-            if (descriptor is FunctionDescriptor && !expression.usesDefaultArguments()) {
-                val directAccessor = codegenContext!!.accessibleDescriptor(JvmCodegenUtil.getDirectMember(descriptor), (expression as? IrCall)?.superQualifier)
-                val accessor = Companion.actualAccessor(descriptor, directAccessor)
+            accessor.copyTypeParametersFrom(source, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR)
+            accessor.copyValueParametersToStatic(source, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR)
+            accessor.returnType = source.returnType.remapTypeParameters(source, accessor)
 
-                if (accessor is AccessorForCallableDescriptor<*> && descriptor !is AccessorForCallableDescriptor<*>) {
-                    val isConstructor = descriptor is ConstructorDescriptor
-                    val accessorOwner = accessor.containingDeclaration as ClassOrPackageFragmentDescriptor
-                    val accessorForIr =
-                            accessorToIrAccessor(isConstructor, accessor, context, descriptor, accessorOwner) //TODO change call
-
-                    val call =
-                            if (isConstructor && expression is IrDelegatingConstructorCall)
-                                IrDelegatingConstructorCallImpl(expression.startOffset, expression.endOffset, accessorForIr as ClassConstructorDescriptor)
-                            else IrCallImpl(expression.startOffset, expression.endOffset, accessorForIr, emptyMap(), expression.origin/*TODO super*/)
-                    //copyAllArgsToValueParams(call, expression)
-                    val receiverAndArgs = expression.receiverAndArgs()
-                    receiverAndArgs.forEachIndexed { i, irExpression ->
-                        call.putValueArgument(i, irExpression)
-                    }
-                    if (isConstructor) {
-                        call.putValueArgument(receiverAndArgs.size, IrConstImpl.constNull(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.ir.symbols.defaultConstructorMarker.descriptor.defaultType))
-                    }
-                    return call
-                }
-            }
-            return superResult
-        }
-
-        private fun accessorToIrAccessor(isConstructor: Boolean, accessor: CallableMemberDescriptor, context: JvmBackendContext, descriptor: FunctionDescriptor, accessorOwner: ClassOrPackageFragmentDescriptor): FunctionDescriptor {
-            return if (isConstructor)
-                (accessor as AccessorForConstructorDescriptor).constructorDescriptorWithMarker(
-                        context.ir.symbols.defaultConstructorMarker.descriptor.defaultType
-                )
-            else descriptor.toStatic(accessorOwner, Name.identifier(context.state.typeMapper.mapAsmMethod(accessor as FunctionDescriptor).name))
-        }
-
-        fun addAccessorToClass(accessor: AccessorForCallableDescriptor<*>, irClassToAddAccessor: IrClass, context: JvmBackendContext) {
-            val accessorOwner = (accessor as FunctionDescriptor).containingDeclaration as ClassOrPackageFragmentDescriptor
-            val body = IrBlockBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
-            val isConstructor = accessor.calleeDescriptor is ConstructorDescriptor
-            val accessorForIr = accessorToIrAccessor(
-                isConstructor, accessor, context,
-                accessor.calleeDescriptor as? FunctionDescriptor ?: return,
-                accessorOwner)
-            val syntheticFunction = IrFunctionImpl(
-                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR,
-                    accessorForIr, body
+            accessor.addValueParameter(
+                Name.identifier("marker"),
+                context.ir.symbols.defaultConstructorMarker.owner.defaultType,
+                JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
             )
-            val calleeDescriptor = accessor.calleeDescriptor as FunctionDescriptor
-            val delegationCall =
-                    if (!isConstructor)
-                        IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, calleeDescriptor)
-                    else IrDelegatingConstructorCallImpl(
-                            UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                            createFunctionSymbol(accessor.calleeDescriptor) as IrConstructorSymbol,
-                            accessor.calleeDescriptor as ClassConstructorDescriptor
-                    )
-            copyAllArgsToValueParams(delegationCall, accessorForIr)
 
-            body.statements.add(if (isConstructor) delegationCall else IrReturnImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, accessor, delegationCall))
-            irClassToAddAccessor.declarations.add(syntheticFunction)
+            accessor.body = IrExpressionBodyImpl(
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                createConstructorCall(accessor, source.symbol)
+            )
+        }
+    }
+
+    private fun createConstructorCall(accessor: IrConstructor, targetSymbol: IrConstructorSymbol) =
+        IrDelegatingConstructorCallImpl(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+            context.irBuiltIns.unitType,
+            targetSymbol, targetSymbol.descriptor, targetSymbol.owner.typeParameters.size
+        ).also {
+            copyAllParamsToArgs(it, accessor)
         }
 
-        private fun actualAccessor(descriptor: FunctionDescriptor, calculatedAccessor: CallableMemberDescriptor): CallableMemberDescriptor {
-            if (calculatedAccessor is AccessorForPropertyDescriptor) {
-                val isGetter = descriptor is PropertyGetterDescriptor
-                val propertyAccessor = if (isGetter) calculatedAccessor.getter!! else calculatedAccessor.setter!!
-                if (isGetter && calculatedAccessor.isWithSyntheticGetterAccessor || !isGetter && calculatedAccessor.isWithSyntheticSetterAccessor) {
-                    return propertyAccessor
-                }
-                return descriptor
+    private fun IrSimpleFunction.makeSimpleFunctionAccessor(): IrSimpleFunction {
+        val source = this
+        return buildFun {
+            origin = JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
+            name = source.accessorName()
+            visibility = Visibilities.PUBLIC
+            isSuspend = source.isSuspend
+        }.also { accessor ->
+            accessor.parent = source.parent
+            pendingTransformations.add { (accessor.parent as IrDeclarationContainer).declarations.add(accessor) }
 
-            }
-            return calculatedAccessor
+            accessor.copyTypeParametersFrom(source, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR)
+            accessor.copyValueParametersToStatic(source, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR)
+            accessor.returnType = source.returnType.remapTypeParameters(source, accessor)
+
+            accessor.body = IrExpressionBodyImpl(
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                createSimpleFunctionCall(accessor, source.symbol)
+            )
+        }
+    }
+
+    private fun createSimpleFunctionCall(accessor: IrFunction, targetSymbol: IrFunctionSymbol) =
+        IrCallImpl(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+            accessor.returnType,
+            targetSymbol, targetSymbol.descriptor,
+            targetSymbol.owner.typeParameters.size
+        ).also {
+            copyAllParamsToArgs(it, accessor)
         }
 
-        private fun copyAllArgsToValueParams(call: IrMemberAccessExpression, fromDescriptor: CallableMemberDescriptor) {
-            var offset = 0
-            val newDescriptor = call.descriptor
-            newDescriptor.dispatchReceiverParameter?.let {
-                call.dispatchReceiver = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, fromDescriptor.valueParameters[offset++])
-            }
+    private fun makeGetterAccessorSymbol(fieldSymbol: IrFieldSymbol): IrSimpleFunctionSymbol =
+        buildFun {
+            origin = JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
+            name = fieldSymbol.owner.accessorNameForGetter()
+            visibility = Visibilities.PUBLIC
+            modality = Modality.FINAL
+            returnType = fieldSymbol.owner.type
+        }.also { accessor ->
+            accessor.parent = fieldSymbol.owner.parent
+            pendingTransformations.add { (accessor.parent as IrDeclarationContainer).declarations.add(accessor) }
 
-            newDescriptor.extensionReceiverParameter?.let {
-                call.extensionReceiver = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, fromDescriptor.valueParameters[offset++])
-            }
-
-            call.descriptor.valueParameters.forEachIndexed { i, _ ->
-                call.putValueArgument(i, IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, fromDescriptor.valueParameters[i + offset]))
-            }
-        }
-
-        private fun AccessorForConstructorDescriptor.constructorDescriptorWithMarker(marker: KotlinType) =
-            ClassConstructorDescriptorImpl.createSynthesized(containingDeclaration, annotations, false, source).also {
-                it.initialize(
-                        DescriptorUtils.getReceiverParameterType(extensionReceiverParameter),
-                        dispatchReceiverParameter,
-                        emptyList()/*TODO*/,
-                        calleeDescriptor.valueParameters.map { it.copy(this, it.name, it.index) } + ValueParameterDescriptorImpl.createWithDestructuringDeclarations(it, null, calleeDescriptor.valueParameters.size, Annotations.EMPTY, Name.identifier("marker"), marker, false, false, false, null, SourceElement.NO_SOURCE, null),
-                        calleeDescriptor.returnType,
-                        Modality.FINAL,
-                        Visibilities.LOCAL
+            if (!fieldSymbol.owner.isStatic) {
+                accessor.addValueParameter(
+                    Name.identifier("\$this"),
+                    (fieldSymbol.owner.parent as IrClass).defaultType,
+                    JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
                 )
             }
+
+            accessor.body = createAccessorBodyForGetter(fieldSymbol.owner, accessor)
+        }.symbol
+
+    private fun createAccessorBodyForGetter(targetField: IrField, accessor: IrSimpleFunction): IrBody {
+        val resolvedTargetField = targetField.resolveFakeOverride()!!
+        val maybeDispatchReceiver =
+            if (resolvedTargetField.isStatic) null
+            else IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, accessor.valueParameters[0].symbol)
+        return IrExpressionBodyImpl(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+            IrGetFieldImpl(
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                resolvedTargetField.symbol,
+                resolvedTargetField.type,
+                maybeDispatchReceiver
+            )
+        )
+    }
+
+    private fun makeSetterAccessorSymbol(fieldSymbol: IrFieldSymbol): IrSimpleFunctionSymbol =
+        buildFun {
+            origin = JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
+            name = fieldSymbol.owner.accessorNameForSetter()
+            visibility = Visibilities.PUBLIC
+            modality = Modality.FINAL
+            returnType = context.irBuiltIns.unitType
+        }.also { accessor ->
+            accessor.parent = fieldSymbol.owner.parent
+            pendingTransformations.add { (accessor.parent as IrDeclarationContainer).declarations.add(accessor) }
+
+            if (!fieldSymbol.owner.isStatic) {
+                accessor.addValueParameter(
+                    Name.identifier("\$this"),
+                    (fieldSymbol.owner.parent as IrClass).defaultType,
+                    JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
+                )
+            }
+
+            accessor.addValueParameter(Name.identifier("value"), fieldSymbol.owner.type, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR)
+
+            accessor.body = createAccessorBodyForSetter(fieldSymbol.owner, accessor)
+        }.symbol
+
+    private fun createAccessorBodyForSetter(targetField: IrField, accessor: IrSimpleFunction): IrBody {
+        val resolvedTargetField = targetField.resolveFakeOverride()!!
+        val maybeDispatchReceiver =
+            if (resolvedTargetField.isStatic) null
+            else IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, accessor.valueParameters[0].symbol)
+        val value = IrGetValueImpl(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+            accessor.valueParameters[if (resolvedTargetField.isStatic) 0 else 1].symbol
+        )
+        return IrExpressionBodyImpl(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+            IrSetFieldImpl(
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                resolvedTargetField.symbol,
+                maybeDispatchReceiver,
+                value,
+                resolvedTargetField.type
+            )
+        )
+    }
+
+    private fun modifyFunctionAccessExpression(
+        oldExpression: IrFunctionAccessExpression,
+        accessorSymbol: IrFunctionSymbol
+    ): IrFunctionAccessExpression {
+        val newExpression = when (oldExpression) {
+            is IrCall -> IrCallImpl(
+                oldExpression.startOffset, oldExpression.endOffset,
+                oldExpression.type,
+                accessorSymbol, accessorSymbol.descriptor,
+                oldExpression.typeArgumentsCount,
+                oldExpression.origin,
+                oldExpression.superQualifierSymbol
+            )
+            is IrDelegatingConstructorCall -> IrDelegatingConstructorCallImpl(
+                oldExpression.startOffset, oldExpression.endOffset,
+                context.irBuiltIns.unitType,
+                accessorSymbol as IrConstructorSymbol, accessorSymbol.descriptor,
+                oldExpression.typeArgumentsCount
+            )
+            else -> error("Need IrCall or IrDelegatingConstructor call, got $oldExpression")
+        }
+        newExpression.copyTypeArgumentsFrom(oldExpression)
+        val receiverAndArgs = oldExpression.receiverAndArgs()
+        receiverAndArgs.forEachIndexed { i, irExpression ->
+            newExpression.putValueArgument(i, irExpression)
+        }
+        if (accessorSymbol is IrConstructorSymbol) {
+            newExpression.putValueArgument(
+                receiverAndArgs.size,
+                IrConstImpl.constNull(
+                    UNDEFINED_OFFSET,
+                    UNDEFINED_OFFSET,
+                    context.ir.symbols.defaultConstructorMarker.owner.defaultType
+                )
+            )
+        }
+        return newExpression
+    }
+
+    private fun modifyGetterExpression(
+        oldExpression: IrGetField,
+        accessorSymbol: IrFunctionSymbol
+    ): IrCall {
+        val call = IrCallImpl(
+            oldExpression.startOffset, oldExpression.endOffset,
+            oldExpression.type,
+            accessorSymbol, accessorSymbol.descriptor,
+            0,
+            oldExpression.origin
+        )
+        oldExpression.receiver?.let {
+            call.putValueArgument(0, oldExpression.receiver)
+        }
+        return call
+    }
+
+    private fun modifySetterExpression(
+        oldExpression: IrSetField,
+        accessorSymbol: IrFunctionSymbol
+    ): IrCall {
+        val call = IrCallImpl(
+            oldExpression.startOffset, oldExpression.endOffset,
+            oldExpression.type,
+            accessorSymbol, accessorSymbol.descriptor,
+            0,
+            oldExpression.origin
+        )
+        oldExpression.receiver?.let {
+            call.putValueArgument(0, oldExpression.receiver)
+        }
+        call.putValueArgument(call.valueArgumentsCount - 1, oldExpression.value)
+        return call
+    }
+
+    private fun copyAllParamsToArgs(
+        call: IrFunctionAccessExpression,
+        syntheticFunction: IrFunction
+    ) {
+        var offset = 0
+        val delegateTo = call.symbol.owner
+        syntheticFunction.typeParameters.forEachIndexed { i, typeParam ->
+            call.putTypeArgument(i, IrSimpleTypeImpl(typeParam.symbol, false, emptyList(), emptyList()))
+        }
+        delegateTo.dispatchReceiverParameter?.let {
+            call.dispatchReceiver =
+                IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, syntheticFunction.valueParameters[offset++].symbol)
+        }
+
+        delegateTo.extensionReceiverParameter?.let {
+            call.extensionReceiver =
+                IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, syntheticFunction.valueParameters[offset++].symbol)
+        }
+
+        delegateTo.valueParameters.forEachIndexed { i, _ ->
+            call.putValueArgument(
+                i,
+                IrGetValueImpl(
+                    UNDEFINED_OFFSET,
+                    UNDEFINED_OFFSET,
+                    syntheticFunction.valueParameters[i + offset].symbol
+                )
+            )
+        }
+    }
+
+    private fun IrFunction.accessorName(): Name {
+        val jvmName = context.state.typeMapper.mapFunctionName(
+            descriptor,
+            OwnerKind.getMemberOwnerKind(parentAsClass.descriptor)
+        )
+        return Name.identifier("access\$$jvmName")
+    }
+
+    private fun IrField.accessorNameForGetter(): Name {
+        val getterName = JvmAbi.getterName(name.asString())
+        return Name.identifier("access\$prop\$$getterName")
+    }
+
+    private fun IrField.accessorNameForSetter(): Name {
+        val setterName = JvmAbi.setterName(name.asString())
+        return Name.identifier("access\$prop\$$setterName")
+    }
+
+    private fun IrSymbol.isAccessible(): Boolean {
+        /// We assume that IR code that reaches us has been checked for correctness at the frontend.
+        /// This function needs to single out those cases where Java accessibility rules differ from Kotlin's.
+
+        val declarationRaw = owner as IrDeclarationWithVisibility
+        val declaration =
+            (declarationRaw as? IrSimpleFunction)?.resolveFakeOverride()
+                ?: (declarationRaw as? IrField)?.resolveFakeOverride() ?: declarationRaw
+
+        // There is never a problem with visibility of inline functions, as those don't end up as Java entities
+        if (declaration is IrFunction && declaration.isInline) return true
+
+        // The only two visibilities where Kotlin rules differ from JVM rules.
+        if (!Visibilities.isPrivate(declaration.visibility) && declaration.visibility != Visibilities.PROTECTED) return true
+
+        // If local variables are accessible by Kotlin rules, they also are by Java rules.
+        val symbolDeclarationContainer = (declaration.parent as? IrDeclarationContainer) as? IrElement ?: return true
+
+        // Within inline functions, we have to assume the worst.
+        if (inlinedLambdasCollector.isInlineNonpublicContext(allScopes))
+            return false
+
+        val contextDeclarationContainer = allScopes.lastOrNull { it.irElement is IrDeclarationContainer }?.irElement
+
+        val samePackage = declaration.getPackageFragment()?.fqName == contextDeclarationContainer?.getPackageFragment()?.fqName
+        return when {
+            Visibilities.isPrivate(declaration.visibility) && symbolDeclarationContainer != contextDeclarationContainer -> false
+            (declaration.visibility == Visibilities.PROTECTED && !samePackage &&
+                    !(symbolDeclarationContainer is IrClass && contextDeclarationContainer is IrClass &&
+                            contextDeclarationContainer.isSubclassOf(symbolDeclarationContainer))) -> false
+            else -> true
+        }
     }
 }
+
+private class InlinedLambdasCollector : IrElementVisitorVoidWithContext() {
+    private val inlinedLambdasInNonPublicContexts = mutableSetOf<IrFunction>()
+
+    fun isInlineNonpublicContext(scopeStack: List<ScopeWithIr>): Boolean {
+        val currentFunction = scopeStack.map { it.irElement }.lastOrNull { it is IrFunction } as? IrFunction ?: return false
+        return (currentFunction.isInline && currentFunction.visibility in setOf(Visibilities.PRIVATE, Visibilities.PROTECTED))
+                || currentFunction in inlinedLambdasInNonPublicContexts
+    }
+
+    override fun visitElement(element: IrElement) {
+        element.acceptChildrenVoid(this)
+    }
+
+    override fun visitFunctionAccess(expression: IrFunctionAccessExpression) {
+        val callTarget = expression.symbol.owner
+        if (callTarget.isInline && isInlineNonpublicContext(allScopes)) {
+            for (i in 0 until expression.valueArgumentsCount) {
+                val argument = expression.getValueArgument(i)?.removeBlocks()
+                if (argument is IrFunctionReference &&
+                    argument.symbol.owner.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA &&
+                    !callTarget.valueParameters[i].isNoinline
+                ) {
+                    inlinedLambdasInNonPublicContexts.add(argument.symbol.owner)
+                }
+            }
+        }
+        super.visitFunctionAccess(expression)
+    }
+}
+

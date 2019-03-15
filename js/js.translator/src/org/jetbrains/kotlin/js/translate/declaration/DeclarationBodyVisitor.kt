@@ -28,9 +28,6 @@ import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getClassDescriptor
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.pureFqn
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getSupertypesWithoutFakes
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.calls.components.hasDefaultValue
-import org.jetbrains.kotlin.resolve.calls.components.isActualParameterWithCorrespondingExpectedDefault
-import org.jetbrains.kotlin.resolve.descriptorUtil.hasOwnParametersWithDefaultValue
 
 class DeclarationBodyVisitor(
         private val containingClass: ClassDescriptor,
@@ -111,12 +108,8 @@ class DeclarationBodyVisitor(
         initializerStatements.add(statement)
     }
 
-    private fun hasParametersWithDefaultValue(descriptor: FunctionDescriptor) = descriptor.valueParameters.any { it.hasDefaultValue() }
-    private fun hasCorrespondingExpectParametersWithDefaultValue(descriptor: FunctionDescriptor) =
-        descriptor.valueParameters.any { it.isActualParameterWithCorrespondingExpectedDefault }
-
     override fun addFunction(descriptor: FunctionDescriptor, expression: JsExpression?, psi: KtElement?) {
-        if (!hasParametersWithDefaultValue(descriptor) || !descriptor.isOverridableOrOverrides) {
+        if (!descriptor.hasOrInheritsParametersWithDefaultValue() || !descriptor.isOverridableOrOverrides) {
             if (expression != null) {
                 context.addDeclarationStatement(context.addFunctionToPrototype(containingClass, descriptor, expression))
             }
@@ -130,7 +123,7 @@ class DeclarationBodyVisitor(
                 context.addDeclarationStatement(JsAstUtils.assignment(functionRef, expression).makeStmt())
             }
 
-            if (descriptor.hasOwnParametersWithDefaultValue() || hasCorrespondingExpectParametersWithDefaultValue(descriptor)) {
+            if (descriptor.hasOwnParametersWithDefaultValue()) {
                 val caller = JsFunction(context.getScopeForDescriptor(containingClass), JsBlock(), "")
                 caller.source = psi?.finalElement
                 val callerContext = context

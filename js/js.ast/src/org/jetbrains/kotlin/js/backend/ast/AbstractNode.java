@@ -28,13 +28,13 @@ abstract class AbstractNode extends HasMetadata implements JsNode {
         return out.toString();
     }
 
+    @SuppressWarnings("unchecked")
     protected <T extends HasMetadata & JsNode> T withMetadataFrom(T other) {
         this.copyMetadataFrom(other);
         Object otherSource = other.getSource();
         if (otherSource != null) {
             source(otherSource);
         }
-        //noinspection unchecked
         return (T) this;
     }
 }

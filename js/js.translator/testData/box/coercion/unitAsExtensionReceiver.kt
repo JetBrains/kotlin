@@ -1,4 +1,8 @@
-// EXPECTED_REACHABLE_NODES: 1112
+// IGNORE_BACKEND: JS_IR
+// EXPECTED_REACHABLE_NODES: 1284
+
+// TODO: Design Unit materialization and Unit.asDynamic() in JS IR BE
+
 var log = ""
 
 fun foo() {

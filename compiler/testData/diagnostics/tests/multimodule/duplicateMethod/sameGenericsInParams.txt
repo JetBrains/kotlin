@@ -63,6 +63,3 @@ package p {
 package
 
 public fun test(/*0*/ b: p.B?, /*1*/ a: p.G1<kotlin.Int>, /*2*/ b1: p.G2<p.B, kotlin.String>): kotlin.Unit
-
-package p {
-}

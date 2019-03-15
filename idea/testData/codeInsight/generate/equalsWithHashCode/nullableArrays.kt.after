@@ -1,5 +1,3 @@
-import java.util.Arrays
-
 class A(val n: IntArray?, val s: Array<String>?) {
     val f: Float = 1.0f
 
@@ -13,16 +11,22 @@ class A(val n: IntArray?, val s: Array<String>?) {
 
         other as A
 
-        if (!Arrays.equals(n, other.n)) return false
-        if (!Arrays.equals(s, other.s)) return false
+        if (n != null) {
+            if (other.n == null) return false
+            if (!n.contentEquals(other.n)) return false
+        } else if (other.n != null) return false
+        if (s != null) {
+            if (other.s == null) return false
+            if (!s.contentEquals(other.s)) return false
+        } else if (other.s != null) return false
         if (f != other.f) return false
 
         return true
     }
 
     override fun hashCode(): Int {
-        var result = n?.let { Arrays.hashCode(it) } ?: 0
-        result = 31 * result + (s?.let { Arrays.hashCode(it) } ?: 0)
+        var result = n?.contentHashCode() ?: 0
+        result = 31 * result + (s?.contentHashCode() ?: 0)
         result = 31 * result + f.hashCode()
         return result
     }

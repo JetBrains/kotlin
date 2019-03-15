@@ -7,17 +7,17 @@ import android.os.Parcelable
 interface <error descr="[PLUGIN_ERROR] 'Parcelable' should be a class">Intf</error> : Parcelable
 
 @Parcelize
-object <error descr="[PLUGIN_ERROR] 'Parcelable' should be a class">Obj</error>
+object <error descr="[PLUGIN_ERROR] No 'Parcelable' supertype">Obj</error>
 
 class A {
     @Parcelize
-    companion <error descr="[PLUGIN_ERROR] 'Parcelable' should be a class">object</error> {
+    companion <error descr="[PLUGIN_ERROR] No 'Parcelable' supertype">object</error> {
         fun foo() {}
     }
 }
 
 @Parcelize
-enum class <error descr="[PLUGIN_ERROR] 'Parcelable' should be a class">Enum</error> {
+enum class <error descr="[PLUGIN_ERROR] No 'Parcelable' supertype">Enum</error> {
     WHITE, BLACK
 }
 

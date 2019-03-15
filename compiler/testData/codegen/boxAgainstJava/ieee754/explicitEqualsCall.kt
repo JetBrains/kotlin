@@ -1,4 +1,3 @@
-// LANGUAGE_VERSION: 1.1
 // FILE: JavaClass.java
 
 public class JavaClass {
@@ -11,10 +10,6 @@ public class JavaClass {
         return 0.0;
     }
 
-    public Double null0(){
-        return null;
-    }
-
 }
 
 
@@ -23,10 +18,9 @@ public class JavaClass {
 fun box(): String {
     val jClass = JavaClass()
 
-    if (jClass.minus0().equals(jClass.plus0())) return "fail 5"
+    if (jClass.minus0().equals(jClass.plus0())) return "fail 1"
+    if (jClass.plus0().equals(jClass.minus0())) return "fail 2"
 
-    if (jClass.null0().equals(jClass.plus0())) return "fail 6"
-    if (jClass.minus0().equals(jClass.null0())) return "fail 7"
     return "OK"
 }
 

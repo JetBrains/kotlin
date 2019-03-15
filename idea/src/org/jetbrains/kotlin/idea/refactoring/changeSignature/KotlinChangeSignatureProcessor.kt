@@ -30,6 +30,7 @@ import com.intellij.refactoring.rename.UnresolvableCollisionUsageInfo
 import com.intellij.usageView.UsageInfo
 import com.intellij.usageView.UsageViewDescriptor
 import com.intellij.util.containers.MultiMap
+import org.jetbrains.kotlin.idea.refactoring.broadcastRefactoringExit
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinFunctionCallUsage
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinImplicitReceiverUsage
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinUsageInfo
@@ -43,6 +44,16 @@ class KotlinChangeSignatureProcessor(
 ) : ChangeSignatureProcessorBase(project, KotlinChangeInfoWrapper(changeInfo)) {
     val ktChangeInfo
         get() = changeInfo.delegate!!
+
+    override fun setPrepareSuccessfulSwingThreadCallback(callback: Runnable?) {
+        val actualCallback = if (callback != null) {
+            Runnable {
+                callback.run()
+                setPrepareSuccessfulSwingThreadCallback(null)
+            }
+        } else null
+        super.setPrepareSuccessfulSwingThreadCallback(actualCallback)
+    }
 
     override fun createUsageViewDescriptor(usages: Array<UsageInfo>): UsageViewDescriptor {
         val subject = if (ktChangeInfo.kind.isConstructor) "constructor" else "function"
@@ -119,6 +130,14 @@ class KotlinChangeSignatureProcessor(
         }
         finally {
             changeInfo.invalidate()
+        }
+    }
+
+    override fun doRun() {
+        try {
+            super.doRun()
+        } finally {
+            broadcastRefactoringExit(myProject, refactoringId!!)
         }
     }
 }

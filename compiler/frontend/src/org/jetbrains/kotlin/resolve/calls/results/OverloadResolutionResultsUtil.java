@@ -32,6 +32,7 @@ import java.util.Collection;
 
 public class OverloadResolutionResultsUtil {
     @NotNull
+    @SuppressWarnings("unchecked")
     public static <D extends CallableDescriptor> OverloadResolutionResults<D> ambiguity(OverloadResolutionResults<D> results1, OverloadResolutionResults<D> results2) {
         Collection<MutableResolvedCall<D>> resultingCalls = Lists.newArrayList();
         resultingCalls.addAll((Collection<MutableResolvedCall<D>>) results1.getResultingCalls());

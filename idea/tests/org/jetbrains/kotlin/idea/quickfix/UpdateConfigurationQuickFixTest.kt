@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.quickfix
@@ -40,6 +29,16 @@ import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
 import java.io.File
 
 class UpdateConfigurationQuickFixTest : LightPlatformCodeInsightFixtureTestCase() {
+    fun testDisableInlineClasses() {
+        configureRuntime("mockRuntime11")
+        resetProjectSettings(LanguageVersion.KOTLIN_1_3)
+        myFixture.configureByText("foo.kt", "inline class My(val n: Int)")
+
+        assertEquals(LanguageFeature.State.ENABLED_WITH_WARNING, inlineClassesSupport)
+        myFixture.launchAction(myFixture.findSingleIntention("Disable inline classes support in the project"))
+        assertEquals(LanguageFeature.State.DISABLED, inlineClassesSupport)
+    }
+
     fun testEnableCoroutines() {
         configureRuntime("mockRuntime11")
         resetProjectSettings(LanguageVersion.KOTLIN_1_1)
@@ -64,7 +63,9 @@ class UpdateConfigurationQuickFixTest : LightPlatformCodeInsightFixtureTestCase(
 
     fun testEnableCoroutinesFacet() {
         configureRuntime("mockRuntime11")
-        val facet = configureKotlinFacet(myModule)
+        val facet = configureKotlinFacet(myModule) {
+            settings.languageLevel = LanguageVersion.KOTLIN_1_1
+        }
         resetProjectSettings(LanguageVersion.KOTLIN_1_1)
         myFixture.configureByText("foo.kt", "suspend fun foo()")
 
@@ -191,6 +192,9 @@ class UpdateConfigurationQuickFixTest : LightPlatformCodeInsightFixtureTestCase(
 
     private val coroutineSupport: LanguageFeature.State
         get() = project.getLanguageVersionSettings().getFeatureSupport(LanguageFeature.Coroutines)
+
+    private val inlineClassesSupport: LanguageFeature.State
+        get() = project.getLanguageVersionSettings().getFeatureSupport(LanguageFeature.InlineClasses)
 
     override fun tearDown() {
         FacetManager.getInstance(myModule).getFacetByType(KotlinFacetType.TYPE_ID)?.let {

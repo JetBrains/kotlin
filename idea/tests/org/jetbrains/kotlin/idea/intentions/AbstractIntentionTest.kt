@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.intentions
@@ -33,9 +22,7 @@ import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.testFramework.PlatformTestUtil
 import junit.framework.ComparisonFailure
 import junit.framework.TestCase
-import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
-import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils
-import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.*
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
@@ -106,6 +93,7 @@ abstract class AbstractIntentionTest : KotlinLightCodeInsightFixtureTestCase() {
         val pathToFiles = mapOf(*(sourceFilePaths zip psiFiles).toTypedArray())
 
         val fileText = FileUtil.loadFile(mainFile, true)
+        val configured = configureCompilerOptions(fileText, project, module)
 
         ConfigLibraryUtil.configureLibrariesByDirective(myModule, PlatformTestUtil.getCommunityPath(), fileText)
 
@@ -124,9 +112,11 @@ abstract class AbstractIntentionTest : KotlinLightCodeInsightFixtureTestCase() {
             if (file is KtFile && !InTextDirectivesUtils.isDirectiveDefined(fileText, "// SKIP_ERRORS_AFTER")) {
                 DirectiveBasedActionUtils.checkForUnexpectedErrors(file as KtFile)
             }
-        }
-        finally {
+        } finally {
             ConfigLibraryUtil.unconfigureLibrariesByDirective(myModule, fileText)
+            if (configured) {
+                rollbackCompilerOptions(project, module)
+            }
         }
     }
 

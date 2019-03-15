@@ -1,25 +1,17 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.jvm.compiler
 
 import com.intellij.openapi.util.io.FileUtil
+import junit.framework.TestCase
+import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
+import java.util.concurrent.TimeUnit
 import java.util.jar.Manifest
 
 class Java9ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
@@ -30,20 +22,20 @@ class Java9ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
             name: String,
             modulePath: List<File> = emptyList(),
             addModules: List<String> = emptyList(),
+            additionalKotlinArguments: List<String> = emptyList(),
             manifest: Manifest? = null
     ): File {
-        val jdk9Home = KotlinTestUtils.getJdk9HomeIfPossible() ?: return File("<test-skipped>")
-
         val paths = (modulePath + ForTestCompileRuntime.runtimeJarForTests()).joinToString(separator = File.pathSeparator) { it.path }
 
         val kotlinOptions = mutableListOf(
-                "-jdk-home", jdk9Home.path,
-                "-jvm-target", "1.8",
-                "-Xmodule-path=$paths"
+            "-jdk-home", KotlinTestUtils.getJdk9Home().path,
+            "-jvm-target", "1.8",
+            "-Xmodule-path=$paths"
         )
         if (addModules.isNotEmpty()) {
             kotlinOptions += "-Xadd-modules=${addModules.joinToString()}"
         }
+        kotlinOptions += additionalKotlinArguments
 
         return compileLibrary(
                 name,
@@ -160,11 +152,10 @@ class Java9ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
     fun testSpecifyPathToModuleInfoInArguments() {
         val a = module("moduleA")
 
-        val jdk9Home = KotlinTestUtils.getJdk9HomeIfPossible() ?: return
         val kotlinOptions = mutableListOf(
-                "$testDataDirectory/someOtherDirectoryWithTheActualModuleInfo/module-info.java",
-                "-jdk-home", jdk9Home.path,
-                "-Xmodule-path=${a.path}"
+            "$testDataDirectory/someOtherDirectoryWithTheActualModuleInfo/module-info.java",
+            "-jdk-home", KotlinTestUtils.getJdk9Home().path,
+            "-Xmodule-path=${a.path}"
         )
         compileLibrary(
                 "moduleB",
@@ -175,8 +166,6 @@ class Java9ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
     }
 
     fun testMultiReleaseLibrary() {
-        val jdk9Home = KotlinTestUtils.getJdk9HomeIfPossible() ?: return
-
         val librarySrc = FileUtil.findFilesByMask(JAVA_FILES, File(testDataDirectory, "library"))
         val libraryOut = File(tmpdir, "out")
         KotlinTestUtils.compileJavaFilesExternallyWithJava9(librarySrc, listOf("-d", libraryOut.path))
@@ -186,7 +175,9 @@ class Java9ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
         File(libraryOut, "module-info.class").renameTo(File(libraryOut9, "module-info.class"))
 
         // Use the name other from 'library' to prevent it from being loaded as an automatic module if module-info.class is not found
-        val libraryJar = createMultiReleaseJar(jdk9Home, File(tmpdir, "multi-release-library.jar"), libraryOut, libraryOut9)
+        val libraryJar = createMultiReleaseJar(
+            KotlinTestUtils.getJdk9Home(), File(tmpdir, "multi-release-library.jar"), libraryOut, libraryOut9
+        )
 
         module("main", listOf(libraryJar))
     }
@@ -227,8 +218,10 @@ class Java9ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
 
     fun testDependencyOnStdlib() {
         module("unnamed")
-        module("namedWithExplicitDependency")
+        val namedWithExplicitDependency = module("namedWithExplicitDependency")
         module("namedWithoutExplicitDependency")
+        module("namedWithIndirectDependencyViaOtherModule", listOf(namedWithExplicitDependency))
+        module("namedWithIndirectDependencyViaReflect", listOf(ForTestCompileRuntime.reflectJarForTests()))
     }
 
     fun testDependencyOnStdlibJdk78() {
@@ -237,5 +230,33 @@ class Java9ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
 
     fun testDependencyOnReflect() {
         module("usage", listOf(ForTestCompileRuntime.reflectJarForTests()))
+    }
+
+    fun testWithBuildFile() {
+        // This test checks that module path is configured correctly when the compiler is invoked in the '-Xbuild-file' mode. Note that
+        // the "'-d' option is ignored" warning in this test is an artifact of the test infrastructure and is not a part of the test.
+        val buildFile = AbstractCliTest.replacePathsInBuildXml(
+            "-Xbuild-file=${File(testDataDirectory, "build.xml").path}",
+            testDataDirectory.absolutePath,
+            tmpdir.absolutePath
+        )
+        module("usage", additionalKotlinArguments = listOf("-no-stdlib", buildFile))
+    }
+
+    fun testCoroutinesDebugMetadata() {
+        val jar = module("usage", listOf(ForTestCompileRuntime.runtimeJarForTests()))
+
+        val command = listOf<String>(
+            File(KotlinTestUtils.getJdk9Home(), "bin/java").path,
+            "-p",
+            "${ForTestCompileRuntime.runtimeJarForTests().path}${File.pathSeparator}${jar.path}",
+            "-m",
+            "usage/some.module.withsome.packages.UsageKt"
+        )
+
+        val process = ProcessBuilder().command(command).start()
+        process.waitFor(1, TimeUnit.MINUTES)
+        val got = process.inputStream.reader().readText()
+        KotlinTestUtils.assertEqualsToFile(File("$testDataDirectory/stdout.txt"), got)
     }
 }

@@ -4,6 +4,7 @@
  */
 
 @file:Suppress("FINITE_BOUNDS_VIOLATION_IN_JAVA")
+
 package org.jetbrains.kotlin.metadata.serialization
 
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -20,9 +21,9 @@ private class TableElementWrapper<Element : GeneratedMessageLite.Builder<*, Elem
 }
 
 abstract class MutableTable<Element, Table, TableBuilder>
-    where Element : GeneratedMessageLite.Builder<*, Element>,
-          Table : GeneratedMessageLite,
-          TableBuilder : GeneratedMessageLite.Builder<Table, TableBuilder> {
+        where Element : GeneratedMessageLite.Builder<*, Element>,
+              Table : GeneratedMessageLite,
+              TableBuilder : GeneratedMessageLite.Builder<Table, TableBuilder> {
 
     private val interner = Interner<TableElementWrapper<Element>>()
 
@@ -31,16 +32,16 @@ abstract class MutableTable<Element, Table, TableBuilder>
     protected abstract fun addElement(builder: TableBuilder, element: Element)
 
     operator fun get(type: Element): Int =
-            interner.intern(TableElementWrapper(type))
+        interner.intern(TableElementWrapper(type))
 
     @Suppress("UNCHECKED_CAST")
     fun serialize(): Table? =
-            if (interner.isEmpty) null
-            else createTableBuilder().apply {
-                for (obj in interner.allInternedObjects) {
-                    addElement(this, obj.builder)
-                }
-            }.build() as Table
+        if (interner.isEmpty) null
+        else createTableBuilder().apply {
+            for (obj in interner.allInternedObjects) {
+                addElement(this, obj.builder)
+            }
+        }.build() as Table
 }
 
 class MutableTypeTable : MutableTable<ProtoBuf.Type.Builder, ProtoBuf.TypeTable, ProtoBuf.TypeTable.Builder>() {
@@ -51,7 +52,8 @@ class MutableTypeTable : MutableTable<ProtoBuf.Type.Builder, ProtoBuf.TypeTable,
     }
 }
 
-class MutableVersionRequirementTable : MutableTable<ProtoBuf.VersionRequirement.Builder, ProtoBuf.VersionRequirementTable, ProtoBuf.VersionRequirementTable.Builder>() {
+class MutableVersionRequirementTable :
+    MutableTable<ProtoBuf.VersionRequirement.Builder, ProtoBuf.VersionRequirementTable, ProtoBuf.VersionRequirementTable.Builder>() {
     override fun createTableBuilder(): ProtoBuf.VersionRequirementTable.Builder = ProtoBuf.VersionRequirementTable.newBuilder()
 
     override fun addElement(builder: ProtoBuf.VersionRequirementTable.Builder, element: ProtoBuf.VersionRequirement.Builder) {

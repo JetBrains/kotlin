@@ -2,7 +2,7 @@ package
 
 public fun bar(): kotlin.Int
 
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.EXPRESSION}) public final annotation class My : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.EXPRESSION}) @kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) public final annotation class My : kotlin.Annotation {
     public constructor My()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

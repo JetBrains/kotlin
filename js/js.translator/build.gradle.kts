@@ -2,12 +2,9 @@ import org.gradle.plugins.ide.idea.model.IdeaModel
 
 plugins {
     idea
+    kotlin("jvm")
+    id("jps-compatible")
 }
-
-apply { plugin("kotlin") }
-apply { plugin("jps-compatible") }
-
-jvmTarget = "1.6"
 
 dependencies {
     compile(project(":core:descriptors"))

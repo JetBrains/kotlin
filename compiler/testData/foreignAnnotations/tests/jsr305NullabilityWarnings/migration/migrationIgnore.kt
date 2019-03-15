@@ -46,12 +46,12 @@ fun main(a: A) {
     a.field.length
 
     a.foo2("", null)?.length
-    <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.foo2("", null)<!>.length
-    <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.foo2(<!NULL_FOR_NONNULL_TYPE!>null<!>, "")<!>.length
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.foo2("", null)<!>.length
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.foo2(<!NULL_FOR_NONNULL_TYPE!>null<!>, "")<!>.length
 
     a.bar2().length
     a.bar2()<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.length
 
     a.field2?.length
-    <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.field2<!>.length
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.field2<!>.length
 }

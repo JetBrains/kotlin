@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.idea.facet
 
 import com.intellij.facet.Facet
 import com.intellij.facet.FacetManager
-import com.intellij.facet.FacetTypeRegistry
 import com.intellij.openapi.module.Module
 
 class KotlinFacet(

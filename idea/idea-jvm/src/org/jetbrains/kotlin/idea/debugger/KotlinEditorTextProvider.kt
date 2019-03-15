@@ -70,42 +70,20 @@ class KotlinEditorTextProvider : EditorTextProvider {
                 }
             }
 
+            fun KtExpression.qualifiedParentOrSelf(isSelector: Boolean = true): KtExpression {
+                val parent = parent
+                return if (parent is KtQualifiedExpression && (!isSelector || parent.selectorExpression == this)) parent else this
+            }
+
             val parent = ktElement.parent
 
             val newExpression = when (parent) {
                 is KtThisExpression -> parent
-                is KtSuperExpression -> {
-                    val pparent = parent.parent
-                    when (pparent) {
-                        is KtQualifiedExpression -> pparent
-                        else -> parent
-                    }
-                }
-                is KtReferenceExpression -> {
-                    val pparent = parent.parent
-                    if (pparent is KtQualifiedExpression && pparent.selectorExpression == parent) {
-                        pparent
-                    }
-                    else {
-                        parent
-                    }
-                }
-                is KtQualifiedExpression -> {
-                    if (parent.receiverExpression != ktElement) {
-                        parent
-                    }
-                    else {
-                        null
-                    }
-                }
-                is KtOperationExpression -> {
-                    if (parent.operationReference == ktElement) {
-                        parent
-                    }
-                    else {
-                        null
-                    }
-                }
+                is KtSuperExpression -> parent.qualifiedParentOrSelf(isSelector = false)
+                is KtArrayAccessExpression -> if (parent.arrayExpression == ktElement) ktElement else parent.qualifiedParentOrSelf()
+                is KtReferenceExpression -> parent.qualifiedParentOrSelf()
+                is KtQualifiedExpression -> if (parent.receiverExpression != ktElement) parent else null
+                is KtOperationExpression -> if (parent.operationReference == ktElement) parent else null
                 else -> null
             }
 

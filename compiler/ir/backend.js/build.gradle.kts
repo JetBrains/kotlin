@@ -1,7 +1,7 @@
-plugins { kotlin("jvm") }
-apply { plugin("jps-compatible") }
-
-jvmTarget = "1.6"
+plugins {
+    kotlin("jvm")
+    id("jps-compatible")
+}
 
 dependencies {
     compile(project(":compiler:util"))
@@ -9,6 +9,7 @@ dependencies {
     compile(project(":compiler:backend-common"))
     compile(project(":compiler:ir.tree"))
     compile(project(":compiler:ir.psi2ir"))
+    compile(project(":compiler:ir.backend.common"))
     compile(project(":js:js.ast"))
     compile(project(":js:js.frontend"))
 

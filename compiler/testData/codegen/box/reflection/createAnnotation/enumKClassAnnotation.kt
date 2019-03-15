@@ -1,7 +1,9 @@
+// IGNORE_BACKEND: JS_IR
 // TODO: muted automatically, investigate should it be ran for JS or not
 // IGNORE_BACKEND: JS, NATIVE
 
 // WITH_REFLECT
+package test
 
 import kotlin.reflect.KClass
 import kotlin.test.assertEquals
@@ -43,8 +45,8 @@ fun box(): String {
     assertEquals(a2, a1)
     assertEquals(a1.hashCode(), a2.hashCode())
 
-    assertEquals("@Anno(level=WARNING, klass=class java.lang.Number, foo=@Foo(value=OK), " +
-                 "levels=[WARNING], klasses=[class java.lang.Number], foos=[@Foo(value=OK)])", a1.toString())
+    assertEquals("@test.Anno(level=WARNING, klass=class java.lang.Number, foo=@test.Foo(value=OK), " +
+                 "levels=[WARNING], klasses=[class java.lang.Number], foos=[@test.Foo(value=OK)])", a1.toString())
 
     return "OK"
 }

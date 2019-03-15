@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.script
 
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import kotlin.reflect.*
 import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.jvm.jvmErasure
@@ -160,18 +159,6 @@ private class StringArgsConverter : ArgsConverter<String> {
 
     override fun tryConvertVararg(parameter: KParameter, firstArg: NamedArgument<String>, restArgsIt: Iterator<NamedArgument<String>>): ArgsConverter.Result {
 
-        fun convertAnyArray(classifier: KClassifier?, args: Sequence<String?>): Any? =
-                when (classifier) {
-                    String::class -> args.toList().toTypedArray()
-                    is KClass<*> -> classifier.constructors.firstNotNullResult { ctor ->
-                        try {
-                            args.map { ctor.call(it) }.toList().toTypedArray()
-                        }
-                        catch (e: Exception) { null }
-                    }
-                    else -> null
-                }
-
         fun convertPrimitivesArray(type: KType, args: Sequence<String?>): Any? =
                 when (type.classifier) {
                     IntArray::class -> args.map { it?.toIntOrNull() }
@@ -228,9 +215,42 @@ private class AnyArgsConverter : ArgsConverter<Any> {
                ?: ArgsConverter.Result.Failure
     }
 
-    override fun tryConvertVararg(parameter: KParameter, firstArg: NamedArgument<Any>, restArgsIt: Iterator<NamedArgument<Any>>): ArgsConverter.Result =
-            ArgsConverter.Result.Failure
+    override fun tryConvertVararg(
+        parameter: KParameter, firstArg: NamedArgument<Any>, restArgsIt: Iterator<NamedArgument<Any>>
+    ): ArgsConverter.Result {
+
+        val parameterType = parameter.type
+        if (parameterType.jvmErasure.java.isArray) {
+            val argsSequence = sequenceOf(firstArg.value) + restArgsIt.asSequence().map { it.value }
+            val arrayElementType = parameterType.arguments.firstOrNull()?.type
+            val arrayArgCandidate = convertAnyArray(arrayElementType?.classifier, argsSequence)
+            if (arrayArgCandidate != null)
+                return ArgsConverter.Result.Success(arrayArgCandidate)
+        }
+
+        return ArgsConverter.Result.Failure
+    }
 
     override fun tryConvertTail(parameter: KParameter, firstArg: NamedArgument<Any>, restArgsIt: Iterator<NamedArgument<Any>>): ArgsConverter.Result =
             tryConvertSingle(parameter, firstArg)
+}
+
+@Suppress("UNCHECKED_CAST")
+private inline fun <reified T> convertAnyArray(classifier: KClassifier?, args: Sequence<T?>): Any? =
+    if (classifier == T::class) args.toList().toTypedArray() // simple case
+    else convertAnyArrayImpl<T>(classifier, args)
+
+private fun <T> convertAnyArrayImpl(classifier: KClassifier?, args: Sequence<T?>): Any? {
+    val elementClass = (classifier as? KClass<*>) ?: return null
+
+    val argsList = args.toList()
+    val result = java.lang.reflect.Array.newInstance(elementClass.java, argsList.size)
+    argsList.forEachIndexed { idx, arg ->
+        try {
+            java.lang.reflect.Array.set(result, idx, arg)
+        } catch (e: IllegalArgumentException) {
+            return@convertAnyArrayImpl null
+        }
+    }
+    return result
 }

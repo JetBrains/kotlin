@@ -1,0 +1,26 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "org.jetbrains.kotlin:kotlin-allopen:$kotlin_version"
+    }
+}
+
+apply plugin: org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper
+apply plugin: org.jetbrains.kotlin.allopen.gradle.AllOpenGradleSubplugin
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+allOpen {
+    annotation("AllOpen")
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+}

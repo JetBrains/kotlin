@@ -17,18 +17,53 @@
 package org.jetbrains.kotlin.idea.compiler.configuration
 
 import com.intellij.openapi.components.PersistentStateComponent
-import com.intellij.openapi.components.StoragePathMacros.PROJECT_CONFIG_DIR
 import com.intellij.openapi.project.Project
-import com.intellij.util.messages.Topic
+import com.intellij.openapi.util.Comparing
+import com.intellij.openapi.util.JDOMUtil
 import com.intellij.util.ReflectionUtil
-import com.intellij.util.xmlb.SkipDefaultValuesSerializationFilters
+import com.intellij.util.messages.Topic
+import com.intellij.util.xmlb.Accessor
+import com.intellij.util.xmlb.SerializationFilterBase
 import com.intellij.util.xmlb.XmlSerializer
+import gnu.trove.THashMap
 import org.jdom.Element
 import org.jetbrains.kotlin.cli.common.arguments.*
-import org.jetbrains.kotlin.config.SettingConstants
+import org.jetbrains.kotlin.idea.syncPublisherWithDisposeCheck
 import kotlin.reflect.KClass
 
 abstract class BaseKotlinCompilerSettings<T : Freezable> protected constructor(private val project: Project) : PersistentStateComponent<Element>, Cloneable {
+    // Based on com.intellij.util.xmlb.SkipDefaultValuesSerializationFilters
+    private object DefaultValuesFilter : SerializationFilterBase() {
+        private val defaultBeans = THashMap<Class<*>, Any>()
+
+        private fun createDefaultBean(beanClass: Class<Any>): Any {
+            return ReflectionUtil.newInstance<Any>(beanClass).apply {
+                if (this is K2JSCompilerArguments) {
+                    sourceMapPrefix = ""
+                }
+            }
+        }
+
+        private fun getDefaultValue(accessor: Accessor, bean: Any): Any? {
+            if (bean is K2JSCompilerArguments && accessor.name == K2JSCompilerArguments::sourceMapEmbedSources.name) {
+                return if (bean.sourceMap) K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_INLINING else null
+            }
+
+            val beanClass = bean.javaClass
+            val defaultBean = defaultBeans.getOrPut(beanClass) { createDefaultBean(beanClass) }
+            return accessor.read(defaultBean)
+        }
+
+        override fun accepts(accessor: Accessor, bean: Any, beanValue: Any?): Boolean {
+            val defValue = getDefaultValue(accessor, bean)
+            return if (defValue is Element && beanValue is Element) {
+                !JDOMUtil.areElementsEqual(beanValue, defValue)
+            } else {
+                !Comparing.equal(beanValue, defValue)
+            }
+        }
+    }
+
     @Suppress("LeakingThis", "UNCHECKED_CAST")
     private var _settings: T = createSettings().frozen() as T
         private set(value) {
@@ -40,7 +75,8 @@ abstract class BaseKotlinCompilerSettings<T : Freezable> protected constructor(p
         set(value) {
             validateNewSettings(value)
             _settings = value
-            project.messageBus.syncPublisher(KotlinCompilerSettingsListener.TOPIC).settingsChanged(value)
+
+            project.syncPublisherWithDisposeCheck(KotlinCompilerSettingsListener.TOPIC).settingsChanged(value)
         }
 
     fun update(changer: T.() -> Unit) {
@@ -64,32 +100,21 @@ abstract class BaseKotlinCompilerSettings<T : Freezable> protected constructor(p
 
     protected abstract fun createSettings(): T
 
-    override fun getState() = XmlSerializer.serialize(_settings, SKIP_DEFAULT_VALUES)
+    override fun getState() = XmlSerializer.serialize(_settings, DefaultValuesFilter)
 
     override fun loadState(state: Element) {
         _settings = ReflectionUtil.newInstance(_settings.javaClass).apply {
             if (this is CommonCompilerArguments) {
-                freeArgs = ArrayList()
+                freeArgs = mutableListOf()
+                internalArguments = mutableListOf()
             }
             XmlSerializer.deserializeInto(this, state)
         }
-        project.messageBus.syncPublisher(KotlinCompilerSettingsListener.TOPIC).settingsChanged(settings)
+
+        project.syncPublisherWithDisposeCheck(KotlinCompilerSettingsListener.TOPIC).settingsChanged(settings)
     }
 
     public override fun clone(): Any = super.clone()
-
-    companion object {
-        const val KOTLIN_COMPILER_SETTINGS_PATH = PROJECT_CONFIG_DIR + "/" + SettingConstants.KOTLIN_COMPILER_SETTINGS_FILE
-
-        private val SKIP_DEFAULT_VALUES = SkipDefaultValuesSerializationFilters(
-                CommonCompilerArguments.DummyImpl(),
-                K2JVMCompilerArguments(),
-                K2JSCompilerArguments().apply {
-                    sourceMapPrefix = ""
-                    sourceMapEmbedSources = K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_INLINING
-                }
-        )
-    }
 }
 
 interface KotlinCompilerSettingsListener {

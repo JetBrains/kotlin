@@ -22,18 +22,23 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
+import org.jetbrains.kotlin.idea.util.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.types.isError
 
-class ConvertPropertyInitializerToGetterIntention : SelfTargetingRangeIntention<KtProperty>(KtProperty::class.java, "Convert property initializer to getter") {
-
+class ConvertPropertyInitializerToGetterIntention : SelfTargetingRangeIntention<KtProperty>(
+    KtProperty::class.java, "Convert property initializer to getter"
+) {
     override fun applicabilityRange(element: KtProperty): TextRange? {
-        val initializer = element.initializer
-        return if (initializer != null && element.getter == null && !element.isExtensionDeclaration() && !element.isLocal)
-            initializer.textRange
+        val initializer = element.initializer ?: return null
+        val nameIdentifier = element.nameIdentifier ?: return null
+        return if (element.getter == null && !element.isExtensionDeclaration() && !element.isLocal && !element.hasJvmFieldAnnotation())
+            TextRange(nameIdentifier.startOffset, initializer.endOffset)
         else
             null
     }
@@ -64,14 +69,12 @@ class ConvertPropertyInitializerToGetterIntention : SelfTargetingRangeIntention<
 
             if (setter != null) {
                 property.addBefore(getter, setter)
-            }
-            else if (property.isVar) {
+            } else if (property.isVar) {
                 property.add(getter)
                 val notImplemented = KtPsiFactory(property).createExpression("TODO()")
                 val notImplementedSetter = KtPsiFactory(property).createPropertySetter(notImplemented)
                 property.add(notImplementedSetter)
-            }
-            else {
+            } else {
                 property.add(getter)
             }
 

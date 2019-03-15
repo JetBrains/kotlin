@@ -28,23 +28,25 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.PsiSearchHelper
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.util.Processor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.effectiveVisibility
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
+import org.jetbrains.kotlin.idea.core.canBePrivate
 import org.jetbrains.kotlin.idea.core.isInheritable
 import org.jetbrains.kotlin.idea.core.isOverridable
 import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.quickfix.AddModifierFix
 import org.jetbrains.kotlin.idea.refactoring.isConstructorDeclaredProperty
 import org.jetbrains.kotlin.idea.search.isCheapEnoughToSearchConsideringOperators
+import org.jetbrains.kotlin.idea.search.usagesSearch.dataClassComponentFunction
+import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
+import org.jetbrains.kotlin.idea.util.compat.psiSearchHelperInstance
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.isPrivate
-import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
-import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmFieldAnnotation
+import org.jetbrains.kotlin.psi.psiUtil.*
 
 class MemberVisibilityCanBePrivateInspection : AbstractKotlinInspection() {
 
@@ -75,27 +77,33 @@ class MemberVisibilityCanBePrivateInspection : AbstractKotlinInspection() {
 
     private fun canBePrivate(declaration: KtNamedDeclaration): Boolean {
         if (declaration.hasModifier(KtTokens.PRIVATE_KEYWORD) || declaration.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return false
+        if (declaration.annotationEntries.isNotEmpty()) return false
+
+        val classOrObject = declaration.containingClassOrObject ?: return false
+        val inheritable = classOrObject is KtClass && classOrObject.isInheritable()
+        if (!inheritable && declaration.hasModifier(KtTokens.PROTECTED_KEYWORD)) return false //reported by ProtectedInFinalInspection
+        if (declaration.isOverridable()) return false
 
         val descriptor = (declaration.toDescriptor() as? DeclarationDescriptorWithVisibility) ?: return false
         when (descriptor.effectiveVisibility()) {
             EffectiveVisibility.Private, EffectiveVisibility.Local -> return false
         }
 
-        val classOrObject = declaration.containingClassOrObject ?: return false
-        if (classOrObject.isAnnotation()) return false
-
-        val inheritable = classOrObject is KtClass && classOrObject.isInheritable()
-        if (!inheritable && declaration.hasModifier(KtTokens.PROTECTED_KEYWORD)) return false //reported by ProtectedInFinalInspection
-        if (declaration.isOverridable()) return false
-
-        if (descriptor.hasJvmFieldAnnotation()) return false
         val entryPointsManager = EntryPointsManager.getInstance(declaration.project) as EntryPointsManagerBase
-        if (UnusedSymbolInspection.checkAnnotatedUsingPatterns(descriptor,
-                                                               with (entryPointsManager) {
-                                                                   additionalAnnotations + ADDITIONAL_ANNOTATIONS
-                                                               })) return false
+        if (UnusedSymbolInspection.checkAnnotatedUsingPatterns(
+                declaration,
+                with(entryPointsManager) {
+                    additionalAnnotations + ADDITIONAL_ANNOTATIONS
+                }
+            )
+        ) return false
 
-        val psiSearchHelper = PsiSearchHelper.SERVICE.getInstance(declaration.project)
+        if (!declaration.canBePrivate()) return false
+
+        // properties can be referred by component1/component2, which is too expensive to search, don't analyze them
+        if (declaration is KtParameter && declaration.dataClassComponentFunction() != null) return false
+
+        val psiSearchHelper = psiSearchHelperInstance(declaration.project)
         val useScope = declaration.useScope
         val name = declaration.name ?: return false
         val restrictedScope = if (useScope is GlobalSearchScope) {
@@ -104,8 +112,7 @@ class MemberVisibilityCanBePrivateInspection : AbstractKotlinInspection() {
                 PsiSearchHelper.SearchCostResult.ZERO_OCCURRENCES -> return false
                 PsiSearchHelper.SearchCostResult.FEW_OCCURRENCES -> KotlinSourceFilterScope.projectSources(useScope, declaration.project)
             }
-        }
-        else useScope
+        } else useScope
 
         var otherUsageFound = false
         var inClassUsageFound = false
@@ -113,25 +120,33 @@ class MemberVisibilityCanBePrivateInspection : AbstractKotlinInspection() {
             val usage = it.element
             if (classOrObject != usage.getParentOfType<KtClassOrObject>(false)) {
                 otherUsageFound = true
-                false
+                return@Processor false
             }
-            else {
-                val function = usage.getParentOfType<KtCallableDeclaration>(false)
-                val insideInlineFun = function?.modifierList?.let {
-                    it.hasModifier(KtTokens.INLINE_KEYWORD) && !function.isPrivate()
-                } ?: false
-                if (insideInlineFun) {
+            val classOrObjectDescriptor = classOrObject.descriptor as? ClassDescriptor
+            if (classOrObjectDescriptor != null) {
+                val receiverType = (usage as? KtElement)?.resolveToCall()?.dispatchReceiver?.type
+                val receiverDescriptor = receiverType?.constructor?.declarationDescriptor
+                if (receiverDescriptor != null && receiverDescriptor != classOrObjectDescriptor) {
                     otherUsageFound = true
-                    false
+                    return@Processor false
                 }
-                else {
-                    inClassUsageFound = true
-                    true
-                }
+            }
+            val function = usage.getParentOfTypesAndPredicate<KtDeclarationWithBody>(
+                true, KtNamedFunction::class.java, KtPropertyAccessor::class.java
+            ) { true }
+            val insideInlineFun = function.insideInline() || (function as? KtPropertyAccessor)?.property.insideInline()
+            if (insideInlineFun) {
+                otherUsageFound = true
+                false
+            } else {
+                inClassUsageFound = true
+                true
             }
         })
         return inClassUsageFound && !otherUsageFound
     }
+
+    private fun KtModifierListOwner?.insideInline() = this?.let { it.hasModifier(KtTokens.INLINE_KEYWORD) && !it.isPrivate() } ?: false
 
     private fun registerProblem(holder: ProblemsHolder, declaration: KtDeclaration) {
         val modifierListOwner = declaration.getParentOfType<KtModifierListOwner>(false) ?: return
@@ -140,9 +155,11 @@ class MemberVisibilityCanBePrivateInspection : AbstractKotlinInspection() {
             else -> "Property"
         }
         val nameElement = (declaration as? PsiNameIdentifierOwner)?.nameIdentifier ?: return
-        holder.registerProblem(declaration.visibilityModifier() ?: nameElement,
-                               "$member '${declaration.getName()}' can be private",
-                               ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                               IntentionWrapper(AddModifierFix(modifierListOwner, KtTokens.PRIVATE_KEYWORD), declaration.containingKtFile))
+        holder.registerProblem(
+            declaration.visibilityModifier() ?: nameElement,
+            "$member '${declaration.getName()}' could be private",
+            ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+            IntentionWrapper(AddModifierFix(modifierListOwner, KtTokens.PRIVATE_KEYWORD), declaration.containingKtFile)
+        )
     }
 }

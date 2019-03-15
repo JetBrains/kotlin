@@ -1,0 +1,4 @@
+public open class CustomProjectionKind : R|java/lang/Object| {
+    public open operator function foo(): R|ft<kotlin/collections/MutableList<ft<kotlin/Number, kotlin/Number?>>, kotlin/collections/List<ft<kotlin/Number, kotlin/Number?>>?>|!
+
+}

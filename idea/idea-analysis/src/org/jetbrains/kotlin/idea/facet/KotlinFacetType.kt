@@ -10,6 +10,7 @@ import com.intellij.facet.FacetTypeId
 import com.intellij.facet.FacetTypeRegistry
 import com.intellij.openapi.module.JavaModuleType
 import com.intellij.openapi.module.ModuleType
+import org.jetbrains.kotlin.idea.util.isRunningInCidrIde
 import org.jetbrains.kotlin.idea.KotlinIcons
 import javax.swing.Icon
 
@@ -24,7 +25,7 @@ abstract class KotlinFacetType<C : KotlinFacetConfiguration> :
             get() = FacetTypeRegistry.getInstance().findFacetType(TYPE_ID)
     }
 
-    override fun isSuitableModuleType(moduleType: ModuleType<*>) = moduleType is JavaModuleType
+    override fun isSuitableModuleType(moduleType: ModuleType<*>) = if (isRunningInCidrIde) true else moduleType is JavaModuleType
 
     override fun getIcon(): Icon = KotlinIcons.SMALL_LOGO
 }

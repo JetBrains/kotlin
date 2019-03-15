@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: NATIVE
-// LANGUAGE_VERSION: 1.2
 // WITH_RUNTIME
 
 open class Foo {

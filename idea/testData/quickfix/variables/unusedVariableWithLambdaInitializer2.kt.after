@@ -1,0 +1,4 @@
+// "Remove variable 'a'" "true"
+fun test() {
+    { s: String -> s + s }
+}

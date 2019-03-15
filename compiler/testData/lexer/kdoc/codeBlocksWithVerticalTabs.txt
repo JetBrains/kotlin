@@ -1,0 +1,74 @@
+KDOC_START ('/**')
+WHITE_SPACE ('\n ')
+KDOC_LEADING_ASTERISK ('*')
+KDOC_TEXT (' ')
+KDOC_TAG_NAME ('@foo')
+WHITE_SPACE (' ')
+KDOC_TEXT ('Thisis text.')
+WHITE_SPACE ('\n ')
+KDOC_LEADING_ASTERISK ('*')
+KDOC_CODE_BLOCK_TEXT ('    This isindented code block')
+WHITE_SPACE ('\n ')
+KDOC_LEADING_ASTERISK ('*')
+KDOC_CODE_BLOCK_TEXT ('    Second lineof code block')
+WHITE_SPACE ('\n ')
+KDOC_LEADING_ASTERISK ('*')
+KDOC_TEXT (' ')
+KDOC_TAG_NAME ('@foo')
+WHITE_SPACE (' ')
+KDOC_TEXT ('Thisistext.')
+WHITE_SPACE ('\n ')
+KDOC_LEADING_ASTERISK ('*')
+KDOC_CODE_BLOCK_TEXT ('	Tabulated code block')
+WHITE_SPACE ('\n ')
+KDOC_LEADING_ASTERISK ('*')
+KDOC_CODE_BLOCK_TEXT ('	Tabulated secondline')
+WHITE_SPACE ('\n ')
+KDOC_LEADING_ASTERISK ('*')
+KDOC_TEXT (' ')
+KDOC_TAG_NAME ('@foo')
+WHITE_SPACE (' ')
+KDOC_TEXT ('Thisis text.')
+WHITE_SPACE ('\n ')
+KDOC_LEADING_ASTERISK ('*')
+KDOC_TEXT (' ``` kotlin')
+WHITE_SPACE ('\n ')
+KDOC_LEADING_ASTERISK ('*')
+KDOC_CODE_BLOCK_TEXT (' @foo This iscode block.')
+WHITE_SPACE ('\n ')
+KDOC_LEADING_ASTERISK ('*')
+KDOC_CODE_BLOCK_TEXT (' ')
+KDOC_TEXT ('```')
+WHITE_SPACE ('\n ')
+KDOC_LEADING_ASTERISK ('*')
+KDOC_TEXT (' ')
+KDOC_TAG_NAME ('@foo')
+WHITE_SPACE (' ')
+KDOC_TEXT ('Thisis text.')
+WHITE_SPACE ('\n ')
+KDOC_LEADING_ASTERISK ('*')
+KDOC_TEXT (' ~~~')
+WHITE_SPACE ('\n ')
+KDOC_LEADING_ASTERISK ('*')
+KDOC_CODE_BLOCK_TEXT (' @foo This is code block')
+WHITE_SPACE ('\n ')
+KDOC_LEADING_ASTERISK ('*')
+KDOC_CODE_BLOCK_TEXT (' With multiplelines.')
+WHITE_SPACE ('\n ')
+KDOC_LEADING_ASTERISK ('*')
+KDOC_CODE_BLOCK_TEXT (' ')
+KDOC_TEXT ('~~~')
+WHITE_SPACE ('\n ')
+KDOC_LEADING_ASTERISK ('*')
+KDOC_TEXT (' ')
+KDOC_TAG_NAME ('@foo')
+WHITE_SPACE (' ')
+KDOC_TEXT ('Thisis yet moretext.')
+WHITE_SPACE ('\n ')
+KDOC_LEADING_ASTERISK ('*')
+KDOC_TEXT (' ```')
+WHITE_SPACE ('\n ')
+KDOC_LEADING_ASTERISK ('*')
+KDOC_CODE_BLOCK_TEXT (' @foo Thisis an unclosed codeblock.')
+WHITE_SPACE ('\n ')
+KDOC_END ('*/')

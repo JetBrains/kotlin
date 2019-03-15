@@ -39,6 +39,6 @@ fun test() {
     platformJ || false
 
     !platformNN
-    !<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!>
+    !<!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!>
     !platformJ
 }

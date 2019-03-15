@@ -2,7 +2,7 @@ package
 
 package a {
     public fun foo(): kotlin.Unit
-    public fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+    public fun main(): kotlin.Unit
 
     public final class Pair</*0*/ A, /*1*/ B> {
         public constructor Pair</*0*/ A, /*1*/ B>(/*0*/ a: A, /*1*/ b: B)

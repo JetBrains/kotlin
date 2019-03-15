@@ -280,7 +280,18 @@ class CoroutineFunctionTransformer(private val function: JsFunction, name: Strin
                 statements += block.statements
             }
         }
-        val switchStatement = JsSwitch(stateRef.deepCopy(), cases)
+
+        // NOTE: temporary workaround to let tests run without hanging
+        // TODO: probably default statement should be removed asap the issue about nested break & finally is fixed
+        val defaultCase = JsDefault().apply {
+            val block = JsBlock(
+                assignment(stateRef, JsIntLiteral(indexOfGlobalCatch)).makeStmt(),
+                JsThrow(JsNew(JsNameRef("Error"), listOf(JsStringLiteral("State Machine Unreachable execution"))))
+            )
+            statements += block
+        }
+
+        val switchStatement = JsSwitch(stateRef.deepCopy(), cases + defaultCase)
         val loop = JsDoWhile(JsBooleanLiteral(true), JsTry(JsBlock(switchStatement), catch, null))
 
         return listOf(loop)

@@ -1,0 +1,4 @@
+public open class Max : R|java/lang/Object| {
+    public open operator function max(coll: R|ft<kotlin/collections/MutableCollection<out T>, kotlin/collections/Collection<out T>?>|!): R|ft<T, T?>|!
+
+}

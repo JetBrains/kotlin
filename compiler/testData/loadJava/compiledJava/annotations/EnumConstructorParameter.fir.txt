@@ -1,0 +1,9 @@
+public final enum class EnumConstructorParameter : R|java/lang/Enum<test/EnumConstructorParameter>| {
+    public final static property INSTANCE(val): R|ft<test/EnumConstructorParameter, test/EnumConstructorParameter?>|!
+        public get(): R|ft<test/EnumConstructorParameter, test/EnumConstructorParameter?>|!
+
+    private final function EnumConstructorParameter(@R|test/EnumConstructorParameter.Anno|(String(string)) s: R|ft<kotlin/String, kotlin/String?>|!): R|test/EnumConstructorParameter|
+
+    private final function EnumConstructorParameter(x: R|kotlin/Int|): R|test/EnumConstructorParameter|
+
+}

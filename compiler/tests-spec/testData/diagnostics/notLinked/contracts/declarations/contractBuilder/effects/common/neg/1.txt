@@ -1,0 +1,8 @@
+package
+
+public inline fun case_1(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
+public fun case_2(/*0*/ x: kotlin.Any?): kotlin.Boolean
+public fun case_3(/*0*/ x: kotlin.Any?): kotlin.Boolean
+public fun case_4(/*0*/ x: kotlin.Any?): kotlin.Boolean
+public fun case_5(/*0*/ x: kotlin.Any?): kotlin.Boolean
+public fun case_6(/*0*/ x: kotlin.Any?): kotlin.Boolean

@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.codegen.ClassBuilderFactory
 import org.jetbrains.kotlin.codegen.DelegatingClassBuilder
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
-import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.org.objectweb.asm.*
@@ -68,7 +68,7 @@ class ParcelableClinitClassBuilderInterceptorExtension : ClassBuilderInterceptor
             internal val delegateClassBuilder: ClassBuilder,
             val bindingContext: BindingContext
     ) : DelegatingClassBuilder() {
-        private var currentClass: KtClass? = null
+        private var currentClass: KtClassOrObject? = null
         private var currentClassName: String? = null
         private var isClinitGenerated = false
 
@@ -83,7 +83,7 @@ class ParcelableClinitClassBuilderInterceptorExtension : ClassBuilderInterceptor
                 superName: String,
                 interfaces: Array<out String>
         ) {
-            if (origin is KtClass) {
+            if (origin is KtClassOrObject) {
                 currentClass = origin
             } else {
                 currentClass = null
@@ -134,7 +134,7 @@ class ParcelableClinitClassBuilderInterceptorExtension : ClassBuilderInterceptor
         }
     }
 
-    private class ClinitAwareMethodVisitor(val parcelableName: String, mv: MethodVisitor) : MethodVisitor(Opcodes.ASM5, mv) {
+    private class ClinitAwareMethodVisitor(val parcelableName: String, mv: MethodVisitor) : MethodVisitor(Opcodes.API_VERSION, mv) {
         override fun visitInsn(opcode: Int) {
             if (opcode == Opcodes.RETURN) {
                 val iv = InstructionAdapter(this)

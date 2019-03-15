@@ -1,0 +1,10 @@
+public open class NonTrivialFunctionType : R|java/lang/Object| {
+    public open operator function foo(filenameFilter: R|ft<java/io/FilenameFilter, java/io/FilenameFilter?>|!): R|kotlin/Unit|
+
+    public open operator function foo(comparator: R|ft<java/util/Comparator<ft<kotlin/String, kotlin/String?>>, java/util/Comparator<ft<kotlin/String, kotlin/String?>>?>|!): R|kotlin/Unit|
+
+    public open operator function wildcardUnbound(comparator: R|ft<java/util/Comparator<*>, java/util/Comparator<*>?>|!): R|kotlin/Unit|
+
+    public open operator function wildcardBound(comparator: R|ft<java/util/Comparator<in java/lang/CharSequence>, java/util/Comparator<in java/lang/CharSequence>?>|!): R|kotlin/Unit|
+
+}

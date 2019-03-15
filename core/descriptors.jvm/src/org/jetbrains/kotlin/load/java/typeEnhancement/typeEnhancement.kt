@@ -16,11 +16,11 @@
 
 package org.jetbrains.kotlin.load.java.typeEnhancement
 
+import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.annotations.CompositeAnnotations
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.load.java.typeEnhancement.NullabilityQualifier.NOT_N
 import org.jetbrains.kotlin.load.java.typeEnhancement.NullabilityQualifier.NULLABLE
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.createProjection
@@ -46,7 +45,7 @@ fun KotlinType.enhance(qualifiers: (Int) -> JavaTypeQualifiers) = unwrap().enhan
 fun KotlinType.hasEnhancedNullability()
         = annotations.findAnnotation(JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION) != null
 
-private enum class TypeComponentPosition {
+enum class TypeComponentPosition {
     FLEXIBLE_LOWER,
     FLEXIBLE_UPPER,
     INFLEXIBLE
@@ -148,7 +147,7 @@ private fun List<Annotations>.compositeAnnotationsOrSingle() = when (size) {
     else -> CompositeAnnotations(this.toList())
 }
 
-private fun TypeComponentPosition.shouldEnhance() = this != TypeComponentPosition.INFLEXIBLE
+fun TypeComponentPosition.shouldEnhance() = this != TypeComponentPosition.INFLEXIBLE
 
 private data class EnhancementResult<out T>(val result: T, val enhancementAnnotations: Annotations?)
 private fun <T> T.noChange() = EnhancementResult(this, null)
@@ -197,10 +196,6 @@ private class EnhancedTypeAnnotations(private val fqNameToMatch: FqName) : Annot
         fqNameToMatch -> EnhancedTypeAnnotationDescriptor
         else -> null
     }
-
-    override fun getAllAnnotations() = this.map { AnnotationWithTarget(it, null) }
-
-    override fun getUseSiteTargetedAnnotations() = emptyList<AnnotationWithTarget>()
 
     // Note, that this class may break Annotations contract (!isEmpty && iterator.isEmpty())
     // It's a hack that we need unless we have stable "user data" in JetType

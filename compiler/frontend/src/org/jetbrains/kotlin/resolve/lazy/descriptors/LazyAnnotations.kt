@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.resolve.lazy.descriptors
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
@@ -56,34 +55,16 @@ class LazyAnnotations(
     override fun isEmpty() = annotationEntries.isEmpty()
 
     private val annotation = c.storageManager.createMemoizedFunction { entry: KtAnnotationEntry ->
-
-        val descriptor = LazyAnnotationDescriptor(c, entry)
-        val target = entry.useSiteTarget?.getAnnotationUseSiteTarget()
-        AnnotationWithTarget(descriptor, target)
+        LazyAnnotationDescriptor(c, entry)
     }
 
-    override fun getUseSiteTargetedAnnotations(): List<AnnotationWithTarget> {
-        return annotationEntries
-            .mapNotNull {
-                val (descriptor, target) = annotation(it)
-                if (target == null) null else AnnotationWithTarget(descriptor, target)
-            }
-    }
-
-    override fun getAllAnnotations() = annotationEntries.map(annotation)
-
-    override fun iterator(): Iterator<AnnotationDescriptor> {
-        return annotationEntries
-            .asSequence()
-            .mapNotNull {
-                val (descriptor, target) = annotation(it)
-                if (target == null) descriptor else null // Filter out annotations with target
-            }.iterator()
-    }
+    override fun iterator(): Iterator<AnnotationDescriptor> = annotationEntries.asSequence().map(annotation).iterator()
 
     override fun forceResolveAllContents() {
         // To resolve all entries
-        getAllAnnotations()
+        for (annotation in this) {
+            // TODO: probably we should do ForceResolveUtil.forceResolveAllContents(annotation) here
+        }
     }
 }
 

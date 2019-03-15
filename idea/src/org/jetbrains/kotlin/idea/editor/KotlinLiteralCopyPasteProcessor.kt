@@ -34,11 +34,9 @@ import org.jetbrains.kotlin.psi.KtEscapeStringTemplateEntry
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 import org.jetbrains.kotlin.psi.psiUtil.*
-import kotlin.coroutines.experimental.SequenceBuilder
-import kotlin.coroutines.experimental.buildIterator
 
 private val PsiElement.templateContentRange: TextRange?
-    get() = this.getParentOfType<KtStringTemplateExpression>(false)?.let{
+    get() = this.getParentOfType<KtStringTemplateExpression>(false)?.let {
         it.textRange.cutOut(it.getContentRange())
     }
 
@@ -63,8 +61,7 @@ private fun deduceBlockSelectionWidth(startOffsets: IntArray, endOffsets: IntArr
     }
     return if (totalLength < text.length && (text.length + 1) % fragmentCount == 0) {
         (text.length + 1) / fragmentCount - 1
-    }
-    else {
+    } else {
         -1
     }
 }
@@ -93,20 +90,19 @@ class KotlinLiteralCopyPasteProcessor : CopyPastePreProcessor {
                 }
                 val elTp = element.node.elementType
                 if (elTp == KtTokens.ESCAPE_SEQUENCE && fileRange.contains(element.range) &&
-                    element.templateContentRange?.contains(fileRange) == true) {
+                    element.templateContentRange?.contains(fileRange) == true
+                ) {
                     val tpEntry = element.parent as KtEscapeStringTemplateEntry
                     changed = true
                     buffer.append(tpEntry.unescapedValue)
                     givenTextOffset = element.endOffset
-                }
-                else if (elTp == KtTokens.SHORT_TEMPLATE_ENTRY_START || elTp == KtTokens.LONG_TEMPLATE_ENTRY_START) {
+                } else if (elTp == KtTokens.SHORT_TEMPLATE_ENTRY_START || elTp == KtTokens.LONG_TEMPLATE_ENTRY_START) {
                     //Process inner templates without escaping
                     val tpEntry = element.parent
                     val inter = fileRange.intersection(tpEntry.range)!!
                     buffer.append(fileText.substring(inter.startOffset, inter.endOffset))
                     givenTextOffset = inter.endOffset
-                }
-                else {
+                } else {
                     val inter = fileRange.intersection(element.range)!!
                     buffer.append(fileText.substring(inter.startOffset, inter.endOffset))
                     givenTextOffset = inter.endOffset
@@ -145,13 +141,12 @@ class KotlinLiteralCopyPasteProcessor : CopyPastePreProcessor {
                 }
                 endsInLineBreak = it is NewLineChunk
             }
-            return if (endsInLineBreak){
+            return if (endsInLineBreak) {
                 res.removeSuffix(lineBreak).toString() + "\\n"
-            } else{
+            } else {
                 res.toString()
             }
-        }
-        else {
+        } else {
             val tripleQuoteRe = Regex("[\"]{3,}")
             TemplateTokenSequence(text).map { chunk ->
                 when (chunk) {
@@ -174,13 +169,11 @@ private object NewLineChunk : TemplateChunk()
 private class TemplateTokenSequence(private val inputString: String) : Sequence<TemplateChunk> {
     private fun String.guessIsTemplateEntryStart(): Boolean = if (this.startsWith("\${")) {
         true
-    }
-    else if (this.length > 1 && this[0] == '$') {
+    } else if (this.length > 1 && this[0] == '$') {
         val guessedIdentifier = substring(1)
         val tokenType = KotlinLexer().apply { start(guessedIdentifier) }.tokenType
         tokenType == KtTokens.IDENTIFIER || tokenType == KtTokens.THIS_KEYWORD
-    }
-    else {
+    } else {
         false
     }
 
@@ -194,8 +187,7 @@ private class TemplateTokenSequence(private val inputString: String) : Sequence<
                 val tokenType = lexer.tokenType
                 return if (tokenType == KtTokens.IDENTIFIER || tokenType == KtTokens.THIS_KEYWORD) {
                     from + lexer.tokenEnd - 1
-                }
-                else {
+                } else {
                     -1
                 }
             }
@@ -204,8 +196,7 @@ private class TemplateTokenSequence(private val inputString: String) : Sequence<
                 while (lexer.tokenType != null) {
                     if (lexer.tokenType == KtTokens.LONG_TEMPLATE_ENTRY_START) {
                         depth++
-                    }
-                    else if (lexer.tokenType == KtTokens.LONG_TEMPLATE_ENTRY_END) {
+                    } else if (lexer.tokenType == KtTokens.LONG_TEMPLATE_ENTRY_END) {
                         depth--
                         if (depth == 0) {
                             return from + lexer.currentPosition.offset
@@ -219,7 +210,7 @@ private class TemplateTokenSequence(private val inputString: String) : Sequence<
         }
     }
 
-    private suspend fun SequenceBuilder<TemplateChunk>.yieldLiteral(chunk: String) {
+    private suspend fun SequenceScope<TemplateChunk>.yieldLiteral(chunk: String) {
         val splitLines = LineTokenizer.tokenize(chunk, false, false)
         for (i in 0..splitLines.size - 1) {
             if (i != 0) {
@@ -233,7 +224,7 @@ private class TemplateTokenSequence(private val inputString: String) : Sequence<
         if (inputString.isEmpty()) {
             return emptySequence<TemplateChunk>().iterator()
         }
-        return buildIterator {
+        return iterator {
             var from = 0
             var to = 0
             while (to < inputString.length) {
@@ -242,16 +233,14 @@ private class TemplateTokenSequence(private val inputString: String) : Sequence<
                     to += 1
                     if (to < inputString.length) to += 1
                     continue
-                }
-                else if (c == '$') {
+                } else if (c == '$') {
                     if (inputString.substring(to).guessIsTemplateEntryStart()) {
                         if (from < to) yieldLiteral(inputString.substring(from until to))
                         from = to
                         to = findTemplateEntryEnd(inputString, from)
                         if (to != -1) {
                             yield(EntryChunk(inputString.substring(from until to)))
-                        }
-                        else {
+                        } else {
                             to = inputString.length
                             yieldLiteral(inputString.substring(from until to))
                         }

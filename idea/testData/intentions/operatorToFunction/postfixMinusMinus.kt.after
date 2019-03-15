@@ -1,4 +1,4 @@
 fun foo() {
     var a = 5
-    a.dec()
+    a = a.dec()
 }

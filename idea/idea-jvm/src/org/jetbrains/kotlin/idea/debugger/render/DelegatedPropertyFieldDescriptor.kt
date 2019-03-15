@@ -22,10 +22,7 @@ import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
 import com.intellij.debugger.ui.impl.watch.FieldDescriptorImpl
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiExpression
-import com.sun.jdi.Field
-import com.sun.jdi.Method
-import com.sun.jdi.ObjectReference
-import com.sun.jdi.Value
+import com.sun.jdi.*
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 
@@ -76,6 +73,13 @@ class DelegatedPropertyFieldDescriptor(
     }
 
     override fun getDeclaredType(): String? {
-        return findGetterForDelegatedProperty()?.returnType()?.name()
+        val getter = findGetterForDelegatedProperty() ?: return null
+        val returnType = try {
+            getter.returnType()
+        } catch (e: ClassNotLoadedException) {
+            // Behavior copied from LocalVariableDescriptorImpl (in platform)
+            return "<unknown>"
+        }
+        return returnType?.name()
     }
 }

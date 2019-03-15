@@ -1,0 +1,38 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
+    }
+
+    dependencies {
+        apply from: "include.gradle"
+        def kotlinVersion = gradleKotlinPluginVersion('1.2.60')
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+    }
+}
+
+project('common1') {
+    apply plugin: 'kotlin-platform-common'
+}
+
+project('common2') {
+    apply plugin: 'kotlin-platform-common'
+}
+
+project('jvm') {
+    apply plugin: 'kotlin-platform-jvm'
+
+    dependencies {
+        expectedBy project(':common1')
+        expectedBy project(':common2')
+    }
+}
+
+project('js') {
+    apply plugin: 'kotlin-platform-js'
+
+    dependencies {
+        expectedBy project(':common1')
+    }
+}
+        

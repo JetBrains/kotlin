@@ -1,6 +1,6 @@
+// IGNORE_BACKEND: JVM_IR
 // TARGET_BACKEND: JVM
 // WITH_RUNTIME
-// LANGUAGE_VERSION: 1.2
 
 // FILE: foo.kt
 
@@ -12,10 +12,8 @@ fun f() {}
 
 // FILE: bar.kt
 
-@file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-
 fun getPackageName(classFqName: String): String =
-        Class.forName(classFqName).getAnnotation(Metadata::class.java).pn
+    Class.forName(classFqName).getAnnotation(Metadata::class.java).packageName
 
 fun box(): String {
     val bar = getPackageName("BarKt")

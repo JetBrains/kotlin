@@ -16,15 +16,25 @@ repositories {
 
 dependencies {
     compile project(':kotlin-gradle-plugin-api')
+    compile project(':kotlin-gradle-plugin-model')
 
-    compile project(':kotlin-stdlib')
+    compile kotlinStdlib()
     compileOnly project(':compiler')
     compileOnly project(':kotlin-noarg-compiler-plugin')
 
     compileOnly gradleApi()
+
+    testCompile gradleApi()
+    testCompile "junit:junit:4.12"
 }
 
 evaluationDependsOn(":kotlin-noarg-compiler-plugin")
+
+tasks.withType(project.compileKotlin.class) {
+    kotlinOptions.languageVersion = "1.2"
+    kotlinOptions.apiVersion = "1.2"
+    kotlinOptions.freeCompilerArgs += ["-Xskip-metadata-version-check"]
+}
 
 jar {
     from(project(":kotlin-noarg-compiler-plugin").sourceSets.main.output.classesDirs)
@@ -36,8 +46,9 @@ ArtifactsKt.runtimeJar(project, EmbeddableKt.rewriteDepsToShadedCompiler(project
 
 artifacts {
     archives sourcesJar
-    archives javadocJar
 }
+
+javadocJar()
 
 pluginBundle {
     plugins {
@@ -51,3 +62,5 @@ pluginBundle {
         }
     }
 }
+
+test.executable = "${JDK_18}/bin/java"

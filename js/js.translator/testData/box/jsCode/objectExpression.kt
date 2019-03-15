@@ -1,4 +1,5 @@
-// EXPECTED_REACHABLE_NODES: 1131
+// IGNORE_BACKEND: JS_IR
+// EXPECTED_REACHABLE_NODES: 1282
 import kotlin.js.*
 
 private fun isOrdinaryObject(o: Any?): Boolean = jsTypeOf(o) == "object" && Object.getPrototypeOf(o).`constructor` === Any::class.js

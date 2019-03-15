@@ -1,1 +1,0 @@
-class test.Foo has 1 usage that is not safe to delete.

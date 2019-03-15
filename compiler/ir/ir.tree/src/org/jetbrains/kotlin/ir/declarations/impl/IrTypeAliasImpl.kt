@@ -27,7 +27,10 @@ class IrTypeAliasImpl(
     endOffset: Int,
     origin: IrDeclarationOrigin,
     override val descriptor: TypeAliasDescriptor
-) : IrDeclarationBase(startOffset, endOffset, origin), IrTypeAlias {
+) :
+    IrDeclarationBase(startOffset, endOffset, origin),
+    IrTypeAlias {
+
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitTypeAlias(this, data)
     }

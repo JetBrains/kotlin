@@ -1,0 +1,6 @@
+// "Remove 'operator' modifier" "true"
+// COMPILER_ARGUMENTS: -XXLanguage:+ProhibitOperatorMod
+
+object A {
+    fun mod(x: Int) {}
+}

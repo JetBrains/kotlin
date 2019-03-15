@@ -24,12 +24,13 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 
 class KotlinSourceFilterScope private constructor(
-        delegate: GlobalSearchScope,
-        private val includeProjectSourceFiles: Boolean,
-        private val includeLibrarySourceFiles: Boolean,
-        private val includeClassFiles: Boolean,
-        private val includeScriptDependencies: Boolean,
-        private val project: Project
+    delegate: GlobalSearchScope,
+    private val includeProjectSourceFiles: Boolean,
+    private val includeLibrarySourceFiles: Boolean,
+    private val includeClassFiles: Boolean,
+    private val includeScriptDependencies: Boolean,
+    private val includeScriptsOutsideSourceRoots: Boolean,
+    private val project: Project
 ) : DelegatingGlobalSearchScope(delegate) {
 
     private val index = ProjectRootManager.getInstance(project).fileIndex
@@ -40,7 +41,14 @@ class KotlinSourceFilterScope private constructor(
         if (!super.contains(file)) return false
 
         return ProjectRootsUtil.isInContent(
-                project, file, includeProjectSourceFiles, includeLibrarySourceFiles, includeClassFiles, includeScriptDependencies, index
+            project,
+            file,
+            includeProjectSourceFiles,
+            includeLibrarySourceFiles,
+            includeClassFiles,
+            includeScriptDependencies,
+            includeScriptsOutsideSourceRoots,
+            index
         )
     }
 
@@ -77,25 +85,25 @@ class KotlinSourceFilterScope private constructor(
 
     companion object {
         @JvmStatic
-        fun sourcesAndLibraries(delegate: GlobalSearchScope, project: Project) = create(delegate, true, true, true, true, project)
+        fun sourcesAndLibraries(delegate: GlobalSearchScope, project: Project) = create(delegate, true, true, true, true, true, project)
 
         @JvmStatic
-        fun sourceAndClassFiles(delegate: GlobalSearchScope, project: Project) = create(delegate, true, false, true, true, project)
+        fun sourceAndClassFiles(delegate: GlobalSearchScope, project: Project) = create(delegate, true, false, true, true, true, project)
 
         @JvmStatic
-        fun projectSourceAndClassFiles(delegate: GlobalSearchScope, project: Project) = create(delegate, true, false, true, false, project)
+        fun projectSourceAndClassFiles(delegate: GlobalSearchScope, project: Project) = create(delegate, true, false, true, false, true, project)
 
         @JvmStatic
-        fun projectSources(delegate: GlobalSearchScope, project: Project) = create(delegate, true, false, false, false, project)
+        fun projectSources(delegate: GlobalSearchScope, project: Project) = create(delegate, true, false, false, false, true, project)
 
         @JvmStatic
-        fun librarySources(delegate: GlobalSearchScope, project: Project) = create(delegate, false, true, false, true, project)
+        fun librarySources(delegate: GlobalSearchScope, project: Project) = create(delegate, false, true, false, true, false, project)
 
         @JvmStatic
-        fun libraryClassFiles(delegate: GlobalSearchScope, project: Project) = create(delegate, false, false, true, true, project)
+        fun libraryClassFiles(delegate: GlobalSearchScope, project: Project) = create(delegate, false, false, true, true, false, project)
 
         @JvmStatic
-        fun projectAndLibrariesSources(delegate: GlobalSearchScope, project: Project) = create(delegate, true, true, false, false, project)
+        fun projectAndLibrariesSources(delegate: GlobalSearchScope, project: Project) = create(delegate, true, true, false, false, true, project)
 
         private fun create(
                 delegate: GlobalSearchScope,
@@ -103,6 +111,7 @@ class KotlinSourceFilterScope private constructor(
                 includeLibrarySourceFiles: Boolean,
                 includeClassFiles: Boolean,
                 includeScriptDependencies: Boolean,
+                includeScriptsOutsideSourceRoots: Boolean,
                 project: Project
         ): GlobalSearchScope {
             if (delegate === GlobalSearchScope.EMPTY_SCOPE) return delegate
@@ -114,11 +123,12 @@ class KotlinSourceFilterScope private constructor(
                         includeLibrarySourceFiles = delegate.includeLibrarySourceFiles && includeLibrarySourceFiles,
                         includeClassFiles = delegate.includeClassFiles && includeClassFiles,
                         includeScriptDependencies = delegate.includeScriptDependencies && includeScriptDependencies,
+                        includeScriptsOutsideSourceRoots = delegate.includeScriptsOutsideSourceRoots && includeScriptsOutsideSourceRoots,
                         project = project
                 )
             }
 
-            return KotlinSourceFilterScope(delegate, includeProjectSourceFiles, includeLibrarySourceFiles, includeClassFiles, includeScriptDependencies, project)
+            return KotlinSourceFilterScope(delegate, includeProjectSourceFiles, includeLibrarySourceFiles, includeClassFiles, includeScriptDependencies, includeScriptsOutsideSourceRoots, project)
         }
     }
 }

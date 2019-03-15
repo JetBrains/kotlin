@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.android.synthetic.res
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
+import com.intellij.psi.SmartPsiElementPointer
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
@@ -65,14 +66,18 @@ class AndroidLayoutGroup(val name: String, val layouts: List<AndroidLayout>)
 
 class AndroidLayout(val resources: List<AndroidResource>)
 
-sealed class AndroidResource(val id: ResourceIdentifier, val sourceElement: PsiElement?, val partiallyDefined: Boolean) {
+sealed class AndroidResource(
+    val id: ResourceIdentifier,
+    val sourceElement: SmartPsiElementPointer<PsiElement>?,
+    val partiallyDefined: Boolean
+) {
     open fun sameClass(other: AndroidResource): Boolean = false
     open fun partiallyDefined(): AndroidResource = this
 
     class Widget(
             id: ResourceIdentifier,
             val xmlType: String,
-            sourceElement: PsiElement?,
+            sourceElement: SmartPsiElementPointer<PsiElement>?,
             partiallyDefined: Boolean = false
     ) : AndroidResource(id, sourceElement, partiallyDefined) {
         override fun sameClass(other: AndroidResource) = other is Widget
@@ -81,7 +86,7 @@ sealed class AndroidResource(val id: ResourceIdentifier, val sourceElement: PsiE
 
     class Fragment(
             id: ResourceIdentifier,
-            sourceElement: PsiElement?,
+            sourceElement: SmartPsiElementPointer<PsiElement>?,
             partiallyDefined: Boolean = false
     ) : AndroidResource(id, sourceElement, partiallyDefined) {
         override fun sameClass(other: AndroidResource) = other is Fragment

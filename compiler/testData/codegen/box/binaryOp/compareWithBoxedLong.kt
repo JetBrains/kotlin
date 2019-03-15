@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS, NATIVE
+// TARGET_BACKEND: JVM
 // reason - multifile tests are not supported in JS tests
 //FILE: JavaClass.java
 

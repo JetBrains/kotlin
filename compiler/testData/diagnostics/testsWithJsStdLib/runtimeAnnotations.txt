@@ -3,7 +3,7 @@ package
 @X public final external class A {
     public constructor A()
     @X public final val p: kotlin.Int
-    public final val r: kotlin.Int
+    @get:X public final val r: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     @X public final fun f(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -13,7 +13,7 @@ package
 @Y public final external class B {
     public constructor B()
     @Y public final val p: kotlin.Int
-    public final val r: kotlin.Int
+    @get:Y public final val r: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     @Y public final fun f(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -23,8 +23,8 @@ package
 @X public final class C {
     public constructor C()
     @X public final val p: kotlin.Int = 0
-    public final val q: kotlin.Int
-    public final val r: kotlin.Int = 0
+    @get:X public final val q: kotlin.Int
+    @get:X public final val r: kotlin.Int = 0
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     @X public final fun f(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -34,8 +34,8 @@ package
 @Y public final class D {
     public constructor D()
     @Y public final val p: kotlin.Int = 0
-    public final val q: kotlin.Int
-    public final val r: kotlin.Int = 0
+    @get:Y public final val q: kotlin.Int
+    @get:Y public final val r: kotlin.Int = 0
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     @Y public final fun f(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

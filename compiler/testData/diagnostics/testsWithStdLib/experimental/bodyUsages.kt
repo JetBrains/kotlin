@@ -1,18 +1,16 @@
-// !API_VERSION: 1.3
-// MODULE: api
+// !USE_EXPERIMENTAL: kotlin.Experimental
 // FILE: api.kt
 
 package api
 
-@Experimental(Experimental.Level.WARNING, [Experimental.Impact.COMPILATION])
-annotation class ExperimentalCompilationAPI
+@Experimental(Experimental.Level.WARNING)
+annotation class ExperimentalAPI
 
 interface I
 
-@ExperimentalCompilationAPI
+@ExperimentalAPI
 class Impl : I
 
-// MODULE: usage(api)
 // FILE: usage.kt
 
 package usage
@@ -21,12 +19,12 @@ import api.*
 
 open class Base(val i: I)
 
-@UseExperimental(ExperimentalCompilationAPI::class)
+@UseExperimental(ExperimentalAPI::class)
 class Derived : Base(Impl())
 
-@UseExperimental(ExperimentalCompilationAPI::class)
+@UseExperimental(ExperimentalAPI::class)
 class Delegated : I by Impl()
 
-@UseExperimental(ExperimentalCompilationAPI::class)
+@UseExperimental(ExperimentalAPI::class)
 val delegatedProperty by Impl()
 operator fun I.getValue(x: Any?, y: Any?) = null

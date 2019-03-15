@@ -1,0 +1,8 @@
+-Kapt-stubs=output/stubs
+-Kapt-classes=output/classes
+-Kapt-sources=output/sources
+-Kapt-classpath=output/ap
+-Kapt-processors=apt.SampleApt
+-d output/classes
+-cp output/ap:%KOTLIN_STDLIB%
+Test.kt

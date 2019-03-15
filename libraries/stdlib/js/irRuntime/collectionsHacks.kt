@@ -1,0 +1,64 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
+package kotlin.collections
+
+import kotlin.js.*
+
+// Copied from libraries/stdlib/js/src/kotlin/collections/utils.kt
+// Current inliner doesn't rename symbols inside `js` fun
+@Suppress("UNUSED_PARAMETER")
+internal fun deleteProperty(obj: Any, property: Any) {
+    js("delete obj[property]")
+}
+
+internal fun arrayToString(array: Array<*>) = array.joinToString(", ", "[", "]") { toString(it) }
+
+internal fun <T> Array<out T>.contentDeepHashCodeInternal(): Int {
+    var result = 1
+    for (element in this) {
+        val elementHash = when {
+            element == null -> 0
+            isArrayish(element) -> (element.unsafeCast<Array<*>>()).contentDeepHashCodeInternal()
+
+            element is UByteArray   -> element.contentHashCode()
+            element is UShortArray  -> element.contentHashCode()
+            element is UIntArray    -> element.contentHashCode()
+            element is ULongArray   -> element.contentHashCode()
+
+            else                    -> element.hashCode()
+        }
+
+        result = 31 * result + elementHash
+    }
+    return result
+}
+
+internal fun <T> T.contentEqualsInternal(other: T): Boolean {
+    val a = this.asDynamic()
+    val b = other.asDynamic()
+
+    if (a === b) return true
+
+    if (!isArrayish(b) || a.length != b.length) return false
+
+    for (i in 0 until a.length) {
+        if (a[i] != b[i]) {
+            return false
+        }
+    }
+    return true
+}
+
+internal fun <T> T.contentHashCodeInternal(): Int {
+    val a = this.asDynamic()
+    var result = 1
+
+    for (i in 0 until a.length) {
+        result = result * 31 + hashCode(a[i])
+    }
+
+    return result
+}

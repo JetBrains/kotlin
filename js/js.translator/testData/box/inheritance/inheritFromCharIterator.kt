@@ -1,4 +1,5 @@
-// EXPECTED_REACHABLE_NODES: 1122
+// KJS_WITH_FULL_RUNTIME
+// EXPECTED_REACHABLE_NODES: 1294
 package foo
 
 class MyCharIterator : CharIterator() {

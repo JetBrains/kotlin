@@ -1,0 +1,4 @@
+<T> public open class ConstructorWithNewTypeParams : R|java/lang/Object| {
+    public final function ConstructorWithNewTypeParams(first: R|ft<U, U?>|!): R|test/ConstructorWithNewTypeParams|
+
+}

@@ -1,0 +1,5 @@
+package
+
+public fun </*0*/ T> listOf(/*0*/ t: T): kotlin.collections.List<T>
+public fun usage(/*0*/ c: kotlin.collections.List<kotlin.String>): kotlin.Unit
+@kotlin.internal.InlineOnly public inline fun </*0*/ C : kotlin.collections.Collection<*>, /*1*/ R> C.ifEmpty(/*0*/ f: () -> R): R where C : R

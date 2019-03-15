@@ -30,3 +30,13 @@ internal fun KtElement.deleteSemicolon() {
     val lastSiblingToDelete = PsiTreeUtil.skipSiblingsForward(sibling, PsiWhiteSpace::class.java)?.prevSibling ?: sibling
     parent.deleteChildRange(nextSibling, lastSiblingToDelete)
 }
+
+fun KtExpression.unpackFunctionLiteral(allowParentheses: Boolean = false): KtLambdaExpression? {
+    return when (this) {
+        is KtLambdaExpression -> this
+        is KtLabeledExpression -> baseExpression?.unpackFunctionLiteral(allowParentheses)
+        is KtAnnotatedExpression -> baseExpression?.unpackFunctionLiteral(allowParentheses)
+        is KtParenthesizedExpression -> if (allowParentheses) expression?.unpackFunctionLiteral(allowParentheses) else null
+        else -> null
+    }
+}

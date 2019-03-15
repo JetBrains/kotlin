@@ -21,11 +21,8 @@ import java.io.File
 fun File.isJavaFile() =
         extension.equals("java", ignoreCase = true)
 
-fun File.isKotlinFile(): Boolean =
-    extension.let {
-        "kt".equals(it, ignoreCase = true) ||
-        "kts".equals(it, ignoreCase = true)
-    }
+fun File.isKotlinFile(sourceFilesExtensions: List<String>): Boolean =
+    !isJavaFile() && sourceFilesExtensions.any { it.equals(extension, ignoreCase = true) }
 
 fun File.isClassFile(): Boolean =
         extension.equals("class", ignoreCase = true)

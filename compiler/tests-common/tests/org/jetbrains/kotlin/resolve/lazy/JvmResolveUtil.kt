@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve.lazy
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.TestsCompiletimeError
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.cli.jvm.compiler.CliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -25,7 +26,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.container.ComponentProvider
-import org.jetbrains.kotlin.descriptors.PackagePartProvider
+import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.resolve.BindingTrace
@@ -57,11 +58,19 @@ object JvmResolveUtil {
         trace: BindingTrace = CliBindingTrace()
     ): AnalysisResult {
         for (file in files) {
-            AnalyzingUtils.checkForSyntacticErrors(file)
+            try {
+                AnalyzingUtils.checkForSyntacticErrors(file)
+            } catch (e: Exception) {
+                throw TestsCompiletimeError(e)
+            }
         }
 
         return analyze(project, files, configuration, packagePartProvider, trace).apply {
-            AnalyzingUtils.throwExceptionOnErrors(bindingContext)
+            try {
+                AnalyzingUtils.throwExceptionOnErrors(bindingContext)
+            } catch (e: Exception) {
+                throw TestsCompiletimeError(e)
+            }
         }
     }
 

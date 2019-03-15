@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // SKIP_MINIFICATION
 // Contains calls from external JS code
 package foo

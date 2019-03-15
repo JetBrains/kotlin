@@ -1,0 +1,133 @@
+// -- Module: <m1-common> --
+package
+
+@Anno public fun test(): kotlin.Unit
+
+public final annotation class A : kotlin.Annotation {
+    public constructor A(/*0*/ value: kotlin.String)
+    public final val value: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final expect annotation class Anno : kotlin.Annotation {
+    public constructor Anno(/*0*/ b: kotlin.Byte = ..., /*1*/ c: kotlin.Char = ..., /*2*/ d: kotlin.Double = ..., /*3*/ f: kotlin.Float = ..., /*4*/ i: kotlin.Int = ..., /*5*/ i2: kotlin.Int = ..., /*6*/ j: kotlin.Long = ..., /*7*/ j2: kotlin.Long = ..., /*8*/ s: kotlin.Short = ..., /*9*/ z: kotlin.Boolean = ..., /*10*/ ba: kotlin.ByteArray = ..., /*11*/ ca: kotlin.CharArray = ..., /*12*/ da: kotlin.DoubleArray = ..., /*13*/ fa: kotlin.FloatArray = ..., /*14*/ ia: kotlin.IntArray = ..., /*15*/ ja: kotlin.LongArray = ..., /*16*/ sa: kotlin.ShortArray = ..., /*17*/ za: kotlin.BooleanArray = ..., /*18*/ str: kotlin.String = ..., /*19*/ k: kotlin.reflect.KClass<*> = ..., /*20*/ e: E = ..., /*21*/ stra: kotlin.Array<kotlin.String> = ..., /*22*/ ka: kotlin.Array<kotlin.reflect.KClass<*>> = ..., /*23*/ ea: kotlin.Array<E> = ...)
+    public expect final val b: kotlin.Byte
+    public expect final val ba: kotlin.ByteArray
+    public expect final val c: kotlin.Char
+    public expect final val ca: kotlin.CharArray
+    public expect final val d: kotlin.Double
+    public expect final val da: kotlin.DoubleArray
+    public expect final val e: E
+    public expect final val ea: kotlin.Array<E>
+    public expect final val f: kotlin.Float
+    public expect final val fa: kotlin.FloatArray
+    public expect final val i: kotlin.Int
+    public expect final val i2: kotlin.Int
+    public expect final val ia: kotlin.IntArray
+    public expect final val j: kotlin.Long
+    public expect final val j2: kotlin.Long
+    public expect final val ja: kotlin.LongArray
+    public expect final val k: kotlin.reflect.KClass<*>
+    public expect final val ka: kotlin.Array<kotlin.reflect.KClass<*>>
+    public expect final val s: kotlin.Short
+    public expect final val sa: kotlin.ShortArray
+    public expect final val str: kotlin.String
+    public expect final val stra: kotlin.Array<kotlin.String>
+    public expect final val z: kotlin.Boolean
+    public expect final val za: kotlin.BooleanArray
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final enum class E : kotlin.Enum<E> {
+    enum entry E1
+
+    enum entry E2
+
+    enum entry E3
+
+    private constructor E()
+    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: E): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): E
+    public final /*synthesized*/ fun values(): kotlin.Array<E>
+}
+
+
+// -- Module: <m2-jvm> --
+package
+
+@Anno /* = Jnno */ public fun test(): kotlin.Unit
+
+public final annotation class A : kotlin.Annotation {
+    public constructor A(/*0*/ value: kotlin.String)
+    public final val value: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final enum class E : kotlin.Enum<E> {
+    enum entry E1
+
+    enum entry E2
+
+    enum entry E3
+
+    private constructor E()
+    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: E): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    protected/*protected and package*/ final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+    public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<E!>!
+    public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): E
+    public final /*synthesized*/ fun values(): kotlin.Array<E>
+}
+
+public final annotation class Jnno : kotlin.Annotation {
+    public constructor Jnno(/*0*/ b: kotlin.Byte = ..., /*1*/ c: kotlin.Char = ..., /*2*/ d: kotlin.Double = ..., /*3*/ f: kotlin.Float = ..., /*4*/ i: kotlin.Int = ..., /*5*/ i2: kotlin.Int = ..., /*6*/ j: kotlin.Long = ..., /*7*/ j2: kotlin.Long = ..., /*8*/ s: kotlin.Short = ..., /*9*/ z: kotlin.Boolean = ..., /*10*/ ba: kotlin.ByteArray = ..., /*11*/ ca: kotlin.CharArray = ..., /*12*/ da: kotlin.DoubleArray = ..., /*13*/ fa: kotlin.FloatArray = ..., /*14*/ ia: kotlin.IntArray = ..., /*15*/ ja: kotlin.LongArray = ..., /*16*/ sa: kotlin.ShortArray = ..., /*17*/ za: kotlin.BooleanArray = ..., /*18*/ str: kotlin.String = ..., /*19*/ k: kotlin.reflect.KClass<*> = ..., /*20*/ e: E = ..., /*21*/ stra: kotlin.Array<kotlin.String> = ..., /*22*/ ka: kotlin.Array<kotlin.reflect.KClass<*>> = ..., /*23*/ ea: kotlin.Array<E> = ...)
+    public final val b: kotlin.Byte
+    public final val ba: kotlin.ByteArray
+    public final val c: kotlin.Char
+    public final val ca: kotlin.CharArray
+    public final val d: kotlin.Double
+    public final val da: kotlin.DoubleArray
+    public final val e: E
+    public final val ea: kotlin.Array<E>
+    public final val f: kotlin.Float
+    public final val fa: kotlin.FloatArray
+    public final val i: kotlin.Int
+    public final val i2: kotlin.Int
+    public final val ia: kotlin.IntArray
+    public final val j: kotlin.Long
+    public final val j2: kotlin.Long
+    public final val ja: kotlin.LongArray
+    public final val k: kotlin.reflect.KClass<*>
+    public final val ka: kotlin.Array<kotlin.reflect.KClass<*>>
+    public final val s: kotlin.Short
+    public final val sa: kotlin.ShortArray
+    public final val str: kotlin.String
+    public final val stra: kotlin.Array<kotlin.String>
+    public final val z: kotlin.Boolean
+    public final val za: kotlin.BooleanArray
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+public actual typealias Anno = Jnno

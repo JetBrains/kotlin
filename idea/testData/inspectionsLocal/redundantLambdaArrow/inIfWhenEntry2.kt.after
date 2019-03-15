@@ -1,0 +1,10 @@
+fun test(): (Int) -> Int {
+    return when {
+        true -> {
+            { 42 }
+        }
+        else -> {
+            { _ -> 42 }
+        }
+    }
+}

@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1116
+// EXPECTED_REACHABLE_NODES: 1288
 // CHECK_CONTAINS_NO_CALLS: box except=equals;Baz_getInstance;callLocal;callLocalExtension
 // CHECK_CONTAINS_NO_CALLS: callLocal
 // CHECK_CONTAINS_NO_CALLS: callLocalExtension

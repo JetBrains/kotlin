@@ -4,7 +4,7 @@ package kt770_351_735
 
 
 //KT-770 Reference is not resolved to anything, but is not marked unresolved
-fun main(args : Array<String>) {
+fun main() {
     var i = 0
     when (i) {
         1 -> i--
@@ -98,7 +98,7 @@ fun testImplicitCoercion() {
         3 -> {
         <!IMPLICIT_CAST_TO_ANY!><!UNUSED_VALUE!>z =<!> 34<!>
     }
-        else -> <!UNUSED_CHANGED_VALUE, IMPLICIT_CAST_TO_ANY!>z--<!>
+        else -> <!IMPLICIT_CAST_TO_ANY, UNUSED_CHANGED_VALUE!>z--<!>
     }
 
     var <!UNUSED_VARIABLE!>iff<!> = <!INVALID_IF_AS_EXPRESSION!>if<!> (true) {
@@ -108,7 +108,7 @@ fun testImplicitCoercion() {
     val <!UNUSED_VARIABLE!>h<!> = if (false) <!IMPLICIT_CAST_TO_ANY!>4<!> else <!IMPLICIT_CAST_TO_ANY!>{}<!>
 
     bar(<!NI;TYPE_MISMATCH!>if (true) {
-        <!NI;CONSTANT_EXPECTED_TYPE_MISMATCH, CONSTANT_EXPECTED_TYPE_MISMATCH!>4<!>
+        <!OI;CONSTANT_EXPECTED_TYPE_MISMATCH!>4<!>
     }
         else {
         <!UNUSED_VALUE!>z =<!> 342

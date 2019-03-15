@@ -36,7 +36,7 @@ class KotlinFacetSettingsProviderImpl(private val project: Project) : KotlinFace
         project.messageBus.connect(project).subscribe(
                 ProjectTopics.PROJECT_ROOTS,
                 object : ModuleRootListener {
-                    override fun rootsChanged(event: ModuleRootEvent?) {
+                    override fun rootsChanged(event: ModuleRootEvent) {
                         ModuleManager.getInstance(project).modules.forEach { it.facetSettingsCache = null }
                     }
                 }

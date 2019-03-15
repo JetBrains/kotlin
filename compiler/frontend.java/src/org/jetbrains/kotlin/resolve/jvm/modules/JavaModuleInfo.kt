@@ -64,22 +64,30 @@ class JavaModuleInfo(
             val requires = arrayListOf<Requires>()
             val exports = arrayListOf<Exports>()
 
-            ClassReader(contents).accept(object : ClassVisitor(Opcodes.ASM6) {
-                override fun visitModule(name: String, access: Int, version: String?): ModuleVisitor {
-                    moduleName = name
+            try {
+                ClassReader(contents).accept(object : ClassVisitor(Opcodes.API_VERSION) {
+                    override fun visitModule(name: String, access: Int, version: String?): ModuleVisitor {
+                        moduleName = name
 
-                    return object : ModuleVisitor(Opcodes.ASM6) {
-                        override fun visitRequire(module: String, access: Int, version: String?) {
-                            requires.add(Requires(module, (access and ACC_TRANSITIVE) != 0))
-                        }
+                        return object : ModuleVisitor(Opcodes.API_VERSION) {
+                            override fun visitRequire(module: String, access: Int, version: String?) {
+                                requires.add(Requires(module, (access and ACC_TRANSITIVE) != 0))
+                            }
 
-                        override fun visitExport(packageFqName: String, access: Int, modules: Array<String>?) {
-                            // For some reason, '/' is the delimiter in packageFqName here
-                            exports.add(Exports(FqName(packageFqName.replace('/', '.')), modules?.toList().orEmpty()))
+                            override fun visitExport(packageFqName: String, access: Int, modules: Array<String>?) {
+                                // For some reason, '/' is the delimiter in packageFqName here
+                                exports.add(Exports(FqName(packageFqName.replace('/', '.')), modules?.toList().orEmpty()))
+                            }
                         }
                     }
-                }
-            }, ClassReader.SKIP_DEBUG or ClassReader.SKIP_CODE or ClassReader.SKIP_FRAMES)
+                }, ClassReader.SKIP_DEBUG or ClassReader.SKIP_CODE or ClassReader.SKIP_FRAMES)
+            } catch (e: Exception) {
+                throw IllegalStateException(
+                    "Could not load module definition from: $file. The file might be broken " +
+                            "by incorrect post-processing via bytecode tools. Please remove this file from the classpath.",
+                    e
+                )
+            }
 
             return if (moduleName != null)
                 JavaModuleInfo(moduleName!!, requires.compact(), exports.compact())

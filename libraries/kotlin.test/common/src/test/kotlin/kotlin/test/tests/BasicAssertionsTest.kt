@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
 package kotlin.test.tests
 
 import kotlin.test.*
@@ -25,24 +30,23 @@ class BasicAssertionsTest {
         assertFailsWith<AssertionError> { throw AssertionError() }
     }
 
-    @Test fun testAssertFailsWithFails() {
+    @Test
+    fun testAssertFailsWithFails() {
         assertTrue(true) // at least one assertion required for qunit
 
-        withDefaultAsserter run@ {
+        withDefaultAsserter run@{
             try {
                 assertFailsWith<IllegalStateException> { throw IllegalArgumentException() }
-            }
-            catch (e: AssertionError) {
+            } catch (e: AssertionError) {
                 return@run
             }
             throw AssertionError("Expected to fail")
         }
 
-        withDefaultAsserter run@ {
+        withDefaultAsserter run@{
             try {
-                assertFailsWith<IllegalStateException> {  }
-            }
-            catch (e: AssertionError) {
+                assertFailsWith<IllegalStateException> { }
+            } catch (e: AssertionError) {
                 return@run
             }
             throw AssertionError("Expected to fail")
@@ -100,7 +104,7 @@ class BasicAssertionsTest {
     @Test
     fun testAssertFalseFails() {
         checkFailedAssertion { assertFalse(true) }
-        checkFailedAssertion{ assertFalse { true } }
+        checkFailedAssertion { assertFalse { true } }
     }
 
     @Test
@@ -110,7 +114,7 @@ class BasicAssertionsTest {
 
     @Test()
     fun testAssertFailsFails() {
-        checkFailedAssertion { assertFails {  } }
+        checkFailedAssertion { assertFails { } }
     }
 
 
@@ -195,11 +199,10 @@ private fun checkFailedAssertion(assertion: () -> Unit) {
 
 @Suppress("INVISIBLE_MEMBER")
 private fun withDefaultAsserter(block: () -> Unit) {
-    val current = overrideAsserter(DefaultAsserter())
+    val current = overrideAsserter(DefaultAsserter)
     try {
         block()
-    }
-    finally {
+    } finally {
         overrideAsserter(current)
     }
 }

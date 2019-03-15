@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1133
+// EXPECTED_REACHABLE_NODES: 1291
 external enum class X {
     A, B
 }

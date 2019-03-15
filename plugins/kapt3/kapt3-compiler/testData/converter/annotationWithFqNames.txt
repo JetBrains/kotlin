@@ -1,0 +1,73 @@
+package lib;
+
+public @interface Anno {
+
+    Class<?>[] impls() default {};
+}
+
+////////////////////
+
+package lib.impl;
+
+public class Impl {
+}
+
+////////////////////
+
+package test;
+
+import lib.Anno;
+import lib.impl.Impl;
+
+@kotlin.Metadata()
+@lib.Anno(impls = {lib.impl.Impl.class, ABC.class})
+public final class Bar {
+
+    public Bar() {
+        super();
+    }
+}
+
+////////////////////
+
+package test;
+
+import lib.Anno;
+import lib.impl.Impl;
+
+@kotlin.Metadata()
+@lib.Anno(impls = {lib.impl.Impl.class})
+public final class Boo {
+
+    public Boo() {
+        super();
+    }
+}
+
+////////////////////
+
+package test;
+
+import lib.Anno;
+import lib.impl.Impl;
+
+@kotlin.Metadata()
+@lib.Anno(impls = {lib.impl.Impl.class})
+public final class Foo {
+
+    public Foo() {
+        super();
+    }
+}
+
+////////////////////
+
+package test;
+
+import lib.Anno;
+import lib.impl.Impl;
+
+@kotlin.Suppress(names = {"UNRESOLVED_REFERENCE", "ANNOTATION_ARGUMENT_MUST_BE_CONST", "NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION"})
+@kotlin.Metadata()
+public final class TestKt {
+}

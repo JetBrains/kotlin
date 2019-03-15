@@ -34,7 +34,7 @@ class RemoveArgumentNameIntention
 
         val argumentList = element.parent as? KtValueArgumentList ?: return null
         val arguments = argumentList.arguments
-        if (arguments.takeWhile { it != element }.any { it.isNamed() }) return null
+        if (arguments.asSequence().takeWhile { it != element }.any { it.isNamed() }) return null
 
         val callExpr = argumentList.parent as? KtCallElement ?: return null
         val resolvedCall = callExpr.resolveToCall() ?: return null

@@ -1,3 +1,4 @@
+warning: language version 1.0 is deprecated and its support will be removed in a future version of Kotlin
 compiler/testData/cli/jvm/unsupportedTypeAlias.kt:3:1: error: the feature "type aliases" is only available since language version 1.1
 typealias Unused = String
 ^

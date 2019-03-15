@@ -1,7 +1,7 @@
-import kotlin.coroutines.experimental.*
-import kotlin.coroutines.experimental.intrinsics.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
-suspend fun foo(value: Int): Int = suspendCoroutineOrReturn { c ->
+suspend fun foo(value: Int): Int = suspendCoroutineUninterceptedOrReturn { c ->
     c.resume(value)
     COROUTINE_SUSPENDED
 }
@@ -14,4 +14,4 @@ suspend fun bar(): Unit {
     println(a + b)
 }
 
-// LINES: 4 4 4 5 5 5 5 6 4 4 4 15 9 9 9 9 15 9 9 9 * 15 10 10 11 11 11 11 11 * 11 12 12 13 13 13 13 13 13 13 14 14
+// LINES: 38 4 4 4 5 5 44 44 5 89 44 5 5 6 4 4 4 15 9 9 9 * 15 10 10 11 11 11 2 11 11 * 11 12 12 13 13 13 2 13 13 13 13 14 14 * 15 9 9 9 9

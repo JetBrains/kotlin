@@ -26,7 +26,11 @@ import org.jetbrains.kotlin.idea.core.script.loadDefinitionsFromTemplates
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import java.io.File
 
-class ScriptTemplatesFromCompilerSettingsProvider(private val project: Project) : ScriptDefinitionContributor {
+class ScriptTemplatesFromCompilerSettingsProvider(
+    private val project: Project,
+    private val compilerSettings: KotlinCompilerSettings
+) : ScriptDefinitionContributor {
+
     init {
         project.messageBus.connect().subscribe(KotlinCompilerSettingsListener.TOPIC, object : KotlinCompilerSettingsListener {
             override fun <T> settingsChanged(newSettings: T) {
@@ -38,7 +42,7 @@ class ScriptTemplatesFromCompilerSettingsProvider(private val project: Project) 
     }
 
     override fun getDefinitions(): List<KotlinScriptDefinition> {
-        val kotlinSettings = KotlinCompilerSettings.getInstance(project).settings
+        val kotlinSettings = compilerSettings.settings
         return if (kotlinSettings.scriptTemplates.isBlank()) emptyList()
         else loadDefinitionsFromTemplates(
             templateClassNames = kotlinSettings.scriptTemplates.split(',', ' '),

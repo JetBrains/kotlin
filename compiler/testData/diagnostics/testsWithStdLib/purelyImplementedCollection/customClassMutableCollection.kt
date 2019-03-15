@@ -1,4 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE
+// !WITH_NEW_INFERENCE
 // JAVAC_EXPECTED_FILE
 
 import java.util.*;
@@ -28,5 +29,5 @@ fun foo() {
     x.add("")
 
     val b1: Collection<String?> = x
-    val b2: MutableCollection<String?> = <!TYPE_MISMATCH!>x<!>
+    val b2: MutableCollection<String?> = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>x<!>
 }

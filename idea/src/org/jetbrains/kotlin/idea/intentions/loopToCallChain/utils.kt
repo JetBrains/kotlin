@@ -390,7 +390,7 @@ private fun isEmbeddedBreakOrContinue(expression: KtExpressionWithLabel): Boolea
 
         is KtContainerNode -> {
             val containerExpression = parent.parent as KtExpression
-            containerExpression.isUsedAsExpression(containerExpression.analyze(BodyResolveMode.PARTIAL))
+            containerExpression.isUsedAsExpression(containerExpression.analyze(BodyResolveMode.PARTIAL_WITH_CFA))
         }
 
         else -> true

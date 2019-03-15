@@ -139,6 +139,7 @@ abstract class IrElementVisitorVoidWithContext : IrElementVisitorVoid {
     protected val currentProperty get() = scopeStack.lastOrNull { it.scope.scopeOwner is PropertyDescriptor }
     protected val currentScope get() = scopeStack.peek()
     protected val parentScope get() = if (scopeStack.size < 2) null else scopeStack[scopeStack.size - 2]
+    protected val allScopes get() = scopeStack
 
     fun printScopeStack() {
         scopeStack.forEach { println(it.scope.scopeOwner) }

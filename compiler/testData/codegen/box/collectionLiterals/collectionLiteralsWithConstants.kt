@@ -1,8 +1,6 @@
-// LANGUAGE_VERSION: 1.2
 // WITH_REFLECT
 
-// IGNORE_BACKEND: JS
-// IGNORE_BACKEND: NATIVE
+// TARGET_BACKEND: JVM
 
 import java.util.Arrays
 import kotlin.reflect.KFunction0

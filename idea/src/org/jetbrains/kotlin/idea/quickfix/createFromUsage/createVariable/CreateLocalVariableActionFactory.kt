@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.types.Variance
 import java.util.*
 
-object CreateLocalVariableActionFactory: KotlinSingleIntentionActionFactory() {
+object CreateLocalVariableActionFactory : KotlinSingleIntentionActionFactory() {
     override fun createAction(diagnostic: Diagnostic): IntentionAction? {
         val refExpr = QuickFixUtil.getParentElementOfType(diagnostic, KtNameReferenceExpression::class.java) ?: return null
         if (refExpr.getQualifiedElement() != refExpr) return null
@@ -44,10 +44,10 @@ object CreateLocalVariableActionFactory: KotlinSingleIntentionActionFactory() {
         val propertyName = refExpr.getReferencedName()
 
         val container = refExpr.parents
-                .filter { it is KtBlockExpression || it is KtDeclarationWithBody }
-                .firstOrNull() as? KtElement ?: return null
+            .filter { it is KtBlockExpression || it is KtDeclarationWithBody && it.bodyExpression != null }
+            .firstOrNull() as? KtElement ?: return null
 
-        return object: CreateFromUsageFixBase<KtSimpleNameExpression>(refExpr) {
+        return object : CreateFromUsageFixBase<KtSimpleNameExpression>(refExpr) {
             override fun getText(): String = KotlinBundle.message("create.local.variable.from.usage", propertyName)
 
             override fun invoke(project: Project, editor: Editor?, file: KtFile) {
@@ -66,12 +66,12 @@ object CreateLocalVariableActionFactory: KotlinSingleIntentionActionFactory() {
                 }
 
                 val typeInfo = TypeInfo(
-                        originalElement.getExpressionForTypeGuess(),
-                        if (varExpected) Variance.INVARIANT else Variance.OUT_VARIANCE
+                    originalElement.getExpressionForTypeGuess(),
+                    if (varExpected) Variance.INVARIANT else Variance.OUT_VARIANCE
                 )
                 val propertyInfo = PropertyInfo(propertyName, TypeInfo.Empty, typeInfo, varExpected, Collections.singletonList(actualContainer))
 
-                with (CallableBuilderConfiguration(listOfNotNull(propertyInfo), originalElement, file, editor).createBuilder()) {
+                with(CallableBuilderConfiguration(listOfNotNull(propertyInfo), originalElement, file, editor).createBuilder()) {
                     placement = CallablePlacement.NoReceiver(actualContainer)
                     project.executeCommand(text) { build() }
                 }

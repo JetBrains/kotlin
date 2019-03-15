@@ -1,4 +1,5 @@
 // "Add annotation target" "true"
+@Retention(AnnotationRetention.SOURCE)
 annotation class Foo
 
 fun test() {

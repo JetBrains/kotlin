@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.refactoring.changeSignature
@@ -37,9 +26,10 @@ import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.ui.KotlinMethodNode
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.ui.KotlinChangeSignatureDialog.Companion.getTypeInfo
+import org.jetbrains.kotlin.idea.perf.forceUsingUltraLightClassesForTest
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.ui.KotlinChangeSignatureDialog.Companion.getTypeCodeFragmentContext
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.ui.KotlinChangeSignatureDialog.Companion.getTypeInfo
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.ui.KotlinMethodNode
 import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex
 import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionFqnNameIndex
@@ -140,7 +130,7 @@ class KotlinChangeSignatureTest : KotlinLightCodeInsightFixtureTestCase() {
                 else -> throw e
             }
             val conflictsFile = File(testDataPath + getTestName(false) + "Messages.txt")
-            UsefulTestCase.assertSameLinesWithFile(conflictsFile.absolutePath, message)
+            UsefulTestCase.assertSameLinesWithFile(conflictsFile.absolutePath, message!!)
         }
     }
 
@@ -161,7 +151,7 @@ class KotlinChangeSignatureTest : KotlinLightCodeInsightFixtureTestCase() {
                 else -> throw e
             }
             val conflictsFile = File(testDataPath + getTestName(false) + "Messages.txt")
-            UsefulTestCase.assertSameLinesWithFile(conflictsFile.absolutePath, message)
+            UsefulTestCase.assertSameLinesWithFile(conflictsFile.absolutePath, message!!)
         }
     }
 
@@ -574,6 +564,11 @@ class KotlinChangeSignatureTest : KotlinLightCodeInsightFixtureTestCase() {
     }
 
     fun testConvertParameterToReceiverForMember1() = doTest { receiverParameterInfo = newParameters[0] }
+
+    fun testConvertParameterToReceiverForMemberUltraLight() {
+        forceUsingUltraLightClassesForTest()
+        doTest { receiverParameterInfo = newParameters[0] }
+    }
 
     fun testConvertParameterToReceiverForMember2() = doTest { receiverParameterInfo = newParameters[1] }
 
@@ -1008,4 +1003,8 @@ class KotlinChangeSignatureTest : KotlinLightCodeInsightFixtureTestCase() {
     fun testGetConventionRenameToFoo() = doTest { newName = "foo" }
 
     fun testGetConventionRenameToInvoke() = doTest { newName = "invoke" }
+
+    fun testKotlinOverridingJavaWithDifferentParamName() = doJavaTest {
+        newParameters.add(ParameterInfoImpl(-1, "n", PsiType.INT))
+    }
 }

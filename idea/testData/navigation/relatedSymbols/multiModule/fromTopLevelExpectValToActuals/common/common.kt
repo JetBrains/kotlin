@@ -2,5 +2,5 @@ package test
 
 expect val <caret>foo: Int
 
-// REF: [jvm] (test).foo
-// REF: [js] (test).foo
+// REF: [testModule_JVM] (test).foo
+// REF: [testModule_JS] (test).foo

@@ -36,6 +36,6 @@ fun foo1(i: Int) {
 }
 
 // ORDER: foo2
+// ORDER: foo5
 // ORDER: foo10
 // ORDER: foo1
-// ORDER: foo5

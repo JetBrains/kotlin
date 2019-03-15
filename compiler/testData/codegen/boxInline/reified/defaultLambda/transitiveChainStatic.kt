@@ -1,7 +1,8 @@
+// IGNORE_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 // FILE: 1.kt
-// LANGUAGE_VERSION: 1.2
 // SKIP_INLINE_CHECK_IN: inlineFun$default
-//WITH_RUNTIME
+// WITH_RUNTIME
 package test
 
 class OK
@@ -18,8 +19,6 @@ inline fun <reified X> inlineFun2(): String {
 // FILE: 2.kt
 
 import test.*
-
-
 
 fun box(): String {
     return inlineFun2<OK>()

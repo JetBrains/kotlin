@@ -1,4 +1,4 @@
-// INSPECTION_CLASS: org.jetbrains.android.inspections.klint.AndroidLintInspectionToolProvider$AndroidKLintRecycleInspection
+// INSPECTION_CLASS: com.android.tools.idea.lint.AndroidLintRecycleInspection
 
 @file:Suppress("UNUSED_VARIABLE")
 
@@ -13,7 +13,7 @@ class MainActivity : Activity() {
         val cursor = contentResolver.<warning descr="This `Cursor` should be freed up after use with `#close()`">query</warning>(null, null, null, null, null)
 
         // WARNING
-        contentResolver.<warning descr="This `Cursor` should be freed up after use with `#close()`">query</warning>(null, null, null, null, null)
+        contentResolver.query(null, null, null, null, null)
 
         // OK, closed in chained call
         contentResolver.query(null, null, null, null, null).close()

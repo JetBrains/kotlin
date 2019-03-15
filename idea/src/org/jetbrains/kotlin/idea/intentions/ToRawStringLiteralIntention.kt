@@ -19,14 +19,17 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.text.StringUtilRt
+import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.psi.KtEscapeStringTemplateEntry
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtStringTemplateEntry
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 class ToRawStringLiteralIntention : SelfTargetingOffsetIndependentIntention<KtStringTemplateExpression>(
-        KtStringTemplateExpression::class.java,
-        "To raw string literal"
+    KtStringTemplateExpression::class.java,
+    "To raw string literal"
 ), LowPriorityAction {
     override fun isApplicableTo(element: KtStringTemplateExpression): Boolean {
         val text = element.text
@@ -43,8 +46,19 @@ class ToRawStringLiteralIntention : SelfTargetingOffsetIndependentIntention<KtSt
     }
 
     override fun applyTo(element: KtStringTemplateExpression, editor: Editor?) {
+        val startOffset = element.startOffset
+        val endOffset = element.endOffset
+        val currentOffset = editor?.caretModel?.currentCaret?.offset ?: startOffset
+
         val text = convertContent(element)
-        element.replace(KtPsiFactory(element).createExpression("\"\"\"" + text + "\"\"\""))
+        val replaced = element.replaced(KtPsiFactory(element).createExpression("\"\"\"" + text + "\"\"\""))
+
+        val offset = when {
+            startOffset == currentOffset -> startOffset
+            endOffset == currentOffset -> replaced.endOffset
+            else -> minOf(currentOffset + 2, replaced.endOffset)
+        }
+        editor?.caretModel?.moveToOffset(offset)
     }
 
     private fun convertContent(element: KtStringTemplateExpression): String {

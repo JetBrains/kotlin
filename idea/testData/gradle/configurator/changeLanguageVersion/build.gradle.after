@@ -1,0 +1,20 @@
+buildscript {
+    repositories {
+        jcenter()
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0"
+    }
+}
+
+apply plugin: 'kotlin'
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib-1.1.0"
+}
+compileKotlin {
+    kotlinOptions {
+        languageVersion = "1.1"
+    }
+}

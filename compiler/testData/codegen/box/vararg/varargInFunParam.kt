@@ -7,8 +7,6 @@ fun box(): String {
     if (test1(*intArrayOf(1)) != "1") return "fail 5"
     if (test1(*intArrayOf(1, 2)) != "12") return "fail 6"
 
-    if (test1(p = 1) != "1") return "fail 7"
-
     if (test1(p = *intArrayOf()) != "") return "fail 8"
     if (test1(p = *intArrayOf(1)) != "1") return "fail 9"
     if (test1(p = *intArrayOf(1, 2)) != "12") return "fail 10"
@@ -21,8 +19,6 @@ fun box(): String {
     if (test2(*arrayOf<String>("1")) != "1") return "fail 15"
     if (test2(*arrayOf<String>("1", "2")) != "12") return "fail 16"
 
-    if (test2(p = "1") != "1") return "fail 17"
-
     if (test2(p = *arrayOf<String>()) != "") return "fail 18"
     if (test2(p = *arrayOf<String>("1")) != "1") return "fail 19"
     if (test2(p = *arrayOf<String>("1", "2")) != "12") return "fail 20"
@@ -34,8 +30,6 @@ fun box(): String {
     if (test3(*arrayOf<String>()) != "") return "fail 24"
     if (test3(*arrayOf<String>("1")) != "1") return "fail 25"
     if (test3(*arrayOf<String>("1", "2")) != "12") return "fail 26"
-
-    if (test3(p = "1") != "1") return "fail 27"
 
     if (test3(p = *arrayOf<String>()) != "") return "fail 28"
     if (test3(p = *arrayOf<String>("1")) != "1") return "fail 29"

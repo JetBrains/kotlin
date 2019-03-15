@@ -1,0 +1,2 @@
+public open class NestedClass : R|java/lang/Object| {
+}

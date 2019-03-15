@@ -1,0 +1,95 @@
+package
+
+public const val explicit: kotlin.UInt = 2.toUInt()
+public const val nullable: kotlin.UInt? = 3.toUInt()
+public const val ub0: kotlin.UByte = 1.toUByte()
+public const val ui0: kotlin.UInt = -1.toUInt()
+public const val ui1: kotlin.UInt = 0.toUInt()
+public const val ui2: kotlin.UInt = 42.toUInt()
+public const val ul0: kotlin.ULong = 3.toULong()
+public const val us0: kotlin.UShort = 2.toUShort()
+@AnnoUB(ub0 = 1.toUByte(), ub1 = 1.toUByte()) public fun f0(): kotlin.Unit
+@AnnoUS(us0 = 7.toUShort(), us1 = 2.toUShort()) public fun f1(): kotlin.Unit
+@AnnoUI(ui0 = -1.toUInt(), ui1 = 0.toUInt(), ui2 = 42.toUInt(), ui3 = 100.toUInt()) public fun f2(): kotlin.Unit
+@AnnoUL(ul0 = 3.toULong(), ul1 = 5.toULong()) public fun f3(): kotlin.Unit
+
+public final annotation class AnnoUB : kotlin.Annotation {
+    public constructor AnnoUB(/*0*/ ub0: kotlin.UByte, /*1*/ ub1: kotlin.UByte)
+    public final val ub0: kotlin.UByte
+    public final val ub1: kotlin.UByte
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final annotation class AnnoUI : kotlin.Annotation {
+    public constructor AnnoUI(/*0*/ ui0: kotlin.UInt, /*1*/ ui1: kotlin.UInt, /*2*/ ui2: kotlin.UInt, /*3*/ ui3: kotlin.UInt)
+    public final val ui0: kotlin.UInt
+    public final val ui1: kotlin.UInt
+    public final val ui2: kotlin.UInt
+    public final val ui3: kotlin.UInt
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final annotation class AnnoUL : kotlin.Annotation {
+    public constructor AnnoUL(/*0*/ ul0: kotlin.ULong, /*1*/ ul1: kotlin.ULong)
+    public final val ul0: kotlin.ULong
+    public final val ul1: kotlin.ULong
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final annotation class AnnoUS : kotlin.Annotation {
+    public constructor AnnoUS(/*0*/ us0: kotlin.UShort, /*1*/ us1: kotlin.UShort)
+    public final val us0: kotlin.UShort
+    public final val us1: kotlin.UShort
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final annotation class NullableAnno : kotlin.Annotation {
+    public constructor NullableAnno(/*0*/ u: kotlin.UInt?)
+    public final val u: kotlin.UInt?
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+package kotlin {
+
+    public final inline class UByte {
+        public constructor UByte(/*0*/ b: kotlin.Byte)
+        private final val b: kotlin.Byte
+        public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+    }
+
+    public final inline class UInt {
+        public constructor UInt(/*0*/ i: kotlin.Int)
+        private final val i: kotlin.Int
+        public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+    }
+
+    public final inline class ULong {
+        public constructor ULong(/*0*/ l: kotlin.Long)
+        private final val l: kotlin.Long
+        public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+    }
+
+    public final inline class UShort {
+        public constructor UShort(/*0*/ s: kotlin.Short)
+        private final val s: kotlin.Short
+        public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+    }
+}

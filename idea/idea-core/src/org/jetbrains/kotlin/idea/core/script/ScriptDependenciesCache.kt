@@ -24,7 +24,8 @@ import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.NonClasspathDirectoriesScope
 import com.intellij.util.containers.SLRUMap
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.jetbrains.kotlin.idea.core.util.EDT
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.File
@@ -37,13 +38,16 @@ import kotlin.reflect.KProperty0
 import kotlin.reflect.jvm.isAccessible
 import kotlin.script.experimental.dependencies.ScriptDependencies
 
-private const val MAX_SCRIPTS_CACHED = 10
-
 class ScriptDependenciesCache(private val project: Project) {
+
+    companion object {
+        const val MAX_SCRIPTS_CACHED = 50
+    }
+
     private val cacheLock = ReentrantReadWriteLock()
     private val cache = SLRUMap<VirtualFile, ScriptDependencies>(MAX_SCRIPTS_CACHED, MAX_SCRIPTS_CACHED)
 
-    operator fun get(virtualFile: VirtualFile): ScriptDependencies? = cacheLock.read { cache[virtualFile] }
+    operator fun get(virtualFile: VirtualFile): ScriptDependencies? = cacheLock.write { cache[virtualFile] }
 
     val allScriptsClasspath by ClearableLazyValue(cacheLock) {
         val files = cache.entrySet().flatMap { it.value.classpath }.distinct()
@@ -69,9 +73,9 @@ class ScriptDependenciesCache(private val project: Project) {
         this::allLibrarySourcesScope.clearValue()
 
         val kotlinScriptDependenciesClassFinder =
-                Extensions.getArea(project).getExtensionPoint(PsiElementFinder.EP_NAME).extensions
-                        .filterIsInstance<KotlinScriptDependenciesClassFinder>()
-                        .single()
+            Extensions.getArea(project).getExtensionPoint(PsiElementFinder.EP_NAME).extensions
+                .filterIsInstance<KotlinScriptDependenciesClassFinder>()
+                .single()
 
         kotlinScriptDependenciesClassFinder.clearCache()
         updateHighlighting(files)
@@ -80,7 +84,7 @@ class ScriptDependenciesCache(private val project: Project) {
     private fun updateHighlighting(files: List<VirtualFile>) {
         ScriptDependenciesModificationTracker.getInstance(project).incModificationCount()
 
-        launch(EDT(project)) {
+        GlobalScope.launch(EDT(project)) {
             files.filter { it.isValid }.forEach {
                 PsiManager.getInstance(project).findFile(it)?.let { psiFile ->
                     DaemonCodeAnalyzer.getInstance(project).restart(psiFile)
@@ -91,7 +95,7 @@ class ScriptDependenciesCache(private val project: Project) {
 
     fun hasNotCachedRoots(scriptDependencies: ScriptDependencies): Boolean {
         return !allScriptsClasspath.containsAll(ScriptDependenciesManager.toVfsRoots(scriptDependencies.classpath)) ||
-               !allLibrarySources.containsAll(ScriptDependenciesManager.toVfsRoots(scriptDependencies.sources))
+                !allLibrarySources.containsAll(ScriptDependenciesManager.toVfsRoots(scriptDependencies.sources))
     }
 
     fun clear() {
@@ -143,11 +147,11 @@ class ScriptDependenciesCache(private val project: Project) {
         }
 
         return ScriptDependencies(
-                classpath = binaries.distinct(),
-                sources = sources.distinct(),
-                imports = imports.distinct(),
-                scripts = scripts.distinct(),
-                javaHome = relevantEntries.map { it.javaHome }.firstOrNull()
+            classpath = binaries.distinct(),
+            sources = sources.distinct(),
+            imports = imports.distinct(),
+            scripts = scripts.distinct(),
+            javaHome = relevantEntries.map { it.javaHome }.firstOrNull()
         )
     }
 }
@@ -157,13 +161,14 @@ private fun <R> KProperty0<R>.clearValue() {
     (getDelegate() as ClearableLazyValue<*, *>).clear()
 }
 
-private class ClearableLazyValue<in R, out T : Any>(private val lock: ReentrantReadWriteLock, private val compute: () -> T): ReadOnlyProperty<R, T> {
+private class ClearableLazyValue<in R, out T : Any>(
+    private val lock: ReentrantReadWriteLock,
+    private val compute: () -> T
+) : ReadOnlyProperty<R, T> {
     override fun getValue(thisRef: R, property: KProperty<*>): T {
-        lock.read {
+        lock.write {
             if (value == null) {
-                lock.write {
-                    value = compute()
-                }
+                value = compute()
             }
             return value!!
         }

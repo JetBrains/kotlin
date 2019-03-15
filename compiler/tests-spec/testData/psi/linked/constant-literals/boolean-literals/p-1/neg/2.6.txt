@@ -1,0 +1,8 @@
+KtFile: 2.6.kt
+  PACKAGE_DIRECTIVE
+    PsiElement(package)('package')
+    PsiWhiteSpace(' ')
+    PsiErrorElement:Package name must be a '.'-separated identifier list
+      PsiElement(true)('true')
+  IMPORT_LIST
+    <empty list>

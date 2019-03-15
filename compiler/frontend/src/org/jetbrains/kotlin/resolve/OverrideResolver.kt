@@ -866,7 +866,7 @@ class OverrideResolver(
             declaringClass: ClassDescriptor
         ): CallableMemberDescriptor? {
             for (supertype in declaringClass.typeConstructor.supertypes) {
-                val all = Sets.newLinkedHashSet<CallableMemberDescriptor>()
+                val all = linkedSetOf<CallableMemberDescriptor>()
                 all.addAll(supertype.memberScope.getContributedFunctions(declared.name, NoLookupLocation.WHEN_CHECK_OVERRIDES))
                 all.addAll(supertype.memberScope.getContributedVariables(declared.name, NoLookupLocation.WHEN_CHECK_OVERRIDES))
                 for (fromSuper in all) {

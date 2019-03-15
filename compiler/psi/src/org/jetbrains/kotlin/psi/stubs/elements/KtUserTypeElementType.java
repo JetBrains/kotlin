@@ -25,25 +25,24 @@ import org.jetbrains.kotlin.psi.KtUserType;
 import org.jetbrains.kotlin.psi.stubs.KotlinUserTypeStub;
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinUserTypeStubImpl;
 
-import java.io.IOException;
-
 public class KtUserTypeElementType extends KtStubElementType<KotlinUserTypeStub, KtUserType> {
     public KtUserTypeElementType(@NotNull @NonNls String debugName) {
         super(debugName, KtUserType.class, KotlinUserTypeStub.class);
     }
 
+    @NotNull
     @Override
     public KotlinUserTypeStub createStub(@NotNull KtUserType psi, StubElement parentStub) {
-        return new KotlinUserTypeStubImpl(parentStub);
+        return new KotlinUserTypeStubImpl((StubElement<?>) parentStub);
     }
 
     @Override
-    public void serialize(@NotNull KotlinUserTypeStub stub, @NotNull StubOutputStream dataStream) throws IOException {
+    public void serialize(@NotNull KotlinUserTypeStub stub, @NotNull StubOutputStream dataStream) {
     }
 
     @NotNull
     @Override
-    public KotlinUserTypeStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
-        return new KotlinUserTypeStubImpl(parentStub);
+    public KotlinUserTypeStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) {
+        return new KotlinUserTypeStubImpl((StubElement<?>) parentStub);
     }
 }

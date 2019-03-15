@@ -1,10 +1,12 @@
+// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 // WITH_COROUTINES
+// COMMON_COROUTINES_TEST
 import helpers.*
-import kotlin.coroutines.experimental.*
-import kotlin.coroutines.experimental.intrinsics.*
+import COROUTINES_PACKAGE.*
 import kotlin.test.assertEquals
 
+@Suppress("DEPRECATION_ERROR")
 class Controller {
     val coroutineContext = object : CoroutineContext {
         public override fun <E : CoroutineContext.Element> get(key: CoroutineContext.Key<E>): E? = null
@@ -18,25 +20,13 @@ class Controller {
     suspend fun controllerSuspendHere() =
         if (coroutineContext == EmptyCoroutineContext) "$coroutineContext == $EmptyCoroutineContext" else "OK"
 
-    suspend fun controllerSuspendHereIntrinsicOld() =
-        if (kotlin.coroutines.experimental.intrinsics.coroutineContext != EmptyCoroutineContext)
-            "${kotlin.coroutines.experimental.intrinsics.coroutineContext} != $EmptyCoroutineContext"
-        else
-            "OK"
-
-    suspend fun controllerSuspendHereIntrinsicNew() =
-        if (kotlin.coroutines.experimental.coroutineContext != EmptyCoroutineContext)
-            "${kotlin.coroutines.experimental.coroutineContext} != $EmptyCoroutineContext"
-        else
-            "OK"
-
     suspend fun controllerMultipleArgs(a: Any, b: Any, c: Any) =
         if (coroutineContext == EmptyCoroutineContext) "$coroutineContext == $EmptyCoroutineContext" else "OK"
 
     fun builder(c: suspend Controller.() -> String): String {
         var fromSuspension: String? = null
 
-        c.startCoroutine(this, object : Continuation<String> {
+        c.startCoroutine(this, object : ContinuationAdapter<String>() {
             override val context: CoroutineContext
                 get() = EmptyCoroutineContext
 
@@ -63,17 +53,9 @@ fun box(): String {
     if (res != "OK") {
         return "fail 2 $res"
     }
-    res = v.builder { controllerSuspendHereIntrinsicOld() }
-    if (res != "OK") {
-        return "fail 3 $res"
-    }
-    res = v.builder { controllerSuspendHereIntrinsicNew() }
-    if (res != "OK") {
-        return "fail 4 $res"
-    }
     res = v.builder { controllerSuspendHere() }
     if (res != "OK") {
-        return "fail 5 $res"
+        return "fail 3 $res"
     }
 
     return "OK"

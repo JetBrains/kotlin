@@ -1,0 +1,39 @@
+package
+
+package j {
+
+    public open class J : kt.KFooZ {
+        public constructor J()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun foo(): kt.Z
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+package kt {
+    public fun jfoo(/*0*/ x: j.J): kt.Z
+
+    public interface IFoo</*0*/ T> {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public abstract fun foo(): T
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public open class KFooZ : kt.IFoo<kt.Z> {
+        public constructor KFooZ()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ fun foo(): kt.Z
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final inline class Z {
+        public constructor Z(/*0*/ value: kotlin.Int)
+        public final val value: kotlin.Int
+        public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+    }
+}

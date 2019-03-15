@@ -32,7 +32,7 @@ public class KtContainerNode extends KtElementImpl {
     }
 
     @Override // for visibility
-    protected PsiElement findChildByType(IElementType type) {
+    protected <T extends PsiElement> T findChildByType(IElementType type) {
         return super.findChildByType(type);
     }
 }

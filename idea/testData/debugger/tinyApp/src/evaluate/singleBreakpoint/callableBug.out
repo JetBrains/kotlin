@@ -1,7 +1,6 @@
-LineBreakpoint created at callableBug.kt:8
+LineBreakpoint created at callableBug.kt:8 lambdaOrdinal = 1
 Run Java
 Connected to the target VM
-callableBug.kt:8
 callableBug.kt:8
 Compile bytecode for callable
 Compile bytecode for it

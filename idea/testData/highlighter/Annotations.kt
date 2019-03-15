@@ -1,4 +1,7 @@
+// EXPECTED_DUPLICATED_HIGHLIGHTING
+
 <info descr="null" textAttributesKey="KOTLIN_ANNOTATION">@Target</info>(<info descr="null" textAttributesKey="KOTLIN_CLASS">AnnotationTarget</info>.<info descr="null" textAttributesKey="KOTLIN_ENUM_ENTRY">CLASS</info>, <info descr="null" textAttributesKey="KOTLIN_CLASS">AnnotationTarget</info>.<info descr="null" textAttributesKey="KOTLIN_ENUM_ENTRY">EXPRESSION</info>)
+<info descr="null" textAttributesKey="KOTLIN_ANNOTATION">@Retention</info>(<info descr="null" textAttributesKey="KOTLIN_CLASS">AnnotationRetention</info>.<info descr="null" textAttributesKey="KOTLIN_ENUM_ENTRY">SOURCE</info>)
 <info descr="null">annotation</info> class <info descr="null">Ann</info>
 
 <info descr="null" textAttributesKey="KOTLIN_ANNOTATION">@Ann</info> class <info descr="null">A</info>

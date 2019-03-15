@@ -5,19 +5,30 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
-import com.intellij.codeInspection.LocalInspectionToolSession
-import com.intellij.codeInspection.ProblemsHolder
-import com.intellij.openapi.editor.event.DocumentAdapter
+import com.intellij.analysis.AnalysisScope
+import com.intellij.codeInspection.*
+import com.intellij.codeInspection.reference.RefEntity
+import com.intellij.codeInspection.reference.RefFile
+import com.intellij.codeInspection.reference.RefPackage
 import com.intellij.openapi.editor.event.DocumentEvent
+import com.intellij.openapi.editor.event.DocumentListener
 import com.intellij.openapi.ui.LabeledComponent
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.ui.EditorTextField
+import com.siyeh.ig.BaseGlobalInspection
 import com.siyeh.ig.psiutils.TestUtils
+import org.intellij.lang.annotations.Language
 import org.intellij.lang.regexp.RegExpFileType
+import org.jdom.Element
+import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.idea.core.packageMatchesDirectoryOrImplicit
 import org.jetbrains.kotlin.idea.quickfix.RenameIdentifierFix
+import org.jetbrains.kotlin.idea.refactoring.isInjectedFragment
+import org.jetbrains.kotlin.idea.util.compat.psiFile
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
@@ -27,6 +38,16 @@ import java.util.regex.PatternSyntaxException
 import javax.swing.JPanel
 
 data class NamingRule(val message: String, val matcher: (String) -> Boolean)
+
+private fun findRuleMessage(checkString: String, rules: Array<out NamingRule>): String? {
+    for (rule in rules) {
+        if (rule.matcher(checkString)) {
+            return rule.message
+        }
+    }
+
+    return null
+}
 
 private val START_UPPER = NamingRule("should start with an uppercase letter") {
     it.getOrNull(0)?.isUpperCase() == false
@@ -38,6 +59,10 @@ private val START_LOWER = NamingRule("should start with a lowercase letter") {
 
 private val NO_UNDERSCORES = NamingRule("should not contain underscores") {
     '_' in it
+}
+
+private val NO_START_UPPER = NamingRule("should not start with an uppercase letter") {
+    it.getOrNull(0)?.isUpperCase() == true
 }
 
 private val NO_START_UNDERSCORE = NamingRule("should not start with an underscore") {
@@ -56,15 +81,18 @@ private val NO_BAD_CHARACTERS_OR_UNDERSCORE = NamingRule("may contain only lette
     it.any { c -> c !in 'a'..'z' && c !in 'A'..'Z' && c !in '0'..'9' && c != '_' }
 }
 
-abstract class NamingConventionInspection(
+class NamingConventionInspectionSettings(
     private val entityName: String,
-    private val defaultNamePattern: String,
+    @Language("RegExp") val defaultNamePattern: String,
+    private val setNamePatternCallback: ((value: String) -> Unit),
     private vararg val rules: NamingRule
-) : AbstractKotlinInspection() {
-    protected var nameRegex: Regex? = defaultNamePattern.toRegex()
+) {
+    var nameRegex: Regex? = defaultNamePattern.toRegex()
+
     var namePattern: String = defaultNamePattern
         set(value) {
             field = value
+            setNamePatternCallback.invoke(value)
             nameRegex = try {
                 value.toRegex()
             } catch (e: PatternSyntaxException) {
@@ -72,7 +100,7 @@ abstract class NamingConventionInspection(
             }
         }
 
-    protected fun verifyName(element: PsiNameIdentifierOwner, holder: ProblemsHolder) {
+    fun verifyName(element: PsiNameIdentifierOwner, holder: ProblemsHolder) {
         val name = element.name
         val nameIdentifier = element.nameIdentifier
         if (name != null && nameIdentifier != null && nameRegex?.matches(name) == false) {
@@ -85,18 +113,69 @@ abstract class NamingConventionInspection(
         }
     }
 
-    protected fun getNameMismatchMessage(name: String): String {
-        if (namePattern == defaultNamePattern) {
-            for (rule in rules) {
-                if (rule.matcher(name)) {
-                    return rule.message
-                }
-            }
+    fun getNameMismatchMessage(name: String): String {
+        if (namePattern != defaultNamePattern) {
+            return getDefaultErrorMessage()
         }
-        return "doesn't match regex '$namePattern'"
+
+        return findRuleMessage(name, rules) ?: getDefaultErrorMessage()
     }
 
-    override fun createOptionsPanel() = NamingConventionOptionsPanel(this)
+    fun getDefaultErrorMessage() = "doesn't match regex '$namePattern'"
+
+    fun createOptionsPanel(): JPanel = NamingConventionOptionsPanel(this)
+
+    private class NamingConventionOptionsPanel(settings: NamingConventionInspectionSettings) : JPanel() {
+        init {
+            layout = BorderLayout()
+
+            val regexField = EditorTextField(settings.namePattern, null, RegExpFileType.INSTANCE).apply {
+                setOneLineMode(true)
+            }
+            regexField.document.addDocumentListener(object : DocumentListener {
+                override fun documentChanged(e: DocumentEvent) {
+                    settings.namePattern = regexField.text
+                }
+            })
+            val labeledComponent = LabeledComponent.create(regexField, "Pattern:", BorderLayout.WEST)
+            add(labeledComponent, BorderLayout.NORTH)
+        }
+    }
+}
+
+
+sealed class NamingConventionInspection(
+    entityName: String,
+    @Language("RegExp") defaultNamePattern: String,
+    vararg rules: NamingRule
+) : AbstractKotlinInspection() {
+
+    // Serialized inspection state
+    @Suppress("MemberVisibilityCanBePrivate")
+    var namePattern: String = defaultNamePattern
+
+    private val namingSettings = NamingConventionInspectionSettings(
+        entityName, defaultNamePattern,
+        setNamePatternCallback = { value ->
+            namePattern = value
+        },
+        rules = *rules
+    )
+
+    protected fun verifyName(element: PsiNameIdentifierOwner, holder: ProblemsHolder) {
+        namingSettings.verifyName(element, holder)
+    }
+
+    protected fun getNameMismatchMessage(name: String): String {
+        return namingSettings.getNameMismatchMessage(name)
+    }
+
+    override fun createOptionsPanel(): JPanel = namingSettings.createOptionsPanel()
+
+    override fun readSettings(node: Element) {
+        super.readSettings(node)
+        namingSettings.namePattern = namePattern
+    }
 }
 
 class ClassNameInspection : NamingConventionInspection(
@@ -134,6 +213,9 @@ class FunctionNameInspection : NamingConventionInspection(
 ) {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return namedFunctionVisitor { function ->
+            if (function.hasModifier(KtTokens.OVERRIDE_KEYWORD)) {
+                return@namedFunctionVisitor
+            }
             if (!TestUtils.isInTestSourceContent(function)) {
                 verifyName(function, holder)
             }
@@ -170,6 +252,10 @@ abstract class PropertyNameInspectionBase protected constructor(
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return propertyVisitor { property ->
+            if (property.hasModifier(KtTokens.OVERRIDE_KEYWORD)) {
+                return@propertyVisitor
+            }
+
             if (property.getKind() == kind) {
                 verifyName(property, holder)
             }
@@ -220,18 +306,58 @@ class LocalVariableNameInspection :
         START_LOWER, NO_UNDERSCORES, NO_BAD_CHARACTERS
     )
 
-class PackageNameInspection :
-    NamingConventionInspection("Package", "[a-z][A-Za-z\\d]*(\\.[a-z][A-Za-z\\d]*)*", NO_UNDERSCORES) {
+private class PackageNameInspectionLocal(
+    val parentInspection: InspectionProfileEntry,
+    val namingSettings: NamingConventionInspectionSettings
+) : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
         return packageDirectiveVisitor { directive ->
-            val qualifiedName = directive.qualifiedName
-            if (qualifiedName.isNotEmpty() && nameRegex?.matches(qualifiedName) == false) {
-                val message = getNameMismatchMessage(qualifiedName)
-                holder.registerProblem(
-                    directive.packageNameExpression!!,
-                    "Package name <code>#ref</code> $message #loc",
-                    RenamePackageFix()
-                )
+            val packageNameExpression = directive.packageNameExpression ?: return@packageDirectiveVisitor
+
+            val checkResult = checkPackageDirective(directive, namingSettings) ?: return@packageDirectiveVisitor
+
+            val descriptionTemplate = checkResult.toProblemTemplateString()
+
+            holder.registerProblem(
+                packageNameExpression,
+                descriptionTemplate,
+                RenamePackageFix()
+            )
+        }
+    }
+
+    companion object {
+        data class CheckResult(val errorMessage: String, val isForPart: Boolean)
+
+        fun CheckResult.toProblemTemplateString(): String {
+            return if (isForPart) {
+                "Package name <code>#ref</code> part $errorMessage #loc"
+            } else {
+                "Package name <code>#ref</code> $errorMessage #loc"
+            }
+        }
+
+        fun checkPackageDirective(directive: KtPackageDirective, namingSettings: NamingConventionInspectionSettings): CheckResult? {
+            return checkQualifiedName(directive.qualifiedName, namingSettings)
+        }
+
+        fun checkQualifiedName(qualifiedName: String, namingSettings: NamingConventionInspectionSettings): CheckResult? {
+            if (qualifiedName.isEmpty() || namingSettings.nameRegex?.matches(qualifiedName) != false) {
+                return null
+            }
+
+            val partErrorMessage = if (namingSettings.namePattern == namingSettings.defaultNamePattern) {
+                qualifiedName.split('.').asSequence()
+                    .mapNotNull { part -> findRuleMessage(part, PackageNameInspection.PART_RULES) }
+                    .firstOrNull()
+            } else {
+                null
+            }
+
+            return if (partErrorMessage != null) {
+                CheckResult(partErrorMessage, true)
+            } else {
+                CheckResult(namingSettings.getDefaultErrorMessage(), false)
             }
         }
     }
@@ -242,21 +368,86 @@ class PackageNameInspection :
             return JavaPsiFacade.getInstance(element.project).findPackage(packageDirective.qualifiedName)
         }
     }
+
+    override fun getShortName(): String = parentInspection.shortName
+    override fun getDisplayName(): String = parentInspection.displayName
 }
 
-class NamingConventionOptionsPanel(owner: NamingConventionInspection) : JPanel() {
-    init {
-        layout = BorderLayout()
+class PackageNameInspection : BaseGlobalInspection() {
+    companion object {
+        const val DEFAULT_PACKAGE_NAME_PATTERN = "[a-z_][a-zA-Z\\d_]*(\\.[a-z_][a-zA-Z\\d_]*)*"
+        val PART_RULES = arrayOf(NO_BAD_CHARACTERS_OR_UNDERSCORE, NO_START_UPPER)
 
-        val regexField = EditorTextField(owner.namePattern, null, RegExpFileType.INSTANCE).apply {
-            setOneLineMode(true)
-        }
-        regexField.document.addDocumentListener(object : DocumentAdapter() {
-            override fun documentChanged(e: DocumentEvent?) {
-                owner.namePattern = regexField.text
+        private fun PackageNameInspectionLocal.Companion.CheckResult.toErrorMessage(qualifiedName: String): String {
+            return if (isForPart) {
+                "Package name <code>$qualifiedName</code> part $errorMessage"
+            } else {
+                "Package name <code>$qualifiedName</code> $errorMessage"
             }
-        })
-        val labeledComponent = LabeledComponent.create(regexField, "Pattern:", BorderLayout.WEST)
-        add(labeledComponent, BorderLayout.NORTH)
+        }
+    }
+
+    // Serialized setting
+    @Suppress("MemberVisibilityCanBePrivate")
+    var namePattern: String = DEFAULT_PACKAGE_NAME_PATTERN
+
+    private val namingSettings = NamingConventionInspectionSettings(
+        "Package",
+        DEFAULT_PACKAGE_NAME_PATTERN,
+        setNamePatternCallback = { value ->
+            namePattern = value
+        }
+    )
+
+    override fun checkElement(
+        refEntity: RefEntity,
+        analysisScope: AnalysisScope,
+        inspectionManager: InspectionManager,
+        globalInspectionContext: GlobalInspectionContext
+    ): Array<CommonProblemDescriptor>? {
+        when (refEntity) {
+            is RefFile -> {
+                val psiFile = refEntity.psiFile
+                if (psiFile is KtFile && !psiFile.isInjectedFragment && !psiFile.packageMatchesDirectoryOrImplicit()) {
+                    val packageDirective = psiFile.packageDirective
+                    if (packageDirective != null) {
+                        val qualifiedName = packageDirective.qualifiedName
+                        val checkResult = PackageNameInspectionLocal.checkPackageDirective(packageDirective, namingSettings)
+                        if (checkResult != null) {
+                            return arrayOf(inspectionManager.createProblemDescriptor(checkResult.toErrorMessage(qualifiedName)))
+                        }
+                    }
+                }
+            }
+
+            is RefPackage -> {
+                @NonNls val name = StringUtil.getShortName(refEntity.getQualifiedName())
+                if (name.isEmpty() || InspectionsBundle.message("inspection.reference.default.package") == name) {
+                    return null
+                }
+
+                val checkResult = PackageNameInspectionLocal.checkQualifiedName(name, namingSettings)
+                if (checkResult != null) {
+                    return arrayOf(inspectionManager.createProblemDescriptor(checkResult.toErrorMessage(name)))
+                }
+            }
+
+            else -> {
+                return null
+            }
+        }
+
+        return null
+    }
+
+    override fun readSettings(element: Element) {
+        super.readSettings(element)
+        namingSettings.namePattern = namePattern
+    }
+
+    override fun createOptionsPanel() = namingSettings.createOptionsPanel()
+
+    override fun getSharedLocalInspectionTool(): LocalInspectionTool {
+        return PackageNameInspectionLocal(this, namingSettings)
     }
 }

@@ -30,12 +30,69 @@ interface SyntheticScope {
     fun getSyntheticStaticFunctions(scope: ResolutionScope, name: Name, location: LookupLocation): Collection<FunctionDescriptor>
     fun getSyntheticConstructors(scope: ResolutionScope, name: Name, location: LookupLocation): Collection<FunctionDescriptor>
 
-    fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>): Collection<PropertyDescriptor>
+    fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>, location: LookupLocation): Collection<PropertyDescriptor>
     fun getSyntheticMemberFunctions(receiverTypes: Collection<KotlinType>): Collection<FunctionDescriptor>
     fun getSyntheticStaticFunctions(scope: ResolutionScope): Collection<FunctionDescriptor>
     fun getSyntheticConstructors(scope: ResolutionScope): Collection<FunctionDescriptor>
 
     fun getSyntheticConstructor(constructor: ConstructorDescriptor): ConstructorDescriptor?
+
+    open class Default : SyntheticScope {
+        override fun getSyntheticExtensionProperties(
+            receiverTypes: Collection<KotlinType>,
+            name: Name,
+            location: LookupLocation
+        ): Collection<PropertyDescriptor> {
+            return emptyList()
+        }
+
+        override fun getSyntheticMemberFunctions(
+            receiverTypes: Collection<KotlinType>,
+            name: Name,
+            location: LookupLocation
+        ): Collection<FunctionDescriptor> {
+            return emptyList()
+        }
+
+        override fun getSyntheticStaticFunctions(
+            scope: ResolutionScope,
+            name: Name,
+            location: LookupLocation
+        ): Collection<FunctionDescriptor> {
+            return emptyList()
+        }
+
+        override fun getSyntheticConstructors(
+            scope: ResolutionScope,
+            name: Name,
+            location: LookupLocation
+        ): Collection<FunctionDescriptor> {
+            return emptyList()
+        }
+
+        override fun getSyntheticExtensionProperties(
+            receiverTypes: Collection<KotlinType>,
+            location: LookupLocation
+        ): Collection<PropertyDescriptor> {
+            return emptyList()
+        }
+
+        override fun getSyntheticMemberFunctions(receiverTypes: Collection<KotlinType>): Collection<FunctionDescriptor> {
+            return emptyList()
+        }
+
+        override fun getSyntheticStaticFunctions(scope: ResolutionScope): Collection<FunctionDescriptor> {
+            return emptyList()
+        }
+
+        override fun getSyntheticConstructors(scope: ResolutionScope): Collection<FunctionDescriptor> {
+            return emptyList()
+        }
+
+        override fun getSyntheticConstructor(constructor: ConstructorDescriptor): ConstructorDescriptor? {
+            return null
+        }
+    }
 }
 
 interface SyntheticScopes {
@@ -59,8 +116,8 @@ fun SyntheticScopes.collectSyntheticStaticFunctions(scope: ResolutionScope, name
 fun SyntheticScopes.collectSyntheticConstructors(scope: ResolutionScope, name: Name, location: LookupLocation)
         = scopes.flatMap { it.getSyntheticConstructors(scope, name, location) }
 
-fun SyntheticScopes.collectSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>)
-        = scopes.flatMap { it.getSyntheticExtensionProperties(receiverTypes) }
+fun SyntheticScopes.collectSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>, location: LookupLocation)
+        = scopes.flatMap { it.getSyntheticExtensionProperties(receiverTypes, location) }
 
 fun SyntheticScopes.collectSyntheticMemberFunctions(receiverTypes: Collection<KotlinType>)
         = scopes.flatMap { it.getSyntheticMemberFunctions(receiverTypes) }

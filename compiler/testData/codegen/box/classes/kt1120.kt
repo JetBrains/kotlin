@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // Won't ever work with JS backend.
 // TODO: Consider rewriting this test without using threads, since the issue is not about threads at all.
 // IGNORE_BACKEND: JS, NATIVE

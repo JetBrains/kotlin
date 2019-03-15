@@ -55,6 +55,8 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration;
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod;
 import org.jetbrains.kotlin.idea.MainFunctionDetector;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
+import org.jetbrains.kotlin.idea.core.FileIndexUtilsKt;
+import org.jetbrains.kotlin.idea.project.PlatformKt;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtDeclaration;
 import org.jetbrains.kotlin.psi.KtDeclarationContainer;
@@ -95,7 +97,7 @@ public class KotlinRunConfiguration extends JetRunConfiguration {
     public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
         SettingsEditorGroup<KotlinRunConfiguration> group = new SettingsEditorGroup<KotlinRunConfiguration>();
         group.addEditor(ExecutionBundle.message("run.configuration.configuration.tab.title"), new KotlinRunConfigurationEditor(getProject()));
-        JavaRunConfigurationExtensionManager.getInstance().appendEditors(this, group);
+        JavaRunConfigurationExtensionManagerUtil.getInstance().appendEditors(this, group);
         group.addEditor(ExecutionBundle.message("logs.tab.title"), new LogConfigurationPanel<KotlinRunConfiguration>());
         return group;
     }
@@ -105,7 +107,7 @@ public class KotlinRunConfiguration extends JetRunConfiguration {
         PathMacroManager.getInstance(getProject()).expandPaths(element);
         super.readExternal(element);
 
-        JavaRunConfigurationExtensionManager.getInstance().readExternal(this, element);
+        JavaRunConfigurationExtensionManagerUtil.getInstance().readExternal(this, element);
         DefaultJDOMExternalizer.readExternal(this, element);
 
         readModule(element);
@@ -115,7 +117,7 @@ public class KotlinRunConfiguration extends JetRunConfiguration {
     @Override
     public void writeExternal(Element element) throws WriteExternalException {
         super.writeExternal(element);
-        JavaRunConfigurationExtensionManager.getInstance().writeExternal(this, element);
+        JavaRunConfigurationExtensionManagerUtil.getInstance().writeExternal(this, element);
         DefaultJDOMExternalizer.writeExternal(this, element);
 
         writeModule(element);
@@ -318,7 +320,8 @@ public class KotlinRunConfiguration extends JetRunConfiguration {
     private static KtNamedFunction findMainFun(@NotNull PsiClass psiClass) {
         for (KtNamedFunction function : getMainFunCandidates(psiClass)) {
             BindingContext bindingContext = ResolutionUtils.analyze(function, BodyResolveMode.FULL);
-            MainFunctionDetector mainFunctionDetector = new MainFunctionDetector(bindingContext);
+            MainFunctionDetector mainFunctionDetector =
+                    new MainFunctionDetector(bindingContext, PlatformKt.getLanguageVersionSettings(function));
             if (mainFunctionDetector.isMain(function)) return function;
         }
         return null;
@@ -334,7 +337,8 @@ public class KotlinRunConfiguration extends JetRunConfiguration {
             JavaParameters params = new JavaParameters();
             JavaRunConfigurationModule module = myConfiguration.getConfigurationModule();
 
-            int classPathType = getClasspathType(module);
+            int classPathType = DumbService.getInstance(module.getProject()).computeWithAlternativeResolveEnabled(
+                    () -> getClasspathType(module));
 
             String jreHome = myConfiguration.ALTERNATIVE_JRE_PATH_ENABLED ? myConfiguration.ALTERNATIVE_JRE_PATH : null;
             JavaParametersUtil.configureModule(module, params, classPathType, jreHome);
@@ -367,7 +371,7 @@ public class KotlinRunConfiguration extends JetRunConfiguration {
 
             ModuleFileIndex fileIndex = ModuleRootManager.getInstance(classModule).getFileIndex();
             if (fileIndex.isInSourceContent(virtualFileForMainFun)) {
-                if (fileIndex.isInTestSourceContent(virtualFileForMainFun)) {
+                if (FileIndexUtilsKt.isInTestSourceContentKotlinAware(fileIndex, virtualFileForMainFun)) {
                     return JavaParameters.JDK_AND_CLASSES_AND_TESTS;
                 }
                 else {

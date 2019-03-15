@@ -1,0 +1,2 @@
+<P> public open class InnerClassReferencesOuterTP : R|java/lang/Object| {
+}

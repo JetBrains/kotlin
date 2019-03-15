@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.js.resolve.diagnostics
@@ -19,6 +8,7 @@ package org.jetbrains.kotlin.js.resolve.diagnostics
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.js.PredefinedAnnotation
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
@@ -28,10 +18,12 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
+import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
+import org.jetbrains.kotlin.resolve.isInlineClassType
 import org.jetbrains.kotlin.resolve.source.getPsi
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 
 object JsExternalChecker : DeclarationChecker {
@@ -47,19 +39,23 @@ object JsExternalChecker : DeclarationChecker {
             }
         }
 
-        if (DescriptorUtils.isAnnotationClass(descriptor)) {
-            trace.report(ErrorsJs.WRONG_EXTERNAL_DECLARATION.on(declaration, "annotation class"))
+        if (descriptor is ClassDescriptor) {
+            val classKind = when {
+                descriptor.isData -> "data class"
+                descriptor.isInner -> "inner class"
+                descriptor.isInline -> "inline class"
+                DescriptorUtils.isAnnotationClass(descriptor) -> "annotation class"
+                else -> null
+            }
+
+            if (classKind != null) {
+                trace.report(ErrorsJs.WRONG_EXTERNAL_DECLARATION.on(declaration, classKind))
+            }
         }
-        else if (descriptor is ClassDescriptor && descriptor.isData) {
-            trace.report(ErrorsJs.WRONG_EXTERNAL_DECLARATION.on(declaration, "data class"))
-        }
-        else if (descriptor is PropertyAccessorDescriptor && isDirectlyExternal(declaration, descriptor)) {
+
+        if (descriptor is PropertyAccessorDescriptor && isDirectlyExternal(declaration, descriptor)) {
             trace.report(ErrorsJs.WRONG_EXTERNAL_DECLARATION.on(declaration, "property accessor"))
-        }
-        else if (descriptor is ClassDescriptor && descriptor.isInner) {
-            trace.report(ErrorsJs.WRONG_EXTERNAL_DECLARATION.on(declaration, "inner class"))
-        }
-        else if (isPrivateMemberOfExternalClass(descriptor)) {
+        } else if (isPrivateMemberOfExternalClass(descriptor)) {
             trace.report(ErrorsJs.WRONG_EXTERNAL_DECLARATION.on(declaration, "private member of class"))
         }
 
@@ -92,22 +88,36 @@ object JsExternalChecker : DeclarationChecker {
             trace.report(ErrorsJs.INLINE_EXTERNAL_DECLARATION.on(declaration))
         }
 
-        if (descriptor is CallableMemberDescriptor && !(descriptor is PropertyAccessorDescriptor && descriptor.isDefault)) {
-            for (p in descriptor.valueParameters) {
-                if ((p.varargElementType ?: p.type).isExtensionFunctionType) {
+        fun reportOnParametersAndReturnTypesIf(
+            diagnosticFactory: DiagnosticFactory0<KtElement>,
+            condition: (KotlinType) -> Boolean
+        ) {
+            if (descriptor is CallableMemberDescriptor && !(descriptor is PropertyAccessorDescriptor && descriptor.isDefault)) {
+                fun checkTypeIsNotInlineClass(type: KotlinType, elementToReport: KtElement) {
+                    if (condition(type)) {
+                        trace.report(diagnosticFactory.on(elementToReport))
+                    }
+                }
+
+                for (p in descriptor.valueParameters) {
                     val ktParam = p.source.getPsi() as? KtParameter ?: declaration
-                    trace.report(ErrorsJs.EXTENSION_FUNCTION_IN_EXTERNAL_DECLARATION.on(ktParam))
+                    checkTypeIsNotInlineClass(p.varargElementType ?: p.type, ktParam)
+                }
+
+                val elementToReport = when (declaration) {
+                    is KtCallableDeclaration -> declaration.typeReference
+                    is KtPropertyAccessor -> declaration.returnTypeReference
+                    else -> declaration
+                }
+
+                elementToReport?.let {
+                    checkTypeIsNotInlineClass(descriptor.returnType!!, it)
                 }
             }
-
-            // Only report on properties if there are no custom accessors
-            val propertyWithCustomAccessors = descriptor is PropertyDescriptor &&
-                                              !(descriptor.getter?.isDefault ?: true && descriptor.setter?.isDefault ?: true)
-
-            if (!propertyWithCustomAccessors && descriptor.returnType?.isExtensionFunctionType ?: false) {
-                trace.report(ErrorsJs.EXTENSION_FUNCTION_IN_EXTERNAL_DECLARATION.on(declaration))
-            }
         }
+
+        reportOnParametersAndReturnTypesIf(ErrorsJs.INLINE_CLASS_IN_EXTERNAL_DECLARATION, KotlinType::isInlineClassType)
+        reportOnParametersAndReturnTypesIf(ErrorsJs.EXTENSION_FUNCTION_IN_EXTERNAL_DECLARATION, KotlinType::isExtensionFunctionType)
 
         if (descriptor is CallableMemberDescriptor && descriptor.isNonAbstractMemberOfInterface() &&
             !descriptor.isNullableProperty()
@@ -123,16 +133,15 @@ object JsExternalChecker : DeclarationChecker {
     }
 
     private fun checkBody(
-            declaration: KtDeclaration, descriptor: DeclarationDescriptor,
-            diagnosticHolder: DiagnosticSink, bindingContext: BindingContext
+        declaration: KtDeclaration, descriptor: DeclarationDescriptor,
+        diagnosticHolder: DiagnosticSink, bindingContext: BindingContext
     ) {
         if (declaration is KtProperty && descriptor is PropertyAccessorDescriptor) return
 
         if (declaration is KtDeclarationWithBody && !declaration.hasValidExternalBody(bindingContext)) {
             diagnosticHolder.report(ErrorsJs.WRONG_BODY_OF_EXTERNAL_DECLARATION.on(declaration.bodyExpression!!))
-        }
-        else if (declaration is KtDeclarationWithInitializer &&
-                 declaration.initializer?.isDefinedExternallyExpression(bindingContext) == false
+        } else if (declaration is KtDeclarationWithInitializer &&
+            declaration.initializer?.isDefinedExternallyExpression(bindingContext) == false
         ) {
             diagnosticHolder.report(ErrorsJs.WRONG_INITIALIZER_OF_EXTERNAL_DECLARATION.on(declaration.initializer!!))
         }
@@ -159,14 +168,12 @@ object JsExternalChecker : DeclarationChecker {
                     }
                 }
             }
-        }
-        else if (declaration is KtSecondaryConstructor) {
+        } else if (declaration is KtSecondaryConstructor) {
             val delegationCall = declaration.getDelegationCall()
             if (!delegationCall.isImplicit) {
                 diagnosticHolder.report(ErrorsJs.EXTERNAL_DELEGATED_CONSTRUCTOR_CALL.on(delegationCall))
             }
-        }
-        else if (declaration is KtProperty && descriptor !is PropertyAccessorDescriptor) {
+        } else if (declaration is KtProperty && descriptor !is PropertyAccessorDescriptor) {
             declaration.delegate?.let { delegate ->
                 diagnosticHolder.report(ErrorsJs.EXTERNAL_DELEGATION.on(delegate))
             }
@@ -183,15 +190,15 @@ object JsExternalChecker : DeclarationChecker {
 
     private fun checkEnumEntry(declaration: KtDeclaration, diagnosticHolder: DiagnosticSink) {
         if (declaration !is KtEnumEntry) return
-        declaration.getBody()?.let {
+        declaration.body?.let {
             diagnosticHolder.report(ErrorsJs.EXTERNAL_ENUM_ENTRY_WITH_BODY.on(it))
         }
     }
 
     private fun checkConstructorPropertyParam(
-            declaration: KtDeclaration,
-            descriptor: DeclarationDescriptor,
-            diagnosticHolder: DiagnosticSink
+        declaration: KtDeclaration,
+        descriptor: DeclarationDescriptor,
+        diagnosticHolder: DiagnosticSink
     ) {
         if (descriptor !is PropertyDescriptor || declaration !is KtParameter) return
         val containingClass = descriptor.containingDeclaration as ClassDescriptor
@@ -203,7 +210,7 @@ object JsExternalChecker : DeclarationChecker {
         if (declaration is KtProperty && descriptor is PropertyAccessorDescriptor) return false
 
         return declaration.hasModifier(KtTokens.EXTERNAL_KEYWORD) ||
-               AnnotationsUtils.hasAnnotation(descriptor, PredefinedAnnotation.NATIVE)
+                AnnotationsUtils.hasAnnotation(descriptor, PredefinedAnnotation.NATIVE)
     }
 
     private fun isPrivateMemberOfExternalClass(descriptor: DeclarationDescriptor): Boolean {
@@ -215,8 +222,9 @@ object JsExternalChecker : DeclarationChecker {
     }
 
     private fun CallableMemberDescriptor.isNonAbstractMemberOfInterface() =
-            modality != Modality.ABSTRACT && DescriptorUtils.isInterface(containingDeclaration) &&
-            this !is PropertyAccessorDescriptor
+        modality != Modality.ABSTRACT &&
+                DescriptorUtils.isInterface(containingDeclaration) &&
+                this !is PropertyAccessorDescriptor
 
     private fun CallableMemberDescriptor.isNullableProperty() = this is PropertyDescriptor && TypeUtils.isNullableType(type)
 

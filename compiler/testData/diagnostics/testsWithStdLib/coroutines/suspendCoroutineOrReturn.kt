@@ -1,10 +1,13 @@
+// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // !CHECK_TYPE
-import kotlin.coroutines.experimental.*
-import kotlin.coroutines.experimental.intrinsics.*
+// SKIP_TXT
+
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 class Controller {
-    suspend fun noParams(): Unit = suspendCoroutineOrReturn {
+    suspend fun noParams(): Unit = suspendCoroutineUninterceptedOrReturn {
         if (hashCode() % 2 == 0) {
             it.resume(Unit)
             COROUTINE_SUSPENDED
@@ -13,12 +16,12 @@ class Controller {
             Unit
         }
     }
-    suspend fun yieldString(value: String) = suspendCoroutineOrReturn<Int> {
+    suspend fun yieldString(value: String) = suspendCoroutineUninterceptedOrReturn<Int> {
         it.resume(1)
         it checkType { _<Continuation<Int>>() }
-        it.resume(<!TYPE_MISMATCH!>""<!>)
+        it.<!OI;TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>resume<!>(<!NI;TYPE_MISMATCH!>""<!>)
 
-        // We can return anything here, 'suspendCoroutineOrReturn' is not very type-safe
+        // We can return anything here, 'suspendCoroutineUninterceptedOrReturn' is not very type-safe
         // Also we can call resume and then return the value too, but it's still just our problem
         "Not-int"
     }

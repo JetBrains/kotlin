@@ -7,9 +7,8 @@ package org.jetbrains.kotlin.test;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
@@ -37,11 +36,15 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
+import org.jetbrains.kotlin.CoroutineTestUtilKt;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.checkers.CompilerTestLanguageVersionSettings;
+import org.jetbrains.kotlin.checkers.CompilerTestLanguageVersionSettingsKt;
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys;
+import org.jetbrains.kotlin.cli.common.config.ContentRootsKt;
+import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot;
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation;
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
@@ -87,17 +90,25 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.jetbrains.kotlin.test.InTextDirectivesUtils.isCompatibleTarget;
-import static org.jetbrains.kotlin.test.InTextDirectivesUtils.isDirectiveDefined;
+import static org.jetbrains.kotlin.test.InTextDirectivesUtils.*;
 
 public class KotlinTestUtils {
     public static String TEST_MODULE_NAME = "test-module";
 
     public static final String TEST_GENERATOR_NAME = "org.jetbrains.kotlin.generators.tests.TestsPackage";
-    public static final String PLEASE_REGENERATE_TESTS = "Please regenerate tests (GenerateTests.kt)";
+    private static final String PLEASE_REGENERATE_TESTS = "Please regenerate tests (GenerateTests.kt)";
 
-    public static final boolean RUN_IGNORED_TESTS_AS_REGULAR =
+    private static final boolean RUN_IGNORED_TESTS_AS_REGULAR =
             Boolean.getBoolean("org.jetbrains.kotlin.run.ignored.tests.as.regular");
+
+    private static final boolean PRINT_STACKTRACE_FOR_IGNORED_TESTS =
+            Boolean.getBoolean("org.jetbrains.kotlin.print.stacktrace.for.ignored.tests");
+
+    private static final boolean DONT_IGNORE_TESTS_WORKING_ON_COMPATIBLE_BACKEND =
+            Boolean.getBoolean("org.jetbrains.kotlin.dont.ignore.tests.working.on.compatible.backend");
+
+    private static final boolean AUTOMATICALLY_UNMUTE_PASSED_TESTS = false;
+    private static final boolean AUTOMATICALLY_MUTE_FAILED_TESTS = false;
 
     private static final List<File> filesToDelete = new ArrayList<>();
 
@@ -292,9 +303,6 @@ public class KotlinTestUtils {
         }
     };
 
-    // We suspect sequences of eight consecutive hexadecimal digits to be a package part hash code
-    private static final Pattern STRIP_PACKAGE_PART_HASH_PATTERN = Pattern.compile("\\$([0-9a-f]{8})");
-
     private KotlinTestUtils() {
     }
 
@@ -404,10 +412,15 @@ public class KotlinTestUtils {
     }
 
     @NotNull
-    public static File tmpDirForTest(TestCase test) throws IOException {
-        File answer = normalizeFile(FileUtil.createTempDirectory(test.getClass().getSimpleName(), test.getName()));
+    public static File tmpDirForTest(@NotNull String testClassName, @NotNull String testName) throws IOException {
+        File answer = normalizeFile(FileUtil.createTempDirectory(testClassName, testName));
         deleteOnShutdown(answer);
         return answer;
+    }
+
+    @NotNull
+    public static File tmpDirForTest(TestCase test) throws IOException {
+        return tmpDirForTest(test.getClass().getSimpleName(), test.getName());
     }
 
     @NotNull
@@ -427,11 +440,11 @@ public class KotlinTestUtils {
 
     private static void deleteOnShutdown(File file) {
         if (filesToDelete.isEmpty()) {
-            ShutDownTracker.getInstance().registerShutdownTask(() -> ShutDownTracker.invokeAndWait(true, true, () -> {
+            ShutDownTracker.getInstance().registerShutdownTask(() -> {
                 for (File victim : filesToDelete) {
                     FileUtil.delete(victim);
                 }
-            }));
+            });
         }
 
         filesToDelete.add(file);
@@ -560,10 +573,7 @@ public class KotlinTestUtils {
             configuration.put(JVMConfigurationKeys.JDK_HOME, new File(jdk6));
         }
         else if (jdkKind == TestJdkKind.FULL_JDK_9) {
-            File home = getJdk9HomeIfPossible();
-            if (home != null) {
-                configuration.put(JVMConfigurationKeys.JDK_HOME, home);
-            }
+            configuration.put(JVMConfigurationKeys.JDK_HOME, getJdk9Home());
         }
         else if (SystemInfo.IS_AT_LEAST_JAVA9) {
             configuration.put(JVMConfigurationKeys.JDK_HOME, new File(System.getProperty("java.home")));
@@ -587,32 +597,24 @@ public class KotlinTestUtils {
         return configuration;
     }
 
-    @Nullable
-    public static File getJdk9HomeIfPossible() {
-        String jdk9 = System.getenv("JDK_19");
+    @NotNull
+    public static File getJdk9Home() {
+        String jdk9 = System.getenv("JDK_9");
         if (jdk9 == null) {
-            jdk9 = System.getenv("JDK_9");
-        }
-        if (jdk9 == null) {
-            // TODO: replace this with a failure as soon as Java 9 is installed on all TeamCity agents
-            System.err.println("Environment variable JDK_19 is not set, the test will be skipped");
-            return null;
+            jdk9 = System.getenv("JDK_19");
+            if (jdk9 == null) {
+                throw new AssertionError("Environment variable JDK_9 is not set!");
+            }
         }
         return new File(jdk9);
     }
 
-    @NotNull
-    private static String getJreHome(@NotNull String jdkHome) {
-        File jre = new File(jdkHome, "jre");
-        return jre.isDirectory() ? jre.getPath() : jdkHome;
-    }
-
     public static void resolveAllKotlinFiles(KotlinCoreEnvironment environment) throws IOException {
-        List<String> paths = ContentRootsKt.getKotlinSourceRoots(environment.getConfiguration());
-        if (paths.isEmpty()) return;
+        List<KotlinSourceRoot> roots = ContentRootsKt.getKotlinSourceRoots(environment.getConfiguration());
+        if (roots.isEmpty()) return;
         List<KtFile> ktFiles = new ArrayList<>();
-        for (String path : paths) {
-            File file = new File(path);
+        for (KotlinSourceRoot root : roots) {
+            File file = new File(root.getPath());
             if (file.isFile()) {
                 ktFiles.add(loadJetFile(environment.getProject(), file));
             }
@@ -629,8 +631,24 @@ public class KotlinTestUtils {
     }
 
     public static void assertEqualsToFile(@NotNull File expectedFile, @NotNull Editor editor) {
-        String actualText = editor.getDocument().getText();
-        String afterText = new StringBuilder(actualText).insert(editor.getCaretModel().getOffset(), "<caret>").toString();
+        assertEqualsToFile(expectedFile, editor, true);
+    }
+
+    public static void assertEqualsToFile(@NotNull File expectedFile, @NotNull Editor editor, Boolean enableSelectionTags) {
+        Caret caret = editor.getCaretModel().getCurrentCaret();
+        List<TagsTestDataUtil.TagInfo> tags = Lists.newArrayList(
+                new TagsTestDataUtil.TagInfo<>(caret.getOffset(), true, "caret")
+        );
+
+        if (enableSelectionTags) {
+            int selectionStart = caret.getSelectionStart();
+            int selectionEnd = caret.getSelectionEnd();
+
+            tags.add(new TagsTestDataUtil.TagInfo<>(selectionStart, true, "selection"));
+            tags.add(new TagsTestDataUtil.TagInfo<>(selectionEnd, false, "selection"));
+        }
+
+        String afterText = TagsTestDataUtil.insertTagsInText(tags, editor.getDocument().getText());
 
         assertEqualsToFile(expectedFile, afterText);
     }
@@ -678,6 +696,7 @@ public class KotlinTestUtils {
     ) throws IOException {
         if (!ktFiles.isEmpty()) {
             KotlinCoreEnvironment environment = createEnvironmentWithFullJdkAndIdeaAnnotations(disposable);
+            CompilerTestLanguageVersionSettingsKt.setupLanguageVersionSettingsForMultifileCompilerTests(ktFiles, environment);
             LoadDescriptorUtil.compileKotlinToDirAndGetModule(ktFiles, outDir, environment);
         }
         else {
@@ -719,12 +738,17 @@ public class KotlinTestUtils {
 
     @NotNull
     public static <M, F> List<F> createTestFiles(@Nullable String testFileName, String expectedText, TestFileFactory<M, F> factory) {
-        return createTestFiles(testFileName, expectedText, factory, false);
+        return createTestFiles(testFileName, expectedText, factory, false, "");
+    }
+
+    @NotNull
+    public static <M, F> List<F> createTestFiles(@Nullable String testFileName, String expectedText, TestFileFactory<M, F> factory, String coroutinesPackage) {
+        return createTestFiles(testFileName, expectedText, factory, false, coroutinesPackage);
     }
 
     @NotNull
     public static <M, F> List<F> createTestFiles(String testFileName, String expectedText, TestFileFactory<M, F> factory,
-            boolean preserveLocations) {
+            boolean preserveLocations, String coroutinesPackage) {
         Map<String, String> directives = parseDirectives(expectedText);
 
         List<F> testFiles = Lists.newArrayList();
@@ -777,33 +801,14 @@ public class KotlinTestUtils {
 
         if (isDirectiveDefined(expectedText, "WITH_COROUTINES")) {
             M supportModule = hasModules ? factory.createModule("support", Collections.emptyList(), Collections.emptyList()) : null;
+
+            boolean isReleaseCoroutines =
+                    !coroutinesPackage.contains("experimental") &&
+                    !isDirectiveDefined(expectedText, "!LANGUAGE: -ReleaseCoroutines");
+
             testFiles.add(factory.createFile(supportModule,
                                              "CoroutineUtil.kt",
-                                             "package helpers\n" +
-                                             "import kotlin.coroutines.experimental.*\n" +
-                                             "fun <T> handleResultContinuation(x: (T) -> Unit): Continuation<T> = object: Continuation<T> {\n" +
-                                             "    override val context = EmptyCoroutineContext\n" +
-                                             "    override fun resumeWithException(exception: Throwable) {\n" +
-                                             "        throw exception\n" +
-                                             "    }\n" +
-                                             "\n" +
-                                             "    override fun resume(data: T) = x(data)\n" +
-                                             "}\n" +
-                                             "\n" +
-                                             "fun handleExceptionContinuation(x: (Throwable) -> Unit): Continuation<Any?> = object: Continuation<Any?> {\n" +
-                                             "    override val context = EmptyCoroutineContext\n" +
-                                             "    override fun resumeWithException(exception: Throwable) {\n" +
-                                             "        x(exception)\n" +
-                                             "    }\n" +
-                                             "\n" +
-                                             "    override fun resume(data: Any?) { }\n" +
-                                             "}\n" +
-                                             "\n" +
-                                             "open class EmptyContinuation(override val context: CoroutineContext = EmptyCoroutineContext) : Continuation<Any?> {\n" +
-                                             "    companion object : EmptyContinuation()\n" +
-                                             "    override fun resume(data: Any?) {}\n" +
-                                             "    override fun resumeWithException(exception: Throwable) { throw exception }\n" +
-                                             "}",
+                                             CoroutineTestUtilKt.createTextForHelpers(isReleaseCoroutines),
                                              directives
             ));
         }
@@ -838,18 +843,13 @@ public class KotlinTestUtils {
 
     @NotNull
     public static Map<String, String> parseDirectives(String expectedText) {
-        Map<String, String> directives = Maps.newHashMap();
+        Map<String, String> directives = new HashMap<>();
         Matcher directiveMatcher = DIRECTIVE_PATTERN.matcher(expectedText);
-        int start = 0;
         while (directiveMatcher.find()) {
-            if (directiveMatcher.start() != start) {
-                Assert.fail("Directives should only occur at the beginning of a file: " + directiveMatcher.group());
-            }
             String name = directiveMatcher.group(1);
             String value = directiveMatcher.group(3);
             String oldValue = directives.put(name, value);
             Assert.assertNull("Directive overwritten: " + name + " old value: " + oldValue + " new value: " + value, oldValue);
-            start = directiveMatcher.end() + 1;
         }
         return directives;
     }
@@ -871,7 +871,7 @@ public class KotlinTestUtils {
                 int firstLineEnd = text.indexOf('\n');
                 return StringUtil.trimTrailing(text.substring(firstLineEnd + 1));
             }
-        });
+        }, "");
 
         Assert.assertTrue("Exactly two files expected: ", files.size() == 2);
 
@@ -982,11 +982,8 @@ public class KotlinTestUtils {
     }
 
     public static boolean compileJavaFilesExternallyWithJava9(@NotNull Collection<File> files, @NotNull List<String> options) {
-        File jdk9 = getJdk9HomeIfPossible();
-        assert jdk9 != null : "Environment variable JDK_19 is not set";
-
         List<String> command = new ArrayList<>();
-        command.add(new File(jdk9, "bin/javac").getPath());
+        command.add(new File(getJdk9Home(), "bin/javac").getPath());
         command.addAll(options);
         for (File file : files) {
             command.add(file.getPath());
@@ -1023,6 +1020,95 @@ public class KotlinTestUtils {
 
     public static String navigationMetadata(@TestDataFile String testFile) {
         return testFile;
+    }
+
+    public interface DoTest {
+        void invoke(String filePath) throws Exception;
+    }
+
+    // In this test runner version the `testDataFile` parameter is annotated by `TestDataFile`.
+    // So only file paths passed to this parameter will be used in navigation actions, like "Navigate to testdata" and "Related Symbol..."
+    public static void runTest(DoTest test, TargetBackend targetBackend, @TestDataFile String testDataFile) throws Exception {
+        runTest0(test, targetBackend, testDataFile);
+    }
+
+    // In this test runner version, NONE of the parameters are annotated by `TestDataFile`.
+    // So DevKit will use test name to determine related files in navigation actions, like "Navigate to testdata" and "Related Symbol..."
+    //
+    // Pro:
+    // * in most cases, it shows all related files including generated js files, for example.
+    // Cons:
+    // * sometimes, for too common/general names, it shows many variants to navigate
+    // * it adds an additional step for navigation -- you must choose an exact file to navigate
+    public static void runTest0(DoTest test, TargetBackend targetBackend, String testDataFilePath) throws Exception {
+        File testDataFile = new File(testDataFilePath);
+
+        boolean isIgnored = isIgnoredTarget(targetBackend, testDataFile);
+
+        if (DONT_IGNORE_TESTS_WORKING_ON_COMPATIBLE_BACKEND) {
+            // Only ignore if it is ignored for both backends
+            // Motivation: this backend works => all good, even if compatible backend fails
+            // This backend fails, compatible works => need to know
+            isIgnored &= isIgnoredTarget(targetBackend.getCompatibleWith(), testDataFile);
+        }
+
+        try {
+            test.invoke(testDataFilePath);
+        }
+        catch (Throwable e) {
+
+            if (!isIgnored && AUTOMATICALLY_MUTE_FAILED_TESTS) {
+                String text = doLoadFile(testDataFile);
+                String directive = InTextDirectivesUtils.IGNORE_BACKEND_DIRECTIVE_PREFIX + targetBackend.name() + "\n";
+
+                String newText;
+                if (text.startsWith("// !")) {
+                    StringBuilder prefixBuilder = new StringBuilder();
+                    int l = 0;
+                    while (text.startsWith("// !", l)) {
+                        int r = text.indexOf("\n", l) + 1;
+                        if (r <= 0) r = text.length();
+                        prefixBuilder.append(text.substring(l, r));
+                        l = r;
+                    }
+                    prefixBuilder.append(directive);
+                    prefixBuilder.append(text.substring(l));
+
+                    newText = prefixBuilder.toString();
+                } else {
+                    newText = directive + text;
+                }
+
+                if (!newText.equals(text)) {
+                    System.err.println("\"" + directive + "\" was added to \"" + testDataFile + "\"");
+                    FileUtil.writeToFile(testDataFile, newText);
+                }
+            }
+
+            if (RUN_IGNORED_TESTS_AS_REGULAR || !isIgnored) {
+                throw e;
+            }
+
+            if (PRINT_STACKTRACE_FOR_IGNORED_TESTS) {
+                e.printStackTrace();
+            }
+            return;
+        }
+
+        if (isIgnored) {
+            if (AUTOMATICALLY_UNMUTE_PASSED_TESTS) {
+                String text = doLoadFile(testDataFile);
+                String directive = InTextDirectivesUtils.IGNORE_BACKEND_DIRECTIVE_PREFIX + targetBackend.name();
+                String newText = Pattern.compile("^" + directive + "\n", Pattern.MULTILINE).matcher(text).replaceAll("");
+
+                if (!newText.equals(text)) {
+                    System.err.println("\"" + directive + "\" was removed from \"" + testDataFile + "\"");
+                    FileUtil.writeToFile(testDataFile, newText);
+                }
+            }
+
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive.");
+        }
     }
 
     public static String getTestsRoot(@NotNull Class<?> testCaseClass) {
@@ -1113,7 +1199,7 @@ public class KotlinTestUtils {
     }
 
     private static Set<String> collectMethodsMetadata(Class<?> testCaseClass) {
-        Set<String> filePaths = Sets.newHashSet();
+        Set<String> filePaths = new HashSet<>();
         for (Method method : testCaseClass.getDeclaredMethods()) {
             String path = getMethodMetadata(method);
             if (path != null) {
@@ -1186,20 +1272,6 @@ public class KotlinTestUtils {
         return new File(file.getParentFile(), FileUtil.getNameWithoutExtension(file) + (newExtension == null ? "" : "." + newExtension));
     }
 
-    @NotNull
-    public static String replaceHashWithStar(@NotNull String string) {
-        return replaceHash(string, "*");
-    }
-
-    public static String replaceHash(@NotNull String string, @NotNull String replacement) {
-        //TODO: hashes are still used in SamWrapperCodegen
-        Matcher matcher = STRIP_PACKAGE_PART_HASH_PATTERN.matcher(string);
-        if (matcher.find()) {
-            return matcher.replaceAll("\\$" + replacement);
-        }
-        return string;
-    }
-
     public static boolean isAllFilesPresentTest(String testName) {
         //noinspection SpellCheckingInspection
         return testName.toLowerCase().startsWith("allfilespresentin");
@@ -1207,5 +1279,14 @@ public class KotlinTestUtils {
 
     public static String nameToCompare(@NotNull String name) {
         return (SystemInfo.isFileSystemCaseSensitive ? name : name.toLowerCase()).replace('\\', '/');
+    }
+
+    public static boolean isMultiExtensionName(@NotNull String name) {
+        int firstDotIndex = name.indexOf('.');
+        if (firstDotIndex == -1) {
+            return false;
+        }
+        // Several extension if name contains another dot
+        return name.indexOf('.', firstDotIndex + 1) != -1;
     }
 }

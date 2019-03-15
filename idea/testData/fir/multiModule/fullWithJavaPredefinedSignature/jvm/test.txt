@@ -1,0 +1,8 @@
+FILE: test.kt
+    public abstract interface UseIterable : R|MyIterable<kotlin/String>| {
+        public open function test(): R|kotlin/Unit| {
+            val it: R|error: Not supported: FirImplicitTypeRefImpl| = R|FakeOverride<java/lang/Iterable.iterator: R|ft<kotlin/collections/MutableIterator<ft<T, T?>>, kotlin/collections/Iterator<ft<T, T?>>?>|!>|()
+            val split: R|error: Not supported: FirImplicitTypeRefImpl| = R|FakeOverride<java/lang/Iterable.spliterator: R|ft<java/util/Spliterator<ft<T, T>>, java/util/Spliterator<ft<T, T>>>|>|()
+        }
+
+    }

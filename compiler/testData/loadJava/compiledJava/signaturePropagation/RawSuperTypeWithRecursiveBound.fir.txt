@@ -1,0 +1,2 @@
+public open class RawSuperTypeWithRecursiveBound : R|java/lang/Object| {
+}

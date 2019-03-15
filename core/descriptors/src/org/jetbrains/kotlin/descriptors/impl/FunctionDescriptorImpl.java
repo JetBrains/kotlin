@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.descriptors.impl;
@@ -24,7 +13,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationsKt;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.resolve.DescriptorFactory;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.utils.SmartList;
 
@@ -77,7 +66,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
 
     @NotNull
     public FunctionDescriptorImpl initialize(
-            @Nullable KotlinType receiverParameterType,
+            @Nullable ReceiverParameterDescriptor extensionReceiverParameter,
             @Nullable ReceiverParameterDescriptor dispatchReceiverParameter,
             @NotNull List<? extends TypeParameterDescriptor> typeParameters,
             @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
@@ -90,7 +79,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         this.unsubstitutedReturnType = unsubstitutedReturnType;
         this.modality = modality;
         this.visibility = visibility;
-        this.extensionReceiverParameter = DescriptorFactory.createExtensionReceiverParameterForCallable(this, receiverParameterType);
+        this.extensionReceiverParameter = extensionReceiverParameter;
         this.dispatchReceiverParameter = dispatchReceiverParameter;
 
         for (int i = 0; i < typeParameters.size(); ++i) {
@@ -170,6 +159,10 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
 
     public void setHasSynthesizedParameterNames(boolean hasSynthesizedParameterNames) {
         this.hasSynthesizedParameterNames = hasSynthesizedParameterNames;
+    }
+
+    public void setExtensionReceiverParameter(@NotNull ReceiverParameterDescriptor extensionReceiverParameter) {
+        this.extensionReceiverParameter = extensionReceiverParameter;
     }
 
     @Nullable
@@ -268,9 +261,9 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <V> V getUserData(UserDataKey<V> key) {
         if (userDataMap == null) return null;
-        //noinspection unchecked
         return (V) userDataMap.get(key);
     }
 
@@ -280,8 +273,8 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void setOverriddenDescriptors(@NotNull Collection<? extends CallableMemberDescriptor> overriddenDescriptors) {
-        //noinspection unchecked
         overriddenFunctions = (Collection<? extends FunctionDescriptor>) overriddenDescriptors;
         for (FunctionDescriptor function : overriddenFunctions) {
             if (function.isHiddenForResolutionEverywhereBesideSupercalls()) {
@@ -357,7 +350,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         protected @Nullable FunctionDescriptor original = null;
         protected @NotNull Kind kind;
         protected @NotNull List<ValueParameterDescriptor> newValueParameterDescriptors;
-        protected @Nullable KotlinType newExtensionReceiverParameterType;
+        protected @Nullable ReceiverParameterDescriptor newExtensionReceiverParameter;
         protected @Nullable ReceiverParameterDescriptor dispatchReceiverParameter = FunctionDescriptorImpl.this.dispatchReceiverParameter;
         protected @NotNull KotlinType newReturnType;
         protected @Nullable Name name;
@@ -380,7 +373,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
                 @NotNull Visibility newVisibility,
                 @NotNull Kind kind,
                 @NotNull List<ValueParameterDescriptor> newValueParameterDescriptors,
-                @Nullable KotlinType newExtensionReceiverParameterType,
+                @Nullable ReceiverParameterDescriptor newExtensionReceiverParameter,
                 @NotNull KotlinType newReturnType,
                 @Nullable Name name
         ) {
@@ -390,7 +383,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             this.newVisibility = newVisibility;
             this.kind = kind;
             this.newValueParameterDescriptors = newValueParameterDescriptors;
-            this.newExtensionReceiverParameterType = newExtensionReceiverParameterType;
+            this.newExtensionReceiverParameter = newExtensionReceiverParameter;
             this.newReturnType = newReturnType;
             this.name = name;
         }
@@ -460,8 +453,8 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
 
         @NotNull
         @Override
-        public CopyConfiguration setExtensionReceiverType(@Nullable KotlinType type) {
-            this.newExtensionReceiverParameterType = type;
+        public CopyConfiguration setExtensionReceiverParameter(@Nullable ReceiverParameterDescriptor extensionReceiverParameter) {
+            this.newExtensionReceiverParameter = extensionReceiverParameter;
             return this;
         }
 
@@ -574,7 +567,8 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         return new CopyConfiguration(
                 substitutor.getSubstitution(),
                 getContainingDeclaration(), getModality(), getVisibility(), getKind(), getValueParameters(),
-                getExtensionReceiverParameterType(), getReturnType(), null);
+                getExtensionReceiverParameter(), getReturnType(), null
+        );
     }
 
     @Nullable
@@ -599,15 +593,24 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         final TypeSubstitutor substitutor = DescriptorSubstitutor.substituteTypeParameters(
                 unsubstitutedTypeParameters, configuration.substitution, substitutedDescriptor, substitutedTypeParameters, wereChanges
         );
+        if (substitutor == null) return null;
 
-        KotlinType substitutedReceiverParameterType = null;
-        if (configuration.newExtensionReceiverParameterType != null) {
-            substitutedReceiverParameterType = substitutor.substitute(configuration.newExtensionReceiverParameterType, Variance.IN_VARIANCE);
-            if (substitutedReceiverParameterType == null) {
+        ReceiverParameterDescriptor substitutedReceiverParameter = null;
+        if (configuration.newExtensionReceiverParameter != null) {
+            KotlinType substitutedExtensionReceiverType =
+                    substitutor.substitute(configuration.newExtensionReceiverParameter.getType(), Variance.IN_VARIANCE);
+            if (substitutedExtensionReceiverType == null) {
                 return null;
             }
+            substitutedReceiverParameter = new ReceiverParameterDescriptorImpl(
+                    substitutedDescriptor,
+                    new ExtensionReceiver(
+                            substitutedDescriptor, substitutedExtensionReceiverType, configuration.newExtensionReceiverParameter.getValue()
+                    ),
+                    configuration.newExtensionReceiverParameter.getAnnotations()
+            );
 
-            wereChanges[0] |= substitutedReceiverParameterType != configuration.newExtensionReceiverParameterType;
+            wereChanges[0] |= substitutedExtensionReceiverType != configuration.newExtensionReceiverParameter.getType();
         }
 
         ReceiverParameterDescriptor substitutedExpectedThis = null;
@@ -650,7 +653,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         }
 
         substitutedDescriptor.initialize(
-                substitutedReceiverParameterType,
+                substitutedReceiverParameter,
                 substitutedExpectedThis,
                 substitutedTypeParameters,
                 substitutedValueParameters,
@@ -772,6 +775,15 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     public static List<ValueParameterDescriptor> getSubstitutedValueParameters(
             FunctionDescriptor substitutedDescriptor,
             @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
+            @NotNull TypeSubstitutor substitutor
+    ) {
+        return getSubstitutedValueParameters(substitutedDescriptor, unsubstitutedValueParameters, substitutor, false, false, null);
+    }
+
+    @Nullable
+    public static List<ValueParameterDescriptor> getSubstitutedValueParameters(
+            FunctionDescriptor substitutedDescriptor,
+            @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
             @NotNull TypeSubstitutor substitutor,
             boolean dropOriginal,
             boolean preserveSourceElement,
@@ -821,6 +833,9 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
 
     // Don't use on published descriptors
     public <V> void putInUserDataMap(UserDataKey<V> key, Object value) {
+        if (userDataMap == null) {
+            userDataMap = new LinkedHashMap<UserDataKey<?>, Object>();
+        }
         userDataMap.put(key, value);
     }
 }

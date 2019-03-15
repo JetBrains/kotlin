@@ -1,0 +1,15 @@
+package
+
+public inline fun case_1(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
+    CallsInPlace(block, EXACTLY_ONCE)
+
+public inline fun case_2(/*0*/ value_1: kotlin.Int?, /*1*/ block: () -> kotlin.Unit): kotlin.Boolean
+    CallsInPlace(block, EXACTLY_ONCE)
+    Returns(TRUE) -> value_1 != null
+
+public inline fun </*0*/ T> T?.case_3(/*0*/ value_1: kotlin.Int?, /*1*/ value_2: kotlin.Boolean, /*2*/ value_3: kotlin.Int?, /*3*/ block: () -> kotlin.Unit): kotlin.Boolean?
+    CallsInPlace(block, EXACTLY_ONCE)
+    Returns(TRUE) -> value_1 != null
+    Returns(FALSE) -> !value_2
+    Returns(NOT_NULL) -> <this> != null && value_3 != null
+

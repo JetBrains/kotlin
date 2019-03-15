@@ -49,9 +49,9 @@ import org.jetbrains.kotlin.idea.util.projectStructure.version
 import org.jetbrains.kotlin.idea.util.runWithAlternativeResolveEnabled
 import org.jetbrains.kotlin.idea.vfilefinder.KotlinJavaScriptMetaFileIndex
 import org.jetbrains.kotlin.idea.vfilefinder.hasSomethingInPackage
-import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion
+import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
 import org.jetbrains.kotlin.utils.JsMetadataVersion
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.LibraryUtils
@@ -89,16 +89,16 @@ enum class LibraryJarDescriptor(
     val shouldExist: Boolean,
     val getPath: (KotlinPaths) -> File = { paths -> File(paths.libPath, jarName) }
 ) {
-    RUNTIME_JAR(PathUtil.KOTLIN_JAVA_STDLIB_JAR, OrderRootType.CLASSES, true, KotlinPaths::getStdlibPath) {
+    RUNTIME_JAR(PathUtil.KOTLIN_JAVA_STDLIB_JAR, OrderRootType.CLASSES, true, { it.stdlibPath }) {
         override fun findExistingJar(library: Library): VirtualFile? {
             if (isExternalLibrary(library)) return null
             return JavaRuntimeDetectionUtil.getRuntimeJar(Arrays.asList(*library.getFiles(OrderRootType.CLASSES)))
         }
     },
 
-    REFLECT_JAR(PathUtil.KOTLIN_JAVA_REFLECT_JAR, OrderRootType.CLASSES, false, KotlinPaths::getReflectPath),
-    SCRIPT_RUNTIME_JAR(PathUtil.KOTLIN_JAVA_SCRIPT_RUNTIME_JAR, OrderRootType.CLASSES, true, KotlinPaths::getScriptRuntimePath),
-    TEST_JAR(PathUtil.KOTLIN_TEST_JAR, OrderRootType.CLASSES, false, KotlinPaths::getKotlinTestPath),
+    REFLECT_JAR(PathUtil.KOTLIN_JAVA_REFLECT_JAR, OrderRootType.CLASSES, false, { it.reflectPath }),
+    SCRIPT_RUNTIME_JAR(PathUtil.KOTLIN_JAVA_SCRIPT_RUNTIME_JAR, OrderRootType.CLASSES, true, { it.scriptRuntimePath }),
+    TEST_JAR(PathUtil.KOTLIN_TEST_JAR, OrderRootType.CLASSES, false, { it.kotlinTestPath }),
 
     @Deprecated("RUNTIME_JDK7_JAR should be used since 1.2")
     RUNTIME_JRE7_JAR(PathUtil.KOTLIN_JAVA_RUNTIME_JRE7_JAR, OrderRootType.CLASSES, false),
@@ -116,7 +116,7 @@ enum class LibraryJarDescriptor(
     RUNTIME_JRE8_SOURCES_JAR(PathUtil.KOTLIN_JAVA_RUNTIME_JRE8_SRC_JAR, OrderRootType.SOURCES, false),
     RUNTIME_JDK8_SOURCES_JAR(PathUtil.KOTLIN_JAVA_RUNTIME_JDK8_SRC_JAR, OrderRootType.SOURCES, false),
 
-    RUNTIME_SRC_JAR(PathUtil.KOTLIN_JAVA_STDLIB_SRC_JAR, OrderRootType.SOURCES, false, KotlinPaths::getStdlibSourcesPath) {
+    RUNTIME_SRC_JAR(PathUtil.KOTLIN_JAVA_STDLIB_SRC_JAR, OrderRootType.SOURCES, false, { it.stdlibSourcesPath }) {
         override fun findExistingJar(library: Library): VirtualFile? {
             return super.findExistingJar(library) ?: LibraryUtils.getJarFile(
                 library.getFiles(orderRootType).toList(),
@@ -127,8 +127,8 @@ enum class LibraryJarDescriptor(
     REFLECT_SRC_JAR(PathUtil.KOTLIN_REFLECT_SRC_JAR, OrderRootType.SOURCES, false),
     TEST_SRC_JAR(PathUtil.KOTLIN_TEST_SRC_JAR, OrderRootType.SOURCES, false),
 
-    JS_STDLIB_JAR(PathUtil.JS_LIB_JAR_NAME, OrderRootType.CLASSES, true, KotlinPaths::getJsStdLibJarPath),
-    JS_STDLIB_SRC_JAR(PathUtil.JS_LIB_SRC_JAR_NAME, OrderRootType.SOURCES, false, KotlinPaths::getJsStdLibSrcJarPath);
+    JS_STDLIB_JAR(PathUtil.JS_LIB_JAR_NAME, OrderRootType.CLASSES, true, { it.jsStdLibJarPath }),
+    JS_STDLIB_SRC_JAR(PathUtil.JS_LIB_SRC_JAR_NAME, OrderRootType.SOURCES, false, { it.jsStdLibSrcJarPath });
 
     open fun findExistingJar(library: Library): VirtualFile? {
         if (isExternalLibrary(library)) return null
@@ -269,8 +269,7 @@ const val MAVEN_STDLIB_ID_JDK8 = PathUtil.KOTLIN_JAVA_RUNTIME_JDK8_NAME
 const val MAVEN_JS_STDLIB_ID = PathUtil.JS_LIB_NAME
 const val MAVEN_JS_TEST_ID = PathUtil.KOTLIN_TEST_JS_NAME
 
-const val MAVEN_OLD_JS_STDLIB_ID = "kotlin-js-library"
-const val MAVEN_COMMON_STDLIB_ID = "kotlin-stdlib-common" // TODO: KotlinCommonMavenConfigurator
+
 const val MAVEN_TEST_ID = PathUtil.KOTLIN_TEST_NAME
 const val MAVEN_TEST_JUNIT_ID = "kotlin-test-junit"
 const val MAVEN_COMMON_TEST_ID = "kotlin-test-common"
@@ -280,7 +279,8 @@ val LOG = Logger.getInstance("org.jetbrains.kotlin.idea.versions.KotlinRuntimeLi
 
 data class LibInfo(
     val groupId: String,
-    val name: String
+    val name: String,
+    val version: String = "0.0.0"
 )
 
 data class DeprecatedLibInfo(

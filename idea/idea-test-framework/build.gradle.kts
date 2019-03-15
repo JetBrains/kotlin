@@ -1,6 +1,8 @@
 
-apply { plugin("kotlin") }
-apply { plugin("jps-compatible") }
+plugins {
+    kotlin("jvm")
+    id("jps-compatible")
+}
 
 dependencies {
     testCompile(project(":compiler:frontend"))
@@ -13,7 +15,7 @@ dependencies {
     testCompile(project(":kotlin-test:kotlin-test-jvm"))
     testCompileOnly(project(":kotlin-reflect-api"))
     testCompile(commonDep("junit:junit"))
-    testCompileOnly(intellijDep()) { includeJars("openapi", "idea", "log4j") }
+    testCompileOnly(intellijDep())
 }
 
 sourceSets {

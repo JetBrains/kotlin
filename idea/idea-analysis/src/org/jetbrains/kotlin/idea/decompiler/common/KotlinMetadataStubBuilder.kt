@@ -33,14 +33,14 @@ open class KotlinMetadataStubBuilder(
         private val version: Int,
         private val fileType: FileType,
         private val serializerProtocol: SerializerExtensionProtocol,
-        private val readFile: (ByteArray, VirtualFile) -> FileWithMetadata?
+        private val readFile: (VirtualFile, ByteArray) -> FileWithMetadata?
 ) : ClsStubBuilder() {
     override fun getStubVersion() = ClassFileStubBuilder.STUB_VERSION + version
 
     override fun buildFileStub(content: FileContent): PsiFileStub<*>? {
         val virtualFile = content.file
         assert(virtualFile.fileType == fileType) { "Unexpected file type ${virtualFile.fileType}" }
-        val file = readFile(content.content, virtualFile) ?: return null
+        val file = readFile(virtualFile, content.content) ?: return null
 
         when (file) {
             is FileWithMetadata.Incompatible -> {
@@ -51,7 +51,7 @@ open class KotlinMetadataStubBuilder(
                 val packageFqName = file.packageFqName
                 val nameResolver = file.nameResolver
                 val components = ClsStubBuilderComponents(
-                        ProtoBasedClassDataFinder(file.proto, nameResolver),
+                        ProtoBasedClassDataFinder(file.proto, nameResolver, file.version),
                         AnnotationLoaderForStubBuilderImpl(serializerProtocol),
                         virtualFile
                 )

@@ -1,0 +1,20 @@
+package test
+
+public interface IFoo</*0*/ T> {
+    public abstract fun foo(): T
+}
+
+public/*package*/ open class JExtendsKFooZ : test.KFooZ {
+    public/*package*/ constructor JExtendsKFooZ()
+    public open /*fake_override*/ fun foo(): test.Z
+}
+
+public open class KFooZ : test.IFoo<test.Z> {
+    public constructor KFooZ()
+    public open fun foo(): test.Z
+}
+
+public final inline class Z {
+    public constructor Z(/*0*/ kotlin.Int)
+    public final val value: kotlin.Int
+}

@@ -1,0 +1,6 @@
+package
+
+public fun kotlin.Any?.case_1(): kotlin.Boolean
+public fun kotlin.Any?.case_2(): kotlin.Boolean
+public fun </*0*/ T> T?.case_3(): kotlin.Boolean
+public inline fun </*0*/ reified T : kotlin.Number> T.case_4(): kotlin.Boolean

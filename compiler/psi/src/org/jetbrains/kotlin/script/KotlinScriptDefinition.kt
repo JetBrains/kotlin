@@ -24,10 +24,12 @@ import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtScript
 import kotlin.reflect.KClass
+import kotlin.reflect.KType
 import kotlin.script.experimental.dependencies.DependenciesResolver
+import kotlin.script.experimental.location.ScriptExpectedLocation
 import kotlin.script.templates.standard.ScriptTemplateWithArgs
 
-open class KotlinScriptDefinition(val template: KClass<out Any>) : UserDataHolderBase() {
+open class KotlinScriptDefinition(open val template: KClass<out Any>) : UserDataHolderBase() {
 
     open val name: String = "Kotlin Script"
 
@@ -43,12 +45,30 @@ open class KotlinScriptDefinition(val template: KClass<out Any>) : UserDataHolde
     open fun getScriptName(script: KtScript): Name =
         NameUtils.getScriptNameForFile(script.containingKtFile.name)
 
+    open val fileExtension: String
+        get() = "kts"
+
+    // Target platform for script, ex. "JVM", "JS", "NATIVE"
+    open val platform: String
+        get() = "JVM"
+
     open val dependencyResolver: DependenciesResolver get() = DependenciesResolver.NoDependencies
 
     open val acceptedAnnotations: List<KClass<out Annotation>> get() = emptyList()
 
     @Deprecated("temporary workaround for missing functionality, will be replaced by the new API soon")
     open val additionalCompilerArguments: Iterable<String>? = null
+
+    open val scriptExpectedLocations: List<ScriptExpectedLocation> =
+        listOf(ScriptExpectedLocation.SourcesOnly, ScriptExpectedLocation.TestsOnly)
+
+    open val implicitReceivers: List<KType> get() = emptyList()
+
+    open val providedProperties: List<Pair<String, KType>> get() = emptyList()
+
+    open val targetClassAnnotations: List<Annotation> get() = emptyList()
+
+    open val targetMethodAnnotations: List<Annotation> get() = emptyList()
 }
 
 object StandardScriptDefinition : KotlinScriptDefinition(ScriptTemplateWithArgs::class)

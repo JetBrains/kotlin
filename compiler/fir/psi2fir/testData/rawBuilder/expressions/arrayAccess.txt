@@ -1,0 +1,16 @@
+FILE: arrayAccess.kt
+    public? final? property p(val): <implicit> = Int(0)
+        public? get(): <implicit>
+    public? final? function foo(): <implicit> {
+        return@@@foo Int(1)
+    }
+    public? final? class Wrapper {
+        public? constructor(v: IntArray): super<kotlin/Any>()
+
+        public? final? property v(val): IntArray
+            public? get(): IntArray
+
+    }
+    public? final? function test(a: IntArray, w: Wrapper): <implicit> {
+        return@@@test plus#(plus#(plus#(a#[Int(0)], a#[p#]), a#[foo#()]), w#.v#[Int(0)])
+    }

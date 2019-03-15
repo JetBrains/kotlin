@@ -30,6 +30,8 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.MemberKind
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.RawSignature
 import org.jetbrains.org.objectweb.asm.FieldVisitor
 import org.jetbrains.org.objectweb.asm.MethodVisitor
+import org.jetbrains.kotlin.codegen.coroutines.unwrapInitialDescriptorForSuspendFunction
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import java.io.BufferedWriter
 import java.io.File
 
@@ -82,7 +84,9 @@ class SignatureDumpingBuilderFactory(
         }
 
         override fun newMethod(origin: JvmDeclarationOrigin, access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?): MethodVisitor {
-            signatures += RawSignature(name, desc, MemberKind.METHOD) to origin.descriptor
+            signatures += RawSignature(name, desc, MemberKind.METHOD) to origin.descriptor?.let {
+                if (it is CallableDescriptor) it.unwrapInitialDescriptorForSuspendFunction() else it
+            }
             return super.newMethod(origin, access, name, desc, signature, exceptions)
         }
 

@@ -3,10 +3,13 @@
 */
 package hello
 
-import kotlin.js.*
-import kotlin.browser.window
-import org.w3c.dom.*
 import jquery.*
+import org.w3c.dom.CanvasRenderingContext2D
+import org.w3c.dom.HTMLCanvasElement
+import kotlin.browser.document
+import kotlin.browser.window
+import kotlin.random.*
+import kotlin.math.*
 
 val canvas: HTMLCanvasElement
     get() {
@@ -19,21 +22,21 @@ val context: CanvasRenderingContext2D
     }
 
 
-val width: Double
+val width: Int
     get() {
-        return canvas.width.toDouble()
+        return canvas.width
     }
 
-val height: Double
+val height: Int
     get() {
-        return canvas.height.toDouble()
+        return canvas.height
     }
 
 
 // class representing a floating text
 class HelloKotlin() {
-    var relX = 0.2 + 0.2 * Math.random()
-    var relY = 0.4 + 0.2 * Math.random()
+    var relX = Random.nextDouble(0.2, 0.4)
+    var relY = Random.nextDouble(0.4, 0.6)
 
     val absX: Double
         get() = (relX * width)
@@ -66,28 +69,25 @@ class HelloKotlin() {
 
     fun move() {
         val relTextWidth = textWidthInPixels / width
-        if (relX > (1.0 - relTextWidth - relXVelocity.abs) || relX < relXVelocity.abs) {
+        if (relX > (1.0 - relTextWidth - relXVelocity.absoluteValue) || relX < relXVelocity.absoluteValue) {
             relXVelocity *= -1
         }
         val relTextHeight = textHeightInPixels / height
-        if (relY > (1.0 - relYVelocity.abs) || relY < relYVelocity.abs + relTextHeight) {
+        if (relY > (1.0 - relYVelocity.absoluteValue) || relY < relYVelocity.absoluteValue + relTextHeight) {
             relYVelocity *= -1
         }
         relX += relXVelocity
         relY += relYVelocity
     }
 
-    fun randomVelocity() = 0.03 * Math.random() * (if (Math.random() < 0.5) 1 else -1)
+    fun randomVelocity() = Random.nextDouble(-0.03, 0.03) // same as 0.03 * Math.random() * (if (Math.random() < 0.5) 1 else -1)
 
-
-    val Double.abs: Double
-        get() = if (this > 0) this else -this
 }
 
 fun renderBackground() {
     context.save()
     context.fillStyle = "#5C7EED"
-    context.fillRect(0.0, 0.0, width, height)
+    context.fillRect(0.0, 0.0, width.toDouble(), height.toDouble())
     context.restore()
 }
 
@@ -107,3 +107,5 @@ fun main(args: Array<String>) {
                            }, interval)
     }
 }
+
+

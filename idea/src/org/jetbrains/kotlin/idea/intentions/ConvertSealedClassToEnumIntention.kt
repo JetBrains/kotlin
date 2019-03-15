@@ -26,10 +26,10 @@ import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.refactoring.util.RefactoringDescriptionLocation
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
-import org.jetbrains.kotlin.idea.highlighter.markers.liftToExpected
 import org.jetbrains.kotlin.idea.runSynchronouslyWithProgress
 import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
 import org.jetbrains.kotlin.idea.search.declarationsSearch.searchInheritors
+import org.jetbrains.kotlin.idea.util.liftToExpected
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
@@ -140,8 +140,9 @@ class ConvertSealedClassToEnumIntention : SelfTargetingRangeIntention<KtClass>(K
 
         if (entriesToAdd.isNotEmpty()) {
             val firstEntry = entriesToAdd
-                    .reversed()
-                    .map { klass.addDeclarationBefore(it, null) }
+                .reversed()
+                .asSequence()
+                .map { klass.addDeclarationBefore(it, null) }
                     .last()
             // TODO: Add formatter rule
             firstEntry.parent.addBefore(psiFactory.createNewLine(), firstEntry)

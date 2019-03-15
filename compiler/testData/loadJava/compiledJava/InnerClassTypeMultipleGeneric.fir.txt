@@ -1,0 +1,4 @@
+public open class InnerClassTypeMultipleGeneric : R|java/lang/Object| {
+    public open operator function staticType(): R|ft<test/InnerClassTypeMultipleGeneric.Outer.Inner<ft<kotlin/Byte, kotlin/Byte?>, ft<kotlin/Char, kotlin/Char?>, ft<kotlin/Boolean, kotlin/Boolean?>>, test/InnerClassTypeMultipleGeneric.Outer.Inner<ft<kotlin/Byte, kotlin/Byte?>, ft<kotlin/Char, kotlin/Char?>, ft<kotlin/Boolean, kotlin/Boolean?>>?>|!
+
+}

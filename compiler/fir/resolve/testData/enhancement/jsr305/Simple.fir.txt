@@ -1,0 +1,10 @@
+public open class Simple : R|java/lang/Object| {
+    @R|javax/annotation/Nullable|() public open property field(var): R|kotlin/String|?
+        public get(): R|kotlin/String|?
+        public set(value: R|kotlin/String|?): kotlin/Unit
+
+    @R|javax/annotation/Nullable|() public open operator function foo(@R|javax/annotation/Nonnull|() x: R|kotlin/String|, @R|javax/annotation/CheckForNull|() y: R|kotlin/CharSequence|?): R|kotlin/String|?
+
+    @R|javax/annotation/Nonnull|() public open operator function bar(): R|kotlin/String|
+
+}

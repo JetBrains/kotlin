@@ -25,13 +25,13 @@ package a {
 }
 
 package b {
-    public fun test(): B!
+    public fun test(): a.B!
     public fun test2(): B!
 
     public open class A1 {
         public constructor A1()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open fun getB(): B!
+        public open fun getB(): a.B!
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }

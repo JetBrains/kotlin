@@ -1,5 +1,5 @@
-// TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS, NATIVE
+// IGNORE_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 
 // WITH_REFLECT
 
@@ -7,7 +7,7 @@ import kotlin.reflect.KProperty
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.full.*
-import kotlin.reflect.jvm.*
+import kotlin.reflect.jvm.isAccessible
 
 object Delegate {
     operator fun getValue(thiz: My, property: KProperty<*>): String {

@@ -56,6 +56,9 @@ public interface ErrorsAndroid {
     DiagnosticFactory1<PsiElement, KtClassOrObject> REDUNDANT_TYPE_PARCELER = DiagnosticFactory1.create(WARNING);
     DiagnosticFactory1<PsiElement, KtClassOrObject> CLASS_SHOULD_BE_PARCELIZE = DiagnosticFactory1.create(ERROR);
 
+    DiagnosticFactory0<PsiElement> INAPPLICABLE_IGNORED_ON_PARCEL = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<PsiElement> INAPPLICABLE_IGNORED_ON_PARCEL_CONSTRUCTOR_PROPERTY = DiagnosticFactory0.create(WARNING);
+
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {
         {

@@ -16,12 +16,17 @@ import com.intellij.ui.EditorTextField
 import org.intellij.lang.regexp.RegExpFileType
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.quickfix.AddExclExclCallFix
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtVisitorVoid
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.isNullabilityFlexible
 import java.awt.BorderLayout
 import java.util.regex.PatternSyntaxException
@@ -46,7 +51,8 @@ class PlatformExtensionReceiverOfInlineInspection : AbstractKotlinInspection() {
             override fun visitDotQualifiedExpression(expression: KtDotQualifiedExpression) {
                 super.visitDotQualifiedExpression(expression)
 
-                if (!expression.languageVersionSettings.supportsFeature(LanguageFeature.NullabilityAssertionOnExtensionReceiver)) {
+                val languageVersionSettings = expression.languageVersionSettings
+                if (!languageVersionSettings.supportsFeature(LanguageFeature.NullabilityAssertionOnExtensionReceiver)) {
                     return
                 }
                 val nameRegex = nameRegex
@@ -56,13 +62,19 @@ class PlatformExtensionReceiverOfInlineInspection : AbstractKotlinInspection() {
                     return
                 }
 
-                val resolvedCall = expression.resolveToCall() ?: return
+                val context = expression.analyze(BodyResolveMode.PARTIAL)
+                val resolvedCall = expression.getResolvedCall(context) ?: return
                 val extensionReceiverType = resolvedCall.extensionReceiver?.type ?: return
                 if (!extensionReceiverType.isNullabilityFlexible()) return
                 val descriptor = resolvedCall.resultingDescriptor as? FunctionDescriptor ?: return
                 if (!descriptor.isInline) return
 
                 val receiverExpression = expression.receiverExpression
+                val dataFlowValueFactory = receiverExpression.getResolutionFacade().getFrontendService(DataFlowValueFactory::class.java)
+                val dataFlow = dataFlowValueFactory.createDataFlowValue(receiverExpression, extensionReceiverType, context, descriptor)
+                val stableNullability = context.getDataFlowInfoBefore(receiverExpression).getStableNullability(dataFlow)
+                if (!stableNullability.canBeNull()) return
+
                 holder.registerProblem(
                     receiverExpression,
                     "Call of inline function with nullable extension receiver can provoke NPE in Kotlin 1.2+",
@@ -82,7 +94,7 @@ class PlatformExtensionReceiverOfInlineInspection : AbstractKotlinInspection() {
                 setOneLineMode(true)
             }
             regexField.document.addDocumentListener(object : DocumentListener {
-                override fun documentChanged(e: DocumentEvent?) {
+                override fun documentChanged(e: DocumentEvent) {
                     owner.namePattern = regexField.text
                 }
             })

@@ -7,7 +7,7 @@ class Test {
     var name: String = ""
     <caret>override fun toString(): String {
         return "Test(" +
-                "serial='$serial'," +
+                "serial='$serial', " +
                 "name='$name'" +
                 ")"
     }

@@ -18,10 +18,8 @@ package org.jetbrains.kotlin.console
 
 import com.intellij.execution.process.BaseOSProcessHandler
 import com.intellij.openapi.command.WriteCommandAction
-import com.intellij.openapi.util.text.StringUtil
+import org.jetbrains.kotlin.cli.common.repl.replInputAsXml
 import org.jetbrains.kotlin.console.actions.logError
-
-private val XML_PREAMBLE = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 
 class CommandExecutor(private val runner: KotlinConsoleRunner) {
     private val commandHistory = runner.commandHistory
@@ -50,12 +48,7 @@ class CommandExecutor(private val runner: KotlinConsoleRunner) {
         val processInputOS = processHandler.processInput ?: return logError(this::class.java, "<p>Broken process stream</p>")
         val charset = (processHandler as? BaseOSProcessHandler)?.charset ?: Charsets.UTF_8
 
-        val xmlRes = XML_PREAMBLE +
-                     "<input>" +
-                     StringUtil.escapeXml(
-                             StringUtil.replace(command, SOURCE_CHARS, XML_REPLACEMENTS)
-                     ) +
-                     "</input>"
+        val xmlRes = command.replInputAsXml()
 
         val bytes = ("$xmlRes\n").toByteArray(charset)
         processInputOS.write(bytes)

@@ -1,35 +1,28 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.inspections
 
 import com.google.common.collect.Lists
-import com.intellij.codeInspection.ProblemDescriptor
+import com.intellij.codeHighlighting.HighlightDisplayLevel
+import com.intellij.codeHighlighting.Pass
+import com.intellij.codeInsight.daemon.impl.HighlightInfoType
+import com.intellij.codeInsight.intention.EmptyIntentionAction
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.profile.codeInspection.ProjectInspectionProfileManager
+import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import junit.framework.ComparisonFailure
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.test.configureLanguageVersion
+import org.jetbrains.kotlin.idea.test.configureCompilerOptions
+import org.jetbrains.kotlin.idea.test.rollbackCompilerOptions
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Assert
@@ -64,12 +57,16 @@ abstract class AbstractLocalInspectionTest : KotlinLightCodeInsightFixtureTestCa
         }
 
         if (candidateFiles.isEmpty()) {
-            throw AssertionError(".inspection file is not found for " + testDataFile +
-                                 "\nAdd it to base directory of test data. It should contain fully-qualified name of inspection class.")
+            throw AssertionError(
+                ".inspection file is not found for " + testDataFile +
+                        "\nAdd it to base directory of test data. It should contain fully-qualified name of inspection class."
+            )
         }
         if (candidateFiles.size > 1) {
-            throw AssertionError("Several .inspection files are available for " + testDataFile +
-                                 "\nPlease remove some of them\n" + candidateFiles)
+            throw AssertionError(
+                "Several .inspection files are available for " + testDataFile +
+                        "\nPlease remove some of them\n" + candidateFiles
+            )
         }
 
         val className = FileUtil.loadFile(candidateFiles[0]).trim { it <= ' ' }
@@ -83,123 +80,174 @@ abstract class AbstractLocalInspectionTest : KotlinLightCodeInsightFixtureTestCa
         val fileText = FileUtil.loadFile(mainFile, true)
         TestCase.assertTrue("\"<caret>\" is missing in file \"$mainFile\"", fileText.contains("<caret>"))
 
-        configureLanguageVersion(fileText, project, module)
+        val configured = configureCompilerOptions(fileText, project, module)
 
-        val minJavaVersion = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// MIN_JAVA_VERSION: ")
-        if (minJavaVersion != null && !SystemInfo.isJavaVersionAtLeast(minJavaVersion)) return
+        try {
+            val minJavaVersion = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// MIN_JAVA_VERSION: ")
+            if (minJavaVersion != null && !SystemInfo.isJavaVersionAtLeast(minJavaVersion)) return
 
-        if (file is KtFile && !InTextDirectivesUtils.isDirectiveDefined(fileText, "// SKIP_ERRORS_BEFORE")) {
-            DirectiveBasedActionUtils.checkForUnexpectedErrors(file as KtFile)
-        }
+            if (file is KtFile && !InTextDirectivesUtils.isDirectiveDefined(fileText, "// SKIP_ERRORS_BEFORE")) {
+                DirectiveBasedActionUtils.checkForUnexpectedErrors(file as KtFile)
+            }
 
-        var i = 1
-        val extraFileNames = mutableListOf<String>()
-        extraFileLoop@ while (true) {
-            for (extension in EXTENSIONS) {
-                val extraFile = File(mainFile.parent, FileUtil.getNameWithoutExtension(mainFile) + "." + i + extension)
-                if (extraFile.exists()) {
-                    extraFileNames += extraFile.name
-                    i++
-                    continue@extraFileLoop
+            var i = 1
+            val extraFileNames = mutableListOf<String>()
+            extraFileLoop@ while (true) {
+                for (extension in EXTENSIONS) {
+                    val extraFile = File(mainFile.parent, FileUtil.getNameWithoutExtension(mainFile) + "." + i + extension)
+                    if (extraFile.exists()) {
+                        extraFileNames += extraFile.name
+                        i++
+                        continue@extraFileLoop
+                    }
+                }
+                break
+            }
+            val parentFile = mainFile.parentFile
+            if (parentFile != null) {
+                for (file in parentFile.walkTopDown().maxDepth(1)) {
+                    if (file.name.endsWith(".lib.kt")) {
+                        extraFileNames += file.name
+                    }
                 }
             }
-            break
-        }
 
-        val psiFile = myFixture.configureByFiles(*(listOf(mainFile.name) + extraFileNames).toTypedArray()).first()
+            myFixture.configureByFiles(*(listOf(mainFile.name) + extraFileNames).toTypedArray()).first()
 
-        doTestFor(mainFile.name, psiFile.virtualFile!!, inspection, fileText)
+            doTestFor(mainFile.name, inspection, fileText)
 
-        if (file is KtFile && !InTextDirectivesUtils.isDirectiveDefined(fileText, "// SKIP_ERRORS_AFTER")) {
-            DirectiveBasedActionUtils.checkForUnexpectedErrors(file as KtFile)
+            if (file is KtFile && !InTextDirectivesUtils.isDirectiveDefined(fileText, "// SKIP_ERRORS_AFTER")) {
+                DirectiveBasedActionUtils.checkForUnexpectedErrors(file as KtFile)
+            }
+        } finally {
+            if (configured) {
+                rollbackCompilerOptions(project, module)
+            }
         }
     }
 
     protected fun runInspectionWithFixesAndCheck(
-            file: VirtualFile,
-            inspection: AbstractKotlinInspection,
-            problemExpectedString: String?,
-            highlightExpectedString: String?,
-            localFixTextString: String?
+        inspection: AbstractKotlinInspection,
+        expectedProblemString: String?,
+        expectedHighlightString: String?,
+        localFixTextString: String?
     ): Boolean {
-        val problemExpected = problemExpectedString == null || problemExpectedString != "none"
-        val presentation = runInspection(inspection, project, listOf(file))
-        val problemDescriptors = presentation.problemDescriptors
-                .filterIsInstance<ProblemDescriptor>()
-                .filter {
-                    val caretOffset = myFixture.caretOffset
-                    caretOffset in it.textRangeInElement?.shiftRight(it.psiElement.startOffset) ?: it.psiElement.textRange
-                }
+        val problemExpected = expectedProblemString == null || expectedProblemString != "none"
+        myFixture.enableInspections(inspection::class.java)
+
+        // Set default level to WARNING to make possible to test DO_NOT_SHOW
+        val inspectionProfileManager = ProjectInspectionProfileManager.getInstance(project)
+        val inspectionProfile = inspectionProfileManager.currentProfile
+        val state = inspectionProfile.getToolDefaultState(inspection.shortName, project)
+        state.level = HighlightDisplayLevel.WARNING
+
+        val caretOffset = myFixture.caretOffset
+        val highlightInfos = CodeInsightTestFixtureImpl.instantiateAndRun(
+            file, editor, intArrayOf(
+                Pass.LINE_MARKERS,
+                Pass.EXTERNAL_TOOLS,
+                Pass.POPUP_HINTS,
+                Pass.UPDATE_ALL,
+                Pass.UPDATE_FOLDING,
+                Pass.WOLF
+            ), (file as? KtFile)?.isScript() == true
+        ).filter { it.description != null && caretOffset in it.startOffset..it.endOffset }
+
         Assert.assertTrue(
-                if (!problemExpected)
-                    "No problems should be detected at caret\n" +
-                    "Detected problems: ${problemDescriptors.joinToString { it.descriptionTemplate }}"
-                else
-                    "Expected at least one problem at caret",
-                problemExpected == problemDescriptors.isNotEmpty())
-        if (!problemExpected) return false
-        problemDescriptors
-                .filter { it.highlightType != ProblemHighlightType.INFORMATION }
-                .forEach {
-                    Assert.assertTrue("Problem description should not contain 'can': ${it.descriptionTemplate}",
-                                      " can " !in it.descriptionTemplate)
-                }
-        if (problemExpectedString != null) {
-            Assert.assertTrue("Expected the following problem at caret: $problemExpectedString\n" +
-                              "Active problems: ${problemDescriptors.joinToString { it.descriptionTemplate }}",
-                              problemDescriptors.any { it.descriptionTemplate == problemExpectedString })
+            if (!problemExpected)
+                "No problems should be detected at caret\n" +
+                        "Detected problems: ${highlightInfos.joinToString { it.description }}"
+            else
+                "Expected at least one problem at caret",
+            problemExpected == highlightInfos.isNotEmpty()
+        )
+        if (!problemExpected || highlightInfos.isEmpty()) return false
+        highlightInfos
+            .filter { it.type != HighlightInfoType.INFORMATION }
+            .forEach {
+                val description = it.description
+                Assert.assertTrue(
+                    "Problem description should not contain 'can': $description",
+                    " can " !in description
+                )
+            }
+
+        if (expectedProblemString != null) {
+            Assert.assertTrue(
+                "Expected the following problem at caret: $expectedProblemString\n" +
+                        "Active problems: ${highlightInfos.joinToString { it.description }}",
+                highlightInfos.any { it.description == expectedProblemString }
+            )
         }
-        if (highlightExpectedString != null) {
-            Assert.assertTrue("Expected the following problem highlight type\n" +
-                              "Actual types: ${problemDescriptors.joinToString { it.highlightType.toString() } }",
-                              problemDescriptors.all { it.highlightType.toString() == highlightExpectedString })
+        val expectedHighlightType = when (expectedHighlightString) {
+            null -> null
+            ProblemHighlightType.GENERIC_ERROR_OR_WARNING.name -> HighlightDisplayLevel.WARNING.name
+            else -> expectedHighlightString
+        }
+        if (expectedHighlightType != null) {
+            Assert.assertTrue(
+                "Expected the following problem highlight type: $expectedHighlightType\n" +
+                        "Actual type: ${highlightInfos.joinToString { it.type.toString() }}",
+                highlightInfos.all { expectedHighlightType in it.type.toString() }
+            )
         }
 
-        val allLocalFixActions = problemDescriptors.flatMap { problem ->
-            val fixes = problem.fixes
-            fixes?.toList() ?: emptyList()
+        val allLocalFixActions = highlightInfos.flatMap { it.quickFixActionMarkers ?: emptyList() }.map { it.first.action }
+
+        val localFixActions = if (localFixTextString == null || localFixTextString == "none") {
+            allLocalFixActions
+        } else {
+            allLocalFixActions.filter { fix -> fix.text == localFixTextString }
         }
-        val localFixActions = allLocalFixActions.filter { fix -> localFixTextString == null || fix.name == localFixTextString }
-        val availableDescription = allLocalFixActions.joinToString { it.name }
 
-        val fixDescription = localFixTextString?.let { "with specified text '$localFixTextString'"} ?: ""
-        TestCase.assertTrue("No fix action $fixDescription\n" +
-                            "Available actions: $availableDescription",
-                            localFixActions.isNotEmpty())
+        val availableDescription = allLocalFixActions.joinToString { it.text }
 
-        val localFixAction = localFixActions.singleOrNull()
-        TestCase.assertTrue("More than one fix action $fixDescription\n" +
-                            "Available actions: $availableDescription",
-                            localFixAction != null)
+        val fixDescription = localFixTextString?.let { "with specified text '$localFixTextString'" } ?: ""
+        TestCase.assertTrue(
+            "No fix action $fixDescription\n" +
+                    "Available actions: $availableDescription",
+            localFixActions.isNotEmpty()
+        )
 
-        val problemDescriptor = problemDescriptors.find { localFixAction in it.fixes?.toList() ?: emptyList() }!!
+        val localFixAction = localFixActions.singleOrNull { it !is EmptyIntentionAction }
+        if (localFixTextString == "none") {
+            Assert.assertTrue("Expected no fix action", localFixAction == null)
+            return false
+        }
+        TestCase.assertTrue(
+            "More than one fix action $fixDescription\n" +
+                    "Available actions: $availableDescription",
+            localFixAction != null
+        )
 
-        project.executeWriteCommand(localFixAction!!.name, null) {
-            localFixAction.applyFix(project, problemDescriptor)
+        project.executeWriteCommand(localFixAction!!.text, null) {
+            localFixAction.invoke(project, editor, file)
         }
         return true
     }
 
-    private fun doTestFor(mainFilePath: String, file: VirtualFile, inspection: AbstractKotlinInspection, fileText: String) {
-        val problemExpectedString = InTextDirectivesUtils.findStringWithPrefixes(
-                fileText, "// $expectedProblemDirectiveName: ")
-        val highlightExpectedString = InTextDirectivesUtils.findStringWithPrefixes(
-                fileText, "// $expectedProblemHighlightType: ")
+    private fun doTestFor(mainFilePath: String, inspection: AbstractKotlinInspection, fileText: String) {
+        val expectedProblemString = InTextDirectivesUtils.findStringWithPrefixes(
+            fileText, "// $expectedProblemDirectiveName: "
+        )
+        val expectedHighlightString = InTextDirectivesUtils.findStringWithPrefixes(
+            fileText, "// $expectedProblemHighlightType: "
+        )
         val localFixTextString = InTextDirectivesUtils.findStringWithPrefixes(
-                fileText, "// $fixTextDirectiveName: ")
+            fileText, "// $fixTextDirectiveName: "
+        )
 
-        if (!runInspectionWithFixesAndCheck(file, inspection, problemExpectedString, highlightExpectedString, localFixTextString)) {
+        if (!runInspectionWithFixesAndCheck(inspection, expectedProblemString, expectedHighlightString, localFixTextString)) {
             return
         }
 
         val canonicalPathToExpectedFile = mainFilePath + afterFileNameSuffix
         try {
             myFixture.checkResultByFile(canonicalPathToExpectedFile)
-        }
-        catch (e: ComparisonFailure) {
+        } catch (e: ComparisonFailure) {
             KotlinTestUtils.assertEqualsToFile(
-                    File(testDataPath, canonicalPathToExpectedFile),
-                    editor.document.text
+                File(testDataPath, canonicalPathToExpectedFile),
+                editor.document.text
             )
         }
     }

@@ -34,16 +34,18 @@ class KotlinModuleXmlBuilder {
     }
 
     fun addModule(
-            moduleName: String,
-            outputDir: String,
-            sourceFiles: Iterable<File>,
-            javaSourceRoots: Iterable<JvmSourceRoot>,
-            classpathRoots: Iterable<File>,
-            modularJdkRoot: File?,
-            targetTypeId: String,
-            isTests: Boolean,
-            directoriesToFilterOut: Set<File>,
-            friendDirs: Iterable<File>): KotlinModuleXmlBuilder {
+        moduleName: String,
+        outputDir: String,
+        sourceFiles: Iterable<File>,
+        javaSourceRoots: Iterable<JvmSourceRoot>,
+        classpathRoots: Iterable<File>,
+        commonSourceFiles: Iterable<File>,
+        modularJdkRoot: File?,
+        targetTypeId: String,
+        isTests: Boolean,
+        directoriesToFilterOut: Set<File>,
+        friendDirs: Iterable<File>
+    ): KotlinModuleXmlBuilder {
         assert(!done) { "Already done" }
 
         p.println("<!-- Module script for ${if (isTests) "tests" else "production"} -->")
@@ -62,6 +64,10 @@ class KotlinModuleXmlBuilder {
             p.println("<", SOURCES, " ", PATH, "=\"", getEscapedPath(sourceFile), "\"/>")
         }
 
+        for (commonSourceFile in commonSourceFiles) {
+            p.println("<", COMMON_SOURCES, " ", PATH, "=\"", getEscapedPath(commonSourceFile), "\"/>")
+        }
+
         processJavaSourceRoots(javaSourceRoots)
         processClasspath(classpathRoots, directoriesToFilterOut)
 
@@ -78,7 +84,7 @@ class KotlinModuleXmlBuilder {
             directoriesToFilterOut: Set<File>) {
         p.println("<!-- Classpath -->")
         for (file in files) {
-            val isOutput = directoriesToFilterOut.contains(file) && !IncrementalCompilation.isEnabled()
+            val isOutput = directoriesToFilterOut.contains(file) && !IncrementalCompilation.isEnabledForJvm()
             if (isOutput) {
                 // For IDEA's make (incremental compilation) purposes, output directories of the current module and its dependencies
                 // appear on the class path, so we are at risk of seeing the results of the previous build, i.e. if some class was

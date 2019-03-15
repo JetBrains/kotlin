@@ -1,0 +1,22 @@
+package
+
+@Anno1(s = {"foo"}) @Anno2(i = {1}) public fun f1(): kotlin.Unit
+@Anno1(s = {"foo"}) @Anno2(i = {1}) public fun f2(): kotlin.Unit
+public fun foo(/*0*/ vararg ints: kotlin.Int /*kotlin.IntArray*/): kotlin.Unit
+public fun test(): kotlin.Unit
+
+public final annotation class Anno1 : kotlin.Annotation {
+    public constructor Anno1(/*0*/ vararg s: kotlin.String /*kotlin.Array<out kotlin.String>*/)
+    public final val s: kotlin.Array<out kotlin.String>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final annotation class Anno2 : kotlin.Annotation {
+    public constructor Anno2(/*0*/ vararg i: kotlin.Int /*kotlin.IntArray*/)
+    public final val i: kotlin.IntArray
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

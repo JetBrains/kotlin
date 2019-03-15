@@ -169,7 +169,7 @@ private fun checkUpdatedExpectedType(was: Type?, new: Type) {
     }
 }
 
-private class MySourceInterpreter : SourceInterpreter() {
+private class MySourceInterpreter : SourceInterpreter(Opcodes.API_VERSION) {
     override fun copyOperation(insn: AbstractInsnNode, value: SourceValue) =
             when {
                 insn.isStoreOperation() || insn.isLoadOperation() -> SourceValue(value.size, insn)

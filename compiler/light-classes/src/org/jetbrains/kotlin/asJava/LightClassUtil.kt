@@ -209,7 +209,7 @@ object LightClassUtil {
     fun buildLightTypeParameterList(
             owner: PsiTypeParameterListOwner,
             declaration: KtDeclaration): PsiTypeParameterList {
-        val builder = KotlinLightTypeParameterListBuilder(owner.manager)
+        val builder = KotlinLightTypeParameterListBuilder(owner)
         if (declaration is KtTypeParameterListOwner) {
             val parameters = declaration.typeParameters
             for (i in parameters.indices) {

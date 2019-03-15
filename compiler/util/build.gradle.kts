@@ -1,11 +1,11 @@
 
-apply { plugin("kotlin") }
-apply { plugin("jps-compatible") }
-
-jvmTarget = "1.6"
+plugins {
+    kotlin("jvm")
+    id("jps-compatible")
+}
 
 dependencies {
-    compile(projectDist(":kotlin-stdlib"))
+    compile(kotlinStdlib())
     compile(project(":core:deserialization"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     compileOnly(intellijDep()) { includeIntellijCoreJarDependencies(project) }
@@ -15,7 +15,7 @@ dependencies {
 sourceSets {
     "main" {
         projectDefault()
-        resources.srcDir(File(rootDir, "resources")).apply { include("**") }
+        resources.srcDir(File(rootDir, "resources"))
     }
     "test" {}
 }

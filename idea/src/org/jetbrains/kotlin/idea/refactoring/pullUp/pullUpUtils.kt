@@ -69,7 +69,7 @@ fun addMemberToTarget(targetMember: KtNamedDeclaration, targetClass: KtClassOrOb
         return parameterList.addParameterBefore(targetMember, anchor)
     }
 
-    val anchor = targetClass.declarations.filterIsInstance(targetMember::class.java).lastOrNull()
+    val anchor = targetClass.declarations.asSequence().filterIsInstance(targetMember::class.java).lastOrNull()
     return when {
         anchor == null && targetMember is KtProperty -> targetClass.addDeclarationBefore(targetMember, null)
         else -> targetClass.addDeclarationAfter(targetMember, anchor)
@@ -80,7 +80,17 @@ private fun KtParameter.needToBeAbstract(targetClass: KtClassOrObject): Boolean 
     return hasModifier(KtTokens.ABSTRACT_KEYWORD) || targetClass is KtClass && targetClass.isInterface()
 }
 
-private fun KtParameter.toProperty(): KtProperty = KtPsiFactory(this).createProperty(text)
+private fun KtParameter.toProperty(): KtProperty =
+    KtPsiFactory(this)
+        .createProperty(text)
+        .also {
+            val originalTypeRef = typeReference
+            val generatedTypeRef = it.typeReference
+            if (originalTypeRef != null && generatedTypeRef != null) {
+                // Preserve copyable user data of original type reference
+                generatedTypeRef.replace(originalTypeRef)
+            }
+        }
 
 fun doAddCallableMember(
         memberCopy: KtCallableDeclaration,

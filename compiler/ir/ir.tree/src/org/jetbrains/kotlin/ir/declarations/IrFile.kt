@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.name.FqName
+import java.io.File
 
 interface IrPackageFragment : IrElement, IrDeclarationContainer, IrSymbolOwner {
     val packageFragmentDescriptor: PackageFragmentDescriptor
@@ -37,14 +38,17 @@ interface IrExternalPackageFragment : IrPackageFragment {
     override val symbol: IrExternalPackageFragmentSymbol
 }
 
-interface IrFile : IrPackageFragment {
+interface IrFile : IrPackageFragment, IrAnnotationContainer, IrMetadataSourceOwner {
     override val symbol: IrFileSymbol
 
     val fileEntry: SourceManager.FileEntry
     val fileAnnotations: MutableList<AnnotationDescriptor>
 
+    override val metadata: MetadataSource.File?
+
     override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrFile =
         accept(transformer, data) as IrFile
 }
 
-val IrFile.name: String get() = fileEntry.name
+val IrFile.path: String get() = fileEntry.name
+val IrFile.name: String get() = File(path).name

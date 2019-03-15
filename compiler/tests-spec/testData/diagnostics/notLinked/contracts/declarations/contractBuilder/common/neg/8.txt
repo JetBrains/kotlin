@@ -1,0 +1,5 @@
+package
+
+public inline fun case_1(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
+public inline fun case_2(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
+public inline fun case_3(/*0*/ block: () -> kotlin.Unit): kotlin.Unit

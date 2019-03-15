@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.test
@@ -19,8 +8,9 @@ package kotlin.test
 import kotlin.reflect.KClass
 
 /**
- * Comments out a block of test code until it is implemented while keeping a link to the code
- * to implement in your unit test output
+ * Takes the given [block] of test code and _doesn't_ execute it.
+ *
+ * This keeps the code under test referenced, but doesn't actually test it until it is implemented.
  */
 actual fun todo(block: () -> Unit) {
     // println("TODO at " + (Exception() as java.lang.Throwable).getStackTrace()?.get(1) + " for " + block)
@@ -28,7 +18,14 @@ actual fun todo(block: () -> Unit) {
 }
 
 
-/** Asserts that a [block] fails with a specific exception of type [exceptionClass] being thrown. */
+/**
+ * Asserts that a [block] fails with a specific exception of type [exceptionClass] being thrown.
+ *
+ * If the assertion fails, the specified [message] is used unless it is null as a prefix for the failure message.
+ *
+ * @return An exception of the expected exception type [T] that successfully caught.
+ * The returned exception can be inspected further, for example by asserting its property values.
+ */
 actual fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, message: String?, block: () -> Unit): T {
     val exception = assertFails(message, block)
     @Suppress("INVISIBLE_MEMBER")

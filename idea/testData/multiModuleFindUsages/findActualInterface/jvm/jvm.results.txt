@@ -1,0 +1,2 @@
+[common.kt] Supertype 2 expect class C : I
+[jvm.kt] Supertype 5 actual class C : I

@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.incremental.storage
 
-import org.jetbrains.kotlin.utils.keysToMap
 import java.io.File
 
 internal class FileToIdMap(file: File) : BasicMap<File, Int>(file, FileKeyDescriptor, IntExternalizer) {
@@ -34,5 +33,12 @@ internal class FileToIdMap(file: File) : BasicMap<File, Int>(file, FileKeyDescri
         storage.remove(file)
     }
 
-    fun toMap(): Map<File, Int> = storage.keys.keysToMap { storage[it]!! }
+    fun toMap(): Map<File, Int> {
+        val result = HashMap<File, Int>()
+        for (key in storage.keys) {
+            val value = storage[key] ?: continue
+            result[key] = value
+        }
+        return result
+    }
 }

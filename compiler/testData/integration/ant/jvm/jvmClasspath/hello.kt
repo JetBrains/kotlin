@@ -6,7 +6,7 @@ import javax.crypto.Cipher
 import com.sun.crypto.provider.SunJCE
 import sun.nio.ByteBuffered
 
-fun main(args : Array<String>) {
+fun main() {
     val a = Big5() // charsets.jar
     val c = DNSNameService() // dnsns.jar
     val e : Cipher? = null // jce.jar

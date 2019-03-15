@@ -35,22 +35,27 @@ import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootManager
+import com.intellij.openapi.ui.InputValidatorEx
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiFile
 import com.intellij.util.IncorrectOperationException
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.idea.statistics.KotlinEventTrigger
+import org.jetbrains.kotlin.idea.statistics.KotlinStatisticsTrigger
 import java.util.*
 
-class NewKotlinFileAction
-    : CreateFileFromTemplateAction("Kotlin File/Class",
-                                   "Creates new Kotlin file or class",
-                                   KotlinFileType.INSTANCE.icon),
-      DumbAware
-{
+class NewKotlinFileAction : CreateFileFromTemplateAction(
+    "Kotlin File/Class",
+    "Creates new Kotlin file or class",
+    KotlinFileType.INSTANCE.icon
+), DumbAware {
     override fun postProcess(createdElement: PsiFile?, templateName: String?, customProperties: Map<String, String>?) {
         super.postProcess(createdElement, templateName, customProperties)
 
@@ -66,8 +71,7 @@ class NewKotlinFileAction
             val ktClass = createdElement.declarations.singleOrNull() as? KtNamedDeclaration
             if (ktClass != null) {
                 CreateFromTemplateAction.moveCaretAfterNameIdentifier(ktClass)
-            }
-            else {
+            } else {
                 val editor = FileEditorManager.getInstance(createdElement.project).selectedTextEditor ?: return
                 if (editor.document == createdElement.viewProvider.document) {
                     val lineCount = editor.document.lineCount
@@ -81,11 +85,13 @@ class NewKotlinFileAction
 
     override fun buildDialog(project: Project, directory: PsiDirectory, builder: CreateFileFromTemplateDialog.Builder) {
         builder.setTitle("New Kotlin File/Class")
-                .addKind("File", KotlinFileType.INSTANCE.icon, "Kotlin File")
-                .addKind("Class", KotlinIcons.CLASS, "Kotlin Class")
-                .addKind("Interface", KotlinIcons.INTERFACE, "Kotlin Interface")
-                .addKind("Enum class", KotlinIcons.ENUM, "Kotlin Enum")
-                .addKind("Object", KotlinIcons.OBJECT, "Kotlin Object")
+            .addKind("File", KotlinFileType.INSTANCE.icon, "Kotlin File")
+            .addKind("Class", KotlinIcons.CLASS, "Kotlin Class")
+            .addKind("Interface", KotlinIcons.INTERFACE, "Kotlin Interface")
+            .addKind("Enum class", KotlinIcons.ENUM, "Kotlin Enum")
+            .addKind("Object", KotlinIcons.OBJECT, "Kotlin Object")
+
+        builder.setValidator(NameValidator)
     }
 
     override fun getActionName(directory: PsiDirectory, newName: String, templateName: String) = "Kotlin File/Class"
@@ -104,18 +110,45 @@ class NewKotlinFileAction
         return 0
     }
 
-    override fun equals(obj: Any?): Boolean {
-        return obj is NewKotlinFileAction
+    override fun equals(other: Any?): Boolean {
+        return other is NewKotlinFileAction
     }
 
     override fun startInWriteAction() = false
 
     override fun createFileFromTemplate(name: String, template: FileTemplate, dir: PsiDirectory) =
-            Companion.createFileFromTemplate(name, template, dir)
+        createFileFromTemplateWithStat(name, template, dir)
 
     companion object {
-        private fun findOrCreateTarget(dir: PsiDirectory, name: String, directorySeparators: Array<Char>): Pair<String, PsiDirectory> {
-            var className = name.removeSuffix(".kt")
+        private object NameValidator : InputValidatorEx {
+            override fun getErrorText(inputString: String): String? {
+                if (inputString.trim().isEmpty()) {
+                    return "Name can't be empty"
+                }
+
+                val parts: List<String> = inputString.split(*FQNAME_SEPARATORS)
+                if (parts.any { it.trim().isEmpty() }) {
+                    return "Name can't have empty parts"
+                }
+
+                return null
+            }
+
+            override fun checkInput(inputString: String): Boolean {
+                return true
+            }
+
+            override fun canClose(inputString: String): Boolean {
+                return getErrorText(inputString) == null
+            }
+        }
+
+        @get:TestOnly
+        val nameValidator: InputValidatorEx
+            get() = NameValidator
+
+        private fun findOrCreateTarget(dir: PsiDirectory, name: String, directorySeparators: CharArray): Pair<String, PsiDirectory> {
+            var className = name.substringBeforeLast(".kt")
             var targetDir = dir
 
             for (splitChar in directorySeparators) {
@@ -142,14 +175,14 @@ class NewKotlinFileAction
             val properties = Properties(defaultProperties)
 
             val element = try {
-                CreateFromTemplateDialog(project, dir, template,
-                                         AttributesDefaults(className).withFixedName(true),
-                                         properties).create()
-            }
-            catch (e: IncorrectOperationException) {
+                CreateFromTemplateDialog(
+                    project, dir, template,
+                    AttributesDefaults(className).withFixedName(true),
+                    properties
+                ).create()
+            } catch (e: IncorrectOperationException) {
                 throw e
-            }
-            catch (e: Exception) {
+            } catch (e: Exception) {
                 LOG.error(e)
                 return null
             }
@@ -157,16 +190,33 @@ class NewKotlinFileAction
             return element?.containingFile
         }
 
+        private val FILE_SEPARATORS = charArrayOf('/', '\\')
+        private val FQNAME_SEPARATORS = charArrayOf('/', '\\', '.')
+
+        fun createFileFromTemplateWithStat(name: String, template: FileTemplate, dir: PsiDirectory): PsiFile? {
+            KotlinStatisticsTrigger.trigger(KotlinEventTrigger.KotlinIdeNewFileTemplateTrigger, template.name)
+            return createFileFromTemplate(name, template, dir)
+        }
+
+
         fun createFileFromTemplate(name: String, template: FileTemplate, dir: PsiDirectory): PsiFile? {
-            val directorySeparators = if (template.name == "Kotlin File") arrayOf('/', '\\') else arrayOf('/', '\\', '.')
+            val directorySeparators = if (template.name == "Kotlin File") FILE_SEPARATORS else FQNAME_SEPARATORS
             val (className, targetDir) = findOrCreateTarget(dir, name, directorySeparators)
 
             val service = DumbService.getInstance(dir.project)
             service.isAlternativeResolveEnabled = true
             try {
-                return createFromTemplate(targetDir, className, template)
-            }
-            finally {
+                val psiFile = createFromTemplate(targetDir, className, template)
+                if (psiFile is KtFile) {
+                    val singleClass = psiFile.declarations.singleOrNull() as? KtClass
+                    if (singleClass != null && !singleClass.isEnum() && !singleClass.isInterface() && name.contains("Abstract")) {
+                        runWriteAction {
+                            singleClass.addModifier(KtTokens.ABSTRACT_KEYWORD)
+                        }
+                    }
+                }
+                return psiFile
+            } finally {
                 service.isAlternativeResolveEnabled = false
             }
         }
@@ -176,7 +226,7 @@ class NewKotlinFileAction
 abstract class NewKotlinFileHook {
     companion object {
         val EP_NAME: ExtensionPointName<NewKotlinFileHook> =
-                ExtensionPointName.create<NewKotlinFileHook>("org.jetbrains.kotlin.newFileHook")
+            ExtensionPointName.create<NewKotlinFileHook>("org.jetbrains.kotlin.newFileHook")
     }
 
     abstract fun postProcess(createdElement: KtFile, module: Module)

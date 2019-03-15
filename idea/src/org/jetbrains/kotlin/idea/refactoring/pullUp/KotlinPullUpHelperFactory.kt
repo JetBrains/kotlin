@@ -38,8 +38,8 @@ class KotlinPullUpHelperFactory : PullUpHelperFactory {
         val sourceClass = sourceClass.unwrapped as? KtClassOrObject ?: return null
         val targetClass = targetClass.unwrapped as? PsiNamedElement ?: return null
         val membersToMove = membersToMove
-                .mapNotNull { it.toKtDeclarationWrapperAware() }
-                .sortedBy { it.startOffset }
+            .mapNotNull { it.toKtDeclarationWrapperAware() }
+            .sortedBy { it.startOffset }
         return KotlinPullUpData(sourceClass, targetClass, membersToMove)
     }
 
@@ -90,7 +90,8 @@ class JavaToKotlinPullUpHelperFactory : PullUpHelperFactory {
             psiClass
         }
         return outerPsiClasses
-                .drop(1)
+            .asSequence()
+            .drop(1)
                 .plus(dummyTargetClass)
                 .fold(dummyFile.add(outerPsiClasses.first()), PsiElement::add) as PsiClass
     }

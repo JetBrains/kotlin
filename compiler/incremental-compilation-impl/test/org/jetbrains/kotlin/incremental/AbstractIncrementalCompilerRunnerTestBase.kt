@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.incremental
 
 import com.intellij.testFramework.UsefulTestCase
-import com.intellij.util.containers.HashMap
 import org.jetbrains.kotlin.TestWithWorkingDir
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
@@ -33,7 +32,7 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
         val testDir = File(path)
 
         fun Iterable<File>.relativePaths() =
-                map { it.relativeTo(workingDir).path.replace('\\', '/') }
+            map { it.relativeTo(workingDir).path.replace('\\', '/') }
 
         val srcDir = File(workingDir, "src").apply { mkdirs() }
         val cacheDir = File(workingDir, "incremental-data").apply { mkdirs() }
@@ -51,10 +50,12 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
         // modifications
         val buildLogFile = buildLogFinder.findBuildLog(testDir) ?: throw IllegalStateException("build log file not found in $workingDir")
         val buildLogSteps = parseTestBuildLog(buildLogFile)
-        val modifications = getModificationsToPerform(testDir,
-                                                      moduleNames = null,
-                                                      allowNoFilesWithSuffixInTestData = false,
-                                                      touchPolicy = TouchPolicy.CHECKSUM)
+        val modifications = getModificationsToPerform(
+            testDir,
+            moduleNames = null,
+            allowNoFilesWithSuffixInTestData = false,
+            touchPolicy = TouchPolicy.CHECKSUM
+        )
 
         assert(modifications.size == buildLogSteps.size) {
             "Modifications count (${modifications.size}) != expected build log steps count (${buildLogSteps.size})"
@@ -74,7 +75,14 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
             val (_, compiledSources, compileErrors) = make(cacheDir, sourceRoots, args)
 
             expectedSB.appendLine(stepLogAsString(step, buildLogStep.compiledKotlinFiles, buildLogStep.compileErrors))
-            expectedSBWithoutErrors.appendLine(stepLogAsString(step, buildLogStep.compiledKotlinFiles, buildLogStep.compileErrors, includeErrors = false))
+            expectedSBWithoutErrors.appendLine(
+                stepLogAsString(
+                    step,
+                    buildLogStep.compiledKotlinFiles,
+                    buildLogStep.compileErrors,
+                    includeErrors = false
+                )
+            )
             actualSB.appendLine(stepLogAsString(step, compiledSources.relativePaths(), compileErrors))
             actualSBWithoutErrors.appendLine(stepLogAsString(step, compiledSources.relativePaths(), compileErrors, includeErrors = false))
             step++
@@ -84,14 +92,13 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
             if (BuildLogFinder.isJpsLogFile(buildLogFile)) {
                 // JPS logs should be updated carefully, because standalone logs are a bit different (no removed classes, iterations, etc)
                 Assert.assertEquals(expectedSB.toString(), actualSB.toString())
-            }
-            else {
+            } else {
                 UsefulTestCase.assertSameLinesWithFile(buildLogFile.canonicalPath, actualSB.toString(), false)
             }
         }
 
         // todo: also compare caches
-        run rebuildAndCompareOutput@ {
+        run rebuildAndCompareOutput@{
             val rebuildOutDir = File(workingDir, "rebuild-out").apply { mkdirs() }
             val rebuildCacheDir = File(workingDir, "rebuild-cache").apply { mkdirs() }
             val rebuildResult = make(rebuildCacheDir, sourceRoots, createCompilerArguments(rebuildOutDir, testDir))

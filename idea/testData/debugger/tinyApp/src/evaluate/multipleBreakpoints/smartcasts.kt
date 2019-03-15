@@ -12,7 +12,7 @@ fun main(args: Array<String>) {
 // RESULT: 1: I
 
 // EXPRESSION: derived.prop
-// RESULT: java.lang.ClassCastException: smartcasts.Base cannot be cast to smartcasts.Derived: Ljava/lang/ClassCastException;
+// RESULT: java.lang.ClassCastException : smartcasts.Base cannot be cast to smartcasts.Derived
 fun test1(derived: Base) =
         derived is Derived &&
         //Breakpoint!
@@ -22,7 +22,7 @@ fun test1(derived: Base) =
 // RESULT: 1: I
 
 // EXPRESSION: nullable.prop
-// RESULT: Method threw 'kotlin.TypeCastException' exception.
+// RESULT: java.lang.NullPointerException
 fun test2(nullable: Derived?) =
         nullable != null &&
         //Breakpoint!

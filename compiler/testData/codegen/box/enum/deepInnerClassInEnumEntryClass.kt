@@ -1,4 +1,4 @@
-// LANGUAGE_VERSION: 1.2
+// IGNORE_BACKEND: JVM_IR
 
 enum class A {
     X {

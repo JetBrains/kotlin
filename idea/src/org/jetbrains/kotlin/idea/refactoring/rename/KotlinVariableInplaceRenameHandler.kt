@@ -38,11 +38,11 @@ open class KotlinVariableInplaceRenameHandler : VariableInplaceRenameHandler() {
     protected open class RenamerImpl : VariableInplaceRenamer {
         constructor(elementToRename: PsiNamedElement, editor: Editor): super(elementToRename, editor)
         constructor(
-            elementToRename: PsiNamedElement,
-            editor: Editor,
-            currentName: String,
-            oldName: String
-        ) : super(elementToRename, editor, editor.project, currentName, oldName)
+                elementToRename: PsiNamedElement,
+                editor: Editor,
+                currentName: String,
+                oldName: String
+        ) : super(elementToRename, editor, editor.project!!, currentName, oldName)
 
         override fun acceptReference(reference: PsiReference): Boolean {
             val refElement = reference.element

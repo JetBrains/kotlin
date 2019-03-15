@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.backend.common
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.util.usesDefaultArguments
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -35,7 +36,7 @@ import org.jetbrains.kotlin.types.typeUtil.isUnit
  * However any returned call can be correctly optimized as tail recursion.
  */
 fun collectTailRecursionCalls(irFunction: IrFunction): Set<IrCall> {
-    if (!irFunction.descriptor.isTailrec) {
+    if ((irFunction as? IrSimpleFunction)?.isTailrec != true) {
         return emptySet()
     }
 

@@ -1,3 +1,5 @@
+// IGNORE_BACKEND: JS_IR
+// KJS_WITH_FULL_RUNTIME
 // SKIP_MINIFICATION
 // This test uses eval
 open class A {

@@ -1,0 +1,9 @@
+FILE: variables.kt
+    public? final? function foo(): kotlin/Unit {
+        val x: <implicit> = Int(1)
+        var y: <implicit> = plus#(x#, Int(1))
+        val z: <implicit> = times#(y#, Int(2))
+        y# = plus#(y#, z#)
+        val w: <implicit> = minus#(y#, x#)
+        return@@@foo w#
+    }

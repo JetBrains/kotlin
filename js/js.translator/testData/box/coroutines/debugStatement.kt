@@ -1,4 +1,5 @@
-// EXPECTED_REACHABLE_NODES: 1152
+// KJS_WITH_FULL_RUNTIME
+// EXPECTED_REACHABLE_NODES: 1292
 // CHECK_DEBUGGER_COUNT: function=doResume count=1
 
 fun foo(f: suspend () -> Unit) {

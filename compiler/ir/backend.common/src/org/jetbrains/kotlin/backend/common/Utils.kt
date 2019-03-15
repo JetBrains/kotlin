@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.backend.common
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
 
-fun CommonBackendContext.reportWarning(message: String, irFile: IrFile, irElement: IrElement) {
+fun CommonBackendContext.reportWarning(message: String, irFile: IrFile?, irElement: IrElement) {
     report(irElement, irFile, message, false)
 }
 

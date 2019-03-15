@@ -42,23 +42,29 @@ import org.jetbrains.kotlin.types.typeUtil.isBoolean
 
 class KtPostfixTemplateProvider : PostfixTemplateProvider {
     override fun getTemplates() = setOf(
-            KtNotPostfixTemplate,
-            KtIfExpressionPostfixTemplate,
-            KtElseExpressionPostfixTemplate,
-            KtNotNullPostfixTemplate("notnull"),
-            KtNotNullPostfixTemplate("nn"),
-            KtIsNullPostfixTemplate,
-            KtWhenExpressionPostfixTemplate,
-            KtTryPostfixTemplate,
-            KtIntroduceVariablePostfixTemplate("val"),
-            KtIntroduceVariablePostfixTemplate("var"),
-            KtForEachPostfixTemplate("for"),
-            KtForEachPostfixTemplate("iter"),
-            KtAssertPostfixTemplate,
-            KtParenthesizedPostfixTemplate,
-            KtSoutPostfixTemplate,
-            KtReturnPostfixTemplate,
-            KtWhilePostfixTemplate
+        KtNotPostfixTemplate,
+        KtIfExpressionPostfixTemplate,
+        KtElseExpressionPostfixTemplate,
+        KtNotNullPostfixTemplate("notnull"),
+        KtNotNullPostfixTemplate("nn"),
+        KtIsNullPostfixTemplate,
+        KtWhenExpressionPostfixTemplate,
+        KtTryPostfixTemplate,
+        KtIntroduceVariablePostfixTemplate("val"),
+        KtIntroduceVariablePostfixTemplate("var"),
+        KtForEachPostfixTemplate("for"),
+        KtForEachPostfixTemplate("iter"),
+        KtAssertPostfixTemplate,
+        KtParenthesizedPostfixTemplate,
+        KtSoutPostfixTemplate,
+        KtReturnPostfixTemplate,
+        KtWhilePostfixTemplate,
+        KtWrapWithListOfPostfixTemplate,
+        KtWrapWithSetOfPostfixTemplate,
+        KtWrapWithArrayOfPostfixTemplate,
+        KtWrapWithSequenceOfPostfixTemplate,
+        KtSpreadPostfixTemplate,
+        KtArgumentPostfixTemplate
     )
 
     override fun isTerminalSymbol(currentChar: Char) = currentChar == '.' || currentChar == '!'
@@ -75,61 +81,61 @@ class KtPostfixTemplateProvider : PostfixTemplateProvider {
         /**
          * In tests only one expression should be suggested, so in case there are many of them, save relevant items
          */
-        @TestOnly
+        @get:TestOnly
         @Volatile
         var previouslySuggestedExpressions = emptyList<String>()
     }
 }
 
 private object KtNotPostfixTemplate : NotPostfixTemplate(
-        KtPostfixTemplatePsiInfo,
-        createExpressionSelector { it.isBoolean() }
+    KtPostfixTemplatePsiInfo,
+    createExpressionSelector { it.isBoolean() }
 )
 
 private class KtIntroduceVariablePostfixTemplate(
-        val kind: String
+    val kind: String
 ) : PostfixTemplateWithExpressionSelector(kind, "$kind name = expression", createExpressionSelector()) {
     override fun expandForChooseExpression(expression: PsiElement, editor: Editor) {
         KotlinIntroduceVariableHandler.doRefactoring(
-                expression.project, editor, expression as KtExpression,
-                isVar = kind == "var",
-                occurrencesToReplace = null,
-                onNonInteractiveFinish = null
+            expression.project, editor, expression as KtExpression,
+            isVar = kind == "var",
+            occurrencesToReplace = null,
+            onNonInteractiveFinish = null
         )
     }
 }
 
 internal object KtPostfixTemplatePsiInfo : PostfixTemplatePsiInfo() {
     override fun createExpression(context: PsiElement, prefix: String, suffix: String) =
-            KtPsiFactory(context.project).createExpression(prefix + context.text + suffix)
+        KtPsiFactory(context.project).createExpression(prefix + context.text + suffix)
 
     override fun getNegatedExpression(element: PsiElement) = (element as KtExpression).negate()
 }
 
 internal fun createExpressionSelector(
-        checkCanBeUsedAsValue: Boolean = true,
-        statementsOnly: Boolean = false,
-        typePredicate: ((KotlinType) -> Boolean)? = null
+    checkCanBeUsedAsValue: Boolean = true,
+    statementsOnly: Boolean = false,
+    typePredicate: ((KotlinType) -> Boolean)? = null
 ): PostfixTemplateExpressionSelector {
     val predicate: ((KtExpression, BindingContext) -> Boolean)? =
-            if (typePredicate != null) { expression, bindingContext ->
-                    expression.getType(bindingContext)?.let(typePredicate) ?: false
-            }
-            else null
+        if (typePredicate != null) { expression, bindingContext ->
+            expression.getType(bindingContext)?.let(typePredicate) ?: false
+        }
+        else null
     return createExpressionSelectorWithComplexFilter(checkCanBeUsedAsValue, statementsOnly, predicate)
 }
 
 internal fun createExpressionSelectorWithComplexFilter(
-        // Do not suggest expressions like 'val a = 1'/'for ...'
-        checkCanBeUsedAsValue: Boolean = true,
-        statementsOnly: Boolean = false,
-        predicate: ((KtExpression, BindingContext) -> Boolean)? = null
+    // Do not suggest expressions like 'val a = 1'/'for ...'
+    checkCanBeUsedAsValue: Boolean = true,
+    statementsOnly: Boolean = false,
+    predicate: ((KtExpression, BindingContext) -> Boolean)? = null
 ): PostfixTemplateExpressionSelector = KtExpressionPostfixTemplateSelector(checkCanBeUsedAsValue, statementsOnly, predicate)
 
 private class KtExpressionPostfixTemplateSelector(
-        private val checkCanBeUsedAsValue: Boolean,
-        private val statementsOnly: Boolean,
-        private val predicate: ((KtExpression, BindingContext) -> Boolean)?
+    private val checkCanBeUsedAsValue: Boolean,
+    private val statementsOnly: Boolean,
+    private val predicate: ((KtExpression, BindingContext) -> Boolean)?
 ) : PostfixTemplateExpressionSelector {
 
     private fun filterElement(element: PsiElement): Boolean {
@@ -156,11 +162,11 @@ private class KtExpressionPostfixTemplateSelector(
     }
 
     private fun KtExpression.canBeUsedAsValue() =
-            !KtPsiUtil.isAssignment(this) &&
-            !this.isNamedDeclaration &&
-            this !is KtLoopExpression &&
-            // if's only with else may be treated as expressions
-            !isIfWithoutElse
+        !KtPsiUtil.isAssignment(this) &&
+                !this.isNamedDeclaration &&
+                this !is KtLoopExpression &&
+                // if's only with else may be treated as expressions
+                !isIfWithoutElse
 
     private val KtExpression.isIfWithoutElse: Boolean
         get() = (this is KtIfExpression && this.elseKeyword == null)
@@ -169,11 +175,11 @@ private class KtExpressionPostfixTemplateSelector(
         val originalFile = context.containingFile.originalFile
         val textRange = context.textRange
         val originalElement = findElementOfClassAtRange(originalFile, textRange.startOffset, textRange.endOffset, context::class.java)
-                              ?: return emptyList()
+            ?: return emptyList()
 
         val expressions = originalElement.parentsWithSelf
-                .filterIsInstance<KtExpression>()
-                .takeWhile { !it.isBlockBodyInDeclaration }
+            .filterIsInstance<KtExpression>()
+            .takeWhile { !it.isBlockBodyInDeclaration }
 
         val boundExpression = expressions.firstOrNull { it.parent.endOffset > offset }
         val boundElementParent = boundExpression?.parent
@@ -181,10 +187,10 @@ private class KtExpressionPostfixTemplateSelector(
         if (boundElementParent is KtDotQualifiedExpression && boundExpression == boundElementParent.receiverExpression) {
             val qualifiedExpressionEnd = boundElementParent.endOffset
             expressions
-                    .dropWhile { it != boundElementParent }
-                    .drop(1)
-                    .takeWhile { it.endOffset == qualifiedExpressionEnd }
-                    .toCollection(filteredByOffset)
+                .dropWhile { it != boundElementParent }
+                .drop(1)
+                .takeWhile { it.endOffset == qualifiedExpressionEnd }
+                .toCollection(filteredByOffset)
         }
 
         val result = filteredByOffset.filter(this::filterElement)

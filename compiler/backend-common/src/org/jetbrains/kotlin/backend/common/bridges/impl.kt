@@ -17,20 +17,17 @@
 package org.jetbrains.kotlin.backend.common.bridges
 
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isOrOverridesSynthesized
 
 fun <Signature> generateBridgesForFunctionDescriptor(
-        descriptor: FunctionDescriptor,
-        signature: (FunctionDescriptor) -> Signature,
-        isBodyOwner: (DeclarationDescriptor) -> Boolean
+    descriptor: FunctionDescriptor,
+    signature: (FunctionDescriptor) -> Signature
 ): Set<Bridge<Signature>> {
-    return generateBridges(DescriptorBasedFunctionHandle(descriptor, isBodyOwner), { signature(it.descriptor) })
+    return generateBridges(DescriptorBasedFunctionHandle(descriptor), { signature(it.descriptor) })
 }
 
 /**
@@ -50,32 +47,26 @@ fun <Signature> generateBridgesForFunctionDescriptor(
  * can generate a bridge near an implementation (of course, in case it has a super-declaration with a different signature). Ultimately this
  * eases the process of determining what bridges are already generated in our supertypes and need to be inherited, not regenerated.
  */
-class DescriptorBasedFunctionHandle(
-        val descriptor: FunctionDescriptor,
-        /*
-        To generate proper bridges for non-abstract function
-        we should know if the function declaration and its definition in the target platform are the same or not.
-        For JS and JVM8 they are placed in interface classes and we need generate bridge for such function ('isAbstract' will return false).
-        For JVM6 target function body generated in separate place (DefaultImpl) and method in interface is abstract
-        For JVM6 target function body is generated in a separate place (DefaultImpls) and
-        the method in the interface is abstract so we must not generate bridges for such cases.
-        */
-        isBodyOwner: (DeclarationDescriptor) -> Boolean
-) : FunctionHandle {
-    private val overridden = descriptor.overriddenDescriptors.map { DescriptorBasedFunctionHandle(it.original, isBodyOwner) }
+open class DescriptorBasedFunctionHandle(val descriptor: FunctionDescriptor) : FunctionHandle {
+    private val _overridden by lazy(LazyThreadSafetyMode.NONE) {
+        descriptor.overriddenDescriptors.map {
+            createHandleForOverridden(
+                it.original
+            )
+        }
+    }
 
-    override val isDeclaration: Boolean =
-            descriptor.kind.isReal ||
-            findInterfaceImplementation(descriptor) != null
+    protected open fun createHandleForOverridden(overridden: FunctionDescriptor) = DescriptorBasedFunctionHandle(overridden)
+
+    override val isDeclaration: Boolean = descriptor.kind.isReal || findInterfaceImplementation(descriptor) != null
 
     override val isAbstract: Boolean =
-            descriptor.modality == Modality.ABSTRACT ||
-            isBodyOwner(descriptor.containingDeclaration)
+        descriptor.modality == Modality.ABSTRACT
 
-    override val isInterfaceDeclaration: Boolean
-        get() = DescriptorUtils.isInterface(descriptor.containingDeclaration)
+    override val mayBeUsedAsSuperImplementation: Boolean =
+        !DescriptorUtils.isInterface(descriptor.containingDeclaration)
 
-    override fun getOverridden() = overridden
+    override fun getOverridden() = _overridden
 
     override fun hashCode(): Int {
         return descriptor.hashCode()

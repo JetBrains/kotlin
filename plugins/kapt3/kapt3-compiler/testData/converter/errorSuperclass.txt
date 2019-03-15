@@ -1,0 +1,38 @@
+package test;
+
+import java.lang.System;
+
+@kotlin.Metadata()
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+public abstract @interface Anno {
+}
+
+////////////////////
+
+package test;
+
+import java.lang.System;
+
+@kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
+@kotlin.Metadata()
+@Anno()
+public final class ClassWithParent implements java.lang.CharSequence {
+
+    public ClassWithParent() {
+        super();
+    }
+
+    @java.lang.Override()
+    public final int length() {
+        return 0;
+    }
+
+    public abstract int getLength();
+
+    @java.lang.Override()
+    public final char charAt(int p0) {
+        return '\u0000';
+    }
+
+    public abstract char get(int p0);
+}

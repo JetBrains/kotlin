@@ -4,7 +4,7 @@ UFile (package = )
             UAnnotation (fqName = org.jetbrains.annotations.Nullable)
             UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
                 UIdentifier (Identifier (readLine))
-                USimpleNameReferenceExpression (identifier = readLine)
+                USimpleNameReferenceExpression (identifier = readLine, resolvesTo = null)
         UField (name = b)
             UAnnotation (fqName = org.jetbrains.annotations.NotNull)
             USwitchExpression

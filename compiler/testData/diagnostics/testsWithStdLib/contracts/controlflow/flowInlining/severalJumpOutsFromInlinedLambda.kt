@@ -1,7 +1,8 @@
 // !LANGUAGE: +AllowContractsForCustomFunctions +UseCallsInPlaceEffect
+// !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 // !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
 
-import kotlin.internal.contracts.*
+import kotlin.contracts.*
 
 inline fun <T> myRun(block: () -> T): T {
     contract {

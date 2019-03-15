@@ -10,7 +10,7 @@ operator fun Int.get(s: Int): Int {
 operator fun Int.set(s: Int, x: String = "", z: Int) {
 }
 
-fun main(args: Array<String>) {
+fun main() {
     1[2] = 1
     1.set(2, z = 1)
     1[2] += 1

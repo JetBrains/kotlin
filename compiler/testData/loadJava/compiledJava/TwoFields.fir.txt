@@ -1,0 +1,10 @@
+public final class TwoFields : R|java/lang/Object| {
+    public open property a(var): R|kotlin/Int|
+        public get(): R|kotlin/Int|
+        public set(value: R|kotlin/Int|): kotlin/Unit
+
+    public open property b(var): R|kotlin/Short|
+        public get(): R|kotlin/Short|
+        public set(value: R|kotlin/Short|): kotlin/Unit
+
+}

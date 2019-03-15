@@ -43,5 +43,5 @@ fun test() {
     }
 }
 
-// EXIST: {"lookupString":"two", "attributes":""}
-// EXIST: {"lookupString":"one", "attributes":["grayed"]}
+// EXIST: two
+// ABSENT: one

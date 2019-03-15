@@ -71,6 +71,8 @@ extend Function {
 
 extend Property {
   repeated Annotation property_annotation = 130;
+  repeated Annotation property_getter_annotation = 132;
+  repeated Annotation property_setter_annotation = 133;
   optional Annotation.Argument.Value compile_time_value = 131;
   optional int32 property_containing_file_id = 135;
 }

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
+import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
@@ -24,14 +25,16 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.analysis.analyzeAsReplacement
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.project.builtIns
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.matches
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class ReplaceWithOperatorAssignmentInspection : AbstractApplicabilityBasedInspection<KtBinaryExpression>(
-        KtBinaryExpression::class.java
+    KtBinaryExpression::class.java
 ) {
 
     override fun isApplicable(element: KtBinaryExpression): Boolean {
@@ -40,7 +43,7 @@ class ReplaceWithOperatorAssignmentInspection : AbstractApplicabilityBasedInspec
         val right = element.right as? KtBinaryExpression ?: return false
         if (right.left == null || right.right == null) return false
 
-        val bindingContext = right.analyze(BodyResolveMode.PARTIAL)
+        val bindingContext = right.analyze(BodyResolveMode.PARTIAL_WITH_CFA)
         if (!checkExpressionRepeat(left, right, bindingContext)) return false
 
         // now check that the resulting operator assignment will be resolved
@@ -55,9 +58,23 @@ class ReplaceWithOperatorAssignmentInspection : AbstractApplicabilityBasedInspec
     override val defaultFixText = "Replace with operator-assignment"
 
     override fun fixText(element: KtBinaryExpression) =
-            "Replace with '${element.operationReference.operationSignTokenType?.value}='"
+        "Replace with '${(element.right as? KtBinaryExpression)?.operationReference?.operationSignTokenType?.value}='"
 
-    private fun checkExpressionRepeat(variableExpression: KtNameReferenceExpression, expression: KtBinaryExpression, bindingContext: BindingContext): Boolean {
+    override fun inspectionHighlightType(element: KtBinaryExpression): ProblemHighlightType {
+        val left = element.left as? KtNameReferenceExpression
+        if (left != null) {
+            val context = left.analyze(BodyResolveMode.PARTIAL)
+            val leftType = left.getType(context)
+            if (leftType?.isReadOnlyCollectionOrMap(element.builtIns) == true) return ProblemHighlightType.INFORMATION
+        }
+        return ProblemHighlightType.GENERIC_ERROR_OR_WARNING
+    }
+
+    private fun checkExpressionRepeat(
+        variableExpression: KtNameReferenceExpression,
+        expression: KtBinaryExpression,
+        bindingContext: BindingContext
+    ): Boolean {
         val descriptor = bindingContext[BindingContext.REFERENCE_TARGET, expression.operationReference]?.containingDeclaration
         val isPrimitiveOperation = descriptor is ClassDescriptor && KotlinBuiltIns.isPrimitiveType(descriptor.defaultType)
 
@@ -75,7 +92,11 @@ class ReplaceWithOperatorAssignmentInspection : AbstractApplicabilityBasedInspec
 
             expressionLeft is KtBinaryExpression -> {
                 val sameCommutativeOperation = expressionLeft.operationToken == operationToken && isCommutative(operationToken)
-                isPrimitiveOperation && sameCommutativeOperation && checkExpressionRepeat(variableExpression, expressionLeft, bindingContext)
+                isPrimitiveOperation && sameCommutativeOperation && checkExpressionRepeat(
+                    variableExpression,
+                    expressionLeft,
+                    bindingContext
+                )
             }
 
             else -> {
@@ -86,10 +107,10 @@ class ReplaceWithOperatorAssignmentInspection : AbstractApplicabilityBasedInspec
 
     private fun isCommutative(operationToken: IElementType) = operationToken == KtTokens.PLUS || operationToken == KtTokens.MUL
     private fun isArithmeticOperation(operationToken: IElementType) = operationToken == KtTokens.PLUS ||
-                                                                       operationToken == KtTokens.MINUS ||
-                                                                       operationToken == KtTokens.MUL ||
-                                                                       operationToken == KtTokens.DIV ||
-                                                                       operationToken == KtTokens.PERC
+            operationToken == KtTokens.MINUS ||
+            operationToken == KtTokens.MUL ||
+            operationToken == KtTokens.DIV ||
+            operationToken == KtTokens.PERC
 
     override fun applyTo(element: PsiElement, project: Project, editor: Editor?) {
         (element as? KtBinaryExpression)?.replace(buildOperatorAssignment(element))
@@ -97,17 +118,17 @@ class ReplaceWithOperatorAssignmentInspection : AbstractApplicabilityBasedInspec
 
     private fun buildOperatorAssignment(element: KtBinaryExpression): KtBinaryExpression {
         val replacement = buildOperatorAssignmentText(
-                element.left as KtNameReferenceExpression,
-                element.right as KtBinaryExpression,
-                ""
+            element.left as KtNameReferenceExpression,
+            element.right as KtBinaryExpression,
+            ""
         )
         return KtPsiFactory(element).createExpression(replacement) as KtBinaryExpression
     }
 
     private tailrec fun buildOperatorAssignmentText(
-            variableExpression: KtNameReferenceExpression,
-            expression: KtBinaryExpression,
-            tail: String
+        variableExpression: KtNameReferenceExpression,
+        expression: KtBinaryExpression,
+        tail: String
     ): String {
         val operationText = expression.operationReference.text
         val variableName = variableExpression.text
@@ -123,9 +144,9 @@ class ReplaceWithOperatorAssignmentInspection : AbstractApplicabilityBasedInspec
 
             expression.left is KtBinaryExpression ->
                 buildOperatorAssignmentText(
-                        variableExpression,
-                        expression.left as KtBinaryExpression,
-                        "$operationText ${expression.right!!.text}".appendTail()
+                    variableExpression,
+                    expression.left as KtBinaryExpression,
+                    "$operationText ${expression.right!!.text}".appendTail()
                 )
 
             else ->

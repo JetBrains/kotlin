@@ -265,7 +265,7 @@ public class InterceptionInstrumenter {
     private byte[] instrument(byte[] classData, List<MethodInstrumenter> instrumenters) {
         ClassReader cr = new ClassReader(classData);
         ClassWriter cw = new ClassWriter(cr, 0);
-        cr.accept(new ClassVisitor(ASM5, cw) {
+        cr.accept(new ClassVisitor(API_VERSION, cw) {
             private final Map<MethodInstrumenter, String> matchedMethods = new HashMap<>();
 
             @Override
@@ -316,7 +316,7 @@ public class InterceptionInstrumenter {
                 int maxStackDepth = getMaxStackDepth(name, desc, normalReturnData, enterData, exceptionData);
                 boolean isConstructor = "<init>".equals(name);
 
-                return new MethodVisitor(ASM5, mv) {
+                return new MethodVisitor(API_VERSION, mv) {
 
                     private InstructionAdapter ia = null;
 
@@ -421,7 +421,7 @@ public class InterceptionInstrumenter {
             }
 
             private TraceMethodVisitor getDumpingVisitorWrapper(MethodVisitor mv, String methodName, String methodDesc) {
-                return new TraceMethodVisitor(mv, new Textifier(ASM5) {
+                return new TraceMethodVisitor(mv, new Textifier(API_VERSION) {
                     @Override
                     public void visitMethodEnd() {
                         System.out.println(cr.getClassName() + ":" + methodName + methodDesc);
@@ -514,7 +514,7 @@ public class InterceptionInstrumenter {
 
             }
         }
-        ia.invokevirtual(methodData.getDeclaringClass(), methodData.getName(), methodData.getDesc());
+        ia.invokevirtual(methodData.getDeclaringClass(), methodData.getName(), methodData.getDesc(), false);
         Type type = asmMethod.getReturnType();
         if (type.getSort() != Type.VOID) {
             if (type.getSize() == 1) {

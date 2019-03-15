@@ -1,0 +1,4 @@
+// DISABLE-ERRORS
+fun main(args: Array<String>) {
+    return 1
+}

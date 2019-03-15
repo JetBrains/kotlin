@@ -81,6 +81,7 @@ public class StubClassBuilder extends AbstractClassBuilder {
     ) {
         assert v == null : "defineClass() called twice?";
 
+        //noinspection ConstantConditions
         v = new StubBuildingVisitor<>(null, EMPTY_STRATEGY, parent, access, calculateShortName(name));
 
         super.defineClass(origin, version, access, name, signature, superName, interfaces);

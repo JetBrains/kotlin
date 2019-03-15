@@ -1,0 +1,2 @@
+public abstract interface CustomAnnotation : R|java/lang/Object| {
+}

@@ -2,26 +2,6 @@ LineBreakpoint created at createExpressionSimple.kt:15
 Run Java
 Connected to the target VM
 createExpressionSimple.kt:15
-package createExpressionSimple
-
-class MyClass: Base() {
-    val i = 1
-}
-
-open class Base {
-    val baseI = 2
-}
-
-fun main(args: Array<String>) {
-    val myClass: Base = MyClass()
-    val myBase = Base()
-    //Breakpoint!
-    val a = 1
-}
-
-// PRINT_FRAME
-// DESCRIPTOR_VIEW_OPTIONS: NAME_EXPRESSION
-
  frame    = main
    local    = args (expression = args)
    local    = myClass (expression = myClass)

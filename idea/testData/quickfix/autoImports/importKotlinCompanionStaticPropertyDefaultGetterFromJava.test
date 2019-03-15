@@ -16,7 +16,7 @@ public class Foo {
 // FILE: foo/Bar.dependency.kt
 package foo
 
-object Bar {
+class Bar {
     companion object {
         @JvmStatic val testValue = "foobar";
     }

@@ -1,0 +1,33 @@
+FILE: locals.kt
+    public? final? function withLocals(p: Int): Int {
+        public? final? class Local {
+            public? constructor(pp: Int): super<kotlin/Any>()
+
+            public? final? property pp(val): Int
+                public? get(): Int
+
+            public? final? function diff(): <implicit> {
+                return@@@diff minus#(pp#, p#)
+            }
+
+        }
+
+        val x: <implicit> = Local#(Int(42)).diff#()
+        public? final? function sum(y: Int, z: Int, f: ( (Int, Int) -> Int )): Int {
+            return@@@sum plus#(x#, f#(plus#(y#, z#)))
+        }
+
+        val code: <implicit> = object : Any {
+            public? constructor(): super<Any>()
+
+            public? final? function foo(): <implicit> {
+                return@@@foo hashCode#()
+            }
+
+        }
+        .foo#()
+        return@@@withLocals sum#(code#, Local#(Int(1)).diff#(), function <anonymous>(x: Int, y: Int): <implicit> {
+            return plus#(x#, y#)
+        }
+        )
+    }

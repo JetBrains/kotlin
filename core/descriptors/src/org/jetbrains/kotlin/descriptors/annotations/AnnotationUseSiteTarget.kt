@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.descriptors.annotations
 
-import org.jetbrains.kotlin.descriptors.*
-
 enum class AnnotationUseSiteTarget(renderName: String? = null) {
     FIELD(),
     FILE(),
@@ -30,14 +28,4 @@ enum class AnnotationUseSiteTarget(renderName: String? = null) {
     PROPERTY_DELEGATE_FIELD("delegate");
 
     val renderName: String = renderName ?: name.toLowerCase()
-
-    companion object {
-        fun getAssociatedUseSiteTarget(descriptor: DeclarationDescriptor): AnnotationUseSiteTarget? = when (descriptor) {
-            is PropertyDescriptor -> PROPERTY
-            is ValueParameterDescriptor -> CONSTRUCTOR_PARAMETER
-            is PropertyGetterDescriptor -> PROPERTY_GETTER
-            is PropertySetterDescriptor -> PROPERTY_SETTER
-            else -> null
-        }
-    }
 }

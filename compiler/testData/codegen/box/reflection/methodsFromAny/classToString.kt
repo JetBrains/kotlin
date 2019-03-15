@@ -1,7 +1,7 @@
-// TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS, NATIVE
+// TARGET_BACKEND: JVM
 
 // WITH_REFLECT
+package test
 
 import kotlin.test.*
 
@@ -12,9 +12,9 @@ class A {
 }
 
 fun box(): String {
-    assertEquals("class A", "${A::class}")
-    assertEquals("class A\$Nested", "${A.Nested::class}")
-    assertEquals("class A\$Companion", "${A.Companion::class}")
+    assertEquals("class test.A", "${A::class}")
+    assertEquals("class test.A\$Nested", "${A.Nested::class}")
+    assertEquals("class test.A\$Companion", "${A.Companion::class}")
 
     assertEquals("class kotlin.Any", "${Any::class}")
     assertEquals("class kotlin.Int", "${Int::class}")

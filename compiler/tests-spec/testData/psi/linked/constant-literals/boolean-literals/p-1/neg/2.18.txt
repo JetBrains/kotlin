@@ -1,0 +1,95 @@
+KtFile: 2.18.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  TYPEALIAS
+    PsiElement(typealias)('typealias')
+    PsiWhiteSpace(' ')
+    PsiErrorElement:Type name expected
+      PsiElement(true)('true')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('Boolean')
+  PsiWhiteSpace('\n\n')
+  TYPEALIAS
+    MODIFIER_LIST
+      PsiElement(private)('private')
+    PsiWhiteSpace(' ')
+    PsiElement(typealias)('typealias')
+    PsiWhiteSpace(' ')
+    PsiErrorElement:Type name expected
+      PsiElement(false)('false')
+    TYPE_PARAMETER_LIST
+      PsiElement(LT)('<')
+      TYPE_PARAMETER
+        PsiElement(IDENTIFIER)('T')
+      PsiElement(GT)('>')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('List')
+        TYPE_ARGUMENT_LIST
+          PsiElement(LT)('<')
+          TYPE_PROJECTION
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('T')
+          PsiElement(GT)('>')
+  PsiWhiteSpace('\n\n')
+  TYPEALIAS
+    MODIFIER_LIST
+      PsiElement(internal)('internal')
+    PsiWhiteSpace(' ')
+    PsiElement(typealias)('typealias')
+    PsiWhiteSpace(' ')
+    PsiErrorElement:Type name expected
+      PsiElement(true)('true')
+    TYPE_PARAMETER_LIST
+      PsiElement(LT)('<')
+      TYPE_PARAMETER
+        PsiErrorElement:Type parameter name expected
+          PsiElement(false)('false')
+      PsiElement(GT)('>')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('Map')
+        TYPE_ARGUMENT_LIST
+          PsiElement(LT)('<')
+          TYPE_PROJECTION
+            TYPE_REFERENCE
+              PsiErrorElement:Type expected
+                PsiElement(true)('true')
+          PsiErrorElement:Expecting a '>'
+            <empty list>
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(LT)('<')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(false)('false')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(GT)('>')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(COMMA)(',')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('List')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(LT)('<')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(true)('true')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(GT)('>')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(GT)('>')

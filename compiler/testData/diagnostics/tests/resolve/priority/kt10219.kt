@@ -9,7 +9,7 @@ class A
 
 var A.timeInMillis: String
     get() = ""
-    set(v) {}
+    set(<!UNUSED_PARAMETER!>v<!>) {}
 
 fun a(c: Calendar) {
     A().apply {

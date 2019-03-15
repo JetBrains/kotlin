@@ -2,7 +2,7 @@
 
 class A {
     inner class B {
-        companion <!NESTED_CLASS_NOT_ALLOWED(Companion object)!>object<!> { }
+        companion <!NESTED_CLASS_NOT_ALLOWED("Companion object")!>object<!> { }
     }
 }
 

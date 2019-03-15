@@ -1,3 +1,4 @@
+warning: language version 1.1 is deprecated and its support will be removed in a future version of Kotlin
 compiler/testData/cli/jvm/apiVersion1.0.kt:8:1: error: the feature "coroutines" is only available since API version 1.1 (see: https://kotlinlang.org/docs/diagnostics/experimental-coroutines)
 suspend fun test() {
 ^

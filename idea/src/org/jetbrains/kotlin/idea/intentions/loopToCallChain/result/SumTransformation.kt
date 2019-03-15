@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.intentions.loopToCallChain.result
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.*
@@ -71,7 +70,7 @@ abstract class SumTransformationBase(
             val value = statement.right ?: return null
 
             val valueType = value.typeWithSmartCast()?.toSupportedType() ?: return null
-            val sumType = (variableInitialization.variable.resolveToDescriptorIfAny() as? VariableDescriptor)?.type?.toSupportedType() ?: return null
+            val sumType = variableInitialization.variable.resolveToDescriptorIfAny()?.type?.toSupportedType() ?: return null
 
             val conversionFunctionName = when (sumType) {
                 SupportedType.INT -> {

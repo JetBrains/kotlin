@@ -12,10 +12,10 @@ fun nullable(a: String?): String? = ""
 @Nullable fun nullableWithN(): String? = ""
 @NotNull fun nullableWithNN(): String? = ""
 
-val nullableVal: String? = ""
-var nullableVar: String? = ""
-val notNullVal: String = ""
-var notNullVar: String = ""
+val nullableVal: String? = { "" }()
+var nullableVar: String? = { "" }()
+val notNullVal: String = { "" }()
+var notNullVar: String = { "" }()
 
 val notNullValWithGet: String
     @[Nullable] get() = ""
@@ -31,6 +31,6 @@ var nullableVarWithGetSet: String?
     @NotNull get() = ""
     @NotNull set(v) {}
 
-private val privateNn: String = ""
-private val privateN: String? = ""
+private val privateNn: String = { "" }()
+private val privateN: String? = { "" }()
 private fun privateFun(a: String, b: String?): String? = null

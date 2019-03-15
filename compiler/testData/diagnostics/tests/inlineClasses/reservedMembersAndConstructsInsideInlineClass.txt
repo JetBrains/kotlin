@@ -1,0 +1,63 @@
+package
+
+public final inline class IC1 {
+    public constructor IC1(/*0*/ x: kotlin.Any)
+    public final val x: kotlin.Any
+    public final fun box(): kotlin.Unit
+    public final fun box(/*0*/ x: kotlin.Any): kotlin.Unit
+    public open override /*1*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+    public final fun unbox(): kotlin.Unit
+    public final fun unbox(/*0*/ x: kotlin.Any): kotlin.Unit
+}
+
+public final inline class IC2 {
+    public constructor IC2(/*0*/ x: kotlin.Any)
+    public final val x: kotlin.Any
+    public final fun box(): kotlin.Any
+    public final fun box(/*0*/ x: kotlin.Any): kotlin.Unit
+    public final fun equals(/*0*/ my: kotlin.Any, /*1*/ other: kotlin.Any): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public final fun hashCode(/*0*/ a: kotlin.Any): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+    public final fun unbox(): kotlin.Any
+    public final fun unbox(/*0*/ x: kotlin.Any): kotlin.Unit
+}
+
+public final inline class IC3 {
+    public constructor IC3(/*0*/ x: kotlin.Any)
+    public final val x: kotlin.Any
+    public final fun box(/*0*/ x: kotlin.Any): kotlin.Any
+    public final fun equals(): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+    public final fun unbox(/*0*/ x: kotlin.Any): kotlin.Any
+}
+
+public final inline class IC4 : WithBox {
+    public constructor IC4(/*0*/ s: kotlin.String)
+    public final val s: kotlin.String
+    public open override /*1*/ fun box(): kotlin.String
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+public final inline class IC5 {
+    public constructor IC5(/*0*/ i: kotlin.Int)
+    public constructor IC5(/*0*/ a: kotlin.String)
+    public final val a: kotlin.String
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+public interface WithBox {
+    public abstract fun box(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

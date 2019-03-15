@@ -48,6 +48,3 @@ package p {
 package
 
 public fun test(/*0*/ a: p.A): kotlin.Unit
-
-package p {
-}

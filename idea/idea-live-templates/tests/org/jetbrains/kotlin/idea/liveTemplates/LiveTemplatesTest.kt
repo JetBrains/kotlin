@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -29,60 +29,64 @@ class LiveTemplatesTest : KotlinLightCodeInsightFixtureTestCase() {
     }
 
     fun testSout() {
-        paremeterless()
+        parameterless()
     }
 
     fun testSout_BeforeCall() {
-        paremeterless()
+        parameterless()
     }
 
     fun testSout_BeforeCallSpace() {
-        paremeterless()
+        parameterless()
     }
 
     fun testSout_BeforeBinary() {
-        paremeterless()
+        parameterless()
     }
 
     fun testSout_InCallArguments() {
-        paremeterless()
+        parameterless()
     }
 
     fun testSout_BeforeQualifiedCall() {
-        paremeterless()
+        parameterless()
     }
 
     fun testSout_AfterSemicolon() {
-        paremeterless()
+        parameterless()
     }
 
     fun testSoutf() {
-        paremeterless()
+        parameterless()
     }
 
     fun testSoutf_InCompanion() {
-        paremeterless()
+        parameterless()
     }
 
     fun testSerr() {
-        paremeterless()
+        parameterless()
     }
 
     fun testMain() {
-        paremeterless()
+        parameterless()
+    }
+
+    fun testMaina() {
+        parameterless()
     }
 
     fun testSoutv() {
         start()
 
         assertStringItems("DEFAULT_BUFFER_SIZE", "args", "x", "y")
-        typeAndNextTab("y")
+        typeAndNextTab("y.plus(\"test\")")
 
         checkAfter()
     }
 
     fun testSoutp() {
-        paremeterless()
+        parameterless()
     }
 
     fun testFun0() {
@@ -228,7 +232,7 @@ class LiveTemplatesTest : KotlinLightCodeInsightFixtureTestCase() {
         doTestIfnInn()
     }
 
-    private fun paremeterless() {
+    private fun parameterless() {
         start()
 
         checkAfter()
@@ -268,17 +272,18 @@ class LiveTemplatesTest : KotlinLightCodeInsightFixtureTestCase() {
         val project = project
         UIUtil.invokeAndWaitIfNeeded(Runnable {
             CommandProcessor.getInstance().executeCommand(
-                    project,
-                    {
-                        templateState!!.nextTab()
-                    },
-                    "nextTab",
-                    null)
+                project,
+                {
+                    templateState!!.nextTab()
+                },
+                "nextTab",
+                null
+            )
         })
     }
 
     private fun nextTab(times: Int) {
-        for (i in 0..times - 1) {
+        for (i in 0 until times) {
             nextTab()
         }
     }

@@ -76,6 +76,8 @@ object DirectiveBasedActionUtils {
             "Show property type hints",
             "Show parameter type hints",
             "Show argument name hints",
-            "Show hints for suspending calls"
+            "Show hints for suspending calls",
+            "Add 'JUnit",
+            "Add 'testng"
     )
 }

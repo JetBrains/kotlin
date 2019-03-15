@@ -1,4 +1,6 @@
+// KJS_WITH_FULL_RUNTIME
 // !LANGUAGE: +InlineClasses
+// IGNORE_BACKEND: JVM_IR
 
 inline class UInt(private val value: Int) : Comparable<UInt> {
     companion object {

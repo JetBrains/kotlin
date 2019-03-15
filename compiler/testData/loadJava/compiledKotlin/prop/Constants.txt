@@ -1,32 +1,32 @@
 package test
 
-public val MAX_HIGH_SURROGATE: kotlin.Char = \uDBFF ('?')
+public const val MAX_HIGH_SURROGATE: kotlin.Char = \uDBFF ('?')
     public fun <get-MAX_HIGH_SURROGATE>(): kotlin.Char
-public val b: kotlin.Byte = 100.toByte()
+public const val b: kotlin.Byte = 100.toByte()
     public fun <get-b>(): kotlin.Byte
-public val b1: kotlin.Byte = 1.toByte()
+public const val b1: kotlin.Byte = 1.toByte()
     public fun <get-b1>(): kotlin.Byte
-public val bb: kotlin.Boolean = true
+public const val bb: kotlin.Boolean = true
     public fun <get-bb>(): kotlin.Boolean
-public val c: kotlin.Char = \u03C0 ('π')
+public const val c: kotlin.Char = \u03C0 ('π')
     public fun <get-c>(): kotlin.Char
-public val d: kotlin.Double = 3.14.toDouble()
+public const val d: kotlin.Double = 3.14.toDouble()
     public fun <get-d>(): kotlin.Double
-public val f: kotlin.Float = 3.14.toFloat()
+public const val f: kotlin.Float = 3.14.toFloat()
     public fun <get-f>(): kotlin.Float
-public val i: kotlin.Int = 2000000
+public const val i: kotlin.Int = 2000000
     public fun <get-i>(): kotlin.Int
-public val i1: kotlin.Short = 1.toShort()
+public const val i1: kotlin.Short = 1.toShort()
     public fun <get-i1>(): kotlin.Short
-public val l: kotlin.Long = 2000000000000.toLong()
+public const val l: kotlin.Long = 2000000000000.toLong()
     public fun <get-l>(): kotlin.Long
-public val l1: kotlin.Long = 1.toLong()
+public const val l1: kotlin.Long = 1.toLong()
     public fun <get-l1>(): kotlin.Long
-public val nl: kotlin.Char = \u000A ('\n')
+public const val nl: kotlin.Char = \u000A ('\n')
     public fun <get-nl>(): kotlin.Char
-public val s: kotlin.Short = 20000.toShort()
+public const val s: kotlin.Short = 20000.toShort()
     public fun <get-s>(): kotlin.Short
-public val s1: kotlin.Short = 1.toShort()
+public const val s1: kotlin.Short = 1.toShort()
     public fun <get-s1>(): kotlin.Short
-public val str: kotlin.String = ":)"
+public const val str: kotlin.String = ":)"
     public fun <get-str>(): kotlin.String

@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.Constrain
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.StrictEqualityTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.*
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
 
 fun CallableDescriptor.fuzzyReturnType() = returnType?.toFuzzyType(typeParameters)
@@ -88,9 +89,13 @@ class FuzzyType(
         }
     }
 
+    // Diagnostic for EA-109046
+    @Suppress("USELESS_ELVIS")
     private fun TypeParameterDescriptor.toOriginal(): TypeParameterDescriptor {
         val callableDescriptor = containingDeclaration as? CallableMemberDescriptor ?: return this
-        return callableDescriptor.original.typeParameters[index]
+        val original = callableDescriptor.original ?: error("original = null for $callableDescriptor")
+        val typeParameters = original.typeParameters ?: error("typeParameters = null for $original")
+        return typeParameters[index]
     }
 
     override fun equals(other: Any?) = other is FuzzyType && other.type == type && other.freeParameters == freeParameters
@@ -130,6 +135,7 @@ class FuzzyType(
     private fun matchedSubstitutor(otherType: FuzzyType, matchKind: MatchKind): TypeSubstitutor? {
         if (type.isError) return null
         if (otherType.type.isError) return null
+        if (otherType.type.isUnit() && matchKind == MatchKind.IS_SUBTYPE) return TypeSubstitutor.EMPTY
 
         fun KotlinType.checkInheritance(otherType: KotlinType): Boolean {
             return when (matchKind) {

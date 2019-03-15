@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.framework;
 
-import com.intellij.framework.FrameworkType;
 import com.intellij.openapi.roots.LibraryOrderEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.OrderEntry;
@@ -39,7 +38,7 @@ public class FrameworksCompatibilityUtils {
     public static void suggestRemoveIncompatibleFramework(
             @NotNull ModifiableRootModel rootModel,
             @NotNull Set<? extends LibraryKind> frameworkLibraryKinds,
-            @NotNull FrameworkType frameworkType
+            @NotNull String presentableName
     ) {
         List<OrderEntry> existingEntries = new ArrayList<OrderEntry>();
 
@@ -57,7 +56,7 @@ public class FrameworksCompatibilityUtils {
 
         removeWithConfirm(rootModel, existingEntries,
                           String.format("Current module is already configured with '%s' framework.\nDo you want to remove it?",
-                                        frameworkType.getPresentableName()),
+                                        presentableName),
                           "Framework Conflict");
     }
 

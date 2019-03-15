@@ -1,0 +1,18 @@
+// FIX: Add '.getOrThrow()' to function result (breaks use-sites!)
+package kotlin
+
+fun incorrectBlock(arg: Boolean, arg2: Boolean?): Int {
+    if (arg) {
+        return Result(1).getOrThrow()
+    } else {
+        when (arg2) {
+            true -> return Result(2).getOrThrow()
+            else -> {
+                if (arg2 == false) {
+                    return Result(3).getOrThrow()
+                }
+                return Result(4).getOrThrow()
+            }
+        }
+    }
+}

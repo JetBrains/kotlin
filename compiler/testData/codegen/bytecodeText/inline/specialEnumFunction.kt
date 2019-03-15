@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 inline fun <reified T : Enum<T>> myValues(): String {
     val values = enumValues<T>()
     return "OK"

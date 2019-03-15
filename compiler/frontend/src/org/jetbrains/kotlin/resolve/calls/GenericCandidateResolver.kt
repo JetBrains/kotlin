@@ -1,25 +1,11 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve.calls
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.ReflectionTypes
-import org.jetbrains.kotlin.builtins.isBuiltinFunctionalTypeOrSubtype
-import org.jetbrains.kotlin.builtins.isFunctionTypeOrSubtype
+import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
@@ -261,7 +247,12 @@ class GenericCandidateResolver(
         val dataFlowInfoForArgument = context.candidateCall.dataFlowInfoForArguments.getInfo(valueArgument)
         val newContext = context.replaceExpectedType(expectedType).replaceDataFlowInfo(dataFlowInfoForArgument)
 
-        val typeInfoForCall = argumentTypeResolver.getArgumentTypeInfo(argumentExpression, newContext, resolveFunctionArgumentBodies)
+        val typeInfoForCall = argumentTypeResolver.getArgumentTypeInfo(
+            argumentExpression,
+            newContext,
+            resolveFunctionArgumentBodies,
+            expectedType?.isSuspendFunctionType == true
+        )
         context.candidateCall.dataFlowInfoForArguments.updateInfo(valueArgument, typeInfoForCall.dataFlowInfo)
 
         val constraintPosition = VALUE_PARAMETER_POSITION.position(valueParameterDescriptor.index)
@@ -423,7 +414,7 @@ class GenericCandidateResolver(
 
         val effectiveExpectedType = getEffectiveExpectedType(valueParameterDescriptor, valueArgument, context)
 
-        if (isCoroutineCallWithAdditionalInference(valueParameterDescriptor, valueArgument)) {
+        if (isCoroutineCallWithAdditionalInference(valueParameterDescriptor, valueArgument, languageVersionSettings)) {
             coroutineInferenceSupport.analyzeCoroutine(functionLiteral, valueArgument, constraintSystem, context, effectiveExpectedType)
         }
 
@@ -435,9 +426,15 @@ class GenericCandidateResolver(
         var expectedType = newSubstitution.buildSubstitutor().substitute(effectiveExpectedType, Variance.IN_VARIANCE)
 
         if (expectedType == null || TypeUtils.isDontCarePlaceholder(expectedType)) {
-            expectedType = argumentTypeResolver.getShapeTypeOfFunctionLiteral(functionLiteral, context.scope, context.trace, false)
+            expectedType = argumentTypeResolver.getShapeTypeOfFunctionLiteral(
+                functionLiteral,
+                context.scope,
+                context.trace,
+                false,
+                expectedType?.isSuspendFunctionType == true
+            )
         }
-        if (expectedType == null || !expectedType.isBuiltinFunctionalTypeOrSubtype || hasUnknownFunctionParameter(expectedType)) {
+        if (expectedType == null || !expectedType.isBuiltinFunctionalType || hasUnknownFunctionParameter(expectedType)) {
             return
         }
         val dataFlowInfoForArguments = context.candidateCall.dataFlowInfoForArguments
@@ -463,7 +460,8 @@ class GenericCandidateResolver(
                 .replaceDataFlowInfo(dataFlowInfoForArgument).replaceResolutionResultsCache(temporaryToResolveFunctionLiteral.cache)
                 .replaceContextDependency(INDEPENDENT)
             val type = argumentTypeResolver.getFunctionLiteralTypeInfo(
-                argumentExpression, functionLiteral, newContext, RESOLVE_FUNCTION_ARGUMENTS
+                argumentExpression, functionLiteral, newContext, RESOLVE_FUNCTION_ARGUMENTS,
+                expectedType.isSuspendFunctionType
             ).type
             if (!mismatch[0]) {
                 constraintSystem.addSubtypeConstraint(type, effectiveExpectedTypeInSystem, position)
@@ -476,8 +474,10 @@ class GenericCandidateResolver(
         val newContext = context.replaceExpectedType(expectedTypeWithEstimatedReturnType).replaceDataFlowInfo(dataFlowInfoForArgument)
             .replaceContextDependency(INDEPENDENT)
         val type =
-            argumentTypeResolver.getFunctionLiteralTypeInfo(argumentExpression, functionLiteral, newContext, RESOLVE_FUNCTION_ARGUMENTS)
-                .type
+            argumentTypeResolver.getFunctionLiteralTypeInfo(
+                argumentExpression, functionLiteral, newContext, RESOLVE_FUNCTION_ARGUMENTS,
+                expectedType.isSuspendFunctionType
+            ).type
         constraintSystem.addSubtypeConstraint(type, effectiveExpectedTypeInSystem, position)
     }
 
@@ -491,7 +491,7 @@ class GenericCandidateResolver(
         val effectiveExpectedType = getEffectiveExpectedType(valueParameterDescriptor, valueArgument, context)
         val expectedType = getExpectedTypeForCallableReference(callableReference, constraintSystem, context, effectiveExpectedType)
                 ?: return
-        if (!ReflectionTypes.isCallableType(expectedType)) return
+        if (!expectedType.isApplicableExpectedTypeForCallableReference()) return
         val resolvedType = getResolvedTypeForCallableReference(callableReference, context, expectedType, valueArgument) ?: return
         val position = VALUE_PARAMETER_POSITION.position(valueParameterDescriptor.index)
         constraintSystem.addSubtypeConstraint(
@@ -554,4 +554,11 @@ fun makeConstantSubstitutor(typeParameterDescriptors: Collection<TypeParameterDe
 
         override fun isEmpty() = false
     })
+}
+
+private fun KotlinType.isApplicableExpectedTypeForCallableReference(): Boolean {
+    return this.isFunctionType ||
+            ReflectionTypes.isBaseTypeForNumberedReferenceTypes(this) ||
+            ReflectionTypes.isNumberedKFunctionOrKSuspendFunction(this) ||
+            ReflectionTypes.isNumberedKPropertyOrKMutablePropertyType(this)
 }

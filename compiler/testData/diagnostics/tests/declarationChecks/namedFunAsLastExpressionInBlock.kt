@@ -7,7 +7,7 @@ fun test() {
     val x = fun <!ANONYMOUS_FUNCTION_WITH_NAME!>named1<!>(x: Int): Int { return 1 }
     x checkType { _<Function1<Int, Int>>() }
 
-    foo { <!EXPECTED_TYPE_MISMATCH(\(\) -> Int)!>fun named2(): Int {return 1}<!> }
+    foo { <!EXPECTED_TYPE_MISMATCH("() -> Int")!>fun named2(): Int {return 1}<!> }
     foo({ <!EXPECTED_TYPE_MISMATCH!>fun named3() = 1<!> })
 
     val x1 =
@@ -33,7 +33,7 @@ fun test() {
 
     val x31 = when (1) {
         0 -> {
-            <!OI;EXPECTED_TYPE_MISMATCH!>fun <!NI;ANONYMOUS_FUNCTION_WITH_NAME!>named10<!>(): Int {return 1}<!>
+            <!OI;EXPECTED_TYPE_MISMATCH!>fun named10(): Int {return 1}<!>
         }
         else -> <!OI;EXPECTED_TYPE_MISMATCH!>fun <!NI;ANONYMOUS_FUNCTION_WITH_NAME!>named11<!>() = 1<!>
     }
@@ -45,10 +45,16 @@ fun test() {
     x4 checkType { _<Function1<Int, Unit>>() }
 
     <!UNUSED_LAMBDA_EXPRESSION!>{ y: Int -> fun named14(): Int {return 1} }<!>
+    val b = (fun <!ANONYMOUS_FUNCTION_WITH_NAME!>named15<!>(): Boolean { return true })()
+
+    baz(fun <!ANONYMOUS_FUNCTION_WITH_NAME!>named16<!>(){})
 }
+
+fun bar() = fun <!ANONYMOUS_FUNCTION_WITH_NAME!>named<!>() {}
 
 fun <T> run(block: () -> T): T = null!!
 fun run2(block: () -> Unit): Unit = null!!
+fun baz(obj: Any?) {}
 
 fun success() {
     run { fun named1() = 1 }
@@ -56,4 +62,14 @@ fun success() {
 
     val x = run { fun named3() = 1 }
     x checkType { _<Unit>() }
+
+    val y = when (1) {
+        0 -> {
+            <!OI;EXPECTED_TYPE_MISMATCH!>fun named4(): Int {return 1}<!>
+        }
+        else -> {
+            <!OI;EXPECTED_TYPE_MISMATCH!>fun named5(): Int {return 1}<!>
+        }
+    }
+    y checkType { <!OI;TYPE_MISMATCH!>_<!><Unit>() }
 }

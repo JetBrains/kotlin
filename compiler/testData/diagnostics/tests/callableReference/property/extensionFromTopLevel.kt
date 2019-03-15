@@ -7,7 +7,7 @@ val String.countCharacters: Int
 
 var Int.meaning: Long
     get() = 42L
-    set(value) {}
+    set(<!UNUSED_PARAMETER!>value<!>) {}
 
 fun test() {
     val f = String::countCharacters

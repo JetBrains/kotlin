@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.SupertypeLoopChecker;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
+import org.jetbrains.kotlin.storage.StorageManager;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,9 +37,10 @@ public class ClassTypeConstructorImpl extends AbstractClassTypeConstructor imple
     public ClassTypeConstructorImpl(
             @NotNull ClassDescriptor classDescriptor,
             @NotNull List<? extends TypeParameterDescriptor> parameters,
-            @NotNull Collection<KotlinType> supertypes
+            @NotNull Collection<KotlinType> supertypes,
+            @NotNull StorageManager storageManager
     ) {
-        super(LockBasedStorageManager.NO_LOCKS);
+        super(storageManager);
         this.classDescriptor = classDescriptor;
         this.parameters = Collections.unmodifiableList(new ArrayList<TypeParameterDescriptor>(parameters));
         this.supertypes = Collections.unmodifiableCollection(supertypes);

@@ -1,5 +1,4 @@
-// TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS, NATIVE
+// TARGET_BACKEND: JVM
 
 class MyMapEntry<K, V>: Map.Entry<K, V> {
     override fun hashCode(): Int = 0

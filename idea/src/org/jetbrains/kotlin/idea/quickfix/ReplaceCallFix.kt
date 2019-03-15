@@ -88,7 +88,7 @@ class ReplaceWithSafeCallFix(
                 return ReplaceWithSafeCallFix(qualifiedExpression, qualifiedExpression.shouldHaveNotNullType())
             }
             else {
-                psiElement as? KtNameReferenceExpression ?: return null
+                if (psiElement !is KtNameReferenceExpression) return null
                 if (psiElement.getResolvedCall(psiElement.analyze())?.getImplicitReceiverValue() != null) {
                     val expressionToReplace: KtExpression = psiElement.parent as? KtCallExpression ?: psiElement
                     return ReplaceImplicitReceiverCallFix(expressionToReplace, expressionToReplace.shouldHaveNotNullType())

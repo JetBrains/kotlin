@@ -58,6 +58,9 @@ interface IrElementTransformer<in D> : IrElementVisitor<IrElement, D> {
     override fun visitBlockBody(body: IrBlockBody, data: D) = visitBody(body, data)
     override fun visitSyntheticBody(body: IrSyntheticBody, data: D) = visitBody(body, data)
 
+    override fun visitSuspendableExpression(expression: IrSuspendableExpression, data: D) = visitExpression(expression, data)
+    override fun visitSuspensionPoint(expression: IrSuspensionPoint, data: D) = visitExpression(expression, data)
+
     override fun visitExpression(expression: IrExpression, data: D): IrExpression =
         expression.also { it.transformChildren(this, data) }
 
@@ -129,6 +132,10 @@ interface IrElementTransformer<in D> : IrElementVisitor<IrElement, D> {
 
     override fun visitReturn(expression: IrReturn, data: D) = visitExpression(expression, data)
     override fun visitThrow(expression: IrThrow, data: D) = visitExpression(expression, data)
+
+    override fun visitDynamicExpression(expression: IrDynamicExpression, data: D) = visitExpression(expression, data)
+    override fun visitDynamicOperatorExpression(expression: IrDynamicOperatorExpression, data: D) = visitDynamicExpression(expression, data)
+    override fun visitDynamicMemberExpression(expression: IrDynamicMemberExpression, data: D) = visitDynamicExpression(expression, data)
 
     override fun visitErrorDeclaration(declaration: IrErrorDeclaration, data: D) = visitDeclaration(declaration, data)
     override fun visitErrorExpression(expression: IrErrorExpression, data: D) = visitExpression(expression, data)

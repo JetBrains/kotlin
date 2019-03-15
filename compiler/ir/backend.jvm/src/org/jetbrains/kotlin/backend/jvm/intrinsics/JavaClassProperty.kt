@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.codegen.AsmUtil.boxType
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
@@ -38,7 +37,7 @@ object JavaClassProperty : IntrinsicMethod() {
                 val type = value.type
                 when {
                     type == Type.VOID_TYPE -> {
-                        StackValue.unit().put(AsmTypes.UNIT_TYPE, v)
+                        StackValue.unit().put(v)
                         v.invokevirtual("java/lang/Object", "getClass", "()Ljava/lang/Class;", false)
                     }
                     isPrimitive(type) -> {

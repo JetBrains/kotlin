@@ -1,0 +1,8 @@
+// "Convert member to extension" "true"
+// WITH_RUNTIME
+interface B {
+}
+
+inline fun B.foo() {
+    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+}

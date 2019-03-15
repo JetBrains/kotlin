@@ -16,14 +16,13 @@
 
 package org.jetbrains.kotlin.resolve;
 
-import org.jetbrains.annotations.Mutable;
+import kotlin.annotations.jvm.Mutable;
+import kotlin.annotations.jvm.ReadOnly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
-import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyScriptDescriptor;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 
 import java.util.Collection;
@@ -40,7 +39,7 @@ public interface BodiesResolveContext {
     @Mutable
     Map<KtSecondaryConstructor, ClassConstructorDescriptor> getSecondaryConstructors();
     @Mutable
-    Map<KtScript, LazyScriptDescriptor> getScripts();
+    Map<KtScript, ClassDescriptorWithResolutionScopes> getScripts();
 
     @Mutable
     Map<KtProperty, PropertyDescriptor> getProperties();

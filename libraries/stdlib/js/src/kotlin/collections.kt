@@ -1,30 +1,19 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.collections
 
 import kotlin.comparisons.naturalOrder
-import kotlin.math.floor
+import kotlin.random.Random
 
 /** Returns the array if it's not `null`, or an empty array otherwise. */
 @kotlin.internal.InlineOnly
-public inline fun <T> Array<out T>?.orEmpty(): Array<out T> = this ?: emptyArray<T>()
+public actual inline fun <T> Array<out T>?.orEmpty(): Array<out T> = this ?: emptyArray<T>()
 
 @kotlin.internal.InlineOnly
-public inline fun <T> Collection<T>.toTypedArray(): Array<T> = copyToArray(this)
+public actual inline fun <T> Collection<T>.toTypedArray(): Array<T> = copyToArray(this)
 
 @JsName("copyToArray")
 @PublishedApi
@@ -36,7 +25,7 @@ internal fun <T> copyToArray(collection: Collection<T>): Array<T> {
 }
 
 @JsName("copyToArrayImpl")
-internal fun copyToArrayImpl(collection: Collection<*>): Array<Any?> {
+internal actual fun copyToArrayImpl(collection: Collection<*>): Array<Any?> {
     val array = emptyArray<Any?>()
     val iterator = collection.iterator()
     while (iterator.hasNext())
@@ -45,7 +34,7 @@ internal fun copyToArrayImpl(collection: Collection<*>): Array<Any?> {
 }
 
 @JsName("copyToExistingArrayImpl")
-internal fun <T> copyToArrayImpl(collection: Collection<*>, array: Array<T>): Array<T> {
+internal actual fun <T> copyToArrayImpl(collection: Collection<*>, array: Array<T>): Array<T> {
     if (array.size < collection.size)
         return copyToArrayImpl(collection).unsafeCast<Array<T>>()
 
@@ -59,10 +48,6 @@ internal fun <T> copyToArrayImpl(collection: Collection<*>, array: Array<T>): Ar
     }
     return array
 }
-
-@library("arrayToString")
-@Suppress("UNUSED_PARAMETER")
-internal fun arrayToString(array: Array<*>): String = definedExternally
 
 /**
  * Returns an immutable list containing only the specified object [element].
@@ -86,7 +71,7 @@ public fun <K, V> mapOf(pair: Pair<K, V>): Map<K, V> = hashMapOf(pair)
  * Each element in the list gets replaced with the [value].
  */
 @SinceKotlin("1.2")
-public fun <T> MutableList<T>.fill(value: T): Unit {
+public actual fun <T> MutableList<T>.fill(value: T): Unit {
     for (index in 0..lastIndex) {
         this[index] = value
     }
@@ -98,33 +83,29 @@ public fun <T> MutableList<T>.fill(value: T): Unit {
  * See: https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm
  */
 @SinceKotlin("1.2")
-public fun <T> MutableList<T>.shuffle(): Unit {
-    for (i in lastIndex downTo 1) {
-        val j = rand(i + 1)
-        val copy = this[i]
-        this[i] = this[j]
-        this[j] = copy
-    }
-}
-private fun rand(upperBound: Int) = floor(kotlin.js.Math.random() * upperBound).toInt()
+public actual fun <T> MutableList<T>.shuffle(): Unit = shuffle(Random)
 
 /**
  * Returns a new list with the elements of this list randomly shuffled.
  */
 @SinceKotlin("1.2")
-public fun <T> Iterable<T>.shuffled(): List<T> = toMutableList().apply { shuffle() }
+public actual fun <T> Iterable<T>.shuffled(): List<T> = toMutableList().apply { shuffle() }
 
 /**
  * Sorts elements in the list in-place according to their natural sort order.
+ *
+ * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
  */
-public fun <T : Comparable<T>> MutableList<T>.sort(): Unit {
+public actual fun <T : Comparable<T>> MutableList<T>.sort(): Unit {
     collectionsSort(this, naturalOrder())
 }
 
 /**
  * Sorts elements in the list in-place according to the order specified with [comparator].
+ *
+ * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
  */
-public fun <T> MutableList<T>.sortWith(comparator: Comparator<in T>): Unit {
+public actual fun <T> MutableList<T>.sortWith(comparator: Comparator<in T>): Unit {
     collectionsSort(this, comparator)
 }
 
@@ -132,26 +113,72 @@ private fun <T> collectionsSort(list: MutableList<T>, comparator: Comparator<in 
     if (list.size <= 1) return
 
     val array = copyToArray(list)
-
-    array.asDynamic().sort(comparator.asDynamic().compare.bind(comparator))
+    sortArrayWith(array, comparator)
 
     for (i in 0 until array.size) {
         list[i] = array[i]
     }
 }
 
-internal fun <T> arrayOfNulls(reference: Array<out T>, size: Int): Array<T> {
+internal actual fun <T> arrayOfNulls(reference: Array<T>, size: Int): Array<T> {
     return arrayOfNulls<Any>(size).unsafeCast<Array<T>>()
 }
 
+@SinceKotlin("1.3")
+@PublishedApi
+@JsName("arrayCopy")
+internal fun <T> arrayCopy(source: Array<out T>, destination: Array<in T>, destinationOffset: Int, startIndex: Int, endIndex: Int) {
+    AbstractList.checkRangeIndexes(startIndex, endIndex, source.size)
+    val rangeSize = endIndex - startIndex
+    AbstractList.checkRangeIndexes(destinationOffset, destinationOffset + rangeSize, destination.size)
+
+    if (js("ArrayBuffer").isView(destination) && js("ArrayBuffer").isView(source)) {
+        val subrange = source.asDynamic().subarray(startIndex, endIndex)
+        destination.asDynamic().set(subrange, destinationOffset)
+    } else {
+        if (source !== destination || destinationOffset <= startIndex) {
+            for (index in 0 until rangeSize) {
+                destination[destinationOffset + index] = source[startIndex + index]
+            }
+        } else {
+            for (index in rangeSize - 1 downTo 0) {
+                destination[destinationOffset + index] = source[startIndex + index]
+            }
+        }
+    }
+}
+
 // no singleton map implementation in js, return map as is
-internal inline fun <K, V> Map<K, V>.toSingletonMapOrSelf(): Map<K, V> = this
+@Suppress("NOTHING_TO_INLINE")
+internal actual inline fun <K, V> Map<K, V>.toSingletonMapOrSelf(): Map<K, V> = this
 
-internal inline fun <K, V> Map<out K, V>.toSingletonMap(): Map<K, V> = this.toMutableMap()
+@Suppress("NOTHING_TO_INLINE")
+internal actual inline fun <K, V> Map<out K, V>.toSingletonMap(): Map<K, V> = this.toMutableMap()
 
-internal inline fun <T> Array<out T>.copyToArrayOfAny(isVarargs: Boolean): Array<out Any?> =
-        if (isVarargs)
-        // no need to copy vararg array in JS
-            this
-        else
-            this.copyOf()
+
+@Suppress("NOTHING_TO_INLINE")
+internal actual inline fun <T> Array<out T>.copyToArrayOfAny(isVarargs: Boolean): Array<out Any?> =
+    if (isVarargs)
+    // no need to copy vararg array in JS
+        this
+    else
+        this.copyOf()
+
+
+
+@PublishedApi
+internal actual fun checkIndexOverflow(index: Int): Int {
+    if (index < 0) {
+        throwIndexOverflow()
+    }
+    return index
+}
+
+@PublishedApi
+internal actual fun checkCountOverflow(count: Int): Int {
+    if (count < 0) {
+        throwCountOverflow()
+    }
+    return count
+}
+

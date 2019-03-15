@@ -3,4 +3,4 @@ package p
 
 import dependency.*
 
-val d = Date(1, 2)
+val d = Date("") //import dependency.Date is not necessary

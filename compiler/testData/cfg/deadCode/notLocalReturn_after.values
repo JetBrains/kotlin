@@ -1,0 +1,88 @@
+== doCall ==
+inline fun doCall(f: () -> Unit) = f()
+---------------------
+      <v0>: {<: () -> Unit}   NEW: magic[FAKE_INITIALIZER](f: () -> Unit) -> <v0>
+f     <v1>: {<: () -> Unit}   NEW: r(f) -> <v1>
+f()   <v2>: Unit              NEW: call(f(), invoke|<v1>) -> <v2>
+=====================
+== test1 ==
+fun test1(nonLocal: String): String {
+    val localResult = doCall {
+        return nonLocal  //unreachable
+    }
+    return "NON_LOCAL_FAILED $localResult"  //unreachable
+}
+---------------------
+                                                                                                                      <v0>: String            NEW: magic[FAKE_INITIALIZER](nonLocal: String) -> <v0>
+{ return nonLocal //unreachable }                                                                                     <v1>: {<: () -> Unit}   NEW: r({ return nonLocal //unreachable }) -> <v1>
+doCall { return nonLocal //unreachable }                                                                              <v2>: Unit              NEW: call(doCall { return nonLocal //unreachable }, doCall|<v1>) -> <v2>
+localResult                                                                                                           <v3>: *                 NEW: r(localResult) -> <v3>
+"NON_LOCAL_FAILED $localResult"                                                                                       <v4>: String            NEW: magic[STRING_TEMPLATE]("NON_LOCAL_FAILED $localResult"|<v3>) -> <v4>
+return "NON_LOCAL_FAILED $localResult"                                                                                !<v5>: *
+{ val localResult = doCall { return nonLocal //unreachable } return "NON_LOCAL_FAILED $localResult" //unreachable }   !<v5>: *                COPY
+=====================
+== anonymous_0 ==
+{
+        return nonLocal  //unreachable
+    }
+---------------------
+nonLocal                        <v0>: String   NEW: r(nonLocal) -> <v0>
+return nonLocal                 !<v1>: *
+return nonLocal //unreachable   !<v1>: *       COPY
+=====================
+== doSomething ==
+fun doSomething() {}
+---------------------
+=====================
+== test2 ==
+fun test2() {
+    fun f(x: Any?) = x
+    f(null?.let { return })
+
+    // false unreachable here
+    doSomething()
+}
+---------------------
+null                                                                                     <v0>: Nothing                     NEW: r(null) -> <v0>
+{ return }                                                                               <v1>: {<: (Nothing) -> Nothing}   NEW: r({ return }) -> <v1>
+let { return }                                                                           !<v2>: *
+null?.let { return }                                                                     !<v2>: *                          COPY
+f(null?.let { return })                                                                  <v3>: *                           NEW: call(f(null?.let { return }), f|!<v2>) -> <v3>
+doSomething()                                                                            <v4>: *                           NEW: call(doSomething(), doSomething) -> <v4>
+{ fun f(x: Any?) = x f(null?.let { return }) // false unreachable here doSomething() }   <v4>: *                           COPY
+=====================
+== f ==
+fun f(x: Any?) = x
+---------------------
+    <v0>: *   NEW: magic[FAKE_INITIALIZER](x: Any?) -> <v0>
+x   <v1>: *   NEW: r(x) -> <v1>
+=====================
+== inlined anonymous_1 ==
+{ return }
+---------------------
+return   !<v0>: *
+return   !<v0>: *   COPY
+=====================
+== test3 ==
+fun test3(x: Any?): Boolean =
+    x?.let {
+        return true
+    } ?: false
+---------------------
+                                  <v0>: *                       NEW: magic[FAKE_INITIALIZER](x: Any?) -> <v0>
+x                                 <v1>: {<: Any}                NEW: r(x) -> <v1>
+{ return true }                   <v2>: {<: (Any) -> Nothing}   NEW: r({ return true }) -> <v2>
+let { return true }               !<v3>: *
+x?.let { return true }            !<v3>: *                      COPY
+false                             <v4>: Boolean                 NEW: r(false) -> <v4>
+x?.let { return true } ?: false   <v5>: Boolean                 NEW: merge(x?.let { return true } ?: false|!<v3>, <v4>) -> <v5>
+=====================
+== inlined anonymous_2 ==
+{
+        return true
+    }
+---------------------
+true          <v0>: Boolean   NEW: r(true) -> <v0>
+return true   !<v1>: *
+return true   !<v1>: *        COPY
+=====================

@@ -1,0 +1,13 @@
+package
+
+@kotlin.jvm.JvmName(name = "bad") public fun bar(/*0*/ f: Foo): kotlin.Unit
+@kotlin.jvm.JvmName(name = "good") public fun baz(/*0*/ r: kotlin.Result<kotlin.Int>): kotlin.Unit
+
+public final inline class Foo {
+    public constructor Foo(/*0*/ x: kotlin.Int)
+    public final val x: kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    @kotlin.jvm.JvmName(name = "other") public final fun simple(): kotlin.Unit
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}

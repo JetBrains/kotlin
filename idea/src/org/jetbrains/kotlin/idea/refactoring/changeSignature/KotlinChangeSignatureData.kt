@@ -26,15 +26,16 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.idea.highlighter.markers.actualsForExpected
-import org.jetbrains.kotlin.idea.highlighter.markers.isExpectedOrExpectedClassMember
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinCallableDefinitionUsage
 import org.jetbrains.kotlin.idea.search.declarationsSearch.forEachOverridingElement
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.idea.util.actualsForExpected
+import org.jetbrains.kotlin.idea.util.isExpectDeclaration
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.utils.SmartList
 import java.util.*
@@ -60,11 +61,11 @@ class KotlinChangeSignatureData(
                     val jetParameter = valueParameters?.get(parameterDescriptor.index)
                     val parameterType = parameterDescriptor.type
                     val parameterTypeText = jetParameter?.typeReference?.text
-                                            ?: IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(parameterType)
+                                            ?: IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(parameterType)
                     KotlinParameterInfo(
                             callableDescriptor = baseDescriptor,
                             originalIndex = parameterDescriptor.index,
-                            name = parameterDescriptor.name.asString(),
+                            name = parameterDescriptor.name.asString().quoteIfNeeded(),
                             originalTypeInfo = KotlinTypeInfo(false, parameterType, parameterTypeText),
                             defaultValueForParameter = jetParameter?.defaultValue,
                             valOrVar = jetParameter?.valOrVarKeyword.toValVar()
@@ -76,7 +77,7 @@ class KotlinChangeSignatureData(
         val receiverType = baseDescriptor.extensionReceiverParameter?.type ?: return null
         val receiverName = suggestReceiverNames(baseDeclaration.project, baseDescriptor).first()
         val receiverTypeText = (baseDeclaration as? KtCallableDeclaration)?.receiverTypeReference?.text
-                               ?: IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(receiverType)
+                               ?: IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(receiverType)
         return KotlinParameterInfo(callableDescriptor = baseDescriptor,
                                    name = receiverName,
                                    originalTypeInfo = KotlinTypeInfo(false, receiverType, receiverTypeText))
@@ -101,7 +102,7 @@ class KotlinChangeSignatureData(
         primaryCallables + primaryCallables.flatMapTo(HashSet<UsageInfo>()) { primaryFunction ->
             val primaryDeclaration = primaryFunction.declaration as? KtDeclaration ?: return@flatMapTo emptyList()
 
-            if (primaryDeclaration.isExpectedOrExpectedClassMember()) {
+            if (primaryDeclaration.isExpectDeclaration()) {
                 return@flatMapTo primaryDeclaration.actualsForExpected().mapNotNull {
                     val descriptor = it.unsafeResolveToDescriptor()
                     val callableDescriptor = when (descriptor) {

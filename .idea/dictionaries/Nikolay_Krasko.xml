@@ -7,9 +7,10 @@
       <w>fqname</w>
       <w>goto</w>
       <w>gradle</w>
+      <w>infos</w>
       <w>intrinsics</w>
       <w>kdoc</w>
-      <w>kompiler</w>
+      <w>lateinit</w>
       <w>memoize</w>
       <w>memoized</w>
       <w>multiline</w>
@@ -18,11 +19,13 @@
       <w>preloader</w>
       <w>preloading</w>
       <w>preprocess</w>
+      <w>proximities</w>
       <w>redeclarations</w>
       <w>smap</w>
       <w>subclassed</w>
       <w>subgraph</w>
       <w>substep</w>
+      <w>tailrec</w>
     </words>
   </dictionary>
 </component>

@@ -21,10 +21,10 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 class CoercionValue(
-        val value: StackValue,
-        private val castType: Type,
-        private val castKotlinType: KotlinType?,
-        private val underlyingKotlinType: KotlinType? // type of the underlying parameter for inline class
+    val value: StackValue,
+    private val castType: Type,
+    private val castKotlinType: KotlinType?,
+    private val underlyingKotlinType: KotlinType? // type of the underlying parameter for inline class
 ) : StackValue(castType, castKotlinType, value.canHaveSideEffects()) {
 
     override fun putSelector(type: Type, kotlinType: KotlinType?, v: InstructionAdapter) {
@@ -55,8 +55,8 @@ class CoercionValue(
 
 
 class StackValueWithLeaveTask(
-        val stackValue: StackValue,
-        val leaveTasks: (StackValue) -> Unit
+    val stackValue: StackValue,
+    val leaveTasks: (StackValue) -> Unit
 ) : StackValue(stackValue.type, stackValue.kotlinType) {
 
     override fun putReceiver(v: InstructionAdapter, isRead: Boolean) {
@@ -89,22 +89,22 @@ class FunctionCallStackValue(
 
 fun ValueParameterDescriptor.findJavaDefaultArgumentValue(targetType: Type, typeMapper: KotlinTypeMapper): StackValue {
     val descriptorWithDefaultValue = DFS.dfs(
-            listOf(this.original),
-            { it.original.overriddenDescriptors.map(ValueParameterDescriptor::getOriginal) },
-            object : DFS.AbstractNodeHandler<ValueParameterDescriptor, ValueParameterDescriptor?>() {
-                var result: ValueParameterDescriptor? = null
+        listOf(this.original),
+        { it.original.overriddenDescriptors.map(ValueParameterDescriptor::getOriginal) },
+        object : DFS.AbstractNodeHandler<ValueParameterDescriptor, ValueParameterDescriptor?>() {
+            var result: ValueParameterDescriptor? = null
 
-                override fun beforeChildren(current: ValueParameterDescriptor?): Boolean {
-                    if (current?.declaresDefaultValue() == true && current.getDefaultValueFromAnnotation() != null) {
-                        result = current
-                        return false
-                    }
-
-                    return true
+            override fun beforeChildren(current: ValueParameterDescriptor?): Boolean {
+                if (current?.declaresDefaultValue() == true && current.getDefaultValueFromAnnotation() != null) {
+                    result = current
+                    return false
                 }
 
-                override fun result(): ValueParameterDescriptor? = result
+                return true
             }
+
+            override fun result(): ValueParameterDescriptor? = result
+        }
     ) ?: error("Should be at least one descriptor with default value: $this")
 
     val defaultValue = descriptorWithDefaultValue.getDefaultValueFromAnnotation()

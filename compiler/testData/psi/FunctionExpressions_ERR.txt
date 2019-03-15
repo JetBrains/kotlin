@@ -575,61 +575,64 @@ KtFile: FunctionExpressions_ERR.kt
           PsiElement(RPAR)(')')
       PsiWhiteSpace('\n\n\n    ')
       CALL_EXPRESSION
-        CALL_EXPRESSION
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('bar')
-          VALUE_ARGUMENT_LIST
-            PsiElement(LPAR)('(')
-            VALUE_ARGUMENT
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('public')
-            PsiWhiteSpace(' ')
-            PsiErrorElement:Expecting ')'
-              PsiElement(fun)('fun')
-        PsiWhiteSpace(' ')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('bar')
         VALUE_ARGUMENT_LIST
           PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('public')
+          PsiErrorElement:Expecting ','
+            <empty list>
+          PsiWhiteSpace(' ')
+          VALUE_ARGUMENT
+            FUN
+              PsiElement(fun)('fun')
+              PsiWhiteSpace(' ')
+              VALUE_PARAMETER_LIST
+                PsiElement(LPAR)('(')
+                PsiElement(RPAR)(')')
           PsiElement(RPAR)(')')
-      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
-        PsiElement(RPAR)(')')
       PsiWhiteSpace('\n    ')
       CALL_EXPRESSION
-        CALL_EXPRESSION
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('bar')
-          VALUE_ARGUMENT_LIST
-            PsiElement(LPAR)('(')
-            VALUE_ARGUMENT
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('open')
-            PsiWhiteSpace(' ')
-            PsiErrorElement:Expecting ')'
-              PsiElement(fun)('fun')
-        PsiWhiteSpace(' ')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('bar')
         VALUE_ARGUMENT_LIST
           PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('open')
+          PsiErrorElement:Expecting ','
+            <empty list>
+          PsiWhiteSpace(' ')
+          VALUE_ARGUMENT
+            FUN
+              PsiElement(fun)('fun')
+              PsiWhiteSpace(' ')
+              VALUE_PARAMETER_LIST
+                PsiElement(LPAR)('(')
+                PsiElement(RPAR)(')')
           PsiElement(RPAR)(')')
-      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
-        PsiElement(RPAR)(')')
       PsiWhiteSpace('\n    ')
       CALL_EXPRESSION
-        CALL_EXPRESSION
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('bar')
-          VALUE_ARGUMENT_LIST
-            PsiElement(LPAR)('(')
-            VALUE_ARGUMENT
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('final')
-            PsiWhiteSpace(' ')
-            PsiErrorElement:Expecting ')'
-              PsiElement(fun)('fun')
-        PsiWhiteSpace(' ')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('bar')
         VALUE_ARGUMENT_LIST
           PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('final')
+          PsiErrorElement:Expecting ','
+            <empty list>
+          PsiWhiteSpace(' ')
+          VALUE_ARGUMENT
+            FUN
+              PsiElement(fun)('fun')
+              PsiWhiteSpace(' ')
+              VALUE_PARAMETER_LIST
+                PsiElement(LPAR)('(')
+                PsiElement(RPAR)(')')
           PsiElement(RPAR)(')')
-      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
-        PsiElement(RPAR)(')')
       PsiWhiteSpace('\n\n    ')
       CALL_EXPRESSION
         REFERENCE_EXPRESSION

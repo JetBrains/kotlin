@@ -1,0 +1,3 @@
+package
+
+public fun </*0*/ T : kotlin.Boolean> T.case_1(): kotlin.Boolean?

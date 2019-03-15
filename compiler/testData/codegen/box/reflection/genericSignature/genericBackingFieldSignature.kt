@@ -1,8 +1,10 @@
-// TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS, NATIVE
+// IGNORE_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 
 // WITH_REFLECT
 //test for KT-3722 Write correct generic type information for generated fields
+package test
+
 import kotlin.properties.Delegates
 
 class Z<T> {
@@ -50,25 +52,25 @@ fun box(): String {
 
     val classField = clz.getDeclaredField("classField1");
 
-    if (classField.getGenericType().toString() != "Z<T>")
+    if (classField.getGenericType().toString() != "test.Z<T>")
         return "fail1: " + classField.getGenericType();
 
 
     val classField2 = clz.getDeclaredField("classField2");
 
-    if (classField2.getGenericType().toString() != "Z<java.lang.String>")
+    if (classField2.getGenericType().toString() != "test.Z<java.lang.String>")
         return "fail2: " + classField2.getGenericType();
 
 
     val classField3 = clz.getDeclaredField("classField3");
 
-    if (classField3.getGenericType().toString() != "Zout<java.lang.String>")
+    if (classField3.getGenericType().toString() != "test.Zout<java.lang.String>")
         return "fail3: " + classField3.getGenericType();
 
 
     val classField4 = clz.getDeclaredField("classField4");
 
-    if (classField4.getGenericType().toString() != "Zin<TParam>")
+    if (classField4.getGenericType().toString() != "test.Zin<test.TParam>")
         return "fail4: " + classField4.getGenericType();
 
     val classField5 = clz.getDeclaredField("delegateLazy\$delegate");

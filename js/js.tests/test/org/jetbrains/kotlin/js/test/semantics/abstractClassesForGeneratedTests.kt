@@ -29,6 +29,10 @@ abstract class AbstractEnumValuesInlineTests : BorrowedInlineTest("enum/")
 
 abstract class AbstractInlineDefaultValuesTests : BorrowedInlineTest("defaultValues/")
 
+abstract class AbstractInlineSuspendTests : BorrowedInlineTest("suspend/")
+
+abstract class AbstractJsInlineContractsTests : BorrowedInlineTest("contracts/")
+
 abstract class AbstractBoxJsTest : BasicBoxTest(
         BasicBoxTest.TEST_DATA_DIR_PATH + "box/",
         "box/"
@@ -41,6 +45,12 @@ abstract class AbstractJsCodegenBoxTest : BasicBoxTest(
         "codegen/box/"
 )
 
+abstract class AbstractJsLegacyPrimitiveArraysBoxTest : BasicBoxTest(
+        "compiler/testData/codegen/box/arrays/",
+        "codegen/box/arrays-legacy-primitivearrays/",
+        typedArraysEnabled = false
+)
+
 abstract class AbstractSourceMapGenerationSmokeTest : BasicBoxTest(
         BasicBoxTest.TEST_DATA_DIR_PATH + "sourcemap/",
         "sourcemap/",
@@ -49,3 +59,33 @@ abstract class AbstractSourceMapGenerationSmokeTest : BasicBoxTest(
 )
 
 abstract class AbstractIrBoxJsTest : BasicIrBoxTest(BasicBoxTest.TEST_DATA_DIR_PATH + "box/", "irBox/")
+
+abstract class AbstractIrJsCodegenBoxTest : BasicIrBoxTest(
+    "compiler/testData/codegen/box/",
+    "codegen/irBox/"
+)
+
+abstract class BorrowedIrInlineTest(relativePath: String) : BasicIrBoxTest(
+    "compiler/testData/codegen/boxInline/$relativePath",
+    "codegen/irBoxInline/$relativePath"
+) {
+    init {
+        additionalCommonFileDirectories += BasicBoxTest.TEST_DATA_DIR_PATH + relativePath + "/_commonFiles/"
+    }
+}
+
+abstract class AbstractIrNonLocalReturnsTest : BorrowedIrInlineTest("nonLocalReturns/")
+
+abstract class AbstractIrPropertyAccessorsInlineTests : BorrowedIrInlineTest("property/")
+
+abstract class AbstractIrNoInlineTests : BorrowedIrInlineTest("noInline/")
+
+abstract class AbstractIrCallableReferenceInlineTests : BorrowedIrInlineTest("callableReference/")
+
+abstract class AbstractIrEnumValuesInlineTests : BorrowedIrInlineTest("enum/")
+
+abstract class AbstractIrInlineDefaultValuesTests : BorrowedIrInlineTest("defaultValues/")
+
+abstract class AbstractIrInlineSuspendTests : BorrowedIrInlineTest("suspend/")
+
+abstract class AbstractIrJsInlineContractsTests : BorrowedIrInlineTest("contracts/")

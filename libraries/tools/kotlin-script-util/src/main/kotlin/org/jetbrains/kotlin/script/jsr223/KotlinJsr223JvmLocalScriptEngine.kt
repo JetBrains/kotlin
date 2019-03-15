@@ -22,9 +22,11 @@ import org.jetbrains.kotlin.cli.common.repl.*
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.addJvmSdkRoots
 import org.jetbrains.kotlin.cli.jvm.repl.GenericReplCompiler
+import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
+import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCompilerConfigurationComponentRegistrar
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.net.URLClassLoader
@@ -67,9 +69,10 @@ class KotlinJsr223JvmLocalScriptEngine(
     private fun makeCompilerConfiguration() = CompilerConfiguration().apply {
         addJvmSdkRoots(PathUtil.getJdkClassesRootsFromCurrentJre())
         addJvmClasspathRoots(templateClasspath)
+        add(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS, ScriptingCompilerConfigurationComponentRegistrar())
         put(CommonConfigurationKeys.MODULE_NAME, "kotlin-script")
         languageVersionSettings = LanguageVersionSettingsImpl(
-                LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE, mapOf(AnalysisFlag.skipMetadataVersionCheck to true)
+                LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE, mapOf(AnalysisFlags.skipMetadataVersionCheck to true)
         )
     }
 }

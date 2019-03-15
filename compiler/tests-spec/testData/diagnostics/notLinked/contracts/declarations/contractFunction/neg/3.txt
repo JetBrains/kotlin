@@ -1,0 +1,5 @@
+package
+
+public fun case_1(): kotlin.Unit
+public fun funWithContractExactlyOnce(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
+    CallsInPlace(block, EXACTLY_ONCE)

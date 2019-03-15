@@ -17,23 +17,23 @@ private object PO {}
 //+JDK
 package b
 
-import a.<!INVISIBLE_REFERENCE(A; private; file)!>A<!>
-import a.<!INVISIBLE_REFERENCE(foo; private; file)!>foo<!>
+import a.<!INVISIBLE_REFERENCE("A", "private", "file")!>A<!>
+import a.<!INVISIBLE_REFERENCE("foo", "private", "file")!>foo<!>
 import a.makeA
-import a.<!INVISIBLE_REFERENCE(PO; private; file)!>PO<!>
+import a.<!INVISIBLE_REFERENCE("PO", "private", "file")!>PO<!>
 
 fun test() {
     val y = makeA()
-    y.<!INVISIBLE_MEMBER(A; private; file)!>bar<!>()
-    <!INVISIBLE_MEMBER(foo; private; file)!>foo<!>()
+    y.<!INVISIBLE_MEMBER("A", "private", "file")!>bar<!>()
+    <!INVISIBLE_MEMBER("foo", "private", "file")!>foo<!>()
 
-    val u : <!INVISIBLE_REFERENCE(A; private; file)!>A<!> = <!INVISIBLE_MEMBER(A; private; file)!>A<!>()
-    val a : java.util.Arrays.<!INVISIBLE_REFERENCE(ArrayList; private; 'Arrays')!>ArrayList<!><Int>;
+    val u : <!INVISIBLE_REFERENCE("A", "private", "file")!>A<!> = <!INVISIBLE_MEMBER("A", "private", "file")!>A<!>()
+    val a : java.util.Arrays.<!INVISIBLE_REFERENCE("ArrayList", "private", "'Arrays'")!>ArrayList<!><Int>;
 
-    val po = <!INVISIBLE_MEMBER(PO; private; file)!>PO<!>
+    val po = <!INVISIBLE_MEMBER("PO", "private", "file")!>PO<!>
 }
 
-class B : <!EXPOSED_SUPER_CLASS!><!INVISIBLE_REFERENCE(A; private; file), INVISIBLE_MEMBER(A; private; file)!>A<!>()<!> {}
+class B : <!EXPOSED_SUPER_CLASS!><!INVISIBLE_MEMBER("A", "private", "file"), INVISIBLE_REFERENCE("A", "private", "file")!>A<!>()<!> {}
 
 class Q {
     class W {

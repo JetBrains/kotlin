@@ -1,0 +1,11 @@
+interface I {
+    // INFO: {checked: "true"}
+    fun privateFun() = 0
+}
+
+// NAME: I
+// SIBLING:
+class Foo : I {
+
+    fun refer() = privateFun()
+}

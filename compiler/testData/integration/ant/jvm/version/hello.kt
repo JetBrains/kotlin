@@ -1,5 +1,5 @@
 package hello
 
-fun main(args : Array<String>) {
+fun main() {
     println("Yo!")
 }

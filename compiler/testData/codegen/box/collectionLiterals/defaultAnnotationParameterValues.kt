@@ -1,8 +1,7 @@
-// LANGUAGE_VERSION: 1.2
 // WITH_REFLECT
 
-// IGNORE_BACKEND: JS
-// IGNORE_BACKEND: NATIVE
+// IGNORE_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 
 import java.util.Arrays
 import kotlin.reflect.KClass

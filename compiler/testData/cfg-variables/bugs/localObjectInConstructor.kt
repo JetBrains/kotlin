@@ -60,6 +60,7 @@ class Demo3 {
     private var state: Boolean = true
 }
 
+fun <T, R> T.run(f: T.() -> R) = f()
 fun <T> exec(f: () -> T): T = f()
 
 class Demo4 {

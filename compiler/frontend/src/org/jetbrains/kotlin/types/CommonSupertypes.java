@@ -9,11 +9,10 @@ import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
+import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 import org.jetbrains.kotlin.utils.DFS;
@@ -100,7 +99,7 @@ public class CommonSupertypes {
     @NotNull
     private static SimpleType commonSuperTypeForInflexible(@NotNull Collection<SimpleType> types, int recursionDepth, int maxDepth) {
         assert !types.isEmpty();
-        Collection<SimpleType> typeSet = new HashSet<>(types);
+        Collection<SimpleType> typeSet = new LinkedHashSet<>(types);
 
         // If any of the types is nullable, the result must be nullable
         // This also removed Nothing and Nothing? because they are subtypes of everything else
@@ -132,7 +131,7 @@ public class CommonSupertypes {
         // constructor of the supertype -> all of its instantiations occurring as supertypes
         Map<TypeConstructor, Set<SimpleType>> commonSupertypes = computeCommonRawSupertypes(typeSet);
         while (commonSupertypes.size() > 1) {
-            Set<SimpleType> merge = new HashSet<>();
+            Set<SimpleType> merge = new LinkedHashSet<>();
             for (Set<SimpleType> supertypes : commonSupertypes.values()) {
                 merge.addAll(supertypes);
             }
@@ -142,18 +141,18 @@ public class CommonSupertypes {
         if (commonSupertypes.isEmpty()) {
             StringBuilder info = new StringBuilder();
             for (SimpleType type : types) {
-                String superTypes = type.getConstructor().getSupertypes().stream()
-                        .map(CommonSupertypes::renderTypeFully)
-                        .collect(Collectors.joining(", "));
+                String superTypes = TypeUtils.getAllSupertypes(type).stream()
+                        .map(t -> "-- " + renderTypeFully(t))
+                        .collect(Collectors.joining("\n"));
 
                 info
                         .append("Info about ").append(renderTypeFully(type)).append(": ").append('\n')
-                        .append("- Supertypes: ").append(superTypes).append('\n')
+                        .append("- Supertypes: ").append('\n')
+                        .append(superTypes).append('\n')
                         .append("- DeclarationDescriptor class: ").append(classOfDeclarationDescriptor(type)).append('\n')
-                        .append("- TypeConstructor class: ").append(type.getConstructor().getClass()).append('\n')
                         .append('\n');
             }
-            throw new IllegalStateException("There is no common supertype for: " + types + " \n" + info.toString());
+            throw new IllegalStateException("[Report version 3] There is no common supertype for: " + types + " \n" + info.toString());
         }
 
         // constructor of the supertype -> all of its instantiations occurring as supertypes
@@ -166,7 +165,24 @@ public class CommonSupertypes {
 
     @NotNull
     private static String renderTypeFully(@NotNull KotlinType type) {
-        return DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(type);
+        return DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(type) + ", typeConstructor debug: " +
+               renderTypeConstructorVerboseDebugInformation(type.getConstructor());
+    }
+
+    @SuppressWarnings("deprecation")
+    private static String renderTypeConstructorVerboseDebugInformation(TypeConstructor typeConstructor) {
+        if (!(typeConstructor instanceof AbstractTypeConstructor)) {
+            return typeConstructor.toString() + "[" + typeConstructor.getClass().getName() + "]";
+        }
+
+        AbstractTypeConstructor abstractTypeConstructor = (AbstractTypeConstructor) typeConstructor;
+        DeclarationDescriptor declarationDescriptor = abstractTypeConstructor.getDeclarationDescriptor();
+        String moduleDescriptorString = declarationDescriptor == null
+                                        ? "<no module for null descriptor>"
+                                        : Objects.toString(DescriptorUtils.getContainingModule(declarationDescriptor));
+        return "descriptor=" + declarationDescriptor + "@" + Integer.toHexString(Objects.hashCode(declarationDescriptor)) +
+               ", moduleDescriptor=" + moduleDescriptorString +
+               ", " + abstractTypeConstructor.renderAdditionalDebugInformation();
     }
 
     @Nullable
@@ -203,7 +219,7 @@ public class CommonSupertypes {
         assert order != null;
 
         Set<TypeConstructor> notSource = new HashSet<>();
-        Map<TypeConstructor, Set<SimpleType>> result = new HashMap<>();
+        Map<TypeConstructor, Set<SimpleType>> result = new LinkedHashMap<>();
         for (TypeConstructor superConstructor : order) {
             if (!commonSuperclasses.contains(superConstructor)) {
                 continue;
@@ -233,7 +249,7 @@ public class CommonSupertypes {
         List<TypeParameterDescriptor> parameters = constructor.getParameters();
         List<TypeProjection> newProjections = new ArrayList<>(parameters.size());
         for (TypeParameterDescriptor parameterDescriptor : parameters) {
-            Set<TypeProjection> typeProjections = new HashSet<>();
+            Set<TypeProjection> typeProjections = new LinkedHashSet<>();
             for (KotlinType type : types) {
                 typeProjections.add(type.getArguments().get(parameterDescriptor.getIndex()));
             }
@@ -276,8 +292,8 @@ public class CommonSupertypes {
             return TypeUtils.makeStarProjection(parameterDescriptor);
         }
 
-        Set<KotlinType> ins = new HashSet<>();
-        Set<KotlinType> outs = new HashSet<>();
+        Set<KotlinType> ins = new LinkedHashSet<>();
+        Set<KotlinType> outs = new LinkedHashSet<>();
 
         Variance variance = parameterDescriptor.getVariance();
         switch (variance) {
@@ -370,7 +386,7 @@ public class CommonSupertypes {
                     @Override
                     public boolean beforeChildren(SimpleType current) {
                         Set<SimpleType> instances =
-                                constructorToAllInstances.computeIfAbsent(current.getConstructor(), k -> new HashSet<>());
+                                constructorToAllInstances.computeIfAbsent(current.getConstructor(), k -> new LinkedHashSet<>());
                         instances.add(current);
 
                         return true;

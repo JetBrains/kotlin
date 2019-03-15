@@ -20,12 +20,6 @@ package a {
     }
 }
 
-package b {
-}
-
-package c {
-}
-
 package test {
     public val x1: kotlin.Int
     public val x3: kotlin.Int

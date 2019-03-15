@@ -1,5 +1,4 @@
 // CORRECT_ERROR_TYPES
-// EXPECTED_ERROR(kotlin:9:5) cannot find symbol
 // JAVAC_OPTION -Xmaxerrs=1
 
 @file:Suppress("UNRESOLVED_REFERENCE")
@@ -11,3 +10,5 @@ class Test {
 
 // There are two errors (unresolved identifier ABC, BCD) actually.
 // But we specified the max error count, so the error output is limited.
+
+// EXPECTED_ERROR(kotlin:8:5) cannot find symbol

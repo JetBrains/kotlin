@@ -1,0 +1,4 @@
+public open class ProtectedPackageFun : R|java/lang/Object| {
+    protected/*protected and package*/ open operator function foo(): R|kotlin/Unit|
+
+}

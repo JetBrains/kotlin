@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin
@@ -21,17 +10,31 @@ import kotlin.annotation.AnnotationRetention.SOURCE
 import kotlin.annotation.AnnotationTarget.*
 
 /**
- * Marks the annotated class, function, property, variable or parameter as deprecated.
- * @property message the message explaining the deprecation and recommending an alternative API to use.
- * @property replaceWith if present, specifies a code fragment which should be used as a replacement for
- *     the deprecated API usage.
+ * Marks the annotated declaration as deprecated.
+ *
+ * A deprecated API element is not recommended to use, typically because it's being phased out or a better alternative exists.
+ *
+ * To help removing deprecated API gradually, the property [level] could be used.
+ * Usually a gradual phase-out goes through the "warning", then "error", then "hidden" or "removed" stages:
+ * - First and by default, [DeprecationLevel.WARNING] is used to notify API consumers, but not to break their compilation or runtime usages.
+ * - Then, some time later the deprecation level is raised to [DeprecationLevel.ERROR], so that no new Kotlin code can be compiled
+ *   using the deprecated API.
+ * - Finally, the API is either removed entirely, or hidden ([DeprecationLevel.HIDDEN]) from code,
+ * so its usages look like unresolved references, while the API remains in the compiled code
+ * preserving binary compatibility with previously compiled code.
+ *
+ * @property message The message explaining the deprecation and recommending an alternative API to use.
+ * @property replaceWith If present, specifies a code fragment which should be used as a replacement for
+ *  the deprecated API usage.
+ * @property level Specifies how the deprecated element usages are reported in code.
+ *  See the [DeprecationLevel] enum for the possible values.
  */
 @Target(CLASS, FUNCTION, PROPERTY, ANNOTATION_CLASS, CONSTRUCTOR, PROPERTY_SETTER, PROPERTY_GETTER, TYPEALIAS)
 @MustBeDocumented
 public annotation class Deprecated(
-        val message: String,
-        val replaceWith: ReplaceWith = ReplaceWith(""),
-        val level: DeprecationLevel = DeprecationLevel.WARNING
+    val message: String,
+    val replaceWith: ReplaceWith = ReplaceWith(""),
+    val level: DeprecationLevel = DeprecationLevel.WARNING
 )
 
 /**
@@ -53,12 +56,14 @@ public annotation class Deprecated(
 public annotation class ReplaceWith(val expression: String, vararg val imports: String)
 
 /**
- * Contains levels for deprecation levels.
+ * Possible levels of a deprecation. The level specifies how the deprecated element usages are reported in code.
+ *
+ * @see Deprecated
  */
 public enum class DeprecationLevel {
-    /** Usage of the deprecated element will be marked as a warning. */
+    /** Usage of the deprecated element will be reported as a warning. */
     WARNING,
-    /** Usage of the deprecated element will be marked as an error. */
+    /** Usage of the deprecated element will be reported as an error. */
     ERROR,
     /** Deprecated element will not be accessible from code. */
     HIDDEN
@@ -134,7 +139,7 @@ public annotation class DslMarker
  * makes it effectively public.
  *
  * Public inline functions cannot use non-public API, since if they are inlined, those non-public API references
- * would violate access restrictions at a call site (http://kotlinlang.org/docs/reference/inline-functions.html#public-inline-restrictions).
+ * would violate access restrictions at a call site (https://kotlinlang.org/docs/reference/inline-functions.html#public-inline-restrictions).
  *
  * To overcome this restriction an `internal` declaration can be annotated with the `@PublishedApi` annotation:
  * - this allows to call that declaration from public inline functions;

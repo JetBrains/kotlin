@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -29,19 +29,19 @@ class TestNGContributor : AsserterContributor {
  */
 object TestNGAsserter : Asserter {
     override fun assertEquals(message: String?, expected: Any?, actual: Any?) {
-        Assert.assertEquals(expected, actual, message)
+        Assert.assertEquals(actual, expected, message)
     }
 
     override fun assertNotEquals(message: String?, illegal: Any?, actual: Any?) {
-        Assert.assertNotEquals(illegal, actual, message)
+        Assert.assertNotEquals(actual, illegal, message)
     }
 
     override fun assertSame(message: String?, expected: Any?, actual: Any?) {
-        Assert.assertSame(expected, actual, message)
+        Assert.assertSame(actual, expected, message)
     }
 
     override fun assertNotSame(message: String?, illegal: Any?, actual: Any?) {
-        Assert.assertNotSame(illegal, actual, message)
+        Assert.assertNotSame(actual, illegal, message)
     }
 
     override fun assertNotNull(message: String?, actual: Any?) {

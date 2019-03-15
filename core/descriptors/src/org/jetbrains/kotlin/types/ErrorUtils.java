@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
+import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.types.error.ErrorSimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.utils.Printer;
 
@@ -70,6 +71,12 @@ public class ErrorUtils {
             @NotNull
             @Override
             public Name getName() {
+                return Name.special("<ERROR MODULE>");
+            }
+
+            @NotNull
+            @Override
+            public Name getStableName() {
                 return Name.special("<ERROR MODULE>");
             }
 
@@ -135,19 +142,11 @@ public class ErrorUtils {
         };
     }
 
-    public static boolean containsErrorType(@NotNull CallableDescriptor callableDescriptor) {
-        if (callableDescriptor instanceof FunctionDescriptor) {
-            return containsErrorType((FunctionDescriptor) callableDescriptor);
-        }
-        else {
-            return containsErrorType(callableDescriptor.getReturnType());
-        }
-    }
-
-    public static boolean containsErrorType(@NotNull FunctionDescriptor function) {
-        if (containsErrorType(function.getReturnType())) {
-            return true;
-        }
+    /**
+     * @return true iff any of the types referenced in parameter types (including type parameters and extension receiver) of the function
+     * is an error type. Does not check the return type of the function.
+     */
+    public static boolean containsErrorTypeInParameters(@NotNull FunctionDescriptor function) {
         ReceiverParameterDescriptor receiverParameter = function.getExtensionReceiverParameter();
         if (receiverParameter != null && containsErrorType(receiverParameter.getType())) {
             return true;
@@ -191,19 +190,13 @@ public class ErrorUtils {
 
         @NotNull
         @Override
-        // TODO: Convert to Kotlin or add @JvmWildcard to MemberScope declarations
-        // method is covariantly overridden in Kotlin, but collections in Java are invariant
-        @SuppressWarnings({"unchecked"})
-        public Set getContributedVariables(@NotNull Name name, @NotNull LookupLocation location) {
+        public Set<? extends PropertyDescriptor> getContributedVariables(@NotNull Name name, @NotNull LookupLocation location) {
             return ERROR_PROPERTY_GROUP;
         }
 
         @NotNull
         @Override
-        // TODO: Convert to Kotlin or add @JvmWildcard to MemberScope declarations
-        // method is covariantly overridden in Kotlin, but collections in Java are invariant
-        @SuppressWarnings({"unchecked"})
-        public Set getContributedFunctions(@NotNull Name name, @NotNull LookupLocation location) {
+        public Set<? extends SimpleFunctionDescriptor> getContributedFunctions(@NotNull Name name, @NotNull LookupLocation location) {
             return Collections.singleton(createErrorFunction(this));
         }
 
@@ -277,17 +270,15 @@ public class ErrorUtils {
 
         @NotNull
         @Override
-        @SuppressWarnings({"unchecked"}) // KT-9898 Impossible implement kotlin interface from java
-        public Collection getContributedVariables(@NotNull Name name, @NotNull LookupLocation location) {
+        public Collection<? extends PropertyDescriptor> getContributedVariables(@NotNull Name name, @NotNull LookupLocation location) {
             throw new IllegalStateException(debugMessage+", required name: " + name);
         }
 
         @NotNull
         @Override
-        // TODO: Convert to Kotlin or add @JvmWildcard to MemberScope declarations
-        // method is covariantly overridden in Kotlin, but collections in Java are invariant
-        @SuppressWarnings({"unchecked"})
-        public Collection getContributedFunctions(@NotNull Name name, @NotNull LookupLocation location) {
+        public Collection<? extends SimpleFunctionDescriptor> getContributedFunctions(
+                @NotNull Name name, @NotNull LookupLocation location
+        ) {
             throw new IllegalStateException(debugMessage+", required name: " + name);
         }
 
@@ -343,7 +334,7 @@ public class ErrorUtils {
         public ErrorClassDescriptor(@NotNull Name name) {
             super(getErrorModule(), name,
                   Modality.OPEN, ClassKind.CLASS, Collections.<KotlinType>emptyList(), SourceElement.NO_SOURCE,
-                  /* isExternal = */ false
+                  /* isExternal = */ false, LockBasedStorageManager.NO_LOCKS
             );
 
             ClassConstructorDescriptorImpl
@@ -424,11 +415,7 @@ public class ErrorUtils {
                 SourceElement.NO_SOURCE,
                 false, false, false, false, false, false
         );
-        descriptor.setType(ERROR_PROPERTY_TYPE,
-                           Collections.<TypeParameterDescriptor>emptyList(),
-                           null,
-                           (KotlinType) null
-        );
+        descriptor.setType(ERROR_PROPERTY_TYPE, Collections.<TypeParameterDescriptor>emptyList(), null, null);
 
         return descriptor;
     }

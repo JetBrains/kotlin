@@ -1,6 +1,11 @@
 // !LANGUAGE: +InlineClasses
+// IGNORE_BACKEND: JVM_IR
+
+// FILE: utils.kt
 
 inline class UInt(val value: Int)
+
+// FILE: test.kt
 
 fun test(u1: UInt, u2: UInt) {
     val a = u1.value
@@ -9,6 +14,7 @@ fun test(u1: UInt, u2: UInt) {
     val c = u1.value + u2.value
 }
 
+// @TestKt.class:
 // 0 INVOKESTATIC UInt\$Erased.getValue
 // 0 INVOKESTATIC UInt\$Erased.box
 // 0 INVOKEVIRTUAL UInt.unbox

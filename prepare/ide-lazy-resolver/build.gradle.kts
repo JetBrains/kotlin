@@ -2,7 +2,9 @@ import java.util.Properties
 
 description = "Kotlin IDE Lazy Resolver"
 
-apply { plugin("java") }
+plugins {
+    java
+}
 
 val versions by configurations.creating
 val versionFilePath = "$rootDir/dependencies/dependencies.properties"
@@ -30,7 +32,7 @@ runtimeJar {
     dependsOn(":idea:ide-common:classes")
     project(":idea:ide-common").let { p ->
         p.pluginManager.withPlugin("java") {
-            from(p.the<JavaPluginConvention>().sourceSets.getByName("main").output)
+            from(p.mainSourceSet.output)
         }
     }
     from(fileTree("$rootDir/idea/ide-common")) { include("src/**") } // Eclipse formatter sources navigation depends on this

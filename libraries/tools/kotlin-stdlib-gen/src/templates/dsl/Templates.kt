@@ -1,22 +1,9 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package templates
-
-import kotlin.coroutines.experimental.*
 
 @DslMarker
 annotation class TemplateDsl
@@ -66,7 +53,7 @@ interface MemberTemplate {
     /** Specifies which platforms this member template should be generated for */
     fun platforms(vararg platforms: Platform)
 
-    fun instantiate(platforms: List<Platform> = Platform.values): Sequence<MemberBuilder>
+    fun instantiate(targets: Collection<KotlinTarget> = KotlinTarget.values): Sequence<MemberBuilder>
 
     /** Registers parameterless member builder function */
     fun builder(b: MemberBuildAction)
@@ -91,9 +78,9 @@ abstract class MemberTemplateDefinition<TParam> : MemberTemplate {
 
     private val buildActions = mutableListOf<BuildAction>()
 
-    private var targetPlatforms = setOf(*Platform.values())
+    private var allowedPlatforms = setOf(*Platform.values())
     override fun platforms(vararg platforms: Platform) {
-        targetPlatforms = setOf(*platforms)
+        allowedPlatforms = setOf(*platforms)
     }
 
 
@@ -118,23 +105,24 @@ abstract class MemberTemplateDefinition<TParam> : MemberTemplate {
             } ?: this
 
 
-    override fun instantiate(platforms: List<Platform>): Sequence<MemberBuilder> {
-        val resultingPlatforms = platforms.intersect(targetPlatforms)
-        val specificPlatforms by lazy { resultingPlatforms - Platform.Common }
+    override fun instantiate(targets: Collection<KotlinTarget>): Sequence<MemberBuilder> {
+        val resultingTargets = targets.filter { it.platform in allowedPlatforms }
+        val resultingPlatforms = resultingTargets.map { it.platform }.distinct()
+        val specificTargets by lazy { resultingTargets - KotlinTarget.Common }
 
         fun platformMemberBuilders(family: Family, p: TParam) =
-                if (Platform.Common in targetPlatforms) {
-                    val commonMemberBuilder = createMemberBuilder(Platform.Common, family, p)
+                if (Platform.Common in allowedPlatforms) {
+                    val commonMemberBuilder = createMemberBuilder(KotlinTarget.Common, family, p)
                     mutableListOf<MemberBuilder>().also { builders ->
                         if (Platform.Common in resultingPlatforms) builders.add(commonMemberBuilder)
                         if (commonMemberBuilder.hasPlatformSpecializations) {
-                            specificPlatforms.mapTo(builders) {
+                            specificTargets.mapTo(builders) {
                                 createMemberBuilder(it, family, p)
                             }
                         }
                     }
                 } else {
-                    resultingPlatforms.map { createMemberBuilder(it, family, p) }
+                    resultingTargets.map { createMemberBuilder(it, family, p) }
                 }
 
         return parametrize()
@@ -143,8 +131,8 @@ abstract class MemberTemplateDefinition<TParam> : MemberTemplate {
                 .flatten()
     }
 
-    private fun createMemberBuilder(platform: Platform, family: Family, p: TParam): MemberBuilder {
-        return MemberBuilder(targetPlatforms, platform, family).also { builder ->
+    private fun createMemberBuilder(target: KotlinTarget, family: Family, p: TParam): MemberBuilder {
+        return MemberBuilder(allowedPlatforms, target, family).also { builder ->
             for (action in buildActions) {
                 when (action) {
                     is BuildAction.Generic -> action(builder)
@@ -158,7 +146,12 @@ abstract class MemberTemplateDefinition<TParam> : MemberTemplate {
 
 
 private fun defaultPrimitives(f: Family): Set<PrimitiveType> =
-        if (f.isPrimitiveSpecialization) PrimitiveType.defaultPrimitives else emptySet()
+    when {
+        f == Family.Unsigned || f == Family.ArraysOfUnsigned -> PrimitiveType.unsignedPrimitives
+        f == Family.RangesOfPrimitives -> PrimitiveType.rangePrimitives
+        f.isPrimitiveSpecialization -> PrimitiveType.defaultPrimitives
+        else -> emptySet()
+    }
 
 @TemplateDsl
 class FamilyPrimitiveMemberDefinition : MemberTemplateDefinition<PrimitiveType?>() {
@@ -190,7 +183,7 @@ class FamilyPrimitiveMemberDefinition : MemberTemplateDefinition<PrimitiveType?>
         }
     }
 
-    override fun parametrize(): Sequence<Pair<Family, PrimitiveType?>> = buildSequence {
+    override fun parametrize(): Sequence<Pair<Family, PrimitiveType?>> = sequence {
         for ((family, primitives) in familyPrimitives) {
             if (primitives.isEmpty())
                 yield(family to null)

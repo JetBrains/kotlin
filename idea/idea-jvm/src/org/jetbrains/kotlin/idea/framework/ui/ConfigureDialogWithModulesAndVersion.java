@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.idea.KotlinPluginUtil;
 import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtilsKt;
 import org.jetbrains.kotlin.idea.configuration.KotlinProjectConfigurator;
 import org.jetbrains.kotlin.idea.configuration.RepositoryDescription;
+import org.jetbrains.kotlin.idea.util.VersioningKt;
 import org.jetbrains.kotlin.idea.versions.KotlinRuntimeLibraryUtilKt;
 
 import javax.swing.*;
@@ -54,7 +55,7 @@ import java.util.concurrent.TimeUnit;
 
 public class ConfigureDialogWithModulesAndVersion extends DialogWrapper {
     private static final String VERSIONS_LIST_URL =
-            "http://search.maven.org/solrsearch/select?q=g:%22org.jetbrains.kotlin%22+AND+a:%22kotlin-runtime%22&core=gav&rows=20&wt=json";
+            "https://search.maven.org/solrsearch/select?q=g:%22org.jetbrains.kotlin%22+AND+a:%22kotlin-stdlib%22&core=gav&rows=20&wt=json";
 
     @NotNull private final String minimumVersion;
 
@@ -222,7 +223,7 @@ public class ConfigureDialogWithModulesAndVersion extends DialogWrapper {
         Collections.sort(versions, VersionComparatorUtil.COMPARATOR.reversed());
 
         // Handle the case when the new version has just been released and the Maven search index hasn't been updated yet
-        if (!ConfigureKotlinInProjectUtilsKt.isEap(bundledRuntimeVersion) && !KotlinPluginUtil.isSnapshotVersion() &&
+        if (!VersioningKt.isEap(bundledRuntimeVersion) && !KotlinPluginUtil.isSnapshotVersion() &&
             !bundledRuntimeVersion.contains("dev") && !versions.contains(bundledRuntimeVersion)) {
             versions.add(0, bundledRuntimeVersion);
         }

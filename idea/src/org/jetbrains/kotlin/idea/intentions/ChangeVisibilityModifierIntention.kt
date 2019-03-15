@@ -22,18 +22,14 @@ import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.idea.core.canBePrivate
-import org.jetbrains.kotlin.idea.core.canBeProtected
-import org.jetbrains.kotlin.idea.core.setVisibility
-import org.jetbrains.kotlin.idea.core.toDescriptor
+import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi.psiUtil.toVisibility
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
-import java.lang.IllegalArgumentException
 
 open class ChangeVisibilityModifierIntention protected constructor(
     val modifier: KtModifierKeywordToken
@@ -43,11 +39,11 @@ open class ChangeVisibilityModifierIntention protected constructor(
         val modifierList = element.modifierList
         if (modifierList?.hasModifier(modifier) == true) return null
 
+        if (KtPsiUtil.isLocal((element as? KtPropertyAccessor)?.property ?: element)) return null
+
         val descriptor = element.toDescriptor() as? DeclarationDescriptorWithVisibility ?: return null
         val targetVisibility = modifier.toVisibility()
         if (descriptor.visibility == targetVisibility) return null
-
-        if (KtPsiUtil.isLocal((element as? KtPropertyAccessor)?.property ?: element)) return null
 
         if (modifierList?.hasModifier(KtTokens.OVERRIDE_KEYWORD) == true) {
             val callableDescriptor = descriptor  as? CallableDescriptor ?: return null
@@ -88,16 +84,6 @@ open class ChangeVisibilityModifierIntention protected constructor(
         if (element is KtPropertyAccessor) element.modifierList?.nextSibling?.replace(KtPsiFactory(element).createWhiteSpace())
     }
 
-    private fun KtModifierKeywordToken.toVisibility(): Visibility {
-        return when (this) {
-            KtTokens.PUBLIC_KEYWORD -> Visibilities.PUBLIC
-            KtTokens.PRIVATE_KEYWORD -> Visibilities.PRIVATE
-            KtTokens.PROTECTED_KEYWORD -> Visibilities.PROTECTED
-            KtTokens.INTERNAL_KEYWORD -> Visibilities.INTERNAL
-            else -> throw IllegalArgumentException("Unknown visibility modifier:$this")
-        }
-    }
-
     private fun noModifierYetApplicabilityRange(declaration: KtDeclaration): TextRange? {
         return when (declaration) {
             is KtNamedFunction -> declaration.funKeyword?.textRange
@@ -116,14 +102,10 @@ open class ChangeVisibilityModifierIntention protected constructor(
         }
     }
 
-    protected fun isAnnotationClassPrimaryConstructor(element: KtDeclaration) =
-        element is KtPrimaryConstructor && (element.parent as? KtClass)?.hasModifier(KtTokens.ANNOTATION_KEYWORD) ?: false
-
     class Public : ChangeVisibilityModifierIntention(KtTokens.PUBLIC_KEYWORD), HighPriorityAction
 
     class Private : ChangeVisibilityModifierIntention(KtTokens.PRIVATE_KEYWORD), HighPriorityAction {
         override fun applicabilityRange(element: KtDeclaration): TextRange? {
-            if (isAnnotationClassPrimaryConstructor(element)) return null
             return if (element.canBePrivate()) super.applicabilityRange(element) else null
         }
     }
@@ -136,8 +118,7 @@ open class ChangeVisibilityModifierIntention protected constructor(
 
     class Internal : ChangeVisibilityModifierIntention(KtTokens.INTERNAL_KEYWORD) {
         override fun applicabilityRange(element: KtDeclaration): TextRange? {
-            if (isAnnotationClassPrimaryConstructor(element)) return null
-            return super.applicabilityRange(element)
+            return if (element.canBeInternal()) super.applicabilityRange(element) else null
         }
     }
 }

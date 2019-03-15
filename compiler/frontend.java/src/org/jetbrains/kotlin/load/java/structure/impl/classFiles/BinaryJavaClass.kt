@@ -31,13 +31,13 @@ import java.text.CharacterIterator
 import java.text.StringCharacterIterator
 
 class BinaryJavaClass(
-        override val virtualFile: VirtualFile,
-        override val fqName: FqName,
-        private val context: ClassifierResolutionContext,
-        private val signatureParser: BinaryClassSignatureParser,
-        override var access: Int = 0,
-        override val outerClass: JavaClass?,
-        classContent: ByteArray? = null
+    override val virtualFile: VirtualFile,
+    override val fqName: FqName,
+    internal val context: ClassifierResolutionContext,
+    private val signatureParser: BinaryClassSignatureParser,
+    override var access: Int = 0,
+    override val outerClass: JavaClass?,
+    classContent: ByteArray? = null
 ) : ClassVisitor(ASM_API_VERSION_FOR_CLASS_READING), VirtualFileBoundJavaClass, BinaryJavaModifierListOwner, MapBasedJavaAnnotationOwner {
     private lateinit var myInternalName: String
 
@@ -50,8 +50,11 @@ class BinaryJavaClass(
 
     override val annotationsByFqName by buildLazyValueForMap()
 
-    private val innerClassNameToAccess: MutableMap<Name, Int> = THashMap()
-    override val innerClassNames get() = innerClassNameToAccess.keys
+    // Short name of a nested class of this class -> access flags as seen in the InnerClasses attribute value.
+    // Note that it doesn't include classes mentioned in other InnerClasses attribute values (those which are not nested in this class).
+    private val ownInnerClassNameToAccess: MutableMap<Name, Int> = THashMap()
+
+    override val innerClassNames get() = ownInnerClassNameToAccess.keys
 
     override val name: Name
         get() = fqName.shortName()
@@ -71,8 +74,8 @@ class BinaryJavaClass(
 
     init {
         ClassReader(classContent ?: virtualFile.contentsToByteArray()).accept(
-                this,
-                ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES
+            this,
+            ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES
         )
     }
 
@@ -100,27 +103,31 @@ class BinaryJavaClass(
         if (access.isSet(Opcodes.ACC_SYNTHETIC)) return
         if (innerName == null || outerName == null) return
 
-        if (myInternalName == outerName) {
+        // Do not read InnerClasses attribute values where full name != outer + $ + inner; treat those classes as top level instead.
+        // This is possible for example for Groovy-generated $Trait$FieldHelper classes.
+        if (name == "$outerName$$innerName") {
             context.addInnerClass(name, outerName, innerName)
-            innerClassNameToAccess[context.mapInternalNameToClassId(name).shortClassName] = access
+
+            if (myInternalName == outerName) {
+                ownInnerClassNameToAccess[context.mapInternalNameToClassId(name).shortClassName] = access
+            }
         }
     }
 
     override fun visit(
-            version: Int,
-            access: Int,
-            name: String,
-            signature: String?,
-            superName: String?,
-            interfaces: Array<out String>?
+        version: Int,
+        access: Int,
+        name: String,
+        signature: String?,
+        superName: String?,
+        interfaces: Array<out String>?
     ) {
         this.access = this.access or access
         this.myInternalName = name
 
         if (signature != null) {
             parseClassSignature(signature)
-        }
-        else {
+        } else {
             this.typeParameters = emptyList()
             this.supertypes = mutableListOf<JavaClassifierType>().apply {
                 addIfNotNull(superName?.convertInternalNameToClassifierType())
@@ -134,9 +141,9 @@ class BinaryJavaClass(
     private fun parseClassSignature(signature: String) {
         val iterator = StringCharacterIterator(signature)
         this.typeParameters =
-                signatureParser
-                        .parseTypeParametersDeclaration(iterator, context)
-                        .also(context::addTypeParameters)
+            signatureParser
+                .parseTypeParametersDeclaration(iterator, context)
+                .also(context::addTypeParameters)
 
         val supertypes = ContainerUtil.newSmartList<JavaClassifierType>()
         supertypes.addIfNotNull(signatureParser.parseClassifierRefSignature(iterator, context))
@@ -147,7 +154,7 @@ class BinaryJavaClass(
     }
 
     private fun String.convertInternalNameToClassifierType(): JavaClassifierType =
-            PlainJavaClassifierType({ context.resolveByInternalName(this) }, emptyList())
+        PlainJavaClassifierType({ context.resolveByInternalName(this) }, emptyList())
 
     override fun visitField(access: Int, name: String, desc: String, signature: String?, value: Any?): FieldVisitor? {
         if (access.isSet(Opcodes.ACC_SYNTHETIC)) return null
@@ -161,13 +168,13 @@ class BinaryJavaClass(
 
             object : FieldVisitor(ASM_API_VERSION_FOR_CLASS_READING) {
                 override fun visitAnnotation(desc: String, visible: Boolean) =
-                        BinaryJavaAnnotation.addAnnotation(this@run.annotations, desc, context, signatureParser)
+                    BinaryJavaAnnotation.addAnnotation(this@run.annotations, desc, context, signatureParser)
 
                 override fun visitTypeAnnotation(typeRef: Int, typePath: TypePath?, desc: String, visible: Boolean) =
-                        if (typePath == null)
-                            BinaryJavaAnnotation.addTypeAnnotation(type, desc, context, signatureParser)
-                        else
-                            null
+                    if (typePath == null)
+                        BinaryJavaAnnotation.addTypeAnnotation(type, desc, context, signatureParser)
+                    else
+                        null
             }
         }
     }
@@ -179,7 +186,7 @@ class BinaryJavaClass(
         if (fieldType !is JavaPrimitiveType || fieldType.type == null || value !is Int) return value
 
         return when (fieldType.type) {
-             PrimitiveType.BOOLEAN -> {
+            PrimitiveType.BOOLEAN -> {
                 when (value) {
                     0 -> false
                     1 -> true
@@ -192,13 +199,18 @@ class BinaryJavaClass(
     }
 
     override fun visitAnnotation(desc: String, visible: Boolean) =
-            BinaryJavaAnnotation.addAnnotation(annotations, desc, context, signatureParser)
+        BinaryJavaAnnotation.addAnnotation(annotations, desc, context, signatureParser)
 
-    override fun findInnerClass(name: Name): JavaClass? {
-        val access = innerClassNameToAccess[name] ?: return null
+    override fun findInnerClass(name: Name): JavaClass? = findInnerClass(name, classFileContent = null)
+
+    fun findInnerClass(name: Name, classFileContent: ByteArray?): JavaClass? {
+        val access = ownInnerClassNameToAccess[name] ?: return null
 
         return virtualFile.parent.findChild("${virtualFile.nameWithoutExtension}$$name.class")?.let {
-            BinaryJavaClass(it, fqName.child(name), context.copyForMember(), signatureParser, access, this)
+            BinaryJavaClass(
+                it, fqName.child(name), context.copyForMember(), signatureParser, access, this,
+                classFileContent
+            )
         }
     }
 }

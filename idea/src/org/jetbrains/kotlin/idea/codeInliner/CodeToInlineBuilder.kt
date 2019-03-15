@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.codeInliner
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -26,7 +27,6 @@ import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.intentions.InsertExplicitTypeArgumentsIntention
 import org.jetbrains.kotlin.idea.intentions.SpecifyExplicitLambdaSignatureIntention
 import org.jetbrains.kotlin.idea.references.canBeResolvedViaImport
-import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.getResolutionScope
@@ -59,7 +59,17 @@ class CodeToInlineBuilder(
     ): CodeToInline {
         var bindingContext = analyze()
 
-        val codeToInline = MutableCodeToInline(mainExpression, statementsBefore.toMutableList(), mutableSetOf())
+        val descriptor = mainExpression.getResolvedCall(bindingContext)?.resultingDescriptor
+        val alwaysKeepMainExpression = when (descriptor) {
+            is PropertyDescriptor -> descriptor.getter?.isDefault == false
+            else -> false
+        }
+        val codeToInline = MutableCodeToInline(
+            mainExpression,
+            statementsBefore.toMutableList(),
+            mutableSetOf(),
+            alwaysKeepMainExpression
+        )
 
         bindingContext = insertExplicitTypeArguments(codeToInline, bindingContext, analyze)
 
@@ -82,7 +92,10 @@ class CodeToInlineBuilder(
 
     private fun getParametersForFunctionLiteral(functionLiteralExpression: KtLambdaExpression, context: BindingContext): String? {
         val lambdaDescriptor = context.get(BindingContext.FUNCTION, functionLiteralExpression.functionLiteral)
-        if (lambdaDescriptor == null || ErrorUtils.containsErrorType(lambdaDescriptor)) return null
+        if (lambdaDescriptor == null ||
+            ErrorUtils.containsErrorTypeInParameters(lambdaDescriptor) ||
+            ErrorUtils.containsErrorType(lambdaDescriptor.returnType)
+        ) return null
         return lambdaDescriptor.valueParameters.joinToString {
             it.name.render() + ": " + IdeDescriptorRenderers.SOURCE_CODE.renderType(it.type)
         }
@@ -142,7 +155,7 @@ class CodeToInlineBuilder(
             val target = bindingContext[BindingContext.REFERENCE_TARGET, expression] ?: return@forEachDescendantOfType
 
             //TODO: other types of references ('[]' etc)
-            if (expression.mainReference.canBeResolvedViaImport(target, bindingContext)) {
+            if (expression.canBeResolvedViaImport(target, bindingContext)) {
                 codeToInline.fqNamesToImport.add(target.importableFqName!!)
             }
 

@@ -39,14 +39,14 @@ fun copyTestSources(testDataDir: File, sourceDestinationDir: File, filePrefix: S
         if (!file.isFile) continue
 
         val renamedFile =
-                if (filePrefix.isEmpty()) {
-                    file
+            if (filePrefix.isEmpty()) {
+                file
+            }
+            else {
+                File(sourceDestinationDir, file.name.removePrefix(filePrefix)).apply {
+                    file.renameTo(this)
                 }
-                else {
-                    File(sourceDestinationDir, file.name.removePrefix(filePrefix)).apply {
-                        file.renameTo(this)
-                    }
-                }
+            }
 
         mapping[renamedFile] = File(testDataDir, file.name)
     }
@@ -55,10 +55,10 @@ fun copyTestSources(testDataDir: File, sourceDestinationDir: File, filePrefix: S
 }
 
 fun getModificationsToPerform(
-        testDataDir: File,
-        moduleNames: Collection<String>?,
-        allowNoFilesWithSuffixInTestData: Boolean,
-        touchPolicy: TouchPolicy
+    testDataDir: File,
+    moduleNames: Collection<String>?,
+    allowNoFilesWithSuffixInTestData: Boolean,
+    touchPolicy: TouchPolicy
 ): List<List<Modification>> {
 
     fun getModificationsForIteration(newSuffix: String, touchSuffix: String, deleteSuffix: String): List<Modification> {
@@ -67,12 +67,18 @@ fun getModificationsToPerform(
             val underscore = fileName.indexOf("_")
 
             if (underscore != -1) {
-                val module = fileName.substring(0, underscore)
+                var moduleName = fileName.substring(0, underscore)
+                var moduleFileName = fileName.substring(underscore + 1)
+                if (moduleName.all { it.isDigit() }) {
+                    val (moduleName1, moduleFileName1) = moduleFileName.split("_")
+                    moduleName = moduleName1
+                    moduleFileName = moduleFileName1
+                }
 
                 assert(moduleNames != null) { "File name has module prefix, but multi-module environment is absent" }
-                assert(module in moduleNames!!) { "Module not found for file with prefix: $fileName" }
+                assert(moduleName in moduleNames!!) { "Module not found for file with prefix: $fileName" }
 
-                return Pair(module, fileName.substring(underscore + 1))
+                return Pair(moduleName, moduleFileName)
             }
 
             assert(moduleNames == null) { "Test is multi-module, but file has no module prefix: $fileName" }
@@ -80,9 +86,9 @@ fun getModificationsToPerform(
         }
 
         val rules = mapOf<String, (String, File) -> Modification>(
-                newSuffix to { path, file -> ModifyContent(path, file) },
-                touchSuffix to { path, _ -> TouchFile(path, touchPolicy) },
-                deleteSuffix to { path, _ -> DeleteFile(path) }
+            newSuffix to { path, file -> ModifyContent(path, file) },
+            touchSuffix to { path, _ -> TouchFile(path, touchPolicy) },
+            deleteSuffix to { path, _ -> DeleteFile(path) }
         )
 
         val modifications = ArrayList<Modification>()
@@ -122,8 +128,8 @@ fun getModificationsToPerform(
     }
     else {
         return (1..10)
-                .map { getModificationsForIteration(".new.$it", ".touch.$it", ".delete.$it") }
-                .filter { it.isNotEmpty() }
+            .map { getModificationsForIteration(".new.$it", ".touch.$it", ".delete.$it") }
+            .filter { it.isNotEmpty() }
     }
 }
 

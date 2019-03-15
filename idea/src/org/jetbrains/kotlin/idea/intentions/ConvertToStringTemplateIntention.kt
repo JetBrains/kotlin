@@ -79,27 +79,23 @@ open class ConvertToStringTemplateIntention : SelfTargetingOffsetIndependentInte
 
         fun buildText(expr: KtExpression?, forceBraces: Boolean): String {
             if (expr == null) return ""
-            val expression = KtPsiUtil.safeDeparenthesize(expr)
+            val expression = KtPsiUtil.safeDeparenthesize(expr).let {
+                if ((it as? KtDotQualifiedExpression)?.isToString() == true) it.receiverExpression else it
+            }
             val expressionText = expression.text
             when (expression) {
                 is KtConstantExpression -> {
                     val bindingContext = expression.analyze(BodyResolveMode.PARTIAL)
                     val type = bindingContext.getType(expression)!!
 
-                    if (KotlinBuiltIns.isChar(type)) {
-                        val value = expressionText.removePrefix("'").removeSuffix("'")
-                        return when (value) { // escape double quote and unescape single one and $
-                            "\"" -> "\\\""
-                            "\\'" -> "'"
-                            "$" -> if (forceBraces) "\\$" else "$"
-                            else -> value
-                        }
-                    }
-
                     val constant = ConstantExpressionEvaluator.getConstant(expression, bindingContext)
-                    val stringValue = constant?.getValue(type).toString()
-                    if (stringValue == expressionText) {
-                        return StringUtil.escapeStringCharacters(stringValue)
+                    if (constant != null) {
+                        val stringValue = constant.getValue(type).toString()
+                        if (KotlinBuiltIns.isChar(type) || stringValue == expressionText) {
+                            return buildString {
+                                StringUtil.escapeStringCharacters(stringValue.length, stringValue, if (forceBraces) "\"$" else "\"", this)
+                            }
+                        }
                     }
                 }
 
@@ -126,6 +122,9 @@ open class ConvertToStringTemplateIntention : SelfTargetingOffsetIndependentInte
 
                 is KtNameReferenceExpression ->
                     return "$" + (if (forceBraces) "{$expressionText}" else expressionText)
+
+                is KtThisExpression ->
+                    return "$" + (if (forceBraces || expression.labelQualifier != null) "{$expressionText}" else expressionText)
             }
 
             return "\${$expressionText}"

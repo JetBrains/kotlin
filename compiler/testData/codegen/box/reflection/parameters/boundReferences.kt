@@ -1,10 +1,11 @@
+// IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND: JS_IR
 // TODO: investigate should it be ran for JS or not
 // IGNORE_BACKEND: JS, NATIVE
 
 // WITH_REFLECT
 
 import kotlin.reflect.*
-import kotlin.reflect.jvm.*
 import kotlin.test.*
 
 class C {

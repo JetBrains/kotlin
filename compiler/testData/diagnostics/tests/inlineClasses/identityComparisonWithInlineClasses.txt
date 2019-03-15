@@ -1,0 +1,19 @@
+package
+
+public fun test(/*0*/ f1: Foo, /*1*/ f2: Foo, /*2*/ b1: Bar, /*3*/ fn1: Foo?, /*4*/ fn2: Foo?): kotlin.Unit
+
+public final inline class Bar {
+    public constructor Bar(/*0*/ y: kotlin.String)
+    public final val y: kotlin.String
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+public final inline class Foo {
+    public constructor Foo(/*0*/ x: kotlin.Int)
+    public final val x: kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}

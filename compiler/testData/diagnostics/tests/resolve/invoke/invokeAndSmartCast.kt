@@ -9,11 +9,11 @@ fun test(a: A) {
     }
     "".<!UNSAFE_IMPLICIT_INVOKE_CALL!>(a.x)<!>()
     a<!NI;UNSAFE_CALL!>.<!><!OI;UNSAFE_IMPLICIT_INVOKE_CALL!>x<!>("")
-    <!UNSAFE_IMPLICIT_INVOKE_CALL!>(a.x)<!>("")
+    <!NI;UNSAFE_CALL, OI;UNSAFE_IMPLICIT_INVOKE_CALL!>(a.x)<!>("")
 
     with("") {
         a<!NI;UNSAFE_CALL!>.<!><!OI;UNSAFE_IMPLICIT_INVOKE_CALL!>x<!>(<!NO_VALUE_FOR_PARAMETER!>)<!>
-        <!UNSAFE_IMPLICIT_INVOKE_CALL!>(a.x)<!>()
+        <!NI;UNSAFE_CALL, OI;UNSAFE_IMPLICIT_INVOKE_CALL!>(a.x)<!>()
         if (a.x != null) {
             a<!NI;UNSAFE_CALL!>.<!><!OI;UNSAFE_IMPLICIT_INVOKE_CALL!>x<!>(<!NO_VALUE_FOR_PARAMETER!>)<!> // todo
             <!DEBUG_INFO_SMARTCAST!>(a.x)<!>()

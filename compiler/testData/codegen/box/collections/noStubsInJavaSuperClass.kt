@@ -1,5 +1,5 @@
-// TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS, NATIVE
+// IGNORE_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 
 // FILE: B.java
 public abstract class B<E> extends A<E> implements L<E> {

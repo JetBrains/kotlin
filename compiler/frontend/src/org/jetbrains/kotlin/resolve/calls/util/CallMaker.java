@@ -325,6 +325,12 @@ public class CallMaker {
     }
 
     @NotNull
+    public static ValueArgument makeExternalValueArgument(@NotNull KtExpression expression, @NotNull KtElement reportErrorsOn) {
+        return new ExpressionValueArgument(expression, reportErrorsOn, true);
+    }
+
+
+    @NotNull
     public static Call makePropertyCall(@Nullable Receiver explicitReceiver, @Nullable ASTNode callOperationNode, @NotNull KtSimpleNameExpression nameExpression) {
         return makeCallWithExpressions(nameExpression, explicitReceiver, callOperationNode, nameExpression, Collections.emptyList());
     }

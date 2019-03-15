@@ -1,11 +1,17 @@
 package
 
 public interface ExceptionTracker {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
 public/*package*/ open class LockBasedStorageManager {
     public/*package*/ constructor LockBasedStorageManager()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     @java.lang.Override public/*package*/ open fun foo(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     public/*package*/ interface ExceptionHandlingStrategy {
         public abstract fun bar(): kotlin.Unit
@@ -16,5 +22,8 @@ public/*package*/ open class LockBasedStorageManager {
 }
 
 public interface StorageManager {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public abstract fun foo(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

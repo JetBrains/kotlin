@@ -16,13 +16,13 @@
 
 package org.jetbrains.kotlin.types;
 
-import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider;
+import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl;
 import org.jetbrains.kotlin.psi.KtExpression;
@@ -488,7 +488,7 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
 
     private void assertSupertypes(String typeStr, String... supertypeStrs) {
         Set<KotlinType> allSupertypes = TypeUtils.getAllSupertypes(makeType(scopeWithImports, typeStr));
-        Set<KotlinType> expected = Sets.newHashSet();
+        Set<KotlinType> expected = new HashSet<>();
         for (String supertypeStr : supertypeStrs) {
             KotlinType supertype = makeType(scopeWithImports, supertypeStr);
             expected.add(supertype);
@@ -545,7 +545,8 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
         KotlinType thisType = makeType(contextType);
         ReceiverParameterDescriptorImpl receiverParameterDescriptor = new ReceiverParameterDescriptorImpl(
                 scopeWithImports.getOwnerDescriptor(),
-                new TransientReceiver(thisType)
+                new TransientReceiver(thisType),
+                Annotations.Companion.getEMPTY()
         );
 
         LexicalScope scope = new LexicalScopeImpl(scopeWithImports, scopeWithImports.getOwnerDescriptor(), false,

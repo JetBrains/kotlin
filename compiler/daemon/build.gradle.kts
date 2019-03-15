@@ -1,8 +1,8 @@
 
-apply { plugin("kotlin") }
-apply { plugin("jps-compatible") }
-
-jvmTarget = "1.6"
+plugins {
+    kotlin("jvm")
+    id("jps-compatible")
+}
 
 dependencies {
     compile(project(":compiler:cli"))
@@ -11,6 +11,7 @@ dependencies {
     compile(project(":kotlin-build-common"))
     compile(commonDep("org.fusesource.jansi", "jansi"))
     compile(commonDep("org.jline", "jline"))
+    compileOnly(project(":kotlin-scripting-compiler"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     compileOnly(intellijDep()) { includeIntellijCoreJarDependencies(project) }
 }

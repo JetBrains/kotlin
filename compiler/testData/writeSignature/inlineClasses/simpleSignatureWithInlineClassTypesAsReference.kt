@@ -10,7 +10,7 @@ object Test {
     fun asReturn(): Bar = TODO()
 }
 
-// method: Test::asParam
+// method: Test::asParam-GWb7d6U
 // jvm signature: (Ljava/lang/Integer;)V
 // generic signature: null
 

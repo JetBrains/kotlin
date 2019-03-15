@@ -8,7 +8,7 @@ fun dynamic.onDynamicFun() = 1
 @kotlin.internal.DynamicExtension
 var dynamic.onDynamicProperty
     get() = ""
-    set(value) {}
+    set(<!UNUSED_PARAMETER!>value<!>) {}
 
 
 fun test(d: dynamic, a: Any?) {

@@ -1,4 +1,4 @@
-// INSPECTION_CLASS: org.jetbrains.android.inspections.klint.AndroidLintInspectionToolProvider$AndroidKLintRecycleInspection
+// INSPECTION_CLASS: com.android.tools.idea.lint.AndroidLintRecycleInspection
 
 @file:Suppress("UNUSED_VARIABLE")
 
@@ -11,7 +11,7 @@ class MainActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        VelocityTracker.<warning descr="This `VelocityTracker` should be recycled after use with `#recycle()`">obtain</warning>()
+        VelocityTracker.obtain()
 
         VelocityTracker.obtain().recycle()
 

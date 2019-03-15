@@ -19,32 +19,36 @@ package org.jetbrains.kotlin.config
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.cli.common.arguments.*
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.copyBean
+import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
+import org.jetbrains.kotlin.platform.IdePlatform
+import org.jetbrains.kotlin.platform.IdePlatformKind
 import org.jetbrains.kotlin.utils.DescriptionAware
 
+@Deprecated("Use IdePlatformKind instead.", level = DeprecationLevel.ERROR)
 sealed class TargetPlatformKind<out Version : TargetPlatformVersion>(
-        val version: Version,
-        val name: String
+    val version: Version,
+    val name: String
 ) : DescriptionAware {
     override val description = "$name ${version.description}"
 
-    class Jvm(version: JvmTarget) : TargetPlatformKind<JvmTarget>(version, "JVM") {
+    class Jvm(version: JvmTarget) : @Suppress("DEPRECATION_ERROR") TargetPlatformKind<JvmTarget>(version, "JVM") {
         companion object {
-            val JVM_PLATFORMS by lazy { JvmTarget.values().map(::Jvm) }
-
+            private val JVM_PLATFORMS by lazy { JvmTarget.values().map(::Jvm) }
             operator fun get(version: JvmTarget) = JVM_PLATFORMS[version.ordinal]
         }
     }
 
-    object JavaScript : TargetPlatformKind<TargetPlatformVersion.NoVersion>(TargetPlatformVersion.NoVersion, "JavaScript")
+    object JavaScript : @Suppress("DEPRECATION_ERROR") TargetPlatformKind<TargetPlatformVersion.NoVersion>(
+        TargetPlatformVersion.NoVersion,
+        "JavaScript"
+    )
 
-    object Common : TargetPlatformKind<TargetPlatformVersion.NoVersion>(TargetPlatformVersion.NoVersion, "Common (experimental)")
-
-    companion object {
-        val ALL_PLATFORMS: List<TargetPlatformKind<*>> by lazy { Jvm.JVM_PLATFORMS + JavaScript + Common }
-        val DEFAULT_PLATFORM: TargetPlatformKind<*>
-            get() = Jvm[JvmTarget.DEFAULT]
-    }
+    object Common : @Suppress("DEPRECATION_ERROR") TargetPlatformKind<TargetPlatformVersion.NoVersion>(
+        TargetPlatformVersion.NoVersion,
+        "Common (experimental)"
+    )
 }
 
 object CoroutineSupport {
@@ -54,7 +58,7 @@ object CoroutineSupport {
 
     fun byCompilerArgumentsOrNull(arguments: CommonCompilerArguments?): LanguageFeature.State? = when (arguments?.coroutinesState) {
         CommonCompilerArguments.ENABLE -> LanguageFeature.State.ENABLED
-        CommonCompilerArguments.WARN -> LanguageFeature.State.ENABLED_WITH_WARNING
+        CommonCompilerArguments.WARN, CommonCompilerArguments.DEFAULT -> LanguageFeature.State.ENABLED_WITH_WARNING
         CommonCompilerArguments.ERROR -> LanguageFeature.State.ENABLED_WITH_ERROR
         else -> null
     }
@@ -74,7 +78,7 @@ sealed class VersionView : DescriptionAware {
     abstract val version: LanguageVersion
 
     object LatestStable : VersionView() {
-        override val version: LanguageVersion = LanguageVersion.LATEST_STABLE
+        override val version: LanguageVersion = RELEASED_VERSION
 
         override val description: String
             get() = "Latest stable (${version.versionString})"
@@ -90,6 +94,15 @@ sealed class VersionView : DescriptionAware {
     }
 
     companion object {
+        val RELEASED_VERSION by lazy {
+            val latestStable = LanguageVersion.LATEST_STABLE
+            if (latestStable.isPreRelease()) {
+                val versions = LanguageVersion.values()
+                val index = versions.indexOf(latestStable)
+                versions.getOrNull(index - 1) ?: LanguageVersion.KOTLIN_1_0
+            } else latestStable
+        }
+
         fun deserialize(value: String?, isAutoAdvance: Boolean): VersionView {
             if (isAutoAdvance) return VersionView.LatestStable
             val languageVersion = LanguageVersion.fromVersionString(value)
@@ -111,6 +124,15 @@ var CommonCompilerArguments.apiVersionView: VersionView
         apiVersion = value.version.versionString
         autoAdvanceApiVersion = value == VersionView.LatestStable
     }
+
+enum class KotlinModuleKind {
+    DEFAULT,
+    SOURCE_SET_HOLDER,
+    COMPILATION_AND_SOURCE_SET_HOLDER;
+
+    val isNewMPP: Boolean
+        get() = this != DEFAULT
+}
 
 class KotlinFacetSettings {
     companion object {
@@ -165,27 +187,21 @@ class KotlinFacetSettings {
             compilerArguments!!.apiVersion = value?.versionString
         }
 
-    val targetPlatformKind: TargetPlatformKind<*>?
-        get() = compilerArguments?.let {
-            when (it) {
-                is K2JVMCompilerArguments -> {
-                    val jvmTarget = it.jvmTarget ?: JvmTarget.DEFAULT.description
-                    TargetPlatformKind.Jvm.JVM_PLATFORMS.firstOrNull { it.version.description >= jvmTarget }
-                }
-                is K2JSCompilerArguments -> TargetPlatformKind.JavaScript
-                is K2MetadataCompilerArguments -> TargetPlatformKind.Common
-                else -> null
-            }
+    val platform: IdePlatform<*, *>?
+        get() {
+            val compilerArguments = this.compilerArguments ?: return null
+            return IdePlatformKind.platformByCompilerArguments(compilerArguments)
         }
 
-    var coroutineSupport: LanguageFeature.State
+    var coroutineSupport: LanguageFeature.State?
         get() {
             val languageVersion = languageLevel ?: return LanguageFeature.Coroutines.defaultState
             if (languageVersion < LanguageFeature.Coroutines.sinceVersion!!) return LanguageFeature.State.DISABLED
-            return CoroutineSupport.byCompilerArguments(compilerArguments)
+            return CoroutineSupport.byCompilerArgumentsOrNull(compilerArguments)
         }
         set(value) {
-            compilerArguments!!.coroutinesState = when (value) {
+            compilerArguments?.coroutinesState = when (value) {
+                null -> CommonCompilerArguments.DEFAULT
                 LanguageFeature.State.ENABLED -> CommonCompilerArguments.ENABLE
                 LanguageFeature.State.ENABLED_WITH_WARNING -> CommonCompilerArguments.WARN
                 LanguageFeature.State.ENABLED_WITH_ERROR, LanguageFeature.State.DISABLED -> CommonCompilerArguments.ERROR
@@ -196,22 +212,12 @@ class KotlinFacetSettings {
 
     var productionOutputPath: String? = null
     var testOutputPath: String? = null
-}
 
-fun TargetPlatformKind<*>.createCompilerArguments(init: CommonCompilerArguments.() -> Unit = {}): CommonCompilerArguments {
-    val arguments = when (this) {
-        is TargetPlatformKind.Jvm -> K2JVMCompilerArguments()
-        is TargetPlatformKind.JavaScript -> K2JSCompilerArguments()
-        is TargetPlatformKind.Common -> K2MetadataCompilerArguments()
-    }
+    var kind: KotlinModuleKind = KotlinModuleKind.DEFAULT
+    var sourceSetNames: List<String> = emptyList()
+    var isTestModule: Boolean = false
 
-    arguments.init()
-
-    if (arguments is K2JVMCompilerArguments) {
-        arguments.jvmTarget = this@createCompilerArguments.version.description
-    }
-
-    return arguments
+    var externalProjectId: String = ""
 }
 
 interface KotlinFacetSettingsProvider {

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // FILE: JavaClass.java
 
 class JavaClass {
@@ -21,7 +22,7 @@ class JavaClass {
         return this;
     }
 
-    JavaClass mod(Runnable i) {
+    JavaClass rem(Runnable i) {
         i.run();
         return this;
     }

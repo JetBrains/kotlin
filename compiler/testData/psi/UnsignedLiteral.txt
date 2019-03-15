@@ -1,0 +1,174 @@
+KtFile: UnsignedLiteral.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('array')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    CALL_EXPRESSION
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('array')
+      TYPE_ARGUMENT_LIST
+        PsiElement(LT)('<')
+        TYPE_PROJECTION
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Any')
+        PsiElement(GT)('>')
+      VALUE_ARGUMENT_LIST
+        PsiElement(LPAR)('(')
+        PsiWhiteSpace('\n    ')
+        VALUE_ARGUMENT
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('1u')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n    ')
+        VALUE_ARGUMENT
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('0u')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n    ')
+        VALUE_ARGUMENT
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('1_1u')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n    ')
+        VALUE_ARGUMENT
+          PREFIX_EXPRESSION
+            OPERATION_REFERENCE
+              PsiElement(MINUS)('-')
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('2u')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n    ')
+        VALUE_ARGUMENT
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('0xFFu')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n    ')
+        VALUE_ARGUMENT
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('0b100u')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n    ')
+        VALUE_ARGUMENT
+          BINARY_EXPRESSION
+            FLOAT_CONSTANT
+              PsiElement(FLOAT_CONSTANT)('3.14')
+            OPERATION_REFERENCE
+              PsiElement(IDENTIFIER)('u')
+            PsiErrorElement:Expecting an element
+              <empty list>
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n    ')
+        VALUE_ARGUMENT
+          BINARY_EXPRESSION
+            FLOAT_CONSTANT
+              PsiElement(FLOAT_CONSTANT)('1e1')
+            OPERATION_REFERENCE
+              PsiElement(IDENTIFIER)('u')
+            PsiErrorElement:Expecting an element
+              <empty list>
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n    ')
+        VALUE_ARGUMENT
+          BINARY_EXPRESSION
+            FLOAT_CONSTANT
+              PsiElement(FLOAT_CONSTANT)('1.0e1')
+            OPERATION_REFERENCE
+              PsiElement(IDENTIFIER)('u')
+            PsiErrorElement:Expecting an element
+              <empty list>
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n    ')
+        VALUE_ARGUMENT
+          BINARY_EXPRESSION
+            FLOAT_CONSTANT
+              PsiElement(FLOAT_CONSTANT)('2_2.0f')
+            OPERATION_REFERENCE
+              PsiElement(IDENTIFIER)('u')
+            PsiErrorElement:Expecting an element
+              <empty list>
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n    ')
+        VALUE_ARGUMENT
+          BINARY_EXPRESSION
+            FLOAT_CONSTANT
+              PsiElement(FLOAT_CONSTANT)('6.022_137e+2_3f')
+            OPERATION_REFERENCE
+              PsiElement(IDENTIFIER)('u')
+            PsiErrorElement:Expecting an element
+              <empty list>
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n    ')
+        VALUE_ARGUMENT
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('1U')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n    ')
+        VALUE_ARGUMENT
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('0xFU')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n    ')
+        VALUE_ARGUMENT
+          BINARY_EXPRESSION
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('1u')
+            OPERATION_REFERENCE
+              PsiElement(IDENTIFIER)('U')
+            PsiErrorElement:Expecting an element
+              <empty list>
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n    ')
+        VALUE_ARGUMENT
+          BINARY_EXPRESSION
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('1U')
+            OPERATION_REFERENCE
+              PsiElement(IDENTIFIER)('u')
+            PsiErrorElement:Expecting an element
+              <empty list>
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n    ')
+        VALUE_ARGUMENT
+          BINARY_EXPRESSION
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('1L')
+            OPERATION_REFERENCE
+              PsiElement(IDENTIFIER)('u')
+            PsiErrorElement:Expecting an element
+              <empty list>
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n    ')
+        VALUE_ARGUMENT
+          BINARY_EXPRESSION
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('1L')
+            OPERATION_REFERENCE
+              PsiElement(IDENTIFIER)('U')
+            PsiErrorElement:Expecting an element
+              <empty list>
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n    ')
+        VALUE_ARGUMENT
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('1uL')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n    ')
+        VALUE_ARGUMENT
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('1UL')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n    ')
+        VALUE_ARGUMENT
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('3Ul')
+        PsiWhiteSpace('\n')
+        PsiElement(RPAR)(')')

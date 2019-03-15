@@ -2,6 +2,3 @@ package
 
 public val l: kotlin.collections.MutableList<in kotlin.Int>
 public fun test(/*0*/ l: java.util.List<kotlin.Int>): kotlin.Unit
-
-package xxx {
-}

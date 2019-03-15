@@ -1,0 +1,6 @@
+// "Replace annotation with kotlin.annotation.MustBeDocumented" "true"
+
+import kotlin.annotation.MustBeDocumented
+
+@MustBeDocumented<caret>
+annotation class Foo

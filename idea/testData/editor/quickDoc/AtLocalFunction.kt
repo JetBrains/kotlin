@@ -6,4 +6,4 @@ fun context() {
     <caret>local()
 }
 
-//INFO: <pre><b>local</b> <b>final</b> <b>fun</b> local(): Unit</pre>
+//INFO: <div class='definition'><pre>local final fun <b>local</b>(): Unit</pre></div>

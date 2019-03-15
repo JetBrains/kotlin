@@ -1,5 +1,4 @@
-// TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS, NATIVE
+// TARGET_BACKEND: JVM
 
 // WITH_RUNTIME
 
@@ -11,6 +10,6 @@ class C {
 }
 
 fun box(): String {
-    val m = C::class.java.getClassLoader().loadClass("ExtensionMethodKt").getMethod("foo", C::class.java, String::class.java)
+    val m = Class.forName("ExtensionMethodKt").getMethod("foo", C::class.java, String::class.java)
     return m.invoke(null, C(), "O") as String
 }

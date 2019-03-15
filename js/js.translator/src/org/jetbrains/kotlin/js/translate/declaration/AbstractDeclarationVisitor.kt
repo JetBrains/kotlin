@@ -21,18 +21,15 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.isOverridable
 import org.jetbrains.kotlin.js.backend.ast.JsExpression
-import org.jetbrains.kotlin.js.backend.ast.JsFunction
 import org.jetbrains.kotlin.js.backend.ast.JsName
-import org.jetbrains.kotlin.js.backend.ast.metadata.coroutineMetadata
-import org.jetbrains.kotlin.js.backend.ast.metadata.isInlineableCoroutineBody
-import org.jetbrains.kotlin.js.descriptorUtils.shouldBeExported
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
-import org.jetbrains.kotlin.js.translate.expression.*
+import org.jetbrains.kotlin.js.translate.expression.translateAndAliasParameters
+import org.jetbrains.kotlin.js.translate.expression.translateFunction
+import org.jetbrains.kotlin.js.translate.expression.wrapWithInlineMetadata
 import org.jetbrains.kotlin.js.translate.general.TranslatorVisitor
 import org.jetbrains.kotlin.js.translate.utils.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtensionProperty
-import org.jetbrains.kotlin.resolve.source.getPsi
 
 abstract class AbstractDeclarationVisitor : TranslatorVisitor<Unit>()  {
     override fun emptyResult(context: TranslationContext) { }
@@ -97,18 +94,8 @@ abstract class AbstractDeclarationVisitor : TranslatorVisitor<Unit>()  {
         else {
             null
         }
-        addFunction(descriptor, functionAndContext?.first, expression)
 
-        if (descriptor.isSuspend && descriptor.isInline && descriptor.shouldBeExported(context.config) && functionAndContext != null) {
-            val innerContext = functionAndContext.second
-            val inlineFunction = functionAndContext.first.deepCopy() as JsFunction
-            inlineFunction.name = null
-            inlineFunction.coroutineMetadata = null
-            inlineFunction.isInlineableCoroutineBody = true
-            val metadata = InlineMetadata.compose(inlineFunction, descriptor, innerContext)
-            val functionWithMetadata = metadata.functionWithMetadata(context, descriptor.source.getPsi())
-            context.addDeclarationStatement(functionWithMetadata.makeStmt())
-        }
+        addFunction(descriptor, functionAndContext?.first, expression)
     }
 
     override fun visitTypeAlias(typeAlias: KtTypeAlias, data: TranslationContext?) {}
@@ -123,21 +110,15 @@ abstract class AbstractDeclarationVisitor : TranslatorVisitor<Unit>()  {
         val innerContext = context.newDeclaration(descriptor).translateAndAliasParameters(descriptor, function.parameters)
 
         if (descriptor.isSuspend) {
-            function.fillCoroutineMetadata(context, descriptor, hasController = false)
+            function.fillCoroutineMetadata(innerContext, descriptor, hasController = false)
         }
 
         if (!descriptor.isOverridable) {
             function.body.statements += FunctionBodyTranslator.setDefaultValueForArguments(descriptor, innerContext)
         }
         innerContext.translateFunction(expression, function)
-        val result = if (descriptor.isSuspend && descriptor.shouldBeExported(context.config)) {
-            function
-        }
-        else {
-            innerContext.wrapWithInlineMetadata(context, function, descriptor)
-        }
 
-        return Pair(result, innerContext)
+        return Pair(innerContext.wrapWithInlineMetadata(context, function, descriptor), innerContext)
     }
 
     // used from kotlinx.serialization

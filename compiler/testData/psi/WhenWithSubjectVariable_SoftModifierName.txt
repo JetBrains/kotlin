@@ -1,0 +1,316 @@
+KtFile: WhenWithSubjectVariable_SoftModifierName.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('test')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      WHEN
+        PsiElement(when)('when')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('abstract')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(LBRACE)('{')
+        PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      WHEN
+        PsiElement(when)('when')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('enum')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(LBRACE)('{')
+        PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      WHEN
+        PsiElement(when)('when')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('open')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(LBRACE)('{')
+        PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      WHEN
+        PsiElement(when)('when')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('inner')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(LBRACE)('{')
+        PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      WHEN
+        PsiElement(when)('when')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('override')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(LBRACE)('{')
+        PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      WHEN
+        PsiElement(when)('when')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('private')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(LBRACE)('{')
+        PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      WHEN
+        PsiElement(when)('when')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('public')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(LBRACE)('{')
+        PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      WHEN
+        PsiElement(when)('when')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('internal')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(LBRACE)('{')
+        PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      WHEN
+        PsiElement(when)('when')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('protected')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(LBRACE)('{')
+        PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      WHEN
+        PsiElement(when)('when')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('out')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(LBRACE)('{')
+        PsiElement(RBRACE)('}')
+      PsiWhiteSpace(' ')
+      PsiComment(EOL_COMMENT)('// NB 'in' is a hard keyword')
+      PsiWhiteSpace('\n    ')
+      WHEN
+        PsiElement(when)('when')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('final')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(LBRACE)('{')
+        PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      WHEN
+        PsiElement(when)('when')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('vararg')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(LBRACE)('{')
+        PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      WHEN
+        PsiElement(when)('when')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('reified')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(LBRACE)('{')
+        PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      WHEN
+        PsiElement(when)('when')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('companion')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(LBRACE)('{')
+        PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      WHEN
+        PsiElement(when)('when')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('sealed')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(LBRACE)('{')
+        PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      WHEN
+        PsiElement(when)('when')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('lateinit')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(LBRACE)('{')
+        PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      WHEN
+        PsiElement(when)('when')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('data')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(LBRACE)('{')
+        PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      WHEN
+        PsiElement(when)('when')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('inline')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(LBRACE)('{')
+        PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      WHEN
+        PsiElement(when)('when')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('noinline')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(LBRACE)('{')
+        PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      WHEN
+        PsiElement(when)('when')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('tailrec')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(LBRACE)('{')
+        PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      WHEN
+        PsiElement(when)('when')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('external')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(LBRACE)('{')
+        PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      WHEN
+        PsiElement(when)('when')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('annotation')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(LBRACE)('{')
+        PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      WHEN
+        PsiElement(when)('when')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('crossinline')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(LBRACE)('{')
+        PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      WHEN
+        PsiElement(when)('when')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('const')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(LBRACE)('{')
+        PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      WHEN
+        PsiElement(when)('when')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('operator')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(LBRACE)('{')
+        PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      WHEN
+        PsiElement(when)('when')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('infix')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(LBRACE)('{')
+        PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      WHEN
+        PsiElement(when)('when')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('suspend')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(LBRACE)('{')
+        PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

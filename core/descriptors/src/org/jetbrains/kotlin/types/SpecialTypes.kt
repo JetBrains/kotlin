@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.checker.NewTypeVariableConstructor
 import org.jetbrains.kotlin.types.checker.NullabilityChecker
+import org.jetbrains.kotlin.types.model.DefinitelyNotNullTypeMarker
 import org.jetbrains.kotlin.types.typeUtil.canHaveUndefinedNullability
 
 abstract class DelegatingSimpleType : SimpleType() {
@@ -60,7 +61,9 @@ class LazyWrappedType(storageManager: StorageManager, computation: () -> KotlinT
     override fun isComputed(): Boolean = lazyValue.isComputed()
 }
 
-class DefinitelyNotNullType private constructor(val original: SimpleType) : DelegatingSimpleType(), CustomTypeVariable {
+class DefinitelyNotNullType private constructor(val original: SimpleType) : DelegatingSimpleType(), CustomTypeVariable,
+    DefinitelyNotNullTypeMarker {
+
     companion object {
         internal fun makeDefinitelyNotNull(type: UnwrappedType): DefinitelyNotNullType? {
             return when {
@@ -81,8 +84,8 @@ class DefinitelyNotNullType private constructor(val original: SimpleType) : Dele
             }
         }
 
-        fun makesSenseToBeDefinitelyNotNull(type: UnwrappedType): Boolean =
-                type.canHaveUndefinedNullability() && !NullabilityChecker.isSubtypeOfAny(type)
+        private fun makesSenseToBeDefinitelyNotNull(type: UnwrappedType): Boolean =
+            type.canHaveUndefinedNullability() && !NullabilityChecker.isSubtypeOfAny(type)
     }
 
     override val delegate: SimpleType
@@ -111,7 +114,28 @@ val KotlinType.isDefinitelyNotNullType: Boolean
     get() = unwrap() is DefinitelyNotNullType
 
 fun SimpleType.makeSimpleTypeDefinitelyNotNullOrNotNull(): SimpleType =
-        DefinitelyNotNullType.makeDefinitelyNotNull(this) ?: makeNullableAsSpecified(false)
+    DefinitelyNotNullType.makeDefinitelyNotNull(this)
+        ?: makeIntersectionTypeDefinitelyNotNullOrNotNull()
+        ?: makeNullableAsSpecified(false)
 
 fun UnwrappedType.makeDefinitelyNotNullOrNotNull(): UnwrappedType =
-        DefinitelyNotNullType.makeDefinitelyNotNull(this) ?: makeNullableAsSpecified(false)
+    DefinitelyNotNullType.makeDefinitelyNotNull(this)
+        ?: makeIntersectionTypeDefinitelyNotNullOrNotNull()
+        ?: makeNullableAsSpecified(false)
+
+private fun KotlinType.makeIntersectionTypeDefinitelyNotNullOrNotNull(): SimpleType? {
+    val typeConstructor = constructor as? IntersectionTypeConstructor ?: return null
+    val definitelyNotNullConstructor = typeConstructor.makeDefinitelyNotNullOrNotNull() ?: return null
+
+    return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
+        annotations,
+        definitelyNotNullConstructor,
+        listOf(),
+        false,
+        definitelyNotNullConstructor.createScopeForKotlinType()
+    )
+}
+
+private fun IntersectionTypeConstructor.makeDefinitelyNotNullOrNotNull(): IntersectionTypeConstructor? {
+    return transformComponents({ TypeUtils.isNullableType(it) }, { it.unwrap().makeDefinitelyNotNullOrNotNull() })
+}

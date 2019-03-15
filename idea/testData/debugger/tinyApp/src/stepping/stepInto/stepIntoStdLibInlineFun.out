@@ -2,7 +2,7 @@ LineBreakpoint created at stepIntoStdLibInlineFun.kt:6
 Run Java
 Connected to the target VM
 stepIntoStdLibInlineFun.kt:6
-_Collections.!EXT!
+stepIntoStdLibInlineFun.kt:1
 resuming stepIntoStdLibInlineFun.kt:6
 Disconnected from the target VM
 

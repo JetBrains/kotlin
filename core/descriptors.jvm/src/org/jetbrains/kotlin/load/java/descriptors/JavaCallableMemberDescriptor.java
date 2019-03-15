@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.java.descriptors;
 
+import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
@@ -28,6 +29,7 @@ public interface JavaCallableMemberDescriptor extends CallableMemberDescriptor {
     JavaCallableMemberDescriptor enhance(
             @Nullable KotlinType enhancedReceiverType,
             @NotNull List<ValueParameterData> enhancedValueParametersData,
-            @NotNull KotlinType enhancedReturnType
+            @NotNull KotlinType enhancedReturnType,
+            @Nullable Pair<UserDataKey<?>, ?> additionalUserData
     );
 }

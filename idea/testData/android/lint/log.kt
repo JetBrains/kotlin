@@ -1,6 +1,6 @@
-// INSPECTION_CLASS: org.jetbrains.android.inspections.klint.AndroidLintInspectionToolProvider$AndroidKLintLogConditionalInspection
-// INSPECTION_CLASS2: org.jetbrains.android.inspections.klint.AndroidLintInspectionToolProvider$AndroidKLintLogTagMismatchInspection
-// INSPECTION_CLASS3: org.jetbrains.android.inspections.klint.AndroidLintInspectionToolProvider$AndroidKLintLongLogTagInspection
+// INSPECTION_CLASS: com.android.tools.idea.lint.AndroidLintLogConditionalInspection
+// INSPECTION_CLASS2: com.android.tools.idea.lint.AndroidLintLogTagMismatchInspection
+// INSPECTION_CLASS3: com.android.tools.idea.lint.AndroidLintLongLogTagInspection
 
 import android.annotation.SuppressLint
 import android.util.Log
@@ -15,8 +15,8 @@ class LogTest {
         Log.d(TAG1, m) // ok: unconditional, but not performing computation
         Log.d(TAG1, "a" + "b") // ok: unconditional, but not performing non-constant computation
         Log.d(TAG1, Constants.MY_MESSAGE) // ok: unconditional, but constant string
-        Log.<warning descr="The log call Log.i(...) should be conditional: surround with `if (Log.isLoggable(...))` or `if (BuildConfig.DEBUG) { ... }`">i(TAG1, "message" + m)</warning> // error: unconditional w/ computation
-        Log.<warning descr="The log call Log.i(...) should be conditional: surround with `if (Log.isLoggable(...))` or `if (BuildConfig.DEBUG) { ... }`">i(TAG1, toString())</warning> // error: unconditional w/ computation
+        <warning descr="The log call Log.i(...) should be conditional: surround with `if (Log.isLoggable(...))` or `if (BuildConfig.DEBUG) { ... }`">Log.i(TAG1, "message" + m)</warning> // error: unconditional w/ computation
+        <warning descr="The log call Log.i(...) should be conditional: surround with `if (Log.isLoggable(...))` or `if (BuildConfig.DEBUG) { ... }`">Log.i(TAG1, toString())</warning> // error: unconditional w/ computation
         Log.e(TAG1, toString()) // ok: only flagging debug/info messages
         Log.w(TAG1, toString()) // ok: only flagging debug/info messages
         Log.wtf(TAG1, toString()) // ok: only flagging debug/info messages
@@ -44,22 +44,22 @@ class LogTest {
         if (shouldLog) {
             // String literal tags
             Log.d("short_tag", "message") // ok: short
-            Log.<error descr="The logging tag can be at most 23 characters, was 43 (really_really_really_really_really_long_tag)">d("really_really_really_really_really_long_tag", "message")</error> // error: too long
+            Log.d("<error descr="The logging tag can be at most 23 characters, was 43 (really_really_really_really_really_long_tag)">really_really_really_really_really_long_tag</error>", "message") // error: too long
 
             // Resolved field tags
             Log.d(TAG1, "message") // ok: short
             Log.d(TAG22, "message") // ok: short
             Log.d(TAG23, "message") // ok: threshold
-            Log.<error descr="The logging tag can be at most 23 characters, was 24 (123456789012345678901234)">d(TAG24, "message")</error> // error: too long
-            Log.<error descr="The logging tag can be at most 23 characters, was 39 (MyReallyReallyReallyReallyReallyLongTag)">d(LONG_TAG, "message")</error> // error: way too long
+            Log.d(<error descr="The logging tag can be at most 23 characters, was 24 (123456789012345678901234)">TAG24</error>, "message") // error: too long
+            Log.d(<error descr="The logging tag can be at most 23 characters, was 39 (MyReallyReallyReallyReallyReallyLongTag)">LONG_TAG</error>, "message") // error: way too long
 
             // Locally defined variable tags
             val LOCAL_TAG = "MyReallyReallyReallyReallyReallyLongTag"
-            Log.<error descr="The logging tag can be at most 23 characters, was 39 (MyReallyReallyReallyReallyReallyLongTag)">d(LOCAL_TAG, "message")</error> // error: too long
+            Log.d(<error descr="The logging tag can be at most 23 characters, was 39 (MyReallyReallyReallyReallyReallyLongTag)">LOCAL_TAG</error>, "message") // error: too long
 
             // Concatenated tags
-            Log.<error descr="The logging tag can be at most 23 characters, was 28 (1234567890123456789012MyTag1)">d(TAG22 + TAG1, "message")</error> // error: too long
-            Log.<error descr="The logging tag can be at most 23 characters, was 27 (1234567890123456789012MyTag)">d(TAG22 + "MyTag", "message")</error> // error: too long
+            Log.d(<error descr="The logging tag can be at most 23 characters, was 28 (1234567890123456789012MyTag1)">TAG22 + TAG1</error>, "message") // error: too long
+            Log.d(<error descr="The logging tag can be at most 23 characters, was 27 (1234567890123456789012MyTag)">TAG22 + "MyTag"</error>, "message") // error: too long
         }
     }
 

@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 Kotlin.isBooleanArray = function (a) {
@@ -59,20 +48,8 @@ Kotlin.arrayToString = function (a) {
     return "[" + Array.prototype.map.call(a, function(e) { return toString(e); }).join(", ") + "]";
 };
 
-Kotlin.arrayDeepToString = function (a, visited) {
-    visited = visited || [a];
-    var toString = Kotlin.isCharArray(a) ? String.fromCharCode : Kotlin.toString;
-    return "[" + Array.prototype.map.call(a, function (e) {
-            if (Kotlin.isArrayish(e) && visited.indexOf(e) < 0) {
-                visited.push(e);
-                var result = Kotlin.arrayDeepToString(e, visited);
-                visited.pop();
-                return result;
-            }
-            else {
-                return toString(e);
-            }
-        }).join(", ") + "]";
+Kotlin.arrayDeepToString = function (arr) {
+    return Kotlin.kotlin.collections.contentDeepToStringImpl(arr);
 };
 
 Kotlin.arrayEquals = function (a, b) {
@@ -92,24 +69,7 @@ Kotlin.arrayEquals = function (a, b) {
 };
 
 Kotlin.arrayDeepEquals = function (a, b) {
-    if (a === b) {
-        return true;
-    }
-    if (!Kotlin.isArrayish(b) || a.length !== b.length) {
-        return false;
-    }
-
-    for (var i = 0, n = a.length; i < n; i++) {
-        if (Kotlin.isArrayish(a[i])) {
-            if (!Kotlin.arrayDeepEquals(a[i], b[i])) {
-                return false;
-            }
-        }
-        else if (!Kotlin.equals(a[i], b[i])) {
-            return false;
-        }
-    }
-    return true;
+    return Kotlin.kotlin.collections.contentDeepEqualsImpl(a, b);
 };
 
 Kotlin.arrayHashCode = function (arr) {
@@ -121,12 +81,7 @@ Kotlin.arrayHashCode = function (arr) {
 };
 
 Kotlin.arrayDeepHashCode = function (arr) {
-    var result = 1;
-    for (var i = 0, n = arr.length; i < n; i++) {
-        var e = arr[i];
-        result = ((31 * result | 0) + (Kotlin.isArrayish(e) ? Kotlin.arrayDeepHashCode(e) : Kotlin.hashCode(e))) | 0;
-    }
-    return result;
+    return Kotlin.kotlin.collections.contentDeepHashCodeImpl(arr);
 };
 
 Kotlin.primitiveArraySort = function (array) {

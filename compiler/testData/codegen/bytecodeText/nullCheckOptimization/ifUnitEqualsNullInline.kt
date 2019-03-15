@@ -1,5 +1,4 @@
-// WITH_RUNTIME
-
+// IGNORE_BACKEND: JVM_IR
 // FILE: test.kt
 
 fun test1(): String {

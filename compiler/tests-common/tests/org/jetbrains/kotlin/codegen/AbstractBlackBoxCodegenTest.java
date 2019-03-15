@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen;
@@ -20,10 +9,12 @@ import com.intellij.openapi.util.io.FileUtil;
 import kotlin.io.FilesKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.TestsRuntimeError;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
-import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.io.File;
@@ -37,21 +28,33 @@ import static org.jetbrains.kotlin.test.clientserver.TestProcessServerKt.getGene
 
 public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
 
+    private static final boolean IGNORE_EXPECTED_FAILURES =
+            Boolean.getBoolean("kotlin.suppress.expected.test.failures");
+
     @Override
-    protected void doMultiFileTest(@NotNull File wholeFile, @NotNull List<TestFile> files, @Nullable File javaFilesDir) throws Exception {
+    protected void doMultiFileTest(
+        @NotNull File wholeFile,
+        @NotNull List<TestFile> files,
+        @Nullable File javaFilesDir
+    ) throws Exception {
+        boolean isIgnored = IGNORE_EXPECTED_FAILURES && InTextDirectivesUtils.isIgnoredTarget(getBackend(), wholeFile);
+
+        compile(files, javaFilesDir, !isIgnored);
+
         try {
-            compile(files, javaFilesDir);
-            blackBox();
+            blackBox(!isIgnored);
         }
         catch (Throwable t) {
-            try {
-                // To create .txt file in case of failure
-                doBytecodeListingTest(wholeFile);
-            }
-            catch (Throwable ignored) {
+            if (!isIgnored) {
+                try {
+                    // To create .txt file in case of failure
+                    doBytecodeListingTest(wholeFile);
+                }
+                catch (Throwable ignored) {
+                }
             }
 
-            throw t;
+            throw new TestsRuntimeError(t);
         }
 
         doBytecodeListingTest(wholeFile);
@@ -60,7 +63,12 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
     private void doBytecodeListingTest(@NotNull File wholeFile) throws Exception {
         if (!InTextDirectivesUtils.isDirectiveDefined(FileUtil.loadFile(wholeFile), "CHECK_BYTECODE_LISTING")) return;
 
-        File expectedFile = new File(wholeFile.getParent(), FilesKt.getNameWithoutExtension(wholeFile) + ".txt");
+        String suffix =
+                (coroutinesPackage.contains("experimental") || coroutinesPackage.isEmpty())
+                && InTextDirectivesUtils.isDirectiveDefined(FileUtil.loadFile(wholeFile), "COMMON_COROUTINES_TEST")
+                ? "_1_2" : "";
+        File expectedFile = new File(wholeFile.getParent(), FilesKt.getNameWithoutExtension(wholeFile) + suffix + ".txt");
+
         String text =
                 BytecodeListingTextCollectingVisitor.Companion.getText(
                         classFileFactory,
@@ -87,12 +95,12 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
                         }
                 );
 
-        assertEqualsToFile(expectedFile, text);
+        assertEqualsToFile(expectedFile, text, s -> s.replace("COROUTINES_PACKAGE", coroutinesPackage));
     }
 
-    protected void blackBox() {
+    protected void blackBox(boolean reportProblems) {
         // If there are many files, the first 'box(): String' function will be executed.
-        GeneratedClassLoader generatedClassLoader = generateAndCreateClassLoader();
+        GeneratedClassLoader generatedClassLoader = generateAndCreateClassLoader(reportProblems);
         for (KtFile firstFile : myFiles.getPsiFiles()) {
             String className = getFacadeFqName(firstFile);
             if (className == null) continue;
@@ -105,7 +113,9 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
                 }
             }
             catch (Throwable e) {
-                System.out.println(generateToText());
+                if (reportProblems) {
+                    System.out.println(generateToText());
+                }
                 throw ExceptionUtilsKt.rethrow(e);
             }
             finally {
@@ -115,14 +125,14 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
         fail("Can't find box method!");
     }
 
-
     @Nullable
-    private static String getFacadeFqName(@NotNull KtFile firstFile) {
-        for (KtDeclaration declaration : CodegenUtil.getActualDeclarations(firstFile)) {
-            if (declaration instanceof KtProperty || declaration instanceof KtNamedFunction || declaration instanceof KtTypeAlias) {
-                return JvmFileClassUtil.getFileClassInfoNoResolve(firstFile).getFacadeClassFqName().asString();
-            }
-        }
-        return null;
+    private static String getFacadeFqName(@NotNull KtFile file) {
+        return CodegenUtil.getMemberDeclarationsToGenerate(file).isEmpty()
+               ? null
+               : JvmFileClassUtil.getFileClassInfoNoResolve(file).getFacadeClassFqName().asString();
+    }
+
+    protected TargetBackend getBackend() {
+        return TargetBackend.JVM;
     }
 }

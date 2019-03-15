@@ -1,0 +1,9 @@
+package
+
+public val value_1: kotlin.Int = 27
+public val value_2: kotlin.Int = 13
+public val value_3: kotlin.Int = 0
+public val value_4: kotlin.Int
+public val value_5: kotlin.Int
+public val value_6: kotlin.Int = 0
+public val value_7: kotlin.Int = 2

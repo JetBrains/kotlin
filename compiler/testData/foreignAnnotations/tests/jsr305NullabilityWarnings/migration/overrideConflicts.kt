@@ -66,7 +66,7 @@ fun main(b: B, c: C) {
     b.foo2()?.length
     b.foo3()<!UNSAFE_CALL!>.<!>length
     b.foo3()?.length
-    <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>b.foo4()<!>.length
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>b.foo4()<!>.length
     b.foo4()?.length
 
     b.bar(<!NULL_FOR_NONNULL_TYPE!>null<!>)

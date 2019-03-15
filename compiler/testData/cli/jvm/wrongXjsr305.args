@@ -6,7 +6,9 @@ $TEMP_DIR$
 -Xjsr305=@hello\:warning
 -Xjsr305=@hello\:warn
 -Xjsr305=@hello\:ignore
+-Xjsr305=@hello\:warn
 -Xjsr305=strict
 -Xjsr305=ignore
 -Xjsr305=under-migration\:ignore
 -Xjsr305=under-migration\:strict
+-Xjsr305=under-migration\:ignore

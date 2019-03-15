@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget.*
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.diagnostics.reportDiagnosticOnce
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getAnnotationEntries
@@ -34,8 +36,14 @@ class AnnotationChecker(
     private val languageVersionSettings: LanguageVersionSettings
 ) {
     fun check(annotated: KtAnnotated, trace: BindingTrace, descriptor: DeclarationDescriptor? = null) {
-        val actualTargets = getActualTargetList(annotated, descriptor, trace)
+        val actualTargets = getActualTargetList(annotated, descriptor, trace.bindingContext)
         checkEntries(annotated.annotationEntries, actualTargets, trace, annotated)
+        if (annotated is KtProperty) {
+            checkPropertyUseSiteTargetAnnotations(annotated, trace)
+        }
+        if (annotated is KtClass) {
+            checkSuperTypeAnnotations(annotated, trace)
+        }
         if (annotated is KtCallableDeclaration) {
             annotated.typeReference?.let { check(it, trace) }
             annotated.receiverTypeReference?.let { check(it, trace) }
@@ -64,10 +72,54 @@ class AnnotationChecker(
     }
 
     fun checkExpression(expression: KtExpression, trace: BindingTrace) {
-        checkEntries(expression.getAnnotationEntries(), getActualTargetList(expression, null, trace), trace)
+        checkEntries(expression.getAnnotationEntries(), getActualTargetList(expression, null, trace.bindingContext), trace)
         if (expression is KtLambdaExpression) {
             for (parameter in expression.valueParameters) {
                 parameter.typeReference?.let { check(it, trace) }
+            }
+        }
+    }
+
+    private fun checkPropertyUseSiteTargetAnnotations(property: KtProperty, trace: BindingTrace) {
+        fun List<KtAnnotationEntry>?.getDescriptors() = this?.mapNotNull { trace.get(BindingContext.ANNOTATION, it)?.annotationClass } ?: listOf()
+
+        val reportError = languageVersionSettings.supportsFeature(LanguageFeature.ProhibitRepeatedUseSiteTargetAnnotations)
+
+        val propertyAnnotations = mapOf(
+            AnnotationUseSiteTarget.PROPERTY_GETTER to property.getter?.annotationEntries.getDescriptors(),
+            AnnotationUseSiteTarget.PROPERTY_SETTER to property.setter?.annotationEntries.getDescriptors(),
+            AnnotationUseSiteTarget.SETTER_PARAMETER to property.setter?.parameter?.annotationEntries.getDescriptors()
+        )
+
+        for (entry in property.annotationEntries) {
+            val descriptor = trace.get(BindingContext.ANNOTATION, entry) ?: continue
+            val classDescriptor = descriptor.annotationClass ?: continue
+
+            val useSiteTarget = entry.useSiteTarget?.getAnnotationUseSiteTarget() ?: property.getDefaultUseSiteTarget(descriptor)
+            val existingAnnotations = propertyAnnotations.get(useSiteTarget) ?: continue
+            if (classDescriptor in existingAnnotations && !classDescriptor.isRepeatableAnnotation()) {
+                if (reportError) {
+                    trace.reportDiagnosticOnce(Errors.REPEATED_ANNOTATION.on(entry))
+                } else {
+                    trace.report(Errors.REPEATED_ANNOTATION_WARNING.on(entry))
+                }
+            }
+        }
+    }
+
+    private fun checkSuperTypeAnnotations(annotated: KtClass, trace: BindingTrace) {
+        val reportError = languageVersionSettings.supportsFeature(LanguageFeature.ProhibitUseSiteTargetAnnotationsOnSuperTypes)
+
+        for (superType in annotated.superTypeListEntries.mapNotNull { it.typeReference }) {
+            for (entry in superType.annotationEntries) {
+                if (entry.useSiteTarget != null) {
+                    val diagnostic = if (reportError) {
+                        Errors.ANNOTATION_ON_SUPERCLASS.on(entry)
+                    } else {
+                        Errors.ANNOTATION_ON_SUPERCLASS_WARNING.on(entry)
+                    }
+                    trace.report(diagnostic)
+                }
             }
         }
     }
@@ -197,15 +249,15 @@ class AnnotationChecker(
             }.toSet()
         }
 
-        fun getDeclarationSiteActualTargetList(annotated: KtElement, descriptor: ClassDescriptor?, trace: BindingTrace):
+        fun getDeclarationSiteActualTargetList(annotated: KtElement, descriptor: ClassDescriptor?, context: BindingContext):
                 List<KotlinTarget> {
-            return getActualTargetList(annotated, descriptor, trace).defaultTargets
+            return getActualTargetList(annotated, descriptor, context).defaultTargets
         }
 
-        private fun DeclarationDescriptor?.hasBackingField(bindingTrace: BindingTrace) =
-            (this as? PropertyDescriptor)?.let { bindingTrace.get(BindingContext.BACKING_FIELD_REQUIRED, it) } ?: false
+        private fun DeclarationDescriptor?.hasBackingField(context: BindingContext) =
+            (this as? PropertyDescriptor)?.let { context.get(BindingContext.BACKING_FIELD_REQUIRED, it) } ?: false
 
-        fun getActualTargetList(annotated: KtElement, descriptor: DeclarationDescriptor?, trace: BindingTrace): TargetList {
+        fun getActualTargetList(annotated: KtElement, descriptor: DeclarationDescriptor?, context: BindingContext): TargetList {
             return when (annotated) {
                 is KtClassOrObject ->
                     (descriptor as? ClassDescriptor)?.let { TargetList(KotlinTarget.classActualTargets(it)) } ?: TargetLists.T_CLASSIFIER
@@ -213,8 +265,8 @@ class AnnotationChecker(
                 is KtProperty -> {
                     when {
                         annotated.isLocal -> TargetLists.T_LOCAL_VARIABLE
-                        annotated.isMember -> TargetLists.T_MEMBER_PROPERTY(descriptor.hasBackingField(trace), annotated.hasDelegate())
-                        else -> TargetLists.T_TOP_LEVEL_PROPERTY(descriptor.hasBackingField(trace), annotated.hasDelegate())
+                        annotated.isMember -> TargetLists.T_MEMBER_PROPERTY(descriptor.hasBackingField(context), annotated.hasDelegate())
+                        else -> TargetLists.T_TOP_LEVEL_PROPERTY(descriptor.hasBackingField(context), annotated.hasDelegate())
                     }
                 }
                 is KtParameter -> {
@@ -250,7 +302,7 @@ class AnnotationChecker(
             }
         }
 
-        private object TargetLists {
+        object TargetLists {
             val T_CLASSIFIER = targetList(CLASS)
             val T_TYPEALIAS = targetList(TYPEALIAS)
 

@@ -1,8 +1,10 @@
 
 description = "Kotlin SourceSections Compiler Plugin"
 
-apply { plugin("kotlin") }
-apply { plugin("jps-compatible") }
+plugins {
+    kotlin("jvm")
+    id("jps-compatible")
+}
 
 
 dependencies {
@@ -22,9 +24,9 @@ dependencies {
     testCompile(projectRuntimeJar(":kotlin-daemon-client"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(commonDep("junit:junit"))
-    testCompile(intellijCoreDep()) { includeJars("intellij-core") }
+    testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     testCompile(intellijDep()) { includeJars("idea", "idea_rt", "openapi", "log4j", "jdom", "jps-model") }
-    testRuntime(projectDist(":kotlin-reflect"))
+    testRuntime(project(":kotlin-reflect"))
 }
 
 sourceSets {
@@ -36,10 +38,10 @@ projectTest {
     workingDir = rootDir
 }
 
+publish()
+
 runtimeJar()
 sourcesJar()
 javadocJar()
 
 dist()
-
-publish()

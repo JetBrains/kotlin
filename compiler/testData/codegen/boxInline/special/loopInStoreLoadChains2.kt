@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // FILE: 1.kt
 inline fun cycle(p: String): String {
     var z = p

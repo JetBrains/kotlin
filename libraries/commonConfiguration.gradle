@@ -52,18 +52,47 @@ ext.configureJvm6Project = { Project project ->
     }
 }
 
-ext.manifestAttributes = { Manifest manifest, Project project, String component = null ->
+ext.compileJava9Sources = { Project project, String moduleName, Collection<FileCollection> moduleOutputs = [project.sourceSets.main.output] ->
+    // module-info.java should be in java9 source set by convention
+    SourceDirectorySet java9SourceSet = project.sourceSets.java9.java
+    project.tasks.getByName("compileJava9Java").configure { JavaCompile it ->
+        dependsOn(moduleOutputs)
+        it.sourceCompatibility = 1.9
+        it.targetCompatibility = 1.9
+        it.destinationDir = file("${java9SourceSet.outputDir}/META-INF/versions/9")
+        it.options.fork = true
+        it.options.forkOptions.javaHome = file(JDK_9)
+        it.options.sourcepath = files(java9SourceSet.srcDirs)
+
+        doFirst {
+            def moduleFiles = files(*moduleOutputs)
+            def modulePath = project.configurations.compileClasspath.filter { !(it in moduleFiles.files) }
+
+            options.compilerArgs = [
+                    '--module-path', modulePath.asPath,
+                    '--patch-module', "$moduleName=${moduleFiles.asPath}"
+            ]
+
+            classpath = files()
+        }
+    }
+}
+
+ext.manifestAttributes = { Manifest manifest, Project project, String component = null, boolean multiRelease = false ->
     project.configure(manifest) {
         attributes \
                 'Implementation-Vendor': 'JetBrains',
                 'Implementation-Title': project.archivesBaseName,
-                'Implementation-Version': project.buildNumber,
-                'Build-Jdk': System.getProperty('java.version')
+                'Implementation-Version': project.buildNumber
 
         if (component != null) {
             attributes \
                 'Kotlin-Runtime-Component': component,
                 'Kotlin-Version': project.kotlinLanguageVersion
+        }
+        if (multiRelease) {
+            attributes \
+                'Multi-Release': 'true'
         }
     }
 }
@@ -184,17 +213,14 @@ ext.configurePublishing = { Project project ->
 
         task publish(dependsOn: uploadArchives)
     }
-
 }
 
-ext.createPreprocessorTask = { Project project, def name, def sourceDir, def targetDir, def profile = "JS" ->
-    return project.tasks.create("preprocessSources$name", JavaExec) {
-//        dependsOn(rootProject.prepareBootstrap)
-        inputs.dir(sourceDir)
-        outputs.dir(targetDir)
-        classpath = rootProject.configurations.bootstrapCompile
-//        classpath = project.files(bootstrapCompilerFile)
-        main = "org.jetbrains.kotlin.preprocessor.PreprocessorCLI"
-        args = [sourceDir, targetDir, profile]
+allprojects { project ->
+    project.ext.javadocJar = { lambda = {} ->
+        ArtifactsKt.javadocJar(project, lambda)
+    }
+    
+    dependencies.ext.kotlinStdlib = { suffix ->
+        DependenciesKt.kotlinStdlib(project, suffix)
     }
 }

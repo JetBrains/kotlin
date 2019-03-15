@@ -5,3 +5,5 @@ enum class Enum(x: String) {
     val becameNullable: Any = x
     val unchanged: Any = x
 }
+
+fun Any.string() = this as String

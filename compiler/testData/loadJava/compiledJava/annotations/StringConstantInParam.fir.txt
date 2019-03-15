@@ -1,0 +1,5 @@
+public abstract interface StringConstantInParam : R|java/lang/Object| {
+    public final static property HEL(val): R|ft<kotlin/String, kotlin/String?>|!
+        public get(): R|ft<kotlin/String, kotlin/String?>|!
+
+}

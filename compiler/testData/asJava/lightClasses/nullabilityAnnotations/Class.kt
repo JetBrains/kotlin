@@ -13,10 +13,10 @@ class Class {
     @Nullable fun nullableWithN(): String? = ""
     @NotNull fun nullableWithNN(): String? = ""
 
-    val nullableVal: String? = ""
-    var nullableVar: String? = ""
-    val notNullVal: String = ""
-    var notNullVar: String = ""
+    val nullableVal: String? = { "" }()
+    var nullableVar: String? = { "" }()
+    val notNullVal: String = { "" }()
+    var notNullVar: String = { "" }()
 
     val notNullValWithGet: String
         @[Nullable] get() = ""
@@ -32,6 +32,6 @@ class Class {
         @[NotNull] get() = ""
         @[NotNull] set(v) {}
 
-    private val privateNN: String = ""
-    private val privateN: String? = ""
+    private val privateNN: String = { "" }()
+    private val privateN: String? = { "" }()
 }

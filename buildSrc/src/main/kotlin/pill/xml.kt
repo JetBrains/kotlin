@@ -6,7 +6,7 @@ import shadow.org.jdom2.Element
 import shadow.org.jdom2.output.Format
 import shadow.org.jdom2.output.XMLOutputter
 
-class xml(val name: String, vararg val args: Pair<String, Any>, block: xml.() -> Unit = {}) {
+class xml(val name: String, private vararg val args: Pair<String, Any>, block: xml.() -> Unit = {}) {
     private companion object {
         fun makeXml(name: String, vararg args: Pair<String, Any>, block: xml.() -> Unit = {}): xml {
             return xml(name, *args, block = block)

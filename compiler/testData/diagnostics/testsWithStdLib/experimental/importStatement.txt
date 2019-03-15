@@ -1,0 +1,27 @@
+package
+
+package feature {
+
+    package feature.experimental {
+
+        package feature.experimental.self {
+            @feature.experimental.self.ImportedMarker public val importedProperty: kotlin.Unit
+            @feature.experimental.self.ImportedMarker public fun importedFunction(): kotlin.Unit
+
+            @feature.experimental.self.ImportedMarker public object ImportedClass {
+                private constructor ImportedClass()
+                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                @feature.experimental.self.ImportedMarker public final fun importedObjectMember(): kotlin.Unit
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+            }
+
+            @kotlin.Experimental public final annotation class ImportedMarker : kotlin.Annotation {
+                public constructor ImportedMarker()
+                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+            }
+        }
+    }
+}

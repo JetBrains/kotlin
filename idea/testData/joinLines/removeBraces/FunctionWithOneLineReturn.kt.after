@@ -1,1 +1,1 @@
-fun foo(): Int =<caret> 1
+fun foo(): Int =<selection><caret></selection> 1

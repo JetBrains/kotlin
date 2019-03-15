@@ -3,8 +3,8 @@ import kotlin.properties.ReadOnlyProperty
 // "Create property 'foo'" "true"
 // ERROR: Property must be initialized
 
+val foo: ReadOnlyProperty<Nothing?, Int>
+
 fun test() {
     val x: Int by foo
 }
-
-val foo: ReadOnlyProperty<Nothing?, Int>

@@ -1,0 +1,7 @@
+class Foo {
+    fun foo() {}
+}
+
+fun Foo?.test() {
+    this@test?.foo()
+}

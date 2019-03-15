@@ -1,4 +1,5 @@
 // "Rename to 'rem'" "true"
+// DISABLE-ERRORS
 
 object A
 operator<caret> fun A.mod(x: Int) {}

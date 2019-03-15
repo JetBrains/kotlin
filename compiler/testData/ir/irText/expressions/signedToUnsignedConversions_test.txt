@@ -1,0 +1,136 @@
+FILE fqName:<root> fileName:/signedToUnsignedConversions_test.kt
+  PROPERTY name:IMPLICIT_INT visibility:public modality:FINAL flags:const,val
+    annotations:
+      CALL 'constructor ImplicitIntegerCoercion()' type=kotlin.internal.ImplicitIntegerCoercion origin=null
+    FIELD PROPERTY_BACKING_FIELD name:IMPLICIT_INT type:kotlin.Int visibility:public flags:final,static
+      EXPRESSION_BODY
+        CONST Int type=kotlin.Int value=255
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-IMPLICIT_INT> visibility:public modality:FINAL <> () returnType:kotlin.Int flags:
+      correspondingProperty: PROPERTY name:IMPLICIT_INT visibility:public modality:FINAL flags:const,val
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-IMPLICIT_INT>(): Int'
+          GET_FIELD 'IMPLICIT_INT: Int' type=kotlin.Int origin=null
+  PROPERTY name:EXPLICIT_INT visibility:public modality:FINAL flags:const,val
+    annotations:
+      CALL 'constructor ImplicitIntegerCoercion()' type=kotlin.internal.ImplicitIntegerCoercion origin=null
+    FIELD PROPERTY_BACKING_FIELD name:EXPLICIT_INT type:kotlin.Int visibility:public flags:final,static
+      EXPRESSION_BODY
+        CONST Int type=kotlin.Int value=255
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-EXPLICIT_INT> visibility:public modality:FINAL <> () returnType:kotlin.Int flags:
+      correspondingProperty: PROPERTY name:EXPLICIT_INT visibility:public modality:FINAL flags:const,val
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-EXPLICIT_INT>(): Int'
+          GET_FIELD 'EXPLICIT_INT: Int' type=kotlin.Int origin=null
+  PROPERTY name:LONG_CONST visibility:public modality:FINAL flags:const,val
+    annotations:
+      CALL 'constructor ImplicitIntegerCoercion()' type=kotlin.internal.ImplicitIntegerCoercion origin=null
+    FIELD PROPERTY_BACKING_FIELD name:LONG_CONST type:kotlin.Long visibility:public flags:final,static
+      EXPRESSION_BODY
+        CONST Long type=kotlin.Long value=255
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-LONG_CONST> visibility:public modality:FINAL <> () returnType:kotlin.Long flags:
+      correspondingProperty: PROPERTY name:LONG_CONST visibility:public modality:FINAL flags:const,val
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-LONG_CONST>(): Long'
+          GET_FIELD 'LONG_CONST: Long' type=kotlin.Long origin=null
+  PROPERTY name:NON_CONST visibility:public modality:FINAL flags:val
+    annotations:
+      CALL 'constructor ImplicitIntegerCoercion()' type=kotlin.internal.ImplicitIntegerCoercion origin=null
+    FIELD PROPERTY_BACKING_FIELD name:NON_CONST type:kotlin.Int visibility:public flags:final,static
+      EXPRESSION_BODY
+        CONST Int type=kotlin.Int value=255
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-NON_CONST> visibility:public modality:FINAL <> () returnType:kotlin.Int flags:
+      correspondingProperty: PROPERTY name:NON_CONST visibility:public modality:FINAL flags:val
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-NON_CONST>(): Int'
+          GET_FIELD 'NON_CONST: Int' type=kotlin.Int origin=null
+  PROPERTY name:BIGGER_THAN_UBYTE visibility:public modality:FINAL flags:const,val
+    annotations:
+      CALL 'constructor ImplicitIntegerCoercion()' type=kotlin.internal.ImplicitIntegerCoercion origin=null
+    FIELD PROPERTY_BACKING_FIELD name:BIGGER_THAN_UBYTE type:kotlin.Int visibility:public flags:final,static
+      EXPRESSION_BODY
+        CONST Int type=kotlin.Int value=256
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-BIGGER_THAN_UBYTE> visibility:public modality:FINAL <> () returnType:kotlin.Int flags:
+      correspondingProperty: PROPERTY name:BIGGER_THAN_UBYTE visibility:public modality:FINAL flags:const,val
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-BIGGER_THAN_UBYTE>(): Int'
+          GET_FIELD 'BIGGER_THAN_UBYTE: Int' type=kotlin.Int origin=null
+  PROPERTY name:UINT_CONST visibility:public modality:FINAL flags:const,val
+    annotations:
+      CALL 'constructor ImplicitIntegerCoercion()' type=kotlin.internal.ImplicitIntegerCoercion origin=null
+    FIELD PROPERTY_BACKING_FIELD name:UINT_CONST type:kotlin.UInt visibility:public flags:final,static
+      EXPRESSION_BODY
+        CONST Int type=kotlin.UInt value=42
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-UINT_CONST> visibility:public modality:FINAL <> () returnType:kotlin.UInt flags:
+      correspondingProperty: PROPERTY name:UINT_CONST visibility:public modality:FINAL flags:const,val
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-UINT_CONST>(): UInt'
+          GET_FIELD 'UINT_CONST: UInt' type=kotlin.UInt origin=null
+  FUN name:takeUByte visibility:public modality:FINAL <> (u:kotlin.UByte) returnType:kotlin.Unit flags:
+    VALUE_PARAMETER name:u index:0 type:kotlin.UByte flags:
+      annotations:
+        CALL 'constructor ImplicitIntegerCoercion()' type=kotlin.internal.ImplicitIntegerCoercion origin=null
+    BLOCK_BODY
+  FUN name:takeUShort visibility:public modality:FINAL <> (u:kotlin.UShort) returnType:kotlin.Unit flags:
+    VALUE_PARAMETER name:u index:0 type:kotlin.UShort flags:
+      annotations:
+        CALL 'constructor ImplicitIntegerCoercion()' type=kotlin.internal.ImplicitIntegerCoercion origin=null
+    BLOCK_BODY
+  FUN name:takeUInt visibility:public modality:FINAL <> (u:kotlin.UInt) returnType:kotlin.Unit flags:
+    VALUE_PARAMETER name:u index:0 type:kotlin.UInt flags:
+      annotations:
+        CALL 'constructor ImplicitIntegerCoercion()' type=kotlin.internal.ImplicitIntegerCoercion origin=null
+    BLOCK_BODY
+  FUN name:takeULong visibility:public modality:FINAL <> (u:kotlin.ULong) returnType:kotlin.Unit flags:
+    VALUE_PARAMETER name:u index:0 type:kotlin.ULong flags:
+      annotations:
+        CALL 'constructor ImplicitIntegerCoercion()' type=kotlin.internal.ImplicitIntegerCoercion origin=null
+    BLOCK_BODY
+  FUN name:takeUBytes visibility:public modality:FINAL <> (u:kotlin.UByteArray) returnType:kotlin.Unit flags:
+    VALUE_PARAMETER name:u index:0 type:kotlin.UByteArray varargElementType:kotlin.UByte flags:vararg
+      annotations:
+        CALL 'constructor ImplicitIntegerCoercion()' type=kotlin.internal.ImplicitIntegerCoercion origin=null
+    BLOCK_BODY
+  FUN name:takeLong visibility:public modality:FINAL <> (l:kotlin.Long) returnType:kotlin.Unit flags:
+    VALUE_PARAMETER name:l index:0 type:kotlin.Long flags:
+      annotations:
+        CALL 'constructor ImplicitIntegerCoercion()' type=kotlin.internal.ImplicitIntegerCoercion origin=null
+    BLOCK_BODY
+  FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:
+    BLOCK_BODY
+      CALL 'takeUByte(UByte): Unit' type=kotlin.Unit origin=null
+        u: TYPE_OP type=kotlin.UByte origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.UByte
+          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:UByte modality:FINAL visibility:public flags:inline superTypes:[kotlin.Comparable<kotlin.UByte>]
+          CALL '<get-IMPLICIT_INT>(): Int' type=kotlin.Int origin=GET_PROPERTY
+      CALL 'takeUByte(UByte): Unit' type=kotlin.Unit origin=null
+        u: TYPE_OP type=kotlin.UByte origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.UByte
+          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:UByte modality:FINAL visibility:public flags:inline superTypes:[kotlin.Comparable<kotlin.UByte>]
+          CALL '<get-EXPLICIT_INT>(): Int' type=kotlin.Int origin=GET_PROPERTY
+      CALL 'takeUShort(UShort): Unit' type=kotlin.Unit origin=null
+        u: TYPE_OP type=kotlin.UShort origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.UShort
+          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:UShort modality:FINAL visibility:public flags:inline superTypes:[kotlin.Comparable<kotlin.UShort>]
+          CALL '<get-IMPLICIT_INT>(): Int' type=kotlin.Int origin=GET_PROPERTY
+      CALL 'takeUShort(UShort): Unit' type=kotlin.Unit origin=null
+        u: TYPE_OP type=kotlin.UShort origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.UShort
+          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:UShort modality:FINAL visibility:public flags:inline superTypes:[kotlin.Comparable<kotlin.UShort>]
+          CALL '<get-BIGGER_THAN_UBYTE>(): Int' type=kotlin.Int origin=GET_PROPERTY
+      CALL 'takeUInt(UInt): Unit' type=kotlin.Unit origin=null
+        u: TYPE_OP type=kotlin.UInt origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.UInt
+          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:UInt modality:FINAL visibility:public flags:inline superTypes:[kotlin.Comparable<kotlin.UInt>]
+          CALL '<get-IMPLICIT_INT>(): Int' type=kotlin.Int origin=GET_PROPERTY
+      CALL 'takeULong(ULong): Unit' type=kotlin.Unit origin=null
+        u: TYPE_OP type=kotlin.ULong origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.ULong
+          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:ULong modality:FINAL visibility:public flags:inline superTypes:[kotlin.Comparable<kotlin.ULong>]
+          CALL '<get-IMPLICIT_INT>(): Int' type=kotlin.Int origin=GET_PROPERTY
+      CALL 'takeUBytes(vararg UByte): Unit' type=kotlin.Unit origin=null
+        u: VARARG type=kotlin.UByteArray varargElementType=kotlin.UByte
+          TYPE_OP type=kotlin.UByte origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.UByte
+            typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:UByte modality:FINAL visibility:public flags:inline superTypes:[kotlin.Comparable<kotlin.UByte>]
+            CALL '<get-IMPLICIT_INT>(): Int' type=kotlin.Int origin=GET_PROPERTY
+          TYPE_OP type=kotlin.UByte origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.UByte
+            typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:UByte modality:FINAL visibility:public flags:inline superTypes:[kotlin.Comparable<kotlin.UByte>]
+            CALL '<get-EXPLICIT_INT>(): Int' type=kotlin.Int origin=GET_PROPERTY
+          CONST Byte type=kotlin.UByte value=42
+      CALL 'takeLong(Long): Unit' type=kotlin.Unit origin=null
+        l: TYPE_OP type=kotlin.Long origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.Long
+          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Long modality:FINAL visibility:public flags: superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Long>; java.io.Serializable]
+          CALL '<get-IMPLICIT_INT>(): Int' type=kotlin.Int origin=GET_PROPERTY

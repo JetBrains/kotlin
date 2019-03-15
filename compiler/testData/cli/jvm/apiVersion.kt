@@ -1,3 +1,3 @@
 fun test() {
-    ""::class.isInstance(42)
+    ""::class.sealedSubclasses
 }

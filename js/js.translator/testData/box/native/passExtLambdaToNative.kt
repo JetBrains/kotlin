@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // TODO: Unmute when extension functions are supported in external declarations.
 // IGNORE_BACKEND: JS
 

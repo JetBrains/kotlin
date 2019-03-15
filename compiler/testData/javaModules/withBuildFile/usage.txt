@@ -1,0 +1,2 @@
+warning: the '-d' option with a directory destination is ignored because '-Xbuild-file' is specified
+OK

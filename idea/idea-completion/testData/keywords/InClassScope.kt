@@ -20,18 +20,17 @@ class TestClass {
 // EXIST:  var
 // EXIST:  constructor
 // EXIST:  init
-// EXIST:  { itemText: "companion object", tailText: " {...}" }
+// EXIST:  companion object
 // EXIST:  operator
 // EXIST:  infix
 // EXIST:  sealed class
 // EXIST:  lateinit var
-// EXIST:  data
+// EXIST:  data class
 // EXIST:  inline
 // EXIST:  tailrec
 // EXIST:  external
 // EXIST:  annotation class
-// EXIST:  const
-// EXIST:  suspend
+// EXIST:  suspend fun
 // EXIST:  typealias
 // EXIST:  expect
 // EXIST:  actual

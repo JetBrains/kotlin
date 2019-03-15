@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.hierarchy.calls
 
-import com.google.common.collect.Maps
 import com.intellij.find.findUsages.JavaFindUsagesOptions
 import com.intellij.ide.hierarchy.HierarchyNodeDescriptor
 import com.intellij.ide.hierarchy.HierarchyTreeStructure
@@ -118,7 +117,7 @@ class KotlinCallerTreeStructure(
 
     override fun buildChildren(nodeDescriptor: HierarchyNodeDescriptor): Array<Any> {
         val element = nodeDescriptor.psiElement as? KtDeclaration ?: return ArrayUtil.EMPTY_OBJECT_ARRAY
-        val callerToDescriptorMap = Maps.newHashMap<PsiElement, NodeDescriptor<*>>()
+        val callerToDescriptorMap = hashMapOf<PsiElement, NodeDescriptor<*>>()
         val descriptor = element.unsafeResolveToDescriptor()
         if (descriptor is CallableMemberDescriptor) {
             return descriptor.getDeepestSuperDeclarations().flatMap { rootDescriptor ->

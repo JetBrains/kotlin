@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.types;
 
-import com.google.common.collect.Maps;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -50,6 +49,7 @@ import org.jetbrains.kotlin.tests.di.InjectionKt;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 @SuppressWarnings("unchecked")
@@ -127,7 +127,7 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
     }
 
     private Map<TypeConstructor, TypeProjection> stringsToSubstitutionMap(Pair<String, String>[] substitutionStrs) {
-        Map<TypeConstructor, TypeProjection> map = Maps.newHashMap();
+        Map<TypeConstructor, TypeProjection> map = new HashMap();
         for (Pair<String, String> pair : substitutionStrs) {
             String typeParameterName = pair.first;
             String replacementProjectionString = pair.second;

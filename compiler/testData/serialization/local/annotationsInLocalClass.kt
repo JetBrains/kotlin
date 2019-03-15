@@ -1,14 +1,25 @@
 // CLASS_NAME_SUFFIX: A$foo$Local
 
+import kotlin.reflect.KClass
+
 class A {
     annotation class Ann(val info: String)
 
-    fun foo() {
-        @Ann("class") class Local {
-            @Ann("fun") fun foo(): Local = this
-            @field:Ann("val") val x = foo()
+    annotation class Bnn(val klass: KClass<*>)
 
-            @Ann("inner") inner class Inner
+    fun foo() {
+        @Ann("class")
+        class Local {
+            @Ann("fun")
+            fun foo(): Local = this
+
+            @field:Ann("val")
+            @Bnn(Local::class)
+            val x = foo()
+
+            @Ann("inner")
+            @Bnn(Array<Array<out Local>>::class)
+            inner class Inner
         }
     }
 }

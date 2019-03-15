@@ -1,5 +1,5 @@
 // "class org.jetbrains.kotlin.idea.quickfix.LiftAssignmentOutOfTryFix" "false"
-// ACTION: Make variable mutable
+// ACTION: Change to var
 // ERROR: Val cannot be reassigned
 // ERROR: Val cannot be reassigned
 // WITH_RUNTIME

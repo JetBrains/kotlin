@@ -4,6 +4,8 @@ import org.gradle.api.*
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.*
 import org.gradle.kotlin.dsl.*
+import org.gradle.language.jvm.tasks.ProcessResources
+
 //import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 
 inline fun Project.sourceSets(crossinline body: SourceSetsBuilder.() -> Unit) =
@@ -11,14 +13,11 @@ inline fun Project.sourceSets(crossinline body: SourceSetsBuilder.() -> Unit) =
 
 class SourceSetsBuilder(val project: Project) {
 
-    inline operator fun String.invoke(crossinline body: SourceSet.() -> Unit) {
+    inline operator fun String.invoke(crossinline body: SourceSet.() -> Unit): SourceSet {
         val sourceSetName = this
-        project.configure<JavaPluginConvention>
-        {
-            sourceSets.matching { it.name == sourceSetName }.forEach {
-                none()
-                it.body()
-            }
+        return project.sourceSets.maybeCreate(sourceSetName).apply {
+            none()
+            body()
         }
     }
 }
@@ -28,18 +27,18 @@ fun SourceSet.none() {
     resources.setSrcDirs(emptyList<String>())
 }
 
-fun SourceSet.projectDefault() {
-    when (name) {
-        "main" -> {
-            java.srcDirs("src")
-            resources.srcDir("resources").apply { include("**") }
-            resources.srcDir("src").apply { include("META-INF/**", "**/*.properties") }
-        }
-        "test" -> {
-            java.srcDirs("test", "tests")
+val SourceSet.projectDefault: Project.() -> Unit
+    get() = {
+        when (this@projectDefault.name) {
+            "main" -> {
+                java.srcDirs("src")
+                this@projectDefault.resources.srcDir("resources")
+            }
+            "test" -> {
+                java.srcDirs("test", "tests")
+            }
         }
     }
-}
 
 // TODO: adding KotlinSourceSet dep to the plugin breaks the build unexpectedly, resolve and uncomment
 //val SourceSet.kotlin: SourceDirectorySet
@@ -55,8 +54,14 @@ fun SourceSet.projectDefault() {
 
 fun Project.getSourceSetsFrom(projectPath: String): SourceSetContainer {
     evaluationDependsOn(projectPath)
-    return project(projectPath).the<JavaPluginConvention>().sourceSets
+    return project(projectPath).sourceSets
 }
 
+val Project.sourceSets: SourceSetContainer
+    get() = javaPluginConvention().sourceSets
 
+val Project.mainSourceSet: SourceSet
+    get() = sourceSets.getByName("main")
 
+val Project.testSourceSet: SourceSet
+    get() = sourceSets.getByName("test")

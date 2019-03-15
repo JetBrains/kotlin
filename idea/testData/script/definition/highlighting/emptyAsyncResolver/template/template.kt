@@ -4,6 +4,7 @@ import java.io.File
 import kotlin.script.dependencies.*
 import kotlin.script.experimental.dependencies.*
 import kotlin.script.templates.ScriptTemplateDefinition
+import kotlin.script.experimental.location.*
 
 class TestDependenciesResolver : AsyncDependenciesResolver {
     override suspend fun resolveAsync(
@@ -14,6 +15,7 @@ class TestDependenciesResolver : AsyncDependenciesResolver {
     }
 }
 
+@ScriptExpectedLocations([ScriptExpectedLocation.Everywhere])
 @ScriptTemplateDefinition(TestDependenciesResolver::class, scriptFilePattern = "script.kts")
 open class Template: Base()
 

@@ -38,19 +38,15 @@ import org.jetbrains.idea.maven.project.MavenProjectsManager
 import org.jetbrains.idea.maven.utils.MavenArtifactScope
 import org.jetbrains.kotlin.idea.maven.PomFile
 import org.jetbrains.kotlin.idea.maven.configuration.KotlinMavenConfigurator
+import org.jetbrains.kotlin.idea.platform.tooling
 import org.jetbrains.kotlin.idea.versions.*
+import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
 import java.util.*
 
 class KotlinMavenPluginPhaseInspection : DomElementsInspection<MavenDomProjectModel>(MavenDomProjectModel::class.java) {
     companion object {
-        private val STDLIB_MAVEN_ID = MavenId(KotlinMavenConfigurator.GROUP_ID, MAVEN_STDLIB_ID, null)
-        private val STDLIB_JRE7_MAVEN_ID = MavenId(KotlinMavenConfigurator.GROUP_ID, MAVEN_STDLIB_ID_JRE7, null)
-        private val STDLIB_JDK7_MAVEN_ID = MavenId(KotlinMavenConfigurator.GROUP_ID, MAVEN_STDLIB_ID_JDK7, null)
-        private val STDLIB_JRE8_MAVEN_ID = MavenId(KotlinMavenConfigurator.GROUP_ID, MAVEN_STDLIB_ID_JRE8, null)
-        private val STDLIB_JDK8_MAVEN_ID = MavenId(KotlinMavenConfigurator.GROUP_ID, MAVEN_STDLIB_ID_JDK8, null)
-
-        private val JVM_STDLIB_IDS =
-            listOf(STDLIB_MAVEN_ID, STDLIB_JRE7_MAVEN_ID, STDLIB_JDK7_MAVEN_ID, STDLIB_JRE8_MAVEN_ID, STDLIB_JDK8_MAVEN_ID)
+        private val JVM_STDLIB_IDS = JvmIdePlatformKind.tooling
+            .mavenLibraryIds.map { MavenId(KotlinMavenConfigurator.GROUP_ID, it, null) }
 
         private val JS_STDLIB_MAVEN_ID = MavenId(KotlinMavenConfigurator.GROUP_ID, MAVEN_JS_STDLIB_ID, null)
     }

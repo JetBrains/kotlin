@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.jvm;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.PrimitiveType;
 import org.jetbrains.kotlin.name.FqName;
 
@@ -36,16 +37,19 @@ public enum JvmPrimitiveType {
     private static final Set<FqName> WRAPPERS_CLASS_NAMES;
     private static final Map<String, JvmPrimitiveType> TYPE_BY_NAME;
     private static final Map<PrimitiveType, JvmPrimitiveType> TYPE_BY_PRIMITIVE_TYPE;
+    private static final Map<String, JvmPrimitiveType> TYPE_BY_DESC;
 
     static {
         WRAPPERS_CLASS_NAMES = new HashSet<FqName>();
         TYPE_BY_NAME = new HashMap<String, JvmPrimitiveType>();
         TYPE_BY_PRIMITIVE_TYPE = new EnumMap<PrimitiveType, JvmPrimitiveType>(PrimitiveType.class);
+        TYPE_BY_DESC = new HashMap<String, JvmPrimitiveType>();
 
         for (JvmPrimitiveType type : values()) {
             WRAPPERS_CLASS_NAMES.add(type.getWrapperFqName());
             TYPE_BY_NAME.put(type.getJavaKeywordName(), type);
             TYPE_BY_PRIMITIVE_TYPE.put(type.getPrimitiveType(), type);
+            TYPE_BY_DESC.put(type.getDesc(), type);
         }
     }
 
@@ -65,6 +69,11 @@ public enum JvmPrimitiveType {
     @NotNull
     public static JvmPrimitiveType get(@NotNull PrimitiveType type) {
         return TYPE_BY_PRIMITIVE_TYPE.get(type);
+    }
+
+    @Nullable
+    public static JvmPrimitiveType getByDesc(@NotNull String desc) {
+        return TYPE_BY_DESC.get(desc);
     }
 
     private final PrimitiveType primitiveType;

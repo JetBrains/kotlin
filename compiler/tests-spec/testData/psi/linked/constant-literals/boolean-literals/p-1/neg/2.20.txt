@@ -1,0 +1,68 @@
+KtFile: 2.20.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('f')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      BINARY_EXPRESSION
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('1')
+        PsiWhiteSpace(' ')
+        OPERATION_REFERENCE
+          PsiElement(PLUS)('+')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('1')
+      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+        <empty list>
+      PsiWhiteSpace(' ')
+      BOOLEAN_CONSTANT
+        PsiElement(true)('true')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+        PsiElement(INTEGER_LITERAL)('10')
+        PsiElement(RANGE)('..')
+        PsiElement(INTEGER_LITERAL)('11')
+      PsiWhiteSpace('\n\n    ')
+      BINARY_EXPRESSION
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('1')
+        PsiWhiteSpace(' ')
+        OPERATION_REFERENCE
+          PsiElement(PLUS)('+')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('1')
+      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+        <empty list>
+      PsiWhiteSpace(' ')
+      BOOLEAN_CONSTANT
+        PsiElement(false)('false')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+        PsiElement(INTEGER_LITERAL)('10')
+        PsiElement(RANGE)('..')
+        PsiElement(INTEGER_LITERAL)('11')
+        PsiWhiteSpace(' ')
+        PsiElement(true)('true')
+        PsiWhiteSpace(' ')
+        PsiElement(INTEGER_LITERAL)('10')
+        PsiWhiteSpace(' ')
+        PsiElement(false)('false')
+        PsiWhiteSpace(' ')
+        PsiElement(MINUS)('-')
+        PsiElement(FLOAT_CONSTANT)('.9')
+        PsiElement(MINUS)('-')
+        PsiElement(FLOAT_CONSTANT)('9.0')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

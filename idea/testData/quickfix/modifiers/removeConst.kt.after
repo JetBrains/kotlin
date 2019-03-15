@@ -1,0 +1,7 @@
+// "Remove 'const' modifier" "true"
+
+class Foo
+
+object Test {
+    val c = Foo()
+}

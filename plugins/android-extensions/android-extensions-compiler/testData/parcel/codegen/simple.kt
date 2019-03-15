@@ -1,6 +1,6 @@
 // CURIOUS_ABOUT writeToParcel, createFromParcel, <clinit>, describeContents
 // WITH_RUNTIME
-// LOCAL_VARIABLES_TABLE
+// LOCAL_VARIABLE_TABLE
 
 import kotlinx.android.parcel.*
 import android.os.Parcelable

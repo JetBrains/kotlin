@@ -5,7 +5,7 @@ public fun main(/*0*/ kotlin.Array<kotlin.String>): kotlin.Unit
 public object A {
     private constructor A()
     @kotlin.jvm.JvmStatic public final val b: kotlin.String
-    public final var test.A.c: kotlin.String
+    @get:kotlin.jvm.JvmStatic @set:kotlin.jvm.JvmStatic public final var test.A.c: kotlin.String
 }
 
 public/*package*/ open class Test {

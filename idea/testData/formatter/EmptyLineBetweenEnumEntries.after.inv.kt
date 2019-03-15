@@ -30,4 +30,14 @@ enum class E8 {
     B  // B
 }
 
+enum class E9 {
+    F, S, T
+}
+
+enum class E10 {
+    F, S, T;
+
+    val x = 1
+}
+
 // SET_TRUE: KEEP_LINE_BREAKS

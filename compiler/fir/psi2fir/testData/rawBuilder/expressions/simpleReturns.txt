@@ -1,0 +1,7 @@
+FILE: simpleReturns.kt
+    public? final? function foo(): kotlin/Unit {
+        return@@@foo Unit
+    }
+    public? final? function bar(): String {
+        return@@@bar String(Hello)
+    }

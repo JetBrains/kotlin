@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.stubs.KotlinImportDirectiveStub;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 import org.jetbrains.kotlin.resolve.ImportPath;
 
-public class KtImportDirective extends KtElementImplStub<KotlinImportDirectiveStub> {
+public class KtImportDirective extends KtElementImplStub<KotlinImportDirectiveStub> implements KtImportInfo {
 
     public KtImportDirective(@NotNull ASTNode node) {
         super(node);
@@ -36,6 +36,8 @@ public class KtImportDirective extends KtElementImplStub<KotlinImportDirectiveSt
     public KtImportDirective(@NotNull KotlinImportDirectiveStub stub) {
         super(stub, KtStubElementTypes.IMPORT_DIRECTIVE);
     }
+
+    private volatile FqName importedFqName;
 
     @Override
     public <R, D> R accept(@NotNull KtVisitor<R, D> visitor, D data) {
@@ -57,12 +59,14 @@ public class KtImportDirective extends KtElementImplStub<KotlinImportDirectiveSt
         return getStubOrPsiChild(KtStubElementTypes.IMPORT_ALIAS);
     }
 
+    @Override
     @Nullable
     public String getAliasName() {
         KtImportAlias alias = getAlias();
         return alias != null ? alias.getName() : null;
     }
 
+    @Override
     public boolean isAllUnder() {
         KotlinImportDirectiveStub stub = getStub();
         if (stub != null) {
@@ -72,13 +76,37 @@ public class KtImportDirective extends KtElementImplStub<KotlinImportDirectiveSt
     }
 
     @Nullable
+    @Override
+    public ImportContent getImportContent() {
+        KtExpression reference = getImportedReference();
+        if (reference == null) return null;
+        return new ImportContent.ExpressionBased(reference);
+    }
+
+    @Nullable
+    @Override
+    public Name getImportedName() {
+        return KtImportInfo.DefaultImpls.getImportedName(this);
+    }
+
+    @Override
+    @Nullable
     @IfNotParsed
     public FqName getImportedFqName() {
         KotlinImportDirectiveStub stub = getStub();
         if (stub != null) {
             return stub.getImportedFqName();
         }
-        return fqNameFromExpression(getImportedReference());
+
+        FqName importedFqName = this.importedFqName;
+        if (importedFqName != null) return importedFqName;
+        KtExpression importedReference = getImportedReference();
+        // in case it's not parsed
+        if (importedReference == null) return null;
+
+        importedFqName = fqNameFromExpression(importedReference);
+        this.importedFqName = importedFqName;
+        return importedFqName;
     }
 
     @Nullable
@@ -104,6 +132,12 @@ public class KtImportDirective extends KtElementImplStub<KotlinImportDirectiveSt
             return stub.isValid();
         }
         return !PsiTreeUtil.hasErrorElements(this);
+    }
+
+    @Override
+    public void subtreeChanged() {
+        super.subtreeChanged();
+        importedFqName = null;
     }
 
     @Nullable

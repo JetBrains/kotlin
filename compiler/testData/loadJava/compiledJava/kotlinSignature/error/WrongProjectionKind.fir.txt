@@ -1,0 +1,4 @@
+public open class WrongProjectionKind : R|java/lang/Object| {
+    public open operator function copy(from: R|kotlin/Array<ft<java/lang/Number, java/lang/Number?>>|, to: R|kotlin/Array<ft<java/lang/Number, java/lang/Number?>>|): R|ft<kotlin/collections/MutableList<ft<kotlin/Number, kotlin/Number?>>, kotlin/collections/List<ft<kotlin/Number, kotlin/Number?>>?>|!
+
+}

@@ -2,23 +2,22 @@
     <problem>
         <file>test.kt</file>
         <line>1</line>
-        <module>light_idea_test_case</module>
-        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
         <description>Function name &lt;code&gt;Foo&lt;/code&gt; should start with a lowercase letter #loc</description>
     </problem>
     <problem>
         <file>test.kt</file>
         <line>3</line>
-        <module>light_idea_test_case</module>
-        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
         <description>Function name &lt;code&gt;FOO_BAR&lt;/code&gt; should not contain underscores #loc</description>
     </problem>
     <problem>
         <file>test.kt</file>
         <line>7</line>
-        <module>light_idea_test_case</module>
-        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
         <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class naming convention</problem_class>
         <description>Function name &lt;code&gt;`a b`&lt;/code&gt; may contain only letters and digits #loc</description>
+    </problem>
+    <problem>
+        <file>test.kt</file>
+        <line>10</line>
+        <description>Function name &lt;code&gt;a_b&lt;/code&gt; should not contain underscores #loc</description>
     </problem>
 </problems>

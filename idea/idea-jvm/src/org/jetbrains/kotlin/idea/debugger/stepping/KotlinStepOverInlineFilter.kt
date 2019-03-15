@@ -25,11 +25,11 @@ import com.sun.jdi.Location
 import org.jetbrains.kotlin.idea.debugger.ktLocationInfo
 
 class StepOverFilterData(
-        val lineNumber: Int,
-        val stepOverLines: Set<Int>,
-        val inlineRangeVariables: List<LocalVariable>,
-        val isDexDebug: Boolean,
-        val skipAfterCodeIndex: Long = -1
+    val lineNumber: Int,
+    val stepOverLines: Set<Int>,
+    val inlineRangeVariables: List<LocalVariable>,
+    val isDexDebug: Boolean,
+    val skipAfterCodeIndex: Long = -1
 )
 
 class KotlinStepOverInlineFilter(val project: Project, val data: StepOverFilterData) : KotlinMethodFilter {
@@ -58,7 +58,5 @@ class KotlinStepOverInlineFilter(val project: Project, val data: StepOverFilterD
         throw IllegalStateException() // Should not be called from Kotlin hint
     }
 
-    override fun getCallingExpressionLines(): Range<Int>? {
-        throw IllegalStateException() // Should not be called from Kotlin hint
-    }
+    override fun getCallingExpressionLines(): Range<Int>? = null
 }

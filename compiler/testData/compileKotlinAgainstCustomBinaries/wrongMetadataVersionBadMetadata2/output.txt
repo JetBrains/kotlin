@@ -1,3 +1,4 @@
+$TMP_DIR$/library-after.jar!/META-INF/main.kotlin_module: error: module was compiled with an incompatible version of Kotlin. The binary version of its metadata is 42.0.0, expected version is $ABI_VERSION$.
 compiler/testData/compileKotlinAgainstCustomBinaries/wrongMetadataVersionBadMetadata2/source.kt:12:13: error: unresolved reference: foo
     val x = foo()
             ^

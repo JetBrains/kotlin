@@ -1,4 +1,4 @@
-// LANGUAGE_VERSION: 1.0
+// !LANGUAGE: -InlineConstVals
 
 const val y = "cde"
 

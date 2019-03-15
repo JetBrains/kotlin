@@ -24,8 +24,8 @@ import org.jetbrains.org.objectweb.asm.signature.SignatureVisitor
 import java.util.*
 import org.jetbrains.kotlin.kapt3.stubs.ElementKind.*
 import org.jetbrains.kotlin.kapt3.javac.KaptTreeMaker
-import org.jetbrains.kotlin.kapt3.mapJList
-import org.jetbrains.kotlin.kapt3.mapJListIndexed
+import org.jetbrains.kotlin.kapt3.base.mapJList
+import org.jetbrains.kotlin.kapt3.base.mapJListIndexed
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.org.objectweb.asm.signature.SignatureReader
 import com.sun.tools.javac.util.List as JavacList
@@ -92,24 +92,24 @@ private class SignatureNode(val kind: ElementKind, val name: String? = null) {
     val children: MutableList<SignatureNode> = SmartList<SignatureNode>()
 }
 
-class SignatureParser(val treeMaker: KaptTreeMaker) {
+class SignatureParser(private val treeMaker: KaptTreeMaker) {
     class ClassGenericSignature(
-            val typeParameters: JavacList<JCTypeParameter>,
-            val superClass: JCExpression,
-            val interfaces: JavacList<JCExpression>
+        val typeParameters: JavacList<JCTypeParameter>,
+        val superClass: JCExpression,
+        val interfaces: JavacList<JCExpression>
     )
 
     class MethodGenericSignature(
-            val typeParameters: JavacList<JCTypeParameter>,
-            val parameterTypes: JavacList<JCVariableDecl>,
-            val exceptionTypes: JavacList<JCExpression>,
-            val returnType: JCExpression?
+        val typeParameters: JavacList<JCTypeParameter>,
+        val parameterTypes: JavacList<JCVariableDecl>,
+        val exceptionTypes: JavacList<JCExpression>,
+        val returnType: JCExpression?
     )
-    
+
     fun parseClassSignature(
-            signature: String?,
-            rawSuperClass: JCExpression,
-            rawInterfaces: JavacList<JCExpression>
+        signature: String?,
+        rawSuperClass: JCExpression,
+        rawInterfaces: JavacList<JCExpression>
     ): ClassGenericSignature {
         if (signature == null) {
             return ClassGenericSignature(JavacList.nil(), rawSuperClass, rawInterfaces)
@@ -128,11 +128,11 @@ class SignatureParser(val treeMaker: KaptTreeMaker) {
     }
 
     fun parseMethodSignature(
-            signature: String?,
-            rawParameters: JavacList<JCVariableDecl>,
-            rawExceptionTypes: JavacList<JCExpression>,
-            rawReturnType: JCExpression?,
-            nonErrorParameterTypeProvider: (Int, () -> JCExpression) -> JCExpression
+        signature: String?,
+        rawParameters: JavacList<JCVariableDecl>,
+        rawExceptionTypes: JavacList<JCExpression>,
+        rawReturnType: JCExpression?,
+        nonErrorParameterTypeProvider: (Int, () -> JCExpression) -> JCExpression
     ): MethodGenericSignature {
         if (signature == null) {
             val parameters = mapJListIndexed(rawParameters) { index, it ->
@@ -164,8 +164,8 @@ class SignatureParser(val treeMaker: KaptTreeMaker) {
     }
 
     fun parseFieldSignature(
-            signature: String?,
-            rawType: JCExpression
+        signature: String?,
+        rawType: JCExpression
     ): JCExpression {
         if (signature == null) return rawType
 
@@ -208,8 +208,9 @@ class SignatureParser(val treeMaker: KaptTreeMaker) {
 
                 for (innerClass in innerClasses) {
                     expression = makeExpressionForClassTypeWithArguments(
-                            treeMaker.Select(expression, treeMaker.name(innerClass.name!!)),
-                            innerClass.children)
+                        treeMaker.Select(expression, treeMaker.name(innerClass.name!!)),
+                        innerClass.children
+                    )
                 }
 
                 expression
@@ -273,12 +274,12 @@ private fun SignatureNode.split(l1: MutableList<SignatureNode>, e1: ElementKind,
 }
 
 private fun SignatureNode.split(
-        l1: MutableList<SignatureNode>,
-        e1: ElementKind,
-        l2: MutableList<SignatureNode>,
-        e2: ElementKind,
-        l3: MutableList<SignatureNode>,
-        e3: ElementKind
+    l1: MutableList<SignatureNode>,
+    e1: ElementKind,
+    l2: MutableList<SignatureNode>,
+    e2: ElementKind,
+    l3: MutableList<SignatureNode>,
+    e3: ElementKind
 ) {
     for (child in children) {
         val kind = child.kind
@@ -292,14 +293,14 @@ private fun SignatureNode.split(
 }
 
 private fun SignatureNode.split(
-        l1: MutableList<SignatureNode>,
-        e1: ElementKind,
-        l2: MutableList<SignatureNode>,
-        e2: ElementKind,
-        l3: MutableList<SignatureNode>,
-        e3: ElementKind,
-        l4: MutableList<SignatureNode>,
-        e4: ElementKind
+    l1: MutableList<SignatureNode>,
+    e1: ElementKind,
+    l2: MutableList<SignatureNode>,
+    e2: ElementKind,
+    l3: MutableList<SignatureNode>,
+    e3: ElementKind,
+    l4: MutableList<SignatureNode>,
+    e4: ElementKind
 ) {
     for (child in children) {
         val kind = child.kind
@@ -313,7 +314,7 @@ private fun SignatureNode.split(
     }
 }
 
-private class SignatureParserVisitor : SignatureVisitor(Opcodes.ASM5) {
+private class SignatureParserVisitor : SignatureVisitor(Opcodes.API_VERSION) {
     val root = SignatureNode(Root)
     private val stack = ArrayDeque<SignatureNode>(5).apply { add(root) }
 

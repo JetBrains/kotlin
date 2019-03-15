@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
+import org.jetbrains.kotlin.type.MapPsiToAsmDesc
 
 interface LightMemberOriginForCompiledElement : LightMemberOrigin {
     override val originKind: JvmDeclarationOriginKind
@@ -156,8 +157,8 @@ private object ByJvmSignatureIndexer : DecompiledTextIndexer<ClassNameAndSignatu
         }
 
         if (descriptor is DeserializedSimpleFunctionDescriptor) {
-            JvmProtoBufUtil.getJvmMethodSignature(descriptor.proto, descriptor.nameResolver, descriptor.typeTable)?.let {
-                val signature = MemberSignature.fromMethodNameAndDesc(it)
+            JvmProtoBufUtil.getJvmMethodSignature(descriptor.proto, descriptor.nameResolver, descriptor.typeTable)?.let { it ->
+                val signature = MemberSignature.fromJvmMemberSignature(it)
                 save((descriptor.containingDeclaration as? ClassDescriptor)?.relativeClassName().orEmpty(), signature)
             }
         }
@@ -168,7 +169,7 @@ private object ByJvmSignatureIndexer : DecompiledTextIndexer<ClassNameAndSignatu
             if (signature != null) {
                 val fieldSignature = JvmProtoBufUtil.getJvmFieldSignature(proto, descriptor.nameResolver, descriptor.typeTable)
                 if (fieldSignature != null) {
-                    save(className, MemberSignature.fromFieldNameAndDesc(fieldSignature.name, fieldSignature.desc))
+                    save(className, MemberSignature.fromJvmMemberSignature(fieldSignature))
                 }
                 if (signature.hasGetter()) {
                     save(className, MemberSignature.fromMethod(descriptor.nameResolver, signature.getter))

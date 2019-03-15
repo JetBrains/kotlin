@@ -30,7 +30,13 @@ import java.lang.UnsupportedOperationException
 class CompareTo : IntrinsicMethod() {
     private fun genInvoke(type: Type?, v: InstructionAdapter) {
         when (type) {
-            Type.INT_TYPE -> v.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, "compare", "(II)I", false)
+            Type.CHAR_TYPE, Type.BYTE_TYPE, Type.SHORT_TYPE, Type.INT_TYPE ->
+                v.invokestatic(
+                    IntrinsicMethods.INTRINSICS_CLASS_NAME,
+                    "compare",
+                    "(II)I",
+                    false
+                )
             Type.LONG_TYPE -> v.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, "compare", "(JJ)I", false)
             Type.FLOAT_TYPE -> v.invokestatic("java/lang/Float", "compare", "(FF)I", false)
             Type.DOUBLE_TYPE -> v.invokestatic("java/lang/Double", "compare", "(DD)I", false)
@@ -57,7 +63,18 @@ class CompareTo : IntrinsicMethod() {
 class PrimitiveComparison(
     private val primitiveNumberType: KotlinType,
     private val operatorToken: KtSingleValueToken
-) : IntrinsicMethod() {
+) : IntrinsicMethod(), ComparisonIntrinsic {
+
+    override fun genStackValue(expression: IrMemberAccessExpression, context: JvmBackendContext): StackValue {
+        val parameterType = context.state.typeMapper.mapType(primitiveNumberType)
+
+        return StackValue.cmp(
+            operatorToken,
+            parameterType,
+            StackValue.onStack(parameterType, primitiveNumberType),
+            StackValue.onStack(parameterType, primitiveNumberType)
+        )
+    }
 
     override fun toCallable(
         expression: IrMemberAccessExpression,
@@ -68,8 +85,7 @@ class PrimitiveComparison(
 
         return object : IrIntrinsicFunction(expression, signature, context, listOf(parameterType, parameterType)) {
             override fun genInvokeInstruction(v: InstructionAdapter) {
-                StackValue.cmp(operatorToken, parameterType, StackValue.onStack(parameterType), StackValue.onStack(parameterType))
-                    .put(Type.BOOLEAN_TYPE, v)
+                genStackValue(expression, context).put(Type.BOOLEAN_TYPE, v)
             }
         }
     }

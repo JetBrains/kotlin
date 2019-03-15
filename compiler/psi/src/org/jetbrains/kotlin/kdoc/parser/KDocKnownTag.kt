@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.kdoc.parser
 
 import com.intellij.openapi.util.text.StringUtil
 
-enum class KDocKnownTag private constructor(val isReferenceRequired: Boolean, val isSectionStart: Boolean) {
+enum class KDocKnownTag(val isReferenceRequired: Boolean, val isSectionStart: Boolean) {
     AUTHOR(false, false),
     THROWS(true, false),
     EXCEPTION(true, false),

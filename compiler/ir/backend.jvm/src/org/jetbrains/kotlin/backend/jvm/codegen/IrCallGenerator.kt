@@ -40,12 +40,13 @@ interface IrCallGenerator {
     }
 
     fun genValueAndPut(
-            valueParameterDescriptor: ValueParameterDescriptor?,
-            argumentExpression: IrExpression,
-            parameterType: Type,
-            parameterIndex: Int,
-            codegen: ExpressionCodegen,
-            blockInfo: BlockInfo) {
+        valueParameterDescriptor: ValueParameterDescriptor?,
+        argumentExpression: IrExpression,
+        parameterType: Type,
+        parameterIndex: Int,
+        codegen: ExpressionCodegen,
+        blockInfo: BlockInfo
+    ) {
         codegen.gen(argumentExpression, parameterType, blockInfo)
     }
 
@@ -53,7 +54,5 @@ interface IrCallGenerator {
         value.put(parameterType, codegen.visitor)
     }
 
-    object DefaultCallGenerator: IrCallGenerator {
-
-    }
+    object DefaultCallGenerator : IrCallGenerator
 }

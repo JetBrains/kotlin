@@ -1,8 +1,8 @@
 
-apply { plugin("kotlin") }
-apply { plugin("jps-compatible") }
-
-jvmTarget = "1.6"
+plugins {
+    kotlin("jvm")
+    id("jps-compatible")
+}
 
 dependencies {
     compile(project(":compiler:util"))
@@ -10,7 +10,7 @@ dependencies {
     compile(project(":compiler:frontend"))
     compile(project(":compiler:frontend.java"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    compileOnly(intellijDep()) { includeJars("annotations", "asm-all", "trove4j", "guava", rootProject = rootProject) }
+    compileOnly(intellijDep()) { includeJars("asm-all", "trove4j", "guava", rootProject = rootProject) }
 }
 
 sourceSets {

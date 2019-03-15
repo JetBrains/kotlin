@@ -2,7 +2,7 @@ package
 
 public fun box(): kotlin.String
 public fun </*0*/ T> generic_invoker(/*0*/ gen: () -> T): T
-public fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+public fun main(): kotlin.Unit
 public fun println(/*0*/ message: kotlin.Int): kotlin.Unit
 public fun println(/*0*/ message: kotlin.Long): kotlin.Unit
 public fun </*0*/ T> kotlin.collections.Iterable<T>.foreach(/*0*/ operation: (element: T) -> kotlin.Unit): kotlin.Unit

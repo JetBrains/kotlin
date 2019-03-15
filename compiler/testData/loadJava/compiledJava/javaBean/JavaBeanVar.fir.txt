@@ -1,0 +1,6 @@
+public open class JavaBeanVar : R|java/lang/Object| {
+    public open operator function getColor(): R|ft<kotlin/String, kotlin/String?>|!
+
+    public open operator function setColor(string: R|ft<kotlin/String, kotlin/String?>|!): R|kotlin/Unit|
+
+}

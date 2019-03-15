@@ -9,10 +9,10 @@ fun foo(): Int {
     if (x != null) return x
     
     val y: Int? = null
-    if (y == null) return <!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH!>if (<!SENSELESS_COMPARISON!><!DEBUG_INFO_CONSTANT!>y<!> != null<!>) y else <!OI;TYPE_MISMATCH, DEBUG_INFO_CONSTANT!>y<!><!>
+    if (y == null) return <!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH!>if (<!SENSELESS_COMPARISON!><!DEBUG_INFO_CONSTANT!>y<!> != null<!>) y else <!DEBUG_INFO_CONSTANT, OI;TYPE_MISMATCH!>y<!><!>
     
     val z: Int? = null
     if (z != null) return if (<!SENSELESS_COMPARISON!>z == null<!>) z else z
     
-    return <!NI;TYPE_MISMATCH, DEBUG_INFO_CONSTANT, TYPE_MISMATCH!>z<!>
+    return <!DEBUG_INFO_CONSTANT, NI;TYPE_MISMATCH, TYPE_MISMATCH!>z<!>
 }

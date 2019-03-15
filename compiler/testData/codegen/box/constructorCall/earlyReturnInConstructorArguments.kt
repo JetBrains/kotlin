@@ -1,3 +1,4 @@
+// !LANGUAGE: -NormalizeConstructorCalls
 // TARGET_BACKEND: JVM
 // WITH_RUNTIME
 inline fun ok(): String {

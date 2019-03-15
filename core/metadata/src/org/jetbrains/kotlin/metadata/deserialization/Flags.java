@@ -77,6 +77,8 @@ public class Flags {
     public static final BooleanFlagField IS_NEGATED = FlagField.booleanFirst();
     public static final BooleanFlagField IS_NULL_CHECK_PREDICATE = FlagField.booleanAfter(IS_NEGATED);
 
+    // Annotations
+    public static final BooleanFlagField IS_UNSIGNED = FlagField.booleanFirst();
 
     // ---
 
@@ -238,8 +240,8 @@ public class Flags {
             return new BooleanFlagField(offset);
         }
 
-        protected final int offset;
-        protected final int bitWidth;
+        public final int offset;
+        public final int bitWidth;
 
         private FlagField(int offset, int bitWidth) {
             this.offset = offset;

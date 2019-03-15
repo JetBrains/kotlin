@@ -1,7 +1,7 @@
 package
 
 public fun bar(/*0*/ b: B): kotlin.String
-public fun foo(/*0*/ b: B): {C & A & B}?
+public fun foo(/*0*/ b: B): {A & B & C}?
 public fun gav(/*0*/ b: B): A?
 
 public interface A {
@@ -25,10 +25,10 @@ public interface C {
 
 public final class My {
     public constructor My(/*0*/ b: B)
-    public final val x: {C & A & B}?
+    public final val x: {A & B & C}?
     public final val y: C?
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public final fun foo(/*0*/ b: B): {C & A & B}?
+    public final fun foo(/*0*/ b: B): {A & B & C}?
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

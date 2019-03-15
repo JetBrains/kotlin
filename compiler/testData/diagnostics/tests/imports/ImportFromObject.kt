@@ -19,7 +19,7 @@ object S {
     fun Int.ext() = Unit
     var String.ext: Int
         get() = 3
-        set(i) {
+        set(<!UNUSED_PARAMETER!>i<!>) {
         }
 
     fun A(<!UNUSED_PARAMETER!>c<!>: Int) = A()

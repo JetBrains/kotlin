@@ -1,4 +1,6 @@
-// LANGUAGE_VERSION: 1.0
+// !API_VERSION: 1.0
+// IGNORE_BACKEND: JVM_IR
+
 fun box(): String {
     val nullValue: Any? = null
     val nullDouble: Double? = null
@@ -26,4 +28,6 @@ fun box(): String {
     }
     return "OK"
 }
-// 0 areEqual
+
+// 4 areEqual \(Ljava/lang/Object;Ljava/lang/Object;\)Z
+// 4 areEqual

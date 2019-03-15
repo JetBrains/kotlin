@@ -29,11 +29,11 @@ import bar.*
     val iii = /*p:foo p:foo(I)*/Obj./*c:foo.Obj*/bar()
     /*p:foo(I)*/iii./*c:foo.I*/foo()
 
-    /*p:foo p:bar p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io p:kotlin.comparisons p:java.lang p:kotlin.jvm*/E./*c:foo.E*/X
-    /*p:foo p:bar p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io p:kotlin.comparisons p:java.lang p:kotlin.jvm p:kotlin(Int)*/E./*c:foo.E*/X./*c:foo.E*/a
-    /*p:foo p:bar p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io p:kotlin.comparisons p:java.lang p:kotlin.jvm*/E./*c:foo.E*/Y./*c:foo.E*/foo()
-    /*p:foo p:bar p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io p:kotlin.comparisons p:java.lang p:kotlin.jvm p:kotlin(Array)*/E./*c:foo.E*/values()
-    /*p:foo p:bar p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io p:kotlin.comparisons p:java.lang p:kotlin.jvm*/E./*c:foo.E*/valueOf(/*p:kotlin(String)*/"")
+    /*p:foo p:bar p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io p:kotlin.comparisons p:kotlin.jvm p:java.lang*/E./*c:foo.E*/X
+    /*p:foo p:bar p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io p:kotlin.comparisons p:kotlin.jvm p:java.lang p:kotlin(Int)*/E./*c:foo.E*/X./*c:foo.E*/a
+    /*p:foo p:bar p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io p:kotlin.comparisons p:kotlin.jvm p:java.lang*/E./*c:foo.E*/Y./*c:foo.E*/foo()
+    /*p:foo p:bar p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io p:kotlin.comparisons p:kotlin.jvm p:java.lang p:kotlin(Array)*/E./*c:foo.E*/values()
+    /*p:foo p:bar p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io p:kotlin.comparisons p:kotlin.jvm p:java.lang*/E./*c:foo.E*/valueOf(/*p:kotlin(String)*/"")
 }
 
 /*p:foo*/fun classifiers(

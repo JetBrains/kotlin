@@ -1,4 +1,6 @@
+// IGNORE_BACKEND: JS_IR
 // WITH_RUNTIME
+// KJS_WITH_FULL_RUNTIME
 
 var order = StringBuilder()
 

@@ -9,11 +9,11 @@
   <component name="libraryTable">
     <library name="KotlinJavaRuntime">
       <CLASSES>
-        <root url="jar://$TEMP_TEST_DIR$/kotlin-runtime.jar!/" />
+        <root url="jar://$TEMP_TEST_DIR$/kotlin-stblib.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES>
-        <root url="jar://$TEMP_TEST_DIR$/kotlin-runtime.jar!/src" />
+        <root url="jar://$TEMP_TEST_DIR$/kotlin-stblib.jar!/src" />
       </SOURCES>
     </library>
   </component>

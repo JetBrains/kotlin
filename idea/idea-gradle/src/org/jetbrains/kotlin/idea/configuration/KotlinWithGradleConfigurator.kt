@@ -24,10 +24,13 @@ import com.intellij.openapi.vfs.WritingAccessProvider
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
+import com.intellij.util.PathUtil
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.CoroutineSupport
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.idea.facet.getRuntimeLibraryVersion
+import org.jetbrains.kotlin.idea.facet.toApiVersion
 import org.jetbrains.kotlin.idea.framework.ui.ConfigureDialogWithModulesAndVersion
 import org.jetbrains.kotlin.idea.quickfix.ChangeCoroutineSupportFix
 import org.jetbrains.kotlin.idea.util.application.executeCommand
@@ -82,7 +85,14 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
 
     protected open fun getMinimumSupportedVersion() = "1.0.0"
 
-    private fun isFileConfigured(buildScript: PsiFile): Boolean = getManipulator(buildScript).isConfigured(kotlinPluginName)
+    protected fun PsiFile.isKtDsl() = this is KtFile
+
+    private fun isFileConfigured(buildScript: PsiFile): Boolean {
+        val manipulator = getManipulatorIfAny(buildScript) ?: return false
+        return with(manipulator) {
+            isConfiguredWithOldSyntax(kotlinPluginName) || isConfigured(getKotlinPluginExpression(buildScript.isKtDsl()))
+        }
+    }
 
     @JvmSuppressWildcards
     override fun configure(project: Project, excludeModules: Collection<Module>) {
@@ -91,14 +101,19 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
         dialog.show()
         if (!dialog.isOK) return
 
-        project.executeCommand("Configure Kotlin") {
+        val collector = configureSilently(project, dialog.modulesToConfigure, dialog.kotlinVersion)
+        collector.showNotification()
+    }
+
+    fun configureSilently(project: Project, modules: List<Module>, version: String): NotificationMessageCollector {
+        return project.executeCommand("Configure Kotlin") {
             val collector = createConfigureKotlinNotificationCollector(project)
-            val changedFiles = configureWithVersion(project, dialog.modulesToConfigure, dialog.kotlinVersion, collector)
+            val changedFiles = configureWithVersion(project, modules, version, collector)
 
             for (file in changedFiles) {
                 OpenFileAction.openFile(file.virtualFile, project)
             }
-            collector.showNotification()
+            collector
         }
     }
 
@@ -147,6 +162,7 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
         val jvmTarget = getJvmTarget(sdk, version)
         return getManipulator(file).configureModuleBuildScript(
             kotlinPluginName,
+            getKotlinPluginExpression(file.isKtDsl()),
             getStdlibArtifactName(sdk, version),
             version,
             jvmTarget
@@ -158,6 +174,7 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
     protected open fun getJvmTarget(sdk: Sdk?, version: String): String? = null
 
     protected abstract val kotlinPluginName: String
+    protected abstract fun getKotlinPluginExpression(forKotlinDsl: Boolean): String
 
     protected open fun addElementsToFile(
         file: PsiFile,
@@ -165,7 +182,7 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
         version: String
     ): Boolean {
         if (!isTopLevelProjectFile) {
-            var wasModified = configureProjectFile(file, version)
+            var wasModified = getManipulator(file).configureProjectBuildScript(kotlinPluginName, version)
             wasModified = wasModified or configureModuleBuildScript(file, version)
             return wasModified
         }
@@ -222,7 +239,7 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
 
     override fun changeCoroutineConfiguration(module: Module, state: LanguageFeature.State) {
         val runtimeUpdateRequired = state != LanguageFeature.State.DISABLED &&
-                (getRuntimeLibraryVersion(module)?.startsWith("1.0") ?: false)
+                getRuntimeLibraryVersion(module).toApiVersion() == ApiVersion.KOTLIN_1_0
 
         if (runtimeUpdateRequired) {
             Messages.showErrorDialog(
@@ -240,6 +257,30 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
         }
     }
 
+    override fun changeGeneralFeatureConfiguration(
+        module: Module,
+        feature: LanguageFeature,
+        state: LanguageFeature.State,
+        forTests: Boolean
+    ) {
+        val sinceVersion = feature.sinceApiVersion
+
+        if (state != LanguageFeature.State.DISABLED && getRuntimeLibraryVersion(module).toApiVersion() < sinceVersion) {
+            Messages.showErrorDialog(
+                module.project,
+                "${feature.presentableName} support requires version $sinceVersion or later of the Kotlin runtime library. " +
+                        "Please update the version in your build script.",
+                ChangeCoroutineSupportFix.getFixText(state)
+            )
+            return
+        }
+
+        val element = changeFeatureConfiguration(module, feature, state, forTests)
+        if (element != null) {
+            OpenFileDescriptor(module.project, element.containingFile.virtualFile, element.textRange.startOffset).navigate(true)
+        }
+    }
+
     override fun addLibraryDependency(
         module: Module,
         element: PsiElement,
@@ -251,11 +292,14 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
     }
 
     companion object {
-        fun getManipulator(file: PsiFile): GradleBuildScriptManipulator = when (file) {
-            is KtFile -> KotlinBuildScriptManipulator(file)
-            is GroovyFile -> GroovyBuildScriptManipulator(file)
-            else -> error("Unknown build script file type!")
+        fun getManipulatorIfAny(file: PsiFile, preferNewSyntax: Boolean = true): GradleBuildScriptManipulator<*>? = when (file) {
+            is KtFile -> KotlinBuildScriptManipulator(file, preferNewSyntax)
+            is GroovyFile -> GroovyBuildScriptManipulator(file, preferNewSyntax)
+            else -> null
         }
+
+        fun getManipulator(file: PsiFile, preferNewSyntax: Boolean = true): GradleBuildScriptManipulator<*> =
+            getManipulatorIfAny(file, preferNewSyntax) ?: error("Unknown build script file type (${file::class.qualifiedName})!")
 
         val GROUP_ID = "org.jetbrains.kotlin"
         val GRADLE_PLUGIN_ID = "kotlin-gradle-plugin"
@@ -263,9 +307,14 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
         val CLASSPATH = "classpath \"$GROUP_ID:$GRADLE_PLUGIN_ID:\$kotlin_version\""
 
         private val KOTLIN_BUILD_SCRIPT_NAME = "build.gradle.kts"
+        private val KOTLIN_SETTINGS_SCRIPT_NAME = "settings.gradle.kts"
 
-        fun getGroovyDependencySnippet(artifactName: String, scope: String) =
-            "$scope \"org.jetbrains.kotlin:$artifactName:\$kotlin_version\""
+        fun getGroovyDependencySnippet(artifactName: String, scope: String, withVersion: Boolean, gradleVersion: GradleVersion): String {
+            val updatedScope = gradleVersion.scope(scope)
+            val versionStr = if (withVersion) ":\$kotlin_version" else ""
+
+            return "$updatedScope \"org.jetbrains.kotlin:$artifactName$versionStr\""
+        }
 
         fun getGroovyApplyPluginDirective(pluginName: String) = "apply plugin: '$pluginName'"
 
@@ -275,8 +324,7 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
                 return
             }
 
-            getManipulator(buildScript)
-                .addKotlinLibraryToModuleBuildScript(scope, libraryDescriptor, module.getBuildSystemType() == AndroidGradle)
+            getManipulator(buildScript).addKotlinLibraryToModuleBuildScript(scope, libraryDescriptor)
 
             buildScript.virtualFile?.let {
                 createConfigureKotlinNotificationCollector(buildScript.project)
@@ -287,6 +335,15 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
 
         fun changeCoroutineConfiguration(module: Module, coroutineOption: String): PsiElement? = changeBuildGradle(module) {
             getManipulator(it).changeCoroutineConfiguration(coroutineOption)
+        }
+
+        fun changeFeatureConfiguration(
+            module: Module,
+            feature: LanguageFeature,
+            state: LanguageFeature.State,
+            forTests: Boolean
+        ) = changeBuildGradle(module) {
+            getManipulator(it).changeLanguageFeatureConfiguration(feature, state, forTests)
         }
 
         fun changeLanguageVersion(module: Module, languageVersion: String?, apiVersion: String?, forTests: Boolean) =
@@ -320,28 +377,37 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
             }
         }
 
-        fun configureProjectFile(file: PsiFile, version: String): Boolean = getManipulator(file).configureProjectBuildScript(version)
-
         private fun canConfigureFile(file: PsiFile): Boolean = WritingAccessProvider.isPotentiallyWritable(file.virtualFile, null)
 
-        private fun Module.getBuildScriptPsiFile() = getBuildScriptFile()?.getPsiFile(project)
+        private fun Module.getBuildScriptPsiFile() =
+            getBuildScriptFile(GradleConstants.DEFAULT_SCRIPT_NAME, KOTLIN_BUILD_SCRIPT_NAME)?.getPsiFile(project)
 
-        private fun Project.getTopLevelBuildScriptPsiFile() = basePath?.let { findBuildGradleFile(it)?.getPsiFile(this) }
+        fun Module.getBuildScriptSettingsPsiFile() =
+            getBuildScriptSettingsFile(GradleConstants.SETTINGS_FILE_NAME, KOTLIN_SETTINGS_SCRIPT_NAME)?.getPsiFile(project)
 
-        private fun Module.getBuildScriptFile(): File? {
+        private fun Project.getTopLevelBuildScriptPsiFile() = basePath?.let {
+            findBuildGradleFile(it, GradleConstants.DEFAULT_SCRIPT_NAME, KOTLIN_BUILD_SCRIPT_NAME)?.getPsiFile(this)
+        }
+
+        fun Module.getTopLevelBuildScriptSettingsPsiFile() =
+            ExternalSystemApiUtil.getExternalRootProjectPath(this)?.let { externalProjectPath ->
+                findBuildGradleFile(externalProjectPath, GradleConstants.SETTINGS_FILE_NAME, KOTLIN_SETTINGS_SCRIPT_NAME)?.getPsiFile(project)
+            }
+
+        private fun Module.getBuildScriptFile(vararg fileNames: String): File? {
             val moduleDir = File(moduleFilePath).parent
-            findBuildGradleFile(moduleDir)?.let {
+            findBuildGradleFile(moduleDir, *fileNames)?.let {
                 return it
             }
 
             ModuleRootManager.getInstance(this).contentRoots.forEach { root ->
-                findBuildGradleFile(root.path)?.let {
+                findBuildGradleFile(root.path, *fileNames)?.let {
                     return it
                 }
             }
 
             ExternalSystemApiUtil.getExternalProjectPath(this)?.let { externalProjectPath ->
-                findBuildGradleFile(externalProjectPath)?.let {
+                findBuildGradleFile(externalProjectPath, *fileNames)?.let {
                     return it
                 }
             }
@@ -349,9 +415,20 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
             return null
         }
 
-        private fun findBuildGradleFile(path: String): File? =
-            File(path + "/" + GradleConstants.DEFAULT_SCRIPT_NAME).takeIf { it.exists() }
-                    ?: File(path + "/" + KOTLIN_BUILD_SCRIPT_NAME).takeIf { it.exists() }
+        private fun Module.getBuildScriptSettingsFile(vararg fileNames: String): File? {
+            ExternalSystemApiUtil.getExternalProjectPath(this)?.let { externalProjectPath ->
+                return generateSequence(externalProjectPath) {
+                    PathUtil.getParentPath(it).let { if (it.isBlank()) null else it }
+                }.mapNotNull {
+                    findBuildGradleFile(it, *fileNames)
+                }.firstOrNull()
+            }
+
+            return null
+        }
+
+        private fun findBuildGradleFile(path: String, vararg fileNames: String): File? =
+            fileNames.asSequence().map { File(path + "/" + it) }.firstOrNull { it.exists() }
 
         private fun File.getPsiFile(project: Project) = VfsUtil.findFileByIoFile(this, true)?.let {
             PsiManager.getInstance(project).findFile(it)

@@ -16,12 +16,8 @@
 
 package org.jetbrains.kotlin.idea.refactoring.introduce.extractClass
 
-import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import com.intellij.refactoring.HelpID
 import com.intellij.refactoring.RefactoringBundle
-import com.intellij.refactoring.util.CommonRefactoringUtil
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractClass.ui.KotlinExtractSuperclassDialog
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -30,6 +26,8 @@ object KotlinExtractSuperclassHandler : KotlinExtractSuperHandlerBase(false) {
     val REFACTORING_NAME = "Extract Superclass"
 
     override fun getErrorMessage(klass: KtClassOrObject): String? {
+        val superMessage = super.getErrorMessage(klass)
+        if (superMessage != null) return superMessage
         if (klass is KtClass) {
             if (klass.isInterface()) return RefactoringBundle.message("superclass.cannot.be.extracted.from.an.interface")
             if (klass.isEnum()) return RefactoringBundle.message("superclass.cannot.be.extracted.from.an.enum")
@@ -38,12 +36,11 @@ object KotlinExtractSuperclassHandler : KotlinExtractSuperHandlerBase(false) {
         return null
     }
 
-    override fun doInvoke(klass: KtClassOrObject, targetParent: PsiElement, project: Project, editor: Editor?) {
+    override fun createDialog(klass: KtClassOrObject, targetParent: PsiElement) =
         KotlinExtractSuperclassDialog(
                 originalClass = klass,
                 targetParent = targetParent,
                 conflictChecker = { checkConflicts(klass, it) },
                 refactoring = { ExtractSuperRefactoring(it).performRefactoring() }
-        ).show()
-    }
+        )
 }

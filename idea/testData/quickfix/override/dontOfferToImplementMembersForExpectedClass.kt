@@ -1,8 +1,7 @@
 // "Implement members" "false"
 // ACTION: Create test
 // ACTION: Make internal
-// ACTION: Make private
-// ACTION: Move 'A' to separate file
+// ACTION: Extract 'A' from current file
 
 interface I {
     fun foo()

@@ -41,6 +41,8 @@ public class IntrinsicMethods {
     private static final FqName KOTLIN_JVM = new FqName("kotlin.jvm");
     /* package */ static final FqNameUnsafe RECEIVER_PARAMETER_FQ_NAME = new FqNameUnsafe("T");
 
+    private static final FqNameUnsafe KOTLIN_ULONG = new FqNameUnsafe("kotlin.ULong");
+
     private static final IntrinsicMethod UNARY_MINUS = new UnaryMinus();
     private static final IntrinsicMethod UNARY_PLUS = new UnaryPlus();
     private static final IntrinsicMethod NUMBER_CAST = new NumberCast();
@@ -68,6 +70,8 @@ public class IntrinsicMethods {
     public IntrinsicMethods(JvmTarget jvmTarget, boolean shouldThrowNpeOnExplicitEqualsForBoxedNull) {
         intrinsicsMap.registerIntrinsic(KOTLIN_JVM, RECEIVER_PARAMETER_FQ_NAME, "javaClass", -1, JavaClassProperty.INSTANCE);
         intrinsicsMap.registerIntrinsic(KOTLIN_JVM, KotlinBuiltIns.FQ_NAMES.kClass, "java", -1, new KClassJavaProperty());
+        intrinsicsMap.registerIntrinsic(KOTLIN_JVM, KotlinBuiltIns.FQ_NAMES.kClass, "javaObjectType", -1, new KClassJavaObjectTypeProperty());
+        intrinsicsMap.registerIntrinsic(KOTLIN_JVM, KotlinBuiltIns.FQ_NAMES.kClass, "javaPrimitiveType", -1, new KClassJavaPrimitiveTypeProperty());
         intrinsicsMap.registerIntrinsic(KotlinBuiltIns.FQ_NAMES.kCallable.toSafe(), null, "name", -1, new KCallableNameProperty());
         intrinsicsMap.registerIntrinsic(new FqName("kotlin.jvm.internal.unsafe"), null, "monitorEnter", 1, MonitorInstruction.MONITOR_ENTER);
         intrinsicsMap.registerIntrinsic(new FqName("kotlin.jvm.internal.unsafe"), null, "monitorExit", 1, MonitorInstruction.MONITOR_EXIT);
@@ -76,6 +80,8 @@ public class IntrinsicMethods {
         intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, KotlinBuiltIns.FQ_NAMES.kProperty0, "isInitialized", -1, LateinitIsInitialized.INSTANCE);
 
         intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, null, "arrayOf", 1, new ArrayOf());
+
+        intrinsicsMap.registerIntrinsic(new FqName("kotlin.collections"), new FqNameUnsafe("kotlin.collections.MutableMap"), "set", 2, new MutableMapSet());
 
         ImmutableList<Name> primitiveCastMethods = OperatorConventions.NUMBER_CONVERSIONS.asList();
         for (Name method : primitiveCastMethods) {
@@ -149,6 +155,16 @@ public class IntrinsicMethods {
         }
 
         declareArrayMethods();
+
+        if (jvmTarget.compareTo(JvmTarget.JVM_1_8) >= 0) {
+            Java8ULongDivide java8ULongDivide = new Java8ULongDivide();
+            Java8ULongRemainder java8ULongRemainder = new Java8ULongRemainder();
+
+            intrinsicsMap.registerIntrinsic(KOTLIN_ULONG.toSafe(), null, "div", 1, java8ULongDivide);
+            intrinsicsMap.registerIntrinsic(KOTLIN_ULONG.toSafe(), null, "rem", 1, java8ULongRemainder);
+            intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, null, "ulongDivide", 2, java8ULongDivide);
+            intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, null, "ulongRemainder", 2, java8ULongRemainder);
+        }
     }
 
     private void declareArrayMethods() {

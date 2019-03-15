@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1119
+// EXPECTED_REACHABLE_NODES: 1289
 package foo
 
 var global: String = ""
@@ -10,11 +10,11 @@ fun bar(s: String): Int {
 fun testWhen() {
     global = ""
     when(arrayOf(bar("A"),2,3)) {
-        arrayOf(1) -> println("1")
-        arrayOf(2) -> println("2")
-        else  -> println("else")
+        arrayOf(1) -> bar("1")
+        arrayOf(2) -> bar("2")
+        else  -> bar("else")
     }
-    assertEquals("A", global)
+    assertEquals("Aelse", global)
 
 }
 

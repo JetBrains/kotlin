@@ -16,57 +16,93 @@
 
 package org.jetbrains.kotlin.idea.inspections.collections
 
+import com.intellij.codeInsight.actions.OptimizeImportsProcessor
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.openapi.project.Project
+import com.intellij.psi.codeStyle.CodeStyleManager
+import org.jetbrains.kotlin.idea.core.ShortenReferences
+import org.jetbrains.kotlin.idea.core.moveFunctionLiteralOutsideParentheses
 import org.jetbrains.kotlin.idea.core.replaced
+import org.jetbrains.kotlin.idea.formatter.commitAndUnblockDocument
+import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
+import org.jetbrains.kotlin.psi.psiUtil.PsiChildRange
 
-class SimplifyCallChainFix(val newName: String) : LocalQuickFix {
-    override fun getName() = "Merge call chain to '$newName'"
+class SimplifyCallChainFix(
+    private val conversion: AbstractCallChainChecker.Conversion,
+    private val removeReceiverOfFirstCall: Boolean = false,
+    private val runOptimizeImports: Boolean = false,
+    private val modifyArguments: KtPsiFactory.(KtCallExpression) -> Unit = {}
+) : LocalQuickFix {
+    private val shortenedText = conversion.replacement.substringAfterLast(".")
+
+    override fun getName() = "Merge call chain to '$shortenedText'"
 
     override fun getFamilyName() = name
 
-    override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-        (descriptor.psiElement as? KtQualifiedExpression)?.let { secondQualifiedExpression ->
-            val factory = KtPsiFactory(secondQualifiedExpression)
-            val firstExpression = secondQualifiedExpression.receiverExpression
+    fun apply(qualifiedExpression: KtQualifiedExpression) {
+        val factory = KtPsiFactory(qualifiedExpression)
+        val firstExpression = qualifiedExpression.receiverExpression
 
-            val operationSign = when (firstExpression) {
-                is KtSafeQualifiedExpression -> "?."
-                is KtQualifiedExpression -> "."
-                else -> ""
-            }
-
-            val receiverExpression = (firstExpression as? KtQualifiedExpression)?.receiverExpression
-
-            val firstCallExpression = SimplifiableCallChainInspection.getCallExpression(firstExpression) ?: return
-            val secondCallExpression = secondQualifiedExpression.selectorExpression as? KtCallExpression ?: return
-
-            val lastArgumentPrefix = if (newName.startsWith("joinTo")) "transform = " else ""
-            val arguments = secondCallExpression.valueArgumentList?.arguments.orEmpty().map { it.text } +
-                            firstCallExpression.valueArgumentList?.arguments.orEmpty().map { "$lastArgumentPrefix${it.text}" }
-            val lambdaExpression = firstCallExpression.lambdaArguments.singleOrNull()?.getLambdaExpression()
-
-            val argumentsText = arguments.ifNotEmpty { joinToString(prefix = "(", postfix = ")") } ?: ""
-            val newQualifiedExpression = if (lambdaExpression != null) factory.createExpressionByPattern(
-                "$0$1$2 $3 $4",
-                receiverExpression ?: "",
-                operationSign,
-                newName,
-                argumentsText,
-                lambdaExpression.text
-            )
-            else factory.createExpressionByPattern(
-                    "$0$1$2 $3",
-                    receiverExpression ?: "",
-                    operationSign,
-                    newName,
-                    argumentsText
-            )
-
-            secondQualifiedExpression.replaced(newQualifiedExpression)
+        val operationSign = if (removeReceiverOfFirstCall) "" else when (firstExpression) {
+            is KtSafeQualifiedExpression -> "?."
+            is KtQualifiedExpression -> "."
+            else -> ""
         }
+
+        val receiverExpressionOrEmptyString =
+            if (!removeReceiverOfFirstCall && firstExpression is KtQualifiedExpression) firstExpression.receiverExpression.text else ""
+
+        val firstCallExpression = AbstractCallChainChecker.getCallExpression(firstExpression) ?: return
+        factory.modifyArguments(firstCallExpression)
+        val firstCallArgumentList = firstCallExpression.valueArgumentList
+
+        val secondCallExpression = qualifiedExpression.selectorExpression as? KtCallExpression ?: return
+        val secondCallArgumentList = secondCallExpression.valueArgumentList
+
+        fun KtValueArgumentList.getTextInsideParentheses(): String {
+            val range = PsiChildRange(leftParenthesis?.nextSibling ?: firstChild, rightParenthesis?.prevSibling ?: lastChild)
+            return range.joinToString(separator = "") { it.text }
+        }
+
+        val lambdaExpression = firstCallExpression.lambdaArguments.singleOrNull()?.getLambdaExpression()
+        val additionalArgument = conversion.additionalArgument
+        val secondCallHasArguments = secondCallArgumentList?.arguments?.isNotEmpty() == true
+        val firstCallHasArguments = firstCallArgumentList?.arguments?.isNotEmpty() == true
+        val argumentsText = listOfNotNull(
+            secondCallArgumentList.takeIf { secondCallHasArguments }?.getTextInsideParentheses(),
+            firstCallArgumentList.takeIf { firstCallHasArguments }?.getTextInsideParentheses(),
+            additionalArgument.takeIf { !firstCallHasArguments && !secondCallHasArguments },
+            lambdaExpression?.text
+        ).joinToString(separator = ",")
+
+        val newCallText = conversion.replacement
+        val newQualifiedOrCallExpression = factory.createExpression(
+            "$receiverExpressionOrEmptyString$operationSign$newCallText($argumentsText)"
+        )
+
+        val project = qualifiedExpression.project
+        val file = qualifiedExpression.containingKtFile
+        val result = qualifiedExpression.replaced(newQualifiedOrCallExpression)
+        if (lambdaExpression != null) {
+            val callExpression = when (result) {
+                is KtQualifiedExpression -> result.callExpression
+                is KtCallExpression -> result
+                else -> null
+            }
+            callExpression?.moveFunctionLiteralOutsideParentheses()
+        }
+
+        result.containingKtFile.commitAndUnblockDocument()
+        val reformatted = CodeStyleManager.getInstance(project).reformat(result)
+        ShortenReferences.DEFAULT.process(reformatted as KtElement)
+        if (runOptimizeImports) {
+            OptimizeImportsProcessor(project, file).run()
+        }
+    }
+
+    override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
+        (descriptor.psiElement as? KtQualifiedExpression)?.let(this::apply)
     }
 }

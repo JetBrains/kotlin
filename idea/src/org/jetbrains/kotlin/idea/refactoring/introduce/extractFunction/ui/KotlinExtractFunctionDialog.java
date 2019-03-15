@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringUtilKt;
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*;
 import org.jetbrains.kotlin.idea.refactoring.introduce.ui.KotlinSignatureComponent;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
+import org.jetbrains.kotlin.lexer.KtModifierKeywordToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -94,11 +95,12 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
         return KtPsiUtilKt.quoteIfNeeded(functionNameField.getEnteredName());
     }
 
-    private String getVisibility() {
-        if (!isVisibilitySectionAvailable()) return "";
+    @Nullable
+    private KtModifierKeywordToken getVisibility() {
+        if (!isVisibilitySectionAvailable()) return null;
 
-        String value = (String) visibilityBox.getSelectedItem();
-        return KtTokens.PUBLIC_KEYWORD.getValue().equals(value) ? "" : value;
+        KtModifierKeywordToken value = (KtModifierKeywordToken) visibilityBox.getSelectedItem();
+        return KtTokens.DEFAULT_VISIBILITY_KEYWORD.equals(value) ? null : value;
     }
 
     private boolean checkNames() {
@@ -114,7 +116,7 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
 
         setOKActionEnabled(checkNames());
         signaturePreviewField.setText(
-                ExtractorUtilKt.getSignaturePreview(getCurrentConfiguration(), IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES)
+                ExtractorUtilKt.getSignaturePreview(getCurrentConfiguration(), IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS)
         );
     }
 
@@ -156,7 +158,7 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
                                 boolean cellHasFocus
                         ) {
                             super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                            setText(IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType((KotlinType) value));
+                            setText(IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType((KotlinType) value));
                             return this;
                         }
                     }
@@ -174,13 +176,12 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
             returnTypePanel.getParent().remove(returnTypePanel);
         }
 
+        visibilityBox.setModel(new DefaultComboBoxModel(KtTokens.VISIBILITY_MODIFIERS.getTypes()));
+
         boolean enableVisibility = isVisibilitySectionAvailable();
         visibilityBox.setEnabled(enableVisibility);
         if (enableVisibility) {
-            String defaultVisibility = extractableCodeDescriptor.getVisibility();
-            if (defaultVisibility.isEmpty()) {
-                defaultVisibility = KtTokens.PUBLIC_KEYWORD.getValue();
-            }
+            KtModifierKeywordToken defaultVisibility = extractableCodeDescriptor.getVisibility();
             visibilityBox.setSelectedItem(defaultVisibility);
         }
         visibilityBox.addItemListener(
@@ -243,7 +244,7 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
 
     @Override
     public JComponent getPreferredFocusedComponent() {
-        return functionNameField;
+        return functionNameField.getFocusableComponent();
     }
 
     @Override
@@ -275,7 +276,7 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
     public static ExtractableCodeDescriptor createNewDescriptor(
             @NotNull ExtractableCodeDescriptor originalDescriptor,
             @NotNull String newName,
-            @NotNull String newVisibility,
+            @Nullable KtModifierKeywordToken newVisibility,
             @Nullable ExtractFunctionParameterTablePanel.ParameterInfo newReceiverInfo,
             @NotNull List<ExtractFunctionParameterTablePanel.ParameterInfo> newParameterInfos,
             @Nullable KotlinType returnType

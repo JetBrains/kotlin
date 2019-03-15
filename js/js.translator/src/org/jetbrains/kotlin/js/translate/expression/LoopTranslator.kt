@@ -99,7 +99,10 @@ private val indicesFqName = FqName("kotlin.collections.indices")
 private val sequenceFqName = FqName("kotlin.sequences.Sequence")
 
 fun translateForExpression(expression: KtForExpression, context: TranslationContext): JsStatement {
-    val loopRange = KtPsiUtil.deparenthesize(getLoopRange(expression))!!
+    val loopRange = getLoopRange(expression).let {
+        val deparenthesized = KtPsiUtil.deparenthesize(it)!!
+        if (deparenthesized is KtStringTemplateExpression) it else deparenthesized
+    }
     val rangeType = getTypeForExpression(context.bindingContext(), loopRange)
 
     fun isForOverRange(): Boolean {

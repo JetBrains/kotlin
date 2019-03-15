@@ -1,4 +1,5 @@
-// EXPECTED_REACHABLE_NODES: 1115
+// KJS_WITH_FULL_RUNTIME
+// EXPECTED_REACHABLE_NODES: 1230
 package foo
 
 var global: String = ""
@@ -46,6 +47,19 @@ fun box(): String {
         sLong += i
     assertEquals(55L, sLong)
 
+    // KT-22376
+    global = ""
+    for (s in "AB")
+        global += s
+    assertEquals("AB", global)
+
+    for (s in (("CD")))
+        global += s
+    assertEquals("ABCD", global)
+
+    for (s in (("EF")))
+        global += s
+    assertEquals("ABCDEF", global)
 
     return "OK"
 }

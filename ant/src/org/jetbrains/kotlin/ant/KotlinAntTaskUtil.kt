@@ -38,7 +38,7 @@ internal object KotlinAntTaskUtil {
     }
 
     val compilerJar: File by jar("kotlin-compiler.jar")
-    val runtimeJar: File by jar("kotlin-runtime.jar")
+    val runtimeJar: File by jar("kotlin-stdlib.jar")
     val reflectJar: File by jar("kotlin-reflect.jar")
 
     private fun jar(name: String) = lazy {

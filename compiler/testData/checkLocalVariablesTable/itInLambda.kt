@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 public fun <T> Iterable<T>.myforEach(operation: (T) -> Unit) : Unit {
     for (element in this) operation(element)
 }

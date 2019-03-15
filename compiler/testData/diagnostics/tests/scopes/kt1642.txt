@@ -1,7 +1,2 @@
 package
 
-package a {
-
-    package a.java {
-    }
-}

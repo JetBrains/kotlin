@@ -1,0 +1,5 @@
+FILE: Strange.kt
+    <out T> public abstract interface Strange {
+        public abstract function foo(): R|T|
+
+    }

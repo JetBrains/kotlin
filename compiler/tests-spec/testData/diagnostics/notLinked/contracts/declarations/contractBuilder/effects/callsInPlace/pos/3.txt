@@ -1,0 +1,6 @@
+package
+
+public inline fun </*0*/ T : kotlin.Function<*>> T.case_1(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
+    CallsInPlace(<this>, EXACTLY_ONCE)
+    CallsInPlace(block, EXACTLY_ONCE)
+

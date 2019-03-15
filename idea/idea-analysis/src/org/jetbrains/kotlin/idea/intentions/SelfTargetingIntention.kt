@@ -28,7 +28,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
-import org.jetbrains.kotlin.psi.CREATEBYPATTERN_MAY_NOT_REFORMAT
+import org.jetbrains.kotlin.psi.CREATE_BY_PATTERN_MAY_NOT_REFORMAT
 import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.psiUtil.containsInside
@@ -86,13 +86,13 @@ abstract class SelfTargetingIntention<TElement : PsiElement>(
 
     final override fun isAvailable(project: Project, editor: Editor, file: PsiFile): Boolean {
         if (ApplicationManager.getApplication().isUnitTestMode) {
-            CREATEBYPATTERN_MAY_NOT_REFORMAT = true
+            CREATE_BY_PATTERN_MAY_NOT_REFORMAT = true
         }
         try {
             return getTarget(editor, file) != null
         }
         finally {
-            CREATEBYPATTERN_MAY_NOT_REFORMAT = false
+            CREATE_BY_PATTERN_MAY_NOT_REFORMAT = false
         }
     }
 

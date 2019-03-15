@@ -1,34 +1,23 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.js.translate.utils
 
+import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.backend.common.COROUTINE_SUSPENDED_NAME
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.coroutinesIntrinsicsPackageFqName
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.*
+import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsicWithReceiverComputed
@@ -37,11 +26,19 @@ import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.simpleReturnFunc
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.calls.components.isActualParameterWithCorrespondingExpectedDefault
+import org.jetbrains.kotlin.resolve.calls.model.ArgumentUnmapped
+import org.jetbrains.kotlin.resolve.calls.model.DataFlowInfoForArguments
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.descriptorUtil.hasOrInheritsParametersWithDefaultValue
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
+import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
+import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
+import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.utils.DFS
 
 fun generateDelegateCall(
     classDescriptor: ClassDescriptor,
@@ -71,15 +68,19 @@ fun generateDelegateCall(
         args.add(JsNameRef(extensionFunctionReceiverName))
     }
 
-    for (param in fromDescriptor.valueParameters) {
+    val valueParameterDescriptors = if (fromDescriptor.isSuspend) {
+        fromDescriptor.valueParameters + context.continuationParameterDescriptor!!
+    } else fromDescriptor.valueParameters
+
+    for (param in valueParameterDescriptors) {
         val paramName = param.name.asString()
         val jsParamName = JsScope.declareTemporaryName(paramName)
         parameters.add(JsParameter(jsParamName))
         args.add(JsNameRef(jsParamName))
     }
 
-    val intrinsic = context.intrinsics().getFunctionIntrinsic(toDescriptor)
-    val invocation = if (intrinsic.exists() && intrinsic is FunctionIntrinsicWithReceiverComputed) {
+    val intrinsic = context.intrinsics().getFunctionIntrinsic(toDescriptor, context)
+    val invocation = if (intrinsic is FunctionIntrinsicWithReceiverComputed) {
         intrinsic.apply(thisObject, args, context)
     } else {
         JsInvocation(overriddenMemberFunctionRef, args)
@@ -90,6 +91,9 @@ fun generateDelegateCall(
     val functionObject = simpleReturnFunction(context.scope(), invocation)
     functionObject.source = source?.finalElement
     functionObject.parameters.addAll(parameters)
+    if (functionObject.isSuspend) {
+        functionObject.fillCoroutineMetadata(context, fromDescriptor, false)
+    }
 
     val fromFunctionName = fromDescriptor.getNameForFunctionWithPossibleDefaultParam()
 
@@ -118,9 +122,10 @@ fun <T, S> List<T>.splitToRanges(classifier: (T) -> S): List<Pair<List<T>, S>> {
     return result
 }
 
-fun getReferenceToJsClass(type: KotlinType, context: TranslationContext): JsExpression {
-    val classifierDescriptor = type.constructor.declarationDescriptor
+fun getReferenceToJsClass(type: KotlinType, context: TranslationContext): JsExpression =
+    getReferenceToJsClass(type.constructor.declarationDescriptor, context)
 
+fun getReferenceToJsClass(classifierDescriptor: ClassifierDescriptor?, context: TranslationContext): JsExpression {
     return when (classifierDescriptor) {
         is ClassDescriptor -> {
             ReferenceTranslator.translateAsTypeReference(classifierDescriptor, context)
@@ -131,10 +136,10 @@ fun getReferenceToJsClass(type: KotlinType, context: TranslationContext): JsExpr
             context.usageTracker()?.used(classifierDescriptor)
 
             context.captureTypeIfNeedAndGetCapturedName(classifierDescriptor)
-                    ?: context.getNameForDescriptor(classifierDescriptor).makeRef()
+                ?: context.getNameForDescriptor(classifierDescriptor).makeRef()
         }
         else -> {
-            throw IllegalStateException("Can't get reference for $type")
+            throw IllegalStateException("Can't get reference for $classifierDescriptor")
         }
     }
 }
@@ -165,19 +170,18 @@ fun JsFunction.fillCoroutineMetadata(
     descriptor: FunctionDescriptor,
     hasController: Boolean
 ) {
-    val suspendPropertyDescriptor = context.currentModule.getPackage(DescriptorUtils.COROUTINES_INTRINSICS_PACKAGE_FQ_NAME)
+    val suspendPropertyDescriptor = context.currentModule.getPackage(context.languageVersionSettings.coroutinesIntrinsicsPackageFqName())
         .memberScope
         .getContributedVariables(COROUTINE_SUSPENDED_NAME, NoLookupLocation.FROM_BACKEND).first()
 
-    val coroutineBaseClassRef = ReferenceTranslator.translateAsTypeReference(TranslationUtils.getCoroutineBaseClass(context), context)
+    fun getCoroutinePropertyName(id: String) = context.getNameForDescriptor(TranslationUtils.getCoroutineProperty(context, id))
 
-    fun getCoroutinePropertyName(id: String) =
-        context.getNameForDescriptor(TranslationUtils.getCoroutineProperty(context, id))
+    val suspendObject = CallTranslator.translateGet(context, resolveAccessorCall(suspendPropertyDescriptor, context), null)
 
     coroutineMetadata = CoroutineMetadata(
         doResumeName = context.getNameForDescriptor(TranslationUtils.getCoroutineDoResumeFunction(context)),
-        suspendObjectRef = ReferenceTranslator.translateAsValueReference(suspendPropertyDescriptor, context),
-        baseClassRef = coroutineBaseClassRef,
+        suspendObjectRef = suspendObject,
+        baseClassRef = ReferenceTranslator.translateAsTypeReference(TranslationUtils.getCoroutineBaseClass(context), context),
         stateName = getCoroutinePropertyName("state"),
         exceptionStateName = getCoroutinePropertyName("exceptionState"),
         finallyPathName = getCoroutinePropertyName("finallyPath"),
@@ -187,6 +191,41 @@ fun JsFunction.fillCoroutineMetadata(
         hasReceiver = descriptor.dispatchReceiverParameter != null,
         psiElement = descriptor.source.getPsi()
     )
+}
+
+private fun resolveAccessorCall(
+    suspendPropertyDescriptor: PropertyDescriptor,
+    context: TranslationContext
+): ResolvedCall<PropertyDescriptor> {
+    return object : ResolvedCall<PropertyDescriptor> {
+        override fun getStatus() = ResolutionStatus.SUCCESS
+
+        override fun getCall(): Call = object : Call {
+            override fun getCallOperationNode(): ASTNode? = null
+            override fun getExplicitReceiver(): Receiver? = null
+            override fun getDispatchReceiver(): ReceiverValue? = null
+            override fun getCalleeExpression(): KtExpression? = null
+            override fun getValueArgumentList(): KtValueArgumentList? = null
+            override fun getValueArguments(): List<ValueArgument> = emptyList()
+            override fun getFunctionLiteralArguments(): List<LambdaArgument> = emptyList()
+            override fun getTypeArguments(): List<KtTypeProjection> = emptyList()
+            override fun getTypeArgumentList(): KtTypeArgumentList? = null
+            override fun getCallElement(): KtElement = KtPsiFactory(context.config.project).createExpression("COROUTINE_SUSPENDED")
+            override fun getCallType(): Call.CallType = Call.CallType.DEFAULT
+        }
+
+        override fun getCandidateDescriptor() = suspendPropertyDescriptor
+        override fun getResultingDescriptor() = suspendPropertyDescriptor
+        override fun getExtensionReceiver() = null
+        override fun getDispatchReceiver() = null
+        override fun getExplicitReceiverKind() = ExplicitReceiverKind.NO_EXPLICIT_RECEIVER
+        override fun getValueArguments(): MutableMap<ValueParameterDescriptor, ResolvedValueArgument> = mutableMapOf()
+        override fun getValueArgumentsByIndex(): MutableList<ResolvedValueArgument> = mutableListOf()
+        override fun getArgumentMapping(valueArgument: ValueArgument) = ArgumentUnmapped
+        override fun getTypeArguments(): MutableMap<TypeParameterDescriptor, KotlinType> = mutableMapOf()
+        override fun getDataFlowInfoForArguments(): DataFlowInfoForArguments = throw IllegalStateException()
+        override fun getSmartCastDispatchReceiverType(): KotlinType? = null
+    }
 }
 
 fun definePackageAlias(name: String, varName: JsName, tag: String, parentRef: JsExpression): JsStatement {
@@ -199,7 +238,7 @@ fun definePackageAlias(name: String, varName: JsName, tag: String, parentRef: Js
 val PsiElement.finalElement: PsiElement
     get() = when (this) {
         is KtFunctionLiteral -> rBrace ?: this
-        is KtDeclarationWithBody -> (bodyExpression as? KtBlockExpression)?.rBrace ?: bodyExpression ?: this
+        is KtDeclarationWithBody -> bodyBlockExpression?.rBrace ?: bodyExpression ?: this
         is KtLambdaExpression -> bodyExpression?.rBrace ?: this
         else -> this
     }
@@ -246,6 +285,9 @@ fun TranslationContext.createCoroutineResult(resolvedCall: ResolvedCall<*>): JsE
     }
 }
 
+fun KotlinType.refineType() =
+    TypeUtils.getAllSupertypes(this).find(KotlinBuiltIns::isPrimitiveTypeOrNullablePrimitiveType) ?: this
+
 /**
  * Tries to get precise statically known primitive type. Takes generic supertypes into account. Doesn't handle smart-casts.
  * This is needed to be compatible with JVM NaN behaviour:
@@ -260,7 +302,7 @@ fun TranslationContext.getPrecisePrimitiveType(expression: KtExpression): Kotlin
     val bindingContext = bindingContext()
     val ktType = bindingContext.getType(expression) ?: return null
 
-    return TypeUtils.getAllSupertypes(ktType).find(KotlinBuiltIns::isPrimitiveTypeOrNullablePrimitiveType) ?: ktType
+    return ktType.refineType()
 }
 
 fun TranslationContext.getPrecisePrimitiveTypeNotNull(expression: KtExpression): KotlinType {
@@ -275,3 +317,12 @@ fun TranslationContext.getPrimitiveNumericComparisonInfo(expression: KtExpressio
             null
         }
 }
+
+fun FunctionDescriptor.hasOrInheritsParametersWithDefaultValue(): Boolean = DFS.ifAny(
+    listOf(this),
+    { current -> current.overriddenDescriptors.map { it.original } },
+    { it.hasOwnParametersWithDefaultValue() }
+)
+
+fun FunctionDescriptor.hasOwnParametersWithDefaultValue() =
+    original.valueParameters.any { it.declaresDefaultValue() || it.isActualParameterWithCorrespondingExpectedDefault }

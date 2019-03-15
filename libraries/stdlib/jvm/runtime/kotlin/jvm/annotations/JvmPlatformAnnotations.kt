@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.jvm
@@ -27,7 +16,7 @@ import kotlin.reflect.KClass
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.CONSTRUCTOR)
 @Retention(AnnotationRetention.BINARY)
 @MustBeDocumented
-public annotation class JvmOverloads
+public actual annotation class JvmOverloads
 
 /**
  * Specifies that an additional static method needs to be generated from this element if it's a function.
@@ -39,7 +28,7 @@ public annotation class JvmOverloads
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
 @Retention(AnnotationRetention.RUNTIME)
 @MustBeDocumented
-public annotation class JvmStatic
+public actual annotation class JvmStatic
 
 /**
  * Specifies the name for the Java class or method which is generated from this element.
@@ -51,7 +40,7 @@ public annotation class JvmStatic
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.FILE)
 @Retention(AnnotationRetention.BINARY)
 @MustBeDocumented
-public annotation class JvmName(val name: String)
+public actual annotation class JvmName(actual val name: String)
 
 /**
  * Instructs the Kotlin compiler to generate a multifile class with top-level functions and properties declared in this file as one of its parts.
@@ -60,7 +49,7 @@ public annotation class JvmName(val name: String)
 @Target(AnnotationTarget.FILE)
 @Retention(AnnotationRetention.SOURCE)
 @MustBeDocumented
-public annotation class JvmMultifileClass
+public actual annotation class JvmMultifileClass
 
 /**
  * Changes the fully qualified name of the JVM package of the .class file generated from this file.
@@ -72,11 +61,20 @@ public annotation class JvmMultifileClass
 @Retention(AnnotationRetention.SOURCE)
 @MustBeDocumented
 @SinceKotlin("1.2")
-internal annotation class JvmPackageName(val name: String)
+internal actual annotation class JvmPackageName(actual val name: String)
 
+/**
+ * Sets `ACC_SYNTHETIC` flag on the annotated target in the Java bytecode.
+ *
+ * Synthetic targets become inaccessible for Java sources at compile time while still being accessible for Kotlin sources.
+ * Marking target as synthetic is a binary compatible change, already compiled Java code will be able to access such target.
+ *
+ * This annotation is intended for *rare cases* when API designer needs to hide Kotlin-specific target from Java API
+ * while keeping it a part of Kotlin API so the resulting API is idiomatic for both languages.
+ */
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.FIELD)
 @Retention(AnnotationRetention.SOURCE)
-public annotation class JvmSynthetic
+public actual annotation class JvmSynthetic
 
 /**
  * This annotation indicates what exceptions should be declared by a function when compiled to a JVM method.
@@ -110,7 +108,7 @@ public annotation class Throws(vararg val exceptionClasses: KClass<out Throwable
 @Target(AnnotationTarget.FIELD)
 @Retention(AnnotationRetention.BINARY)
 @MustBeDocumented
-public annotation class JvmField
+public actual annotation class JvmField
 
 /**
  * Instructs compiler to generate or omit wildcards for type arguments corresponding to parameters with
@@ -124,7 +122,7 @@ public annotation class JvmField
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.TYPE)
 @Retention(AnnotationRetention.BINARY)
 @MustBeDocumented
-public annotation class JvmSuppressWildcards(val suppress: Boolean = true)
+public actual annotation class JvmSuppressWildcards(actual val suppress: Boolean = true)
 
 /**
  * Instructs compiler to generate wildcard for annotated type arguments corresponding to parameters with declaration-site variance.
@@ -134,4 +132,4 @@ public annotation class JvmSuppressWildcards(val suppress: Boolean = true)
 @Target(AnnotationTarget.TYPE)
 @Retention(AnnotationRetention.BINARY)
 @MustBeDocumented
-public annotation class JvmWildcard
+public actual annotation class JvmWildcard

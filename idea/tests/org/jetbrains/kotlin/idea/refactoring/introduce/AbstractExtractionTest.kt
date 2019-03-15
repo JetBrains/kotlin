@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.refactoring.introduce
@@ -22,6 +11,7 @@ import com.intellij.ide.DataManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -42,6 +32,7 @@ import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
+import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager
 import org.jetbrains.kotlin.idea.refactoring.checkConflictsInteractively
 import org.jetbrains.kotlin.idea.refactoring.chooseMembers
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractClass.ExtractSuperInfo
@@ -65,6 +56,7 @@ import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCaseBase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
+import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
@@ -72,7 +64,6 @@ import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.util.findElementByCommentPrefix
 import java.io.File
-import java.lang.AssertionError
 import java.util.*
 import kotlin.test.assertEquals
 
@@ -297,7 +288,7 @@ abstract class AbstractExtractionTest : KotlinLightCodeInsightFixtureTestCase() 
     }
 
     protected fun doExtractSuperTest(path: String, isInterface: Boolean) {
-        doTest(path) { file ->
+        doTest(path, true) { file ->
             file as KtFile
 
             markMembersInfo(file)
@@ -305,6 +296,8 @@ abstract class AbstractExtractionTest : KotlinLightCodeInsightFixtureTestCase() 
             val targetParent = file.findElementByCommentPrefix("// SIBLING:")?.parent ?: file.parent!!
             val fileText = file.text
             val className = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// NAME:")!!
+            val targetFileName = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// TARGET_FILE_NAME:")
+                    ?: "$className.${KotlinFileType.EXTENSION}"
             val editor = fixture.editor
             val originalClass = file.findElementAt(editor.caretModel.offset)?.getStrictParentOfType<KtClassOrObject>()!!
             val memberInfos = chooseMembers(extractClassMembers(originalClass))
@@ -314,7 +307,7 @@ abstract class AbstractExtractionTest : KotlinLightCodeInsightFixtureTestCase() 
                         originalClass,
                         memberInfos,
                         targetParent,
-                        "$className.${KotlinFileType.EXTENSION}",
+                        targetFileName,
                         className,
                         isInterface,
                         DocCommentPolicy<PsiComment>(DocCommentPolicy.ASIS)
@@ -332,6 +325,10 @@ abstract class AbstractExtractionTest : KotlinLightCodeInsightFixtureTestCase() 
         val mainFile = File(path)
 
         PluginTestCaseBase.addJdk(myFixture.projectDisposable, PluginTestCaseBase::mockJdk)
+
+        if (mainFile.extension == KotlinParserDefinition.STD_SCRIPT_SUFFIX) {
+            ScriptDependenciesManager.updateScriptDependenciesSynchronously(VfsUtil.findFileByIoFile(mainFile, true)!!, project)
+        }
 
         fixture.testDataPath = "${KotlinTestUtils.getHomeDirectory()}/${mainFile.parent}"
 
@@ -438,7 +435,7 @@ fun doExtractFunction(fixture: CodeInsightTestFixture, file: KtFile) {
                     val allParameters = listOfNotNull(descriptor.receiverParameter) + descriptor.parameters
                     val actualDescriptors = allParameters.map { renderer.render(it.originalDescriptor) }.joinToString()
                     val actualTypes = allParameters.map {
-                        it.getParameterTypeCandidates(false).map { renderer.renderType(it) }.joinToString(", ", "[", "]")
+                        it.getParameterTypeCandidates().map { renderer.renderType(it) }.joinToString(", ", "[", "]")
                     }.joinToString()
 
                     if (actualNames.size != 1 || expectedNames.isNotEmpty()) {

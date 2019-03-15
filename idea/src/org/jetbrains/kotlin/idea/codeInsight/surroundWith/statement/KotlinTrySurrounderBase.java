@@ -24,7 +24,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.codeInsight.surroundWith.KotlinSurrounderUtils;
-import org.jetbrains.kotlin.idea.codeInsight.surroundWith.MoveDeclarationsOutHelper;
+import org.jetbrains.kotlin.idea.codeInsight.surroundWith.MoveDeclarationsOutHelperKt;
 import org.jetbrains.kotlin.psi.*;
 
 public abstract class KotlinTrySurrounderBase extends KotlinStatementsSurrounder {
@@ -37,7 +37,7 @@ public abstract class KotlinTrySurrounderBase extends KotlinStatementsSurrounder
     @Nullable
     @Override
     protected TextRange surroundStatements(@NotNull Project project, @NotNull Editor editor, @NotNull PsiElement container, @NotNull PsiElement[] statements) {
-        statements = MoveDeclarationsOutHelper.move(container, statements, true);
+        statements = MoveDeclarationsOutHelperKt.move(container, statements, true);
 
         if (statements.length == 0) {
             KotlinSurrounderUtils.showErrorHint(project, editor, KotlinSurrounderUtils.SURROUND_WITH_ERROR);

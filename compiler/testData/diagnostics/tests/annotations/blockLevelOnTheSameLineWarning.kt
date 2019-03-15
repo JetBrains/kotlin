@@ -1,8 +1,11 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 @Target(AnnotationTarget.EXPRESSION)
+@Retention(AnnotationRetention.SOURCE)
 annotation class Ann1
+
 @Target(AnnotationTarget.EXPRESSION)
+@Retention(AnnotationRetention.SOURCE)
 annotation class Ann2(val x: String)
 
 fun bar() {}

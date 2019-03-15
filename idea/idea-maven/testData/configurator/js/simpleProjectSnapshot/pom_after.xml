@@ -30,7 +30,7 @@
             </snapshots>
             <id>sonatype.oss.snapshots</id>
             <name>Sonatype OSS Snapshot Repository</name>
-            <url>http://oss.sonatype.org/content/repositories/snapshots</url>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </repository>
     </repositories>
 
@@ -44,7 +44,7 @@
             </snapshots>
             <id>sonatype.oss.snapshots</id>
             <name>Sonatype OSS Snapshot Repository</name>
-            <url>http://oss.sonatype.org/content/repositories/snapshots</url>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </pluginRepository>
     </pluginRepositories>
 

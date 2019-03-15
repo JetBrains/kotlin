@@ -53,7 +53,7 @@ val writeCompilerVersion by tasks.creating {
 }
 
 val writePluginVersion by tasks.creating {
-    val versionFile = project(":idea").projectDir.resolve("src/META-INF/plugin.xml")
+    val versionFile = project(":idea").projectDir.resolve("resources/META-INF/plugin.xml")
     val pluginVersion = rootProject.findProperty("pluginVersion") as String?
     inputs.property("version", pluginVersion)
     outputs.file(versionFile)

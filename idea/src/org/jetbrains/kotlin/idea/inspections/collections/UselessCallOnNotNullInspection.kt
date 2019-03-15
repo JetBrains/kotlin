@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 
 class UselessCallOnNotNullInspection : AbstractUselessCallInspection() {
     override val uselessFqNames = mapOf("kotlin.collections.orEmpty" to deleteConversion,
+                                        "kotlin.sequences.orEmpty" to deleteConversion,
                                         "kotlin.text.orEmpty" to deleteConversion,
                                         "kotlin.text.isNullOrEmpty" to Conversion("isEmpty"),
                                         "kotlin.text.isNullOrBlank" to Conversion("isBlank"))

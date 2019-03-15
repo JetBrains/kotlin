@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.codegen.serialization;
 
-import com.intellij.openapi.util.Pair;
+import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
@@ -36,7 +36,7 @@ public final class JvmSerializationBindings {
     public static final SerializationMappingSlice<PropertyDescriptor, Method> SYNTHETIC_METHOD_FOR_PROPERTY =
             SerializationMappingSlice.create();
 
-    private static final class SerializationMappingSlice<K, V> extends BasicWritableSlice<K, V> {
+    public static final class SerializationMappingSlice<K, V> extends BasicWritableSlice<K, V> {
         public SerializationMappingSlice() {
             super(Slices.ONLY_REWRITE_TO_EQUAL, false);
         }

@@ -1,0 +1,60 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        apply from: "include.gradle"
+        def kotlinVersion = gradleKotlinPluginVersion('1.2.31')
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+    }
+}
+
+project('project1') {
+    apply plugin: 'kotlin-platform-common'
+}
+
+project('project2') {
+    repositories {
+        mavenCentral()
+    }
+
+    apply plugin: 'kotlin-platform-jvm'
+
+    sourceSets {
+        main
+        main2
+    }
+
+    task myJar(type: Jar) {
+        baseName = 'project2-jar'
+        from sourceSets.main.output
+        from sourceSets.main2.output
+    }
+
+    configurations {
+        myConfig
+    }
+
+    artifacts {
+        myConfig myJar
+    }
+
+    dependencies {
+        implement project(':project1')
+    }
+}
+
+project('project3') {
+    repositories {
+        mavenCentral()
+    }
+
+    apply plugin: 'kotlin-platform-jvm'
+    apply plugin: 'kotlin'
+
+    dependencies {
+        compile(project(path: ':project2', configuration: 'myConfig')) { transitive = false }
+    }
+}
+        

@@ -1,7 +1,10 @@
 apply plugin: 'kotlin'
 
 sourceSets {
-    main.kotlin.srcDir 'src'
+    main {
+        kotlin.srcDir 'src'
+        resources.srcDir "$buildDir/copyright"
+    }
 }
 
 dependencies {
@@ -10,12 +13,19 @@ dependencies {
 }
 
 compileKotlin {
-    compilerJarFile = null
     kotlinOptions {
-        languageVersion = "1.1"
-        apiVersion = "1.1"
-        freeCompilerArgs = ["-version", "-Xnormalize-constructor-calls=enable"]
+        freeCompilerArgs = ["-version"]
     }
+}
+
+task copyCopyrightProfile(type: Copy) {
+    from "$rootDir/.idea/copyright"
+    into "$buildDir/copyright"
+    include 'apache.xml'
+}
+
+processResources {
+    dependsOn(copyCopyrightProfile)
 }
 
 task run(type: JavaExec) {

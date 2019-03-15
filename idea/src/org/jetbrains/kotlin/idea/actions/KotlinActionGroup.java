@@ -19,8 +19,9 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.project.DumbAware;
 
-public class KotlinActionGroup extends DefaultActionGroup {
+public class KotlinActionGroup extends DefaultActionGroup implements DumbAware {
     @Override
     public void update(AnActionEvent event) {
         Presentation p = event.getPresentation();

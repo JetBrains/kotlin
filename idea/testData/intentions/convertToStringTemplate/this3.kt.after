@@ -1,0 +1,5 @@
+class A {
+    inner class B {
+        val s = "${this@A}"
+    }
+}

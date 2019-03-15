@@ -34,4 +34,13 @@
         <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Suspicious combination of == and ===</problem_class>
         <description>Suspicious combination of == and ===</description>
     </problem>
+
+    <problem>
+        <file>test.kt</file>
+        <line>18</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="test.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Suspicious combination of == and ===</problem_class>
+        <description>Suspicious combination of == and ===</description>
+    </problem>
 </problems>

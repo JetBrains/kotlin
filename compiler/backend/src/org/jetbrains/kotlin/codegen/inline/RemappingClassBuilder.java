@@ -27,6 +27,7 @@ import org.jetbrains.org.objectweb.asm.ClassVisitor;
 import org.jetbrains.org.objectweb.asm.FieldVisitor;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.commons.*;
+import org.jetbrains.org.objectweb.asm.commons.FieldRemapper;
 
 public class RemappingClassBuilder extends DelegatingClassBuilder {
     private final ClassBuilder builder;
@@ -53,7 +54,8 @@ public class RemappingClassBuilder extends DelegatingClassBuilder {
             @NotNull String superName,
             @NotNull String[] interfaces
     ) {
-        super.defineClass(origin, version, access, remapper.mapType(name), remapper.mapSignature(signature, false), remapper.mapType(superName), remapper.mapTypes(interfaces));
+        super.defineClass(origin, version, access, remapper.mapType(name), remapper.mapSignature(signature, false),
+                          remapper.mapType(superName), remapper.mapTypes(interfaces));
     }
 
     @Override
@@ -66,9 +68,8 @@ public class RemappingClassBuilder extends DelegatingClassBuilder {
             @Nullable String signature,
             @Nullable Object value
     ) {
-        return new RemappingFieldAdapter(
-                builder.newField(origin, access, name, remapper.mapDesc(desc), remapper.mapSignature(signature, true), value),
-                remapper
+        return new FieldRemapper(
+                builder.newField(origin, access, name, remapper.mapDesc(desc), remapper.mapSignature(signature, true), value), remapper
         );
     }
 
@@ -82,9 +83,15 @@ public class RemappingClassBuilder extends DelegatingClassBuilder {
             @Nullable String signature,
             @Nullable String[] exceptions
     ) {
-        return new RemappingMethodAdapter(
-                access, desc,
-                builder.newMethod(origin, access, name, remapper.mapMethodDesc(desc), remapper.mapSignature(signature, false), exceptions),
+        String newDescriptor = remapper.mapMethodDesc(desc);
+        // MethodRemapper doesn't extends LocalVariablesSorter, but RemappingMethodAdapter does.
+        // So wrapping with LocalVariablesSorter to keep old behavior.
+        // TODO: investigate LocalVariablesSorter removing (see also same code in MethodInliner)
+        return new MethodRemapper(
+                new LocalVariablesSorter(
+                        access, newDescriptor,
+                        builder.newMethod(origin, access, name, newDescriptor, remapper.mapSignature(signature, false),
+                                          exceptions)),
                 remapper
         );
     }
@@ -92,12 +99,12 @@ public class RemappingClassBuilder extends DelegatingClassBuilder {
     @Override
     @NotNull
     public AnnotationVisitor newAnnotation(@NotNull String desc, boolean visible) {
-        return new RemappingAnnotationAdapter(builder.newAnnotation(remapper.mapDesc(desc), visible), remapper);
+        return new AnnotationRemapper(builder.newAnnotation(remapper.mapDesc(desc), visible), remapper);
     }
 
     @Override
     @NotNull
     public ClassVisitor getVisitor() {
-        return new RemappingClassAdapter(builder.getVisitor(), remapper);
+        return new ClassRemapper(builder.getVisitor(), remapper);
     }
 }

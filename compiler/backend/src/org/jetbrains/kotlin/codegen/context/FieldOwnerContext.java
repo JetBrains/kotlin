@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
-import org.jetbrains.kotlin.resolve.jvm.annotations.AnnotationUtilKt;
+import org.jetbrains.kotlin.resolve.jvm.annotations.JvmAnnotationUtilKt;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -61,7 +61,7 @@ public abstract class FieldOwnerContext<T extends DeclarationDescriptor> extends
         String actualName = descriptor2Name.get(descriptor);
         if (actualName != null) return actualName;
 
-        String newName = descriptor2Name.isEmpty() || AnnotationUtilKt.hasJvmFieldAnnotation(descriptor)
+        String newName = descriptor2Name.isEmpty() || JvmAnnotationUtilKt.hasJvmFieldAnnotation(descriptor)
                          ? defaultPropertyName
                          : defaultPropertyName + "$" + descriptor2Name.size();
         descriptor2Name.put(descriptor, newName);

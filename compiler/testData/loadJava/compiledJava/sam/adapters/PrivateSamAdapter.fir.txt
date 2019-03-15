@@ -1,0 +1,4 @@
+public open class PrivateSamAdapter : R|java/lang/Object| {
+    private open operator function samAdapter(r: R|ft<test/PrivateSamAdapter.SamInterface, test/PrivateSamAdapter.SamInterface?>|!): R|kotlin/Unit|
+
+}

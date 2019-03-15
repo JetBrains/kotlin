@@ -24,8 +24,6 @@ import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.util.JavaParametersUtil
 import com.intellij.execution.util.ProgramParametersUtil
 import com.intellij.ide.projectView.impl.ProjectRootsUtil
-import com.intellij.openapi.compiler.CompilerPaths
-import com.intellij.openapi.compiler.ex.CompilerPathsEx
 import com.intellij.openapi.components.PathMacroManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleUtilCore
@@ -41,6 +39,7 @@ import com.intellij.refactoring.listeners.RefactoringElementAdapter
 import com.intellij.refactoring.listeners.RefactoringElementListener
 import org.jdom.Element
 import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager
+import org.jetbrains.kotlin.idea.run.JavaRunConfigurationExtensionManagerUtil
 import org.jetbrains.kotlin.idea.run.KotlinRunConfiguration
 import org.jetbrains.kotlin.idea.run.script.standalone.KotlinStandaloneScriptRunConfigurationProducer.Companion.pathFromPsiElement
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil.isProjectSourceFile
@@ -113,13 +112,13 @@ class KotlinStandaloneScriptRunConfiguration(
     override fun getConfigurationEditor(): SettingsEditor<out RunConfiguration> {
         val group = SettingsEditorGroup<KotlinStandaloneScriptRunConfiguration>()
         group.addEditor(ExecutionBundle.message("run.configuration.configuration.tab.title"), KotlinStandaloneScriptRunConfigurationEditor(project))
-        JavaRunConfigurationExtensionManager.getInstance().appendEditors(this, group)
+        JavaRunConfigurationExtensionManagerUtil.getInstance().appendEditors(this, group)
         return group
     }
 
     override fun writeExternal(element: Element) {
         super.writeExternal(element)
-        JavaRunConfigurationExtensionManager.getInstance().writeExternal(this, element)
+        JavaRunConfigurationExtensionManagerUtil.getInstance().writeExternal(this, element)
         DefaultJDOMExternalizer.writeExternal(this, element)
         EnvironmentVariablesComponent.writeExternal(element, getEnvs())
         PathMacroManager.getInstance(project).collapsePathsRecursively(element)
@@ -128,7 +127,7 @@ class KotlinStandaloneScriptRunConfiguration(
     override fun readExternal(element: Element) {
         PathMacroManager.getInstance(project).expandPaths(element)
         super.readExternal(element)
-        JavaRunConfigurationExtensionManager.getInstance().readExternal(this, element)
+        JavaRunConfigurationExtensionManagerUtil.getInstance().readExternal(this, element)
         DefaultJDOMExternalizer.readExternal(this, element)
         EnvironmentVariablesComponent.readExternal(element, getEnvs())
     }

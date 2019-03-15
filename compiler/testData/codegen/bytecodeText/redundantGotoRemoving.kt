@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 val nonConstFlag = true
 
 inline fun <T, R> calc(value : T, fn: (T) -> R) : R = fn(value)

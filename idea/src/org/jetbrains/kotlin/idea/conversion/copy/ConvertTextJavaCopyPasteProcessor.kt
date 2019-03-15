@@ -221,7 +221,7 @@ class ConvertTextJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransf
     }
 
     private fun parseAsFile(text: String, fileType: LanguageFileType, project: Project): PsiFile {
-        return PsiFileFactory.getInstance(project).createFileFromText("Dummy.java", fileType, text, LocalTimeCounter.currentTime(), true)
+        return PsiFileFactory.getInstance(project).createFileFromText("Dummy." + fileType.defaultExtension, fileType, text, LocalTimeCounter.currentTime(), true)
     }
 
     private fun DataForConversion.tryResolveImports(targetFile: KtFile): ElementAndTextList {
@@ -281,6 +281,6 @@ class ConvertTextJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransf
     }
 
     companion object {
-        @TestOnly var conversionPerformed: Boolean = false
+        @get:TestOnly var conversionPerformed: Boolean = false
     }
 }

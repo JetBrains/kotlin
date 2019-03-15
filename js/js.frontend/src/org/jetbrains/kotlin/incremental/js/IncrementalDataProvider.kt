@@ -22,11 +22,15 @@ import java.io.File
 interface IncrementalDataProvider {
     /** gets header metadata (serialized [JsProtoBuf.Header]) from previous compilation */
     val headerMetadata: ByteArray
+
     /** gets non-dirty package parts data from previous compilation */
     val compiledPackageParts: Map<File, TranslationResultValue>
+
+    val metadataVersion: IntArray
 }
 
 class IncrementalDataProviderImpl(
     override val headerMetadata: ByteArray,
-    override val compiledPackageParts: Map<File, TranslationResultValue>
+    override val compiledPackageParts: Map<File, TranslationResultValue>,
+    override val metadataVersion: IntArray
 ) : IncrementalDataProvider

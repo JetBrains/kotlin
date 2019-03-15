@@ -37,19 +37,21 @@ class Jsr305Parser(private val collector: MessageCollector) {
                 item.startsWith("@") -> {
                     val (name, state) = parseJsr305UserDefined(item) ?: return@forEach
                     val current = userDefined[name]
-                    if (current != null) {
+                    if (current == null) {
+                        userDefined[name] = state
+                    } else if (current != state) {
                         reportDuplicateJsr305("@$name:${current.description}", item)
                         return@forEach
                     }
-                    userDefined[name] = state
                 }
                 item.startsWith("under-migration") -> {
-                    if (migration != null) {
+                    val state = parseJsr305UnderMigration(item)
+                    if (migration == null) {
+                        migration = state
+                    } else if (migration != state) {
                         reportDuplicateJsr305("under-migration:${migration?.description}", item)
                         return@forEach
                     }
-
-                    migration = parseJsr305UnderMigration(item)
                 }
                 item == "enable" -> {
                     collector.report(
@@ -61,11 +63,12 @@ class Jsr305Parser(private val collector: MessageCollector) {
                     global = ReportLevel.STRICT
                 }
                 else -> {
-                    if (global != null) {
+                    if (global == null) {
+                        global = ReportLevel.findByDescription(item)
+                    } else if (global!!.description != item) {
                         reportDuplicateJsr305(global!!.description, item)
                         return@forEach
                     }
-                    global = ReportLevel.findByDescription(item)
                 }
             }
         }

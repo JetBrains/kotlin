@@ -1,6 +1,8 @@
 annotation class base
 
-@Target(AnnotationTarget.EXPRESSION) annotation class special
+@Target(AnnotationTarget.EXPRESSION)
+@Retention(AnnotationRetention.SOURCE)
+annotation class special
 
 fun transform(i: Int, tr: (Int) -> Int): Int = <!WRONG_ANNOTATION_TARGET!>@base<!> @special tr(@special i)
 

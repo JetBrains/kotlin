@@ -83,6 +83,22 @@ message Annotation {
       optional Annotation annotation = 8;
 
       repeated Value array_element = 9;
+
+      // If type = CLASS, the number of dimensions of the array of the class specified in class_id.
+      // E.g. if class_id = kotlin/String, this annotation argument value denotes:
+      // - String::class, if array_dimension_count = 0
+      // - Array<String>::class, if array_dimension_count = 1
+      // - Array<Array<String>>::class, if array_dimension_count = 2
+      // - etc.
+      // Since it's very difficult to represent Kotlin-specific type aspects (nullability, type projections) of array arguments
+      // in class literals on JVM, we don't bother to do represent this in our format as well.
+      // So, for example, values `Array<Array<in B?>>::class` and `Array<out Array<B>>?>::class` will be represented exactly the same here.
+      optional int32 array_dimension_count = 11 [default = 0];
+
+      /*
+        isUnsigned
+      */
+      optional int32 flags = 10 [default = 0];
     }
 
     required int32 name_id = 1 [(name_id_in_table) = true];
@@ -215,7 +231,7 @@ message Class {
   optional TypeTable type_table = 30;
 
   // Index into the VersionRequirementTable
-  optional int32 version_requirement = 31;
+  repeated int32 version_requirement = 31;
 
   optional VersionRequirementTable version_requirement_table = 32;
 
@@ -253,7 +269,7 @@ message Constructor {
   repeated ValueParameter value_parameter = 2;
 
   // Index into the VersionRequirementTable
-  optional int32 version_requirement = 31;
+  repeated int32 version_requirement = 31;
 
   extensions 100 to 18999;
 }
@@ -290,7 +306,7 @@ message Function {
   optional TypeTable type_table = 30;
 
   // Index into the VersionRequirementTable
-  optional int32 version_requirement = 31;
+  repeated int32 version_requirement = 31;
 
   optional Contract contract = 32;
 
@@ -344,7 +360,7 @@ message Property {
   optional int32 setter_flags = 8;
 
   // Index into the VersionRequirementTable
-  optional int32 version_requirement = 31;
+  repeated int32 version_requirement = 31;
 
   extensions 100 to 18999;
 }
@@ -389,7 +405,7 @@ message TypeAlias {
   repeated Annotation annotation = 8;
 
   // Index into the VersionRequirementTable
-  optional int32 version_requirement = 31;
+  repeated int32 version_requirement = 31;
 
   extensions 100 to 199;
 }
@@ -525,7 +541,7 @@ message Expression {
     isNegated => this expression should be negated
     isIsNullPredicate => this expression is IsNullPredicate with 'variableName' as argument
   */
-  optional int32 flags = 1;
+  optional int32 flags = 1 [default = 0];
 
   // stored as index in valueParameters list of owner-function in 1-indexation
   // Index '0' is reserved for extension receiver

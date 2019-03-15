@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.addRemoveModifier.addModifier
@@ -34,6 +35,13 @@ class KtPrimaryConstructor : KtConstructor<KtPrimaryConstructor> {
 
     private fun getOrCreateConstructorKeyword(): PsiElement {
         return getConstructorKeyword() ?: addBefore(KtPsiFactory(this).createConstructorKeyword(), valueParameterList!!)
+    }
+
+    fun removeRedundantConstructorKeywordAndSpace() {
+        getConstructorKeyword()?.delete()
+        if (prevSibling is PsiWhiteSpace) {
+            prevSibling.delete()
+        }
     }
 
     override fun addModifier(modifier: KtModifierKeywordToken) {
@@ -53,7 +61,7 @@ class KtPrimaryConstructor : KtConstructor<KtPrimaryConstructor> {
     override fun removeModifier(modifier: KtModifierKeywordToken) {
         super.removeModifier(modifier)
         if (modifierList == null) {
-            getConstructorKeyword()?.delete()
+            removeRedundantConstructorKeywordAndSpace()
         }
     }
 
@@ -62,9 +70,8 @@ class KtPrimaryConstructor : KtConstructor<KtPrimaryConstructor> {
         return if (modifierList != null) {
             modifierList.addBefore(annotationEntry, modifierList.firstChild) as KtAnnotationEntry
         } else {
-            val parameterList = valueParameterList!!
             val newModifierList = KtPsiFactory(project).createModifierList(annotationEntry.text)
-            (addBefore(newModifierList, parameterList) as KtModifierList).annotationEntries.first()
+            (addBefore(newModifierList, getOrCreateConstructorKeyword()) as KtModifierList).annotationEntries.first()
         }
     }
 }

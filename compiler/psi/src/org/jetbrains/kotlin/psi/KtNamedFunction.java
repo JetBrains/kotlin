@@ -26,9 +26,11 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.lexer.KtTokens;
+import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinFunctionStub;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 import org.jetbrains.kotlin.psi.typeRefHelpers.TypeRefHelpersKt;
+import org.jetbrains.kotlin.util.AstLoadingFilter;
 
 import java.util.Collections;
 import java.util.List;
@@ -121,7 +123,30 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
     @Override
     @Nullable
     public KtExpression getBodyExpression() {
-        return findChildByClass(KtExpression.class);
+        KotlinFunctionStub stub = getStub();
+        if (stub != null && !stub.hasBody()) {
+            return null;
+        }
+
+        return AstLoadingFilter.forceAllowTreeLoading(this.getContainingFile(), () ->
+                findChildByClass(KtExpression.class)
+        );
+    }
+
+    @Nullable
+    @Override
+    public KtBlockExpression getBodyBlockExpression() {
+        KotlinFunctionStub stub = getStub();
+        if (stub != null && !(stub.hasBlockBody() && stub.hasBody())) {
+            return null;
+        }
+
+        KtExpression bodyExpression = findChildByClass(KtExpression.class);
+        if (bodyExpression instanceof KtBlockExpression) {
+            return (KtBlockExpression) bodyExpression;
+        }
+
+        return null;
     }
 
     @Override
@@ -218,5 +243,14 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
     public boolean shouldChangeModificationCount(PsiElement place) {
         // Suppress Java check for out-of-block
         return false;
+    }
+
+    public boolean mayHaveContract() {
+        KotlinFunctionStub stub = getStub();
+        if (stub != null) {
+            return stub.mayHaveContract();
+        }
+
+        return KtPsiUtilKt.isContractPresentPsiCheck(this);
     }
 }

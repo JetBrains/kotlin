@@ -1,0 +1,4 @@
+public open class ConstructorWithSeveralParams : R|java/lang/Object| {
+    public final function ConstructorWithSeveralParams(integer: R|ft<kotlin/Int, kotlin/Int?>|!, intBasic: R|kotlin/Int|, collection: R|ft<java/util/ArrayList<ft<kotlin/String, kotlin/String?>>, java/util/ArrayList<ft<kotlin/String, kotlin/String?>>?>|!): R|test/ConstructorWithSeveralParams|
+
+}

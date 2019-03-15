@@ -1,3 +1,4 @@
+// !CHECK_HIGHLIGHTING
 package a
 
 expect class A {
@@ -11,5 +12,5 @@ expect class B {
 }
 
 expect class C {
-    <error>header</error> inner class Inner
+    inner class Inner
 }

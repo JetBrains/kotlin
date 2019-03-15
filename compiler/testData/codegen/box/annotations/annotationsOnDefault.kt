@@ -1,6 +1,4 @@
-// TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS, NATIVE
-
+// TARGET_BACKEND: JVM
 // WITH_RUNTIME
 
 import kotlin.test.assertEquals
@@ -19,22 +17,26 @@ fun test(name: String, annotations: Array<out Annotation>) {
     assertEquals(1, annotations.filterIsInstance<Ann>().single().x, "$name[0]")
 }
 
+fun testAbsence(name: String, annotations: Array<out Annotation>) {
+    assertEquals(0, annotations.filterIsInstance<Ann>().size, "$name")
+}
+
 fun box(): String {
     val foo = A::class.java.getDeclaredMethods().first { it.getName() == "foo" }
     test("foo", foo.getDeclaredAnnotations())
 
     val fooDefault = A::class.java.getDeclaredMethods().first { it.getName() == "foo\$default" }
-    test("foo", foo.getDeclaredAnnotations())
+    testAbsence("foo\$default", fooDefault.getDeclaredAnnotations())
 
     val (secondary, secondaryDefault) = A::class.java.getDeclaredConstructors().partition { it.getParameterTypes().size == 3 }
 
     test("secondary", secondary[0].getDeclaredAnnotations())
-    test("secondary\$default", secondaryDefault[0].getDeclaredAnnotations())
+    testAbsence("secondary\$default", secondaryDefault[0].getDeclaredAnnotations())
 
     val (primary, primaryDefault) = B::class.java.getConstructors().partition { it.getParameterTypes().size == 3 }
 
     test("primary", primary[0].getDeclaredAnnotations())
-    test("primary\$default", primaryDefault[0].getDeclaredAnnotations())
+    testAbsence("primary\$default", primaryDefault[0].getDeclaredAnnotations())
 
     return "OK"
 }

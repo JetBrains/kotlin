@@ -21,10 +21,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 import org.jetbrains.kotlin.js.backend.ast.*
-import org.jetbrains.kotlin.js.backend.ast.metadata.descriptor
-import org.jetbrains.kotlin.js.backend.ast.metadata.functionDescriptor
-import org.jetbrains.kotlin.js.backend.ast.metadata.hasDefaultValue
-import org.jetbrains.kotlin.js.backend.ast.metadata.type
+import org.jetbrains.kotlin.js.backend.ast.metadata.*
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.descriptorUtils.shouldBeExported
 import org.jetbrains.kotlin.js.inline.util.FunctionWithWrapper
@@ -105,9 +102,6 @@ fun TranslationContext.wrapWithInlineMetadata(
 ): JsExpression {
     val sourceInfo = descriptor.source.getPsi()
     return if (descriptor.isInline) {
-        val incrementalResults = config.configuration[JSConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER]
-        incrementalResults?.reportInlineFunction(descriptor, function, sourceInfo)
-
         if (descriptor.shouldBeExported(config)) {
             val metadata = InlineMetadata.compose(function, descriptor, this)
             metadata.functionWithMetadata(outerContext, sourceInfo)
@@ -119,6 +113,9 @@ fun TranslationContext.wrapWithInlineMetadata(
                         JsReturn(function))
                 }
             InlineMetadata.wrapFunction(outerContext, FunctionWithWrapper(function, block), sourceInfo)
+        }.also {
+            val incrementalResults = config.configuration[JSConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER]
+            incrementalResults?.reportInlineFunction(descriptor, it, sourceInfo)
         }
     }
     else {

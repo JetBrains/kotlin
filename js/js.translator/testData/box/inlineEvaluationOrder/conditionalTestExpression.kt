@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1119
+// EXPECTED_REACHABLE_NODES: 1287
 package foo
 
 fun test(x: Boolean): Boolean =

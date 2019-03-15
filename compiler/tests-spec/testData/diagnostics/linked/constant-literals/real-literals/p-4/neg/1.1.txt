@@ -1,0 +1,17 @@
+package
+
+public val value_1: kotlin.Double
+public val value_10: kotlin.Double
+public val value_11: kotlin.Double
+public val value_12: kotlin.Double
+public val value_13: kotlin.Double
+public val value_14: kotlin.Double
+public val value_15: kotlin.Double
+public val value_2: kotlin.Double
+public val value_3: kotlin.Double
+public val value_4: kotlin.Double
+public val value_5: kotlin.Double
+public val value_6: kotlin.Double
+public val value_7: kotlin.Double
+public val value_8: kotlin.Double
+public val value_9: kotlin.Double

@@ -1,8 +1,10 @@
+// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
+// COMMON_COROUTINES_TEST
 // WITH_COROUTINES
 import helpers.*
-import kotlin.coroutines.experimental.*
-import kotlin.coroutines.experimental.intrinsics.*
+import COROUTINES_PACKAGE.*
+import COROUTINES_PACKAGE.intrinsics.*
 
 interface Consumer { fun consume(s: String) }
 
@@ -20,7 +22,7 @@ fun builder(c: suspend () -> Unit) {
 
 fun builderConsumer(c: suspend () -> Consumer): Consumer {
     var res: Consumer? = null
-    c.startCoroutine(object : Continuation<Consumer> {
+    c.startCoroutine(object : ContinuationAdapter<Consumer>() {
         override fun resume(value: Consumer) {
             res = value
         }

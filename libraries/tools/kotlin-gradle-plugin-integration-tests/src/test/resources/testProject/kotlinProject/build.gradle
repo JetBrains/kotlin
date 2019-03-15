@@ -24,7 +24,3 @@ dependencies {
 test {
     useTestNG()
 }
-
-task exit << {
-    System.exit(0)
-}

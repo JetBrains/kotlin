@@ -1,0 +1,15 @@
+package
+
+public fun main(/*0*/ a: A<kotlin.String>, /*1*/ a1: A<kotlin.String?>): kotlin.Unit
+
+public open class A</*0*/ T : kotlin.Any!> {
+    public constructor A</*0*/ T : kotlin.Any!>()
+    @androidx.annotation.RecentlyNullable public final var field: kotlin.String!
+    @androidx.annotation.RecentlyNonNull public open fun bar(): kotlin.String!
+    @androidx.annotation.RecentlyNullable public open fun baz(/*0*/ @androidx.annotation.RecentlyNonNull x: T!): T!
+    @androidx.annotation.RecentlyNonNull public open fun baz2(/*0*/ @androidx.annotation.RecentlyNullable x: T!): T!
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    @androidx.annotation.RecentlyNullable public open fun foo(/*0*/ @androidx.annotation.RecentlyNonNull x: kotlin.String!, /*1*/ @androidx.annotation.RecentlyNullable y: kotlin.CharSequence!): kotlin.String!
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

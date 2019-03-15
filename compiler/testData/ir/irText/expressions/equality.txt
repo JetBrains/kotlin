@@ -1,5 +1,5 @@
 FILE fqName:<root> fileName:/equality.kt
-  FUN name:test1 visibility:public modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:Boolean flags:
+  FUN name:test1 visibility:public modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:kotlin.Boolean flags:
     VALUE_PARAMETER name:a index:0 type:kotlin.Int flags:
     VALUE_PARAMETER name:b index:1 type:kotlin.Int flags:
     BLOCK_BODY
@@ -7,7 +7,7 @@ FILE fqName:<root> fileName:/equality.kt
         CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
           arg0: GET_VAR 'value-parameter a: Int' type=kotlin.Int origin=null
           arg1: GET_VAR 'value-parameter b: Int' type=kotlin.Int origin=null
-  FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:Boolean flags:
+  FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:kotlin.Boolean flags:
     VALUE_PARAMETER name:a index:0 type:kotlin.Int flags:
     VALUE_PARAMETER name:b index:1 type:kotlin.Int flags:
     BLOCK_BODY
@@ -16,7 +16,7 @@ FILE fqName:<root> fileName:/equality.kt
           arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
             arg0: GET_VAR 'value-parameter a: Int' type=kotlin.Int origin=null
             arg1: GET_VAR 'value-parameter b: Int' type=kotlin.Int origin=null
-  FUN name:test3 visibility:public modality:FINAL <> (a:kotlin.Any?, b:kotlin.Any?) returnType:Boolean flags:
+  FUN name:test3 visibility:public modality:FINAL <> (a:kotlin.Any?, b:kotlin.Any?) returnType:kotlin.Boolean flags:
     VALUE_PARAMETER name:a index:0 type:kotlin.Any? flags:
     VALUE_PARAMETER name:b index:1 type:kotlin.Any? flags:
     BLOCK_BODY

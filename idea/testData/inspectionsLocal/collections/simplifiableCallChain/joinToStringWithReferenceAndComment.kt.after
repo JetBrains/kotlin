@@ -1,0 +1,12 @@
+// WITH_RUNTIME
+
+val x = listOf(1, 2, 3).joinToString(
+        // comment2
+        prefix = "= ",
+        // comment3
+        separator = " + "
+        // comment4
+        ,
+        // comment1
+        transform = Int::toString
+)

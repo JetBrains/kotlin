@@ -24,69 +24,77 @@ import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-fun capturedBoundReferenceReceiver(ownerType: Type, expectedReceiverType: Type, isInliningStrategy: Boolean): StackValue =
-        StackValue.operation(expectedReceiverType) { iv ->
-            iv.load(0, ownerType)
-            iv.getfield(
-                    ownerType.internalName,
-                    //HACK for inliner - it should recognize field as captured receiver
-                    if (isInliningStrategy) AsmUtil.CAPTURED_RECEIVER_FIELD else AsmUtil.BOUND_REFERENCE_RECEIVER,
-                    AsmTypes.OBJECT_TYPE.descriptor
-            )
-            StackValue.coerce(AsmTypes.OBJECT_TYPE, expectedReceiverType, iv)
-        }
+fun capturedBoundReferenceReceiver(
+    ownerType: Type,
+    expectedReceiverType: Type,
+    expectedReceiverKotlinType: KotlinType?,
+    isInliningStrategy: Boolean
+): StackValue =
+    StackValue.operation(expectedReceiverType) { iv ->
+        iv.load(0, ownerType)
+        iv.getfield(
+            ownerType.internalName,
+            //HACK for inliner - it should recognize field as captured receiver
+            if (isInliningStrategy) AsmUtil.CAPTURED_RECEIVER_FIELD else AsmUtil.BOUND_REFERENCE_RECEIVER,
+            AsmTypes.OBJECT_TYPE.descriptor
+        )
+        val nullableAny = expectedReceiverKotlinType?.run { builtIns.nullableAnyType }
+        StackValue.coerce(AsmTypes.OBJECT_TYPE, nullableAny, expectedReceiverType, expectedReceiverKotlinType, iv)
+    }
 
 fun ClassDescriptor.isSyntheticClassForCallableReference(): Boolean =
-        this is SyntheticClassDescriptorForLambda &&
-        (this.source as? KotlinSourceElement)?.psi is KtCallableReferenceExpression
+    this is SyntheticClassDescriptorForLambda &&
+            (this.source as? KotlinSourceElement)?.psi is KtCallableReferenceExpression
 
 fun CalculatedClosure.isForCallableReference(): Boolean =
-        closureClass.isSyntheticClassForCallableReference()
+    closureClass.isSyntheticClassForCallableReference()
 
 fun CalculatedClosure.isForBoundCallableReference(): Boolean =
-        isForCallableReference() && captureReceiverType != null
+    isForCallableReference() && capturedReceiverFromOuterContext != null
 
-fun InstructionAdapter.loadBoundReferenceReceiverParameter(index: Int, type: Type) {
+fun InstructionAdapter.loadBoundReferenceReceiverParameter(index: Int, type: Type, kotlinType: KotlinType?) {
     load(index, type)
-    StackValue.coerce(type, AsmTypes.OBJECT_TYPE, this)
+    val nullableAny = kotlinType?.run { builtIns.nullableAnyType }
+    StackValue.coerce(type, kotlinType, AsmTypes.OBJECT_TYPE, nullableAny, this)
 }
 
 fun CalculatedClosure.isBoundReferenceReceiverField(fieldInfo: FieldInfo): Boolean =
-        isForBoundCallableReference() &&
-        fieldInfo.fieldName == AsmUtil.CAPTURED_RECEIVER_FIELD
+    isForBoundCallableReference() &&
+            fieldInfo.fieldName == AsmUtil.CAPTURED_RECEIVER_FIELD
 
-fun InstructionAdapter.generateClosureFieldsInitializationFromParameters(closure: CalculatedClosure, args: List<FieldInfo>): Pair<Int, Type>? {
+fun InstructionAdapter.generateClosureFieldsInitializationFromParameters(
+    closure: CalculatedClosure,
+    args: List<FieldInfo>
+): Pair<Int, FieldInfo>? {
     var k = 1
     var boundReferenceReceiverParameterIndex = -1
-    var boundReferenceReceiverType: Type? = null
+    var boundReferenceReceiverFieldInfo: FieldInfo? = null
     for (fieldInfo in args) {
         if (closure.isBoundReferenceReceiverField(fieldInfo)) {
             boundReferenceReceiverParameterIndex = k
-            boundReferenceReceiverType = fieldInfo.fieldType
+            boundReferenceReceiverFieldInfo = fieldInfo
             k += fieldInfo.fieldType.size
             continue
         }
         k = AsmUtil.genAssignInstanceFieldFromParam(fieldInfo, k, this)
     }
 
-    return when {
-        boundReferenceReceiverType != null ->
-            Pair(boundReferenceReceiverParameterIndex, boundReferenceReceiverType)
-        else ->
-            null
-    }
+    return boundReferenceReceiverFieldInfo?.let { Pair(boundReferenceReceiverParameterIndex, it) }
 }
 
 fun computeExpectedNumberOfReceivers(referencedFunction: FunctionDescriptor, isBound: Boolean): Int {
     val receivers = (if (referencedFunction.dispatchReceiverParameter != null) 1 else 0) +
-                    (if (referencedFunction.extensionReceiverParameter != null) 1 else 0) -
-                    (if (isBound) 1 else 0)
+            (if (referencedFunction.extensionReceiverParameter != null) 1 else 0) -
+            (if (isBound) 1 else 0)
 
     if (receivers < 0 && referencedFunction is ConstructorDescriptor &&
-               DescriptorUtils.isObject(referencedFunction.containingDeclaration.containingDeclaration)) {
+        DescriptorUtils.isObject(referencedFunction.containingDeclaration.containingDeclaration)
+    ) {
         //reference to object nested class
         //TODO: seems problem should be fixed on frontend side (note that object instance are captured by generated class)
         return 0

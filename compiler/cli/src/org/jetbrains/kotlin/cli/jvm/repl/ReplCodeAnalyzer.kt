@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.container.get
-import org.jetbrains.kotlin.descriptors.ScriptDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptorWithResolutionScopes
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.name.FqName
@@ -40,14 +40,12 @@ import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.resolve.lazy.*
 import org.jetbrains.kotlin.resolve.lazy.data.KtClassLikeInfo
 import org.jetbrains.kotlin.resolve.lazy.declarations.*
-import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyScriptDescriptor
 import org.jetbrains.kotlin.resolve.scopes.ImportingScope
 import org.jetbrains.kotlin.resolve.scopes.utils.parentsWithSelf
 import org.jetbrains.kotlin.resolve.scopes.utils.replaceImportingScopes
 import org.jetbrains.kotlin.script.ScriptPriorities
 
 class ReplCodeAnalyzer(environment: KotlinCoreEnvironment) {
-
     private val topDownAnalysisContext: TopDownAnalysisContext
     private val topDownAnalyzer: LazyTopDownAnalyzer
     private val resolveSession: ResolveSession
@@ -63,31 +61,32 @@ class ReplCodeAnalyzer(environment: KotlinCoreEnvironment) {
         // to be found via ResolveSession. The latter is true as long as light classes are not needed in REPL (which is currently true
         // because no symbol declared in the REPL session can be used from Java)
         val container = TopDownAnalyzerFacadeForJVM.createContainer(
-                environment.project,
-                emptyList(),
-                trace,
-                environment.configuration,
-                environment::createPackagePartProvider,
-                { _, _ -> ScriptMutableDeclarationProviderFactory() }
+            environment.project,
+            emptyList(),
+            trace,
+            environment.configuration,
+            environment::createPackagePartProvider,
+            { _, _ -> ScriptMutableDeclarationProviderFactory() }
         )
 
-        this.module = container.get<ModuleDescriptorImpl>()
-        this.scriptDeclarationFactory = container.get<ScriptMutableDeclarationProviderFactory>()
-        this.resolveSession = container.get<ResolveSession>()
+        this.module = container.get()
+        this.scriptDeclarationFactory = container.get()
+        this.resolveSession = container.get()
         this.topDownAnalysisContext = TopDownAnalysisContext(
-                TopDownAnalysisMode.TopLevelDeclarations, DataFlowInfoFactory.EMPTY, resolveSession.declarationScopeProvider
+            TopDownAnalysisMode.TopLevelDeclarations, DataFlowInfoFactory.EMPTY, resolveSession.declarationScopeProvider
         )
-        this.topDownAnalyzer = container.get<LazyTopDownAnalyzer>()
+        this.topDownAnalyzer = container.get()
     }
 
     interface ReplLineAnalysisResult {
-        val scriptDescriptor: ScriptDescriptor?
+        val scriptDescriptor: ClassDescriptorWithResolutionScopes?
         val diagnostics: Diagnostics
 
-        data class Successful(override val scriptDescriptor: ScriptDescriptor, override val diagnostics: Diagnostics) : ReplLineAnalysisResult
+        data class Successful(override val scriptDescriptor: ClassDescriptorWithResolutionScopes, override val diagnostics: Diagnostics) :
+            ReplLineAnalysisResult
 
         data class WithErrors(override val diagnostics: Diagnostics) : ReplLineAnalysisResult {
-            override val scriptDescriptor: ScriptDescriptor? get() = null
+            override val scriptDescriptor: ClassDescriptorWithResolutionScopes? get() = null
         }
     }
 
@@ -115,8 +114,7 @@ class ReplCodeAnalyzer(environment: KotlinCoreEnvironment) {
         return if (hasErrors) {
             replState.lineFailure(linePsi, codeLine)
             ReplLineAnalysisResult.WithErrors(diagnostics)
-        }
-        else {
+        } else {
             val scriptDescriptor = context.scripts[linePsi.script]!!
             replState.lineSuccess(linePsi, codeLine, scriptDescriptor)
             ReplLineAnalysisResult.Successful(scriptDescriptor, diagnostics)
@@ -134,8 +132,7 @@ class ReplCodeAnalyzer(environment: KotlinCoreEnvironment) {
             val provider = delegateFactory.getPackageMemberDeclarationProvider(FqName.ROOT)!!
             try {
                 rootPackageProvider.addDelegateProvider(provider)
-            }
-            catch (e: UninitializedPropertyAccessException) {
+            } catch (e: UninitializedPropertyAccessException) {
                 rootPackageProvider = AdaptablePackageMemberDeclarationProvider(provider)
             }
         }
@@ -157,7 +154,7 @@ class ReplCodeAnalyzer(environment: KotlinCoreEnvironment) {
         }
 
         class AdaptablePackageMemberDeclarationProvider(
-                private var delegateProvider: PackageMemberDeclarationProvider
+            private var delegateProvider: PackageMemberDeclarationProvider
         ) : DelegatePackageMemberDeclarationProvider(delegateProvider) {
             fun addDelegateProvider(provider: PackageMemberDeclarationProvider) {
                 delegateProvider = CombinedPackageMemberDeclarationProvider(listOf(provider, delegateProvider))
@@ -167,8 +164,8 @@ class ReplCodeAnalyzer(environment: KotlinCoreEnvironment) {
         }
     }
 
-    // TODO: merge with org.jetbrains.kotlin.resolve.repl.ReplState when switching to new REPL infrastruct everywhere
-    // TODO: review it's place in the extracted state infrastruct (now the analyzer itself is a part of the state
+    // TODO: merge with org.jetbrains.kotlin.resolve.repl.ReplState when switching to new REPL infrastructure everywhere
+    // TODO: review its place in the extracted state infrastructure (now the analyzer itself is a part of the state)
     class ResettableAnalyzerState {
         private val successfulLines = ReplHistory<LineInfo.SuccessfulLine>()
         private val submittedLines = hashMapOf<KtFile, LineInfo>()
@@ -194,7 +191,7 @@ class ReplCodeAnalyzer(environment: KotlinCoreEnvironment) {
             }
         }
 
-        fun lineSuccess(ktFile: KtFile, codeLine: ReplCodeLine, scriptDescriptor: LazyScriptDescriptor) {
+        fun lineSuccess(ktFile: KtFile, codeLine: ReplCodeLine, scriptDescriptor: ClassDescriptorWithResolutionScopes) {
             val successfulLine = LineInfo.SuccessfulLine(ktFile, successfulLines.lastValue(), scriptDescriptor)
             submittedLines[ktFile] = successfulLine
             successfulLines.add(CompiledReplCodeLine(ktFile.name, codeLine), successfulLine)
@@ -212,7 +209,12 @@ class ReplCodeAnalyzer(environment: KotlinCoreEnvironment) {
             abstract val parentLine: SuccessfulLine?
 
             class SubmittedLine(override val linePsi: KtFile, override val parentLine: SuccessfulLine?) : LineInfo()
-            class SuccessfulLine(override val linePsi: KtFile, override val parentLine: SuccessfulLine?, val lineDescriptor: LazyScriptDescriptor) : LineInfo()
+            class SuccessfulLine(
+                override val linePsi: KtFile,
+                override val parentLine: SuccessfulLine?,
+                val lineDescriptor: ClassDescriptorWithResolutionScopes
+            ) : LineInfo()
+
             class FailedLine(override val linePsi: KtFile, override val parentLine: SuccessfulLine?) : LineInfo()
         }
 
@@ -222,7 +224,7 @@ class ReplCodeAnalyzer(environment: KotlinCoreEnvironment) {
             val lastLineImports = lexicalScopeAfterLastLine.parentsWithSelf.first { it is ImportingScope } as ImportingScope
             val scopesForThisLine = fileScopeFactory.createScopesForFile(lineInfo.linePsi, lastLineImports)
             val combinedLexicalScopes = lexicalScopeAfterLastLine.replaceImportingScopes(scopesForThisLine.importingScope)
-            return FileScopes(combinedLexicalScopes, scopesForThisLine.importingScope, scopesForThisLine.importResolver)
+            return FileScopes(combinedLexicalScopes, scopesForThisLine.importingScope, scopesForThisLine.importForceResolver)
         }
     }
 }

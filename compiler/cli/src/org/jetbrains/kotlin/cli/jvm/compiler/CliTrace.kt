@@ -45,7 +45,7 @@ class CliTraceHolder : CodeAnalyzerInitializer {
 // TODO: needs better name + list of keys to skip somewhere
 class NoScopeRecordCliBindingTrace : CliBindingTrace() {
     override fun <K, V> record(slice: WritableSlice<K, V>, key: K, value: V) {
-        if (slice === BindingContext.LEXICAL_SCOPE || slice == BindingContext.DATA_FLOW_INFO_BEFORE) {
+        if (slice == BindingContext.LEXICAL_SCOPE || slice == BindingContext.DATA_FLOW_INFO_BEFORE) {
             // In the compiler there's no need to keep scopes
             return
         }

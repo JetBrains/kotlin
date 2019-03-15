@@ -20,27 +20,18 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberScope
 import org.jetbrains.kotlin.storage.StorageManager
-import javax.inject.Inject
 
 abstract class DeserializedPackageFragment(
-        fqName: FqName,
-        protected val storageManager: StorageManager,
-        module: ModuleDescriptor
+    fqName: FqName,
+    protected val storageManager: StorageManager,
+    module: ModuleDescriptor
 ) : PackageFragmentDescriptorImpl(module, fqName) {
-    // component dependency cycle
-    @set:Inject
-    lateinit var components: DeserializationComponents
 
-    private val memberScope = storageManager.createLazyValue { computeMemberScope() }
+    abstract fun initialize(components: DeserializationComponents)
 
     abstract val classDataFinder: ClassDataFinder
-
-    protected abstract fun computeMemberScope(): MemberScope
-
-    override fun getMemberScope() = memberScope()
 
     open fun hasTopLevelClass(name: Name): Boolean {
         val scope = getMemberScope()

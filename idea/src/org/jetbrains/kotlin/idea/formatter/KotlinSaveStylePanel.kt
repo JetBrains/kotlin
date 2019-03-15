@@ -34,7 +34,7 @@ class KotlinSaveStylePanel(settings: CodeStyleSettings) : CodeStyleAbstractPanel
     private val saveDefaultsComboBox = ComboBox<SaveItem>()
     private val saveDefaultsItems = listOf(
         SaveItem("<ide defaults>", null),
-        SaveItem("Current set of defaults", "KOTLIN_OLD_DEFAULTS"),
+        SaveItem(KotlinObsoleteCodeStyle.CODE_STYLE_TITLE, KotlinObsoleteCodeStyle.CODE_STYLE_ID),
         SaveItem(KotlinStyleGuideCodeStyle.CODE_STYLE_TITLE, KotlinStyleGuideCodeStyle.CODE_STYLE_ID)
     )
 

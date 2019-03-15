@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.idea.references.KtSimpleReference
 import org.jetbrains.kotlin.idea.runSynchronouslyWithProgress
 import org.jetbrains.kotlin.idea.search.usagesSearch.searchReferencesOrMethodReferences
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
+import org.jetbrains.kotlin.idea.util.application.progressIndicatorNullable
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
@@ -97,7 +98,7 @@ class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntent
                     "$receiver.${expression.text}(${arguments.joinToString()})"
             )
             expression.replaced(adapterLambda).let {
-                MoveLambdaOutsideParenthesesIntention.moveFunctionLiteralOutsideParenthesesIfPossible(it)
+                it.moveFunctionLiteralOutsideParenthesesIfPossible()
             }
         }
     }
@@ -159,7 +160,7 @@ class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntent
             } as KtLambdaExpression
 
             expression.replaced(replacingLambda).let {
-                MoveLambdaOutsideParenthesesIntention.moveFunctionLiteralOutsideParenthesesIfPossible(it)
+                it.moveFunctionLiteralOutsideParenthesesIfPossible()
             }
         }
 
@@ -186,7 +187,7 @@ class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntent
                 runReadAction {
                     val progressStep = 1.0/callables.size
                     for ((i, callable) in callables.withIndex()) {
-                        ProgressManager.getInstance().progressIndicator.fraction = (i + 1) * progressStep
+                        ProgressManager.getInstance().progressIndicatorNullable!!.fraction = (i + 1) * progressStep
 
                         if (callable !is PsiNamedElement) continue
 

@@ -18,21 +18,24 @@ package org.jetbrains.kotlin.descriptors.annotations
 
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.getAbbreviation
 
 interface AnnotationDescriptor {
     val type: KotlinType
 
     val fqName: FqName?
-        get() = annotationClass?.takeUnless(ErrorUtils::isError)?.fqNameUnsafe?.takeIf(FqNameUnsafe::isSafe)?.toSafe()
+        get() = annotationClass?.takeUnless(ErrorUtils::isError)?.fqNameOrNull()
 
     val allValueArguments: Map<Name, ConstantValue<*>>
 
     val source: SourceElement
 }
+
+val AnnotationDescriptor.abbreviationFqName: FqName?
+    get() = type.getAbbreviation()?.constructor?.declarationDescriptor?.fqNameOrNull()

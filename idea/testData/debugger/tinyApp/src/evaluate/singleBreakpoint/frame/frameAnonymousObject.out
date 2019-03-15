@@ -2,29 +2,6 @@ LineBreakpoint created at frameAnonymousObject.kt:11
 Run Java
 Connected to the target VM
 frameAnonymousObject.kt:11
-package frameAnonymousObject
-
-fun main(args: Array<String>) {
-    val val1 = 1
-    val o = object {
-        val obProp = 1
-
-        fun run() {
-            foo {
-                //Breakpoint!
-                val1 + obProp
-            }
-        }
-    }
-
-    o.run()
-}
-
-fun foo(f: () -> Unit) {
-    f()
-}
-
-// PRINT_FRAME
  frame    = invoke:11, FrameAnonymousObjectKt$main$o$1$run$1 {frameAnonymousObject}
    this     = this = {frameAnonymousObject.FrameAnonymousObjectKt$main$o$1$run$1@uniqueID}Function0<kotlin.Unit>
      field    = this$0: frameAnonymousObject.FrameAnonymousObjectKt$main$o$1 = {frameAnonymousObject.FrameAnonymousObjectKt$main$o$1@uniqueID} (sp = null)

@@ -17,6 +17,5 @@ class TestSample(<caret>)
 // EXIST: actual
 /* TODO: keywords below should not be here*/
 // EXIST: abstract
-// EXIST: const
 // EXIST: lateinit var
 // NOTHING_ELSE

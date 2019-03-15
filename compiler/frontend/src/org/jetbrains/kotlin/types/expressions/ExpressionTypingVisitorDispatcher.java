@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.types.expressions;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
+import com.intellij.openapi.project.IndexNotReadyException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.diagnostics.Errors;
@@ -203,7 +204,7 @@ public abstract class ExpressionTypingVisitorDispatcher extends KtVisitor<Kotlin
                 }
                 return result;
             }
-            catch (ProcessCanceledException | KotlinFrontEndException e) {
+            catch (ProcessCanceledException | KotlinFrontEndException | IndexNotReadyException e) {
                 throw e;
             }
             catch (Throwable e) {

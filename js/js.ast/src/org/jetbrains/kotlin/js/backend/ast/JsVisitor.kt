@@ -64,7 +64,7 @@ abstract class JsVisitor {
             visitElement(x)
 
     open fun visitDoWhile(x: JsDoWhile): Unit =
-            visitElement(x)
+            visitLoop(x)
 
     open fun visitEmpty(x: JsEmpty): Unit =
             visitElement(x)
@@ -73,10 +73,10 @@ abstract class JsVisitor {
             visitElement(x)
 
     open fun visitFor(x: JsFor): Unit =
-            visitElement(x)
+            visitLoop(x)
 
     open fun visitForIn(x: JsForIn): Unit =
-            visitElement(x)
+            visitLoop(x)
 
     open fun visitFunction(x: JsFunction): Unit =
             visitElement(x)
@@ -89,6 +89,9 @@ abstract class JsVisitor {
 
     open fun visitLabel(x: JsLabel): Unit =
             visitElement(x)
+
+    open fun visitLoop(x: JsLoop): Unit =
+        visitElement(x)
 
     open fun visitNameRef(nameRef: JsNameRef): Unit =
             visitElement(nameRef)
@@ -151,7 +154,7 @@ abstract class JsVisitor {
             visitElement(x)
 
     open fun visitWhile(x: JsWhile): Unit =
-            visitElement(x)
+            visitLoop(x)
 
     open fun visitDocComment(comment: JsDocComment): Unit =
             visitElement(comment)

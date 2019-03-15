@@ -29,7 +29,7 @@ class SimpleKotlinRenderLogTest : AbstractKotlinRenderLogTest() {
 
     @Test fun testQualifiedConstructorCall() = doTest("QualifiedConstructorCall")
 
-    @Test fun testPropertyDelegate() = doTest("PropertyDelegate") { testName, file -> check(testName, file, false) }
+    @Test fun testPropertyDelegate() = doTest("PropertyDelegate")
 
     @Test fun testLocalVariableWithAnnotation() = doTest("LocalVariableWithAnnotation")
 
@@ -75,4 +75,22 @@ class SimpleKotlinRenderLogTest : AbstractKotlinRenderLogTest() {
 
     @Test
     fun testAnnotationComplex() = doTest("AnnotationComplex")
+
+    @Test
+    fun testParametersDisorder() = doTest("ParametersDisorder") { testName, file ->
+        // disabled due to inconsistent parents for 2-receivers call (KT-22344)
+        check(testName, file, false)
+    }
+
+    @Test
+    fun testLambdas() = doTest("Lambdas")
+
+    @Test
+    fun testTypeReferences() = doTest("TypeReferences")
+
+    @Test
+    fun testDelegate() = doTest("Delegate")
+
+    @Test
+    fun testConstructorDelegate() = doTest("ConstructorDelegate")
 }

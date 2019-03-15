@@ -2,7 +2,7 @@ package beforeTest //package name should be less than imported one
 
 import test.*
 
-fun main(args: Array<String>) {
+fun main() {
     "O".switchMapOnce {
 
         "K".switchMapOnce {

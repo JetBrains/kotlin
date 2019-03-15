@@ -2,14 +2,14 @@ package test
 
 public final class ClassVal {
     /*primary*/ public constructor ClassVal()
-    public final val property1: kotlin.Int = 1
+    public final val property1: kotlin.Int
         public final fun <get-property1>(): kotlin.Int
-    internal final val property2: kotlin.Int = 1
+    internal final val property2: kotlin.Int
         internal final fun <get-property2>(): kotlin.Int
     private final val property3: java.lang.Object
         private final fun <get-property3>(): java.lang.Object
-    protected final val property4: kotlin.String = ""
+    protected final val property4: kotlin.String
         protected final fun <get-property4>(): kotlin.String
-    public final val property5: kotlin.Int = 1
+    public final val property5: kotlin.Int
         public final fun <get-property5>(): kotlin.Int
 }

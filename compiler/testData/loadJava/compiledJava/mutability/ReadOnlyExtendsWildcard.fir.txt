@@ -1,0 +1,6 @@
+public abstract interface ReadOnlyExtendsWildcard : R|java/lang/Object| {
+    public abstract operator function bar(): R|kotlin/Unit|
+
+    public abstract operator function foo(@R|kotlin/annotations/jvm/ReadOnly|() x: R|ft<kotlin/collections/List<out java/lang/CharSequence>, kotlin/collections/List<out java/lang/CharSequence>?>|!, @R|org/jetbrains/annotations/NotNull|() y: R|kotlin/Comparable<in java/lang/String>|): R|kotlin/Unit|
+
+}

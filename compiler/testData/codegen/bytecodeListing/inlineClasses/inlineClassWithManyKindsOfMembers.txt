@@ -1,0 +1,96 @@
+@kotlin.annotation.Target
+@kotlin.annotation.Retention
+@java.lang.annotation.Retention
+@java.lang.annotation.Target
+@kotlin.Metadata
+public annotation class A
+
+@kotlin.annotation.Target
+@kotlin.annotation.Retention
+@java.lang.annotation.Retention
+@java.lang.annotation.Target
+@kotlin.Metadata
+public annotation class AGet
+
+@kotlin.annotation.Target
+@kotlin.annotation.Retention
+@java.lang.annotation.Retention
+@java.lang.annotation.Target
+@kotlin.Metadata
+public annotation class AReceiver
+
+@kotlin.annotation.Target
+@kotlin.annotation.Retention
+@java.lang.annotation.Retention
+@java.lang.annotation.Target
+@kotlin.Metadata
+public annotation class ASet
+
+@kotlin.annotation.Target
+@kotlin.annotation.Retention
+@java.lang.annotation.Retention
+@java.lang.annotation.Target
+@kotlin.Metadata
+public annotation class ASetParam
+
+@kotlin.Metadata
+public interface IFoo {
+    public abstract method getOverridingExtVal(@org.jetbrains.annotations.NotNull p0: java.lang.String): int
+    public abstract method getOverridingExtVar(@org.jetbrains.annotations.NotNull p0: java.lang.String): int
+    public abstract method getOverridingVal(): int
+    public abstract method getOverridingVar(): int
+    public abstract method overridingExtFun(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    public abstract method overridingFun(): void
+    public abstract method setOverridingExtVar(@org.jetbrains.annotations.NotNull p0: java.lang.String, p1: int): void
+    public abstract method setOverridingVar(p0: int): void
+}
+
+@kotlin.Metadata
+public final class Z {
+    private final field x: int
+    private synthetic method <init>(p0: int): void
+    public synthetic final static @org.jetbrains.annotations.NotNull method box-impl(p0: int): Z
+    public static method constructor-impl(p0: int): int
+    public static method constructor-impl(p0: long): int
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: int, @org.jetbrains.annotations.Nullable p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: int, p1: int): boolean
+    public final static @AGet method getNonOverridingExtVal-impl(p0: int, @AReceiver @org.jetbrains.annotations.NotNull p1: java.lang.String): int
+    public final static @AGet method getNonOverridingExtVar-impl(p0: int, @AReceiver @org.jetbrains.annotations.NotNull p1: java.lang.String): int
+    public final static @AGet method getNonOverridingVal-impl(p0: int): int
+    public final static @AGet method getNonOverridingVar-impl(p0: int): int
+    public @AGet method getOverridingExtVal(@AReceiver @org.jetbrains.annotations.NotNull p0: java.lang.String): int
+    public static @AGet method getOverridingExtVal-impl(p0: int, @AReceiver @org.jetbrains.annotations.NotNull p1: java.lang.String): int
+    public @AGet method getOverridingExtVar(@AReceiver @org.jetbrains.annotations.NotNull p0: java.lang.String): int
+    public static @AGet method getOverridingExtVar-impl(p0: int, @AReceiver @org.jetbrains.annotations.NotNull p1: java.lang.String): int
+    public @AGet method getOverridingVal(): int
+    public static @AGet method getOverridingVal-impl(p0: int): int
+    public @AGet method getOverridingVar(): int
+    public static @AGet method getOverridingVar-impl(p0: int): int
+    public final @AGet method getX(): int
+    public method hashCode(): int
+    public static method hashCode-impl(p0: int): int
+    public final static @A method nonOverridingExtFun-impl(p0: int, @AReceiver @org.jetbrains.annotations.NotNull p1: java.lang.String): void
+    public synthetic deprecated static @A method nonOverridingExtVal$annotations(p0: java.lang.String): void
+    public synthetic deprecated static @A method nonOverridingExtVar$annotations(p0: java.lang.String): void
+    public final static @A method nonOverridingFun-impl(p0: int): void
+    public synthetic deprecated static @A method nonOverridingVal$annotations(): void
+    public synthetic deprecated static @A method nonOverridingVar$annotations(): void
+    public @A method overridingExtFun(@AReceiver @org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    public static @A method overridingExtFun-impl(p0: int, @AReceiver @org.jetbrains.annotations.NotNull p1: java.lang.String): void
+    public synthetic deprecated static @A method overridingExtVal$annotations(p0: java.lang.String): void
+    public synthetic deprecated static @A method overridingExtVar$annotations(p0: java.lang.String): void
+    public @A method overridingFun(): void
+    public static @A method overridingFun-impl(p0: int): void
+    public synthetic deprecated static @A method overridingVal$annotations(): void
+    public synthetic deprecated static @A method overridingVar$annotations(): void
+    public final static @ASet method setNonOverridingExtVar-impl(p0: int, @AReceiver @org.jetbrains.annotations.NotNull p1: java.lang.String, @ASetParam p2: int): void
+    public final static @ASet method setNonOverridingVar-impl(p0: int, @ASetParam p1: int): void
+    public @ASet method setOverridingExtVar(@AReceiver @org.jetbrains.annotations.NotNull p0: java.lang.String, @ASetParam p1: int): void
+    public static @ASet method setOverridingExtVar-impl(p0: int, @AReceiver @org.jetbrains.annotations.NotNull p1: java.lang.String, @ASetParam p2: int): void
+    public @ASet method setOverridingVar(@ASetParam p0: int): void
+    public static @ASet method setOverridingVar-impl(p0: int, @ASetParam p1: int): void
+    public @A @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+    public static @A @org.jetbrains.annotations.NotNull method toString-impl(p0: int): java.lang.String
+    public synthetic final method unbox-impl(): int
+}

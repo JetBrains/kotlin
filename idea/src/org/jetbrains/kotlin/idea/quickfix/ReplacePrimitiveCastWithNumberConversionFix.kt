@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors.CAST_NEVER_SUCCEEDS
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
@@ -59,7 +59,7 @@ class ReplacePrimitiveCastWithNumberConversionFix(
             val castType = binaryExpression.right?.createTypeBinding(context)?.type ?: return null
             if (!castType.isPrimitiveNumberType()) return null
 
-            return ReplacePrimitiveCastWithNumberConversionFix(binaryExpression, SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(castType))
+            return ReplacePrimitiveCastWithNumberConversionFix(binaryExpression, SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(castType))
         }
     }
 }

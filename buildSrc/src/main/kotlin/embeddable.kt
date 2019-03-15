@@ -6,6 +6,7 @@ import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.task
 import org.gradle.kotlin.dsl.*
+import java.io.File
 
 val kotlinEmbeddableRootPackage = "org.jetbrains.kotlin"
 
@@ -17,7 +18,6 @@ val packagesToRelocate =
                 "org.jdom",
                 "org.picocontainer",
                 "org.jline",
-                "gnu",
                 "org.fusesource",
                 "kotlinx.coroutines")
 
@@ -64,7 +64,7 @@ private fun Project.compilerShadowJar(taskName: String, body: ShadowJar.() -> Un
 
     return task<ShadowJar>(taskName) {
         destinationDir = File(buildDir, "libs")
-        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
         from(compilerJar)
         body()
     }
@@ -96,7 +96,7 @@ fun Project.embeddableCompilerDummyForDependenciesRewriting(taskName: String = "
 
     return task<ShadowJar>(taskName) {
         destinationDir = File(buildDir, "libs")
-        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
         from(compilerDummyJar)
         configureEmbeddableCompilerRelocation(withJavaxInject = false)
         body()
@@ -118,7 +118,7 @@ fun Project.rewriteDepsToShadedJar(originalJarTask: Jar, shadowJarTask: Jar, bod
         // which leads to the content of that JAR being excluded as well:
         exclude { it.file == compilerDummyJarFile }
 
-        classifier = null
+        classifier = ""
         body()
     }
 }

@@ -1,0 +1,23 @@
+// TOOL: DifferentStdlibGradleVersionInspection
+
+group 'Again'
+version '1.0-SNAPSHOT'
+
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            url 'https://dl.bintray.com/kotlin/kotlin-eap'
+        }
+    }
+
+    dependencies {
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.40-eap-51")
+    }
+}
+
+apply plugin: 'kotlin-platform-common'
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib-common:1.2.40-eap-51"
+}

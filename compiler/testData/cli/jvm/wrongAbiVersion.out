@@ -1,4 +1,5 @@
 error: incompatible classes were found in dependencies. Remove them from the classpath or use '-Xskip-metadata-version-check' to suppress errors
+compiler/testData/cli/jvm/wrongAbiVersionLib/bin/META-INF/main.kotlin_module: error: module was compiled with an incompatible version of Kotlin. The binary version of its metadata is 0.30.0, expected version is $ABI_VERSION$.
 compiler/testData/cli/jvm/wrongAbiVersion.kt:3:12: error: class 'ClassWithWrongAbiVersion' was compiled with an incompatible version of Kotlin. The binary version of its metadata is 0.30.0, expected version is $ABI_VERSION$.
 The class is loaded from $TESTDATA_DIR$/wrongAbiVersionLib/bin/ClassWithWrongAbiVersion.class
 fun foo(x: ClassWithWrongAbiVersion) {

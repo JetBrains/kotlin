@@ -1,0 +1,8 @@
+fun foo() {}
+
+fun test(b: Boolean) {
+    if (b) {
+        foo() // bbb
+    }
+    // ccc
+}

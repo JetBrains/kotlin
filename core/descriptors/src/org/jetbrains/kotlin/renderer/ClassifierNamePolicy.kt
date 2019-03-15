@@ -24,7 +24,7 @@ import java.util.*
 interface ClassifierNamePolicy {
     object SHORT : ClassifierNamePolicy {
         override fun renderClassifier(classifier: ClassifierDescriptor, renderer: DescriptorRenderer): String {
-            if (classifier is TypeParameterDescriptor) return renderer.renderName(classifier.name)
+            if (classifier is TypeParameterDescriptor) return renderer.renderName(classifier.name, false)
 
             val qualifiedNameElements = ArrayList<Name>()
 
@@ -42,7 +42,7 @@ interface ClassifierNamePolicy {
 
     object FULLY_QUALIFIED : ClassifierNamePolicy {
         override fun renderClassifier(classifier: ClassifierDescriptor, renderer: DescriptorRenderer): String {
-            if (classifier is TypeParameterDescriptor) return renderer.renderName(classifier.name)
+            if (classifier is TypeParameterDescriptor) return renderer.renderName(classifier.name, false)
 
             return renderer.renderFqName(DescriptorUtils.getFqName(classifier))
         }

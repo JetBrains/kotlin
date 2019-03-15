@@ -20,7 +20,6 @@ import com.intellij.coverage.CoverageSuitesBundle
 import com.intellij.coverage.JavaCoverageAnnotator
 import com.intellij.coverage.JavaCoverageEngineExtension
 import com.intellij.coverage.PackageAnnotator
-import com.intellij.execution.configurations.RunConfigurationBase
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.roots.CompilerModuleExtension
@@ -33,14 +32,16 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiNamedElement
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
+import org.jetbrains.kotlin.idea.core.isInTestSourceContentKotlinAware
 import org.jetbrains.kotlin.idea.run.KotlinRunConfiguration
+import org.jetbrains.kotlin.idea.run.RunConfigurationBaseAny
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
 
 class KotlinCoverageExtension : JavaCoverageEngineExtension() {
-    override fun isApplicableTo(conf: RunConfigurationBase?): Boolean = conf is KotlinRunConfiguration
+    override fun isApplicableTo(conf: RunConfigurationBaseAny?): Boolean = conf is KotlinRunConfiguration
 
     override fun suggestQualifiedName(sourceFile: PsiFile, classes: Array<out PsiClass>, names: MutableSet<String>): Boolean {
         if (sourceFile is KtFile) {
@@ -152,7 +153,7 @@ class KotlinCoverageExtension : JavaCoverageEngineExtension() {
             val module = ModuleUtilCore.findModuleForPsiElement(file)
             if (module == null) return null
             val fileIndex = ProjectRootManager.getInstance(file.project).fileIndex
-            val inTests = fileIndex.isInTestSourceContent(file.virtualFile)
+            val inTests = fileIndex.isInTestSourceContentKotlinAware(file.virtualFile)
             val compilerOutputExtension = CompilerModuleExtension.getInstance(module)
             return if (inTests)
                 compilerOutputExtension!!.compilerOutputPathForTests
@@ -161,7 +162,7 @@ class KotlinCoverageExtension : JavaCoverageEngineExtension() {
         }
 
         private fun collectClassFilePrefixes(file: KtFile): Collection<String> {
-            val result = file.children.filter { it is KtClassOrObject }.map { (it as KtClassOrObject).name!! }
+            val result = file.children.filter { it is KtClassOrObject }.mapNotNull { (it as KtClassOrObject).name }
             val packagePartFqName = JvmFileClassUtil.getFileClassInfoNoResolve(file).fileClassFqName
             return result.union(arrayListOf(packagePartFqName.shortName().asString()))
         }

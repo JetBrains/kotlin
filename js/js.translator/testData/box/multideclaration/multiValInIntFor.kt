@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1110
+// EXPECTED_REACHABLE_NODES: 1282
 package foo
 
 operator fun Int.component1(): Int {

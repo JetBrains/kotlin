@@ -1,0 +1,54 @@
+FILE fqName:<root> fileName:/localDelegatedPropertiesWithAnnotations.kt
+  CLASS ANNOTATION_CLASS name:A modality:FINAL visibility:public flags: superTypes:[kotlin.Annotation]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:A flags:
+    CONSTRUCTOR visibility:public <> (x:kotlin.String) returnType:A flags:primary
+      VALUE_PARAMETER name:x index:0 type:kotlin.String flags:
+    PROPERTY name:x visibility:public modality:FINAL flags:val
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:public flags:final
+        EXPRESSION_BODY
+          GET_VAR 'value-parameter x: String' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:A) returnType:kotlin.String flags:
+        correspondingProperty: PROPERTY name:x visibility:public modality:FINAL flags:val
+        $this: VALUE_PARAMETER name:<this> type:A flags:
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-x>(): String'
+            GET_FIELD 'x: String' type=kotlin.String origin=null
+              receiver: GET_VAR 'this@A: A' type=A origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+      overridden:
+        FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+      overridden:
+        FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+      overridden:
+        FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+  FUN name:foo visibility:public modality:FINAL <> (m:kotlin.collections.Map<kotlin.String, kotlin.Int>) returnType:kotlin.Unit flags:
+    VALUE_PARAMETER name:m index:0 type:kotlin.collections.Map<kotlin.String, kotlin.Int> flags:
+    BLOCK_BODY
+      LOCAL_DELEGATED_PROPERTY name:test type:kotlin.Int flags:val
+        annotations:
+          CALL 'constructor A(String)' type=A origin=null
+            x: CONST String type=kotlin.String value="foo/test"
+        VAR DELEGATE name:test$delegate type:kotlin.Lazy<kotlin.Int> flags:val
+          CALL 'lazy(() -> T): Lazy<T>' type=kotlin.Lazy<kotlin.Int> origin=null
+            <T>: kotlin.Int
+            initializer: BLOCK type=kotlin.Function0<kotlin.Int> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Int flags:
+                BLOCK_BODY
+                  RETURN type=kotlin.Nothing from='<anonymous>(): Int'
+                    CONST Int type=kotlin.Int value=42
+              FUNCTION_REFERENCE '<anonymous>(): Int' type=kotlin.Function0<kotlin.Int> origin=LAMBDA
+        FUN DELEGATED_PROPERTY_ACCESSOR name:<get-test> visibility:local modality:FINAL <> () returnType:kotlin.Int flags:
+          BLOCK_BODY
+            RETURN type=kotlin.Nothing from='<get-test>(): Int'
+              CALL 'getValue(Any?, KProperty<*>) on Lazy<T>: T' type=kotlin.Int origin=null
+                <T>: kotlin.Int
+                $receiver: GET_VAR '`test$delegate`: Lazy<Int>' type=kotlin.Lazy<kotlin.Int> origin=null
+                thisRef: CONST Null type=kotlin.Nothing? value=null
+                property: LOCAL_DELEGATED_PROPERTY_REFERENCE 'test: Int' delegate='`test$delegate`: Lazy<Int>' getter='<get-test>(): Int' setter=null type=kotlin.reflect.KProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+

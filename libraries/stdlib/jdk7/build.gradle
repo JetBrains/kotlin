@@ -1,11 +1,16 @@
 description = 'Kotlin Standard Library JDK 7 extension'
 
 apply plugin: 'kotlin'
+apply plugin: 'pill-configurable'
 
 configureJvm6Project(project)
 configureDist(project)
 configurePublishing(project)
 ext.javaHome = JDK_17
+
+pill {
+    importAsLibrary = true
+}
 
 dependencies {
     compile project(':kotlin-stdlib')
@@ -22,20 +27,41 @@ sourceSets {
         kotlin {
             srcDir 'test'
             if(!System.properties.'idea.active') {
+                srcDir '../jvm/test'
+                srcDir '../common/test'
                 srcDir '../test'
             }
+        }
+    }
+    java9 {
+        java {
+            srcDir 'java9'
         }
     }
 }
 
 jar {
-    manifestAttributes(manifest, project, 'Main')
+    manifestAttributes(manifest, project, 'Main' /*true*/)
+    // TODO: enable as soon as this doesn't cause D8/DX to crash
+    // from sourceSets.java9.output
 }
+
+task modularJar(type: Jar) {
+    dependsOn(jar)
+    manifestAttributes(manifest, project, 'Main', true)
+    classifier = 'modular'
+
+    from zipTree(jar.outputs.files.singleFile)
+    from sourceSets.java9.output
+}
+
 
 artifacts {
     archives sourcesJar
-    archives javadocJar
+    archives modularJar
 }
+
+javadocJar()
 
 dist {
     from (jar, sourcesJar)
@@ -51,16 +77,15 @@ compileKotlin {
             "-Xallow-kotlin-package",
             "-Xmultifile-parts-inherit",
             "-Xnormalize-constructor-calls=enable",
-            "-Xdump-declarations-to=${buildDir}/stdlib-jdk7-declarations.json",
             "-module-name", project.name
     ]
 }
 
 compileTestKotlin {
-    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package"]
+    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-Xmulti-platform", "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes"]
 }
 
-kotlin.experimental.coroutines 'enable'
+compileJava9Sources(project, 'kotlin.stdlib.jdk7')
 
 test {
     executable = "$JDK_17/bin/java"

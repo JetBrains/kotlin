@@ -20,6 +20,8 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
+import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.idea.analysis.analyzeAsReplacement
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
@@ -47,7 +49,8 @@ class OptimizedImportsBuilder(
         private val options: Options
 ) {
     companion object {
-        @TestOnly
+        @get:TestOnly
+        @set:TestOnly
         var testLog: StringBuilder? = null
     }
 
@@ -264,7 +267,10 @@ class OptimizedImportsBuilder(
                 append("\n")
             }
         }
-        val fileWithImports = KtPsiFactory(originalFile).createAnalyzableFile("Dummy.kt", fileText, originalFile)
+        val fileWithImports = KtPsiFactory(originalFile).createAnalyzableFile("Dummy_" + originalFile.name, fileText, originalFile)
+        if (file.isScript()) {
+            fileWithImports.originalFile = originalFile
+        }
         return fileWithImports.getFileResolutionScope()
     }
 
@@ -306,6 +312,9 @@ class OptimizedImportsBuilder(
 
     private fun isImportedByDefault(fqName: FqName) = importInsertHelper.isImportedWithDefault(ImportPath(fqName, false), file)
 
+    private fun isImportedByLowPriorityDefault(fqName: FqName) =
+        importInsertHelper.isImportedWithLowPriorityDefaultImport(ImportPath(fqName, false), file)
+
     private fun DeclarationDescriptor.nameCountToUseStar(): Int {
         val isMember = containingDeclaration is ClassDescriptor
         return if (isMember)
@@ -316,8 +325,23 @@ class OptimizedImportsBuilder(
 
     private fun areTargetsEqual(descriptors1: Collection<DeclarationDescriptor>, descriptors2: Collection<DeclarationDescriptor>): Boolean {
         return descriptors1.size == descriptors2.size &&
-               descriptors1.zip(descriptors2).all { it.first.importableFqName == it.second.importableFqName } //TODO: can have different order?
+                descriptors1.zip(descriptors2).all { (first, second) -> areTargetsEqual(first, second) } //TODO: can have different order?
     }
+
+    private fun areTargetsEqual(first: DeclarationDescriptor, second: DeclarationDescriptor): Boolean {
+        if (first == second) return true
+
+        val firstFqName = first.importableFqName
+        val secondFqName = second.importableFqName
+
+        return firstFqName == secondFqName ||
+                (first.isAliasTo(second) && secondFqName != null && isImportedByLowPriorityDefault(secondFqName)) ||
+                (second.isAliasTo(first) && firstFqName != null && isImportedByLowPriorityDefault(firstFqName))
+    }
+
+    private fun DeclarationDescriptor.isAliasTo(other: DeclarationDescriptor): Boolean =
+        this is TypeAliasDescriptor && classDescriptor == other ||
+                this is TypeAliasConstructorDescriptor && underlyingConstructorDescriptor == other
 
     private fun ImportPath.isAllowedByRules(): Boolean = importRules.none { it is ImportRule.DoNotAdd && it.importPath == this }
 }

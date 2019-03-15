@@ -60,7 +60,7 @@ class MoveMemberToTopLevelIntention : MoveMemberOutOfObjectIntention("Move to to
 
     override fun applicabilityRange(element: KtNamedDeclaration): TextRange? {
         if (element !is KtNamedFunction && element !is KtProperty) return null
-        element.containingClassOrObject as? KtObjectDeclaration ?: return null
+        if (element.containingClassOrObject !is KtObjectDeclaration) return null
         return element.nameIdentifier?.textRange
     }
 

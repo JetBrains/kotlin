@@ -54,12 +54,13 @@ import org.jetbrains.kotlin.console.gutter.ConsoleGutterContentProvider
 import org.jetbrains.kotlin.console.gutter.ConsoleIndicatorRenderer
 import org.jetbrains.kotlin.console.gutter.IconWithTooltip
 import org.jetbrains.kotlin.console.gutter.ReplIcons
+import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.project.NotUnderContentRootModuleInfo
-import org.jetbrains.kotlin.idea.caches.project.moduleInfo
+import org.jetbrains.kotlin.idea.caches.project.forcedModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.productionSourceInfo
 import org.jetbrains.kotlin.idea.caches.project.testSourceInfo
-import org.jetbrains.kotlin.idea.caches.resolve.*
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionContributor
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionsManager
 import org.jetbrains.kotlin.idea.project.KOTLIN_CONSOLE_KEY
@@ -69,7 +70,6 @@ import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
-import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyScriptDescriptor
 import org.jetbrains.kotlin.resolve.repl.ReplState
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import java.awt.Color
@@ -143,6 +143,10 @@ class KotlinConsoleRunner(
         val builder = LanguageConsoleBuilder()
 
         val consoleView = builder.gutterContentProvider(ConsoleGutterContentProvider()).build(project, KotlinLanguage.INSTANCE)
+
+        // This rename is needed to parse file in console as script
+        consoleView.virtualFile.rename(this, consoleView.virtualFile.name + KotlinParserDefinition.STD_SCRIPT_EXT)
+
         consoleView.virtualFile.putUserData(KOTLIN_CONSOLE_KEY, true)
 
 
@@ -163,6 +167,8 @@ class KotlinConsoleRunner(
         ScriptDefinitionsManager.getInstance(project).reloadDefinitionsBy(consoleContributor)
 
         enableCompletion(consoleView)
+
+        setupGutters(consoleView)
 
         return consoleView
     }
@@ -224,7 +230,7 @@ class KotlinConsoleRunner(
         editor.setPlaceholderAttributes(placeholderAttrs)
     }
 
-    fun setupGutters() {
+    fun setupGutters(consoleView: LanguageConsoleView) {
         fun configureEditorGutter(editor: EditorEx, color: Color, iconWithTooltip: IconWithTooltip): RangeHighlighter {
             editor.settings.isLineMarkerAreaShown = true // hack to show gutter
             editor.settings.isFoldingOutlineShown = true
@@ -278,7 +284,8 @@ class KotlinConsoleRunner(
 
             replState.submitLine(psiFile)
             configureFileDependencies(psiFile)
-            val scriptDescriptor = psiFile.script!!.unsafeResolveToDescriptor() as? LazyScriptDescriptor ?: error("Failed to analyze line:\n$text")
+            val scriptDescriptor =
+                psiFile.script!!.unsafeResolveToDescriptor() as? ScriptDescriptor ?: error("Failed to analyze line:\n$text")
             ForceResolveUtil.forceResolveAllContents(scriptDescriptor)
             replState.lineSuccess(psiFile, scriptDescriptor)
 
@@ -293,7 +300,7 @@ class KotlinConsoleRunner(
         }
 
     private fun configureFileDependencies(psiFile: KtFile) {
-        psiFile.moduleInfo = module.testSourceInfo() ?: module.productionSourceInfo() ?:
+        psiFile.forcedModuleInfo = module.testSourceInfo() ?: module.productionSourceInfo() ?:
                 NotUnderContentRootModuleInfo
     }
 }

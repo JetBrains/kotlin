@@ -6,7 +6,7 @@ public operator fun kotlin.CharSequence.contains(/*0*/ other: kotlin.CharSequenc
 public open class VcsException : java.lang.Exception {
     public constructor VcsException()
     public open override /*1*/ /*fake_override*/ val cause: kotlin.Throwable?
-    public open override /*1*/ val message: kotlin.String
+    @get:java.lang.Override @get:org.jetbrains.annotations.NotNull public open override /*1*/ val message: kotlin.String
     public final override /*1*/ /*fake_override*/ fun addSuppressed(/*0*/ exception: kotlin.Throwable!): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun fillInStackTrace(): kotlin.Throwable!

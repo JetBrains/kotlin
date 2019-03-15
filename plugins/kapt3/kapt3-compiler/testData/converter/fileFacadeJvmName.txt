@@ -8,12 +8,8 @@ public final class FacadeName {
     public FacadeName() {
         super();
     }
-    private static final int bar = 3;
+    public static final int bar = 3;
 
     public static final void foo() {
-    }
-
-    public static final int getBar() {
-        return 0;
     }
 }

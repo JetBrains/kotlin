@@ -31,7 +31,7 @@ interface ResolutionScope {
     /**
      * Returns contributed classifier, but discriminates deprecated
      *
-     * This method can return some classifier where [getContributedClassifier] haven't returned none,
+     * This method can return some classifier where [getContributedClassifier] haven't returned any,
      * but it should never return different one, even if it is deprecated.
      * Note that implementors are encouraged to provide non-deprecated classifier if it doesn't contradict
      * contract above.
@@ -39,9 +39,9 @@ interface ResolutionScope {
     fun getContributedClassifierIncludeDeprecated(name: Name, location: LookupLocation): DescriptorWithDeprecation<ClassifierDescriptor>? =
         getContributedClassifier(name, location)?.let { DescriptorWithDeprecation.createNonDeprecated(it) }
 
-    fun getContributedVariables(name: Name, location: LookupLocation): Collection<VariableDescriptor>
+    fun getContributedVariables(name: Name, location: LookupLocation): Collection<@JvmWildcard VariableDescriptor>
 
-    fun getContributedFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor>
+    fun getContributedFunctions(name: Name, location: LookupLocation): Collection<@JvmWildcard FunctionDescriptor>
 
     /**
      * All visible descriptors from current scope possibly filtered by the given name and kind filters

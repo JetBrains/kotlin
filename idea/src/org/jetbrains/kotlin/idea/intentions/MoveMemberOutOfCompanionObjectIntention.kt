@@ -28,8 +28,10 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.refactoring.getUsageContext
+import org.jetbrains.kotlin.idea.refactoring.isInterfaceClass
 import org.jetbrains.kotlin.idea.runSynchronouslyWithProgress
 import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.idea.util.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.parents
@@ -88,7 +90,8 @@ class MoveMemberOutOfCompanionObjectIntention : MoveMemberOutOfObjectIntention("
         if (element !is KtNamedFunction && element !is KtProperty && element !is KtClassOrObject) return null
         val container = element.containingClassOrObject
         if (!(container is KtObjectDeclaration && container.isCompanion())) return null
-        if (container.containingClassOrObject == null) return null
+        val containingClassOrObject = container.containingClassOrObject ?: return null
+        if (containingClassOrObject.isInterfaceClass() && element.hasJvmFieldAnnotation()) return null
         return element.nameIdentifier?.textRange
     }
 

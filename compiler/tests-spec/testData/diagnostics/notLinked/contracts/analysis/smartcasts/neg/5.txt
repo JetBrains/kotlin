@@ -1,0 +1,56 @@
+package
+
+public fun case_1(/*0*/ value_1: kotlin.Any?): kotlin.Unit
+public fun case_2(/*0*/ value_1: kotlin.Number?): kotlin.Unit
+public fun case_3(/*0*/ value_1: kotlin.Any?): kotlin.Unit
+public fun case_4(/*0*/ value_1: kotlin.Any?, /*1*/ value_2: kotlin.Any?, /*2*/ value_3: kotlin.Any?): kotlin.Unit
+public fun case_5(/*0*/ value_1: kotlin.Number?, /*1*/ value_2: kotlin.Number?, /*2*/ value_3: kotlin.Number?): kotlin.Unit
+public fun case_6(/*0*/ value_1: kotlin.Any?, /*1*/ value_2: kotlin.Any?, /*2*/ value_3: kotlin.Any?): kotlin.Unit
+
+package contracts {
+    public fun </*0*/ T> T?.case_1(): kotlin.Unit
+        Returns(WILDCARD) -> <this> == null || <this> !is String
+
+    public fun </*0*/ T : kotlin.Number?> T.case_2(): kotlin.Unit
+        Returns(WILDCARD) -> <this> !is Int || <this> == null
+
+    public inline fun </*0*/ reified T> T?.case_3(): kotlin.Unit
+        Returns(WILDCARD) -> <this> !is Number || <this> !is Int || <this> == null
+
+    public fun </*0*/ T> T?.case_4_1(): kotlin.Boolean
+        Returns(TRUE) -> <this> == null || <this> !is String
+
+    public fun </*0*/ T> T?.case_4_2(): kotlin.Boolean
+        Returns(FALSE) -> <this> == null || <this> !is String
+
+    public fun </*0*/ T> T?.case_4_3(): kotlin.Boolean?
+        Returns(NOT_NULL) -> <this> == null || <this> !is String
+
+    public fun </*0*/ T> T?.case_4_4(): kotlin.Boolean?
+        Returns(NULL) -> <this> == null || <this> !is String
+
+    public fun </*0*/ T : kotlin.Number?> T.case_5_1(): kotlin.Boolean
+        Returns(TRUE) -> <this> !is Int || <this> == null
+
+    public fun </*0*/ T : kotlin.Number?> T.case_5_2(): kotlin.Boolean
+        Returns(FALSE) -> <this> !is Int || <this> == null
+
+    public fun </*0*/ T : kotlin.Number?> T.case_5_3(): kotlin.Boolean?
+        Returns(NOT_NULL) -> <this> !is Int || <this> == null
+
+    public fun </*0*/ T : kotlin.Number?> T.case_5_4(): kotlin.Boolean?
+        Returns(NULL) -> <this> !is Int || <this> == null
+
+    public inline fun </*0*/ reified T> T?.case_6_1(): kotlin.Boolean
+        Returns(TRUE) -> <this> !is Number || <this> !is Int || <this> == null
+
+    public inline fun </*0*/ reified T> T?.case_6_2(): kotlin.Boolean
+        Returns(FALSE) -> <this> !is Number || <this> !is Int || <this> == null
+
+    public inline fun </*0*/ reified T> T?.case_6_3(): kotlin.Boolean?
+        Returns(NOT_NULL) -> <this> is Number && <this> is Int && <this> != null
+
+    public inline fun </*0*/ reified T> T?.case_6_4(): kotlin.Boolean?
+        Returns(NULL) -> <this> is Number && <this> is Int && <this> != null
+
+}

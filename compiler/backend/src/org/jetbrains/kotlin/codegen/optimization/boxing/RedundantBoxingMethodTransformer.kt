@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.codegen.optimization.common.remapLocalVariables
 import org.jetbrains.kotlin.codegen.optimization.fixStack.peek
 import org.jetbrains.kotlin.codegen.optimization.fixStack.top
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
+import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -34,10 +35,10 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
 import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 import java.util.*
 
-class RedundantBoxingMethodTransformer : MethodTransformer() {
+class RedundantBoxingMethodTransformer(private val generationState: GenerationState) : MethodTransformer() {
 
     override fun transform(internalClassName: String, node: MethodNode) {
-        val interpreter = RedundantBoxingInterpreter(node.instructions)
+        val interpreter = RedundantBoxingInterpreter(node.instructions, generationState)
         val frames = MethodTransformer.analyze(internalClassName, node, interpreter)
 
         interpretPopInstructionsForBoxedValues(interpreter, node, frames)
@@ -250,7 +251,7 @@ class RedundantBoxingMethodTransformer : MethodTransformer() {
         castWithType: Pair<AbstractInsnNode, Type>
     ) {
         val castInsn = castWithType.getFirst()
-        val castInsnsListener = MethodNode(Opcodes.ASM5)
+        val castInsnsListener = MethodNode(Opcodes.API_VERSION)
         InstructionAdapter(castInsnsListener).cast(value.unboxedType, castWithType.getSecond())
 
         for (insn in castInsnsListener.instructions.toArray()) {

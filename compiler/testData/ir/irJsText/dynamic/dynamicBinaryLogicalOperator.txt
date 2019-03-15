@@ -1,0 +1,15 @@
+FILE fqName:<root> fileName:/dynamicBinaryLogicalOperator.kt
+  FUN name:testAndAnd visibility:public modality:FINAL <> (d:dynamic) returnType:kotlin.Boolean flags:
+    VALUE_PARAMETER name:d index:0 type:dynamic flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='testAndAnd(dynamic): Boolean'
+        DYN_OP operator=ANDAND type=kotlin.Boolean
+          receiver: GET_VAR 'value-parameter d: dynamic' type=dynamic origin=null
+          0: GET_VAR 'value-parameter d: dynamic' type=dynamic origin=null
+  FUN name:testOrOr visibility:public modality:FINAL <> (d:dynamic) returnType:kotlin.Boolean flags:
+    VALUE_PARAMETER name:d index:0 type:dynamic flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='testOrOr(dynamic): Boolean'
+        DYN_OP operator=OROR type=kotlin.Boolean
+          receiver: GET_VAR 'value-parameter d: dynamic' type=dynamic origin=null
+          0: GET_VAR 'value-parameter d: dynamic' type=dynamic origin=null

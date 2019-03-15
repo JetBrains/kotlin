@@ -17,16 +17,12 @@
 package org.jetbrains.kotlin.js.patterns;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.PrimitiveType;
 import org.jetbrains.kotlin.name.Name;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Predicate;
 
 public final class NamePredicate implements Predicate<Name> {
@@ -59,7 +55,7 @@ public final class NamePredicate implements Predicate<Name> {
     public static final NamePredicate LONG = new NamePredicate(PrimitiveType.LONG.getTypeName());
 
     @NotNull
-    private final Set<Name> validNames = Sets.newHashSet();
+    private final Set<Name> validNames = new HashSet<>();
 
     public NamePredicate(@NotNull String... validNames) {
         this(Arrays.asList(validNames));

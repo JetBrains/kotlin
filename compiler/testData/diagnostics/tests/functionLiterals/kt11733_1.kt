@@ -9,7 +9,7 @@ public interface Predicate<T extends CharSequence> {
 }
 // FILE: Main.kt
 fun process(<!UNUSED_PARAMETER!>x<!>: Predicate<String>) {}
-fun main(args: Array<String>) {
+fun main() {
     process(Predicate { x -> x checkType { _<String>() }
         true
     })

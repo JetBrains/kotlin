@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.search.ideaExtensions
 
-import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.search.GlobalSearchScope
@@ -31,26 +30,36 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.asJava.unwrapped
+import org.jetbrains.kotlin.compatibility.ExecutorProcessor
 import org.jetbrains.kotlin.idea.caches.lightClasses.KtFakeLightClass
-import org.jetbrains.kotlin.idea.highlighter.markers.actualsForExpected
-import org.jetbrains.kotlin.idea.highlighter.markers.isExpectedOrExpectedClassMember
 import org.jetbrains.kotlin.idea.search.declarationsSearch.forEachImplementation
 import org.jetbrains.kotlin.idea.search.declarationsSearch.forEachOverridingMethod
 import org.jetbrains.kotlin.idea.search.declarationsSearch.toPossiblyFakeLightMethods
+import org.jetbrains.kotlin.idea.util.actualsForExpected
 import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.idea.util.isExpectDeclaration
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.contains
 import java.util.*
 
 class KotlinDefinitionsSearcher : QueryExecutor<PsiElement, DefinitionsScopedSearch.SearchParameters> {
-    override fun execute(queryParameters: DefinitionsScopedSearch.SearchParameters, consumer: Processor<PsiElement>): Boolean {
+    override fun execute(queryParameters: DefinitionsScopedSearch.SearchParameters, consumer: ExecutorProcessor<PsiElement>): Boolean {
         val consumer = skipDelegatedMethodsConsumer(consumer)
         val element = queryParameters.element
         val scope = queryParameters.scope
 
         return when (element) {
             is KtClass -> {
-                processClassImplementations(element, consumer) && processActualDeclarations(element, consumer)
+                val isExpectEnum = runReadAction { element.isEnum() && element.isExpectDeclaration() }
+                if (isExpectEnum) {
+                    processActualDeclarations(element, consumer)
+                } else {
+                    processClassImplementations(element, consumer) && processActualDeclarations(element, consumer)
+                }
+            }
+
+            is KtObjectDeclaration -> {
+                processActualDeclarations(element, consumer)
             }
 
             is KtLightClass -> {
@@ -83,7 +92,7 @@ class KotlinDefinitionsSearcher : QueryExecutor<PsiElement, DefinitionsScopedSea
 
     companion object {
 
-        private fun skipDelegatedMethodsConsumer(baseConsumer: Processor<PsiElement>): Processor<PsiElement> {
+        private fun skipDelegatedMethodsConsumer(baseConsumer: ExecutorProcessor<PsiElement>): Processor<PsiElement> {
             return Processor { element ->
                 if (isDelegated(element)) {
                     return@Processor true
@@ -109,21 +118,22 @@ class KotlinDefinitionsSearcher : QueryExecutor<PsiElement, DefinitionsScopedSea
             return ContainerUtil.process(ClassInheritorsSearch.search(psiClass, true), consumer)
         }
 
-        private fun processLightClassLocalImplementations(psiClass: KtLightClass,
-                                                          searchScope: LocalSearchScope,
-                                                          consumer: Processor<PsiElement>): Boolean {
+        private fun processLightClassLocalImplementations(
+            psiClass: KtLightClass,
+            searchScope: LocalSearchScope,
+            consumer: Processor<PsiElement>
+        ): Boolean {
             // workaround for IDEA optimization that uses Java PSI traversal to locate inheritors in local search scope
             val virtualFiles = searchScope.scope.mapTo(HashSet()) { it.containingFile.virtualFile }
             val globalScope = GlobalSearchScope.filesScope(psiClass.project, virtualFiles)
-            return ContainerUtil.process(ClassInheritorsSearch.search(psiClass, globalScope, true), Processor<PsiClass> { candidate ->
+            return ContainerUtil.process(ClassInheritorsSearch.search(psiClass, globalScope, true)) { candidate ->
                 val candidateOrigin = candidate.unwrapped ?: candidate
                 if (candidateOrigin in searchScope) {
                     consumer.process(candidate)
-                }
-                else {
+                } else {
                     true
                 }
-            })
+            }
         }
 
         private fun processFunctionImplementations(function: KtFunction, scope: SearchScope, consumer: Processor<PsiElement>): Boolean {
@@ -132,7 +142,11 @@ class KotlinDefinitionsSearcher : QueryExecutor<PsiElement, DefinitionsScopedSea
             }
         }
 
-        private fun processPropertyImplementations(declaration: KtNamedDeclaration, scope: SearchScope, consumer: Processor<PsiElement>): Boolean {
+        private fun processPropertyImplementations(
+            declaration: KtNamedDeclaration,
+            scope: SearchScope,
+            consumer: Processor<PsiElement>
+        ): Boolean {
             return runReadAction {
                 processPropertyImplementationsMethods(declaration.toPossiblyFakeLightMethods(), scope, consumer)
             }
@@ -140,12 +154,16 @@ class KotlinDefinitionsSearcher : QueryExecutor<PsiElement, DefinitionsScopedSea
 
         private fun processActualDeclarations(declaration: KtDeclaration, consumer: Processor<PsiElement>): Boolean {
             return runReadAction {
-                if (!declaration.isExpectedOrExpectedClassMember()) true
+                if (!declaration.isExpectDeclaration()) true
                 else declaration.actualsForExpected().all(consumer::process)
             }
         }
 
-        fun processPropertyImplementationsMethods(accessors: Iterable<PsiMethod>, scope: SearchScope, consumer: Processor<PsiElement>): Boolean {
+        fun processPropertyImplementationsMethods(
+            accessors: Iterable<PsiMethod>,
+            scope: SearchScope,
+            consumer: Processor<PsiElement>
+        ): Boolean {
             return accessors.all { method ->
                 method.forEachOverridingMethod(scope) { implementation ->
                     if (isDelegated(implementation)) return@forEachOverridingMethod true

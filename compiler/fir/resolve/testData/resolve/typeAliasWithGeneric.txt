@@ -1,0 +1,12 @@
+FILE: typeAliasWithGeneric.kt
+    public open class A {
+        public constructor(): super<R|kotlin/Any|>()
+
+    }
+    <S, T : R|A|> public abstract interface B {
+    }
+    public final class D : R|C<A>| {
+        public constructor(): super<R|kotlin/Any|>()
+
+    }
+    <T> public final typealias C = R|B<T, A>|

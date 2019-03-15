@@ -23,5 +23,5 @@ internal sealed class ChangesEither {
             val lookupSymbols: Collection<LookupSymbol> = emptyList(),
             val fqNames: Collection<FqName> = emptyList()
     ) : ChangesEither()
-    internal class Unknown : ChangesEither()
+    internal class Unknown(val reason: String? = null) : ChangesEither()
 }

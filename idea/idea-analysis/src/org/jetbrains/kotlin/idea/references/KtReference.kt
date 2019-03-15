@@ -49,14 +49,14 @@ abstract class AbstractKtReference<T : KtElement>(element: T) : PsiPolyVariantRe
         return ResolveCache.getInstance(expression.project).resolveWithCaching(this, kotlinResolver, false, incompleteCode)
     }
 
-    override fun isReferenceTo(element: PsiElement?): Boolean {
-        return element != null && matchesTarget(element)
+    override fun isReferenceTo(element: PsiElement): Boolean {
+        return matchesTarget(element)
     }
 
     override fun getCanonicalText(): String = "<TBD>"
 
     open fun canRename(): Boolean = false
-    override fun handleElementRename(newElementName: String?): PsiElement? = throw IncorrectOperationException()
+    override fun handleElementRename(newElementName: String): PsiElement? = throw IncorrectOperationException()
 
     override fun bindToElement(element: PsiElement): PsiElement = throw IncorrectOperationException()
 
@@ -78,7 +78,7 @@ abstract class AbstractKtReference<T : KtElement>(element: T) : PsiPolyVariantRe
             class KotlinResolveResult(element: PsiElement) : PsiElementResolveResult(element)
 
             private fun resolveToPsiElements(ref: AbstractKtReference<KtElement>): Collection<PsiElement> {
-                val bindingContext = ref.expression.analyze(BodyResolveMode.PARTIAL_WITH_DIAGNOSTICS)
+                val bindingContext = ref.expression.analyze(BodyResolveMode.PARTIAL)
                 return resolveToPsiElements(ref, bindingContext, ref.getTargetDescriptors(bindingContext))
             }
 

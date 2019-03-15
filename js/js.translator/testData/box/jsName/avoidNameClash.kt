@@ -1,5 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1122
-package foo
+// EXPECTED_REACHABLE_NODES: 1290
 
 object A {
     @JsName("js_method") fun f() = "method"
@@ -8,7 +7,7 @@ object A {
 }
 
 fun test() = js("""
-var a = JS_TESTS.foo.A;
+var a = JS_TESTS.A;
 return a.js_method() + ";" + a.js_property;
 """)
 

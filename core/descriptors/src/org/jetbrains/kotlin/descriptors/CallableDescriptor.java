@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.descriptors;
 
+import kotlin.annotations.jvm.ReadOnly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.Collection;
@@ -64,4 +64,10 @@ public interface CallableDescriptor extends DeclarationDescriptorWithVisibility,
 
     @NotNull
     Collection<? extends CallableDescriptor> getOverriddenDescriptors();
+
+    interface UserDataKey<V> {}
+
+    // TODO: pull up userdata related members to DeclarationDescriptor and use more efficient implementation (e.g. THashMap)
+    @Nullable
+    <V> V getUserData(UserDataKey<V> key);
 }

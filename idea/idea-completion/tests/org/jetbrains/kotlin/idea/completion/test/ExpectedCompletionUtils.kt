@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.completion.test
@@ -24,10 +13,12 @@ import com.google.gson.JsonParser
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementPresentation
-import com.intellij.codeInsight.lookup.impl.LookupCellRenderer
 import com.intellij.ui.JBColor
 import com.intellij.util.ArrayUtil
+import org.jetbrains.kotlin.idea.completion.LookupElementFactory
+import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.test.AstAccessControl
+import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
@@ -88,7 +79,11 @@ object ExpectedCompletionUtils {
             val PRESENTATION_TYPE_TEXT: String = "typeText"
             val PRESENTATION_TAIL_TEXT: String = "tailText"
             val PRESENTATION_TEXT_ATTRIBUTES: String = "attributes"
-            val validKeys: Set<String> = setOf(LOOKUP_STRING, ALL_LOOKUP_STRINGS, PRESENTATION_ITEM_TEXT, PRESENTATION_TYPE_TEXT, PRESENTATION_TAIL_TEXT, PRESENTATION_TEXT_ATTRIBUTES)
+            val MODULE_NAME: String = "module"
+            val validKeys: Set<String> = setOf(
+                LOOKUP_STRING, ALL_LOOKUP_STRINGS, PRESENTATION_ITEM_TEXT, PRESENTATION_TYPE_TEXT,
+                PRESENTATION_TAIL_TEXT, PRESENTATION_TEXT_ATTRIBUTES, MODULE_NAME
+            )
         }
     }
 
@@ -315,11 +310,19 @@ object ExpectedCompletionUtils {
             if (presentation.tailText != null) {
                 map.put(CompletionProposal.PRESENTATION_TAIL_TEXT, presentation.tailText)
             }
+            item.moduleName?.let {
+                map.put(CompletionProposal.MODULE_NAME, it)
+            }
 
             result.add(ExpectedCompletionUtils.CompletionProposal(map))
         }
         return result
     }
+
+    private val LookupElement.moduleName: String?
+        get() {
+            return (`object` as? DeclarationLookupObject)?.psiElement?.module?.name
+        }
 
     private fun textAttributes(presentation: LookupElementPresentation): String {
         return buildString {
@@ -332,7 +335,7 @@ object ExpectedCompletionUtils {
             }
             val foreground = presentation.itemTextForeground
             if (foreground != JBColor.foreground()) {
-                assert(foreground == LookupCellRenderer.getGrayedForeground(false))
+                assert(foreground == LookupElementFactory.CAST_REQUIRED_COLOR)
                 if (length > 0) append(" ")
                 append("grayed")
             }

@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1177
+// EXPECTED_REACHABLE_NODES: 1331
 package foo
 
 class undefined

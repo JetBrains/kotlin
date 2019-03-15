@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.codegen
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 import org.jetbrains.org.objectweb.asm.Type
 
 enum class ValueKind {
@@ -25,14 +26,14 @@ interface CallGenerator {
     class DefaultCallGenerator(private val codegen: ExpressionCodegen) : CallGenerator {
 
         override fun genCallInner(
-                callableMethod: Callable,
-                resolvedCall: ResolvedCall<*>?,
-                callDefault: Boolean,
-                codegen: ExpressionCodegen) {
+            callableMethod: Callable,
+            resolvedCall: ResolvedCall<*>?,
+            callDefault: Boolean,
+            codegen: ExpressionCodegen
+        ) {
             if (!callDefault) {
                 callableMethod.genInvokeInstruction(codegen.v)
-            }
-            else {
+            } else {
                 (callableMethod as CallableMethod).genInvokeDefaultInstruction(codegen.v)
             }
         }
@@ -46,17 +47,34 @@ interface CallGenerator {
         }
 
         override fun genValueAndPut(
-                valueParameterDescriptor: ValueParameterDescriptor,
-                argumentExpression: KtExpression,
-                parameterType: Type,
-                parameterIndex: Int) {
+            valueParameterDescriptor: ValueParameterDescriptor?,
+            argumentExpression: KtExpression,
+            parameterType: JvmKotlinType,
+            parameterIndex: Int
+        ) {
+            val container = valueParameterDescriptor?.containingDeclaration
+            val isVarargInvoke = container != null && JvmCodegenUtil.isDeclarationOfBigArityFunctionInvoke(container)
+
+            val v = codegen.v
+            if (isVarargInvoke) {
+                if (parameterIndex == 0) {
+                    v.iconst(container!!.valueParameters.size)
+                    v.newarray(OBJECT_TYPE)
+                }
+                v.dup()
+                v.iconst(parameterIndex)
+            }
+
             val value = codegen.gen(argumentExpression)
-            value.put(parameterType, valueParameterDescriptor.original.type, codegen.v)
+            value.put(parameterType.type, parameterType.kotlinType, v)
+
+            if (isVarargInvoke) {
+                v.astore(OBJECT_TYPE)
+            }
         }
 
-        override fun putCapturedValueOnStack(
-                stackValue: StackValue, valueType: Type, paramIndex: Int) {
-            stackValue.put(stackValue.type, codegen.v)
+        override fun putCapturedValueOnStack(stackValue: StackValue, valueType: Type, paramIndex: Int) {
+            stackValue.put(stackValue.type, stackValue.kotlinType, codegen.v)
         }
 
         override fun putValueIfNeeded(parameterType: JvmKotlinType, value: StackValue, kind: ValueKind, parameterIndex: Int) {
@@ -98,26 +116,28 @@ interface CallGenerator {
     fun genCallInner(callableMethod: Callable, resolvedCall: ResolvedCall<*>?, callDefault: Boolean, codegen: ExpressionCodegen)
 
     fun genValueAndPut(
-            valueParameterDescriptor: ValueParameterDescriptor,
-            argumentExpression: KtExpression,
-            parameterType: Type,
-            parameterIndex: Int)
+        valueParameterDescriptor: ValueParameterDescriptor?,
+        argumentExpression: KtExpression,
+        parameterType: JvmKotlinType,
+        parameterIndex: Int
+    )
 
-    fun putValueIfNeeded(
-            parameterType: JvmKotlinType,
-            value: StackValue) {
+    fun putValueIfNeeded(parameterType: JvmKotlinType, value: StackValue) {
         putValueIfNeeded(parameterType, value, ValueKind.GENERAL)
     }
 
     fun putValueIfNeeded(
-            parameterType: JvmKotlinType,
-            value: StackValue,
-            kind: ValueKind = ValueKind.GENERAL,
-            parameterIndex: Int = -1)
+        parameterType: JvmKotlinType,
+        value: StackValue,
+        kind: ValueKind = ValueKind.GENERAL,
+        parameterIndex: Int = -1
+    )
 
     fun putCapturedValueOnStack(
-            stackValue: StackValue,
-            valueType: Type, paramIndex: Int)
+        stackValue: StackValue,
+        valueType: Type,
+        paramIndex: Int
+    )
 
     fun processAndPutHiddenParameters(justProcess: Boolean)
 

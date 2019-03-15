@@ -1,4 +1,7 @@
-// LANGUAGE_VERSION: 1.0
+// !API_VERSION: 1.0
+// IGNORE_BACKEND: NATIVE
+// IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND: JS_IR
 
 fun box(): String {
     val plusZero: Any = 0.0

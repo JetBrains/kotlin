@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.resolve.lazy.descriptors
 
-import com.google.common.collect.Sets
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -24,8 +23,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.lazy.LazyClassContext
-import org.jetbrains.kotlin.resolve.lazy.ResolveSession
-import org.jetbrains.kotlin.resolve.lazy.data.KtScriptInfo
 import org.jetbrains.kotlin.resolve.lazy.declarations.AbstractPsiBasedDeclarationProvider
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProvider
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
@@ -55,14 +52,10 @@ protected constructor(
         storageManager.createMemoizedFunction { doGetTypeAliases(it) }
 
     private fun doGetClasses(name: Name): List<ClassDescriptor> {
-        val result = Sets.newLinkedHashSet<ClassDescriptor>()
+        val result = linkedSetOf<ClassDescriptor>()
         declarationProvider.getClassOrObjectDeclarations(name).mapTo(result) {
-            if (it is KtScriptInfo)
-                LazyScriptDescriptor(c as ResolveSession, thisDescriptor, name, it)
-            else {
-                val isExternal = it.modifierList?.hasModifier(KtTokens.EXTERNAL_KEYWORD) ?: false
-                LazyClassDescriptor(c, thisDescriptor, name, it, isExternal)
-            }
+            val isExternal = it.modifierList?.hasModifier(KtTokens.EXTERNAL_KEYWORD) ?: false
+            LazyClassDescriptor(c, thisDescriptor, name, it, isExternal)
         }
         getNonDeclaredClasses(name, result)
         return result.toList()
@@ -92,7 +85,7 @@ protected constructor(
     }
 
     private fun doGetFunctions(name: Name): Collection<SimpleFunctionDescriptor> {
-        val result = Sets.newLinkedHashSet<SimpleFunctionDescriptor>()
+        val result = linkedSetOf<SimpleFunctionDescriptor>()
 
         val declarations = declarationProvider.getFunctionDeclarations(name)
         for (functionDeclaration in declarations) {

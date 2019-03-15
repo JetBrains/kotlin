@@ -5,7 +5,10 @@ public fun bar(/*0*/ x: kotlin.Int, /*1*/ vararg s: kotlin.String /*kotlin.Array
 public fun baz(/*0*/ s: kotlin.String): kotlin.Unit
 public fun f(): kotlin.Unit
 public fun g(/*0*/ args: kotlin.Array<kotlin.String>?): kotlin.Unit
+public fun getArr(): kotlin.Array<kotlin.String>?
 public fun h(/*0*/ b: B): kotlin.Unit
+public fun invokeTest(/*0*/ goodArgs: kotlin.Array<kotlin.String>): kotlin.Unit
+public fun k(): kotlin.Unit
 
 public open class A {
     public constructor A()
@@ -24,4 +27,21 @@ public final class B {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class J {
+    public constructor J()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public interface Invoke {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public abstract operator fun invoke(/*0*/ vararg args: kotlin.String! /*kotlin.Array<(out) kotlin.String!>!*/): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    // Static members
+    public final var staticFun: J.Invoke!
 }

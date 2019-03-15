@@ -1,17 +1,17 @@
 package org.test
 
-@Deprecated("BinaryError", level = DeprecationLevel.ERROR)
-@Experimental(Experimental.Level.ERROR, [Experimental.Impact.RUNTIME])
-annotation class BinaryError
+@Deprecated("Error1", level = DeprecationLevel.ERROR)
+@Experimental
+annotation class Error1
 
-@Deprecated("BinaryHidden", level = DeprecationLevel.HIDDEN)
-@Experimental(Experimental.Level.ERROR, [Experimental.Impact.RUNTIME])
-annotation class BinaryHidden
+@Deprecated("Error2", level = DeprecationLevel.ERROR)
+@Experimental
+annotation class Error2
 
-@Deprecated("SourceError", level = DeprecationLevel.ERROR)
-@Experimental(Experimental.Level.ERROR, [Experimental.Impact.COMPILATION])
-annotation class SourceError
+@Deprecated("Hidden1", level = DeprecationLevel.HIDDEN)
+@Experimental
+annotation class Hidden1
 
-@Deprecated("SourceHidden", level = DeprecationLevel.HIDDEN)
-@Experimental(Experimental.Level.ERROR, [Experimental.Impact.COMPILATION])
-annotation class SourceHidden
+@Deprecated("Hidden2", level = DeprecationLevel.HIDDEN)
+@Experimental
+annotation class Hidden2

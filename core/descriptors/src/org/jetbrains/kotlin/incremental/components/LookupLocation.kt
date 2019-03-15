@@ -58,7 +58,8 @@ enum class NoLookupLocation : LookupLocation {
     FROM_JAVA_LOADER,
     WHEN_GET_LOCAL_VARIABLE,
     WHEN_FIND_BY_FQNAME,
-    WHEN_GET_COMPANION_OBJECT;
+    WHEN_GET_COMPANION_OBJECT,
+    FOR_DEFAULT_IMPORTS;
 
     override val location: LocationInfo? get() = null
 }

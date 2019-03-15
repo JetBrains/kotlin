@@ -2,7 +2,7 @@ package
 
 package a {
     public fun foo(/*0*/ map: a.Pair<kotlin.String, kotlin.String>): kotlin.Unit
-    public fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+    public fun main(): kotlin.Unit
 
     public final class Pair</*0*/ out A, /*1*/ out B> {
         public constructor Pair</*0*/ out A, /*1*/ out B>(/*0*/ first: A, /*1*/ second: B)

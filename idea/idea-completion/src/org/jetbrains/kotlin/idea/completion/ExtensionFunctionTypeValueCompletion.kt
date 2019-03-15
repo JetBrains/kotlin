@@ -74,7 +74,7 @@ class ExtensionFunctionTypeValueCompletion(
                                     }
                                 }
 
-                                override fun handleInsert(context: InsertionContext?) {
+                                override fun handleInsert(context: InsertionContext) {
                                     insertHandler.handleInsert(context, this)
                                 }
                             }

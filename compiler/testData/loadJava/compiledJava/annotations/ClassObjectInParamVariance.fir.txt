@@ -1,0 +1,2 @@
+public open class ClassObjectInParamVariance : R|java/lang/Object| {
+}

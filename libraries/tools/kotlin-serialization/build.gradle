@@ -1,0 +1,34 @@
+apply plugin: 'kotlin'
+
+configureJvmProject(project)
+configurePublishing(project)
+
+compileJava {
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+    options.fork = false
+}
+
+dependencies {
+    compileOnly project(':kotlin-gradle-plugin')
+    compileOnly project(':kotlin-gradle-plugin-api')
+
+    compileOnly kotlinStdlib()
+    compileOnly project(path: ':kotlin-compiler-embeddable', configuration: 'runtimeJar')
+}
+
+evaluationDependsOn(":kotlinx-serialization-compiler-plugin")
+
+jar {
+    from(project(":kotlinx-serialization-compiler-plugin").sourceSets.main.output.classesDirs)
+    from(project(":kotlinx-serialization-compiler-plugin").sourceSets.main.output.resourcesDir)
+    manifestAttributes(manifest, project)
+}
+
+ArtifactsKt.runtimeJar(project, EmbeddableKt.rewriteDepsToShadedCompiler(project, jar, {}), {})
+
+artifacts {
+    archives sourcesJar
+}
+
+javadocJar()

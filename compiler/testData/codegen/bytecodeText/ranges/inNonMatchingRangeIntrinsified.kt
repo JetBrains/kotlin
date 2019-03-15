@@ -1,5 +1,4 @@
-// WITH_RUNTIME
-
+// IGNORE_BACKEND: JVM_IR
 fun inInt(x: Long): Boolean {
     return x in 1..2
 }

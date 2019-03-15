@@ -1,0 +1,107 @@
+FILE fqName:<root> fileName:/annotationsInAnnotationArguments.kt
+  CLASS ANNOTATION_CLASS name:A1 modality:FINAL visibility:public flags: superTypes:[kotlin.Annotation]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:A1 flags:
+    CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:A1 flags:primary
+      VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
+    PROPERTY name:x visibility:public modality:FINAL flags:val
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public flags:final
+        EXPRESSION_BODY
+          GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:A1) returnType:kotlin.Int flags:
+        correspondingProperty: PROPERTY name:x visibility:public modality:FINAL flags:val
+        $this: VALUE_PARAMETER name:<this> type:A1 flags:
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-x>(): Int'
+            GET_FIELD 'x: Int' type=kotlin.Int origin=null
+              receiver: GET_VAR 'this@A1: A1' type=A1 origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+      overridden:
+        FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+      overridden:
+        FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+      overridden:
+        FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+  CLASS ANNOTATION_CLASS name:A2 modality:FINAL visibility:public flags: superTypes:[kotlin.Annotation]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:A2 flags:
+    CONSTRUCTOR visibility:public <> (a:A1) returnType:A2 flags:primary
+      VALUE_PARAMETER name:a index:0 type:A1 flags:
+    PROPERTY name:a visibility:public modality:FINAL flags:val
+      FIELD PROPERTY_BACKING_FIELD name:a type:A1 visibility:public flags:final
+        EXPRESSION_BODY
+          GET_VAR 'value-parameter a: A1' type=A1 origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> visibility:public modality:FINAL <> ($this:A2) returnType:A1 flags:
+        correspondingProperty: PROPERTY name:a visibility:public modality:FINAL flags:val
+        $this: VALUE_PARAMETER name:<this> type:A2 flags:
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-a>(): A1'
+            GET_FIELD 'a: A1' type=A1 origin=null
+              receiver: GET_VAR 'this@A2: A2' type=A2 origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+      overridden:
+        FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+      overridden:
+        FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+      overridden:
+        FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+  CLASS ANNOTATION_CLASS name:AA modality:FINAL visibility:public flags: superTypes:[kotlin.Annotation]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:AA flags:
+    CONSTRUCTOR visibility:public <> (xs:kotlin.Array<A1>) returnType:AA flags:primary
+      VALUE_PARAMETER name:xs index:0 type:kotlin.Array<A1> flags:
+    PROPERTY name:xs visibility:public modality:FINAL flags:val
+      FIELD PROPERTY_BACKING_FIELD name:xs type:kotlin.Array<A1> visibility:public flags:final
+        EXPRESSION_BODY
+          GET_VAR 'value-parameter xs: Array<A1>' type=kotlin.Array<A1> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-xs> visibility:public modality:FINAL <> ($this:AA) returnType:kotlin.Array<A1> flags:
+        correspondingProperty: PROPERTY name:xs visibility:public modality:FINAL flags:val
+        $this: VALUE_PARAMETER name:<this> type:AA flags:
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-xs>(): Array<A1>'
+            GET_FIELD 'xs: Array<A1>' type=kotlin.Array<A1> origin=null
+              receiver: GET_VAR 'this@AA: AA' type=AA origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+      overridden:
+        FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+      overridden:
+        FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+      overridden:
+        FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+  FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:
+    annotations:
+      CALL 'constructor A2(A1)' type=A2 origin=null
+        a: CALL 'constructor A1(Int)' type=A1 origin=null
+          x: CONST Int type=kotlin.Int value=42
+      CALL 'constructor AA(Array<A1>)' type=AA origin=null
+        xs: VARARG type=kotlin.Array<A1> varargElementType=A1
+          CALL 'constructor A1(Int)' type=A1 origin=null
+            x: CONST Int type=kotlin.Int value=1
+          CALL 'constructor A1(Int)' type=A1 origin=null
+            x: CONST Int type=kotlin.Int value=2
+      CALL 'constructor A2(A1)' type=A2 origin=null
+        a: CALL 'constructor A1(Int)' type=A1 origin=null
+          x: CONST Int type=kotlin.Int value=42
+      CALL 'constructor AA(Array<A1>)' type=AA origin=null
+        xs: VARARG type=kotlin.Array<A1> varargElementType=A1
+          CALL 'constructor A1(Int)' type=A1 origin=null
+            x: CONST Int type=kotlin.Int value=1
+          CALL 'constructor A1(Int)' type=A1 origin=null
+            x: CONST Int type=kotlin.Int value=2
+    BLOCK_BODY
+

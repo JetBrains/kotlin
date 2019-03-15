@@ -1,7 +1,8 @@
+// IGNORE_BACKEND: JVM_IR
 // TARGET_BACKEND: JVM
 // WITH_RUNTIME
 // FILE: test.kt
-// LANGUAGE_VERSION: 1.2
+
 import kotlin.test.*
 
 class C {

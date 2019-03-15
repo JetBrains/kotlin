@@ -6,20 +6,21 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.ir.types.IrType
 
-interface IrField : IrSymbolDeclaration<IrFieldSymbol> {
+interface IrField : IrSymbolDeclaration<IrFieldSymbol>, IrOverridableDeclaration<IrFieldSymbol>,
+    IrDeclarationWithName, IrDeclarationWithVisibility, IrDeclarationParent {
     override val descriptor: PropertyDescriptor
 
-    override val declarationKind: IrDeclarationKind
-        get() = IrDeclarationKind.FIELD
+    val type: IrType
+    val isFinal: Boolean
+    val isExternal: Boolean
+    val isStatic: Boolean
 
-    val name: Name
-    val type: KotlinType
-    val visibility: Visibility
     var initializer: IrExpressionBody?
+    var correspondingProperty: IrProperty?
+
+    override val metadata: MetadataSource.Property?
 }

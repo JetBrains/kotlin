@@ -1,5 +1,5 @@
 package
 
 public fun </*0*/ T> listOf(/*0*/ vararg values: T /*kotlin.Array<out T>*/): kotlin.collections.List<T>
-public fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+public fun main(): kotlin.Unit
 public operator fun </*0*/ T> kotlin.collections.Iterable<T>.plus(/*0*/ element: T): kotlin.collections.List<T>

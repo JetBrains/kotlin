@@ -1,5 +1,5 @@
 // TODO: Enable when JS backend supports Java class library
-// IGNORE_BACKEND: JS, NATIVE
+// TARGET_BACKEND: JVM
 public class SomeClass() : java.lang.Object() {
 }
 

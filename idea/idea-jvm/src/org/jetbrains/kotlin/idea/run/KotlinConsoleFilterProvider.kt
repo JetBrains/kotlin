@@ -40,10 +40,12 @@ class KotlinConsoleFilterProvider : ConsoleFilterProviderEx {
 class KotlinConsoleFilter(val project: Project, val scope: GlobalSearchScope) : Filter {
     override fun applyFilter(line: String, entireLength: Int): Filter.Result? {
         val messageSuffix = pattern.find(line) ?: return null
-        val pathStart = line.indexOf(":\\").takeIf { it >= 0 }?.minus(1)
-                        ?: line.indexOf("/").takeIf { it >= 0 }
-                        ?: return null
-        val path = line.substring(pathStart, messageSuffix.groups[1]!!.range.last + 1)
+        val pathEnd = messageSuffix.groups[1]!!.range.last + 1
+        val pathWithPrefix = line.substring(0, pathEnd)
+        val pathStart = pathWithPrefix.indexOf(":\\").takeIf { it >= 0 }?.minus(1)
+                ?: pathWithPrefix.indexOf("/").takeIf { it >= 0 }
+                ?: return null
+        val path = pathWithPrefix.substring(pathStart)
         val lineNumber = Integer.parseInt(messageSuffix.groupValues[2]) - 1
         val column = Integer.parseInt(messageSuffix.groupValues[3]) - 1
         val attrs = EditorColorsManager.getInstance().globalScheme.getAttributes(CodeInsightColors.HYPERLINK_ATTRIBUTES)

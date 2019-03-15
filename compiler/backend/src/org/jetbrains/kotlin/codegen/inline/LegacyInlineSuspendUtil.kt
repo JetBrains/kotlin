@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
-import jdk.internal.org.objectweb.asm.Opcodes
+import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.load.kotlin.getContainingKotlinJvmBinaryClass
@@ -28,7 +28,7 @@ import org.jetbrains.org.objectweb.asm.tree.MethodNode
 // before/after suspension point marks, so we detect those functions here and insert the corresponding marks
 
 fun insertLegacySuspendInlineMarks(node: MethodNode) {
-    with (node.instructions) {
+    with(node.instructions) {
         // look for return instruction before the end and insert "afterSuspendMarker" there
         insertBefore(findLastReturn(last) ?: return, produceSuspendMarker(false).instructions)
         // insert "beforeSuspendMarker" at the beginning

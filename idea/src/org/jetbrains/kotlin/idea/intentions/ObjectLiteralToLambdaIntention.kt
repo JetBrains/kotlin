@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
+import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiComment
@@ -24,6 +25,7 @@ import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.canMoveLambdaOutsideParentheses
@@ -36,19 +38,33 @@ import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.sam.SingleAbstractMethodUtils
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
-import org.jetbrains.kotlin.psi.psiUtil.contentRange
-import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.KotlinType
 
-class ObjectLiteralToLambdaInspection : IntentionBasedInspection<KtObjectLiteralExpression>(ObjectLiteralToLambdaIntention::class)
+class ObjectLiteralToLambdaInspection : IntentionBasedInspection<KtObjectLiteralExpression>(ObjectLiteralToLambdaIntention::class) {
+    override fun problemHighlightType(element: KtObjectLiteralExpression): ProblemHighlightType {
+        val (_, baseType, singleFunction) = extractData(element) ?: return super.problemHighlightType(element)
+        val bodyBlock = singleFunction.bodyBlockExpression
+        val lastStatement = bodyBlock?.statements?.lastOrNull()
+        if (bodyBlock?.anyDescendantOfType<KtReturnExpression> { it != lastStatement } == true) return ProblemHighlightType.INFORMATION
+
+        val valueArgument = element.parent as? KtValueArgument
+        val call = valueArgument?.getStrictParentOfType<KtCallExpression>()
+        if (call != null) {
+            val argumentMatch = call.resolveToCall()?.getArgumentMapping(valueArgument) as? ArgumentMatch
+            if (baseType.constructor != argumentMatch?.valueParameter?.type?.constructor) return ProblemHighlightType.INFORMATION
+        }
+
+        return super.problemHighlightType(element)
+    }
+}
 
 class ObjectLiteralToLambdaIntention : SelfTargetingRangeIntention<KtObjectLiteralExpression>(
         KtObjectLiteralExpression::class.java,
@@ -164,24 +180,24 @@ class ObjectLiteralToLambdaIntention : SelfTargetingRangeIntention<KtObjectLiter
             ShortenReferences.DEFAULT.process(replaced.containingKtFile, replaced.startOffset, endOffset)
         }
     }
+}
 
-    private data class Data(
-            val baseTypeRef: KtTypeReference,
-            val baseType: KotlinType,
-            val singleFunction: KtNamedFunction
-    )
+private data class Data(
+    val baseTypeRef: KtTypeReference,
+    val baseType: KotlinType,
+    val singleFunction: KtNamedFunction
+)
 
-    private fun extractData(element: KtObjectLiteralExpression): Data? {
-        val objectDeclaration = element.objectDeclaration
+private fun extractData(element: KtObjectLiteralExpression): Data? {
+    val objectDeclaration = element.objectDeclaration
 
-        val singleFunction = objectDeclaration.declarations.singleOrNull() as? KtNamedFunction ?: return null
-        if (!singleFunction.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return null
+    val singleFunction = objectDeclaration.declarations.singleOrNull() as? KtNamedFunction ?: return null
+    if (!singleFunction.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return null
 
-        val delegationSpecifier = objectDeclaration.superTypeListEntries.singleOrNull() ?: return null
-        val typeRef = delegationSpecifier.typeReference ?: return null
-        val bindingContext = typeRef.analyze(BodyResolveMode.PARTIAL)
-        val baseType = bindingContext[BindingContext.TYPE, typeRef] ?: return null
+    val delegationSpecifier = objectDeclaration.superTypeListEntries.singleOrNull() ?: return null
+    val typeRef = delegationSpecifier.typeReference ?: return null
+    val bindingContext = typeRef.analyze(BodyResolveMode.PARTIAL)
+    val baseType = bindingContext[BindingContext.TYPE, typeRef] ?: return null
 
-        return Data(typeRef, baseType, singleFunction)
-    }
+    return Data(typeRef, baseType, singleFunction)
 }

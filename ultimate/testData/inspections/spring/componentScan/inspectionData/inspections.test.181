@@ -1,0 +1,3 @@
+// INSPECTION_CLASS: org.jetbrains.kotlin.idea.spring.inspections.KotlinSpringComponentScanInspection
+// FIXTURE_CLASS: org.jetbrains.kotlin.idea.spring.tests.SpringTestFixtureExtension
+// CONFIGURE_SPRING_FILE_SET

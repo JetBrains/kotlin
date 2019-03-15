@@ -10,7 +10,7 @@ fun test() : Int {
 }
 
 class A() {
-    val x : Int = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>foo1(<!UNRESOLVED_REFERENCE, TOO_MANY_ARGUMENTS!>xx<!>)<!>
+    val x : Int = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>foo1(<!TOO_MANY_ARGUMENTS, UNRESOLVED_REFERENCE!>xx<!>)<!>
 }
 
 fun foo1() {}

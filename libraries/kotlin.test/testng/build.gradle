@@ -21,15 +21,16 @@ jar {
 
 artifacts {
     archives sourcesJar
-    archives javadocJar
 }
+
+javadocJar()
 
 dist {
     from (jar, sourcesJar)
 }
 
 compileKotlin {
-    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-Xmulti-platform", "-module-name", project.name]
+    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-module-name", project.name]
 }
 
 compileTestKotlin {

@@ -10,4 +10,4 @@ fun test() {
     <caret>testMethod()
 }
 
-//INFO: <pre><b>public</b> <b>fun</b> testMethod(): Unit <i>defined in</i> root package <i>in file</i> OnMethodUsageMultiline.kt</pre><p>Some documentation on two lines.</p>
+//INFO: <div class='definition'><pre><font color="808080"><i>OnMethodUsageMultiline.kt</i></font><br>public fun <b>testMethod</b>(): Unit</pre></div><div class='content'><p>Some documentation on two lines.</p></div><table class='sections'></table>

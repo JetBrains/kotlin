@@ -5,17 +5,18 @@
 
 package org.jetbrains.kotlin.codegen
 
-import com.intellij.util.ArrayUtil
 import org.jetbrains.kotlin.codegen.context.ClassContext
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.resolve.InlineClassDescriptorResolver
+import org.jetbrains.kotlin.resolve.descriptorUtil.secondaryConstructors
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.Synthetic
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
-import org.jetbrains.org.objectweb.asm.Opcodes
 
 class ErasedInlineClassBodyCodegen(
     aClass: KtClass,
@@ -24,19 +25,45 @@ class ErasedInlineClassBodyCodegen(
     state: GenerationState,
     parentCodegen: MemberCodegen<*>?
 ) : ClassBodyCodegen(aClass, context, v, state, parentCodegen) {
-    override fun generateDeclaration() {
-        v.defineClass(
-            myClass.psiOrParent, state.classFileVersion, Opcodes.ACC_FINAL or Opcodes.ACC_STATIC or Opcodes.ACC_PUBLIC,
-            typeMapper.mapErasedInlineClass(descriptor).internalName,
-            null, "java/lang/Object", ArrayUtil.EMPTY_STRING_ARRAY
-        )
-        v.visitSource(myClass.containingKtFile.name, null)
+
+    private val classAsmType = typeMapper.mapClass(descriptor)
+
+    private val constructorCodegen = ConstructorCodegen(
+        descriptor, context, functionCodegen, this, this, state, kind, v, classAsmType, aClass, bindingContext
+    )
+
+    override fun generateDeclaration() {}
+    override fun generateKotlinMetadataAnnotation() {}
+    override fun done() {}
+
+    override fun generateConstructors() {
+        val delegationFieldsInfo = DelegationFieldsInfo(classAsmType, descriptor, state, bindingContext)
+
+        constructorCodegen.generatePrimaryConstructor(delegationFieldsInfo, AsmTypes.OBJECT_TYPE)
+
+        for (secondaryConstructor in descriptor.secondaryConstructors) {
+            constructorCodegen.generateSecondaryConstructor(secondaryConstructor, AsmTypes.OBJECT_TYPE)
+        }
     }
 
     override fun generateSyntheticPartsAfterBody() {
         super.generateSyntheticPartsAfterBody()
 
+        generateDelegatesToDefaultImpl()
+        generateUnboxMethod()
+        generateFunctionsFromAny()
+        generateSpecializedEqualsStub()
+    }
+
+    private fun generateFunctionsFromAny() {
+        FunctionsFromAnyGeneratorImpl(
+            myClass as KtClassOrObject, bindingContext, descriptor, classAsmType, context, v, state
+        ).generate()
+    }
+
+    private fun generateUnboxMethod() {
         val boxMethodDescriptor = InlineClassDescriptorResolver.createBoxFunctionDescriptor(descriptor) ?: return
+
         functionCodegen.generateMethod(
             Synthetic(null, boxMethodDescriptor), boxMethodDescriptor, object : FunctionGenerationStrategy.CodegenBased(state) {
                 override fun mapMethodSignature(
@@ -65,7 +92,28 @@ class ErasedInlineClassBodyCodegen(
         )
     }
 
-    override fun generateKotlinMetadataAnnotation() {
-        writeSyntheticClassMetadata(v, state)
+    private fun generateSpecializedEqualsStub() {
+        val specializedEqualsDescriptor = InlineClassDescriptorResolver.createSpecializedEqualsDescriptor(descriptor) ?: return
+
+        functionCodegen.generateMethod(
+            Synthetic(null, specializedEqualsDescriptor), specializedEqualsDescriptor, object : FunctionGenerationStrategy.CodegenBased(state) {
+                override fun mapMethodSignature(
+                    functionDescriptor: FunctionDescriptor,
+                    typeMapper: KotlinTypeMapper,
+                    contextKind: OwnerKind,
+                    hasSpecialBridge: Boolean
+                ): JvmMethodGenericSignature {
+                    // we shouldn't use default mapping here to avoid adding parameter that relates to carrier type
+                    return typeMapper.mapSignatureForSpecializedEqualsOfInlineClass(functionDescriptor)
+                }
+
+
+                override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
+                    val iv = codegen.v
+                    iv.aconst(null)
+                    iv.athrow()
+                }
+            }
+        )
     }
 }

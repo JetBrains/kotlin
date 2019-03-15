@@ -27,22 +27,22 @@ class RemoveRedundantSpreadOperatorInspection : AbstractKotlinInspection() {
             val argumentOffset = argument.startOffset
             val startOffset = spreadElement.startOffset - argumentOffset
             val endOffset =
-                    when (argumentExpression) {
-                        is KtCallExpression -> {
-                            if (!argumentExpression.isArrayOfMethod()) return
-                            argumentExpression.calleeExpression!!.endOffset - argumentOffset
-                        }
-                        is KtCollectionLiteralExpression -> startOffset + 1
-                        else -> return
+                when (argumentExpression) {
+                    is KtCallExpression -> {
+                        if (!argumentExpression.isArrayOfMethod()) return
+                        argumentExpression.calleeExpression!!.endOffset - argumentOffset
                     }
+                    is KtCollectionLiteralExpression -> startOffset + 1
+                    else -> return
+                }
 
             val problemDescriptor = holder.manager.createProblemDescriptor(
-                    argument,
-                    TextRange(startOffset, endOffset),
-                    "Remove redundant spread operator",
-                    ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                    isOnTheFly,
-                    RemoveRedundantSpreadOperatorQuickfix()
+                argument,
+                TextRange(startOffset, endOffset),
+                "Remove redundant spread operator",
+                ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                isOnTheFly,
+                RemoveRedundantSpreadOperatorQuickfix()
             )
             holder.registerProblem(problemDescriptor)
         })
@@ -61,14 +61,18 @@ class RemoveRedundantSpreadOperatorQuickfix : LocalQuickFix {
         val outerArgumentList = spreadValueArgument.getStrictParentOfType<KtValueArgumentList>() ?: return
         // Arguments under arrayOf or []
         val innerArgumentExpressions =
-                when (spreadArgumentExpression) {
-                    is KtCallExpression -> spreadArgumentExpression.valueArgumentList?.arguments?.map { it.getArgumentExpression() }
-                    is KtCollectionLiteralExpression -> spreadArgumentExpression.getInnerExpressions()
-                    else -> null
-                } ?: return
+            when (spreadArgumentExpression) {
+                is KtCallExpression -> spreadArgumentExpression.valueArgumentList?.arguments?.map {
+                    it.getArgumentExpression() to it.isSpread
+                }
+                is KtCollectionLiteralExpression -> spreadArgumentExpression.getInnerExpressions().map { it to false }
+                else -> null
+            } ?: return
 
         val factory = KtPsiFactory(project)
-        innerArgumentExpressions.reversed().forEach { outerArgumentList.addArgumentAfter(factory.createArgument(it), spreadValueArgument) }
+        innerArgumentExpressions.reversed().forEach { (expression, isSpread) ->
+            outerArgumentList.addArgumentAfter(factory.createArgument(expression, isSpread = isSpread), spreadValueArgument)
+        }
         outerArgumentList.removeArgument(spreadValueArgument)
     }
 }

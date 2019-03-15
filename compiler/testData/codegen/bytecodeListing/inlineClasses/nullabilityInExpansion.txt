@@ -1,0 +1,257 @@
+@kotlin.Metadata
+public final class NullabilityInExpansionKt {
+    public final static @org.jetbrains.annotations.Nullable method qwrap1(p0: int): Q1
+    public final static @org.jetbrains.annotations.Nullable method qwrap2(p0: int): Q2
+    public final static @org.jetbrains.annotations.Nullable method qwrapN(p0: int): QN
+    public final static @org.jetbrains.annotations.Nullable method swrap1(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
+    public final static @org.jetbrains.annotations.Nullable method swrap2(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
+    public final static @org.jetbrains.annotations.Nullable method swrapN(@org.jetbrains.annotations.NotNull p0: java.lang.String): SN
+    public final static @org.jetbrains.annotations.Nullable method swrapN2(@org.jetbrains.annotations.NotNull p0: java.lang.String): SN2
+    public final static @org.jetbrains.annotations.NotNull method swrapNbox(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
+    public final static @org.jetbrains.annotations.Nullable method wwrap1(@org.jetbrains.annotations.NotNull p0: java.lang.String): W1
+    public final static @org.jetbrains.annotations.Nullable method wwrap2(@org.jetbrains.annotations.NotNull p0: java.lang.String): W2
+    public final static @org.jetbrains.annotations.Nullable method wwrapN(@org.jetbrains.annotations.NotNull p0: java.lang.String): WN
+    public final static @org.jetbrains.annotations.Nullable method zwrap1(p0: int): Z1
+    public final static @org.jetbrains.annotations.Nullable method zwrap2(p0: int): Z2
+    public final static @org.jetbrains.annotations.Nullable method zwrapN(p0: int): ZN
+    public final static @org.jetbrains.annotations.Nullable method zwrapN2(p0: int): ZN2
+    public final static @org.jetbrains.annotations.NotNull method zwrapNbox(p0: int): Z1
+}
+
+@kotlin.Metadata
+public final class Q1 {
+    private final @org.jetbrains.annotations.Nullable field x: java.lang.Integer
+    private synthetic method <init>(@org.jetbrains.annotations.Nullable p0: java.lang.Integer): void
+    public synthetic final static @org.jetbrains.annotations.NotNull method box-impl(@org.jetbrains.annotations.Nullable p0: java.lang.Integer): Q1
+    public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.Nullable p0: java.lang.Integer): java.lang.Integer
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: java.lang.Integer, @org.jetbrains.annotations.Nullable p1: java.lang.Object): boolean
+    public final static method equals-impl0(@org.jetbrains.annotations.Nullable p0: java.lang.Integer, @org.jetbrains.annotations.Nullable p1: java.lang.Integer): boolean
+    public final @org.jetbrains.annotations.Nullable method getX(): java.lang.Integer
+    public method hashCode(): int
+    public static method hashCode-impl(p0: java.lang.Integer): int
+    public method toString(): java.lang.String
+    public static @org.jetbrains.annotations.NotNull method toString-impl(p0: java.lang.Integer): java.lang.String
+    public synthetic final @org.jetbrains.annotations.Nullable method unbox-impl(): java.lang.Integer
+}
+
+@kotlin.Metadata
+public final class Q2 {
+    private final @org.jetbrains.annotations.NotNull field z: java.lang.Integer
+    private synthetic method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.Integer): void
+    public synthetic final static @org.jetbrains.annotations.NotNull method box-impl(@org.jetbrains.annotations.NotNull p0: java.lang.Integer): Q2
+    public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.NotNull p0: java.lang.Integer): java.lang.Integer
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: java.lang.Integer, @org.jetbrains.annotations.Nullable p1: java.lang.Object): boolean
+    public final static method equals-impl0(@org.jetbrains.annotations.NotNull p0: java.lang.Integer, @org.jetbrains.annotations.NotNull p1: java.lang.Integer): boolean
+    public final @org.jetbrains.annotations.NotNull method getZ(): java.lang.Integer
+    public method hashCode(): int
+    public static method hashCode-impl(p0: java.lang.Integer): int
+    public method toString(): java.lang.String
+    public static @org.jetbrains.annotations.NotNull method toString-impl(p0: java.lang.Integer): java.lang.String
+    public synthetic final @org.jetbrains.annotations.NotNull method unbox-impl(): java.lang.Integer
+}
+
+@kotlin.Metadata
+public final class QN {
+    private final @org.jetbrains.annotations.Nullable field z: Q1
+    private synthetic method <init>(@org.jetbrains.annotations.Nullable p0: Q1): void
+    public synthetic final static @org.jetbrains.annotations.NotNull method box-impl(@org.jetbrains.annotations.Nullable p0: Q1): QN
+    public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.Nullable p0: Q1): Q1
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: Q1, @org.jetbrains.annotations.Nullable p1: java.lang.Object): boolean
+    public final static method equals-impl0(@org.jetbrains.annotations.Nullable p0: Q1, @org.jetbrains.annotations.Nullable p1: Q1): boolean
+    public final @org.jetbrains.annotations.Nullable method getZ(): Q1
+    public method hashCode(): int
+    public static method hashCode-impl(p0: Q1): int
+    public method toString(): java.lang.String
+    public static @org.jetbrains.annotations.NotNull method toString-impl(p0: Q1): java.lang.String
+    public synthetic final @org.jetbrains.annotations.Nullable method unbox-impl(): Q1
+}
+
+@kotlin.Metadata
+public final class S1 {
+    private final @org.jetbrains.annotations.NotNull field x: java.lang.String
+    private synthetic method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    public synthetic final static @org.jetbrains.annotations.NotNull method box-impl(@org.jetbrains.annotations.NotNull p0: java.lang.String): S1
+    public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: java.lang.String, @org.jetbrains.annotations.Nullable p1: java.lang.Object): boolean
+    public final static method equals-impl0(@org.jetbrains.annotations.NotNull p0: java.lang.String, @org.jetbrains.annotations.NotNull p1: java.lang.String): boolean
+    public final @org.jetbrains.annotations.NotNull method getX(): java.lang.String
+    public method hashCode(): int
+    public static method hashCode-impl(p0: java.lang.String): int
+    public method toString(): java.lang.String
+    public static @org.jetbrains.annotations.NotNull method toString-impl(p0: java.lang.String): java.lang.String
+    public synthetic final @org.jetbrains.annotations.NotNull method unbox-impl(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class S2 {
+    private final @org.jetbrains.annotations.NotNull field z: java.lang.String
+    private synthetic method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    public synthetic final static @org.jetbrains.annotations.NotNull method box-impl(@org.jetbrains.annotations.NotNull p0: java.lang.String): S2
+    public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: java.lang.String, @org.jetbrains.annotations.Nullable p1: java.lang.Object): boolean
+    public final static method equals-impl0(@org.jetbrains.annotations.NotNull p0: java.lang.String, @org.jetbrains.annotations.NotNull p1: java.lang.String): boolean
+    public final @org.jetbrains.annotations.NotNull method getZ(): java.lang.String
+    public method hashCode(): int
+    public static method hashCode-impl(p0: java.lang.String): int
+    public method toString(): java.lang.String
+    public static @org.jetbrains.annotations.NotNull method toString-impl(p0: java.lang.String): java.lang.String
+    public synthetic final @org.jetbrains.annotations.NotNull method unbox-impl(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class SN {
+    private final @org.jetbrains.annotations.Nullable field z: java.lang.String
+    private synthetic method <init>(@org.jetbrains.annotations.Nullable p0: java.lang.String): void
+    public synthetic final static @org.jetbrains.annotations.NotNull method box-impl(@org.jetbrains.annotations.Nullable p0: java.lang.String): SN
+    public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.Nullable p0: java.lang.String): java.lang.String
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: java.lang.String, @org.jetbrains.annotations.Nullable p1: java.lang.Object): boolean
+    public final static method equals-impl0(@org.jetbrains.annotations.Nullable p0: java.lang.String, @org.jetbrains.annotations.Nullable p1: java.lang.String): boolean
+    public final @org.jetbrains.annotations.Nullable method getZ(): java.lang.String
+    public method hashCode(): int
+    public static method hashCode-impl(p0: java.lang.String): int
+    public method toString(): java.lang.String
+    public static @org.jetbrains.annotations.NotNull method toString-impl(p0: java.lang.String): java.lang.String
+    public synthetic final @org.jetbrains.annotations.Nullable method unbox-impl(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class SN2 {
+    private final @org.jetbrains.annotations.NotNull field z: java.lang.String
+    private synthetic method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    public synthetic final static @org.jetbrains.annotations.NotNull method box-impl(@org.jetbrains.annotations.NotNull p0: java.lang.String): SN2
+    public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: java.lang.String, @org.jetbrains.annotations.Nullable p1: java.lang.Object): boolean
+    public final static method equals-impl0(@org.jetbrains.annotations.NotNull p0: java.lang.String, @org.jetbrains.annotations.NotNull p1: java.lang.String): boolean
+    public final @org.jetbrains.annotations.NotNull method getZ(): java.lang.String
+    public method hashCode(): int
+    public static method hashCode-impl(p0: java.lang.String): int
+    public method toString(): java.lang.String
+    public static @org.jetbrains.annotations.NotNull method toString-impl(p0: java.lang.String): java.lang.String
+    public synthetic final @org.jetbrains.annotations.NotNull method unbox-impl(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class W1 {
+    private final @org.jetbrains.annotations.Nullable field x: java.lang.String
+    private synthetic method <init>(@org.jetbrains.annotations.Nullable p0: java.lang.String): void
+    public synthetic final static @org.jetbrains.annotations.NotNull method box-impl(@org.jetbrains.annotations.Nullable p0: java.lang.String): W1
+    public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.Nullable p0: java.lang.String): java.lang.String
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: java.lang.String, @org.jetbrains.annotations.Nullable p1: java.lang.Object): boolean
+    public final static method equals-impl0(@org.jetbrains.annotations.Nullable p0: java.lang.String, @org.jetbrains.annotations.Nullable p1: java.lang.String): boolean
+    public final @org.jetbrains.annotations.Nullable method getX(): java.lang.String
+    public method hashCode(): int
+    public static method hashCode-impl(p0: java.lang.String): int
+    public method toString(): java.lang.String
+    public static @org.jetbrains.annotations.NotNull method toString-impl(p0: java.lang.String): java.lang.String
+    public synthetic final @org.jetbrains.annotations.Nullable method unbox-impl(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class W2 {
+    private final @org.jetbrains.annotations.NotNull field z: java.lang.String
+    private synthetic method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    public synthetic final static @org.jetbrains.annotations.NotNull method box-impl(@org.jetbrains.annotations.NotNull p0: java.lang.String): W2
+    public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: java.lang.String, @org.jetbrains.annotations.Nullable p1: java.lang.Object): boolean
+    public final static method equals-impl0(@org.jetbrains.annotations.NotNull p0: java.lang.String, @org.jetbrains.annotations.NotNull p1: java.lang.String): boolean
+    public final @org.jetbrains.annotations.NotNull method getZ(): java.lang.String
+    public method hashCode(): int
+    public static method hashCode-impl(p0: java.lang.String): int
+    public method toString(): java.lang.String
+    public static @org.jetbrains.annotations.NotNull method toString-impl(p0: java.lang.String): java.lang.String
+    public synthetic final @org.jetbrains.annotations.NotNull method unbox-impl(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class WN {
+    private final @org.jetbrains.annotations.Nullable field z: W1
+    private synthetic method <init>(@org.jetbrains.annotations.Nullable p0: W1): void
+    public synthetic final static @org.jetbrains.annotations.NotNull method box-impl(@org.jetbrains.annotations.Nullable p0: W1): WN
+    public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.Nullable p0: W1): W1
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: W1, @org.jetbrains.annotations.Nullable p1: java.lang.Object): boolean
+    public final static method equals-impl0(@org.jetbrains.annotations.Nullable p0: W1, @org.jetbrains.annotations.Nullable p1: W1): boolean
+    public final @org.jetbrains.annotations.Nullable method getZ(): W1
+    public method hashCode(): int
+    public static method hashCode-impl(p0: W1): int
+    public method toString(): java.lang.String
+    public static @org.jetbrains.annotations.NotNull method toString-impl(p0: W1): java.lang.String
+    public synthetic final @org.jetbrains.annotations.Nullable method unbox-impl(): W1
+}
+
+@kotlin.Metadata
+public final class Z1 {
+    private final field x: int
+    private synthetic method <init>(p0: int): void
+    public synthetic final static @org.jetbrains.annotations.NotNull method box-impl(p0: int): Z1
+    public static method constructor-impl(p0: int): int
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: int, @org.jetbrains.annotations.Nullable p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: int, p1: int): boolean
+    public final method getX(): int
+    public method hashCode(): int
+    public static method hashCode-impl(p0: int): int
+    public method toString(): java.lang.String
+    public static @org.jetbrains.annotations.NotNull method toString-impl(p0: int): java.lang.String
+    public synthetic final method unbox-impl(): int
+}
+
+@kotlin.Metadata
+public final class Z2 {
+    private final field z: int
+    private synthetic method <init>(p0: int): void
+    public synthetic final static @org.jetbrains.annotations.NotNull method box-impl(p0: int): Z2
+    public static method constructor-impl(p0: int): int
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: int, @org.jetbrains.annotations.Nullable p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: int, p1: int): boolean
+    public final method getZ(): int
+    public method hashCode(): int
+    public static method hashCode-impl(p0: int): int
+    public method toString(): java.lang.String
+    public static @org.jetbrains.annotations.NotNull method toString-impl(p0: int): java.lang.String
+    public synthetic final method unbox-impl(): int
+}
+
+@kotlin.Metadata
+public final class ZN {
+    private final @org.jetbrains.annotations.Nullable field z: Z1
+    private synthetic method <init>(@org.jetbrains.annotations.Nullable p0: Z1): void
+    public synthetic final static @org.jetbrains.annotations.NotNull method box-impl(@org.jetbrains.annotations.Nullable p0: Z1): ZN
+    public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.Nullable p0: Z1): Z1
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: Z1, @org.jetbrains.annotations.Nullable p1: java.lang.Object): boolean
+    public final static method equals-impl0(@org.jetbrains.annotations.Nullable p0: Z1, @org.jetbrains.annotations.Nullable p1: Z1): boolean
+    public final @org.jetbrains.annotations.Nullable method getZ(): Z1
+    public method hashCode(): int
+    public static method hashCode-impl(p0: Z1): int
+    public method toString(): java.lang.String
+    public static @org.jetbrains.annotations.NotNull method toString-impl(p0: Z1): java.lang.String
+    public synthetic final @org.jetbrains.annotations.Nullable method unbox-impl(): Z1
+}
+
+@kotlin.Metadata
+public final class ZN2 {
+    private final @org.jetbrains.annotations.NotNull field z: Z1
+    private synthetic method <init>(@org.jetbrains.annotations.NotNull p0: Z1): void
+    public synthetic final static @org.jetbrains.annotations.NotNull method box-impl(@org.jetbrains.annotations.NotNull p0: Z1): ZN2
+    public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.NotNull p0: Z1): Z1
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: Z1, @org.jetbrains.annotations.Nullable p1: java.lang.Object): boolean
+    public final static method equals-impl0(@org.jetbrains.annotations.NotNull p0: Z1, @org.jetbrains.annotations.NotNull p1: Z1): boolean
+    public final @org.jetbrains.annotations.NotNull method getZ(): Z1
+    public method hashCode(): int
+    public static method hashCode-impl(p0: Z1): int
+    public method toString(): java.lang.String
+    public static @org.jetbrains.annotations.NotNull method toString-impl(p0: Z1): java.lang.String
+    public synthetic final @org.jetbrains.annotations.NotNull method unbox-impl(): Z1
+}

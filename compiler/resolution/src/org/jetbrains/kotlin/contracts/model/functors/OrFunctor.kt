@@ -16,21 +16,17 @@
 
 package org.jetbrains.kotlin.contracts.model.functors
 
-import org.jetbrains.kotlin.contracts.model.structure.ESReturns
-import org.jetbrains.kotlin.contracts.model.structure.ESAnd
-import org.jetbrains.kotlin.contracts.model.structure.ESConstant
-import org.jetbrains.kotlin.contracts.model.structure.ESOr
-import org.jetbrains.kotlin.contracts.model.structure.lift
+import org.jetbrains.kotlin.contracts.model.Computation
 import org.jetbrains.kotlin.contracts.model.ConditionalEffect
 import org.jetbrains.kotlin.contracts.model.ESEffect
-import org.jetbrains.kotlin.contracts.model.Computation
+import org.jetbrains.kotlin.contracts.model.structure.*
 
-class OrFunctor : AbstractBinaryFunctor() {
-    override fun invokeWithConstant(computation: Computation, constant: ESConstant): List<ESEffect> = when (constant) {
-        ESConstant.FALSE -> computation.effects
-        ESConstant.TRUE -> emptyList()
+class OrFunctor(constants: ESConstants) : AbstractBinaryFunctor(constants) {
+    override fun invokeWithConstant(computation: Computation, constant: ESConstant): List<ESEffect> = when {
+        constant.isFalse -> computation.effects
+        constant.isTrue -> emptyList()
 
-    // This means that expression isn't typechecked properly
+        // This means that expression isn't typechecked properly
         else -> computation.effects
     }
 
@@ -39,8 +35,11 @@ class OrFunctor : AbstractBinaryFunctor() {
          expression wasn't properly typechecked, we could get some senseless clauses here, e.g.
          with Returns(1) (note that they still *return* as guaranteed by AbstractSequentialBinaryFunctor).
          We will just ignore such clauses in order to make smartcasting robust while typing */
-        val (leftTrue, leftFalse) = left.strictPartition(ESReturns(true.lift()), ESReturns(false.lift()))
-        val (rightTrue, rightFalse) = right.strictPartition(ESReturns(true.lift()), ESReturns(false.lift()))
+
+        val leftTrue = left.filter { it.simpleEffect.isReturns { value.isTrue } }
+        val leftFalse = left.filter { it.simpleEffect.isReturns { value.isFalse } }
+        val rightTrue = right.filter { it.simpleEffect.isReturns { value.isTrue } }
+        val rightFalse = right.filter { it.simpleEffect.isReturns { value.isFalse } }
 
         val whenLeftReturnsTrue = foldConditionsWithOr(leftTrue)
         val whenRightReturnsTrue = foldConditionsWithOr(rightTrue)
@@ -49,20 +48,20 @@ class OrFunctor : AbstractBinaryFunctor() {
 
         // When whole Or-functor returns true, all we know is that one of arguments was true.
         // So, to make a correct clause we have to know *both* 'Returns(true)'-conditions
-        val conditionWhenTrue = applyIfBothNotNull(whenLeftReturnsTrue, whenRightReturnsTrue, { l, r -> ESOr(l, r) })
+        val conditionWhenTrue = applyIfBothNotNull(whenLeftReturnsTrue, whenRightReturnsTrue) { l, r -> ESOr(constants, l, r) }
 
         // Even if one of 'Returns(false)' is missing, we still can argue that other condition
         // *must* be false when whole OR-functor returns false
-        val conditionWhenFalse = applyWithDefault(whenLeftReturnsFalse, whenRightReturnsFalse, { l, r -> ESAnd(l, r) })
+        val conditionWhenFalse = applyWithDefault(whenLeftReturnsFalse, whenRightReturnsFalse) { l, r -> ESAnd(constants, l, r) }
 
         val result = mutableListOf<ConditionalEffect>()
 
         if (conditionWhenTrue != null) {
-            result.add(ConditionalEffect(conditionWhenTrue, ESReturns(true.lift())))
+            result.add(ConditionalEffect(conditionWhenTrue, ESReturns(constants.trueValue)))
         }
 
         if (conditionWhenFalse != null) {
-            result.add(ConditionalEffect(conditionWhenFalse, ESReturns(false.lift())))
+            result.add(ConditionalEffect(conditionWhenFalse, ESReturns(constants.falseValue)))
         }
 
         return result

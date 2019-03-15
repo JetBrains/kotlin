@@ -1,0 +1,59 @@
+group 'com.example'
+version '1.0'
+
+buildscript {
+	repositories {
+		mavenLocal()
+		jcenter()
+	}
+	dependencies {
+		classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+	}
+}
+
+apply plugin: 'kotlin-multiplatform'
+
+repositories {
+    mavenLocal()
+    jcenter()
+    maven { url  "https://dl.bintray.com/kotlin/kotlinx.html/" }
+}
+
+kotlin {
+    targets {
+    	fromPreset(presets.jvm, 'jvmWithoutJava')
+        fromPreset(presets.jvmWithJava, 'jvmWithJava')
+        fromPreset(presets.js, 'js')
+		fromPreset(presets.macosX64, 'macos64')
+		fromPreset(presets.linuxX64, 'linux64')
+		fromPreset(presets.mingwX64, 'mingw64')
+    }
+    sourceSets {
+        commonTest {
+        	dependencies {
+        		implementation 'org.jetbrains.kotlin:kotlin-test-common'
+        		implementation 'org.jetbrains.kotlin:kotlin-test-annotations-common'
+        	}
+        }
+        configure([main, jvmWithoutJavaMain]) {
+        	dependencies {
+        		implementation 'org.jetbrains.kotlin:kotlin-stdlib'
+        	}
+        }
+        configure([test, jvmWithoutJavaTest]) {
+        	dependencies {
+        		implementation 'org.jetbrains.kotlin:kotlin-test'
+        		implementation 'org.jetbrains.kotlin:kotlin-test-junit'
+        	}
+        }
+        jsTest {
+        	dependencies {
+        		implementation 'org.jetbrains.kotlin:kotlin-test-js'
+        	}
+        }
+		nativeMain
+		configure([macos64Main, linux64Main, mingw64Main]) {
+			dependsOn nativeMain
+		}
+    }
+}

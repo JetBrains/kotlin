@@ -33,9 +33,6 @@ package
 
 public fun test(/*0*/ b: a.B): kotlin.Unit
 
-package a {
-}
-
 
 // -- Module: <top_m1> --
 package

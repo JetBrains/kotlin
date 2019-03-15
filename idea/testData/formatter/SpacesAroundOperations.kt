@@ -27,6 +27,11 @@ class Some {
         12%3*12/3
 
         1..2
+
+        null ?: 3 + 1
+
+        val a = 1
+        null ?: a + a
     }
 }
 

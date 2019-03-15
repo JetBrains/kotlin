@@ -1,10 +1,10 @@
 
 description = "Kotlin SamWithReceiver IDEA Plugin"
 
-apply { plugin("kotlin") }
-apply { plugin("jps-compatible") }
-
-jvmTarget = "1.6"
+plugins {
+    kotlin("jvm")
+    id("jps-compatible")
+}
 
 dependencies {
     compile(project(":kotlin-sam-with-receiver-compiler-plugin"))
@@ -13,10 +13,18 @@ dependencies {
     compile(project(":compiler:frontend"))
     compile(project(":compiler:frontend.java"))
     compile(project(":idea:idea-core"))
-    compile(project(":idea:idea-android"))
+
+    Ide.AS33.orHigher.not {
+        compile(project(":idea:idea-android"))
+    }
+
     compile(project(":idea"))
     compile(project(":idea:idea-jvm"))
+
     compile(intellijDep()) { includeJars("openapi", "extensions", "util") }
+    Platform[181].orHigher {
+        compile(intellijDep()) { includeJars("platform-api") }
+    }
 }
 
 sourceSets {

@@ -49,7 +49,7 @@ fun setupEditorSelection(editor: Editor, declaration: KtNamedDeclaration) {
 
     when (declaration) {
         is KtNamedFunction, is KtSecondaryConstructor -> {
-            ((declaration as KtFunction).bodyExpression as? KtBlockExpression)?.let {
+            (declaration as KtFunction).bodyBlockExpression?.let {
                 positionBetween(it.lBrace!!, it.rBrace!!)
             }
         }

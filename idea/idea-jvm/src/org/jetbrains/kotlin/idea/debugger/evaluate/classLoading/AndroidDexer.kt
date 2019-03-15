@@ -20,7 +20,8 @@ import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 
 interface AndroidDexer {
     companion object : ProjectExtensionDescriptor<AndroidDexer>(
-            "org.jetbrains.kotlin.androidDexer", AndroidDexer::class.java)
+        "org.jetbrains.kotlin.androidDexer", AndroidDexer::class.java
+    )
 
     fun dex(classes: Collection<ClassToLoad>): ByteArray?
 }

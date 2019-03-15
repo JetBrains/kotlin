@@ -1,4 +1,4 @@
-// "Make variable mutable" "true"
+// "Change to var" "true"
 class A() {
     val a: Int = 0
         <caret>set(v: Int) {}

@@ -30,10 +30,13 @@ import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.extractSuperclass.ExtractSuperClassUtil
 import com.intellij.refactoring.lang.ElementsHandler
 import com.intellij.refactoring.util.CommonRefactoringUtil
+import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.idea.refactoring.SeparateFileWrapper
 import org.jetbrains.kotlin.idea.refactoring.chooseContainerElementIfNecessary
 import org.jetbrains.kotlin.idea.refactoring.getExtractionContainers
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractClass.ui.KotlinExtractSuperDialogBase
+import org.jetbrains.kotlin.idea.refactoring.showWithTransaction
+import org.jetbrains.kotlin.idea.util.isExpectDeclaration
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
@@ -47,7 +50,7 @@ abstract class KotlinExtractSuperHandlerBase(private val isExtractInterface: Boo
         val klass = element.getNonStrictParentOfType<KtClassOrObject>() ?: return
         if (!checkClass(klass, editor)) return
         editor.scrollingModel.scrollToCaret(ScrollType.MAKE_VISIBLE)
-        selectElements(klass, project, editor)
+        selectElements(klass, editor)
     }
 
     override fun invoke(project: Project, elements: Array<out PsiElement>, dataContext: DataContext?) {
@@ -55,7 +58,7 @@ abstract class KotlinExtractSuperHandlerBase(private val isExtractInterface: Boo
         val editor = CommonDataKeys.EDITOR.getData(dataContext)
         val klass = PsiTreeUtil.findCommonParent(*elements)?.getNonStrictParentOfType<KtClassOrObject>() ?: return
         if (!checkClass(klass, editor)) return
-        selectElements(klass, project, editor)
+        selectElements(klass, editor)
     }
 
     private fun checkClass(klass: KtClassOrObject, editor: Editor?): Boolean {
@@ -77,10 +80,14 @@ abstract class KotlinExtractSuperHandlerBase(private val isExtractInterface: Boo
         return true
     }
 
-    private fun selectElements(klass: KtClassOrObject, project: Project, editor: Editor?) {
+    private fun doInvoke(klass: KtClassOrObject, targetParent: PsiElement) {
+        createDialog(klass, targetParent).showWithTransaction()
+    }
+
+    private fun selectElements(klass: KtClassOrObject, editor: Editor?) {
         val containers = klass.getExtractionContainers(strict = true, includeAll = true) + SeparateFileWrapper(klass.manager)
 
-        if (editor == null) return doInvoke(klass, containers.first(), project, editor)
+        if (editor == null) return doInvoke(klass, containers.first())
 
         chooseContainerElementIfNecessary(
                 containers,
@@ -88,7 +95,7 @@ abstract class KotlinExtractSuperHandlerBase(private val isExtractInterface: Boo
                 if (containers.first() is KtFile) "Select target file" else "Select target code block / file",
                 true,
                 { it },
-                { doInvoke(klass, if (it is SeparateFileWrapper) klass.containingFile.parent!! else it, project, editor) }
+                { doInvoke(klass, if (it is SeparateFileWrapper) klass.containingFile.parent!! else it) }
         )
     }
 
@@ -103,7 +110,11 @@ abstract class KotlinExtractSuperHandlerBase(private val isExtractInterface: Boo
         return ExtractSuperClassUtil.showConflicts(dialog, conflicts, originalClass.project)
     }
 
-    internal abstract fun getErrorMessage(klass: KtClassOrObject): String?
+    internal open fun getErrorMessage(klass: KtClassOrObject): String? = when {
+        klass.isExpectDeclaration() -> "Extraction from expect class is not yet supported"
+        klass.toLightClass() == null -> "Extraction from non-JVM class is not yet supported"
+        else -> null
+    }
 
-    protected abstract fun doInvoke(klass: KtClassOrObject, targetParent: PsiElement, project: Project, editor: Editor?)
+    protected abstract fun createDialog(klass: KtClassOrObject, targetParent: PsiElement): KotlinExtractSuperDialogBase
 }

@@ -1,0 +1,83 @@
+KtFile: 2.20.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('f')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      BINARY_EXPRESSION
+        BINARY_EXPRESSION
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('1')
+          PsiWhiteSpace(' ')
+          OPERATION_REFERENCE
+            PsiElement(PLUS)('+')
+          PsiWhiteSpace(' ')
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('1')
+        PsiWhiteSpace(' ')
+        OPERATION_REFERENCE
+          PsiElement(IDENTIFIER)('`true`')
+        PsiWhiteSpace(' ')
+        BINARY_EXPRESSION
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('10')
+          OPERATION_REFERENCE
+            PsiElement(RANGE)('..')
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('11')
+      PsiWhiteSpace('\n\n    ')
+      BINARY_EXPRESSION
+        BINARY_EXPRESSION
+          BINARY_EXPRESSION
+            BINARY_EXPRESSION
+              INTEGER_CONSTANT
+                PsiElement(INTEGER_LITERAL)('1')
+              PsiWhiteSpace(' ')
+              OPERATION_REFERENCE
+                PsiElement(PLUS)('+')
+              PsiWhiteSpace(' ')
+              INTEGER_CONSTANT
+                PsiElement(INTEGER_LITERAL)('1')
+            PsiWhiteSpace(' ')
+            OPERATION_REFERENCE
+              PsiElement(IDENTIFIER)('`false`')
+            PsiWhiteSpace(' ')
+            BINARY_EXPRESSION
+              INTEGER_CONSTANT
+                PsiElement(INTEGER_LITERAL)('10')
+              OPERATION_REFERENCE
+                PsiElement(RANGE)('..')
+              INTEGER_CONSTANT
+                PsiElement(INTEGER_LITERAL)('11')
+          PsiWhiteSpace(' ')
+          OPERATION_REFERENCE
+            PsiElement(IDENTIFIER)('`true`')
+          PsiWhiteSpace(' ')
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('10')
+        PsiWhiteSpace(' ')
+        OPERATION_REFERENCE
+          PsiElement(IDENTIFIER)('`false`')
+        PsiWhiteSpace(' ')
+        BINARY_EXPRESSION
+          PREFIX_EXPRESSION
+            OPERATION_REFERENCE
+              PsiElement(MINUS)('-')
+            FLOAT_CONSTANT
+              PsiElement(FLOAT_CONSTANT)('.9')
+          OPERATION_REFERENCE
+            PsiElement(MINUS)('-')
+          FLOAT_CONSTANT
+            PsiElement(FLOAT_CONSTANT)('9.0')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

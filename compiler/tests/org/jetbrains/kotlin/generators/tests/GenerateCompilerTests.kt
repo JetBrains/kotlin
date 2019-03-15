@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.generators.tests
@@ -27,18 +16,24 @@ import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.defaultConstructor.AbstractDefaultArgumentsReflectionTest
 import org.jetbrains.kotlin.codegen.flags.AbstractWriteFlagsTest
-import org.jetbrains.kotlin.codegen.ir.AbstractIrBlackBoxCodegenTest
-import org.jetbrains.kotlin.codegen.ir.AbstractIrBlackBoxInlineCodegenTest
-import org.jetbrains.kotlin.codegen.ir.AbstractIrCompileKotlinAgainstInlineKotlinTest
+import org.jetbrains.kotlin.codegen.ir.*
+import org.jetbrains.kotlin.fir.AbstractFirResolveTestCase
+import org.jetbrains.kotlin.fir.AbstractFirResolveTestCaseWithStdlib
+import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase
+import org.jetbrains.kotlin.fir.java.AbstractFirTypeEnhancementTest
+import org.jetbrains.kotlin.fir.java.AbstractOwnFirTypeEnhancementTest
 import org.jetbrains.kotlin.generators.tests.generator.testGroup
 import org.jetbrains.kotlin.generators.util.KT_OR_KTS_WITHOUT_DOTS_IN_NAME
+import org.jetbrains.kotlin.generators.util.KT_WITHOUT_DOTS_IN_NAME
 import org.jetbrains.kotlin.integration.AbstractAntTaskTest
 import org.jetbrains.kotlin.ir.AbstractIrCfgTestCase
+import org.jetbrains.kotlin.ir.AbstractIrJsTextTestCase
 import org.jetbrains.kotlin.ir.AbstractIrSourceRangesTestCase
 import org.jetbrains.kotlin.ir.AbstractIrTextTestCase
 import org.jetbrains.kotlin.jvm.compiler.*
 import org.jetbrains.kotlin.jvm.compiler.javac.AbstractLoadJavaUsingJavacTest
-import org.jetbrains.kotlin.kdoc.AbstractKDocLexerTest
+import org.jetbrains.kotlin.lexer.kdoc.AbstractKDocLexerTest
+import org.jetbrains.kotlin.lexer.kotlin.AbstractKotlinLexerTest
 import org.jetbrains.kotlin.modules.xml.AbstractModuleXmlParserTest
 import org.jetbrains.kotlin.multiplatform.AbstractMultiPlatformIntegrationTest
 import org.jetbrains.kotlin.parsing.AbstractParsingTest
@@ -61,8 +56,7 @@ fun main(args: Array<String>) {
     testGroup("compiler/tests", "compiler/testData") {
 
         testClass<AbstractDiagnosticsTest> {
-            model("diagnostics/tests")
-            model("diagnostics/tests/script", extension = "kts")
+            model("diagnostics/tests", pattern = "^(.*)\\.kts?$")
             model("codegen/box/diagnostics")
         }
 
@@ -103,6 +97,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractDiagnosticsWithJdk9Test> {
             model("diagnostics/testsWithJava9")
+        }
+
+        testClass<AbstractDiagnosticsWithUnsignedTypes> {
+            model("diagnostics/testsWithUnsignedTypes")
         }
 
         testClass<AbstractMultiPlatformIntegrationTest> {
@@ -161,8 +159,8 @@ fun main(args: Array<String>) {
             model("codegen/kapt", targetBackend = TargetBackend.JVM)
         }
 
-        testClass<AbstractIrBlackBoxCodegenTest>("IrOnlyBoxCodegenTestGenerated") {
-            model("ir/box", targetBackend = TargetBackend.JVM)
+        testClass<AbstractAsmLikeInstructionListingTest> {
+            model("codegen/asmLike", targetBackend = TargetBackend.JVM)
         }
 
         testClass<AbstractBlackBoxInlineCodegenTest> {
@@ -181,12 +179,20 @@ fun main(args: Array<String>) {
             model("codegen/script", extension = "kts")
         }
 
+        testClass<AbstractCustomScriptCodegenTest> {
+            model("codegen/customScript", pattern = "^(.*)$")
+        }
+
         testClass<AbstractBytecodeTextTest> {
-            model("codegen/bytecodeText")
+            model("codegen/bytecodeText", targetBackend = TargetBackend.JVM)
         }
 
         testClass<AbstractIrTextTestCase> {
             model("ir/irText")
+        }
+
+        testClass<AbstractIrJsTextTestCase> {
+            model("ir/irJsText")
         }
 
         testClass<AbstractIrCfgTestCase> {
@@ -197,6 +203,8 @@ fun main(args: Array<String>) {
             model("ir/sourceRanges")
         }
 
+
+
         testClass<AbstractBytecodeListingTest> {
             model("codegen/bytecodeListing")
         }
@@ -206,7 +214,7 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractCheckLocalVariablesTableTest> {
-            model("checkLocalVariablesTable")
+            model("checkLocalVariablesTable", targetBackend = TargetBackend.JVM)
         }
 
         testClass<AbstractWriteFlagsTest> {
@@ -331,8 +339,7 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractLineNumberTest> {
-            model("lineNumber", recursive = false)
-            model("lineNumber/custom", testMethod = "doTestCustom")
+            model("lineNumber")
         }
 
         testClass<AbstractLocalClassProtoTest> {
@@ -340,21 +347,68 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractKDocLexerTest> {
-            model("kdoc/lexer")
+            model("lexer/kdoc")
         }
-    }
 
-    testGroup("compiler/tests-ir-jvm/tests", "compiler/testData") {
+        testClass<AbstractKotlinLexerTest> {
+            model("lexer/kotlin")
+        }
+
         testClass<AbstractIrBlackBoxCodegenTest> {
-            model("codegen/box", targetBackend = TargetBackend.JVM)
+            model("codegen/box", targetBackend = TargetBackend.JVM_IR)
+        }
+
+        testClass<AbstractIrBlackBoxAgainstJavaCodegenTest> {
+            model("codegen/boxAgainstJava", targetBackend = TargetBackend.JVM_IR)
+        }
+
+        testClass<AbstractIrCompileKotlinAgainstKotlinTest> {
+            model("compileKotlinAgainstKotlin", targetBackend = TargetBackend.JVM_IR)
+        }
+
+        testClass<AbstractIrCheckLocalVariablesTableTest> {
+            model("checkLocalVariablesTable", targetBackend = TargetBackend.JVM_IR)
+        }
+
+        testClass<AbstractIrLineNumberTest> {
+            model("lineNumber", targetBackend = TargetBackend.JVM_IR)
         }
 
         testClass<AbstractIrBlackBoxInlineCodegenTest> {
-            model("codegen/boxInline")
+            model("codegen/boxInline", targetBackend = TargetBackend.JVM_IR)
         }
 
-        testClass<AbstractIrCompileKotlinAgainstInlineKotlinTest> {
-            model("codegen/boxInline")
+        testClass<AbstractIrBytecodeTextTest> {
+            model("codegen/bytecodeText", targetBackend = TargetBackend.JVM_IR)
         }
     }
+
+    testGroup("compiler/fir/psi2fir/tests", "compiler/fir/psi2fir/testData") {
+        testClass<AbstractRawFirBuilderTestCase> {
+            model("rawBuilder", testMethod = "doRawFirTest")
+        }
+    }
+
+    testGroup("compiler/fir/resolve/tests", "compiler/fir/resolve/testData") {
+        testClass<AbstractFirResolveTestCase> {
+            model("resolve", pattern = KT_WITHOUT_DOTS_IN_NAME, excludeDirs = listOf("stdlib"))
+        }
+
+        testClass<AbstractFirResolveTestCaseWithStdlib> {
+            model("resolve/stdlib", pattern = KT_WITHOUT_DOTS_IN_NAME)
+        }
+    }
+
+    testGroup("compiler/fir/resolve/tests", "compiler/testData") {
+        testClass<AbstractFirTypeEnhancementTest> {
+            model("loadJava/compiledJava", extension = "java")
+        }
+    }
+
+    testGroup("compiler/fir/resolve/tests", "compiler/fir/resolve/testData") {
+        testClass<AbstractOwnFirTypeEnhancementTest> {
+            model("enhancement", extension = "java")
+        }
+    }
+
 }

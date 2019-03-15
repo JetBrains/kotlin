@@ -4,11 +4,18 @@ import org.junit.Test
 
 class KotlinUastValuesTest : AbstractKotlinValuesTest() {
 
-    @Test fun testAssertion() = doTest("Assertion")
+    @Test
+    fun testAssertion() = doTest("Assertion")
 
-    @Test fun testIn() = doTest("In")
+    @Test
+    fun testDelegate() = doTest("Delegate")
 
-    @Test fun testLocalDeclarations() = doTest("LocalDeclarations")
+    @Test
+    fun testIn() = doTest("In")
 
-    @Test fun testSimple() = doTest("Simple")
+    @Test
+    fun testLocalDeclarations() = doTest("LocalDeclarations")
+
+    @Test
+    fun testSimple() = doTest("Simple")
 }

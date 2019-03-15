@@ -23,10 +23,12 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.transform
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.utils.SmartList
 
 class IrClassImpl(
@@ -39,25 +41,50 @@ class IrClassImpl(
     override val visibility: Visibility,
     override val modality: Modality,
     override val isCompanion: Boolean,
-    override val isData: Boolean
-) : IrDeclarationBase(startOffset, endOffset, origin),
+    override val isInner: Boolean,
+    override val isData: Boolean,
+    override val isExternal: Boolean,
+    override val isInline: Boolean
+) :
+    IrDeclarationBase(startOffset, endOffset, origin),
     IrClass {
 
-    constructor(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, symbol: IrClassSymbol) :
+    constructor(
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        symbol: IrClassSymbol,
+        modality: Modality = symbol.descriptor.modality
+    ) :
             this(
                 startOffset, endOffset, origin, symbol,
                 symbol.descriptor.name, symbol.descriptor.kind,
-                symbol.descriptor.visibility, symbol.descriptor.modality,
-                symbol.descriptor.isCompanionObject, symbol.descriptor.isData
+                symbol.descriptor.visibility,
+                modality = modality,
+                isCompanion = symbol.descriptor.isCompanionObject,
+                isInner = symbol.descriptor.isInner,
+                isData = symbol.descriptor.isData,
+                isExternal = symbol.descriptor.isEffectivelyExternal(),
+                isInline = symbol.descriptor.isInline
             )
 
-    constructor(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ClassDescriptor) :
-            this(startOffset, endOffset, origin, IrClassSymbolImpl(descriptor))
+    constructor(
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        descriptor: ClassDescriptor,
+        modality: Modality = descriptor.modality
+    ) :
+            this(startOffset, endOffset, origin, IrClassSymbolImpl(descriptor), modality)
 
     constructor(
-        startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ClassDescriptor,
-        members: List<IrDeclaration>
-    ) : this(startOffset, endOffset, origin, descriptor) {
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        descriptor: ClassDescriptor,
+        modality: Modality = descriptor.modality,
+        members: List<IrDeclaration> = emptyList()
+    ) : this(startOffset, endOffset, origin, descriptor, modality) {
         addAll(members)
     }
 
@@ -73,7 +100,9 @@ class IrClassImpl(
 
     override val typeParameters: MutableList<IrTypeParameter> = SmartList()
 
-    override val superClasses: MutableList<IrClassSymbol> = SmartList()
+    override val superTypes: MutableList<IrType> = SmartList()
+
+    override var metadata: MetadataSource? = null
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitClass(this, data)

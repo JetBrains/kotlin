@@ -1,0 +1,2 @@
+<P> public final class ClassWithTypeP : R|java/lang/Object| {
+}

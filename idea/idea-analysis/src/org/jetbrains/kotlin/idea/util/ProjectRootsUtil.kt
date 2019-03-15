@@ -7,10 +7,13 @@ package org.jetbrains.kotlin.idea.util
 
 import com.intellij.ide.highlighter.ArchiveFileType
 import com.intellij.ide.highlighter.JavaClassFileType
+import com.intellij.ide.scratch.ScratchUtil
 import com.intellij.injected.editor.VirtualFileWindow
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.fileTypes.FileType
+import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.module.ModulePointerManager
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.FileIndex
@@ -26,6 +29,8 @@ import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager
 import org.jetbrains.kotlin.idea.decompiler.builtIns.KotlinBuiltInFileType
 import org.jetbrains.kotlin.idea.decompiler.js.KotlinJavaScriptMetaFileType
 import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.findScriptDefinition
+import kotlin.script.experimental.location.ScriptExpectedLocation
 
 abstract class KotlinBinaryExtension(val fileType: FileType) {
     companion object {
@@ -55,17 +60,68 @@ val PsiFileSystemItem.sourceRoot: VirtualFile?
     get() = virtualFile?.getSourceRoot(project)
 
 object ProjectRootsUtil {
-    @JvmStatic fun isInContent(project: Project, file: VirtualFile, includeProjectSource: Boolean,
-                               includeLibrarySource: Boolean, includeLibraryClasses: Boolean,
-                               includeScriptDependencies: Boolean,
-                               fileIndex: ProjectFileIndex = ProjectFileIndex.SERVICE.getInstance(project)): Boolean {
+
+    @Suppress("DEPRECATION")
+    @JvmStatic
+    fun isInContent(
+        project: Project, file: VirtualFile, includeProjectSource: Boolean,
+        includeLibrarySource: Boolean, includeLibraryClasses: Boolean,
+        includeScriptDependencies: Boolean, includeScriptsOutsideSourceRoots: Boolean,
+        fileIndex: ProjectFileIndex = ProjectFileIndex.SERVICE.getInstance(project)
+    ): Boolean {
+        val scriptDefinition = file.findScriptDefinition(project)
+        if (scriptDefinition != null) {
+            val scriptScope = scriptDefinition.scriptExpectedLocations
+            val includeAll = scriptScope.contains(ScriptExpectedLocation.Everywhere)
+                    || scriptScope.contains(ScriptExpectedLocation.Project)
+                    || ScratchUtil.isScratch(file)
+            return isInContentWithoutScriptDefinitionCheck(
+                project,
+                file,
+                includeProjectSource && (
+                        includeAll
+                                || scriptScope.contains(ScriptExpectedLocation.SourcesOnly)
+                                || scriptScope.contains(ScriptExpectedLocation.TestsOnly)
+                        ),
+                includeLibrarySource && (includeAll || scriptScope.contains(ScriptExpectedLocation.Libraries)),
+                includeLibraryClasses && (includeAll || scriptScope.contains(ScriptExpectedLocation.Libraries)),
+                includeScriptDependencies && (includeAll || scriptScope.contains(ScriptExpectedLocation.Libraries)),
+                includeScriptsOutsideSourceRoots && includeAll,
+                fileIndex
+            )
+        }
+        return isInContentWithoutScriptDefinitionCheck(
+            project,
+            file,
+            includeProjectSource,
+            includeLibrarySource,
+            includeLibraryClasses,
+            includeScriptDependencies,
+            false,
+            fileIndex
+        )
+    }
+
+    private fun isInContentWithoutScriptDefinitionCheck(
+        project: Project, file: VirtualFile, includeProjectSource: Boolean,
+        includeLibrarySource: Boolean, includeLibraryClasses: Boolean,
+        includeScriptDependencies: Boolean, includeScriptsOutsideSourceRoots: Boolean,
+        fileIndex: ProjectFileIndex = ProjectFileIndex.SERVICE.getInstance(project)
+    ): Boolean {
 
         if (includeProjectSource && fileIndex.isInSourceContentWithoutInjected(file)) return true
+
+        if (includeScriptsOutsideSourceRoots) {
+            if (ProjectRootManager.getInstance(project).fileIndex.isInContent(file) || ScratchUtil.isScratch(file)) {
+                return true
+            }
+            return file.findScriptDefinition(project)?.scriptExpectedLocations?.contains(ScriptExpectedLocation.Everywhere) == true
+        }
 
         if (!includeLibraryClasses && !includeLibrarySource) return false
 
         // NOTE: the following is a workaround for cases when class files are under library source roots and source files are under class roots
-        val fileType = file.fileType
+        val fileType = FileTypeManager.getInstance().getFileTypeByFileName(file.nameSequence)
         val canContainClassFiles = fileType == ArchiveFileType.INSTANCE || file.isDirectory
         val isBinary = fileType.isKotlinBinary()
 
@@ -77,7 +133,11 @@ object ProjectRootsUtil {
         }
         if (includeLibrarySource && !isBinary) {
             if (fileIndex.isInLibrarySource(file)) return true
-            if (scriptConfigurationManager?.getAllLibrarySourcesScope()?.contains(file) == true) return true
+            if (scriptConfigurationManager?.getAllLibrarySourcesScope()?.contains(file) == true &&
+                !fileIndex.isInSourceContentWithoutInjected(file)
+            ) {
+                return true
+            }
         }
 
         return false
@@ -88,7 +148,8 @@ object ProjectRootsUtil {
             includeProjectSource: Boolean,
             includeLibrarySource: Boolean,
             includeLibraryClasses: Boolean,
-            includeScriptDependencies: Boolean
+            includeScriptDependencies: Boolean,
+            includeScriptsOutsideSourceRoots: Boolean
     ): Boolean {
         return runReadAction {
             val virtualFile = when (element) {
@@ -97,40 +158,119 @@ object ProjectRootsUtil {
                               } ?: return@runReadAction false
 
             val project = element.project
-            return@runReadAction isInContent(project, virtualFile, includeProjectSource, includeLibrarySource, includeLibraryClasses, includeScriptDependencies)
+            return@runReadAction isInContent(
+                project,
+                virtualFile,
+                includeProjectSource,
+                includeLibrarySource,
+                includeLibraryClasses,
+                includeScriptDependencies,
+                includeScriptsOutsideSourceRoots
+            )
         }
     }
 
-    @JvmStatic fun isInProjectSource(element: PsiElement): Boolean {
-        return isInContent(element, includeProjectSource = true, includeLibrarySource = false, includeLibraryClasses = false, includeScriptDependencies = false)
+    @JvmOverloads
+    @JvmStatic
+    fun isInProjectSource(element: PsiElement, includeScriptsOutsideSourceRoots: Boolean = false): Boolean {
+        return isInContent(
+            element,
+            includeProjectSource = true,
+            includeLibrarySource = false,
+            includeLibraryClasses = false,
+            includeScriptDependencies = false,
+            includeScriptsOutsideSourceRoots = includeScriptsOutsideSourceRoots
+        )
     }
 
-    @JvmStatic fun isProjectSourceFile(project: Project, file: VirtualFile): Boolean {
-        return isInContent(project, file, includeProjectSource = true, includeLibrarySource = false, includeLibraryClasses = false, includeScriptDependencies = false)
+    @JvmOverloads
+    @JvmStatic
+    fun isProjectSourceFile(project: Project, file: VirtualFile, includeScriptsOutsideSourceRoots: Boolean = false): Boolean {
+        return isInContent(
+            project,
+            file,
+            includeProjectSource = true,
+            includeLibrarySource = false,
+            includeLibraryClasses = false,
+            includeScriptDependencies = false,
+            includeScriptsOutsideSourceRoots = includeScriptsOutsideSourceRoots
+        )
     }
 
-    @JvmStatic fun isInProjectOrLibSource(element: PsiElement): Boolean {
-        return isInContent(element, includeProjectSource = true, includeLibrarySource = true, includeLibraryClasses = false, includeScriptDependencies = false)
+    @JvmOverloads
+    @JvmStatic
+    fun isInProjectOrLibSource(element: PsiElement, includeScriptsOutsideSourceRoots: Boolean = false): Boolean {
+        return isInContent(
+            element,
+            includeProjectSource = true,
+            includeLibrarySource = true,
+            includeLibraryClasses = false,
+            includeScriptDependencies = false,
+            includeScriptsOutsideSourceRoots = includeScriptsOutsideSourceRoots
+        )
     }
 
-    @JvmStatic fun isInProjectOrLibraryContent(element: PsiElement): Boolean {
-        return isInContent(element, includeProjectSource = true, includeLibrarySource = true, includeLibraryClasses = true, includeScriptDependencies = true)
+    @JvmStatic
+    fun isInProjectOrLibraryContent(element: PsiElement): Boolean {
+        return isInContent(
+            element,
+            includeProjectSource = true,
+            includeLibrarySource = true,
+            includeLibraryClasses = true,
+            includeScriptDependencies = true,
+            includeScriptsOutsideSourceRoots = false
+        )
     }
 
-    @JvmStatic fun isInProjectOrLibraryClassFile(element: PsiElement): Boolean {
-        return isInContent(element, includeProjectSource = true, includeLibrarySource = false, includeLibraryClasses = true, includeScriptDependencies = false)
+    @JvmStatic
+    fun isInProjectOrLibraryClassFile(element: PsiElement): Boolean {
+        return isInContent(
+            element,
+            includeProjectSource = true,
+            includeLibrarySource = false,
+            includeLibraryClasses = true,
+            includeScriptDependencies = false,
+            includeScriptsOutsideSourceRoots = false
+        )
     }
 
-    @JvmStatic fun isLibraryClassFile(project: Project, file: VirtualFile): Boolean {
-        return isInContent(project, file, includeProjectSource = false, includeLibrarySource = false, includeLibraryClasses = true, includeScriptDependencies = true)
+    @JvmStatic
+    fun isLibraryClassFile(project: Project, file: VirtualFile): Boolean {
+        return isInContent(
+            project,
+            file,
+            includeProjectSource = false,
+            includeLibrarySource = false,
+            includeLibraryClasses = true,
+            includeScriptDependencies = true,
+            includeScriptsOutsideSourceRoots = false
+        )
     }
 
-    @JvmStatic fun isLibrarySourceFile(project: Project, file: VirtualFile): Boolean {
-        return isInContent(project, file, includeProjectSource = false, includeLibrarySource = true, includeLibraryClasses = false, includeScriptDependencies = true)
+    @JvmStatic
+    fun isLibrarySourceFile(project: Project, file: VirtualFile): Boolean {
+        return isInContent(
+            project,
+            file,
+            includeProjectSource = false,
+            includeLibrarySource = true,
+            includeLibraryClasses = false,
+            includeScriptDependencies = true,
+            includeScriptsOutsideSourceRoots = false
+        )
     }
 
-    @JvmStatic fun isLibraryFile(project: Project, file: VirtualFile): Boolean {
-        return isInContent(project, file, includeProjectSource = false, includeLibrarySource = true, includeLibraryClasses = true, includeScriptDependencies = true)
+    @JvmStatic
+    fun isLibraryFile(project: Project, file: VirtualFile): Boolean {
+        return isInContent(
+            project,
+            file,
+            includeProjectSource = false,
+            includeLibrarySource = true,
+            includeLibraryClasses = true,
+            includeScriptDependencies = true,
+            includeScriptsOutsideSourceRoots = false
+        )
     }
 }
 
@@ -144,3 +284,6 @@ val PsiElement.module: Module?
     get() = ModuleUtilCore.findModuleForPsiElement(this)
 
 fun VirtualFile.findModule(project: Project) = ModuleUtilCore.findModuleForFile(this, project)
+
+fun Module.createPointer() =
+    ModulePointerManager.getInstance(project).create(this)

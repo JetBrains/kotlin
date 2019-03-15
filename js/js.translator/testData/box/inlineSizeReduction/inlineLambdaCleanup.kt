@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1109
+// EXPECTED_REACHABLE_NODES: 1281
 // CHECK_NOT_CALLED: produceOK except=box
 
 fun produceOK() = "OK"

@@ -17,25 +17,23 @@
 package org.jetbrains.kotlin.idea.scratch.ui
 
 import com.intellij.ide.scratch.ScratchFileService
-import com.intellij.openapi.components.AbstractProjectComponent
+import com.intellij.ide.scratch.ScratchRootType
+import com.intellij.openapi.components.ProjectComponent
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
-import org.jetbrains.kotlin.idea.scratch.ScratchFileLanguageProvider
-import org.jetbrains.kotlin.idea.scratch.getAllEditorsWithScratchPanel
-import org.jetbrains.kotlin.idea.scratch.getEditorWithoutScratchPanel
-import org.jetbrains.kotlin.idea.scratch.removeScratchPanel
+import org.jetbrains.kotlin.idea.scratch.*
 
-class ScratchFileHook(project: Project) : AbstractProjectComponent(project) {
+class ScratchFileHook(val project: Project) : ProjectComponent {
 
     override fun projectOpened() {
-        myProject.messageBus.connect(myProject).subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, ScratchEditorListener())
+        project.messageBus.connect(project).subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, ScratchEditorListener())
     }
 
     override fun projectClosed() {
-        getAllEditorsWithScratchPanel(myProject).forEach { (editor, panel) -> editor.removeScratchPanel(panel) }
+        getAllEditorsWithScratchPanel(project).forEach { (editor, _) -> editor.removeScratchPanel() }
     }
 
     private inner class ScratchEditorListener : FileEditorManagerListener {
@@ -44,7 +42,9 @@ class ScratchFileHook(project: Project) : AbstractProjectComponent(project) {
 
             val editor = getEditorWithoutScratchPanel(source, file) ?: return
 
-            ScratchTopPanel.createPanel(myProject, file, editor)
+            ScratchTopPanel.createPanel(project, file, editor)
+
+            ScratchFileAutoRunner.addListener(project, editor)
         }
 
         override fun fileClosed(source: FileEditorManager, file: VirtualFile) {}
@@ -52,8 +52,8 @@ class ScratchFileHook(project: Project) : AbstractProjectComponent(project) {
 
     private fun isPluggable(file: VirtualFile): Boolean {
         if (!file.isValid) return false
-        if (!ScratchFileService.isInScratchRoot(file)) return false
-        val psiFile = PsiManager.getInstance(myProject).findFile(file) ?: return false
+        if (ScratchFileService.getInstance().getRootType(file) !is ScratchRootType) return false
+        val psiFile = PsiManager.getInstance(project).findFile(file) ?: return false
         return ScratchFileLanguageProvider.get(psiFile.fileType) != null
     }
 }

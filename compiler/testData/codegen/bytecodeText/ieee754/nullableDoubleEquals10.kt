@@ -1,4 +1,5 @@
-// LANGUAGE_VERSION: 1.0
+// !API_VERSION: 1.0
+// IGNORE_BACKEND: JVM_IR
 
 fun myEquals(a: Double?, b: Double?) = a == b
 
@@ -26,4 +27,4 @@ fun box(): String {
     return "OK"
 }
 
-// 0 areEquals
+// 0 areEqual

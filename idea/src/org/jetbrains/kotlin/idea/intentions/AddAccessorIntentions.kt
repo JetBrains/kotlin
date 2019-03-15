@@ -22,26 +22,31 @@ import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.refactoring.isAbstract
+import org.jetbrains.kotlin.idea.util.findAnnotation
+import org.jetbrains.kotlin.idea.util.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPsiFactory
 
 abstract class AbstractAddAccessorsIntention(
-        private val addGetter: Boolean,
-        private val addSetter: Boolean
+    private val addGetter: Boolean,
+    private val addSetter: Boolean
 ) : SelfTargetingRangeIntention<KtProperty>(KtProperty::class.java, createFamilyName(addGetter, addSetter)) {
 
     override fun applicabilityRange(element: KtProperty): TextRange? {
         if (element.isLocal || element.isAbstract() || element.hasDelegate() ||
             element.hasModifier(KtTokens.LATEINIT_KEYWORD) ||
-            element.hasModifier(KtTokens.CONST_KEYWORD)) {
+            element.hasModifier(KtTokens.CONST_KEYWORD) ||
+            element.hasJvmFieldAnnotation()
+        ) {
             return null
         }
         val descriptor = element.resolveToDescriptorIfAny() as? CallableMemberDescriptor ?: return null
         if (descriptor.isExpect) return null
 
         if (addSetter && (!element.isVar || element.setter != null)) return null
-        if (addGetter && element.getter != null) return null
+        if (addGetter && ((element.typeReference == null && element.initializer == null) || element.getter != null)) return null
         return element.nameIdentifier?.textRange
     }
 

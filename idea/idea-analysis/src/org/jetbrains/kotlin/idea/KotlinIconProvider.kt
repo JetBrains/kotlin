@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea
 
 import com.intellij.ide.IconProvider
 import com.intellij.openapi.project.DumbAware
+import com.intellij.openapi.project.IndexNotReadyException
 import com.intellij.openapi.util.Iconable
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
@@ -25,7 +26,11 @@ import com.intellij.ui.RowIcon
 import com.intellij.util.PlatformIcons
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
+import org.jetbrains.kotlin.idea.KotlinIcons.ACTUAL
+import org.jetbrains.kotlin.idea.KotlinIcons.EXPECT
 import org.jetbrains.kotlin.idea.caches.lightClasses.KtLightClassForDecompiledDeclaration
+import org.jetbrains.kotlin.idea.util.hasMatchingExpected
+import org.jetbrains.kotlin.idea.util.isExpectDeclaration
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -35,6 +40,12 @@ import javax.swing.Icon
 class KotlinIconProvider : IconProvider(), DumbAware {
     override fun getIcon(psiElement: PsiElement, flags: Int): Icon? {
         if (psiElement is KtFile) {
+            if (psiElement.isScript()) {
+                return when {
+                    psiElement.name.endsWith(".gradle.kts") -> KotlinIcons.GRADLE_SCRIPT
+                    else -> KotlinIcons.SCRIPT
+                }
+            }
             val mainClass = getSingleClass(psiElement)
             return if (mainClass != null) getIcon(mainClass, flags) else KotlinIcons.FILE
         }
@@ -42,7 +53,15 @@ class KotlinIconProvider : IconProvider(), DumbAware {
         val result = psiElement.getBaseIcon()
         if (flags and Iconable.ICON_FLAG_VISIBILITY > 0 && result != null && (psiElement is KtModifierListOwner && psiElement !is KtClassInitializer)) {
             val list = psiElement.modifierList
-            return createRowIcon(result, getVisibilityIcon(list))
+            val visibilityIcon = getVisibilityIcon(list)
+
+            val withExpectedActual: Icon = try {
+                result.addExpectActualMarker(psiElement)
+            } catch (indexNotReady: IndexNotReadyException) {
+                result
+            }
+
+            createRowIcon(withExpectedActual, visibilityIcon)
         }
         return result
     }
@@ -126,5 +145,18 @@ class KotlinIconProvider : IconProvider(), DumbAware {
             is KtTypeAlias -> KotlinIcons.TYPE_ALIAS
             else -> null
         }
+    }
+}
+
+private fun Icon.addExpectActualMarker(element: PsiElement): Icon {
+    val declaration = (element as? KtNamedDeclaration) ?: return this
+    val additionalIcon = when {
+        declaration.isExpectDeclaration() -> EXPECT
+        declaration.hasMatchingExpected() -> ACTUAL
+        else -> return this
+    }
+    return RowIcon(2).apply {
+        setIcon(this@addExpectActualMarker, 0)
+        setIcon(additionalIcon, 1)
     }
 }

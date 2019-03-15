@@ -29,7 +29,8 @@ import org.jetbrains.kotlin.name.FqName
 class IrExternalPackageFragmentImpl(
     override val symbol: IrExternalPackageFragmentSymbol,
     override val fqName: FqName
-) : IrExternalPackageFragment, IrElementBase(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
+) : IrElementBase(UNDEFINED_OFFSET, UNDEFINED_OFFSET),
+    IrExternalPackageFragment {
 
     constructor(symbol: IrExternalPackageFragmentSymbol) : this(symbol, symbol.descriptor.fqName)
 

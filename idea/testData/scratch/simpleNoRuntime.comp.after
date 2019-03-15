@@ -1,0 +1,3 @@
+arrayListOf(1, 2).size    // RESULT: 2
+
+//NO_MODULE

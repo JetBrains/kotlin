@@ -1,0 +1,30 @@
+package
+
+public fun test(/*0*/ e: [ERROR : ErrorType]): kotlin.Unit
+
+public open class Foo {
+    public constructor Foo()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public open fun </*0*/ T : kotlin.Any!> foo(/*0*/ var1: Sam<T!>!): kotlin.Unit
+}
+
+public interface Sam</*0*/ K : kotlin.Any!> {
+    public abstract fun compute(): Sam.Result<K!>!
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public open class Result</*0*/ V : kotlin.Any!> {
+        public constructor Result</*0*/ V : kotlin.Any!>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        // Static members
+        public open fun </*0*/ V : kotlin.Any!> create(/*0*/ value: V!): Sam.Result<V!>!
+    }
+}

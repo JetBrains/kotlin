@@ -23,7 +23,6 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.WindowManager
 import com.intellij.psi.PsiElement
-import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.refactoring.HelpID
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.util.CommonRefactoringUtil
@@ -33,21 +32,19 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInliner.CodeToInline
 import org.jetbrains.kotlin.idea.codeInliner.PropertyUsageReplacementStrategy
+import org.jetbrains.kotlin.idea.findUsages.ReferencesSearchScopeHelper
 import org.jetbrains.kotlin.idea.project.builtIns
 import org.jetbrains.kotlin.idea.refactoring.checkConflictsInteractively
 import org.jetbrains.kotlin.idea.references.ReferenceAccess
 import org.jetbrains.kotlin.idea.references.readWriteAccess
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtBinaryExpression
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 
 class KotlinInlineValHandler(private val withPrompt: Boolean) : InlineActionHandler() {
 
-    constructor(): this(withPrompt = true)
+    constructor() : this(withPrompt = true)
 
     override fun isEnabledForLanguage(l: Language) = l == KotlinLanguage.INSTANCE
 
@@ -92,8 +89,7 @@ class KotlinInlineValHandler(private val withPrompt: Boolean) : InlineActionHand
             readReplacement = buildCodeToInline(declaration, descriptor.type, isTypeExplicit, initialization.value, false, editor) ?: return
             writeReplacement = null
             assignmentToDelete = initialization.assignment
-        }
-        else {
+        } else {
             readReplacement = getter?.let {
                 buildCodeToInline(getter, descriptor.type, isTypeExplicit, getter.bodyExpression!!, getter.hasBlockBody(), editor) ?: return
             }
@@ -111,8 +107,7 @@ class KotlinInlineValHandler(private val withPrompt: Boolean) : InlineActionHand
             project.checkConflictsInteractively(conflictsCopy) {
                 performRefactoring(declaration, readReplacement, writeReplacement, assignmentToDelete, editor, hasHighlightings)
             }
-        }
-        else {
+        } else {
             performRefactoring(declaration, readReplacement, writeReplacement, assignmentToDelete, editor, hasHighlightings)
         }
     }
@@ -120,7 +115,7 @@ class KotlinInlineValHandler(private val withPrompt: Boolean) : InlineActionHand
     private data class Usages(val referenceExpressions: Collection<KtExpression>, val conflicts: MultiMap<PsiElement, String>)
 
     private fun findUsages(declaration: KtProperty): Usages {
-        val references = ReferencesSearch.search(declaration)
+        val references = ReferencesSearchScopeHelper.search(declaration)
         val referenceExpressions = mutableListOf<KtExpression>()
         val conflictUsages = MultiMap.create<PsiElement, String>()
         for (ref in references) {
@@ -145,10 +140,10 @@ class KotlinInlineValHandler(private val withPrompt: Boolean) : InlineActionHand
     private data class Initialization(val value: KtExpression, val assignment: KtBinaryExpression?)
 
     private fun extractInitialization(
-            declaration: KtProperty,
-            referenceExpressions: Collection<KtExpression>,
-            project: Project,
-            editor: Editor?
+        declaration: KtProperty,
+        referenceExpressions: Collection<KtExpression>,
+        project: Project,
+        editor: Editor?
     ): Initialization? {
         val writeUsages = referenceExpressions.filter { it.readWriteAccess(useResolveForReadWrite = true) != ReferenceAccess.READ }
 
@@ -159,11 +154,10 @@ class KotlinInlineValHandler(private val withPrompt: Boolean) : InlineActionHand
                 return null
             }
             return Initialization(initializerInDeclaration, assignment = null)
-        }
-        else {
+        } else {
             val assignment = writeUsages.singleOrNull()
-                    ?.getAssignmentByLHS()
-                    ?.takeIf { it.operationToken == KtTokens.EQ }
+                ?.getAssignmentByLHS()
+                ?.takeIf { it.operationToken == KtTokens.EQ }
             val initializer = assignment?.right
             if (initializer == null) {
                 reportAmbiguousAssignment(project, editor, declaration.name!!, writeUsages)
@@ -174,12 +168,12 @@ class KotlinInlineValHandler(private val withPrompt: Boolean) : InlineActionHand
     }
 
     private fun performRefactoring(
-            declaration: KtProperty,
-            readReplacement: CodeToInline?,
-            writeReplacement: CodeToInline?,
-            assignmentToDelete: KtBinaryExpression?,
-            editor: Editor?,
-            hasHighlightings: Boolean
+        declaration: KtProperty,
+        readReplacement: CodeToInline?,
+        writeReplacement: CodeToInline?,
+        assignmentToDelete: KtBinaryExpression?,
+        editor: Editor?,
+        hasHighlightings: Boolean
     ) {
         val replacementStrategy = PropertyUsageReplacementStrategy(readReplacement, writeReplacement)
         val reference = editor?.findSimpleNameReference()
@@ -192,8 +186,7 @@ class KotlinInlineValHandler(private val withPrompt: Boolean) : InlineActionHand
                 val statusBar = WindowManager.getInstance().getStatusBar(declaration.project)
                 statusBar?.info = RefactoringBundle.message("press.escape.to.remove.the.highlighting")
             }
-        }
-        else {
+        } else {
             dialog.doAction()
         }
     }
@@ -205,7 +198,13 @@ class KotlinInlineValHandler(private val withPrompt: Boolean) : InlineActionHand
     }
 
     private fun showErrorHint(project: Project, editor: Editor?, message: String) {
-        CommonRefactoringUtil.showErrorHint(project, editor, message, RefactoringBundle.message("inline.variable.title"), HelpID.INLINE_VARIABLE)
+        CommonRefactoringUtil.showErrorHint(
+            project,
+            editor,
+            message,
+            RefactoringBundle.message("inline.variable.title"),
+            HelpID.INLINE_VARIABLE
+        )
     }
 
 }

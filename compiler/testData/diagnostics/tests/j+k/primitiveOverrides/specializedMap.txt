@@ -28,10 +28,10 @@ public abstract class AbstractSpecializedMap : kotlin.collections.MutableMap<kot
 
 public open class SpecializedMap : AbstractSpecializedMap {
     public constructor SpecializedMap()
-    public open override /*1*/ val entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<kotlin.Int!, kotlin.Double!>>
-    public open override /*1*/ val keys: kotlin.collections.MutableSet<kotlin.Int!>
-    public open override /*1*/ val size: kotlin.Int
-    public open override /*1*/ val values: kotlin.collections.MutableCollection<kotlin.Double!>
+    @get:org.jetbrains.annotations.NotNull @get:java.lang.Override public open override /*1*/ val entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<kotlin.Int!, kotlin.Double!>>
+    @get:org.jetbrains.annotations.NotNull @get:java.lang.Override public open override /*1*/ val keys: kotlin.collections.MutableSet<kotlin.Int!>
+    @get:java.lang.Override public open override /*1*/ val size: kotlin.Int
+    @get:org.jetbrains.annotations.NotNull @get:java.lang.Override public open override /*1*/ val values: kotlin.collections.MutableCollection<kotlin.Double!>
     @java.lang.Override public open override /*1*/ fun clear(): kotlin.Unit
     public open override /*1*/ fun containsKey(/*0*/ k: kotlin.Int): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun containsKey(/*0*/ x: kotlin.Int!): kotlin.Boolean

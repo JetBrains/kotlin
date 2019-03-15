@@ -17,38 +17,53 @@
 package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.createFunctionSymbol
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.types.KotlinType
 
 class IrFunctionReferenceImpl(
     startOffset: Int,
     endOffset: Int,
-    type: KotlinType,
+    type: IrType,
     override val symbol: IrFunctionSymbol,
     override val descriptor: FunctionDescriptor,
-    typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
+    typeArgumentsCount: Int,
+    valueArgumentsCount: Int,
     origin: IrStatementOrigin? = null
-) : IrFunctionReference,
+) :
     IrCallWithIndexedArgumentsBase(
-        startOffset, endOffset, type,
-        symbol.descriptor.valueParameters.size,
-        typeArguments,
+        startOffset,
+        endOffset,
+        type,
+        typeArgumentsCount,
+        valueArgumentsCount,
         origin
-    ) {
+    ),
+    IrFunctionReference {
+
+    constructor(
+        startOffset: Int,
+        endOffset: Int,
+        type: IrType,
+        symbol: IrFunctionSymbol,
+        descriptor: FunctionDescriptor,
+        typeArgumentsCount: Int,
+        origin: IrStatementOrigin? = null
+    ): this(startOffset, endOffset, type, symbol, descriptor, typeArgumentsCount, descriptor.valueParameters.size, origin)
+
     @Deprecated("Creates unbound symbol")
     constructor(
         startOffset: Int,
         endOffset: Int,
-        type: KotlinType,
+        type: IrType,
         descriptor: FunctionDescriptor,
-        typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
+        typeArgumentsCount: Int,
         origin: IrStatementOrigin? = null
-    ) : this(startOffset, endOffset, type, createFunctionSymbol(descriptor.original), descriptor, typeArguments, origin)
+    ) : this(startOffset, endOffset, type, createFunctionSymbol(descriptor.original), descriptor,
+             typeArgumentsCount, descriptor.valueParameters.size, origin)
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitFunctionReference(this, data)

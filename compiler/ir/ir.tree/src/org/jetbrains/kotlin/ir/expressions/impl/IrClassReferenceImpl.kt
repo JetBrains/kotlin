@@ -23,27 +23,29 @@ import org.jetbrains.kotlin.ir.expressions.IrClassReference
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.types.KotlinType
 
 class IrClassReferenceImpl(
     startOffset: Int,
     endOffset: Int,
-    type: KotlinType,
+    type: IrType,
     symbol: IrClassifierSymbol,
-    override val classType: KotlinType
-) : IrClassReference,
+    override val classType: IrType
+) :
     IrTerminalDeclarationReferenceBase<IrClassifierSymbol, ClassifierDescriptor>(
         startOffset, endOffset, type,
         symbol, symbol.descriptor
-    ) {
+    ),
+    IrClassReference {
+
     @Deprecated("Creates unbound symbols")
     constructor(
         startOffset: Int,
         endOffset: Int,
-        type: KotlinType,
+        type: IrType,
         descriptor: ClassifierDescriptor,
-        classType: KotlinType
+        classType: IrType
     ) : this(startOffset, endOffset, type, createClassifierSymbol(descriptor), classType)
 
     override val descriptor: ClassifierDescriptor get() = symbol.descriptor

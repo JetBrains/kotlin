@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // FILE: Super.java
 
 class Super {

@@ -17,10 +17,7 @@
 package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationContainer
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -30,21 +27,31 @@ interface FileLoweringPass {
     fun lower(irFile: IrFile)
 }
 
-interface ClassLoweringPass {
+interface ClassLoweringPass : FileLoweringPass {
     fun lower(irClass: IrClass)
+
+    override fun lower(irFile: IrFile) = runOnFilePostfix(irFile)
 }
 
-interface DeclarationContainerLoweringPass {
+interface DeclarationContainerLoweringPass : FileLoweringPass {
     fun lower(irDeclarationContainer: IrDeclarationContainer)
+
+    override fun lower(irFile: IrFile) = runOnFilePostfix(irFile)
 }
 
-interface FunctionLoweringPass {
+interface FunctionLoweringPass : FileLoweringPass {
     fun lower(irFunction: IrFunction)
+
+    override fun lower(irFile: IrFile) = runOnFilePostfix(irFile)
 }
 
-interface BodyLoweringPass {
+interface BodyLoweringPass : FileLoweringPass {
     fun lower(irBody: IrBody)
+
+    override fun lower(irFile: IrFile) = runOnFilePostfix(irFile)
 }
+
+fun FileLoweringPass.lower(moduleFragment: IrModuleFragment) = moduleFragment.files.forEach { lower(it) }
 
 fun ClassLoweringPass.runOnFilePostfix(irFile: IrFile) {
     irFile.acceptVoid(object : IrElementVisitorVoid {
@@ -67,7 +74,7 @@ fun DeclarationContainerLoweringPass.asClassLoweringPass() = object : ClassLower
 
 fun DeclarationContainerLoweringPass.runOnFilePostfix(irFile: IrFile) {
     this.asClassLoweringPass().runOnFilePostfix(irFile)
-    this.lower(irFile)
+    this.lower(irFile as IrDeclarationContainer)
 }
 
 fun BodyLoweringPass.runOnFilePostfix(irFile: IrFile) {

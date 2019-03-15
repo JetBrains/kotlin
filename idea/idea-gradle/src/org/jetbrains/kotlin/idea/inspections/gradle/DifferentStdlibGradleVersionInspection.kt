@@ -16,31 +16,28 @@
 
 package org.jetbrains.kotlin.idea.inspections.gradle
 
-import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.ProjectKeys
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.idea.configuration.KOTLIN_GROUP_ID
 import org.jetbrains.kotlin.idea.inspections.gradle.GradleHeuristicHelper.PRODUCTION_DEPENDENCY_STATEMENTS
-import org.jetbrains.kotlin.idea.versions.*
+import org.jetbrains.kotlin.idea.platform.tooling
+import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.plugins.gradle.codeInspection.GradleBaseInspection
 import org.jetbrains.plugins.groovy.codeInspection.BaseInspectionVisitor
-import org.jetbrains.plugins.groovy.lang.psi.GroovyFileBase
-import org.jetbrains.plugins.groovy.lang.psi.GroovyPsiElement
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.blocks.GrClosableBlock
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrMethodCall
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.path.GrCallExpression
-import java.util.*
 
 class DifferentStdlibGradleVersionInspection : GradleBaseInspection() {
-    override fun buildVisitor(): BaseInspectionVisitor = MyVisitor(
-        listOf(MAVEN_STDLIB_ID, MAVEN_STDLIB_ID_JRE7, MAVEN_STDLIB_ID_JDK7, MAVEN_STDLIB_ID_JRE8, MAVEN_STDLIB_ID_JDK8)
-    )
+    override fun buildVisitor(): BaseInspectionVisitor = MyVisitor(KOTLIN_GROUP_ID, JvmIdePlatformKind.tooling.mavenLibraryIds)
 
     override fun buildErrorString(vararg args: Any) =
         "Plugin version (${args[0]}) is not the same as library version (${args[1]})"
 
-    private abstract class VersionFinder(private val libraryIds: List<String>) : KotlinGradleInspectionVisitor() {
+    private abstract class VersionFinder(private val groupId: String, private val libraryIds: List<String>) :
+        KotlinGradleInspectionVisitor() {
         protected abstract fun onFound(stdlibVersion: String, stdlibStatement: GrCallExpression)
 
         override fun visitClosure(closure: GrClosableBlock) {
@@ -52,13 +49,13 @@ class DifferentStdlibGradleVersionInspection : GradleBaseInspection() {
             if (dependenciesCall.parent !is PsiFile) return
 
             val stdlibStatement = findLibraryStatement(closure, "org.jetbrains.kotlin", libraryIds) ?: return
-            val stdlibVersion = getResolvedKotlinStdlibVersion(closure.containingFile, libraryIds) ?: return
+            val stdlibVersion = getResolvedLibVersion(closure.containingFile, groupId, libraryIds) ?: return
 
             onFound(stdlibVersion, stdlibStatement)
         }
     }
 
-    private inner class MyVisitor(libraryIds: List<String>) : VersionFinder(libraryIds) {
+    private inner class MyVisitor(groupId: String, libraryIds: List<String>) : VersionFinder(groupId, libraryIds) {
         override fun onFound(stdlibVersion: String, stdlibStatement: GrCallExpression) {
             val gradlePluginVersion = getResolvedKotlinGradleVersion(stdlibStatement.containingFile)
 
@@ -69,42 +66,27 @@ class DifferentStdlibGradleVersionInspection : GradleBaseInspection() {
     }
 
     companion object {
-        fun getKotlinStdlibVersions(gradleFile: GroovyFileBase, libraryId: List<String>): Collection<String> {
-            val versions = LinkedHashSet<String>()
-            val visitor = object : VersionFinder(libraryId) {
-                override fun visitElement(element: GroovyPsiElement) {
-                    element.acceptChildren(this)
-                }
-
-                override fun onFound(stdlibVersion: String, stdlibStatement: GrCallExpression) {
-                    versions += stdlibVersion
-                }
-            }
-            gradleFile.accept(visitor)
-            return versions
-        }
-
         private fun findLibraryStatement(closure: GrClosableBlock, libraryGroup: String, libraryIds: List<String>): GrCallExpression? {
             return GradleHeuristicHelper.findStatementWithPrefixes(closure, PRODUCTION_DEPENDENCY_STATEMENTS).firstOrNull { statement ->
-                libraryIds.any { it in statement.text } && statement.text.contains(libraryGroup)
+                libraryIds.any {
+                    val index = statement.text.indexOf(it)
+                    // This prevents detecting kotlin-stdlib inside kotlin-stdlib-common, -jdk8, etc.
+                    index != -1 && statement.text.getOrNull(index + it.length) != '-'
+                } && statement.text.contains(libraryGroup)
             }
         }
 
-        fun getResolvedKotlinStdlibVersion(file: PsiFile, libraryIds: List<String>): String? {
+        fun getResolvedLibVersion(file: PsiFile, groupId: String, libraryIds: List<String>): String? {
             val projectStructureNode = findGradleProjectStructure(file) ?: return null
             val module = ProjectRootManager.getInstance(file.project).fileIndex.getModuleForFile(file.virtualFile) ?: return null
 
             for (moduleData in projectStructureNode.findAll(ProjectKeys.MODULE).filter { it.data.internalName == module.name }) {
-                moduleData.node.getResolvedKotlinStdlibVersionByModuleData(libraryIds)?.let { return it }
+                moduleData.node.getResolvedVersionByModuleData(groupId, libraryIds)?.let {
+                    return it
+                }
             }
 
             return null
         }
     }
-}
-
-internal fun DataNode<*>.getResolvedKotlinStdlibVersionByModuleData(libraryIds: List<String>): String? {
-    return KotlinGradleModelFacade.EP_NAME.extensions.asSequence()
-        .mapNotNull { it.getResolvedKotlinStdlibVersionByModuleData(this, libraryIds) }
-        .firstOrNull()
 }

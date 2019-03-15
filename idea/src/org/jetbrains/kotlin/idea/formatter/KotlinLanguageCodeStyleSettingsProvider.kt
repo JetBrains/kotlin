@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.formatter
@@ -51,7 +40,7 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                // todo: something
                        try {            return foo1(12, 13, 14)
                        }        catch (e: Exception) {            return 0        }        finally {           if (true) {               return 1           }           else {               return 2           }        }    }
-                   private val f = {(a: Int)->a*2}
+                   private val f = {a: Int->a*2}
 
                    fun longMethod(@Named("param1") param1: Int,
                     param2: String) {
@@ -137,7 +126,7 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                }""".trimIndent()
 
         else -> """open class Some {
-                       private val f: (Int)->Int = { (a: Int) -> a * 2 }
+                       private val f: (Int)->Int = { a: Int -> a * 2 }
                        fun foo(): Int {
                            val test: Int = 12
                            for (i in 10..42) {
@@ -266,6 +255,8 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
             LanguageCodeStyleSettingsProvider.SettingsType.WRAPPING_AND_BRACES_SETTINGS -> {
                 consumer.showStandardOptions(
                     // "ALIGN_MULTILINE_CHAINED_METHODS",
+                    "RIGHT_MARGIN",
+                    "WRAP_ON_TYPING",
                     "KEEP_FIRST_COLUMN_COMMENT",
                     "KEEP_LINE_BREAKS",
                     "ALIGN_MULTILINE_EXTENDS_LIST",
@@ -296,6 +287,12 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                 )
                 consumer.renameStandardOption(CodeStyleSettingsCustomizable.WRAPPING_SWITCH_STATEMENT, "'when' statements")
                 consumer.renameStandardOption("FIELD_ANNOTATION_WRAP", "Property annotations")
+                consumer.renameStandardOption("METHOD_PARAMETERS_WRAP", "Function declaration parameters")
+                consumer.renameStandardOption("CALL_PARAMETERS_WRAP", "Function call arguments")
+                consumer.renameStandardOption("METHOD_CALL_CHAIN_WRAP", "Chained function calls")
+                consumer.renameStandardOption("METHOD_ANNOTATION_WRAP", "Function annotations")
+                consumer.renameStandardOption(CodeStyleSettingsCustomizable.WRAPPING_METHOD_PARENTHESES, "Function parentheses")
+
                 showCustomOption(
                     KotlinCodeStyleSettings::ALIGN_IN_COLUMNS_CASE_BRANCH,
                     "Align 'when' branches in columns",
@@ -350,6 +347,11 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                         CodeStyleSettingsCustomizable.WRAP_VALUES_FOR_SINGLETON
                     )
                 )
+                showCustomOption(
+                    KotlinCodeStyleSettings::CONTINUATION_INDENT_IN_ELVIS,
+                    title = "Use continuation indent",
+                    groupName = "Elvis expressions"
+                )
                 @Suppress("InvalidBundleOrProperty")
                 showCustomOption(
                     KotlinCodeStyleSettings::IF_RPAREN_ON_NEW_LINE,
@@ -374,6 +376,9 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                     "Around 'when' branches with {}",
                     CodeStyleSettingsCustomizable.BLANK_LINES
                 )
+            }
+            LanguageCodeStyleSettingsProvider.SettingsType.COMMENTER_SETTINGS -> {
+                consumer.showAllStandardOptions();
             }
             else -> consumer.showStandardOptions()
         }

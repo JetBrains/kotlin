@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // SKIP_MINIFICATION
 // This test uses eval, so DCE becomes impossible
 // MODULE: lib

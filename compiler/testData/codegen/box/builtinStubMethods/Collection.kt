@@ -1,5 +1,5 @@
-// TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS, NATIVE
+// IGNORE_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 
 class MyCollection<T>: Collection<T> {
     override val size: Int get() = 0

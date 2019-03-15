@@ -1,5 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-// !LANGUAGE: -Coroutines
+// !LANGUAGE: -Coroutines -ReleaseCoroutines
 
 <!UNSUPPORTED_FEATURE!>suspend<!> fun suspendHere(): String = "OK"
 

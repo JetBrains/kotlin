@@ -1,8 +1,10 @@
 
 description = "Kotlin SamWithReceiver Compiler Plugin"
 
-apply { plugin("kotlin") }
-apply { plugin("jps-compatible") }
+plugins {
+    kotlin("jvm")
+    id("jps-compatible")
+}
 
 dependencies {
     compileOnly(project(":compiler:frontend"))
@@ -12,7 +14,6 @@ dependencies {
 
     testCompile(project(":compiler:backend"))
     testCompile(project(":compiler:cli"))
-    testCompile(project(":compiler:tests-common"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(commonDep("junit:junit"))
 }
@@ -22,14 +23,12 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-val jar = runtimeJar {
-    from(fileTree("$projectDir/src")) { include("META-INF/**") }
-}
+publish()
+
+val jar = runtimeJar {}
 sourcesJar()
 javadocJar()
 testsJar {}
-
-publish()
 
 dist {
     rename("kotlin-", "")
@@ -42,7 +41,4 @@ ideaPlugin {
 projectTest {
     dependsOn(":kotlin-stdlib:jvm-minimal-for-test:dist")
     workingDir = rootDir
-    doFirst {
-        systemProperty("idea.home.path", intellijRootDir().canonicalPath)
-    }
 }

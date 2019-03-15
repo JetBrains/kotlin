@@ -1,5 +1,4 @@
-// TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS, NATIVE
+// TARGET_BACKEND: JVM
 
 // WITH_RUNTIME
 
@@ -14,8 +13,6 @@ annotation class Ann(vararg val p: Int)
 @Ann(*intArrayOf(1)) class MyClass5
 @Ann(*intArrayOf(1, 2)) class MyClass6
 
-@Ann(p = 1) class MyClass7
-
 @Ann(p = *intArrayOf()) class MyClass8
 @Ann(p = *intArrayOf(1)) class MyClass9
 @Ann(p = *intArrayOf(1, 2)) class MyClass10
@@ -28,8 +25,6 @@ fun box(): String {
     test(MyClass4::class.java, "")
     test(MyClass5::class.java, "1")
     test(MyClass6::class.java, "12")
-
-    test(MyClass7::class.java, "1")
 
     test(MyClass8::class.java, "")
     test(MyClass9::class.java, "1")

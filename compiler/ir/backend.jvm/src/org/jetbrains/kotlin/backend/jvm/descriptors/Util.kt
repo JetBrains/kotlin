@@ -18,11 +18,12 @@ package org.jetbrains.kotlin.backend.jvm.descriptors
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.impl.*
+import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.PropertyGetterDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.PropertySetterDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeProjectionImpl
-import org.jetbrains.kotlin.types.TypeSubstitutor
 
 fun PropertyDescriptorImpl.initialize(
         type: KotlinType,
@@ -30,10 +31,12 @@ fun PropertyDescriptorImpl.initialize(
         dispatchReceiverParameter: ReceiverParameterDescriptor? = null,
         extensionReceiverParameter: ReceiverParameterDescriptor? = null,
         getter: PropertyGetterDescriptorImpl? = null,
-        setter: PropertySetterDescriptorImpl? = null
+        setter: PropertySetterDescriptorImpl? = null,
+        backingField: FieldDescriptor? = null,
+        delegateField: FieldDescriptor? = null
 ): PropertyDescriptorImpl {
     setType(type, typeParameters, dispatchReceiverParameter, extensionReceiverParameter)
-    initialize(getter, setter)
+    initialize(getter, setter, backingField, delegateField)
     return this
 }
 

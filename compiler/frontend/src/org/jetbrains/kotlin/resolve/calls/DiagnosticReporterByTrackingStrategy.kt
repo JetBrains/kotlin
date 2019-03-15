@@ -79,7 +79,7 @@ class DiagnosticReporterByTrackingStrategy(
     override fun onCallReceiver(callReceiver: SimpleKotlinCallArgument, diagnostic: KotlinCallDiagnostic) {
         when (diagnostic.javaClass) {
             UnsafeCallError::class.java -> {
-                val implicitInvokeCheck = (callReceiver as? ReceiverExpressionKotlinCallArgument)?.isVariableReceiverForInvoke ?: false
+                val implicitInvokeCheck = (callReceiver as? ReceiverExpressionKotlinCallArgument)?.isForImplicitInvoke ?: false
                 tracingStrategy.unsafeCall(trace, callReceiver.receiver.receiverValue.type, implicitInvokeCheck)
             }
 
@@ -124,8 +124,7 @@ class DiagnosticReporterByTrackingStrategy(
     }
 
     override fun onCallArgumentName(callArgument: KotlinCallArgument, diagnostic: KotlinCallDiagnostic) {
-        val nameReference = callArgument.psiCallArgument.valueArgument.getArgumentName()?.referenceExpression
-                ?: error("Argument name should be not null for argument: $callArgument")
+        val nameReference = callArgument.psiCallArgument.valueArgument.getArgumentName()?.referenceExpression ?: return
         when (diagnostic.javaClass) {
             NamedArgumentReference::class.java -> {
                 trace.record(BindingContext.REFERENCE_TARGET, nameReference, (diagnostic as NamedArgumentReference).parameterDescriptor)

@@ -1,0 +1,13 @@
+// WITH_RUNTIME
+// HIGHLIGHT: INFORMATION
+fun maybeFoo(): String? {
+    return "foo"
+}
+
+fun convert(x: String, y: Int) = ""
+
+fun foo(it: Int) {
+    maybeFoo()?.let { it1 -> convert(it1, it) }
+}
+
+

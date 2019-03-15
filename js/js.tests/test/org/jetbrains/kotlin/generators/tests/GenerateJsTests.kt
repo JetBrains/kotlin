@@ -17,7 +17,7 @@ fun main(args: Array<String>) {
     // TODO: repair these tests
     //generateTestDataForReservedWords()
 
-    testGroup("js/js.tests/test", "js/js.translator/testData") {
+    testGroup("js/js.tests/test", "js/js.translator/testData", testRunnerMethodName = "runTest0") {
         testClass<AbstractBoxJsTest> {
             model("box/", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.JS)
         }
@@ -43,33 +43,81 @@ fun main(args: Array<String>) {
         }
     }
 
-    testGroup("js/js.tests/test", "compiler/testData") {
+    testGroup("js/js.tests/test", "compiler/testData", testRunnerMethodName = "runTest0") {
         testClass<AbstractJsCodegenBoxTest> {
             model("codegen/box", targetBackend = TargetBackend.JS)
+        }
+
+        testClass<AbstractIrJsCodegenBoxTest> {
+            model("codegen/box", targetBackend = TargetBackend.JS_IR)
         }
 
         testClass<AbstractNonLocalReturnsTest> {
             model("codegen/boxInline/nonLocalReturns/", targetBackend = TargetBackend.JS)
         }
 
+        testClass<AbstractIrNonLocalReturnsTest> {
+            model("codegen/boxInline/nonLocalReturns/", targetBackend = TargetBackend.JS_IR)
+        }
+
         testClass<AbstractPropertyAccessorsInlineTests> {
             model("codegen/boxInline/property/", targetBackend = TargetBackend.JS)
+        }
+
+        testClass<AbstractIrPropertyAccessorsInlineTests> {
+            model("codegen/boxInline/property/", targetBackend = TargetBackend.JS_IR)
         }
 
         testClass<AbstractNoInlineTests> {
             model("codegen/boxInline/noInline/", targetBackend = TargetBackend.JS)
         }
 
+        testClass<AbstractIrNoInlineTests> {
+            model("codegen/boxInline/noInline/", targetBackend = TargetBackend.JS_IR)
+        }
+
         testClass<AbstractCallableReferenceInlineTests> {
             model("codegen/boxInline/callableReference/", targetBackend = TargetBackend.JS)
+        }
+
+        testClass<AbstractIrCallableReferenceInlineTests> {
+            model("codegen/boxInline/callableReference/", targetBackend = TargetBackend.JS_IR)
         }
 
         testClass<AbstractEnumValuesInlineTests> {
             model("codegen/boxInline/enum/", targetBackend = TargetBackend.JS)
         }
 
+        testClass<AbstractIrEnumValuesInlineTests> {
+            model("codegen/boxInline/enum/", targetBackend = TargetBackend.JS_IR)
+        }
+
         testClass<AbstractInlineDefaultValuesTests> {
             model("codegen/boxInline/defaultValues/", targetBackend = TargetBackend.JS)
+        }
+
+        testClass<AbstractIrInlineDefaultValuesTests> {
+            model("codegen/boxInline/defaultValues/", targetBackend = TargetBackend.JS_IR)
+        }
+
+        testClass<AbstractInlineSuspendTests> {
+            model("codegen/boxInline/suspend/", targetBackend = TargetBackend.JS)
+        }
+
+        testClass<AbstractIrInlineSuspendTests> {
+            model("codegen/boxInline/suspend/", targetBackend = TargetBackend.JS_IR)
+        }
+
+        testClass<AbstractJsInlineContractsTests> {
+            model("codegen/boxInline/contracts/", targetBackend = TargetBackend.JS)
+        }
+
+        testClass<AbstractIrJsInlineContractsTests> {
+            model("codegen/boxInline/contracts/", targetBackend = TargetBackend.JS_IR)
+        }
+
+        testClass<AbstractJsLegacyPrimitiveArraysBoxTest> {
+            model("codegen/box/arrays", targetBackend = TargetBackend.JS)
         }
     }
 }

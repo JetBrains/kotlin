@@ -1,4 +1,5 @@
 // !LANGUAGE: +InlineClasses
+// IGNORE_BACKEND: JVM_IR
 
 inline class UInt(private val value: Int)
 
@@ -8,7 +9,7 @@ inline class UIntArray(private val intArray: IntArray) {
 
 inline class UIntIterator(private val intIterator: IntIterator) : Iterator<UInt> {
     override fun next(): UInt {
-        return UInt(intIterator.next())
+        return UInt(intIterator.next()) // box inside bridge that returns java/lang/Object
     }
 
     override fun hasNext(): Boolean {
@@ -27,13 +28,12 @@ fun test() {
 
 fun takeUInt(u: UInt) {}
 
-// 0 INVOKESTATIC UInt\$Erased.box
-// 0 INVOKEVIRTUAL UInt.unbox
+// 1 INVOKESTATIC UInt\.box
+// 1 INVOKEVIRTUAL UInt.unbox
 
 // 0 INVOKEVIRTUAL UIntIterator.iterator
 // 1 INVOKESTATIC kotlin/jvm/internal/ArrayIteratorsKt.iterator
 
 // 0 intValue
 
-// inside wrong bridge
-// 1 valueOf
+// 0 valueOf

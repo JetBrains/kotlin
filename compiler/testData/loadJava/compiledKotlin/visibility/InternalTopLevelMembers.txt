@@ -1,5 +1,5 @@
 package test
 
-internal val x: kotlin.Int = 0
+internal val x: kotlin.Int
     internal fun <get-x>(): kotlin.Int
 internal fun f(): kotlin.Int

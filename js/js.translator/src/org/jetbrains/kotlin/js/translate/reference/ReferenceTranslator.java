@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.KtQualifiedExpression;
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForTypeAliasObject;
 import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.Arrays;
@@ -48,7 +49,7 @@ import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getDescriptor
 import static org.jetbrains.kotlin.js.translate.utils.PsiUtils.getSelectorAsSimpleName;
 
 public final class ReferenceTranslator {
-    private static final Set<FqNameUnsafe> DECLARATIONS_WITHOUT_SIZE_EFFECTS = new HashSet<>(Arrays.asList(
+    private static final Set<FqNameUnsafe> DECLARATIONS_WITHOUT_SIDE_EFFECTS = new HashSet<>(Arrays.asList(
             new FqNameUnsafe("kotlin.coroutines.experimental.intrinsics.COROUTINE_SUSPENDED"),
             new FqNameUnsafe("kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED"),
             KotlinBuiltIns.FQ_NAMES.unit
@@ -144,7 +145,7 @@ public final class ReferenceTranslator {
     }
 
     private static boolean isValueWithoutSideEffect(@NotNull DeclarationDescriptor descriptor) {
-        return DECLARATIONS_WITHOUT_SIZE_EFFECTS.contains(DescriptorUtils.getFqName(descriptor));
+        return DECLARATIONS_WITHOUT_SIDE_EFFECTS.contains(DescriptorUtils.getFqName(descriptor));
     }
 
     @NotNull
@@ -220,7 +221,9 @@ public final class ReferenceTranslator {
         DeclarationDescriptor descriptor = getDescriptorForReferenceExpression(context.bindingContext(), simpleNameExpression);
 
         // Skip ValueParameterDescriptor because sometime we can miss resolved call for it, e.g. when set something to delegated property.
-        return descriptor instanceof VariableDescriptor && !(descriptor instanceof ValueParameterDescriptor);
+        return descriptor instanceof VariableDescriptor &&
+               !(descriptor instanceof ValueParameterDescriptor) &&
+               !(descriptor instanceof FakeCallableDescriptorForTypeAliasObject);
     }
 
 }

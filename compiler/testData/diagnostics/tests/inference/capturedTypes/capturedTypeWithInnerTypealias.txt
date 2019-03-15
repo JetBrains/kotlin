@@ -1,0 +1,5 @@
+package
+
+@kotlin.Suppress(names = {"UPPER_BOUND_VIOLATED"}) public val </*0*/ T> kotlin.reflect.KClass<T>.java: java.lang.Class<T>
+public fun test(/*0*/ k: kotlin.reflect.KClass<out MyString /* = kotlin.String */>): kotlin.Unit
+public typealias MyString = kotlin.String

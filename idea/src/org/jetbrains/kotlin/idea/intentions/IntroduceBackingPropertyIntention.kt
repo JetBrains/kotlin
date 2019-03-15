@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
+import org.jetbrains.kotlin.idea.util.hasJvmFieldAnnotation
+import org.jetbrains.kotlin.idea.util.isExpectDeclaration
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -39,13 +41,16 @@ class IntroduceBackingPropertyIntention : SelfTargetingIntention<KtProperty>(KtP
     companion object {
         fun canIntroduceBackingProperty(property: KtProperty): Boolean {
             val name = property.name ?: return false
+            if (property.hasModifier(KtTokens.CONST_KEYWORD)) return false
+            if (property.hasJvmFieldAnnotation()) return false
 
-            val bindingContext = property.getResolutionFacade().analyzeFullyAndGetResult(listOf(property)).bindingContext
+            val bindingContext = property.getResolutionFacade().analyzeWithAllCompilerChecks(listOf(property)).bindingContext
             val descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, property) as? PropertyDescriptor ?: return false
             if (bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, descriptor) == false) return false
 
             val containingClass = property.getStrictParentOfType<KtClassOrObject>() ?: return false
-            return containingClass.declarations.none { it is KtProperty && it.name == "_" + name }
+            if (containingClass.isExpectDeclaration()) return false
+            return containingClass.declarations.none { it is KtProperty && it.name == "_$name" }
         }
 
         fun introduceBackingProperty(property: KtProperty) {
@@ -59,8 +64,7 @@ class IntroduceBackingPropertyIntention : SelfTargetingIntention<KtProperty>(KtP
             val getter = property.getter
             if (getter == null) {
                 createGetter(property)
-            }
-            else {
+            } else {
                 replaceFieldReferences(getter, property.name!!)
             }
 
@@ -68,8 +72,7 @@ class IntroduceBackingPropertyIntention : SelfTargetingIntention<KtProperty>(KtP
                 val setter = property.setter
                 if (setter == null) {
                     createSetter(property)
-                }
-                else {
+                } else {
                     replaceFieldReferences(setter, property.name!!)
                 }
             }

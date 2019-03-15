@@ -1,0 +1,19 @@
+package
+
+public inline fun case_1(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
+public fun case_2(): kotlin.Unit
+public inline fun case_3(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
+public inline fun case_4(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
+public inline fun case_5(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
+public inline fun case_6(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
+public inline fun case_7(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
+public fun </*0*/ K> expandIn(/*0*/ vararg x: [ERROR : In<K>]<K> /*kotlin.Array<out [ERROR : In<K>]<K>>*/): K
+public fun </*0*/ K> expandInWithRemoveNullable(/*0*/ vararg x: [ERROR : In<K?>]<K?> /*kotlin.Array<out [ERROR : In<K?>]<K?>>*/): K
+public fun </*0*/ K> expandInv(/*0*/ vararg x: [ERROR : Inv<K>]<K> /*kotlin.Array<out [ERROR : Inv<K>]<K>>*/): K
+public fun </*0*/ K> expandInvWithRemoveNullable(/*0*/ vararg x: [ERROR : Inv<K?>]<K?> /*kotlin.Array<out [ERROR : Inv<K?>]<K?>>*/): K
+public fun </*0*/ K> expandOut(/*0*/ vararg x: [ERROR : Out<K>]<K> /*kotlin.Array<out [ERROR : Out<K>]<K>>*/): K
+public fun </*0*/ K> expandOutWithRemoveNullable(/*0*/ vararg x: [ERROR : Out<K?>]<K?> /*kotlin.Array<out [ERROR : Out<K?>]<K?>>*/): K
+public fun funWithAnyArg(/*0*/ value_1: kotlin.Any): kotlin.Int
+public fun funWithoutArgs(): kotlin.Int
+public fun </*0*/ K> removeNullable(/*0*/ vararg x: K? /*kotlin.Array<out K?>*/): K
+public fun </*0*/ K> select(/*0*/ vararg x: K /*kotlin.Array<out K>*/): K

@@ -1,8 +1,10 @@
 
 description = "Kotlin Build Common"
 
-apply { plugin("kotlin") }
-apply { plugin("jps-compatible") }
+plugins {
+    kotlin("jvm")
+    id("jps-compatible")
+}
 
 dependencies {
     compileOnly(project(":core:util.runtime"))
@@ -12,23 +14,25 @@ dependencies {
     compileOnly(project(":js:js.serializer"))
     compileOnly(project(":js:js.frontend"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    compileOnly(intellijDep()) { includeJars("annotations", "asm-all", "trove4j", "util") }
+    compileOnly(intellijDep()) { includeJars("asm-all", "trove4j", "util", rootProject = rootProject) }
     compileOnly(project(":kotlin-reflect-api"))
 
     testCompileOnly(project(":compiler:cli-common"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(commonDep("junit:junit"))
     testCompile(protobufFull())
-    testCompile(projectDist(":kotlin-stdlib"))
+    testCompile(kotlinStdlib())
     testCompileOnly(intellijDep()) { includeJars("openapi") }
 
-    testRuntime(projectDist(":kotlin-reflect"))
+    testRuntime(project(":kotlin-reflect"))
 }
 
 sourceSets {
     "main" { projectDefault() }
     "test" { projectDefault() }
 }
+
+publish()
 
 runtimeJar()
 sourcesJar()
@@ -37,5 +41,3 @@ javadocJar()
 testsJar()
 
 projectTest()
-
-publish()

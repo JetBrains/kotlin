@@ -34,3 +34,12 @@ PsiJetFileStubImpl[package=]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Target]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            DOT_QUALIFIED_EXPRESSION
+              REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
+              REFERENCE_EXPRESSION[referencedName=TYPE]
+          VALUE_ARGUMENT[isSpread=false]
+            DOT_QUALIFIED_EXPRESSION
+              REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
+              REFERENCE_EXPRESSION[referencedName=TYPE_PARAMETER]

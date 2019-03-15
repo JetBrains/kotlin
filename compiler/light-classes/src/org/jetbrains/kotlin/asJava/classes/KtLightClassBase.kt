@@ -81,4 +81,8 @@ abstract class KtLightClassBase protected constructor(manager: PsiManager)
     abstract override fun hashCode(): Int
 
     override fun getContext() = parent
+
+    override fun isEquivalentTo(another: PsiElement?): Boolean {
+        return PsiClassImplUtil.isClassEquivalentTo(this, another)
+    }
 }

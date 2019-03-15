@@ -18,19 +18,22 @@ package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrThrow
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.types.KotlinType
 
 class IrThrowImpl(
     startOffset: Int,
     endOffset: Int,
-    type: KotlinType
-) : IrExpressionBase(startOffset, endOffset, type), IrThrow {
+    type: IrType
+) :
+    IrExpressionBase(startOffset, endOffset, type),
+    IrThrow {
+
     constructor(
         startOffset: Int,
         endOffset: Int,
-        type: KotlinType,
+        type: IrType,
         value: IrExpression
     ) : this(startOffset, endOffset, type) {
         this.value = value

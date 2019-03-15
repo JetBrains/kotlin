@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve;
@@ -33,6 +22,7 @@ import org.jetbrains.kotlin.resolve.calls.tower.TowerLevelsKt;
 import org.jetbrains.kotlin.resolve.diagnostics.MutableDiagnosticsWithSuppression;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
+import org.jetbrains.kotlin.types.expressions.CaptureKind;
 import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
 import org.jetbrains.kotlin.util.slicedMap.MutableSlicedMap;
@@ -198,10 +188,21 @@ public class BindingContextUtils {
         return expression instanceof KtReferenceExpression;
     }
 
-    public static boolean isVarCapturedInClosure(BindingContext bindingContext, DeclarationDescriptor descriptor) {
+    public static boolean isCapturedInClosure(BindingContext bindingContext, DeclarationDescriptor descriptor) {
         if (!(descriptor instanceof VariableDescriptor) || descriptor instanceof PropertyDescriptor) return false;
         VariableDescriptor variableDescriptor = (VariableDescriptor) descriptor;
-        return bindingContext.get(CAPTURED_IN_CLOSURE, variableDescriptor) != null && variableDescriptor.isVar();
+        return bindingContext.get(CAPTURED_IN_CLOSURE, variableDescriptor) != null;
+    }
+
+    public static boolean isCapturedInClosureWithExactlyOnceEffect(BindingContext bindingContext, DeclarationDescriptor descriptor) {
+        if (!(descriptor instanceof VariableDescriptor) || descriptor instanceof PropertyDescriptor) return false;
+        VariableDescriptor variableDescriptor = (VariableDescriptor) descriptor;
+        return bindingContext.get(CAPTURED_IN_CLOSURE, variableDescriptor) == CaptureKind.EXACTLY_ONCE_EFFECT;
+    }
+
+    public static boolean isBoxedLocalCapturedInClosure(BindingContext bindingContext, DeclarationDescriptor descriptor) {
+        return (isCapturedInClosure(bindingContext, descriptor) && ((VariableDescriptor) descriptor).isVar()) ||
+               isCapturedInClosureWithExactlyOnceEffect(bindingContext, descriptor);
     }
 
     @NotNull
@@ -229,6 +230,7 @@ public class BindingContextUtils {
         return bindingContext.get(CONSTRUCTOR_RESOLVED_DELEGATION_CALL, constructorDescriptor);
     }
 
+    @SuppressWarnings("unchecked")
     static void addOwnDataTo(
             @NotNull BindingTrace trace, @Nullable TraceEntryFilter filter, boolean commitDiagnostics,
             @NotNull MutableSlicedMap map, MutableDiagnosticsWithSuppression diagnostics

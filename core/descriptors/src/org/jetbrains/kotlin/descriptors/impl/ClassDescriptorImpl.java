@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
+import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.types.ClassTypeConstructorImpl;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeConstructor;
@@ -37,14 +38,15 @@ public class ClassDescriptorImpl extends ClassDescriptorBase {
             @NotNull ClassKind kind,
             @NotNull Collection<KotlinType> supertypes,
             @NotNull SourceElement source,
-            boolean isExternal
+            boolean isExternal,
+            @NotNull StorageManager storageManager
     ) {
-        super(LockBasedStorageManager.NO_LOCKS, containingDeclaration, name, source, isExternal);
+        super(storageManager, containingDeclaration, name, source, isExternal);
         assert modality != Modality.SEALED : "Implement getSealedSubclasses() for this class: " + getClass();
         this.modality = modality;
         this.kind = kind;
 
-        this.typeConstructor = new ClassTypeConstructorImpl(this, Collections.<TypeParameterDescriptor>emptyList(), supertypes);
+        this.typeConstructor = new ClassTypeConstructorImpl(this, Collections.<TypeParameterDescriptor>emptyList(), supertypes, storageManager);
     }
 
     public final void initialize(

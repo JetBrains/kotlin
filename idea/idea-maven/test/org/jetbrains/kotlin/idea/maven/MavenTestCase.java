@@ -58,7 +58,7 @@ public abstract class MavenTestCase extends UsefulTestCase {
     private static final String mavenMirrorUrl = System.getProperty("idea.maven.test.mirror",
                                                                     // use JB maven proxy server for internal use by default, see details at
                                                                     // https://confluence.jetbrains.com/display/JBINT/Maven+proxy+server
-                                                                    "http://maven.labs.intellij.net/repo1");
+                                                                    "https://maven.labs.intellij.net/repo1");
     private static boolean mirrorDiscoverable = false;
 
     static {

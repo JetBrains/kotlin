@@ -4,7 +4,7 @@ package kt2164
 
 fun foo(x: Int): Int = x + 1
 
-fun main(args : Array<String>) {
+fun main() {
     val x: Int? = null
 
     foo(<!TYPE_MISMATCH!>x<!>)
@@ -22,7 +22,7 @@ fun main(args : Array<String>) {
         foo(x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>)
         foo(<!DEBUG_INFO_SMARTCAST!>x<!>)
     } else {
-        foo(<!TYPE_MISMATCH, DEBUG_INFO_CONSTANT!>x<!>)
+        foo(<!DEBUG_INFO_CONSTANT, TYPE_MISMATCH!>x<!>)
         <!OI;UNREACHABLE_CODE!>foo(<!><!ALWAYS_NULL!>x<!>!!<!OI;UNREACHABLE_CODE!>)<!>
         <!OI;UNREACHABLE_CODE!>foo(<!DEBUG_INFO_SMARTCAST!>x<!>)<!>
     }

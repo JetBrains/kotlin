@@ -1,0 +1,86 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        jcenter()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+apply plugin: 'kotlin-multiplatform'
+
+repositories {
+    mavenLocal()
+    jcenter()
+}
+
+kotlin {
+    sourceSets {
+        commonMain {
+            dependencies {
+                api "org.jetbrains.kotlin:kotlin-stdlib-common"
+                api(project(":exported"))
+            }
+        }
+        
+        commonTest {
+            dependencies {
+                api "org.jetbrains.kotlin:kotlin-test-annotations-common"
+            }
+        }
+    }
+
+    targets {
+        macosX64("macos64")
+        linuxX64("linux64")
+        mingwX64("mingw64")
+
+        configure([macos64, linux64, mingw64]) {
+            binaries {
+
+                executable()                  // Executable with default name.
+                executable("foo")             // Custom binary name.
+                executable("bar", [RELEASE])  // Custom build types.
+
+                // Configure a binary.
+                executable("baz", [RELEASE]) {
+                    // Rename an output binary: baz.kexe -> my-baz.kexe.
+                    baseName = "my-baz"
+                    // Use a custom entry point.
+                    entryPoint = "foo.main"
+                }
+
+                executable("test2", [RELEASE]) {
+                    compilation = compilations["test"]
+                }
+
+                sharedLib([RELEASE])
+                staticLib([RELEASE])
+            }
+            // Check that we can access binaries/tasks:
+            // Just by name:
+            println("Check link task: ${binaries.releaseShared.linkTask.name}")
+            // Using a typed getter:
+            println("Check run task: ${binaries.getExecutable("foo", RELEASE).runTask.name}")
+        }
+        iosArm64("ios") {
+            binaries {
+                framework {
+                    export project(':exported')
+                }
+                framework('custom', [RELEASE]) {
+                    embedBitcode = 'DISABLE'
+                    linkerOpts = ['-L.']
+                    freeCompilerArgs = ["-Xtime"]
+                    isStatic = true
+                }
+            }
+        }
+        iosX64("iosSim") {
+            binaries {
+                framework()
+            }
+        }
+    }
+}

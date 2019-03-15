@@ -16,12 +16,14 @@
 
 package org.jetbrains.kotlin.serialization
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument.Value
 import org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument.Value.Type
+import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.types.ErrorUtils
@@ -59,7 +61,7 @@ class AnnotationSerializer(private val stringTable: DescriptorAwareStringTable) 
 
             override fun visitBooleanValue(value: BooleanValue, data: Unit) {
                 type = Type.BOOLEAN
-                setIntValue(if (value.value) 1 else 0)
+                intValue = if (value.value) 1 else 0
             }
 
             override fun visitByteValue(value: ByteValue, data: Unit) {
@@ -79,7 +81,7 @@ class AnnotationSerializer(private val stringTable: DescriptorAwareStringTable) 
 
             override fun visitEnumValue(value: EnumValue, data: Unit) {
                 type = Type.ENUM
-                classId = stringTable.getQualifiedClassNameIndex(value.enumClassId.asString(), value.enumClassId.isLocal)
+                classId = stringTable.getQualifiedClassNameIndex(value.enumClassId)
                 enumValueId = stringTable.getStringIndex(value.enumEntryName.asString())
             }
 
@@ -98,11 +100,33 @@ class AnnotationSerializer(private val stringTable: DescriptorAwareStringTable) 
             }
 
             override fun visitKClassValue(value: KClassValue, data: Unit) {
-                val descriptor = value.value.constructor.declarationDescriptor as? ClassDescriptor
-                ?: throw UnsupportedOperationException("Class literal annotation argument should be a class: $value")
-
                 type = Type.CLASS
-                classId = stringTable.getFqNameIndex(descriptor)
+
+                when (val classValue = value.value) {
+                    is KClassValue.Value.NormalClass -> {
+                        classId = stringTable.getQualifiedClassNameIndex(classValue.classId)
+
+                        if (classValue.arrayDimensions > 0) {
+                            arrayDimensionCount = classValue.arrayDimensions
+                        }
+                    }
+                    is KClassValue.Value.LocalClass -> {
+                        var arrayDimensions = 0
+                        var type = classValue.type
+                        while (KotlinBuiltIns.isArray(type)) {
+                            arrayDimensions++
+                            type = type.arguments.single().type
+                        }
+
+                        val descriptor = type.constructor.declarationDescriptor as? ClassDescriptor
+                            ?: error("Type parameters are not allowed in class literal annotation arguments: $classValue")
+                        classId = stringTable.getFqNameIndex(descriptor)
+
+                        if (arrayDimensions > 0) {
+                            arrayDimensionCount = arrayDimensions
+                        }
+                    }
+                }
             }
 
             override fun visitLongValue(value: LongValue, data: Unit) {
@@ -122,6 +146,30 @@ class AnnotationSerializer(private val stringTable: DescriptorAwareStringTable) 
             override fun visitStringValue(value: StringValue, data: Unit) {
                 type = Type.STRING
                 stringValue = stringTable.getStringIndex(value.value)
+            }
+
+            override fun visitUByteValue(value: UByteValue, data: Unit?) {
+                type = Type.BYTE
+                intValue = value.value.toLong()
+                flags = Flags.IS_UNSIGNED.toFlags(true)
+            }
+
+            override fun visitUShortValue(value: UShortValue, data: Unit?) {
+                type = Type.SHORT
+                intValue = value.value.toLong()
+                flags = Flags.IS_UNSIGNED.toFlags(true)
+            }
+
+            override fun visitUIntValue(value: UIntValue, data: Unit?) {
+                type = Type.INT
+                intValue = value.value.toLong()
+                flags = Flags.IS_UNSIGNED.toFlags(true)
+            }
+
+            override fun visitULongValue(value: ULongValue, data: Unit?) {
+                type = Type.LONG
+                intValue = value.value
+                flags = Flags.IS_UNSIGNED.toFlags(true)
             }
         }, Unit)
     }

@@ -47,6 +47,9 @@ interface IrElementVisitor<out R, in D> {
     fun visitBlockBody(body: IrBlockBody, data: D) = visitBody(body, data)
     fun visitSyntheticBody(body: IrSyntheticBody, data: D) = visitBody(body, data)
 
+    fun visitSuspendableExpression(expression: IrSuspendableExpression, data: D) = visitExpression(expression, data)
+    fun visitSuspensionPoint(expression: IrSuspensionPoint, data: D) = visitExpression(expression, data)
+
     fun visitExpression(expression: IrExpression, data: D) = visitElement(expression, data)
     fun <T> visitConst(expression: IrConst<T>, data: D) = visitExpression(expression, data)
     fun visitVararg(expression: IrVararg, data: D) = visitExpression(expression, data)
@@ -102,6 +105,10 @@ interface IrElementVisitor<out R, in D> {
 
     fun visitReturn(expression: IrReturn, data: D) = visitExpression(expression, data)
     fun visitThrow(expression: IrThrow, data: D) = visitExpression(expression, data)
+
+    fun visitDynamicExpression(expression: IrDynamicExpression, data: D) = visitExpression(expression, data)
+    fun visitDynamicOperatorExpression(expression: IrDynamicOperatorExpression, data: D) = visitDynamicExpression(expression, data)
+    fun visitDynamicMemberExpression(expression: IrDynamicMemberExpression, data: D) = visitDynamicExpression(expression, data)
 
     fun visitErrorDeclaration(declaration: IrErrorDeclaration, data: D) = visitDeclaration(declaration, data)
     fun visitErrorExpression(expression: IrErrorExpression, data: D) = visitExpression(expression, data)

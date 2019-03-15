@@ -1,0 +1,10 @@
+enum class Entry {
+    FOO, BAR, BAZ
+}
+
+fun test(e: Entry): Int {
+    return when (e) {
+        <spot>Entry.FOO -> 1
+        else -> 0</spot>
+    }
+}

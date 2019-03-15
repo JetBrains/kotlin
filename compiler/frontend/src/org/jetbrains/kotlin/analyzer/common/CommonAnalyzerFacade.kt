@@ -29,8 +29,8 @@ import org.jetbrains.kotlin.container.useImpl
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.context.ProjectContext
+import org.jetbrains.kotlin.contracts.ContractDeserializerImpl
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.frontend.di.configureModule
@@ -44,12 +44,17 @@ import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
 import org.jetbrains.kotlin.serialization.deserialization.MetadataPackageFragmentProvider
+import org.jetbrains.kotlin.serialization.deserialization.MetadataPartProvider
+
+class CommonAnalysisParameters(
+    val metadataPartProviderFactory: (ModuleContent<*>) -> MetadataPartProvider
+) : PlatformAnalysisParameters
 
 /**
  * A facade that is used to analyze common (platform-independent) modules in multi-platform projects.
- * See [TargetPlatform.Common]
+ * See [CommonPlatform]
  */
-object CommonAnalyzerFacade : AnalyzerFacade() {
+object CommonAnalyzerFacade : ResolverForModuleFactory() {
     private class SourceModuleInfo(
         override val name: Name,
         override val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>,
@@ -64,7 +69,7 @@ object CommonAnalyzerFacade : AnalyzerFacade() {
     fun analyzeFiles(
         files: Collection<KtFile>, moduleName: Name, dependOnBuiltIns: Boolean, languageVersionSettings: LanguageVersionSettings,
         capabilities: Map<ModuleDescriptor.Capability<*>, Any?> = mapOf(MultiTargetPlatform.CAPABILITY to MultiTargetPlatform.Common),
-        packagePartProviderFactory: (ModuleInfo, ModuleContent) -> PackagePartProvider
+        metadataPartProviderFactory: (ModuleContent<ModuleInfo>) -> MetadataPartProvider
     ): AnalysisResult {
         val moduleInfo = SourceModuleInfo(moduleName, capabilities, dependOnBuiltIns)
         val project = files.firstOrNull()?.project ?: throw AssertionError("No files to analyze")
@@ -78,15 +83,23 @@ object CommonAnalyzerFacade : AnalyzerFacade() {
         @Suppress("NAME_SHADOWING")
         val resolver = ResolverForProjectImpl(
             "sources for metadata serializer",
-            ProjectContext(project), listOf(moduleInfo), { CommonAnalyzerFacade },
-            { ModuleContent(files, GlobalSearchScope.allScope(project)) },
-            object : PlatformAnalysisParameters {},
-            languageSettingsProvider = object : LanguageSettingsProvider {
-                override fun getLanguageVersionSettings(moduleInfo: ModuleInfo, project: Project) = multiplatformLanguageSettings
-                override fun getTargetPlatform(moduleInfo: ModuleInfo) = TargetPlatformVersion.NoVersion
+            ProjectContext(project),
+            listOf(moduleInfo),
+            modulesContent = { ModuleContent(it, files, GlobalSearchScope.allScope(project)) },
+            moduleLanguageSettingsProvider = object : LanguageSettingsProvider {
+                override fun getLanguageVersionSettings(
+                    moduleInfo: ModuleInfo,
+                    project: Project,
+                    isReleaseCoroutines: Boolean?
+                ) = multiplatformLanguageSettings
+
+                override fun getTargetPlatform(
+                    moduleInfo: ModuleInfo,
+                    project: Project
+                ) = TargetPlatformVersion.NoVersion
             },
-            packagePartProviderFactory = packagePartProviderFactory,
-            modulePlatforms = { MultiTargetPlatform.Common }
+            resolverForModuleFactoryByPlatform = { CommonAnalyzerFacade },
+            platformParameters = { _ -> CommonAnalysisParameters(metadataPartProviderFactory) }
         )
 
         val moduleDescriptor = resolver.descriptorForModule(moduleInfo)
@@ -98,17 +111,16 @@ object CommonAnalyzerFacade : AnalyzerFacade() {
     }
 
     override fun <M : ModuleInfo> createResolverForModule(
-        moduleInfo: M,
         moduleDescriptor: ModuleDescriptorImpl,
         moduleContext: ModuleContext,
-        moduleContent: ModuleContent,
+        moduleContent: ModuleContent<M>,
         platformParameters: PlatformAnalysisParameters,
         targetEnvironment: TargetEnvironment,
         resolverForProject: ResolverForProject<M>,
-        languageSettingsProvider: LanguageSettingsProvider,
-        packagePartProvider: PackagePartProvider
+        languageVersionSettings: LanguageVersionSettings,
+        targetPlatformVersion: TargetPlatformVersion
     ): ResolverForModule {
-        val (syntheticFiles, moduleContentScope) = moduleContent
+        val (moduleInfo, syntheticFiles, moduleContentScope) = moduleContent
         val project = moduleContext.project
         val declarationProviderFactory = DeclarationProviderFactoryService.createDeclarationProviderFactory(
             project, moduleContext.storageManager, syntheticFiles,
@@ -116,10 +128,11 @@ object CommonAnalyzerFacade : AnalyzerFacade() {
             moduleInfo
         )
 
+        val metadataPartProvider = (platformParameters as CommonAnalysisParameters).metadataPartProviderFactory(moduleContent)
         val trace = CodeAnalyzerInitializer.getInstance(project).createTrace()
         val container = createContainerToResolveCommonCode(
-            moduleContext, trace, declarationProviderFactory, moduleContentScope, targetEnvironment, packagePartProvider,
-            languageSettingsProvider.getLanguageVersionSettings(moduleInfo, project)
+            moduleContext, trace, declarationProviderFactory, moduleContentScope, targetEnvironment, metadataPartProvider,
+            languageVersionSettings
         )
 
         val packageFragmentProviders = listOf(
@@ -136,7 +149,7 @@ object CommonAnalyzerFacade : AnalyzerFacade() {
         declarationProviderFactory: DeclarationProviderFactory,
         moduleContentScope: GlobalSearchScope,
         targetEnvironment: TargetEnvironment,
-        packagePartProvider: PackagePartProvider,
+        metadataPartProvider: MetadataPartProvider,
         languageVersionSettings: LanguageVersionSettings
     ): StorageComponentContainer = createContainer("ResolveCommonCode", targetPlatform) {
         configureModule(moduleContext, targetPlatform, TargetPlatformVersion.NoVersion, bindingTrace)
@@ -149,9 +162,10 @@ object CommonAnalyzerFacade : AnalyzerFacade() {
         useInstance(languageVersionSettings)
         useImpl<AnnotationResolverImpl>()
         useImpl<CompilerDeserializationConfiguration>()
-        useInstance(packagePartProvider)
+        useInstance(metadataPartProvider)
         useInstance(declarationProviderFactory)
         useImpl<MetadataPackageFragmentProvider>()
+        useImpl<ContractDeserializerImpl>()
 
         val metadataFinderFactory = ServiceManager.getService(moduleContext.project, MetadataFinderFactory::class.java)
                 ?: error("No MetadataFinderFactory in project")
@@ -161,5 +175,5 @@ object CommonAnalyzerFacade : AnalyzerFacade() {
     }
 
     override val targetPlatform: TargetPlatform
-        get() = TargetPlatform.Common
+        get() = CommonPlatform
 }

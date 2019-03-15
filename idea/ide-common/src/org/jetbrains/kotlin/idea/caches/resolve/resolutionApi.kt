@@ -75,6 +75,10 @@ fun KtNamedFunction.resolveToDescriptorIfAny(bodyResolveMode: BodyResolveMode = 
     return (this as KtDeclaration).resolveToDescriptorIfAny(bodyResolveMode) as? FunctionDescriptor
 }
 
+fun KtProperty.resolveToDescriptorIfAny(bodyResolveMode: BodyResolveMode = BodyResolveMode.PARTIAL): VariableDescriptor? {
+    return (this as KtDeclaration).resolveToDescriptorIfAny(bodyResolveMode) as? VariableDescriptor
+}
+
 fun KtParameter.resolveToParameterDescriptorIfAny(bodyResolveMode: BodyResolveMode = BodyResolveMode.PARTIAL): ValueParameterDescriptor? {
     val context = analyze(bodyResolveMode)
     return context.get(BindingContext.VALUE_PARAMETER, this) as? ValueParameterDescriptor
@@ -121,33 +125,42 @@ fun KtElement.findModuleDescriptor(): ModuleDescriptor = getResolutionFacade().m
 // This function is used on declarations to make analysis not only declaration itself but also it content:
 // body for declaration with body, initializer & accessors for properties
 fun KtDeclaration.analyzeWithContent(): BindingContext =
-    getResolutionFacade().analyzeFullyAndGetResult(listOf(this)).bindingContext
+    getResolutionFacade().analyzeWithAllCompilerChecks(listOf(this)).bindingContext
 
 // This function is used to make full analysis of declaration container.
 // All its declarations, including their content (see above), are analyzed.
 inline fun <reified T> T.analyzeWithContent(): BindingContext where T : KtDeclarationContainer, T : KtElement =
-    getResolutionFacade().analyzeFullyAndGetResult(listOf(this)).bindingContext
+    getResolutionFacade().analyzeWithAllCompilerChecks(listOf(this)).bindingContext
 
-// NB: for statements / expressions, usually should be replaced with analyze(),
-// for declarations, analyzeWithContent() will do what you want.
+/**
+ * This function is expected to produce the same result as compiler for the whole file content (including diagnostics,
+ * trace slices, descriptors, etc.).
+ *
+ * It's not recommended to call this function without real need.
+ *
+ * @ref [KotlinCacheService]
+ * @ref [org.jetbrains.kotlin.idea.caches.resolve.PerFileAnalysisCache]
+ */
+fun KtFile.analyzeWithAllCompilerChecks(vararg extraFiles: KtFile): AnalysisResult =
+    KotlinCacheService.getInstance(project).getResolutionFacade(listOf(this) + extraFiles.toList()).analyzeWithAllCompilerChecks(listOf(this))
+
+/**
+ * This function is expected to produce the same result as compiler for the given element and its children (including diagnostics,
+ * trace slices, descriptors, etc.). For some expression element it actually performs analyze for some parent (usually declaration).
+ *
+ * It's not recommended to call this function without real need.
+ *
+ * NB: for statements / expressions, usually should be replaced with analyze(),
+ * for declarations, analyzeWithContent() will do what you want.
+ *
+ * @ref [KotlinCacheService]
+ * @ref [org.jetbrains.kotlin.idea.caches.resolve.PerFileAnalysisCache]
+ */
 @Deprecated(
-    "Use analyzeWithContent() instead, or use just analyze()",
-    ReplaceWith("analyze()")
-)
-fun KtElement.analyzeFully(): BindingContext = getResolutionFacade().analyzeFullyAndGetResult(listOf(this)).bindingContext
-
-// This and next function are expected to produce the same result as compiler
-// for the given element and its children (including diagnostics, trace slices, descriptors, etc.)
-// Not recommended to call both of them without real need
-// See also KotlinResolveCache, KotlinResolveDataProvider
-fun KtFile.analyzeFullyAndGetResult(vararg extraFiles: KtFile): AnalysisResult =
-    KotlinCacheService.getInstance(project).getResolutionFacade(listOf(this) + extraFiles.toList()).analyzeFullyAndGetResult(listOf(this))
-
-@Deprecated(
-    "Use either KtFile.analyzeFullyAndGetResult() or KtElement.analyzeAndGetResult()",
+    "Use either KtFile.analyzeWithAllCompilerChecks() or KtElement.analyzeAndGetResult()",
     ReplaceWith("analyzeAndGetResult()")
 )
-fun KtElement.analyzeFullyAndGetResult(): AnalysisResult = getResolutionFacade().analyzeFullyAndGetResult(listOf(this))
+fun KtElement.analyzeWithAllCompilerChecks(): AnalysisResult = getResolutionFacade().analyzeWithAllCompilerChecks(listOf(this))
 
 // this method don't check visibility and collect all descriptors with given fqName
 fun ResolutionFacade.resolveImportReference(
@@ -159,3 +172,11 @@ fun ResolutionFacade.resolveImportReference(
     return qualifiedExpressionResolver.processImportReference(
             importDirective, moduleDescriptor, BindingTraceContext(), excludedImportNames = emptyList(), packageFragmentForVisibilityCheck = null)?.getContributedDescriptors() ?: emptyList()
 }
+
+@Suppress("DEPRECATION")
+@Deprecated(
+    "This method is going to be removed in 1.3.0 release",
+    ReplaceWith("analyzeWithAllCompilerChecks().bindingContext"),
+    DeprecationLevel.ERROR
+)
+fun KtElement.analyzeFully(): BindingContext = analyzeWithAllCompilerChecks().bindingContext

@@ -1,6 +1,6 @@
 package
 
 package a {
-    public fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+    public fun main(): kotlin.Unit
     public fun </*0*/ R> test(/*0*/ callback: (R) -> kotlin.Unit): kotlin.Unit
 }

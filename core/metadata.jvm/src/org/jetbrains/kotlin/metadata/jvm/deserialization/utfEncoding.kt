@@ -35,10 +35,9 @@ fun bytesToStrings(bytes: ByteArray): Array<String> {
     for (b in bytes) {
         val c = b.toInt() and 0xFF // 0 <= c <= 255
         buffer.append(c.toChar())
-        if (0 < b && b <= 127) {
+        if (b in 1..127) {
             bytesInBuffer++
-        }
-        else {
+        } else {
             bytesInBuffer += 2
         }
 

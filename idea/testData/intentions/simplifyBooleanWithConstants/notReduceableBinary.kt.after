@@ -1,0 +1,4 @@
+fun test() {
+    foo(false) ?: return
+}
+fun foo(v: Boolean): Int = 1

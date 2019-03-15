@@ -26,10 +26,8 @@ object JvmSimpleNameBacktickChecker : IdentifierChecker {
     // See The Java Virtual Machine Specification, section 4.7.9.1 https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.7.9.1
     private val CHARS = setOf('.', ';', '[', ']', '/', '<', '>', ':', '\\')
 
-    override fun checkIdentifier(identifier: PsiElement?, diagnosticHolder: DiagnosticSink) {
-        if (identifier == null) return
-
-        reportIfNeeded(identifier.text, identifier, diagnosticHolder)
+    override fun checkIdentifier(simpleNameExpression: KtSimpleNameExpression, diagnosticHolder: DiagnosticSink) {
+        reportIfNeeded(simpleNameExpression.getReferencedName(), { simpleNameExpression.getIdentifier() }, diagnosticHolder)
     }
 
     override fun checkDeclaration(declaration: KtDeclaration, diagnosticHolder: DiagnosticSink) {
@@ -50,17 +48,22 @@ object JvmSimpleNameBacktickChecker : IdentifierChecker {
     private fun checkNamed(declaration: KtNamedDeclaration, diagnosticHolder: DiagnosticSink) {
         val name = declaration.name ?: return
 
-        val element = declaration.nameIdentifier ?: declaration
-        reportIfNeeded(name, element, diagnosticHolder)
+        reportIfNeeded(name, { declaration.nameIdentifier ?: declaration }, diagnosticHolder)
     }
 
-    private fun reportIfNeeded(name: String, element: PsiElement, diagnosticHolder: DiagnosticSink) {
+    private fun reportIfNeeded(name: String, reportOn: () -> PsiElement?, diagnosticHolder: DiagnosticSink) {
         val text = KtPsiUtil.unquoteIdentifier(name)
         if (text.isEmpty()) {
-            diagnosticHolder.report(Errors.INVALID_CHARACTERS.on(element, "should not be empty"))
-        }
-        else if (text.any { it in CHARS }) {
-            diagnosticHolder.report(Errors.INVALID_CHARACTERS.on(element, "contains illegal characters: ${CHARS.intersect(text.toSet()).joinToString("")}"))
+            diagnosticHolder.report(Errors.INVALID_CHARACTERS.on(reportOn() ?: return, "should not be empty"))
+        } else if (text.any { it in CHARS }) {
+            diagnosticHolder.report(
+                Errors.INVALID_CHARACTERS.on(
+                    reportOn() ?: return,
+                    "contains illegal characters: ${CHARS.intersect(text.toSet()).joinToString(
+                        ""
+                    )}"
+                )
+            )
         }
     }
 }

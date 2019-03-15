@@ -1,0 +1,5 @@
+val lst: kotlin.collections.MutableList<kotlin.Long> = kotlin.collections.mutableListOf()
+lst.add(100)
+lst.get(0).methodWithSideEffect()
+lst.set(1, lst.get(0))
+lst.contains(lst.size)

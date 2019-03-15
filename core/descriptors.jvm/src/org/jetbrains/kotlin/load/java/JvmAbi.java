@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.load.java;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.CompanionObjectMapping;
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
-import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
+import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
@@ -21,7 +18,8 @@ import static org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject;
 
 public final class JvmAbi {
     public static final String DEFAULT_IMPLS_CLASS_NAME = "DefaultImpls";
-    public static final String ERASED_INLINE_CLASS_NAME = "Erased";
+    public static final String ERASED_INLINE_CONSTRUCTOR_NAME = "constructor";
+    public static final FqName JVM_FIELD_ANNOTATION_FQ_NAME = new FqName("kotlin.jvm.JvmField");
 
     /**
      * Warning: use DEFAULT_IMPLS_CLASS_NAME and TypeMappingConfiguration.innerClassNameFactory when possible.
@@ -40,7 +38,7 @@ public final class JvmAbi {
     public static final String DELEGATED_PROPERTIES_ARRAY_NAME = "$$delegatedProperties";
     public static final String DELEGATE_SUPER_FIELD_PREFIX = "$$delegate_";
     private static final String ANNOTATIONS_SUFFIX = "$annotations";
-    private static final String ANNOTATED_PROPERTY_METHOD_NAME_SUFFIX = ANNOTATIONS_SUFFIX;
+    public static final String ANNOTATED_PROPERTY_METHOD_NAME_SUFFIX = ANNOTATIONS_SUFFIX;
     private static final String ANNOTATED_TYPEALIAS_METHOD_NAME_SUFFIX = ANNOTATIONS_SUFFIX;
 
     public static final String INSTANCE_FIELD = "INSTANCE";
@@ -52,7 +50,7 @@ public final class JvmAbi {
     public static final String LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT = "$i$a$";
     public static final String LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION = "$i$f$";
 
-    public static final String ERASED_INLINE_CLASS_SUFFIX = "$" + ERASED_INLINE_CLASS_NAME;
+    public static final String IMPL_SUFFIX_FOR_INLINE_CLASS_MEMBERS = "-impl";
 
     @NotNull
     public static String getSyntheticMethodNameForAnnotatedProperty(@NotNull Name propertyName) {
@@ -96,11 +94,14 @@ public final class JvmAbi {
     }
 
     public static boolean isPropertyWithBackingFieldInOuterClass(@NotNull PropertyDescriptor propertyDescriptor) {
-        return propertyDescriptor.getKind() != CallableMemberDescriptor.Kind.FAKE_OVERRIDE &&
-               isCompanionObjectWithBackingFieldsInOuter(propertyDescriptor.getContainingDeclaration());
+        if (propertyDescriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) return false;
+
+        if (isClassCompanionObjectWithBackingFieldsInOuter(propertyDescriptor.getContainingDeclaration())) return true;
+
+        return isCompanionObject(propertyDescriptor.getContainingDeclaration()) && hasJvmFieldAnnotation(propertyDescriptor);
     }
 
-    public static boolean isCompanionObjectWithBackingFieldsInOuter(@NotNull DeclarationDescriptor companionObject) {
+    public static boolean isClassCompanionObjectWithBackingFieldsInOuter(@NotNull DeclarationDescriptor companionObject) {
         return isCompanionObject(companionObject) &&
                isClassOrEnumClass(companionObject.getContainingDeclaration()) &&
                !isMappedIntrinsicCompanionObject((ClassDescriptor) companionObject);
@@ -108,5 +109,14 @@ public final class JvmAbi {
 
     public static boolean isMappedIntrinsicCompanionObject(@NotNull ClassDescriptor companionObject) {
         return CompanionObjectMapping.INSTANCE.isMappedIntrinsicCompanionObject(companionObject);
+    }
+
+    public static boolean hasJvmFieldAnnotation(@NotNull CallableMemberDescriptor memberDescriptor) {
+        // TODO: deduplicate this with org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmFieldAnnotation
+        if (memberDescriptor instanceof PropertyDescriptor) {
+            FieldDescriptor field = ((PropertyDescriptor) memberDescriptor).getBackingField();
+            if (field != null && field.getAnnotations().hasAnnotation(JVM_FIELD_ANNOTATION_FQ_NAME)) return true;
+        }
+        return memberDescriptor.getAnnotations().hasAnnotation(JVM_FIELD_ANNOTATION_FQ_NAME);
     }
 }

@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS, NATIVE
+// TARGET_BACKEND: JVM
 
 // FILE: First.java
 

@@ -1,0 +1,15 @@
+public final enum class EnumMembers : R|java/lang/Enum<test/EnumMembers>| {
+    public final static property FIRST(val): R|ft<test/EnumMembers, test/EnumMembers?>|!
+        public get(): R|ft<test/EnumMembers, test/EnumMembers?>|!
+
+    public final static property SECOND(val): R|ft<test/EnumMembers, test/EnumMembers?>|!
+        public get(): R|ft<test/EnumMembers, test/EnumMembers?>|!
+
+    public final property isFirst(val): R|kotlin/Boolean|
+        public get(): R|kotlin/Boolean|
+
+    public open operator function first(): R|kotlin/Boolean|
+
+    private final function EnumMembers(isFirst: R|kotlin/Boolean|): R|test/EnumMembers|
+
+}

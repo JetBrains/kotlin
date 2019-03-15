@@ -7,12 +7,12 @@
 
     <groupId>org.jetbrains.kotlin</groupId>
     <artifactId>kotlin-project</artifactId>
-    <version>1.2-SNAPSHOT</version>
+    <version>1.3-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Kotlin</name>
     <description>Kotlin is a statically typed programming language that compiles to JVM byte codes and JavaScript</description>
-    <url>http://kotlinlang.org/</url>
+    <url>https://kotlinlang.org/</url>
 
     <licenses>
         <license>
@@ -34,7 +34,7 @@
             <id>JetBrains</id>
             <name>JetBrains Team</name>
             <organization>JetBrains</organization>
-            <organizationUrl>http://www.jetbrains.com</organizationUrl>
+            <organizationUrl>https://www.jetbrains.com</organizationUrl>
         </developer>
     </developers>
 
@@ -46,7 +46,7 @@
         <pegdown.version>1.1.0</pegdown.version>
         <surefire-version>2.16</surefire-version>
         <exec-maven-plugin.version>1.2.1</exec-maven-plugin.version>
-        <selenium.version>2.52.0</selenium.version>
+        <selenium.version>2.53.1</selenium.version>
         <htmlunit.version>2.24</htmlunit.version>
 
         <kotlin-dist>${project-root}/dist</kotlin-dist>
@@ -79,12 +79,13 @@
 
         <module>tools/maven-archetypes</module>
 
-
-        <module>tools/idl2k</module>
         <module>tools/kotlin-annotation-processing-maven</module>
         <module>tools/kotlin-maven-allopen</module>
         <module>tools/kotlin-maven-noarg</module>
         <module>tools/kotlin-maven-sam-with-receiver</module>
+        <module>tools/kotlin-maven-serialization</module>
+
+        <module>tools/kotlin-bom</module>
 
         <module>tools/kotlin-maven-plugin-test</module>
 

@@ -50,16 +50,17 @@ public abstract class DiagnosticFactory<D extends Diagnostic> {
     }
 
     @NotNull
+    @SuppressWarnings("unchecked")
     public D cast(@NotNull Diagnostic diagnostic) {
         if (diagnostic.getFactory() != this) {
             throw new IllegalArgumentException("Factory mismatch: expected " + this + " but was " + diagnostic.getFactory());
         }
 
-        //noinspection unchecked
         return (D) diagnostic;
     }
 
     @NotNull
+    @SafeVarargs
     public static <D extends Diagnostic> D cast(@NotNull Diagnostic diagnostic, @NotNull DiagnosticFactory<? extends D>... factories) {
         return cast(diagnostic, Arrays.asList(factories));
     }

@@ -1,6 +1,11 @@
 // !LANGUAGE: +InlineClasses
+// IGNORE_BACKEND: JVM_IR
+
+// FILE: utils.kt
 
 inline class ULong(val l: Long)
+
+// FILE: test.kt
 
 fun nonLocal(): ULong? {
     val u = ULong(0)
@@ -22,7 +27,8 @@ fun labeled(): ULong? {
     }
 }
 
-// 2 INVOKESTATIC ULong\$Erased.box
+// @TestKt.class:
+// 2 INVOKESTATIC ULong\.box
 // 0 INVOKEVIRTUAL ULong.unbox
 
 // 0 valueOf

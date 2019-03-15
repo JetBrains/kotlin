@@ -1,0 +1,28 @@
+FILE: typeParameterVsNested.kt
+    public? final? interface Some {
+    }
+    <T : Some> public? abstract class My {
+        public? constructor(): super<kotlin/Any>()
+
+        public? final? inner class T {
+            public? constructor(): super<kotlin/Any>()
+
+        }
+
+        public? abstract property x(val): T
+            public? get(): T
+
+        public? abstract function foo(arg: T): kotlin/Unit
+
+        public? abstract property y(val): My.T
+            public? get(): My.T
+
+        public? abstract property z(val): test.My.T
+            public? get(): test.My.T
+
+        public? final? class Some : T {
+            public? constructor(): super<T>()
+
+        }
+
+    }

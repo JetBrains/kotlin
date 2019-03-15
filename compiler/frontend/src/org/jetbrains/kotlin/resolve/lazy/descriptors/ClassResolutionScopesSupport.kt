@@ -40,7 +40,7 @@ class ClassResolutionScopesSupport(
         }
     }
 
-    val scopeForClassHeaderResolution: () -> LexicalScope = storageManager.createLazyValue {
+    val scopeForClassHeaderResolution: () -> LexicalScope = storageManager.createLazyValue(onRecursion = createErrorLexicalScope) {
         scopeWithGenerics(getOuterScope())
     }
 

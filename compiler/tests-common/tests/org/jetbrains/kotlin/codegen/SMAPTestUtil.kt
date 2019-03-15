@@ -35,7 +35,7 @@ object SMAPTestUtil {
     private fun extractSMAPFromClasses(outputFiles: Iterable<OutputFile>): List<SMAPAndFile> {
         return outputFiles.mapNotNull { outputFile ->
             var debugInfo: String? = null
-            ClassReader(outputFile.asByteArray()).accept(object : ClassVisitor(Opcodes.ASM5) {
+            ClassReader(outputFile.asByteArray()).accept(object : ClassVisitor(Opcodes.API_VERSION) {
                 override fun visitSource(source: String?, debug: String?) {
                     debugInfo = debug
                 }

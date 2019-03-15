@@ -1,4 +1,6 @@
-// EXPECTED_REACHABLE_NODES: 1166
+// IGNORE_BACKEND: JS_IR
+// KJS_WITH_FULL_RUNTIME
+// EXPECTED_REACHABLE_NODES: 1323
 fun <T> checkThrown(x: T, block: (T) -> Any?): Unit? {
     return try {
         println((block(x) ?: "").toString())

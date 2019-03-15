@@ -1,0 +1,13 @@
+package
+
+public const val myPi: kotlin.Double = 3.141592653589793.toDouble()
+@Anno(d = 3.141592653589793.toDouble()) public fun f(): kotlin.Unit
+@Anno(d = 3.141592653589793.toDouble()) public fun g(): kotlin.Unit
+
+public final annotation class Anno : kotlin.Annotation {
+    public constructor Anno(/*0*/ d: kotlin.Double)
+    public final val d: kotlin.Double
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

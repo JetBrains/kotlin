@@ -1,4 +1,6 @@
 // !LANGUAGE: -ProperIeee754Comparisons
+// IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND: JS_IR
 
 fun less1(a: Float, b: Float) = a < b
 

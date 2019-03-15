@@ -1,0 +1,13 @@
+package
+
+public fun case_1(): kotlin.Unit
+public fun case_2(): kotlin.Unit
+
+package contracts {
+    public inline fun </*0*/ T> case_1(/*0*/ block: () -> T): T
+        CallsInPlace(block, EXACTLY_ONCE)
+
+    public inline fun case_2(/*0*/ block: () -> kotlin.Int): kotlin.Int
+        CallsInPlace(block, EXACTLY_ONCE)
+
+}

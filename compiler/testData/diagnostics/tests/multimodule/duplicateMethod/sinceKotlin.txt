@@ -19,9 +19,3 @@ package
 
 public fun test1(): kotlin.Int
 public fun test2(): kotlin.Int
-
-package p1 {
-}
-
-package p2 {
-}

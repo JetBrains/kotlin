@@ -29,7 +29,7 @@ import java.util.*
 // speeds up finding files/classes in classpath/java source roots
 // NOT THREADSAFE, needs to be adapted/removed if we want compiler to be multithreaded
 // the main idea of this class is for each package to store roots which contains it to avoid excessive file system traversal
-class JvmDependenciesIndexImpl(_roots: List<JavaRoot>): JvmDependenciesIndex {
+class JvmDependenciesIndexImpl(_roots: List<JavaRoot>) : JvmDependenciesIndex {
     //these fields are computed based on _roots passed to constructor which are filled in later
     private val roots: List<JavaRoot> by lazy { _roots.toList() }
 
@@ -69,9 +69,9 @@ class JvmDependenciesIndexImpl(_roots: List<JavaRoot>): JvmDependenciesIndex {
     }
 
     override fun traverseDirectoriesInPackage(
-            packageFqName: FqName,
-            acceptedRootTypes: Set<JavaRoot.RootType>,
-            continueSearch: (VirtualFile, JavaRoot.RootType) -> Boolean
+        packageFqName: FqName,
+        acceptedRootTypes: Set<JavaRoot.RootType>,
+        continueSearch: (VirtualFile, JavaRoot.RootType) -> Boolean
     ) {
         search(TraverseRequest(packageFqName, acceptedRootTypes)) { dir, rootType ->
             if (continueSearch(dir, rootType)) null else Unit
@@ -80,9 +80,9 @@ class JvmDependenciesIndexImpl(_roots: List<JavaRoot>): JvmDependenciesIndex {
 
     // findClassGivenDirectory MUST check whether the class with this classId exists in given package
     override fun <T : Any> findClass(
-            classId: ClassId,
-            acceptedRootTypes: Set<JavaRoot.RootType>,
-            findClassGivenDirectory: (VirtualFile, JavaRoot.RootType) -> T?
+        classId: ClassId,
+        acceptedRootTypes: Set<JavaRoot.RootType>,
+        findClassGivenDirectory: (VirtualFile, JavaRoot.RootType) -> T?
     ): T? {
         // make a decision based on information saved from last class search
         if (lastClassSearch?.first?.classId != classId) {
@@ -95,16 +95,14 @@ class JvmDependenciesIndexImpl(_roots: List<JavaRoot>): JvmDependenciesIndex {
                 val limitedRootTypes = acceptedRootTypes - cachedRequest.acceptedRootTypes
                 if (limitedRootTypes.isEmpty()) {
                     null
-                }
-                else {
+                } else {
                     search(FindClassRequest(classId, limitedRootTypes), findClassGivenDirectory)
                 }
             }
             is SearchResult.Found -> {
                 if (cachedRequest.acceptedRootTypes == acceptedRootTypes) {
                     findClassGivenDirectory(cachedResult.packageDirectory, cachedResult.root.type)
-                }
-                else {
+                } else {
                     search(FindClassRequest(classId, acceptedRootTypes), findClassGivenDirectory)
                 }
             }
@@ -151,11 +149,11 @@ class JvmDependenciesIndexImpl(_roots: List<JavaRoot>): JvmDependenciesIndex {
     // try to find a target directory corresponding to package represented by packagesPath in a given root represented by index
     // possibly filling "Cache" objects with new information
     private fun travelPath(
-            rootIndex: Int,
-            packageFqName: FqName,
-            packagesPath: List<String>,
-            fillCachesAfter: Int,
-            cachesPath: List<Cache>
+        rootIndex: Int,
+        packageFqName: FqName,
+        packagesPath: List<String>,
+        fillCachesAfter: Int,
+        cachesPath: List<Cache>
     ): VirtualFile? {
         if (rootIndex >= maxIndex) {
             for (i in (fillCachesAfter + 1)..(cachesPath.size - 1)) {
@@ -184,8 +182,7 @@ class JvmDependenciesIndexImpl(_roots: List<JavaRoot>): JvmDependenciesIndex {
                 if (prefixPathSegments[pathIndex].identifier != subPackageName) {
                     return null
                 }
-            }
-            else {
+            } else {
                 currentFile = currentFile.findChildPackage(subPackageName, pathRoot.type) ?: return null
             }
 
@@ -235,8 +232,8 @@ class JvmDependenciesIndexImpl(_roots: List<JavaRoot>): JvmDependenciesIndex {
     }
 
     private data class TraverseRequest(
-            override val packageFqName: FqName,
-            override val acceptedRootTypes: Set<JavaRoot.RootType>
+        override val packageFqName: FqName,
+        override val acceptedRootTypes: Set<JavaRoot.RootType>
     ) : SearchRequest
 
     private interface SearchRequest {

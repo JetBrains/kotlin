@@ -1,5 +1,4 @@
-// WITH_RUNTIME
-
+// IGNORE_BACKEND: JVM_IR
 fun testByte(a: Byte, x: Byte, y: Byte) = a in x until y
 
 fun testShort(a: Short, x: Short, y: Short) = a in x until y

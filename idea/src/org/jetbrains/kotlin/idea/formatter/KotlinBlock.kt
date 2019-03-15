@@ -50,7 +50,7 @@ class KotlinBlock(
 
         override fun getAlignment(): Alignment? = alignment
 
-        override fun isIncompleteInSuper(): Boolean = this@KotlinBlock.isIncomplete
+        override fun isIncompleteInSuper(): Boolean = super@KotlinBlock.isIncomplete()
 
         override fun getSuperChildAttributes(newChildIndex: Int): ChildAttributes = super@KotlinBlock.getChildAttributes(newChildIndex)
 
@@ -96,6 +96,8 @@ class KotlinBlock(
     override fun isLeaf(): Boolean = kotlinDelegationBlock.isLeaf()
 
     override fun getTextRange() = kotlinDelegationBlock.getTextRange()
+
+    override fun isIncomplete(): Boolean = kotlinDelegationBlock.isIncomplete()
 }
 
 object KotlinSpacingBuilderUtilImpl : KotlinSpacingBuilderUtil {

@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.container
 
 import java.io.Closeable
 import java.lang.reflect.Type
-import java.util.ArrayList
+import java.util.*
 
 enum class ComponentState {
     Null,
@@ -131,7 +131,7 @@ open class SingletonTypeComponentDescriptor(container: ComponentContainer, val k
         val constructor = binding.constructor
         val arguments = computeArguments(binding.argumentDescriptors)
 
-        val instance = constructor.newInstance(*arguments.toTypedArray())!!
+        val instance = runWithUnwrappingInvocationException { constructor.newInstance(*arguments.toTypedArray())!! }
         state = ComponentState.Initialized
         return instance
     }

@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.idea.refactoring.isAbstract
 import org.jetbrains.kotlin.idea.runSynchronouslyWithProgress
 import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
 import org.jetbrains.kotlin.idea.search.declarationsSearch.searchInheritors
+import org.jetbrains.kotlin.idea.util.PopupChooserBuilderWrapper
 import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
@@ -126,7 +127,7 @@ abstract class ImplementAbstractMemberIntentionBase :
         val chooserObject = OverrideMemberChooserObject.create(member.project,
                                                                descriptorToImplement,
                                                                descriptorToImplement,
-                                                               OverrideMemberChooserObject.BodyType.EMPTY,
+                                                               OverrideMemberChooserObject.BodyType.FROM_TEMPLATE,
                                                                preferConstructorParameters)
         OverrideImplementMembersHandler.generateMembers(editor, targetClass, listOf(chooserObject), false)
     }
@@ -213,7 +214,7 @@ abstract class ImplementAbstractMemberIntentionBase :
             selectionMode = ListSelectionModel.MULTIPLE_INTERVAL_SELECTION
             cellRenderer = renderer
         }
-        val builder = PopupChooserBuilder(list)
+        val builder = PopupChooserBuilderWrapper<PsiElement>(list)
         renderer.installSpeedSearch(builder)
         builder
                 .setTitle(CodeInsightBundle.message("intention.implement.abstract.method.class.chooser.title"))

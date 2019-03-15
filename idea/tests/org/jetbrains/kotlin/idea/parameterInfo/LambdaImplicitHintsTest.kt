@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,6 +15,16 @@ class LambdaImplicitHintsTest : KotlinLightCodeInsightFixtureTestCase() {
     fun check(text: String) {
         myFixture.configureByText("A.kt", text)
         myFixture.testInlays()
+    }
+
+    fun testHintType() {
+        myFixture.checkHintType(
+            """
+            val x = listOf("").filter { <caret>
+            }
+            """,
+            HintType.LAMBDA_IMPLICIT_PARAMETER_RECEIVER
+        )
     }
 
     fun testSimpleIt() {

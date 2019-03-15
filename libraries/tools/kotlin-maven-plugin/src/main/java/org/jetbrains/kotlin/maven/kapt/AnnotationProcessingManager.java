@@ -78,6 +78,11 @@ public class AnnotationProcessingManager {
     }
 
     @NotNull
+    public static File getGeneratedKotlinSourcesDirectory(@NotNull MavenProject project, @NotNull String sourceSetName) {
+        return new File(getTargetDirectory(project), "generated-sources/kaptKotlin/" + sourceSetName);
+    }
+
+    @NotNull
     static File getStubsDirectory(@NotNull MavenProject project, @NotNull String sourceSetName) {
         return new File(getTargetDirectory(project), "kaptStubs/" + sourceSetName);
     }

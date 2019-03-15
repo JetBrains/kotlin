@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
+import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForTypeAliasObject;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -48,14 +49,15 @@ public final class BindingUtils {
     private BindingUtils() {
     }
 
+    @SuppressWarnings("unchecked")
     @NotNull
-    static private <E extends PsiElement, D extends DeclarationDescriptor>
-    D getDescriptorForExpression(@NotNull BindingContext context, @NotNull E expression, Class<D> descriptorClass) {
+    private static <E extends PsiElement, D extends DeclarationDescriptor> D getDescriptorForExpression(
+            @NotNull BindingContext context, @NotNull E expression, Class<D> descriptorClass
+    ) {
         DeclarationDescriptor descriptor = context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, expression);
         assert descriptor != null;
         assert descriptorClass.isInstance(descriptor)
                 : message(expression, expression.toString() + " expected to have of type" + descriptorClass.toString());
-        //noinspection unchecked
         return (D) descriptor;
     }
 
@@ -128,6 +130,9 @@ public final class BindingUtils {
                 assert classDescriptor != null : "Resolved typealias must have non-null class descriptor: " + descriptor;
             }
             return classDescriptor;
+        }
+        else if (descriptor instanceof FakeCallableDescriptorForTypeAliasObject) {
+            return ((FakeCallableDescriptorForTypeAliasObject) descriptor).getReferencedObject();
         }
         else {
             return descriptor;

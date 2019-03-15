@@ -47,7 +47,7 @@ class CompilerFileLimitTest : CompilerSmokeTestBase() {
                     appendln("// kotlin rules ... and stuff")
                 }
             }
-            appendln("fun main(args: Array<String>)")
+            appendln("fun main()")
             appendln("{")
             appendln("\tval result = Class5().foo() + Class$size().foo()")
             appendln("\tprintln(result)")
@@ -81,7 +81,7 @@ class CompilerFileLimitTest : CompilerSmokeTestBase() {
         return buildString {
             append("package usesLarge\n\n")
             append("import large.Large\n\n")
-            appendln("fun main(args: Array<String>)")
+            appendln("fun main()")
             appendln("{")
             appendln("\tval result = Large.Class0().foo() + Large.Class$size().foo()")
             appendln("\tprintln(result)")

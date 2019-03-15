@@ -72,7 +72,7 @@ internal abstract class AbstractScopeTowerLevel(
                 )?.let { diagnostics.add(VisibilityError(it)) }
             }
         }
-        return CandidateWithBoundDispatchReceiverImpl(dispatchReceiver, descriptor, diagnostics)
+        return CandidateWithBoundDispatchReceiver(dispatchReceiver, descriptor, diagnostics)
     }
 
 }
@@ -222,13 +222,20 @@ internal open class ScopeBasedTowerLevel protected constructor(
     private val resolutionScope: ResolutionScope
 ) : AbstractScopeTowerLevel(scopeTower) {
 
+    val deprecationDiagnosticOfThisScope: ResolutionDiagnostic? =
+        if (resolutionScope is DeprecatedLexicalScope) ResolvedUsingDeprecatedVisibility(resolutionScope, location) else null
+
     internal constructor(scopeTower: ImplicitScopeTower, lexicalScope: LexicalScope) : this(scopeTower, lexicalScope as ResolutionScope)
 
     override fun getVariables(
         name: Name,
         extensionReceiver: ReceiverValueWithSmartCastInfo?
     ): Collection<CandidateWithBoundDispatchReceiver> = resolutionScope.getContributedVariables(name, location).map {
-        createCandidateDescriptor(it, dispatchReceiver = null)
+        createCandidateDescriptor(
+            it,
+            dispatchReceiver = null,
+            specialError = deprecationDiagnosticOfThisScope
+        )
     }
 
     override fun getObjects(
@@ -239,7 +246,7 @@ internal open class ScopeBasedTowerLevel protected constructor(
             createCandidateDescriptor(
                 classifier,
                 dispatchReceiver = null,
-                specialError = if (isDeprecated) ResolvedUsingDeprecatedVisbility(resolutionScope, location) else null
+                specialError = if (isDeprecated) ResolvedUsingDeprecatedVisibility(resolutionScope, location) else null
             )
         }
 
@@ -249,8 +256,13 @@ internal open class ScopeBasedTowerLevel protected constructor(
     ): Collection<CandidateWithBoundDispatchReceiver> {
         val result: ArrayList<CandidateWithBoundDispatchReceiver> = ArrayList()
 
-        resolutionScope.getContributedFunctionsAndConstructors(name, location, scopeTower.syntheticScopes)
-            .mapTo(result) { createCandidateDescriptor(it, dispatchReceiver = null) }
+        resolutionScope.getContributedFunctionsAndConstructors(name, location, scopeTower.syntheticScopes).mapTo(result) {
+            createCandidateDescriptor(
+                it,
+                dispatchReceiver = null,
+                specialError = deprecationDiagnosticOfThisScope
+            )
+        }
 
         // Add constructors of deprecated classifier with an additional diagnostic
         val descriptorWithDeprecation = resolutionScope.getContributedClassifierIncludeDeprecated(name, location)
@@ -259,7 +271,7 @@ internal open class ScopeBasedTowerLevel protected constructor(
                 createCandidateDescriptor(
                     it,
                     dispatchReceiver = null,
-                    specialError = ResolvedUsingDeprecatedVisbility(resolutionScope, location)
+                    specialError = ResolvedUsingDeprecatedVisibility(resolutionScope, location)
                 )
             }
         }

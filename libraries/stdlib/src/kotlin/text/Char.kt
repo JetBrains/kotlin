@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 @file:kotlin.jvm.JvmMultifileClass
@@ -21,9 +10,11 @@ package kotlin.text
 
 /**
  * Concatenates this Char and a String.
+ *
+ * @sample samples.text.Chars.plus
  */
 @kotlin.internal.InlineOnly
-public inline operator fun Char.plus(other: String) : String = this.toString() + other
+public inline operator fun Char.plus(other: String): String = this.toString() + other
 
 /**
  * Returns `true` if this character is equal to the [other] character, optionally ignoring character case.
@@ -34,6 +25,8 @@ public inline operator fun Char.plus(other: String) : String = this.toString() +
  *   - The two characters are the same (as compared by the == operator)
  *   - Applying the method [toUpperCase] to each character produces the same result
  *   - Applying the method [toLowerCase] to each character produces the same result
+ *
+ * @sample samples.text.Chars.equals
  */
 public fun Char.equals(other: Char, ignoreCase: Boolean = false): Boolean {
     if (this == other) return true

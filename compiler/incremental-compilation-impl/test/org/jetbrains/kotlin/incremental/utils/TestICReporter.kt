@@ -17,10 +17,10 @@
 package org.jetbrains.kotlin.incremental.utils
 
 import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.incremental.ICReporter
+import org.jetbrains.kotlin.incremental.ICReporterBase
 import java.io.File
 
-class TestICReporter : ICReporter {
+class TestICReporter : ICReporterBase() {
     private val compiledSourcesMutable = arrayListOf<File>()
 
     val compiledSources: List<File>
@@ -32,7 +32,10 @@ class TestICReporter : ICReporter {
     override fun report(message: () -> String) {
     }
 
-    override fun reportCompileIteration(sourceFiles: Collection<File>, exitCode: ExitCode) {
+    override fun reportVerbose(message: () -> String) {
+    }
+
+    override fun reportCompileIteration(incremental: Boolean, sourceFiles: Collection<File>, exitCode: ExitCode) {
         compiledSourcesMutable.addAll(sourceFiles)
         this.exitCode = exitCode
     }

@@ -1,4 +1,4 @@
 package
 
 public inline fun foo(): kotlin.Unit
-public fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+public fun main(): kotlin.Unit

@@ -55,7 +55,7 @@ class RemoveExplicitTypeArgumentsIntention : SelfTargetingOffsetIndependentInten
             if (callExpression.typeArguments.isEmpty()) return false
 
             val resolutionFacade = callExpression.getResolutionFacade()
-            val bindingContext = resolutionFacade.analyze(callExpression, BodyResolveMode.PARTIAL)
+            val bindingContext = resolutionFacade.analyze(callExpression, BodyResolveMode.PARTIAL_WITH_CFA)
             val originalCall = callExpression.getResolvedCall(bindingContext) ?: return false
 
             val (contextExpression, expectedType) = findContextToAnalyze(callExpression, bindingContext)

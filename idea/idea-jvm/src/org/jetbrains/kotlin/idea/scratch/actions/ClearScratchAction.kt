@@ -17,19 +17,18 @@
 package org.jetbrains.kotlin.idea.scratch.actions
 
 import com.intellij.icons.AllIcons
-import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.scratch.ScratchFileLanguageProvider
-import org.jetbrains.kotlin.idea.scratch.ui.ScratchTopPanel
+import org.jetbrains.kotlin.idea.scratch.getScratchPanelFromSelectedEditor
 
-class ClearScratchAction(private val scratchPanel: ScratchTopPanel) : AnAction(
-    KotlinBundle.message("scratch.clear.button"),
+class ClearScratchAction : ScratchAction(
     KotlinBundle.message("scratch.clear.button"),
     AllIcons.Actions.GC
 ) {
     override fun actionPerformed(e: AnActionEvent) {
-        val scratchFile = scratchPanel.scratchFile
+        val project = e.project ?: return
+        val scratchFile = getScratchPanelFromSelectedEditor(project)?.scratchFile ?: return
         val psiFile = scratchFile.getPsiFile() ?: return
 
         ScratchFileLanguageProvider.get(psiFile.language)?.getOutputHandler()?.clear(scratchFile)

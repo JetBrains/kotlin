@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.maven.inspections
 
+import com.intellij.codeInspection.CleanupLocalInspectionTool
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.util.text.VersionComparatorUtil
 import com.intellij.util.xml.DomFileElement
@@ -29,7 +30,9 @@ import org.jetbrains.kotlin.idea.maven.PomFile
 import org.jetbrains.kotlin.idea.maven.findDependencies
 import org.jetbrains.kotlin.idea.versions.DEPRECATED_LIBRARIES_INFORMATION
 
-class DeprecatedMavenDependencyInspection : DomElementsInspection<MavenDomProjectModel>(MavenDomProjectModel::class.java) {
+class DeprecatedMavenDependencyInspection :
+    DomElementsInspection<MavenDomProjectModel>(MavenDomProjectModel::class.java), CleanupLocalInspectionTool {
+
     override fun checkFileElement(domFileElement: DomFileElement<MavenDomProjectModel>?, holder: DomElementAnnotationHolder?) {
         if (domFileElement == null || holder == null) return
 

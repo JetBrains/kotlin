@@ -26,11 +26,10 @@ class RenameKotlinTypeParameterProcessor : RenameKotlinPsiProcessor() {
 
     override fun findCollisions(
             element: PsiElement,
-            newName: String?,
+            newName: String,
             allRenames: MutableMap<out PsiElement, String>,
             result: MutableList<UsageInfo>
     ) {
-        if (newName == null) return
         val declaration = element as? KtTypeParameter ?: return
         val descriptor = declaration.unsafeResolveToDescriptor()
         checkRedeclarations(descriptor, newName, result)

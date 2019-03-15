@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1122
+// EXPECTED_REACHABLE_NODES: 1292
 // CHECK_LABELS_COUNT: function=test0 count=0
 // CHECK_LABELS_COUNT: function=test1 count=0
 // CHECK_LABELS_COUNT: function=test2 count=0

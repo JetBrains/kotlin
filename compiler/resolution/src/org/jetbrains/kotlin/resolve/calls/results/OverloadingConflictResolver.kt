@@ -19,10 +19,8 @@ package org.jetbrains.kotlin.resolve.calls.results
 import gnu.trove.THashSet
 import gnu.trove.TObjectHashingStrategy
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.ScriptDescriptor
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.builtins.UnsignedTypes
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.synthetic.SyntheticMemberDescriptor
 import org.jetbrains.kotlin.resolve.DescriptorEquivalenceForOverrides
 import org.jetbrains.kotlin.resolve.OverridingUtil
@@ -34,12 +32,14 @@ import java.util.*
 
 open class OverloadingConflictResolver<C : Any>(
     private val builtIns: KotlinBuiltIns,
+    private val module: ModuleDescriptor,
     private val specificityComparator: TypeSpecificityComparator,
     private val getResultingDescriptor: (C) -> CallableDescriptor,
     private val createEmptyConstraintSystem: () -> SimpleConstraintSystem,
     private val createFlatSignature: (C) -> FlatSignature<C>,
     private val getVariableCandidates: (C) -> C?, // for variable WithInvoke
-    private val isFromSources: (CallableDescriptor) -> Boolean
+    private val isFromSources: (CallableDescriptor) -> Boolean,
+    private val hasSAMConversion: ((C) -> Boolean)?
 ) {
 
     private val resolvedCallHashingStrategy = object : TObjectHashingStrategy<C> {
@@ -154,10 +154,17 @@ open class OverloadingConflictResolver<C : Any>(
 
             CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS ->
                 findMaximallySpecificCall(candidates, discriminateGenerics, isDebuggerContext)
-                        ?: findMaximallySpecificCall(
-                            candidates.filterNotTo(mutableSetOf()) { createFlatSignature(it).isSyntheticMember },
+                    ?: hasSAMConversion?.let { hasConversion ->
+                        findMaximallySpecificCall(
+                            candidates.filterNotTo(mutableSetOf()) { hasConversion(it) },
                             discriminateGenerics, isDebuggerContext
                         )
+                    }
+
+                    ?: findMaximallySpecificCall(
+                        candidates.filterNotTo(mutableSetOf()) { createFlatSignature(it).isSyntheticMember },
+                        discriminateGenerics, isDebuggerContext
+                    )
         }
 
     // null means ambiguity between variables
@@ -280,11 +287,43 @@ open class OverloadingConflictResolver<C : Any>(
         override fun isNonSubtypeNotLessSpecific(specific: KotlinType, general: KotlinType): Boolean {
             val _double = builtIns.doubleType
             val _float = builtIns.floatType
-            val _long = builtIns.longType
-            val _int = builtIns.intType
-            val _byte = builtIns.byteType
-            val _short = builtIns.shortType
 
+            val isSpecificUnsigned = UnsignedTypes.isUnsignedType(specific)
+            val isGeneralUnsigned = UnsignedTypes.isUnsignedType(general)
+            return when {
+                isSpecificUnsigned && isGeneralUnsigned -> {
+                    val uLong = module.findClassAcrossModuleDependencies(KotlinBuiltIns.FQ_NAMES.uLong)?.defaultType ?: return false
+                    val uInt = module.findClassAcrossModuleDependencies(KotlinBuiltIns.FQ_NAMES.uInt)?.defaultType ?: return false
+                    val uByte = module.findClassAcrossModuleDependencies(KotlinBuiltIns.FQ_NAMES.uByte)?.defaultType ?: return false
+                    val uShort = module.findClassAcrossModuleDependencies(KotlinBuiltIns.FQ_NAMES.uShort)?.defaultType ?: return false
+
+                    isNonSubtypeNotLessSpecific(specific, general, _double, _float, uLong, uInt, uByte, uShort)
+                }
+
+                !isSpecificUnsigned && isGeneralUnsigned -> true
+
+                else -> {
+                    val _long = builtIns.longType
+                    val _int = builtIns.intType
+                    val _byte = builtIns.byteType
+                    val _short = builtIns.shortType
+
+                    isNonSubtypeNotLessSpecific(specific, general, _double, _float, _long, _int, _byte, _short)
+                }
+            }
+
+        }
+
+        private fun isNonSubtypeNotLessSpecific(
+            specific: KotlinType,
+            general: KotlinType,
+            _double: KotlinType,
+            _float: KotlinType,
+            _long: KotlinType,
+            _int: KotlinType,
+            _byte: KotlinType,
+            _short: KotlinType
+        ): Boolean {
             when {
                 TypeUtils.equalTypes(specific, _double) && TypeUtils.equalTypes(general, _float) -> return true
                 TypeUtils.equalTypes(specific, _int) -> {
@@ -364,7 +403,8 @@ open class OverloadingConflictResolver<C : Any>(
                 gSignature,
                 SpecificityComparisonWithNumerics,
                 specificityComparator
-            )) {
+            )
+        ) {
             return false
         }
 

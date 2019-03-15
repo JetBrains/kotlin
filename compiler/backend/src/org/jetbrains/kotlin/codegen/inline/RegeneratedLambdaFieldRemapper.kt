@@ -16,25 +16,27 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
+import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.codegen.AsmUtil.THIS
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode
 
 class RegeneratedLambdaFieldRemapper(
-        originalLambdaInternalName: String,
-        override val newLambdaInternalName: String,
-        parameters: Parameters,
-        val recapturedLambdas: Map<String, LambdaInfo>,
-        remapper: FieldRemapper,
-        private val isConstructor: Boolean
+    originalLambdaInternalName: String,
+    override val newLambdaInternalName: String,
+    parameters: Parameters,
+    val recapturedLambdas: Map<String, LambdaInfo>,
+    remapper: FieldRemapper,
+    private val isConstructor: Boolean
 ) : FieldRemapper(originalLambdaInternalName, remapper, parameters) {
 
     public override fun canProcess(fieldOwner: String, fieldName: String, isFolding: Boolean) =
-            super.canProcess(fieldOwner, fieldName, isFolding) || isRecapturedLambdaType(fieldOwner, isFolding)
+        super.canProcess(fieldOwner, fieldName, isFolding) || isRecapturedLambdaType(fieldOwner, isFolding)
 
     private fun isRecapturedLambdaType(owner: String, isFolding: Boolean) =
-            recapturedLambdas.containsKey(owner) && (isFolding || parent !is InlinedLambdaRemapper)
+        recapturedLambdas.containsKey(owner) && (isFolding || parent !is InlinedLambdaRemapper)
 
     override fun findField(fieldInsnNode: FieldInsnNode, captured: Collection<CapturedParamInfo>): CapturedParamInfo? {
         val searchInParent = !canProcess(fieldInsnNode.owner, fieldInsnNode.name, false)
@@ -63,22 +65,23 @@ class RegeneratedLambdaFieldRemapper(
         val fin = FieldInsnNode(node.opcode, node.owner, fieldName.substringAfter(CAPTURED_FIELD_FOLD_PREFIX), node.desc)
         var fromParent = false
         val field = findFieldInSuper(fin) ?:
-                    //search in parent
-                    findFieldInSuper(FieldInsnNode(
-                            Opcodes.GETSTATIC, originalLambdaInternalName, THIS_0,
-                            Type.getObjectType(parent!!.originalLambdaInternalName!!).descriptor
-                    ))?.also { fromParent = true } ?:
-                    throw AssertionError("Couldn't find captured this $originalLambdaInternalName for $fieldName")
+        //search in parent
+        findFieldInSuper(
+            FieldInsnNode(
+                Opcodes.GETSTATIC, originalLambdaInternalName, AsmUtil.CAPTURED_THIS_FIELD,
+                Type.getObjectType(parent!!.originalLambdaInternalName!!).descriptor
+            )
+        )?.also { fromParent = true } ?: throw AssertionError("Couldn't find captured this $originalLambdaInternalName for $fieldName")
 
 
         val result = StackValue.field(
-                if (field.isSkipped)
-                    Type.getObjectType(parent!!.parent!!.newLambdaInternalName)
-                else
-                    field.getType(),
-                Type.getObjectType(newLambdaInternalName), /*TODO owner type*/
-                field.newFieldName, false,
-                prefix ?: StackValue.LOCAL_0
+            if (field.isSkipped)
+                Type.getObjectType(parent!!.parent!!.newLambdaInternalName)
+            else
+                field.getType(),
+            Type.getObjectType(newLambdaInternalName), /*TODO owner type*/
+            field.newFieldName, false,
+            prefix ?: StackValue.LOCAL_0
         )
 
         return if (fromParent) parent!!.getFieldForInline(node, result) else result

@@ -169,8 +169,9 @@ class KotlinCreateTestIntention : SelfTargetingRangeIntention<KtNamedDeclaration
                             if (existingClass != null) {
                                 runWriteAction {
                                     val existingMethodNames = existingClass
-                                            .declarations
-                                            .filterIsInstance<KtNamedFunction>()
+                                        .declarations
+                                        .asSequence()
+                                        .filterIsInstance<KtNamedFunction>()
                                             .mapTo(HashSet()) { it.name }
                                     generatedClass
                                             .methods

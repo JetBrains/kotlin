@@ -1,0 +1,15 @@
+FILE: NestedSuperType.kt
+    public final class A : R|b/B| {
+        public constructor(): super<R|b/B|>()
+
+        public final class NestedInA1 : R|b/B.NestedInB| {
+            public constructor(): super<R|b/B.NestedInB|>()
+
+        }
+
+        public final class NestedInA2 : R|c/C.NestedInC| {
+            public constructor(): super<R|c/C.NestedInC|>()
+
+        }
+
+    }

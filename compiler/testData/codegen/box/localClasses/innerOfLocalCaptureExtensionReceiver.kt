@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 fun String.bar(): String {
     open class Local {
         fun result() = this@bar

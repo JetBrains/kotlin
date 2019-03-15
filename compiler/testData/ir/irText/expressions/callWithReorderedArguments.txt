@@ -1,25 +1,25 @@
 FILE fqName:<root> fileName:/callWithReorderedArguments.kt
-  FUN name:foo visibility:public modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:Unit flags:
+  FUN name:foo visibility:public modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:kotlin.Unit flags:
     VALUE_PARAMETER name:a index:0 type:kotlin.Int flags:
     VALUE_PARAMETER name:b index:1 type:kotlin.Int flags:
     BLOCK_BODY
-  FUN name:noReorder1 visibility:public modality:FINAL <> () returnType:Int flags:
+  FUN name:noReorder1 visibility:public modality:FINAL <> () returnType:kotlin.Int flags:
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='noReorder1(): Int'
         CONST Int type=kotlin.Int value=1
-  FUN name:noReorder2 visibility:public modality:FINAL <> () returnType:Int flags:
+  FUN name:noReorder2 visibility:public modality:FINAL <> () returnType:kotlin.Int flags:
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='noReorder2(): Int'
         CONST Int type=kotlin.Int value=2
-  FUN name:reordered1 visibility:public modality:FINAL <> () returnType:Int flags:
+  FUN name:reordered1 visibility:public modality:FINAL <> () returnType:kotlin.Int flags:
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='reordered1(): Int'
         CONST Int type=kotlin.Int value=1
-  FUN name:reordered2 visibility:public modality:FINAL <> () returnType:Int flags:
+  FUN name:reordered2 visibility:public modality:FINAL <> () returnType:kotlin.Int flags:
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='reordered2(): Int'
         CONST Int type=kotlin.Int value=2
-  FUN name:test visibility:public modality:FINAL <> () returnType:Unit flags:
+  FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:
     BLOCK_BODY
       CALL 'foo(Int, Int): Unit' type=kotlin.Unit origin=null
         a: CALL 'noReorder1(): Int' type=kotlin.Int origin=null

@@ -16,12 +16,16 @@
 
 package org.jetbrains.kotlin.backend.common
 
-import org.jetbrains.kotlin.backend.common.descriptors.SharedVariablesManager
+import org.jetbrains.kotlin.backend.common.ir.DeclarationFactory
+import org.jetbrains.kotlin.backend.common.ir.Ir
+import org.jetbrains.kotlin.backend.common.ir.SharedVariablesManager
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 
 interface BackendContext {
+    val ir: Ir<CommonBackendContext>
     val builtIns: KotlinBuiltIns
     val irBuiltIns: IrBuiltIns
     val sharedVariablesManager: SharedVariablesManager
+    val declarationFactory: DeclarationFactory
 }

@@ -18,6 +18,7 @@ package org.jetbrains.uast.kotlin
 
 import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.util.PsiTypesUtil
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
@@ -32,14 +33,15 @@ import org.jetbrains.kotlin.types.typeUtil.nullability
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.uast.*
 import org.jetbrains.uast.internal.acceptList
+import org.jetbrains.uast.kotlin.declarations.KotlinUIdentifier
 import org.jetbrains.uast.kotlin.declarations.UastLightIdentifier
-import org.jetbrains.uast.kotlin.internal.KotlinUElementWithComments
+import org.jetbrains.uast.kotlin.internal.DelegatedMultiResolve
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiParameter
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiVariable
 import org.jetbrains.uast.visitor.UastVisitor
 
-abstract class AbstractKotlinUVariable(givenParent: UElement?)
-    : KotlinAbstractUElement(givenParent), PsiVariable, UVariable, KotlinUElementWithComments {
+abstract class AbstractKotlinUVariable(givenParent: UElement?) : KotlinAbstractUElement(givenParent), PsiVariable, UVariableExPlaceHolder,
+    UAnchorOwner {
 
     override val uastInitializer: UExpression?
         get() {
@@ -48,7 +50,7 @@ abstract class AbstractKotlinUVariable(givenParent: UElement?)
                 is UastKotlinPsiVariable -> psi.ktInitializer
                 is UastKotlinPsiParameter -> psi.ktDefaultValue
                 is KtLightElement<*, *> -> {
-                    val origin = psi.kotlinOrigin
+                    val origin = psi.kotlinOrigin?.takeIf { it.canAnalyze() } // EA-137191
                     when (origin) {
                         is KtVariableDeclaration -> origin.initializer
                         is KtParameter -> origin.defaultValue
@@ -90,16 +92,34 @@ abstract class AbstractKotlinUVariable(givenParent: UElement?)
     }
 
 
-    abstract protected fun acceptsAnnotationTarget(target: AnnotationUseSiteTarget?): Boolean
+    protected abstract fun acceptsAnnotationTarget(target: AnnotationUseSiteTarget?): Boolean
 
-    override val typeReference by lz { getLanguagePlugin().convertOpt<UTypeReferenceExpression>(psi.typeElement, this) }
+    override val typeReference: UTypeReferenceExpression? by lz {
+        KotlinUTypeReferenceExpression(type, (sourcePsi as? KtCallableDeclaration)?.typeReference, this)
+    }
 
-    override val uastAnchor: UElement?
-        get() = UIdentifier(nameIdentifier, this)
+    override val uastAnchor: UIdentifier?
+        get() {
+            val sourcePsi = sourcePsi
+            val identifierSourcePsi = when (sourcePsi) {
+                is KtNamedDeclaration -> sourcePsi.nameIdentifier
+                is KtTypeReference -> sourcePsi.typeElement?.let {
+                    // receiver param in extension function
+                    (it as? KtUserType)?.referenceExpression?.getIdentifier() ?: it
+                } ?: sourcePsi
+                is KtNameReferenceExpression -> sourcePsi.getReferencedNameElement()
+                is KtBinaryExpression, is KtCallExpression -> null // e.g. `foo("Lorem ipsum") ?: foo("dolor sit amet")`
+                is KtDestructuringDeclaration -> sourcePsi.valOrVarKeyword
+                else -> sourcePsi
+            } ?: return null
+            return KotlinUIdentifier(nameIdentifier, identifierSourcePsi, this)
+        }
 
     override fun equals(other: Any?) = other is AbstractKotlinUVariable && psi == other.psi
 
-    class WrappedUAnnotation(psiAnnotation: PsiAnnotation, override val uastParent: UElement) : UAnnotation, JvmDeclarationUElement {
+    class WrappedUAnnotation(psiAnnotation: PsiAnnotation, override val uastParent: UElement) : UAnnotation, UAnchorOwner,
+        DelegatedMultiResolve,
+        JvmDeclarationUElementPlaceholder {
 
         override val javaPsi: PsiAnnotation = psiAnnotation
         override val psi: PsiAnnotation = javaPsi
@@ -109,7 +129,10 @@ abstract class AbstractKotlinUVariable(givenParent: UElement?)
             psi.parameterList.attributes.map { WrappedUNamedExpression(it, this) }
         }
 
-        class WrappedUNamedExpression(pair: PsiNameValuePair, override val uastParent: UElement?) : UNamedExpression, JvmDeclarationUElement {
+        override val uastAnchor by lazy { KotlinUIdentifier(javaPsi.nameReferenceElement?.referenceNameElement, null, this) }
+
+        class WrappedUNamedExpression(pair: PsiNameValuePair, override val uastParent: UElement?) : UNamedExpression,
+            JvmDeclarationUElementPlaceholder {
             override val name: String? = pair.name
             override val psi = pair
             override val javaPsi: PsiElement? = psi
@@ -138,8 +161,6 @@ class KotlinUVariable(
 
     override val psi = javaPsi
 
-    override val typeReference by lz { getLanguagePlugin().convertOpt<UTypeReferenceExpression>(psi.typeElement, this) }
-
     override fun acceptsAnnotationTarget(target: AnnotationUseSiteTarget?): Boolean = true
 
     override fun getInitializer(): PsiExpression? {
@@ -164,7 +185,7 @@ open class KotlinUParameter(
         psi: PsiParameter,
         final override val sourcePsi: KtElement?,
         givenParent: UElement?
-) : AbstractKotlinUVariable(givenParent), UParameter, PsiParameter by psi {
+) : AbstractKotlinUVariable(givenParent), UParameterExPlaceHolder, PsiParameter by psi {
 
     final override val javaPsi = unwrap<UParameter, PsiParameter>(psi)
 
@@ -216,7 +237,8 @@ class KotlinReceiverUParameter(
 
 }
 
-class KotlinNullabilityUAnnotation(val annotatedElement: PsiElement, override val uastParent: UElement) : UAnnotation, JvmDeclarationUElement {
+class KotlinNullabilityUAnnotation(val annotatedElement: PsiElement, override val uastParent: UElement) : UAnnotationEx, UAnchorOwner,
+    DelegatedMultiResolve, JvmDeclarationUElementPlaceholder {
 
     private fun getTargetType(annotatedElement: PsiElement): KotlinType? {
         if (annotatedElement is KtTypeReference) {
@@ -234,6 +256,8 @@ class KotlinNullabilityUAnnotation(val annotatedElement: PsiElement, override va
         }?.let { return it }
         return null
     }
+
+    override val uastAnchor: UIdentifier? = null
 
     val nullability by lz { getTargetType(annotatedElement)?.nullability() }
 
@@ -268,7 +292,7 @@ open class KotlinUField(
         psi: PsiField,
         override val sourcePsi: KtElement?,
         givenParent: UElement?
-) : AbstractKotlinUVariable(givenParent), UField, PsiField by psi {
+) : AbstractKotlinUVariable(givenParent), UFieldExPlaceHolder, PsiField by psi {
     override fun getSourceElement() = sourcePsi ?: this
 
     override val javaPsi  = unwrap<UField, PsiField>(psi)
@@ -313,7 +337,7 @@ open class KotlinULocalVariable(
         psi: PsiLocalVariable,
         override val sourcePsi: KtElement,
         givenParent: UElement?
-) : AbstractKotlinUVariable(givenParent), ULocalVariable, PsiLocalVariable by psi {
+) : AbstractKotlinUVariable(givenParent), ULocalVariableExPlaceHolder, PsiLocalVariable by psi {
 
     override val javaPsi = unwrap<ULocalVariable, PsiLocalVariable>(psi)
 
@@ -360,7 +384,7 @@ class KotlinUEnumConstant(
         psi: PsiEnumConstant,
         override val sourcePsi: KtElement?,
         givenParent: UElement?
-) : AbstractKotlinUVariable(givenParent), UEnumConstant, PsiEnumConstant by psi {
+) : AbstractKotlinUVariable(givenParent), UEnumConstantExPlaceHolder, UCallExpressionEx, DelegatedMultiResolve, PsiEnumConstant by psi {
 
     override val initializingClass: UClass? by lz {
         (psi.initializingClass as? KtLightClass)?.let { initializingClass ->
@@ -410,14 +434,16 @@ class KotlinUEnumConstant(
     override val valueArgumentCount: Int
         get() = psi.argumentList?.expressions?.size ?: 0
 
-    override val valueArguments by lz {
-        psi.argumentList?.expressions?.map {
-            getLanguagePlugin().convertElement(it, this) as? UExpression ?: UastEmptyExpression
-        } ?: emptyList()
-    }
+    override val valueArguments by lz(fun(): List<UExpression> {
+        val ktEnumEntry = sourcePsi as? KtEnumEntry ?: return emptyList()
+        val ktSuperTypeCallEntry = ktEnumEntry.initializerList?.initializers?.firstOrNull() as? KtSuperTypeCallEntry ?: return emptyList()
+        return ktSuperTypeCallEntry.valueArguments.map {
+            it.getArgumentExpression()?.let { getLanguagePlugin().convertElement(it, this) } as? UExpression ?: UastEmptyExpression(this)
+        }
+    })
 
     override val returnType: PsiType?
-        get() = psi.type
+        get() = uastParent?.getAsJavaPsiElement(PsiClass::class.java)?.let { PsiTypesUtil.getClassType(it) }
 
     override fun resolve() = psi.resolveMethod()
 
@@ -438,4 +464,7 @@ class KotlinUEnumConstant(
         override val identifier: String
             get() = psi.containingClass?.name ?: "<error>"
     }
+
+    override fun getArgumentForParameter(i: Int): UExpression? = valueArguments.getOrNull(i)
+
 }

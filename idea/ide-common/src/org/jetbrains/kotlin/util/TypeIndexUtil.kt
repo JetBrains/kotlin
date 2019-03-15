@@ -39,7 +39,7 @@ fun KtFile.aliasImportMap(): Multimap<String, String> {
     }
 
     val data = CachedAliasImportData(buildAliasImportMap(), modificationStamp)
-    putUserData(ALIAS_IMPORT_DATA_KEY, cached)
+    putUserData(ALIAS_IMPORT_DATA_KEY, data)
     return data.map
 }
 

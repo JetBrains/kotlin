@@ -17,14 +17,15 @@
 package org.jetbrains.kotlin.codegen
 
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.TestsCompiletimeError
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
-import org.jetbrains.kotlin.cli.common.output.outputUtils.writeAllTo
-import org.jetbrains.kotlin.cli.jvm.compiler.CliBindingTrace
+import org.jetbrains.kotlin.cli.common.output.writeAllTo
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.descriptors.PackagePartProvider
+import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.resolve.BindingTrace
@@ -34,7 +35,11 @@ import java.io.File
 object GenerationUtils {
     @JvmStatic
     fun compileFileTo(ktFile: KtFile, environment: KotlinCoreEnvironment, output: File): ClassFileFactory =
-        compileFile(ktFile, environment).apply {
+        compileFilesTo(listOf(ktFile), environment, output)
+
+    @JvmStatic
+    fun compileFilesTo(files: List<KtFile>, environment: KotlinCoreEnvironment, output: File): ClassFileFactory =
+        compileFiles(files, environment).factory.apply {
             writeAllTo(output)
         }
 
@@ -48,7 +53,7 @@ object GenerationUtils {
         files: List<KtFile>,
         environment: KotlinCoreEnvironment,
         classBuilderFactory: ClassBuilderFactory = ClassBuilderFactories.TEST,
-        trace: BindingTrace = CliBindingTrace()
+        trace: BindingTrace = NoScopeRecordCliBindingTrace()
     ): GenerationState =
         compileFiles(files, environment.configuration, classBuilderFactory, environment::createPackagePartProvider, trace)
 
@@ -59,7 +64,7 @@ object GenerationUtils {
         configuration: CompilerConfiguration,
         classBuilderFactory: ClassBuilderFactory,
         packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
-        trace: BindingTrace = CliBindingTrace()
+        trace: BindingTrace = NoScopeRecordCliBindingTrace()
     ): GenerationState {
         val analysisResult =
             JvmResolveUtil.analyzeAndCheckForErrors(files.first().project, files, configuration, packagePartProvider, trace)
@@ -76,7 +81,12 @@ object GenerationUtils {
         }
 
         // For JVM-specific errors
-        AnalyzingUtils.throwExceptionOnErrors(state.collectedExtraJvmDiagnostics)
+        try {
+            AnalyzingUtils.throwExceptionOnErrors(state.collectedExtraJvmDiagnostics)
+        } catch (e: Throwable) {
+            throw TestsCompiletimeError(e)
+        }
+
         return state
     }
 }

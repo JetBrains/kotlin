@@ -23,6 +23,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
 
+import java.util.Arrays;
+
 public class KtBinaryExpression extends KtExpressionImpl implements KtOperationExpression {
     public KtBinaryExpression(@NotNull ASTNode node) {
         super(node);
@@ -64,7 +66,12 @@ public class KtBinaryExpression extends KtExpressionImpl implements KtOperationE
     @Override
     @NotNull
     public KtOperationReferenceExpression getOperationReference() {
-        return (KtOperationReferenceExpression) findChildByType(KtNodeTypes.OPERATION_REFERENCE);
+        PsiElement operationReference = findChildByType(KtNodeTypes.OPERATION_REFERENCE);
+        if (operationReference == null) {
+            throw new NullPointerException("No operation reference for binary expression: " + Arrays.toString(getChildren()));
+        }
+
+        return (KtOperationReferenceExpression) operationReference;
     }
 
     @NotNull
@@ -72,3 +79,4 @@ public class KtBinaryExpression extends KtExpressionImpl implements KtOperationE
         return getOperationReference().getReferencedNameElementType();
     }
 }
+

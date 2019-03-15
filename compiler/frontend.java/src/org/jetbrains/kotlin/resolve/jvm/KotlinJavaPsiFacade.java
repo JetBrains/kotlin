@@ -43,6 +43,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.asJava.KtLightClassMarker;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
+import org.jetbrains.kotlin.load.java.JavaClassFinder;
 import org.jetbrains.kotlin.load.java.JavaClassFinderImpl;
 import org.jetbrains.kotlin.load.java.structure.JavaClass;
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl;
@@ -96,13 +97,18 @@ public class KotlinJavaPsiFacade {
         });
     }
 
+    public void clearPackageCaches() {
+        packageCache = null;
+    }
+
     public LightModifierList getEmptyModifierList() {
         return emptyModifierList;
     }
 
-    public JavaClass findClass(@NotNull ClassId classId, @NotNull GlobalSearchScope scope) {
+    public JavaClass findClass(@NotNull JavaClassFinder.Request request, @NotNull GlobalSearchScope scope) {
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled(); // We hope this method is being called often enough to cancel daemon processes smoothly
 
+        ClassId classId = request.getClassId();
         String qualifiedName = classId.asSingleFqName().asString();
 
         if (shouldUseSlowResolve()) {
@@ -115,7 +121,7 @@ public class KotlinJavaPsiFacade {
 
         for (KotlinPsiElementFinderWrapper finder : finders()) {
             if (finder instanceof CliFinder) {
-                JavaClass aClass = ((CliFinder) finder).findClass(classId, scope);
+                JavaClass aClass = ((CliFinder) finder).findClass(request, scope);
                 if (aClass != null) return aClass;
             }
             else {
@@ -379,8 +385,8 @@ public class KotlinJavaPsiFacade {
             return javaFileManager.findClass(qualifiedName, scope);
         }
 
-        public JavaClass findClass(@NotNull ClassId classId, @NotNull GlobalSearchScope scope) {
-            return javaFileManager.findClass(classId, scope);
+        public JavaClass findClass(@NotNull JavaClassFinder.Request request, @NotNull GlobalSearchScope scope) {
+            return javaFileManager.findClass(request, scope);
         }
 
         @Nullable

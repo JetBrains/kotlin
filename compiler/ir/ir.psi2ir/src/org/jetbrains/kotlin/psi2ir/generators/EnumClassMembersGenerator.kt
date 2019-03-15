@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.addMember
@@ -44,7 +43,7 @@ class EnumClassMembersGenerator(declarationGenerator: DeclarationGenerator) : De
                 IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER,
                 valuesFunction
             ).also { irFunction ->
-                FunctionGenerator(declarationGenerator).generateFunctionParameterDeclarations(irFunction, null, null)
+                FunctionGenerator(declarationGenerator).generateFunctionParameterDeclarationsAndReturnType(irFunction, null, null)
                 irFunction.body = IrSyntheticBodyImpl(irClass.startOffset, irClass.endOffset, IrSyntheticBodyKind.ENUM_VALUES)
             }
         )
@@ -59,11 +58,11 @@ class EnumClassMembersGenerator(declarationGenerator: DeclarationGenerator) : De
 
         irClass.addMember(
             context.symbolTable.declareSimpleFunctionWithOverrides(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                irClass.startOffset, irClass.endOffset,
                 IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER,
                 valueOfFunction
             ).also { irFunction ->
-                FunctionGenerator(declarationGenerator).generateFunctionParameterDeclarations(irFunction, null, null)
+                FunctionGenerator(declarationGenerator).generateFunctionParameterDeclarationsAndReturnType(irFunction, null, null)
                 irFunction.body = IrSyntheticBodyImpl(irClass.startOffset, irClass.endOffset, IrSyntheticBodyKind.ENUM_VALUEOF)
             }
         )

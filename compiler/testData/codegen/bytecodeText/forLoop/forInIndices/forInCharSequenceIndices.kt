@@ -1,5 +1,4 @@
-// WITH_RUNTIME
-
+// IGNORE_BACKEND: JVM_IR
 fun test(s: CharSequence): Int {
     var result = 0
     for (i in s.indices) {

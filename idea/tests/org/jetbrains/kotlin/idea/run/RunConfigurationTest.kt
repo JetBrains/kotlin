@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.run
@@ -29,21 +18,21 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiManager
 import com.intellij.refactoring.RefactoringFactory
 import com.intellij.testFramework.MapDataContext
-import com.intellij.testFramework.PlatformTestCase
 import com.intellij.testFramework.PsiTestUtil
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.idea.MainFunctionDetector
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex
 import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionFqnNameIndex
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.KotlinCodeInsightTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.*
+import org.jetbrains.kotlin.idea.test.configureLanguageAndApiVersion
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.junit.Assert
 import java.io.File
 import java.util.*
@@ -56,6 +45,9 @@ class RunConfigurationTest: KotlinCodeInsightTestCase() {
 
     fun testMainInTest() {
         val createResult = configureModule(moduleDirPath("module"), getTestProject().baseDir!!)
+        configureLanguageAndApiVersion(
+            createResult.module.project, createResult.module, LanguageVersionSettingsImpl.DEFAULT.languageVersion.versionString
+        )
         ConfigLibraryUtil.configureKotlinRuntimeAndSdk(createResult.module, addJdk(testRootDisposable, ::mockJdk))
 
         val runConfiguration = createConfigurationFromMain("some.main")
@@ -70,8 +62,8 @@ class RunConfigurationTest: KotlinCodeInsightTestCase() {
                 val assertIsMain = "yes" in options
                 val assertIsNotMain = "no" in options
 
-                val bindingContext = function.analyze(BodyResolveMode.FULL)
-                val isMainFunction = MainFunctionDetector(bindingContext).isMain(function)
+                val isMainFunction =
+                    MainFunctionDetector(LanguageVersionSettingsImpl.DEFAULT) { it.resolveToDescriptorIfAny() }.isMain(function)
 
                 if (assertIsMain) {
                     Assert.assertTrue("The function ${function.fqName?.asString()} should be main", isMainFunction)
@@ -92,8 +84,17 @@ class RunConfigurationTest: KotlinCodeInsightTestCase() {
                     } catch (expected: Throwable) {
                     }
 
-                    Assert.assertNull("Kotlin configuration producer shouldN'T produce configuration for ${function.fqName?.asString()}",
-                                      KotlinRunConfigurationProducer.getEntryPointContainer(function))
+                    if (function.containingFile.text.startsWith("// entryPointExists")) {
+                        Assert.assertNotNull(
+                            "Kotlin configuration producer should produce configuration for ${function.fqName?.asString()}",
+                            KotlinRunConfigurationProducer.getEntryPointContainer(function)
+                        )
+                    } else {
+                        Assert.assertNull(
+                            "Kotlin configuration producer shouldn't produce configuration for ${function.fqName?.asString()}",
+                            KotlinRunConfigurationProducer.getEntryPointContainer(function)
+                        )
+                    }
                 }
             }
         }
@@ -159,7 +160,7 @@ class RunConfigurationTest: KotlinCodeInsightTestCase() {
 
         val runConfiguration = createConfigurationFromObject("renameTest.Foo", save = true)
 
-        val pkg = JavaPsiFacade.getInstance(getTestProject()).findPackage("renameTest")
+        val pkg = JavaPsiFacade.getInstance(getTestProject()).findPackage("renameTest")!!
         val rename = RefactoringFactory.getInstance(getTestProject()).createRename(pkg, "afterRenameTest")
         rename.run()
 
@@ -240,11 +241,11 @@ class RunConfigurationTest: KotlinCodeInsightTestCase() {
 
     private fun configureModule(moduleDir: String, outputParentDir: VirtualFile, configModule: Module = module): CreateModuleResult {
         val srcPath = moduleDir + "/src"
-        val srcDir = PsiTestUtil.createTestProjectStructure(project, configModule, srcPath, PlatformTestCase.myFilesToDelete, true)
+        val srcDir = PsiTestUtil.createTestProjectStructure(project, configModule, srcPath, myFilesToDelete, true)
 
         val testPath = moduleDir + "/test"
         if (File(testPath).exists()) {
-            val testDir = PsiTestUtil.createTestProjectStructure(project, configModule, testPath, PlatformTestCase.myFilesToDelete, false)
+            val testDir = PsiTestUtil.createTestProjectStructure(project, configModule, testPath, myFilesToDelete, false)
             PsiTestUtil.addSourceRoot(module, testDir, true)
         }
 

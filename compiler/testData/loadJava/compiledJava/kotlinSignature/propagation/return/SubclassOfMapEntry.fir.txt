@@ -1,0 +1,6 @@
+<K, V> public abstract interface SubclassOfMapEntry : R|java/util/Map.Entry<K, V>| {
+    public abstract operator function setValue(value: R|ft<V, V?>|!): R|ft<V, V?>|!
+
+    public abstract operator function setValue(<anonymous Java parameter>: R|ft<V, V?>|!): R|ft<V, V?>|!
+
+}

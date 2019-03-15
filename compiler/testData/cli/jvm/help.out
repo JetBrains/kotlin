@@ -5,7 +5,7 @@ where possible options include:
   -include-runtime           Include Kotlin runtime in to resulting .jar
   -java-parameters           Generate metadata for Java 1.8 reflection on method parameters
   -jdk-home <path>           Path to JDK home directory to include into classpath, if differs from default JAVA_HOME
-  -jvm-target <version>      Target version of the generated JVM bytecode (1.6 or 1.8), default is 1.6
+  -jvm-target <version>      Target version of the generated JVM bytecode (1.6, 1.8, 9, 10, 11 or 12), default is 1.6
   -module-name <name>        Name of the generated .kotlin_module file
   -no-jdk                    Don't include Java runtime into classpath
   -no-reflect                Don't include kotlin-reflect.jar into classpath
@@ -21,7 +21,13 @@ where possible options include:
   -language-version <version> Provide source compatibility with specified language version
   -P plugin:<pluginId>:<optionName>=<value>
                              Pass an option to a plugin
+  -progressive               Enable progressive compiler mode.
+                             In this mode, deprecations and bug fixes for unstable code take effect immediately,
+                             instead of going through a graceful migration cycle.
+                             Code written in the progressive mode is backward compatible; however, code written in
+                             non-progressive mode may cause compilation errors in the progressive mode.
   -nowarn                    Generate no warnings
   -verbose                   Enable verbose logging output
   -version                   Display compiler version
+  @<argfile>                 Expand compiler arguments from the given file, containing one argument or file path per line
 OK

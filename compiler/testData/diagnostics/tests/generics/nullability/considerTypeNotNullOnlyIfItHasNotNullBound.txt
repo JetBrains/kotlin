@@ -1,0 +1,3 @@
+package
+
+public inline fun </*0*/ T, /*1*/ reified S> foo(/*0*/ x: T?, /*1*/ y: T): T

@@ -1,0 +1,15 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+repositories {
+	mavenLocal()
+	jcenter()
+}
+
+dependencies {
+    implementation 'com.example:sample-lib:1.0'
+}
+
+mainClassName = 'A'

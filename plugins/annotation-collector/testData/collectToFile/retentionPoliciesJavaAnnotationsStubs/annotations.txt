@@ -1,8 +1,0 @@
-a DefaultAnnotation 0
-c 0 DafaultUsage
-a SourceAnnotation 1
-c 1 SourceUsage
-a ClassAnnotation 2
-c 2 ClassUsage
-a RuntimeAnnotation 3
-c 3 RuntimeUsage

@@ -1,11 +1,12 @@
 @file:Suppress("unused") // usages in build scripts are not tracked properly
 
 import org.gradle.api.logging.Logger
-import org.objectweb.asm.*
+import org.jetbrains.org.objectweb.asm.*
 import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.util.jar.JarFile
+import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
 /**
@@ -22,7 +23,7 @@ fun stripMetadata(logger: Logger, classNamePattern: String, inFile: File, outFil
 
         var changed = false
         val classWriter = ClassWriter(0)
-        val classVisitor = object : ClassVisitor(Opcodes.ASM5, classWriter) {
+        val classVisitor = object : ClassVisitor(Opcodes.API_VERSION, classWriter) {
             override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? {
                 if (Type.getType(desc).internalName == "kotlin/Metadata") {
                     changed = true
@@ -47,8 +48,8 @@ fun stripMetadata(logger: Logger, classNamePattern: String, inFile: File, outFil
                     error("Size increased for ${entry.name}: was ${inBytes.size} bytes, became ${outBytes.size} bytes")
                 }
 
-                entry.compressedSize = -1L
-                outJar.putNextEntry(entry)
+                val newEntry = ZipEntry(entry.name)
+                outJar.putNextEntry(newEntry)
                 outJar.write(outBytes)
                 outJar.closeEntry()
             }

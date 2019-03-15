@@ -23,49 +23,59 @@ import org.jetbrains.kotlin.types.KotlinType
 
 // The MessageLite instance everywhere should be Constructor, Function or Property
 // TODO: simplify this interface
-interface AnnotationAndConstantLoader<out A : Any, out C : Any, out T : Any> {
+interface AnnotationAndConstantLoader<out A : Any, out C : Any> {
     fun loadClassAnnotations(
-            container: ProtoContainer.Class
+        container: ProtoContainer.Class
     ): List<A>
 
     fun loadCallableAnnotations(
-            container: ProtoContainer,
-            proto: MessageLite,
-            kind: AnnotatedCallableKind
-    ): List<T>
+        container: ProtoContainer,
+        proto: MessageLite,
+        kind: AnnotatedCallableKind
+    ): List<A>
+
+    fun loadPropertyBackingFieldAnnotations(
+        container: ProtoContainer,
+        proto: ProtoBuf.Property
+    ): List<A>
+
+    fun loadPropertyDelegateFieldAnnotations(
+        container: ProtoContainer,
+        proto: ProtoBuf.Property
+    ): List<A>
 
     fun loadEnumEntryAnnotations(
-            container: ProtoContainer,
-            proto: ProtoBuf.EnumEntry
+        container: ProtoContainer,
+        proto: ProtoBuf.EnumEntry
     ): List<A>
 
     fun loadValueParameterAnnotations(
-            container: ProtoContainer,
-            callableProto: MessageLite,
-            kind: AnnotatedCallableKind,
-            parameterIndex: Int,
-            proto: ProtoBuf.ValueParameter
+        container: ProtoContainer,
+        callableProto: MessageLite,
+        kind: AnnotatedCallableKind,
+        parameterIndex: Int,
+        proto: ProtoBuf.ValueParameter
     ): List<A>
 
     fun loadExtensionReceiverParameterAnnotations(
-            container: ProtoContainer,
-            proto: MessageLite,
-            kind: AnnotatedCallableKind
+        container: ProtoContainer,
+        proto: MessageLite,
+        kind: AnnotatedCallableKind
     ): List<A>
 
     fun loadTypeAnnotations(
-            proto: ProtoBuf.Type,
-            nameResolver: NameResolver
+        proto: ProtoBuf.Type,
+        nameResolver: NameResolver
     ): List<A>
 
     fun loadTypeParameterAnnotations(
-            proto: ProtoBuf.TypeParameter,
-            nameResolver: NameResolver
+        proto: ProtoBuf.TypeParameter,
+        nameResolver: NameResolver
     ): List<A>
 
     fun loadPropertyConstant(
-            container: ProtoContainer,
-            proto: ProtoBuf.Property,
-            expectedType: KotlinType
+        container: ProtoContainer,
+        proto: ProtoBuf.Property,
+        expectedType: KotlinType
     ): C?
 }

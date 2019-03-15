@@ -1,0 +1,17 @@
+package
+
+public fun case_1(/*0*/ value_1: kotlin.Int?): kotlin.Unit
+public fun case_2(/*0*/ value_1: kotlin.Int?, /*1*/ value_2: kotlin.Int?, /*2*/ value_3: kotlin.Any?): kotlin.Unit
+
+package contracts {
+    public inline fun case_1(/*0*/ value_1: kotlin.Int?, /*1*/ block: () -> kotlin.Unit): kotlin.Boolean
+        CallsInPlace(block, AT_MOST_ONCE)
+        Returns(TRUE) -> value_1 != null
+
+    public inline fun </*0*/ T> T?.case_2(/*0*/ value_1: kotlin.Int?, /*1*/ value_2: kotlin.Any?, /*2*/ block: () -> kotlin.Unit): kotlin.Boolean?
+        CallsInPlace(block, AT_MOST_ONCE)
+        Returns(TRUE) -> value_1 == null && <this> == null && value_2 !is Boolean?
+        Returns(FALSE) -> value_2 is Boolean?
+        Returns(NULL) -> (value_1 != null || <this> != null) && value_2 !is Boolean?
+
+}

@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 
 fun wrapOrSkip(s: String, inCode: Boolean) = if (inCode) "<code>$s</code>" else s
 
-fun formatClassDescriptor(classDescriptor: DeclarationDescriptor) = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(classDescriptor)
+fun formatClassDescriptor(classDescriptor: DeclarationDescriptor) = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.render(classDescriptor)
 
 fun formatPsiClass(
         psiClass: PsiClass,

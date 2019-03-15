@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsn
 import org.jetbrains.kotlin.codegen.pseudoInsns.asNotNull
 import org.jetbrains.kotlin.codegen.pseudoInsns.isPseudo
+import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.org.objectweb.asm.Label
@@ -35,13 +36,13 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.tree.*
 
-class RedundantNullCheckMethodTransformer : MethodTransformer() {
+class RedundantNullCheckMethodTransformer(private val generationState: GenerationState) : MethodTransformer() {
     override fun transform(internalClassName: String, methodNode: MethodNode) {
-        while (TransformerPass(internalClassName, methodNode).run()) {
+        while (TransformerPass(internalClassName, methodNode, generationState).run()) {
         }
     }
 
-    private class TransformerPass(val internalClassName: String, val methodNode: MethodNode) {
+    private class TransformerPass(val internalClassName: String, val methodNode: MethodNode, val generationState: GenerationState) {
         private var changes = false
 
         fun run(): Boolean {
@@ -59,7 +60,7 @@ class RedundantNullCheckMethodTransformer : MethodTransformer() {
         }
 
         private fun analyzeNullabilities(): Map<AbstractInsnNode, StrictBasicValue> {
-            val frames = analyze(internalClassName, methodNode, NullabilityInterpreter())
+            val frames = analyze(internalClassName, methodNode, NullabilityInterpreter(generationState))
             val insns = methodNode.instructions.toArray()
             val nullabilityMap = LinkedHashMap<AbstractInsnNode, StrictBasicValue>()
             for (i in insns.indices) {

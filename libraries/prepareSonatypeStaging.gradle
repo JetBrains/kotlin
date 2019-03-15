@@ -30,7 +30,7 @@ preparePublication {
         }
 
         def repoId = rootNode.data.stagedRepositoryId.text()
-        ext.repoUrl = "http://oss.sonatype.org/service/local/staging/deployByRepositoryId/$repoId/".toString()
+        ext.repoUrl = "https://oss.sonatype.org/service/local/staging/deployByRepositoryId/$repoId/".toString()
         println "##teamcity[setParameter name='system.deploy-url' value='${repoUrl}']"
     }
 }

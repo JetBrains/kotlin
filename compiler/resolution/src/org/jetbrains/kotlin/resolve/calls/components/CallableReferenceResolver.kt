@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.calls.components
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
@@ -33,17 +34,20 @@ import org.jetbrains.kotlin.types.UnwrappedType
 
 class CallableReferenceOverloadConflictResolver(
     builtIns: KotlinBuiltIns,
+    module: ModuleDescriptor,
     specificityComparator: TypeSpecificityComparator,
     statelessCallbacks: KotlinResolutionStatelessCallbacks,
     constraintInjector: ConstraintInjector
 ) : OverloadingConflictResolver<CallableReferenceCandidate>(
     builtIns,
+    module,
     specificityComparator,
     { it.candidate },
     { SimpleConstraintSystemImpl(constraintInjector, builtIns) },
     Companion::createFlatSignature,
     { null },
-    { statelessCallbacks.isDescriptorFromSource(it) }
+    { statelessCallbacks.isDescriptorFromSource(it) },
+    null
 ) {
     companion object {
         private fun createFlatSignature(candidate: CallableReferenceCandidate) =

@@ -14,7 +14,7 @@ class WithPC1(<!UNUSED_PARAMETER!>a<!> : Int) {
 }
 
 
-class Foo() : <!SUPERTYPE_NOT_INITIALIZED, FINAL_SUPERTYPE!>WithPC0<!>, <!SYNTAX!>this<!>() {
+class Foo() : <!FINAL_SUPERTYPE, SUPERTYPE_NOT_INITIALIZED!>WithPC0<!>, <!SYNTAX!>this<!>() {
 
 }
 
@@ -31,5 +31,5 @@ class NoCPI {
   val a = 1
   var ab = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>1<!>
     get() = 1
-    set(v) {}
+    set(<!UNUSED_PARAMETER!>v<!>) {}
 }

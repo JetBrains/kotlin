@@ -1,12 +1,14 @@
 import org.gradle.jvm.tasks.Jar
 
-plugins { java }
-apply { plugin("kotlin") }
+plugins {
+    java
+    kotlin("jvm")
+}
 
 dependencies {
-    compile(project(":kotlin-stdlib"))
+    compile(kotlinStdlib())
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    compileOnly(intellijDep()) { includeJars("asm-all") }
+    compileOnly(intellijDep()) { includeJars("asm-all", rootProject = rootProject) }
 }
 
 sourceSets {

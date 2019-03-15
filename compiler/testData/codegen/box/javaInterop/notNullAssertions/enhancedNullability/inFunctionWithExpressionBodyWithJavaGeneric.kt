@@ -1,6 +1,6 @@
 // !LANGUAGE: +StrictJavaNullabilityAssertions
 // TARGET_BACKEND: JVM
-
+// SKIP_JDK6
 // See KT-8135
 // We could generate runtime assertion on call site for 'generic<NOT_NULL_TYPE>()' below.
 

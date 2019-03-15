@@ -27,9 +27,12 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.configuration.ui.notifications.ConfigureKotlinNotification
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
+import org.jetbrains.kotlin.idea.framework.effectiveKind
 import org.jetbrains.kotlin.idea.quickfix.KotlinAddRequiredModuleFix
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.findFirstPsiJavaModule
+import org.jetbrains.kotlin.idea.util.isDev
+import org.jetbrains.kotlin.idea.util.isEap
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import org.jetbrains.kotlin.idea.util.projectStructure.sdk
 import org.jetbrains.kotlin.idea.util.projectStructure.version
@@ -43,21 +46,39 @@ import org.jetbrains.kotlin.utils.ifEmpty
 
 data class RepositoryDescription(val id: String, val name: String, val url: String, val bintrayUrl: String?, val isSnapshot: Boolean)
 
-const val LAST_SNAPSHOT_VERSION = "1.2-SNAPSHOT"
+const val LAST_SNAPSHOT_VERSION = "1.3-SNAPSHOT"
 
 val SNAPSHOT_REPOSITORY = RepositoryDescription(
-        "sonatype.oss.snapshots",
-        "Sonatype OSS Snapshot Repository",
-        "http://oss.sonatype.org/content/repositories/snapshots",
-        null,
-        isSnapshot = true)
+    "sonatype.oss.snapshots",
+    "Sonatype OSS Snapshot Repository",
+    "https://oss.sonatype.org/content/repositories/snapshots",
+    null,
+    isSnapshot = true
+)
 
 val EAP_REPOSITORY = RepositoryDescription(
-        "bintray.kotlin.eap",
-        "Bintray Kotlin EAP Repository",
-        "http://dl.bintray.com/kotlin/kotlin-eap",
-        "https://bintray.com/kotlin/kotlin-eap/kotlin/",
-        isSnapshot = false)
+    "bintray.kotlin.eap",
+    "Bintray Kotlin EAP Repository",
+    "https://dl.bintray.com/kotlin/kotlin-eap",
+    "https://bintray.com/kotlin/kotlin-eap/kotlin/",
+    isSnapshot = false
+)
+
+val DEFAULT_GRADLE_PLUGIN_REPOSITORY = RepositoryDescription(
+    "default.gradle.plugins",
+    "Default Gradle Plugin Repository",
+    "https://plugins.gradle.org/m2/",
+    null,
+    isSnapshot = false
+)
+
+fun devRepository(version: String) = RepositoryDescription(
+    "teamcity.kotlin.dev",
+    "Teamcity Repository of Kotlin Development Builds",
+    "https://teamcity.jetbrains.com/guestAuth/app/rest/builds/buildType:(id:Kotlin_dev_Compiler),number:$version,branch:default:any/artifacts/content/maven/",
+    null,
+    isSnapshot = false
+)
 
 val MAVEN_CENTRAL = "mavenCentral()"
 
@@ -66,7 +87,7 @@ val JCENTER = "jcenter()"
 val KOTLIN_GROUP_ID = "org.jetbrains.kotlin"
 
 fun isRepositoryConfigured(repositoriesBlockText: String): Boolean =
-        repositoriesBlockText.contains(MAVEN_CENTRAL) || repositoriesBlockText.contains(JCENTER)
+    repositoriesBlockText.contains(MAVEN_CENTRAL) || repositoriesBlockText.contains(JCENTER)
 
 fun DependencyScope.toGradleCompileScope(isAndroidModule: Boolean) = when (this) {
     DependencyScope.COMPILE -> "compile"
@@ -77,13 +98,14 @@ fun DependencyScope.toGradleCompileScope(isAndroidModule: Boolean) = when (this)
     else -> "compile"
 }
 
-fun RepositoryDescription.toGroovyRepositorySnippet() = "maven {\n    url '$url'\n}"
+fun RepositoryDescription.toGroovyRepositorySnippet() = "maven { url '$url' }"
 
-fun RepositoryDescription.toKotlinRepositorySnippet() = "maven {\n    setUrl(\"$url\")\n}"
+fun RepositoryDescription.toKotlinRepositorySnippet() = "maven { setUrl(\"$url\") }"
 
 fun getRepositoryForVersion(version: String): RepositoryDescription? = when {
     isSnapshot(version) -> SNAPSHOT_REPOSITORY
     isEap(version) -> EAP_REPOSITORY
+    isDev(version) -> devRepository(version)
     else -> null
 }
 
@@ -99,17 +121,19 @@ fun isModuleConfigured(moduleSourceRootGroup: ModuleSourceRootGroup): Boolean {
  */
 fun getModulesWithKotlinFiles(project: Project): Collection<Module> {
     if (!runReadAction {
-        !project.isDisposed && FileTypeIndex.containsFileOfType (KotlinFileType.INSTANCE, GlobalSearchScope.projectScope(project))
-    }) {
+            !project.isDisposed &&
+                    FileTypeIndex.containsFileOfType(KotlinFileType.INSTANCE, GlobalSearchScope.projectScope(project))
+        }) {
         return emptyList()
     }
 
     return project.allModules()
-            .filter { module ->
-                runReadAction {
-                    !project.isDisposed && FileTypeIndex.containsFileOfType(KotlinFileType.INSTANCE, module.getModuleScope(true))
-                }
+        .filter { module ->
+            runReadAction {
+                !project.isDisposed && !module.isDisposed
+                        && FileTypeIndex.containsFileOfType(KotlinFileType.INSTANCE, module.getModuleScope(true))
             }
+        }
 }
 
 /**
@@ -175,13 +199,13 @@ fun allConfigurators() = Extensions.getExtensions(KotlinProjectConfigurator.EP_N
 
 fun getCanBeConfiguredModules(project: Project, configurator: KotlinProjectConfigurator): List<Module> {
     return ModuleSourceRootMap(project).groupByBaseModules(project.allModules())
-            .filter { configurator.canConfigure(it) }
-            .map { it.baseModule }
+        .filter { configurator.canConfigure(it) }
+        .map { it.baseModule }
 }
 
 private fun KotlinProjectConfigurator.canConfigure(moduleSourceRootGroup: ModuleSourceRootGroup) =
-        getStatus(moduleSourceRootGroup) == ConfigureKotlinStatus.CAN_BE_CONFIGURED &&
-        (allConfigurators().toList() - this).none { it.getStatus(moduleSourceRootGroup) == ConfigureKotlinStatus.CONFIGURED }
+    getStatus(moduleSourceRootGroup) == ConfigureKotlinStatus.CAN_BE_CONFIGURED &&
+            (allConfigurators().toList() - this).none { it.getStatus(moduleSourceRootGroup) == ConfigureKotlinStatus.CONFIGURED }
 
 /**
  * Returns a list of modules which contain sources in Kotlin and for which it's possible to run the given configurator.
@@ -218,7 +242,10 @@ fun getConfigurationPossibilitiesForConfigureNotification(
                 ConfigureKotlinStatus.CONFIGURED -> moduleAlreadyConfigured = true
             }
         }
-        if (moduleCanBeConfigured && !moduleAlreadyConfigured && !SuppressNotificationState.isKotlinNotConfiguredSuppressed(moduleSourceRootGroup))
+        if (moduleCanBeConfigured && !moduleAlreadyConfigured && !SuppressNotificationState.isKotlinNotConfiguredSuppressed(
+                moduleSourceRootGroup
+            )
+        )
             configurableModules.add(moduleSourceRootGroup)
     }
 
@@ -228,15 +255,15 @@ fun getConfigurationPossibilitiesForConfigureNotification(
 fun findApplicableConfigurator(module: Module): KotlinProjectConfigurator {
     val moduleGroup = module.toModuleGroup()
     return allConfigurators().find { it.getStatus(moduleGroup) != ConfigureKotlinStatus.NON_APPLICABLE }
-           ?: KotlinJavaModuleConfigurator.instance
+        ?: KotlinJavaModuleConfigurator.instance
 }
 
 fun hasAnyKotlinRuntimeInScope(module: Module): Boolean {
     return runReadAction {
         val scope = module.getModuleWithDependenciesAndLibrariesScope(hasKotlinFilesOnlyInTests(module))
         getKotlinJvmRuntimeMarkerClass(module.project, scope) != null ||
-        hasKotlinJsKjsmFile(module.project, LibraryKindSearchScope(module, scope, JSLibraryKind) ) ||
-        hasKotlinCommonRuntimeInScope(scope)
+                hasKotlinJsKjsmFile(module.project, LibraryKindSearchScope(module, scope, JSLibraryKind)) ||
+                hasKotlinCommonRuntimeInScope(scope)
     }
 }
 
@@ -266,19 +293,16 @@ fun hasKotlinFilesInSources(module: Module): Boolean {
     return FileTypeIndex.containsFileOfType(KotlinFileType.INSTANCE, module.getModuleScope(false))
 }
 
-fun isEap(version: String): Boolean {
-    return version.contains("rc") || version.contains("eap") || version.contains("-M")
-}
-
-private class LibraryKindSearchScope(val module: Module,
-                                     val baseScope: GlobalSearchScope,
-                                     val libraryKind: PersistentLibraryKind<*>
+class LibraryKindSearchScope(
+    val module: Module,
+    val baseScope: GlobalSearchScope,
+    val libraryKind: PersistentLibraryKind<*>
 ) : DelegatingGlobalSearchScope(baseScope) {
     override fun contains(file: VirtualFile): Boolean {
         if (!super.contains(file)) return false
         val orderEntry = ModuleRootManager.getInstance(module).fileIndex.getOrderEntryForFile(file)
         if (orderEntry is LibraryOrderEntry) {
-            return (orderEntry.library as LibraryEx).kind == libraryKind
+            return (orderEntry.library as LibraryEx).effectiveKind(module.project) == libraryKind
         }
         return true
     }

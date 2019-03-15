@@ -24,6 +24,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.idea.util.isExpectDeclaration
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens.LATEINIT_KEYWORD
 import org.jetbrains.kotlin.lexer.KtTokens.VARARG_KEYWORD
@@ -43,10 +45,9 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.KotlinType
 
-
 class MovePropertyToConstructorIntention :
-        SelfTargetingIntention<KtProperty>(KtProperty::class.java, "Move to constructor"),
-        LocalQuickFix {
+    SelfTargetingIntention<KtProperty>(KtProperty::class.java, "Move to constructor"),
+    LocalQuickFix {
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         val property = descriptor.psiElement as? KtProperty ?: return
@@ -54,18 +55,18 @@ class MovePropertyToConstructorIntention :
     }
 
     override fun isApplicableTo(element: KtProperty, caretOffset: Int): Boolean {
-        fun KtProperty.isDeclaredInClass() : Boolean {
+        fun KtProperty.isDeclaredInSupportedClass(): Boolean {
             val parent = getStrictParentOfType<KtClassOrObject>()
-            return parent is KtClass && !parent.isInterface()
+            return parent is KtClass && !parent.isInterface() && !parent.isExpectDeclaration()
         }
 
         return !element.isLocal
-               && !element.hasDelegate()
-               && element.getter == null
-               && element.setter == null
-               && !element.hasModifier(LATEINIT_KEYWORD)
-               && (element.isDeclaredInClass())
-               && (element.initializer?.isValidInConstructor() ?: true)
+                && !element.hasDelegate()
+                && element.getter == null
+                && element.setter == null
+                && !element.hasModifier(LATEINIT_KEYWORD)
+                && (element.isDeclaredInSupportedClass())
+                && (element.initializer?.isValidInConstructor() ?: true)
     }
 
     override fun applyTo(element: KtProperty, editor: Editor?) {
@@ -76,18 +77,14 @@ class MovePropertyToConstructorIntention :
 
         val commentSaver = CommentSaver(element)
 
+        val context = element.analyze(BodyResolveMode.PARTIAL)
         val propertyAnnotationsText = element.modifierList?.annotationEntries?.joinToString(separator = " ") {
-            if (it.isApplicableToConstructorParameter()) {
-                it.getTextWithUseSiteIfMissing("property")
-            }
-            else {
-                it.text
-            }
+            it.getTextWithUseSite(context)
         }
 
         if (constructorParameter != null) {
             val parameterAnnotationsText =
-                    constructorParameter.modifierList?.annotationEntries?.joinToString(separator = " ") { it.text }
+                constructorParameter.modifierList?.annotationEntries?.joinToString(separator = " ") { it.text }
 
             val parameterText = buildString {
                 element.modifierList?.getModifiersText()?.let(this::append)
@@ -103,10 +100,9 @@ class MovePropertyToConstructorIntention :
             constructorParameter.replace(factory.createParameter(parameterText)).apply {
                 commentSaver.restore(this)
             }
-        }
-        else {
-            val typeText = element.typeReference?.text ?:
-                           (element.resolveToDescriptorIfAny() as? PropertyDescriptor)?.type?.render() ?: return
+        } else {
+            val typeText =
+                element.typeReference?.text ?: (element.resolveToDescriptorIfAny() as? PropertyDescriptor)?.type?.render() ?: return
             val parameterText = buildString {
                 element.modifierList?.getModifiersText()?.let(this::append)
                 propertyAnnotationsText?.takeIf(String::isNotBlank)?.let { appendWithSpaceBefore(it) }
@@ -131,27 +127,35 @@ class MovePropertyToConstructorIntention :
         return parameterDescriptor.source.getPsi() as? KtParameter
     }
 
-    private fun KtAnnotationEntry.isApplicableToConstructorParameter(): Boolean {
-        val context = analyze(BodyResolveMode.PARTIAL)
-        val descriptor = context[BindingContext.ANNOTATION, this] ?: return false
-        val applicableTargets = AnnotationChecker.applicableTargetSet(descriptor)
-        return applicableTargets.contains(KotlinTarget.VALUE_PARAMETER)
-    }
+    private fun KtAnnotationEntry.getTextWithUseSite(context: BindingContext): String {
+        if (useSiteTarget != null) return text
+        val typeReference = this.typeReference?.text ?: return text
+        val valueArgumentList = valueArgumentList?.text.orEmpty()
 
-    private fun KtAnnotationEntry.getTextWithUseSiteIfMissing(useSite: String) =
-            if (useSiteTarget == null)
-                "@$useSite:${typeReference?.text.orEmpty()}${valueArgumentList?.text.orEmpty()}"
-            else
+        fun AnnotationUseSiteTarget.textWithMe() = "@$renderName:$typeReference$valueArgumentList"
+
+        val descriptor = context[BindingContext.ANNOTATION, this] ?: return text
+        val applicableTargets = AnnotationChecker.applicableTargetSet(descriptor)
+        return when {
+            KotlinTarget.VALUE_PARAMETER !in applicableTargets ->
                 text
+            KotlinTarget.PROPERTY in applicableTargets ->
+                AnnotationUseSiteTarget.PROPERTY.textWithMe()
+            KotlinTarget.FIELD in applicableTargets ->
+                AnnotationUseSiteTarget.FIELD.textWithMe()
+            else ->
+                text
+        }
+    }
 
     private fun KotlinType.render() = IdeDescriptorRenderers.SOURCE_CODE.renderType(this)
 
     private fun KtModifierList.getModifiersText() = getModifiers().joinToString(separator = " ") { it.text }
 
     private fun KtModifierList.getModifiers(): List<PsiElement> =
-            node.getChildren(null).filter { it.elementType is KtModifierKeywordToken }.map { it.psi }
+        node.getChildren(null).filter { it.elementType is KtModifierKeywordToken }.map { it.psi }
 
-    private fun StringBuilder.appendWithSpaceBefore(str: String) = append(" " + str)
+    private fun StringBuilder.appendWithSpaceBefore(str: String) = append(" $str")
 
     private fun KtExpression.isValidInConstructor(): Boolean {
         val containingClass = getStrictParentOfType<KtClass>() ?: return false

@@ -1,0 +1,10 @@
+public open class A : R|java/lang/Object| {
+    public open operator function foo(@R|kotlin/annotations/jvm/internal/DefaultNull|() x: R|ft<kotlin/Int, kotlin/Int?>|! = Null(null)): R|kotlin/Unit|
+
+    public open operator function bar(@R|kotlin/annotations/jvm/internal/DefaultNull|() x: R|kotlin/Int| = Null(null)): R|kotlin/Unit|
+
+}
+<T> public open class B : R|java/lang/Object| {
+    public open operator function foo(@R|kotlin/annotations/jvm/internal/DefaultNull|() t: R|ft<T, T?>|! = Null(null)): R|kotlin/Unit|
+
+}

@@ -16,26 +16,30 @@
 
 package org.jetbrains.kotlin.psi2ir.intermediate
 
+import org.jetbrains.kotlin.ir.builders.IrGeneratorContext
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.types.KotlinType
 
 class BackingFieldLValue(
-    val startOffset: Int,
-    val endOffset: Int,
-    override val type: KotlinType,
-    val symbol: IrFieldSymbol,
-    val receiver: IntermediateValue?,
-    val origin: IrStatementOrigin?
+    private val context: IrGeneratorContext,
+    private val startOffset: Int,
+    private val endOffset: Int,
+    override val type: IrType,
+    private val symbol: IrFieldSymbol,
+    private val receiver: IntermediateValue?,
+    private val origin: IrStatementOrigin?
 ) : LValue, AssignmentReceiver {
+
     override fun store(irExpression: IrExpression): IrExpression =
-        IrSetFieldImpl(startOffset, endOffset, symbol, receiver?.load(), irExpression, origin)
+        IrSetFieldImpl(startOffset, endOffset, symbol, receiver?.load(), irExpression, context.irBuiltIns.unitType, origin)
 
     override fun load(): IrExpression =
-        IrGetFieldImpl(startOffset, endOffset, symbol, receiver?.load(), origin)
+        IrGetFieldImpl(startOffset, endOffset, symbol, type, receiver?.load(), origin)
 
     override fun assign(withLValue: (LValue) -> IrExpression): IrExpression =
         withLValue(this)

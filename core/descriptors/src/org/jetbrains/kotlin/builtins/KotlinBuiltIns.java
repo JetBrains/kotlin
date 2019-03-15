@@ -1,22 +1,10 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.builtins;
 
-import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
@@ -24,21 +12,18 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.functions.BuiltInFictitiousFunctionClassFactory;
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.deserialization.AdditionalClassPartsProvider;
 import org.jetbrains.kotlin.descriptors.deserialization.ClassDescriptorFactory;
 import org.jetbrains.kotlin.descriptors.deserialization.PlatformDependentDeclarationFilter;
-import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
-import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.scopes.ChainedMemberScope;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.storage.MemoizedFunctionToNotNull;
 import org.jetbrains.kotlin.storage.NotNullLazyValue;
@@ -50,6 +35,7 @@ import java.util.*;
 
 import static kotlin.collections.SetsKt.setOf;
 import static org.jetbrains.kotlin.builtins.PrimitiveType.*;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME_RELEASE;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.getFqName;
 import static org.jetbrains.kotlin.utils.CollectionsKt.newHashMapWithExpectedSize;
 import static org.jetbrains.kotlin.utils.CollectionsKt.newHashSetWithExpectedSize;
@@ -68,15 +54,15 @@ public abstract class KotlinBuiltIns {
             RANGES_PACKAGE_FQ_NAME,
             ANNOTATION_PACKAGE_FQ_NAME,
             ReflectionTypesKt.getKOTLIN_REFLECT_FQ_NAME(),
-            BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("internal"))
+            BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("internal")),
+            COROUTINES_PACKAGE_FQ_NAME_RELEASE
     );
 
     private ModuleDescriptorImpl builtInsModule;
 
     private final NotNullLazyValue<Primitives> primitives;
-    private final NotNullLazyValue<PackageFragments> packageFragments;
+    private final NotNullLazyValue<Collection<PackageViewDescriptor>> builtInPackagesImportedByDefault;
 
-    private final MemoizedFunctionToNotNull<Integer, ClassDescriptor> suspendFunctionClasses;
     private final MemoizedFunctionToNotNull<Name, ClassDescriptor> builtInClassesByName;
 
     private final StorageManager storageManager;
@@ -87,19 +73,15 @@ public abstract class KotlinBuiltIns {
     protected KotlinBuiltIns(@NotNull StorageManager storageManager) {
         this.storageManager = storageManager;
 
-        this.packageFragments = storageManager.createLazyValue(new Function0<PackageFragments>() {
+        this.builtInPackagesImportedByDefault = storageManager.createLazyValue(new Function0<Collection<PackageViewDescriptor>>() {
             @Override
-            public PackageFragments invoke() {
-                PackageFragmentProvider provider = builtInsModule.getPackageFragmentProvider();
-
-                Map<FqName, PackageFragmentDescriptor> nameToFragment = new LinkedHashMap<FqName, PackageFragmentDescriptor>();
-                PackageFragmentDescriptor kotlin = createPackage(provider, nameToFragment, BUILT_INS_PACKAGE_FQ_NAME);
-                PackageFragmentDescriptor kotlinCollections = createPackage(provider, nameToFragment, COLLECTIONS_PACKAGE_FQ_NAME);
-                createPackage(provider, nameToFragment, RANGES_PACKAGE_FQ_NAME);
-                PackageFragmentDescriptor kotlinAnnotation = createPackage(provider, nameToFragment, ANNOTATION_PACKAGE_FQ_NAME);
-                Set<PackageFragmentDescriptor> allImportedByDefault = new LinkedHashSet<PackageFragmentDescriptor>(nameToFragment.values());
-
-                return new PackageFragments(kotlin, kotlinCollections, kotlinAnnotation, allImportedByDefault);
+            public Collection<PackageViewDescriptor> invoke() {
+                return Arrays.asList(
+                    builtInsModule.getPackage(BUILT_INS_PACKAGE_FQ_NAME),
+                    builtInsModule.getPackage(COLLECTIONS_PACKAGE_FQ_NAME),
+                    builtInsModule.getPackage(RANGES_PACKAGE_FQ_NAME),
+                    builtInsModule.getPackage(ANNOTATION_PACKAGE_FQ_NAME)
+                );
             }
         });
 
@@ -123,22 +105,17 @@ public abstract class KotlinBuiltIns {
             }
         });
 
-        this.suspendFunctionClasses = storageManager.createMemoizedFunction(new Function1<Integer, ClassDescriptor>() {
-            @Override
-            public ClassDescriptor invoke(Integer arity) {
-                return new FunctionClassDescriptor(
-                        getStorageManager(),
-                        packageFragments.invoke().builtInsPackageFragment,
-                        FunctionClassDescriptor.Kind.SuspendFunction,
-                        arity
-                );
-            }
-        });
-
         this.builtInClassesByName = storageManager.createMemoizedFunction(new Function1<Name, ClassDescriptor>() {
             @Override
             public ClassDescriptor invoke(Name name) {
-                return getBuiltInClassByName(name, getBuiltInsPackageFragment());
+                ClassifierDescriptor classifier = getBuiltInsPackageScope().getContributedClassifier(name, NoLookupLocation.FROM_BUILTINS);
+                if (classifier == null) {
+                    throw new AssertionError("Built-in class " + BUILT_INS_PACKAGE_FQ_NAME.child(name) + " is not found");
+                }
+                if (!(classifier instanceof ClassDescriptor)) {
+                    throw new AssertionError("Must be a class descriptor " + name + ", but was " + classifier);
+                }
+                return (ClassDescriptor) classifier;
             }
         });
     }
@@ -183,42 +160,6 @@ public abstract class KotlinBuiltIns {
     }
 
     @NotNull
-    private PackageFragmentDescriptor createPackage(
-            @NotNull PackageFragmentProvider fragmentProvider,
-            @Nullable Map<FqName, PackageFragmentDescriptor> packageNameToPackageFragment,
-            @NotNull final FqName packageFqName
-    ) {
-        final List<PackageFragmentDescriptor> packageFragments = fragmentProvider.getPackageFragments(packageFqName);
-
-        PackageFragmentDescriptor result =
-                packageFragments.isEmpty()
-                ? new EmptyPackageFragmentDescriptor(builtInsModule, packageFqName)
-                : packageFragments.size() == 1
-                ? packageFragments.iterator().next()
-                : new PackageFragmentDescriptorImpl(builtInsModule, packageFqName) {
-                    @NotNull
-                    @Override
-                    public MemberScope getMemberScope() {
-                        return new ChainedMemberScope(
-                                "built-in package " + packageFqName,
-                                CollectionsKt.map(
-                                        packageFragments,
-                                        new Function1<PackageFragmentDescriptor, MemberScope>() {
-                                            @Override
-                                            public MemberScope invoke(PackageFragmentDescriptor descriptor) {
-                                                return descriptor.getMemberScope();
-                                            }
-                                        }
-                                )
-                        );
-                    }
-                };
-
-        if (packageNameToPackageFragment != null) packageNameToPackageFragment.put(packageFqName, result);
-        return result;
-    }
-
-    @NotNull
     protected StorageManager getStorageManager() {
         return storageManager;
     }
@@ -239,26 +180,6 @@ public abstract class KotlinBuiltIns {
         }
     }
 
-    private static class PackageFragments {
-        public final PackageFragmentDescriptor builtInsPackageFragment;
-        public final PackageFragmentDescriptor collectionsPackageFragment;
-        public final PackageFragmentDescriptor annotationPackageFragment;
-        public final Set<PackageFragmentDescriptor> allImportedByDefaultBuiltInsPackageFragments;
-
-        private PackageFragments(
-                @NotNull PackageFragmentDescriptor builtInsPackageFragment,
-                @NotNull PackageFragmentDescriptor collectionsPackageFragment,
-                @NotNull PackageFragmentDescriptor annotationPackageFragment,
-                @NotNull Set<PackageFragmentDescriptor> allImportedByDefaultBuiltInsPackageFragments
-        ) {
-            this.builtInsPackageFragment = builtInsPackageFragment;
-            this.collectionsPackageFragment = collectionsPackageFragment;
-            this.annotationPackageFragment = annotationPackageFragment;
-            this.allImportedByDefaultBuiltInsPackageFragments = allImportedByDefaultBuiltInsPackageFragments;
-        }
-    }
-
-    @SuppressWarnings("WeakerAccess")
     public static class FqNames {
         public final FqNameUnsafe any = fqNameUnsafe("Any");
         public final FqNameUnsafe nothing = fqNameUnsafe("Nothing");
@@ -286,7 +207,6 @@ public abstract class KotlinBuiltIns {
         public final FqName throwable = fqName("Throwable");
         public final FqName comparable = fqName("Comparable");
 
-        public final FqNameUnsafe charRange = rangesFqName("CharRange");
         public final FqNameUnsafe intRange = rangesFqName("IntRange");
         public final FqNameUnsafe longRange = rangesFqName("LongRange");
 
@@ -330,7 +250,18 @@ public abstract class KotlinBuiltIns {
         public final FqNameUnsafe kMutableProperty0 = reflect("KMutableProperty0");
         public final FqNameUnsafe kMutableProperty1 = reflect("KMutableProperty1");
         public final FqNameUnsafe kMutableProperty2 = reflect("KMutableProperty2");
-        public final ClassId kProperty = ClassId.topLevel(reflect("KProperty").toSafe());
+        public final FqNameUnsafe kPropertyFqName = reflect("KProperty");
+        public final FqNameUnsafe kMutablePropertyFqName = reflect("KMutableProperty");
+        public final ClassId kProperty = ClassId.topLevel(kPropertyFqName.toSafe());
+
+        public final FqName uByteFqName = fqName("UByte");
+        public final FqName uShortFqName = fqName("UShort");
+        public final FqName uIntFqName = fqName("UInt");
+        public final FqName uLongFqName = fqName("ULong");
+        public final ClassId uByte = ClassId.topLevel(uByteFqName);
+        public final ClassId uShort = ClassId.topLevel(uShortFqName);
+        public final ClassId uInt = ClassId.topLevel(uIntFqName);
+        public final ClassId uLong = ClassId.topLevel(uLongFqName);
 
         public final Set<Name> primitiveTypeShortNames = newHashSetWithExpectedSize(PrimitiveType.values().length);
         public final Set<Name> primitiveArrayTypeShortNames = newHashSetWithExpectedSize(PrimitiveType.values().length);
@@ -382,15 +313,19 @@ public abstract class KotlinBuiltIns {
     }
 
     @NotNull
-    public Set<PackageFragmentDescriptor> getBuiltInsPackageFragmentsImportedByDefault() {
-        return packageFragments.invoke().allImportedByDefaultBuiltInsPackageFragments;
+    public Collection<PackageViewDescriptor> getBuiltInPackagesImportedByDefault() {
+        return builtInPackagesImportedByDefault.invoke();
     }
 
-    @NotNull
-    public PackageFragmentDescriptor getBuiltInsPackageFragment() {
-        return packageFragments.invoke().builtInsPackageFragment;
-    }
-
+    /**
+     * Checks if the given descriptor is declared in the deserialized built-in package fragment, i.e. if it was loaded as a part of
+     * loading .kotlin_builtins definition files.
+     *
+     * NOTE: this method returns false for descriptors loaded from .class files or other binaries, even if they are "built-in" in some
+     * other sense! For example, it returns false for the class descriptor of `kotlin.IntRange` loaded from `kotlin/IntRange.class`.
+     * In case you need to check if the class is "built-in" in another sense, you should probably do it by inspecting its FQ name,
+     * or the FQ name of its containing package.
+     */
     public static boolean isBuiltIn(@NotNull DeclarationDescriptor descriptor) {
         return DescriptorUtils.getParentOfType(descriptor, BuiltInsPackageFragment.class, false) != null;
     }
@@ -411,64 +346,19 @@ public abstract class KotlinBuiltIns {
 
     @NotNull
     public MemberScope getBuiltInsPackageScope() {
-        return packageFragments.invoke().builtInsPackageFragment.getMemberScope();
-    }
-
-    @NotNull
-    private ClassDescriptor getAnnotationClassByName(@NotNull Name simpleName) {
-        return getBuiltInClassByName(simpleName, packageFragments.invoke().annotationPackageFragment);
-    }
-
-    @NotNull
-    public ClassDescriptor getBuiltInClassByName(@NotNull Name simpleName) {
-        return builtInClassesByName.invoke(simpleName);
-    }
-
-    @NotNull
-    private static ClassDescriptor getBuiltInClassByName(@NotNull Name simpleName, @NotNull PackageFragmentDescriptor packageFragment) {
-        ClassDescriptor classDescriptor = getBuiltInClassByNameNullable(simpleName, packageFragment);
-        if (classDescriptor == null) {
-            throw new AssertionError("Built-in class " + packageFragment.getFqName().child(simpleName).asString() + " is not found");
-        }
-        return classDescriptor;
-    }
-
-    @Nullable
-    public ClassDescriptor getBuiltInClassByNameNullable(@NotNull Name simpleName) {
-        return getBuiltInClassByNameNullable(simpleName, getBuiltInsPackageFragment());
-    }
-
-    @Nullable
-    public ClassDescriptor getBuiltInClassByFqNameNullable(@NotNull FqName fqName) {
-        return DescriptorUtilKt.resolveClassByFqName(builtInsModule, fqName, NoLookupLocation.FROM_BUILTINS);
+        return builtInsModule.getPackage(BUILT_INS_PACKAGE_FQ_NAME).getMemberScope();
     }
 
     @NotNull
     public ClassDescriptor getBuiltInClassByFqName(@NotNull FqName fqName) {
-        ClassDescriptor descriptor = getBuiltInClassByFqNameNullable(fqName);
+        ClassDescriptor descriptor = DescriptorUtilKt.resolveClassByFqName(builtInsModule, fqName, NoLookupLocation.FROM_BUILTINS);
         assert descriptor != null : "Can't find built-in class " + fqName;
         return descriptor;
     }
 
-    @Nullable
-    private static ClassDescriptor getBuiltInClassByNameNullable(@NotNull Name simpleName, @NotNull PackageFragmentDescriptor packageFragment) {
-        ClassifierDescriptor classifier = packageFragment.getMemberScope().getContributedClassifier(
-                simpleName,
-                NoLookupLocation.FROM_BUILTINS);
-
-        assert classifier == null ||
-               classifier instanceof ClassDescriptor : "Must be a class descriptor " + simpleName + ", but was " + classifier;
-        return (ClassDescriptor) classifier;
-    }
-
     @NotNull
     private ClassDescriptor getBuiltInClassByName(@NotNull String simpleName) {
-        return getBuiltInClassByName(Name.identifier(simpleName));
-    }
-
-    @NotNull
-    private static ClassDescriptor getBuiltInClassByName(@NotNull String simpleName, PackageFragmentDescriptor packageFragment) {
-        return getBuiltInClassByName(Name.identifier(simpleName), packageFragment);
+        return builtInClassesByName.invoke(Name.identifier(simpleName));
     }
 
     @NotNull
@@ -563,8 +453,8 @@ public abstract class KotlinBuiltIns {
 
     @NotNull
     public ClassDescriptor getSuspendFunction(int parameterCount) {
-        // SuspendFunction$n is not visible through member scope, and is created independently.
-        return suspendFunctionClasses.invoke(parameterCount);
+        Name name = Name.identifier(FunctionClassDescriptor.Kind.SuspendFunction.getClassNamePrefix() + parameterCount);
+        return getBuiltInClassByFqName(COROUTINES_PACKAGE_FQ_NAME_RELEASE.child(name));
     }
 
     @NotNull
@@ -598,68 +488,68 @@ public abstract class KotlinBuiltIns {
     }
 
     @NotNull
-    private ClassDescriptor getCollectionClassByName(@NotNull String simpleName) {
-        return getBuiltInClassByName(simpleName, packageFragments.invoke().collectionsPackageFragment);
+    public ClassDescriptor getKClass() {
+        return getBuiltInClassByFqName(FQ_NAMES.kClass.toSafe());
     }
 
     @NotNull
     public ClassDescriptor getIterator() {
-        return getCollectionClassByName("Iterator");
+        return getBuiltInClassByFqName(FQ_NAMES.iterator);
     }
 
     @NotNull
     public ClassDescriptor getIterable() {
-        return getCollectionClassByName("Iterable");
+        return getBuiltInClassByFqName(FQ_NAMES.iterable);
     }
 
     @NotNull
     public ClassDescriptor getMutableIterable() {
-        return getCollectionClassByName("MutableIterable");
+        return getBuiltInClassByFqName(FQ_NAMES.mutableIterable);
     }
 
     @NotNull
     public ClassDescriptor getMutableIterator() {
-        return getCollectionClassByName("MutableIterator");
+        return getBuiltInClassByFqName(FQ_NAMES.mutableIterator);
     }
 
     @NotNull
     public ClassDescriptor getCollection() {
-        return getCollectionClassByName("Collection");
+        return getBuiltInClassByFqName(FQ_NAMES.collection);
     }
 
     @NotNull
     public ClassDescriptor getMutableCollection() {
-        return getCollectionClassByName("MutableCollection");
+        return getBuiltInClassByFqName(FQ_NAMES.mutableCollection);
     }
 
     @NotNull
     public ClassDescriptor getList() {
-        return getCollectionClassByName("List");
+        return getBuiltInClassByFqName(FQ_NAMES.list);
     }
 
     @NotNull
     public ClassDescriptor getMutableList() {
-        return getCollectionClassByName("MutableList");
+        return getBuiltInClassByFqName(FQ_NAMES.mutableList);
     }
 
     @NotNull
     public ClassDescriptor getSet() {
-        return getCollectionClassByName("Set");
+        return getBuiltInClassByFqName(FQ_NAMES.set);
     }
 
     @NotNull
     public ClassDescriptor getMutableSet() {
-        return getCollectionClassByName("MutableSet");
+        return getBuiltInClassByFqName(FQ_NAMES.mutableSet);
     }
 
     @NotNull
     public ClassDescriptor getMap() {
-        return getCollectionClassByName("Map");
+        return getBuiltInClassByFqName(FQ_NAMES.map);
     }
 
     @NotNull
     public ClassDescriptor getMutableMap() {
-        return getCollectionClassByName("MutableMap");
+        return getBuiltInClassByFqName(FQ_NAMES.mutableMap);
     }
 
     @NotNull
@@ -678,12 +568,12 @@ public abstract class KotlinBuiltIns {
 
     @NotNull
     public ClassDescriptor getListIterator() {
-        return getCollectionClassByName("ListIterator");
+        return getBuiltInClassByFqName(FQ_NAMES.listIterator);
     }
 
     @NotNull
     public ClassDescriptor getMutableListIterator() {
-        return getCollectionClassByName("MutableListIterator");
+        return getBuiltInClassByFqName(FQ_NAMES.mutableListIterator);
     }
 
     @NotNull
@@ -784,12 +674,37 @@ public abstract class KotlinBuiltIns {
             }
             return arrayType.getArguments().get(0).getType();
         }
+        KotlinType notNullArrayType = TypeUtils.makeNotNullable(arrayType);
         //noinspection SuspiciousMethodCalls
-        KotlinType primitiveType = primitives.invoke().kotlinArrayTypeToPrimitiveKotlinType.get(TypeUtils.makeNotNullable(arrayType));
-        if (primitiveType == null) {
-            throw new IllegalStateException("not array: " + arrayType);
+        KotlinType primitiveType = primitives.invoke().kotlinArrayTypeToPrimitiveKotlinType.get(notNullArrayType);
+        if (primitiveType != null) return primitiveType;
+
+        ModuleDescriptor module = DescriptorUtils.getContainingModuleOrNull(notNullArrayType);
+        if (module != null) {
+            KotlinType unsignedType = getElementTypeForUnsignedArray(notNullArrayType, module);
+            if (unsignedType != null) return unsignedType;
         }
-        return primitiveType;
+
+
+        throw new IllegalStateException("not array: " + arrayType);
+    }
+
+    @Nullable
+    private static KotlinType getElementTypeForUnsignedArray(@NotNull KotlinType notNullArrayType, @NotNull ModuleDescriptor module) {
+        ClassifierDescriptor descriptor = notNullArrayType.getConstructor().getDeclarationDescriptor();
+        if (descriptor == null) return null;
+        if (!UnsignedTypes.INSTANCE.isShortNameOfUnsignedArray(descriptor.getName())) return null;
+
+        ClassId arrayClassId = DescriptorUtilsKt.getClassId(descriptor);
+        if (arrayClassId == null) return null;
+
+        ClassId elementClassId = UnsignedTypes.INSTANCE.getUnsignedClassIdByArrayClassId(arrayClassId);
+        if (elementClassId == null) return null;
+
+        ClassDescriptor elementClassDescriptor = FindClassInModuleKt.findClassAcrossModuleDependencies(module, elementClassId);
+        if (elementClassDescriptor == null) return null;
+
+        return elementClassDescriptor.getDefaultType();
     }
 
     @NotNull
@@ -802,7 +717,28 @@ public abstract class KotlinBuiltIns {
      */
     @Nullable
     public SimpleType getPrimitiveArrayKotlinTypeByPrimitiveKotlinType(@NotNull KotlinType kotlinType) {
-        return primitives.invoke().primitiveKotlinTypeToKotlinArrayType.get(kotlinType);
+        SimpleType primitiveArray = primitives.invoke().primitiveKotlinTypeToKotlinArrayType.get(kotlinType);
+        if (primitiveArray != null) return primitiveArray;
+
+        if (UnsignedTypes.INSTANCE.isUnsignedType(kotlinType)) {
+            if (TypeUtils.isNullableType(kotlinType)) return null;
+
+            ModuleDescriptor module = DescriptorUtils.getContainingModuleOrNull(kotlinType);
+            if (module == null) return null;
+
+            ClassId unsignedClassId = DescriptorUtilsKt.getClassId(kotlinType.getConstructor().getDeclarationDescriptor());
+            assert unsignedClassId != null : "unsignedClassId should not be null for unsigned type " + kotlinType;
+
+            ClassId arrayClassId = UnsignedTypes.INSTANCE.getUnsignedArrayClassIdByUnsignedClassId(unsignedClassId);
+            assert arrayClassId != null : "arrayClassId should not be null for unsigned type " + unsignedClassId;
+
+            ClassDescriptor arrayClassDescriptor = FindClassInModuleKt.findClassAcrossModuleDependencies(module, arrayClassId);
+            if (arrayClassDescriptor == null) return null;
+
+            return arrayClassDescriptor.getDefaultType();
+        }
+
+        return null;
     }
 
     public static boolean isPrimitiveArray(@NotNull FqNameUnsafe arrayFqName) {
@@ -883,13 +819,17 @@ public abstract class KotlinBuiltIns {
         return getPrimitiveType(descriptor) != null;
     }
 
-    public static boolean isConstructedFromGivenClass(@NotNull KotlinType type, @NotNull FqNameUnsafe fqName) {
-        ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
-        return descriptor instanceof ClassDescriptor && classFqNameEquals(descriptor, fqName);
+    private static boolean isConstructedFromGivenClass(@NotNull KotlinType type, @NotNull FqNameUnsafe fqName) {
+        return isTypeConstructorForGivenClass(type.getConstructor(), fqName);
     }
 
     public static boolean isConstructedFromGivenClass(@NotNull KotlinType type, @NotNull FqName fqName) {
         return isConstructedFromGivenClass(type, fqName.toUnsafe());
+    }
+
+    public static boolean isTypeConstructorForGivenClass(@NotNull TypeConstructor typeConstructor, @NotNull FqNameUnsafe fqName) {
+        ClassifierDescriptor descriptor = typeConstructor.getDeclarationDescriptor();
+        return descriptor instanceof ClassDescriptor && classFqNameEquals(descriptor, fqName);
     }
 
     private static boolean classFqNameEquals(@NotNull ClassifierDescriptor descriptor, @NotNull FqNameUnsafe fqName) {
@@ -924,6 +864,10 @@ public abstract class KotlinBuiltIns {
 
     public static boolean isBoolean(@NotNull ClassDescriptor classDescriptor) {
         return classFqNameEquals(classDescriptor, FQ_NAMES._boolean);
+    }
+
+    public static boolean isNumber(@NotNull KotlinType type) {
+        return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES.number);
     }
 
     public static boolean isChar(@NotNull KotlinType type) {
@@ -964,6 +908,22 @@ public abstract class KotlinBuiltIns {
 
     public static boolean isDouble(@NotNull KotlinType type) {
         return isDoubleOrNullableDouble(type) && !type.isMarkedNullable();
+    }
+
+    public static boolean isUByte(@NotNull KotlinType type) {
+        return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES.uByteFqName.toUnsafe());
+    }
+
+    public static boolean isUShort(@NotNull KotlinType type) {
+        return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES.uShortFqName.toUnsafe());
+    }
+
+    public static boolean isUInt(@NotNull KotlinType type) {
+        return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES.uIntFqName.toUnsafe());
+    }
+
+    public static boolean isULong(@NotNull KotlinType type) {
+        return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES.uLongFqName.toUnsafe());
     }
 
     public static boolean isDoubleOrNullableDouble(@NotNull KotlinType type) {
@@ -1020,6 +980,19 @@ public abstract class KotlinBuiltIns {
         return classFqNameEquals(descriptor, FQ_NAMES._enum);
     }
 
+    public static boolean isEnum(@NotNull KotlinType type) {
+        return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES._enum);
+    }
+
+    public static boolean isComparable(@NotNull ClassDescriptor descriptor) {
+        return classFqNameEquals(descriptor, FQ_NAMES.comparable.toUnsafe());
+    }
+
+    public static boolean isComparable(@NotNull KotlinType type) {
+        return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES.comparable.toUnsafe());
+    }
+
+
     public static boolean isCharSequence(@Nullable KotlinType type) {
         return type != null && isNotNullConstructedFromGivenClass(type, FQ_NAMES.charSequence);
     }
@@ -1073,7 +1046,7 @@ public abstract class KotlinBuiltIns {
     }
 
     public static boolean isDeprecated(@NotNull DeclarationDescriptor declarationDescriptor) {
-        if (containsAnnotation(declarationDescriptor, FQ_NAMES.deprecated)) return true;
+        if (declarationDescriptor.getOriginal().getAnnotations().hasAnnotation(FQ_NAMES.deprecated)) return true;
 
         if (declarationDescriptor instanceof PropertyDescriptor) {
             boolean isVar = ((PropertyDescriptor) declarationDescriptor).isVar();
@@ -1091,21 +1064,5 @@ public abstract class KotlinBuiltIns {
 
     public static FqName getPrimitiveFqName(@NotNull PrimitiveType primitiveType) {
         return BUILT_INS_PACKAGE_FQ_NAME.child(primitiveType.getTypeName());
-    }
-
-    private static boolean containsAnnotation(DeclarationDescriptor descriptor, FqName annotationClassFqName) {
-        DeclarationDescriptor original = descriptor.getOriginal();
-        Annotations annotations = original.getAnnotations();
-
-        if (annotations.findAnnotation(annotationClassFqName) != null) return true;
-
-        AnnotationUseSiteTarget associatedUseSiteTarget = AnnotationUseSiteTarget.Companion.getAssociatedUseSiteTarget(descriptor);
-        if (associatedUseSiteTarget != null) {
-            if (Annotations.Companion.findUseSiteTargetedAnnotation(annotations, associatedUseSiteTarget, annotationClassFqName) != null) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }

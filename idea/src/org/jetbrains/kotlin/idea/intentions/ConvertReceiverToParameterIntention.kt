@@ -96,7 +96,7 @@ class ConvertReceiverToParameterIntention : SelfTargetingOffsetIndependentIntent
                                 }
                             }
 
-                            override fun templateFinished(template: Template?, brokenOff: Boolean) {
+                            override fun templateFinished(template: Template, brokenOff: Boolean) {
                                 val newName = addedParameter.name
                                 revertChanges()
                                 if (!brokenOff) {

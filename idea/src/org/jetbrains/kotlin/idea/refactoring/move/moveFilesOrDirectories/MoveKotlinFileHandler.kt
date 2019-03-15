@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.*
 import org.jetbrains.kotlin.idea.refactoring.move.updatePackageDirective
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.UserDataProperty
 
 internal var KtFile.allElementsToMove: List<PsiElement>? by UserDataProperty(Key.create("SCOPE_TO_MOVE"))
@@ -92,16 +91,14 @@ class MoveKotlinFileHandler : MoveFileHandler() {
         }
 
         return MoveKotlinDeclarationsProcessor(
-                MoveDeclarationsDescriptor(
-                        project = project,
-                        elementsToMove = psiFile.declarations.filterIsInstance<KtNamedDeclaration>(),
-                        moveTarget = moveTarget,
-                        delegate = MoveDeclarationsDelegate.TopLevel,
-                        scanEntireFile = true,
-                        allElementsToMove = psiFile.allElementsToMove,
-                        analyzeConflicts = withConflicts
-                ),
-                Mover.Idle
+            MoveDeclarationsDescriptor(
+                project = project,
+                moveSource = MoveSource(psiFile),
+                moveTarget = moveTarget,
+                delegate = MoveDeclarationsDelegate.TopLevel,
+                allElementsToMove = psiFile.allElementsToMove,
+                analyzeConflicts = withConflicts
+            )
         )
     }
 

@@ -1,0 +1,26 @@
+apply plugin: 'kotlin'
+
+configureJvmProject(project)
+configurePublishing(project)
+
+compileJava {
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+    options.fork = false
+}
+
+evaluationDependsOn(":kotlinx-serialization-compiler-plugin")
+
+jar {
+    from(project(":kotlinx-serialization-compiler-plugin").sourceSets.main.output.classesDirs)
+    from(project(":kotlinx-serialization-compiler-plugin").sourceSets.main.output.resourcesDir)
+    manifestAttributes(manifest, project)
+}
+
+ArtifactsKt.runtimeJar(project, jar, {})
+
+artifacts {
+    archives sourcesJar
+}
+
+javadocJar()

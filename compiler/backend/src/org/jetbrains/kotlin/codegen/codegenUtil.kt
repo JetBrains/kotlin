@@ -1,17 +1,22 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
-
 
 package org.jetbrains.kotlin.codegen
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.codegen.binding.CodegenBinding
+import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.codegen.context.CodegenContext
 import org.jetbrains.kotlin.codegen.context.FieldOwnerContext
+import org.jetbrains.kotlin.codegen.context.MultifileClassFacadeContext
 import org.jetbrains.kotlin.codegen.context.PackageContext
+import org.jetbrains.kotlin.codegen.coroutines.continuationAsmType
 import org.jetbrains.kotlin.codegen.coroutines.unwrapInitialDescriptorForSuspendFunction
+import org.jetbrains.kotlin.codegen.inline.NUMBERED_FUNCTION_PREFIX
 import org.jetbrains.kotlin.codegen.inline.ReificationArgument
 import org.jetbrains.kotlin.codegen.intrinsics.TypeIntrinsics
 import org.jetbrains.kotlin.codegen.optimization.common.asSequence
@@ -21,8 +26,6 @@ import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.deserialization.PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
-import org.jetbrains.kotlin.diagnostics.rendering.Renderers
-import org.jetbrains.kotlin.diagnostics.rendering.RenderingContext
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.SpecialSignatureInfo
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
@@ -30,38 +33,43 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isSubclass
 import org.jetbrains.kotlin.resolve.annotations.hasJvmStaticAnnotation
 import org.jetbrains.kotlin.resolve.calls.callUtil.getFirstArgumentExpression
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.Synthetic
+import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor.CoroutinesCompatibilityMode
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.org.objectweb.asm.Label
+import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.commons.Method
+import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import org.jetbrains.org.objectweb.asm.util.Textifier
 import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor
-import org.jetbrains.org.objectweb.asm.tree.MethodNode
-import java.io.StringWriter
 import java.io.PrintWriter
+import java.io.StringWriter
 import java.util.*
 
 fun generateIsCheck(
     v: InstructionAdapter,
     kotlinType: KotlinType,
-    asmType: Type
+    asmType: Type,
+    isReleaseCoroutines: Boolean
 ) {
     if (TypeUtils.isNullableType(kotlinType)) {
         val nope = Label()
@@ -72,7 +80,7 @@ fun generateIsCheck(
 
             ifnull(nope)
 
-            TypeIntrinsics.instanceOf(this, kotlinType, asmType)
+            TypeIntrinsics.instanceOf(this, kotlinType, asmType, isReleaseCoroutines)
 
             goTo(end)
 
@@ -83,7 +91,7 @@ fun generateIsCheck(
             mark(end)
         }
     } else {
-        TypeIntrinsics.instanceOf(v, kotlinType, asmType)
+        TypeIntrinsics.instanceOf(v, kotlinType, asmType, isReleaseCoroutines)
     }
 }
 
@@ -91,7 +99,8 @@ fun generateAsCast(
     v: InstructionAdapter,
     kotlinType: KotlinType,
     asmType: Type,
-    isSafe: Boolean
+    isSafe: Boolean,
+    isReleaseCoroutines: Boolean
 ) {
     if (!isSafe) {
         if (!TypeUtils.isNullableType(kotlinType)) {
@@ -100,7 +109,7 @@ fun generateAsCast(
     } else {
         with(v) {
             dup()
-            TypeIntrinsics.instanceOf(v, kotlinType, asmType)
+            TypeIntrinsics.instanceOf(v, kotlinType, asmType, isReleaseCoroutines)
             val ok = Label()
             ifne(ok)
             pop()
@@ -143,7 +152,7 @@ fun populateCompanionBackingFieldNamesToOuterContextIfNeeded(
         return
     }
 
-    if (!JvmAbi.isCompanionObjectWithBackingFieldsInOuter(descriptor)) {
+    if (!JvmAbi.isClassCompanionObjectWithBackingFieldsInOuter(descriptor)) {
         return
     }
     val properties = companion.declarations.filterIsInstance<KtProperty>()
@@ -156,15 +165,6 @@ fun populateCompanionBackingFieldNamesToOuterContextIfNeeded(
     }
 
 }
-
-// TODO: inline and remove then ScriptCodegen is converted to Kotlin
-fun mapSupertypesNames(
-    typeMapper: KotlinTypeMapper,
-    supertypes: List<ClassDescriptor>,
-    signatureVisitor: JvmSignatureWriter?
-): Array<String> =
-    supertypes.map { typeMapper.mapSupertype(it.defaultType, signatureVisitor).internalName }.toTypedArray()
-
 
 // Top level subclasses of a sealed class should be generated before that sealed class,
 // so that we'd generate the necessary accessor for its constructor afterwards
@@ -202,8 +202,10 @@ fun sortTopLevelClassesAndPrepareContextForSealedClasses(
     }
 
     // topologicalOrder(listOf(1, 2, 3)) { emptyList() } = listOf(3, 2, 1). Because of this used keys.reversed().
-    val sortedDescriptors = DFS.topologicalOrder(descriptorToPsi.keys.reversed()) {
-        it.typeConstructor.supertypes.map { it.constructor.declarationDescriptor as? ClassDescriptor }.filter { it in descriptorToPsi.keys }
+    val sortedDescriptors = DFS.topologicalOrder(descriptorToPsi.keys.reversed()) { descriptor ->
+        descriptor.typeConstructor.supertypes
+            .map { it.constructor.declarationDescriptor as? ClassDescriptor }
+            .filter { it in descriptorToPsi.keys }
     }
     sortedDescriptors.mapTo(result) { descriptorToPsi[it]!! }
     return result
@@ -233,26 +235,6 @@ fun ClassBuilder.generateMethod(
     }
 }
 
-
-fun reportTarget6InheritanceErrorIfNeeded(
-    classDescriptor: ClassDescriptor, classElement: PsiElement, restrictedInheritance: List<FunctionDescriptor>, state: GenerationState
-) {
-    if (!restrictedInheritance.isEmpty()) {
-        val groupBy = restrictedInheritance.groupBy { descriptor -> descriptor.containingDeclaration as ClassDescriptor }
-
-        for ((key, value) in groupBy) {
-            state.diagnostics.report(
-                ErrorsJvm.TARGET6_INTERFACE_INHERITANCE.on(
-                    classElement, classDescriptor, key,
-                    value.joinToString(separator = "\n", prefix = "\n") {
-                        Renderers.COMPACT.render(JvmCodegenUtil.getDirectMember(it), RenderingContext.Empty)
-                    }
-                )
-            )
-        }
-    }
-}
-
 fun CallableDescriptor.isJvmStaticInObjectOrClassOrInterface(): Boolean =
     isJvmStaticIn {
         DescriptorUtils.isNonCompanionObject(it) ||
@@ -263,6 +245,9 @@ fun CallableDescriptor.isJvmStaticInObjectOrClassOrInterface(): Boolean =
 
 fun CallableDescriptor.isJvmStaticInCompanionObject(): Boolean =
     isJvmStaticIn { DescriptorUtils.isCompanionObject(it) }
+
+fun CallableDescriptor.isJvmStaticInInlineClass(): Boolean =
+    isJvmStaticIn { it.isInlineClass() }
 
 private fun CallableDescriptor.isJvmStaticIn(predicate: (DeclarationDescriptor) -> Boolean): Boolean =
     when (this) {
@@ -294,6 +279,7 @@ fun Collection<Type>.withVariableIndices(): List<Pair<Int, Type>> = mutableListO
 }
 
 fun FunctionDescriptor.isGenericToArray(): Boolean {
+    if (name.asString() != "toArray") return false
     if (valueParameters.size != 1 || typeParameters.size != 1) return false
 
     val returnType = returnType ?: throw AssertionError(toString())
@@ -307,7 +293,8 @@ fun FunctionDescriptor.isGenericToArray(): Boolean {
 }
 
 fun FunctionDescriptor.isNonGenericToArray(): Boolean {
-    if (!valueParameters.isEmpty() || !typeParameters.isEmpty()) return false
+    if (name.asString() != "toArray") return false
+    if (valueParameters.isNotEmpty() || typeParameters.isNotEmpty()) return false
 
     val returnType = returnType
     return returnType != null && KotlinBuiltIns.isArray(returnType)
@@ -329,30 +316,27 @@ fun FqName.topLevelClassInternalName() = JvmClassName.byClassId(ClassId(parent()
 fun FqName.topLevelClassAsmType(): Type = Type.getObjectType(topLevelClassInternalName())
 
 fun initializeVariablesForDestructuredLambdaParameters(codegen: ExpressionCodegen, valueParameters: List<ValueParameterDescriptor>) {
-    val savedIsShouldMarkLineNumbers = codegen.isShouldMarkLineNumbers
     // Do not write line numbers until destructuring happens
     // (otherwise destructuring variables will be uninitialized in the beginning of lambda)
-    codegen.isShouldMarkLineNumbers = false
+    codegen.runWithShouldMarkLineNumbers(false) {
+        for (parameterDescriptor in valueParameters) {
+            if (parameterDescriptor !is ValueParameterDescriptorImpl.WithDestructuringDeclaration) continue
 
-    for (parameterDescriptor in valueParameters) {
-        if (parameterDescriptor !is ValueParameterDescriptorImpl.WithDestructuringDeclaration) continue
+            for (entry in parameterDescriptor.destructuringVariables.filterOutDescriptorsWithSpecialNames()) {
+                codegen.myFrameMap.enter(entry, codegen.typeMapper.mapType(entry.type))
+            }
 
-        for (entry in parameterDescriptor.destructuringVariables.filterOutDescriptorsWithSpecialNames()) {
-            codegen.myFrameMap.enter(entry, codegen.typeMapper.mapType(entry.type))
-        }
-
-        val destructuringDeclaration =
-            (DescriptorToSourceUtils.descriptorToDeclaration(parameterDescriptor) as? KtParameter)?.destructuringDeclaration
+            val destructuringDeclaration =
+                (DescriptorToSourceUtils.descriptorToDeclaration(parameterDescriptor) as? KtParameter)?.destructuringDeclaration
                     ?: error("Destructuring declaration for descriptor $parameterDescriptor not found")
 
-        codegen.initializeDestructuringDeclarationVariables(
-            destructuringDeclaration,
-            TransientReceiver(parameterDescriptor.type),
-            codegen.findLocalOrCapturedValue(parameterDescriptor) ?: error("Local var not found for parameter $parameterDescriptor")
-        )
+            codegen.initializeDestructuringDeclarationVariables(
+                destructuringDeclaration,
+                TransientReceiver(parameterDescriptor.type),
+                codegen.findLocalOrCapturedValue(parameterDescriptor) ?: error("Local var not found for parameter $parameterDescriptor")
+            )
+        }
     }
-
-    codegen.isShouldMarkLineNumbers = savedIsShouldMarkLineNumbers
 }
 
 fun <D : CallableDescriptor> D.unwrapFrontendVersion() = unwrapInitialDescriptorForSuspendFunction()
@@ -376,8 +360,8 @@ fun InstructionAdapter.generateNewInstanceDupAndPlaceBeforeStackTop(
     }
 }
 
-fun extractReificationArgument(type: KotlinType): Pair<TypeParameterDescriptor, ReificationArgument>? {
-    var type = type
+fun extractReificationArgument(initialType: KotlinType): Pair<TypeParameterDescriptor, ReificationArgument>? {
+    var type = initialType
     var arrayDepth = 0
     val isNullable = type.isMarkedNullable
     while (KotlinBuiltIns.isArray(type)) {
@@ -403,15 +387,6 @@ fun ClassDescriptor.isPossiblyUninitializedSingleton() =
     DescriptorUtils.isEnumEntry(this) ||
             DescriptorUtils.isCompanionObject(this) && JvmCodegenUtil.isJvmInterface(this.containingDeclaration)
 
-val CodegenContext<*>.parentContextsWithSelf
-    get() = generateSequence(this) { it.parentContext }
-
-val CodegenContext<*>.parentContexts
-    get() = parentContext?.parentContextsWithSelf ?: emptySequence()
-
-val CodegenContext<*>.contextStackText
-    get() = parentContextsWithSelf.joinToString(separator = "\n") { it.toString() }
-
 inline fun FrameMap.evaluateOnce(
     value: StackValue,
     asType: Type,
@@ -432,11 +407,242 @@ inline fun FrameMap.evaluateOnce(
 }
 
 // Handy debugging routine. Print all instructions from methodNode.
+@TestOnly
+@Suppress("unused")
 fun MethodNode.textifyMethodNode(): String {
     val text = Textifier()
     val tmv = TraceMethodVisitor(text)
     this.instructions.asSequence().forEach { it.accept(tmv) }
+    localVariables.forEach { text.visitLocalVariable(it.name, it.desc, it.signature, it.start.label, it.end.label, it.index) }
     val sw = StringWriter()
     text.print(PrintWriter(sw))
     return "$sw"
+}
+
+fun KotlinType.isInlineClassTypeWithPrimitiveEquality(): Boolean {
+    if (!isInlineClassType()) return false
+
+    // Always treat unsigned types as inline classes with primitive equality
+    if (UnsignedTypes.isUnsignedType(this)) return true
+
+    // TODO support other inline classes that can be compared as underlying primitives
+    return false
+}
+
+fun CallableDescriptor.needsExperimentalCoroutinesWrapper() =
+    (this as? DeserializedMemberDescriptor)?.coroutinesExperimentalCompatibilityMode == CoroutinesCompatibilityMode.NEEDS_WRAPPER
+
+fun recordCallLabelForLambdaArgument(declaration: KtFunctionLiteral, bindingTrace: BindingTrace) {
+    val labelName = getCallLabelForLambdaArgument(declaration, bindingTrace.bindingContext) ?: return
+    val functionDescriptor = bindingTrace[BindingContext.FUNCTION, declaration] ?: return
+    bindingTrace.record(CodegenBinding.CALL_LABEL_FOR_LAMBDA_ARGUMENT, functionDescriptor, labelName)
+
+}
+
+fun getCallLabelForLambdaArgument(declaration: KtFunctionLiteral, bindingContext: BindingContext): String? {
+    val lambdaExpression = declaration.parent as? KtLambdaExpression ?: return null
+    val lambdaExpressionParent = lambdaExpression.parent
+
+    if (lambdaExpressionParent is KtLabeledExpression) {
+        lambdaExpressionParent.name?.let { return it }
+    }
+
+    val lambdaArgument = lambdaExpression.parent as? KtLambdaArgument ?: return null
+    val callExpression = lambdaArgument.parent as? KtCallExpression ?: return null
+    val call = callExpression.getResolvedCall(bindingContext) ?: return null
+
+    return call.resultingDescriptor.name.asString()
+}
+
+private val ARRAY_OF_STRINGS_TYPE = Type.getType("[Ljava/lang/String;")
+private val METHOD_DESCRIPTOR_FOR_MAIN = Type.getMethodDescriptor(Type.VOID_TYPE, ARRAY_OF_STRINGS_TYPE)
+
+fun generateBridgeForMainFunctionIfNecessary(
+    state: GenerationState,
+    packagePartClassBuilder: ClassBuilder,
+    functionDescriptor: FunctionDescriptor,
+    signatureOfRealDeclaration: JvmMethodGenericSignature,
+    origin: JvmDeclarationOrigin,
+    parentContext: CodegenContext<*>
+) {
+    val originElement = origin.element ?: return
+    if (functionDescriptor.name.asString() != "main" || !DescriptorUtils.isTopLevelDeclaration(functionDescriptor)) return
+
+    val unwrappedFunctionDescriptor = functionDescriptor.unwrapInitialDescriptorForSuspendFunction()
+    val isParameterless =
+        unwrappedFunctionDescriptor.extensionReceiverParameter == null && unwrappedFunctionDescriptor.valueParameters.isEmpty()
+
+    if (!functionDescriptor.isSuspend && !isParameterless) return
+    if (!state.mainFunctionDetector.isMain(unwrappedFunctionDescriptor, checkJvmStaticAnnotation = false, checkReturnType = true)) return
+
+    val bridgeMethodVisitor = packagePartClassBuilder.newMethod(
+        Synthetic(originElement, functionDescriptor),
+        ACC_PUBLIC or ACC_STATIC or ACC_SYNTHETIC,
+        "main",
+        METHOD_DESCRIPTOR_FOR_MAIN, null, null
+    )
+
+    if (parentContext is MultifileClassFacadeContext) {
+        bridgeMethodVisitor.visitCode()
+        FunctionCodegen.generateFacadeDelegateMethodBody(
+            bridgeMethodVisitor,
+            Method("main", METHOD_DESCRIPTOR_FOR_MAIN),
+            parentContext
+        )
+        bridgeMethodVisitor.visitEnd()
+        return
+    }
+
+    val lambdaInternalName =
+        if (functionDescriptor.isSuspend)
+            generateLambdaForRunSuspend(
+                state,
+                originElement,
+                packagePartClassBuilder.thisName,
+                signatureOfRealDeclaration,
+                isParameterless
+            )
+        else
+            null
+
+    bridgeMethodVisitor.apply {
+        visitCode()
+
+        if (lambdaInternalName != null) {
+            visitTypeInsn(NEW, lambdaInternalName)
+            visitInsn(DUP)
+            visitVarInsn(ALOAD, 0)
+            visitMethodInsn(
+                INVOKESPECIAL,
+                lambdaInternalName,
+                "<init>",
+                METHOD_DESCRIPTOR_FOR_MAIN,
+                false
+            )
+
+            visitMethodInsn(
+                INVOKESTATIC,
+                "kotlin/coroutines/jvm/internal/RunSuspendKt", "runSuspend",
+                Type.getMethodDescriptor(
+                    Type.VOID_TYPE,
+                    Type.getObjectType(NUMBERED_FUNCTION_PREFIX + "1")
+                ),
+                false
+            )
+        } else {
+            visitMethodInsn(
+                INVOKESTATIC,
+                packagePartClassBuilder.thisName, "main",
+                Type.getMethodDescriptor(
+                    Type.VOID_TYPE
+                ),
+                false
+            )
+        }
+
+        visitInsn(RETURN)
+        visitEnd()
+    }
+}
+
+private fun generateLambdaForRunSuspend(
+    state: GenerationState,
+    originElement: PsiElement,
+    packagePartClassInternalName: String,
+    signatureOfRealDeclaration: JvmMethodGenericSignature,
+    parameterless: Boolean
+): String {
+    val internalName = "$packagePartClassInternalName$$\$main"
+    val lambdaBuilder = state.factory.newVisitor(
+        JvmDeclarationOrigin.NO_ORIGIN,
+        Type.getObjectType(internalName),
+        originElement.containingFile
+    )
+
+    lambdaBuilder.defineClass(
+        originElement, state.classFileVersion,
+        ACC_FINAL or ACC_SUPER or ACC_SYNTHETIC,
+        internalName, null,
+        AsmTypes.LAMBDA.internalName,
+        arrayOf(NUMBERED_FUNCTION_PREFIX + "1")
+    )
+
+    lambdaBuilder.newField(
+        JvmDeclarationOrigin.NO_ORIGIN,
+        ACC_PRIVATE or ACC_FINAL,
+        "args",
+        ARRAY_OF_STRINGS_TYPE.descriptor, null, null
+    )
+
+    lambdaBuilder.newMethod(
+        JvmDeclarationOrigin.NO_ORIGIN,
+        AsmUtil.NO_FLAG_PACKAGE_PRIVATE or ACC_SYNTHETIC,
+        "<init>",
+        METHOD_DESCRIPTOR_FOR_MAIN, null, null
+    ).apply {
+        visitCode()
+        visitVarInsn(ALOAD, 0)
+        visitVarInsn(ALOAD, 1)
+        visitFieldInsn(
+            PUTFIELD,
+            lambdaBuilder.thisName,
+            "args",
+            ARRAY_OF_STRINGS_TYPE.descriptor
+        )
+
+        visitVarInsn(ALOAD, 0)
+        visitInsn(ICONST_1)
+        visitMethodInsn(
+            INVOKESPECIAL,
+            AsmTypes.LAMBDA.internalName,
+            "<init>",
+            Type.getMethodDescriptor(Type.VOID_TYPE, Type.INT_TYPE),
+            false
+        )
+        visitInsn(RETURN)
+        visitEnd()
+    }
+
+    lambdaBuilder.newMethod(
+        JvmDeclarationOrigin.NO_ORIGIN,
+        ACC_PUBLIC or ACC_FINAL or ACC_SYNTHETIC,
+        "invoke",
+        Type.getMethodDescriptor(AsmTypes.OBJECT_TYPE, AsmTypes.OBJECT_TYPE), null, null
+    ).apply {
+        visitCode()
+
+        if (!parameterless) {
+            // Actually, the field for arguments may also be removed in case of parameterless main,
+            // but probably it'd much easier when IR is ready
+            visitVarInsn(ALOAD, 0)
+            visitFieldInsn(
+                GETFIELD,
+                lambdaBuilder.thisName,
+                "args",
+                ARRAY_OF_STRINGS_TYPE.descriptor
+            )
+        }
+
+        visitVarInsn(ALOAD, 1)
+        val continuationInternalName = state.languageVersionSettings.continuationAsmType().internalName
+
+        visitTypeInsn(
+            CHECKCAST,
+            continuationInternalName
+        )
+        visitMethodInsn(
+            INVOKESTATIC,
+            packagePartClassInternalName,
+            signatureOfRealDeclaration.asmMethod.name,
+            signatureOfRealDeclaration.asmMethod.descriptor,
+            false
+        )
+        visitInsn(ARETURN)
+        visitEnd()
+    }
+
+    writeSyntheticClassMetadata(lambdaBuilder, state)
+
+    lambdaBuilder.done()
+    return lambdaBuilder.thisName
 }

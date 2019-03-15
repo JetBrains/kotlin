@@ -1,0 +1,6 @@
+FILE: ByteArray.kt
+    public abstract interface My {
+        public abstract property array(val): R|kotlin/ByteArray|
+            public get(): R|kotlin/ByteArray|
+
+    }

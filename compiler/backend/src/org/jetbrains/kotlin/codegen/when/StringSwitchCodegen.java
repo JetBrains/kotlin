@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.codegen.when;
 
-import com.google.common.collect.Maps;
 import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.ExpressionCodegen;
@@ -27,6 +26,7 @@ import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -34,7 +34,7 @@ public class StringSwitchCodegen extends SwitchCodegen {
     private static final String HASH_CODE_METHOD_DESC = Type.getMethodDescriptor(Type.INT_TYPE);
     private static final String EQUALS_METHOD_DESC = Type.getMethodDescriptor(Type.BOOLEAN_TYPE, Type.getType(Object.class));
 
-    private final Map<Integer, List<Pair<String, Label>>> hashCodesToStringAndEntryLabel = Maps.newHashMap();
+    private final Map<Integer, List<Pair<String, Label>>> hashCodesToStringAndEntryLabel = new HashMap<>();
     private int tempVarIndex;
 
     public StringSwitchCodegen(
@@ -68,14 +68,12 @@ public class StringSwitchCodegen extends SwitchCodegen {
     }
 
     @Override
-    protected void generateSubject() {
-        tempVarIndex = codegen.myFrameMap.enterTemp(subjectType);
-        super.generateSubject();
-        v.store(tempVarIndex, subjectType);
-
-        v.load(tempVarIndex, subjectType);
-
+    protected void generateSubjectValueToIndex() {
         generateNullCheckIfNeeded();
+
+        tempVarIndex = codegen.myFrameMap.enterTemp(subjectType);
+        v.store(tempVarIndex, subjectType);
+        v.load(tempVarIndex, subjectType);
 
         v.invokevirtual(
                 subjectType.getInternalName(),

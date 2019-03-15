@@ -43,6 +43,6 @@ class KotlinJavaScriptMetaFileDecompiler : KotlinMetadataDecompiler<JsMetadataVe
         JsProtoBuf.Header.parseDelimitedFrom(stream)
 
         val proto = ProtoBuf.PackageFragment.parseFrom(stream, JsSerializerProtocol.extensionRegistry)
-        return FileWithMetadata.Compatible(proto, JsSerializerProtocol)
+        return FileWithMetadata.Compatible(proto, version, JsSerializerProtocol)
     }
 }

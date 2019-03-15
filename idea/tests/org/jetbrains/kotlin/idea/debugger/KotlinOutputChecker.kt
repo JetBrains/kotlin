@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.debugger
@@ -43,6 +32,13 @@ internal class KotlinOutputChecker(
         private val JDI_BUG_OUTPUT_PATTERN_1 = Regex("ERROR:\\s+JDWP\\s+Unable\\s+to\\s+get\\s+JNI\\s+1\\.2\\s+environment,\\s+jvm->GetEnv\\(\\)\\s+return\\s+code\\s+=\\s+-2")
         //JDWP exit error AGENT_ERROR_NO_JNI_ENV(183):  [../../../src/share/back/util.c:820]
         private val JDI_BUG_OUTPUT_PATTERN_2 = Regex("JDWP\\s+exit\\s+error\\s+AGENT_ERROR_NO_JNI_ENV.*]")
+    }
+
+    private lateinit var myTestName: String
+
+    override fun init(testName: String) {
+        super.init(testName)
+        this.myTestName = Character.toLowerCase(testName[0]) + testName.substring(1)
     }
 
     // Copied from the base OutputChecker.checkValid(). Need to intercept call to base preprocessBuffer() method

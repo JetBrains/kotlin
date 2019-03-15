@@ -18,25 +18,28 @@ package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.ir.types.IrType
 
-interface IrFunction : IrDeclaration, IrTypeParametersContainer, IrSymbolOwner, IrDeclarationParent {
+interface IrFunction :
+    IrDeclarationWithName, IrDeclarationWithVisibility, IrTypeParametersContainer, IrSymbolOwner, IrDeclarationParent, IrReturnTarget {
+
     override val descriptor: FunctionDescriptor
     override val symbol: IrFunctionSymbol
 
-    val visibility: Visibility
     val isInline: Boolean // NB: there's an inline constructor for Array and each primitive array class
-    val returnType: KotlinType
+    val isExternal: Boolean
+    var returnType: IrType
 
     var dispatchReceiverParameter: IrValueParameter?
     var extensionReceiverParameter: IrValueParameter?
     val valueParameters: MutableList<IrValueParameter>
 
     var body: IrBody?
+
+    override val metadata: MetadataSource?
 }
 
 
@@ -44,10 +47,10 @@ fun IrFunction.getIrValueParameter(parameter: ValueParameterDescriptor): IrValue
     valueParameters.getOrElse(parameter.index) {
         throw AssertionError("No IrValueParameter for $parameter")
     }.also { found ->
-            assert(found.descriptor == parameter) {
-                "Parameter indices mismatch at $descriptor: $parameter != ${found.descriptor}"
-            }
+        assert(found.descriptor == parameter) {
+            "Parameter indices mismatch at $descriptor: $parameter != ${found.descriptor}"
         }
+    }
 
 fun IrFunction.getDefault(parameter: ValueParameterDescriptor): IrExpressionBody? =
     getIrValueParameter(parameter).defaultValue
@@ -55,3 +58,6 @@ fun IrFunction.getDefault(parameter: ValueParameterDescriptor): IrExpressionBody
 fun IrFunction.putDefault(parameter: ValueParameterDescriptor, expressionBody: IrExpressionBody) {
     getIrValueParameter(parameter).defaultValue = expressionBody
 }
+
+val IrFunction.isStaticMethodOfClass: Boolean
+    get() = this is IrSimpleFunction && parent is IrClass && dispatchReceiverParameter == null

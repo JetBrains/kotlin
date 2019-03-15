@@ -2,5 +2,5 @@ package test
 
 public inline fun a(): kotlin.Unit
 public inline fun b(): kotlin.Unit
-public inline fun c(): kotlin.Unit
+public inline fun c(/*0*/ crossinline f: () -> kotlin.Unit): kotlin.Unit
 public inline fun d(): kotlin.Unit

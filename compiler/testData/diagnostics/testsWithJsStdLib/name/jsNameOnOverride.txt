@@ -5,7 +5,7 @@ package foo {
     public open class A {
         public constructor A()
         @kotlin.js.JsName(name = "bar_") public open val bar: kotlin.Int = 123
-        public open val baz: kotlin.Int
+        @get:kotlin.js.JsName(name = "getBaz_") public open val baz: kotlin.Int
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         @kotlin.js.JsName(name = "foo_") public open fun foo(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -15,7 +15,7 @@ package foo {
     public final class B : foo.A {
         public constructor B()
         @kotlin.js.JsName(name = "bar__") public open override /*1*/ val bar: kotlin.Int = 142
-        public open override /*1*/ val baz: kotlin.Int
+        @get:kotlin.js.JsName(name = "getBaz__") public open override /*1*/ val baz: kotlin.Int
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         @kotlin.js.JsName(name = "foo__") public open override /*1*/ fun foo(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

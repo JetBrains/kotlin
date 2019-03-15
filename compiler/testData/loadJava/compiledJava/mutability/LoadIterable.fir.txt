@@ -1,0 +1,10 @@
+<T> public abstract interface LoadIterable : R|java/lang/Object| {
+    @R|kotlin/annotations/jvm/Mutable|() public abstract operator function getIterable(): R|ft<kotlin/collections/MutableIterable<ft<T, T?>>, kotlin/collections/MutableIterable<ft<T, T?>>?>|!
+
+    public abstract operator function setIterable(@R|kotlin/annotations/jvm/Mutable|() Iterable: R|ft<kotlin/collections/MutableIterable<ft<T, T?>>, kotlin/collections/MutableIterable<ft<T, T?>>?>|!): R|kotlin/Unit|
+
+    @R|kotlin/annotations/jvm/ReadOnly|() public abstract operator function getReadOnlyIterable(): R|ft<kotlin/collections/Iterable<ft<T, T?>>, kotlin/collections/Iterable<ft<T, T?>>?>|!
+
+    public abstract operator function setReadOnlyIterable(@R|kotlin/annotations/jvm/ReadOnly|() Iterable: R|ft<kotlin/collections/Iterable<ft<T, T?>>, kotlin/collections/Iterable<ft<T, T?>>?>|!): R|kotlin/Unit|
+
+}

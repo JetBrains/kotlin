@@ -32,3 +32,11 @@ class D {
         var FOO_BAR: Int = 0
     }
 }
+
+interface I {
+    val Foo: Int
+}
+
+class C : I {
+    override override val Foo = 1
+}

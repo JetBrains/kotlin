@@ -2,11 +2,11 @@ package test
 
 public open class Base {
     /*primary*/ public constructor Base()
-    internal open val int: kotlin.Int = 1
+    internal open val int: kotlin.Int
         internal open fun <get-int>(): kotlin.Int
-    protected open val prot: kotlin.Int = 1
+    protected open val prot: kotlin.Int
         protected open fun <get-prot>(): kotlin.Int
-    public open val pub: kotlin.Int = 1
+    public open val pub: kotlin.Int
         public open fun <get-pub>(): kotlin.Int
 }
 

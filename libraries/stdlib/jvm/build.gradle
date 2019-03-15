@@ -1,0 +1,264 @@
+description = 'Kotlin Standard Library for JVM'
+
+apply plugin: 'kotlin-platform-jvm'
+apply plugin: 'pill-configurable'
+
+archivesBaseName = 'kotlin-stdlib'
+
+configureJvm6Project(project)
+configureDist(project)
+configurePublishing(project)
+
+pill {
+    importAsLibrary = true
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir "${rootDir}/core/builtins/src"
+            srcDir 'runtime'
+            srcDir 'src'
+        }
+    }
+    experimental {
+        kotlin {
+            srcDir "../experimental"
+        }
+    }
+    coroutinesExperimental {
+        kotlin {
+            srcDir '../coroutines-experimental/jvm/src'
+        }
+    }
+    coroutinesExperimentalTest {
+        kotlin {
+            srcDir '../coroutines-experimental/jvm/test'
+        }
+    }
+    coroutinesExperimentalMigrationTest {
+        kotlin {
+            if(!System.properties.'idea.active') {
+                srcDir '../coroutines-experimental/jvm/test'
+            }
+        }
+    }
+    test {
+        kotlin {
+            srcDir 'test'
+        }
+    }
+    longRunningTest {
+        kotlin {
+            srcDir 'testLongRunning'
+        }
+    }
+    java9 {
+        java {
+            srcDir 'java9'
+        }
+    }
+}
+
+configurations {
+    commonSources
+    coroutinesExperimentalTestCompile.extendsFrom(testCompile)
+    coroutinesExperimentalMigrationTestCompile.extendsFrom(coroutinesExperimentalTestCompile)
+    longRunningTestCompile.extendsFrom(testCompile)
+    builtins
+    compileOnly.extendsFrom(builtins)
+}
+
+dependencies {
+    expectedBy project(":kotlin-stdlib-common")
+
+    commonSources project(path: ":kotlin-stdlib-common", configuration: "sources")
+
+    compile group: 'org.jetbrains', name: 'annotations', version:'13.0'
+
+    testCompile project(':kotlin-test:kotlin-test-junit')
+    testCompile sourceSets.coroutinesExperimental.output
+
+    coroutinesExperimentalCompile sourceSets.main.output
+    coroutinesExperimentalTestCompile sourceSets.test.output
+
+    builtins project(':core:builtins')
+}
+
+jar {
+    dependsOn(configurations.builtins)
+    manifestAttributes(manifest, project, 'Main' /*true*/)
+    from {
+        zipTree(configurations.builtins.singleFile)
+    }
+    from sourceSets.experimental.output
+    from sourceSets.coroutinesExperimental.output
+    // TODO: enable as soon as this doesn't cause D8/DX to crash
+    // from sourceSets.java9.output
+}
+
+sourcesJar {
+    from "${rootDir}/core/builtins/native"
+    from sourceSets.coroutinesExperimental.kotlin
+}
+
+task distSourcesJar(type: Jar) {
+    dependsOn(sourcesJar, configurations.commonSources)
+    baseName = 'dist-kotlin-stdlib'
+    version = null
+    classifier = 'sources'
+    duplicatesStrategy = DuplicatesStrategy.FAIL
+    from zipTree(sourcesJar.outputs.files.singleFile)
+
+    from(zipTree(configurations.commonSources.singleFile)) {
+        it.includeEmptyDirs = false
+        exclude 'META-INF/*'
+        into 'common'
+    }
+}
+
+task distMavenSources(type: Copy) {
+    from(sourcesJar)
+    into "$distDir/maven"
+    rename "-${java.util.regex.Pattern.quote(version)}", ''
+}
+
+task modularJar(type: Jar) {
+    dependsOn(jar)
+    manifestAttributes(manifest, project, 'Main', true)
+    classifier = 'modular'
+
+    from zipTree(jar.outputs.files.singleFile).matching {
+        // Beware of Gradle problem: changing exclude spec doesn't affect Jar task up-to-dateness
+        exclude('kotlin/native/**')
+    }
+    from sourceSets.java9.output
+}
+
+artifacts {
+    archives sourcesJar
+    archives modularJar
+}
+
+javadocJar()
+
+dist {
+    dependsOn distMavenSources
+
+    [jar, distSourcesJar].forEach {
+        from(it) {
+            rename('dist-', '')
+        }
+    }
+
+    from (configurations.compile) {
+        include 'annotations*.jar'
+    }
+}
+
+task dexMethodCount(type: DexMethodCount) {
+    from jar
+    ownPackages = ['kotlin']
+}
+check.dependsOn(dexMethodCount)
+
+compileKotlin {
+    kotlinOptions {
+        freeCompilerArgs = [
+                "-version",
+                "-Xallow-kotlin-package",
+                "-Xallow-result-return-type",
+                "-Xmultifile-parts-inherit",
+                "-Xnormalize-constructor-calls=enable",
+                "-module-name", "kotlin-stdlib",
+                "-Xuse-experimental=kotlin.Experimental",
+                "-Xuse-experimental=kotlin.ExperimentalMultiplatform",
+                "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
+                "-XXLanguage:+InlineClasses"
+        ]
+    }
+}
+
+
+compileExperimentalKotlin {
+    kotlinOptions {
+        languageVersion = "1.3"
+        apiVersion = "1.3"
+        freeCompilerArgs = [
+                "-version",
+                "-Xallow-kotlin-package",
+                "-Xmultifile-parts-inherit",
+                "-module-name", "kotlin-stdlib-experimental"
+        ]
+    }
+}
+
+compileJava9Sources(project, 'kotlin.stdlib', [sourceSets.main.output, sourceSets.coroutinesExperimental.output])
+
+compileCoroutinesExperimentalKotlin {
+    kotlinOptions {
+        languageVersion = "1.3"
+        apiVersion = "1.3"
+        freeCompilerArgs = [
+                "-version",
+                "-Xallow-kotlin-package",
+                "-Xallow-result-return-type",
+                "-Xmultifile-parts-inherit",
+                "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
+                "-Xuse-experimental=kotlin.Experimental",
+                "-Xcoroutines=enable",
+                "-XXLanguage:-ReleaseCoroutines",
+                "-module-name", "kotlin-stdlib-coroutines"
+        ]
+    }
+}
+
+compileCoroutinesExperimentalTestKotlin {
+    kotlinOptions {
+        languageVersion = "1.2"
+        apiVersion = "1.2"
+        freeCompilerArgs = [
+                "-Xcoroutines=enable"
+        ]
+    }
+}
+
+compileCoroutinesExperimentalMigrationTestKotlin {
+    kotlinOptions {
+        languageVersion = "1.3"
+        apiVersion = "1.3"
+        freeCompilerArgs = []
+    }
+}
+
+task coroutinesExperimentalTest(type: Test, dependsOn: coroutinesExperimentalTestClasses) {
+    group = "verification"
+    testClassesDirs = sourceSets.coroutinesExperimentalTest.output.classesDirs
+    classpath = sourceSets.coroutinesExperimentalTest.runtimeClasspath
+}
+task coroutinesExperimentalMigrationTest(type: Test, dependsOn: coroutinesExperimentalMigrationTestClasses) {
+    group = "verification"
+    testClassesDirs = sourceSets.coroutinesExperimentalMigrationTest.output.classesDirs
+    classpath = sourceSets.coroutinesExperimentalMigrationTest.runtimeClasspath
+}
+
+check.dependsOn(coroutinesExperimentalTest)
+check.dependsOn(coroutinesExperimentalMigrationTest)
+
+compileTestKotlin {
+    kotlinOptions {
+        freeCompilerArgs += [
+                "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes"
+        ]
+    }
+}
+
+task longRunningTest(type: Test, dependsOn: longRunningTestClasses) {
+    group = "verification"
+    testClassesDirs = sourceSets.longRunningTest.output.classesDirs
+    classpath = sourceSets.longRunningTest.runtimeClasspath
+}
+
+if (project.hasProperty("kotlin.stdlib.test.long.running")) {
+    check.dependsOn(longRunningTest)
+}

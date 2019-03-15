@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// IGNORE_BACKEND: JVM_IR
 import kotlin.test.*
 
 fun intRange() = 1 .. 4

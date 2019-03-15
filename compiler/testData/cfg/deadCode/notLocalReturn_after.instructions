@@ -1,0 +1,206 @@
+== doCall ==
+inline fun doCall(f: () -> Unit) = f()
+---------------------
+L0:
+  1 <START>
+    v(f: () -> Unit)
+    magic[FAKE_INITIALIZER](f: () -> Unit) -> <v0>
+    w(f|<v0>)
+    r(f) -> <v1>
+    mark(f())
+    call(f(), invoke|<v1>) -> <v2>
+    ret(*|<v2>) L1
+L1:
+    <END>                                             NEXT:[<SINK>]
+error:
+    <ERROR>                                           PREV:[]
+sink:
+    <SINK>                                            PREV:[<ERROR>, <END>]
+=====================
+== test1 ==
+fun test1(nonLocal: String): String {
+    val localResult = doCall {
+        return nonLocal  //unreachable
+    }
+    return "NON_LOCAL_FAILED $localResult"  //unreachable
+}
+---------------------
+L0:
+  1 <START>
+    v(nonLocal: String)
+    magic[FAKE_INITIALIZER](nonLocal: String) -> <v0>
+    w(nonLocal|<v0>)
+  2 mark({ val localResult = doCall { return nonLocal //unreachable } return "NON_LOCAL_FAILED $localResult" //unreachable })
+    v(val localResult = doCall { return nonLocal //unreachable })
+    mark({ return nonLocal //unreachable })
+    jmp?(L2)                                                                                                                     NEXT:[r({ return nonLocal //unreachable }) -> <v1>, d({ return nonLocal //unreachable })]
+    d({ return nonLocal //unreachable })                                                                                         NEXT:[<SINK>]
+L2 [after local declaration]:
+    r({ return nonLocal //unreachable }) -> <v1>                                                                                 PREV:[jmp?(L2)]
+    mark(doCall { return nonLocal //unreachable })
+    call(doCall { return nonLocal //unreachable }, doCall|<v1>) -> <v2>
+    w(localResult|<v2>)
+    mark("NON_LOCAL_FAILED $localResult")
+    r(localResult) -> <v3>
+    magic[STRING_TEMPLATE]("NON_LOCAL_FAILED $localResult"|<v3>) -> <v4>
+    ret(*|<v4>) L1
+L1:
+  1 <END>                                                                                                                        NEXT:[<SINK>]                                                                                                                       PREV:[ret(*|<v0>) L1, ret(*|<v4>) L1]
+error:
+    <ERROR>                                                                                                                      PREV:[]
+sink:
+    <SINK>                                                                                                                       PREV:[<ERROR>, <END>, d({ return nonLocal //unreachable })]
+=====================
+== anonymous_0 ==
+{
+        return nonLocal  //unreachable
+    }
+---------------------
+L3:
+  3 <START>
+  4 mark(return nonLocal //unreachable)
+    r(nonLocal) -> <v0>
+    ret(*|<v0>) L1                         NEXT:[<END>]
+L4:
+  3 <END>                                  NEXT:[<SINK>]                                 PREV:[]
+error:
+    <ERROR>                                PREV:[]
+sink:
+    <SINK>                                 PREV:[<ERROR>, <END>]
+=====================
+== doSomething ==
+fun doSomething() {}
+---------------------
+L0:
+  1 <START>
+  2 mark({})
+    read (Unit)
+L1:
+  1 <END>          NEXT:[<SINK>]
+error:
+    <ERROR>        PREV:[]
+sink:
+    <SINK>         PREV:[<ERROR>, <END>]
+=====================
+== test2 ==
+fun test2() {
+    fun f(x: Any?) = x
+    f(null?.let { return })
+
+    // false unreachable here
+    doSomething()
+}
+---------------------
+L0:
+  1 <START>
+  2 mark({ fun f(x: Any?) = x f(null?.let { return }) // false unreachable here doSomething() })
+    jmp?(L2)                                                                                        NEXT:[mark(null?.let { return }), d(fun f(x: Any?) = x)]
+    d(fun f(x: Any?) = x)                                                                           NEXT:[<SINK>]
+L2 [after local declaration]:
+    mark(null?.let { return })                                                                      PREV:[jmp?(L2)]
+    jf(L5)                                                                                          NEXT:[mark(f(null?.let { return })), r(null) -> <v0>]
+    r(null) -> <v0>
+    mark({ return })
+    r({ return }) -> <v1>
+    mark(let { return })
+    call(let { return }, let|<v0>, <v1>)
+L6 [before inlined declaration]:
+    inlined({ return })                                                                             NEXT:[<SINK>]
+L5 [result of call]:
+L7 [after inlined declaration]:
+    mark(f(null?.let { return }))                                                                   PREV:[jf(L5)]
+    call(f(null?.let { return }), f|!<v2>) -> <v3>
+    mark(doSomething())
+    call(doSomething(), doSomething) -> <v4>
+L1:
+  1 <END>                                                                                           NEXT:[<SINK>]                                                                                          PREV:[ret L1, call(doSomething(), doSomething) -> <v4>]
+error:
+    <ERROR>                                                                                         PREV:[]
+sink:
+    <SINK>                                                                                          PREV:[<ERROR>, <END>, d(fun f(x: Any?) = x), inlined({ return })]
+=====================
+== f ==
+fun f(x: Any?) = x
+---------------------
+L3:
+  3 <START>
+    v(x: Any?)
+    magic[FAKE_INITIALIZER](x: Any?) -> <v0>
+    w(x|<v0>)
+    r(x) -> <v1>
+    ret(*|<v1>) L4
+L4:
+    <END>                                       NEXT:[<SINK>]
+error:
+    <ERROR>                                     PREV:[]
+sink:
+    <SINK>                                      PREV:[<ERROR>, <END>]
+=====================
+== inlined anonymous_1 ==
+{ return }
+---------------------
+L8:
+  3 <START>
+  4 mark(return)
+    ret L1             NEXT:[<END>]
+- 3 ret(*|!<v0>) L9    PREV:[]
+L9:
+-   <END>              NEXT:[<SINK>]          PREV:[]
+error:
+-   <ERROR>            PREV:[]
+sink:
+-   <SINK>             PREV:[]
+=====================
+== test3 ==
+fun test3(x: Any?): Boolean =
+    x?.let {
+        return true
+    } ?: false
+---------------------
+L0:
+  1 <START>
+    v(x: Any?)
+    magic[FAKE_INITIALIZER](x: Any?) -> <v0>
+    w(x|<v0>)
+    mark(x?.let { return true })
+    jf(L2)                                                        NEXT:[mark(x?.let { return true } ?: false), r(x) -> <v1>]
+    r(x) -> <v1>
+    mark({ return true })
+    r({ return true }) -> <v2>
+    mark(let { return true })
+    call(let { return true }, let|<v1>, <v2>)
+L3 [before inlined declaration]:
+    inlined({ return true })                                      NEXT:[<SINK>]
+L2 [result of call]:
+L4 [after inlined declaration]:
+    mark(x?.let { return true } ?: false)                         PREV:[jf(L2)]
+    jt(L7|!<v3>)                                                  NEXT:[r(false) -> <v4>, merge(x?.let { return true } ?: false|!<v3>, <v4>) -> <v5>]
+    r(false) -> <v4>
+L7 [after elvis operator]:
+    merge(x?.let { return true } ?: false|!<v3>, <v4>) -> <v5>    PREV:[jt(L7|!<v3>), r(false) -> <v4>]
+    ret(*|<v5>) L1
+L1:
+    <END>                                                         NEXT:[<SINK>]                                                                          PREV:[ret(*|<v0>) L1, ret(*|<v5>) L1]
+error:
+    <ERROR>                                                       PREV:[]
+sink:
+    <SINK>                                                        PREV:[<ERROR>, <END>, inlined({ return true })]
+=====================
+== inlined anonymous_2 ==
+{
+        return true
+    }
+---------------------
+L5:
+  2 <START>
+  3 mark(return true)
+    r(true) -> <v0>
+    ret(*|<v0>) L1       NEXT:[<END>]
+- 2 ret(*|!<v1>) L6      PREV:[]
+L6:
+-   <END>                NEXT:[<SINK>]               PREV:[]
+error:
+-   <ERROR>              PREV:[]
+sink:
+-   <SINK>               PREV:[]
+=====================

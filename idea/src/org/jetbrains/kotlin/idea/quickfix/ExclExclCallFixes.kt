@@ -17,7 +17,9 @@
 package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.codeInsight.FileModificationService
+import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.codeInsight.intention.IntentionAction
+import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
@@ -27,6 +29,7 @@ import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.diagnostics.Errors.UNSAFE_CALL
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
@@ -53,7 +56,7 @@ abstract class ExclExclCallFix(psiElement: PsiElement) : KotlinQuickFixAction<Ps
     override fun startInWriteAction(): Boolean = true
 }
 
-class RemoveExclExclCallFix(psiElement: PsiElement) : ExclExclCallFix(psiElement), CleanupFix {
+class RemoveExclExclCallFix(psiElement: PsiElement) : ExclExclCallFix(psiElement), CleanupFix, HighPriorityAction {
     override fun getText(): String = KotlinBundle.message("remove.unnecessary.non.null.assertion")
 
     override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean =
@@ -80,7 +83,7 @@ class RemoveExclExclCallFix(psiElement: PsiElement) : ExclExclCallFix(psiElement
     }
 }
 
-class AddExclExclCallFix(psiElement: PsiElement, val checkImplicitReceivers: Boolean) : ExclExclCallFix(psiElement) {
+class AddExclExclCallFix(psiElement: PsiElement, val checkImplicitReceivers: Boolean) : ExclExclCallFix(psiElement), LowPriorityAction {
     constructor(psiElement: PsiElement) : this(psiElement, true)
 
     override fun getText() = KotlinBundle.message("introduce.non.null.assertion")
@@ -114,10 +117,9 @@ class AddExclExclCallFix(psiElement: PsiElement, val checkImplicitReceivers: Boo
             return (psiElement.prevSibling as? KtExpression).expressionForCall()
         }
         return when (psiElement) {
-            is KtArrayAccessExpression -> psiElement.arrayExpression.expressionForCall()
+            is KtArrayAccessExpression -> psiElement.expressionForCall()
             is KtOperationReferenceExpression -> {
-                val parent = psiElement.parent
-                when (parent) {
+                when (val parent = psiElement.parent) {
                     is KtUnaryExpression -> parent.baseExpression.expressionForCall()
                     is KtBinaryExpression -> {
                         val receiver = if (KtPsiUtil.isInOrNotInOperation(parent)) parent.right else parent.left
@@ -152,7 +154,13 @@ class AddExclExclCallFix(psiElement: PsiElement, val checkImplicitReceivers: Boo
     }
 
     companion object : KotlinSingleIntentionActionFactory() {
-        override fun createAction(diagnostic: Diagnostic): IntentionAction = AddExclExclCallFix(diagnostic.psiElement)
+        override fun createAction(diagnostic: Diagnostic): IntentionAction {
+            val psiElement = diagnostic.psiElement
+            if (diagnostic.factory == UNSAFE_CALL && psiElement is KtArrayAccessExpression) {
+                psiElement.arrayExpression?.let { return AddExclExclCallFix(it) }
+            }
+            return AddExclExclCallFix(psiElement)
+        }
     }
 }
 

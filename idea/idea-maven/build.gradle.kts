@@ -1,6 +1,8 @@
 
-apply { plugin("kotlin") }
-apply { plugin("jps-compatible") }
+plugins {
+    kotlin("jvm")
+    id("jps-compatible")
+}
 
 dependencies {
     compile(project(":core:util.runtime"))
@@ -16,17 +18,24 @@ dependencies {
     compile(project(":idea:idea-jvm"))
     compile(project(":idea:idea-jps-common"))
 
-    compileOnly(intellijDep()) { includeJars("openapi", "idea", "gson", "jdom", "extensions", "util", rootProject = rootProject) }
-    excludeInAndroidStudio(rootProject) { compileOnly(intellijPluginDep("maven")) { includeJars("maven", "maven-server-api") } }
+    compileOnly(intellijDep())
+    excludeInAndroidStudio(rootProject) { compileOnly(intellijPluginDep("maven")) }
 
     testCompile(projectTests(":idea"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(projectTests(":idea:idea-test-framework"))
 
-    testCompileOnly(intellijDep()) { includeJars("openapi", "idea", "gson", "idea_rt", rootProject = rootProject) }
-    testCompileOnly(intellijPluginDep("maven")) { includeJars("maven", "maven-server-api") }
+    testCompileOnly(intellijDep())
+    if (Ide.IJ()) {
+        testCompileOnly(intellijPluginDep("maven"))
+        testRuntime(intellijPluginDep("maven"))
+    }
 
-    testRuntime(projectDist(":kotlin-reflect"))
+    testCompile(project(":idea:idea-native")) { isTransitive = false }
+    testRuntime(project(":kotlin-native:kotlin-native-library-reader")) { isTransitive = false }
+    testRuntime(project(":kotlin-native:kotlin-native-utils")) { isTransitive = false }
+
+    testRuntime(project(":kotlin-reflect"))
     testRuntime(project(":idea:idea-jvm"))
     testRuntime(project(":idea:idea-android"))
     testRuntime(project(":plugins:android-extensions-ide"))
@@ -34,29 +43,44 @@ dependencies {
     testRuntime(project(":sam-with-receiver-ide-plugin"))
     testRuntime(project(":allopen-ide-plugin"))
     testRuntime(project(":noarg-ide-plugin"))
+    testRuntime(project(":kotlin-scripting-idea"))
+    testRuntime(project(":kotlinx-serialization-ide-plugin"))
 
     testRuntime(intellijDep())
     // TODO: the order of the plugins matters here, consider avoiding order-dependency
     testRuntime(intellijPluginDep("junit"))
-    testRuntime(intellijPluginDep("testng")) { includeJars("jcommander", "resources_en") }
-    testRuntime(intellijPluginDep("properties")) { includeJars("resources_en") }
+    testRuntime(intellijPluginDep("testng"))
+    testRuntime(intellijPluginDep("properties"))
     testRuntime(intellijPluginDep("gradle"))
     testRuntime(intellijPluginDep("Groovy"))
-    testRuntime(intellijPluginDep("coverage")) { includeJars("jacocoant") }
-    testRuntime(intellijPluginDep("maven"))
+    testRuntime(intellijPluginDep("coverage"))
     testRuntime(intellijPluginDep("android"))
+    testRuntime(intellijPluginDep("smali"))
 }
 
-sourceSets {
-    "main" { projectDefault() }
-    "test" { projectDefault() }
+if (Ide.IJ()) {
+    sourceSets {
+        "main" { projectDefault() }
+        "test" { projectDefault() }
+    }
+} else {
+    sourceSets {
+        "main" { }
+        "test" { }
+    }
 }
 
 testsJar()
 
 projectTest {
     workingDir = rootDir
-    doFirst {
-        systemProperty("idea.home.path", intellijRootDir().canonicalPath)
+}
+
+
+if (Ide.IJ()) {
+    runtimeJar {
+        archiveName = "maven-ide.jar"
     }
+
+    ideaPlugin()
 }

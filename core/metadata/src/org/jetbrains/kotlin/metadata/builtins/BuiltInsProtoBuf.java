@@ -12,6 +12,8 @@ public final class BuiltInsProtoBuf {
     registry.add(org.jetbrains.kotlin.metadata.builtins.BuiltInsProtoBuf.constructorAnnotation);
     registry.add(org.jetbrains.kotlin.metadata.builtins.BuiltInsProtoBuf.functionAnnotation);
     registry.add(org.jetbrains.kotlin.metadata.builtins.BuiltInsProtoBuf.propertyAnnotation);
+    registry.add(org.jetbrains.kotlin.metadata.builtins.BuiltInsProtoBuf.propertyGetterAnnotation);
+    registry.add(org.jetbrains.kotlin.metadata.builtins.BuiltInsProtoBuf.propertySetterAnnotation);
     registry.add(org.jetbrains.kotlin.metadata.builtins.BuiltInsProtoBuf.compileTimeValue);
     registry.add(org.jetbrains.kotlin.metadata.builtins.BuiltInsProtoBuf.enumEntryAnnotation);
     registry.add(org.jetbrains.kotlin.metadata.builtins.BuiltInsProtoBuf.parameterAnnotation);
@@ -95,6 +97,38 @@ public final class BuiltInsProtoBuf {
         org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.getDefaultInstance(),
         null,
         150,
+        org.jetbrains.kotlin.protobuf.WireFormat.FieldType.MESSAGE,
+        false,
+        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.class);
+  public static final int PROPERTY_GETTER_ANNOTATION_FIELD_NUMBER = 152;
+  /**
+   * <code>extend .org.jetbrains.kotlin.metadata.Property { ... }</code>
+   */
+  public static final
+    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
+      org.jetbrains.kotlin.metadata.ProtoBuf.Property,
+      java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.Annotation>> propertyGetterAnnotation = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
+          .newRepeatedGeneratedExtension(
+        org.jetbrains.kotlin.metadata.ProtoBuf.Property.getDefaultInstance(),
+        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.getDefaultInstance(),
+        null,
+        152,
+        org.jetbrains.kotlin.protobuf.WireFormat.FieldType.MESSAGE,
+        false,
+        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.class);
+  public static final int PROPERTY_SETTER_ANNOTATION_FIELD_NUMBER = 153;
+  /**
+   * <code>extend .org.jetbrains.kotlin.metadata.Property { ... }</code>
+   */
+  public static final
+    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
+      org.jetbrains.kotlin.metadata.ProtoBuf.Property,
+      java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.Annotation>> propertySetterAnnotation = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
+          .newRepeatedGeneratedExtension(
+        org.jetbrains.kotlin.metadata.ProtoBuf.Property.getDefaultInstance(),
+        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.getDefaultInstance(),
+        null,
+        153,
         org.jetbrains.kotlin.protobuf.WireFormat.FieldType.MESSAGE,
         false,
         org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.class);

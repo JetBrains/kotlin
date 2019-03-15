@@ -3,7 +3,7 @@
     <java dir="${temp}" fork="true" classname="org.jetbrains.kotlin.cli.js.K2JSCompiler">
       <classpath>
         <pathelement location="${kotlin.lib}/kotlin-compiler.jar"/>
-        <pathelement location="${kotlin.lib}/kotlin-runtime.jar"/>
+        <pathelement location="${kotlin.lib}/kotlin-stdlib.jar"/>
       </classpath>
       <arg value="${test.data}/root1/foo.kt"/>
       <arg value="-output"/>

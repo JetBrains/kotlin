@@ -25,15 +25,20 @@ import com.intellij.codeInsight.daemon.impl.UpdateHighlightersUtil
 import com.intellij.lang.annotation.Annotation
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.lang.annotation.HighlightSeverity.*
-import com.intellij.openapi.components.AbstractProjectComponent
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.components.ProjectComponent
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.DumbAware
-import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.MessageType
+import com.intellij.openapi.wm.WindowManager
+import com.intellij.openapi.wm.ex.StatusBarEx
 import com.intellij.psi.PsiFile
-import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode
+import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.core.script.IdeScriptReportSink
+import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionsManager
+import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesUpdater
 import org.jetbrains.kotlin.psi.KtFile
 import kotlin.script.experimental.dependencies.ScriptReport
 
@@ -45,6 +50,22 @@ class ScriptExternalHighlightingPass(
 
     override fun doApplyInformationToEditor() {
         val document = document ?: return
+
+        if (!file.isScript()) return
+
+        if (!ScriptDefinitionsManager.getInstance(file.project).isReady()) {
+            showNotification(
+                file,
+                "Highlighting in scripts is not available until all Script Definitions are loaded"
+            )
+        }
+
+        if (!ScriptDependenciesUpdater.areDependenciesCached(file)) {
+            showNotification(
+                file,
+                "Highlighting in scripts is not available until all Script Dependencies are loaded"
+            )
+        }
 
         val reports = file.virtualFile.getUserData(IdeScriptReportSink.Reports) ?: return
 
@@ -93,11 +114,26 @@ class ScriptExternalHighlightingPass(
             ScriptReport.Severity.ERROR -> ERROR
             ScriptReport.Severity.WARNING -> WARNING
             ScriptReport.Severity.INFO -> INFORMATION
-            ScriptReport.Severity.DEBUG -> if (KotlinInternalMode.enabled) INFORMATION else null
+            ScriptReport.Severity.DEBUG -> if (ApplicationManager.getApplication().isInternal) INFORMATION else null
         }
     }
 
-    class Factory(project: Project, registrar: TextEditorHighlightingPassRegistrar) : AbstractProjectComponent(project),
+    private fun showNotification(file: KtFile, message: String) {
+        UIUtil.invokeLaterIfNeeded {
+            val ideFrame = WindowManager.getInstance().getIdeFrame(file.project)
+            if (ideFrame != null) {
+                val statusBar = ideFrame.statusBar as StatusBarEx
+                statusBar.notifyProgressByBalloon(
+                    MessageType.WARNING,
+                    message,
+                    null,
+                    null
+                )
+            }
+        }
+    }
+
+    class Factory(registrar: TextEditorHighlightingPassRegistrar) : ProjectComponent,
         TextEditorHighlightingPassFactory {
         init {
             registrar.registerTextEditorHighlightingPass(

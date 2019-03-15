@@ -1,0 +1,5 @@
+package
+
+public val resultP: kotlin.Result<kotlin.Int>
+public fun f(/*0*/ r1: kotlin.Result<kotlin.Int>?): kotlin.Unit
+public fun result(): kotlin.Result<kotlin.Int>

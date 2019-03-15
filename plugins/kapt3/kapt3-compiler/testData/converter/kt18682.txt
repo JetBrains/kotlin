@@ -36,7 +36,7 @@ public final class Kt18682Kt {
     }
 
     @org.jetbrains.annotations.NotNull()
-    public static final java.util.List<Foo> test4() {
+    public static final java.util.List<java.lang.Object> test4() {
         return null;
     }
 }

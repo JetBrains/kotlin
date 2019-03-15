@@ -1,6 +1,6 @@
 package test
 
-public var v: kotlin.Int
+@get:kotlin.jvm.JvmName(name = "vget") @set:kotlin.jvm.JvmName(name = "vset") public var v: kotlin.Int
 
 public open class PlatformName {
     public constructor PlatformName()

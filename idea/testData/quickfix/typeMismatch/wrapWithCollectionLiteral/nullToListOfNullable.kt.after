@@ -1,0 +1,8 @@
+// "Wrap element with 'listOf()' call" "true"
+// WITH_RUNTIME
+
+fun foo() {
+    bar(listOf(null))
+}
+
+fun bar(a: List<String?>) {}

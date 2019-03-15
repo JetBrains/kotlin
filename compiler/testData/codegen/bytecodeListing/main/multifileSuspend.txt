@@ -1,0 +1,18 @@
+@kotlin.Metadata
+public final class Hello/Foo {
+    public final static @org.jetbrains.annotations.Nullable method main(@org.jetbrains.annotations.NotNull p0: java.lang.String[], @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
+    public synthetic static method main(p0: java.lang.String[]): void
+}
+
+@kotlin.Metadata
+synthetic final class Hello/Foo__MultifileSuspendKt$$$main {
+    private final field args: java.lang.String[]
+    synthetic method <init>(p0: java.lang.String[]): void
+    public synthetic final method invoke(p0: java.lang.Object): java.lang.Object
+}
+
+@kotlin.Metadata
+synthetic final class Hello/Foo__MultifileSuspendKt {
+    public final static @org.jetbrains.annotations.Nullable method main(@org.jetbrains.annotations.NotNull p0: java.lang.String[], @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
+    public synthetic static method main(p0: java.lang.String[]): void
+}

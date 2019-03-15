@@ -1,8 +1,8 @@
-// IGNORE_BACKEND: NATIVE
+// IGNORE_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 // FILE: 1.kt
 // WITH_REFLECT
 package test
-
 inline val <reified T : Any> T.className: String; get() = T::class.java.simpleName
 
 // FILE: 2.kt

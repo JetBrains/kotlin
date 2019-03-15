@@ -1,9 +1,9 @@
 package org.test
 
-@Deprecated("BinaryWarning", level = DeprecationLevel.WARNING)
-@Experimental(Experimental.Level.ERROR, [Experimental.Impact.RUNTIME])
-annotation class BinaryWarning
+@Deprecated("Warning1", level = DeprecationLevel.WARNING)
+@Experimental
+annotation class Warning1
 
-@Deprecated("SourceWarning", level = DeprecationLevel.WARNING)
-@Experimental(Experimental.Level.ERROR, [Experimental.Impact.COMPILATION])
-annotation class SourceWarning
+@Deprecated("Warning2", level = DeprecationLevel.WARNING)
+@Experimental
+annotation class Warning2

@@ -1,0 +1,6 @@
+package
+
+public fun getBoolean(): kotlin.Boolean
+public fun testJumpOutInElvis(/*0*/ x: kotlin.Int?): kotlin.Unit
+public fun testJumpOutInElvisLikeIf(/*0*/ x: kotlin.Int?): kotlin.Unit
+public fun testJumpOutInIf(/*0*/ x: kotlin.Int?): kotlin.Unit

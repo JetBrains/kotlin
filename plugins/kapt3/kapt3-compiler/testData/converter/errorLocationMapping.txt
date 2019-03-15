@@ -134,7 +134,7 @@ public final class ErrorInDeclarations {
 import kotlin.reflect.KClass;
 
 @kotlin.Metadata()
-public final class ErrorInSupertype {
+public final class ErrorInSupertype implements ABC {
 
     public ErrorInSupertype() {
         super();
@@ -147,7 +147,7 @@ public final class ErrorInSupertype {
 import kotlin.reflect.KClass;
 
 @kotlin.Metadata()
-public final class ErrorInSupertype2 {
+public final class ErrorInSupertype2 extends ABC<java.lang.String> {
 
     public ErrorInSupertype2() {
         super();

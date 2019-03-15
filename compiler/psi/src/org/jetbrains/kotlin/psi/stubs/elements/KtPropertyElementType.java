@@ -36,6 +36,7 @@ public class KtPropertyElementType extends KtStubElementType<KotlinPropertyStub,
         super(debugName, KtProperty.class, KotlinPropertyStub.class);
     }
 
+    @NotNull
     @Override
     public KotlinPropertyStub createStub(@NotNull KtProperty psi, StubElement parentStub) {
         assert !psi.isLocal() :
@@ -43,7 +44,7 @@ public class KtPropertyElementType extends KtStubElementType<KotlinPropertyStub,
                               psi.getText(), psi.getParent() != null ? psi.getParent().getText() : "<no parent>");
 
         return new KotlinPropertyStubImpl(
-                parentStub, StringRef.fromString(psi.getName()),
+                (StubElement<?>) parentStub, StringRef.fromString(psi.getName()),
                 psi.isVar(), psi.isTopLevel(), psi.hasDelegate(),
                 psi.hasDelegateExpression(), psi.hasInitializer(),
                 psi.getReceiverTypeReference() != null, psi.getTypeReference() != null,
@@ -81,9 +82,10 @@ public class KtPropertyElementType extends KtStubElementType<KotlinPropertyStub,
         StringRef fqNameAsString = dataStream.readName();
         FqName fqName = fqNameAsString != null ? new FqName(fqNameAsString.toString()) : null;
 
-        return new KotlinPropertyStubImpl(parentStub, name, isVar, isTopLevel, hasDelegate,
-                                          hasDelegateExpression, hasInitializer, hasReceiverTypeRef, hasReturnTypeRef,
-                                          fqName);
+        return new KotlinPropertyStubImpl(
+                (StubElement<?>) parentStub, name, isVar, isTopLevel, hasDelegate, hasDelegateExpression, hasInitializer,
+                hasReceiverTypeRef, hasReturnTypeRef, fqName
+        );
     }
 
     @Override

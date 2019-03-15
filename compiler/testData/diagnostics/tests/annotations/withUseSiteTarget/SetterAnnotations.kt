@@ -25,7 +25,7 @@ class SomeClass {
     @set:Ann
     var propertyWithCustomSetter: Int
         get() = 5
-        set(v) {}
+        set(<!UNUSED_PARAMETER!>v<!>) {}
 
     <!INAPPLICABLE_TARGET_ON_PROPERTY, WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@set:Ann<!>
     fun annotationOnFunction(a: Int) = a + 5

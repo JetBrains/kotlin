@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 open class Base {
     open val foo = "Base"
 }

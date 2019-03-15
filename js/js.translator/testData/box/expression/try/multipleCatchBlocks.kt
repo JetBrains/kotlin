@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1118
+// EXPECTED_REACHABLE_NODES: 1291
 package foo
 
 class UserException() : RuntimeException()

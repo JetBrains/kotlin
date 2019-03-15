@@ -54,13 +54,11 @@ interface ScopeTowerLevel {
     fun recordLookup(name: Name)
 }
 
-interface CandidateWithBoundDispatchReceiver {
-    val descriptor: CallableDescriptor
-
+class CandidateWithBoundDispatchReceiver(
+    val dispatchReceiver: ReceiverValueWithSmartCastInfo?,
+    val descriptor: CallableDescriptor,
     val diagnostics: List<ResolutionDiagnostic>
-
-    val dispatchReceiver: ReceiverValueWithSmartCastInfo?
-}
+)
 
 fun getResultApplicability(diagnostics: Collection<KotlinCallDiagnostic>) =
     diagnostics.maxBy { it.candidateApplicability }?.candidateApplicability
@@ -109,4 +107,4 @@ object InvokeConventionCallNoOperatorModifier : ResolutionDiagnostic(CONVENTION_
 object InfixCallNoInfixModifier : ResolutionDiagnostic(CONVENTION_ERROR)
 object DeprecatedUnaryPlusAsPlus : ResolutionDiagnostic(CONVENTION_ERROR)
 
-class ResolvedUsingDeprecatedVisbility(val baseSourceScope: ResolutionScope, val lookupLocation: LookupLocation) : ResolutionDiagnostic(RESOLVED)
+class ResolvedUsingDeprecatedVisibility(val baseSourceScope: ResolutionScope, val lookupLocation: LookupLocation) : ResolutionDiagnostic(RESOLVED)

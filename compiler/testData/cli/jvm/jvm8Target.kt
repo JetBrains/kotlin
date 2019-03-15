@@ -2,6 +2,6 @@ interface A {
     fun test() = "OK"
 }
 
-fun main(args: Array<String>) {
+fun main() {
     println(object : A {}.test())
 }

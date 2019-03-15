@@ -1,6 +1,0 @@
-error: incompatible classes were found in dependencies. Remove them from the classpath or use '-Xskip-metadata-version-check' to suppress errors
-compiler/testData/cli/jvm/wrongAbiVersionNoErrors.kt:3:14: error: class 'wrong.ClassWithInnerLambda' was compiled with an incompatible version of Kotlin. The binary version of its metadata is 0.30.0, expected version is $ABI_VERSION$.
-The class is loaded from $TESTDATA_DIR$/wrongAbiVersionLib/bin/wrong/ClassWithInnerLambda.class
-import wrong.ClassWithInnerLambda
-             ^
-COMPILATION_ERROR

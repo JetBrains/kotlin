@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.idea.refactoring.changeSignature.ui
 
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.editor.colors.EditorFontType
-import com.intellij.openapi.editor.event.DocumentAdapter
 import com.intellij.openapi.editor.event.DocumentEvent
+import com.intellij.openapi.editor.event.DocumentListener
 import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
@@ -136,7 +136,7 @@ class KotlinChangeSignatureDialog(
     }
 
     private fun getColumnTextMaxLength(nameFunction: Function1<ParameterTableModelItemBase<KotlinParameterInfo>, String?>) =
-            parametersTableModel.items.map { nameFunction(it)?.length ?: 0 }.max() ?: 0
+            parametersTableModel.items.asSequence().map { nameFunction(it)?.length ?: 0 }.max() ?: 0
 
     private fun getParamNamesMaxLength() = getColumnTextMaxLength { getPresentationName(it) }
 
@@ -226,8 +226,8 @@ class KotlinChangeSignatureDialog(
 
                     if (editor != null) {
                         editor.addDocumentListener(
-                                object : DocumentAdapter() {
-                                    override fun documentChanged(e: DocumentEvent?) {
+                                object : DocumentListener {
+                                    override fun documentChanged(e: DocumentEvent) {
                                         fireDocumentChanged(e, columnFinal)
                                     }
                                 }
@@ -402,7 +402,7 @@ class KotlinChangeSignatureDialog(
 
     companion object {
         private fun createParametersInfoModel(descriptor: KotlinMethodDescriptor, defaultValueContext: PsiElement): KotlinCallableParameterTableModel {
-            val typeContext = getTypeCodeFragmentContext(defaultValueContext)
+            val typeContext = getTypeCodeFragmentContext(descriptor.baseDeclaration)
             return when (descriptor.kind) {
                 KotlinMethodDescriptor.Kind.FUNCTION -> KotlinFunctionParameterTableModel(descriptor, typeContext, defaultValueContext)
                 KotlinMethodDescriptor.Kind.PRIMARY_CONSTRUCTOR -> KotlinPrimaryConstructorParameterTableModel(descriptor, typeContext, defaultValueContext)

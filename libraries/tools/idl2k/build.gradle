@@ -1,0 +1,45 @@
+buildscript {
+    ext.antlr4_version = '4.7.1'
+}
+
+apply plugin: "antlr"
+apply plugin: "kotlin"
+
+if (project.findProperty("idl2k.deploy")?.toBoolean()) {
+    configurePublishing(project)
+}
+
+repositories {
+    mavenCentral()
+}
+
+project.sourceSets.main.antlr.srcDirs = ["src/main/antlr4"]
+
+dependencies {
+    antlr "org.antlr:antlr4:$antlr4_version"
+    implementation "org.antlr:antlr4-runtime:$antlr4_version"
+    implementation kotlinStdlib()
+    implementation "org.jsoup:jsoup:1.8.2"
+
+    testImplementation "junit:junit:4.12"
+}
+
+sourceSets.main.kotlin.srcDirs += file("$buildDir/generated-src/antlr/main/")
+
+generateGrammarSource {
+    arguments += ["-visitor", "-long-messages", "-package", "org.antlr.webidl"]
+}
+
+
+compileKotlin.dependsOn generateGrammarSource
+compileTestKotlin.dependsOn generateTestGrammarSource
+
+task downloadIDL(type: JavaExec) {
+    main = "org.jetbrains.idl2k.dl.DownloadKt"
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+task idl2k(type: JavaExec) {
+    main = "org.jetbrains.idl2k.MainKt"
+    classpath = sourceSets.main.runtimeClasspath
+}

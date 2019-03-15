@@ -1,0 +1,15 @@
+package
+
+public val value_1: [ERROR : Type for E0]
+public val value_10: [ERROR : Type for e666666]
+public val value_11: [ERROR : Type for E7777777]
+public val value_12: [ERROR : <ERROR FUNCTION RETURN TYPE>]
+public val value_13: [ERROR : <ERROR FUNCTION RETURN TYPE>]
+public val value_2: [ERROR : Type for e000]
+public val value_3: [ERROR : <ERROR FUNCTION RETURN TYPE>]
+public val value_4: [ERROR : Type for e00]
+public val value_5: [ERROR : <ERROR FUNCTION RETURN TYPE>]
+public val value_6: [ERROR : Type for e22]
+public val value_7: [ERROR : <ERROR FUNCTION RETURN TYPE>]
+public val value_8: [ERROR : Type for e4444]
+public val value_9: [ERROR : <ERROR FUNCTION RETURN TYPE>]

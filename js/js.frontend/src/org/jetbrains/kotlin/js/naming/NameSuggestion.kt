@@ -40,7 +40,7 @@ import java.util.*
  * [NameSuggestion] supports caching.
  */
 class NameSuggestion {
-    private val cache: MutableMap<DeclarationDescriptor, SuggestedName?> = WeakHashMap()
+    private val cache: MutableMap<DeclarationDescriptor, SuggestedName?> = Collections.synchronizedMap(WeakHashMap())
 
     /**
      * Generates names for declarations. Name consists of the following parts:

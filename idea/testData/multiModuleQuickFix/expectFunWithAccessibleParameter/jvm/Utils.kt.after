@@ -1,0 +1,6 @@
+// "Create expected function in common module testModule_Common" "true"
+// DISABLE-ERRORS
+
+actual class Some
+
+actual fun foo(some: List<Some>) {}

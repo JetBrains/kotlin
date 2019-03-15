@@ -19,7 +19,9 @@ package org.jetbrains.kotlin.asJava.elements
 import com.intellij.psi.*
 import com.intellij.psi.impl.compiled.ClsTypeElementImpl
 import com.intellij.psi.scope.PsiScopeProcessor
-import com.intellij.psi.util.*
+import com.intellij.psi.util.MethodSignature
+import com.intellij.psi.util.MethodSignatureBackedByPsiMethod
+import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
@@ -30,12 +32,13 @@ import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.propertyNameByAccessor
 import org.jetbrains.kotlin.asJava.unwrapped
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 
-class KtLightMethodImpl private constructor(
+open class KtLightMethodImpl protected constructor(
         computeRealDelegate: () -> PsiMethod,
         lightMemberOrigin: LightMemberOrigin?,
         containingClass: KtLightClass,
@@ -50,29 +53,31 @@ class KtLightMethodImpl private constructor(
 
     private val paramsList: PsiParameterList by lazyPub {
         KtLightParameterList(this, dummyDelegate?.parameterList?.parametersCount ?: clsDelegate.parameterList.parametersCount) {
-            clsDelegate.parameterList.parameters.mapIndexed { index, clsParameter -> KtLightParameter(clsParameter, index, this@KtLightMethodImpl) }
+            buildParametersForList()
         }
     }
 
-    private val typeParamsList: CachedValue<PsiTypeParameterList> by lazyPub {
-        val cacheManager = CachedValuesManager.getManager(clsDelegate.project)
-        cacheManager.createCachedValue<PsiTypeParameterList>(
-                {
-                    val origin = (lightMemberOrigin as? LightMemberOriginForDeclaration)?.originalElement
-                    val list = if (origin != null) {
-                        if (origin is KtClassOrObject) {
-                            KotlinLightTypeParameterListBuilder(manager)
-                        }
-                        else {
-                            LightClassUtil.buildLightTypeParameterList(this@KtLightMethodImpl, origin)
-                        }
-                    }
-                    else {
-                        clsDelegate.typeParameterList
-                    }
-                    CachedValueProvider.Result.create(list, PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT)
-                }, false
-        )
+    protected open fun buildParametersForList(): List<PsiParameter> {
+        val clsParameters by lazyPub { clsDelegate.parameterList.parameters }
+        return (dummyDelegate?.parameterList?.parameters ?: clsParameters).mapIndexed { index, dummyParameter ->
+            KtLightParameter(
+                dummyParameter,
+                { clsParameters.getOrNull(index) },
+                index,
+                this@KtLightMethodImpl
+            )
+        }
+    }
+
+    private val typeParamsList: PsiTypeParameterList? by lazyPub { buildTypeParameterList() }
+
+    protected open fun buildTypeParameterList(): PsiTypeParameterList? {
+        val origin = (lightMemberOrigin as? LightMemberOriginForDeclaration)?.originalElement
+        return when {
+            origin is KtClassOrObject -> KotlinLightTypeParameterListBuilder(this)
+            origin != null -> LightClassUtil.buildLightTypeParameterList(this, origin)
+            else -> clsDelegate.typeParameterList
+        }
     }
 
     override fun accept(visitor: PsiElementVisitor) {
@@ -84,9 +89,17 @@ class KtLightMethodImpl private constructor(
         }
     }
 
+    override val isMangled: Boolean
+        get() {
+            val demangledName = KotlinTypeMapper.InternalNameMapper.demangleInternalName(name) ?: return false
+            val originalName = propertyNameByAccessor(demangledName, this) ?: demangledName
+            return originalName == kotlinOrigin?.name
+        }
+
     override fun setName(name: String): PsiElement? {
         val jvmNameAnnotation = modifierList.findAnnotation(DescriptorUtils.JVM_NAME.asString())
-        val newNameForOrigin = propertyNameByAccessor(name, this) ?: name
+        val demangledName = (if (isMangled) KotlinTypeMapper.InternalNameMapper.demangleInternalName(name) else null) ?: name
+        val newNameForOrigin = propertyNameByAccessor(demangledName, this) ?: demangledName
         if (newNameForOrigin == kotlinOrigin?.name) {
             jvmNameAnnotation?.delete()
             return this
@@ -119,7 +132,7 @@ class KtLightMethodImpl private constructor(
 
     override fun getParameterList() = paramsList
 
-    override fun getTypeParameterList() = typeParamsList.value
+    override fun getTypeParameterList() = typeParamsList
 
     override fun getTypeParameters(): Array<PsiTypeParameter> =
             typeParameterList?.typeParameters ?: PsiTypeParameter.EMPTY_ARRAY

@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.findUsages.KotlinPropertyFindUsagesOptions;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.KtNamedDeclaration;
+import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 
 import javax.swing.*;
 
@@ -46,10 +47,12 @@ public class KotlinFindPropertyUsagesDialog extends JavaFindUsagesDialog<KotlinP
         super(element, project, findUsagesOptions, toShowInNewTab, mustOpenInNewTab, isSingleFile, handler);
     }
 
-    private StateRestoringCheckBox cbReaders;
-    private StateRestoringCheckBox cbWriters;
-    private StateRestoringCheckBox cbOverrides;
+    private StateRestoringCheckBox readAccesses;
+    private StateRestoringCheckBox writeAccesses;
+    private StateRestoringCheckBox overrideUsages;
+    private StateRestoringCheckBox expectedUsages;
 
+    @NotNull
     @Override
     protected KotlinPropertyFindUsagesOptions getFindUsagesOptions() {
         return (KotlinPropertyFindUsagesOptions) myFindUsagesOptions;
@@ -64,9 +67,12 @@ public class KotlinFindPropertyUsagesDialog extends JavaFindUsagesDialog<KotlinP
     public void calcFindUsagesOptions(KotlinPropertyFindUsagesOptions options) {
         super.calcFindUsagesOptions(options);
 
-        options.isReadAccess = isSelected(cbReaders);
-        options.isWriteAccess = isSelected(cbWriters);
-        options.setSearchOverrides(isSelected(cbOverrides));
+        options.isReadAccess = isSelected(readAccesses);
+        options.isWriteAccess = isSelected(writeAccesses);
+        options.setSearchOverrides(isSelected(overrideUsages));
+        if (expectedUsages != null) {
+            options.setSearchExpected(expectedUsages.isSelected());
+        }
     }
 
     @Override
@@ -77,13 +83,13 @@ public class KotlinFindPropertyUsagesDialog extends JavaFindUsagesDialog<KotlinP
 
         KotlinPropertyFindUsagesOptions options = getFindUsagesOptions();
 
-        cbReaders = addCheckboxToPanel(
+        readAccesses = addCheckboxToPanel(
                 KotlinBundle.message("find.what.property.readers.checkbox"),
                 options.isReadAccess,
                 findWhatPanel,
                 true
         );
-        cbWriters = addCheckboxToPanel(
+        writeAccesses = addCheckboxToPanel(
                 KotlinBundle.message("find.what.property.writers.checkbox"),
                 options.isWriteAccess,
                 findWhatPanel,
@@ -107,7 +113,7 @@ public class KotlinFindPropertyUsagesDialog extends JavaFindUsagesDialog<KotlinP
         boolean isAbstract = property.hasModifier(KtTokens.ABSTRACT_KEYWORD);
         boolean isOpen = property.hasModifier(KtTokens.OPEN_KEYWORD);
         if (isOpen || isAbstract) {
-            cbOverrides = addCheckboxToPanel(
+            overrideUsages = addCheckboxToPanel(
                     isAbstract
                     ? KotlinBundle.message("find.what.implementing.properties.checkbox")
                     : KotlinBundle.message("find.what.overriding.properties.checkbox"),
@@ -116,10 +122,20 @@ public class KotlinFindPropertyUsagesDialog extends JavaFindUsagesDialog<KotlinP
                     false
             );
         }
+        boolean isActual = PsiUtilsKt.hasActualModifier(property);
+        KotlinPropertyFindUsagesOptions options = getFindUsagesOptions();
+        if (isActual) {
+            expectedUsages = addCheckboxToPanel(
+                    "Expected properties",
+                    options.getSearchExpected(),
+                    optionsPanel,
+                    false
+            );
+        }
     }
 
     @Override
     protected void update() {
-        setOKActionEnabled(isSelected(cbReaders) || isSelected(cbWriters));
+        setOKActionEnabled(isSelected(readAccesses) || isSelected(writeAccesses));
     }
 }

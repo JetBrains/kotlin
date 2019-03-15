@@ -1,4 +1,5 @@
 // !LANGUAGE: +InlineClasses
+// IGNORE_BACKEND: JVM_IR
 
 inline class Foo(val x: Int) {
     fun empty() {}
@@ -12,7 +13,7 @@ inline class Foo(val x: Int) {
     }
 }
 
-// 2 INVOKESTATIC Foo\$Erased.empty \(I\)V
-// 2 INVOKESTATIC Foo\$Erased.withParam \(ILjava/lang/String;\)V
-// 2 INVOKESTATIC Foo\$Erased.withInlineClassParam \(II\)V
-// 0 INVOKEVIRTUAL
+// 1 INVOKESTATIC Foo\.empty-impl \(I\)V
+// 1 INVOKESTATIC Foo\.withParam-impl \(ILjava/lang/String;\)V
+// 1 INVOKESTATIC Foo\.withInlineClassParam-GWb7d6U \(II\)V
+// 5 INVOKEVIRTUAL

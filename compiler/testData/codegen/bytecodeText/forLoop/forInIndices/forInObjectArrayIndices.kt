@@ -1,5 +1,4 @@
-// WITH_RUNTIME
-
+// IGNORE_BACKEND: JVM_IR
 fun test() {
     var sum = 0
     for (i in arrayOf("", "", "", "").indices) {

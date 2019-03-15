@@ -35,5 +35,5 @@ class NoCPI {
   val a = 1
   var ab = <error>1</error>
     get() = 1
-    set(v) {}
+    set(<warning>v</warning>) {}
 }

@@ -1,9 +1,11 @@
+// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 // WITH_COROUTINES
+// COMMON_COROUTINES_TEST
 import helpers.*
-import kotlin.coroutines.experimental.*
-import kotlin.coroutines.experimental.intrinsics.suspendCoroutineOrReturn
-import kotlin.coroutines.experimental.intrinsics.COROUTINE_SUSPENDED
+import COROUTINES_PACKAGE.*
+import COROUTINES_PACKAGE.intrinsics.suspendCoroutineUninterceptedOrReturn
+import COROUTINES_PACKAGE.intrinsics.COROUTINE_SUSPENDED
 
 fun box(): String {
     async {
@@ -31,13 +33,13 @@ fun async(f: suspend () -> Unit) {
 suspend fun wait(): Unit {
     wait2()
     log += "wait;"
-    return suspendCoroutineOrReturn { c ->
+    return suspendCoroutineUninterceptedOrReturn { c ->
         postponed = { c.resume(Unit) }
         COROUTINE_SUSPENDED
     }
 }
 
-suspend fun wait2(): Unit = suspendCoroutineOrReturn { c ->
+suspend fun wait2(): Unit = suspendCoroutineUninterceptedOrReturn { c ->
     log += "wait2;"
     postponed = { c.resume(Unit) }
     COROUTINE_SUSPENDED

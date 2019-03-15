@@ -1,11 +1,13 @@
 
-apply { plugin("kotlin") }
-apply { plugin("jps-compatible") }
+plugins {
+    kotlin("jvm")
+    id("jps-compatible")
+}
 
 dependencies {
     testRuntime(intellijDep())
 
-    compile(projectDist(":kotlin-stdlib"))
+    compile(kotlinStdlib())
     compile(project(":compiler:frontend"))
     compile(project(":compiler:frontend.java"))
     compile(project(":compiler:light-classes"))
@@ -15,9 +17,18 @@ dependencies {
     testCompile(project(":idea"))
     testCompile(projectTests(":idea:idea-test-framework"))
     testCompile(project(":compiler:light-classes"))
-    testCompile(projectDist(":kotlin-test:kotlin-test-junit"))
+    testCompile(project(":kotlin-test:kotlin-test-junit"))
     testCompile(commonDep("junit:junit"))
 
+    when {
+        Ide.IJ181.orHigher() || Ide.AS33.orHigher() -> testCompileOnly(intellijDep()) { includeJars("platform-api", "platform-impl") }
+        Ide.AS32() -> testCompileOnly(intellijDep()) { includeJars("idea") }
+    }
+    testCompile(project(":idea:idea-native")) { isTransitive = false }
+    testCompile(project(":idea:idea-gradle-native")) { isTransitive = false }
+
+    testRuntime(project(":kotlin-native:kotlin-native-library-reader")) { isTransitive = false }
+    testRuntime(project(":kotlin-native:kotlin-native-utils")) { isTransitive = false }
     testRuntime(project(":plugins:kapt3-idea")) { isTransitive = false }
     testRuntime(project(":idea:idea-jvm"))
     testRuntime(project(":idea:idea-android"))
@@ -25,12 +36,17 @@ dependencies {
     testRuntime(project(":sam-with-receiver-ide-plugin"))
     testRuntime(project(":allopen-ide-plugin"))
     testRuntime(project(":noarg-ide-plugin"))
+    testRuntime(project(":kotlin-scripting-idea"))
+    testRuntime(project(":kotlinx-serialization-ide-plugin"))
     testRuntime(intellijPluginDep("properties"))
     testRuntime(intellijPluginDep("gradle"))
     testRuntime(intellijPluginDep("Groovy"))
     testRuntime(intellijPluginDep("coverage"))
-    testRuntime(intellijPluginDep("maven"))
+    Ide.IJ {
+        testRuntime(intellijPluginDep("maven"))
+    }
     testRuntime(intellijPluginDep("android"))
+    testRuntime(intellijPluginDep("smali"))
     testRuntime(intellijPluginDep("junit"))
     testRuntime(intellijPluginDep("testng"))
     testRuntime(intellijPluginDep("IntelliLang"))
@@ -49,26 +65,20 @@ sourceSets {
 projectTest {
     dependsOn(":dist")
     workingDir = rootDir
-    doFirst {
-        systemProperty("idea.home.path", intellijRootDir().canonicalPath)
-    }
 }
 
 testsJar()
 
-
 val testForWebDemo by task<Test> {
     include("**/*JavaToKotlinConverterForWebDemoTestGenerated*")
-    classpath = the<JavaPluginConvention>().sourceSets["test"].runtimeClasspath
+    classpath = testSourceSet.runtimeClasspath
     workingDir = rootDir
 }
-val cleanTestForWebDemo by tasks
 
 val test: Test by tasks
 test.apply {
     exclude("**/*JavaToKotlinConverterForWebDemoTestGenerated*")
     dependsOn(testForWebDemo)
 }
-val cleanTest by tasks
-cleanTest.dependsOn(cleanTestForWebDemo)
 
+ideaPlugin()

@@ -1,0 +1,96 @@
+group 'com.example'
+version '1.0'
+
+buildscript {
+	repositories {
+		mavenLocal()
+		jcenter()
+	}
+	dependencies {
+		classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+	}
+}
+
+apply plugin: 'kotlin-multiplatform'
+
+repositories {
+    mavenLocal()
+    jcenter()
+    maven { url  "https://dl.bintray.com/kotlin/kotlinx.html/" }
+}
+
+kotlin {
+	// Check the new preset functions:
+	jvm('jvm6') { }
+    js('nodeJs')
+    targetFromPreset(presets.wasm32) { println targetName }
+    targetFromPreset(presets.jvm, 'jvm6') { println targetName } // access existing target
+    
+    targets {
+    	// Also check that the old DSL (fromPreset) works:
+        fromPreset(presets.linuxX64, 'linux64')
+        fromPreset(presets.mingwX64, 'mingw64')
+        fromPreset(presets.macosX64, 'macos64')
+
+        // Check the DSL constructs in the Groovy DSL:
+        fromPreset(presets.jvm, 'jvm6') {
+        	println "Configuring $targetName"
+            compilations.main {
+                kotlinOptions {
+                    println "jvmTarget = " + jvmTarget
+                }
+                defaultSourceSet {
+                    println "Kotlin srcDirs: " + kotlin.srcDirs
+                }
+            }
+        }
+
+        all {
+            mavenPublication {
+                pom.withXml {
+                    asNode().appendNode('name', 'Sample MPP library')
+                }
+            }
+        }
+    }
+
+    sourceSets {
+        commonMain {
+            dependencies {
+                api 'org.jetbrains.kotlin:kotlin-stdlib-common'
+            }
+        }
+        jvm6Main {
+            dependencies {
+                api 'org.jetbrains.kotlin:kotlin-stdlib'
+                implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.23.4'
+            }
+        }
+        nodeJsMain {
+        	dependencies {
+                api 'org.jetbrains.kotlin:kotlin-stdlib-js'
+        		implementation 'org.jetbrains.kotlinx:kotlinx-html-js:0.6.11'
+        	}
+        }
+    }
+}
+
+kotlin.sourceSets.each { println it.kotlin.srcDirs }
+
+apply plugin: 'maven-publish'
+
+publishing {
+	repositories {
+		maven { url "file://${projectDir.absolutePath.replace('\\', '/')}/repo" }
+	}
+}
+
+// Check that a compilation may be created after project evaluation, KT-28896:
+afterEvaluate {
+    kotlin {
+        jvm('jvm6').compilations.create('benchmark') {
+            defaultSourceSet.dependsOn(sourceSets.jvm6Main)
+            assemble.dependsOn compileKotlinTask
+        }
+    }
+}

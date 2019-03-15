@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeAliasStubImpl
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.serialization.deserialization.getName
+import org.jetbrains.kotlin.metadata.deserialization.underlyingType
 
 fun createTypeAliasStub(
         parent: StubElement<out PsiElement>,
@@ -57,5 +58,6 @@ fun createTypeAliasStub(
         createAnnotationStubs(typeAliasProto.annotationList.map { context.nameResolver.getClassId(it.id) }, modifierList)
     }
 
-    typeStubBuilder.createTypeReferenceStub(typeAlias, typeAliasProto.underlyingType)
+    val typeAliasUnderlyingType = typeAliasProto.underlyingType(context.typeTable)
+    typeStubBuilder.createTypeReferenceStub(typeAlias, typeAliasUnderlyingType)
 }

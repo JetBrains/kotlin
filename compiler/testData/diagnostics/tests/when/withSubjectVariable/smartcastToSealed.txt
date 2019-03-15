@@ -1,0 +1,25 @@
+package
+
+public fun testSmartcastToSealedInSubjectInitializer1(/*0*/ x: kotlin.Any?): kotlin.Unit
+public fun testSmartcastToSealedInSubjectInitializer2(/*0*/ x: kotlin.Any?): kotlin.Unit
+
+public sealed class Either {
+    private constructor Either()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Left : Either {
+    public constructor Left()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Right : Either {
+    public constructor Right()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

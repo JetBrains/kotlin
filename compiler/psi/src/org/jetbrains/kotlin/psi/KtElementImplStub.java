@@ -54,6 +54,7 @@ public class KtElementImplStub<T extends StubElement<?>> extends StubBasedPsiEle
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public final void accept(@NotNull PsiElementVisitor visitor) {
         if (visitor instanceof KtVisitor) {
             accept((KtVisitor) visitor, null);
@@ -98,6 +99,7 @@ public class KtElementImplStub<T extends StubElement<?>> extends StubBasedPsiEle
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public PsiReference getReference() {
         PsiReference[] references = getReferences();
         if (references.length == 1) return references[0];

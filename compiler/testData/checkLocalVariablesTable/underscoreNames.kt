@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 data class A(val x: Double = 1.0, val y: String = "", val z: Char = '0')
 
 fun foo(a: A, block: (A, String, Int) -> String): String = block(a, "", 1)
@@ -27,7 +28,7 @@ fun box() {
 // VARIABLE : NAME=c TYPE=C INDEX=9
 // VARIABLE : NAME=a TYPE=D INDEX=7
 // VARIABLE : NAME=this TYPE=LUnderscoreNamesKt$box$1; INDEX=0
-// VARIABLE : NAME=$x_$_$_y TYPE=LA; INDEX=1
+// VARIABLE : NAME=$dstr$x$_u24__u24$y TYPE=LA; INDEX=1
 // VARIABLE : NAME=$noName_1 TYPE=Ljava/lang/String; INDEX=2
 // VARIABLE : NAME=w TYPE=I INDEX=3
 // VARIABLE : NAME=x TYPE=D INDEX=4

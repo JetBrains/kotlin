@@ -1,4 +1,4 @@
-// "Make variable mutable" "true"
+// "Change to var" "true"
 
 val String.prop: Int
     get() {

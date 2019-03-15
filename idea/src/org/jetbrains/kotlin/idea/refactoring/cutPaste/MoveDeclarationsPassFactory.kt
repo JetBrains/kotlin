@@ -24,7 +24,7 @@ import com.intellij.codeInsight.daemon.impl.HighlightInfo
 import com.intellij.codeInsight.daemon.impl.HighlightInfoType
 import com.intellij.codeInsight.daemon.impl.UpdateHighlightersUtil
 import com.intellij.codeInsight.daemon.impl.quickfix.QuickFixAction
-import com.intellij.openapi.components.AbstractProjectComponent
+import com.intellij.openapi.components.ProjectComponent
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
@@ -32,8 +32,8 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.idea.conversion.copy.range
 
-class MoveDeclarationsPassFactory(project: Project, highlightingPassRegistrar: TextEditorHighlightingPassRegistrar)
-    : AbstractProjectComponent(project), TextEditorHighlightingPassFactory {
+class MoveDeclarationsPassFactory(highlightingPassRegistrar: TextEditorHighlightingPassRegistrar)
+    : ProjectComponent, TextEditorHighlightingPassFactory {
     
     init {
         highlightingPassRegistrar.registerTextEditorHighlightingPass(this, TextEditorHighlightingPassRegistrar.Anchor.BEFORE, Pass.POPUP_HINTS, true, true)

@@ -27,24 +27,6 @@
     </problem>
 
     <problem>
-        <file>ReturnNoValue.kt</file>
-        <line>6</line>
-        <module>light_idea_test_case</module>
-        <entry_point TYPE="file" FQNAME="ReturnNoValue.kt" />
-        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Convert object literal to lambda</problem_class>
-        <description>Convert to lambda</description>
-    </problem>
-
-    <problem>
-        <file>ReturnNotLast.kt</file>
-        <line>8</line>
-        <module>light_idea_test_case</module>
-        <entry_point TYPE="file" FQNAME="ReturnNotLast.kt" />
-        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Convert object literal to lambda</problem_class>
-        <description>Convert to lambda</description>
-    </problem>
-
-    <problem>
         <file>ParametersNotUsed.kt</file>
         <line>8</line>
         <module>light_idea_test_case</module>
@@ -98,24 +80,6 @@
     </problem>
 
     <problem>
-        <file>ReturnsInWhen.kt</file>
-        <line>8</line>
-        <module>light_idea_test_case</module>
-        <entry_point TYPE="file" FQNAME="ReturnsInWhen.kt" />
-        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Convert object literal to lambda</problem_class>
-        <description>Convert to lambda</description>
-    </problem>
-
-    <problem>
-        <file>ReturnsInIf.kt</file>
-        <line>8</line>
-        <module>light_idea_test_case</module>
-        <entry_point TYPE="file" FQNAME="ReturnsInIf.kt" />
-        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Convert object literal to lambda</problem_class>
-        <description>Convert to lambda</description>
-    </problem>
-
-    <problem>
         <file>NotInRange2.kt</file>
         <line>7</line>
         <module>light_idea_test_case</module>
@@ -133,23 +97,6 @@
         <description>Convert to lambda</description>
     </problem>
 
-    <problem>
-        <file>QualifiedReturn.kt</file>
-        <line>6</line>
-        <module>light_idea_test_case</module>
-        <entry_point TYPE="file" FQNAME="QualifiedReturn.kt" />
-        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Convert object literal to lambda</problem_class>
-        <description>Convert to lambda</description>
-    </problem>
-
-    <problem>
-        <file>SamAdapterNeededBecauseOfLabeledReturn.kt</file>
-        <line>6</line>
-        <module>light_idea_test_case</module>
-        <entry_point TYPE="file" FQNAME="SamAdapterNeededBecauseOfLabeledReturn.kt" />
-        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Convert object literal to lambda</problem_class>
-        <description>Convert to lambda</description>
-    </problem>
     <problem>
         <file>ThisReference.kt</file>
         <line>12</line>

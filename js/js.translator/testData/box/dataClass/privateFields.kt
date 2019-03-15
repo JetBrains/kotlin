@@ -1,4 +1,5 @@
-// EXPECTED_REACHABLE_NODES: 1123
+// KJS_WITH_FULL_RUNTIME
+// EXPECTED_REACHABLE_NODES: 1292
 package foo
 
 data class A(private val x: Int) {

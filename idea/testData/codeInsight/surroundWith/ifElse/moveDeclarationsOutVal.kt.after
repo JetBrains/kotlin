@@ -1,7 +1,6 @@
 fun foo() {
-    val a: String?
-    if (<caret>) {
-        a = "aaa"
+    val a: String? = if (<caret>) {
+        "aaa"
     } else {
     }
     a.toString()

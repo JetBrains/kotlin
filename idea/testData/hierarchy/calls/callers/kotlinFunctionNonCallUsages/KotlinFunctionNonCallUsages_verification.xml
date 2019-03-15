@@ -1,3 +1,3 @@
-<node text="p.foo()  (p)" base="true">
-    <node text="q.bar()  (q)"/>
+<node text="foo()  (p)" base="true">
+  <node text="bar()  (q)"/>
 </node>

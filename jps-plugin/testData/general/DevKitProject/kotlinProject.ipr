@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <option name="DEFAULT_COMPILER" value="Javac" />
+  </component>
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/kotlinProject.iml" filepath="$PROJECT_DIR$/kotlinProject.iml" />
+    </modules>
+  </component>
+  <component name="ProjectRootManager"
+             version="2"
+             languageLevel="JDK_1_6"
+             default="true"
+             project-jdk-name="IntelliJ IDEA"
+             project-jdk-type="IDEA JDK" >
+    <output url="file://$PROJECT_DIR$/out" />
+  </component>
+</project>

@@ -1,0 +1,8 @@
+// WITH_RUNTIME
+
+fun foo(s: String, i: Int) = s.length + i
+
+fun test() {
+    fun bar() = ""
+    foo(bar(), 1)
+}

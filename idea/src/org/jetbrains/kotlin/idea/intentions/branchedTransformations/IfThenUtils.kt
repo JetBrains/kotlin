@@ -21,26 +21,33 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
+import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.intentions.getLeftMostReceiverExpression
 import org.jetbrains.kotlin.idea.intentions.replaceFirstReceiver
 import org.jetbrains.kotlin.idea.refactoring.inline.KotlinInlineValHandler
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinIntroduceVariableHandler
-import org.jetbrains.kotlin.idea.refactoring.isMultiLine
 import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.resolve.frontendService
+import org.jetbrains.kotlin.idea.util.getResolutionScope
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
+import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getExplicitReceiverValue
 import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getImplicitReceiverValue
-import org.jetbrains.kotlin.resolve.calls.smartcasts.isStableValue
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
+import org.jetbrains.kotlin.resolve.scopes.utils.findVariable
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.utils.addToStdlib.constant
@@ -62,7 +69,9 @@ fun KtExpression.unwrapBlockOrParenthesis(): KtExpression {
     val innerExpression = KtPsiUtil.safeDeparenthesize(this, true)
     if (innerExpression is KtBlockExpression) {
         val statement = innerExpression.statements.singleOrNull() ?: return this
-        return KtPsiUtil.safeDeparenthesize(statement, true)
+        val deparenthesized = KtPsiUtil.safeDeparenthesize(statement, true)
+        if (deparenthesized is KtLambdaExpression) return this
+        return deparenthesized
     }
     return innerExpression
 }
@@ -96,6 +105,12 @@ fun KtThrowExpression.throwsNullPointerExceptionWithNoArguments(): Boolean {
 
 fun KtExpression.evaluatesTo(other: KtExpression): Boolean =
     this.unwrapBlockOrParenthesis().text == other.text
+
+fun KtExpression.anyArgumentEvaluatesTo(argument: KtExpression): Boolean {
+    val callExpression = this as? KtCallExpression ?: return false
+    val arguments = callExpression.valueArguments.map { it.getArgumentExpression() }
+    return arguments.any { it?.evaluatesTo(argument) == true } && arguments.all { it is KtNameReferenceExpression }
+}
 
 fun KtExpression.convertToIfNotNullExpression(
     conditionLhs: KtExpression,
@@ -158,11 +173,23 @@ fun KtPostfixExpression.inlineBaseExpressionIfApplicableWithPrompt(editor: Edito
     (this.baseExpression as? KtNameReferenceExpression)?.inlineIfDeclaredLocallyAndOnlyUsedOnceWithPrompt(editor)
 }
 
-fun KtExpression.isStable(context: BindingContext = this.analyze()): Boolean {
-    if (this is KtConstantExpression || this is KtThisExpression) return true
-    val descriptor = BindingContextUtils.extractVariableDescriptorFromReference(context, this)
-    return descriptor is VariableDescriptor &&
-            isStableValue(descriptor, DescriptorUtils.getContainingModule(descriptor))
+// I.e. stable val/var/receiver
+// We exclude stable complex expressions here, because we don't do smartcasts on them (even though they are stable)
+fun KtExpression.isStableSimpleExpression(context: BindingContext = this.analyze()): Boolean {
+    val dataFlowValue = this.toDataFlowValue(context)
+    return dataFlowValue?.isStable == true &&
+            dataFlowValue.kind != DataFlowValue.Kind.STABLE_COMPLEX_EXPRESSION
+
+}
+
+fun KtExpression.isStableVal(context: BindingContext = this.analyze()): Boolean {
+    return this.toDataFlowValue(context)?.kind == DataFlowValue.Kind.STABLE_VALUE
+}
+
+private fun KtExpression.toDataFlowValue(context: BindingContext): DataFlowValue? {
+    val expressionType = this.getType(context) ?: return null
+    val dataFlowValueFactory = this.getResolutionFacade().frontendService<DataFlowValueFactory>()
+    return dataFlowValueFactory.createDataFlowValue(this, expressionType, context, findModuleDescriptor())
 }
 
 data class IfThenToSelectData(
@@ -194,30 +221,66 @@ data class IfThenToSelectData(
                         baseClause is KtDotQualifiedExpression -> baseClause.replaceFirstReceiver(
                             factory, newReceiver!!, safeAccess = true
                         )
-                        hasImplicitReceiver() -> factory.createExpressionByPattern("$0?.$1", newReceiver!!, baseClause).insertSafeCalls(
+                        hasImplicitReceiverReplaceableBySafeCall() -> factory.createExpressionByPattern("$0?.$1", newReceiver!!, baseClause).insertSafeCalls(
                             factory
                         )
+                        baseClause is KtCallExpression -> baseClause.replaceCallWithLet(newReceiver!!, factory)
                         else -> error("Illegal state")
                     }
                 }
-                hasImplicitReceiver() -> factory.createExpressionByPattern("this?.$0", baseClause).insertSafeCalls(factory)
+                hasImplicitReceiverReplaceableBySafeCall() -> factory.createExpressionByPattern("$0?.$1", receiverExpression, baseClause).insertSafeCalls(factory)
+                baseClause is KtCallExpression -> baseClause.replaceCallWithLet(receiverExpression, factory)
                 else -> baseClause.insertSafeCalls(factory)
             }
         }
     }
 
-    internal fun getImplicitReceiver(): ImplicitReceiver? = baseClause.getResolvedCall(context)?.getImplicitReceiverValue()
+    internal fun getImplicitReceiver(): ImplicitReceiver? {
+        val resolvedCall = baseClause.getResolvedCall(context) ?: return null
+        if (resolvedCall.getExplicitReceiverValue() != null) return null
+        return resolvedCall.getImplicitReceiverValue()
+    }
 
-    internal fun hasImplicitReceiver(): Boolean = getImplicitReceiver() != null
+    internal fun hasImplicitReceiverReplaceableBySafeCall(): Boolean =
+        receiverExpression is KtThisExpression && getImplicitReceiver() != null
+
+    private fun KtCallExpression.replaceCallWithLet(
+        receiver: KtExpression,
+        factory: KtPsiFactory
+    ): KtExpression {
+        val needExplicitParameter = valueArguments.any { it.getArgumentExpression()?.text == "it" }
+        val parameterName = if (needExplicitParameter) {
+            val scope = getResolutionScope()
+            KotlinNameSuggester.suggestNameByName("it") { scope.findVariable(Name.identifier(it), NoLookupLocation.FROM_IDE) == null }
+        } else {
+            "it"
+        }
+        return factory.buildExpression {
+            appendExpression(receiver)
+            appendFixedText("?.let {")
+            if (needExplicitParameter) appendFixedText(" $parameterName ->")
+            appendExpression(calleeExpression)
+            appendFixedText("(")
+            valueArguments.forEachIndexed { index, arg ->
+                if (index != 0) appendFixedText(", ")
+                val argExpression = arg.getArgumentExpression()
+                if (argExpression?.evaluatesTo(receiverExpression) == true)
+                    appendFixedText(parameterName)
+                else
+                    appendExpression(argExpression)
+            }
+            appendFixedText(") }")
+        }
+    }
 }
 
 internal fun KtIfExpression.buildSelectTransformationData(): IfThenToSelectData? {
     val context = analyze()
 
-    val condition = condition as? KtOperationExpression ?: return null
+    val condition = condition?.unwrapBlockOrParenthesis() as? KtOperationExpression ?: return null
     val thenClause = then?.unwrapBlockOrParenthesis()
     val elseClause = `else`?.unwrapBlockOrParenthesis()
-    val receiverExpression = condition.checkedExpression() ?: return null
+    val receiverExpression = condition.checkedExpression()?.unwrapBlockOrParenthesis() ?: return null
 
     val (baseClause, negatedClause) = when (condition) {
         is KtBinaryExpression -> when (condition.operationToken) {
@@ -242,16 +305,15 @@ internal fun KtIfExpression.buildSelectTransformationData(): IfThenToSelectData?
     return IfThenToSelectData(context, condition, receiverExpression, baseClause, negatedClause)
 }
 
+internal fun KtExpression?.isClauseTransformableToLetOnly(receiver: KtExpression?) =
+    this is KtCallExpression && (resolveToCall()?.getImplicitReceiverValue() == null || receiver !is KtThisExpression)
+
 internal fun KtIfExpression.shouldBeTransformed(): Boolean {
     val condition = condition
     return when (condition) {
-        is KtBinaryExpression -> true
-        is KtIsExpression -> {
-            if (!isMultiLine()) true
-            else {
-                val baseClause = (if (condition.isNegated) `else` else then)?.unwrapBlockOrParenthesis()
-                baseClause !is KtDotQualifiedExpression
-            }
+        is KtBinaryExpression -> {
+            val baseClause = (if (condition.operationToken == KtTokens.EQEQ) `else` else then)?.unwrapBlockOrParenthesis()
+            !baseClause.isClauseTransformableToLetOnly(condition.checkedExpression())
         }
         else -> false
     }

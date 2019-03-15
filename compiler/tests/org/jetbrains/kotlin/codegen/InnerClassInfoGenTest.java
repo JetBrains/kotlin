@@ -139,7 +139,7 @@ public class InnerClassInfoGenTest extends CodegenTestCase {
         ClassReader reader = new ClassReader(bytes);
         List<InnerClassAttribute> result = new ArrayList<>();
 
-        reader.accept(new ClassVisitor(ASM5) {
+        reader.accept(new ClassVisitor(API_VERSION) {
             @Override
             public void visitInnerClass(@NotNull String name, String outerName, String innerName, int access) {
                 result.add(new InnerClassAttribute(name, outerName, innerName, access));

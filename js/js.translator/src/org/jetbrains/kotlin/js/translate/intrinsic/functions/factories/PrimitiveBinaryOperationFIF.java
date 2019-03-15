@@ -138,7 +138,7 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
 
     @Nullable
     @Override
-    public FunctionIntrinsic getIntrinsic(@NotNull FunctionDescriptor descriptor) {
+    public FunctionIntrinsic getIntrinsic(@NotNull FunctionDescriptor descriptor, @NotNull TranslationContext context) {
         if (CHAR_RANGE_TO.test(descriptor)) {
             return new RangeToIntrinsic(descriptor);
         }

@@ -7,27 +7,37 @@ internal abstract class KotlinMultiplatformCommonOptionsBase : org.jetbrains.kot
     private var allWarningsAsErrorsField: kotlin.Boolean? = null
     override var allWarningsAsErrors: kotlin.Boolean
         get() = allWarningsAsErrorsField ?: false
-        set(value) { allWarningsAsErrorsField = value }
+        set(value) {
+            allWarningsAsErrorsField = value
+        }
 
     private var suppressWarningsField: kotlin.Boolean? = null
     override var suppressWarnings: kotlin.Boolean
         get() = suppressWarningsField ?: false
-        set(value) { suppressWarningsField = value }
+        set(value) {
+            suppressWarningsField = value
+        }
 
     private var verboseField: kotlin.Boolean? = null
     override var verbose: kotlin.Boolean
         get() = verboseField ?: false
-        set(value) { verboseField = value }
+        set(value) {
+            verboseField = value
+        }
 
     private var apiVersionField: kotlin.String?? = null
     override var apiVersion: kotlin.String?
         get() = apiVersionField ?: null
-        set(value) { apiVersionField = value }
+        set(value) {
+            apiVersionField = value
+        }
 
     private var languageVersionField: kotlin.String?? = null
     override var languageVersion: kotlin.String?
         get() = languageVersionField ?: null
-        set(value) { languageVersionField = value }
+        set(value) {
+            languageVersionField = value
+        }
 
     internal open fun updateArguments(args: org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments) {
         allWarningsAsErrorsField?.let { args.allWarningsAsErrors = it }

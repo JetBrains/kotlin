@@ -30,10 +30,10 @@
     <error>var v1 : Int</error> <info>get</info>
     <error>var v2 : Int</error> <info>get</info> <info>set</info>
     <error>var v3 : Int</error> <info>get</info>() = 1; <info>set</info>
-    var v4 : Int <info>get</info>() = 1; <info>set</info>(x){}
+    var v4 : Int <info>get</info>() = 1; <info>set</info>(<warning>x</warning>){}
 
     <error>var v5 : Int</error> <info>get</info>() = 1; <info>set</info>(x){field = x}
-    <error>var v6 : Int</error> <info>get</info>() = field + 1; <info>set</info>(x){}
+    <error>var v6 : Int</error> <info>get</info>() = field + 1; <info>set</info>(<warning>x</warning>){}
 
   <error>var v9 : Int</error> <info>set</info>
   <error>var v10 : Int</error> <info>get</info>

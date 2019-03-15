@@ -16,17 +16,24 @@
 
 package org.jetbrains.kotlin.codegen;
 
+import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
+import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.jar.Manifest;
 
 public class GeneratedClassLoader extends URLClassLoader {
+
     private ClassFileFactory factory;
 
     public GeneratedClassLoader(@NotNull ClassFileFactory factory, ClassLoader parentClassLoader, URL... urls) {
@@ -41,6 +48,38 @@ public class GeneratedClassLoader extends URLClassLoader {
             return new ByteArrayInputStream(outputFile.asByteArray());
         }
         return super.getResourceAsStream(name);
+    }
+
+    @Override
+    public Enumeration<URL> findResources(String name) throws IOException {
+        Enumeration<URL> fromParent = super.findResources(name);
+
+        URL url = createFakeURLForResource(name);
+        if (url == null) return fromParent;
+
+        List<URL> fromMe = Collections.singletonList(url);
+        List<URL> result = fromParent.hasMoreElements()
+                           ? CollectionsKt.plus(fromMe, Collections.list(fromParent))
+                           : fromMe;
+        return Collections.enumeration(result);
+    }
+
+    @Override
+    public URL findResource(String name) {
+        URL url = createFakeURLForResource(name);
+        return url != null ? url : super.findResource(name);
+    }
+
+    @Nullable
+    private URL createFakeURLForResource(@NotNull String name) {
+        try {
+            OutputFile outputFile = factory.get(name);
+            return outputFile == null
+                   ? null
+                   : BytesUrlUtils.createBytesUrl(outputFile.asByteArray());
+        } catch (IOException e) {
+            throw ExceptionUtilsKt.rethrow(e);
+        }
     }
 
     @NotNull

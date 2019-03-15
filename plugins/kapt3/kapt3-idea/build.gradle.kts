@@ -1,18 +1,19 @@
 
-apply { plugin("kotlin") }
-apply { plugin("jps-compatible") }
-
-jvmTarget = "1.6"
+plugins {
+    kotlin("jvm")
+    id("jps-compatible")
+}
 
 dependencies {
-    compile(projectDist(":kotlin-stdlib"))
+    compile(kotlinStdlib())
     compile(project(":compiler:frontend"))
     compile(project(":idea")) { isTransitive = false }
     compile(project(":idea:kotlin-gradle-tooling"))
-    compile(project(":kotlin-annotation-processing"))
-    compileOnly(intellijDep()) { includeJars("openapi", "external-system-rt", "util") }
-    compileOnly(intellijPluginDep("gradle")) { includeJars("gradle-core", "gradle-tooling-api", "gradle", rootProject = rootProject) }
-    compileOnly(intellijPluginDep("android")) { includeJars("android", "android-common", "sdklib", "sdk-common", "sdk-tools") }
+    compile(project(":idea:idea-core"))
+    compile(project(":idea:idea-gradle"))
+    compileOnly(intellijDep())
+    compileOnly(intellijPluginDep("gradle"))
+    compileOnly(intellijPluginDep("android"))
 }
 
 sourceSets {

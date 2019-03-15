@@ -1,8 +1,7 @@
 // WITH_RUNTIME
 fun main(args: Array<String>) {
     var a: String? = "A"
-    val a1 = a
-    doSomething(if (a1 != null) a1 else throw NullPointerException("Expression 'a' must not be null"))
+    doSomething(if (a != null) a else throw NullPointerException("Expression 'a' must not be null"))
 }
 
 fun doSomething(a: Any){}

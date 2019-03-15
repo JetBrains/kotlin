@@ -1,0 +1,13 @@
+// "Fix experimental coroutines usages in the project" "true"
+// WITH_RUNTIME
+package migrate
+
+fun main(args: Array<String>) {
+    val one = sequence {
+        yield(1)
+    }
+
+    val two = iterator {
+        yield(1)
+    }
+}

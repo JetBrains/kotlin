@@ -1,10 +1,10 @@
 
 description = "Kotlin AllOpen IDEA Plugin"
 
-apply { plugin("kotlin") }
-apply { plugin("jps-compatible") }
-
-jvmTarget = "1.6"
+plugins {
+    kotlin("jvm")
+    id("jps-compatible")
+}
 
 dependencies {
     compile(project(":kotlin-allopen-compiler-plugin"))
@@ -15,9 +15,9 @@ dependencies {
     compile(project(":idea:idea-jvm"))
     compile(project(":idea:idea-jps-common"))
     compile(project(":plugins:annotation-based-compiler-plugins-ide-support"))
-    compileOnly(intellijDep()) { includeJars("openapi", "idea", "util", "extensions") }
-    excludeInAndroidStudio(rootProject) { compileOnly(intellijPluginDep("maven")) { includeJars("maven") } }
-    compileOnly(intellijPluginDep("gradle")) { includeJars("gradle-tooling-api", "gradle", rootProject = rootProject) }
+    compileOnly(intellijDep())
+    excludeInAndroidStudio(rootProject) { compileOnly(intellijPluginDep("maven")) }
+    compileOnly(intellijPluginDep("gradle"))
 }
 
 sourceSets {

@@ -1,28 +1,18 @@
+// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 // WITH_COROUTINES
+// COMMON_COROUTINES_TEST
 import helpers.*
-import kotlin.coroutines.experimental.*
+import COROUTINES_PACKAGE.*
 import kotlin.test.assertEquals
 
-suspend fun suspendHereOld() =
-    if (kotlin.coroutines.experimental.intrinsics.coroutineContext != EmptyCoroutineContext)
-        "${kotlin.coroutines.experimental.intrinsics.coroutineContext} != $EmptyCoroutineContext"
-    else
-        "OK"
-
-suspend fun suspendHereNew() =
+suspend fun suspendHere() =
     if (coroutineContext != EmptyCoroutineContext)
         "${coroutineContext} != $EmptyCoroutineContext"
     else
         "OK"
 
-suspend fun multipleArgsOld(a: Any, b: Any, c: Any) =
-    if (kotlin.coroutines.experimental.intrinsics.coroutineContext != EmptyCoroutineContext)
-        "${kotlin.coroutines.experimental.intrinsics.coroutineContext} != $EmptyCoroutineContext"
-    else
-        "OK"
-
-suspend fun multipleArgsNew(a: Any, b: Any, c: Any) =
+suspend fun multipleArgs(a: Any, b: Any, c: Any) =
     if (coroutineContext != EmptyCoroutineContext)
         "${coroutineContext} != $EmptyCoroutineContext"
     else
@@ -31,7 +21,7 @@ suspend fun multipleArgsNew(a: Any, b: Any, c: Any) =
 fun builder(c: suspend () -> String): String {
     var fromSuspension: String? = null
 
-    val continuation = object : Continuation<String> {
+    val continuation = object : ContinuationAdapter<String>() {
         override val context: CoroutineContext
             get() = EmptyCoroutineContext
 
@@ -50,30 +40,13 @@ fun builder(c: suspend () -> String): String {
 }
 
 fun box(): String {
-    var res = builder { suspendHereOld() }
+    var res = builder { suspendHere() }
     if (res != "OK") {
         return "fail 1 $res"
     }
-    res = builder { multipleArgsOld(1, 1, 1) }
+    res = builder { multipleArgs(1, 1, 1) }
     if (res != "OK") {
         return "fail 2 $res"
-    }
-    res = builder {
-        if (kotlin.coroutines.experimental.intrinsics.coroutineContext != EmptyCoroutineContext)
-            "${kotlin.coroutines.experimental.intrinsics.coroutineContext} != $EmptyCoroutineContext"
-        else
-            "OK"
-    }
-    if (res != "OK") {
-        return "fail 3 $res"
-    }
-    res = builder { suspendHereNew() }
-    if (res != "OK") {
-        return "fail 4 $res"
-    }
-    res = builder { multipleArgsNew(1, 1, 1) }
-    if (res != "OK") {
-        return "fail 5 $res"
     }
     res = builder {
         if (coroutineContext != EmptyCoroutineContext)
@@ -82,7 +55,7 @@ fun box(): String {
             "OK"
     }
     if (res != "OK") {
-        return "fail 6 $res"
+        return "fail 3 $res"
     }
 
     return "OK"

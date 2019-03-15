@@ -48,6 +48,7 @@ class KotlinSuppressIntentionAction private constructor(
     override fun isAvailable(project: Project, editor: Editor?, element: PsiElement) = element.isValid
 
     override fun invoke(project: Project, editor: Editor?, element: PsiElement) {
+        if (!element.isValid) return
         if (!FileModificationService.getInstance().preparePsiElementForWrite(element)) return
 
         val id = "\"$suppressKey\""

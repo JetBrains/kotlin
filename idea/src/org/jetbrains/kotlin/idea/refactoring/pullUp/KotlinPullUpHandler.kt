@@ -21,6 +21,8 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiNamedElement
 import com.intellij.refactoring.HelpID
 import com.intellij.refactoring.RefactoringBundle
@@ -28,8 +30,8 @@ import com.intellij.refactoring.util.CommonRefactoringUtil
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.idea.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.refactoring.AbstractPullPushMembersHandler
+import org.jetbrains.kotlin.idea.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfoStorage
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.qualifiedClassNameForRendering
@@ -37,6 +39,8 @@ import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.idea.statistics.KotlinEventTrigger
+import org.jetbrains.kotlin.idea.statistics.KotlinStatisticsTrigger
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 
 class KotlinPullUpHandler : AbstractPullPushMembersHandler(
@@ -110,6 +114,16 @@ class KotlinPullUpHandler : AbstractPullPushMembersHandler(
 
             KotlinPullUpDialog(project, classOrObject, superClasses, memberInfoStorage).show()
         }
+    }
+
+    override fun invoke(project: Project, elements: Array<out PsiElement>, dataContext: DataContext?) {
+        super.invoke(project, elements, dataContext)
+        KotlinStatisticsTrigger.trigger(KotlinEventTrigger.KotlinIdeRefactoringTrigger, this::class.java.name)
+    }
+
+    override fun invoke(project: Project, editor: Editor, file: PsiFile, dataContext: DataContext?) {
+        super.invoke(project, editor, file, dataContext)
+        KotlinStatisticsTrigger.trigger(KotlinEventTrigger.KotlinIdeRefactoringTrigger, this::class.java.name)
     }
 }
 

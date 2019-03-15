@@ -17,8 +17,13 @@
 package org.jetbrains.kotlin.incremental
 
 import java.io.File
+import java.io.Serializable
 
-sealed class ChangedFiles {
+sealed class ChangedFiles : Serializable {
     class Known(val modified: List<File>, val removed: List<File>) : ChangedFiles()
     class Unknown : ChangedFiles()
+
+    companion object {
+        const val serialVersionUID: Long = 0
+    }
 }

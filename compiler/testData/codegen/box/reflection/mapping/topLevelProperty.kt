@@ -1,5 +1,5 @@
-// TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS, NATIVE
+// IGNORE_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 
 // WITH_REFLECT
 
@@ -8,19 +8,20 @@ import kotlin.test.assertEquals
 
 var topLevel = "123"
 
+val fileFacadeClass = object {}::class.java.enclosingClass
+
 fun box(): String {
     val p = ::topLevel
 
     assert(p.javaField != null) { "Fail p field" }
     val field = p.javaField!!
-    val className = field.getDeclaringClass().getName()
-    assertEquals("TopLevelPropertyKt", className)
+    assertEquals(fileFacadeClass, field.getDeclaringClass())
 
     val getter = p.javaGetter!!
     val setter = p.javaSetter!!
 
-    assertEquals(getter, Class.forName("TopLevelPropertyKt").getMethod("getTopLevel"))
-    assertEquals(setter, Class.forName("TopLevelPropertyKt").getMethod("setTopLevel", String::class.java))
+    assertEquals(getter, fileFacadeClass.getMethod("getTopLevel"))
+    assertEquals(setter, fileFacadeClass.getMethod("setTopLevel", String::class.java))
 
     assert(getter.invoke(null) == "123") { "Fail k getter" }
     setter.invoke(null, "456")

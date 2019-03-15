@@ -30,15 +30,21 @@ class DefaultClassObjectIntrinsic( val fqName: FqName): ObjectIntrinsic {
 }
 
 class ObjectIntrinsics {
-    private val cache = mutableMapOf<ClassDescriptor, ObjectIntrinsic>()
+    private val cache = mutableMapOf<ClassDescriptor, ObjectIntrinsic?>()
 
-    fun getIntrinsic(classDescriptor: ClassDescriptor) = cache.getOrPut(classDescriptor) { createIntrinsic(classDescriptor) }
+    fun getIntrinsic(classDescriptor: ClassDescriptor): ObjectIntrinsic? {
+        if (classDescriptor in cache) return cache[classDescriptor]
 
-    private fun createIntrinsic(classDescriptor: ClassDescriptor): ObjectIntrinsic {
+        return createIntrinsic(classDescriptor).also {
+            cache[classDescriptor] = it
+        }
+    }
+
+    private fun createIntrinsic(classDescriptor: ClassDescriptor): ObjectIntrinsic? {
         if (classDescriptor.fqNameUnsafe == KotlinBuiltIns.FQ_NAMES._enum ||
             !CompanionObjectMapping.isMappedIntrinsicCompanionObject(classDescriptor)
         ) {
-            return NO_OBJECT_INTRINSIC
+            return null
         }
 
         val containingDeclaration = classDescriptor.containingDeclaration
@@ -50,12 +56,4 @@ class ObjectIntrinsics {
 
 interface ObjectIntrinsic {
     fun apply(context: TranslationContext): JsExpression
-    fun exists(): Boolean = true
-}
-
-object NO_OBJECT_INTRINSIC : ObjectIntrinsic {
-    override fun apply(context: TranslationContext): JsExpression =
-            throw UnsupportedOperationException("ObjectIntrinsic#NO_OBJECT_INTRINSIC_#apply")
-
-    override fun exists(): Boolean = false
 }

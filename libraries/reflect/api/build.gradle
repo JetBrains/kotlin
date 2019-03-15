@@ -4,21 +4,37 @@ apply plugin: 'kotlin'
 
 configureJvm6Project(project)
 
+def jpsBuild = findProperty("jpsBuild")?.toString() == "true"
+
 sourceSets {
     main {
         java {
             srcDir "${rootDir}/core/reflection.jvm/src"
         }
     }
+
+    if (!jpsBuild) {
+        java9
+    }
 }
 
 dependencies {
-    compileOnly project(':kotlin-stdlib')
+    compile kotlinStdlib()
     compileOnly project(':core:descriptors')
     compileOnly project(':core:descriptors.jvm')
     compileOnly project(':core:deserialization')
     compileOnly project(':core:descriptors.runtime')
     compileOnly project(':core:util.runtime')
+    compileOnly "org.jetbrains:annotations:13.0"
+}
+
+if (!jpsBuild) {
+    compileJava9Sources(
+            project, 'kotlin.reflect',
+            [sourceSets.main.output, configurations.compileOnly.filter {
+                !it.name.contains("kotlin-stdlib")
+            }]
+    )
 }
 
 compileKotlin {
@@ -26,7 +42,22 @@ compileKotlin {
         freeCompilerArgs = ["-version",
                             "-Xallow-kotlin-package",
                             "-Xnormalize-constructor-calls=enable",
-                            "-module-name", "kotlin-reflection",
-                            "-Xdump-declarations-to=${buildDir}/reflect-declarations.json"]
+                            "-module-name", "kotlin-reflection"]
     }
+}
+
+jar {
+    manifestAttributes(manifest, project, "internal")
+}
+
+task java9Jar(type: Jar) {
+    classifier = "java9"
+    if (!jpsBuild) {
+        from sourceSets.java9.output
+    }
+}
+
+artifacts {
+    archives java9Jar
+    runtime java9Jar
 }

@@ -1,0 +1,40 @@
+FILE: calls.kt
+    public? final? infix function distance(x: Int, y: Int): <implicit> {
+        return@@@distance plus#(x#, y#)
+    }
+    public? final? function test(): Int {
+        return@@@test distance#(Int(3), Int(4))
+    }
+    public? final? function testRegular(): Int {
+        return@@@testRegular distance#(Int(3), Int(4))
+    }
+    public? final? class My {
+        public? constructor(x: Int): super<kotlin/Any>()
+
+        public? final? property x(var): Int
+            public? get(): Int
+            public? set(value: Int): kotlin/Unit
+
+        public? final? operator function invoke(): <implicit> {
+            return@@@invoke x#
+        }
+
+        public? final? function foo(): kotlin/Unit {
+        }
+
+        public? final? function copy(): <implicit> {
+            return@@@copy My#(x#)
+        }
+
+    }
+    public? final? function testInvoke(): Int {
+        return@@@testInvoke invoke#(My#(Int(13)))
+    }
+    public? final? function testQualified(first: My, second: My?): kotlin/Unit {
+        println#(first#.x#)
+        println#(second#?.x#)
+        first#.foo#()
+        second#?.foo#()
+        first#.copy#().foo#()
+        first#.x# = Int(42)
+    }

@@ -1,6 +1,3 @@
-// EXPECTED_ERROR class J$B is public, should be declared in a file named J$B.java
-// EXPECTED_ERROR class JavaClass is public, should be declared in a file named JavaClass.java
-
 // FILE: JavaClass.java
 public class JavaClass {
     public class Foo {
@@ -79,3 +76,6 @@ class Test1(val zoo: Foo.Bar.Zoo) : Foo.Bar(), IFoo.IBar, IFoo.IBar.IZoo {
     fun a(): Thread.State = Thread.State.NEW
     fun b(foo: JavaClass.Foo, bar: JavaClass.Foo.Bar) {}
 }
+
+// EXPECTED_ERROR class J$B is public, should be declared in a file named J$B.java
+// EXPECTED_ERROR class JavaClass is public, should be declared in a file named JavaClass.java

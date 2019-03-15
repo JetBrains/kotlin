@@ -7,27 +7,37 @@ internal abstract class KotlinJsDceOptionsBase : org.jetbrains.kotlin.gradle.dsl
     private var allWarningsAsErrorsField: kotlin.Boolean? = null
     override var allWarningsAsErrors: kotlin.Boolean
         get() = allWarningsAsErrorsField ?: false
-        set(value) { allWarningsAsErrorsField = value }
+        set(value) {
+            allWarningsAsErrorsField = value
+        }
 
     private var suppressWarningsField: kotlin.Boolean? = null
     override var suppressWarnings: kotlin.Boolean
         get() = suppressWarningsField ?: false
-        set(value) { suppressWarningsField = value }
+        set(value) {
+            suppressWarningsField = value
+        }
 
     private var verboseField: kotlin.Boolean? = null
     override var verbose: kotlin.Boolean
         get() = verboseField ?: false
-        set(value) { verboseField = value }
+        set(value) {
+            verboseField = value
+        }
 
     private var devModeField: kotlin.Boolean? = null
     override var devMode: kotlin.Boolean
         get() = devModeField ?: false
-        set(value) { devModeField = value }
+        set(value) {
+            devModeField = value
+        }
 
     private var outputDirectoryField: kotlin.String?? = null
     override var outputDirectory: kotlin.String?
         get() = outputDirectoryField ?: null
-        set(value) { outputDirectoryField = value }
+        set(value) {
+            outputDirectoryField = value
+        }
 
     internal open fun updateArguments(args: org.jetbrains.kotlin.cli.common.arguments.K2JSDceArguments) {
         allWarningsAsErrorsField?.let { args.allWarningsAsErrors = it }

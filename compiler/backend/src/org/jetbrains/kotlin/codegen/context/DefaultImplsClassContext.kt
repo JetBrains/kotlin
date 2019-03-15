@@ -23,20 +23,21 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 
 class DefaultImplsClassContext(
-        typeMapper: KotlinTypeMapper,
-        contextDescriptor: ClassDescriptor,
-        contextKind: OwnerKind,
-        parentContext: CodegenContext<*>?,
-        localLookup: ((DeclarationDescriptor) -> Boolean)?,
-        private val interfaceContext: ClassContext
+    typeMapper: KotlinTypeMapper,
+    contextDescriptor: ClassDescriptor,
+    contextKind: OwnerKind,
+    parentContext: CodegenContext<*>?,
+    localLookup: ((DeclarationDescriptor) -> Boolean)?,
+    val interfaceContext: ClassContext
 ) : ClassContext(typeMapper, contextDescriptor, contextKind, parentContext, localLookup) {
 
     override fun getCompanionObjectContext(): CodegenContext<*>? = interfaceContext.companionObjectContext
 
     override fun getAccessors(): Collection<AccessorForCallableDescriptor<*>> {
         val accessors = super.getAccessors()
-        val alreadyExistKeys = accessors.map ({ Pair(it.calleeDescriptor, it.superCallTarget) })
-        val filtered = interfaceContext.accessors.associateByTo(linkedMapOf()) { Pair(it.calleeDescriptor, it.superCallTarget) }.apply { keys -= alreadyExistKeys }
+        val alreadyExistKeys = accessors.map({ Pair(it.calleeDescriptor, it.superCallTarget) })
+        val filtered = interfaceContext.accessors.associateByTo(linkedMapOf()) { Pair(it.calleeDescriptor, it.superCallTarget) }
+            .apply { keys -= alreadyExistKeys }
         return accessors + filtered.values
     }
 }

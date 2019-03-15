@@ -1,3 +1,4 @@
+// !LANGUAGE: +ProperIeee754Comparisons
 fun equals5(a: Any?, b: Any?) = if (a is Double && b is Double?) a == b else null!!
 
 fun equals6(a: Any?, b: Any?) = if (a is Double? && b is Double) a == b else null!!
@@ -17,7 +18,5 @@ fun box(): String {
     return "OK"
 }
 
-// 1 areEqual \(Ljava/lang/Double;Ljava/lang/Double;\)Z
-// 1 areEqual \(DLjava/lang/Double;\)Z
-// 1 areEqual \(Ljava/lang/Double;D\)Z
+// 3 areEqual \(Ljava/lang/Double;Ljava/lang/Double;\)Z
 // 3 areEqual

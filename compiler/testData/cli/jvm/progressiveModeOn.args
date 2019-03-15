@@ -1,0 +1,4 @@
+$TESTDATA_DIR$/progressive
+-d
+$TEMP_DIR$
+-progressive

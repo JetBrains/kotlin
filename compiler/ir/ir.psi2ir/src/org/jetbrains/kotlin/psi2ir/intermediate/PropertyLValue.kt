@@ -17,22 +17,24 @@
 package org.jetbrains.kotlin.psi2ir.intermediate
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.ir.builders.IrGeneratorContext
 import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.ir.types.IrType
 
 abstract class PropertyLValueBase(
+    protected val context: IrGeneratorContext,
     val scope: Scope,
     val startOffset: Int,
     val endOffset: Int,
     val origin: IrStatementOrigin?,
-    override val type: KotlinType,
+    override val type: IrType,
     val callReceiver: CallReceiver,
     val superQualifier: IrClassSymbol?
 ) : LValue, AssignmentReceiver {
@@ -41,12 +43,12 @@ abstract class PropertyLValueBase(
             val dispatchReceiverVariable2 = dispatchReceiverValue?.let {
                 scope.createTemporaryVariable(dispatchReceiverValue.load(), "this")
             }
-            val dispatchReceiverValue2 = dispatchReceiverVariable2?.let { VariableLValue(it) }
+            val dispatchReceiverValue2 = dispatchReceiverVariable2?.let { VariableLValue(context, it) }
 
             val extensionReceiverVariable2 = extensionReceiverValue?.let {
                 scope.createTemporaryVariable(extensionReceiverValue.load(), "receiver")
             }
-            val extensionReceiverValue2 = extensionReceiverVariable2?.let { VariableLValue(it) }
+            val extensionReceiverValue2 = extensionReceiverVariable2?.let { VariableLValue(context, it) }
 
             val irResultExpression = withLValue(withReceiver(dispatchReceiverValue2, extensionReceiverValue2))
 
@@ -64,20 +66,25 @@ abstract class PropertyLValueBase(
 }
 
 class FieldPropertyLValue(
+    context: IrGeneratorContext,
     scope: Scope,
     startOffset: Int,
     endOffset: Int,
     origin: IrStatementOrigin?,
     val field: IrFieldSymbol,
+    type: IrType,
     callReceiver: CallReceiver,
     superQualifier: IrClassSymbol?
-) : PropertyLValueBase(scope, startOffset, endOffset, origin, field.descriptor.type, callReceiver, superQualifier) {
+) :
+    PropertyLValueBase(context, scope, startOffset, endOffset, origin, type, callReceiver, superQualifier) {
+
     override fun load(): IrExpression =
         callReceiver.call { dispatchReceiverValue, extensionReceiverValue ->
             assert(extensionReceiverValue == null) { "Field can't have an extension receiver: ${field.descriptor}" }
             IrGetFieldImpl(
                 startOffset, endOffset,
                 field,
+                type,
                 dispatchReceiverValue?.load(),
                 origin,
                 superQualifier
@@ -92,6 +99,7 @@ class FieldPropertyLValue(
                 field,
                 dispatchReceiverValue?.load(),
                 irExpression,
+                context.irBuiltIns.unitType,
                 origin,
                 superQualifier
             )
@@ -99,57 +107,76 @@ class FieldPropertyLValue(
 
     override fun withReceiver(dispatchReceiver: VariableLValue?, extensionReceiver: VariableLValue?): PropertyLValueBase =
         FieldPropertyLValue(
+            context,
             scope, startOffset, endOffset, origin,
             field,
+            type,
             SimpleCallReceiver(dispatchReceiver, extensionReceiver),
             superQualifier
         )
 }
 
 class AccessorPropertyLValue(
+    context: IrGeneratorContext,
     scope: Scope,
     startOffset: Int,
     endOffset: Int,
     origin: IrStatementOrigin?,
-    type: KotlinType,
+    type: IrType,
     val getter: IrFunctionSymbol?,
     val getterDescriptor: FunctionDescriptor?,
     val setter: IrFunctionSymbol?,
     val setterDescriptor: FunctionDescriptor?,
-    val typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
+    val typeArguments: List<IrType>?,
     callReceiver: CallReceiver,
     superQualifier: IrClassSymbol?
-) : PropertyLValueBase(scope, startOffset, endOffset, origin, type, callReceiver, superQualifier) {
+) : PropertyLValueBase(context, scope, startOffset, endOffset, origin, type, callReceiver, superQualifier) {
+
+    private val typeArgumentsCount = typeArguments?.size ?: 0
+
+    private fun IrMemberAccessExpression.putTypeArguments() {
+        typeArguments?.forEachIndexed { index, irType ->
+            putTypeArgument(index, irType)
+        }
+    }
+
     override fun load(): IrExpression =
-        callReceiver.call { dispatchReceiverValue, extensionReceiverValue ->
+        callReceiver.adjustForCallee(getterDescriptor!!).call { dispatchReceiverValue, extensionReceiverValue ->
             IrGetterCallImpl(
                 startOffset, endOffset,
-                getter!!, getterDescriptor!!,
-                typeArguments,
+                type,
+                getter!!, getterDescriptor,
+                typeArgumentsCount,
                 dispatchReceiverValue?.load(),
                 extensionReceiverValue?.load(),
                 origin,
                 superQualifier
-            )
+            ).apply {
+                putTypeArguments()
+            }
         }
 
     override fun store(irExpression: IrExpression) =
-        callReceiver.call { dispatchReceiverValue, extensionReceiverValue ->
+        callReceiver.adjustForCallee(setterDescriptor!!).call { dispatchReceiverValue, extensionReceiverValue ->
             IrSetterCallImpl(
                 startOffset, endOffset,
-                setter!!, setterDescriptor!!,
-                typeArguments,
+                context.irBuiltIns.unitType,
+                setter!!, setterDescriptor,
+                typeArgumentsCount,
                 dispatchReceiverValue?.load(),
                 extensionReceiverValue?.load(),
                 irExpression,
                 origin,
                 superQualifier
-            )
+            ).apply {
+                putTypeArguments()
+            }
         }
 
     override fun withReceiver(dispatchReceiver: VariableLValue?, extensionReceiver: VariableLValue?): PropertyLValueBase =
         AccessorPropertyLValue(
-            scope, startOffset, endOffset, origin,
+            context, scope,
+            startOffset, endOffset, origin,
             type, getter, getterDescriptor, setter, setterDescriptor,
             typeArguments,
             SimpleCallReceiver(dispatchReceiver, extensionReceiver),

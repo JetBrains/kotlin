@@ -1,0 +1,2 @@
+<P, Q> public final class ClassWithTypePP : R|java/lang/Object| {
+}

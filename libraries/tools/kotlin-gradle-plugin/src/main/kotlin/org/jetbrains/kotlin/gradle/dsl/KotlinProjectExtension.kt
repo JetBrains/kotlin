@@ -16,27 +16,48 @@
 
 package org.jetbrains.kotlin.gradle.dsl
 
+import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.internal.plugins.DslObject
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
 import kotlin.reflect.KClass
 
-internal fun Project.createKotlinExtension(extensionClass: KClass<out KotlinProjectExtension>) {
-    val kotlinExt = extensions.create("kotlin", extensionClass.java)
+private const val KOTLIN_PROJECT_EXTENSION_NAME = "kotlin"
+
+internal fun Project.createKotlinExtension(extensionClass: KClass<out KotlinProjectExtension>): KotlinProjectExtension {
+    val kotlinExt = extensions.create(KOTLIN_PROJECT_EXTENSION_NAME, extensionClass.java)
     DslObject(kotlinExt).extensions.create("experimental", ExperimentalExtension::class.java)
+    return kotlinExtension
 }
+
+internal val Project.kotlinExtension: KotlinProjectExtension
+    get() = extensions.getByName(KOTLIN_PROJECT_EXTENSION_NAME) as KotlinProjectExtension
+
+internal val Project.multiplatformExtensionOrNull: KotlinMultiplatformExtension?
+    get() = extensions.findByName(KOTLIN_PROJECT_EXTENSION_NAME) as? KotlinMultiplatformExtension
+
+internal val Project.multiplatformExtension: KotlinMultiplatformExtension
+    get() = extensions.getByName(KOTLIN_PROJECT_EXTENSION_NAME) as KotlinMultiplatformExtension
 
 open class KotlinProjectExtension {
     val experimental: ExperimentalExtension
-            get() = DslObject(this).extensions.getByType(ExperimentalExtension::class.java)!!
+        get() = DslObject(this).extensions.getByType(ExperimentalExtension::class.java)
+
+    var sourceSets: NamedDomainObjectContainer<KotlinSourceSet>
+        @Suppress("UNCHECKED_CAST")
+        get() = DslObject(this).extensions.getByName("sourceSets") as NamedDomainObjectContainer<KotlinSourceSet>
+        internal set(value) {
+            DslObject(this).extensions.add("sourceSets", value)
+        }
 }
 
-open class KotlinJvmProjectExtension : KotlinProjectExtension() {
-    /**
-     * With Gradle 4.0+, disables the separate output directory for Kotlin, falling back to sharing the deprecated
-     * single classes directory per source set. With Gradle < 4.0, has no effect.
-     * */
-    var copyClassesToJavaOutput = false
+open class KotlinSingleJavaTargetExtension : KotlinProjectExtension() {
+    // TODO define subtypes with proper type arguments for each of the option types once the new model is available in old projects
+    internal lateinit var target: KotlinWithJavaTarget<*>
 }
+
+open class KotlinJvmProjectExtension : KotlinSingleJavaTargetExtension()
 
 open class ExperimentalExtension {
     var coroutines: Coroutines? = null
@@ -45,12 +66,11 @@ open class ExperimentalExtension {
 enum class Coroutines {
     ENABLE,
     WARN,
-    ERROR;
+    ERROR,
+    DEFAULT;
 
     companion object {
-        val DEFAULT = WARN
-
         fun byCompilerArgument(argument: String): Coroutines? =
-                Coroutines.values().firstOrNull { it.name.equals(argument, ignoreCase = true) }
+            Coroutines.values().firstOrNull { it.name.equals(argument, ignoreCase = true) }
     }
 }

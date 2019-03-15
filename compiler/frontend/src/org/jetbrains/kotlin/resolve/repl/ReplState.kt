@@ -16,11 +16,12 @@
 
 package org.jetbrains.kotlin.resolve.repl
 
+import org.jetbrains.kotlin.descriptors.ClassDescriptorWithResolutionScopes
+import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.lazy.FileScopeFactory
 import org.jetbrains.kotlin.resolve.lazy.FileScopes
 import org.jetbrains.kotlin.resolve.lazy.FileScopesCustomizer
-import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyScriptDescriptor
 import org.jetbrains.kotlin.resolve.lazy.fileScopesCustomizer
 import org.jetbrains.kotlin.resolve.scopes.ImportingScope
 import org.jetbrains.kotlin.resolve.scopes.utils.parentsWithSelf
@@ -44,7 +45,7 @@ class ReplState {
         }
     }
 
-    fun lineSuccess(ktFile: KtFile, scriptDescriptor: LazyScriptDescriptor) {
+    fun lineSuccess(ktFile: KtFile, scriptDescriptor: ScriptDescriptor) {
         val successfulLine = LineInfo.SuccessfulLine(ktFile, successfulLines.lastOrNull(), scriptDescriptor)
         lines[ktFile] = successfulLine
         successfulLines.add(successfulLine)
@@ -65,7 +66,7 @@ class ReplState {
         class SuccessfulLine(
             override val linePsi: KtFile,
             override val parentLine: SuccessfulLine?,
-            val lineDescriptor: LazyScriptDescriptor
+            val lineDescriptor: ScriptDescriptor
         ) : LineInfo()
 
         class FailedLine(override val linePsi: KtFile, override val parentLine: SuccessfulLine?) : LineInfo()
@@ -73,10 +74,11 @@ class ReplState {
 
     private fun computeFileScopes(lineInfo: LineInfo, fileScopeFactory: FileScopeFactory): FileScopes? {
         // create scope that wraps previous line lexical scope and adds imports from this line
-        val lexicalScopeAfterLastLine = lineInfo.parentLine?.lineDescriptor?.scopeForInitializerResolution ?: return null
+        val lexicalScopeAfterLastLine =
+            (lineInfo.parentLine?.lineDescriptor as? ClassDescriptorWithResolutionScopes)?.scopeForInitializerResolution ?: return null
         val lastLineImports = lexicalScopeAfterLastLine.parentsWithSelf.firstIsInstance<ImportingScope>()
         val scopesForThisLine = fileScopeFactory.createScopesForFile(lineInfo.linePsi, lastLineImports)
         val combinedLexicalScopes = lexicalScopeAfterLastLine.replaceImportingScopes(scopesForThisLine.importingScope)
-        return FileScopes(combinedLexicalScopes, scopesForThisLine.importingScope, scopesForThisLine.importResolver)
+        return FileScopes(combinedLexicalScopes, scopesForThisLine.importingScope, scopesForThisLine.importForceResolver)
     }
 }

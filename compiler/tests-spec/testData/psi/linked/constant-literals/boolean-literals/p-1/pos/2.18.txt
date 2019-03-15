@@ -1,0 +1,95 @@
+KtFile: 2.18.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  TYPEALIAS
+    PsiElement(typealias)('typealias')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('`true`')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('Boolean')
+  PsiWhiteSpace('\n\n')
+  TYPEALIAS
+    MODIFIER_LIST
+      PsiElement(private)('private')
+    PsiWhiteSpace(' ')
+    PsiElement(typealias)('typealias')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('`false`')
+    TYPE_PARAMETER_LIST
+      PsiElement(LT)('<')
+      TYPE_PARAMETER
+        PsiElement(IDENTIFIER)('T')
+      PsiElement(GT)('>')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('List')
+        TYPE_ARGUMENT_LIST
+          PsiElement(LT)('<')
+          TYPE_PROJECTION
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('T')
+          PsiElement(GT)('>')
+  PsiWhiteSpace('\n\n')
+  TYPEALIAS
+    MODIFIER_LIST
+      PsiElement(internal)('internal')
+    PsiWhiteSpace(' ')
+    PsiElement(typealias)('typealias')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('`true`')
+    TYPE_PARAMETER_LIST
+      PsiElement(LT)('<')
+      TYPE_PARAMETER
+        PsiElement(IDENTIFIER)('`false`')
+      PsiElement(GT)('>')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('Map')
+        TYPE_ARGUMENT_LIST
+          PsiElement(LT)('<')
+          TYPE_PROJECTION
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('`true`')
+                TYPE_ARGUMENT_LIST
+                  PsiElement(LT)('<')
+                  TYPE_PROJECTION
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('`false`')
+                  PsiElement(GT)('>')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          TYPE_PROJECTION
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('List')
+                TYPE_ARGUMENT_LIST
+                  PsiElement(LT)('<')
+                  TYPE_PROJECTION
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('`true`')
+                  PsiElement(GT)('>')
+          PsiElement(GT)('>')

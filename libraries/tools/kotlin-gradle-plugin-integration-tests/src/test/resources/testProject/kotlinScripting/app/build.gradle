@@ -1,0 +1,5 @@
+apply plugin: 'kotlin'
+
+dependencies {
+    compile project(':script-template')
+}

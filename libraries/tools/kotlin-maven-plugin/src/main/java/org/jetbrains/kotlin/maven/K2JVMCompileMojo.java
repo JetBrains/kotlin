@@ -123,12 +123,16 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
 
     @Override
     protected List<String> getSourceFilePaths() {
-        List<String> paths = super.getSourceFilePaths();
+        List<String> paths = new ArrayList<>(super.getSourceFilePaths());
 
         File sourcesDir = AnnotationProcessingManager.getGeneratedSourcesDirectory(project, getSourceSetName());
         if (sourcesDir.isDirectory()) {
-            paths = new ArrayList<>(paths);
             paths.add(sourcesDir.getAbsolutePath());
+        }
+
+        File kotlinSourcesDir = AnnotationProcessingManager.getGeneratedKotlinSourcesDirectory(project, getSourceSetName());
+        if (kotlinSourcesDir.isDirectory()) {
+            paths.add(kotlinSourcesDir.getAbsolutePath());
         }
 
         return paths;
@@ -249,7 +253,7 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
         File kotlinClassesDir = new File(cachesDir, "classes");
         File snapshotsFile = new File(cachesDir, "snapshots.bin");
         String classpath = arguments.getClasspath();
-        MavenICReporter icReporter = MavenICReporter.get(getLog());
+        MavenICReporter icReporter = new MavenICReporter(getLog());
 
         try {
             arguments.setDestination(kotlinClassesDir.getAbsolutePath());

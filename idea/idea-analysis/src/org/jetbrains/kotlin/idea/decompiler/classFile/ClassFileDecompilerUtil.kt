@@ -17,12 +17,14 @@
 package org.jetbrains.kotlin.idea.decompiler.classFile
 
 import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.ClassFileViewProvider
 import org.jetbrains.kotlin.idea.caches.FileAttributeService
 import org.jetbrains.kotlin.idea.caches.IDEKotlinBinaryClassCache
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
+import org.jetbrains.kotlin.load.kotlin.findKotlinClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -51,7 +53,7 @@ fun isKotlinWithCompatibleAbiVersion(file: VirtualFile): Boolean {
  */
 fun isKotlinInternalCompiledFile(file: VirtualFile, fileContent: ByteArray? = null): Boolean {
     // Don't crash on invalid files (EA-97751)
-    if (!file.isValid || fileContent?.size == 0) {
+    if (!file.isValid || fileContent?.size == 0 || !file.exists()) {
         return false
     }
 
@@ -60,10 +62,19 @@ fun isKotlinInternalCompiledFile(file: VirtualFile, fileContent: ByteArray? = nu
     }
 
     val innerClass =
-            if (fileContent == null)
+        try {
+            if (fileContent == null) {
                 ClassFileViewProvider.isInnerClass(file)
-            else
+            } else {
                 ClassFileViewProvider.isInnerClass(file, fileContent)
+            }
+        } catch (exception: Exception) {
+            Logger
+                .getInstance("org.jetbrains.kotlin.idea.decompiler.classFile.isKotlinInternalCompiledFile")
+                .debug(file.path, exception)
+
+            return false
+        }
 
     if (innerClass) {
         return true
@@ -73,7 +84,7 @@ fun isKotlinInternalCompiledFile(file: VirtualFile, fileContent: ByteArray? = nu
     if (header.classId.isLocal) return true
 
     return header.kind == KotlinClassHeader.Kind.SYNTHETIC_CLASS ||
-           header.kind == KotlinClassHeader.Kind.MULTIFILE_CLASS_PART
+            header.kind == KotlinClassHeader.Kind.MULTIFILE_CLASS_PART
 }
 
 fun findMultifileClassParts(file: VirtualFile, classId: ClassId, partNames: List<String>): List<KotlinJvmBinaryClass> {

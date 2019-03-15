@@ -50,7 +50,16 @@ class SurroundWithArrayOfWithSpreadOperatorInFunctionFix(
 
     companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtExpression>? {
-            val actualDiagnostic = Errors.ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION.cast(diagnostic)
+            val actualDiagnostic = when (diagnostic.factory) {
+                Errors.ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION ->
+                    Errors.ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION.cast(diagnostic)
+
+                Errors.ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION_ERROR ->
+                    Errors.ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION_ERROR.cast(diagnostic)
+
+                else -> error("Non expected diagnostic: $diagnostic")
+            }
+
             val parameterType = actualDiagnostic.a
 
             val wrapper = PRIMITIVE_TYPE_TO_ARRAY[KotlinBuiltIns.getPrimitiveArrayElementType(parameterType)] ?: ARRAY_OF_FUNCTION

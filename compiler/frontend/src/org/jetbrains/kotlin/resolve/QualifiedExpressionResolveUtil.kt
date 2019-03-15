@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForTypeAliasObject
 import org.jetbrains.kotlin.resolve.descriptorUtil.classValueDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.classValueTypeDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasCompanionObject
@@ -97,10 +98,10 @@ private fun resolveQualifierReferenceTarget(
         // Given a class qualifier in expression position,
         // it should provide a proper REFERENCE_TARGET (with type),
         // and, in case of implicit companion object reference, SHORT_REFERENCE_TO_COMPANION_OBJECT.
-        val classValueDescriptor = classifier.classValueDescriptor
-        if (selectorIsCallable && classValueDescriptor != null) {
+        val receiverClassifierDescriptor = classifier.getCallableReceiverDescriptorRetainingTypeAliasReference()
+        if (selectorIsCallable && receiverClassifierDescriptor != null) {
             val classValueTypeDescriptor = classifier.classValueTypeDescriptor!!
-            context.trace.record(BindingContext.REFERENCE_TARGET, qualifier.referenceExpression, classValueDescriptor)
+            context.trace.record(BindingContext.REFERENCE_TARGET, qualifier.referenceExpression, receiverClassifierDescriptor)
             context.trace.recordType(qualifier.expression, classValueTypeDescriptor.defaultType)
             if (classifier.hasCompanionObject) {
                 context.trace.record(BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, qualifier.referenceExpression, classifier)
@@ -111,3 +112,16 @@ private fun resolveQualifierReferenceTarget(
 
     return qualifier.descriptor
 }
+
+private fun ClassifierDescriptor.getCallableReceiverDescriptorRetainingTypeAliasReference(): DeclarationDescriptor? =
+    when (this) {
+        is ClassDescriptor -> classValueDescriptor
+
+        is TypeAliasDescriptor ->
+            if (classDescriptor?.classValueDescriptor != null)
+                FakeCallableDescriptorForTypeAliasObject(this)
+            else
+                this
+
+        else -> null
+    }

@@ -1,4 +1,4 @@
-// "Add remaining branches with import" "true"
+// "Add remaining branches with * import" "true"
 // WITH_RUNTIME
 import Baz.*
 import Foo.*

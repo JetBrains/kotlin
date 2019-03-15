@@ -1,0 +1,5 @@
+package
+
+public fun case_1(/*0*/ x: kotlin.Any?): kotlin.Boolean
+public fun case_2(/*0*/ x: kotlin.Any?): kotlin.Unit
+public fun case_3(/*0*/ x: kotlin.Any?): kotlin.Boolean

@@ -17,6 +17,7 @@
 package org.jetbrains.uast.kotlin
 
 import com.intellij.psi.*
+import com.intellij.psi.impl.light.LightPsiClassBuilder
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForScript
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
@@ -26,10 +27,15 @@ import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.uast.*
+import org.jetbrains.uast.internal.acceptList
+import org.jetbrains.uast.kotlin.declarations.KotlinUIdentifier
 import org.jetbrains.uast.kotlin.declarations.KotlinUMethod
 import org.jetbrains.uast.kotlin.declarations.UastLightIdentifier
+import org.jetbrains.uast.kotlin.kinds.KotlinSpecialExpressionKinds
+import org.jetbrains.uast.visitor.UastVisitor
 
-abstract class AbstractKotlinUClass(givenParent: UElement?) : KotlinAbstractUElement(givenParent), UClass, JvmDeclarationUElement {
+abstract class AbstractKotlinUClass(givenParent: UElement?) : KotlinAbstractUElement(givenParent), UClassTypeSpecific, UAnchorOwner,
+    JvmDeclarationUElementPlaceholder {
 
     override val uastDeclarations by lz {
         mutableListOf<UDeclaration>().apply {
@@ -40,16 +46,25 @@ abstract class AbstractKotlinUClass(givenParent: UElement?) : KotlinAbstractUEle
         }
     }
 
+    open val ktClass: KtClassOrObject? get() = (psi as? KtLightClass)?.kotlinOrigin
+
     override val uastSuperTypes: List<UTypeReferenceExpression>
-        get() {
-            val ktClass = (psi as? KtLightClass)?.kotlinOrigin ?: return emptyList()
-            return ktClass.superTypeListEntries.mapNotNull { it.typeReference }.map {
-                LazyKotlinUTypeReferenceExpression(it, this)
-            }
+        get() = ktClass?.superTypeListEntries.orEmpty().mapNotNull { it.typeReference }.map {
+            LazyKotlinUTypeReferenceExpression(it, this)
         }
 
-    override val uastAnchor: UElement?
-        get() = UIdentifier(psi.nameIdentifier, this)
+    val delegateExpressions: List<UExpression>
+        get() = ktClass?.superTypeListEntries.orEmpty()
+            .filterIsInstance<KtDelegatedSuperTypeEntry>()
+            .map { KotlinSupertypeDelegationUExpression(it, this) }
+
+    override fun accept(visitor: UastVisitor) {
+        if (visitor.visitClass(this)) return
+        delegateExpressions.acceptList(visitor)
+        annotations.acceptList(visitor)
+        uastDeclarations.acceptList(visitor)
+        visitor.afterVisitClass(this)
+    }
 
     override val annotations: List<UAnnotation> by lz {
         (sourcePsi as? KtModifierListOwner)?.annotationEntries.orEmpty().map { KotlinUAnnotation(it, this) }
@@ -60,12 +75,32 @@ abstract class AbstractKotlinUClass(givenParent: UElement?) : KotlinAbstractUEle
 
 }
 
+class KotlinSupertypeDelegationUExpression(override val sourcePsi: KtDelegatedSuperTypeEntry, givenParent: UElement?) :
+    KotlinAbstractUExpression(givenParent), UExpressionList {
+
+    override val psi: PsiElement? get() = sourcePsi
+
+    val typeReference: UTypeReferenceExpression? by lazy {
+        sourcePsi.typeReference?.let { KotlinUTypeReferenceExpression(it.toPsiType(this), it, this) }
+    }
+
+    val delegateExpression: UExpression? by lazy {
+        sourcePsi.delegateExpression?.let { kotlinUastPlugin.convertElement(it, this, UExpression::class.java) as? UExpression }
+    }
+
+    override val expressions: List<UExpression>
+        get() = listOfNotNull(typeReference, delegateExpression)
+
+    override val kind: UastSpecialExpressionKind get() = KotlinSpecialExpressionKinds.SUPER_DELEGATION
+
+}
+
 open class KotlinUClass private constructor(
         psi: KtLightClass,
         givenParent: UElement?
 ) : AbstractKotlinUClass(givenParent), PsiClass by psi {
 
-    val ktClass = psi.kotlinOrigin
+    final override val ktClass = psi.kotlinOrigin
 
     override val javaPsi: KtLightClass = psi
 
@@ -81,8 +116,13 @@ open class KotlinUClass private constructor(
 
     override fun getContainingFile(): PsiFile? = unwrapFakeFileForLightClass(psi.containingFile)
 
-    override val uastAnchor: UElement
-        get() = UIdentifier(nameIdentifier, this)
+    override val uastAnchor by lazy { getIdentifierSourcePsi()?.let { KotlinUIdentifier(nameIdentifier, it, this) } }
+
+    private fun getIdentifierSourcePsi(): PsiElement? {
+        ktClass?.nameIdentifier?.let { return it }
+        (ktClass as? KtObjectDeclaration)?.getObjectKeyword()?.let { return it }
+        return null
+    }
 
     override fun getInnerClasses(): Array<UClass> {
         // filter DefaultImpls to avoid processing same methods from original interface multiple times
@@ -166,6 +206,14 @@ open class KotlinConstructorUMethod(
         }
     }
 
+    override val uastAnchor: KotlinUIdentifier by lazy {
+        KotlinUIdentifier(
+            psi.nameIdentifier,
+            if (isPrimary) ktClass?.nameIdentifier else (psi.kotlinOrigin as? KtSecondaryConstructor)?.getConstructorKeyword(),
+            this
+        )
+    }
+
     override val javaPsi = psi
 
     override val sourcePsi = psi.kotlinOrigin
@@ -201,7 +249,7 @@ class KotlinUAnonymousClass(
 
     override val javaPsi: PsiAnonymousClass = psi
 
-    override val sourcePsi: KtClassOrObject? = (psi as? KtLightClass)?.kotlinOrigin
+    override val sourcePsi: KtClassOrObject? = ktClass
 
     override fun getOriginalElement(): PsiElement? = super<AbstractKotlinUClass>.getOriginalElement()
 
@@ -213,10 +261,9 @@ class KotlinUAnonymousClass(
 
     override fun getContainingFile(): PsiFile = unwrapFakeFileForLightClass(psi.containingFile)
 
-    override val uastAnchor: UElement?
-        get() {
-            val ktClassOrObject = (psi.originalElement as? KtLightClass)?.kotlinOrigin as? KtObjectDeclaration ?: return null
-            return UIdentifier(ktClassOrObject.getObjectKeyword(), this)
+    override val uastAnchor by lazy {
+        val ktClassOrObject = (psi.originalElement as? KtLightClass)?.kotlinOrigin as? KtObjectDeclaration ?: return@lazy null
+        KotlinUIdentifier(ktClassOrObject.getObjectKeyword(), this)
         }
 
 }
@@ -229,8 +276,7 @@ class KotlinScriptUClass(
 
     override fun getNameIdentifier(): PsiIdentifier? = UastLightIdentifier(psi, psi.kotlinOrigin)
 
-    override val uastAnchor: UElement
-        get() = UIdentifier(nameIdentifier, this)
+    override val uastAnchor by lazy { KotlinUIdentifier(nameIdentifier, sourcePsi?.nameIdentifier, this) }
 
     override val javaPsi: PsiClass = psi
 
@@ -272,6 +318,37 @@ class KotlinScriptUClass(
         override val javaPsi = psi
         override val sourcePsi = psi.kotlinOrigin
     }
+}
+
+/**
+ * implementation of [UClass] for invalid code, when it is impossible to create a [KtLightClass]
+ */
+class KotlinInvalidUClass(
+    override val psi: PsiClass,
+    givenParent: UElement?
+) : AbstractKotlinUClass(givenParent), PsiClass by psi {
+
+    constructor(name: String, context: PsiElement, givenParent: UElement?) : this(LightPsiClassBuilder(context, name), givenParent)
+
+    override fun getContainingFile(): PsiFile? = uastParent?.getContainingUFile()?.sourcePsi as? PsiFile
+
+    override val sourcePsi: PsiElement? get() = null
+
+    override val uastAnchor: UIdentifier? get() = null
+
+    override val javaPsi: PsiClass get() = psi
+
+    override fun getFields(): Array<UField> = emptyArray()
+
+    override fun getInitializers(): Array<UClassInitializer> = emptyArray()
+
+    override fun getInnerClasses(): Array<UClass> = emptyArray()
+
+    override fun getMethods(): Array<UMethod> = emptyArray()
+
+    override fun getSuperClass(): UClass? = null
+
+    override fun getOriginalElement(): PsiElement? = null
 }
 
 private fun reportConvertFailure(psiMethod: PsiMethod): Nothing {

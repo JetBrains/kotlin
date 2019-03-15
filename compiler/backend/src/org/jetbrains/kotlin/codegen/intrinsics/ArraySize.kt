@@ -22,10 +22,9 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.org.objectweb.asm.Type
 
 class ArraySize : IntrinsicPropertyGetter() {
-    override fun generate(
-            resolvedCall: ResolvedCall<*>?, codegen: ExpressionCodegen, returnType: Type, receiver: StackValue
-    ) = StackValue.operation(returnType) {
-        receiver.put(receiver.type, it)
-        it.arraylength()
-    }
+    override fun generate(resolvedCall: ResolvedCall<*>?, codegen: ExpressionCodegen, returnType: Type, receiver: StackValue) =
+        StackValue.operation(returnType) { iv ->
+            receiver.put(iv)
+            iv.arraylength()
+        }
 }

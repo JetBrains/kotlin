@@ -1,11 +1,13 @@
+// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 // WITH_COROUTINES
+// COMMON_COROUTINES_TEST
 import helpers.*
 
-import kotlin.coroutines.experimental.*
-import kotlin.coroutines.experimental.intrinsics.*
+import COROUTINES_PACKAGE.*
+import COROUTINES_PACKAGE.intrinsics.*
 
-suspend fun suspendThere(v: A): A = suspendCoroutineOrReturn { x ->
+suspend fun suspendThere(v: A): A = suspendCoroutineUninterceptedOrReturn { x ->
     x.resume(v)
     COROUTINE_SUSPENDED
 }

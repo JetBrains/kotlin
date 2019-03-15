@@ -1,0 +1,3 @@
+package
+
+public fun test(/*0*/ ub1: kotlin.UByte, /*1*/ ub2: kotlin.UByte, /*2*/ us1: kotlin.UShort, /*3*/ us2: kotlin.UShort, /*4*/ ui1: kotlin.UInt, /*5*/ ui2: kotlin.UInt, /*6*/ ul1: kotlin.ULong, /*7*/ ul2: kotlin.ULong): kotlin.Unit

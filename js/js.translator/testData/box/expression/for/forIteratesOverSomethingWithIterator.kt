@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1121
+// EXPECTED_REACHABLE_NODES: 1291
 package foo
 
 class Iter(val upper: Int) {

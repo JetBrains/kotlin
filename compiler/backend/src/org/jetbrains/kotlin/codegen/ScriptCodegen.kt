@@ -6,23 +6,29 @@
 package org.jetbrains.kotlin.codegen
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.codegen.AsmUtil.writeAnnotationData
 import org.jetbrains.kotlin.codegen.context.CodegenContext
 import org.jetbrains.kotlin.codegen.context.MethodContext
 import org.jetbrains.kotlin.codegen.context.ScriptContext
+import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.descriptorUtil.*
+import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
+import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
+import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperInterfaces
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.*
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.Companion.NO_ORIGIN
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
+import org.jetbrains.kotlin.serialization.DescriptorSerializer
+import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
-
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.Companion.NO_ORIGIN
-import org.jetbrains.org.objectweb.asm.Opcodes.*
 
 class ScriptCodegen private constructor(
         private val scriptDeclaration: KtScript,
@@ -41,8 +47,11 @@ class ScriptCodegen private constructor(
                 classAsmType.internalName,
                 null,
                 typeMapper.mapSupertype(scriptDescriptor.getSuperClassOrAny().defaultType, null).internalName,
-                mapSupertypesNames(typeMapper, scriptDescriptor.getSuperInterfaces(), null)
+                scriptDescriptor.getSuperInterfaces().map {
+                    typeMapper.mapSupertype(it.defaultType, null).internalName
+                }.toTypedArray()
         )
+        AnnotationCodegen.forClass(v.visitor, this, state).genAnnotations(scriptDescriptor, null)
     }
 
     override fun generateBody() {
@@ -58,7 +67,11 @@ class ScriptCodegen private constructor(
     override fun generateSyntheticPartsAfterBody() {}
 
     override fun generateKotlinMetadataAnnotation() {
-        generateKotlinClassMetadataAnnotation(scriptDescriptor, true)
+        val serializer = DescriptorSerializer.create(scriptDescriptor, JvmSerializerExtension(v.serializationBindings, state), null)
+        val classProto = serializer.classProto(scriptDescriptor).build()
+        writeKotlinMetadata(v, state, KotlinClassHeader.Kind.CLASS, JvmAnnotationNames.METADATA_SCRIPT_FLAG) { av ->
+            writeAnnotationData(av, serializer, classProto)
+        }
     }
 
     private fun genConstructor(
@@ -66,7 +79,11 @@ class ScriptCodegen private constructor(
             classBuilder: ClassBuilder,
             methodContext: MethodContext
     ) {
-        val jvmSignature = typeMapper.mapScriptSignature(scriptDescriptor, scriptContext.earlierScripts)
+        val jvmSignature = typeMapper.mapScriptSignature(
+            scriptDescriptor,
+            scriptContext.earlierScripts
+        )
+        val asmMethod = jvmSignature.asmMethod
 
         if (state.replSpecific.shouldGenerateScriptResultValue) {
             val resultFieldInfo = scriptContext.resultFieldInfo
@@ -82,6 +99,8 @@ class ScriptCodegen private constructor(
                 OtherOrigin(scriptDeclaration, scriptDescriptor.unsubstitutedPrimaryConstructor),
                 ACC_PUBLIC, jvmSignature.asmMethod.name, jvmSignature.asmMethod.descriptor, null, null)
 
+        AnnotationCodegen.forMethod(mv, this, state).genAnnotations(scriptDescriptor.unsubstitutedPrimaryConstructor, asmMethod.returnType)
+
         if (state.classBuilderMode.generateBodies) {
             mv.visitCode()
 
@@ -92,50 +111,70 @@ class ScriptCodegen private constructor(
             val superclass = scriptDescriptor.getSuperClassNotAny()
             // TODO: throw if class is not found)
 
+            val frameMap = FrameMap()
+            frameMap.enterTemp(OBJECT_TYPE)
+
+            fun genFieldFromArrayElement(descriptor: ClassDescriptor, paramIndex: Int, elementIndex: Int, name: String) {
+                val elementClassType = typeMapper.mapClass(descriptor)
+                val array = StackValue.local(paramIndex, AsmUtil.getArrayType(OBJECT_TYPE))
+                val value = StackValue.arrayElement(OBJECT_TYPE, null, array, StackValue.constant(elementIndex, Type.INT_TYPE))
+                val field = StackValue.field(elementClassType, classType, name, false, StackValue.local(0, classType))
+                field.store(value, iv)
+            }
+
+            fun genFieldFromParam(fieldClassType: Type, paramIndex: Int, name: String) {
+                val value = StackValue.local(paramIndex, fieldClassType)
+                val field = StackValue.field(fieldClassType, classType, name, false, StackValue.local(0, classType))
+                field.store(value, iv)
+            }
+
+            if (!scriptContext.earlierScripts.isEmpty()) {
+                val scriptsParamIndex = frameMap.enterTemp(AsmUtil.getArrayType(OBJECT_TYPE))
+
+                scriptContext.earlierScripts.forEachIndexed { earlierScriptIndex, earlierScript ->
+                    val name = scriptContext.getScriptFieldName(earlierScript)
+                    genFieldFromArrayElement(earlierScript, scriptsParamIndex, earlierScriptIndex, name)
+                }
+            }
+
             if (superclass == null) {
                 iv.load(0, classType)
                 iv.invokespecial("java/lang/Object", "<init>", "()V", false)
-            }
-            else {
+            } else {
                 val ctorDesc = superclass.unsubstitutedPrimaryConstructor
-                               ?: throw RuntimeException("Primary constructor not found for script template " + superclass.toString())
+                        ?: throw RuntimeException("Primary constructor not found for script template " + superclass.toString())
 
                 iv.load(0, classType)
-
-                val valueParamStart = if (scriptContext.earlierScripts.isEmpty()) 1 else 2 // this + array of earlier scripts if not empty
 
                 val valueParameters = scriptDescriptor.unsubstitutedPrimaryConstructor.valueParameters
                 for (superclassParam in ctorDesc.valueParameters) {
                     val valueParam = valueParameters.first { it.name == superclassParam.name }
-                    iv.load(valueParam!!.index + valueParamStart, typeMapper.mapType(valueParam.type))
+                    val paramType = typeMapper.mapType(valueParam.type)
+                    iv.load(valueParam!!.index + scriptContext.ctorValueParametersStart + 1, paramType)
+                    frameMap.enterTemp(paramType)
                 }
 
                 val ctorMethod = typeMapper.mapToCallableMethod(ctorDesc, false)
                 val sig = ctorMethod.getAsmMethod().descriptor
 
                 iv.invokespecial(
-                        typeMapper.mapSupertype(superclass.defaultType, null).internalName,
-                        "<init>", sig, false)
+                    typeMapper.mapSupertype(superclass.defaultType, null).internalName,
+                    "<init>", sig, false
+                )
             }
             iv.load(0, classType)
 
-            val frameMap = FrameMap()
-            frameMap.enterTemp(OBJECT_TYPE)
+            scriptDescriptor.implicitReceivers.forEachIndexed { receiverIndex, receiver ->
+                val receiversParamIndex = frameMap.enterTemp(AsmUtil.getArrayType(OBJECT_TYPE))
+                val name = scriptContext.getImplicitReceiverName(receiverIndex)
+                genFieldFromParam(typeMapper.mapClass(receiver), receiversParamIndex, name)
+            }
 
-
-            if (!scriptContext.earlierScripts.isEmpty()) {
-                val scriptsParamIndex = frameMap.enterTemp(AsmUtil.getArrayType(OBJECT_TYPE))
-
-                var earlierScriptIndex = 0
-                for (earlierScript in scriptContext.earlierScripts) {
-                    val earlierClassType = typeMapper.mapClass(earlierScript)
-                    iv.load(0, classType)
-                    iv.load(scriptsParamIndex, earlierClassType)
-                    iv.aconst(earlierScriptIndex++)
-                    iv.aload(OBJECT_TYPE)
-                    iv.checkcast(earlierClassType)
-                    iv.putfield(classType.internalName, scriptContext.getScriptFieldName(earlierScript), earlierClassType.descriptor)
-                }
+            scriptDescriptor.scriptProvidedProperties.forEachIndexed { envVarIndex, envVar ->
+                val fieldClassType = typeMapper.mapType(envVar)
+                val envVarParamIndex = frameMap.enterTemp(fieldClassType)
+                val name = scriptContext.getProvidedPropertyName(envVarIndex)
+                genFieldFromParam(fieldClassType, envVarParamIndex, name)
             }
 
             val codegen = ExpressionCodegen(mv, frameMap, Type.VOID_TYPE, methodContext, state, this)
@@ -151,9 +190,34 @@ class ScriptCodegen private constructor(
 
     private fun genFieldsForParameters(classBuilder: ClassBuilder) {
         for (earlierScript in scriptContext.earlierScripts) {
-            val earlierClassName = typeMapper.mapType(earlierScript)
-            val access = ACC_PUBLIC or ACC_FINAL
-            classBuilder.newField(NO_ORIGIN, access, scriptContext.getScriptFieldName(earlierScript), earlierClassName.descriptor, null, null)
+            classBuilder.newField(
+                NO_ORIGIN,
+                ACC_PUBLIC or ACC_FINAL,
+                scriptContext.getScriptFieldName(earlierScript),
+                typeMapper.mapType(earlierScript).descriptor,
+                null,
+                null
+            )
+        }
+        for (receiverIndex in scriptContext.receiverDescriptors.indices) {
+            classBuilder.newField(
+                NO_ORIGIN,
+                ACC_PUBLIC or ACC_FINAL,
+                scriptContext.getImplicitReceiverName(receiverIndex),
+                scriptContext.getImplicitReceiverType(receiverIndex)!!.descriptor,
+                null,
+                null
+            )
+        }
+        for (envVarIndex in scriptDescriptor.scriptProvidedProperties.indices) {
+            classBuilder.newField(
+                NO_ORIGIN,
+                ACC_PUBLIC or ACC_FINAL,
+                scriptContext.getProvidedPropertyName(envVarIndex),
+                scriptContext.getProvidedPropertyType(envVarIndex).descriptor,
+                null,
+                null
+            )
         }
     }
 

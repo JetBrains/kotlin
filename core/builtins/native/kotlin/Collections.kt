@@ -101,7 +101,7 @@ public interface MutableCollection<E> : Collection<E>, MutableIterable<E> {
 
     // Bulk Modification Operations
     /**
-     * Adds all of the elements in the specified collection to this collection.
+     * Adds all of the elements of the specified collection to this collection.
      *
      * @return `true` if any of the specified elements was added to the collection, `false` if the collection was not modified.
      */
@@ -189,15 +189,27 @@ public interface List<out E> : Collection<E> {
  */
 public interface MutableList<E> : List<E>, MutableCollection<E> {
     // Modification Operations
+    /**
+     * Adds the specified element to the end of this list.
+     *
+     * @return `true` because the list is always modified as the result of this operation.
+     */
     override fun add(element: E): Boolean
 
     override fun remove(element: E): Boolean
 
     // Bulk Modification Operations
+    /**
+     * Adds all of the elements of the specified collection to the end of this list.
+     *
+     * The elements are appended in the order they appear in the [elements] collection.
+     *
+     * @return `true` if the list was changed as the result of the operation.
+     */
     override fun addAll(elements: Collection<E>): Boolean
 
     /**
-     * Inserts all of the elements in the specified collection [elements] into this list at the specified [index].
+     * Inserts all of the elements of the specified collection [elements] into this list at the specified [index].
      *
      * @return `true` if the list was changed as the result of the operation.
      */

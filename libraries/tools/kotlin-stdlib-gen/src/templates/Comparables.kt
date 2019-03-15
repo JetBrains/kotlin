@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package templates
@@ -19,6 +8,16 @@ package templates
 import templates.Family.*
 
 object ComparableOps : TemplateGroupBase() {
+
+    init {
+        defaultBuilder {
+            specialFor(Unsigned) {
+                since("1.3")
+                annotation("@ExperimentalUnsignedTypes")
+                sourceFile(SourceFile.UComparisons)
+            }
+        }
+    }
 
     private val numericPrimitives = PrimitiveType.numericPrimitives.sortedBy { it.capacity }.toSet()
     private val intPrimitives = setOf(PrimitiveType.Int, PrimitiveType.Long)
@@ -30,15 +29,15 @@ object ComparableOps : TemplateGroupBase() {
     } builder {
         sourceFile(SourceFile.Ranges)
         returns("SELF")
-        typeParam("T: Comparable<T>")
+        typeParam("T : Comparable<T>")
         doc {
             """
             Ensures that this value is not less than the specified [minimumValue].
 
             @return this value if it's greater than or equal to the [minimumValue] or the [minimumValue] otherwise.
-            @sample samples.comparisons.ComparableOps.coerceAtLeast${if (f == Generic) "Comparable" else ""}
             """
         }
+        sample("samples.comparisons.ComparableOps.coerceAtLeast${if (f == Generic) "Comparable" else ""}")
         body {
             """
             return if (this < minimumValue) minimumValue else this
@@ -52,15 +51,15 @@ object ComparableOps : TemplateGroupBase() {
     } builder {
         sourceFile(SourceFile.Ranges)
         returns("SELF")
-        typeParam("T: Comparable<T>")
+        typeParam("T : Comparable<T>")
         doc {
             """
             Ensures that this value is not greater than the specified [maximumValue].
 
             @return this value if it's less than or equal to the [maximumValue] or the [maximumValue] otherwise.
-            @sample samples.comparisons.ComparableOps.coerceAtMost${if (f == Generic) "Comparable" else ""}
             """
         }
+        sample("samples.comparisons.ComparableOps.coerceAtMost${if (f == Generic) "Comparable" else ""}")
         body {
             """
             return if (this > maximumValue) maximumValue else this
@@ -74,15 +73,15 @@ object ComparableOps : TemplateGroupBase() {
     } builder {
         sourceFile(SourceFile.Ranges)
         returns("SELF")
-        typeParam("T: Comparable<T>")
+        typeParam("T : Comparable<T>")
         doc {
             """
             Ensures that this value lies in the specified [range].
 
             @return this value if it's in the [range], or `range.start` if this value is less than `range.start`, or `range.endInclusive` if this value is greater than `range.endInclusive`.
-            @sample samples.comparisons.ComparableOps.coerceIn${if (f == Generic) "Comparable" else ""}
             """
         }
+        sample("samples.comparisons.ComparableOps.coerceIn${if (f == Generic) "Comparable" else ""}")
         body(Generic) {
             """
             if (range is ClosedFloatingPointRange) {
@@ -117,15 +116,15 @@ object ComparableOps : TemplateGroupBase() {
         sourceFile(SourceFile.Ranges)
         since("1.1")
         returns("SELF")
-        typeParam("T: Comparable<T>")
+        typeParam("T : Comparable<T>")
         doc {
             """
             Ensures that this value lies in the specified [range].
 
             @return this value if it's in the [range], or `range.start` if this value is less than `range.start`, or `range.endInclusive` if this value is greater than `range.endInclusive`.
-            @sample samples.comparisons.ComparableOps.coerceInFloatingPointRange
             """
         }
+        sample("samples.comparisons.ComparableOps.coerceInFloatingPointRange")
         body(Generic) {
             """
             if (range.isEmpty()) throw IllegalArgumentException("Cannot coerce value to an empty range: ${'$'}range.")
@@ -144,10 +143,11 @@ object ComparableOps : TemplateGroupBase() {
     val f_minOf_2 = fn("minOf(a: T, b: T)") {
         include(Generic)
         include(Primitives, numericPrimitives)
+        include(Unsigned)
     } builder {
         sourceFile(SourceFile.Comparisons)
         since("1.1")
-        typeParam("T: Comparable<T>")
+        typeParam("T : Comparable<T>")
         returns("T")
         receiver("")
         doc {
@@ -156,44 +156,66 @@ object ComparableOps : TemplateGroupBase() {
             If values are equal, returns the first one.
             """
         }
+        val defaultImpl = "if (a <= b) a else b"
+        body { "return $defaultImpl" }
+
+        specialFor(Primitives, Unsigned) {
+            doc { "Returns the smaller of two values." }
+        }
         // TODO: Add a note about NaN propagation for floats.
         specialFor(Primitives) {
             inlineOnly()
-            doc {
-                """Returns the smaller of two values."""
-            }
             var convertBack = "to$primitive()"
             on(Platform.JS) {
+                suppress("DEPRECATION_ERROR")
                 convertBack = "unsafeCast<$primitive>()"
             }
-            body {
-                "return Math.min(a, b)"
+            on(Platform.JVM) {
+                body { "return Math.min(a, b)" }
+            }
+            on(Platform.JS) {
+                body { "return Math.min(a, b)" }
+                if (primitive == PrimitiveType.Long) {
+                    inline(suppressWarning = true)
+                    body { "return $defaultImpl" }
+                }
             }
             if (primitive in shortIntPrimitives) {
                 body { "return Math.min(a.toInt(), b.toInt()).$convertBack" }
+                on(Platform.Native) {
+                    body { "return minOf(a.toInt(), b.toInt()).$convertBack" }
+                }
             }
-            on(Platform.JS) {
-                if (primitive == PrimitiveType.Long) {
-                    inline(suppressWarning = true)
-                    body { "return if (a <= b) a else b" }
+            if (primitive?.isFloatingPoint() == true) {
+                on(Platform.Native) {
+                    body {
+                        """
+                        return when {
+                            a.isNaN() -> a
+                            b.isNaN() -> b
+                            else -> if (a.compareTo(b) <= 0) a else b
+                        }
+                        """
+                    }
                 }
             }
         }
-        body(Generic) {
-            "return if (a <= b) a else b"
+        specialFor(Generic) {
+            on(Platform.JS) { /* just to make expect, KT-22520 */ }
         }
     }
 
-    val f_minOf = fn("minOf(a: T, b: T, c: T)") {
+    val f_minOf_3 = fn("minOf(a: T, b: T, c: T)") {
         include(Generic)
         include(Primitives, numericPrimitives)
+        include(Unsigned)
     } builder {
         sourceFile(SourceFile.Comparisons)
         since("1.1")
-        typeParam("T: Comparable<T>")
+        typeParam("T : Comparable<T>")
         returns("T")
         receiver("")
-        specialFor(Primitives) { inlineOnly() }
+        specialFor(Primitives, Unsigned) { inlineOnly() }
         // TODO: Add a note about NaN propagation for floats.
         doc {
             """
@@ -203,15 +225,23 @@ object ComparableOps : TemplateGroupBase() {
         body {
             "return minOf(a, minOf(b, c))"
         }
+        specialFor(Primitives, Generic) {
+            on(Platform.JS) { /* just to make expect, KT-22520 */ }
+        }
         specialFor(Primitives) {
             if (primitive in shortIntPrimitives) {
-                body { "return Math.min(a.toInt(), Math.min(b.toInt(), c.toInt())).to$primitive()" }
+                body { "return minOf(a.toInt(), minOf(b.toInt(), c.toInt())).to$primitive()" }
+                on(Platform.JVM) {
+                    body { "return Math.min(a.toInt(), Math.min(b.toInt(), c.toInt())).to$primitive()" }
+                }
                 on(Platform.JS) {
+                    suppress("DEPRECATION_ERROR")
                     body { "return Math.min(a.toInt(), b.toInt(), c.toInt()).unsafeCast<$primitive>()" }
                 }
             }
             else if (primitive != PrimitiveType.Long) {
                 on(Platform.JS) {
+                    suppress("DEPRECATION_ERROR")
                     body { "return Math.min(a, b, c)" }
                 }
             }
@@ -256,10 +286,11 @@ object ComparableOps : TemplateGroupBase() {
     val f_maxOf_2 = fn("maxOf(a: T, b: T)") {
         include(Generic)
         include(Primitives, numericPrimitives)
+        include(Unsigned)
     } builder {
         sourceFile(SourceFile.Comparisons)
         since("1.1")
-        typeParam("T: Comparable<T>")
+        typeParam("T : Comparable<T>")
         returns("T")
         receiver("")
         doc {
@@ -268,44 +299,62 @@ object ComparableOps : TemplateGroupBase() {
             If values are equal, returns the first one.
             """
         }
+        val defaultImpl = "if (a >= b) a else b"
+        body { "return $defaultImpl" }
+
+        specialFor(Primitives, Unsigned) {
+            doc { "Returns the greater of two values." }
+        }
         // TODO: Add a note about NaN propagation for floats.
         specialFor(Primitives) {
             inlineOnly()
-            doc {
-                """Returns the greater of two values."""
-            }
             var convertBack = "to$primitive()"
             on(Platform.JS) {
+                suppress("DEPRECATION_ERROR")
                 convertBack = "unsafeCast<$primitive>()"
             }
-            body {
-                "return Math.max(a, b)"
+            on(Platform.JVM) {
+                body { "return Math.max(a, b)" }
+            }
+            on(Platform.JS) {
+                body { "return Math.max(a, b)" }
+                if (primitive == PrimitiveType.Long) {
+                    inline(suppressWarning = true)
+                    body { "return $defaultImpl" }
+                }
             }
             if (primitive in shortIntPrimitives) {
                 body { "return Math.max(a.toInt(), b.toInt()).$convertBack" }
+                on(Platform.Native) {
+                    body { "return maxOf(a.toInt(), b.toInt()).$convertBack" }
+                }
             }
-            on(Platform.JS) {
-                if (primitive == PrimitiveType.Long) {
-                    inline(suppressWarning = true)
-                    body { "return if (a >= b) a else b" }
+            if (primitive?.isFloatingPoint() == true) {
+                on(Platform.Native) {
+                    body {
+                        """
+                        return if (a.compareTo(b) >= 0) a else b
+                        """
+                    }
                 }
             }
         }
-        body(Generic) {
-            "return if (a >= b) a else b"
+        specialFor(Generic) {
+            on(Platform.JS) { /* just to make expect, KT-22520 */ }
         }
     }
 
     val f_maxOf_3 = fn("maxOf(a: T, b: T, c: T)") {
         include(Generic)
         include(Primitives, numericPrimitives)
+        include(Unsigned)
     } builder {
         sourceFile(SourceFile.Comparisons)
         since("1.1")
-        typeParam("T: Comparable<T>")
+        typeParam("T : Comparable<T>")
         returns("T")
         receiver("")
-        specialFor(Primitives) { inlineOnly() }
+        specialFor(Primitives, Unsigned) { inlineOnly() }
         // TODO: Add a note about NaN propagation for floats.
         doc {
             """
@@ -315,15 +364,23 @@ object ComparableOps : TemplateGroupBase() {
         body {
             "return maxOf(a, maxOf(b, c))"
         }
+        specialFor(Primitives, Generic) {
+            on(Platform.JS) { /* just to make expect, KT-22520 */ }
+        }
         specialFor(Primitives) {
             if (primitive in shortIntPrimitives) {
-                body { "return Math.max(a.toInt(), Math.max(b.toInt(), c.toInt())).to$primitive()" }
+                body { "return maxOf(a.toInt(), maxOf(b.toInt(), c.toInt())).to$primitive()" }
+                on(Platform.JVM) {
+                    body { "return Math.max(a.toInt(), Math.max(b.toInt(), c.toInt())).to$primitive()" }
+                }
                 on(Platform.JS) {
+                    suppress("DEPRECATION_ERROR")
                     body { "return Math.max(a.toInt(), b.toInt(), c.toInt()).unsafeCast<$primitive>()" }
                 }
             }
             else if (primitive != PrimitiveType.Long) {
                 on(Platform.JS) {
+                    suppress("DEPRECATION_ERROR")
                     body { "return Math.max(a, b, c)" }
                 }
             }
@@ -373,16 +430,16 @@ object ComparableOps : TemplateGroupBase() {
         sourceFile(SourceFile.Ranges)
 
         specialFor(Generic) { signature("coerceIn(minimumValue: SELF?, maximumValue: SELF?)", notForSorting = true) }
-        typeParam("T: Comparable<T>")
+        typeParam("T : Comparable<T>")
         returns("SELF")
         doc {
             """
             Ensures that this value lies in the specified range [minimumValue]..[maximumValue].
 
             @return this value if it's in the range, or [minimumValue] if this value is less than [minimumValue], or [maximumValue] if this value is greater than [maximumValue].
-            @sample samples.comparisons.ComparableOps.coerceIn${if (f == Generic) "Comparable" else ""}
             """
         }
+        sample("samples.comparisons.ComparableOps.coerceIn${if (f == Generic) "Comparable" else ""}")
         body(Primitives) {
             """
             if (minimumValue > maximumValue) throw IllegalArgumentException("Cannot coerce value to an empty range: maximum ${'$'}maximumValue is less than minimum ${'$'}minimumValue.")

@@ -1,24 +1,10 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea;
 
-import com.google.common.collect.Lists;
-import com.intellij.openapi.editor.Caret;
-import com.intellij.openapi.editor.Editor;
 import com.intellij.rt.execution.junit.FileComparisonFailure;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.CodeInsightTestUtil;
@@ -26,7 +12,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.TagsTestDataUtil;
 
 import java.io.File;
 
@@ -48,6 +33,8 @@ public class WordSelectionTest extends KotlinLightCodeInsightFixtureTestCase {
     public void testValueParameters2() {
         doTest();
     }
+
+    public void testValueParametersInLambda() { doTest(); }
 
     public void testDocComment() { doTest(); }
 
@@ -130,6 +117,17 @@ public class WordSelectionTest extends KotlinLightCodeInsightFixtureTestCase {
     public void testDeclarationWithComment3() { doTest(); }
     public void testDeclarationWithComment4() { doTest(); }
 
+    public void testLeftBrace() { doTest(); }
+    public void testRightBrace() { doTest(); }
+
+    public void testLabeledReturn() { doTest(); }
+
+    public void testClassMember1() { doTest(); }
+    public void testClassMember2() { doTest(); }
+    public void testClassMember3() { doTest(); }
+    public void testClassMember4() { doTest(); }
+    public void testClassMember5() { doTest(); }
+
     private void doTest() {
         String dirName = getTestName(false);
 
@@ -170,21 +168,6 @@ public class WordSelectionTest extends KotlinLightCodeInsightFixtureTestCase {
     }
 
     private void wrapToFileComparisonFailure(String failedFilePath) {
-        Editor editor = myFixture.getEditor();
-
-        Caret caret = editor.getCaretModel().getCurrentCaret();
-        int selectionStart = caret.getSelectionStart();
-        int selectionEnd = caret.getSelectionEnd();
-
-        String actualText = TagsTestDataUtil.insertTagsInText(
-                Lists.<TagsTestDataUtil.TagInfo>newArrayList(
-                        new TagsTestDataUtil.TagInfo<String>(caret.getOffset(), true, "caret"),
-                        new TagsTestDataUtil.TagInfo<String>(selectionStart, true, "selection"),
-                        new TagsTestDataUtil.TagInfo<String>(selectionEnd, false, "selection")),
-                editor.getDocument().getText()
-        );
-
-        KotlinTestUtils.assertEqualsToFile(new File(failedFilePath), actualText);
+        KotlinTestUtils.assertEqualsToFile(new File(failedFilePath), myFixture.getEditor());
     }
-
 }

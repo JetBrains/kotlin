@@ -1,0 +1,5 @@
+package
+
+@get:kotlin.jvm.Synchronized @set:kotlin.jvm.Synchronized public var bar: kotlin.String
+@get:kotlin.jvm.Synchronized @set:kotlin.jvm.Synchronized public var baz: kotlin.String
+@kotlin.jvm.Synchronized public inline fun foo(/*0*/ f: () -> kotlin.Unit): kotlin.Unit

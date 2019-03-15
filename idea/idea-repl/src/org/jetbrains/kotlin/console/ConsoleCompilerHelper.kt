@@ -19,10 +19,10 @@ package org.jetbrains.kotlin.console
 import com.intellij.execution.ExecutionManager
 import com.intellij.execution.Executor
 import com.intellij.execution.ui.RunContentDescriptor
-import com.intellij.openapi.compiler.CompileContext
 import com.intellij.openapi.compiler.CompilerManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
+import com.intellij.task.ProjectTaskManager
 
 class ConsoleCompilerHelper(
     private val project: Project,
@@ -39,10 +39,9 @@ class ConsoleCompilerHelper(
 
     fun compileModule() {
         if (ExecutionManager.getInstance(project).contentManager.removeRunContent(executor, contentDescriptor)) {
-            CompilerManager.getInstance(project).make(module) {
-                _: Boolean, errors: Int, _: Int, _: CompileContext ->
+            ProjectTaskManager.getInstance(project).build(arrayOf(module)) { result ->
                 if (!module.isDisposed) {
-                    KotlinConsoleKeeper.getInstance(project).run(module, previousCompilationFailed = errors > 0)
+                    KotlinConsoleKeeper.getInstance(project).run(module, previousCompilationFailed = result.errors > 0)
                 }
             }
         }

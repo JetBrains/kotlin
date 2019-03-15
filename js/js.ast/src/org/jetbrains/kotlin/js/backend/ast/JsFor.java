@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
  * Note that any of the parts of the <code>for</code> loop header can be
  * <code>null</code>, although the body will never be null.
  */
-public class JsFor extends SourceInfoAwareJsNode implements JsStatement {
+public class JsFor extends SourceInfoAwareJsNode implements JsLoop {
     private JsStatement body;
     private JsExpression condition;
     private JsExpression incrementExpression;
@@ -100,6 +100,7 @@ public class JsFor extends SourceInfoAwareJsNode implements JsStatement {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void traverse(JsVisitorWithContext v, JsContext ctx) {
         if (v.visit(this, ctx)) {
             assert (!(initExpression != null && initVars != null));

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.types.typeUtil
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -53,11 +54,14 @@ fun KotlinType.supertypes(): Collection<KotlinType> = TypeUtils.getAllSupertypes
 
 fun KotlinType.isNothing(): Boolean = KotlinBuiltIns.isNothing(this)
 fun KotlinType.isNullableNothing(): Boolean = KotlinBuiltIns.isNullableNothing(this)
+fun KotlinType.isNothingOrNullableNothing(): Boolean = KotlinBuiltIns.isNothingOrNullableNothing(this)
 fun KotlinType.isUnit(): Boolean = KotlinBuiltIns.isUnit(this)
 fun KotlinType.isAnyOrNullableAny(): Boolean = KotlinBuiltIns.isAnyOrNullableAny(this)
 fun KotlinType.isNullableAny(): Boolean = KotlinBuiltIns.isNullableAny(this)
 fun KotlinType.isBoolean(): Boolean = KotlinBuiltIns.isBoolean(this)
 fun KotlinType.isPrimitiveNumberType(): Boolean = KotlinBuiltIns.isPrimitiveType(this) && !isBoolean()
+fun KotlinType.isUnsignedNumberType(): Boolean = UnsignedTypes.isUnsignedType(this)
+fun KotlinType.isSignedOrUnsignedNumberType(): Boolean = isPrimitiveNumberType() || isUnsignedNumberType()
 
 fun KotlinType.isBooleanOrNullableBoolean(): Boolean = KotlinBuiltIns.isBooleanOrNullableBoolean(this)
 fun KotlinType.isNotNullThrowable(): Boolean = KotlinBuiltIns.isThrowableOrNullableThrowable(this) && !isMarkedNullable
@@ -77,6 +81,7 @@ fun KotlinType.isPrimitiveNumberOrNullableType(): Boolean =
 fun KotlinType.isTypeParameter(): Boolean = TypeUtils.isTypeParameter(this)
 
 fun KotlinType.isInterface(): Boolean = (constructor.declarationDescriptor as? ClassDescriptor)?.kind == ClassKind.INTERFACE
+fun KotlinType.isEnum(): Boolean = (constructor.declarationDescriptor as? ClassDescriptor)?.kind == ClassKind.ENUM_CLASS
 
 fun KotlinType?.isArrayOfNothing(): Boolean {
     if (this == null || !KotlinBuiltIns.isArray(this)) return false
@@ -224,3 +229,14 @@ fun UnwrappedType.canHaveUndefinedNullability(): Boolean =
     constructor is NewTypeVariableConstructor ||
             constructor.declarationDescriptor is TypeParameterDescriptor ||
             this is NewCapturedType
+
+val TypeParameterDescriptor.representativeUpperBound: KotlinType
+    get() {
+        assert(upperBounds.isNotEmpty()) { "Upper bounds should not be empty: $this" }
+
+        return upperBounds.firstOrNull {
+            val classDescriptor = it.constructor.declarationDescriptor as? ClassDescriptor ?: return@firstOrNull false
+            classDescriptor.kind != ClassKind.INTERFACE && classDescriptor.kind != ClassKind.ANNOTATION_CLASS
+        } ?: upperBounds.first()
+    }
+

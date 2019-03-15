@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.resolve.calls.tasks;
 
-import com.google.common.collect.Sets;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
@@ -45,6 +44,7 @@ import org.jetbrains.kotlin.types.Variance;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 
 import java.util.Collection;
+import java.util.HashSet;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.resolve.BindingContext.AMBIGUOUS_REFERENCE_TARGET;
@@ -64,7 +64,7 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
 
     @Override
     public <D extends CallableDescriptor> void recordAmbiguity(@NotNull BindingTrace trace, @NotNull Collection<? extends ResolvedCall<D>> candidates) {
-        Collection<D> descriptors = Sets.newHashSet();
+        Collection<D> descriptors = new HashSet<>();
         for (ResolvedCall<D> candidate : candidates) {
             descriptors.add(candidate.getCandidateDescriptor());
         }

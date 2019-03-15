@@ -1,4 +1,4 @@
 package test
 
-public val nsVal: kotlin.Int = 1
+public val nsVal: kotlin.Int
     public fun <get-nsVal>(): kotlin.Int

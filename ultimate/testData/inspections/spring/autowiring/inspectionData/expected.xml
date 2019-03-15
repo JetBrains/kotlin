@@ -1,49 +1,5 @@
 <problems>
     <problem>
-        <file>ambiguousConstructors.kt</file>
-        <line>52</line>
-        <entry_point TYPE="file" FQNAME="temp:///src/ambiguousConstructors/ambiguousConstructors.kt" />
-        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Autowiring for Bean Class (Kotlin)</problem_class>
-        <description>Class doesn't contain matching constructor for autowiring</description>
-    </problem>
-    <problem>
-        <file>ambiguousConstructors.kt</file>
-        <line>58</line>
-        <entry_point TYPE="file" FQNAME="temp:///src/ambiguousConstructors/ambiguousConstructors.kt" />
-        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Autowiring for Bean Class (Kotlin)</problem_class>
-        <description>Class doesn't contain matching constructor for autowiring</description>
-    </problem>
-
-    <problem>
-        <file>multipleAutowiredConstructors.kt</file>
-        <line>30</line>
-        <entry_point TYPE="file" FQNAME="temp:///src/multipleAutowiredConstructors/multipleAutowiredConstructors.kt" />
-        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Autowiring for Bean Class (Kotlin)</problem_class>
-        <description>Only one constructor can have @Autowired annotation</description>
-    </problem>
-    <problem>
-        <file>multipleAutowiredConstructors.kt</file>
-        <line>31</line>
-        <entry_point TYPE="file" FQNAME="temp:///src/multipleAutowiredConstructors/multipleAutowiredConstructors.kt" />
-        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Autowiring for Bean Class (Kotlin)</problem_class>
-        <description>Only one constructor can have @Autowired annotation</description>
-    </problem>
-    <problem>
-        <file>multipleAutowiredConstructors.kt</file>
-        <line>35</line>
-        <entry_point TYPE="file" FQNAME="temp:///src/multipleAutowiredConstructors/multipleAutowiredConstructors.kt" />
-        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Autowiring for Bean Class (Kotlin)</problem_class>
-        <description>Only one constructor can have @Autowired annotation</description>
-    </problem>
-    <problem>
-        <file>multipleAutowiredConstructors.kt</file>
-        <line>36</line>
-        <entry_point TYPE="file" FQNAME="temp:///src/multipleAutowiredConstructors/multipleAutowiredConstructors.kt" />
-        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Autowiring for Bean Class (Kotlin)</problem_class>
-        <description>Only one constructor can have @Autowired annotation</description>
-    </problem>
-
-    <problem>
         <file>invalidAutowiredResource.kt</file>
         <line>24</line>
         <entry_point TYPE="file" FQNAME="temp:///src/mismatchedType/mismatchedType.kt" />

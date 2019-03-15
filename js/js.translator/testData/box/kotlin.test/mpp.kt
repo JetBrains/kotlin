@@ -1,5 +1,6 @@
 // !LANGUAGE: +MultiPlatformProjects
-// EXPECTED_REACHABLE_NODES: 1173
+// EXPECTED_REACHABLE_NODES: 1328
+// IGNORE_BACKEND: JS_IR
 
 // FILE: lib.kt
 import kotlin.test.Test
@@ -9,6 +10,7 @@ expect class PlatformTest {
 }
 
 // FILE: main.kt
+import common.*
 import kotlin.test.Test
 
 actual class PlatformTest {

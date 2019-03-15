@@ -1,0 +1,4 @@
+public open class WrongTypeParameterBoundStructure1 : R|java/lang/Object| {
+    public open operator function foo(a: R|ft<A, A?>|!, b: R|ft<kotlin/collections/MutableList<out B>, kotlin/collections/List<out B>?>|!): R|kotlin/Unit|
+
+}

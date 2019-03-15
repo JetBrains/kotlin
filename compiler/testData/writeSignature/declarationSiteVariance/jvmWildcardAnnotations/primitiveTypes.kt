@@ -1,3 +1,4 @@
+// WITH_RUNTIME
 class Out<out T>
 class In<in E>
 

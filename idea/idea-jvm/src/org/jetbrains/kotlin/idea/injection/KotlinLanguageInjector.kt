@@ -23,7 +23,6 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
-import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.util.text.StringUtilRt
 import com.intellij.patterns.PatternCondition
 import com.intellij.patterns.PatternConditionPlus
@@ -45,12 +44,16 @@ import org.intellij.plugins.intelliLang.inject.config.InjectionPlace
 import org.intellij.plugins.intelliLang.inject.java.JavaLanguageInjectionSupport
 import org.intellij.plugins.intelliLang.util.AnnotationUtilEx
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.patterns.KotlinFunctionPattern
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.runInReadActionWithWriteActionPriority
+import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
+import org.jetbrains.kotlin.idea.util.application.progressIndicatorNullable
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
@@ -70,8 +73,6 @@ class KotlinLanguageInjector(
         private val STRING_LITERALS_REGEXP = "\"([^\"]*)\"".toRegex()
         private val ABSENT_KOTLIN_INJECTION = BaseInjection("ABSENT_KOTLIN_BASE_INJECTION")
     }
-
-    var annotationInjectionsEnabled = Registry.`is`("kotlin.annotation.injection.enabled", false)
 
     private val kotlinSupport: KotlinLanguageInjectionSupport? by lazy {
         ArrayList(InjectorUtils.getActiveInjectionSupports()).filterIsInstance(KotlinLanguageInjectionSupport::class.java).firstOrNull()
@@ -109,7 +110,7 @@ class KotlinLanguageInjector(
                     return computedInjection
                 }
 
-                if (ApplicationManager.getApplication().isReadAccessAllowed && ProgressManager.getInstance().progressIndicator == null) {
+                if (ApplicationManager.getApplication().isReadAccessAllowed && ProgressManager.getInstance().progressIndicatorNullable == null) {
                     // The action cannot be canceled by caller and by internal checkCanceled() calls.
                     // Force creating new indicator that is canceled on write action start, otherwise there might be lags in typing.
                     runInReadActionWithWriteActionPriority(::computeAndCache) ?: kotlinCachedInjection?.baseInjection ?: ABSENT_KOTLIN_INJECTION
@@ -133,9 +134,13 @@ class KotlinLanguageInjector(
             if (parts.ranges.isEmpty()) return
 
             InjectorUtils.registerInjection(language, parts.ranges, file, registrar)
-            InjectorUtils.registerSupport(support, false, registrar)
-            InjectorUtils.putInjectedFileUserData(registrar, InjectedLanguageUtil.FRANKENSTEIN_INJECTION,
-                                                  if (parts.isUnparsable) java.lang.Boolean.TRUE else null)
+            InjectorUtils.registerSupport(support, false, ktHost, language)
+            InjectorUtils.putInjectedFileUserData(
+                ktHost,
+                language,
+                InjectedLanguageUtil.FRANKENSTEIN_INJECTION,
+                if (parts.isUnparsable) java.lang.Boolean.TRUE else null
+            )
         }
         else {
             InjectorUtils.registerInjectionSimple(ktHost, baseInjection, support, registrar)
@@ -168,10 +173,32 @@ class KotlinLanguageInjector(
 
     private fun findInjectionInfo(place: KtElement, originalHost: Boolean = true): InjectionInfo? {
         return injectWithExplicitCodeInstruction(place)
-               ?: injectWithCall(place)
-               ?: injectInAnnotationCall(place)
-               ?: injectWithReceiver(place)
-               ?: injectWithVariableUsage(place, originalHost)
+                ?: injectWithCall(place)
+                ?: injectReturnValue(place)
+                ?: injectInAnnotationCall(place)
+                ?: injectWithReceiver(place)
+                ?: injectWithVariableUsage(place, originalHost)
+    }
+
+    private fun injectReturnValue(place: KtElement): InjectionInfo? {
+        val parent = place.parent
+
+        tailrec fun findReturnExpression(expression: PsiElement?): KtReturnExpression? = when (expression) {
+            is KtReturnExpression -> expression
+            is KtBinaryExpression -> findReturnExpression(expression.takeIf { it.operationToken == KtTokens.ELVIS }?.parent)
+            is KtContainerNodeForControlStructureBody, is KtIfExpression -> findReturnExpression(expression.parent)
+            else -> null
+        }
+
+        val returnExp = findReturnExpression(parent) ?: return null
+
+        if (returnExp.labeledExpression != null) return null
+
+        val callableDeclaration = PsiTreeUtil.getParentOfType(returnExp, KtDeclaration::class.java) as? KtCallableDeclaration ?: return null
+        if (callableDeclaration.annotationEntries.isEmpty()) return null
+
+        val descriptor = callableDeclaration.descriptor ?: return null
+        return injectionInfoByAnnotation(descriptor)
     }
 
     private fun injectWithExplicitCodeInstruction(host: KtElement): InjectionInfo? {
@@ -280,7 +307,6 @@ class KotlinLanguageInjector(
     }
 
     private fun injectInAnnotationCall(host: KtElement): InjectionInfo? {
-        if (!annotationInjectionsEnabled) return null
         val argument = host.parent as? KtValueArgument ?: return null
         val annotationEntry = argument.parent.parent as? KtCallElement ?: return null
         if (!fastCheckInjectionsExists(annotationEntry)) return null
@@ -335,10 +361,17 @@ class KotlinLanguageInjector(
         val functionDescriptor = ktReference.resolveToDescriptors(bindingContext).singleOrNull() as? FunctionDescriptor ?: return null
 
         val parameterDescriptor = functionDescriptor.valueParameters.getOrNull(argumentIndex) ?: return null
-        val injectAnnotation = parameterDescriptor.annotations.findAnnotation(FqName(AnnotationUtil.LANGUAGE)) ?: return null
+        return injectionInfoByAnnotation(parameterDescriptor)
+    }
+
+    private fun injectionInfoByAnnotation(annotated: Annotated): InjectionInfo? {
+        val injectAnnotation = annotated.annotations.findAnnotation(FqName(AnnotationUtil.LANGUAGE)) ?: return null
 
         val languageId = injectAnnotation.argumentValue("value")?.safeAs<StringValue>()?.value ?: return null
-        return InjectionInfo(languageId, null, null)
+        val prefix = injectAnnotation.argumentValue("prefix")?.safeAs<StringValue>()?.value
+        val suffix = injectAnnotation.argumentValue("suffix")?.safeAs<StringValue>()?.value
+
+        return InjectionInfo(languageId, prefix, suffix)
     }
 
     private fun findInjection(element: PsiElement?, injections: List<BaseInjection>): InjectionInfo? {

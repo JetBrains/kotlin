@@ -1,4 +1,4 @@
-fun main(args: Array<String>) {
+fun main() {
     "".run {
         <!UNUSED_LAMBDA_EXPRESSION!>{}<!>
     }

@@ -1,0 +1,2 @@
+public abstract interface AnnotationInParam : R|java/lang/Object| {
+}

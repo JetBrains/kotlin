@@ -1,0 +1,67 @@
+KtFile: 1.4.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    BINARY_EXPRESSION
+      CHARACTER_CONSTANT
+        PsiElement(CHARACTER_LITERAL)(''a'')
+      OPERATION_REFERENCE
+        PsiElement(IDENTIFIER)('l')
+      PsiErrorElement:Expecting an element
+        <empty list>
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    BINARY_EXPRESSION
+      FLOAT_CONSTANT
+        PsiElement(FLOAT_CONSTANT)('.09')
+      OPERATION_REFERENCE
+        PsiElement(IDENTIFIER)('L')
+      PsiErrorElement:Expecting an element
+        <empty list>
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    BINARY_EXPRESSION
+      FLOAT_CONSTANT
+        PsiElement(FLOAT_CONSTANT)('10.10')
+      OPERATION_REFERENCE
+        PsiElement(IDENTIFIER)('l')
+      PsiErrorElement:Expecting an element
+        <empty list>
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    BINARY_EXPRESSION
+      STRING_TEMPLATE
+        PsiElement(OPEN_QUOTE)('"')
+        LITERAL_STRING_TEMPLATE_ENTRY
+          PsiElement(REGULAR_STRING_PART)('...')
+        PsiElement(CLOSING_QUOTE)('"')
+      OPERATION_REFERENCE
+        PsiElement(IDENTIFIER)('L')
+      PsiErrorElement:Expecting an element
+        <empty list>

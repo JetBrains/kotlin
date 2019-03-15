@@ -50,7 +50,7 @@ PsiJetFileStubImpl[package=a]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
-          FUN[fqName=a.InheritingClasses.A.af, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=af]
+          FUN[fqName=a.InheritingClasses.A.af, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=af]
             MODIFIER_LIST[abstract public]
             VALUE_PARAMETER_LIST
             TYPE_REFERENCE
@@ -58,7 +58,7 @@ PsiJetFileStubImpl[package=a]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
-          FUN[fqName=a.InheritingClasses.A.of, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=of]
+          FUN[fqName=a.InheritingClasses.A.of, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=of]
             MODIFIER_LIST[open public]
             VALUE_PARAMETER_LIST
             TYPE_REFERENCE
@@ -95,7 +95,7 @@ PsiJetFileStubImpl[package=a]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
-          FUN[fqName=a.InheritingClasses.B.af, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=af]
+          FUN[fqName=a.InheritingClasses.B.af, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=af]
             MODIFIER_LIST[open public]
             VALUE_PARAMETER_LIST
             TYPE_REFERENCE
@@ -103,7 +103,7 @@ PsiJetFileStubImpl[package=a]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
-          FUN[fqName=a.InheritingClasses.B.of, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=of]
+          FUN[fqName=a.InheritingClasses.B.of, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=of]
             MODIFIER_LIST[open public]
             VALUE_PARAMETER_LIST
             TYPE_REFERENCE

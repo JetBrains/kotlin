@@ -19,8 +19,8 @@ package org.jetbrains.kotlin.incremental
 import org.jetbrains.kotlin.incremental.storage.BasicMapsOwner
 import java.io.File
 
-abstract class IncrementalCachesManager<PlatformCache : IncrementalCacheCommon<*>>(
-    protected val cachesRootDir: File,
+abstract class IncrementalCachesManager<PlatformCache : AbstractIncrementalCache<*>>(
+    cachesRootDir: File,
     protected val reporter: ICReporter
 ) {
     private val caches = arrayListOf<BasicMapsOwner>()
@@ -35,11 +35,6 @@ abstract class IncrementalCachesManager<PlatformCache : IncrementalCacheCommon<*
     val lookupCache: LookupStorage = LookupStorage(lookupCacheDir).apply { registerCache() }
     abstract val platformCache: PlatformCache
 
-    fun clean() {
-        caches.forEach { it.clean() }
-        cachesRootDir.deleteRecursively()
-    }
-
     fun close(flush: Boolean = false): Boolean {
         var successful = true
 
@@ -47,8 +42,7 @@ abstract class IncrementalCachesManager<PlatformCache : IncrementalCacheCommon<*
             if (flush) {
                 try {
                     cache.flush(false)
-                }
-                catch (e: Throwable) {
+                } catch (e: Throwable) {
                     successful = false
                     reporter.report { "Exception when flushing cache ${cache.javaClass}: $e" }
                 }
@@ -56,8 +50,7 @@ abstract class IncrementalCachesManager<PlatformCache : IncrementalCacheCommon<*
 
             try {
                 cache.close()
-            }
-            catch (e: Throwable) {
+            } catch (e: Throwable) {
                 successful = false
                 reporter.report { "Exception when closing cache ${cache.javaClass}: $e" }
             }

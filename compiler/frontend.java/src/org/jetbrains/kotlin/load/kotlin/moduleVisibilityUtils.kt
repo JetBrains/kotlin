@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedTypeAliasDescriptor
 import java.io.File
-import java.nio.file.Paths
 
 interface ModuleVisibilityManager {
     val chunk: Collection<Module>
@@ -72,7 +71,7 @@ fun isContainedByCompiledPartOfOurModule(descriptor: DeclarationDescriptor, outD
             StandardFileSystems.JAR_PROTOCOL -> VfsUtilCore.getVirtualFileForJar(file)?.let(VfsUtilCore::virtualToIoFile)
             else -> null
         }
-        return ioFile != null && Paths.get(ioFile.toURI()).startsWith(Paths.get(outDirectory.toURI()))
+        return ioFile != null && ioFile.toPath().startsWith(outDirectory.toPath())
     }
 
     return false
@@ -88,5 +87,5 @@ fun getSourceElement(descriptor: DeclarationDescriptor): SourceElement =
                 descriptor.toSourceElement
         }
 
-private val DeclarationDescriptor.toSourceElement: SourceElement
+val DeclarationDescriptor.toSourceElement: SourceElement
     get() = if (this is DeclarationDescriptorWithSource) source else SourceElement.NO_SOURCE

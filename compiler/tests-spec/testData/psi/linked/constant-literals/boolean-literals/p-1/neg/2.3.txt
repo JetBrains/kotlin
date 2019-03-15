@@ -1,0 +1,322 @@
+KtFile: 2.3.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  CLASS
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('A')
+    PsiWhiteSpace(' ')
+    TYPE_PARAMETER_LIST
+      PsiElement(LT)('<')
+      TYPE_PARAMETER
+        PsiErrorElement:Type parameter name expected
+          PsiElement(true)('true')
+      PsiElement(COMMA)(',')
+      PsiWhiteSpace(' ')
+      TYPE_PARAMETER
+        PsiErrorElement:Type parameter name expected
+          PsiElement(false)('false')
+      PsiElement(GT)('>')
+    PsiWhiteSpace('\n        ')
+    PsiElement(where)('where')
+    PsiWhiteSpace(' ')
+    TYPE_CONSTRAINT_LIST
+      TYPE_CONSTRAINT
+        PsiErrorElement:Expecting type parameter name
+          PsiElement(true)('true')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('CharSequence')
+      PsiElement(COMMA)(',')
+      PsiWhiteSpace('\n              ')
+      TYPE_CONSTRAINT
+        PsiErrorElement:Expecting type parameter name
+          PsiElement(false)('false')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Comparable')
+            TYPE_ARGUMENT_LIST
+              PsiElement(LT)('<')
+              TYPE_PROJECTION
+                TYPE_REFERENCE
+                  PsiErrorElement:Type expected
+                    PsiElement(true)('true')
+              PsiElement(GT)('>')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    MODIFIER_LIST
+      PsiElement(annotation)('annotation')
+    PsiWhiteSpace(' ')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('B')
+    PsiWhiteSpace(' ')
+    TYPE_PARAMETER_LIST
+      PsiElement(LT)('<')
+      TYPE_PARAMETER
+        PsiErrorElement:Type parameter name expected
+          PsiElement(false)('false')
+      PsiElement(GT)('>')
+    PsiWhiteSpace('\n        ')
+    PsiElement(where)('where')
+    PsiWhiteSpace(' ')
+    TYPE_CONSTRAINT_LIST
+      TYPE_CONSTRAINT
+        PsiErrorElement:Expecting type parameter name
+          PsiElement(true)('true')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('CharSequence')
+      PsiElement(COMMA)(',')
+      PsiWhiteSpace('\n              ')
+      TYPE_CONSTRAINT
+        ANNOTATION_ENTRY
+          PsiElement(AT)('@')
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('A')
+                TYPE_ARGUMENT_LIST
+                  PsiElement(LT)('<')
+                  TYPE_PROJECTION
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('List')
+                        TYPE_ARGUMENT_LIST
+                          PsiElement(LT)('<')
+                          TYPE_PROJECTION
+                            TYPE_REFERENCE
+                              NULLABLE_TYPE
+                                USER_TYPE
+                                  REFERENCE_EXPRESSION
+                                    PsiElement(IDENTIFIER)('Nothing')
+                                PsiElement(QUEST)('?')
+                          PsiElement(GT)('>')
+                  PsiElement(GT)('>')
+        PsiWhiteSpace(' ')
+        ANNOTATION_ENTRY
+          PsiElement(AT)('@')
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('B')
+        PsiWhiteSpace(' ')
+        PsiErrorElement:Expecting type parameter name
+          PsiElement(false)('false')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Comparable')
+            TYPE_ARGUMENT_LIST
+              PsiElement(LT)('<')
+              TYPE_PROJECTION
+                TYPE_REFERENCE
+                  PsiErrorElement:Type expected
+                    PsiElement(true)('true')
+              PsiElement(GT)('>')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    MODIFIER_LIST
+      PsiElement(annotation)('annotation')
+    PsiWhiteSpace(' ')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('C')
+    PsiWhiteSpace(' ')
+    TYPE_PARAMETER_LIST
+      PsiElement(LT)('<')
+      TYPE_PARAMETER
+        PsiErrorElement:Type parameter name expected
+          PsiElement(false)('false')
+      PsiElement(COMMA)(',')
+      PsiWhiteSpace(' ')
+      TYPE_PARAMETER
+        PsiErrorElement:Type parameter name expected
+          PsiElement(true)('true')
+      PsiElement(GT)('>')
+    PsiWhiteSpace(' ')
+    PsiElement(where)('where')
+    PsiWhiteSpace(' ')
+    TYPE_CONSTRAINT_LIST
+      TYPE_CONSTRAINT
+        ANNOTATION_ENTRY
+          PsiElement(AT)('@')
+          ANNOTATION_TARGET
+            PsiElement(property)('property')
+          PsiElement(COLON)(':')
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('C')
+        PsiWhiteSpace(' ')
+        PsiErrorElement:Expecting type parameter name
+          PsiElement(false)('false')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('CharSequence')
+      PsiElement(COMMA)(',')
+      PsiWhiteSpace(' ')
+      TYPE_CONSTRAINT
+        PsiErrorElement:Expecting type parameter name
+          PsiElement(true)('true')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Comparable')
+            TYPE_ARGUMENT_LIST
+              PsiElement(LT)('<')
+              TYPE_PROJECTION
+                TYPE_REFERENCE
+                  PsiErrorElement:Type expected
+                    PsiElement(false)('false')
+              PsiElement(GT)('>')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    TYPE_PARAMETER_LIST
+      PsiElement(LT)('<')
+      TYPE_PARAMETER
+        PsiErrorElement:Type parameter name expected
+          PsiElement(true)('true')
+      PsiElement(COMMA)(',')
+      PsiWhiteSpace(' ')
+      TYPE_PARAMETER
+        PsiErrorElement:Type parameter name expected
+          PsiElement(false)('false')
+      PsiElement(GT)('>')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('d')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('Boolean')
+    PsiWhiteSpace('\n        ')
+    PsiElement(where)('where')
+    PsiWhiteSpace(' ')
+    TYPE_CONSTRAINT_LIST
+      TYPE_CONSTRAINT
+        PsiErrorElement:Expecting type parameter name
+          PsiElement(true)('true')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Any')
+      PsiElement(COMMA)(',')
+      PsiWhiteSpace('\n              ')
+      TYPE_CONSTRAINT
+        PsiErrorElement:Expecting type parameter name
+          PsiElement(false)('false')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Iterable')
+            TYPE_ARGUMENT_LIST
+              PsiElement(LT)('<')
+              TYPE_PROJECTION
+                PsiElement(MUL)('*')
+              PsiElement(GT)('>')
+      PsiElement(COMMA)(',')
+      PsiWhiteSpace('\n              ')
+      TYPE_CONSTRAINT
+        PsiErrorElement:Expecting type parameter name
+          PsiElement(true)('true')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Collection')
+            TYPE_ARGUMENT_LIST
+              PsiElement(LT)('<')
+              TYPE_PROJECTION
+                PsiElement(MUL)('*')
+              PsiElement(GT)('>')
+      PsiElement(COMMA)(',')
+      PsiWhiteSpace('\n              ')
+      TYPE_CONSTRAINT
+        PsiErrorElement:Expecting type parameter name
+          PsiElement(false)('false')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('MutableCollection')
+            TYPE_ARGUMENT_LIST
+              PsiElement(LT)('<')
+              TYPE_PROJECTION
+                PsiElement(MUL)('*')
+              PsiElement(GT)('>')
+      PsiElement(COMMA)(',')
+      PsiWhiteSpace('\n              ')
+      TYPE_CONSTRAINT
+        PsiErrorElement:Expecting type parameter name
+          PsiElement(true)('true')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Comparable')
+            TYPE_ARGUMENT_LIST
+              PsiElement(LT)('<')
+              TYPE_PROJECTION
+                TYPE_REFERENCE
+                  PsiErrorElement:Type expected
+                    PsiElement(false)('false')
+              PsiElement(GT)('>')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    BINARY_EXPRESSION
+      BOOLEAN_CONSTANT
+        PsiElement(true)('true')
+      PsiWhiteSpace(' ')
+      OPERATION_REFERENCE
+        PsiElement(EQEQ)('==')
+      PsiWhiteSpace(' ')
+      BOOLEAN_CONSTANT
+        PsiElement(false)('false')

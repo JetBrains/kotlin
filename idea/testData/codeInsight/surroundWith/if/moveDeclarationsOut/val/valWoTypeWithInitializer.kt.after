@@ -1,7 +1,6 @@
 fun foo() {
-    val a: String
-    if () {
-        a = "aaa"
+    val a = if () {
+        "aaa"
     }
 
     a.charAt(1)

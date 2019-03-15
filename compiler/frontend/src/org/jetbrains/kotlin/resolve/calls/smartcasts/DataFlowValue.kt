@@ -43,6 +43,8 @@ class DataFlowValue(
         STABLE_VALUE("stable val"),
         // Block, or if / else, or when
         STABLE_COMPLEX_EXPRESSION("complex expression", ""),
+        // Should be unstable, but can be used as stable with deprecation warning
+        LEGACY_STABLE_LOCAL_DELEGATED_PROPERTY("local delegated property"),
         // Member value with open / custom getter
         // Smart casts are not safe
         PROPERTY_WITH_GETTER("custom getter", "property that has open or custom getter"),
@@ -69,7 +71,10 @@ class DataFlowValue(
      * Stable means here we do not expect some sudden change of their values,
      * like accessing mutable properties in another thread, so smart casts can be used safely.
      */
-    val isStable = (kind == Kind.STABLE_VALUE || kind == Kind.STABLE_VARIABLE || kind == Kind.STABLE_COMPLEX_EXPRESSION)
+    val isStable = kind == Kind.STABLE_VALUE ||
+            kind == Kind.STABLE_VARIABLE ||
+            kind == Kind.STABLE_COMPLEX_EXPRESSION ||
+            kind == Kind.LEGACY_STABLE_LOCAL_DELEGATED_PROPERTY
 
     val canBeBound get() = identifierInfo.canBeBound
 
@@ -85,7 +90,18 @@ class DataFlowValue(
 
     override fun toString() = "$kind $identifierInfo $immanentNullability"
 
-    override fun hashCode() = type.hashCode() + 31 * identifierInfo.hashCode()
+    private var hashCode = 0
+
+    override fun hashCode(): Int {
+        var hashCode = hashCode
+
+        if (hashCode == 0) {
+            hashCode = type.hashCode() + 31 * identifierInfo.hashCode()
+            this.hashCode = hashCode
+        }
+
+        return hashCode
+    }
 
     companion object {
 

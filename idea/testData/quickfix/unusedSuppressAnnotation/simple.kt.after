@@ -1,4 +1,4 @@
-// "Suppress for declarations annotated by 'xxx.XXX'" "true"
+// "Suppress unused warning if annotated by 'xxx.XXX'" "true"
 package xxx
 
 annotation class XXX

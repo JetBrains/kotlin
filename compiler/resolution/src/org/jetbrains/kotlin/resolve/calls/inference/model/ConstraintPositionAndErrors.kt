@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability.INAPPLICABLE
 import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability.INAPPLICABLE_WRONG_RECEIVER
+import org.jetbrains.kotlin.resolve.scopes.receivers.QualifierReceiver
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.UnwrappedType
 
@@ -55,14 +56,28 @@ class KnownTypeParameterConstraintPosition(val typeArgument: KotlinType) : Const
     override fun toString() = "TypeArgument $typeArgument"
 }
 
+class LHSArgumentConstraintPosition(val receiver: QualifierReceiver) : ConstraintPosition() {
+    override fun toString(): String {
+        return "LHS receiver $receiver"
+    }
+}
+
 class LambdaArgumentConstraintPosition(val lambda: ResolvedLambdaAtom) : ConstraintPosition() {
     override fun toString(): String {
         return "LambdaArgument $lambda"
     }
 }
 
+class DelegatedPropertyConstraintPosition(val topLevelCall: KotlinCall) : ConstraintPosition() {
+    override fun toString() = "Constraint from call $topLevelCall for delegated property"
+}
+
 class IncorporationConstraintPosition(val from: ConstraintPosition, val initialConstraint: InitialConstraint) : ConstraintPosition() {
     override fun toString() = "Incorporate $initialConstraint from position $from"
+}
+
+class CoroutinePosition() : ConstraintPosition() {
+    override fun toString(): String = "for coroutine call"
 }
 
 @Deprecated("Should be used only in SimpleConstraintSystemImpl")
@@ -85,3 +100,9 @@ class CapturedTypeFromSubtyping(
 ) : ConstraintSystemCallDiagnostic(INAPPLICABLE)
 
 class NotEnoughInformationForTypeParameter(val typeVariable: NewTypeVariable) : ConstraintSystemCallDiagnostic(INAPPLICABLE)
+
+class ConstrainingTypeIsError(
+    val typeVariable: NewTypeVariable,
+    val constraintType: UnwrappedType,
+    val position: IncorporationConstraintPosition
+) : ConstraintSystemCallDiagnostic(INAPPLICABLE)

@@ -1,0 +1,36 @@
+FILE fqName:<root> fileName:/dynamicBinaryOperator.kt
+  FUN name:testBinaryPlus visibility:public modality:FINAL <> (d:dynamic) returnType:dynamic flags:
+    VALUE_PARAMETER name:d index:0 type:dynamic flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='testBinaryPlus(dynamic): dynamic'
+        DYN_OP operator=BINARY_PLUS type=dynamic
+          receiver: GET_VAR 'value-parameter d: dynamic' type=dynamic origin=null
+          0: CONST Int type=kotlin.Int value=1
+  FUN name:testBinaryMinus visibility:public modality:FINAL <> (d:dynamic) returnType:dynamic flags:
+    VALUE_PARAMETER name:d index:0 type:dynamic flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='testBinaryMinus(dynamic): dynamic'
+        DYN_OP operator=BINARY_MINUS type=dynamic
+          receiver: GET_VAR 'value-parameter d: dynamic' type=dynamic origin=null
+          0: CONST Int type=kotlin.Int value=1
+  FUN name:testMul visibility:public modality:FINAL <> (d:dynamic) returnType:dynamic flags:
+    VALUE_PARAMETER name:d index:0 type:dynamic flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='testMul(dynamic): dynamic'
+        DYN_OP operator=MUL type=dynamic
+          receiver: GET_VAR 'value-parameter d: dynamic' type=dynamic origin=null
+          0: CONST Int type=kotlin.Int value=2
+  FUN name:testDiv visibility:public modality:FINAL <> (d:dynamic) returnType:dynamic flags:
+    VALUE_PARAMETER name:d index:0 type:dynamic flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='testDiv(dynamic): dynamic'
+        DYN_OP operator=DIV type=dynamic
+          receiver: GET_VAR 'value-parameter d: dynamic' type=dynamic origin=null
+          0: CONST Int type=kotlin.Int value=2
+  FUN name:testMod visibility:public modality:FINAL <> (d:dynamic) returnType:dynamic flags:
+    VALUE_PARAMETER name:d index:0 type:dynamic flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='testMod(dynamic): dynamic'
+        DYN_OP operator=MOD type=dynamic
+          receiver: GET_VAR 'value-parameter d: dynamic' type=dynamic origin=null
+          0: CONST Int type=kotlin.Int value=2

@@ -60,14 +60,14 @@ class BatchTemplateRunner(private val project: Project) {
             PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.document)
             val template = factory() ?: return@executeWriteCommand
             manager.startTemplate(
-                    editor,
-                    template,
-                    object : TemplateEditingAdapter() {
-                        override fun templateFinished(template: Template?, brokenOff: Boolean) {
-                            if (brokenOff) return
-                            ApplicationManager.getApplication().invokeLater { runTemplates(iterator) }
-                        }
+                editor,
+                template,
+                object : TemplateEditingAdapter() {
+                    override fun templateFinished(template: Template, brokenOff: Boolean) {
+                        if (brokenOff) return
+                        ApplicationManager.getApplication().invokeLater { runTemplates(iterator) }
                     }
+                }
             )
         }
     }

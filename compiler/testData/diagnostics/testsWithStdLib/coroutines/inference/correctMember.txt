@@ -2,7 +2,7 @@ package
 
 public val test1: kotlin.String
 public val test2: kotlin.Int
-public fun </*0*/ S> generate(/*0*/ g: suspend Controller<S>.() -> kotlin.Unit): S
+public fun </*0*/ S> generate(/*0*/ @kotlin.BuilderInference g: suspend Controller<S>.() -> kotlin.Unit): S
 
 public interface Controller</*0*/ T> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

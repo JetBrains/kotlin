@@ -57,7 +57,8 @@ abstract class AbstractIncrementalJvmCompilerRunnerTest : AbstractIncrementalCom
         }
         val args = arrayOf("-cp", javaClasspath,
                            "-d", javaDestinationDir.canonicalPath,
-                           *javaSources.map { it.canonicalPath }.toTypedArray())
+                           *javaSources.map { it.canonicalPath }.toTypedArray()
+        )
 
         val err = ByteArrayOutputStream()
         val javac = ToolProvider.getSystemJavaCompiler()
@@ -69,15 +70,15 @@ abstract class AbstractIncrementalJvmCompilerRunnerTest : AbstractIncrementalCom
     }
 
     override fun createCompilerArguments(destinationDir: File, testDir: File): K2JVMCompilerArguments =
-            K2JVMCompilerArguments().apply {
-                moduleName = testDir.name
-                destination = destinationDir.path
-                classpath = compileClasspath
-            }
+        K2JVMCompilerArguments().apply {
+            moduleName = testDir.name
+            destination = destinationDir.path
+            classpath = compileClasspath
+        }
 
     private val compileClasspath =
-            listOf(
-                kotlinStdlibJvm,
-                KotlinTestUtils.getAnnotationsJar()
-            ).joinToString(File.pathSeparator) { it.canonicalPath }
+        listOf(
+            kotlinStdlibJvm,
+            KotlinTestUtils.getAnnotationsJar()
+        ).joinToString(File.pathSeparator) { it.canonicalPath }
 }

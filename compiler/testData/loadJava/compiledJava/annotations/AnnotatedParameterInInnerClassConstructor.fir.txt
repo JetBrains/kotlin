@@ -1,0 +1,2 @@
+public/*package*/ open class AnnotatedParameterInInnerClassConstructor : R|java/lang/Object| {
+}

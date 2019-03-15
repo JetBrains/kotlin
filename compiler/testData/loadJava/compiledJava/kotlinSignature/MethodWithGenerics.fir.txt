@@ -1,0 +1,4 @@
+public open class MethodWithGenerics : R|java/lang/Object| {
+    public open operator function foo(a: R|ft<kotlin/String, kotlin/String?>|!, b: R|ft<kotlin/collections/MutableList<ft<kotlin/collections/MutableMap.MutableEntry<ft<kotlin/String, kotlin/String?>, ft<kotlin/String, kotlin/String?>>, kotlin/collections/Map.Entry<ft<kotlin/String, kotlin/String?>, ft<kotlin/String, kotlin/String?>>?>>, kotlin/collections/List<ft<kotlin/collections/MutableMap.MutableEntry<ft<kotlin/String, kotlin/String?>, ft<kotlin/String, kotlin/String?>>, kotlin/collections/Map.Entry<ft<kotlin/String, kotlin/String?>, ft<kotlin/String, kotlin/String?>>?>>?>|!): R|ft<kotlin/String, kotlin/String?>|!
+
+}

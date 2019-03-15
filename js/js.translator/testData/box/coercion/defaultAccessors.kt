@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1140
+// EXPECTED_REACHABLE_NODES: 1288
 interface I {
     val a: Char
 }
@@ -17,9 +17,11 @@ object Y : I {
         }
 }
 
+val expectedCharRepresentationInProperty = if (testUtils.isLegacyBackend()) "object" else "number"
+
 fun box(): String {
     val t = jsTypeOf(X.asDynamic().a)
-    if (t != "object") return "fail1: $t"
+    if (t != expectedCharRepresentationInProperty) return "fail1: $t"
 
     Y.a = '@'
     Y.a

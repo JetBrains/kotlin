@@ -19,22 +19,24 @@ package org.jetbrains.kotlin.idea.configuration
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListenerAdapter
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskType
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.configuration.ui.KotlinConfigurationCheckerComponent
 
 class KotlinExternalSystemSyncListener : ExternalSystemTaskNotificationListenerAdapter() {
     override fun onStart(id: ExternalSystemTaskId, workingDir: String) {
-        if (id.type == ExternalSystemTaskType.RESOLVE_PROJECT) {
-            id.findProject()?.let { project ->
-                KotlinConfigurationCheckerComponent.getInstance(project).syncStarted()
-            }
-        }
+        val project = id.findResolvedProject() ?: return
+        KotlinMigrationProjectComponent.getInstanceIfNotDisposed(project)?.onImportAboutToStart()
+        KotlinConfigurationCheckerComponent.getInstanceIfNotDisposed(project)?.syncStarted()
     }
 
     override fun onEnd(id: ExternalSystemTaskId) {
-        if (id.type == ExternalSystemTaskType.RESOLVE_PROJECT) {
-            id.findProject()?.let { project ->
-                KotlinConfigurationCheckerComponent.getInstance(project).syncDone()
-            }
-        }
+        // At this point changes might be still not applied to project structure yet.
+        val project = id.findResolvedProject() ?: return
+        KotlinConfigurationCheckerComponent.getInstanceIfNotDisposed(project)?.syncDone()
     }
+}
+
+internal fun ExternalSystemTaskId.findResolvedProject(): Project? {
+    if (type != ExternalSystemTaskType.RESOLVE_PROJECT) return null
+    return findProject()
 }

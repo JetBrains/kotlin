@@ -1,0 +1,2 @@
+public open class RawSuperType : R|java/lang/Object| {
+}

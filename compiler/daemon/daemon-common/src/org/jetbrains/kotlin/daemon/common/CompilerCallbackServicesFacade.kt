@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.daemon.common
 
 import org.jetbrains.kotlin.incremental.components.LookupInfo
+import org.jetbrains.kotlin.incremental.js.JsInlineFunctionHash
 import org.jetbrains.kotlin.load.kotlin.incremental.components.JvmPackagePartProto
 import org.jetbrains.kotlin.modules.TargetId
 import java.io.Serializable
@@ -29,7 +30,10 @@ import java.rmi.RemoteException
  * the reason for having common facade is attempt to reduce number of connections between client and daemon
  * Note: non-standard naming convention used to denote combining several entities in one facade - prefix <entityName>_ is used for every function belonging to the entity
  */
-@Deprecated("The usages should be replaced with `compile` method and `CompilerServicesFacadeBase` implementations", ReplaceWith("CompilerServicesFacadeBase"))
+@Deprecated(
+    "The usages should be replaced with `compile` method and `CompilerServicesFacadeBase` implementations",
+    ReplaceWith("CompilerServicesFacadeBase")
+)
 interface CompilerCallbackServicesFacade : Remote {
 
     @Throws(RemoteException::class)
@@ -40,6 +44,15 @@ interface CompilerCallbackServicesFacade : Remote {
 
     @Throws(RemoteException::class)
     fun hasCompilationCanceledStatus(): Boolean
+
+    @Throws(RemoteException::class)
+    fun hasExpectActualTracker(): Boolean
+
+    @Throws(RemoteException::class)
+    fun hasIncrementalResultsConsumer(): Boolean
+
+    @Throws(RemoteException::class)
+    fun hasIncrementalDataProvider(): Boolean
 
     // ----------------------------------------------------
     // IncrementalCache
@@ -82,11 +95,43 @@ interface CompilerCallbackServicesFacade : Remote {
     // CompilationCanceledStatus
     @Throws(RemoteException::class, RmiFriendlyCompilationCanceledException::class)
     fun compilationCanceledStatus_checkCanceled(): Void?
+
+    // ---------------------------------------------------
+    // ExpectActualTracker
+    @Throws(RemoteException::class)
+    fun expectActualTracker_report(expectedFilePath: String, actualFilePath: String)
+
+    // ---------------------------------------------------
+    // IncrementalResultsConsumer (js)
+    @Throws(RemoteException::class)
+    fun incrementalResultsConsumer_processHeader(headerMetadata: ByteArray)
+
+    @Throws(RemoteException::class)
+    fun incrementalResultsConsumer_processPackagePart(sourceFilePath: String, packagePartMetadata: ByteArray, binaryAst: ByteArray, inlineData: ByteArray)
+
+    @Throws(RemoteException::class)
+    fun incrementalResultsConsumer_processInlineFunctions(functions: Collection<JsInlineFunctionHash>)
+
+    // ---------------------------------------------------
+    // IncrementalDataProvider (js)
+    @Throws(RemoteException::class)
+    fun incrementalDataProvider_getHeaderMetadata(): ByteArray
+
+    @Throws(RemoteException::class)
+    fun incrementalDataProvider_getCompiledPackageParts(): Collection<CompiledPackagePart>
+
+    @Throws(RemoteException::class)
+    fun incrementalDataProvider_getMetadataVersion(): IntArray
 }
 
+class CompiledPackagePart(
+    val filePath: String,
+    val metadata: ByteArray, val binaryAst: ByteArray, val inlineData: ByteArray
+) : Serializable
 
 class RmiFriendlyCompilationCanceledException : Exception(), Serializable {
     companion object {
-        private val serialVersionUID: Long = 8228357578L // just a random number, but should never be changed to avoid deserialization problems
+        // just a random number, but should never be changed to avoid deserialization problems
+        private val serialVersionUID: Long = 8228357578L
     }
 }

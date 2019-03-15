@@ -22,24 +22,33 @@ import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.MetadataSource
+import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.SmartList
-import java.util.*
 
 class IrFileImpl(
     override val fileEntry: SourceManager.FileEntry,
     override val symbol: IrFileSymbol,
     override val fqName: FqName
-) : IrElementBase(0, fileEntry.maxOffset), IrFile {
+) :
+    IrElementBase(0, fileEntry.maxOffset),
+    IrFile {
 
-    constructor(fileEntry: SourceManager.FileEntry, symbol: IrFileSymbol) :
+    constructor(
+        fileEntry: SourceManager.FileEntry,
+        symbol: IrFileSymbol
+    ) :
             this(fileEntry, symbol, symbol.descriptor.fqName)
 
-    constructor(fileEntry: SourceManager.FileEntry, packageFragmentDescriptor: PackageFragmentDescriptor) :
+    constructor(
+        fileEntry: SourceManager.FileEntry,
+        packageFragmentDescriptor: PackageFragmentDescriptor
+    ) :
             this(fileEntry, IrFileSymbolImpl(packageFragmentDescriptor), packageFragmentDescriptor.fqName)
 
     constructor(
@@ -61,6 +70,10 @@ class IrFileImpl(
     override val fileAnnotations: MutableList<AnnotationDescriptor> = SmartList()
 
     override val declarations: MutableList<IrDeclaration> = ArrayList()
+
+    override val annotations: MutableList<IrCall> = ArrayList()
+
+    override var metadata: MetadataSource.File? = null
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitFile(this, data)

@@ -1,6 +1,6 @@
 package
 
-public var x: kotlin.Int
+@setparam:Ann public var x: kotlin.Int
 
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS}) public final annotation class Ann : kotlin.Annotation {
     public constructor Ann()

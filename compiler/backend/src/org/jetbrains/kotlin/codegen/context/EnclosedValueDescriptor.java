@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.ExpressionCodegen;
 import org.jetbrains.kotlin.codegen.StackValue;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.org.objectweb.asm.Type;
 
 public final class EnclosedValueDescriptor {
@@ -29,18 +30,21 @@ public final class EnclosedValueDescriptor {
     private final StackValue.StackValueWithSimpleReceiver innerValue;
     private final StackValue instanceValue;
     private final Type type;
+    private final KotlinType kotlinType;
 
     public EnclosedValueDescriptor(
             @NotNull String fieldName,
             @Nullable DeclarationDescriptor descriptor,
             @NotNull StackValue.StackValueWithSimpleReceiver innerValue,
-            @NotNull Type type
+            @NotNull Type type,
+            @Nullable KotlinType kotlinType
     ) {
         this.fieldName = fieldName;
         this.descriptor = descriptor;
         this.innerValue = innerValue;
         this.instanceValue = innerValue;
         this.type = type;
+        this.kotlinType = kotlinType;
     }
 
     public EnclosedValueDescriptor(
@@ -48,13 +52,15 @@ public final class EnclosedValueDescriptor {
             @Nullable DeclarationDescriptor descriptor,
             @NotNull StackValue.StackValueWithSimpleReceiver innerValue,
             @NotNull StackValue.Field instanceValue,
-            @NotNull Type type
+            @NotNull Type type,
+            @Nullable KotlinType kotlinType
     ) {
         this.fieldName = name;
         this.descriptor = descriptor;
         this.innerValue = innerValue;
         this.instanceValue = instanceValue;
         this.type = type;
+        this.kotlinType = kotlinType;
     }
 
     @NotNull
@@ -80,6 +86,11 @@ public final class EnclosedValueDescriptor {
     @NotNull
     public Type getType() {
         return type;
+    }
+
+    @Nullable
+    public KotlinType getKotlinType() {
+        return kotlinType;
     }
 
     @Override

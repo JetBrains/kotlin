@@ -1,8 +1,8 @@
-LineBreakpoint created at stopInObjectLiteralInInlineCallWithClosureInAnonymous.kt:11
+LineBreakpoint created at stopInObjectLiteralInInlineCallWithClosureInAnonymous.kt:13
 Run Java
 Connected to the target VM
-stopInObjectLiteralInInlineCallWithClosureInAnonymous.kt:11
-stopInObjectLiteralInInlineCallWithClosureInAnonymous.kt:12
+stopInObjectLiteralInInlineCallWithClosureInAnonymous.kt:13
+stopInObjectLiteralInInlineCallWithClosureInAnonymous.kt:14
 Disconnected from the target VM
 
 Process finished with exit code 0

@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1108
+// EXPECTED_REACHABLE_NODES: 1280
 inline fun foo(i : Int) = if (i % 2 == 0) {} else i
 
 fun box(): String {

@@ -30,7 +30,7 @@ class KotlinUBlockExpression(
     class KotlinLazyUBlockExpression(
             override val uastParent: UElement?,
             expressionProducer: (expressionParent: UElement) -> List<UExpression>
-    ) : UBlockExpression, JvmDeclarationUElement {
+    ) : UBlockExpression, JvmDeclarationUElementPlaceholder {
         override val psi: PsiElement? = null
         override val javaPsi: PsiElement? = null
         override val sourcePsi: PsiElement? = null

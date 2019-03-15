@@ -20,11 +20,14 @@ import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtPostfixExpression
 import org.jetbrains.uast.*
+import org.jetbrains.uast.kotlin.declarations.KotlinUIdentifier
+import org.jetbrains.uast.kotlin.internal.DelegatedMultiResolve
 
 class KotlinUPostfixExpression(
         override val psi: KtPostfixExpression,
         givenParent: UElement?
-) : KotlinAbstractUExpression(givenParent), UPostfixExpression, KotlinUElementWithType, KotlinEvaluatableUElement, UResolvable {
+) : KotlinAbstractUExpression(givenParent), UPostfixExpression, KotlinUElementWithType, KotlinEvaluatableUElement,
+    UResolvable, DelegatedMultiResolve {
     override val operand by lz { KotlinConverter.convertOrEmpty(psi.baseExpression, this) }
 
     override val operator = when (psi.operationToken) {
@@ -35,7 +38,7 @@ class KotlinUPostfixExpression(
     }
 
     override val operatorIdentifier: UIdentifier?
-        get() = UIdentifier(psi.operationReference, this)
+        get() = KotlinUIdentifier(psi.operationReference, this)
 
     override fun resolveOperator() = psi.operationReference.resolveCallToDeclaration(context = this) as? PsiMethod
 

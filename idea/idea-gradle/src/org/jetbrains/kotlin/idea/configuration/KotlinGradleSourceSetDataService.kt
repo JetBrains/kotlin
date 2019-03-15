@@ -31,26 +31,43 @@ import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import com.intellij.openapi.roots.impl.libraries.LibraryImpl
 import com.intellij.openapi.roots.libraries.PersistentLibraryKind
+import com.intellij.openapi.util.Key
 import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
-import org.jetbrains.kotlin.config.CoroutineSupport
-import org.jetbrains.kotlin.config.JvmTarget
-import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.TargetPlatformKind
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
+import org.jetbrains.kotlin.gradle.ArgsInfo
+import org.jetbrains.kotlin.gradle.CompilerArgumentsBySourceSet
+import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
+import org.jetbrains.kotlin.idea.configuration.GradlePropertiesFileFacade.Companion.KOTLIN_CODE_STYLE_GRADLE_SETTING
 import org.jetbrains.kotlin.idea.facet.*
+import org.jetbrains.kotlin.idea.formatter.ProjectCodeStyleImporter
 import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.idea.framework.detectLibraryKind
 import org.jetbrains.kotlin.idea.inspections.gradle.findAll
 import org.jetbrains.kotlin.idea.inspections.gradle.findKotlinPluginVersion
-import org.jetbrains.kotlin.idea.inspections.gradle.getResolvedKotlinStdlibVersionByModuleData
+import org.jetbrains.kotlin.idea.inspections.gradle.getResolvedVersionByModuleData
+import org.jetbrains.kotlin.idea.platform.tooling
+import org.jetbrains.kotlin.idea.roots.migrateNonJvmSourceFolders
+import org.jetbrains.kotlin.platform.IdePlatformKind
+import org.jetbrains.kotlin.platform.impl.isCommon
+import org.jetbrains.kotlin.platform.impl.isJavaScript
+import org.jetbrains.kotlin.platform.impl.isJvm
+import org.jetbrains.kotlin.psi.UserDataProperty
 import org.jetbrains.plugins.gradle.model.data.BuildScriptClasspathData
 import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData
+import org.jetbrains.plugins.gradle.util.GradleConstants
 import java.io.File
 import java.util.*
+
+var Module.compilerArgumentsBySourceSet
+        by UserDataProperty(Key.create<CompilerArgumentsBySourceSet>("CURRENT_COMPILER_ARGUMENTS"))
+
+var Module.sourceSetName
+        by UserDataProperty(Key.create<String>("SOURCE_SET_NAME"))
 
 interface GradleProjectImportHandler {
     companion object : ProjectExtensionDescriptor<GradleProjectImportHandler>(
@@ -60,6 +77,36 @@ interface GradleProjectImportHandler {
 
     fun importBySourceSet(facet: KotlinFacet, sourceSetNode: DataNode<GradleSourceSetData>)
     fun importByModule(facet: KotlinFacet, moduleNode: DataNode<ModuleData>)
+}
+
+class KotlinGradleProjectSettingsDataService : AbstractProjectDataService<ProjectData, Void>() {
+    override fun getTargetDataKey() = ProjectKeys.PROJECT
+
+    override fun postProcess(
+        toImport: MutableCollection<DataNode<ProjectData>>,
+        projectData: ProjectData?,
+        project: Project,
+        modelsProvider: IdeModifiableModelsProvider
+    ) {
+        val allSettings = modelsProvider.modules.mapNotNull {
+            val settings = modelsProvider
+                .getModifiableFacetModel(it)
+                .findFacet(KotlinFacetType.TYPE_ID, KotlinFacetType.INSTANCE.defaultFacetName)
+                ?.configuration
+                ?.settings ?: return@mapNotNull null
+            if (settings.useProjectSettings) null else settings
+        }
+        val languageVersion = allSettings.asSequence().mapNotNullTo(LinkedHashSet()) { it.languageLevel }.singleOrNull()
+        val apiVersion = allSettings.asSequence().mapNotNullTo(LinkedHashSet()) { it.apiLevel }.singleOrNull()
+        KotlinCommonCompilerArgumentsHolder.getInstance(project).update {
+            if (languageVersion != null) {
+                this.languageVersion = languageVersion.versionString
+            }
+            if (apiVersion != null) {
+                this.apiVersion = apiVersion.versionString
+            }
+        }
+    }
 }
 
 class KotlinGradleSourceSetDataService : AbstractProjectDataService<GradleSourceSetData, Void>() {
@@ -76,7 +123,7 @@ class KotlinGradleSourceSetDataService : AbstractProjectDataService<GradleSource
             val ideModule = modelsProvider.findIdeModule(sourceSetData) ?: continue
 
             val moduleNode = ExternalSystemApiUtil.findParent(sourceSetNode, ProjectKeys.MODULE) ?: continue
-            val kotlinFacet = configureFacetByGradleModule(moduleNode, sourceSetNode, ideModule, modelsProvider) ?: continue
+            val kotlinFacet = configureFacetByGradleModule(ideModule, modelsProvider, moduleNode, sourceSetNode) ?: continue
             GradleProjectImportHandler.getInstances(project).forEach { it.importBySourceSet(kotlinFacet, sourceSetNode) }
         }
     }
@@ -97,9 +144,12 @@ class KotlinGradleProjectDataService : AbstractProjectDataService<ModuleData, Vo
 
             val moduleData = moduleNode.data
             val ideModule = modelsProvider.findIdeModule(moduleData) ?: continue
-            val kotlinFacet = configureFacetByGradleModule(moduleNode, null, ideModule, modelsProvider) ?: continue
+            val kotlinFacet = configureFacetByGradleModule(ideModule, modelsProvider, moduleNode, null) ?: continue
             GradleProjectImportHandler.getInstances(project).forEach { it.importByModule(kotlinFacet, moduleNode) }
         }
+
+        val codeStyleStr = GradlePropertiesFileFacade.forProject(project).readProperty(KOTLIN_CODE_STYLE_GRADLE_SETTING)
+        ProjectCodeStyleImporter.apply(project, codeStyleStr)
     }
 }
 
@@ -116,7 +166,9 @@ class KotlinGradleLibraryDataService : AbstractProjectDataService<LibraryData, V
         val projectDataNode = toImport.first().parent!!
         @Suppress("UNCHECKED_CAST")
         val moduleDataNodes = projectDataNode.children.filter { it.data is ModuleData } as List<DataNode<ModuleData>>
-        val anyNonJvmModules = moduleDataNodes.any { detectPlatformByPlugin(it)?.takeIf { it !is TargetPlatformKind.Jvm } != null }
+        val anyNonJvmModules = moduleDataNodes
+            .any { node -> detectPlatformKindByPlugin(node)?.takeIf { !it.isJvm } != null }
+
         for (libraryDataNode in toImport) {
             val ideLibrary = modelsProvider.findIdeLibrary(libraryDataNode.data) ?: continue
 
@@ -155,29 +207,52 @@ class KotlinGradleLibraryDataService : AbstractProjectDataService<LibraryData, V
     }
 }
 
+fun detectPlatformKindByPlugin(moduleNode: DataNode<ModuleData>): IdePlatformKind<*>? {
+    val pluginId = moduleNode.platformPluginId
+    return IdePlatformKind.ALL_KINDS.firstOrNull { it.tooling.gradlePluginId == pluginId }
+}
+
+@Suppress("DEPRECATION_ERROR")
+@Deprecated(
+    "Use detectPlatformKindByPlugin() instead",
+    replaceWith = ReplaceWith("detectPlatformKindByPlugin(moduleNode)"),
+    level = DeprecationLevel.ERROR
+)
 fun detectPlatformByPlugin(moduleNode: DataNode<ModuleData>): TargetPlatformKind<*>? {
     return when (moduleNode.platformPluginId) {
-        "kotlin-platform-jvm" -> TargetPlatformKind.Jvm[JvmTarget.JVM_1_6]
+        "kotlin-platform-jvm" -> TargetPlatformKind.Jvm[JvmTarget.DEFAULT]
         "kotlin-platform-js" -> TargetPlatformKind.JavaScript
         "kotlin-platform-common" -> TargetPlatformKind.Common
         else -> null
     }
 }
 
-private fun detectPlatformByLibrary(moduleNode: DataNode<ModuleData>): TargetPlatformKind<*>? {
+private fun detectPlatformByLibrary(moduleNode: DataNode<ModuleData>): IdePlatformKind<*>? {
     val detectedPlatforms =
         mavenLibraryIdToPlatform.entries
-            .filter { moduleNode.getResolvedKotlinStdlibVersionByModuleData(listOf(it.key)) != null }
+            .filter { moduleNode.getResolvedVersionByModuleData(KOTLIN_GROUP_ID, listOf(it.key)) != null }
             .map { it.value }.distinct()
-    return detectedPlatforms.singleOrNull() ?: detectedPlatforms.firstOrNull { it != TargetPlatformKind.Common }
+    return detectedPlatforms.singleOrNull() ?: detectedPlatforms.firstOrNull { !it.isCommon }
 }
 
-private fun configureFacetByGradleModule(
+@Suppress("unused") // Used in the Android plugin
+fun configureFacetByGradleModule(
     moduleNode: DataNode<ModuleData>,
-    sourceSetNode: DataNode<GradleSourceSetData>?,
+    sourceSetName: String?,
     ideModule: Module,
     modelsProvider: IdeModifiableModelsProvider
 ): KotlinFacet? {
+    return configureFacetByGradleModule(ideModule, modelsProvider, moduleNode, null, sourceSetName)
+}
+
+fun configureFacetByGradleModule(
+    ideModule: Module,
+    modelsProvider: IdeModifiableModelsProvider,
+    moduleNode: DataNode<ModuleData>,
+    sourceSetNode: DataNode<GradleSourceSetData>?,
+    sourceSetName: String? = sourceSetNode?.data?.id?.let { it.substring(it.lastIndexOf(':') + 1) }
+): KotlinFacet? {
+    if (moduleNode.kotlinSourceSet != null) return null // Suppress in the presence of new MPP model
     if (!moduleNode.isResolved) return null
 
     if (!moduleNode.hasKotlinPlugin) {
@@ -190,27 +265,28 @@ private fun configureFacetByGradleModule(
     }
 
     val compilerVersion = moduleNode.findAll(BuildScriptClasspathData.KEY).firstOrNull()?.data?.let(::findKotlinPluginVersion)
-            ?: return null
-    val platformKind = detectPlatformByPlugin(moduleNode) ?: detectPlatformByLibrary(moduleNode)
+        ?: return null
+    val platformKind = detectPlatformKindByPlugin(moduleNode) ?: detectPlatformByLibrary(moduleNode)
+
+    // TODO there should be a way to figure out the correct platform version
+    val platform = platformKind?.defaultPlatform
 
     val coroutinesProperty = CoroutineSupport.byCompilerArgument(
         moduleNode.coroutines ?: findKotlinCoroutinesProperty(ideModule.project)
     )
 
-    val kotlinFacet = ideModule.getOrCreateFacet(modelsProvider, false)
-    kotlinFacet.configureFacet(compilerVersion, coroutinesProperty, platformKind, modelsProvider)
+    val kotlinFacet = ideModule.getOrCreateFacet(modelsProvider, false, GradleConstants.SYSTEM_ID.id)
+    kotlinFacet.configureFacet(compilerVersion, coroutinesProperty, platform, modelsProvider)
 
-    val sourceSetName = sourceSetNode?.data?.id?.let { it.substring(it.lastIndexOf(':') + 1) }
+    if (sourceSetNode == null) {
+        ideModule.compilerArgumentsBySourceSet = moduleNode.compilerArgumentsBySourceSet
+        ideModule.sourceSetName = sourceSetName
+    }
+    ideModule.hasExternalSdkConfiguration = sourceSetNode?.data?.sdkName != null
 
     val argsInfo = moduleNode.compilerArgumentsBySourceSet?.get(sourceSetName ?: "main")
     if (argsInfo != null) {
-        val currentCompilerArguments = argsInfo.currentArguments
-        val defaultCompilerArguments = argsInfo.defaultArguments
-        val dependencyClasspath = argsInfo.dependencyClasspath.map { PathUtil.toSystemIndependentName(it) }
-        if (currentCompilerArguments.isNotEmpty()) {
-            parseCompilerArgumentsToFacet(currentCompilerArguments, defaultCompilerArguments, kotlinFacet, modelsProvider)
-        }
-        adjustClasspath(kotlinFacet, dependencyClasspath)
+        configureFacetByCompilerArguments(kotlinFacet, argsInfo, modelsProvider)
     }
 
     with(kotlinFacet.configuration.settings) {
@@ -221,16 +297,33 @@ private fun configureFacetByGradleModule(
 
     kotlinFacet.noVersionAutoAdvance()
 
+    if (platformKind != null && !platformKind.isJvm) {
+        migrateNonJvmSourceFolders(modelsProvider.getModifiableRootModel(ideModule))
+    }
+
     return kotlinFacet
 }
 
-private fun getExplicitOutputPath(moduleNode: DataNode<ModuleData>, platformKind: TargetPlatformKind<*>?, sourceSet: String): String? {
-    if (platformKind !== TargetPlatformKind.JavaScript) return null
+fun configureFacetByCompilerArguments(kotlinFacet: KotlinFacet, argsInfo: ArgsInfo, modelsProvider: IdeModifiableModelsProvider?) {
+    val currentCompilerArguments = argsInfo.currentArguments
+    val defaultCompilerArguments = argsInfo.defaultArguments
+    val dependencyClasspath = argsInfo.dependencyClasspath.map { PathUtil.toSystemIndependentName(it) }
+    if (currentCompilerArguments.isNotEmpty()) {
+        parseCompilerArgumentsToFacet(currentCompilerArguments, defaultCompilerArguments, kotlinFacet, modelsProvider)
+    }
+    adjustClasspath(kotlinFacet, dependencyClasspath)
+}
+
+private fun getExplicitOutputPath(moduleNode: DataNode<ModuleData>, platformKind: IdePlatformKind<*>?, sourceSet: String): String? {
+    if (!platformKind.isJavaScript) {
+        return null
+    }
+
     val k2jsArgumentList = moduleNode.compilerArgumentsBySourceSet?.get(sourceSet)?.currentArguments ?: return null
     return K2JSCompilerArguments().apply { parseCommandLineArguments(k2jsArgumentList, this) }.outputFile
 }
 
-private fun adjustClasspath(kotlinFacet: KotlinFacet, dependencyClasspath: List<String>) {
+internal fun adjustClasspath(kotlinFacet: KotlinFacet, dependencyClasspath: List<String>) {
     if (dependencyClasspath.isEmpty()) return
     val arguments = kotlinFacet.configuration.settings.compilerArguments as? K2JVMCompilerArguments ?: return
     val fullClasspath = arguments.classpath?.split(File.pathSeparator) ?: emptyList()
@@ -239,15 +332,7 @@ private fun adjustClasspath(kotlinFacet: KotlinFacet, dependencyClasspath: List<
     arguments.classpath = if (newClasspath.isNotEmpty()) newClasspath.joinToString(File.pathSeparator) else null
 }
 
-private val gradlePropertyFiles = listOf("local.properties", "gradle.properties")
-
-private fun findKotlinCoroutinesProperty(project: Project): String {
-    for (propertyFileName in gradlePropertyFiles) {
-        val propertyFile = project.baseDir.findChild(propertyFileName) ?: continue
-        val properties = Properties()
-        properties.load(propertyFile.inputStream)
-        properties.getProperty("kotlin.coroutines")?.let { return it }
-    }
-
-    return CoroutineSupport.getCompilerArgument(LanguageFeature.Coroutines.defaultState)
+internal fun findKotlinCoroutinesProperty(project: Project): String {
+    return GradlePropertiesFileFacade.forProject(project).readProperty("kotlin.coroutines")
+        ?: CoroutineSupport.getCompilerArgument(LanguageFeature.Coroutines.defaultState)
 }

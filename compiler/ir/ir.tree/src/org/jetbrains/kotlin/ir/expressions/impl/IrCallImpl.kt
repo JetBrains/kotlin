@@ -18,73 +18,80 @@ package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.expressions.typeParametersCount
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.createClassSymbolOrNull
 import org.jetbrains.kotlin.ir.symbols.impl.createFunctionSymbol
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.types.KotlinType
 
 class IrCallImpl(
     startOffset: Int,
     endOffset: Int,
-    type: KotlinType,
+    type: IrType,
     override val symbol: IrFunctionSymbol,
     override val descriptor: FunctionDescriptor,
-    typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
-    override val origin: IrStatementOrigin? = null,
+    typeArgumentsCount: Int,
+    valueArgumentsCount: Int,
+    origin: IrStatementOrigin? = null,
     override val superQualifierSymbol: IrClassSymbol? = null
-) : IrCall,
-    IrCallWithIndexedArgumentsBase(startOffset, endOffset, type, symbol.descriptor.valueParameters.size, typeArguments) {
+) :
+    IrCallWithIndexedArgumentsBase(
+        startOffset, endOffset, type,
+        typeArgumentsCount,
+        valueArgumentsCount,
+        origin
+    ),
+    IrCall {
+
+    constructor(
+        startOffset: Int,
+        endOffset: Int,
+        type: IrType,
+        symbol: IrFunctionSymbol,
+        descriptor: FunctionDescriptor,
+        origin: IrStatementOrigin? = null,
+        superQualifierSymbol: IrClassSymbol? = null
+    ) : this(startOffset, endOffset, type, symbol, descriptor, descriptor.typeParametersCount,
+             descriptor.valueParameters.size, origin, superQualifierSymbol)
+
+    constructor(
+        startOffset: Int,
+        endOffset: Int,
+        type: IrType,
+        symbol: IrFunctionSymbol,
+        descriptor: FunctionDescriptor,
+        typeArgumentsCount: Int,
+        origin: IrStatementOrigin? = null,
+        superQualifierSymbol: IrClassSymbol? = null
+    ) : this(startOffset, endOffset, type, symbol, descriptor, typeArgumentsCount,
+             descriptor.valueParameters.size, origin, superQualifierSymbol)
+
     @Deprecated("Creates unbound symbols")
     constructor(
         startOffset: Int,
         endOffset: Int,
-        type: KotlinType,
-        calleeDescriptor: FunctionDescriptor,
-        typeArguments: Map<TypeParameterDescriptor, KotlinType>? = null,
+        type: IrType,
+        descriptor: FunctionDescriptor,
+        typeArgumentsCount: Int,
         origin: IrStatementOrigin? = null,
         superQualifierDescriptor: ClassDescriptor? = null
     ) : this(
         startOffset, endOffset,
         type,
-        createFunctionSymbol(calleeDescriptor),
-        calleeDescriptor,
-        typeArguments, origin,
+        createFunctionSymbol(descriptor),
+        descriptor,
+        typeArgumentsCount,
+        descriptor.valueParameters.size,
+        origin,
         createClassSymbolOrNull(superQualifierDescriptor)
     )
 
-    @Deprecated("Creates unbound symbols")
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        calleeDescriptor: FunctionDescriptor,
-        typeArguments: Map<TypeParameterDescriptor, KotlinType>? = null,
-        origin: IrStatementOrigin? = null,
-        superQualifierDescriptor: ClassDescriptor? = null
-    ) : this(
-        startOffset, endOffset,
-        calleeDescriptor.returnType!!,
-        createFunctionSymbol(calleeDescriptor),
-        calleeDescriptor,
-        typeArguments, origin,
-        createClassSymbolOrNull(superQualifierDescriptor)
-    )
-
-    constructor(
-        startOffset: Int, endOffset: Int,
-        symbol: IrFunctionSymbol,
-        descriptor: FunctionDescriptor,
-        typeArguments: Map<TypeParameterDescriptor, KotlinType>? = null,
-        origin: IrStatementOrigin? = null,
-        superQualifierSymbol: IrClassSymbol? = null
-    ) : this(startOffset, endOffset, descriptor.returnType!!, symbol, descriptor, typeArguments, origin, superQualifierSymbol)
-
-    constructor(startOffset: Int, endOffset: Int, symbol: IrFunctionSymbol) :
-            this(startOffset, endOffset, symbol, symbol.descriptor)
+    constructor(startOffset: Int, endOffset: Int, type: IrType, symbol: IrFunctionSymbol) :
+            this(startOffset, endOffset, type, symbol, symbol.descriptor)
 
 
     override val superQualifier: ClassDescriptor? = superQualifierSymbol?.descriptor

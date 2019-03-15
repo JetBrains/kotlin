@@ -43,6 +43,8 @@ class CombinedPackageMemberDeclarationProvider(
 
     override fun getClassOrObjectDeclarations(name: Name) = providers.flatMap { it.getClassOrObjectDeclarations(name) }
 
+    override fun getScriptDeclarations(name: Name) = providers.flatMap { it.getScriptDeclarations(name) }
+
     override fun getTypeAliasDeclarations(name: Name) = providers.flatMap { it.getTypeAliasDeclarations(name) }
 
     override fun getDeclarationNames(): Set<Name> = providers.flatMapTo(HashSet()) { it.getDeclarationNames() }

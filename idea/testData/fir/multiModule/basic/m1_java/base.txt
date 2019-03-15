@@ -1,0 +1,15 @@
+FILE: base.kt
+    public final class Hello {
+        public constructor(msg: R|kotlin/String|): super<R|kotlin/Any|>()
+
+        public final property msg(val): R|kotlin/String|
+            public get(): R|kotlin/String|
+
+    }
+    public final class Test {
+        public constructor(set: R|java/util/Set<*>|): super<R|kotlin/Any|>()
+
+        public final property set(val): R|java/util/Set<*>|
+            public get(): R|java/util/Set<*>|
+
+    }

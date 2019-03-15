@@ -19,8 +19,6 @@ package org.jetbrains.kotlin.load.kotlin
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.load.java.components.DescriptorResolverUtils
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass.AnnotationArrayArgumentVisitor
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -38,7 +36,7 @@ class BinaryClassAnnotationAndConstantLoaderImpl(
         private val notFoundClasses: NotFoundClasses,
         storageManager: StorageManager,
         kotlinClassFinder: KotlinClassFinder
-) : AbstractBinaryClassAnnotationAndConstantLoader<AnnotationDescriptor, ConstantValue<*>, AnnotationWithTarget>(
+) : AbstractBinaryClassAnnotationAndConstantLoader<AnnotationDescriptor, ConstantValue<*>>(
         storageManager, kotlinClassFinder
 ) {
     private val annotationDeserializer = AnnotationDeserializer(module, notFoundClasses)
@@ -64,17 +62,14 @@ class BinaryClassAnnotationAndConstantLoaderImpl(
         return ConstantValueFactory.createConstantValue(normalizedValue)
     }
 
-    override fun loadPropertyAnnotations(
-            propertyAnnotations: List<AnnotationDescriptor>,
-            fieldAnnotations: List<AnnotationDescriptor>,
-            fieldUseSiteTarget: AnnotationUseSiteTarget
-    ): List<AnnotationWithTarget> {
-        return propertyAnnotations.map { AnnotationWithTarget(it, null) } +
-               fieldAnnotations.map { AnnotationWithTarget(it, fieldUseSiteTarget) }
-    }
-
-    override fun transformAnnotations(annotations: List<AnnotationDescriptor>): List<AnnotationWithTarget> {
-        return annotations.map { AnnotationWithTarget(it, null) }
+    override fun transformToUnsignedConstant(constant: ConstantValue<*>): ConstantValue<*>? {
+        return when (constant) {
+            is ByteValue -> UByteValue(constant.value)
+            is ShortValue -> UShortValue(constant.value)
+            is IntValue -> UIntValue(constant.value)
+            is LongValue -> ULongValue(constant.value)
+            else -> constant
+        }
     }
 
     override fun loadAnnotation(
@@ -93,6 +88,10 @@ class BinaryClassAnnotationAndConstantLoaderImpl(
                 }
             }
 
+            override fun visitClassLiteral(name: Name, value: ClassLiteralValue) {
+                arguments[name] = KClassValue(value)
+            }
+
             override fun visitEnum(name: Name, enumClassId: ClassId, enumEntryName: Name) {
                 arguments[name] = EnumValue(enumClassId, enumEntryName)
             }
@@ -107,6 +106,10 @@ class BinaryClassAnnotationAndConstantLoaderImpl(
 
                     override fun visitEnum(enumClassId: ClassId, enumEntryName: Name) {
                         elements.add(EnumValue(enumClassId, enumEntryName))
+                    }
+
+                    override fun visitClassLiteral(value: ClassLiteralValue) {
+                        elements.add(KClassValue(value))
                     }
 
                     override fun visitEnd() {

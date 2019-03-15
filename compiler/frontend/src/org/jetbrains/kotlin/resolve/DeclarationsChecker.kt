@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve
 import com.google.common.collect.ImmutableSet
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
@@ -37,13 +38,14 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils.classCanHaveOpenMembers
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.checkers.PlatformDiagnosticSuppressor
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.resolve.descriptorUtil.declaresOrInheritsDefaultValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.isAnnotationConstructor
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
+import org.jetbrains.kotlin.resolve.inline.isInlineOnly
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.*
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
 
 internal class DeclarationsCheckerBuilder(
@@ -265,7 +267,10 @@ class DeclarationsChecker(
             trace.report(EXPECTED_ENUM_CONSTRUCTOR.on(declaration))
         }
 
-        if (declaration is KtPrimaryConstructor && !DescriptorUtils.isAnnotationClass(constructorDescriptor.constructedClass)) {
+        if (declaration is KtPrimaryConstructor &&
+            !DescriptorUtils.isAnnotationClass(constructorDescriptor.constructedClass) &&
+            !constructorDescriptor.constructedClass.isInline
+        ) {
             for (parameter in declaration.valueParameters) {
                 if (parameter.hasValOrVar()) {
                     trace.report(EXPECTED_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER.on(parameter))
@@ -309,6 +314,7 @@ class DeclarationsChecker(
 
     private fun checkClass(classDescriptor: ClassDescriptorWithResolutionScopes, classOrObject: KtClassOrObject) {
         checkSupertypesForConsistency(classDescriptor, classOrObject)
+        checkLocalAnnotation(classDescriptor, classOrObject)
         checkTypesInClassHeader(classOrObject)
 
         when (classOrObject) {
@@ -326,6 +332,16 @@ class DeclarationsChecker(
         checkPrimaryConstructor(classOrObject, classDescriptor)
 
         checkPrivateExpectedDeclaration(classOrObject, classDescriptor)
+    }
+
+    private fun checkLocalAnnotation(classDescriptor: ClassDescriptor, classOrObject: KtClassOrObject) {
+        if (classDescriptor.kind == ClassKind.ANNOTATION_CLASS && DescriptorUtils.isLocal(classDescriptor)) {
+            if (languageVersionSettings.supportsFeature(LanguageFeature.ProhibitLocalAnnotations)) {
+                trace.report(LOCAL_ANNOTATION_CLASS_ERROR.on(classOrObject))
+            } else {
+                trace.report(LOCAL_ANNOTATION_CLASS.on(classOrObject))
+            }
+        }
     }
 
     private fun checkTypesInClassHeader(classOrObject: KtClassOrObject) {
@@ -389,6 +405,8 @@ class DeclarationsChecker(
                 // Otherwise report the diagnostic on the type parameter declaration
                 declaration
             }
+
+            if (descriptor.containingDeclaration.safeAs<MemberDescriptor>()?.isInlineOnly() == true) return
 
             trace.report(BOUNDS_NOT_ALLOWED_IF_BOUNDED_BY_TYPE_PARAMETER.on(reportOn))
         }
@@ -907,7 +925,11 @@ class DeclarationsChecker(
         val nullableNothing = callableDescriptor.builtIns.nullableNothingType
         for (parameter in varargParameters) {
             val varargElementType = parameter.varargElementType!!.upperIfFlexible()
-            if (KotlinTypeChecker.DEFAULT.isSubtypeOf(varargElementType, nullableNothing)) {
+            if (KotlinTypeChecker.DEFAULT.isSubtypeOf(varargElementType, nullableNothing) ||
+                (varargElementType.isInlineClassType() &&
+                        !UnsignedTypes.isUnsignedType(varargElementType) &&
+                        !KotlinBuiltIns.isPrimitiveTypeOrNullablePrimitiveType(varargElementType))
+            ) {
                 val parameterDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(parameter) as? KtParameter ?: continue
                 trace.report(FORBIDDEN_VARARG_PARAMETER_TYPE.on(parameterDeclaration, varargElementType))
             }

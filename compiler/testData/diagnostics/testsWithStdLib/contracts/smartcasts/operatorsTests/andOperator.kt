@@ -1,8 +1,9 @@
 // !LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect
+// !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 // !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
 // !WITH_NEW_INFERENCE
 
-import kotlin.internal.contracts.*
+import kotlin.contracts.*
 
 fun trueWhenString(x: Any?): Boolean {
     contract {
@@ -41,17 +42,17 @@ fun truetrue(x: Any?) {
         <!DEBUG_INFO_SMARTCAST!>x<!>.inc()
     }
     x.<!UNRESOLVED_REFERENCE!>length<!>
-    x.<!NI;NONE_APPLICABLE, OI;UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
+    x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
 }
 
 fun truefalse(x: Any?) {
     if (trueWhenString(x) && falseWhenInt(x)) {
         <!DEBUG_INFO_SMARTCAST!>x<!>.length
-        x.<!NI;NONE_APPLICABLE, OI;UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
+        x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
     }
     else {
         x.<!UNRESOLVED_REFERENCE!>length<!>
-        x.<!NI;NONE_APPLICABLE, OI;UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
+        x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
     }
 }
 
@@ -62,19 +63,19 @@ fun falsetrue(x: Any?) {
     }
     else {
         x.<!UNRESOLVED_REFERENCE!>length<!>
-        x.<!NI;NONE_APPLICABLE, OI;UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
+        x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
     }
 }
 
 fun falsefalse(x: Any?) {
     if (falseWhenString(x) && falseWhenInt(x)) {
         x.<!UNRESOLVED_REFERENCE!>length<!>
-        x.<!NI;NONE_APPLICABLE, OI;UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
+        x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
     }
     else {
         // Note that we can't argue that we have any of smartcasts here,
         // because we don't know which one of both arguments was 'false' to bring us here
         x.<!UNRESOLVED_REFERENCE!>length<!>
-        x.<!NI;NONE_APPLICABLE, OI;UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
+        x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
     }
 }

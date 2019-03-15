@@ -1,11 +1,9 @@
-// TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS, NATIVE
+// TARGET_BACKEND: JVM
 
 // WITH_REFLECT
 // FULL_JDK
 
 import kotlin.reflect.KClass
-import kotlin.reflect.jvm.*
 import kotlin.test.assertEquals
 
 class A {
@@ -47,15 +45,14 @@ fun box(): String {
     assertEquals(listOf("Entry"), nestedNames(MutableMap::class))
 
     // Primitives
-    for (primitive in listOf(Byte::class, Double::class, Float::class, Int::class, Long::class, Short::class, Char::class)) {
+    for (primitive in listOf(Byte::class, Double::class, Float::class, Int::class, Long::class, Short::class, Char::class, Boolean::class)) {
         assertEquals(listOf("Companion"), nestedNames(primitive))
     }
-    assertEquals(emptyList<String>(), nestedNames(Boolean::class))
 
     // Primitive arrays
     for (primitiveArray in listOf(
-            ByteArray::class, DoubleArray::class, FloatArray::class, IntArray::class,
-            LongArray::class, ShortArray::class, CharArray::class, BooleanArray::class
+        ByteArray::class, DoubleArray::class, FloatArray::class, IntArray::class,
+        LongArray::class, ShortArray::class, CharArray::class, BooleanArray::class
     )) {
         assertEquals(emptyList<String>(), nestedNames(primitiveArray))
     }

@@ -1,11 +1,11 @@
+private val <T> T.bar: Int
+    get() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
 // "Create extension property 'T.bar'" "true"
 fun consume(n: Int) {}
 
 fun <T> foo(t: T) {
     consume(t.bar)
 }
-
-private val <T> T.bar: Int
-    get() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }

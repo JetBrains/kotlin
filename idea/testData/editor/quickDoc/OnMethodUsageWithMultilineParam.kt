@@ -12,5 +12,6 @@ fun test() {
     <caret>testMethod("")
 }
 
-//INFO: <pre><b>public</b> <b>fun</b> testMethod(test: String): Unit <i>defined in</i> root package <i>in file</i> OnMethodUsageWithMultilineParam.kt</pre><p>Some documentation on two lines.</p>
-//INFO: <dl><dt><b>Parameters:</b></dt><dd><code>test</code> - String on two lines</dd></dl>
+//INFO: <div class='definition'><pre><font color="808080"><i>OnMethodUsageWithMultilineParam.kt</i></font><br>public fun <b>testMethod</b>(
+//INFO:     test: String
+//INFO: ): Unit</pre></div><div class='content'><p>Some documentation on two lines.</p></div><table class='sections'><tr><td valign='top' class='section'><p>Params:</td><td valign='top'><p><code>test</code> - String on two lines</td></table>

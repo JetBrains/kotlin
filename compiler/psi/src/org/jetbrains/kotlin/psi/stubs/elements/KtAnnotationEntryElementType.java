@@ -23,12 +23,11 @@ import com.intellij.psi.stubs.StubOutputStream;
 import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtAnnotationEntry;
-import org.jetbrains.kotlin.psi.KtPsiUtil;
 import org.jetbrains.kotlin.psi.KtValueArgumentList;
 import org.jetbrains.kotlin.psi.stubs.KotlinAnnotationEntryStub;
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinAnnotationEntryStubImpl;
-import org.jetbrains.kotlin.name.Name;
 
 import java.io.IOException;
 
@@ -38,13 +37,14 @@ public class KtAnnotationEntryElementType extends KtStubElementType<KotlinAnnota
         super(debugName, KtAnnotationEntry.class, KotlinAnnotationEntryStub.class);
     }
 
+    @NotNull
     @Override
     public KotlinAnnotationEntryStub createStub(@NotNull KtAnnotationEntry psi, StubElement parentStub) {
         Name shortName = psi.getShortName();
         String resultName = shortName != null ? shortName.asString() : null;
         KtValueArgumentList valueArgumentList = psi.getValueArgumentList();
         boolean hasValueArguments = valueArgumentList != null && !valueArgumentList.getArguments().isEmpty();
-        return new KotlinAnnotationEntryStubImpl(parentStub, StringRef.fromString(resultName), hasValueArguments);
+        return new KotlinAnnotationEntryStubImpl((StubElement<?>) parentStub, StringRef.fromString(resultName), hasValueArguments);
     }
 
     @Override
@@ -58,7 +58,7 @@ public class KtAnnotationEntryElementType extends KtStubElementType<KotlinAnnota
     public KotlinAnnotationEntryStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
         StringRef text = dataStream.readName();
         boolean hasValueArguments = dataStream.readBoolean();
-        return new KotlinAnnotationEntryStubImpl(parentStub, text, hasValueArguments);
+        return new KotlinAnnotationEntryStubImpl((StubElement<?>) parentStub, text, hasValueArguments);
     }
 
     @Override

@@ -19,10 +19,11 @@ package org.jetbrains.kotlin.psi2ir.intermediate
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 
 class ExtensionInvokeCallReceiver(
-    val callBuilder: CallBuilder,
-    val functionReceiver: IntermediateValue,
-    val extensionInvokeReceiver: IntermediateValue
+    private val callBuilder: CallBuilder,
+    private val functionReceiver: IntermediateValue,
+    private val extensionInvokeReceiver: IntermediateValue
 ) : CallReceiver {
+
     override fun call(withDispatchAndExtensionReceivers: (IntermediateValue?, IntermediateValue?) -> IrExpression): IrExpression {
         // extensionInvokeReceiver is actually a first argument:
         //      receiver.extFun(p1, ..., pN)

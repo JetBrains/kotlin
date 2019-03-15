@@ -177,10 +177,7 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
             if (!checkEquals(old.typeTable, new.typeTable)) return false
         }
 
-        if (old.hasVersionRequirement() != new.hasVersionRequirement()) return false
-        if (old.hasVersionRequirement()) {
-            if (old.versionRequirement != new.versionRequirement) return false
-        }
+        if (!checkEqualsClassVersionRequirement(old, new)) return false
 
         if (old.hasVersionRequirementTable() != new.hasVersionRequirementTable()) return false
         if (old.hasVersionRequirementTable()) {
@@ -251,7 +248,7 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
         ENUM_ENTRY_LIST,
         SEALED_SUBCLASS_FQ_NAME_LIST,
         TYPE_TABLE,
-        VERSION_REQUIREMENT,
+        VERSION_REQUIREMENT_LIST,
         VERSION_REQUIREMENT_TABLE,
         JVM_EXT_CLASS_MODULE_NAME,
         JVM_EXT_CLASS_LOCAL_VARIABLE_LIST,
@@ -302,10 +299,7 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
             if (!checkEquals(old.typeTable, new.typeTable)) result.add(ProtoBufClassKind.TYPE_TABLE)
         }
 
-        if (old.hasVersionRequirement() != new.hasVersionRequirement()) result.add(ProtoBufClassKind.VERSION_REQUIREMENT)
-        if (old.hasVersionRequirement()) {
-            if (old.versionRequirement != new.versionRequirement) result.add(ProtoBufClassKind.VERSION_REQUIREMENT)
-        }
+        if (!checkEqualsClassVersionRequirement(old, new)) result.add(ProtoBufClassKind.VERSION_REQUIREMENT_LIST)
 
         if (old.hasVersionRequirementTable() != new.hasVersionRequirementTable()) result.add(ProtoBufClassKind.VERSION_REQUIREMENT_TABLE)
         if (old.hasVersionRequirementTable()) {
@@ -404,10 +398,7 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
             if (!checkEquals(old.typeTable, new.typeTable)) return false
         }
 
-        if (old.hasVersionRequirement() != new.hasVersionRequirement()) return false
-        if (old.hasVersionRequirement()) {
-            if (old.versionRequirement != new.versionRequirement) return false
-        }
+        if (!checkEqualsFunctionVersionRequirement(old, new)) return false
 
         if (old.hasContract() != new.hasContract()) return false
         if (old.hasContract()) {
@@ -510,14 +501,16 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
             if (old.setterFlags != new.setterFlags) return false
         }
 
-        if (old.hasVersionRequirement() != new.hasVersionRequirement()) return false
-        if (old.hasVersionRequirement()) {
-            if (old.versionRequirement != new.versionRequirement) return false
-        }
+        if (!checkEqualsPropertyVersionRequirement(old, new)) return false
 
         if (old.hasExtension(JvmProtoBuf.propertySignature) != new.hasExtension(JvmProtoBuf.propertySignature)) return false
         if (old.hasExtension(JvmProtoBuf.propertySignature)) {
             if (!checkEquals(old.getExtension(JvmProtoBuf.propertySignature), new.getExtension(JvmProtoBuf.propertySignature))) return false
+        }
+
+        if (old.hasExtension(JvmProtoBuf.flags) != new.hasExtension(JvmProtoBuf.flags)) return false
+        if (old.hasExtension(JvmProtoBuf.flags)) {
+            if (old.getExtension(JvmProtoBuf.flags) != new.getExtension(JvmProtoBuf.flags)) return false
         }
 
         if (old.getExtensionCount(JsProtoBuf.propertyAnnotation) != new.getExtensionCount(JsProtoBuf.propertyAnnotation)) {
@@ -526,6 +519,24 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
         else {
             for(i in 0..old.getExtensionCount(JsProtoBuf.propertyAnnotation) - 1) {
                 if (!checkEquals(old.getExtension(JsProtoBuf.propertyAnnotation, i), new.getExtension(JsProtoBuf.propertyAnnotation, i))) return false
+            }
+        }
+
+        if (old.getExtensionCount(JsProtoBuf.propertyGetterAnnotation) != new.getExtensionCount(JsProtoBuf.propertyGetterAnnotation)) {
+            return false
+        }
+        else {
+            for(i in 0..old.getExtensionCount(JsProtoBuf.propertyGetterAnnotation) - 1) {
+                if (!checkEquals(old.getExtension(JsProtoBuf.propertyGetterAnnotation, i), new.getExtension(JsProtoBuf.propertyGetterAnnotation, i))) return false
+            }
+        }
+
+        if (old.getExtensionCount(JsProtoBuf.propertySetterAnnotation) != new.getExtensionCount(JsProtoBuf.propertySetterAnnotation)) {
+            return false
+        }
+        else {
+            for(i in 0..old.getExtensionCount(JsProtoBuf.propertySetterAnnotation) - 1) {
+                if (!checkEquals(old.getExtension(JsProtoBuf.propertySetterAnnotation, i), new.getExtension(JsProtoBuf.propertySetterAnnotation, i))) return false
             }
         }
 
@@ -555,6 +566,24 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
         else {
             for(i in 0..old.getExtensionCount(BuiltInsProtoBuf.propertyAnnotation) - 1) {
                 if (!checkEquals(old.getExtension(BuiltInsProtoBuf.propertyAnnotation, i), new.getExtension(BuiltInsProtoBuf.propertyAnnotation, i))) return false
+            }
+        }
+
+        if (old.getExtensionCount(BuiltInsProtoBuf.propertyGetterAnnotation) != new.getExtensionCount(BuiltInsProtoBuf.propertyGetterAnnotation)) {
+            return false
+        }
+        else {
+            for(i in 0..old.getExtensionCount(BuiltInsProtoBuf.propertyGetterAnnotation) - 1) {
+                if (!checkEquals(old.getExtension(BuiltInsProtoBuf.propertyGetterAnnotation, i), new.getExtension(BuiltInsProtoBuf.propertyGetterAnnotation, i))) return false
+            }
+        }
+
+        if (old.getExtensionCount(BuiltInsProtoBuf.propertySetterAnnotation) != new.getExtensionCount(BuiltInsProtoBuf.propertySetterAnnotation)) {
+            return false
+        }
+        else {
+            for(i in 0..old.getExtensionCount(BuiltInsProtoBuf.propertySetterAnnotation) - 1) {
+                if (!checkEquals(old.getExtension(BuiltInsProtoBuf.propertySetterAnnotation, i), new.getExtension(BuiltInsProtoBuf.propertySetterAnnotation, i))) return false
             }
         }
 
@@ -598,10 +627,7 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
 
         if (!checkEqualsTypeAliasAnnotation(old, new)) return false
 
-        if (old.hasVersionRequirement() != new.hasVersionRequirement()) return false
-        if (old.hasVersionRequirement()) {
-            if (old.versionRequirement != new.versionRequirement) return false
-        }
+        if (!checkEqualsTypeAliasVersionRequirement(old, new)) return false
 
         return true
     }
@@ -783,10 +809,7 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
 
         if (!checkEqualsConstructorValueParameter(old, new)) return false
 
-        if (old.hasVersionRequirement() != new.hasVersionRequirement()) return false
-        if (old.hasVersionRequirement()) {
-            if (old.versionRequirement != new.versionRequirement) return false
-        }
+        if (!checkEqualsConstructorVersionRequirement(old, new)) return false
 
         if (old.hasExtension(JvmProtoBuf.constructorSignature) != new.hasExtension(JvmProtoBuf.constructorSignature)) return false
         if (old.hasExtension(JvmProtoBuf.constructorSignature)) {
@@ -989,6 +1012,16 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
         }
 
         if (!checkEqualsAnnotationArgumentValueArrayElement(old, new)) return false
+
+        if (old.hasArrayDimensionCount() != new.hasArrayDimensionCount()) return false
+        if (old.hasArrayDimensionCount()) {
+            if (old.arrayDimensionCount != new.arrayDimensionCount) return false
+        }
+
+        if (old.hasFlags() != new.hasFlags()) return false
+        if (old.hasFlags()) {
+            if (old.flags != new.flags) return false
+        }
 
         return true
     }
@@ -1252,6 +1285,16 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
         return true
     }
 
+    open fun checkEqualsClassVersionRequirement(old: ProtoBuf.Class, new: ProtoBuf.Class): Boolean {
+        if (old.versionRequirementCount != new.versionRequirementCount) return false
+
+        for(i in 0..old.versionRequirementCount - 1) {
+            if (old.getVersionRequirement(i) != new.getVersionRequirement(i)) return false
+        }
+
+        return true
+    }
+
     open fun checkEqualsFunctionTypeParameter(old: ProtoBuf.Function, new: ProtoBuf.Function): Boolean {
         if (old.typeParameterCount != new.typeParameterCount) return false
 
@@ -1272,11 +1315,31 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
         return true
     }
 
+    open fun checkEqualsFunctionVersionRequirement(old: ProtoBuf.Function, new: ProtoBuf.Function): Boolean {
+        if (old.versionRequirementCount != new.versionRequirementCount) return false
+
+        for(i in 0..old.versionRequirementCount - 1) {
+            if (old.getVersionRequirement(i) != new.getVersionRequirement(i)) return false
+        }
+
+        return true
+    }
+
     open fun checkEqualsPropertyTypeParameter(old: ProtoBuf.Property, new: ProtoBuf.Property): Boolean {
         if (old.typeParameterCount != new.typeParameterCount) return false
 
         for(i in 0..old.typeParameterCount - 1) {
             if (!checkEquals(old.getTypeParameter(i), new.getTypeParameter(i))) return false
+        }
+
+        return true
+    }
+
+    open fun checkEqualsPropertyVersionRequirement(old: ProtoBuf.Property, new: ProtoBuf.Property): Boolean {
+        if (old.versionRequirementCount != new.versionRequirementCount) return false
+
+        for(i in 0..old.versionRequirementCount - 1) {
+            if (old.getVersionRequirement(i) != new.getVersionRequirement(i)) return false
         }
 
         return true
@@ -1297,6 +1360,16 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
 
         for(i in 0..old.annotationCount - 1) {
             if (!checkEquals(old.getAnnotation(i), new.getAnnotation(i))) return false
+        }
+
+        return true
+    }
+
+    open fun checkEqualsTypeAliasVersionRequirement(old: ProtoBuf.TypeAlias, new: ProtoBuf.TypeAlias): Boolean {
+        if (old.versionRequirementCount != new.versionRequirementCount) return false
+
+        for(i in 0..old.versionRequirementCount - 1) {
+            if (old.getVersionRequirement(i) != new.getVersionRequirement(i)) return false
         }
 
         return true
@@ -1357,6 +1430,16 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
 
         for(i in 0..old.valueParameterCount - 1) {
             if (!checkEquals(old.getValueParameter(i), new.getValueParameter(i))) return false
+        }
+
+        return true
+    }
+
+    open fun checkEqualsConstructorVersionRequirement(old: ProtoBuf.Constructor, new: ProtoBuf.Constructor): Boolean {
+        if (old.versionRequirementCount != new.versionRequirementCount) return false
+
+        for(i in 0..old.versionRequirementCount - 1) {
+            if (old.getVersionRequirement(i) != new.getVersionRequirement(i)) return false
         }
 
         return true
@@ -1552,8 +1635,8 @@ fun ProtoBuf.Class.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) ->
         hashCode = 31 * hashCode + typeTable.hashCode(stringIndexes, fqNameIndexes)
     }
 
-    if (hasVersionRequirement()) {
-        hashCode = 31 * hashCode + versionRequirement
+    for(i in 0..versionRequirementCount - 1) {
+        hashCode = 31 * hashCode + getVersionRequirement(i)
     }
 
     if (hasVersionRequirementTable()) {
@@ -1632,8 +1715,8 @@ fun ProtoBuf.Function.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int)
         hashCode = 31 * hashCode + typeTable.hashCode(stringIndexes, fqNameIndexes)
     }
 
-    if (hasVersionRequirement()) {
-        hashCode = 31 * hashCode + versionRequirement
+    for(i in 0..versionRequirementCount - 1) {
+        hashCode = 31 * hashCode + getVersionRequirement(i)
     }
 
     if (hasContract()) {
@@ -1716,16 +1799,28 @@ fun ProtoBuf.Property.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int)
         hashCode = 31 * hashCode + setterFlags
     }
 
-    if (hasVersionRequirement()) {
-        hashCode = 31 * hashCode + versionRequirement
+    for(i in 0..versionRequirementCount - 1) {
+        hashCode = 31 * hashCode + getVersionRequirement(i)
     }
 
     if (hasExtension(JvmProtoBuf.propertySignature)) {
         hashCode = 31 * hashCode + getExtension(JvmProtoBuf.propertySignature).hashCode(stringIndexes, fqNameIndexes)
     }
 
+    if (hasExtension(JvmProtoBuf.flags)) {
+        hashCode = 31 * hashCode + getExtension(JvmProtoBuf.flags)
+    }
+
     for(i in 0..getExtensionCount(JsProtoBuf.propertyAnnotation) - 1) {
         hashCode = 31 * hashCode + getExtension(JsProtoBuf.propertyAnnotation, i).hashCode(stringIndexes, fqNameIndexes)
+    }
+
+    for(i in 0..getExtensionCount(JsProtoBuf.propertyGetterAnnotation) - 1) {
+        hashCode = 31 * hashCode + getExtension(JsProtoBuf.propertyGetterAnnotation, i).hashCode(stringIndexes, fqNameIndexes)
+    }
+
+    for(i in 0..getExtensionCount(JsProtoBuf.propertySetterAnnotation) - 1) {
+        hashCode = 31 * hashCode + getExtension(JsProtoBuf.propertySetterAnnotation, i).hashCode(stringIndexes, fqNameIndexes)
     }
 
     if (hasExtension(JsProtoBuf.compileTimeValue)) {
@@ -1746,6 +1841,14 @@ fun ProtoBuf.Property.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int)
 
     for(i in 0..getExtensionCount(BuiltInsProtoBuf.propertyAnnotation) - 1) {
         hashCode = 31 * hashCode + getExtension(BuiltInsProtoBuf.propertyAnnotation, i).hashCode(stringIndexes, fqNameIndexes)
+    }
+
+    for(i in 0..getExtensionCount(BuiltInsProtoBuf.propertyGetterAnnotation) - 1) {
+        hashCode = 31 * hashCode + getExtension(BuiltInsProtoBuf.propertyGetterAnnotation, i).hashCode(stringIndexes, fqNameIndexes)
+    }
+
+    for(i in 0..getExtensionCount(BuiltInsProtoBuf.propertySetterAnnotation) - 1) {
+        hashCode = 31 * hashCode + getExtension(BuiltInsProtoBuf.propertySetterAnnotation, i).hashCode(stringIndexes, fqNameIndexes)
     }
 
     if (hasExtension(BuiltInsProtoBuf.compileTimeValue)) {
@@ -1788,8 +1891,8 @@ fun ProtoBuf.TypeAlias.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int
         hashCode = 31 * hashCode + getAnnotation(i).hashCode(stringIndexes, fqNameIndexes)
     }
 
-    if (hasVersionRequirement()) {
-        hashCode = 31 * hashCode + versionRequirement
+    for(i in 0..versionRequirementCount - 1) {
+        hashCode = 31 * hashCode + getVersionRequirement(i)
     }
 
     return hashCode
@@ -1946,8 +2049,8 @@ fun ProtoBuf.Constructor.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (I
         hashCode = 31 * hashCode + getValueParameter(i).hashCode(stringIndexes, fqNameIndexes)
     }
 
-    if (hasVersionRequirement()) {
-        hashCode = 31 * hashCode + versionRequirement
+    for(i in 0..versionRequirementCount - 1) {
+        hashCode = 31 * hashCode + getVersionRequirement(i)
     }
 
     if (hasExtension(JvmProtoBuf.constructorSignature)) {
@@ -2118,6 +2221,14 @@ fun ProtoBuf.Annotation.Argument.Value.hashCode(stringIndexes: (Int) -> Int, fqN
 
     for(i in 0..arrayElementCount - 1) {
         hashCode = 31 * hashCode + getArrayElement(i).hashCode(stringIndexes, fqNameIndexes)
+    }
+
+    if (hasArrayDimensionCount()) {
+        hashCode = 31 * hashCode + arrayDimensionCount
+    }
+
+    if (hasFlags()) {
+        hashCode = 31 * hashCode + flags
     }
 
     return hashCode

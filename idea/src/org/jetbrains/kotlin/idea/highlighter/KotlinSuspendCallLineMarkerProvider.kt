@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -23,18 +23,18 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContext.*
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.resolve.calls.checkers.isBuiltInCoroutineContext
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class KotlinSuspendCallLineMarkerProvider : LineMarkerProvider {
     private class SuspendCallMarkerInfo(callElement: PsiElement, message: String) : LineMarkerInfo<PsiElement>(
-            callElement,
-            callElement.textRange,
-            KotlinIcons.SUSPEND_CALL,
-            Pass.LINE_MARKERS,
-            { message },
-            null,
-            GutterIconRenderer.Alignment.RIGHT
+        callElement,
+        callElement.textRange,
+        KotlinIcons.SUSPEND_CALL,
+        Pass.LINE_MARKERS,
+        { message },
+        null,
+        GutterIconRenderer.Alignment.RIGHT
     ) {
         override fun createGutterRenderer(): GutterIconRenderer? {
             return object : LineMarkerInfo.LineMarkerGutterIconRenderer<PsiElement>(this) {
@@ -46,8 +46,8 @@ class KotlinSuspendCallLineMarkerProvider : LineMarkerProvider {
     override fun getLineMarkerInfo(element: PsiElement): LineMarkerInfo<*>? = null
 
     override fun collectSlowLineMarkers(
-            elements: MutableList<PsiElement>,
-            result: MutableCollection<LineMarkerInfo<*>>
+        elements: MutableList<PsiElement>,
+        result: MutableCollection<LineMarkerInfo<*>>
     ) {
         val markedLineNumbers = HashSet<Int>()
 
@@ -55,6 +55,12 @@ class KotlinSuspendCallLineMarkerProvider : LineMarkerProvider {
             ProgressManager.checkCanceled()
 
             if (element !is KtExpression) continue
+
+            val containingFile = element.containingFile
+            if (containingFile !is KtFile || containingFile is KtCodeFragment) {
+                continue
+            }
+
             val lineNumber = element.getLineNumber()
             if (lineNumber in markedLineNumbers) continue
             if (!element.hasSuspendCalls()) continue
@@ -102,8 +108,12 @@ fun KtExpression.hasSuspendCalls(bindingContext: BindingContext = analyze(BodyRe
         }
         else -> {
             val resolvedCall = getResolvedCall(bindingContext)
-            (resolvedCall?.resultingDescriptor as? FunctionDescriptor)?.isSuspend == true ||
-                    (resolvedCall?.resultingDescriptor as? PropertyDescriptor)?.isBuiltInCoroutineContext() == true
+            if ((resolvedCall?.resultingDescriptor as? FunctionDescriptor)?.isSuspend == true) true
+            else {
+                val propertyDescriptor = resolvedCall?.resultingDescriptor as? PropertyDescriptor
+                val s = propertyDescriptor?.fqNameSafe?.asString()
+                s?.startsWith("kotlin.coroutines.") == true && s.endsWith(".coroutineContext")
+            }
         }
     }
 }

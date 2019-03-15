@@ -47,6 +47,7 @@ public abstract class KtStubElementType<StubT extends StubElement, PsiT extends 
     @NotNull
     private final ArrayFactory<PsiT> arrayFactory;
 
+    @SuppressWarnings("unchecked")
     public KtStubElementType(@NotNull @NonNls String debugName, @NotNull Class<PsiT> psiClass, @NotNull Class<?> stubClass) {
         super(debugName, KotlinLanguage.INSTANCE);
         try {
@@ -56,13 +57,11 @@ public abstract class KtStubElementType<StubT extends StubElement, PsiT extends 
         catch (NoSuchMethodException e) {
             throw new RuntimeException("Stub element type declaration for " + psiClass.getSimpleName() + " is missing required constructors",e);
         }
-        //noinspection unchecked
         emptyArray = (PsiT[]) Array.newInstance(psiClass, 0);
         arrayFactory = count -> {
             if (count == 0) {
                 return emptyArray;
             }
-            //noinspection unchecked
             return (PsiT[]) Array.newInstance(psiClass, count);
         };
     }

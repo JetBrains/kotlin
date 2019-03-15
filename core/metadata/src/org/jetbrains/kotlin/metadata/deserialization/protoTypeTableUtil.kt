@@ -101,3 +101,9 @@ fun ProtoBuf.TypeAlias.expandedType(typeTable: TypeTable): ProtoBuf.Type = when 
     hasExpandedTypeId() -> typeTable[expandedTypeId]
     else -> error("No expandedType in ProtoBuf.TypeAlias")
 }
+
+fun ProtoBuf.Expression.isInstanceType(typeTable: TypeTable): ProtoBuf.Type? = when {
+    hasIsInstanceType() -> isInstanceType
+    hasIsInstanceTypeId() -> typeTable[isInstanceTypeId]
+    else -> null
+}

@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 @file:kotlin.jvm.JvmMultifileClass
@@ -19,7 +8,7 @@
 
 package kotlin.collections
 
-import kotlin.comparisons.compareValues
+import kotlin.contracts.*
 
 internal object EmptyIterator : ListIterator<Nothing> {
     override fun hasNext(): Boolean = false
@@ -63,7 +52,7 @@ internal object EmptyList : List<Nothing>, Serializable, RandomAccess {
 
 internal fun <T> Array<out T>.asCollection(): Collection<T> = ArrayAsCollection(this, isVarargs = false)
 
-private class ArrayAsCollection<T>(val values: Array<out T>, val isVarargs: Boolean): Collection<T> {
+private class ArrayAsCollection<T>(val values: Array<out T>, val isVarargs: Boolean) : Collection<T> {
     override val size: Int get() = values.size
     override fun isEmpty(): Boolean = values.isEmpty()
     override fun contains(element: T): Boolean = values.contains(element)
@@ -112,15 +101,15 @@ public inline fun <T> arrayListOf(): ArrayList<T> = ArrayList()
  * Returns a new [MutableList] with the given elements.
  * @sample samples.collections.Collections.Lists.mutableList
  */
-public fun <T> mutableListOf(vararg elements: T): MutableList<T>
-        = if (elements.size == 0) ArrayList() else ArrayList(ArrayAsCollection(elements, isVarargs = true))
+public fun <T> mutableListOf(vararg elements: T): MutableList<T> =
+    if (elements.size == 0) ArrayList() else ArrayList(ArrayAsCollection(elements, isVarargs = true))
 
 /**
  * Returns a new [ArrayList] with the given elements.
  * @sample samples.collections.Collections.Lists.arrayList
  */
-public fun <T> arrayListOf(vararg elements: T): ArrayList<T>
-        = if (elements.size == 0) ArrayList() else ArrayList(ArrayAsCollection(elements, isVarargs = true))
+public fun <T> arrayListOf(vararg elements: T): ArrayList<T> =
+    if (elements.size == 0) ArrayList() else ArrayList(ArrayAsCollection(elements, isVarargs = true))
 
 /**
  * Returns a new read-only list either of single given element, if it is not null, or empty list if the element is null. The returned list is serializable (JVM).
@@ -179,6 +168,20 @@ public val <T> List<T>.lastIndex: Int
 public inline fun <T> Collection<T>.isNotEmpty(): Boolean = !isEmpty()
 
 /**
+ * Returns `true` if this nullable collection is either null or empty.
+ * @sample samples.collections.Collections.Collections.collectionIsNullOrEmpty
+ */
+@SinceKotlin("1.3")
+@kotlin.internal.InlineOnly
+public inline fun <T> Collection<T>?.isNullOrEmpty(): Boolean {
+    contract {
+        returns(false) implies (this@isNullOrEmpty != null)
+    }
+
+    return this == null || this.isEmpty()
+}
+
+/**
  * Returns this Collection if it's not `null` and the empty list otherwise.
  * @sample samples.collections.Collections.Collections.collectionOrEmpty
  */
@@ -191,6 +194,18 @@ public inline fun <T> Collection<T>?.orEmpty(): Collection<T> = this ?: emptyLis
  */
 @kotlin.internal.InlineOnly
 public inline fun <T> List<T>?.orEmpty(): List<T> = this ?: emptyList()
+
+/**
+ * Returns this collection if it's not empty
+ * or the result of calling [defaultValue] function if the collection is empty.
+ *
+ * @sample samples.collections.Collections.Collections.collectionIfEmpty
+ */
+@SinceKotlin("1.3")
+@kotlin.internal.InlineOnly
+public inline fun <C, R> C.ifEmpty(defaultValue: () -> R): R where C : Collection<*>, C : R =
+    if (isEmpty()) defaultValue() else this
+
 
 /**
  * Checks if all elements in the specified collection are contained in this collection.
@@ -224,7 +239,7 @@ internal fun <T> List<T>.optimizeReadOnlyList() = when (size) {
  * @sample samples.collections.Collections.Lists.binarySearchOnComparable
  * @sample samples.collections.Collections.Lists.binarySearchWithBoundaries
  */
-public fun <T: Comparable<T>> List<T?>.binarySearch(element: T?, fromIndex: Int = 0, toIndex: Int = size): Int {
+public fun <T : Comparable<T>> List<T?>.binarySearch(element: T?, fromIndex: Int = 0, toIndex: Int = size): Int {
     rangeCheck(size, fromIndex, toIndex)
 
     var low = fromIndex
@@ -297,8 +312,13 @@ public fun <T> List<T>.binarySearch(element: T, comparator: Comparator<in T>, fr
  * so that the list (or the specified subrange of list) still remains sorted.
  * @sample samples.collections.Collections.Lists.binarySearchByKey
  */
-public inline fun <T, K : Comparable<K>> List<T>.binarySearchBy(key: K?, fromIndex: Int = 0, toIndex: Int = size, crossinline selector: (T) -> K?): Int =
-        binarySearch(fromIndex, toIndex) { compareValues(selector(it), key) }
+public inline fun <T, K : Comparable<K>> List<T>.binarySearchBy(
+    key: K?,
+    fromIndex: Int = 0,
+    toIndex: Int = size,
+    crossinline selector: (T) -> K?
+): Int =
+    binarySearch(fromIndex, toIndex) { compareValues(selector(it), key) }
 
 // do not introduce this overload --- too rare
 //public fun <T, K> List<T>.binarySearchBy(key: K, comparator: Comparator<K>, fromIndex: Int = 0, toIndex: Int = size(), selector: (T) -> K): Int =
@@ -353,4 +373,21 @@ private fun rangeCheck(size: Int, fromIndex: Int, toIndex: Int) {
     }
 }
 
+
+@PublishedApi
+@SinceKotlin("1.3")
+internal expect fun checkIndexOverflow(index: Int): Int
+
+@PublishedApi
+@SinceKotlin("1.3")
+internal expect fun checkCountOverflow(count: Int): Int
+
+
+@PublishedApi
+@SinceKotlin("1.3")
+internal fun throwIndexOverflow() { throw ArithmeticException("Index overflow has happened.") }
+
+@PublishedApi
+@SinceKotlin("1.3")
+internal fun throwCountOverflow() { throw ArithmeticException("Count overflow has happened.") }
 

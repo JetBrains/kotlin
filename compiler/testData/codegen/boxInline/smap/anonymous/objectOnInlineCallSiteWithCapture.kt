@@ -1,5 +1,5 @@
 // FILE: 1.kt
-
+// IGNORE_BACKEND: JVM_IR
 package builders
 //TODO there is a bug in asm it's skips linenumber on same line on reading bytecode
 inline fun call(crossinline init: () -> Unit) {

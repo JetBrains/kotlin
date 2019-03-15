@@ -213,7 +213,7 @@ public class KotlinInplaceVariableIntroducer<D extends KtCallableDeclaration> ex
                                     public void run() {
                                         if (exprTypeCheckbox.isSelected()) {
                                             String renderedType =
-                                                    IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(myExprType);
+                                                    IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(myExprType);
                                             myDeclaration.setTypeReference(new KtPsiFactory(myProject).createType(renderedType));
                                         }
                                         else {
@@ -343,7 +343,7 @@ public class KotlinInplaceVariableIntroducer<D extends KtCallableDeclaration> ex
 
     protected void addTypeReferenceVariable(TemplateBuilderImpl builder) {
         KtTypeReference typeReference = myDeclaration.getTypeReference();
-        Expression expression = SpecifyTypeExplicitlyIntention.Companion.createTypeExpressionForTemplate(myExprType, myDeclaration);
+        Expression expression = SpecifyTypeExplicitlyIntention.Companion.createTypeExpressionForTemplate(myExprType, myDeclaration, false);
         if (typeReference != null && expression != null) {
             builder.replaceElement(typeReference, TYPE_REFERENCE_VARIABLE_NAME, expression, false);
         }

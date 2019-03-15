@@ -17,12 +17,12 @@
 package org.jetbrains.kotlin.idea.util
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.psi.psiUtil.isImportDirectiveExpression
@@ -213,7 +213,17 @@ sealed class CallTypeAndReceiver<TReceiver : KtElement?, out TCallType : CallTyp
     }
 }
 
-data class ReceiverType(val type: KotlinType, val receiverIndex: Int, val implicit: Boolean = false)
+data class ReceiverType(
+    val type: KotlinType,
+    val receiverIndex: Int,
+    val implicitValue: ReceiverValue? = null
+) {
+    val implicit: Boolean get() = implicitValue != null
+
+    fun extractDslMarkers() =
+        implicitValue?.let(DslMarkerUtils::extractDslMarkerFqNames)?.all()
+            ?: DslMarkerUtils.extractDslMarkerFqNames(type)
+}
 
 fun CallTypeAndReceiver<*, *>.receiverTypes(
         bindingContext: BindingContext,
@@ -296,7 +306,9 @@ fun CallTypeAndReceiver<*, *>.receiverTypesWithIndex(
         ExpressionReceiver.create(receiverExpression, receiverType, bindingContext)
     }
 
-    val implicitReceiverValues = resolutionScope.getImplicitReceiversWithInstance().map { it.value }
+    val implicitReceiverValues = resolutionScope.getImplicitReceiversWithInstance(
+        excludeShadowedByDslMarkers = languageVersionSettings.supportsFeature(LanguageFeature.DslMarkersSupport)
+    ).map { it.value }
 
     val dataFlowInfo = bindingContext.getDataFlowInfoBefore(contextElement)
 
@@ -305,9 +317,13 @@ fun CallTypeAndReceiver<*, *>.receiverTypesWithIndex(
     var receiverIndex = 0
 
     fun addReceiverType(receiverValue: ReceiverValue, implicit: Boolean) {
-        val types = receiverValueTypes(receiverValue, dataFlowInfo, bindingContext, moduleDescriptor, stableSmartCastsOnly, languageVersionSettings,
-                                       resolutionFacade.frontendService<DataFlowValueFactory>())
-        types.mapTo(result) { ReceiverType(it, receiverIndex, implicit) }
+        val types = receiverValueTypes(
+            receiverValue, dataFlowInfo, bindingContext, moduleDescriptor, stableSmartCastsOnly, languageVersionSettings,
+            resolutionFacade.frontendService<DataFlowValueFactory>()
+        )
+
+        types.mapTo(result) { type -> ReceiverType(type, receiverIndex, receiverValue.takeIf { implicit }) }
+
         receiverIndex++
     }
     if (withImplicitReceiversWhenExplicitPresent || expressionReceiver == null) {
@@ -342,21 +358,4 @@ private fun receiverValueTypes(
     else {
         listOf(receiverValue.type)
     }
-}
-
-
-fun Collection<ReceiverType>.shadowedByDslMarkers(): Set<ReceiverType> {
-    val typesByDslScopes = LinkedHashMap<FqName, MutableList<ReceiverType>>()
-
-    this
-            .mapNotNull { receiver ->
-                val dslMarkers = DslMarkerUtils.extractDslMarkerFqNames(receiver.type)
-                (receiver to dslMarkers).takeIf { dslMarkers.isNotEmpty() }
-            }
-            .forEach { (v, dslMarkers) -> dslMarkers.forEach { typesByDslScopes.getOrPut(it, { mutableListOf() }) += v } }
-
-    val shadowedDslReceivers = mutableSetOf<ReceiverType>()
-    typesByDslScopes.flatMapTo(shadowedDslReceivers) { (_, v) -> v.asSequence().drop(1).asIterable() }
-
-    return shadowedDslReceivers
 }

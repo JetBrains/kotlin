@@ -1,23 +1,24 @@
 ================ Step #1 =================
 
-Building module1
-Actions after cache changed: [REBUILD_ALL_KOTLIN, DO_NOTHING]
-Cleaning output files:
-  out/production/module1/a/A.class
-End of files
-Compiling files:
-  module1/src/A.kt
-End of files
+Lookups cache are INVALID
 Marked as dirty by Kotlin:
   module1/src/A.kt
   module2/src/B.kt
   module3/src/C.kt
   module4/src/D.kt
+Building module1
+Cleaning output files:
+  out/production/module1/META-INF/module1.kotlin_module
+  out/production/module1/a/A.class
+End of files
+Compiling files:
+  module1/src/A.kt
+End of files
 Exit code: OK
 ------------------------------------------
 Building module2
-Actions after cache changed: [REBUILD_CHUNK, DO_NOTHING]
 Cleaning output files:
+  out/production/module2/META-INF/module2.kotlin_module
   out/production/module2/b/B.class
 End of files
 Compiling files:
@@ -26,8 +27,8 @@ End of files
 Exit code: OK
 ------------------------------------------
 Building module3
-Actions after cache changed: [REBUILD_CHUNK, DO_NOTHING]
 Cleaning output files:
+  out/production/module3/META-INF/module3.kotlin_module
   out/production/module3/c/C.class
 End of files
 Compiling files:
@@ -36,9 +37,9 @@ End of files
 Exit code: OK
 ------------------------------------------
 Building module4
-Actions after cache changed: [REBUILD_CHUNK, DO_NOTHING]
 Cleaning output files:
   out/production/module4/D/D.class
+  out/production/module4/META-INF/module4.kotlin_module
 End of files
 Compiling files:
   module4/src/D.kt

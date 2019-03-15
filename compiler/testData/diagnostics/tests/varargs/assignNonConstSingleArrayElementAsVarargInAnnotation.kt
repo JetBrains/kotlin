@@ -1,4 +1,4 @@
-// !LANGUAGE: -ProhibitNonConstValuesAsVarargsInAnnotations
+// !LANGUAGE: -ProhibitNonConstValuesAsVarargsInAnnotations, -ProhibitAssigningSingleElementsToVarargsInNamedForm
 
 val nonConstArray = longArrayOf(0)
 fun nonConstFun(): LongArray = TODO()
@@ -19,7 +19,7 @@ fun foo3() {}
 @Anno(value = <!ANNOTATION_ARGUMENT_IS_NON_CONST!>[<!ANNOTATION_ARGUMENT_IS_NON_CONST!>nonConstLong()<!>]<!>)
 fun foo4() {}
 
-@Anno(value = *<!ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION, ANNOTATION_ARGUMENT_MUST_BE_CONST!>nonConstArray<!>)
+@Anno(value = *<!ANNOTATION_ARGUMENT_MUST_BE_CONST, REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_ANNOTATION!>nonConstArray<!>)
 fun bar1() {}
 
 @Anno(*<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>nonConstArray<!>)

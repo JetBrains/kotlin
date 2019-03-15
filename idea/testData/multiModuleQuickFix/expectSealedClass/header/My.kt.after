@@ -1,0 +1,21 @@
+// My: to be implemented
+// DISABLE-ERRORS
+expect sealed class My private constructor(x: Double) {
+    abstract val num: Int
+    open fun isGood(): Boolean
+
+    object First : My {
+        override val num: Int
+    }
+    class Some(num: Int) : My {
+        override val num: Int
+    }
+    object Best : My {
+        override val num: Int
+        override fun isGood(): Boolean
+
+    }
+
+    val x: Double
+
+}

@@ -28,7 +28,7 @@ class SomeClass {
     @setparam:Ann
     var propertyWithCustomSetter: Int
         get() = 5
-        set(v) {}
+        set(<!UNUSED_PARAMETER!>v<!>) {}
 
     <!INAPPLICABLE_TARGET_ON_PROPERTY!>@setparam:Ann<!>
     fun anotherFun() {

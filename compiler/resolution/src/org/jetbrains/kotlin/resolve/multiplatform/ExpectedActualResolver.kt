@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.TypeConstructorSubstitution
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
-import org.jetbrains.kotlin.types.checker.TypeCheckerContext
+import org.jetbrains.kotlin.types.checker.ClassicTypeCheckerContext
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.keysToMap
@@ -50,7 +50,7 @@ object ExpectedActualResolver {
                     // TODO: support non-source definitions (e.g. from Java)
                     actual.source.containingFile != SourceFile.NO_SOURCE_FILE
                 }.groupBy { actual ->
-                    areCompatibleCallables(expected, actual)
+                    areCompatibleCallables(expected, actual, platformModule)
                 }
             }
             is ClassDescriptor -> {
@@ -113,7 +113,9 @@ object ExpectedActualResolver {
                 listOf(module.getPackage(containingDeclaration.fqName).memberScope)
             }
             is ClassDescriptor -> {
-                val classes = containingDeclaration.findClassifiersFromModule(module).filterIsInstance<ClassDescriptor>()
+                val classes = containingDeclaration.findClassifiersFromModule(module)
+                    .mapNotNull { if (it is TypeAliasDescriptor) it.classDescriptor else it }
+                    .filterIsInstance<ClassDescriptor>()
                 if (this is ConstructorDescriptor) return classes.flatMap { it.constructors }
 
                 classes.map { it.unsubstitutedMemberScope }
@@ -125,11 +127,12 @@ object ExpectedActualResolver {
             is FunctionDescriptor -> scopes.flatMap { it.getContributedFunctions(name, NoLookupLocation.FOR_ALREADY_TRACKED) }
             is PropertyDescriptor -> scopes.flatMap { it.getContributedVariables(name, NoLookupLocation.FOR_ALREADY_TRACKED) }
             else -> throw AssertionError("Unsupported declaration: $this")
-        }
+        }.onlyFromThis(module)
     }
 
     private fun ClassifierDescriptorWithTypeParameters.findClassifiersFromModule(
-        module: ModuleDescriptor
+        module: ModuleDescriptor,
+        includeDependencies: Boolean = false
     ): Collection<ClassifierDescriptorWithTypeParameters> {
         val classId = classId ?: return emptyList()
 
@@ -139,6 +142,7 @@ object ExpectedActualResolver {
 
         val segments = classId.relativeClassName.pathSegments()
         var classifiers = module.getPackage(classId.packageFqName).memberScope.getAllClassifiers(segments.first())
+        if (!includeDependencies) classifiers = classifiers.onlyFromThis(module)
 
         for (name in segments.subList(1, segments.size)) {
             classifiers = classifiers.mapNotNull { classifier ->
@@ -150,6 +154,9 @@ object ExpectedActualResolver {
 
         return classifiers
     }
+
+    private fun <T : DeclarationDescriptor> Iterable<T>.onlyFromThis(module: ModuleDescriptor): List<T> =
+        filter { it.module == module }
 
     sealed class Compatibility {
         // For IncompatibilityKind.STRONG `actual` declaration is considered as overload and error reports on expected declaration
@@ -192,7 +199,7 @@ object ExpectedActualResolver {
 
             object ClassKind : Incompatible("class kinds are different (class, interface, object, enum, annotation)")
 
-            object ClassModifiers : Incompatible("modifiers are different (companion, inner)")
+            object ClassModifiers : Incompatible("modifiers are different (companion, inner, inline)")
 
             object Supertypes : Incompatible("some supertypes are missing in the actual declaration")
 
@@ -257,7 +264,7 @@ object ExpectedActualResolver {
         if (!equalsBy(aTypeParams, bTypeParams, TypeParameterDescriptor::getName)) return Incompatible.TypeParameterNames
 
         if (!areCompatibleModalities(a.modality, b.modality)) return Incompatible.Modality
-        if (a.visibility != b.visibility) return Incompatible.Visibility
+        if (!areDeclarationsWithCompatibleVisibilities(a, b)) return Incompatible.Visibility
 
         areCompatibleTypeParameters(aTypeParams, bTypeParams, platformModule, substitutor).let { if (it != Compatible) return it }
 
@@ -297,7 +304,7 @@ object ExpectedActualResolver {
         if (b == null) return false
 
         with(NewKotlinTypeChecker) {
-            val context = object : TypeCheckerContext(false) {
+            val context = object : ClassicTypeCheckerContext(false) {
                 override fun areEqualTypeConstructors(a: TypeConstructor, b: TypeConstructor): Boolean {
                     return isExpectedClassAndActualTypeAlias(a, b, platformModule) ||
                             isExpectedClassAndActualTypeAlias(b, a, platformModule) ||
@@ -322,7 +329,7 @@ object ExpectedActualResolver {
         return expected is ClassifierDescriptorWithTypeParameters &&
                 expected.isExpect &&
                 actual is ClassifierDescriptorWithTypeParameters &&
-                expected.findClassifiersFromModule(platformModule).any { classifier ->
+                expected.findClassifiersFromModule(platformModule, includeDependencies = true).any { classifier ->
                     // Note that it's fine to only check that this "actual typealias" expands to the expected class, without checking
                     // whether the type arguments in the expansion are in the correct order or have the correct variance, because we only
                     // allow simple cases like "actual typealias Foo<A, B> = FooImpl<A, B>", see DeclarationsChecker#checkActualTypeAlias
@@ -390,7 +397,7 @@ object ExpectedActualResolver {
 
         if (a.kind != b.kind) return Incompatible.ClassKind
 
-        if (!equalBy(a, b) { listOf(it.isCompanionObject, it.isInner) }) return Incompatible.ClassModifiers
+        if (!equalBy(a, b) { listOf(it.isCompanionObject, it.isInner, it.isInline) }) return Incompatible.ClassModifiers
 
         val aTypeParams = a.declaredTypeParameters
         val bTypeParams = b.declaredTypeParameters
@@ -420,6 +427,20 @@ object ExpectedActualResolver {
     private fun areCompatibleModalities(a: Modality, b: Modality): Boolean {
         return a == Modality.FINAL && b == Modality.OPEN ||
                 a == b
+    }
+
+    private fun areDeclarationsWithCompatibleVisibilities(
+        a: CallableMemberDescriptor,
+        b: CallableMemberDescriptor
+    ): Boolean {
+        val compare = Visibilities.compare(a.visibility, b.visibility)
+        return if (a.isOverridable) {
+            // For overridable declarations visibility should match precisely, see KT-19664
+            compare == 0
+        } else {
+            // For non-overridable declarations actuals are allowed to have more permissive visibility
+            compare != null && compare <= 0
+        }
     }
 
 

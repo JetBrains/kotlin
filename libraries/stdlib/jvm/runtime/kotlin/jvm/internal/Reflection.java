@@ -1,23 +1,16 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.jvm.internal;
 
 import kotlin.SinceKotlin;
+import kotlin.collections.ArraysKt;
 import kotlin.reflect.*;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * This class serves as a facade to the actual reflection implementation. JVM back-end generates calls to static methods of this class
@@ -80,6 +73,11 @@ public class Reflection {
         return factory.renderLambdaToString(lambda);
     }
 
+    @SinceKotlin(version = "1.3")
+    public static String renderLambdaToString(FunctionBase lambda) {
+        return factory.renderLambdaToString(lambda);
+    }
+
     // Functions
 
     public static KFunction function(FunctionReference f) {
@@ -110,5 +108,47 @@ public class Reflection {
 
     public static KMutableProperty2 mutableProperty2(MutablePropertyReference2 p) {
         return factory.mutableProperty2(p);
+    }
+
+    // typeOf
+
+    @SinceKotlin(version = "1.4")
+    public static KType typeOf(Class klass) {
+        return factory.typeOf(getOrCreateKotlinClass(klass), Collections.<KTypeProjection>emptyList(), false);
+    }
+
+    @SinceKotlin(version = "1.4")
+    public static KType typeOf(Class klass, KTypeProjection arg1) {
+        return factory.typeOf(getOrCreateKotlinClass(klass), Collections.singletonList(arg1), false);
+    }
+
+    @SinceKotlin(version = "1.4")
+    public static KType typeOf(Class klass, KTypeProjection arg1, KTypeProjection arg2) {
+        return factory.typeOf(getOrCreateKotlinClass(klass), Arrays.asList(arg1, arg2), false);
+    }
+
+    @SinceKotlin(version = "1.4")
+    public static KType typeOf(Class klass, KTypeProjection... arguments) {
+        return factory.typeOf(getOrCreateKotlinClass(klass), ArraysKt.<KTypeProjection>toList(arguments), false);
+    }
+
+    @SinceKotlin(version = "1.4")
+    public static KType nullableTypeOf(Class klass) {
+        return factory.typeOf(getOrCreateKotlinClass(klass), Collections.<KTypeProjection>emptyList(), true);
+    }
+
+    @SinceKotlin(version = "1.4")
+    public static KType nullableTypeOf(Class klass, KTypeProjection arg1) {
+        return factory.typeOf(getOrCreateKotlinClass(klass), Collections.singletonList(arg1), true);
+    }
+
+    @SinceKotlin(version = "1.4")
+    public static KType nullableTypeOf(Class klass, KTypeProjection arg1, KTypeProjection arg2) {
+        return factory.typeOf(getOrCreateKotlinClass(klass), Arrays.asList(arg1, arg2), true);
+    }
+
+    @SinceKotlin(version = "1.4")
+    public static KType nullableTypeOf(Class klass, KTypeProjection... arguments) {
+        return factory.typeOf(getOrCreateKotlinClass(klass), ArraysKt.<KTypeProjection>toList(arguments), true);
     }
 }

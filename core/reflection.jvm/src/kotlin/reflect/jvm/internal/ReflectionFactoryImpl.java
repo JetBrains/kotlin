@@ -18,7 +18,12 @@ package kotlin.reflect.jvm.internal;
 
 import kotlin.jvm.internal.*;
 import kotlin.reflect.*;
+import kotlin.reflect.full.KClassifiers;
 import kotlin.reflect.jvm.ReflectLambdaKt;
+
+import java.lang.annotation.Annotation;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @suppress
@@ -52,6 +57,11 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
 
     @Override
     public String renderLambdaToString(Lambda lambda) {
+        return renderLambdaToString((FunctionBase) lambda);
+    }
+
+    @Override
+    public String renderLambdaToString(FunctionBase lambda) {
         KFunction kFunction = ReflectLambdaKt.reflect(lambda);
         if (kFunction != null) {
             KFunctionImpl impl = UtilKt.asKFunctionImpl(kFunction);
@@ -104,6 +114,13 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
     private static KDeclarationContainerImpl getOwner(CallableReference reference) {
         KDeclarationContainer owner = reference.getOwner();
         return owner instanceof KDeclarationContainerImpl ? ((KDeclarationContainerImpl) owner) : EmptyContainerForLocal.INSTANCE;
+    }
+
+    // typeOf
+
+    @Override
+    public KType typeOf(KClassifier klass, List<KTypeProjection> arguments, boolean isMarkedNullable) {
+        return KClassifiers.createType(klass, arguments, isMarkedNullable, Collections.<Annotation>emptyList());
     }
 
     // Misc

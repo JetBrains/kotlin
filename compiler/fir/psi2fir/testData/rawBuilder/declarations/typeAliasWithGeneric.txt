@@ -1,0 +1,12 @@
+FILE: typeAliasWithGeneric.kt
+    public? open class A {
+        public? constructor(): super<kotlin/Any>()
+
+    }
+    <S, T : A> public? final? interface B {
+    }
+    <T> public? final typealias C = B<T, A>
+    public? final? class D : C<A> {
+        public? constructor(): super<kotlin/Any>()
+
+    }

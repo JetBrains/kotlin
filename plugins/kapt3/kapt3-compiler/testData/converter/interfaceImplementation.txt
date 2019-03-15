@@ -1,0 +1,34 @@
+import java.lang.System;
+
+@kotlin.Metadata()
+public abstract interface Named {
+
+    @org.jetbrains.annotations.Nullable()
+    public abstract java.lang.String getName();
+}
+
+////////////////////
+
+
+import java.lang.System;
+
+@kotlin.Metadata()
+public final class Product2 implements Named {
+    @org.jetbrains.annotations.Nullable()
+    private java.lang.String name;
+
+    @org.jetbrains.annotations.Nullable()
+    @java.lang.Override()
+    public java.lang.String getName() {
+        return null;
+    }
+
+    public void setName(@org.jetbrains.annotations.Nullable()
+    java.lang.String p0) {
+    }
+
+    public Product2(@org.jetbrains.annotations.NotNull()
+    java.lang.String otherName) {
+        super();
+    }
+}

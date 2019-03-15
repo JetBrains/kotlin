@@ -1,143 +1,118 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
-import org.jetbrains.kotlin.backend.common.lower.DECLARATION_ORIGIN_FUNCTION_FOR_DEFAULT_PARAMETER
+import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
+import org.jetbrains.kotlin.backend.common.ir.copyTo
+import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
+import org.jetbrains.kotlin.backend.common.lower.InitializersLowering.Companion.clinitName
+import org.jetbrains.kotlin.backend.common.lower.VariableRemapper
+import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.descriptors.DefaultImplsClassDescriptorImpl
-import org.jetbrains.kotlin.backend.jvm.lower.InitializersLowering.Companion.clinitName
-import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl
-import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
-import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.org.objectweb.asm.Opcodes
 
-class InterfaceLowering(val state: GenerationState) : IrElementTransformerVoid(), ClassLoweringPass {
+internal val interfacePhase = makeIrFilePhase(
+    ::InterfaceLowering,
+    name = "Interface",
+    description = "Move default implementations of interface members to DefaultImpls class"
+)
+
+private class InterfaceLowering(val context: JvmBackendContext) : IrElementTransformerVoid(), ClassLoweringPass {
+
+    val state = context.state
 
     override fun lower(irClass: IrClass) {
-        if (!DescriptorUtils.isInterface(irClass.descriptor)) {
-            return
-        }
+        if (!irClass.isInterface) return
 
-        val interfaceDescriptor = irClass.descriptor
-        val defaultImplsDescriptor = createDefaultImplsClassDescriptor(interfaceDescriptor)
-        val defaultImplsIrClass = IrClassImpl(irClass.startOffset, irClass.endOffset, JvmLoweredDeclarationOrigin.DEFAULT_IMPLS, defaultImplsDescriptor)
+        val defaultImplsIrClass = context.declarationFactory.getDefaultImplsClass(irClass)
         irClass.declarations.add(defaultImplsIrClass)
-
         val members = defaultImplsIrClass.declarations
 
-        irClass.declarations.filterIsInstance<IrFunction>().forEach {
-            val descriptor = it.descriptor
-            if (descriptor.modality != Modality.ABSTRACT) {
-                val functionDescriptorImpl = createDefaultImplFunDescriptor(defaultImplsDescriptor, descriptor, interfaceDescriptor, state.typeMapper)
-                members.add(functionDescriptorImpl.createFunctionAndMapVariables(it))
-                it.body = null
+        for (function in irClass.declarations) {
+            if (function !is IrSimpleFunction) continue
+
+            if (function.modality != Modality.ABSTRACT && function.origin != IrDeclarationOrigin.FAKE_OVERRIDE) {
+                val element = context.declarationFactory.getDefaultImplsFunction(function)
+                members.add(element)
+                element.body = function.body
+                function.body = null
+                //TODO reset modality to abstract
             }
         }
-
 
         irClass.transformChildrenVoid(this)
 
-        //REMOVE private methods
-        val privateToRemove = irClass.declarations.filterIsInstance<IrFunction>().mapNotNull {
-            val visibility = AsmUtil.getVisibilityAccessFlag(it.descriptor)
-            if (visibility == Opcodes.ACC_PRIVATE && it.descriptor.name != clinitName) {
-                it
-            }
-            else null
-        }
-
-        val defaultBodies = irClass.declarations.filterIsInstance<IrFunction>().filter {
-            it.origin == DECLARATION_ORIGIN_FUNCTION_FOR_DEFAULT_PARAMETER
-        }
-        irClass.declarations.removeAll(privateToRemove)
-        irClass.declarations.removeAll(defaultBodies)
-    }
-
-    companion object {
-
-        fun createDefaultImplsClassDescriptor(interfaceDescriptor: ClassDescriptor): DefaultImplsClassDescriptorImpl {
-            return DefaultImplsClassDescriptorImpl(
-                    Name.identifier(JvmAbi.DEFAULT_IMPLS_CLASS_NAME), interfaceDescriptor, interfaceDescriptor.source
-            )
-        }
-
-        fun createDefaultImplFunDescriptor(
-                defaultImplsDescriptor: DefaultImplsClassDescriptorImpl,
-                descriptor: FunctionDescriptor,
-                interfaceDescriptor: ClassDescriptor, typeMapper: KotlinTypeMapper
-        ): SimpleFunctionDescriptorImpl {
-            val name = Name.identifier(typeMapper.mapAsmMethod(descriptor).name)
-            return createStaticFunctionWithReceivers(defaultImplsDescriptor, name, descriptor, interfaceDescriptor.defaultType)
+        irClass.declarations.removeAll {
+            it is IrFunction && shouldRemoveFunction(it)
         }
     }
+
+    private fun shouldRemoveFunction(function: IrFunction): Boolean =
+        Visibilities.isPrivate(function.visibility) && function.name != clinitName ||
+                function.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER ||
+                function.origin == JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_ANNOTATIONS
 }
 
 
-internal fun createStaticFunctionWithReceivers(owner: ClassOrPackageFragmentDescriptor, name: Name, descriptor: FunctionDescriptor, dispatchReceiverType: KotlinType): SimpleFunctionDescriptorImpl {
-    val newFunction = SimpleFunctionDescriptorImpl.create(
-            owner,
-            AnnotationsImpl(emptyList()),
-            name,
-            CallableMemberDescriptor.Kind.DECLARATION, descriptor.source
-    )
-    var offset = 0
-    val dispatchReceiver =
-            ValueParameterDescriptorImpl.createWithDestructuringDeclarations(
-                    newFunction, null, offset++, AnnotationsImpl(emptyList()), Name.identifier("this"),
-                    dispatchReceiverType, false, false, false, null, descriptor.source, null)
-    val extensionReceiver =
-            descriptor.extensionReceiverParameter?.let { extensionReceiver ->
-                ValueParameterDescriptorImpl.createWithDestructuringDeclarations(
-                        newFunction, null, offset++, AnnotationsImpl(emptyList()), Name.identifier("receiver"),
-                        extensionReceiver.value.type, false, false, false, null, extensionReceiver.source, null)
-            }
+internal fun createStaticFunctionWithReceivers(
+    irParent: IrDeclarationParent,
+    name: Name,
+    oldFunction: IrFunction,
+    dispatchReceiverType: IrType? = oldFunction.dispatchReceiverParameter?.type,
+    origin: IrDeclarationOrigin = oldFunction.origin
+): IrSimpleFunction {
+    val descriptor = WrappedSimpleFunctionDescriptor(Annotations.EMPTY, oldFunction.descriptor.source)
+    return IrFunctionImpl(
+        oldFunction.startOffset, oldFunction.endOffset,
+        origin,
+        IrSimpleFunctionSymbolImpl(descriptor),
+        name,
+        oldFunction.visibility,
+        Modality.FINAL,
+        oldFunction.returnType,
+        isInline = false, isExternal = false, isTailrec = false, isSuspend = false
+    ).apply {
+        descriptor.bind(this)
+        parent = irParent
 
-    val valueParameters = listOfNotNull(dispatchReceiver, extensionReceiver) +
-                          descriptor.valueParameters.map { it.copy(newFunction, it.name, it.index + offset) }
+        copyTypeParametersFrom(oldFunction)
 
-    newFunction.initialize(
-            null, null, emptyList()/*TODO: type parameters*/,
-            valueParameters, descriptor.returnType, Modality.FINAL, descriptor.visibility
-    )
-    return newFunction
+        var offset = 0
+        val dispatchReceiver = oldFunction.dispatchReceiverParameter?.copyTo(
+            this,
+            name = Name.identifier("this"),
+            index = offset++,
+            type = dispatchReceiverType!!
+        )
+        val extensionReceiver = oldFunction.extensionReceiverParameter?.copyTo(
+            this,
+            name = Name.identifier("receiver"),
+            index = offset++
+        )
+        valueParameters.addAll(listOfNotNull(dispatchReceiver, extensionReceiver) +
+                                       oldFunction.valueParameters.map { it.copyTo(this, index = it.index + offset) }
+        )
+
+        val mapping: Map<IrValueParameter, IrValueParameter> =
+            (listOfNotNull(oldFunction.dispatchReceiverParameter, oldFunction.extensionReceiverParameter) + oldFunction.valueParameters)
+                .zip(valueParameters).toMap()
+        body = oldFunction.body?.transform(VariableRemapper(mapping), null)
+
+        metadata = oldFunction.metadata
+    }
 }
-
-internal fun FunctionDescriptor.createFunctionAndMapVariables(oldFunction: IrFunction) =
-        IrFunctionImpl(oldFunction.startOffset, oldFunction.endOffset, oldFunction.origin, this, oldFunction.body).also {
-            val mapping: Map<ValueDescriptor, ValueDescriptor> =
-                    (
-                            listOfNotNull(oldFunction.descriptor.dispatchReceiverParameter!!, oldFunction.descriptor.extensionReceiverParameter) +
-                            oldFunction.descriptor.valueParameters
-                    ).zip(this.valueParameters).toMap()
-
-            it.body?.transform(VariableRemapper(mapping), null)
-        }

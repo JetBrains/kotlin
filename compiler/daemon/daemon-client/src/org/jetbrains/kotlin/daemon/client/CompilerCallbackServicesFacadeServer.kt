@@ -16,61 +16,71 @@
 
 package org.jetbrains.kotlin.daemon.client
 
-import org.jetbrains.kotlin.daemon.common.CompilerCallbackServicesFacade
-import org.jetbrains.kotlin.daemon.common.LoopbackNetworkInterface
-import org.jetbrains.kotlin.daemon.common.RmiFriendlyCompilationCanceledException
-import org.jetbrains.kotlin.daemon.common.SOCKET_ANY_FREE_PORT
+import org.jetbrains.kotlin.daemon.common.*
+import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupInfo
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
+import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
+import org.jetbrains.kotlin.incremental.js.JsInlineFunctionHash
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.load.kotlin.incremental.components.JvmPackagePartProto
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.utils.isProcessCanceledException
+import java.io.File
 import java.rmi.server.UnicastRemoteObject
-import kotlin.reflect.full.allSuperclasses
 
 
 open class CompilerCallbackServicesFacadeServer(
-        val incrementalCompilationComponents: IncrementalCompilationComponents? = null,
-        val lookupTracker: LookupTracker? = null,
-        val compilationCanceledStatus: CompilationCanceledStatus? = null,
-        port: Int = SOCKET_ANY_FREE_PORT
+    val incrementalCompilationComponents: IncrementalCompilationComponents? = null,
+    val lookupTracker: LookupTracker? = null,
+    val compilationCanceledStatus: CompilationCanceledStatus? = null,
+    val expectActualTracker: ExpectActualTracker? = null,
+    val incrementalResultsConsumer: IncrementalResultsConsumer? = null,
+    val incrementalDataProvider: IncrementalDataProvider? = null,
+    port: Int = SOCKET_ANY_FREE_PORT
 ) : CompilerCallbackServicesFacade,
-        UnicastRemoteObject(
-                port,
-                LoopbackNetworkInterface.clientLoopbackSocketFactory,
-                LoopbackNetworkInterface.serverLoopbackSocketFactory
-        ) {
+    UnicastRemoteObject(
+        port,
+        LoopbackNetworkInterface.clientLoopbackSocketFactory,
+        LoopbackNetworkInterface.serverLoopbackSocketFactory
+    ) {
     override fun hasIncrementalCaches(): Boolean = incrementalCompilationComponents != null
 
     override fun hasLookupTracker(): Boolean = lookupTracker != null
 
     override fun hasCompilationCanceledStatus(): Boolean = compilationCanceledStatus != null
 
+    override fun hasExpectActualTracker(): Boolean = expectActualTracker != null
+
+    override fun hasIncrementalResultsConsumer(): Boolean = incrementalResultsConsumer != null
+
+    override fun hasIncrementalDataProvider(): Boolean = incrementalDataProvider != null
+
     // TODO: consider replacing NPE with other reporting, although NPE here means most probably incorrect usage
 
     override fun incrementalCache_getObsoletePackageParts(target: TargetId): Collection<String> =
-            incrementalCompilationComponents!!.getIncrementalCache(target).getObsoletePackageParts()
+        incrementalCompilationComponents!!.getIncrementalCache(target).getObsoletePackageParts()
 
     override fun incrementalCache_getObsoleteMultifileClassFacades(target: TargetId): Collection<String> =
-            incrementalCompilationComponents!!.getIncrementalCache(target).getObsoleteMultifileClasses()
+        incrementalCompilationComponents!!.getIncrementalCache(target).getObsoleteMultifileClasses()
 
     override fun incrementalCache_getMultifileFacadeParts(target: TargetId, internalName: String): Collection<String>? =
-            incrementalCompilationComponents!!.getIncrementalCache(target).getStableMultifileFacadeParts(internalName)
+        incrementalCompilationComponents!!.getIncrementalCache(target).getStableMultifileFacadeParts(internalName)
 
     override fun incrementalCache_getPackagePartData(target: TargetId, partInternalName: String): JvmPackagePartProto? =
-            incrementalCompilationComponents!!.getIncrementalCache(target).getPackagePartData(partInternalName)
+        incrementalCompilationComponents!!.getIncrementalCache(target).getPackagePartData(partInternalName)
 
     override fun incrementalCache_getModuleMappingData(target: TargetId): ByteArray? =
-            incrementalCompilationComponents!!.getIncrementalCache(target).getModuleMappingData()
+        incrementalCompilationComponents!!.getIncrementalCache(target).getModuleMappingData()
 
     // todo: remove (the method it called was relevant only for old IC)
     override fun incrementalCache_registerInline(target: TargetId, fromPath: String, jvmSignature: String, toPath: String) {
     }
 
     override fun incrementalCache_getClassFilePath(target: TargetId, internalClassName: String): String =
-            incrementalCompilationComponents!!.getIncrementalCache(target).getClassFilePath(internalClassName)
+        incrementalCompilationComponents!!.getIncrementalCache(target).getClassFilePath(internalClassName)
 
     override fun incrementalCache_close(target: TargetId) {
         incrementalCompilationComponents!!.getIncrementalCache(target).close()
@@ -94,8 +104,7 @@ open class CompilerCallbackServicesFacadeServer(
         try {
             compilationCanceledStatus!!.checkCanceled()
             return null
-        }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             // avoid passing exceptions that may have different serialVersionUID on across rmi border
             // removing dependency from openapi (this is obsolete part anyway, and will be removed soon)
             if (e.isProcessCanceledException())
@@ -103,4 +112,34 @@ open class CompilerCallbackServicesFacadeServer(
             else throw e
         }
     }
+
+    override fun expectActualTracker_report(expectedFilePath: String, actualFilePath: String) {
+        expectActualTracker!!.report(File(expectedFilePath), File(actualFilePath))
+    }
+
+    override fun incrementalResultsConsumer_processHeader(headerMetadata: ByteArray) {
+        incrementalResultsConsumer!!.processHeader(headerMetadata)
+    }
+
+    override fun incrementalResultsConsumer_processPackagePart(
+        sourceFilePath: String,
+        packagePartMetadata: ByteArray,
+        binaryAst: ByteArray,
+        inlineData: ByteArray
+    ) {
+        incrementalResultsConsumer!!.processPackagePart(File(sourceFilePath), packagePartMetadata, binaryAst, inlineData)
+    }
+
+    override fun incrementalResultsConsumer_processInlineFunctions(functions: Collection<JsInlineFunctionHash>) {
+        incrementalResultsConsumer!!.processInlineFunctions(functions)
+    }
+
+    override fun incrementalDataProvider_getHeaderMetadata(): ByteArray = incrementalDataProvider!!.headerMetadata
+
+    override fun incrementalDataProvider_getMetadataVersion(): IntArray = incrementalDataProvider!!.metadataVersion
+
+    override fun incrementalDataProvider_getCompiledPackageParts() =
+        incrementalDataProvider!!.compiledPackageParts.entries.map {
+            CompiledPackagePart(it.key.path, it.value.metadata, it.value.binaryAst, it.value.inlineData)
+        }
 }

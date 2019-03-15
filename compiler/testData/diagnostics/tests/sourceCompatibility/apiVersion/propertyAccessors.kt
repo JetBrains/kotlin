@@ -10,23 +10,23 @@ val v2 = ""
 var v3: String
     @SinceKotlin("1.1")
     get() = ""
-    set(value) {}
+    set(<!UNUSED_PARAMETER!>value<!>) {}
 
 var v4: String
     get() = ""
     @SinceKotlin("1.1")
-    set(value) {}
+    set(<!UNUSED_PARAMETER!>value<!>) {}
 
 var v5: String
     @SinceKotlin("1.1")
     get() = ""
     @SinceKotlin("1.1")
-    set(value) {}
+    set(<!UNUSED_PARAMETER!>value<!>) {}
 
 @SinceKotlin("1.1")
 var v6: String
     get() = ""
-    set(value) {}
+    set(<!UNUSED_PARAMETER!>value<!>) {}
 
 @SinceKotlin("1.0")
 val v7: String

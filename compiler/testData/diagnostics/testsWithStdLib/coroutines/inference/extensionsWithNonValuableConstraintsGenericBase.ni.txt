@@ -1,0 +1,32 @@
+package
+
+public val test1: kotlin.String
+public val test2: kotlin.Any?
+public val test3: kotlin.String
+public val test4: kotlin.Int
+public val test5: kotlin.Int
+public val test6: kotlin.Any?
+public fun </*0*/ S> generate(/*0*/ @kotlin.BuilderInference g: suspend Controller<S>.() -> kotlin.Unit): S
+public fun </*0*/ S> generateSpecific(/*0*/ @kotlin.BuilderInference g: suspend SpecificController<S>.() -> kotlin.Unit): S
+public fun Base<*>.starBase(): kotlin.Unit
+public fun Base<kotlin.String>.stringBase(): kotlin.Unit
+
+public interface Base</*0*/ K> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Controller</*0*/ T> : Base<T> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public open suspend fun yield(/*0*/ t: T): kotlin.Unit
+}
+
+public interface SpecificController</*0*/ T> : Base<kotlin.String> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public open suspend fun yield(/*0*/ t: T): kotlin.Unit
+}

@@ -1,0 +1,169 @@
+KtFile: 1.1.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiErrorElement:Expecting an expression
+      <empty list>
+    PsiWhiteSpace(' ')
+    PsiErrorElement:Property getter or setter expected
+      PsiElement(DOT)('.')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiErrorElement:Expecting an expression
+      <empty list>
+    PsiWhiteSpace(' ')
+    PsiErrorElement:Property getter or setter expected
+      PsiElement(RANGE)('..')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiErrorElement:Expecting an expression
+      <empty list>
+    PsiWhiteSpace(' ')
+    PsiErrorElement:Property getter or setter expected
+      PsiElement(RESERVED)('...')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiErrorElement:Expecting an expression
+      <empty list>
+    PsiWhiteSpace(' ')
+    PsiErrorElement:Property getter or setter expected
+      PsiElement(RESERVED)('...')
+      PsiElement(RESERVED)('...')
+      PsiElement(RESERVED)('...')
+      PsiElement(RESERVED)('...')
+      PsiElement(RESERVED)('...')
+      PsiElement(RESERVED)('...')
+      PsiElement(RESERVED)('...')
+      PsiElement(RESERVED)('...')
+      PsiElement(RESERVED)('...')
+      PsiElement(RESERVED)('...')
+      PsiElement(RESERVED)('...')
+      PsiElement(RANGE)('..')
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiErrorElement:Expecting an expression
+      <empty list>
+    PsiWhiteSpace(' ')
+    PsiErrorElement:Property getter or setter expected
+      PsiElement(RANGE)('..')
+      PsiElement(INTEGER_LITERAL)('0')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiErrorElement:Expecting an expression
+      <empty list>
+    PsiWhiteSpace(' ')
+    PsiErrorElement:Property getter or setter expected
+      PsiElement(RESERVED)('...')
+      PsiElement(FLOAT_CONSTANT)('1000F')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiErrorElement:Expecting an expression
+      <empty list>
+    PsiWhiteSpace(' ')
+    PsiErrorElement:Property getter or setter expected
+      PsiElement(RANGE)('..')
+      PsiElement(FLOAT_CONSTANT)('1000e1')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiErrorElement:Expecting an expression
+      <empty list>
+    PsiWhiteSpace(' ')
+    PsiErrorElement:Property getter or setter expected
+      PsiElement(RESERVED)('...')
+      PsiElement(FLOAT_CONSTANT)('9E100F')
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiErrorElement:Expecting an expression
+      <empty list>
+    PsiWhiteSpace(' ')
+    PsiErrorElement:Property getter or setter expected
+      PsiElement(RANGE)('..')
+      PsiElement(FLOAT_CONSTANT)('00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000F')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiErrorElement:Expecting an expression
+      <empty list>
+    PsiWhiteSpace(' ')
+    PsiErrorElement:Property getter or setter expected
+      PsiElement(RANGE)('..')
+      PsiElement(FLOAT_CONSTANT)('1E-99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiErrorElement:Expecting an expression
+      <empty list>
+    PsiWhiteSpace(' ')
+    PsiErrorElement:Property getter or setter expected
+      PsiElement(RESERVED)('...')
+      PsiElement(RESERVED)('...')
+      PsiElement(RESERVED)('...')
+      PsiElement(FLOAT_CONSTANT)('.0e+222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiErrorElement:Expecting an expression
+      <empty list>
+    PsiWhiteSpace(' ')
+    PsiErrorElement:Property getter or setter expected
+      PsiElement(RANGE)('..')
+      PsiElement(FLOAT_CONSTANT)('555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555123456785012345678501234567850123456785012345678501234567850f')

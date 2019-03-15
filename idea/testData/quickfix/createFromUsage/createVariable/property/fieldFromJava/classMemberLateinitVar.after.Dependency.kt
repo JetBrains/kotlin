@@ -1,5 +1,4 @@
 class K {
-    @JvmField
-    lateinit var foo: String
 
+    lateinit var foo: String
 }

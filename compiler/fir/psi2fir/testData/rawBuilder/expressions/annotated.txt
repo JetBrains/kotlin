@@ -1,0 +1,33 @@
+FILE: annotated.kt
+    @Target(AnnotationTarget#.EXPRESSION#) @Retention(AnnotationRetention#.SOURCE#) public? final? annotation class Ann {
+        public? constructor(): super<kotlin/Any>()
+
+    }
+    public? final? function foo(arg: Int): Int {
+        when () {
+            ==(@Ann() arg#, Int(0)) ->  {
+                @Ann() return@@@foo Int(1)
+            }
+            else ->  {
+            }
+        }
+
+        @Ann() when () {
+            ==(arg#, Int(1)) ->  {
+                return@@@foo @Ann() Int(1)
+            }
+            else ->  {
+            }
+        }
+
+        return@@@foo Int(42)
+    }
+    public? final? data class Two {
+        public? constructor(x: Int, y: Int): super<kotlin/Any>()
+
+    }
+    public? final? function bar(two: Two): kotlin/Unit {
+        val <destruct>: <implicit> = two#
+        @Ann() val x: <implicit> = component1(<destruct>#)
+        @Ann() val y: <implicit> = component2(<destruct>#)
+    }

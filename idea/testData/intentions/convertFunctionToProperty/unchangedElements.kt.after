@@ -5,7 +5,7 @@ annotation class X(val s: String)
 class A(val n: Int) {
     val t = 1
     internal @X("1")
-    val <T : Number> T.foo: Boolean
+    val <T : Number> T.foo<caret>: Boolean
         get() = toInt() - n > 1
     val u = 2
 }

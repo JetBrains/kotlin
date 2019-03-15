@@ -1,7 +1,14 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("CollectionsKt")
 
 package kotlin.collections
+
+import kotlin.random.Random
 
 /**
  * Removes a single instance of the specified element from this
@@ -12,8 +19,8 @@ package kotlin.collections
  * @return `true` if the element has been successfully removed; `false` if it was not present in the collection.
  */
 @kotlin.internal.InlineOnly
-public inline fun <@kotlin.internal.OnlyInputTypes T> MutableCollection<out T>.remove(element: T): Boolean
-        = @Suppress("UNCHECKED_CAST") (this as MutableCollection<T>).remove(element)
+public inline fun <@kotlin.internal.OnlyInputTypes T> MutableCollection<out T>.remove(element: T): Boolean =
+    @Suppress("UNCHECKED_CAST") (this as MutableCollection<T>).remove(element)
 
 /**
  * Removes all of this collection's elements that are also contained in the specified collection.
@@ -23,8 +30,8 @@ public inline fun <@kotlin.internal.OnlyInputTypes T> MutableCollection<out T>.r
  * @return `true` if any of the specified elements was removed from the collection, `false` if the collection was not modified.
  */
 @kotlin.internal.InlineOnly
-public inline fun <@kotlin.internal.OnlyInputTypes T> MutableCollection<out T>.removeAll(elements: Collection<T>): Boolean
-        = @Suppress("UNCHECKED_CAST") (this as MutableCollection<T>).removeAll(elements)
+public inline fun <@kotlin.internal.OnlyInputTypes T> MutableCollection<out T>.removeAll(elements: Collection<T>): Boolean =
+    @Suppress("UNCHECKED_CAST") (this as MutableCollection<T>).removeAll(elements)
 
 /**
  * Retains only the elements in this collection that are contained in the specified collection.
@@ -34,8 +41,8 @@ public inline fun <@kotlin.internal.OnlyInputTypes T> MutableCollection<out T>.r
  * @return `true` if any element was removed from the collection, `false` if the collection was not modified.
  */
 @kotlin.internal.InlineOnly
-public inline fun <@kotlin.internal.OnlyInputTypes T> MutableCollection<out T>.retainAll(elements: Collection<T>): Boolean
-        = @Suppress("UNCHECKED_CAST") (this as MutableCollection<T>).retainAll(elements)
+public inline fun <@kotlin.internal.OnlyInputTypes T> MutableCollection<out T>.retainAll(elements: Collection<T>): Boolean =
+    @Suppress("UNCHECKED_CAST") (this as MutableCollection<T>).retainAll(elements)
 
 /**
  * Removes the element at the specified [index] from this list.
@@ -154,7 +161,7 @@ public fun <T> MutableIterable<T>.retainAll(predicate: (T) -> Boolean): Boolean 
 
 private fun <T> MutableIterable<T>.filterInPlace(predicate: (T) -> Boolean, predicateResultToRemove: Boolean): Boolean {
     var result = false
-    with (iterator()) {
+    with(iterator()) {
         while (hasNext())
             if (predicate(next()) == predicateResultToRemove) {
                 remove()
@@ -194,8 +201,7 @@ private fun <T> MutableList<T>.filterInPlace(predicate: (T) -> Boolean, predicat
             removeAt(removeIndex)
 
         return true
-    }
-    else {
+    } else {
         return false
     }
 }
@@ -255,3 +261,26 @@ private fun MutableCollection<*>.retainNothing(): Boolean {
     clear()
     return result
 }
+
+/**
+ * Randomly shuffles elements in this mutable list using the specified [random] instance as the source of randomness.
+ *
+ * See: https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm
+ */
+@SinceKotlin("1.3")
+public fun <T> MutableList<T>.shuffle(random: Random): Unit {
+    for (i in lastIndex downTo 1) {
+        val j = random.nextInt(i + 1)
+        val copy = this[i]
+        this[i] = this[j]
+        this[j] = copy
+    }
+}
+
+/**
+ * Returns a new list with the elements of this list randomly shuffled
+ * using the specified [random] instance as the source of randomness.
+ */
+@SinceKotlin("1.3")
+public fun <T> Iterable<T>.shuffled(random: Random): List<T> = toMutableList().apply { shuffle(random) }
+

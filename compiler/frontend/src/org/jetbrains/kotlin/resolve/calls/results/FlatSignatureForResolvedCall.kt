@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.calls.results
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl
@@ -52,13 +53,16 @@ fun <RC : ResolvedCall<*>> RC.createFlatSignature(): FlatSignature<RC> {
 
 fun createOverloadingConflictResolver(
     builtIns: KotlinBuiltIns,
+    module: ModuleDescriptor,
     specificityComparator: TypeSpecificityComparator
 ) = OverloadingConflictResolver(
     builtIns,
+    module,
     specificityComparator,
     MutableResolvedCall<*>::getResultingDescriptor,
     ConstraintSystemBuilderImpl.Companion::forSpecificity,
     MutableResolvedCall<*>::createFlatSignature,
     { (it as? VariableAsFunctionResolvedCallImpl)?.variableCall },
-    { DescriptorToSourceUtils.descriptorToDeclaration(it) != null }
+    { DescriptorToSourceUtils.descriptorToDeclaration(it) != null },
+    null
 )

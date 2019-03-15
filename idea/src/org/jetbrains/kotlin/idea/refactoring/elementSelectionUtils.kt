@@ -225,7 +225,7 @@ private fun smartSelectElement(
             .setItemChoosenCallback { callback(list.selectedValue as KtElement) }
             .addListener(
                     object : JBPopupAdapter() {
-                        override fun onClosed(event: LightweightWindowEvent?) {
+                        override fun onClosed(event: LightweightWindowEvent) {
                             highlighter.dropHighlight()
                         }
                     }

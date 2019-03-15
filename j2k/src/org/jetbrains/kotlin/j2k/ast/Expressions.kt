@@ -98,6 +98,14 @@ open class LiteralExpression(val literalText: String) : Expression() {
     }
 }
 
+class ArrayLiteralExpression(val expressions: List<Expression>) : Expression() {
+    override fun generateCode(builder: CodeBuilder) {
+        builder.append("[")
+        builder.append(expressions, ", ")
+        builder.append("]")
+    }
+}
+
 class ParenthesizedExpression(val expression: Expression) : Expression() {
     override fun generateCode(builder: CodeBuilder) {
         builder append "(" append expression append ")"

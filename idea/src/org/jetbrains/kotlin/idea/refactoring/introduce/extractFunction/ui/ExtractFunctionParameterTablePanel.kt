@@ -36,7 +36,7 @@ open class ExtractFunctionParameterTablePanel : AbstractParameterTablePanel<Para
             originalParameter: Parameter,
             val isReceiver: Boolean
     ) : AbstractParameterTablePanel.AbstractParameterInfo<Parameter>(originalParameter) {
-        var type = originalParameter.getParameterType(false)
+        var type = originalParameter.parameterType
 
         init {
             name = if (isReceiver) "<receiver>" else originalParameter.name
@@ -56,7 +56,7 @@ open class ExtractFunctionParameterTablePanel : AbstractParameterTablePanel<Para
                 override fun getTableCellRendererComponent(
                         table: JTable, value: Any, isSelected: Boolean, hasFocus: Boolean, row: Int, column: Int
                 ): Component {
-                    myLabel.text = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(value as KotlinType)
+                    myLabel.text = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(value as KotlinType)
                     myLabel.background = if (isSelected) table.selectionBackground else table.background
                     myLabel.foreground = if (isSelected) table.selectionForeground else table.foreground
                     if (isSelected) {
@@ -78,9 +78,9 @@ open class ExtractFunctionParameterTablePanel : AbstractParameterTablePanel<Para
                     val info = parameterInfos[row]
 
                     myEditorComponent.setCell(table, row, column)
-                    myEditorComponent.setOptions(*info.originalParameter.getParameterTypeCandidates(false).toTypedArray())
+                    myEditorComponent.setOptions(*info.originalParameter.getParameterTypeCandidates().toTypedArray())
                     myEditorComponent.setDefaultValue(info.type)
-                    myEditorComponent.setToString { IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(it as KotlinType) }
+                    myEditorComponent.setToString { IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(it as KotlinType) }
 
                     return myEditorComponent
                 }
@@ -118,7 +118,7 @@ open class ExtractFunctionParameterTablePanel : AbstractParameterTablePanel<Para
             val info = parameterInfos[rowIndex]
             return when (columnIndex) {
                 AbstractParameterTablePanel.PARAMETER_NAME_COLUMN -> super.isCellEditable(rowIndex, columnIndex) && !info.isReceiver
-                PARAMETER_TYPE_COLUMN -> isEnabled && info.isEnabled && info.originalParameter.getParameterTypeCandidates(false).size > 1
+                PARAMETER_TYPE_COLUMN -> isEnabled && info.isEnabled && info.originalParameter.getParameterTypeCandidates().size > 1
                 else -> super.isCellEditable(rowIndex, columnIndex)
             }
         }

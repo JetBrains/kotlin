@@ -3,5 +3,5 @@ package
 package test {
     public var global: kotlin.Throwable?
     public fun </*0*/ T> foo(/*0*/ x: kotlin.Throwable, /*1*/ z: T, /*2*/ b: (T) -> kotlin.Unit): kotlin.Unit
-    public fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+    public fun main(): kotlin.Unit
 }

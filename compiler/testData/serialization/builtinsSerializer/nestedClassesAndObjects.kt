@@ -15,18 +15,10 @@ class ClassA {
 
     inner class classC {
         val memberFromC: Int = 200
-
-        class CC {
-            val memberFromCC: Int = 250
-        }
-
-        object CO {
-            val memberFromCO: Int = 265
-        }
     }
 
     companion object {
-        val stat: Int
+        val stat: Int = 250
 
         class D {
             val memberFromD: Int = 275
@@ -37,4 +29,3 @@ class ClassA {
         val memberFromObjA: Int = 300
     }
 }
-

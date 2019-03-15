@@ -17,9 +17,9 @@
 package org.jetbrains.kotlin.resolve.lazy.data;
 
 import com.intellij.psi.PsiElement;
+import kotlin.annotations.jvm.ReadOnly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.kotlin.descriptors.ClassKind;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.*;

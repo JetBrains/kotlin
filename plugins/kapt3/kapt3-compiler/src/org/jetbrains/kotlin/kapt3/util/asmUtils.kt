@@ -26,7 +26,6 @@ import org.jetbrains.org.objectweb.asm.tree.MethodNode
 internal fun isEnum(access: Int) = (access and Opcodes.ACC_ENUM) != 0
 internal fun isPublic(access: Int) = (access and Opcodes.ACC_PUBLIC) != 0
 internal fun isSynthetic(access: Int) = (access and Opcodes.ACC_SYNTHETIC) != 0
-internal fun isPrivate(access: Int) = (access and Opcodes.ACC_PRIVATE) != 0
 internal fun isFinal(access: Int) = (access and Opcodes.ACC_FINAL) != 0
 internal fun isStatic(access: Int) = (access and Opcodes.ACC_STATIC) != 0
 internal fun isAbstract(access: Int) = (access and Opcodes.ACC_ABSTRACT) != 0
@@ -40,14 +39,20 @@ internal fun <T> List<T>?.isNullOrEmpty() = this == null || this.isEmpty()
 
 internal fun MethodNode.isJvmOverloadsGenerated(): Boolean {
     return (invisibleAnnotations?.any { it.isJvmOverloadsGenerated() } ?: false)
-           || (visibleAnnotations?.any { it.isJvmOverloadsGenerated() } ?: false)
+            || (visibleAnnotations?.any { it.isJvmOverloadsGenerated() } ?: false)
 }
 
 // Constant from DefaultParameterValueSubstitutor can't be used in Maven build because of ProGuard
 // rename this as well
 private val ANNOTATION_TYPE_DESCRIPTOR_FOR_JVMOVERLOADS_GENERATED_METHODS: String =
-        Type.getObjectType("synthetic/kotlin/jvm/GeneratedByJvmOverloads").descriptor
+    Type.getObjectType("synthetic/kotlin/jvm/GeneratedByJvmOverloads").descriptor
 
 private fun AnnotationNode.isJvmOverloadsGenerated(): Boolean {
     return this.desc == ANNOTATION_TYPE_DESCRIPTOR_FOR_JVMOVERLOADS_GENERATED_METHODS
 }
+
+val ClassNode.className: String
+    get() = Type.getObjectType(name).className
+
+val ClassNode.simpleName: String
+    get() = name.substringAfterLast('/').substringAfterLast('$')

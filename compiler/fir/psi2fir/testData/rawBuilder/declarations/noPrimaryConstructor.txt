@@ -1,0 +1,12 @@
+FILE: noPrimaryConstructor.kt
+    public? final? class NoPrimary {
+        public? final? property x(val): String
+            public? get(): String
+
+        public? constructor(x: String): super<kotlin/Any>() {
+            this#.x# = x#
+        }
+
+        public? constructor(): this<NoPrimary>(String())
+
+    }

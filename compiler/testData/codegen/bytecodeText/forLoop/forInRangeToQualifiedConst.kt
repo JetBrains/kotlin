@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 object Host {
     const val M = 1
     const val N = 4

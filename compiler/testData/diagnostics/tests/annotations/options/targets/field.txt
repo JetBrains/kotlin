@@ -1,7 +1,7 @@
 package
 
-@Field public val x: kotlin.Int = 42
-@Field public val y: kotlin.Int
+@field:Field public val x: kotlin.Int = 42
+@field:Field public val y: kotlin.Int
 
 @Field public final annotation class Another : kotlin.Annotation {
     public constructor Another()
@@ -18,8 +18,8 @@ package
 }
 
 public interface His {
-    @Field public abstract val x: kotlin.Int
-    @Field public open val y: kotlin.Int
+    @field:Field public abstract val x: kotlin.Int
+    @field:Field public open val y: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -27,11 +27,11 @@ public interface His {
 
 @Field public abstract class My {
     public constructor My(/*0*/ @Field arg: kotlin.Int, /*1*/ w: kotlin.Int)
-    @Field public final val v: kotlin.Int
-    @Field public final val w: kotlin.Int
-    @Field public final val x: kotlin.Int
-    @Field public final val y: kotlin.Int
-    @Field public abstract val z: kotlin.Int
+    @field:Field public final val v: kotlin.Int
+    @field:Field public final val w: kotlin.Int
+    @field:Field public final val x: kotlin.Int
+    @field:Field public final val y: kotlin.Int
+    @field:Field public abstract val z: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     @Field public final fun foo(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

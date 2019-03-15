@@ -53,7 +53,9 @@ fun box(): String {
     val dd: dynamic = E()
     assertEquals("D.foo(42)", dd.foo(42))
     assertEquals("D.foo(99)", dd.bar(99))
-    assertEquals("D.foo(88)", dd.`foo_za3lpa$`(88))
+    if (testUtils.isLegacyBackend()) {
+        assertEquals("D.foo(88)", dd.`foo_za3lpa$`(88))
+    }
 
     return "OK"
 }

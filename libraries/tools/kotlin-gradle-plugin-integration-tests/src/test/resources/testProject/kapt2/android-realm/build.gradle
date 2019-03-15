@@ -3,8 +3,8 @@ buildscript {
 
     repositories {
         mavenLocal()
-        jcenter()
         maven { url 'https://maven.google.com' }
+        jcenter()
     }
     dependencies {
         classpath "com.android.tools.build:gradle:$android_tools_version"
@@ -45,11 +45,11 @@ android {
 
 repositories {
     mavenLocal()
+    maven { url 'https://maven.google.com' }
     maven {
-        url 'http://oss.jfrog.org/artifactory/oss-snapshot-local'
+        url 'https://oss.jfrog.org/artifactory/oss-snapshot-local'
     }
     mavenCentral()
-    maven { url 'https://maven.google.com' }
 }
 
 dependencies {

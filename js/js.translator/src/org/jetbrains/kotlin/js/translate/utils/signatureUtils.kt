@@ -40,6 +40,11 @@ fun generateSignature(descriptor: DeclarationDescriptor): String? {
     }
     return when (descriptor) {
         is CallableDescriptor -> {
+            // Should correspond to inner name generation
+            if (descriptor is ConstructorDescriptor && descriptor.isPrimary) {
+                return generateSignature(descriptor.constructedClass)
+            }
+
             val parent = generateSignature(descriptor.containingDeclaration) ?: return null
             if (descriptor !is VariableAccessorDescriptor && descriptor !is ConstructorDescriptor && descriptor.name.isSpecial) {
                 return null

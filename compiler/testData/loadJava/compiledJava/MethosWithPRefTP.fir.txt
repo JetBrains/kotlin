@@ -1,0 +1,4 @@
+public final class MethosWithPRefTP : R|java/lang/Object| {
+    public final operator function f(p: R|ft<P, P?>|!): R|kotlin/Unit|
+
+}

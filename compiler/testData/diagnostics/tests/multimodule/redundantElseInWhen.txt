@@ -47,6 +47,3 @@ package other {
     public fun baz(/*0*/ b: kotlin.Boolean?): kotlin.Int
     public fun foo(/*0*/ e: test.E): kotlin.Int
 }
-
-package test {
-}

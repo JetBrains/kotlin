@@ -2,11 +2,12 @@ LineBreakpoint created at constructors.kt:9
 LineBreakpoint created at constructors.kt:13
 LineBreakpoint created at constructors.kt:20
 LineBreakpoint created at constructors.kt:28
-LineBreakpoint created at constructors.kt:48
-LineBreakpoint created at constructors.kt:53
-LineBreakpoint created at constructors.kt:58
-LineBreakpoint created at constructors.kt:64
-LineBreakpoint created at constructors.kt:70
+LineBreakpoint created at constructors.kt:49
+LineBreakpoint created at constructors.kt:54
+LineBreakpoint created at constructors.kt:59
+LineBreakpoint created at constructors.kt:65
+LineBreakpoint created at constructors.kt:71
+LineBreakpoint created at constructors.kt:77
 Run Java
 Connected to the target VM
 constructors.kt:9
@@ -17,16 +18,18 @@ constructors.kt:20
 Compile bytecode for p1 + p2
 constructors.kt:28
 Compile bytecode for i1
-constructors.kt:48
+constructors.kt:49
 Compile bytecode for 1 + 1
-constructors.kt:53
+constructors.kt:54
 Compile bytecode for 1 + 2
-constructors.kt:58
+constructors.kt:59
 Compile bytecode for a
-constructors.kt:64
+constructors.kt:65
 Compile bytecode for 1 + 3
-constructors.kt:70
+constructors.kt:71
 Compile bytecode for i
+constructors.kt:77
+Compile bytecode for a
 Disconnected from the target VM
 
 Process finished with exit code 0

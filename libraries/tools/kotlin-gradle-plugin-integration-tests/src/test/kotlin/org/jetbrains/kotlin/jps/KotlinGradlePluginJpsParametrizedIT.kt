@@ -5,6 +5,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import java.io.File
+
 @RunWith(Parameterized::class)
 class KotlinGradlePluginJpsParametrizedIT : BaseIncrementalGradleIT() {
 
@@ -18,26 +19,28 @@ class KotlinGradlePluginJpsParametrizedIT : BaseIncrementalGradleIT() {
     }
 
     override fun defaultBuildOptions() =
-            super.defaultBuildOptions().copy(incremental = true)
+        super.defaultBuildOptions().copy(incremental = true)
 
     companion object {
 
         private val jpsResourcesPath = File("../../../jps-plugin/testData/incremental")
-        private val ignoredDirs = setOf(File(jpsResourcesPath, "cacheVersionChanged"),
-                                        File(jpsResourcesPath, "changeIncrementalOption"),
-                                        File(jpsResourcesPath, "custom"),
-                                        File(jpsResourcesPath, "lookupTracker"))
+        private val ignoredDirs = setOf(
+            File(jpsResourcesPath, "cacheVersionChanged"),
+            File(jpsResourcesPath, "changeIncrementalOption"),
+            File(jpsResourcesPath, "custom"),
+            File(jpsResourcesPath, "lookupTracker")
+        )
         private val buildLogFinder = BuildLogFinder(isGradleEnabled = true)
 
         @Suppress("unused")
         @Parameterized.Parameters(name = "{0}")
         @JvmStatic
         fun data(): List<Array<String>> =
-                jpsResourcesPath.walk()
-                        .onEnter { it !in ignoredDirs }
-                        .filter { it.isDirectory && buildLogFinder.findBuildLog(it) != null  }
-                        .map { arrayOf(it.toRelativeString(jpsResourcesPath)) }
-                        .toList()
+            jpsResourcesPath.walk()
+                .onEnter { it !in ignoredDirs }
+                .filter { it.isDirectory && buildLogFinder.findBuildLog(it) != null }
+                .map { arrayOf(it.toRelativeString(jpsResourcesPath)) }
+                .toList()
     }
 }
 

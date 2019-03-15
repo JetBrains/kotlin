@@ -1,0 +1,63 @@
+FILE: branches.kt
+    public? final? function foo(a: Int, b: Int): <implicit> {
+        return@@@foo when () {
+            >(a#, b#) ->  {
+                a#
+            }
+            else ->  {
+                b#
+            }
+        }
+
+    }
+    public? final? function bar(a: Double, b: Double): Double {
+        when () {
+            >(a#, b#) ->  {
+                println#(a#)
+                return@@@bar a#
+            }
+            else ->  {
+                println#(b#)
+                return@@@bar b#
+            }
+        }
+
+    }
+    public? final? function baz(a: Long, b: Long): Long {
+        when () {
+            >(a#, b#) ->  {
+                println#(a#)
+                return@@@baz a#
+            }
+            else ->  {
+                return@@@baz b#
+            }
+        }
+
+    }
+    public? final? function grade(g: Int): String {
+        return@@@grade when (g#) {
+            ||(==($subj$, Int(6)), ==($subj$, Int(7))) ->  {
+                String(Outstanding)
+            }
+            ==($subj$, Int(5)) ->  {
+                String(Excellent)
+            }
+            ==($subj$, Int(4)) ->  {
+                String(Good)
+            }
+            ==($subj$, Int(3)) ->  {
+                String(Mediocre)
+            }
+            in($subj$, rangeTo#(Int(1), Int(2))) ->  {
+                String(Fail)
+            }
+            is/Number($subj$) ->  {
+                String(Number)
+            }
+            else ->  {
+                String(Unknown)
+            }
+        }
+
+    }

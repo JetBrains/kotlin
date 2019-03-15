@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 class EncapsulatedEnum<T : Enum<T>>(val value: T)
 
 enum class MyEnum(val value: String) {

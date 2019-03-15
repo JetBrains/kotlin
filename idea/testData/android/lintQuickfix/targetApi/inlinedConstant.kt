@@ -1,5 +1,5 @@
 // INTENTION_TEXT: Add @TargetApi(KITKAT) Annotation
-// INSPECTION_CLASS: org.jetbrains.android.inspections.klint.AndroidLintInspectionToolProvider$AndroidKLintInlinedApiInspection
+// INSPECTION_CLASS: com.android.tools.idea.lint.AndroidLintInlinedApiInspection
 
 class Test {
     fun foo(): Int {

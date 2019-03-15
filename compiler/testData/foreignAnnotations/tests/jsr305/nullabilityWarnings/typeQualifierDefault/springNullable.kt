@@ -69,7 +69,7 @@ public class A {
 fun main(a: A) {
     a.foo("", null)<!UNNECESSARY_SAFE_CALL!>?.<!>length
     a.foo("", null).length
-    a.foo(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>, "").length
+    a.foo(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS("String", "Nothing?")!>null<!>, "").length
 
     a.bar().length
     a.bar()<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.length
@@ -77,7 +77,7 @@ fun main(a: A) {
     a.field?.length
     a.field.length
 
-    <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.baz()<!>.get(0)
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS("MutableList<String!>?")!>a.baz()<!>.get(0)
     a.baz()!!.get(0).get(0)
     a.baz()!!.get(0)?.get(0)
 }

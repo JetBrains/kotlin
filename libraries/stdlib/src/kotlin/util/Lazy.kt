@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
 @file:kotlin.jvm.JvmName("LazyKt")
 @file:kotlin.jvm.JvmMultifileClass
 
@@ -16,6 +21,7 @@ public interface Lazy<out T> {
      * Once the value was initialized it must not change during the rest of lifetime of this Lazy instance.
      */
     public val value: T
+
     /**
      * Returns `true` if a value for this Lazy instance has been already initialized, and `false` otherwise.
      * Once this function has returned `true` it stays `true` for the rest of lifetime of this Lazy instance.

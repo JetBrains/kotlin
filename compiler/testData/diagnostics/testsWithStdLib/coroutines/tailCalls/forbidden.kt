@@ -1,19 +1,20 @@
 // !DIAGNOSTICS: -UNUSED_ANONYMOUS_PARAMETER
-import kotlin.coroutines.experimental.*
-import kotlin.coroutines.experimental.intrinsics.*
+// COMMON_COROUTINES_TEST
+import COROUTINES_PACKAGE.*
+import COROUTINES_PACKAGE.intrinsics.*
 
 fun nonSuspend() {}
 
 suspend fun foo() {
-    suspendCoroutineOrReturn { x: Continuation<Int> -> }
+    suspendCoroutineUninterceptedOrReturn { x: Continuation<Int> -> }
 
     nonSuspend()
 }
 
 suspend fun unitSuspend() {
-    suspendCoroutineOrReturn { x: Continuation<Int> -> }
+    suspendCoroutineUninterceptedOrReturn { x: Continuation<Int> -> }
 }
 
 suspend fun baz(): Int = run {
-    suspendCoroutineOrReturn { x: Continuation<Int> -> }
+    suspendCoroutineUninterceptedOrReturn { x: Continuation<Int> -> }
 }

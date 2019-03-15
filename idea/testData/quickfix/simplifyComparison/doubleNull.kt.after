@@ -4,8 +4,7 @@ fun foo(x: String?) {
 
     }
     else {
-        if (false) {
-
-        }
     }
 }
+
+fun bar() {}

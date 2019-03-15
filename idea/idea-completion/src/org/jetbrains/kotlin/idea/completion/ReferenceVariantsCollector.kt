@@ -25,13 +25,16 @@ import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.idea.util.ShadowedDeclarationsFilter
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
+import org.jetbrains.kotlin.psi.externalDescriptors
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DataClassDescriptorResolver
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeSmart
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeSmartForCompiler
 import java.util.*
 
 data class ReferenceVariants(val imported: Collection<DeclarationDescriptor>, val notImportedExtensions: Collection<CallableDescriptor>)
@@ -119,7 +122,7 @@ class ReferenceVariantsCollector(
 
         val getOrSetPrefix = GET_SET_PREFIXES.firstOrNull { prefix.startsWith(it) }
         val additionalPropertyNameFilter: ((String) -> Boolean)? = getOrSetPrefix
-                ?.let { prefixMatcher.cloneWithPrefix(prefix.removePrefix(getOrSetPrefix).decapitalizeSmart()).asStringNameFilter() }
+                ?.let { prefixMatcher.cloneWithPrefix(prefix.removePrefix(getOrSetPrefix).decapitalizeSmartForCompiler()).asStringNameFilter() }
 
         val shadowedDeclarationsFilter = if (runtimeReceiver != null)
             ShadowedDeclarationsFilter(bindingContext, resolutionFacade, nameExpression, runtimeReceiver)
@@ -141,13 +144,30 @@ class ReferenceVariantsCollector(
                     useReceiverType = runtimeReceiver?.type)
         }
 
+        val basicNameFilter = descriptorNameFilter.toNameFilter()
         val (descriptorKindFilter, additionalPropertyNameFilter) = filterConfiguration
 
-        var basicVariants = getReferenceVariants(descriptorKindFilter, descriptorNameFilter.toNameFilter())
+        var runDistinct = false
+
+        var basicVariants = getReferenceVariants(descriptorKindFilter, basicNameFilter)
         if (additionalPropertyNameFilter != null) {
             basicVariants += getReferenceVariants(descriptorKindFilter.intersect(DescriptorKindFilter.VARIABLES), additionalPropertyNameFilter.toNameFilter())
+            runDistinct = true
+        }
+
+        val containingCodeFragment = nameExpression.containingKtFile as? KtCodeFragment
+        if (containingCodeFragment != null) {
+            val externalDescriptors = containingCodeFragment.externalDescriptors
+            if (externalDescriptors != null) {
+                basicVariants += externalDescriptors
+                    .filter { descriptorKindFilter.accepts(it) && basicNameFilter(it.name) }
+            }
+        }
+
+        if (runDistinct) {
             basicVariants = basicVariants.distinct()
         }
+
         return ReferenceVariants(filterConfiguration.filterVariants(basicVariants).toHashSet(), emptyList())
     }
 

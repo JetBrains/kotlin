@@ -21,7 +21,7 @@ val l20: Int = <!INTEGER_OVERFLOW!>30 * 24 * 60 * 60 * 1000<!>
 val l21: Int = intMinValue - intMinValue
 val l22: Int = <!INTEGER_OVERFLOW!>intMinValue + <!INTEGER_OVERFLOW!>-intMinValue<!><!>
 val l23: Int = intMaxValue + <!INTEGER_OVERFLOW!>-intMinValue<!>
-val l24: Int = (-1).<!DEPRECATION!>mod<!>(5)
+val l24: Int = (-1).<!DEPRECATION_ERROR!>mod<!>(5)
 val l25: Int = (-1).rem(5)
 val l26: Int = (-1) % 5
 
@@ -45,7 +45,7 @@ fun foo() {
     val l21: Int = intMinValue - intMinValue
     val l22: Int = <!INTEGER_OVERFLOW!>intMinValue + <!INTEGER_OVERFLOW!>-intMinValue<!><!>
     val l23: Int = intMaxValue + <!INTEGER_OVERFLOW!>-intMinValue<!>
-    val l24: Int = (-1).<!DEPRECATION!>mod<!>(5)
+    val l24: Int = (-1).<!DEPRECATION_ERROR!>mod<!>(5)
     val l25: Int = (-1).rem(5)
     val l26: Int = (-1) % 5
 }
@@ -70,7 +70,7 @@ class A {
         val l21: Int = intMinValue - intMinValue
         val l22: Int = <!INTEGER_OVERFLOW!>intMinValue + <!INTEGER_OVERFLOW!>-intMinValue<!><!>
         val l23: Int = intMaxValue + <!INTEGER_OVERFLOW!>-intMinValue<!>
-        val l24: Int = (-1).<!DEPRECATION!>mod<!>(5)
+        val l24: Int = (-1).<!DEPRECATION_ERROR!>mod<!>(5)
         val l25: Int = (-1).rem(5)
         val l26: Int = (-1) % 5
     }

@@ -22,9 +22,9 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind.LOWER
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind.UPPER
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.checker.CaptureStatus
 import org.jetbrains.kotlin.types.checker.NewCapturedType
 import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
+import org.jetbrains.kotlin.types.model.CaptureStatus
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isNullableAny
@@ -38,6 +38,7 @@ class ConstraintInjector(val constraintIncorporator: ConstraintIncorporator, val
 
         var maxTypeDepthFromInitialConstraints: Int
         val notFixedTypeVariables: MutableMap<TypeConstructor, MutableVariableWithConstraints>
+        val fixedTypeVariables: MutableMap<TypeConstructor, UnwrappedType>
 
         fun addInitialConstraint(initialConstraint: InitialConstraint)
         fun addError(error: KotlinCallDiagnostic)
@@ -153,6 +154,11 @@ class ConstraintInjector(val constraintIncorporator: ConstraintIncorporator, val
                     ?: error("Should by type variableConstructor: $typeVariableConstructor. ${c.allTypeVariables.values}")
 
             var targetType = type
+            if (targetType.isError) {
+                c.addError(ConstrainingTypeIsError(typeVariable, targetType, position))
+                return
+            }
+
             if (type.contains(this::isCapturedTypeFromSubtyping)) {
                 // TypeVariable <: type -> if TypeVariable <: subType => TypeVariable <: type
                 if (kind == UPPER) {

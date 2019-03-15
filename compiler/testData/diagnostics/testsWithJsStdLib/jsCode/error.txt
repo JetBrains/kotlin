@@ -4,4 +4,4 @@ public val code: kotlin.String = "
     var s = "hello"
     + );
 "
-public fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+public fun main(): kotlin.Unit

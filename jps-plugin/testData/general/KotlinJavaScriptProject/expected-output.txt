@@ -4,7 +4,5 @@ kotlinProject/
   kotlinProject.js
   kotlinProject.meta.js
   lib/
-    kotlin-experimental.js
-    kotlin-experimental.meta.js
     kotlin.js
     kotlin.meta.js

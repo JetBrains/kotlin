@@ -18,10 +18,16 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderWithTextStub;
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
 public class KtSimpleNameStringTemplateEntry extends KtStringTemplateEntryWithExpression {
     public KtSimpleNameStringTemplateEntry(@NotNull ASTNode node) {
         super(node);
+    }
+
+    public KtSimpleNameStringTemplateEntry(@NotNull KotlinPlaceHolderWithTextStub<KtSimpleNameStringTemplateEntry> stub) {
+        super(stub, KtStubElementTypes.SHORT_STRING_TEMPLATE_ENTRY);
     }
 
     @Override

@@ -23,7 +23,9 @@ import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
+import org.jetbrains.kotlin.load.kotlin.findKotlinClass
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.ClassId
@@ -88,12 +90,16 @@ class IncrementalPackageFragmentProvider(
                             val jvmBinaryClass =
                                     kotlinClassFinder.findKotlinClass(ClassId.topLevel(partName.fqNameForTopLevelClassMaybeWithDollars))
 
+                            val metadataVersion =
+                                jvmBinaryClass?.classHeader?.metadataVersion
+                                ?: JvmMetadataVersion.INSTANCE
+
                             DeserializedPackageMemberScope(
-                                    this, packageProto, nameResolver,
-                                    JvmPackagePartSource(
+                                this, packageProto, nameResolver, metadataVersion,
+                                JvmPackagePartSource(
                                             partName, facadeName, packageProto, nameResolver, knownJvmBinaryClass = jvmBinaryClass
                                     ),
-                                    deserializationComponents, classNames = { emptyList() }
+                                deserializationComponents, classNames = { emptyList() }
                             )
                         }
                     }

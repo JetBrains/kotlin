@@ -5,11 +5,11 @@ public final class User {
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String, p1: int): void
     public final @org.jetbrains.annotations.NotNull method component1(): java.lang.String
     public final method component2(): int
-    public synthetic static @org.jetbrains.annotations.NotNull method copy$default(p0: User, p1: java.lang.String, p2: int, p3: int, p4: java.lang.Object): User
+    public synthetic static method copy$default(p0: User, p1: java.lang.String, p2: int, p3: int, p4: java.lang.Object): User
     public final @org.jetbrains.annotations.NotNull method copy(@org.jetbrains.annotations.NotNull p0: java.lang.String, p1: int): User
-    public method equals(p0: java.lang.Object): boolean
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public final method getAge(): int
     public final @org.jetbrains.annotations.NotNull method getName(): java.lang.String
     public method hashCode(): int
-    public method toString(): java.lang.String
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
 }

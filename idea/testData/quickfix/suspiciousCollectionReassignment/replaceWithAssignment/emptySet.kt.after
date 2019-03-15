@@ -1,0 +1,12 @@
+// "Replace with assignment (original is empty)" "true"
+// TOOL: org.jetbrains.kotlin.idea.inspections.SuspiciousCollectionReassignmentInspection
+// WITH_RUNTIME
+fun test(otherList: Set<Int>) {
+    var list = emptySet<Int>()
+    foo()
+    bar()
+    list = otherList
+}
+
+fun foo() {}
+fun bar() {}

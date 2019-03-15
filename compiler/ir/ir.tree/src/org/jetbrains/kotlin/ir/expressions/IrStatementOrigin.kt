@@ -93,6 +93,8 @@ interface IrStatementOrigin {
 
     object PROPERTY_REFERENCE_FOR_DELEGATE : IrStatementOriginImpl("PROPERTY_REFERENCE_FOR_DELEGATE")
 
+    object BRIDGE_DELEGATION : IrStatementOriginImpl("BRIDGE_DELEGATION")
+
     data class COMPONENT_N private constructor(val index: Int) : IrStatementOriginImpl("COMPONENT_$index") {
         companion object {
             private val precreatedComponents = Array(32) { i -> COMPONENT_N(i + 1) }

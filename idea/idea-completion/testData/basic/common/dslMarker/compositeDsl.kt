@@ -42,7 +42,9 @@ class DslOtherChild {
 
 @SimpleOtherDsl @SimpleDsl
 class DslAnotherChild {
+     fun foo () {
 
+     }
 }
 
 fun dsl(body: DslRoot.() -> Unit) {
@@ -66,6 +68,7 @@ fun test() {
     }
 }
 
-// EXIST: {lookupString:"otherThing", attributes:["grayed"]}
-// EXIST: {lookupString:"child", attributes:["grayed"]}
-// EXIST: {lookupString:"otherChild", attributes:["grayed"]}
+// EXIST: foo
+// ABSENT: otherThing
+// ABSENT: child
+// ABSENT: otherChild

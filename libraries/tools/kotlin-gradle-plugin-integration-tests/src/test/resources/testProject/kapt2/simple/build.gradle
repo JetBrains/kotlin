@@ -23,3 +23,5 @@ dependencies {
     kapt "org.jetbrains.kotlin:annotation-processor-example:$kotlin_version"
     testCompile 'junit:junit:4.12'
 }
+
+compileKotlin.kotlinOptions.allWarningsAsErrors = true

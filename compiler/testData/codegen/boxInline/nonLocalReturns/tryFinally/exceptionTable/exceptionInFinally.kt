@@ -18,8 +18,6 @@ public inline fun <T : MCloseable, R> T.muse(block: (T) -> R): R {
 
 import test.*
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
-import kotlin.test.fail
 
 class MyException(message: String) : Exception(message)
 
@@ -75,7 +73,7 @@ inline fun assertError(index: Int, expected: String, l: Test.()->Unit) {
     val testLocal = Test()
     try {
         testLocal.l()
-        fail("fail $index: no error")
+        throw AssertionError("fail $index: no error")
     } catch (e: Exception) {
         assertEquals(expected, testLocal.status.value, "failed on $index")
     }

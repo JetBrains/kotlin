@@ -18,22 +18,18 @@ package org.jetbrains.kotlin.script
 
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiFile
 
 interface ScriptDefinitionProvider {
     fun findScriptDefinition(fileName: String): KotlinScriptDefinition?
     fun isScript(fileName: String): Boolean
-    fun findScriptDefinition(file: VirtualFile): KotlinScriptDefinition? = findScriptDefinition(file.name)
+    fun getDefaultScriptDefinition(): KotlinScriptDefinition
+
+    fun getKnownFilenameExtensions(): Sequence<String>
 
     companion object {
-        fun getInstance(project: Project): ScriptDefinitionProvider =
+        fun getInstance(project: Project): ScriptDefinitionProvider? =
             ServiceManager.getService(project, ScriptDefinitionProvider::class.java)
     }
 }
 
-fun getScriptDefinition(file: VirtualFile, project: Project): KotlinScriptDefinition? =
-    ScriptDefinitionProvider.getInstance(project).findScriptDefinition(file)
 
-fun getScriptDefinition(psiFile: PsiFile): KotlinScriptDefinition? =
-    ScriptDefinitionProvider.getInstance(psiFile.project).findScriptDefinition(psiFile.name)

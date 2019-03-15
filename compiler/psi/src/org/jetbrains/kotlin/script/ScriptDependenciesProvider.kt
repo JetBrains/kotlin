@@ -24,13 +24,10 @@ import kotlin.script.experimental.dependencies.ScriptDependencies
 
 interface ScriptDependenciesProvider {
     fun getScriptDependencies(file: VirtualFile): ScriptDependencies?
-    fun getScriptDependencies(file: PsiFile) = getScriptDependencies(file.virtualFile)
+    fun getScriptDependencies(file: PsiFile) = getScriptDependencies(file.virtualFile ?: file.originalFile.virtualFile)
 
     companion object {
-        fun getInstance(project: Project): ScriptDependenciesProvider =
+        fun getInstance(project: Project): ScriptDependenciesProvider? =
             ServiceManager.getService(project, ScriptDependenciesProvider::class.java)
     }
 }
-
-fun getScriptExternalDependencies(file: VirtualFile, project: Project): ScriptDependencies? =
-    ScriptDependenciesProvider.getInstance(project).getScriptDependencies(file)

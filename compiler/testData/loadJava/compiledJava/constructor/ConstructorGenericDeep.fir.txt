@@ -1,0 +1,4 @@
+public open class ConstructorGenericDeep : R|java/lang/Object| {
+    public final function ConstructorGenericDeep(cl: R|ft<java/lang/Class<ft<P, P?>>, java/lang/Class<ft<P, P?>>?>|!): R|test/ConstructorGenericDeep|
+
+}

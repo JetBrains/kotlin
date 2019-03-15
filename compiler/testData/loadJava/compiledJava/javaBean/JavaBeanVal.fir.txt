@@ -1,0 +1,4 @@
+public open class JavaBeanVal : R|java/lang/Object| {
+    public open operator function getColor(): R|ft<kotlin/String, kotlin/String?>|!
+
+}

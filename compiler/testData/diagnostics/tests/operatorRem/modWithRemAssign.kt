@@ -1,3 +1,4 @@
+// !LANGUAGE: -ProhibitOperatorMod
 // !DIAGNOSTICS: -UNUSED_PARAMETER, -EXTENSION_SHADOWED_BY_MEMBER
 
 class ModAndRemAssign {

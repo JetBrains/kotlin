@@ -19,13 +19,12 @@ package org.jetbrains.kotlin.ir.declarations.impl
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
-import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.SmartList
 
@@ -36,20 +35,43 @@ class IrTypeParameterImpl(
     override val symbol: IrTypeParameterSymbol,
     override val name: Name,
     override val index: Int,
-    override val variance: Variance,
-    override val upperBounds: List<KotlinType>
-) : IrDeclarationBase(startOffset, endOffset, origin), IrTypeParameter {
+    override val isReified: Boolean,
+    override val variance: Variance
+) :
+    IrDeclarationBase(startOffset, endOffset, origin),
+    IrTypeParameter {
 
-    constructor(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, symbol: IrTypeParameterSymbol) :
+    constructor(
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        symbol: IrTypeParameterSymbol
+    ) :
             this(
                 startOffset, endOffset, origin, symbol,
                 symbol.descriptor.name,
                 symbol.descriptor.index,
-                symbol.descriptor.variance,
-                symbol.descriptor.upperBounds.toMutableList()
+                symbol.descriptor.isReified,
+                symbol.descriptor.variance
             )
 
-    constructor(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: TypeParameterDescriptor) :
+    constructor(
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        symbol: IrTypeParameterSymbol,
+        name: Name,
+        index: Int,
+        variance: Variance
+    ) : this(startOffset, endOffset, origin, symbol, name, index, symbol.descriptor.isReified, variance)
+
+    @Deprecated("Use constructor which takes symbol instead of descriptor")
+    constructor(
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        descriptor: TypeParameterDescriptor
+    ) :
             this(startOffset, endOffset, origin, IrTypeParameterSymbolImpl(descriptor))
 
     init {
@@ -58,7 +80,7 @@ class IrTypeParameterImpl(
 
     override val descriptor: TypeParameterDescriptor get() = symbol.descriptor
 
-    override val superClassifiers: MutableList<IrClassifierSymbol> = SmartList<IrClassifierSymbol>()
+    override val superTypes: MutableList<IrType> = SmartList()
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitTypeParameter(this, data)

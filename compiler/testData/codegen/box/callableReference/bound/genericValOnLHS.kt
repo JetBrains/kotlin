@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: NATIVE
+// IGNORE_BACKEND: JVM_IR
 
 class Generic<P : Any>(val p: P)
 

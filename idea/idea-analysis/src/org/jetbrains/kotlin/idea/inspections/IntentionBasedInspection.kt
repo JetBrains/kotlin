@@ -21,6 +21,7 @@ import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.codeInspection.*
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.fileEditor.FileDocumentManager
@@ -205,6 +206,10 @@ abstract class IntentionBasedInspection<TElement : PsiElement> private construct
 }
 
 fun PsiElement.findExistingEditor(): Editor? {
+    ApplicationManager.getApplication().assertReadAccessAllowed()
+
+    if (!containingFile.isValid) return null
+
     val file = containingFile?.virtualFile ?: return null
     val document = FileDocumentManager.getInstance().getDocument(file) ?: return null
 

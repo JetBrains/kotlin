@@ -1,4 +1,6 @@
+// KJS_WITH_FULL_RUNTIME
 // IGNORE_BACKEND: NATIVE
+// IGNORE_BACKEND: JVM_IR
 class A : HashMap<String, Double>()
 
 fun box(): String {

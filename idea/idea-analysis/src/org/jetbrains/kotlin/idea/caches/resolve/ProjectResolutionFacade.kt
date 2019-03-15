@@ -24,22 +24,28 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.SLRUCache
 import org.jetbrains.kotlin.analyzer.*
-import org.jetbrains.kotlin.builtins.DefaultBuiltIns
+import org.jetbrains.kotlin.analyzer.common.CommonAnalysisParameters
+import org.jetbrains.kotlin.analyzer.common.CommonPlatform
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.caches.resolve.IdePlatformSupport
+import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
+import org.jetbrains.kotlin.caches.resolve.resolution
 import org.jetbrains.kotlin.context.GlobalContextImpl
+import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.context.withProject
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.project.*
+import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
+import org.jetbrains.kotlin.idea.caches.project.getNullableModuleInfo
 import org.jetbrains.kotlin.idea.compiler.IDELanguageSettingsProvider
 import org.jetbrains.kotlin.idea.project.IdeaEnvironment
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
-import org.jetbrains.kotlin.platform.JvmBuiltIns
+import org.jetbrains.kotlin.platform.idePlatformKind
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.CompositeBindingContext
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 internal class ProjectResolutionFacade(
@@ -96,13 +102,14 @@ internal class ProjectResolutionFacade(
             delegateResolverForProject = EmptyResolverForProject()
             delegateBuiltIns = null
         }
+        val projectContext = globalContext.withProject(project)
 
         val builtIns = delegateBuiltIns ?: createBuiltIns(
             settings,
-            globalContext
+            projectContext
         )
 
-        val allModuleInfos = (allModules ?: collectAllModuleInfosFromIdeaModel(project)).toMutableSet()
+        val allModuleInfos = (allModules ?: getModuleInfosFromIdeaModel(project, settings.platform)).toMutableSet()
 
         val syntheticFilesByModule = syntheticFiles.groupBy(KtFile::getModuleInfo)
         val syntheticFilesModules = syntheticFilesByModule.keys
@@ -111,33 +118,45 @@ internal class ProjectResolutionFacade(
         val modulesToCreateResolversFor = allModuleInfos.filter(moduleFilter)
 
         val modulesContentFactory = { module: IdeaModuleInfo ->
-            ModuleContent(syntheticFilesByModule[module] ?: listOf(), module.contentScope())
+            ModuleContent(module, syntheticFilesByModule[module] ?: listOf(), module.contentScope())
         }
 
-        val jvmPlatformParameters = JvmPlatformParameters { javaClass: JavaClass ->
-            val psiClass = (javaClass as JavaClassImpl).psi
-            psiClass.getNullableModuleInfo()
-        }
+        val jvmPlatformParameters = JvmPlatformParameters(
+            packagePartProviderFactory = { IDEPackagePartProvider(it.moduleContentScope) },
+            moduleByJavaClass = { javaClass: JavaClass ->
+                val psiClass = (javaClass as JavaClassImpl).psi
+                psiClass.getPlatformModuleInfo(JvmPlatform)?.platformModule ?: psiClass.getNullableModuleInfo()
+            }
+        )
+
+        val commonPlatformParameters = CommonAnalysisParameters(
+            metadataPartProviderFactory = { IDEPackagePartProvider(it.moduleContentScope) }
+        )
 
         val resolverForProject = ResolverForProjectImpl(
             resolverDebugName,
-            globalContext.withProject(project),
+            projectContext,
             modulesToCreateResolversFor,
-            { module ->
-                val platform = module.platform ?: settings.platform
-                IdePlatformSupport.facades[platform] ?: throw UnsupportedOperationException("Unsupported platform $platform")
-            },
             modulesContentFactory,
-            jvmPlatformParameters,
-            IdeaEnvironment,
-            builtIns,
-            delegateResolverForProject,
-            packagePartProviderFactory = { _, c -> IDEPackagePartProvider(c.moduleContentScope) },
+            moduleLanguageSettingsProvider = IDELanguageSettingsProvider,
+            resolverForModuleFactoryByPlatform = { modulePlatform ->
+                val platform = modulePlatform ?: settings.platform
+                platform.idePlatformKind.resolution.resolverForModuleFactory
+            },
+            platformParameters = { platform ->
+                when (platform) {
+                    is JvmPlatform -> jvmPlatformParameters
+                    is CommonPlatform -> commonPlatformParameters
+                    else -> PlatformAnalysisParameters.Empty
+                }
+            },
+            targetEnvironment = IdeaEnvironment,
+            builtIns = builtIns,
+            delegateResolver = delegateResolverForProject,
             firstDependency = settings.sdk?.let { SdkInfo(project, it) },
-            modulePlatforms = { module -> module.platform?.multiTargetPlatform },
             packageOracleFactory = ServiceManager.getService(project, IdePackageOracleFactory::class.java),
-            languageSettingsProvider = IDELanguageSettingsProvider,
-            invalidateOnOOCB = invalidateOnOOCB
+            invalidateOnOOCB = invalidateOnOOCB,
+            isReleaseCoroutines = settings.isReleaseCoroutines
         )
 
         if (delegateBuiltIns == null && builtIns is JvmBuiltIns) {
@@ -152,22 +171,23 @@ internal class ProjectResolutionFacade(
         return resolverForProject
     }
 
-    fun resolverForModuleInfo(moduleInfo: IdeaModuleInfo) = cachedResolverForProject.resolverForModule(moduleInfo)
+    internal fun resolverForModuleInfo(moduleInfo: IdeaModuleInfo) = cachedResolverForProject.resolverForModule(moduleInfo)
 
-    fun resolverForElement(element: PsiElement): ResolverForModule {
+    internal fun resolverForElement(element: PsiElement): ResolverForModule {
         val infos = element.getModuleInfos()
         return infos.asIterable().firstNotNullResult { cachedResolverForProject.tryGetResolverForModule(it) }
                 ?: cachedResolverForProject.tryGetResolverForModule(NotUnderContentRootModuleInfo)
                 ?: cachedResolverForProject.diagnoseUnknownModuleInfo(infos.toList())
     }
 
-    fun resolverForDescriptor(moduleDescriptor: ModuleDescriptor) = cachedResolverForProject.resolverForModuleDescriptor(moduleDescriptor)
+    internal fun resolverForDescriptor(moduleDescriptor: ModuleDescriptor) =
+        cachedResolverForProject.resolverForModuleDescriptor(moduleDescriptor)
 
-    fun findModuleDescriptor(ideaModuleInfo: IdeaModuleInfo): ModuleDescriptor {
+    internal fun findModuleDescriptor(ideaModuleInfo: IdeaModuleInfo): ModuleDescriptor {
         return cachedResolverForProject.descriptorForModule(ideaModuleInfo)
     }
 
-    fun getAnalysisResultsForElements(elements: Collection<KtElement>): AnalysisResult {
+    internal fun getAnalysisResultsForElements(elements: Collection<KtElement>): AnalysisResult {
         assert(elements.isNotEmpty()) { "elements collection should not be empty" }
         val slruCache = synchronized(analysisResults) {
             analysisResults.value!!
@@ -192,10 +212,9 @@ internal class ProjectResolutionFacade(
         return "$debugString@${Integer.toHexString(hashCode())}"
     }
 
-    companion object {
-        private fun createBuiltIns(settings: PlatformAnalysisSettings, sdkContext: GlobalContextImpl): KotlinBuiltIns {
-            val supportInstance = IdePlatformSupport.platformSupport[settings.platform] ?: return DefaultBuiltIns.Instance
-            return supportInstance.createBuiltIns(settings, sdkContext)
+    private companion object {
+        private fun createBuiltIns(settings: PlatformAnalysisSettings, projectContext: ProjectContext): KotlinBuiltIns {
+            return settings.platform.idePlatformKind.resolution.createBuiltIns(settings, projectContext)
         }
     }
 }

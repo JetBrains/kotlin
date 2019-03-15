@@ -21,15 +21,16 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
-import org.jetbrains.kotlin.config.AnalysisFlag
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.description.ContractProviderKey
 import org.jetbrains.kotlin.contracts.description.LazyContractProvider
 import org.jetbrains.kotlin.contracts.parsing.ContractParsingServices
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationSplitter
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl
 import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.FunctionExpressionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
@@ -47,6 +48,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils.getDispatchReceiverParameter
 import org.jetbrains.kotlin.resolve.ModifiersChecker.resolveMemberModalityFromModifiers
 import org.jetbrains.kotlin.resolve.ModifiersChecker.resolveVisibilityFromModifiers
 import org.jetbrains.kotlin.resolve.bindingContextUtil.recordScope
+import org.jetbrains.kotlin.resolve.calls.DslMarkerUtils
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.util.createValueParametersForInvokeInFunctionType
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
@@ -55,6 +57,7 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope
 import org.jetbrains.kotlin.resolve.scopes.TraceBasedLocalRedeclarationChecker
 import org.jetbrains.kotlin.resolve.source.toSourceElement
+import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -64,6 +67,7 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionExpression
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionLiteral
 import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
+import org.jetbrains.kotlin.util.AstLoadingFilter
 import java.util.*
 
 class FunctionDescriptorResolver(
@@ -75,7 +79,8 @@ class FunctionDescriptorResolver(
     private val overloadChecker: OverloadChecker,
     private val contractParsingServices: ContractParsingServices,
     private val expressionTypingServices: ExpressionTypingServices,
-    private val languageVersionSettings: LanguageVersionSettings
+    private val languageVersionSettings: LanguageVersionSettings,
+    private val storageManager: StorageManager
 ) {
     fun resolveFunctionDescriptor(
         containingDescriptor: DeclarationDescriptor,
@@ -197,18 +202,36 @@ class FunctionDescriptorResolver(
             function, getDefaultModality(container, visibility, function.hasBody()),
             trace.bindingContext, container
         )
+
         val contractProvider = getContractProvider(functionDescriptor, trace, scope, dataFlowInfo, function)
+        val userData = mutableMapOf<CallableDescriptor.UserDataKey<*>, Any>().apply {
+            if (contractProvider != null) {
+                put(ContractProviderKey, contractProvider)
+            }
+
+            if (receiverType != null && expectedFunctionType.functionTypeExpected() && !expectedFunctionType.annotations.isEmpty()) {
+                put(DslMarkerUtils.FunctionTypeAnnotationsKey, expectedFunctionType.annotations)
+            }
+        }
+
+        val extensionReceiver = receiverType?.let {
+            val splitter = AnnotationSplitter(storageManager, receiverType.annotations, EnumSet.of(AnnotationUseSiteTarget.RECEIVER))
+            DescriptorFactory.createExtensionReceiverParameterForCallable(
+                functionDescriptor, it, splitter.getAnnotationsForTarget(AnnotationUseSiteTarget.RECEIVER)
+            )
+        }
 
         functionDescriptor.initialize(
-            receiverType,
+            extensionReceiver,
             getDispatchReceiverParameterIfNeeded(container),
             typeParameterDescriptors,
             valueParameterDescriptors,
             returnType,
             modality,
             visibility,
-            mapOf(ContractProviderKey to contractProvider)
+            userData.takeIf { it.isNotEmpty() }
         )
+
         functionDescriptor.isOperator = function.hasModifier(KtTokens.OPERATOR_KEYWORD)
         functionDescriptor.isInfix = function.hasModifier(KtTokens.INFIX_KEYWORD)
         functionDescriptor.isExternal = function.hasModifier(KtTokens.EXTERNAL_KEYWORD)
@@ -231,19 +254,20 @@ class FunctionDescriptorResolver(
         scope: LexicalScope,
         dataFlowInfo: DataFlowInfo,
         function: KtFunction
-    ): LazyContractProvider {
-        val provideByDeferredForceResolve = LazyContractProvider {
-            expressionTypingServices.getBodyExpressionType(trace, scope, dataFlowInfo, function, functionDescriptor)
-        }
-        val emptyContract = LazyContractProvider.createInitialized(null)
+    ): LazyContractProvider? {
+        if (function !is KtNamedFunction) return null
 
         val isContractsEnabled = languageVersionSettings.supportsFeature(LanguageFeature.AllowContractsForCustomFunctions) ||
                 // We need to enable contracts if we're compiling "kotlin"-package to be able to ship contracts in stdlib in 1.2
-                languageVersionSettings.getFlag(AnalysisFlag.allowKotlinPackage)
+                languageVersionSettings.getFlag(AnalysisFlags.allowKotlinPackage)
 
-        if (!isContractsEnabled || !contractParsingServices.fastCheckIfContractPresent(function)) return emptyContract
+        if (!isContractsEnabled || !function.mayHaveContract()) return null
 
-        return provideByDeferredForceResolve
+        return LazyContractProvider(storageManager) {
+            AstLoadingFilter.forceAllowTreeLoading(function.containingFile) {
+                expressionTypingServices.getBodyExpressionType(trace, scope, dataFlowInfo, function, functionDescriptor)
+            }
+        }
     }
 
     private fun createValueParameterDescriptors(
@@ -287,7 +311,7 @@ class FunctionDescriptorResolver(
     private fun KotlinType.removeParameterNameAnnotation(): KotlinType {
         if (this is TypeUtils.SpecialType) return this
         val parameterNameAnnotation = annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.parameterName) ?: return this
-        return replaceAnnotations(AnnotationsImpl(annotations.filter { it != parameterNameAnnotation }))
+        return replaceAnnotations(Annotations.create(annotations.filter { it != parameterNameAnnotation }))
     }
 
     private fun KotlinType.functionTypeExpected() = !TypeUtils.noExpectedType(this) && isBuiltinFunctionalType
@@ -426,8 +450,7 @@ class FunctionDescriptorResolver(
             }
 
             val valueParameterDescriptor = descriptorResolver.resolveValueParameterDescriptor(
-                parameterScope, functionDescriptor,
-                valueParameter, i, type, trace
+                parameterScope, functionDescriptor, valueParameter, i, type, trace, Annotations.EMPTY
             )
 
             // Do not report NAME_SHADOWING for lambda destructured parameters as they may be not fully resolved at this time

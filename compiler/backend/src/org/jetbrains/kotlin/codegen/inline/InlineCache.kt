@@ -18,10 +18,9 @@ package org.jetbrains.kotlin.codegen.inline
 
 import com.intellij.util.containers.SLRUMap
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.org.objectweb.asm.commons.Method
 
-data class MethodId(val containingFqName: FqName, val method: Method)
+data class MethodId(val ownerInternalName: String, val method: Method)
 
 class InlineCache {
     val classBytes: SLRUMap<ClassId, ByteArray> = SLRUMap(30, 20)
@@ -34,8 +33,7 @@ inline fun <K, V> SLRUMap<K, V>.getOrPut(key: K, defaultValue: () -> V): V {
         val answer = defaultValue()
         put(key, answer)
         answer
-    }
-    else {
+    } else {
         value
     }
 }

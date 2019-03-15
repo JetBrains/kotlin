@@ -25,7 +25,7 @@ interface C : A {
 }
 
 <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class D<!> : J {
-    <!ACCIDENTAL_OVERRIDE!>suspend override fun foo()<!> {
+    suspend override fun foo() {
 
     }
 }
@@ -33,5 +33,5 @@ interface C : A {
 // FILE: J.java
 
 public interface J extends A {
-    Object foo(kotlin.coroutines.experimental.Continuation<kotlin.Unit> y);
+    Object foo(kotlin.coroutines.Continuation<kotlin.Unit> y);
 }

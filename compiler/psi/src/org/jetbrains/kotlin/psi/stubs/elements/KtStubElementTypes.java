@@ -101,6 +101,18 @@ public interface KtStubElementTypes {
     KtPlaceHolderStubElementType<KtTypeArgumentList> TYPE_ARGUMENT_LIST =
             new KtPlaceHolderStubElementType<>("TYPE_ARGUMENT_LIST", KtTypeArgumentList.class);
 
+    KtPlaceHolderStubElementType<KtValueArgumentList> VALUE_ARGUMENT_LIST =
+            new KtValueArgumentListElementType("VALUE_ARGUMENT_LIST");
+
+    KtValueArgumentElementType<KtValueArgument> VALUE_ARGUMENT =
+            new KtValueArgumentElementType<>("VALUE_ARGUMENT", KtValueArgument.class);
+
+    KtValueArgumentElementType<KtLambdaArgument> LAMBDA_ARGUMENT =
+            new KtValueArgumentElementType<>("LAMBDA_ARGUMENT", KtLambdaArgument.class);
+
+    KtPlaceHolderStubElementType<KtValueArgumentName> VALUE_ARGUMENT_NAME =
+            new KtPlaceHolderStubElementType<>("VALUE_ARGUMENT_NAME", KtValueArgumentName.class);
+
     KtPlaceHolderStubElementType<KtSuperTypeList> SUPER_TYPE_LIST =
             new KtPlaceHolderStubElementType<>("SUPER_TYPE_LIST", KtSuperTypeList.class);
 
@@ -116,6 +128,27 @@ public interface KtStubElementTypes {
             new KtPlaceHolderStubElementType<>("SUPER_TYPE_ENTRY", KtSuperTypeEntry.class);
     KtPlaceHolderStubElementType<KtConstructorCalleeExpression> CONSTRUCTOR_CALLEE =
             new KtPlaceHolderStubElementType<>("CONSTRUCTOR_CALLEE", KtConstructorCalleeExpression.class);
+
+    KtConstantExpressionElementType NULL                = new KtConstantExpressionElementType("NULL");
+    KtConstantExpressionElementType BOOLEAN_CONSTANT    = new KtConstantExpressionElementType("BOOLEAN_CONSTANT");
+    KtConstantExpressionElementType FLOAT_CONSTANT      = new KtConstantExpressionElementType("FLOAT_CONSTANT");
+    KtConstantExpressionElementType CHARACTER_CONSTANT  = new KtConstantExpressionElementType("CHARACTER_CONSTANT");
+    KtConstantExpressionElementType INTEGER_CONSTANT    = new KtConstantExpressionElementType("INTEGER_CONSTANT");
+
+    KtPlaceHolderStubElementType<KtStringTemplateExpression> STRING_TEMPLATE =
+            new KtStringTemplateExpressionElementType("STRING_TEMPLATE");
+
+    KtPlaceHolderWithTextStubElementType<KtBlockStringTemplateEntry> LONG_STRING_TEMPLATE_ENTRY =
+            new KtPlaceHolderWithTextStubElementType<>("LONG_STRING_TEMPLATE_ENTRY", KtBlockStringTemplateEntry.class);
+
+    KtPlaceHolderWithTextStubElementType<KtSimpleNameStringTemplateEntry> SHORT_STRING_TEMPLATE_ENTRY =
+            new KtPlaceHolderWithTextStubElementType<>("SHORT_STRING_TEMPLATE_ENTRY", KtSimpleNameStringTemplateEntry.class);
+
+    KtPlaceHolderWithTextStubElementType<KtLiteralStringTemplateEntry> LITERAL_STRING_TEMPLATE_ENTRY =
+            new KtPlaceHolderWithTextStubElementType<>("LITERAL_STRING_TEMPLATE_ENTRY", KtLiteralStringTemplateEntry.class);
+
+    KtPlaceHolderWithTextStubElementType<KtEscapeStringTemplateEntry> ESCAPE_STRING_TEMPLATE_ENTRY =
+            new KtPlaceHolderWithTextStubElementType<>("ESCAPE_STRING_TEMPLATE_ENTRY", KtEscapeStringTemplateEntry.class);
 
     KtScriptElementType SCRIPT = new KtScriptElementType("SCRIPT");
 

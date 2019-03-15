@@ -1,3 +1,5 @@
+// PROBLEM: Redundant overriding method
+// FIX: Remove redundant overriding method
 open class Foo {
     open fun simple() {
     }

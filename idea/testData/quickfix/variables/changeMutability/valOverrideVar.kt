@@ -1,4 +1,4 @@
-// "Make variable mutable" "true"
+// "Change to var" "true"
 open class A {
     open var x = 42;
 }

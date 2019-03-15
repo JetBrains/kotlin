@@ -4,4 +4,4 @@ actual class Foo {
     actual class <caret>Bar
 }
 
-// REF: [common] (in test.Foo).Bar
+// REF: [testModule_Common] (in test.Foo).Bar

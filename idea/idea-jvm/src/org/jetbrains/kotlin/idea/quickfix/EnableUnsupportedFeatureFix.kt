@@ -11,7 +11,6 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootManager
-import com.intellij.openapi.roots.ex.ProjectRootManagerEx
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.ui.Messages
 import com.intellij.psi.PsiElement
@@ -20,13 +19,14 @@ import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.configuration.BuildSystemType
 import org.jetbrains.kotlin.idea.configuration.findApplicableConfigurator
 import org.jetbrains.kotlin.idea.configuration.getBuildSystemType
+import org.jetbrains.kotlin.idea.core.isInTestSourceContentKotlinAware
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.facet.getRuntimeLibraryVersion
+import org.jetbrains.kotlin.idea.roots.invalidateProjectRoots
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import org.jetbrains.kotlin.idea.versions.findKotlinRuntimeLibrary
 import org.jetbrains.kotlin.idea.versions.updateLibraries
@@ -55,7 +55,7 @@ sealed class EnableUnsupportedFeatureFix(
                 else
                     null
             }
-            val forTests = ModuleRootManager.getInstance(module).fileIndex.isInTestSourceContent(file.virtualFile)
+            val forTests = ModuleRootManager.getInstance(module).fileIndex.isInTestSourceContentKotlinAware(file.virtualFile)
 
             findApplicableConfigurator(module).updateLanguageVersion(
                     module,
@@ -81,7 +81,7 @@ sealed class EnableUnsupportedFeatureFix(
             val targetVersion = feature.sinceVersion!!
 
             KotlinCommonCompilerArgumentsHolder.getInstance(project).update {
-                val parsedApiVersion = ApiVersion.parse(apiVersion!!)
+                val parsedApiVersion = apiVersion?.let { ApiVersion.parse(it) }
                 if (parsedApiVersion != null && feature.sinceApiVersion > parsedApiVersion) {
                     if (!checkUpdateRuntime(project, feature.sinceApiVersion)) return@update
                     apiVersion = feature.sinceApiVersion.versionString
@@ -91,7 +91,7 @@ sealed class EnableUnsupportedFeatureFix(
                     languageVersion = targetVersion.versionString
                 }
             }
-            ProjectRootManagerEx.getInstanceEx(project).makeRootsChange({}, false, true)
+            project.invalidateProjectRoots()
         }
     }
 
@@ -103,7 +103,7 @@ sealed class EnableUnsupportedFeatureFix(
             val apiVersionOnly = sinceVersion <= languageFeatureSettings.languageVersion &&
                                  feature.sinceApiVersion > languageFeatureSettings.apiVersion
 
-            if (!sinceVersion.isStable && !KotlinInternalMode.enabled) {
+            if (!sinceVersion.isStable && !ApplicationManager.getApplication().isInternal) {
                 return null
             }
 

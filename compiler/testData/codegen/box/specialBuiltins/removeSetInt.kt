@@ -1,3 +1,6 @@
+// KJS_WITH_FULL_RUNTIME
+// IGNORE_BACKEND: NATIVE
+// IGNORE_BACKEND: JVM_IR
 class MySet : HashSet<Int>() {
     override fun remove(element: Int): Boolean {
         return super.remove(element)

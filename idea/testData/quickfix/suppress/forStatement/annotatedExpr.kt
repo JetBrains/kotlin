@@ -5,4 +5,5 @@ fun foo() {
 }
 
 @Target(AnnotationTarget.EXPRESSION)
+@Retention(AnnotationRetention.SOURCE)
 annotation class ann

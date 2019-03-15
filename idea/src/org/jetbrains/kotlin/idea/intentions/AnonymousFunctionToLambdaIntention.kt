@@ -20,6 +20,8 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
+import org.jetbrains.kotlin.idea.core.getLastLambdaExpression
+import org.jetbrains.kotlin.idea.core.moveFunctionLiteralOutsideParenthesesIfPossible
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.psi.*
@@ -89,9 +91,6 @@ class AnonymousFunctionToLambdaIntention : SelfTargetingRangeIntention<KtNamedFu
         val returnLabel = callee.getReferencedNameAsName()
         returnSaver.restore(replaced, returnLabel)
 
-        val moveLambdaOutsideParenthesesIntention = MoveLambdaOutsideParenthesesIntention()
-        if (moveLambdaOutsideParenthesesIntention.isApplicableTo(callExpression, replaced.textOffset)) {
-            moveLambdaOutsideParenthesesIntention.applyTo(callExpression, editor)
-        }
+        callExpression.getLastLambdaExpression()?.moveFunctionLiteralOutsideParenthesesIfPossible()
     }
 }

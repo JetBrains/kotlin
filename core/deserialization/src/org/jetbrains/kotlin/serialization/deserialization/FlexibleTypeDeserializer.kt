@@ -24,7 +24,7 @@ interface FlexibleTypeDeserializer {
     fun create(proto: ProtoBuf.Type, flexibleId: String, lowerBound: SimpleType, upperBound: SimpleType): KotlinType
 
     object ThrowException : FlexibleTypeDeserializer {
-        override fun create(proto: ProtoBuf.Type, flexibleId: String, lowerBound: SimpleType, upperBound: SimpleType): KotlinType
-                = throw IllegalArgumentException("This method should not be used.")
+        override fun create(proto: ProtoBuf.Type, flexibleId: String, lowerBound: SimpleType, upperBound: SimpleType): KotlinType =
+            throw IllegalArgumentException("This method should not be used.")
     }
 }

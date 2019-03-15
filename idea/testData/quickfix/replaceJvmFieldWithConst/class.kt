@@ -6,6 +6,7 @@
 // ACTION: Make public
 // ACTION: Move to constructor
 // ACTION: Specify type explicitly
+// ACTION: Add use-site target 'field'
 class Foo {
     <caret>@JvmField private val a = "Lorem ipsum"
 }

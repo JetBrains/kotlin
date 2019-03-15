@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.lazy
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiRecursiveElementVisitor
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -32,14 +33,16 @@ import java.util.*
 class PartialBodyResolveFilter(
         elementsToResolve: Collection<KtElement>,
         private val declaration: KtDeclaration,
-        probablyNothingCallableNames: ProbablyNothingCallableNames,
         forCompletion: Boolean
 ) : StatementFilter() {
 
     private val statementMarks = StatementMarks()
 
-    private val nothingFunctionNames = HashSet(probablyNothingCallableNames.functionNames())
-    private val nothingVariableNames = HashSet(probablyNothingCallableNames.propertyNames())
+    private val globalProbablyNothingCallableNames = ProbablyNothingCallableNames.getInstance(declaration.project)
+    private val globalProbablyContractedCallableNames = ProbablyContractedCallableNames.getInstance(declaration.project)
+
+    private val contextNothingFunctionNames = HashSet<String>()
+    private val contextNothingVariableNames = HashSet<String>()
 
     override val filter: ((KtExpression) -> Boolean)? = { statementMarks.statementMark(it) != MarkLevel.NONE }
 
@@ -55,10 +58,10 @@ class PartialBodyResolveFilter(
                 val name = declaration.name
                 if (name != null) {
                     if (declaration is KtNamedFunction) {
-                        nothingFunctionNames.add(name)
+                        contextNothingFunctionNames.add(name)
                     }
                     else {
-                        nothingVariableNames.add(name)
+                        contextNothingVariableNames.add(name)
                     }
                 }
             }
@@ -113,7 +116,7 @@ class PartialBodyResolveFilter(
                 if (!smartCastPlaces.isEmpty()) {
                     //TODO: do we really need correct resolve for ALL smart cast places?
                     smartCastPlaces.values
-                            .flatMap { it }
+                            .flatten()
                             .forEach { statementMarks.mark(it, MarkLevel.NEED_REFERENCE_RESOLVE) }
                     updateNameFilter()
                 }
@@ -165,6 +168,19 @@ class PartialBodyResolveFilter(
 
                 if (expression.operationToken == KtTokens.EXCLEXCL) {
                     addIfCanBeSmartCast(expression.baseExpression ?: return)
+                }
+            }
+
+            override fun visitCallExpression(expression: KtCallExpression) {
+                super.visitCallExpression(expression)
+
+                val nameReference = expression.calleeExpression as? KtNameReferenceExpression ?: return
+                if (!globalProbablyContractedCallableNames.isProbablyContractedCallableName(nameReference.getReferencedName())) return
+
+                val mentionedSmartCastName = expression.findMentionedName(filter)
+
+                if (mentionedSmartCastName != null) {
+                    addPlace(mentionedSmartCastName, expression)
                 }
             }
 
@@ -256,6 +272,25 @@ class PartialBodyResolveFilter(
         })
 
         return map
+    }
+
+    private fun KtExpression.findMentionedName(filter: (SmartCastName) -> Boolean): SmartCastName? {
+        var foundMentionedName: SmartCastName? = null
+
+        val visitor = object : PsiRecursiveElementVisitor() {
+            override fun visitElement(element: PsiElement) {
+                if (foundMentionedName != null) return
+
+                if (element !is KtSimpleNameExpression) super.visitElement(element)
+                if (element !is KtExpression) return
+
+                element.smartCastExpressionName()?.takeIf(filter)?.let { foundMentionedName = it }
+            }
+        }
+
+        accept(visitor)
+
+        return foundMentionedName
     }
 
     /**
@@ -399,7 +434,7 @@ class PartialBodyResolveFilter(
 
             override fun visitCallExpression(expression: KtCallExpression) {
                 val name = (expression.calleeExpression as? KtSimpleNameExpression)?.getReferencedName()
-                if (name != null && name in nothingFunctionNames) {
+                if (name != null && (name in globalProbablyNothingCallableNames.functionNames() || name in contextNothingFunctionNames)) {
                     result.add(expression)
                 }
                 super.visitCallExpression(expression)
@@ -407,7 +442,7 @@ class PartialBodyResolveFilter(
 
             override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
                 val name = expression.getReferencedName()
-                if (name in nothingVariableNames) {
+                if (name in globalProbablyNothingCallableNames.propertyNames() || name in contextNothingVariableNames) {
                     result.add(expression)
                 }
             }

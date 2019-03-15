@@ -67,7 +67,6 @@ public enum EnumClass2 {
     /*public static final*/ RED /* = new RED(null) */;
     private final java.lang.String blah = null;
 
-    EnumClass2(@org.jetbrains.annotations.NotNull()
-    java.lang.String blah) {
+    EnumClass2(java.lang.String blah) {
     }
 }

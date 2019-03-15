@@ -1,0 +1,12 @@
+<inspection_tool class="IncompatibleAPI" enabled="true" level="WARNING" enabled_by_default="true">
+    <option name="problems">
+        <list>
+            <Problem reference="lib.LibClass" reason="class example" />
+            <Problem reference="lib.LibMethods#staticMethod" reason="static method example" />
+            <Problem reference="lib.LibMethods#overload1(int)" reason="concrete overload example" />
+            <Problem reference="lib.LibMethods#overload2" reason="overload with no params example" />
+            <Problem reference="lib.LibSuper#test" reason="signature changed example" />
+            <Problem reference="lib.LibConstructor#LibConstructor(java.lang.Object)" reason="constructor example" />
+        </list>
+    </option>
+</inspection_tool>

@@ -26,7 +26,7 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithAllCompilerChecks
 import org.jetbrains.kotlin.idea.highlighter.KotlinPsiChecker
 import org.jetbrains.kotlin.idea.quickfix.CleanupFix
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
@@ -50,7 +50,7 @@ class KotlinCleanupInspection : LocalInspectionTool(), CleanupLocalInspectionToo
             return null
         }
 
-        val analysisResult = file.analyzeFullyAndGetResult()
+        val analysisResult = file.analyzeWithAllCompilerChecks()
         if (analysisResult.isError()) {
             throw ProcessCanceledException(analysisResult.error)
         }

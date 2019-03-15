@@ -1,0 +1,300 @@
+KtFile: 3.3.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    INTEGER_CONSTANT
+      PsiElement(INTEGER_LITERAL)('0')
+    PsiErrorElement:Property getter or setter expected
+      PsiElement(RESERVED)('...')
+      PsiElement(FLOAT_CONSTANT)('1f')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    INTEGER_CONSTANT
+      PsiElement(INTEGER_LITERAL)('1')
+    PsiErrorElement:Property getter or setter expected
+      PsiElement(BAD_CHARACTER)('…')
+      PsiElement(FLOAT_CONSTANT)('1f')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    INTEGER_CONSTANT
+      PsiElement(INTEGER_LITERAL)('0')
+    PsiErrorElement:Property getter or setter expected
+      PsiElement(INTEGER_LITERAL)('0')
+      PsiElement(INTEGER_LITERAL)('0')
+      PsiElement(COLON)(':')
+      PsiElement(FLOAT_CONSTANT)('1F')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    INTEGER_CONSTANT
+      PsiElement(INTEGER_LITERAL)('2')
+    PsiErrorElement:Property getter or setter expected
+      PsiElement(BAD_CHARACTER)('•')
+      PsiElement(FLOAT_CONSTANT)('0F')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    INTEGER_CONSTANT
+      PsiElement(INTEGER_LITERAL)('0')
+    PsiErrorElement:Property getter or setter expected
+      PsiElement(INTEGER_LITERAL)('0')
+      PsiElement(BAD_CHARACTER)('·')
+      PsiElement(FLOAT_CONSTANT)('0f')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    INTEGER_CONSTANT
+      PsiElement(INTEGER_LITERAL)('300')
+    PsiErrorElement:Property getter or setter expected
+      PsiElement(BAD_CHARACTER)('‚')
+      PsiElement(FLOAT_CONSTANT)('1F')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    INTEGER_CONSTANT
+      PsiElement(INTEGER_LITERAL)('0')
+    PsiErrorElement:Property getter or setter expected
+      PsiElement(INTEGER_LITERAL)('0')
+      PsiElement(INTEGER_LITERAL)('0')
+      PsiElement(INTEGER_LITERAL)('0')
+      PsiElement(BAD_CHARACTER)('°')
+      PsiElement(FLOAT_CONSTANT)('1f')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    INTEGER_CONSTANT
+      PsiElement(INTEGER_LITERAL)('1')
+    PsiErrorElement:Property getter or setter expected
+      PsiElement(BAD_CHARACTER)('●')
+      PsiElement(FLOAT_CONSTANT)('1F')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    INTEGER_CONSTANT
+      PsiElement(INTEGER_LITERAL)('8')
+    PsiErrorElement:Property getter or setter expected
+      PsiElement(BAD_CHARACTER)('☺')
+      PsiElement(FLOAT_CONSTANT)('10f')
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    DOT_QUALIFIED_EXPRESSION
+      INTEGER_CONSTANT
+        PsiElement(INTEGER_LITERAL)('1')
+      PsiElement(DOT)('.')
+      PsiWhiteSpace(' ')
+      FLOAT_CONSTANT
+        PsiElement(FLOAT_CONSTANT)('2f')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    DOT_QUALIFIED_EXPRESSION
+      INTEGER_CONSTANT
+        PsiElement(INTEGER_LITERAL)('1')
+      PsiWhiteSpace(' ')
+      PsiElement(DOT)('.')
+      PsiWhiteSpace(' ')
+      FLOAT_CONSTANT
+        PsiElement(FLOAT_CONSTANT)('2f')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    INTEGER_CONSTANT
+      PsiElement(INTEGER_LITERAL)('1')
+    PsiWhiteSpace(' ')
+    PsiErrorElement:Property getter or setter expected
+      PsiElement(FLOAT_CONSTANT)('.2F')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    INTEGER_CONSTANT
+      PsiElement(INTEGER_LITERAL)('1')
+    PsiWhiteSpace('\t')
+    PsiErrorElement:Property getter or setter expected
+      PsiElement(FLOAT_CONSTANT)('.2f')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    DOT_QUALIFIED_EXPRESSION
+      INTEGER_CONSTANT
+        PsiElement(INTEGER_LITERAL)('1')
+      PsiWhiteSpace('\t')
+      PsiElement(DOT)('.')
+      PsiWhiteSpace('\t')
+      FLOAT_CONSTANT
+        PsiElement(FLOAT_CONSTANT)('2F')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    DOT_QUALIFIED_EXPRESSION
+      INTEGER_CONSTANT
+        PsiElement(INTEGER_LITERAL)('1')
+      PsiElement(DOT)('.')
+      PsiWhiteSpace('\t')
+      FLOAT_CONSTANT
+        PsiElement(FLOAT_CONSTANT)('2f')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    INTEGER_CONSTANT
+      PsiElement(INTEGER_LITERAL)('1')
+  PsiWhiteSpace('\n')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(FLOAT_CONSTANT)('.2F')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    DOT_QUALIFIED_EXPRESSION
+      INTEGER_CONSTANT
+        PsiElement(INTEGER_LITERAL)('1')
+      PsiElement(DOT)('.')
+      PsiWhiteSpace('\n    ')
+      FLOAT_CONSTANT
+        PsiElement(FLOAT_CONSTANT)('2F')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    DOT_QUALIFIED_EXPRESSION
+      INTEGER_CONSTANT
+        PsiElement(INTEGER_LITERAL)('1')
+      PsiElement(DOT)('.')
+      PsiWhiteSpace('\n    ')
+      FLOAT_CONSTANT
+        PsiElement(FLOAT_CONSTANT)('2f')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    INTEGER_CONSTANT
+      PsiElement(INTEGER_LITERAL)('1')
+  PsiWhiteSpace('\n')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(FLOAT_CONSTANT)('.2f')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    DOT_QUALIFIED_EXPRESSION
+      INTEGER_CONSTANT
+        PsiElement(INTEGER_LITERAL)('1')
+      PsiElement(DOT)('.')
+      PsiErrorElement:Expecting an element
+        PsiElement(BAD_CHARACTER)('')
+    PsiErrorElement:Property getter or setter expected
+      PsiElement(FLOAT_CONSTANT)('35f')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    INTEGER_CONSTANT
+      PsiElement(INTEGER_LITERAL)('3')
+    PsiErrorElement:Property getter or setter expected
+      PsiElement(BAD_CHARACTER)('')
+      PsiElement(FLOAT_CONSTANT)('.5F')

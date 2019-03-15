@@ -1,6 +1,6 @@
 //FILE: 1.kt
+// IGNORE_BACKEND: JVM_IR
 package test
-
 inline fun annotatedWith2(crossinline predicate: () -> Boolean) =
         { any { predicate() } }()
 

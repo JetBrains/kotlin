@@ -25,15 +25,15 @@ interface JvmDependenciesIndex {
     val indexedRoots: Sequence<JavaRoot>
 
     fun <T : Any> findClass(
-            classId: ClassId,
-            acceptedRootTypes: Set<JavaRoot.RootType> = JavaRoot.SourceAndBinary,
-            findClassGivenDirectory: (VirtualFile, JavaRoot.RootType) -> T?
+        classId: ClassId,
+        acceptedRootTypes: Set<JavaRoot.RootType> = JavaRoot.SourceAndBinary,
+        findClassGivenDirectory: (VirtualFile, JavaRoot.RootType) -> T?
     ): T?
 
     fun traverseDirectoriesInPackage(
-            packageFqName: FqName,
-            acceptedRootTypes: Set<JavaRoot.RootType> = JavaRoot.SourceAndBinary,
-            continueSearch: (VirtualFile, JavaRoot.RootType) -> Boolean
+        packageFqName: FqName,
+        acceptedRootTypes: Set<JavaRoot.RootType> = JavaRoot.SourceAndBinary,
+        continueSearch: (VirtualFile, JavaRoot.RootType) -> Boolean
     )
 }
 

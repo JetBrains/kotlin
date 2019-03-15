@@ -1,14 +1,14 @@
 package
 
 package foo {
-    @kotlin.js.JsName(name = "mm_") public var mm: kotlin.Int
-    @kotlin.js.JsName(name = "xx_") public val xx: kotlin.Int
+    @kotlin.js.JsName(name = "mm_") @get:kotlin.js.JsName(name = "get_mm") @set:kotlin.js.JsName(name = "set_mm") public var mm: kotlin.Int
+    @kotlin.js.JsName(name = "xx_") @get:kotlin.js.JsName(name = "get_xx") public val xx: kotlin.Int
     @kotlin.js.JsName(name = "yy_") public val yy: kotlin.Int = 0
 
     public final class A {
         public constructor A()
-        @kotlin.js.JsName(name = "m_") public final var m: kotlin.Int
-        @kotlin.js.JsName(name = "x_") public final val x: kotlin.Int
+        @kotlin.js.JsName(name = "m_") @get:kotlin.js.JsName(name = "get_m") @set:kotlin.js.JsName(name = "set_m") public final var m: kotlin.Int
+        @kotlin.js.JsName(name = "x_") @get:kotlin.js.JsName(name = "get_x") public final val x: kotlin.Int
         @kotlin.js.JsName(name = "y_") public final val y: kotlin.Int = 0
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

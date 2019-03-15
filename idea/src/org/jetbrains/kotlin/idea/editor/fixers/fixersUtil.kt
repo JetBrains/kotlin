@@ -16,13 +16,14 @@
 
 package org.jetbrains.kotlin.idea.editor.fixers
 
-import com.intellij.psi.PsiElement
-import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.editor.Document
+import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiElement
 
 val PsiElement.range: TextRange get() = textRange!!
 val TextRange.start: Int get() = startOffset
 val TextRange.end: Int get() = endOffset
 
 fun PsiElement.startLine(doc: Document): Int = doc.getLineNumber(range.start)
+fun PsiElement.endLine(doc: Document): Int = doc.getLineNumber(range.end)
 fun PsiElement?.isWithCaret(caret: Int) = this?.textRange?.contains(caret) == true

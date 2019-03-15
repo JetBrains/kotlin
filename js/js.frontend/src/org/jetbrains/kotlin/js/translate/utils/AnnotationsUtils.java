@@ -22,8 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget;
-import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.js.PredefinedAnnotation;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtAnnotationEntry;
@@ -111,13 +109,7 @@ public final class AnnotationsUtils {
             @NotNull DeclarationDescriptor descriptor,
             @NotNull PredefinedAnnotation annotation
     ) {
-        return getAnnotationByName(descriptor, annotation.getFqName());
-    }
-
-    @Nullable
-    private static AnnotationDescriptor getAnnotationByName(@NotNull DeclarationDescriptor descriptor, @NotNull FqName fqName) {
-        AnnotationWithTarget annotationWithTarget = Annotations.Companion.findAnyAnnotation(descriptor.getAnnotations(), (fqName));
-        return annotationWithTarget != null ? annotationWithTarget.getAnnotation() : null;
+        return descriptor.getAnnotations().findAnnotation(annotation.getFqName());
     }
 
     public static boolean isNativeObject(@NotNull DeclarationDescriptor descriptor) {
@@ -159,7 +151,7 @@ public final class AnnotationsUtils {
 
     @Nullable
     public static AnnotationDescriptor getJsNameAnnotation(@NotNull DeclarationDescriptor descriptor) {
-        return getAnnotationByName(descriptor, new FqName(JS_NAME));
+        return descriptor.getAnnotations().findAnnotation(new FqName(JS_NAME));
     }
 
     public static boolean isPredefinedObject(@NotNull DeclarationDescriptor descriptor) {
@@ -183,9 +175,8 @@ public final class AnnotationsUtils {
     }
 
     private static boolean hasAnnotationOrInsideAnnotatedClass(@NotNull DeclarationDescriptor descriptor, @NotNull FqName fqName) {
-        if (getAnnotationByName(descriptor, fqName) != null) {
-            return true;
-        }
+        if (descriptor.getAnnotations().hasAnnotation(fqName)) return true;
+
         ClassDescriptor containingClass = DescriptorUtils.getContainingClass(descriptor);
         return containingClass != null && hasAnnotationOrInsideAnnotatedClass(containingClass, fqName);
     }

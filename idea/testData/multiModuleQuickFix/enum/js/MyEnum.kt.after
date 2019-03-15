@@ -1,10 +1,8 @@
 // MyEnum: to be implemented
 actual enum class MyEnum {
-    FIRST,
-    SECOND,
-    LAST;
+    FIRST, SECOND, LAST;
 
     actual val num: Int
-        get() = TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
 
 }

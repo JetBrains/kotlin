@@ -17,15 +17,19 @@
 package org.jetbrains.kotlin.resolve.constants
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.resolve.descriptorUtil.classId
+import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
 
 abstract class ConstantValue<out T>(open val value: T) {
     abstract fun getType(module: ModuleDescriptor): KotlinType
@@ -37,9 +41,12 @@ abstract class ConstantValue<out T>(open val value: T) {
     override fun hashCode(): Int = value?.hashCode() ?: 0
 
     override fun toString(): String = value.toString()
+
+    open fun stringTemplateValue(): String = value.toString()
 }
 
 abstract class IntegerValueConstant<out T> protected constructor(value: T) : ConstantValue<T>(value)
+abstract class UnsignedValueConstant<out T> protected constructor(value: T) : ConstantValue<T>(value)
 
 class AnnotationValue(value: AnnotationDescriptor) : ConstantValue<AnnotationDescriptor>(value) {
     override fun getType(module: ModuleDescriptor): KotlinType = value.type
@@ -151,13 +158,72 @@ class IntValue(value: Int) : IntegerValueConstant<Int>(value) {
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitIntValue(this, data)
 }
 
-class KClassValue(private val type: KotlinType) : ConstantValue<KotlinType>(type) {
-    override fun getType(module: ModuleDescriptor): KotlinType = type
+class KClassValue(value: Value) : ConstantValue<KClassValue.Value>(value) {
+    sealed class Value {
+        data class NormalClass(val value: ClassLiteralValue) : Value() {
+            val classId: ClassId get() = value.classId
+            val arrayDimensions: Int get() = value.arrayNestedness
+        }
 
-    override val value: KotlinType
-        get() = type.arguments.single().type
+        data class LocalClass(val type: KotlinType) : Value()
+    }
+
+    constructor(value: ClassLiteralValue) : this(Value.NormalClass(value))
+
+    constructor(classId: ClassId, arrayDimensions: Int) : this(ClassLiteralValue(classId, arrayDimensions))
+
+    override fun getType(module: ModuleDescriptor): KotlinType =
+        KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, module.builtIns.kClass, listOf(TypeProjectionImpl(getArgumentType(module))))
+
+    fun getArgumentType(module: ModuleDescriptor): KotlinType {
+        when (value) {
+            is Value.LocalClass -> return value.type
+            is Value.NormalClass -> {
+                val (classId, arrayDimensions) = value.value
+                val descriptor = module.findClassAcrossModuleDependencies(classId)
+                    ?: return ErrorUtils.createErrorType("Unresolved type: $classId (arrayDimensions=$arrayDimensions)")
+
+                // If this value refers to a class named test.Foo.Bar where both Foo and Bar have generic type parameters,
+                // we're constructing a type `test.Foo<*>.Bar<*>` below
+                var type = descriptor.defaultType.replaceArgumentsWithStarProjections()
+                repeat(arrayDimensions) {
+                    type = module.builtIns.getArrayType(Variance.INVARIANT, type)
+                }
+
+                return type
+            }
+        }
+    }
 
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitKClassValue(this, data)
+
+    companion object {
+        fun create(argumentType: KotlinType): ConstantValue<*>? {
+            if (argumentType.isError) return null
+
+            var type = argumentType
+            var arrayDimensions = 0
+            while (KotlinBuiltIns.isArray(type)) {
+                type = type.arguments.single().type
+                arrayDimensions++
+            }
+
+            return when (val descriptor = type.constructor.declarationDescriptor) {
+                is ClassDescriptor -> {
+                    val classId = descriptor.classId ?: return KClassValue(KClassValue.Value.LocalClass(argumentType))
+                    KClassValue(classId, arrayDimensions)
+                }
+                is TypeParameterDescriptor -> {
+                    // This is possible before 1.4 if a reified type parameter is used in annotation on a local class / anonymous object.
+                    // In JVM class file, we can't represent such literal properly, so we're writing java.lang.Object instead.
+                    // This has no effect on the compiler front-end or other back-ends, so we use kotlin.Any for simplicity here.
+                    // See LanguageFeature.ProhibitTypeParametersInClassLiteralsInAnnotationArguments
+                    KClassValue(ClassId.topLevel(KotlinBuiltIns.FQ_NAMES.any.toSafe()), 0)
+                }
+                else -> null
+            }
+        }
+    }
 }
 
 class LongValue(value: Long) : IntegerValueConstant<Long>(value) {
@@ -188,4 +254,63 @@ class StringValue(value: String) : ConstantValue<String>(value) {
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitStringValue(this, data)
 
     override fun toString() = "\"$value\""
+}
+
+class UByteValue(byteValue: Byte) : UnsignedValueConstant<Byte>(byteValue) {
+    override fun getType(module: ModuleDescriptor): KotlinType {
+        return module.findClassAcrossModuleDependencies(KotlinBuiltIns.FQ_NAMES.uByte)?.defaultType
+                ?: ErrorUtils.createErrorType("Unsigned type UByte not found")
+    }
+
+    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R = visitor.visitUByteValue(this, data)
+
+    override fun toString() = "$value.toUByte()"
+
+    override fun stringTemplateValue(): String = (value.toInt() and 0xFF).toString()
+}
+
+class UShortValue(shortValue: Short) : UnsignedValueConstant<Short>(shortValue) {
+    override fun getType(module: ModuleDescriptor): KotlinType {
+        return module.findClassAcrossModuleDependencies(KotlinBuiltIns.FQ_NAMES.uShort)?.defaultType
+                ?: ErrorUtils.createErrorType("Unsigned type UShort not found")
+    }
+
+    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R = visitor.visitUShortValue(this, data)
+
+    override fun toString() = "$value.toUShort()"
+
+    override fun stringTemplateValue(): String = (value.toInt() and 0xFFFF).toString()
+}
+
+class UIntValue(intValue: Int) : UnsignedValueConstant<Int>(intValue) {
+    override fun getType(module: ModuleDescriptor): KotlinType {
+        return module.findClassAcrossModuleDependencies(KotlinBuiltIns.FQ_NAMES.uInt)?.defaultType
+                ?: ErrorUtils.createErrorType("Unsigned type UInt not found")
+    }
+
+    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitUIntValue(this, data)
+
+    override fun toString() = "$value.toUInt()"
+
+    override fun stringTemplateValue(): String = (value.toLong() and 0xFFFFFFFFL).toString()
+}
+
+class ULongValue(longValue: Long) : UnsignedValueConstant<Long>(longValue) {
+    override fun getType(module: ModuleDescriptor): KotlinType {
+        return module.findClassAcrossModuleDependencies(KotlinBuiltIns.FQ_NAMES.uLong)?.defaultType
+                ?: ErrorUtils.createErrorType("Unsigned type ULong not found")
+    }
+
+    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R = visitor.visitULongValue(this, data)
+
+    override fun toString() = "$value.toULong()"
+
+    override fun stringTemplateValue(): String {
+        if (value >= 0) return value.toString()
+
+        val div10 = (value ushr 1) / 5
+        val mod10 = value - 10 * div10
+
+        return "$div10$mod10"
+    }
 }

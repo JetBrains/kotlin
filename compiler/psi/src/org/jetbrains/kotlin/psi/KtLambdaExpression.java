@@ -91,6 +91,7 @@ public class KtLambdaExpression extends LazyParseablePsiElement implements KtExp
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public final void accept(@NotNull PsiElementVisitor visitor) {
         if (visitor instanceof KtVisitor) {
             accept((KtVisitor) visitor, null);

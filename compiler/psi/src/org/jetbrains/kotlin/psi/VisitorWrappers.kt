@@ -260,6 +260,13 @@ fun binaryExpressionVisitor(block: (KtBinaryExpression) -> Unit) =
         }
     }
 
+fun binaryWithTypeRHSExpressionVisitor(block: (KtBinaryExpressionWithTypeRHS) -> Unit) =
+    object : KtVisitorVoid() {
+        override fun visitBinaryWithTypeRHSExpression(expression: KtBinaryExpressionWithTypeRHS) {
+            block(expression)
+        }
+    }
+
 fun binaryExpressionRecursiveVisitor(block: (KtBinaryExpression) -> Unit) =
     object : KtTreeVisitorVoid() {
         override fun visitBinaryExpression(binaryExpression: KtBinaryExpression) {
@@ -325,6 +332,13 @@ fun referenceExpressionRecursiveVisitor(block: (KtReferenceExpression) -> Unit) 
         override fun visitReferenceExpression(referenceExpression: KtReferenceExpression) {
             super.visitReferenceExpression(referenceExpression)
             block(referenceExpression)
+        }
+    }
+
+fun valueArgumentListVisitor(block: (KtValueArgumentList) -> Unit) =
+    object : KtVisitorVoid() {
+        override fun visitValueArgumentList(list: KtValueArgumentList) {
+            block(list)
         }
     }
 
@@ -400,5 +414,29 @@ fun qualifiedExpressionRecursiveVisitor(block: (KtQualifiedExpression) -> Unit) 
         override fun visitQualifiedExpression(qualifiedExpression: KtQualifiedExpression) {
             super.visitQualifiedExpression(qualifiedExpression)
             block(qualifiedExpression)
+        }
+    }
+
+fun returnExpressionVisitor(block: (KtReturnExpression) -> Unit) =
+    object : KtVisitorVoid() {
+        override fun visitReturnExpression(returnExpression: KtReturnExpression) {
+            super.visitReturnExpression(returnExpression)
+            block(returnExpression)
+        }
+    }
+
+fun delegatedSuperTypeEntry(block: (KtDelegatedSuperTypeEntry) -> Unit) =
+    object : KtVisitorVoid() {
+        override fun visitDelegatedSuperTypeEntry(delegatedSuperTypeEntry: KtDelegatedSuperTypeEntry) {
+            super.visitDelegatedSuperTypeEntry(delegatedSuperTypeEntry)
+            block(delegatedSuperTypeEntry)
+        }
+    }
+
+fun postfixExpressionVisitor(block: (KtPostfixExpression) -> Unit) =
+    object : KtVisitorVoid() {
+        override fun visitPostfixExpression(expression: KtPostfixExpression) {
+            super.visitPostfixExpression(expression)
+            block(expression)
         }
     }

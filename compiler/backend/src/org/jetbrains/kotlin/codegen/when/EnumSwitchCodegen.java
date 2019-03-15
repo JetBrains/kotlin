@@ -39,10 +39,9 @@ public class EnumSwitchCodegen extends SwitchCodegen {
     }
 
     @Override
-    protected void generateSubject() {
+    protected void generateSubjectValueToIndex() {
         codegen.getState().getMappingsClassesForWhenByEnum().generateMappingsClassForExpression(expression);
 
-        super.generateSubject();
         generateNullCheckIfNeeded();
 
         v.getstatic(

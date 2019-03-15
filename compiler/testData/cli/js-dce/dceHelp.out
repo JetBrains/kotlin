@@ -10,4 +10,5 @@ where possible options include:
   -nowarn                    Generate no warnings
   -verbose                   Enable verbose logging output
   -version                   Display compiler version
+  @<argfile>                 Expand compiler arguments from the given file, containing one argument or file path per line
 OK

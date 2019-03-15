@@ -1,0 +1,2 @@
+public open class AnnotationTargets : R|java/lang/Object| {
+}

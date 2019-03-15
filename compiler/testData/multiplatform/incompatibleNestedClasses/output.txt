@@ -24,31 +24,31 @@ The following declaration is incompatible because class kinds are different (cla
     actual class N3
            ^
 compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:8:5: error: actual class 'N2' has no corresponding expected declaration
-The following declaration is incompatible because modifiers are different (companion, inner):
+The following declaration is incompatible because modifiers are different (companion, inner, inline):
     public final expect class N2
 
     actual inner class N2
     ^
 compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:9:5: error: actual class 'I2' has no corresponding expected declaration
-The following declaration is incompatible because modifiers are different (companion, inner):
+The following declaration is incompatible because modifiers are different (companion, inner, inline):
     public final expect inner class I2
 
     actual class I2
     ^
 compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:13:5: error: actual companion object 'Companion' has no corresponding expected declaration
-The following declaration is incompatible because modifiers are different (companion, inner):
+The following declaration is incompatible because modifiers are different (companion, inner, inline):
     public expect object Companion
 
     actual companion object {}
     ^
 compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:14:5: error: actual object 'Factory' has no corresponding expected declaration
-The following declaration is incompatible because modifiers are different (companion, inner):
+The following declaration is incompatible because modifiers are different (companion, inner, inline):
     public expect companion object Factory
 
     actual object Factory
     ^
 compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:18:5: error: actual object 'Companion' has no corresponding expected declaration
-The following declaration is incompatible because modifiers are different (companion, inner):
+The following declaration is incompatible because modifiers are different (companion, inner, inline):
     public expect companion object
 
     actual object Companion

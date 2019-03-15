@@ -23,7 +23,7 @@ fun <info textAttributesKey="KOTLIN_CLASS">Int</info>.<info textAttributesKey="K
 }
 
 fun <info descr="null" textAttributesKey="KOTLIN_FUNCTION_DECLARATION">foo</info>() {
-    <warning descr="[EXPERIMENTAL_FEATURE_WARNING] The feature \"coroutines\" is experimental (see: https://kotlinlang.org/docs/diagnostics/experimental-coroutines)" textAttributesKey="WARNING_ATTRIBUTES"><info descr="null" textAttributesKey="KOTLIN_KEYWORD">suspend</info></warning> {
+    <info descr="null" textAttributesKey="KOTLIN_KEYWORD">suspend</info> {
 
     }
 }

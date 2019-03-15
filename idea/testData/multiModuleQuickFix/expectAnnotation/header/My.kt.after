@@ -1,0 +1,3 @@
+// My: to be implemented
+// DISABLE-ERRORS
+expect annotation class My(val x: Int, val y: Double)

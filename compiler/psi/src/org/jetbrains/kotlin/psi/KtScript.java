@@ -18,26 +18,16 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.util.PsiTreeUtil;
-import kotlin.Lazy;
-import kotlin.LazyKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.name.NameUtils;
 import org.jetbrains.kotlin.psi.stubs.KotlinScriptStub;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
-import org.jetbrains.kotlin.script.KotlinScriptDefinition;
-import org.jetbrains.kotlin.script.KotlinScriptDefinitionProviderKt;
 
 import java.util.List;
-import java.util.Objects;
-
-import static kotlin.LazyThreadSafetyMode.PUBLICATION;
 
 public class KtScript extends KtNamedDeclarationStub<KotlinScriptStub> implements KtDeclarationContainer {
-    private final Lazy<KotlinScriptDefinition> kotlinScriptDefinition = LazyKt.lazy(PUBLICATION, () -> Objects.requireNonNull(
-            KotlinScriptDefinitionProviderKt.getScriptDefinition(getContainingKtFile()),
-            () -> "Should not parse a script without definition: " + getContainingKtFile().getVirtualFile().getPath()
-    ));
-
     public KtScript(@NotNull ASTNode node) {
         super(node);
     }
@@ -54,7 +44,8 @@ public class KtScript extends KtNamedDeclarationStub<KotlinScriptStub> implement
             return stub.getFqName();
         }
         KtFile containingKtFile = getContainingKtFile();
-        return containingKtFile.getPackageFqName().child(kotlinScriptDefinition.getValue().getScriptName(this));
+        Name fileBasedName = NameUtils.getScriptNameForFile(containingKtFile.getName());
+        return containingKtFile.getPackageFqName().child(fileBasedName);
     }
 
     @Override

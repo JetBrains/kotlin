@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.utils.join
 
 open class ValueParameterDescriptorImpl(
         containingDeclaration: CallableDescriptor,
@@ -81,6 +82,13 @@ open class ValueParameterDescriptorImpl(
         // as value parameters.
         // Must be forced via ForceResolveUtil.forceResolveAllContents()
         val destructuringVariables by lazy(destructuringVariables)
+
+        override fun copy(newOwner: CallableDescriptor, newName: Name, newIndex: Int): ValueParameterDescriptor {
+            return WithDestructuringDeclaration(
+                newOwner, null, newIndex, annotations, newName, type, declaresDefaultValue(),
+                isCrossinline, isNoinline, varargElementType, SourceElement.NO_SOURCE
+            ) { destructuringVariables }
+        }
     }
 
     private val original: ValueParameterDescriptor = original ?: this

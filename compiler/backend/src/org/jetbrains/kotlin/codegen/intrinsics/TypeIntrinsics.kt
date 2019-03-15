@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen.intrinsics
@@ -19,8 +8,10 @@ package org.jetbrains.kotlin.codegen.intrinsics
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
@@ -28,12 +19,37 @@ import org.jetbrains.org.objectweb.asm.tree.*
 import kotlin.text.Regex
 
 object TypeIntrinsics {
-    @JvmStatic fun instanceOf(v: InstructionAdapter, jetType: KotlinType, boxedAsmType: Type) {
+    @JvmStatic
+    fun instanceOf(v: InstructionAdapter, jetType: KotlinType, boxedAsmType: Type, isReleaseCoroutines: Boolean) {
         val functionTypeArity = getFunctionTypeArity(jetType)
         if (functionTypeArity >= 0) {
             v.iconst(functionTypeArity)
             v.typeIntrinsic(IS_FUNCTON_OF_ARITY_METHOD_NAME, IS_FUNCTON_OF_ARITY_DESCRIPTOR)
             return
+        }
+
+        if (isReleaseCoroutines) {
+            val suspendFunctionTypeArity = getSuspendFunctionTypeArity(jetType)
+            if (suspendFunctionTypeArity >= 0) {
+                val notSuspendLambda = Label()
+                val end = Label()
+
+                with(v) {
+                    dup()
+                    instanceOf(AsmTypes.SUSPEND_FUNCTION_TYPE)
+                    ifeq(notSuspendLambda)
+                    iconst(suspendFunctionTypeArity + 1)
+                    typeIntrinsic(IS_FUNCTON_OF_ARITY_METHOD_NAME, IS_FUNCTON_OF_ARITY_DESCRIPTOR)
+                    goTo(end)
+
+                    mark(notSuspendLambda)
+                    pop()
+                    iconst(0)
+
+                    mark(end)
+                }
+                return
+            }
         }
 
         val isMutableCollectionMethodName = getIsMutableCollectionMethodName(jetType)
@@ -148,15 +164,24 @@ object TypeIntrinsics {
     }
 
     private val KOTLIN_FUNCTION_INTERFACE_REGEX = Regex("^kotlin\\.Function([0-9]+)$")
+    private val KOTLIN_SUSPEND_FUNCTION_INTERFACE_REGEX = Regex("^kotlin\\.coroutines\\.SuspendFunction([0-9]+)$")
 
     /**
      * @return function type arity (non-negative), or -1 if the given type is not a function type
      */
-    private fun getFunctionTypeArity(jetType: KotlinType): Int {
-        val classFqName = getClassFqName(jetType) ?: return -1
-        val match = KOTLIN_FUNCTION_INTERFACE_REGEX.find(classFqName.asString()) ?: return -1
+    private fun getFunctionTypeArity(kotlinType: KotlinType): Int = getFunctionTypeArityByRegex(kotlinType, KOTLIN_FUNCTION_INTERFACE_REGEX)
+
+    private fun getFunctionTypeArityByRegex(kotlinType: KotlinType, regex: Regex): Int {
+        val classFqName = getClassFqName(kotlinType) ?: return -1
+        val match = regex.find(classFqName.asString()) ?: return -1
         return Integer.valueOf(match.groups[1]!!.value)
     }
+
+    /**
+     * @return function type arity (non-negative, not counting continuation), or -1 if the given type is not a function type
+     */
+    private fun getSuspendFunctionTypeArity(kotlinType: KotlinType): Int =
+        getFunctionTypeArityByRegex(kotlinType, KOTLIN_SUSPEND_FUNCTION_INTERFACE_REGEX)
 
     private fun typeIntrinsicNode(methodName: String, methodDescriptor: String): MethodInsnNode =
             MethodInsnNode(Opcodes.INVOKESTATIC, INTRINSICS_CLASS, methodName, methodDescriptor, false)

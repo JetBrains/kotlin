@@ -7,13 +7,12 @@ configurePublishing(project)
 
 dependencies {
     expectedBy project(':kotlin-test:kotlin-test-common')
-    compile project(':kotlin-test:kotlin-test-annotations-common') // TODO: replace with impl-dependency
-    compile project(':kotlin-stdlib-js')
+    expectedBy project(':kotlin-test:kotlin-test-annotations-common')
+    compile kotlinStdlib("js")
 }
 
 compileKotlin2Js {
-    // TODO: Why "-Xmulti-platfrom" ?
-    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-Xmulti-platform"]
+    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-Xuse-experimental=kotlin.contracts.ExperimentalContracts"]
     kotlinOptions {
         moduleKind = "umd"
         outputFile = "${buildDir}/classes/main/kotlin-test.js"
@@ -45,8 +44,9 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 
 artifacts {
     archives sourcesJar
-    archives javadocJar
 }
+
+javadocJar()
 
 task distJs(type: Copy) {
     dependsOn(compileKotlin2Js)

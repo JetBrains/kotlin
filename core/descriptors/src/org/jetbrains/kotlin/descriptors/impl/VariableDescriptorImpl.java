@@ -107,4 +107,10 @@ public abstract class VariableDescriptorImpl extends DeclarationDescriptorNonRoo
     public boolean isConst() {
         return false;
     }
+
+    @Nullable
+    @Override
+    public <V> V getUserData(UserDataKey<V> key) {
+        return null;
+    }
 }

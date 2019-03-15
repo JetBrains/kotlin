@@ -1,0 +1,8 @@
+// WITH_RUNTIME
+
+fun foo(value: Int?): Int? {
+    return if (value != null) value.let {
+        println()
+        it + 1
+    } else null
+}

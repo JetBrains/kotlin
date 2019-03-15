@@ -1,0 +1,4 @@
+// WITH_RUNTIME
+fun test() {
+    listOf(listOf(1), listOf(2)).asSequence().flatten().filter { it > 1 }.toList()
+}

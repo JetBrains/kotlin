@@ -2,7 +2,6 @@ warning: option 'enable' for -Xjsr305 flag is deprecated. Please use 'strict' in
 error: unrecognized -Xjsr305 value: under-migration:stct
 error: unrecognized -Xjsr305 value: @hello:warning
 error: conflict duplicating -Xjsr305 value: @hello:warn, @hello:ignore
-error: conflict duplicating -Xjsr305 value: strict, strict
 error: conflict duplicating -Xjsr305 value: strict, ignore
 error: conflict duplicating -Xjsr305 value: under-migration:ignore, under-migration:strict
 COMPILATION_ERROR

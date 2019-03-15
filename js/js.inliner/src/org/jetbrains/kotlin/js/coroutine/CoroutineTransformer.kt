@@ -19,42 +19,27 @@ package org.jetbrains.kotlin.js.coroutine
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.coroutineMetadata
 import org.jetbrains.kotlin.js.backend.ast.metadata.isInlineableCoroutineBody
+import org.jetbrains.kotlin.js.inline.ImportIntoFragmentInliningScope
 import org.jetbrains.kotlin.js.translate.declaration.transformCoroutineMetadataToSpecialFunctions
 import org.jetbrains.kotlin.js.translate.expression.InlineMetadata
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 
 class CoroutineTransformer : JsVisitorWithContextImpl() {
-    private val additionalStatementsByNode = mutableMapOf<JsNode, List<JsStatement>>()
 
-    override fun endVisit(x: JsExpressionStatement, ctx: JsContext<in JsStatement>) {
-        additionalStatementsByNode.remove(x)?.forEach { ctx.addNext(it) }
-        super.endVisit(x, ctx)
-    }
-
-    override fun endVisit(x: JsVars, ctx: JsContext<in JsStatement>) {
-        for (v in x.vars) {
-            additionalStatementsByNode.remove(v)?.forEach { ctx.addNext(it) }
-        }
-        super.endVisit(x, ctx)
-    }
+    val functionName = mutableMapOf<JsFunction, String?>()
 
     override fun visit(x: JsExpressionStatement, ctx: JsContext<*>): Boolean {
         val expression = x.expression
         val assignment = JsAstUtils.decomposeAssignment(expression)
         if (assignment != null) {
             val (lhs, rhs) = assignment
-            val function = rhs as? JsFunction ?: InlineMetadata.decompose(rhs)?.function?.function
-            if (function?.coroutineMetadata != null) {
+            InlineMetadata.tryExtractFunction(rhs)?.let { wrapper ->
+                val function = wrapper.function
                 val name = ((lhs as? JsNameRef)?.name ?: function.name)?.ident
-                additionalStatementsByNode[x] = CoroutineFunctionTransformer(function, name).transform()
-                return false
+                functionName[function] = name
             }
-        }
-        else if (expression is JsFunction) {
-            if (expression.coroutineMetadata != null) {
-                additionalStatementsByNode[x] = CoroutineFunctionTransformer(expression, expression.name?.ident).transform()
-                return false
-            }
+        } else if (expression is JsFunction) {
+            functionName[expression] = expression.name?.ident
         }
         return super.visit(x, ctx)
     }
@@ -64,19 +49,30 @@ class CoroutineTransformer : JsVisitorWithContextImpl() {
             x.body = transformCoroutineMetadataToSpecialFunctions(x.body)
             return false
         }
+        if (x.coroutineMetadata != null) {
+            lastStatementLevelContext.addPrevious(CoroutineFunctionTransformer(x, functionName[x]).transform())
+            x.coroutineMetadata = null
+            return false
+        }
         return super.visit(x, ctx)
     }
 
     override fun visit(x: JsVars.JsVar, ctx: JsContext<*>): Boolean {
         val initExpression = x.initExpression
         if (initExpression != null) {
-            val function = initExpression as? JsFunction ?: InlineMetadata.decompose(initExpression)?.function?.function
-            if (function?.coroutineMetadata != null) {
-                val name = x.name.ident
-                additionalStatementsByNode[x] = CoroutineFunctionTransformer(function, name).transform()
-                return false
+            InlineMetadata.tryExtractFunction(initExpression)?.let { wrapper ->
+                functionName[wrapper.function] = x.name.ident
             }
         }
         return super.visit(x, ctx)
+    }
+}
+
+fun transformCoroutines(fragments: Iterable<JsProgramFragment>) {
+    val coroutineTransformer = CoroutineTransformer()
+    for (fragment in fragments) {
+        ImportIntoFragmentInliningScope.process(fragment) { scope ->
+            coroutineTransformer.accept(scope.allCode)
+        }
     }
 }

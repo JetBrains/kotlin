@@ -5,7 +5,7 @@
     <parent>
         <artifactId>kotlin-project</artifactId>
         <groupId>org.jetbrains.kotlin</groupId>
-        <version>1.2-SNAPSHOT</version>
+        <version>1.3-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -107,8 +107,6 @@
                         <artifactId>maven-invoker-plugin</artifactId>
                         <version>2.0.0</version>
                         <configuration>
-                            <projectsDirectory>src/it</projectsDirectory>
-                            <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
                             <pomIncludes>
                                 <pomInclude>*/pom.xml</pomInclude>
                             </pomIncludes>
@@ -124,20 +122,26 @@
                                 <artifact>org.jetbrains.kotlin:kotlin-maven-noarg:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-maven-sam-with-receiver:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-annotation-processing-maven:${project.version}</artifact>
-                                <artifact>org.jetbrains.kotlin:kotlin-runtime:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-script-runtime:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-stdlib:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-stdlib-common:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-stdlib-js:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-stdlib-jdk7:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-stdlib-jdk8:${project.version}</artifact>
-                                <artifact>org.jetbrains.kotlin:kotlin-stdlib-jre7:${project.version}</artifact>
-                                <artifact>org.jetbrains.kotlin:kotlin-stdlib-jre8:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-reflect:${project.version}</artifact>
+                                <artifact>org.jetbrains.kotlin:kotlin-stdlib:${project.version}:jar:modular</artifact>
+                                <artifact>org.jetbrains.kotlin:kotlin-stdlib-jdk7:${project.version}:jar:modular</artifact>
+                                <artifact>org.jetbrains.kotlin:kotlin-stdlib-jdk8:${project.version}:jar:modular</artifact>
+                                <artifact>org.jetbrains.kotlin:kotlin-reflect:${project.version}:jar:modular</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-test-common:${project.version}</artifact>
+                                <artifact>org.jetbrains.kotlin:kotlin-test-annotations-common:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-test:${project.version}</artifact>
+                                <artifact>org.jetbrains.kotlin:kotlin-test-junit:${project.version}</artifact>
+                                <artifact>org.jetbrains.kotlin:kotlin-test-junit5:${project.version}</artifact>
+                                <artifact>org.jetbrains.kotlin:kotlin-test-testng:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-test-js:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-script-util:${project.version}</artifact>
+                                <artifact>org.jetbrains.kotlin:kotlin-bom:${project.version}:pom</artifact>
                             </extraArtifacts>
                             <showErrors>true</showErrors>
                             <postBuildHookScript>verify</postBuildHookScript>
@@ -150,7 +154,23 @@
                         <executions>
                             <execution>
                                 <id>integration-test</id>
+                                <configuration>
+                                    <projectsDirectory>src/it</projectsDirectory>
+                                    <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
+                                </configuration>
                                 <!--<phase>package</phase>-->
+                                <goals>
+                                    <goal>install</goal>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>integration-test-java9</id>
+                                <configuration>
+                                    <projectsDirectory>src/it/java9</projectsDirectory>
+                                    <cloneProjectsTo>${project.build.directory}/it/java9</cloneProjectsTo>
+                                    <javaHome>${env.JDK_9}</javaHome>
+                                </configuration>
                                 <goals>
                                     <goal>install</goal>
                                     <goal>run</goal>

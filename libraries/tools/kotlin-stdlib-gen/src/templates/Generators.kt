@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package templates
@@ -20,6 +9,15 @@ import templates.Family.*
 import templates.SequenceClass.*
 
 object Generators : TemplateGroupBase() {
+
+    init {
+        defaultBuilder {
+            specialFor(ArraysOfUnsigned) {
+                since("1.3")
+                annotation("@ExperimentalUnsignedTypes")
+            }
+        }
+    }
 
     val f_plusElement = fn("plusElement(element: T)") {
         include(Iterables, Collections, Sets, Sequences)
@@ -369,13 +367,18 @@ object Generators : TemplateGroupBase() {
         }
     }
 
+    private fun elementsConversionClause(elements: Family) =
+            """
+            The [elements] ${elements.doc.collection} may be converted to a [HashSet] to speed up the operation, thus the elements are required to have
+            a correct and stable implementation of `hashCode()` that doesn't change between successive invocations.
+            """
 
     val f_minus_iterable = fn("minus(elements: Iterable<T>)") {
         include(Iterables, Sets, Sequences)
     } builder {
         operator(true)
 
-        doc { "Returns a list containing all elements of the original collection except the elements contained in the given [elements] collection." }
+        doc { "Returns a list containing all elements of the original collection except the elements contained in the given [elements] collection.\n" }
         returns("List<T>")
         specialFor(Sets, Sequences) { returns("SELF") }
         body {
@@ -436,6 +439,9 @@ object Generators : TemplateGroupBase() {
             }
 
         }
+        doc {
+            doc + elementsConversionClause(Iterables)
+        }
     }
 
     val f_minus_array = fn("minus(elements: Array<out T>)") {
@@ -443,7 +449,7 @@ object Generators : TemplateGroupBase() {
     } builder {
         operator(true)
 
-        doc { "Returns a list containing all elements of the original collection except the elements contained in the given [elements] array." }
+        doc { "Returns a list containing all elements of the original collection except the elements contained in the given [elements] array.\n" }
         returns("List<T>")
         specialFor(Sets, Sequences) { returns("SELF") }
         body {
@@ -492,6 +498,9 @@ object Generators : TemplateGroupBase() {
                 """
             }
         }
+        doc {
+            doc + elementsConversionClause(ArraysOfObjects)
+        }
     }
 
     val f_minus_sequence = fn("minus(elements: Sequence<T>)") {
@@ -499,7 +508,7 @@ object Generators : TemplateGroupBase() {
     } builder {
         operator(true)
 
-        doc { "Returns a list containing all elements of the original collection except the elements contained in the given [elements] sequence." }
+        doc { "Returns a list containing all elements of the original collection except the elements contained in the given [elements] sequence.\n" }
         returns("List<T>")
         specialFor(Sets, Sequences) { returns("SELF") }
         body {
@@ -552,6 +561,9 @@ object Generators : TemplateGroupBase() {
                 }
                 """
             }
+        }
+        doc {
+            doc + elementsConversionClause(Sequences)
         }
     }
 
@@ -631,10 +643,9 @@ object Generators : TemplateGroupBase() {
             @param step the number of elements to move the window forward by on an each step, by default 1
             @param partialWindows controls whether or not to keep partial windows in the end if any,
             by default `false` which means partial windows won't be preserved
-
-            @sample samples.collections.Sequences.Transformations.averageWindows
             """
         }
+        sample("samples.collections.Sequences.Transformations.averageWindows")
 
         typeParam("R")
         returns("List<R>")
@@ -711,10 +722,9 @@ object Generators : TemplateGroupBase() {
             @param step the number of elements to move the window forward by on an each step, by default 1
             @param partialWindows controls whether or not to keep partial windows in the end if any,
             by default `false` which means partial windows won't be preserved
-
-            @sample samples.collections.Sequences.Transformations.takeWindows
             """
         }
+        sample("samples.collections.Sequences.Transformations.takeWindows")
 
         body {
             """
@@ -765,10 +775,9 @@ object Generators : TemplateGroupBase() {
             @param step the number of elements to move the window forward by on an each step, by default 1
             @param partialWindows controls whether or not to keep partial windows in the end if any,
             by default `false` which means partial windows won't be preserved
-
-            @sample samples.collections.Sequences.Transformations.averageWindows
             """
         }
+        sample("samples.collections.Sequences.Transformations.averageWindows")
         typeParam("R")
         returns("Sequence<R>")
 
@@ -798,10 +807,9 @@ object Generators : TemplateGroupBase() {
             @param step the number of elements to move the window forward by on an each step, by default 1
             @param partialWindows controls whether or not to keep partial windows in the end if any,
             by default `false` which means partial windows won't be preserved
-
-            @sample samples.collections.Sequences.Transformations.takeWindows
             """
         }
+        sample("samples.collections.Sequences.Transformations.takeWindows")
         returns("Sequence<String>")
 
         body(CharSequences) { "return windowedSequence(size, step, partialWindows) { it.toString() }" }
@@ -823,10 +831,9 @@ object Generators : TemplateGroupBase() {
             The last ${f.viewResult} may have less ${f.element.pluralize()} than the given [size].
 
             @param size the number of elements to take in each ${f.viewResult}, must be positive and can be greater than the number of elements in this ${f.collection}.
-
-            @sample samples.text.Strings.chunkedTransform
             """
         }
+        sample("samples.text.Strings.chunkedTransform")
 
         typeParam("R")
         returns("List<R>")
@@ -851,10 +858,9 @@ object Generators : TemplateGroupBase() {
             The last ${f.snapshotResult} in the resulting ${f.mapResult} may have less ${f.element.pluralize()} than the given [size].
 
             @param size the number of elements to take in each ${f.snapshotResult}, must be positive and can be greater than the number of elements in this ${f.collection}.
-
-            @sample samples.collections.Collections.Transformations.chunked
             """
         }
+        sample("samples.collections.Collections.Transformations.chunked")
         specialFor(Iterables) { returns("List<List<T>>") }
         specialFor(Sequences) { returns("Sequence<List<T>>") }
         specialFor(CharSequences) { returns("List<String>") }
@@ -880,10 +886,9 @@ object Generators : TemplateGroupBase() {
             The last ${f.viewResult} may have less ${f.element.pluralize()} than the given [size].
 
             @param size the number of elements to take in each ${f.viewResult}, must be positive and can be greater than the number of elements in this ${f.collection}.
-
-            @sample samples.text.Strings.chunkedTransformToSequence
             """
         }
+        sample("samples.text.Strings.chunkedTransformToSequence")
 
         typeParam("R")
         returns("Sequence<R>")
@@ -906,10 +911,9 @@ object Generators : TemplateGroupBase() {
             The last ${f.snapshotResult} in the resulting sequence may have less ${f.element.pluralize()} than the given [size].
 
             @param size the number of elements to take in each ${f.snapshotResult}, must be positive and can be greater than the number of elements in this ${f.collection}.
-
-            @sample samples.collections.Collections.Transformations.chunked
             """
         }
+        sample("samples.collections.Collections.Transformations.chunked")
         returns("Sequence<String>")
 
         body(CharSequences) { "return chunkedSequence(size) { it.toString() }" }
@@ -926,10 +930,9 @@ object Generators : TemplateGroupBase() {
             to an each pair of two adjacent ${f.element.pluralize()} in this ${f.collection}.
 
             The returned ${f.mapResult} is empty if this ${f.collection} contains less than two ${f.element.pluralize()}.
-
-            @sample samples.collections.Collections.Transformations.zipWithNextToFindDeltas
             """
         }
+        sample("samples.collections.Collections.Transformations.zipWithNextToFindDeltas")
         returns("List<R>")
         inline()
         body {
@@ -964,7 +967,7 @@ object Generators : TemplateGroupBase() {
         }
         body(Sequences) {
             """
-            return buildSequence result@ {
+            return sequence result@ {
                 val iterator = iterator()
                 if (!iterator.hasNext()) return@result
                 var current = iterator.next()
@@ -988,10 +991,9 @@ object Generators : TemplateGroupBase() {
             Returns a ${f.mapResult} of pairs of each two adjacent ${f.element.pluralize()} in this ${f.collection}.
 
             The returned ${f.mapResult} is empty if this ${f.collection} contains less than two ${f.element.pluralize()}.
-
-            @sample samples.collections.Collections.Transformations.zipWithNext
             """
         }
+        sample("samples.collections.Collections.Transformations.zipWithNext")
         sequenceClassification(intermediate, stateless)
         specialFor(Sequences) { returns("Sequence<Pair<T, T>>") }
         body {
@@ -1000,17 +1002,22 @@ object Generators : TemplateGroupBase() {
     }
 
     val f_zip_transform = fn("zip(other: Iterable<R>, transform: (a: T, b: R) -> V)") {
-        include(Iterables, ArraysOfObjects, ArraysOfPrimitives)
+        include(Iterables, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
     } builder {
+        inline()
+        specialFor(ArraysOfUnsigned) { inlineOnly() }
+
         doc {
             """
-            Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+            Returns a list of values built from the elements of `this` ${f.collection} and the [other] collection with the same index
+            using the provided [transform] function applied to each pair of elements.
+            The returned list has length of the shortest collection.
             """
         }
+        sample("samples.collections.Iterables.Operations.zipIterableWithTransform")
         typeParam("R")
         typeParam("V")
         returns("List<V>")
-        inline()
         body {
             """
             val first = iterator()
@@ -1022,7 +1029,7 @@ object Generators : TemplateGroupBase() {
             return list
             """
         }
-        body(ArraysOfObjects, ArraysOfPrimitives) {
+        body(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
             """
             val arraySize = size
             val list = ArrayList<V>(minOf(other.collectionSizeOrDefault(10), arraySize))
@@ -1037,17 +1044,22 @@ object Generators : TemplateGroupBase() {
     }
 
     val f_zip_array_transform = fn("zip(other: Array<out R>, transform: (a: T, b: R) -> V)") {
-        include(Iterables, ArraysOfObjects, ArraysOfPrimitives)
+        include(Iterables, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
     } builder {
+        inline()
+        specialFor(ArraysOfUnsigned) { inlineOnly() }
+
         doc {
             """
-            Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+            Returns a list of values built from the elements of `this` ${f.collection} and the [other] array with the same index
+            using the provided [transform] function applied to each pair of elements.
+            The returned list has length of the shortest collection.
             """
         }
+        sample("samples.collections.Iterables.Operations.zipIterableWithTransform")
         typeParam("R")
         typeParam("V")
         returns("List<V>")
-        inline()
         body {
             """
             val arraySize = other.size
@@ -1060,7 +1072,7 @@ object Generators : TemplateGroupBase() {
             return list
             """
         }
-        body(ArraysOfObjects, ArraysOfPrimitives) {
+        body(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
             """
             val size = minOf(size, other.size)
             val list = ArrayList<V>(size)
@@ -1074,16 +1086,21 @@ object Generators : TemplateGroupBase() {
     }
 
     val f_zip_sameArray_transform = fn("zip(other: SELF, transform: (a: T, b: T) -> V)") {
-        include(ArraysOfPrimitives)
+        include(ArraysOfPrimitives, ArraysOfUnsigned)
     } builder {
+        inline()
+        specialFor(ArraysOfUnsigned) { inlineOnly() }
+
         doc {
             """
-            Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+            Returns a list of values built from the elements of `this` array and the [other] array with the same index
+            using the provided [transform] function applied to each pair of elements.
+            The returned list has length of the shortest array.
             """
         }
+        sample("samples.collections.Iterables.Operations.zipIterableWithTransform")
         typeParam("V")
         returns("List<V>")
-        inline()
         body {
             """
             val size = minOf(size, other.size)
@@ -1101,9 +1118,12 @@ object Generators : TemplateGroupBase() {
     } builder {
         doc {
             """
-            Returns a sequence of values built from elements of both collections with same indexes using provided [transform]. Resulting sequence has length of shortest input sequences.
+            Returns a sequence of values built from the elements of `this` sequence and the [other] sequence with the same index
+            using the provided [transform] function applied to each pair of elements.
+            The resulting sequence ends as soon as the shortest input sequence ends.
             """
         }
+        sample("samples.collections.Sequences.Transformations.zipWithTransform")
         sequenceClassification(intermediate, stateless)
         typeParam("R")
         typeParam("V")
@@ -1120,9 +1140,12 @@ object Generators : TemplateGroupBase() {
     } builder {
         doc {
             """
-            Returns a list of values built from characters of both char sequences with same indexes using provided [transform]. List has length of shortest char sequence.
+            Returns a list of values built from the characters of `this` and the [other] char sequences with the same index
+            using the provided [transform] function applied to each pair of characters.
+            The returned list has length of the shortest char sequence.
             """
         }
+        sample("samples.text.Strings.zipWithTransform")
         typeParam("V")
         returns("List<V>")
         inline()
@@ -1141,14 +1164,16 @@ object Generators : TemplateGroupBase() {
 
 
     val f_zip = fn("zip(other: Iterable<R>)") {
-        include(Iterables, ArraysOfObjects, ArraysOfPrimitives)
+        include(Iterables, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
     } builder {
         infix(true)
         doc {
             """
-            Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
+            Returns a list of pairs built from the elements of `this` collection and [other] ${f.collection} with the same index.
+            The returned list has length of the shortest collection.
             """
         }
+        sample("samples.collections.Iterables.Operations.zipIterable")
         typeParam("R")
         returns("List<Pair<T, R>>")
         body {
@@ -1164,9 +1189,11 @@ object Generators : TemplateGroupBase() {
         infix(true)
         doc {
             """
-            Returns a list of pairs built from characters of both char sequences with same indexes. List has length of shortest char sequence.
+            Returns a list of pairs built from the characters of `this` and the [other] char sequences with the same index
+            The returned list has length of the shortest char sequence.
             """
         }
+        sample("samples.text.Strings.zip")
         returns("List<Pair<Char, Char>>")
         body {
             """
@@ -1176,14 +1203,16 @@ object Generators : TemplateGroupBase() {
     }
 
     val f_zip_array = fn("zip(other: Array<out R>)") {
-        include(Iterables, ArraysOfObjects, ArraysOfPrimitives)
+        include(Iterables, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
     } builder {
         infix(true)
         doc {
             """
-            Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
+            Returns a list of pairs built from the elements of `this` ${f.collection} and the [other] array with the same index.
+            The returned list has length of the shortest collection.
             """
         }
+        sample("samples.collections.Iterables.Operations.zipIterable")
         typeParam("R")
         returns("List<Pair<T, R>>")
         body {
@@ -1194,14 +1223,16 @@ object Generators : TemplateGroupBase() {
     }
 
     val f_zip_sameArray = fn("zip(other: SELF)") {
-        include(ArraysOfPrimitives)
+        include(ArraysOfPrimitives, ArraysOfUnsigned)
     } builder {
         infix(true)
         doc {
             """
-            Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
+            Returns a list of pairs built from the elements of `this` array and the [other] array with the same index.
+            The returned list has length of the shortest collection.
             """
         }
+        sample("samples.collections.Iterables.Operations.zipIterable")
         returns("List<Pair<T, T>>")
         body {
             """
@@ -1216,10 +1247,11 @@ object Generators : TemplateGroupBase() {
         infix(true)
         doc {
             """
-            Returns a sequence of pairs built from elements of both sequences with same indexes.
-            Resulting sequence has length of shortest input sequence.
+            Returns a sequence of values built from the elements of `this` sequence and the [other] sequence with the same index.
+            The resulting sequence ends as soon as the shortest input sequence ends.
             """
         }
+        sample("samples.collections.Sequences.Transformations.zip")
         sequenceClassification(intermediate, stateless)
         typeParam("R")
         returns("Sequence<Pair<T, R>>")

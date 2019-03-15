@@ -1,0 +1,319 @@
+PsiJetFileStubImpl[package=test]
+  PACKAGE_DIRECTIVE
+    REFERENCE_EXPRESSION[referencedName=test]
+  IMPORT_LIST
+    IMPORT_DIRECTIVE[importedFqName=test.E.E1, isAllUnder=false, isValid=true]
+      DOT_QUALIFIED_EXPRESSION
+        DOT_QUALIFIED_EXPRESSION
+          REFERENCE_EXPRESSION[referencedName=test]
+          REFERENCE_EXPRESSION[referencedName=E]
+        REFERENCE_EXPRESSION[referencedName=E1]
+    IMPORT_DIRECTIVE[importedFqName=kotlin.reflect.KClass, isAllUnder=false, isValid=true]
+      DOT_QUALIFIED_EXPRESSION
+        DOT_QUALIFIED_EXPRESSION
+          REFERENCE_EXPRESSION[referencedName=kotlin]
+          REFERENCE_EXPRESSION[referencedName=reflect]
+        REFERENCE_EXPRESSION[referencedName=KClass]
+  CLASS[fqName=test.Simple, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Simple, superNames=[]]
+    MODIFIER_LIST[annotation]
+    PRIMARY_CONSTRUCTOR
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=test.Simple.i, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=i]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Int]
+        VALUE_PARAMETER[fqName=test.Simple.l, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=l]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Long]
+        VALUE_PARAMETER[fqName=test.Simple.b, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=b]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Byte]
+        VALUE_PARAMETER[fqName=test.Simple.d, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=d]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Double]
+        VALUE_PARAMETER[fqName=test.Simple.f, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=f]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Float]
+        VALUE_PARAMETER[fqName=test.Simple.c, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=c]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Char]
+        VALUE_PARAMETER[fqName=test.Simple.b1, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=b1]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Boolean]
+        VALUE_PARAMETER[fqName=test.Simple.b2, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=b2]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Boolean]
+  CLASS[fqName=test.WithSimple, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithSimple, superNames=[]]
+    MODIFIER_LIST[]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=Simple]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Simple]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=12]
+          VALUE_ARGUMENT[isSpread=false]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=12L]
+          VALUE_ARGUMENT[isSpread=false]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=12]
+          VALUE_ARGUMENT[isSpread=false]
+            FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=3.3]
+          VALUE_ARGUMENT[isSpread=false]
+            VALUE_ARGUMENT_NAME
+              REFERENCE_EXPRESSION[referencedName=f]
+            FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=3.3F]
+          VALUE_ARGUMENT[isSpread=false]
+            VALUE_ARGUMENT_NAME
+              REFERENCE_EXPRESSION[referencedName=c]
+            CHARACTER_CONSTANT[kind=CHARACTER_CONSTANT, value='a']
+          VALUE_ARGUMENT[isSpread=false]
+            VALUE_ARGUMENT_NAME
+              REFERENCE_EXPRESSION[referencedName=b1]
+            BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=true]
+          VALUE_ARGUMENT[isSpread=false]
+            VALUE_ARGUMENT_NAME
+              REFERENCE_EXPRESSION[referencedName=b2]
+            BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=false]
+  CLASS[fqName=test.StringLiteral, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=StringLiteral, superNames=[]]
+    MODIFIER_LIST[annotation]
+    PRIMARY_CONSTRUCTOR
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=test.StringLiteral.s1, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=s1]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=String]
+        VALUE_PARAMETER[fqName=test.StringLiteral.s2, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=s2]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=String]
+        VALUE_PARAMETER[fqName=test.StringLiteral.s3, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=s3]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=String]
+  PROPERTY[fqName=test.CONSTANT, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=CONSTANT]
+    MODIFIER_LIST[const]
+  CLASS[fqName=test.WithStringLiteral, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithStringLiteral, superNames=[]]
+    MODIFIER_LIST[]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=StringLiteral]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=StringLiteral]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            STRING_TEMPLATE
+              LITERAL_STRING_TEMPLATE_ENTRY[text=some]
+          VALUE_ARGUMENT[isSpread=false]
+            STRING_TEMPLATE
+          VALUE_ARGUMENT[isSpread=false]
+            STRING_TEMPLATE
+              LITERAL_STRING_TEMPLATE_ENTRY[text=H]
+              SHORT_STRING_TEMPLATE_ENTRY[text=$CONSTANT]
+                REFERENCE_EXPRESSION[referencedName=CONSTANT]
+  CLASS[fqName=test.E, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=E, superNames=[]]
+    MODIFIER_LIST[enum]
+    CLASS_BODY
+      ENUM_ENTRY[fqName=test.E.E1, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=E1, superNames=[]]
+      ENUM_ENTRY[fqName=test.E.E2, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=E2, superNames=[]]
+  CLASS[fqName=test.EnumLiteral, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=EnumLiteral, superNames=[]]
+    MODIFIER_LIST[annotation]
+    PRIMARY_CONSTRUCTOR
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=test.EnumLiteral.e1, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=e1]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=E]
+        VALUE_PARAMETER[fqName=test.EnumLiteral.e2, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=e2]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=E]
+        VALUE_PARAMETER[fqName=test.EnumLiteral.e3, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=e3]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=E]
+  CLASS[fqName=test.WithEnumLiteral, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithEnumLiteral, superNames=[]]
+    MODIFIER_LIST[]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=EnumLiteral]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=EnumLiteral]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            REFERENCE_EXPRESSION[referencedName=E1]
+          VALUE_ARGUMENT[isSpread=false]
+            DOT_QUALIFIED_EXPRESSION
+              REFERENCE_EXPRESSION[referencedName=E]
+              REFERENCE_EXPRESSION[referencedName=E2]
+          VALUE_ARGUMENT[isSpread=false]
+            VALUE_ARGUMENT_NAME
+              REFERENCE_EXPRESSION[referencedName=e3]
+            DOT_QUALIFIED_EXPRESSION
+              DOT_QUALIFIED_EXPRESSION
+                REFERENCE_EXPRESSION[referencedName=test]
+                REFERENCE_EXPRESSION[referencedName=E]
+              REFERENCE_EXPRESSION[referencedName=E2]
+  CLASS[fqName=test.VarArg, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=VarArg, superNames=[]]
+    MODIFIER_LIST[annotation]
+    PRIMARY_CONSTRUCTOR
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=test.VarArg.v, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=v]
+          MODIFIER_LIST[vararg]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Int]
+  CLASS[fqName=test.WithVarArg, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithVarArg, superNames=[]]
+    MODIFIER_LIST[]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=VarArg]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=VarArg]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+          VALUE_ARGUMENT[isSpread=false]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
+          VALUE_ARGUMENT[isSpread=false]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=3]
+  CLASS[fqName=test.Arrays, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Arrays, superNames=[]]
+    MODIFIER_LIST[annotation]
+    PRIMARY_CONSTRUCTOR
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=test.Arrays.ia, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=ia]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=IntArray]
+        VALUE_PARAMETER[fqName=test.Arrays.la, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=la]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=LongArray]
+        VALUE_PARAMETER[fqName=test.Arrays.fa, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=fa]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=FloatArray]
+        VALUE_PARAMETER[fqName=test.Arrays.da, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=da]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=DoubleArray]
+        VALUE_PARAMETER[fqName=test.Arrays.ca, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=ca]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=CharArray]
+        VALUE_PARAMETER[fqName=test.Arrays.ba, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=ba]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=BooleanArray]
+  CLASS[fqName=test.WithArrays, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithArrays, superNames=[]]
+    MODIFIER_LIST[]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=Arrays]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Arrays]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+          VALUE_ARGUMENT[isSpread=false]
+          VALUE_ARGUMENT[isSpread=false]
+          VALUE_ARGUMENT[isSpread=false]
+          VALUE_ARGUMENT[isSpread=false]
+          VALUE_ARGUMENT[isSpread=false]
+  CLASS[fqName=test.ClassLiteral, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=ClassLiteral, superNames=[]]
+    MODIFIER_LIST[annotation]
+    PRIMARY_CONSTRUCTOR
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=test.ClassLiteral.c1, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=c1]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=KClass]
+              TYPE_ARGUMENT_LIST
+                TYPE_PROJECTION[projectionKind=STAR]
+        VALUE_PARAMETER[fqName=test.ClassLiteral.c2, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=c2]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=KClass]
+              TYPE_ARGUMENT_LIST
+                TYPE_PROJECTION[projectionKind=STAR]
+        VALUE_PARAMETER[fqName=test.ClassLiteral.c3, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=c3]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=KClass]
+              TYPE_ARGUMENT_LIST
+                TYPE_PROJECTION[projectionKind=STAR]
+  CLASS[fqName=test.WithClassLiteral, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithClassLiteral, superNames=[]]
+    MODIFIER_LIST[]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=ClassLiteral]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=ClassLiteral]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+          VALUE_ARGUMENT[isSpread=false]
+          VALUE_ARGUMENT[isSpread=false]
+    TYPE_PARAMETER_LIST
+      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+  CLASS[fqName=test.Nested, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Nested, superNames=[]]
+    MODIFIER_LIST[annotation]
+    PRIMARY_CONSTRUCTOR
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=test.Nested.i, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=i]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Int]
+        VALUE_PARAMETER[fqName=test.Nested.s, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=s]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=String]
+  CLASS[fqName=test.Outer, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Outer, superNames=[]]
+    MODIFIER_LIST[annotation]
+    PRIMARY_CONSTRUCTOR
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=test.Outer.some, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=some]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=String]
+        VALUE_PARAMETER[fqName=test.Outer.nested, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=nested]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Nested]
+  CLASS[fqName=test.WithNested, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithNested, superNames=[]]
+    MODIFIER_LIST[]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=Outer]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Outer]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            STRING_TEMPLATE
+              LITERAL_STRING_TEMPLATE_ENTRY[text=value]
+          VALUE_ARGUMENT[isSpread=false]
+            VALUE_ARGUMENT_NAME
+              REFERENCE_EXPRESSION[referencedName=nested]
+  CLASS[fqName=test.ArraysSpread, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=ArraysSpread, superNames=[]]
+    MODIFIER_LIST[annotation]
+    PRIMARY_CONSTRUCTOR
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=test.ArraysSpread.ia, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=ia]
+          MODIFIER_LIST[vararg]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Int]
+  CLASS[fqName=test.WithSpreadOperatorArrays, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithSpreadOperatorArrays, superNames=[]]
+    MODIFIER_LIST[]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=ArraysSpread]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=ArraysSpread]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=true]

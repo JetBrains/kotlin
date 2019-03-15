@@ -5,12 +5,24 @@
 
 package org.jetbrains.kotlin.js.test
 
+import org.jetbrains.kotlin.ir.backend.js.CompilationMode
+import org.jetbrains.kotlin.ir.backend.js.CompiledModule
 import org.jetbrains.kotlin.ir.backend.js.compile
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.facade.MainCallParameters
 import org.jetbrains.kotlin.js.facade.TranslationUnit
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.test.TargetBackend
 import java.io.File
+
+private val fullRuntimeKlibPath = "js/js.translator/testData/out/klibs/runtimeFull/"
+private val defaultRuntimeKlibPath = "js/js.translator/testData/out/klibs/runtimeDefault/"
+
+private val JS_IR_RUNTIME_MODULE_NAME = "JS_IR_RUNTIME"
+
+private val fullRuntimeKlib = CompiledModule(JS_IR_RUNTIME_MODULE_NAME, null, null, fullRuntimeKlibPath, emptyList(), true)
+private val defaultRuntimeKlib = CompiledModule(JS_IR_RUNTIME_MODULE_NAME, null, null, defaultRuntimeKlibPath, emptyList(), true)
 
 abstract class BasicIrBoxTest(
     pathToTestDir: String,
@@ -18,9 +30,30 @@ abstract class BasicIrBoxTest(
     pathToRootOutputDir: String = BasicBoxTest.TEST_DATA_DIR_PATH,
     generateSourceMap: Boolean = false,
     generateNodeJsRunner: Boolean = false
-) : BasicBoxTest(pathToTestDir, testGroupOutputDirPrefix, pathToRootOutputDir, generateSourceMap, generateNodeJsRunner) {
+) : BasicBoxTest(
+    pathToTestDir,
+    testGroupOutputDirPrefix,
+    pathToRootOutputDir = pathToRootOutputDir,
+    typedArraysEnabled = true,
+    generateSourceMap = generateSourceMap,
+    generateNodeJsRunner = generateNodeJsRunner,
+    targetBackend = TargetBackend.JS_IR
+) {
 
-    override var skipMinification = true
+    override val skipMinification = true
+
+    // TODO Design incremental compilation for IR and add test support
+    override val incrementalCompilationChecksEnabled = false
+
+    private val compilationCache = mutableMapOf<String, CompiledModule>()
+
+    override fun doTest(filePath: String, expectedResult: String, mainCallParameters: MainCallParameters, coroutinesPackage: String) {
+        compilationCache.clear()
+        super.doTest(filePath, expectedResult, mainCallParameters, coroutinesPackage)
+    }
+
+    private val runtimes = mapOf(JsIrTestRuntime.DEFAULT to defaultRuntimeKlib,
+                                 JsIrTestRuntime.FULL to fullRuntimeKlib)
 
     override fun translateFiles(
         units: List<TranslationUnit>,
@@ -32,19 +65,58 @@ abstract class BasicIrBoxTest(
         incrementalData: IncrementalData,
         remap: Boolean,
         testPackage: String?,
-        testFunction: String
+        testFunction: String,
+        runtime: JsIrTestRuntime,
+        isMainModule: Boolean
     ) {
-        val code = compile(
-            config.project,
-            units.map { (it as TranslationUnit.SourceFile).file }
-                // TODO: temporary ignore _commonFiles/asserts.kt since it depends on stdlib but we don't have any library support in JS IR BE yet
-                // and probably it will be better to avoid using stdlib in testData as much as possible.
-                .filter { !it.virtualFilePath.endsWith("js/js.translator/testData/_commonFiles/asserts.kt") },
-            config.configuration,
-            FqName((testPackage?.let { it + "." } ?: "") + testFunction))
+        val filesToCompile = units
+            .map { (it as TranslationUnit.SourceFile).file }
+            // TODO: split input files to some parts (global common, local common, test)
+            .filterNot { it.virtualFilePath.contains(BasicBoxTest.COMMON_FILES_DIR_PATH) }
 
-        outputFile.parentFile.mkdirs()
-        outputFile.writeText(code)
+//        config.configuration.put(CommonConfigurationKeys.EXCLUDED_ELEMENTS_FROM_DUMPING, setOf("<JS_IR_RUNTIME>"))
+//        config.configuration.put(
+//            CommonConfigurationKeys.PHASES_TO_VALIDATE_AFTER,
+//            setOf(
+//                "RemoveInlineFunctionsWithReifiedTypeParametersLowering",
+//                "InnerClassConstructorCallsLowering",
+//                "InlineClassLowering", "ConstLowering"
+//            )
+//        )
+
+        val runtimeKlib = runtimes[runtime]
+
+        val dependencyNames = config.configuration[JSConfigurationKeys.LIBRARIES]!!.map { File(it).name }
+        val dependencies = listOfNotNull(runtimeKlib) + dependencyNames.mapNotNull {
+            compilationCache[it]
+        }
+
+//        config.configuration.put(CommonConfigurationKeys.PHASES_TO_DUMP_STATE, setOf("UnitMaterializationLowering"))
+//        config.configuration.put(CommonConfigurationKeys.PHASES_TO_DUMP_STATE_BEFORE, setOf("ReturnableBlockLowering"))
+//        config.configuration.put(CommonConfigurationKeys.PHASES_TO_DUMP_STATE_AFTER, setOf("MultipleCatchesLowering"))
+//        config.configuration.put(CommonConfigurationKeys.PHASES_TO_VALIDATE, setOf("ALL"))
+
+        val actualOutputFile = outputFile.absolutePath.let {
+            if (!isMainModule) it.replace("_v5.js", "/") else it
+        }
+
+        val result = compile(
+            config.project,
+            filesToCompile,
+            config.configuration,
+            listOf(FqName((testPackage?.let { "$it." } ?: "") + testFunction)),
+            if (isMainModule) CompilationMode.JS_AGAINST_KLIB else CompilationMode.KLIB,
+            dependencies,
+            actualOutputFile
+        )
+
+        compilationCache[outputFile.name.replace(".js", ".meta.js")] = result
+
+        val generatedCode = result.generatedCode
+        if (generatedCode != null) {
+            val wrappedCode = wrapWithModuleEmulationMarkers(generatedCode, moduleId = config.moduleId, moduleKind = config.moduleKind)
+            outputFile.write(wrappedCode)
+        }
     }
 
     override fun runGeneratedCode(
@@ -53,9 +125,18 @@ abstract class BasicIrBoxTest(
         testPackage: String?,
         testFunction: String,
         expectedResult: String,
-        withModuleSystem: Boolean
+        withModuleSystem: Boolean,
+        runtime: JsIrTestRuntime
     ) {
         // TODO: should we do anything special for module systems?
-        super.runGeneratedCode(jsFiles, null, null, testFunction, expectedResult, false)
+        // TODO: return list of js from translateFiles and provide then to this function with other js files
+
+        V8IrJsTestChecker.check(jsFiles, testModuleName, null, testFunction, expectedResult, withModuleSystem)
     }
+}
+
+
+private fun File.write(text: String) {
+    parentFile.mkdirs()
+    writeText(text)
 }

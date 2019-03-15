@@ -1,8 +1,9 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER -SUSPENSION_CALL_MUST_BE_USED_AS_RETURN_VALUE
+// COMMON_COROUTINES_TEST
 
 interface SuperInterface
 
-@kotlin.coroutines.experimental.RestrictsSuspension
+@COROUTINES_PACKAGE.RestrictsSuspension
 open class RestrictedController : SuperInterface
 
 class SubClass : RestrictedController()
@@ -43,7 +44,7 @@ fun A.test() {
         }
     }
 
-    <!WRONG_MODIFIER_TARGET!>suspend<!> fun SuperInterface.fun1() {
+    suspend fun SuperInterface.fun1() {
         topLevel()
         member()
         with(A()) {
@@ -51,7 +52,7 @@ fun A.test() {
             member()
         }
     }
-    <!WRONG_MODIFIER_TARGET!>suspend<!> fun RestrictedController.fun2() {
+    suspend fun RestrictedController.fun2() {
         <!ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>topLevel<!>()
         <!ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>member<!>()
         with(A()) {
@@ -59,7 +60,7 @@ fun A.test() {
             <!ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>member<!>()
         }
     }
-    <!WRONG_MODIFIER_TARGET!>suspend<!> fun SubClass.fun3() {
+    suspend fun SubClass.fun3() {
         <!ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>topLevel<!>()
         <!ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>member<!>()
         with(A()) {

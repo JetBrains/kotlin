@@ -1,5 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1127
-package foo
+// EXPECTED_REACHABLE_NODES: 1295
 
 open class A {
     @JsName("js_f") open fun f(x: Int) = "A.f($x)"
@@ -10,7 +9,7 @@ class B : A() {
 }
 
 fun test() = js("""
-var module = JS_TESTS.foo;
+var module = JS_TESTS;
 return new (module.A)().js_f(23) + ";" + new (module.B)().js_f(42);
 """)
 

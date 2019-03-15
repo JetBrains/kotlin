@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 enum class X {
     B {
         val value2 = "K"

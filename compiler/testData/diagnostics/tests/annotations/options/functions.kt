@@ -7,6 +7,7 @@ annotation class FunAnn
 annotation class SourceAnn
 
 @Target(AnnotationTarget.EXPRESSION)
+@Retention(AnnotationRetention.SOURCE)
 annotation class ExprAnn
 
 fun bar(arg: () -> Int) = arg()

@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.android.synthetic.res
 
 import com.intellij.openapi.components.ServiceManager
-import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.compilerRunner;
 
 import com.intellij.util.containers.ContainerUtil;
+import kotlin.collections.CollectionsKt;
 import kotlin.jvm.JvmClassMappingKt;
 import kotlin.reflect.KClass;
 import kotlin.reflect.KProperty1;
@@ -26,6 +27,7 @@ import kotlin.reflect.jvm.ReflectJvmMapping;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.arguments.Argument;
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments;
+import org.jetbrains.kotlin.cli.common.arguments.InternalArgument;
 import org.jetbrains.kotlin.cli.common.arguments.ParseCommandLineArgumentsKt;
 import org.jetbrains.kotlin.utils.StringsKt;
 
@@ -46,6 +48,7 @@ public class ArgumentUtils {
         Class<? extends CommonToolArguments> argumentsClass = arguments.getClass();
         convertArgumentsToStringList(arguments, argumentsClass.newInstance(), JvmClassMappingKt.getKotlinClass(argumentsClass), result);
         result.addAll(arguments.getFreeArgs());
+        result.addAll(CollectionsKt.map(arguments.getInternalArguments(), InternalArgument::getStringRepresentation));
         return result;
     }
 

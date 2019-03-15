@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.ir
 
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.name
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir2cfg.generators.FunctionGenerator
 import org.jetbrains.kotlin.ir2cfg.util.dump
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -45,9 +42,9 @@ abstract class AbstractIrCfgTestCase : AbstractIrGeneratorTestCase() {
     private fun IrModuleFragment.cfgDump(): String {
         val builder = StringBuilder()
         for (file in this.files) {
-            builder.appendln("// FILE: ${file.name}")
+            builder.appendln("// FILE: ${file.path}")
             builder.appendln(file.cfgDump())
-            builder.appendln("// END FILE: ${file.name}")
+            builder.appendln("// END FILE: ${file.path}")
             builder.appendln()
         }
         return builder.toString()

@@ -1,0 +1,2 @@
+public open class OverrideMethod : R|java/lang/Object| {
+}

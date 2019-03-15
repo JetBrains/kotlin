@@ -1,0 +1,4 @@
+public open class ConstructorWithoutParams : R|java/lang/Object| {
+    public final function ConstructorWithoutParams(): R|test/ConstructorWithoutParams|
+
+}

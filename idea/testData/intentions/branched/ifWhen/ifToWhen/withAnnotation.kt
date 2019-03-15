@@ -1,6 +1,7 @@
 var b = true
 
 @Target(AnnotationTarget.EXPRESSION)
+@Retention(AnnotationRetention.SOURCE)
 annotation class Ann
 
 fun println(s: String) {}

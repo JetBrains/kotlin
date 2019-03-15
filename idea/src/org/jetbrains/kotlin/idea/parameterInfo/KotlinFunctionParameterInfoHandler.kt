@@ -33,7 +33,9 @@ import org.jetbrains.kotlin.idea.core.OptionalParametersHelper
 import org.jetbrains.kotlin.idea.core.resolveCandidates
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.ShadowedDeclarationsFilter
+import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.load.java.NULLABILITY_ANNOTATIONS
 import org.jetbrains.kotlin.load.java.sam.SamAdapterDescriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
@@ -56,39 +58,73 @@ import java.awt.Color
 import java.util.*
 import kotlin.reflect.KClass
 
-class KotlinFunctionParameterInfoHandler : KotlinParameterInfoWithCallHandlerBase<KtValueArgumentList, KtValueArgument>(KtValueArgumentList::class, KtValueArgument::class) {
+class KotlinFunctionParameterInfoHandler :
+    KotlinParameterInfoWithCallHandlerBase<KtValueArgumentList, KtValueArgument>(KtValueArgumentList::class, KtValueArgument::class) {
+
     override fun getActualParameters(arguments: KtValueArgumentList) = arguments.arguments.toTypedArray()
 
-    override fun getActualParametersRBraceType() = KtTokens.RPAR
+    override fun getActualParametersRBraceType(): KtSingleValueToken = KtTokens.RPAR
 
     override fun getArgumentListAllowedParentClasses() = setOf(KtCallElement::class.java)
 }
 
-class KotlinArrayAccessParameterInfoHandler : KotlinParameterInfoWithCallHandlerBase<KtContainerNode, KtExpression>(KtContainerNode::class, KtExpression::class) {
+class KotlinLambdaParameterInfoHandler :
+    KotlinParameterInfoWithCallHandlerBase<KtLambdaArgument, KtLambdaArgument>(KtLambdaArgument::class, KtLambdaArgument::class) {
+
+    override fun getActualParameters(lambdaArgument: KtLambdaArgument) = arrayOf(lambdaArgument)
+
+    override fun getActualParametersRBraceType(): KtSingleValueToken = KtTokens.RBRACE
+
+    override fun getArgumentListAllowedParentClasses() = setOf(KtLambdaArgument::class.java)
+
+    override fun getParameterIndex(context: UpdateParameterInfoContext, argumentList: KtLambdaArgument): Int {
+        val size = (argumentList.parent as? KtCallElement)?.valueArguments?.size ?: 1
+        return size - 1
+    }
+}
+
+class KotlinArrayAccessParameterInfoHandler :
+    KotlinParameterInfoWithCallHandlerBase<KtContainerNode, KtExpression>(KtContainerNode::class, KtExpression::class) {
+
     override fun getArgumentListAllowedParentClasses() = setOf(KtArrayAccessExpression::class.java)
 
-    override fun getActualParameters(containerNode: KtContainerNode): Array<out KtExpression> = containerNode.allChildren.filterIsInstance<KtExpression>().toList().toTypedArray()
+    override fun getActualParameters(containerNode: KtContainerNode): Array<out KtExpression> =
+        containerNode.allChildren.filterIsInstance<KtExpression>().toList().toTypedArray()
 
-    override fun getActualParametersRBraceType() = KtTokens.RBRACKET
+    override fun getActualParametersRBraceType(): KtSingleValueToken = KtTokens.RBRACKET
 }
 
 abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement, TArgument : KtElement>(
-        private val argumentListClass: KClass<TArgumentList>,
-        private val argumentClass: KClass<TArgument>
+    private val argumentListClass: KClass<TArgumentList>,
+    private val argumentClass: KClass<TArgument>
 ) : ParameterInfoHandlerWithTabActionSupport<TArgumentList, FunctionDescriptor, TArgument> {
 
     companion object {
         @JvmField
         val GREEN_BACKGROUND: Color = JBColor(Color(231, 254, 234), Gray._100)
+
+        val STOP_SEARCH_CLASSES: Set<Class<out KtElement>> = setOf(
+            KtNamedFunction::class.java,
+            KtVariableDeclaration::class.java,
+            KtValueArgumentList::class.java,
+            KtLambdaArgument::class.java,
+            KtContainerNode::class.java,
+            KtTypeArgumentList::class.java
+        )
+
+        private val RENDERER = DescriptorRenderer.SHORT_NAMES_IN_TYPES.withOptions {
+            enhancedTypes = true
+            renderUnabbreviatedType = false
+        }
     }
 
     private fun findCall(argumentList: TArgumentList, bindingContext: BindingContext): Call? {
         return (argumentList.parent as? KtElement)?.getCall(bindingContext)
     }
 
-    override fun getActualParameterDelimiterType() = KtTokens.COMMA
+    override fun getActualParameterDelimiterType(): KtSingleValueToken = KtTokens.COMMA
 
-    override fun getArgListStopSearchClasses() = setOf(KtNamedFunction::class.java, KtVariableDeclaration::class.java)
+    override fun getArgListStopSearchClasses(): Set<Class<out KtElement>> = STOP_SEARCH_CLASSES
 
     override fun getArgumentListClass() = argumentListClass.java
 
@@ -104,7 +140,7 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
             val arguments = getActualParameters(argumentList)
             val index = arguments.indexOf(element)
             context.setCurrentParameter(index)
-            context.setHighlightedParameter(element)
+            context.highlightedParameter = element
         }
         return argumentList
     }
@@ -114,21 +150,24 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
         val file = context.file as? KtFile ?: return null
 
         val token = file.findElementAt(context.offset) ?: return null
-        val argumentList = PsiTreeUtil.getParentOfType(token, argumentListClass.java) ?: return null
+        val argumentList = PsiTreeUtil.getParentOfType(token, argumentListClass.java, true, *STOP_SEARCH_CLASSES.toTypedArray())
+            ?: return null
 
         val bindingContext = argumentList.analyze(BodyResolveMode.PARTIAL)
         val call = findCall(argumentList, bindingContext) ?: return null
 
         val resolutionFacade = file.getResolutionFacade()
         val candidates =
-                call.resolveCandidates(bindingContext, resolutionFacade)
-                        .map { it.resultingDescriptor }
-                        .distinctBy { it.original }
+            call.resolveCandidates(bindingContext, resolutionFacade)
+                .map { it.resultingDescriptor }
+                .distinctBy { it.original }
 
-        val shadowedDeclarationsFilter = ShadowedDeclarationsFilter(bindingContext,
-                                                                    resolutionFacade,
-                                                                    call.callElement,
-                                                                    call.explicitReceiver as? ReceiverValue)
+        val shadowedDeclarationsFilter = ShadowedDeclarationsFilter(
+            bindingContext,
+            resolutionFacade,
+            call.callElement,
+            call.explicitReceiver as? ReceiverValue
+        )
 
         context.itemsToShow = shadowedDeclarationsFilter.filter(candidates).toTypedArray()
         return argumentList
@@ -138,12 +177,15 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
         if (context.parameterOwner !== argumentList) {
             context.removeHint()
         }
-
-        val offset = context.offset
-        val parameterIndex = argumentList.allChildren
-                .takeWhile { it.startOffset < offset }
-                .count { it.node.elementType == KtTokens.COMMA }
+        val parameterIndex = getParameterIndex(context, argumentList)
         context.setCurrentParameter(parameterIndex)
+    }
+
+    protected open fun getParameterIndex(context: UpdateParameterInfoContext, argumentList: TArgumentList): Int {
+        val offset = context.offset
+        return argumentList.allChildren
+            .takeWhile { it.startOffset < offset }
+            .count { it.node.elementType == KtTokens.COMMA }
     }
 
     override fun updateUI(itemToShow: FunctionDescriptor, context: ParameterInfoUIContext) {
@@ -168,7 +210,7 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
         val project = argumentList.project
 
         val (substitutedDescriptor, argumentToParameter, highlightParameterIndex, isGrey) = matchCallWithSignature(
-                call, itemToShow, currentArgumentIndex, bindingContext, argumentList.getResolutionFacade()
+            call, itemToShow, currentArgumentIndex, bindingContext, argumentList.getResolutionFacade()
         ) ?: return false
 
         var boldStartOffset = -1
@@ -237,26 +279,21 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
         return true
     }
 
-    override fun getParameterCloseChars() = ParameterInfoUtils.DEFAULT_PARAMETER_CLOSE_CHARS
-
-    override fun tracksParameterIndex() = true
-
     //TODO
     override fun couldShowInLookup() = false
-    override fun getParametersForLookup(item: LookupElement, context: ParameterInfoContext) = emptyArray<Any>()
-    override fun getParametersForDocumentation(item: FunctionDescriptor, context: ParameterInfoContext) = emptyArray<Any>()
 
-    private val RENDERER = DescriptorRenderer.SHORT_NAMES_IN_TYPES.withOptions {
-        renderUnabbreviatedType = false
-    }
+    override fun getParametersForLookup(item: LookupElement, context: ParameterInfoContext) = emptyArray<Any>()
 
     private fun renderParameter(parameter: ValueParameterDescriptor, includeName: Boolean, named: Boolean, project: Project): String {
         return buildString {
             if (named) append("[")
 
-            parameter.annotations.getAllAnnotations().forEach {
-                it.annotation.fqName?.let { append("@${it.shortName().asString()} ") }
-            }
+            parameter
+                .annotations
+                .filterNot { it.fqName in NULLABILITY_ANNOTATIONS }
+                .forEach {
+                    it.fqName?.let { fqName -> append("@${fqName.shortName().asString()} ") }
+                }
 
             if (parameter.varargElementType != null) {
                 append("vararg ")
@@ -289,8 +326,7 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
             if (expression is KtConstantExpression || expression is KtStringTemplateExpression) {
                 if (text.startsWith("\"")) {
                     return "\"...\""
-                }
-                else if (text.startsWith("\'")) {
+                } else if (text.startsWith("\'")) {
                     return "\'...\'"
                 }
             }
@@ -308,27 +344,27 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
     }
 
     private fun isResolvedToDescriptor(
-            call: Call,
-            functionDescriptor: FunctionDescriptor,
-            bindingContext: BindingContext
+        call: Call,
+        functionDescriptor: FunctionDescriptor,
+        bindingContext: BindingContext
     ): Boolean {
         val target = call.getResolvedCall(bindingContext)?.resultingDescriptor as? FunctionDescriptor
         return target != null && descriptorsEqual(target, functionDescriptor)
     }
 
     private data class SignatureInfo(
-            val substitutedDescriptor: FunctionDescriptor,
-            val argumentToParameter: (ValueArgument) -> ValueParameterDescriptor?,
-            val highlightParameterIndex: Int?,
-            val isGrey: Boolean
+        val substitutedDescriptor: FunctionDescriptor,
+        val argumentToParameter: (ValueArgument) -> ValueParameterDescriptor?,
+        val highlightParameterIndex: Int?,
+        val isGrey: Boolean
     )
 
     private fun matchCallWithSignature(
-            call: Call,
-            overload: FunctionDescriptor,
-            currentArgumentIndex: Int,
-            bindingContext: BindingContext,
-            resolutionFacade: ResolutionFacade
+        call: Call,
+        overload: FunctionDescriptor,
+        currentArgumentIndex: Int,
+        bindingContext: BindingContext,
+        resolutionFacade: ResolutionFacade
     ): SignatureInfo? {
         if (currentArgumentIndex == 0 && call.valueArguments.isEmpty() && overload.valueParameters.isEmpty()) {
             return SignatureInfo(overload, { null }, null, isGrey = false)
@@ -348,8 +384,7 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
         if (arguments.size > currentArgumentIndex) {
             currentArgument = arguments[currentArgumentIndex]
             callToUse = call
-        }
-        else {
+        } else {
             // add dummy current argument if we don't have one
             currentArgument = object : ValueArgument {
                 override fun getArgumentExpression(): KtExpression? = null
@@ -361,13 +396,13 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
             }
             callToUse = object : DelegatingCall(call) {
                 val argumentsWithCurrent =
-                        arguments + currentArgument +
-                        // For array set method call, also add the argument in the right-hand side
-                        (if (isArraySetMethod) listOf(call.valueArguments.last()) else listOf())
+                    arguments + currentArgument +
+                            // For array set method call, also add the argument in the right-hand side
+                            (if (isArraySetMethod) listOf(call.valueArguments.last()) else listOf())
 
                 override fun getValueArguments() = argumentsWithCurrent
                 override fun getFunctionLiteralArguments() = emptyList<LambdaArgument>()
-                override fun getValueArgumentList() = null
+                override fun getValueArgumentList(): KtValueArgumentList? = null
             }
         }
 
@@ -376,8 +411,8 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
         // The second way is needed for the case when the descriptor was invalidated and new one has been built.
         // See testLocalFunctionBug().
         val resolvedCall = candidates.firstOrNull { it.resultingDescriptor.original == overload.original }
-                           ?: candidates.firstOrNull { descriptorsEqual(it.resultingDescriptor, overload) }
-                           ?: return null
+            ?: candidates.firstOrNull { descriptorsEqual(it.resultingDescriptor, overload) }
+            ?: return null
         val resultingDescriptor = resolvedCall.resultingDescriptor
 
         fun argumentToParameter(argument: ValueArgument): ValueParameterDescriptor? {
@@ -395,13 +430,13 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
         // grey out if not all arguments before the current are matched
         val isGrey = argumentsBeforeCurrent.any { argument ->
             resolvedCall.getArgumentMapping(argument).isError() &&
-            !argument.hasError(bindingContext) /* ignore arguments that have error type */
+                    !argument.hasError(bindingContext) /* ignore arguments that have error type */
         }
         return SignatureInfo(resultingDescriptor, ::argumentToParameter, highlightParameterIndex, isGrey)
     }
 
-    private fun ValueArgument.hasError(bindingContext: BindingContext)
-            = getArgumentExpression()?.let { bindingContext.getType(it) }?.isError ?: true
+    private fun ValueArgument.hasError(bindingContext: BindingContext) =
+        getArgumentExpression()?.let { bindingContext.getType(it) }?.isError ?: true
 
     // we should not compare descriptors directly because partial resolve is involved
     private fun descriptorsEqual(descriptor1: FunctionDescriptor, descriptor2: FunctionDescriptor): Boolean {

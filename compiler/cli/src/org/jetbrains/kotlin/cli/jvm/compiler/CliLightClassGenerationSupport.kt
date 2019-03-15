@@ -39,9 +39,9 @@ import org.jetbrains.kotlin.resolve.BindingContext
  * To mitigate this, CliLightClassGenerationSupport hold a trace that is shared between the analyzer and JetLightClasses
  */
 class CliLightClassGenerationSupport(private val traceHolder: CliTraceHolder) : LightClassGenerationSupport() {
-    override fun createDataHolderForClass(
-            classOrObject: KtClassOrObject, builder: LightClassBuilder
-    ): LightClassDataHolder.ForClass {
+    override fun createUltraLightClass(element: KtClassOrObject) = null
+
+    override fun createDataHolderForClass(classOrObject: KtClassOrObject, builder: LightClassBuilder): LightClassDataHolder.ForClass {
         //force resolve companion for light class generation
         traceHolder.bindingContext.get(BindingContext.CLASS, classOrObject)?.companionObjectDescriptor
 
@@ -49,10 +49,7 @@ class CliLightClassGenerationSupport(private val traceHolder: CliTraceHolder) : 
 
         bindingContext.get(BindingContext.CLASS, classOrObject) ?: return InvalidLightClassDataHolder
 
-        return LightClassDataHolderImpl(
-                stub,
-                diagnostics
-        )
+        return LightClassDataHolderImpl(stub, diagnostics)
     }
 
     override fun createDataHolderForFacade(files: Collection<KtFile>, builder: LightClassBuilder): LightClassDataHolder.ForFacade {
@@ -75,5 +72,3 @@ class CliLightClassGenerationSupport(private val traceHolder: CliTraceHolder) : 
 
     override fun analyzeWithContent(element: KtClassOrObject) = traceHolder.bindingContext
 }
-
-

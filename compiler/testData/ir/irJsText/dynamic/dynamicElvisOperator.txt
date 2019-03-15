@@ -1,0 +1,17 @@
+FILE fqName:<root> fileName:/dynamicElvisOperator.kt
+  FUN name:test visibility:public modality:FINAL <> (d:dynamic) returnType:dynamic flags:
+    VALUE_PARAMETER name:d index:0 type:dynamic flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='test(dynamic): dynamic'
+        BLOCK type=dynamic origin=ELVIS
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_elvis_lhs type:dynamic flags:val
+            GET_VAR 'value-parameter d: dynamic' type=dynamic origin=null
+          WHEN type=dynamic origin=null
+            BRANCH
+              if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
+                arg0: GET_VAR 'tmp0_elvis_lhs: dynamic' type=dynamic origin=null
+                arg1: CONST Null type=kotlin.Nothing? value=null
+              then: CONST String type=kotlin.String value="other"
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: GET_VAR 'tmp0_elvis_lhs: dynamic' type=dynamic origin=null

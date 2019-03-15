@@ -4,6 +4,6 @@ class A : OverrideMe {
 }
 
 
-//INFO: <pre><b>public</b> <b>open</b> <b>fun</b> overrideMe(): Unit <i>defined in</i> A</pre><DD><DL><DT><b>Description copied from interface:</b>&nbsp;<a href="psi_element://OverrideMe"><code>OverrideMe</code></a><br>
+//INFO: <div class='definition'><pre><a href="psi_element://A"><code>A</code></a><br>public open fun <b>overrideMe</b>(): Unit</pre></div></pre></div><table class='sections'><p><tr><td valign='top' class='section'><p>Description copied from interface:</td><td valign='top'><p><a href="psi_element://OverrideMe"><code>OverrideMe</code></a><br>
 //INFO:        Some comment
-//INFO:      </DD></DL></DD><DD><DL><DT><b>Specified by:</b><DD><a href="psi_element://OverrideMe#overrideMe()"><code>overrideMe</code></a> in interface <a href="psi_element://OverrideMe"><code>OverrideMe</code></a></DD></DL></DD>
+//INFO:      </td><tr><td valign='top' class='section'><p>Specified by:</td><td valign='top'><p><a href="psi_element://OverrideMe#overrideMe()"><code>overrideMe</code></a> in interface <a href="psi_element://OverrideMe"><code>OverrideMe</code></a></td></table>

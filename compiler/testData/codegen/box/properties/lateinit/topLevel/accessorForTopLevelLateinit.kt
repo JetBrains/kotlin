@@ -1,5 +1,3 @@
-// LANGUAGE_VERSION: 1.2
-
 // FILE: lateinit.kt
 private lateinit var s: String
 

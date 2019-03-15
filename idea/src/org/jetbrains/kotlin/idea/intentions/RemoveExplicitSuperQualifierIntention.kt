@@ -48,7 +48,7 @@ class RemoveExplicitSuperQualifierIntention : SelfTargetingRangeIntention<KtSupe
         val qualifiedExpression = element.getQualifiedExpressionForReceiver() ?: return null
         val selector = qualifiedExpression.selectorExpression ?: return null
 
-        val bindingContext = selector.analyze(BodyResolveMode.PARTIAL)
+        val bindingContext = selector.analyze(BodyResolveMode.PARTIAL_WITH_CFA)
         if (selector.getResolvedCall(bindingContext) == null) return null
 
         val newQualifiedExpression = KtPsiFactory(element).createExpressionByPattern(

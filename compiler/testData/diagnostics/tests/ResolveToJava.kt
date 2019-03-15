@@ -1,5 +1,6 @@
 // !WITH_NEW_INFERENCE
 // !CHECK_TYPE
+// JAVAC_SKIP
 
 // FILE: f.kt
 
@@ -20,7 +21,7 @@ fun test(<!UNUSED_PARAMETER!>l<!> : <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.util
 
   val <!UNUSED_VARIABLE!>f<!> : java.io.File? = null
 
-  Collections.<!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER, FUNCTION_CALL_EXPECTED!>emptyList<!>
+  Collections.<!FUNCTION_CALL_EXPECTED, OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>emptyList<!>
   Collections.<!FUNCTION_CALL_EXPECTED!>emptyList<Int><!>
   Collections.emptyList<Int>()
   Collections.<!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>emptyList<!>()

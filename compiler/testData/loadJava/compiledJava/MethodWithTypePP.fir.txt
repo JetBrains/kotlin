@@ -1,0 +1,4 @@
+public final class MethodWithTypePP : R|java/lang/Object| {
+    public final operator function f(): R|kotlin/Unit|
+
+}

@@ -8,5 +8,7 @@ fun foo(): Boolean {
 
     fun Int.someLocalFun(text: String) = 42
 
+    object LocalObject
+
     return bar() == Local()
 }

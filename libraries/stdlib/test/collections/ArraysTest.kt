@@ -1,25 +1,18 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
+
+@file:Suppress("SIGNED_CONSTANT_CONVERTED_TO_UNSIGNED")
 
 package test.collections
 
+import test.assertStaticTypeIs
+import test.assertTypeEquals
 import test.collections.behaviors.*
 import test.comparisons.STRING_CASE_INSENSITIVE_ORDER
 import kotlin.test.*
-import kotlin.comparisons.*
+import kotlin.random.Random
 
 fun <T> assertArrayNotSameButEquals(expected: Array<out T>, actual: Array<out T>, message: String = "") { assertTrue(expected !== actual && expected contentEquals actual, message) }
 fun assertArrayNotSameButEquals(expected: IntArray, actual: IntArray, message: String = "") {             assertTrue(expected !== actual && expected contentEquals actual, message) }
@@ -106,7 +99,7 @@ class ArraysTest {
         assertEquals(0.toShort(), arr[0])
         assertEquals(1.toShort(), arr[1])
     }
-    
+
     @Test fun intArray() {
         val arr = IntArray(2)
 
@@ -114,7 +107,7 @@ class ArraysTest {
         assertEquals(0, arr[0])
         assertEquals(0, arr[1])
     }
-    
+
     @Test fun intArrayInit() {
         val arr = IntArray(2) { it.toInt() }
 
@@ -122,7 +115,7 @@ class ArraysTest {
         assertEquals(0.toInt(), arr[0])
         assertEquals(1.toInt(), arr[1])
     }
-    
+
     @Test fun longArray() {
         val arr = LongArray(2)
 
@@ -148,7 +141,7 @@ class ArraysTest {
         assertEquals(expected, arr[0])
         assertEquals(expected, arr[1])
     }
-    
+
     @Test fun floatArrayInit() {
         val arr = FloatArray(2) { it.toFloat() }
 
@@ -206,20 +199,51 @@ class ArraysTest {
     }
 
     @Test fun contentEquals() {
-        val arr1 = arrayOf("a", 1, null)
-        val arr2 = arrayOf(*arr1)
-        assertTrue(arr1 contentEquals arr2)
-        val arr3 = arr2.reversedArray()
-        assertFalse(arr1 contentEquals arr3)
+        fun <T> checkArray(array: T, copy: T.() -> T, toList: T.() -> List<*>, check: (T, T) -> Boolean, modify: T.() -> Unit) {
+            val list = toList(array)
+            val array2 = copy(array)
+            val list2 = toList(array2)
+            assertEquals(list, list2)
+            assertNotSame(array, array2)
+            assertTrue(check(array, array2), "Copy of array should have the same content: original $list, modified $list2")
+
+            modify(array2)
+            val list2m = toList(array2)
+            assertNotEquals(list, list2m)
+            assertFalse(check(array, array2), "Modified array should be different: original $list, modified $list2m")
+        }
+
+        checkArray(arrayOf("a", 1, null), { copyOf() }, { toList() }, { a1, a2 -> a1 contentEquals a2 }, { reverse() })
+        checkArray(byteArrayOf(1, 2, 3), { copyOf() }, { toList() }, { a1, a2 -> a1 contentEquals a2 }, { reverse() })
+        checkArray(intArrayOf(1, 2, 3), { copyOf() }, { toList() }, { a1, a2 -> a1 contentEquals a2 }, { reverse() })
+        checkArray(longArrayOf(1, 2, 3), { copyOf() }, { toList() }, { a1, a2 -> a1 contentEquals a2 }, { reverse() })
+        checkArray(doubleArrayOf(Double.NaN, -0.0, 0.0, Double.POSITIVE_INFINITY, 1.0),
+                   { copyOf() }, { toList() }, { a1, a2 -> a1 contentEquals a2 }, { this[1] = 0.0 })
     }
 
     @Test fun contentDeepEquals() {
         val arr1 = arrayOf("a", 1, intArrayOf(2))
         val arr2 = arrayOf("a", 1, intArrayOf(2))
+        val arr3 = arrayOf("a", 1, uintArrayOf(2u))
+        val arr4 = arrayOf("a", 1, uintArrayOf(2u))
         assertFalse(arr1 contentEquals arr2)
         assertTrue(arr1 contentDeepEquals arr2)
+
+        assertFalse(arr1 contentDeepEquals arr3)
+        assertTrue(arr3 contentDeepEquals arr4)
+
         arr2[2] = arr1
         assertFalse(arr1 contentDeepEquals arr2)
+
+        arr4[2] = arr3
+        assertFalse(arr3 contentDeepEquals arr4)
+
+        val arr5 = arrayOf(doubleArrayOf(-0.0, Double.NaN))
+        val arr6 = arrayOf(doubleArrayOf(0.0, Double.NaN))
+        assertFalse(arr5 contentDeepEquals arr6)
+
+        arr5[0][0] = 0.0
+        assertTrue(arr5 contentDeepEquals arr6)
     }
 
     @Test fun contentToString() {
@@ -231,8 +255,13 @@ class ArraysTest {
     }
 
     @Test fun contentDeepToString() {
-        val arr = arrayOf("aa", 1, null, charArrayOf('d'))
-        assertEquals("[aa, 1, null, [d]]", arr.contentDeepToString())
+        val arr = arrayOf(
+            "aa", 1, null, arrayOf(arrayOf("foo")), charArrayOf('d'), booleanArrayOf(false),
+            intArrayOf(-1), longArrayOf(-1), shortArrayOf(-1), byteArrayOf(-1),
+            uintArrayOf(UInt.MAX_VALUE), ulongArrayOf(ULong.MAX_VALUE), ushortArrayOf(UShort.MAX_VALUE), ubyteArrayOf(UByte.MAX_VALUE),
+            doubleArrayOf(3.14), floatArrayOf(1.25f)
+        )
+        assertEquals("[aa, 1, null, [[foo]], [d], [false], [-1], [-1], [-1], [-1], [4294967295], [18446744073709551615], [65535], [255], [3.14], [1.25]]", arr.contentDeepToString())
     }
 
     @Test fun contentDeepToStringNoRecursion() {
@@ -253,11 +282,33 @@ class ArraysTest {
         val arr = arrayOf("a", 1, null, Value(5))
         assertEquals(listOf(*arr).hashCode(), arr.contentHashCode())
         assertEquals((1*31 + 2)*31 + 3, arrayOf(Value(2), Value(3)).contentHashCode())
+
+        longArrayOf(1L, Long.MAX_VALUE, Long.MIN_VALUE).let { assertEquals(it.toList().hashCode(), it.contentHashCode()) }
+        intArrayOf(1, Int.MAX_VALUE, Int.MIN_VALUE).let { assertEquals(it.toList().hashCode(), it.contentHashCode()) }
+        byteArrayOf(1, Byte.MAX_VALUE, Byte.MIN_VALUE).let { assertEquals(it.toList().hashCode(), it.contentHashCode()) }
+        charArrayOf('a', Char.MAX_VALUE, Char.MIN_VALUE).let { assertEquals(it.toList().hashCode(), it.contentHashCode()) }
+        doubleArrayOf(1.0, -0.0, 0.0, Double.NaN, Double.POSITIVE_INFINITY).let { assertEquals(it.toList().hashCode(), it.contentHashCode()) }
+        floatArrayOf(1.0f, -0.0f, 0.0f, Float.NaN, Float.POSITIVE_INFINITY).let { assertEquals(it.toList().hashCode(), it.contentHashCode()) }
     }
 
     @Test fun contentDeepHashCode() {
         val arr = arrayOf(null, Value(2), arrayOf(Value(3)))
         assertEquals(((1*31 + 0)*31 + 2) * 31 + (1 * 31 + 3), arr.contentDeepHashCode())
+
+        val intArray2 = arrayOf(intArrayOf(1, 2), intArrayOf(3, 4))
+        val intList2 = listOf(listOf(1, 2), listOf(3, 4))
+
+        assertEquals(intList2.hashCode(), intArray2.contentDeepHashCode())
+
+        val doubleArray2 = arrayOf(doubleArrayOf(1.0, Double.NaN), doubleArrayOf(-0.0, 0.0))
+        val doubleList2 = listOf(listOf(1.0, Double.NaN), listOf(-0.0, 0.0))
+
+        assertEquals(doubleList2.hashCode(), doubleArray2.contentDeepHashCode())
+
+        val uintArray2 = arrayOf(uintArrayOf(1u, 2u), uintArrayOf(3u, 4u))
+        val uintList2 = listOf(listOf(1u, 2u), listOf(3u, 4u))
+
+        assertEquals(uintList2.hashCode(), uintArray2.contentDeepHashCode())
     }
 
 
@@ -590,6 +641,31 @@ class ArraysTest {
         expect(2) { arrayOf(1, 2, 3).last { it % 2 == 0 } }
     }
 
+
+    @Test fun random() {
+        Array(100) { it }.let { array ->
+            val tosses = List(10) { array.random() }
+            assertTrue(tosses.distinct().size > 1, "Should be some distinct elements in $tosses")
+
+            val seed = Random.nextInt()
+            val random1 = Random(seed)
+            val random2 = Random(seed)
+
+            val tosses1 = List(10) { array.random(random1) }
+            val tosses2 = List(10) { array.random(random2) }
+
+            assertEquals(tosses1, tosses2)
+        }
+
+        arrayOf("x").let { singletonArray ->
+            val tosses = List(10) { singletonArray.random() }
+            assertEquals(singletonArray.toList(), tosses.distinct())
+        }
+
+        assertFailsWith<NoSuchElementException> { emptyArray<Any>().random() }
+    }
+
+
     @Test fun contains() {
         assertTrue(arrayOf("1", "2", "3", "4").contains("2"))
         assertTrue("3" in arrayOf("1", "2", "3", "4"))
@@ -611,6 +687,15 @@ class ArraysTest {
         assertEquals(listOf<Short>(200, 100), shortArrayOf(50, 100, 200).slice(2 downTo 1))
         assertEquals(listOf(100L, 200L, 30L), longArrayOf(50L, 100L, 200L, 30L).slice(1..3))
         assertEquals(listOf(true, false, true), booleanArrayOf(true, false, true, true).slice(iter))
+
+        for (range in listOf(-1 until 0, 0 until 2, 2..2)) {
+            val bounds = "range: $range"
+            val exClass = IndexOutOfBoundsException::class
+            assertFailsWith(exClass, bounds) { arrayOf("x").slice(range) }
+            assertFailsWith(exClass, bounds) { intArrayOf(1).slice(range) }
+            assertFailsWith(exClass, bounds) { longArrayOf(1L).slice(range) }
+            assertFailsWith(exClass, bounds) { charArrayOf('C').slice(range) }
+        }
     }
 
     @Test fun sliceArray() {
@@ -630,6 +715,15 @@ class ArraysTest {
 //        assertArrayNotSameButEquals(shortArrayOf(200, 100), shortArrayOf(50, 100, 200).sliceArray(2 downTo 1))
         assertArrayNotSameButEquals(longArrayOf(100L, 200L, 30L), longArrayOf(50L, 100L, 200L, 30L).sliceArray(1..3))
         assertArrayNotSameButEquals(booleanArrayOf(true, false, true), booleanArrayOf(true, false, true, true).sliceArray(coll))
+
+        for (range in listOf(-1 until 0, 0 until 2, 2..2)) {
+            val bounds = "range: $range"
+            val exClass = IndexOutOfBoundsException::class
+            assertFailsWith(exClass, bounds) { arrayOf("x").sliceArray(range) }
+            assertFailsWith(exClass, bounds) { intArrayOf(1).sliceArray(range) }
+            assertFailsWith(exClass, bounds) { longArrayOf(1L).sliceArray(range) }
+            assertFailsWith(exClass, bounds) { charArrayOf('C').sliceArray(range) }
+        }
     }
 
     @Test fun iterators() {
@@ -729,9 +823,21 @@ class ArraysTest {
 
         assertArrayNotSameButEquals(charArrayOf('A', 'B'), charArrayOf('A', 'B', 'C').copyOf(2))
         assertArrayNotSameButEquals(charArrayOf('A', 'B', '\u0000'), charArrayOf('A', 'B').copyOf(3))
+
+        assertArrayNotSameButEquals(emptyArray(), arrayOf("x").copyOf(0))
+        assertArrayNotSameButEquals(intArrayOf(), intArrayOf(1).copyOf(0))
+        assertArrayNotSameButEquals(longArrayOf(), longArrayOf(1).copyOf(0))
+        assertArrayNotSameButEquals(charArrayOf(), charArrayOf('a').copyOf(0))
+
+        // RuntimeException is the most specific common of JVM and JS implementations
+        assertFailsWith<RuntimeException> { arrayOf("x").copyOf(-1) }
+        assertFailsWith<RuntimeException> { intArrayOf().copyOf(-1) }
+        assertFailsWith<RuntimeException> { longArrayOf().copyOf(-1) }
+        assertFailsWith<RuntimeException> { charArrayOf('c').copyOf(-1) }
     }
 
     @Test fun copyOfRange() {
+        assertArrayNotSameButEquals(arrayOf("b", "c"), arrayOf("a", "b", "c").copyOfRange(1, 3))
         assertArrayNotSameButEquals(booleanArrayOf(true, false, true), booleanArrayOf(true, false, true, true).copyOfRange(0, 3))
         assertArrayNotSameButEquals(byteArrayOf(0, 1, 2), byteArrayOf(0, 1, 2, 3, 4, 5).copyOfRange(0, 3))
         assertArrayNotSameButEquals(shortArrayOf(0, 1, 2), shortArrayOf(0, 1, 2, 3, 4, 5).copyOfRange(0, 3))
@@ -740,9 +846,117 @@ class ArraysTest {
         assertArrayNotSameButEquals(floatArrayOf(0F, 1F, 2F), floatArrayOf(0F, 1F, 2F, 3F, 4F, 5F).copyOfRange(0, 3))
         assertArrayNotSameButEquals(doubleArrayOf(0.0, 1.0, 2.0), doubleArrayOf(0.0, 1.0, 2.0, 3.0, 4.0, 5.0).copyOfRange(0, 3))
         assertArrayNotSameButEquals(charArrayOf('0', '1', '2'), charArrayOf('0', '1', '2', '3', '4', '5').copyOfRange(0, 3))
+
+        for (pos in 0..3) {
+            assertArrayNotSameButEquals(emptyArray(), arrayOf("a", "b", "c").copyOfRange(pos, pos))
+            assertArrayNotSameButEquals(intArrayOf(), intArrayOf(1, 2, 3).copyOfRange(pos, pos))
+            assertArrayNotSameButEquals(charArrayOf(), charArrayOf('a', 'b', 'c').copyOfRange(pos, pos))
+            assertArrayNotSameButEquals(longArrayOf(), LongArray(3) { it.toLong() }.copyOfRange(pos, pos))
+        }
+
+        for ((start, end) in listOf(-1 to 0, 0 to 2, 2 to 2, 1 to 0)) {
+            val bounds = "start: $start, end: $end"
+            val exClass = if (start > end) IllegalArgumentException::class else IndexOutOfBoundsException::class
+            assertFailsWith(exClass, bounds) { arrayOf("x").copyOfRange(start, end) }
+            assertFailsWith(exClass, bounds) { intArrayOf(1).copyOfRange(start, end) }
+            assertFailsWith(exClass, bounds) { longArrayOf(1L).copyOfRange(start, end) }
+            assertFailsWith(exClass, bounds) { charArrayOf('C').copyOfRange(start, end) }
+        }
     }
 
 
+    @Test fun copyRangeInto() {
+        fun <T> doTest(
+            copyInto: T.(T, Int, Int, Int) -> T,
+            assertTEquals: (T, T, String) -> Unit,
+            toStringT: T.() -> String,
+            dest: T, newValues: T,
+            result1: T, result2: T, result3: T
+        ) {
+            newValues.copyInto(dest, 0, 1, 3)
+            assertTypeEquals(result1, dest)
+            assertTEquals(result1, dest, "Copying from newValues: ${result1.toStringT()}, ${dest.toStringT()}")
+
+            dest.copyInto(dest, 0, 1, 3)
+            assertTEquals(result2, dest, "Overlapping backward copy: ${result2.toStringT()}, ${dest.toStringT()}")
+
+            dest.copyInto(dest, 1, 0, 2)
+            assertTEquals(result3, dest, "Overlapping forward copy: ${result2.toStringT()}, ${dest.toStringT()}")
+
+            for ((start, end) in listOf(-1 to 0, 0 to 4, 4 to 4, 1 to 0, 0 to -1)) {
+                val bounds = "start: $start, end: $end"
+                val ex = assertFails(bounds) { newValues.copyInto(dest, 0, start, end) }
+                assertTrue(ex is IllegalArgumentException || ex is IndexOutOfBoundsException, "Unexpected exception type: $ex")
+            }
+            for (destIndex in listOf(-1, 2, 4)) {
+                assertFailsWith<IndexOutOfBoundsException>("index: $destIndex") { newValues.copyInto(dest, destIndex, 0, 2) }
+            }
+        }
+
+        doTest(
+            Array<String>::copyInto, { e, a, msg -> assertArrayNotSameButEquals(e, a, msg) }, Array<*>::contentToString,
+            arrayOf("a", "b", "c"), arrayOf("e", "f", "g"),
+            arrayOf("f", "g", "c"), arrayOf("g", "c", "c"), arrayOf("g", "g", "c")
+        )
+
+        doTest(
+            IntArray::copyInto, ::assertArrayNotSameButEquals, IntArray::contentToString,
+            intArrayOf(1, 2, 3), intArrayOf(4, 5, 6),
+            intArrayOf(5, 6, 3), intArrayOf(6, 3, 3), intArrayOf(6, 6, 3)
+        )
+
+        doTest(
+            LongArray::copyInto, ::assertArrayNotSameButEquals, LongArray::contentToString,
+            longArrayOf(1, 2, 3), longArrayOf(4, 5, 6),
+            longArrayOf(5, 6, 3), longArrayOf(6, 3, 3), longArrayOf(6, 6, 3)
+        )
+
+        doTest(
+            ByteArray::copyInto, ::assertArrayNotSameButEquals, ByteArray::contentToString,
+            byteArrayOf(1, 2, 3), byteArrayOf(4, 5, 6),
+            byteArrayOf(5, 6, 3), byteArrayOf(6, 3, 3), byteArrayOf(6, 6, 3)
+        )
+
+        doTest(
+            CharArray::copyInto, ::assertArrayNotSameButEquals, CharArray::contentToString,
+            charArrayOf('a', 'b', 'c'), charArrayOf('e', 'f', 'g'),
+            charArrayOf('f', 'g', 'c'), charArrayOf('g', 'c', 'c'), charArrayOf('g', 'g', 'c')
+        )
+
+        doTest(
+            UIntArray::copyInto, { e, a, msg -> assertTrue(e contentEquals a, msg) }, UIntArray::contentToString,
+            uintArrayOf(1, 2, 3), uintArrayOf(4, 5, 6),
+            uintArrayOf(5, 6, 3), uintArrayOf(6, 3, 3), uintArrayOf(6, 6, 3)
+        )
+
+        doTest(
+            ULongArray::copyInto, { e, a, msg -> assertTrue(e contentEquals a, msg) }, ULongArray::contentToString,
+            ulongArrayOf(1, 2, 3), ulongArrayOf(4, 5, 6),
+            ulongArrayOf(5, 6, 3), ulongArrayOf(6, 3, 3), ulongArrayOf(6, 6, 3)
+        )
+
+        doTest(
+            UByteArray::copyInto, { e, a, msg -> assertTrue(e contentEquals a, msg) }, UByteArray::contentToString,
+            ubyteArrayOf(1, 2, 3), ubyteArrayOf(4, 5, 6),
+            ubyteArrayOf(5, 6, 3), ubyteArrayOf(6, 3, 3), ubyteArrayOf(6, 6, 3)
+        )
+    }
+
+    @Test fun copyRangeIntoVarianceTest() {
+        val sourceArr: Array<out Int> = arrayOf(1, 2, 3)
+        val targetAnyArr: Array<Any?> = arrayOfNulls<Any?>(3)
+        val targetNumberArr: Array<Number> = Array<Number>(3) { 0.0 }
+        val targetArrProjection: Array<in Number> = targetNumberArr
+
+        val c1 = sourceArr.copyInto(targetAnyArr)
+        assertStaticTypeIs<Array<Any?>>(c1)
+
+        val c2 = sourceArr.copyInto(targetNumberArr)
+        assertStaticTypeIs<Array<Number>>(c2)
+
+        val c3 = sourceArr.copyInto(targetArrProjection)
+        assertStaticTypeIs<Array<in Number>>(c3)
+    }
 
     @Test fun reduceIndexed() {
         expect(-1) { intArrayOf(1, 2, 3).reduceIndexed { index, a, b -> index + a - b } }
@@ -830,6 +1044,10 @@ class ArraysTest {
         doTest(build = { map {it % 2 == 0}.toBooleanArray() },  reverse = { reverse() }, snapshot = { toList() })
         doTest(build = { map {it.toString()}.toTypedArray() },  reverse = { reverse() }, snapshot = { toList() })
         doTest(build = { map {it.toString()}.toTypedArray() as Array<out String> },  reverse = { reverse() }, snapshot = { toList() })
+        doTest(build = { map {it.toUInt()}.toUIntArray() },     reverse = { reverse() }, snapshot = { toList() })
+        doTest(build = { map {it.toULong()}.toULongArray() },   reverse = { reverse() }, snapshot = { toList() })
+        doTest(build = { map {it.toUByte()}.toUByteArray() },   reverse = { reverse() }, snapshot = { toList() })
+        doTest(build = { map {it.toUShort()}.toUShortArray() }, reverse = { reverse() }, snapshot = { toList() })
     }
 
 
@@ -1198,6 +1416,21 @@ class ArraysTest {
         }
     }
 
+    @Test fun sortStable() {
+        val keyRange = 'A'..'D'
+        for (size in listOf(10, 100, 2000)) {
+            val array = Array(size) { index -> Sortable(keyRange.random(), index) }
+
+            array.sortedArray().assertStableSorted()
+            array.sortedArrayDescending().assertStableSorted(descending = true)
+
+            array.sort()
+            array.assertStableSorted()
+            array.sortDescending()
+            array.assertStableSorted(descending = true)
+        }
+    }
+
     @Test fun sortByInPlace() {
         val data = arrayOf("aa" to 20, "ab" to 3, "aa" to 3)
         data.sortBy { it.second }
@@ -1215,6 +1448,22 @@ class ArraysTest {
         val indices = values.indices.toList().toIntArray()
 
         assertEquals(listOf(1, 2, 0), indices.sortedBy { values[it] })
+    }
+
+    @Test fun sortByStable() {
+        val keyRange = 'A'..'D'
+        for (size in listOf(10, 100, 2000)) {
+            val array = Array(size) { index -> Sortable(keyRange.random(), index) }
+
+            array.sortedBy { it.key }.assertStableSorted()
+            array.sortedByDescending { it.key }.assertStableSorted(descending = true)
+
+            array.sortBy { it.key }
+            array.assertStableSorted()
+
+            array.sortByDescending { it.key }
+            array.assertStableSorted(descending = true)
+        }
     }
 
     @Test fun sortedNullableBy() {
@@ -1241,7 +1490,21 @@ class ArraysTest {
         array.sortWith(comparator)
         array.iterator().assertSorted { a, b -> comparator.compare(a, b) <= 0 }
     }
+
+    @Test
+    fun elementAt() {
+        expect(0) { byteArrayOf(0, 1, 2).elementAt(0) }
+        expect(1) { shortArrayOf(0, 1, 2).elementAt(1) }
+        expect(2) { intArrayOf(0, 1, 2).elementAt(2) }
+
+        assertFailsWith<IndexOutOfBoundsException> { arrayOf<String>().elementAt(0) }
+        assertFailsWith<IndexOutOfBoundsException> { longArrayOf(0, 1, 2).elementAt(-1) }
+    }
 }
+
+
+fun <K : Comparable<K>> Array<out Sortable<K>>.assertStableSorted(descending: Boolean = false) =
+    iterator().assertStableSorted(descending = descending)
 
 private class ArraySortedChecker<A, T>(val array: A, val comparator: Comparator<in T>) {
     public fun <R> checkSorted(sorted: A.() -> R, sortedDescending: A.() -> R, iterator: R.() -> Iterator<T>) {

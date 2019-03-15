@@ -1,12 +1,12 @@
 package test
 
 class Some {
-    @SomeAnnotation(some = arrayOf("Foo"), same = intArrayOf(0))
+    @SomeAnnotation(some = ["Foo"], same = [0])
     fun foo() {
 
     }
 
-    @SomeAnnotation(some = arrayOf("Bar", "Buz"), same = intArrayOf(1, 2))
+    @SomeAnnotation(some = ["Bar", "Buz"], same = [1, 2])
     fun bar() {
 
     }

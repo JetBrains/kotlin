@@ -22,7 +22,12 @@ fun testCheckWithFailingMessage(x: Any?) {
     <!DEBUG_INFO_SMARTCAST!>x<!>.length
 }
 
-fun tesCheckNotNullWithMessage(x: Int?) {
-    checkNotNull(x) { "x is null!"}
+fun testCheckNotNullWithMessage(x: Int?) {
+    checkNotNull(x) { "x is null!" }
+    <!DEBUG_INFO_SMARTCAST!>x<!>.inc()
+}
+
+fun testCheckNotNull(x: Int?) {
+    checkNotNull(x)
     <!DEBUG_INFO_SMARTCAST!>x<!>.inc()
 }

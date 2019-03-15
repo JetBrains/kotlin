@@ -43,17 +43,35 @@ fun RepositoryHandler.intellijSdkRepo(project: Project): IvyArtifactRepository =
 
     ivyPattern("${baseDir.canonicalPath}/[organisation]/[revision]/[module].ivy.xml")
     ivyPattern("${baseDir.canonicalPath}/[organisation]/[revision]/intellij.plugin.[module].ivy.xml")
+    ivyPattern("${baseDir.canonicalPath}/[organisation]/[revision]/plugins-[module].ivy.xml")
     artifactPattern("${baseDir.canonicalPath}/[organisation]/[revision]/[module]/lib/[artifact](-[classifier]).jar")
     artifactPattern("${baseDir.canonicalPath}/[organisation]/[revision]/intellij/plugins/[module]/lib/[artifact](-[classifier]).jar")
     artifactPattern("${baseDir.canonicalPath}/[organisation]/[revision]/plugins-[module]/[module]/lib/[artifact](-[classifier]).jar")
     artifactPattern("${baseDir.canonicalPath}/[organisation]/[revision]/[module]/[artifact].jar")
     artifactPattern("${baseDir.canonicalPath}/[organisation]/[revision]/[module]/[artifact](-[revision])(-[classifier]).jar")
     artifactPattern("${baseDir.canonicalPath}/[organisation]/[revision]/sources/[artifact]-[revision]-[classifier].[ext]")
+
+    metadataSources {
+        ivyDescriptor()
+    }
 }
 
 fun Project.intellijDep(module: String = "intellij") = "kotlin.build.custom.deps:$module:${rootProject.extra["versions.intellijSdk"]}"
 
 fun Project.intellijCoreDep() = intellijDep("intellij-core")
+
+/**
+ * Runtime version of annotations that are already in Kotlin stdlib (historically Kotlin has older version of this one).
+ *
+ * SHOULD NOT BE USED IN COMPILE CLASSPATH!
+ *
+ * `@NonNull`, `@Nullabe` from `idea/annotations.jar` has `TYPE` target which leads to different types treatment in Kotlin compiler.
+ * On the other hand, `idea/annotations.jar` contains org/jetbrains/annotations/Async annations which is required for IDEA debugger.
+ *
+ * So, we are excluding `annotaions.jar` from all other `kotlin.build.custom.deps` and using this one for runtime only
+ * to avoid accidentally including `annotations.jar` by calling `intellijDep()`.
+ */
+fun Project.intellijRuntimeAnnotations() = intellijDep("intellij-runtime-annotations")
 
 fun Project.intellijPluginDep(plugin: String) = intellijDep(plugin)
 
@@ -118,7 +136,7 @@ fun Project.runIdeTask(name: String, ideaPluginDir: File, ideaSandboxDir: File, 
     return task<JavaExec>(name) {
         val ideaSandboxConfigDir = File(ideaSandboxDir, "config")
 
-        classpath = the<JavaPluginConvention>().sourceSets["main"].runtimeClasspath
+        classpath = mainSourceSet.runtimeClasspath
 
         main = "com.intellij.idea.Main"
 
@@ -129,20 +147,27 @@ fun Project.runIdeTask(name: String, ideaPluginDir: File, ideaSandboxDir: File, 
             "-XX:ReservedCodeCacheSize=240m",
             "-XX:+HeapDumpOnOutOfMemoryError",
             "-ea",
-            "-Didea.is.internal=true",
             "-Didea.debug.mode=true",
             "-Didea.system.path=$ideaSandboxDir",
             "-Didea.config.path=$ideaSandboxConfigDir",
             "-Dapple.laf.useScreenMenuBar=true",
             "-Dapple.awt.graphics.UseQuartz=true",
             "-Dsun.io.useCanonCaches=false",
-            "-Dplugin.path=${ideaPluginDir.absolutePath}",
-            "-Dkotlin.internal.mode.enabled=true",
-            "-Didea.additional.classpath=../idea-kotlin-runtime/kotlin-runtime.jar,../idea-kotlin-runtime/kotlin-reflect.jar"
+            "-Dplugin.path=${ideaPluginDir.absolutePath}"
         )
+
+        if (rootProject.findProperty("versions.androidStudioRelease") != null) {
+            jvmArgs("-Didea.platform.prefix=AndroidStudio")
+        }
 
         if (project.hasProperty("noPCE")) {
             jvmArgs("-Didea.ProcessCanceledException=disabled")
+        }
+
+        jvmArgs("-Didea.is.internal=${project.findProperty("idea.is.internal") ?: true}")
+
+        project.findProperty("idea.args")?.let { arguments ->
+            jvmArgs(arguments.toString().split(" "))
         }
 
         args()

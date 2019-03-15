@@ -1,0 +1,26 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+apply plugin: "java"
+apply plugin: "kotlin"
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile "org.jetbrains.kotlin:annotation-processor-example:$kotlin_version"
+    kapt "org.jetbrains.kotlin:annotation-processor-example:$kotlin_version"
+    testCompile 'junit:junit:4.12'
+}
+
+compileKotlin.kotlinOptions.allWarningsAsErrors = true

@@ -52,7 +52,8 @@ class KotlinExtractInterfaceDialog(
     override fun createMemberInfoModel(): MemberInfoModelBase {
         val extractableMemberInfos = extractClassMembers(originalClass).filterNot {
             val member = it.member
-            member is KtClass && member.hasModifier(KtTokens.INNER_KEYWORD)
+            member is KtClass && member.hasModifier(KtTokens.INNER_KEYWORD) ||
+                    member is KtParameter && member.hasModifier(KtTokens.PRIVATE_KEYWORD)
         }
         extractableMemberInfos.forEach { it.isToAbstract = true }
         return object : MemberInfoModelBase(
@@ -65,10 +66,8 @@ class KotlinExtractInterfaceDialog(
 
                 val member = memberInfo.member
                 return !(member.hasModifier(KtTokens.INLINE_KEYWORD) ||
-                         member.hasModifier(KtTokens.EXTERNAL_KEYWORD) ||
-                         member.hasModifier(KtTokens.LATEINIT_KEYWORD) ||
-                         member.hasModifier(KtTokens.INTERNAL_KEYWORD) ||
-                         member.hasModifier(KtTokens.PROTECTED_KEYWORD))
+                        member.hasModifier(KtTokens.EXTERNAL_KEYWORD) ||
+                        member.hasModifier(KtTokens.LATEINIT_KEYWORD))
             }
 
             override fun isAbstractEnabled(memberInfo: KotlinMemberInfo): Boolean {

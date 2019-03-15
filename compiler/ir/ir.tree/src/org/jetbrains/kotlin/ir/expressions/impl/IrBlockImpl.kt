@@ -18,18 +18,33 @@ package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.types.KotlinType
 
-class IrBlockImpl(startOffset: Int, endOffset: Int, type: KotlinType, origin: IrStatementOrigin? = null) :
-    IrContainerExpressionBase(startOffset, endOffset, type, origin), IrBlock {
-    constructor(startOffset: Int, endOffset: Int, type: KotlinType, origin: IrStatementOrigin?, statements: List<IrStatement>) :
+class IrBlockImpl(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    origin: IrStatementOrigin? = null
+) :
+    IrContainerExpressionBase(startOffset, endOffset, type, origin),
+    IrBlock {
+
+    constructor(
+        startOffset: Int,
+        endOffset: Int,
+        type: IrType,
+        origin: IrStatementOrigin?,
+        statements: List<IrStatement>
+    ) :
             this(startOffset, endOffset, type, origin) {
         this.statements.addAll(statements)
     }
@@ -50,43 +65,57 @@ fun IrBlockImpl.inlineStatement(statement: IrStatement) {
     }
 }
 
-
 class IrReturnableBlockImpl(
-    startOffset: Int, endOffset: Int, type: KotlinType,
-    override val symbol: IrReturnableBlockSymbol, origin: IrStatementOrigin? = null, override val sourceFileName: String = "no source file"
-) : IrContainerExpressionBase(startOffset, endOffset, type, origin), IrReturnableBlock {
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    override val symbol: IrReturnableBlockSymbol,
+    origin: IrStatementOrigin? = null,
+    override val sourceFileSymbol: IrFileSymbol? = null
+) :
+    IrContainerExpressionBase(startOffset, endOffset, type, origin),
+    IrReturnableBlock {
+
     override val descriptor = symbol.descriptor
 
     constructor(
         startOffset: Int,
         endOffset: Int,
-        type: KotlinType,
+        type: IrType,
         symbol: IrReturnableBlockSymbol,
         origin: IrStatementOrigin?,
         statements: List<IrStatement>,
-        sourceFileName: String = "no source file"
-    ) :
-            this(startOffset, endOffset, type, symbol, origin, sourceFileName) {
+        sourceFileSymbol: IrFileSymbol? = null
+    ) : this(startOffset, endOffset, type, symbol, origin, sourceFileSymbol) {
         this.statements.addAll(statements)
     }
 
     constructor(
-        startOffset: Int, endOffset: Int, type: KotlinType,
-        descriptor: FunctionDescriptor, origin: IrStatementOrigin? = null, sourceFileName: String = "no source file"
-    ) :
-            this(startOffset, endOffset, type, IrReturnableBlockSymbolImpl(descriptor), origin, sourceFileName)
+        startOffset: Int,
+        endOffset: Int,
+        type: IrType,
+        descriptor: FunctionDescriptor,
+        origin: IrStatementOrigin? = null,
+        sourceFileSymbol: IrFileSymbol? = null
+    ) : this(startOffset, endOffset, type, IrReturnableBlockSymbolImpl(descriptor), origin, sourceFileSymbol)
 
     constructor(
-        startOffset: Int, endOffset: Int, type: KotlinType,
-        descriptor: FunctionDescriptor, origin: IrStatementOrigin?, statements: List<IrStatement>, sourceFileName: String = "no source file"
-    ) :
-            this(startOffset, endOffset, type, descriptor, origin, sourceFileName) {
+        startOffset: Int,
+        endOffset: Int,
+        type: IrType,
+        descriptor: FunctionDescriptor,
+        origin: IrStatementOrigin?,
+        statements: List<IrStatement>,
+        sourceFileSymbol: IrFileSymbol? = null
+    ) : this(startOffset, endOffset, type, descriptor, origin, sourceFileSymbol) {
         this.statements.addAll(statements)
     }
 
     init {
         symbol.bind(this)
     }
+
+    override val sourceFileName: String = sourceFileSymbol?.owner?.fileEntry?.name ?: "no source file"
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitBlock(this, data)

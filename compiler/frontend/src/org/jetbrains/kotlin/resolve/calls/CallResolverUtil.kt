@@ -90,11 +90,22 @@ fun CallableDescriptor.hasInferredReturnType(constraintSystem: ConstraintSystem)
     return true
 }
 
+private fun filterOutTypeParameters(upperBounds: List<KotlinType>, candidateDescriptor: CallableDescriptor): List<KotlinType> {
+    if (upperBounds.size < 2) return upperBounds
+    val result = upperBounds.filterNot {
+        val declarationDescriptor = it.constructor.declarationDescriptor
+        declarationDescriptor is TypeParameterDescriptor && declarationDescriptor.containingDeclaration == candidateDescriptor
+    }
+    if (result.isEmpty()) return upperBounds
+    return result
+}
+
 fun getErasedReceiverType(receiverParameterDescriptor: ReceiverParameterDescriptor, descriptor: CallableDescriptor): KotlinType {
     var receiverType = receiverParameterDescriptor.type
     for (typeParameter in descriptor.typeParameters) {
         if (typeParameter.typeConstructor == receiverType.constructor) {
-            receiverType = TypeIntersector.getUpperBoundsAsType(typeParameter)
+            val properUpperBounds = filterOutTypeParameters(typeParameter.upperBounds, descriptor)
+            receiverType = TypeIntersector.intersectUpperBounds(typeParameter, properUpperBounds)
         }
     }
     val fakeTypeArguments = ContainerUtil.newSmartList<TypeProjection>()

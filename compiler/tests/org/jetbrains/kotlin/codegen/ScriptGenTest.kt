@@ -17,14 +17,15 @@
 package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.config.addKotlinSourceRoots
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
+import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.scripts.TestKotlinScriptDependenciesResolver
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -43,14 +44,19 @@ class ScriptGenTest : CodegenTestCase() {
         super.setUp()
         additionalDependencies =
                 System.getenv("PROJECT_CLASSES_DIRS")?.split(File.pathSeparator)?.map { File(it) }
-                ?: listOf("compiler/build/classes/kotlin/test", "build/compiler/classes/kotlin/test", "out/test/compiler.test")
+                ?: listOf(
+                    "compiler/build/classes/kotlin/test",
+                    "build/compiler/classes/kotlin/test",
+                    "out/test/compiler.test",
+                    "out/test/compiler_test"
+                )
                         .mapNotNull { File(it).canonicalFile.takeIf { it.isDirectory } }
                         .takeIf { it.isNotEmpty() }
                 ?: throw IllegalStateException("Unable to get classes output dirs, set PROJECT_CLASSES_DIRS environment variable")
     }
 
     fun testLanguage() {
-        setUpEnvironment("scriptCustom/fib.lang.kt")
+        setUpEnvironment("scriptCustom/fib.lang.kts")
 
         val aClass = generateClass("Fib_lang")
         val constructor = aClass.getConstructor(Integer.TYPE)
@@ -61,7 +67,7 @@ class ScriptGenTest : CodegenTestCase() {
     }
 
     fun testLanguageWithPackage() {
-        setUpEnvironment("scriptCustom/fibwp.lang.kt")
+        setUpEnvironment("scriptCustom/fibwp.lang.kts")
 
         val aClass = generateClass("test.Fibwp_lang")
         val constructor = aClass.getConstructor(Integer.TYPE)
@@ -72,7 +78,7 @@ class ScriptGenTest : CodegenTestCase() {
     }
 
     fun testDependentScripts() {
-        setUpEnvironment(listOf("scriptCustom/fibwp.lang.kt", "scriptCustom/fibwprunner.kts"))
+        setUpEnvironment(listOf("scriptCustom/fibwp.lang.kts", "scriptCustom/fibwprunner.kts"))
 
         val aClass = generateClass("Fibwprunner")
         val constructor = aClass.getConstructor()
@@ -88,7 +94,7 @@ class ScriptGenTest : CodegenTestCase() {
     }
 
     fun testScriptWhereMethodHasClosure() {
-        setUpEnvironment("scriptCustom/methodWithClosure.lang.kt")
+        setUpEnvironment("scriptCustom/methodWithClosure.lang.kts")
 
         val aClass = generateClass("MethodWithClosure_lang")
         val constructor = aClass.getConstructor(Integer.TYPE)
@@ -119,6 +125,7 @@ class ScriptGenTest : CodegenTestCase() {
             addKotlinSourceRoots(sourcePaths.map { "${KotlinTestUtils.getTestDataPathBase()}/codegen/$it" })
             addJvmClasspathRoots(additionalDependencies)
         }
+        loadScriptingPlugin(configuration)
 
         myEnvironment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
@@ -127,6 +134,6 @@ class ScriptGenTest : CodegenTestCase() {
 }
 
 @ScriptTemplateDefinition(
-        scriptFilePattern =".*\\.lang\\.kt",
+        scriptFilePattern =".*\\.lang\\.kts",
         resolver = TestKotlinScriptDependenciesResolver::class)
 abstract class ScriptWithIntParam(val num: Int)

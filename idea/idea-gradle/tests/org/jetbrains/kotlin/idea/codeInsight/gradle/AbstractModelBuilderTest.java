@@ -60,7 +60,7 @@ import static org.junit.Assume.assumeThat;
 @RunWith(value = Parameterized.class)
 public abstract class AbstractModelBuilderTest {
 
-    public static final Object[][] SUPPORTED_GRADLE_VERSIONS = {{"3.5"}};
+    public static final Object[][] SUPPORTED_GRADLE_VERSIONS = {{"3.5"}, {"4.9"}};
 
     private static final Pattern TEST_METHOD_NAME_PATTERN = Pattern.compile("(.*)\\[(\\d*: with Gradle-.*)\\]");
 
@@ -216,8 +216,8 @@ public abstract class AbstractModelBuilderTest {
     public static class DistributionLocator {
         private static final String RELEASE_REPOSITORY_ENV = "GRADLE_RELEASE_REPOSITORY";
         private static final String SNAPSHOT_REPOSITORY_ENV = "GRADLE_SNAPSHOT_REPOSITORY";
-        private static final String GRADLE_RELEASE_REPO = "http://services.gradle.org/distributions";
-        private static final String GRADLE_SNAPSHOT_REPO = "http://services.gradle.org/distributions-snapshots";
+        private static final String GRADLE_RELEASE_REPO = "https://services.gradle.org/distributions";
+        private static final String GRADLE_SNAPSHOT_REPO = "https://services.gradle.org/distributions-snapshots";
 
         @NotNull private final String myReleaseRepoUrl;
         @NotNull private final String mySnapshotRepoUrl;

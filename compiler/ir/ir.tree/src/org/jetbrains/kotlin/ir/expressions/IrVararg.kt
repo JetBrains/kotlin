@@ -17,13 +17,13 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
-import org.jetbrains.kotlin.types.KotlinType
 
 interface IrVarargElement : IrElement
 
 interface IrVararg : IrExpression {
-    val varargElementType: KotlinType
+    val varargElementType: IrType
 
     val elements: List<IrVarargElement>
 

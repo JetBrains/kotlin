@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -41,7 +41,7 @@ sealed class FormattingChange {
 fun collectFormattingChanges(file: PsiFile): Set<FormattingChange> {
     try {
         file.collectFormattingChanges = true
-        CodeStyleManager.getInstance(file.project).reformat(file)
+        CodeStyleManager.getInstance(file.project).reformat(file, true)
         return file.collectChangesFormattingModel?.requestedChanges ?: emptySet()
     }
     finally {

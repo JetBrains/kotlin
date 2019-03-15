@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertyGetterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
@@ -46,8 +47,10 @@ internal fun genClearCacheFunction(packageFragmentDescriptor: PackageFragmentDes
             SourceElement.NO_SOURCE) {}
 
     val unitType = packageFragmentDescriptor.builtIns.unitType
-    function.initialize(receiverType, null, emptyList(), emptyList(), unitType, Modality.FINAL, Visibilities.PUBLIC)
-    return function
+    return function.initialize(
+        DescriptorFactory.createExtensionReceiverParameterForCallable(function, receiverType, Annotations.EMPTY),
+        null, emptyList(), emptyList(), unitType, Modality.FINAL, Visibilities.PUBLIC
+    )
 }
 
 internal fun genPropertyForWidget(
@@ -56,7 +59,7 @@ internal fun genPropertyForWidget(
         resolvedWidget: ResolvedWidget,
         context: SyntheticElementResolveContext
 ): PropertyDescriptor {
-    val sourceEl = resolvedWidget.widget.sourceElement?.let(::XmlSourceElement) ?: SourceElement.NO_SOURCE
+    val sourceEl = resolvedWidget.widget.sourceElement?.element?.let(::XmlSourceElement) ?: SourceElement.NO_SOURCE
 
     val classDescriptor = resolvedWidget.viewClassDescriptor
     val type = classDescriptor?.let {
@@ -80,7 +83,7 @@ internal fun genPropertyForFragment(
         type: SimpleType,
         fragment: AndroidResource.Fragment
 ): PropertyDescriptor {
-    val sourceElement = fragment.sourceElement?.let(::XmlSourceElement) ?: SourceElement.NO_SOURCE
+    val sourceElement = fragment.sourceElement?.element?.let(::XmlSourceElement) ?: SourceElement.NO_SOURCE
     return genProperty(fragment, receiverType, type, packageFragmentDescriptor, sourceElement, null)
 }
 
@@ -120,7 +123,8 @@ private fun genProperty(
             flexibleType,
             emptyList<TypeParameterDescriptor>(),
             null,
-            receiverType)
+            DescriptorFactory.createExtensionReceiverParameterForCallable(property, receiverType, Annotations.EMPTY)
+    )
 
     val getter = PropertyGetterDescriptorImpl(
             property,

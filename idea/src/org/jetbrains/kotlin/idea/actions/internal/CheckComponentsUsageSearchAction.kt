@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.actions.internal
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.progress.EmptyProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
@@ -29,6 +30,7 @@ import com.intellij.openapi.vfs.VirtualFileVisitor
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.idea.search.usagesSearch.ExpressionsOfTypeProcessor
+import org.jetbrains.kotlin.idea.util.application.progressIndicatorNullable
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtFile
@@ -56,7 +58,7 @@ class CheckComponentsUsageSearchAction : AnAction() {
                 .filter { it.isData() }
                 .toList()
 
-        val progressIndicator = ProgressManager.getInstance().progressIndicator
+        val progressIndicator = ProgressManager.getInstance().progressIndicatorNullable
         for ((i, dataClass) in dataClasses.withIndex()) {
             progressIndicator?.text = "Checking data class ${i + 1} of ${dataClasses.size}..."
             progressIndicator?.text2 = dataClass.fqName?.asString() ?: ""
@@ -97,7 +99,7 @@ class CheckComponentsUsageSearchAction : AnAction() {
     }
 
     override fun update(e: AnActionEvent) {
-        if (!KotlinInternalMode.enabled) {
+        if (!ApplicationManager.getApplication().isInternal) {
             e.presentation.isVisible = false
             e.presentation.isEnabled = false
         }

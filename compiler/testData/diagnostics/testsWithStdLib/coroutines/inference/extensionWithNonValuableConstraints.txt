@@ -1,0 +1,43 @@
+package
+
+public val test1: kotlin.String
+public val test2: [ERROR : Type for generate {
+    baseExtension()
+}]
+public val test3: kotlin.Int
+public val test4: [ERROR : Type for generate {
+    outNullableAnyExtension()
+}]
+public val test5: [ERROR : Type for generate {
+    yield(42)
+    outAnyExtension()
+}]
+public val test6: [ERROR : Type for generate {
+    yield("bar")
+    invNullableAnyExtension()
+}]
+public val test7: [ERROR : Type for generate {
+    yield("baz")
+    genericExtension<Int>()
+}]
+public val test8: kotlin.String
+public fun </*0*/ S> generate(/*0*/ @kotlin.BuilderInference g: suspend Controller<S>.() -> kotlin.Unit): S
+public fun Base.baseExtension(): kotlin.Unit
+public fun </*0*/ S> Controller<S>.genericExtension(): kotlin.Unit
+public fun Controller<kotlin.Any?>.invNullableAnyExtension(): kotlin.Unit
+public fun Controller<out kotlin.Any>.outAnyExtension(): kotlin.Unit
+public fun Controller<out kotlin.Any?>.outNullableAnyExtension(): kotlin.Unit
+@kotlin.BuilderInference public fun Controller<kotlin.String>.safeExtension(): kotlin.Unit
+
+public interface Base {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Controller</*0*/ T> : Base {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public open suspend fun yield(/*0*/ t: T): kotlin.Unit
+}

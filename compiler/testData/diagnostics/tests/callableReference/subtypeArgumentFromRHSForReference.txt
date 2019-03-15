@@ -1,0 +1,42 @@
+package
+
+public fun </*0*/ T : Parent> radio(/*0*/ field: Inv<T>): kotlin.Unit
+public fun test(/*0*/ form: Form): kotlin.Unit
+
+public final class Child : Parent {
+    public constructor Child()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class ChildHolder {
+    public constructor ChildHolder(/*0*/ child: Child)
+    public final var child: Child
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Form {
+    public constructor Form()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun </*0*/ F> get0(/*0*/ field: kotlin.reflect.KMutableProperty<F>): Inv<F>
+    public final fun </*0*/ F> get1(/*0*/ field: kotlin.reflect.KProperty<F>): Inv<F>
+    public final fun </*0*/ F> get2(/*0*/ field: kotlin.reflect.KCallable<F>): Inv<F>
+    public final fun </*0*/ F> get3(/*0*/ field: kotlin.reflect.KMutableProperty1<*, F>): Inv<F>
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Inv</*0*/ T> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Parent {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

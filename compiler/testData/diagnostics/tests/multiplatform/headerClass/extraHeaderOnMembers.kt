@@ -3,7 +3,7 @@
 // FILE: common.kt
 
 expect class H {
-    <!WRONG_MODIFIER_TARGET, JVM:WRONG_MODIFIER_TARGET!>expect<!> fun foo()
+    <!JVM:WRONG_MODIFIER_TARGET, WRONG_MODIFIER_TARGET!>expect<!> fun foo()
 }
 
 // MODULE: m1-jvm(m1-common)

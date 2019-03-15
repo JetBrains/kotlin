@@ -3,27 +3,11 @@ Run Java
 Connected to the target VM
 frameSharedVarLocalVar.kt:7
 Compile bytecode for var1
-package frameSharedVarLocalVar
-
-fun main(args: Array<String>) {
-    var var1 = 1
-    foo {
-        //Breakpoint!
-        var1 = 2
-    }
-}
-
-inline fun foo(f: () -> Unit) {
-    f()
-}
-
-// PRINT_FRAME
-
-// EXPRESSION: var1
-// RESULT: 1: I
  frame    = main:7, FrameSharedVarLocalVarKt {frameSharedVarLocalVar}
    local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = frameSharedVarLocalVar.kt, 3)
    local    = var1: int = 1 (sp = frameSharedVarLocalVar.kt, 4)
+   local    = $i$f$foo: int = undefined (sp = null)
+   local    = $i$a$-foo-FrameSharedVarLocalVarKt$main$1: int = undefined (sp = null)
 Disconnected from the target VM
 
 Process finished with exit code 0

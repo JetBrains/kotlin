@@ -1,0 +1,35 @@
+FILE: companion.kt
+    public abstract class Some {
+        public constructor(): super<R|kotlin/Any|>()
+
+        public final companion object Companion {
+            public constructor(): super<R|kotlin/Any|>()
+
+            public final class InCompanion {
+                public constructor(): super<R|kotlin/Any|>()
+
+            }
+
+        }
+
+        public abstract property x(val): R|test/Some.Companion.InCompanion|
+            public get(): R|test/Some.Companion.InCompanion|
+
+    }
+    public abstract class Another {
+        public constructor(): super<R|kotlin/Any|>()
+
+        public final companion object NamedCompanion {
+            public constructor(): super<R|kotlin/Any|>()
+
+            public final class InCompanion {
+                public constructor(): super<R|kotlin/Any|>()
+
+            }
+
+        }
+
+        public abstract property x(val): R|test/Another.NamedCompanion.InCompanion|
+            public get(): R|test/Another.NamedCompanion.InCompanion|
+
+    }

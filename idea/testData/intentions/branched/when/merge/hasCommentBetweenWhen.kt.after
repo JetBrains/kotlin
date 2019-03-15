@@ -1,0 +1,16 @@
+fun <T> doSomething(a: T) {}
+
+fun test(a: Int) {
+    <caret>when (a) {
+        0 -> {
+            doSomething("A")
+            doSomething("C")
+        }
+        1 -> {
+            doSomething("B")
+            doSomething("D")
+        }
+    }
+
+    // comment
+}

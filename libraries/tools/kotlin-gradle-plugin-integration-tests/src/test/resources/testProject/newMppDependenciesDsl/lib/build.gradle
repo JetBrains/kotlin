@@ -1,0 +1,16 @@
+plugins {
+    id 'java'
+}
+
+repositories {
+    mavenLocal()
+    jcenter()
+}
+
+configurations {
+	outputConfiguration
+}
+
+artifacts {
+	outputConfiguration file('output.txt')
+}

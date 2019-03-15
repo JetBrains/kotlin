@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 abstract class A8 : MutableCollection<Any> {
     override fun contains(o: Any): Boolean {
         throw UnsupportedOperationException()

@@ -23,16 +23,16 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.intentions.*
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.util.OperatorChecks
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-class ReplaceContainsIntention : SelfTargetingRangeIntention<KtDotQualifiedExpression>(KtDotQualifiedExpression::class.java, "Replace 'contains' call with 'in' operator"), HighPriorityAction {
+class ReplaceContainsIntention : SelfTargetingRangeIntention<KtDotQualifiedExpression>(
+    KtDotQualifiedExpression::class.java, "Replace 'contains' call with 'in' operator"
+), HighPriorityAction {
     override fun applicabilityRange(element: KtDotQualifiedExpression): TextRange? {
         if (element.calleeName != OperatorNameConventions.CONTAINS.asString()) return null
 
@@ -54,14 +54,6 @@ class ReplaceContainsIntention : SelfTargetingRangeIntention<KtDotQualifiedExpre
         return element.callExpression!!.calleeExpression!!.textRange
     }
 
-    private val FunctionDescriptor.isOperatorOrCompatible: Boolean
-        get() {
-            if (this is JavaMethodDescriptor) {
-                return OperatorChecks.check(this).isSuccess
-            }
-            return isOperator
-        }
-
     override fun applyTo(element: KtDotQualifiedExpression, editor: Editor?) {
         val argument = element.callExpression!!.valueArguments.single().getArgumentExpression()!!
         val receiver = element.receiverExpression
@@ -71,19 +63,13 @@ class ReplaceContainsIntention : SelfTargetingRangeIntention<KtDotQualifiedExpre
         val prefixExpression = element.parent as? KtPrefixExpression
         val expression = if (prefixExpression != null && prefixExpression.operationToken == KtTokens.EXCL) {
             prefixExpression.replace(psiFactory.createExpressionByPattern("$0 !in $1", argument, receiver))
-        }
-        else {
+        } else {
             element.replace(psiFactory.createExpressionByPattern("$0 in $1", argument, receiver))
         }
 
         // Append semicolon to previous statement if needed
         if (argument is KtLambdaExpression) {
-            val previousElement = KtPsiUtil.skipSiblingsBackwardByPredicate(expression) {
-                it!!.node.elementType in KtTokens.WHITE_SPACE_OR_COMMENT_BIT_SET
-            }
-            if (previousElement != null && previousElement is KtExpression) {
-                previousElement.parent.addAfter(psiFactory.createSemicolon(), previousElement)
-            }
+            psiFactory.appendSemicolonBeforeLambdaContainingElement(expression)
         }
     }
 

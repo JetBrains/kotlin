@@ -19,24 +19,25 @@ package org.jetbrains.kotlin.android.synthetic.idea
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.module.Module
 import kotlinx.android.extensions.CacheImplementation
-import org.jetbrains.android.facet.AndroidFacet
 import org.jetbrains.kotlin.analyzer.ModuleInfo
+import org.jetbrains.kotlin.android.model.isAndroidModule
 import org.jetbrains.kotlin.android.synthetic.AndroidCommandLineProcessor.Companion.ANDROID_COMPILER_PLUGIN_ID
 import org.jetbrains.kotlin.android.synthetic.AndroidCommandLineProcessor.Companion.EXPERIMENTAL_OPTION
 import org.jetbrains.kotlin.android.synthetic.AndroidCommandLineProcessor.Companion.ENABLED_OPTION
 import org.jetbrains.kotlin.android.synthetic.AndroidCommandLineProcessor.Companion.DEFAULT_CACHE_IMPL_OPTION
 import org.jetbrains.kotlin.android.synthetic.AndroidComponentRegistrar.Companion.parseCacheImplementationType
-import org.jetbrains.kotlin.compiler.plugin.CliOption
-import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
+import org.jetbrains.kotlin.compiler.plugin.AbstractCliOption
+import org.jetbrains.kotlin.idea.core.unwrapModuleSourceInfo
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
 private val ANNOTATION_OPTION_PREFIX = "plugin:$ANDROID_COMPILER_PLUGIN_ID:"
 
-private fun Module.getOptionValueInFacet(option: CliOption): String? {
+private fun Module.getOptionValueInFacet(option: AbstractCliOption): String? {
     val kotlinFacet = KotlinFacet.get(this) ?: return null
     val commonArgs = kotlinFacet.configuration.settings.compilerArguments ?: return null
 
-    val prefix = ANNOTATION_OPTION_PREFIX + option.name + "="
+    val prefix = ANNOTATION_OPTION_PREFIX + option.optionName + "="
 
     val optionValue = commonArgs.pluginOptions
             ?.firstOrNull { it.startsWith(prefix) }
@@ -46,21 +47,23 @@ private fun Module.getOptionValueInFacet(option: CliOption): String? {
 }
 
 private fun isTestMode(module: Module): Boolean {
-    return ApplicationManager.getApplication().isUnitTestMode && AndroidFacet.getInstance(module) != null
+    return ApplicationManager.getApplication().isUnitTestMode && module.isAndroidModule
 }
 
 internal val Module.androidExtensionsIsEnabled: Boolean
     get() = isTestMode(this) || getOptionValueInFacet(ENABLED_OPTION) == "true"
 
+internal fun ModuleInfo.findAndroidModuleInfo() = unwrapModuleSourceInfo()?.takeIf { it.platform is JvmPlatform }
+
 internal val ModuleInfo.androidExtensionsIsEnabled: Boolean
     get() {
-        val module = (this as? ModuleSourceInfo)?.module ?: return false
+        val module = this.findAndroidModuleInfo()?.module ?: return false
         return module.androidExtensionsIsEnabled
     }
 
 internal val ModuleInfo.androidExtensionsIsExperimental: Boolean
     get() {
-        val module = (this as? ModuleSourceInfo)?.module ?: return false
+        val module = this.findAndroidModuleInfo()?.module ?: return false
         return module.androidExtensionsIsExperimental
     }
 
@@ -72,6 +75,6 @@ internal val Module.androidExtensionsIsExperimental: Boolean
 
 val ModuleInfo.androidExtensionsGlobalCacheImpl: CacheImplementation
     get() {
-        val module = (this as? ModuleSourceInfo)?.module ?: return CacheImplementation.NO_CACHE
+        val module = this.findAndroidModuleInfo()?.module ?: return CacheImplementation.NO_CACHE
         return parseCacheImplementationType(module.getOptionValueInFacet(DEFAULT_CACHE_IMPL_OPTION))
     }

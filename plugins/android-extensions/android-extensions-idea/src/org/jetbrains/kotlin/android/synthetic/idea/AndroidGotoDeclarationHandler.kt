@@ -25,7 +25,6 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.xml.XmlAttribute
 import org.jetbrains.kotlin.android.synthetic.res.AndroidLayoutXmlFileManager
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
@@ -51,12 +50,11 @@ class AndroidGotoDeclarationHandler : GotoDeclarationHandler {
     }
 
     private fun getLayoutManager(sourceElement: PsiElement): AndroidLayoutXmlFileManager? {
-        val moduleInfo = sourceElement.getModuleInfo()
-        if (moduleInfo !is ModuleSourceInfo) return null
+        val moduleInfo = sourceElement.getModuleInfo().findAndroidModuleInfo() ?: return null
         return ModuleServiceManager.getService(moduleInfo.module, AndroidLayoutXmlFileManager::class.java)
     }
 
-    override fun getActionText(context: DataContext?): String? {
+    override fun getActionText(context: DataContext): String? {
         return null
     }
 }

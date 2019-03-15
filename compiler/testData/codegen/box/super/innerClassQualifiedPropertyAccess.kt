@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 interface T {
     open val baz: String
         get() = "T.baz"

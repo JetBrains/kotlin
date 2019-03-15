@@ -1,0 +1,11 @@
+public final enum class Enum : R|java/lang/Enum<test/Enum>| {
+    public final static property A(val): R|ft<test/Enum, test/Enum?>|!
+        public get(): R|ft<test/Enum, test/Enum?>|!
+
+    public final static property B(val): R|ft<test/Enum, test/Enum?>|!
+        public get(): R|ft<test/Enum, test/Enum?>|!
+
+    public final static property C(val): R|ft<test/Enum, test/Enum?>|!
+        public get(): R|ft<test/Enum, test/Enum?>|!
+
+}

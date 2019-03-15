@@ -75,8 +75,6 @@ sealed class KotlinUsageContextDataFlowPanelBase(
 
             override fun isToShowPreviewButton() = false
 
-            override fun isToShowCloseButton() = false
-
             override fun isAutoScroll() = false
 
             override fun setAutoScroll(autoScroll: Boolean) {}

@@ -1,0 +1,4 @@
+public open class Inheritor : R|Second| {
+    public open operator function foo R|First|.(first: R|kotlin/String|, s: R|kotlin/Int|): R|kotlin/Unit|
+
+}

@@ -1,4 +1,4 @@
-compiler/testData/cli/jvm/jsr305Usage.kt:2:11: warning: expected type does not accept nulls in Java, but the value may be null in Kotlin
+compiler/testData/cli/jvm/jsr305Usage.kt:2:11: warning: type mismatch: inferred type is Nothing? but String was expected
     a.foo(null)
           ^
 OK

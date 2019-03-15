@@ -1,0 +1,4 @@
+public open class WildcardBounds : R|java/lang/Object| {
+    public/*package*/ open operator function foo(x: R|ft<test/WildcardBounds.A<out java/lang/CharSequence>, test/WildcardBounds.A<out java/lang/CharSequence>?>|!, y: R|ft<test/WildcardBounds.A<in java/lang/String>, test/WildcardBounds.A<in java/lang/String>?>|!): R|kotlin/Unit|
+
+}

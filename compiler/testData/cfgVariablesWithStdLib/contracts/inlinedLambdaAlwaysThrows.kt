@@ -1,6 +1,7 @@
 // !LANGUAGE: +AllowContractsForCustomFunctions +UseCallsInPlaceEffect
+// !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 
-import kotlin.internal.contracts.*
+import kotlin.contracts.*
 
 inline fun myRun(block: () -> Unit): Unit {
     contract {

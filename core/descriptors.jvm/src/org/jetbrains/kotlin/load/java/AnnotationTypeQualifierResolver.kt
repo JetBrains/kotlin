@@ -34,13 +34,13 @@ import org.jetbrains.kotlin.utils.Jsr305State
 import org.jetbrains.kotlin.utils.ReportLevel
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
-private val TYPE_QUALIFIER_NICKNAME_FQNAME = FqName("javax.annotation.meta.TypeQualifierNickname")
-private val TYPE_QUALIFIER_FQNAME = FqName("javax.annotation.meta.TypeQualifier")
-private val TYPE_QUALIFIER_DEFAULT_FQNAME = FqName("javax.annotation.meta.TypeQualifierDefault")
+val TYPE_QUALIFIER_NICKNAME_FQNAME = FqName("javax.annotation.meta.TypeQualifierNickname")
+val TYPE_QUALIFIER_FQNAME = FqName("javax.annotation.meta.TypeQualifier")
+val TYPE_QUALIFIER_DEFAULT_FQNAME = FqName("javax.annotation.meta.TypeQualifierDefault")
 
-private val MIGRATION_ANNOTATION_FQNAME = FqName("kotlin.annotations.jvm.UnderMigration")
+val MIGRATION_ANNOTATION_FQNAME = FqName("kotlin.annotations.jvm.UnderMigration")
 
-private val BUILT_IN_TYPE_QUALIFIER_DEFAULT_ANNOTATIONS = mapOf(
+val BUILT_IN_TYPE_QUALIFIER_DEFAULT_ANNOTATIONS = mapOf(
         FqName("javax.annotation.ParametersAreNullableByDefault") to
                 NullabilityQualifierWithApplicability(
                         NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NULLABLE),

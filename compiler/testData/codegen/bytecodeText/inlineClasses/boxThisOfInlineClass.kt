@@ -1,4 +1,5 @@
 // !LANGUAGE: +InlineClasses
+// IGNORE_BACKEND: JVM_IR
 
 inline class UInt(val a: Int) {
     fun test() {
@@ -13,7 +14,7 @@ inline class UInt(val a: Int) {
 
 fun takeNullable(a: UInt?) {}
 
-// 2 INVOKESTATIC UInt\$Erased.box
+// 2 INVOKESTATIC UInt\.box
 // 0 INVOKEVIRTUAL Foo.unbox
 
 // 1 valueOf

@@ -1,0 +1,40 @@
+FILE fqName:<root> fileName:/specializedTypeAliasConstructorCall.kt
+  CLASS CLASS name:Cell modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Cell<T> flags:
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+    CONSTRUCTOR visibility:public <> (value:T) returnType:Cell<T> flags:primary
+      VALUE_PARAMETER name:value index:0 type:T flags:
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='Cell'
+    PROPERTY name:value visibility:public modality:FINAL flags:val
+      FIELD PROPERTY_BACKING_FIELD name:value type:T visibility:public flags:final
+        EXPRESSION_BODY
+          GET_VAR 'value-parameter value: T' type=T origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:FINAL <> ($this:Cell<T>) returnType:T flags:
+        correspondingProperty: PROPERTY name:value visibility:public modality:FINAL flags:val
+        $this: VALUE_PARAMETER name:<this> type:Cell<T> flags:
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-value>(): T'
+            GET_FIELD 'value: T' type=T origin=null
+              receiver: GET_VAR 'this@Cell: Cell<T>' type=Cell<T> origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+  TYPEALIAS typealias IntAlias = Cell<Int> type=Cell<kotlin.Int>
+  FUN name:test visibility:public modality:FINAL <> () returnType:Cell<kotlin.Int> flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='test(): IntAlias /* = Cell<Int> */'
+        CALL 'constructor Cell(T)' type=Cell<kotlin.Int> origin=null
+          <T>: kotlin.Int
+          value: CONST Int type=kotlin.Int value=42

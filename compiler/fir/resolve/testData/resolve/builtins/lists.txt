@@ -1,0 +1,15 @@
+FILE: lists.kt
+    public abstract class MyStringList : R|kotlin/collections/List<kotlin/String>| {
+        public constructor(): super<R|kotlin/Any|>()
+
+    }
+    public abstract class MyMutableStringList : R|kotlin/collections/MutableList<kotlin/String>| {
+        public constructor(): super<R|kotlin/Any|>()
+
+    }
+    public final function convert R|kotlin/collections/List<kotlin/String>|.(): R|MyStringList| {
+        return@@@convert as/R|MyStringList|(this#)
+    }
+    public final function ret(l: R|kotlin/collections/MutableList<kotlin/String>|): R|MyMutableStringList| {
+        return@@@ret as/R|MyMutableStringList|(this#)
+    }

@@ -49,6 +49,7 @@ public class GradleRunner {
         System.out.println("Building gradle project...");
         GeneralCommandLine build = generateCommandLine("build");
         build.addParameter("--stacktrace");
+        build.addParameter("--warn");
         RunResult result = RunUtils.execute(build);
         OutputUtils.checkResult(result);
     }
@@ -67,8 +68,11 @@ public class GradleRunner {
 
     public String connectedDebugAndroidTest() {
         System.out.println("Starting tests...");
-        RunResult result = RunUtils.execute(generateCommandLine("connectedAndroidTest"));
-        return result.getOutput();
+        GeneralCommandLine test = generateCommandLine("connectedAndroidTest");
+        test.addParameters("--stacktrace");
+        //To avoid problem with discovering tests on Android in multidex build
+        test.addParameters("-Pandroid.testInstrumentationRunnerArguments.class=org.jetbrains.kotlin.android.tests.CodegenTestCaseOnAndroid");
+        return RunUtils.execute(test).getOutput();
     }
 
     private GeneralCommandLine generateCommandLine(String taskName) {

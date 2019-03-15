@@ -1,0 +1,4 @@
+<T> public abstract interface GenericInterfaceParameterWithSelfBound : R|java/lang/Object| {
+    public abstract operator function method(t: R|ft<T, T?>|!): R|ft<T, T?>|!
+
+}

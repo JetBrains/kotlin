@@ -6,8 +6,10 @@
     </properties>
   </component>
   <component name="EntryPointsManager">
-    <list size="1">
+    <list size="3">
       <item index="0" class="java.lang.String" itemvalue="javax.inject.Inject" />
+      <item index="1" class="java.lang.String" itemvalue="org.gradle.api.tasks.TaskAction" />
+      <item index="2" class="java.lang.String" itemvalue="org.gradle.api.tasks.options.Option" />
     </list>
   </component>
   <component name="FacetAutodetectingManager">
@@ -42,6 +44,38 @@
       <list>
         <option value="$PROJECT_DIR$/libraries/pom.xml" />
       </list>
+    </option>
+  </component>
+  <component name="NullableNotNullManager">
+    <option name="myNullables">
+      <value>
+        <list size="9">
+          <item index="0" class="java.lang.String" itemvalue="org.jetbrains.annotations.Nullable" />
+          <item index="1" class="java.lang.String" itemvalue="javax.annotation.Nullable" />
+          <item index="2" class="java.lang.String" itemvalue="javax.annotation.CheckForNull" />
+          <item index="3" class="java.lang.String" itemvalue="edu.umd.cs.findbugs.annotations.Nullable" />
+          <item index="4" class="java.lang.String" itemvalue="android.support.annotation.Nullable" />
+          <item index="5" class="java.lang.String" itemvalue="androidx.annotation.Nullable" />
+          <item index="6" class="java.lang.String" itemvalue="org.checkerframework.checker.nullness.qual.Nullable" />
+          <item index="7" class="java.lang.String" itemvalue="org.checkerframework.checker.nullness.compatqual.NullableDecl" />
+          <item index="8" class="java.lang.String" itemvalue="org.checkerframework.checker.nullness.compatqual.NullableType" />
+        </list>
+      </value>
+    </option>
+    <option name="myNotNulls">
+      <value>
+        <list size="9">
+          <item index="0" class="java.lang.String" itemvalue="org.jetbrains.annotations.NotNull" />
+          <item index="1" class="java.lang.String" itemvalue="javax.annotation.Nonnull" />
+          <item index="2" class="java.lang.String" itemvalue="javax.validation.constraints.NotNull" />
+          <item index="3" class="java.lang.String" itemvalue="edu.umd.cs.findbugs.annotations.NonNull" />
+          <item index="4" class="java.lang.String" itemvalue="android.support.annotation.NonNull" />
+          <item index="5" class="java.lang.String" itemvalue="androidx.annotation.NonNull" />
+          <item index="6" class="java.lang.String" itemvalue="org.checkerframework.checker.nullness.qual.NonNull" />
+          <item index="7" class="java.lang.String" itemvalue="org.checkerframework.checker.nullness.compatqual.NonNullDecl" />
+          <item index="8" class="java.lang.String" itemvalue="org.checkerframework.checker.nullness.compatqual.NonNullType" />
+        </list>
+      </value>
     </option>
   </component>
   <component name="ProjectResources">

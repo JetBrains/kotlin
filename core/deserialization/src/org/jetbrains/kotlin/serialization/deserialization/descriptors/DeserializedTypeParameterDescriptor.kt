@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.serialization.deserialization.descriptors
 
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.SupertypeLoopChecker
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.AbstractLazyTypeParameterDescriptor
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.upperBounds
@@ -29,9 +28,9 @@ import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlin.types.KotlinType
 
 class DeserializedTypeParameterDescriptor(
-        private val c: DeserializationContext,
-        private val proto: ProtoBuf.TypeParameter,
-        index: Int
+    private val c: DeserializationContext,
+    private val proto: ProtoBuf.TypeParameter,
+    index: Int
 ) : AbstractLazyTypeParameterDescriptor(
     c.storageManager, c.containingDeclaration, c.nameResolver.getName(proto.name),
     ProtoEnumFlags.variance(proto.variance), proto.reified, index, SourceElement.NO_SOURCE, SupertypeLoopChecker.EMPTY
@@ -45,11 +44,10 @@ class DeserializedTypeParameterDescriptor(
         if (upperBounds.isEmpty()) {
             return listOf(this.builtIns.defaultBound)
         }
-        return upperBounds.map {
-            c.typeDeserializer.type(it, Annotations.EMPTY)
-        }
+        return upperBounds.map(c.typeDeserializer::type)
     }
 
     override fun reportSupertypeLoopError(type: KotlinType) = throw IllegalStateException(
-            "There should be no cycles for deserialized type parameters, but found for: $this")
+        "There should be no cycles for deserialized type parameters, but found for: $this"
+    )
 }

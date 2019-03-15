@@ -1,0 +1,5 @@
+package
+
+public val a: [ERROR : Type cannot be resolved. Please make sure you have the required dependencies for unsigned types in the classpath]
+public val b: [ERROR : Type cannot be resolved. Please make sure you have the required dependencies for unsigned types in the classpath]
+public fun foo(/*0*/ u: [ERROR : UInt]): kotlin.Unit

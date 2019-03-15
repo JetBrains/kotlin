@@ -42,8 +42,9 @@ class ConvertPrimaryConstructorToSecondaryIntention : SelfTargetingIntention<KtP
 ) {
     override fun isApplicableTo(element: KtPrimaryConstructor, caretOffset: Int): Boolean {
         val containingClass = element.containingClassOrObject as? KtClass ?: return false
-        if (containingClass.isAnnotation() || containingClass.isData()) return false;
-        return element.valueParameters.all { !it.hasValOrVar() || it.annotationEntries.isEmpty() }
+        if (containingClass.isAnnotation() || containingClass.isData()
+            || containingClass.superTypeListEntries.any { it is KtDelegatedSuperTypeEntry }) return false
+        return element.valueParameters.all { !it.hasValOrVar() || (it.name != null && it.annotationEntries.isEmpty()) }
     }
 
     private fun KtReferenceExpression.isIndependent(classDescriptor: ClassDescriptor, context: BindingContext): Boolean {
@@ -101,11 +102,11 @@ class ConvertPrimaryConstructorToSecondaryIntention : SelfTargetingIntention<KtP
                             superTypeEntry.replace(factory.createSuperTypeEntry(superTypeEntry.typeReference!!.text))
                         }
                     }
-                    val valueParameterInitializers = element.valueParameters.filter { it.hasValOrVar() }.joinToString(separator = "\n") {
+                    val valueParameterInitializers = element.valueParameters.asSequence().filter { it.hasValOrVar() }.joinToString(separator = "\n") {
                         val name = it.name!!
                         "this.$name = $name"
                     }
-                    val classBodyInitializers = klass.declarations.filter {
+                    val classBodyInitializers = klass.declarations.asSequence().filter {
                         (it is KtProperty && initializerMap[it] != null) || it is KtAnonymousInitializer
                     }.joinToString(separator = "\n") {
                         if (it is KtProperty) {

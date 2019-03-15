@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.reflect
@@ -20,7 +9,7 @@ package kotlin.reflect
  * Represents a type. Type is usually either a class with optional type arguments,
  * or a type parameter of some declaration, plus nullability.
  */
-public interface KType {
+public interface KType : KAnnotatedElement {
     /**
      * The declaration of the classifier used in this type.
      * For example, in the type `List<String>` the classifier would be the [KClass] instance for [List].
@@ -67,7 +56,7 @@ public interface KType {
  *
  * Type projection is either the star projection, or an entity consisting of a specific type plus optional variance.
  *
- * See the [Kotlin language documentation](http://kotlinlang.org/docs/reference/generics.html#type-projections)
+ * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/generics.html#type-projections)
  * for more information.
  */
 @SinceKotlin("1.1")
@@ -85,7 +74,7 @@ public data class KTypeProjection constructor(
         /**
          * Star projection, denoted by the `*` character.
          * For example, in the type `KClass<*>`, `*` is the star projection.
-         * See the [Kotlin language documentation](http://kotlinlang.org/docs/reference/generics.html#star-projections)
+         * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/generics.html#star-projections)
          * for more information.
          */
         public val STAR: KTypeProjection = KTypeProjection(null, null)

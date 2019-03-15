@@ -1,6 +1,6 @@
 package
 
-public val x: kotlin.Int
+@get:kotlin.js.JsName(name = ".") public val x: kotlin.Int
 private fun ` .private `(): kotlin.String
 @kotlin.js.JsName(name = "validName") private fun ` .private with @JsName `(): kotlin.String
 public fun ` .public `(): kotlin.String

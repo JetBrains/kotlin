@@ -21,30 +21,29 @@ import org.jetbrains.annotations.TestOnly
 
 internal abstract class TaskToFriendTaskMapper {
     operator fun get(task: Task): String? =
-            getFriendByName(task.name)
+        getFriendByName(task.name)
 
     @TestOnly
     operator fun get(name: String): String? =
-            getFriendByName(name)
+        getFriendByName(name)
 
     protected abstract fun getFriendByName(name: String): String?
 }
 
 sealed internal class RegexTaskToFriendTaskMapper(
-        private val prefix: String,
-        suffix: String,
-        private val postfixReplacement: String
+    private val prefix: String,
+    suffix: String,
+    private val targetName: String,
+    private val postfixReplacement: String
 ) : TaskToFriendTaskMapper() {
-    class Default : RegexTaskToFriendTaskMapper("compile", "TestKotlin(AfterJava)?", "Kotlin")
-    class JavaScript : RegexTaskToFriendTaskMapper("compile", "TestKotlin2Js", "Kotlin2Js")
-    class Common : RegexTaskToFriendTaskMapper("compile", "TestKotlinCommon", "KotlinCommon")
-    class Android : RegexTaskToFriendTaskMapper("compile", "(Unit|Android)TestKotlin(AfterJava)?", "Kotlin")
+    class Default(targetName: String) : RegexTaskToFriendTaskMapper("compile", "TestKotlin", targetName, "Kotlin")
+    class Android(targetName: String) : RegexTaskToFriendTaskMapper("compile", "(Unit|Android)TestKotlin", targetName, "Kotlin")
 
-    private val regex = "$prefix(.*)$suffix".toRegex()
+    private val regex = "$prefix(.*)$suffix${targetName.capitalize()}".toRegex()
 
     override fun getFriendByName(name: String): String? {
         val match = regex.matchEntire(name) ?: return null
         val variant = match.groups[1]?.value ?: ""
-        return prefix + variant + postfixReplacement
+        return prefix + variant + postfixReplacement + targetName.capitalize()
     }
 }

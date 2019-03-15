@@ -1,0 +1,4 @@
+public open class VarargString : R|java/lang/Object| {
+    public open operator function vararg(vararg strings: R|kotlin/Array<ft<java/lang/String, java/lang/String?>>|): R|kotlin/Unit|
+
+}

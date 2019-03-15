@@ -1,7 +1,10 @@
+// IGNORE_BACKEND: JS_IR
 // TODO: muted automatically, investigate should it be ran for JS or not
 // IGNORE_BACKEND: JS, NATIVE
 
 // WITH_REFLECT
+
+package test
 
 import kotlin.test.assertEquals
 
@@ -77,7 +80,7 @@ fun box(): String {
     assertEquals(a2, a1)
     assertEquals(a1.hashCode(), a2.hashCode())
 
-    assertEquals("@Anno(b=1, c=x, d=3.14, f=-2.72, i=42424242, j=239239239239239, s=42, z=true, " +
+    assertEquals("@test.Anno(b=1, c=x, d=3.14, f=-2.72, i=42424242, j=239239239239239, s=42, z=true, " +
                  "ba=[-1], ca=[y], da=[-3.14159], fa=[2.7218], ia=[424242], ja=[239239239239], sa=[-43], za=[false, true], " +
                  "str=lol, stra=[rofl])", a1.toString())
 

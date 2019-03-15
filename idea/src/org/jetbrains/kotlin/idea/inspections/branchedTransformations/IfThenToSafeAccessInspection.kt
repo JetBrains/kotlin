@@ -19,24 +19,22 @@ package org.jetbrains.kotlin.idea.inspections.branchedTransformations
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.AbstractApplicabilityBasedInspection
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.*
+import org.jetbrains.kotlin.idea.refactoring.rename.KotlinVariableInplaceRenameHandler
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 
 class IfThenToSafeAccessInspection : AbstractApplicabilityBasedInspection<KtIfExpression>(KtIfExpression::class.java) {
 
-    override fun isApplicable(element: KtIfExpression): Boolean {
-        val ifThenToSelectData = element.buildSelectTransformationData() ?: return false
-        if (!ifThenToSelectData.receiverExpression.isStable(ifThenToSelectData.context)) return false
-
-        return ifThenToSelectData.clausesReplaceableBySafeCall()
-    }
+    override fun isApplicable(element: KtIfExpression): Boolean = isApplicableTo(element, expressionShouldBeStable = true)
 
     override fun inspectionTarget(element: KtIfExpression) = element.ifKeyword
 
@@ -47,42 +45,71 @@ class IfThenToSafeAccessInspection : AbstractApplicabilityBasedInspection<KtIfEx
 
     override val defaultFixText = "Simplify foldable if-then"
 
-    override fun fixText(element: KtIfExpression): String {
-        val ifThenToSelectData = element.buildSelectTransformationData()
-        return if (ifThenToSelectData?.baseClauseEvaluatesToReceiver() == true) {
-            if (ifThenToSelectData.condition is KtIsExpression) {
-                "Replace 'if' expression with safe cast expression"
-            } else {
-                "Remove redundant 'if' expression"
-            }
-        } else {
-            "Replace 'if' expression with safe access expression"
-        }
-    }
+    override fun fixText(element: KtIfExpression): String = fixTextFor(element)
 
     override val startFixInWriteAction = false
 
     override fun applyTo(element: PsiElement, project: Project, editor: Editor?) {
         val ifExpression = element.getParentOfType<KtIfExpression>(true) ?: return
-        val ifThenToSelectData = ifExpression.buildSelectTransformationData() ?: return
-
-        val factory = KtPsiFactory(ifExpression)
-        val resultExpr = runWriteAction {
-            val replacedBaseClause = ifThenToSelectData.replacedBaseClause(factory)
-            val newExpr = ifExpression.replaced(replacedBaseClause)
-            KtPsiUtil.deparenthesize(newExpr)
-        }
-
-        if (editor != null) {
-            (resultExpr as? KtSafeQualifiedExpression)?.inlineReceiverIfApplicableWithPrompt(editor)
-        }
+        convert(ifExpression, editor)
     }
 
-    private fun IfThenToSelectData.clausesReplaceableBySafeCall(): Boolean = when {
-        baseClause == null -> false
-        negatedClause == null && baseClause.isUsedAsExpression(context) -> false
-        negatedClause != null && !negatedClause.isNullExpression() -> false
-        else -> baseClause.evaluatesTo(receiverExpression) || baseClause.hasFirstReceiverOf(receiverExpression) ||
-                receiverExpression is KtThisExpression && getImplicitReceiver()?.let { it.type == receiverExpression.getType(context) } == true
+    companion object {
+
+        private fun IfThenToSelectData.clausesReplaceableBySafeCall(): Boolean = when {
+            baseClause == null -> false
+            negatedClause == null && baseClause.isUsedAsExpression(context) -> false
+            negatedClause != null && !negatedClause.isNullExpression() -> false
+            baseClause.evaluatesTo(receiverExpression) -> true
+            baseClause.hasFirstReceiverOf(receiverExpression) -> true
+            baseClause.anyArgumentEvaluatesTo(receiverExpression) -> true
+            receiverExpression is KtThisExpression -> getImplicitReceiver()?.let { it.type == receiverExpression.getType(context) } == true
+            else -> false
+        }
+
+        fun fixTextFor(element: KtIfExpression): String {
+            val ifThenToSelectData = element.buildSelectTransformationData()
+            return if (ifThenToSelectData?.baseClauseEvaluatesToReceiver() == true) {
+                if (ifThenToSelectData.condition is KtIsExpression) {
+                    "Replace 'if' expression with safe cast expression"
+                } else {
+                    "Remove redundant 'if' expression"
+                }
+            } else {
+                "Replace 'if' expression with safe access expression"
+            }
+        }
+
+        fun convert(ifExpression: KtIfExpression, editor: Editor?) {
+            val ifThenToSelectData = ifExpression.buildSelectTransformationData() ?: return
+
+            val factory = KtPsiFactory(ifExpression)
+            val resultExpr = runWriteAction {
+                val replacedBaseClause = ifThenToSelectData.replacedBaseClause(factory)
+                val newExpr = ifExpression.replaced(replacedBaseClause)
+                KtPsiUtil.deparenthesize(newExpr)
+            }
+
+            if (editor != null && resultExpr is KtSafeQualifiedExpression) {
+                resultExpr.inlineReceiverIfApplicableWithPrompt(editor)
+                resultExpr.renameLetParameter(editor)
+            }
+        }
+
+        fun isApplicableTo(element: KtIfExpression, expressionShouldBeStable: Boolean): Boolean {
+            val ifThenToSelectData = element.buildSelectTransformationData() ?: return false
+            if (expressionShouldBeStable && !ifThenToSelectData.receiverExpression.isStableSimpleExpression(ifThenToSelectData.context)) return false
+
+            return ifThenToSelectData.clausesReplaceableBySafeCall()
+        }
+
+        internal fun KtSafeQualifiedExpression.renameLetParameter(editor: Editor) {
+            val callExpression = selectorExpression as? KtCallExpression ?: return
+            if (callExpression.calleeExpression?.text != "let") return
+            val parameter = callExpression.lambdaArguments.singleOrNull()?.getLambdaExpression()?.valueParameters?.singleOrNull() ?: return
+            PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.document)
+            editor.caretModel.moveToOffset(parameter.startOffset)
+            KotlinVariableInplaceRenameHandler().doRename(parameter, editor, null)
+        }
     }
 }

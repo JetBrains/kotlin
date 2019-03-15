@@ -5,6 +5,11 @@ inline fun a() {}
 
 inline fun b() {}
 
-inline fun c() {}
+inline fun c(crossinline f: () -> Unit) {
+    object { init { f() }}
+    { f() }
+}
 
-inline fun d() {}
+inline fun d() {
+    c {}
+}

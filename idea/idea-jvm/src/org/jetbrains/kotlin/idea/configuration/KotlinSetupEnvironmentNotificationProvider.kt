@@ -11,7 +11,10 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectBundle
-import com.intellij.openapi.roots.*
+import com.intellij.openapi.roots.ModuleRootEvent
+import com.intellij.openapi.roots.ModuleRootListener
+import com.intellij.openapi.roots.ModuleRootManager
+import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.roots.ui.configuration.ProjectSettingsService
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.ui.popup.ListPopup
@@ -41,7 +44,7 @@ class KotlinSetupEnvironmentNotificationProvider(
 
     init {
         myProject.messageBus.connect(myProject).subscribe(ProjectTopics.PROJECT_ROOTS, object : ModuleRootListener {
-            override fun rootsChanged(event: ModuleRootEvent?) {
+            override fun rootsChanged(event: ModuleRootEvent) {
                 notifications.updateAllNotifications()
             }
         })
@@ -69,8 +72,10 @@ class KotlinSetupEnvironmentNotificationProvider(
             return createSetupSdkPanel(myProject, psiFile)
         }
 
-        if (!KotlinConfigurationCheckerComponent.getInstance(module.project).isSyncing &&
-            !SuppressNotificationState.isKotlinNotConfiguredSuppressed(module.toModuleGroup()) &&
+        val configurationCheckerComponent = KotlinConfigurationCheckerComponent.getInstanceIfNotDisposed(module.project) ?: return null
+
+        if (!configurationCheckerComponent.isSyncing &&
+            isNotConfiguredNotificationRequired(module.toModuleGroup()) &&
             !hasAnyKotlinRuntimeInScope(module) &&
             UnsupportedAbiVersionNotificationPanelProvider.collectBadRoots(module).isEmpty()
         ) {

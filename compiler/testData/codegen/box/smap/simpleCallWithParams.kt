@@ -108,3 +108,4 @@ inline fun inlineFun(): String {
 fun fail(): String {
     throw AssertionError("fail")
 }
+// IGNORE_BACKEND: JVM_IR

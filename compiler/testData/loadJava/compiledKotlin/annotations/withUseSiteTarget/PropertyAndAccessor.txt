@@ -1,0 +1,25 @@
+package test
+
+public final annotation class A : kotlin.Annotation {
+    /*primary*/ public constructor A(/*0*/ value: kotlin.String)
+    public final val value: kotlin.String
+        public final fun <get-value>(): kotlin.String
+}
+
+public final annotation class B : kotlin.Annotation {
+    /*primary*/ public constructor B(/*0*/ value: kotlin.Array<kotlin.String>)
+    public final val value: kotlin.Array<kotlin.String>
+        public final fun <get-value>(): kotlin.Array<kotlin.String>
+}
+
+public interface I {
+    public abstract var getterAndSetter: kotlin.Int
+        @test.A(value = "getter") public abstract fun <get-getterAndSetter>(): kotlin.Int
+        @test.B(value = {"setter"}) public abstract fun <set-getterAndSetter>(/*0*/ <set-?>: kotlin.Int): kotlin.Unit
+    @test.A(value = "property") public abstract var propertyAndGetter: kotlin.Int
+        @test.B(value = {"getter"}) public abstract fun <get-propertyAndGetter>(): kotlin.Int
+        public abstract fun <set-propertyAndGetter>(/*0*/ <set-?>: kotlin.Int): kotlin.Unit
+    @test.A(value = "property") public abstract var propertyAndSetter: kotlin.Int
+        public abstract fun <get-propertyAndSetter>(): kotlin.Int
+        @test.B(value = {"setter"}) public abstract fun <set-propertyAndSetter>(/*0*/ <set-?>: kotlin.Int): kotlin.Unit
+}

@@ -1,0 +1,5 @@
+// FIX: Replace with '+='
+fun foo() {
+    var x = 0
+    x += 1
+}

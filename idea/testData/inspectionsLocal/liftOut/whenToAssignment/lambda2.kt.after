@@ -1,0 +1,12 @@
+fun test(b: Boolean) {
+    var fn: () -> String
+
+    <caret>fn = when (b) {
+        true -> {
+            { "foo" }
+        }
+        else -> {
+            { "bar" }
+        }
+    }
+}

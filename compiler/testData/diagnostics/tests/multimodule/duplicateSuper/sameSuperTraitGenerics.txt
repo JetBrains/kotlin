@@ -50,6 +50,3 @@ public final class Foo : p.A<kotlin.String>, p.B {
     public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 }
-
-package p {
-}

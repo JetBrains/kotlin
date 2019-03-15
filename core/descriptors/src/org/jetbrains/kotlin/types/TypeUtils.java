@@ -15,6 +15,9 @@ import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
+import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.name.FqNameUnsafe;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
@@ -265,6 +268,14 @@ public class TypeUtils {
         if (isTypeParameter(type)) {
             return hasNullableSuperType(type);
         }
+
+        TypeConstructor constructor = type.getConstructor();
+        if (constructor instanceof IntersectionTypeConstructor) {
+            for (KotlinType supertype : constructor.getSupertypes()) {
+                if (isNullableType(supertype)) return true;
+            }
+        }
+
         return false;
     }
 
@@ -374,19 +385,29 @@ public class TypeUtils {
             @Nullable KotlinType type,
             @NotNull Function1<UnwrappedType, Boolean> isSpecialType
     ) {
+        return contains(type, isSpecialType, new HashSet<KotlinType>());
+    }
+
+    private static boolean contains(
+            @Nullable KotlinType type,
+            @NotNull Function1<UnwrappedType, Boolean> isSpecialType,
+            HashSet<KotlinType> visited
+    ) {
         if (type == null) return false;
+        if (visited.contains(type)) return false;
+        visited.add(type);
 
         UnwrappedType unwrappedType = type.unwrap();
         if (isSpecialType.invoke(unwrappedType)) return true;
 
         FlexibleType flexibleType = unwrappedType instanceof FlexibleType ? (FlexibleType) unwrappedType : null;
         if (flexibleType != null
-            && (contains(flexibleType.getLowerBound(), isSpecialType) || contains(flexibleType.getUpperBound(), isSpecialType))) {
+            && (contains(flexibleType.getLowerBound(), isSpecialType, visited) || contains(flexibleType.getUpperBound(), isSpecialType, visited))) {
             return true;
         }
 
         if (unwrappedType instanceof DefinitelyNotNullType &&
-            contains(((DefinitelyNotNullType) unwrappedType).getOriginal(), isSpecialType)) {
+            contains(((DefinitelyNotNullType) unwrappedType).getOriginal(), isSpecialType, visited)) {
             return true;
         }
 
@@ -394,13 +415,13 @@ public class TypeUtils {
         if (typeConstructor instanceof IntersectionTypeConstructor) {
             IntersectionTypeConstructor intersectionTypeConstructor = (IntersectionTypeConstructor) typeConstructor;
             for (KotlinType supertype : intersectionTypeConstructor.getSupertypes()) {
-                if (contains(supertype, isSpecialType)) return true;
+                if (contains(supertype, isSpecialType, visited)) return true;
             }
             return false;
         }
 
         for (TypeProjection projection : type.getArguments()) {
-            if (!projection.isStarProjection() && contains(projection.getType(), isSpecialType)) return true;
+            if (!projection.isStarProjection() && contains(projection.getType(), isSpecialType, visited)) return true;
         }
         return false;
     }
@@ -436,6 +457,27 @@ public class TypeUtils {
         KotlinType longType = builtIns.getLongType();
         if (supertypes.contains(longType)) {
             return longType;
+        }
+
+        KotlinType uIntType = findByFqName(supertypes, KotlinBuiltIns.FQ_NAMES.uIntFqName);
+        if (uIntType != null) return uIntType;
+
+        KotlinType uLongType = findByFqName(supertypes, KotlinBuiltIns.FQ_NAMES.uLongFqName);
+        if (uLongType != null) return uLongType;
+
+        return null;
+    }
+
+    @Nullable
+    private static KotlinType findByFqName(@NotNull Collection<KotlinType> supertypes, FqName fqName) {
+        for (KotlinType supertype : supertypes) {
+            ClassifierDescriptor descriptor = supertype.getConstructor().getDeclarationDescriptor();
+            if (descriptor == null) continue;
+
+            FqNameUnsafe descriptorFqName = DescriptorUtils.getFqName(descriptor);
+            if (descriptorFqName.equals(fqName.toUnsafe())) {
+                return supertype;
+            }
         }
         return null;
     }

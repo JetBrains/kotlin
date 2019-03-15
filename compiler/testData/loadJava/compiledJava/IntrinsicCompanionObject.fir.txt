@@ -1,0 +1,12 @@
+public abstract interface IntrinsicCompanionObject : R|java/lang/Object| {
+    public abstract operator function testInt(i: R|ft<kotlin/Int.Companion, kotlin/Int.Companion?>|!): R|kotlin/Unit|
+
+    public abstract operator function testChar(c: R|ft<kotlin/Char.Companion, kotlin/Char.Companion?>|!): R|kotlin/Unit|
+
+    public abstract operator function testString(s: R|ft<kotlin/String.Companion, kotlin/String.Companion?>|!): R|kotlin/Unit|
+
+    public abstract operator function testBoolean(b: R|ft<kotlin/Boolean.Companion, kotlin/Boolean.Companion?>|!): R|kotlin/Unit|
+
+    public abstract operator function testEnum(e: R|ft<kotlin/Enum.Companion, kotlin/Enum.Companion?>|!): R|kotlin/Unit|
+
+}

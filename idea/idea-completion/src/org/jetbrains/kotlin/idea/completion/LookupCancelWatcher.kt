@@ -17,25 +17,28 @@
 package org.jetbrains.kotlin.idea.completion
 
 import com.intellij.codeInsight.lookup.Lookup
-import com.intellij.codeInsight.lookup.LookupAdapter
 import com.intellij.codeInsight.lookup.LookupEvent
+import com.intellij.codeInsight.lookup.LookupListener
 import com.intellij.codeInsight.lookup.LookupManager
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.components.AbstractProjectComponent
+import com.intellij.openapi.components.ProjectComponent
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.editor.RangeMarker
-import com.intellij.openapi.editor.event.*
+import com.intellij.openapi.editor.event.CaretEvent
+import com.intellij.openapi.editor.event.CaretListener
+import com.intellij.openapi.editor.event.EditorFactoryEvent
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
+import org.jetbrains.kotlin.idea.util.compat.EditorFactoryListenerWrapper
 
-class LookupCancelWatcher(project: Project) : AbstractProjectComponent(project) {
+class LookupCancelWatcher(val project: Project) : ProjectComponent {
     private class Reminiscence(editor: Editor, offset: Int) {
         var editor: Editor? = editor
         private var marker: RangeMarker? = editor.document.createRangeMarker(offset, offset)
 
         // forget about auto-popup cancellation when the caret is moved to the start or before it
-        private var editorListener: CaretListener? = object : CaretAdapter() {
+        private var editorListener: CaretListener? = object : CaretListener {
             override fun caretPositionChanged(e: CaretEvent) {
                 if (!marker!!.isValid || editor.logicalPositionToOffset(e.newPosition) <= offset) {
                     dispose()
@@ -75,7 +78,7 @@ class LookupCancelWatcher(project: Project) : AbstractProjectComponent(project) 
         return lastReminiscence?.matches(editor, offset) ?: false
     }
 
-    private val lookupCancelListener = object : LookupAdapter() {
+    private val lookupCancelListener = object : LookupListener {
         override fun lookupCanceled(event: LookupEvent) {
             val lookup = event.lookup
             if (event.isCanceledExplicitly && lookup.isCompletion) {
@@ -88,20 +91,31 @@ class LookupCancelWatcher(project: Project) : AbstractProjectComponent(project) 
                 }
             }
         }
+
+        override fun itemSelected(event: LookupEvent) {
+            // BUNCH: 182
+            // Has default implementation since 183
+        }
+
+        override fun currentItemChanged(event: LookupEvent) {
+            // BUNCH: 182
+            // Has default implementation since 183
+        }
     }
 
     override fun initComponent() {
         EditorFactory.getInstance().addEditorFactoryListener(
-                object : EditorFactoryAdapter() {
-                    override fun editorReleased(event: EditorFactoryEvent) {
-                        if (lastReminiscence?.editor == event.editor) {
-                            lastReminiscence!!.dispose()
-                        }
+            object : EditorFactoryListenerWrapper {
+                override fun editorReleased(event: EditorFactoryEvent) {
+                    if (lastReminiscence?.editor == event.editor) {
+                        lastReminiscence!!.dispose()
                     }
-                },
-                myProject)
+                }
+            },
+            project
+        )
 
-        LookupManager.getInstance(myProject).addPropertyChangeListener { event ->
+        LookupManager.getInstance(project).addPropertyChangeListener { event ->
             if (event.propertyName == LookupManager.PROP_ACTIVE_LOOKUP) {
                 (event.newValue as Lookup?)?.addLookupListener(lookupCancelListener)
             }

@@ -1,0 +1,20 @@
+public open class StaticFinal : R|java/lang/Object| {
+    public final static property publicNonNull(val): R|ft<kotlin/String, kotlin/String?>|!
+        public get(): R|ft<kotlin/String, kotlin/String?>|!
+
+    public final static property publicNull(val): R|ft<kotlin/String, kotlin/String?>|!
+        public get(): R|ft<kotlin/String, kotlin/String?>|!
+
+    public/*package*/ final static property packageNonNull(val): R|ft<kotlin/String, kotlin/String?>|!
+        public/*package*/ get(): R|ft<kotlin/String, kotlin/String?>|!
+
+    public/*package*/ final static property packageNull(val): R|ft<kotlin/String, kotlin/String?>|!
+        public/*package*/ get(): R|ft<kotlin/String, kotlin/String?>|!
+
+    private final static property privateNonNull(val): R|ft<kotlin/String, kotlin/String?>|!
+        private get(): R|ft<kotlin/String, kotlin/String?>|!
+
+    private final static property privateNull(val): R|ft<kotlin/String, kotlin/String?>|!
+        private get(): R|ft<kotlin/String, kotlin/String?>|!
+
+}

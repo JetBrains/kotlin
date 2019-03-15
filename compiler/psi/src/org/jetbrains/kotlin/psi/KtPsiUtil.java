@@ -30,7 +30,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.kdoc.psi.api.KDocElement;
 import org.jetbrains.kotlin.lexer.KtToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
@@ -225,24 +224,6 @@ public class KtPsiUtil {
     }
 
     @Nullable
-    public static Name getAliasName(@NotNull KtImportDirective importDirective) {
-        if (importDirective.isAllUnder()) {
-            return null;
-        }
-        String aliasName = importDirective.getAliasName();
-        KtExpression importedReference = importDirective.getImportedReference();
-        if (importedReference == null) {
-            return null;
-        }
-        KtSimpleNameExpression referenceExpression = getLastReference(importedReference);
-        if (aliasName == null) {
-            aliasName = referenceExpression != null ? referenceExpression.getReferencedName() : null;
-        }
-
-        return aliasName != null && !aliasName.isEmpty() ? Name.identifier(aliasName) : null;
-    }
-
-    @Nullable
     public static KtSimpleNameExpression getLastReference(@NotNull KtExpression importedReference) {
         KtElement selector = KtPsiUtilKt.getQualifiedElementSelector(importedReference);
         return selector instanceof KtSimpleNameExpression ? (KtSimpleNameExpression) selector : null;
@@ -285,10 +266,12 @@ public class KtPsiUtil {
     }
 
     @Nullable
+    @SafeVarargs
     @Contract("null, _ -> null")
     public static PsiElement getTopmostParentOfTypes(
             @Nullable PsiElement element,
-            @NotNull Class<? extends PsiElement>... parentTypes) {
+            @NotNull Class<? extends PsiElement>... parentTypes
+    ) {
         if (element instanceof PsiFile) return null;
 
         PsiElement answer = PsiTreeUtil.getParentOfType(element, parentTypes);
@@ -449,6 +432,8 @@ public class KtPsiUtil {
             return false;
         }
 
+        if (parentElement instanceof KtCollectionLiteralExpression) return false;
+
         if (innerExpression instanceof KtIfExpression) {
             if (parentElement instanceof KtQualifiedExpression) return true;
 
@@ -461,6 +446,11 @@ public class KtPsiUtil {
 
                 current = current.getParent();
             }
+        }
+
+        if (innerExpression instanceof KtLambdaExpression) {
+            PsiElement prevSibling = PsiTreeUtil.skipWhitespacesAndCommentsBackward(currentInner);
+            if (prevSibling != null && prevSibling.getText().endsWith(KtTokens.RPAR.getValue())) return true;
         }
 
         if (parentElement instanceof KtCallExpression && currentInner == ((KtCallExpression) parentElement).getCalleeExpression()) {
@@ -506,6 +496,14 @@ public class KtPsiUtil {
         if (parentElement instanceof KtBinaryExpression &&
             parentOperation == KtTokens.ELVIS &&
             !(innerExpression instanceof KtBinaryExpression) &&
+            currentInner == ((KtBinaryExpression) parentElement).getRight()) {
+            return false;
+        }
+
+        // 'x = fun {}' case
+        if (parentElement instanceof KtBinaryExpression &&
+            parentOperation == KtTokens.EQ &&
+            innerExpression instanceof KtNamedFunction &&
             currentInner == ((KtBinaryExpression) parentElement).getRight()) {
             return false;
         }
@@ -658,12 +656,13 @@ public class KtPsiUtil {
         return parent;
     }
 
+    @SafeVarargs
+    @SuppressWarnings("unchecked")
     public static <T extends PsiElement> T getLastChildByType(@NotNull PsiElement root, @NotNull Class<? extends T>... elementTypes) {
         PsiElement[] children = root.getChildren();
 
         for (int i = children.length - 1; i >= 0; i--) {
             if (PsiTreeUtil.instanceOf(children[i], elementTypes)) {
-                //noinspection unchecked
                 return (T) children[i];
             }
         }
@@ -817,6 +816,12 @@ public class KtPsiUtil {
                 }
                 else if (parent instanceof KtClassBody && !isMemberOfObjectExpression((KtCallableDeclaration) current)) {
                     return (KtElement) parent;
+                }
+                else if (parent instanceof KtBlockExpression) {
+                    PsiElement grandParent = parent.getParent();
+                    if (grandParent instanceof KtScript) {
+                        return (KtElement) parent;
+                    }
                 }
             }
             if (current instanceof KtParameter) {

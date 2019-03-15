@@ -1,3 +1,5 @@
+// KJS_WITH_FULL_RUNTIME
+// IGNORE_BACKEND: JVM_IR
 
 fun box() : String {
     if (!testIteratingOverMap1()) return "fail 1"

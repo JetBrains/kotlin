@@ -20,10 +20,7 @@ import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.actionSystem.LangDataKeys
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiDirectory
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiPackage
-import com.intellij.psi.PsiReference
+import com.intellij.psi.*
 import com.intellij.refactoring.JavaRefactoringSettings
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.move.MoveCallback
@@ -43,35 +40,40 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
+import org.jetbrains.kotlin.psi.psiUtil.isTopLevelInFileOrScript
 import java.util.*
 
 class MoveKotlinDeclarationsHandler : MoveHandlerDelegate() {
     private fun getUniqueContainer(elements: Array<out PsiElement>): PsiElement? {
+        val allTopLevel = elements.all { isTopLevelInFileOrScript(it) }
+
         val getContainer: (PsiElement) -> PsiElement? =
-                if (elements.any { it.parent !is KtFile }) { e ->
+            { e ->
+                if (allTopLevel) {
+                    e.containingFile?.parent
+                } else {
                     when (e) {
                         is KtNamedDeclaration -> e.containingClassOrObject ?: e.parent
                         is KtFile -> e.parent
                         else -> null
                     }
                 }
-                else { e ->
-                    e.containingFile?.parent
-                }
+            }
+
         return elements.mapNotNullTo(LinkedHashSet(), getContainer).singleOrNull()
     }
 
-    private fun KtNamedDeclaration.canMove() = if (this is KtClassOrObject) !isLocal else parent is KtFile
+    private fun KtNamedDeclaration.canMove() = if (this is KtClassOrObject) !isLocal else isTopLevelInFileOrScript(this)
 
     private fun doMoveWithCheck(
-            project: Project, elements: Array<out PsiElement>, targetContainer: PsiElement?, callback: MoveCallback?, editor: Editor?
+        project: Project, elements: Array<out PsiElement>, targetContainer: PsiElement?, callback: MoveCallback?, editor: Editor?
     ): Boolean {
         if (!CommonRefactoringUtil.checkReadOnlyStatusRecursively(project, elements.toList(), true)) return false
 
         val container = getUniqueContainer(elements)
         if (container == null) {
             CommonRefactoringUtil.showErrorHint(
-                    project, editor, "All declarations must belong to the same directory or class", MOVE_DECLARATIONS, null
+                project, editor, "All declarations must belong to the same directory or class", MOVE_DECLARATIONS, null
             )
             return false
         }
@@ -92,7 +94,8 @@ class MoveKotlinDeclarationsHandler : MoveHandlerDelegate() {
         }
 
         if (elementsToSearch.any { !it.canMove() }) {
-            val message = RefactoringBundle.getCannotRefactorMessage("Move declaration is only supported for top-level declarations and nested classes")
+            val message =
+                RefactoringBundle.getCannotRefactorMessage("Move declaration is only supported for top-level declarations and nested classes")
             CommonRefactoringUtil.showErrorHint(project, editor, message, MOVE_DECLARATIONS, null)
             return true
         }
@@ -110,7 +113,7 @@ class MoveKotlinDeclarationsHandler : MoveHandlerDelegate() {
                 else -> null
             }
             val initialTargetDirectory = MoveFilesOrDirectoriesUtil.resolveToDirectory(project, initialTargetElement)
-            val dialog = KotlinAwareMoveFilesOrDirectoriesDialog(project) {
+            val dialog = KotlinAwareMoveFilesOrDirectoriesDialog(project, initialTargetDirectory) {
                 invokeMoveFilesOrDirectoriesRefactoring(it, project, elements, initialTargetDirectory, callback)
             }
             dialog.setData(elements, initialTargetDirectory, "refactoring.moveFile")
@@ -124,15 +127,22 @@ class MoveKotlinDeclarationsHandler : MoveHandlerDelegate() {
                 val targetPackageName = MoveClassesOrPackagesImpl.getInitialTargetPackageName(targetContainer, elements)
                 val targetDirectory = if (targetContainer != null) {
                     MoveClassesOrPackagesImpl.getInitialTargetDirectory(targetContainer, elements)
-                }
-                else null
+                } else null
                 val searchInComments = JavaRefactoringSettings.getInstance()!!.MOVE_SEARCH_IN_COMMENTS
                 val searchInText = JavaRefactoringSettings.getInstance()!!.MOVE_SEARCH_FOR_TEXT
                 val targetFile = targetContainer as? KtFile
                 val moveToPackage = targetContainer !is KtFile
 
                 MoveKotlinTopLevelDeclarationsDialog(
-                        project, elementsToSearch, targetPackageName, targetDirectory, targetFile, moveToPackage, searchInComments, searchInText, callback
+                    project,
+                    elementsToSearch,
+                    targetPackageName,
+                    targetDirectory,
+                    targetFile,
+                    moveToPackage,
+                    searchInComments,
+                    searchInText,
+                    callback
                 ).show()
             }
 
@@ -140,20 +150,25 @@ class MoveKotlinDeclarationsHandler : MoveHandlerDelegate() {
                 if (elementsToSearch.size > 1) {
                     // todo: allow moving multiple classes to upper level
                     if (targetContainer !is KtClassOrObject) {
-                        val message = RefactoringBundle.getCannotRefactorMessage("Moving multiple nested classes to top-level is not supported")
+                        val message =
+                            RefactoringBundle.getCannotRefactorMessage("Moving multiple nested classes to top-level is not supported")
                         CommonRefactoringUtil.showErrorHint(project, editor, message, MOVE_DECLARATIONS, null)
                         return true
                     }
                     @Suppress("UNCHECKED_CAST")
-                    MoveKotlinNestedClassesDialog(project,
-                                                  elementsToSearch.filterIsInstance<KtClassOrObject>(),
-                                                  container,
-                                                  targetContainer,
-                                                  callback).show()
+                    MoveKotlinNestedClassesDialog(
+                        project,
+                        elementsToSearch.filterIsInstance<KtClassOrObject>(),
+                        container,
+                        targetContainer,
+                        callback
+                    ).show()
                     return true
                 }
-                KotlinSelectNestedClassRefactoringDialog.chooseNestedClassRefactoring(elementsToSearch.first() as KtClassOrObject,
-                                                                                      targetContainer)
+                KotlinSelectNestedClassRefactoringDialog.chooseNestedClassRefactoring(
+                    elementsToSearch.first() as KtClassOrObject,
+                    targetContainer
+                )
             }
 
             else -> throw AssertionError("Unexpected container: ${container.getElementTextWithContext()}")
@@ -183,17 +198,32 @@ class MoveKotlinDeclarationsHandler : MoveHandlerDelegate() {
         }
     }
 
+    private fun tryToMoveImpl(
+        element: PsiElement, project: Project, dataContext: DataContext?, reference: PsiReference?, editor: Editor?
+    ): Boolean {
+        val elementsToMove = element.unwrapped?.let { arrayOf(it) } ?: PsiElement.EMPTY_ARRAY
+        val targetContainer = dataContext?.let { dataContext -> LangDataKeys.TARGET_PSI_ELEMENT.getData(dataContext) }
+        return canMove(elementsToMove, targetContainer, true) && doMoveWithCheck(project, elementsToMove, targetContainer, null, editor)
+    }
+
+    private fun recursivelyTryToMove(
+        element: PsiElement, project: Project, dataContext: DataContext?, reference: PsiReference?, editor: Editor?
+    ): Boolean {
+        return tryToMoveImpl(element, project, dataContext, reference, editor)
+                || element.parent?.let { recursivelyTryToMove(it, project, dataContext, reference, editor) } ?: false
+    }
+
     override fun canMove(elements: Array<out PsiElement>, targetContainer: PsiElement?): Boolean {
         return canMove(elements, targetContainer, false)
     }
 
     override fun isValidTarget(psiElement: PsiElement?, sources: Array<out PsiElement>): Boolean {
         return psiElement is PsiPackage
-               || (psiElement is PsiDirectory && psiElement.getPackage() != null)
-               || psiElement is KtFile
-               || (psiElement is KtClassOrObject
-                   && !(psiElement.hasModifier(KtTokens.ANNOTATION_KEYWORD))
-                   && !sources.any { it.parent is KtFile })
+                || (psiElement is PsiDirectory && psiElement.getPackage() != null)
+                || psiElement is KtFile
+                || (psiElement is KtClassOrObject
+                && !(psiElement.hasModifier(KtTokens.ANNOTATION_KEYWORD))
+                && !sources.any { it.parent is KtFile })
     }
 
     override fun doMove(project: Project, elements: Array<out PsiElement>, targetContainer: PsiElement?, callback: MoveCallback?) {
@@ -201,11 +231,14 @@ class MoveKotlinDeclarationsHandler : MoveHandlerDelegate() {
     }
 
     override fun tryToMove(
-            element: PsiElement, project: Project, dataContext: DataContext?, reference: PsiReference?, editor: Editor?
+        element: PsiElement, project: Project, dataContext: DataContext?, reference: PsiReference?, editor: Editor?
     ): Boolean {
-        val elementsToMove = element.unwrapped?.let { arrayOf(it) } ?: PsiElement.EMPTY_ARRAY
-        val targetContainer = dataContext?.let { dataContext -> LangDataKeys.TARGET_PSI_ELEMENT.getData(dataContext) }
-        return canMove(elementsToMove, targetContainer, true) && doMoveWithCheck(project, elementsToMove, targetContainer, null, editor)
+        if (element is PsiWhiteSpace && element.textOffset > 0) {
+            val prevElement = element.containingFile.findElementAt(element.textOffset - 1)
+            return prevElement != null
+                    && recursivelyTryToMove(prevElement, project, dataContext, reference, editor)
+        }
+        return tryToMoveImpl(element, project, dataContext, reference, editor)
     }
 }
 

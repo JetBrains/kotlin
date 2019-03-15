@@ -5,9 +5,7 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
     repositories {
-        maven {
-            url 'http://oss.sonatype.org/content/repositories/snapshots'
-        }
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
         mavenCentral()
     }
 }
@@ -16,9 +14,7 @@ apply plugin: 'kotlin-android'
 
 repositories {
     mavenCentral()
-    maven {
-        url 'http://oss.sonatype.org/content/repositories/snapshots'
-    }
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
 }
 
 android {
@@ -33,7 +29,7 @@ android {
 
 dependencies {
     compile 'com.android.support:support-v4:13.0.0'
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 
 // VERSION: $VERSION$

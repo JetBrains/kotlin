@@ -1,0 +1,5 @@
+package
+
+public inline fun case_1(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
+    CallsInPlace(block, EXACTLY_ONCE)
+

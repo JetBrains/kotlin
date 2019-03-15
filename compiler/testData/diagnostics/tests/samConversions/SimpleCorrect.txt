@@ -1,0 +1,19 @@
+package
+
+public fun test(/*0*/ j: J, /*1*/ r: Runnable): kotlin.Unit
+
+public interface J {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract fun foo1(/*0*/ r: Runnable!): kotlin.Unit
+    public abstract fun foo2(/*0*/ r1: Runnable!, /*1*/ r2: Runnable!): kotlin.Unit
+    public abstract fun foo3(/*0*/ r1: Runnable!, /*1*/ r2: Runnable!, /*2*/ r3: Runnable!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Runnable {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract fun run(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

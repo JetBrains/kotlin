@@ -26,10 +26,7 @@ import com.intellij.psi.search.SearchScope
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtFileAnnotationList
-import org.jetbrains.kotlin.psi.KtModifierList
-import org.jetbrains.kotlin.psi.KtModifierListOwner
+import org.jetbrains.kotlin.psi.*
 import java.util.*
 
 // NOTE: in this file we collect only LANGUAGE INDEPENDENT methods working with PSI and not modifying it
@@ -94,6 +91,10 @@ fun PsiElement.nextLeaf(filter: (PsiElement) -> Boolean): PsiElement? {
     return leaf
 }
 
+fun <T : PsiElement> PsiElement.getParentOfTypes(strict: Boolean = false, vararg parentClasses: Class<out T>): T? {
+    return getParentOfTypesAndPredicate(strict, *parentClasses) { true }
+}
+
 fun <T : PsiElement> PsiElement.getParentOfTypesAndPredicate(
     strict: Boolean = false, vararg parentClasses: Class<out T>, predicate: (T) -> Boolean
 ): T? {
@@ -119,6 +120,18 @@ fun <T : PsiElement> PsiElement.getNonStrictParentOfType(parentClass: Class<T>):
 
 inline fun <reified T : PsiElement> PsiElement.getParentOfType(strict: Boolean): T? {
     return PsiTreeUtil.getParentOfType(this, T::class.java, strict)
+}
+
+inline fun <reified T : PsiElement, reified V : PsiElement> PsiElement.getParentOfTypes2(): PsiElement? {
+    return PsiTreeUtil.getParentOfType(this, T::class.java, V::class.java)
+}
+
+inline fun <reified T : PsiElement, reified V : PsiElement, reified U : PsiElement> PsiElement.getParentOfTypes3(): PsiElement? {
+    return PsiTreeUtil.getParentOfType(this, T::class.java, V::class.java, U::class.java)
+}
+
+inline fun <reified T : PsiElement> PsiElement.getParentOfType(strict: Boolean, vararg stopAt: Class<out PsiElement>): T? {
+    return PsiTreeUtil.getParentOfType(this, T::class.java, strict, *stopAt)
 }
 
 inline fun <reified T : PsiElement> PsiElement.getStrictParentOfType(): T? {
@@ -151,6 +164,10 @@ fun PsiElement.getNextSiblingIgnoringWhitespace(withItself: Boolean = false): Ps
 
 fun PsiElement.getPrevSiblingIgnoringWhitespaceAndComments(withItself: Boolean = false): PsiElement? {
     return siblings(withItself = withItself, forward = false).filter { it !is PsiWhiteSpace && it !is PsiComment }.firstOrNull()
+}
+
+fun PsiElement.getPrevSiblingIgnoringWhitespace(withItself: Boolean = false): PsiElement? {
+    return siblings(withItself = withItself, forward = false).filter { it !is PsiWhiteSpace }.firstOrNull()
 }
 
 inline fun <reified T : PsiElement> T.nextSiblingOfSameType() = PsiTreeUtil.getNextSiblingOfType(this, T::class.java)
@@ -278,6 +295,20 @@ val PsiElement.startOffset: Int
 val PsiElement.endOffset: Int
     get() = textRange.endOffset
 
+val KtPureElement.pureStartOffset: Int
+    get() = psiOrParent.textRangeWithoutComments.startOffset
+
+val KtPureElement.pureEndOffset: Int
+    get() = psiOrParent.textRangeWithoutComments.endOffset
+
+val PsiElement.startOffsetSkippingComments: Int
+    get() {
+        if (!startsWithComment()) return startOffset // fastpath
+        val firstNonCommentChild = generateSequence(firstChild) { it.nextSibling }
+            .firstOrNull { it !is PsiWhiteSpace && it !is PsiComment }
+        return firstNonCommentChild?.startOffset ?: startOffset
+    }
+
 fun PsiElement.getStartOffsetIn(ancestor: PsiElement): Int {
     var offset = 0
     var parent = this
@@ -333,10 +364,10 @@ private fun findFirstLeafWhollyInRange(file: PsiFile, range: TextRange): PsiElem
 }
 
 val PsiElement.textRangeWithoutComments: TextRange
-    get() {
-        val firstNonCommentChild = children.firstOrNull { it !is PsiWhiteSpace && it !is PsiComment } ?: return textRange
-        return TextRange(firstNonCommentChild.startOffset, endOffset)
-    }
+    get() = if (!startsWithComment()) textRange else TextRange(startOffsetSkippingComments, endOffset)
+
+fun PsiElement.startsWithComment(): Boolean = firstChild is PsiComment
+
 
 // ---------------------------------- Debug/logging ----------------------------------------------------------------------------------------
 
@@ -399,6 +430,9 @@ fun <E : PsiElement> E.createSmartPointer(): SmartPsiElementPointer<E> =
 fun PsiElement.before(element: PsiElement) = textRange.endOffset <= element.textRange.startOffset
 
 inline fun <reified T : PsiElement> PsiElement.getLastParentOfTypeInRow() = parents.takeWhile { it is T }.lastOrNull() as? T
+
+inline fun <reified T : PsiElement> PsiElement.getLastParentOfTypeInRowWithSelf() = parentsWithSelf
+    .takeWhile { it is T }.lastOrNull() as? T
 
 fun KtModifierListOwner.hasExpectModifier() = hasModifier(KtTokens.HEADER_KEYWORD) || hasModifier(KtTokens.EXPECT_KEYWORD)
 fun KtModifierList.hasExpectModifier() = hasModifier(KtTokens.HEADER_KEYWORD) || hasModifier(KtTokens.EXPECT_KEYWORD)

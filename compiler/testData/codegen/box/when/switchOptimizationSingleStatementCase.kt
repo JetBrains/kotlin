@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // CHECK_CASES_COUNT: function=test1 count=2
 // CHECK_IF_COUNT: function=test1 count=0
 // CHECK_BREAKS_COUNT: function=test1 count=1

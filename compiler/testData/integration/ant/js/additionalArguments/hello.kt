@@ -4,7 +4,7 @@ inline fun foo(f: () -> Unit) = f()
 
 var ok = "Fail"
 
-fun main(args : Array<String>) {
+fun main() {
     foo {
         ok = "OK"
     }

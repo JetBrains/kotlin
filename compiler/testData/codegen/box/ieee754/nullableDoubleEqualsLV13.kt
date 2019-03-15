@@ -1,5 +1,3 @@
-// LANGUAGE_VERSION: 1.3
-
 fun myEquals(a: Double?, b: Double?) = a == b
 
 fun myEquals1(a: Double?, b: Double) = a == b

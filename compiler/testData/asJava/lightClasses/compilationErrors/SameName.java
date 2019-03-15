@@ -1,8 +1,8 @@
 public final class A {
-    private final int i = 0;
-    private final java.lang.String i$1 = "";
-    private final java.lang.String j = "a";
-    private final java.lang.String j$1 = "b";
+    private final int i;
+    private final java.lang.String i$1;
+    private final java.lang.String j;
+    private final java.lang.String j$1;
 
     public final void f(int i, double s) { /* compiled code */ }
 

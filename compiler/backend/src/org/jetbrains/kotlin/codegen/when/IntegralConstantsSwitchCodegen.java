@@ -41,4 +41,9 @@ public class IntegralConstantsSwitchCodegen extends SwitchCodegen {
 
         putTransitionOnce(value, entryLabel);
     }
+
+    @Override
+    protected void generateSubjectValueToIndex() {
+        // Do nothing: subject is an int value
+    }
 }

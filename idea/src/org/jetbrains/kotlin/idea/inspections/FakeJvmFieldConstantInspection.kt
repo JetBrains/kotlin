@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightFieldImpl.KtLightFieldForDecl
 import org.jetbrains.kotlin.idea.inspections.MayBeConstantInspection.Status.*
 import org.jetbrains.kotlin.idea.quickfix.AddConstModifierFix
 import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 
 class FakeJvmFieldConstantInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
@@ -34,28 +35,72 @@ class FakeJvmFieldConstantInspection : AbstractKotlinInspection() {
 
                 for (attribute in list.attributes) {
                     val valueExpression = attribute.value as? PsiExpression ?: continue
-                    val resolvedLightField = (valueExpression as? PsiReference)?.resolve() as? KtLightFieldForDeclaration ?: continue
-                    val resolvedProperty = resolvedLightField.kotlinOrigin as? KtProperty ?: continue
-                    with(MayBeConstantInspection) {
-                        if (resolvedProperty.annotationEntries.isEmpty()) return@with
-                        val resolvedPropertyStatus = resolvedProperty.getStatus()
-                        if (resolvedPropertyStatus == JVM_FIELD_MIGHT_BE_CONST ||
-                            resolvedPropertyStatus == JVM_FIELD_MIGHT_BE_CONST_NO_INITIALIZER ||
-                            resolvedPropertyStatus == JVM_FIELD_MIGHT_BE_CONST_ERRONEOUS) {
-                            val fixes = mutableListOf<LocalQuickFix>()
-                            if (resolvedPropertyStatus == JVM_FIELD_MIGHT_BE_CONST) {
-                                fixes += IntentionWrapper(AddConstModifierFix(resolvedProperty), resolvedProperty.containingFile)
-                            }
-                            holder.registerProblem(
-                                    valueExpression,
-                                    "Use of @JvmField non-const Kotlin property as annotation argument is incorrect." +
-                                    " Will be forbidden in 1.3",
-                                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                                    *fixes.toTypedArray()
-                            )
-                        }
-                    }
+                    checkExpression(valueExpression, holder)
                 }
+            }
+
+            override fun visitSwitchLabelStatement(statement: PsiSwitchLabelStatement) {
+                super.visitSwitchLabelStatement(statement)
+
+                val valueExpression = statement.caseValue ?: return
+                checkExpression(valueExpression, holder)
+            }
+
+            override fun visitAssignmentExpression(expression: PsiAssignmentExpression) {
+                super.visitAssignmentExpression(expression)
+
+                if (expression.operationTokenType != JavaTokenType.EQ) return
+                val leftType = expression.lExpression.type as? PsiPrimitiveType ?: return
+                checkAssignmentChildren(expression.rExpression ?: return, leftType, holder)
+            }
+
+            override fun visitVariable(variable: PsiVariable) {
+                super.visitVariable(variable)
+
+                val leftType = variable.type as? PsiPrimitiveType ?: return
+                val initializer = variable.initializer ?: return
+                checkAssignmentChildren(initializer, leftType, holder)
+            }
+        }
+    }
+
+    private fun checkAssignmentChildren(right: PsiExpression, leftType: PsiPrimitiveType, holder: ProblemsHolder) {
+        if (leftType == PsiType.BOOLEAN || leftType == PsiType.CHAR || leftType == PsiType.VOID) return
+        right.forEachDescendantOfType<PsiExpression>(canGoInside = { parentElement ->
+            parentElement !is PsiCallExpression && parentElement !is PsiTypeCastExpression
+        }) { rightPart ->
+            checkExpression(rightPart, holder) { resolvedPropertyType ->
+                leftType != resolvedPropertyType && !leftType.isAssignableFrom(resolvedPropertyType)
+            }
+        }
+    }
+
+    private fun checkExpression(
+        valueExpression: PsiExpression,
+        holder: ProblemsHolder,
+        additionalTypeCheck: (PsiType) -> Boolean = { true }
+    ) {
+        val resolvedLightField = (valueExpression as? PsiReference)?.resolve() as? KtLightFieldForDeclaration ?: return
+        val resolvedProperty = resolvedLightField.kotlinOrigin as? KtProperty ?: return
+        with(MayBeConstantInspection) {
+            if (resolvedProperty.annotationEntries.isEmpty()) return
+            val resolvedPropertyStatus = resolvedProperty.getStatus()
+            if (resolvedPropertyStatus == JVM_FIELD_MIGHT_BE_CONST ||
+                resolvedPropertyStatus == JVM_FIELD_MIGHT_BE_CONST_NO_INITIALIZER ||
+                resolvedPropertyStatus == JVM_FIELD_MIGHT_BE_CONST_ERRONEOUS
+            ) {
+                val resolvedPropertyType = resolvedLightField.type
+                if (!additionalTypeCheck(resolvedPropertyType)) return
+                val fixes = mutableListOf<LocalQuickFix>()
+                if (resolvedPropertyStatus == JVM_FIELD_MIGHT_BE_CONST) {
+                    fixes += IntentionWrapper(AddConstModifierFix(resolvedProperty), resolvedProperty.containingFile)
+                }
+                holder.registerProblem(
+                    valueExpression,
+                    "Use of non-const Kotlin property as Java constant is incorrect. Will be forbidden in 1.4",
+                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                    *fixes.toTypedArray()
+                )
             }
         }
     }

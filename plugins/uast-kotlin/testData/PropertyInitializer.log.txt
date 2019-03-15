@@ -4,7 +4,9 @@ UFile (package = )
             UAnnotation (fqName = org.jetbrains.annotations.NotNull)
             ULiteralExpression (value = "/sdcard")
         UAnnotationMethod (name = getWithSetter)
-            USimpleNameReferenceExpression (identifier = field)
+            UBlockExpression
+                UReturnExpression
+                    USimpleNameReferenceExpression (identifier = field)
         UAnnotationMethod (name = setWithSetter)
             UParameter (name = p)
                 UAnnotation (fqName = org.jetbrains.annotations.NotNull)

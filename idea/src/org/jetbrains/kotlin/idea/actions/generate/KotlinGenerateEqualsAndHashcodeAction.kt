@@ -23,12 +23,13 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.util.IncorrectOperationException
+import org.jetbrains.kotlin.analyzer.common.CommonPlatform
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.CollectingNameValidator
@@ -41,12 +42,11 @@ import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
+import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -69,30 +69,19 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
     }
 
     class Info(
-            val needEquals: Boolean,
-            val needHashCode: Boolean,
-            val classDescriptor: ClassDescriptor,
-            val variablesForEquals: List<VariableDescriptor>,
-            val variablesForHashCode: List<VariableDescriptor>
+        val needEquals: Boolean,
+        val needHashCode: Boolean,
+        val classDescriptor: ClassDescriptor,
+        val variablesForEquals: List<VariableDescriptor>,
+        val variablesForHashCode: List<VariableDescriptor>
     )
 
     override fun isValidForClass(targetClass: KtClassOrObject): Boolean {
         return targetClass is KtClass
-               && targetClass !is KtEnumEntry
-               && !targetClass.isEnum()
-               && !targetClass.isAnnotation()
-               && !targetClass.isInterface()
-               && (!targetClass.isData() || isValidForDataClass(targetClass))
-    }
-
-    private fun isValidForDataClass(targetClass: KtClass): Boolean {
-        val constructor = targetClass.primaryConstructor ?: return false
-        val context = constructor.analyze(BodyResolveMode.PARTIAL)
-        return constructor.valueParameters.any { parameter ->
-            parameter.hasValOrVar() && context.get(BindingContext.TYPE, parameter.typeReference)?.let { type ->
-                KotlinBuiltIns.isArray(type) || KotlinBuiltIns.isPrimitiveArray(type)
-            } ?: false
-        }
+                && targetClass !is KtEnumEntry
+                && !targetClass.isEnum()
+                && !targetClass.isAnnotation()
+                && !targetClass.isInterface()
     }
 
     override fun prepareMembersInfo(klass: KtClassOrObject, project: Project, editor: Editor?): Info? {
@@ -115,7 +104,7 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
                     hashCodeDescriptor.source.getPsi()?.delete()
                     needEquals = true
                     needHashCode = true
-                } catch(e: IncorrectOperationException) {
+                } catch (e: IncorrectOperationException) {
                     LOG.error(e)
                 }
             }
@@ -129,7 +118,7 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
         }
 
         return with(KotlinGenerateEqualsWizard(project, klass, properties, needEquals, needHashCode)) {
-            if (!showAndGet()) return null
+            if (!klass.hasExpectModifier() && !showAndGet()) return null
 
             Info(needEquals,
                  needHashCode,
@@ -144,7 +133,7 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
         if (!targetClass.languageVersionSettings.supportsFeature(LanguageFeature.BoundCallableReferences)) return defaultExpression
         return when (targetClass.platform) {
             is JsPlatform -> "other == null || this::class.js != $paramName::class.js"
-            is TargetPlatform.Common -> "other == null || this::class != $paramName::class"
+            is CommonPlatform -> "other == null || this::class != $paramName::class"
             else -> defaultExpression
         }
     }
@@ -154,8 +143,44 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
         if (!targetClass.languageVersionSettings.supportsFeature(LanguageFeature.BoundCallableReferences)) return defaultExpression
         return when (targetClass.platform) {
             is JsPlatform -> "this::class.js"
-            is TargetPlatform.Common -> "this::class"
+            is CommonPlatform -> "this::class"
             else -> defaultExpression
+        }
+    }
+
+    private fun isNestedArray(variable: VariableDescriptor) =
+        KotlinBuiltIns.isArrayOrPrimitiveArray(variable.builtIns.getArrayElementType(variable.type))
+
+    private fun KtElement.canUseArrayContentFunctions() =
+        languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_1
+
+    private fun generateArraysEqualsCall(
+        variable: VariableDescriptor,
+        canUseContentFunctions: Boolean,
+        arg1: String,
+        arg2: String
+    ): String {
+        return if (canUseContentFunctions) {
+            val methodName = if (isNestedArray(variable)) "contentDeepEquals" else "contentEquals"
+            "$arg1.$methodName($arg2)"
+        } else {
+            val methodName = if (isNestedArray(variable)) "deepEquals" else "equals"
+            "java.util.Arrays.$methodName($arg1, $arg2)"
+        }
+    }
+
+    private fun generateArrayHashCodeCall(
+        variable: VariableDescriptor,
+        canUseContentFunctions: Boolean,
+        argument: String
+    ): String {
+        return if (canUseContentFunctions) {
+            val methodName = if (isNestedArray(variable)) "contentDeepHashCode" else "contentHashCode"
+            val dot = if (TypeUtils.isNullableType(variable.type)) "?." else "."
+            "$argument$dot$methodName()"
+        } else {
+            val methodName = if (isNestedArray(variable)) "deepHashCode" else "hashCode"
+            "java.util.Arrays.$methodName($argument)"
         }
     }
 
@@ -176,8 +201,7 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
             val useIsCheck = CodeInsightSettings.getInstance().USE_INSTANCEOF_ON_EQUALS_PARAMETER
             val isNotInstanceCondition = if (useIsCheck) {
                 "$paramName !is $typeForCast"
-            }
-            else {
+            } else {
                 generateClassLiteralsNotEqual(paramName, targetClass)
             }
             val bodyText = buildString {
@@ -197,14 +221,28 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
                     append('\n')
 
                     variablesForEquals.forEach {
-                        val propName = (DescriptorToSourceUtilsIde.getAnyDeclaration(project, it) as PsiNameIdentifierOwner).nameIdentifier!!.text
+                        val isNullable = TypeUtils.isNullableType(it.type)
+                        val isArray = KotlinBuiltIns.isArrayOrPrimitiveArray(it.type)
+                        val canUseArrayContentFunctions = targetClass.canUseArrayContentFunctions()
+                        val propName =
+                            (DescriptorToSourceUtilsIde.getAnyDeclaration(project, it) as PsiNameIdentifierOwner).nameIdentifier!!.text
                         val notEquals = when {
-                            KotlinBuiltIns.isArray(it.type) || KotlinBuiltIns.isPrimitiveArray(it.type) ->
-                                "!java.util.Arrays.equals($propName, $paramName.$propName)"
-                            else ->
+                            isArray -> {
+                                "!${generateArraysEqualsCall(it, canUseArrayContentFunctions, propName, "$paramName.$propName")}"
+                            }
+                            else -> {
                                 "$propName != $paramName.$propName"
+                            }
                         }
-                        append("if ($notEquals) return false\n")
+                        val equalsCheck = "if ($notEquals) return false\n"
+                        if (isArray && isNullable && canUseArrayContentFunctions) {
+                            append("if ($propName != null) {\n")
+                            append("if ($paramName.$propName == null) return false\n")
+                            append(equalsCheck)
+                            append("} else if ($paramName.$propName != null) return false\n")
+                        } else {
+                            append(equalsCheck)
+                        }
                     }
 
                     append('\n')
@@ -213,7 +251,7 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
                 append("return true")
             }
 
-            equalsFun.bodyExpression!!.replace(KtPsiFactory(project).createBlock(bodyText))
+            equalsFun.replaceBody { KtPsiFactory(project).createBlock(bodyText) }
 
             return equalsFun
         }
@@ -230,8 +268,13 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
             var text = when {
                 typeClass == builtIns.byte || typeClass == builtIns.short || typeClass == builtIns.int ->
                     ref
-                KotlinBuiltIns.isArray(type) || KotlinBuiltIns.isPrimitiveArray(type) ->
-                    if (isNullable) "$ref?.let { java.util.Arrays.hashCode(it) }" else "java.util.Arrays.hashCode($ref)"
+                KotlinBuiltIns.isArrayOrPrimitiveArray(type) -> {
+                    val canUseArrayContentFunctions = targetClass.canUseArrayContentFunctions()
+                    val shouldWrapInLet = isNullable && !canUseArrayContentFunctions
+                    val hashCodeArg = if (shouldWrapInLet) "it" else ref
+                    val hashCodeCall = generateArrayHashCodeCall(this, canUseArrayContentFunctions, hashCodeArg)
+                    if (shouldWrapInLet) "$ref?.let { $hashCodeCall }" else hashCodeCall
+                }
                 else ->
                     if (isNullable) "$ref?.hashCode()" else "$ref.hashCode()"
             }
@@ -269,7 +312,7 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
                 }.toString()
             } else "return $initialValue"
 
-            hashCodeFun.bodyExpression!!.replace(KtPsiFactory(project).createBlock(bodyText))
+            hashCodeFun.replaceBody { KtPsiFactory(project).createBlock(bodyText) }
 
             return hashCodeFun
         }
@@ -278,10 +321,10 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
     override fun generateMembers(project: Project, editor: Editor?, info: Info): List<KtDeclaration> {
         val targetClass = info.classDescriptor.source.getPsi() as KtClass
         val prototypes = ArrayList<KtDeclaration>(2)
-                .apply {
-                    addIfNotNull(generateEquals(project, info, targetClass))
-                    addIfNotNull(generateHashCode(project, info, targetClass))
-                }
+            .apply {
+                addIfNotNull(generateEquals(project, info, targetClass))
+                addIfNotNull(generateHashCode(project, info, targetClass))
+            }
         val anchor = with(targetClass.declarations) { lastIsInstanceOrNull<KtNamedFunction>() ?: lastOrNull() }
         return insertMembersAfter(editor, targetClass, prototypes, anchor)
     }

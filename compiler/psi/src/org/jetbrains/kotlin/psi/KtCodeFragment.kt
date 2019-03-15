@@ -25,6 +25,7 @@ import com.intellij.psi.impl.source.tree.FileElement
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.tree.IElementType
 import com.intellij.testFramework.LightVirtualFile
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.types.KotlinType
@@ -45,7 +46,7 @@ abstract class KtCodeFragment(
             text
         ), true
     ), false
-), JavaCodeFragment {
+), KtCodeFragmentBase {
 
     private var viewProvider = super.getViewProvider() as SingleRootFileViewProvider
     private var imports = LinkedHashSet<String>()
@@ -87,7 +88,8 @@ abstract class KtCodeFragment(
     override fun getContext(): PsiElement? {
         if (fakeContextForJavaFile != null) return fakeContextForJavaFile
         if (context !is KtElement) {
-            LOG.warn("CodeFragment with non-kotlin context should have fakeContextForJavaFile set: \noriginalContext = ${context?.getElementTextWithContext()}")
+            val logInfoForContextElement = (context as? PsiFile)?.virtualFile?.path ?: context?.getElementTextWithContext()
+            LOG.warn("CodeFragment with non-kotlin context should have fakeContextForJavaFile set: \noriginalContext = $logInfoForContextElement")
             return null
         }
 
@@ -99,7 +101,7 @@ abstract class KtCodeFragment(
     override fun clone(): KtCodeFragment {
         val clone = cloneImpl(calcTreeElement().clone() as FileElement) as KtCodeFragment
         clone.isPhysical = false
-        clone.originalFile = this
+        clone.myOriginalFile = this
         clone.imports = imports
         clone.viewProvider =
                 SingleRootFileViewProvider(PsiManager.getInstance(_project), LightVirtualFile(name, KotlinFileType.INSTANCE, text), false)
@@ -166,10 +168,6 @@ abstract class KtCodeFragment(
 
     override fun getExceptionHandler() = exceptionHandler
 
-    override fun importClass(aClass: PsiClass?): Boolean {
-        return true
-    }
-
     fun getContextContainingFile(): KtFile? {
         return getOriginalContext()?.containingKtFile
     }
@@ -201,3 +199,5 @@ abstract class KtCodeFragment(
         private val LOG = Logger.getInstance(KtCodeFragment::class.java)
     }
 }
+
+var KtCodeFragment.externalDescriptors: List<DeclarationDescriptor>? by CopyablePsiUserDataProperty(Key.create("EXTERNAL_DESCRIPTORS"))

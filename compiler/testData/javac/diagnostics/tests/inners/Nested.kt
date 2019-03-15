@@ -1,4 +1,4 @@
-// FILE: p/p.kt;
+// FILE: p/p.kt
 package p
 
 object Object {

@@ -16,7 +16,8 @@
 
 package org.jetbrains.kotlin.idea.completion
 
-import kotlinx.coroutines.experimental.channels.ConflatedChannel
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.Channel.Factory.CONFLATED
 import java.lang.System.currentTimeMillis
 
 
@@ -48,7 +49,7 @@ interface CompletionBenchmarkSink {
 
     class Impl : CompletionBenchmarkSink {
         private val pendingSessions = mutableListOf<CompletionSession>()
-        val channel = ConflatedChannel<CompletionBenchmarkResults>()
+        val channel = Channel<CompletionBenchmarkResults>(capacity = CONFLATED)
 
         private val perSessionResults = LinkedHashMap<CompletionSession, PerSessionResults>()
         private var start: Long = 0

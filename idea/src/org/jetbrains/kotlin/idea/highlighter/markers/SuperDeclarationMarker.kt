@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.renderer.RenderingFormat
 import java.awt.event.MouseEvent
 import java.util.*
 
-object SuperDeclarationMarkerTooltip: Function<PsiElement, String> {
+object SuperDeclarationMarkerTooltip : Function<PsiElement, String> {
     override fun `fun`(element: PsiElement): String? {
         val ktDeclaration = element.getParentOfType<KtDeclaration>(false) ?: return null
         val (elementDescriptor, overriddenDescriptors) = resolveDeclarationWithParents(ktDeclaration!!)
@@ -83,16 +83,19 @@ class SuperDeclarationMarkerNavigationHandler : GutterIconNavigationHandler<PsiE
         }
 
         val elementName = elementDescriptor!!.name
-        return NavigationPopupDescriptor(superDeclarations,
-                                         KotlinBundle.message("navigation.title.super.declaration", elementName),
-                                         KotlinBundle.message("navigation.findUsages.title.super.declaration", elementName),
-                                         KtFunctionPsiElementCellRenderer())
+        return NavigationPopupDescriptor(
+            superDeclarations,
+            KotlinBundle.message("navigation.title.super.declaration", elementName),
+            KotlinBundle.message("navigation.findUsages.title.super.declaration", elementName),
+            KtFunctionPsiElementCellRenderer()
+        )
     }
 }
 
 data class ResolveWithParentsResult(
-        val descriptor: CallableMemberDescriptor?,
-        val overriddenDescriptors: Collection<CallableMemberDescriptor>)
+    val descriptor: CallableMemberDescriptor?,
+    val overriddenDescriptors: Collection<CallableMemberDescriptor>
+)
 
 fun resolveDeclarationWithParents(element: KtDeclaration): ResolveWithParentsResult {
     val descriptor = if (element is KtParameter)

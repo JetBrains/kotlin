@@ -49,7 +49,7 @@ class ForInArrayLoopGenerator(
             arrayVar = value.index // no need to copy local variable into another variable
         } else {
             arrayVar = createLoopTempVariable(OBJECT_TYPE)
-            value.put(asmLoopRangeType, v)
+            value.put(asmLoopRangeType, loopRangeType, v)
             v.store(arrayVar, OBJECT_TYPE)
         }
 
@@ -78,12 +78,13 @@ class ForInArrayLoopGenerator(
     }
 
     override fun assignToLoopParameter() {
-        val arrayElParamType = if (KotlinBuiltIns.isArray(loopRangeType)) boxType(asmElementType) else asmElementType
+        val arrayElParamType =
+            if (KotlinBuiltIns.isArray(loopRangeType)) boxType(asmElementType, elementType, codegen.state.typeMapper) else asmElementType
 
         v.load(arrayVar, OBJECT_TYPE)
         v.load(indexVar, Type.INT_TYPE)
         v.aload(arrayElParamType)
-        StackValue.onStack(arrayElParamType).put(asmElementType, codegen.v)
+        StackValue.onStack(arrayElParamType, elementType).put(asmElementType, elementType, codegen.v)
         v.store(loopParameterVar, asmElementType)
     }
 

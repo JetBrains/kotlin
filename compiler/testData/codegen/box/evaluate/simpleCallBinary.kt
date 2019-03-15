@@ -1,5 +1,4 @@
-// TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS, NATIVE
+// TARGET_BACKEND: JVM
 
 // WITH_RUNTIME
 
@@ -16,7 +15,7 @@ const val prop1: Int = 1.plus(1)
 const val prop2: Int = 1.minus(1)
 const val prop3: Int = 1.times(1)
 const val prop4: Int = 1.div(1)
-const val prop5: Int = 1.mod(1)
+const val prop5: Int = 1.rem(1)
 
 @Ann(prop1, prop2, prop3, prop4, prop5) class MyClass
 

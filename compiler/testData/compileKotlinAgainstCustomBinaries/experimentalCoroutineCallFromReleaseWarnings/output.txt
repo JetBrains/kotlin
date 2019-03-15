@@ -1,0 +1,25 @@
+compiler/testData/compileKotlinAgainstCustomBinaries/experimentalCoroutineCallFromReleaseWarnings/release.kt:2:5: warning: 'builder(suspend () -> Unit): Unit' is deprecated. Experimental coroutines support will be dropped in 1.4
+    builder {}
+    ^
+compiler/testData/compileKotlinAgainstCustomBinaries/experimentalCoroutineCallFromReleaseWarnings/release.kt:3:5: warning: 'builder2(suspend Int.(String) -> Unit): Unit' is deprecated. Experimental coroutines support will be dropped in 1.4
+    builder2 { }
+    ^
+compiler/testData/compileKotlinAgainstCustomBinaries/experimentalCoroutineCallFromReleaseWarnings/release.kt:6:7: warning: 'start(): Unit' is deprecated. Experimental coroutines support will be dropped in 1.4
+    x.start()
+      ^
+compiler/testData/compileKotlinAgainstCustomBinaries/experimentalCoroutineCallFromReleaseWarnings/release.kt:8:5: warning: 'dummy(): Unit' is deprecated. Experimental coroutines support will be dropped in 1.4
+    dummy()
+    ^
+compiler/testData/compileKotlinAgainstCustomBinaries/experimentalCoroutineCallFromReleaseWarnings/release.kt:9:9: warning: 'dummy(): String' is deprecated. Experimental coroutines support will be dropped in 1.4
+    C().dummy()
+        ^
+compiler/testData/compileKotlinAgainstCustomBinaries/experimentalCoroutineCallFromReleaseWarnings/release.kt:10:25: warning: 'dummy(): String' is deprecated. Experimental coroutines support will be dropped in 1.4
+    WithNested.Nested().dummy()
+                        ^
+compiler/testData/compileKotlinAgainstCustomBinaries/experimentalCoroutineCallFromReleaseWarnings/release.kt:11:25: warning: 'dummy(): String' is deprecated. Experimental coroutines support will be dropped in 1.4
+    WithInner().Inner().dummy()
+                        ^
+compiler/testData/compileKotlinAgainstCustomBinaries/experimentalCoroutineCallFromReleaseWarnings/release.kt:13:5: warning: 'suspendAcceptsSuspend(suspend () -> Unit): Unit' is deprecated. Experimental coroutines support will be dropped in 1.4
+    suspendAcceptsSuspend {
+    ^
+OK

@@ -6,21 +6,17 @@ version = '1.0'
 
 repositories {
   mavenCentral()
-    maven {
-        url 'http://dl.bintray.com/kotlin/kotlin-eap'
-    }
+    maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
 }
 
 dependencies {
   testCompile group: 'junit', name: 'junit', version: '4.11'
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
 buildscript {
     ext.kotlin_version = '$VERSION$'
     repositories {
-        maven {
-            url 'http://dl.bintray.com/kotlin/kotlin-eap'
-        }
+        maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
         mavenCentral()
     }
     dependencies {

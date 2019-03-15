@@ -1,0 +1,58 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        apply from: "include.gradle"
+        def kotlinVersion = gradleKotlinPluginVersion('1.1.0')
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+    }
+}
+
+project('common-lib') {
+    apply plugin: 'kotlin-platform-common'
+}
+
+project('jvm-lib') {
+    apply plugin: 'kotlin-platform-jvm'
+
+    dependencies {
+        implement project(':common-lib')
+    }
+}
+
+project('js-lib') {
+    apply plugin: 'kotlin-platform-js'
+
+    dependencies {
+        implement project(':common-lib')
+    }
+}
+
+project('common-app') {
+    apply plugin: 'kotlin-platform-common'
+
+    dependencies {
+        compile project(':common-lib')
+    }
+}
+
+project('jvm-app') {
+    apply plugin: 'kotlin-platform-jvm'
+
+    dependencies {
+        implement project(':common-app')
+        compile project(':jvm-lib')
+    }
+}
+
+project('js-app') {
+    apply plugin: 'kotlin-platform-js'
+
+    dependencies {
+        implement project(':common-app')
+        compile project(':js-lib')
+    }
+}
+        

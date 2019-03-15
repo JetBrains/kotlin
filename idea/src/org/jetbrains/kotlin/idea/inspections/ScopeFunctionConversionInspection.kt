@@ -114,28 +114,24 @@ class Replacement<T : PsiElement> private constructor(
         get() = elementPointer.element!!.endOffset
 }
 
-class ReplacementCollection {
-    private lateinit var project: Project
+class ReplacementCollection(private val project: Project) {
     private val replacements = mutableListOf<Replacement<out PsiElement>>()
     var createParameter: KtPsiFactory.() -> PsiElement? = { null }
     var elementToRename: PsiElement? = null
 
     fun <T : PsiElement> add(element: T, replacementFactory: KtPsiFactory.(T) -> PsiElement) {
-        project = element.project
         replacements.add(Replacement.create(element, replacementFactory))
     }
 
     fun apply() {
-        if (replacements.isNotEmpty()) {
-            val factory = KtPsiFactory(project)
-            elementToRename = factory.createParameter()
+        val factory = KtPsiFactory(project)
+        elementToRename = factory.createParameter()
 
-            // Calls need to be processed in outside-in order
-            replacements.sortBy { it.endOffset }
+        // Calls need to be processed in outside-in order
+        replacements.sortBy { it.endOffset }
 
-            for (replacement in replacements) {
-                replacement.apply(factory)
-            }
+        for (replacement in replacements) {
+            replacement.apply(factory)
         }
     }
 
@@ -157,12 +153,10 @@ abstract class ConvertScopeFunctionFix(private val counterpartName: String) : Lo
         functionLiteral.valueParameterList?.delete()
         functionLiteral.arrow?.delete()
 
-        val replacements = ReplacementCollection()
+        val replacements = ReplacementCollection(project)
         analyzeLambda(bindingContext, lambda, lambdaDescriptor, replacements)
         callee.replace(KtPsiFactory(project).createExpression(counterpartName) as KtNameReferenceExpression)
-        if (replacements.isNotEmpty()) {
-            replacements.apply()
-        }
+        replacements.apply()
         postprocessLambda(lambda)
 
         if (replacements.isNotEmpty() && replacements.elementToRename != null && !ApplicationManager.getApplication().isUnitTestMode) {
@@ -215,8 +209,10 @@ class ConvertScopeFunctionToParameter(counterpartName: String) : ConvertScopeFun
                 if (dispatchReceiverTarget == lambdaDescriptor || extensionReceiverTarget == lambdaDescriptor) {
                     val parent = expression.parent
                     if (parent is KtCallExpression && expression == parent.calleeExpression) {
-                        replacements.add(parent) { element ->
-                            factory.createExpressionByPattern("$0.$1", parameterName, element)
+                        if ((parent.parent as? KtQualifiedExpression)?.receiverExpression !is KtThisExpression) {
+                            replacements.add(parent) { element ->
+                                factory.createExpressionByPattern("$0.$1", parameterName, element)
+                            }
                         }
                     } else if (parent is KtQualifiedExpression && parent.receiverExpression is KtThisExpression) {
                         // do nothing

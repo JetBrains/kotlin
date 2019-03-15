@@ -1,0 +1,11 @@
+package
+
+public val </*0*/ reified T> T.test: kotlin.Any
+
+public final annotation class Ann : kotlin.Annotation {
+    public constructor Ann(/*0*/ vararg k: kotlin.reflect.KClass<*> /*kotlin.Array<out kotlin.reflect.KClass<*>>*/)
+    public final val k: kotlin.Array<out kotlin.reflect.KClass<*>>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

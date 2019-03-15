@@ -35,8 +35,10 @@ class KotlinCallerUsage(element: KtNamedDeclaration): KotlinUsageInfo<KtNamedDec
             else -> null
         } ?: return true
         changeInfo.getNonReceiverParameters()
-                .withIndex()
-                .filter { it.value.isNewParameter }
+            .asSequence()
+            .withIndex()
+            .filter { it.value.isNewParameter }
+            .toList()
                 .forEach {
                     val newParameter = it.value.getDeclarationSignature(it.index, changeInfo.methodDescriptor.originalPrimaryCallable)
                     parameterList.addParameter(newParameter).addToShorteningWaitSet()
@@ -50,7 +52,7 @@ class KotlinCallerCallUsage(element: KtCallElement): KotlinUsageInfo<KtCallEleme
     override fun processUsage(changeInfo: KotlinChangeInfo, element: KtCallElement, allUsages: Array<out UsageInfo>): Boolean {
         val argumentList = element.valueArgumentList ?: return true
         val psiFactory = KtPsiFactory(project)
-        val isNamedCall = argumentList.arguments.any { it.getArgumentName() != null }
+        val isNamedCall = argumentList.arguments.any { it.isNamed() }
         changeInfo.getNonReceiverParameters()
                 .filter { it.isNewParameter }
                 .forEach {

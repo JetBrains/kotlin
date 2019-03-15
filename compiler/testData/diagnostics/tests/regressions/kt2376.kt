@@ -1,6 +1,6 @@
 // FILE: main.kt
 //KT-2376 java.lang.Number should be visible in Kotlin as kotlin.Number
-fun main(args: Array<String>) {
+fun main() {
     Test().number(5.toInt())
 }
 

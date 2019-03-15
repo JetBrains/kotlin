@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.text
@@ -46,6 +35,8 @@ public interface MatchNamedGroupCollection : MatchGroupCollection {
     /**
      * Returns a named group with the specified [name].
      * @return An instance of [MatchGroup] if the group with the specified [name] was matched or `null` otherwise.
+     * @throws IllegalArgumentException if there is no group with the specified [name] defined in the regex pattern.
+     * @throws UnsupportedOperationException if getting named groups isn't supported on the current platform.
      */
     public operator fun get(name: String): MatchGroup?
 }
@@ -74,7 +65,7 @@ public interface MatchResult {
      * If the group in the regular expression is optional and there were no match captured by that group,
      * corresponding item in [groupValues] is an empty string.
      *
-     * @sample: samples.text.Regexps.matchDestructuringToGroupValues
+     * @sample samples.text.Regexps.matchDestructuringToGroupValues
      */
     public val groupValues: List<String>
 
@@ -83,7 +74,7 @@ public interface MatchResult {
      *
      * component1 corresponds to the value of the first group, component2 — of the second, and so on.
      *
-     * @sample: samples.text.Regexps.matchDestructuring
+     * @sample samples.text.Regexps.matchDestructuringToGroupValues
      */
     public val destructured: Destructured get() = Destructured(this)
 
@@ -100,7 +91,7 @@ public interface MatchResult {
      * If the group in the regular expression is optional and there were no match captured by that group,
      * corresponding component value is an empty string.
      *
-     * @sample: samples.text.Regexps.matchDestructuringToGroupValues
+     * @sample samples.text.Regexps.matchDestructuringToGroupValues
      */
     public class Destructured internal constructor(public val match: MatchResult) {
         @kotlin.internal.InlineOnly
@@ -123,11 +114,12 @@ public interface MatchResult {
         public operator inline fun component9():  String = match.groupValues[9]
         @kotlin.internal.InlineOnly
         public operator inline fun component10(): String = match.groupValues[10]
+
         /**
          *  Returns destructured group values as a list of strings.
          *  First value in the returned list corresponds to the value of the first group, and so on.
          *
-         * @sample: samples.text.Regexps.matchDestructuringToGroupValues
+         * @sample samples.text.Regexps.matchDestructuringToGroupValues
          */
         public fun toList(): List<String> = match.groupValues.subList(1, match.groupValues.size)
     }

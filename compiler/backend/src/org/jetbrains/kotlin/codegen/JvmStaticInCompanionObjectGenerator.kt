@@ -49,8 +49,7 @@ class JvmStaticInCompanionObjectGenerator(
                     override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
                         val iv = codegen.v
                         val classDescriptor = descriptor.containingDeclaration as ClassDescriptor
-                        val singletonValue = StackValue.singleton(classDescriptor, typeMapper)
-                        singletonValue.put(singletonValue.type, iv)
+                        StackValue.singleton(classDescriptor, typeMapper).put(iv)
                         var index = 0
                         val asmMethod = signature.asmMethod
                         for (paramType in asmMethod.argumentTypes) {
@@ -63,7 +62,7 @@ class JvmStaticInCompanionObjectGenerator(
                                 propertyValue.put(signature.returnType, iv)
                             }
                             else {
-                                propertyValue.store(StackValue.onStack(propertyValue.type), iv, true)
+                                propertyValue.store(StackValue.onStack(propertyValue.type, propertyValue.kotlinType), iv, true)
                             }
                         }
                         else {

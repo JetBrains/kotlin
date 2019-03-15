@@ -22,9 +22,9 @@ class TypeParameter(val oldName: String, val newName: String?, val isReified: Bo
 
 //typeMapping data could be changed outside through method processing
 class TypeRemapper private constructor(
-        private val typeMapping: MutableMap<String, String>,
-        val parent: TypeRemapper? = null,
-        private val isRootInlineLambda: Boolean = false
+    private val typeMapping: MutableMap<String, String?>,
+    val parent: TypeRemapper? = null,
+    private val isRootInlineLambda: Boolean = false
 ) {
     private val additionalMappings = hashMapOf<String, String>()
     private val typeParametersMapping = hashMapOf<String, TypeParameter>()
@@ -54,7 +54,7 @@ class TypeRemapper private constructor(
 
     fun registerTypeParameter(mapping: TypeParameterMapping) {
         typeParametersMapping[mapping.name] = TypeParameter(
-                mapping.name, mapping.reificationArgument?.parameterName, mapping.isReified, mapping.signature
+            mapping.name, mapping.reificationArgument?.parameterName, mapping.isReified, mapping.signature
         )
     }
 
@@ -65,7 +65,7 @@ class TypeRemapper private constructor(
     companion object {
         @JvmStatic
         fun createRoot(formalTypeParameters: TypeParameterMappings?): TypeRemapper {
-            return TypeRemapper(HashMap<String, String>()).apply {
+            return TypeRemapper(HashMap<String, String?>()).apply {
                 formalTypeParameters?.forEach {
                     registerTypeParameter(it)
                 }
@@ -73,7 +73,7 @@ class TypeRemapper private constructor(
         }
 
         @JvmStatic
-        fun createFrom(mappings: MutableMap<String, String>): TypeRemapper {
+        fun createFrom(mappings: MutableMap<String, String?>): TypeRemapper {
             return TypeRemapper(mappings)
         }
 
@@ -83,7 +83,7 @@ class TypeRemapper private constructor(
             return TypeRemapper(createNewAndMerge(parentRemapper, mappings), parentRemapper, isRootInlineLambda)
         }
 
-        private fun createNewAndMerge(remapper: TypeRemapper, additionalTypeMappings: Map<String, String?>): MutableMap<String, String> {
+        private fun createNewAndMerge(remapper: TypeRemapper, additionalTypeMappings: Map<String, String?>): MutableMap<String, String?> {
             return HashMap(remapper.typeMapping).apply {
                 this += additionalTypeMappings
             }

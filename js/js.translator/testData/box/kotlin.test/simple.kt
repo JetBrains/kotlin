@@ -1,4 +1,6 @@
-// EXPECTED_REACHABLE_NODES: 1173
+// IGNORE_BACKEND: JS_IR
+// EXPECTED_REACHABLE_NODES: 1330
+import common.*
 import kotlin.test.Test
 
 class Simple {

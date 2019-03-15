@@ -88,14 +88,20 @@ internal fun addModifier(modifierList: KtModifierList, modifier: KtModifierKeywo
 
         fun placeAfter(child: PsiElement): Boolean {
             if (child is PsiWhiteSpace) return false
-            if (child is KtAnnotation) return true // place modifiers after annotations
+            if (child is KtAnnotation || child is KtAnnotationEntry) return true // place modifiers after annotations
             val elementType = child.node!!.elementType
             val order = MODIFIERS_ORDER.indexOf(elementType)
             return newModifierOrder > order
         }
 
         val lastChild = modifierList.lastChild
-        val anchor = lastChild?.siblings(forward = false)?.firstOrNull(::placeAfter)
+        val anchor = lastChild?.siblings(forward = false)?.firstOrNull(::placeAfter).let {
+            when {
+                it?.nextSibling is PsiWhiteSpace && (it is KtAnnotation || it is KtAnnotationEntry) -> it.nextSibling
+                it == null && modifierList.firstChild is PsiWhiteSpace -> modifierList.firstChild
+                else -> it
+            }
+        }
         modifierList.addAfter(newModifier, anchor)
 
         if (anchor == lastChild) { // add line break if needed, otherwise visibility keyword may appear on previous line

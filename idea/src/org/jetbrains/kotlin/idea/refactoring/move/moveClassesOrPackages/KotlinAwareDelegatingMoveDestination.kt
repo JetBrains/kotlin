@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.KotlinDirecto
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.analyzeConflictsInFile
 import org.jetbrains.kotlin.idea.search.projectScope
 import org.jetbrains.kotlin.idea.stubindex.KotlinExactPackagesIndex
+import org.jetbrains.kotlin.idea.util.application.progressIndicatorNullable
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
@@ -73,8 +74,8 @@ class KotlinAwareDelegatingMoveDestination(
         }
         filesToProcess.flatMap {it.declarations}.forEach { it.accept(extraElementCollector) }
 
-        val progressIndicator = ProgressManager.getInstance().progressIndicator
-        progressIndicator?.pushState()
+        val progressIndicator = ProgressManager.getInstance().progressIndicatorNullable!!
+        progressIndicator.pushState()
 
         val extraUsages = ArrayList<UsageInfo>()
         try {
@@ -87,7 +88,7 @@ class KotlinAwareDelegatingMoveDestination(
             }
         }
         finally {
-            progressIndicator?.popState()
+            progressIndicator.popState()
         }
 
         filesToProcess.forEach {

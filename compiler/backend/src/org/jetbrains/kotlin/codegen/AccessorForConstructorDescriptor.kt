@@ -18,18 +18,17 @@ package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
 
 class AccessorForConstructorDescriptor(
-        private val calleeDescriptor: ClassConstructorDescriptor,
-        containingDeclaration: DeclarationDescriptor,
-        private val superCallTarget: ClassDescriptor?
+    override val calleeDescriptor: ClassConstructorDescriptor,
+    containingDeclaration: DeclarationDescriptor,
+    override val superCallTarget: ClassDescriptor?,
+    override val accessorKind: AccessorKind
 ) : AbstractAccessorForFunctionDescriptor(containingDeclaration, Name.special("<init>")),
-        ClassConstructorDescriptor,
-        AccessorForCallableDescriptor<ConstructorDescriptor> {
-    override fun getCalleeDescriptor(): ConstructorDescriptor = calleeDescriptor
+    ClassConstructorDescriptor,
+    AccessorForCallableDescriptor<ConstructorDescriptor> {
 
     override fun getContainingDeclaration(): ClassDescriptor = calleeDescriptor.containingDeclaration
 
@@ -39,16 +38,15 @@ class AccessorForConstructorDescriptor(
 
     override fun getReturnType(): KotlinType = super.getReturnType()!!
 
-    override fun getSuperCallTarget(): ClassDescriptor? = superCallTarget
 
     override fun substitute(substitutor: TypeSubstitutor) = super.substitute(substitutor) as ClassConstructorDescriptor
 
     override fun copy(
-            newOwner: DeclarationDescriptor,
-            modality: Modality,
-            visibility: Visibility,
-            kind: CallableMemberDescriptor.Kind,
-            copyOverrides: Boolean
+        newOwner: DeclarationDescriptor,
+        modality: Modality,
+        visibility: Visibility,
+        kind: CallableMemberDescriptor.Kind,
+        copyOverrides: Boolean
     ): AccessorForConstructorDescriptor {
         throw UnsupportedOperationException()
     }
@@ -57,13 +55,13 @@ class AccessorForConstructorDescriptor(
 
     init {
         initialize(
-                DescriptorUtils.getReceiverParameterType(extensionReceiverParameter),
-                calleeDescriptor.dispatchReceiverParameter,
-                copyTypeParameters(calleeDescriptor),
-                copyValueParameters(calleeDescriptor),
-                calleeDescriptor.returnType,
-                Modality.FINAL,
-                Visibilities.LOCAL
+            calleeDescriptor.extensionReceiverParameter?.copy(this),
+            calleeDescriptor.dispatchReceiverParameter,
+            copyTypeParameters(calleeDescriptor),
+            copyValueParameters(calleeDescriptor),
+            calleeDescriptor.returnType,
+            Modality.FINAL,
+            Visibilities.LOCAL
         )
     }
 }

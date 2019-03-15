@@ -1,4 +1,4 @@
-compiler/testData/cli/js/languageVersion.kt:5:17: error: this type is sealed, so it can be inherited by only its own nested classes or objects
-class Derived : Base()
-                ^
+compiler/testData/cli/js/languageVersion.kt:4:5: error: members are not allowed in annotation class
+    class Nested
+    ^
 COMPILATION_ERROR

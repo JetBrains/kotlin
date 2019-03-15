@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.incremental
 
+import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
@@ -27,8 +28,7 @@ import org.jetbrains.kotlin.compilerRunner.toGeneratedFile
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.incremental.multiproject.ArtifactChangesProvider
-import org.jetbrains.kotlin.incremental.multiproject.ChangesRegistry
+import org.jetbrains.kotlin.incremental.parsing.classesFqNames
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import java.io.File
@@ -38,18 +38,19 @@ abstract class IncrementalCompilerRunner<
     Args : CommonCompilerArguments,
     CacheManager : IncrementalCachesManager<*>
 >(
-        workingDir: File,
-        cacheDirName: String,
-        protected val cacheVersions: List<CacheVersion>,
-        protected val reporter: ICReporter,
-        protected val artifactChangesProvider: ArtifactChangesProvider?,
-        protected val changesRegistry: ChangesRegistry?,
-        private val localStateDirs: Collection<File> = emptyList()
+    private val workingDir: File,
+    cacheDirName: String,
+    protected val reporter: ICReporter,
+    private val buildHistoryFile: File,
+    // there might be some additional output directories (e.g. for generated java in kapt)
+    // to remove them correctly on rebuild, we pass them as additional argument
+    private val outputFiles: Collection<File> = emptyList()
 ) {
 
     protected val cacheDirectory = File(workingDir, cacheDirName)
     protected val dirtySourcesSinceLastTimeFile = File(workingDir, DIRTY_SOURCES_FILE_NAME)
     protected val lastBuildInfoFile = File(workingDir, LAST_BUILD_INFO_FILE_NAME)
+    protected open val kotlinSourceFilesExtensions: List<String> = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 
     protected abstract fun isICEnabled(): Boolean
     protected abstract fun createCacheManager(args: Args): CacheManager
@@ -68,24 +69,13 @@ abstract class IncrementalCompilerRunner<
 
         fun rebuild(reason: () -> String): ExitCode {
             reporter.report(reason)
-
-            caches.clean()
-            dirtySourcesSinceLastTimeFile.delete()
-
-            reporter.report { "Deleting output directories on rebuild:" }
-            for (dir in sequenceOf(destinationDir(args)) + localStateDirs.asSequence()) {
-                if (!dir.isDirectory) continue
-
-                dir.deleteRecursively()
-                dir.mkdirs()
-                reporter.report { "deleted $dir" }
-            }
-
+            caches.close(false)
+            clearLocalStateOnRebuild(args)
             caches = createCacheManager(args)
             if (providedChangedFiles == null) {
                 caches.inputsCache.sourceSnapshotMap.compareAndUpdate(allSourceFiles)
             }
-            val allKotlinFiles = allSourceFiles.filter { it.isKotlinFile() }
+            val allKotlinFiles = allSourceFiles.filter { it.isKotlinFile(kotlinSourceFilesExtensions) }
             return compileIncrementally(args, caches, allKotlinFiles, CompilationMode.Rebuild(), messageCollector)
         }
 
@@ -112,6 +102,34 @@ abstract class IncrementalCompilerRunner<
         }
     }
 
+    private fun clearLocalStateOnRebuild(args: Args) {
+        val destinationDir = destinationDir(args)
+
+        reporter.reportVerbose { "Clearing output on rebuild" }
+        for (file in sequenceOf(destinationDir, workingDir) + outputFiles.asSequence()) {
+            val deleted: Boolean? = when {
+                file.isDirectory -> {
+                    reporter.reportVerbose { "  Deleting directory $file" }
+                    file.deleteRecursively()
+                }
+                file.isFile -> {
+                    reporter.reportVerbose { "  Deleting $file" }
+                    file.delete()
+                }
+                else -> null
+            }
+
+            if (deleted == false) {
+                reporter.reportVerbose { "  Could not delete $file" }
+            }
+        }
+
+        assert(!destinationDir.exists()) { "Could not delete destination dir $destinationDir" }
+        assert(!workingDir.exists()) { "Could not delete caches dir $workingDir" }
+        destinationDir.mkdirs()
+        workingDir.mkdirs()
+    }
+
     private fun sourcesToCompile(caches: CacheManager, changedFiles: ChangedFiles, args: Args): CompilationMode =
             when (changedFiles) {
                 is ChangedFiles.Known -> calculateSourcesToCompile(caches, changedFiles, args)
@@ -120,26 +138,18 @@ abstract class IncrementalCompilerRunner<
 
     protected abstract fun calculateSourcesToCompile(caches: CacheManager, changedFiles: ChangedFiles.Known, args: Args): CompilationMode
 
-    protected fun getDirtyFiles(changedFiles: ChangedFiles.Known): HashSet<File> {
-        val dirtyFiles = HashSet<File>(with(changedFiles) { modified.size + removed.size })
-        with(changedFiles) {
-            modified.asSequence() + removed.asSequence()
-        }.filterTo(dirtyFiles, File::isKotlinFile)
+    protected fun initDirtyFiles(dirtyFiles: DirtyFilesContainer, changedFiles: ChangedFiles.Known) {
+        dirtyFiles.add(changedFiles.modified, "was modified since last time")
+        dirtyFiles.add(changedFiles.removed, "was removed since last time")
 
         if (dirtySourcesSinceLastTimeFile.exists()) {
             val files = dirtySourcesSinceLastTimeFile.readLines().map(::File)
-            if (files.isNotEmpty()) {
-                reporter.report { "Source files added since last compilation: ${reporter.pathsAsString(files)}" }
-            }
-
-            dirtyFiles.addAll(files)
+            dirtyFiles.add(files, "was not compiled last time")
         }
-
-        return dirtyFiles
     }
 
     protected sealed class CompilationMode {
-        class Incremental(val dirtyFiles: Set<File>) : CompilationMode()
+        class Incremental(val dirtyFiles: DirtyFilesContainer) : CompilationMode()
         class Rebuild(getReason: () -> String = { "" }) : CompilationMode() {
             val reason: String by lazy(getReason)
         }
@@ -191,7 +201,7 @@ abstract class IncrementalCompilerRunner<
         preBuildHook(args, compilationMode)
 
         val dirtySources = when (compilationMode) {
-            is CompilationMode.Incremental -> ArrayList(compilationMode.dirtyFiles)
+            is CompilationMode.Incremental -> compilationMode.dirtyFiles.toMutableList()
             is CompilationMode.Rebuild -> allKotlinSources.toMutableList()
         }
 
@@ -203,7 +213,7 @@ abstract class IncrementalCompilerRunner<
         var exitCode = ExitCode.OK
 
         while (dirtySources.any() || runWithNoDirtyKotlinSources(caches)) {
-            val complementaryFiles = caches.inputsCache.clearComplementaryFilesMapping(dirtySources)
+            val complementaryFiles = caches.platformCache.getComplementaryFilesRecursive(dirtySources)
             dirtySources.addAll(complementaryFiles)
             caches.platformCache.markDirty(dirtySources)
             caches.inputsCache.removeOutputForSourceFiles(dirtySources)
@@ -227,6 +237,7 @@ abstract class IncrementalCompilerRunner<
             exitCode = runCompiler(sourcesToCompile.toSet(), args, caches, services, messageCollectorAdapter)
             postCompilationHook(exitCode)
 
+            reporter.reportCompileIteration(compilationMode is CompilationMode.Incremental, sourcesToCompile, exitCode)
             if (exitCode != ExitCode.OK) break
 
             dirtySourcesSinceLastTimeFile.delete()
@@ -242,7 +253,7 @@ abstract class IncrementalCompilerRunner<
                 }
             }
 
-            caches.inputsCache.registerComplementaryFiles(expectActualTracker)
+            caches.platformCache.updateComplementaryFiles(dirtySources, expectActualTracker)
             caches.inputsCache.registerOutputForSourceFiles(generatedFiles)
             caches.lookupCache.update(lookupTracker, sourcesToCompile, removedKotlinSources)
             val changesCollector = ChangesCollector()
@@ -273,25 +284,49 @@ abstract class IncrementalCompilerRunner<
         val dirtyData = DirtyData(buildDirtyLookupSymbols, buildDirtyFqNames)
         processChangesAfterBuild(compilationMode, currentBuildInfo, dirtyData)
 
-        if (exitCode == ExitCode.OK) {
-            cacheVersions.forEach { it.saveIfNeeded() }
+        return exitCode
+    }
+
+    protected fun getRemovedClassesChanges(
+        caches: IncrementalCachesManager<*>,
+        changedFiles: ChangedFiles.Known
+    ): DirtyData {
+        val removedClasses = HashSet<String>()
+        val dirtyFiles = changedFiles.modified.filterTo(HashSet()) { it.isKotlinFile(kotlinSourceFilesExtensions) }
+        val removedFiles = changedFiles.removed.filterTo(HashSet()) { it.isKotlinFile(kotlinSourceFilesExtensions) }
+
+        val existingClasses = classesFqNames(dirtyFiles)
+        val previousClasses = caches.platformCache
+            .classesFqNamesBySources(dirtyFiles + removedFiles)
+            .map { it.asString() }
+
+        for (fqName in previousClasses) {
+            if (fqName !in existingClasses) {
+                removedClasses.add(fqName)
+            }
         }
 
-        return exitCode
+        val changesCollector = ChangesCollector()
+        removedClasses.forEach { changesCollector.collectSignature(FqName(it), areSubclassesAffected = true) }
+        return changesCollector.getDirtyData(listOf(caches.platformCache), reporter)
     }
 
     open fun runWithNoDirtyKotlinSources(caches: CacheManager): Boolean = false
 
-    protected open fun processChangesAfterBuild(compilationMode: CompilationMode, currentBuildInfo: BuildInfo, dirtyData: DirtyData) {
-        if (changesRegistry == null) return
+    private fun processChangesAfterBuild(
+        compilationMode: CompilationMode,
+        currentBuildInfo: BuildInfo,
+        dirtyData: DirtyData
+    ) {
+        val prevDiffs = BuildDiffsStorage.readFromFile(buildHistoryFile, reporter)?.buildDiffs ?: emptyList()
+        val newDiff = if (compilationMode is CompilationMode.Incremental) {
+            BuildDifference(currentBuildInfo.startTS, true, dirtyData)
+        } else {
+            val emptyDirtyData = DirtyData()
+            BuildDifference(currentBuildInfo.startTS, false, emptyDirtyData)
+        }
 
-        if (compilationMode is CompilationMode.Incremental) {
-            changesRegistry.registerChanges(currentBuildInfo.startTS, dirtyData)
-        }
-        else {
-            assert(compilationMode is CompilationMode.Rebuild) { "Unexpected compilation mode: ${compilationMode::class.java}" }
-            changesRegistry.unknownChanges(currentBuildInfo.startTS)
-        }
+        BuildDiffsStorage.writeToFile(buildHistoryFile, BuildDiffsStorage(prevDiffs + newDiff), reporter)
     }
 
     companion object {

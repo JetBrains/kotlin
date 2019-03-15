@@ -14,9 +14,9 @@ class A {
     val Int.c: Int
         get() = 1
 
-    val c: Int = 2
+    val c: Int = { 2 }()
 
-    val d: Int = 2
+    val d: Int = { 2 }()
 
     val Int.d: Int
         get() = 1

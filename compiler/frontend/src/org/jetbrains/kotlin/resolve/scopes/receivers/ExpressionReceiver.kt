@@ -26,9 +26,9 @@ interface ExpressionReceiver : ReceiverValue {
 
     companion object {
         private open class ExpressionReceiverImpl(
-            override val expression: KtExpression, type: KotlinType
-        ) : AbstractReceiverValue(type), ExpressionReceiver {
-            override fun replaceType(newType: KotlinType) = ExpressionReceiverImpl(expression, newType)
+            override val expression: KtExpression, type: KotlinType, original: ReceiverValue?
+        ) : AbstractReceiverValue(type, original), ExpressionReceiver {
+            override fun replaceType(newType: KotlinType) = ExpressionReceiverImpl(expression, newType, original)
 
             override fun toString() = "$type {$expression: ${expression.text}}"
         }
@@ -36,17 +36,19 @@ interface ExpressionReceiver : ReceiverValue {
         private class ThisExpressionClassReceiver(
             override val classDescriptor: ClassDescriptor,
             expression: KtExpression,
-            type: KotlinType
-        ) : ExpressionReceiverImpl(expression, type), ThisClassReceiver {
-            override fun replaceType(newType: KotlinType) = ThisExpressionClassReceiver(classDescriptor, expression, newType)
+            type: KotlinType,
+            original: ReceiverValue?
+        ) : ExpressionReceiverImpl(expression, type, original), ThisClassReceiver {
+            override fun replaceType(newType: KotlinType) = ThisExpressionClassReceiver(classDescriptor, expression, newType, original)
         }
 
         private class SuperExpressionReceiver(
             override val thisType: KotlinType,
             expression: KtExpression,
-            type: KotlinType
-        ) : ExpressionReceiverImpl(expression, type), SuperCallReceiverValue {
-            override fun replaceType(newType: KotlinType) = SuperExpressionReceiver(thisType, expression, newType)
+            type: KotlinType,
+            original: ReceiverValue?
+        ) : ExpressionReceiverImpl(expression, type, original), SuperCallReceiverValue {
+            override fun replaceType(newType: KotlinType) = SuperExpressionReceiver(thisType, expression, newType, original)
         }
 
         fun create(
@@ -64,17 +66,17 @@ interface ExpressionReceiver : ReceiverValue {
             if (referenceExpression != null) {
                 val descriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, referenceExpression)
                 if (descriptor is ClassDescriptor) {
-                    return ThisExpressionClassReceiver(descriptor.original, expression, type)
+                    return ThisExpressionClassReceiver(descriptor.original, expression, type, original = null)
                 }
             } else if (expression is KtSuperExpression) {
                 // if there is no THIS_TYPE_FOR_SUPER_EXPRESSION in binding context, we fall through into more restrictive option
                 // i.e. just return common ExpressionReceiverImpl
                 bindingContext[BindingContext.THIS_TYPE_FOR_SUPER_EXPRESSION, expression]?.let { thisType ->
-                    return SuperExpressionReceiver(thisType, expression, type)
+                    return SuperExpressionReceiver(thisType, expression, type, original = null)
                 }
             }
 
-            return ExpressionReceiverImpl(expression, type)
+            return ExpressionReceiverImpl(expression, type, original = null)
         }
     }
 }

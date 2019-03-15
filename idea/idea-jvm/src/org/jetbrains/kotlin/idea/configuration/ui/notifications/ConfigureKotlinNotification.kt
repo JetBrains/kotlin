@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.idea.configuration.ui.KotlinConfigurationCheckerComp
 import javax.swing.event.HyperlinkEvent
 
 data class ConfigureKotlinNotificationState(
+    val debugProjectName: String,
     val notificationString: String,
     val notConfiguredModules: Collection<String>
 )
@@ -64,6 +65,7 @@ class ConfigureKotlinNotification(
             }
 
             return ConfigureKotlinNotificationState(
+                project.name,
                 "Configure $modulesString in '${project.name}' project<br/> $links",
                 configurableModules.map { it.baseModule.name }
             )

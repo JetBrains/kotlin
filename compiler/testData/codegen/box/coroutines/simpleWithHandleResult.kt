@@ -1,10 +1,12 @@
+// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 // WITH_COROUTINES
+// COMMON_COROUTINES_TEST
 import helpers.*
-import kotlin.coroutines.experimental.*
-import kotlin.coroutines.experimental.intrinsics.*
+import COROUTINES_PACKAGE.*
+import COROUTINES_PACKAGE.intrinsics.*
 
-suspend fun suspendHere(): String = suspendCoroutineOrReturn { x ->
+suspend fun suspendHere(): String = suspendCoroutineUninterceptedOrReturn { x ->
     x.resume("OK")
     COROUTINE_SUSPENDED
 }
@@ -12,7 +14,7 @@ suspend fun suspendHere(): String = suspendCoroutineOrReturn { x ->
 fun builder(c: suspend () -> Int): Int {
     var res = 0
 
-    c.createCoroutine(object : Continuation<Int> {
+    c.createCoroutine(object : ContinuationAdapter<Int>() {
         override val context = EmptyCoroutineContext
 
         override fun resume(data: Int) {

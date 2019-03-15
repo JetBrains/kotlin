@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // FILE: JavaClass.java
 
 class JavaClass {
@@ -17,7 +18,7 @@ class JavaClass {
         i.run();
     }
 
-    void modAssign(Runnable i) {
+    void remAssign(Runnable i) {
         i.run();
     }
 }

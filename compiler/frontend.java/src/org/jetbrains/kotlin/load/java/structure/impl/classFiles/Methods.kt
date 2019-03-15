@@ -31,7 +31,7 @@ import java.text.StringCharacterIterator
 abstract class BinaryJavaMethodBase(
         override val access: Int,
         override val containingClass: JavaClass,
-        val valueParameters: List<JavaValueParameter>,
+        val valueParameters: List<BinaryJavaValueParameter>,
         val typeParameters: List<JavaTypeParameter>,
         override val name: Name
 ) : JavaMember, MapBasedJavaAnnotationOwner, BinaryJavaModifierListOwner {
@@ -80,13 +80,13 @@ abstract class BinaryJavaMethodBase(
                         }
 
             val parameterTypes = info.valueParameterTypes
-            val parameterList = ContainerUtil.newArrayList<JavaValueParameter>()
+            val parameterList = ContainerUtil.newArrayList<BinaryJavaValueParameter>()
             val paramCount = parameterTypes.size
-            for (i in 0..paramCount - 1) {
+            for (i in 0 until paramCount) {
                 val type = parameterTypes[i]
                 val isEllipsisParam = isVarargs && i == paramCount - 1
 
-                parameterList.add(BinaryJavaValueParameter(null, type, isEllipsisParam))
+                parameterList.add(BinaryJavaValueParameter(type, isEllipsisParam))
             }
 
             val member: BinaryJavaMethodBase =
@@ -106,7 +106,14 @@ abstract class BinaryJavaMethodBase(
                 else -> 0
             }
 
-            return member to AnnotationsCollectorMethodVisitor(member, parentContext, signatureParser, paramIgnoreCount)
+            return member to
+                    AnnotationsAndParameterCollectorMethodVisitor(
+                        member,
+                        parentContext,
+                        signatureParser,
+                        paramIgnoreCount,
+                        Type.getArgumentTypes(desc).size
+                    )
         }
 
         private fun parseMethodDescription(
@@ -155,20 +162,28 @@ abstract class BinaryJavaMethodBase(
 class BinaryJavaMethod(
         flags: Int,
         containingClass: JavaClass,
-        valueParameters: List<JavaValueParameter>,
+        valueParameters: List<BinaryJavaValueParameter>,
         typeParameters: List<JavaTypeParameter>,
         name: Name,
         override val returnType: JavaType
 ) : BinaryJavaMethodBase(
         flags, containingClass, valueParameters, typeParameters, name
 ), JavaMethod {
-    override var hasAnnotationParameterDefaultValue: Boolean = false
+    override var annotationParameterDefaultValue: JavaAnnotationArgument? = null
+        internal set(value) {
+            if (field != null) {
+                throw AssertionError(
+                    "Annotation method cannot have two default values: $this (old=$field, new=$value)"
+                )
+            }
+            field = value
+        }
 }
 
 class BinaryJavaConstructor(
         flags: Int,
         containingClass: JavaClass,
-        valueParameters: List<JavaValueParameter>,
+        valueParameters: List<BinaryJavaValueParameter>,
         typeParameters: List<JavaTypeParameter>
 ) : BinaryJavaMethodBase(
         flags, containingClass, valueParameters, typeParameters,

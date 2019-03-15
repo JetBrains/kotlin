@@ -17,10 +17,10 @@
 package org.jetbrains.kotlin.load.kotlin.header
 
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
-import org.jetbrains.kotlin.load.java.JvmBytecodeBinaryVersion
-import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.MultifileClassKind.DELEGATING
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.MultifileClassKind.INHERITING
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmBytecodeBinaryVersion
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 
 class KotlinClassHeader(
         val kind: KotlinClassHeader.Kind,

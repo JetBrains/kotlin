@@ -1,7 +1,7 @@
 package
 
 public val test1: Four<kotlin.Int, kotlin.Int, kotlin.String, kotlin.String>
-public fun </*0*/ S, /*1*/ P1, /*2*/ P2, /*3*/ R> generate(/*0*/ p1: P1, /*1*/ p2: kotlin.collections.List<P2>, /*2*/ g: suspend GenericController<S>.(P1, P2) -> R): Four<S, P1, P2, R>
+public fun </*0*/ S, /*1*/ P1, /*2*/ P2, /*3*/ R> generate(/*0*/ p1: P1, /*1*/ p2: kotlin.collections.List<P2>, /*2*/ @kotlin.BuilderInference g: suspend GenericController<S>.(P1, P2) -> R): Four<S, P1, P2, R>
 public fun </*0*/ X> listOf(/*0*/ vararg x: X /*kotlin.Array<out X>*/): kotlin.collections.List<X>
 
 public final class Four</*0*/ X, /*1*/ Y, /*2*/ Z, /*3*/ T> {

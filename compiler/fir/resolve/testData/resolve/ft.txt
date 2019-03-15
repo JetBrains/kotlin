@@ -1,0 +1,5 @@
+FILE: ft.kt
+    <T> public abstract interface KMutableProperty1 : R|KProperty1<T>| {
+    }
+    <T> public abstract interface KProperty1 : R|kotlin/Function1| {
+    }

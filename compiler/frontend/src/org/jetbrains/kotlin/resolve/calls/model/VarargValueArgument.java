@@ -16,16 +16,24 @@
 
 package org.jetbrains.kotlin.resolve.calls.model;
 
-import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.ValueArgument;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 public class VarargValueArgument implements ResolvedValueArgument {
-    private final List<ValueArgument> arguments = Lists.newArrayList();
+    private final List<ValueArgument> arguments;
+
+    public VarargValueArgument() {
+        this.arguments = new ArrayList<>();
+    }
+
+    public VarargValueArgument(@NotNull List<? extends ValueArgument> arguments) {
+        this.arguments = new ArrayList<>(arguments);
+    }
 
     public void addArgument(@NotNull ValueArgument argument) {
         arguments.add(argument);

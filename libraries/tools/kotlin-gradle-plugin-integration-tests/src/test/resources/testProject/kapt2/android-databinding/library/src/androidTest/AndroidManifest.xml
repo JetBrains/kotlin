@@ -1,0 +1,5 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="org.maw.library">
+    <application>
+        <activity android:name="org.maw.library.BlankActivity"/>
+    </application>
+</manifest>

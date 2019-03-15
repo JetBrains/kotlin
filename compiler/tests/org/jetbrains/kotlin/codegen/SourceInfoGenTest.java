@@ -44,7 +44,7 @@ public class SourceInfoGenTest extends CodegenTestCase {
         ClassReader classReader = new ClassReader(file.asByteArray());
 
         String[] producer = new String[1];
-        classReader.accept(new ClassVisitor(Opcodes.ASM5) {
+        classReader.accept(new ClassVisitor(Opcodes.API_VERSION) {
 
             @Override
             public void visitSource(String source, String debug) {

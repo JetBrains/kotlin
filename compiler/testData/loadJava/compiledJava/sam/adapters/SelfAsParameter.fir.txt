@@ -1,0 +1,4 @@
+public abstract interface SelfAsParameter : R|java/lang/Object| {
+    public abstract operator function foo(p: R|ft<test/SelfAsParameter, test/SelfAsParameter?>|!): R|kotlin/Unit|
+
+}

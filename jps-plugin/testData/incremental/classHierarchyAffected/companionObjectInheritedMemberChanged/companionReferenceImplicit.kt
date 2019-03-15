@@ -1,3 +1,3 @@
 fun implicitRef() {
-    A.x.hashCode()
+    A.x.length
 }

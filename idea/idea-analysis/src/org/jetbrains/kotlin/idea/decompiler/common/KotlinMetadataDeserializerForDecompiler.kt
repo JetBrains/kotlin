@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.idea.decompiler.textBuilder.LoggingErrorReporter
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.ResolveEverythingToKotlinAnyLocalClassifierResolver
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.TargetPlatform
@@ -37,6 +38,7 @@ class KotlinMetadataDeserializerForDecompiler(
         packageFqName: FqName,
         private val proto: ProtoBuf.PackageFragment,
         private val nameResolver: NameResolver,
+        private val metadataVersion: BinaryVersion,
         override val targetPlatform: TargetPlatform,
         serializerProtocol: SerializerExtensionProtocol,
         flexibleTypeDeserializer: FlexibleTypeDeserializer
@@ -49,7 +51,8 @@ class KotlinMetadataDeserializerForDecompiler(
         val notFoundClasses = NotFoundClasses(storageManager, moduleDescriptor)
 
         deserializationComponents = DeserializationComponents(
-                storageManager, moduleDescriptor, DeserializationConfiguration.Default, ProtoBasedClassDataFinder(proto, nameResolver),
+                storageManager, moduleDescriptor, DeserializationConfiguration.Default,
+                ProtoBasedClassDataFinder(proto, nameResolver, metadataVersion),
                 AnnotationAndConstantLoaderImpl(moduleDescriptor, notFoundClasses, serializerProtocol), packageFragmentProvider,
                 ResolveEverythingToKotlinAnyLocalClassifierResolver(builtIns), LoggingErrorReporter(LOG),
                 LookupTracker.DO_NOTHING, flexibleTypeDeserializer, emptyList(), notFoundClasses,
@@ -64,8 +67,8 @@ class KotlinMetadataDeserializerForDecompiler(
         }
 
         val membersScope = DeserializedPackageMemberScope(
-                createDummyPackageFragment(facadeFqName), proto.`package`, nameResolver, containerSource = null,
-                components = deserializationComponents
+            createDummyPackageFragment(facadeFqName), proto.`package`, nameResolver, metadataVersion, containerSource = null,
+            components = deserializationComponents
         ) { emptyList() }
 
         return membersScope.getContributedDescriptors().toList()

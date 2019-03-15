@@ -23,8 +23,8 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiRecursiveElementVisitor
 import com.intellij.psi.codeStyle.CodeStyleManager
-import kotlinx.coroutines.experimental.run
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.conversion.copy.range
@@ -64,7 +64,7 @@ class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
                         collectAvailableActions(file, rangeMarker)
                     }
 
-                    run(EDT) {
+                    withContext(EDT) {
                         for ((element, action, _, writeActionNeeded) in elementToActions) {
                             if (element.isValid) {
                                 if (writeActionNeeded) {
@@ -88,7 +88,7 @@ class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
 
 
                 if (formatCode) {
-                    run(EDT) {
+                    withContext(EDT) {
                         runWriteAction {
                             val codeStyleManager = CodeStyleManager.getInstance(file.project)
                             if (rangeMarker != null) {
@@ -145,7 +145,7 @@ class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
             file.elementsInRange(rangeMarker.range!!).filterIsInstance<KtElement>()
 
         return if (elements.isNotEmpty())
-            file.getResolutionFacade().analyzeFullyAndGetResult(elements).bindingContext.diagnostics
+            file.getResolutionFacade().analyzeWithAllCompilerChecks(elements).bindingContext.diagnostics
         else
             Diagnostics.EMPTY
     }

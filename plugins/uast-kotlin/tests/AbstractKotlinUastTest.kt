@@ -9,6 +9,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.util.io.URLUtil
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -17,21 +18,22 @@ import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.addKotlinSourceRoot
+import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
+import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.uast.UastLanguagePlugin
 import org.jetbrains.uast.evaluation.UEvaluatorExtension
-import org.jetbrains.uast.kotlin.KotlinUastBindingContextProviderService
 import org.jetbrains.uast.kotlin.KotlinUastLanguagePlugin
+import org.jetbrains.uast.kotlin.KotlinUastResolveProviderService
 import org.jetbrains.uast.kotlin.evaluation.KotlinEvaluatorExtension
-import org.jetbrains.uast.kotlin.internal.CliKotlinUastBindingContextProviderService
+import org.jetbrains.uast.kotlin.internal.CliKotlinUastResolveProviderService
 import org.jetbrains.uast.kotlin.internal.UastAnalysisHandlerExtension
-import org.jetbrains.uast.test.env.AbstractCoreEnvironment
-import org.jetbrains.uast.test.env.AbstractUastTest
+import org.jetbrains.uast.test.env.kotlin.AbstractCoreEnvironment
+import org.jetbrains.uast.test.env.kotlin.AbstractUastTest
 import java.io.File
 
 abstract class AbstractKotlinUastTest : AbstractUastTest() {
@@ -72,8 +74,8 @@ abstract class AbstractKotlinUastTest : AbstractUastTest() {
                 .registerExtension(KotlinEvaluatorExtension())
 
         project.registerService(
-                KotlinUastBindingContextProviderService::class.java,
-                CliKotlinUastBindingContextProviderService::class.java)
+            KotlinUastResolveProviderService::class.java,
+            CliKotlinUastResolveProviderService::class.java)
     }
 
     override fun createEnvironment(source: File): AbstractCoreEnvironment {
@@ -106,6 +108,10 @@ abstract class AbstractKotlinUastTest : AbstractUastTest() {
             put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
 
             put(CommonConfigurationKeys.MODULE_NAME, "test-module")
+
+            if (sourceFile.extension == KotlinParserDefinition.STD_SCRIPT_SUFFIX) {
+                loadScriptingPlugin(this)
+            }
         }
     }
 

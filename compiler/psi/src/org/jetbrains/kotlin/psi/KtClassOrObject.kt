@@ -67,7 +67,7 @@ abstract class KtClassOrObject :
 
     fun getAnonymousInitializers(): List<KtAnonymousInitializer> = getBody()?.anonymousInitializers.orEmpty()
 
-    fun getBody(): KtClassBody? = getStubOrPsiChild(KtStubElementTypes.CLASS_BODY)
+    override fun getBody(): KtClassBody? = getStubOrPsiChild(KtStubElementTypes.CLASS_BODY)
 
     inline fun <reified T : KtDeclaration> addDeclaration(declaration: T): T {
         val body = getOrCreateBody()
@@ -128,6 +128,54 @@ abstract class KtClassOrObject :
             file.delete()
         }
     }
+
+    override fun isEquivalentTo(another: PsiElement?): Boolean {
+        if (this === another) {
+            return true
+        }
+
+        if (another !is KtClassOrObject) {
+            return false
+        }
+
+        val fq1 = getQualifiedName() ?: return false
+        val fq2 = another.getQualifiedName() ?: return false
+        if (fq1 == fq2) {
+            val thisLocal = isLocal
+            if (thisLocal != another.isLocal) {
+                return false
+            }
+
+            // For non-local classes same fqn is enough
+            // Consider different instances of local classes non-equivalent
+            return !thisLocal
+        }
+
+        return false
+    }
+
+    protected fun getQualifiedName(): String? {
+        val stub = stub
+        if (stub != null) {
+            val fqName = stub.getFqName()
+            return fqName?.asString()
+        }
+
+        val parts = mutableListOf<String>()
+        var current: KtClassOrObject? = this
+        while (current != null) {
+            val name = current.name ?: return null
+            parts.add(name)
+            current = PsiTreeUtil.getParentOfType(current, KtClassOrObject::class.java)
+        }
+        val file = containingFile as? KtFile ?: return null
+        val fileQualifiedName = file.packageFqName.asString()
+        if (!fileQualifiedName.isEmpty()) {
+            parts.add(fileQualifiedName)
+        }
+        parts.reverse()
+        return parts.joinToString(separator = ".")
+    }
 }
 
 fun KtClassOrObject.getOrCreateBody(): KtClassBody {
@@ -137,3 +185,6 @@ fun KtClassOrObject.getOrCreateBody(): KtClassBody {
     if (this is KtEnumEntry) return addAfter(newBody, initializerList ?: nameIdentifier) as KtClassBody
     return add(newBody) as KtClassBody
 }
+
+val KtClassOrObject.allConstructors
+    get() = listOfNotNull(primaryConstructor) + secondaryConstructors

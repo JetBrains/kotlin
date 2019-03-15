@@ -2,19 +2,19 @@ fun test() {
     var a = 12
 
     a =
-            12
+        12
 
     a +=
-            12
+        12
 
     a -=
-            12
+        12
 
     a *=
-            12
+        12
 
     a /=
-            12
+        12
 
     a is
             String
@@ -36,3 +36,4 @@ fun test() {
 }
 
 // SET_TRUE: ALIGN_MULTILINE_BINARY_OPERATION
+// SET_FALSE: CONTINUATION_INDENT_FOR_EXPRESSION_BODIES

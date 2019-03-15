@@ -1,0 +1,8 @@
+pluginManagement {
+	repositories {
+		mavenLocal()
+		gradlePluginPortal()
+	}
+}
+
+enableFeaturePreview('GRADLE_METADATA')

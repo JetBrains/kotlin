@@ -1,0 +1,6 @@
+package
+
+public val configurations1: kotlin.collections.List<() -> kotlin.Int>
+public val configurations2: kotlin.collections.Map<kotlin.Int, kotlin.collections.List<() -> kotlin.Int>>
+public val configurations3: kotlin.collections.List<kotlin.Pair<kotlin.Int, kotlin.collections.Map<kotlin.Int, kotlin.collections.List<() -> kotlin.Int>>>>
+public val configurations4: kotlin.collections.List<kotlin.Pair<kotlin.Int, kotlin.collections.Map<kotlin.Int, kotlin.collections.List<kotlin.Pair<kotlin.Int, kotlin.collections.List<() -> kotlin.Int>>>>>>

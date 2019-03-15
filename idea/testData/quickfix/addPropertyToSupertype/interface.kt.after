@@ -1,0 +1,8 @@
+// "Add 'val hoge: Int' to 'Foo'" "true"
+interface Foo {
+    val hoge: Int
+}
+
+class Bar: Foo {
+    override val hoge = 3
+}

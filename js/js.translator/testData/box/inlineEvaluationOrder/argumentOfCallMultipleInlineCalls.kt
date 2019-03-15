@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1118
+// EXPECTED_REACHABLE_NODES: 1287
 package foo
 
 fun sum(a: Int, b: Int, c: Int, d: Int): Int {

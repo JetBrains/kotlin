@@ -22,21 +22,22 @@ import org.junit.Test
 class RegexTaskToFriendTaskMapperTest {
     @Test
     fun getFriendTaskNameDefault() {
-        val mapper = RegexTaskToFriendTaskMapper.Default()
+        val mapper = RegexTaskToFriendTaskMapper.Default("")
         Assert.assertEquals("compileKotlin", mapper["compileTestKotlin"])
         Assert.assertEquals(null, mapper["compileKotlin"])
     }
 
     @Test
-    fun getFriendTasksNameJavaScript() {
-        val mapper = RegexTaskToFriendTaskMapper.JavaScript()
-        Assert.assertEquals("compileKotlin2Js", mapper["compileTestKotlin2Js"])
-        Assert.assertEquals(null, mapper["compileKotlin2Js"])
+    fun getFriendTaskNameCustomTargetName() {
+        val mapper = RegexTaskToFriendTaskMapper.Default("Foo")
+        Assert.assertEquals("compileKotlinFoo", mapper["compileTestKotlinFoo"])
+        Assert.assertEquals(null, mapper["compileKotlinFoo"])
+        Assert.assertEquals(null, mapper["compileTestKotlinBar"])
     }
 
     @Test
     fun getFriendTaskNameAndroid() {
-        val mapper = RegexTaskToFriendTaskMapper.Android()
+        val mapper = RegexTaskToFriendTaskMapper.Android("")
         // Unit test examples
         Assert.assertEquals("compileDebugKotlin", mapper["compileDebugUnitTestKotlin"])
         Assert.assertEquals("compileReleaseKotlin", mapper["compileReleaseUnitTestKotlin"])
@@ -47,5 +48,22 @@ class RegexTaskToFriendTaskMapperTest {
         Assert.assertEquals("compileProdDebugKotlin", mapper["compileProdDebugAndroidTestKotlin"])
 
         Assert.assertEquals(null, mapper["compileDebugKotlin"])
+    }
+
+    @Test
+    fun getFriendTaskNameAndroidCustomTargetName() {
+        val mapper = RegexTaskToFriendTaskMapper.Android("Foo")
+        // Unit test examples
+        Assert.assertEquals("compileDebugKotlinFoo", mapper["compileDebugUnitTestKotlinFoo"])
+        Assert.assertEquals("compileReleaseKotlinFoo", mapper["compileReleaseUnitTestKotlinFoo"])
+        Assert.assertEquals("compileProdDebugKotlinFoo", mapper["compileProdDebugUnitTestKotlinFoo"])
+        // Android test examples
+        Assert.assertEquals("compileDebugKotlinFoo", mapper["compileDebugAndroidTestKotlinFoo"])
+        Assert.assertEquals("compileReleaseKotlinFoo", mapper["compileReleaseAndroidTestKotlinFoo"])
+        Assert.assertEquals("compileProdDebugKotlinFoo", mapper["compileProdDebugAndroidTestKotlinFoo"])
+
+        Assert.assertEquals(null, mapper["compileDebugKotlinFoo"])
+        Assert.assertEquals(null, mapper["compileDebugUnitTestKotlinBar"])
+        Assert.assertEquals(null, mapper["compileDebugAndroidTestKotlinBar"])
     }
 }

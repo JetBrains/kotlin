@@ -1,9 +1,11 @@
 // "Add new line after annotations" "true"
 
 @Target(AnnotationTarget.EXPRESSION)
+@Retention(AnnotationRetention.SOURCE)
 annotation class Ann
 
 @Target(AnnotationTarget.EXPRESSION)
+@Retention(AnnotationRetention.SOURCE)
 annotation class Ann2(val x: String)
 
 fun foo(y: Int) {

@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.decompiler.navigation
@@ -28,26 +17,11 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 import java.util.*
 
-abstract class AbstractNavigateToLibraryTest : KotlinCodeInsightTestCase() {
-
-    protected fun doTest(path: String): Unit = doTestEx(path)
-
-    protected fun doWithJSModuleTest(path: String): Unit = doTestEx(path) {
-        val jsModule = this.createModule("js-module")
-        jsModule.configureAs(ModuleKind.KOTLIN_JAVASCRIPT)
-    }
-
-    abstract val withSource: Boolean
+abstract class AbstractNavigateToLibraryTest : KotlinLightCodeInsightFixtureTestCase() {
     abstract val expectedFileExt: String
 
-    protected fun doTestEx(path: String, additionalConfig: (() -> Unit)? = null) {
-        module.configureAs(getProjectDescriptor())
-
-        if (additionalConfig != null) {
-            additionalConfig()
-        }
-
-        configureByFile(path)
+    protected fun doTest(path: String) {
+        myFixture.configureByFile(path)
         NavigationChecker.checkAnnotatedCode(file, File(path.replace(".kt", expectedFileExt)))
     }
 
@@ -57,24 +31,39 @@ abstract class AbstractNavigateToLibraryTest : KotlinCodeInsightTestCase() {
     }
 
     override fun getTestDataPath(): String =
-            KotlinTestUtils.getHomeDirectory() + File.separator
-
-
-    open fun getProjectDescriptor(): KotlinLightProjectDescriptor =
-        SdkAndMockLibraryProjectDescriptor(
-            PluginTestCaseBase.getTestDataPathBase() + "/decompiler/navigation/library",
-            withSource
-        )
+        KotlinTestUtils.getHomeDirectory() + File.separator
 }
 
 abstract class AbstractNavigateToDecompiledLibraryTest : AbstractNavigateToLibraryTest() {
-    override val withSource: Boolean get() = false
     override val expectedFileExt: String get() = ".decompiled.expected"
+
+    override fun getProjectDescriptor(): KotlinLightProjectDescriptor = PROJECT_DESCRIPTOR
+
+    companion object {
+        private val PROJECT_DESCRIPTOR = SdkAndMockLibraryProjectDescriptor(
+            PluginTestCaseBase.getTestDataPathBase() + "/decompiler/navigation/library", false
+        )
+    }
 }
 
 abstract class AbstractNavigateToLibrarySourceTest : AbstractNavigateToLibraryTest() {
-    override val withSource: Boolean get() = true
     override val expectedFileExt: String get() = ".source.expected"
+
+    override fun getProjectDescriptor(): KotlinLightProjectDescriptor = PROJECT_DESCRIPTOR
+
+    protected companion object {
+        val PROJECT_DESCRIPTOR = SdkAndMockLibraryProjectDescriptor(
+            PluginTestCaseBase.getTestDataPathBase() + "/decompiler/navigation/library", true
+        )
+    }
+}
+
+abstract class AbstractNavigateToLibrarySourceTestWithJS : AbstractNavigateToLibrarySourceTest() {
+    override fun getProjectDescriptor(): KotlinLightProjectDescriptor = KotlinMultiModuleProjectDescriptor(
+        "AbstractNavigateToLibrarySourceTestWithJS",
+        AbstractNavigateToLibrarySourceTest.PROJECT_DESCRIPTOR,
+        KotlinStdJSProjectDescriptor
+    )
 }
 
 class NavigationChecker(val file: PsiFile, val referenceTargetChecker: (PsiElement) -> Unit) {

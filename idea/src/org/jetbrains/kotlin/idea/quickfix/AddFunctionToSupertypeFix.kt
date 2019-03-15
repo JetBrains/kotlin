@@ -151,7 +151,7 @@ class AddFunctionToSupertypeFix private constructor(
 
             val targetClass = DescriptorToSourceUtilsIde.getAnyDeclaration(project, classDescriptor) as? KtClass ?: return null
             return FunctionData(
-                IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(functionDescriptor),
+                IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.render(functionDescriptor),
                 sourceCode,
                 targetClass
             )
@@ -164,8 +164,10 @@ class AddFunctionToSupertypeFix private constructor(
 
             // TODO: filter out impossible supertypes (for example when argument's type isn't visible in a superclass).
             return getSuperClasses(containingClass)
+                .asSequence()
                 .filterNot { KotlinBuiltIns.isAnyOrNullableAny(it.defaultType) }
                 .map { generateFunctionSignatureForType(functionDescriptor, it) }
+                .toList()
         }
 
         private fun MutableList<KotlinType>.sortSubtypesFirst(): List<KotlinType> {

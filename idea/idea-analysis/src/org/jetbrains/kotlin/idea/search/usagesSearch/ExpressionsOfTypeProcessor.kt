@@ -35,14 +35,14 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.toLightClass
-import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
+import org.jetbrains.kotlin.compatibility.ExecutorProcessor
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.util.resolveToDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
+import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaMemberDescriptor
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.idea.references.KtDestructuringDeclarationReference
 import org.jetbrains.kotlin.idea.search.excludeFileTypes
@@ -52,12 +52,12 @@ import org.jetbrains.kotlin.idea.search.restrictToKotlinSources
 import org.jetbrains.kotlin.idea.util.FuzzyType
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.idea.util.compat.psiSearchHelperInstance
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.sam.SingleAbstractMethodUtils
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
@@ -65,14 +65,14 @@ import java.util.*
 //TODO: check if smart search is too expensive
 
 class ExpressionsOfTypeProcessor(
-        private val typeToSearch: FuzzyType,
-        private val classToSearch: PsiClass?,
-        private val searchScope: SearchScope,
-        private val project: Project,
-        private val possibleMatchHandler: (KtExpression) -> Unit,
-        private val possibleMatchesInScopeHandler: (SearchScope) -> Unit
+    private val typeToSearch: FuzzyType,
+    private val classToSearch: PsiClass?,
+    private val searchScope: SearchScope,
+    private val project: Project,
+    private val possibleMatchHandler: (KtExpression) -> Unit,
+    private val possibleMatchesInScopeHandler: (SearchScope) -> Unit
 ) {
-    @TestOnly
+    /** For tests only */
     enum class Mode {
         ALWAYS_SMART,
         ALWAYS_PLAIN,
@@ -80,9 +80,10 @@ class ExpressionsOfTypeProcessor(
     }
 
     companion object {
-        @TestOnly
+        @get:TestOnly
         var mode = if (ApplicationManager.getApplication().isUnitTestMode) Mode.ALWAYS_SMART else Mode.PLAIN_WHEN_NEEDED
-        @TestOnly
+
+        @get:TestOnly
         var testLog: MutableList<String>? = null
 
         inline fun testLog(s: () -> String) {
@@ -95,7 +96,7 @@ class ExpressionsOfTypeProcessor(
             return runReadAction {
                 if (element !is KtDeclaration && element !is PsiMember) return@runReadAction element.text
                 val fqName = element.getKotlinFqName()?.asString()
-                             ?: (element as? KtNamedDeclaration)?.name
+                    ?: (element as? KtNamedDeclaration)?.name
                 when (element) {
                     is PsiMethod -> fqName + element.parameterList.text
                     is KtFunction -> fqName + element.valueParameterList!!.text
@@ -136,7 +137,12 @@ class ExpressionsOfTypeProcessor(
         }
 
         // optimization
-        if (runReadAction { searchScope is GlobalSearchScope && !FileTypeIndex.containsFileOfType(KotlinFileType.INSTANCE, searchScope) }) return
+        if (runReadAction {
+                searchScope is GlobalSearchScope && !FileTypeIndex.containsFileOfType(
+                    KotlinFileType.INSTANCE,
+                    searchScope
+                )
+            }) return
 
         // for class from library always use plain search because we cannot search usages in compiled code (we could though)
         if (!runReadAction { classToSearch.isValid && ProjectRootsUtil.isInProjectSource(classToSearch) }) {
@@ -150,9 +156,9 @@ class ExpressionsOfTypeProcessor(
 
         runReadAction {
             val scopeElements = scopesToUsePlainSearch.values
-                    .flatMap { it }
-                    .filter { it.isValid }
-                    .toTypedArray()
+                .flatten()
+                .filter { it.isValid }
+                .toTypedArray()
             if (scopeElements.isNotEmpty()) {
                 possibleMatchesInScopeHandler(LocalSearchScope(scopeElements))
             }
@@ -174,7 +180,7 @@ class ExpressionsOfTypeProcessor(
 
     private fun downShiftToPlainSearch(reference: PsiReference) {
         val message = getFallbackDiagnosticsMessage(reference)
-        LOG.info("ExpressionsOfTypeProcessor: " + message)
+        LOG.info("ExpressionsOfTypeProcessor: $message")
         testLog { "Downgrade to plain text search: $message" }
 
         tasks.clear()
@@ -208,7 +214,8 @@ class ExpressionsOfTypeProcessor(
         data class ProcessClassUsagesTask(val classToSearch: PsiClass) : Task {
             override fun perform() {
                 testLog { "Searched references to ${logPresentation(classToSearch)}" }
-                val scope = GlobalSearchScope.allScope(project).excludeFileTypes(XmlFileType.INSTANCE) // ignore usages in XML - they don't affect us
+                val scope = GlobalSearchScope.allScope(project)
+                    .excludeFileTypes(XmlFileType.INSTANCE) // ignore usages in XML - they don't affect us
                 searchReferences(classToSearch, scope) { reference ->
                     val element = reference.element
                     val wasProcessed = when (element.language) {
@@ -263,10 +270,11 @@ class ExpressionsOfTypeProcessor(
                               })
     }
 
-    private class StaticMemberRequestResultProcessor(val psiMember: PsiMember, classes: List<PsiClass>) : RequestResultProcessor(psiMember) {
+    private class StaticMemberRequestResultProcessor(val psiMember: PsiMember, classes: List<PsiClass>) :
+        RequestResultProcessor(psiMember) {
         val possibleClassesNames: Set<String> = runReadAction { classes.map { it.qualifiedName }.filterNotNullTo(HashSet()) }
 
-        override fun processTextOccurrence(element: PsiElement, offsetInElement: Int, consumer: Processor<PsiReference>): Boolean {
+        override fun processTextOccurrence(element: PsiElement, offsetInElement: Int, consumer: ExecutorProcessor<PsiReference>): Boolean {
             when (element) {
                 is KtQualifiedExpression -> {
                     val selectorExpression = element.selectorExpression ?: return true
@@ -291,9 +299,9 @@ class ExpressionsOfTypeProcessor(
                         val fqName = element.importedFqName?.asString()
                         if (fqName != null && fqName in possibleClassesNames) {
                             val ref = element.importedReference
-                                    ?.getQualifiedElementSelector()
-                                    ?.references
-                                    ?.firstOrNull()
+                                ?.getQualifiedElementSelector()
+                                ?.references
+                                ?.firstOrNull()
                             if (ref != null) {
                                 consumer.process(ref)
                             }
@@ -320,13 +328,18 @@ class ExpressionsOfTypeProcessor(
         val declarationName = runReadAction { psiMember.name } ?: return
         if (declarationName.isEmpty()) return
 
-        data class ProcessStaticCallableUsagesTask(val member: PsiMember, val memberScope: SearchScope, val taskProcessor: ReferenceProcessor) : Task {
+        data class ProcessStaticCallableUsagesTask(
+            val member: PsiMember,
+            val memberScope: SearchScope,
+            val taskProcessor: ReferenceProcessor
+        ) : Task {
             override fun perform() {
                 // This class will look through the whole hierarchy anyway, so shouldn't be a big overhead here
                 val inheritanceClasses = ClassInheritorsSearch.search(
-                        declarationClass,
-                        classUseScope(declarationClass),
-                        true, true, false).findAll()
+                    declarationClass,
+                    classUseScope(declarationClass),
+                    true, true, false
+                ).findAll()
 
                 val classes = (inheritanceClasses + declarationClass).filter {
                     it !is KtLightClass
@@ -341,29 +354,30 @@ class ExpressionsOfTypeProcessor(
 
                     testLog { "Searched references to static $memberName in non-Java files by request $request" }
                     searchRequestCollector.searchWord(
-                            request,
-                            classUseScope(klass).intersectWith(memberScope), UsageSearchContext.IN_CODE, true, member, resultProcessor)
+                        request,
+                        classUseScope(klass).intersectWith(memberScope), UsageSearchContext.IN_CODE, true, member, resultProcessor
+                    )
 
                     val qualifiedName = runReadAction { klass.qualifiedName }
                     if (qualifiedName != null) {
-                        val importAllUnderRequest = qualifiedName + ".*"
+                        val importAllUnderRequest = "$qualifiedName.*"
 
                         testLog { "Searched references to static $memberName in non-Java files by request $importAllUnderRequest" }
                         searchRequestCollector.searchWord(
-                                importAllUnderRequest,
-                                classUseScope(klass).intersectWith(memberScope), UsageSearchContext.IN_CODE, true, member, resultProcessor)
+                            importAllUnderRequest,
+                            classUseScope(klass).intersectWith(memberScope), UsageSearchContext.IN_CODE, true, member, resultProcessor
+                        )
                     }
                 }
 
-                PsiSearchHelper.SERVICE.getInstance(project).processRequests(searchRequestCollector) { reference ->
+                psiSearchHelperInstance(project).processRequests(searchRequestCollector) { reference ->
                     if (reference.element.parents.any { it is KtImportDirective }) {
                         // Found declaration in import - process all file with an ordinal reference search
                         val containingFile = reference.element.containingFile
                         addCallableDeclarationToProcess(member, LocalSearchScope(containingFile), taskProcessor)
 
                         true
-                    }
-                    else {
+                    } else {
                         val processed = taskProcessor.handler(this@ExpressionsOfTypeProcessor, reference)
                         if (!processed) { // we don't know how to handle this reference and down-shift to plain search
                             downShiftToPlainSearch(reference)
@@ -380,26 +394,29 @@ class ExpressionsOfTypeProcessor(
     }
 
     private fun addCallableDeclarationToProcess(declaration: PsiElement, scope: SearchScope, processor: ReferenceProcessor) {
-        if (scope !is LocalSearchScope && declaration is PsiMember && (declaration.modifierList?.hasModifierProperty(PsiModifier.STATIC) ?: false)) {
+        if (scope !is LocalSearchScope && declaration is PsiMember &&
+            (declaration.modifierList?.hasModifierProperty(PsiModifier.STATIC) == true)
+        ) {
             addStaticMemberToProcess(declaration, scope, processor)
             return
         }
 
         @Suppress("NAME_SHADOWING")
         data class ProcessCallableUsagesTask(
-                val declaration: PsiElement,
-                val processor: ReferenceProcessor,
-                val scope: SearchScope) : Task {
+            val declaration: PsiElement,
+            val processor: ReferenceProcessor,
+            val scope: SearchScope
+        ) : Task {
             override fun perform() {
                 if (scope is LocalSearchScope) {
                     testLog { "Searched imported static member $declaration in ${scope.scope.toList()}" }
-                }
-                else {
+                } else {
                     testLog { "Searched references to ${logPresentation(declaration)} in non-Java files" }
                 }
 
                 val searchParameters = KotlinReferencesSearchParameters(
-                        declaration, scope, kotlinOptions = KotlinReferencesSearchOptions(searchNamedArguments = false))
+                    declaration, scope, kotlinOptions = KotlinReferencesSearchOptions(searchNamedArguments = false)
+                )
                 searchReferences(searchParameters) { reference ->
                     val processed = processor.handler(this@ExpressionsOfTypeProcessor, reference)
                     if (!processed) { // we don't know how to handle this reference and down-shift to plain search
@@ -439,8 +456,7 @@ class ExpressionsOfTypeProcessor(
             if (reference is KtDestructuringDeclarationReference) {
                 // declaration usage in form of destructuring declaration entry
                 addCallableDeclarationOfOurType(reference.element)
-            }
-            else {
+            } else {
                 (reference.element as? KtReferenceExpression)?.let { processSuspiciousExpression(it) }
             }
             true
@@ -614,8 +630,7 @@ class ExpressionsOfTypeProcessor(
                     val whenExpression = whenEntry.parent as KtWhenExpression
                     val entriesAfter = whenExpression.entries.dropWhile { it != whenEntry }.drop(1)
                     entriesAfter.forEach { usePlainSearch(it) }
-                }
-                else {
+                } else {
                     usePlainSearch(whenEntry)
                 }
                 return true
@@ -663,7 +678,7 @@ class ExpressionsOfTypeProcessor(
                     break@ParentsLoop
                 }
 
-            //TODO: if Java parameter has Kotlin functional type then we should process method usages
+                //TODO: if Java parameter has Kotlin functional type then we should process method usages
                 is PsiParameter -> {
                     if (prev == parent.typeElement) { // usage in parameter type - check if the method is in SAM interface
                         processParameterInSamClass(parent)
@@ -760,8 +775,7 @@ class ExpressionsOfTypeProcessor(
             if (psiClass != null) {
                 testLog { "Resolved java class to descriptor: ${psiClass.qualifiedName}" }
 
-                val resolutionFacade = KotlinCacheService.getInstance(project).getResolutionFacadeByFile(psiClass.containingFile, JvmPlatform)
-                val classDescriptor = psiClass.resolveToDescriptor(resolutionFacade) as? JavaClassDescriptor
+                val classDescriptor = psiClass.getJavaMemberDescriptor() as? JavaClassDescriptor
                 if (classDescriptor != null && SingleAbstractMethodUtils.getSingleAbstractMethodOrNull(classDescriptor) != null) {
                     addSamInterfaceToProcess(psiClass)
                     return true
@@ -833,8 +847,7 @@ class ExpressionsOfTypeProcessor(
     private fun processSuspiciousDeclaration(declaration: KtDeclaration) {
         if (declaration is KtDestructuringDeclaration) {
             declaration.entries.forEach { processSuspiciousDeclaration(it) }
-        }
-        else {
+        } else {
             if (!isImplicitlyTyped(declaration)) return
 
             testLog { "Checked type of ${logPresentation(declaration)}" }
@@ -875,8 +888,7 @@ class ExpressionsOfTypeProcessor(
                     }
                     prevElements.add(element)
                 }
-            }
-            else {
+            } else {
                 assert(restricted == GlobalSearchScope.EMPTY_SCOPE)
             }
 
@@ -933,8 +945,7 @@ class ExpressionsOfTypeProcessor(
             runReadAction {
                 if (ref.element.isValid) {
                     processor(ref)
-                }
-                else {
+                } else {
                     true
                 }
             }

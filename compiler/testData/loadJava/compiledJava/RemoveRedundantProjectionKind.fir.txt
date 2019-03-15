@@ -1,0 +1,6 @@
+public abstract interface RemoveRedundantProjectionKind : R|java/lang/Object| {
+    public abstract operator function f(collection: R|ft<kotlin/collections/MutableCollection<out java/lang/CharSequence>, kotlin/collections/Collection<out java/lang/CharSequence>?>|!): R|kotlin/Unit|
+
+    public abstract operator function f(comparator: R|ft<kotlin/Comparable<in java/lang/CharSequence>, kotlin/Comparable<in java/lang/CharSequence>?>|!): R|kotlin/Unit|
+
+}

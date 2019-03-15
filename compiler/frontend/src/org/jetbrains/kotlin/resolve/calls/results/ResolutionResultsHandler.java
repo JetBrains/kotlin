@@ -16,12 +16,12 @@
 
 package org.jetbrains.kotlin.resolve.calls.results;
 
-import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.context.CallResolutionContext;
@@ -40,9 +40,12 @@ public class ResolutionResultsHandler {
 
     public ResolutionResultsHandler(
             @NotNull KotlinBuiltIns builtIns,
+            @NotNull ModuleDescriptor module,
             @NotNull TypeSpecificityComparator specificityComparator
     ) {
-        overloadingConflictResolver = FlatSignatureForResolvedCallKt.createOverloadingConflictResolver(builtIns, specificityComparator);
+        overloadingConflictResolver = FlatSignatureForResolvedCallKt.createOverloadingConflictResolver(
+                builtIns, module, specificityComparator
+        );
     }
 
     @NotNull
@@ -52,10 +55,10 @@ public class ResolutionResultsHandler {
             @NotNull Collection<MutableResolvedCall<D>> candidates,
             @NotNull LanguageVersionSettings languageVersionSettings
     ) {
-        Set<MutableResolvedCall<D>> successfulCandidates = Sets.newLinkedHashSet();
-        Set<MutableResolvedCall<D>> failedCandidates = Sets.newLinkedHashSet();
-        Set<MutableResolvedCall<D>> incompleteCandidates = Sets.newLinkedHashSet();
-        Set<MutableResolvedCall<D>> candidatesWithWrongReceiver = Sets.newLinkedHashSet();
+        Set<MutableResolvedCall<D>> successfulCandidates = new LinkedHashSet<>();
+        Set<MutableResolvedCall<D>> failedCandidates = new LinkedHashSet<>();
+        Set<MutableResolvedCall<D>> incompleteCandidates = new LinkedHashSet<>();
+        Set<MutableResolvedCall<D>> candidatesWithWrongReceiver = new LinkedHashSet<>();
         for (MutableResolvedCall<D> candidateCall : candidates) {
             ResolutionStatus status = candidateCall.getStatus();
             assert status != UNKNOWN_STATUS : "No resolution for " + candidateCall.getCandidateDescriptor();
@@ -91,14 +94,14 @@ public class ResolutionResultsHandler {
 
     @NotNull
     private <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> computeSuccessfulResult(
-            @NotNull CallResolutionContext context,
+            @NotNull CallResolutionContext<?> context,
             @NotNull TracingStrategy tracing,
             @NotNull Set<MutableResolvedCall<D>> successfulCandidates,
             @NotNull Set<MutableResolvedCall<D>> incompleteCandidates,
             @NotNull CheckArgumentTypesMode checkArgumentsMode,
             @NotNull LanguageVersionSettings languageVersionSettings
     ) {
-        Set<MutableResolvedCall<D>> successfulAndIncomplete = Sets.newLinkedHashSet();
+        Set<MutableResolvedCall<D>> successfulAndIncomplete = new LinkedHashSet<>();
         successfulAndIncomplete.addAll(successfulCandidates);
         successfulAndIncomplete.addAll(incompleteCandidates);
         OverloadResolutionResultsImpl<D> results = chooseAndReportMaximallySpecific(
@@ -144,7 +147,7 @@ public class ResolutionResultsHandler {
         }
 
         for (EnumSet<ResolutionStatus> severityLevel : SEVERITY_LEVELS) {
-            Set<MutableResolvedCall<D>> thisLevel = Sets.newLinkedHashSet();
+            Set<MutableResolvedCall<D>> thisLevel = new LinkedHashSet<>();
             for (MutableResolvedCall<D> candidate : failedCandidates) {
                 if (severityLevel.contains(candidate.getStatus())) {
                     thisLevel.add(candidate);
@@ -189,6 +192,7 @@ public class ResolutionResultsHandler {
     }
 
     @NotNull
+    @SuppressWarnings("unchecked")
     private <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> chooseAndReportMaximallySpecific(
             @NotNull Set<MutableResolvedCall<D>> candidates,
             boolean discriminateGenerics,

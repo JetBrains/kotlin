@@ -14,7 +14,6 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.fileChooser.FileChooserFactory
 import com.intellij.openapi.help.HelpManager
 import com.intellij.openapi.keymap.KeymapUtil
-import com.intellij.openapi.project.DumbModePermission
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
@@ -25,7 +24,6 @@ import com.intellij.psi.*
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.copy.CopyFilesOrDirectoriesDialog
 import com.intellij.refactoring.util.CommonRefactoringUtil
-import com.intellij.ui.DocumentAdapter
 import com.intellij.ui.NonFocusableCheckBox
 import com.intellij.ui.RecentsManager
 import com.intellij.ui.TextFieldWithHistoryWithBrowseButton
@@ -37,13 +35,14 @@ import org.jetbrains.kotlin.idea.core.packageMatchesDirectory
 import org.jetbrains.kotlin.idea.refactoring.isInJavaSourceRoot
 import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.idea.util.onTextChange
 import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
 import javax.swing.JComponent
-import javax.swing.event.DocumentEvent
 
 class KotlinAwareMoveFilesOrDirectoriesDialog(
         private val project: Project,
+        private val initialDirectory: PsiDirectory?,
         private val callback: (KotlinAwareMoveFilesOrDirectoriesDialog?) -> Unit
 ) : DialogWrapper(project, true) {
     companion object {
@@ -53,6 +52,7 @@ class KotlinAwareMoveFilesOrDirectoriesDialog(
 
     private val nameLabel = JBLabelDecorator.createJBLabelDecorator().setBold(true)
     private val targetDirectoryField = TextFieldWithHistoryWithBrowseButton()
+    private val searchReferencesCb = NonFocusableCheckBox("Search r${UIUtil.MNEMONIC}eferences").apply { isSelected = true }
     private val openInEditorCb = NonFocusableCheckBox("Open moved files in editor")
     private val updatePackageDirectiveCb = NonFocusableCheckBox()
 
@@ -67,6 +67,9 @@ class KotlinAwareMoveFilesOrDirectoriesDialog(
 
     val updatePackageDirective: Boolean
         get() = updatePackageDirectiveCb.isSelected
+
+    val searchReferences: Boolean
+        get() = searchReferencesCb.isSelected
 
     override fun createActions() = arrayOf(okAction, cancelAction, helpAction)
 
@@ -85,13 +88,7 @@ class KotlinAwareMoveFilesOrDirectoriesDialog(
                                                      TextComponentAccessor.TEXT_FIELD_WITH_HISTORY_WHOLE_TEXT)
         val textField = targetDirectoryField.childComponent.textEditor
         FileChooserFactory.getInstance().installFileCompletion(textField, descriptor, true, disposable)
-        textField.document.addDocumentListener(
-                object : DocumentAdapter() {
-                    override fun textChanged(e: DocumentEvent) {
-                        validateOKButton()
-                    }
-                }
-        )
+        textField.onTextChange { validateOKButton() }
         targetDirectoryField.setTextFieldPreferredWidth(CopyFilesOrDirectoriesDialog.MAX_PATH_LENGTH)
         Disposer.register(disposable, targetDirectoryField)
 
@@ -102,6 +99,7 @@ class KotlinAwareMoveFilesOrDirectoriesDialog(
                 .addComponent(nameLabel)
                 .addLabeledComponent(RefactoringBundle.message("move.files.to.directory.label"), targetDirectoryField, UIUtil.LARGE_VGAP)
                 .addTooltip(RefactoringBundle.message("path.completion.shortcut", shortcutText))
+                .addComponentToRightColumn(searchReferencesCb, UIUtil.LARGE_VGAP)
                 .addComponentToRightColumn(openInEditorCb, UIUtil.LARGE_VGAP)
                 .addComponentToRightColumn(updatePackageDirectiveCb, UIUtil.LARGE_VGAP)
                 .panel
@@ -166,7 +164,12 @@ class KotlinAwareMoveFilesOrDirectoriesDialog(
 
         project.executeCommand(RefactoringBundle.message("move.title"), null) {
             runWriteAction {
-                val directoryName = targetDirectoryField.childComponent.text.replace(File.separatorChar, '/')
+                val directoryName = targetDirectoryField.childComponent.text.replace(File.separatorChar, '/').let {
+                    when {
+                        it.startsWith(".") -> (initialDirectory?.virtualFile?.path ?: "") + "/" + it
+                        else -> it
+                    }
+                }
                 try {
                     targetDirectory = DirectoryUtil.mkdirs(PsiManager.getInstance(project), directoryName)
                 }

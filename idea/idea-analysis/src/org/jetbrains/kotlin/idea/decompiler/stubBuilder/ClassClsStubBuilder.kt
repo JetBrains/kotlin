@@ -112,6 +112,7 @@ private class ClassClsStubBuilder(
             relevantFlags.add(INNER)
             relevantFlags.add(DATA)
             relevantFlags.add(MODALITY)
+            relevantFlags.add(INLINE_CLASS)
         }
         val additionalModifiers = when (classKind) {
             ProtoBuf.Class.Kind.ENUM_CLASS -> listOf(KtTokens.ENUM_KEYWORD)
@@ -247,20 +248,30 @@ private class ClassClsStubBuilder(
     }
 
     private fun createNestedClassStub(classBody: StubElement<out PsiElement>, nestedClassId: ClassId) {
-        val (nameResolver, classProto, sourceElement) =
-                c.components.classDataFinder.findClassData(nestedClassId)
-                        ?: c.components.virtualFileForDebug.let { rootFile ->
-                            LOG.error(
-                                "Could not find class data for nested class $nestedClassId of class ${nestedClassId.outerClassId}\n" +
-                                        "Root file: ${rootFile.canonicalPath}\n" +
-                                        "Dir: ${rootFile.parent.canonicalPath}\n" +
-                                        "Children:\n" +
-                                        rootFile.parent.children.sortedBy { it.name }.joinToString(separator = "\n") {
-                                            "${it.name} (valid: ${it.isValid})"
-                                        }
-                            )
-                            return
-                        }
+        val (nameResolver, classProto, _, sourceElement) =
+            c.components.classDataFinder.findClassData(nestedClassId)
+                ?: c.components.virtualFileForDebug.let { rootFile ->
+                    val outerClassId = nestedClassId.outerClassId
+                    val sortedChildren = rootFile.parent.children.sortedBy { it.name }
+                    val msgPrefix = "Could not find data for nested class $nestedClassId of class $outerClassId\n"
+                    val explanation = when {
+                        outerClassId != null && sortedChildren.none { it.name.startsWith("${outerClassId.relativeClassName}\$a") } ->
+                            // KT-29427: case with obfuscation
+                            "Reason: obfuscation suspected (single-letter name)\n"
+                        else ->
+                            // General case
+                            ""
+                    }
+                    val msg = msgPrefix + explanation +
+                            "Root file: ${rootFile.canonicalPath}\n" +
+                            "Dir: ${rootFile.parent.canonicalPath}\n" +
+                            "Children:\n" +
+                            sortedChildren.joinToString(separator = "\n") {
+                                "${it.name} (valid: ${it.isValid})"
+                            }
+                    LOG.info(msg)
+                    return
+                }
         createClassStub(classBody, classProto, nameResolver, nestedClassId, sourceElement, c)
     }
 

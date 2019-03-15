@@ -1,22 +1,12 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("AssertionsKt")
 @file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
+
 package kotlin.test
 
 import kotlin.internal.*
@@ -42,13 +32,22 @@ private fun <T : Throwable> assertFailsWithImpl(exceptionClass: Class<T>, messag
 }
 
 
-/** Asserts that a [block] fails with a specific exception of type [exceptionClass] being thrown. */
-actual fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, message: String?, block: () -> Unit): T = assertFailsWithImpl(exceptionClass.java, message, block)
+/**
+ * Asserts that a [block] fails with a specific exception of type [exceptionClass] being thrown.
+ *
+ * If the assertion fails, the specified [message] is used unless it is null as a prefix for the failure message.
+ *
+ * @return An exception of the expected exception type [T] that successfully caught.
+ * The returned exception can be inspected further, for example by asserting its property values.
+ */
+actual fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, message: String?, block: () -> Unit): T =
+    assertFailsWithImpl(exceptionClass.java, message, block)
 
 
 /**
- * Comments out a [block] of test code until it is implemented while keeping a link to the code
- * to implement in your unit test output
+ * Takes the given [block] of test code and _doesn't_ execute it.
+ *
+ * This keeps the code under test referenced, but doesn't actually test it until it is implemented.
  */
 @InlineOnly
 actual inline fun todo(@Suppress("UNUSED_PARAMETER") block: () -> Unit) {

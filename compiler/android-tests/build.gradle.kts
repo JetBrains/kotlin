@@ -1,6 +1,8 @@
 
-apply { plugin("kotlin") }
-apply { plugin("jps-compatible") }
+plugins {
+    kotlin("jvm")
+    id("jps-compatible")
+}
 
 jvmTarget = "1.6"
 
@@ -9,6 +11,8 @@ dependencies {
     compile(project(":compiler:cli"))
     compile(project(":compiler:frontend"))
     compile(project(":compiler:backend"))
+    compile(kotlinStdlib())
+    compile(project(":kotlin-reflect"))
     compile(projectTests(":compiler:tests-common"))
     compile(commonDep("junit:junit"))
     compileOnly(intellijDep()) { includeJars("openapi") }
@@ -30,8 +34,8 @@ sourceSets {
 }
 
 projectTest {
+    dependsOn(":dist")
     doFirst {
-        systemProperty("idea.home.path", intellijRootDir().canonicalPath)
         environment("kotlin.tests.android.timeout", "45")
     }
     workingDir = rootDir

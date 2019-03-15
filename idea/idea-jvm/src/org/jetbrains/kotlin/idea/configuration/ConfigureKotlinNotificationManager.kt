@@ -70,18 +70,27 @@ fun checkHideNonConfiguredNotifications(project: Project) {
         DumbService.getInstance(project).waitForSmartMode()
         val moduleSourceRootMap = ModuleSourceRootMap(project)
 
-        val hideNotification = try {
-            val moduleSourceRootGroups = notification.notificationState.notConfiguredModules
-                .mapNotNull { ModuleManager.getInstance(project).findModuleByName(it) }
-                .map { moduleSourceRootMap.getWholeModuleGroup(it) }
-            moduleSourceRootGroups.none(::isNotConfiguredNotificationRequired)
-        } catch (e: IndexNotReadyException) {
-            checkInProgress.set(false)
-            ApplicationManager.getApplication().invokeLater {
-                checkHideNonConfiguredNotifications(project)
-            }
-            return@executeOnPooledThread
+        if (notification.notificationState.debugProjectName != project.name) {
+            LOG.error("Bad notification check for project: ${project.name}\n${notification.notificationState}")
         }
+
+        val hideNotification =
+            if (!ApplicationManager.getApplication().isUnitTestMode) {
+                try {
+                    val moduleSourceRootGroups = notification.notificationState.notConfiguredModules
+                        .mapNotNull { ModuleManager.getInstance(project).findModuleByName(it) }
+                        .map { moduleSourceRootMap.getWholeModuleGroup(it) }
+                    moduleSourceRootGroups.none(::isNotConfiguredNotificationRequired)
+                } catch (e: IndexNotReadyException) {
+                    checkInProgress.set(false)
+                    ApplicationManager.getApplication().invokeLater {
+                        checkHideNonConfiguredNotifications(project)
+                    }
+                    return@executeOnPooledThread
+                }
+            } else {
+                true
+            }
 
         if (hideNotification) {
             ApplicationManager.getApplication().invokeLater {

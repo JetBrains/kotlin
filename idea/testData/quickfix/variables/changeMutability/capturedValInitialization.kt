@@ -1,4 +1,4 @@
-// "Make variable mutable" "true"
+// "Change to var" "true"
 fun exec(f: () -> Unit) = f()
 
 fun foo() {

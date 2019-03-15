@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.debugger.safeAllLineLocations
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
@@ -96,25 +97,25 @@ class KotlinFieldBreakpoint(
         return null
     }
 
-    override fun reload(psiFile: PsiFile?) {
-        val property = getProperty(sourcePosition)
-        if (property != null) {
-            setFieldName(property.name!!)
+    override fun reload() {
+        super.reload()
 
-            if (property is KtProperty && property.isTopLevel) {
-                properties.myClassName = JvmFileClassUtil.getFileClassInfoNoResolve(property.getContainingKtFile()).fileClassFqName.asString()
-            }
-            else {
-                val ktClass: KtClassOrObject? = PsiTreeUtil.getParentOfType(property, KtClassOrObject::class.java)
-                if (ktClass is KtClassOrObject) {
-                    val fqName = ktClass.fqName
-                    if (fqName != null) {
-                        properties.myClassName = fqName.asString()
-                    }
+        val property = getProperty(sourcePosition) ?: return
+        val propertyName = property.name ?: return
+        setFieldName(propertyName)
+
+        if (property is KtProperty && property.isTopLevel) {
+            properties.myClassName = JvmFileClassUtil.getFileClassInfoNoResolve(property.getContainingKtFile()).fileClassFqName.asString()
+        } else {
+            val ktClass: KtClassOrObject? = PsiTreeUtil.getParentOfType(property, KtClassOrObject::class.java)
+            if (ktClass is KtClassOrObject) {
+                val fqName = ktClass.fqName
+                if (fqName != null) {
+                    properties.myClassName = fqName.asString()
                 }
             }
-            isInstanceFiltersEnabled = false
         }
+        isInstanceFiltersEnabled = false
     }
 
     override fun createRequestForPreparedClass(debugProcess: DebugProcessImpl?, refType: ReferenceType?) {
@@ -211,7 +212,7 @@ class KotlinFieldBreakpoint(
 
     private fun createMethodBreakpoint(debugProcess: DebugProcessImpl, refType: ReferenceType, accessor: Method) {
         val manager = debugProcess.requestsManager
-        val line = accessor.allLineLocations().firstOrNull()
+        val line = accessor.safeAllLineLocations().firstOrNull()
         if (line != null) {
             val request = manager.createBreakpointRequest(this, line)
             debugProcess.requestsManager.enableRequest(request)

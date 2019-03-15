@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.jps.build
 
 import com.intellij.testFramework.UsefulTestCase
-import com.intellij.util.containers.HashMap
 import com.intellij.util.containers.StringInterner
 import org.jetbrains.kotlin.TestWithWorkingDir
 import org.jetbrains.kotlin.build.JvmSourceRoot
@@ -40,9 +39,10 @@ import org.jetbrains.kotlin.incremental.testingUtils.TouchPolicy
 import org.jetbrains.kotlin.incremental.testingUtils.copyTestSources
 import org.jetbrains.kotlin.incremental.testingUtils.getModificationsToPerform
 import org.jetbrains.kotlin.incremental.utils.TestMessageCollector
-import org.jetbrains.kotlin.jps.incremental.runJSCompiler
 import org.jetbrains.kotlin.jps.incremental.createTestingCompilerEnvironment
+import org.jetbrains.kotlin.jps.incremental.runJSCompiler
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.utils.JsMetadataVersion
 import java.io.*
 import java.util.*
 
@@ -77,13 +77,14 @@ abstract class AbstractJvmLookupTrackerTest : AbstractLookupTrackerTest() {
 
     override fun runCompiler(filesToCompile: Iterable<File>, env: JpsCompilerEnvironment): Any? {
         val moduleFile = makeModuleFile(
-                name = "test",
-                isTest = true,
-                outputDir = outDir,
-                sourcesToCompile = filesToCompile.toList(),
-                javaSourceRoots = listOf(JvmSourceRoot(srcDir, null)),
-                classpath = listOf(outDir, ForTestCompileRuntime.runtimeJarForTests()).filter { it.exists() },
-                friendDirs = emptyList()
+            name = "test",
+            isTest = true,
+            outputDir = outDir,
+            sourcesToCompile = filesToCompile.toList(),
+            commonSources = emptyList(),
+            javaSourceRoots = listOf(JvmSourceRoot(srcDir, null)),
+            classpath = listOf(outDir, ForTestCompileRuntime.runtimeJarForTests()).filter { it.exists() },
+            friendDirs = emptyList()
         )
 
         val args = K2JVMCompilerArguments().apply {
@@ -119,7 +120,10 @@ abstract class AbstractJsLookupTrackerTest : AbstractLookupTrackerTest() {
 
     override fun Services.Builder.registerAdditionalServices() {
         if (header != null) {
-            register(IncrementalDataProvider::class.java, IncrementalDataProviderImpl(header!!, packageParts!!))
+            register(
+                IncrementalDataProvider::class.java,
+                IncrementalDataProviderImpl(header!!, packageParts, JsMetadataVersion.INSTANCE.toArray())
+            )
         }
 
         register(IncrementalResultsConsumer::class.java, IncrementalResultsConsumerImpl())
@@ -159,12 +163,12 @@ abstract class AbstractLookupTrackerTest : TestWithWorkingDir() {
         super.setUp()
         srcDir = File(workingDir, "src").apply { mkdirs() }
         outDir = File(workingDir, "out")
-        isICEnabledBackup = IncrementalCompilation.isEnabled()
-        IncrementalCompilation.setIsEnabled(true)
+        isICEnabledBackup = IncrementalCompilation.isEnabledForJvm()
+        IncrementalCompilation.setIsEnabledForJvm(true)
     }
 
     override fun tearDown() {
-        IncrementalCompilation.setIsEnabled(isICEnabledBackup)
+        IncrementalCompilation.setIsEnabledForJvm(isICEnabledBackup)
         super.tearDown()
     }
 
@@ -200,7 +204,7 @@ abstract class AbstractLookupTrackerTest : TestWithWorkingDir() {
 
         val testDir = File(path)
         val workToOriginalFileMap = HashMap(copyTestSources(testDir, srcDir, filePrefix = ""))
-        var dirtyFiles = srcDir.walk().filterTo(HashSet()) { it.isKotlinFile() }
+        var dirtyFiles = srcDir.walk().filterTo(HashSet()) { it.isKotlinFile(listOf("kt", "kts")) }
         val steps = getModificationsToPerform(testDir, moduleNames = null, allowNoFilesWithSuffixInTestData = true, touchPolicy = TouchPolicy.CHECKSUM)
                 .filter { it.isNotEmpty() }
 

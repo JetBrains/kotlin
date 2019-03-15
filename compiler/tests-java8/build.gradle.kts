@@ -1,13 +1,15 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-apply { plugin("kotlin") }
-apply { plugin("jps-compatible") }
+plugins {
+    kotlin("jvm")
+    id("jps-compatible")
+}
 
 dependencies {
     testCompile(projectTests(":compiler:tests-common"))
-    testCompile(intellijCoreDep()) { includeJars("intellij-core") }
+    testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     testCompile(projectTests(":generators:test-generator"))
-    testRuntime(projectDist(":kotlin-reflect"))
+    testRuntime(project(":kotlin-reflect"))
     testRuntime(intellijDep())
 }
 
@@ -25,7 +27,8 @@ projectTest {
     executable = "${rootProject.extra["JDK_18"]!!}/bin/java"
     dependsOn(":dist")
     workingDir = rootDir
-    systemProperty("kotlin.test.script.classpath", the<JavaPluginConvention>().sourceSets.getByName("test").output.classesDirs.joinToString(File.pathSeparator))
+    systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
+    systemProperty("idea.home.path", intellijRootDir().canonicalPath)
 }
 
 val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateJava8TestsKt")

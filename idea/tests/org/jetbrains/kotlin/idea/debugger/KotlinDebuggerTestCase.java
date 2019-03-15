@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.debugger;
@@ -41,11 +30,15 @@ import com.intellij.testFramework.EdtTestUtil;
 import com.intellij.testFramework.IdeaTestUtil;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.xdebugger.XDebugSession;
+import kotlin.Unit;
+import kotlin.collections.CollectionsKt;
 import kotlin.io.FilesKt;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.asJava.classes.FakeLightClassForFileOfPackage;
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
+import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JvmCompilerArgumentsHolder;
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
@@ -89,6 +82,9 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
     protected static final String KOTLIN_LIBRARY_NAME = "KotlinLibrary";
     private static final String CUSTOM_LIBRARY_NAME = "CustomLibrary";
 
+    @Nullable
+    private String oldJvmTarget = null;
+
     @Override
     protected OutputChecker initOutputChecker() {
         return new KotlinOutputChecker(
@@ -128,36 +124,12 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
             NoStrataPositionManagerHelperKt.setEmulateDexDebugInTests(true);
         }
         super.setUp();
-    }
 
-    @Override
-    protected void runTest() throws Throwable {
-        super.runTest();
-        if(getDebugProcess() != null) {
-            getDebugProcess().getProcessHandler().startNotify();
-            waitProcess(getDebugProcess().getProcessHandler());
-            waitForCompleted();
-            //disposeSession(myDebuggerSession);
-            assertNull(DebuggerManagerEx.getInstanceEx(myProject).getDebugProcess(getDebugProcess().getProcessHandler()));
-            myDebuggerSession = null;
-        }
-
-        if (getChecker().contains("JVMTI_ERROR_WRONG_PHASE(112)")) {
-            myRestart.incrementAndGet();
-            if (needsRestart()) {
-                return;
-            }
-        } else {
-            myRestart.set(0);
-        }
-
-        throwExceptionsIfAny();
-        checkTestOutput();
-    }
-
-    private boolean needsRestart() {
-        int restart = myRestart.get();
-        return restart > 0 && restart <= 3;
+        Kotlin2JvmCompilerArgumentsHolder.Companion.getInstance(myProject).update(s -> {
+            oldJvmTarget = s.getJvmTarget();
+            s.setJvmTarget("1.8");
+            return Unit.INSTANCE;
+        });
     }
 
     private static void deleteLocalCacheDirectory(boolean assertDeleteSuccess) {
@@ -245,6 +217,11 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
 
     @Override
     protected void tearDown() throws Exception {
+        Kotlin2JvmCompilerArgumentsHolder.Companion.getInstance(myProject).update(s -> {
+            s.setJvmTarget(oldJvmTarget);
+            return Unit.INSTANCE;
+        });
+
         if (DexLikeBytecodePatchKt.needDexPatch(getTestName(true))) {
             NoStrataPositionManagerHelperKt.setEmulateDexDebugInTests(false);
         }
@@ -255,7 +232,7 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
         });
 
         super.tearDown();
-        VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory());
+        VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory());
     }
 
     @SuppressWarnings("AssignmentToStaticFieldFromInstanceMethod")
@@ -263,7 +240,7 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
     protected void setUpModule() {
         super.setUpModule();
 
-        IdeaTestUtil.setModuleLanguageLevel(myModule, LanguageLevel.JDK_1_6);
+        IdeaTestUtil.setModuleLanguageLevel(myModule, LanguageLevel.JDK_1_8);
 
         String outputDirPath = getAppOutputPath();
         File outDir = new File(outputDirPath);
@@ -279,10 +256,13 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
 
                 String sourcesDir = modulePath + File.separator + "src";
 
-                MockLibraryUtil.compileKotlin(sourcesDir, outDir, CUSTOM_LIBRARY_JAR.getPath());
+                MockLibraryUtil.compileKotlin(sourcesDir, outDir, CollectionsKt.listOf("-jvm-target", "1.8"), CUSTOM_LIBRARY_JAR.getPath());
 
                 List<String> options =
-                        Arrays.asList("-d", outputDirPath, "-classpath", ForTestCompileRuntime.runtimeJarForTests().getPath(), "-g");
+                        Arrays.asList("-d", outputDirPath, "-classpath",
+                                      ForTestCompileRuntime.runtimeJarForTests().getPath() + File.pathSeparator +
+                                      ForTestCompileRuntime.jetbrainsAnnotationsForTests().getPath(),
+                                      "-g");
                 KotlinTestUtils.compileJavaFiles(findJavaFiles(new File(sourcesDir)), options);
 
                 DexLikeBytecodePatchKt.patchDexTests(outDir);

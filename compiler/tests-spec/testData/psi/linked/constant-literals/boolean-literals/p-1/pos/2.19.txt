@@ -1,0 +1,66 @@
+KtFile: 2.19.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    IMPORT_DIRECTIVE
+      PsiElement(import)('import')
+      PsiWhiteSpace(' ')
+      DOT_QUALIFIED_EXPRESSION
+        DOT_QUALIFIED_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('org')
+          PsiElement(DOT)('.')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('jetbrains')
+        PsiElement(DOT)('.')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('`true`')
+      PsiElement(DOT)('.')
+      PsiElement(MUL)('*')
+    PsiWhiteSpace('\n\n')
+    IMPORT_DIRECTIVE
+      PsiElement(import)('import')
+      PsiWhiteSpace(' ')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('`false`')
+    PsiWhiteSpace('\n\n')
+    IMPORT_DIRECTIVE
+      PsiElement(import)('import')
+      PsiWhiteSpace(' ')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('`true`')
+      PsiElement(DOT)('.')
+      PsiElement(MUL)('*')
+      PsiElement(SEMICOLON)(';')
+    PsiWhiteSpace('\n\n')
+    IMPORT_DIRECTIVE
+      PsiElement(import)('import')
+      PsiWhiteSpace(' ')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('`false`')
+      PsiElement(DOT)('.')
+      PsiElement(MUL)('*')
+    IMPORT_DIRECTIVE
+      PsiElement(import)('import')
+      PsiWhiteSpace(' ')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('`true`')
+    PsiWhiteSpace('\n\n')
+    IMPORT_DIRECTIVE
+      PsiElement(import)('import')
+      PsiWhiteSpace(' ')
+      DOT_QUALIFIED_EXPRESSION
+        DOT_QUALIFIED_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('org')
+          PsiElement(DOT)('.')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('jetbrains')
+        PsiElement(DOT)('.')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('kotlin')
+      PsiWhiteSpace(' ')
+      IMPORT_ALIAS
+        PsiElement(as)('as')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('`false`')

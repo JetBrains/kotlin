@@ -38,9 +38,10 @@ class JavacWrapperKotlinResolverImpl(private val lightClassGenerationSupport: Li
             return supersCache[classOrObject]!!
         }
 
-        val classDescriptor = lightClassGenerationSupport.analyze(classOrObject).get(BindingContext.CLASS, classOrObject) ?: return emptyList()
+        val classDescriptor =
+            lightClassGenerationSupport.analyze(classOrObject).get(BindingContext.CLASS, classOrObject) ?: return emptyList()
         val classIds = classDescriptor.defaultType.constructor.supertypes
-                .mapNotNull { (it.constructor.declarationDescriptor as? ClassDescriptor)?.classId }
+            .mapNotNull { (it.constructor.declarationDescriptor as? ClassDescriptor)?.classId }
         supersCache[classOrObject] = classIds
 
         return classIds
@@ -49,12 +50,12 @@ class JavacWrapperKotlinResolverImpl(private val lightClassGenerationSupport: Li
     override fun findField(classOrObject: KtClassOrObject, name: String): JavaField? {
         val lightClass = classOrObject.toLightClass() ?: return null
 
-        return lightClass.allFields.find { it.name == name}?.let(::MockKotlinField)
+        return lightClass.allFields.find { it.name == name }?.let(::MockKotlinField)
     }
 
     override fun findField(ktFile: KtFile?, name: String): JavaField? {
         val lightClass = ktFile?.findFacadeClass() ?: return null
 
-        return lightClass.allFields.find { it.name == name}?.let(::MockKotlinField)
+        return lightClass.allFields.find { it.name == name }?.let(::MockKotlinField)
     }
 }

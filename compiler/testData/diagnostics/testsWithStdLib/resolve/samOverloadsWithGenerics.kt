@@ -1,5 +1,6 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // !CHECK_TYPE
+// !WITH_NEW_INFERENCE
 
 // FILE: Foo.java
 import kotlin.Unit;
@@ -19,6 +20,6 @@ class Foo {
 
 // FILE: 1.kt
 fun test() {
-    Foo().foo {} checkType { _<Int>() }
+    Foo().<!NI;OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!> {} <!NI;DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>checkType<!> { <!NI;UNRESOLVED_REFERENCE!>_<!><Int>() }
     Foo().bar {} checkType { _<String>() }
 }

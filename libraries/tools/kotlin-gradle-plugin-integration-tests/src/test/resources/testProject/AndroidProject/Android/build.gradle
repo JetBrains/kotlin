@@ -1,3 +1,5 @@
+import org.gradle.util.VersionNumber
+
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
@@ -35,6 +37,8 @@ android {
     kotlinOptions {
         noJdk = true
     }
+
+    lintOptions.abortOnError = false
 }
 
 if (VersionNumber.parse(android_tools_version) < VersionNumber.parse("3.0.0-alpha1")) {

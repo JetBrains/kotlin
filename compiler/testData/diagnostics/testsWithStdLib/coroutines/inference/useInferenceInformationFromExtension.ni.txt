@@ -1,0 +1,26 @@
+package
+
+public val extension: kotlin.collections.List<kotlin.String>
+public val normal: kotlin.collections.List<kotlin.Int>
+public val safeExtension: kotlin.collections.List<kotlin.String>
+public fun </*0*/ S> generate(/*0*/ @kotlin.BuilderInference g: suspend GenericController<S>.() -> kotlin.Unit): kotlin.collections.List<S>
+public suspend fun </*0*/ S> GenericController<S>.extensionYield(/*0*/ s: S): kotlin.Unit
+@kotlin.BuilderInference public suspend fun </*0*/ S> GenericController<S>.safeExtensionYield(/*0*/ s: S): kotlin.Unit
+
+public final class GenericController</*0*/ T> {
+    public constructor GenericController</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public final suspend fun yield(/*0*/ t: T): kotlin.Unit
+}
+
+package kotlin {
+
+    public final annotation class BuilderInference : kotlin.Annotation {
+        public constructor BuilderInference()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

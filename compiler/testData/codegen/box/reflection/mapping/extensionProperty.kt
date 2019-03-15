@@ -1,5 +1,5 @@
-// TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS, NATIVE
+// IGNORE_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 
 // WITH_REFLECT
 
@@ -14,14 +14,16 @@ var K.ext: Double
         this.value = value.toLong()
     }
 
+val fileFacadeClass = object {}::class.java.enclosingClass
+
 fun box(): String {
     val p = K::ext
 
     val getter = p.javaGetter!!
     val setter = p.javaSetter!!
 
-    assertEquals(getter, Class.forName("ExtensionPropertyKt").getMethod("getExt", K::class.java))
-    assertEquals(setter, Class.forName("ExtensionPropertyKt").getMethod("setExt", K::class.java, Double::class.java))
+    assertEquals(getter, fileFacadeClass.getMethod("getExt", K::class.java))
+    assertEquals(setter, fileFacadeClass.getMethod("setExt", K::class.java, Double::class.java))
 
     val k = K(42L)
     assert(getter.invoke(null, k) == 42.0) { "Fail k getter" }

@@ -20,12 +20,13 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.uast.*
+import org.jetbrains.uast.kotlin.internal.DelegatedMultiResolve
 
 class KotlinUNamedExpression private constructor(
-        override val name: String?,
-        override val sourcePsi: PsiElement?,
-        givenParent: UElement?,
-        expressionProducer: (UElement) -> UExpression
+    override val name: String?,
+    override val sourcePsi: PsiElement?,
+    givenParent: UElement?,
+    expressionProducer: (UElement) -> UExpression
 ) : KotlinAbstractUElement(givenParent), UNamedExpression {
 
     override val expression: UExpression by lz { expressionProducer(this) }
@@ -40,22 +41,27 @@ class KotlinUNamedExpression private constructor(
         internal fun create(name: String?, valueArgument: ValueArgument, uastParent: UElement?): UNamedExpression {
             val expression = valueArgument.getArgumentExpression()
             return KotlinUNamedExpression(name, valueArgument.asElement(), uastParent) { expressionParent ->
-                expression?.let { expressionParent.getLanguagePlugin().convert<UExpression>(it, expressionParent) } ?: UastEmptyExpression
+                expression?.let { expressionParent.getLanguagePlugin().convertOpt<UExpression>(it, expressionParent) }
+                    ?: UastEmptyExpression(expressionParent)
             }
         }
 
         internal fun create(
-                name: String?,
-                valueArguments: List<ValueArgument>,
-                uastParent: UElement?): UNamedExpression {
+            name: String?,
+            valueArguments: List<ValueArgument>,
+            uastParent: UElement?
+        ): UNamedExpression {
             return KotlinUNamedExpression(name, null, uastParent) { expressionParent ->
                 KotlinUVarargExpression(valueArguments, expressionParent)
             }
         }
     }
 }
-class KotlinUVarargExpression(private val valueArgs: List<ValueArgument>,
-                              uastParent: UElement?) : KotlinAbstractUExpression(uastParent), UCallExpression {
+
+class KotlinUVarargExpression(
+    private val valueArgs: List<ValueArgument>,
+    uastParent: UElement?
+) : KotlinAbstractUExpression(uastParent), UCallExpressionEx, DelegatedMultiResolve {
     override val kind: UastCallKind = UastCallKind.NESTED_ARRAY_INITIALIZER
 
     override val valueArguments: List<UExpression> by lz {
@@ -65,6 +71,8 @@ class KotlinUVarargExpression(private val valueArgs: List<ValueArgument>,
             } ?: UastEmptyExpression
         }
     }
+
+    override fun getArgumentForParameter(i: Int): UExpression? = valueArguments.getOrNull(i)
 
     override val valueArgumentCount: Int
         get() = valueArgs.size

@@ -44,8 +44,7 @@ class AutomaticInheritorRenamer(klass: KtClass, newName: String): AutomaticRenam
 
     override fun getDialogTitle() = RefactoringBundle.message("rename.inheritors.title")
     override fun getDialogDescription() = RefactoringBundle.message("rename.inheritors.with.the.following.names.to")
-    override fun entityName() = RefactoringBundle.message("entity.name.inheritor")
-}
+    override fun entityName() = RefactoringBundle.message("entity.name.inheritor")}
 
 class AutomaticInheritorRenamerFactory : AutomaticRenamerFactory {
     override fun isApplicable(element: PsiElement) = element is KtClass

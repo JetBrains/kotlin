@@ -1,7 +1,9 @@
+// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 // WITH_COROUTINES
+// COMMON_COROUTINES_TEST
 import helpers.*
-import kotlin.coroutines.experimental.*
+import COROUTINES_PACKAGE.*
 
 inline fun inlinedLambda(block: () -> Unit) {
     return block()

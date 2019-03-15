@@ -1,0 +1,2 @@
+public final class FakeStaticOverrides : R|java/lang/Object| {
+}

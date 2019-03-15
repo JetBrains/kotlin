@@ -1,7 +1,7 @@
 
-// INSPECTION_CLASS: org.jetbrains.android.inspections.klint.AndroidLintInspectionToolProvider$AndroidKLintNewApiInspection
-// INSPECTION_CLASS2: org.jetbrains.android.inspections.klint.AndroidLintInspectionToolProvider$AndroidKLintInlinedApiInspection
-// INSPECTION_CLASS3: org.jetbrains.android.inspections.klint.AndroidLintInspectionToolProvider$AndroidKLintOverrideInspection
+// INSPECTION_CLASS: com.android.tools.idea.lint.AndroidLintNewApiInspection
+// INSPECTION_CLASS2: com.android.tools.idea.lint.AndroidLintInlinedApiInspection
+// INSPECTION_CLASS3: com.android.tools.idea.lint.AndroidLintOverrideInspection
 
 import android.animation.RectEvaluator
 import android.annotation.SuppressLint
@@ -42,7 +42,7 @@ class ApiCallTest: Activity() {
         // Ok
         Bundle().getInt("")
 
-        View.<warning descr="Field requires API level 16 (current min is 1): `android.view.View#SYSTEM_UI_FLAG_FULLSCREEN`">SYSTEM_UI_FLAG_FULLSCREEN</warning>
+        <warning descr="Field requires API level 16 (current min is 1): `android.view.View#SYSTEM_UI_FLAG_FULLSCREEN`">View.SYSTEM_UI_FLAG_FULLSCREEN</warning>
 
         // Virtual call
         <error descr="Call requires API level 11 (current min is 1): android.app.Activity#getActionBar">getActionBar</error>() // API 11
@@ -50,7 +50,7 @@ class ApiCallTest: Activity() {
 
         // Class references (no call or field access)
         val error: DOMError? = null // API 8
-        val clz = <error descr="Class requires API level 8 (current min is 1): org.w3c.dom.DOMErrorHandler">DOMErrorHandler::class</error> // API 8
+        val clz = DOMErrorHandler::class // API 8
 
         // Method call
         chronometer.<error descr="Call requires API level 3 (current min is 1): android.widget.Chronometer#getOnChronometerTickListener">onChronometerTickListener</error> // API 3
@@ -58,21 +58,21 @@ class ApiCallTest: Activity() {
         // Inherited method call (from TextView
         chronometer.<error descr="Call requires API level 11 (current min is 1): android.widget.TextView#setTextIsSelectable">setTextIsSelectable</error>(true) // API 11
 
-        <error descr="Class requires API level 14 (current min is 1): android.widget.GridLayout">GridLayout::class</error>
+        GridLayout::class
 
         // Field access
-        val field = OpcodeInfo.<warning descr="Field requires API level 11 (current min is 1): `dalvik.bytecode.OpcodeInfo#MAXIMUM_VALUE`">MAXIMUM_VALUE</warning> // API 11
+        val field = <warning descr="Field requires API level 11 (current min is 1): `dalvik.bytecode.OpcodeInfo#MAXIMUM_VALUE`">OpcodeInfo.MAXIMUM_VALUE</warning> // API 11
 
 
         val fillParent = LayoutParams.FILL_PARENT // API 1
         // This is a final int, which means it gets inlined
         val matchParent = LayoutParams.MATCH_PARENT // API 8
         // Field access: non final
-        val batteryInfo = report!!.<error descr="Field requires API level 14 (current min is 1): `android.app.ApplicationErrorReport#batteryInfo`">batteryInfo</error>
+        val batteryInfo = <error descr="Field requires API level 14 (current min is 1): `android.app.ApplicationErrorReport#batteryInfo`">report!!.batteryInfo</error>
 
         // Enum access
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP) {
-            val mode = PorterDuff.Mode.<error descr="Field requires API level 11 (current min is 1): `android.graphics.PorterDuff.Mode#OVERLAY`">OVERLAY</error> // API 11
+            val mode = <error descr="Field requires API level 11 (current min is 1): `android.graphics.PorterDuff.Mode#OVERLAY`">PorterDuff.Mode.OVERLAY</error> // API 11
         }
     }
 
@@ -95,7 +95,7 @@ class ApiCallTest: Activity() {
 
     fun test3(rect: Rect) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-            <error descr="Call requires API level 18 (current min is 1): android.animation.RectEvaluator#RectEvaluator">RectEvaluator</error>(); // ERROR
+            <error descr="Call requires API level 18 (current min is 1): new android.animation.RectEvaluator">RectEvaluator()</error>; // ERROR
         }
     }
 
@@ -104,15 +104,15 @@ class ApiCallTest: Activity() {
             System.out.println("Something");
             RectEvaluator(rect); // OK
         } else {
-            <error descr="Call requires API level 21 (current min is 1): android.animation.RectEvaluator#RectEvaluator">RectEvaluator</error>(rect); // ERROR
+            <error descr="Call requires API level 21 (current min is 1): new android.animation.RectEvaluator">RectEvaluator(rect)</error>; // ERROR
         }
     }
 
     fun test5(rect: Rect) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.CUPCAKE) {
-            <error descr="Call requires API level 21 (current min is 1): android.animation.RectEvaluator#RectEvaluator">RectEvaluator</error>(rect); // ERROR
+            <error descr="Call requires API level 21 (current min is 1): new android.animation.RectEvaluator">RectEvaluator(rect)</error>; // ERROR
         } else {
-            <error descr="Call requires API level 21 (current min is 1): android.animation.RectEvaluator#RectEvaluator">RectEvaluator</error>(rect); // ERROR
+            <error descr="Call requires API level 21 (current min is 1): new android.animation.RectEvaluator">RectEvaluator(rect)</error>; // ERROR
         }
     }
 
@@ -120,29 +120,29 @@ class ApiCallTest: Activity() {
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
             GridLayout(null).getOrientation(); // Not flagged
         } else {
-            <error descr="Call requires API level 14 (current min is 1): android.widget.GridLayout#GridLayout">GridLayout</error>(null).<error descr="Call requires API level 14 (current min is 1): android.widget.GridLayout#getOrientation">getOrientation</error>(); // Flagged
+            <error descr="Call requires API level 14 (current min is 1): new android.widget.GridLayout">GridLayout(null)</error>.<error descr="Call requires API level 14 (current min is 1): android.widget.GridLayout#getOrientation">getOrientation</error>(); // Flagged
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
             GridLayout(null).getOrientation(); // Not flagged
         } else {
-            <error descr="Call requires API level 14 (current min is 1): android.widget.GridLayout#GridLayout">GridLayout</error>(null).<error descr="Call requires API level 14 (current min is 1): android.widget.GridLayout#getOrientation">getOrientation</error>(); // Flagged
+            <error descr="Call requires API level 14 (current min is 1): new android.widget.GridLayout">GridLayout(null)</error>.<error descr="Call requires API level 14 (current min is 1): android.widget.GridLayout#getOrientation">getOrientation</error>(); // Flagged
         }
 
         if (SDK_INT >= ICE_CREAM_SANDWICH) {
             GridLayout(null).getOrientation(); // Not flagged
         } else {
-            <error descr="Call requires API level 14 (current min is 1): android.widget.GridLayout#GridLayout">GridLayout</error>(null).<error descr="Call requires API level 14 (current min is 1): android.widget.GridLayout#getOrientation">getOrientation</error>(); // Flagged
+            <error descr="Call requires API level 14 (current min is 1): new android.widget.GridLayout">GridLayout(null)</error>.<error descr="Call requires API level 14 (current min is 1): android.widget.GridLayout#getOrientation">getOrientation</error>(); // Flagged
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
             GridLayout(null).getOrientation(); // Not flagged
         } else {
-            <error descr="Call requires API level 14 (current min is 1): android.widget.GridLayout#GridLayout">GridLayout</error>(null).<error descr="Call requires API level 14 (current min is 1): android.widget.GridLayout#getOrientation">getOrientation</error>(); // Flagged
+            <error descr="Call requires API level 14 (current min is 1): new android.widget.GridLayout">GridLayout(null)</error>.<error descr="Call requires API level 14 (current min is 1): android.widget.GridLayout#getOrientation">getOrientation</error>(); // Flagged
         }
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-            <error descr="Call requires API level 14 (current min is 1): android.widget.GridLayout#GridLayout">GridLayout</error>(null).<error descr="Call requires API level 14 (current min is 1): android.widget.GridLayout#getOrientation">getOrientation</error>(); // Flagged
+            <error descr="Call requires API level 14 (current min is 1): new android.widget.GridLayout">GridLayout(null)</error>.<error descr="Call requires API level 14 (current min is 1): android.widget.GridLayout#getOrientation">getOrientation</error>(); // Flagged
         } else {
             GridLayout(null).getOrientation(); // Not flagged
         }
@@ -150,24 +150,24 @@ class ApiCallTest: Activity() {
         if (Build.VERSION.SDK_INT >= 14) {
             GridLayout(null).getOrientation(); // Not flagged
         } else {
-            <error descr="Call requires API level 14 (current min is 1): android.widget.GridLayout#GridLayout">GridLayout</error>(null).<error descr="Call requires API level 14 (current min is 1): android.widget.GridLayout#getOrientation">getOrientation</error>(); // Flagged
+            <error descr="Call requires API level 14 (current min is 1): new android.widget.GridLayout">GridLayout(null)</error>.<error descr="Call requires API level 14 (current min is 1): android.widget.GridLayout#getOrientation">getOrientation</error>(); // Flagged
         }
 
         if (VERSION.SDK_INT >= VERSION_CODES.ICE_CREAM_SANDWICH) {
             GridLayout(null).getOrientation(); // Not flagged
         } else {
-            <error descr="Call requires API level 14 (current min is 1): android.widget.GridLayout#GridLayout">GridLayout</error>(null).<error descr="Call requires API level 14 (current min is 1): android.widget.GridLayout#getOrientation">getOrientation</error>(); // Flagged
+            <error descr="Call requires API level 14 (current min is 1): new android.widget.GridLayout">GridLayout(null)</error>.<error descr="Call requires API level 14 (current min is 1): android.widget.GridLayout#getOrientation">getOrientation</error>(); // Flagged
         }
 
         // Nested conditionals
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             if (priority) {
-                <error descr="Call requires API level 14 (current min is 1): android.widget.GridLayout#GridLayout">GridLayout</error>(null).<error descr="Call requires API level 14 (current min is 1): android.widget.GridLayout#getOrientation">getOrientation</error>(); // Flagged
+                <error descr="Call requires API level 14 (current min is 1): new android.widget.GridLayout">GridLayout(null)</error>.<error descr="Call requires API level 14 (current min is 1): android.widget.GridLayout#getOrientation">getOrientation</error>(); // Flagged
             } else {
-                <error descr="Call requires API level 14 (current min is 1): android.widget.GridLayout#GridLayout">GridLayout</error>(null).<error descr="Call requires API level 14 (current min is 1): android.widget.GridLayout#getOrientation">getOrientation</error>(); // Flagged
+                <error descr="Call requires API level 14 (current min is 1): new android.widget.GridLayout">GridLayout(null)</error>.<error descr="Call requires API level 14 (current min is 1): android.widget.GridLayout#getOrientation">getOrientation</error>(); // Flagged
             }
         } else {
-            <error descr="Call requires API level 14 (current min is 1): android.widget.GridLayout#GridLayout">GridLayout</error>(null).<error descr="Call requires API level 14 (current min is 1): android.widget.GridLayout#getOrientation">getOrientation</error>(); // Flagged
+            <error descr="Call requires API level 14 (current min is 1): new android.widget.GridLayout">GridLayout(null)</error>.<error descr="Call requires API level 14 (current min is 1): android.widget.GridLayout#getOrientation">getOrientation</error>(); // Flagged
         }
 
         // Nested conditionals 2
@@ -178,7 +178,7 @@ class ApiCallTest: Activity() {
                 GridLayout(null).getOrientation(); // Not flagged
             }
         } else {
-            <error descr="Call requires API level 14 (current min is 1): android.widget.GridLayout#GridLayout">GridLayout</error>(null); // Flagged
+            <error descr="Call requires API level 14 (current min is 1): new android.widget.GridLayout">GridLayout(null)</error>; // Flagged
         }
     }
 
@@ -186,41 +186,41 @@ class ApiCallTest: Activity() {
         if (android.os.Build.VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
             GridLayout(null).getOrientation(); // Not flagged
         } else {
-            <error descr="Call requires API level 14 (current min is 1): android.widget.GridLayout#GridLayout">GridLayout</error>(null); // Flagged
+            <error descr="Call requires API level 14 (current min is 1): new android.widget.GridLayout">GridLayout(null)</error>; // Flagged
         }
 
         if (android.os.Build.VERSION.SDK_INT >= 16) {
             GridLayout(null).getOrientation(); // Not flagged
         } else {
-            <error descr="Call requires API level 14 (current min is 1): android.widget.GridLayout#GridLayout">GridLayout</error>(null); // Flagged
+            <error descr="Call requires API level 14 (current min is 1): new android.widget.GridLayout">GridLayout(null)</error>; // Flagged
         }
 
         if (android.os.Build.VERSION.SDK_INT >= 13) {
-            <error descr="Call requires API level 14 (current min is 1): android.widget.GridLayout#GridLayout">GridLayout</error>(null).<error descr="Call requires API level 14 (current min is 1): android.widget.GridLayout#getOrientation">getOrientation</error>(); // Flagged
+            <error descr="Call requires API level 14 (current min is 1): new android.widget.GridLayout">GridLayout(null)</error>.<error descr="Call requires API level 14 (current min is 1): android.widget.GridLayout#getOrientation">getOrientation</error>(); // Flagged
         } else {
-            <error descr="Call requires API level 14 (current min is 1): android.widget.GridLayout#GridLayout">GridLayout</error>(null); // Flagged
+            <error descr="Call requires API level 14 (current min is 1): new android.widget.GridLayout">GridLayout(null)</error>; // Flagged
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             GridLayout(null).getOrientation(); // Not flagged
         } else {
-            <error descr="Call requires API level 14 (current min is 1): android.widget.GridLayout#GridLayout">GridLayout</error>(null); // Flagged
+            <error descr="Call requires API level 14 (current min is 1): new android.widget.GridLayout">GridLayout(null)</error>; // Flagged
         }
 
         if (SDK_INT >= JELLY_BEAN) {
             GridLayout(null).getOrientation(); // Not flagged
         } else {
-            <error descr="Call requires API level 14 (current min is 1): android.widget.GridLayout#GridLayout">GridLayout</error>(null); // Flagged
+            <error descr="Call requires API level 14 (current min is 1): new android.widget.GridLayout">GridLayout(null)</error>; // Flagged
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             GridLayout(null).getOrientation(); // Not flagged
         } else {
-            <error descr="Call requires API level 14 (current min is 1): android.widget.GridLayout#GridLayout">GridLayout</error>(null); // Flagged
+            <error descr="Call requires API level 14 (current min is 1): new android.widget.GridLayout">GridLayout(null)</error>; // Flagged
         }
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-            <error descr="Call requires API level 14 (current min is 1): android.widget.GridLayout#GridLayout">GridLayout</error>(null); // Flagged
+            <error descr="Call requires API level 14 (current min is 1): new android.widget.GridLayout">GridLayout(null)</error>; // Flagged
         } else {
             GridLayout(null).getOrientation(); // Not flagged
         }
@@ -228,13 +228,13 @@ class ApiCallTest: Activity() {
         if (Build.VERSION.SDK_INT >= 16) {
             GridLayout(null).getOrientation(); // Not flagged
         } else {
-            <error descr="Call requires API level 14 (current min is 1): android.widget.GridLayout#GridLayout">GridLayout</error>(null); // Flagged
+            <error descr="Call requires API level 14 (current min is 1): new android.widget.GridLayout">GridLayout(null)</error>; // Flagged
         }
 
         if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
             GridLayout(null).getOrientation(); // Not flagged
         } else {
-            <error descr="Call requires API level 14 (current min is 1): android.widget.GridLayout#GridLayout">GridLayout</error>(null); // Flagged
+            <error descr="Call requires API level 14 (current min is 1): new android.widget.GridLayout">GridLayout(null)</error>; // Flagged
         }
     }
 
@@ -292,7 +292,7 @@ class ApiCallTest: Activity() {
             //NO ERROR
         }
 
-        if (SDK_INT != 11 || getActionBar() == null) {
+        if (SDK_INT != 11 || <error descr="Call requires API level 11 (current min is 1): android.app.Activity#getActionBar">getActionBar</error>() == null) {
             //NO ERROR
         }
 
@@ -336,7 +336,7 @@ class ApiCallTest: Activity() {
         }
 
         // No Error
-        val actionBar = getActionBar()
+        val actionBar = <error descr="Call requires API level 11 (current min is 1): android.app.Activity#getActionBar">getActionBar</error>()
     }
 
     fun testError() {
@@ -345,7 +345,7 @@ class ApiCallTest: Activity() {
         }
 
         // No Error
-        val actionBar = getActionBar()
+        val actionBar = <error descr="Call requires API level 11 (current min is 1): android.app.Activity#getActionBar">getActionBar</error>()
     }
 
     fun testWithoutAnnotation(textView: TextView) {
@@ -424,19 +424,19 @@ class ApiCallTest: Activity() {
         val linear = layout as LinearLayout // OK API 1
     }
 
-    abstract class ErrorVectorDravable : <error descr="Call requires API level 21 (current min is 1): android.graphics.drawable.VectorDrawable#VectorDrawable"><error descr="Class requires API level 21 (current min is 1): android.graphics.drawable.VectorDrawable">VectorDrawable</error></error>(), Parcelable
+    abstract class ErrorVectorDravable : <error descr="Call requires API level 21 (current min is 1): new android.graphics.drawable.VectorDrawable"><error descr="Class requires API level 21 (current min is 1): android.graphics.drawable.VectorDrawable">VectorDrawable</error>()</error>, Parcelable
 
     @TargetApi(21)
     class MyVectorDravable : VectorDrawable()
 
     fun testTypes() {
-        <error descr="Call requires API level 14 (current min is 1): android.widget.GridLayout#GridLayout">GridLayout</error>(this)
-        val c = <error descr="Class requires API level 21 (current min is 1): android.graphics.drawable.VectorDrawable">VectorDrawable::class</error>.java
+        <error descr="Call requires API level 14 (current min is 1): new android.widget.GridLayout">GridLayout(this)</error>
+        val c = VectorDrawable::class.java
     }
 
     fun testCallWithApiAnnotation(textView: TextView) {
-        <error descr="Call requires API level 21 (current min is 1): ApiCallTest.MyVectorDravable#MyVectorDravable">MyVectorDravable</error>()
-        <error descr="Call requires API level 16 (current min is 1): ApiCallTest#testWithTargetApiAnnotation">testWithTargetApiAnnotation</error>(textView)
+        MyVectorDravable()
+        testWithTargetApiAnnotation(textView)
     }
 
     companion object : Activity() {
@@ -472,7 +472,7 @@ fun testJava8() {
     }
 
     // Error, Api 24, Java8
-    mapOf(1 to 2).<error descr="Call requires API level 24 (current min is 1): java.util.Map#forEach">forEach</error> { key, value -> key + value }
+    mapOf(1 to 2).forEach { key, value -> key + value }
 
     // Ok, Kotlin
     mapOf(1 to 2).forEach { (key, value) -> key + value }

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.script
 
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
@@ -35,9 +36,9 @@ internal val KtAnnotationEntry.typeName: String get() = (typeReference?.typeElem
 internal fun String?.orAnonymous(kind: String = ""): String =
         this ?: "<anonymous" + (if (kind.isNotBlank()) " $kind" else "") + ">"
 
-internal fun constructAnnotation(psi: KtAnnotationEntry, targetClass: KClass<out Annotation>): Annotation {
-    val module = ModuleDescriptorImpl(Name.special("<script-annotations-preprocessing>"), LockBasedStorageManager(), DefaultBuiltIns.Instance)
-    val evaluator = ConstantExpressionEvaluator(module, LanguageVersionSettingsImpl.DEFAULT)
+internal fun constructAnnotation(psi: KtAnnotationEntry, targetClass: KClass<out Annotation>, project: Project): Annotation {
+    val module = ModuleDescriptorImpl(Name.special("<script-annotations-preprocessing>"), LockBasedStorageManager("scriptAnnotationsPreprocessing"), DefaultBuiltIns.Instance)
+    val evaluator = ConstantExpressionEvaluator(module, LanguageVersionSettingsImpl.DEFAULT, project)
     val trace = BindingTraceContext()
 
     val valueArguments = psi.valueArguments.map { arg ->

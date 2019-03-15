@@ -16,31 +16,16 @@
 
 package org.jetbrains.kotlin.gradle.utils
 
-import java.lang.reflect.Field
 import java.lang.reflect.InvocationTargetException
-
-internal fun Class<*>.getDeclaredFieldInHierarchy(name: String): Field? {
-    val inheritanceChain = generateSequence(this) { it.superclass }
-    return inheritanceChain.map {
-        try {
-            it.getDeclaredField(name)
-        } catch (_: NoSuchFieldException) {
-            null
-        }
-    }.filterNotNull().first()
-}
 
 internal inline fun <T> checkedReflection(block: () -> T, onReflectionException: (Exception) -> T): T {
     return try {
         block()
-    }
-    catch (e: InvocationTargetException) {
+    } catch (e: InvocationTargetException) {
         throw e.targetException
-    }
-    catch (e: ReflectiveOperationException) {
+    } catch (e: ReflectiveOperationException) {
         onReflectionException(e)
-    }
-    catch (e: IllegalArgumentException) {
+    } catch (e: IllegalArgumentException) {
         onReflectionException(e)
     }
 }

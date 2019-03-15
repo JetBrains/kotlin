@@ -1,8 +1,8 @@
 // FILE: 1.kt
-// LANGUAGE_VERSION: 1.2
 // SKIP_INLINE_CHECK_IN: inlineFun$default
-package test
+// IGNORE_BACKEND: JVM_IR
 
+package test
 inline fun inlineFun(capturedParam: String, lambda: () -> String = { capturedParam }): String {
     return lambda()
 }

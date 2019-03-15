@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.psi.psiUtil.isPropertyParameter
  * @return string description of declaration, like `Function "describe"`
  */
 fun KtNamedDeclaration.describe(): String? = when (this) {
-    is KtClass -> "Class \"$name\""
+    is KtClass -> "${if (isInterface()) "Interface" else "Class"} \"$name\""
     is KtObjectDeclaration -> "Object \"$name\""
     is KtNamedFunction -> "Function \"$name\""
     is KtSecondaryConstructor -> "Constructor"

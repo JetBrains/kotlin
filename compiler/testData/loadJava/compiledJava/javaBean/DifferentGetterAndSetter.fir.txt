@@ -1,0 +1,6 @@
+public open class DifferentGetterAndSetter : R|java/lang/Object| {
+    public open operator function setSomething(color: R|ft<kotlin/String, kotlin/String?>|!): R|kotlin/Unit|
+
+    public open operator function getSomething(): R|kotlin/Int|
+
+}

@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UForEachExpression
 import org.jetbrains.uast.UIdentifier
+import org.jetbrains.uast.kotlin.declarations.KotlinUIdentifier
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiParameter
 import org.jetbrains.uast.psi.UastPsiParameterNotResolved
 
@@ -38,5 +39,5 @@ class KotlinUForEachExpression(
     }
 
     override val forIdentifier: UIdentifier
-        get() = UIdentifier(null, this)
+        get() = KotlinUIdentifier(null, this)
 }

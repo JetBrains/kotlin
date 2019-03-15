@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 abstract class KotlinCallableInsertHandler(val callType: CallType<*>) : BaseDeclarationInsertHandler() {
     companion object {
-        private val shortenReferences = ShortenReferences({ ShortenReferences.Options.DEFAULT.copy(dropBracesInStringTemplates = false)})
+        private val shortenReferences = ShortenReferences({ ShortenReferences.Options.DEFAULT.copy(dropBracesInStringTemplates = false) })
     }
 
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
@@ -41,7 +41,7 @@ abstract class KotlinCallableInsertHandler(val callType: CallType<*>) : BaseDecl
         addImport(context, item)
     }
 
-    private fun addImport(context : InsertionContext, item : LookupElement) {
+    private fun addImport(context: InsertionContext, item: LookupElement) {
         val psiDocumentManager = PsiDocumentManager.getInstance(context.project)
         psiDocumentManager.commitAllDocuments()
 
@@ -53,11 +53,14 @@ abstract class KotlinCallableInsertHandler(val callType: CallType<*>) : BaseDecl
                 if (DescriptorUtils.isTopLevelDeclaration(descriptor) && !descriptor.isArtificialImportAliasedDescriptor) {
                     ImportInsertHelper.getInstance(context.project).importDescriptor(file, descriptor)
                 }
-            }
-            else if (callType == CallType.DEFAULT) {
+            } else if (callType == CallType.DEFAULT) {
                 if (descriptor.isArtificialImportAliasedDescriptor) return
                 val fqName = descriptor.importableFqName ?: return
-                context.document.replaceString(context.startOffset, context.tailOffset, fqName.render() + " ") // insert space after for correct parsing
+                context.document.replaceString(
+                    context.startOffset,
+                    context.tailOffset,
+                    fqName.render() + " "
+                ) // insert space after for correct parsing
 
                 psiDocumentManager.commitAllDocuments()
 

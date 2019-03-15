@@ -7,11 +7,18 @@ plugins {
     `java-base`
 }
 
-// Do not rename, used in JPS importer
+repositories {
+    maven("https://jetbrains.bintray.com/markdown")
+}
+
+// Do not rename, used in pill importer
 val projectsToShadow by extra(listOf(
         ":plugins:annotation-based-compiler-plugins-ide-support",
+        ":core:type-system",
         ":compiler:backend",
         ":compiler:backend-common",
+        ":compiler:backend.jvm",
+        ":compiler:ir.backend.common",
         ":kotlin-build-common",
         ":compiler:cli-common",
         ":compiler:container",
@@ -24,26 +31,38 @@ val projectsToShadow by extra(listOf(
         ":eval4j",
         ":idea:formatter",
         ":compiler:psi",
+        *if (project.findProperty("fir.enabled") == "true") {
+            arrayOf(
+                ":compiler:fir:cones",
+                ":compiler:fir:resolve",
+                ":compiler:fir:tree",
+                ":compiler:fir:java",
+                ":compiler:fir:psi2fir",
+                ":idea:fir-view"
+            )
+        } else {
+            emptyArray()
+        },
         ":compiler:frontend",
+        ":compiler:frontend.common",
         ":compiler:frontend.java",
         ":compiler:frontend.script",
         ":idea:ide-common",
         ":idea",
-        ":idea:idea-android",
-        ":idea:idea-android-output-parser",
+        ":idea:idea-native",
         ":idea:idea-core",
-        ":idea:idea-jvm",
-        ":idea:idea-jps-common",
         ":idea:idea-gradle",
-        ":idea:idea-maven",
+        ":idea:idea-gradle-native",
         //":idea-ultimate",
         ":compiler:ir.psi2ir",
         ":compiler:ir.tree",
-        ":j2k",
         ":js:js.ast",
         ":js:js.frontend",
         ":js:js.parser",
         ":js:js.serializer",
+        ":js:js.translator",
+        ":kotlin-native:kotlin-native-utils",
+        ":kotlin-native:kotlin-native-library-reader",
         ":compiler:light-classes",
         ":compiler:plugin-api",
         ":kotlin-preloader",
@@ -52,23 +71,25 @@ val projectsToShadow by extra(listOf(
         ":compiler:util",
         ":core:util.runtime"))
 
-// Do not rename, used in JPS importer
+// Do not rename, used in pill importer
 val packedJars by configurations.creating
 
 val sideJars by configurations.creating
 
 dependencies {
     packedJars(protobufFull())
-    packedJars(project(":core:builtins", configuration = "builtins"))
-    sideJars(projectDist(":kotlin-script-runtime"))
-    sideJars(projectDist(":kotlin-stdlib"))
-    sideJars(projectDist(":kotlin-reflect"))
+    packedJars(project(":core:builtins"))
+    sideJars(project(":kotlin-script-runtime"))
+    sideJars(kotlinStdlib())
+    sideJars(kotlinStdlib("jdk7"))
+    sideJars(kotlinStdlib("jdk8"))
+    sideJars(project(":kotlin-reflect"))
     sideJars(project(":kotlin-compiler-client-embeddable"))
     sideJars(commonDep("io.javaslang", "javaslang"))
     sideJars(commonDep("javax.inject"))
     sideJars(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
     sideJars(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-jdk8")) { isTransitive = false }
-    sideJars(commonDep("org.jetbrains", "markdown"))
+    sideJars(commonDep("org.jetbrains", "markdown")) { isTransitive = false }
 }
 
 val jar = runtimeJar(task<ShadowJar>("shadowJar")) {
@@ -82,6 +103,7 @@ val jar = runtimeJar(task<ShadowJar>("shadowJar")) {
 }
 
 ideaPlugin {
+    duplicatesStrategy = DuplicatesStrategy.FAIL // Investigation is required if we have multiple jars with same name
     dependsOn(":dist")
     from(jar)
     from(sideJars)

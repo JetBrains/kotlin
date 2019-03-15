@@ -1,0 +1,10 @@
+<idea-plugin>
+    <depends optional="true" config-file="kotlin-spring.xml">com.intellij.spring</depends>
+    <depends optional="true">com.intellij.javaee</depends>
+    <depends optional="true">com.intellij.persistence</depends>
+    <depends optional="true">com.intellij.database</depends>
+    <depends optional="true">com.intellij.css</depends>
+    <depends optional="true">com.intellij.jsp</depends>
+    <depends optional="true">com.intellij.diagram</depends>
+    <depends optional="true" config-file="kotlin-nodejs.xml">NodeJS</depends>
+</idea-plugin>

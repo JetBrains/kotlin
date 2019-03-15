@@ -1,7 +1,8 @@
-// TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS, NATIVE
+// TARGET_BACKEND: JVM
 
 // WITH_RUNTIME
+
+package test
 
 enum class State {
     O,
@@ -11,7 +12,7 @@ enum class State {
 fun box(): String {
     val field = State::class.java.getField("O")
     val className = field.get(null).javaClass.name
-    if (className != "State") return "Fail: $className"
+    if (className != "test.State") return "Fail: $className"
 
     return "${State.O.name}${State.K.name}"
 }

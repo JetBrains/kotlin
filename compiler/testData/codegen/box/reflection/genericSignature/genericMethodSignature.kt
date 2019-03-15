@@ -1,7 +1,8 @@
-// TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS, NATIVE
+// TARGET_BACKEND: JVM
 
 // WITH_REFLECT
+
+package test
 
 class Z<T> {}
 
@@ -31,10 +32,10 @@ fun box(): String {
 
     val params = listOf(
             Params(1, Any::class.java, "T", "T"),
-            Params(2, Z::class.java, "Z<T>", "Z<T>"),
-            Params(3, Z::class.java, "Z<java.lang.String>", "Z<java.lang.String>"),
-            Params(4, Any::class.java, "Zout<java.lang.String>", "X"),
-            Params(5, Any::class.java, "Zin<TParam>", "Y")
+            Params(2, Z::class.java, "test.Z<T>", "test.Z<T>"),
+            Params(3, Z::class.java, "test.Z<java.lang.String>", "test.Z<java.lang.String>"),
+            Params(4, Any::class.java, "test.Zout<java.lang.String>", "X"),
+            Params(5, Any::class.java, "test.Zin<test.TParam>", "Y")
     )
 
 

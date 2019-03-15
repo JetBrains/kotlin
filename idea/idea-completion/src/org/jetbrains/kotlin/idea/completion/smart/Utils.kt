@@ -277,6 +277,7 @@ enum class SmartCompletionItemPriority {
     CLASS_LITERAL,
     THIS,
     DELEGATES_STATIC_MEMBER,
+    ENUM_ENTRIES,
     DEFAULT,
     NULLABLE,
     INSTANTIATION,

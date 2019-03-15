@@ -1,0 +1,9 @@
+// "Add parameters to constructor 'Foo'" "true"
+// DISABLE-ERRORS
+enum class Foo(i: Int, i1: Int) {
+    A(1, 2),
+    B(3),
+    C(3, 4),
+    D(1, 2),
+    E(1, 2)
+}

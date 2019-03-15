@@ -1,0 +1,16 @@
+package
+
+public val value_1: kotlin.Double = 0.0.toDouble()
+public val value_10: kotlin.Double = 0.0654765.toDouble()
+public val value_11: kotlin.Float = 0.0.toFloat()
+public val value_12: kotlin.Float = 0.0.toFloat()
+public val value_13: kotlin.Double = 0.0.toDouble()
+public val value_14: kotlin.Float = Infinity.toFloat()
+public val value_2: kotlin.Double = 110.0.toDouble()
+public val value_3: kotlin.Double = 0.0.toDouble()
+public val value_4: kotlin.Float = 0.0.toFloat()
+public val value_5: kotlin.Double = 9999999.9.toDouble()
+public val value_6: kotlin.Float = Infinity.toFloat()
+public val value_7: kotlin.Double = 1.234567892345679E8.toDouble()
+public val value_8: kotlin.Double = 4.565E8.toDouble()
+public val value_9: kotlin.Float = 560000.0.toFloat()

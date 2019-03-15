@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.debugger.evaluate
 
 import com.intellij.debugger.DebuggerBundle
 import com.intellij.debugger.DebuggerInvocationUtil
-import com.intellij.debugger.EvaluatingComputable
 import com.intellij.debugger.engine.ContextUtil
 import com.intellij.debugger.engine.evaluation.EvaluateException
 import com.intellij.debugger.engine.evaluation.EvaluateExceptionUtil
@@ -34,28 +33,26 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.sun.jdi.ClassType
 import com.sun.jdi.Value
 import org.jetbrains.eval4j.jdi.asValue
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Type as AsmType
 
 abstract class KotlinRuntimeTypeEvaluator(
-        editor: Editor?,
-        expression: KtExpression,
-        context: DebuggerContextImpl,
-        indicator: ProgressIndicator
+    editor: Editor?,
+    expression: KtExpression,
+    context: DebuggerContextImpl,
+    indicator: ProgressIndicator
 ) : EditorEvaluationCommand<KotlinType>(editor, expression, context, indicator) {
 
     override fun threadAction() {
         var type: KotlinType? = null
         try {
             type = evaluate()
-        }
-        catch (ignored: ProcessCanceledException) {
-        }
-        catch (ignored: EvaluateException) {
-        }
-        finally {
+        } catch (ignored: ProcessCanceledException) {
+        } catch (ignored: EvaluateException) {
+        } finally {
             typeCalculationFinished(type)
         }
     }
@@ -65,15 +62,16 @@ abstract class KotlinRuntimeTypeEvaluator(
     override fun evaluate(evaluationContext: EvaluationContextImpl): KotlinType? {
         val project = evaluationContext.project
 
-        val evaluator = DebuggerInvocationUtil.commitAndRunReadAction<ExpressionEvaluator>(project, EvaluatingComputable {
-                val codeFragment = KtPsiFactory(myElement.project).createExpressionCodeFragment(
-                        myElement.text, myElement.containingFile.context)
-                KotlinEvaluationBuilder.build(codeFragment, ContextUtil.getSourcePosition(evaluationContext))
-        })
+        val evaluator = DebuggerInvocationUtil.commitAndRunReadAction<ExpressionEvaluator>(project) {
+            val codeFragment = KtPsiFactory(myElement.project).createExpressionCodeFragment(
+                myElement.text, myElement.containingFile.context
+            )
+            KotlinEvaluationBuilder.build(codeFragment, ContextUtil.getSourcePosition(evaluationContext))
+        }
 
         val value = evaluator.evaluate(evaluationContext)
         if (value != null) {
-            return getCastableRuntimeType(evaluationContext.debugProcess.searchScope, value)
+            return runReadAction { getCastableRuntimeType(evaluationContext.debugProcess.searchScope, value) }
         }
 
         throw EvaluateExceptionUtil.createEvaluateException(DebuggerBundle.message("evaluation.error.surrounded.expression.null"))

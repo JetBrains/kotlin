@@ -99,8 +99,9 @@ public class DataFlowAnalyzer {
     }
 
     private boolean typeHasOverriddenEquals(@NotNull KotlinType type, @NotNull KtElement lookupElement) {
-        Collection<SimpleFunctionDescriptor> members = type.getMemberScope().getContributedFunctions(
-                OperatorNameConventions.EQUALS, new KotlinLookupLocation(lookupElement));
+        Collection<? extends SimpleFunctionDescriptor> members = type.getMemberScope().getContributedFunctions(
+                OperatorNameConventions.EQUALS, new KotlinLookupLocation(lookupElement)
+        );
         for (FunctionDescriptor member : members) {
             KotlinType returnType = member.getReturnType();
             if (returnType == null || !KotlinBuiltIns.isBoolean(returnType)) continue;

@@ -27,8 +27,9 @@ class ConsoleDiagnosticMessageHolder : MessageCollectorBasedReporter, Diagnostic
     private val outputStream = ByteArrayOutputStream()
 
     override val messageCollector: GroupingMessageCollector = GroupingMessageCollector(
-            PrintingMessageCollector(PrintStream(outputStream), MessageRenderer.WITHOUT_PATHS, false),
-            false)
+        PrintingMessageCollector(PrintStream(outputStream), MessageRenderer.WITHOUT_PATHS, false),
+        false
+    )
 
     override fun renderMessage(): String {
         messageCollector.flush()

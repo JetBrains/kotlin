@@ -3,7 +3,9 @@ import org.gradle.jvm.tasks.Jar
 
 description = "Kotlin Android Extensions Compiler"
 
-apply { plugin("kotlin") }
+plugins {
+    kotlin("jvm")
+}
 
 dependencies {
     compileOnly(project(":compiler:util"))
@@ -32,8 +34,9 @@ jar.apply {
     duplicatesStrategy = DuplicatesStrategy.FAIL
 }
 
+publish()
+
 runtimeJar(rewriteDepsToShadedCompiler(jar))
 sourcesJar()
 javadocJar()
 
-publish()

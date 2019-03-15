@@ -16,6 +16,7 @@
 
 package kotlin.reflect.jvm.internal.structure
 
+import org.jetbrains.kotlin.load.java.structure.JavaAnnotationArgument
 import org.jetbrains.kotlin.load.java.structure.JavaMethod
 import org.jetbrains.kotlin.load.java.structure.JavaValueParameter
 import java.lang.reflect.Method
@@ -27,8 +28,8 @@ class ReflectJavaMethod(override val member: Method) : ReflectJavaMember(), Java
     override val returnType: ReflectJavaType
         get() = ReflectJavaType.create(member.genericReturnType)
 
-    override val hasAnnotationParameterDefaultValue: Boolean
-        get() = member.defaultValue != null
+    override val annotationParameterDefaultValue: JavaAnnotationArgument?
+        get() = member.defaultValue?.let { ReflectJavaAnnotationArgument.create(it, null) }
 
     override val typeParameters: List<ReflectJavaTypeParameter>
         get() = member.typeParameters.map(::ReflectJavaTypeParameter)

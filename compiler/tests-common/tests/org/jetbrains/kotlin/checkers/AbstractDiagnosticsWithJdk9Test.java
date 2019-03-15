@@ -18,12 +18,9 @@ package org.jetbrains.kotlin.checkers;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestJdkKind;
 
 import java.io.File;
-import java.util.List;
-import java.util.Map;
 
 public abstract class AbstractDiagnosticsWithJdk9Test extends AbstractDiagnosticsTest {
     @NotNull
@@ -36,18 +33,5 @@ public abstract class AbstractDiagnosticsWithJdk9Test extends AbstractDiagnostic
     @Override
     protected TestJdkKind getTestJdkKind(@NotNull File file) {
         return TestJdkKind.FULL_JDK_9;
-    }
-
-    @Override
-    protected void doMultiFileTest(
-            @NotNull File file,
-            @NotNull Map<String, ModuleAndDependencies> modules,
-            @NotNull List<TestFile> testFiles
-    ) {
-        if (KotlinTestUtils.getJdk9HomeIfPossible() == null) {
-            // Skip this test if no Java 9 is found
-            return;
-        }
-        super.doMultiFileTest(file, modules, testFiles);
     }
 }

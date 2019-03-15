@@ -20,8 +20,11 @@ import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.psi.search.GlobalSearchScope
+import com.sun.jdi.Location
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.KotlinFileTypeFactory
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
@@ -41,79 +44,83 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
 object DebuggerUtils {
+    @get:TestOnly
+    var forceRanking = false
+
     fun findSourceFileForClassIncludeLibrarySources(
-            project: Project,
-            scope: GlobalSearchScope,
-            className: JvmClassName,
-            fileName: String): KtFile? {
+        project: Project,
+        scope: GlobalSearchScope,
+        className: JvmClassName,
+        fileName: String,
+        location: Location? = null
+    ): KtFile? {
         return runReadAction {
             findSourceFileForClass(
-                    project,
-                    listOf(scope, KotlinSourceFilterScope.librarySources(GlobalSearchScope.allScope(project), project)),
-                    className,
-                    fileName)
+                project,
+                listOf(scope, KotlinSourceFilterScope.librarySources(GlobalSearchScope.allScope(project), project)),
+                className,
+                fileName,
+                location
+            )
         }
     }
 
     fun findSourceFileForClass(
-            project: Project,
-            scopes: List<GlobalSearchScope>,
-            className: JvmClassName,
-            fileName: String): KtFile? {
+        project: Project,
+        scopes: List<GlobalSearchScope>,
+        className: JvmClassName,
+        fileName: String,
+        location: Location?
+    ): KtFile? {
         if (!isKotlinSourceFile(fileName)) return null
         if (DumbService.getInstance(project).isDumb) return null
 
-        val filesWithExactName = scopes.findFirstNotEmpty { findFilesByNameInPackage(className, fileName, project, it) } ?: return null
-
-        if (filesWithExactName.isEmpty()) return null
-
-        if (filesWithExactName.size == 1) {
-            return filesWithExactName.single()
-        }
-
-        // Static facade or inner class of such facade?
         val partFqName = className.fqNameForClassNameWithoutDollars
-        val filesForPart = scopes.findFirstNotEmpty { StaticFacadeIndexUtil.findFilesForFilePart(partFqName, it, project) } ?: return null
-        if (!filesForPart.isEmpty()) {
-            for (file in filesForPart) {
-                if (file.name == fileName) {
-                    return file
-                }
+
+        for (scope in scopes) {
+            val files = findFilesByNameInPackage(className, fileName, project, scope)
+
+            if (files.isEmpty()) {
+                continue
             }
-            // Do not fall back to decompiled files (which have different name).
-            return null
+
+            if (files.size == 1 && !forceRanking || location == null) {
+                return files.first()
+            }
+
+            StaticFacadeIndexUtil.findFilesForFilePart(partFqName, scope, project)
+                .singleOrNull { it.name == fileName }
+                ?.let { return it }
+
+            return FileRankingCalculatorForIde.findMostAppropriateSource(files, location)
         }
 
-        return filesWithExactName.first()
+        return null
     }
 
-    private fun <T, R> Collection<T>.findFirstNotEmpty(predicate: (T) -> Collection<R>): Collection<R>? {
-        var result: Collection<R> = emptyList()
-        for (e in this) {
-            result = predicate(e)
-            if (result.isNotEmpty()) break
-        }
-        return result
-    }
-
-    private fun findFilesByNameInPackage(className: JvmClassName, fileName: String, project: Project, searchScope: GlobalSearchScope): List<KtFile> {
+    private fun findFilesByNameInPackage(
+        className: JvmClassName,
+        fileName: String,
+        project: Project,
+        searchScope: GlobalSearchScope
+    ): List<KtFile> {
         val files = findFilesWithExactPackage(className.packageFqName, searchScope, project).filter { it.name == fileName }
         return files.sortedWith(JavaElementFinder.byClasspathComparator(searchScope))
     }
 
     fun analyzeInlinedFunctions(
-            resolutionFacadeForFile: ResolutionFacade,
-            file: KtFile,
-            analyzeOnlyReifiedInlineFunctions: Boolean,
-            bindingContext: BindingContext? = null
+        resolutionFacadeForFile: ResolutionFacade,
+        file: KtFile,
+        analyzeOnlyReifiedInlineFunctions: Boolean,
+        bindingContext: BindingContext? = null
     ): Pair<BindingContext, List<KtFile>> {
         val analyzedElements = HashSet<KtElement>()
         val context = analyzeElementWithInline(
-                resolutionFacadeForFile,
-                file,
-                1,
-                analyzedElements,
-                !analyzeOnlyReifiedInlineFunctions, bindingContext
+            resolutionFacadeForFile,
+            file,
+            1,
+            analyzedElements,
+            !analyzeOnlyReifiedInlineFunctions, bindingContext
         )
 
         //We processing another files just to annotate anonymous classes within their inline functions
@@ -141,15 +148,15 @@ object DebuggerUtils {
     }
 
     private fun analyzeElementWithInline(
-            resolutionFacade: ResolutionFacade,
-            element: KtElement,
-            deep: Int,
-            analyzedElements: MutableSet<KtElement>,
-            analyzeInlineFunctions: Boolean,
-            fullResolveContext: BindingContext? = null
+        resolutionFacade: ResolutionFacade,
+        element: KtElement,
+        deep: Int,
+        analyzedElements: MutableSet<KtElement>,
+        analyzeInlineFunctions: Boolean,
+        fullResolveContext: BindingContext? = null
     ): BindingContext {
         val project = element.project
-        val inlineFunctions = HashSet<KtNamedFunction>()
+        val declarationsWithBody = HashSet<KtDeclarationWithBody>()
 
         val innerContexts = ArrayList<BindingContext>()
         innerContexts.addIfNotNull(fullResolveContext)
@@ -196,32 +203,53 @@ object DebuggerUtils {
                 val descriptor = resolvedCall.resultingDescriptor
                 if (descriptor is DeserializedSimpleFunctionDescriptor) return
 
-                if (InlineUtil.isInline(descriptor) && (analyzeInlineFunctions || hasReifiedTypeParameters(descriptor))) {
-                    val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor)
-                    if (declaration != null && declaration is KtNamedFunction && !analyzedElements.contains(declaration)) {
-                        inlineFunctions.add(declaration)
+                isAdditionalResolveNeededForDescriptor(descriptor)
+
+                if (descriptor is PropertyDescriptor) {
+                    for (accessor in descriptor.accessors) {
+                        isAdditionalResolveNeededForDescriptor(accessor)
                     }
+                }
+            }
+
+            private fun isAdditionalResolveNeededForDescriptor(descriptor: CallableDescriptor) {
+                if (!(InlineUtil.isInline(descriptor) && (analyzeInlineFunctions || hasReifiedTypeParameters(descriptor)))) {
+                    return
+                }
+
+                val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor)
+                if (declaration != null && declaration is KtDeclarationWithBody && !analyzedElements.contains(declaration)) {
+                    declarationsWithBody.add(declaration)
+                    return
                 }
             }
         })
 
         analyzedElements.add(element)
 
-        if (!inlineFunctions.isEmpty() && deep < 10) {
-            for (inlineFunction in inlineFunctions) {
+        if (!declarationsWithBody.isEmpty() && deep < 10) {
+            for (inlineFunction in declarationsWithBody) {
                 val body = inlineFunction.bodyExpression
                 if (body != null) {
-                    innerContexts.add(analyzeElementWithInline(resolutionFacade, inlineFunction, deep + 1, analyzedElements, analyzeInlineFunctions))
+                    innerContexts.add(
+                        analyzeElementWithInline(
+                            resolutionFacade,
+                            inlineFunction,
+                            deep + 1,
+                            analyzedElements,
+                            analyzeInlineFunctions
+                        )
+                    )
                 }
             }
 
-            analyzedElements.addAll(inlineFunctions)
+            analyzedElements.addAll(declarationsWithBody)
         }
 
         return CompositeBindingContext.create(innerContexts)
     }
 
     private fun hasReifiedTypeParameters(descriptor: CallableDescriptor): Boolean {
-        return descriptor.typeParameters.any() { it.isReified }
+        return descriptor.typeParameters.any { it.isReified }
     }
 }

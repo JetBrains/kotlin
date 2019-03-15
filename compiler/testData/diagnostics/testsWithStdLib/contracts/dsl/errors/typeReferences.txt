@@ -1,0 +1,22 @@
+package
+
+public fun referToAliasedFunctionType(/*0*/ x: kotlin.Any?): kotlin.Unit
+public fun referToAliasedGeneric(/*0*/ x: kotlin.Any?): kotlin.Unit
+public fun referToAliasedSimpleType(/*0*/ x: kotlin.Any?): kotlin.Unit
+    Returns(WILDCARD) -> x is Int
+
+public inline fun </*0*/ reified T> referToReifiedGeneric(/*0*/ x: kotlin.Any?): kotlin.Unit
+public fun referToSubstituted(/*0*/ x: kotlin.Any?): kotlin.Unit
+public fun referToSubstitutedWithStar(/*0*/ x: kotlin.Any?): kotlin.Unit
+    Returns(WILDCARD) -> x is Generic<*>
+
+public final class Generic</*0*/ T> {
+    public constructor Generic</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun referToCaptured(/*0*/ x: kotlin.Any?): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+public typealias FunctionalType = () -> kotlin.Unit
+public typealias GenericString = Generic<kotlin.String>
+public typealias SimpleType = kotlin.Int

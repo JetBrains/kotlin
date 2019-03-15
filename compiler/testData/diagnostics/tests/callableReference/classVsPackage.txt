@@ -40,12 +40,6 @@ package a {
 // -- Module: <m3> --
 package
 
-package a {
-
-    package a.b {
-    }
-}
-
 package test {
     public fun test(): kotlin.reflect.KFunction1<a.b.c, kotlin.Unit>
 }

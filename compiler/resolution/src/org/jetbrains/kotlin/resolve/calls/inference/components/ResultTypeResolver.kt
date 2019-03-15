@@ -27,7 +27,8 @@ import org.jetbrains.kotlin.types.checker.intersectTypes
 import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberType
 
 class ResultTypeResolver(
-    val typeApproximator: TypeApproximator
+    val typeApproximator: TypeApproximator,
+    val trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle
 ) {
     interface Context {
         fun isProperType(type: UnwrappedType): Boolean
@@ -77,6 +78,9 @@ class ResultTypeResolver(
             if (!isProperType(constraint.type)) continue
             if (!checkConstraint(constraint.type, constraint.kind, resultType)) return false
         }
+
+        if (!trivialConstraintTypeInferenceOracle.isSuitableResultedType(resultType)) return false
+
         return true
     }
 
@@ -128,8 +132,12 @@ class ResultTypeResolver(
                         newSupertypes.add(supertype)
                 }
 
-                TypeUtils.getDefaultPrimitiveNumberType(numberSupertypes)?.let {
-                    newSupertypes.add(it.unwrap())
+
+                val representativeNumberType = TypeUtils.getDefaultPrimitiveNumberType(numberSupertypes)
+                if (representativeNumberType != null) {
+                    newSupertypes.add(representativeNumberType.unwrap())
+                } else {
+                    newSupertypes.addAll(numberSupertypes.map { it.unwrap() })
                 }
 
                 intersectTypes(newSupertypes).makeNullableAsSpecified(commonSuperType.isMarkedNullable)

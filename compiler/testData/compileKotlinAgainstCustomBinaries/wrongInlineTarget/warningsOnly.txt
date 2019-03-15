@@ -1,0 +1,19 @@
+compiler/testData/compileKotlinAgainstCustomBinaries/wrongInlineTarget/warningsOnly.kt:8:9: warning: cannot inline bytecode built with JVM target 1.8 into bytecode that is being built with JVM target 1.6. Please specify proper '-jvm-target' option
+        inlineFunBase {}
+        ^
+compiler/testData/compileKotlinAgainstCustomBinaries/wrongInlineTarget/warningsOnly.kt:9:9: warning: cannot inline bytecode built with JVM target 1.8 into bytecode that is being built with JVM target 1.6. Please specify proper '-jvm-target' option
+        inlineGetterBase
+        ^
+compiler/testData/compileKotlinAgainstCustomBinaries/wrongInlineTarget/warningsOnly.kt:10:9: warning: cannot inline bytecode built with JVM target 1.8 into bytecode that is being built with JVM target 1.6. Please specify proper '-jvm-target' option
+        inlineGetterBase = 1
+        ^
+compiler/testData/compileKotlinAgainstCustomBinaries/wrongInlineTarget/warningsOnly.kt:13:9: warning: cannot inline bytecode built with JVM target 1.8 into bytecode that is being built with JVM target 1.6. Please specify proper '-jvm-target' option
+        inlineSetterBase = 1
+        ^
+compiler/testData/compileKotlinAgainstCustomBinaries/wrongInlineTarget/warningsOnly.kt:15:9: warning: cannot inline bytecode built with JVM target 1.8 into bytecode that is being built with JVM target 1.6. Please specify proper '-jvm-target' option
+        allInlineBase
+        ^
+compiler/testData/compileKotlinAgainstCustomBinaries/wrongInlineTarget/warningsOnly.kt:16:9: warning: cannot inline bytecode built with JVM target 1.8 into bytecode that is being built with JVM target 1.6. Please specify proper '-jvm-target' option
+        allInlineBase = 1
+        ^
+OK

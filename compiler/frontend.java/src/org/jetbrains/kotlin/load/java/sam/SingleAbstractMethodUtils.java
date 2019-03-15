@@ -148,7 +148,7 @@ public class SingleAbstractMethodUtils {
         // Otherwise android data binding can cause resolve re-entrance
         // For details see KT-18687, KT-16149
         // TODO: prevent resolve re-entrance on architecture level, or (alternatively) ask data binding owners not to do it
-        if (DescriptorUtilsKt.getFqNameSafe(klass).asString().equals("android.databinding.DataBindingComponent")) {
+        if (DescriptorUtilsKt.getFqNameSafe(klass).asString().endsWith(".databinding.DataBindingComponent")) {
             return null;
         }
 

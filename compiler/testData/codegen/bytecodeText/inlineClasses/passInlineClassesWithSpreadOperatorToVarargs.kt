@@ -1,6 +1,11 @@
 // !LANGUAGE: +InlineClasses
+// IGNORE_BACKEND: JVM_IR
+
+// FILE: utils.kt
 
 inline class UInt(val u: Int)
+
+// FILE: test.kt
 
 fun <T> takeVarargs(vararg e: T) {}
 
@@ -9,7 +14,8 @@ fun test(u1: UInt, u2: UInt, us: Array<UInt>) {
     takeVarargs(u1, u2, *us) // 2 box + ...
 }
 
-// 2 INVOKESTATIC UInt\$Erased.box
+// @TestKt.class:
+// 2 INVOKESTATIC UInt\.box
 // 0 INVOKEVIRTUAL UInt.unbox
 
 // 2 CHECKCAST \[LUInt

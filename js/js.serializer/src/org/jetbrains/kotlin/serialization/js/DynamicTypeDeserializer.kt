@@ -26,15 +26,16 @@ import org.jetbrains.kotlin.types.createDynamicType
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
 object DynamicTypeDeserializer : FlexibleTypeDeserializer {
-    val id = "kotlin.DynamicType"
+    const val id = "kotlin.DynamicType"
 
     override fun create(proto: ProtoBuf.Type, flexibleId: String, lowerBound: SimpleType, upperBound: SimpleType): KotlinType {
         if (flexibleId != id) return ErrorUtils.createErrorType("Unexpected id: $flexibleId. ($lowerBound..$upperBound)")
+
         return if (StrictEqualityTypeChecker.strictEqualTypes(lowerBound, lowerBound.builtIns.nothingType) &&
-                   StrictEqualityTypeChecker.strictEqualTypes(upperBound, upperBound.builtIns.nullableAnyType)) {
+            StrictEqualityTypeChecker.strictEqualTypes(upperBound, upperBound.builtIns.nullableAnyType)
+        ) {
             createDynamicType(lowerBound.builtIns)
-        }
-        else {
+        } else {
             ErrorUtils.createErrorType("Illegal type range for dynamic type: $lowerBound..$upperBound")
         }
     }

@@ -1,0 +1,15 @@
+FILE fqName:<root> fileName:/kt27005.kt
+  FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:suspend
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='foo(): Unit'
+        CALL 'baz(): T' type=kotlin.Unit origin=null
+          <T>: kotlin.Unit
+  FUN name:bar visibility:public modality:FINAL <> () returnType:kotlin.Any flags:suspend
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='bar(): Any'
+        CALL 'baz(): T' type=kotlin.Any origin=null
+          <T>: kotlin.Any
+  FUN name:baz visibility:public modality:FINAL <T> () returnType:T flags:suspend
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+    BLOCK_BODY
+      CALL 'TODO(): Nothing' type=kotlin.Nothing origin=null

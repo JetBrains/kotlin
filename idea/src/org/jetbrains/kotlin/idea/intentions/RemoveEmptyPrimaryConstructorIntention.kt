@@ -19,8 +19,8 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.codeInspection.CleanupLocalInspectionTool
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.idea.highlighter.markers.isExpectedOrExpectedClassMember
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
+import org.jetbrains.kotlin.idea.util.isExpectDeclaration
 import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
 
@@ -40,7 +40,7 @@ class RemoveEmptyPrimaryConstructorIntention :
         element.annotations.isNotEmpty() -> false
         element.modifierList?.text?.isBlank() == false -> false
         element.containingClass()?.secondaryConstructors?.isNotEmpty() == true -> false
-        element.isExpectedOrExpectedClassMember() -> false
+        element.isExpectDeclaration() -> false
         else -> true
     }
 }

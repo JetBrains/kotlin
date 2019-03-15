@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.java.lazy.types
 
+import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.load.java.components.TypeUsage
@@ -28,7 +29,6 @@ import org.jetbrains.kotlin.load.java.lazy.types.JavaTypeFlexibility.*
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.Variance.*
 import org.jetbrains.kotlin.types.typeUtil.createProjection
@@ -42,7 +42,7 @@ class JavaTypeResolver(
         private val typeParameterResolver: TypeParameterResolver
 ) {
 
-    fun transformJavaType(javaType: JavaType, attr: JavaTypeAttributes): KotlinType {
+    fun transformJavaType(javaType: JavaType?, attr: JavaTypeAttributes): KotlinType {
         return when (javaType) {
             is JavaPrimitiveType -> {
                 val primitiveType = javaType.type
@@ -53,6 +53,7 @@ class JavaTypeResolver(
             is JavaArrayType -> transformArrayType(javaType, attr)
             // Top level type can be a wildcard only in case of broken Java code, but we should not fail with exceptions in such cases
             is JavaWildcardType -> javaType.bound?.let { transformJavaType(it, attr) } ?: c.module.builtIns.defaultBound
+            null -> c.module.builtIns.defaultBound
             else -> throw UnsupportedOperationException("Unsupported type: " + javaType)
         }
     }
@@ -247,7 +248,7 @@ class JavaTypeResolver(
     }
 
     private fun transformToTypeProjection(
-            javaType: JavaType,
+            javaType: JavaType?,
             attr: JavaTypeAttributes,
             typeParameter: TypeParameterDescriptor
     ): TypeProjection {

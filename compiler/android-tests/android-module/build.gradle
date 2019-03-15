@@ -2,12 +2,11 @@
 
 buildscript {
     repositories {
-        jcenter()
         google()
-
+        jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath 'com.android.tools.build:gradle:3.2.1'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -16,13 +15,13 @@ buildscript {
 apply plugin: 'com.android.application'
 
 repositories {
-    jcenter()
     google()
+    jcenter()
 }
 
 android {
     compileSdkVersion 19
-    buildToolsVersion "27.0.3"
+    buildToolsVersion "28.0.3"
 
     defaultConfig {
         applicationId "org.jetbrains.kotlin.android.tests"
@@ -31,7 +30,7 @@ android {
         versionCode 1
         versionName "1.0"
         testApplicationId "org.jetbrains.kotlin.android.tests.gradle"
-        testInstrumentationRunner "android.test.InstrumentationTestRunner"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }
     buildTypes {
@@ -41,20 +40,6 @@ android {
         }
     }
 
-    sourceSets {
-        main {
-            manifest.srcFile 'AndroidManifest.xml'
-            java {
-                srcDirs = ['src']
-            }
-            res.srcDirs = ['res']
-        }
-        androidTest {
-            java {
-                srcDirs = ['src']
-            }
-        }
-    }
     packagingOptions { exclude 'META-INF/build.txt' }
 
     //TODO run under java 6, cause there is error on implicit 'stream' import in 'asWithMutable' test
@@ -72,14 +57,19 @@ android {
         maxProcessCount 4
         additionalParameters "--debug"
     }
+
+    testOptions {
+        resultsDir = "build/test/results"
+    }
+
 }
 
 task jarTestFolders() {
     println "Jar folders..."
     new File("${projectDir}/libs/").listFiles().each { File file ->
-        if (file.isDirectory()) {
+        if (file.isDirectory() && !file.name.equals("test")) {
             println "Jar '${file.name}' folder..."
-            ant.jar(basedir: "libs/${file.name}/", destfile: "libs/" +  file.name  + ".jar")
+            ant.jar(basedir: "libs/${file.name}/", destfile: "libs/test/" +  file.name  + ".jar")
         }
     }
 }
@@ -89,7 +79,9 @@ tasks.withType(JavaCompile) {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestCompile 'junit:junit:4.12'
-    compile 'com.android.support:multidex:1.0.1'
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestImplementation 'junit:junit:4.12'
+    implementation 'com.android.support:multidex:1.0.3'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation fileTree(dir: 'libs/test', include: ['*.jar'])
 }

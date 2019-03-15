@@ -4,4 +4,4 @@ public fun </*0*/ T> array1(/*0*/ vararg a: T /*kotlin.Array<out T>*/): kotlin.A
 public fun join(/*0*/ x: kotlin.Int, /*1*/ vararg a: kotlin.String /*kotlin.Array<out kotlin.String>*/): kotlin.String
 public fun </*0*/ T> joinG(/*0*/ x: kotlin.Int, /*1*/ vararg a: T /*kotlin.Array<out T>*/): kotlin.String
 public fun </*0*/ T : kotlin.Any> joinT(/*0*/ x: kotlin.Int, /*1*/ vararg a: T /*kotlin.Array<out T>*/): T?
-public fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+public fun main(): kotlin.Unit

@@ -16,66 +16,99 @@
 
 package org.jetbrains.kotlin.contracts.parsing
 
-import org.jetbrains.kotlin.config.AnalysisFlag
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.description.ContractDescription
 import org.jetbrains.kotlin.contracts.description.ContractProviderKey
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.contracts.description.LazyContractProvider
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.isContractDescriptionCallPsiCheck
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
-import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind
+import org.jetbrains.kotlin.storage.StorageManager
 
-class ContractParsingServices(val languageVersionSettings: LanguageVersionSettings) {
-    fun fastCheckIfContractPresent(element: KtElement): Boolean {
-        if (!isContractAllowedHere(element)) return false
-        val firstExpression = ((element as? KtFunction)?.bodyExpression as? KtBlockExpression)?.statements?.firstOrNull() ?: return false
-        return isContractDescriptionCallFastCheck(firstExpression)
+class ContractParsingServices(val languageVersionSettings: LanguageVersionSettings, private val storageManager: StorageManager) {
+    /**
+     * ! IMPORTANT NOTICE !
+     *
+     * This function has very important non-obvious implicit contract:
+     * it *must* call [org.jetbrains.kotlin.contracts.description.LazyContractProvider.setContractDescription]
+     * if FunctionDescriptor had [LazyContractProvider] in the user data.
+     *
+     * Otherwise, it may lead to inconsistent resolve state and failed assertions
+     */
+    fun checkContractAndRecordIfPresent(expression: KtExpression, trace: BindingTrace, scope: LexicalScope) {
+        // Fastpath. Note that it doesn't violates invariant described in KDoc, because 'isContractDescriptionCallPsiCheck'
+        // is a *necessary* (but not sufficient, actually) condition for presence of 'LazyContractProvider'
+        if (!expression.isContractDescriptionCallPsiCheck()) return
+
+        val callContext = ContractCallContext(expression, scope, trace)
+        val contractProviderIfAny =
+            (scope.ownerDescriptor as? FunctionDescriptor)?.getUserData(ContractProviderKey) as? LazyContractProvider?
+        var resultingContractDescription: ContractDescription? = null
+
+        try {
+            if (!callContext.isContractDescriptionCallPreciseCheck()) return
+            resultingContractDescription = parseContractAndReportErrors(callContext)
+        } finally {
+            contractProviderIfAny?.setContractDescription(resultingContractDescription)
+        }
     }
 
-    fun checkContractAndRecordIfPresent(expression: KtExpression, trace: BindingTrace, scope: LexicalScope, isFirstStatement: Boolean) {
-        val ownerDescriptor = scope.ownerDescriptor
-        if (!isContractDescriptionCallFastCheck(expression) || ownerDescriptor !is FunctionDescriptor) return
-        val contractProvider = ownerDescriptor.getUserData(ContractProviderKey) ?: return
+    private fun ContractCallContext.isContractDescriptionCallPreciseCheck(): Boolean =
+        contractCallExpression.isContractDescriptionCallPreciseCheck(bindingContext)
 
+    /**
+     * This function deals with some call that is guaranteed to resolve to 'contract' from stdlib, so,
+     * ideally, it should satisfy following condition: null returned <=> at least one error was reported
+     */
+    private fun parseContractAndReportErrors(callContext: ContractCallContext): ContractDescription? {
+        val collector = TraceBasedCollector(callContext)
+
+        try {
+            checkFeatureEnabled(collector)
+
+            val contractNotAllowed = callContext.bindingContext[BindingContext.CONTRACT_NOT_ALLOWED, callContext.contractCallExpression] == true
+            // Small optimization: do not even try to parse contract if we already have errors
+            if (collector.hasErrors() || contractNotAllowed) return null
+
+            val parsedContract = PsiContractParserDispatcher(collector, callContext, storageManager).parseContract()
+
+            // Make sure that at least generic error will be reported if we couldn't parse contract
+            // (null returned => at least one error was reported)
+            if (parsedContract == null) collector.addFallbackErrorIfNecessary()
+
+            // Make sure that we don't return non-null value if there were some errors
+            // (null returned <= at least one error was reported)
+            return parsedContract?.takeUnless { collector.hasErrors() }
+        } finally {
+            collector.flushDiagnostics()
+        }
+    }
+
+    private fun checkFeatureEnabled(collector: ContractParsingDiagnosticsCollector) {
         val isFeatureTurnedOn = languageVersionSettings.supportsFeature(LanguageFeature.AllowContractsForCustomFunctions) ||
                 // This condition is here for technical purposes of compiling 1.2-runtime with contracts
-                languageVersionSettings.getFlag(AnalysisFlag.Flags.allowKotlinPackage)
-
-        val contractDescriptor = when {
-            !isFeatureTurnedOn || !isContractDescriptionCallPreciseCheck(expression, trace.bindingContext) -> null
-
-            !isContractAllowedHere(scope) || !isFirstStatement -> {
-                trace.report(Errors.CONTRACT_NOT_ALLOWED.on(expression))
-                null
-            }
-
-            else -> parseContract(expression, trace, ownerDescriptor)
+                languageVersionSettings.getFlag(AnalysisFlags.allowKotlinPackage)
+        if (!isFeatureTurnedOn) {
+            collector.unsupportedFeature(languageVersionSettings)
         }
-
-        contractProvider.setContractDescription(contractDescriptor)
     }
 
-    private fun parseContract(expression: KtExpression?, trace: BindingTrace, ownerDescriptor: FunctionDescriptor): ContractDescription? =
-        PsiContractParserDispatcher(trace, this).parseContract(expression, ownerDescriptor)
+    private fun KtExpression.isContractDescriptionCallPreciseCheck(context: BindingContext): Boolean =
+        getResolvedCall(context)?.resultingDescriptor?.isContractCallDescriptor() ?: false
+}
 
-    internal fun isContractDescriptionCall(expression: KtExpression, context: BindingContext): Boolean =
-        isContractDescriptionCallFastCheck(expression) && isContractDescriptionCallPreciseCheck(expression, context)
-
-    private fun isContractAllowedHere(element: KtElement): Boolean =
-        element is KtNamedFunction && element.isTopLevel && element.hasBlockBody() && !element.hasModifier(KtTokens.OPERATOR_KEYWORD)
-
-    private fun isContractAllowedHere(scope: LexicalScope): Boolean =
-        scope.kind == LexicalScopeKind.CODE_BLOCK && (scope.parent as? LexicalScope)?.kind == LexicalScopeKind.FUNCTION_INNER_SCOPE
-
-    private fun isContractDescriptionCallFastCheck(expression: KtExpression): Boolean =
-        expression is KtCallExpression && expression.calleeExpression?.text == "contract"
-
-    private fun isContractDescriptionCallPreciseCheck(expression: KtExpression, context: BindingContext): Boolean =
-        expression.getResolvedCall(context)?.resultingDescriptor?.isContractCallDescriptor() ?: false
+class ContractCallContext(
+    val contractCallExpression: KtExpression,
+    val scope: LexicalScope,
+    val trace: BindingTrace
+) {
+    val ownerDescriptor: DeclarationDescriptor = scope.ownerDescriptor
+    val functionDescriptor: FunctionDescriptor = ownerDescriptor as FunctionDescriptor
+    val bindingContext: BindingContext = trace.bindingContext
 }

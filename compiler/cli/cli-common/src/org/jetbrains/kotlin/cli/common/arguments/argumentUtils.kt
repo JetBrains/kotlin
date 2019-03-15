@@ -23,12 +23,14 @@ import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KProperty1
 import kotlin.reflect.KVisibility
 import kotlin.reflect.full.declaredMemberProperties
-import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.memberProperties
 
 @Suppress("UNCHECKED_CAST")
-fun <T : Any> copyBean(bean: T) =
-        copyProperties(bean, bean::class.java.newInstance()!!, true, collectProperties(bean::class as KClass<T>, false))
+fun <T : Any> copyBean(bean: T) = copyBeanTo(bean, bean::class.java.newInstance()!!)
+
+@Suppress("UNCHECKED_CAST")
+fun <T : Any> copyBeanTo(from: T, to: T, filter: ((KProperty1<T, Any?>, Any?) -> Boolean)? = null) =
+    copyProperties(from, to, true, collectProperties(from::class as KClass<T>, false), filter)
 
 fun <From : Any, To : From> mergeBeans(from: From, to: To): To {
     // TODO: rewrite when updated version of com.intellij.util.xmlb is available on TeamCity
@@ -38,25 +40,27 @@ fun <From : Any, To : From> mergeBeans(from: From, to: To): To {
 
 @Suppress("UNCHECKED_CAST")
 fun <From : Any, To : Any> copyInheritedFields(from: From, to: To) =
-        copyProperties(from, to, true, collectProperties(from::class as KClass<From>, true))
+    copyProperties(from, to, true, collectProperties(from::class as KClass<From>, true))
 
 @Suppress("UNCHECKED_CAST")
 fun <From : Any, To : Any> copyFieldsSatisfying(from: From, to: To, predicate: (KProperty1<From, Any?>) -> Boolean) =
-        copyProperties(from, to, true, collectProperties(from::class as KClass<From>, false).filter(predicate))
+    copyProperties(from, to, true, collectProperties(from::class as KClass<From>, false).filter(predicate))
 
 private fun <From : Any, To : Any> copyProperties(
-        from: From,
-        to: To,
-        deepCopyWhenNeeded: Boolean,
-        propertiesToCopy: List<KProperty1<From, Any?>>
+    from: From,
+    to: To,
+    deepCopyWhenNeeded: Boolean,
+    propertiesToCopy: List<KProperty1<From, Any?>>,
+    filter: ((KProperty1<From, Any?>, Any?) -> Boolean)? = null
 ): To {
     if (from == to) return to
 
     for (fromProperty in propertiesToCopy) {
         @Suppress("UNCHECKED_CAST")
         val toProperty = to::class.memberProperties.firstOrNull { it.name == fromProperty.name } as? KMutableProperty1<To, Any?>
-                         ?: continue
+            ?: continue
         val fromValue = fromProperty.get(from)
+        if (filter != null && !filter(fromProperty, fromValue)) continue
         toProperty.set(to, if (deepCopyWhenNeeded) fromValue?.copyValueIfNeeded() else fromValue)
     }
     return to
@@ -65,14 +69,14 @@ private fun <From : Any, To : Any> copyProperties(
 private fun Any.copyValueIfNeeded(): Any {
     @Suppress("UNCHECKED_CAST")
     return when (this) {
-        is ByteArray -> Arrays.copyOf(this, size)
-        is CharArray -> Arrays.copyOf(this, size)
-        is ShortArray -> Arrays.copyOf(this, size)
-        is IntArray -> Arrays.copyOf(this, size)
-        is LongArray -> Arrays.copyOf(this, size)
-        is FloatArray -> Arrays.copyOf(this, size)
-        is DoubleArray -> Arrays.copyOf(this, size)
-        is BooleanArray -> Arrays.copyOf(this, size)
+        is ByteArray -> this.copyOf(size)
+        is CharArray -> this.copyOf(size)
+        is ShortArray -> this.copyOf(size)
+        is IntArray -> this.copyOf(size)
+        is LongArray -> this.copyOf(size)
+        is FloatArray -> this.copyOf(size)
+        is DoubleArray -> this.copyOf(size)
+        is BooleanArray -> this.copyOf(size)
 
         is Array<*> -> java.lang.reflect.Array.newInstance(this::class.java.componentType, size).apply {
             this as Array<Any?>
@@ -96,8 +100,8 @@ fun <T : Any> collectProperties(kClass: KClass<T>, inheritedOnly: Boolean): List
     if (inheritedOnly) {
         properties.removeAll(kClass.declaredMemberProperties)
     }
-    return properties.filter {
-        it.visibility == KVisibility.PUBLIC && (it.annotations.firstOrNull { it is Transient } as Transient?) == null
+    return properties.filter { property ->
+        property.visibility == KVisibility.PUBLIC && (property.annotations.firstOrNull { it is Transient } as Transient?) == null
     }
 }
 
@@ -106,3 +110,4 @@ fun CommonCompilerArguments.setApiVersionToLanguageVersionIfNeeded() {
         apiVersion = languageVersion
     }
 }
+

@@ -50,7 +50,7 @@ class ConvertAssertToIfWithThrowIntention : SelfTargetingIntention<KtCallExpress
         val args = element.valueArguments
         val conditionText = args[0]?.getArgumentExpression()?.text ?: return
         val functionLiteralArgument = element.lambdaArguments.singleOrNull()
-        val bindingContext = element.analyze(BodyResolveMode.PARTIAL)
+        val bindingContext = element.analyze(BodyResolveMode.PARTIAL_WITH_CFA)
         val psiFactory = KtPsiFactory(element)
 
         val messageFunctionExpr = when {

@@ -133,9 +133,9 @@ class AndroidExtensionsGradleImportHandler : GradleProjectImportHandler {
                 .filterTo(mutableListOf()) { !it.startsWith("plugin:$ANDROID_COMPILER_PLUGIN_ID:") } // Filter out old options
 
         if (moduleNode.hasAndroidExtensionsPlugin) {
-            newPluginOptions += makePluginOption(EXPERIMENTAL_OPTION.name, moduleNode.isExperimental.toString())
-            newPluginOptions += makePluginOption(ENABLED_OPTION.name, moduleNode.hasAndroidExtensionsPlugin.toString())
-            newPluginOptions += makePluginOption(DEFAULT_CACHE_IMPL_OPTION.name, moduleNode.defaultCacheImplementation)
+            newPluginOptions += makePluginOption(EXPERIMENTAL_OPTION.optionName, moduleNode.isExperimental.toString())
+            newPluginOptions += makePluginOption(ENABLED_OPTION.optionName, moduleNode.hasAndroidExtensionsPlugin.toString())
+            newPluginOptions += makePluginOption(DEFAULT_CACHE_IMPL_OPTION.optionName, moduleNode.defaultCacheImplementation)
         }
 
         commonArguments.pluginOptions = newPluginOptions.toTypedArray()

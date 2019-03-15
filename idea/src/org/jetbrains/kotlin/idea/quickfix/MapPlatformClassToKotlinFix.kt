@@ -142,7 +142,7 @@ class MapPlatformClassToKotlinFix(
         }
 
         TemplateManager.getInstance(project).startTemplate(editor, builder.buildInlineTemplate(), object : TemplateEditingAdapter() {
-            override fun templateFinished(template: Template?, brokenOff: Boolean) {
+            override fun templateFinished(template: Template, brokenOff: Boolean) {
                 caretModel.moveToOffset(oldOffset)
             }
         })

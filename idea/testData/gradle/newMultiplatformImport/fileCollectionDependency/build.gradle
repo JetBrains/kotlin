@@ -1,0 +1,35 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        jcenter()
+        maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
+    }
+    dependencies {
+        apply from: "include.gradle"
+        def kotlinVersion = gradleKotlinPluginVersion('1.3.10')
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+    }
+}
+
+allprojects {
+    repositories {
+        mavenLocal()
+        jcenter()
+        maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
+    }
+}
+
+apply plugin: 'kotlin-multiplatform'
+
+kotlin {
+    sourceSets {
+        jvmMain {
+            dependencies {
+                implementation files("a", "b")
+            }
+        }
+    }
+    targets {
+        fromPreset(presets.jvmWithJava, 'jvm')
+    }
+} 

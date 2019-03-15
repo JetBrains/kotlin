@@ -33,7 +33,7 @@ data class ClassIdWithTarget(val classId: ClassId, val target: AnnotationUseSite
 
 class ClsStubBuilderComponents(
         val classDataFinder: ClassDataFinder,
-        val annotationLoader: AnnotationAndConstantLoader<ClassId, Unit, ClassIdWithTarget>,
+        val annotationLoader: AnnotationAndConstantLoader<ClassId, Unit>,
         val virtualFileForDebug: VirtualFile
 ) {
     fun createContext(

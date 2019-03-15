@@ -19,7 +19,7 @@ enum class TestClasses : EnumStyleClass {
 }
 
 // example
-fun main(args: Array<String>) {
+fun main() {
     // Kotlin: Expression 'cls1' of type 'DOMElementTestClasses' cannot be invoked as a function
     DOMElementTestClasses.cls1()
 

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.js.naming
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.isSuspendFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.KotlinType
@@ -80,7 +81,11 @@ private fun StringBuilder.encodeForSignature(
         return append(typeParameterNamer(declaration))
     }
 
-    append(DescriptorUtils.getFqName(declaration).asString())
+    if (type.isSuspendFunctionType) {
+        append(DescriptorUtils.getFqName(declaration).asString().replace("kotlin.coroutines.SuspendFunction", "kotlin.SuspendFunction"))
+    } else {
+        append(DescriptorUtils.getFqName(declaration).asString())
+    }
 
     val parameters = declaration.typeConstructor.parameters
     if (type.arguments.isNotEmpty() && parameters.isNotEmpty()) {

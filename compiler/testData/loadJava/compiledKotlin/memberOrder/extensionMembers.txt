@@ -2,9 +2,9 @@ package test
 
 public final class A {
     /*primary*/ public constructor A()
-    public final val c: kotlin.Int = 2
+    public final val c: kotlin.Int
         public final fun <get-c>(): kotlin.Int
-    public final val d: kotlin.Int = 2
+    public final val d: kotlin.Int
         public final fun <get-d>(): kotlin.Int
     public final val kotlin.Int.c: kotlin.Int
         public final fun kotlin.Int.<get-c>(): kotlin.Int

@@ -1,4 +1,4 @@
-// INSPECTION_CLASS: org.jetbrains.android.inspections.klint.AndroidLintInspectionToolProvider$AndroidKLintLocalSuppressInspection
+// INSPECTION_CLASS: com.android.tools.idea.lint.AndroidLintLocalSuppressInspection
 
 import android.annotation.SuppressLint
 import android.view.View
@@ -13,15 +13,15 @@ class WrongAnnotation2 {
 
     companion object {
         @SuppressLint("NewApi") // Valid: class-file check on method
-        fun foobar(view: View, @SuppressLint("NewApi") foo: Int) {
+        fun foobar(view: View, <error descr="The `@SuppressLint` annotation cannot be used on a local variable with the lint check 'NewApi': move out to the surrounding method">@SuppressLint("NewApi")</error> foo: Int) {
             // Invalid: class-file check
             <error descr="The `@SuppressLint` annotation cannot be used on a local variable with the lint check 'NewApi': move out to the surrounding method">@SuppressLint("NewApi")</error> // Invalid
             val a: Boolean
 
-            @SuppressLint("SdCardPath", "NewApi") // TODO: Invalid, class-file based check on local variable
+            <error descr="The `@SuppressLint` annotation cannot be used on a local variable with the lint check 'NewApi': move out to the surrounding method">@SuppressLint("SdCardPath", "NewApi")</error> // TODO: Invalid, class-file based check on local variable
             val b: Boolean
 
-            @android.annotation.SuppressLint("SdCardPath", "NewApi") // TDOD: Invalid (FQN)
+            <error descr="The `@SuppressLint` annotation cannot be used on a local variable with the lint check 'NewApi': move out to the surrounding method">@android.annotation.SuppressLint("SdCardPath", "NewApi")</error> // TDOD: Invalid (FQN)
             val c: Boolean
 
             @SuppressLint("SdCardPath") // Valid: AST-based check

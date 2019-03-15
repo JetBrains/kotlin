@@ -1,5 +1,8 @@
+// IGNORE_BACKEND: JVM_IR
 // FILE: inlined.kt
+// COMMON_COROUTINES_TEST
 // WITH_RUNTIME
+// WITH_COROUTINES
 // NO_CHECK_LAMBDA_INLINING
 
 suspend inline fun inlineMe(c: suspend () -> Unit) {
@@ -25,21 +28,13 @@ suspend inline fun crossinlineMe(crossinline c: suspend () -> Unit) {
 }
 
 // FILE: inlineSite.kt
+// COMMON_COROUTINES_TEST
 
-import kotlin.coroutines.experimental.*
+import COROUTINES_PACKAGE.*
+import helpers.*
 
 fun builder(c: suspend () -> Unit) {
-    c.startCoroutine(object: Continuation<Unit> {
-        override val context: CoroutineContext
-            get() = EmptyCoroutineContext
-
-        override fun resume(value: Unit) {
-        }
-
-        override fun resumeWithException(exception: Throwable) {
-            throw exception
-        }
-    })
+    c.startCoroutine(EmptyContinuation)
 }
 
 var i = 0;

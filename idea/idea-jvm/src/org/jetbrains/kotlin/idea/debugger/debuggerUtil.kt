@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.debugger
@@ -20,13 +9,14 @@ import com.intellij.debugger.engine.DebugProcessImpl
 import com.intellij.debugger.engine.DebuggerManagerThreadImpl
 import com.intellij.debugger.engine.events.DebuggerCommandImpl
 import com.intellij.debugger.impl.DebuggerContextImpl
-import com.intellij.debugger.jdi.LocalVariableProxyImpl
 import com.intellij.psi.PsiElement
 import com.sun.jdi.*
 import com.sun.tools.jdi.LocalVariableImpl
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
-import org.jetbrains.kotlin.codegen.coroutines.CONTINUATION_ASM_TYPE
+import org.jetbrains.kotlin.codegen.binding.CodegenBinding.asmTypeForAnonymousClass
 import org.jetbrains.kotlin.codegen.coroutines.DO_RESUME_METHOD_NAME
+import org.jetbrains.kotlin.codegen.coroutines.INVOKE_SUSPEND_METHOD_NAME
+import org.jetbrains.kotlin.codegen.coroutines.continuationAsmTypes
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches
 import org.jetbrains.kotlin.idea.refactoring.getLineEndOffset
@@ -37,17 +27,15 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
+import org.jetbrains.org.objectweb.asm.Type as AsmType
 import java.util.*
 
-fun isInsideInlineFunctionBody(visibleVariables: List<LocalVariableProxyImpl>): Boolean {
-    return visibleVariables.any { it.name().startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION) }
-}
-
-fun numberOfInlinedFunctions(visibleVariables: List<LocalVariableProxyImpl>): Int {
-    return visibleVariables.count { it.name().startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION) }
-}
-
-fun isInsideInlineArgument(inlineArgument: KtFunction, location: Location, debugProcess: DebugProcessImpl): Boolean {
+fun isInsideInlineArgument(
+    inlineArgument: KtFunction,
+    location: Location,
+    debugProcess: DebugProcessImpl,
+    bindingContext: BindingContext = KotlinDebuggerCaches.getOrCreateTypeMapper(inlineArgument).bindingContext
+): Boolean {
     val visibleVariables = location.visibleVariables(debugProcess)
     val markerLocalVariables = visibleVariables.filter { it.name().startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT) }
 
@@ -56,10 +44,19 @@ fun isInsideInlineArgument(inlineArgument: KtFunction, location: Location, debug
     val functionName = runReadAction { functionNameByArgument(inlineArgument, context) }
 
     return markerLocalVariables
-            .map { it.name() }
-            .any { variableName ->
-                lambdaOrdinalByLocalVariable(variableName) == lambdaOrdinal && functionNameByLocalVariable(variableName) == functionName
+        .map { it.name().drop(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT.length) }
+        .any { variableName ->
+            if (variableName.startsWith("-")) {
+                val lambdaClassName = asmTypeForAnonymousClass(bindingContext, inlineArgument)
+                    .internalName.substringAfterLast("/")
+
+                variableName == "-$functionName-$lambdaClassName"
+            } else {
+                // For Kotlin up to 1.3.10
+                lambdaOrdinalByLocalVariable(variableName) == lambdaOrdinal
+                        && functionNameByLocalVariable(variableName) == functionName
             }
+        }
 }
 
 fun <T : Any> DebugProcessImpl.invokeInManagerThread(f: (DebuggerContextImpl) -> T?): T? {
@@ -119,7 +116,7 @@ private class MockStackFrame(private val location: Location, private val vm: Vir
 
     private fun createVisibleVariables() {
         if (visibleVariables == null) {
-            val allVariables = location.method().variables()
+            val allVariables = location.method().safeVariables() ?: emptyList()
             val map = HashMap<String, LocalVariable>(allVariables.size)
 
             for (allVariable in allVariables) {
@@ -154,14 +151,20 @@ private class MockStackFrame(private val location: Location, private val vm: Vir
     override fun virtualMachine() = vm
 }
 
-private val DO_RESUME_SIGNATURE = "(Ljava/lang/Object;Ljava/lang/Throwable;)Ljava/lang/Object;"
+private const val DO_RESUME_SIGNATURE = "(Ljava/lang/Object;Ljava/lang/Throwable;)Ljava/lang/Object;"
+private const val INVOKE_SUSPEND_SIGNATURE = "(Ljava/lang/Object;)Ljava/lang/Object;"
 
 fun isInSuspendMethod(location: Location): Boolean {
     val method = location.method()
     val signature = method.signature()
 
-    return signature.contains(CONTINUATION_ASM_TYPE.toString()) ||
-           (method.name() == DO_RESUME_METHOD_NAME && signature == DO_RESUME_SIGNATURE)
+    for (continuationAsmType in continuationAsmTypes()) {
+        if (signature.contains(continuationAsmType.toString()) ||
+            (method.name() == DO_RESUME_METHOD_NAME && signature == DO_RESUME_SIGNATURE) ||
+            (method.name() == INVOKE_SUSPEND_METHOD_NAME && signature == INVOKE_SUSPEND_SIGNATURE)
+        ) return true
+    }
+    return false
 }
 
 fun suspendFunctionFirstLineLocation(location: Location): Int? {
@@ -183,7 +186,7 @@ fun isOnSuspendReturnOrReenter(location: Location): Boolean {
 }
 
 fun isLastLineLocationInMethod(location: Location): Boolean {
-    val knownLines = location.method().allLineLocations().map { it.lineNumber() }.filter { it != -1 }
+    val knownLines = location.method().safeAllLineLocations().map { it.lineNumber() }.filter { it != -1 }
     if (knownLines.isEmpty()) {
         return false
     }
@@ -192,7 +195,7 @@ fun isLastLineLocationInMethod(location: Location): Boolean {
 }
 
 fun isOneLineMethod(location: Location): Boolean {
-    val allLineLocations = location.method().allLineLocations()
+    val allLineLocations = location.method().safeAllLineLocations()
     val firstLine = allLineLocations.firstOrNull()?.lineNumber()
     val lastLine = allLineLocations.lastOrNull()?.lineNumber()
 
@@ -234,4 +237,32 @@ fun findCallByEndToken(element: PsiElement): KtCallExpression? {
         }
         else -> null
     }
+}
+
+fun Type.isSubtype(className: String): Boolean = isSubtype(AsmType.getObjectType(className))
+
+fun Type.isSubtype(type: AsmType): Boolean {
+    if (this.signature() == type.descriptor) {
+        return true
+    }
+
+    if (type.sort != AsmType.OBJECT || this !is ClassType) {
+        return false
+    }
+
+    val superTypeName = type.className
+
+    if (allInterfaces().any { it.name() == superTypeName }) {
+        return true
+    }
+
+    var superClass = superclass()
+    while (superClass != null) {
+        if (superClass.name() == superTypeName) {
+            return true
+        }
+        superClass = superClass.superclass()
+    }
+
+    return false
 }

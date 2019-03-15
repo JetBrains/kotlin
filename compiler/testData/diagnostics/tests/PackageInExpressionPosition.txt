@@ -10,7 +10,7 @@ package foo {
     public val xss: [ERROR : Type for java.lang.System]
     public val xsss: [ERROR : Type for foo.X]
     public val xssss: [ERROR : Type for foo]
-    public fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+    public fun main(): kotlin.Unit
 
     public final class X {
         public constructor X()

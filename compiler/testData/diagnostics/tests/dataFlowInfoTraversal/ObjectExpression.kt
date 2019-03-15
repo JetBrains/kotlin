@@ -7,6 +7,6 @@ fun foo() {
 
     val <!UNUSED_VARIABLE!>a<!> = object {
         fun baz() = bar(if (x == null) 0 else <!DEBUG_INFO_SMARTCAST!>x<!>)
-        fun quux(): Int = <!NI;TYPE_MISMATCH!>if (x == null) <!OI;TYPE_MISMATCH, DEBUG_INFO_CONSTANT!>x<!> else <!DEBUG_INFO_SMARTCAST!>x<!><!>
+        fun quux(): Int = <!NI;TYPE_MISMATCH!>if (x == null) <!DEBUG_INFO_CONSTANT, OI;TYPE_MISMATCH!>x<!> else <!DEBUG_INFO_SMARTCAST!>x<!><!>
     }
 }

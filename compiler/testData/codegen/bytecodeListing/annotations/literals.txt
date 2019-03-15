@@ -5,6 +5,7 @@
 public annotation class ClsAnn
 
 @kotlin.annotation.Target
+@kotlin.annotation.Retention
 @java.lang.annotation.Retention
 @java.lang.annotation.Target
 @kotlin.Metadata

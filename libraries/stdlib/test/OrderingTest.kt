@@ -1,7 +1,11 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
 package test.comparisons
 
 import kotlin.test.*
-import kotlin.comparisons.*
 
 data class Item(val name: String, val rating: Int) : Comparable<Item> {
     public override fun compareTo(other: Item): Int {
@@ -9,7 +13,8 @@ data class Item(val name: String, val rating: Int) : Comparable<Item> {
     }
 }
 
-val STRING_CASE_INSENSITIVE_ORDER: Comparator<String> = compareBy { it: String -> it.toUpperCase() }.thenBy { it.toLowerCase() }.thenBy { it }
+val STRING_CASE_INSENSITIVE_ORDER: Comparator<String> =
+    compareBy { it: String -> it.toUpperCase() }.thenBy { it.toLowerCase() }.thenBy { it }
 
 class OrderingTest {
     val v1 = Item("wine", 9)
@@ -67,13 +72,13 @@ class OrderingTest {
         val byRating = compareBy<Item> { it.rating }
         val v3 = Item(v1.name, v1.rating + 1)
         val v4 = Item(v2.name + "_", v2.rating)
-        assertTrue( (byName then byRating).compare(v1, v2) > 0 )
-        assertTrue( (byName then byRating).compare(v1, v3) < 0 )
-        assertTrue( (byName thenDescending byRating).compare(v1, v3) > 0 )
+        assertTrue((byName then byRating).compare(v1, v2) > 0)
+        assertTrue((byName then byRating).compare(v1, v3) < 0)
+        assertTrue((byName thenDescending byRating).compare(v1, v3) > 0)
 
-        assertTrue( (byRating then byName).compare(v1, v2) < 0 )
-        assertTrue( (byRating then byName).compare(v4, v2) > 0 )
-        assertTrue( (byRating thenDescending byName).compare(v4, v2) < 0 )
+        assertTrue((byRating then byName).compare(v1, v2) < 0)
+        assertTrue((byRating then byName).compare(v4, v2) > 0)
+        assertTrue((byRating thenDescending byName).compare(v4, v2) < 0)
     }
 
     @Test
@@ -130,8 +135,8 @@ class OrderingTest {
     @Test
     fun sortUsingCustomComparator() {
         val comparator = object : Comparator<Item> {
-            override fun compare(o1: Item, o2: Item): Int {
-                return compareValuesBy(o1, o2, { it.name }, { it.rating })
+            override fun compare(a: Item, b: Item): Int {
+                return compareValuesBy(a, b, { it.name }, { it.rating })
             }
 
             override fun equals(other: Any?): Boolean {
@@ -145,7 +150,8 @@ class OrderingTest {
         assertEquals(v1, items[1])
     }
 
-    @Test fun maxOf() {
+    @Test
+    fun maxOf() {
         assertEquals(Int.MAX_VALUE, maxOf(Int.MAX_VALUE, Int.MIN_VALUE))
         assertEquals(Int.MAX_VALUE, maxOf(Int.MAX_VALUE, Int.MIN_VALUE, 0))
 
@@ -154,16 +160,20 @@ class OrderingTest {
 
         assertEquals(Double.POSITIVE_INFINITY, maxOf(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY))
         assertEquals(Double.POSITIVE_INFINITY, maxOf(Double.POSITIVE_INFINITY, Double.MAX_VALUE, Double.MIN_VALUE))
+        assertEquals(0.0, maxOf(0.0, -0.0))
+        assertEquals(0.0, maxOf(-0.0, 0.0))
     }
 
-    @Test fun maxOfWith() {
+    @Test
+    fun maxOfWith() {
         assertEquals(v1, maxOf(v1, v2, compareBy { it.name }))
         assertEquals(v1, maxOf(v3, v2, v1, compareBy { it.name }))
         assertEquals(v2, maxOf(v1, v2, compareBy { it.rating }))
         assertEquals(v3, maxOf(v1, v2, v3, compareBy { it.rating }))
     }
 
-    @Test fun minOf() {
+    @Test
+    fun minOf() {
         assertEquals(Int.MIN_VALUE, minOf(Int.MAX_VALUE, Int.MIN_VALUE))
         assertEquals(Int.MIN_VALUE, minOf(Int.MAX_VALUE, Int.MIN_VALUE, 0))
 
@@ -172,9 +182,12 @@ class OrderingTest {
 
         assertEquals(Double.NEGATIVE_INFINITY, minOf(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY))
         assertEquals(Double.MIN_VALUE, minOf(Double.POSITIVE_INFINITY, Double.MAX_VALUE, Double.MIN_VALUE))
+        assertEquals(-0.0, minOf(0.0, -0.0))
+        assertEquals(-0.0, minOf(-0.0, 0.0))
     }
 
-    @Test fun minOfWith() {
+    @Test
+    fun minOfWith() {
         assertEquals(v2, minOf(v1, v2, compareBy { it.name }))
         assertEquals(v3, minOf(v3, v2, v1, compareBy { it.name }))
         assertEquals(v1, minOf(v1, v2, compareBy { it.rating }))

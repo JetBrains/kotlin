@@ -19,11 +19,10 @@ package org.jetbrains.kotlin.idea.compiler.configuration
 import com.intellij.openapi.components.*
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.config.CompilerSettings
+import org.jetbrains.kotlin.config.SettingConstants
 import org.jetbrains.kotlin.config.SettingConstants.KOTLIN_COMPILER_SETTINGS_SECTION
 
-@State(name = KOTLIN_COMPILER_SETTINGS_SECTION,
-       storages = arrayOf(Storage(file = StoragePathMacros.PROJECT_FILE),
-                          Storage(file = BaseKotlinCompilerSettings.KOTLIN_COMPILER_SETTINGS_PATH, scheme = StorageScheme.DIRECTORY_BASED)))
+@State(name = KOTLIN_COMPILER_SETTINGS_SECTION, storages = [(Storage(SettingConstants.KOTLIN_COMPILER_SETTINGS_FILE))])
 class KotlinCompilerSettings(project: Project) : BaseKotlinCompilerSettings<CompilerSettings>(project) {
     override fun createSettings() = CompilerSettings()
 

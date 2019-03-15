@@ -1,0 +1,2 @@
+public abstract interface RecursiveAnnotation2 : R|java/lang/Object| {
+}

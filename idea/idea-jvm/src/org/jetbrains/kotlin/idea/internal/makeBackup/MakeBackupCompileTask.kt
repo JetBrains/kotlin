@@ -26,7 +26,7 @@ val random = Random()
 
 val HISTORY_LABEL_KEY = Key.create<String>("history label")
 
-class MakeBackupCompileTask: CompileTask {
+class MakeBackupCompileTask : CompileTask {
     override fun execute(context: CompileContext?): Boolean {
         val project = context!!.project!!
 
@@ -38,5 +38,4 @@ class MakeBackupCompileTask: CompileTask {
 
         return true
     }
-
 }

@@ -1,39 +1,29 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve;
 
 import com.google.common.collect.ImmutableMap;
+import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
+import kotlin.annotations.jvm.ReadOnly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.cfg.LeakingThisDescriptor;
 import org.jetbrains.kotlin.cfg.TailRecursionKind;
 import org.jetbrains.kotlin.contracts.description.InvocationKind;
 import org.jetbrains.kotlin.contracts.model.Computation;
-import org.jetbrains.kotlin.contracts.model.Functor;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemCompleter;
-import org.jetbrains.kotlin.resolve.calls.model.CallResolutionResult;
+import org.jetbrains.kotlin.resolve.calls.model.PartialCallResolutionResult;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue;
@@ -58,6 +48,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 import static org.jetbrains.kotlin.util.slicedMap.RewritePolicy.DO_NOTHING;
+import static org.jetbrains.kotlin.util.slicedMap.Slices.COMPILE_TIME_VALUE_REWRITE_POLICY;
 
 public interface BindingContext {
     BindingContext EMPTY = new BindingContext() {
@@ -99,7 +90,7 @@ public interface BindingContext {
 
     WritableSlice<KtAnnotationEntry, AnnotationDescriptor> ANNOTATION = Slices.createSimpleSlice();
 
-    WritableSlice<KtExpression, CompileTimeConstant<?>> COMPILE_TIME_VALUE = Slices.createSimpleSlice();
+    WritableSlice<KtExpression, CompileTimeConstant<?>> COMPILE_TIME_VALUE = new BasicWritableSlice<>(COMPILE_TIME_VALUE_REWRITE_POLICY);
 
     WritableSlice<KtTypeReference, KotlinType> TYPE = Slices.createSimpleSlice();
     WritableSlice<KtTypeReference, KotlinType> ABBREVIATED_TYPE = Slices.createSimpleSlice();
@@ -107,11 +98,13 @@ public interface BindingContext {
     WritableSlice<KtExpression, DataFlowInfo> DATA_FLOW_INFO_BEFORE = new BasicWritableSlice<>(DO_NOTHING);
     WritableSlice<KtExpression, KotlinType> EXPECTED_EXPRESSION_TYPE = new BasicWritableSlice<>(DO_NOTHING);
     WritableSlice<KtElement, Computation> EXPRESSION_EFFECTS = Slices.createSimpleSlice();
-    WritableSlice<FunctionDescriptor, Functor> FUNCTOR = Slices.createSimpleSlice();
+    WritableSlice<KtElement, Boolean> CONTRACT_NOT_ALLOWED = Slices.createSimpleSlice();
+    WritableSlice<KtElement, Boolean> IS_CONTRACT_DECLARATION_BLOCK = Slices.createSimpleSlice();
     WritableSlice<KtFunction, KotlinType> EXPECTED_RETURN_TYPE = new BasicWritableSlice<>(DO_NOTHING);
     WritableSlice<KtExpression, DataFlowInfo> DATAFLOW_INFO_AFTER_CONDITION = Slices.createSimpleSlice();
     WritableSlice<VariableDescriptor, DataFlowValue> BOUND_INITIALIZER_VALUE = Slices.createSimpleSlice();
     WritableSlice<KtExpression, LeakingThisDescriptor> LEAKING_THIS = Slices.createSimpleSlice();
+    WritableSlice<KtParameter, Boolean> UNUSED_MAIN_PARAMETER = Slices.createSimpleSlice();
 
     /**
      * A qualifier corresponds to a receiver expression (if any). For 'A.B' qualifier is recorded for 'A'.
@@ -128,7 +121,8 @@ public interface BindingContext {
             new BasicWritableSlice<>(DO_NOTHING);
 
     WritableSlice<Call, ResolvedCall<?>> RESOLVED_CALL = new BasicWritableSlice<>(DO_NOTHING);
-    WritableSlice<Call, CallResolutionResult> ONLY_RESOLVED_CALL = new BasicWritableSlice<>(DO_NOTHING);
+    WritableSlice<Call, PartialCallResolutionResult> ONLY_RESOLVED_CALL = new BasicWritableSlice<>(DO_NOTHING);
+    WritableSlice<Call, BasicCallResolutionContext> PARTIAL_CALL_RESOLUTION_CONTEXT = new BasicWritableSlice<>(DO_NOTHING);
     WritableSlice<KtExpression, Call> DELEGATE_EXPRESSION_TO_PROVIDE_DELEGATE_CALL = new BasicWritableSlice<>(DO_NOTHING);
     WritableSlice<Call, TailRecursionKind> TAIL_RECURSION_CALL = Slices.createSimpleSlice();
     WritableSlice<KtElement, ConstraintSystemCompleter> CONSTRAINT_SYSTEM_COMPLETER = new BasicWritableSlice<>(DO_NOTHING);
@@ -271,6 +265,8 @@ public interface BindingContext {
     WritableSlice<KtFunction, KotlinResolutionCallbacksImpl.LambdaInfo> NEW_INFERENCE_LAMBDA_INFO = new BasicWritableSlice<>(DO_NOTHING);
 
     WritableSlice<KtExpression, PrimitiveNumericComparisonInfo> PRIMITIVE_NUMERIC_COMPARISON_INFO = Slices.createSimpleSlice();
+
+    WritableSlice<KtExpression, Ref<VariableDescriptor>> NEW_INFERENCE_CATCH_EXCEPTION_PARAMETER = Slices.createSimpleSlice();
 
     @SuppressWarnings("UnusedDeclaration")
     @Deprecated // This field is needed only for the side effects of its initializer

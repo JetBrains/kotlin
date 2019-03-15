@@ -1,0 +1,5 @@
+FILE: simpleImportOuter.kt
+    public final class My : R|a/Outer.Nested| {
+        public constructor(): super<R|a/Outer.Nested|>()
+
+    }

@@ -1,0 +1,6 @@
+buildscript {
+    repositories {
+        jcenter()
+        mavenCentral()
+    }
+}

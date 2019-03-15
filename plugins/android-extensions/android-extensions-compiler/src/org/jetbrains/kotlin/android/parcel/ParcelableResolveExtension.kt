@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
@@ -46,6 +47,7 @@ open class ParcelableResolveExtension : SyntheticResolveExtension {
         fun createMethod(
                 classDescriptor: ClassDescriptor,
                 componentKind: ParcelableSyntheticComponent.ComponentKind,
+                modality: Modality,
                 returnType: KotlinType,
                 vararg parameters: Pair<String, KotlinType>
         ): SimpleFunctionDescriptor {
@@ -64,7 +66,7 @@ open class ParcelableResolveExtension : SyntheticResolveExtension {
 
             functionDescriptor.initialize(
                     null, classDescriptor.thisAsReceiverParameter, emptyList(), valueParameters,
-                    returnType, Modality.FINAL, Visibilities.PUBLIC)
+                    returnType, modality, Visibilities.PUBLIC)
 
             return functionDescriptor
         }
@@ -80,10 +82,11 @@ open class ParcelableResolveExtension : SyntheticResolveExtension {
     override fun getSyntheticCompanionObjectNameIfNeeded(thisDescriptor: ClassDescriptor) = null
 
     override fun generateSyntheticMethods(
-            clazz: ClassDescriptor,
-            name: Name,
-            fromSupertypes: List<SimpleFunctionDescriptor>,
-            result: MutableCollection<SimpleFunctionDescriptor>
+        clazz: ClassDescriptor,
+        name: Name,
+        bindingContext: BindingContext,
+        fromSupertypes: List<SimpleFunctionDescriptor>,
+        result: MutableCollection<SimpleFunctionDescriptor>
     ) {
         fun isExperimental(): Boolean {
             val sourceElement = (clazz.source as? PsiSourceElement)?.psi as? KtElement ?: return false
@@ -96,7 +99,7 @@ open class ParcelableResolveExtension : SyntheticResolveExtension {
                 && result.none { it.isDescribeContents() }
                 && fromSupertypes.none { it.isDescribeContents() }
         ) {
-            result += createMethod(clazz, DESCRIBE_CONTENTS, clazz.builtIns.intType)
+            result += createMethod(clazz, DESCRIBE_CONTENTS, Modality.OPEN, clazz.builtIns.intType)
         } else if (name.asString() == WRITE_TO_PARCEL.methodName
                 && clazz.isParcelize
                 && isExperimental()
@@ -104,7 +107,8 @@ open class ParcelableResolveExtension : SyntheticResolveExtension {
         ) {
             val builtIns = clazz.builtIns
             val parcelClassType = resolveParcelClassType(clazz.module) ?: ErrorUtils.createErrorType("Unresolved 'Parcel' type")
-            result += createMethod(clazz, WRITE_TO_PARCEL, builtIns.unitType, "parcel" to parcelClassType, "flags" to builtIns.intType)
+            result += createMethod(clazz, WRITE_TO_PARCEL, Modality.OPEN,
+                                   builtIns.unitType, "parcel" to parcelClassType, "flags" to builtIns.intType)
         }
     }
 

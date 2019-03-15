@@ -1,0 +1,2 @@
+public abstract interface StringInParam : R|java/lang/Object| {
+}

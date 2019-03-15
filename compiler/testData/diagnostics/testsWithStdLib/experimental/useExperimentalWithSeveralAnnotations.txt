@@ -1,4 +1,3 @@
-// -- Module: <api> --
 package
 
 package api {
@@ -6,33 +5,26 @@ package api {
     @api.E2 public fun e2(): kotlin.Unit
     @api.E3 public fun e3(): kotlin.Unit
 
-    @kotlin.Experimental(changesMayBreak = {Impact.COMPILATION}, level = Level.WARNING) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION}) public final annotation class E1 : kotlin.Annotation {
+    @kotlin.Experimental(level = Level.WARNING) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION}) public final annotation class E1 : kotlin.Annotation {
         public constructor E1()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    @kotlin.Experimental(changesMayBreak = {Impact.COMPILATION}, level = Level.WARNING) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION}) public final annotation class E2 : kotlin.Annotation {
+    @kotlin.Experimental(level = Level.WARNING) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION}) public final annotation class E2 : kotlin.Annotation {
         public constructor E2()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    @kotlin.Experimental(changesMayBreak = {Impact.COMPILATION}, level = Level.WARNING) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION}) public final annotation class E3 : kotlin.Annotation {
+    @kotlin.Experimental(level = Level.WARNING) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION}) public final annotation class E3 : kotlin.Annotation {
         public constructor E3()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
-}
-
-
-// -- Module: <usage> --
-package
-
-package api {
 }
 
 package usage {

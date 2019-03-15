@@ -7,9 +7,6 @@ package org.jetbrains.kotlin.js.util;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.js.backend.ast.JsBinaryOperation;
-import org.jetbrains.kotlin.js.backend.ast.JsBinaryOperator;
-import org.jetbrains.kotlin.js.backend.ast.JsExpression;
 import org.jetbrains.kotlin.js.backend.ast.JsNode;
 
 import java.util.ArrayList;
@@ -20,10 +17,10 @@ public final class AstUtil {
     }
 
     @Nullable
+    @SuppressWarnings("unchecked")
     public static <T extends JsNode> T deepCopy(@Nullable T node) {
         if (node == null) return null;
 
-        //noinspection unchecked
         return (T) node.deepCopy();
     }
 

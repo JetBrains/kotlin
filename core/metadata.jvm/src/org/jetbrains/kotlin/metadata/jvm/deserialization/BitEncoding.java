@@ -13,7 +13,19 @@ import java.util.List;
 import static org.jetbrains.kotlin.metadata.jvm.deserialization.UtfEncodingKt.MAX_UTF8_INFO_LENGTH;
 
 public class BitEncoding {
-    private static final boolean FORCE_8TO7_ENCODING = "true".equals(System.getProperty("kotlin.jvm.serialization.use8to7"));
+    private static final boolean FORCE_8TO7_ENCODING;
+
+    static {
+        String use8to7;
+        try {
+            use8to7 = System.getProperty("kotlin.jvm.serialization.use8to7");
+        }
+        catch (SecurityException e) {
+            use8to7 = null;
+        }
+
+        FORCE_8TO7_ENCODING = "true".equals(use8to7);
+    }
 
     private static final char _8TO7_MODE_MARKER = (char) -1;
 

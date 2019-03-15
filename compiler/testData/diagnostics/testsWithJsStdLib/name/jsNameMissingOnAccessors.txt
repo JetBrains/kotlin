@@ -1,14 +1,14 @@
 package
 
 package foo {
-    public var xx: kotlin.Int
-    public var foo.A.ext: kotlin.Int
+    @get:kotlin.js.JsName(name = "get_xx") public var xx: kotlin.Int
+    @get:kotlin.js.JsName(name = "get_ext") public var foo.A.ext: kotlin.Int
 
     public final class A {
         public constructor A()
-        public final var x: kotlin.Int
-        public final var y: kotlin.Int
-        public final var z: kotlin.Int
+        @get:kotlin.js.JsName(name = "get_x") public final var x: kotlin.Int
+        @set:kotlin.js.JsName(name = "set_y") public final var y: kotlin.Int
+        @get:kotlin.js.JsName(name = "get_z") @set:kotlin.js.JsName(name = "set_z") public final var z: kotlin.Int
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

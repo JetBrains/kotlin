@@ -17,19 +17,26 @@
 package org.jetbrains.kotlin.idea.run;
 
 import com.intellij.application.options.ModulesComboBox;
+import com.intellij.execution.ExecutionBundle;
 import com.intellij.execution.JavaExecutionUtil;
-import com.intellij.execution.ui.CommonJavaParametersPanel;
-import com.intellij.execution.ui.ConfigurationModuleSelector;
-import com.intellij.execution.ui.DefaultJreSelector;
-import com.intellij.execution.ui.JrePathEditor;
-import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.execution.configurations.ConfigurationUtil;
+import com.intellij.execution.ui.*;
+import com.intellij.ide.util.ClassFilter;
+import com.intellij.openapi.application.ReadAction;
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.LabeledComponent;
+import com.intellij.psi.JavaCodeFragment;
 import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.util.PsiMethodUtil;
+import com.intellij.ui.EditorTextFieldWithBrowseButton;
 import com.intellij.ui.PanelWithAnchor;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.asJava.classes.KtLightClass;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -37,7 +44,7 @@ import java.awt.event.ActionListener;
 
 public class KotlinRunConfigurationEditor extends SettingsEditor<KotlinRunConfiguration> implements PanelWithAnchor {
     private JPanel mainPanel;
-    private LabeledComponent<JTextField> mainClass;
+    private LabeledComponent<EditorTextFieldWithBrowseButton> mainClass;
 
     private CommonJavaParametersPanel commonProgramParameters;
     private LabeledComponent<ModulesComboBox> moduleChooser;
@@ -46,7 +53,33 @@ public class KotlinRunConfigurationEditor extends SettingsEditor<KotlinRunConfig
     private final ConfigurationModuleSelector moduleSelector;
     private JComponent anchor;
 
+    private final Project project;
+
+    private static ClassBrowser createApplicationClassBrowser(
+            Project project,
+            ConfigurationModuleSelector moduleSelector
+    ) {
+        ClassFilter applicationClass = new ClassFilter() {
+            @Override
+            public boolean isAccepted(PsiClass aClass) {
+                return aClass instanceof KtLightClass && ConfigurationUtil.MAIN_CLASS.value(aClass) && findMainMethod(aClass) != null;
+            }
+
+            @Nullable
+            private PsiMethod findMainMethod(PsiClass aClass) {
+                return ReadAction.compute(() -> PsiMethodUtil.findMainMethod(aClass));
+            }
+        };
+        return new ClassBrowser.MainClassBrowser(project, moduleSelector, ExecutionBundle.message("choose.main.class.dialog.title")) {
+            @Override
+            protected ClassFilter createFilter(Module module) {
+                return applicationClass;
+            }
+        };
+    }
+
     public KotlinRunConfigurationEditor(Project project) {
+        this.project = project;
         moduleSelector = new ConfigurationModuleSelector(project, moduleChooser.getComponent());
         jrePathEditor.setDefaultJreSelector(DefaultJreSelector.fromModuleDependencies(moduleChooser.getComponent(), false));
         commonProgramParameters.setModuleContext(moduleSelector.getModule());
@@ -56,12 +89,12 @@ public class KotlinRunConfigurationEditor extends SettingsEditor<KotlinRunConfig
                 commonProgramParameters.setModuleContext(moduleSelector.getModule());
             }
         });
-
+        createApplicationClassBrowser(project, moduleSelector).setField(mainClass.getComponent());
         anchor = UIUtil.mergeComponentsWithAnchor(mainClass, commonProgramParameters, jrePathEditor, jrePathEditor, moduleChooser);
     }
 
     @Override
-    protected void applyEditorTo(KotlinRunConfiguration configuration) throws ConfigurationException {
+    protected void applyEditorTo(KotlinRunConfiguration configuration) {
         commonProgramParameters.applyTo(configuration);
         moduleSelector.applyTo(configuration);
 
@@ -88,9 +121,18 @@ public class KotlinRunConfigurationEditor extends SettingsEditor<KotlinRunConfig
     }
 
     private void createUIComponents() {
-        mainClass = new LabeledComponent<JTextField>();
-        JTextField myMainClassField = new JTextField();
-        mainClass.setComponent(myMainClassField);
+        mainClass = new LabeledComponent<>();
+        mainClass.setComponent(new EditorTextFieldWithBrowseButton(project, true, (declaration, place) -> {
+            if (declaration instanceof KtLightClass) {
+                KtLightClass aClass = (KtLightClass)declaration;
+                if (ConfigurationUtil.MAIN_CLASS.value(aClass)
+                    && (PsiMethodUtil.findMainMethod(aClass) != null || place.getParent() != null)
+                    && moduleSelector.findClass(((PsiClass)declaration).getQualifiedName()) != null) {
+                    return JavaCodeFragment.VisibilityChecker.Visibility.VISIBLE;
+                }
+            }
+            return JavaCodeFragment.VisibilityChecker.Visibility.NOT_VISIBLE;
+        }));
     }
 
     @Override

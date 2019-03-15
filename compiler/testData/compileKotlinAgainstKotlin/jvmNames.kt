@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: NATIVE
+// TARGET_BACKEND: JVM
 // FILE: A.kt
 
 package lib
@@ -19,13 +19,22 @@ class A {
         @JvmName("OK") get
 }
 
+annotation class Anno(@get:JvmName("uglyJvmName") val value: String)
+
 // FILE: B.kt
 
 import lib.*
+
+@Anno("OK")
+fun annotated() {}
 
 fun box(): String {
     foo()
     v = 1
     consumeInt(v)
+
+    val annoValue = (::annotated.annotations.single() as Anno).value
+    if (annoValue != "OK") return "Fail annotation value: $annoValue"
+
     return A().OK
 }

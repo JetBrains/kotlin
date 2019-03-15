@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package templates
@@ -24,6 +13,17 @@ object Elements : TemplateGroupBase() {
     init {
         defaultBuilder {
             sequenceClassification(terminal)
+            specialFor(ArraysOfUnsigned) {
+                since("1.3")
+                annotation("@ExperimentalUnsignedTypes")
+            }
+            specialFor(RangesOfPrimitives) {
+                if (primitive in PrimitiveType.unsignedPrimitives) {
+                    since("1.3")
+                    annotation("@ExperimentalUnsignedTypes")
+                    sourceFile(SourceFile.URanges)
+                }
+            }
         }
     }
 
@@ -50,7 +50,7 @@ object Elements : TemplateGroupBase() {
     }
 
     val f_indexOf = fn("indexOf(element: T)") {
-        include(Iterables, Sequences, ArraysOfObjects, ArraysOfPrimitives, Lists)
+        include(Iterables, Sequences, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned, Lists)
     } builder {
         doc { "Returns first index of [element], or -1 if the ${f.collection} does not contain element." }
         typeParam("@kotlin.internal.OnlyInputTypes T")
@@ -63,6 +63,7 @@ object Elements : TemplateGroupBase() {
             ${if (f == Iterables) "if (this is List) return this.indexOf(element)" else ""}
             var index = 0
             for (item in this) {
+                checkIndexOverflow(index)
                 if (element == item)
                     return index
                 index++
@@ -97,13 +98,19 @@ object Elements : TemplateGroupBase() {
                 }
             }
             return -1
-           """
+            """
         }
         body(Lists) { "return indexOf(element)" }
+
+        specialFor(ArraysOfUnsigned) {
+            inlineOnly()
+            val signedPrimitiveName = primitive!!.name.drop(1)
+            body { "return storage.indexOf(element.to$signedPrimitiveName())" }
+        }
     }
 
     val f_lastIndexOf = fn("lastIndexOf(element: T)") {
-        include(Iterables, Sequences, ArraysOfObjects, ArraysOfPrimitives, Lists)
+        include(Iterables, Sequences, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned, Lists)
     } builder {
         doc { "Returns last index of [element], or -1 if the ${f.collection} does not contain element." }
         typeParam("@kotlin.internal.OnlyInputTypes T")
@@ -117,6 +124,7 @@ object Elements : TemplateGroupBase() {
             var lastIndex = -1
             var index = 0
             for (item in this) {
+                checkIndexOverflow(index)
                 if (element == item)
                     lastIndex = index
                 index++
@@ -151,14 +159,20 @@ object Elements : TemplateGroupBase() {
                 }
             }
             return -1
-           """
+            """
         }
         body(Lists) { "return lastIndexOf(element)" }
+
+        specialFor(ArraysOfUnsigned) {
+            inlineOnly()
+            val signedPrimitiveName = primitive!!.name.drop(1)
+            body { "return storage.lastIndexOf(element.to$signedPrimitiveName())" }
+        }
     }
 
     val f_indexOfFirst = fn("indexOfFirst(predicate: (T) -> Boolean)") {
         includeDefault()
-        include(CharSequences, Lists)
+        include(CharSequences, Lists, ArraysOfUnsigned)
     } builder {
         inline()
 
@@ -168,12 +182,13 @@ object Elements : TemplateGroupBase() {
             """
             var index = 0
             for (item in this) {
+                ${if (f != Lists) "checkIndexOverflow(index)" else ""}
                 if (predicate(item))
                     return index
                 index++
             }
             return -1
-            """
+            """.lines().filterNot { it.isBlank() }.joinToString("\n")
         }
 
         body(CharSequences, ArraysOfPrimitives, ArraysOfObjects) {
@@ -186,11 +201,16 @@ object Elements : TemplateGroupBase() {
             return -1
             """
         }
+
+        specialFor(ArraysOfUnsigned) {
+            inlineOnly()
+            body { "return storage.indexOfFirst { predicate(it.to${primitive!!.name}()) }" }
+        }
     }
 
     val f_indexOfLast = fn("indexOfLast(predicate: (T) -> Boolean)") {
         includeDefault()
-        include(CharSequences, Lists)
+        include(CharSequences, Lists, ArraysOfUnsigned)
     } builder {
         inline()
 
@@ -201,6 +221,7 @@ object Elements : TemplateGroupBase() {
             var lastIndex = -1
             var index = 0
             for (item in this) {
+                checkIndexOverflow(index)
                 if (predicate(item))
                     lastIndex = index
                 index++
@@ -230,14 +251,20 @@ object Elements : TemplateGroupBase() {
             return -1
             """
         }
+
+        specialFor(ArraysOfUnsigned) {
+            inlineOnly()
+            body { "return storage.indexOfLast { predicate(it.to${primitive!!.name}()) }" }
+        }
     }
 
     val f_elementAt = fn("elementAt(index: Int)") {
         includeDefault()
-        include(CharSequences, Lists)
+        include(CharSequences, Lists, ArraysOfUnsigned)
     } builder {
         val index = '$' + "index"
         doc { "Returns ${f.element.prefixWithArticle()} at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this ${f.collection}." }
+        sample("samples.collections.Collections.Elements.elementAt")
         returns("T")
         body {
             """
@@ -253,17 +280,34 @@ object Elements : TemplateGroupBase() {
             """
         }
 
-        specialFor(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives) {
+        specialFor(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
             inlineOnly()
             body { "return get(index)" }
+        }
+
+        specialFor(CharSequences, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
+            on(Platform.Common) {
+                inline(Inline.No)
+            }
+            on(Platform.JS) {
+                inline(Inline.No)
+
+                val size = if (f == CharSequences) "length" else "size"
+                body {
+                    """
+                    return elementAtOrElse(index) { throw IndexOutOfBoundsException("index: $index, $size: $$size}") }
+                    """
+                }
+            }
         }
     }
 
     val f_elementAtOrElse = fn("elementAtOrElse(index: Int, defaultValue: (Int) -> T)") {
         includeDefault()
-        include(CharSequences, Lists)
+        include(CharSequences, Lists, ArraysOfUnsigned)
     } builder {
         doc { "Returns ${f.element.prefixWithArticle()} at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this ${f.collection}." }
+        sample("samples.collections.Collections.Elements.elementAtOrElse")
         returns("T")
         body {
             """
@@ -295,7 +339,7 @@ object Elements : TemplateGroupBase() {
             return defaultValue(index)
             """
         }
-        specialFor(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives) {
+        specialFor(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
             inlineOnly()
             body {
                 """
@@ -306,7 +350,7 @@ object Elements : TemplateGroupBase() {
     }
 
     val f_getOrElse = fn("getOrElse(index: Int, defaultValue: (Int) -> T)") {
-        include(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives)
+        include(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
     } builder {
         doc { "Returns ${f.element.prefixWithArticle()} at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this ${f.collection}." }
         returns("T")
@@ -320,9 +364,10 @@ object Elements : TemplateGroupBase() {
 
     val f_elementAtOrNull = fn("elementAtOrNull(index: Int)") {
         includeDefault()
-        include(CharSequences, Lists)
+        include(CharSequences, Lists, ArraysOfUnsigned)
     } builder {
         doc { "Returns ${f.element.prefixWithArticle()} at the given [index] or `null` if the [index] is out of bounds of this ${f.collection}." }
+        sample("samples.collections.Collections.Elements.elementAtOrNull")
         returns("T?")
         body {
             """
@@ -354,14 +399,14 @@ object Elements : TemplateGroupBase() {
             return null
             """
         }
-        specialFor(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives) {
+        specialFor(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
             inlineOnly()
             body { "return this.getOrNull(index)" }
         }
     }
 
     val f_getOrNull = fn("getOrNull(index: Int)") {
-        include(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives)
+        include(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
     } builder {
         doc { "Returns ${f.element.prefixWithArticle()} at the given [index] or `null` if the [index] is out of bounds of this ${f.collection}." }
         returns("T?")
@@ -374,7 +419,7 @@ object Elements : TemplateGroupBase() {
 
     val f_first = fn("first()") {
         includeDefault()
-        include(CharSequences, Lists)
+        include(CharSequences, Lists, ArraysOfUnsigned)
     } builder {
         doc { """Returns first ${f.element}.
         @throws [NoSuchElementException] if the ${f.collection} is empty.
@@ -408,11 +453,16 @@ object Elements : TemplateGroupBase() {
             return iterator.next()
             """
         }
+
+        specialFor(ArraysOfUnsigned) {
+            inlineOnly()
+            body { "return storage.first().to${primitive!!.name}()" }
+        }
     }
 
     val f_firstOrNull = fn("firstOrNull()") {
         includeDefault()
-        include(CharSequences, Lists)
+        include(CharSequences, Lists, ArraysOfUnsigned)
     } builder {
         doc { "Returns the first ${f.element}, or `null` if the ${f.collection} is empty." }
         returns("T?")
@@ -434,7 +484,7 @@ object Elements : TemplateGroupBase() {
             }
             """
         }
-        body(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives) {
+        body(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
             """
             return if (isEmpty()) null else this[0]
             """
@@ -451,12 +501,15 @@ object Elements : TemplateGroupBase() {
 
     val f_first_predicate = fn("first(predicate: (T) -> Boolean)") {
         includeDefault()
-        include(CharSequences)
+        include(CharSequences, ArraysOfUnsigned)
     } builder {
         inline()
+        specialFor(ArraysOfUnsigned) { inlineOnly() }
+
         doc { """Returns the first ${f.element} matching the given [predicate].
         @throws [NoSuchElementException] if no such ${f.element} is found.""" }
         returns("T")
+
         body {
             """
             for (element in this) if (predicate(element)) return element
@@ -467,9 +520,10 @@ object Elements : TemplateGroupBase() {
 
     val f_firstOrNull_predicate = fn("firstOrNull(predicate: (T) -> Boolean)") {
         includeDefault()
-        include(CharSequences)
+        include(CharSequences, ArraysOfUnsigned)
     } builder {
         inline()
+        specialFor(ArraysOfUnsigned) { inlineOnly() }
 
         doc { "Returns the first ${f.element} matching the given [predicate], or `null` if ${f.element} was not found." }
         returns("T?")
@@ -483,7 +537,7 @@ object Elements : TemplateGroupBase() {
 
     val f_find = fn("find(predicate: (T) -> Boolean)") {
         includeDefault()
-        include(CharSequences)
+        include(CharSequences, ArraysOfUnsigned)
     } builder {
         inline(Inline.Only)
         doc { "Returns the first ${f.element} matching the given [predicate], or `null` if no such ${f.element} was found." }
@@ -494,7 +548,7 @@ object Elements : TemplateGroupBase() {
 
     val f_last = fn("last()") {
         includeDefault()
-        include(CharSequences, Lists)
+        include(CharSequences, Lists, ArraysOfUnsigned)
     } builder {
         doc { """Returns the last ${f.element}.
         @throws [NoSuchElementException] if the ${f.collection} is empty.""" }
@@ -533,11 +587,16 @@ object Elements : TemplateGroupBase() {
             return this[lastIndex]
             """
         }
+
+        specialFor(ArraysOfUnsigned) {
+            inlineOnly()
+            body { "return storage.last().to${primitive!!.name}()" }
+        }
     }
 
     val f_lastOrNull = fn("lastOrNull()") {
         includeDefault()
-        include(Lists, CharSequences)
+        include(Lists, CharSequences, ArraysOfUnsigned)
     } builder {
         doc { "Returns the last ${f.element}, or `null` if the ${f.collection} is empty." }
         returns("T?")
@@ -573,7 +632,7 @@ object Elements : TemplateGroupBase() {
             return if (isEmpty()) null else this[length - 1]
             """
         }
-        body(Lists, ArraysOfObjects, ArraysOfPrimitives) {
+        body(Lists, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
             """
             return if (isEmpty()) null else this[size - 1]
             """
@@ -582,9 +641,10 @@ object Elements : TemplateGroupBase() {
 
     val f_last_predicate = fn("last(predicate: (T) -> Boolean)") {
         includeDefault()
-        include(Lists, CharSequences)
+        include(Lists, CharSequences, ArraysOfUnsigned)
     } builder {
         inline()
+        specialFor(ArraysOfUnsigned) { inlineOnly() }
 
         doc { """Returns the last ${f.element} matching the given [predicate].
         @throws [NoSuchElementException] if no such ${f.element} is found.""" }
@@ -605,7 +665,7 @@ object Elements : TemplateGroupBase() {
             """
         }
 
-        body(CharSequences, ArraysOfPrimitives, ArraysOfObjects) {
+        body(CharSequences, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
             """
             for (index in this.indices.reversed()) {
                 val element = this[index]
@@ -628,9 +688,11 @@ object Elements : TemplateGroupBase() {
 
     val f_lastOrNull_predicate = fn("lastOrNull(predicate: (T) -> Boolean)") {
         includeDefault()
-        include(Lists, CharSequences)
+        include(Lists, CharSequences, ArraysOfUnsigned)
     } builder {
         inline()
+        specialFor(ArraysOfUnsigned) { inlineOnly() }
+
         doc { "Returns the last ${f.element} matching the given [predicate], or `null` if no such ${f.element} was found." }
         returns("T?")
         body {
@@ -645,7 +707,7 @@ object Elements : TemplateGroupBase() {
             """
         }
 
-        body(CharSequences, ArraysOfPrimitives, ArraysOfObjects) {
+        body(CharSequences, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
             """
             for (index in this.indices.reversed()) {
                 val element = this[index]
@@ -669,7 +731,7 @@ object Elements : TemplateGroupBase() {
 
     val f_findLast = fn("findLast(predicate: (T) -> Boolean)") {
         includeDefault()
-        include(Lists, CharSequences)
+        include(Lists, CharSequences, ArraysOfUnsigned)
     } builder {
         inline(Inline.Only)
         doc { "Returns the last ${f.element} matching the given [predicate], or `null` if no such ${f.element} was found." }
@@ -679,7 +741,7 @@ object Elements : TemplateGroupBase() {
 
     val f_single = fn("single()") {
         includeDefault()
-        include(Lists, CharSequences)
+        include(Lists, CharSequences, ArraysOfUnsigned)
     } builder {
         doc { "Returns the single ${f.element}, or throws an exception if the ${f.collection} is empty or has more than one ${f.element}." }
         returns("T")
@@ -719,11 +781,16 @@ object Elements : TemplateGroupBase() {
             }
             """
         }
+
+        specialFor(ArraysOfUnsigned) {
+            inlineOnly()
+            body { "return storage.single().to${primitive!!.name}()" }
+        }
     }
 
     val f_singleOrNull = fn("singleOrNull()") {
         includeDefault()
-        include(Lists, CharSequences)
+        include(Lists, CharSequences, ArraysOfUnsigned)
     } builder {
         doc { "Returns single ${f.element}, or `null` if the ${f.collection} is empty or has more than one ${f.element}." }
         returns("T?")
@@ -759,7 +826,7 @@ object Elements : TemplateGroupBase() {
             return if (length == 1) this[0] else null
             """
         }
-        body(Lists, ArraysOfObjects, ArraysOfPrimitives) {
+        body(Lists, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
             """
             return if (size == 1) this[0] else null
             """
@@ -768,11 +835,14 @@ object Elements : TemplateGroupBase() {
 
     val f_single_predicate = fn("single(predicate: (T) -> Boolean)") {
         includeDefault()
-        include(CharSequences)
+        include(CharSequences, ArraysOfUnsigned)
     } builder {
         inline()
+        specialFor(ArraysOfUnsigned) { inlineOnly() }
+
         doc { "Returns the single ${f.element} matching the given [predicate], or throws exception if there is no or more than one matching ${f.element}." }
         returns("T")
+
         body {
             """
             var single: T? = null
@@ -793,11 +863,14 @@ object Elements : TemplateGroupBase() {
 
     val f_singleOrNull_predicate = fn("singleOrNull(predicate: (T) -> Boolean)") {
         includeDefault()
-        include(CharSequences)
+        include(CharSequences, ArraysOfUnsigned)
     } builder {
         inline()
+        specialFor(ArraysOfUnsigned) { inlineOnly() }
+
         doc { "Returns the single ${f.element} matching the given [predicate], or `null` if ${f.element} was not found or more than one ${f.element} was found." }
         returns("T?")
+
         body {
             """
             var single: T? = null
@@ -815,9 +888,73 @@ object Elements : TemplateGroupBase() {
         }
     }
 
+    val f_random = fn("random()") {
+        include(Collections, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned, CharSequences, RangesOfPrimitives)
+    } builder {
+        since("1.3")
+        inlineOnly()
+        returns("T")
+        doc {
+            """
+            Returns a random ${f.element} from this ${f.collection}.
+
+            @throws ${if (f == RangesOfPrimitives) "IllegalArgumentException" else "NoSuchElementException"} if this ${f.collection} is empty.
+            """
+        }
+        body {
+            """return random(Random)"""
+        }
+    }
+
+    val f_random_random = fn("random(random: Random)") {
+        include(Collections, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned, CharSequences, RangesOfPrimitives)
+    } builder {
+        since("1.3")
+        returns("T")
+        doc {
+            """
+            Returns a random ${f.element} from this ${f.collection} using the specified source of randomness.
+
+            @throws ${if (f == RangesOfPrimitives) "IllegalArgumentException" else "NoSuchElementException"} if this ${f.collection} is empty.
+            """
+        }
+        body {
+            """
+            if (isEmpty())
+                throw NoSuchElementException("${f.doc.collection.capitalize()} is empty.")
+            return elementAt(random.nextInt(size))
+            """
+        }
+        specialFor(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned, CharSequences) {
+            body {
+                val size = if (family == CharSequences) "length" else "size"
+                """
+                if (isEmpty())
+                    throw NoSuchElementException("${f.doc.collection.capitalize()} is empty.")
+                return get(random.nextInt($size))
+                """
+            }
+        }
+        specialFor(RangesOfPrimitives) {
+            body {
+                val expr = when (primitive) {
+                    PrimitiveType.Char -> "nextInt(first.toInt(), last.toInt() + 1).toChar()"
+                    else -> "next$primitive(this)"
+                }
+                """
+                try {
+                    return random.$expr
+                } catch(e: IllegalArgumentException) {
+                    throw NoSuchElementException(e.message)
+                }
+                """
+            }
+        }
+    }
+
     val f_components = (1..5).map { n ->
         fn("component$n()") {
-            include(Lists, ArraysOfObjects, ArraysOfPrimitives)
+            include(Lists, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
         } builder {
             operator(true)
             inlineOnly()

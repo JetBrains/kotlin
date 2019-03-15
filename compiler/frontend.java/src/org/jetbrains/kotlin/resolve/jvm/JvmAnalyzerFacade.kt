@@ -18,9 +18,10 @@ package org.jetbrains.kotlin.resolve.jvm
 
 import org.jetbrains.kotlin.analyzer.*
 import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.TargetPlatformVersion
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ModuleContext
-import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.frontend.java.di.createContainerForLazyResolveWithJava
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolverImpl
 import org.jetbrains.kotlin.load.java.structure.JavaClass
+import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer
 import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.resolve.TargetPlatform
@@ -37,23 +39,23 @@ import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
 
 class JvmPlatformParameters(
+    val packagePartProviderFactory: (ModuleContent<*>) -> PackagePartProvider,
     val moduleByJavaClass: (JavaClass) -> ModuleInfo?
 ) : PlatformAnalysisParameters
 
 
-object JvmAnalyzerFacade : AnalyzerFacade() {
+object JvmAnalyzerFacade : ResolverForModuleFactory() {
     override fun <M : ModuleInfo> createResolverForModule(
-        moduleInfo: M,
         moduleDescriptor: ModuleDescriptorImpl,
         moduleContext: ModuleContext,
-        moduleContent: ModuleContent,
+        moduleContent: ModuleContent<M>,
         platformParameters: PlatformAnalysisParameters,
         targetEnvironment: TargetEnvironment,
         resolverForProject: ResolverForProject<M>,
-        languageSettingsProvider: LanguageSettingsProvider,
-        packagePartProvider: PackagePartProvider
+        languageVersionSettings: LanguageVersionSettings,
+        targetPlatformVersion: TargetPlatformVersion
     ): ResolverForModule {
-        val (syntheticFiles, moduleContentScope) = moduleContent
+        val (moduleInfo, syntheticFiles, moduleContentScope) = moduleContent
         val project = moduleContext.project
         val declarationProviderFactory = DeclarationProviderFactoryService.createDeclarationProviderFactory(
             project, moduleContext.storageManager, syntheticFiles,
@@ -80,12 +82,11 @@ object JvmAnalyzerFacade : AnalyzerFacade() {
             resolverForModule.componentProvider.get<JavaDescriptorResolver>()
         }
 
-        val jvmTarget = languageSettingsProvider.getTargetPlatform(moduleInfo) as? JvmTarget ?: JvmTarget.JVM_1_6
-        val languageVersionSettings = languageSettingsProvider.getLanguageVersionSettings(moduleInfo, project)
-
+        val jvmTarget = targetPlatformVersion as? JvmTarget ?: JvmTarget.DEFAULT
         val trace = CodeAnalyzerInitializer.getInstance(project).createTrace()
 
         val lookupTracker = LookupTracker.DO_NOTHING
+        val packagePartProvider = (platformParameters as JvmPlatformParameters).packagePartProviderFactory(moduleContent)
         val container = createContainerForLazyResolveWithJava(
             moduleContext,
             trace,

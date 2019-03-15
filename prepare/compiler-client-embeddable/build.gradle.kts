@@ -4,9 +4,8 @@ description = "Kotlin compiler client embeddable"
 
 plugins {
     maven
+    kotlin("jvm")
 }
-
-apply { plugin("kotlin") }
 
 val jarContents by configurations.creating
 val testRuntimeCompilerJar by configurations.creating
@@ -22,11 +21,11 @@ dependencies {
     testCompile(project(":compiler:daemon-common"))
     testCompile(projectRuntimeJar(":kotlin-daemon-client"))
     testCompile(commonDep("junit:junit"))
-    testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
-    testCompile(projectDist(":kotlin-test:kotlin-test-junit"))
-    testRuntimeCompilerJar(projectDist(":kotlin-compiler"))
-    testStdlibJar(projectDist(":kotlin-stdlib"))
-    testScriptRuntimeJar(projectDist(":kotlin-script-runtime"))
+    testCompile(project(":kotlin-test:kotlin-test-jvm"))
+    testCompile(project(":kotlin-test:kotlin-test-junit"))
+    testRuntimeCompilerJar(project(":kotlin-compiler"))
+    testStdlibJar(kotlinStdlib())
+    testScriptRuntimeJar(project(":kotlin-script-runtime"))
 }
 
 sourceSets {
@@ -43,25 +42,20 @@ projectTest {
               ":kotlin-script-runtime:dist")
     workingDir = File(rootDir, "libraries/tools/kotlin-compiler-client-embeddable-test/src")
     doFirst {
-        systemProperty("kotlin.test.script.classpath", the<JavaPluginConvention>().sourceSets.getByName("test").output.classesDirs.joinToString(File.pathSeparator))
+        systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
         systemProperty("compilerJar", testRuntimeCompilerJar.singleFile.canonicalPath)
         systemProperty("stdlibJar", testStdlibJar.singleFile.canonicalPath)
         systemProperty("scriptRuntimeJar", testScriptRuntimeJar.singleFile.canonicalPath)
     }
 }
 
-archives.artifacts.let { artifacts ->
-    artifacts.forEach {
-        if (it.type == "jar") {
-            artifacts.remove(it)
-        }
-    }
-}
+publish()
+
+noDefaultJar()
 
 runtimeJar(task<ShadowJar>("shadowJar")) {
     from(jarContents)
 }
+
 sourcesJar()
 javadocJar()
-
-publish()

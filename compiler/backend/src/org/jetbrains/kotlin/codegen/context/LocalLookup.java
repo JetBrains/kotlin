@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.codegen.context;
 
 import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.codegen.AsmUtil;
 import org.jetbrains.kotlin.codegen.ExpressionCodegen;
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil;
 import org.jetbrains.kotlin.codegen.StackValue;
@@ -18,7 +19,6 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.org.objectweb.asm.Type;
 
-import static org.jetbrains.kotlin.codegen.AsmUtil.CAPTURED_RECEIVER_FIELD;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isLocalFunction;
 
@@ -55,7 +55,7 @@ public interface LocalLookup {
                 Type type = sharedVarType != null ? sharedVarType : localType;
                 KotlinType kotlinType = sharedVarType != null ? null : localKotlinType;
 
-                String fieldName = "$" + vd.getName();
+                String fieldName = AsmUtil.getCapturedFieldName(vd.getName().asString());
                 StackValue.Local thiz = StackValue.LOCAL_0;
 
                 StackValue.StackValueWithSimpleReceiver innerValue;
@@ -63,11 +63,11 @@ public interface LocalLookup {
                 if (sharedVarType != null) {
                     StackValue.Field wrapperValue = StackValue.receiverWithRefWrapper(localType, classType, fieldName, thiz, vd);
                     innerValue = StackValue.fieldForSharedVar(localType, classType, fieldName, wrapperValue, vd);
-                    enclosedValueDescriptor = new EnclosedValueDescriptor(fieldName, d, innerValue, wrapperValue, type);
+                    enclosedValueDescriptor = new EnclosedValueDescriptor(fieldName, d, innerValue, wrapperValue, type, kotlinType);
                 }
                 else {
                     innerValue = StackValue.field(type, kotlinType, classType, fieldName, false, thiz, vd);
-                    enclosedValueDescriptor = new EnclosedValueDescriptor(fieldName, d, innerValue, type);
+                    enclosedValueDescriptor = new EnclosedValueDescriptor(fieldName, d, innerValue, type, kotlinType);
                 }
 
                 closure.captureVariable(enclosedValueDescriptor);
@@ -113,12 +113,12 @@ public interface LocalLookup {
                 int localClassIndexStart = simpleName.lastIndexOf('$');
                 String localFunSuffix = localClassIndexStart >= 0 ? simpleName.substring(localClassIndexStart) : "";
 
-                String fieldName = "$" + vd.getName() + localFunSuffix;
+                String fieldName = AsmUtil.getCapturedFieldName(vd.getName().asString()) + localFunSuffix;
                 StackValue.StackValueWithSimpleReceiver innerValue = StackValue.field(
                         localType, null, classType, fieldName, false, StackValue.LOCAL_0, vd
                 );
 
-                closure.captureVariable(new EnclosedValueDescriptor(fieldName, d, innerValue, localType));
+                closure.captureVariable(new EnclosedValueDescriptor(fieldName, d, innerValue, localType, null));
 
                 return innerValue;
             }
@@ -138,16 +138,20 @@ public interface LocalLookup {
                     MutableClosure closure,
                     Type classType
             ) {
-                if (closure.getEnclosingReceiverDescriptor() != d) {
+                ReceiverParameterDescriptor enclosingReceiverDescriptor = closure.getEnclosingReceiverDescriptor();
+                if (enclosingReceiverDescriptor != d) {
                     return null;
                 }
 
-                KotlinType receiverType = closure.getEnclosingReceiverDescriptor().getType();
+                assert(enclosingReceiverDescriptor != null);
+
+                KotlinType receiverType = enclosingReceiverDescriptor.getType();
                 Type type = state.getTypeMapper().mapType(receiverType);
+                String fieldName = closure.getCapturedReceiverFieldName(state.getBindingContext(), state.getLanguageVersionSettings());
                 StackValue.StackValueWithSimpleReceiver innerValue = StackValue.field(
-                        type, receiverType, classType, CAPTURED_RECEIVER_FIELD, false, StackValue.LOCAL_0, d
+                        type, receiverType, classType, fieldName, false, StackValue.LOCAL_0, d
                 );
-                closure.setCaptureReceiver();
+                closure.setNeedsCaptureReceiverFromOuterContext();
 
                 return innerValue;
             }

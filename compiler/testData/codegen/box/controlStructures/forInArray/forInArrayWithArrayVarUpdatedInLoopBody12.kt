@@ -1,5 +1,8 @@
+// !LANGUAGE: -ProperForInArrayLoopRangeVariableAssignmentSemantic
+// IGNORE_BACKEND: NATIVE
+// IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND: JS_IR
 // WITH_RUNTIME
-// LANGUAGE_VERSION: 1.2
 // IGNORE_BACKEND: JS
 
 fun box(): String {

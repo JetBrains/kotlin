@@ -330,6 +330,26 @@ error:
 sink:
     <SINK>                                                                        USE: in: {} out: {}
 =====================
+== run ==
+fun <T, R> T.run(f: T.() -> R) = f()
+---------------------
+L0:
+  1 <START>                                          INIT: in: {} out: {}
+    v(f: T.() -> R)                                  INIT: in: {} out: {}
+    magic[FAKE_INITIALIZER](f: T.() -> R) -> <v0>    INIT: in: {} out: {}
+    w(f|<v0>)                                        INIT: in: {} out: {}
+    r(f) -> <v1>                                     INIT: in: {} out: {}
+    magic[IMPLICIT_RECEIVER](f()) -> <v2>
+    mark(f())
+    call(f(), invoke|<v1>, <v2>) -> <v3>
+    ret(*|<v3>) L1
+L1:
+    <END>
+error:
+    <ERROR>
+sink:
+    <SINK>                                                                   USE: in: {} out: {}
+=====================
 == exec ==
 fun <T> exec(f: () -> T): T = f()
 ---------------------

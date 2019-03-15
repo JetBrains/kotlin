@@ -1,0 +1,3 @@
+$TESTDATA_DIR$/apiVersion.kt
+-d
+@$TESTDATA_DIR$/mixingArgfilesAndUsualArgs.argfile

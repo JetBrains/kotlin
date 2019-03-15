@@ -1,3 +1,4 @@
+// SKIP_JDK6
 // TARGET_BACKEND: JVM
 // FILE: Test.kt
 open class KFoo {

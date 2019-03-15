@@ -1,0 +1,34 @@
+FILE: simpleClass.kt
+    public abstract interface SomeInterface {
+        public abstract function foo(x: R|kotlin/Int|, y: R|kotlin/String|): R|kotlin/String|
+
+        public abstract property bar(val): R|kotlin/Boolean|
+            public get(): R|kotlin/Boolean|
+
+    }
+    public final class SomeClass : R|SomeInterface| {
+        public constructor(): super<R|kotlin/Any|>()
+
+        private final property baz(val): R|error: Not supported: FirImplicitTypeRefImpl| = Int(42)
+            private get(): R|error: Not supported: FirImplicitTypeRefImpl|
+
+        public final override function foo(x: R|kotlin/Int|, y: R|kotlin/String|): R|kotlin/String| {
+            return@@@foo <Unresolved name: plus>#(<Unresolved name: plus>#(<Unresolved name: y>#, <Unresolved name: x>#), R|/SomeClass.baz|)
+        }
+
+        public final override property bar(var): R|kotlin/Boolean|
+            public get(): R|kotlin/Boolean| {
+                return Boolean(true)
+            }
+            public set(value: R|kotlin/Boolean|): R|kotlin/Unit| {
+            }
+
+        public final lateinit property fau(var): R|kotlin/Double|
+            public get(): R|kotlin/Double|
+            public set(value: R|kotlin/Double|): R|kotlin/Unit|
+
+    }
+    public final inline class InlineClass {
+        public constructor(): super<R|kotlin/Any|>()
+
+    }

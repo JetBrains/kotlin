@@ -3,6 +3,8 @@ package org.example.manyvariants
 import android.app.Activity
 import android.os.Bundle
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.parcel.Parcelize
+import android.os.Parcelable
 
 class MainActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle) {
@@ -11,3 +13,6 @@ class MainActivity : Activity() {
         viewMain
     }
 }
+
+@Parcelize
+class User(val firstName: String, val lastName: String) : Parcelable

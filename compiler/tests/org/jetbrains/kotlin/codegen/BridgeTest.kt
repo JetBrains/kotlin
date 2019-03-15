@@ -28,7 +28,7 @@ class BridgeTest : TestCase() {
     private class Fun(val text: String) : FunctionHandle {
         override val isDeclaration: Boolean get() = text[1] == 'D'
         override val isAbstract: Boolean get() = text[0] == '-'
-        override val isInterfaceDeclaration: Boolean get() = false
+        override val mayBeUsedAsSuperImplementation: Boolean get() = true
         val signature: Char get() = text[2]
 
         val overriddenFunctions: MutableList<Fun> = arrayListOf()
@@ -150,7 +150,7 @@ class BridgeTest : TestCase() {
         graph()
         doTest(a, setOf())
     }
-    
+
     fun testSimpleFakeOverrideSameSignature() {
         val a = v("+D1")
         val b = v("+F1")
@@ -190,7 +190,7 @@ class BridgeTest : TestCase() {
         doTest(a, setOf())
         doTest(b, setOf())
     }
-    
+
     // Simple tests where declaration "a" is inherited by declaration "b" with a different signature.
     // Note that we don't generate bridges near abstract declarations in contrast to javac
 
@@ -200,7 +200,7 @@ class BridgeTest : TestCase() {
         graph(b to a)
         doTest(b, setOf(bridge(a, b)))
     }
-    
+
     fun testSimpleAbstractDeclarationDifferentSignature() {
         val a = v("-D1")
         val b = v("-D2")
@@ -221,7 +221,7 @@ class BridgeTest : TestCase() {
         graph(b to a)
         doTest(b, setOf(bridge(a, b)))
     }
-    
+
     // Simple tests where declaration overrides declaration through a fake override in the super class, with a different signature
 
     fun testSimpleConcreteDeclarationOverridesConcreteThroughFakeOverride() {
@@ -263,7 +263,7 @@ class BridgeTest : TestCase() {
         doTest(b, setOf())
         doTest(c, setOf())
     }
-    
+
     // Declaration "c" overrides two declarations "a" and "b"
 
     fun testAbstractDeclarationOverridesTwoAbstractDeclarations() {
@@ -320,7 +320,7 @@ class BridgeTest : TestCase() {
         doTest(b, setOf())
         doTest(c, setOf(bridge(a, c), bridge(b, c)))
     }
-    
+
     // Diamonds where the sink (vertex "d") is a declaration: bridges from all super-declarations to "d" should be present
 
     fun testDiamondAbstractDeclarations() {
@@ -334,7 +334,7 @@ class BridgeTest : TestCase() {
         doTest(c, setOf())
         doTest(d, setOf())
     }
-    
+
     fun testDiamondMixedDeclarations() {
         val a = v("-D1")
         val b = v("+D2")
@@ -346,7 +346,7 @@ class BridgeTest : TestCase() {
         doTest(c, setOf())
         doTest(d, setOf(bridge(a, d), bridge(b, d), bridge(c, d)))
     }
-    
+
     fun testDiamondAbstractFakeOverridesInTheMiddle() {
         val a = v("-D1")
         val b = v("-F2")
@@ -360,7 +360,7 @@ class BridgeTest : TestCase() {
     }
 
     // Fake override "c" overrides declarations "a" and "b": a bridge is needed if signatures are different and there's an implementation
-    
+
     fun testAbstractFakeOverride() {
         val a = v("-D1")
         val b = v("-D2")
@@ -384,7 +384,7 @@ class BridgeTest : TestCase() {
         graph(c to a, c to b)
         doTest(c, setOf(bridge(a, b)))
     }
-    
+
     fun testFakeOverrideInheritingDeclarations() {
         val a = v("-D1")
         val b = v("+D2")

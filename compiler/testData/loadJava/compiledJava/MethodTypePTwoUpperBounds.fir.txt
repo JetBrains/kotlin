@@ -1,0 +1,4 @@
+public open class MethodTypePTwoUpperBounds : R|java/lang/Object| {
+    public open operator function foo(): R|kotlin/Unit|
+
+}

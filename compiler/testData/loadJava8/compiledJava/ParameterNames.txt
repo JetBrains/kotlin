@@ -1,0 +1,29 @@
+package test
+
+public open class ParameterNames {
+    public constructor ParameterNames(/*0*/ longConstructorParam: kotlin.Long, /*1*/ stringConstructorParam: kotlin.String!)
+    public open fun foo(/*0*/ longMethodParam: kotlin.Long, /*1*/ intMethodParam: kotlin.Int): kotlin.Unit
+
+    public/*package*/ final enum class Enum : kotlin.Enum<test.ParameterNames.Enum!> {
+        enum entry E
+
+        private constructor Enum(/*0*/ doubleEnumParam: kotlin.Double, /*1*/ stringEnumParam: kotlin.String!)
+        public final override /*1*/ /*fake_override*/ val name: kotlin.String
+        public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+        protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.ParameterNames.Enum!): kotlin.Int
+        protected/*protected and package*/ final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+        public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<test.ParameterNames.Enum!>!
+
+        // Static members
+        public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.ParameterNames.Enum
+        public final /*synthesized*/ fun values(): kotlin.Array<test.ParameterNames.Enum>
+    }
+
+    public/*package*/ open inner class Inner {
+        public constructor Inner(/*0*/ doubleInnerParam: kotlin.Double, /*1*/ objectInnerParam: kotlin.Any!)
+    }
+
+    // Static members
+    public/*package*/ open fun bar(/*0*/ staticMethodParam: test.ParameterNames!): kotlin.Unit
+}

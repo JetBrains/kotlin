@@ -17,12 +17,10 @@
 package org.jetbrains.kotlin.psi.stubs.elements;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression;
-import org.jetbrains.kotlin.psi.KtImportDirective;
-import org.jetbrains.kotlin.psi.KtPackageDirective;
 
 public class KtDotQualifiedExpressionElementType extends KtPlaceHolderStubElementType<KtDotQualifiedExpression> {
     public KtDotQualifiedExpressionElementType(@NotNull @NonNls String debugName) {
@@ -31,6 +29,18 @@ public class KtDotQualifiedExpressionElementType extends KtPlaceHolderStubElemen
 
     @Override
     public boolean shouldCreateStub(ASTNode node) {
-        return PsiTreeUtil.getParentOfType(node.getPsi(), KtImportDirective.class, KtPackageDirective.class) != null;
+        ASTNode treeParent = node.getTreeParent();
+        if (treeParent == null) return false;
+
+        IElementType parentElementType = treeParent.getElementType();
+        if (parentElementType == KtStubElementTypes.IMPORT_DIRECTIVE ||
+            parentElementType == KtStubElementTypes.PACKAGE_DIRECTIVE ||
+            parentElementType == KtStubElementTypes.VALUE_ARGUMENT ||
+            parentElementType == KtStubElementTypes.DOT_QUALIFIED_EXPRESSION
+        ) {
+            return super.shouldCreateStub(node);
+        }
+
+        return false;
     }
 }

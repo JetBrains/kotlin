@@ -1,6 +1,8 @@
-// EXPECTED_REACHABLE_NODES: 1169
+// DONT_TARGET_EXACT_BACKEND: JS_IR
+// EXPECTED_REACHABLE_NODES: 1322
 package foo
 
+@Suppress("DEPRECATION_ERROR")
 fun box(): String {
     check(jsClass<A>(), A().jsClass)
     check(jsClass<B>(), B().jsClass)

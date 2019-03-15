@@ -17,6 +17,7 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.containers.MultiMap
+import org.jetbrains.kotlin.analyzer.common.CommonPlatform
 import org.jetbrains.kotlin.idea.core.util.CachedValue
 import org.jetbrains.kotlin.idea.core.util.getValue
 import org.jetbrains.kotlin.idea.framework.getLibraryPlatform
@@ -61,7 +62,7 @@ class LibraryDependenciesCacheImpl(private val project: Project) : LibraryDepend
         val libraries = LinkedHashSet<Library>()
         val sdks = LinkedHashSet<Sdk>()
 
-        val platform = getLibraryPlatform(library)
+        val platform = getLibraryPlatform(project, library)
 
         for (module in getLibraryUsageIndex().modulesLibraryIsUsedIn[library]) {
             if (!processedModules.add(module)) continue
@@ -73,7 +74,7 @@ class LibraryDependenciesCacheImpl(private val project: Project) : LibraryDepend
 
                 override fun visitLibraryOrderEntry(libraryOrderEntry: LibraryOrderEntry, value: Unit) {
                     val otherLibrary = libraryOrderEntry.library
-                    if (otherLibrary != null && compatiblePlatforms(platform, getLibraryPlatform(otherLibrary))) {
+                    if (otherLibrary != null && compatiblePlatforms(platform, getLibraryPlatform(project, otherLibrary))) {
                         libraries.add(otherLibrary)
                     }
                 }
@@ -91,7 +92,7 @@ class LibraryDependenciesCacheImpl(private val project: Project) : LibraryDepend
      * @return true if it's OK to add a dependency from a library with platform [from] to a library with platform [to]
      */
     private fun compatiblePlatforms(from: TargetPlatform, to: TargetPlatform): Boolean {
-        return from == to || to == TargetPlatform.Common
+        return from == to || to is CommonPlatform
     }
 
     private fun getLibraryUsageIndex(): LibraryUsageIndex {

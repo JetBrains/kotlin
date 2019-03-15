@@ -1,4 +1,6 @@
-// LANGUAGE_VERSION: 1.0
+// !LANGUAGE: -DataClassInheritance
+// IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JVM_IR
 
 data class Foo(val s: String)
 

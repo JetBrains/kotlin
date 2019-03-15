@@ -1,0 +1,2 @@
+public abstract interface SubstitutedClassParameter : R|java/lang/Object| {
+}

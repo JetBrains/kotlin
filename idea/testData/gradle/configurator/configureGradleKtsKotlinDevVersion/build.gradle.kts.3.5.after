@@ -1,0 +1,34 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
+val kotlin_version: String by extra
+buildscript {
+    var kotlin_version: String by extra
+    kotlin_version = "1.2.60-dev-286"
+    repositories {
+        maven { setUrl("https://teamcity.jetbrains.com/guestAuth/app/rest/builds/buildType:(id:Kotlin_dev_Compiler),number:1.2.60-dev-286,branch:default:any/artifacts/content/maven/") }
+        mavenCentral()
+    }
+    dependencies {
+        classpath(kotlinModule("gradle-plugin", kotlin_version))
+    }
+}
+group = "testgroup"
+version = "1.0-SNAPSHOT"
+apply {
+    plugin("kotlin")
+}
+dependencies {
+    implementation(kotlinModule("stdlib-jdk8", kotlin_version))
+}
+repositories {
+    maven { setUrl("https://teamcity.jetbrains.com/guestAuth/app/rest/builds/buildType:(id:Kotlin_dev_Compiler),number:1.2.60-dev-286,branch:default:any/artifacts/content/maven/") }
+    mavenCentral()
+}
+val compileKotlin: KotlinCompile by tasks
+compileKotlin.kotlinOptions {
+    jvmTarget = "1.8"
+}
+val compileTestKotlin: KotlinCompile by tasks
+compileTestKotlin.kotlinOptions {
+    jvmTarget = "1.8"
+}

@@ -1,0 +1,5 @@
+@kotlin.Metadata
+public final class ParameterlessMainKt {
+    public final static method main(): void
+    public synthetic static method main(p0: java.lang.String[]): void
+}

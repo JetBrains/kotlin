@@ -23,11 +23,13 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.config.LanguageFeature.CallableReferencesToClassMembersWithEmptyLHS
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.intentions.getCallableDescriptor
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 
 class ExplicitThisInspection : AbstractKotlinInspection() {
 
@@ -52,15 +54,16 @@ class ExplicitThisInspection : AbstractKotlinInspection() {
             val context = expression.analyze()
             val scope = expression.getResolutionScope(context) ?: return
 
-            val referenceExpression = reference as? KtNameReferenceExpression
-                                      ?: reference.getChildOfType()
-                                      ?: return
+            val referenceExpression = reference as? KtNameReferenceExpression ?: reference.getChildOfType() ?: return
 
             //we avoid overload-related problems by enforcing that there is only one candidate
             val name = referenceExpression.getReferencedNameAsName()
             val candidates = scope.getAllAccessibleVariables(name) + scope.getAllAccessibleFunctions(name)
-            if (candidates.size != 1) return
-
+            if (referenceExpression.getCallableDescriptor() is SyntheticJavaPropertyDescriptor) {
+                if (candidates.map { it.containingDeclaration }.distinct().size != 1) return
+            } else {
+                if (candidates.size != 1) return
+            }
 
             val receiverType = context[BindingContext.EXPRESSION_TYPE_INFO, thisExpression]?.type ?: return
             val expressionFactory = scope.getFactoryForImplicitReceiverWithSubtypeOf(receiverType) ?: return

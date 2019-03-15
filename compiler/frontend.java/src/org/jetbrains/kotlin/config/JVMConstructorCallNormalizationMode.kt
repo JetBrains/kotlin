@@ -17,9 +17,9 @@
 package org.jetbrains.kotlin.config
 
 enum class JVMConstructorCallNormalizationMode(
-        val description: String,
-        val isEnabled: Boolean,
-        val shouldPreserveClassInitialization: Boolean
+    val description: String,
+    val isEnabled: Boolean,
+    val shouldPreserveClassInitialization: Boolean
 ) {
     DISABLE("disable", false, false),
     ENABLE("enable", true, false),
@@ -27,10 +27,12 @@ enum class JVMConstructorCallNormalizationMode(
     ;
 
     companion object {
-        @JvmField
-        val DEFAULT = DISABLE
+        @JvmStatic
+        fun isSupportedValue(string: String?) =
+            string == null || values().any { it.description == string }
 
         @JvmStatic
-        fun fromStringOrNull(string: String?) = values().find { it.description == string }
+        fun fromStringOrNull(string: String?) =
+            values().find { it.description == string }
     }
 }

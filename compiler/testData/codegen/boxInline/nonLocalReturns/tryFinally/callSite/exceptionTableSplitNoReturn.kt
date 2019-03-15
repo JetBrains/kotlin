@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // FILE: 1.kt
 // WITH_RUNTIME
 package test
@@ -37,9 +38,7 @@ public inline fun <R> doCallWithException(h: Holder, block: ()-> R) {
 // FILE: 2.kt
 
 import test.*
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
-import kotlin.test.fail
+import kotlin.test.*
 
 fun test1(): Holder {
     val h = Holder("")

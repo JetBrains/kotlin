@@ -1,10 +1,12 @@
 description = "Kotlin Annotation Processing Runtime"
 
-apply { plugin("kotlin") }
-apply { plugin("jps-compatible") }
+plugins {
+    kotlin("jvm")
+    id("jps-compatible")
+}
 
 dependencies {
-    compile(projectDist(":kotlin-stdlib"))
+    compile(kotlinStdlib())
 }
 
 jvmTarget = "1.6"
@@ -14,10 +16,10 @@ sourceSets {
     "test" {}
 }
 
+publish()
+
 runtimeJar()
 sourcesJar()
 javadocJar()
 
 dist(targetName = "kotlin-annotation-processing-runtime.jar")
-
-publish()

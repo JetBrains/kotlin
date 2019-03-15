@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.resolve.calls.context.CallPosition
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.inference.isCaptured
 import org.jetbrains.kotlin.resolve.calls.inference.wrapWithCapturingSubstitution
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructorSubstitution
@@ -56,11 +57,11 @@ fun ResolutionContext<*>.reportTypeMismatchDueToTypeProjection(
             callPosition.resolvedCall, { f: CallableDescriptor ->
                 getEffectiveExpectedType(f.valueParameters[callPosition.valueParameter.index], callPosition.valueArgument, this)
             })
-        is CallPosition.ExtensionReceiverPosition -> Pair(
+        is CallPosition.ExtensionReceiverPosition -> Pair<ResolvedCall<*>, (CallableDescriptor) -> KotlinType?>(
             callPosition.resolvedCall, { f: CallableDescriptor ->
                 f.extensionReceiverParameter?.type
             })
-        is CallPosition.PropertyAssignment -> Pair(
+        is CallPosition.PropertyAssignment -> Pair<ResolvedCall<out CallableDescriptor>, (CallableDescriptor) -> KotlinType?>(
             callPosition.leftPart.getResolvedCall(trace.bindingContext) ?: return false, { f: CallableDescriptor ->
                 (f as? PropertyDescriptor)?.setter?.valueParameters?.get(0)?.type
             })

@@ -76,27 +76,45 @@ object NewCommonSuperTypeCalculator {
         return if (actuallyNotNull) commonSuperType else null
     }
 
+    // Makes representative sample, i.e. (A, B, A) -> (A, B)
     private fun List<SimpleType>.uniquify(): List<SimpleType> {
-        val result = ArrayList<SimpleType>()
+        val uniqueTypes = arrayListOf<SimpleType>()
         for (type in this) {
-            if (!result.any { NewKotlinTypeChecker.equalTypes(it, type) }) {
-                result.add(type)
+            val isNewUniqueType = uniqueTypes.all { !NewKotlinTypeChecker.equalTypes(it, type) }
+            if (isNewUniqueType) {
+                uniqueTypes += type
             }
         }
-        return result
+        return uniqueTypes
+    }
+
+    // This function leaves only supertypes, i.e. A0 is a strong supertype for A iff A != A0 && A <: A0
+    // Explanation: consider types (A : A0, B : B0, A0, B0), then CST(A, B, A0, B0) == CST(CST(A, A0), CST(B, B0)) == CST(A0, B0)
+    private fun List<SimpleType>.filterSupertypes(): List<SimpleType> {
+        val supertypes = this.toMutableList()
+        val iterator = supertypes.iterator()
+        while (iterator.hasNext()) {
+            val potentialSubtype = iterator.next()
+            val isSubtype = supertypes.any { supertype ->
+                supertype !== potentialSubtype && NewKotlinTypeChecker.isSubtypeOf(potentialSubtype, supertype)
+            }
+
+            if (isSubtype) iterator.remove()
+        }
+
+        return supertypes
     }
 
     private fun commonSuperTypeForNotNullTypes(types: List<SimpleType>, depth: Int): SimpleType {
+        if (types.size == 1) return types.single()
+
         val uniqueTypes = types.uniquify()
-        val filteredType = uniqueTypes.filterNot { type ->
-            uniqueTypes.any { other -> type != other && NewKotlinTypeChecker.isSubtypeOf(type, other) }
-        }
-        // seems like all types are equal
-        if (filteredType.isEmpty()) return uniqueTypes.first()
+        if (uniqueTypes.size == 1) return uniqueTypes.single()
 
-        filteredType.singleOrNull()?.let { return it }
+        val explicitSupertypes = uniqueTypes.filterSupertypes()
+        if (explicitSupertypes.size == 1) return explicitSupertypes.single()
 
-        return findSuperTypeConstructorsAndIntersectResult(filteredType, depth)
+        return findSuperTypeConstructorsAndIntersectResult(explicitSupertypes, depth)
     }
 
     private fun findSuperTypeConstructorsAndIntersectResult(types: List<SimpleType>, depth: Int): SimpleType {
@@ -136,7 +154,7 @@ object NewCommonSuperTypeCalculator {
             nullable = false
         )
 
-        val typeCheckerContext = TypeCheckerContext(false)
+        val typeCheckerContext = ClassicTypeCheckerContext(false)
 
         /**
          * Sometimes one type can have several supertypes with given type constructor, suppose A <: List<Int> and A <: List<Double>.

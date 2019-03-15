@@ -2,7 +2,7 @@ fun testing() {
     <caret>SomeClass<List<String>>()
 }
 
-//INFO: <html><head>    <style type="text/css">        #error {            background-color: #eeeeee;            margin-bottom: 10px;        }        p {            margin: 5px 0;        }    </style></head><body><PRE>public class <b>SomeClass</b>&lt;T extends <a href="psi_element://java.util.List"><code>List</code></a>&gt;
-//INFO: extends <a href="psi_element://java.lang.Object"><code>Object</code></a></PRE>
+//INFO: <div class='definition'><pre>public class <b>SomeClass</b>&lt;T extends <a href="psi_element://java.util.List"><code>List</code></a>&gt;
+//INFO: extends <a href="psi_element://java.lang.Object"><code>Object</code></a></pre></div><div class='content'>
 //INFO:    Some Java Class
-//INFO:    <DD><DL><DT><b>Type parameters:</b><DD><code>&lt;T&gt;</code> - </DD></DL></DD></body></html>
+//INFO:    </div><table class='sections'><p><tr><td valign='top' class='section'><p>Type parameters:</td><td valign='top'>&lt;T&gt; &ndash; </td></table>

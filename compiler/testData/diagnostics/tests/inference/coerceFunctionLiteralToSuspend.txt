@@ -1,0 +1,10 @@
+package
+
+public fun fail1(/*0*/ c: suspend () -> kotlin.Unit): kotlin.Unit
+public fun fail2(/*0*/ c: () -> kotlin.Unit): kotlin.Unit
+public suspend fun fail3(/*0*/ c: suspend () -> kotlin.Unit): kotlin.Unit
+public suspend fun fail4(/*0*/ c: () -> kotlin.Unit): kotlin.Unit
+public fun success1(/*0*/ c: suspend () -> kotlin.Unit): kotlin.Unit
+public suspend fun success2(/*0*/ c: suspend () -> kotlin.Unit): kotlin.Unit
+public fun test1(): kotlin.Unit
+public suspend fun test2(): kotlin.Unit

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.frontend.di
 
+import org.jetbrains.kotlin.analyzer.common.CommonPlatform
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.config.TargetPlatformVersion
@@ -54,6 +55,7 @@ fun StorageComponentContainer.configureModule(
     useInstance(platformVersion)
 
     platform.platformConfigurator.configureModuleComponents(this)
+    platform.platformConfigurator.configureModuleDependentCheckers(this)
 
     for (extension in StorageComponentContainerContributor.getInstances(moduleContext.project)) {
         extension.registerModuleComponents(this, platform, moduleContext.module)
@@ -172,6 +174,7 @@ fun createContainerForLazyResolve(
     targetEnvironment.configure(this)
 
     useImpl<ResolveSession>()
+    useImpl<LazyTopDownAnalyzer>()
 }
 
 fun createLazyResolveSession(moduleContext: ModuleContext, files: Collection<KtFile>): ResolveSession =
@@ -179,7 +182,7 @@ fun createLazyResolveSession(moduleContext: ModuleContext, files: Collection<KtF
         moduleContext,
         FileBasedDeclarationProviderFactory(moduleContext.storageManager, files),
         BindingTraceContext(),
-        TargetPlatform.Common,
+        CommonPlatform,
         TargetPlatformVersion.NoVersion,
         CompilerEnvironment,
         LanguageVersionSettingsImpl.DEFAULT

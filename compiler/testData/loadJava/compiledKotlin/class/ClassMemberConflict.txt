@@ -2,12 +2,12 @@ package test
 
 public final class ConstructorTypeParamClassObjectConflict</*0*/ test> {
     /*primary*/ public constructor ConstructorTypeParamClassObjectConflict</*0*/ test>()
-    public final val some: kotlin.Int = 12
+    public final val some: kotlin.Int
         public final fun <get-some>(): kotlin.Int
 
     public companion object Companion {
         /*primary*/ private constructor Companion()
-        public final val test: kotlin.Int = 12
+        public final val test: kotlin.Int
             public final fun <get-test>(): kotlin.Int
     }
 }
@@ -27,14 +27,14 @@ public final class ConstructorTypeParamClassObjectTypeConflict</*0*/ test> {
 
 public final class TestClassObjectAndClassConflict {
     /*primary*/ public constructor TestClassObjectAndClassConflict()
-    public final val bla: kotlin.String = "More"
+    public final val bla: kotlin.String
         public final fun <get-bla>(): kotlin.String
-    public final val some: kotlin.String = "More"
+    public final val some: kotlin.String
         public final fun <get-some>(): kotlin.String
 
     public companion object Companion {
         /*primary*/ private constructor Companion()
-        public final val bla: kotlin.Int = 12
+        public final val bla: kotlin.Int
             public final fun <get-bla>(): kotlin.Int
     }
 }
@@ -46,7 +46,7 @@ public final class TestConstructorParamClassObjectConflict {
 
     public companion object Companion {
         /*primary*/ private constructor Companion()
-        public final val test: kotlin.Int = 12
+        public final val test: kotlin.Int
             public final fun <get-test>(): kotlin.Int
     }
 }
@@ -60,7 +60,7 @@ public final class TestConstructorValClassObjectConflict {
 
     public companion object Companion {
         /*primary*/ private constructor Companion()
-        public final val test: kotlin.Int = 12
+        public final val test: kotlin.Int
             public final fun <get-test>(): kotlin.Int
     }
 }

@@ -16,33 +16,33 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
+import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
-import org.jetbrains.kotlin.backend.common.lower.DECLARATION_ORIGIN_FUNCTION_FOR_DEFAULT_PARAMETER
-import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 
-class StaticDefaultFunctionLowering(val state: GenerationState) : IrElementTransformerVoid(), ClassLoweringPass {
+internal val staticDefaultFunctionPhase = makeIrFilePhase(
+    ::StaticDefaultFunctionLowering,
+    name = "StaticDefaultFunction",
+    description = "Generate static functions for default parameters"
+)
+
+private class StaticDefaultFunctionLowering() : IrElementTransformerVoid(), ClassLoweringPass {
+    constructor(@Suppress("UNUSED_PARAMETER") context: BackendContext) : this()
 
     override fun lower(irClass: IrClass) {
-        val descriptor = irClass.descriptor
-        if (DescriptorUtils.isInterface(descriptor) || DescriptorUtils.isAnnotationClass(descriptor)) {
-            return
-        }
         irClass.accept(this, null)
     }
 
     override fun visitFunction(declaration: IrFunction): IrStatement {
-        if (declaration.origin == DECLARATION_ORIGIN_FUNCTION_FOR_DEFAULT_PARAMETER && declaration.dispatchReceiverParameter != null) {
-            val newFunction = createStaticFunctionWithReceivers(declaration.descriptor.containingDeclaration as ClassDescriptor, declaration.descriptor.name, declaration.descriptor, declaration.descriptor.dispatchReceiverParameter!!.type)
-            return newFunction.createFunctionAndMapVariables(declaration)
-        }
-        else {
-            return super.visitFunction(declaration)
+        return if (declaration.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER && declaration.dispatchReceiverParameter != null) {
+            createStaticFunctionWithReceivers(declaration.parent, declaration.name, declaration)
+        } else {
+            super.visitFunction(declaration)
         }
     }
 }

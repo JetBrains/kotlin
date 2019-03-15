@@ -24,11 +24,13 @@ import org.jetbrains.kotlin.cli.common.repl.*
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.repl.GenericReplCompiler
 import org.jetbrains.kotlin.cli.jvm.repl.GenericReplCompilerState
+import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.RemoteOperationsTracer
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
+import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCompilerConfigurationComponentRegistrar
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.io.PrintStream
@@ -54,8 +56,9 @@ open class KotlinJvmReplService(
         addJvmClasspathRoots(templateClasspath)
         put(CommonConfigurationKeys.MODULE_NAME, "kotlin-script")
         languageVersionSettings = LanguageVersionSettingsImpl(
-                LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE, mapOf(AnalysisFlag.skipMetadataVersionCheck to true)
+                LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE, mapOf(AnalysisFlags.skipMetadataVersionCheck to true)
         )
+        configureScripting()
     }
 
     protected fun makeScriptDefinition(templateClasspath: List<File>, templateClassName: String): KotlinScriptDefinition? {
@@ -170,4 +173,21 @@ inline internal fun getValidId(counter: AtomicInteger, check: (Int) -> Boolean):
         newId = counter.addAndGet(internalRng.nextInt())
     }
     return newId
+}
+
+private fun CompilerConfiguration.configureScripting() {
+    val error = try {
+        add(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS, ScriptingCompilerConfigurationComponentRegistrar())
+        null
+    } catch (e: NoClassDefFoundError) {
+        e
+    } catch (e: ClassNotFoundException) {
+        e
+    }
+    if (error != null) {
+        throw IllegalStateException(
+            "Unable to use scripting/REPL in the daemon, no kotlin-scripting-compiler.jar or its dependencies are found in the compiler classpath",
+            error
+        )
+    }
 }

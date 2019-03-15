@@ -24,21 +24,24 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.resolve.frontendService
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.KtVisitorVoid
-import org.jetbrains.kotlin.resolve.DeprecationResolver
-import org.jetbrains.kotlin.resolve.deprecatedByOverriddenMessage
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
+import org.jetbrains.kotlin.resolve.deprecation.deprecatedByOverriddenMessage
 
 class OverridingDeprecatedMemberInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return object : KtVisitorVoid() {
             override fun visitNamedDeclaration(declaration: KtNamedDeclaration) {
+                if (!declaration.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return
                 registerProblemIfNeeded(declaration, declaration.nameIdentifier ?: return)
             }
 
             override fun visitPropertyAccessor(accessor: KtPropertyAccessor) {
+                if (!accessor.property.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return
                 registerProblemIfNeeded(accessor, accessor.namePlaceholder)
             }
 

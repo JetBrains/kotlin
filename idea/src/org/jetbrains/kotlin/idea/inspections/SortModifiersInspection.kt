@@ -7,12 +7,15 @@ package org.jetbrains.kotlin.idea.inspections
 
 import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.addRemoveModifier.sortModifiers
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 class SortModifiersInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool {
 
@@ -32,10 +35,12 @@ class SortModifiersInspection : AbstractKotlinInspection(), CleanupLocalInspecti
                     }
                 }
 
-                val modifiers = modifierElements.mapNotNull { it.node.elementType as? KtModifierKeywordToken }.toList()
+                val modifiers = modifierElements.asSequence().mapNotNull { it.node.elementType as? KtModifierKeywordToken }.toList()
                 if (modifiers.isEmpty()) return
 
                 val startElement = modifierElements.firstOrNull { it.node.elementType is KtModifierKeywordToken } ?: return
+                val endElement = modifierElements.lastOrNull { it.node.elementType is KtModifierKeywordToken } ?: return
+                val rangeInElement = TextRange(startElement.startOffset, endElement.endOffset).shiftLeft(list.startOffset)
 
                 val sortedModifiers = sortModifiers(modifiers)
                 if (modifiers == sortedModifiers && !modifiersBeforeAnnotations) return
@@ -46,8 +51,8 @@ class SortModifiersInspection : AbstractKotlinInspection(), CleanupLocalInspecti
                     "Non-canonical modifiers order"
 
                 val descriptor = holder.manager.createProblemDescriptor(
-                    startElement,
                     list,
+                    rangeInElement,
                     message,
                     ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                     isOnTheFly,

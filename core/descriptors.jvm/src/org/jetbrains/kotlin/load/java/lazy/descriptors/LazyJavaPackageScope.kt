@@ -22,24 +22,28 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
+import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
+import org.jetbrains.kotlin.load.kotlin.findKotlinClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.storage.NullableLazyValue
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.alwaysTrue
 import java.util.*
 
 class LazyJavaPackageScope(
-        c: LazyJavaResolverContext,
-        private val jPackage: JavaPackage,
-        override val ownerDescriptor: LazyJavaPackageFragment
+    c: LazyJavaResolverContext,
+    private val jPackage: JavaPackage,
+    override val ownerDescriptor: LazyJavaPackageFragment
 ) : LazyJavaStaticScope(c) {
     // Null means that it's impossible to determine list of class names in package, i.e. in IDE where special finders exist
     // But for compiler though we can determine full list of class names by getting all class-file names in classpath and sources
@@ -47,48 +51,58 @@ class LazyJavaPackageScope(
         c.components.finder.knownClassNamesInPackage(ownerDescriptor.fqName)
     }
 
-    private val classes = c.storageManager.createMemoizedFunctionWithNullableValues<FindClassRequest, ClassDescriptor> classByRequest@{ request ->
-        val requestClassId = ClassId(ownerDescriptor.fqName, request.name)
+    private val classes =
+        c.storageManager.createMemoizedFunctionWithNullableValues<FindClassRequest, ClassDescriptor> classByRequest@{ request ->
+            val requestClassId = ClassId(ownerDescriptor.fqName, request.name)
 
-        val kotlinBinaryClass =
-                // These branches should be semantically equal, but the first one could be faster
+            val kotlinClassOrClassFileContent =
+            // These branches should be semantically equal, but the first one could be faster
                 if (request.javaClass != null)
-                    c.components.kotlinClassFinder.findKotlinClass(request.javaClass)
+                    c.components.kotlinClassFinder.findKotlinClassOrContent(request.javaClass)
                 else
-                    c.components.kotlinClassFinder.findKotlinClass(requestClassId)
+                    c.components.kotlinClassFinder.findKotlinClassOrContent(requestClassId)
 
-        val classId = kotlinBinaryClass?.classId
-        // Nested/local classes can be found when running in CLI in case when request.name looks like 'Outer$Inner'
-        // It happens because KotlinClassFinder searches through a file-based index that does not differ classes containing $-sign and nested ones
-        if (classId != null && (classId.isNestedClass || classId.isLocal)) return@classByRequest null
+            val kotlinBinaryClass = kotlinClassOrClassFileContent?.toKotlinJvmBinaryClass()
 
-        val kotlinResult = resolveKotlinBinaryClass(kotlinBinaryClass)
+            val classId = kotlinBinaryClass?.classId
+            // Nested/local classes can be found when running in CLI in case when request.name looks like 'Outer$Inner'
+            // It happens because KotlinClassFinder searches through a file-based index that does not differ classes containing $-sign and nested ones
+            if (classId != null && (classId.isNestedClass || classId.isLocal)) return@classByRequest null
 
-        when (kotlinResult) {
-            is KotlinClassLookupResult.Found -> kotlinResult.descriptor
-            is KotlinClassLookupResult.SyntheticClass -> null
-            is KotlinClassLookupResult.NotFound -> {
-                val javaClass = request.javaClass ?: c.components.finder.findClass(requestClassId)
+            val kotlinResult = resolveKotlinBinaryClass(kotlinBinaryClass)
 
-                if (javaClass?.lightClassOriginKind == LightClassOriginKind.BINARY) {
-                    throw IllegalStateException(
+            when (kotlinResult) {
+                is KotlinClassLookupResult.Found -> kotlinResult.descriptor
+                is KotlinClassLookupResult.SyntheticClass -> null
+                is KotlinClassLookupResult.NotFound -> {
+                    val javaClass =
+                        request.javaClass ?: c.components.finder.findClass(
+                            JavaClassFinder.Request(
+                                requestClassId,
+                                kotlinClassOrClassFileContent?.safeAs<KotlinClassFinder.Result.ClassFileContent>()
+                                    ?.content
+                            )
+                        )
+
+                    if (javaClass?.lightClassOriginKind == LightClassOriginKind.BINARY) {
+                        throw IllegalStateException(
                             "Couldn't find kotlin binary class for light class created by kotlin binary file\n" +
-                            "JavaClass: $javaClass\n" +
-                            "ClassId: $requestClassId\n" +
-                            "findKotlinClass(JavaClass) = ${c.components.kotlinClassFinder.findKotlinClass(javaClass)}\n" +
-                            "findKotlinClass(ClassId) = ${c.components.kotlinClassFinder.findKotlinClass(requestClassId)}\n"
-                    )
-                }
+                                    "JavaClass: $javaClass\n" +
+                                    "ClassId: $requestClassId\n" +
+                                    "findKotlinClass(JavaClass) = ${c.components.kotlinClassFinder.findKotlinClass(javaClass)}\n" +
+                                    "findKotlinClass(ClassId) = ${c.components.kotlinClassFinder.findKotlinClass(requestClassId)}\n"
+                        )
+                    }
 
-                val actualFqName = javaClass?.fqName
-                if (actualFqName == null || actualFqName.isRoot || actualFqName.parent() != ownerDescriptor.fqName)
-                    null
-                else
-                    LazyJavaClassDescriptor(c, ownerDescriptor, javaClass)
+                    val actualFqName = javaClass?.fqName
+                    if (actualFqName == null || actualFqName.isRoot || actualFqName.parent() != ownerDescriptor.fqName)
+                        null
+                    else
+                        LazyJavaClassDescriptor(c, ownerDescriptor, javaClass)
                             .also(c.components.javaClassesTracker::reportClass)
+                }
             }
         }
-    }
 
     private sealed class KotlinClassLookupResult {
         class Found(val descriptor: ClassDescriptor) : KotlinClassLookupResult()
@@ -97,19 +111,19 @@ class LazyJavaPackageScope(
     }
 
     private fun resolveKotlinBinaryClass(kotlinClass: KotlinJvmBinaryClass?): KotlinClassLookupResult =
-            when {
-                kotlinClass == null -> {
-                    KotlinClassLookupResult.NotFound
-                }
-                kotlinClass.classHeader.kind == KotlinClassHeader.Kind.CLASS -> {
-                    val descriptor = c.components.deserializedDescriptorResolver.resolveClass(kotlinClass)
-                    if (descriptor != null) KotlinClassLookupResult.Found(descriptor) else KotlinClassLookupResult.NotFound
-                }
-                else -> {
-                    // This is a package or interface DefaultImpls or something like that
-                    KotlinClassLookupResult.SyntheticClass
-                }
+        when {
+            kotlinClass == null -> {
+                KotlinClassLookupResult.NotFound
             }
+            kotlinClass.classHeader.kind == KotlinClassHeader.Kind.CLASS -> {
+                val descriptor = c.components.deserializedDescriptorResolver.resolveClass(kotlinClass)
+                if (descriptor != null) KotlinClassLookupResult.Found(descriptor) else KotlinClassLookupResult.NotFound
+            }
+            else -> {
+                // This is a package or interface DefaultImpls or something like that
+                KotlinClassLookupResult.SyntheticClass
+            }
+        }
 
     // javaClass here is only for sake of optimizations
     private class FindClassRequest(val name: Name, val javaClass: JavaClass?) {
@@ -159,7 +173,10 @@ class LazyJavaPackageScope(
     override fun computePropertyNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?) = emptySet<Name>()
 
     // we don't use implementation from super which caches all descriptors and does not use filters
-    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
+    override fun getContributedDescriptors(
+        kindFilter: DescriptorKindFilter,
+        nameFilter: (Name) -> Boolean
+    ): Collection<DeclarationDescriptor> {
         return computeDescriptors(kindFilter, nameFilter, NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS)
     }
 }

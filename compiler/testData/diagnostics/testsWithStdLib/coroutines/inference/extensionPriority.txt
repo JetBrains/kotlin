@@ -2,11 +2,11 @@ package
 
 public val test1: Pair<kotlin.Int, kotlin.Int>
 public val test2: Pair<kotlin.Int, kotlin.String>
-public fun </*0*/ T, /*1*/ R> generate(/*0*/ g: suspend GenericController<T>.() -> R): Pair<T, R>
+public fun </*0*/ T, /*1*/ R> generate(/*0*/ @kotlin.BuilderInference g: suspend GenericController<T>.() -> R): Pair<T, R>
 public fun </*0*/ X> listOf(/*0*/ vararg x: X /*kotlin.Array<out X>*/): kotlin.collections.List<X>
 public fun </*0*/ X> setOf(/*0*/ vararg x: X /*kotlin.Array<out X>*/): kotlin.collections.Set<X>
-public suspend fun </*0*/ S> GenericController<S>.yieldAll(/*0*/ s: kotlin.collections.Collection<S>): kotlin.String
-public suspend fun </*0*/ S> GenericController<S>.yieldAll(/*0*/ s: kotlin.collections.Set<S>): kotlin.Int
+@kotlin.BuilderInference public suspend fun </*0*/ S> GenericController<S>.yieldAll(/*0*/ s: kotlin.collections.Collection<S>): kotlin.String
+@kotlin.BuilderInference public suspend fun </*0*/ S> GenericController<S>.yieldAll(/*0*/ s: kotlin.collections.Set<S>): kotlin.Int
 
 public final class GenericController</*0*/ T> {
     public constructor GenericController</*0*/ T>()

@@ -1,13 +1,15 @@
 /*
-    In this example strange creatures are watching the kotlin logo. You can drag'n'drop them as well as the logo.
-    Doubleclick to add more creatures but be careful. They may be watching you!
-*/
+ * In this example strange creatures are watching the kotlin logo.
+ * You can drag'n'drop them as well as the logo. Doubleclick to add
+ * more creatures but be careful. They may be watching you!
+ */
 package creatures
 
 import jquery.*
-import kotlin.js.*
-import kotlin.browser.window
 import org.w3c.dom.*
+import kotlin.browser.document
+import kotlin.browser.window
+import kotlin.math.*
 
 
 fun getImage(path: String): HTMLImageElement {
@@ -30,7 +32,8 @@ abstract class Shape() {
 
     abstract fun draw(state: CanvasState)
     // these two abstract methods defines that our shapes can be dragged
-    abstract operator fun contains(mousePos: Vector): Boolean
+    operator abstract fun contains(mousePos: Vector): Boolean
+
     abstract var pos: Vector
 
     var selected: Boolean = false
@@ -57,9 +60,9 @@ abstract class Shape() {
 val Kotlin = Logo(v(250.0, 75.0))
 
 class Logo(override var pos: Vector) : Shape() {
-    val relSize: Double = 0.25
+    val relSize: Double = 0.15
     val shadowOffset = v(-3.0, 3.0)
-    val imageSize = v(377.0, 393.0)
+    val imageSize = v(200.0, 200.0)
     var size: Vector = imageSize * relSize
     // get-only properties like this saves you lots of typing and are very expressive
     val position: Vector
@@ -69,7 +72,7 @@ class Logo(override var pos: Vector) : Shape() {
     fun drawLogo(state: CanvasState) {
         size = imageSize * (state.size.x / imageSize.x) * relSize
         // getKotlinLogo() is a 'magic' function here defined only for purposes of demonstration but in fact it just find an element containing the logo
-        state.context.drawImage(getImage("http://kotlin-demo.jetbrains.com/static/images/kotlinlogowobackground.png"), 0.0, 0.0,
+        state.context.drawImage(getImage("https://try.kotlinlang.org/static/images/canvas/Kotlin-logo.png"), 0.0, 0.0,
                                 imageSize.x, imageSize.y,
                                 position.x, position.y,
                                 size.x, size.y)
@@ -82,8 +85,7 @@ class Logo(override var pos: Vector) : Shape() {
             context.shadowed(shadowOffset, 0.2) {
                 drawLogo(state)
             }
-        }
-        else {
+        } else {
             drawLogo(state)
         }
     }
@@ -94,18 +96,12 @@ class Logo(override var pos: Vector) : Shape() {
         get() = pos + size * 0.5
 }
 
-val gradientGenerator: RadialGradientGenerator? = null
-    get() {
-        if (field == null) {
-            field = RadialGradientGenerator(context)
-        }
-        return field
-    }
+val gradientGenerator by lazy { RadialGradientGenerator(context) }
 
 class Creature(override var pos: Vector, val state: CanvasState) : Shape() {
 
     val shadowOffset = v(-5.0, 5.0)
-    val colorStops = gradientGenerator!!.getNext()
+    val colorStops = gradientGenerator.getNext()
     val relSize = 0.05
     // these properties have no backing fields and in java/javascript they could be represented as little helper functions
     val radius: Double
@@ -120,7 +116,7 @@ class Creature(override var pos: Vector, val state: CanvasState) : Shape() {
 
     // defining more nice extension functions
     fun CanvasRenderingContext2D.circlePath(position: Vector, rad: Double) {
-        arc(position.x, position.y, rad, 0.0, 2 * Math.PI, false)
+        arc(position.x, position.y, rad, 0.0, 2 * PI, false)
     }
 
     //notice we can use an extension function we just defined inside another extension function
@@ -134,8 +130,7 @@ class Creature(override var pos: Vector, val state: CanvasState) : Shape() {
         val context = state.context
         if (!selected) {
             drawCreature(context)
-        }
-        else {
+        } else {
             drawCreatureWithShadow(context)
         }
     }
@@ -162,7 +157,7 @@ class Creature(override var pos: Vector, val state: CanvasState) : Shape() {
         val tailDirection = -directionToLogo
         val tailPos = position + tailDirection * radius * 1.0
         val tailSize = radius * 1.6
-        val angle = Math.PI / 6.0
+        val angle = PI / 6.0
         val p1 = tailPos + tailDirection.rotatedBy(angle) * tailSize
         val p2 = tailPos + tailDirection.rotatedBy(-angle) * tailSize
         val middlePoint = position + tailDirection * radius * 1.0
@@ -195,13 +190,13 @@ class Creature(override var pos: Vector, val state: CanvasState) : Shape() {
 }
 
 class CanvasState(val canvas: HTMLCanvasElement) {
-    var width = canvas.width.toDouble()
-    var height = canvas.height.toDouble()
+    var width = canvas.width
+    var height = canvas.height
     val size: Vector
-        get() = v(width, height)
+        get() = v(width.toDouble(), height.toDouble())
     val context = creatures.context
     var valid = false
-    var shapes = ArrayList<Shape>()
+    var shapes = mutableListOf<Shape>()
     var selection: Shape? = null
     var dragOff = Vector()
     val interval = 1000 / 30
@@ -252,7 +247,7 @@ class CanvasState(val canvas: HTMLCanvasElement) {
         var element: HTMLElement? = canvas
         while (element != null) {
             val el: HTMLElement = element
-            offset += Vector(el.offsetLeft, el.offsetTop)
+            offset += Vector(el.offsetLeft.toDouble(), el.offsetTop.toDouble())
             element = el.offsetParent as HTMLElement?
         }
         return Vector(e.pageX, e.pageY) - offset
@@ -265,17 +260,17 @@ class CanvasState(val canvas: HTMLCanvasElement) {
 
     fun clear() {
         context.fillStyle = "#FFFFFF"
-        context.fillRect(0.0, 0.0, width, height)
+        context.fillRect(0.0, 0.0, width.toDouble(), height.toDouble())
         context.strokeStyle = "#000000"
         context.lineWidth = 4.0
-        context.strokeRect(0.0, 0.0, width, height)
+        context.strokeRect(0.0, 0.0, width.toDouble(), height.toDouble())
     }
 
     fun draw() {
         if (valid) return
 
         clear()
-        for (shape in shapes.reversed()) {
+        for (shape in shapes.asReversed()) {
             shape.draw(this)
         }
         Kotlin.draw(this)
@@ -284,7 +279,7 @@ class CanvasState(val canvas: HTMLCanvasElement) {
 }
 
 class RadialGradientGenerator(val context: CanvasRenderingContext2D) {
-    val gradients = ArrayList<Array<out Pair<Double, String>>>()
+    val gradients = mutableListOf<Array<out Pair<Double, String>>>()
     var current = 0
 
     fun newColorStops(vararg colorStops: Pair<Double, String>) {
@@ -308,29 +303,26 @@ class RadialGradientGenerator(val context: CanvasRenderingContext2D) {
 }
 
 fun v(x: Double, y: Double) = Vector(x, y)
-fun v(x: Int, y: Int) = Vector(x.toDouble(), y.toDouble())
 
 class Vector(val x: Double = 0.0, val y: Double = 0.0) {
-    constructor(x: Int, y: Int) : this(x.toDouble(), y.toDouble())
-
     operator fun plus(v: Vector) = v(x + v.x, y + v.y)
     operator fun unaryMinus() = v(-x, -y)
     operator fun minus(v: Vector) = v(x - v.x, y - v.y)
     operator fun times(koef: Double) = v(x * koef, y * koef)
-    infix fun distanceTo(v: Vector) = Math.sqrt((this - v).sqr)
+    infix fun distanceTo(v: Vector) = sqrt((this - v).sqr)
     fun rotatedBy(theta: Double): Vector {
-        val sin = Math.sin(theta)
-        val cos = Math.cos(theta)
+        val sin = sin(theta)
+        val cos = cos(theta)
         return v(x * cos - y * sin, x * sin + y * cos)
     }
 
     fun isInRect(topLeft: Vector, size: Vector) = (x >= topLeft.x) && (x <= topLeft.x + size.x) &&
-                                                  (y >= topLeft.y) && (y <= topLeft.y + size.y)
+            (y >= topLeft.y) && (y <= topLeft.y + size.y)
 
     val sqr: Double
         get() = x * x + y * y
     val normalized: Vector
-        get() = this * (1.0 / Math.sqrt(sqr))
+        get() = this * (1.0 / sqrt(sqr))
 }
 
 fun main(args: Array<String>) {
@@ -346,11 +338,3 @@ fun main(args: Array<String>) {
     }
 }
 
-fun <T> List<T>.reversed(): List<T> {
-    val result = ArrayList<T>()
-    var i = size
-    while (i > 0) {
-        result.add(get(--i))
-    }
-    return result
-}

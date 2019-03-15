@@ -24,6 +24,7 @@ import com.intellij.codeInsight.navigation.NavigationUtil
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.impl.DocumentMarkupModel
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogBuilder
@@ -31,10 +32,10 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.ui.components.JBPanel
 import com.intellij.ui.components.JBTextField
 import com.intellij.uiDesigner.core.GridLayoutManager
-import kotlinx.coroutines.experimental.channels.ConflatedChannel
-import kotlinx.coroutines.experimental.delay
-import kotlinx.coroutines.experimental.launch
-import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.jetbrains.kotlin.idea.actions.internal.benchmark.AbstractCompletionBenchmarkAction.Companion.addBoxWithLabel
 import org.jetbrains.kotlin.idea.actions.internal.benchmark.AbstractCompletionBenchmarkAction.Companion.collectSuitableKotlinFiles
 import org.jetbrains.kotlin.idea.actions.internal.benchmark.AbstractCompletionBenchmarkAction.Companion.shuffledSequence
@@ -46,8 +47,8 @@ import javax.swing.JFileChooser
 import kotlin.properties.Delegates
 
 class HighlightingBenchmarkAction : AnAction() {
-    override fun actionPerformed(e: AnActionEvent?) {
-        val project = e?.project ?: return
+    override fun actionPerformed(e: AnActionEvent) {
+        val project = e.project ?: return
 
         val settings = showSettingsDialog() ?: return
 
@@ -76,7 +77,7 @@ class HighlightingBenchmarkAction : AnAction() {
 
         val finishListener = DaemonFinishListener()
         connection.subscribe(DaemonCodeAnalyzer.DAEMON_EVENT_TOPIC, finishListener)
-        launch(EDT) {
+        GlobalScope.launch(EDT) {
             try {
                 delay(100)
                 ktFiles
@@ -98,7 +99,7 @@ class HighlightingBenchmarkAction : AnAction() {
     private data class Settings(val seed: Long, val files: Int, val lines: Int)
 
     private inner class DaemonFinishListener : DaemonCodeAnalyzer.DaemonListener {
-        val channel = ConflatedChannel<String>()
+        val channel = Channel<String>(capacity = Channel.CONFLATED)
 
         override fun daemonFinished() {
             channel.offer(SUCCESS)
@@ -215,7 +216,7 @@ class HighlightingBenchmarkAction : AnAction() {
     }
 
     override fun update(e: AnActionEvent) {
-        e.presentation.isEnabledAndVisible = KotlinInternalMode.enabled
+        e.presentation.isEnabledAndVisible = ApplicationManager.getApplication().isInternal
     }
 }
 

@@ -1,0 +1,3 @@
+package
+
+public suspend fun dummy(): kotlin.String

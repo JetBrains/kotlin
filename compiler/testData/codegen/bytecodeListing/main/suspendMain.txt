@@ -1,0 +1,12 @@
+@kotlin.Metadata
+synthetic final class SuspendMainKt$$$main {
+    private final field args: java.lang.String[]
+    synthetic method <init>(p0: java.lang.String[]): void
+    public synthetic final method invoke(p0: java.lang.Object): java.lang.Object
+}
+
+@kotlin.Metadata
+public final class SuspendMainKt {
+    public final static @org.jetbrains.annotations.Nullable method main(@org.jetbrains.annotations.NotNull p0: java.lang.String[], @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
+    public synthetic static method main(p0: java.lang.String[]): void
+}

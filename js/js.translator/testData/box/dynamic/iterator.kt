@@ -1,4 +1,6 @@
-// EXPECTED_REACHABLE_NODES: 1414
+// IGNORE_BACKEND: JS_IR
+// KJS_WITH_FULL_RUNTIME
+// EXPECTED_REACHABLE_NODES: 1556
 package foo
 
 fun testFor(expected: Int, d: dynamic, case: String) {

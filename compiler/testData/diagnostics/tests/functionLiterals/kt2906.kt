@@ -14,7 +14,7 @@ public fun foo2(bar: () -> Unit) {
     }
 }
 
-fun main(args: Array<String>) {
+fun main() {
     foo1 { println ("foo1")} // prints "foo1"
     foo2 { println ("foo2")} // prints "foo2"
 }

@@ -4,10 +4,10 @@ import org.jetbrains.kotlin.gradle.BaseGradleIT
 import java.io.File
 
 class ProcessRunResult(
-        private val cmd: List<String>,
-        private val workingDir: File,
-        val exitCode: Int,
-        val output: String
+    private val cmd: List<String>,
+    private val workingDir: File,
+    val exitCode: Int,
+    val output: String
 ) {
     val isSuccessful: Boolean
         get() = exitCode == 0
@@ -21,10 +21,10 @@ Executing process was ${if (isSuccessful) "successful" else "unsuccessful"}
 }
 
 fun runProcess(
-        cmd: List<String>,
-        workingDir: File,
-        environmentVariables: Map<String, String> = mapOf(),
-        options: BaseGradleIT.BuildOptions? = null
+    cmd: List<String>,
+    workingDir: File,
+    environmentVariables: Map<String, String> = mapOf(),
+    options: BaseGradleIT.BuildOptions? = null
 ): ProcessRunResult {
     val builder = ProcessBuilder(cmd)
     builder.environment().putAll(environmentVariables)

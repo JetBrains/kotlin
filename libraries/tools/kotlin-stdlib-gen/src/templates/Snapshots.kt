@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package templates
@@ -99,7 +88,7 @@ object Snapshots : TemplateGroupBase() {
         include(CharSequences)
         platforms(Platform.JVM)
     } builder {
-        typeParam("T: Comparable<T>")
+        typeParam("T : Comparable<T>")
         doc { "Returns a [SortedSet][java.util.SortedSet] of all ${f.element.pluralize()}." }
         returns("java.util.SortedSet<T>")
         body { "return toCollection(java.util.TreeSet<T>())" }
@@ -411,6 +400,68 @@ object Snapshots : TemplateGroupBase() {
             """
             for (element in this) {
                 destination.put(keySelector(element), valueTransform(element))
+            }
+            return destination
+            """
+        }
+    }
+
+    val f_associateWith = fn("associateWith(valueSelector: (K) -> V)") {
+        include(Iterables, Sequences, CharSequences)
+    } builder {
+        inline()
+        since("1.3")
+        typeParam("K", primary = true)
+        typeParam("V")
+        returns("Map<K, V>")
+        doc {
+            """
+            Returns a [Map] where keys are ${f.element.pluralize()} from the given ${f.collection} and values are
+            produced by the [valueSelector] function applied to each ${f.element}.
+
+            If any two ${f.element.pluralize()} are equal, the last one gets added to the map.
+
+            The returned map preserves the entry iteration order of the original ${f.collection}.
+            """
+        }
+        sample(when (family) {
+            CharSequences -> "samples.text.Strings.associateWith"
+            else -> "samples.collections.Collections.Transformations.associateWith"
+        })
+        body {
+            val resultMap = when (family) {
+                Iterables -> "LinkedHashMap<K, V>(mapCapacity(collectionSizeOrDefault(10)).coerceAtLeast(16))"
+                CharSequences -> "LinkedHashMap<K, V>(mapCapacity(length).coerceAtLeast(16))"
+                else -> "LinkedHashMap<K, V>()"
+            }
+            """
+            val result = $resultMap
+            return associateWithTo(result, valueSelector)
+            """
+        }
+    }
+
+    val f_associateWithTo = fn("associateWithTo(destination: M, valueSelector: (K) -> V)") {
+        include(Iterables, Sequences, CharSequences)
+    } builder {
+        inline()
+        since("1.3")
+        typeParam("K", primary = true)
+        typeParam("V")
+        typeParam("M : MutableMap<in K, in V>")
+        returns("M")
+        doc {
+            """
+            Populates and returns the [destination] mutable map with key-value pairs for each ${f.element} of the given ${f.collection},
+            where key is the ${f.element} itself and value is provided by the [valueSelector] function applied to that key.
+
+            If any two ${f.element.pluralize()} are equal, the last one overwrites the former value in the map.
+            """
+        }
+        body {
+            """
+            for (element in this) {
+                destination.put(element, valueSelector(element))
             }
             return destination
             """

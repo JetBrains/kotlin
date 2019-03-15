@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.contracts.parsing
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.contracts.description.BooleanExpression
+import org.jetbrains.kotlin.contracts.description.CallsEffectDeclaration
 import org.jetbrains.kotlin.contracts.description.ContractDescription
 import org.jetbrains.kotlin.contracts.description.EffectDeclaration
 import org.jetbrains.kotlin.contracts.description.expressions.BooleanVariableReference
@@ -31,53 +32,91 @@ import org.jetbrains.kotlin.contracts.parsing.ContractsDslNames.RETURNS_NOT_NULL
 import org.jetbrains.kotlin.contracts.parsing.effects.PsiCallsEffectParser
 import org.jetbrains.kotlin.contracts.parsing.effects.PsiConditionalEffectParser
 import org.jetbrains.kotlin.contracts.parsing.effects.PsiReturnsEffectParser
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
-import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtLambdaExpression
-import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
+import org.jetbrains.kotlin.storage.StorageManager
 
-internal class PsiContractParserDispatcher(val trace: BindingTrace, val contractParsingServices: ContractParsingServices) {
-    private val conditionParser = PsiConditionParser(trace, this)
-    private val constantParser = PsiConstantParser(trace)
+internal class PsiContractParserDispatcher(
+    private val collector: ContractParsingDiagnosticsCollector,
+    private val callContext: ContractCallContext,
+    private val storageManager: StorageManager
+) {
+    private val conditionParser = PsiConditionParser(collector, callContext, this)
+    private val constantParser = PsiConstantParser(callContext)
     private val effectsParsers: Map<Name, PsiEffectParser> = mapOf(
-        RETURNS_EFFECT to PsiReturnsEffectParser(trace, this),
-        RETURNS_NOT_NULL_EFFECT to PsiReturnsEffectParser(trace, this),
-        CALLS_IN_PLACE_EFFECT to PsiCallsEffectParser(trace, this),
-        CONDITIONAL_EFFECT to PsiConditionalEffectParser(trace, this)
+        RETURNS_EFFECT to PsiReturnsEffectParser(collector, callContext, this),
+        RETURNS_NOT_NULL_EFFECT to PsiReturnsEffectParser(collector, callContext, this),
+        CALLS_IN_PLACE_EFFECT to PsiCallsEffectParser(collector, callContext, this),
+        CONDITIONAL_EFFECT to PsiConditionalEffectParser(collector, callContext, this)
     )
 
-    fun parseContract(expression: KtExpression?, ownerDescriptor: FunctionDescriptor): ContractDescription? {
-        if (expression == null) return null
-        if (!contractParsingServices.isContractDescriptionCall(expression, trace.bindingContext)) return null
+    fun parseContract(): ContractDescription? {
+        // Must be non-null because of checks in 'checkContractAndRecordIfPresent', but actually is not, see EA-124365
+        val resolvedCall = callContext.contractCallExpression.getResolvedCall(callContext.bindingContext) ?: return null
 
-        val resolvedCall = expression.getResolvedCall(trace.bindingContext)!! // Must be non-null due to 'isContractDescriptionCall' check
+        val firstArgumentExpression = resolvedCall.firstArgumentAsExpressionOrNull()
+        val lambda = if (firstArgumentExpression is KtLambdaExpression) {
+            firstArgumentExpression
+        } else {
+            val reportOn = firstArgumentExpression ?: callContext.contractCallExpression
+            collector.badDescription("first argument of 'contract'-call should be a lambda expression", reportOn)
+            return null
+        }
 
-        val lambda = resolvedCall.firstArgumentAsExpressionOrNull() as? KtLambdaExpression ?: return null
-
-        val effects = lambda.bodyExpression?.statements?.mapNotNull { parseEffect(it) } ?: return null
-
+        val effectsWithExpression = lambda.bodyExpression?.statements?.map { parseEffect(it) to it } ?: return null
+        checkDuplicatedCallsEffectsAndReport(effectsWithExpression)
+        val effects = effectsWithExpression.mapNotNull { it.first }
         if (effects.isEmpty()) return null
 
-        return ContractDescription(effects, ownerDescriptor)
+        return ContractDescription(effects, callContext.functionDescriptor, storageManager)
     }
 
     fun parseCondition(expression: KtExpression?): BooleanExpression? = expression?.accept(conditionParser, Unit)
 
     fun parseEffect(expression: KtExpression?): EffectDeclaration? {
         if (expression == null) return null
-        val returnType = expression.getType(trace.bindingContext) ?: return null
+        if (!isValidEffectDeclaration(expression)) return null
+
+        val returnType = expression.getType(callContext.bindingContext) ?: return null
         val parser = effectsParsers[returnType.constructor.declarationDescriptor?.name]
         if (parser == null) {
-            trace.report(Errors.ERROR_IN_CONTRACT_DESCRIPTION.on(expression, "Unrecognized effect"))
+            collector.badDescription("unrecognized effect", expression)
             return null
         }
+
         return parser.tryParseEffect(expression)
+    }
+
+    private fun checkDuplicatedCallsEffectsAndReport(effects: List<Pair<EffectDeclaration?, KtExpression>>) {
+        val descriptorsWithCallsEffect = mutableSetOf<ParameterDescriptor>()
+        for ((effect, expression) in effects) {
+            if (effect !is CallsEffectDeclaration) continue
+            val descriptor = effect.variableReference.descriptor
+            if (descriptor in descriptorsWithCallsEffect) {
+                collector.badDescription("Duplicated contract for ${descriptor.name}. Only one `callsInPlace` contract per parameter is allowed.", expression)
+            } else {
+                descriptorsWithCallsEffect.add(descriptor)
+            }
+        }
+    }
+
+    private fun isValidEffectDeclaration(expression: KtExpression): Boolean {
+        if (expression !is KtCallExpression && expression !is KtBinaryExpression) {
+            collector.badDescription("unexpected construction in contract description", expression)
+            return false
+        }
+
+        val resultingDescriptor = expression.getResolvedCall(callContext.bindingContext)?.resultingDescriptor ?: return false
+        if (!resultingDescriptor.isFromContractDsl()) {
+            collector.badDescription("effects can be produced only by direct calls to ContractsDSL", expression)
+            return false
+        }
+
+        return true
     }
 
     fun parseConstant(expression: KtExpression?): ConstantReference? {
@@ -87,24 +126,16 @@ internal class PsiContractParserDispatcher(val trace: BindingTrace, val contract
 
     fun parseVariable(expression: KtExpression?): VariableReference? {
         if (expression == null) return null
-        val descriptor = expression.getResolvedCall(trace.bindingContext)?.resultingDescriptor ?: return null
+        val descriptor = expression.getResolvedCall(callContext.bindingContext)?.resultingDescriptor
         if (descriptor !is ParameterDescriptor) {
-            trace.report(
-                Errors.ERROR_IN_CONTRACT_DESCRIPTION.on(
-                    expression,
-                    "only references to parameters are allowed in contract description"
-                )
-            )
+            if (expression !is KtConstantExpression)
+                collector.badDescription("only references to parameters are allowed in contract description", expression)
             return null
         }
 
         if (descriptor is ReceiverParameterDescriptor && descriptor.type.constructor.declarationDescriptor?.isFromContractDsl() == true) {
-            trace.report(
-                Errors.ERROR_IN_CONTRACT_DESCRIPTION.on(
-                    expression,
-                    "only references to parameters are allowed. Did you miss label on <this>?"
-                )
-            )
+            collector.badDescription("only references to parameters are allowed. Did you miss label on <this>?", expression)
+            return null
         }
 
         return if (KotlinBuiltIns.isBoolean(descriptor.type))

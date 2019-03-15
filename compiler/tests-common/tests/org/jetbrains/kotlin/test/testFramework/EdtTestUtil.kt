@@ -25,7 +25,7 @@ import javax.swing.SwingUtilities
 class EdtTestUtil {
     companion object {
         @TestOnly @JvmStatic fun runInEdtAndWait(runnable: Runnable) {
-            runInEdtAndWait { runnable.run() }
+            org.jetbrains.kotlin.test.testFramework.runInEdtAndWait { runnable.run() }
         }
     }
 }
@@ -42,7 +42,7 @@ fun runInEdtAndWait(runnable: () -> Unit) {
     else {
         try {
             val application = ApplicationManager.getApplication()
-                    .takeIf { it !is MockApplication } // because MockApplication do nothing instead of `invokeAndWait`
+                .takeIf { it !is MockApplication } // because MockApplication do nothing instead of `invokeAndWait`
             if (application != null)
                 application.invokeAndWait(runnable)
             else

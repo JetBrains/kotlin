@@ -16,6 +16,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.JavaDirectoryService
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
@@ -35,7 +36,12 @@ class KotlinFilePasteProvider : PasteProvider {
         val fileName = (ktFile.declarations.firstOrNull()?.name ?: return) + ".kt"
         val directory = ideView.getOrChooseDirectory() ?: return
         project.executeWriteCommand("Create Kotlin file") {
-            val file = directory.createFile(fileName)
+            val file = try {
+                directory.createFile(fileName)
+            } catch (e: IncorrectOperationException) {
+                return@executeWriteCommand
+            }
+
             val documentManager = PsiDocumentManager.getInstance(project)
             val document = documentManager.getDocument(file)
             if (document != null) {
@@ -55,7 +61,10 @@ class KotlinFilePasteProvider : PasteProvider {
         val ideView = ideView(dataContext)
         if (project == null || ideView == null || ideView.directories.isEmpty()) return false
         val text = CopyPasteManager.getInstance().getContents<String>(DataFlavor.stringFlavor) ?: return false
-        if (text.contains(";\n")) return false //Optimisation for Java. Kotlin doesn't need that...
+        //todo: KT-25329, to remove these heuristics
+        if (text.contains(";\n") ||
+            ((text.contains("public interface") || text.contains("public class")) &&
+                    !text.contains("fun "))) return false //Optimisation for Java. Kotlin doesn't need that...
         val file = KtPsiFactory(project).createFile(text)
         return !PsiTreeUtil.hasErrorElements(file)
     }

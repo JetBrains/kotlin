@@ -17,8 +17,6 @@
 package samples.collections
 
 import samples.*
-import kotlin.coroutines.experimental.buildIterator
-import kotlin.test.*
 
 @RunWith(Enclosed::class)
 class Iterables {
@@ -28,7 +26,7 @@ class Iterables {
         @Sample
         fun iterable() {
             val iterable = Iterable {
-                buildIterator {
+                iterator {
                     yield(42)
                     yieldAll(1..5 step 2)
                 }
@@ -59,5 +57,19 @@ class Iterables {
             assertPrints(list.unzip(), "([1, 2, 3], [a, b, c])")
         }
 
+        @Sample
+        fun zipIterable() {
+            val listA = listOf("a", "b", "c")
+            val listB = listOf(1, 2, 3, 4)
+            assertPrints(listA zip listB, "[(a, 1), (b, 2), (c, 3)]")
+        }
+
+        @Sample
+        fun zipIterableWithTransform() {
+            val listA = listOf("a", "b", "c")
+            val listB = listOf(1, 2, 3, 4)
+            val result = listA.zip(listB) { a, b -> "$a$b" }
+            assertPrints(result, "[a1, b2, c3]")
+        }
     }
 }

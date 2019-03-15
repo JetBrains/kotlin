@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.reflect
@@ -19,17 +8,17 @@ package kotlin.reflect
 /**
  * Represents a class and provides introspection capabilities.
  * Instances of this class are obtainable by the `::class` syntax.
- * See the [Kotlin language documentation](http://kotlinlang.org/docs/reference/reflection.html#class-references)
+ * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/reflection.html#class-references)
  * for more information.
  *
  * @param T the type of the class.
  */
-public interface KClass<T : Any> : KDeclarationContainer, KAnnotatedElement, KClassifier {
+public actual interface KClass<T : Any> : KDeclarationContainer, KAnnotatedElement, KClassifier {
     /**
      * The simple name of the class as it was declared in the source code,
      * or `null` if the class has no name (if, for example, it is an anonymous object literal).
      */
-    public val simpleName: String?
+    public actual val simpleName: String?
 
     /**
      * The fully qualified dot-separated name of the class,
@@ -77,6 +66,12 @@ public interface KClass<T : Any> : KDeclarationContainer, KAnnotatedElement, KCl
     public val supertypes: List<KType>
 
     /**
+     * The list of the immediate subclasses if this class is a sealed class, or an empty list otherwise.
+     */
+    @SinceKotlin("1.3")
+    public val sealedSubclasses: List<KClass<out T>>
+
+    /**
      * Visibility of this class, or `null` if its visibility cannot be represented in Kotlin.
      */
     @SinceKotlin("1.1")
@@ -102,7 +97,7 @@ public interface KClass<T : Any> : KDeclarationContainer, KAnnotatedElement, KCl
 
     /**
      * `true` if this class is `sealed`.
-     * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/classes.html#sealed-classes)
+     * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/sealed-classes.html)
      * for more information.
      */
     @SinceKotlin("1.1")

@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.idea.codeInsight
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzerSettings
 import com.intellij.codeInsight.daemon.LineMarkerInfo
 import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerImpl
+import com.intellij.openapi.editor.Document
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.rt.execution.junit.FileComparisonFailure
@@ -40,103 +42,117 @@ abstract class AbstractLineMarkersTest : KotlinLightCodeInsightFixtureTestCase()
         return KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
     }
 
-    fun doTest(path: String) {
+    fun doTest(path: String) = doTest(path) {}
+
+    protected fun doAndCheckHighlighting(
+        documentToAnalyze: Document, expectedHighlighting: ExpectedHighlightingData, expectedFile: File
+    ): List<LineMarkerInfo<*>> {
+        myFixture.doHighlighting()
+
+        val markers = DaemonCodeAnalyzerImpl.getLineMarkers(documentToAnalyze, myFixture.project)
+
+        try {
+            expectedHighlighting.checkLineMarkers(markers, documentToAnalyze.text)
+
+            // This is a workaround for sad bug in ExpectedHighlightingData:
+            // the latter doesn't throw assertion error when some line markers are expected, but none are present.
+            if (FileUtil.loadFile(expectedFile).contains("<lineMarker") && markers.isEmpty()) {
+                throw AssertionError("Some line markers are expected, but nothing is present at all")
+            }
+        } catch (error: AssertionError) {
+            try {
+                val actualTextWithTestData = TagsTestDataUtil.insertInfoTags(markers, true, myFixture.file.text)
+                KotlinTestUtils.assertEqualsToFile(expectedFile, actualTextWithTestData)
+            } catch (failure: FileComparisonFailure) {
+                throw FileComparisonFailure(
+                    error.message + "\n" + failure.message,
+                    failure.expected,
+                    failure.actual,
+                    failure.filePath
+                )
+            }
+        }
+        return markers
+    }
+
+    fun doTest(path: String, additionalCheck: () -> Unit) {
         val fileText = FileUtil.loadFile(File(path))
         try {
             ConfigLibraryUtil.configureLibrariesByDirective(myFixture.module, PlatformTestUtil.getCommunityPath(), fileText)
-            if (InTextDirectivesUtils.findStringWithPrefixes(fileText,"METHOD_SEPARATORS") != null) {
+            if (InTextDirectivesUtils.findStringWithPrefixes(fileText, "METHOD_SEPARATORS") != null) {
                 DaemonCodeAnalyzerSettings.getInstance().SHOW_METHOD_SEPARATORS = true
             }
-
 
             myFixture.configureByFile(path)
             val project = myFixture.project
             val document = myFixture.editor.document
 
-            val data = ExpectedHighlightingData(
-                    document, false, false, false, myFixture.file)
+            val data = ExpectedHighlightingData(document, false, false, false, myFixture.file)
             data.init()
 
             PsiDocumentManager.getInstance(project).commitAllDocuments()
 
-            myFixture.doHighlighting()
+            val markers = doAndCheckHighlighting(document, data, File(path))
 
-            val markers = DaemonCodeAnalyzerImpl.getLineMarkers(document, project)
-
-            try {
-                data.checkLineMarkers(markers, document.text)
-
-                // This is a workaround for sad bug in ExpectedHighlightingData:
-                // the latter doesn't throw assertion error when some line markers are expected, but none are present.
-                if (FileUtil.loadFile(File(path)).contains("<lineMarker") && markers.isEmpty()) {
-                    throw AssertionError("Some line markers are expected, but nothing is present at all")
-                }
-            }
-            catch (error: AssertionError) {
-                try {
-                    val actualTextWithTestData = TagsTestDataUtil.insertInfoTags(markers, true, myFixture.file.text)
-                    KotlinTestUtils.assertEqualsToFile(File(path), actualTextWithTestData)
-                }
-                catch (failure: FileComparisonFailure) {
-                    throw FileComparisonFailure(error.message + "\n" + failure.message,
-                                                failure.expected,
-                                                failure.actual,
-                                                failure.filePath)
-                }
-
-            }
-
-            assertNavigationElements(markers)
-        }
-        catch (exc: Exception) {
+            assertNavigationElements(myFixture.project, myFixture.file as KtFile, markers)
+            additionalCheck()
+        } catch (exc: Exception) {
             throw RuntimeException(exc)
-        }
-        finally {
+        } finally {
             ConfigLibraryUtil.unconfigureLibrariesByDirective(myModule, fileText)
             DaemonCodeAnalyzerSettings.getInstance().SHOW_METHOD_SEPARATORS = false
         }
 
     }
 
-    private fun assertNavigationElements(markers: List<LineMarkerInfo<*>>) {
-        val navigationDataComments = KotlinTestUtils.getLastCommentsInFile(
-                myFixture.file as KtFile, KotlinTestUtils.CommentType.BLOCK_COMMENT, false)
-        if (navigationDataComments.isEmpty()) return
-
-        for (navigationComment in navigationDataComments) {
-            val description = getLineMarkerDescription(navigationComment)
-            val navigateMarker = markers.find { it.lineMarkerTooltip?.startsWith(description) == true }!!
-
-            TestCase.assertNotNull(
-                    String.format("Can't find marker for navigation check with description \"%s\"", description),
-                    navigateMarker)
-
-            val handler = navigateMarker.navigationHandler
-            if (handler is TestableLineMarkerNavigator) {
-                val navigateElements = handler.getTargetsPopupDescriptor(navigateMarker.element)?.targets?.sortedBy { it.renderAsGotoImplementation() }
-                val actualNavigationData = NavigationTestUtils.getNavigateElementsText(myFixture.project, navigateElements)
-
-                UsefulTestCase.assertSameLines(getExpectedNavigationText(navigationComment), actualNavigationData)
-            }
-            else {
-                Assert.fail("Only SuperDeclarationMarkerNavigationHandler are supported in navigate check")
-            }
-        }
-    }
-
     companion object {
 
-        private val LINE_MARKER_PREFIX = "LINEMARKER:"
-        private val TARGETS_PREFIX = "TARGETS"
+        @Suppress("SpellCheckingInspection")
+        private const val LINE_MARKER_PREFIX = "LINEMARKER:"
+        private const val TARGETS_PREFIX = "TARGETS"
+
+        fun assertNavigationElements(project: Project, file: KtFile, markers: List<LineMarkerInfo<*>>) {
+            val navigationDataComments = KotlinTestUtils.getLastCommentsInFile(
+                file, KotlinTestUtils.CommentType.BLOCK_COMMENT, false
+            )
+            if (navigationDataComments.isEmpty()) return
+
+            for ((navigationCommentIndex, navigationComment) in navigationDataComments.reversed().withIndex()) {
+                val description = getLineMarkerDescription(navigationComment)
+                val navigateMarkers = markers.filter { it.lineMarkerTooltip?.startsWith(description) == true }
+                val navigateMarker = navigateMarkers.singleOrNull() ?: navigateMarkers.getOrNull(navigationCommentIndex)
+
+                TestCase.assertNotNull(
+                    String.format("Can't find marker for navigation check with description \"%s\"", description),
+                    navigateMarker
+                )
+
+                val handler = navigateMarker!!.navigationHandler
+                if (handler is TestableLineMarkerNavigator) {
+                    val navigateElements = handler.getTargetsPopupDescriptor(navigateMarker.element)?.targets?.sortedBy {
+                        it.renderAsGotoImplementation()
+                    }
+                    val actualNavigationData = NavigationTestUtils.getNavigateElementsText(project, navigateElements)
+
+                    UsefulTestCase.assertSameLines(getExpectedNavigationText(navigationComment), actualNavigationData)
+                } else {
+                    Assert.fail("Only TestableLineMarkerNavigator are supported in navigate check")
+                }
+            }
+        }
 
         private fun getLineMarkerDescription(navigationComment: String): String {
             val firstLineEnd = navigationComment.indexOf("\n")
-            TestCase.assertTrue("The first line in block comment must contain description of marker for navigation check", firstLineEnd != -1)
+            TestCase.assertTrue(
+                "The first line in block comment must contain description of marker for navigation check", firstLineEnd != -1
+            )
 
             var navigationMarkerText = navigationComment.substring(0, firstLineEnd)
 
-            TestCase.assertTrue(String.format("Add %s directive in first line of comment", LINE_MARKER_PREFIX),
-                                navigationMarkerText.startsWith(LINE_MARKER_PREFIX))
+            TestCase.assertTrue(
+                String.format("Add %s directive in first line of comment", LINE_MARKER_PREFIX),
+                navigationMarkerText.startsWith(LINE_MARKER_PREFIX)
+            )
 
             navigationMarkerText = navigationMarkerText.substring(LINE_MARKER_PREFIX.length)
 
@@ -149,8 +165,9 @@ abstract class AbstractLineMarkersTest : KotlinLightCodeInsightFixtureTestCase()
             var expectedNavigationText = navigationComment.substring(firstLineEnd + 1)
 
             TestCase.assertTrue(
-                    String.format("Marker %s is expected before navigation data", TARGETS_PREFIX),
-                    expectedNavigationText.startsWith(TARGETS_PREFIX))
+                String.format("Marker %s is expected before navigation data", TARGETS_PREFIX),
+                expectedNavigationText.startsWith(TARGETS_PREFIX)
+            )
 
             expectedNavigationText = expectedNavigationText.substring(expectedNavigationText.indexOf("\n") + 1)
 

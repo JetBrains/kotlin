@@ -1,0 +1,59 @@
+@kotlin.Metadata
+public final class TestInternalCompanionInClass$Companion {
+    inner class TestInternalCompanionInClass$Companion
+    private method <init>(): void
+    public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
+}
+
+@kotlin.Metadata
+public final class TestInternalCompanionInClass {
+    public final static field Companion: TestInternalCompanionInClass$Companion
+    inner class TestInternalCompanionInClass$Companion
+    static method <clinit>(): void
+    public method <init>(): void
+}
+
+@kotlin.Metadata
+final class TestPrivateCompanionInClass$Companion {
+    inner class TestPrivateCompanionInClass$Companion
+    private method <init>(): void
+    public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
+}
+
+@kotlin.Metadata
+public final class TestPrivateCompanionInClass {
+    private final static field Companion: TestPrivateCompanionInClass$Companion
+    inner class TestPrivateCompanionInClass$Companion
+    static method <clinit>(): void
+    public method <init>(): void
+}
+
+@kotlin.Metadata
+final class TestPrivateCompanionInInterface$Companion {
+    synthetic final static field $$INSTANCE: TestPrivateCompanionInInterface$Companion
+    inner class TestPrivateCompanionInInterface$Companion
+    static method <clinit>(): void
+    private method <init>(): void
+}
+
+@kotlin.Metadata
+public interface TestPrivateCompanionInInterface {
+    public synthetic final static field Companion: TestPrivateCompanionInInterface$Companion
+    inner class TestPrivateCompanionInInterface$Companion
+    static method <clinit>(): void
+}
+
+@kotlin.Metadata
+public final class TestProtectedCompanionInClass$Companion {
+    inner class TestProtectedCompanionInClass$Companion
+    private method <init>(): void
+    public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
+}
+
+@kotlin.Metadata
+public class TestProtectedCompanionInClass {
+    protected final static field Companion: TestProtectedCompanionInClass$Companion
+    inner class TestProtectedCompanionInClass$Companion
+    static method <clinit>(): void
+    public method <init>(): void
+}

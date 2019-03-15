@@ -1,4 +1,5 @@
-// EXPECTED_REACHABLE_NODES: 1144
+// KJS_WITH_FULL_RUNTIME
+// EXPECTED_REACHABLE_NODES: 1302
 import kotlin.reflect.KProperty
 
 var lastGeneratedId = 0

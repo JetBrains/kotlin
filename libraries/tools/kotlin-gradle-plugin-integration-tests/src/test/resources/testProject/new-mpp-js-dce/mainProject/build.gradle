@@ -1,0 +1,44 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+apply plugin: "kotlin-multiplatform"
+apply plugin: "kotlin-dce-js"
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+kotlin.targets.fromPreset(kotlin.presets.js, 'nodeJs')
+
+dependencies {
+    nodeJsImplementation project(":libraryProject")
+    nodeJsImplementation "org.jetbrains.kotlin:kotlin-stdlib-js"
+    nodeJsImplementation "org.mozilla:rhino:1.7.7.1"
+}
+
+compileKotlinNodeJs.kotlinOptions.sourceMap = true
+compileKotlinNodeJs.kotlinOptions.outputFile = "${buildDir}/exampleapp.js"
+compileKotlinNodeJs.kotlinOptions.suppressWarnings = true
+compileKotlinNodeJs.kotlinOptions.verbose = true
+runDceNodeJsKotlin.keep("exampleapp.exampleapp.status")
+
+task runRhino(type: JavaExec) {
+    classpath = kotlin.targets.nodeJs.compilations.main.runtimeDependencyFiles
+    workingDir = "${buildDir}"
+    main = 'org.mozilla.javascript.tools.shell.Main'
+    args = ["-opt", "-1",
+            "-f", "kotlin-js-min/nodeJs/main/kotlin.js",
+            "-f", "kotlin-js-min/nodeJs/main/examplelib.js",
+            "-f", "kotlin-js-min/nodeJs/main/exampleapp.js",
+            "-f", "../check.js"]
+}
+
+runRhino.dependsOn(runDceNodeJsKotlin)

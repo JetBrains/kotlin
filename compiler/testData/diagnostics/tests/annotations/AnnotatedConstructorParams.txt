@@ -1,8 +1,8 @@
 package
 
 package a {
-    @java.lang.Deprecated @java.lang.SuppressWarnings(value = {}) public val s: kotlin.String = ""
-    @java.lang.Deprecated @java.lang.SuppressWarnings(value = {}) public fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+    @field:java.lang.Deprecated @field:java.lang.SuppressWarnings(value = {}) public val s: kotlin.String = ""
+    @java.lang.Deprecated @java.lang.SuppressWarnings(value = {}) public fun main(): kotlin.Unit
 
     public final class Test {
         public constructor Test(/*0*/ @java.lang.Deprecated s: kotlin.String, /*1*/ @java.lang.SuppressWarnings(value = {}) x: kotlin.Int)

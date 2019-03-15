@@ -1,5 +1,5 @@
 FILE fqName:<root> fileName:/javaNestedClass.kt
-  FUN name:test visibility:public modality:FINAL <> (jj:J.JJ) returnType:Unit flags:
+  FUN name:test visibility:public modality:FINAL <> (jj:J.JJ) returnType:kotlin.Unit flags:
     VALUE_PARAMETER name:jj index:0 type:J.JJ flags:
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test(J.JJ): Unit'

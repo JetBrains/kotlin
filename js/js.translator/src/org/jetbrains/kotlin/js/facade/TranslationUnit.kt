@@ -21,5 +21,5 @@ import org.jetbrains.kotlin.psi.KtFile
 sealed class TranslationUnit {
     class SourceFile(val file: KtFile) : TranslationUnit()
 
-    class BinaryAst(val data: ByteArray) : TranslationUnit()
+    class BinaryAst(val data: ByteArray, val inlineData: ByteArray) : TranslationUnit()
 }

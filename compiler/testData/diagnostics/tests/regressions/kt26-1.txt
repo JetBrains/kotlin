@@ -1,7 +1,2 @@
 package
 
-package bar {
-}
-
-package foo {
-}

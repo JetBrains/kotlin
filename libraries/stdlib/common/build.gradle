@@ -1,18 +1,24 @@
 description = 'Kotlin Common Standard Library'
 
 apply plugin: 'kotlin-platform-common'
+apply plugin: 'pill-configurable'
 
 configureDist(project)
 configurePublishing(project)
 
-def commonSrcDir = "${buildDir}/common-sources"
-def commonTestSrcDir = "${buildDir}/common-test-sources"
+def commonSrcDir = "../src"
+def commonTestSrcDir = "../test"
+
+pill {
+    importAsLibrary = true
+}
 
 sourceSets {
     main {
         kotlin {
             srcDir 'src'
             srcDir commonSrcDir
+            srcDir '../unsigned/src'
         }
     }
     test {
@@ -21,61 +27,95 @@ sourceSets {
             srcDir 'test'
         }
     }
+    coroutinesExperimental {
+        kotlin {
+            srcDir '../coroutines-experimental/src'
+        }
+    }
 }
 
 dependencies {
     testCompile project(":kotlin-test:kotlin-test-common")
     testCompile project(":kotlin-test:kotlin-test-annotations-common")
+
+    coroutinesExperimentalCompile sourceSets.main.output
 }
 
-createPreprocessorTask(project, "Main", "${projectDir}/../src/kotlin", commonSrcDir)
-createPreprocessorTask(project, "Test", "${projectDir}/../test", commonTestSrcDir)
-
 compileKotlinCommon {
-    dependsOn preprocessSourcesMain
+    dependsOn(":prepare:build.version:writeStdlibVersion")
 //    dependsOn ":prepare:compiler:prepare-compiler-with-bootstrap-runtime"
 //    compilerJarFile = compilerJarWithBootstrapRuntime
 }
 
-/*
-// TODO: currently unsupported
 compileKotlinCommon {
     kotlinOptions {
         freeCompilerArgs = [
-                "-module-name", "${project.name}".toString()
+                "-module-name", project.name,
+                "-Xuse-experimental=kotlin.Experimental",
+                "-Xuse-experimental=kotlin.ExperimentalMultiplatform",
+                "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
+                "-XXLanguage:+InlineClasses",
+                "-Xallow-kotlin-package",
+                "-Xallow-result-return-type"
         ]
     }
 }
-*/
 
-compileTestKotlinCommon {
-    dependsOn preprocessSourcesTest
+compileCoroutinesExperimentalKotlinCommon {
+    kotlinOptions {
+        languageVersion = "1.3"
+        apiVersion = "1.3"
+        freeCompilerArgs = [
+                "-module-name", project.name+"-coroutines",
+                "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
+                "-Xuse-experimental=kotlin.Experimental",
+                "-Xcoroutines=enable",
+                "-XXLanguage:-ReleaseCoroutines",
+                "-Xallow-kotlin-package",
+                "-Xallow-result-return-type"
+        ]
+    }
 }
 
-kotlin.experimental.coroutines 'enable'
+compileTestKotlinCommon {
+    kotlinOptions {
+        freeCompilerArgs += [
+                "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes"
+        ]
+    }
+}
 
 jar {
     manifestAttributes(manifest, project, 'Main')
+    from sourceSets.coroutinesExperimental.output
 }
-
 
 task sourcesJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'
     from sourceSets.main.kotlin
+    from sourceSets.coroutinesExperimental.kotlin
+}
+
+configurations {
+    sources
 }
 
 artifacts {
     archives sourcesJar
-    archives javadocJar
+    sources sourcesJar
 }
+
+javadocJar()
 
 // TODO: call the "dist" task instead, once we need to publish kotlin-stdlib-common.jar with the compiler distribution
 task distCommon(type: Copy) {
     from(jar)
+    from(sourcesJar)
     into "$distDir/common"
     rename "-${java.util.regex.Pattern.quote(version)}", ''
 }
 
 dist.dependsOn distCommon
+
 
 classes.setDependsOn(classes.dependsOn.findAll { it != "compileJava" })

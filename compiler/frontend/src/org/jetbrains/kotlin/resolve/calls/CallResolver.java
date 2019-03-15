@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve.calls;
@@ -23,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.FunctionTypesKt;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.config.AnalysisFlags;
 import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
@@ -35,9 +25,9 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.CallResolverUtilKt;
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
+import org.jetbrains.kotlin.resolve.calls.components.InferenceSession;
 import org.jetbrains.kotlin.resolve.calls.context.*;
 import org.jetbrains.kotlin.resolve.calls.inference.CoroutineInferenceUtilKt;
-import org.jetbrains.kotlin.resolve.calls.model.KotlinCallKind;
 import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsImpl;
@@ -200,7 +190,7 @@ public class CallResolver {
             @NotNull BasicCallResolutionContext context,
             @NotNull Name name,
             @NotNull KtReferenceExpression referenceExpression,
-            @NotNull NewResolutionOldInference.ResolutionKind<D> kind
+            @NotNull NewResolutionOldInference.ResolutionKind kind
     ) {
         TracingStrategy tracing = TracingStrategyImpl.create(referenceExpression, context.call);
         return computeTasksAndResolveCall(context, name, tracing, kind);
@@ -211,7 +201,7 @@ public class CallResolver {
             @NotNull BasicCallResolutionContext context,
             @NotNull Name name,
             @NotNull TracingStrategy tracing,
-            @NotNull NewResolutionOldInference.ResolutionKind<D> kind
+            @NotNull NewResolutionOldInference.ResolutionKind kind
     ) {
         return callResolvePerfCounter.<OverloadResolutionResults<D>>time(() -> {
             ResolutionTask<D> resolutionTask = new ResolutionTask<>(kind, name, null);
@@ -237,7 +227,7 @@ public class CallResolver {
     ) {
         return callResolvePerfCounter.<OverloadResolutionResults<D>>time(() -> {
             ResolutionTask<D> resolutionTask = new ResolutionTask<>(
-                    new NewResolutionOldInference.ResolutionKind.GivenCandidates<>(), null, candidates
+                    new NewResolutionOldInference.ResolutionKind.GivenCandidates(), null, candidates
             );
             return doResolveCallOrGetCachedResults(context, resolutionTask, tracing);
         });
@@ -307,12 +297,13 @@ public class CallResolver {
         return resolveFunctionCall(
                 BasicCallResolutionContext.create(
                         trace, scope, call, expectedType, dataFlowInfo, ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
-                        isAnnotationContext, languageVersionSettings, dataFlowValueFactory
+                        isAnnotationContext, languageVersionSettings, dataFlowValueFactory, InferenceSession.Companion.getDefault()
                 )
         );
     }
 
     @NotNull
+    @SuppressWarnings("unchecked")
     public OverloadResolutionResults<FunctionDescriptor> resolveFunctionCall(@NotNull BasicCallResolutionContext context) {
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
 
@@ -435,7 +426,8 @@ public class CallResolver {
                 dataFlowInfo, ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
                 false,
                 languageVersionSettings,
-                dataFlowValueFactory);
+                dataFlowValueFactory,
+                InferenceSession.Companion.getDefault());
 
         if (call.getCalleeExpression() == null) return checkArgumentTypesAndFail(context);
 
@@ -562,7 +554,7 @@ public class CallResolver {
             Set<ResolutionCandidate<FunctionDescriptor>> candidates = Collections.singleton(candidate);
 
             ResolutionTask<FunctionDescriptor> resolutionTask = new ResolutionTask<>(
-                    new NewResolutionOldInference.ResolutionKind.GivenCandidates<>(), null, candidates
+                    new NewResolutionOldInference.ResolutionKind.GivenCandidates(), null, candidates
             );
 
             return doResolveCallOrGetCachedResults(basicCallResolutionContext, resolutionTask, tracing);
@@ -578,12 +570,13 @@ public class CallResolver {
         tracing.bindCall(context.trace, call);
 
         boolean newInferenceEnabled = languageVersionSettings.supportsFeature(LanguageFeature.NewInference);
-        if (newInferenceEnabled && (resolutionTask.resolutionKind.getKotlinCallKind() != KotlinCallKind.UNSUPPORTED)) {
+        NewResolutionOldInference.ResolutionKind resolutionKind = resolutionTask.resolutionKind;
+        if (newInferenceEnabled && PSICallResolver.getDefaultResolutionKinds().contains(resolutionKind)) {
             assert resolutionTask.name != null;
-            return PSICallResolver.runResolutionAndInference(context, resolutionTask.name, resolutionTask.resolutionKind, tracing);
+            return PSICallResolver.runResolutionAndInference(context, resolutionTask.name, resolutionKind, tracing);
         }
 
-        if (newInferenceEnabled && resolutionTask.resolutionKind instanceof NewResolutionOldInference.ResolutionKind.GivenCandidates) {
+        if (newInferenceEnabled && resolutionKind instanceof NewResolutionOldInference.ResolutionKind.GivenCandidates) {
             assert resolutionTask.givenCandidates != null;
             return PSICallResolver.runResolutionAndInferenceForGivenCandidates(context, resolutionTask.givenCandidates, tracing);
         }
@@ -602,7 +595,7 @@ public class CallResolver {
             return results;
         }
 
-        DelegatingBindingTrace deltasTraceForTypeInference = ((OverloadResolutionResultsImpl) results).getTrace();
+        DelegatingBindingTrace deltasTraceForTypeInference = results.getTrace();
         if (deltasTraceForTypeInference != null) {
             deltasTraceForTypeInference.addOwnDataTo(traceToResolveCall);
         }
@@ -664,6 +657,7 @@ public class CallResolver {
             @NotNull ResolutionTask<D> resolutionTask,
             @NotNull TracingStrategy tracing
     ) {
+        DataFlowInfo initialInfo = context.dataFlowInfoForArguments.getResultInfo();
         if (context.checkArguments == CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS) {
             argumentTypeResolver.analyzeArgumentsAndRecordTypes(context, ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS);
         }
@@ -682,14 +676,32 @@ public class CallResolver {
             }
         }
 
+        OverloadResolutionResultsImpl<D> result;
         if (!(resolutionTask.resolutionKind instanceof NewResolutionOldInference.ResolutionKind.GivenCandidates)) {
             assert resolutionTask.name != null;
-            return newResolutionOldInference.runResolution(context, resolutionTask.name, resolutionTask.resolutionKind, tracing);
+            result = newResolutionOldInference.runResolution(context, resolutionTask.name, resolutionTask.resolutionKind, tracing);
         }
         else {
             assert resolutionTask.givenCandidates != null;
-            return newResolutionOldInference.runResolutionForGivenCandidates(context, tracing, resolutionTask.givenCandidates);
+            result = newResolutionOldInference.runResolutionForGivenCandidates(context, tracing, resolutionTask.givenCandidates);
         }
+
+        // in code like
+        //   assert(a!!.isEmpty())
+        //   a.length
+        // we should ignore data flow info from assert argument, since assertions can be disabled and
+        // thus it will lead to NPE in runtime otherwise
+        if (languageVersionSettings.getFlag(AnalysisFlags.getIgnoreDataFlowInAssert()) && result.isSingleResult()) {
+            D descriptor = result.getResultingDescriptor();
+            if (descriptor.getName().equals(Name.identifier("assert"))) {
+                DeclarationDescriptor declaration = descriptor.getContainingDeclaration();
+                if (declaration instanceof PackageFragmentDescriptor &&
+                    ((PackageFragmentDescriptor) declaration).getFqName().asString().equals("kotlin")) {
+                    context.dataFlowInfoForArguments.updateInfo(context.call.getValueArguments().get(0), initialInfo);
+                }
+            }
+        }
+        return result;
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -702,10 +714,10 @@ public class CallResolver {
         final Collection<ResolutionCandidate<D>> givenCandidates;
 
         @NotNull
-        final NewResolutionOldInference.ResolutionKind<D> resolutionKind;
+        final NewResolutionOldInference.ResolutionKind resolutionKind;
 
         private ResolutionTask(
-                @NotNull NewResolutionOldInference.ResolutionKind<D> kind,
+                @NotNull NewResolutionOldInference.ResolutionKind kind,
                 @Nullable Name name,
                 @Nullable Collection<ResolutionCandidate<D>> candidates
         ) {

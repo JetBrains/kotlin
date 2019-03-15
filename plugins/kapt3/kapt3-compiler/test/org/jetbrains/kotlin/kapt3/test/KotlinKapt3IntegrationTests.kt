@@ -31,15 +31,17 @@ import javax.lang.model.element.TypeElement
 
 class KotlinKapt3IntegrationTests : AbstractKotlinKapt3IntegrationTest(), Java9TestLauncher {
     override fun test(
-            name: String,
-            vararg supportedAnnotations: String,
-            options: Map<String, String>,
-            process: (Set<TypeElement>, RoundEnvironment, ProcessingEnvironment) -> Unit
+        name: String,
+        vararg supportedAnnotations: String,
+        options: Map<String, String>,
+        process: (Set<TypeElement>, RoundEnvironment, ProcessingEnvironment) -> Unit
     ) {
         super.test(name, *supportedAnnotations, options = options, process = process)
 
-        doTestWithJdk9(SingleJUnitTestRunner::class.java,
-                       KotlinKapt3IntegrationTests::class.java.name + "#test" + getTestName(false))
+        doTestWithJdk9(
+            SingleJUnitTestRunner::class.java,
+            KotlinKapt3IntegrationTests::class.java.name + "#test" + getTestName(false)
+        )
     }
 
     @Test
@@ -51,7 +53,7 @@ class KotlinKapt3IntegrationTests : AbstractKotlinKapt3IntegrationTest(), Java9T
     }
 
     @Test
-    fun testComments() = test("Simple", "test.MyAnnotation") { set, roundEnv, env ->
+    fun testComments() = test("Simple", "test.MyAnnotation") { _, _, env ->
         fun commentOf(className: String) = env.elementUtils.getDocComment(env.elementUtils.getTypeElement(className))
 
         assert(commentOf("test.Simple") == " * KDoc comment.\n")
@@ -73,27 +75,29 @@ class KotlinKapt3IntegrationTests : AbstractKotlinKapt3IntegrationTest(), Java9T
     }
 
     @Test
-    fun testStubsAndIncrementalDataForNestedClasses() = bindingsTest("NestedClasses") { stubsOutputDir, incrementalDataOutputDir, bindings ->
-        assert(File(stubsOutputDir, "test/Simple.java").exists())
-        assert(!File(stubsOutputDir, "test/Simple/InnerClass.java").exists())
+    fun testStubsAndIncrementalDataForNestedClasses() {
+        bindingsTest("NestedClasses") { stubsOutputDir, incrementalDataOutputDir, bindings ->
+            assert(File(stubsOutputDir, "test/Simple.java").exists())
+            assert(!File(stubsOutputDir, "test/Simple/InnerClass.java").exists())
 
-        assert(File(incrementalDataOutputDir, "test/Simple.class").exists())
-        assert(File(incrementalDataOutputDir, "test/Simple\$Companion.class").exists())
-        assert(File(incrementalDataOutputDir, "test/Simple\$InnerClass.class").exists())
-        assert(File(incrementalDataOutputDir, "test/Simple\$NestedClass.class").exists())
-        assert(File(incrementalDataOutputDir, "test/Simple\$NestedClass\$NestedNestedClass.class").exists())
+            assert(File(incrementalDataOutputDir, "test/Simple.class").exists())
+            assert(File(incrementalDataOutputDir, "test/Simple\$Companion.class").exists())
+            assert(File(incrementalDataOutputDir, "test/Simple\$InnerClass.class").exists())
+            assert(File(incrementalDataOutputDir, "test/Simple\$NestedClass.class").exists())
+            assert(File(incrementalDataOutputDir, "test/Simple\$NestedClass\$NestedNestedClass.class").exists())
 
-        assert(bindings.any { it.key == "test/Simple" && it.value.name == "test/Simple.java" })
-        assert(bindings.none { it.key.contains("Companion") })
-        assert(bindings.none { it.key.contains("InnerClass") })
+            assert(bindings.any { it.key == "test/Simple" && it.value.name == "test/Simple.java" })
+            assert(bindings.none { it.key.contains("Companion") })
+            assert(bindings.none { it.key.contains("InnerClass") })
+        }
     }
 
     private fun bindingsTest(name: String, test: (File, File, Map<String, KaptJavaFileObject>) -> Unit) {
         test(name, "test.MyAnnotation") { _, _, _ ->
             val kaptExtension = AnalysisHandlerExtension.getInstances(myEnvironment.project).firstIsInstance<Kapt3ExtensionForTests>()
 
-            val stubsOutputDir = kaptExtension.stubsOutputDir
-            val incrementalDataOutputDir = kaptExtension.incrementalDataOutputDir
+            val stubsOutputDir = kaptExtension.options.stubsOutputDir
+            val incrementalDataOutputDir = kaptExtension.options.incrementalDataOutputDir
 
             val bindings = kaptExtension.savedBindings!!
 
@@ -103,8 +107,8 @@ class KotlinKapt3IntegrationTests : AbstractKotlinKapt3IntegrationTest(), Java9T
 
     @Test
     fun testOptions() = test(
-            "Simple", "test.MyAnnotation",
-            options = mapOf("firstKey" to "firstValue", "secondKey" to "")
+        "Simple", "test.MyAnnotation",
+        options = mapOf("firstKey" to "firstValue", "secondKey" to "")
     ) { _, _, env ->
         val options = env.options
         assertEquals("firstValue", options["firstKey"])
@@ -117,11 +121,11 @@ class KotlinKapt3IntegrationTests : AbstractKotlinKapt3IntegrationTest(), Java9T
         val annotatedElements = roundEnv.getElementsAnnotatedWith(set.single())
         assertEquals(1, annotatedElements.size)
         val constructors = annotatedElements
-                .first()
-                .enclosedElements
-                .filter { it.kind == ElementKind.CONSTRUCTOR }
-                .map { it as ExecutableElement }
-                .sortedBy { it.parameters.size }
+            .first()
+            .enclosedElements
+            .filter { it.kind == ElementKind.CONSTRUCTOR }
+            .map { it as ExecutableElement }
+            .sortedBy { it.parameters.size }
         assertEquals(2, constructors.size)
         assertEquals(2, constructors[0].parameters.size)
         assertEquals(3, constructors[1].parameters.size)

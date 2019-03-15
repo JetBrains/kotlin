@@ -1,0 +1,112 @@
+@kotlin.Metadata
+public final class Generic {
+    public method <init>(): void
+    public final @org.jetbrains.annotations.Nullable method foo(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
+}
+
+@kotlin.Metadata
+@kotlin.coroutines.jvm.internal.DebugMetadata
+final class TailSuspendUnitFunKt$callsIntNotTailCall$1 {
+    field label: int
+    synthetic field result: java.lang.Object
+    inner class TailSuspendUnitFunKt$callsIntNotTailCall$1
+    method <init>(p0: kotlin.coroutines.Continuation): void
+    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+}
+
+@kotlin.Metadata
+@kotlin.coroutines.jvm.internal.DebugMetadata
+final class TailSuspendUnitFunKt$lambdaAsParameterNotTailCall$1 {
+    field L$0: java.lang.Object
+    field label: int
+    synthetic field result: java.lang.Object
+    inner class TailSuspendUnitFunKt$lambdaAsParameterNotTailCall$1
+    method <init>(p0: kotlin.coroutines.Continuation): void
+    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+}
+
+@kotlin.Metadata
+@kotlin.coroutines.jvm.internal.DebugMetadata
+final class TailSuspendUnitFunKt$multipleExitPointsNotTailCall$1 {
+    field Z$0: boolean
+    field label: int
+    synthetic field result: java.lang.Object
+    inner class TailSuspendUnitFunKt$multipleExitPointsNotTailCall$1
+    method <init>(p0: kotlin.coroutines.Continuation): void
+    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+}
+
+@kotlin.coroutines.jvm.internal.DebugMetadata
+@kotlin.Metadata
+final class TailSuspendUnitFunKt$multipleExitPointsWhen$2 {
+    field label: int
+    inner class TailSuspendUnitFunKt$multipleExitPointsWhen$2
+    method <init>(p0: kotlin.coroutines.Continuation): void
+    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
+    public final method invoke(p0: java.lang.Object): java.lang.Object
+    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+}
+
+@kotlin.Metadata
+@kotlin.coroutines.jvm.internal.DebugMetadata
+final class TailSuspendUnitFunKt$notTailCall$1 {
+    field label: int
+    synthetic field result: java.lang.Object
+    inner class TailSuspendUnitFunKt$notTailCall$1
+    method <init>(p0: kotlin.coroutines.Continuation): void
+    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+}
+
+@kotlin.Metadata
+final class TailSuspendUnitFunKt$useGenericIngerType$2 {
+    public final static field INSTANCE: TailSuspendUnitFunKt$useGenericIngerType$2
+    inner class TailSuspendUnitFunKt$useGenericIngerType$2
+    static method <clinit>(): void
+    method <init>(): void
+    public synthetic method invoke(): java.lang.Object
+    public final method invoke(): void
+}
+
+@kotlin.Metadata
+@kotlin.coroutines.jvm.internal.DebugMetadata
+final class TailSuspendUnitFunKt$useNullableUnit$1 {
+    field label: int
+    synthetic field result: java.lang.Object
+    inner class TailSuspendUnitFunKt$useNullableUnit$1
+    method <init>(p0: kotlin.coroutines.Continuation): void
+    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+}
+
+@kotlin.Metadata
+public final class TailSuspendUnitFunKt {
+    inner class TailSuspendUnitFunKt$callsIntNotTailCall$1
+    inner class TailSuspendUnitFunKt$lambdaAsParameterNotTailCall$1
+    inner class TailSuspendUnitFunKt$multipleExitPointsNotTailCall$1
+    inner class TailSuspendUnitFunKt$multipleExitPointsWhen$2
+    inner class TailSuspendUnitFunKt$notTailCall$1
+    inner class TailSuspendUnitFunKt$useGenericIngerType$2
+    inner class TailSuspendUnitFunKt$useNullableUnit$1
+    public final static @org.jetbrains.annotations.Nullable method callsIntNotTailCall(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final static @org.jetbrains.annotations.Nullable method empty(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final static @org.jetbrains.annotations.Nullable method generic(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final static @org.jetbrains.annotations.Nullable method genericInferType(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
+    public final static @org.jetbrains.annotations.Nullable method lambdaAsParameter(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
+    public final static @org.jetbrains.annotations.Nullable method lambdaAsParameterNotTailCall(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
+    public final static @org.jetbrains.annotations.Nullable method lambdaAsParameterReturn(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
+    public final static @org.jetbrains.annotations.Nullable method multipleExitPoints(p0: boolean, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
+    public final static @org.jetbrains.annotations.Nullable method multipleExitPointsNotTailCall(p0: boolean, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
+    public final static @org.jetbrains.annotations.Nullable method multipleExitPointsWhen(p0: int, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
+    public final static @org.jetbrains.annotations.Nullable method multipleExitPointsWithOrdinaryInline(p0: boolean, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
+    public final static @org.jetbrains.annotations.Nullable method notTailCall(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final static @org.jetbrains.annotations.Nullable method nullableUnit(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final static method ordinary(): int
+    public final static method ordinaryInline(): void
+    public final static @org.jetbrains.annotations.Nullable method returnsInt(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final static @org.jetbrains.annotations.Nullable method useGenericClass(@org.jetbrains.annotations.NotNull p0: Generic, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
+    public final static @org.jetbrains.annotations.Nullable method useGenericIngerType(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final static @org.jetbrains.annotations.Nullable method useGenericReturningUnit(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final static @org.jetbrains.annotations.Nullable method useNullableUnit(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final static @org.jetbrains.annotations.Nullable method useRunRunRunRunRun(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final static @org.jetbrains.annotations.Nullable method withReturn(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final static @org.jetbrains.annotations.Nullable method withoutReturn(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
+}

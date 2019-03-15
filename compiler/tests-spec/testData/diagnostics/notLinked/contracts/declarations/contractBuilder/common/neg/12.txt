@@ -1,0 +1,10 @@
+package
+
+public inline fun case_1(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
+public inline fun case_2(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
+public inline fun case_3(/*0*/ value_1: kotlin.Int?, /*1*/ block: () -> kotlin.Unit): kotlin.Unit
+
+package builder {
+    public inline fun kotlin.contracts.ContractBuilder.callsInPlaceEffectBuilder(/*0*/ block: () -> kotlin.Unit): kotlin.contracts.CallsInPlace
+    public fun kotlin.contracts.ContractBuilder.returnsEffectBuilder(/*0*/ value_1: kotlin.Int?): kotlin.contracts.ConditionalEffect
+}

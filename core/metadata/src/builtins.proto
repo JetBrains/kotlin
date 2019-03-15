@@ -39,6 +39,8 @@ extend Function {
 
 extend Property {
   repeated Annotation property_annotation = 150;
+  repeated Annotation property_getter_annotation = 152;
+  repeated Annotation property_setter_annotation = 153;
   optional Annotation.Argument.Value compile_time_value = 151;
 }
 

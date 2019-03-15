@@ -1,0 +1,67 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.ir.util
+
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrField
+import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classifierOrFail
+import org.jetbrains.kotlin.ir.types.isMarkedNullable
+
+
+/**
+ * Returns inline class for given class or null of type is not inlined
+ * TODO: Make this configurable for different backends (currently implements logic of JS BE)
+ */
+fun IrType.getInlinedClass(): IrClass? {
+    if (this is IrSimpleType) {
+        val erased = erase(this) ?: return null
+        if (erased.isInline) {
+            if (this.isMarkedNullable()) {
+                var fieldType: IrType
+                var fieldInlinedClass = erased
+                while (true) {
+                    fieldType = getInlineClassBackingField(fieldInlinedClass).type
+                    if (fieldType.isMarkedNullable()) {
+                        return null
+                    }
+
+                    fieldInlinedClass = fieldType.getInlinedClass() ?: break
+                }
+            }
+
+            return erased
+        }
+    }
+    return null
+}
+
+fun IrType.isInlined(): Boolean = this.getInlinedClass() != null
+
+private tailrec fun erase(type: IrType): IrClass? {
+    val classifier = type.classifierOrFail
+
+    return when (classifier) {
+        is IrClassSymbol -> classifier.owner
+        is IrTypeParameterSymbol -> erase(classifier.owner.superTypes.first())
+        else -> error(classifier)
+    }
+}
+
+fun getInlineClassBackingField(irClass: IrClass): IrField {
+    for (declaration in irClass.declarations) {
+        if (declaration is IrField)
+            return declaration
+
+        if (declaration is IrProperty)
+            return declaration.backingField ?: continue
+    }
+    error("Inline class has no field")
+}

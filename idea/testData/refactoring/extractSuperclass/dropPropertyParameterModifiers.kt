@@ -1,3 +1,4 @@
+// WITH_RUNTIME
 // NAME: Middle
 
 open class Parent(open val bad: String) {

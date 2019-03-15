@@ -1,0 +1,24 @@
+FILE fqName:<root> fileName:/dynamicArrayIncrementDecrement.kt
+  FUN name:testArrayIncrementDecrement visibility:public modality:FINAL <> (d:dynamic) returnType:kotlin.Unit flags:
+    VALUE_PARAMETER name:d index:0 type:dynamic flags:
+    BLOCK_BODY
+      VAR name:t1 type:dynamic flags:val
+        DYN_OP operator=PREFIX_INCREMENT type=dynamic
+          receiver: DYN_OP operator=ARRAY_ACCESS type=dynamic
+            receiver: GET_VAR 'value-parameter d: dynamic' type=dynamic origin=null
+            0: CONST String type=kotlin.String value="prefixIncr"
+      VAR name:t2 type:dynamic flags:val
+        DYN_OP operator=PREFIX_DECREMENT type=dynamic
+          receiver: DYN_OP operator=ARRAY_ACCESS type=dynamic
+            receiver: GET_VAR 'value-parameter d: dynamic' type=dynamic origin=null
+            0: CONST String type=kotlin.String value="prefixDecr"
+      VAR name:t3 type:dynamic flags:val
+        DYN_OP operator=POSTFIX_INCREMENT type=dynamic
+          receiver: DYN_OP operator=ARRAY_ACCESS type=dynamic
+            receiver: GET_VAR 'value-parameter d: dynamic' type=dynamic origin=null
+            0: CONST String type=kotlin.String value="postfixIncr"
+      VAR name:t4 type:dynamic flags:val
+        DYN_OP operator=POSTFIX_DECREMENT type=dynamic
+          receiver: DYN_OP operator=ARRAY_ACCESS type=dynamic
+            receiver: GET_VAR 'value-parameter d: dynamic' type=dynamic origin=null
+            0: CONST String type=kotlin.String value="postfixDecr"

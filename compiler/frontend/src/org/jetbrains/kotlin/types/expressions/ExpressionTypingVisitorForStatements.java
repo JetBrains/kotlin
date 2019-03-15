@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.types.expressions;
 
-import com.google.common.collect.Sets;
 import com.intellij.psi.tree.IElementType;
 import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
@@ -50,6 +49,7 @@ import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
 
 import java.util.Collection;
+import java.util.HashSet;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.psi.KtPsiUtil.deparenthesize;
@@ -260,7 +260,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             // Both 'plus()' and 'plusAssign()' available => ambiguity
             OverloadResolutionResults<FunctionDescriptor> ambiguityResolutionResults = OverloadResolutionResultsUtil.ambiguity(assignmentOperationDescriptors, binaryOperationDescriptors);
             context.trace.report(ASSIGN_OPERATOR_AMBIGUITY.on(operationSign, ambiguityResolutionResults.getResultingCalls()));
-            Collection<DeclarationDescriptor> descriptors = Sets.newHashSet();
+            Collection<DeclarationDescriptor> descriptors = new HashSet<>();
             for (ResolvedCall<?> resolvedCall : ambiguityResolutionResults.getResultingCalls()) {
                 descriptors.add(resolvedCall.getResultingDescriptor());
             }
@@ -403,7 +403,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
 
     @Override
     public KotlinTypeInfo visitIfExpression(@NotNull KtIfExpression expression, ExpressionTypingContext context) {
-        return controlStructures.visitIfExpression(expression, context, true);
+        return controlStructures.visitIfExpression(expression, context);
     }
 
     @Override

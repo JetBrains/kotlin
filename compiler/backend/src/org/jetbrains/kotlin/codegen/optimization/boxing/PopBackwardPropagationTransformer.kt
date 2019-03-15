@@ -119,7 +119,7 @@ class PopBackwardPropagationTransformer : MethodTransformer() {
             throw AssertionError("Incorrect bytecode at ${methodNode.instructions.indexOf(insn)}: ${insn.debugText} $frame")
         }
 
-        private inner class HazardsTrackingInterpreter : SourceInterpreter() {
+        private inner class HazardsTrackingInterpreter : SourceInterpreter(Opcodes.API_VERSION) {
             override fun naryOperation(insn: AbstractInsnNode, values: MutableList<out SourceValue>): SourceValue {
                 for (value in values) {
                     value.insns.markAsDontTouch()
