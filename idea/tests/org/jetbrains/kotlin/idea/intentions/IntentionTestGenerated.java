@@ -4913,6 +4913,49 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/convertCollectionConstructorToFunction")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ConvertCollectionConstructorToFunction extends AbstractIntentionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInConvertCollectionConstructorToFunction() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertCollectionConstructorToFunction"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("keepArrayListCallWithArgument.kt")
+        public void testKeepArrayListCallWithArgument() throws Exception {
+            runTest("idea/testData/intentions/convertCollectionConstructorToFunction/keepArrayListCallWithArgument.kt");
+        }
+
+        @TestMetadata("replaceArrayListCall.kt")
+        public void testReplaceArrayListCall() throws Exception {
+            runTest("idea/testData/intentions/convertCollectionConstructorToFunction/replaceArrayListCall.kt");
+        }
+
+        @TestMetadata("replaceArrayListCallWithType.kt")
+        public void testReplaceArrayListCallWithType() throws Exception {
+            runTest("idea/testData/intentions/convertCollectionConstructorToFunction/replaceArrayListCallWithType.kt");
+        }
+
+        @TestMetadata("replaceHashMapCall.kt")
+        public void testReplaceHashMapCall() throws Exception {
+            runTest("idea/testData/intentions/convertCollectionConstructorToFunction/replaceHashMapCall.kt");
+        }
+
+        @TestMetadata("replaceHashSetCall.kt")
+        public void testReplaceHashSetCall() throws Exception {
+            runTest("idea/testData/intentions/convertCollectionConstructorToFunction/replaceHashSetCall.kt");
+        }
+
+        @TestMetadata("replaceLinkedHashSetCall.kt")
+        public void testReplaceLinkedHashSetCall() throws Exception {
+            runTest("idea/testData/intentions/convertCollectionConstructorToFunction/replaceLinkedHashSetCall.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/convertEnumToSealedClass")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
