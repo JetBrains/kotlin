@@ -116,3 +116,25 @@ public final class Foo {
         super();
     }
 }
+
+////////////////////
+
+
+import java.lang.System;
+
+@kotlin.Metadata()
+public final class Zoo {
+    private final int p = 100;
+
+    public final int getP() {
+        return 0;
+    }
+
+    public Zoo(int p) {
+        super();
+    }
+
+    public Zoo() {
+        super();
+    }
+}

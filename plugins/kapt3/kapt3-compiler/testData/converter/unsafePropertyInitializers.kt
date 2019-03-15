@@ -22,3 +22,5 @@ object Boo {
     val z = foo()
     fun foo() = "abc"
 }
+
+class Zoo(val p: Int = 100)

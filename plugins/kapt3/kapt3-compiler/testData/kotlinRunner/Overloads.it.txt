@@ -26,7 +26,7 @@ public final class State {
     private final int someInt = 0;
     private final long someLong = 0L;
     @org.jetbrains.annotations.NotNull()
-    private final java.lang.String someString = null;
+    private final java.lang.String someString = "";
 
     public final int getSomeInt() {
         return 0;

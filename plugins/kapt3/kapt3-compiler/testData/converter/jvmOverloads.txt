@@ -5,7 +5,7 @@ public final class State {
     private final int someInt = 0;
     private final long someLong = 0L;
     @org.jetbrains.annotations.NotNull()
-    private final java.lang.String someString = null;
+    private final java.lang.String someString = "";
 
     public final int getSomeInt() {
         return 0;
@@ -38,9 +38,9 @@ import java.lang.System;
 @kotlin.Metadata()
 public final class State2 {
     public final int someInt = 0;
-    public final long someLong = 0L;
+    public final long someLong = 2L;
     @org.jetbrains.annotations.NotNull()
-    public final java.lang.String someString = null;
+    public final java.lang.String someString = "";
 
     public final int test(int someInt, long someLong, @org.jetbrains.annotations.NotNull()
     java.lang.String someString) {
