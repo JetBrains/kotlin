@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.base.kapt3
 
-import org.jetbrains.kotlin.kapt3.base.incremental.JavaClassCacheManager
 import org.jetbrains.kotlin.kapt3.base.incremental.SourcesToReprocess
 import java.io.File
 import java.nio.file.Files
@@ -129,7 +128,7 @@ enum class AptMode(override val stringValue: String) : KaptSelector {
         get() = this != APT_ONLY
 }
 
-fun KaptOptions.collectJavaSourceFiles(cacheManager: JavaClassCacheManager? = null): List<File> {
+fun KaptOptions.collectJavaSourceFiles(sourcesToReprocess: SourcesToReprocess = SourcesToReprocess.FullRebuild): List<File> {
     fun allSources(): List<File> {
         return (javaSourceRoots + stubsOutputDir)
             .sortedBy { Files.isSymbolicLink(it.toPath()) } // Get non-symbolic paths first
@@ -138,15 +137,9 @@ fun KaptOptions.collectJavaSourceFiles(cacheManager: JavaClassCacheManager? = nu
             .distinctBy { it.canonicalPath }
     }
 
-    return if (cacheManager != null && changedFiles.isNotEmpty()) {
-        val toReprocess = cacheManager.invalidateAndGetDirtyFiles(changedFiles.filter { it.extension == "java" })
-
-        when (toReprocess) {
-            is SourcesToReprocess.FullRebuild -> allSources()
-            is SourcesToReprocess.Incremental -> toReprocess.toReprocess.filter { it.exists() }
-        }
-    } else {
-        allSources()
+    return when (sourcesToReprocess) {
+        is SourcesToReprocess.FullRebuild -> allSources()
+        is SourcesToReprocess.Incremental -> sourcesToReprocess.toReprocess.filter { it.exists() }
     }
 }
 

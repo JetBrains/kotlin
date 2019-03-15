@@ -49,25 +49,34 @@ class IncrementalAptCache : Serializable {
         return true
     }
 
-    fun invalidateAggregatingAndGetAnnotations(): Set<String> {
+    fun getAggregatingClaimedAnnotations(): Set<String> = aggregatingClaimedAnnotations
+
+    /** Returns generated Java sources originating from aggregating APs. */
+    fun invalidateAggregating(): List<File> {
+        val dirtyAggregating = aggregatingGenerated.filter { it.extension == "java" }
         aggregatingGenerated.forEach { it.delete() }
         aggregatingGenerated.clear()
 
-        return aggregatingClaimedAnnotations
+        return dirtyAggregating
     }
 
-    fun invalidateIsolatingGenerated(fromSources: Set<File>) {
+    /** Returns generated Java sources originating from the specified sources, and generated  by isloating APs. */
+    fun invalidateIsolatingGenerated(fromSources: Set<File>): List<File> {
+        val allInvalidated = mutableListOf<File>()
         var changedSources = fromSources.toSet()
 
         // We need to do it in a loop because mapping could be: [AGenerated.java -> A.java, AGeneratedGenerated.java -> AGenerated.java]
-        while(changedSources.isNotEmpty()) {
+        while (changedSources.isNotEmpty()) {
             val generated = isolatingMapping.filter { changedSources.contains(it.value) }.keys
             generated.forEach {
+                if (it.extension == "java") allInvalidated.add(it)
+
                 it.delete()
                 isolatingMapping.remove(it)
             }
             changedSources = generated
         }
+        return allInvalidated
     }
 
     private fun invalidateCache() {

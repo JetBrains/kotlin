@@ -125,12 +125,13 @@ internal class AnnotationProcessorDependencyCollector(private val runtimeProcTyp
 }
 
 private fun getSrcFiles(elements: Array<out Element?>): List<File> {
-    return elements.filterNotNull().mapNotNull {
-        var origin = it
+    return elements.filterNotNull().mapNotNull { elem ->
+        var origin = elem
         while (origin.enclosingElement != null && origin.enclosingElement !is PackageElement) {
             origin = origin.enclosingElement
         }
-        (origin as? Symbol.ClassSymbol)?.sourcefile?.let { src -> File(src.toUri()) }
+        val uri = (origin as? Symbol.ClassSymbol)?.sourcefile?.toUri()?.takeIf { it.isAbsolute }
+        uri?.let { File(it) }
     }
 }
 

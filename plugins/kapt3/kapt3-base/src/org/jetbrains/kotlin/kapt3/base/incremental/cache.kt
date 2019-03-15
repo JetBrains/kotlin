@@ -8,15 +8,15 @@ package org.jetbrains.kotlin.kapt3.base.incremental
 import java.io.*
 
 // TODO(gavra): switch away from Java serialization
-class JavaClassCacheManager(private val file: File, private val classpathFqNamesHistory: File) : Closeable {
+class JavaClassCacheManager(val file: File, private val classpathFqNamesHistory: File) : Closeable {
 
-    internal val javaCacheFile = file.resolve("java-cache.bin")
+    private val javaCacheFile = file.resolve("java-cache.bin")
     internal val javaCache = maybeGetJavaCacheFromFile()
 
-    internal val aptCacheFile = file.resolve("apt-cache.bin")
-    internal val aptCache = maybeGetAptCacheFromFile()
+    private val aptCacheFile = file.resolve("apt-cache.bin")
+    private val aptCache = maybeGetAptCacheFromFile()
 
-    internal val lastBuildTimestamp = file.resolve("last-build-ts.bin")
+    private val lastBuildTimestamp = file.resolve("last-build-ts.bin")
 
     private var closed = false
 
@@ -75,15 +75,20 @@ class JavaClassCacheManager(private val file: File, private val classpathFqNames
                     is SourcesToReprocess.Incremental -> {
                         val toReprocess = filesToReprocess.toReprocess.toMutableSet()
 
-                        aptCache.invalidateIsolatingGenerated(toReprocess)
+                        val isolatingGenerated = aptCache.invalidateIsolatingGenerated(toReprocess)
+                        val generatedDirtyTypes = javaCache.invalidateGeneratedTypes(isolatingGenerated).toMutableSet()
+
                         if (!toReprocess.isEmpty()) {
                             // only if there are some files to reprocess we should invalidate the aggregating ones
+                            val aggregatingGenerated = aptCache.invalidateAggregating()
+                            generatedDirtyTypes.addAll(javaCache.invalidateGeneratedTypes(aggregatingGenerated))
+
                             toReprocess.addAll(
-                                javaCache.invalidateEntriesAnnotatedWith(aptCache.invalidateAggregatingAndGetAnnotations())
+                                javaCache.invalidateEntriesAnnotatedWith(aptCache.getAggregatingClaimedAnnotations())
                             )
                         }
 
-                        SourcesToReprocess.Incremental(toReprocess.toList())
+                        SourcesToReprocess.Incremental(toReprocess.toList(), generatedDirtyTypes)
                     }
                 }
             }
@@ -147,7 +152,7 @@ class JavaClassCacheManager(private val file: File, private val classpathFqNames
 }
 
 sealed class SourcesToReprocess {
-    class Incremental(val toReprocess: List<File>): SourcesToReprocess()
+    class Incremental(val toReprocess: List<File>, val dirtyTypes: Set<String>) : SourcesToReprocess()
     object FullRebuild : SourcesToReprocess()
 }
 
