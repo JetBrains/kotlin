@@ -24,6 +24,7 @@ val kotlinCoroutinesPackageFqn = kotlinPackageFqn.child(Name.identifier("corouti
 
 
 fun IrType.isFunction() = this.isNameInPackage("Function", kotlinPackageFqn)
+fun IrType.isKClass() = this.isNameInPackage("KClass", kotlinReflectionPackageFqn)
 fun IrType.isKFunction() = this.isNameInPackage("KFunction", kotlinReflectionPackageFqn)
 fun IrType.isSuspendFunction() = this.isNameInPackage("SuspendFunction", kotlinCoroutinesPackageFqn)
 
@@ -85,3 +86,6 @@ fun IrType.isPrimitiveArray() = isTypeFromKotlinPackage { it in FQ_NAMES.primiti
 fun IrType.getPrimitiveArrayElementType() = (this as? IrSimpleType)?.let {
     (it.classifier.owner as? IrClass)?.fqNameWhenAvailable?.toUnsafe()?.let { fqn -> FQ_NAMES.arrayClassFqNameToPrimitiveType[fqn] }
 }
+
+fun IrType.isNonPrimitiveArray() =
+    (this.isArray() || this.isNullableArray()) && !this.isPrimitiveArray()
