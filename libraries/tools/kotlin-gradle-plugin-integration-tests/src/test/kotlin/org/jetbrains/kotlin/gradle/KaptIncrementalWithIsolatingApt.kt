@@ -107,7 +107,7 @@ fun BaseGradleIT.Project.setupIncrementalAptProject(procType: String) {
 
     val updatedContent = content.replace(
         Regex("^\\s*kapt\\s\"org\\.jetbrain.*$", RegexOption.MULTILINE),
-        "    kapt files(\"$processorPath\")"
+        "    kapt files(\"${processorPath.invariantSeparatorsPath}\")"
     )
     buildFile.writeText(updatedContent)
 }

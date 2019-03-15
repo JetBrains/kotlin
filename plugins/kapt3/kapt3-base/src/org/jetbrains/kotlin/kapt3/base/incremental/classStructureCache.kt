@@ -7,11 +7,16 @@ package org.jetbrains.kotlin.kapt3.base.incremental
 
 import com.sun.tools.javac.processing.JavacProcessingEnvironment
 import java.io.File
+import java.io.ObjectInputStream
+import java.io.ObjectOutputStream
 import java.io.Serializable
 import java.net.URI
 
 class JavaClassCache() : Serializable {
     private var sourceCache = mutableMapOf<URI, SourceFileStructure>()
+
+    /** Record these separately because we only need to know where each generated type is coming from. */
+    private var generatedTypes = mutableMapOf<File, MutableList<String>>()
 
     /** Map from types to files they are mentioned in. */
     @Transient
@@ -23,9 +28,21 @@ class JavaClassCache() : Serializable {
         sourceCache[sourceStructure.sourceFile] = sourceStructure
     }
 
-    private fun readObject(input: java.io.ObjectInputStream) {
+    fun addGeneratedType(type: String, generatedFile: File) {
+        val typesInFile = generatedTypes[generatedFile] ?: ArrayList(1)
+        typesInFile.add(type)
+        generatedTypes[generatedFile] = typesInFile
+    }
+
+    fun invalidateGeneratedTypes(files: List<File>): Set<String> {
+        return files.mapNotNull { generatedTypes.remove(it) }.flatten().toSet()
+    }
+
+    private fun readObject(input: ObjectInputStream) {
         @Suppress("UNCHECKED_CAST")
         sourceCache = input.readObject() as MutableMap<URI, SourceFileStructure>
+        @Suppress("UNCHECKED_CAST")
+        generatedTypes = input.readObject() as MutableMap<File, MutableList<String>>
 
         dependencyCache = HashMap(sourceCache.size * 4)
         for (sourceInfo in sourceCache.values) {
@@ -45,6 +62,11 @@ class JavaClassCache() : Serializable {
         }
     }
 
+    private fun writeObject(output: ObjectOutputStream) {
+        output.writeObject(sourceCache)
+        output.writeObject(generatedTypes)
+    }
+
     fun isAlreadyProcessed(sourceFile: URI) = sourceCache.containsKey(sourceFile)
 
     /** Used for testing only. */
@@ -57,6 +79,7 @@ class JavaClassCache() : Serializable {
     fun invalidateEntriesForChangedFiles(changes: Changes): SourcesToReprocess {
         val allDirtyFiles = mutableSetOf<URI>()
         var currentDirtyFiles = changes.sourceChanges.map { it.toURI() }
+        val allDirtyTypes = mutableSetOf<String>()
 
         // check for constants first because they cause full rebuilt
         for (sourceChange in currentDirtyFiles) {
@@ -76,6 +99,7 @@ class JavaClassCache() : Serializable {
 
                 val structure = sourceCache.remove(dirtyFile) ?: continue
                 val dirtyTypes = structure.getDeclaredTypes()
+                allDirtyTypes.addAll(dirtyTypes)
 
                 dirtyTypes.forEach { type ->
                     nonTransitiveCache[type]?.let {
@@ -91,7 +115,7 @@ class JavaClassCache() : Serializable {
             currentDirtyFiles = nextRound.filter { !allDirtyFiles.contains(it) }
         }
 
-        return SourcesToReprocess.Incremental(allDirtyFiles.map { File(it) })
+        return SourcesToReprocess.Incremental(allDirtyFiles.map { File(it) }, allDirtyTypes)
     }
 
     /**
@@ -119,6 +143,7 @@ class JavaClassCache() : Serializable {
 
     internal fun invalidateAll() {
         sourceCache.clear()
+        generatedTypes.clear()
     }
 }
 
