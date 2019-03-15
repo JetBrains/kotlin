@@ -45,15 +45,20 @@ public inline fun <K, V> ConcurrentMap<K, V>.getOrPut(key: K, defaultValue: () -
 
 
 /**
- * Converts this [Map] to a [SortedMap] so iteration order will be in key order.
+ * Converts this [Map] to a [SortedMap]. The resulting [SortedMap] determines the equality and order of keys according to their natural sorting order.
+ *
+ * Note that if the natural sorting order of keys considers any two keys of this map equal
+ * (this could happen if the equality of keys according to [Comparable.compareTo] is inconsistent with the equality according to [Any.equals]),
+ * only the value associated with the last of them gets into the resulting map.
  *
  * @sample samples.collections.Maps.Transformations.mapToSortedMap
  */
 public fun <K : Comparable<K>, V> Map<out K, V>.toSortedMap(): SortedMap<K, V> = TreeMap(this)
 
 /**
- * Converts this [Map] to a [SortedMap] using the given [comparator] so that iteration order will be in the order
- * defined by the comparator.
+ * Converts this [Map] to a [SortedMap]. The resulting [SortedMap] determines the equality and order of keys according to the sorting order provided by the given [comparator].
+ *
+ * Note that if the `comparator` considers any two keys of this map equal, only the value associated with the last of them gets into the resulting map.
  *
  * @sample samples.collections.Maps.Transformations.mapToSortedMapWithComparator
  */
@@ -63,6 +68,8 @@ public fun <K, V> Map<out K, V>.toSortedMap(comparator: Comparator<in K>): Sorte
 /**
  * Returns a new [SortedMap] with the specified contents, given as a list of pairs
  * where the first value is the key and the second is the value.
+ *
+ * The resulting [SortedMap] determines the equality and order of keys according to their natural sorting order.
  *
  * @sample samples.collections.Maps.Instantiation.sortedMapFromPairs
  */
