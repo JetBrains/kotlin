@@ -688,7 +688,10 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
                 psiMethod,
                 object: ChangeParametersRequest {
                     override fun getExpectedParameters(): List<ExpectedParameter> =
-                        currentParameters + expectedParameter(PsiType.getTypeByName("java.io.File", project, myFixture.file.resolveScope), "file")
+                        currentParameters + expectedParameter(
+                            PsiType.getTypeByName("java.io.File", project, myFixture.file.resolveScope), "file",
+                            listOf(annotationRequest("Anno", intAttribute("i", 8)))
+                        )
 
                     override fun isValid(): Boolean = true
                 })
@@ -698,8 +701,10 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
             """
         import java.io.File
 
+        annotation class Anno(val i: Int)
+
         class Foo {
-            fun bar(@Anno(3) a: Int, file: File) {}
+            fun bar(@Anno(3) a: Int, @Anno(i = 8) file: File) {}
         }
         """.trimIndent(), true
         )

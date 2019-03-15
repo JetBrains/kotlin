@@ -5,6 +5,7 @@
 package org.jetbrains.kotlin.idea.quickfix.crossLanguage
 
 import com.intellij.codeInsight.daemon.QuickFixBundle
+import com.intellij.lang.jvm.actions.AnnotationRequest
 import com.intellij.lang.jvm.actions.ChangeParametersRequest
 import com.intellij.lang.jvm.actions.ExpectedParameter
 import com.intellij.openapi.diagnostic.Logger
@@ -18,7 +19,6 @@ import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
-import org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateEqualsAndHashcodeAction
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.ShortenReferences
@@ -62,7 +62,7 @@ internal class ChangeMethodParameters(
 
     private sealed class ParameterModification {
         data class Keep(val ktParameter: KtParameter) : ParameterModification()
-        data class Add(val name: String, val ktType: KotlinType) : ParameterModification()
+        data class Add(val name: String, val ktType: KotlinType, val expectedAnnotations: Collection<AnnotationRequest>) : ParameterModification()
     }
 
     private tailrec fun getParametersModifications(
@@ -100,7 +100,11 @@ internal class ChangeMethodParameters(
             currentParameters,
             expectedParameters.subList(1, expectedParameters.size),
             index + 1,
-            collected + ParameterModification.Add(expectedHead.semanticNames.firstOrNull() ?: "param$index", kotlinType)
+            collected + ParameterModification.Add(
+                expectedHead.semanticNames.firstOrNull() ?: "param$index",
+                kotlinType,
+                expectedHead.expectedAnnotations
+            )
         )
 
     }
@@ -129,8 +133,12 @@ internal class ChangeMethodParameters(
         val currentParameter = target.valueParameterList!!.parameters.iterator()
         for ((action, parameter) in parametersMapped) {
             when (action) {
-                is ParameterModification.Add ->
+                is ParameterModification.Add -> {
+                    for (expectedAnnotation in action.expectedAnnotations) {
+                        addAnnotationEntry(parameter, expectedAnnotation, null)
+                    }
                     target.valueParameterList!!.addParameter(parameter)
+                }
 
                 is ParameterModification.Keep ->
                     if (!currentParameter.hasNext() || currentParameter.next() != parameter) {
