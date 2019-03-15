@@ -24,10 +24,10 @@ class KotlinGradleWebMultiplatformModuleBuilder : KotlinGradleAbstractMultiplatf
 
     override fun getBuilderId() = "kotlin.gradle.multiplatform.web"
 
-    override fun getPresentableName() = "JS Client and JVM Server"
+    override fun getPresentableName() = "JS Client and JVM Server | Gradle"
 
     override fun getDescription() =
-        "Multiplatform Gradle projects allow reusing the same Kotlin code between JS Client and JVM Server."
+        "Multiplatform Gradle project allowing reuse of the same Kotlin code between JS Client and JVM Server"
 
     override fun BuildScriptDataBuilder.setupAdditionalDependencies() {
         addBuildscriptRepositoriesDefinition("jcenter()")

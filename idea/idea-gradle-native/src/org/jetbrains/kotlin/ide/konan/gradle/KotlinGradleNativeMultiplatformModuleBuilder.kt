@@ -26,7 +26,7 @@ class KotlinGradleNativeMultiplatformModuleBuilder : KotlinGradleAbstractMultipl
 
     override fun getBuilderId() = "kotlin.gradle.multiplatform.native"
 
-    override fun getPresentableName() = "Kotlin/Native"
+    override fun getPresentableName() = "Native | Gradle"
 
     override fun getDescription() = "Gradle-based Kotlin project for native binaries"
 

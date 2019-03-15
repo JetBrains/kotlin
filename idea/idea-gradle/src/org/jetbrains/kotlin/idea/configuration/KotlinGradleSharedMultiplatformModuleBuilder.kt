@@ -29,10 +29,10 @@ class KotlinGradleSharedMultiplatformModuleBuilder : KotlinGradleAbstractMultipl
 
     override fun getBuilderId() = "kotlin.gradle.multiplatform.shared"
 
-    override fun getPresentableName() = "Gradle-based Multiplatform Library"
+    override fun getPresentableName() = "Multiplatform Library | Gradle"
 
     override fun getDescription() =
-        "Multiplatform Gradle projects allow sharing the same Kotlin code between all three main platforms (JVM, JS, Native)."
+        "Multiplatform Gradle project allowing reuse of the same Kotlin code between all three main platforms (JVM, JS, and Native)"
 
     override fun createProjectSkeleton(rootDir: VirtualFile) {
         val src = rootDir.createChildDirectory(this, "src")
