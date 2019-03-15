@@ -134,8 +134,8 @@ public interface MutableCollection<E> : Collection<E>, MutableIterable<E> {
  */
 public interface List<out E> : Collection<E> {
     // Query Operations
-    override val size: Int
 
+    override val size: Int
     override fun isEmpty(): Boolean
     override fun contains(element: @UnsafeVariance E): Boolean
     override fun iterator(): Iterator<E>
@@ -256,8 +256,8 @@ public interface MutableList<E> : List<E>, MutableCollection<E> {
  */
 public interface Set<out E> : Collection<E> {
     // Query Operations
-    override val size: Int
 
+    override val size: Int
     override fun isEmpty(): Boolean
     override fun contains(element: @UnsafeVariance E): Boolean
     override fun iterator(): Iterator<E>
@@ -287,8 +287,8 @@ public interface MutableSet<E> : Set<E>, MutableCollection<E> {
     override fun remove(element: E): Boolean
 
     // Bulk Modification Operations
-    override fun addAll(elements: Collection<E>): Boolean
 
+    override fun addAll(elements: Collection<E>): Boolean
     override fun removeAll(elements: Collection<E>): Boolean
     override fun retainAll(elements: Collection<E>): Boolean
     override fun clear(): Unit

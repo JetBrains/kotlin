@@ -14,7 +14,7 @@ public actual abstract class AbstractMutableSet<E> protected actual constructor(
     /**
      * Compares this set with another set instance with the unordered structural equality.
      *
-     * @return true, if [other] instance is a [Set] of the same size, all elements of which are contained in this set.
+     * @return `true`, if [other] instance is a [Set] of the same size, all elements of which are contained in this set.
      */
     override fun equals(other: Any?): Boolean {
         if (other === this) return true
