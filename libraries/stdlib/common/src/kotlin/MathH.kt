@@ -275,7 +275,7 @@ public expect fun ln1p(x: Double): Double
 /**
  * Rounds the given value [x] to an integer towards positive infinity.
 
- * @return the smallest double value that is greater than the given value [x] and is a mathematical integer.
+ * @return the smallest double value that is greater than or equal to the given value [x] and is a mathematical integer.
  *
  * Special cases:
  *   - `ceil(x)` is `x` where `x` is `NaN` or `+Inf` or `-Inf` or already a mathematical integer.
@@ -286,7 +286,7 @@ public expect fun ceil(x: Double): Double
 /**
  * Rounds the given value [x] to an integer towards negative infinity.
 
- * @return the largest double value that is smaller than the given value [x] and is a mathematical integer.
+ * @return the largest double value that is smaller than or equal to the given value [x] and is a mathematical integer.
  *
  * Special cases:
  *   - `floor(x)` is `x` where `x` is `NaN` or `+Inf` or `-Inf` or already a mathematical integer.
@@ -736,7 +736,7 @@ public expect fun ln1p(x: Float): Float
 /**
  * Rounds the given value [x] to an integer towards positive infinity.
 
- * @return the smallest Float value that is greater than the given value [x] and is a mathematical integer.
+ * @return the smallest Float value that is greater than or equal to the given value [x] and is a mathematical integer.
  *
  * Special cases:
  *   - `ceil(x)` is `x` where `x` is `NaN` or `+Inf` or `-Inf` or already a mathematical integer.
@@ -747,7 +747,7 @@ public expect fun ceil(x: Float): Float
 /**
  * Rounds the given value [x] to an integer towards negative infinity.
 
- * @return the largest Float value that is smaller than the given value [x] and is a mathematical integer.
+ * @return the largest Float value that is smaller than or equal to the given value [x] and is a mathematical integer.
  *
  * Special cases:
  *   - `floor(x)` is `x` where `x` is `NaN` or `+Inf` or `-Inf` or already a mathematical integer.
