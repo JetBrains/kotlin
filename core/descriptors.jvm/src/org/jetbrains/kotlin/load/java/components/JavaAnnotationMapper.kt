@@ -73,9 +73,9 @@ object JavaAnnotationMapper {
                 return JavaDeprecatedAnnotationDescriptor(javaAnnotation, c)
             }
         }
-        return kotlinToJavaNameMap[kotlinName]?.let {
-            annotationOwner.findAnnotation(it)?.let {
-                mapOrResolveJavaAnnotation(it, c)
+        return kotlinToJavaNameMap[kotlinName]?.let { javaName ->
+            annotationOwner.findAnnotation(javaName)?.let { annotation ->
+                mapOrResolveJavaAnnotation(annotation, c)
             }
         }
     }

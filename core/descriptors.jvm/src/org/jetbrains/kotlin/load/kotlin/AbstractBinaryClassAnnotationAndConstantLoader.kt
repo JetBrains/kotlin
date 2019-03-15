@@ -327,7 +327,7 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any>(
                     val paramSignature = MemberSignature.fromMethodSignatureAndParameterIndex(signature, index)
                     var result = memberAnnotations[paramSignature]
                     if (result == null) {
-                        result = ArrayList<A>()
+                        result = ArrayList()
                         memberAnnotations[paramSignature] = result
                     }
                     return loadAnnotationIfNotSpecial(classId, source, result)
@@ -380,16 +380,16 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any>(
         kind: AnnotatedCallableKind,
         requireHasFieldFlagForField: Boolean = false
     ): MemberSignature? {
-        return when {
-            proto is ProtoBuf.Constructor -> {
+        return when (proto) {
+            is ProtoBuf.Constructor -> {
                 MemberSignature.fromJvmMemberSignature(
                     JvmProtoBufUtil.getJvmConstructorSignature(proto, nameResolver, typeTable) ?: return null
                 )
             }
-            proto is ProtoBuf.Function -> {
+            is ProtoBuf.Function -> {
                 MemberSignature.fromJvmMemberSignature(JvmProtoBufUtil.getJvmMethodSignature(proto, nameResolver, typeTable) ?: return null)
             }
-            proto is ProtoBuf.Property -> {
+            is ProtoBuf.Property -> {
                 val signature = proto.getExtensionOrNull(propertySignature) ?: return null
                 when (kind) {
                     AnnotatedCallableKind.PROPERTY_GETTER ->

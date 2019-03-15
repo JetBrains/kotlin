@@ -45,7 +45,7 @@ class ReflectJavaArrayAnnotationArgument(
     name: Name?,
     private val values: Array<*>
 ) : ReflectJavaAnnotationArgument(name), JavaArrayAnnotationArgument {
-    override fun getElements() = values.map { ReflectJavaAnnotationArgument.create(it!!, null) }
+    override fun getElements() = values.map { create(it!!, null) }
 }
 
 class ReflectJavaEnumValueAnnotationArgument(

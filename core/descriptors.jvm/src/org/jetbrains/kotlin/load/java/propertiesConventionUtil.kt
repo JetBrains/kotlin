@@ -16,9 +16,8 @@
 
 package org.jetbrains.kotlin.load.java
 
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeSmart
 import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties.getPropertyNameCandidatesBySpecialGetterName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeSmartForCompiler
 
 fun propertyNameByGetMethodName(methodName: Name): Name? =
@@ -28,7 +27,7 @@ fun propertyNameBySetMethodName(methodName: Name, withIsPrefix: Boolean): Name? 
     propertyNameFromAccessorMethodName(methodName, "set", addPrefix = if (withIsPrefix) "is" else null)
 
 fun propertyNamesBySetMethodName(methodName: Name) =
-    listOf(propertyNameBySetMethodName(methodName, false), propertyNameBySetMethodName(methodName, true)).filterNotNull()
+    listOfNotNull(propertyNameBySetMethodName(methodName, false), propertyNameBySetMethodName(methodName, true))
 
 private fun propertyNameFromAccessorMethodName(
     methodName: Name,

@@ -95,7 +95,7 @@ class JavaIncompatibilityRulesOverridabilityCondition : ExternalOverridabilityCo
         //    void get(Object x) {}
         // }
         //
-        // The problem is that when checking overridabilty of `A.get` and `HashMap.get` we fall through to here, because
+        // The problem is that when checking overridability of `A.get` and `HashMap.get` we fall through to here, because
         // we do not recreate a magic copy of it, because it has the same signature.
         // But it obviously that if subDescriptor and superDescriptor has the same JVM descriptor, they're one-way overridable.
         // Note that it doesn't work if special builtIn was renamed, because we do not consider renamed built-ins

@@ -37,6 +37,7 @@ private val NOT_PLATFORM = JavaTypeQualifiers(NullabilityQualifier.NOT_NULL, nul
 /** Type is always non-nullable: `T & Any` */
 private val NOT_NULLABLE = JavaTypeQualifiers(NullabilityQualifier.NOT_NULL, null, isNotNullTypeParameter = true)
 
+@Suppress("LocalVariableName")
 val PREDEFINED_FUNCTION_ENHANCEMENT_INFO_BY_SIGNATURE = signatures {
     val JLObject = javaLang("Object")
     val JFPredicate = javaFunction("Predicate")
@@ -250,5 +251,3 @@ private class SignatureEnhancementBuilder {
 
     fun build(): Map<String, PredefinedFunctionEnhancementInfo> = signatures
 }
-
-

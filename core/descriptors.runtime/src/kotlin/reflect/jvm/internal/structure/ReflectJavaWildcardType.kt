@@ -28,8 +28,8 @@ class ReflectJavaWildcardType(override val reflectType: WildcardType) : ReflectJ
                 throw UnsupportedOperationException("Wildcard types with many bounds are not yet supported: $reflectType")
             }
             return when {
-                lowerBounds.size == 1 -> ReflectJavaType.create(lowerBounds.single())
-                upperBounds.size == 1 -> upperBounds.single().let { ub -> if (ub != Any::class.java) ReflectJavaType.create(ub) else null }
+                lowerBounds.size == 1 -> create(lowerBounds.single())
+                upperBounds.size == 1 -> upperBounds.single().let { ub -> if (ub != Any::class.java) create(ub) else null }
                 else -> null
             }
         }

@@ -119,7 +119,7 @@ private object JvmTypeFactoryImpl : JvmTypeFactory<JvmType> {
         }
 
     override fun createFromString(representation: String): JvmType {
-        assert(representation.length > 0) { "empty string as JvmType" }
+        assert(representation.isNotEmpty()) { "empty string as JvmType" }
         val firstChar = representation[0]
 
         JvmPrimitiveType.values().firstOrNull { it.desc[0] == firstChar }?.let {
@@ -158,7 +158,7 @@ internal object TypeMappingConfigurationImpl : TypeMappingConfiguration<JvmType>
         throw AssertionError("There should be no intersection type in existing descriptors, but found: " + types.joinToString())
     }
 
-    override fun getPredefinedTypeForClass(classDescriptor: ClassDescriptor) = null
+    override fun getPredefinedTypeForClass(classDescriptor: ClassDescriptor): JvmType? = null
     override fun getPredefinedInternalNameForClass(classDescriptor: ClassDescriptor): String? = null
 
     override fun processErrorType(kotlinType: KotlinType, descriptor: ClassDescriptor) {

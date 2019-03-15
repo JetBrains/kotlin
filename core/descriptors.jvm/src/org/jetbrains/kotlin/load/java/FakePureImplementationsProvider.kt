@@ -24,7 +24,7 @@ object FakePureImplementationsProvider {
 
     private val pureImplementations = hashMapOf<FqName, FqName>()
     private infix fun FqName.implementedWith(implementations: List<FqName>) {
-        implementations.associateTo(pureImplementations) { it to this }
+        implementations.associateWithTo(pureImplementations) { this }
     }
 
     init {
@@ -40,4 +40,3 @@ object FakePureImplementationsProvider {
 
     private fun fqNameListOf(vararg names: String): List<FqName> = names.map(::FqName)
 }
-

@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.load.kotlin.header.ReadKotlinClassHeaderAnnotationVisitor
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.ClassLiteralValue
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
@@ -234,17 +233,17 @@ private object ReflectClassStructure {
             clazz.isArray -> {
                 val v = visitor.visitArray(name) ?: return
                 val componentType = clazz.componentType
-                if (componentType.isEnum) {
-                    val enumClassId = componentType.classId
-                    for (element in value as Array<*>) {
-                        v.visitEnum(enumClassId, Name.identifier((element as Enum<*>).name))
+                when {
+                    componentType.isEnum -> {
+                        val enumClassId = componentType.classId
+                        for (element in value as Array<*>) {
+                            v.visitEnum(enumClassId, Name.identifier((element as Enum<*>).name))
+                        }
                     }
-                } else if (componentType == Class::class.java) {
-                    for (element in value as Array<*>) {
+                    componentType == Class::class.java -> for (element in value as Array<*>) {
                         v.visitClassLiteral((element as Class<*>).classLiteralValue())
                     }
-                } else {
-                    for (element in value as Array<*>) {
+                    else -> for (element in value as Array<*>) {
                         v.visit(element)
                     }
                 }

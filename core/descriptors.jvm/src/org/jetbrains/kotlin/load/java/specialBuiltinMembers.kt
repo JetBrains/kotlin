@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.getSpecialSignatureInfo
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.sameAsBuiltinMethodWithErasedValueParameters
 import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties.getBuiltinSpecialPropertyGetterName
-import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.kotlin.SignatureBuildingComponents
 import org.jetbrains.kotlin.load.kotlin.computeJvmSignature
@@ -201,7 +200,7 @@ object BuiltinMethodsWithSpecialGenericSignature {
 
         if (builtinSignature in ERASED_COLLECTION_PARAMETER_SIGNATURES) return SpecialSignatureInfo.ONE_COLLECTION_PARAMETER
 
-        val defaultValue = SIGNATURE_TO_DEFAULT_VALUES_MAP[builtinSignature]!!
+        val defaultValue = SIGNATURE_TO_DEFAULT_VALUES_MAP.getValue(builtinSignature)
 
         return if (defaultValue == TypeSafeBarrierDescription.NULL)
             // return type is some generic type as 'Map.get'

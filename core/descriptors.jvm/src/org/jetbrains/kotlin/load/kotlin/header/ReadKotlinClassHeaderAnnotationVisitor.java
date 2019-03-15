@@ -318,7 +318,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
         @Override
         public void visitEnd() {
             //noinspection SSBasedInspection
-            visitEnd(strings.toArray(new String[strings.size()]));
+            visitEnd(strings.toArray(new String[0]));
         }
 
         protected abstract void visitEnd(@NotNull String[] data);

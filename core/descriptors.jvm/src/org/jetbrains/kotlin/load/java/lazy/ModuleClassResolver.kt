@@ -25,7 +25,7 @@ interface ModuleClassResolver {
     fun resolveClass(javaClass: JavaClass): ClassDescriptor?
 }
 
-class SingleModuleClassResolver() : ModuleClassResolver {
+class SingleModuleClassResolver : ModuleClassResolver {
     override fun resolveClass(javaClass: JavaClass): ClassDescriptor? = resolver.resolveClass(javaClass)
 
     // component dependency cycle

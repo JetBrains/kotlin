@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import java.lang.reflect.Member
 import java.lang.reflect.Method
 import java.util.*
 
@@ -84,14 +85,14 @@ class ReflectJavaClass(
     override val fields: List<ReflectJavaField>
         get() = klass.declaredFields
             .asSequence()
-            .filter { field -> !field.isSynthetic }
+            .filterNot(Member::isSynthetic)
             .map(::ReflectJavaField)
             .toList()
 
     override val constructors: List<ReflectJavaConstructor>
         get() = klass.declaredConstructors
             .asSequence()
-            .filter { constructor -> !constructor.isSynthetic }
+            .filterNot(Member::isSynthetic)
             .map(::ReflectJavaConstructor)
             .toList()
 

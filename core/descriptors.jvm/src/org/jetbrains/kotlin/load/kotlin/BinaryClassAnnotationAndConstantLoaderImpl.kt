@@ -96,7 +96,7 @@ class BinaryClassAnnotationAndConstantLoaderImpl(
             }
 
             override fun visitArray(name: Name): AnnotationArrayArgumentVisitor? {
-                return object : KotlinJvmBinaryClass.AnnotationArrayArgumentVisitor {
+                return object : AnnotationArrayArgumentVisitor {
                     private val elements = ArrayList<ConstantValue<*>>()
 
                     override fun visit(value: Any?) {

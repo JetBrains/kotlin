@@ -19,7 +19,6 @@ package kotlin.reflect.jvm.internal.components
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import kotlin.reflect.jvm.internal.structure.ReflectJavaClass
 import kotlin.reflect.jvm.internal.structure.ReflectJavaPackage

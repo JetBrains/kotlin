@@ -54,7 +54,7 @@ class JavaTypeResolver(
             // Top level type can be a wildcard only in case of broken Java code, but we should not fail with exceptions in such cases
             is JavaWildcardType -> javaType.bound?.let { transformJavaType(it, attr) } ?: c.module.builtIns.defaultBound
             null -> c.module.builtIns.defaultBound
-            else -> throw UnsupportedOperationException("Unsupported type: " + javaType)
+            else -> throw UnsupportedOperationException("Unsupported type: $javaType")
         }
     }
 
@@ -199,7 +199,7 @@ class JavaTypeResolver(
                     // This option is needed because sometimes we get weird versions of JDK classes in the class path,
                     // such as collections with no generics, so the Java types are not raw, formally, but they don't match with
                     // their Kotlin analogs, so we treat them as raw to avoid exceptions
-                    (javaType.typeArguments.isEmpty() && !constructor.parameters.isEmpty())
+                    (javaType.typeArguments.isEmpty() && constructor.parameters.isNotEmpty())
 
         val typeParameters = constructor.parameters
         if (eraseTypeParameters) {
@@ -279,7 +279,7 @@ class JavaTypeResolver(
     private fun JavaTypeAttributes.isNullable(): Boolean {
         if (flexibility == FLEXIBLE_LOWER_BOUND) return false
 
-        // even if flexibility is FLEXIBLE_UPPER_BOUND it's still can be not nullable for supetypes and annotation parameters
+        // even if flexibility is FLEXIBLE_UPPER_BOUND it's still can be not nullable for supertypes and annotation parameters
         return !isForAnnotationParameter && howThisTypeIsUsed != SUPERTYPE
     }
 }

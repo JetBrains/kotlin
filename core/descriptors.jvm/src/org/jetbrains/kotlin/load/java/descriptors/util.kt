@@ -64,11 +64,7 @@ fun copyValueParameters(
 fun ClassDescriptor.getParentJavaStaticClassScope(): LazyJavaStaticClassScope? {
     val superClassDescriptor = getSuperClassNotAny() ?: return null
 
-    val staticScope = superClassDescriptor.staticScope
-
-    if (staticScope !is LazyJavaStaticClassScope) return superClassDescriptor.getParentJavaStaticClassScope()
-
-    return staticScope
+    return superClassDescriptor.staticScope as? LazyJavaStaticClassScope ?: superClassDescriptor.getParentJavaStaticClassScope()
 }
 
 fun DeserializedMemberDescriptor.getImplClassNameForDeserialized(): JvmClassName? =

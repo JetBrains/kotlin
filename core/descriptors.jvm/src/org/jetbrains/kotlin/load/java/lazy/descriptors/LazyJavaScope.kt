@@ -60,7 +60,7 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
     // this lazy value is not used at all in LazyPackageFragmentScopeForJavaPackage because we do not use caching there
     // but is placed in the base class to not duplicate code
     private val allDescriptors = c.storageManager.createRecursionTolerantLazyValue<Collection<DeclarationDescriptor>>(
-        { computeDescriptors(DescriptorKindFilter.ALL, MemberScope.ALL_NAME_FILTER, NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS) },
+        { computeDescriptors(DescriptorKindFilter.ALL, MemberScope.ALL_NAME_FILTER) },
         // This is to avoid the following recursive case:
         //    when computing getAllPackageNames() we ask the JavaPsiFacade for all subpackages of foo
         //    it, in turn, asks JavaElementFinder for subpackages of Kotlin package foo, which calls getAllPackageNames() recursively
@@ -97,7 +97,7 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
         c.components.signatureEnhancement.enhanceSignatures(c, result).toList()
     }
 
-    open protected fun JavaMethodDescriptor.isVisibleAsFunction() = true
+    protected open fun JavaMethodDescriptor.isVisibleAsFunction() = true
 
     protected data class MethodSignatureData(
         val returnType: KotlinType,
@@ -321,9 +321,9 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
 
     protected fun computeDescriptors(
         kindFilter: DescriptorKindFilter,
-        nameFilter: (Name) -> Boolean,
-        location: LookupLocation
+        nameFilter: (Name) -> Boolean
     ): List<DeclarationDescriptor> {
+        val location = NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS
         val result = LinkedHashSet<DeclarationDescriptor>()
 
         if (kindFilter.acceptsKinds(DescriptorKindFilter.CLASSIFIERS_MASK)) {

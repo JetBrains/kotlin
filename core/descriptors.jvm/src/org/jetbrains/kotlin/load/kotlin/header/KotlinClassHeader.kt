@@ -23,13 +23,13 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmBytecodeBinaryVersio
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 
 class KotlinClassHeader(
-    val kind: KotlinClassHeader.Kind,
+    val kind: Kind,
     val metadataVersion: JvmMetadataVersion,
     val bytecodeVersion: JvmBytecodeBinaryVersion,
     val data: Array<String>?,
     val incompatibleData: Array<String>?,
     val strings: Array<String>?,
-    val extraString: String?,
+    private val extraString: String?,
     val extraInt: Int,
     val packageName: String?
 ) {
@@ -62,6 +62,7 @@ class KotlinClassHeader(
         get() = data.takeIf { kind == Kind.MULTIFILE_CLASS }?.asList().orEmpty()
 
     // TODO: use in incremental compilation
+    @Suppress("unused")
     val multifileClassKind: MultifileClassKind?
         get() = if (kind == Kind.MULTIFILE_CLASS || kind == Kind.MULTIFILE_CLASS_PART) {
             if ((extraInt and JvmAnnotationNames.METADATA_MULTIFILE_PARTS_INHERIT_FLAG) != 0)

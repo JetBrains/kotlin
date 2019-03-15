@@ -127,7 +127,7 @@ abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
                     myTestRootDisposable, ConfigurationKind.ALL, jdkKind
                 )
                 for (root in environment.configuration.getList(CLIConfigurationKeys.CONTENT_ROOTS)) {
-                    LOG.info("root: " + root.toString())
+                    LOG.info("root: $root")
                 }
                 val ktFile = KotlinTestUtils.createFile(file.path, text, environment.project)
                 GenerationUtils.compileFileTo(ktFile, environment, tmpdir)
@@ -176,7 +176,7 @@ abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
 
     private fun adaptJavaSource(text: String): String {
         val typeAnnotations = arrayOf("NotNull", "Nullable", "ReadOnly", "Mutable")
-        val adaptedSource = typeAnnotations.fold(text) { text, annotation -> text.replace("@$annotation", "") }
+        val adaptedSource = typeAnnotations.fold(text) { result, annotation -> result.replace("@$annotation", "") }
         if ("@Retention" !in adaptedSource) {
             return adaptedSource.replace(
                 "@interface",
@@ -213,7 +213,7 @@ abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
         override fun <R, D> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R =
             visitor.visitPackageViewDescriptor(this, data)
 
-        override fun getContainingDeclaration() = null
+        override fun getContainingDeclaration(): PackageViewDescriptor? = null
         override fun getOriginal() = throw UnsupportedOperationException()
         override fun acceptVoid(visitor: DeclarationDescriptorVisitor<Void, Void>?) = throw UnsupportedOperationException()
         override fun getName() = throw UnsupportedOperationException()

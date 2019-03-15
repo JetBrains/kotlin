@@ -122,11 +122,11 @@ private fun SimpleType.enhanceInflexible(
     val subtreeSize = globalArgIndex - index
     if (!wereChanges) return SimpleResult(this, subtreeSize, wereChanges = false)
 
-    val newAnnotations = listOf(
+    val newAnnotations = listOfNotNull(
         annotations,
         enhancedMutabilityAnnotations,
         enhancedNullabilityAnnotations
-    ).filterNotNull().compositeAnnotationsOrSingle()
+    ).compositeAnnotationsOrSingle()
 
     val enhancedType = KotlinTypeFactory.simpleType(
         newAnnotations,

@@ -170,8 +170,8 @@ object JavaToKotlinClassMap : PlatformToKotlinClassMap {
 
         val readOnlyFqName = readOnlyClassId.asSingleFqName()
         val mutableFqName = mutableClassId.asSingleFqName()
-        mutableToReadOnly.put(mutableClassId.asSingleFqName().toUnsafe(), readOnlyFqName)
-        readOnlyToMutable.put(readOnlyFqName.toUnsafe(), mutableFqName)
+        mutableToReadOnly[mutableClassId.asSingleFqName().toUnsafe()] = readOnlyFqName
+        readOnlyToMutable[readOnlyFqName.toUnsafe()] = mutableFqName
     }
 
     private fun add(javaClassId: ClassId, kotlinClassId: ClassId) {
@@ -188,11 +188,11 @@ object JavaToKotlinClassMap : PlatformToKotlinClassMap {
     }
 
     private fun addJavaToKotlin(javaClassId: ClassId, kotlinClassId: ClassId) {
-        javaToKotlin.put(javaClassId.asSingleFqName().toUnsafe(), kotlinClassId)
+        javaToKotlin[javaClassId.asSingleFqName().toUnsafe()] = kotlinClassId
     }
 
     private fun addKotlinToJava(kotlinFqNameUnsafe: FqName, javaClassId: ClassId) {
-        kotlinToJava.put(kotlinFqNameUnsafe.toUnsafe(), javaClassId)
+        kotlinToJava[kotlinFqNameUnsafe.toUnsafe()] = javaClassId
     }
 
     fun isJavaPlatformClass(fqName: FqName): Boolean = mapJavaToKotlin(fqName) != null
@@ -210,7 +210,7 @@ object JavaToKotlinClassMap : PlatformToKotlinClassMap {
         return if (className.isSafe)
             mapPlatformClass(className.toSafe(), classDescriptor.builtIns)
         else
-            emptySet<ClassDescriptor>()
+            emptySet()
     }
 
     fun mutableToReadOnly(fqNameUnsafe: FqNameUnsafe?): FqName? = mutableToReadOnly[fqNameUnsafe]
@@ -244,7 +244,7 @@ object JavaToKotlinClassMap : PlatformToKotlinClassMap {
     }
 
     private fun classId(clazz: Class<*>): ClassId {
-        assert(!clazz.isPrimitive && !clazz.isArray) { "Invalid class: " + clazz }
+        assert(!clazz.isPrimitive && !clazz.isArray) { "Invalid class: $clazz" }
         val outer = clazz.declaringClass
         return if (outer == null)
             ClassId.topLevel(FqName(clazz.canonicalName))
