@@ -479,12 +479,12 @@ internal fun addAnnotationEntry(
         KtPsiFactory(target)
             .createAnnotationEntry(
                 "@$annotationUseSiteTargetPrefix${request.qualifiedName}${
-                request.attributes.mapIndexed { i, p ->
+                request.attributes.takeIf { it.isNotEmpty() }?.mapIndexed { i, p ->
                     if (!kotlinAnnotation && i == 0 && p.name == "value")
                         renderAttributeValue(p.value).toString()
                     else
                         "${p.name} = ${renderAttributeValue(p.value)}"
-                }.joinToString(", ", "(", ")")
+                }?.joinToString(", ", "(", ")") ?: ""
                 }"
             )
     )

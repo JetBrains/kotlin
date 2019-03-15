@@ -280,7 +280,7 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
                 import pkg.myannotation.JavaAnnotation
 
                 class Foo {
-                   @field:JavaAnnotation()
+                   @field:JavaAnnotation
                    val bar: String = null
                 }
                 """.trimIndent(), true
@@ -332,7 +332,7 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
                 import pkg.myannotation.JavaAnnotation
 
                 class Foo {
-                   @JavaAnnotation()
+                   @JavaAnnotation
                    val bar: String = null
                 }
                 """.trimIndent(), true
