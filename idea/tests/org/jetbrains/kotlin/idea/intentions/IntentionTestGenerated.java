@@ -2054,6 +2054,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 runTest("idea/testData/intentions/branched/doubleBangToIfThen/replaceParentExpression2.kt");
             }
 
+            @TestMetadata("replaceParentExpression3.kt")
+            public void testReplaceParentExpression3() throws Exception {
+                runTest("idea/testData/intentions/branched/doubleBangToIfThen/replaceParentExpression3.kt");
+            }
+
             @TestMetadata("simpleNameExpressionInParens.kt")
             public void testSimpleNameExpressionInParens() throws Exception {
                 runTest("idea/testData/intentions/branched/doubleBangToIfThen/simpleNameExpressionInParens.kt");
