@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.ir.util
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES
+import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -21,27 +23,23 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.DFS
 
 val kotlinPackageFqn = FqName.fromSegments(listOf("kotlin"))
-val kotlinReflectionPackageFqn = kotlinPackageFqn.child(Name.identifier("reflection"))
+val kotlinReflectionPackageFqn = kotlinPackageFqn.child(Name.identifier("reflect"))
+val kotlinCoroutinesPackageFqn = kotlinPackageFqn.child(Name.identifier("coroutines"))
 
-fun IrType.isFunction(): Boolean {
+
+fun IrType.isFunction() = this.isNameInPackage("Function", kotlinPackageFqn)
+fun IrType.isKFunction() = this.isNameInPackage("KFunction", kotlinReflectionPackageFqn)
+fun IrType.isSuspendFunction() = this.isNameInPackage("SuspendFunction", kotlinCoroutinesPackageFqn)
+
+fun IrType.isNameInPackage(prefix: String, packageFqName: FqName): Boolean {
     val classifier = classifierOrNull ?: return false
     val name = classifier.descriptor.name.asString()
-    if (!name.startsWith("Function")) return false
+    if (!name.startsWith(prefix)) return false
     val declaration = classifier.owner as IrDeclaration
     val parent = declaration.parent as? IrPackageFragment ?: return false
 
-    return parent.fqName == kotlinPackageFqn
-}
+    return parent.fqName == packageFqName
 
-
-fun IrType.isKFunction(): Boolean {
-    val classifier = classifierOrNull ?: return false
-    val name = classifier.descriptor.name.asString()
-    if (!name.startsWith("KFunction")) return false
-    val declaration = classifier.owner as IrDeclaration
-    val parent = declaration.parent as? IrPackageFragment ?: return false
-
-    return parent.fqName == kotlinReflectionPackageFqn
 }
 
 
@@ -79,13 +77,19 @@ fun IrType.isNullable(): Boolean = DFS.ifAny(listOf(this), { it.typeParameterSup
 })
 
 
-fun IrType.isThrowable(): Boolean {
+fun IrType.isThrowable(): Boolean = isTypeFromKotlinPackage { name -> name.asString() == "Throwable" }
+
+fun IrType.isThrowableTypeOrSubtype() = DFS.ifAny(listOf(this), IrType::superTypes, IrType::isThrowable)
+
+fun IrType.isUnsigned(): Boolean = isTypeFromKotlinPackage { name -> UnsignedTypes.isShortNameOfUnsignedType(name) }
+
+private inline fun IrType.isTypeFromKotlinPackage(namePredicate: (Name) -> Boolean): Boolean {
     if (this is IrSimpleType) {
         val classClassifier = classifier as? IrClassSymbol ?: return false
-        if (classClassifier.owner.name.asString() != "Throwable") return false
+        if (!namePredicate(classClassifier.owner.name)) return false
         val parent = classClassifier.owner.parent as? IrPackageFragment ?: return false
         return parent.fqName == kotlinPackageFqn
     } else return false
 }
 
-fun IrType.isThrowableTypeOrSubtype() = DFS.ifAny(listOf(this), IrType::superTypes, IrType::isThrowable)
+fun IrType.isPrimitiveArray() = isTypeFromKotlinPackage { it in FQ_NAMES.primitiveArrayTypeShortNames }

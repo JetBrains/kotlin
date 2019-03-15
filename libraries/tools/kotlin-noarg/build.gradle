@@ -18,7 +18,7 @@ dependencies {
     compile project(':kotlin-gradle-plugin-api')
     compile project(':kotlin-gradle-plugin-model')
 
-    compile project(':kotlin-stdlib')
+    compile kotlinStdlib()
     compileOnly project(':compiler')
     compileOnly project(':kotlin-noarg-compiler-plugin')
 
@@ -46,8 +46,9 @@ ArtifactsKt.runtimeJar(project, EmbeddableKt.rewriteDepsToShadedCompiler(project
 
 artifacts {
     archives sourcesJar
-    archives javadocJar
 }
+
+javadocJar()
 
 pluginBundle {
     plugins {

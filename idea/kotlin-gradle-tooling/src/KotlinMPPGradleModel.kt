@@ -6,10 +6,13 @@
 package org.jetbrains.kotlin.gradle
 
 import org.jetbrains.plugins.gradle.model.ExternalDependency
+import org.jetbrains.plugins.gradle.model.ModelFactory
 import java.io.File
 import java.io.Serializable
 
 typealias KotlinDependency = ExternalDependency
+
+fun KotlinDependency.deepCopy(): KotlinDependency = ModelFactory.createCopy(this)
 
 interface KotlinModule : Serializable {
     val name: String
@@ -55,10 +58,10 @@ interface KotlinCompilationArguments : Serializable {
 
 interface KotlinCompilation : KotlinModule {
     val sourceSets: Collection<KotlinSourceSet>
-    val target: KotlinTarget
     val output: KotlinCompilationOutput
     val arguments: KotlinCompilationArguments
     val dependencyClasspath: List<String>
+    val disambiguationClassifier: String?
 
     companion object {
         const val MAIN_COMPILATION_NAME = "main"
@@ -84,6 +87,7 @@ interface KotlinTargetJar : Serializable {
 
 interface KotlinTarget : Serializable {
     val name: String
+    val presetName: String?
     val disambiguationClassifier: String?
     val platform: KotlinPlatform
     val compilations: Collection<KotlinCompilation>
@@ -102,4 +106,9 @@ interface KotlinMPPGradleModel : Serializable {
     val sourceSets: Map<String, KotlinSourceSet>
     val targets: Collection<KotlinTarget>
     val extraFeatures: ExtraFeatures
+    val kotlinNativeHome: String
+
+    companion object {
+        const val NO_KOTLIN_NATIVE_HOME = ""
+    }
 }

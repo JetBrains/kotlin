@@ -26,10 +26,7 @@ import org.jetbrains.kotlin.kdoc.parser.KDocElementTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.children
-import org.jetbrains.kotlin.psi.psiUtil.leaves
-import org.jetbrains.kotlin.psi.psiUtil.parents
-import org.jetbrains.kotlin.psi.psiUtil.siblings
+import org.jetbrains.kotlin.psi.psiUtil.*
 
 private val QUALIFIED_OPERATION = TokenSet.create(DOT, SAFE_ACCESS)
 private val QUALIFIED_EXPRESSIONS = TokenSet.create(KtNodeTypes.DOT_QUALIFIED_EXPRESSION, KtNodeTypes.SAFE_ACCESS_EXPRESSION)
@@ -695,7 +692,19 @@ private val INDENT_RULES = arrayOf(
     strategy("Expression body")
         .within(KtNodeTypes.FUN)
         .forElement {
-            it.psi is KtExpression && it.psi !is KtBlockExpression
+            (it.psi is KtExpression && it.psi !is KtBlockExpression)
+        }
+        .continuationIf(KotlinCodeStyleSettings::CONTINUATION_INDENT_FOR_EXPRESSION_BODIES, indentFirst = true),
+
+    strategy("Line comment at expression body position")
+        .forElement { node ->
+            val psi = node.psi
+            val parent = psi.parent
+            if (psi is PsiComment && parent is KtDeclarationWithInitializer) {
+                psi.getNextSiblingIgnoringWhitespace() == parent.initializer
+            } else {
+                false
+            }
         }
         .continuationIf(KotlinCodeStyleSettings::CONTINUATION_INDENT_FOR_EXPRESSION_BODIES, indentFirst = true),
 

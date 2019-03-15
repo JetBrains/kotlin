@@ -1,4 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE
+// !WITH_NEW_INFERENCE
 import java.util.*
 
 fun bar(): String? = null
@@ -14,7 +15,7 @@ fun foo() {
     x[0] = ""
 
     val b1: MutableList<String?> = x
-    val b2: MutableList<String> = <!TYPE_MISMATCH!>x<!>
+    val b2: MutableList<String> = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>x<!>
     val b3: List<String?> = x
 
     val b4: Collection<String?> = x

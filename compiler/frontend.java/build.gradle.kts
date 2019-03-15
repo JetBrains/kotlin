@@ -3,8 +3,6 @@ plugins {
     id("jps-compatible")
 }
 
-jvmTarget = "1.6"
-
 dependencies {
     compile(project(":core:descriptors"))
     compile(project(":core:descriptors.jvm"))
@@ -14,7 +12,7 @@ dependencies {
     }
     compile(project(":compiler:frontend"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    compileOnly(intellijDep()) { includeJars("annotations", "asm-all", "trove4j", "guava", rootProject = rootProject) }
+    compileOnly(intellijDep()) { includeJars("asm-all", "trove4j", "guava", rootProject = rootProject) }
 }
 
 sourceSets {

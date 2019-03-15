@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.referenceExpression
 import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.BindingContext.NEW_INFERENCE_CATCH_EXCEPTION_PARAMETER
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
 import org.jetbrains.kotlin.resolve.calls.KotlinCallResolver
@@ -40,9 +41,7 @@ import org.jetbrains.kotlin.resolve.calls.util.CallMaker
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.resolve.scopes.LexicalScope
-import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
+import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.expressions.*
@@ -447,7 +446,7 @@ class PSICallResolver(
         private fun createReceiverValueWithSmartCastInfo(variable: KotlinResolutionCandidate): ReceiverValueWithSmartCastInfo {
             val callForVariable = variable.resolvedCall.atom as PSIKotlinCallForVariable
             val calleeExpression = callForVariable.baseCall.psiCall.calleeExpression as? KtReferenceExpression
-                    ?: error("Unexpected call : ${callForVariable.baseCall.psiCall}")
+                ?: error("Unexpected call : ${callForVariable.baseCall.psiCall}")
 
             val temporaryTrace = TemporaryBindingTrace.create(context.trace, "Context for resolve candidate")
 
@@ -489,11 +488,10 @@ class PSICallResolver(
 
         val resolvedTypeArguments = resolveTypeArguments(context, oldCall.typeArguments)
 
-        val argumentsInParenthesis = if (oldCall.callType != Call.CallType.ARRAY_SET_METHOD && oldCall.functionLiteralArguments.isEmpty()) {
-            oldCall.valueArguments
-        } else {
-            oldCall.valueArguments.dropLast(1)
-        }
+        val lambdasOutsideParenthesis = oldCall.functionLiteralArguments.size
+        val extraArgumentsNumber = if (oldCall.callType == Call.CallType.ARRAY_SET_METHOD) 1 else lambdasOutsideParenthesis
+
+        val argumentsInParenthesis = oldCall.valueArguments.dropLast(extraArgumentsNumber)
 
         val externalLambdaArguments = oldCall.functionLiteralArguments
         val resolvedArgumentsInParenthesis = resolveArgumentsInParenthesis(context, argumentsInParenthesis)
@@ -504,7 +502,7 @@ class PSICallResolver(
             }
             oldCall.valueArguments.last()
         } else {
-            if (externalLambdaArguments.size > 2) {
+            if (externalLambdaArguments.size > 1) {
                 externalLambdaArguments.drop(1).mapNotNull { it.getLambdaExpression() }.forEach {
                     context.trace.report(Errors.MANY_LAMBDA_EXPRESSION_ARGUMENTS.on(it))
                 }
@@ -563,7 +561,7 @@ class PSICallResolver(
 
                     val bindingContext = context.trace.bindingContext
                     val call = bindingContext[BindingContext.DELEGATE_EXPRESSION_TO_PROVIDE_DELEGATE_CALL, ktExpression]
-                            ?: ktExpression?.getCall(bindingContext)
+                        ?: ktExpression?.getCall(bindingContext)
 
                     val onlyResolvedCall = call?.let {
                         bindingContext.get(BindingContext.ONLY_RESOLVED_CALL, it)
@@ -590,7 +588,7 @@ class PSICallResolver(
             ModifierCheckerCore.check(projection, context.trace, null, languageVersionSettings)
 
             resolveType(context, projection.typeReference, typeResolver)?.let { SimpleTypeArgumentImpl(projection.typeReference!!, it) }
-                    ?: TypeArgumentPlaceholder
+                ?: TypeArgumentPlaceholder
         }
 
     private fun resolveArgumentsInParenthesis(
@@ -633,6 +631,7 @@ class PSICallResolver(
 
         val context = outerCallContext.replaceContextDependency(ContextDependency.DEPENDENT)
             .replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE).replaceDataFlowInfo(startDataFlowInfo)
+            .expandContextForCatchClause(ktExpression)
 
         if (ktExpression is KtCallableReferenceExpression) {
             checkNoSpread(outerCallContext, valueArgument)
@@ -683,5 +682,21 @@ class PSICallResolver(
         // argumentExpression instead of ktExpression is hack -- type info should be stored also for parenthesized expression
         val typeInfo = expressionTypingServices.getTypeInfo(argumentExpression, context)
         return createSimplePSICallArgument(context, valueArgument, typeInfo) ?: parseErrorArgument
+    }
+
+    private fun BasicCallResolutionContext.expandContextForCatchClause(ktExpression: Any): BasicCallResolutionContext {
+        if (ktExpression !is KtExpression) return this
+
+        val variableDescriptorHolder = trace.bindingContext[NEW_INFERENCE_CATCH_EXCEPTION_PARAMETER, ktExpression] ?: return this
+        val variableDescriptor = variableDescriptorHolder.get() ?: return this
+        variableDescriptorHolder.set(null)
+
+        val redeclarationChecker = expressionTypingServices.createLocalRedeclarationChecker(trace)
+
+        val catchScope = with(scope) {
+            LexicalWritableScope(this, ownerDescriptor, false, redeclarationChecker, LexicalScopeKind.CATCH)
+        }
+        catchScope.addVariableDescriptor(variableDescriptor)
+        return replaceScope(catchScope)
     }
 }

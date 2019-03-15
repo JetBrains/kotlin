@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.codegen.context.MethodContext;
 import org.jetbrains.kotlin.codegen.context.RootContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
+import org.jetbrains.kotlin.config.JvmAnalysisFlags;
+import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
@@ -30,11 +32,7 @@ import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityUtilsKt;
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.psi.Call;
-import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.psi.KtFunction;
-import org.jetbrains.kotlin.psi.KtSuperTypeListEntry;
-import org.jetbrains.kotlin.psi.codeFragmentUtil.CodeFragmentUtilKt;
+import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
@@ -42,6 +40,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
+import org.jetbrains.kotlin.resolve.source.PsiSourceElement;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
@@ -51,7 +50,6 @@ import java.io.File;
 import static org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegenUtilKt.SUSPEND_FUNCTION_CREATE_METHOD_NAME;
 import static org.jetbrains.kotlin.descriptors.ClassKind.ANNOTATION_CLASS;
 import static org.jetbrains.kotlin.descriptors.ClassKind.INTERFACE;
-import static org.jetbrains.kotlin.descriptors.Modality.ABSTRACT;
 import static org.jetbrains.kotlin.descriptors.Modality.FINAL;
 import static org.jetbrains.kotlin.resolve.BindingContext.DELEGATED_PROPERTY_CALL;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject;
@@ -145,14 +143,6 @@ public class JvmCodegenUtil {
         else {
             return DescriptorUtils.areInSameModule(directMember, contextDescriptor);
         }
-    }
-
-    public static boolean hasAbstractMembers(@NotNull ClassDescriptor classDescriptor) {
-        return CollectionsKt.any(
-                DescriptorUtils.getAllDescriptors(classDescriptor.getDefaultType().getMemberScope()),
-                descriptor -> descriptor instanceof CallableMemberDescriptor &&
-                              ((CallableMemberDescriptor) descriptor).getModality() == ABSTRACT
-        );
     }
 
     public static boolean isConstOrHasJvmFieldAnnotation(@NotNull PropertyDescriptor propertyDescriptor) {
@@ -249,8 +239,20 @@ public class JvmCodegenUtil {
     }
 
     public static boolean isDebuggerContext(@NotNull CodegenContext context) {
-        KtFile file = DescriptorToSourceUtils.getContainingFile(context.getContextDescriptor());
-        return file != null && CodeFragmentUtilKt.getSuppressDiagnosticsInDebugMode(file);
+        PsiFile file = null;
+
+        DeclarationDescriptor contextDescriptor = context.getContextDescriptor();
+        if (contextDescriptor instanceof DeclarationDescriptorWithSource) {
+            SourceElement sourceElement = ((DeclarationDescriptorWithSource) contextDescriptor).getSource();
+            if (sourceElement instanceof PsiSourceElement) {
+                PsiElement psi = ((PsiSourceElement) sourceElement).getPsi();
+                if (psi != null) {
+                    file = psi.getContainingFile();
+                }
+            }
+        }
+
+        return file instanceof KtCodeFragment;
     }
 
     @Nullable
@@ -388,5 +390,14 @@ public class JvmCodegenUtil {
 
     public static boolean isPolymorphicSignature(@NotNull FunctionDescriptor descriptor) {
         return descriptor.getAnnotations().hasAnnotation(new FqName("java.lang.invoke.MethodHandle.PolymorphicSignature"));
+    }
+
+    @NotNull
+    public static String sanitizeNameIfNeeded(@NotNull String name, @NotNull LanguageVersionSettings languageVersionSettings) {
+        if (languageVersionSettings.getFlag(JvmAnalysisFlags.getSanitizeParentheses())) {
+            return name.replace("(", "$_").replace(")", "$_");
+        }
+
+        return name;
     }
 }

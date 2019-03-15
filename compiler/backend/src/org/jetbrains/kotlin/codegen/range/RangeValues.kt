@@ -17,12 +17,11 @@
 package org.jetbrains.kotlin.codegen.range
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -38,9 +37,11 @@ fun ExpressionCodegen.createRangeValueForExpression(rangeExpression: KtExpressio
     // also look into org.jetbrains.kotlin.generators.tests and update related testData generators
     // (e.g., GenerateInRangeExpressionTestData).
 
-    getResolvedCallForRangeExpression(bindingContext, rangeExpression)?.let {
-        createIntrinsifiedRangeValueOrNull(it)?.let {
-            return it
+    val resolvedCall = getResolvedCallForRangeExpression(bindingContext, rangeExpression)
+    if (resolvedCall != null) {
+        val intrinsicRangeValue = createIntrinsifiedRangeValueOrNull(resolvedCall)
+        if (intrinsicRangeValue != null) {
+            return intrinsicRangeValue
         }
     }
 
@@ -60,9 +61,9 @@ fun ExpressionCodegen.createRangeValueForExpression(rangeExpression: KtExpressio
             )
         }
 
-        isPrimitiveRange(rangeType) ->
+        isPrimitiveRange(rangeType) || isUnsignedRange(rangeType) ->
             PrimitiveRangeRangeValue(rangeExpression)
-        isPrimitiveProgression(rangeType) ->
+        isPrimitiveProgression(rangeType) || isUnsignedProgression(rangeType) ->
             PrimitiveProgressionRangeValue(rangeExpression)
         isSubtypeOfString(rangeType, builtIns) && isCharSequenceIteratorCall(loopRangeIteratorResolvedCall) ->
             CharSequenceRangeValue(true, AsmTypes.JAVA_STRING_TYPE)
@@ -73,6 +74,7 @@ fun ExpressionCodegen.createRangeValueForExpression(rangeExpression: KtExpressio
     }
 }
 
+@Suppress("DEPRECATION")
 fun isLocalVarReference(rangeExpression: KtExpression, bindingContext: BindingContext): Boolean {
     if (rangeExpression !is KtSimpleNameExpression) return false
     val resultingDescriptor = rangeExpression.getResolvedCall(bindingContext)?.resultingDescriptor ?: return false
@@ -86,7 +88,7 @@ private fun isSubtypeOfString(type: KotlinType, builtIns: KotlinBuiltIns) =
     KotlinTypeChecker.DEFAULT.isSubtypeOf(type, builtIns.stringType)
 
 private fun isSubtypeOfCharSequence(type: KotlinType, builtIns: KotlinBuiltIns) =
-    KotlinTypeChecker.DEFAULT.isSubtypeOf(type, builtIns.getBuiltInClassByName(Name.identifier("CharSequence")).defaultType)
+    KotlinTypeChecker.DEFAULT.isSubtypeOf(type, builtIns.charSequence.defaultType)
 
 private fun getResolvedCallForRangeExpression(
     bindingContext: BindingContext,
@@ -116,11 +118,11 @@ private fun ExpressionCodegen.createIntrinsifiedRangeValueOrNull(rangeCall: Reso
     val rangeCallee = rangeCall.resultingDescriptor
 
     return when {
-        isPrimitiveNumberRangeTo(rangeCallee) ->
+        isPrimitiveNumberRangeTo(rangeCallee) || isUnsignedIntegerRangeTo(rangeCallee) ->
             PrimitiveNumberRangeLiteralRangeValue(rangeCall)
-        isPrimitiveNumberDownTo(rangeCallee) ->
+        isPrimitiveNumberDownTo(rangeCallee) || isUnsignedIntegerDownTo(rangeCallee) ->
             DownToProgressionRangeValue(rangeCall)
-        isPrimitiveNumberUntil(rangeCallee) ->
+        isPrimitiveNumberUntil(rangeCallee) || isUnsignedIntegerUntil(rangeCallee) ->
             PrimitiveNumberUntilRangeValue(rangeCall)
         isArrayOrPrimitiveArrayIndices(rangeCallee) ->
             ArrayIndicesRangeValue(rangeCall)

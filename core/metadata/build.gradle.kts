@@ -10,7 +10,7 @@ javaHome = rootProject.extra["JDK_16"] as String
 
 dependencies {
     compile(protobufLite())
-    compile(project(":kotlin-stdlib"))
+    compile(kotlinStdlib())
 }
 
 sourceSets {
@@ -19,11 +19,6 @@ sourceSets {
 }
 
 tasks.withType<JavaCompile> {
-    dependsOn(protobufLiteTask)
     sourceCompatibility = "1.6"
     targetCompatibility = "1.6"
-}
-
-tasks.withType<KotlinCompile> {
-    dependsOn(protobufLiteTask)
 }

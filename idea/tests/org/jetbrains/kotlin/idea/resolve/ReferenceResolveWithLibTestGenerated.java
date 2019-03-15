@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -42,6 +42,11 @@ public class ReferenceResolveWithLibTestGenerated extends AbstractReferenceResol
     @TestMetadata("fakeOverride2.kt")
     public void testFakeOverride2() throws Exception {
         runTest("idea/testData/resolve/referenceWithLib/fakeOverride2.kt");
+    }
+
+    @TestMetadata("infinityAndNanInJavaAnnotation.kt")
+    public void testInfinityAndNanInJavaAnnotation() throws Exception {
+        runTest("idea/testData/resolve/referenceWithLib/infinityAndNanInJavaAnnotation.kt");
     }
 
     @TestMetadata("innerClassFromLib.kt")

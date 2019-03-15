@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtPureClassOrObject
+import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializerCodegen
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.getSerialTypeInfo
@@ -72,7 +73,7 @@ class SerializerJsTranslator(descriptor: ClassDescriptor,
         val pushClassFunc = serialDescImplClass.getFuncDesc(CallingConventions.addClassAnnotation).single()
         val serialClassDescRef = JsNameRef(context.getNameForDescriptor(generatedSerialDescPropertyDescriptor), JsThisRef())
 
-        for (prop in orderedProperties) {
+        for (prop in serializableProperties) {
             if (prop.transient) continue
             val call = JsInvocation(
                 JsNameRef(context.getNameForDescriptor(addFunc), serialClassDescRef),
@@ -100,7 +101,7 @@ class SerializerJsTranslator(descriptor: ClassDescriptor,
     }
 
     override fun generateChildSerializersGetter(function: FunctionDescriptor) = generateFunction(function) { _, _ ->
-        val allSerializers = orderedProperties.map { requireNotNull(serializerTower(it)) { "Property ${it.name} must have a serializer" } }
+        val allSerializers = serializableProperties.map { requireNotNull(serializerTower(it)) { "Property ${it.name} must have a serializer" } }
         +JsReturn(JsArrayLiteral(allSerializers))
     }
 
@@ -131,26 +132,29 @@ class SerializerJsTranslator(descriptor: ClassDescriptor,
     }
 
     private fun TranslationContext.referenceMethod(clazz: ClassDescriptor, name: String) =
-        clazz.getFuncDesc(name).single().let { getNameForDescriptor(it) }
+        getNameForDescriptor(clazz.getFuncDesc(name).single())
 
     override fun generateSave(function: FunctionDescriptor) = generateFunction(function) { jsFun, ctx ->
         val encoderClass = serializerDescriptor.getClassFromSerializationPackage(SerialEntityNames.ENCODER_CLASS)
         val kOutputClass = serializerDescriptor.getClassFromSerializationPackage(SerialEntityNames.STRUCTURE_ENCODER_CLASS)
         val wBeginFunc = ctx.getNameForDescriptor(
-                encoderClass.getFuncDesc(CallingConventions.begin).single { it.valueParameters.size == 2 })
+            encoderClass.getFuncDesc(CallingConventions.begin).single { it.valueParameters.size == 2 })
         val serialClassDescRef = JsNameRef(context.getNameForDescriptor(anySerialDescProperty!!), JsThisRef())
-        val initializersMap: Map<PropertyDescriptor, KtExpression?> = context.buildInitializersRemapping(
-            (serializableDescriptor.findPsi() as? KtPureClassOrObject)
-                ?: throw AssertionError("Serializable descriptor $serializableDescriptor must have source file to build initializers map")
-        )
+
+        val serializableSource = ((serializableDescriptor.findPsi() as? KtPureClassOrObject)
+            ?: throw AssertionError("Serializable descriptor $serializableDescriptor must have source file to build initializers map"))
+        val initializersMap: Map<PropertyDescriptor, KtExpression?> =
+            context.buildInitializersRemapping(serializableSource, serializableDescriptor.getSuperClassNotAny())
 
         // output.writeBegin(desc, [])
         val typeParams = serializableDescriptor.declaredTypeParameters.mapIndexed { idx, _ ->
             JsNameRef(context.scope().declareName("$typeArgPrefix$idx"), JsThisRef())
         }
-        val call = JsInvocation(JsNameRef(wBeginFunc, JsNameRef(jsFun.parameters[0].name)),
-                                serialClassDescRef,
-                                JsArrayLiteral(typeParams))
+        val call = JsInvocation(
+            JsNameRef(wBeginFunc, JsNameRef(jsFun.parameters[0].name)),
+            serialClassDescRef,
+            JsArrayLiteral(typeParams)
+        )
         val objRef = JsNameRef(jsFun.parameters[1].name)
         // output = output.writeBegin...
         val localOutputName = jsFun.scope.declareFreshName("output")
@@ -160,7 +164,7 @@ class SerializerJsTranslator(descriptor: ClassDescriptor,
         fun SerializableProperty.jsNameRef() = JsNameRef(ctx.getNameForDescriptor(descriptor), objRef)
 
         // todo: internal serialization via virtual calls
-        val labeledProperties = orderedProperties.filter { !it.transient }
+        val labeledProperties = serializableProperties.filter { !it.transient }
         for (index in labeledProperties.indices) {
             val property = labeledProperties[index]
             if (property.transient) continue
@@ -224,15 +228,15 @@ class SerializerJsTranslator(descriptor: ClassDescriptor,
         +JsVars(JsVars.JsVar(indexVar.name), JsVars.JsVar(readAllVar.name, JsBooleanLiteral(false)))
 
         // calculating bit mask vars
-        val blocksCnt = orderedProperties.size / 32 + 1
-        fun bitMaskOff(i: Int) = i / 32
+        val blocksCnt = serializableProperties.bitMaskSlotCount()
+        fun bitMaskOff(i: Int) = bitMaskSlotAt(i)
 
         // var bitMask0 = 0, bitMask1 = 0...
         val bitMasks = (0 until blocksCnt).map { JsNameRef(jsFun.scope.declareFreshName("bitMask$it")) }
         +JsVars(bitMasks.map { JsVars.JsVar(it.name, JsIntLiteral(0)) }, false)
 
         // var localProp0, localProp1, ...
-        val localProps = orderedProperties.mapIndexed {i, _ -> JsNameRef(jsFun.scope.declareFreshName("local$i")) }
+        val localProps = serializableProperties.mapIndexed { i, _ -> JsNameRef(jsFun.scope.declareFreshName("local$i")) }
         +JsVars(localProps.map { JsVars.JsVar(it.name) }, true)
 
         //input = input.readBegin(...)
@@ -241,8 +245,10 @@ class SerializerJsTranslator(descriptor: ClassDescriptor,
         }
         val inputVar = JsNameRef(jsFun.scope.declareFreshName("input"))
         val readBeginF = decoderClass.getFuncDesc(CallingConventions.begin).single()
-        val readBeginCall = JsInvocation(JsNameRef(context.getNameForDescriptor(readBeginF), JsNameRef(jsFun.parameters[0].name)),
-                                         serialClassDescRef, JsArrayLiteral(typeParams))
+        val readBeginCall = JsInvocation(
+            JsNameRef(context.getNameForDescriptor(readBeginF), JsNameRef(jsFun.parameters[0].name)),
+            serialClassDescRef, JsArrayLiteral(typeParams)
+        )
         +JsVars(JsVars.JsVar(inputVar.name, readBeginCall))
 
         // while(true) {
@@ -252,20 +258,20 @@ class SerializerJsTranslator(descriptor: ClassDescriptor,
             // index = input.readElement(classDesc)
             val readElementF = context.getNameForDescriptor(inputClass.getFuncDesc(CallingConventions.decodeElementIndex).single())
             +JsAstUtils.assignment(
-                    indexVar,
-                    JsInvocation(JsNameRef(readElementF, inputVar), serialClassDescRef)
+                indexVar,
+                JsInvocation(JsNameRef(readElementF, inputVar), serialClassDescRef)
             ).makeStmt()
             // switch(index)
             jsSwitch(indexVar) {
                 // -2: readAll = true
                 case(JsIntLiteral(-2)) {
                     +JsAstUtils.assignment(
-                            readAllVar,
-                            JsBooleanLiteral(true)
+                        readAllVar,
+                        JsBooleanLiteral(true)
                     ).makeStmt()
                 }
                 // all properties
-                for ((i, property) in orderedProperties.withIndex()) {
+                for ((i, property) in serializableProperties.withIndex()) {
                     case(JsIntLiteral(i)) {
                         // input.readXxxElementValue
                         val sti = getSerialTypeInfo(property)
@@ -273,64 +279,72 @@ class SerializerJsTranslator(descriptor: ClassDescriptor,
                         val call: JsExpression = if (innerSerial == null) {
                             val unknownSer = (sti.elementMethodPrefix.isEmpty())
                             val readFunc =
-                                    inputClass.getFuncDesc("${CallingConventions.decode}${sti.elementMethodPrefix}${CallingConventions.elementPostfix}")
-                                            // if readElementValue, must have 3 parameters, if readXXXElementValue - 2
-                                            .single { !unknownSer || (it.valueParameters.size == 3) }
-                                            .let { context.getNameForDescriptor(it) }
+                                inputClass.getFuncDesc("${CallingConventions.decode}${sti.elementMethodPrefix}${CallingConventions.elementPostfix}")
+                                    // if readElementValue, must have 3 parameters, if readXXXElementValue - 2
+                                    .single { !unknownSer || (it.valueParameters.size == 3) }
+                                    .let { context.getNameForDescriptor(it) }
                             val readArgs = mutableListOf(serialClassDescRef, JsIntLiteral(i))
-                            if (unknownSer) readArgs.add(ExpressionVisitor.getObjectKClass(
-                                this@SerializerJsTranslator.context,
-                                property.type.toClassDescriptor!!
-                            ))
+                            if (unknownSer) readArgs.add(
+                                ExpressionVisitor.getObjectKClass(
+                                    this@SerializerJsTranslator.context,
+                                    property.type.toClassDescriptor!!
+                                )
+                            )
                             JsInvocation(JsNameRef(readFunc, inputVar), readArgs)
-                        }
-                        else {
-                            val notSeenTest = propNotSeenTest(bitMasks[i / 32], i)
+                        } else {
+                            val notSeenTest = propNotSeenTest(bitMasks[bitMaskOff(i)], i)
                             val readFunc =
-                                    inputClass.getFuncDesc("${CallingConventions.decode}${sti.elementMethodPrefix}Serializable${CallingConventions.elementPostfix}").single()
-                                            .let { context.getNameForDescriptor(it) }
+                                inputClass.getFuncDesc("${CallingConventions.decode}${sti.elementMethodPrefix}Serializable${CallingConventions.elementPostfix}")
+                                    .single()
+                                    .let { context.getNameForDescriptor(it) }
                             val updateFunc =
-                                    inputClass.getFuncDesc("${CallingConventions.update}${sti.elementMethodPrefix}Serializable${CallingConventions.elementPostfix}").single()
-                                            .let { context.getNameForDescriptor(it) }
-                            JsConditional(notSeenTest,
-                                          JsInvocation(JsNameRef(readFunc, inputVar),
-                                                       serialClassDescRef,
-                                                       JsIntLiteral(i),
-                                                       innerSerial),
-                                          JsInvocation(JsNameRef(updateFunc, inputVar),
-                                                       serialClassDescRef,
-                                                       JsIntLiteral(i),
-                                                       innerSerial,
-                                                       localProps[i]
-                                          )
+                                inputClass.getFuncDesc("${CallingConventions.update}${sti.elementMethodPrefix}Serializable${CallingConventions.elementPostfix}")
+                                    .single()
+                                    .let { context.getNameForDescriptor(it) }
+                            JsConditional(
+                                notSeenTest,
+                                JsInvocation(
+                                    JsNameRef(readFunc, inputVar),
+                                    serialClassDescRef,
+                                    JsIntLiteral(i),
+                                    innerSerial
+                                ),
+                                JsInvocation(
+                                    JsNameRef(updateFunc, inputVar),
+                                    serialClassDescRef,
+                                    JsIntLiteral(i),
+                                    innerSerial,
+                                    localProps[i]
+                                )
                             )
                         }
                         // localPropI = ...
                         +JsAstUtils.assignment(
-                                localProps[i],
-                                call
+                            localProps[i],
+                            call
                         ).makeStmt()
                         // need explicit unit instance
                         if (sti.unit) {
                             +JsAstUtils.assignment(
-                                    localProps[i],
-                                    context.getQualifiedReference(property.type.builtIns.unit)
+                                localProps[i],
+                                context.getQualifiedReference(property.type.builtIns.unit)
                             ).makeStmt()
                         }
                         // char unboxing crutch
                         if (KotlinBuiltIns.isCharOrNullableChar(property.type)) {
                             val coerceTo = TranslationUtils.getReturnTypeForCoercion(property.descriptor)
                             +JsAstUtils.assignment(
-                                    localProps[i],
-                                    TranslationUtils.coerce(context, localProps[i], coerceTo)
+                                localProps[i],
+                                TranslationUtils.coerce(context, localProps[i], coerceTo)
                             ).makeStmt()
                         }
 
                         // bitMask[i] |= 1 << x
                         val bitPos = 1 shl (i % 32)
-                        +JsBinaryOperation(JsBinaryOperator.ASG_BIT_OR,
-                                           bitMasks[i / 32],
-                                           JsIntLiteral(bitPos)
+                        +JsBinaryOperation(
+                            JsBinaryOperator.ASG_BIT_OR,
+                            bitMasks[bitMaskOff(i)],
+                            JsIntLiteral(bitPos)
                         ).makeStmt()
                         // if (!readAll) break
                         +JsIf(JsAstUtils.not(readAllVar), JsBreak())
@@ -343,7 +357,7 @@ class SerializerJsTranslator(descriptor: ClassDescriptor,
                 // default: throw
                 default {
                     val excClassRef = serializableDescriptor.getClassFromSerializationPackage(SerialEntityNames.UNKNOWN_FIELD_EXC)
-                            .let { context.translateQualifiedReference(it) }
+                        .let { context.translateQualifiedReference(it) }
                     +JsThrow(JsNew(excClassRef, listOf(indexVar)))
                 }
             }
@@ -351,17 +365,17 @@ class SerializerJsTranslator(descriptor: ClassDescriptor,
 
         // input.readEnd(desc)
         val readEndF = inputClass.getFuncDesc(CallingConventions.end).single()
-                .let { context.getNameForDescriptor(it) }
+            .let { context.getNameForDescriptor(it) }
         +JsInvocation(
-                JsNameRef(readEndF, inputVar),
-                serialClassDescRef
+            JsNameRef(readEndF, inputVar),
+            serialClassDescRef
         ).makeStmt()
 
         // deserialization constructor call
         // todo: external deserialization with primary constructor and setters calls after resolution of KT-11586
         val constrDesc = KSerializerDescriptorResolver.createLoadConstructorDescriptor(serializableDescriptor, context.bindingContext())
         val constrRef = context.getInnerNameForDescriptor(constrDesc).makeRef()
-        val args: MutableList<JsExpression> = mutableListOf(bitMasks[0])
+        val args: MutableList<JsExpression> = bitMasks.toMutableList()
         args += localProps
         args += JsNullLiteral()
         +JsReturn(JsInvocation(constrRef, args))

@@ -1,0 +1,83 @@
+FILE: lambda.kt
+    public? final? data class Tuple {
+        public? constructor(x: Int, y: Int): super<kotlin/Any>()
+
+        public? final? property x(val): Int
+            public? get(): Int
+
+        public? final? property y(val): Int
+            public? get(): Int
+
+    }
+    public? final? inline function use(f: ( (Tuple) -> Int )): <implicit> {
+        return@@@use f#(Tuple#(Int(1), Int(2)))
+    }
+    public? final? function foo(): Int {
+        val l1: <implicit> = function  <implicit>.<anonymous>(t: Tuple): <implicit> {
+            return  {
+                val x: <implicit> = t#.x#
+                val y: <implicit> = t#.y#
+                plus#(x#, y#)
+            }
+
+        }
+
+        use#(use@function  <implicit>.<anonymous>(<destruct>: <implicit>): <implicit> {
+            return  {
+                val x: <implicit> = component1(<destruct>#)
+                val y: <implicit> = component2(<destruct>#)
+                plus#(x#, y#)
+            }
+
+        }
+        )
+        return@@@foo use#(use@function  <implicit>.<anonymous>(): <implicit> {
+            return  {
+                when () {
+                    ==(it#.x#, Int(0)) ->  {
+                        return@@@foo Int(0)
+                    }
+                    else ->  {
+                    }
+                }
+
+                return@@@use it#.y#
+            }
+
+        }
+        )
+    }
+    public? final? function bar(): Int {
+        return@@@bar use#(lambda@function  <implicit>.<anonymous>(): <implicit> {
+            return  {
+                when () {
+                    ==(it#.x#, Int(0)) ->  {
+                        return@@@bar Int(0)
+                    }
+                    else ->  {
+                    }
+                }
+
+                return@@@lambda it#.y#
+            }
+
+        }
+        )
+    }
+    public? final? function test(list: List<Int>): kotlin/Unit {
+        val map: <implicit> = mutableMapOf#<Int, String>()
+        list#.forEach#(forEach@function  <implicit>.<anonymous>(): <implicit> {
+            return  {
+                val <complex-set>: <implicit> = map#.getOrPut#(it#, getOrPut@function  <implicit>.<anonymous>(): <implicit> {
+                    return  {
+                        mutableListOf#()
+                    }
+
+                }
+                )
+                <complex-set># += String()
+            }
+
+        }
+        )
+    }

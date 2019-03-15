@@ -126,6 +126,12 @@ class CheckIrElementVisitor(
     override fun visitCall(expression: IrCall) {
         super.visitCall(expression)
 
+        val function = expression.symbol.owner
+
+        if (function.dispatchReceiverParameter?.type is IrDynamicType) {
+            reportError(expression, "Dispatch receivers with 'dynamic' type are not allowed")
+        }
+
         val returnType = expression.descriptor.returnType
         if (returnType == null) {
             reportError(expression, "${expression.descriptor} return type is null")
@@ -231,6 +237,10 @@ class CheckIrElementVisitor(
 
     override fun visitFunction(declaration: IrFunction) {
         super.visitFunction(declaration)
+
+        if (declaration.dispatchReceiverParameter?.type is IrDynamicType) {
+            reportError(declaration, "Dispatch receivers with 'dynamic' type are not allowed")
+        }
 
         for ((i, p) in declaration.valueParameters.withIndex()) {
             if (p.index != i) {

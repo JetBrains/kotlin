@@ -188,9 +188,7 @@ class InlineClassLowering(val context: BackendContext) {
                 override fun visitCall(call: IrCall): IrExpression {
                     call.transformChildrenVoid(this)
                     val function = call.symbol.owner
-                    if (
-                        function.isDynamic() ||
-                        function.parent !is IrClass ||
+                    if (function.parent !is IrClass ||
                         function.isStaticMethodOfClass ||
                         !function.parentAsClass.isInline ||
                         (function is IrSimpleFunction && !function.isReal) ||

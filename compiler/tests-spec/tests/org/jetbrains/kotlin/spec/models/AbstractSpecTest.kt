@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.spec.models
 
+import org.jetbrains.kotlin.TestsExceptionType
 import org.jetbrains.kotlin.spec.*
 import org.jetbrains.kotlin.spec.parsers.CommonPatterns
 import org.jetbrains.kotlin.spec.parsers.CommonPatterns.issuesPattern
+import org.jetbrains.kotlin.spec.parsers.LinkedSpecTestPatterns.relevantPlacesPattern
 import org.jetbrains.kotlin.spec.parsers.TestCasePatterns.testCaseNumberPattern
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -21,23 +23,26 @@ enum class CommonInfoElementType(
     UNEXPECTED_BEHAVIOUR,
     ISSUES(valuePattern = issuesPattern),
     DISCUSSION,
-    NOTE
+    NOTE,
+    EXCEPTION
 }
 
 enum class CommonSpecTestFileInfoElementType(
     override val valuePattern: Pattern? = null,
     override val required: Boolean = false
 ) : SpecTestInfoElementType {
-    SECTIONS(valuePattern = CommonPatterns.sectionsInFilePattern, required = true),
     NUMBER(required = true),
-    DESCRIPTION(required = true)
+    DESCRIPTION(required = true),
+    HELPERS
 }
 
 enum class SpecTestCaseInfoElementType(
     override val valuePattern: Pattern? = null,
     override val required: Boolean = false
 ) : SpecTestInfoElementType {
-    TESTCASE_NUMBER(valuePattern = testCaseNumberPattern, required = true)
+    TESTCASE_NUMBER(valuePattern = testCaseNumberPattern, required = true),
+    RELEVANT_PLACES(valuePattern = relevantPlacesPattern),
+    UNSPECIFIED_BEHAVIOR
 }
 
 abstract class AbstractSpecTest(
@@ -48,7 +53,9 @@ abstract class AbstractSpecTest(
     val description: String,
     val cases: SpecTestCasesSet,
     val unexpectedBehavior: Boolean,
-    val issues: Set<String>
+    val issues: Set<String>,
+    val helpers: Set<String>?,
+    val exception: TestsExceptionType?
 ) {
     companion object {
         private fun issuesToString(issues: Set<String>) = issues.joinToString(", ") { CommonPatterns.ISSUE_TRACKER + it }

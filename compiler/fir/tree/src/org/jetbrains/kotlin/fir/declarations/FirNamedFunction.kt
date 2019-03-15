@@ -21,6 +21,8 @@ interface FirNamedFunction : @VisitedSupertype FirFunction, FirCallableMember {
 
     val isExternal: Boolean get() = status.isExternal
 
+    val isSuspend: Boolean get() = status.isSuspend
+
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitNamedFunction(this, data)
 

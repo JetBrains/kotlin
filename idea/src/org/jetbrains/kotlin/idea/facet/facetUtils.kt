@@ -240,6 +240,7 @@ private fun Module.configureSdkIfPossible(compilerArguments: CommonCompilerArgum
     if (isAndroidModule(modelsProvider) || hasNonOverriddenExternalSdkConfiguration(compilerArguments)) return
 
     val projectSdk = ProjectRootManager.getInstance(project).projectSdk
+    KotlinSdkType.setUpIfNeeded()
     val allSdks = ProjectJdkTable.getInstance().allJdks
     val sdk = if (compilerArguments is K2JVMCompilerArguments) {
         val jdkHome = compilerArguments.jdkHome
@@ -256,7 +257,6 @@ private fun Module.configureSdkIfPossible(compilerArguments: CommonCompilerArgum
                 .asSequence()
                 .mapNotNull { modelsProvider.getModifiableRootModel(it).sdk }
                 .firstOrNull { it.sdkType is KotlinSdkType }
-            ?: KotlinSdkType.INSTANCE.createSdkWithUniqueName(allSdks.toList())
     }
 
     val rootModel = modelsProvider.getModifiableRootModel(this)

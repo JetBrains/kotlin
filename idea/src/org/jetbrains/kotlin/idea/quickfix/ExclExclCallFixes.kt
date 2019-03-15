@@ -17,7 +17,9 @@
 package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.codeInsight.FileModificationService
+import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.codeInsight.intention.IntentionAction
+import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
@@ -54,7 +56,7 @@ abstract class ExclExclCallFix(psiElement: PsiElement) : KotlinQuickFixAction<Ps
     override fun startInWriteAction(): Boolean = true
 }
 
-class RemoveExclExclCallFix(psiElement: PsiElement) : ExclExclCallFix(psiElement), CleanupFix {
+class RemoveExclExclCallFix(psiElement: PsiElement) : ExclExclCallFix(psiElement), CleanupFix, HighPriorityAction {
     override fun getText(): String = KotlinBundle.message("remove.unnecessary.non.null.assertion")
 
     override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean =
@@ -81,7 +83,7 @@ class RemoveExclExclCallFix(psiElement: PsiElement) : ExclExclCallFix(psiElement
     }
 }
 
-class AddExclExclCallFix(psiElement: PsiElement, val checkImplicitReceivers: Boolean) : ExclExclCallFix(psiElement) {
+class AddExclExclCallFix(psiElement: PsiElement, val checkImplicitReceivers: Boolean) : ExclExclCallFix(psiElement), LowPriorityAction {
     constructor(psiElement: PsiElement) : this(psiElement, true)
 
     override fun getText() = KotlinBundle.message("introduce.non.null.assertion")
@@ -117,8 +119,7 @@ class AddExclExclCallFix(psiElement: PsiElement, val checkImplicitReceivers: Boo
         return when (psiElement) {
             is KtArrayAccessExpression -> psiElement.expressionForCall()
             is KtOperationReferenceExpression -> {
-                val parent = psiElement.parent
-                when (parent) {
+                when (val parent = psiElement.parent) {
                     is KtUnaryExpression -> parent.baseExpression.expressionForCall()
                     is KtBinaryExpression -> {
                         val receiver = if (KtPsiUtil.isInOrNotInOperation(parent)) parent.right else parent.left

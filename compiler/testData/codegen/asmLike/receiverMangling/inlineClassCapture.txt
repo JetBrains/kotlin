@@ -9,10 +9,10 @@ public final class Foo$Bar : java/lang/Object {
 
     public final void bar() {
         Local variables:
-            1 $i$a$-block-Foo$Bar$bar$1$1: I
-            2 $i$f$block: I
-            3 $i$a$-block-Foo$Bar$bar$1: I
-            4 $i$f$block: I
+            4 $i$a$-block-Foo$Bar$bar$1$1: I
+            3 $i$f$block: I
+            2 $i$a$-block-Foo$Bar$bar$1: I
+            1 $i$f$block: I
             0 this: LFoo$Bar;
     }
 }
@@ -25,8 +25,8 @@ public final class Foo : java/lang/Object {
 
     public final void foo() {
         Local variables:
-            1 $i$a$-block-Foo$foo$1: I
-            2 $i$f$block: I
+            2 $i$a$-block-Foo$foo$1: I
+            1 $i$f$block: I
             0 this: LFoo;
     }
 }

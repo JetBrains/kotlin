@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -67,6 +67,11 @@ public class LineNumberTestGenerated extends AbstractLineNumberTest {
     @TestMetadata("inlineSimpleCall.kt")
     public void testInlineSimpleCall() throws Exception {
         runTest("compiler/testData/lineNumber/inlineSimpleCall.kt");
+    }
+
+    @TestMetadata("lineNumberAfterInline.kt")
+    public void testLineNumberAfterInline() throws Exception {
+        runTest("compiler/testData/lineNumber/lineNumberAfterInline.kt");
     }
 
     @TestMetadata("localFunction.kt")
@@ -194,6 +199,11 @@ public class LineNumberTestGenerated extends AbstractLineNumberTest {
         @TestMetadata("noParametersArgumentCallInExpression.kt")
         public void testNoParametersArgumentCallInExpression() throws Exception {
             runTest("compiler/testData/lineNumber/custom/noParametersArgumentCallInExpression.kt");
+        }
+
+        @TestMetadata("primitiveNullChecks.kt")
+        public void testPrimitiveNullChecks() throws Exception {
+            runTest("compiler/testData/lineNumber/custom/primitiveNullChecks.kt");
         }
 
         @TestMetadata("smapInlineAsArgument.kt")

@@ -8,13 +8,13 @@ plugins {
     id("jps-compatible")
 }
 
-jvmTarget = "1.6"
-
 dependencies {
+    compile(project(":compiler:frontend.common"))
     compile(project(":core:descriptors"))
     compile(project(":compiler:fir:cones"))
+    compile(project(":compiler:ir.tree"))
     // Necessary only to store bound PsiElement inside FirElement
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core", "annotations") }
+    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 }
 
 sourceSets {
@@ -22,7 +22,6 @@ sourceSets {
         projectDefault()
         java.srcDir("visitors")
     }
-    "test" {}
 }
 
 val generatorClasspath by configurations.creating
@@ -40,7 +39,7 @@ val generateVisitors by tasks.creating(NoDebugJavaExec::class) {
     }
 
     inputs.files(allSourceFiles)
-    outputs.files(output)
+    outputs.dirs(output)
 
     classpath = generatorClasspath
     args(generationRoot, output)

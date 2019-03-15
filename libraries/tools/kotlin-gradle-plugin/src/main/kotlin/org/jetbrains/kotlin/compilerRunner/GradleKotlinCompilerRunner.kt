@@ -20,6 +20,7 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.plugins.JavaPluginConvention
+import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.build.JvmSourceRoot
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
@@ -29,12 +30,16 @@ import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.daemon.client.CompileServiceSession
 import org.jetbrains.kotlin.daemon.common.*
-import org.jetbrains.kotlin.gradle.logging.TaskLoggers
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
+import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskLoggers
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.newTmpFile
 import org.jetbrains.kotlin.gradle.utils.relativeToRoot
-import org.jetbrains.kotlin.incremental.*
+import org.jetbrains.kotlin.incremental.classpathAsList
+import org.jetbrains.kotlin.incremental.destinationAsFile
+import org.jetbrains.kotlin.incremental.makeModuleFile
 import java.io.File
 import java.lang.ref.WeakReference
 
@@ -57,7 +62,7 @@ internal open class GradleCompilerRunner(protected val task: Task) {
         get() = task.project
 
     /**
-     * Compiler might be executed asynchronuosly. Do not do anything requiring end of compilation after this function is called.
+     * Compiler might be executed asynchronously. Do not do anything requiring end of compilation after this function is called.
      * @see [GradleKotlinCompilerWork]
      */
     fun runJvmCompilerAsync(
@@ -88,7 +93,7 @@ internal open class GradleCompilerRunner(protected val task: Task) {
     }
 
     /**
-     * Compiler might be executed asynchronuosly. Do not do anything requiring end of compilation after this function is called.
+     * Compiler might be executed asynchronously. Do not do anything requiring end of compilation after this function is called.
      * @see [GradleKotlinCompilerWork]
      */
     fun runJsCompilerAsync(
@@ -103,7 +108,7 @@ internal open class GradleCompilerRunner(protected val task: Task) {
     }
 
     /**
-     * Compiler might be executed asynchronuosly. Do not do anything requiring end of compilation after this function is called.
+     * Compiler might be executed asynchronously. Do not do anything requiring end of compilation after this function is called.
      * @see [GradleKotlinCompilerWork]
      */
     fun runMetadataCompilerAsync(
@@ -140,8 +145,9 @@ internal open class GradleCompilerRunner(protected val task: Task) {
             incrementalCompilationEnvironment = incrementalCompilationEnvironment,
             incrementalModuleInfo = modulesInfo,
             buildFile = buildFile,
-            localStateDirectories = environment.localStateDirectories,
-            taskPath = task.path
+            outputFiles = environment.outputFiles.toList(),
+            taskPath = task.path,
+            buildReportMode = environment.buildReportMode
         )
         TaskLoggers.put(task.path, task.logger)
         runCompilerAsync(workArgs)
@@ -159,13 +165,19 @@ internal open class GradleCompilerRunner(protected val task: Task) {
             sessionIsAliveFlagFile: File,
             compilerFullClasspath: List<File>,
             messageCollector: MessageCollector,
-            isDebugEnabled: Boolean
+            isDebugEnabled: Boolean,
+            enableAssertions: Boolean
         ): CompileServiceSession? {
             val compilerId = CompilerId.makeCompilerId(compilerFullClasspath)
+            val additionalJvmParams = arrayListOf<String>()
+            if (enableAssertions) {
+                additionalJvmParams.add("ea")
+            }
             return KotlinCompilerRunnerUtils.newDaemonConnection(
                 compilerId, clientIsAliveFlagFile, sessionIsAliveFlagFile,
                 messageCollector = messageCollector,
-                isDebugEnabled = isDebugEnabled
+                isDebugEnabled = isDebugEnabled,
+                additionalJvmParams = additionalJvmParams.toTypedArray()
             )
         }
 
@@ -184,7 +196,7 @@ internal open class GradleCompilerRunner(protected val task: Task) {
             val jarToModule = HashMap<File, IncrementalModuleEntry>()
 
             for (project in gradle.rootProject.allprojects) {
-                project.tasks.withType(AbstractKotlinCompile::class.java).forEach { task ->
+              project.tasks.withType(AbstractKotlinCompile::class.java).toList().forEach { task ->
                     val module = IncrementalModuleEntry(project.path, task.moduleName, project.buildDir, task.buildHistoryFile)
                     dirToModule[task.destinationDir] = module
                     task.javaOutputDir?.let { dirToModule[it] = module }
@@ -198,6 +210,15 @@ internal open class GradleCompilerRunner(protected val task: Task) {
                 }
                 project.tasks.withType(InspectClassesForMultiModuleIC::class.java).forEach { task ->
                     jarToClassListFile[File(task.archivePath)] = task.classesListFile
+                }
+                project.extensions.findByType(KotlinMultiplatformExtension::class.java)?.let { kotlinExt ->
+                    for (target in kotlinExt.targets) {
+                        val mainCompilation = target.compilations.findByName(KotlinCompilation.MAIN_COMPILATION_NAME) ?: continue
+                        val kotlinTask = mainCompilation.compileKotlinTask as? AbstractKotlinCompile<*> ?: continue
+                        val module = IncrementalModuleEntry(project.path, kotlinTask.moduleName, project.buildDir, kotlinTask.buildHistoryFile)
+                        val jarTask = project.tasks.findByName(target.artifactsTaskName) as? AbstractArchiveTask ?: continue
+                        jarToModule[jarTask.archivePath] = module
+                    }
                 }
             }
 

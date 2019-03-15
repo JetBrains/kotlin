@@ -13,11 +13,15 @@ dependencies {
 }
 
 sourceSets {
-    "main" { projectDefault() }
-    "test" { none() }
+    "main" {
+        projectDefault()
+        java.srcDir("gen")
+    }
+    "test" { projectDefault() }
+
 }
 
-configureInstrumentation()
+configureFormInstrumentation()
 
 runtimeJar {
     archiveName = "native-ide.jar"

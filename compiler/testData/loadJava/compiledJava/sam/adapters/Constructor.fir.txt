@@ -1,0 +1,4 @@
+public open class Constructor : R|java/lang/Object| {
+    public final function Constructor(r: R|ft<java/lang/Runnable, java/lang/Runnable?>|!): R|test/Constructor|
+
+}

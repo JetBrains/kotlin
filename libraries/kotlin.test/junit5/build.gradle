@@ -24,8 +24,9 @@ jar {
 
 artifacts {
     archives sourcesJar
-    archives javadocJar
 }
+
+javadocJar()
 
 dist {
     from (jar, sourcesJar)

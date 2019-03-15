@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS_IR, NATIVE
+// IGNORE_BACKEND: NATIVE
 // WITH_RUNTIME
 import kotlin.test.assertTrue
 

@@ -5,22 +5,23 @@
 
 package org.jetbrains.kotlin.fir.symbols.impl
 
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.ConeClassSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterSymbol
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.name.ClassId
 
-class FirClassSymbol(override val classId: ClassId) : ConeClassSymbol, AbstractFirBasedSymbol<FirClass>() {
-    override val kind: ClassKind
-        get() = fir.classKind
+class FirClassSymbol(override val classId: ClassId) : ConeClassSymbol, AbstractFirBasedSymbol<FirRegularClass>() {
+    override fun toLookupTag(): ConeClassLikeLookupTag = ConeClassLikeLookupTagImpl(classId)
 
-    override val superTypes: List<ConeClassLikeType>
-        get() = fir.superTypes.mapNotNull { it.coneTypeSafe<ConeClassLikeType>() }
+    override fun equals(other: Any?): Boolean =
+        other is FirClassSymbol && classId == other.classId && fir == other.fir
 
-    override val typeParameters: List<ConeTypeParameterSymbol>
-        get() = fir.typeParameters.map { it.symbol }
+    override fun hashCode(): Int {
+        var result = 31
+        result = result * 19 + classId.hashCode()
+        result = result * 19 + fir.hashCode()
+        return result
+    }
 }

@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 // !CHECK_TYPE
 // !DIAGNOSTICS: -UNUSED_PARAMETER -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_VARIABLE
 
@@ -27,25 +28,25 @@ fun foo() {
     i = genericBuilder { 1 }
     genericBuilder { 1 }
     genericBuilder<Int> { 1 }
-    genericBuilder<Int> { <!TYPE_MISMATCH!>""<!> }
+    genericBuilder<Int> { <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>""<!> }
 
     val y = { 1 }
-    <!TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR!>genericBuilder<!>(<!TYPE_MISMATCH!>y<!>)
+    <!OI;TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR!>genericBuilder<!>(<!TYPE_MISMATCH!>y<!>)
 
-    unitBuilder {}
-    unitBuilder { <!UNUSED_EXPRESSION!>1<!> }
-    unitBuilder({})
-    unitBuilder({ <!UNUSED_EXPRESSION!>1<!> })
+    <!NI;UNREACHABLE_CODE!>unitBuilder {}<!>
+    <!NI;UNREACHABLE_CODE!>unitBuilder { <!OI;UNUSED_EXPRESSION!>1<!> }<!>
+    <!NI;UNREACHABLE_CODE!>unitBuilder({})<!>
+    <!NI;UNREACHABLE_CODE!>unitBuilder({ <!OI;UNUSED_EXPRESSION!>1<!> })<!>
 
-    manyArgumentsBuilder({}, { "" }) { 1 }
+    <!NI;UNREACHABLE_CODE!>manyArgumentsBuilder({}, { "" }) { 1 }<!>
 
-    val s: String = manyArgumentsBuilder({}, { "" }) { 1 }
+    <!NI;UNREACHABLE_CODE!>val s: String = manyArgumentsBuilder({}, { "" }) { 1 }<!>
 
-    manyArgumentsBuilder<String>({}, { "" }, { 1 })
-    manyArgumentsBuilder<String>({}, { <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!> }, { 2 })
+    <!NI;UNREACHABLE_CODE!>manyArgumentsBuilder<String>({}, { "" }, { 1 })<!>
+    <!NI;UNREACHABLE_CODE!>manyArgumentsBuilder<String>({}, { <!CONSTANT_EXPECTED_TYPE_MISMATCH, NI;CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!> }, { 2 })<!>
 
-    severalParamsInLambda { <!NAME_SHADOWING!>x<!>, <!NAME_SHADOWING!>y<!> ->
+    <!NI;UNREACHABLE_CODE!>severalParamsInLambda { <!NAME_SHADOWING!>x<!>, <!NAME_SHADOWING!>y<!> ->
         x checkType { _<String>() }
         y checkType { _<Int>() }
-    }
+    }<!>
 }

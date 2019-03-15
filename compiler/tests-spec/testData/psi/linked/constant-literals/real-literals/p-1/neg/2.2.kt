@@ -1,9 +1,8 @@
 /*
  * KOTLIN PSI SPEC TEST (NEGATIVE)
  *
- * SECTIONS: constant-literals, real-literals
- * PARAGRAPH: 1
- * SENTENCE: [2] Unlike other languages, Kotlin real literals may only be expressed in decimal numbers.
+ * SPEC VERSION: 0.1-draft
+ * PLACES: constant-literals, real-literals -> paragraph 1 -> sentence 2
  * NUMBER: 2
  * DESCRIPTION: Not allowed binary real literals.
  */

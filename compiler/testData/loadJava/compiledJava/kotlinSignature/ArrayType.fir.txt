@@ -1,0 +1,4 @@
+public open class ArrayType : R|java/lang/Object| {
+    public open operator function foo(): R|kotlin/Array<ft<java/lang/String, java/lang/String?>>|
+
+}

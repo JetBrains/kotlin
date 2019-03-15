@@ -18,7 +18,9 @@ package org.jetbrains.kotlin.serialization.js.ast
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.JsImportedModule
 import org.jetbrains.kotlin.js.backend.ast.metadata.*
+import org.jetbrains.kotlin.js.backend.ast.metadata.LocalAlias
 import org.jetbrains.kotlin.js.backend.ast.metadata.SpecialFunction
 import org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.*
 import org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.BinaryOperation.Type.*
@@ -28,7 +30,8 @@ import java.io.OutputStream
 import java.util.*
 import org.jetbrains.kotlin.resolve.inline.InlineStrategy as KotlinInlineStrategy
 
-class JsAstSerializer(private val pathResolver: (File) -> String) {
+class JsAstSerializer(private val jsAstValidator: ((JsProgramFragment, Set<JsName>) -> Unit)?,
+                      private val pathResolver: (File) -> String) {
     private val nameTableBuilder = NameTable.newBuilder()
     private val stringTableBuilder = StringTable.newBuilder()
     private val nameMap = mutableMapOf<JsName, Int>()
@@ -37,7 +40,7 @@ class JsAstSerializer(private val pathResolver: (File) -> String) {
     private val importedNames = mutableSetOf<JsName>()
 
     fun serialize(fragment: JsProgramFragment, output: OutputStream) {
-        val namesBySignature = fragment.nameBindings.associate { it.key to it.name }
+        val namesBySignature = fragment.nameBindings.associateTo(mutableMapOf()) { it.key to it.name }
         importedNames.clear()
         importedNames += fragment.imports.map { namesBySignature[it.key]!! }
         serialize(fragment).writeTo(output)
@@ -61,6 +64,8 @@ class JsAstSerializer(private val pathResolver: (File) -> String) {
 
     private fun serializeFragment(fragment: JsProgramFragment): Fragment {
         val fragmentBuilder = Fragment.newBuilder()
+
+        fragmentBuilder.packageFqn = fragment.packageFqn
 
         for (importedModule in fragment.importedModules) {
             val importedModuleBuilder = ImportedModule.newBuilder()
@@ -101,6 +106,25 @@ class JsAstSerializer(private val pathResolver: (File) -> String) {
             }
             fragmentBuilder.addInlineModule(inlineModuleBuilder)
         }
+
+        fragment.tests?.let {
+            fragmentBuilder.setTestsInvocation(serialize(it))
+        }
+
+        fragment.mainFunction?.let {
+            fragmentBuilder.setMainInvocation(serialize(it))
+        }
+
+        fragment.inlinedLocalDeclarations.forEach { (tag, block) ->
+            val builder = InlinedLocalDeclarations.newBuilder().apply {
+                setTag(serialize(tag))
+                setBlock(serializeBlock(block))
+            }
+
+            fragmentBuilder.addInlinedLocalDeclarations(builder.build())
+        }
+
+        jsAstValidator?.let { it(fragment, nameMap.keys) }
 
         return fragmentBuilder.build()
     }
@@ -448,6 +472,16 @@ class JsAstSerializer(private val pathResolver: (File) -> String) {
         return visitor.builder.build()
     }
 
+    private fun serialize(module: JsImportedModule): JsAstProtoBuf.JsImportedModule {
+        val moduleBuilder = JsAstProtoBuf.JsImportedModule.newBuilder()
+        moduleBuilder.externalName = serialize(module.externalName)
+        moduleBuilder.internalName = serialize(module.internalName)
+        module.plainReference?.let {
+            moduleBuilder.plainReference = serialize(it)
+        }
+        return moduleBuilder.build()
+    }
+
     private fun serializeParameter(parameter: JsParameter): Parameter {
         val parameterBuilder = Parameter.newBuilder()
         parameterBuilder.nameId = serialize(parameter.name)
@@ -586,6 +620,15 @@ class JsAstSerializer(private val pathResolver: (File) -> String) {
         val result = nameTableBuilder.entryCount
         nameTableBuilder.addEntry(builder)
         result
+    }
+
+    private fun serialize(alias: LocalAlias): JsAstProtoBuf.LocalAlias {
+        val builder = JsAstProtoBuf.LocalAlias.newBuilder()
+        builder.localNameId = serialize(alias.name)
+        alias.tag?.let {
+            builder.tag = serialize(it)
+        }
+        return builder.build()
     }
 
     private fun serialize(string: String) = stringMap.getOrPut(string) {

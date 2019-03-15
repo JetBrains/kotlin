@@ -146,7 +146,7 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
     FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:Test1 flags:
       VALUE_PARAMETER name:value index:0 type:kotlin.String flags:
       SYNTHETIC_BODY kind=ENUM_VALUEOF
-  CLASS ENUM_CLASS name:Test2 modality:FINAL visibility:public flags: superTypes:[kotlin.Enum<Test2>]
+  CLASS ENUM_CLASS name:Test2 modality:ABSTRACT visibility:public flags: superTypes:[kotlin.Enum<Test2>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test2 flags:
     CONSTRUCTOR visibility:private <> (x:kotlin.Int) returnType:Test2 flags:primary
       VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:

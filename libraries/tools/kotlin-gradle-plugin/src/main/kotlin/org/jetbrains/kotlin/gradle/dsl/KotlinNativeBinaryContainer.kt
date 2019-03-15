@@ -26,26 +26,23 @@ open class KotlinNativeBinaryContainer @Inject constructor(
 ) : AbstractKotlinNativeBinaryContainer(),
     DomainObjectSet<NativeBinary> by backingContainer
 {
-    override val project: Project
+    final override val project: Project
         get() = target.project
 
     private val defaultCompilation: KotlinNativeCompilation
         get() = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
 
     private val nameToBinary = mutableMapOf<String, NativeBinary>()
-    internal val prefixGroups: NamedDomainObjectSet<PrefixGroup> = WrapUtil.toNamedDomainObjectSet(PrefixGroup::class.java)
+    internal val prefixGroups: NamedDomainObjectSet<PrefixGroup> = project.container(PrefixGroup::class.java)
 
     // region DSL getters.
-    private fun generateName(prefix: String, buildType: NativeBuildType, outputKindClassifier: String) =
-        lowerCamelCaseName(prefix, buildType.getName(), outputKindClassifier)
-
     private inline fun <reified T : NativeBinary> getBinary(
         namePrefix: String,
         buildType: NativeBuildType,
         outputKind: NativeOutputKind
     ): T {
         val classifier = outputKind.taskNameClassifier
-        val name = generateName(namePrefix, buildType, classifier)
+        val name = generateBinaryName(namePrefix, buildType, classifier)
         val binary = getByName(name)
         require(binary is T && binary.buildType == buildType) {
             "Binary $name has incorrect outputKind or build type.\n" +
@@ -60,7 +57,7 @@ open class KotlinNativeBinaryContainer @Inject constructor(
         outputKind: NativeOutputKind
     ): T? {
         val classifier = outputKind.taskNameClassifier
-        val name = generateName(namePrefix, buildType, classifier)
+        val name = generateBinaryName(namePrefix, buildType, classifier)
         val binary = findByName(name)
         return if (binary is T && binary.buildType == buildType) {
             binary
@@ -112,7 +109,7 @@ open class KotlinNativeBinaryContainer @Inject constructor(
         }
 
         buildTypes.forEach { buildType ->
-            val name = generateName(namePrefix, buildType, outputKind.taskNameClassifier)
+            val name = generateBinaryName(namePrefix, buildType, outputKind.taskNameClassifier)
 
             require(name !in nameToBinary) {
                 "Cannot create binary $name: binary with such a name already exists"
@@ -137,15 +134,26 @@ open class KotlinNativeBinaryContainer @Inject constructor(
     internal fun defaultTestExecutable(
         configure: Executable.() -> Unit
     ) = createBinaries(
-        "test",
+        DEFAULT_TEST_NAME_PREFIX,
         "test",
         NativeOutputKind.EXECUTABLE,
-        listOf(NativeBuildType.DEBUG),
+        listOf(DEFAULT_TEST_BUILD_TYPE),
         { name, baseName, buildType, compilation ->
             Executable(name, baseName, buildType, compilation, true)
         },
         configure
     )
+
+    internal fun getDefaultTestExecutable(): Executable =
+        getExecutable(DEFAULT_TEST_NAME_PREFIX, DEFAULT_TEST_BUILD_TYPE)
+
+    companion object {
+        internal val DEFAULT_TEST_BUILD_TYPE = NativeBuildType.DEBUG
+        internal val DEFAULT_TEST_NAME_PREFIX = "test"
+
+        internal fun generateBinaryName(prefix: String, buildType: NativeBuildType, outputKindClassifier: String) =
+            lowerCamelCaseName(prefix, buildType.getName(), outputKindClassifier)
+    }
     // endregion.
 
     internal inner class PrefixGroup(

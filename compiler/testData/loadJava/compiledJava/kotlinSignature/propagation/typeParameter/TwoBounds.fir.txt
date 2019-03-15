@@ -1,0 +1,2 @@
+public abstract interface TwoBounds : R|java/lang/Object| {
+}

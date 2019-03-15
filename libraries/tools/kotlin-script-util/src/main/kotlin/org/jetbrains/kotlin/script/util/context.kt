@@ -43,7 +43,7 @@ fun scriptCompilationClasspathFromContextOrStlib(
     classLoader: ClassLoader = Thread.currentThread().contextClassLoader,
     wholeClasspath: Boolean = false
 ): List<File> =
-    kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContextOrStlib(
+    kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContextOrStdlib(
         *keyNames, classLoader = classLoader, wholeClasspath = wholeClasspath
     )
 

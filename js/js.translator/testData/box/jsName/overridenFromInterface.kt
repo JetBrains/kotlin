@@ -1,6 +1,4 @@
-// IGNORE_BACKEND: JS_IR
 // EXPECTED_REACHABLE_NODES: 1290
-package foo
 
 interface A {
     @JsName("js_f") fun f(x: Int): String
@@ -11,7 +9,7 @@ class B : A {
 }
 
 fun test() = js("""
-var module = JS_TESTS.foo;
+var module = JS_TESTS;
 return new (module.B)().js_f(23);
 """)
 

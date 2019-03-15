@@ -31,13 +31,12 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategyImpl
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
-import org.jetbrains.kotlin.types.IndexedParametersSubstitution
-import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.UnwrappedType
-import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.expressions.DoubleColonExpressionResolver
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
+import org.jetbrains.kotlin.types.typeUtil.isUnit
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class ResolvedAtomCompleter(
     private val resultSubstitutor: NewTypeSubstitutor,
@@ -55,6 +54,10 @@ class ResolvedAtomCompleter(
     private val topLevelTrace = topLevelCallCheckerContext.trace
 
     private fun complete(resolvedAtom: ResolvedAtom) {
+        if (topLevelCallContext.inferenceSession.callCompleted(resolvedAtom)) {
+            return
+        }
+
         when (resolvedAtom) {
             is ResolvedCollectionLiteralAtom -> completeCollectionLiteralCalls(resolvedAtom)
             is ResolvedCallableReferenceAtom -> completeCallableReference(resolvedAtom)
@@ -94,16 +97,41 @@ class ResolvedAtomCompleter(
             topLevelCallCheckerContext
 
         kotlinToResolvedCallTransformer.bindAndReport(topLevelCallContext, topLevelTrace, resolvedCall, diagnostics)
-        kotlinToResolvedCallTransformer.runCallCheckers(resolvedCall, callCheckerContext)
 
         val lastCall = if (resolvedCall is VariableAsFunctionResolvedCall) resolvedCall.functionCall else resolvedCall
+
         kotlinToResolvedCallTransformer.runArgumentsChecks(topLevelCallContext, topLevelTrace, lastCall as NewResolvedCallImpl<*>)
+        kotlinToResolvedCallTransformer.runCallCheckers(resolvedCall, callCheckerContext)
+        kotlinToResolvedCallTransformer.runAdditionalReceiversCheckers(resolvedCall, topLevelCallContext)
 
         return resolvedCall
     }
 
+    private val ResolvedLambdaAtom.isCoercedToUnit: Boolean
+        get() {
+            val returnTypes =
+                resultArguments.map {
+                    val type = it.safeAs<SimpleKotlinCallArgument>()?.receiver?.receiverValue?.type ?: return@map null
+                    val unwrappedType = when (type) {
+                        is WrappedType -> type.unwrap()
+                        is UnwrappedType -> type
+                    }
+                    resultSubstitutor.safeSubstitute(unwrappedType)
+                }
+            if (returnTypes.isEmpty()) return true
+            val substitutedTypes = returnTypes.filterNotNull()
+            // we have some unsubstituted types
+            if (substitutedTypes.isEmpty()) return false
+            val commonReturnType = CommonSupertypes.commonSupertype(returnTypes)
+            return commonReturnType.isUnit()
+        }
+
     private fun completeLambda(lambda: ResolvedLambdaAtom) {
-        val returnType = resultSubstitutor.safeSubstitute(lambda.returnType)
+        val returnType = if (lambda.isCoercedToUnit) {
+            builtIns.unitType
+        } else {
+            resultSubstitutor.safeSubstitute(lambda.returnType)
+        }
 
         updateTraceForLambda(lambda, topLevelTrace, returnType)
 

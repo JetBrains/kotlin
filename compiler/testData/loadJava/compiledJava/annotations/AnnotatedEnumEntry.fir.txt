@@ -1,0 +1,11 @@
+public final enum class AnnotatedEnumEntry : R|java/lang/Enum<test/AnnotatedEnumEntry>| {
+    @R|test/AnnotatedEnumEntry.Anno|(String(a)) public final static property E1(val): R|ft<test/AnnotatedEnumEntry, test/AnnotatedEnumEntry?>|!
+        public get(): R|ft<test/AnnotatedEnumEntry, test/AnnotatedEnumEntry?>|!
+
+    @R|test/AnnotatedEnumEntry.Anno|(String(b)) @R|test/AnnotatedEnumEntry.Anno2|() public final static property E2(val): R|ft<test/AnnotatedEnumEntry, test/AnnotatedEnumEntry?>|!
+        public get(): R|ft<test/AnnotatedEnumEntry, test/AnnotatedEnumEntry?>|!
+
+    public final static property E3(val): R|ft<test/AnnotatedEnumEntry, test/AnnotatedEnumEntry?>|!
+        public get(): R|ft<test/AnnotatedEnumEntry, test/AnnotatedEnumEntry?>|!
+
+}

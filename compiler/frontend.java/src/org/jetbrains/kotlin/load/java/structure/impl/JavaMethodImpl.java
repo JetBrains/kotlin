@@ -16,14 +16,13 @@
 
 package org.jetbrains.kotlin.load.java.structure.impl;
 
+import com.intellij.psi.PsiAnnotationMemberValue;
 import com.intellij.psi.PsiAnnotationMethod;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.load.java.structure.JavaMethod;
-import org.jetbrains.kotlin.load.java.structure.JavaType;
-import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter;
-import org.jetbrains.kotlin.load.java.structure.JavaValueParameter;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.load.java.structure.*;
 import org.jetbrains.kotlin.name.Name;
 
 import java.util.List;
@@ -54,6 +53,20 @@ public class JavaMethodImpl extends JavaMemberImpl<PsiMethod> implements JavaMet
     @NotNull
     public List<JavaValueParameter> getValueParameters() {
         return valueParameters(getPsi().getParameterList().getParameters());
+    }
+
+    @Override
+    @Nullable
+    public JavaAnnotationArgument getAnnotationParameterDefaultValue() {
+        PsiMethod psiMethod = getPsi();
+        if (psiMethod instanceof PsiAnnotationMethod) {
+            PsiAnnotationMemberValue defaultValue = ((PsiAnnotationMethod) psiMethod).getDefaultValue();
+            if (defaultValue != null) {
+                return JavaAnnotationArgumentImpl.Factory.create(defaultValue, null);
+            }
+        }
+
+        return null;
     }
 
     @Override

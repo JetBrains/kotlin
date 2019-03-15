@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.cli.jvm.repl
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
-import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.repl.*
@@ -28,8 +27,8 @@ import org.jetbrains.kotlin.codegen.CompilationErrorHandler
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyScriptDescriptor
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.ScriptDependenciesProvider
 import java.io.File
@@ -74,7 +73,7 @@ open class GenericReplCompiler(
                 Pair(compilerState.lastLineState!!.psiFile, compilerState.lastLineState!!.errorHolder)
             }
 
-            val newDependencies = ScriptDependenciesProvider.getInstance(checker.environment.project).getScriptDependencies(psiFile)
+            val newDependencies = ScriptDependenciesProvider.getInstance(checker.environment.project)?.getScriptDependencies(psiFile)
             var classpathAddendum: List<File>? = null
             if (compilerState.lastDependencies != newDependencies) {
                 compilerState.lastDependencies = newDependencies
@@ -89,7 +88,7 @@ open class GenericReplCompiler(
                 else -> error("Unexpected result ${analysisResult::class.java}")
             }
 
-            val type = (scriptDescriptor as LazyScriptDescriptor).resultValue?.returnType
+            val type = (scriptDescriptor as ScriptDescriptor).resultValue?.returnType
 
             val generationState = GenerationState.Builder(
                 psiFile.project,
@@ -125,8 +124,7 @@ open class GenericReplCompiler(
                 classpathAddendum ?: emptyList(),
                 generationState.replSpecific.resultType?.let {
                     DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(it)
-                },
-                type?.isFunctionType ?: false
+                }
             )
         }
     }

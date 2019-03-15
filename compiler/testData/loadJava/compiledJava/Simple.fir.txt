@@ -1,0 +1,4 @@
+public final class Simple : R|java/lang/Object| {
+    public final function Simple(): R|test/Simple|
+
+}

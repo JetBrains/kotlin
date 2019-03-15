@@ -53,12 +53,14 @@ class IrClassImpl(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        symbol: IrClassSymbol
+        symbol: IrClassSymbol,
+        modality: Modality = symbol.descriptor.modality
     ) :
             this(
                 startOffset, endOffset, origin, symbol,
                 symbol.descriptor.name, symbol.descriptor.kind,
-                symbol.descriptor.visibility, symbol.descriptor.modality,
+                symbol.descriptor.visibility,
+                modality = modality,
                 isCompanion = symbol.descriptor.isCompanionObject,
                 isInner = symbol.descriptor.isInner,
                 isData = symbol.descriptor.isData,
@@ -70,17 +72,19 @@ class IrClassImpl(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        descriptor: ClassDescriptor
+        descriptor: ClassDescriptor,
+        modality: Modality = descriptor.modality
     ) :
-            this(startOffset, endOffset, origin, IrClassSymbolImpl(descriptor))
+            this(startOffset, endOffset, origin, IrClassSymbolImpl(descriptor), modality)
 
     constructor(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
         descriptor: ClassDescriptor,
-        members: List<IrDeclaration>
-    ) : this(startOffset, endOffset, origin, descriptor) {
+        modality: Modality = descriptor.modality,
+        members: List<IrDeclaration> = emptyList()
+    ) : this(startOffset, endOffset, origin, descriptor, modality) {
         addAll(members)
     }
 
@@ -97,6 +101,8 @@ class IrClassImpl(
     override val typeParameters: MutableList<IrTypeParameter> = SmartList()
 
     override val superTypes: MutableList<IrType> = SmartList()
+
+    override var metadata: MetadataSource? = null
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitClass(this, data)

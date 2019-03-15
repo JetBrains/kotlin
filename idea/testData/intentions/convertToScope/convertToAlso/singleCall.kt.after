@@ -1,0 +1,11 @@
+// WITH_RUNTIME
+
+class C {
+    fun foo() {}
+}
+
+fun test() {
+    val c = C().also {
+        it.foo()
+    }
+}

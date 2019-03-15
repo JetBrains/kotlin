@@ -38,8 +38,12 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.project.SdkInfo
 import org.jetbrains.kotlin.idea.caches.project.getScriptRelatedModuleInfo
 import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
-import org.jetbrains.kotlin.script.*
-import org.jetbrains.kotlin.scripting.compiler.plugin.KotlinScriptDefinitionAdapterFromNewAPI
+import org.jetbrains.kotlin.script.KotlinScriptDefinition
+import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
+import org.jetbrains.kotlin.script.ScriptDefinitionProvider
+import org.jetbrains.kotlin.script.ScriptTemplatesProvider
+import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.KotlinScriptDefinitionAdapterFromNewAPI
+import org.jetbrains.kotlin.scripting.legacy.LazyScriptDefinitionProvider
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.flattenTo
@@ -58,7 +62,7 @@ import kotlin.script.experimental.host.configurationDependencies
 import kotlin.script.experimental.host.createCompilationConfigurationFromTemplate
 import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
-import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContextOrStlib
+import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContextOrStdlib
 import kotlin.script.templates.standard.ScriptTemplateWithArgs
 
 class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinitionProvider() {
@@ -70,6 +74,7 @@ class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinit
 
     override fun findScriptDefinition(fileName: String): KotlinScriptDefinition? {
         if (nonScriptFileName(fileName)) return null
+        if (!isReady()) return null
 
         val cached = synchronized(scriptDefinitionsCacheLock) { scriptDefinitionsCache.get(fileName) }
         if (cached != null) return cached
@@ -137,6 +142,12 @@ class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinit
         return definitions ?: kotlin.run {
             reloadScriptDefinitions()
             definitions!!
+        }
+    }
+
+    fun isReady(): Boolean {
+        return definitionsByContributor.keys.all { contributor ->
+            contributor.isReady()
         }
     }
 
@@ -267,6 +278,7 @@ interface ScriptDefinitionContributor {
     val id: String
 
     fun getDefinitions(): List<KotlinScriptDefinition>
+    fun isReady() = true
 
     companion object {
         val EP_NAME: ExtensionPointName<ScriptDefinitionContributor> =
@@ -304,7 +316,7 @@ class BundledKotlinScriptDependenciesResolver(private val project: Project) : De
             listOf(reflectPath, stdlibPath, scriptRuntimePath)
         }
         if (ScratchFileService.getInstance().getRootType(virtualFile) is IdeConsoleRootType) {
-            classpath = scriptCompilationClasspathFromContextOrStlib(wholeClasspath = true) + classpath
+            classpath = scriptCompilationClasspathFromContextOrStdlib(wholeClasspath = true) + classpath
         }
 
         return ScriptDependencies(javaHome = javaHome?.let(::File), classpath = classpath).asSuccess()

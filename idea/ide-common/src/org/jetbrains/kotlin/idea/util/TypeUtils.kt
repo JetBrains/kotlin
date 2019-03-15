@@ -18,7 +18,10 @@
 
 package org.jetbrains.kotlin.idea.util
 
+import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
+import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
+import org.jetbrains.kotlin.builtins.replaceReturnType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
@@ -33,16 +36,16 @@ import org.jetbrains.kotlin.types.typeUtil.*
 import org.jetbrains.kotlin.utils.SmartSet
 
 fun KotlinType.approximateFlexibleTypes(
-        preferNotNull: Boolean = false,
-        preferStarForRaw: Boolean = false
+    preferNotNull: Boolean = false,
+    preferStarForRaw: Boolean = false
 ): KotlinType {
     if (isDynamic()) return this
     return unwrapEnhancement().approximateNonDynamicFlexibleTypes(preferNotNull, preferStarForRaw)
 }
 
 private fun KotlinType.approximateNonDynamicFlexibleTypes(
-        preferNotNull: Boolean = false,
-        preferStarForRaw: Boolean = false
+    preferNotNull: Boolean = false,
+    preferStarForRaw: Boolean = false
 ): SimpleType {
     if (this is ErrorType) return this
 
@@ -55,10 +58,10 @@ private fun KotlinType.approximateNonDynamicFlexibleTypes(
         // Foo! -> Foo?
         // Foo<Bar!>! -> Foo<Bar>?
         var approximation =
-                if (isCollection)
-                    flexible.lowerBound.makeNullableAsSpecified(!preferNotNull)
-                else
-                    if (this is RawType && preferStarForRaw) flexible.upperBound.makeNullableAsSpecified(!preferNotNull)
+            if (isCollection)
+                flexible.lowerBound.makeNullableAsSpecified(!preferNotNull)
+            else
+                if (this is RawType && preferStarForRaw) flexible.upperBound.makeNullableAsSpecified(!preferNotNull)
                 else
                     if (preferNotNull) flexible.lowerBound else flexible.upperBound
 
@@ -66,7 +69,10 @@ private fun KotlinType.approximateNonDynamicFlexibleTypes(
 
         approximation = if (nullability() == TypeNullability.NOT_NULL) approximation.makeNullableAsSpecified(false) else approximation
 
-        if (approximation.isMarkedNullable && !flexible.lowerBound.isMarkedNullable && TypeUtils.isTypeParameter(approximation) && TypeUtils.hasNullableSuperType(approximation)) {
+        if (approximation.isMarkedNullable && !flexible.lowerBound.isMarkedNullable && TypeUtils.isTypeParameter(approximation) && TypeUtils.hasNullableSuperType(
+                approximation
+            )
+        ) {
             approximation = approximation.makeNullableAsSpecified(false)
         }
 
@@ -76,11 +82,12 @@ private fun KotlinType.approximateNonDynamicFlexibleTypes(
     (unwrap() as? AbbreviatedType)?.let {
         return AbbreviatedType(it.expandedType, it.abbreviation.approximateNonDynamicFlexibleTypes(preferNotNull))
     }
-    return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(annotations,
-                                                                 constructor,
-                                                                 arguments.map { it.substitute { type -> type.approximateFlexibleTypes(preferNotNull = true) } },
-                                                                 isMarkedNullable,
-                                                                 ErrorUtils.createErrorScope("This type is not supposed to be used in member resolution", true)
+    return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
+        annotations,
+        constructor,
+        arguments.map { it.substitute { type -> type.approximateFlexibleTypes(preferNotNull = true) } },
+        isMarkedNullable,
+        ErrorUtils.createErrorScope("This type is not supposed to be used in member resolution", true)
     )
 }
 
@@ -102,7 +109,7 @@ fun KotlinType.isResolvableInScope(scope: LexicalScope?, checkTypeParameters: Bo
 fun KotlinType.approximateWithResolvableType(scope: LexicalScope?, checkTypeParameters: Boolean): KotlinType {
     if (isError || isResolvableInScope(scope, checkTypeParameters)) return this
     return supertypes().firstOrNull { it.isResolvableInScope(scope, checkTypeParameters) }
-           ?: builtIns.anyType
+        ?: builtIns.anyType
 }
 
 fun KotlinType.anonymousObjectSuperTypeOrNull(): KotlinType? {
@@ -114,34 +121,74 @@ fun KotlinType.anonymousObjectSuperTypeOrNull(): KotlinType? {
 }
 
 fun KotlinType.getResolvableApproximations(
-        scope: LexicalScope?,
-        checkTypeParameters: Boolean,
-        allowIntersections: Boolean = false
+    scope: LexicalScope?,
+    checkTypeParameters: Boolean,
+    allowIntersections: Boolean = false
 ): Sequence<KotlinType> {
     return (listOf(this) + TypeUtils.getAllSupertypes(this))
-            .asSequence()
-            .filter { it.isResolvableInScope(scope, checkTypeParameters, allowIntersections) }
-            .mapNotNull mapArgs@ {
-                val resolvableArgs = it.arguments.filterTo(SmartSet.create()) { it.type.isResolvableInScope(scope, checkTypeParameters) }
-                if (resolvableArgs.containsAll(it.arguments)) return@mapArgs it
+        .asSequence()
+        .mapNotNull {
+            it.asTypeProjection()
+                .fixTypeProjection(scope, checkTypeParameters, allowIntersections, isOutVariance = true)
+                ?.type
+        }
+}
 
-                val newArguments = (it.arguments zip it.constructor.parameters).map {
-                    val (arg, param) = it
-                    when {
-                        arg in resolvableArgs -> arg
+private fun TypeProjection.fixTypeProjection(
+    scope: LexicalScope?,
+    checkTypeParameters: Boolean,
+    allowIntersections: Boolean,
+    isOutVariance: Boolean
+): TypeProjection? {
+    if (!type.isResolvableInScope(scope, checkTypeParameters, allowIntersections)) return null
+    if (type.arguments.isEmpty()) return this
 
-                        arg.projectionKind == Variance.OUT_VARIANCE ||
-                        param.variance == Variance.OUT_VARIANCE -> TypeProjectionImpl(
-                                arg.projectionKind,
-                                arg.type.approximateWithResolvableType(scope, checkTypeParameters)
-                        )
+    val resolvableArgs = type.arguments.filterTo(SmartSet.create()) { typeProjection ->
+        typeProjection.type.isResolvableInScope(scope, checkTypeParameters, allowIntersections)
+    }
 
-                        else -> return@mapArgs null
-                    }
+    if (resolvableArgs.containsAll(type.arguments)) {
+        fun fixArguments(type: KotlinType): KotlinType? = type.replace(
+            (type.arguments zip type.constructor.parameters).map { (arg, param) ->
+                if (arg.isStarProjection) arg
+                else arg.fixTypeProjection(
+                    scope,
+                    checkTypeParameters,
+                    allowIntersections,
+                    isOutVariance = isOutVariance && param.variance == Variance.OUT_VARIANCE
+                ) ?: when {
+                    !isOutVariance -> return null
+                    param.variance == Variance.OUT_VARIANCE -> arg.type.approximateWithResolvableType(
+                        scope,
+                        checkTypeParameters
+                    ).asTypeProjection()
+                    else -> type.replaceArgumentsWithStarProjections().arguments.first()
                 }
+            })
 
-                it.replace(newArguments)
-            }
+        return if (type.isBuiltinFunctionalType) {
+            val returnType = type.getReturnTypeFromFunctionType()
+            type.replaceReturnType(fixArguments(returnType) ?: return null).asTypeProjection()
+        } else fixArguments(type)?.asTypeProjection()
+    }
+
+    if (!isOutVariance) return null
+
+    val newArguments = (type.arguments zip type.constructor.parameters).map { (arg, param) ->
+        when {
+            arg in resolvableArgs -> arg
+
+            arg.projectionKind == Variance.OUT_VARIANCE ||
+                    param.variance == Variance.OUT_VARIANCE -> TypeProjectionImpl(
+                arg.projectionKind,
+                arg.type.approximateWithResolvableType(scope, checkTypeParameters)
+            )
+
+            else -> return if (isOutVariance) type.replaceArgumentsWithStarProjections().asTypeProjection() else null
+        }
+    }
+
+    return type.replace(newArguments).asTypeProjection()
 }
 
 fun KotlinType.isAbstract(): Boolean {

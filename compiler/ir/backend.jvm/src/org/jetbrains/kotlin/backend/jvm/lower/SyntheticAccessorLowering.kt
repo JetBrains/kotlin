@@ -5,39 +5,45 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
-import org.jetbrains.kotlin.backend.common.*
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedClassConstructorDescriptor
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedValueParameterDescriptor
-import org.jetbrains.kotlin.backend.common.ir.*
+import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
+import org.jetbrains.kotlin.backend.common.IrElementVisitorVoidWithContext
+import org.jetbrains.kotlin.backend.common.ScopeWithIr
+import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
+import org.jetbrains.kotlin.backend.common.ir.copyValueParametersToStatic
+import org.jetbrains.kotlin.backend.common.ir.remapTypeParameters
+import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.intrinsics.receiverAndArgs
 import org.jetbrains.kotlin.codegen.OwnerKind
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
+import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
+import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
-import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 
-class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElementTransformerVoidWithContext(), FileLoweringPass {
+internal val syntheticAccessorPhase = makeIrFilePhase(
+    ::SyntheticAccessorLowering,
+    name = "SyntheticAccessor",
+    description = "Introduce synthetic accessors",
+    prerequisite = setOf(objectClassPhase)
+)
+
+private class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElementTransformerVoidWithContext(), FileLoweringPass {
     private val pendingTransformations = mutableListOf<Function0<Unit>>()
     private val inlinedLambdasCollector = InlinedLambdasCollector()
 
@@ -74,14 +80,13 @@ class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElementTrans
         accumMap: MutableMap<FromSyT, ToSyT>,
         symbolConverter: (FromSyT) -> ToSyT,
         exprConverter: (ExprT, ToSyT) -> IrDeclarationReference
-    ): IrExpression {
+    ): IrExpression =
         if (!symbol.isAccessible()) {
-            val accessorSymbol = accumMap.getOrPut(symbol, { symbolConverter(symbol) })
-            return exprConverter(expression, accessorSymbol)
+            val accessorSymbol = accumMap.getOrPut(symbol) { symbolConverter(symbol) }
+            exprConverter(expression, accessorSymbol)
         } else {
-            return expression
+            expression
         }
-    }
 
     private fun makeFunctionAccessorSymbol(functionSymbol: IrFunctionSymbol): IrFunctionSymbol = when (functionSymbol) {
         is IrConstructorSymbol -> functionSymbol.owner.makeConstructorAccessor().symbol
@@ -91,19 +96,13 @@ class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElementTrans
 
     private fun IrConstructor.makeConstructorAccessor(): IrConstructor {
         val source = this
-        val accessorDescriptor = WrappedClassConstructorDescriptor()
-        return IrConstructorImpl(
-            UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-            JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR,
-            IrConstructorSymbolImpl(accessorDescriptor),
-            name,
-            Visibilities.PUBLIC,
-            IrUninitializedType,
-            isInline = false,
-            isExternal = false,
-            isPrimary = false
-        ).also { accessor ->
-            accessorDescriptor.bind(accessor)
+
+        return buildConstructor {
+            origin = JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
+            name = source.name
+            visibility = Visibilities.PUBLIC
+
+        }.also { accessor ->
             accessor.parent = source.parent
             pendingTransformations.add { (accessor.parent as IrDeclarationContainer).declarations.add(accessor) }
 
@@ -111,22 +110,11 @@ class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElementTrans
             accessor.copyValueParametersToStatic(source, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR)
             accessor.returnType = source.returnType.remapTypeParameters(source, accessor)
 
-            val markerParameterDescriptor = WrappedValueParameterDescriptor()
-            val markerParameter = IrValueParameterImpl(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR,
-                IrValueParameterSymbolImpl(markerParameterDescriptor),
+            accessor.addValueParameter(
                 Name.identifier("marker"),
-                index = accessor.valueParameters.size,
-                type = context.ir.symbols.defaultConstructorMarker.owner.defaultType,
-                varargElementType = null,
-                isCrossinline = false,
-                isNoinline = false
-            ).apply {
-                markerParameterDescriptor.bind(this)
-                parent = accessor
-            }
-            accessor.valueParameters.add(markerParameter)
+                context.ir.symbols.defaultConstructorMarker.owner.defaultType,
+                JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
+            )
 
             accessor.body = IrExpressionBodyImpl(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET,
@@ -146,21 +134,12 @@ class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElementTrans
 
     private fun IrSimpleFunction.makeSimpleFunctionAccessor(): IrSimpleFunction {
         val source = this
-        val accessorDescriptor = WrappedSimpleFunctionDescriptor()
-        return IrFunctionImpl(
-            UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-            JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR,
-            IrSimpleFunctionSymbolImpl(accessorDescriptor),
-            source.descriptor.accessorName(),
-            Visibilities.PUBLIC,
-            Modality.FINAL,
-            IrUninitializedType,
-            isInline = false,
-            isExternal = false,
-            isTailrec = false,
+        return buildFun {
+            origin = JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
+            name = source.accessorName()
+            visibility = Visibilities.PUBLIC
             isSuspend = source.isSuspend
-        ).also { accessor ->
-            accessorDescriptor.bind(accessor)
+        }.also { accessor ->
             accessor.parent = source.parent
             pendingTransformations.add { (accessor.parent as IrDeclarationContainer).declarations.add(accessor) }
 
@@ -185,48 +164,27 @@ class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElementTrans
             copyAllParamsToArgs(it, accessor)
         }
 
-    private fun makeGetterAccessorSymbol(fieldSymbol: IrFieldSymbol): IrSimpleFunctionSymbol {
-        val accessorDescriptor = WrappedSimpleFunctionDescriptor()
-        return IrFunctionImpl(
-            UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-            JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR,
-            IrSimpleFunctionSymbolImpl(accessorDescriptor),
-            fieldSymbol.descriptor.accessorNameForGetter(),
-            Visibilities.PUBLIC,
-            Modality.FINAL,
-            fieldSymbol.owner.type,
-            isInline = false,
-            isExternal = false,
-            isTailrec = false,
-            isSuspend = false
-        ).also { accessor ->
-            accessorDescriptor.bind(accessor)
+    private fun makeGetterAccessorSymbol(fieldSymbol: IrFieldSymbol): IrSimpleFunctionSymbol =
+        buildFun {
+            origin = JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
+            name = fieldSymbol.owner.accessorNameForGetter()
+            visibility = Visibilities.PUBLIC
+            modality = Modality.FINAL
+            returnType = fieldSymbol.owner.type
+        }.also { accessor ->
             accessor.parent = fieldSymbol.owner.parent
             pendingTransformations.add { (accessor.parent as IrDeclarationContainer).declarations.add(accessor) }
 
             if (!fieldSymbol.owner.isStatic) {
-                val receiverDescriptor = WrappedValueParameterDescriptor()
-                accessor.valueParameters.add(
-                    IrValueParameterImpl(
-                        UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                        JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR,
-                        IrValueParameterSymbolImpl(receiverDescriptor),
-                        Name.identifier("\$this"),
-                        index = 0,
-                        type = (fieldSymbol.owner.parent as IrClass).defaultType,
-                        varargElementType = null,
-                        isCrossinline = false,
-                        isNoinline = false
-                    ).apply {
-                        receiverDescriptor.bind(this)
-                        parent = accessor
-                    }
+                accessor.addValueParameter(
+                    Name.identifier("\$this"),
+                    (fieldSymbol.owner.parent as IrClass).defaultType,
+                    JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
                 )
             }
 
             accessor.body = createAccessorBodyForGetter(fieldSymbol.owner, accessor)
         }.symbol
-    }
 
     private fun createAccessorBodyForGetter(targetField: IrField, accessor: IrSimpleFunction): IrBody {
         val resolvedTargetField = targetField.resolveFakeOverride()!!
@@ -244,65 +202,29 @@ class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElementTrans
         )
     }
 
-    private fun makeSetterAccessorSymbol(fieldSymbol: IrFieldSymbol): IrSimpleFunctionSymbol {
-        val accessorDescriptor = WrappedSimpleFunctionDescriptor()
-        return IrFunctionImpl(
-            UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-            JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR,
-            IrSimpleFunctionSymbolImpl(accessorDescriptor),
-            fieldSymbol.descriptor.accessorNameForSetter(),
-            Visibilities.PUBLIC,
-            Modality.FINAL,
-            returnType = context.irBuiltIns.unitType,
-            isInline = false,
-            isExternal = false,
-            isTailrec = false,
-            isSuspend = false
-        ).also { accessor ->
-            accessorDescriptor.bind(accessor)
+    private fun makeSetterAccessorSymbol(fieldSymbol: IrFieldSymbol): IrSimpleFunctionSymbol =
+        buildFun {
+            origin = JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
+            name = fieldSymbol.owner.accessorNameForSetter()
+            visibility = Visibilities.PUBLIC
+            modality = Modality.FINAL
+            returnType = context.irBuiltIns.unitType
+        }.also { accessor ->
             accessor.parent = fieldSymbol.owner.parent
             pendingTransformations.add { (accessor.parent as IrDeclarationContainer).declarations.add(accessor) }
 
             if (!fieldSymbol.owner.isStatic) {
-                val receiverDescriptor = WrappedValueParameterDescriptor()
-                accessor.valueParameters.add(
-                    IrValueParameterImpl(
-                        UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                        JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR,
-                        IrValueParameterSymbolImpl(receiverDescriptor),
-                        Name.identifier("\$this"),
-                        index = 0,
-                        type = (fieldSymbol.owner.parent as IrClass).defaultType,
-                        varargElementType = null,
-                        isCrossinline = false,
-                        isNoinline = false
-                    ).apply {
-                        receiverDescriptor.bind(this)
-                        parent = accessor
-                    }
+                accessor.addValueParameter(
+                    Name.identifier("\$this"),
+                    (fieldSymbol.owner.parent as IrClass).defaultType,
+                    JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
                 )
             }
-            val valueDescriptor = WrappedValueParameterDescriptor()
-            accessor.valueParameters.add(
-                IrValueParameterImpl(
-                    UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                    JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR,
-                    IrValueParameterSymbolImpl(valueDescriptor),
-                    Name.identifier("value"),
-                    index = if (fieldSymbol.owner.isStatic) 0 else 1,
-                    type = fieldSymbol.owner.type,
-                    varargElementType = null,
-                    isCrossinline = false,
-                    isNoinline = false
-                ).apply {
-                    valueDescriptor.bind(this)
-                    parent = accessor
-                }
-            )
+
+            accessor.addValueParameter(Name.identifier("value"), fieldSymbol.owner.type, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR)
 
             accessor.body = createAccessorBodyForSetter(fieldSymbol.owner, accessor)
         }.symbol
-    }
 
     private fun createAccessorBodyForSetter(targetField: IrField, accessor: IrSimpleFunction): IrBody {
         val resolvedTargetField = targetField.resolveFakeOverride()!!
@@ -410,12 +332,12 @@ class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElementTrans
         }
         delegateTo.dispatchReceiverParameter?.let {
             call.dispatchReceiver =
-                    IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, syntheticFunction.valueParameters[offset++].symbol)
+                IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, syntheticFunction.valueParameters[offset++].symbol)
         }
 
         delegateTo.extensionReceiverParameter?.let {
             call.extensionReceiver =
-                    IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, syntheticFunction.valueParameters[offset++].symbol)
+                IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, syntheticFunction.valueParameters[offset++].symbol)
         }
 
         delegateTo.valueParameters.forEachIndexed { i, _ ->
@@ -430,21 +352,20 @@ class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElementTrans
         }
     }
 
-    // !!!!!! Should I use syntheticAccesssorUtils here ???
-    private fun FunctionDescriptor.accessorName(): Name {
-        val jvmName = DescriptorUtils.getJvmName(this) ?: context.state.typeMapper.mapFunctionName(
-            this,
-            OwnerKind.getMemberOwnerKind(containingDeclaration)
+    private fun IrFunction.accessorName(): Name {
+        val jvmName = context.state.typeMapper.mapFunctionName(
+            descriptor,
+            OwnerKind.getMemberOwnerKind(parentAsClass.descriptor)
         )
         return Name.identifier("access\$$jvmName")
     }
 
-    private fun PropertyDescriptor.accessorNameForGetter(): Name {
+    private fun IrField.accessorNameForGetter(): Name {
         val getterName = JvmAbi.getterName(name.asString())
         return Name.identifier("access\$prop\$$getterName")
     }
 
-    private fun PropertyDescriptor.accessorNameForSetter(): Name {
+    private fun IrField.accessorNameForSetter(): Name {
         val setterName = JvmAbi.setterName(name.asString())
         return Name.identifier("access\$prop\$$setterName")
     }
@@ -464,9 +385,8 @@ class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElementTrans
         // The only two visibilities where Kotlin rules differ from JVM rules.
         if (!Visibilities.isPrivate(declaration.visibility) && declaration.visibility != Visibilities.PROTECTED) return true
 
-        val symbolDeclarationContainer = (declaration.parent as? IrDeclarationContainer) as? IrElement
         // If local variables are accessible by Kotlin rules, they also are by Java rules.
-        if (symbolDeclarationContainer == null) return true
+        val symbolDeclarationContainer = (declaration.parent as? IrDeclarationContainer) as? IrElement ?: return true
 
         // Within inline functions, we have to assume the worst.
         if (inlinedLambdasCollector.isInlineNonpublicContext(allScopes))
@@ -489,8 +409,8 @@ private class InlinedLambdasCollector : IrElementVisitorVoidWithContext() {
     private val inlinedLambdasInNonPublicContexts = mutableSetOf<IrFunction>()
 
     fun isInlineNonpublicContext(scopeStack: List<ScopeWithIr>): Boolean {
-        val currentFunction = scopeStack.map { it.irElement }. lastOrNull { it is IrFunction } as? IrFunction ?: return false
-        return (currentFunction.isInline == true && currentFunction.visibility in setOf(Visibilities.PRIVATE, Visibilities.PROTECTED))
+        val currentFunction = scopeStack.map { it.irElement }.lastOrNull { it is IrFunction } as? IrFunction ?: return false
+        return (currentFunction.isInline && currentFunction.visibility in setOf(Visibilities.PRIVATE, Visibilities.PROTECTED))
                 || currentFunction in inlinedLambdasInNonPublicContexts
     }
 
@@ -505,7 +425,8 @@ private class InlinedLambdasCollector : IrElementVisitorVoidWithContext() {
                 val argument = expression.getValueArgument(i)?.removeBlocks()
                 if (argument is IrFunctionReference &&
                     argument.symbol.owner.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA &&
-                    !callTarget.valueParameters[i].isNoinline) {
+                    !callTarget.valueParameters[i].isNoinline
+                ) {
                     inlinedLambdasInNonPublicContexts.add(argument.symbol.owner)
                 }
             }

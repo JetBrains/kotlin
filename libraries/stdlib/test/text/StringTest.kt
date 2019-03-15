@@ -53,11 +53,21 @@ class StringTest {
     @Test fun stringFromCharArraySlice() {
         val chars: CharArray = charArrayOf('K', 'o', 't', 'l', 'i', 'n', ' ', 'r', 'u', 'l', 'e', 's')
         assertEquals("rule", String(chars, 7, 4))
+
+        val longChars = CharArray(200_000) { 'k' }
+        val longString = String(longChars, 1000, 190_000)
+        assertEquals(190_000, longString.length)
+        assertTrue(longString.all { it == 'k' })
     }
 
     @Test fun stringFromCharArray() {
         val chars: CharArray = charArrayOf('K', 'o', 't', 'l', 'i', 'n')
         assertEquals("Kotlin", String(chars))
+
+        val longChars = CharArray(200_000) { 'k' }
+        val longString = String(longChars)
+        assertEquals(200_000, longString.length)
+        assertTrue(longString.all { it == 'k' })
     }
 
     @Test fun stringFromCharArrayUnicodeSurrogatePairs() {
@@ -65,6 +75,16 @@ class StringTest {
         assertEquals("Ц月語Ŭᎍ🀺", String(chars))
         assertEquals("月", String(chars, 1, 1))
         assertEquals("Ŭᎍ🀺", String(chars, 3, 4))
+    }
+
+    @Test fun stringFromCharArrayOutOfBounds() {
+        fun test(chars: CharArray) {
+            assertFailsWith<IndexOutOfBoundsException> { String(chars, -1, 1) }
+            assertFailsWith<IndexOutOfBoundsException> { String(chars, 1, -1) }
+            assertFailsWith<IndexOutOfBoundsException> { String(chars, chars.size - 1, 2) }
+        }
+        test(CharArray(16) { 'k' })
+        test(CharArray(160_000) { 'k' })
     }
 
     @Test fun isEmptyAndBlank() = withOneCharSequenceArg { arg1 ->
@@ -1439,5 +1459,15 @@ ${"    "}
         assertEquals("  ABC\n  \n  123", "ABC\n \n123".prependIndent("  "))
         assertEquals("  ABC\n   \n  123", "ABC\n   \n123".prependIndent("  "))
         assertEquals("  ", "".prependIndent("  "))
+    }
+
+    @Test
+    fun elementAt() {
+        expect('a') { "a c".elementAt(0) }
+        expect(' ') { "a c".elementAt(1) }
+        expect('c') { "a c".elementAt(2) }
+
+        assertFailsWith<IndexOutOfBoundsException> { "".elementAt(0) }
+        assertFailsWith<IndexOutOfBoundsException> { "a c".elementAt(-1) }
     }
 }

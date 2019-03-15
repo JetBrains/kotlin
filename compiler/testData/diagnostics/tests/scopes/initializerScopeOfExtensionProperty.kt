@@ -2,7 +2,7 @@
 
 package i
 
-val <T> List<T>.length = <!UNRESOLVED_REFERENCE, EXTENSION_PROPERTY_WITH_BACKING_FIELD!>size<!>
+val <T> List<T>.length = <!EXTENSION_PROPERTY_WITH_BACKING_FIELD, UNRESOLVED_REFERENCE!>size<!>
 
 val <T> List<T>.length1 : Int get() = size
 
@@ -15,7 +15,7 @@ class A {
     val ii : Int = 1
 }
 
-val A.foo = <!UNRESOLVED_REFERENCE, EXTENSION_PROPERTY_WITH_BACKING_FIELD!>ii<!>
+val A.foo = <!EXTENSION_PROPERTY_WITH_BACKING_FIELD, UNRESOLVED_REFERENCE!>ii<!>
 
 val A.foo1 : Int get() = ii
 

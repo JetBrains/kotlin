@@ -22,16 +22,20 @@ abstract class AbstractParsingTestSpec : AbstractParsingTest() {
 
         println(specTest)
 
-        TestExceptionsComparator(file).runAndCompareWithExpected({ Pair(specTest.unexpectedBehavior, null) }) {
+        if (specTest.exception == null) {
             super.doParsingTest(filePath, CommonParser::testInfoFilter)
-
-            try {
-                val psiTestValidator = ParsingTestTypeValidator(myFile, File(filePath), specTest)
-                psiTestValidator.validatePathConsistency(testLinkedType)
-                psiTestValidator.validateTestType()
-            } catch (e: SpecTestValidationException) {
-                Assert.fail(e.description)
+        } else {
+            TestExceptionsComparator(file).run(specTest.exception) {
+                super.doParsingTest(filePath, CommonParser::testInfoFilter)
             }
+        }
+
+        try {
+            val psiTestValidator = ParsingTestTypeValidator(myFile, File(filePath), specTest)
+            psiTestValidator.validatePathConsistency(testLinkedType)
+            psiTestValidator.validateTestType()
+        } catch (e: SpecTestValidationException) {
+            Assert.fail(e.description)
         }
     }
 }

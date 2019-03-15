@@ -16,34 +16,36 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.backend.js
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.declaration.DeclarationBodyVisitor
 import org.jetbrains.kotlin.js.translate.general.Translation
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtPureClassOrObject
+import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
+import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializableCodegen
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.anonymousInitializers
-import org.jetbrains.kotlinx.serialization.compiler.backend.common.bodyPropertiesDescriptorsMap
-import org.jetbrains.kotlinx.serialization.compiler.backend.common.primaryPropertiesDescriptorsMap
+import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.MISSING_FIELD_EXC
-import org.jetbrains.kotlinx.serialization.compiler.resolve.getClassFromSerializationPackage
-import org.jetbrains.kotlinx.serialization.compiler.resolve.isInternalSerializable
 
 class SerializableJsTranslator(
     val declaration: KtPureClassOrObject,
     val descriptor: ClassDescriptor,
-    val translator: DeclarationBodyVisitor,
     val context: TranslationContext
 ) : SerializableCodegen(descriptor, context.bindingContext()) {
 
-    private val initMap: Map<PropertyDescriptor, KtExpression?> = context.buildInitializersRemapping(declaration)
+    private val initMap: Map<PropertyDescriptor, KtExpression?> = context.buildInitializersRemapping(declaration, descriptor.getSuperClassNotAny())
 
     override fun generateInternalConstructor(constructorDescriptor: ClassConstructorDescriptor) {
 
@@ -55,15 +57,39 @@ class SerializableJsTranslator(
             @Suppress("NAME_SHADOWING")
             val context = context.innerContextWithAliased(serializableDescriptor.thisAsReceiverParameter, thiz)
 
+            // use serializationConstructorMarker for passing "this" from inheritors to base class
+            val markerAsThis = jsFun.parameters.last().name.makeRef()
+
             +JsVars(
                 JsVars.JsVar(
                     thiz.name,
-                    Namer.createObjectWithPrototypeFrom(context.getInnerNameForDescriptor(serializableDescriptor).makeRef())
+                    JsAstUtils.or(
+                        markerAsThis,
+                        Namer.createObjectWithPrototypeFrom(context.getInnerNameForDescriptor(serializableDescriptor).makeRef())
+                    )
                 )
             )
-            val seenVar = jsFun.parameters[0].name.makeRef()
-            for ((index, prop) in properties.serializableProperties.withIndex()) {
-                val paramRef = jsFun.parameters[index + 1].name.makeRef()
+            val serializableProperties = properties.serializableProperties
+            val seenVarsOffset = serializableProperties.bitMaskSlotCount()
+            val seenVars = (0 until seenVarsOffset).map { jsFun.parameters[it].name.makeRef() }
+            val superClass = serializableDescriptor.getSuperClassOrAny()
+            var startPropOffset: Int = 0
+            when {
+                KotlinBuiltIns.isAny(superClass) -> { /* no=op */ }
+                superClass.isInternalSerializable -> {
+                    startPropOffset = generateSuperSerializableCall(
+                        superClass,
+                        jsFun.parameters.map { it.name.makeRef() },
+                        thiz,
+                        seenVarsOffset
+                    )
+                }
+                else -> generateSuperNonSerializableCall(superClass, thiz)
+            }
+
+            for (index in startPropOffset until serializableProperties.size) {
+                val prop = serializableProperties[index]
+                val paramRef = jsFun.parameters[index + seenVarsOffset].name.makeRef()
                 // assign this.a = a in else branch
                 val assignParamStmt = TranslationUtils.assignmentToBackingField(context, prop.descriptor, paramRef).makeStmt()
 
@@ -75,12 +101,12 @@ class SerializableJsTranslator(
                     JsThrow(JsNew(missingExceptionClassRef, listOf(JsStringLiteral(prop.name))))
                 }
                 // (seen & 1 << i == 0) -- not seen
-                val notSeenTest = propNotSeenTest(seenVar, index)
+                val notSeenTest = propNotSeenTest(seenVars[bitMaskSlotAt(index)], index)
                 +JsIf(notSeenTest, ifNotSeenStmt, assignParamStmt)
             }
 
             //transient initializers and init blocks
-            val serialDescs = properties.serializableProperties.map { it.descriptor }
+            val serialDescs = serializableProperties.map { it.descriptor }
             (initMap - serialDescs).forEach { (desc, expr) ->
                 val e = requireNotNull(expr) { "transient without an initializer" }
                 val initExpr = Translation.translateAsExpression(e, context)
@@ -97,6 +123,33 @@ class SerializableJsTranslator(
         context.addDeclarationStatement(f.makeStmt())
     }
 
+    private fun JsBlockBuilder.generateSuperNonSerializableCall(superClass: ClassDescriptor, thisParameter: JsExpression) {
+        val suitableCtor = superClass.constructors.singleOrNull { it.valueParameters.size == 0 }
+            ?: throw IllegalArgumentException("Non-serializable parent of serializable $serializableDescriptor must have no arg constructor")
+        if (suitableCtor.isPrimary) {
+            +JsInvocation(Namer.getFunctionCallRef(context.getInnerReference(superClass)), thisParameter).makeStmt()
+        } else {
+            +JsAstUtils.assignment(thisParameter, JsInvocation(context.getInnerReference(suitableCtor), thisParameter)).makeStmt()
+        }
+    }
+
+    private fun JsBlockBuilder.generateSuperSerializableCall(
+        superClass: ClassDescriptor,
+        parameters: List<JsExpression>,
+        thisParameter: JsExpression,
+        propertiesStart: Int
+    ): Int {
+        val constrDesc = KSerializerDescriptorResolver.createLoadConstructorDescriptor(superClass, context.bindingContext())
+        val constrRef = context.getInnerNameForDescriptor(constrDesc).makeRef()
+        val superProperties = SerializableProperties(superClass, bindingContext).serializableProperties
+        val superSlots = superProperties.bitMaskSlotCount()
+        val arguments = parameters.subList(0, superSlots) +
+                parameters.subList(propertiesStart, propertiesStart + superProperties.size) +
+                thisParameter // SerializationConstructorMarker
+        +JsAstUtils.assignment(thisParameter, JsInvocation(constrRef, arguments)).makeStmt()
+        return superProperties.size
+    }
+
     override fun generateWriteSelfMethod(methodDescriptor: FunctionDescriptor) {
         // no-op yet
     }
@@ -104,12 +157,18 @@ class SerializableJsTranslator(
     companion object {
         fun translate(
             declaration: KtPureClassOrObject,
-            descriptor: ClassDescriptor,
+            serializableClass: ClassDescriptor,
             translator: DeclarationBodyVisitor,
             context: TranslationContext
         ) {
-            if (descriptor.isInternalSerializable)
-                SerializableJsTranslator(declaration, descriptor, translator, context).generate()
+            if (serializableClass.isInternalSerializable)
+                SerializableJsTranslator(declaration, serializableClass, context).generate()
+            else if (serializableClass.hasSerializableAnnotationWithoutArgs && !serializableClass.hasCompanionObjectAsSerializer) {
+                throw CompilationException(
+                    "@Serializable annotation on $serializableClass would be ignored because it is impossible to serialize it automatically. " +
+                            "Provide serializer manually via e.g. companion object", null, serializableClass.findPsi()
+                )
+            }
         }
     }
 }

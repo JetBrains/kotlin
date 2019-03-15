@@ -22,7 +22,7 @@ import java.io.File
 abstract class AbstractLightAnalysisModeTest : CodegenTestCase() {
     private companion object {
         var TEST_LIGHT_ANALYSIS: ClassBuilderFactory = object : ClassBuilderFactories.TestClassBuilderFactory() {
-            override fun getClassBuilderMode() = ClassBuilderMode.LIGHT_ANALYSIS_FOR_TESTS
+            override fun getClassBuilderMode() = ClassBuilderMode.getLightAnalysisForTests()
         }
     }
 
@@ -61,7 +61,7 @@ abstract class AbstractLightAnalysisModeTest : CodegenTestCase() {
         val testFiles = loadMultiFiles(files, environment.project)
         val classFileFactory = GenerationUtils.compileFiles(testFiles.psiFiles, environment, TEST_LIGHT_ANALYSIS).factory
 
-        return BytecodeListingTextCollectingVisitor.getText(classFileFactory, ListAnalysisFilter(), replaceHash = false)
+        return BytecodeListingTextCollectingVisitor.getText(classFileFactory, ListAnalysisFilter())
     }
 
     protected fun compileWithFullAnalysis(
@@ -94,7 +94,7 @@ abstract class AbstractLightAnalysisModeTest : CodegenTestCase() {
             private fun shouldFilterClass(descriptor: ClassDescriptor): Boolean {
                 return descriptor.visibility == Visibilities.LOCAL || descriptor is SyntheticClassDescriptorForLambda
             }
-        }, replaceHash = false)
+        })
     }
 
     private open class ListAnalysisFilter : BytecodeListingTextCollectingVisitor.Filter {

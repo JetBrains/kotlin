@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.codegen.binding;
 
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -55,7 +57,7 @@ public class CodegenBinding {
     public static final WritableSlice<FunctionDescriptor, FunctionDescriptor> SUSPEND_FUNCTION_TO_JVM_VIEW =
             Slices.createSimpleSlice();
 
-    public static final WritableSlice<FunctionDescriptor, Boolean> CAPTURES_CROSSINLINE_SUSPEND_LAMBDA =
+    public static final WritableSlice<FunctionDescriptor, Boolean> CAPTURES_CROSSINLINE_LAMBDA =
             Slices.createSimpleSlice();
 
     public static final WritableSlice<ClassDescriptor, Boolean> RECURSIVE_SUSPEND_CALLABLE_REFERENCE =
@@ -90,6 +92,15 @@ public class CodegenBinding {
         CodegenAnnotatingVisitor visitor = new CodegenAnnotatingVisitor(state);
         for (KtFile file : allFilesInPackages(state.getBindingContext(), state.getFiles())) {
             file.accept(visitor);
+            if (file instanceof KtCodeFragment) {
+                PsiElement context = file.getContext();
+                if (context != null) {
+                    PsiFile contextFile = context.getContainingFile();
+                    if (contextFile != null) {
+                        contextFile.accept(visitor);
+                    }
+                }
+            }
         }
     }
 

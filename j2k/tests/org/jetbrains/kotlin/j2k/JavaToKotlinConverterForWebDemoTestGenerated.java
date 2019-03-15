@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -3792,6 +3792,11 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
         @TestMetadata("IfToSafeCall.java")
         public void testIfToSafeCall() throws Exception {
             runTest("j2k/testData/fileOrElement/postProcessing/IfToSafeCall.java");
+        }
+
+        @TestMetadata("java8MapForEachWithFullJdk.java")
+        public void testJava8MapForEachWithFullJdk() throws Exception {
+            runTest("j2k/testData/fileOrElement/postProcessing/java8MapForEachWithFullJdk.java");
         }
 
         @TestMetadata("NotIs.java")

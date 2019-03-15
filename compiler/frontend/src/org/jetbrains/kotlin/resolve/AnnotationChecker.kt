@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget.*
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.diagnostics.reportDiagnosticOnce
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getAnnotationEntries
@@ -36,6 +38,12 @@ class AnnotationChecker(
     fun check(annotated: KtAnnotated, trace: BindingTrace, descriptor: DeclarationDescriptor? = null) {
         val actualTargets = getActualTargetList(annotated, descriptor, trace.bindingContext)
         checkEntries(annotated.annotationEntries, actualTargets, trace, annotated)
+        if (annotated is KtProperty) {
+            checkPropertyUseSiteTargetAnnotations(annotated, trace)
+        }
+        if (annotated is KtClass) {
+            checkSuperTypeAnnotations(annotated, trace)
+        }
         if (annotated is KtCallableDeclaration) {
             annotated.typeReference?.let { check(it, trace) }
             annotated.receiverTypeReference?.let { check(it, trace) }
@@ -68,6 +76,50 @@ class AnnotationChecker(
         if (expression is KtLambdaExpression) {
             for (parameter in expression.valueParameters) {
                 parameter.typeReference?.let { check(it, trace) }
+            }
+        }
+    }
+
+    private fun checkPropertyUseSiteTargetAnnotations(property: KtProperty, trace: BindingTrace) {
+        fun List<KtAnnotationEntry>?.getDescriptors() = this?.mapNotNull { trace.get(BindingContext.ANNOTATION, it)?.annotationClass } ?: listOf()
+
+        val reportError = languageVersionSettings.supportsFeature(LanguageFeature.ProhibitRepeatedUseSiteTargetAnnotations)
+
+        val propertyAnnotations = mapOf(
+            AnnotationUseSiteTarget.PROPERTY_GETTER to property.getter?.annotationEntries.getDescriptors(),
+            AnnotationUseSiteTarget.PROPERTY_SETTER to property.setter?.annotationEntries.getDescriptors(),
+            AnnotationUseSiteTarget.SETTER_PARAMETER to property.setter?.parameter?.annotationEntries.getDescriptors()
+        )
+
+        for (entry in property.annotationEntries) {
+            val descriptor = trace.get(BindingContext.ANNOTATION, entry) ?: continue
+            val classDescriptor = descriptor.annotationClass ?: continue
+
+            val useSiteTarget = entry.useSiteTarget?.getAnnotationUseSiteTarget() ?: property.getDefaultUseSiteTarget(descriptor)
+            val existingAnnotations = propertyAnnotations.get(useSiteTarget) ?: continue
+            if (classDescriptor in existingAnnotations && !classDescriptor.isRepeatableAnnotation()) {
+                if (reportError) {
+                    trace.reportDiagnosticOnce(Errors.REPEATED_ANNOTATION.on(entry))
+                } else {
+                    trace.report(Errors.REPEATED_ANNOTATION_WARNING.on(entry))
+                }
+            }
+        }
+    }
+
+    private fun checkSuperTypeAnnotations(annotated: KtClass, trace: BindingTrace) {
+        val reportError = languageVersionSettings.supportsFeature(LanguageFeature.ProhibitUseSiteTargetAnnotationsOnSuperTypes)
+
+        for (superType in annotated.superTypeListEntries.mapNotNull { it.typeReference }) {
+            for (entry in superType.annotationEntries) {
+                if (entry.useSiteTarget != null) {
+                    val diagnostic = if (reportError) {
+                        Errors.ANNOTATION_ON_SUPERCLASS.on(entry)
+                    } else {
+                        Errors.ANNOTATION_ON_SUPERCLASS_WARNING.on(entry)
+                    }
+                    trace.report(diagnostic)
+                }
             }
         }
     }

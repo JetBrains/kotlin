@@ -16,6 +16,7 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.logging.Logging
 import org.gradle.api.provider.Property
+import org.jetbrains.kotlin.gradle.KotlinMPPGradleModel.Companion.NO_KOTLIN_NATIVE_HOME
 import org.jetbrains.plugins.gradle.model.*
 import org.jetbrains.plugins.gradle.tooling.ErrorMessageBuilder
 import org.jetbrains.plugins.gradle.tooling.ModelBuilderService
@@ -50,7 +51,8 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         computeSourceSetsDeferredInfo(sourceSets, targets)
         val coroutinesState = getCoroutinesState(project)
         reportUnresolvedDependencies(targets)
-        return KotlinMPPGradleModelImpl(sourceSetMap, targets, ExtraFeaturesImpl(coroutinesState))
+        val kotlinNativeHome = KotlinNativeHomeEvaluator.getKotlinNativeHome(project) ?: NO_KOTLIN_NATIVE_HOME
+        return KotlinMPPGradleModelImpl(sourceSetMap, targets, ExtraFeaturesImpl(coroutinesState), kotlinNativeHome)
     }
 
     private fun reportUnresolvedDependencies(targets: Collection<KotlinTarget>) {
@@ -175,6 +177,15 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         val platformId = (getPlatformType.invoke(gradleTarget) as? Named)?.name ?: return null
         val platform = KotlinPlatform.byId(platformId) ?: return null
         val disambiguationClassifier = getDisambiguationClassifier(gradleTarget) as? String
+        val getPreset = targetClass.getMethodOrNull("getPreset")
+        var targetPresetName: String? = null
+        try {
+            val targetPreset = getPreset?.invoke(gradleTarget)
+            val getPresetName = targetPreset?.javaClass?.getMethodOrNull("getName")
+            targetPresetName = getPresetName?.invoke(targetPreset) as? String
+        } catch (e: Throwable) {
+            targetPresetName = "${e::class.java.name}:${e.message}"
+        }
         @Suppress("UNCHECKED_CAST")
         val gradleCompilations =
             (getCompilations.invoke(gradleTarget) as? NamedDomainObjectContainer<Named>)?.asMap?.values ?: emptyList<Named>()
@@ -182,8 +193,11 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
             buildCompilation(it, disambiguationClassifier, sourceSetMap, dependencyResolver, project)
         }
         val jar = buildTargetJar(gradleTarget, project)
-        val target = KotlinTargetImpl(gradleTarget.name, disambiguationClassifier, platform, compilations, jar)
-        compilations.forEach { it.target = target }
+        val target = KotlinTargetImpl(gradleTarget.name, targetPresetName, disambiguationClassifier, platform, compilations, jar)
+        compilations.forEach {
+            it.disambiguationClassifier = target.disambiguationClassifier
+            it.platform = target.platform
+        }
         return target
     }
 
@@ -264,7 +278,7 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
     private fun safelyGetArguments(compileKotlinTask: Task, accessor: Method?) = try {
         accessor?.invoke(compileKotlinTask) as? List<String>
     } catch (e: Exception) {
-        logger.info(e.message, e)
+        logger.info(e.message ?: "Unexpected exception: $e", e)
         null
     } ?: emptyList()
 

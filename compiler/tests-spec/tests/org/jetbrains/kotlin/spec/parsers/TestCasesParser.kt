@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.spec.parsers
 
+import org.jetbrains.kotlin.TestsExceptionType
 import org.jetbrains.kotlin.spec.*
 import org.jetbrains.kotlin.spec.models.CommonInfoElementType
+import org.jetbrains.kotlin.spec.models.LinkedSpecTestFileInfoElementType
 import org.jetbrains.kotlin.spec.models.SpecTestCaseInfoElementType
 import org.jetbrains.kotlin.spec.models.SpecTestInfoElements
 import org.jetbrains.kotlin.spec.parsers.CommonParser.splitByComma
@@ -16,6 +18,7 @@ import java.util.*
 private operator fun SpecTestCase.plusAssign(addTestCase: SpecTestCase) {
     this.code += addTestCase.code
     this.unexpectedBehavior = this.unexpectedBehavior or addTestCase.unexpectedBehavior
+    this.unspecifiedBehavior = this.unspecifiedBehavior or addTestCase.unspecifiedBehavior
     this.issues?.addAll(addTestCase.issues!!)
     this.ranges.addAll(addTestCase.ranges)
 }
@@ -71,7 +74,9 @@ fun parseTestCases(testFiles: TestFiles): SpecTestCasesSet {
                 code = matcher.group("codeSL") ?: matcher.group("codeML"),
                 ranges = mutableListOf(range),
                 unexpectedBehavior = caseInfoElements.contains(CommonInfoElementType.UNEXPECTED_BEHAVIOUR),
-                issues = CommonParser.parseIssues(caseInfoElements[CommonInfoElementType.ISSUES]).toMutableList()
+                unspecifiedBehavior = caseInfoElements.contains(LinkedSpecTestFileInfoElementType.UNSPECIFIED_BEHAVIOR),
+                issues = CommonParser.parseIssues(caseInfoElements[CommonInfoElementType.ISSUES]).toMutableList(),
+                exception = caseInfoElements[CommonInfoElementType.EXCEPTION]?.content?.let { TestsExceptionType.fromValue(it) }
             ).save(testCasesSet.byNumbers, testCasesOfFile, testCasesByRangesOfFile, caseInfoElements)
 
             startFind = matcher.end() - nextDirective.length

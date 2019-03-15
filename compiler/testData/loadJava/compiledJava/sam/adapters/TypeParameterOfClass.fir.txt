@@ -1,0 +1,4 @@
+<T> public open class TypeParameterOfClass : R|java/lang/Object| {
+    public open operator function foo(comparator: R|ft<java/util/Comparator<ft<T, T?>>, java/util/Comparator<ft<T, T?>>?>|!): R|kotlin/Unit|
+
+}

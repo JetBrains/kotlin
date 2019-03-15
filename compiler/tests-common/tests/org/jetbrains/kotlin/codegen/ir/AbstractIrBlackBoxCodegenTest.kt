@@ -30,7 +30,11 @@ abstract class AbstractIrBlackBoxCodegenTest : AbstractBlackBoxCodegenTest() {
     //symbols are constructed with stdlib descriptors so stdlib should be presented
     // TODO rewrite symbols building
     override fun extractConfigurationKind(files: MutableList<TestFile>): ConfigurationKind {
-        return ConfigurationKind.ALL
+        val result = super.extractConfigurationKind(files)
+        return when (result) {
+            ConfigurationKind.JDK_NO_RUNTIME, ConfigurationKind.JDK_ONLY -> ConfigurationKind.NO_KOTLIN_REFLECT
+            else -> result
+        }
     }
 
     override fun getBackend() = TargetBackend.JVM_IR

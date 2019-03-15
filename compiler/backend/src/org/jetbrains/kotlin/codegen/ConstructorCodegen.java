@@ -420,8 +420,7 @@ public class ConstructorCodegen {
                 // Super constructor requires OUTER parameter, but our OUTER instance may be different from what is expected by the super
                 // constructor. We need to traverse our outer classes from the bottom up, to find the needed class. See innerExtendsOuter.kt
                 ClassDescriptor outerForSuper = (ClassDescriptor) superConstructor.getContainingDeclaration().getContainingDeclaration();
-                StackValue outer = codegen.generateThisOrOuter(outerForSuper, true, true);
-                outer.put(outer.type, codegen.v);
+                codegen.generateThisOrOuter(outerForSuper, true, true).put(codegen.v);
                 superIndex++;
             }
             else if (kind == JvmMethodParameterKind.SUPER_CALL_PARAM || kind == JvmMethodParameterKind.ENUM_NAME_OR_ORDINAL) {

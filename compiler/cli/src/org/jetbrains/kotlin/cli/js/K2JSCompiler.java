@@ -77,6 +77,7 @@ import java.util.*;
 import static org.jetbrains.kotlin.cli.common.ExitCode.COMPILATION_ERROR;
 import static org.jetbrains.kotlin.cli.common.ExitCode.OK;
 import static org.jetbrains.kotlin.cli.common.UtilsKt.checkKotlinPackageUsage;
+import static org.jetbrains.kotlin.cli.common.UtilsKt.getLibraryFromHome;
 import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*;
 
 public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
@@ -142,7 +143,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
                 }
                 else {
                     TranslationResultValue translatedValue = compiledParts.get(allSources[i]);
-                    translationUnits.add(new TranslationUnit.BinaryAst(translatedValue.getBinaryAst()));
+                    translationUnits.add(new TranslationUnit.BinaryAst(translatedValue.getBinaryAst(), translatedValue.getInlineData()));
                 }
             }
             return translator.translateUnits(reporter, translationUnits, mainCallParameters, jsAnalysisResult);
@@ -364,7 +365,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         MessageCollector messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY);
 
         if (arguments.getTarget() != null) {
-            assert arguments.getTarget() == "v5" : "Unsupported ECMA version: " + arguments.getTarget();
+            assert "v5".equals(arguments.getTarget()) : "Unsupported ECMA version: " + arguments.getTarget();
         }
         configuration.put(JSConfigurationKeys.TARGET, EcmaVersion.defaultVersion());
 

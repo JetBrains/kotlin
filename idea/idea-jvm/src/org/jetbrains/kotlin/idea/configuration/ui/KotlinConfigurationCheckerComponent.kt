@@ -20,6 +20,7 @@ import com.intellij.ProjectTopics
 import com.intellij.notification.NotificationDisplayType
 import com.intellij.notification.NotificationsConfiguration
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.components.ProjectComponent
 import com.intellij.openapi.externalSystem.service.project.manage.ProjectDataImportListener
 import com.intellij.openapi.project.DumbService
@@ -53,13 +54,15 @@ class KotlinConfigurationCheckerComponent(val project: Project) : ProjectCompone
                 if (!project.isInitialized) return
 
                 if (notificationPostponed && !isSyncing) {
-                    ApplicationManager.getApplication().executeOnPooledThread {
-                        DumbService.getInstance(project).waitForSmartMode()
+                    DumbService.getInstance(project).runWhenSmart {
                         if (!isSyncing) {
                             notificationPostponed = false
+
+                            val excludeModules = collectModulesWithOutdatedRuntime(findOutdatedKotlinLibraries(project))
+
                             showConfigureKotlinNotificationIfNeeded(
                                 project,
-                                collectModulesWithOutdatedRuntime(findOutdatedKotlinLibraries(project))
+                                excludeModules
                             )
                         }
                     }
@@ -115,7 +118,15 @@ class KotlinConfigurationCheckerComponent(val project: Project) : ProjectCompone
     companion object {
         const val CONFIGURE_NOTIFICATION_GROUP_ID = "Configure Kotlin in Project"
 
-        fun getInstance(project: Project): KotlinConfigurationCheckerComponent =
-            project.getComponent(KotlinConfigurationCheckerComponent::class.java)
+        fun getInstanceIfNotDisposed(project: Project): KotlinConfigurationCheckerComponent? {
+            return runReadAction {
+                if (!project.isDisposed) {
+                    project.getComponent(KotlinConfigurationCheckerComponent::class.java)
+                        ?: error("Can't find ${KotlinConfigurationCheckerComponent::class} component")
+                } else {
+                    null
+                }
+            }
+        }
     }
 }

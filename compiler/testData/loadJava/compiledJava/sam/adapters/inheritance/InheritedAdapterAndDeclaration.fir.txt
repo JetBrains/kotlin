@@ -1,0 +1,2 @@
+public abstract interface InheritedAdapterAndDeclaration : R|java/lang/Object| {
+}

@@ -24,14 +24,14 @@ class KotlinGradleWebMultiplatformModuleBuilder : KotlinGradleAbstractMultiplatf
 
     override fun getBuilderId() = "kotlin.gradle.multiplatform.web"
 
-    override fun getPresentableName() = "Kotlin (JS Client/JVM Server)"
+    override fun getPresentableName() = "JS Client and JVM Server"
 
     override fun getDescription() =
         "Multiplatform Gradle projects allow reusing the same Kotlin code between JS Client and JVM Server."
 
     override fun BuildScriptDataBuilder.setupAdditionalDependencies() {
         addBuildscriptRepositoriesDefinition("jcenter()")
-        addRepositoriesDefinition("maven { url \"http://dl.bintray.com/kotlin/ktor\" }")
+        addRepositoriesDefinition("maven { url \"https://dl.bintray.com/kotlin/ktor\" }")
         addRepositoriesDefinition("jcenter()")
     }
 
@@ -232,7 +232,7 @@ class KotlinGradleWebMultiplatformModuleBuilder : KotlinGradleAbstractMultiplatf
 
     override fun buildMultiPlatformPart(): String {
         return """
-            def ktor_version = '1.0.1'
+            def ktor_version = '1.1.3'
             def logback_version = '1.2.3'
 
             kotlin {

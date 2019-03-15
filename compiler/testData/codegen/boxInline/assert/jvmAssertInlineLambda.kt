@@ -5,12 +5,16 @@
 // WITH_RUNTIME
 // NO_CHECK_LAMBDA_INLINING
 
+package test
+
 inline fun call(c: () -> Unit) {
     c()
 }
 
 // FILE: inlineSite.kt
 // KOTLIN_CONFIGURATION_FLAGS: ASSERTIONS_MODE=jvm
+
+import test.*
 
 interface Checker {
     fun checkTrue(): Boolean

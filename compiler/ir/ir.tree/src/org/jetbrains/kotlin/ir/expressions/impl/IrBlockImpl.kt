@@ -18,9 +18,11 @@ package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
@@ -63,14 +65,13 @@ fun IrBlockImpl.inlineStatement(statement: IrStatement) {
     }
 }
 
-
 class IrReturnableBlockImpl(
     startOffset: Int,
     endOffset: Int,
     type: IrType,
     override val symbol: IrReturnableBlockSymbol,
     origin: IrStatementOrigin? = null,
-    override val sourceFileName: String = "no source file"
+    override val sourceFileSymbol: IrFileSymbol? = null
 ) :
     IrContainerExpressionBase(startOffset, endOffset, type, origin),
     IrReturnableBlock {
@@ -84,8 +85,8 @@ class IrReturnableBlockImpl(
         symbol: IrReturnableBlockSymbol,
         origin: IrStatementOrigin?,
         statements: List<IrStatement>,
-        sourceFileName: String = "no source file"
-    ) : this(startOffset, endOffset, type, symbol, origin, sourceFileName) {
+        sourceFileSymbol: IrFileSymbol? = null
+    ) : this(startOffset, endOffset, type, symbol, origin, sourceFileSymbol) {
         this.statements.addAll(statements)
     }
 
@@ -95,8 +96,8 @@ class IrReturnableBlockImpl(
         type: IrType,
         descriptor: FunctionDescriptor,
         origin: IrStatementOrigin? = null,
-        sourceFileName: String = "no source file"
-    ) : this(startOffset, endOffset, type, IrReturnableBlockSymbolImpl(descriptor), origin, sourceFileName)
+        sourceFileSymbol: IrFileSymbol? = null
+    ) : this(startOffset, endOffset, type, IrReturnableBlockSymbolImpl(descriptor), origin, sourceFileSymbol)
 
     constructor(
         startOffset: Int,
@@ -105,14 +106,16 @@ class IrReturnableBlockImpl(
         descriptor: FunctionDescriptor,
         origin: IrStatementOrigin?,
         statements: List<IrStatement>,
-        sourceFileName: String = "no source file"
-    ) : this(startOffset, endOffset, type, descriptor, origin, sourceFileName) {
+        sourceFileSymbol: IrFileSymbol? = null
+    ) : this(startOffset, endOffset, type, descriptor, origin, sourceFileSymbol) {
         this.statements.addAll(statements)
     }
 
     init {
         symbol.bind(this)
     }
+
+    override val sourceFileName: String = sourceFileSymbol?.owner?.fileEntry?.name ?: "no source file"
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitBlock(this, data)

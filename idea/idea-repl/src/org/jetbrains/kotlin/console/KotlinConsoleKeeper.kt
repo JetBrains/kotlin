@@ -48,15 +48,13 @@ class KotlinConsoleKeeper(val project: Project) {
 
         val consoleRunner = KotlinConsoleRunner(module, cmdLine, previousCompilationFailed, project, REPL_TITLE, path)
         consoleRunner.initAndRun()
-        consoleRunner.setupGutters()
-
         return consoleRunner
     }
 
     companion object {
         @JvmStatic fun getInstance(project: Project) = ServiceManager.getService(project, KotlinConsoleKeeper::class.java)
 
-        fun createCommandLine(module: Module): GeneralCommandLine {
+        fun createCommandLine(module: Module?): GeneralCommandLine {
             val javaParameters = createJavaParametersWithSdk(module)
 
             javaParameters.mainClass = "dummy"
@@ -70,7 +68,8 @@ class KotlinConsoleKeeper(val project: Project) {
             //paramList.add("-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005")
 
             val kotlinPaths = PathUtil.kotlinPathsForIdeaPlugin
-            val replClassPath = listOf(kotlinPaths.compilerPath, kotlinPaths.reflectPath, kotlinPaths.stdlibPath, kotlinPaths.scriptRuntimePath)
+            val replClassPath =
+                (kotlinPaths.compilerClasspath + kotlinPaths.compilerPath)
                     .joinToString(File.pathSeparator) { it.absolutePath }
 
             paramList.add("-cp")
@@ -80,16 +79,18 @@ class KotlinConsoleKeeper(val project: Project) {
 
             paramList.add("org.jetbrains.kotlin.cli.jvm.K2JVMCompiler")
 
-            addPathToCompiledOutput(paramList, module)
+            if (module != null) {
+                addPathToCompiledOutput(paramList, module)
+            }
 
             return commandLine
         }
 
-        fun createJavaParametersWithSdk(module: Module): JavaParameters {
+        fun createJavaParametersWithSdk(module: Module?): JavaParameters {
             val params = JavaParameters()
             params.charset = null
 
-            val sdk = ModuleRootManager.getInstance(module).sdk
+            val sdk = module?.let { ModuleRootManager.getInstance(module).sdk }
             if (sdk != null && sdk.sdkType is JavaSdkType && File(sdk.homePath).exists()) {
                 params.jdk = sdk
             }

@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializableCompanionCodegen
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
-import org.jetbrains.kotlinx.serialization.compiler.resolve.KSerializerDescriptorResolver.findSerializerConstructorForTypeArgumentsSerializers
 
 class SerializableCompanionIrGenerator(
     val irClass: IrClass,
@@ -33,7 +32,7 @@ class SerializableCompanionIrGenerator(
         ) {
             val companionDescriptor = irClass.descriptor
             val serializableClass = getSerializableClassDescriptorByCompanion(companionDescriptor) ?: return
-            if (serializableClass.isInternalSerializable)
+            if (serializableClass.shouldHaveGeneratedMethodsInCompanion)
                 SerializableCompanionIrGenerator(irClass, context, bindingContext).generate()
         }
     }

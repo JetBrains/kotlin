@@ -57,7 +57,7 @@ class KotlinJavascriptSerializerExtension(
     override fun serializeProperty(
             descriptor: PropertyDescriptor,
             proto: ProtoBuf.Property.Builder,
-            versionRequirementTable: MutableVersionRequirementTable,
+            versionRequirementTable: MutableVersionRequirementTable?,
             childSerializer: DescriptorSerializer
     ) {
         val id = getFileId(descriptor)

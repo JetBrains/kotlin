@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability.INAPPLICABLE
 import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability.INAPPLICABLE_WRONG_RECEIVER
+import org.jetbrains.kotlin.resolve.scopes.receivers.QualifierReceiver
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.UnwrappedType
 
@@ -53,6 +54,12 @@ class FixVariableConstraintPosition(val variable: NewTypeVariable) : ConstraintP
 
 class KnownTypeParameterConstraintPosition(val typeArgument: KotlinType) : ConstraintPosition() {
     override fun toString() = "TypeArgument $typeArgument"
+}
+
+class LHSArgumentConstraintPosition(val receiver: QualifierReceiver) : ConstraintPosition() {
+    override fun toString(): String {
+        return "LHS receiver $receiver"
+    }
 }
 
 class LambdaArgumentConstraintPosition(val lambda: ResolvedLambdaAtom) : ConstraintPosition() {

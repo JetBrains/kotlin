@@ -17,10 +17,7 @@
 package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationContainer
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -53,6 +50,8 @@ interface BodyLoweringPass : FileLoweringPass {
 
     override fun lower(irFile: IrFile) = runOnFilePostfix(irFile)
 }
+
+fun FileLoweringPass.lower(moduleFragment: IrModuleFragment) = moduleFragment.files.forEach { lower(it) }
 
 fun ClassLoweringPass.runOnFilePostfix(irFile: IrFile) {
     irFile.acceptVoid(object : IrElementVisitorVoid {

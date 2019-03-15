@@ -1,0 +1,9 @@
+FILE: Test.kt
+    public final class Tester : R|Inheritor|, R|First| {
+        public constructor(): super<R|Inheritor|>()
+
+        public final function test(): R|kotlin/Unit| {
+            R|/Inheritor.foo|(String(abc), Int(456))
+        }
+
+    }

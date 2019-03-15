@@ -1,0 +1,38 @@
+FILE: enum.kt
+    public abstract interface Some {
+    }
+    public final object O1 : R|Some| {
+        public constructor(): super<R|kotlin/Any|>()
+
+    }
+    public final object O2 : R|Some| {
+        public constructor(): super<R|kotlin/Any|>()
+
+    }
+    public final enum class SomeEnum {
+        private constructor(x: R|Some|): super<R|kotlin/Enum|>()
+
+        public final property x(val): R|Some|
+            public get(): R|Some|
+
+        public final enum entry FIRST : R|SomeEnum| {
+            public constructor(): super<R|SomeEnum|>(<Unresolved name: O1>#)
+
+            public final override function check(y: R|Some|): R|kotlin/Boolean| {
+                return@@@check Boolean(true)
+            }
+
+        }
+
+        public final enum entry SECOND : R|SomeEnum| {
+            public constructor(): super<R|SomeEnum|>(<Unresolved name: O2>#)
+
+            public final override function check(y: R|Some|): R|kotlin/Boolean| {
+                return@@@check ==(<Unresolved name: y>#, <Unresolved name: O2>#)
+            }
+
+        }
+
+        public abstract function check(y: R|Some|): R|kotlin/Boolean|
+
+    }

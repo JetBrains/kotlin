@@ -1,28 +1,24 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve.calls.checkers
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.contracts.description.CallsEffectDeclaration
+import org.jetbrains.kotlin.contracts.description.ContractProviderKey
+import org.jetbrains.kotlin.contracts.description.InvocationKind
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContext.CAPTURED_IN_CLOSURE
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.callUtil.getValueArgumentForExpression
+import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
@@ -43,8 +39,7 @@ class CapturingInClosureChecker : CallChecker {
         val scopeContainer = scope.ownerDescriptor
         if (isCapturedVariable(variableParent, scopeContainer)) {
             if (trace.get(CAPTURED_IN_CLOSURE, variable) != CaptureKind.NOT_INLINE) {
-                val inline = isCapturedInInline(trace.bindingContext, scopeContainer, variableParent)
-                trace.record(CAPTURED_IN_CLOSURE, variable, if (inline) CaptureKind.INLINE_ONLY else CaptureKind.NOT_INLINE)
+                trace.record(CAPTURED_IN_CLOSURE, variable, getCaptureKind(trace.bindingContext, scopeContainer, variableParent))
             }
         }
     }
@@ -61,17 +56,34 @@ class CapturingInClosureChecker : CallChecker {
         return true
     }
 
-    private fun isCapturedInInline(
+    private fun getCaptureKind(
         context: BindingContext, scopeContainer: DeclarationDescriptor, variableParent: DeclarationDescriptor
-    ): Boolean {
+    ): CaptureKind {
         val scopeDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(scopeContainer)
-        if (!InlineUtil.canBeInlineArgument(scopeDeclaration)) return false
+        if (!InlineUtil.canBeInlineArgument(scopeDeclaration)) return CaptureKind.NOT_INLINE
 
-        if (InlineUtil.isInlinedArgument(scopeDeclaration as KtFunction, context, false)) {
+        val exactlyOnceContract = isExactlyOnceContract(context, scopeDeclaration as KtFunction)
+        if (InlineUtil.isInlinedArgument(scopeDeclaration, context, exactlyOnceContract)) {
             val scopeContainerParent = scopeContainer.containingDeclaration ?: error("parent is null for $scopeContainer")
-            return !isCapturedVariable(variableParent, scopeContainerParent) ||
-                    isCapturedInInline(context, scopeContainerParent, variableParent)
+            return if (
+                !isCapturedVariable(variableParent, scopeContainerParent) ||
+                getCaptureKind(context, scopeContainerParent, variableParent) == CaptureKind.INLINE_ONLY
+            ) CaptureKind.INLINE_ONLY else CaptureKind.NOT_INLINE
         }
-        return false
+        if (exactlyOnceContract) return CaptureKind.EXACTLY_ONCE_EFFECT
+        return CaptureKind.NOT_INLINE
+    }
+
+    private fun isExactlyOnceContract(bindingContext: BindingContext, argument: KtFunction): Boolean {
+        val call = KtPsiUtil.getParentCallIfPresent(argument) ?: return false
+        val resolvedCall = call.getResolvedCall(bindingContext) ?: return false
+        val descriptor = resolvedCall.getResultingDescriptor()
+        val valueArgument = resolvedCall.call.getValueArgumentForExpression(argument) ?: return false
+        val mapping = resolvedCall.getArgumentMapping(valueArgument) as? ArgumentMatch ?: return false
+        val parameter = mapping.valueParameter
+        val contractDescription = descriptor.getUserData(ContractProviderKey)?.getContractDescription() ?: return false
+        val effect = contractDescription.effects.filterIsInstance<CallsEffectDeclaration>()
+            .find { it.variableReference.descriptor == parameter } ?: return false
+        return effect.kind == InvocationKind.EXACTLY_ONCE
     }
 }

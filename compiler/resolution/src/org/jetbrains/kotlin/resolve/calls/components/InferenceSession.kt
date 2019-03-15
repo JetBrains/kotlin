@@ -25,6 +25,7 @@ interface InferenceSession {
             ): Map<TypeConstructor, UnwrappedType> = emptyMap()
 
             override fun writeOnlyStubs(): Boolean = false
+            override fun callCompleted(resolvedAtom: ResolvedAtom): Boolean = false
         }
     }
 
@@ -35,6 +36,7 @@ interface InferenceSession {
     fun currentConstraintSystem(): ConstraintStorage
     fun inferPostponedVariables(lambda: ResolvedLambdaAtom, initialStorage: ConstraintStorage): Map<TypeConstructor, UnwrappedType>
     fun writeOnlyStubs(): Boolean
+    fun callCompleted(resolvedAtom: ResolvedAtom): Boolean
 }
 
 interface PartialCallInfo {

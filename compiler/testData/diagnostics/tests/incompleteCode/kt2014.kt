@@ -10,7 +10,7 @@ class Foo {
 
 fun x(f : Foo) {
     f.<!FUNCTION_CALL_EXPECTED!>prop<!>
-    f.<!NO_VALUE_FOR_PARAMETER, FUNCTION_CALL_EXPECTED!>bar<!>
+    f.<!FUNCTION_CALL_EXPECTED, NO_VALUE_FOR_PARAMETER!>bar<!>
 
     f.<!FUNCTION_EXPECTED!>a<!>()
     <!UNRESOLVED_REFERENCE!>c<!>()

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.generators.tests
 import org.jetbrains.kotlin.generators.tests.generator.testGroup
 import org.jetbrains.kotlin.js.test.AbstractDceTest
 import org.jetbrains.kotlin.js.test.AbstractJsLineNumberTest
+import org.jetbrains.kotlin.js.test.ir.semantics.*
 import org.jetbrains.kotlin.js.test.semantics.*
 import org.jetbrains.kotlin.test.TargetBackend
 

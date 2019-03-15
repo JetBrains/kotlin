@@ -9,14 +9,13 @@ val fatJarContentsStripMetadata by configurations.creating
 val fatJarContentsStripServices by configurations.creating
 
 val compilerModules: Array<String> by rootProject.extra
-val compilerManifestClassPath = "kotlin-stdlib.jar kotlin-reflect.jar kotlin-script-runtime.jar"
 
 dependencies {
     compilerModules.forEach { module ->
         compile(project(module)) { isTransitive = false }
     }
 
-    fatJarContents(project(":core:builtins", configuration = "builtins"))
+    fatJarContents(project(":core:builtins"))
     fatJarContents(commonDep("javax.inject"))
     fatJarContents(commonDep("org.jline", "jline"))
     fatJarContents(commonDep("org.fusesource.jansi", "jansi"))

@@ -56,6 +56,17 @@ class Kapt3WorkersIT : Kapt3IT() {
             assertSubstringCount("Loaded com.sun.tools.javac.util.Context from", 1)
         }
     }
+
+    @Test
+    fun testKaptSkipped() {
+        val gradleVersionRequired = GradleVersionRequired.AtLeast("4.3")
+
+        val project =
+            Project("kaptSkipped", directoryPrefix = "kapt2", gradleVersionRequirement = gradleVersionRequired)
+        project.build("build") {
+            assertSuccessful()
+        }
+    }
 }
 
 open class Kapt3IT : Kapt3BaseIT() {
@@ -305,28 +316,6 @@ open class Kapt3IT : Kapt3BaseIT() {
 
         project.build("kaptKotlin") {
             assertSuccessful()
-        }
-    }
-
-    @Test
-    fun testKaptClassesDirSync() {
-        val project = Project("autoService", GradleVersionRequired.Exact("3.5"), directoryPrefix = "kapt2")
-
-        project.build("build") {
-            assertSuccessful()
-            assertKaptSuccessful()
-            assertFileExists("processor/build/classes/main/META-INF/services/javax.annotation.processing.Processor")
-            assertFileExists("processor/build/classes/main/processor/MyProcessor.class")
-        }
-
-        project.projectDir.getFileByName("MyProcessor.kt").modify {
-            it.replace("@AutoService(Processor::class)", "")
-        }
-
-        project.build(":processor:build") {
-            assertSuccessful()
-            assertNoSuchFile("processor/build/classes/main/META-INF/services/javax.annotation.processing.Processor")
-            assertFileExists("processor/build/classes/main/processor/MyProcessor.class")
         }
     }
 
@@ -587,5 +576,15 @@ open class Kapt3IT : Kapt3BaseIT() {
         gradleBuildScript().appendText("\ndependencies { implementation project(':simple') }")
 
         testResolveAllConfigurations()
+    }
+
+    @Test
+    fun testMPPKaptPresence() {
+        val project = Project("mpp-kapt-presence", directoryPrefix = "kapt2")
+
+        project.build("build") {
+            assertSuccessful()
+            assertTasksExecuted(":dac:jdk:kaptGenerateStubsKotlin", ":dac:jdk:compileKotlin")
+        }
     }
 }

@@ -28,7 +28,7 @@ class A {
 // EXIST:  var
 // EXIST:  constructor
 // EXIST:  init
-// EXIST: { itemText: "companion object", tailText: " {...}" }
+// EXIST:  companion object
 // EXIST:  operator
 // EXIST:  infix
 // EXIST:  sealed class
@@ -38,8 +38,7 @@ class A {
 // EXIST:  tailrec
 // EXIST:  external
 // EXIST:  annotation class
-// EXIST:  const val
-// EXIST:  suspend
+// EXIST:  suspend fun
 // EXIST:  typealias
 // EXIST:  expect
 // EXIST:  actual

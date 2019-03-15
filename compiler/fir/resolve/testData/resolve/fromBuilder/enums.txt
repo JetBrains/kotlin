@@ -1,0 +1,70 @@
+FILE: enums.kt
+    public final enum class Order {
+        private constructor(): super<R|kotlin/Enum|>()
+
+        public final enum entry FIRST {
+            public constructor(): super<R|kotlin/Any|>()
+
+        }
+
+        public final enum entry SECOND {
+            public constructor(): super<R|kotlin/Any|>()
+
+        }
+
+        public final enum entry THIRD {
+            public constructor(): super<R|kotlin/Any|>()
+
+        }
+
+    }
+    public final enum class Planet {
+        private constructor(m: R|kotlin/Double|, r: R|kotlin/Double|): super<R|kotlin/Enum|>()
+
+        public final property m(val): R|kotlin/Double|
+            public get(): R|kotlin/Double|
+
+        internal final property r(val): R|kotlin/Double|
+            internal get(): R|kotlin/Double|
+
+        public final enum entry MERCURY : R|Planet| {
+            public constructor(): super<R|Planet|>(Double(1.0), Double(2.0))
+
+            public final override function sayHello(): R|kotlin/Unit| {
+                <Unresolved name: println>#(String(Hello!!!))
+            }
+
+        }
+
+        public final enum entry VENERA : R|Planet| {
+            public constructor(): super<R|Planet|>(Double(3.0), Double(4.0))
+
+            public final override function sayHello(): R|kotlin/Unit| {
+                <Unresolved name: println>#(String(Ola!!!))
+            }
+
+        }
+
+        public final enum entry EARTH : R|Planet| {
+            public constructor(): super<R|Planet|>(Double(5.0), Double(6.0))
+
+            public final override function sayHello(): R|kotlin/Unit| {
+                <Unresolved name: println>#(String(Privet!!!))
+            }
+
+        }
+
+        public final property g(val): R|kotlin/Double| = <Unresolved name: div>#(<Unresolved name: times>#(<Unresolved name: G>#, R|/Planet.m|), <Unresolved name: times>#(R|/Planet.r|, R|/Planet.r|))
+            public get(): R|kotlin/Double|
+
+        public abstract function sayHello(): R|kotlin/Unit|
+
+        public final companion object Companion {
+            public constructor(): super<R|kotlin/Any|>()
+
+            public final const property G(val): R|error: Not supported: FirImplicitTypeRefImpl| = Double(6.67E-11)
+                public get(): R|error: Not supported: FirImplicitTypeRefImpl|
+
+        }
+
+    }

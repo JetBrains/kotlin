@@ -76,6 +76,7 @@ class SerializerIrGenerator(val irClass: IrClass, override val compilerContext: 
         compilerContext.localSymbolTable.declareAnonymousInitializer(
             irClass.startOffset, irClass.endOffset, SERIALIZABLE_PLUGIN_ORIGIN, irClass.descriptor
         ).buildWithScope { initIrBody ->
+            initIrBody.parent = irClass
             val ctor = irClass.declarations.filterIsInstance<IrConstructor>().find { it.isPrimary }
                 ?: throw AssertionError("Serializer must have primary constructor")
             val serialClassDescImplCtor = compilerContext.externalSymbols.referenceConstructor(serialDescImplConstructor)
@@ -90,14 +91,17 @@ class SerializerIrGenerator(val irClass: IrClass, override val compilerContext: 
                         nameHint = "serialDesc"
                     )
 
-                    fun addFieldCall(fieldName: String) =
-                        irCall(addFuncS, type = compilerContext.irBuiltIns.unitType).apply {
-                            dispatchReceiver = irGet(localDesc)
-                        }.mapValueParameters { irString(fieldName) }
+                    fun addFieldCall(prop: SerializableProperty) = irInvoke(
+                        irGet(localDesc),
+                        addFuncS,
+                        irString(prop.name),
+                        irBoolean(prop.optional),
+                        typeHint = compilerContext.irBuiltIns.unitType
+                    )
 
-                    for (classProp in orderedProperties) {
+                    for (classProp in serializableProperties) {
                         if (classProp.transient) continue
-                        +addFieldCall(classProp.name)
+                        +addFieldCall(classProp)
                         // add property annotations
                         copySerialInfoAnnotationsToDescriptor(
                             classProp.irField.correspondingProperty?.annotations.orEmpty(),
@@ -139,16 +143,15 @@ class SerializerIrGenerator(val irClass: IrClass, override val compilerContext: 
     }
 
     override fun generateGenericFieldsAndConstructor(typedConstructorDescriptor: ClassConstructorDescriptor) =
-        irClass.contributeCtor(typedConstructorDescriptor) { ctor ->
+        irClass.contributeConstructor(typedConstructorDescriptor, fromStubs = true) { ctor ->
             // generate call to primary ctor to init serialClassDesc and super()
-            val primaryCtor = irClass.descriptor.unsubstitutedPrimaryConstructor
+            val primaryCtor = irClass.constructors.find { it.isPrimary }
                 ?: throw AssertionError("Serializer class must have primary constructor")
             +IrDelegatingConstructorCallImpl(
                 startOffset,
                 endOffset,
                 compilerContext.irBuiltIns.unitType,
-                compilerContext.localSymbolTable.referenceConstructor(primaryCtor),
-                primaryCtor
+                primaryCtor.symbol
             )
 
             // store type arguments serializers in fields
@@ -163,7 +166,7 @@ class SerializerIrGenerator(val irClass: IrClass, override val compilerContext: 
         }
 
     override fun generateChildSerializersGetter(function: FunctionDescriptor) = irClass.contributeFunction(function) { irFun ->
-        val allSerializers = orderedProperties.map { requireNotNull(
+        val allSerializers = serializableProperties.map { requireNotNull(
                 serializerTower(this@SerializerIrGenerator, it)) { "Property ${it.name} must have a serializer" }
         }
 
@@ -214,7 +217,7 @@ class SerializerIrGenerator(val irClass: IrClass, override val compilerContext: 
         fun SerializableProperty.irGet(): IrGetField = irGetField(irGet(serialObjectSymbol), irField)
 
         //  internal serialization via virtual calls?
-        for ((index, property) in orderedProperties.filter { !it.transient }.withIndex()) {
+        for ((index, property) in serializableProperties.filter { !it.transient }.withIndex()) {
             // output.writeXxxElementValue(classDesc, index, value)
             val sti = getSerialTypeInfo(property)
             val innerSerial = serializerInstance(
@@ -241,7 +244,8 @@ class SerializerIrGenerator(val irClass: IrClass, override val compilerContext: 
                     property.irGet()
                 )
             }
-            val elementCall = irInvoke(irGet(localOutput), writeFunc, *args.toTypedArray())
+            val typeArgs  = if (writeFunc.owner.typeParameters.isNotEmpty()) listOf(property.type.toIrType()) else listOf()
+            val elementCall = irInvoke(irGet(localOutput), writeFunc, typeArguments = typeArgs, valueArguments = args)
 
             // check for call to .shouldEncodeElementDefault
             if (!property.optional) {
@@ -252,7 +256,7 @@ class SerializerIrGenerator(val irClass: IrClass, override val compilerContext: 
                 // if (obj.prop != DEFAULT_VALUE || output.shouldEncodeElementDefault(this.descriptor, i))
                 //    output.encodeIntElement(this.descriptor, i, obj.prop)
                 val shouldEncodeFunc = kOutputClass.referenceMethod(CallingConventions.shouldEncodeDefault)
-                val partA = irNotEquals(property.irGet(), fieldInitializer(property)!!) // todo: props w/o backing fields
+                val partA = irNotEquals(property.irGet(), fieldInitializer(property)!!)
                 val partB = irInvoke(irGet(localOutput), shouldEncodeFunc, irGet(localSerialDesc), irInt(index))
                 // Ir infrastructure does not have dedicated symbol for ||, so
                 //  `a || b == if (a) true else b`, see org.jetbrains.kotlin.ir.builders.PrimitivesKt.oror
@@ -299,24 +303,23 @@ class SerializerIrGenerator(val irClass: IrClass, override val compilerContext: 
         val localSerialDesc = irTemporary(irGet(descriptorGetterSymbol.owner.returnType, irThis(), descriptorGetterSymbol), "desc")
 
         // workaround due to unavailability of labels (KT-25386)
-        val flagVar = irTemporaryVar(irBoolean(true), "flag", parent = loadFunc)
+        val flagVar = irTemporaryVar(irBoolean(true), "flag")
 
-        val indexVar = irTemporaryVar(irInt(0), "index", parent = loadFunc)
+        val indexVar = irTemporaryVar(irInt(0), "index")
 //        val readAll = irTemporaryVar(irBoolean(false), "readAll", parent = loadFunc)
 //
         // calculating bit mask vars
-        val blocksCnt = orderedProperties.size / 32 + 1
+        val blocksCnt = serializableProperties.bitMaskSlotCount()
 
         // var bitMask0 = 0, bitMask1 = 0...
-        val bitMasks = (0 until blocksCnt).map { irTemporaryVar(irInt(0), "bitMask$it", parent = loadFunc) }
+        val bitMasks = (0 until blocksCnt).map { irTemporaryVar(irInt(0), "bitMask$it") }
         // var local0 = null, local1 = null ...
-        val localProps = orderedProperties.mapIndexed { i, prop ->
+        val localProps = serializableProperties.mapIndexed { i, prop ->
             val (expr, type) = defaultValueAndType(prop)
             irTemporaryVar(
                 expr,
                 "local$i",
-                typeHint = type,
-                parent = loadFunc
+                typeHint = type
             )
         }
 
@@ -342,29 +345,42 @@ class SerializerIrGenerator(val irClass: IrClass, override val compilerContext: 
                     // if index == -1 (READ_DONE) break loop
                     +IrBranchImpl(irEquals(indexVar.get(), irInt(-1)), irSetVar(flagVar.symbol, irBoolean(false)))
 
-                    val branchBodies: List<Pair<Int, IrExpression>> = orderedProperties.mapIndexed { index, property ->
-                        val body = irBlock {
-                            val sti = getSerialTypeInfo(property)
-                            val innerSerial = serializerInstance(this@SerializerIrGenerator, serializableDescriptor, sti.serializer, property.module, property.type, property.genericIndex)
-                            // todo: update
-                            val decodeFuncToCall =
-                                (if (innerSerial != null) "${CallingConventions.decode}${sti.elementMethodPrefix}Serializable${CallingConventions.elementPostfix}"
-                                else "${CallingConventions.decode}${sti.elementMethodPrefix}${CallingConventions.elementPostfix}")
-                                    .let {
-                                        inputClass.referenceMethod(it)
-                                    }
-                            val args = mutableListOf<IrExpression>(localSerialDesc.get(), irInt(index))
-                            if (innerSerial != null)
-                                args.add(innerSerial)
-                            // local$i = localInput.decode...(...)
-                            +irSetVar(localProps[index].symbol, irInvoke(localInput.get(), decodeFuncToCall, *args.toTypedArray()))
-                            // bitMask[i] |= 1 << x
-                            val bitPos = 1 shl (index % 32)
-                            val or = irBinOp(OperatorNameConventions.OR, bitMasks[index / 32].get(), irInt(bitPos))
-                            +irSetVar(bitMasks[index / 32].symbol, or)
+                    val branchBodies: List<Pair<Int, IrExpression>> =
+                        serializableProperties.mapIndexed { index, property ->
+                            val body = irBlock {
+                                val sti = getSerialTypeInfo(property)
+                                val innerSerial = serializerInstance(
+                                    this@SerializerIrGenerator,
+                                    serializableDescriptor,
+                                    sti.serializer,
+                                    property.module,
+                                    property.type,
+                                    property.genericIndex
+                                )
+                                // todo: update
+                                val decodeFuncToCall =
+                                    (if (innerSerial != null) "${CallingConventions.decode}${sti.elementMethodPrefix}Serializable${CallingConventions.elementPostfix}"
+                                    else "${CallingConventions.decode}${sti.elementMethodPrefix}${CallingConventions.elementPostfix}")
+                                        .let {
+                                            inputClass.referenceMethod(it)
+                                        }
+                                val typeArgs =
+                                    if (decodeFuncToCall.owner.typeParameters.isNotEmpty()) listOf(property.type.toIrType()) else listOf()
+                                val args = mutableListOf(localSerialDesc.get(), irInt(index))
+                                if (innerSerial != null)
+                                    args.add(innerSerial)
+                                // local$i = localInput.decode...(...)
+                                +irSetVar(
+                                    localProps[index].symbol,
+                                    irInvoke(localInput.get(), decodeFuncToCall, typeArgs, args)
+                                )
+                                // bitMask[i] |= 1 << x
+                                val bitPos = 1 shl (index % 32)
+                                val or = irBinOp(OperatorNameConventions.OR, bitMasks[index / 32].get(), irInt(bitPos))
+                                +irSetVar(bitMasks[index / 32].symbol, or)
+                            }
+                            index to body
                         }
-                        index to body
-                    }
                     branchBodies.forEach { (i, e) -> +IrBranchImpl(irEquals(indexVar.get(), irInt(i)), e) }
 
                     // throw exception on unknown field
@@ -397,10 +413,8 @@ class SerializerIrGenerator(val irClass: IrClass, override val compilerContext: 
         // todo: set properties in external deserialization
         var args: List<IrExpression> = localProps.map { it.get() }
         val ctor: IrConstructorSymbol = if (serializableDescriptor.isInternalSerializable) {
-            val ctorDesc = serializableIrClass
-                .constructors.single { it.origin == SERIALIZABLE_PLUGIN_ORIGIN }
-            args = listOf(irGet(bitMasks[0])) + args + irNull()
-            ctorDesc.symbol
+            args = bitMasks.map { irGet(it) } + args + irNull()
+            serializableIrClass.serializableSyntheticConstructor()
         } else {
             compilerContext.externalSymbols.referenceConstructor(serializableDescriptor.unsubstitutedPrimaryConstructor!!)
         }

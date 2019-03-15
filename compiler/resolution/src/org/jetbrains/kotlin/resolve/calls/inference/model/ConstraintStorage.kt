@@ -60,7 +60,11 @@ interface ConstraintStorage {
 enum class ConstraintKind {
     LOWER,
     UPPER,
-    EQUALITY
+    EQUALITY;
+
+    fun isLower(): Boolean = this == LOWER
+    fun isUpper(): Boolean = this == UPPER
+    fun isEqual(): Boolean = this == EQUALITY
 }
 
 class Constraint(

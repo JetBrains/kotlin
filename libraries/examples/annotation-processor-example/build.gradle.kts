@@ -6,7 +6,7 @@ plugins {
 }
 
 dependencies {
-    compile(project(":kotlin-stdlib"))
+    compile(kotlinStdlib())
 }
 
 sourceSets {

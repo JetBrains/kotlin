@@ -255,6 +255,8 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
             LanguageCodeStyleSettingsProvider.SettingsType.WRAPPING_AND_BRACES_SETTINGS -> {
                 consumer.showStandardOptions(
                     // "ALIGN_MULTILINE_CHAINED_METHODS",
+                    "RIGHT_MARGIN",
+                    "WRAP_ON_TYPING",
                     "KEEP_FIRST_COLUMN_COMMENT",
                     "KEEP_LINE_BREAKS",
                     "ALIGN_MULTILINE_EXTENDS_LIST",
@@ -285,6 +287,12 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                 )
                 consumer.renameStandardOption(CodeStyleSettingsCustomizable.WRAPPING_SWITCH_STATEMENT, "'when' statements")
                 consumer.renameStandardOption("FIELD_ANNOTATION_WRAP", "Property annotations")
+                consumer.renameStandardOption("METHOD_PARAMETERS_WRAP", "Function declaration parameters")
+                consumer.renameStandardOption("CALL_PARAMETERS_WRAP", "Function call arguments")
+                consumer.renameStandardOption("METHOD_CALL_CHAIN_WRAP", "Chained function calls")
+                consumer.renameStandardOption("METHOD_ANNOTATION_WRAP", "Function annotations")
+                consumer.renameStandardOption(CodeStyleSettingsCustomizable.WRAPPING_METHOD_PARENTHESES, "Function parentheses")
+
                 showCustomOption(
                     KotlinCodeStyleSettings::ALIGN_IN_COLUMNS_CASE_BRANCH,
                     "Align 'when' branches in columns",
@@ -368,6 +376,9 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                     "Around 'when' branches with {}",
                     CodeStyleSettingsCustomizable.BLANK_LINES
                 )
+            }
+            LanguageCodeStyleSettingsProvider.SettingsType.COMMENTER_SETTINGS -> {
+                consumer.showAllStandardOptions();
             }
             else -> consumer.showStandardOptions()
         }

@@ -1,6 +1,6 @@
 ## The Kotlin Standard Library
 
-This module creates the [standard library for Kotlin](http://kotlinlang.org/api/latest/jvm/stdlib/index.html).
+This module creates the [standard library for Kotlin](https://kotlinlang.org/api/latest/jvm/stdlib/index.html).
 
 ### Notes for contributors
 

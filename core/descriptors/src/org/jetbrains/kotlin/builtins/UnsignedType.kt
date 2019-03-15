@@ -38,6 +38,7 @@ object UnsignedTypes {
     }
 
     fun isShortNameOfUnsignedArray(name: Name) = name in arrayClassesShortNames
+    fun isShortNameOfUnsignedType(name: Name) = name in unsignedTypeNames
 
     fun getUnsignedClassIdByArrayClassId(arrayClassId: ClassId): ClassId? = arrayClassIdToUnsignedClassId[arrayClassId]
     fun getUnsignedArrayClassIdByUnsignedClassId(arrayClassId: ClassId): ClassId? = unsignedClassIdToArrayClassId[arrayClassId]

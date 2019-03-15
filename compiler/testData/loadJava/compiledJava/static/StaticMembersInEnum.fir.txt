@@ -1,0 +1,20 @@
+public final enum class StaticMembersInEnum : R|java/lang/Enum<test/StaticMembersInEnum>| {
+    public final static property ENTRY(val): R|ft<test/StaticMembersInEnum, test/StaticMembersInEnum?>|!
+        public get(): R|ft<test/StaticMembersInEnum, test/StaticMembersInEnum?>|!
+
+    public open static property STATIC_FIELD(var): R|kotlin/Int|
+        public get(): R|kotlin/Int|
+        public set(value: R|kotlin/Int|): kotlin/Unit
+
+    public final static property CONSTANT(val): R|ft<test/StaticMembersInEnum, test/StaticMembersInEnum?>|!
+        public get(): R|ft<test/StaticMembersInEnum, test/StaticMembersInEnum?>|!
+
+    public open static operator function foo(): R|kotlin/Unit|
+
+    public open static operator function values(x: R|kotlin/Int|): R|kotlin/Unit|
+
+    public open static operator function valueOf(x: R|kotlin/Int|): R|kotlin/Unit|
+
+    public open static operator function valueOf(<anonymous Java parameter>: R|ft<java/lang/Class<ft<T, T?>>, java/lang/Class<ft<T, T?>>?>|!, <anonymous Java parameter>: R|ft<kotlin/String, kotlin/String?>|!): R|ft<T, T?>|!
+
+}

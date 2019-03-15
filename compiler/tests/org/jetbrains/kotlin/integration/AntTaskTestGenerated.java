@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -107,11 +107,6 @@ public class AntTaskTestGenerated extends AbstractAntTaskTest {
     @TestMetadata("stdlibForJavacWithNoKotlin")
     public void testStdlibForJavacWithNoKotlin() throws Exception {
         runTest("compiler/testData/integration/ant/jvm/stdlibForJavacWithNoKotlin/");
-    }
-
-    @TestMetadata("stdlibJre78AndStdlibJdk78")
-    public void testStdlibJre78AndStdlibJdk78() throws Exception {
-        runTest("compiler/testData/integration/ant/jvm/stdlibJre78AndStdlibJdk78/");
     }
 
     @TestMetadata("suppressWarnings")

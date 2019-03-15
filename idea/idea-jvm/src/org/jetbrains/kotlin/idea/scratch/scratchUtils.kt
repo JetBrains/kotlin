@@ -8,11 +8,14 @@ package org.jetbrains.kotlin.idea.scratch
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.TextEditor
+import com.intellij.openapi.fileEditor.impl.text.TextEditorProvider
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.idea.scratch.ui.ScratchPanelListener
 import org.jetbrains.kotlin.idea.scratch.ui.ScratchTopPanel
+import org.jetbrains.kotlin.idea.syncPublisherWithDisposeCheck
 import org.jetbrains.kotlin.psi.UserDataProperty
 
 internal val LOG = Logger.getInstance("#org.jetbrains.kotlin.idea.scratch")
@@ -38,6 +41,11 @@ fun getAllEditorsWithScratchPanel(project: Project): List<Pair<TextEditor, Scrat
         if (panel != null) it to panel else null
     }
 
+fun getScratchPanelFromSelectedEditor(project: Project): ScratchTopPanel? {
+    val editor = FileEditorManager.getInstance(project).selectedTextEditor ?: return null
+    return TextEditorProvider.getInstance().getTextEditor(editor).getScratchPanel()
+}
+
 fun TextEditor.getScratchPanel(): ScratchTopPanel? {
     return scratchTopPanel
 }
@@ -47,6 +55,7 @@ fun TextEditor.addScratchPanel(panel: ScratchTopPanel) {
     FileEditorManager.getInstance(panel.scratchFile.project).addTopComponent(this, panel)
 
     Disposer.register(this, panel)
+    panel.scratchFile.project.syncPublisherWithDisposeCheck(ScratchPanelListener.TOPIC).panelAdded(panel)
 }
 
 fun TextEditor.removeScratchPanel() {

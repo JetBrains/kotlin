@@ -101,7 +101,7 @@ class KotlinFunctionCallUsage(
         if (resolvedCall == null || resolvedCall.isReallySuccess()) return false
 
         // TODO: investigate why arguments are not recorded for enum constructor call
-        if (element is KtSuperTypeCallEntry && element.parent.parent is KtEnumEntry) return false
+        if (element is KtSuperTypeCallEntry && element.parent.parent is KtEnumEntry && element.valueArguments.isEmpty()) return false
 
         if (skipUnmatchedArgumentsCheck) return false
 

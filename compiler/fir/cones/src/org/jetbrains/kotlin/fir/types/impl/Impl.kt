@@ -5,25 +5,35 @@
 
 package org.jetbrains.kotlin.fir.types.impl
 
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
+import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.types.*
 
 open class ConeClassTypeImpl(
-    override val symbol: ConeClassLikeSymbol,
-    override val typeArguments: Array<ConeKotlinTypeProjection>
-) : ConeClassLikeType()
-
-class ConeAbbreviatedTypeImpl(
-    override val abbreviationSymbol: ConeClassLikeSymbol,
-    override val typeArguments: Array<ConeKotlinTypeProjection>,
-    override val directExpansion: ConeClassLikeType
-) : ConeAbbreviatedType() {
-    override val symbol: ConeClassLikeSymbol
-        get() = abbreviationSymbol
+    override val lookupTag: ConeClassLikeLookupTag,
+    override val typeArguments: Array<out ConeKotlinTypeProjection>,
+    isNullable: Boolean
+) : ConeClassType() {
+    override val nullability: ConeNullability = ConeNullability.create(isNullable)
 }
 
-class ConeTypeParameterTypeImpl(override val symbol: ConeTypeParameterSymbol) : ConeTypeParameterType() {
+class ConeAbbreviatedTypeImpl(
+    override val abbreviationLookupTag: ConeClassLikeLookupTag,
+    override val typeArguments: Array<out ConeKotlinTypeProjection>,
+    isNullable: Boolean
+) : ConeAbbreviatedType() {
+    override val lookupTag: ConeClassLikeLookupTag
+        get() = abbreviationLookupTag
+
+    override val nullability: ConeNullability = ConeNullability.create(isNullable)
+}
+
+class ConeTypeParameterTypeImpl(
+    override val lookupTag: ConeTypeParameterLookupTag,
+    isNullable: Boolean
+) : ConeTypeParameterType() {
     override val typeArguments: Array<out ConeKotlinTypeProjection>
         get() = EMPTY_ARRAY
+
+    override val nullability: ConeNullability = ConeNullability.create(isNullable)
 }

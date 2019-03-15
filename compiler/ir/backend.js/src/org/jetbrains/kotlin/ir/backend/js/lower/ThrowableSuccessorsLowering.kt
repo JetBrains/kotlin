@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.atMostOne
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedPropertyDescriptor
+import org.jetbrains.kotlin.backend.common.descriptors.WrappedFieldDescriptor
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.makeNotNull
@@ -29,42 +30,43 @@ import org.jetbrains.kotlin.ir.util.isThrowableTypeOrSubtype
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
 
-class ThrowableSuccessorsLowering(context: JsIrBackendContext) : FileLoweringPass {
-    private val unitType = context.irBuiltIns.unitType
-    private val nothingNType = context.irBuiltIns.nothingNType
-    private val nothingType = context.irBuiltIns.nothingType
-    private val stringType = context.irBuiltIns.stringType
-    private val booleanType = context.irBuiltIns.booleanType
+class ThrowableSuccessorsLowering(val context: JsIrBackendContext) : FileLoweringPass {
+    private val unitType get() = context.irBuiltIns.unitType
+    private val nothingNType get() = context.irBuiltIns.nothingNType
+    private val nothingType get() = context.irBuiltIns.nothingType
+    private val stringType get() = context.irBuiltIns.stringType
+    private val booleanType get() = context.irBuiltIns.booleanType
+    private val throwableType get() = context.irBuiltIns.throwableType
 
-    private val propertyGetter = context.intrinsics.jsGetJSField.symbol
-    private val propertySetter = context.intrinsics.jsSetJSField.symbol
-    private val eqeqeqSymbol = context.irBuiltIns.eqeqSymbol
+    private val propertyGetter get() = context.intrinsics.jsGetJSField.symbol
+    private val propertySetter get() = context.intrinsics.jsSetJSField.symbol
+    private val eqeqeqSymbol get() = context.irBuiltIns.eqeqSymbol
 
     private val messageName get() = JsIrBuilder.buildString(stringType, "message")
     private val causeName get() = JsIrBuilder.buildString(stringType, "cause")
     private val nameName get() = JsIrBuilder.buildString(stringType, "name")
 
-    private val throwableClass = context.symbolTable.referenceClass(
-        context.getClass(JsIrBackendContext.KOTLIN_PACKAGE_FQN.child(Name.identifier("Throwable")))
-    ).owner
-    private val throwableConstructors = throwableClass.declarations.filterIsInstance<IrConstructor>()
+    private val throwableClass = context.throwableClass
+    private val throwableConstructors = context.throwableConstructors
 
-    private val defaultCtor = throwableConstructors.single { it.valueParameters.size == 0 }
+    private val defaultCtor = context.defaultThrowableCtor
     private val toString =
-        throwableClass.declarations.filterIsInstance<IrSimpleFunction>().single { it.name == Name.identifier("toString") }
+        throwableClass.owner.declarations.filterIsInstance<IrSimpleFunction>().single { it.name == Name.identifier("toString") }.symbol
 
     private val messagePropertyName = Name.identifier("message")
     private val causePropertyName = Name.identifier("cause")
 
-    private val messageGetter =
-        throwableClass.declarations.filterIsInstance<IrFunction>().atMostOne { it.name == Name.special("<get-message>") }
-            ?: throwableClass.declarations.filterIsInstance<IrProperty>().atMostOne { it.name == messagePropertyName }?.getter!!
-    private val causeGetter =
-        throwableClass.declarations.filterIsInstance<IrFunction>().atMostOne { it.name == Name.special("<get-cause>") }
-            ?: throwableClass.declarations.filterIsInstance<IrProperty>().atMostOne { it.name == causePropertyName }?.getter!!
+    private val messageGetter by lazy {
+        throwableClass.owner.declarations.filterIsInstance<IrFunction>().atMostOne { it.name == Name.special("<get-message>") }?.symbol
+            ?: throwableClass.owner.declarations.filterIsInstance<IrProperty>().atMostOne { it.name == messagePropertyName }?.getter?.symbol!!
+    }
+    private val causeGetter by lazy {
+        throwableClass.owner.declarations.filterIsInstance<IrFunction>().atMostOne { it.name == Name.special("<get-cause>") }?.symbol
+            ?: throwableClass.owner.declarations.filterIsInstance<IrProperty>().atMostOne { it.name == causePropertyName }?.getter?.symbol!!
+    }
 
-    private val captureStackFunction = context.symbolTable.referenceSimpleFunction(context.getInternalFunctions("captureStack").single())
-    private val newThrowableFunction = context.symbolTable.referenceSimpleFunction(context.getInternalFunctions("newThrowable").single())
+    private val captureStackFunction = context.captureStackSymbol
+    private val newThrowableFunction = context.newThrowableSymbol
     private val pendingSuperUsages = mutableListOf<DirectThrowableSuccessors>()
 
     private data class DirectThrowableSuccessors(val klass: IrClass, val message: IrField, val cause: IrField)
@@ -106,7 +108,7 @@ class ThrowableSuccessorsLowering(context: JsIrBackendContext) : FileLoweringPas
 
     inner class ThrowableInstanceCreationLowering : IrElementTransformerVoid() {
         override fun visitCall(expression: IrCall): IrExpression {
-            if (expression.symbol.owner !in throwableConstructors) return super.visitCall(expression)
+            if (expression.symbol !in throwableConstructors) return super.visitCall(expression)
 
             expression.transformChildrenVoid(this)
 
@@ -128,7 +130,7 @@ class ThrowableSuccessorsLowering(context: JsIrBackendContext) : FileLoweringPas
                 else -> {
                     val arg = expression.getValueArgument(0)!!
                     when {
-                        arg.type.makeNotNull().isThrowable() -> Pair(nullValue(), arg)
+                        arg.type.makeNotNull(false).isThrowable() -> Pair(nullValue(), arg)
                         else -> Pair(arg, nullValue())
                     }
                 }
@@ -143,8 +145,8 @@ class ThrowableSuccessorsLowering(context: JsIrBackendContext) : FileLoweringPas
         override fun visitClass(declaration: IrClass) {
 
             if (isDirectChildOfThrowable(declaration)) {
-                val messageField = createBackingField(declaration, messagePropertyName, messageGetter.returnType)
-                val causeField = createBackingField(declaration, causePropertyName, causeGetter.returnType)
+                val messageField = createBackingField(declaration, messagePropertyName, stringType)
+                val causeField = createBackingField(declaration, causePropertyName, throwableType)
                 val existedMessageAccessor = ownPropertyAccessor(declaration, messageGetter)
                 if (existedMessageAccessor.origin == IrDeclarationOrigin.FAKE_OVERRIDE)
                     createPropertyAccessor(existedMessageAccessor, messageField)
@@ -157,7 +159,7 @@ class ThrowableSuccessorsLowering(context: JsIrBackendContext) : FileLoweringPas
         }
 
         private fun createBackingField(declaration: IrClass, name: Name, type: IrType): IrField {
-            val fieldDescriptor = WrappedPropertyDescriptor()
+            val fieldDescriptor = WrappedFieldDescriptor()
             val fieldSymbol = IrFieldSymbolImpl(fieldDescriptor)
             val fieldDeclaration = IrFieldImpl(
                 UNDEFINED_OFFSET,
@@ -204,13 +206,13 @@ class ThrowableSuccessorsLowering(context: JsIrBackendContext) : FileLoweringPas
         override fun visitFunction(declaration: IrFunction, data: IrDeclarationParent) = super.visitFunction(declaration, declaration)
 
         override fun visitCall(expression: IrCall, data: IrDeclarationParent): IrElement {
-            if (expression.superQualifierSymbol?.owner != throwableClass) return super.visitCall(expression, data)
+            if (expression.superQualifierSymbol != throwableClass) return super.visitCall(expression, data)
 
             expression.transformChildren(this, data)
 
             val superField = when {
-                expression.symbol.owner == messageGetter -> successor.message
-                expression.symbol.owner == causeGetter -> successor.cause
+                expression.symbol == messageGetter -> successor.message
+                expression.symbol == causeGetter -> successor.cause
                 else -> error("Unknown accessor")
             }
 
@@ -218,14 +220,14 @@ class ThrowableSuccessorsLowering(context: JsIrBackendContext) : FileLoweringPas
         }
 
         override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: IrDeclarationParent): IrElement {
-            if (expression.symbol.owner !in throwableConstructors) return super.visitDelegatingConstructorCall(expression, data)
+            if (expression.symbol !in throwableConstructors) return super.visitDelegatingConstructorCall(expression, data)
 
             expression.transformChildren(this, data)
 
             val (messageArg, causeArg, paramStatements) = extractConstructorParameters(expression, data)
 
             val newDelegation = expression.run {
-                IrDelegatingConstructorCallImpl(startOffset, endOffset, type, defaultCtor.symbol, defaultCtor.descriptor)
+                IrDelegatingConstructorCallImpl(startOffset, endOffset, type, defaultCtor, defaultCtor.descriptor)
             }
 
             val klass = successor.klass
@@ -291,7 +293,7 @@ class ThrowableSuccessorsLowering(context: JsIrBackendContext) : FileLoweringPas
                     val irVal = JsIrBuilder.buildVar(arg.type, parent, initializer = arg)
                     val argValue = JsIrBuilder.buildGetValue(irVal.symbol)
                     when {
-                        arg.type.makeNotNull().isThrowable() -> Triple(safeCallToString(irVal), argValue, listOf(irVal))
+                        arg.type.makeNotNull(false).isThrowable() -> Triple(safeCallToString(irVal), argValue, listOf(irVal))
                         else -> Triple(argValue, nullValue(), listOf(irVal))
                     }
                 }
@@ -306,14 +308,14 @@ class ThrowableSuccessorsLowering(context: JsIrBackendContext) : FileLoweringPas
             putValueArgument(1, JsIrBuilder.buildNull(value.type))
         }
         val value2 = JsIrBuilder.buildGetValue(receiver.symbol)
-        val call = JsIrBuilder.buildCall(toString.symbol, stringType).apply { dispatchReceiver = value2 }
+        val call = JsIrBuilder.buildCall(toString, stringType).apply { dispatchReceiver = value2 }
         return JsIrBuilder.buildIfElse(stringType.makeNullable(), check, JsIrBuilder.buildNull(stringType), call)
     }
 
     private fun isDirectChildOfThrowable(irClass: IrClass) = irClass.superTypes.any { it.isThrowable() }
-    private fun ownPropertyAccessor(irClass: IrClass, irBase: IrFunction) =
+    private fun ownPropertyAccessor(irClass: IrClass, irBase: IrFunctionSymbol) =
         irClass.declarations.filterIsInstance<IrProperty>().mapNotNull { it.getter }
-            .single { it.overriddenSymbols.any { s -> s.owner == irBase } }
+            .single { it.overriddenSymbols.any { s -> s == irBase } }
 
     inner class ThrowablePropertiesUsageTransformer : IrElementTransformerVoid() {
         override fun visitCall(expression: IrCall): IrExpression {
@@ -323,7 +325,7 @@ class ThrowableSuccessorsLowering(context: JsIrBackendContext) : FileLoweringPas
 
             expression.transformChildrenVoid(this)
 
-            val owner = expression.symbol.owner
+            val owner = expression.symbol
             return when (owner) {
                 messageGetter -> {
                     IrCallImpl(expression.startOffset, expression.endOffset, expression.type, propertyGetter).apply {

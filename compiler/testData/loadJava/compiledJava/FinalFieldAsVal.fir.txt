@@ -1,0 +1,5 @@
+public final class FinalFieldAsVal : R|java/lang/Object| {
+    public final property f(val): R|kotlin/Int|
+        public get(): R|kotlin/Int|
+
+}

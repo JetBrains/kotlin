@@ -46,7 +46,9 @@ internal fun generateParameterNames(
                 isEnumName = !isEnumName
                 if (!isEnumName) "\$enum\$name" else "\$enum\$ordinal"
             }
-            JvmMethodParameterKind.RECEIVER -> AsmUtil.RECEIVER_PARAMETER_NAME
+            JvmMethodParameterKind.RECEIVER -> {
+                AsmUtil.getNameForReceiverParameter(functionDescriptor, state.bindingContext, state.languageVersionSettings)
+            }
             JvmMethodParameterKind.OUTER -> AsmUtil.CAPTURED_THIS_FIELD
             JvmMethodParameterKind.VALUE -> iterator.next().name.asString()
 

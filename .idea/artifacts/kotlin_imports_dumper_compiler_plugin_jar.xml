@@ -1,0 +1,12 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="kotlin-imports-dumper-compiler-plugin.jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/kotlin_imports_dumper_compiler_plugin_jar</output-path>
+    <root id="archive" name="kotlin-imports-dumper-compiler-plugin.jar">
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/plugins/imports-dumper/build/tmp/jar/MANIFEST.MF" />
+      </element>
+      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlinx/kotlinx-serialization-runtime/0.4.2/e343c68c9fa77a190225484c1e03b1485fbb5f1f/kotlinx-serialization-runtime-0.4.2.jar" path-in-jar="/" />
+      <element id="module-output" name="kotlin.kotlin-imports-dumper-compiler-plugin.main" />
+    </root>
+  </artifact>
+</component>

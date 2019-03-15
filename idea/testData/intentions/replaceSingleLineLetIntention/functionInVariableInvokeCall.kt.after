@@ -1,0 +1,6 @@
+// WITH_RUNTIME
+class Foo(val bar: () -> Int)
+
+fun bar(foo: Foo?) {
+    foo?.bar?.invoke()
+}

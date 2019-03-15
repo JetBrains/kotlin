@@ -9,15 +9,11 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.AbstractValueUsageTransformer
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.isNothing
-import org.jetbrains.kotlin.ir.types.makeNotNull
-import org.jetbrains.kotlin.ir.util.getInlinedClass
-import org.jetbrains.kotlin.ir.util.isInlined
-import org.jetbrains.kotlin.ir.util.isNullable
-import org.jetbrains.kotlin.ir.util.patchDeclarationParents
+import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.*
 
 
 // Copied and adapted from Kotlin/Native
@@ -34,10 +30,11 @@ class AutoboxingTransformer(val context: JsIrBackendContext) : AbstractValueUsag
 
         val actualType = when (this) {
             is IrCall -> {
-                if (this.symbol.owner.let { it is IrSimpleFunction && it.isSuspend }) {
+                val function = this.symbol.owner
+                if (function.let { it is IrSimpleFunction && it.isSuspend }) {
                     irBuiltIns.anyNType
                 } else {
-                    this.symbol.owner.returnType
+                    function.realOverrideTarget.returnType
                 }
             }
             is IrGetField -> this.symbol.owner.type
@@ -65,13 +62,20 @@ class AutoboxingTransformer(val context: JsIrBackendContext) : AbstractValueUsag
         }
 
         // // TODO: Default parameters are passed as nulls and they need not to be unboxed. Fix this
-        if (actualType.makeNotNull().isNothing())
+        if (actualType.makeNotNull(false).isNothing())
             return this
 
         val expectedType = type
 
         val actualInlinedClass = actualType.getInlinedClass()
         val expectedInlinedClass = expectedType.getInlinedClass()
+
+        // Mimicking behaviour of current JS backend
+        // TODO: Revisit
+        if (
+            (actualType is IrDynamicType && expectedType.makeNotNull().isChar()) ||
+            (actualType.makeNotNull().isChar() && expectedType is IrDynamicType)
+        ) return this
 
         val function = when {
             actualInlinedClass == null && expectedInlinedClass == null -> return this
@@ -121,9 +125,38 @@ class AutoboxingTransformer(val context: JsIrBackendContext) : AbstractValueUsag
         }
     }
 
+    private val IrFunctionAccessExpression.target: IrFunction
+        get() = when (this) {
+            is IrCall -> this.callTarget
+            is IrDelegatingConstructorCall -> this.symbol.owner
+            else -> TODO(this.render())
+        }
+
+    private val IrCall.callTarget: IrFunction
+        get() = symbol.owner.realOverrideTarget
+
+
+    override fun IrExpression.useAsDispatchReceiver(expression: IrFunctionAccessExpression): IrExpression {
+        return this.useAsArgument(expression.target.dispatchReceiverParameter!!)
+    }
+
+    override fun IrExpression.useAsExtensionReceiver(expression: IrFunctionAccessExpression): IrExpression {
+        return this.useAsArgument(expression.target.extensionReceiverParameter!!)
+    }
+
+    override fun IrExpression.useAsValueArgument(
+        expression: IrFunctionAccessExpression,
+        parameter: IrValueParameter
+    ): IrExpression {
+
+        return this.useAsArgument(expression.target.valueParameters[parameter.index])
+    }
+
+
     override fun IrExpression.useAsVarargElement(expression: IrVararg): IrExpression {
         return this.useAs(
-            if (this.type.isInlined())
+            // Do not box primitive inline classes
+            if (this.type.isInlined() && !expression.type.isInlined() && !expression.type.isPrimitiveArray())
                 irBuiltIns.anyNType
             else
                 expression.varargElementType
@@ -141,3 +174,4 @@ class AutoboxingTransformer(val context: JsIrBackendContext) : AbstractValueUsag
         }
 
 }
+

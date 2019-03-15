@@ -1,0 +1,2 @@
+public abstract interface MutableToReadOnly : R|java/lang/Object| {
+}

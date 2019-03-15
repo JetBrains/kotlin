@@ -65,6 +65,8 @@ configurations {
     coroutinesExperimentalTestCompile.extendsFrom(testCompile)
     coroutinesExperimentalMigrationTestCompile.extendsFrom(coroutinesExperimentalTestCompile)
     longRunningTestCompile.extendsFrom(testCompile)
+    builtins
+    compileOnly.extendsFrom(builtins)
 }
 
 dependencies {
@@ -79,11 +81,16 @@ dependencies {
 
     coroutinesExperimentalCompile sourceSets.main.output
     coroutinesExperimentalTestCompile sourceSets.test.output
+
+    builtins project(':core:builtins')
 }
 
 jar {
+    dependsOn(configurations.builtins)
     manifestAttributes(manifest, project, 'Main' /*true*/)
-    from("${rootDir}/dist/builtins")
+    from {
+        zipTree(configurations.builtins.singleFile)
+    }
     from sourceSets.experimental.output
     from sourceSets.coroutinesExperimental.output
     // TODO: enable as soon as this doesn't cause D8/DX to crash
@@ -121,15 +128,19 @@ task modularJar(type: Jar) {
     manifestAttributes(manifest, project, 'Main', true)
     classifier = 'modular'
 
-    from zipTree(jar.outputs.files.singleFile)
+    from zipTree(jar.outputs.files.singleFile).matching {
+        // Beware of Gradle problem: changing exclude spec doesn't affect Jar task up-to-dateness
+        exclude('kotlin/native/**')
+    }
     from sourceSets.java9.output
 }
 
 artifacts {
     archives sourcesJar
-    archives javadocJar
     archives modularJar
 }
+
+javadocJar()
 
 dist {
     dependsOn distMavenSources
@@ -152,8 +163,6 @@ task dexMethodCount(type: DexMethodCount) {
 check.dependsOn(dexMethodCount)
 
 compileKotlin {
-    dependsOn(":core:builtins:serialize")
-    classpath += files("${rootDir}/dist/builtins")
     kotlinOptions {
         freeCompilerArgs = [
                 "-version",

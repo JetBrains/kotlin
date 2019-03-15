@@ -42,6 +42,7 @@ import javax.swing.JComponent
 
 class KotlinAwareMoveFilesOrDirectoriesDialog(
         private val project: Project,
+        private val initialDirectory: PsiDirectory?,
         private val callback: (KotlinAwareMoveFilesOrDirectoriesDialog?) -> Unit
 ) : DialogWrapper(project, true) {
     companion object {
@@ -51,7 +52,7 @@ class KotlinAwareMoveFilesOrDirectoriesDialog(
 
     private val nameLabel = JBLabelDecorator.createJBLabelDecorator().setBold(true)
     private val targetDirectoryField = TextFieldWithHistoryWithBrowseButton()
-    private val searchReferencesCb = NonFocusableCheckBox("Search ${UIUtil.MNEMONIC}references").apply { isSelected = true }
+    private val searchReferencesCb = NonFocusableCheckBox("Search r${UIUtil.MNEMONIC}eferences").apply { isSelected = true }
     private val openInEditorCb = NonFocusableCheckBox("Open moved files in editor")
     private val updatePackageDirectiveCb = NonFocusableCheckBox()
 
@@ -163,7 +164,12 @@ class KotlinAwareMoveFilesOrDirectoriesDialog(
 
         project.executeCommand(RefactoringBundle.message("move.title"), null) {
             runWriteAction {
-                val directoryName = targetDirectoryField.childComponent.text.replace(File.separatorChar, '/')
+                val directoryName = targetDirectoryField.childComponent.text.replace(File.separatorChar, '/').let {
+                    when {
+                        it.startsWith(".") -> (initialDirectory?.virtualFile?.path ?: "") + "/" + it
+                        else -> it
+                    }
+                }
                 try {
                     targetDirectory = DirectoryUtil.mkdirs(PsiManager.getInstance(project), directoryName)
                 }

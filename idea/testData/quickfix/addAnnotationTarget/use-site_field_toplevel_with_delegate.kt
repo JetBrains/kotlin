@@ -1,5 +1,6 @@
 // "Add annotation target" "false"
 // WITH_RUNTIME
+// ACTION: Introduce import alias
 // ACTION: Make internal
 // ACTION: Make private
 // ERROR: '@field:' annotations could be applied only to properties with backing fields

@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,7 +17,9 @@ abstract class AbstractNavigateFromLibrarySourcesTest : LightCodeInsightFixtureT
     protected fun navigationElementForReferenceInLibrarySource(filePath: String, referenceText: String): PsiElement {
         val libraryOrderEntry = ModuleRootManager.getInstance(myModule!!).orderEntries.first { it is LibraryOrderEntry }
         val libSourcesRoot = libraryOrderEntry.getUrls(OrderRootType.SOURCES)[0]
-        val vf = VirtualFileManager.getInstance().findFileByUrl(libSourcesRoot + "/$filePath")!!
+        val libUrl = "$libSourcesRoot/$filePath"
+        val vf = VirtualFileManager.getInstance().refreshAndFindFileByUrl(libUrl)
+            ?: error("Can't find library: $libUrl")
         val psiFile = psiManager.findFile(vf)!!
         val indexOf = psiFile.text!!.indexOf(referenceText)
         val reference = psiFile.findReferenceAt(indexOf)

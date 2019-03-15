@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.gradle.plugin.KOTLIN_JS_DSL_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.getConvention
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.allKotlinSourceSets
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 
 /**
@@ -96,7 +95,7 @@ class KotlinModelBuilder(private val kotlinPluginVersion: String, private val an
                     kotlinSourceSet.kotlin.srcDirs,
                     javaSourceSet.resources.srcDirs,
                     destinationDir,
-                    javaSourceSet.output.resourcesDir,
+                    javaSourceSet.output.resourcesDir!!,
                     createCompilerArguments()
                 )
             } else null

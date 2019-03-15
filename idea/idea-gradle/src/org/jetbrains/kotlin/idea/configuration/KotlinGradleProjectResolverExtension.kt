@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.configuration
 
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.ProjectKeys
 import com.intellij.openapi.externalSystem.model.project.ExternalSystemSourceType
@@ -28,16 +29,14 @@ import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.io.FileUtil
 import org.gradle.api.artifacts.Dependency
 import org.gradle.tooling.model.idea.IdeaModule
-import org.jetbrains.kotlin.gradle.CompilerArgumentsBySourceSet
-import org.jetbrains.kotlin.gradle.KotlinGradleModel
-import org.jetbrains.kotlin.gradle.KotlinGradleModelBuilder
-import org.jetbrains.kotlin.gradle.KotlinMPPGradleModel
+import org.jetbrains.kotlin.gradle.*
 import org.jetbrains.kotlin.idea.inspections.gradle.getDependencyModules
 import org.jetbrains.kotlin.idea.util.CopyableDataNodeUserDataProperty
 import org.jetbrains.kotlin.idea.util.DataNodeUserDataProperty
 import org.jetbrains.kotlin.idea.util.NotNullableCopyableDataNodeUserDataProperty
-import org.jetbrains.kotlin.statistics.KotlinStatisticsTrigger
-import org.jetbrains.kotlin.statistics.KotlinTargetTrigger
+import org.jetbrains.kotlin.idea.util.PsiPrecedences
+import org.jetbrains.kotlin.idea.statistics.KotlinEventTrigger
+import org.jetbrains.kotlin.idea.statistics.KotlinStatisticsTrigger
 import org.jetbrains.plugins.gradle.model.ExternalProjectDependency
 import org.jetbrains.plugins.gradle.model.ExternalSourceSet
 import org.jetbrains.plugins.gradle.model.FileCollectionDependency
@@ -69,6 +68,7 @@ var DataNode<out ModuleData>.dependenciesCache
 
 class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() {
     val isAndroidProjectKey = Key.findKeyByName("IS_ANDROID_PROJECT_KEY")
+    private val LOG = Logger.getInstance(PsiPrecedences::class.java)
 
     override fun getToolingExtensionsClasses(): Set<Class<out Any>> {
         return setOf(KotlinGradleModelBuilder::class.java, Unit::class.java)
@@ -178,7 +178,10 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
                     }
                 }
 
-                val dependencies = if (useModulePerSourceSet()) moduleNode.getDependencies(ideProject) else getDependencyModules(ideModule, gradleModule.project)
+                val dependencies = if (useModulePerSourceSet()) moduleNode.getDependencies(ideProject) else getDependencyModules(
+                    ideModule,
+                    gradleModule.project
+                )
                 // queue only those dependencies that haven't been discovered earlier
                 dependencies.filterTo(toProcess, discovered::add)
             }
@@ -190,10 +193,16 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
         ideModule: DataNode<ModuleData>,
         ideProject: DataNode<ProjectData>
     ) {
+        if (LOG.isDebugEnabled) {
+            LOG.debug("Start populate module dependencies. Gradle module: [$gradleModule], Ide module: [$ideModule], Ide project: [$ideProject]")
+        }
         val mppModel = resolverCtx.getExtraProject(gradleModule, KotlinMPPGradleModel::class.java)
         if (mppModel != null) {
-            mppModel.targets.filterNot { it.name == "metadata" }.forEach { target ->
-                KotlinStatisticsTrigger.trigger(KotlinTargetTrigger::class.java, "MPP.${target.name}")
+            mppModel.targets.forEach { target ->
+                KotlinStatisticsTrigger.trigger(
+                    KotlinEventTrigger.KotlinGradleTargetTrigger,
+                    "MPP.${target.platform.id + (target.presetName?.let { ".$it" } ?: "")}"
+                )
             }
             return super.populateModuleDependencies(gradleModule, ideModule, ideProject)
         }
@@ -210,19 +219,22 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
 
         ideModule.isResolved = true
         ideModule.hasKotlinPlugin = gradleModel.hasKotlinPlugin
-        ideModule.compilerArgumentsBySourceSet = gradleModel.compilerArgumentsBySourceSet
+        ideModule.compilerArgumentsBySourceSet = gradleModel.compilerArgumentsBySourceSet.deepCopy()
         ideModule.coroutines = gradleModel.coroutines
         ideModule.platformPluginId = gradleModel.platformPluginId
 
         KotlinStatisticsTrigger.trigger(
-                KotlinTargetTrigger::class.java,
-                gradleModel.platformPluginId ?: "unknown"
+            KotlinEventTrigger.KotlinGradleTargetTrigger,
+            gradleModel.kotlinTarget ?: "unknown"
         )
 
         addImplementedModuleNames(gradleModule, ideModule, ideProject, gradleModel)
 
         if (useModulePerSourceSet()) {
             super.populateModuleDependencies(gradleModule, ideModule, ideProject)
+        }
+        if (LOG.isDebugEnabled) {
+            LOG.debug("Finish populating module dependencies. Gradle module: [$gradleModule], Ide module: [$ideModule], Ide project: [$ideProject]")
         }
     }
 

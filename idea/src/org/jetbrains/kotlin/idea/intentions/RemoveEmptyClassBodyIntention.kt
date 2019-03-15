@@ -34,7 +34,7 @@ class RemoveEmptyClassBodyInspection :
             ProblemHighlightType.LIKE_UNUSED_SYMBOL
 }
 
-class RemoveEmptyClassBodyIntention : SelfTargetingOffsetIndependentIntention<KtClassBody>(KtClassBody::class.java, "Remove empty class body") {
+class RemoveEmptyClassBodyIntention : SelfTargetingOffsetIndependentIntention<KtClassBody>(KtClassBody::class.java, "Redundant empty class body") {
 
     override fun applyTo(element: KtClassBody, editor: Editor?) {
         val parent = element.parent

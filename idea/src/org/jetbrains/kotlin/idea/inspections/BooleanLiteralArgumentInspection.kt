@@ -16,7 +16,6 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.intentions.AddNameToArgumentIntention
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtConstantExpression
@@ -38,7 +37,7 @@ class BooleanLiteralArgumentInspection(
             if (valueArguments.takeLastWhile { it != argument }.any { !it.isNamed() }) return
 
             if (argumentExpression.analyze().diagnostics.forElement(argumentExpression).any { it.severity == Severity.ERROR }) return
-            if (call.resolveToCall()?.resultingDescriptor?.hasStableParameterNames() != true) return
+            if (AddNameToArgumentIntention.detectNameToAdd(argument) == null) return
 
             val hasPreviousUnnamedBoolean = valueArguments.asSequence().windowed(size = 2, step = 1).any { (prev, next) ->
                 next == argument && !prev.isNamed() &&
@@ -49,9 +48,10 @@ class BooleanLiteralArgumentInspection(
                 fixes += AddNamesToLastBooleanArgumentsFix()
             }
             fixes += IntentionWrapper(AddNameToArgumentIntention(), argument.containingKtFile)
-            holder.registerProblem(
+            holder.registerProblemWithoutOfflineInformation(
                 argument,
                 "Boolean literal argument without parameter name",
+                isOnTheFly,
                 if (reportSingle || hasPreviousUnnamedBoolean) GENERIC_ERROR_OR_WARNING else INFORMATION,
                 *fixes.toTypedArray()
             )

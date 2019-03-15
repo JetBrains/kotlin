@@ -14,9 +14,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
-import org.jetbrains.kotlin.script.KotlinScriptDefinition
-import org.jetbrains.kotlin.script.ScriptDefinitionProvider
-import org.jetbrains.kotlin.script.StandardScriptDefinition
 
 internal data class PsiSetup(
     val applicationEnvironment: CoreApplicationEnvironment,
@@ -35,7 +32,6 @@ internal fun setup(): PsiSetup {
     CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), MetaLanguage.EP_NAME, MetaLanguage::class.java)
 
 
-    applicationEnvironment.registerApplicationService(ScriptDefinitionProvider::class.java, NoopScriptDefinitionProvider())
     applicationEnvironment.registerFileType(KotlinFileType.INSTANCE, "kt")
     applicationEnvironment.registerParserDefinition(KotlinParserDefinition())
 
@@ -51,20 +47,3 @@ internal inline fun <T> withPsiSetup(l: PsiSetup.() -> T): T {
     return t
 }
 
-private class NoopScriptDefinitionProvider : ScriptDefinitionProvider {
-    override fun getDefaultScriptDefinition(): KotlinScriptDefinition {
-        return StandardScriptDefinition
-    }
-
-    override fun getKnownFilenameExtensions(): Sequence<String> {
-        return emptySequence()
-    }
-
-    override fun isScript(fileName: String): Boolean {
-        return false
-    }
-
-    override fun findScriptDefinition(fileName: String): KotlinScriptDefinition? {
-        return null
-    }
-}

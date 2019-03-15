@@ -60,6 +60,19 @@ fun Project.intellijDep(module: String = "intellij") = "kotlin.build.custom.deps
 
 fun Project.intellijCoreDep() = intellijDep("intellij-core")
 
+/**
+ * Runtime version of annotations that are already in Kotlin stdlib (historically Kotlin has older version of this one).
+ *
+ * SHOULD NOT BE USED IN COMPILE CLASSPATH!
+ *
+ * `@NonNull`, `@Nullabe` from `idea/annotations.jar` has `TYPE` target which leads to different types treatment in Kotlin compiler.
+ * On the other hand, `idea/annotations.jar` contains org/jetbrains/annotations/Async annations which is required for IDEA debugger.
+ *
+ * So, we are excluding `annotaions.jar` from all other `kotlin.build.custom.deps` and using this one for runtime only
+ * to avoid accidentally including `annotations.jar` by calling `intellijDep()`.
+ */
+fun Project.intellijRuntimeAnnotations() = intellijDep("intellij-runtime-annotations")
+
 fun Project.intellijPluginDep(plugin: String) = intellijDep(plugin)
 
 fun Project.intellijUltimateDep() = intellijDep("intellij")
@@ -134,7 +147,6 @@ fun Project.runIdeTask(name: String, ideaPluginDir: File, ideaSandboxDir: File, 
             "-XX:ReservedCodeCacheSize=240m",
             "-XX:+HeapDumpOnOutOfMemoryError",
             "-ea",
-            "-Didea.is.internal=true",
             "-Didea.debug.mode=true",
             "-Didea.system.path=$ideaSandboxDir",
             "-Didea.config.path=$ideaSandboxConfigDir",
@@ -150,6 +162,12 @@ fun Project.runIdeTask(name: String, ideaPluginDir: File, ideaSandboxDir: File, 
 
         if (project.hasProperty("noPCE")) {
             jvmArgs("-Didea.ProcessCanceledException=disabled")
+        }
+
+        jvmArgs("-Didea.is.internal=${project.findProperty("idea.is.internal") ?: true}")
+
+        project.findProperty("idea.args")?.let { arguments ->
+            jvmArgs(arguments.toString().split(" "))
         }
 
         args()

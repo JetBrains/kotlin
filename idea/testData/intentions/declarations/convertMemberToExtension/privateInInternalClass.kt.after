@@ -1,0 +1,4 @@
+internal class Foo {
+}
+
+private fun Foo.bar() {}

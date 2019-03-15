@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.references;
@@ -23,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
+import org.jetbrains.kotlin.descriptors.PackageViewDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies;
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde;
 import org.jetbrains.kotlin.idea.navigation.GotoCheck;
@@ -31,6 +20,7 @@ import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.idea.test.ProjectDescriptorWithStdlibSources;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 
 import java.util.ArrayList;
@@ -83,11 +73,11 @@ public class BuiltInsReferenceResolverTest extends KotlinLightCodeInsightFixture
     }
 
     private static Collection<DeclarationDescriptor> getAllStandardDescriptors() {
-        final List<DeclarationDescriptor> descriptors = new ArrayList<DeclarationDescriptor>();
+        List<DeclarationDescriptor> descriptors = new ArrayList<>();
 
-        PackageFragmentDescriptor builtinsPackageFragment = DefaultBuiltIns.getInstance().getBuiltInsPackageFragment();
+        MemberScope builtIns = DefaultBuiltIns.getInstance().getBuiltInsPackageScope();
 
-        for (DeclarationDescriptor packageMember : DescriptorUtils.getAllDescriptors(builtinsPackageFragment.getMemberScope())) {
+        for (DeclarationDescriptor packageMember : DescriptorUtils.getAllDescriptors(builtIns)) {
             packageMember.acceptVoid(new DeclarationDescriptorVisitorEmptyBodies<Void, Void>() {
                 @Override
                 public Void visitClassDescriptor(ClassDescriptor descriptor, Void data) {
@@ -102,6 +92,11 @@ public class BuiltInsReferenceResolverTest extends KotlinLightCodeInsightFixture
                 @Override
                 public Void visitDeclarationDescriptor(DeclarationDescriptor descriptor, Void data) {
                     descriptors.add(descriptor);
+                    return null;
+                }
+
+                @Override
+                public Void visitPackageViewDescriptor(PackageViewDescriptor descriptor, Void data) {
                     return null;
                 }
             });

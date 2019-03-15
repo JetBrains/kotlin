@@ -1,0 +1,19 @@
+LineBreakpoint created at suspendContinuation.kt:7
+Run Java
+Connected to the target VM
+suspendContinuation.kt:7
+Compile bytecode for a
+ frame    = main:7, SuspendContinuationKt {suspendContinuation}
+   local    = $completion: kotlin.coroutines.Continuation = {kotlin.coroutines.intrinsics.IntrinsicsKt__IntrinsicsJvmKt$createCoroutineUnintercepted$$inlined$createCoroutineFromSuspendFunction$IntrinsicsKt__IntrinsicsJvmKt$1@uniqueID}Continuation at kotlin.coroutines.intrinsics.IntrinsicsKt__IntrinsicsJvmKt$createCoroutineUnintercepted$$inlined$createCoroutineFromSuspendFunction$IntrinsicsKt__IntrinsicsJvmKt$1 (sp = null)
+     field    = label: int = 1 (sp = null)
+     field    = $completion: kotlin.coroutines.Continuation = {kotlin.coroutines.jvm.internal.RunSuspend@uniqueID} (sp = null)
+       field    = result: kotlin.Result = null (sp = RunSuspend.!EXT!)
+     field    = $this_createCoroutineUnintercepted$inlined: kotlin.jvm.functions.Function1 = {suspendContinuation.SuspendContinuationKt$$$main@uniqueID}interface kotlin.jvm.functions.Function1 (sp = null)
+       field    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = null)
+       field    = arity: int = 1 (sp = Lambda.!EXT!)
+     field    = completion: kotlin.coroutines.Continuation = {kotlin.coroutines.jvm.internal.RunSuspend@uniqueID} (sp = BaseContinuationImpl.!EXT!)
+       field    = result: kotlin.Result = null (sp = RunSuspend.!EXT!)
+   local    = a: int = 5 (sp = suspendContinuation.kt, 4)
+Disconnected from the target VM
+
+Process finished with exit code 0

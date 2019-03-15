@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.logging.LogLevel
 import org.gradle.tooling.GradleConnector
 import org.gradle.util.GradleVersion
+import org.gradle.util.VersionNumber
 import org.jetbrains.kotlin.gradle.model.ModelContainer
 import org.jetbrains.kotlin.gradle.model.ModelFetcherBuildAction
 import org.jetbrains.kotlin.gradle.util.*
@@ -44,7 +45,13 @@ abstract class BaseGradleIT {
         val sdkLicense = File(sdkLicenses, "android-sdk-license")
         if (!sdkLicense.exists()) {
             sdkLicense.createNewFile()
-            sdkLicense.writeText("d56f5187479451eabf01fb78af6dfcb131a6481e")
+            sdkLicense.writeText(
+                """
+                8933bad161af4178b1185d1a37fbf41ea5269c55
+                d56f5187479451eabf01fb78af6dfcb131a6481e
+                24333f8a63b6825ea9c5514f83c2829b004d1fee
+                """.trimIndent()
+            )
         }
 
         val sdkPreviewLicense = File(sdkLicenses, "android-sdk-preview-license")
@@ -137,7 +144,14 @@ abstract class BaseGradleIT {
                 .apply {
                     File(BaseGradleIT.resourcesRootFile, "GradleWrapper").copyRecursively(this)
                     val wrapperProperties = File(this, "gradle/wrapper/gradle-wrapper.properties")
-                    wrapperProperties.modify { it.replace("<GRADLE_WRAPPER_VERSION>", version) }
+                    val isGradleVerisonSnapshot = version.endsWith("+0000")
+                    if (!isGradleVerisonSnapshot) {
+                        wrapperProperties.modify { it.replace("<GRADLE_WRAPPER_VERSION>", version) }
+                    } else {
+                        wrapperProperties.modify {
+                            it.replace("distributions/gradle-<GRADLE_WRAPPER_VERSION>", "distributions-snapshots/gradle-$version")
+                        }
+                    }
                 }
 
         private val runnerGradleVersion = System.getProperty("runnerGradleVersion")
@@ -171,7 +185,7 @@ abstract class BaseGradleIT {
         val incrementalJs: Boolean? = null,
         val androidHome: File? = null,
         val javaHome: File? = null,
-        val androidGradlePluginVersion: String? = null,
+        val androidGradlePluginVersion: AGPVersion? = null,
         val forceOutputToStdout: Boolean = false,
         val debug: Boolean = false,
         val freeCommandLineArgs: List<String> = emptyList(),
@@ -252,8 +266,19 @@ abstract class BaseGradleIT {
 
     // Basically the same as `Project.build`, tells gradle to wait for debug on 5005 port
     // Faster to type than `project.build("-Dorg.gradle.debug=true")` or `project.build(options = defaultBuildOptions().copy(debug = true))`
+    @Deprecated("Use, but do not commit!")
     fun Project.debug(vararg params: String, options: BuildOptions = defaultBuildOptions(), check: CompiledProject.() -> Unit) {
         build(*params, options = options.copy(debug = true), check = check)
+    }
+
+    @Deprecated("Use, but do not commit!")
+    fun Project.debugKotlinDaemon(
+        vararg params: String,
+        debugPort: Int = 5006,
+        options: BuildOptions = defaultBuildOptions(),
+        check: CompiledProject.() -> Unit
+    ) {
+        build(*params, options = options.copy(kotlinDaemonDebugPort = debugPort), check = check)
     }
 
     fun Project.build(vararg params: String, options: BuildOptions = defaultBuildOptions(), check: CompiledProject.() -> Unit) {
@@ -444,6 +469,16 @@ abstract class BaseGradleIT {
         }
     }
 
+    fun CompiledProject.assertTasksFailed(vararg tasks: String) {
+        assertTasksFailed(tasks.toList())
+    }
+
+    fun CompiledProject.assertTasksFailed(tasks: Iterable<String>) {
+        for (task in tasks) {
+            assertContains("$task FAILED")
+        }
+    }
+
     fun CompiledProject.assertTasksUpToDate(vararg tasks: String) {
         assertTasksUpToDate(tasks.toList())
     }
@@ -511,14 +546,10 @@ abstract class BaseGradleIT {
             assertSameFiles(sources, compiledJavaSources.projectRelativePaths(this.project), "Compiled Java files differ:\n  ")
 
     fun Project.resourcesDir(subproject: String? = null, sourceSet: String = "main"): String =
-        (subproject?.plus("/") ?: "") + "build/" +
-                (if (testGradleVersionBelow("4.0")) "classes/" else "resources/") +
-                sourceSet + "/"
+        (subproject?.plus("/") ?: "") + "build/resources/$sourceSet/"
 
     fun Project.classesDir(subproject: String? = null, sourceSet: String = "main", language: String = "kotlin"): String =
-        (subproject?.plus("/") ?: "") + "build/classes/" +
-                (if (testGradleVersionAtLeast("4.0")) "$language/" else "") +
-                sourceSet + "/"
+        (subproject?.plus("/") ?: "") + "build/classes/$language/$sourceSet/"
 
     fun Project.testGradleVersionAtLeast(version: String): Boolean =
         GradleVersion.version(chooseWrapperVersionOrFinishTest()) >= GradleVersion.version(version)
@@ -548,13 +579,13 @@ abstract class BaseGradleIT {
         params.toMutableList().apply {
             add("--stacktrace")
             when (minLogLevel) {
-            // Do not allow to configure Gradle project with `ERROR` log level (error logs visible on all log levels)
+                // Do not allow to configure Gradle project with `ERROR` log level (error logs visible on all log levels)
                 LogLevel.ERROR -> error("Log level ERROR is not supported by Gradle command-line")
-            // Omit log level argument for default `LIFECYCLE` log level,
-            // because there is no such command-line option `--lifecycle`
-            // see https://docs.gradle.org/current/userguide/logging.html#sec:choosing_a_log_level
+                // Omit log level argument for default `LIFECYCLE` log level,
+                // because there is no such command-line option `--lifecycle`
+                // see https://docs.gradle.org/current/userguide/logging.html#sec:choosing_a_log_level
                 LogLevel.LIFECYCLE -> Unit
-            //Command line option for other log levels
+                //Command line option for other log levels
                 else -> add("--${minLogLevel.name.toLowerCase()}")
             }
             if (options.daemonOptionSupported) {
@@ -596,7 +627,7 @@ abstract class BaseGradleIT {
 
             // Workaround: override a console type set in the user machine gradle.properties (since Gradle 4.3):
             add("--console=plain")
-
+            add("-Dkotlin.daemon.ea=true")
             addAll(options.freeCommandLineArgs)
         }
 

@@ -1,9 +1,6 @@
 package org.jetbrains.kotlin.gradle
 
-import org.jetbrains.kotlin.gradle.util.allKotlinFiles
-import org.jetbrains.kotlin.gradle.util.getFileByName
-import org.jetbrains.kotlin.gradle.util.getFilesByNames
-import org.jetbrains.kotlin.gradle.util.modify
+import org.jetbrains.kotlin.gradle.util.*
 import org.junit.Assert
 import org.junit.Test
 import java.io.File
@@ -27,11 +24,17 @@ class IncrementalCompilationJsMultiProjectIT : BaseIncrementalCompilationMultiPr
 
     override val additionalLibDependencies: String =
         "implementation \"org.jetbrains.kotlin:kotlin-test-js:${'$'}kotlin_version\""
+
+    override val compileKotlinTaskName: String
+        get() = "compileKotlin2Js"
 }
 
 class IncrementalCompilationJvmMultiProjectIT : BaseIncrementalCompilationMultiProjectIT() {
     override val additionalLibDependencies: String =
         "implementation \"org.jetbrains.kotlin:kotlin-stdlib:${'$'}kotlin_version\""
+
+    override val compileKotlinTaskName: String
+        get() = "compileKotlin"
 
     override fun defaultProject(): Project =
         Project("incrementalMultiproject")
@@ -203,6 +206,7 @@ open class A {
     }
 
     protected abstract val additionalLibDependencies: String
+    protected abstract val compileKotlinTaskName: String
 
     @Test
     fun testAddDependencyToLib() {
@@ -251,20 +255,57 @@ open class A {
         }
 
         val bKt = project.projectDir.getFileByName("B.kt")
+        val bKtContent = bKt.readText()
         bKt.delete()
+
+        fun runFailingBuild() {
+            project.build("build") {
+                assertFailed()
+                assertContains("B.kt has been removed")
+                assertTasksFailed(":lib:$compileKotlinTaskName")
+                val affectedFiles = project.projectDir.getFilesByNames("barUseAB.kt", "barUseB.kt")
+                assertCompiledKotlinSources(project.relativize(affectedFiles))
+            }
+        }
+
+        runFailingBuild()
+        runFailingBuild()
+
+        bKt.writeText(bKtContent.replace("fun b", "open fun b"))
+
+        project.build("build") {
+            assertSuccessful()
+            val affectedFiles = project.projectDir.getFilesByNames(
+                "B.kt", "barUseAB.kt", "barUseB.kt",
+                "BB.kt", "fooUseB.kt"
+            )
+            assertCompiledKotlinSources(project.relativize(affectedFiles))
+        }
+    }
+
+    @Test
+    fun testRemoveLibFromClasspath() {
+        val project = defaultProject()
+        project.build("build") {
+            assertSuccessful()
+        }
+
+        val appBuildGradle = project.projectDir.resolve("app/build.gradle")
+        val appBuildGradleContent = appBuildGradle.readText()
+        appBuildGradle.modify { it.checkedReplace("compile project(':lib')", "") }
+        val aaKt = project.projectDir.getFileByName("AA.kt")
+        aaKt.addNewLine()
 
         project.build("build") {
             assertFailed()
         }
 
-        project.projectDir.getFileByName("barUseB.kt").delete()
-        project.projectDir.getFileByName("barUseAB.kt").delete()
+        appBuildGradle.writeText(appBuildGradleContent)
+        aaKt.addNewLine()
 
         project.build("build") {
-            assertFailed()
-            val affectedSources = project.projectDir.allKotlinFiles()
-            val relativePaths = project.relativize(affectedSources)
-            assertCompiledKotlinSources(relativePaths)
+            assertSuccessful()
+            assertCompiledKotlinSources(project.relativize(aaKt))
         }
     }
 }

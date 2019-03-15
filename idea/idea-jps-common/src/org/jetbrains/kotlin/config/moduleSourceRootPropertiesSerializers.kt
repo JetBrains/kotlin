@@ -27,12 +27,12 @@ sealed class KotlinSourceRootPropertiesSerializer(
     typeId: String
 ) : JpsModuleSourceRootPropertiesSerializer<JavaSourceRootProperties>(type, typeId) {
     object Source : KotlinSourceRootPropertiesSerializer(
-            KotlinSourceRootType.Source,
+            SourceKotlinRootType,
             KOTLIN_SOURCE_ROOT_TYPE_ID
     )
 
     object TestSource : KotlinSourceRootPropertiesSerializer(
-            KotlinSourceRootType.TestSource,
+            TestSourceKotlinRootType,
             KOTLIN_TEST_ROOT_TYPE_ID
     )
 
@@ -59,12 +59,12 @@ sealed class KotlinResourceRootPropertiesSerializer(
     typeId: String
 ) : JpsModuleSourceRootPropertiesSerializer<JavaResourceRootProperties>(type, typeId) {
     object Resource : KotlinResourceRootPropertiesSerializer(
-            KotlinResourceRootType.Resource,
+            ResourceKotlinRootType,
             KOTLIN_RESOURCE_ROOT_TYPE_ID
     )
     object TestResource : KotlinResourceRootPropertiesSerializer(
-            KotlinResourceRootType.TestResource,
-            KOTLIN_TEST_RESOURCE_ROOT_TYPE_ID
+        TestResourceKotlinRootType,
+        KOTLIN_TEST_RESOURCE_ROOT_TYPE_ID
     )
 
     override fun loadProperties(sourceRootTag: Element): JavaResourceRootProperties {

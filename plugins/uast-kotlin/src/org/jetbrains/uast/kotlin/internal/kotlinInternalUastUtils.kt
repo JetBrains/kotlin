@@ -33,7 +33,9 @@ import org.jetbrains.kotlin.asJava.toLightElements
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalTypeOrSubtype
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.synthetic.SyntheticMemberDescriptor
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
+import org.jetbrains.kotlin.load.java.sam.SamAdapterDescriptor
 import org.jetbrains.kotlin.load.java.sam.SamConstructorDescriptor
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryPackageSourceElement
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
@@ -41,6 +43,7 @@ import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMemberSignature
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -54,7 +57,9 @@ import org.jetbrains.kotlin.synthetic.SamAdapterExtensionFunctionDescriptor
 import org.jetbrains.kotlin.type.MapPsiToAsmDesc
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.isInterface
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.uast.*
+import org.jetbrains.uast.kotlin.expressions.KotlinLocalFunctionUVariable
 import java.lang.ref.WeakReference
 import java.text.StringCharacterIterator
 
@@ -94,14 +99,12 @@ internal fun resolveSource(context: KtElement, descriptor: DeclarationDescriptor
     }
 }
 
-private fun resolveDeserialized(context: KtElement, descriptor: DeclarationDescriptor): PsiMethod? {
-    if (descriptor !is DeserializedCallableMemberDescriptor) return null
-
-    val containingDeclaration = descriptor.containingDeclaration
-    val psiClass = when (containingDeclaration) {
+internal fun resolveContainingDeserializedClass(context: KtElement, memberDescriptor: DeserializedCallableMemberDescriptor): PsiClass? {
+    val containingDeclaration = memberDescriptor.containingDeclaration
+    return when (containingDeclaration) {
         is LazyJavaPackageFragment -> {
             val binaryPackageSourceElement = containingDeclaration.source as? KotlinJvmBinaryPackageSourceElement ?: return null
-            val containingBinaryClass = binaryPackageSourceElement.getContainingBinaryClass(descriptor) ?: return null
+            val containingBinaryClass = binaryPackageSourceElement.getContainingBinaryClass(memberDescriptor) ?: return null
             val containingClassQualifiedName = containingBinaryClass.classId.asSingleFqName().asString()
             JavaPsiFacade.getInstance(context.project).findClass(containingClassQualifiedName, context.resolveScope) ?: return null
         }
@@ -111,7 +114,12 @@ private fun resolveDeserialized(context: KtElement, descriptor: DeclarationDescr
         }
         else -> return null
     }
+}
 
+private fun resolveDeserialized(context: KtElement, descriptor: DeclarationDescriptor): PsiMethod? {
+    if (descriptor !is DeserializedCallableMemberDescriptor) return null
+
+    val psiClass = resolveContainingDeserializedClass(context, descriptor) ?: return null
 
     val proto = descriptor.proto
     val nameResolver = descriptor.nameResolver
@@ -169,6 +177,9 @@ internal fun KotlinType.toPsiType(lightDeclaration: PsiModifierListOwner?, conte
     }
 
     (constructor.declarationDescriptor as? TypeParameterDescriptor)?.let { typeParameter ->
+        (typeParameter.containingDeclaration.toSource()?.getMaybeLightElement() as? PsiTypeParameterListOwner)
+            ?.typeParameterList?.typeParameters?.getOrNull(typeParameter.index)
+            ?.let { return PsiTypesUtil.getClassType(it) }
         return CommonSupertypes.commonSupertype(typeParameter.upperBounds).toPsiType(lightDeclaration, context, boxed)
     }
 
@@ -241,21 +252,19 @@ internal fun KtClassOrObject.toPsiType(): PsiType {
     return PsiTypesUtil.getClassType(lightClass)
 }
 
-internal fun PsiElement.getMaybeLightElement(context: UElement): PsiElement? {
+internal fun PsiElement.getMaybeLightElement(): PsiElement? {
     return when (this) {
-        is KtVariableDeclaration -> {
+        is KtDeclaration -> {
             val lightElement = toLightElements().firstOrNull()
             if (lightElement != null) return lightElement
 
-            val languagePlugin = context.getLanguagePlugin()
-            val uElement = languagePlugin.convertElementWithParent(this, null)
-            when (uElement) {
-                is UDeclaration -> uElement.psi
-                is UDeclarationsExpression -> uElement.declarations.firstOrNull()?.psi
+            when (val uElement = this.toUElement()) {
+                is UDeclaration -> uElement.javaPsi
+                is UDeclarationsExpression -> uElement.declarations.firstOrNull()?.javaPsi
+                is ULambdaExpression -> (uElement.uastParent as? KotlinLocalFunctionUVariable)?.javaPsi
                 else -> null
             }
         }
-        is KtDeclaration -> toLightElements().firstOrNull()
         is KtElement -> null
         else -> this
     }
@@ -270,7 +279,7 @@ internal fun KtElement.resolveCallToDeclaration(
         resolvedCall.resultingDescriptor
     }
 
-    return descriptor.toSource()?.getMaybeLightElement(context)
+    return descriptor.toSource()?.getMaybeLightElement()
 }
 
 internal fun KtExpression.unwrapBlockOrParenthesis(): KtExpression {
@@ -282,8 +291,15 @@ internal fun KtExpression.unwrapBlockOrParenthesis(): KtExpression {
     return innerExpression
 }
 
+internal fun KtElement.canAnalyze(): Boolean {
+    if (!isValid) return false
+    val containingFile = containingFile as? KtFile ?: return false // EA-114080, EA-113475, EA-134193
+    if (containingFile.doNotAnalyze != null) return false // To prevent exceptions during analysis
+    return true
+}
+
 internal fun KtElement.analyze(): BindingContext {
-    if (containingFile !is KtFile) return BindingContext.EMPTY // EA-114080, EA-113475
+    if (!canAnalyze()) return BindingContext.EMPTY
     return ServiceManager.getService(project, KotlinUastResolveProviderService::class.java)
         ?.getBindingContext(this) ?: BindingContext.EMPTY
 }
@@ -304,15 +320,16 @@ internal fun KotlinType.getFunctionalInterfaceType(source: UElement, element: Kt
 internal fun KotlinULambdaExpression.getFunctionalInterfaceType(): PsiType? {
     val parent = psi.parent
     if (parent is KtBinaryExpressionWithTypeRHS) return parent.right?.getType()?.getFunctionalInterfaceType(this, psi)
-    if (parent is KtLambdaArgument) run {
-        val callExpression = parent.parent as? KtCallExpression ?: return@run
+    if (parent is KtValueArgument) run {
+        val callExpression = parent.parents.take(2).firstIsInstanceOrNull<KtCallExpression>() ?: return@run
         val resolvedCall = callExpression.getResolvedCall(callExpression.analyze()) ?: return@run
-        val candidateDescriptor = resolvedCall.candidateDescriptor
+        val candidateDescriptor = resolvedCall.candidateDescriptor as? SyntheticMemberDescriptor<*> ?: return@run
         when (candidateDescriptor) {
             is SamConstructorDescriptor -> return candidateDescriptor.returnType?.getFunctionalInterfaceType(this, psi)
-            is SamAdapterExtensionFunctionDescriptor -> {
+            is SamAdapterDescriptor<*>, is SamAdapterExtensionFunctionDescriptor -> {
                 val index = (resolvedCall.getArgumentMapping(parent) as? ArgumentMatch)?.valueParameter?.index ?: return@run
-                val parameterDescriptor = candidateDescriptor.baseDescriptorForSynthetic.valueParameters.getOrNull(index) ?: return@run
+                val functionDescriptor = candidateDescriptor.baseDescriptorForSynthetic as? FunctionDescriptor ?: return@run
+                val parameterDescriptor = functionDescriptor.valueParameters.getOrNull(index) ?: return@run
                 return parameterDescriptor.type.getFunctionalInterfaceType(this, psi)
             }
         }

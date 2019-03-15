@@ -56,7 +56,11 @@ internal abstract class KtUltraLightMethod(
     abstract override fun buildTypeParameterList(): PsiTypeParameterList
 
     private val _throwsList: PsiReferenceList by lazyPub {
-        val list = KotlinLightReferenceListBuilder(manager, language, PsiReferenceList.Role.THROWS_LIST)
+        val list =
+            object : KotlinLightReferenceListBuilder(manager, language, PsiReferenceList.Role.THROWS_LIST) {
+                override fun getParent() = this@KtUltraLightMethod
+                override fun getContainingFile() = this@KtUltraLightMethod.containingFile
+            }
         computeDescriptor()?.let {
             for (ex in FunctionCodegen.getThrownExceptions(it)) {
                 val psiClassType = ex.defaultType.asPsiType(support, TypeMappingMode.DEFAULT, list) as? PsiClassType ?: continue

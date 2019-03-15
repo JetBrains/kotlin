@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve;
 
 import com.google.common.collect.ImmutableMap;
+import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
 import kotlin.annotations.jvm.ReadOnly;
 import org.jetbrains.annotations.NotNull;
@@ -15,7 +16,6 @@ import org.jetbrains.kotlin.cfg.LeakingThisDescriptor;
 import org.jetbrains.kotlin.cfg.TailRecursionKind;
 import org.jetbrains.kotlin.contracts.description.InvocationKind;
 import org.jetbrains.kotlin.contracts.model.Computation;
-import org.jetbrains.kotlin.contracts.model.Functor;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.name.FqName;
@@ -98,7 +98,8 @@ public interface BindingContext {
     WritableSlice<KtExpression, DataFlowInfo> DATA_FLOW_INFO_BEFORE = new BasicWritableSlice<>(DO_NOTHING);
     WritableSlice<KtExpression, KotlinType> EXPECTED_EXPRESSION_TYPE = new BasicWritableSlice<>(DO_NOTHING);
     WritableSlice<KtElement, Computation> EXPRESSION_EFFECTS = Slices.createSimpleSlice();
-    WritableSlice<FunctionDescriptor, Functor> FUNCTOR = Slices.createSimpleSlice();
+    WritableSlice<KtElement, Boolean> CONTRACT_NOT_ALLOWED = Slices.createSimpleSlice();
+    WritableSlice<KtElement, Boolean> IS_CONTRACT_DECLARATION_BLOCK = Slices.createSimpleSlice();
     WritableSlice<KtFunction, KotlinType> EXPECTED_RETURN_TYPE = new BasicWritableSlice<>(DO_NOTHING);
     WritableSlice<KtExpression, DataFlowInfo> DATAFLOW_INFO_AFTER_CONDITION = Slices.createSimpleSlice();
     WritableSlice<VariableDescriptor, DataFlowValue> BOUND_INITIALIZER_VALUE = Slices.createSimpleSlice();
@@ -264,6 +265,8 @@ public interface BindingContext {
     WritableSlice<KtFunction, KotlinResolutionCallbacksImpl.LambdaInfo> NEW_INFERENCE_LAMBDA_INFO = new BasicWritableSlice<>(DO_NOTHING);
 
     WritableSlice<KtExpression, PrimitiveNumericComparisonInfo> PRIMITIVE_NUMERIC_COMPARISON_INFO = Slices.createSimpleSlice();
+
+    WritableSlice<KtExpression, Ref<VariableDescriptor>> NEW_INFERENCE_CATCH_EXCEPTION_PARAMETER = Slices.createSimpleSlice();
 
     @SuppressWarnings("UnusedDeclaration")
     @Deprecated // This field is needed only for the side effects of its initializer

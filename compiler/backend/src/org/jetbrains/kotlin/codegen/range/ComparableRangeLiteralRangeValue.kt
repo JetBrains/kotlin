@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.codegen.range
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.generateCallReceiver
 import org.jetbrains.kotlin.codegen.generateCallSingleArgument
-import org.jetbrains.kotlin.codegen.isClosedRangeContains
 import org.jetbrains.kotlin.codegen.range.forLoop.IteratorForLoopGenerator
 import org.jetbrains.kotlin.codegen.range.inExpression.InContinuousRangeOfComparableExpressionGenerator
 import org.jetbrains.kotlin.descriptors.CallableDescriptor

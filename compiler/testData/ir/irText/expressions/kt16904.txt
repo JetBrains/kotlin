@@ -144,7 +144,7 @@ FILE fqName:<root> fileName:/kt16904.kt
     PROPERTY FAKE_OVERRIDE name:field visibility:public modality:FINAL flags:var
       FIELD FAKE_OVERRIDE name:field type:kotlin.Int visibility:public flags:
         overridden:
-          FIELD IR_EXTERNAL_DECLARATION_STUB name:field type:kotlin.Int visibility:public flags:
+          FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:field type:kotlin.Int visibility:public flags:
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
       overridden:
         FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:

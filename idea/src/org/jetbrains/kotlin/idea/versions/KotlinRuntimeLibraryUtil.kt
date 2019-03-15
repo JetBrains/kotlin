@@ -89,16 +89,16 @@ enum class LibraryJarDescriptor(
     val shouldExist: Boolean,
     val getPath: (KotlinPaths) -> File = { paths -> File(paths.libPath, jarName) }
 ) {
-    RUNTIME_JAR(PathUtil.KOTLIN_JAVA_STDLIB_JAR, OrderRootType.CLASSES, true, KotlinPaths::getStdlibPath) {
+    RUNTIME_JAR(PathUtil.KOTLIN_JAVA_STDLIB_JAR, OrderRootType.CLASSES, true, { it.stdlibPath }) {
         override fun findExistingJar(library: Library): VirtualFile? {
             if (isExternalLibrary(library)) return null
             return JavaRuntimeDetectionUtil.getRuntimeJar(Arrays.asList(*library.getFiles(OrderRootType.CLASSES)))
         }
     },
 
-    REFLECT_JAR(PathUtil.KOTLIN_JAVA_REFLECT_JAR, OrderRootType.CLASSES, false, KotlinPaths::getReflectPath),
-    SCRIPT_RUNTIME_JAR(PathUtil.KOTLIN_JAVA_SCRIPT_RUNTIME_JAR, OrderRootType.CLASSES, true, KotlinPaths::getScriptRuntimePath),
-    TEST_JAR(PathUtil.KOTLIN_TEST_JAR, OrderRootType.CLASSES, false, KotlinPaths::getKotlinTestPath),
+    REFLECT_JAR(PathUtil.KOTLIN_JAVA_REFLECT_JAR, OrderRootType.CLASSES, false, { it.reflectPath }),
+    SCRIPT_RUNTIME_JAR(PathUtil.KOTLIN_JAVA_SCRIPT_RUNTIME_JAR, OrderRootType.CLASSES, true, { it.scriptRuntimePath }),
+    TEST_JAR(PathUtil.KOTLIN_TEST_JAR, OrderRootType.CLASSES, false, { it.kotlinTestPath }),
 
     @Deprecated("RUNTIME_JDK7_JAR should be used since 1.2")
     RUNTIME_JRE7_JAR(PathUtil.KOTLIN_JAVA_RUNTIME_JRE7_JAR, OrderRootType.CLASSES, false),
@@ -116,7 +116,7 @@ enum class LibraryJarDescriptor(
     RUNTIME_JRE8_SOURCES_JAR(PathUtil.KOTLIN_JAVA_RUNTIME_JRE8_SRC_JAR, OrderRootType.SOURCES, false),
     RUNTIME_JDK8_SOURCES_JAR(PathUtil.KOTLIN_JAVA_RUNTIME_JDK8_SRC_JAR, OrderRootType.SOURCES, false),
 
-    RUNTIME_SRC_JAR(PathUtil.KOTLIN_JAVA_STDLIB_SRC_JAR, OrderRootType.SOURCES, false, KotlinPaths::getStdlibSourcesPath) {
+    RUNTIME_SRC_JAR(PathUtil.KOTLIN_JAVA_STDLIB_SRC_JAR, OrderRootType.SOURCES, false, { it.stdlibSourcesPath }) {
         override fun findExistingJar(library: Library): VirtualFile? {
             return super.findExistingJar(library) ?: LibraryUtils.getJarFile(
                 library.getFiles(orderRootType).toList(),
@@ -127,8 +127,8 @@ enum class LibraryJarDescriptor(
     REFLECT_SRC_JAR(PathUtil.KOTLIN_REFLECT_SRC_JAR, OrderRootType.SOURCES, false),
     TEST_SRC_JAR(PathUtil.KOTLIN_TEST_SRC_JAR, OrderRootType.SOURCES, false),
 
-    JS_STDLIB_JAR(PathUtil.JS_LIB_JAR_NAME, OrderRootType.CLASSES, true, KotlinPaths::getJsStdLibJarPath),
-    JS_STDLIB_SRC_JAR(PathUtil.JS_LIB_SRC_JAR_NAME, OrderRootType.SOURCES, false, KotlinPaths::getJsStdLibSrcJarPath);
+    JS_STDLIB_JAR(PathUtil.JS_LIB_JAR_NAME, OrderRootType.CLASSES, true, { it.jsStdLibJarPath }),
+    JS_STDLIB_SRC_JAR(PathUtil.JS_LIB_SRC_JAR_NAME, OrderRootType.SOURCES, false, { it.jsStdLibSrcJarPath });
 
     open fun findExistingJar(library: Library): VirtualFile? {
         if (isExternalLibrary(library)) return null

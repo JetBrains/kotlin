@@ -9,8 +9,8 @@ public class A {
 
 // FILE: main.kt
 
-class <!UNSUPPORTED(Inheritance of a Java member referencing 'kotlin.jvm.functions.FunctionN': fun foo\(w: FunctionN<*>!\): Unit defined in A)!>B<!> : A()
+class <!UNSUPPORTED("Inheritance of a Java member referencing 'kotlin.jvm.functions.FunctionN': fun foo(w: FunctionN<*>!): Unit defined in A")!>B<!> : A()
 
 fun foo() {
-    <!UNSUPPORTED(Inheritance of a Java member referencing 'kotlin.jvm.functions.FunctionN': fun foo\(w: FunctionN<*>!\): Unit defined in A)!>object<!> : A() {}
+    <!UNSUPPORTED("Inheritance of a Java member referencing 'kotlin.jvm.functions.FunctionN': fun foo(w: FunctionN<*>!): Unit defined in A")!>object<!> : A() {}
 }

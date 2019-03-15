@@ -16,9 +16,6 @@ internal fun File.isJavaFile() =
 internal fun File.isKotlinFile(sourceFilesExtensions: List<String>): Boolean =
     !isJavaFile() && sourceFilesExtensions.any { it.equals(extension, ignoreCase = true) }
 
-internal fun File.isClassFile(): Boolean =
-    extension.equals("class", ignoreCase = true)
-
 internal fun File.relativeOrCanonical(base: File): String =
     relativeToOrNull(base)?.path ?: canonicalPath
 

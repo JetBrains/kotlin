@@ -1,0 +1,70 @@
+FILE: enums.kt
+    public? final? enum class Order {
+        public? constructor(): super<kotlin/Enum>()
+
+        public? final enum entry FIRST {
+            public? constructor(): super<kotlin/Any>()
+
+        }
+
+        public? final enum entry SECOND {
+            public? constructor(): super<kotlin/Any>()
+
+        }
+
+        public? final enum entry THIRD {
+            public? constructor(): super<kotlin/Any>()
+
+        }
+
+    }
+    public? final? enum class Planet {
+        public? constructor(m: Double, r: Double): super<kotlin/Enum>()
+
+        public? final? property m(val): Double
+            public? get(): Double
+
+        internal final? property r(val): Double
+            internal get(): Double
+
+        public? final enum entry MERCURY : Planet {
+            public? constructor(): super<Planet>(Double(1.0), Double(2.0))
+
+            public? open? override function sayHello(): kotlin/Unit {
+                println#(String(Hello!!!))
+            }
+
+        }
+
+        public? final enum entry VENERA : Planet {
+            public? constructor(): super<Planet>(Double(3.0), Double(4.0))
+
+            public? open? override function sayHello(): kotlin/Unit {
+                println#(String(Ola!!!))
+            }
+
+        }
+
+        public? final enum entry EARTH : Planet {
+            public? constructor(): super<Planet>(Double(5.0), Double(6.0))
+
+            public? open? override function sayHello(): kotlin/Unit {
+                println#(String(Privet!!!))
+            }
+
+        }
+
+        public? final? property g(val): Double = div#(times#(G#, m#), times#(r#, r#))
+            public? get(): Double
+
+        public? abstract function sayHello(): kotlin/Unit
+
+        public? final? companion object Companion {
+            public? constructor(): super<kotlin/Any>()
+
+            public? final? const property G(val): <implicit> = Double(6.67E-11)
+                public? get(): <implicit>
+
+        }
+
+    }

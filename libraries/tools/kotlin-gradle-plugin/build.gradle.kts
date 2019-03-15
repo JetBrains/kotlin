@@ -1,5 +1,4 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import com.gradle.publish.PluginConfig
+
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.pill.PillExtension
@@ -12,19 +11,18 @@ plugins {
     id("jps-compatible")
 }
 
+publish()
+
 // todo: make lazy
 val jar: Jar by tasks
 runtimeJar(rewriteDepsToShadedCompiler(jar))
 
 sourcesJar()
 javadocJar()
-publish()
 
 repositories {
     google()
 }
-
-val agp25CompileOnly by configurations.creating
 
 pill {
     variant = PillExtension.Variant.FULL
@@ -37,7 +35,7 @@ dependencies {
     compileOnly(project(":compiler:incremental-compilation-impl"))
     compileOnly(project(":compiler:daemon-common"))
 
-    compile(project(":kotlin-stdlib"))
+    compile(kotlinStdlib())
     compile(project(":kotlin-native:kotlin-native-utils"))
     compileOnly(project(":kotlin-reflect-api"))
     compileOnly(project(":kotlin-android-extensions"))
@@ -48,6 +46,9 @@ dependencies {
     compileOnly(project(":kotlin-scripting-compiler"))
 
     compileOnly("com.android.tools.build:gradle:2.0.0")
+    compileOnly("com.android.tools.build:gradle-core:2.0.0")
+    compileOnly("com.android.tools.build:builder:2.0.0")
+    compileOnly("com.android.tools.build:builder-model:2.0.0")
     compileOnly("org.codehaus.groovy:groovy-all:2.4.12")
     compileOnly(gradleApi())
 
@@ -61,13 +62,9 @@ dependencies {
     runtime(project(":kotlin-reflect"))
 
     // com.android.tools.build:gradle has ~50 unneeded transitive dependencies
-    agp25CompileOnly("com.android.tools.build:gradle:3.0.0-alpha1") { isTransitive = false }
-    agp25CompileOnly("com.android.tools.build:gradle-core:3.0.0-alpha1") { isTransitive = false }
-    agp25CompileOnly("com.android.tools.build:builder-model:3.0.0-alpha1") { isTransitive = false }
-    agp25CompileOnly("org.codehaus.groovy:groovy-all:2.4.12")
-    agp25CompileOnly(gradleApi())
-    agp25CompileOnly(project(":kotlin-annotation-processing"))
-    agp25CompileOnly(project(":kotlin-annotation-processing-gradle"))
+    compileOnly("com.android.tools.build:gradle:3.0.0") { isTransitive = false }
+    compileOnly("com.android.tools.build:gradle-core:3.0.0") { isTransitive = false }
+    compileOnly("com.android.tools.build:builder-model:3.0.0") { isTransitive = false }
 
     testCompileOnly (project(":compiler"))
     testCompile(projectTests(":kotlin-build-common"))
@@ -79,9 +76,6 @@ dependencies {
     testCompileOnly(project(":kotlin-annotation-processing"))
     testCompileOnly(project(":kotlin-annotation-processing-gradle"))
 }
-
-val agp25 by sourceSets.creating
-agp25.compileClasspath += configurations.compile + agp25CompileOnly + mainSourceSet.output
 
 tasks {
     withType<KotlinCompile> {
@@ -96,12 +90,12 @@ tasks {
         for ((name, value) in propertiesToExpand) {
             inputs.property(name, value)
         }
-        expand("projectVersion" to project.version)
+        filesMatching("project.properties") {
+            expand("projectVersion" to project.version)
+        }
     }
 
     named<Jar>("jar") {
-        dependsOn(tasks.named("agp25Classes"))
-        from(agp25.output.classesDirs)
         callGroovy("manifestAttributes", manifest, project)
     }
 

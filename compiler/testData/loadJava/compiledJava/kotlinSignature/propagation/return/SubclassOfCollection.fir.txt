@@ -1,0 +1,4 @@
+<E> public abstract interface SubclassOfCollection : R|java/util/Collection<E>| {
+    public abstract operator function iterator(): R|ft<kotlin/collections/MutableIterator<ft<E, E?>>, kotlin/collections/Iterator<ft<E, E?>>?>|!
+
+}

@@ -14,20 +14,20 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrTypeParameterImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
-import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 
 /**
  * Binds the arguments explicitly represented in the IR to the parameters of the accessed function.
@@ -143,6 +143,23 @@ fun IrMemberAccessExpression.addArguments(args: List<Pair<ParameterDescriptor, I
     this.addArguments(args.toMap())
 
 fun IrExpression.isNullConst() = this is IrConst<*> && this.kind == IrConstKind.Null
+
+fun IrExpression.isTrueConst() = this is IrConst<*> && this.kind == IrConstKind.Boolean && this.value == true
+
+fun IrExpression.isFalseConst() = this is IrConst<*> && this.kind == IrConstKind.Boolean && this.value == false
+
+fun IrExpression.coerceToUnitIfNeeded(valueType: KotlinType, irBuiltIns: IrBuiltIns): IrExpression {
+    return if (KotlinTypeChecker.DEFAULT.isSubtypeOf(valueType, irBuiltIns.unitType.toKotlinType()))
+        this
+    else
+        IrTypeOperatorCallImpl(
+            startOffset, endOffset,
+            irBuiltIns.unitType,
+            IrTypeOperator.IMPLICIT_COERCION_TO_UNIT,
+            irBuiltIns.unitType, irBuiltIns.unitType.classifierOrFail,
+            this
+        )
+}
 
 fun IrMemberAccessExpression.usesDefaultArguments(): Boolean =
     this.descriptor.valueParameters.any { this.getValueArgument(it) == null }
@@ -263,11 +280,14 @@ val IrClassSymbol.constructors: Sequence<IrConstructorSymbol>
 val IrClass.constructors: Sequence<IrConstructor>
     get() = this.declarations.asSequence().filterIsInstance<IrConstructor>()
 
+val IrDeclarationContainer.properties: Sequence<IrProperty>
+    get() = declarations.asSequence().filterIsInstance<IrProperty>()
+
 val IrFunction.explicitParameters: List<IrValueParameter>
     get() = (listOfNotNull(dispatchReceiverParameter, extensionReceiverParameter) + valueParameters)
 
-val IrClass.defaultType: IrType
-    get() = this.thisReceiver!!.type
+val IrClass.defaultType: IrSimpleType
+    get() = this.thisReceiver!!.type as IrSimpleType
 
 val IrSimpleFunction.isReal: Boolean get() = descriptor.kind.isReal
 
@@ -291,11 +311,8 @@ fun IrClass.isSubclassOf(ancestor: IrClass): Boolean {
     return this.hasAncestorInSuperTypes()
 }
 
-// This implementation is from kotlin-native
-// TODO: use this implementation instead of any other
-fun IrSimpleFunction.resolveFakeOverride(): IrSimpleFunction? {
-
-    if (isReal) return this
+fun IrSimpleFunction.collectRealOverrides(): Set<IrSimpleFunction> {
+    if (isReal) return setOf(this)
 
     val visited = mutableSetOf<IrSimpleFunction>()
     val realOverrides = mutableSetOf<IrSimpleFunction>()
@@ -324,7 +341,13 @@ fun IrSimpleFunction.resolveFakeOverride(): IrSimpleFunction? {
     visited.clear()
     realOverrides.toList().forEach { excludeRepeated(it) }
 
-    return realOverrides.singleOrNull { it.modality != Modality.ABSTRACT }
+    return realOverrides
+}
+
+// This implementation is from kotlin-native
+// TODO: use this implementation instead of any other
+fun IrSimpleFunction.resolveFakeOverride(): IrSimpleFunction? {
+    return collectRealOverrides().singleOrNull { it.modality != Modality.ABSTRACT }
 }
 
 fun IrField.resolveFakeOverride(): IrField? {
@@ -356,6 +379,11 @@ tailrec fun IrElement.getPackageFragment(): IrPackageFragment? {
     }
 }
 
+fun IrAnnotationContainer.getAnnotation(name: FqName) =
+    annotations.find {
+        it.symbol.owner.parentAsClass.descriptor.fqNameSafe == name
+    }
+
 fun IrAnnotationContainer.hasAnnotation(name: FqName) =
     annotations.any {
         it.symbol.owner.parentAsClass.descriptor.fqNameSafe == name
@@ -380,15 +408,21 @@ fun IrFunction.isFakeOverriddenFromAny(): Boolean {
 fun IrCall.isSuperToAny() = superQualifier?.let { this.symbol.owner.isFakeOverriddenFromAny() } ?: false
 
 fun IrDeclaration.isEffectivelyExternal(): Boolean {
+
+    fun IrFunction.effectiveParentDeclaration(): IrDeclaration? =
+        when (this) {
+            is IrSimpleFunction -> correspondingProperty ?: parent as? IrDeclaration
+            else -> parent as? IrDeclaration
+        }
+
     return when (this) {
-        is IrFunction -> isExternal || parent is IrDeclaration && parent.isEffectivelyExternal()
+        is IrFunction -> isExternal || (effectiveParentDeclaration()?.isEffectivelyExternal() ?: false)
         is IrField -> isExternal || parent is IrDeclaration && parent.isEffectivelyExternal()
+        is IrProperty -> isExternal || parent is IrDeclaration && parent.isEffectivelyExternal()
         is IrClass -> isExternal || parent is IrDeclaration && parent.isEffectivelyExternal()
         else -> false
     }
 }
-
-fun IrDeclaration.isDynamic() = this is IrFunction && dispatchReceiverParameter?.type is IrDynamicType
 
 inline fun <reified T : IrDeclaration> IrDeclarationContainer.findDeclaration(predicate: (T) -> Boolean): T? =
     declarations.find { it is T && predicate(it) } as? T
@@ -440,21 +474,6 @@ fun createField(
     }
 
     return IrFieldImpl(startOffset, endOffset, origin, descriptor, type)
-}
-
-fun IrFunction.createDispatchReceiverParameter() {
-    assert(this.dispatchReceiverParameter == null)
-
-    val descriptor = this.descriptor.dispatchReceiverParameter ?: return
-
-    this.dispatchReceiverParameter = IrValueParameterImpl(
-        startOffset,
-        endOffset,
-        IrDeclarationOrigin.DEFINED,
-        descriptor,
-        this.parentAsClass.defaultType,
-        null
-    ).also { it.parent = this }
 }
 
 // In presence of `IrBlock`s, return the expression that actually serves as the value (the last one).
@@ -546,5 +565,14 @@ private fun IrCall.copyTypeAndValueArgumentsFrom(
 
     while (fromValueArgumentIndex < call.valueArgumentsCount) {
         putValueArgument(toValueArgumentIndex++, call.getValueArgument(fromValueArgumentIndex++))
+    }
+}
+
+val IrDeclaration.file: IrFile get() = parent.let {
+    when (it) {
+        is IrFile -> it
+        is IrPackageFragment -> TODO("Unknown file")
+        is IrDeclaration -> it.file
+        else -> TODO("Unexpected declaration parent")
     }
 }

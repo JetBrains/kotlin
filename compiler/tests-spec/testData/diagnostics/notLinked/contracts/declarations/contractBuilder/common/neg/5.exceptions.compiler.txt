@@ -1,2 +1,0 @@
-CASES: 4
-java.lang.StackOverflowError

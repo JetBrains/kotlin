@@ -1,0 +1,4 @@
+public open class MyException : R|java/lang/Object| {
+    public final function MyException(message: R|ft<kotlin/String, kotlin/String?>|!, cause: R|ft<kotlin/Throwable, kotlin/Throwable?>|!): R|test/MyException|
+
+}

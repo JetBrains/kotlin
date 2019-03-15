@@ -1,0 +1,6 @@
+public open class NotNullField : R|java/lang/Object| {
+    @R|org/jetbrains/annotations/NotNull|() public open property hi(var): R|kotlin/String|
+        public get(): R|kotlin/String|
+        public set(value: R|kotlin/String|): kotlin/Unit
+
+}

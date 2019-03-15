@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -54,6 +54,11 @@ public class ScratchRunActionTestGenerated extends AbstractScratchRunActionTest 
         @TestMetadata("simpleFun.kts")
         public void testSimpleFun() throws Exception {
             runTest("idea/testData/scratch/simpleFun.kts");
+        }
+
+        @TestMetadata("simpleNoRuntime.kts")
+        public void testSimpleNoRuntime() throws Exception {
+            runTest("idea/testData/scratch/simpleNoRuntime.kts");
         }
 
         @TestMetadata("spacesAtLineStart.kts")
@@ -132,6 +137,11 @@ public class ScratchRunActionTestGenerated extends AbstractScratchRunActionTest 
         @TestMetadata("simpleFun.kts")
         public void testSimpleFun() throws Exception {
             runTest("idea/testData/scratch/simpleFun.kts");
+        }
+
+        @TestMetadata("simpleNoRuntime.kts")
+        public void testSimpleNoRuntime() throws Exception {
+            runTest("idea/testData/scratch/simpleNoRuntime.kts");
         }
 
         @TestMetadata("spacesAtLineStart.kts")

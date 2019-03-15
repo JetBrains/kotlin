@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.MagicKind
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.ReadValueInstruction
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraversalOrder
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.traverse
+import org.jetbrains.kotlin.cfg.variable.PseudocodeVariablesData
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*

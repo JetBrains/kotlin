@@ -12,9 +12,7 @@ import org.jetbrains.kotlin.android.synthetic.diagnostic.DefaultErrorMessagesAnd
 import org.jetbrains.kotlin.android.synthetic.diagnostic.ErrorsAndroid
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.FrameMap
-import org.jetbrains.kotlin.codegen.state.IncompatibleClassTracker
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
-import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -181,11 +179,8 @@ class ParcelableDeclarationChecker : DeclarationChecker {
         val typeMapper = KotlinTypeMapper(
             bindingContext,
             ClassBuilderMode.FULL,
-            IncompatibleClassTracker.DoNothing,
             descriptor.module.name.asString(),
-            JvmTarget.DEFAULT,
-            languageVersionSettings,
-            false
+            languageVersionSettings
         )
 
         for (parameter in primaryConstructor?.valueParameters.orEmpty()) {

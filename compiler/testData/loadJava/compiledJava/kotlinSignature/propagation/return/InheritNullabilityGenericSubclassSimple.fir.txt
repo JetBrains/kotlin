@@ -1,0 +1,2 @@
+public abstract interface InheritNullabilityGenericSubclassSimple : R|java/lang/Object| {
+}

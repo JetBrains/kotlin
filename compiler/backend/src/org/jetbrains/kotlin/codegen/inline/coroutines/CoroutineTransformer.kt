@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,7 +7,10 @@ package org.jetbrains.kotlin.codegen.inline.coroutines
 
 import com.intellij.util.ArrayUtil
 import org.jetbrains.kotlin.codegen.ClassBuilder
-import org.jetbrains.kotlin.codegen.coroutines.*
+import org.jetbrains.kotlin.codegen.coroutines.CoroutineTransformerMethodVisitor
+import org.jetbrains.kotlin.codegen.coroutines.getLastParameterIndex
+import org.jetbrains.kotlin.codegen.coroutines.isResumeImplMethodName
+import org.jetbrains.kotlin.codegen.coroutines.replaceFakeContinuationsWithRealOnes
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.optimization.common.asSequence
 import org.jetbrains.kotlin.config.isReleaseCoroutines
@@ -17,8 +20,8 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.org.objectweb.asm.Opcodes
-import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode
+import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import org.jetbrains.org.objectweb.asm.tree.TypeInsnNode
 
 class CoroutineTransformer(
@@ -32,14 +35,14 @@ class CoroutineTransformer(
 
     fun shouldTransform(node: MethodNode): Boolean {
         if (isContinuationNotLambda()) return false
-        val crossinlineSuspend = crossinlineSuspend() ?: return false
+        val crossinlineParam = crossinlineLambda() ?: return false
         if (inliningContext.isInliningLambda && !inliningContext.isContinuation) return false
         return when {
             isSuspendFunction(node) -> true
             isSuspendLambda(node) -> {
                 if (isStateMachine(node)) return false
                 val functionDescriptor =
-                    crossinlineSuspend.invokeMethodDescriptor.containingDeclaration as? FunctionDescriptor ?: return true
+                    crossinlineParam.invokeMethodDescriptor.containingDeclaration as? FunctionDescriptor ?: return true
                 !functionDescriptor.isInline
             }
             else -> false
@@ -50,8 +53,8 @@ class CoroutineTransformer(
             if (state.languageVersionSettings.isReleaseCoroutines()) superClassName.endsWith("ContinuationImpl")
             else methods.any { it.name == "getLabel" }
 
-    private fun crossinlineSuspend(): PsiExpressionLambda? = inliningContext.expressionMap.values.find {
-        it is PsiExpressionLambda && it.isCrossInline && it.invokeMethodDescriptor.isSuspend
+    private fun crossinlineLambda(): PsiExpressionLambda? = inliningContext.expressionMap.values.find {
+        it is PsiExpressionLambda && it.isCrossInline
     }?.cast()
 
     private fun isStateMachine(node: MethodNode): Boolean =
@@ -60,7 +63,7 @@ class CoroutineTransformer(
     private fun isSuspendLambda(node: MethodNode) = isResumeImpl(node)
 
     fun newMethod(node: MethodNode): DeferredMethodVisitor {
-        val element = crossinlineSuspend()?.functionWithBodyOrCallableReference.sure {
+        val element = crossinlineLambda()?.functionWithBodyOrCallableReference.sure {
             "crossinline lambda should have element"
         }
         return when {

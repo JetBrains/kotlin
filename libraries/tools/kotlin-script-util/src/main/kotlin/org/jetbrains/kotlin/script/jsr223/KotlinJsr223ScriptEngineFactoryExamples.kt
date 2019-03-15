@@ -42,7 +42,7 @@ class KotlinJsr223JvmDaemonLocalEvalScriptEngineFactory : KotlinJsr223JvmScriptE
     override fun getScriptEngine(): ScriptEngine =
             KotlinJsr223JvmDaemonCompileScriptEngine(
                 this,
-                KotlinJars.compilerClasspath,
+                KotlinJars.compilerWithScriptingClasspath,
                 scriptCompilationClasspathFromContextOrStlib("kotlin-script-util.jar", wholeClasspath = true),
                 KotlinStandardJsr223ScriptTemplate::class.qualifiedName!!,
                 { ctx, types -> ScriptArgsWithTypes(arrayOf(ctx.getBindings(ScriptContext.ENGINE_SCOPE)), types ?: emptyArray()) },

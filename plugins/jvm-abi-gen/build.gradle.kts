@@ -33,9 +33,10 @@ projectTest {
     dependsOn(":dist")
 }
 
+publish()
+
 sourcesJar()
 javadocJar()
 dist()
-publish()
 
 testsJar()

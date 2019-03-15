@@ -4,10 +4,8 @@ plugins {
     id("jps-compatible")
 }
 
-jvmTarget = "1.6"
-
 dependencies {
-    compile(project(":kotlin-stdlib"))
+    compile(kotlinStdlib())
     compile(project(":core:deserialization"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     compileOnly(intellijDep()) { includeIntellijCoreJarDependencies(project) }

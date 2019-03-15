@@ -7,12 +7,18 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
-import org.jetbrains.kotlin.backend.common.makePhase
+import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.util.isAnnotationClass
 
-class AnnotationLowering() : ClassLoweringPass {
+internal val annotationPhase = makeIrFilePhase(
+    ::AnnotationLowering,
+    name = "Annotation",
+    description = "Remove constructors from annotation classes"
+)
+
+private class AnnotationLowering() : ClassLoweringPass {
     constructor(@Suppress("UNUSED_PARAMETER") context: BackendContext) : this()
 
     override fun lower(irClass: IrClass) {

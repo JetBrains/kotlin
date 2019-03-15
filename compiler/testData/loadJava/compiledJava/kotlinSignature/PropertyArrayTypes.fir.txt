@@ -1,0 +1,14 @@
+<T> public open class PropertyArrayTypes : R|java/lang/Object| {
+    public open property arrayOfArrays(var): R|kotlin/Array<ft<kotlin/Array<ft<java/lang/String, java/lang/String?>>, kotlin/Array<ft<java/lang/String, java/lang/String?>>?>>|
+        public get(): R|kotlin/Array<ft<kotlin/Array<ft<java/lang/String, java/lang/String?>>, kotlin/Array<ft<java/lang/String, java/lang/String?>>?>>|
+        public set(value: R|kotlin/Array<ft<kotlin/Array<ft<java/lang/String, java/lang/String?>>, kotlin/Array<ft<java/lang/String, java/lang/String?>>?>>|): kotlin/Unit
+
+    public open property array(var): R|kotlin/Array<ft<java/lang/String, java/lang/String?>>|
+        public get(): R|kotlin/Array<ft<java/lang/String, java/lang/String?>>|
+        public set(value: R|kotlin/Array<ft<java/lang/String, java/lang/String?>>|): kotlin/Unit
+
+    public open property genericArray(var): R|kotlin/Array<ft<T, T?>>|
+        public get(): R|kotlin/Array<ft<T, T?>>|
+        public set(value: R|kotlin/Array<ft<T, T?>>|): kotlin/Unit
+
+}

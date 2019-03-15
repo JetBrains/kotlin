@@ -350,6 +350,7 @@ class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
         SETTER_USAGE
     }
 
+    //TODO: a very long and complicated method, even recursive. mb refactor it somehow? at least split by PsiElement types?
     override tailrec fun renameElement(element: PsiElement, newName: String, usages: Array<UsageInfo>, listener: RefactoringElementListener?) {
         val newNameUnquoted = newName.unquote()
         if (element is KtLightMethod) {
@@ -405,17 +406,16 @@ class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
                     oldSetterName -> UsageKind.SETTER_USAGE
                     else -> UsageKind.SIMPLE_PROPERTY_USAGE
                 }
-            }
-            else {
+            } else {
                 UsageKind.SIMPLE_PROPERTY_USAGE
             }
         }
 
-        super.renameElement(element, JvmAbi.setterName(newNameUnquoted).quoteIfNeeded(),
+        super.renameElement(element.copy(), JvmAbi.setterName(newNameUnquoted).quoteIfNeeded(),
                             refKindUsages[UsageKind.SETTER_USAGE]?.toTypedArray() ?: arrayOf<UsageInfo>(),
                             null)
 
-        super.renameElement(element, JvmAbi.getterName(newNameUnquoted).quoteIfNeeded(),
+        super.renameElement(element.copy(), JvmAbi.getterName(newNameUnquoted).quoteIfNeeded(),
                             refKindUsages[UsageKind.GETTER_USAGE]?.toTypedArray() ?: arrayOf<UsageInfo>(),
                             null)
 

@@ -1,3 +1,5 @@
+// EXPECTED_DUPLICATED_HIGHLIGHTING
+
 fun <info descr="null">bar</info>(<info descr="null">block</info>: () -> <info descr="null">Int</info>) = <info descr="null"><info descr="null">block</info></info>()
 
 fun <info descr="null">foo</info>(): <info descr="null">Int</info> {

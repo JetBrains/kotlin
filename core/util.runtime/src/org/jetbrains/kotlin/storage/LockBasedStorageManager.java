@@ -64,8 +64,8 @@ public class LockBasedStorageManager implements StorageManager {
     };
 
     @NotNull
-    public static LockBasedStorageManager createWithExceptionHandling(@NotNull ExceptionHandlingStrategy exceptionHandlingStrategy) {
-        return new LockBasedStorageManager(exceptionHandlingStrategy);
+    public static LockBasedStorageManager createWithExceptionHandling(@NotNull String debugText, @NotNull ExceptionHandlingStrategy exceptionHandlingStrategy) {
+        return new LockBasedStorageManager(debugText, exceptionHandlingStrategy, new ReentrantLock());
     }
 
     protected final Lock lock;
@@ -82,16 +82,8 @@ public class LockBasedStorageManager implements StorageManager {
         this.debugText = debugText;
     }
 
-    public LockBasedStorageManager() {
-        this(defaultDebugName(), ExceptionHandlingStrategy.THROW, new ReentrantLock());
-    }
-
-    protected LockBasedStorageManager(@NotNull ExceptionHandlingStrategy exceptionHandlingStrategy) {
-        this(defaultDebugName(), exceptionHandlingStrategy, new ReentrantLock());
-    }
-
-    private static String defaultDebugName() {
-        return "<unknown creating class>";
+    public LockBasedStorageManager(String debugText) {
+        this(debugText, ExceptionHandlingStrategy.THROW, new ReentrantLock());
     }
 
     @Override
@@ -524,14 +516,6 @@ public class LockBasedStorageManager implements StorageManager {
             assert result != null : "compute() returned null under " + getStorageManager();
             return result;
         }
-    }
-
-    @NotNull
-    public static LockBasedStorageManager createDelegatingWithSameLock(
-            @NotNull LockBasedStorageManager base,
-            @NotNull ExceptionHandlingStrategy newStrategy
-    ) {
-        return new LockBasedStorageManager(defaultDebugName(), newStrategy, base.lock);
     }
 
     @NotNull

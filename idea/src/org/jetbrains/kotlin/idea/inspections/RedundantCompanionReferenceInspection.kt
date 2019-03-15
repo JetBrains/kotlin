@@ -12,8 +12,7 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
-import org.jetbrains.kotlin.idea.intentions.getCallableDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.util.getResolutionScope
@@ -21,7 +20,10 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
+import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperInterfaces
@@ -40,10 +42,12 @@ class RedundantCompanionReferenceInspection : AbstractKotlinInspection() {
             if (!objectDeclaration.isCompanion()) return
             if (expression.text != objectDeclaration.name) return
 
+            val context = expression.analyze()
+
             val containingClass = objectDeclaration.containingClass() ?: return
             if (expression.containingClass() != containingClass && expression == parent.receiverExpression) return
             val containingClassDescriptor = containingClass.descriptor as? ClassDescriptor ?: return
-            val selectorDescriptor = selectorExpression?.getCallableDescriptor()
+            val selectorDescriptor = selectorExpression?.getResolvedCall(context)?.resultingDescriptor
             when (selectorDescriptor) {
                 is PropertyDescriptor -> {
                     val name = selectorDescriptor.name
@@ -59,9 +63,13 @@ class RedundantCompanionReferenceInspection : AbstractKotlinInspection() {
                 }
             }
 
+            (expression as? KtSimpleNameExpression)?.getReceiverExpression()?.getQualifiedElementSelector()
+                ?.mainReference?.resolveToDescriptors(context)?.firstOrNull()
+                ?.let { if (it != containingClassDescriptor) return }
+
             val grandParent = parent.parent as? KtQualifiedExpression
             if (grandParent != null) {
-                val grandParentDescriptor = grandParent.resolveToCall()?.resultingDescriptor ?: return
+                val grandParentDescriptor = grandParent.getResolvedCall(context)?.resultingDescriptor ?: return
                 if (grandParentDescriptor is ConstructorDescriptor || grandParentDescriptor is FakeCallableDescriptorForObject) return
             }
 

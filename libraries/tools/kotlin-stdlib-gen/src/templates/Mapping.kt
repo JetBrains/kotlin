@@ -19,12 +19,16 @@ object Mapping : TemplateGroupBase() {
                 else
                     sequenceClassification(intermediate, stateless)
             }
+            specialFor(ArraysOfUnsigned) {
+                since("1.3")
+                annotation("@ExperimentalUnsignedTypes")
+            }
         }
     }
 
     val f_withIndex = fn("withIndex()") {
         includeDefault()
-        include(CharSequences)
+        include(CharSequences, ArraysOfUnsigned)
     } builder {
         doc {
             "Returns a ${if (f == Sequences) f.mapResult else "lazy [Iterable]"} of [IndexedValue] for each ${f.element} of the original ${f.collection}."
@@ -42,9 +46,10 @@ object Mapping : TemplateGroupBase() {
 
     val f_mapIndexed = fn("mapIndexed(transform: (index: Int, T) -> R)") {
         includeDefault()
-        include(CharSequences)
+        include(CharSequences, ArraysOfUnsigned)
     } builder {
         inline()
+        specialFor(ArraysOfUnsigned) { inlineOnly() }
 
         doc {
             """
@@ -59,7 +64,7 @@ object Mapping : TemplateGroupBase() {
         body(Iterables) {
             "return mapIndexedTo(ArrayList<R>(collectionSizeOrDefault(10)), transform)"
         }
-        body(ArraysOfObjects, ArraysOfPrimitives) {
+        body(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
             "return mapIndexedTo(ArrayList<R>(size), transform)"
         }
         body(CharSequences) {
@@ -76,9 +81,10 @@ object Mapping : TemplateGroupBase() {
 
     val f_map = fn("map(transform: (T) -> R)") {
         includeDefault()
-        include(Maps, CharSequences)
+        include(Maps, CharSequences, ArraysOfUnsigned)
     } builder {
         inline()
+        specialFor(ArraysOfUnsigned) { inlineOnly() }
 
         doc {
             """
@@ -91,7 +97,7 @@ object Mapping : TemplateGroupBase() {
         body(Iterables) {
             "return mapTo(ArrayList<R>(collectionSizeOrDefault(10)), transform)"
         }
-        body(ArraysOfObjects, ArraysOfPrimitives, Maps) {
+        body(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned, Maps) {
             "return mapTo(ArrayList<R>(size), transform)"
         }
         body(CharSequences) {
@@ -162,9 +168,10 @@ object Mapping : TemplateGroupBase() {
 
     val f_mapTo = fn("mapTo(destination: C, transform: (T) -> R)") {
         includeDefault()
-        include(Maps, CharSequences)
+        include(Maps, CharSequences, ArraysOfUnsigned)
     } builder {
         inline()
+        specialFor(ArraysOfUnsigned) { inlineOnly() }
 
         doc {
             """
@@ -178,18 +185,19 @@ object Mapping : TemplateGroupBase() {
 
         body {
             """
-                for (item in this)
-                    destination.add(transform(item))
-                return destination
+            for (item in this)
+                destination.add(transform(item))
+            return destination
             """
         }
     }
 
     val f_mapIndexedTo = fn("mapIndexedTo(destination: C, transform: (index: Int, T) -> R)") {
         includeDefault()
-        include(CharSequences)
+        include(CharSequences, ArraysOfUnsigned)
     } builder {
         inline()
+        specialFor(ArraysOfUnsigned) { inlineOnly() }
 
         doc {
             """
@@ -206,10 +214,10 @@ object Mapping : TemplateGroupBase() {
         body {
             fun checkOverflow(value: String) = if (f == Sequences || f == Iterables) "checkIndexOverflow($value)" else value
             """
-                var index = 0
-                for (item in this)
-                    destination.add(transform(${checkOverflow("index++")}, item))
-                return destination
+            var index = 0
+            for (item in this)
+                destination.add(transform(${checkOverflow("index++")}, item))
+            return destination
             """
         }
     }
@@ -260,9 +268,10 @@ object Mapping : TemplateGroupBase() {
 
     val f_flatMap = fn("flatMap(transform: (T) -> Iterable<R>)") {
         includeDefault()
-        include(Maps, CharSequences)
+        include(Maps, CharSequences, ArraysOfUnsigned)
     } builder {
         inline()
+        specialFor(ArraysOfUnsigned) { inlineOnly() }
 
         doc { "Returns a single list of all elements yielded from results of [transform] function being invoked on each ${f.element} of original ${f.collection}." }
         typeParam("R")
@@ -283,9 +292,11 @@ object Mapping : TemplateGroupBase() {
 
     val f_flatMapTo = fn("flatMapTo(destination: C, transform: (T) -> Iterable<R>)") {
         includeDefault()
-        include(Maps, CharSequences)
+        include(Maps, CharSequences, ArraysOfUnsigned)
     } builder {
         inline()
+        specialFor(ArraysOfUnsigned) { inlineOnly() }
+
         doc { "Appends all elements yielded from results of [transform] function being invoked on each ${f.element} of original ${f.collection}, to the given [destination]." }
         specialFor(Sequences) {
             signature("flatMapTo(destination: C, transform: (T) -> Sequence<R>)")
@@ -295,20 +306,21 @@ object Mapping : TemplateGroupBase() {
         returns("C")
         body {
             """
-                for (element in this) {
-                    val list = transform(element)
-                    destination.addAll(list)
-                }
-                return destination
+            for (element in this) {
+                val list = transform(element)
+                destination.addAll(list)
+            }
+            return destination
             """
         }
     }
 
     val f_groupBy_key = fn("groupBy(keySelector: (T) -> K)") {
         includeDefault()
-        include(CharSequences)
+        include(CharSequences, ArraysOfUnsigned)
     } builder {
         inline()
+        specialFor(ArraysOfUnsigned) { inlineOnly() }
 
         doc {
             """
@@ -327,9 +339,10 @@ object Mapping : TemplateGroupBase() {
 
     val f_groupByTo_key = fn("groupByTo(destination: M, keySelector: (T) -> K)") {
         includeDefault()
-        include(CharSequences)
+        include(CharSequences, ArraysOfUnsigned)
     } builder {
         inline()
+        specialFor(ArraysOfUnsigned) { inlineOnly() }
 
         typeParam("K")
         typeParam("M : MutableMap<in K, MutableList<T>>")
@@ -346,21 +359,23 @@ object Mapping : TemplateGroupBase() {
         returns("M")
         body {
             """
-                for (element in this) {
-                    val key = keySelector(element)
-                    val list = destination.getOrPut(key) { ArrayList<T>() }
-                    list.add(element)
-                }
-                return destination
+            for (element in this) {
+                val key = keySelector(element)
+                val list = destination.getOrPut(key) { ArrayList<T>() }
+                list.add(element)
+            }
+            return destination
             """
         }
     }
 
     val f_groupBy_key_value = fn("groupBy(keySelector: (T) -> K, valueTransform: (T) -> V)") {
         includeDefault()
-        include(CharSequences)
+        include(CharSequences, ArraysOfUnsigned)
     } builder {
         inline()
+        specialFor(ArraysOfUnsigned) { inlineOnly() }
+
         doc {
             """
             Groups values returned by the [valueTransform] function applied to each ${f.element} of the original ${f.collection}
@@ -381,9 +396,11 @@ object Mapping : TemplateGroupBase() {
 
     val f_groupByTo_key_value = fn("groupByTo(destination: M, keySelector: (T) -> K, valueTransform: (T) -> V)") {
         includeDefault()
-        include(CharSequences)
+        include(CharSequences, ArraysOfUnsigned)
     } builder {
         inline()
+        specialFor(ArraysOfUnsigned) { inlineOnly() }
+
         typeParam("K")
         typeParam("V")
         typeParam("M : MutableMap<in K, MutableList<V>>")
@@ -402,12 +419,12 @@ object Mapping : TemplateGroupBase() {
         returns("M")
         body {
             """
-                for (element in this) {
-                    val key = keySelector(element)
-                    val list = destination.getOrPut(key) { ArrayList<V>() }
-                    list.add(valueTransform(element))
-                }
-                return destination
+            for (element in this) {
+                val key = keySelector(element)
+                val list = destination.getOrPut(key) { ArrayList<V>() }
+                list.add(valueTransform(element))
+            }
+            return destination
             """
         }
     }

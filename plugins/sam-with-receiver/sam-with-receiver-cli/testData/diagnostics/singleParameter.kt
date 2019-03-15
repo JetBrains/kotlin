@@ -10,7 +10,7 @@ public interface Sam {
 annotation class SamWithReceiver
 
 fun test() {
-    Sam { <!EXPECTED_PARAMETERS_NUMBER_MISMATCH, CANNOT_INFER_PARAMETER_TYPE!>a<!> ->
+    Sam { <!CANNOT_INFER_PARAMETER_TYPE, EXPECTED_PARAMETERS_NUMBER_MISMATCH!>a<!> ->
         System.out.println(<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>a<!>)
     }
 

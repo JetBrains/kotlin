@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -52,6 +52,11 @@ public class AnnotatedMembersSearchTestGenerated extends AbstractAnnotatedMember
     @TestMetadata("testAnnotationsOnFunction.kt")
     public void testTestAnnotationsOnFunction() throws Exception {
         runTest("idea/testData/search/annotations/testAnnotationsOnFunction.kt");
+    }
+
+    @TestMetadata("testAnnotationsOnPropertiesAndParameters.kt")
+    public void testTestAnnotationsOnPropertiesAndParameters() throws Exception {
+        runTest("idea/testData/search/annotations/testAnnotationsOnPropertiesAndParameters.kt");
     }
 
     @TestMetadata("testAnnotationsWithParameters.kt")

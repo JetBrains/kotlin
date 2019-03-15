@@ -20,7 +20,8 @@ import org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.scripting.ScriptingExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptDefinitionsFromClasspathDiscoverySource
+import org.jetbrains.kotlin.gradle.tasks.useLazyTaskConfiguration
+import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.ScriptDefinitionsFromClasspathDiscoverySource
 import java.io.File
 
 private const val MISCONFIGURATION_MESSAGE_SUFFIX = "the plugin is probably applied by a mistake"
@@ -30,9 +31,6 @@ class ScriptingGradleSubplugin : Plugin<Project> {
         fun isEnabled(project: Project) = project.plugins.findPlugin(ScriptingGradleSubplugin::class.java) != null
 
         fun configureForSourceSet(project: Project, sourceSetName: String) {
-
-            if (!org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast(4, 0)) return
-
             val discoveryConfiguration = project.configurations.maybeCreate(getDiscoveryClasspathConfigurationName(sourceSetName)).apply {
                 isVisible = false
                 isCanBeConsumed = false
@@ -44,15 +42,12 @@ class ScriptingGradleSubplugin : Plugin<Project> {
     }
 
     override fun apply(project: Project) {
-
-        if (!org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast(4, 0)) return
-
         project.afterEvaluate {
 
             val javaPluginConvention = project.convention.findPlugin(JavaPluginConvention::class.java)
             if (javaPluginConvention?.sourceSets?.isEmpty() == false) {
 
-                project.tasks.withType(KotlinCompile::class.java) { task ->
+                val configureAction: (KotlinCompile) -> (Unit) = { task ->
 
                     if (task !is KaptGenerateStubsTask) {
 
@@ -62,6 +57,11 @@ class ScriptingGradleSubplugin : Plugin<Project> {
                         }
                             ?: project.logger.warn("kotlin scripting plugin: $project.${task.name} - configuration not found: $discoveryClasspathConfigurationName, $MISCONFIGURATION_MESSAGE_SUFFIX")
                     }
+                }
+                if (useLazyTaskConfiguration) {
+                    project.tasks.withType(KotlinCompile::class.java).configureEach(configureAction)
+                } else {
+                    project.tasks.withType(KotlinCompile::class.java, configureAction)
                 }
             } else {
                 project.logger.warn("kotlin scripting plugin: applied to a non-JVM project $project, $MISCONFIGURATION_MESSAGE_SUFFIX")

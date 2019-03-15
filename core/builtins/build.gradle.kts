@@ -3,23 +3,14 @@ import java.io.File
 
 plugins {
     base
+    `maven-publish`
 }
 
 val builtinsSrc = fileFrom(rootDir, "core", "builtins", "src")
 val builtinsNative = fileFrom(rootDir, "core", "builtins", "native")
-// TODO: rewrite dependent projects on using build results instead of the fixed location
-val builtinsSerialized = File(rootProject.extra["distDir"].toString(), "builtins")
-
-val builtins by configurations.creating
-
-val clean by tasks.getting {
-    doLast {
-        delete(builtinsSerialized)
-    }
-}
 
 val serialize by tasks.creating(NoDebugJavaExec::class) {
-    val outDir = builtinsSerialized
+    val outDir = "$buildDir/$name"
     val inDirs = arrayOf(builtinsSrc, builtinsNative)
     inDirs.forEach { inputs.dir(it) }
     outputs.dir(outDir)
@@ -32,14 +23,24 @@ val serialize by tasks.creating(NoDebugJavaExec::class) {
 
 val builtinsJar by task<Jar> {
     dependsOn(serialize)
-    from(builtinsSerialized) { include("kotlin/**") }
-    baseName = "platform-builtins"
+    from(serialize) { include("kotlin/**") }
     destinationDir = File(buildDir, "libs")
 }
-
 
 val assemble by tasks.getting {
     dependsOn(serialize)
 }
 
-artifacts.add(builtins.name, builtinsJar)
+val builtinsJarArtifact = artifacts.add("default", builtinsJar)
+
+publishing {
+    publications {
+        create<MavenPublication>("internal") {
+            artifact(builtinsJarArtifact)
+        }
+    }
+
+    repositories {
+        maven("${rootProject.buildDir}/internal/repo")
+    }
+}

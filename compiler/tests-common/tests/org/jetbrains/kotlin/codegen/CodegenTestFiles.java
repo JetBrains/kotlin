@@ -22,7 +22,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiErrorElement;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.checkers.CheckerTestUtil;
+import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.AnalyzingUtils;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
@@ -101,7 +101,8 @@ public class CodegenTestFiles {
 
     @NotNull
     public static CodegenTestFiles create(@NotNull String fileName, @NotNull String contentWithDiagnosticMarkup, @NotNull Project project) {
-        String content = CheckerTestUtil.parseDiagnosedRanges(contentWithDiagnosticMarkup, new ArrayList<>());
+        // `rangesToDiagnosticNames` parameter is not-null only for diagnostic tests, it's using for lazy diagnostics
+        String content = CheckerTestUtil.INSTANCE.parseDiagnosedRanges(contentWithDiagnosticMarkup, new ArrayList<>(), null);
         KtFile file = KotlinTestUtils.createFile(fileName, content, project);
         List<PsiErrorElement> ranges = AnalyzingUtils.getSyntaxErrorRanges(file);
         assert ranges.isEmpty() : "Syntax errors found in " + file + ": " + ranges;

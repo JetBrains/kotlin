@@ -1,7 +1,7 @@
 <problems>
     <problem>
-        <file>hasUpperCase.kt</file>
+        <file>hasFirstUpperCase.kt</file>
         <line>1</line>
-        <description>Package name &lt;code&gt;one.two.Three&lt;/code&gt; doesn't match regex '[a-z][A-Za-z\d]*_?(\.[a-z][A-Za-z\d]*_?)*' #loc</description>
+        <description>Package name &lt;code&gt;one.two.Three&lt;/code&gt; part should not start with an uppercase letter #loc</description>
     </problem>
 </problems>

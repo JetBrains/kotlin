@@ -272,6 +272,9 @@ public actual inline fun String(chars: CharArray): String =
 
 /**
  * Converts the characters from a portion of the specified array to a string.
+ *
+ * @throws IndexOutOfBoundsException if either [offset] or [length] are less than zero
+ * or `offset + length` is out of [chars] array bounds.
  */
 @kotlin.internal.InlineOnly
 public actual inline fun String(chars: CharArray, offset: Int, length: Int): String =
@@ -348,6 +351,8 @@ public inline fun String.intern(): String = (this as java.lang.String).intern()
 
 /**
  * Returns `true` if this string is empty or consists solely of whitespace characters.
+ *
+ * @sample samples.text.Strings.stringIsBlank
  */
 public actual fun CharSequence.isBlank(): Boolean = length == 0 || indices.all { this[it].isWhitespace() }
 

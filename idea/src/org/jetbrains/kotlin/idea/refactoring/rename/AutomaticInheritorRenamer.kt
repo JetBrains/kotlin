@@ -16,20 +16,17 @@
 
 package org.jetbrains.kotlin.idea.refactoring.rename
 
-import org.jetbrains.kotlin.statistics.KotlinStatisticsTrigger
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.search.searches.ClassInheritorsSearch
 import com.intellij.refactoring.JavaRefactoringSettings
 import com.intellij.refactoring.RefactoringBundle
-import com.intellij.refactoring.rename.UnresolvableCollisionUsageInfo
 import com.intellij.refactoring.rename.naming.AutomaticRenamer
 import com.intellij.refactoring.rename.naming.AutomaticRenamerFactory
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.psi.KtClass
-import org.jetbrains.kotlin.statistics.KotlinIdeRefactoringTrigger
 
 class AutomaticInheritorRenamer(klass: KtClass, newName: String): AutomaticRenamer() {
     init {
@@ -47,23 +44,7 @@ class AutomaticInheritorRenamer(klass: KtClass, newName: String): AutomaticRenam
 
     override fun getDialogTitle() = RefactoringBundle.message("rename.inheritors.title")
     override fun getDialogDescription() = RefactoringBundle.message("rename.inheritors.with.the.following.names.to")
-    override fun entityName() = RefactoringBundle.message("entity.name.inheritor")
-
-    override fun findUsages(result: MutableList<UsageInfo>?, searchInStringsAndComments: Boolean, searchInNonJavaFiles: Boolean) {
-        super.findUsages(result, searchInStringsAndComments, searchInNonJavaFiles)
-        KotlinStatisticsTrigger.trigger(KotlinIdeRefactoringTrigger::class.java, this::class.java.name)
-    }
-
-    override fun findUsages(result: MutableList<UsageInfo>?, searchInStringsAndComments: Boolean, searchInNonJavaFiles: Boolean, unresolvedUsages: MutableList<UnresolvableCollisionUsageInfo>?) {
-        super.findUsages(result, searchInStringsAndComments, searchInNonJavaFiles, unresolvedUsages)
-        KotlinStatisticsTrigger.trigger(KotlinIdeRefactoringTrigger::class.java, this::class.java.name)
-    }
-
-    override fun findUsages(result: MutableList<UsageInfo>?, searchInStringsAndComments: Boolean, searchInNonJavaFiles: Boolean, unresolvedUsages: MutableList<UnresolvableCollisionUsageInfo>?, allRenames: MutableMap<PsiElement, String>?) {
-        super.findUsages(result, searchInStringsAndComments, searchInNonJavaFiles, unresolvedUsages, allRenames)
-        KotlinStatisticsTrigger.trigger(KotlinIdeRefactoringTrigger::class.java, this::class.java.name)
-    }
-}
+    override fun entityName() = RefactoringBundle.message("entity.name.inheritor")}
 
 class AutomaticInheritorRenamerFactory : AutomaticRenamerFactory {
     override fun isApplicable(element: PsiElement) = element is KtClass

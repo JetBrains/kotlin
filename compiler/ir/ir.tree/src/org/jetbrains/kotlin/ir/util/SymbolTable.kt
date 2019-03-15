@@ -32,6 +32,19 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
+interface IrDeserializer {
+    fun findDeserializedDeclaration(symbol: IrSymbol): IrDeclaration?
+    // We need a separate method for properties, because properties
+    // are treated differently in the SymbolTable.
+    // See SymbolTable.propertyTable and SymbolTable.referenceProperty.
+    // There was an attempt to solve this asymmetry in the symbol table
+    // using property symbols, but it was not successful.
+    // For now we have to live with a special treatment of properties.
+    // TODO: eventually get rid of this asymmetry.
+    fun findDeserializedDeclaration(propertyDescriptor: PropertyDescriptor): IrProperty?
+    fun declareForwardDeclarations()
+}
+
 interface ReferenceSymbolTable {
     fun referenceClass(descriptor: ClassDescriptor): IrClassSymbol
 
@@ -219,7 +232,10 @@ open class SymbolTable : ReferenceSymbolTable {
 
     fun declareClass(
         startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ClassDescriptor,
-        classFactory: (IrClassSymbol) -> IrClass = { IrClassImpl(startOffset, endOffset, origin, it) }
+        modality: Modality = descriptor.modality,
+        classFactory: (IrClassSymbol) -> IrClass = {
+            IrClassImpl(startOffset, endOffset, origin, it, modality).apply { metadata = MetadataSource.Class(it.descriptor) }
+        }
     ): IrClass {
         return classSymbolTable.declare(
             descriptor,
@@ -238,7 +254,11 @@ open class SymbolTable : ReferenceSymbolTable {
         endOffset: Int,
         origin: IrDeclarationOrigin,
         descriptor: ClassConstructorDescriptor,
-        constructorFactory: (IrConstructorSymbol) -> IrConstructor = { IrConstructorImpl(startOffset, endOffset, origin, it, IrUninitializedType) }
+        constructorFactory: (IrConstructorSymbol) -> IrConstructor = {
+            IrConstructorImpl(startOffset, endOffset, origin, it, IrUninitializedType).apply {
+                metadata = MetadataSource.Function(it.descriptor)
+            }
+        }
     ): IrConstructor =
         constructorSymbolTable.declare(
             descriptor,
@@ -272,7 +292,11 @@ open class SymbolTable : ReferenceSymbolTable {
         origin: IrDeclarationOrigin,
         descriptor: PropertyDescriptor,
         type: IrType,
-        fieldFactory: (IrFieldSymbol) -> IrField = { IrFieldImpl(startOffset, endOffset, origin, it, type) }
+        fieldFactory: (IrFieldSymbol) -> IrField = {
+            IrFieldImpl(startOffset, endOffset, origin, it, type).apply {
+                metadata = MetadataSource.Property(it.descriptor)
+            }
+        }
     ): IrField =
         fieldSymbolTable.declare(
             descriptor,
@@ -306,7 +330,11 @@ open class SymbolTable : ReferenceSymbolTable {
         endOffset: Int,
         origin: IrDeclarationOrigin,
         descriptor: FunctionDescriptor,
-        functionFactory: (IrSimpleFunctionSymbol) -> IrSimpleFunction = { IrFunctionImpl(startOffset, endOffset, origin, it, IrUninitializedType) }
+        functionFactory: (IrSimpleFunctionSymbol) -> IrSimpleFunction = {
+            IrFunctionImpl(startOffset, endOffset, origin, it, IrUninitializedType).apply {
+                metadata = MetadataSource.Function(it.descriptor)
+            }
+        }
     ): IrSimpleFunction {
         return simpleFunctionSymbolTable.declare(
             descriptor,

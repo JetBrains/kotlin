@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedPropertyDescriptor
+import org.jetbrains.kotlin.backend.common.descriptors.WrappedFieldDescriptor
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedVariableDescriptor
 import org.jetbrains.kotlin.backend.common.lower.replaceThisByStaticReference
-import org.jetbrains.kotlin.backend.common.makePhase
+import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -19,7 +19,9 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrAnonymousInitializerImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
@@ -31,9 +33,14 @@ import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAbi.JVM_FIELD_ANNOTATION_FQ_NAME
-import org.jetbrains.kotlin.name.Name
 
-class MoveCompanionObjectFieldsLowering(val context: CommonBackendContext) : ClassLoweringPass {
+internal val moveCompanionObjectFieldsPhase = makeIrFilePhase(
+    ::MoveCompanionObjectFieldsLowering,
+    name = "MoveCompanionObjectFields",
+    description = "Move companion object fields to static fields of companion's owner"
+)
+
+private class MoveCompanionObjectFieldsLowering(val context: CommonBackendContext) : ClassLoweringPass {
     override fun lower(irClass: IrClass) {
         val fieldReplacementMap = mutableMapOf<IrFieldSymbol, IrFieldSymbol>()
         if (irClass.isObject && !irClass.isCompanion && irClass.visibility != Visibilities.LOCAL) {
@@ -163,19 +170,12 @@ class MoveCompanionObjectFieldsLowering(val context: CommonBackendContext) : Cla
     }
 
     private fun createStaticBackingField(oldField: IrField, propertyParent: IrClass, fieldParent: IrClass): IrField {
-        val newName = if (fieldParent == propertyParent ||
-            oldField.hasAnnotation(JVM_FIELD_ANNOTATION_FQ_NAME) ||
-            oldField.correspondingProperty?.isConst == true
-        )
-            oldField.name
-        else
-            Name.identifier(oldField.name.toString() + "\$companion")
-        val descriptor = WrappedPropertyDescriptor(oldField.descriptor.annotations, oldField.descriptor.source)
+        val descriptor = WrappedFieldDescriptor(oldField.descriptor.annotations, oldField.descriptor.source)
         val field = IrFieldImpl(
             oldField.startOffset, oldField.endOffset,
             IrDeclarationOrigin.PROPERTY_BACKING_FIELD,
             IrFieldSymbolImpl(descriptor),
-            newName, oldField.type, oldField.visibility,
+            oldField.name, oldField.type, oldField.visibility,
             isFinal = oldField.isFinal,
             isExternal = oldField.isExternal,
             isStatic = true
@@ -183,6 +183,7 @@ class MoveCompanionObjectFieldsLowering(val context: CommonBackendContext) : Cla
             descriptor.bind(this)
             parent = fieldParent
             annotations.addAll(oldField.annotations)
+            metadata = oldField.metadata
         }
         val oldInitializer = oldField.initializer
         if (oldInitializer != null) {

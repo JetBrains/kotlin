@@ -1,0 +1,40 @@
+FILE: jvm.kt
+    public abstract class X {
+        public constructor(): super<R|kotlin/Any|>()
+
+        public final function bar(): R|kotlin/Unit| {
+        }
+
+    }
+    public abstract interface Y {
+        public open function baz(): R|kotlin/Unit| {
+        }
+
+    }
+    public open actual class A : R|X|, R|Y| {
+        public constructor(): super<R|X|>()
+
+        public final actual function foo(): R|kotlin/Unit| {
+        }
+
+    }
+    public final class C : R|B| {
+        public constructor(): super<R|B|>()
+
+        public final function test(): R|kotlin/Unit| {
+            R|/A.foo|()
+            R|/X.bar|()
+            R|/Y.baz|()
+        }
+
+    }
+    public final class D : R|A| {
+        public constructor(): super<R|A|>()
+
+        public final function test(): R|kotlin/Unit| {
+            R|/A.foo|()
+            R|/X.bar|()
+            R|/Y.baz|()
+        }
+
+    }

@@ -1,3 +1,4 @@
+// KJS_WITH_FULL_RUNTIME
 class Template() {
     val collected = ArrayList<String>()
 

@@ -1,5 +1,4 @@
 // !LANGUAGE: +ProperIeee754Comparisons
-// IGNORE_BACKEND: JVM_IR
 fun equals5(a: Any?, b: Any?) = if (a is Float && b is Float?) a == b else null!!
 
 fun equals6(a: Any?, b: Any?) = if (a is Float? && b is Float) a == b else null!!

@@ -1,9 +1,8 @@
 /*
  * KOTLIN PSI SPEC TEST (NEGATIVE)
  *
- * SECTIONS: constant-literals, integer-literals, decimal-integer-literals
- * PARAGRAPH: 1
- * SENTENCE: [1] A sequence of decimal digit symbols (0 though 9) is a decimal integer literal.
+ * SPEC VERSION: 0.1-draft
+ * PLACES: constant-literals, integer-literals, decimal-integer-literals -> paragraph 1 -> sentence 1
  * NUMBER: 1
  * DESCRIPTION: Sequences with not all decimal digit symbols
  */

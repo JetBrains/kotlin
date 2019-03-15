@@ -22,6 +22,7 @@ import com.intellij.openapi.fileTypes.FileType
 import com.intellij.psi.*
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.util.ArrayFactory
 import com.intellij.util.FileContentUtilCore
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.KtNodeTypes
@@ -54,13 +55,16 @@ open class KtFile(viewProvider: FileViewProvider, val isCompiled: Boolean) :
     private var pathCached: String? = null
 
     val importList: KtImportList?
-        get() = findChildByTypeOrClass(KtStubElementTypes.IMPORT_LIST, KtImportList::class.java)
+        get() = importLists.firstOrNull()
+
+    private val importLists: Array<out KtImportList>
+        get() = findChildrenByTypeOrClass(KtStubElementTypes.IMPORT_LIST, KtImportList::class.java)
 
     val fileAnnotationList: KtFileAnnotationList?
         get() = findChildByTypeOrClass(KtStubElementTypes.FILE_ANNOTATION_LIST, KtFileAnnotationList::class.java)
 
     open val importDirectives: List<KtImportDirective>
-        get() = importList?.imports ?: emptyList()
+        get() = importLists.flatMap { it.imports }
 
     // scripts have no package directive, all other files must have package directives
     val packageDirective: KtPackageDirective?
@@ -153,6 +157,19 @@ open class KtFile(viewProvider: FileViewProvider, val isCompiled: Boolean) :
         }
         return findChildByClass(elementClass)
     }
+
+    fun <T : KtElementImplStub<out StubElement<*>>> findChildrenByTypeOrClass(
+        elementType: KtPlaceHolderStubElementType<T>,
+        elementClass: Class<T>
+    ): Array<out T> {
+        val stub = stub
+        if (stub != null) {
+            val arrayFactory: ArrayFactory<T> = elementType.arrayFactory
+            return stub.getChildrenByType(elementType, arrayFactory)
+        }
+        return findChildrenByClass(elementClass)
+    }
+
 
     fun findImportByAlias(name: String): KtImportDirective? =
         importDirectives.firstOrNull { name == it.aliasName }

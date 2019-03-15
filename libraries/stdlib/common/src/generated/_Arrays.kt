@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license 
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license 
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -443,90 +443,63 @@ public operator fun CharArray.contains(element: Char): Boolean {
  * 
  * @sample samples.collections.Collections.Elements.elementAt
  */
-@kotlin.internal.InlineOnly
-public inline fun <T> Array<out T>.elementAt(index: Int): T {
-    return get(index)
-}
+public expect fun <T> Array<out T>.elementAt(index: Int): T
 
 /**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
  * 
  * @sample samples.collections.Collections.Elements.elementAt
  */
-@kotlin.internal.InlineOnly
-public inline fun ByteArray.elementAt(index: Int): Byte {
-    return get(index)
-}
+public expect fun ByteArray.elementAt(index: Int): Byte
 
 /**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
  * 
  * @sample samples.collections.Collections.Elements.elementAt
  */
-@kotlin.internal.InlineOnly
-public inline fun ShortArray.elementAt(index: Int): Short {
-    return get(index)
-}
+public expect fun ShortArray.elementAt(index: Int): Short
 
 /**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
  * 
  * @sample samples.collections.Collections.Elements.elementAt
  */
-@kotlin.internal.InlineOnly
-public inline fun IntArray.elementAt(index: Int): Int {
-    return get(index)
-}
+public expect fun IntArray.elementAt(index: Int): Int
 
 /**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
  * 
  * @sample samples.collections.Collections.Elements.elementAt
  */
-@kotlin.internal.InlineOnly
-public inline fun LongArray.elementAt(index: Int): Long {
-    return get(index)
-}
+public expect fun LongArray.elementAt(index: Int): Long
 
 /**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
  * 
  * @sample samples.collections.Collections.Elements.elementAt
  */
-@kotlin.internal.InlineOnly
-public inline fun FloatArray.elementAt(index: Int): Float {
-    return get(index)
-}
+public expect fun FloatArray.elementAt(index: Int): Float
 
 /**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
  * 
  * @sample samples.collections.Collections.Elements.elementAt
  */
-@kotlin.internal.InlineOnly
-public inline fun DoubleArray.elementAt(index: Int): Double {
-    return get(index)
-}
+public expect fun DoubleArray.elementAt(index: Int): Double
 
 /**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
  * 
  * @sample samples.collections.Collections.Elements.elementAt
  */
-@kotlin.internal.InlineOnly
-public inline fun BooleanArray.elementAt(index: Int): Boolean {
-    return get(index)
-}
+public expect fun BooleanArray.elementAt(index: Int): Boolean
 
 /**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
  * 
  * @sample samples.collections.Collections.Elements.elementAt
  */
-@kotlin.internal.InlineOnly
-public inline fun CharArray.elementAt(index: Int): Char {
-    return get(index)
-}
+public expect fun CharArray.elementAt(index: Int): Char
 
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.
@@ -2788,6 +2761,8 @@ public inline fun CharArray.singleOrNull(predicate: (Char) -> Boolean): Char? {
 /**
  * Returns a list containing all elements except first [n] elements.
  * 
+ * @throws IllegalArgumentException if [n] is negative.
+ * 
  * @sample samples.collections.Collections.Transformations.drop
  */
 public fun <T> Array<out T>.drop(n: Int): List<T> {
@@ -2797,6 +2772,8 @@ public fun <T> Array<out T>.drop(n: Int): List<T> {
 
 /**
  * Returns a list containing all elements except first [n] elements.
+ * 
+ * @throws IllegalArgumentException if [n] is negative.
  * 
  * @sample samples.collections.Collections.Transformations.drop
  */
@@ -2808,6 +2785,8 @@ public fun ByteArray.drop(n: Int): List<Byte> {
 /**
  * Returns a list containing all elements except first [n] elements.
  * 
+ * @throws IllegalArgumentException if [n] is negative.
+ * 
  * @sample samples.collections.Collections.Transformations.drop
  */
 public fun ShortArray.drop(n: Int): List<Short> {
@@ -2817,6 +2796,8 @@ public fun ShortArray.drop(n: Int): List<Short> {
 
 /**
  * Returns a list containing all elements except first [n] elements.
+ * 
+ * @throws IllegalArgumentException if [n] is negative.
  * 
  * @sample samples.collections.Collections.Transformations.drop
  */
@@ -2828,6 +2809,8 @@ public fun IntArray.drop(n: Int): List<Int> {
 /**
  * Returns a list containing all elements except first [n] elements.
  * 
+ * @throws IllegalArgumentException if [n] is negative.
+ * 
  * @sample samples.collections.Collections.Transformations.drop
  */
 public fun LongArray.drop(n: Int): List<Long> {
@@ -2837,6 +2820,8 @@ public fun LongArray.drop(n: Int): List<Long> {
 
 /**
  * Returns a list containing all elements except first [n] elements.
+ * 
+ * @throws IllegalArgumentException if [n] is negative.
  * 
  * @sample samples.collections.Collections.Transformations.drop
  */
@@ -2848,6 +2833,8 @@ public fun FloatArray.drop(n: Int): List<Float> {
 /**
  * Returns a list containing all elements except first [n] elements.
  * 
+ * @throws IllegalArgumentException if [n] is negative.
+ * 
  * @sample samples.collections.Collections.Transformations.drop
  */
 public fun DoubleArray.drop(n: Int): List<Double> {
@@ -2857,6 +2844,8 @@ public fun DoubleArray.drop(n: Int): List<Double> {
 
 /**
  * Returns a list containing all elements except first [n] elements.
+ * 
+ * @throws IllegalArgumentException if [n] is negative.
  * 
  * @sample samples.collections.Collections.Transformations.drop
  */
@@ -2868,6 +2857,8 @@ public fun BooleanArray.drop(n: Int): List<Boolean> {
 /**
  * Returns a list containing all elements except first [n] elements.
  * 
+ * @throws IllegalArgumentException if [n] is negative.
+ * 
  * @sample samples.collections.Collections.Transformations.drop
  */
 public fun CharArray.drop(n: Int): List<Char> {
@@ -2877,6 +2868,8 @@ public fun CharArray.drop(n: Int): List<Char> {
 
 /**
  * Returns a list containing all elements except last [n] elements.
+ * 
+ * @throws IllegalArgumentException if [n] is negative.
  * 
  * @sample samples.collections.Collections.Transformations.drop
  */
@@ -2888,6 +2881,8 @@ public fun <T> Array<out T>.dropLast(n: Int): List<T> {
 /**
  * Returns a list containing all elements except last [n] elements.
  * 
+ * @throws IllegalArgumentException if [n] is negative.
+ * 
  * @sample samples.collections.Collections.Transformations.drop
  */
 public fun ByteArray.dropLast(n: Int): List<Byte> {
@@ -2897,6 +2892,8 @@ public fun ByteArray.dropLast(n: Int): List<Byte> {
 
 /**
  * Returns a list containing all elements except last [n] elements.
+ * 
+ * @throws IllegalArgumentException if [n] is negative.
  * 
  * @sample samples.collections.Collections.Transformations.drop
  */
@@ -2908,6 +2905,8 @@ public fun ShortArray.dropLast(n: Int): List<Short> {
 /**
  * Returns a list containing all elements except last [n] elements.
  * 
+ * @throws IllegalArgumentException if [n] is negative.
+ * 
  * @sample samples.collections.Collections.Transformations.drop
  */
 public fun IntArray.dropLast(n: Int): List<Int> {
@@ -2917,6 +2916,8 @@ public fun IntArray.dropLast(n: Int): List<Int> {
 
 /**
  * Returns a list containing all elements except last [n] elements.
+ * 
+ * @throws IllegalArgumentException if [n] is negative.
  * 
  * @sample samples.collections.Collections.Transformations.drop
  */
@@ -2928,6 +2929,8 @@ public fun LongArray.dropLast(n: Int): List<Long> {
 /**
  * Returns a list containing all elements except last [n] elements.
  * 
+ * @throws IllegalArgumentException if [n] is negative.
+ * 
  * @sample samples.collections.Collections.Transformations.drop
  */
 public fun FloatArray.dropLast(n: Int): List<Float> {
@@ -2937,6 +2940,8 @@ public fun FloatArray.dropLast(n: Int): List<Float> {
 
 /**
  * Returns a list containing all elements except last [n] elements.
+ * 
+ * @throws IllegalArgumentException if [n] is negative.
  * 
  * @sample samples.collections.Collections.Transformations.drop
  */
@@ -2948,6 +2953,8 @@ public fun DoubleArray.dropLast(n: Int): List<Double> {
 /**
  * Returns a list containing all elements except last [n] elements.
  * 
+ * @throws IllegalArgumentException if [n] is negative.
+ * 
  * @sample samples.collections.Collections.Transformations.drop
  */
 public fun BooleanArray.dropLast(n: Int): List<Boolean> {
@@ -2957,6 +2964,8 @@ public fun BooleanArray.dropLast(n: Int): List<Boolean> {
 
 /**
  * Returns a list containing all elements except last [n] elements.
+ * 
+ * @throws IllegalArgumentException if [n] is negative.
  * 
  * @sample samples.collections.Collections.Transformations.drop
  */
@@ -4040,7 +4049,7 @@ public fun CharArray.sliceArray(indices: Collection<Int>): CharArray {
 }
 
 /**
- * Returns a list containing elements at indices in the specified [indices] range.
+ * Returns an array containing elements at indices in the specified [indices] range.
  */
 public fun <T> Array<T>.sliceArray(indices: IntRange): Array<T> {
     if (indices.isEmpty()) return copyOfRange(0, 0)
@@ -4048,7 +4057,7 @@ public fun <T> Array<T>.sliceArray(indices: IntRange): Array<T> {
 }
 
 /**
- * Returns a list containing elements at indices in the specified [indices] range.
+ * Returns an array containing elements at indices in the specified [indices] range.
  */
 public fun ByteArray.sliceArray(indices: IntRange): ByteArray {
     if (indices.isEmpty()) return ByteArray(0)
@@ -4056,7 +4065,7 @@ public fun ByteArray.sliceArray(indices: IntRange): ByteArray {
 }
 
 /**
- * Returns a list containing elements at indices in the specified [indices] range.
+ * Returns an array containing elements at indices in the specified [indices] range.
  */
 public fun ShortArray.sliceArray(indices: IntRange): ShortArray {
     if (indices.isEmpty()) return ShortArray(0)
@@ -4064,7 +4073,7 @@ public fun ShortArray.sliceArray(indices: IntRange): ShortArray {
 }
 
 /**
- * Returns a list containing elements at indices in the specified [indices] range.
+ * Returns an array containing elements at indices in the specified [indices] range.
  */
 public fun IntArray.sliceArray(indices: IntRange): IntArray {
     if (indices.isEmpty()) return IntArray(0)
@@ -4072,7 +4081,7 @@ public fun IntArray.sliceArray(indices: IntRange): IntArray {
 }
 
 /**
- * Returns a list containing elements at indices in the specified [indices] range.
+ * Returns an array containing elements at indices in the specified [indices] range.
  */
 public fun LongArray.sliceArray(indices: IntRange): LongArray {
     if (indices.isEmpty()) return LongArray(0)
@@ -4080,7 +4089,7 @@ public fun LongArray.sliceArray(indices: IntRange): LongArray {
 }
 
 /**
- * Returns a list containing elements at indices in the specified [indices] range.
+ * Returns an array containing elements at indices in the specified [indices] range.
  */
 public fun FloatArray.sliceArray(indices: IntRange): FloatArray {
     if (indices.isEmpty()) return FloatArray(0)
@@ -4088,7 +4097,7 @@ public fun FloatArray.sliceArray(indices: IntRange): FloatArray {
 }
 
 /**
- * Returns a list containing elements at indices in the specified [indices] range.
+ * Returns an array containing elements at indices in the specified [indices] range.
  */
 public fun DoubleArray.sliceArray(indices: IntRange): DoubleArray {
     if (indices.isEmpty()) return DoubleArray(0)
@@ -4096,7 +4105,7 @@ public fun DoubleArray.sliceArray(indices: IntRange): DoubleArray {
 }
 
 /**
- * Returns a list containing elements at indices in the specified [indices] range.
+ * Returns an array containing elements at indices in the specified [indices] range.
  */
 public fun BooleanArray.sliceArray(indices: IntRange): BooleanArray {
     if (indices.isEmpty()) return BooleanArray(0)
@@ -4104,7 +4113,7 @@ public fun BooleanArray.sliceArray(indices: IntRange): BooleanArray {
 }
 
 /**
- * Returns a list containing elements at indices in the specified [indices] range.
+ * Returns an array containing elements at indices in the specified [indices] range.
  */
 public fun CharArray.sliceArray(indices: IntRange): CharArray {
     if (indices.isEmpty()) return CharArray(0)
@@ -4113,6 +4122,8 @@ public fun CharArray.sliceArray(indices: IntRange): CharArray {
 
 /**
  * Returns a list containing first [n] elements.
+ * 
+ * @throws IllegalArgumentException if [n] is negative.
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
@@ -4134,6 +4145,8 @@ public fun <T> Array<out T>.take(n: Int): List<T> {
 /**
  * Returns a list containing first [n] elements.
  * 
+ * @throws IllegalArgumentException if [n] is negative.
+ * 
  * @sample samples.collections.Collections.Transformations.take
  */
 public fun ByteArray.take(n: Int): List<Byte> {
@@ -4153,6 +4166,8 @@ public fun ByteArray.take(n: Int): List<Byte> {
 
 /**
  * Returns a list containing first [n] elements.
+ * 
+ * @throws IllegalArgumentException if [n] is negative.
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
@@ -4174,6 +4189,8 @@ public fun ShortArray.take(n: Int): List<Short> {
 /**
  * Returns a list containing first [n] elements.
  * 
+ * @throws IllegalArgumentException if [n] is negative.
+ * 
  * @sample samples.collections.Collections.Transformations.take
  */
 public fun IntArray.take(n: Int): List<Int> {
@@ -4193,6 +4210,8 @@ public fun IntArray.take(n: Int): List<Int> {
 
 /**
  * Returns a list containing first [n] elements.
+ * 
+ * @throws IllegalArgumentException if [n] is negative.
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
@@ -4214,6 +4233,8 @@ public fun LongArray.take(n: Int): List<Long> {
 /**
  * Returns a list containing first [n] elements.
  * 
+ * @throws IllegalArgumentException if [n] is negative.
+ * 
  * @sample samples.collections.Collections.Transformations.take
  */
 public fun FloatArray.take(n: Int): List<Float> {
@@ -4233,6 +4254,8 @@ public fun FloatArray.take(n: Int): List<Float> {
 
 /**
  * Returns a list containing first [n] elements.
+ * 
+ * @throws IllegalArgumentException if [n] is negative.
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
@@ -4254,6 +4277,8 @@ public fun DoubleArray.take(n: Int): List<Double> {
 /**
  * Returns a list containing first [n] elements.
  * 
+ * @throws IllegalArgumentException if [n] is negative.
+ * 
  * @sample samples.collections.Collections.Transformations.take
  */
 public fun BooleanArray.take(n: Int): List<Boolean> {
@@ -4273,6 +4298,8 @@ public fun BooleanArray.take(n: Int): List<Boolean> {
 
 /**
  * Returns a list containing first [n] elements.
+ * 
+ * @throws IllegalArgumentException if [n] is negative.
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
@@ -4294,6 +4321,8 @@ public fun CharArray.take(n: Int): List<Char> {
 /**
  * Returns a list containing last [n] elements.
  * 
+ * @throws IllegalArgumentException if [n] is negative.
+ * 
  * @sample samples.collections.Collections.Transformations.take
  */
 public fun <T> Array<out T>.takeLast(n: Int): List<T> {
@@ -4310,6 +4339,8 @@ public fun <T> Array<out T>.takeLast(n: Int): List<T> {
 
 /**
  * Returns a list containing last [n] elements.
+ * 
+ * @throws IllegalArgumentException if [n] is negative.
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
@@ -4328,6 +4359,8 @@ public fun ByteArray.takeLast(n: Int): List<Byte> {
 /**
  * Returns a list containing last [n] elements.
  * 
+ * @throws IllegalArgumentException if [n] is negative.
+ * 
  * @sample samples.collections.Collections.Transformations.take
  */
 public fun ShortArray.takeLast(n: Int): List<Short> {
@@ -4344,6 +4377,8 @@ public fun ShortArray.takeLast(n: Int): List<Short> {
 
 /**
  * Returns a list containing last [n] elements.
+ * 
+ * @throws IllegalArgumentException if [n] is negative.
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
@@ -4362,6 +4397,8 @@ public fun IntArray.takeLast(n: Int): List<Int> {
 /**
  * Returns a list containing last [n] elements.
  * 
+ * @throws IllegalArgumentException if [n] is negative.
+ * 
  * @sample samples.collections.Collections.Transformations.take
  */
 public fun LongArray.takeLast(n: Int): List<Long> {
@@ -4378,6 +4415,8 @@ public fun LongArray.takeLast(n: Int): List<Long> {
 
 /**
  * Returns a list containing last [n] elements.
+ * 
+ * @throws IllegalArgumentException if [n] is negative.
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
@@ -4396,6 +4435,8 @@ public fun FloatArray.takeLast(n: Int): List<Float> {
 /**
  * Returns a list containing last [n] elements.
  * 
+ * @throws IllegalArgumentException if [n] is negative.
+ * 
  * @sample samples.collections.Collections.Transformations.take
  */
 public fun DoubleArray.takeLast(n: Int): List<Double> {
@@ -4413,6 +4454,8 @@ public fun DoubleArray.takeLast(n: Int): List<Double> {
 /**
  * Returns a list containing last [n] elements.
  * 
+ * @throws IllegalArgumentException if [n] is negative.
+ * 
  * @sample samples.collections.Collections.Transformations.take
  */
 public fun BooleanArray.takeLast(n: Int): List<Boolean> {
@@ -4429,6 +4472,8 @@ public fun BooleanArray.takeLast(n: Int): List<Boolean> {
 
 /**
  * Returns a list containing last [n] elements.
+ * 
+ * @throws IllegalArgumentException if [n] is negative.
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
@@ -5040,6 +5085,8 @@ public fun CharArray.reversedArray(): CharArray {
 
 /**
  * Sorts elements in the array in-place according to natural sort order of the value returned by specified [selector] function.
+ * 
+ * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
  */
 public inline fun <T, R : Comparable<R>> Array<out T>.sortBy(crossinline selector: (T) -> R?): Unit {
     if (size > 1) sortWith(compareBy(selector))
@@ -5047,6 +5094,8 @@ public inline fun <T, R : Comparable<R>> Array<out T>.sortBy(crossinline selecto
 
 /**
  * Sorts elements in the array in-place descending according to natural sort order of the value returned by specified [selector] function.
+ * 
+ * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
  */
 public inline fun <T, R : Comparable<R>> Array<out T>.sortByDescending(crossinline selector: (T) -> R?): Unit {
     if (size > 1) sortWith(compareByDescending(selector))
@@ -5054,6 +5103,8 @@ public inline fun <T, R : Comparable<R>> Array<out T>.sortByDescending(crossinli
 
 /**
  * Sorts elements in the array in-place descending according to their natural sort order.
+ * 
+ * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
  */
 public fun <T : Comparable<T>> Array<out T>.sortDescending(): Unit {
     sortWith(reverseOrder())
@@ -5131,6 +5182,8 @@ public fun CharArray.sortDescending(): Unit {
 
 /**
  * Returns a list of all elements sorted according to their natural sort order.
+ * 
+ * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
  */
 public fun <T : Comparable<T>> Array<out T>.sorted(): List<T> {
     return sortedArray().asList()
@@ -5187,6 +5240,8 @@ public fun CharArray.sorted(): List<Char> {
 
 /**
  * Returns an array with all elements of this array sorted according to their natural sort order.
+ * 
+ * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
  */
 public fun <T : Comparable<T>> Array<T>.sortedArray(): Array<T> {
     if (isEmpty()) return this
@@ -5251,6 +5306,8 @@ public fun CharArray.sortedArray(): CharArray {
 
 /**
  * Returns an array with all elements of this array sorted descending according to their natural sort order.
+ * 
+ * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
  */
 public fun <T : Comparable<T>> Array<T>.sortedArrayDescending(): Array<T> {
     if (isEmpty()) return this
@@ -5315,6 +5372,8 @@ public fun CharArray.sortedArrayDescending(): CharArray {
 
 /**
  * Returns an array with all elements of this array sorted according the specified [comparator].
+ * 
+ * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
  */
 public fun <T> Array<out T>.sortedArrayWith(comparator: Comparator<in T>): Array<out T> {
     if (isEmpty()) return this
@@ -5323,6 +5382,8 @@ public fun <T> Array<out T>.sortedArrayWith(comparator: Comparator<in T>): Array
 
 /**
  * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
+ * 
+ * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
  */
 public inline fun <T, R : Comparable<R>> Array<out T>.sortedBy(crossinline selector: (T) -> R?): List<T> {
     return sortedWith(compareBy(selector))
@@ -5386,6 +5447,8 @@ public inline fun <R : Comparable<R>> CharArray.sortedBy(crossinline selector: (
 
 /**
  * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [selector] function.
+ * 
+ * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
  */
 public inline fun <T, R : Comparable<R>> Array<out T>.sortedByDescending(crossinline selector: (T) -> R?): List<T> {
     return sortedWith(compareByDescending(selector))
@@ -5449,6 +5512,8 @@ public inline fun <R : Comparable<R>> CharArray.sortedByDescending(crossinline s
 
 /**
  * Returns a list of all elements sorted descending according to their natural sort order.
+ * 
+ * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
  */
 public fun <T : Comparable<T>> Array<out T>.sortedDescending(): List<T> {
     return sortedWith(reverseOrder())
@@ -5505,6 +5570,8 @@ public fun CharArray.sortedDescending(): List<Char> {
 
 /**
  * Returns a list of all elements sorted according to the specified [comparator].
+ * 
+ * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
  */
 public fun <T> Array<out T>.sortedWith(comparator: Comparator<in T>): List<T> {
     return sortedArrayWith(comparator).asList()
@@ -5617,6 +5684,9 @@ public expect fun CharArray.asList(): List<Char>
  * 
  * If two corresponding elements are nested arrays, they are also compared deeply.
  * If any of arrays contains itself on any nesting level the behavior is undefined.
+ * 
+ * The elements of other types are compared for equality with the [equals][Any.equals] function.
+ * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
  */
 @SinceKotlin("1.1")
 public expect infix fun <T> Array<out T>.contentDeepEquals(other: Array<out T>): Boolean
@@ -5645,6 +5715,9 @@ public expect fun <T> Array<out T>.contentDeepToString(): String
 /**
  * Returns `true` if the two specified arrays are *structurally* equal to one another,
  * i.e. contain the same number of the same elements in the same order.
+ * 
+ * The elements are compared for equality with the [equals][Any.equals] function.
+ * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
  */
 @SinceKotlin("1.1")
 public expect infix fun <T> Array<out T>.contentEquals(other: Array<out T>): Boolean
@@ -5652,6 +5725,9 @@ public expect infix fun <T> Array<out T>.contentEquals(other: Array<out T>): Boo
 /**
  * Returns `true` if the two specified arrays are *structurally* equal to one another,
  * i.e. contain the same number of the same elements in the same order.
+ * 
+ * The elements are compared for equality with the [equals][Any.equals] function.
+ * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
  */
 @SinceKotlin("1.1")
 public expect infix fun ByteArray.contentEquals(other: ByteArray): Boolean
@@ -5659,6 +5735,9 @@ public expect infix fun ByteArray.contentEquals(other: ByteArray): Boolean
 /**
  * Returns `true` if the two specified arrays are *structurally* equal to one another,
  * i.e. contain the same number of the same elements in the same order.
+ * 
+ * The elements are compared for equality with the [equals][Any.equals] function.
+ * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
  */
 @SinceKotlin("1.1")
 public expect infix fun ShortArray.contentEquals(other: ShortArray): Boolean
@@ -5666,6 +5745,9 @@ public expect infix fun ShortArray.contentEquals(other: ShortArray): Boolean
 /**
  * Returns `true` if the two specified arrays are *structurally* equal to one another,
  * i.e. contain the same number of the same elements in the same order.
+ * 
+ * The elements are compared for equality with the [equals][Any.equals] function.
+ * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
  */
 @SinceKotlin("1.1")
 public expect infix fun IntArray.contentEquals(other: IntArray): Boolean
@@ -5673,6 +5755,9 @@ public expect infix fun IntArray.contentEquals(other: IntArray): Boolean
 /**
  * Returns `true` if the two specified arrays are *structurally* equal to one another,
  * i.e. contain the same number of the same elements in the same order.
+ * 
+ * The elements are compared for equality with the [equals][Any.equals] function.
+ * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
  */
 @SinceKotlin("1.1")
 public expect infix fun LongArray.contentEquals(other: LongArray): Boolean
@@ -5680,6 +5765,9 @@ public expect infix fun LongArray.contentEquals(other: LongArray): Boolean
 /**
  * Returns `true` if the two specified arrays are *structurally* equal to one another,
  * i.e. contain the same number of the same elements in the same order.
+ * 
+ * The elements are compared for equality with the [equals][Any.equals] function.
+ * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
  */
 @SinceKotlin("1.1")
 public expect infix fun FloatArray.contentEquals(other: FloatArray): Boolean
@@ -5687,6 +5775,9 @@ public expect infix fun FloatArray.contentEquals(other: FloatArray): Boolean
 /**
  * Returns `true` if the two specified arrays are *structurally* equal to one another,
  * i.e. contain the same number of the same elements in the same order.
+ * 
+ * The elements are compared for equality with the [equals][Any.equals] function.
+ * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
  */
 @SinceKotlin("1.1")
 public expect infix fun DoubleArray.contentEquals(other: DoubleArray): Boolean
@@ -5694,6 +5785,9 @@ public expect infix fun DoubleArray.contentEquals(other: DoubleArray): Boolean
 /**
  * Returns `true` if the two specified arrays are *structurally* equal to one another,
  * i.e. contain the same number of the same elements in the same order.
+ * 
+ * The elements are compared for equality with the [equals][Any.equals] function.
+ * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
  */
 @SinceKotlin("1.1")
 public expect infix fun BooleanArray.contentEquals(other: BooleanArray): Boolean
@@ -5701,6 +5795,9 @@ public expect infix fun BooleanArray.contentEquals(other: BooleanArray): Boolean
 /**
  * Returns `true` if the two specified arrays are *structurally* equal to one another,
  * i.e. contain the same number of the same elements in the same order.
+ * 
+ * The elements are compared for equality with the [equals][Any.equals] function.
+ * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
  */
 @SinceKotlin("1.1")
 public expect infix fun CharArray.contentEquals(other: CharArray): Boolean
@@ -6672,11 +6769,15 @@ public expect fun CharArray.sort(): Unit
 
 /**
  * Sorts the array in-place according to the natural order of its elements.
+ * 
+ * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
  */
 public expect fun <T : Comparable<T>> Array<out T>.sort(): Unit
 
 /**
  * Sorts the array in-place according to the order specified by the given [comparator].
+ * 
+ * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
  */
 public expect fun <T> Array<out T>.sortWith(comparator: Comparator<in T>): Unit
 
@@ -6684,80 +6785,56 @@ public expect fun <T> Array<out T>.sortWith(comparator: Comparator<in T>): Unit
  * Returns an array of Boolean containing all of the elements of this generic array.
  */
 public fun Array<out Boolean>.toBooleanArray(): BooleanArray {
-    val result = BooleanArray(size)
-    for (index in indices)
-        result[index] = this[index]
-    return result
+    return BooleanArray(size) { index -> this[index] }
 }
 
 /**
  * Returns an array of Byte containing all of the elements of this generic array.
  */
 public fun Array<out Byte>.toByteArray(): ByteArray {
-    val result = ByteArray(size)
-    for (index in indices)
-        result[index] = this[index]
-    return result
+    return ByteArray(size) { index -> this[index] }
 }
 
 /**
  * Returns an array of Char containing all of the elements of this generic array.
  */
 public fun Array<out Char>.toCharArray(): CharArray {
-    val result = CharArray(size)
-    for (index in indices)
-        result[index] = this[index]
-    return result
+    return CharArray(size) { index -> this[index] }
 }
 
 /**
  * Returns an array of Double containing all of the elements of this generic array.
  */
 public fun Array<out Double>.toDoubleArray(): DoubleArray {
-    val result = DoubleArray(size)
-    for (index in indices)
-        result[index] = this[index]
-    return result
+    return DoubleArray(size) { index -> this[index] }
 }
 
 /**
  * Returns an array of Float containing all of the elements of this generic array.
  */
 public fun Array<out Float>.toFloatArray(): FloatArray {
-    val result = FloatArray(size)
-    for (index in indices)
-        result[index] = this[index]
-    return result
+    return FloatArray(size) { index -> this[index] }
 }
 
 /**
  * Returns an array of Int containing all of the elements of this generic array.
  */
 public fun Array<out Int>.toIntArray(): IntArray {
-    val result = IntArray(size)
-    for (index in indices)
-        result[index] = this[index]
-    return result
+    return IntArray(size) { index -> this[index] }
 }
 
 /**
  * Returns an array of Long containing all of the elements of this generic array.
  */
 public fun Array<out Long>.toLongArray(): LongArray {
-    val result = LongArray(size)
-    for (index in indices)
-        result[index] = this[index]
-    return result
+    return LongArray(size) { index -> this[index] }
 }
 
 /**
  * Returns an array of Short containing all of the elements of this generic array.
  */
 public fun Array<out Short>.toShortArray(): ShortArray {
-    val result = ShortArray(size)
-    for (index in indices)
-        result[index] = this[index]
-    return result
+    return ShortArray(size) { index -> this[index] }
 }
 
 /**

@@ -7,13 +7,15 @@ package org.jetbrains.kotlin.idea.scratch.ui
 
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.core.util.cachedFileAttribute
+import org.jetbrains.kotlin.idea.scratch.ScratchFileOptions
 
-var VirtualFile.scratchPanelConfig: ScratchPanelConfig? by cachedFileAttribute(
-    name = "kotlin-scratch-panel-config",
+var VirtualFile.scratchFileOptions: ScratchFileOptions? by cachedFileAttribute(
+    name = "kotlin-scratch-file-options",
     version = 1,
-    read = { ScratchPanelConfig(readBoolean(), readBoolean()) },
+    read = { ScratchFileOptions(readBoolean(), readBoolean(), readBoolean()) },
     write = {
         writeBoolean(it.isRepl)
         writeBoolean(it.isMakeBeforeRun)
+        writeBoolean(it.isInteractiveMode)
     }
 )

@@ -55,7 +55,7 @@ import java.util.concurrent.TimeUnit;
 
 public class ConfigureDialogWithModulesAndVersion extends DialogWrapper {
     private static final String VERSIONS_LIST_URL =
-            "http://search.maven.org/solrsearch/select?q=g:%22org.jetbrains.kotlin%22+AND+a:%22kotlin-stdlib%22&core=gav&rows=20&wt=json";
+            "https://search.maven.org/solrsearch/select?q=g:%22org.jetbrains.kotlin%22+AND+a:%22kotlin-stdlib%22&core=gav&rows=20&wt=json";
 
     @NotNull private final String minimumVersion;
 

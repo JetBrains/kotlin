@@ -1,0 +1,14 @@
+public open class Frame : R|java/lang/Object| {
+    public/*package*/ open property accessibleContext(var): R|ft<kotlin/String, kotlin/String?>|!
+        public/*package*/ get(): R|ft<kotlin/String, kotlin/String?>|!
+        public/*package*/ set(value: R|ft<kotlin/String, kotlin/String?>|!): kotlin/Unit
+
+}
+public open class JFrame : R|awt/Frame| {
+    protected/*protected and package*/ open property accessibleContext(var): R|ft<kotlin/String, kotlin/String?>|!
+        protected/*protected and package*/ get(): R|ft<kotlin/String, kotlin/String?>|!
+        protected/*protected and package*/ set(value: R|ft<kotlin/String, kotlin/String?>|!): kotlin/Unit
+
+    public final function JFrame(): R|test/JFrame|
+
+}

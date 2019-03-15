@@ -12,6 +12,7 @@ interface Deprecation {
     val deprecationLevel: DeprecationLevelValue
     val message: String?
     val target: DeclarationDescriptor
+    val propagatesToOverrides: Boolean get() = true
 }
 
 // values from kotlin.DeprecationLevel

@@ -64,6 +64,7 @@ class MemberBuilder(
     var toNullableT: Boolean = false
 
     var returns: String? = null; private set
+    val throwsExceptions = mutableListOf<ThrowsException>()
     var body: String? = null; private set
     val annotations: MutableList<String> = mutableListOf()
     val suppressions: MutableList<String> = mutableListOf()
@@ -98,6 +99,8 @@ class MemberBuilder(
     fun returns(type: String) { returns = type }
     @Deprecated("Use specialFor", ReplaceWith("specialFor(*fs) { returns(run(valueBuilder)) }"))
     fun returns(vararg fs: Family, valueBuilder: () -> String) = specialFor(*fs) { returns(run(valueBuilder)) }
+
+    fun throws(exceptionType: String, reason: String) { throwsExceptions += ThrowsException(exceptionType, reason) }
 
     fun typeParam(typeParameterName: String, primary: Boolean = false) {
         typeParams += typeParameterName
@@ -194,28 +197,19 @@ class MemberBuilder(
                     "RECEIVER" -> receiver
                     "SELF" -> self
                     "PRIMITIVE" -> primitive?.name ?: token
-                    "SUM" -> {
-                        when (primitive) {
-                            PrimitiveType.Byte, PrimitiveType.Short, PrimitiveType.Char -> "Int"
-                            else -> primitive
-                        }
-                    }
-                    "ZERO" -> when (primitive) {
-                        PrimitiveType.Double -> "0.0"
-                        PrimitiveType.Float -> "0.0f"
-                        PrimitiveType.Long -> "0L"
-                        else -> "0"
-                    }
                     "ONE" -> when (primitive) {
                         PrimitiveType.Double -> "1.0"
                         PrimitiveType.Float -> "1.0f"
                         PrimitiveType.Long -> "1L"
+                        PrimitiveType.ULong -> "1uL"
+                        in PrimitiveType.unsignedPrimitives -> "1u"
                         else -> "1"
                     }
                     "-ONE" -> when (primitive) {
                         PrimitiveType.Double -> "-1.0"
                         PrimitiveType.Float -> "-1.0f"
                         PrimitiveType.Long -> "-1L"
+                        in PrimitiveType.unsignedPrimitives -> error("-ONE is not in the domain of unsigned primitives")
                         else -> "-1"
                     }
                     "TCollection" -> {
@@ -309,9 +303,13 @@ class MemberBuilder(
                 builder.append(" *\n")
                 builder.append(" * The operation is ${sequenceClassification.joinToString(" and ") { "_${it}_" }}.\n")
             }
+            if (throwsExceptions.any()) {
+                builder.append(" * \n")
+                throwsExceptions.forEach { (type, reason) -> builder.append(" * @throws $type $reason\n") }
+            }
             if (samples.any()) {
                 builder.append(" * \n")
-                samples.forEach { builder.append(" * @sample $it\n")}
+                samples.forEach { builder.append(" * @sample $it\n") }
             }
             builder.append(" */\n")
         }
@@ -381,7 +379,7 @@ class MemberBuilder(
 
         val body = (body ?:
                 deprecate?.replaceWith?.let { "return $it" } ?:
-                throw RuntimeException("$signature for ${target.fullName}: no body specified for ${family to primitive}")
+                """TODO("Body is not provided")""".also { System.err.println("ERROR: $signature for ${target.fullName}: no body specified for ${family to primitive}") }
                 ).trim('\n')
         val indent: Int = body.takeWhile { it == ' ' }.length
 

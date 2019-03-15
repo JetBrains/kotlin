@@ -1,6 +1,6 @@
-import com.moowork.gradle.node.exec.ExecRunner
-import com.moowork.gradle.node.npm.NpmExecRunner
+import com.moowork.gradle.node.NodeExtension
 import com.moowork.gradle.node.npm.NpmTask
+import org.gradle.internal.os.OperatingSystem
 
 plugins {
     kotlin("jvm")
@@ -14,6 +14,8 @@ node {
 
 val antLauncherJar by configurations.creating
 val testJsRuntime by configurations.creating
+
+val generateIrRuntimeKlib by generator("org.jetbrains.kotlin.generators.tests.GenerateIrRuntimeKt")
 
 dependencies {
     testRuntime(intellijDep())
@@ -33,14 +35,26 @@ dependencies {
     testCompile(projectTests(":kotlin-build-common"))
     testCompile(projectTests(":generators:test-generator"))
 
-    testRuntime(project(":kotlin-stdlib"))
-    testJsRuntime(project(":kotlin-stdlib-js"))
+    testRuntime(kotlinStdlib())
+    testJsRuntime(kotlinStdlib("js"))
     testJsRuntime(project(":kotlin-test:kotlin-test-js")) // to be sure that kotlin-test-js built before tests runned
     testRuntime(project(":kotlin-reflect"))
     testRuntime(project(":kotlin-preloader")) // it's required for ant tests
     testRuntime(project(":compiler:backend-common"))
     testRuntime(commonDep("org.fusesource.jansi", "jansi"))
 
+    val currentOs = OperatingSystem.current()
+
+    when {
+        currentOs.isWindows -> {
+            val suffix = if (currentOs.toString().endsWith("64")) "_64" else ""
+            testCompile("com.eclipsesource.j2v8:j2v8_win32_x86$suffix:4.6.0")
+        }
+        currentOs.isMacOsX -> testCompile("com.eclipsesource.j2v8:j2v8_macosx_x86_64:4.6.0")
+        currentOs.run { isLinux || isUnix } -> testCompile("com.eclipsesource.j2v8:j2v8_linux_x86_64:4.8.0")
+        else -> logger.error("unsupported platform $currentOs - can not compile com.eclipsesource.j2v8 dependency")
+    }
+    
     antLauncherJar(commonDep("org.apache.ant", "ant"))
     antLauncherJar(files(toolsJar()))
 }
@@ -50,13 +64,19 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-projectTest {
+
+fun Test.setUpBoxTests(jsEnabled: Boolean, jsIrEnabled: Boolean, skipIrKlib: Boolean = false) {
     dependsOn(":dist")
-    dependsOn(testJsRuntime)
+    if (jsEnabled) dependsOn(testJsRuntime)
+    if (jsIrEnabled && !skipIrKlib) dependsOn(generateIrRuntimeKlib)
+
+    if (jsEnabled && !jsIrEnabled) exclude("org/jetbrains/kotlin/js/test/ir/semantics/*")
+    if (!jsEnabled && jsIrEnabled) include("org/jetbrains/kotlin/js/test/ir/semantics/*")
+
     jvmArgs("-da:jdk.nashorn.internal.runtime.RecompilableScriptFunctionData") // Disable assertion which fails due to a bug in nashorn (KT-23637)
     workingDir = rootDir
     if (findProperty("kotlin.compiler.js.ir.tests.skip")?.toString()?.toBoolean() == true) {
-        exclude("org/jetbrains/kotlin/js/test/semantics/Ir*")
+        exclude("org/jetbrains/kotlin/js/test/ir/semantics/*")
     }
     doFirst {
         systemProperty("kotlin.ant.classpath", antLauncherJar.asPath)
@@ -64,28 +84,40 @@ projectTest {
     }
 
     val prefixForPpropertiesToForward = "fd."
-    for((key, value) in properties) {
+    for ((key, value) in properties) {
         if (key.startsWith(prefixForPpropertiesToForward)) {
-            systemProperty(key.substring(prefixForPpropertiesToForward.length), value)
+            systemProperty(key.substring(prefixForPpropertiesToForward.length), value!!)
         }
     }
 }
 
-testsJar {}
+projectTest {
+    setUpBoxTests(jsEnabled = true, jsIrEnabled = true)
+}
+
+projectTest("jsTest") {
+    setUpBoxTests(jsEnabled = true, jsIrEnabled = false)
+}
+
+projectTest("jsIrTest") {
+    setUpBoxTests(jsEnabled = false, jsIrEnabled = true)
+}
 
 projectTest("quickTest") {
-    dependsOn(":dist")
-    dependsOn(testJsRuntime)
-    workingDir = rootDir
+    setUpBoxTests(jsEnabled = true, jsIrEnabled = false)
     systemProperty("kotlin.js.skipMinificationTest", "true")
-    doFirst {
-        systemProperty("kotlin.ant.classpath", antLauncherJar.asPath)
-        systemProperty("kotlin.ant.launcher.class", "org.apache.tools.ant.Main")
-    }
 }
+
+projectTest("quickIrTest") {
+    setUpBoxTests(jsEnabled = false, jsIrEnabled = true, skipIrKlib = true)
+}
+
+testsJar {}
 
 val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateJsTestsKt")
 val testDataDir = project(":js:js.translator").projectDir.resolve("testData")
+
+extensions.getByType(NodeExtension::class.java).nodeModulesDir = testDataDir
 
 val npmInstall by tasks.getting(NpmTask::class) {
     setWorkingDir(testDataDir)

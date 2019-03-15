@@ -5,7 +5,7 @@ plugins {
 }
 
 dependencies {
-    compile(project(":kotlin-stdlib"))
+    compile(kotlinStdlib())
     compile(project(":core:util.runtime"))
     compile(project(":compiler:backend"))
     compile(project(":compiler:frontend"))
@@ -18,11 +18,6 @@ dependencies {
         compileOnly(intellijDep()) { includeJars("java-api", "java-impl", "asm-all", rootProject = rootProject) }
     }
 
-    Platform[173].orLower {
-        compile(project(":idea:idea-core"))
-        compileOnly(intellijDep()) { includeJars("openapi", "idea", "util", "extensions", "asm-all", rootProject = rootProject) }
-    }
-
     testCompile(project(":kotlin-test:kotlin-test-jvm"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(commonDep("junit:junit"))
@@ -32,10 +27,6 @@ dependencies {
 
     Platform[181].orHigher {
         testCompileOnly(intellijDep()) { includeJars("java-api", "java-impl") }
-    }
-
-    Platform[173].orLower {
-        testCompileOnly(intellijDep()) { includeJars("idea_rt") }
     }
 
     testCompile(project(":idea:idea-native")) { isTransitive = false }

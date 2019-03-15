@@ -31,8 +31,11 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import java.util.*
 
-inline fun <reified T : IrElement> T.deepCopyWithSymbols(initialParent: IrDeclarationParent? = null): T {
-    val symbolRemapper = DeepCopySymbolRemapper()
+inline fun <reified T : IrElement> T.deepCopyWithSymbols(
+    initialParent: IrDeclarationParent? = null,
+    descriptorRemapper: DescriptorsRemapper = DescriptorsRemapper.DEFAULT
+): T {
+    val symbolRemapper = DeepCopySymbolRemapper(descriptorRemapper)
     acceptVoid(symbolRemapper)
     val typeRemapper = DeepCopyTypeRemapper(symbolRemapper)
     return transform(DeepCopyIrTreeWithSymbols(symbolRemapper, typeRemapper), null).patchDeclarationParents(initialParent) as T
@@ -200,16 +203,25 @@ open class DeepCopyIrTreeWithSymbols(
     }
 
     override fun visitProperty(declaration: IrProperty): IrProperty =
-        IrPropertyImpl(
-            declaration.startOffset, declaration.endOffset,
+        IrPropertyImpl(declaration.startOffset, declaration.endOffset,
             mapDeclarationOrigin(declaration.origin),
+            declaration.descriptor,
+            declaration.name,
+            declaration.visibility,
+            declaration.modality,
+            declaration.isVar,
+            declaration.isConst,
+            declaration.isLateinit,
             declaration.isDelegated,
-            declaration.descriptor, // TODO
-            declaration.backingField?.transform(),
-            declaration.getter?.transform(),
-            declaration.setter?.transform()
+            declaration.isExternal
         ).apply {
             transformAnnotations(declaration)
+            this.backingField = declaration.backingField?.transform()
+            this.getter = declaration.getter?.transform()
+            this.setter = declaration.setter?.transform()
+            this.backingField?.let {
+                it.correspondingProperty = this
+            }
         }
 
     override fun visitField(declaration: IrField): IrField =
@@ -371,7 +383,7 @@ open class DeepCopyIrTreeWithSymbols(
                 symbolRemapper.getReferencedReturnableBlock(expression.symbol),
                 mapStatementOrigin(expression.origin),
                 expression.statements.map { it.transform() },
-                expression.sourceFileName
+                expression.sourceFileSymbol
             )
         else
             IrBlockImpl(
@@ -698,6 +710,24 @@ open class DeepCopyIrTreeWithSymbols(
             expression.startOffset, expression.endOffset,
             expression.type.remapType(),
             expression.value.transform()
+        )
+
+    override fun visitDynamicOperatorExpression(expression: IrDynamicOperatorExpression): IrDynamicOperatorExpression =
+        IrDynamicOperatorExpressionImpl(
+            expression.startOffset, expression.endOffset,
+            expression.type.remapType(),
+            expression.operator
+        ).apply {
+            receiver = expression.receiver.transform()
+            expression.arguments.mapTo(arguments) { it.transform() }
+        }
+
+    override fun visitDynamicMemberExpression(expression: IrDynamicMemberExpression): IrDynamicMemberExpression =
+        IrDynamicMemberExpressionImpl(
+            expression.startOffset, expression.endOffset,
+            expression.type.remapType(),
+            expression.memberName,
+            expression.receiver.transform()
         )
 
     override fun visitErrorDeclaration(declaration: IrErrorDeclaration): IrErrorDeclaration =

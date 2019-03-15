@@ -11,7 +11,6 @@ import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.core.script.dependencies.ScriptRelatedModulesProvider
-import org.jetbrains.kotlin.idea.util.projectStructure.getModule
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
 
@@ -23,11 +22,11 @@ class GradleBuildSrcModuleDependencyProvider : ScriptRelatedModulesProvider() {
         val includedModulesPath: List<String> = projectSettings.compositeBuild?.compositeParticipants?.mapNotNull { part ->
             projectSettings.modules.find { it == part.rootPath }
         } ?: emptyList()
+        val includedModulesBuildSrcPaths = includedModulesPath.map { "$it/buildSrc" }
 
-        val moduleForScript = ExternalSystemApiUtil.getExternalProjectPath(file.getModule(project))
-        val buildSrcProjectPath = "$moduleForScript/buildSrc"
+        val rootBuildSrcPath = "${projectSettings.externalProjectPath}/buildSrc"
 
-        return (includedModulesPath + buildSrcProjectPath).flatMap { path ->
+        return (includedModulesPath + includedModulesBuildSrcPaths + rootBuildSrcPath).flatMap { path ->
             ModuleManager.getInstance(project).modules.filter {
                 ExternalSystemApiUtil.getExternalProjectPath(it) == path
             }

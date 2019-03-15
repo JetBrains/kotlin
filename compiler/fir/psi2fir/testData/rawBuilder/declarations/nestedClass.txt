@@ -1,0 +1,22 @@
+FILE: nestedClass.kt
+    public? abstract class Base {
+        public? constructor(s: String): super<kotlin/Any>()
+
+        public? final? property s(val): String
+            public? get(): String
+
+    }
+    public? final? class Outer {
+        public? constructor(): super<kotlin/Any>()
+
+        public? final? class Derived : Base {
+            public? constructor(s: String): super<Base>(s#)
+
+        }
+
+        public? final? object Obj : Base {
+            public? constructor(): super<Base>(String())
+
+        }
+
+    }

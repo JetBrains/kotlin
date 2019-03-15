@@ -1,0 +1,5 @@
+{
+  "type": "AUTO_DETECT",
+  "mainFile": "test.kt",
+  "newName": "bar"
+}

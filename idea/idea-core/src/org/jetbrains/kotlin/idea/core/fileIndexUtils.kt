@@ -10,23 +10,22 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.jps.model.java.JavaResourceRootType
 import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
-import org.jetbrains.kotlin.config.KotlinResourceRootType
-import org.jetbrains.kotlin.config.KotlinSourceRootType
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.idea.caches.project.SourceType
 import org.jetbrains.kotlin.idea.util.isInSourceContentWithoutInjected
 
 private val testRootTypes: Set<JpsModuleSourceRootType<*>> = setOf(
     JavaSourceRootType.TEST_SOURCE,
     JavaResourceRootType.TEST_RESOURCE,
-    KotlinSourceRootType.TestSource,
-    KotlinResourceRootType.TestResource
+    TestSourceKotlinRootType,
+    TestResourceKotlinRootType
 )
 
 private val sourceRootTypes = setOf<JpsModuleSourceRootType<*>>(
     JavaSourceRootType.SOURCE,
     JavaResourceRootType.RESOURCE,
-    KotlinSourceRootType.Source,
-    KotlinResourceRootType.Resource
+    SourceKotlinRootType,
+    ResourceKotlinRootType
 )
 
 fun JpsModuleSourceRootType<*>.getSourceType(): SourceType? = when(this) {

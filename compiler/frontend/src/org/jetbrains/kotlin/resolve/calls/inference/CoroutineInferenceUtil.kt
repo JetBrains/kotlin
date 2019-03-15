@@ -40,9 +40,10 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE
 import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
-import org.jetbrains.kotlin.types.checker.TypeCheckerContext
+import org.jetbrains.kotlin.types.checker.ClassicTypeCheckerContext
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.typeUtil.*
 import javax.inject.Inject
 
@@ -277,9 +278,11 @@ class CoroutineInferenceSupport(
 
     private class CoroutineTypeCheckerContext(
         private val allowOnlyTrivialConstraints: Boolean
-    ) : TypeCheckerContext(errorTypeEqualsToAnything = true) {
+    ) : ClassicTypeCheckerContext(errorTypeEqualsToAnything = true) {
 
-        override fun addSubtypeConstraint(subType: UnwrappedType, superType: UnwrappedType): Boolean? {
+        override fun addSubtypeConstraint(subType: KotlinTypeMarker, superType: KotlinTypeMarker): Boolean? {
+            require(subType is UnwrappedType)
+            require(superType is UnwrappedType)
             val typeTemplate = subType as? TypeTemplate ?: superType as? TypeTemplate
             typeTemplate?.coroutineInferenceData?.addConstraint(subType, superType, allowOnlyTrivialConstraints)
             return null

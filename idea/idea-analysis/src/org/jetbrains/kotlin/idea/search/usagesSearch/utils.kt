@@ -81,9 +81,9 @@ fun PsiReference.checkUsageVsOriginalDescriptor(
 }
 
 fun PsiReference.isImportUsage(): Boolean =
-    element!!.getNonStrictParentOfType<KtImportDirective>() != null
+    element.getNonStrictParentOfType<KtImportDirective>() != null
 
-fun PsiReference.isConstructorUsage(ktClassOrObject: KtClassOrObject): Boolean = with(element!!) {
+fun PsiReference.isConstructorUsage(ktClassOrObject: KtClassOrObject): Boolean = with(element) {
     fun checkJavaUsage(): Boolean {
         val call = getNonStrictParentOfType<PsiConstructorCall>()
         return call == parent && call?.resolveConstructor()?.containingClass?.navigationElement == ktClassOrObject
@@ -92,8 +92,7 @@ fun PsiReference.isConstructorUsage(ktClassOrObject: KtClassOrObject): Boolean =
     fun checkKotlinUsage(): Boolean {
         if (this !is KtElement) return false
 
-        val descriptor = getConstructorCallDescriptor()
-        if (descriptor !is ConstructorDescriptor) return false
+        val descriptor = getConstructorCallDescriptor() as? ConstructorDescriptor ?: return false
 
         val declaration = DescriptorToSourceUtils.descriptorToDeclaration(descriptor.containingDeclaration)
         return declaration == ktClassOrObject || (declaration is KtConstructor<*> && declaration.getContainingClassOrObject() == ktClassOrObject)
@@ -223,9 +222,9 @@ private fun processClassDelegationCallsToSpecifiedConstructor(
 fun PsiReference.isExtensionOfDeclarationClassUsage(declaration: KtNamedDeclaration): Boolean {
     val descriptor = declaration.descriptor ?: return false
     return checkUsageVsOriginalDescriptor(descriptor) { usageDescriptor, targetDescriptor ->
-        when {
-            usageDescriptor == targetDescriptor -> false
-            usageDescriptor !is FunctionDescriptor -> false
+        when (usageDescriptor) {
+            targetDescriptor -> false
+            !is FunctionDescriptor -> false
             else -> {
                 val receiverDescriptor =
                     usageDescriptor.extensionReceiverParameter?.type?.constructor?.declarationDescriptor
@@ -251,12 +250,12 @@ fun PsiReference.isUsageInContainingDeclaration(declaration: KtNamedDeclaration)
 }
 
 fun PsiReference.isCallableOverrideUsage(declaration: KtNamedDeclaration): Boolean {
-    val toDescriptor: (KtDeclaration) -> CallableDescriptor? = { declaration ->
-        if (declaration is KtParameter) {
+    val toDescriptor: (KtDeclaration) -> CallableDescriptor? = { sourceDeclaration ->
+        if (sourceDeclaration is KtParameter) {
             // we don't treat parameters in overriding method as "override" here (overriding parameters usages are searched optionally and via searching of overriding methods first)
-            if (declaration.hasValOrVar()) declaration.propertyDescriptor else null
+            if (sourceDeclaration.hasValOrVar()) sourceDeclaration.propertyDescriptor else null
         } else {
-            declaration.descriptor as? CallableDescriptor
+            sourceDeclaration.descriptor as? CallableDescriptor
         }
     }
 

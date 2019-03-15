@@ -22,7 +22,10 @@ import org.jetbrains.kotlin.idea.util.ShadowedDeclarationsFilter
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForReceiver
+import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
@@ -36,7 +39,6 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.utils.findFirstClassifierWithDeprecationStatus
 import org.jetbrains.kotlin.resolve.scopes.utils.findPackage
 import org.jetbrains.kotlin.resolve.source.getPsi
-import java.lang.IllegalStateException
 import java.util.*
 
 class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT }) {
@@ -49,7 +51,7 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
     ) {
         companion object {
             val DEFAULT = Options()
-            val ALL_ENABLED = Options(true, true)
+            val ALL_ENABLED = Options(removeThisLabels = true, removeThis = true)
         }
     }
 
@@ -58,6 +60,30 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
         val DEFAULT = ShortenReferences()
 
         val RETAIN_COMPANION = ShortenReferences { Options(removeExplicitCompanion = false) }
+
+        fun canBePossibleToDropReceiver(element: KtDotQualifiedExpression, bindingContext: BindingContext): Boolean {
+            val receiver = element.receiverExpression
+            val nameRef = when (receiver) {
+                is KtThisExpression -> return true
+                is KtNameReferenceExpression -> receiver
+                is KtDotQualifiedExpression -> receiver.selectorExpression as? KtNameReferenceExpression ?: return false
+                else -> return false
+            }
+            val targetDescriptor = bindingContext[BindingContext.REFERENCE_TARGET, nameRef]
+            when (targetDescriptor) {
+                is ClassDescriptor -> {
+                    if (targetDescriptor.kind != ClassKind.OBJECT) return true
+                    // for object receiver we should additionally check that it's dispatch receiver (that is the member is inside the object) or not a receiver at all
+                    val resolvedCall = element.getResolvedCall(bindingContext) ?: return false
+                    val receiverKind = resolvedCall.explicitReceiverKind
+                    return receiverKind == ExplicitReceiverKind.DISPATCH_RECEIVER || receiverKind == ExplicitReceiverKind.NO_EXPLICIT_RECEIVER
+                }
+
+                is PackageViewDescriptor -> return true
+
+                else -> return false
+            }
+        }
 
         private fun DeclarationDescriptor.asString() = DescriptorRenderer.FQ_NAMES_IN_TYPES.render(this)
 
@@ -85,7 +111,7 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
         rangeMarker.isGreedyToLeft = true
         rangeMarker.isGreedyToRight = true
         try {
-            process(listOf(file), { element ->
+            process(listOf(file)) { element ->
                 if (rangeMarker.isValid) {
                     val range = TextRange(rangeMarker.startOffset, rangeMarker.endOffset)
 
@@ -111,7 +137,7 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
                 } else {
                     FilterResult.SKIP
                 }
-            })
+            }
         } finally {
             rangeMarker.dispose()
         }
@@ -172,7 +198,7 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
             }
 
             // step 2: analyze collected elements with resolve and decide which can be shortened now and which need descriptors to be imported before shortening
-            val allElementsToAnalyze = visitors.flatMap { it.getElementsToAnalyze().map { it.element } }
+            val allElementsToAnalyze = visitors.flatMap { visitor -> visitor.getElementsToAnalyze().map { it.element } }
             val bindingContext = file.getResolutionFacade().analyze(allElementsToAnalyze, BodyResolveMode.PARTIAL_WITH_CFA)
             processors.forEach { it.analyzeCollectedElements(bindingContext) }
 
@@ -363,7 +389,7 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
             val referenceExpression = element.referenceExpression ?: return AnalyzeQualifiedElementResult.Skip
 
             val target = referenceExpression.targets(bindingContext).singleOrNull()
-                    ?: return AnalyzeQualifiedElementResult.Skip
+                ?: return AnalyzeQualifiedElementResult.Skip
 
             val scope = element.getResolutionScope(bindingContext, resolutionFacade)
             val name = target.name
@@ -449,7 +475,8 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
             if (PsiTreeUtil.getParentOfType(
                     element,
                     KtImportDirective::class.java, KtPackageDirective::class.java
-                ) != null) return AnalyzeQualifiedElementResult.Skip
+                ) != null
+            ) return AnalyzeQualifiedElementResult.Skip
 
             val selector = element.selectorExpression ?: return AnalyzeQualifiedElementResult.Skip
             val callee = selector.getCalleeExpressionIfAny() as? KtReferenceExpression ?: return AnalyzeQualifiedElementResult.Skip
@@ -533,30 +560,6 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
 
                 else ->
                     AnalyzeQualifiedElementResult.ImportDescriptors(targets)
-            }
-        }
-
-        private fun canBePossibleToDropReceiver(element: KtDotQualifiedExpression, bindingContext: BindingContext): Boolean {
-            val receiver = element.receiverExpression
-            val nameRef = when (receiver) {
-                is KtThisExpression -> return true
-                is KtNameReferenceExpression -> receiver
-                is KtDotQualifiedExpression -> receiver.selectorExpression as? KtNameReferenceExpression ?: return false
-                else -> return false
-            }
-            val targetDescriptor = bindingContext[BindingContext.REFERENCE_TARGET, nameRef]
-            when (targetDescriptor) {
-                is ClassDescriptor -> {
-                    if (targetDescriptor.kind != ClassKind.OBJECT) return true
-                    // for object receiver we should additionally check that it's dispatch receiver (that is the member is inside the object) or not a receiver at all
-                    val resolvedCall = element.getResolvedCall(bindingContext) ?: return false
-                    val receiverKind = resolvedCall.explicitReceiverKind
-                    return receiverKind == ExplicitReceiverKind.DISPATCH_RECEIVER || receiverKind == ExplicitReceiverKind.NO_EXPLICIT_RECEIVER
-                }
-
-                is PackageViewDescriptor -> return true
-
-                else -> return false
             }
         }
 
@@ -673,7 +676,8 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
             if (PsiTreeUtil.getParentOfType(
                     element,
                     KtImportDirective::class.java, KtPackageDirective::class.java
-                ) != null) return AnalyzeQualifiedElementResult.Skip
+                ) != null
+            ) return AnalyzeQualifiedElementResult.Skip
 
             val receiverTarget = receiver.singleTarget(bindingContext) as? ClassDescriptor ?: return AnalyzeQualifiedElementResult.Skip
 
@@ -683,7 +687,7 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
             if (receiverTarget.companionObjectDescriptor != selectorTarget) return AnalyzeQualifiedElementResult.Skip
 
             val selectorsSelector = (parent as? KtDotQualifiedExpression)?.selectorExpression
-                    ?: return AnalyzeQualifiedElementResult.ShortenNow
+                ?: return AnalyzeQualifiedElementResult.ShortenNow
 
             val selectorsSelectorTarget = selectorsSelector.singleTarget(bindingContext) ?: return AnalyzeQualifiedElementResult.Skip
             if (selectorsSelectorTarget is ClassDescriptor) return AnalyzeQualifiedElementResult.Skip
@@ -693,7 +697,8 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
                 if (source != null && isEnumCompanionPropertyWithEntryConflict(
                         source,
                         source.name ?: ""
-                    )) return AnalyzeQualifiedElementResult.Skip
+                    )
+                ) return AnalyzeQualifiedElementResult.Skip
             }
 
             return AnalyzeQualifiedElementResult.ShortenNow

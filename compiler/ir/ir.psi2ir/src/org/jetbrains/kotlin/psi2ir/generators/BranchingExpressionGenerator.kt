@@ -77,11 +77,11 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
         if (irBranches.size == 1) {
             val irBranch0 = irBranches[0]
             return buildStatement(ktIf.startOffsetSkippingComments, ktIf.endOffset) {
-                irIfThenMaybeElse(resultType, irBranch0.condition, irBranch0.result, irElseResult)
+                irIfThenMaybeElse(resultType, irBranch0.condition, irBranch0.result, irElseResult, IrStatementOrigin.IF)
             }
         }
 
-        val irWhen = IrWhenImpl(ktIf.startOffsetSkippingComments, ktIf.endOffset, resultType, IrStatementOrigin.WHEN)
+        val irWhen = IrWhenImpl(ktIf.startOffsetSkippingComments, ktIf.endOffset, resultType, IrStatementOrigin.IF)
 
         irWhen.branches.addAll(irBranches)
 

@@ -11,8 +11,11 @@ import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
 import org.jetbrains.kotlin.backend.common.lower.InitializersLowering.Companion.clinitName
 import org.jetbrains.kotlin.backend.common.lower.VariableRemapper
+import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
@@ -23,7 +26,13 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 
-class InterfaceLowering(val context: JvmBackendContext) : IrElementTransformerVoid(), ClassLoweringPass {
+internal val interfacePhase = makeIrFilePhase(
+    ::InterfaceLowering,
+    name = "Interface",
+    description = "Move default implementations of interface members to DefaultImpls class"
+)
+
+private class InterfaceLowering(val context: JvmBackendContext) : IrElementTransformerVoid(), ClassLoweringPass {
 
     val state = context.state
 
@@ -34,29 +43,29 @@ class InterfaceLowering(val context: JvmBackendContext) : IrElementTransformerVo
         irClass.declarations.add(defaultImplsIrClass)
         val members = defaultImplsIrClass.declarations
 
-        irClass.declarations.filterIsInstance<IrFunction>().forEach {
-            if (it is IrSimpleFunction && it.modality != Modality.ABSTRACT && it.origin != IrDeclarationOrigin.FAKE_OVERRIDE) {
-                val element = context.declarationFactory.getDefaultImplsFunction(it)
+        for (function in irClass.declarations) {
+            if (function !is IrSimpleFunction) continue
+
+            if (function.modality != Modality.ABSTRACT && function.origin != IrDeclarationOrigin.FAKE_OVERRIDE) {
+                val element = context.declarationFactory.getDefaultImplsFunction(function)
                 members.add(element)
-                element.body = it.body
-                it.body = null
+                element.body = function.body
+                function.body = null
                 //TODO reset modality to abstract
             }
         }
 
         irClass.transformChildrenVoid(this)
 
-        //REMOVE private methods
-        val privateToRemove = irClass.declarations.filterIsInstance<IrFunction>().filter {
-            Visibilities.isPrivate(it.visibility) && (it as? IrSimpleFunction)?.name != clinitName
+        irClass.declarations.removeAll {
+            it is IrFunction && shouldRemoveFunction(it)
         }
-
-        val defaultBodies = irClass.declarations.filterIsInstance<IrFunction>().filter {
-            it.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER
-        }
-        irClass.declarations.removeAll(privateToRemove)
-        irClass.declarations.removeAll(defaultBodies)
     }
+
+    private fun shouldRemoveFunction(function: IrFunction): Boolean =
+        Visibilities.isPrivate(function.visibility) && function.name != clinitName ||
+                function.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER ||
+                function.origin == JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_ANNOTATIONS
 }
 
 
@@ -103,5 +112,7 @@ internal fun createStaticFunctionWithReceivers(
             (listOfNotNull(oldFunction.dispatchReceiverParameter, oldFunction.extensionReceiverParameter) + oldFunction.valueParameters)
                 .zip(valueParameters).toMap()
         body = oldFunction.body?.transform(VariableRemapper(mapping), null)
+
+        metadata = oldFunction.metadata
     }
 }

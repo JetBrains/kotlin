@@ -1,0 +1,12 @@
+public/*package*/ open class A : R|java/lang/Object| {
+    public open operator function first(@R|kotlin/annotations/jvm/internal/DefaultValue|(String(hello)) value: R|ft<kotlin/String, kotlin/String?>|! = String(hello)): R|kotlin/Unit|
+
+    public open operator function second(@R|kotlin/annotations/jvm/internal/DefaultValue|(String(first)) a: R|ft<kotlin/String, kotlin/String?>|! = String(first), @R|kotlin/annotations/jvm/internal/DefaultValue|(String(second)) b: R|ft<kotlin/String, kotlin/String?>|! = String(second)): R|kotlin/Unit|
+
+    public open operator function third(@R|kotlin/annotations/jvm/internal/DefaultValue|(String(first)) a: R|ft<kotlin/String, kotlin/String?>|! = String(first), b: R|ft<kotlin/String, kotlin/String?>|!): R|kotlin/Unit|
+
+    public open operator function fourth(first: R|ft<kotlin/String, kotlin/String?>|!, @R|kotlin/annotations/jvm/internal/DefaultValue|(String(second)) second: R|ft<kotlin/String, kotlin/String?>|! = String(second)): R|kotlin/Unit|
+
+    public open operator function wrong(@R|kotlin/annotations/jvm/internal/DefaultValue|(String(hello)) i: R|ft<kotlin/Int, kotlin/Int?>|!): R|kotlin/Unit|
+
+}

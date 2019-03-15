@@ -99,7 +99,7 @@ class KotlinJavascriptSerializerTest : TestCaseWithTmpdir() {
 
         val (header, packageFragmentProtos) = readModuleAsProto(metadata.body, metadata.version)
         val provider = createKotlinJavascriptPackageFragmentProvider(
-            LockBasedStorageManager(), module, header, packageFragmentProtos, metadata.version,
+            LockBasedStorageManager("KotlinJavascriptrSerializerTest"), module, header, packageFragmentProtos, metadata.version,
             DeserializationConfiguration.Default, LookupTracker.DO_NOTHING
         ).sure { "No package fragment provider was created" }
 

@@ -52,6 +52,10 @@ messages/**)
 -dontwarn com.intellij.util.io.TarUtil
 -dontwarn com.intellij.util.io.Compressor$Tar
 
+# Annotations from intellijCore/annotations.jar that not presented in org.jetbrains.annotations
+-dontwarn org.jetbrains.annotations.Async*
+-dontwarn org.jetbrains.annotations.Nls$Capitalization
+
 # Nullability annotations used in Guava
 -dontwarn org.checkerframework.checker.nullness.compatqual.NullableDecl
 -dontwarn org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl
@@ -62,6 +66,9 @@ messages/**)
 -dontwarn com.intellij.util.SVGLoader*
 -dontwarn org.apache.batik.script.rhino.RhinoInterpreter
 -dontwarn org.apache.batik.script.rhino.RhinoInterpreterFactory
+
+# The appropriate jar is either loaded separately or added explicitly to the classpath then needed
+-dontwarn org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCompilerConfigurationComponentRegistrar
 
 -dontwarn org.jdom.xpath.jaxen.*
 -dontwarn com.intellij.util.io.Decompressor*
@@ -107,8 +114,6 @@ messages/**)
 }
 
 -keep class org.jetbrains.kotlin.container.** { *; }
-
--keep class org.jetbrains.kotlin.codegen.intrinsics.IntrinsicArrayConstructorsKt { *; }
 
 -keep class org.jetbrains.org.objectweb.asm.Opcodes { *; }
 

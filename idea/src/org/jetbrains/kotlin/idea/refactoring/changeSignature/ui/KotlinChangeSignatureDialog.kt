@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.idea.refactoring.changeSignature.ui
 
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.editor.colors.EditorFontType
-import com.intellij.openapi.editor.event.DocumentAdapter
 import com.intellij.openapi.editor.event.DocumentEvent
+import com.intellij.openapi.editor.event.DocumentListener
 import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
@@ -226,7 +226,7 @@ class KotlinChangeSignatureDialog(
 
                     if (editor != null) {
                         editor.addDocumentListener(
-                                object : DocumentAdapter() {
+                                object : DocumentListener {
                                     override fun documentChanged(e: DocumentEvent) {
                                         fireDocumentChanged(e, columnFinal)
                                     }

@@ -1,0 +1,9 @@
+FILE: F.kt
+    public? open class A {
+        public? constructor(): super<kotlin/Any>()
+
+    }
+    public? final? class B : A {
+        public? constructor(): super<kotlin/Any>()
+
+    }

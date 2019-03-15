@@ -1,0 +1,4 @@
+public open class ConstructorGenericUpperBound : R|java/lang/Object| {
+    public final function ConstructorGenericUpperBound(p: R|ft<P, P?>|!): R|test/ConstructorGenericUpperBound|
+
+}

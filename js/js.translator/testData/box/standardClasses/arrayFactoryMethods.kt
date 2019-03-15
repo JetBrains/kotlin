@@ -1,12 +1,11 @@
-// IGNORE_BACKEND: JS_IR
 // EXPECTED_REACHABLE_NODES: 1293
 
 package foo
 
 class Fail(message: String) : Exception(message)
 
-fun test(testName: String, actual: Any, expectedAsString: String) {
-    val expected = eval("[$expectedAsString]") as Array<in Any>
+fun test(testName: String, actual: Any, expectedAsString: String?, expectedAsArray: Array<in Any>? = null) {
+    val expected = expectedAsArray ?: eval("[$expectedAsString]") as Array<in Any>
     val expectedJs: dynamic = expected
     val actualJs: dynamic = actual
     if (expectedJs.length != actualJs.length) {
@@ -29,7 +28,7 @@ fun box(): String {
         test("byteArrayOf", byteArrayOf(0, 1, 2, 3, 4), "0, 1, 2, 3, 4")
         test("shortArrayOf", shortArrayOf(0, 1, 2, 3, 4), "0, 1, 2, 3, 4")
         test("intArray,", intArrayOf(0, 1, 2, 3, 4), "0, 1, 2, 3, 4")
-        test("longArrayOf", longArrayOf(0, 1, 2, 3, 4), "kotlin.Long.fromInt(0), kotlin.Long.fromInt(1), kotlin.Long.fromInt(2), kotlin.Long.fromInt(3), kotlin.Long.fromInt(4)")
+        test("longArrayOf", longArrayOf(0, 1, 2, 3, 4), null, expectedAsArray = arrayOf(0L, 1L, 2L, 3L, 4L))
         test("floatArrayOf", floatArrayOf(0.0f, 1.0f, 2.0f, 3.0f, 4.0f), "0.0, 1.0, 2.0, 3.0, 4.0")
         test("doubleArrayOf", doubleArrayOf(0.0, 1.1, 2.2, 3.3, 4.4), "0.0, 1.1, 2.2, 3.3, 4.4")
     }

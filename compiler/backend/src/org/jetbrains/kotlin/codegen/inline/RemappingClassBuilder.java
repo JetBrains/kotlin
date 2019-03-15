@@ -54,7 +54,8 @@ public class RemappingClassBuilder extends DelegatingClassBuilder {
             @NotNull String superName,
             @NotNull String[] interfaces
     ) {
-        super.defineClass(origin, version, access, remapper.mapType(name), remapper.mapSignature(signature, false), remapper.mapType(superName), remapper.mapTypes(interfaces));
+        super.defineClass(origin, version, access, remapper.mapType(name), remapper.mapSignature(signature, false),
+                          remapper.mapType(superName), remapper.mapTypes(interfaces));
     }
 
     @Override

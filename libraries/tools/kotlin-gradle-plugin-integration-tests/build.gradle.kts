@@ -29,9 +29,10 @@ dependencies {
     testRuntime(projectRuntimeJar(":kotlin-gradle-plugin-test-utils-embeddable"))
 
     testCompile(project(path = ":examples:annotation-processor-example"))
-    testCompile(project(":kotlin-stdlib-jdk8"))
+    testCompile(kotlinStdlib("jdk8"))
     testCompile(project(":kotlin-reflect"))
     testCompile(project(":kotlin-android-extensions"))
+    testCompile(commonDep("org.jetbrains.intellij.deps", "trove4j"))
 
     testCompile(gradleApi())
 
@@ -74,7 +75,7 @@ tasks.register<Test>("testsFromJps") {
 }
 
 tasks.register<Test>("testAdvanceGradleVersion") {
-    val gradleVersionForTests = "5.0"
+    val gradleVersionForTests = "5.3-rc-2"
     systemProperty("kotlin.gradle.version.for.tests", gradleVersionForTests)
     dependsOn(tasks.getByName("test").dependsOn)
     exclude(jpsIncrementalTestsClass)

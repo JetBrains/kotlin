@@ -7,20 +7,28 @@ package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.makePhase
+import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.util.transformDeclarationsFlat
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.*
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
-class PropertiesLowering() : IrElementTransformerVoid(), FileLoweringPass {
-    constructor(@Suppress("UNUSED_PARAMETER") context: BackendContext) : this()
-
+class PropertiesLowering(
+    private val context: BackendContext,
+    private val originOfSyntheticMethodForAnnotations: IrDeclarationOrigin? = null,
+    private val computeSyntheticMethodName: ((Name) -> String)? = null
+) : IrElementTransformerVoid(), FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.accept(this, null)
     }
@@ -34,21 +42,65 @@ class PropertiesLowering() : IrElementTransformerVoid(), FileLoweringPass {
     override fun visitClass(declaration: IrClass): IrStatement {
         declaration.transformChildrenVoid(this)
         declaration.transformDeclarationsFlat { lowerProperty(it, declaration.kind) }
+        declaration.declarations.removeAll { it is IrProperty }
         return declaration
     }
 
     private fun lowerProperty(declaration: IrDeclaration, kind: ClassKind): List<IrDeclaration>? =
         if (declaration is IrProperty)
-            ArrayList<IrDeclaration>(3).apply {
+            ArrayList<IrDeclaration>(4).apply {
                 // JvmFields in a companion object refer to companion's owners and should not be generated within companion.
                 if (kind != ClassKind.ANNOTATION_CLASS && declaration.backingField?.parent == declaration.parent) {
                     addIfNotNull(declaration.backingField)
                 }
                 addIfNotNull(declaration.getter)
                 addIfNotNull(declaration.setter)
+
+                if (declaration.annotations.isNotEmpty() && originOfSyntheticMethodForAnnotations != null
+                    && computeSyntheticMethodName != null
+                ) {
+                    val methodName = computeSyntheticMethodName.invoke(declaration.name) // Workaround KT-4113
+                    add(createSyntheticMethodForAnnotations(declaration, originOfSyntheticMethodForAnnotations, methodName))
+                }
             }
         else
             null
+
+    private fun createSyntheticMethodForAnnotations(declaration: IrProperty, origin: IrDeclarationOrigin, name: String): IrFunctionImpl {
+        val descriptor = WrappedSimpleFunctionDescriptor(declaration.descriptor.annotations)
+        val symbol = IrSimpleFunctionSymbolImpl(descriptor)
+        // TODO: ACC_DEPRECATED
+        return IrFunctionImpl(
+            -1, -1, origin, symbol, Name.identifier(name),
+            Visibilities.PUBLIC, Modality.OPEN, context.irBuiltIns.unitType,
+            isInline = false, isExternal = false, isTailrec = false, isSuspend = false
+        ).apply {
+            descriptor.bind(this)
+
+            extensionReceiverParameter = declaration.getter?.extensionReceiverParameter
+
+            body = IrBlockBodyImpl(-1, -1)
+
+            // TODO: uncomment this and derive annotations from owner in wrapped descriptors
+            // annotations.addAll(declaration.annotations)
+
+            metadata = declaration.metadata
+        }
+    }
+
+    companion object {
+        fun checkNoProperties(irFile: IrFile) {
+            irFile.acceptVoid(object : IrElementVisitorVoid {
+                override fun visitElement(element: IrElement) {
+                    element.acceptChildrenVoid(this)
+                }
+
+                override fun visitProperty(declaration: IrProperty) {
+                    error("No properties should remain at this stage")
+                }
+            })
+        }
+    }
 }
 
 class LocalDelegatedPropertiesLowering : IrElementTransformerVoid(), FileLoweringPass {

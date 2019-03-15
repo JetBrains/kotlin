@@ -1,0 +1,14 @@
+import Outer.Middle as Middle1
+import Outer.Middle as P
+
+class Outer {
+    class Middle {
+        class Inner
+    }
+}
+
+class Test() {
+    fun test() {
+        val i = Middle1.Inner()
+    }
+}

@@ -10,17 +10,13 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
 class FirTotalResolveTransformer {
 
-    private val transformers: List<FirTransformer<Nothing?>> = listOf(
+    val transformers: List<FirTransformer<Nothing?>> = listOf(
         FirImportResolveTransformer(),
+        FirSupertypeResolverTransformer(),
         FirTypeResolveTransformer(),
-        FirStatusResolveTransformer()
+        FirStatusResolveTransformer(),
+        FirAccessResolveTransformer()
     )
-
-    fun processFile(firFile: FirFile) {
-        for (transformer in transformers) {
-            firFile.transform<FirFile, Nothing?>(transformer, null)
-        }
-    }
 
     fun processFiles(files: List<FirFile>) {
         for (transformer in transformers) {

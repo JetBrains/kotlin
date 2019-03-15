@@ -8,14 +8,6 @@ plugins {
     id("jps-compatible")
 }
 
-tasks.named<KotlinJvmCompile>("compileKotlin") {
-    kotlinOptions.jvmTarget = "1.6"
-}
-
-tasks.named<KotlinJvmCompile>("compileTestKotlin") {
-    kotlinOptions.jvmTarget = "1.8"
-}
-
 val compilerModules: Array<String> by rootProject.extra
 val otherCompilerModules = compilerModules.filter { it != path }
 
@@ -37,23 +29,22 @@ fun configureFreeCompilerArg(isEnabled: Boolean, compilerArgument: String) {
     }
 }
 
-val depDistProjects = listOf(
-        ":kotlin-script-runtime",
-        ":kotlin-stdlib",
-        ":kotlin-test:kotlin-test-jvm"
-)
 val antLauncherJar by configurations.creating
 
 dependencies {
     testRuntime(intellijDep()) // Should come before compiler, because of "progarded" stuff needed for tests
 
-    depDistProjects.forEach {
-        testCompile(project(it))
-    }
+    testCompile(project(":kotlin-script-runtime"))
+    testCompile(project(":kotlin-test:kotlin-test-jvm"))
+    
+    testCompile(kotlinStdlib())
+
     testCompile(commonDep("junit:junit"))
     testCompileOnly(project(":kotlin-test:kotlin-test-jvm"))
     testCompileOnly(project(":kotlin-test:kotlin-test-junit"))
     testCompile(projectTests(":compiler:tests-common"))
+    testCompile(projectTests(":compiler:fir:psi2fir"))
+    testCompile(projectTests(":compiler:fir:resolve"))
     testCompile(projectTests(":generators:test-generator"))
     testCompile(project(":compiler:ir.ir2cfg"))
     testCompile(project(":compiler:ir.tree")) // used for deepCopyWithSymbols call that is removed by proguard from the compiler TODO: make it more straightforward
@@ -74,6 +65,11 @@ dependencies {
 
     antLauncherJar(commonDep("org.apache.ant", "ant"))
     antLauncherJar(files(toolsJar()))
+
+    // For JPS build
+    if (System.getProperty("idea.active") != null) {
+        testRuntimeOnly(files("${rootProject.projectDir}/dist/kotlinc/lib/kotlin-reflect.jar"))
+    }
 }
 
 sourceSets {
@@ -89,7 +85,7 @@ jar.from("../idea/resources") {
 }
 
 projectTest {
-    dependsOn(*testDistProjects.map { "$it:dist" }.toTypedArray())
+    dependsOn(":dist")
     workingDir = rootDir
     systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
     systemProperty("kotlin.suppress.expected.test.failures", project.findProperty("kotlin.suppress.expected.test.failures") ?: false)

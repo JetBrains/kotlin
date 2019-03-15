@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -74,6 +74,11 @@ public class IrSourceRangesTestCaseGenerated extends AbstractIrSourceRangesTestC
         @TestMetadata("fakeOverrides.kt")
         public void testFakeOverrides() throws Exception {
             runTest("compiler/testData/ir/sourceRanges/declarations/fakeOverrides.kt");
+        }
+
+        @TestMetadata("kt29862.kt")
+        public void testKt29862() throws Exception {
+            runTest("compiler/testData/ir/sourceRanges/declarations/kt29862.kt");
         }
 
         @TestMetadata("primaryConstructors.kt")

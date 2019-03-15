@@ -219,9 +219,11 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
         val kaptExtension = project.extensions.getByType(KaptExtension::class.java)
 
+        val nonEmptyKaptConfigurations = kaptConfigurations.filter { it.dependencies.isNotEmpty() }
+
         val context = Kapt3SubpluginContext(
             project, kotlinCompile, javaCompile,
-            kaptVariantData, sourceSetName, kotlinCompilation, kaptExtension, kaptConfigurations
+            kaptVariantData, sourceSetName, kotlinCompilation, kaptExtension, nonEmptyKaptConfigurations
         )
 
         val kaptGenerateStubsTask = context.createKaptGenerateStubsTask()
@@ -379,9 +381,8 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
         kotlinCompilation?.run {
             output.apply {
-                if (tryAddClassesDir { project.files(classesOutputDir).builtBy(kaptTask) }) {
-                    kotlinCompile.attachClassesDir { classesOutputDir }
-                }
+                addClassesDir { project.files(classesOutputDir).builtBy(kaptTask) }
+                kotlinCompile.attachClassesDir { classesOutputDir }
             }
         }
 

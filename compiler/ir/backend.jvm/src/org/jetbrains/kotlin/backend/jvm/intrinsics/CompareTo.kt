@@ -63,7 +63,18 @@ class CompareTo : IntrinsicMethod() {
 class PrimitiveComparison(
     private val primitiveNumberType: KotlinType,
     private val operatorToken: KtSingleValueToken
-) : IntrinsicMethod() {
+) : IntrinsicMethod(), ComparisonIntrinsic {
+
+    override fun genStackValue(expression: IrMemberAccessExpression, context: JvmBackendContext): StackValue {
+        val parameterType = context.state.typeMapper.mapType(primitiveNumberType)
+
+        return StackValue.cmp(
+            operatorToken,
+            parameterType,
+            StackValue.onStack(parameterType, primitiveNumberType),
+            StackValue.onStack(parameterType, primitiveNumberType)
+        )
+    }
 
     override fun toCallable(
         expression: IrMemberAccessExpression,
@@ -74,14 +85,7 @@ class PrimitiveComparison(
 
         return object : IrIntrinsicFunction(expression, signature, context, listOf(parameterType, parameterType)) {
             override fun genInvokeInstruction(v: InstructionAdapter) {
-                StackValue
-                    .cmp(
-                        operatorToken,
-                        parameterType,
-                        StackValue.onStack(parameterType, primitiveNumberType),
-                        StackValue.onStack(parameterType, primitiveNumberType)
-                    )
-                    .put(Type.BOOLEAN_TYPE, v)
+                genStackValue(expression, context).put(Type.BOOLEAN_TYPE, v)
             }
         }
     }

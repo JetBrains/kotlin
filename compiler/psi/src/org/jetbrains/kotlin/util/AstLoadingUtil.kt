@@ -12,9 +12,9 @@ import com.intellij.util.AstLoadingFilter
 /**
  * Absent in 181. Methods were renamed in 183.
  *
- * BUNCH: 183
+ * BUNCH: 182
  */
-@Suppress("IncompatibleAPI")
+@Suppress("IncompatibleAPI", "MissingRecentApi")
 object AstLoadingFilter {
     @JvmStatic
     fun <T, E : Throwable> forceAllowTreeLoading(psiFile: PsiFile, computable: ThrowableComputable<out T, E>): T {

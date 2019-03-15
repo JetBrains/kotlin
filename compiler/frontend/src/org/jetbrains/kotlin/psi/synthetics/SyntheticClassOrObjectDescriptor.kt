@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.lazy.LazyClassContext
 import org.jetbrains.kotlin.resolve.lazy.data.KtClassLikeInfo
+import org.jetbrains.kotlin.resolve.lazy.data.KtClassOrObjectInfo
+import org.jetbrains.kotlin.resolve.lazy.data.KtScriptInfo
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider
 import org.jetbrains.kotlin.resolve.lazy.descriptors.ClassResolutionScopesSupport
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassMemberScope
@@ -136,7 +138,8 @@ class SyntheticClassOrObjectDescriptor(
         override fun getFunctionDeclarations(name: Name): Collection<KtNamedFunction> = emptyList()
         override fun getPropertyDeclarations(name: Name): Collection<KtProperty> = emptyList()
         override fun getDestructuringDeclarationsEntries(name: Name): Collection<KtDestructuringDeclarationEntry> = emptyList()
-        override fun getClassOrObjectDeclarations(name: Name): Collection<KtClassLikeInfo> = emptyList()
+        override fun getClassOrObjectDeclarations(name: Name): Collection<KtClassOrObjectInfo<*>> = emptyList()
+        override fun getScriptDeclarations(name: Name): Collection<KtScriptInfo> = emptyList()
         override fun getTypeAliasDeclarations(name: Name): Collection<KtTypeAlias> = emptyList()
         override fun getDeclarationNames() = emptySet<Name>()
     }

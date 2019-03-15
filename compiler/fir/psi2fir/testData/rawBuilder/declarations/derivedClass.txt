@@ -1,0 +1,15 @@
+FILE: derivedClass.kt
+    <T> public? open class Base {
+        public? constructor(x: T): super<kotlin/Any>()
+
+        public? final? property x(val): T
+            public? get(): T
+
+    }
+    <T : Any> public? final? class Derived : Base<T> {
+        public? constructor(x: T): super<Base<T>>(x#)
+
+    }
+    <T : Any> public? final? function create(x: T): Derived<T> {
+        return@@@create Derived#(x#)
+    }

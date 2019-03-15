@@ -10,21 +10,23 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.expressions.FirBody
+import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.transformInplace
+import org.jetbrains.kotlin.fir.transformSingle
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
 abstract class FirAbstractFunction(
     session: FirSession,
-    psi: PsiElement?,
-    final override val body: FirBody?
+    psi: PsiElement?
 ) : FirAbstractAnnotatedDeclaration(session, psi), FirFunction {
     final override val valueParameters = mutableListOf<FirValueParameter>()
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
-        annotations.transformInplace(transformer, data)
-        valueParameters.transformInplace(transformer, data)
+    final override var body: FirBlock? = null
 
-        return this
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
+        valueParameters.transformInplace(transformer, data)
+        body = body?.transformSingle(transformer, data)
+
+        return super<FirAbstractAnnotatedDeclaration>.transformChildren(transformer, data)
     }
 }

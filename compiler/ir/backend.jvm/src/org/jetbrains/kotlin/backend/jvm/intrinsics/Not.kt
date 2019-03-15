@@ -17,8 +17,10 @@
 package org.jetbrains.kotlin.backend.jvm.intrinsics
 
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.codegen.*
-import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.codegen.Callable
+import org.jetbrains.kotlin.codegen.CallableMethod
+import org.jetbrains.kotlin.codegen.ExpressionCodegen
+import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.psi.KtPrefixExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -28,7 +30,7 @@ import org.jetbrains.org.objectweb.asm.Type
 class Not : IntrinsicMethod() {
     override fun toCallable(expression: IrMemberAccessExpression, signature: JvmMethodSignature, context: JvmBackendContext): IrIntrinsicFunction {
         return IrIntrinsicFunction.create(expression, signature, context) {
-            StackValue.not(StackValue.onStack(Type.BOOLEAN_TYPE)).put(Type.BOOLEAN_TYPE, it)
+            StackValue.not(StackValue.onStack(Type.BOOLEAN_TYPE)).put(it)
         }
     }
 

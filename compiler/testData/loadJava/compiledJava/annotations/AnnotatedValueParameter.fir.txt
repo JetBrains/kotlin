@@ -1,0 +1,4 @@
+public open class AnnotatedValueParameter : R|java/lang/Object| {
+    public open operator function f(@R|test/AnnotatedValueParameter.Anno|(String(non-empty)) parameter: R|ft<kotlin/collections/MutableList<ft<kotlin/String, kotlin/String?>>, kotlin/collections/List<ft<kotlin/String, kotlin/String?>>?>|!): R|kotlin/Unit|
+
+}

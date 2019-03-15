@@ -22,7 +22,6 @@ private const val KOTLIN_UPDATE_CODE_STYLE_PROPERTY_NAME = "update.kotlin.code.s
 fun notifyKotlinStyleUpdateIfNeeded(project: Project) {
     if (!isDefaultOfficialCodeStyle) return
 
-    @Suppress("DEPRECATION") // Suggested fix is absent in 173. BUNCH: 181
     val isProjectSettings = CodeStyleSettingsManager.getInstance(project).USE_PER_PROJECT_SETTINGS
     val settingsComponent: PropertiesComponent = if (isProjectSettings) {
         PropertiesComponent.getInstance(project)

@@ -1,14 +1,11 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen.inline
 
-import org.jetbrains.kotlin.backend.jvm.codegen.IrExpressionLambda
-import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.codegen.ClosureCodegen
-import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.coroutines.continuationAsmType
 import org.jetbrains.kotlin.codegen.coroutines.getOrCreateJvmSuspendFunctionView
 import org.jetbrains.kotlin.codegen.inline.FieldRemapper.Companion.foldName
@@ -45,16 +42,16 @@ import org.jetbrains.org.objectweb.asm.util.Printer
 import java.util.*
 
 class MethodInliner(
-        private val node: MethodNode,
-        private val parameters: Parameters,
-        private val inliningContext: InliningContext,
-        private val nodeRemapper: FieldRemapper,
-        private val isSameModule: Boolean,
-        private val errorPrefix: String,
-        private val sourceMapper: SourceMapper,
-        private val inlineCallSiteInfo: InlineCallSiteInfo,
-        private val inlineOnlySmapSkipper: InlineOnlySmapSkipper?, //non null only for root
-        private val shouldPreprocessApiVersionCalls: Boolean = false
+    private val node: MethodNode,
+    private val parameters: Parameters,
+    private val inliningContext: InliningContext,
+    private val nodeRemapper: FieldRemapper,
+    private val isSameModule: Boolean,
+    private val errorPrefix: String,
+    private val sourceMapper: SourceMapper,
+    private val inlineCallSiteInfo: InlineCallSiteInfo,
+    private val inlineOnlySmapSkipper: InlineOnlySmapSkipper?, //non null only for root
+    private val shouldPreprocessApiVersionCalls: Boolean = false
 ) {
     private val typeMapper = inliningContext.state.typeMapper
     private val languageVersionSettings = inliningContext.state.languageVersionSettings
@@ -67,10 +64,10 @@ class MethodInliner(
     private var lambdasFinallyBlocks: Int = 0
 
     fun doInline(
-            adapter: MethodVisitor,
-            remapper: LocalVarRemapper,
-            remapReturn: Boolean,
-            labelOwner: LabelOwner
+        adapter: MethodVisitor,
+        remapper: LocalVarRemapper,
+        remapReturn: Boolean,
+        labelOwner: LabelOwner
     ): InlineResult {
         return doInline(adapter, remapper, remapReturn, labelOwner, 0)
     }
@@ -83,11 +80,11 @@ class MethodInliner(
     }
 
     private fun doInline(
-            adapter: MethodVisitor,
-            remapper: LocalVarRemapper,
-            remapReturn: Boolean,
-            labelOwner: LabelOwner,
-            finallyDeepShift: Int
+        adapter: MethodVisitor,
+        remapper: LocalVarRemapper,
+        remapReturn: Boolean,
+        labelOwner: LabelOwner,
+        finallyDeepShift: Int
     ): InlineResult {
         //analyze body
         var transformedNode = markPlacesForInlineAndRemoveInlinable(node, labelOwner, finallyDeepShift)
@@ -120,8 +117,7 @@ class MethodInliner(
                     visitor
                 } else MethodBodyVisitor(visitor)
             )
-        }
-        catch (e: Throwable) {
+        } catch (e: Throwable) {
             throw wrapException(e, transformedNode, "couldn't inline method call")
         }
 
@@ -130,7 +126,7 @@ class MethodInliner(
         if (inliningContext.isRoot) {
             val remapValue = remapper.remap(parameters.argsSizeOnStack + 1).value
             InternalFinallyBlockInliner.processInlineFunFinallyBlocks(
-                    resultNode, lambdasFinallyBlocks, (remapValue as StackValue.Local).index
+                resultNode, lambdasFinallyBlocks, (remapValue as StackValue.Local).index
             )
         }
 
@@ -176,9 +172,9 @@ class MethodInliner(
                     remapper.addMapping(oldClassName, newClassName)
 
                     val childInliningContext = inliningContext.subInlineWithClassRegeneration(
-                            inliningContext.nameGenerator,
-                            currentTypeMapping,
-                            inlineCallSiteInfo
+                        inliningContext.nameGenerator,
+                        currentTypeMapping,
+                        inlineCallSiteInfo
                     )
                     val transformer = transformationInfo!!.createTransformer(
                         childInliningContext,
@@ -203,8 +199,7 @@ class MethodInliner(
                         ReifiedTypeInliner.putNeedClassReificationMarker(mv)
                         result.reifiedTypeParametersUsages.mergeAll(transformResult.reifiedTypeParametersUsages)
                     }
-                }
-                else if (!transformationInfo!!.wasAlreadyRegenerated) {
+                } else if (!transformationInfo!!.wasAlreadyRegenerated) {
                     result.addNotChangedClass(oldClassName)
                 }
             }
@@ -278,27 +273,26 @@ class MethodInliner(
                     val lambdaParameters = info.addAllParameters(nodeRemapper)
 
                     val newCapturedRemapper = InlinedLambdaRemapper(
-                            info.lambdaClassType.internalName, nodeRemapper, lambdaParameters,
-                            info is DefaultLambda && info.isBoundCallableReference
+                        info.lambdaClassType.internalName, nodeRemapper, lambdaParameters,
+                        info is DefaultLambda && info.isBoundCallableReference
                     )
 
                     setLambdaInlining(true)
                     val lambdaSMAP = info.node.classSMAP
 
                     val childSourceMapper =
-                            if (inliningContext.classRegeneration && !inliningContext.isInliningLambda)
-                                NestedSourceMapper(sourceMapper, lambdaSMAP.intervals, lambdaSMAP.sourceInfo)
-                            else if (info is DefaultLambda) {
-                                NestedSourceMapper(sourceMapper.parent!!, lambdaSMAP.intervals, lambdaSMAP.sourceInfo)
-                            }
-                            else InlineLambdaSourceMapper(sourceMapper.parent!!, info.node)
+                        if (inliningContext.classRegeneration && !inliningContext.isInliningLambda)
+                            NestedSourceMapper(sourceMapper, lambdaSMAP.intervals, lambdaSMAP.sourceInfo)
+                        else if (info is DefaultLambda) {
+                            NestedSourceMapper(sourceMapper.parent!!, lambdaSMAP.intervals, lambdaSMAP.sourceInfo)
+                        } else InlineLambdaSourceMapper(sourceMapper.parent!!, info.node)
 
                     val inliner = MethodInliner(
-                            info.node.node, lambdaParameters, inliningContext.subInlineLambda(info),
-                            newCapturedRemapper,
-                            if (info is DefaultLambda) isSameModule else true /*cause all nested objects in same module as lambda*/,
-                            "Lambda inlining " + info.lambdaClassType.internalName,
-                            childSourceMapper, inlineCallSiteInfo, null
+                        info.node.node, lambdaParameters, inliningContext.subInlineLambda(info),
+                        newCapturedRemapper,
+                        if (info is DefaultLambda) isSameModule else true /*cause all nested objects in same module as lambda*/,
+                        "Lambda inlining " + info.lambdaClassType.internalName,
+                        childSourceMapper, inlineCallSiteInfo, null
                     )
 
                     val varRemapper = LocalVarRemapper(lambdaParameters, valueParamShift)
@@ -315,8 +309,7 @@ class MethodInliner(
                     addInlineMarker(this, false)
                     childSourceMapper.endMapping()
                     inlineOnlySmapSkipper?.markCallSiteLineNumber(remappingMethodAdapter)
-                }
-                else if (isAnonymousConstructorCall(owner, name)) { //TODO add method
+                } else if (isAnonymousConstructorCall(owner, name)) { //TODO add method
                     //TODO add proper message
                     assert(transformationInfo is AnonymousObjectTransformationInfo) {
                         "<init> call doesn't correspond to object transformation info for '$owner.$name': $transformationInfo"
@@ -347,12 +340,12 @@ class MethodInliner(
                                 // 'This' in outer context corresponds to outer instance in current
                                 visitFieldInsn(
                                     Opcodes.GETSTATIC, owner,
-                                    CAPTURED_FIELD_FOLD_PREFIX + AsmUtil.CAPTURED_THIS_FIELD, capturedParamDesc.type.descriptor
+                                    FieldRemapper.foldName(AsmUtil.CAPTURED_THIS_FIELD), capturedParamDesc.type.descriptor
                                 )
                             } else {
                                 visitFieldInsn(
                                     Opcodes.GETSTATIC, capturedParamDesc.containingLambdaName,
-                                    CAPTURED_FIELD_FOLD_PREFIX + capturedParamDesc.fieldName, capturedParamDesc.type.descriptor
+                                    FieldRemapper.foldName(capturedParamDesc.fieldName), capturedParamDesc.type.descriptor
                                 )
                             }
                         }
@@ -366,16 +359,14 @@ class MethodInliner(
                         }
 
                         transformationInfo = null
-                    }
-                    else {
+                    } else {
                         super.visitMethodInsn(opcode, owner, name, desc, itf)
                     }
-                }
-                else if ((!inliningContext.isInliningLambda || isDefaultLambdaWithReification(inliningContext.lambdaInfo!!)) &&
-                    ReifiedTypeInliner.isNeedClassReificationMarker(MethodInsnNode(opcode, owner, name, desc, false))) {
+                } else if ((!inliningContext.isInliningLambda || isDefaultLambdaWithReification(inliningContext.lambdaInfo!!)) &&
+                    ReifiedTypeInliner.isNeedClassReificationMarker(MethodInsnNode(opcode, owner, name, desc, false))
+                ) {
                     //we shouldn't process here content of inlining lambda it should be reified at external level except default lambdas
-                }
-                else {
+                } else {
                     super.visitMethodInsn(opcode, owner, name, desc, itf)
                 }
             }
@@ -399,7 +390,7 @@ class MethodInliner(
     }
 
     private fun isDefaultLambdaWithReification(lambdaInfo: LambdaInfo) =
-            lambdaInfo is DefaultLambda && lambdaInfo.needReification
+        lambdaInfo is DefaultLambda && lambdaInfo.needReification
 
     private fun prepareNode(node: MethodNode, finallyDeepShift: Int): MethodNode {
         node.instructions.resetLabels()
@@ -418,12 +409,15 @@ class MethodInliner(
             private val isInliningLambda = nodeRemapper.isInsideInliningLambda
 
             private fun getNewIndex(`var`: Int): Int {
-                if (inliningContext.isInliningLambda && inliningContext.lambdaInfo is IrExpressionLambda) {
+                val lambdaInfo = inliningContext.lambdaInfo
+                if (inliningContext.isInliningLambda && lambdaInfo is IrExpressionLambda) {
                     if (`var` < parameters.argsSizeOnStack) {
-                        if (`var` < capturedParamsSize) {
-                            return `var` + realParametersSize
-                        }
-                        else {
+                        val capturedParamsStartIndex =
+                            if (lambdaInfo.isExtensionLambda) lambdaInfo.invokeMethod.argumentTypes[0].size else 0 //shift by extension
+                        val capturedParamsEndIndex = capturedParamsSize + capturedParamsStartIndex - 1
+                        if (`var` in capturedParamsStartIndex..capturedParamsEndIndex) {
+                            return `var` + realParametersSize - capturedParamsStartIndex //subtract extension
+                        } else if (`var` >= capturedParamsStartIndex) {
                             return `var` - capturedParamsSize
                         }
                     }
@@ -454,24 +448,25 @@ class MethodInliner(
                 if (DEFAULT_LAMBDA_FAKE_CALL == owner) {
                     val index = name.substringAfter(DEFAULT_LAMBDA_FAKE_CALL).toInt()
                     val lambda = getLambdaIfExists(index) as DefaultLambda
-                    lambda.parameterOffsetsInDefault.zip(lambda.capturedVars).asReversed().forEach {
-                        (_, captured) ->
+                    lambda.parameterOffsetsInDefault.zip(lambda.capturedVars).asReversed().forEach { (_, captured) ->
                         val originalBoundReceiverType = lambda.originalBoundReceiverType
                         if (lambda.isBoundCallableReference && AsmUtil.isPrimitive(originalBoundReceiverType)) {
                             StackValue.onStack(originalBoundReceiverType!!).put(captured.type, InstructionAdapter(this))
                         }
                         super.visitFieldInsn(
-                                Opcodes.PUTSTATIC, captured.containingLambdaName, CAPTURED_FIELD_FOLD_PREFIX + captured.fieldName, captured.type.descriptor
+                            Opcodes.PUTSTATIC,
+                            captured.containingLambdaName,
+                            CAPTURED_FIELD_FOLD_PREFIX + captured.fieldName,
+                            captured.type.descriptor
                         )
                     }
-                }
-                else {
+                } else {
                     super.visitMethodInsn(opcode, owner, name, desc, itf)
                 }
             }
 
             override fun visitLocalVariable(
-                    name: String, desc: String, signature: String?, start: Label, end: Label, index: Int
+                name: String, desc: String, signature: String?, start: Label, end: Label, index: Int
             ) {
                 if (isInliningLambda || GENERATE_DEBUG_INFO) {
                     val varSuffix = if (inliningContext.isRoot && !isFakeLocalVariableForInline(name)) INLINE_FUN_VAR_SUFFIX else ""
@@ -490,7 +485,7 @@ class MethodInliner(
     }
 
     private fun markPlacesForInlineAndRemoveInlinable(
-            node: MethodNode, labelOwner: LabelOwner, finallyDeepShift: Int
+        node: MethodNode, labelOwner: LabelOwner, finallyDeepShift: Int
     ): MethodNode {
         val processingNode = prepareNode(node, finallyDeepShift)
 
@@ -529,23 +524,21 @@ class MethodInliner(
                             val sourceValue = frame.getStack(firstParameterIndex)
                             val lambdaInfo = getLambdaIfExistsAndMarkInstructions(sourceValue, true, instructions, sources, toDelete)
                             invokeCalls.add(InvokeCall(lambdaInfo, currentFinallyDeep))
-                        }
-                        else if (isSamWrapperConstructorCall(owner, name)) {
+                        } else if (isSamWrapperConstructorCall(owner, name)) {
                             recordTransformation(SamWrapperTransformationInfo(owner, inliningContext, isAlreadyRegenerated(owner)))
-                        }
-                        else if (isAnonymousConstructorCall(owner, name)) {
+                        } else if (isAnonymousConstructorCall(owner, name)) {
                             val lambdaMapping = HashMap<Int, LambdaInfo>()
 
                             var offset = 0
                             var capturesAnonymousObjectThatMustBeRegenerated = false
                             for (i in 0 until paramCount) {
                                 val sourceValue = frame.getStack(firstParameterIndex + i)
-                                val lambdaInfo = getLambdaIfExistsAndMarkInstructions(sourceValue, false, instructions, sources, toDelete
+                                val lambdaInfo = getLambdaIfExistsAndMarkInstructions(
+                                    sourceValue, false, instructions, sources, toDelete
                                 )
                                 if (lambdaInfo != null) {
                                     lambdaMapping.put(offset, lambdaInfo)
-                                }
-                                else if (i < argTypes.size && isAnonymousClassThatMustBeRegenerated(argTypes[i])) {
+                                } else if (i < argTypes.size && isAnonymousClassThatMustBeRegenerated(argTypes[i])) {
                                     capturesAnonymousObjectThatMustBeRegenerated = true
                                 }
 
@@ -553,13 +546,12 @@ class MethodInliner(
                             }
 
                             recordTransformation(
-                                    buildConstructorInvocation(
-                                            owner, cur.desc, lambdaMapping, awaitClassReification, capturesAnonymousObjectThatMustBeRegenerated
-                                    )
+                                buildConstructorInvocation(
+                                    owner, cur.desc, lambdaMapping, awaitClassReification, capturesAnonymousObjectThatMustBeRegenerated
+                                )
                             )
                             awaitClassReification = false
-                        }
-                        else if (inliningContext.isInliningLambda && ReifiedTypeInliner.isOperationReifiedMarker(cur)) {
+                        } else if (inliningContext.isInliningLambda && ReifiedTypeInliner.isOperationReifiedMarker(cur)) {
                             val reificationArgument = cur.reificationArgument
                             val parameterName = reificationArgument!!.parameterName
                             result.reifiedTypeParametersUsages.addUsedReifiedParameter(parameterName)
@@ -571,23 +563,45 @@ class MethodInliner(
                         val className = fieldInsnNode!!.owner
                         if (isAnonymousSingletonLoad(className, fieldInsnNode.name)) {
                             recordTransformation(
-                                    AnonymousObjectTransformationInfo(
-                                            className, awaitClassReification, isAlreadyRegenerated(className), true,
-                                            inliningContext.nameGenerator
-                                    )
+                                AnonymousObjectTransformationInfo(
+                                    className, awaitClassReification, isAlreadyRegenerated(className), true,
+                                    inliningContext.nameGenerator
+                                )
                             )
                             awaitClassReification = false
-                        }
-                        else if (isWhenMappingAccess(className, fieldInsnNode.name)) {
+                        } else if (isWhenMappingAccess(className, fieldInsnNode.name)) {
                             recordTransformation(
-                                    WhenMappingTransformationInfo(
-                                            className, inliningContext.nameGenerator, isAlreadyRegenerated(className), fieldInsnNode
-                                    )
+                                WhenMappingTransformationInfo(
+                                    className, inliningContext.nameGenerator, isAlreadyRegenerated(className), fieldInsnNode
+                                )
                             )
+                        } else if (fieldInsnNode.isCheckAssertionsStatus()) {
+                            fieldInsnNode.owner = inlineCallSiteInfo.ownerClassName
+                            if (inliningContext.isInliningLambda) {
+                                if (inliningContext.lambdaInfo!!.isCrossInline) {
+                                    assert(inliningContext.parent?.parent is RegeneratedClassContext) {
+                                        "$inliningContext grandparent shall be RegeneratedClassContext but got ${inliningContext.parent?.parent}"
+                                    }
+                                    inliningContext.parent!!.parent!!.generateAssertField = true
+                                } else {
+                                    assert(inliningContext.parent != null) {
+                                        "$inliningContext parent shall not be null"
+                                    }
+                                    inliningContext.parent!!.generateAssertField = true
+                                }
+                            } else {
+                                inliningContext.generateAssertField = true
+                            }
                         }
                     }
 
-                    cur.opcode == Opcodes.POP -> getLambdaIfExistsAndMarkInstructions(frame.top()!!, true, instructions, sources, toDelete)?.let {
+                    cur.opcode == Opcodes.POP -> getLambdaIfExistsAndMarkInstructions(
+                        frame.top()!!,
+                        true,
+                        instructions,
+                        sources,
+                        toDelete
+                    )?.let {
                         toDelete.add(cur)
                     }
 
@@ -602,9 +616,11 @@ class MethodInliner(
                         val fieldInsn = cur as FieldInsnNode
                         if (isCapturedFieldName(fieldInsn.name) &&
                             nodeRemapper is InlinedLambdaRemapper &&
-                            nodeRemapper.originalLambdaInternalName == fieldInsn.owner) {
+                            nodeRemapper.originalLambdaInternalName == fieldInsn.owner
+                        ) {
                             val stackTransformations = mutableSetOf<AbstractInsnNode>()
-                            val lambdaInfo = getLambdaIfExistsAndMarkInstructions(frame.peek(1)!!, false, instructions, sources, stackTransformations)
+                            val lambdaInfo =
+                                getLambdaIfExistsAndMarkInstructions(frame.peek(1)!!, false, instructions, sources, stackTransformations)
                             if (lambdaInfo != null && stackTransformations.all { it is VarInsnNode }) {
                                 assert(lambdaInfo.lambdaClassType.internalName == nodeRemapper.originalLambdaInternalName) {
                                     "Wrong bytecode template for contract template: ${lambdaInfo.lambdaClassType.internalName} != ${nodeRemapper.originalLambdaInternalName}"
@@ -616,16 +632,14 @@ class MethodInliner(
                         }
                     }
                 }
-            }
-            else {
+            } else {
                 //given frame is <tt>null</tt> if and only if the corresponding instruction cannot be reached (dead code).
                 //clean dead code otherwise there is problems in unreachable finally block, don't touch label it cause try/catch/finally problems
                 if (cur.type == AbstractInsnNode.LABEL) {
                     //NB: Cause we generate exception table for default handler using gaps (see ExpressionCodegen.visitTryExpression)
                     //it may occurs that interval for default handler starts before catch start label, so this label seems as dead,
                     //but as result all this labels will be merged into one (see KT-5863)
-                }
-                else {
+                } else {
                     toDelete.add(cur)
                 }
             }
@@ -755,8 +769,7 @@ class MethodInliner(
     private fun preprocessNodeBeforeInline(node: MethodNode, labelOwner: LabelOwner) {
         try {
             FixStackWithLabelNormalizationMethodTransformer().transform("fake", node)
-        }
-        catch (e: Throwable) {
+        } catch (e: Throwable) {
             throw wrapException(e, node, "couldn't inline method call")
         }
 
@@ -797,21 +810,21 @@ class MethodInliner(
     }
 
     private fun buildConstructorInvocation(
-            anonymousType: String,
-            desc: String,
-            lambdaMapping: Map<Int, LambdaInfo>,
-            needReification: Boolean,
-            capturesAnonymousObjectThatMustBeRegenerated: Boolean
+        anonymousType: String,
+        desc: String,
+        lambdaMapping: Map<Int, LambdaInfo>,
+        needReification: Boolean,
+        capturesAnonymousObjectThatMustBeRegenerated: Boolean
     ): AnonymousObjectTransformationInfo {
 
         val info = AnonymousObjectTransformationInfo(
-                anonymousType, needReification, lambdaMapping,
-                inliningContext.classRegeneration,
-                isAlreadyRegenerated(anonymousType),
-                desc,
-                false,
-                inliningContext.nameGenerator,
-                capturesAnonymousObjectThatMustBeRegenerated
+            anonymousType, needReification, lambdaMapping,
+            inliningContext.classRegeneration,
+            isAlreadyRegenerated(anonymousType),
+            desc,
+            false,
+            inliningContext.nameGenerator,
+            capturesAnonymousObjectThatMustBeRegenerated
         )
 
         val memoizeAnonymousObject = inliningContext.findAnonymousObjectTransformationInfo(anonymousType)
@@ -908,17 +921,16 @@ class MethodInliner(
     private fun wrapException(originalException: Throwable, node: MethodNode, errorSuffix: String): RuntimeException {
         return if (originalException is InlineException) {
             InlineException("$errorPrefix: $errorSuffix", originalException)
-        }
-        else {
+        } else {
             InlineException("$errorPrefix: $errorSuffix\nCause: ${node.nodeText}", originalException)
         }
     }
 
     private class LocalReturnsNormalizer {
         private class LocalReturn(
-                private val returnInsn: AbstractInsnNode,
-                private val insertBeforeInsn: AbstractInsnNode,
-                private val frame: Frame<SourceValue>
+            private val returnInsn: AbstractInsnNode,
+            private val insertBeforeInsn: AbstractInsnNode,
+            private val frame: Frame<SourceValue>
         ) {
 
             fun transform(insnList: InsnList, returnVariableIndex: Int) {
@@ -955,9 +967,9 @@ class MethodInliner(
         private var returnOpcode = -1
 
         internal fun addLocalReturnToTransform(
-                returnInsn: AbstractInsnNode,
-                insertBeforeInsn: AbstractInsnNode,
-                sourceValueFrame: Frame<SourceValue>
+            returnInsn: AbstractInsnNode,
+            insertBeforeInsn: AbstractInsnNode,
+            sourceValueFrame: Frame<SourceValue>
         ) {
             assert(isReturnOpcode(returnInsn.opcode)) { "return instruction expected" }
             assert(returnOpcode < 0 || returnOpcode == returnInsn.opcode) { "Return op should be " + Printer.OPCODES[returnOpcode] + ", got " + Printer.OPCODES[returnInsn.opcode] }
@@ -968,8 +980,7 @@ class MethodInliner(
             if (returnInsn.opcode != Opcodes.RETURN) {
                 returnVariableSize = if (returnInsn.opcode == Opcodes.LRETURN || returnInsn.opcode == Opcodes.DRETURN) {
                     2
-                }
-                else {
+                } else {
                     1
                 }
             }
@@ -990,9 +1001,9 @@ class MethodInliner(
 
     //Place to insert finally blocks from try blocks that wraps inline fun call
     class PointForExternalFinallyBlocks(
-            @JvmField val beforeIns: AbstractInsnNode,
-            @JvmField val returnType: Type,
-            @JvmField val finallyIntervalEnd: LabelNode
+        @JvmField val beforeIns: AbstractInsnNode,
+        @JvmField val returnType: Type,
+        @JvmField val finallyIntervalEnd: LabelNode
     )
 
     companion object {
@@ -1004,7 +1015,7 @@ class MethodInliner(
             }
             val fin = FieldInsnNode(node.opcode, node.owner, node.name.substring(3), node.desc)
             return fieldRemapper.findField(fin) ?: throw IllegalStateException(
-                    "Couldn't find captured field ${node.owner}.${node.name} in ${fieldRemapper.originalLambdaInternalName}"
+                "Couldn't find captured field ${node.owner}.${node.name} in ${fieldRemapper.originalLambdaInternalName}"
             )
         }
 
@@ -1025,8 +1036,7 @@ class MethodInliner(
 
             try {
                 return analyzer.analyze("fake", node)
-            }
-            catch (e: AnalyzerException) {
+            } catch (e: AnalyzerException) {
                 throw RuntimeException(e)
             }
 
@@ -1038,8 +1048,7 @@ class MethodInliner(
         //      INTRINSICS_CLASS_NAME.checkParameterIsNotNull(...)
         private fun removeClosureAssertions(node: MethodNode) {
             val toDelete = arrayListOf<AbstractInsnNode>()
-            InsnSequence(node.instructions).filterIsInstance<MethodInsnNode>().forEach {
-                methodInsnNode ->
+            InsnSequence(node.instructions).filterIsInstance<MethodInsnNode>().forEach { methodInsnNode ->
                 if (methodInsnNode.name == "checkParameterIsNotNull" && methodInsnNode.owner == IntrinsicMethods.INTRINSICS_CLASS_NAME) {
                     val prev = methodInsnNode.previous
                     assert(Opcodes.LDC == prev?.opcode) { "'checkParameterIsNotNull' should go after LDC but $prev" }
@@ -1074,16 +1083,16 @@ class MethodInliner(
 
         private fun getCapturedFieldAccessChain(aload0: VarInsnNode): List<AbstractInsnNode> {
             val lambdaAccessChain = mutableListOf<AbstractInsnNode>(aload0).apply {
-                addAll(InsnSequence(aload0.next, null).filter { it.isMeaningful }.takeWhile {
-                    insnNode ->
-                    insnNode is FieldInsnNode && "this$0" == insnNode.name
+                addAll(InsnSequence(aload0.next, null).filter { it.isMeaningful }.takeWhile { insnNode ->
+                    insnNode is FieldInsnNode && AsmUtil.CAPTURED_THIS_FIELD == insnNode.name
                 }.toList())
             }
 
             return lambdaAccessChain.apply {
                 last().getNextMeaningful().takeIf { insn -> insn is FieldInsnNode }?.also {
                     //captured field access
-                    insn -> add(insn)
+                        insn ->
+                    add(insn)
                 }
             }
         }
@@ -1131,7 +1140,7 @@ class MethodInliner(
         //process local and global returns (local substituted with goto end-label global kept unchanged)
         @JvmStatic
         fun processReturns(
-                node: MethodNode, labelOwner: LabelOwner, remapReturn: Boolean, endLabel: Label?
+            node: MethodNode, labelOwner: LabelOwner, remapReturn: Boolean, endLabel: Label?
         ): List<PointForExternalFinallyBlocks> {
             if (!remapReturn) {
                 return emptyList()
@@ -1167,9 +1176,11 @@ class MethodInliner(
                     //generate finally block before nonLocalReturn flag/return/goto
                     val label = LabelNode()
                     instructions.insert(insnNode, label)
-                    result.add(PointForExternalFinallyBlocks(
+                    result.add(
+                        PointForExternalFinallyBlocks(
                             getInstructionToInsertFinallyBefore(insnNode, isLocalReturn), getReturnType(insnNode.opcode), label
-                    ))
+                        )
+                    )
                 }
                 insnNode = insnNode.next
             }

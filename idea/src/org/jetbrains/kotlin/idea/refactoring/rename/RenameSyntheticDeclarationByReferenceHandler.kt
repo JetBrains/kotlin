@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.refactoring.rename
 
-import org.jetbrains.kotlin.statistics.KotlinStatisticsTrigger
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Editor
@@ -17,7 +16,8 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.resolve.calls.tower.isSynthesized
-import org.jetbrains.kotlin.statistics.KotlinIdeRefactoringTrigger
+import org.jetbrains.kotlin.idea.statistics.KotlinEventTrigger
+import org.jetbrains.kotlin.idea.statistics.KotlinStatisticsTrigger
 
 class RenameSyntheticDeclarationByReferenceHandler : RenameHandler {
     override fun isAvailableOnDataContext(dataContext: DataContext): Boolean {
@@ -31,7 +31,7 @@ class RenameSyntheticDeclarationByReferenceHandler : RenameHandler {
 
     override fun invoke(project: Project, editor: Editor, file: PsiFile, dataContext: DataContext?) {
         CodeInsightUtils.showErrorHint(project, editor, "Rename is not applicable to synthetic declaration", "Rename", null)
-        KotlinStatisticsTrigger.trigger(KotlinIdeRefactoringTrigger::class.java, this::class.java.name)
+        KotlinStatisticsTrigger.trigger(KotlinEventTrigger.KotlinIdeRefactoringTrigger, this::class.java.name)
     }
 
     override fun invoke(project: Project, elements: Array<out PsiElement>, dataContext: DataContext?) {

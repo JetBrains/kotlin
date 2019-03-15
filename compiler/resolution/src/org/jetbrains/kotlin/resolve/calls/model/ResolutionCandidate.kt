@@ -178,6 +178,9 @@ class MutableResolvedCallAtom(
     lateinit var argumentToCandidateParameter: Map<KotlinCallArgument, ValueParameterDescriptor>
     private var samAdapterMap: HashMap<KotlinCallArgument, SamConversionDescription>? = null
 
+    val hasSamConversion: Boolean
+        get() = samAdapterMap != null
+
     override val argumentsWithConversion: Map<KotlinCallArgument, SamConversionDescription>
         get() = samAdapterMap ?: emptyMap()
 

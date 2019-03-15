@@ -1,0 +1,7 @@
+// WITH_RUNTIME
+
+fun example() {
+    val max = 5
+    for (i in 0 until max) {
+    }
+}

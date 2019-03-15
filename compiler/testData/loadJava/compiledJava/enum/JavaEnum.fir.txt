@@ -1,0 +1,8 @@
+public final enum class JavaEnum : R|java/lang/Enum<test/JavaEnum>| {
+    public final static property ENTRY(val): R|ft<test/JavaEnum, test/JavaEnum?>|!
+        public get(): R|ft<test/JavaEnum, test/JavaEnum?>|!
+
+    public final static property ANOTHER(val): R|ft<test/JavaEnum, test/JavaEnum?>|!
+        public get(): R|ft<test/JavaEnum, test/JavaEnum?>|!
+
+}

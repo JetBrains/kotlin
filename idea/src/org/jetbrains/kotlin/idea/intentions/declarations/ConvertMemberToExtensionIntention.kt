@@ -267,7 +267,12 @@ class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallable
             }
         }
 
-        return processSingleDeclaration(element, allowExpected)
+        val classVisibility = element.containingClass()?.visibilityModifierType()
+        val (extension, bodyToSelect) = processSingleDeclaration(element, allowExpected)
+        if (classVisibility != null && extension.visibilityModifier() == null) {
+            extension.addModifier(classVisibility)
+        }
+        return extension to bodyToSelect
     }
 
     private fun newTypeParameterList(member: KtCallableDeclaration): KtTypeParameterList? {

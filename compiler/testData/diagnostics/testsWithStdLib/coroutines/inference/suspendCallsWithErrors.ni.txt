@@ -1,8 +1,8 @@
 package
 
-public val test1: [ERROR : Error type for ParseError-argument VALUE_ARGUMENT]
+public val test1: kotlin.Any?
 public val test2: kotlin.Int
-public fun </*0*/ S> generate(/*0*/ g: suspend Controller<S>.() -> kotlin.Unit): S
+public fun </*0*/ S> generate(/*0*/ @kotlin.BuilderInference g: suspend Controller<S>.() -> kotlin.Unit): S
 
 public final class A {
     public constructor A()

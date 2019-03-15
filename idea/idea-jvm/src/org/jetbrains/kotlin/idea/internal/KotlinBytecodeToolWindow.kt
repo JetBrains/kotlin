@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.idea.util.InfinitePeriodicalTask
 import org.jetbrains.kotlin.idea.util.LongRunningReadTask
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
@@ -306,6 +307,8 @@ class KotlinBytecodeToolWindow(private val myProject: Project, private val toolW
                 override fun shouldGenerateScript(script: KtScript): Boolean {
                     return script.containingKtFile === ktFile
                 }
+
+                override fun shouldGenerateCodeFragment(script: KtCodeFragment) = false
             }
 
             val state = GenerationState.Builder(

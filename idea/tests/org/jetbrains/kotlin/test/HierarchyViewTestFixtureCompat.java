@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.test;
 import com.intellij.ide.hierarchy.HierarchyNodeDescriptor;
 import com.intellij.ide.hierarchy.HierarchyTreeStructure;
 import com.intellij.openapi.util.JDOMUtil;
-import junit.framework.Assert;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.junit.Assert;
 
 import java.util.*;
 
@@ -20,7 +20,7 @@ import java.util.*;
  *
  * Use org.jetbrains.kotlin.test.HierarchyViewTestFixture typealias instead.
  *
- * BUNCH: 182
+ * BUNCH: 181
  */
 @SuppressWarnings("ALL")
 public class HierarchyViewTestFixtureCompat {

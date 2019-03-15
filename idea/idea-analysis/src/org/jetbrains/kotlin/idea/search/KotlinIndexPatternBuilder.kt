@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.search
 
 import com.intellij.lexer.Lexer
 import com.intellij.psi.PsiFile
-import com.intellij.psi.impl.search.IndexPatternBuilder
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
@@ -26,8 +25,10 @@ import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtFile
 
-class KotlinIndexPatternBuilder: IndexPatternBuilder {
-    private val TODO_COMMENT_TOKENS = TokenSet.orSet(KtTokens.COMMENTS, TokenSet.create(KDocTokens.KDOC))
+class KotlinIndexPatternBuilder : IndexPatternBuilderAdapter() {
+    private companion object {
+        private val TODO_COMMENT_TOKENS = TokenSet.orSet(KtTokens.COMMENTS, TokenSet.create(KDocTokens.KDOC))
+    }
 
     override fun getCommentTokenSet(file: PsiFile): TokenSet? {
         return if (file is KtFile) TODO_COMMENT_TOKENS else null
@@ -39,7 +40,7 @@ class KotlinIndexPatternBuilder: IndexPatternBuilder {
 
     override fun getCommentStartDelta(tokenType: IElementType?): Int = 0
 
-    override fun getCommentEndDelta(tokenType: IElementType?): Int = when(tokenType) {
+    override fun getCommentEndDelta(tokenType: IElementType?): Int = when (tokenType) {
         KtTokens.BLOCK_COMMENT -> "*/".length
         else -> 0
     }

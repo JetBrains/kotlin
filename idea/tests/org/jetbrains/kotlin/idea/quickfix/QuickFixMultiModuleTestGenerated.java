@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -197,6 +197,16 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
     @TestMetadata("convertPropertyGetterToInitializer")
     public void testConvertPropertyGetterToInitializer() throws Exception {
         runTest("idea/testData/multiModuleQuickFix/convertPropertyGetterToInitializer/");
+    }
+
+    @TestMetadata("createClassFromUsageImport")
+    public void testCreateClassFromUsageImport() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/createClassFromUsageImport/");
+    }
+
+    @TestMetadata("createClassFromUsageRef")
+    public void testCreateClassFromUsageRef() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/createClassFromUsageRef/");
     }
 
     @TestMetadata("createFunInExpectClass")

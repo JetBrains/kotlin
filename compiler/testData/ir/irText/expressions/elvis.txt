@@ -50,14 +50,14 @@ FILE fqName:<root> fileName:/elvis.kt
     VALUE_PARAMETER name:a index:0 type:kotlin.Any? flags:
     VALUE_PARAMETER name:b index:1 type:kotlin.Any? flags:
     BLOCK_BODY
-      WHEN type=kotlin.Unit origin=null
+      WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.String
             typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:String modality:FINAL visibility:public flags: superTypes:[kotlin.Comparable<kotlin.String>; kotlin.CharSequence; java.io.Serializable]
             GET_VAR 'value-parameter b: Any?' type=kotlin.Any? origin=null
           then: RETURN type=kotlin.Nothing from='test3(Any?, Any?): String'
             CONST String type=kotlin.String value=""
-      WHEN type=kotlin.Unit origin=null
+      WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.String?
             typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:String modality:FINAL visibility:public flags: superTypes:[kotlin.Comparable<kotlin.String>; kotlin.CharSequence; java.io.Serializable]

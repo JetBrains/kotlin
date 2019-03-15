@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtPureClassOrObject
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
+import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.bodyPropertiesDescriptorsMap
@@ -172,7 +173,13 @@ internal fun SerializerJsTranslator.serializerInstance(
     }
 }
 
-fun TranslationContext.buildInitializersRemapping(forClass: KtPureClassOrObject): Map<PropertyDescriptor, KtExpression?> = forClass.run {
-    (bodyPropertiesDescriptorsMap(bindingContext()).mapValues { it.value.delegateExpressionOrInitializer } +
-            primaryPropertiesDescriptorsMap(bindingContext()).mapValues { it.value.defaultValue })
+fun TranslationContext.buildInitializersRemapping(
+    forClass: KtPureClassOrObject,
+    superClass: ClassDescriptor?
+): Map<PropertyDescriptor, KtExpression?> {
+    val myMap = (forClass.bodyPropertiesDescriptorsMap(bindingContext()).mapValues { it.value.delegateExpressionOrInitializer } +
+            forClass.primaryPropertiesDescriptorsMap(bindingContext()).mapValues { it.value.defaultValue })
+    val parentPsi = superClass?.takeIf { it.isInternalSerializable }?.findPsi() as? KtPureClassOrObject ?: return myMap
+    val parentMap = buildInitializersRemapping(parentPsi, superClass.getSuperClassNotAny())
+    return myMap + parentMap
 }

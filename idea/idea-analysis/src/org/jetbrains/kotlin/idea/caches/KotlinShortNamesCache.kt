@@ -24,6 +24,7 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiField
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.search.PsiShortNamesCache
 import com.intellij.psi.stubs.StubIndex
 import com.intellij.util.ArrayUtil
 import com.intellij.util.Processor
@@ -46,7 +47,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtNamedFunction
 
-class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCacheWrapper() {
+class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache() {
     companion object {
         private val LOG = Logger.getInstance(KotlinShortNamesCache::class.java)
     }

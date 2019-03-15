@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.daemon.client.DaemonReportingTargets
 import org.jetbrains.kotlin.daemon.client.KotlinCompilerClient
 import org.jetbrains.kotlin.daemon.client.KotlinRemoteReplCompilerClient
 import org.jetbrains.kotlin.daemon.common.*
+import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.util.concurrent.locks.ReentrantReadWriteLock
@@ -44,9 +45,9 @@ class KotlinJsr223JvmScriptEngine4Idea(
 ) : KotlinJsr223JvmScriptEngineBase(factory) {
 
     private val daemon by lazy {
-        val path = PathUtil.kotlinPathsForIdeaPlugin.compilerPath
-        assert(path.exists())
-        val compilerId = CompilerId.makeCompilerId(path)
+        val classPath = PathUtil.kotlinPathsForIdeaPlugin.classPath(KotlinPaths.ClassPaths.CompilerWithScripting)
+        assert(classPath.all { it.exists() })
+        val compilerId = CompilerId.makeCompilerId(classPath)
         val daemonOptions = configureDaemonOptions()
         val daemonJVMOptions = DaemonJVMOptions()
 

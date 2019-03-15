@@ -55,7 +55,7 @@ abstract class AbstractJsLineNumberTest : KotlinTestWithEnvironment() {
             orderedModules.asReversed().forEach { module ->
                 val baseOutputPath = module.outputFileName(file)
 
-                val translator = K2JSTranslator(createConfig(module, file, modules))
+                val translator = K2JSTranslator(createConfig(module, file, modules), false)
                 val units = module.files.map { TranslationUnit.SourceFile(createPsiFile(it.fileName)) }
                 val translationResult = translator.translateUnits(ExceptionThrowingReporter, units, MainCallParameters.noCall())
 

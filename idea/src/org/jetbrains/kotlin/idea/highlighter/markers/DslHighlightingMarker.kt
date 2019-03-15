@@ -9,11 +9,13 @@ import com.intellij.application.options.colors.ColorAndFontOptions
 import com.intellij.codeHighlighting.Pass
 import com.intellij.codeInsight.daemon.GutterIconNavigationHandler
 import com.intellij.codeInsight.daemon.LineMarkerInfo
-import com.intellij.icons.AllIcons
 import com.intellij.ide.DataManager
+import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.editor.markup.GutterIconRenderer
 import com.intellij.psi.PsiElement
 import com.intellij.util.Function
+import com.intellij.util.ui.ColorsIcon
+import com.intellij.util.ui.JBUI
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.idea.KotlinLanguage
@@ -21,6 +23,7 @@ import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.highlighter.dsl.DslHighlighterExtension
 import org.jetbrains.kotlin.idea.highlighter.dsl.isDslHighlightingMarker
 import org.jetbrains.kotlin.psi.KtClass
+import javax.swing.Icon
 import javax.swing.JComponent
 
 private val navHandler = GutterIconNavigationHandler<PsiElement> { event, element ->
@@ -39,7 +42,7 @@ fun collectHighlightingColorsMarkers(
     ktClass: KtClass,
     result: MutableCollection<LineMarkerInfo<*>>
 ) {
-    if (ktClass.styleIdForMarkerAnnotation() == null) return
+    val styleId = ktClass.styleIdForMarkerAnnotation() ?: return
 
     val anchor = ktClass.nameIdentifier ?: return
 
@@ -47,12 +50,19 @@ fun collectHighlightingColorsMarkers(
         LineMarkerInfo<PsiElement>(
             anchor,
             anchor.textRange,
-            AllIcons.Gutter.Colors,
+            createIcon(styleId),
             Pass.LINE_MARKERS,
             toolTipHandler, navHandler,
             GutterIconRenderer.Alignment.RIGHT
         )
     )
+}
+
+private fun createIcon(styleId: Int): Icon {
+    val globalScheme = EditorColorsManager.getInstance().globalScheme
+    val markersColor = globalScheme.getAttributes(DslHighlighterExtension.styleById(styleId)).foregroundColor
+    val defaultColor = globalScheme.defaultForeground
+    return JBUI.scale(ColorsIcon(12, markersColor, defaultColor, defaultColor, markersColor))
 }
 
 private fun KtClass.styleIdForMarkerAnnotation(): Int? {
@@ -61,4 +71,3 @@ private fun KtClass.styleIdForMarkerAnnotation(): Int? {
     if (!classDescriptor.isDslHighlightingMarker()) return null
     return DslHighlighterExtension.styleIdByMarkerAnnotation(classDescriptor)
 }
-

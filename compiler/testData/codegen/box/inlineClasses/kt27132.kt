@@ -1,6 +1,6 @@
+// KJS_WITH_FULL_RUNTIME
 // !LANGUAGE: +InlineClasses
 // IGNORE_BACKEND: JVM_IR
-// IGNORE_BACKEND: JS_IR
 // WITH_RUNTIME
 
 inline class Ucn(private val i: UInt)

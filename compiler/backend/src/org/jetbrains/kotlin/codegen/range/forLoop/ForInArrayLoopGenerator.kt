@@ -79,7 +79,7 @@ class ForInArrayLoopGenerator(
 
     override fun assignToLoopParameter() {
         val arrayElParamType =
-            if (KotlinBuiltIns.isArray(loopRangeType)) boxType(asmElementType, elementType, codegen.state) else asmElementType
+            if (KotlinBuiltIns.isArray(loopRangeType)) boxType(asmElementType, elementType, codegen.state.typeMapper) else asmElementType
 
         v.load(arrayVar, OBJECT_TYPE)
         v.load(indexVar, Type.INT_TYPE)

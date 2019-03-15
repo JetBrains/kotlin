@@ -1,0 +1,4 @@
+public abstract interface FilenameFilter : R|java/lang/Object| {
+    public abstract operator function accept(dir: R|ft<java/io/File, java/io/File?>|!, name: R|ft<kotlin/String, kotlin/String?>|!): R|kotlin/Boolean|
+
+}

@@ -14,6 +14,7 @@ import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.NonClasspathDirectoriesScope
 import com.intellij.util.containers.SLRUCache
+import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesCache.Companion.MAX_SCRIPTS_CACHED
 import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager
 import org.jetbrains.kotlin.idea.core.script.dependencies.ScriptRelatedModulesProvider
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
@@ -137,7 +138,7 @@ sealed class ScriptDependenciesSourceInfo(val project: Project) : IdeaModuleInfo
     class ForProject(project: Project) : ScriptDependenciesSourceInfo(project)
 }
 
-private class ScriptBinariesScopeCache(private val project: Project) : SLRUCache<ScriptDependencies, GlobalSearchScope>(6, 6) {
+private class ScriptBinariesScopeCache(private val project: Project) : SLRUCache<ScriptDependencies, GlobalSearchScope>(MAX_SCRIPTS_CACHED, MAX_SCRIPTS_CACHED) {
     override fun createValue(key: ScriptDependencies?): GlobalSearchScope {
         val roots = key?.classpath ?: emptyList()
         val classpath = ScriptDependenciesManager.toVfsRoots(roots)

@@ -1,0 +1,4 @@
+public open class TopLevel$Class : R|java/lang/Object| {
+    public open operator function foo(other: R|ft<test/TopLevel$Class, test/TopLevel$Class?>|!): R|kotlin/Unit|
+
+}

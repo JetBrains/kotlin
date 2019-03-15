@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.js.facade.exceptions.UnsupportedFeatureException;
 import org.jetbrains.kotlin.js.naming.NameSuggestion;
 import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver;
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator;
-import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.StaticContext;
 import org.jetbrains.kotlin.js.translate.context.TemporaryVariable;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
@@ -48,6 +47,7 @@ import org.jetbrains.kotlin.js.translate.utils.*;
 import org.jetbrains.kotlin.js.translate.utils.mutator.AssignToExpressionMutator;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.protobuf.CodedInputStream;
 import org.jetbrains.kotlin.psi.KtDeclaration;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.KtFile;
@@ -58,17 +58,14 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
 import org.jetbrains.kotlin.resolve.constants.*;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
-import org.jetbrains.kotlin.serialization.js.ast.JsAstDeserializer;
+import org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
+import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
-import static org.jetbrains.kotlin.js.translate.general.ModuleWrapperTranslation.wrapIfNecessary;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.convertToStatement;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.toStringLiteralList;
 import static org.jetbrains.kotlin.js.translate.utils.mutator.LastExpressionMutator.mutateLastExpression;
@@ -119,7 +116,7 @@ public final class Translation {
                         }
 
                         String name = NameSuggestion.sanitizeName("L" + compileTimeValue.getValue(type).toString());
-                        return context.declareConstantValue(name, "constant:" + name, constantResult);
+                        return context.declareConstantValue(name, "constant:" + name, constantResult, null);
                     }
 
                     if (KotlinBuiltIns.isInt(type)) {
@@ -323,95 +320,46 @@ public final class Translation {
             @NotNull ModuleDescriptor moduleDescriptor,
             @NotNull JsConfig config,
             @NotNull SourceFilePathResolver sourceFilePathResolver
-    ) {
-        JsProgram program = new JsProgram();
-        JsFunction rootFunction = new JsFunction(program.getRootScope(), new JsBlock(), "root function");
-        JsName internalModuleName = program.getScope().declareName("_");
-        Merger merger = new Merger(rootFunction, internalModuleName, moduleDescriptor);
+    ) throws IOException {
 
-        Map<KtFile, JsProgramFragment> fragmentMap = new HashMap<>();
-        List<JsProgramFragment> fragments = new ArrayList<>();
-        List<JsProgramFragment> newFragments = new ArrayList<>();
+        Map<String, TranslationUnit> inlineFunctionTagMap = new HashMap<>();
 
-        Map<KtFile, List<DeclarationDescriptor>> fileMemberScopes = new HashMap<>();
+        Map<TranslationUnit.SourceFile, SourceFileTranslationResult> translatedSourceFiles = new LinkedHashMap<>();
 
-        List<File> sourceRoots = config.getSourceMapRoots().stream().map(File::new).collect(Collectors.toList());
-        JsAstDeserializer deserializer = new JsAstDeserializer(program, sourceRoots);
         for (TranslationUnit unit : units) {
             if (unit instanceof TranslationUnit.SourceFile) {
-                KtFile file = ((TranslationUnit.SourceFile) unit).getFile();
-                StaticContext staticContext = new StaticContext(bindingTrace, config, moduleDescriptor, sourceFilePathResolver);
+                TranslationUnit.SourceFile sourceFileUnit = ((TranslationUnit.SourceFile) unit);
+                KtFile file = sourceFileUnit.getFile();
+                StaticContext staticContext = new StaticContext(bindingTrace, config, moduleDescriptor, sourceFilePathResolver, file.getPackageFqName().asString());
                 TranslationContext context = TranslationContext.rootContext(staticContext);
                 List<DeclarationDescriptor> fileMemberScope = new ArrayList<>();
                 translateFile(context, file, fileMemberScope);
-                fragments.add(staticContext.getFragment());
-                newFragments.add(staticContext.getFragment());
-                fragmentMap.put(file, staticContext.getFragment());
-                fileMemberScopes.put(file, fileMemberScope);
-                merger.addFragment(staticContext.getFragment());
+
+                JsProgramFragment fragment = staticContext.getFragment();
+                for (String tag : staticContext.getInlineFunctionTags()) {
+                    assert !inlineFunctionTagMap.containsKey(tag) : "Duplicate inline function tag found: '" + tag + "'";
+                    inlineFunctionTagMap.put(tag, unit);
+                }
+                NormalizeImportTagsKt.normalizeImportTags(fragment);
+
+                fragment.setTests(mayBeGenerateTests(context, file, fileMemberScope));
+                fragment.setMainFunction(maybeGenerateCallToMain(context, config, moduleDescriptor, fileMemberScope, mainCallParameters));
+                translatedSourceFiles.put(sourceFileUnit, new SourceFileTranslationResult(fragment, staticContext.getInlineFunctionTags(), fileMemberScope));
             }
             else if (unit instanceof TranslationUnit.BinaryAst) {
-                byte[] astData = ((TranslationUnit.BinaryAst) unit).getData();
-                JsProgramFragment fragment = deserializer.deserialize(new ByteArrayInputStream(astData));
-                merger.addFragment(fragment);
-                fragments.add(fragment);
-            }
-        }
-
-        JsProgramFragment testFragment = mayBeGenerateTests(config, bindingTrace, moduleDescriptor, sourceFilePathResolver);
-        fragments.add(testFragment);
-        newFragments.add(testFragment);
-        merger.addFragment(testFragment);
-        rootFunction.getParameters().add(new JsParameter(internalModuleName));
-
-        if (mainCallParameters.shouldBeGenerated()) {
-            JsProgramFragment mainCallFragment = generateCallToMain(
-                    bindingTrace, config, moduleDescriptor, sourceFilePathResolver, mainCallParameters.arguments());
-            if (mainCallFragment != null) {
-                fragments.add(mainCallFragment);
-                newFragments.add(mainCallFragment);
-                merger.addFragment(mainCallFragment);
-            }
-        }
-
-        merger.merge();
-
-        JsBlock rootBlock = rootFunction.getBody();
-
-        List<JsStatement> statements = rootBlock.getStatements();
-
-        statements.add(0, new JsStringLiteral("use strict").makeStmt());
-        if (!isBuiltinModule(fragments)) {
-            defineModule(program, statements, config.getModuleId());
-        }
-
-        // Invoke function passing modules as arguments
-        // This should help minifier tool to recognize references to these modules as local variables and make them shorter.
-        List<JsImportedModule> importedModuleList = merger.getImportedModules();
-
-        for (JsImportedModule importedModule : importedModuleList) {
-            rootFunction.getParameters().add(new JsParameter(importedModule.getInternalName()));
-        }
-
-        statements.add(new JsReturn(internalModuleName.makeRef()));
-
-        JsBlock block = program.getGlobalBlock();
-        block.getStatements().addAll(wrapIfNecessary(config.getModuleId(), rootFunction, importedModuleList, program,
-                                                     config.getModuleKind()));
-
-        return new AstGenerationResult(program, internalModuleName, fragments, fragmentMap, newFragments,
-                                       merger.getImportBlock().getStatements(), fileMemberScopes, importedModuleList);
-    }
-
-    private static boolean isBuiltinModule(@NotNull List<JsProgramFragment> fragments) {
-        for (JsProgramFragment fragment : fragments) {
-            for (JsNameBinding nameBinding : fragment.getNameBindings()) {
-                if (nameBinding.getKey().equals(ENUM_SIGNATURE) && !fragment.getImports().containsKey(ENUM_SIGNATURE)) {
-                    return true;
+                byte[] inlineDataArray = ((TranslationUnit.BinaryAst) unit).getInlineData();
+                JsAstProtoBuf.InlineData h = JsAstProtoBuf.InlineData.parseFrom(CodedInputStream.newInstance(inlineDataArray));
+                for (String tag : h.getInlineFunctionTagsList()) {
+                    assert !inlineFunctionTagMap.containsKey(tag) : "Duplicate inline function tag found: '" + tag + "'";
+                    inlineFunctionTagMap.put(tag, unit);
                 }
             }
         }
-        return false;
+        return new AstGenerationResult(units,
+                                       translatedSourceFiles,
+                                       inlineFunctionTagMap,
+                                       moduleDescriptor,
+                                       config);
     }
 
     private static void translateFile(
@@ -438,39 +386,36 @@ public final class Translation {
         }
     }
 
-    private static void defineModule(@NotNull JsProgram program, @NotNull List<JsStatement> statements, @NotNull String moduleId) {
-        JsName rootPackageName = program.getScope().findName(Namer.getRootPackageName());
-        if (rootPackageName != null) {
-            Namer namer = Namer.newInstance(program.getScope());
-            statements.add(new JsInvocation(namer.kotlin("defineModule"), new JsStringLiteral(moduleId),
-                                            rootPackageName.makeRef()).makeStmt());
-        }
-    }
-
-    @NotNull
-    private static JsProgramFragment mayBeGenerateTests(
-            @NotNull JsConfig config, @NotNull BindingTrace trace,
-            @NotNull ModuleDescriptor moduleDescriptor, @NotNull SourceFilePathResolver sourceFilePathResolver
+    @Nullable
+    private static JsStatement mayBeGenerateTests(
+            @NotNull TranslationContext context,
+            @NotNull KtFile file,
+            @NotNull List<DeclarationDescriptor> fileMemberScope
     ) {
-        StaticContext staticContext = new StaticContext(trace, config, moduleDescriptor, sourceFilePathResolver);
-        TranslationContext context = TranslationContext.rootContext(staticContext);
-
-        new JSTestGenerator(context).generateTestCalls(moduleDescriptor);
-
-        return staticContext.getFragment();
+        return new JSTestGenerator(context).generateTestCalls(file, fileMemberScope);
     }
 
     //TODO: determine whether should throw exception
     @Nullable
-    private static JsProgramFragment generateCallToMain(
-            @NotNull BindingTrace trace, @NotNull JsConfig config, @NotNull ModuleDescriptor moduleDescriptor,
-            @NotNull SourceFilePathResolver sourceFilePathResolver,
-            @NotNull List<String> arguments
+    private static JsStatement maybeGenerateCallToMain(
+            @NotNull TranslationContext context,
+            @NotNull JsConfig config,
+            @NotNull ModuleDescriptor moduleDescriptor,
+            @NotNull List<DeclarationDescriptor> fileMemberScope,
+            @NotNull MainCallParameters mainCallParameters
     ) {
-        StaticContext staticContext = new StaticContext(trace, config, moduleDescriptor, sourceFilePathResolver);
-        TranslationContext context = TranslationContext.rootContext(staticContext);
+        if (!mainCallParameters.shouldBeGenerated()) return null;
+
         MainFunctionDetector mainFunctionDetector = new MainFunctionDetector(context.bindingContext(), config.getLanguageVersionSettings());
-        FunctionDescriptor functionDescriptor = mainFunctionDetector.getMainFunction(moduleDescriptor);
+
+        FunctionDescriptor functionDescriptor = null;
+
+        for (DeclarationDescriptor d : fileMemberScope) {
+            if (mainFunctionDetector.isMain(d)) {
+                functionDescriptor = (FunctionDescriptor)d;
+            }
+        }
+
         if (functionDescriptor == null) {
             return null;
         }
@@ -480,7 +425,7 @@ public final class Translation {
 
         List<JsExpression> args = new ArrayList<>();
         if (parameterCount != 0) {
-            args.add(new JsArrayLiteral(toStringLiteralList(arguments)));
+            args.add(new JsArrayLiteral(toStringLiteralList(mainCallParameters.arguments())));
         }
 
         if (functionDescriptor.isSuspend()) {
@@ -492,7 +437,6 @@ public final class Translation {
         }
 
         JsExpression call = CallTranslator.INSTANCE.buildCall(context, functionDescriptor, args, null);
-        context.addTopLevelStatement(call.makeStmt());
-        return staticContext.getFragment();
+        return call.makeStmt();
     }
 }

@@ -30,10 +30,7 @@ import org.jetbrains.kotlin.codegen.CompilationErrorHandler
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtPsiUtil
-import org.jetbrains.kotlin.psi.KtScript
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.org.objectweb.asm.Type
 
@@ -199,6 +196,7 @@ private class ClassFilterForClassOrObject(private val classOrObject: KtClassOrOb
             = shouldGenerateClassMembers(processingClassOrObject) || processingClassOrObject.isAncestor(classOrObject, true)
 
     override fun shouldGenerateScript(script: KtScript) = PsiTreeUtil.isAncestor(script, classOrObject, false)
+    override fun shouldGenerateCodeFragment(script: KtCodeFragment) = false
 }
 
 object ClassFilterForFacade : GenerationState.GenerateClassFilter() {
@@ -206,6 +204,7 @@ object ClassFilterForFacade : GenerationState.GenerateClassFilter() {
     override fun shouldGenerateClass(processingClassOrObject: KtClassOrObject) = KtPsiUtil.isLocal(processingClassOrObject)
     override fun shouldGeneratePackagePart(ktFile: KtFile) = true
     override fun shouldGenerateScript(script: KtScript) = false
+    override fun shouldGenerateCodeFragment(script: KtCodeFragment) = false
 }
 
 private class ClassFilterForScript(val script: KtScript) : GenerationState.GenerateClassFilter() {
@@ -220,4 +219,5 @@ private class ClassFilterForScript(val script: KtScript) : GenerationState.Gener
     override fun shouldGeneratePackagePart(ktFile: KtFile): Boolean = script.containingKtFile === ktFile
 
     override fun shouldGenerateScript(script: KtScript): Boolean = this.script === script
+    override fun shouldGenerateCodeFragment(script: KtCodeFragment) = false
 }

@@ -27,11 +27,11 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 import org.jetbrains.org.objectweb.asm.tree.analysis.SourceValue
 
 fun MethodInliner.getLambdaIfExistsAndMarkInstructions(
-        sourceValue: SourceValue,
-        processSwap: Boolean,
-        insnList: InsnList,
-        frames: Array<Frame<SourceValue>?>,
-        toDelete: MutableSet<AbstractInsnNode>
+    sourceValue: SourceValue,
+    processSwap: Boolean,
+    insnList: InsnList,
+    frames: Array<Frame<SourceValue>?>,
+    toDelete: MutableSet<AbstractInsnNode>
 ): LambdaInfo? {
     val toDeleteInner = SmartSet.create<AbstractInsnNode>()
 
@@ -48,11 +48,11 @@ fun MethodInliner.getLambdaIfExistsAndMarkInstructions(
 private fun SourceValue.singleOrNullInsn() = insns.singleOrNull()
 
 private fun MethodInliner.getLambdaIfExistsAndMarkInstructions(
-        insnNode: AbstractInsnNode?,
-        processSwap: Boolean,
-        insnList: InsnList,
-        frames: Array<Frame<SourceValue>?>,
-        toDelete: MutableSet<AbstractInsnNode>
+    insnNode: AbstractInsnNode?,
+    processSwap: Boolean,
+    insnList: InsnList,
+    frames: Array<Frame<SourceValue>?>,
+    toDelete: MutableSet<AbstractInsnNode>
 ): LambdaInfo? {
     if (insnNode == null) return null
 
@@ -76,8 +76,7 @@ private fun MethodInliner.getLambdaIfExistsAndMarkInstructions(
                 return it
             }
         }
-    }
-    else if (processSwap && insnNode.opcode == Opcodes.SWAP) {
+    } else if (processSwap && insnNode.opcode == Opcodes.SWAP) {
         val swapFrame = frames[insnList.indexOf(insnNode)] ?: return null
         val dispatchReceiver = swapFrame.top()!!
         getLambdaIfExistsAndMarkInstructions(dispatchReceiver, false, insnList, frames, toDelete)?.let {
@@ -100,9 +99,9 @@ fun parameterOffsets(isStatic: Boolean, valueParameters: List<JvmMethodParameter
 }
 
 fun MethodNode.remove(instructions: Sequence<AbstractInsnNode>) =
-        instructions.forEach {
-            this@remove.instructions.remove(it)
-        }
+    instructions.forEach {
+        this@remove.instructions.remove(it)
+    }
 
 fun MethodNode.remove(instructions: Collection<AbstractInsnNode>) {
     instructions.forEach {
@@ -111,19 +110,18 @@ fun MethodNode.remove(instructions: Collection<AbstractInsnNode>) {
 }
 
 fun MethodNode.findCapturedFieldAssignmentInstructions(): Sequence<FieldInsnNode> {
-    return InsnSequence(instructions).filterIsInstance<FieldInsnNode>().
-            filter { fieldNode ->
-                //filter captured field assignment
-                //  aload 0
-                //  aload x
-                //  PUTFIELD $fieldName
+    return InsnSequence(instructions).filterIsInstance<FieldInsnNode>().filter { fieldNode ->
+        //filter captured field assignment
+        //  aload 0
+        //  aload x
+        //  PUTFIELD $fieldName
 
-                val prevPrev = fieldNode.previous?.previous as? VarInsnNode
+        val prevPrev = fieldNode.previous?.previous as? VarInsnNode
 
-                fieldNode.opcode == Opcodes.PUTFIELD &&
+        fieldNode.opcode == Opcodes.PUTFIELD &&
                 isCapturedFieldName(fieldNode.name) &&
                 fieldNode.previous is VarInsnNode && prevPrev != null && prevPrev.`var` == 0
-            }
+    }
 }
 
 fun AbstractInsnNode.getNextMeaningful(): AbstractInsnNode? {

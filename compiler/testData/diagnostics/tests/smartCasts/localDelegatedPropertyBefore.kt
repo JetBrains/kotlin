@@ -10,6 +10,6 @@ fun failsWithClassCastException() {
     val sometimesNotInt: Any? by AlternatingDelegate()
 
     if (sometimesNotInt is Int) {
-        <!DEPRECATED_SMARTCAST, DEBUG_INFO_SMARTCAST!>sometimesNotInt<!>.inc()
+        <!DEBUG_INFO_SMARTCAST, DEPRECATED_SMARTCAST!>sometimesNotInt<!>.inc()
     }
 }

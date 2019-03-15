@@ -18,18 +18,16 @@ package org.jetbrains.kotlin.builtins
 
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
-class DefaultBuiltIns private constructor() : KotlinBuiltIns(LockBasedStorageManager()) {
+class DefaultBuiltIns(loadBuiltInsFromCurrentClassLoader: Boolean = true) : KotlinBuiltIns(LockBasedStorageManager("DefaultBuiltIns")) {
     init {
-        createBuiltInsModule()
+        if (loadBuiltInsFromCurrentClassLoader) {
+            createBuiltInsModule()
+        }
     }
 
     companion object {
-        private val initializer = BuiltInsInitializer {
-            DefaultBuiltIns()
-        }
-
         @JvmStatic
-        val Instance: DefaultBuiltIns
-            get() = initializer.get()
+        val Instance: DefaultBuiltIns =
+            DefaultBuiltIns()
     }
 }

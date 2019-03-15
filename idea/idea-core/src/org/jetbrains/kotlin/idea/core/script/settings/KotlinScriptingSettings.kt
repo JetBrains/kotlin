@@ -103,20 +103,26 @@ class KotlinScriptingSettings : PersistentStateComponent<Element> {
         KotlinScriptDefinitionKey(this.name, this::class.qualifiedName ?: "unknown")
 
     private fun Element.addScriptDefinitionContentElement(definition: KotlinScriptDefinitionKey, settings: KotlinScriptDefinitionValue) {
-        Element(SCRIPT_DEFINITION_TAG).apply {
+        addElement(SCRIPT_DEFINITION_TAG).apply {
             attribute(KotlinScriptDefinitionKey::className.name, definition.className)
             attribute(KotlinScriptDefinitionKey::definitionName.name, definition.definitionName)
 
-            Element(KotlinScriptDefinitionValue::order.name).apply {
+            addElement(KotlinScriptDefinitionValue::order.name).apply {
                 text = settings.order.toString()
             }
 
             if (!settings.isEnabled) {
-                Element(KotlinScriptDefinitionValue::isEnabled.name).apply {
+                addElement(KotlinScriptDefinitionValue::isEnabled.name).apply {
                     text = settings.isEnabled.toString()
                 }
             }
         }
+    }
+
+    private fun Element.addElement(name: String): Element {
+        val element = Element(name)
+        addContent(element)
+        return element
     }
 
     private fun Element.toValue(): KotlinScriptDefinitionValue {

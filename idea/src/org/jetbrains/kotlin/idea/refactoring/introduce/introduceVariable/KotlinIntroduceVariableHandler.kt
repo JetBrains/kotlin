@@ -69,7 +69,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
-import org.jetbrains.kotlin.types.checker.TypeCheckerContext
+import org.jetbrains.kotlin.types.checker.ClassicTypeCheckerContext
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.ifEmpty
 import org.jetbrains.kotlin.utils.sure
@@ -85,7 +85,7 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
     private var KtExpression.isOccurrence: Boolean by NotNullablePsiCopyableUserDataProperty(Key.create("OCCURRENCE"), false)
 
     private class TypeCheckerImpl(private val project: Project) : KotlinTypeChecker by KotlinTypeChecker.DEFAULT {
-        private inner class ContextImpl : TypeCheckerContext(false) {
+        private inner class ContextImpl : ClassicTypeCheckerContext(false) {
             override fun areEqualTypeConstructors(a: TypeConstructor, b: TypeConstructor): Boolean {
                 return compareDescriptors(project, a.declarationDescriptor, b.declarationDescriptor)
             }

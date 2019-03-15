@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.backend.common.descriptors.isSuspend
+import org.jetbrains.kotlin.backend.common.ir.isElseBranch
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -24,7 +25,7 @@ fun <T : JsNode, D : JsGenerationContext> IrWhen.toJsNode(
 ): T? =
     branches.foldRight<IrBranch, T?>(null) { br, n ->
         val body = br.result.accept(tr, data)
-        if (br is IrElseBranch) body
+        if (isElseBranch(br)) body
         else {
             val condition = br.condition.accept(IrElementToJsExpressionTransformer(), data)
             node(condition, body, n)
@@ -86,4 +87,121 @@ fun JsName.objectInstanceName() = "${ident}_instance"
 fun defineProperty(receiver: JsExpression, name: String, value: () -> JsExpression): JsInvocation {
     val objectDefineProperty = JsNameRef("defineProperty", Namer.JS_OBJECT)
     return JsInvocation(objectDefineProperty, receiver, JsStringLiteral(name), value())
+}
+
+
+fun defineProperty(receiver: JsExpression, name: String, getter: JsExpression?, setter: JsExpression? = null) =
+    defineProperty(receiver, name) {
+        val literal = JsObjectLiteral(true)
+        literal.apply {
+            if (getter != null)
+                propertyInitializers += JsPropertyInitializer(JsStringLiteral("get"), getter)
+            if (setter != null)
+                propertyInitializers += JsPropertyInitializer(JsStringLiteral("set"), setter)
+        }
+    }
+
+
+// Partially copied from org.jetbrains.kotlin.js.translate.utils.JsAstUtils
+object JsAstUtils {
+    private fun deBlockIfPossible(statement: JsStatement): JsStatement {
+        return if (statement is JsBlock && statement.statements.size == 1) {
+            statement.statements[0]
+        } else {
+            statement
+        }
+    }
+
+    fun newJsIf(
+        ifExpression: JsExpression,
+        thenStatement: JsStatement,
+        elseStatement: JsStatement? = null
+    ): JsIf {
+        var elseStatement = elseStatement
+        elseStatement = if (elseStatement != null) deBlockIfPossible(elseStatement) else null
+        return JsIf(ifExpression, deBlockIfPossible(thenStatement), elseStatement)
+    }
+
+    fun and(op1: JsExpression, op2: JsExpression): JsBinaryOperation {
+        return JsBinaryOperation(JsBinaryOperator.AND, op1, op2)
+    }
+
+    fun or(op1: JsExpression, op2: JsExpression): JsBinaryOperation {
+        return JsBinaryOperation(JsBinaryOperator.OR, op1, op2)
+    }
+
+    fun equality(arg1: JsExpression, arg2: JsExpression): JsBinaryOperation {
+        return JsBinaryOperation(JsBinaryOperator.REF_EQ, arg1, arg2)
+    }
+
+    fun inequality(arg1: JsExpression, arg2: JsExpression): JsBinaryOperation {
+        return JsBinaryOperation(JsBinaryOperator.REF_NEQ, arg1, arg2)
+    }
+
+    fun lessThanEq(arg1: JsExpression, arg2: JsExpression): JsBinaryOperation {
+        return JsBinaryOperation(JsBinaryOperator.LTE, arg1, arg2)
+    }
+
+    fun lessThan(arg1: JsExpression, arg2: JsExpression): JsBinaryOperation {
+        return JsBinaryOperation(JsBinaryOperator.LT, arg1, arg2)
+    }
+
+    fun greaterThan(arg1: JsExpression, arg2: JsExpression): JsBinaryOperation {
+        return JsBinaryOperation(JsBinaryOperator.GT, arg1, arg2)
+    }
+
+    fun greaterThanEq(arg1: JsExpression, arg2: JsExpression): JsBinaryOperation {
+        return JsBinaryOperation(JsBinaryOperator.GTE, arg1, arg2)
+    }
+
+    fun assignment(left: JsExpression, right: JsExpression): JsBinaryOperation {
+        return JsBinaryOperation(JsBinaryOperator.ASG, left, right)
+    }
+
+    fun assignmentToThisField(fieldName: String, right: JsExpression): JsStatement {
+        return assignment(JsNameRef(fieldName, JsThisRef()), right).source(right.source).makeStmt()
+    }
+
+    fun decomposeAssignment(expr: JsExpression): Pair<JsExpression, JsExpression>? {
+        if (expr !is JsBinaryOperation) return null
+
+        return if (expr.operator != JsBinaryOperator.ASG) null else Pair(expr.arg1, expr.arg2)
+
+    }
+
+    fun sum(left: JsExpression, right: JsExpression): JsBinaryOperation {
+        return JsBinaryOperation(JsBinaryOperator.ADD, left, right)
+    }
+
+    fun addAssign(left: JsExpression, right: JsExpression): JsBinaryOperation {
+        return JsBinaryOperation(JsBinaryOperator.ASG_ADD, left, right)
+    }
+
+    fun subtract(left: JsExpression, right: JsExpression): JsBinaryOperation {
+        return JsBinaryOperation(JsBinaryOperator.SUB, left, right)
+    }
+
+    fun mul(left: JsExpression, right: JsExpression): JsBinaryOperation {
+        return JsBinaryOperation(JsBinaryOperator.MUL, left, right)
+    }
+
+    fun div(left: JsExpression, right: JsExpression): JsBinaryOperation {
+        return JsBinaryOperation(JsBinaryOperator.DIV, left, right)
+    }
+
+    fun mod(left: JsExpression, right: JsExpression): JsBinaryOperation {
+        return JsBinaryOperation(JsBinaryOperator.MOD, left, right)
+    }
+
+    fun not(expression: JsExpression): JsPrefixOperation {
+        return JsPrefixOperation(JsUnaryOperator.NOT, expression)
+    }
+
+    fun typeOfIs(expression: JsExpression, string: JsStringLiteral): JsBinaryOperation {
+        return equality(JsPrefixOperation(JsUnaryOperator.TYPEOF, expression), string)
+    }
+
+    fun newVar(name: JsName, expr: JsExpression?): JsVars {
+        return JsVars(JsVars.JsVar(name, expr))
+    }
 }

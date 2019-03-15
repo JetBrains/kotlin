@@ -25,10 +25,14 @@ interface JvmLoweredDeclarationOrigin : IrDeclarationOrigin {
     object CLASS_STATIC_INITIALIZER : IrDeclarationOriginImpl("CLASS_STATIC_INITIALIZER")
     object DEFAULT_IMPLS : IrDeclarationOriginImpl("DEFAULT_IMPL")
     object FIELD_FOR_OUTER_THIS : IrDeclarationOriginImpl("FIELD_FOR_OUTER_THIS")
-    object SYNTHETIC_ACCESSOR : IrDeclarationOriginImpl("SYNTHETIC_ACCESSOR")
+    object FUNCTION_REFERENCE_IMPL : IrDeclarationOriginImpl("FUNCTION_REFERENCE_IMPL")
+    object SYNTHETIC_ACCESSOR : IrDeclarationOriginImpl("SYNTHETIC_ACCESSOR", isSynthetic = true)
     object TO_ARRAY : IrDeclarationOriginImpl("TO_ARRAY")
     object JVM_STATIC_WRAPPER : IrDeclarationOriginImpl("JVM_STATIC_WRAPPER")
+    object JVM_STATIC_WRAPPER_SYNTHETIC : IrDeclarationOriginImpl("JVM_STATIC_WRAPPER_SYNTHETIC", isSynthetic = true)
     object JVM_OVERLOADS_WRAPPER : IrDeclarationOriginImpl("JVM_OVERLOADS_WRAPPER")
+    object SYNTHETIC_METHOD_FOR_PROPERTY_ANNOTATIONS :
+        IrDeclarationOriginImpl("SYNTHETIC_METHOD_FOR_PROPERTY_ANNOTATIONS", isSynthetic = true)
 }
 
 interface JvmLoweredStatementOrigin : IrStatementOrigin {

@@ -21,10 +21,13 @@ import kotlin.coroutines.intrinsics.*
  * +-------+  probeCoroutineCreated +-----------+
  * | START | ---------------------->| SUSPENDED |
  * +-------+                        +-----------+
- *                probeCoroutineResumed |   ^ probeCoroutineSuspended
- *                                      V   |
- *                                  +------------+ completion invoked  +-----------+
- *                                  |   RUNNING  | ------------------->| COMPLETED |
+ *                                      |   ^
+ *                probeCoroutineResumed |   | probeCoroutineSuspended
+ *                              +-------+   |
+ *                              |       |   |
+ *                              |       V   |
+ *                              |   +------------+ completion invoked  +-----------+
+ *                              +-- |   RUNNING  | ------------------->| COMPLETED |
  *                                  +------------+                     +-----------+
  * ```
  *
@@ -48,6 +51,9 @@ internal fun <T> probeCoroutineCreated(completion: Continuation<T>): Continuatio
  * This probe is invoked when coroutine is resumed using [Continuation.resumeWith].
  *
  * This probe is invoked from stdlib implementation of [BaseContinuationImpl.resumeWith] function.
+ * Note, this probe can be invoked multiple times when coroutine is running. Every time the coroutine
+ * resumes a part its callstack that was previously stored in the heap, this probe is invoked
+ * with the references to the newly resumed [frame].
  *
  * Coroutines machinery implementation guarantees that the actual [frame] instance extends
  * [BaseContinuationImpl] class, despite the fact that the declared type of [frame]

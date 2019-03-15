@@ -91,6 +91,7 @@ open class KotlinUMethod(
 
 
     override val uastBody by lz {
+        if (kotlinOrigin?.canAnalyze() != true) return@lz null // EA-137193
         val bodyExpression = when (kotlinOrigin) {
             is KtFunction -> kotlinOrigin.bodyExpression
             is KtProperty -> when {
@@ -106,7 +107,7 @@ open class KotlinUMethod(
                 KotlinUBlockExpression.KotlinLazyUBlockExpression(this, { block ->
                     val implicitReturn = KotlinUImplicitReturnExpression(block)
                     val uBody = getLanguagePlugin().convertElement(bodyExpression, implicitReturn) as? UExpression
-                            ?: return@KotlinLazyUBlockExpression emptyList()
+                        ?: return@KotlinLazyUBlockExpression emptyList()
                     listOf(implicitReturn.apply { returnExpression = uBody })
                 })
 

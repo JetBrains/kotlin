@@ -14,7 +14,7 @@ BB 1
 INCOMING <- BB 0, 4
     Do..while entry: DO_WHILE label=null origin=DO_WHILE_LOOP
 CONTENT
-      1 WHEN type=kotlin.Unit origin=null
+      1 WHEN type=kotlin.Unit origin=IF
       2 GET_VAR 'value-parameter m: Int' type=kotlin.Int origin=null
       3 GET_VAR 'number: Int' type=kotlin.Int origin=null
       4 CONST Int type=kotlin.Int value=10
@@ -31,10 +31,10 @@ CONTENT
       4 GET_VAR 'tmp0: Int' type=kotlin.Int origin=null
       5 TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
 OUTGOING -> BB 3
-    When exit: WHEN type=kotlin.Unit origin=null
+    When exit: WHEN type=kotlin.Unit origin=IF
 BB 3
 INCOMING <- BB 2
-    When exit: WHEN type=kotlin.Unit origin=null
+    When exit: WHEN type=kotlin.Unit origin=IF
 CONTENT
       1 SET_VAR 'number: Int' type=kotlin.Unit origin=DIVEQ
       2 GET_VAR 'number: Int' type=kotlin.Int origin=null

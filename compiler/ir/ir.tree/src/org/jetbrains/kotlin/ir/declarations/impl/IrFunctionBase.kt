@@ -17,10 +17,7 @@
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
@@ -57,6 +54,8 @@ abstract class IrFunctionBase(
     override val valueParameters: MutableList<IrValueParameter> = ArrayList()
 
     final override var body: IrBody? = null
+
+    override var metadata: MetadataSource? = null
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         typeParameters.forEach { it.accept(visitor, data) }

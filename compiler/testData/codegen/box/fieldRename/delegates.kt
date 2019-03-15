@@ -16,14 +16,21 @@ public open class TestDelegate<T: Any>(private val initializer: () -> T) {
     }
 }
 
-class A {}
-class B {}
+class A
+class B
+class C
+class D
 
-public val A.s: String by TestDelegate( {"OK2"})
-public val B.s: String by TestDelegate( {"OK"})
+public val A.s: String by TestDelegate({"A"})
+public val B.s: String by TestDelegate({"B"})
+public val C.s: String by TestDelegate({"C"})
+public val D.s: String by TestDelegate({"D"})
 
 fun box() : String {
-  if (A().s != "OK2") return "fail1"
+    if (A().s != "A") return "Fail A"
+    if (B().s != "B") return "Fail B"
+    if (C().s != "C") return "Fail C"
+    if (D().s != "D") return "Fail D"
 
-  return B().s
+    return "OK"
 }

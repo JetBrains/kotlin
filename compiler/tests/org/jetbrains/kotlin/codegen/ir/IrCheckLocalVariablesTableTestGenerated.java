@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -107,6 +107,49 @@ public class IrCheckLocalVariablesTableTestGenerated extends AbstractIrCheckLoca
     @TestMetadata("underscoreNames.kt")
     public void testUnderscoreNames() throws Exception {
         runTest("compiler/testData/checkLocalVariablesTable/underscoreNames.kt");
+    }
+
+    @TestMetadata("compiler/testData/checkLocalVariablesTable/completionInSuspendFunction")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class CompletionInSuspendFunction extends AbstractIrCheckLocalVariablesTableTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInCompletionInSuspendFunction() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/checkLocalVariablesTable/completionInSuspendFunction"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true);
+        }
+
+        @TestMetadata("nonStaticSimple.kt")
+        public void testNonStaticSimple() throws Exception {
+            runTest("compiler/testData/checkLocalVariablesTable/completionInSuspendFunction/nonStaticSimple.kt");
+        }
+
+        @TestMetadata("nonStaticStateMachine.kt")
+        public void testNonStaticStateMachine() throws Exception {
+            runTest("compiler/testData/checkLocalVariablesTable/completionInSuspendFunction/nonStaticStateMachine.kt");
+        }
+
+        @TestMetadata("staticSimple.kt")
+        public void testStaticSimple() throws Exception {
+            runTest("compiler/testData/checkLocalVariablesTable/completionInSuspendFunction/staticSimple.kt");
+        }
+
+        @TestMetadata("staticSimpleReceiver.kt")
+        public void testStaticSimpleReceiver() throws Exception {
+            runTest("compiler/testData/checkLocalVariablesTable/completionInSuspendFunction/staticSimpleReceiver.kt");
+        }
+
+        @TestMetadata("staticStateMachine.kt")
+        public void testStaticStateMachine() throws Exception {
+            runTest("compiler/testData/checkLocalVariablesTable/completionInSuspendFunction/staticStateMachine.kt");
+        }
+
+        @TestMetadata("staticStateMachineReceiver.kt")
+        public void testStaticStateMachineReceiver() throws Exception {
+            runTest("compiler/testData/checkLocalVariablesTable/completionInSuspendFunction/staticStateMachineReceiver.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/checkLocalVariablesTable/destructuringInSuspendLambda")

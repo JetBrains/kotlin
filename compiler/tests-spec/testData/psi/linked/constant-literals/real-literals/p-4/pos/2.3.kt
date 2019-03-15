@@ -1,9 +1,8 @@
 /*
  * KOTLIN PSI SPEC TEST (POSITIVE)
  *
- * SECTIONS: constant-literals, real-literals
- * PARAGRAPH: 4
- * SENTENCE: [2] It also may not be placed before or after the exponent mark symbol.
+ * SPEC VERSION: 0.1-draft
+ * PLACES: constant-literals, real-literals -> paragraph 4 -> sentence 2
  * NUMBER: 3
  * DESCRIPTION: Real literals with underscores around an exponent mark.
  */

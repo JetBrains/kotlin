@@ -45,6 +45,7 @@ include ":kotlin-build-common",
         ":compiler:ir.ir2cfg",
         ":compiler:ir.backend.common",
         ":compiler:backend.js",
+        ":compiler:backend.jvm",
         ":compiler:backend-common",
         ":compiler:backend",
         ":compiler:plugin-api",
@@ -66,6 +67,7 @@ include ":kotlin-build-common",
         ":jps-plugin",
         ":kotlin-jps-plugin",
         ":core:descriptors",
+        ":core:type-system",
         ":core:descriptors.jvm",
         ":core:deserialization",
         ":core:descriptors.runtime",
@@ -73,8 +75,6 @@ include ":kotlin-build-common",
         ":core:metadata.jvm",
         ":core:builtins",
         ":core:util.runtime",
-        ":custom-dependencies:protobuf-relocated",
-        ":custom-dependencies:protobuf-lite",
         ":custom-dependencies:android-sdk",
         ":idea:fir-view",
         ":idea:idea-jvm",
@@ -101,7 +101,6 @@ include ":kotlin-build-common",
         ":kotlin-android-extensions",
         ":kotlin-android-extensions-runtime",
         ":plugins:android-extensions-ide",
-        ":plugins:android-extensions-jps",
         ":kotlin-allopen-compiler-plugin",
         ":allopen-ide-plugin",
         ":kotlin-noarg-compiler-plugin",
@@ -114,7 +113,6 @@ include ":kotlin-build-common",
         ":plugins:uast-kotlin-idea",
         ":plugins:annotation-based-compiler-plugins-ide-support",
         ":kotlin-script-runtime",
-        ":kotlin-runtime",
         ":kotlin-test",
         ":kotlin-test:kotlin-test-common",
         ":kotlin-test:kotlin-test-annotations-common",
@@ -124,15 +122,6 @@ include ":kotlin-build-common",
         ":kotlin-test:kotlin-test-testng",
         ":kotlin-test:kotlin-test-js",
         ":kotlin-test:kotlin-test-js:kotlin-test-js-it",
-        ":kotlin-stdlib-common",
-        ":kotlin-stdlib",
-        ":kotlin-stdlib-js",
-        ":kotlin-stdlib-jre7",
-        ":kotlin-stdlib-jre8",
-        ":kotlin-stdlib-jdk7",
-        ":kotlin-stdlib-jdk8",
-        ":kotlin-stdlib:samples",
-        ":kotlin-stdlib:jvm-minimal-for-test",
         ":kotlinx-metadata",
         ":kotlinx-metadata-jvm",
         ":prepare:build.version",
@@ -140,7 +129,6 @@ include ":kotlin-build-common",
         ":prepare:formatter",
         ":prepare:ide-lazy-resolver",
         ":prepare:idea-plugin",
-        ":prepare:cidr-plugin",
         ":android-lint",
         ":kotlin-compiler",
         ":kotlin-compiler-embeddable",
@@ -153,9 +141,6 @@ include ":kotlin-build-common",
         ":compiler:tests-spec",
         ":generators",
         ":generators:test-generator",
-        ":tools:binary-compatibility-validator",
-        ":tools:kotlin-stdlib-js-merger",
-        ":tools:kotlin-stdlib-gen",
         ":tools:kotlinp",
         ":kotlin-gradle-plugin-api",
         ":kotlin-gradle-plugin-dsl-codegen",
@@ -198,9 +183,7 @@ include ":kotlin-build-common",
         ":libraries:kotlin-prepush-hook",
         ":libraries:tools:mutability-annotations-compat",
         ":include:kotlin-compiler",
-        ":include:kotlin-stdlib-common-sources",
         ":plugins:jvm-abi-gen",
-        ":usage-statistics",
 
         // plugin markers:
         ':kotlin-gradle-plugin:plugin-marker',
@@ -211,18 +194,18 @@ include ":kotlin-build-common",
         ":kotlinx-serialization-compiler-plugin",
         ":kotlinx-serialization-ide-plugin",
         ":kotlin-serialization",
-        ":kotlin-serialization-unshaded",
-        ":kotlin-idl2k"
+        ":kotlin-serialization-unshaded"
 
 
 def includeCidr = hasProperty("cidrPluginsEnabled") && cidrPluginsEnabled != 'false'
 if (includeCidr) {
+    includeBuild "kotlin-ultimate/buildSrc"
     include ":kotlin-ultimate:cidr-native",
             ":kotlin-ultimate:appcode-native",
             ":kotlin-ultimate:clion-native",
-            ":prepare:cidr-plugin",
-            ":prepare:appcode-plugin",
-            ":prepare:clion-plugin"
+            ":kotlin-ultimate:prepare:cidr-plugin",
+            ":kotlin-ultimate:prepare:appcode-plugin",
+            ":kotlin-ultimate:prepare:clion-plugin"
 }
 
 def isTeamcityBuild = hasProperty("teamcity") || System.getenv("TEAMCITY_VERSION") != null
@@ -234,9 +217,41 @@ if (isTeamcityBuild || includeUltimate) {
     )
 }
 
+def isJpsBuild = hasProperty("jpsBuild") && jpsBuild == 'true'
+if (isJpsBuild) {
+    include ":kotlin-stdlib:jps-build"
+    project(":kotlin-stdlib:jps-build").projectDir = "$rootDir/libraries/stdlib/jps-build" as File
+} else {
+    // modules that we are currently cannot compile with jps
+    include ":kotlin-idl2k"
+    project(':kotlin-idl2k').projectDir = file("$rootDir/libraries/tools/idl2k")
+    
+    include ":kotlin-stdlib-common",
+            ":kotlin-stdlib",
+            ":kotlin-stdlib-js",
+            ":kotlin-stdlib-jdk7",
+            ":kotlin-stdlib-jdk8",
+            ":kotlin-stdlib:samples",
+            ":kotlin-stdlib:jvm-minimal-for-test",
+            ":tools:binary-compatibility-validator",
+            ":tools:kotlin-stdlib-gen",
+
+            ":include:kotlin-stdlib-common-sources"
+
+    project(':kotlin-stdlib-common').projectDir = "$rootDir/libraries/stdlib/common" as File
+    project(':kotlin-stdlib').projectDir = "$rootDir/libraries/stdlib/jvm" as File
+    project(':kotlin-stdlib-js').projectDir = "$rootDir/libraries/stdlib/js" as File
+    project(':kotlin-stdlib-jdk7').projectDir = "$rootDir/libraries/stdlib/jdk7" as File
+    project(':kotlin-stdlib-jdk8').projectDir = "$rootDir/libraries/stdlib/jdk8" as File
+    project(':kotlin-stdlib:samples').projectDir = "$rootDir/libraries/stdlib/samples" as File
+    project(":kotlin-stdlib:jvm-minimal-for-test").projectDir = "$rootDir/libraries/stdlib/jvm-minimal-for-test" as File
+
+    project(':tools:binary-compatibility-validator').projectDir = "$rootDir/libraries/tools/binary-compatibility-validator" as File
+    project(':tools:kotlin-stdlib-gen').projectDir = "$rootDir/libraries/tools/kotlin-stdlib-gen" as File
+}
+
 rootProject.name = "kotlin"
 
-project(':kotlin-runtime').projectDir = "$rootDir/libraries/stdlib/runtime" as File
 project(':kotlin-script-runtime').projectDir = "$rootDir/libraries/tools/script-runtime" as File
 project(':kotlin-test').projectDir = "$rootDir/libraries/kotlin.test" as File
 project(':kotlin-test:kotlin-test-common').projectDir = "$rootDir/libraries/kotlin.test/common" as File
@@ -247,15 +262,6 @@ project(':kotlin-test:kotlin-test-junit5').projectDir = "$rootDir/libraries/kotl
 project(':kotlin-test:kotlin-test-testng').projectDir = "$rootDir/libraries/kotlin.test/testng" as File
 project(':kotlin-test:kotlin-test-js').projectDir = "$rootDir/libraries/kotlin.test/js" as File
 project(':kotlin-test:kotlin-test-js:kotlin-test-js-it').projectDir = "$rootDir/libraries/kotlin.test/js/it" as File
-project(':kotlin-stdlib-common').projectDir = "$rootDir/libraries/stdlib/common" as File
-project(':kotlin-stdlib').projectDir = "$rootDir/libraries/stdlib/jvm" as File
-project(':kotlin-stdlib-js').projectDir = "$rootDir/libraries/stdlib/js" as File
-project(':kotlin-stdlib-jre7').projectDir = "$rootDir/libraries/stdlib/jre7" as File
-project(':kotlin-stdlib-jre8').projectDir = "$rootDir/libraries/stdlib/jre8" as File
-project(':kotlin-stdlib-jdk7').projectDir = "$rootDir/libraries/stdlib/jdk7" as File
-project(':kotlin-stdlib-jdk8').projectDir = "$rootDir/libraries/stdlib/jdk8" as File
-project(':kotlin-stdlib:samples').projectDir = "$rootDir/libraries/stdlib/samples" as File
-project(":kotlin-stdlib:jvm-minimal-for-test").projectDir = "$rootDir/libraries/stdlib/jvm-minimal-for-test" as File
 project(':kotlin-reflect').projectDir = "$rootDir/libraries/reflect" as File
 project(':kotlin-reflect-api').projectDir = "$rootDir/libraries/reflect/api" as File
 project(':kotlinx-metadata').projectDir = "$rootDir/libraries/kotlinx-metadata" as File
@@ -276,6 +282,7 @@ project(':compiler:ir.psi2ir').projectDir = "$rootDir/compiler/ir/ir.psi2ir" as 
 project(':compiler:ir.ir2cfg').projectDir = "$rootDir/compiler/ir/ir.ir2cfg" as File
 project(':compiler:ir.backend.common').projectDir = "$rootDir/compiler/ir/backend.common" as File
 project(':compiler:backend.js').projectDir = "$rootDir/compiler/ir/backend.js" as File
+project(':compiler:backend.jvm').projectDir = "$rootDir/compiler/ir/backend.jvm" as File
 project(':kotlin-native:kotlin-native-utils').projectDir = "$rootDir/konan/utils" as File
 project(':kotlin-native:kotlin-native-library-reader').projectDir = "$rootDir/konan/library-reader" as File
 project(':kotlin-jps-plugin').projectDir = "$rootDir/prepare/jps-plugin" as File
@@ -284,7 +291,6 @@ project(':plugins:android-extensions-compiler').projectDir = "$rootDir/plugins/a
 project(':kotlin-android-extensions').projectDir = "$rootDir/prepare/android-extensions-compiler-gradle" as File
 project(':kotlin-android-extensions-runtime').projectDir = "$rootDir/plugins/android-extensions/android-extensions-runtime" as File
 project(':plugins:android-extensions-ide').projectDir = "$rootDir/plugins/android-extensions/android-extensions-idea" as File
-project(':plugins:android-extensions-jps').projectDir = "$rootDir/plugins/android-extensions/android-extensions-jps" as File
 project(':android-lint').projectDir = "$rootDir/prepare/android-lint" as File
 project(':kotlin-allopen-compiler-plugin').projectDir = "$rootDir/plugins/allopen/allopen-cli" as File
 project(':allopen-ide-plugin').projectDir = "$rootDir/plugins/allopen/allopen-ide" as File
@@ -293,9 +299,6 @@ project(':noarg-ide-plugin').projectDir = "$rootDir/plugins/noarg/noarg-ide" as 
 project(':kotlin-sam-with-receiver-compiler-plugin').projectDir = "$rootDir/plugins/sam-with-receiver/sam-with-receiver-cli" as File
 project(':sam-with-receiver-ide-plugin').projectDir = "$rootDir/plugins/sam-with-receiver/sam-with-receiver-ide" as File
 project(':kotlin-source-sections-compiler-plugin').projectDir = "$rootDir/plugins/source-sections/source-sections-compiler" as File
-project(':tools:binary-compatibility-validator').projectDir = "$rootDir/libraries/tools/binary-compatibility-validator" as File
-project(':tools:kotlin-stdlib-js-merger').projectDir = "$rootDir/libraries/tools/kotlin-stdlib-js-merger" as File
-project(':tools:kotlin-stdlib-gen').projectDir = "$rootDir/libraries/tools/kotlin-stdlib-gen" as File
 project(':tools:kotlinp').projectDir = "$rootDir/libraries/tools/kotlinp" as File
 project(':kotlin-gradle-plugin-api').projectDir = "$rootDir/libraries/tools/kotlin-gradle-plugin-api" as File
 project(':kotlin-gradle-plugin-dsl-codegen').projectDir = "$rootDir/libraries/tools/kotlin-gradle-plugin-dsl-codegen" as File
@@ -325,8 +328,8 @@ project(':kotlin-scripting-jvm').projectDir = "$rootDir/libraries/scripting/jvm"
 project(':kotlin-scripting-jvm-host').projectDir = "$rootDir/libraries/scripting/jvm-host" as File
 project(':kotlin-scripting-jvm-host-embeddable').projectDir = "$rootDir/libraries/scripting/jvm-host-embeddable" as File
 project(':kotlin-scripting-intellij').projectDir = "$rootDir/libraries/scripting/intellij" as File
-project(':kotlin-scripting-compiler').projectDir = "$rootDir/plugins/scripting/scripting-cli" as File
-project(':kotlin-scripting-compiler-embeddable').projectDir = "$rootDir/plugins/scripting/scripting-embeddable" as File
+project(':kotlin-scripting-compiler').projectDir = "$rootDir/plugins/scripting/scripting-compiler" as File
+project(':kotlin-scripting-compiler-embeddable').projectDir = "$rootDir/plugins/scripting/scripting-compiler-embeddable" as File
 project(':kotlin-scripting-idea').projectDir = "$rootDir/plugins/scripting/scripting-idea" as File
 project(':kotlin-main-kts').projectDir = "$rootDir/libraries/tools/kotlin-main-kts" as File
 project(':kotlin-main-kts-test').projectDir = "$rootDir/libraries/tools/kotlin-main-kts-test" as File
@@ -339,7 +342,6 @@ project(':pill:generate-all-tests').projectDir = "$rootDir/plugins/pill/generate
 project(':kotlin-imports-dumper-compiler-plugin').projectDir = "$rootDir/plugins/imports-dumper" as File
 project(':libraries:kotlin-prepush-hook').projectDir = "$rootDir/libraries/tools/kotlin-prepush-hook" as File
 project(':plugins:jvm-abi-gen').projectDir = "$rootDir/plugins/jvm-abi-gen" as File
-project(':usage-statistics').projectDir = "$rootDir/usage-statistics" as File
 
 // plugin markers:
 project(':kotlin-gradle-plugin:plugin-marker').projectDir = file("$rootDir/libraries/tools/kotlin-gradle-plugin/plugin-marker")
@@ -350,4 +352,6 @@ project(':kotlinx-serialization-compiler-plugin').projectDir = file("$rootDir/pl
 project(':kotlinx-serialization-ide-plugin').projectDir = file("$rootDir/plugins/kotlin-serialization/kotlin-serialization-ide")
 project(':kotlin-serialization').projectDir = file("$rootDir/libraries/tools/kotlin-serialization")
 project(':kotlin-serialization-unshaded').projectDir = file("$rootDir/libraries/tools/kotlin-serialization-unshaded")
-project(':kotlin-idl2k').projectDir = file("$rootDir/libraries/tools/idl2k")
+
+// Uncomment to use locally built protobuf-relocated
+// includeBuild("custom-dependencies/protobuf")

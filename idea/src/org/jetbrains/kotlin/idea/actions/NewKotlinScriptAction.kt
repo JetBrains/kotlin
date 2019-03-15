@@ -38,7 +38,7 @@ class NewKotlinScriptAction : CreateFileFromTemplateAction(
     }
 
     override fun createFileFromTemplate(name: String, template: FileTemplate, dir: PsiDirectory) =
-        NewKotlinFileAction.createFileFromTemplate(name, template, dir)
+        NewKotlinFileAction.createFileFromTemplateWithStat(name, template, dir)
 
     override fun getActionName(directory: PsiDirectory, newName: String, templateName: String) = "Kotlin Script"
 

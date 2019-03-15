@@ -37,7 +37,7 @@ internal fun String?.orAnonymous(kind: String = ""): String =
         this ?: "<anonymous" + (if (kind.isNotBlank()) " $kind" else "") + ">"
 
 internal fun constructAnnotation(psi: KtAnnotationEntry, targetClass: KClass<out Annotation>, project: Project): Annotation {
-    val module = ModuleDescriptorImpl(Name.special("<script-annotations-preprocessing>"), LockBasedStorageManager(), DefaultBuiltIns.Instance)
+    val module = ModuleDescriptorImpl(Name.special("<script-annotations-preprocessing>"), LockBasedStorageManager("scriptAnnotationsPreprocessing"), DefaultBuiltIns.Instance)
     val evaluator = ConstantExpressionEvaluator(module, LanguageVersionSettingsImpl.DEFAULT, project)
     val trace = BindingTraceContext()
 

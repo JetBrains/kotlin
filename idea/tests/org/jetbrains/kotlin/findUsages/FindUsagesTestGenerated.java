@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -973,6 +973,11 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
                 runTest("idea/testData/findUsages/kotlin/findPropertyUsages/javaPropertyUsages2.0.kt");
             }
 
+            @TestMetadata("javaPropertyUsages3.0.kt")
+            public void testJavaPropertyUsages3() throws Exception {
+                runTest("idea/testData/findUsages/kotlin/findPropertyUsages/javaPropertyUsages3.0.kt");
+            }
+
             @TestMetadata("javaPropertyWriteUsages.0.kt")
             public void testJavaPropertyWriteUsages() throws Exception {
                 runTest("idea/testData/findUsages/kotlin/findPropertyUsages/javaPropertyWriteUsages.0.kt");
@@ -1379,9 +1384,29 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/findUsages/kotlin/script"), Pattern.compile("^(.+)\\.0\\.(kt|kts)$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("anonymousObject.0.kts")
+            public void testAnonymousObject() throws Exception {
+                runTest("idea/testData/findUsages/kotlin/script/anonymousObject.0.kts");
+            }
+
+            @TestMetadata("anonymousObjectAsInitializer.0.kts")
+            public void testAnonymousObjectAsInitializer() throws Exception {
+                runTest("idea/testData/findUsages/kotlin/script/anonymousObjectAsInitializer.0.kts");
+            }
+
+            @TestMetadata("anonymousObjectInFun.0.kts")
+            public void testAnonymousObjectInFun() throws Exception {
+                runTest("idea/testData/findUsages/kotlin/script/anonymousObjectInFun.0.kts");
+            }
+
             @TestMetadata("dummy.0.kts")
             public void testDummy() throws Exception {
                 runTest("idea/testData/findUsages/kotlin/script/dummy.0.kts");
+            }
+
+            @TestMetadata("localClass.0.kts")
+            public void testLocalClass() throws Exception {
+                runTest("idea/testData/findUsages/kotlin/script/localClass.0.kts");
             }
         }
 

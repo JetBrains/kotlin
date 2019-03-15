@@ -11,7 +11,7 @@ plugins {
 val packedJars by configurations.creating
 
 dependencies {
-    compile(project(":kotlin-stdlib"))
+    compile(kotlinStdlib())
     packedJars(project(":kotlin-annotation-processing")) { isTransitive = false }
     runtime(projectRuntimeJar(":kotlin-compiler-embeddable"))
 }
@@ -19,6 +19,8 @@ dependencies {
 projectTest {
     workingDir = projectDir
 }
+
+publish()
 
 val jar: Jar by tasks
 jar.apply {
@@ -33,5 +35,3 @@ runtimeJar(rewriteDepsToShadedCompiler(
 
 sourcesJar()
 javadocJar()
-
-publish()

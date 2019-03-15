@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -521,6 +521,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
             runTest("compiler/testData/psi/NewlinesInParentheses.kt");
         }
 
+        @TestMetadata("noCommaBetweenArguments.kt")
+        public void testNoCommaBetweenArguments() throws Exception {
+            runTest("compiler/testData/psi/noCommaBetweenArguments.kt");
+        }
+
         @TestMetadata("NonTypeBeforeDotInBaseClass.kt")
         public void testNonTypeBeforeDotInBaseClass() throws Exception {
             runTest("compiler/testData/psi/NonTypeBeforeDotInBaseClass.kt");
@@ -860,6 +865,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
                     runTest("compiler/testData/psi/annotation/at/expressionJustAtTyped.kt");
                 }
 
+                @TestMetadata("kt21055.kt")
+                public void testKt21055() throws Exception {
+                    runTest("compiler/testData/psi/annotation/at/kt21055.kt");
+                }
+
                 @TestMetadata("modifierAtFileStart.kt")
                 public void testModifierAtFileStart() throws Exception {
                     runTest("compiler/testData/psi/annotation/at/modifierAtFileStart.kt");
@@ -873,6 +883,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
                 @TestMetadata("recoveryWhitespaceBeforeColon.kt")
                 public void testRecoveryWhitespaceBeforeColon() throws Exception {
                     runTest("compiler/testData/psi/annotation/at/recoveryWhitespaceBeforeColon.kt");
+                }
+
+                @TestMetadata("recoveryWhitespaceBeforeColon_ERR.kt")
+                public void testRecoveryWhitespaceBeforeColon_ERR() throws Exception {
+                    runTest("compiler/testData/psi/annotation/at/recoveryWhitespaceBeforeColon_ERR.kt");
                 }
 
                 @TestMetadata("validDeclarations.kt")
@@ -1923,6 +1938,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
                 runTest("compiler/testData/psi/recovery/DoWhileWithoutLPar.kt");
             }
 
+            @TestMetadata("enumWthoutClass.kt")
+            public void testEnumWthoutClass() throws Exception {
+                runTest("compiler/testData/psi/recovery/enumWthoutClass.kt");
+            }
+
             @TestMetadata("ForEmptyParentheses.kt")
             public void testForEmptyParentheses() throws Exception {
                 runTest("compiler/testData/psi/recovery/ForEmptyParentheses.kt");
@@ -1996,6 +2016,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
             @TestMetadata("ImportRecovery.kt")
             public void testImportRecovery() throws Exception {
                 runTest("compiler/testData/psi/recovery/ImportRecovery.kt");
+            }
+
+            @TestMetadata("importsWithConflict.kt")
+            public void testImportsWithConflict() throws Exception {
+                runTest("compiler/testData/psi/recovery/importsWithConflict.kt");
             }
 
             @TestMetadata("IncompleteAccessor1.kt")
@@ -2133,6 +2158,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
                 runTest("compiler/testData/psi/recovery/NoArrowInWhen.kt");
             }
 
+            @TestMetadata("NoGTInTypeArguments.kt")
+            public void testNoGTInTypeArguments() throws Exception {
+                runTest("compiler/testData/psi/recovery/NoGTInTypeArguments.kt");
+            }
+
             @TestMetadata("PackageNewLineRecovery.kt")
             public void testPackageNewLineRecovery() throws Exception {
                 runTest("compiler/testData/psi/recovery/PackageNewLineRecovery.kt");
@@ -2146,6 +2176,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
             @TestMetadata("SameLineStatementRecovery.kt")
             public void testSameLineStatementRecovery() throws Exception {
                 runTest("compiler/testData/psi/recovery/SameLineStatementRecovery.kt");
+            }
+
+            @TestMetadata("UnfinishedExtension.kt")
+            public void testUnfinishedExtension() throws Exception {
+                runTest("compiler/testData/psi/recovery/UnfinishedExtension.kt");
             }
 
             @TestMetadata("ValNoName.kt")
@@ -2166,6 +2201,16 @@ public class ParsingTestGenerated extends AbstractParsingTest {
             @TestMetadata("ValueParameterNoTypeRecovery.kt")
             public void testValueParameterNoTypeRecovery() throws Exception {
                 runTest("compiler/testData/psi/recovery/ValueParameterNoTypeRecovery.kt");
+            }
+
+            @TestMetadata("valueParameterRecovery.kt")
+            public void testValueParameterRecovery() throws Exception {
+                runTest("compiler/testData/psi/recovery/valueParameterRecovery.kt");
+            }
+
+            @TestMetadata("valueParameterRecoveryWithTypes.kt")
+            public void testValueParameterRecoveryWithTypes() throws Exception {
+                runTest("compiler/testData/psi/recovery/valueParameterRecoveryWithTypes.kt");
             }
 
             @TestMetadata("WhenWithoutBraces.kt")

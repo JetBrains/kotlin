@@ -70,7 +70,7 @@ class JvmIdePlatformKindTooling : IdePlatformKindTooling() {
                 val framework = TestFrameworks.detectFramework(lightClass) ?: return null
                 if (!framework.isTestMethod(lightMethod, /*checkAbstract = */ false)) return null
 
-                "java:test://${lightClass.qualifiedName}.${lightMethod.name}" to framework
+                "java:test://${lightClass.qualifiedName}/${lightMethod.name}" to framework
             }
 
             else -> return null

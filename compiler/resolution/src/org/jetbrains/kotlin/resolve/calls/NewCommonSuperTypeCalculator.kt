@@ -154,7 +154,7 @@ object NewCommonSuperTypeCalculator {
             nullable = false
         )
 
-        val typeCheckerContext = TypeCheckerContext(false)
+        val typeCheckerContext = ClassicTypeCheckerContext(false)
 
         /**
          * Sometimes one type can have several supertypes with given type constructor, suppose A <: List<Int> and A <: List<Double>.

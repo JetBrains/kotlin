@@ -1,0 +1,8 @@
+public open class Annotated : R|java/lang/Object| {
+    @R|org/jetbrains/annotations/NotNull|() public open operator function foo(@R|org/jetbrains/annotations/Nullable|() param: R|kotlin/String|?): R|kotlin/String|
+
+}
+public open class AnnotatedDerived : R|Annotated| {
+    public open operator function foo(param: R|kotlin/String|?): R|kotlin/String|
+
+}

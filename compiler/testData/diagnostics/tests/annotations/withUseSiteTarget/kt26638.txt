@@ -1,0 +1,14 @@
+package
+
+@get:Ann(x = 10) @get:Ann(x = 20) public val a: kotlin.String
+@set:Ann(x = 10) @set:Ann(x = 20) public var b: kotlin.String
+@setparam:Ann(x = 20) @setparam:Ann(x = 10) public var c: kotlin.String
+@get:Ann(x = 10) @get:Ann(x = 20) @get:Ann(x = 30) @get:Ann(x = 40) public val d: kotlin.String
+
+public final annotation class Ann : kotlin.Annotation {
+    public constructor Ann(/*0*/ x: kotlin.Int)
+    public final val x: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

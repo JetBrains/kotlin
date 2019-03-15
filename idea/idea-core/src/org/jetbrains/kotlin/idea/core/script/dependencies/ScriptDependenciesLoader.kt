@@ -14,6 +14,7 @@ import com.intellij.openapi.util.EmptyRunnable
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.containers.SLRUMap
 import org.jetbrains.kotlin.idea.core.script.*
+import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesCache.Companion.MAX_SCRIPTS_CACHED
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.ScriptContentLoader
@@ -24,17 +25,19 @@ import kotlin.script.experimental.dependencies.DependenciesResolver
 abstract class ScriptDependenciesLoader(protected val project: Project) {
 
     fun updateDependencies(file: VirtualFile, scriptDef: KotlinScriptDefinition) {
-        if (cache[file] == null || fileModificationStamps[file.path] != file.modificationStamp) {
+        if (fileModificationStamps[file.path] != file.modificationStamp) {
             fileModificationStamps.put(file.path, file.modificationStamp)
 
             loadDependencies(file, scriptDef)
         }
     }
 
-    private val fileModificationStamps: SLRUMap<String, Long> = SLRUMap(10, 10)
+    private val fileModificationStamps: SLRUMap<String, Long> = SLRUMap(MAX_SCRIPTS_CACHED, MAX_SCRIPTS_CACHED)
 
     protected abstract fun loadDependencies(file: VirtualFile, scriptDef: KotlinScriptDefinition)
     protected abstract fun shouldShowNotification(): Boolean
+
+    protected var shouldNotifyRootsChanged = false
 
     protected val contentLoader = ScriptContentLoader(project)
     protected val cache: ScriptDependenciesCache = ServiceManager.getService(project, ScriptDependenciesCache::class.java)
@@ -86,15 +89,20 @@ abstract class ScriptDependenciesLoader(protected val project: Project) {
         }
 
         if (rootsChanged) {
-            notifyRootsChanged()
+            shouldNotifyRootsChanged = true
         }
     }
 
-    protected fun notifyRootsChanged() {
+    open fun notifyRootsChanged(): Boolean = submitMakeRootsChange()
+
+    protected fun submitMakeRootsChange(): Boolean {
+        if (!shouldNotifyRootsChanged) return false
+
         val doNotifyRootsChanged = Runnable {
             runWriteAction {
                 if (project.isDisposed) return@runWriteAction
 
+                shouldNotifyRootsChanged = false
                 ProjectRootManagerEx.getInstanceEx(project)?.makeRootsChange(EmptyRunnable.getInstance(), false, true)
                 ScriptDependenciesModificationTracker.getInstance(project).incModificationCount()
             }
@@ -105,5 +113,7 @@ abstract class ScriptDependenciesLoader(protected val project: Project) {
         } else {
             TransactionGuard.getInstance().submitTransactionLater(project, doNotifyRootsChanged)
         }
+
+        return true
     }
 }

@@ -1,0 +1,6 @@
+<T> public abstract interface Comparator : R|java/lang/Object| {
+    public abstract operator function compare(o1: R|ft<T, T?>|!, o2: R|ft<T, T?>|!): R|kotlin/Int|
+
+    public abstract operator function equals(obj: R|ft<kotlin/Any, kotlin/Any?>|!): R|kotlin/Boolean|
+
+}

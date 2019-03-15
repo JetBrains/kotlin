@@ -6,13 +6,15 @@
 package org.jetbrains.kotlin.codegen.inline
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.codegen.OwnerKind
+import org.jetbrains.kotlin.codegen.PropertyReferenceCodegen
+import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding.*
 import org.jetbrains.kotlin.codegen.binding.MutableClosure
 import org.jetbrains.kotlin.codegen.context.EnclosedValueDescriptor
-import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
@@ -57,7 +59,7 @@ abstract class LambdaInfo(@JvmField val isCrossInline: Boolean) : LabelOwner {
 
         for (info in capturedVars) {
             val field = remapper.findField(FieldInsnNode(0, info.containingLambdaName, info.fieldName, ""))
-                    ?: error("Captured field not found: " + info.containingLambdaName + "." + info.fieldName)
+                ?: error("Captured field not found: " + info.containingLambdaName + "." + info.fieldName)
             builder.addCapturedParam(field, info.fieldName)
         }
 
@@ -124,13 +126,13 @@ class DefaultLambda(
         }, ClassReader.SKIP_CODE or ClassReader.SKIP_FRAMES or ClassReader.SKIP_DEBUG)
 
         invokeMethodDescriptor =
-                parameterDescriptor.type.memberScope
-                    .getContributedFunctions(OperatorNameConventions.INVOKE, NoLookupLocation.FROM_BACKEND)
-                    .single()
-                    .let {
-                        //property reference generates erased 'get' method
-                        if (isPropertyReference) it.original else it
-                    }
+            parameterDescriptor.type.memberScope
+                .getContributedFunctions(OperatorNameConventions.INVOKE, NoLookupLocation.FROM_BACKEND)
+                .single()
+                .let {
+                    //property reference generates erased 'get' method
+                    if (isPropertyReference) it.original else it
+                }
 
         val descriptor = Type.getMethodDescriptor(Type.VOID_TYPE, *capturedArgs)
         val constructor = getMethodNode(
@@ -145,29 +147,30 @@ class DefaultLambda(
         }
 
         capturedVars =
-                if (isFunctionReference || isPropertyReference)
-                    constructor?.desc?.let { Type.getArgumentTypes(it) }?.singleOrNull()?.let {
-                        originalBoundReceiverType = it
-                        listOf(capturedParamDesc(AsmUtil.RECEIVER_PARAMETER_NAME, it.boxReceiverForBoundReference()))
-                    } ?: emptyList()
-                else
-                    constructor?.findCapturedFieldAssignmentInstructions()?.map { fieldNode ->
-                        capturedParamDesc(fieldNode.name, Type.getType(fieldNode.desc))
-                    }?.toList() ?: emptyList()
+            if (isFunctionReference || isPropertyReference)
+                constructor?.desc?.let { Type.getArgumentTypes(it) }?.singleOrNull()?.let {
+                    originalBoundReceiverType = it
+                    listOf(capturedParamDesc(AsmUtil.RECEIVER_PARAMETER_NAME, it.boxReceiverForBoundReference()))
+                } ?: emptyList()
+            else
+                constructor?.findCapturedFieldAssignmentInstructions()?.map { fieldNode ->
+                    capturedParamDesc(fieldNode.name, Type.getType(fieldNode.desc))
+                }?.toList() ?: emptyList()
 
         isBoundCallableReference = (isFunctionReference || isPropertyReference) && capturedVars.isNotEmpty()
 
-        invokeMethod = Method(
-            (if (isPropertyReference) OperatorNameConventions.GET else OperatorNameConventions.INVOKE).asString(),
-            sourceCompiler.state.typeMapper.mapSignatureSkipGeneric(invokeMethodDescriptor).asmMethod.descriptor
-        )
+        val methodName = (if (isPropertyReference) OperatorNameConventions.GET else OperatorNameConventions.INVOKE).asString()
+        val signature = sourceCompiler.state.typeMapper.mapSignatureSkipGeneric(invokeMethodDescriptor).asmMethod.descriptor
 
         node = getMethodNode(
             classReader.b,
-            invokeMethod.name,
-            invokeMethod.descriptor,
-            lambdaClassType
-        ) ?: error("Can't find method '${invokeMethod.name}${invokeMethod.descriptor}' in '${classReader.className}'")
+            methodName,
+            signature,
+            lambdaClassType,
+            signatureAmbiguity = true
+        ) ?: error("Can't find method '$methodName$signature' in '${classReader.className}'")
+
+        invokeMethod = Method(node.node.name, node.node.desc)
 
         if (needReification) {
             //nested classes could also require reification
@@ -176,11 +179,11 @@ class DefaultLambda(
     }
 }
 
-fun Type.boxReceiverForBoundReference() =
+internal fun Type.boxReceiverForBoundReference() =
     AsmUtil.boxType(this)
 
-fun Type.boxReceiverForBoundReference(kotlinType: KotlinType, state: GenerationState) =
-    AsmUtil.boxType(this, kotlinType, state)
+internal fun Type.boxReceiverForBoundReference(kotlinType: KotlinType, typeMapper: KotlinTypeMapper) =
+    AsmUtil.boxType(this, kotlinType, typeMapper)
 
 abstract class ExpressionLambda(protected val typeMapper: KotlinTypeMapper, isCrossInline: Boolean) : LambdaInfo(isCrossInline) {
 
@@ -233,7 +236,7 @@ class PsiExpressionLambda(
         if (function == null && expression is KtCallableReferenceExpression) {
             val variableDescriptor =
                 bindingContext.get(BindingContext.VARIABLE, functionWithBodyOrCallableReference) as? VariableDescriptorWithAccessors
-                        ?: throw AssertionError("""Reference expression not resolved to variable descriptor with accessors: ${expression.getText()}""")
+                    ?: throw AssertionError("""Reference expression not resolved to variable descriptor with accessors: ${expression.getText()}""")
             classDescriptor = CodegenBinding.anonymousClassForCallable(bindingContext, variableDescriptor)
             lambdaClassType = typeMapper.mapClass(classDescriptor)
             val getFunction = PropertyReferenceCodegen.findGetFunction(variableDescriptor)

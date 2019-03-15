@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.logging
 
+import org.gradle.api.Task
 import org.gradle.api.logging.Logger
 import org.jetbrains.kotlin.compilerRunner.KotlinLogger
 
@@ -31,4 +32,17 @@ internal inline fun KotlinLogger.kotlinDebug(fn: () -> String) {
         val msg = fn()
         debug("[KOTLIN] $msg")
     }
+}
+
+internal inline fun <T> KotlinLogger.logTime(action: String, fn: () -> T): T {
+    val startNs = System.nanoTime()
+    val result = fn()
+    val endNs = System.nanoTime()
+
+    val timeNs = endNs - startNs
+    val timeMs = timeNs.toDouble() / 1_000_000
+
+    debug(String.format("%s took %.2f ms", action, timeMs))
+
+    return result
 }

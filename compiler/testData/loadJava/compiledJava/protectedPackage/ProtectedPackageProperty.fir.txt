@@ -1,0 +1,6 @@
+public open class ProtectedPackageProperty : R|java/lang/Object| {
+    protected/*protected and package*/ open property foo(var): R|kotlin/Int|
+        protected/*protected and package*/ get(): R|kotlin/Int|
+        protected/*protected and package*/ set(value: R|kotlin/Int|): kotlin/Unit
+
+}

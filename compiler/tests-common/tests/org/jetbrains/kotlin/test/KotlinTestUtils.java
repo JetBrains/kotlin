@@ -107,7 +107,6 @@ public class KotlinTestUtils {
     private static final boolean DONT_IGNORE_TESTS_WORKING_ON_COMPATIBLE_BACKEND =
             Boolean.getBoolean("org.jetbrains.kotlin.dont.ignore.tests.working.on.compatible.backend");
 
-
     private static final boolean AUTOMATICALLY_UNMUTE_PASSED_TESTS = false;
     private static final boolean AUTOMATICALLY_MUTE_FAILED_TESTS = false;
 
@@ -303,9 +302,6 @@ public class KotlinTestUtils {
             return true;
         }
     };
-
-    // We suspect sequences of eight consecutive hexadecimal digits to be a package part hash code
-    private static final Pattern STRIP_PACKAGE_PART_HASH_PATTERN = Pattern.compile("\\$([0-9a-f]{8})");
 
     private KotlinTestUtils() {
     }
@@ -635,17 +631,24 @@ public class KotlinTestUtils {
     }
 
     public static void assertEqualsToFile(@NotNull File expectedFile, @NotNull Editor editor) {
-        Caret caret = editor.getCaretModel().getCurrentCaret();
-        int selectionStart = caret.getSelectionStart();
-        int selectionEnd = caret.getSelectionEnd();
+        assertEqualsToFile(expectedFile, editor, true);
+    }
 
-        String afterText = TagsTestDataUtil.insertTagsInText(
-                Lists.<TagsTestDataUtil.TagInfo>newArrayList(
-                        new TagsTestDataUtil.TagInfo<>(caret.getOffset(), true, "caret"),
-                        new TagsTestDataUtil.TagInfo<>(selectionStart, true, "selection"),
-                        new TagsTestDataUtil.TagInfo<>(selectionEnd, false, "selection")),
-                editor.getDocument().getText()
+    public static void assertEqualsToFile(@NotNull File expectedFile, @NotNull Editor editor, Boolean enableSelectionTags) {
+        Caret caret = editor.getCaretModel().getCurrentCaret();
+        List<TagsTestDataUtil.TagInfo> tags = Lists.newArrayList(
+                new TagsTestDataUtil.TagInfo<>(caret.getOffset(), true, "caret")
         );
+
+        if (enableSelectionTags) {
+            int selectionStart = caret.getSelectionStart();
+            int selectionEnd = caret.getSelectionEnd();
+
+            tags.add(new TagsTestDataUtil.TagInfo<>(selectionStart, true, "selection"));
+            tags.add(new TagsTestDataUtil.TagInfo<>(selectionEnd, false, "selection"));
+        }
+
+        String afterText = TagsTestDataUtil.insertTagsInText(tags, editor.getDocument().getText());
 
         assertEqualsToFile(expectedFile, afterText);
     }
@@ -1267,20 +1270,6 @@ public class KotlinTestUtils {
     @NotNull
     public static File replaceExtension(@NotNull File file, @Nullable String newExtension) {
         return new File(file.getParentFile(), FileUtil.getNameWithoutExtension(file) + (newExtension == null ? "" : "." + newExtension));
-    }
-
-    @NotNull
-    public static String replaceHashWithStar(@NotNull String string) {
-        return replaceHash(string, "*");
-    }
-
-    public static String replaceHash(@NotNull String string, @NotNull String replacement) {
-        //TODO: hashes are still used in SamWrapperCodegen
-        Matcher matcher = STRIP_PACKAGE_PART_HASH_PATTERN.matcher(string);
-        if (matcher.find()) {
-            return matcher.replaceAll("\\$" + replacement);
-        }
-        return string;
     }
 
     public static boolean isAllFilesPresentTest(String testName) {

@@ -38,11 +38,13 @@ interface IrExternalPackageFragment : IrPackageFragment {
     override val symbol: IrExternalPackageFragmentSymbol
 }
 
-interface IrFile : IrPackageFragment, IrAnnotationContainer {
+interface IrFile : IrPackageFragment, IrAnnotationContainer, IrMetadataSourceOwner {
     override val symbol: IrFileSymbol
 
     val fileEntry: SourceManager.FileEntry
     val fileAnnotations: MutableList<AnnotationDescriptor>
+
+    override val metadata: MetadataSource.File?
 
     override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrFile =
         accept(transformer, data) as IrFile

@@ -6,11 +6,25 @@
 package org.jetbrains.kotlin.fir.symbols.impl
 
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
-import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.name.Name
 
-class FirTypeParameterSymbol : AbstractFirBasedSymbol<FirTypeParameter>(), ConeTypeParameterSymbol {
+class FirTypeParameterSymbol : AbstractFirBasedSymbol<FirTypeParameter>(), ConeTypeParameterSymbol, ConeTypeParameterLookupTag,
+    ConeClassifierLookupTagWithFixedSymbol {
+
     override val name: Name
         get() = fir.name
+
+    override val symbol: ConeClassifierSymbol
+        get() = this
+
+    override fun toLookupTag(): ConeTypeParameterLookupTag = this
+
+    override fun equals(other: Any?): Boolean {
+        return other is FirTypeParameterSymbol && fir == other.fir
+    }
+
+    override fun hashCode(): Int {
+        return fir.hashCode()
+    }
 }

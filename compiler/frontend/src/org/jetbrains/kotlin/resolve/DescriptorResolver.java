@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationSplitter;
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.annotations.CompositeAnnotations;
 import org.jetbrains.kotlin.descriptors.impl.*;
@@ -395,7 +396,7 @@ public class DescriptorResolver {
             return new CompositeAnnotations(allAnnotations, additionalAnnotations);
         }
 
-        AnnotationSplitter splitter = AnnotationSplitter.create(storageManager, allAnnotations, SetsKt.setOf(CONSTRUCTOR_PARAMETER));
+        AnnotationSplitter splitter = new AnnotationSplitter(storageManager, allAnnotations, SetsKt.setOf(CONSTRUCTOR_PARAMETER));
         return new CompositeAnnotations(splitter.getAnnotationsForTarget(CONSTRUCTOR_PARAMETER), additionalAnnotations);
     }
 
@@ -868,12 +869,16 @@ public class DescriptorResolver {
                                                                  trace.getBindingContext(), container)
                             : Modality.FINAL;
 
-        AnnotationSplitter.PropertyWrapper wrapper = new AnnotationSplitter.PropertyWrapper(variableDeclaration);
-
         Annotations allAnnotations = annotationResolver.resolveAnnotationsWithoutArguments(scopeForDeclarationResolution, modifierList, trace);
-        AnnotationSplitter annotationSplitter =
-                new AnnotationSplitter(storageManager, allAnnotations,
-                                       () -> AnnotationSplitter.getTargetSet(false, trace.getBindingContext(), wrapper));
+        Set<AnnotationUseSiteTarget> targetSet = EnumSet.of(PROPERTY, PROPERTY_GETTER, FIELD);
+        if (isVar) {
+            targetSet.add(PROPERTY_SETTER);
+            targetSet.add(SETTER_PARAMETER);
+        }
+        if (variableDeclaration instanceof KtProperty && ((KtProperty) variableDeclaration).hasDelegate()) {
+            targetSet.add(PROPERTY_DELEGATE_FIELD);
+        }
+        AnnotationSplitter annotationSplitter = new AnnotationSplitter(storageManager, allAnnotations, targetSet);
 
         Annotations propertyAnnotations = new CompositeAnnotations(CollectionsKt.listOf(
                 annotationSplitter.getAnnotationsForTarget(PROPERTY),
@@ -897,7 +902,6 @@ public class DescriptorResolver {
                 modifierList != null && modifierList.hasModifier(KtTokens.EXTERNAL_KEYWORD),
                 propertyInfo.getHasDelegate()
         );
-        wrapper.setDescriptor(propertyDescriptor);
 
         List<TypeParameterDescriptorImpl> typeParameterDescriptors;
         LexicalScope scopeForDeclarationResolutionWithTypeParameters;
@@ -940,7 +944,7 @@ public class DescriptorResolver {
 
         ReceiverParameterDescriptor receiverDescriptor;
         if (receiverType != null) {
-            AnnotationSplitter splitter = AnnotationSplitter.create(storageManager, receiverType.getAnnotations(), EnumSet.of(RECEIVER));
+            AnnotationSplitter splitter = new AnnotationSplitter(storageManager, receiverType.getAnnotations(), EnumSet.of(RECEIVER));
             receiverDescriptor = DescriptorFactory.createExtensionReceiverParameterForCallable(
                     propertyDescriptor, receiverType, splitter.getAnnotationsForTarget(RECEIVER)
             );
@@ -1225,11 +1229,13 @@ public class DescriptorResolver {
             }
         }
 
-        AnnotationSplitter.PropertyWrapper propertyWrapper = new AnnotationSplitter.PropertyWrapper(parameter);
         Annotations allAnnotations = annotationResolver.resolveAnnotationsWithoutArguments(scope, parameter.getModifierList(), trace);
-        AnnotationSplitter annotationSplitter =
-                new AnnotationSplitter(storageManager, allAnnotations,
-                                       () -> AnnotationSplitter.getTargetSet(true, trace.getBindingContext(), propertyWrapper));
+        Set<AnnotationUseSiteTarget> targetSet = EnumSet.of(PROPERTY, PROPERTY_GETTER, FIELD, CONSTRUCTOR_PARAMETER, PROPERTY_SETTER);
+        if (isMutable) {
+            targetSet.add(PROPERTY_SETTER);
+            targetSet.add(SETTER_PARAMETER);
+        }
+        AnnotationSplitter annotationSplitter = new AnnotationSplitter(storageManager, allAnnotations, targetSet);
 
         Annotations propertyAnnotations = new CompositeAnnotations(
                 annotationSplitter.getAnnotationsForTarget(PROPERTY),
@@ -1252,7 +1258,6 @@ public class DescriptorResolver {
                 false,
                 false
         );
-        propertyWrapper.setDescriptor(propertyDescriptor);
         propertyDescriptor.setType(type, Collections.emptyList(), getDispatchReceiverParameterIfNeeded(classDescriptor), null);
 
         Annotations setterAnnotations = annotationSplitter.getAnnotationsForTarget(PROPERTY_SETTER);

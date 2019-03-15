@@ -3,9 +3,8 @@
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
- * SECTIONS: constant-literals, real-literals
- * PARAGRAPH: 5
- * SENTENCE: [1] A real literal without the type suffix has type kotlin.Double, a real literal with the type suffix has type kotlin.Float.
+ * SPEC VERSION: 0.1-draft
+ * PLACE: constant-literals, real-literals -> paragraph 5 -> sentence 1
  * NUMBER: 5
  * DESCRIPTION: A type checking of a real literal with omitted a fraction part and an exponent mark.
  */

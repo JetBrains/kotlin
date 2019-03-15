@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.resolve.checkers.*
 import org.jetbrains.kotlin.resolve.lazy.DelegationFilter
 import org.jetbrains.kotlin.types.DynamicTypesSettings
 
-
 private val DEFAULT_DECLARATION_CHECKERS = listOf(
     DataClassDeclarationChecker(),
     ConstModifierChecker,
@@ -45,7 +44,8 @@ private val DEFAULT_CALL_CHECKERS = listOf(
     CallableReferenceCompatibilityChecker(), LateinitIntrinsicApplicabilityChecker,
     UnderscoreUsageChecker, AssigningNamedArgumentToVarargChecker(),
     PrimitiveNumericComparisonCallChecker, LambdaWithSuspendModifierCallChecker,
-    UselessElvisCallChecker(), ResultTypeWithNullableOperatorsChecker()
+    UselessElvisCallChecker(), ResultTypeWithNullableOperatorsChecker(), NullableVarargArgumentCallChecker,
+    NamedFunAsExpressionChecker, ContractNotAllowedCallChecker, ReifiedTypeParameterSubstitutionChecker(), TypeOfChecker
 )
 private val DEFAULT_TYPE_CHECKERS = emptyList<AdditionalTypeChecker>()
 private val DEFAULT_CLASSIFIER_USAGE_CHECKERS = listOf(

@@ -1,0 +1,5 @@
+FILE: TypeAliasExpansion.kt
+    public final class MyClass : R|b/TA| {
+        public constructor(): super<R|b/TA|>()
+
+    }

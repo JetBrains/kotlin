@@ -6,7 +6,7 @@ FILE fqName:<root> fileName:/throw.kt
   FUN name:testImplicitCast visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit flags:
     VALUE_PARAMETER name:a index:0 type:kotlin.Any flags:
     BLOCK_BODY
-      WHEN type=kotlin.Unit origin=null
+      WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Throwable
             typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Throwable modality:OPEN visibility:public flags: superTypes:[kotlin.Any; java.io.Serializable]

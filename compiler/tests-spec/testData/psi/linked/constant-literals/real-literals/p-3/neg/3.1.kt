@@ -1,9 +1,8 @@
 /*
  * KOTLIN PSI SPEC TEST (NEGATIVE)
  *
- * SECTIONS: constant-literals, real-literals
- * PARAGRAPH: 3
- * SENTENCE: [3] Unlike other languages, Kotlin does not support omitting the fraction part, but leaving the decimal point in.
+ * SPEC VERSION: 0.1-draft
+ * PLACES: constant-literals, real-literals -> paragraph 3 -> sentence 3
  * NUMBER: 1
  * DESCRIPTION: Real literals with a not allowed dot at the end.
  */

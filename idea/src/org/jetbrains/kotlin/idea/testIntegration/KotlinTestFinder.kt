@@ -26,9 +26,8 @@ import com.intellij.psi.search.PsiShortNamesCache
 import com.intellij.testIntegration.JavaTestFinder
 import com.intellij.testIntegration.TestFinderHelper
 import com.intellij.util.CommonProcessors
-import com.intellij.util.containers.HashSet
-import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.asJava.findFacadeClass
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
@@ -71,8 +70,7 @@ class KotlinTestFinder : JavaTestFinder() {
 
                 if (eachClass is KtLightClassForFacade) {
                     eachClass.files.mapTo(classesWithWeights) { Pair.create(it, candidateNameWithWeight.second) }
-                }
-                else if (eachClass.isPhysical || eachClass is KtLightClassForSourceDeclaration) {
+                } else if (eachClass.isPhysical || eachClass is KtLightClassForSourceDeclaration) {
                     classesWithWeights.add(Pair.create(eachClass, candidateNameWithWeight.second))
                 }
             }
@@ -94,16 +92,22 @@ class KotlinTestFinder : JavaTestFinder() {
         val frameworks = TestFrameworks.getInstance()
 
         val cache = PsiShortNamesCache.getInstance(klass.project)
-        val names = HashSet<String>()
-        cache.getAllClassNames(names)
-
-        for (candidateName in names) {
-            if (!pattern.matcher(candidateName).matches()) continue
+        cache.processAllClassNames { candidateName ->
+            if (!pattern.matcher(candidateName).matches()) return@processAllClassNames true
             for (candidateClass in cache.getClassesByName(candidateName, scope)) {
-                if (!(frameworks.isTestClass(candidateClass) || frameworks.isPotentialTestClass(candidateClass))) continue
-                if (!candidateClass.isPhysical && candidateClass !is KtLightClassForSourceDeclaration) continue
-                processor.process(Pair.create(candidateClass, TestFinderHelper.calcTestNameProximity(klassName, candidateName)))
+                if (!(frameworks.isTestClass(candidateClass) || frameworks.isPotentialTestClass(candidateClass))) {
+                    return@processAllClassNames true
+                }
+                if (!candidateClass.isPhysical && candidateClass !is KtLightClassForSourceDeclaration) {
+                    return@processAllClassNames true
+                }
+
+                if (!processor.process(Pair.create(candidateClass, TestFinderHelper.calcTestNameProximity(klassName, candidateName)))) {
+                    return@processAllClassNames false
+                }
             }
+
+            return@processAllClassNames true
         }
 
         return TestFinderHelper.getSortedElements(classesWithProximities, true)

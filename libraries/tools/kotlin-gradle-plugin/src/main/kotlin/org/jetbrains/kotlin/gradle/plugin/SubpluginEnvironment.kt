@@ -58,7 +58,7 @@ class SubpluginEnvironment(
         kotlinCompilation
     )
 
-    fun <C : CommonCompilerArguments> addSubpluginOptions(
+    fun addSubpluginOptions(
         project: Project,
         kotlinTask: AbstractCompile,
         pluginOptions: CompilerPluginOptions,
@@ -66,7 +66,7 @@ class SubpluginEnvironment(
         variantData: Any? = null,
         androidProjectHandler: AbstractAndroidProjectHandler<out Any?>? = null,
         kotlinCompilation: KotlinCompilation<*>? = null
-    ): List<KotlinGradleSubplugin<AbstractKotlinCompile<C>>> {
+    ): List<KotlinGradleSubplugin<AbstractCompile>> {
         val appliedSubplugins = subplugins.filter { it.isApplicable(project, kotlinTask) }
         for (subplugin in appliedSubplugins) {
             if (!subplugin.isApplicable(project, kotlinTask)) continue

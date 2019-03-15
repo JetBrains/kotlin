@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
-import org.jetbrains.kotlin.fir.expressions.FirBody
+import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 interface FirDeclarationWithBody : FirDeclaration {
-    val body: FirBody?
+    val body: FirBlock?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitDeclarationWithBody(this, data)

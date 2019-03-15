@@ -5,29 +5,27 @@
 
 package org.jetbrains.kotlin.fir.symbols
 
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
+import org.jetbrains.kotlin.types.model.TypeParameterMarker
 
-interface ConeSymbol
+interface ConeSymbol : TypeConstructorMarker
 
-interface ConeTypeParameterSymbol : ConeSymbol {
-    val name: Name
+interface ConeClassifierSymbol : ConeSymbol, TypeParameterMarker {
+    fun toLookupTag(): ConeClassifierLookupTag
 }
 
-interface ConeClassLikeSymbol : ConeSymbol {
+interface ConeTypeParameterSymbol : ConeClassifierSymbol, ConeTypeParameterLookupTag {
+    override fun toLookupTag(): ConeTypeParameterLookupTag = this
+}
+
+interface ConeClassLikeSymbol : ConeClassifierSymbol, TypeConstructorMarker {
     val classId: ClassId
 
-    val typeParameters: List<ConeTypeParameterSymbol>
+    override fun toLookupTag(): ConeClassLikeLookupTag
 }
 
-interface ConeTypeAliasSymbol : ConeClassLikeSymbol {
-    val expansionType: ConeClassLikeType?
-}
+interface ConeTypeAliasSymbol : ConeClassLikeSymbol
 
-interface ConeClassSymbol : ConeClassLikeSymbol {
-    val kind: ClassKind
-
-    val superTypes: List<ConeClassLikeType>
-}
+interface ConeClassSymbol : ConeClassLikeSymbol

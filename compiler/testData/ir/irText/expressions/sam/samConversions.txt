@@ -54,7 +54,7 @@ FILE fqName:<root> fileName:/samConversions.kt
         $this: GET_VAR 'this@test4: J' type=J origin=null
         r: TYPE_OP type=java.lang.Runnable? origin=SAM_CONVERSION typeOperand=java.lang.Runnable?
           typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Runnable modality:ABSTRACT visibility:public flags: superTypes:[kotlin.Any]
-          WHEN type=kotlin.Function0<kotlin.Unit> origin=null
+          WHEN type=kotlin.Function0<kotlin.Unit> origin=IF
             BRANCH
               if: GET_VAR 'value-parameter flag: Boolean' type=kotlin.Boolean origin=null
               then: GET_VAR 'value-parameter a: () -> Unit' type=kotlin.Function0<kotlin.Unit> origin=null

@@ -12,8 +12,8 @@
       @0:0..11 VALUE_PARAMETER name:<this> type:kotlin.Any flags:
     @0:0..11 FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
       @0:0..11 VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-  @4:0..11 CLASS CLASS name:Test2 modality:FINAL visibility:internal flags: superTypes:[kotlin.Any]
-    @4:0..11 VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test2 flags:
+  @3:0..4:11 CLASS CLASS name:Test2 modality:FINAL visibility:internal flags: superTypes:[kotlin.Any]
+    @3:0..4:11 VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test2 flags:
     @4:0..11 CONSTRUCTOR visibility:public <> () returnType:Test2 flags:primary
       @3:0..4:11 BLOCK_BODY
         @3:0..4:11 DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -38,8 +38,8 @@
       @10:0..11 VALUE_PARAMETER name:<this> type:kotlin.Any flags:
     @10:0..11 FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
       @10:0..11 VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-  @14:0..11 CLASS CLASS name:Test4 modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
-    @14:0..11 VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test4 flags:
+  @13:0..14:11 CLASS CLASS name:Test4 modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
+    @13:0..14:11 VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test4 flags:
     @14:0..11 CONSTRUCTOR visibility:public <> () returnType:Test4 flags:primary
       @13:0..14:11 BLOCK_BODY
         @13:0..14:11 DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -51,8 +51,8 @@
       @13:0..14:11 VALUE_PARAMETER name:<this> type:kotlin.Any flags:
     @14:0..11 FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
       @13:0..14:11 VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-  @18:0..11 CLASS ENUM_CLASS name:Test5 modality:FINAL visibility:public flags: superTypes:[kotlin.Enum<Test5>]
-    @18:0..11 VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test5 flags:
+  @17:0..18:11 CLASS ENUM_CLASS name:Test5 modality:FINAL visibility:public flags: superTypes:[kotlin.Enum<Test5>]
+    @17:0..18:11 VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test5 flags:
     @18:0..11 CONSTRUCTOR visibility:private <> () returnType:Test5 flags:primary
       @17:0..18:11 BLOCK_BODY
         @17:0..18:11 ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
@@ -79,13 +79,13 @@
         @17:0..18:11 VALUE_PARAMETER name:<this> type:kotlin.Enum<Test5> flags:
     @18:0..11 FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Enum<Test5>) returnType:kotlin.String flags:
       @17:0..18:11 VALUE_PARAMETER name:<this> type:kotlin.Enum<Test5> flags:
-    @18:0..11 FUN ENUM_CLASS_SPECIAL_MEMBER name:values visibility:public modality:FINAL <> () returnType:kotlin.Array<Test5> flags:
-      @18:0..11 SYNTHETIC_BODY kind=ENUM_VALUES
-    @-1:-1..-1 FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:Test5 flags:
-      @-1:-1..-1 VALUE_PARAMETER name:value index:0 type:kotlin.String flags:
-      @18:0..11 SYNTHETIC_BODY kind=ENUM_VALUEOF
-  @22:0..11 CLASS ANNOTATION_CLASS name:Test6 modality:FINAL visibility:public flags: superTypes:[kotlin.Annotation]
-    @22:0..11 VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test6 flags:
+    @17:0..18:11 FUN ENUM_CLASS_SPECIAL_MEMBER name:values visibility:public modality:FINAL <> () returnType:kotlin.Array<Test5> flags:
+      @17:0..18:11 SYNTHETIC_BODY kind=ENUM_VALUES
+    @17:0..18:11 FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:Test5 flags:
+      @17:0..18:11 VALUE_PARAMETER name:value index:0 type:kotlin.String flags:
+      @17:0..18:11 SYNTHETIC_BODY kind=ENUM_VALUEOF
+  @21:0..22:11 CLASS ANNOTATION_CLASS name:Test6 modality:FINAL visibility:public flags: superTypes:[kotlin.Annotation]
+    @21:0..22:11 VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test6 flags:
     @22:0..11 CONSTRUCTOR visibility:public <> () returnType:Test6 flags:primary
     @22:0..11 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
       @21:0..22:11 VALUE_PARAMETER name:<this> type:kotlin.Any flags:

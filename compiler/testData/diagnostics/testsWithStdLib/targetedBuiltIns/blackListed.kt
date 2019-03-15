@@ -1,8 +1,9 @@
+// !WITH_NEW_INFERENCE
 // FULL_JDK
 
 abstract class A : MutableList<String> {
     override fun sort(/*0*/ p0: java.util.Comparator<in String>) {
-        super.<!DEFAULT_METHOD_CALL_FROM_JAVA6_TARGET_ERROR!>sort<!>(p0)
+        <!NI;SUPER_CANT_BE_EXTENSION_RECEIVER!>super<!>.<!NI;DEPRECATION_ERROR, OI;DEFAULT_METHOD_CALL_FROM_JAVA6_TARGET_ERROR!>sort<!>(p0)
     }
 }
 

@@ -16,7 +16,9 @@
 
 package org.jetbrains.kotlin.codegen.range
 
-import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.codegen.ExpressionCodegen
+import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.codegen.range.comparison.getComparisonGeneratorForKotlinType
 import org.jetbrains.kotlin.codegen.range.comparison.getComparisonGeneratorForRangeContainsCall
 import org.jetbrains.kotlin.codegen.range.forLoop.ForInDefinitelySafeSimpleProgressionLoopGenerator
 import org.jetbrains.kotlin.codegen.range.forLoop.ForLoopGenerator
@@ -36,13 +38,17 @@ import org.jetbrains.org.objectweb.asm.Type
 abstract class PrimitiveNumberRangeIntrinsicRangeValue(
     rangeCall: ResolvedCall<out CallableDescriptor>
 ) : CallIntrinsicRangeValue(rangeCall) {
-    protected val asmElementType = getAsmRangeElementTypeForPrimitiveRangeOrProgression(rangeCall.resultingDescriptor)
+
+    protected val elementKotlinType =
+        rangeCall.resultingDescriptor.returnType?.let { getRangeOrProgressionElementType(it) }
+            ?: throw AssertionError("Unexpected range ")
 
     override fun isIntrinsicInCall(resolvedCallForIn: ResolvedCall<out CallableDescriptor>) =
         resolvedCallForIn.resultingDescriptor.let {
             isPrimitiveRangeContains(it) ||
                     isClosedFloatingPointRangeContains(it) ||
-                    isPrimitiveNumberRangeExtensionContainsPrimitiveNumber(it)
+                    isPrimitiveNumberRangeExtensionContainsPrimitiveNumber(it) ||
+                    isUnsignedIntegerRangeContains(it)
         }
 
     override fun createIntrinsicInExpressionGenerator(
@@ -58,7 +64,7 @@ abstract class PrimitiveNumberRangeIntrinsicRangeValue(
 
             comparedType == Type.DOUBLE_TYPE || comparedType == Type.FLOAT_TYPE -> {
                 val rangeLiteral = getBoundedValue(codegen) as? SimpleBoundedValue
-                        ?: throw AssertionError("Floating point intrinsic range value should be a range literal")
+                    ?: throw AssertionError("Floating point intrinsic range value should be a range literal")
                 InFloatingPointRangeLiteralExpressionGenerator(operatorReference, rangeLiteral, comparisonGenerator, codegen.frameMap)
             }
 
@@ -138,8 +144,9 @@ abstract class PrimitiveNumberRangeIntrinsicRangeValue(
             codegen, forExpression,
             startValue = startValue,
             isStartInclusive = isStartInclusive,
-            endValue = StackValue.integerConstant(endIntValue, asmElementType),
+            endValue = StackValue.integerConstant(endIntValue, codegen.asmType(elementKotlinType)),
             isEndInclusive = true,
+            comparisonGenerator = getComparisonGeneratorForKotlinType(elementKotlinType),
             step = step
         )
 
@@ -155,8 +162,9 @@ abstract class PrimitiveNumberRangeIntrinsicRangeValue(
             codegen, forExpression,
             startValue = startValue,
             isStartInclusive = isStartInclusive,
-            endValue = StackValue.constant(endLongValue, asmElementType),
+            endValue = StackValue.constant(endLongValue, codegen.asmType(elementKotlinType), elementKotlinType),
             isEndInclusive = true,
+            comparisonGenerator = getComparisonGeneratorForKotlinType(elementKotlinType),
             step = step
         )
 

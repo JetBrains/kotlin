@@ -16,11 +16,17 @@
 
 package org.jetbrains.kotlin.contracts.model.visitors
 
-import org.jetbrains.kotlin.builtins.DefaultBuiltIns
-import org.jetbrains.kotlin.contracts.model.*
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.contracts.model.ConditionalEffect
+import org.jetbrains.kotlin.contracts.model.ESEffect
+import org.jetbrains.kotlin.contracts.model.ESExpressionVisitor
+import org.jetbrains.kotlin.contracts.model.MutableContextInfo
 import org.jetbrains.kotlin.contracts.model.structure.*
 
-class InfoCollector(private val observedEffect: ESEffect) : ESExpressionVisitor<MutableContextInfo> {
+class InfoCollector(
+    private val observedEffect: ESEffect,
+    private val constants: ESConstants
+) : ESExpressionVisitor<MutableContextInfo> {
     private var isInverted: Boolean = false
 
     fun collectFromSchema(schema: List<ESEffect>): MutableContextInfo =
@@ -69,14 +75,15 @@ class InfoCollector(private val observedEffect: ESEffect) : ESExpressionVisitor<
         return if (isInverted) leftInfo.and(rightInfo) else leftInfo.or(rightInfo)
     }
 
-    override fun visitVariable(esVariable: ESVariable): MutableContextInfo {
-        return if (esVariable.type != DefaultBuiltIns.Instance.booleanType)
+    override fun visitVariable(esVariable: ESVariable): MutableContextInfo =
+        if (esVariable.type.let { it == null || !KotlinBuiltIns.isBoolean(it) })
             MutableContextInfo.EMPTY
         else
-            MutableContextInfo.EMPTY.equal(esVariable, isInverted.not().lift())
-    }
+            MutableContextInfo.EMPTY.equal(esVariable, constants.booleanValue(!isInverted))
 
     override fun visitConstant(esConstant: ESConstant): MutableContextInfo = MutableContextInfo.EMPTY
+
+    override fun visitReceiver(esReceiver: ESReceiver): MutableContextInfo = MutableContextInfo.EMPTY
 
     private fun <R> inverted(block: () -> R): R {
         isInverted = isInverted.not()
@@ -85,4 +92,3 @@ class InfoCollector(private val observedEffect: ESEffect) : ESExpressionVisitor<
         return result
     }
 }
-

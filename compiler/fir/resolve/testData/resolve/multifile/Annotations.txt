@@ -1,0 +1,30 @@
+FILE: Annotations.kt
+    @FILE:R|annotations/Simple|()
+    @R|annotations/WithInt|(Int(42)) public abstract class First {
+        public constructor(): super<R|kotlin/Any|>()
+
+        @R|annotations/Simple|() public abstract function foo(@R|annotations/WithString|(String(abc)) arg: @R|annotations/Simple|() R|kotlin/Double|): R|kotlin/Unit|
+
+        @R|annotations/Complex|(<Unresolved name: WithInt>#(Int(7)), <Unresolved name: WithString>#(String())) public abstract property v(val): R|kotlin/String|
+            public get(): R|kotlin/String|
+
+    }
+    @R|annotations/WithString|(String(xyz)) public final class Second : @R|annotations/WithInt|(Int(0)) R|test/First| {
+        public constructor(y: R|kotlin/Char|): super<@R|annotations/WithInt|(Int(0)) R|test/First|>()
+
+        public final property y(val): R|kotlin/Char|
+            public get(): R|kotlin/Char|
+
+        public final override function foo(arg: R|kotlin/Double|): R|kotlin/Unit| {
+        }
+
+        public final override property v(val): R|kotlin/String|
+            @R|annotations/Simple|() public get(): R|kotlin/String| {
+                return String()
+            }
+
+        @R|annotations/WithString|(String(constructor)) public constructor(): this<R|test/Second|>(Char(
+))
+
+    }
+    @R|annotations/WithInt|(Int(24)) @R|annotations/VeryComplex|(Float(3.14), Double(6.67E-11), Boolean(false), Long(123456789012345), Null(null)) @R|annotations/WithInt|(Int(24)) @R|annotations/VeryComplex|(Float(3.14), Double(6.67E-11), Boolean(false), Long(123456789012345), Null(null)) public final typealias Third = @R|annotations/Simple|() R|test/Second|

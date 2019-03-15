@@ -1,0 +1,21 @@
+FILE: simpleFakeOverride.kt
+    <T> public open class A {
+        public constructor(): super<R|kotlin/Any|>()
+
+        public final function foo(t: R|T|): R|T| {
+            return@@@foo <Unresolved name: t>#
+        }
+
+    }
+    public final class Some {
+        public constructor(): super<R|kotlin/Any|>()
+
+    }
+    public final class B : R|A<Some>| {
+        public constructor(): super<R|A<Some>|>()
+
+        public final function test(): R|kotlin/Unit| {
+            R|FakeOverride</A.foo: R|Some|>|(<Unresolved name: Some>#())
+        }
+
+    }

@@ -13,7 +13,7 @@ import org.gradle.workers.IsolationMode
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.gradle.internal.Kapt3KotlinGradleSubplugin.Companion.KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinAndroidPluginWrapper
-import org.jetbrains.kotlin.gradle.tasks.clearLocalStateDirectories
+import org.jetbrains.kotlin.gradle.tasks.clearLocalState
 import org.jetbrains.kotlin.gradle.tasks.findKotlinStdlibClasspath
 import org.jetbrains.kotlin.gradle.tasks.findToolsJar
 import org.jetbrains.kotlin.utils.PathUtil
@@ -48,7 +48,7 @@ open class KaptWithoutKotlincTask @Inject constructor(private val workerExecutor
     fun compile() {
         logger.info("Running kapt annotation processing using the Gradle Worker API")
         checkAnnotationProcessorClasspath()
-        clearLocalStateDirectories()
+        clearLocalState()
 
         val compileClasspath = classpath.files.toMutableList()
         if (project.plugins.none { it is KotlinAndroidPluginWrapper }) {
@@ -79,10 +79,19 @@ open class KaptWithoutKotlincTask @Inject constructor(private val workerExecutor
             kaptFlagsForWorker
         )
 
+        // Skip annotation processing if no annotation processors were provided.
+        if (annotationProcessorFqNames.isEmpty() && kaptClasspath.isEmpty())
+            return
+
         val kaptClasspath = kaptJars + findKotlinStdlibClasspath(project)
 
         workerExecutor.submit(KaptExecution::class.java) { config ->
-            config.isolationMode = IsolationMode.PROCESS
+            val isolationModeStr = project.findProperty("kapt.workers.isolation") as String? ?: "none"
+            config.isolationMode = when(isolationModeStr.toLowerCase()) {
+                "process" -> IsolationMode.PROCESS
+                "none" -> IsolationMode.NONE
+                else -> IsolationMode.NONE
+            }
             config.params(optionsForWorker, findToolsJar(), kaptClasspath)
             if (project.findProperty("kapt.workers.log.classloading") == "true") {
                 // for tests
@@ -90,8 +99,6 @@ open class KaptWithoutKotlincTask @Inject constructor(private val workerExecutor
             }
             logger.info("Kapt worker classpath: ${config.classpath}")
         }
-
-        workerExecutor.await()
     }
 }
 

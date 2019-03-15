@@ -41,24 +41,29 @@ import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.MutablePackageFragmentDescriptor
-import org.jetbrains.kotlin.idea.caches.project.getModuleInfoByVirtualFile
 import org.jetbrains.kotlin.idea.caches.project.forcedModuleInfo
+import org.jetbrains.kotlin.idea.caches.project.getModuleInfoByVirtualFile
 import org.jetbrains.kotlin.idea.caches.project.implementedModules
 import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaMemberDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
+import org.jetbrains.kotlin.idea.core.getPackage
 import org.jetbrains.kotlin.idea.core.isInTestSourceContentKotlinAware
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.project.forcedTargetPlatform
+import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.idea.refactoring.getUsageContext
 import org.jetbrains.kotlin.idea.refactoring.move.KotlinMoveUsage
 import org.jetbrains.kotlin.idea.search.and
 import org.jetbrains.kotlin.idea.search.not
 import org.jetbrains.kotlin.idea.util.projectStructure.getModule
 import org.jetbrains.kotlin.idea.util.projectStructure.module
+import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.JavaVisibilities
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
@@ -66,26 +71,27 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
-import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
-import org.jetbrains.kotlin.resolve.descriptorUtil.isSubclassOf
+import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.descriptors.findPackageFragmentForFile
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.resolve.source.getPsi
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
 import org.jetbrains.kotlin.util.isJavaDescriptor
+import org.jetbrains.kotlin.util.supertypesWithAny
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.*
 
 class MoveConflictChecker(
-        private val project: Project,
-        private val elementsToMove: Collection<KtElement>,
-        private val moveTarget: KotlinMoveTarget,
-        contextElement: KtElement,
-        private val doNotGoIn: Collection<KtElement> = emptyList(),
-        allElementsToMove: Collection<PsiElement>? = null
+    private val project: Project,
+    private val elementsToMove: Collection<KtElement>,
+    private val moveTarget: KotlinMoveTarget,
+    contextElement: KtElement,
+    private val doNotGoIn: Collection<KtElement> = emptyList(),
+    allElementsToMove: Collection<PsiElement>? = null
 ) {
     private val resolutionFacade = contextElement.getResolutionFacade()
 
@@ -101,10 +107,10 @@ class MoveConflictChecker(
     }
 
     private fun getModuleDescriptor(sourceFile: VirtualFile) =
-            getModuleInfoByVirtualFile(
-                project,
-                sourceFile
-            )?.let { resolutionFacade.findModuleDescriptor(it) }
+        getModuleInfoByVirtualFile(
+            project,
+            sourceFile
+        )?.let { resolutionFacade.findModuleDescriptor(it) }
 
     private fun KotlinMoveTarget.getContainerDescriptor(): DeclarationDescriptor? {
         return when (this) {
@@ -115,9 +121,9 @@ class MoveConflictChecker(
 
                     is KtFile -> {
                         val packageFragment =
-                                targetElement
-                                        .findModuleDescriptor()
-                                        .findPackageFragmentForFile(targetElement)
+                            targetElement
+                                .findModuleDescriptor()
+                                .findPackageFragmentForFile(targetElement)
 
                         packageFragment?.withSource(targetElement)
                     }
@@ -129,7 +135,7 @@ class MoveConflictChecker(
             is KotlinDirectoryBasedMoveTarget -> {
                 val packageFqName = targetContainerFqName ?: return null
                 val targetModuleDescriptor = targetScope?.let { getModuleDescriptor(it) ?: return null }
-                                             ?: resolutionFacade.moduleDescriptor
+                    ?: resolutionFacade.moduleDescriptor
                 MutablePackageFragmentDescriptor(targetModuleDescriptor, packageFqName).withSource(fakeFile)
             }
 
@@ -154,7 +160,7 @@ class MoveConflictChecker(
 
         val wrappedDescriptor = this
         return when (wrappedDescriptor) {
-        // We rely on visibility not depending on more specific type of CallableMemberDescriptor
+            // We rely on visibility not depending on more specific type of CallableMemberDescriptor
             is CallableMemberDescriptor -> object : CallableMemberDescriptor by wrappedDescriptor {
                 override fun getOriginal() = this
                 override fun getContainingDeclaration() = newContainer ?: wrappedDescriptor.containingDeclaration
@@ -162,7 +168,7 @@ class MoveConflictChecker(
                 override fun getSource() =
                     newContainer?.let { SourceElement { DescriptorUtils.getContainingSourceFile(it) } } ?: wrappedDescriptor.source
             }
-            is ClassDescriptor -> object: ClassDescriptor by wrappedDescriptor {
+            is ClassDescriptor -> object : ClassDescriptor by wrappedDescriptor {
                 override fun getOriginal() = this
                 override fun getContainingDeclaration() = newContainer ?: wrappedDescriptor.containingDeclaration
                 override fun getVisibility(): Visibility = newVisibility ?: wrappedDescriptor.visibility
@@ -173,7 +179,10 @@ class MoveConflictChecker(
         }
     }
 
-    private fun DeclarationDescriptor.asPredicted(newContainer: DeclarationDescriptor, actualVisibility: Visibility?): DeclarationDescriptor? {
+    private fun DeclarationDescriptor.asPredicted(
+        newContainer: DeclarationDescriptor,
+        actualVisibility: Visibility?
+    ): DeclarationDescriptor? {
         val visibility = actualVisibility ?: (this as? DeclarationDescriptorWithVisibility)?.visibility ?: return null
         val adjustedVisibility = if (visibility == Visibilities.PROTECTED && newContainer is PackageFragmentDescriptor) {
             Visibilities.PUBLIC
@@ -197,10 +206,12 @@ class MoveConflictChecker(
     private fun render(declaration: PsiElement) = RefactoringUIUtil.getDescription(declaration, false)
 
     // Based on RefactoringConflictsUtil.analyzeModuleConflicts
-    fun analyzeModuleConflictsInUsages(project: Project,
-                                       usages: Collection<UsageInfo>,
-                                       targetScope: VirtualFile,
-                                       conflicts: MultiMap<PsiElement, String>) {
+    fun analyzeModuleConflictsInUsages(
+        project: Project,
+        usages: Collection<UsageInfo>,
+        targetScope: VirtualFile,
+        conflicts: MultiMap<PsiElement, String>
+    ) {
         val targetModule = targetScope.getModule(project) ?: return
 
         val isInTestSources = ModuleRootManager.getInstance(targetModule).fileIndex.isInTestSourceContentKotlinAware(targetScope)
@@ -216,16 +227,19 @@ class MoveConflictChecker(
             val scopeDescription = RefactoringUIUtil.getDescription(element.getUsageContext(), true)
             val referencedElement = (if (usage is MoveRenameUsageInfo) usage.referencedElement else usage.element) ?: error(usage)
             val message = if (usageModule == targetModule && isInTestSources) {
-                RefactoringBundle.message("0.referenced.in.1.will.not.be.accessible.from.production.of.module.2",
-                                          RefactoringUIUtil.getDescription(referencedElement, true),
-                                          scopeDescription,
-                                          CommonRefactoringUtil.htmlEmphasize(usageModule.name))
-            }
-            else {
-                RefactoringBundle.message("0.referenced.in.1.will.not.be.accessible.from.module.2",
-                                          RefactoringUIUtil.getDescription(referencedElement, true),
-                                          scopeDescription,
-                                          CommonRefactoringUtil.htmlEmphasize(usageModule.name))
+                RefactoringBundle.message(
+                    "0.referenced.in.1.will.not.be.accessible.from.production.of.module.2",
+                    RefactoringUIUtil.getDescription(referencedElement, true),
+                    scopeDescription,
+                    CommonRefactoringUtil.htmlEmphasize(usageModule.name)
+                )
+            } else {
+                RefactoringBundle.message(
+                    "0.referenced.in.1.will.not.be.accessible.from.module.2",
+                    RefactoringUIUtil.getDescription(referencedElement, true),
+                    scopeDescription,
+                    CommonRefactoringUtil.htmlEmphasize(usageModule.name)
+                )
             }
             conflicts.putValue(referencedElement, CommonRefactoringUtil.capitalize(message))
         }
@@ -240,7 +254,7 @@ class MoveConflictChecker(
             val referencedElementsToSkip = newConflicts.keySet().mapNotNullTo(HashSet()) { it.namedUnwrappedElement }
             externalUsages.removeIf {
                 it is MoveRenameUsageInfo &&
-                it.referencedElement?.namedUnwrappedElement?.let { it in referencedElementsToSkip } ?: false
+                        it.referencedElement?.namedUnwrappedElement?.let { it in referencedElementsToSkip } ?: false
             }
             conflicts.putAllValues(newConflicts)
         }
@@ -266,14 +280,14 @@ class MoveConflictChecker(
         if (targetPlatform is JvmPlatform) return baseScope
 
         return ModuleRootManager.getInstance(this)
-                .orderEntries
-                .filterIsInstance<JdkOrderEntry>()
-                .fold(baseScope as SearchScope) { scope, jdkEntry -> scope and !JdkScope(project, jdkEntry) }
+            .orderEntries
+            .filterIsInstance<JdkOrderEntry>()
+            .fold(baseScope as SearchScope) { scope, jdkEntry -> scope and !JdkScope(project, jdkEntry) }
     }
 
     fun checkModuleConflictsInDeclarations(
-            internalUsages: MutableSet<UsageInfo>,
-            conflicts: MultiMap<PsiElement, String>
+        internalUsages: MutableSet<UsageInfo>,
+        conflicts: MultiMap<PsiElement, String>
     ) {
         val targetScope = moveTarget.targetScope ?: return
         val targetModule = targetScope.getModule(project) ?: return
@@ -297,7 +311,8 @@ class MoveConflictChecker(
             if (importableDescriptor is TypeAliasDescriptor
                 && newTargetDescriptors.any {
                     it is ClassDescriptor && it.isExpect && it.importableFqName == importableDescriptor.importableFqName
-                }) return true
+                }
+            ) return true
 
             val renderedImportableTarget = DESCRIPTOR_RENDERER_FOR_COMPARISON.render(importableDescriptor)
             val renderedTarget by lazy { DESCRIPTOR_RENDERER_FOR_COMPARISON.render(targetDescriptor) }
@@ -313,9 +328,9 @@ class MoveConflictChecker(
 
                     is PropertyAccessorDescriptor -> {
                         (it as? PropertyDescriptor)
-                                ?.let { if (targetDescriptor is PropertyGetterDescriptor) it.getter else it.setter }
-                                ?.let { listOf(it) }
-                        ?: emptyList<DeclarationDescriptor>()
+                            ?.let { if (targetDescriptor is PropertyGetterDescriptor) it.getter else it.setter }
+                            ?.let { listOf(it) }
+                            ?: emptyList<DeclarationDescriptor>()
                     }
 
                     else -> emptyList()
@@ -331,7 +346,8 @@ class MoveConflictChecker(
 
             declaration.forEachDescendantOfType<KtReferenceExpression> { refExpr ->
                 // NB: for unknown reason, refExpr.resolveToCall() does not work here
-                val targetDescriptor = refExpr.analyze(BodyResolveMode.PARTIAL)[BindingContext.REFERENCE_TARGET, refExpr] ?: return@forEachDescendantOfType
+                val targetDescriptor =
+                    refExpr.analyze(BodyResolveMode.PARTIAL)[BindingContext.REFERENCE_TARGET, refExpr] ?: return@forEachDescendantOfType
 
                 if (KotlinBuiltIns.isBuiltIn(targetDescriptor)) return@forEachDescendantOfType
 
@@ -348,10 +364,12 @@ class MoveConflictChecker(
 
                 val refContainer = refExpr.getStrictParentOfType<KtNamedDeclaration>() ?: return@forEachDescendantOfType
                 val scopeDescription = RefactoringUIUtil.getDescription(refContainer, true)
-                val message = RefactoringBundle.message("0.referenced.in.1.will.not.be.accessible.in.module.2",
-                                                        RefactoringUIUtil.getDescription(target, true),
-                                                        scopeDescription,
-                                                        CommonRefactoringUtil.htmlEmphasize(targetModule.name))
+                val message = RefactoringBundle.message(
+                    "0.referenced.in.1.will.not.be.accessible.in.module.2",
+                    RefactoringUIUtil.getDescription(target, true),
+                    scopeDescription,
+                    CommonRefactoringUtil.htmlEmphasize(targetModule.name)
+                )
                 conflicts.putValue(target, CommonRefactoringUtil.capitalize(message))
                 referencesToSkip += refExpr
             }
@@ -373,7 +391,8 @@ class MoveConflictChecker(
             if (referencedDescriptor is DeclarationDescriptorWithVisibility
                 && referencedDescriptor.visibility == Visibilities.PUBLIC
                 && moveTarget is KotlinMoveTargetForExistingElement
-                && moveTarget.targetElement.parentsWithSelf.filterIsInstance<KtClassOrObject>().all { it.isPublic }) continue
+                && moveTarget.targetElement.parentsWithSelf.filterIsInstance<KtClassOrObject>().all { it.isPublic }
+            ) continue
 
             val container = element.getUsageContext()
             if (!declarationToContainers.getOrPut(referencedElement) { HashSet<PsiElement>() }.add(container)) continue
@@ -381,10 +400,10 @@ class MoveConflictChecker(
             val targetContainer = moveTarget.getContainerDescriptor() ?: continue
 
             val referencingDescriptor = when (container) {
-                                            is KtDeclaration -> container.unsafeResolveToDescriptor()
-                                            is PsiMember -> container.getJavaMemberDescriptor()
-                                            else -> null
-                                        } ?: continue
+                is KtDeclaration -> container.unsafeResolveToDescriptor()
+                is PsiMember -> container.getJavaMemberDescriptor()
+                else -> null
+            } ?: continue
             val actualVisibility = if (referencingDescriptor.isJavaDescriptor) referencedDescriptor.visibilityAsViewedFromJava() else null
             val originalDescriptorToCheck = referencedDescriptor.wrap(newVisibility = actualVisibility) ?: referencedDescriptor
             val newDescriptorToCheck = referencedDescriptor.asPredicted(targetContainer, actualVisibility) ?: continue
@@ -448,26 +467,26 @@ class MoveConflictChecker(
         for (declaration in elementsToMove - doNotGoIn) {
             declaration.forEachDescendantOfType<KtReferenceExpression> { refExpr ->
                 refExpr.references
-                        .forEach { ref ->
-                            val target = ref.resolve() ?: return@forEach
-                            if (isToBeMoved(target)) return@forEach
+                    .forEach { ref ->
+                        val target = ref.resolve() ?: return@forEach
+                        if (isToBeMoved(target)) return@forEach
 
-                            val targetDescriptor = when (target) {
-                                                       is KtDeclaration -> target.unsafeResolveToDescriptor()
-                                                       is PsiMember -> target.getJavaMemberDescriptor()
-                                                       else -> null
-                                                   } as? DeclarationDescriptorWithVisibility ?: return@forEach
+                        val targetDescriptor = when (target) {
+                            is KtDeclaration -> target.unsafeResolveToDescriptor()
+                            is PsiMember -> target.getJavaMemberDescriptor()
+                            else -> null
+                        } as? DeclarationDescriptorWithVisibility ?: return@forEach
 
-                            var isVisible = targetDescriptor.isVisibleFrom(ref)
-                            if (isVisible && targetDescriptor is ConstructorDescriptor) {
-                                isVisible = targetDescriptor.containingDeclaration.isVisibleFrom(ref)
-                            }
-
-                            if (!isVisible) {
-                                val message = "${render(declaration)} uses ${render(target)} which will be inaccessible after move"
-                                conflicts.putValue(refExpr, message.capitalize())
-                            }
+                        var isVisible = targetDescriptor.isVisibleFrom(ref)
+                        if (isVisible && targetDescriptor is ConstructorDescriptor) {
+                            isVisible = targetDescriptor.containingDeclaration.isVisibleFrom(ref)
                         }
+
+                        if (!isVisible) {
+                            val message = "${render(declaration)} uses ${render(target)} which will be inaccessible after move"
+                            conflicts.putValue(refExpr, message.capitalize())
+                        }
+                    }
             }
         }
     }
@@ -511,8 +530,7 @@ class MoveConflictChecker(
             if (elementToMove is KtClass && elementToMove.isSealed()) {
                 rootClass = elementToMove
                 rootClassDescriptor = rootClass.resolveToDescriptorIfAny() ?: return
-            }
-            else {
+            } else {
                 val classDescriptor = elementToMove.resolveToDescriptorIfAny() ?: return
                 val superClassDescriptor = classDescriptor.getSuperClassNotAny() ?: return
                 if (superClassDescriptor.modality != Modality.SEALED) return
@@ -530,8 +548,7 @@ class MoveConflictChecker(
 
             val message = if (elementToMove == rootClass) {
                 "Sealed class '${rootClass.name}' must be moved with all its subclasses"
-            }
-            else {
+            } else {
                 val type = ElementDescriptionUtil.getElementDescription(elementToMove, UsageViewTypeLocation.INSTANCE).capitalize()
                 "$type '${rootClass.name}' must be moved with sealed parent class and all its subclasses"
             }
@@ -539,10 +556,98 @@ class MoveConflictChecker(
         }
     }
 
+    private fun checkNameClashes(conflicts: MultiMap<PsiElement, String>) {
+        fun <T> equivalent(a: T, b: T): Boolean = when (a) {
+            is DeclarationDescriptor -> when (a) {
+                is FunctionDescriptor -> b is FunctionDescriptor
+                        && equivalent(a.name, b.name) && a.valueParameters.zip(b.valueParameters).all { equivalent(it.first, it.second) }
+                else -> b is DeclarationDescriptor && equivalent(a.name, b.name)
+            }
+            is Name -> b is Name && a.asString() == b.asString()
+            is FqName -> b is Name && a.asString() == b.asString()
+            is ValueParameterDescriptor -> b is ValueParameterDescriptor
+                    && equivalent(a.type, b.type)
+            is KotlinType -> {
+                if (b !is KotlinType) false
+                else {
+                    val aSupertypes = a.constructor.supertypesWithAny()
+                    val bSupertypes = b.constructor.supertypesWithAny()
+                    when {
+                        a.isAnyOrNullableAny() && b.isAnyOrNullableAny() ->         // a = T(?) | Any(?), b = T(?) | Any(?)
+                            true                                                    // => 100% clash
+                        aSupertypes.size == 1 && bSupertypes.size == 1 ->           // a = T: T1, b = T: T2
+                            equivalent(aSupertypes.first(), bSupertypes.first())    // equivalent(T1, T2) => clash
+                        a.arguments.size != 0 && b.arguments.size != 0 ->
+                            equivalent(                                             // a = Something<....>, b = SomethingElse<....>
+                                a.constructor.declarationDescriptor?.name,          // equivalent(Something, SomethingElse) => clash
+                                b.constructor.declarationDescriptor?.name
+                            )
+                        else -> a == b                                              // common case. a == b => clash
+                    }
+                }
+            }
+            else -> false
+        }
+
+        fun walkDeclarations(
+            currentScopeDeclaration: DeclarationDescriptor,
+            declaration: DeclarationDescriptor,
+            report: (String, String) -> Unit
+        ) {
+            fun descrText(d: DeclarationDescriptor) = d.findPsi()?.text ?: "unknown"
+            when (currentScopeDeclaration) {
+                is PackageFragmentDescriptor -> {
+                    fun getPackage(decl: PackageFragmentDescriptor) = decl.containingDeclaration.getPackage(decl.fqName)
+                    val packageDescriptor = getPackage(currentScopeDeclaration)
+                    if ((declaration.containingDeclaration)?.fqNameOrNull() == currentScopeDeclaration.fqNameOrNull()) {
+                        return
+                    }
+                    packageDescriptor
+                        .memberScope
+                        .getContributedDescriptors { it == declaration.name }
+                        .filter { equivalent(it, declaration) }
+                        .forEach { report(descrText(it), packageDescriptor.fqName.asString()) }
+                    return
+                }
+                is ClassDescriptor -> {
+                    if ((declaration.containingDeclaration)?.fqNameOrNull() != currentScopeDeclaration.fqNameOrNull()) {
+                        currentScopeDeclaration
+                            .unsubstitutedMemberScope
+                            .getContributedDescriptors { it == declaration.name }
+                            .filter { equivalent(it, declaration) }
+                            .forEach { report(descrText(it), descrText(currentScopeDeclaration)) }
+                    }
+                }
+
+            }
+            currentScopeDeclaration.containingDeclaration?.let { walkDeclarations(it, declaration, report) }
+        }
+
+        (elementsToMove - doNotGoIn)
+            .filter {it is PsiNamedElement}
+            .forEach { declaration ->
+                val declarationDescriptor =
+                    declaration.analyze().get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration)
+                if (declarationDescriptor is DeclarationDescriptor) {
+                    val baseDescriptor = moveTarget.getContainerDescriptor()
+                    if (baseDescriptor != null) {
+                        walkDeclarations(baseDescriptor, declarationDescriptor) { conflictingDecl, scopeName ->
+                            conflicts.putValue(
+                                declaration,
+                                "Following declarations would clash: \"${declaration.getText()}\" (element to move) " +
+                                        "and \"\n$conflictingDecl\" declared in scope " +
+                                        "$scopeName (move destination)"
+                            )
+                        }
+                    }
+                }
+            }
+    }
+
     fun checkAllConflicts(
-            externalUsages: MutableSet<UsageInfo>,
-            internalUsages: MutableSet<UsageInfo>,
-            conflicts: MultiMap<PsiElement, String>
+        externalUsages: MutableSet<UsageInfo>,
+        internalUsages: MutableSet<UsageInfo>,
+        conflicts: MultiMap<PsiElement, String>
     ) {
         checkModuleConflictsInUsages(externalUsages, conflicts)
         checkModuleConflictsInDeclarations(internalUsages, conflicts)
@@ -550,16 +655,17 @@ class MoveConflictChecker(
         checkVisibilityInDeclarations(conflicts)
         checkInternalMemberUsages(conflicts)
         checkSealedClassMove(conflicts)
+        checkNameClashes(conflicts)
     }
 }
 
 fun analyzeConflictsInFile(
-        file: KtFile,
-        usages: Collection<UsageInfo>,
-        moveTarget: KotlinMoveTarget,
-        allElementsToMove: Collection<PsiElement>,
-        conflicts: MultiMap<PsiElement, String>,
-        onUsageUpdate: (List<UsageInfo>) -> Unit
+    file: KtFile,
+    usages: Collection<UsageInfo>,
+    moveTarget: KotlinMoveTarget,
+    allElementsToMove: Collection<PsiElement>,
+    conflicts: MultiMap<PsiElement, String>,
+    onUsageUpdate: (List<UsageInfo>) -> Unit
 ) {
     val elementsToMove = file.declarations
     if (elementsToMove.isEmpty()) return
@@ -569,11 +675,11 @@ fun analyzeConflictsInFile(
     val externalUsageSet = externalUsages.toMutableSet()
 
     val conflictChecker = MoveConflictChecker(
-            file.project,
-            elementsToMove,
-            moveTarget,
-            elementsToMove.first(),
-            allElementsToMove = allElementsToMove
+        file.project,
+        elementsToMove,
+        moveTarget,
+        elementsToMove.first(),
+        allElementsToMove = allElementsToMove
     )
     conflictChecker.checkAllConflicts(externalUsageSet, internalUsageSet, conflicts)
 

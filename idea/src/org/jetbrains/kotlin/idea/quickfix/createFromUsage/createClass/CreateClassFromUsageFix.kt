@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass
 
 import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.codeInsight.intention.LowPriorityAction
-import com.intellij.codeInsight.intention.impl.CreateClassDialog
 import com.intellij.ide.util.DirectoryChooserUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
@@ -70,14 +69,14 @@ val ClassKind.actionPriority: IntentionActionPriority
     get() = if (this == ANNOTATION_CLASS) IntentionActionPriority.LOW else IntentionActionPriority.NORMAL
 
 data class ClassInfo(
-        val kind: ClassKind = ClassKind.DEFAULT,
-        val name: String,
-        private val targetParents: List<PsiElement>,
-        val expectedTypeInfo: TypeInfo,
-        val inner: Boolean = false,
-        val open: Boolean = false,
-        val typeArguments: List<TypeInfo> = Collections.emptyList(),
-        val parameterInfos: List<ParameterInfo> = Collections.emptyList()
+    val kind: ClassKind = ClassKind.DEFAULT,
+    val name: String,
+    private val targetParents: List<PsiElement>,
+    val expectedTypeInfo: TypeInfo,
+    val inner: Boolean = false,
+    val open: Boolean = false,
+    val typeArguments: List<TypeInfo> = Collections.emptyList(),
+    val parameterInfos: List<ParameterInfo> = Collections.emptyList()
 ) {
     val applicableParents by lazy {
         targetParents.filter {
@@ -87,10 +86,10 @@ data class ClassInfo(
     }
 }
 
-open class CreateClassFromUsageFix<E : KtElement> protected constructor (
-        element: E,
-        private val classInfo: ClassInfo
-): CreateFromUsageFixBase<E>(element) {
+open class CreateClassFromUsageFix<E : KtElement> protected constructor(
+    element: E,
+    private val classInfo: ClassInfo
+) : CreateFromUsageFixBase<E>(element) {
     override fun getText() = "Create ${classInfo.kind.description} '${classInfo.name}'"
 
     override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean {
@@ -114,23 +113,24 @@ open class CreateClassFromUsageFix<E : KtElement> protected constructor (
         if (editor == null) return
 
         val applicableParents = SmartList<PsiElement>().also { parents ->
-            classInfo.applicableParents.filterNotTo(parents) {
-                it is KtClassOrObject && it.superTypeListEntries.any {
+            classInfo.applicableParents.filterNotTo(parents) { element ->
+                element is KtClassOrObject && element.superTypeListEntries.any {
                     when (it) {
-                        is KtDelegatedSuperTypeEntry, is KtSuperTypeEntry -> it.typeAsUserType == element
-                        is KtSuperTypeCallEntry -> it == element
+                        is KtDelegatedSuperTypeEntry, is KtSuperTypeEntry -> it.typeAsUserType == this.element
+                        is KtSuperTypeCallEntry -> it == this.element
                         else -> false
                     }
                 }
             }
-            if (classInfo.kind != ClassKind.ENUM_ENTRY) {
+
+            if (classInfo.kind != ClassKind.ENUM_ENTRY && parents.find { it is PsiPackage } == null) {
                 parents += SeparateFileWrapper(PsiManager.getInstance(project))
             }
         }
 
         if (ApplicationManager.getApplication().isUnitTestMode) {
-            val targetParent = applicableParents.firstOrNull {
-                it.allChildren.any { it is PsiComment && it.text == "// TARGET_PARENT:" }
+            val targetParent = applicableParents.firstOrNull { element ->
+                if (element is PsiPackage) false else element.allChildren.any { it is PsiComment && it.text == "// TARGET_PARENT:" }
             } ?: classInfo.applicableParents.last()
             return doInvoke(targetParent, editor, file)
         }
@@ -141,22 +141,21 @@ open class CreateClassFromUsageFix<E : KtElement> protected constructor (
     }
 
     private fun createFileByPackage(
-            psiPackage: PsiPackage,
-            editor: Editor,
-            originalFile: KtFile
+        psiPackage: PsiPackage,
+        editor: Editor,
+        originalFile: KtFile
     ): KtFile? {
         val directories = psiPackage.directories.filter { it.canRefactor() }
-        assert (directories.isNotEmpty()) { "Package '${psiPackage.qualifiedName}' must be refactorable" }
+        assert(directories.isNotEmpty()) { "Package '${psiPackage.qualifiedName}' must be refactorable" }
 
         val currentModule = ModuleUtilCore.findModuleForPsiElement(originalFile)
         val preferredDirectory =
-                directories.firstOrNull { ModuleUtilCore.findModuleForPsiElement(it) == currentModule }
+            directories.firstOrNull { ModuleUtilCore.findModuleForPsiElement(it) == currentModule }
                 ?: directories.firstOrNull()
 
         val targetDirectory = if (directories.size > 1 && !ApplicationManager.getApplication().isUnitTestMode) {
             DirectoryChooserUtil.chooseDirectory(directories.toTypedArray(), preferredDirectory, originalFile.project, HashMap())
-        }
-                              else {
+        } else {
             preferredDirectory
         } ?: return null
 
@@ -165,11 +164,11 @@ open class CreateClassFromUsageFix<E : KtElement> protected constructor (
         if (targetFile == null) {
             val filePath = "${targetDirectory.virtualFile.path}/$fileName"
             CodeInsightUtils.showErrorHint(
-                    targetDirectory.project,
-                    editor,
-                    "File $filePath already exists but does not correspond to Kotlin file",
-                    "Create file",
-                    null
+                targetDirectory.project,
+                editor,
+                "File $filePath already exists but does not correspond to Kotlin file",
+                "Create file",
+                null
             )
         }
         return targetFile
@@ -186,13 +185,13 @@ open class CreateClassFromUsageFix<E : KtElement> protected constructor (
             val ideaClassKind = classInfo.kind.toIdeaClassKind()
             val defaultPackageFqName = file.packageFqName
             val dialog = object : CreateKotlinClassDialog(
-                    file.project,
-                    "Create ${ideaClassKind.description.capitalize()}",
-                    className,
-                    defaultPackageFqName.asString(),
-                    ideaClassKind,
-                    false,
-                    file.module
+                file.project,
+                "Create ${ideaClassKind.description.capitalize()}",
+                className,
+                defaultPackageFqName.asString(),
+                ideaClassKind,
+                false,
+                file.module
             ) {
                 override fun reportBaseInSourceSelectionInTest() = true
             }
@@ -217,19 +216,19 @@ open class CreateClassFromUsageFix<E : KtElement> protected constructor (
         runWriteAction {
             with(classInfo) {
                 val targetParent =
-                        when (selectedParent) {
-                            is KtElement, is PsiClass -> selectedParent
-                            is PsiPackage -> createFileByPackage(selectedParent, editor, file)
-                            else -> throw AssertionError("Unexpected element: " + selectedParent.text)
-                        } ?: return@runWriteAction
+                    when (selectedParent) {
+                        is KtElement, is PsiClass -> selectedParent
+                        is PsiPackage -> createFileByPackage(selectedParent, editor, file)
+                        else -> throw AssertionError("Unexpected element: " + selectedParent.text)
+                    } ?: return@runWriteAction
                 val constructorInfo = ClassWithPrimaryConstructorInfo(classInfo, expectedTypeInfo)
                 val builder = CallableBuilderConfiguration(
-                        Collections.singletonList(constructorInfo),
-                        element,
-                        file,
-                        editor,
-                        false,
-                        kind == PLAIN_CLASS || kind == INTERFACE
+                    Collections.singletonList(constructorInfo),
+                    element,
+                    file,
+                    editor,
+                    false,
+                    kind == PLAIN_CLASS || kind == INTERFACE
                 ).createBuilder()
                 builder.placement = CallablePlacement.NoReceiver(targetParent)
 
@@ -240,16 +239,15 @@ open class CreateClassFromUsageFix<E : KtElement> protected constructor (
                         if (targetPackageFqName == file.packageFqName) return@build
                         val reference = (element.getQualifiedElementSelector() as? KtSimpleNameExpression)?.mainReference ?: return@build
                         reference.bindToFqName(
-                                targetPackageFqName.child(Name.identifier(className)),
-                                KtSimpleNameReference.ShorteningMode.FORCED_SHORTENING
+                            targetPackageFqName.child(Name.identifier(className)),
+                            KtSimpleNameReference.ShorteningMode.FORCED_SHORTENING
                         )
                     }
                 }
 
                 if (startCommand) {
                     file.project.executeCommand(text, command = ::buildClass)
-                }
-                else {
+                } else {
                     buildClass()
                 }
             }
@@ -257,13 +255,13 @@ open class CreateClassFromUsageFix<E : KtElement> protected constructor (
     }
 
     private class LowPriorityCreateClassFromUsageFix<E : KtElement>(
-            element: E,
-            classInfo: ClassInfo
+        element: E,
+        classInfo: ClassInfo
     ) : CreateClassFromUsageFix<E>(element, classInfo), LowPriorityAction
 
     private class HighPriorityCreateClassFromUsageFix<E : KtElement>(
-            element: E,
-            classInfo: ClassInfo
+        element: E,
+        classInfo: ClassInfo
     ) : CreateClassFromUsageFix<E>(element, classInfo), HighPriorityAction
 
     companion object {

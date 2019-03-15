@@ -10,9 +10,7 @@ import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.psi.PsiElement
 import com.sun.jdi.*
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
-import org.jetbrains.kotlin.codegen.state.IncompatibleClassTracker
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
-import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -344,9 +342,10 @@ abstract class FileRankingCalculator(private val checkClassFqName: Boolean = tru
 
     private fun makeTypeMapper(bindingContext: BindingContext): KotlinTypeMapper {
         return KotlinTypeMapper(
-            bindingContext, ClassBuilderMode.LIGHT_CLASSES, IncompatibleClassTracker.DoNothing, "debugger", JvmTarget.DEFAULT,
-            KotlinTypeMapper.LANGUAGE_VERSION_SETTINGS_DEFAULT, // TODO use proper LanguageVersionSettings
-            false
+            bindingContext,
+            ClassBuilderMode.LIGHT_CLASSES,
+            "debugger",
+            KotlinTypeMapper.LANGUAGE_VERSION_SETTINGS_DEFAULT // TODO use proper LanguageVersionSettings
         )
     }
 

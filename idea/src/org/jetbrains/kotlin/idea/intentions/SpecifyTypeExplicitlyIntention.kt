@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.codeInsight.hint.HintManager
-import com.intellij.codeInsight.intention.LowPriorityAction
+import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.codeInsight.template.*
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
@@ -26,19 +26,19 @@ import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.setType
+import org.jetbrains.kotlin.idea.core.unquote
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.idea.util.getResolvableApproximations
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
@@ -47,7 +47,7 @@ import org.jetbrains.kotlin.utils.ifEmpty
 class SpecifyTypeExplicitlyIntention : SelfTargetingRangeIntention<KtCallableDeclaration>(
     KtCallableDeclaration::class.java,
     "Specify type explicitly"
-), LowPriorityAction {
+), HighPriorityAction {
 
     override fun applicabilityRange(element: KtCallableDeclaration): TextRange? {
         if (element.containingFile is KtCodeFragment) return null
@@ -97,6 +97,7 @@ class SpecifyTypeExplicitlyIntention : SelfTargetingRangeIntention<KtCallableDec
             val callable = declaration.resolveToDescriptorIfAny() as? CallableDescriptor ?: return null
             if (publicAPIOnly && !callable.visibility.isPublicAPI) return null
             val type = callable.returnType ?: return null
+            if (type.isDynamic()) return null
             if (reportPlatformArguments) {
                 if (!type.isFlexibleRecursive()) return null
             } else {
@@ -128,17 +129,8 @@ class SpecifyTypeExplicitlyIntention : SelfTargetingRangeIntention<KtCallableDec
             val bindingContext = resolutionFacade.analyze(contextElement, BodyResolveMode.PARTIAL)
             val scope = contextElement.getResolutionScope(bindingContext, resolutionFacade)
 
-            var checkTypeParameters = true
-            val descriptor = exprType.constructor.declarationDescriptor
-            if (descriptor != null && descriptor is TypeParameterDescriptor) {
-                val owner = descriptor.containingDeclaration
-                if (owner is FunctionDescriptor && owner.typeParameters.contains(descriptor)) {
-                    checkTypeParameters = false
-                }
-            }
-
             fun KotlinType.toResolvableApproximations(): List<KotlinType> =
-                with(getResolvableApproximations(scope, checkTypeParameters).toList()) {
+                with(getResolvableApproximations(scope, checkTypeParameters = false).toList()) {
                     when {
                         exprType.isNullabilityFlexible() -> flatMap {
                             listOf(TypeUtils.makeNotNullable(it), TypeUtils.makeNullable(it))
@@ -182,8 +174,20 @@ class SpecifyTypeExplicitlyIntention : SelfTargetingRangeIntention<KtCallableDec
         private class TypeChooseValueExpression(
             items: List<KotlinType>, defaultItem: KotlinType
         ) : ChooseValueExpression<KotlinType>(items, defaultItem) {
-            override fun getLookupString(element: KotlinType) = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(element)
-            override fun getResult(element: KotlinType) = IdeDescriptorRenderers.SOURCE_CODE.renderType(element)
+            override fun getLookupString(element: KotlinType) =
+                IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(element)
+
+            override fun getResult(element: KotlinType): String {
+                val renderType = IdeDescriptorRenderers.SOURCE_CODE.renderType(element)
+                val descriptor = element.constructor.declarationDescriptor
+                if (descriptor?.name?.asString() == renderType) {
+                    val className = (DescriptorToSourceUtils.descriptorToDeclaration(descriptor) as? KtClass)?.nameIdentifier?.text
+                    if (className != null && className != className.unquote()) {
+                        return className
+                    }
+                }
+                return renderType
+            }
         }
 
         fun addTypeAnnotation(editor: Editor?, declaration: KtCallableDeclaration, exprType: KotlinType) {

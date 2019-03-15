@@ -16,7 +16,12 @@
 
 package org.jetbrains.kotlin.contracts.description
 
+import org.jetbrains.kotlin.contracts.interpretation.ContractInterpretationDispatcher
+import org.jetbrains.kotlin.contracts.model.ESComponents
+import org.jetbrains.kotlin.contracts.model.Functor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.storage.StorageManager
 
 /**
  * This is actual model of contracts, i.e. what is expected to be parsed from
@@ -30,7 +35,18 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
  * backward compatibility. Ideally, this model should only be extended, but not
  * changed.
  */
-open class ContractDescription(val effects: List<EffectDeclaration>, val ownerFunction: FunctionDescriptor)
+open class ContractDescription(
+    val effects: List<EffectDeclaration>,
+    val ownerFunction: FunctionDescriptor,
+    storageManager: StorageManager
+) {
+    private val computeFunctor = storageManager.createMemoizedFunctionWithNullableValues<ModuleDescriptor, Functor> { module ->
+        val components = ESComponents(module.builtIns)
+        ContractInterpretationDispatcher(components).convertContractDescriptorToFunctor(this)
+    }
+
+    fun getFunctor(usageModule: ModuleDescriptor): Functor? = computeFunctor(usageModule)
+}
 
 interface ContractDescriptionElement {
     fun <R, D> accept(contractDescriptionVisitor: ContractDescriptionVisitor<R, D>, data: D): R

@@ -14,7 +14,7 @@ enum class Test {
 // EXIST:  private
 // EXIST:  protected
 // EXIST:  public
-// EXIST: { itemText: "companion object", tailText: " {...}" }
+// EXIST:  companion object
 // EXIST:  operator
 // EXIST:  infix
 // EXIST:  sealed class
@@ -24,8 +24,7 @@ enum class Test {
 // EXIST:  tailrec
 // EXIST:  external
 // EXIST:  annotation class
-// EXIST:  const val
-// EXIST:  suspend
+// EXIST:  suspend fun
 // EXIST: fun
 // EXIST:  typealias
 // EXIST:  expect

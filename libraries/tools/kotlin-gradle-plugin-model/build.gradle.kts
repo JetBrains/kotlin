@@ -6,11 +6,12 @@ plugins {
     maven
 }
 
-standardPublicJars()
 publish()
 
+standardPublicJars()
+
 dependencies {
-    compile(project(":kotlin-stdlib"))
+    compile(kotlinStdlib())
 }
 
 tasks {

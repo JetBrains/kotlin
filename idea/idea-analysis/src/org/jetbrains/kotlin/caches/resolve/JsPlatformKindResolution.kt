@@ -10,9 +10,9 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.analyzer.ResolverForModuleFactory
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.context.ProjectContext
-import org.jetbrains.kotlin.idea.caches.resolve.JsAnalyzerFacade
 import org.jetbrains.kotlin.idea.caches.resolve.PlatformAnalysisSettings
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
+import org.jetbrains.kotlin.js.resolve.JsAnalyzerFacade
 import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.platform.impl.JsIdePlatformKind
 

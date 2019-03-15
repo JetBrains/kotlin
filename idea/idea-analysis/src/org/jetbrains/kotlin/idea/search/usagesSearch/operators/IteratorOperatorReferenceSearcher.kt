@@ -30,11 +30,11 @@ import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 
 class IteratorOperatorReferenceSearcher(
-        targetFunction: PsiElement,
-        searchScope: SearchScope,
-        consumer: ExecutorProcessor<PsiReference>,
-        optimizer: SearchRequestCollector,
-        options: KotlinReferencesSearchOptions
+    targetFunction: PsiElement,
+    searchScope: SearchScope,
+    consumer: ExecutorProcessor<PsiReference>,
+    optimizer: SearchRequestCollector,
+    options: KotlinReferencesSearchOptions
 ) : OperatorReferenceSearcher<KtForExpression>(targetFunction, searchScope, consumer, optimizer, options, wordsToSearch = listOf("in")) {
 
     override fun processPossibleReceiverExpression(expression: KtExpression) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -499,8 +499,13 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         }
 
         @TestMetadata("tailCallIfReturnUnit.kt")
-        public void testTailCallIfReturnUnit() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeListing/tailcall/tailCallIfReturnUnit.kt");
+        public void testTailCallIfReturnUnit_1_2() throws Exception {
+            runTestWithPackageReplacement("compiler/testData/codegen/bytecodeListing/tailcall/tailCallIfReturnUnit.kt", "kotlin.coroutines.experimental");
+        }
+
+        @TestMetadata("tailCallIfReturnUnit.kt")
+        public void testTailCallIfReturnUnit_1_3() throws Exception {
+            runTestWithPackageReplacement("compiler/testData/codegen/bytecodeListing/tailcall/tailCallIfReturnUnit.kt", "kotlin.coroutines");
         }
 
         @TestMetadata("tailCallIntrinsics.kt")

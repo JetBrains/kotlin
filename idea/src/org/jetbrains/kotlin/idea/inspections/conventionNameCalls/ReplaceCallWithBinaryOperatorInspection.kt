@@ -34,6 +34,8 @@ import org.jetbrains.kotlin.idea.intentions.isOperatorOrCompatible
 import org.jetbrains.kotlin.idea.intentions.isReceiverExpressionWithValue
 import org.jetbrains.kotlin.idea.intentions.toResolvedCall
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
+import org.jetbrains.kotlin.idea.project.platform
+import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -41,6 +43,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getLastParentOfTypeInRow
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getFirstArgumentExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getReceiverExpression
+import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
@@ -48,6 +51,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.getKotlinTypeWithPossibleSm
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.types.isDynamic
 import org.jetbrains.kotlin.types.typeUtil.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -83,8 +87,13 @@ class ReplaceCallWithBinaryOperatorInspection : AbstractApplicabilityBasedInspec
     override fun inspectionHighlightType(element: KtDotQualifiedExpression): ProblemHighlightType {
         val calleeExpression = element.callExpression?.calleeExpression as? KtSimpleNameExpression
         val identifier = calleeExpression?.getReferencedNameAsName()
+        if (element.platform == JsPlatform && identifier == OperatorNameConventions.EQUALS) {
+            val context = element.analyze(BodyResolveMode.PARTIAL)
+            if (element.receiverExpression.getType(context)?.isDynamic() == true) {
+                return ProblemHighlightType.INFORMATION
+            }
+        }
         val isFloatingPointNumberEquals = calleeExpression?.isFloatingPointNumberEquals() ?: false
-
         return if (isFloatingPointNumberEquals) {
             ProblemHighlightType.INFORMATION
         } else if (identifier == OperatorNameConventions.EQUALS || identifier == OperatorNameConventions.COMPARE_TO) {
@@ -178,12 +187,14 @@ class ReplaceCallWithBinaryOperatorInspection : AbstractApplicabilityBasedInspec
     private fun KtDotQualifiedExpression.isFloatingPointNumberEquals(): Boolean {
         val resolvedCall = resolveToCall() ?: return false
         val context = analyze(BodyResolveMode.PARTIAL)
+        val declarationDescriptor = containingDeclarationForPseudocode?.resolveToDescriptorIfAny()
         val dataFlowValueFactory = getResolutionFacade().getFrontendService(DataFlowValueFactory::class.java)
+        val defaultType: (KotlinType, Set<KotlinType>) -> KotlinType = { givenType, stableTypes -> stableTypes.firstOrNull() ?: givenType }
         val receiverType = resolvedCall.getReceiverExpression()?.getKotlinTypeWithPossibleSmartCastToFP(
-            context, containingDeclarationForPseudocode?.resolveToDescriptorIfAny(), languageVersionSettings, dataFlowValueFactory
+            context, declarationDescriptor, languageVersionSettings, dataFlowValueFactory, defaultType
         ) ?: return false
         val argumentType = resolvedCall.getFirstArgumentExpression()?.getKotlinTypeWithPossibleSmartCastToFP(
-            context, containingDeclarationForPseudocode?.resolveToDescriptorIfAny(), languageVersionSettings, dataFlowValueFactory
+            context, declarationDescriptor, languageVersionSettings, dataFlowValueFactory, defaultType
         ) ?: return false
         return receiverType.isFpType() && argumentType.isNumericType() ||
                 argumentType.isFpType() && receiverType.isNumericType()

@@ -64,13 +64,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
 
     override fun populateModuleExtraModels(gradleModule: IdeaModule, ideModule: DataNode<ModuleData>) {
         if (ExternalSystemApiUtil.find(ideModule, BuildScriptClasspathData.KEY) == null) {
-            val buildScriptClasspathModel = resolverCtx.getExtraProject(gradleModule, BuildScriptClasspathModel::class.java)
-            val classpathEntries = buildScriptClasspathModel?.classpath?.map {
-                BuildScriptClasspathData.ClasspathEntry(it.classes, it.sources, it.javadoc)
-            } ?: emptyList()
-            val buildScriptClasspathData = BuildScriptClasspathData(GradleConstants.SYSTEM_ID, classpathEntries).also {
-                it.gradleHomeDir = buildScriptClasspathModel?.gradleHomeDir
-            }
+            val buildScriptClasspathData = buildClasspathData(gradleModule, resolverCtx)
             ideModule.createChild(BuildScriptClasspathData.KEY, buildScriptClasspathData)
         }
 
@@ -347,17 +341,20 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
             val mppModel = resolverCtx.getExtraProject(gradleModule, KotlinMPPGradleModel::class.java) ?: return
             val sourceSetMap = ideProject.getUserData(GradleProjectResolver.RESOLVED_SOURCE_SETS) ?: return
             val artifactsMap = ideProject.getUserData(CONFIGURATION_ARTIFACTS) ?: return
+            val substitutor = KotlinNativeLibrariesDependencySubstitutor(mppModel, gradleModule, resolverCtx)
             val processedModuleIds = HashSet<String>()
             processCompilations(gradleModule, mppModel, ideModule, resolverCtx) { dataNode, compilation ->
                 if (processedModuleIds.add(getKotlinModuleId(gradleModule, compilation, resolverCtx))) {
+                    val substitutedDependencies = substitutor.substituteDependencies(compilation.dependencies)
                     buildDependencies(
                         resolverCtx,
                         sourceSetMap,
                         artifactsMap,
                         dataNode,
-                        preprocessDependencies(compilation.dependencies),
+                        preprocessDependencies(substitutedDependencies),
                         ideProject
                     )
+                    KotlinNativeLibrariesNameFixer.applyTo(dataNode)
                     for (sourceSet in compilation.sourceSets) {
                         if (sourceSet.fullName() == compilation.fullName()) continue
                         val targetDataNode = getSiblingKotlinModuleData(sourceSet, gradleModule, ideModule, resolverCtx) ?: continue
@@ -446,7 +443,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
             else -> null
         }
 
-        private fun preprocessDependencies(dependencies: Set<KotlinDependency>): List<ExternalDependency> {
+        private fun preprocessDependencies(dependencies: Collection<KotlinDependency>): List<ExternalDependency> {
             return dependencies
                 .groupBy { it.id }
                 .mapValues { it.value.firstOrNull { it.scope == "COMPILE" } ?: it.value.lastOrNull() }
@@ -616,7 +613,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
             resolverCtx: ProjectResolverContext
         ): KotlinSourceSetInfo? {
             if (sourceSet.platform.isNotSupported()) return null
-            return KotlinSourceSetInfo(sourceSet).also { info ->
+            return KotlinSourceSetInfo(KotlinSourceSetImpl(sourceSet)).also { info ->
                 val languageSettings = sourceSet.languageSettings
                 info.moduleId = getKotlinModuleId(gradleModule, sourceSet, resolverCtx)
                 info.gradleModuleId = getModuleId(resolverCtx, gradleModule)
@@ -646,16 +643,18 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
             resolverCtx: ProjectResolverContext
         ): KotlinSourceSetInfo? {
             if (compilation.platform.isNotSupported()) return null
-            return KotlinSourceSetInfo(compilation).also { sourceSetInfo ->
+            return KotlinSourceSetInfo(KotlinCompilationImpl(compilation)).also { sourceSetInfo ->
                 sourceSetInfo.moduleId = getKotlinModuleId(gradleModule, compilation, resolverCtx)
                 sourceSetInfo.gradleModuleId = getModuleId(resolverCtx, gradleModule)
                 sourceSetInfo.platform = compilation.platform
                 sourceSetInfo.isTestModule = compilation.isTestModule
-                sourceSetInfo.compilerArguments = createCompilerArguments(compilation.arguments.currentArguments, compilation.platform).also {
-                    it.multiPlatform = true
-                }
+                sourceSetInfo.compilerArguments =
+                    createCompilerArguments(compilation.arguments.currentArguments, compilation.platform).also {
+                        it.multiPlatform = true
+                    }
                 sourceSetInfo.dependencyClasspath = compilation.dependencyClasspath
-                sourceSetInfo.defaultCompilerArguments = createCompilerArguments(compilation.arguments.defaultArguments, compilation.platform)
+                sourceSetInfo.defaultCompilerArguments =
+                    createCompilerArguments(compilation.arguments.defaultArguments, compilation.platform)
                 sourceSetInfo.addSourceSets(compilation.sourceSets, compilation.fullName(), gradleModule, resolverCtx)
             }
         }
@@ -682,7 +681,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
         }
 
         private fun KotlinModule.fullName(simpleName: String = name) = when (this) {
-            is KotlinCompilation -> compilationFullName(simpleName, target.disambiguationClassifier)
+            is KotlinCompilation -> compilationFullName(simpleName, disambiguationClassifier)
             else -> simpleName
         }
 
@@ -690,6 +689,9 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
             getModuleId(resolverCtx, gradleModule) + ":" + kotlinModule.fullName()
 
         private fun ExternalProject.notImportedCommonSourceSets() =
-            GradlePropertiesFileFacade.forExternalProject(this).readProperty(KOTLIN_NOT_IMPORTED_COMMON_SOURCE_SETS_SETTING)?.equals("true", ignoreCase = true) ?: false
+            GradlePropertiesFileFacade.forExternalProject(this).readProperty(KOTLIN_NOT_IMPORTED_COMMON_SOURCE_SETS_SETTING)?.equals(
+                "true",
+                ignoreCase = true
+            ) ?: false
     }
 }

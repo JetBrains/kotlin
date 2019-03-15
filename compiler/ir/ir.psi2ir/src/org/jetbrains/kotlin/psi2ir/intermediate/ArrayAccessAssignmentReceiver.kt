@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi2ir.generators.CallGenerator
 import org.jetbrains.kotlin.psi2ir.generators.pregenerateValueArgumentsUsing
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 import org.jetbrains.kotlin.types.KotlinType
 
 class ArrayAccessAssignmentReceiver(
@@ -42,32 +43,59 @@ class ArrayAccessAssignmentReceiver(
     private val origin: IrStatementOrigin
 ) : AssignmentReceiver {
 
+    private val indexedGetDescriptor = indexedGetResolvedCall?.resultingDescriptor
+    private val indexedSetDescriptor = indexedSetResolvedCall?.resultingDescriptor
+
     private val descriptor =
-        indexedGetResolvedCall?.resultingDescriptor
-            ?: indexedSetResolvedCall?.resultingDescriptor
+        indexedGetDescriptor
+            ?: indexedSetDescriptor
             ?: throw AssertionError("Array access should have either indexed-get call or indexed-set call")
 
     override fun assign(withLValue: (LValue) -> IrExpression): IrExpression {
         val kotlinType: KotlinType =
-            indexedGetResolvedCall?.run { resultingDescriptor.returnType!! }
-                ?: indexedSetResolvedCall?.run { resultingDescriptor.valueParameters.last().type }
+            indexedGetDescriptor?.returnType
+                ?: indexedSetDescriptor?.run { valueParameters.last().type }
                 ?: throw AssertionError("Array access should have either indexed-get call or indexed-set call")
 
         val hasResult = origin.isAssignmentOperatorWithResult()
         val resultType = if (hasResult) kotlinType else callGenerator.context.builtIns.unitType
         val irResultType = callGenerator.translateType(resultType)
+
+        if (indexedGetDescriptor?.isDynamic() != false && indexedSetDescriptor?.isDynamic() != false) {
+            return withLValue(
+                createLValue(kotlinType, OnceExpressionValue(irArray)) { _, irIndex ->
+                    OnceExpressionValue(irIndex)
+                }
+            )
+        }
+
         val irBlock = IrBlockImpl(startOffset, endOffset, irResultType, origin)
 
         val irArrayValue = callGenerator.scope.createTemporaryVariableInBlock(callGenerator.context, irArray, irBlock, "array")
 
-        val ktExpressionToIrIndexValue = HashMap<KtExpression, IntermediateValue>()
+        irBlock.inlineStatement(
+            withLValue(
+                createLValue(kotlinType, irArrayValue) { i, irIndex ->
+                    callGenerator.scope.createTemporaryVariableInBlock(callGenerator.context, irIndex, irBlock, "index$i")
+                }
+            )
+        )
 
+        return irBlock
+    }
+
+    private fun createLValue(
+        kotlinType: KotlinType,
+        irArrayValue: IntermediateValue,
+        createIndexValue: (Int, IrExpression) -> IntermediateValue
+    ): LValueWithGetterAndSetterCalls {
+        val ktExpressionToIrIndexValue = HashMap<KtExpression, IntermediateValue>()
         for ((i, irIndex) in irIndexExpressions.withIndex()) {
             ktExpressionToIrIndexValue[ktIndexExpressions[i]] =
-                    callGenerator.scope.createTemporaryVariableInBlock(callGenerator.context, irIndex, irBlock, "index$i")
+                createIndexValue(i, irIndex)
         }
 
-        val irLValue = LValueWithGetterAndSetterCalls(
+        return LValueWithGetterAndSetterCalls(
             callGenerator,
             descriptor,
             { indexedGetCall()?.fillArrayAndIndexArguments(irArrayValue, indexedGetResolvedCall!!, ktExpressionToIrIndexValue) },
@@ -75,9 +103,6 @@ class ArrayAccessAssignmentReceiver(
             callGenerator.translateType(kotlinType),
             startOffset, endOffset, origin
         )
-        irBlock.inlineStatement(withLValue(irLValue))
-
-        return irBlock
     }
 
     override fun assign(value: IrExpression): IrExpression {

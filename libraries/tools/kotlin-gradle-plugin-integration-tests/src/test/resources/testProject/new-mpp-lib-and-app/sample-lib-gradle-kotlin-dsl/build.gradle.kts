@@ -9,7 +9,7 @@ version = "1.0"
 repositories {
     mavenLocal()
     jcenter()
-    maven { setUrl("http://dl.bintray.com/kotlin/kotlinx.html/") }
+    maven { setUrl("https://dl.bintray.com/kotlin/kotlinx.html/") }
 }
 
 kotlin {
@@ -53,4 +53,14 @@ publishing {
 	repositories {
 		maven { setUrl("file://${projectDir.absolutePath.replace('\\', '/')}/repo") }
 	}
+}
+
+// Check that a compilation may be created after project evaluation, KT-28896:
+afterEvaluate {
+    kotlin {
+        jvm("jvm6").compilations.create("benchmark") {
+            defaultSourceSet.dependsOn(sourceSets["jvm6Main"])
+            tasks["assemble"].dependsOn(compileKotlinTask)
+        }
+    }
 }

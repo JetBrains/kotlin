@@ -42,7 +42,7 @@ class JavaTypeResolver(
         private val typeParameterResolver: TypeParameterResolver
 ) {
 
-    fun transformJavaType(javaType: JavaType, attr: JavaTypeAttributes): KotlinType {
+    fun transformJavaType(javaType: JavaType?, attr: JavaTypeAttributes): KotlinType {
         return when (javaType) {
             is JavaPrimitiveType -> {
                 val primitiveType = javaType.type
@@ -53,6 +53,7 @@ class JavaTypeResolver(
             is JavaArrayType -> transformArrayType(javaType, attr)
             // Top level type can be a wildcard only in case of broken Java code, but we should not fail with exceptions in such cases
             is JavaWildcardType -> javaType.bound?.let { transformJavaType(it, attr) } ?: c.module.builtIns.defaultBound
+            null -> c.module.builtIns.defaultBound
             else -> throw UnsupportedOperationException("Unsupported type: " + javaType)
         }
     }
@@ -247,7 +248,7 @@ class JavaTypeResolver(
     }
 
     private fun transformToTypeProjection(
-            javaType: JavaType,
+            javaType: JavaType?,
             attr: JavaTypeAttributes,
             typeParameter: TypeParameterDescriptor
     ): TypeProjection {

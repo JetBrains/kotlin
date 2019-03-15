@@ -5,54 +5,57 @@ FILE fqName:<root> fileName:/invokeOperator.kt
     VALUE_PARAMETER name:a index:0 type:dynamic flags:
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test1(dynamic): dynamic'
-        CALL 'invoke(dynamic): dynamic' type=dynamic origin=INVOKE
-          $this: GET_VAR 'value-parameter a: dynamic' type=dynamic origin=VARIABLE_AS_FUNCTION
-          p0: CONST Int type=kotlin.Int value=1
-  FUN name:test1a visibility:public modality:FINAL <> (a:dynamic) returnType:dynamic flags:
+        DYN_OP operator=INVOKE type=dynamic
+          receiver: GET_VAR 'value-parameter a: dynamic' type=dynamic origin=VARIABLE_AS_FUNCTION
+          0: CONST Int type=kotlin.Int value=1
+  FUN name:test2 visibility:public modality:FINAL <> (a:dynamic) returnType:dynamic flags:
     VALUE_PARAMETER name:a index:0 type:dynamic flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test1a(dynamic): dynamic'
-        CALL 'invoke(dynamic): dynamic' type=dynamic origin=null
-          $this: GET_VAR 'value-parameter a: dynamic' type=dynamic origin=null
-          p0: CONST Int type=kotlin.Int value=1
-  FUN name:test2 visibility:public modality:FINAL <> (a:dynamic, b:dynamic) returnType:dynamic flags:
-    VALUE_PARAMETER name:a index:0 type:dynamic flags:
-    VALUE_PARAMETER name:b index:1 type:dynamic flags:
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test2(dynamic, dynamic): dynamic'
-        CALL 'invoke(dynamic): dynamic' type=dynamic origin=INVOKE
-          $this: GET_VAR 'value-parameter a: dynamic' type=dynamic origin=VARIABLE_AS_FUNCTION
-          p0: GET_VAR 'value-parameter b: dynamic' type=dynamic origin=null
-  FUN name:test2a visibility:public modality:FINAL <> (a:dynamic, b:dynamic) returnType:dynamic flags:
+      RETURN type=kotlin.Nothing from='test2(dynamic): dynamic'
+        DYN_OP operator=INVOKE type=dynamic
+          receiver: DYN_MEMBER memberName='invoke' type=dynamic
+            GET_VAR 'value-parameter a: dynamic' type=dynamic origin=null
+          0: CONST Int type=kotlin.Int value=1
+  FUN name:test3 visibility:public modality:FINAL <> (a:dynamic, b:dynamic) returnType:dynamic flags:
     VALUE_PARAMETER name:a index:0 type:dynamic flags:
     VALUE_PARAMETER name:b index:1 type:dynamic flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test2a(dynamic, dynamic): dynamic'
-        CALL 'invoke(dynamic): dynamic' type=dynamic origin=null
-          $this: GET_VAR 'value-parameter a: dynamic' type=dynamic origin=null
-          p0: GET_VAR 'value-parameter b: dynamic' type=dynamic origin=null
-  FUN name:test2b visibility:public modality:FINAL <> (a:dynamic, b:dynamic) returnType:dynamic flags:
+      RETURN type=kotlin.Nothing from='test3(dynamic, dynamic): dynamic'
+        DYN_OP operator=INVOKE type=dynamic
+          receiver: GET_VAR 'value-parameter a: dynamic' type=dynamic origin=VARIABLE_AS_FUNCTION
+          0: GET_VAR 'value-parameter b: dynamic' type=dynamic origin=null
+  FUN name:test4 visibility:public modality:FINAL <> (a:dynamic, b:dynamic) returnType:dynamic flags:
     VALUE_PARAMETER name:a index:0 type:dynamic flags:
     VALUE_PARAMETER name:b index:1 type:dynamic flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test2b(dynamic, dynamic): dynamic'
-        CALL 'invoke(dynamic): dynamic' type=dynamic origin=INVOKE
-          $this: CALL 'invoke(dynamic): dynamic' type=dynamic origin=INVOKE
-            $this: GET_VAR 'value-parameter a: dynamic' type=dynamic origin=VARIABLE_AS_FUNCTION
-            p0: GET_VAR 'value-parameter b: dynamic' type=dynamic origin=null
-          p0: GET_VAR 'value-parameter b: dynamic' type=dynamic origin=null
-  FUN name:test2c visibility:public modality:FINAL <> (a:dynamic, b:dynamic) returnType:dynamic flags:
+      RETURN type=kotlin.Nothing from='test4(dynamic, dynamic): dynamic'
+        DYN_OP operator=INVOKE type=dynamic
+          receiver: DYN_MEMBER memberName='invoke' type=dynamic
+            GET_VAR 'value-parameter a: dynamic' type=dynamic origin=null
+          0: GET_VAR 'value-parameter b: dynamic' type=dynamic origin=null
+  FUN name:test5 visibility:public modality:FINAL <> (a:dynamic, b:dynamic) returnType:dynamic flags:
     VALUE_PARAMETER name:a index:0 type:dynamic flags:
     VALUE_PARAMETER name:b index:1 type:dynamic flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test2c(dynamic, dynamic): dynamic'
-        CALL 'invoke(dynamic): dynamic' type=dynamic origin=null
-          $this: CALL 'invoke(dynamic): dynamic' type=dynamic origin=INVOKE
-            $this: GET_VAR 'value-parameter a: dynamic' type=dynamic origin=VARIABLE_AS_FUNCTION
-            p0: GET_VAR 'value-parameter b: dynamic' type=dynamic origin=null
-          p0: GET_VAR 'value-parameter b: dynamic' type=dynamic origin=null
-  FUN name:test3 visibility:public modality:FINAL <> (a:dynamic) returnType:kotlin.Unit flags:
+      RETURN type=kotlin.Nothing from='test5(dynamic, dynamic): dynamic'
+        DYN_OP operator=INVOKE type=dynamic
+          receiver: DYN_OP operator=INVOKE type=dynamic
+            receiver: GET_VAR 'value-parameter a: dynamic' type=dynamic origin=VARIABLE_AS_FUNCTION
+            0: GET_VAR 'value-parameter b: dynamic' type=dynamic origin=null
+          0: GET_VAR 'value-parameter b: dynamic' type=dynamic origin=null
+  FUN name:test6 visibility:public modality:FINAL <> (a:dynamic, b:dynamic) returnType:dynamic flags:
+    VALUE_PARAMETER name:a index:0 type:dynamic flags:
+    VALUE_PARAMETER name:b index:1 type:dynamic flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='test6(dynamic, dynamic): dynamic'
+        DYN_OP operator=INVOKE type=dynamic
+          receiver: DYN_MEMBER memberName='invoke' type=dynamic
+            DYN_OP operator=INVOKE type=dynamic
+              receiver: GET_VAR 'value-parameter a: dynamic' type=dynamic origin=VARIABLE_AS_FUNCTION
+              0: GET_VAR 'value-parameter b: dynamic' type=dynamic origin=null
+          0: GET_VAR 'value-parameter b: dynamic' type=dynamic origin=null
+  FUN name:test7 visibility:public modality:FINAL <> (a:dynamic) returnType:kotlin.Unit flags:
     VALUE_PARAMETER name:a index:0 type:dynamic flags:
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test3(dynamic): Unit'
+      RETURN type=kotlin.Nothing from='test7(dynamic): Unit'
         CALL 'invoke(): Unit' type=kotlin.Unit origin=null

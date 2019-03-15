@@ -157,7 +157,7 @@ abstract class GradleKotlinFrameworkSupportProvider(
 
 open class GradleKotlinJavaFrameworkSupportProvider(
     frameworkTypeId: String = "KOTLIN",
-    displayName: String = "Kotlin (Java)"
+    displayName: String = "Kotlin/JVM"
 ) : GradleKotlinFrameworkSupportProvider(frameworkTypeId, displayName, KotlinIcons.SMALL_LOGO) {
 
     override fun getPluginId() = KotlinGradleModuleConfigurator.KOTLIN
@@ -186,7 +186,7 @@ open class GradleKotlinJavaFrameworkSupportProvider(
 
 open class GradleKotlinJSFrameworkSupportProvider(
     frameworkTypeId: String = "KOTLIN_JS",
-    displayName: String = "Kotlin (JavaScript)"
+    displayName: String = "Kotlin/JS"
 ) : GradleKotlinFrameworkSupportProvider(frameworkTypeId, displayName, KotlinIcons.JS) {
 
     override fun getPluginId() = KotlinJsGradleModuleConfigurator.KOTLIN_JS

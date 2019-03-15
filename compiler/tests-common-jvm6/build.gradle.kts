@@ -7,7 +7,7 @@ plugins {
 jvmTarget = "1.6"
 
 dependencies {
-    compile(project(":kotlin-stdlib"))
+    compile(kotlinStdlib())
     testCompile(project(":kotlin-test:kotlin-test-jvm"))
 }
 

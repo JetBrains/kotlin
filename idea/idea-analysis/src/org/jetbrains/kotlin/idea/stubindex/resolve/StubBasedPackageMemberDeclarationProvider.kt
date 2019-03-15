@@ -27,9 +27,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.safeNameForLazyResolve
-import org.jetbrains.kotlin.resolve.lazy.ResolveSessionUtils
 import org.jetbrains.kotlin.resolve.lazy.data.KtClassInfoUtil
-import org.jetbrains.kotlin.resolve.lazy.data.KtClassLikeInfo
+import org.jetbrains.kotlin.resolve.lazy.data.KtClassOrObjectInfo
 import org.jetbrains.kotlin.resolve.lazy.data.KtScriptInfo
 import org.jetbrains.kotlin.resolve.lazy.declarations.PackageMemberDeclarationProvider
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
@@ -74,17 +73,16 @@ class StubBasedPackageMemberDeclarationProvider(
 
     override fun getDeclarationNames() = declarationNames_
 
-    override fun getClassOrObjectDeclarations(name: Name): Collection<KtClassLikeInfo> {
-        val result = ArrayList<KtClassLikeInfo>()
-        runReadAction {
-            KotlinFullClassNameIndex.getInstance().get(childName(name), project, searchScope)
-                    .mapTo(result) { KtClassInfoUtil.createClassLikeInfo(it) }
-
-            KotlinScriptFqnIndex.instance.get(childName(name), project, searchScope)
-                    .mapTo(result, ::KtScriptInfo)
-        }
-        return result
+    override fun getClassOrObjectDeclarations(name: Name): Collection<KtClassOrObjectInfo<*>> = runReadAction {
+        KotlinFullClassNameIndex.getInstance().get(childName(name), project, searchScope)
+            .map { KtClassInfoUtil.createClassLikeInfo(it) }
     }
+
+    override fun getScriptDeclarations(name: Name): Collection<KtScriptInfo> = runReadAction {
+        KotlinScriptFqnIndex.instance.get(childName(name), project, searchScope)
+            .map(::KtScriptInfo)
+    }
+
 
     override fun getFunctionDeclarations(name: Name): Collection<KtNamedFunction> {
         return runReadAction {

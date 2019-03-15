@@ -264,10 +264,12 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
             }
 
             val isCallableImport = importedReference is CallableDescriptor
+            val isEnumEntry = (importedReference as? ClassDescriptor)?.kind == ClassKind.ENUM_ENTRY
             val isAllUnderClassifierImport = importDirective.isAllUnder && importedReference is ClassifierDescriptor
 
-            if (isCallableImport || isAllUnderClassifierImport)
+            if (isCallableImport || isEnumEntry || isAllUnderClassifierImport) {
                 continue@loop
+            }
 
             val importedExpr = treeMaker.FqName(importedFqName.asString())
 
@@ -425,6 +427,11 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         }
 
         val declaration = kaptContext.origins[clazz]?.element as? KtClassOrObject ?: return defaultSuperTypes
+        val declarationDescriptor = kaptContext.bindingContext[BindingContext.CLASS, declaration] ?: return defaultSuperTypes
+
+        if (typeMapper.mapType(declarationDescriptor) != Type.getObjectType(clazz.name)) {
+            return defaultSuperTypes
+        }
 
         val (superClass, superInterfaces) = partitionSuperTypes(declaration) ?: return defaultSuperTypes
 
@@ -462,36 +469,49 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
             .takeIf { it.isNotEmpty() }
             ?: return Pair(null, emptyList())
 
-        val resolvedSuperTypes = superTypeEntries
-            .map { it to kaptContext.bindingContext[BindingContext.TYPE, it.typeReference] }
+        val classEntries = mutableListOf<KtSuperTypeListEntry>()
+        val interfaceEntries = mutableListOf<KtSuperTypeListEntry>()
+        val otherEntries = mutableListOf<KtSuperTypeListEntry>()
 
-        val (resolvedAsClasses, otherSuperTypes) = resolvedSuperTypes
-            .partition {
-                it.second?.isError == false
-                        && (it.second?.constructor?.declarationDescriptor as? ClassDescriptor)?.kind == ClassKind.CLASS
+        for (entry in superTypeEntries) {
+            val type = kaptContext.bindingContext[BindingContext.TYPE, entry.typeReference]
+            val classDescriptor = type?.constructor?.declarationDescriptor as? ClassDescriptor
+
+            if (type != null && !type.isError && classDescriptor != null) {
+                val container = if (classDescriptor.kind == ClassKind.INTERFACE) interfaceEntries else classEntries
+                container += entry
+                continue
             }
 
-        if (resolvedAsClasses.size > 1) {
+            if (entry is KtSuperTypeCallEntry) {
+                classEntries += entry
+                continue
+            }
+
+            otherEntries += entry
+        }
+
+        for (entry in otherEntries) {
+            if (classEntries.isEmpty()) {
+                if (declaration is KtClass && !declaration.isInterface() && declaration.hasOnlySecondaryConstructors()) {
+                    classEntries += entry
+                    continue
+                }
+            }
+
+            interfaceEntries += entry
+        }
+
+        if (classEntries.size > 1) {
             // Error in user code, several entries were resolved to classes
             return null
-        } else if (resolvedAsClasses.size == 1) {
-            return Pair(resolvedAsClasses.single().first.typeReference, otherSuperTypes.mapNotNull { it.first.typeReference })
         }
 
-        val (withParenthesis, withoutParenthesis) = superTypeEntries.partition { it is KtSuperTypeCallEntry }
+        return Pair(classEntries.firstOrNull()?.typeReference, interfaceEntries.mapNotNull { it.typeReference })
+    }
 
-        if (withParenthesis.size > 1) {
-            // Error in user code, several entries with super constructor call
-            return null
-        } else if (withParenthesis.size == 1) {
-            return Pair(withParenthesis.single().typeReference, withoutParenthesis.mapNotNull { it.typeReference })
-        }
-
-        if (declaration is KtClass && declaration.primaryConstructor == null && declaration.secondaryConstructors.isNotEmpty()) {
-            return Pair(superTypeEntries.first().typeReference, superTypeEntries.drop(1).mapNotNull { it.typeReference })
-        }
-
-        return Pair(null, superTypeEntries.mapNotNull { it.typeReference })
+    private fun KtClass.hasOnlySecondaryConstructors(): Boolean {
+        return primaryConstructor == null && secondaryConstructors.isNotEmpty()
     }
 
     private tailrec fun checkIfValidTypeName(containingClass: ClassNode, type: Type): Boolean {

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.name.FqName
 
 const val KLIB_PROPERTY_ABI_VERSION = "abi_version"
 const val KLIB_PROPERTY_UNIQUE_NAME = "unique_name"
+const val KLIB_PROPERTY_COMPILER_VERSION = "compiler_version"
 const val KLIB_PROPERTY_LINKED_OPTS = "linkerOpts"
 const val KLIB_PROPERTY_DEPENDS = "depends"
 const val KLIB_PROPERTY_INTEROP = "interop"

@@ -28,6 +28,7 @@ abstract class ManyCandidatesResolver<D : CallableDescriptor>(
 ) : InferenceSession {
     private val partiallyResolvedCallsInfo = arrayListOf<PSIPartialCallInfo>()
     private val errorCallsInfo = arrayListOf<PSIErrorCallInfo<D>>()
+    private val completedCalls = hashSetOf<ResolvedAtom>()
 
     open fun prepareForCompletion(commonSystem: NewConstraintSystem, resolvedCallsInfo: List<PSIPartialCallInfo>) {
         // do nothing
@@ -58,6 +59,9 @@ abstract class ManyCandidatesResolver<D : CallableDescriptor>(
     override fun currentConstraintSystem(): ConstraintStorage {
         return partiallyResolvedCallsInfo.lastOrNull()?.callResolutionResult?.constraintSystem ?: ConstraintStorage.Empty
     }
+
+    override fun callCompleted(resolvedAtom: ResolvedAtom): Boolean =
+        !completedCalls.add(resolvedAtom)
 
     fun resolveCandidates(resolutionCallbacks: KotlinResolutionCallbacks): List<ResolutionResultCallInfo<D>> {
         val resolvedCallsInfo = partiallyResolvedCallsInfo.toList()

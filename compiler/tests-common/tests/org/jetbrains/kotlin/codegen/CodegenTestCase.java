@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.TestsCompilerError;
 import org.jetbrains.kotlin.TestsCompiletimeError;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.backend.common.output.SimpleOutputFileCollection;
-import org.jetbrains.kotlin.checkers.CheckerTestUtil;
+import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil;
 import org.jetbrains.kotlin.checkers.CompilerTestLanguageVersionSettings;
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys;
 import org.jetbrains.kotlin.cli.common.output.OutputUtilsKt;
@@ -207,17 +207,17 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
             }
         }
 
-        if (explicitLanguageVersionSettings != null) {
-            CommonConfigurationKeysKt.setLanguageVersionSettings(configuration, explicitLanguageVersionSettings);
-        }
-        else if (disableReleaseCoroutines) {
-            CompilerTestLanguageVersionSettings compilerLanguageVersionSettings = new CompilerTestLanguageVersionSettings(
+        if (disableReleaseCoroutines) {
+            explicitLanguageVersionSettings = new CompilerTestLanguageVersionSettings(
                     Collections.singletonMap(LanguageFeature.ReleaseCoroutines, LanguageFeature.State.DISABLED),
                     ApiVersion.LATEST_STABLE,
                     LanguageVersion.LATEST_STABLE,
                     Collections.emptyMap()
             );
-            CommonConfigurationKeysKt.setLanguageVersionSettings(configuration, compilerLanguageVersionSettings);
+        }
+
+        if (explicitLanguageVersionSettings != null) {
+            CommonConfigurationKeysKt.setLanguageVersionSettings(configuration, explicitLanguageVersionSettings);
         }
 
         updateConfigurationWithFlags(configuration, kotlinConfigurationFlags);
@@ -367,7 +367,8 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
         List<KtFile> ktFiles = new ArrayList<>(files.size());
         for (TestFile file : files) {
             if (file.name.endsWith(".kt")) {
-                String content = CheckerTestUtil.parseDiagnosedRanges(file.content, new ArrayList<>(0));
+                // `rangesToDiagnosticNames` parameter is not-null only for diagnostic tests, it's using for lazy diagnostics
+                String content = CheckerTestUtil.INSTANCE.parseDiagnosedRanges(file.content, new ArrayList<>(0), null);
                 ktFiles.add(KotlinTestUtils.createFile(file.name, content, project));
             }
         }
@@ -439,14 +440,16 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
 
         ScriptDependenciesProvider externalImportsProvider =
                 ScriptDependenciesProvider.Companion.getInstance(myEnvironment.getProject());
-        myEnvironment.getSourceFiles().forEach(
-                file -> {
-                    ScriptDependencies dependencies = externalImportsProvider.getScriptDependencies(file);
-                    if (dependencies != null) {
-                        files.addAll(dependencies.getClasspath());
+        if (externalImportsProvider != null) {
+            myEnvironment.getSourceFiles().forEach(
+                    file -> {
+                        ScriptDependencies dependencies = externalImportsProvider.getScriptDependencies(file);
+                        if (dependencies != null) {
+                            files.addAll(dependencies.getClasspath());
+                        }
                     }
-                }
-        );
+            );
+        }
 
         try {
             URL[] result = new URL[files.size()];

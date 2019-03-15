@@ -1,0 +1,4 @@
+public final class StarProjection : R|java/lang/Object| {
+    public final operator function foo(): R|ft<test/StarProjection.MyClass<*>, test/StarProjection.MyClass<*>?>|!
+
+}

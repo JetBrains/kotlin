@@ -208,7 +208,7 @@ enum class KotlinCallKind(vararg resolutionPart: ResolutionPart) {
         CreateFreshVariablesSubstitutor,
         CheckExplicitReceiverKindConsistency,
         CheckReceivers,
-        CheckArguments,
+        CheckArgumentsInParenthesis,
         CheckExternalArgument,
         PostponedVariablesInitializerResolutionPart
     ),

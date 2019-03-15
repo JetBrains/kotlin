@@ -82,7 +82,7 @@ object JvmAnalyzerFacade : ResolverForModuleFactory() {
             resolverForModule.componentProvider.get<JavaDescriptorResolver>()
         }
 
-        val jvmTarget = targetPlatformVersion as? JvmTarget ?: JvmTarget.JVM_1_6
+        val jvmTarget = targetPlatformVersion as? JvmTarget ?: JvmTarget.DEFAULT
         val trace = CodeAnalyzerInitializer.getInstance(project).createTrace()
 
         val lookupTracker = LookupTracker.DO_NOTHING

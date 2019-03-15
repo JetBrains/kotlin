@@ -37,6 +37,8 @@ interface ContractParsingDiagnosticsCollector {
 }
 
 class TraceBasedCollector(private val bindingTrace: BindingTrace, mainCall: KtExpression) : ContractParsingDiagnosticsCollector {
+    constructor(callContext: ContractCallContext) : this(callContext.trace, callContext.contractCallExpression)
+
     private val reportedErrors: MutableList<Diagnostic> = mutableListOf()
     private val mainCallReportTarget = (mainCall as? KtCallExpression)?.calleeExpression ?: mainCall
 

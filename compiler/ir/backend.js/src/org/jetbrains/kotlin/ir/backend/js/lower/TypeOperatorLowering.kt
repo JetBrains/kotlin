@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.utils.getPrimitiveArrayElementType
-import org.jetbrains.kotlin.backend.common.utils.isPrimitiveArray
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrArithBuilder
@@ -187,7 +186,7 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
                     }
                 }
 
-                val toNotNullable = toType.makeNotNull()
+                val toNotNullable = toType.makeNotNull(false)
                 val argumentInstance = argument()
                 val instanceCheck = generateTypeCheckNonNull(argumentInstance, toNotNullable)
                 val isFromNullable = argumentInstance.type.isNullable()
@@ -215,10 +214,17 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
 //                    toType.isChar() -> generateCheckForChar(argument)
                     toType.isNumber() -> generateNumberCheck(argument)
                     toType.isComparable() -> generateComparableCheck(argument)
+                    toType.isCharSequence() -> generateCharSequenceCheck(argument)
                     toType.isArray() -> generateGenericArrayCheck(argument)
                     toType.isPrimitiveArray() -> generatePrimitiveArrayTypeCheck(argument, toType)
                     toType.isTypeParameter() -> generateTypeCheckWithTypeParameter(argument, toType)
-                    toType.isInterface() -> generateInterfaceCheck(argument, toType)
+                    toType.isInterface() -> {
+                        if ((toType.classifierOrFail.owner as IrClass).isEffectivelyExternal()) {
+                            generateIsObjectCheck(argument)
+                        } else {
+                            generateInterfaceCheck(argument, toType)
+                        }
+                    }
                     else -> generateNativeInstanceOf(argument, toType)
                 }
             }
@@ -240,7 +246,7 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
 
                 assert(!typeParameter.isReified) { "reified parameters have to be lowered before" }
                 return typeParameter.superTypes.fold(litTrue) { r, t ->
-                    val check = generateTypeCheckNonNull(argument.copy(), t.makeNotNull())
+                    val check = generateTypeCheckNonNull(argument.copy(), t.makeNotNull(false))
                     calculator.and(r, check)
                 }
             }
@@ -274,6 +280,9 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
 
             private fun generateComparableCheck(argument: IrExpression) =
                 JsIrBuilder.buildCall(context.intrinsics.isComparableSymbol).apply { putValueArgument(0, argument) }
+
+            private fun generateCharSequenceCheck(argument: IrExpression) =
+                JsIrBuilder.buildCall(context.intrinsics.isCharSequenceSymbol).apply { putValueArgument(0, argument) }
 
             private fun generatePrimitiveArrayTypeCheck(argument: IrExpression, toType: IrType): IrExpression {
                 val f = context.intrinsics.isPrimitiveArray[toType.getPrimitiveArrayElementType()]!!

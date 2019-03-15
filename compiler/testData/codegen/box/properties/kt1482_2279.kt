@@ -1,10 +1,12 @@
 // TARGET_BACKEND: JVM
+// WITH_RUNTIME
+package test
 
 abstract class ClassValAbstract {
     abstract var a: Int
 
     companion object {
-        val methods = (this as java.lang.Object).getClass()?.getClassLoader()?.loadClass("ClassValAbstract")?.getMethods()!!
+        val methods = ClassValAbstract::class.java.getMethods()!!
     }
 }
 

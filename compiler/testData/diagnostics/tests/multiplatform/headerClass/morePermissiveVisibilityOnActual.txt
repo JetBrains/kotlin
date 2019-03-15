@@ -1,0 +1,37 @@
+// -- Module: <m1-common> --
+package
+
+public open expect class Container {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    internal final expect fun internalFun1(): kotlin.Unit
+    internal final expect fun internalFun2(): kotlin.Unit
+    internal final expect fun internalFun3(): kotlin.Unit
+    internal open expect fun openInternalFun(): kotlin.Unit
+    public open expect fun openPublicFun(): kotlin.Unit
+    protected final expect fun protectedFun1(): kotlin.Unit
+    protected final expect fun protectedFun2(): kotlin.Unit
+    protected final expect fun protectedFun3(): kotlin.Unit
+    public final expect fun publicFun(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+
+// -- Module: <m2-jvm> --
+package
+
+public open actual class Container {
+    public constructor Container()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final actual fun internalFun1(): kotlin.Unit
+    internal final actual fun internalFun2(): kotlin.Unit
+    protected final actual fun internalFun3(): kotlin.Unit
+    public open actual fun openInternalFun(): kotlin.Unit
+    internal final actual fun openPublicFun(): kotlin.Unit
+    public final actual fun protectedFun1(): kotlin.Unit
+    protected final actual fun protectedFun2(): kotlin.Unit
+    internal final actual fun protectedFun3(): kotlin.Unit
+    public final actual fun publicFun(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

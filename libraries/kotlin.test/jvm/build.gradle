@@ -11,13 +11,17 @@ pill {
     importAsLibrary = true
 }
 
+def jpsBuild = findProperty("jpsBuild")?.toString() == "true"
+
 sourceSets {
-    java9
+    if (!jpsBuild) {
+        java9
+    }
 }
 
 dependencies {
     expectedBy project(':kotlin-test:kotlin-test-common')
-    compile project(':kotlin-stdlib')
+    compile kotlinStdlib()
     testCompile project(":kotlin-test:kotlin-test-junit")
     testCompile('junit:junit:4.12')
 }
@@ -36,14 +40,17 @@ task modularJar(type: Jar) {
     classifier = 'modular'
 
     from zipTree(jar.outputs.files.singleFile)
-    from sourceSets.java9.output
+    if (!jpsBuild) {
+        from sourceSets.java9.output
+    }
 }
 
 artifacts {
     archives sourcesJar
-    archives javadocJar
     archives modularJar
 }
+
+javadocJar()
 
 dist {
     from (jar, sourcesJar)
@@ -59,4 +66,6 @@ compileTestKotlin {
     kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package"]
 }
 
-compileJava9Sources(project, 'kotlin.test')
+if (!jpsBuild) {
+    compileJava9Sources(project, 'kotlin.test')
+}

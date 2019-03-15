@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -52,6 +52,11 @@ public class CallableReferenceInlineTestsGenerated extends AbstractCallableRefer
     @TestMetadata("kt15449.kt")
     public void testKt15449() throws Exception {
         runTest("compiler/testData/codegen/boxInline/callableReference/kt15449.kt");
+    }
+
+    @TestMetadata("kt15751_2.kt")
+    public void testKt15751_2() throws Exception {
+        runTest("compiler/testData/codegen/boxInline/callableReference/kt15751_2.kt");
     }
 
     @TestMetadata("kt16411.kt")

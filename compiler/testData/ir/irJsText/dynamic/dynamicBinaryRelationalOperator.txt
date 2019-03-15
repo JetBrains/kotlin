@@ -1,0 +1,29 @@
+FILE fqName:<root> fileName:/dynamicBinaryRelationalOperator.kt
+  FUN name:testLess visibility:public modality:FINAL <> (d:dynamic) returnType:kotlin.Boolean flags:
+    VALUE_PARAMETER name:d index:0 type:dynamic flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='testLess(dynamic): Boolean'
+        DYN_OP operator=LT type=kotlin.Boolean
+          receiver: GET_VAR 'value-parameter d: dynamic' type=dynamic origin=null
+          0: CONST Int type=kotlin.Int value=2
+  FUN name:testLessOrEqual visibility:public modality:FINAL <> (d:dynamic) returnType:kotlin.Boolean flags:
+    VALUE_PARAMETER name:d index:0 type:dynamic flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='testLessOrEqual(dynamic): Boolean'
+        DYN_OP operator=LE type=kotlin.Boolean
+          receiver: GET_VAR 'value-parameter d: dynamic' type=dynamic origin=null
+          0: CONST Int type=kotlin.Int value=2
+  FUN name:testGreater visibility:public modality:FINAL <> (d:dynamic) returnType:kotlin.Boolean flags:
+    VALUE_PARAMETER name:d index:0 type:dynamic flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='testGreater(dynamic): Boolean'
+        DYN_OP operator=GT type=kotlin.Boolean
+          receiver: GET_VAR 'value-parameter d: dynamic' type=dynamic origin=null
+          0: CONST Int type=kotlin.Int value=2
+  FUN name:testGreaterOrEqual visibility:public modality:FINAL <> (d:dynamic) returnType:kotlin.Boolean flags:
+    VALUE_PARAMETER name:d index:0 type:dynamic flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='testGreaterOrEqual(dynamic): Boolean'
+        DYN_OP operator=GE type=kotlin.Boolean
+          receiver: GET_VAR 'value-parameter d: dynamic' type=dynamic origin=null
+          0: CONST Int type=kotlin.Int value=2

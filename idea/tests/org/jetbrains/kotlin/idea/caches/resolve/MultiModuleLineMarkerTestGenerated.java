@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -69,6 +69,11 @@ public class MultiModuleLineMarkerTestGenerated extends AbstractMultiModuleLineM
         runTest("idea/testData/multiModuleLineMarker/expectEnumEntriesInOneLine/");
     }
 
+    @TestMetadata("expectEnumWithEnumEntriesInOneLine")
+    public void testExpectEnumWithEnumEntriesInOneLine() throws Exception {
+        runTest("idea/testData/multiModuleLineMarker/expectEnumWithEnumEntriesInOneLine/");
+    }
+
     @TestMetadata("expectWithOverload")
     public void testExpectWithOverload() throws Exception {
         runTest("idea/testData/multiModuleLineMarker/expectWithOverload/");
@@ -77,6 +82,11 @@ public class MultiModuleLineMarkerTestGenerated extends AbstractMultiModuleLineM
     @TestMetadata("fromActualAnnotation")
     public void testFromActualAnnotation() throws Exception {
         runTest("idea/testData/multiModuleLineMarker/fromActualAnnotation/");
+    }
+
+    @TestMetadata("fromActualAnnotationWithParametersInOneLine")
+    public void testFromActualAnnotationWithParametersInOneLine() throws Exception {
+        runTest("idea/testData/multiModuleLineMarker/fromActualAnnotationWithParametersInOneLine/");
     }
 
     @TestMetadata("fromActualCompanion")

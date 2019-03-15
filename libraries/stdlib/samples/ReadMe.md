@@ -3,7 +3,7 @@
 This project contains samples for the standard library functions. 
 They are located in the [test](test) source root and each sample is written like a small unit test.
 Then these samples are referenced in the documentation of the standard library functions 
-with the [`@sample`](http://kotlinlang.org/docs/reference/kotlin-doc.html#block-tags) tag and are embedded in the generated documentation as runnable samples. 
+with the [`@sample`](https://kotlinlang.org/docs/reference/kotlin-doc.html#block-tags) tag and are embedded in the generated documentation as runnable samples.
 
 
 ### Guides for sample authoring

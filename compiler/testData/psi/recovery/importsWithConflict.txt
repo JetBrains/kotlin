@@ -1,0 +1,90 @@
+KtFile: importsWithConflict.kt
+  PACKAGE_DIRECTIVE
+    PsiElement(package)('package')
+    PsiWhiteSpace(' ')
+    REFERENCE_EXPRESSION
+      PsiElement(IDENTIFIER)('a')
+  PsiWhiteSpace('\n\n')
+  IMPORT_LIST
+    IMPORT_DIRECTIVE
+      PsiElement(import)('import')
+      PsiWhiteSpace(' ')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('a1')
+  PsiWhiteSpace('\n')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(LT)('<')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(LT)('<')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(LT)('<')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('HEAD')
+  PsiErrorElement:imports are only allowed in the beginning of file
+    <empty list>
+  PsiWhiteSpace('\n')
+  IMPORT_LIST
+    IMPORT_DIRECTIVE
+      PsiElement(import)('import')
+      PsiWhiteSpace(' ')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('a2')
+    PsiWhiteSpace('\n')
+    IMPORT_DIRECTIVE
+      PsiElement(import)('import')
+      PsiWhiteSpace(' ')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('a3')
+  PsiWhiteSpace('\n')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(GT)('>')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(GT)('>')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(GT)('>')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('BAR')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('bar')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiElement(RBRACE)('}')
+  PsiErrorElement:imports are only allowed in the beginning of file
+    <empty list>
+  PsiWhiteSpace('\n\n')
+  IMPORT_LIST
+    IMPORT_DIRECTIVE
+      PsiElement(import)('import')
+      PsiWhiteSpace(' ')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('a2')
+    PsiWhiteSpace('\n')
+    IMPORT_DIRECTIVE
+      PsiElement(import)('import')
+      PsiWhiteSpace(' ')
+      DOT_QUALIFIED_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('a4')
+        PsiElement(DOT)('.')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('df')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiElement(RBRACE)('}')

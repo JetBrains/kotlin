@@ -1,0 +1,2 @@
+public abstract interface NullableToNotNullKotlinSignature : R|java/lang/Object| {
+}

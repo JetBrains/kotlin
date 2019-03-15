@@ -17,7 +17,8 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
-import org.jetbrains.kotlin.gradle.plugin.CopyClassesToJavaOutputStatus
+import org.jetbrains.kotlin.gradle.plugin.MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING
+import org.jetbrains.kotlin.gradle.plugin.MULTIPLE_KOTLIN_PLUGINS_SPECIFIC_PROJECTS_WARNING
 import org.jetbrains.kotlin.gradle.tasks.USING_JVM_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.Test
@@ -65,7 +66,12 @@ class KotlinGradleIT : BaseGradleIT() {
         val wd2 = createTempDir("testRunningInDifferentDir")
         wd1.copyRecursively(wd2)
         wd1.deleteRecursively()
-        assert(!wd1.exists())
+        if (wd1.exists()) {
+            val files = buildString {
+                wd1.walk().forEach { appendln("  " + it.relativeTo(wd1).path) }
+            }
+            error("Some files in $wd1 were not removed:\n$files")
+        }
         wd0.setWritable(false)
         workingDir = wd2
 
@@ -260,24 +266,6 @@ class KotlinGradleIT : BaseGradleIT() {
     }
 
     @Test
-    fun testWipeClassesDirectoryBetweenBuilds() {
-        val project = Project("kotlinJavaProject", GradleVersionRequired.Exact("3.5"))
-
-        project.build("build") {
-            assertSuccessful()
-        }
-
-        val javaOutputDir = File(project.projectDir, "build/classes")
-        assert(javaOutputDir.isDirectory) { "Classes directory does not exist $javaOutputDir" }
-        javaOutputDir.deleteRecursively()
-
-        project.build("build") {
-            assertSuccessful()
-            assertTasksUpToDate(":compileKotlin")
-        }
-    }
-
-    @Test
     fun testMoveClassToOtherModule() {
         val project = Project("moveClassToOtherModule")
 
@@ -317,7 +305,7 @@ class KotlinGradleIT : BaseGradleIT() {
 
     @Test
     fun testKotlinBuiltins() {
-        val project = Project("kotlinBuiltins", GradleVersionRequired.AtLeast("4.0"))
+        val project = Project("kotlinBuiltins")
 
         project.build("build") {
             assertSuccessful()
@@ -358,42 +346,6 @@ class KotlinGradleIT : BaseGradleIT() {
         project.build("build") {
             assertSuccessful()
             assertFileExists(kotlinClassesDir() + "META-INF/$customModuleName.kotlin_module")
-        }
-    }
-
-    @Test
-    fun testChangeDestinationDir() {
-        val project = Project("kotlinProject", GradleVersionRequired.Exact("3.5"))
-        project.setupWorkingDir()
-
-        val fileToRemove = File(project.projectDir, "src/main/kotlin/removeMe.kt")
-        fileToRemove.writeText("val x = 1")
-        val classFilePath = "build/classes/main/RemoveMeKt.class"
-
-        project.build("build") {
-            assertSuccessful()
-            assertFileExists(classFilePath)
-        }
-
-        // Check that after the change the build succeeds and no stale classes remain in the java classes dir
-        File(project.projectDir, "build.gradle").modify {
-            "$it\n\ncompileKotlin.destinationDir = file(\"\${project.buildDir}/compileKotlin\")"
-        }
-        fileToRemove.delete()
-
-        project.build("build") {
-            assertSuccessful()
-            assertNoSuchFile(classFilePath)
-            // Check that the fallback to non-incremental copying was chosen
-            assertContains("Non-incremental copying files")
-        }
-
-        // Check that the classes are copied incrementally under normal conditions
-        fileToRemove.writeText("val x = 1")
-        project.build("build") {
-            assertSuccessful()
-            assertFileExists(classFilePath)
-            assertNotContains("Non-incremental copying files")
         }
     }
 
@@ -515,7 +467,7 @@ class KotlinGradleIT : BaseGradleIT() {
 
     @Test
     fun testSeparateOutputGradle40() {
-        val project = Project("kotlinJavaProject", GradleVersionRequired.AtLeast("4.0"))
+        val project = Project("kotlinJavaProject")
         project.build("compileDeployKotlin", "assemble") {
             assertSuccessful()
 
@@ -529,10 +481,6 @@ class KotlinGradleIT : BaseGradleIT() {
 
             // Check that the Java output is intact:
             assertFileExists("build/classes/java/main/demo/Greeter.class")
-
-            // Check that the sync output task is not used with Gradle 4.0+ and there's no old Kotlin output layout
-            assertNotContains(":copyMainKotlinClasses")
-            assertNoSuchFile("build/kotlin-classes")
         }
     }
 
@@ -575,82 +523,8 @@ class KotlinGradleIT : BaseGradleIT() {
     }
 
     @Test
-    fun testDisableSeparateClassesDirs() {
-
-        fun CompiledProject.check(
-            copyClassesToJavaOutput: Boolean?,
-            expectBuildCacheWarning: Boolean,
-            expectGradleLowVersionWarning: Boolean
-        ) {
-
-            val separateDirPath = kotlinClassesDir() + "demo/KotlinGreetingJoiner.class"
-            val singleDirPath = javaClassesDir() + "demo/KotlinGreetingJoiner.class"
-
-            assertSuccessful()
-            when (copyClassesToJavaOutput) {
-                true -> {
-                    assertNoSuchFile(separateDirPath)
-                    assertFileExists(singleDirPath)
-                }
-                false -> {
-                    assertFileExists(separateDirPath)
-                    assertNoSuchFile(singleDirPath)
-                }
-            }
-
-            if (expectBuildCacheWarning)
-                assertContains(CopyClassesToJavaOutputStatus.buildCacheWarningMessage)
-            else
-                assertNotContains(CopyClassesToJavaOutputStatus.buildCacheWarningMessage)
-
-            if (expectGradleLowVersionWarning)
-                assertContains(CopyClassesToJavaOutputStatus.gradleVersionTooLowWarningMessage)
-            else
-                assertNotContains(CopyClassesToJavaOutputStatus.gradleVersionTooLowWarningMessage)
-        }
-
-        Project("simpleProject", GradleVersionRequired.Exact("4.0")).apply {
-            build("build") {
-                check(
-                    copyClassesToJavaOutput = false,
-                    expectBuildCacheWarning = false,
-                    expectGradleLowVersionWarning = false
-                )
-            }
-            File(projectDir, "build.gradle").appendText("\nkotlin.copyClassesToJavaOutput = true")
-            build("clean", "build") {
-                check(
-                    copyClassesToJavaOutput = true,
-                    expectBuildCacheWarning = false,
-                    expectGradleLowVersionWarning = false
-                )
-            }
-            build("clean", "build", options = defaultBuildOptions().copy(withBuildCache = true)) {
-                check(
-                    copyClassesToJavaOutput = true,
-                    expectBuildCacheWarning = true,
-                    expectGradleLowVersionWarning = false
-                )
-            }
-            projectDir.deleteRecursively()
-        }
-
-        Project("simpleProject", GradleVersionRequired.Exact("3.4")).apply {
-            setupWorkingDir()
-            File(projectDir, "build.gradle").appendText("\nkotlin.copyClassesToJavaOutput = true")
-            build("build") {
-                check(
-                    copyClassesToJavaOutput = null,
-                    expectBuildCacheWarning = false,
-                    expectGradleLowVersionWarning = true
-                )
-            }
-        }
-    }
-
-    @Test
     fun testSrcDirTaskDependency() {
-        Project("simpleProject", GradleVersionRequired.AtLeast("4.1")).apply {
+        Project("simpleProject").apply {
             setupWorkingDir()
             File(projectDir, "build.gradle").appendText(
                 """${'\n'}
@@ -863,6 +737,53 @@ class KotlinGradleIT : BaseGradleIT() {
     }
 
     @Test
+    fun testDefaultKotlinVersionIsNotAffectedByTransitiveDependencies() =
+        with(Project("simpleProject", GradleVersionRequired.AtLeast("4.4"))) {
+            setupWorkingDir()
+            // Add a dependency with an explicit lower Kotlin version that has a kotlin-stdlib transitive dependency:
+            gradleBuildScript().appendText("\ndependencies { compile 'org.jetbrains.kotlin:kotlin-reflect:1.2.71' }")
+            testResolveAllConfigurations {
+                assertSuccessful()
+                assertContains(">> :compile --> kotlin-reflect-1.2.71.jar")
+                // Check that the default newer Kotlin version still wins for 'kotlin-stdlib':
+                assertContains(">> :compile --> kotlin-stdlib-${defaultBuildOptions().kotlinVersion}.jar")
+            }
+        }
+
+    @Test
+    fun testKotlinJvmProjectPublishesKotlinApiDependenciesAsCompile() =
+        with(Project("simpleProject", GradleVersionRequired.AtLeast("4.4"))) {
+            setupWorkingDir()
+            gradleBuildScript().appendText(
+                "\n" + """
+                dependencies {
+                    api 'org.jetbrains.kotlin:kotlin-reflect'
+                }
+                apply plugin: 'maven-publish'
+                group "com.example"
+                version "1.0"
+                publishing {
+                    repositories { maven { url file("${'$'}buildDir/repo").toURI() } }
+                    publications { maven(MavenPublication) { from components.java } }
+                }
+                """.trimIndent()
+            )
+            build("publish") {
+                assertSuccessful()
+                val pomText = projectDir.resolve("build/repo/com/example/simpleProject/1.0/simpleProject-1.0.pom").readText()
+                    .replace("\\s+|\\n".toRegex(), "")
+                assertTrue {
+                    pomText.contains(
+                        "<groupId>org.jetbrains.kotlin</groupId>" +
+                                "<artifactId>kotlin-reflect</artifactId>" +
+                                "<version>${defaultBuildOptions().kotlinVersion}</version>" +
+                                "<scope>compile</scope>"
+                    )
+                }
+            }
+        }
+
+    @Test
     fun testNoTaskConfigurationForcing() {
         val gradleVersionRequirement = GradleVersionRequired.AtLeast("4.9")
         val projects = listOf(
@@ -886,6 +807,88 @@ class KotlinGradleIT : BaseGradleIT() {
                     assertNotContains(taskConfigureFlag)
                 }
             }
+        }
+    }
+
+    @Test
+    fun testBuildReportSmokeTest() = with(Project("simpleProject")) {
+        build("assemble", "-Pkotlin.build.report.enable=true") {
+            assertSuccessful()
+            assertContains("Kotlin build report is written to")
+        }
+    }
+
+    @Test
+    fun testKt29971() = with(Project("kt-29971", GradleVersionRequired.AtLeast("5.0"))) {
+        build("jvm-app:build") {
+            assertSuccessful()
+            assertTasksExecuted(":jvm-app:compileKotlin")
+        }
+    }
+
+    @Test
+    fun testDetectingDifferentClassLoaders() = with(Project("kt-27059-pom-rewriting", GradleVersionRequired.AtLeast("4.10.2"))) {
+        setupWorkingDir()
+
+        val originalRootBuildScript = gradleBuildScript().readText()
+        gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+
+        build("publish", "-PmppProjectDependency=true") {
+            assertSuccessful()
+            assertNotContains(MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING)
+            assertNotContains(MULTIPLE_KOTLIN_PLUGINS_SPECIFIC_PROJECTS_WARNING)
+        }
+
+        // Specify the plugin versions in the subprojects with different plugin sets – this will make Gradle use separate class loaders
+        gradleBuildScript().modify {
+            originalRootBuildScript.checkedReplace("id \"org.jetbrains.kotlin.multiplatform\"", "//")
+        }
+        gradleBuildScript("mpp-lib").modify {
+            it.checkedReplace(
+                "id \"org.jetbrains.kotlin.multiplatform\"",
+                "id \"org.jetbrains.kotlin.multiplatform\" version \"<pluginMarkerVersion>\""
+            ).let(::transformBuildScriptWithPluginsDsl)
+        }
+        gradleBuildScript("jvm-app").modify {
+            it.checkedReplace(
+                "id \"org.jetbrains.kotlin.jvm\"",
+                "id \"org.jetbrains.kotlin.jvm\" version \"<pluginMarkerVersion>\""
+            ).let(::transformBuildScriptWithPluginsDsl)
+        }
+        gradleBuildScript("js-app").modify {
+            it.checkedReplace(
+                "id \"kotlin2js\"",
+                "id \"kotlin2js\" version \"<pluginMarkerVersion>\""
+            ).let(::transformBuildScriptWithPluginsDsl)
+        }
+
+        // Also include another project via a composite build:
+        transformProjectWithPluginsDsl("allopenPluginsDsl", directoryPrefix = "pluginsDsl").let { other ->
+            val result = other.projectName
+            other.setupWorkingDir()
+            other.projectDir.copyRecursively(projectDir.resolve(result))
+            gradleSettingsScript().appendText("\nincludeBuild(\"${result}\")")
+            gradleBuildScript().appendText(
+                "\ntasks.create(\"publish\").dependsOn(gradle.includedBuild(\"${result}\").task(\":assemble\"))"
+            )
+            result
+        }
+
+        build("publish", "-PmppProjectDependency=true") {
+            assertSuccessful()
+            assertContains(MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING)
+
+            val specificProjectsReported = Regex("$MULTIPLE_KOTLIN_PLUGINS_SPECIFIC_PROJECTS_WARNING((?:'.*'(?:, )?)+)")
+                .find(output)!!.groupValues[1].split(", ").map { it.removeSurrounding("'") }.toSet()
+
+            assertEquals(setOf(":mpp-lib", ":jvm-app", ":js-app"), specificProjectsReported)
+        }
+
+        // Test the flag that turns off the warnings
+        build("publish", "-PmppProjectDependency=true", "-Pkotlin.pluginLoadedInMultipleProjects.ignore=true") {
+            assertSuccessful()
+            assertNotContains(MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING)
+            assertNotContains(MULTIPLE_KOTLIN_PLUGINS_SPECIFIC_PROJECTS_WARNING)
         }
     }
 }

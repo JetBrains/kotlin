@@ -195,7 +195,7 @@ class ConvertJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransferab
     }
 
     companion object {
-        @TestOnly var conversionPerformed: Boolean = false
+        @get:TestOnly var conversionPerformed: Boolean = false
     }
 }
 

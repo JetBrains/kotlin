@@ -1,0 +1,2 @@
+public abstract interface AdapterDoesntOverrideDeclaration : R|java/lang/Object| {
+}

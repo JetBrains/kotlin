@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.daemon.client.DaemonReportingTargets
 import org.jetbrains.kotlin.daemon.client.KotlinCompilerClient
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.script.StandardScriptDefinition
+import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.script.tryConstructClassFromStringArgs
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -76,6 +77,8 @@ class SourceSectionsTest : TestCaseWithTmpdir() {
             configuration.addAll(SourceSectionsConfigurationKeys.SECTIONS_OPTION, TEST_ALLOWED_SECTIONS)
             configuration.add(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS, SourceSectionsComponentRegistrar())
         }
+
+        loadScriptingPlugin(configuration)
 
         val environment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
         return environment

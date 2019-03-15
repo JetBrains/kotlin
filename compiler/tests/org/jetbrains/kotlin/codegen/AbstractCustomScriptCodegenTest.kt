@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.codegen
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.script.util.scriptCompilationClasspathFromContextOrStlib
 import org.jetbrains.kotlin.scripting.compiler.plugin.configureScriptDefinitions
 import org.jetbrains.kotlin.test.ConfigurationKind
@@ -39,6 +40,8 @@ abstract class AbstractCustomScriptCodegenTest : CodegenTestCase() {
         }
 
         configuration.addJvmClasspathRoots(additionalDependencies.orEmpty())
+
+        loadScriptingPlugin(configuration)
     }
 
     override fun doMultiFileTest(wholeFile: File, files: MutableList<TestFile>, javaFilesDir: File?) {

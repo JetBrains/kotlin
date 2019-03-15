@@ -27,7 +27,7 @@ FILE fqName:<root> fileName:/enumEntriesWithAnnotations.kt
       overridden:
         FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-  CLASS ENUM_CLASS name:TestEnum modality:FINAL visibility:public flags: superTypes:[kotlin.Enum<TestEnum>]
+  CLASS ENUM_CLASS name:TestEnum modality:OPEN visibility:public flags: superTypes:[kotlin.Enum<TestEnum>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestEnum flags:
     CONSTRUCTOR visibility:private <> () returnType:TestEnum flags:primary
       BLOCK_BODY

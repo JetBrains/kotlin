@@ -27,7 +27,10 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.uast.*
 import java.util.*
 
-class KotlinUFile(override val psi: KtFile, override val languagePlugin: UastLanguagePlugin) : UFile, JvmDeclarationUElementPlaceholder {
+class KotlinUFile(
+    override val psi: KtFile,
+    override val languagePlugin: UastLanguagePlugin = kotlinUastPlugin
+) : UFile, JvmDeclarationUElementPlaceholder {
     override val packageName: String
         get() = psi.packageFqName.asString()
 

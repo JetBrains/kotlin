@@ -1,4 +1,4 @@
 fun foo() {
     var a = 0
-    a.inc()
+    a = a.inc()
 }

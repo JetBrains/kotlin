@@ -1,0 +1,2 @@
+public abstract interface StringConcatenationInParam : R|java/lang/Object| {
+}

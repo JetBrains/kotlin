@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -112,6 +112,16 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
     @TestMetadata("KT14130.kt")
     public void testKT14130() throws Exception {
         runTest("idea/idea-completion/testData/handlers/basic/KT14130.kt");
+    }
+
+    @TestMetadata("KT19863.kt")
+    public void testKT19863() throws Exception {
+        runTest("idea/idea-completion/testData/handlers/basic/KT19863.kt");
+    }
+
+    @TestMetadata("KT19864.kt")
+    public void testKT19864() throws Exception {
+        runTest("idea/idea-completion/testData/handlers/basic/KT19864.kt");
     }
 
     @TestMetadata("KT23627.kt")

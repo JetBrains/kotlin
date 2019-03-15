@@ -26,9 +26,8 @@ class FirFileImpl(
     override val declarations = mutableListOf<FirDeclaration>()
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
-        annotations.transformInplace(transformer, data)
         imports.transformInplace(transformer, data)
         declarations.transformInplace(transformer, data)
-        return this
+        return super<FirAbstractAnnotatedDeclaration>.transformChildren(transformer, data)
     }
 }

@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -203,9 +204,16 @@ class KotlinUFunctionCallExpression(
     }
 
     private fun isAnnotationArgumentArrayInitializer(): Boolean {
+        // KtAnnotationEntry (or KtCallExpression when annotation is nested) -> KtValueArgumentList -> KtValueArgument -> arrayOf call
+        val isAnnotationArgument = when (val elementAt2 = psi.parents.elementAtOrNull(2)) {
+            is KtAnnotationEntry -> true
+            is KtCallExpression -> elementAt2.getParentOfType<KtAnnotationEntry>(true, KtDeclaration::class.java) != null
+            else -> false
+        }
+        if (!isAnnotationArgument) return false
+
         val resolvedCall = resolvedCall ?: return false
-        // KtAnnotationEntry -> KtValueArgumentList -> KtValueArgument -> arrayOf call
-        return psi.parents.elementAtOrNull(2) is KtAnnotationEntry && CompileTimeConstantUtils.isArrayFunctionCall(resolvedCall)
+        return CompileTimeConstantUtils.isArrayFunctionCall(resolvedCall)
     }
 
     override fun convertParent(): UElement? = super.convertParent().let { result ->

@@ -1,9 +1,8 @@
 /*
  * KOTLIN PSI SPEC TEST (NEGATIVE)
  *
- * SECTIONS: constant-literals, real-literals
- * PARAGRAPH: 3
- * SENTENCE: [1] The whole-number part and the exponent part may be omitted.
+ * SPEC VERSION: 0.1-draft
+ * PLACES: constant-literals, real-literals -> paragraph 3 -> sentence 1
  * NUMBER: 3
  * DESCRIPTION: Real literals suffixed by f/F (float suffix) with omitted whole-number part and not allowed several exponent marks.
  */

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -39,6 +39,11 @@ public class IrBlackBoxAgainstJavaCodegenTestGenerated extends AbstractIrBlackBo
 
         public void testAllFilesPresentInAnnotations() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxAgainstJava/annotations"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true);
+        }
+
+        @TestMetadata("divisionByZeroInJava.kt")
+        public void testDivisionByZeroInJava() throws Exception {
+            runTest("compiler/testData/codegen/boxAgainstJava/annotations/divisionByZeroInJava.kt");
         }
 
         @TestMetadata("javaAnnotationArrayValueDefault.kt")
@@ -404,6 +409,24 @@ public class IrBlackBoxAgainstJavaCodegenTestGenerated extends AbstractIrBlackBo
         @TestMetadata("inheritJavaInterface.kt")
         public void testInheritJavaInterface() throws Exception {
             runTest("compiler/testData/codegen/boxAgainstJava/interfaces/inheritJavaInterface.kt");
+        }
+    }
+
+    @TestMetadata("compiler/testData/codegen/boxAgainstJava/multiplatform")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Multiplatform extends AbstractIrBlackBoxAgainstJavaCodegenTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInMultiplatform() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxAgainstJava/multiplatform"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true);
+        }
+
+        @TestMetadata("annotationsViaActualTypeAliasFromBinary.kt")
+        public void testAnnotationsViaActualTypeAliasFromBinary() throws Exception {
+            runTest("compiler/testData/codegen/boxAgainstJava/multiplatform/annotationsViaActualTypeAliasFromBinary.kt");
         }
     }
 

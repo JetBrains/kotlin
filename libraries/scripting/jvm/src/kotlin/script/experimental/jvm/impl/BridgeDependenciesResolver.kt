@@ -22,7 +22,8 @@ import kotlin.script.experimental.jvm.compat.mapToLegacyScriptReportSeverity
 
 class BridgeDependenciesResolver(
     val scriptCompilationConfiguration: ScriptCompilationConfiguration,
-    val onClasspathUpdated: (List<File>) -> Unit = {}
+    val onConfigurationUpdated: (SourceCode, ScriptCompilationConfiguration) -> Unit = { _, _ -> },
+    val getScriptSource: (ScriptContents) -> SourceCode? = { null }
 ) : AsyncDependenciesResolver {
 
     override fun resolve(scriptContents: ScriptContents, environment: Environment): DependenciesResolver.ResolveResult =
@@ -40,9 +41,6 @@ class BridgeDependenciesResolver(
                 )
             )
 
-            val oldClasspath =
-                scriptCompilationConfiguration[ScriptCompilationConfiguration.dependencies].toClassPathOrEmpty()
-
             val defaultImports = scriptCompilationConfiguration[ScriptCompilationConfiguration.defaultImports]?.toList() ?: emptyList()
 
             fun ScriptCompilationConfiguration.toDependencies(classpath: List<File>): ScriptDependencies =
@@ -53,13 +51,15 @@ class BridgeDependenciesResolver(
                     scripts = this[ScriptCompilationConfiguration.importScripts].toFilesOrEmpty()
                 )
 
+            val script = getScriptSource(scriptContents) ?: scriptContents.toScriptSource()
+
             val refineResults = scriptCompilationConfiguration.refineWith(
                 scriptCompilationConfiguration[ScriptCompilationConfiguration.refineConfigurationOnAnnotations]?.handler,
-                scriptContents, processedScriptData
+                processedScriptData, script
             ).onSuccess {
                 it.refineWith(
                     scriptCompilationConfiguration[ScriptCompilationConfiguration.refineConfigurationBeforeCompiling]?.handler,
-                    scriptContents, processedScriptData
+                    processedScriptData, script
                 )
             }
 
@@ -72,11 +72,12 @@ class BridgeDependenciesResolver(
                 }
             }
 
+            if (refinedConfiguration != scriptCompilationConfiguration) {
+                onConfigurationUpdated(script, refinedConfiguration)
+            }
+
             val newClasspath = refinedConfiguration[ScriptCompilationConfiguration.dependencies]
                 ?.flatMap { (it as JvmDependency).classpath } ?: emptyList()
-            if (newClasspath != oldClasspath) {
-                onClasspathUpdated(newClasspath)
-            }
 
             return DependenciesResolver.ResolveResult.Success(
                 // TODO: consider returning only increment from the initial config
@@ -109,12 +110,9 @@ internal fun List<SourceCode>?.toFilesOrEmpty() = this?.map {
 } ?: emptyList()
 
 fun ScriptCompilationConfiguration.refineWith(
-    handler: RefineScriptCompilationConfigurationHandler?, scriptContents: ScriptContents, processedScriptData: ScriptCollectedData
-): ResultWithDiagnostics<ScriptCompilationConfiguration> {
-
-    if (handler == null) return this.asSuccess()
-
-    return handler(
-        ScriptConfigurationRefinementContext(scriptContents.toScriptSource(), this, processedScriptData)
-    )
-}
+    handler: RefineScriptCompilationConfigurationHandler?,
+    processedScriptData: ScriptCollectedData,
+    script: SourceCode
+): ResultWithDiagnostics<ScriptCompilationConfiguration> =
+    if (handler == null) this.asSuccess()
+    else handler(ScriptConfigurationRefinementContext(script, this, processedScriptData))

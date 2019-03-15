@@ -1,0 +1,2 @@
+public abstract interface SubclassWithRawType : R|java/lang/Object| {
+}

@@ -69,27 +69,27 @@ class KotlinConstraintSystemCompleter(
 
             val allTypeVariables = getOrderedAllTypeVariables(c, collectVariablesFromContext, topLevelAtoms)
             val postponedKtPrimitives = getOrderedNotAnalyzedPostponedArguments(topLevelAtoms)
-            val variableForFixation = variableFixationFinder.findFirstVariableForFixation(
-                c, allTypeVariables, postponedKtPrimitives, completionMode, topLevelType
-            )
+            val variableForFixation =
+                variableFixationFinder.findFirstVariableForFixation(
+                    c, allTypeVariables, postponedKtPrimitives, completionMode, topLevelType
+                ) ?: break
 
             if (shouldForceCallableReferenceOrLambdaResolution(completionMode, variableForFixation)) {
                 if (forcePostponedAtomResolution<ResolvedCallableReferenceAtom>(topLevelAtoms, analyze)) continue
                 if (forcePostponedAtomResolution<LambdaWithTypeVariableAsExpectedTypeAtom>(topLevelAtoms, analyze)) continue
             }
 
-            if (variableForFixation != null) {
-                if (variableForFixation.hasProperConstraint || completionMode == ConstraintSystemCompletionMode.FULL) {
-                    val variableWithConstraints = c.notFixedTypeVariables[variableForFixation.variable]!!
+            if (variableForFixation.hasProperConstraint || completionMode == ConstraintSystemCompletionMode.FULL) {
+                val variableWithConstraints = c.notFixedTypeVariables.getValue(variableForFixation.variable)
 
-                    fixVariable(c, topLevelType, variableWithConstraints, postponedKtPrimitives)
+                fixVariable(c, topLevelType, variableWithConstraints, postponedKtPrimitives)
 
-                    if (!variableForFixation.hasProperConstraint) {
-                        c.addError(NotEnoughInformationForTypeParameter(variableWithConstraints.typeVariable))
-                    }
-                    continue
+                if (!variableForFixation.hasProperConstraint) {
+                    c.addError(NotEnoughInformationForTypeParameter(variableWithConstraints.typeVariable))
                 }
+                continue
             }
+
             break
         }
 
@@ -105,12 +105,10 @@ class KotlinConstraintSystemCompleter(
 
     private fun shouldForceCallableReferenceOrLambdaResolution(
         completionMode: ConstraintSystemCompletionMode,
-        variableForFixation: VariableFixationFinder.VariableForFixation?
+        variableForFixation: VariableFixationFinder.VariableForFixation
     ): Boolean {
         if (completionMode == ConstraintSystemCompletionMode.PARTIAL) return false
-        if (variableForFixation != null && variableForFixation.hasProperConstraint) return false
-
-        return true
+        return !variableForFixation.hasProperConstraint || variableForFixation.hasOnlyTrivialProperConstraint
     }
 
     // true if we do analyze

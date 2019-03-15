@@ -41,11 +41,13 @@ message Module {
 }
 
 message PackageParts {
+  // Dot-separated Kotlin FQ name of the package.
   required string package_fq_name = 1;
 
   // Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
   // (multi-file facades are not present in this list, they are defined below). Only files whose JVM package name is equal to the
-  // Kotlin package name (i.e. it has not been changed with @JvmPackageName) are listed here.
+  // Kotlin package name (i.e. it has not been changed with @JvmPackageName) are listed here, the rest are listed in
+  // class_with_jvm_package_name_short_name.
   repeated string short_class_name = 2;
 
   // For each name in short_class_name, index of the name of the corresponding multi-file facade class in multifile_facade_short_name + 1,
@@ -54,11 +56,23 @@ message PackageParts {
   repeated int32 multifile_facade_short_name_id = 3 [packed = true];
 
   // Short names of multi-file facades, used in multifile_facade_short_name_id to store the part -> facade mapping.
+  //
+  // The package name of the multi-file facade is package_fq_name if this multi-file facade is not affected by @JvmPackageName,
+  // and the JVM package name of any multi-file part otherwise. Note that in the latter case, all parts must have the same JVM package name,
+  // otherwise behavior is unspecified.
   repeated string multifile_facade_short_name = 4;
 
-  // Short names of files (single file facades), whose JVM package differs from the Kotlin package because of @JvmPackageName.
-  // The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
+  // Short names of files (single file facades and multi-file _parts_), whose JVM package differs from the Kotlin package because of
+  // @JvmPackageName. The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
   repeated string class_with_jvm_package_name_short_name = 5;
+
+  // This list is an addition to class_with_jvm_package_name_short_name exactly almost in the same way as
+  // multifile_facade_short_name_id is an addition to short_class_name. The only difference is that this list contains _full_ internal
+  // names of multi-file facades whose JVM package differs from the Kotlin package because of @JvmPackageName.
+  //
+  // For each name in class_with_jvm_package_name_short_name, index of the name of the corresponding multi-file facade class in
+  // multifile_facade_short_name + 1, or 0 if the class is not a multi-file part.
+  repeated int32 class_with_jvm_package_name_multifile_facade_short_name_id = 7 [packed = true];
 
   // For each name in class_with_jvm_package_name_short_name, the index (into PackageTable#jvm_package_name) of the JVM package name.
   // This list should have at least one element, otherwise classes with JVM package names are going to be ignored completely.

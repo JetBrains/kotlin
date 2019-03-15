@@ -1,0 +1,26 @@
+buildscript {
+  ext.deps = [
+      'kotlin': [
+          'stdlib': [
+              'common': "org.jetbrains.kotlin:kotlin-stdlib-common:$kotlin_version",
+              'jdk': "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version",
+          ],
+      ],
+  ]
+
+  repositories {
+    mavenLocal()
+    mavenCentral()
+  }
+
+  dependencies {
+    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+  }
+}
+
+allprojects {
+  repositories {
+    mavenLocal()
+    mavenCentral()
+  }
+}

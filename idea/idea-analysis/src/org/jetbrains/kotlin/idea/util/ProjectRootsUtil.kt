@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager
 import org.jetbrains.kotlin.idea.decompiler.builtIns.KotlinBuiltInFileType
 import org.jetbrains.kotlin.idea.decompiler.js.KotlinJavaScriptMetaFileType
 import org.jetbrains.kotlin.idea.util.application.runReadAction
-import org.jetbrains.kotlin.script.findScriptDefinition
+import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.findScriptDefinition
 import kotlin.script.experimental.location.ScriptExpectedLocation
 
 abstract class KotlinBinaryExtension(val fileType: FileType) {
@@ -69,7 +69,7 @@ object ProjectRootsUtil {
         includeScriptDependencies: Boolean, includeScriptsOutsideSourceRoots: Boolean,
         fileIndex: ProjectFileIndex = ProjectFileIndex.SERVICE.getInstance(project)
     ): Boolean {
-        val scriptDefinition = findScriptDefinition(file, project)
+        val scriptDefinition = file.findScriptDefinition(project)
         if (scriptDefinition != null) {
             val scriptScope = scriptDefinition.scriptExpectedLocations
             val includeAll = scriptScope.contains(ScriptExpectedLocation.Everywhere)
@@ -115,7 +115,7 @@ object ProjectRootsUtil {
             if (ProjectRootManager.getInstance(project).fileIndex.isInContent(file) || ScratchUtil.isScratch(file)) {
                 return true
             }
-            return findScriptDefinition(file, project)?.scriptExpectedLocations?.contains(ScriptExpectedLocation.Everywhere) == true
+            return file.findScriptDefinition(project)?.scriptExpectedLocations?.contains(ScriptExpectedLocation.Everywhere) == true
         }
 
         if (!includeLibraryClasses && !includeLibrarySource) return false

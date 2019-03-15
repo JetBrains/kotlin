@@ -1,0 +1,4 @@
+public final class ArrayTypeVariance : R|java/lang/Object| {
+    public final operator function toArray(p0: R|kotlin/Array<ft<java/lang/Object, java/lang/Object?>>|): R|kotlin/Array<ft<java/lang/Object, java/lang/Object?>>|
+
+}

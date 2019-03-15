@@ -1,0 +1,2 @@
+public abstract interface InheritedAndOverriddenAmbiguousAdapters : R|java/lang/Object| {
+}

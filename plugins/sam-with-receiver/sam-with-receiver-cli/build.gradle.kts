@@ -23,12 +23,12 @@ sourceSets {
     "test" { projectDefault() }
 }
 
+publish()
+
 val jar = runtimeJar {}
 sourcesJar()
 javadocJar()
 testsJar {}
-
-publish()
 
 dist {
     rename("kotlin-", "")

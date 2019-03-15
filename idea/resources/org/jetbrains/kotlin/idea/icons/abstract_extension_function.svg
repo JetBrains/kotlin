@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16" viewBox="0 0 16 16">
+  <defs>
+    <rect id="abstract_extension_function-a" width="8" height="14"/>
+  </defs>
+  <g fill="none" fill-rule="evenodd">
+    <path fill="#9AA7B0" fill-opacity=".8" d="M3 3.1055C1.764 4.3685 1 6.0935 1 8.0005 1 9.9065 1.764 11.6315 3 12.8945L3 3.1055zM13 3.1055L13 12.8945C14.236 11.6315 15 9.9065 15 8.0005 15 6.0935 14.236 4.3675 13 3.1055"/>
+    <g transform="translate(4 1)">
+      <mask id="abstract_extension_function-b" fill="#fff">
+        <use xlink:href="#abstract_extension_function-a"/>
+      </mask>
+      <g mask="url(#abstract_extension_function-b)">
+        <g transform="translate(-4 -1)">
+          <path fill="#F98B9E" fill-opacity=".6" d="M15,8 C15,11.866 11.866,15 8,15 C4.134,15 1,11.866 1,8 C1,4.134 4.134,1 8,1 C11.866,1 15,4.134 15,8"/>
+          <polygon fill="#231F20" fill-opacity=".7" points="2.724 0 0 0 0 1 2 1 2.4 2 0 7 1.2 7 3 3.2 4.8 7 6 7" transform="translate(5 4)"/>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,4 @@
+public open class ConstructorWithAnnotations : R|java/lang/Object| {
+    public final function ConstructorWithAnnotations(r: R|ft<java/lang/Runnable, java/lang/Runnable?>|!, @R|org/jetbrains/annotations/NotNull|() s: R|kotlin/String|): R|test/ConstructorWithAnnotations|
+
+}

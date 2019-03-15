@@ -29,13 +29,15 @@ build/
 !**/testData/**/*.iml
 .idea/libraries/Gradle*.xml
 .idea/libraries/Maven*.xml
-.idea/artifacts
+.idea/artifacts/PILL_*.xml
 .idea/modules
 .idea/runConfigurations/JPS_*.xml
+.idea/runConfigurations/PILL_*.xml
 .idea/libraries
 .idea/modules.xml
 .idea/gradle.xml
 .idea/compiler.xml
 .idea/inspectionProfiles/profiles_settings.xml
 .idea/.name
+.idea/artifacts/dist_auto_*
 kotlin-ultimate/

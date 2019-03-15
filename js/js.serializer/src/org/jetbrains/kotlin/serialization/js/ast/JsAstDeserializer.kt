@@ -17,7 +17,9 @@
 package org.jetbrains.kotlin.serialization.js.ast
 
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.JsImportedModule
 import org.jetbrains.kotlin.js.backend.ast.metadata.*
+import org.jetbrains.kotlin.js.backend.ast.metadata.LocalAlias
 import org.jetbrains.kotlin.js.backend.ast.metadata.SpecialFunction
 import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.*
@@ -56,7 +58,7 @@ class JsAstDeserializer(program: JsProgram, private val sourceRoots: Iterable<Fi
     }
 
     private fun deserialize(proto: Fragment): JsProgramFragment {
-        val fragment = JsProgramFragment(scope)
+        val fragment = JsProgramFragment(scope, proto.packageFqn)
 
         fragment.importedModules += proto.importedModuleList.map { importedModuleProto ->
              JsImportedModule(
@@ -95,6 +97,18 @@ class JsAstDeserializer(program: JsProgram, private val sourceRoots: Iterable<Fi
             if (nameBinding.key in fragment.imports) {
                 nameBinding.name.imported = true
             }
+        }
+
+        if (proto.hasTestsInvocation()) {
+            fragment.tests = deserialize(proto.testsInvocation)
+        }
+
+        if (proto.hasMainInvocation()) {
+            fragment.mainFunction = deserialize(proto.mainInvocation)
+        }
+
+        proto.inlinedLocalDeclarationsList.forEach {
+            fragment.inlinedLocalDeclarations[deserializeString(it.tag)] = deserializeGlobalBlock(it.block)
         }
 
         return fragment
@@ -272,9 +286,13 @@ class JsAstDeserializer(program: JsProgram, private val sourceRoots: Iterable<Fi
         expression.synthetic = proto.synthetic
         expression.sideEffects = map(proto.sideEffects)
         if (proto.hasLocalAlias()) {
-            expression.localAlias = deserializeName(proto.localAlias)
+            expression.localAlias = deserializeJsImportedModule(proto.localAlias)
         }
         return expression
+    }
+
+    private fun deserializeJsImportedModule(proto: JsAstProtoBuf.JsImportedModule): JsImportedModule {
+        return JsImportedModule(deserializeString(proto.externalName), deserializeName(proto.internalName), if (proto.hasPlainReference()) deserialize(proto.plainReference!!) else null)
     }
 
     private fun deserializeNoMetadata(proto: Expression): JsExpression = when (proto.expressionCase) {
@@ -445,7 +463,7 @@ class JsAstDeserializer(program: JsProgram, private val sourceRoots: Iterable<Fi
                 JsDynamicScope.declareName(identifier)
             }
             if (nameProto.hasLocalNameId()) {
-                name.localAlias = deserializeName(nameProto.localNameId)
+                name.localAlias = deserializeLocalAlias(nameProto.localNameId)
             }
             if (nameProto.hasImported()) {
                 name.imported = nameProto.imported
@@ -457,6 +475,12 @@ class JsAstDeserializer(program: JsProgram, private val sourceRoots: Iterable<Fi
             name
         }
     }
+
+    private fun deserializeLocalAlias(localNameId: JsAstProtoBuf.LocalAlias): LocalAlias {
+        return LocalAlias(deserializeName(localNameId.localNameId),
+                          if (localNameId.hasTag()) deserializeString(localNameId.tag) else null)
+    }
+
 
     private fun deserializeString(id: Int): String = stringTable[id]
 

@@ -1,0 +1,42 @@
+package foo;
+
+import java.lang.System;
+
+@kotlin.Metadata()
+public abstract interface InterfaceWithDefaults<T extends java.lang.Object> {
+
+    public abstract void foo();
+
+    @kotlin.Metadata()
+    public static final class DefaultImpls {
+
+        public DefaultImpls() {
+            super();
+        }
+
+        public static <T extends java.lang.Object>void foo(foo.InterfaceWithDefaults<T> $this) {
+        }
+    }
+}
+
+////////////////////
+
+package foo;
+
+import java.lang.System;
+
+@kotlin.Metadata()
+public abstract interface SubInterface<T extends java.lang.Object> extends foo.InterfaceWithDefaults<T> {
+
+    @kotlin.Metadata()
+    public static final class DefaultImpls {
+
+        public DefaultImpls() {
+            super();
+        }
+
+        @java.lang.Override()
+        public static <T extends java.lang.Object>void foo(foo.SubInterface<T> $this) {
+        }
+    }
+}

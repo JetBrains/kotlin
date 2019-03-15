@@ -6,4 +6,5 @@
 package kotlin.io
 
 // temporary for shared code, until we have an annotation like JvmSerializable
+@Suppress("ACTUAL_WITHOUT_EXPECT")
 internal actual interface Serializable

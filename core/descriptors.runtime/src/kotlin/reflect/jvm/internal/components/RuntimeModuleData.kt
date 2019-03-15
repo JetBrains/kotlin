@@ -54,7 +54,7 @@ class RuntimeModuleData private constructor(
 
     companion object {
         fun create(classLoader: ClassLoader): RuntimeModuleData {
-            val storageManager = LockBasedStorageManager()
+            val storageManager = LockBasedStorageManager("RuntimeModuleData")
             val builtIns = JvmBuiltIns(storageManager)
             val module = ModuleDescriptorImpl(Name.special("<runtime module for $classLoader>"), storageManager, builtIns)
 

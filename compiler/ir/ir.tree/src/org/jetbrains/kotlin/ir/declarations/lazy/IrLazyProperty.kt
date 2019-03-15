@@ -64,7 +64,7 @@ class IrLazyProperty(
 
     override var backingField: IrField? by lazyVar {
         if (descriptor.hasBackingField(bindingContext)) {
-            stubGenerator.generateFieldStub(descriptor, bindingContext).apply {
+            stubGenerator.generateFieldStub(descriptor).apply {
                 correspondingProperty = this@IrLazyProperty
             }
         } else null

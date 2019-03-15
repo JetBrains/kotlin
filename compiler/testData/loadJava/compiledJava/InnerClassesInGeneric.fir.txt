@@ -1,0 +1,2 @@
+<P, Q> public open class InnerClassesInGeneric : R|java/lang/Object| {
+}

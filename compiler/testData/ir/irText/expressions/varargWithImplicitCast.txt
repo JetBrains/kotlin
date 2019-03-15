@@ -2,7 +2,7 @@ FILE fqName:<root> fileName:/varargWithImplicitCast.kt
   FUN name:testScalar visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.IntArray flags:
     VALUE_PARAMETER name:a index:0 type:kotlin.Any flags:
     BLOCK_BODY
-      WHEN type=kotlin.Unit origin=null
+      WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.Int
             typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:public flags: superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Int>; java.io.Serializable]
@@ -18,7 +18,7 @@ FILE fqName:<root> fileName:/varargWithImplicitCast.kt
   FUN name:testSpread visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.IntArray flags:
     VALUE_PARAMETER name:a index:0 type:kotlin.Any flags:
     BLOCK_BODY
-      WHEN type=kotlin.Unit origin=null
+      WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.IntArray
             typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:IntArray modality:FINAL visibility:public flags: superTypes:[kotlin.Any; kotlin.Cloneable; java.io.Serializable]

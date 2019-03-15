@@ -337,6 +337,12 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
             }
 
         fun createNoCache(classOrObject: KtClassOrObject): KtLightClassForSourceDeclaration? {
+            val containingFile = classOrObject.containingFile
+            if (containingFile is KtCodeFragment) {
+                // Avoid building light classes for code fragments
+                return null
+            }
+
             if (classOrObject.shouldNotBeVisibleAsLightClass()) {
                 return null
             }
@@ -362,8 +368,13 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
                 return InvalidLightClassDataHolder
             }
 
-            return classOrObject.containingKtFile.script?.let { KtLightClassForScript.getLightClassCachedValue(it).value }
-                ?: getLightClassCachedValue(classOrObject).value
+            val containingScript = classOrObject.containingKtFile.script
+            return when {
+                !classOrObject.isLocal && containingScript != null ->
+                    KtLightClassForScript.getLightClassCachedValue(containingScript).value
+                else ->
+                    getLightClassCachedValue(classOrObject).value
+            }
         }
 
         private fun getLightClassCachedValue(classOrObject: KtClassOrObject): CachedValue<LightClassDataHolder.ForClass> {

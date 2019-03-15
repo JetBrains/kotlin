@@ -8,7 +8,7 @@ configurePublishing(project)
 
 
 dependencies {
-    compile project(':kotlin-stdlib-common')
+    compile kotlinStdlib("common")
     testCompile project(":kotlin-test:kotlin-test-annotations-common")
 }
 
@@ -29,8 +29,9 @@ classes.dependsOn.remove("compileJava")
 
 artifacts {
     archives sourcesJar
-    archives javadocJar
 }
+
+javadocJar()
 
 compileKotlinCommon {
     kotlinOptions {

@@ -120,9 +120,17 @@ fun InstructionAdapter.genKOutputMethodCall(
     )
 }
 
-internal fun InstructionAdapter.buildInternalConstructorDesc(propsStartVar: Int, bitMaskBase: Int, codegen: ClassBodyCodegen, args: List<SerializableProperty>): String {
-    val constructorDesc = StringBuilder("(I")
-    load(bitMaskBase, OPT_MASK_TYPE)
+internal fun InstructionAdapter.buildInternalConstructorDesc(
+    propsStartVar: Int,
+    bitMaskBase: Int,
+    codegen: ClassBodyCodegen,
+    args: List<SerializableProperty>
+): String {
+    val constructorDesc = StringBuilder("(")
+    repeat(args.bitMaskSlotCount()) {
+        constructorDesc.append("I")
+        load(bitMaskBase + it, Type.INT_TYPE)
+    }
     var propVar = propsStartVar
     for (property in args) {
         val propertyType = codegen.typeMapper.mapType(property.type)
@@ -135,8 +143,10 @@ internal fun InstructionAdapter.buildInternalConstructorDesc(propsStartVar: Int,
     return constructorDesc.toString()
 }
 
-internal fun ImplementationBodyCodegen.generateMethod(function: FunctionDescriptor,
-                                                      block: InstructionAdapter.(JvmMethodSignature, ExpressionCodegen) -> Unit) {
+internal fun ImplementationBodyCodegen.generateMethod(
+    function: FunctionDescriptor,
+    block: InstructionAdapter.(JvmMethodSignature, ExpressionCodegen) -> Unit
+) {
     this.functionCodegen.generateMethod(OtherOrigin(this.myClass.psiOrParent, function), function,
                                         object : FunctionGenerationStrategy.CodegenBased(this.state) {
                                             override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
@@ -256,7 +266,8 @@ internal fun AbstractSerialGenerator.stackValueSerializerInstance(codegen: Class
         when (serializer.classId) {
             enumSerializerId, contextSerializerId -> {
                 // a special way to instantiate enum -- need a enum KClass reference
-                aconst(codegen.typeMapper.mapType(kType))
+                // GENERIC_ARGUMENT forces boxing in order to obtain KClass
+                aconst(codegen.typeMapper.mapType(kType, null, TypeMappingMode.GENERIC_ARGUMENT))
                 AsmUtil.wrapJavaClassIntoKClass(this)
                 signature.append(AsmTypes.K_CLASS_TYPE.descriptor)
             }
@@ -320,8 +331,8 @@ fun AbstractSerialGenerator.getSerialTypeInfo(property: SerializableProperty, ty
         )
 
     property.serializableWith?.toClassDescriptor?.let { return SerializableInfo(it) }
+    findAddOnSerializer(property.type, property.module)?.let { return SerializableInfo(it) }
     property.type.overridenSerializer?.toClassDescriptor?.let { return SerializableInfo(it) }
-    findAddOnSerializer(property.type)?.let { return SerializableInfo(it) }
 
     if (property.type.isTypeParameter()) return JVMSerialTypeInfo(
         property,
@@ -344,6 +355,7 @@ fun AbstractSerialGenerator.getSerialTypeInfo(property: SerializableProperty, ty
                         // reference elements
                         serializer = property.module.findClassAcrossModuleDependencies(referenceArraySerializerId)
                     }
+                    else -> TODO("primitive arrays are not supported yet")
                     // primitive elements are not supported yet
                 }
             }

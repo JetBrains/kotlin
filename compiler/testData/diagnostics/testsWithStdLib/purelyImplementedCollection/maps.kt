@@ -1,4 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE
+// !WITH_NEW_INFERENCE
 import java.util.*
 import java.util.concurrent.*
 
@@ -12,19 +13,19 @@ fun hashMapTest() {
     x.put(<!TYPE_MISMATCH!>bar()<!>, 1)
     x.put("", 1)
 
-    <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>x[null]<!> = 1
-    <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>x[bar()]<!> = 1
-    <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>x[""]<!> = nullableInt
+    <!OI;TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>x[<!NI;NULL_FOR_NONNULL_TYPE!>null<!>]<!> = 1
+    <!OI;TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>x[<!NI;TYPE_MISMATCH!>bar()<!>]<!> = 1
+    <!OI;TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>x[""]<!> = <!NI;TYPE_MISMATCH!>nullableInt<!>
     x[""] = 1
 
-    val b1: MutableMap<String, Int?> = <!TYPE_MISMATCH!>x<!>
+    val b1: MutableMap<String, Int?> = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>x<!>
     val b2: MutableMap<String, Int> = x
-    val b3: Map<String?, Int> = <!TYPE_MISMATCH!>x<!>
-    val b4: Map<String?, Int?> = <!TYPE_MISMATCH!>x<!>
+    val b3: Map<String?, Int> = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>x<!>
+    val b4: Map<String?, Int?> = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>x<!>
     val b5: Map<String, Int?> = x
 
-    val b6: Int = <!TYPE_MISMATCH!>x[""]<!>
-    val b7: Int = <!TYPE_MISMATCH!>x.get("")<!>
+    val b6: Int = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>x[""]<!>
+    val b7: Int = <!TYPE_MISMATCH!>x.<!NI;TYPE_MISMATCH!>get("")<!><!>
 
     val b8: Int? = x.get("")
 }
@@ -36,19 +37,19 @@ fun treeMapTest() {
     x.put(<!TYPE_MISMATCH!>bar()<!>, 1)
     x.put("", 1)
 
-    <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>x[null]<!> = 1
-    <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>x[bar()]<!> = 1
-    <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>x[""]<!> = nullableInt
+    <!OI;TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>x[<!NI;NULL_FOR_NONNULL_TYPE!>null<!>]<!> = 1
+    <!OI;TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>x[<!NI;TYPE_MISMATCH!>bar()<!>]<!> = 1
+    <!OI;TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>x[""]<!> = <!NI;TYPE_MISMATCH!>nullableInt<!>
     x[""] = 1
 
-    val b1: MutableMap<String, Int?> = <!TYPE_MISMATCH!>x<!>
+    val b1: MutableMap<String, Int?> = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>x<!>
     val b2: MutableMap<String, Int> = x
-    val b3: Map<String?, Int> = <!TYPE_MISMATCH!>x<!>
-    val b4: Map<String?, Int?> = <!TYPE_MISMATCH!>x<!>
+    val b3: Map<String?, Int> = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>x<!>
+    val b4: Map<String?, Int?> = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>x<!>
     val b5: Map<String, Int?> = x
 
-    val b6: Int = <!TYPE_MISMATCH!>x[""]<!>
-    val b7: Int = <!TYPE_MISMATCH!>x.get("")<!>
+    val b6: Int = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>x[""]<!>
+    val b7: Int = <!TYPE_MISMATCH!>x.<!NI;TYPE_MISMATCH!>get("")<!><!>
 
     val b8: Int? = x.get("")
 }
@@ -60,19 +61,19 @@ fun concurrentHashMapTest() {
     x.put(<!TYPE_MISMATCH!>bar()<!>, 1)
     x.put("", 1)
 
-    <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>x[null]<!> = 1
-    <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>x[bar()]<!> = 1
-    <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>x[""]<!> = nullableInt
+    <!OI;TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>x[<!NI;NULL_FOR_NONNULL_TYPE!>null<!>]<!> = 1
+    <!OI;TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>x[<!NI;TYPE_MISMATCH!>bar()<!>]<!> = 1
+    <!OI;TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>x[""]<!> = <!NI;TYPE_MISMATCH!>nullableInt<!>
     x[""] = 1
 
-    val b1: MutableMap<String, Int?> = <!TYPE_MISMATCH!>x<!>
+    val b1: MutableMap<String, Int?> = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>x<!>
     val b2: MutableMap<String, Int> = x
-    val b3: Map<String?, Int> = <!TYPE_MISMATCH!>x<!>
-    val b4: Map<String?, Int?> = <!TYPE_MISMATCH!>x<!>
+    val b3: Map<String?, Int> = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>x<!>
+    val b4: Map<String?, Int?> = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>x<!>
     val b5: Map<String, Int?> = x
 
-    val b6: Int = <!TYPE_MISMATCH!>x[""]<!>
-    val b7: Int = <!TYPE_MISMATCH!>x.get("")<!>
+    val b6: Int = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>x[""]<!>
+    val b7: Int = <!TYPE_MISMATCH!>x.<!NI;TYPE_MISMATCH!>get("")<!><!>
 
     val b8: Int? = x.get("")
 }

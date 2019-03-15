@@ -3,6 +3,7 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
+@file:JvmName("NativeIdePlatformUtil")
 package org.jetbrains.kotlin.platform.impl
 
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
@@ -37,3 +38,8 @@ object NativeIdePlatformKind : IdePlatformKind<NativeIdePlatformKind>() {
 // These are fake compiler arguments for Kotlin/Native - only for usage within IDEA plugin:
 class FakeK2NativeCompilerArguments : CommonCompilerArguments()
 
+val IdePlatformKind<*>?.isKotlinNative
+    get() = this is NativeIdePlatformKind
+
+val IdePlatform<*, *>?.isKotlinNative
+    get() = this is NativeIdePlatformKind.Platform

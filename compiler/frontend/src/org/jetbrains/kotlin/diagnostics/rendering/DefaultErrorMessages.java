@@ -128,6 +128,7 @@ public class DefaultErrorMessages {
         MAP.put(WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET_ON_TYPE,
                 "Use of this annotation with target ''type'' and use site target ''@{0}'' is deprecated", TO_STRING);
         MAP.put(REPEATED_ANNOTATION, "This annotation is not repeatable");
+        MAP.put(REPEATED_ANNOTATION_WARNING, "This annotation is not repeatable");
         MAP.put(NON_SOURCE_ANNOTATION_ON_INLINED_LAMBDA_EXPRESSION, "The lambda expression here is an inlined argument so this annotation cannot be stored anywhere");
 
         MAP.put(INAPPLICABLE_TARGET_ON_PROPERTY, "''@{0}:'' annotations could be applied only to property declarations", TO_STRING);
@@ -381,6 +382,7 @@ public class DefaultErrorMessages {
         MAP.put(LOCAL_OBJECT_NOT_ALLOWED, "Named object ''{0}'' is a singleton and cannot be local. Try to use anonymous object instead", NAME);
         MAP.put(LOCAL_INTERFACE_NOT_ALLOWED, "''{0}'' is an interface so it cannot be local. Try to use anonymous object or abstract class instead", NAME);
         MAP.put(TYPE_PARAMETERS_IN_OBJECT, "Type parameters are not allowed for objects");
+        MAP.put(TYPE_PARAMETERS_IN_ANONYMOUS_OBJECT, "Type parameters for anonymous objects are deprecated");
         MAP.put(ENUM_CLASS_CONSTRUCTOR_CALL, "Enum types cannot be instantiated");
         MAP.put(SEALED_CLASS_CONSTRUCTOR_CALL, "Sealed types cannot be instantiated");
 
@@ -499,6 +501,9 @@ public class DefaultErrorMessages {
         MAP.put(RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY,
                 "Returns are not allowed for functions with expression body. Use block body in '{...}'");
         MAP.put(NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY, "A 'return' expression required in a function with a block body ('{...}')");
+        MAP.put(NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY_MIGRATION, "A 'return' expression required in a function with a block body ('{...}'). " +
+                                                                 "If you got this error after the compiler update, then it's most likely due to a fix of a bug " +
+                                                                 "introduced in 1.3.0 (see KT-28061 for details)");
         MAP.put(RETURN_TYPE_MISMATCH, "This function must return a value of type {0}", RENDER_TYPE);
         MAP.put(EXPECTED_TYPE_MISMATCH, "Expected a value of type {0}", RENDER_TYPE);
         MAP.put(ASSIGNMENT_TYPE_MISMATCH,
@@ -736,6 +741,7 @@ public class DefaultErrorMessages {
         }, RENDER_TYPE, RENDER_TYPE);
 
         MAP.put(INCOMPATIBLE_ENUM_COMPARISON, "Comparison of incompatible enums ''{0}'' and ''{1}'' is always unsuccessful", RENDER_TYPE, RENDER_TYPE);
+        MAP.put(INCOMPATIBLE_ENUM_COMPARISON_ERROR, "Comparison of incompatible enums ''{0}'' and ''{1}'' is always unsuccessful", RENDER_TYPE, RENDER_TYPE);
 
         MAP.put(SENSELESS_COMPARISON, "Condition ''{0}'' is always ''{1}''", ELEMENT_TEXT, TO_STRING);
         MAP.put(SENSELESS_NULL_IN_WHEN, "Expression under 'when' is never equal to null");
@@ -861,6 +867,8 @@ public class DefaultErrorMessages {
         MAP.put(ANNOTATION_ARGUMENT_MUST_BE_CONST, "An annotation argument must be a compile-time constant");
         MAP.put(ANNOTATION_ARGUMENT_MUST_BE_ENUM_CONST, "An enum annotation argument must be a enum constant");
         MAP.put(ANNOTATION_ARGUMENT_MUST_BE_KCLASS_LITERAL, "An annotation argument must be a class literal (T::class)");
+        MAP.put(ANNOTATION_ARGUMENT_KCLASS_LITERAL_OF_TYPE_PARAMETER, "Type parameter in a class literal is not allowed in an annotation argument");
+        MAP.put(ANNOTATION_ARGUMENT_KCLASS_LITERAL_OF_TYPE_PARAMETER_ERROR, "Type parameter in a class literal is deprecated in an annotation argument");
         MAP.put(ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT, "Default value of annotation parameter must be a compile-time constant");
 
         MAP.put(ANNOTATIONS_ON_BLOCK_LEVEL_EXPRESSION_ON_THE_SAME_LINE,
@@ -877,6 +885,9 @@ public class DefaultErrorMessages {
 
         MAP.put(LOCAL_ANNOTATION_CLASS, "Local annotation classes are deprecated and will be unsupported in a future release");
         MAP.put(LOCAL_ANNOTATION_CLASS_ERROR, "Annotation class cannot be local");
+
+        MAP.put(ANNOTATION_ON_SUPERCLASS, "Annotations on superclass are meaningless");
+        MAP.put(ANNOTATION_ON_SUPERCLASS_WARNING, "Annotations on superclass are meaningless and deprecated");
 
         MAP.put(CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT, "Const 'val' are only allowed on top level or in objects");
         MAP.put(CONST_VAL_WITH_DELEGATE, "Const 'val' should not have a delegate");

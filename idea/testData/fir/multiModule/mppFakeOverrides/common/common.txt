@@ -1,0 +1,23 @@
+FILE: common.kt
+    <T> public open expect class A {
+        public constructor(): super<R|kotlin/Any|>()
+
+        public open function foo(arg: R|T|): R|kotlin/Unit|
+
+    }
+    public open class B : R|A<kotlin/String>| {
+        public constructor(): super<R|A<kotlin/String>|>()
+
+    }
+    public open class C : R|B| {
+        public constructor(): super<R|B|>()
+
+        public open function bar(arg: R|kotlin/String|): R|kotlin/String| {
+            return@@@bar <Unresolved name: arg>#
+        }
+
+        public open function baz(arg: R|kotlin/CharSequence|): R|kotlin/String| {
+            return@@@baz <Unresolved name: arg>#.<Unresolved name: toString>#()
+        }
+
+    }

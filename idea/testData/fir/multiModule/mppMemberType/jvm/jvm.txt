@@ -1,0 +1,34 @@
+FILE: jvm.kt
+    public final actual class MyList {
+        public constructor(): super<R|kotlin/Any|>()
+
+        public final actual function get(i: R|kotlin/Int|): R|kotlin/Int| {
+            return@@@get <Unresolved name: i>#
+        }
+
+        public final function set(i: R|kotlin/Int|, v: R|kotlin/Int|): R|kotlin/Unit| {
+        }
+
+    }
+    public final class DerivedList : R|MyList| {
+        public constructor(): super<R|MyList|>()
+
+        public final function useMember(): R|kotlin/Unit| {
+            R|/MyList.get|(Int(1))
+            R|/MyList.set|(Int(2), Int(3))
+        }
+
+    }
+    public final function useList(list: R|MyList|): R|kotlin/Unit| {
+        <Unresolved name: list>#.<Unresolved name: get>#(Int(1))
+        <Unresolved name: list>#.<Unresolved name: set>#(Int(2), Int(3))
+    }
+    public final class DerivedWrapper : R|Wrapper| {
+        public constructor(): super<R|Wrapper|>()
+
+        public final function use(): R|kotlin/Unit| {
+            R|/Wrapper.list|.<Unresolved name: get>#(Int(1))
+            R|/Wrapper.list|.<Unresolved name: set>#(Int(2), Int(3))
+        }
+
+    }

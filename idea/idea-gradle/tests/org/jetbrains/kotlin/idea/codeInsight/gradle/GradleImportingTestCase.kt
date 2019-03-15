@@ -43,6 +43,7 @@ import org.gradle.util.GradleVersion
 import org.gradle.wrapper.GradleWrapperMain
 import org.intellij.lang.annotations.Language
 import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.idea.test.KotlinSdkCreationChecker
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.plugins.gradle.settings.DistributionType
@@ -51,6 +52,7 @@ import org.jetbrains.plugins.gradle.settings.GradleSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import org.jetbrains.plugins.groovy.GroovyFileType
 import org.junit.Assume.assumeThat
+import org.junit.BeforeClass
 import org.junit.Rule
 import org.junit.rules.TestName
 import org.junit.runner.RunWith
@@ -60,14 +62,22 @@ import java.io.IOException
 import java.io.StringWriter
 import java.net.URISyntaxException
 import java.util.*
+import org.junit.AfterClass
+import org.junit.Assume.assumeTrue
 
 // part of org.jetbrains.plugins.gradle.importing.GradleImportingTestCase
 @RunWith(value = Parameterized::class)
 abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
 
+    protected var sdkCreationChecker : KotlinSdkCreationChecker? = null
+
     @JvmField
     @Rule
     var name = TestName()
+
+    @JvmField
+    @Rule
+    var testWatcher = ImportingTestWatcher()
 
     @JvmField
     @Rule
@@ -80,9 +90,12 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
     private lateinit var myProjectSettings: GradleProjectSettings
     private lateinit var myJdkHome: String
 
+    open fun isApplicableTest(): Boolean = true
+
     override fun setUp() {
         myJdkHome = IdeaTestUtil.requireRealJdkHome()
         super.setUp()
+        assumeTrue(isApplicableTest())
         assumeThat(gradleVersion, versionMatcherRule.matcher)
         runWrite {
             ProjectJdkTable.getInstance().findJdk(GRADLE_JDK_NAME)?.let {
@@ -101,6 +114,7 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
         GradleSettings.getInstance(myProject).gradleVmOptions = "-Xmx128m -XX:MaxPermSize=64m"
         System.setProperty(ExternalSystemExecutionSettings.REMOTE_PROCESS_IDLE_TTL_IN_MS_KEY, GRADLE_DAEMON_TTL_MS.toString())
         configureWrapper()
+        sdkCreationChecker = KotlinSdkCreationChecker()
     }
 
     override fun tearDown() {
@@ -114,6 +128,7 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
 
             Messages.setTestDialog(TestDialog.DEFAULT)
             FileUtil.delete(BuildManager.getInstance().buildSystemDirectory.toFile())
+            sdkCreationChecker?.removeNewKotlinSdk()
         } finally {
             super.tearDown()
         }
@@ -159,7 +174,7 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
                 allprojects {
                     repositories {
                         maven {
-                            url 'http://maven.labs.intellij.net/repo1'
+                            url 'https://maven.labs.intellij.net/repo1'
                         }
                     }
                 }
@@ -205,7 +220,7 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
         return File(baseDir, getTestName(true).substringBefore("_"))
     }
 
-    protected fun configureByFiles(): List<VirtualFile> {
+    protected open fun configureByFiles(): List<VirtualFile> {
         val rootDir = testDataDirectory()
         assert(rootDir.exists()) { "Directory ${rootDir.path} doesn't exist" }
 
@@ -270,6 +285,20 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
 
         fun wrapperJar(): File {
             return File(PathUtil.getJarPathForClass(GradleWrapperMain::class.java))
+        }
+
+        private var logSaver: GradleImportingTestLogSaver? = null
+
+        @JvmStatic
+        @BeforeClass
+        fun setLoggerFactory() {
+            logSaver = GradleImportingTestLogSaver()
+        }
+
+        @JvmStatic
+        @AfterClass
+        fun restoreLoggerFactory() {
+            logSaver?.restore()
         }
     }
 }

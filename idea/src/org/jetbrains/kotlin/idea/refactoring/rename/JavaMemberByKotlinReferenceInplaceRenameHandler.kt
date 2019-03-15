@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.refactoring.rename
 
-import org.jetbrains.kotlin.statistics.KotlinStatisticsTrigger
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.command.impl.StartMarkAction
 import com.intellij.openapi.editor.Editor
@@ -33,7 +32,8 @@ import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.statistics.KotlinIdeRefactoringTrigger
+import org.jetbrains.kotlin.idea.statistics.KotlinEventTrigger
+import org.jetbrains.kotlin.idea.statistics.KotlinStatisticsTrigger
 
 class JavaMemberByKotlinReferenceInplaceRenameHandler : MemberInplaceRenameHandler() {
     class Renamer(
@@ -61,12 +61,12 @@ class JavaMemberByKotlinReferenceInplaceRenameHandler : MemberInplaceRenameHandl
 
     override fun invoke(project: Project, elements: Array<out PsiElement>, dataContext: DataContext) {
         super.invoke(project, elements, dataContext)
-        KotlinStatisticsTrigger.trigger(KotlinIdeRefactoringTrigger::class.java, this::class.java.name)
+        KotlinStatisticsTrigger.trigger(KotlinEventTrigger.KotlinIdeRefactoringTrigger, this::class.java.name)
     }
 
     override fun invoke(project: Project, editor: Editor?, file: PsiFile?, dataContext: DataContext?) {
         super.invoke(project, editor, file, dataContext)
-        KotlinStatisticsTrigger.trigger(KotlinIdeRefactoringTrigger::class.java, this::class.java.name)
+        KotlinStatisticsTrigger.trigger(KotlinEventTrigger.KotlinIdeRefactoringTrigger, this::class.java.name)
     }
 
 }

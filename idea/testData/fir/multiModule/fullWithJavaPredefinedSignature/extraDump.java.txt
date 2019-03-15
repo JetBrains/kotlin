@@ -1,0 +1,2 @@
+<T> public abstract interface MyIterable : R|java/lang/Iterable<T>| {
+}

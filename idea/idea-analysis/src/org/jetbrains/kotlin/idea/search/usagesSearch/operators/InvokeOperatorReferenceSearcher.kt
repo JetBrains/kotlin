@@ -34,11 +34,11 @@ import org.jetbrains.uast.UastContext
 import org.jetbrains.uast.convertOpt
 
 class InvokeOperatorReferenceSearcher(
-        targetFunction: PsiElement,
-        searchScope: SearchScope,
-        consumer: ExecutorProcessor<PsiReference>,
-        optimizer: SearchRequestCollector,
-        options: KotlinReferencesSearchOptions
+    targetFunction: PsiElement,
+    searchScope: SearchScope,
+    consumer: ExecutorProcessor<PsiReference>,
+    optimizer: SearchRequestCollector,
+    options: KotlinReferencesSearchOptions
 ) : OperatorReferenceSearcher<KtCallExpression>(targetFunction, searchScope, consumer, optimizer, options, wordsToSearch = emptyList()) {
     private val callArgumentsSize: Int?
 
@@ -49,15 +49,24 @@ class InvokeOperatorReferenceSearcher(
                 val uMethod = uastContext.convertOpt<UMethod>(targetDeclaration, null)
                 val uastParameters = uMethod?.uastParameters
 
-                val isStableNumberOfArguments = uastParameters != null && uastParameters.none { it.uastInitializer != null || it.isVarArgs }
-                if (isStableNumberOfArguments) {
-                    val numberOfArguments = uastParameters!!.size
-                    when {
-                        targetFunction.isExtensionDeclaration() -> numberOfArguments - 1
-                        else -> numberOfArguments
+                if (uastParameters != null) {
+                    val isStableNumberOfArguments = uastParameters.none { uParameter ->
+                        @Suppress("UElementAsPsi")
+                        uParameter.uastInitializer != null || uParameter.isVarArgs
                     }
+
+                    if (isStableNumberOfArguments) {
+                        val numberOfArguments = uastParameters.size
+                        when {
+                            targetFunction.isExtensionDeclaration() -> numberOfArguments - 1
+                            else -> numberOfArguments
+                        }
+                    } else {
+                        null
+                    }
+                } else {
+                    null
                 }
-                else null
             }
 
             else -> null

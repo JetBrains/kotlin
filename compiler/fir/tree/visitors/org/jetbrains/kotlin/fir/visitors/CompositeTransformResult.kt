@@ -7,8 +7,7 @@ package org.jetbrains.kotlin.fir.visitors
 
 import org.jetbrains.kotlin.fir.FirElement
 
-@Suppress("UNSUPPORTED_FEATURE")
-inline class CompositeTransformResult<out T : Any>(val a: Any) {
+class CompositeTransformResult<out T : Any>(val a: Any) {
 
     companion object {
         fun <T : Any> empty() = CompositeTransformResult<T>(emptyList<T>())

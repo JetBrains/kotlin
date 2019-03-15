@@ -1,0 +1,6 @@
+<P> public open class JavaBeanVarOfGenericType : R|java/lang/Object| {
+    public open operator function getCharacters(): R|ft<java/util/ArrayList<ft<P, P?>>, java/util/ArrayList<ft<P, P?>>?>|!
+
+    public open operator function setCharacters(characters: R|ft<java/util/ArrayList<ft<P, P?>>, java/util/ArrayList<ft<P, P?>>?>|!): R|kotlin/Unit|
+
+}

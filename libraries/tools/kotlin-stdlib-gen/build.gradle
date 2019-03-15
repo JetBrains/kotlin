@@ -1,7 +1,10 @@
 apply plugin: 'kotlin'
 
 sourceSets {
-    main.kotlin.srcDir 'src'
+    main {
+        kotlin.srcDir 'src'
+        resources.srcDir "$buildDir/copyright"
+    }
 }
 
 dependencies {
@@ -13,6 +16,16 @@ compileKotlin {
     kotlinOptions {
         freeCompilerArgs = ["-version"]
     }
+}
+
+task copyCopyrightProfile(type: Copy) {
+    from "$rootDir/.idea/copyright"
+    into "$buildDir/copyright"
+    include 'apache.xml'
+}
+
+processResources {
+    dependsOn(copyCopyrightProfile)
 }
 
 task run(type: JavaExec) {

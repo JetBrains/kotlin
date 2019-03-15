@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -109,6 +109,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
         @TestMetadata("enum.kt")
         public void testEnum() throws Exception {
             runTest("compiler/testData/ir/irText/classes/enum.kt");
+        }
+
+        @TestMetadata("enumClassModality.kt")
+        public void testEnumClassModality() throws Exception {
+            runTest("compiler/testData/ir/irText/classes/enumClassModality.kt");
         }
 
         @TestMetadata("enumWithSecondaryCtor.kt")
@@ -267,6 +272,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
         @TestMetadata("kt27005.kt")
         public void testKt27005() throws Exception {
             runTest("compiler/testData/ir/irText/declarations/kt27005.kt");
+        }
+
+        @TestMetadata("kt29833.kt")
+        public void testKt29833() throws Exception {
+            runTest("compiler/testData/ir/irText/declarations/kt29833.kt");
         }
 
         @TestMetadata("localClassWithOverrides.kt")
@@ -977,6 +987,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/expressions/kt28456b.kt");
         }
 
+        @TestMetadata("kt30020.kt")
+        public void testKt30020() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/kt30020.kt");
+        }
+
         @TestMetadata("lambdaInCAO.kt")
         public void testLambdaInCAO() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/lambdaInCAO.kt");
@@ -1130,6 +1145,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
         @TestMetadata("thisOfGenericOuterClass.kt")
         public void testThisOfGenericOuterClass() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/thisOfGenericOuterClass.kt");
+        }
+
+        @TestMetadata("thisReferenceBeforeClassDeclared.kt")
+        public void testThisReferenceBeforeClassDeclared() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/thisReferenceBeforeClassDeclared.kt");
         }
 
         @TestMetadata("throw.kt")

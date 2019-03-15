@@ -156,11 +156,7 @@ open class AddModifierFix(
     object MakeClassOpenFactory : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val typeReference = diagnostic.psiElement as KtTypeReference
-            val bindingContext = typeReference.analyze(BodyResolveMode.PARTIAL)
-            val type = bindingContext[BindingContext.TYPE, typeReference] ?: return null
-            val classDescriptor = type.constructor.declarationDescriptor as? ClassDescriptor ?: return null
-            val declaration = DescriptorToSourceUtils.descriptorToDeclaration(classDescriptor) as? KtClass ?: return null
-            if (!declaration.canRefactor()) return null
+            val declaration = typeReference.classForRefactor() ?: return null
             if (declaration.isEnum() || declaration.isData()) return null
             return AddModifierFix(declaration, KtTokens.OPEN_KEYWORD)
         }
@@ -180,4 +176,13 @@ open class AddModifierFix(
             return AddModifierFix(property, KtTokens.LATEINIT_KEYWORD)
         }
     }
+}
+
+fun KtTypeReference.classForRefactor(): KtClass? {
+    val bindingContext = analyze(BodyResolveMode.PARTIAL)
+    val type = bindingContext[BindingContext.TYPE, this] ?: return null
+    val classDescriptor = type.constructor.declarationDescriptor as? ClassDescriptor ?: return null
+    val declaration = DescriptorToSourceUtils.descriptorToDeclaration(classDescriptor) as? KtClass ?: return null
+    if (!declaration.canRefactor()) return null
+    return declaration
 }

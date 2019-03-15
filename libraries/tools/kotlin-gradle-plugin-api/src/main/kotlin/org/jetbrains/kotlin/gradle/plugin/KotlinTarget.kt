@@ -10,10 +10,10 @@ import org.gradle.api.Action
 import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
+import org.gradle.api.artifacts.PublishArtifact
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.attributes.HasAttributes
 import org.gradle.api.component.SoftwareComponent
-import org.gradle.api.internal.component.UsageContext
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 interface KotlinTargetComponent : SoftwareComponent {
     val target: KotlinTarget
     val publishable: Boolean
+    val defaultArtifactId: String
+    val sourcesArtifacts: Set<PublishArtifact>
 }
 
 interface KotlinTarget : Named, HasAttributes {
@@ -41,9 +43,7 @@ interface KotlinTarget : Named, HasAttributes {
 
     val publishable: Boolean
 
-    val component: KotlinTargetComponent
-
-    fun createUsageContexts(): Set<UsageContext>
+    val components: Set<SoftwareComponent>
 
     fun mavenPublication(action: Closure<Unit>)
     fun mavenPublication(action: Action<MavenPublication>)

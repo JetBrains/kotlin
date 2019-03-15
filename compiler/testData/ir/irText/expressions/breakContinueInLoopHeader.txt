@@ -119,7 +119,7 @@ FILE fqName:<root> fileName:/breakContinueInLoopHeader.kt
                       CALL 'inc(): Int' type=kotlin.Int origin=PREFIX_INCR
                         $this: GET_VAR 'j: Int' type=kotlin.Int origin=PREFIX_INCR
                     GET_VAR 'j: Int' type=kotlin.Int origin=PREFIX_INCR
-              condition: WHEN type=kotlin.Boolean origin=null
+              condition: WHEN type=kotlin.Boolean origin=IF
                 BRANCH
                   if: CALL 'greaterOrEqual(Int, Int): Boolean' type=kotlin.Boolean origin=GTEQ
                     arg0: GET_VAR 'j: Int' type=kotlin.Int origin=null
@@ -128,7 +128,7 @@ FILE fqName:<root> fileName:/breakContinueInLoopHeader.kt
                 BRANCH
                   if: CONST Boolean type=kotlin.Boolean value=true
                   then: BREAK label=null loop.label=Inner
-          WHEN type=kotlin.Unit origin=null
+          WHEN type=kotlin.Unit origin=IF
             BRANCH
               if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                 arg0: GET_VAR 'i: Int' type=kotlin.Int origin=null

@@ -16,7 +16,6 @@ import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.ResolveScopeEnlarger
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.util.PathUtil
@@ -24,11 +23,12 @@ import com.intellij.util.SmartList
 import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
 import org.jetbrains.kotlin.analyzer.CombinedModuleInfo
+import org.jetbrains.kotlin.analyzer.LibraryModuleInfo
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.TrackableModuleInfo
-import org.jetbrains.kotlin.caches.project.LibraryModuleInfo
 import org.jetbrains.kotlin.caches.resolve.resolution
-import org.jetbrains.kotlin.config.KotlinSourceRootType
+import org.jetbrains.kotlin.config.SourceKotlinRootType
+import org.jetbrains.kotlin.config.TestSourceKotlinRootType
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.util.enlargedSearchScope
 import org.jetbrains.kotlin.idea.configuration.BuildSystemType
@@ -170,7 +170,9 @@ data class ModuleProductionSourceInfo internal constructor(
 
     override val stableName: Name = module.getStableName()
 
-    override fun contentScope(): GlobalSearchScope = enlargedSearchScope(ModuleProductionSourceScope(module), module.moduleFile)
+    override fun contentScope(): GlobalSearchScope {
+        return enlargedSearchScope(ModuleProductionSourceScope(module), module, isTestScope = false)
+    }
 
     override fun <T> createCachedValueProvider(f: () -> CachedValueProvider.Result<T>) = CachedValueProvider { f() }
 }
@@ -186,7 +188,7 @@ data class ModuleTestSourceInfo internal constructor(override val module: Module
 
     override val displayedName get() = module.name + " (test)"
 
-    override fun contentScope(): GlobalSearchScope = enlargedSearchScope(ModuleTestSourceScope(module), module.moduleFile)
+    override fun contentScope(): GlobalSearchScope = enlargedSearchScope(ModuleTestSourceScope(module), module, isTestScope = true)
 
     override fun modulesWhoseInternalsAreVisible() = module.cached(CachedValueProvider {
         val list = SmartList<ModuleInfo>()
@@ -209,8 +211,8 @@ fun Module.testSourceInfo(): ModuleTestSourceInfo? = if (hasTestRoots()) ModuleT
 
 internal fun Module.correspondingModuleInfos(): List<ModuleSourceInfo> = listOf(testSourceInfo(), productionSourceInfo()).filterNotNull()
 
-private fun Module.hasProductionRoots() = hasRootsOfType(JavaSourceRootType.SOURCE) || hasRootsOfType(KotlinSourceRootType.Source) || (isNewMPPModule && sourceType == SourceType.PRODUCTION)
-private fun Module.hasTestRoots() = hasRootsOfType(JavaSourceRootType.TEST_SOURCE) || hasRootsOfType(KotlinSourceRootType.TestSource) || (isNewMPPModule && sourceType == SourceType.TEST)
+private fun Module.hasProductionRoots() = hasRootsOfType(JavaSourceRootType.SOURCE) || hasRootsOfType(SourceKotlinRootType) || (isNewMPPModule && sourceType == SourceType.PRODUCTION)
+private fun Module.hasTestRoots() = hasRootsOfType(JavaSourceRootType.TEST_SOURCE) || hasRootsOfType(TestSourceKotlinRootType) || (isNewMPPModule && sourceType == SourceType.TEST)
 
 private fun Module.hasRootsOfType(sourceRootType: JpsModuleSourceRootType<*>): Boolean =
     rootManager.contentEntries.any { it.getSourceFolders(sourceRootType).isNotEmpty() }
@@ -374,7 +376,7 @@ private class SdkScope(project: Project, val sdk: Sdk) :
     override fun toString() = "SdkScope($sdk)"
 }
 
-internal fun IdeaModuleInfo.isLibraryClasses() = this is SdkInfo || this is LibraryInfo
+fun IdeaModuleInfo.isLibraryClasses() = this is SdkInfo || this is LibraryInfo
 
 val OriginCapability = ModuleDescriptor.Capability<ModuleOrigin>("MODULE_ORIGIN")
 

@@ -12,14 +12,17 @@ import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
 
 sealed class KotlinResourceRootType(val isTest: Boolean) : JpsElementTypeBase<JavaResourceRootProperties>(),
-        JpsModuleSourceRootType<JavaResourceRootProperties>, KotlinRootType {
-    object Resource : KotlinResourceRootType(false)
-    object TestResource : KotlinResourceRootType(true)
+    JpsModuleSourceRootType<JavaResourceRootProperties>, KotlinRootType {
 
     override fun createDefaultProperties() =
         JpsJavaExtensionService.getInstance().createResourceRootProperties("", false)
 
     override fun isTestRoot() = isTest
 
+    override fun isForTests() = isTest
+
     override fun equals(other: Any?) = if (super.equals(other)) true else isSameRootType(this, other)
 }
+
+object ResourceKotlinRootType : KotlinResourceRootType(false)
+object TestResourceKotlinRootType : KotlinResourceRootType(true)

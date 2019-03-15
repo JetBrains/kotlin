@@ -1,0 +1,2 @@
+<T> public abstract interface RecursiveWildcardUpperBound : R|java/lang/Object| {
+}

@@ -1,0 +1,10 @@
+public open class Strange : R|java/lang/Object| {
+    @R|javax/annotation/Nonnull|(R|javax/annotation/meta/When.UNKNOWN|()) public open property field(var): R|ft<kotlin/String, kotlin/String?>|!
+        public get(): R|ft<kotlin/String, kotlin/String?>|!
+        public set(value: R|ft<kotlin/String, kotlin/String?>|!): kotlin/Unit
+
+    @R|javax/annotation/Nonnull|(R|javax/annotation/meta/When.MAYBE|()) public open operator function foo(@R|javax/annotation/Nonnull|(R|javax/annotation/meta/When.ALWAYS|()) x: R|kotlin/String|, @R|javax/annotation/Nonnull|(R|javax/annotation/meta/When.NEVER|()) y: R|kotlin/CharSequence|?): R|kotlin/String|?
+
+    @R|javax/annotation/Nonnull|() public open operator function bar(): R|kotlin/String|
+
+}

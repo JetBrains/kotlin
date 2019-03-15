@@ -1,0 +1,8 @@
+package
+
+public fun case4(): kotlin.Unit
+public fun case_1(): kotlin.Boolean?
+public fun case_2(): kotlin.Boolean?
+public fun case_3(): kotlin.Boolean?
+public fun contract(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
+public fun myRun(/*0*/ block: () -> kotlin.Unit): kotlin.Unit

@@ -88,7 +88,7 @@ enum class PrimitiveType {
     OTHER
 }
 
-fun IrType.getPrimitiveType() = makeNotNull().run {
+fun IrType.getPrimitiveType() = makeNotNull(false).run {
     when {
         isBoolean() -> PrimitiveType.BOOLEAN
         isByte() || isShort() || isInt() -> PrimitiveType.INTEGER_NUMBER

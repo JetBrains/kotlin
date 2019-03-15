@@ -3,9 +3,8 @@
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
  *
- * SECTIONS: when-expression
- * PARAGRAPH: 11
- * SENTENCE: [3] The bound expression is of type kotlin.Boolean and the conditions contain both:
+ * SPEC VERSION: 0.1-draft
+ * PLACE: when-expression -> paragraph 11 -> sentence 3
  * NUMBER: 1
  * DESCRIPTION: Checking for not exhaustive 'when' when not contains by all Boolean values or 'when' does not have bound value.
  */

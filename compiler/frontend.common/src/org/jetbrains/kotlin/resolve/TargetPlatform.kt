@@ -16,7 +16,7 @@ import java.util.*
 abstract class TargetPlatform(val platformName: String) {
     private data class DefaultImportsKey(val includeKotlinComparisons: Boolean, val includeLowPriorityImports: Boolean)
 
-    private val defaultImports = LockBasedStorageManager().let { storageManager ->
+    private val defaultImports = LockBasedStorageManager("TargetPlatform").let { storageManager ->
         storageManager.createMemoizedFunction<DefaultImportsKey, List<ImportPath>> { (includeKotlinComparisons, includeLowPriorityImports) ->
             ArrayList<ImportPath>().apply {
                 listOf(

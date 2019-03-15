@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
+import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.scripts.TestKotlinScriptDependenciesResolver
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -43,7 +44,12 @@ class ScriptGenTest : CodegenTestCase() {
         super.setUp()
         additionalDependencies =
                 System.getenv("PROJECT_CLASSES_DIRS")?.split(File.pathSeparator)?.map { File(it) }
-                ?: listOf("compiler/build/classes/kotlin/test", "build/compiler/classes/kotlin/test", "out/test/compiler.test")
+                ?: listOf(
+                    "compiler/build/classes/kotlin/test",
+                    "build/compiler/classes/kotlin/test",
+                    "out/test/compiler.test",
+                    "out/test/compiler_test"
+                )
                         .mapNotNull { File(it).canonicalFile.takeIf { it.isDirectory } }
                         .takeIf { it.isNotEmpty() }
                 ?: throw IllegalStateException("Unable to get classes output dirs, set PROJECT_CLASSES_DIRS environment variable")
@@ -119,6 +125,7 @@ class ScriptGenTest : CodegenTestCase() {
             addKotlinSourceRoots(sourcePaths.map { "${KotlinTestUtils.getTestDataPathBase()}/codegen/$it" })
             addJvmClasspathRoots(additionalDependencies)
         }
+        loadScriptingPlugin(configuration)
 
         myEnvironment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 

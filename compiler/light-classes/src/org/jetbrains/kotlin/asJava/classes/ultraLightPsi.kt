@@ -58,7 +58,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
         // This property may be removed once IntelliJ versions earlier than 2018.3 become unsupported
         // And usages of that property may be replaced with relevant registry key
         @Volatile
-        @TestOnly
+        @get:TestOnly
         var forceUsingUltraLightClasses = false
     }
 

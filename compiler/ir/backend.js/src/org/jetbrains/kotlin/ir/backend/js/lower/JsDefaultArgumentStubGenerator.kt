@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-class JsDefaultArgumentStubGenerator(override val context: JsIrBackendContext) : DefaultArgumentStubGenerator(context, true) {
+class JsDefaultArgumentStubGenerator(override val context: JsIrBackendContext) : DefaultArgumentStubGenerator(context, true, false) {
 
     override fun needSpecialDispatch(irFunction: IrSimpleFunction) = irFunction.isOverridableOrOverrides
 
@@ -51,7 +51,7 @@ class JsDefaultArgumentStubGenerator(override val context: JsIrBackendContext) :
     private fun resolveInvoke(paramCount: Int): IrSimpleFunction {
         assert(paramCount > 0)
         val fqn = FqName.fromSegments(listOf("kotlin", "Function$paramCount"))
-        val functionKlass = context.run { symbolTable.referenceClass(getClass(fqn)) }.owner
+        val functionKlass = context.functionN(paramCount).owner
         return functionKlass.declarations.filterIsInstance<IrSimpleFunction>().first { it.name == Name.identifier("invoke") }
     }
 }

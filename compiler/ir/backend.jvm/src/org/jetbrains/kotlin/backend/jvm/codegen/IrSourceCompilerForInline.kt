@@ -69,7 +69,7 @@ class IrSourceCompilerForInline(
         get() = codegen.classCodegen.getOrCreateSourceMapper()
 
     override fun generateLambdaBody(adapter: MethodVisitor, jvmMethodSignature: JvmMethodSignature, lambdaInfo: ExpressionLambda): SMAP {
-        lambdaInfo as? IrExpressionLambda ?: error("Expecting ir lambda, but $lambdaInfo")
+        lambdaInfo as? IrExpressionLambdaImpl ?: error("Expecting ir lambda, but $lambdaInfo")
 
         val functionCodegen = object : FunctionCodegen(lambdaInfo.function, codegen.classCodegen) {
             override fun createMethod(flags: Int, signature: JvmMethodGenericSignature): MethodVisitor {
@@ -200,7 +200,7 @@ class IrSourceCompilerForInline(
                 }
 
                 override fun getSerializationBindings(): JvmSerializationBindings {
-                    TODO("not implemented")
+                    return JvmSerializationBindings()
                 }
 
                 override fun newAnnotation(desc: String, visible: Boolean): AnnotationVisitor {

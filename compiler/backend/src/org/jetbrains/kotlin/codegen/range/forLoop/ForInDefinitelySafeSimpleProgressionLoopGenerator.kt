@@ -19,9 +19,9 @@ package org.jetbrains.kotlin.codegen.range.forLoop
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.range.SimpleBoundedValue
+import org.jetbrains.kotlin.codegen.range.comparison.ComparisonGenerator
 import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.org.objectweb.asm.Label
-import org.jetbrains.org.objectweb.asm.Type
 
 /**
  * Generates "naive" for loop:
@@ -45,13 +45,15 @@ class ForInDefinitelySafeSimpleProgressionLoopGenerator(
     private val isStartInclusive: Boolean,
     private val endValue: StackValue,
     private val isEndInclusive: Boolean,
+    comparisonGenerator: ComparisonGenerator,
     step: Int
-) : AbstractForInRangeLoopGenerator(codegen, forExpression, step) {
+) : AbstractForInRangeLoopGenerator(codegen, forExpression, step, comparisonGenerator) {
 
     constructor(
         codegen: ExpressionCodegen,
         forExpression: KtForExpression,
         boundedValue: SimpleBoundedValue,
+        comparisonGenerator: ComparisonGenerator,
         step: Int
     ) : this(
         codegen, forExpression,
@@ -59,15 +61,26 @@ class ForInDefinitelySafeSimpleProgressionLoopGenerator(
         isStartInclusive = if (step == 1) boundedValue.isLowInclusive else boundedValue.isHighInclusive,
         endValue = if (step == 1) boundedValue.highBound else boundedValue.lowBound,
         isEndInclusive = if (step == 1) boundedValue.isHighInclusive else boundedValue.isLowInclusive,
+        comparisonGenerator = comparisonGenerator,
         step = step
     )
 
     companion object {
-        fun fromBoundedValueWithStep1(codegen: ExpressionCodegen, forExpression: KtForExpression, boundedValue: SimpleBoundedValue) =
-            ForInDefinitelySafeSimpleProgressionLoopGenerator(codegen, forExpression, boundedValue, 1)
+        fun fromBoundedValueWithStep1(
+            codegen: ExpressionCodegen,
+            forExpression: KtForExpression,
+            boundedValue: SimpleBoundedValue,
+            comparisonGenerator: ComparisonGenerator
+        ) =
+            ForInDefinitelySafeSimpleProgressionLoopGenerator(codegen, forExpression, boundedValue, comparisonGenerator, 1)
 
-        fun fromBoundedValueWithStepMinus1(codegen: ExpressionCodegen, forExpression: KtForExpression, boundedValue: SimpleBoundedValue) =
-            ForInDefinitelySafeSimpleProgressionLoopGenerator(codegen, forExpression, boundedValue, -1)
+        fun fromBoundedValueWithStepMinus1(
+            codegen: ExpressionCodegen,
+            forExpression: KtForExpression,
+            boundedValue: SimpleBoundedValue,
+            comparisonGenerator: ComparisonGenerator
+        ) =
+            ForInDefinitelySafeSimpleProgressionLoopGenerator(codegen, forExpression, boundedValue, comparisonGenerator, -1)
     }
 
     override fun storeRangeStartAndEnd() {
@@ -84,35 +97,17 @@ class ForInDefinitelySafeSimpleProgressionLoopGenerator(
     override fun checkPreCondition(loopExit: Label) {
         loopParameter().put(asmElementType, elementType, v)
         v.load(endVar, asmElementType)
-        if (asmElementType.sort == Type.LONG) {
-            v.lcmp()
-            if (step > 0) {
-                if (isEndInclusive) {
-                    v.ifgt(loopExit)
-                } else {
-                    v.ifge(loopExit)
-                }
-            } else {
-                if (isEndInclusive) {
-                    v.iflt(loopExit)
-                } else {
-                    v.ifle(loopExit)
-                }
-            }
+
+        if (step > 0) {
+            if (isEndInclusive)
+                comparisonGenerator.jumpIfGreater(v, loopExit)
+            else
+                comparisonGenerator.jumpIfGreaterOrEqual(v, loopExit)
         } else {
-            if (step > 0) {
-                if (isEndInclusive) {
-                    v.ificmpgt(loopExit)
-                } else {
-                    v.ificmpge(loopExit)
-                }
-            } else {
-                if (isEndInclusive) {
-                    v.ificmplt(loopExit)
-                } else {
-                    v.ificmple(loopExit)
-                }
-            }
+            if (isEndInclusive)
+                comparisonGenerator.jumpIfLess(v, loopExit)
+            else
+                comparisonGenerator.jumpIfLessOrEqual(v, loopExit)
         }
     }
 

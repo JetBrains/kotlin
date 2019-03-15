@@ -5,14 +5,10 @@
 
 package org.jetbrains.kotlin.ir
 
-import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
 
 abstract class AbstractIrJsTextTestCase : AbstractIrTextTestCase() {
-    override fun doGenerateIrModule(
-        psi2IrTranslator: Psi2IrTranslator,
-        shouldGenerate: (KtFile) -> Boolean
-    ): IrModuleFragment =
-        generateIrModuleWithJsResolve(myFiles.psiFiles, myEnvironment, psi2IrTranslator, shouldGenerate)
+    override fun doGenerateIrModule(psi2IrTranslator: Psi2IrTranslator): IrModuleFragment =
+        generateIrModuleWithJsResolve(myFiles.psiFiles, myEnvironment, psi2IrTranslator)
 }

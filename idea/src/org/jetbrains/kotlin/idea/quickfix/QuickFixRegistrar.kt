@@ -223,6 +223,9 @@ class QuickFixRegistrar : QuickFixContributor {
         UNUSED_VARIABLE.registerFactory(RemovePsiElementSimpleFix.RemoveVariableFactory)
         UNUSED_VARIABLE.registerFactory(RenameToUnderscoreFix.Factory)
 
+        NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY.registerFactory(AddReturnToLastExpressionInFunctionFix)
+        UNUSED_EXPRESSION.registerFactory(AddReturnToUnusedLastExpressionInFunctionFix)
+
         UNUSED_DESTRUCTURED_PARAMETER_ENTRY.registerFactory(RenameToUnderscoreFix.Factory)
 
         SENSELESS_COMPARISON.registerFactory(SimplifyComparisonFix)
@@ -303,11 +306,15 @@ class QuickFixRegistrar : QuickFixContributor {
         val changeFunctionReturnTypeFix = ChangeCallableReturnTypeFix.ChangingReturnTypeToUnitFactory
         RETURN_TYPE_MISMATCH.registerFactory(changeFunctionReturnTypeFix)
         NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY.registerFactory(changeFunctionReturnTypeFix)
+        NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY_MIGRATION.registerFactory(changeFunctionReturnTypeFix)
         RETURN_TYPE_MISMATCH_ON_OVERRIDE.registerFactory(ChangeCallableReturnTypeFix.ReturnTypeMismatchOnOverrideFactory)
         COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH.registerFactory(ChangeCallableReturnTypeFix.ComponentFunctionReturnTypeMismatchFactory)
         HAS_NEXT_FUNCTION_TYPE_MISMATCH.registerFactory(ChangeCallableReturnTypeFix.HasNextFunctionTypeMismatchFactory)
         COMPARE_TO_TYPE_MISMATCH.registerFactory(ChangeCallableReturnTypeFix.CompareToTypeMismatchFactory)
         IMPLICIT_NOTHING_RETURN_TYPE.registerFactory(ChangeCallableReturnTypeFix.ChangingReturnTypeToNothingFactory)
+
+        RETURN_TYPE_MISMATCH_ON_OVERRIDE.registerFactory(ChangeSuperTypeListEntryTypeArgumentFix)
+        PROPERTY_TYPE_MISMATCH_ON_OVERRIDE.registerFactory(ChangeSuperTypeListEntryTypeArgumentFix)
 
         TOO_MANY_ARGUMENTS.registerFactory(ChangeFunctionSignatureFix)
         NO_VALUE_FOR_PARAMETER.registerFactory(ChangeFunctionSignatureFix)
@@ -370,6 +377,7 @@ class QuickFixRegistrar : QuickFixContributor {
         NULL_FOR_NONNULL_TYPE.registerFactory(factoryForTypeMismatchError)
         CONSTANT_EXPECTED_TYPE_MISMATCH.registerFactory(factoryForTypeMismatchError)
         TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH.registerFactory(factoryForTypeMismatchError)
+        SIGNED_CONSTANT_CONVERTED_TO_UNSIGNED.registerFactory(factoryForTypeMismatchError)
 
         SMARTCAST_IMPOSSIBLE.registerFactory(SmartCastImpossibleExclExclFixFactory)
         SMARTCAST_IMPOSSIBLE.registerFactory(CastExpressionFix.SmartCastImpossibleFactory)
@@ -590,5 +598,10 @@ class QuickFixRegistrar : QuickFixContributor {
         DECLARATION_CANT_BE_INLINED.registerFactory(DeclarationCantBeInlinedFactory)
 
         ASSIGN_OPERATOR_AMBIGUITY.registerFactory(AssignOperatorAmbiguityFactory)
+
+        TYPE_MISMATCH.registerFactory(SurroundWithLambdaFix)
+        CONSTANT_EXPECTED_TYPE_MISMATCH.registerFactory(SurroundWithLambdaFix)
+
+        NO_SET_METHOD.registerFactory(ChangeToMutableCollectionFix)
     }
 }

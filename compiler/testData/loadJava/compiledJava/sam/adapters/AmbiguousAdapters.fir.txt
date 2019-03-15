@@ -1,0 +1,6 @@
+public open class AmbiguousAdapters : R|java/lang/Object| {
+    public open operator function foo(r: R|ft<java/lang/Runnable, java/lang/Runnable?>|!): R|kotlin/Unit|
+
+    public open operator function foo(c: R|ft<java/io/Closeable, java/io/Closeable?>|!): R|kotlin/Unit|
+
+}

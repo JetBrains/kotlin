@@ -1,4 +1,0 @@
-// INSPECTION_CLASS: org.jetbrains.kotlin.idea.spring.inspections.SpringKotlinAutowiringInspection
-// FIXTURE_CLASS: org.jetbrains.kotlin.idea.spring.tests.SpringTestFixtureExtension
-// CONFIGURE_SPRING_FILE_SET
-// RUNTIME_WITH_FULL_JDK

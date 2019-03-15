@@ -1,0 +1,13 @@
+package
+
+public fun bar(): kotlin.Unit
+public fun fail(): kotlin.Unit
+public fun foo(/*0*/ func1: () -> kotlin.Unit, /*1*/ func2: () -> kotlin.Unit): kotlin.Unit
+public fun foo(/*0*/ f: Runnable, /*1*/ selector: () -> kotlin.Unit): kotlin.Unit
+
+public interface Runnable {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract fun run(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

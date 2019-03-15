@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -129,6 +129,11 @@ public class NonLocalReturnsTestGenerated extends AbstractNonLocalReturnsTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
         }
 
+        @TestMetadata("kt16417.kt")
+        public void testKt16417() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/kt16417.kt");
+        }
+
         @TestMetadata("kt20433.kt")
         public void testKt20433() throws Exception {
             runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/kt20433.kt");
@@ -147,6 +152,21 @@ public class NonLocalReturnsTestGenerated extends AbstractNonLocalReturnsTest {
         @TestMetadata("kt20433_void.kt")
         public void testKt20433_void() throws Exception {
             runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/kt20433_void.kt");
+        }
+
+        @TestMetadata("kt26384.kt")
+        public void testKt26384() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/kt26384.kt");
+        }
+
+        @TestMetadata("kt26384_2.kt")
+        public void testKt26384_2() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/kt26384_2.kt");
+        }
+
+        @TestMetadata("kt28546.kt")
+        public void testKt28546() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/kt28546.kt");
         }
 
         @TestMetadata("kt6956.kt")

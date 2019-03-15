@@ -24,26 +24,26 @@ import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
  * Reduces given list of effects by evaluating constant expressions,
  * throwing away senseless checks and infeasible clauses, etc.
  */
-class Reducer : ESExpressionVisitor<ESExpression?> {
+class Reducer(private val constants: ESConstants) : ESExpressionVisitor<ESExpression?> {
     fun reduceEffects(schema: List<ESEffect>): List<ESEffect> =
         schema.mapNotNull { reduceEffect(it) }
 
     private fun reduceEffect(effect: ESEffect): ESEffect? {
         when (effect) {
-            is SimpleEffect -> return effect
             is ConditionalEffect -> {
                 // Reduce condition
                 val reducedCondition = effect.condition.accept(this) ?: return null
 
                 // Filter never executed conditions
-                if (reducedCondition is ESConstant && reducedCondition == ESConstant.FALSE) return null
+                if (reducedCondition.isFalse) return null
 
                 // Add always firing effects
-                if (reducedCondition is ESConstant && reducedCondition == ESConstant.TRUE) return effect.simpleEffect
+                if (reducedCondition.isTrue) return effect.simpleEffect
 
                 // Leave everything else as is
                 return effect
             }
+            else -> return effect
         }
     }
 
@@ -59,16 +59,16 @@ class Reducer : ESExpressionVisitor<ESExpression?> {
         // Result is unknown, do not evaluate
         result ?: return ESIs(reducedArg, isOperator.functor)
 
-        return result.xor(isOperator.functor.isNegated).lift()
+        return constants.booleanValue(result.xor(isOperator.functor.isNegated))
     }
 
     override fun visitEqual(equal: ESEqual): ESExpression {
         val reducedLeft = equal.left.accept(this) as ESValue
         val reducedRight = equal.right
 
-        if (reducedLeft is ESConstant) return (reducedLeft == reducedRight).xor(equal.functor.isNegated).lift()
+        if (reducedLeft is ESConstant) return constants.booleanValue((reducedLeft == reducedRight).xor(equal.functor.isNegated))
 
-        return ESEqual(reducedLeft, reducedRight, equal.functor.isNegated)
+        return ESEqual(constants, reducedLeft, reducedRight, equal.functor.isNegated)
     }
 
     override fun visitAnd(and: ESAnd): ESExpression? {
@@ -76,10 +76,10 @@ class Reducer : ESExpressionVisitor<ESExpression?> {
         val reducedRight = and.right.accept(this) ?: return null
 
         return when {
-            reducedLeft == false.lift() || reducedRight == false.lift() -> false.lift()
-            reducedLeft == true.lift() -> reducedRight
-            reducedRight == true.lift() -> reducedLeft
-            else -> ESAnd(reducedLeft, reducedRight)
+            reducedLeft.isFalse || reducedRight.isFalse -> reducedLeft
+            reducedLeft.isTrue -> reducedRight
+            reducedRight.isTrue -> reducedLeft
+            else -> ESAnd(constants, reducedLeft, reducedRight)
         }
     }
 
@@ -88,19 +88,19 @@ class Reducer : ESExpressionVisitor<ESExpression?> {
         val reducedRight = or.right.accept(this) ?: return null
 
         return when {
-            reducedLeft == true.lift() || reducedRight == true.lift() -> true.lift()
-            reducedLeft == false.lift() -> reducedRight
-            reducedRight == false.lift() -> reducedLeft
-            else -> ESOr(reducedLeft, reducedRight)
+            reducedLeft.isTrue || reducedRight.isTrue -> reducedLeft
+            reducedLeft.isFalse -> reducedRight
+            reducedRight.isFalse -> reducedLeft
+            else -> ESOr(constants, reducedLeft, reducedRight)
         }
     }
 
     override fun visitNot(not: ESNot): ESExpression? {
         val reducedArg = not.arg.accept(this) ?: return null
 
-        return when (reducedArg) {
-            ESConstant.TRUE -> ESConstant.FALSE
-            ESConstant.FALSE -> ESConstant.TRUE
+        return when {
+            reducedArg.isTrue -> constants.falseValue
+            reducedArg.isFalse -> constants.trueValue
             else -> reducedArg
         }
     }
@@ -108,4 +108,6 @@ class Reducer : ESExpressionVisitor<ESExpression?> {
     override fun visitVariable(esVariable: ESVariable): ESVariable = esVariable
 
     override fun visitConstant(esConstant: ESConstant): ESConstant = esConstant
+
+    override fun visitReceiver(esReceiver: ESReceiver): ESReceiver = esReceiver
 }

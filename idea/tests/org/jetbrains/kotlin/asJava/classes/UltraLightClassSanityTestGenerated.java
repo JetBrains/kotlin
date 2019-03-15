@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -181,6 +181,11 @@ public class UltraLightClassSanityTestGenerated extends AbstractUltraLightClassS
             runTest("compiler/testData/asJava/lightClasses/compilationErrors/AnnotationModifiers.kt");
         }
 
+        @TestMetadata("EnumNameOverride.kt")
+        public void testEnumNameOverride() throws Exception {
+            runTest("compiler/testData/asJava/lightClasses/compilationErrors/EnumNameOverride.kt");
+        }
+
         @TestMetadata("ExpectClass.kt")
         public void testExpectClass() throws Exception {
             runTest("compiler/testData/asJava/lightClasses/compilationErrors/ExpectClass.kt");
@@ -234,6 +239,11 @@ public class UltraLightClassSanityTestGenerated extends AbstractUltraLightClassS
         @TestMetadata("TraitClassObjectField.kt")
         public void testTraitClassObjectField() throws Exception {
             runTest("compiler/testData/asJava/lightClasses/compilationErrors/TraitClassObjectField.kt");
+        }
+
+        @TestMetadata("TwoOverrides.kt")
+        public void testTwoOverrides() throws Exception {
+            runTest("compiler/testData/asJava/lightClasses/compilationErrors/TwoOverrides.kt");
         }
 
         @TestMetadata("WrongAnnotations.kt")

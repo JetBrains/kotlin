@@ -215,7 +215,7 @@ class FunctionDescriptorResolver(
         }
 
         val extensionReceiver = receiverType?.let {
-            val splitter = AnnotationSplitter.create(storageManager, receiverType.annotations, EnumSet.of(AnnotationUseSiteTarget.RECEIVER))
+            val splitter = AnnotationSplitter(storageManager, receiverType.annotations, EnumSet.of(AnnotationUseSiteTarget.RECEIVER))
             DescriptorFactory.createExtensionReceiverParameterForCallable(
                 functionDescriptor, it, splitter.getAnnotationsForTarget(AnnotationUseSiteTarget.RECEIVER)
             )
@@ -263,7 +263,7 @@ class FunctionDescriptorResolver(
 
         if (!isContractsEnabled || !function.mayHaveContract()) return null
 
-        return LazyContractProvider {
+        return LazyContractProvider(storageManager) {
             AstLoadingFilter.forceAllowTreeLoading(function.containingFile) {
                 expressionTypingServices.getBodyExpressionType(trace, scope, dataFlowInfo, function, functionDescriptor)
             }

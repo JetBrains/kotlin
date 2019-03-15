@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.findUsages.handlers
 import com.intellij.find.findUsages.FindUsagesHandler
 import com.intellij.find.findUsages.FindUsagesOptions
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.project.DumbService
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.impl.light.LightMemberReference
@@ -52,9 +53,11 @@ abstract class KotlinFindUsagesHandler<T : PsiElement>(psiElement: T,
     }
 
     protected fun searchTextOccurrences(element: PsiElement, processor: Processor<UsageInfo>, options: FindUsagesOptions): Boolean {
+        if (!options.isSearchForTextOccurrences) return false
+
         val scope = options.searchScope
 
-        if (options.isSearchForTextOccurrences && scope is GlobalSearchScope) {
+        if (scope is GlobalSearchScope) {
             if (options.fastTrack == null) {
                 return processUsagesInText(element, processor, scope)
             }
@@ -71,7 +74,7 @@ abstract class KotlinFindUsagesHandler<T : PsiElement>(psiElement: T,
 
     protected fun searchReferences(element: PsiElement, processor: Processor<UsageInfo>, options: FindUsagesOptions): Boolean {
         val searcher = createSearcher(element, processor, options)
-        if (!runReadAction { searcher.buildTaskList() }) return false
+        if (!DumbService.getInstance(element.project).runReadActionInSmartMode<Boolean> { searcher.buildTaskList() }) return false
         return searcher.executeTasks()
     }
 

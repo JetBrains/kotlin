@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license 
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license 
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -94,6 +94,60 @@ public inline operator fun ULongRange.contains(element: ULong?): Boolean {
 }
 
 /**
+ * Checks if the specified [value] belongs to this range.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public operator fun UIntRange.contains(value: UByte): Boolean {
+    return contains(value.toUInt())
+}
+
+/**
+ * Checks if the specified [value] belongs to this range.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public operator fun ULongRange.contains(value: UByte): Boolean {
+    return contains(value.toULong())
+}
+
+/**
+ * Checks if the specified [value] belongs to this range.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public operator fun ULongRange.contains(value: UInt): Boolean {
+    return contains(value.toULong())
+}
+
+/**
+ * Checks if the specified [value] belongs to this range.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public operator fun UIntRange.contains(value: ULong): Boolean {
+    return (value shr UInt.SIZE_BITS) == 0uL && contains(value.toUInt())
+}
+
+/**
+ * Checks if the specified [value] belongs to this range.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public operator fun UIntRange.contains(value: UShort): Boolean {
+    return contains(value.toUInt())
+}
+
+/**
+ * Checks if the specified [value] belongs to this range.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public operator fun ULongRange.contains(value: UShort): Boolean {
+    return contains(value.toULong())
+}
+
+/**
  * Returns a progression from this value down to the specified [to] value with the step -1.
  * 
  * The [to] value should be less than or equal to `this` value.
@@ -182,20 +236,19 @@ public infix fun ULongProgression.step(step: Long): ULongProgression {
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
  * 
- * If the [to] value is less than or equal to `this` value the returned range is empty.
+ * If the [to] value is less than or equal to `this` value, then the returned range is empty.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public infix fun UByte.until(to: UByte): UIntRange {
-    return this.toUInt() .. (to.toUInt() - 1u).toUInt()
+    if (to <= UByte.MIN_VALUE) return UIntRange.EMPTY
+    return this.toUInt() .. (to - 1u).toUInt()
 }
 
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
  * 
- * If the [to] value is less than or equal to `this` value the returned range is empty.
- * 
- * If the [to] value is less than or equal to [UInt.MIN_VALUE] the returned range is empty.
+ * If the [to] value is less than or equal to `this` value, then the returned range is empty.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -207,9 +260,7 @@ public infix fun UInt.until(to: UInt): UIntRange {
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
  * 
- * If the [to] value is less than or equal to `this` value the returned range is empty.
- * 
- * If the [to] value is less than or equal to [ULong.MIN_VALUE] the returned range is empty.
+ * If the [to] value is less than or equal to `this` value, then the returned range is empty.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -221,11 +272,12 @@ public infix fun ULong.until(to: ULong): ULongRange {
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
  * 
- * If the [to] value is less than or equal to `this` value the returned range is empty.
+ * If the [to] value is less than or equal to `this` value, then the returned range is empty.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public infix fun UShort.until(to: UShort): UIntRange {
-    return this.toUInt() .. (to.toUInt() - 1u).toUInt()
+    if (to <= UShort.MIN_VALUE) return UIntRange.EMPTY
+    return this.toUInt() .. (to - 1u).toUInt()
 }
 

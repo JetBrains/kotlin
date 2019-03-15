@@ -87,8 +87,11 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
 
     protected fun PsiFile.isKtDsl() = this is KtFile
 
-    private fun isFileConfigured(buildScript: PsiFile): Boolean = with(getManipulator(buildScript)) {
-        isConfiguredWithOldSyntax(kotlinPluginName) || isConfigured(getKotlinPluginExpression(buildScript.isKtDsl()))
+    private fun isFileConfigured(buildScript: PsiFile): Boolean {
+        val manipulator = getManipulatorIfAny(buildScript) ?: return false
+        return with(manipulator) {
+            isConfiguredWithOldSyntax(kotlinPluginName) || isConfigured(getKotlinPluginExpression(buildScript.isKtDsl()))
+        }
     }
 
     @JvmSuppressWildcards
@@ -289,11 +292,14 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
     }
 
     companion object {
-        fun getManipulator(file: PsiFile, preferNewSyntax: Boolean = true): GradleBuildScriptManipulator<*> = when (file) {
+        fun getManipulatorIfAny(file: PsiFile, preferNewSyntax: Boolean = true): GradleBuildScriptManipulator<*>? = when (file) {
             is KtFile -> KotlinBuildScriptManipulator(file, preferNewSyntax)
             is GroovyFile -> GroovyBuildScriptManipulator(file, preferNewSyntax)
-            else -> error("Unknown build script file type (${file::class.qualifiedName})!")
+            else -> null
         }
+
+        fun getManipulator(file: PsiFile, preferNewSyntax: Boolean = true): GradleBuildScriptManipulator<*> =
+            getManipulatorIfAny(file, preferNewSyntax) ?: error("Unknown build script file type (${file::class.qualifiedName})!")
 
         val GROUP_ID = "org.jetbrains.kotlin"
         val GRADLE_PLUGIN_ID = "kotlin-gradle-plugin"

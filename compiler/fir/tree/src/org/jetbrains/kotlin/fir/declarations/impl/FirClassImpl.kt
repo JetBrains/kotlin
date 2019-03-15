@@ -10,13 +10,13 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.transformInplace
-import org.jetbrains.kotlin.fir.types.FirType
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.name.Name
 
 open class FirClassImpl(
     session: FirSession,
@@ -32,7 +32,7 @@ open class FirClassImpl(
     isCompanion: Boolean,
     isData: Boolean,
     isInline: Boolean
-) : FirAbstractMemberDeclaration(session, psi, name, visibility, modality, isExpect, isActual), FirClass {
+) : FirAbstractMemberDeclaration(session, psi, name, visibility, modality, isExpect, isActual), FirRegularClass, FirModifiableClass {
 
     init {
         symbol.bind(this)
@@ -42,14 +42,19 @@ open class FirClassImpl(
         status.isInline = isInline
     }
 
-    override val superTypes = mutableListOf<FirType>()
+    override val superTypeRefs = mutableListOf<FirTypeRef>()
 
     override val declarations = mutableListOf<FirDeclaration>()
 
+    override fun replaceSupertypes(newSupertypes: List<FirTypeRef>): FirRegularClass {
+        superTypeRefs.clear()
+        superTypeRefs.addAll(newSupertypes)
+        return this
+    }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirClass {
-        superTypes.transformInplace(transformer, data)
-        val result = super<FirAbstractMemberDeclaration>.transformChildren(transformer, data) as FirClass
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirRegularClass {
+        superTypeRefs.transformInplace(transformer, data)
+        val result = super<FirAbstractMemberDeclaration>.transformChildren(transformer, data) as FirRegularClass
 
         // Transform declarations in last turn
         declarations.transformInplace(transformer, data)

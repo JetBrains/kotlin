@@ -49,6 +49,8 @@ interface KotlinResolutionCallbacks {
     fun isCompileTimeConstant(resolvedAtom: ResolvedCallAtom, expectedType: UnwrappedType): Boolean
 
     val inferenceSession: InferenceSession
+
+    fun getExpectedTypeFromAsExpressionAndRecordItInTrace(resolvedAtom: ResolvedCallAtom): UnwrappedType?
 }
 
 interface SamConversionTransformer {

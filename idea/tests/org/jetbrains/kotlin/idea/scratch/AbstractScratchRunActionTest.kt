@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.scratch
@@ -23,6 +12,7 @@ import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.roots.CompilerModuleExtension
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.psi.PsiDocumentManager
@@ -36,10 +26,13 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager
 import org.jetbrains.kotlin.idea.highlighter.KotlinHighlightingUtil
 import org.jetbrains.kotlin.idea.scratch.actions.RunScratchAction
+import org.jetbrains.kotlin.idea.scratch.actions.ScratchCompilationSupport
 import org.jetbrains.kotlin.idea.scratch.output.InlayScratchFileRenderer
+import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.junit.Assert
@@ -110,18 +103,22 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
 
         if (!KotlinHighlightingUtil.shouldHighlight(psiFile)) error("Highlighting for scratch file is switched off")
 
-        val (editor, scratchPanel) = getEditorWithScratchPanel(myManager, scratchFile)?: error("Couldn't find scratch panel")
-        scratchPanel.setReplMode(isRepl)
+        val (editor, scratchPanel) = getEditorWithScratchPanel(myManager, scratchFile) ?: error("Couldn't find scratch panel")
+        scratchPanel.scratchFile.saveOptions {
+            copy(isRepl = isRepl, isInteractiveMode = false)
+        }
 
-        val action = RunScratchAction()
-        val event = getActionEvent(scratchFile, action)
-        launchAction(event, action)
+        if (!InTextDirectivesUtils.isDirectiveDefined(fileText, "// NO_MODULE")) {
+            scratchPanel.setModule(myFixture.module)
+        }
+
+        launchScratch(scratchFile)
 
         UIUtil.dispatchAllInvocationEvents()
 
         val start = System.currentTimeMillis()
         // wait until output is displayed in editor or for 1 minute
-        while (!event.presentation.isEnabled && (System.currentTimeMillis() - start) < 60000) {
+        while (ScratchCompilationSupport.isAnyInProgress() && (System.currentTimeMillis() - start) < 60000) {
             Thread.sleep(100)
         }
 
@@ -138,7 +135,10 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
                 .filterIsInstance<InlayScratchFileRenderer>()
                 .forEach {
                     val str = it.toString()
-                    val offset = doc.getLineEndOffset(line); actualOutput.insert(offset, "${str.takeWhile { it.isWhitespace() }}// ${str.trim()}")
+                    val offset = doc.getLineEndOffset(line); actualOutput.insert(
+                    offset,
+                    "${str.takeWhile { it.isWhitespace() }}// ${str.trim()}"
+                )
                 }
         }
 
@@ -151,7 +151,10 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
         KotlinTestUtils.assertEqualsToFile(expectedFile, actualOutput.toString())
     }
 
-    private fun launchAction(e: TestActionEvent, action: AnAction) {
+    private fun launchScratch(scratchFile: VirtualFile) {
+        val action = RunScratchAction()
+        val e = getActionEvent(scratchFile, action)
+
         action.beforeActionPerformedUpdate(e)
         Assert.assertTrue(e.presentation.isEnabled && e.presentation.isVisible)
         action.actionPerformed(e)
@@ -167,7 +170,15 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
 
     override fun getTestDataPath() = KotlinTestUtils.getHomeDirectory()
 
-    override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE_FULL_JDK
+
+    override fun getProjectDescriptor():  com.intellij.testFramework.LightProjectDescriptor {
+        val testName = StringUtil.toLowerCase(getTestName(false))
+
+        return when {
+            testName.endsWith("NoRuntime") -> KotlinLightProjectDescriptor.INSTANCE
+            else -> KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE_FULL_JDK
+        }
+    }
 
     override fun setUp() {
         super.setUp()

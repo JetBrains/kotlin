@@ -1,3 +1,4 @@
+// KJS_WITH_FULL_RUNTIME
 // WITH_RUNTIME
 
 val arr = arrayOf(10, 20, 30, 40)

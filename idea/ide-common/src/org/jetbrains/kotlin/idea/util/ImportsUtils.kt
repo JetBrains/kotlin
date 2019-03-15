@@ -49,7 +49,7 @@ object ImportPathComparator : Comparator<ImportPath> {
 
     private fun isJavaOrKotlinStdlibImport(path: ImportPath): Boolean {
         val s = path.pathStr
-        return s.startsWith("java.") || s.startsWith("javax.")|| s.startsWith("kotlin.")
+        return s.startsWith("java.") || s.startsWith("javax.") || s.startsWith("kotlin.")
     }
 }
 
@@ -62,7 +62,8 @@ val DeclarationDescriptor.importableFqName: FqName?
 fun DeclarationDescriptor.canBeReferencedViaImport(): Boolean {
     if (this is PackageViewDescriptor ||
         DescriptorUtils.isTopLevelDeclaration(this) ||
-        this is CallableDescriptor && DescriptorUtils.isStaticDeclaration(this)) {
+        this is CallableDescriptor && DescriptorUtils.isStaticDeclaration(this)
+    ) {
         return !name.isSpecial
     }
 
@@ -77,6 +78,8 @@ fun DeclarationDescriptor.canBeReferencedViaImport(): Boolean {
     }
 }
 
+fun DeclarationDescriptor.canBeAddedToImport(): Boolean = this !is PackageViewDescriptor && canBeReferencedViaImport()
+
 fun KotlinType.canBeReferencedViaImport(): Boolean {
     val descriptor = constructor.declarationDescriptor
     return descriptor != null && descriptor.canBeReferencedViaImport()
@@ -85,7 +88,7 @@ fun KotlinType.canBeReferencedViaImport(): Boolean {
 // for cases when class qualifier refers companion object treats it like reference to class itself
 fun KtReferenceExpression.getImportableTargets(bindingContext: BindingContext): Collection<DeclarationDescriptor> {
     val targets = bindingContext[BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, this]?.let { listOf(it) }
-                  ?: getReferenceTargets(bindingContext)
+        ?: getReferenceTargets(bindingContext)
     return targets.map { it.getImportableDescriptor() }.toSet()
 }
 

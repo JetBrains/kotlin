@@ -11,8 +11,9 @@ repositories {
 
 dependencies {
     testRuntime(intellijDep())
+    testRuntime(intellijRuntimeAnnotations())
 
-    compile(project(":kotlin-stdlib-jdk8"))
+    compile(kotlinStdlib("jdk8"))
     compileOnly(project(":kotlin-reflect-api"))
     compile(project(":core:descriptors"))
     compile(project(":core:descriptors.jvm"))
@@ -22,6 +23,7 @@ dependencies {
     compile(project(":compiler:frontend.common"))
     compile(project(":compiler:frontend.java"))
     compile(project(":compiler:frontend.script"))
+    compile(project(":compiler:ir.backend.common")) // TODO: fix import (workaround for jps build)
     compile(project(":js:js.frontend"))
     compile(project(":js:js.serializer"))
     compile(project(":compiler:light-classes"))
@@ -35,6 +37,8 @@ dependencies {
     compile(project(":j2k"))
     compile(project(":idea:formatter"))
     compile(project(":idea:fir-view"))
+    compile(project(":compiler:fir:resolve"))
+    compile(project(":compiler:fir:java"))
     compile(project(":idea:idea-core"))
     compile(project(":idea:ide-common"))
     compile(project(":idea:idea-jps-common"))
@@ -43,6 +47,7 @@ dependencies {
     compile(project(":plugins:uast-kotlin-idea"))
     compile(project(":kotlin-script-util")) { isTransitive = false }
     compile(project(":kotlin-scripting-intellij"))
+    compile(project(":compiler:backend.jvm")) // Do not delete, for Pill
 
     compile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
 
@@ -56,6 +61,7 @@ dependencies {
     compileOnly(intellijPluginDep("properties"))
     compileOnly(intellijPluginDep("java-i18n"))
 
+    testCompileOnly(project(":kotlin-reflect-api")) // TODO: fix import (workaround for jps build)
     testCompile(project(":kotlin-test:kotlin-test-junit"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(projectTests(":idea:idea-test-framework")) { isTransitive = false }
@@ -77,6 +83,7 @@ dependencies {
     testCompile(project(":kotlin-sam-with-receiver-compiler-plugin")) { isTransitive = false }
 
     testRuntime(project(":plugins:android-extensions-compiler"))
+    testRuntimeOnly(project(":kotlin-android-extensions-runtime")) // TODO: fix import (workaround for jps build)
     testRuntime(project(":plugins:android-extensions-ide")) { isTransitive = false }
     testRuntime(project(":allopen-ide-plugin")) { isTransitive = false }
     testRuntime(project(":kotlin-allopen-compiler-plugin"))
@@ -118,8 +125,9 @@ dependencies {
     testRuntime(intellijPluginDep("android"))
     testRuntime(intellijPluginDep("smali"))
     testRuntime(intellijPluginDep("testng"))
-}
 
+    if (System.getProperty("idea.active") != null) testRuntimeOnly(files("${rootProject.projectDir}/dist/kotlinc/lib/kotlin-reflect.jar"))
+}
 sourceSets {
     "main" {
         projectDefault()
@@ -143,6 +151,7 @@ sourceSets {
     }
 
 }
+
 
 val performanceTestCompile by configurations.creating {
     extendsFrom(configurations["testCompile"])
@@ -200,6 +209,4 @@ projectTest(taskName = "performanceTest") {
 
 testsJar {}
 
-classesDirsArtifact()
-configureInstrumentation()
-
+configureFormInstrumentation()

@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.codegen.ir.*
 import org.jetbrains.kotlin.fir.AbstractFirResolveTestCase
 import org.jetbrains.kotlin.fir.AbstractFirResolveTestCaseWithStdlib
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase
+import org.jetbrains.kotlin.fir.java.AbstractFirTypeEnhancementTest
+import org.jetbrains.kotlin.fir.java.AbstractOwnFirTypeEnhancementTest
 import org.jetbrains.kotlin.generators.tests.generator.testGroup
 import org.jetbrains.kotlin.generators.util.KT_OR_KTS_WITHOUT_DOTS_IN_NAME
 import org.jetbrains.kotlin.generators.util.KT_WITHOUT_DOTS_IN_NAME
@@ -54,8 +56,7 @@ fun main(args: Array<String>) {
     testGroup("compiler/tests", "compiler/testData") {
 
         testClass<AbstractDiagnosticsTest> {
-            model("diagnostics/tests")
-            model("diagnostics/tests/script", extension = "kts")
+            model("diagnostics/tests", pattern = "^(.*)\\.kts?$")
             model("codegen/box/diagnostics")
         }
 
@@ -183,7 +184,7 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractBytecodeTextTest> {
-            model("codegen/bytecodeText")
+            model("codegen/bytecodeText", targetBackend = TargetBackend.JVM)
         }
 
         testClass<AbstractIrTextTestCase> {
@@ -202,17 +203,7 @@ fun main(args: Array<String>) {
             model("ir/sourceRanges")
         }
 
-        testClass<AbstractRawFirBuilderTestCase> {
-            model("fir/rawBuilder", testMethod = "doRawFirTest")
-        }
 
-        testClass<AbstractFirResolveTestCase> {
-            model("fir/resolve", pattern = KT_WITHOUT_DOTS_IN_NAME, excludeDirs = listOf("stdlib"))
-        }
-
-        testClass<AbstractFirResolveTestCaseWithStdlib> {
-            model("fir/resolve/stdlib", pattern = KT_WITHOUT_DOTS_IN_NAME)
-        }
 
         testClass<AbstractBytecodeListingTest> {
             model("codegen/bytecodeListing")
@@ -371,6 +362,10 @@ fun main(args: Array<String>) {
             model("codegen/boxAgainstJava", targetBackend = TargetBackend.JVM_IR)
         }
 
+        testClass<AbstractIrCompileKotlinAgainstKotlinTest> {
+            model("compileKotlinAgainstKotlin", targetBackend = TargetBackend.JVM_IR)
+        }
+
         testClass<AbstractIrCheckLocalVariablesTableTest> {
             model("checkLocalVariablesTable", targetBackend = TargetBackend.JVM_IR)
         }
@@ -387,4 +382,33 @@ fun main(args: Array<String>) {
             model("codegen/bytecodeText", targetBackend = TargetBackend.JVM_IR)
         }
     }
+
+    testGroup("compiler/fir/psi2fir/tests", "compiler/fir/psi2fir/testData") {
+        testClass<AbstractRawFirBuilderTestCase> {
+            model("rawBuilder", testMethod = "doRawFirTest")
+        }
+    }
+
+    testGroup("compiler/fir/resolve/tests", "compiler/fir/resolve/testData") {
+        testClass<AbstractFirResolveTestCase> {
+            model("resolve", pattern = KT_WITHOUT_DOTS_IN_NAME, excludeDirs = listOf("stdlib"))
+        }
+
+        testClass<AbstractFirResolveTestCaseWithStdlib> {
+            model("resolve/stdlib", pattern = KT_WITHOUT_DOTS_IN_NAME)
+        }
+    }
+
+    testGroup("compiler/fir/resolve/tests", "compiler/testData") {
+        testClass<AbstractFirTypeEnhancementTest> {
+            model("loadJava/compiledJava", extension = "java")
+        }
+    }
+
+    testGroup("compiler/fir/resolve/tests", "compiler/fir/resolve/testData") {
+        testClass<AbstractOwnFirTypeEnhancementTest> {
+            model("enhancement", extension = "java")
+        }
+    }
+
 }

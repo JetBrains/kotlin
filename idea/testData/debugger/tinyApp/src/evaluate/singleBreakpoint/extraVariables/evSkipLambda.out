@@ -2,27 +2,6 @@ LineBreakpoint created at evSkipLambda.kt:12
 Run Java
 Connected to the target VM
 evSkipLambda.kt:12
-package evSkipLambda
-
-class A {
-    var prop = 1
-}
-
-fun main(args: Array<String>) {
-    val a1 = A()
-    val a2 = A()
-
-    //Breakpoint!
-    foo(a1.prop)
-    l {
-        foo(a2.prop)
-    }
-}
-
-fun foo(i: Int) {}
-fun l(f: () -> Unit) {}
-
-// PRINT_FRAME
 Compile bytecode for a1.prop
  frame    = main:12, EvSkipLambdaKt {evSkipLambda}
    local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = evSkipLambda.kt, 7)

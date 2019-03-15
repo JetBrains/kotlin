@@ -18,20 +18,19 @@ package org.jetbrains.kotlin.ir
 
 import junit.framework.TestCase
 import org.jetbrains.kotlin.analyzer.AnalysisResult
+import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensions
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.CodegenTestCase
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
+import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
@@ -84,20 +83,14 @@ abstract class AbstractIrGeneratorTestCase : CodegenTestCase() {
 
     protected abstract fun doTest(wholeFile: File, testFiles: List<TestFile>)
 
-    protected fun generateIrModule(ignoreErrors: Boolean = false, shouldGenerate: (KtFile) -> Boolean = { true }): IrModuleFragment {
+    protected fun generateIrModule(ignoreErrors: Boolean = false): IrModuleFragment {
         assert(myFiles != null) { "myFiles not initialized" }
         assert(myEnvironment != null) { "myEnvironment not initialized" }
-        return doGenerateIrModule(
-            Psi2IrTranslator(myEnvironment.configuration.languageVersionSettings, Psi2IrConfiguration(ignoreErrors)),
-            shouldGenerate
-        )
+        return doGenerateIrModule(Psi2IrTranslator(myEnvironment.configuration.languageVersionSettings, Psi2IrConfiguration(ignoreErrors)))
     }
 
-    protected open fun doGenerateIrModule(
-        psi2IrTranslator: Psi2IrTranslator,
-        shouldGenerate: (KtFile) -> Boolean
-    ): IrModuleFragment =
-        generateIrModuleWithJvmResolve(myFiles.psiFiles, myEnvironment, psi2IrTranslator, shouldGenerate)
+    protected open fun doGenerateIrModule(psi2IrTranslator: Psi2IrTranslator): IrModuleFragment =
+        generateIrModuleWithJvmResolve(myFiles.psiFiles, myEnvironment, psi2IrTranslator)
 
     protected fun generateIrFilesAsSingleModule(testFiles: List<TestFile>, ignoreErrors: Boolean = false): Map<TestFile, IrFile> {
         val irModule = generateIrModule(ignoreErrors)
@@ -123,10 +116,7 @@ abstract class AbstractIrGeneratorTestCase : CodegenTestCase() {
         }
 
         fun generateIrModuleWithJsResolve(
-            ktFilesToAnalyze: List<KtFile>,
-            environment: KotlinCoreEnvironment,
-            psi2ir: Psi2IrTranslator,
-            shouldGenerate: (KtFile) -> Boolean
+            ktFilesToAnalyze: List<KtFile>, environment: KotlinCoreEnvironment, psi2ir: Psi2IrTranslator
         ): IrModuleFragment =
             generateIrModule(
                 TopDownAnalyzerFacadeForJS.analyzeFiles(
@@ -134,53 +124,27 @@ abstract class AbstractIrGeneratorTestCase : CodegenTestCase() {
                     moduleDescriptors = emptyList(),
                     friendModuleDescriptors = emptyList()
                 ),
-                psi2ir, ktFilesToAnalyze, shouldGenerate
+                psi2ir, ktFilesToAnalyze, GeneratorExtensions()
             )
 
         fun generateIrModuleWithJvmResolve(
-            ktFilesToAnalyze: List<KtFile>,
-            environment: KotlinCoreEnvironment,
-            psi2ir: Psi2IrTranslator,
-            shouldGenerate: (KtFile) -> Boolean
+            ktFilesToAnalyze: List<KtFile>, environment: KotlinCoreEnvironment, psi2ir: Psi2IrTranslator
         ): IrModuleFragment =
-            generateIrModule(
-                JvmResolveUtil.analyze(ktFilesToAnalyze, environment),
-                psi2ir, ktFilesToAnalyze, shouldGenerate
-            )
+            generateIrModule(JvmResolveUtil.analyze(ktFilesToAnalyze, environment), psi2ir, ktFilesToAnalyze, JvmGeneratorExtensions)
 
         private fun generateIrModule(
             analysisResult: AnalysisResult,
             psi2ir: Psi2IrTranslator,
             ktFilesToAnalyze: List<KtFile>,
-            shouldGenerate: (KtFile) -> Boolean
+            generatorExtensions: GeneratorExtensions
         ): IrModuleFragment {
             if (!psi2ir.configuration.ignoreErrors) {
                 analysisResult.throwIfError()
                 AnalyzingUtils.throwExceptionOnErrors(analysisResult.bindingContext)
             }
-            val fileToGenerate = ktFilesToAnalyze.filter { shouldGenerate(it) }
-            return generateIrModule(fileToGenerate, analysisResult.moduleDescriptor, analysisResult.bindingContext, psi2ir)
-        }
-
-        fun generateIrModule(
-            ktFiles: List<KtFile>,
-            moduleDescriptor: ModuleDescriptor,
-            bindingContext: BindingContext,
-            languageVersionSettings: LanguageVersionSettings,
-            ignoreErrors: Boolean = false
-        ) =
-            generateIrModule(
-                ktFiles, moduleDescriptor, bindingContext, Psi2IrTranslator(languageVersionSettings, Psi2IrConfiguration(ignoreErrors))
+            return psi2ir.generateModule(
+                analysisResult.moduleDescriptor, ktFilesToAnalyze, analysisResult.bindingContext, generatorExtensions
             )
-
-        fun generateIrModule(
-            ktFiles: List<KtFile>,
-            moduleDescriptor: ModuleDescriptor,
-            bindingContext: BindingContext,
-            psi2ir: Psi2IrTranslator
-        ) =
-            psi2ir.generateModule(moduleDescriptor, ktFiles, bindingContext)
+        }
     }
 }
-
-

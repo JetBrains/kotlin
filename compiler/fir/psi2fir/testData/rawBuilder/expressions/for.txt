@@ -1,0 +1,47 @@
+FILE: for.kt
+    public? final? function foo(): kotlin/Unit {
+        val <range>: <implicit> = rangeTo#(Int(1), Int(10))
+        val <iterator>: <implicit> = <range>#.iterator#()
+        while(<iterator>#.hasNext#()) {
+            val i: <implicit> = <iterator>#.next#()
+            println#(i#)
+        }
+
+    }
+    public? final? function bar(list: List<String>): kotlin/Unit {
+        val <range>: <implicit> = list#.subList#(Int(0), Int(10))
+        val <iterator>: <implicit> = <range>#.iterator#()
+        while(<iterator>#.hasNext#()) {
+            val element: <implicit> = <iterator>#.next#()
+            println#(element#)
+        }
+
+        val <range>: <implicit> = list#.subList#(Int(10), Int(20))
+        val <iterator>: <implicit> = <range>#.iterator#()
+        while(<iterator>#.hasNext#()) {
+            val element: <implicit> = <iterator>#.next#()
+            println#(element#)
+        }
+
+    }
+    public? final? data class Some {
+        public? constructor(x: Int, y: Int): super<kotlin/Any>()
+
+        public? final? property x(val): Int
+            public? get(): Int
+
+        public? final? property y(val): Int
+            public? get(): Int
+
+    }
+    public? final? function baz(set: Set<Some>): kotlin/Unit {
+        val <range>: <implicit> = set#
+        val <iterator>: <implicit> = <range>#.iterator#()
+        while(<iterator>#.hasNext#()) {
+            val <destruct>: <implicit> = <iterator>#.next#()
+            val x: <implicit> = component1(<destruct>#)
+            val y: <implicit> = component2(<destruct>#)
+            println#(plus#(String(x = ), x#, String( y = ), y#))
+        }
+
+    }

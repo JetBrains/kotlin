@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.ir.builders
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
@@ -29,8 +26,10 @@ import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptor
 import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.createFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
@@ -41,7 +40,7 @@ import org.jetbrains.kotlin.types.KotlinType
 class Scope(val scopeOwnerSymbol: IrSymbol) {
     val scopeOwner: DeclarationDescriptor get() = scopeOwnerSymbol.descriptor
 
-    private fun getVariableParent(): IrDeclarationParent {
+    fun getLocalDeclarationParent(): IrDeclarationParent {
         if (!scopeOwnerSymbol.isBound) throw AssertionError("Unbound symbol: $scopeOwner")
         val scopeOwnerElement = scopeOwnerSymbol.owner
         return when (scopeOwnerElement) {
@@ -87,7 +86,27 @@ class Scope(val scopeOwnerSymbol: IrSymbol) {
             irType ?: irExpression.type,
             irExpression
         ).apply {
-            parent = getVariableParent()
+            parent = getLocalDeclarationParent()
+        }
+    }
+
+    fun createTemporaryVariableWithGivenDescriptor(
+        irExpression: IrExpression,
+        nameHint: String? = null,
+        isMutable: Boolean = false,
+        origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
+        descriptor: VariableDescriptor
+    ): IrVariable {
+        return IrVariableImpl(
+            irExpression.startOffset, irExpression.endOffset, origin,
+            IrVariableSymbolImpl(descriptor),
+            Name.identifier(getNameForTemporary(nameHint)),
+            irExpression.type,
+            isVar = isMutable,
+            isConst = false,
+            isLateinit = false
+        ).also {
+            it.initializer = irExpression
         }
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -289,9 +289,19 @@ public class RenameTestGenerated extends AbstractRenameTest {
         runTest("idea/testData/refactoring/rename/labeledLoopByLabel/labeledLoopByLabel.test");
     }
 
+    @TestMetadata("labeledLoopByLabelRefInBreak2/labeledLoopByLabelRefInBreak.test")
+    public void testLabeledLoopByLabelRefInBreak2_LabeledLoopByLabelRefInBreak() throws Exception {
+        runTest("idea/testData/refactoring/rename/labeledLoopByLabelRefInBreak2/labeledLoopByLabelRefInBreak.test");
+    }
+
     @TestMetadata("labeledLoopByLabelRefInBreak/labeledLoopByLabelRefInBreak.test")
     public void testLabeledLoopByLabelRefInBreak_LabeledLoopByLabelRefInBreak() throws Exception {
         runTest("idea/testData/refactoring/rename/labeledLoopByLabelRefInBreak/labeledLoopByLabelRefInBreak.test");
+    }
+
+    @TestMetadata("labeledLoopByLabelRefInContinue2/labeledLoopByLabelRefInContinue.test")
+    public void testLabeledLoopByLabelRefInContinue2_LabeledLoopByLabelRefInContinue() throws Exception {
+        runTest("idea/testData/refactoring/rename/labeledLoopByLabelRefInContinue2/labeledLoopByLabelRefInContinue.test");
     }
 
     @TestMetadata("labeledLoopByLabelRefInContinue/labeledLoopByLabelRefInContinue.test")

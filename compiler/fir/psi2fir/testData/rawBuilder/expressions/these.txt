@@ -1,0 +1,34 @@
+FILE: these.kt
+    public? final? class Some {
+        public? constructor(): super<kotlin/Any>()
+
+        public? final? function foo(): Int {
+            return@@@foo Int(1)
+        }
+
+        public? final? function bar(): Int {
+            return@@@bar this#.foo#()
+        }
+
+        public? final? property instance(val): Some
+            public? get(): Some {
+                return this@Some
+            }
+
+        public? final? function extension String.(): Int {
+            return@@@extension plus#(this@Some.bar#(), this#.length#)
+        }
+
+    }
+    public? final? function extension Some.(): <implicit> {
+        return@@@extension this#.bar#()
+    }
+    public? final? function test(some: Some): Int {
+        return@@@test with#(some#, with@function  <implicit>.<anonymous>(): <implicit> {
+            return  {
+                plus#(this#.foo#(), this@with.extension#())
+            }
+
+        }
+        )
+    }

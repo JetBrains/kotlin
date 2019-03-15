@@ -178,7 +178,7 @@ class JvmSerializerExtension(private val bindings: JvmSerializationBindings, sta
     override fun serializeProperty(
             descriptor: PropertyDescriptor,
             proto: ProtoBuf.Property.Builder,
-            versionRequirementTable: MutableVersionRequirementTable,
+            versionRequirementTable: MutableVersionRequirementTable?,
             childSerializer: DescriptorSerializer
     ) {
         val signatureSerializer = SignatureSerializer()
@@ -204,7 +204,7 @@ class JvmSerializerExtension(private val bindings: JvmSerializationBindings, sta
             proto.setExtension(JvmProtoBuf.propertySignature, signature)
         }
 
-        if (descriptor.isJvmFieldPropertyInInterfaceCompanion()) {
+        if (descriptor.isJvmFieldPropertyInInterfaceCompanion() && versionRequirementTable != null) {
             proto.setExtension(JvmProtoBuf.flags, JvmFlags.getPropertyFlags(true))
 
             proto.addVersionRequirement(

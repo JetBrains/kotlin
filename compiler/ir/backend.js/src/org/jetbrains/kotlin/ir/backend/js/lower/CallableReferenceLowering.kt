@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
-import org.jetbrains.kotlin.ir.types.toIrType
+import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.isInlined
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -211,10 +211,11 @@ class CallableReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
         val additionalDeclarations = generateFactoryBodyWithGuard(factoryFunction) {
             val statements = mutableListOf<IrStatement>(getterFunction)
 
-            val getterFunctionType = context.builtIns.getFunction(getterFunction.valueParameters.size + 1)
-            val type = getterFunctionType.toIrType(symbolTable = context.symbolTable)
-            val irGetReference = JsIrBuilder.buildFunctionReference(type, getterFunction.symbol)
-            val irVar = JsIrBuilder.buildVar(type, factoryFunction, initializer = irGetReference)
+            val getterFunctionTypeSymbol = context.functionN(getterFunction.valueParameters.size + 1)
+
+            val getterFunctionIrType = IrSimpleTypeImpl(getterFunctionTypeSymbol, false, emptyList(), emptyList())
+            val irGetReference = JsIrBuilder.buildFunctionReference(getterFunctionIrType, getterFunction.symbol)
+            val irVar = JsIrBuilder.buildVar(getterFunctionIrType, factoryFunction, initializer = irGetReference)
 
             statements += irVar
 
@@ -226,11 +227,9 @@ class CallableReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
 
             if (setterFunction != null) {
                 statements += setterFunction
-                val setterFunctionType = context.builtIns.getFunction(setterFunction.valueParameters.size + 1)
-                val irSetReference = JsIrBuilder.buildFunctionReference(
-                    setterFunctionType.toIrType(symbolTable = context.symbolTable),
-                    setterFunction.symbol
-                )
+                val setterFunctionTypeSymbol = context.functionN(setterFunction.valueParameters.size + 1)
+                val setterFunctionIrType = IrSimpleTypeImpl(setterFunctionTypeSymbol, false, emptyList(), emptyList())
+                val irSetReference = JsIrBuilder.buildFunctionReference(setterFunctionIrType, setterFunction.symbol)
                 statements += JsIrBuilder.buildCall(context.intrinsics.jsSetJSField.symbol).apply {
                     putValueArgument(0, JsIrBuilder.buildGetValue(irVar.symbol))
                     putValueArgument(1, setterConst)
@@ -282,10 +281,10 @@ class CallableReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
         val additionalDeclarations = generateFactoryBodyWithGuard(factoryFunction) {
             val statements = mutableListOf<IrStatement>(closureFunction)
 
-            val getterFunctionType = context.builtIns.getFunction(closureFunction.valueParameters.size + 1)
-            val type = getterFunctionType.toIrType(symbolTable = context.symbolTable)
-            val irGetReference = JsIrBuilder.buildFunctionReference(type, closureFunction.symbol)
-            val irVar = JsIrBuilder.buildVar(type, factoryFunction, initializer = irGetReference)
+            val getterFunctionTypeSymbol = context.functionN(closureFunction.valueParameters.size + 1)
+            val getterFunctionIrType = IrSimpleTypeImpl(getterFunctionTypeSymbol, false, emptyList(), emptyList())
+            val irGetReference = JsIrBuilder.buildFunctionReference(getterFunctionIrType, closureFunction.symbol)
+            val irVar = JsIrBuilder.buildVar(getterFunctionIrType, factoryFunction, initializer = irGetReference)
             val irVarSymbol = irVar.symbol
 
             statements += irVar

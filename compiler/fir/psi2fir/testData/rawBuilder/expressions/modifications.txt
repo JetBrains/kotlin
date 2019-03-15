@@ -1,0 +1,16 @@
+FILE: modifications.kt
+    public? final? function simple(): kotlin/Unit {
+        var x: <implicit> = Int(10)
+        x# += Int(20)
+        x# -= Int(5)
+        x# /= Int(5)
+        x# *= Int(10)
+    }
+    public? final? function modify List<String>.(): kotlin/Unit {
+        this# += String(Alpha)
+        this# += String(Omega)
+    }
+    public? final? function modify Any.(): kotlin/Unit {
+        val <complex-set>: <implicit> = as/List<Int>(this#)
+        <complex-set># += Int(42)
+    }

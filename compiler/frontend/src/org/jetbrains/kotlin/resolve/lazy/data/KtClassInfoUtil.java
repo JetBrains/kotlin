@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.psi.KtObjectDeclaration;
 public class KtClassInfoUtil {
 
     @NotNull
-    public static KtClassLikeInfo createClassLikeInfo(@NotNull KtClassOrObject classOrObject) {
+    public static KtClassOrObjectInfo<? extends KtClassOrObject> createClassLikeInfo(@NotNull KtClassOrObject classOrObject) {
         if (classOrObject instanceof KtClass) {
             return new KtClassInfo((KtClass) classOrObject);
         }

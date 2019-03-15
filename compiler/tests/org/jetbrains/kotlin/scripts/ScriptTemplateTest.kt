@@ -27,10 +27,7 @@ import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.daemon.TestMessageCollector
 import org.jetbrains.kotlin.daemon.assertHasMessage
 import org.jetbrains.kotlin.daemon.toFile
-import org.jetbrains.kotlin.script.InvalidScriptResolverAnnotation
-import org.jetbrains.kotlin.script.KotlinScriptDefinition
-import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
-import org.jetbrains.kotlin.script.tryConstructClassFromStringArgs
+import org.jetbrains.kotlin.script.*
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
@@ -46,6 +43,9 @@ import java.net.URLClassLoader
 import java.util.concurrent.Future
 import kotlin.reflect.KClass
 import kotlin.script.dependencies.*
+import kotlin.script.dependencies.KotlinScriptExternalDependencies
+import kotlin.script.dependencies.ScriptContents
+import kotlin.script.dependencies.ScriptDependenciesResolver
 import kotlin.script.experimental.dependencies.*
 import kotlin.script.experimental.dependencies.DependenciesResolver.ResolveResult
 import kotlin.script.templates.AcceptedAnnotations
@@ -348,6 +348,8 @@ class ScriptTemplateTest : KtUsefulTestCase() {
             configuration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, scriptDefinition)
             configuration.put(JVMConfigurationKeys.DISABLE_STANDARD_SCRIPT_DEFINITION, true)
             configuration.put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
+
+            loadScriptingPlugin(configuration)
 
             val environment = KotlinCoreEnvironment.createForTests(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 

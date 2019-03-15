@@ -6,16 +6,11 @@
 package org.jetbrains.kotlin.gradle.model
 
 import org.jetbrains.kotlin.gradle.BaseGradleIT
-import org.jetbrains.kotlin.gradle.GradleVersionRequired
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
-import kotlin.test.assertTrue
 
 class KaptModelIT : BaseGradleIT() {
-    override val defaultGradleVersion: GradleVersionRequired
-        get() = GradleVersionRequired.AtLeast("4.0")
-
     @Test
     fun testKaptSimple() {
         val project = Project("simple", directoryPrefix = "kapt2")

@@ -86,6 +86,14 @@ open class IrIntrinsicFunction(
     }
 
     open fun invoke(v: InstructionAdapter, codegen: ExpressionCodegen, data: BlockInfo): StackValue {
+        loadArguments(codegen, data)
+        return StackValue.onStack(genInvokeInstructionWithResult(v))
+    }
+
+    fun loadArguments(
+        codegen: ExpressionCodegen,
+        data: BlockInfo
+    ) {
         val args = listOfNotNull(expression.dispatchReceiver, expression.extensionReceiver) +
                 expression.descriptor.valueParameters.mapIndexed { i, descriptor ->
                     expression.getValueArgument(i) ?: if (descriptor.isVararg)
@@ -104,7 +112,6 @@ open class IrIntrinsicFunction(
                 genArg(irExpression, codegen, i, data)
             }
         }
-        return StackValue.onStack(genInvokeInstructionWithResult(v))
     }
 
     open fun genArg(expression: IrExpression, codegen: ExpressionCodegen, index: Int, data: BlockInfo) {

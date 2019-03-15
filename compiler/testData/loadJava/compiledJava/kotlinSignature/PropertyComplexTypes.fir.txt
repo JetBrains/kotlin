@@ -1,0 +1,18 @@
+<T> public open class PropertyComplexTypes : R|java/lang/Object| {
+    public open property genericType(var): R|ft<T, T?>|!
+        public get(): R|ft<T, T?>|!
+        public set(value: R|ft<T, T?>|!): kotlin/Unit
+
+    public open property listDefinedGeneric(var): R|ft<java/util/ArrayList<ft<kotlin/String, kotlin/String?>>, java/util/ArrayList<ft<kotlin/String, kotlin/String?>>?>|!
+        public get(): R|ft<java/util/ArrayList<ft<kotlin/String, kotlin/String?>>, java/util/ArrayList<ft<kotlin/String, kotlin/String?>>?>|!
+        public set(value: R|ft<java/util/ArrayList<ft<kotlin/String, kotlin/String?>>, java/util/ArrayList<ft<kotlin/String, kotlin/String?>>?>|!): kotlin/Unit
+
+    public open property listGeneric(var): R|ft<java/util/ArrayList<ft<T, T?>>, java/util/ArrayList<ft<T, T?>>?>|!
+        public get(): R|ft<java/util/ArrayList<ft<T, T?>>, java/util/ArrayList<ft<T, T?>>?>|!
+        public set(value: R|ft<java/util/ArrayList<ft<T, T?>>, java/util/ArrayList<ft<T, T?>>?>|!): kotlin/Unit
+
+    public open property listOfGenericList(var): R|ft<java/util/ArrayList<ft<java/util/ArrayList<ft<T, T?>>, java/util/ArrayList<ft<T, T?>>?>>, java/util/ArrayList<ft<java/util/ArrayList<ft<T, T?>>, java/util/ArrayList<ft<T, T?>>?>>?>|!
+        public get(): R|ft<java/util/ArrayList<ft<java/util/ArrayList<ft<T, T?>>, java/util/ArrayList<ft<T, T?>>?>>, java/util/ArrayList<ft<java/util/ArrayList<ft<T, T?>>, java/util/ArrayList<ft<T, T?>>?>>?>|!
+        public set(value: R|ft<java/util/ArrayList<ft<java/util/ArrayList<ft<T, T?>>, java/util/ArrayList<ft<T, T?>>?>>, java/util/ArrayList<ft<java/util/ArrayList<ft<T, T?>>, java/util/ArrayList<ft<T, T?>>?>>?>|!): kotlin/Unit
+
+}

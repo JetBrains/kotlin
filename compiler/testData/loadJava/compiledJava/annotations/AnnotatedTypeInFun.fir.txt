@@ -1,0 +1,4 @@
+public/*package*/ open class AnnotatedTypeInFun : R|java/lang/Object| {
+    public/*package*/ open operator function foo(@R|test/AnnotatedTypeInFun.Anno|(String(a)) a: @R|test/AnnotatedTypeInFun.Anno|(String(a)) R|ft<kotlin/String, kotlin/String?>|!, @R|test/AnnotatedTypeInFun.Anno|(String(b)) b: @R|test/AnnotatedTypeInFun.Anno|(String(b)) R|ft<kotlin/String, kotlin/String?>|!): R|kotlin/Unit|
+
+}

@@ -21,18 +21,28 @@ internal class GradleCompilationResults(
         LoopbackNetworkInterface.clientLoopbackSocketFactory,
         LoopbackNetworkInterface.serverLoopbackSocketFactory
     ) {
+
+    var icLogLines: List<String>? = null
+
     @Throws(RemoteException::class)
     override fun add(compilationResultCategory: Int, value: Serializable) {
-        if (compilationResultCategory == CompilationResultCategory.IC_COMPILE_ITERATION.code) {
-            @Suppress("UNCHECKED_CAST")
-            val compileIterationResult = value as? CompileIterationResult
-            if (compileIterationResult != null) {
-                val sourceFiles = compileIterationResult.sourceFiles
-                if (sourceFiles.any()) {
-                    log.kotlinDebug { "compile iteration: ${sourceFiles.pathsAsStringRelativeTo(projectRootFile)}" }
+        when (compilationResultCategory) {
+            CompilationResultCategory.IC_COMPILE_ITERATION.code -> {
+                @Suppress("UNCHECKED_CAST")
+                val compileIterationResult = value as? CompileIterationResult
+                if (compileIterationResult != null) {
+                    val sourceFiles = compileIterationResult.sourceFiles
+                    if (sourceFiles.any()) {
+                        log.kotlinDebug { "compile iteration: ${sourceFiles.pathsAsStringRelativeTo(projectRootFile)}" }
+                    }
+                    val exitCode = compileIterationResult.exitCode
+                    log.kotlinDebug { "compiler exit code: $exitCode" }
                 }
-                val exitCode = compileIterationResult.exitCode
-                log.kotlinDebug { "compiler exit code: $exitCode" }
+            }
+            CompilationResultCategory.BUILD_REPORT_LINES.code,
+            CompilationResultCategory.VERBOSE_BUILD_REPORT_LINES.code -> {
+                @Suppress("UNCHECKED_CAST")
+                icLogLines = value as? List<String>
             }
         }
     }

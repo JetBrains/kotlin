@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.resolve.checkers.checkClassifierUsages
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.lazy.*
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor
-import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyScriptDescriptor
 import java.util.*
 
 class LazyTopDownAnalyzer(
@@ -87,7 +86,7 @@ class LazyTopDownAnalyzer(
                 override fun visitScript(script: KtScript) {
                     c.scripts.put(
                         script,
-                        lazyDeclarationResolver.getScriptDescriptor(script, KotlinLookupLocation(script)) as LazyScriptDescriptor
+                        lazyDeclarationResolver.getScriptDescriptor(script, KotlinLookupLocation(script))
                     )
                     registerDeclarations(script.declarations)
                 }

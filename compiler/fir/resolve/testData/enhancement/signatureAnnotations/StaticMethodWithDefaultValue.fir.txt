@@ -1,0 +1,4 @@
+public/*package*/ open class A : R|java/lang/Object| {
+    public open static operator function withDefault(@R|kotlin/annotations/jvm/internal/DefaultValue|(String(OK)) arg: R|ft<kotlin/String, kotlin/String?>|! = String(OK)): R|ft<kotlin/String, kotlin/String?>|!
+
+}

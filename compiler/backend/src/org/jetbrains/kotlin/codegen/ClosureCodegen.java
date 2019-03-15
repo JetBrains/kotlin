@@ -399,16 +399,17 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
             @NotNull CallableDescriptor descriptor,
             @NotNull GenerationState state
     ) {
+        KotlinTypeMapper typeMapper = state.getTypeMapper();
         DeclarationDescriptor container = descriptor.getContainingDeclaration();
 
         if (container instanceof ClassDescriptor) {
             // TODO: would it work for arrays?
             SimpleType containerKotlinType = ((ClassDescriptor) container).getDefaultType();
-            Type containerType = state.getTypeMapper().mapClass((ClassDescriptor) container);
-            putJavaLangClassInstance(iv, containerType, containerKotlinType, state);
+            Type containerType = typeMapper.mapClass((ClassDescriptor) container);
+            putJavaLangClassInstance(iv, containerType, containerKotlinType, typeMapper);
         }
         else if (container instanceof PackageFragmentDescriptor) {
-            iv.aconst(state.getTypeMapper().mapOwner(descriptor));
+            iv.aconst(typeMapper.mapOwner(descriptor));
         }
         else if (descriptor instanceof VariableDescriptorWithAccessors) {
             iv.aconst(state.getBindingContext().get(

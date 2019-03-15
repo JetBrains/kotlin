@@ -1,0 +1,26 @@
+public/*package*/ open class A : R|java/lang/Object| {
+    public open operator function a(@R|kotlin/annotations/jvm/internal/DefaultValue|(String(HELLO)) arg: R|ft<Signs, Signs?>|! = R|/Signs.HELLO|): R|ft<Signs, Signs?>|!
+
+    public open operator function bar(@R|kotlin/annotations/jvm/internal/DefaultValue|(String(X)) arg: R|ft<Signs, Signs?>|! = R|/Signs.X|): R|ft<Signs, Signs?>|!
+
+    public open operator function baz(@R|kotlin/annotations/jvm/internal/DefaultValue|(String(NOT_ENTRY_EITHER)) arg: R|ft<Signs, Signs?>|!): R|ft<Signs, Signs?>|!
+
+    public open operator function bam(@R|kotlin/annotations/jvm/internal/DefaultValue|(String(NOT_ENTRY_EITHER)) arg: R|ft<Mixed, Mixed?>|! = R|/Mixed.NOT_ENTRY_EITHER|): R|ft<Mixed, Mixed?>|!
+
+}
+public final enum class Mixed : R|java/lang/Enum<Mixed>| {
+    public final static property NOT_ENTRY_EITHER(val): R|ft<Mixed, Mixed?>|!
+        public get(): R|ft<Mixed, Mixed?>|!
+
+}
+public final enum class Signs : R|java/lang/Enum<Signs>| {
+    public final static property HELLO(val): R|ft<Signs, Signs?>|!
+        public get(): R|ft<Signs, Signs?>|!
+
+    public final static property WORLD(val): R|ft<Signs, Signs?>|!
+        public get(): R|ft<Signs, Signs?>|!
+
+    public final static property X(val): R|ft<Signs, Signs?>|!
+        public get(): R|ft<Signs, Signs?>|!
+
+}

@@ -47,12 +47,13 @@ configurations.getByName("compileOnly").extendsFrom(shadows)
 val mainJar by configurations.creating
 
 dependencies {
-    compile(project(":kotlin-stdlib"))
+    compile(kotlinStdlib())
 
-    proguardDeps(project(":kotlin-stdlib"))
+    proguardDeps(kotlinStdlib())
     proguardAdditionalInJars(project(":kotlin-annotations-jvm"))
     proguardDeps(files(firstFromJavaHomeThatExists("jre/lib/rt.jar", "../Classes/classes.jar", jdkHome = File(property("JDK_16") as String))))
 
+    shadows(project(":core:type-system"))
     shadows(project(":kotlin-reflect-api"))
     shadows(project(":core:metadata"))
     shadows(project(":core:metadata.jvm"))
@@ -62,7 +63,9 @@ dependencies {
     shadows(project(":core:descriptors.runtime"))
     shadows(project(":core:util.runtime"))
     shadows("javax.inject:javax.inject:1")
-    shadows(project(":custom-dependencies:protobuf-lite", configuration = "default"))
+    shadows(protobufLite())
+    
+    compileOnly("org.jetbrains:annotations:13.0")
 }
 
 class KotlinModuleShadowTransformer(private val logger: Logger) : Transformer {
@@ -93,7 +96,7 @@ class KotlinModuleShadowTransformer(private val logger: Logger) : Transformer {
     override fun hasTransformedResource(): Boolean =
             data.isNotEmpty()
 
-    override fun modifyOutputStream(os: ZipOutputStream) {
+    override fun modifyOutputStream(os: ZipOutputStream, preserveFileTimestamps: Boolean) {
         for ((path, bytes) in data) {
             os.putNextEntry(ZipEntry(path))
             os.write(bytes)

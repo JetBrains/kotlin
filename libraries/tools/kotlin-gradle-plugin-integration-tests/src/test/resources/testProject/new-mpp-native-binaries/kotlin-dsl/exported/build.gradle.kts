@@ -5,7 +5,7 @@ plugins {
 repositories {
     mavenLocal()
     jcenter()
-    maven { setUrl("http://dl.bintray.com/kotlin/kotlinx.html/") }
+    maven { setUrl("https://dl.bintray.com/kotlin/kotlinx.html/") }
 }
 
 kotlin {
@@ -15,5 +15,9 @@ kotlin {
         }
     }
 
-    iosArm64("ios")
+    iosArm64("ios") 
+    macosX64("macos64")
+    linuxX64("linux64")
+    mingwX64("mingw64")
+    iosX64("iosSim")
 }

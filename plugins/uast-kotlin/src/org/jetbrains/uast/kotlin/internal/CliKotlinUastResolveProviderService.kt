@@ -4,9 +4,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
-import org.jetbrains.kotlin.codegen.state.IncompatibleClassTracker
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
-import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.container.ComponentProvider
@@ -61,9 +59,8 @@ class UastAnalysisHandlerExtension : AnalysisHandlerExtension {
 
         val typeMapper = KotlinTypeMapper(
             bindingContext, ClassBuilderMode.LIGHT_CLASSES,
-            IncompatibleClassTracker.DoNothing, JvmAbi.DEFAULT_MODULE_NAME, JvmTarget.DEFAULT,
-            KotlinTypeMapper.LANGUAGE_VERSION_SETTINGS_DEFAULT, // TODO use proper LanguageVersionSettings
-            false
+            JvmAbi.DEFAULT_MODULE_NAME,
+            KotlinTypeMapper.LANGUAGE_VERSION_SETTINGS_DEFAULT // TODO use proper LanguageVersionSettings
         )
         this.typeMapper = typeMapper
         return typeMapper

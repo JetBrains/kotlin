@@ -27,13 +27,18 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Alarm
 import com.intellij.util.io.HttpRequests
 import com.intellij.util.text.VersionComparatorUtil
-import org.jetbrains.kotlin.idea.update.PluginUpdateVerifier
+import org.jdom.Attribute
+import org.jdom.DataConversionException
 import org.jetbrains.kotlin.idea.update.verify
 import java.io.File
 import java.io.IOException
 import java.io.PrintWriter
 import java.io.StringWriter
 import java.net.URLEncoder
+import java.time.DateTimeException
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneOffset
 import java.util.concurrent.TimeUnit
 
 sealed class PluginUpdateStatus {
@@ -79,7 +84,7 @@ sealed class PluginUpdateStatus {
     }
 }
 
-class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Disposable {
+class KotlinPluginUpdater(private val propertiesComponent: PropertiesComponent) : Disposable {
     private var updateDelay = INITIAL_UPDATE_DELAY
     private val alarm = Alarm(Alarm.ThreadToUse.POOLED_THREAD, this)
     private val notificationGroup = NotificationGroup("Kotlin plugin updates", NotificationDisplayType.STICKY_BALLOON, true)
@@ -136,7 +141,7 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
 
     private fun updateCheck(callback: (PluginUpdateStatus) -> Boolean) {
         var updateStatus: PluginUpdateStatus
-        if (KotlinPluginUtil.isSnapshotVersion()) {
+        if (KotlinPluginUtil.isSnapshotVersion() || KotlinPluginUtil.isPatched()) {
             updateStatus = PluginUpdateStatus.LatestVersionInstalled
         } else {
             try {
@@ -195,12 +200,10 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
             return PluginUpdateStatus.LatestVersionInstalled
         }
         val newVersion = responseDoc.getChild("category")?.getChild("idea-plugin")?.getChild("version")?.text
-        if (newVersion == null) {
-            return PluginUpdateStatus.CheckFailed(
+            ?: return PluginUpdateStatus.CheckFailed(
                 "Couldn't find plugin version in repository response",
                 JDOMUtil.writeElement(responseDoc, "\n")
             )
-        }
         val pluginDescriptor = initPluginDescriptor(newVersion)
         return updateIfNotLatest(pluginDescriptor, null)
     }
@@ -269,6 +272,8 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
 
                 if (prepareResult) {
                     val pluginDescriptor = pluginDownloader.descriptor
+                    // BUNCH: 181 Not null since 182.
+                    @Suppress("SENSELESS_COMPARISON")
                     if (pluginDescriptor != null) {
                         installed = true
                         pluginDownloader.install()
@@ -322,5 +327,46 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
         private val LOG = Logger.getInstance(KotlinPluginUpdater::class.java)
 
         fun getInstance(): KotlinPluginUpdater = ServiceManager.getService(KotlinPluginUpdater::class.java)
+
+        class ResponseParseException(message: String, cause: Exception? = null) : IllegalStateException(message, cause)
+
+        @Throws(IOException::class, ResponseParseException::class)
+        fun fetchPluginReleaseDate(pluginId: String, version: String): LocalDate? {
+            // Need a better request (MP-2157)
+            val url = "https://plugins.jetbrains.com/plugins/list?pluginId=$pluginId&pluginVersion=$version"
+
+            val responseDoc = HttpRequests.request(url).connect {
+                JDOMUtil.load(it.inputStream)
+            }
+
+            if (responseDoc.name != "plugin-repository") {
+                throw ResponseParseException("No plugin repository element")
+            }
+
+            val dateAttribute: Attribute = responseDoc
+                .getChild("category")
+                ?.getChildren("idea-plugin")
+                ?.mapNotNull { pluginElement ->
+                    if (pluginElement.getChild("version")?.text == version) {
+                        pluginElement.getAttribute("date")
+                    } else {
+                        null
+                    }
+                }
+                ?.singleOrNull()
+                ?: throw ResponseParseException("Can't find current plugin version")
+
+            val dateLong = try {
+                dateAttribute.longValue
+            } catch (e: DataConversionException) {
+                throw ResponseParseException("Can't convert date value to long", e)
+            }
+
+            return try {
+                Instant.ofEpochMilli(dateLong).atZone(ZoneOffset.UTC).toLocalDate()
+            } catch (e: DateTimeException) {
+                throw ResponseParseException("Can't convert to date", e)
+            }
+        }
     }
 }

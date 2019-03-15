@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -129,6 +129,16 @@ public class QuickDocProviderTestGenerated extends AbstractQuickDocProviderTest 
         runTest("idea/testData/editor/quickDoc/KotlinPackageClassUsedFromJava.java");
     }
 
+    @TestMetadata("Lateinit.kt")
+    public void testLateinit() throws Exception {
+        runTest("idea/testData/editor/quickDoc/Lateinit.kt");
+    }
+
+    @TestMetadata("LateinitName.kt")
+    public void testLateinitName() throws Exception {
+        runTest("idea/testData/editor/quickDoc/LateinitName.kt");
+    }
+
     @TestMetadata("MethodFromStdLib.kt")
     public void testMethodFromStdLib() throws Exception {
         runTest("idea/testData/editor/quickDoc/MethodFromStdLib.kt");
@@ -247,6 +257,16 @@ public class QuickDocProviderTestGenerated extends AbstractQuickDocProviderTest 
     @TestMetadata("Samples.kt")
     public void testSamples() throws Exception {
         runTest("idea/testData/editor/quickDoc/Samples.kt");
+    }
+
+    @TestMetadata("Tailrec.kt")
+    public void testTailrec() throws Exception {
+        runTest("idea/testData/editor/quickDoc/Tailrec.kt");
+    }
+
+    @TestMetadata("TailrecName.kt")
+    public void testTailrecName() throws Exception {
+        runTest("idea/testData/editor/quickDoc/TailrecName.kt");
     }
 
     @TestMetadata("TopLevelMethodFromJava.java")

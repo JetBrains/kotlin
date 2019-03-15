@@ -16,24 +16,15 @@
 
 package org.jetbrains.kotlin.gradle.utils
 
+import org.gradle.api.GradleException
 import org.gradle.api.Task
-import org.gradle.api.tasks.SourceSetOutput
 import org.gradle.api.tasks.TaskInputs
 import org.gradle.api.tasks.TaskOutputs
+import org.gradle.util.GradleVersion
 
 internal val Task.inputsCompatible: TaskInputs get() = inputs
 
 internal val Task.outputsCompatible: TaskOutputs get() = outputs
-
-private val filesMethod by lazy {
-    TaskInputs::class.java.methods.first {
-        it.name == "files" && it.parameterTypes.contentEquals(arrayOf(Array<Any>::class.java))
-    }
-}
-
-internal fun TaskInputs.filesCompatible(vararg files: Any) {
-    filesMethod(this, files)
-}
 
 private val propertyMethod by lazy {
     TaskInputs::class.java.methods.first {
@@ -43,36 +34,6 @@ private val propertyMethod by lazy {
 
 internal fun TaskInputs.propertyCompatible(name: String, value: Any) {
     propertyMethod(this, name, value)
-}
-
-private val outputsDirMethod by lazy {
-    TaskOutputs::class.java.methods.first {
-        it.name == "dir" && it.parameterTypes.contentEquals(arrayOf(Any::class.java))
-    }
-}
-
-internal fun TaskOutputs.dirCompatible(value: Any) {
-    outputsDirMethod(this, value)
-}
-
-private val outputsFilesMethod by lazy {
-    TaskOutputs::class.java.methods.first {
-        it.name == "files" && it.parameterTypes.contentEquals(arrayOf(Array<Any>::class.java))
-    }
-}
-
-internal fun TaskOutputs.filesCompatible(vararg value: Any) {
-    outputsFilesMethod(this, value)
-}
-
-private val fileMethod by lazy {
-    TaskInputs::class.java.methods.first {
-        it.name == "file" && it.parameterTypes.contentEquals(arrayOf(Any::class.java))
-    }
-}
-
-internal fun TaskInputs.fileCompatible(filePath: Any) {
-    fileMethod(this, filePath)
 }
 
 private val inputsDirMethod by lazy {
@@ -85,12 +46,12 @@ internal fun TaskInputs.dirCompatible(dirPath: Any) {
     inputsDirMethod(this, dirPath)
 }
 
-private val setClassesDirMethod by lazy {
-    SourceSetOutput::class.java.methods.first {
-        it.name == "setClassesDir" && it.parameterTypes.contentEquals(arrayOf(Any::class.java))
+internal fun checkGradleCompatibility(minSupportedVersion: GradleVersion = GradleVersion.version("4.1")) {
+    val currentVersion = GradleVersion.current()
+    if (currentVersion < minSupportedVersion) {
+        throw GradleException(
+            "Current version of Gradle $currentVersion is not compatible with Kotlin plugin. " +
+                    "Please use Gradle $minSupportedVersion or newer or previous version of Kotlin plugin."
+        )
     }
-}
-
-internal fun SourceSetOutput.setClassesDirCompatible(dirPath: Any) {
-    setClassesDirMethod(this, dirPath)
 }

@@ -1,0 +1,18 @@
+FILE: B.kt
+    public final class B : R|A| {
+        public constructor(): super<R|A|>()
+
+        public final override function foo(): R|B| {
+            return@@@foo this#
+        }
+
+        public final function bar(): R|B| {
+            return@@@bar this#
+        }
+
+        public final function test(): R|kotlin/Unit| {
+            R|/B.foo|()
+            R|/B.bar|()
+        }
+
+    }

@@ -8,8 +8,6 @@ plugins {
     id("jps-compatible")
 }
 
-jvmTarget = "1.6"
-
 dependencies {
     compile(project(":kotlin-build-common"))
     compileOnly(project(":compiler:cli-common"))
@@ -27,10 +25,10 @@ sourceSets {
     "test" {}
 }
 
+publish()
+
 val jar: Jar by tasks
 
 runtimeJar(rewriteDepsToShadedCompiler(jar))
 sourcesJar()
 javadocJar()
-
-publish()

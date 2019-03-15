@@ -12,10 +12,12 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
+import org.jetbrains.kotlin.resolve.calls.CallTransformer
 import org.jetbrains.kotlin.resolve.calls.DiagnosticReporterByTrackingStrategy
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getEffectiveExpectedType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.isFakeElement
+import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.calls.components.AdditionalDiagnosticReporter
@@ -53,6 +55,7 @@ import java.util.*
 
 class KotlinToResolvedCallTransformer(
     private val callCheckers: Iterable<CallChecker>,
+    private val additionalTypeCheckers: Iterable<AdditionalTypeChecker>,
     private val dataFlowAnalyzer: DataFlowAnalyzer,
     private val argumentTypeResolver: ArgumentTypeResolver,
     private val constantExpressionEvaluator: ConstantExpressionEvaluator,
@@ -200,6 +203,36 @@ class KotlinToResolvedCallTransformer(
                 callChecker.check(resolvedCall.variableCall, reportOn, callCheckerContext)
             }
         }
+    }
+
+    fun runAdditionalReceiversCheckers(resolvedCall: ResolvedCall<*>, context: BasicCallResolutionContext) {
+        context.checkReceiver(
+            resolvedCall,
+            resolvedCall.resultingDescriptor.extensionReceiverParameter,
+            resolvedCall.extensionReceiver,
+            resolvedCall.explicitReceiverKind.isExtensionReceiver,
+            implicitInvokeCheck = false
+        )
+        context.checkReceiver(
+            resolvedCall,
+            resolvedCall.resultingDescriptor.dispatchReceiverParameter,
+            resolvedCall.dispatchReceiver,
+            resolvedCall.explicitReceiverKind.isDispatchReceiver,
+            implicitInvokeCheck = context.call is CallTransformer.CallForImplicitInvoke
+        )
+
+    }
+
+    private fun BasicCallResolutionContext.checkReceiver(
+        resolvedCall: ResolvedCall<*>,
+        receiverParameter: ReceiverParameterDescriptor?,
+        receiverArgument: ReceiverValue?,
+        isExplicitReceiver: Boolean,
+        implicitInvokeCheck: Boolean
+    ) {
+        if (receiverParameter == null || receiverArgument == null) return
+        val safeAccess = isExplicitReceiver && !implicitInvokeCheck && resolvedCall.call.isSemanticallyEquivalentToSafeCall
+        additionalTypeCheckers.forEach { it.checkReceiver(receiverParameter, receiverArgument, safeAccess, this) }
     }
 
     // todo very beginning code

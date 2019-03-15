@@ -462,7 +462,7 @@ class SignatureEnhancement(
     }
 }
 
-private fun createJavaTypeQualifiers(
+fun createJavaTypeQualifiers(
     nullability: NullabilityQualifier?,
     mutability: MutabilityQualifier?,
     forWarning: Boolean,
@@ -474,7 +474,7 @@ private fun createJavaTypeQualifiers(
     return JavaTypeQualifiers(nullability, mutability, true, forWarning)
 }
 
-private fun <T : Any> Set<T>.select(low: T, high: T, own: T?, isCovariant: Boolean): T? {
+fun <T : Any> Set<T>.select(low: T, high: T, own: T?, isCovariant: Boolean): T? {
     if (isCovariant) {
         val supertypeQualifier = if (low in this) low else if (high in this) high else null
         return if (supertypeQualifier == low && own == high) null else own ?: supertypeQualifier
@@ -488,7 +488,7 @@ private fun <T : Any> Set<T>.select(low: T, high: T, own: T?, isCovariant: Boole
     return effectiveSet.singleOrNull()
 }
 
-private fun Set<NullabilityQualifier>.select(own: NullabilityQualifier?, isCovariant: Boolean) =
+fun Set<NullabilityQualifier>.select(own: NullabilityQualifier?, isCovariant: Boolean) =
     if (own == NullabilityQualifier.FORCE_FLEXIBILITY)
         NullabilityQualifier.FORCE_FLEXIBILITY
     else

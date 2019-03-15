@@ -14,6 +14,8 @@ import java.lang.IllegalStateException
 
 private const val CIDR_FEATURE_STATISTICS_PROVIDER_FQNAME = "com.jetbrains.cidr.lang.OCFeatureStatisticsBundleProvider"
 
+// Remove the function, when there's no dependency to cidr during running Kotlin tests.
+// BUNCH: as33
 fun registerAdditionalResourceBundleInTests() {
     if (!ApplicationManager.getApplication().isUnitTestMode) {
         return
@@ -29,7 +31,7 @@ fun registerAdditionalResourceBundleInTests() {
     val cidrFSBundleProviderClass = try {
         Class.forName(CIDR_FEATURE_STATISTICS_PROVIDER_FQNAME)
     } catch (_: ClassNotFoundException) {
-        throw IllegalStateException("Remove this registration for the current platform: class wasn't found.")
+        return
     }
 
     val cidrFSBundleProvider = cidrFSBundleProviderClass.newInstance() as FeatureStatisticsBundleProvider

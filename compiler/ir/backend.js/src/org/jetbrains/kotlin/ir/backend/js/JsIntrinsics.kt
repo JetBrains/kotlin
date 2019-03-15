@@ -14,8 +14,9 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
+import org.jetbrains.kotlin.ir.types.isLong
 import org.jetbrains.kotlin.ir.util.constructors
-import org.jetbrains.kotlin.ir.util.getPropertyGetter
+import org.jetbrains.kotlin.ir.util.findDeclaration
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi2ir.findSingleFunction
@@ -116,6 +117,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
 
     val isNumberSymbol = getInternalFunction("isNumber")
     val isComparableSymbol = getInternalFunction("isComparable")
+    val isCharSequenceSymbol = getInternalFunction("isCharSequence")
 
     val isPrimitiveArray = mapOf(
         PrimitiveType.BOOLEAN to getInternalFunction("isBooleanArray"),
@@ -125,7 +127,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
         PrimitiveType.INT to getInternalFunction("isIntArray"),
         PrimitiveType.FLOAT to getInternalFunction("isFloatArray"),
         PrimitiveType.LONG to getInternalFunction("isLongArray"),
-        PrimitiveType.DOUBLE to getInternalFunction("isLongArray")
+        PrimitiveType.DOUBLE to getInternalFunction("isDoubleArray")
     )
 
 
@@ -178,13 +180,17 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
         )
     )
 
+    val longCompareToLong: IrSimpleFunction = longClassSymbol.owner.findDeclaration<IrSimpleFunction> {
+        it.name == Name.identifier("compareTo") && it.valueParameters[0].type.isLong()
+    }!!
+
     val charClassSymbol = getInternalClassWithoutPackage("kotlin.Char")
     val charConstructor = charClassSymbol.constructors.single().owner
 
-    val uByteClassSymbol = getInternalClassWithoutPackage("kotlin.UByte")
-    val uShortClassSymbol = getInternalClassWithoutPackage("kotlin.UShort")
-    val uIntClassSymbol = getInternalClassWithoutPackage("kotlin.UInt")
-    val uLongClassSymbol = getInternalClassWithoutPackage("kotlin.ULong")
+    val uByteClassSymbol by lazy { getInternalClassWithoutPackage("kotlin.UByte") }
+    val uShortClassSymbol by lazy { getInternalClassWithoutPackage("kotlin.UShort") }
+    val uIntClassSymbol by lazy { getInternalClassWithoutPackage("kotlin.UInt") }
+    val uLongClassSymbol by lazy { getInternalClassWithoutPackage("kotlin.ULong") }
 
     val unreachable = defineUnreachableIntrinsic()
 

@@ -1,9 +1,8 @@
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
- * SECTIONS: when-expression
- * PARAGRAPH: 11
- * SENTENCE: [3] The bound expression is of type kotlin.Boolean and the conditions contain both:
+ * SPEC VERSION: 0.1-draft
+ * PLACE: when-expression -> paragraph 11 -> sentence 3
  * NUMBER: 1
  * DESCRIPTION: Check when exhaustive via boolean bound value and evaluating to value true and false.
  */

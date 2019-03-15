@@ -18,18 +18,27 @@ package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.FunctionLoweringPass
+import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrGetValue
-import org.jetbrains.kotlin.ir.expressions.IrSetVariable
-import org.jetbrains.kotlin.ir.expressions.IrValueAccessExpression
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.visitors.*
 import java.util.*
+
+val sharedVariablesPhase = makeIrFilePhase(
+    ::SharedVariablesLowering,
+    name = "SharedVariables",
+    description = "Transform shared variables"
+)
+
+object CoroutineIntrinsicLambdaOrigin : IrStatementOriginImpl("Coroutine intrinsic lambda")
 
 class SharedVariablesLowering(val context: BackendContext) : FunctionLoweringPass {
     override fun lower(irFunction: IrFunction) {
@@ -47,17 +56,28 @@ class SharedVariablesLowering(val context: BackendContext) : FunctionLoweringPas
         }
 
         private fun collectSharedVariables() {
-            irFunction.accept(object : IrElementVisitor<Unit, IrDeclarationParent> {
-                val relevantVars = HashSet<IrVariable>()
+            irFunction.accept(object : IrElementVisitor<Unit, IrDeclarationParent?> {
+                val relevantVars = mutableSetOf<IrVariable>()
 
-                override fun visitElement(element: IrElement, data: IrDeclarationParent) {
+                override fun visitElement(element: IrElement, data: IrDeclarationParent?) {
                     element.acceptChildren(this, data)
                 }
 
-                override fun visitDeclaration(declaration: IrDeclaration, data: IrDeclarationParent) =
+                override fun visitDeclaration(declaration: IrDeclaration, data: IrDeclarationParent?) =
                     super.visitDeclaration(declaration, declaration as? IrDeclarationParent ?: data)
 
-                override fun visitVariable(declaration: IrVariable, data: IrDeclarationParent) {
+                override fun visitContainerExpression(expression: IrContainerExpression, data: IrDeclarationParent?) =
+                    super.visitContainerExpression(
+                        expression,
+                        if (expression is IrReturnableBlock
+                            && expression.origin == CoroutineIntrinsicLambdaOrigin
+                        )
+                            null
+                        else
+                            data
+                    )
+
+                override fun visitVariable(declaration: IrVariable, data: IrDeclarationParent?) {
                     declaration.acceptChildren(this, data)
 
                     if (declaration.isVar) {
@@ -65,7 +85,7 @@ class SharedVariablesLowering(val context: BackendContext) : FunctionLoweringPas
                     }
                 }
 
-                override fun visitValueAccess(expression: IrValueAccessExpression, data: IrDeclarationParent) {
+                override fun visitValueAccess(expression: IrValueAccessExpression, data: IrDeclarationParent?) {
                     expression.acceptChildren(this, data)
 
                     val value = expression.symbol.owner
@@ -77,7 +97,7 @@ class SharedVariablesLowering(val context: BackendContext) : FunctionLoweringPas
         }
 
         private fun rewriteSharedVariables() {
-            val transformedDescriptors = HashMap<IrValueSymbol, IrVariableSymbol>()
+            val transformedSymbols = HashMap<IrValueSymbol, IrVariableSymbol>()
 
             irFunction.transformChildrenVoid(object : IrElementTransformerVoid() {
                 override fun visitVariable(declaration: IrVariable): IrStatement {
@@ -86,7 +106,8 @@ class SharedVariablesLowering(val context: BackendContext) : FunctionLoweringPas
                     if (declaration !in sharedVariables) return declaration
 
                     val newDeclaration = context.sharedVariablesManager.declareSharedVariable(declaration)
-                    transformedDescriptors[declaration.symbol] = newDeclaration.symbol
+                    newDeclaration.parent = irFunction
+                    transformedSymbols[declaration.symbol] = newDeclaration.symbol
 
                     return context.sharedVariablesManager.defineSharedValue(declaration, newDeclaration)
                 }
@@ -110,7 +131,7 @@ class SharedVariablesLowering(val context: BackendContext) : FunctionLoweringPas
                 }
 
                 private fun getTransformedSymbol(oldSymbol: IrValueSymbol): IrVariableSymbol? =
-                    transformedDescriptors.getOrElse(oldSymbol) {
+                    transformedSymbols.getOrElse(oldSymbol) {
                         assert(oldSymbol.owner !in sharedVariables) {
                             "Shared variable is not transformed: ${oldSymbol.owner.dump()}"
                         }

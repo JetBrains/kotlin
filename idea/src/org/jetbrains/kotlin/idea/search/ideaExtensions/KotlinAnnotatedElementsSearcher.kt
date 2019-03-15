@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.asJava.ImpreciseResolveResult.NO_MATCH
 import org.jetbrains.kotlin.asJava.ImpreciseResolveResult.UNSURE
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.toLightClass
+import org.jetbrains.kotlin.asJava.toPsiParameters
 import org.jetbrains.kotlin.compatibility.ExecutorProcessor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.search.PsiBasedClassResolver
@@ -62,6 +63,13 @@ class KotlinAnnotatedElementsSearcher : QueryExecutor<PsiModifierListOwner, Anno
                         return@processAnnotatedMembers consumer.process(backingField)
                     }
 
+                    LightClassUtil.getLightClassPropertyMethods(declaration).all { consumer.process(it) }
+                }
+                is KtParameter -> {
+                    if (!declaration.toPsiParameters().all { consumer.process(it) }) return@processAnnotatedMembers false
+                    LightClassUtil.getLightClassBackingField(declaration)?.let {
+                        if (!consumer.process(it)) return@processAnnotatedMembers false
+                    }
                     LightClassUtil.getLightClassPropertyMethods(declaration).all { consumer.process(it) }
                 }
                 else -> true

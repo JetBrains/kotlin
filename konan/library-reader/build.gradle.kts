@@ -5,8 +5,6 @@ plugins {
 
 description = "Kotlin/Native deserializer and library reader"
 
-jvmTarget = "1.6"
-
 dependencies {
 
     // Compile-only dependencies are needed for compilation of this module:
@@ -25,6 +23,6 @@ sourceSets {
     "test" { none() }
 }
 
-standardPublicJars()
-
 publish()
+
+standardPublicJars()

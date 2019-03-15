@@ -9,6 +9,16 @@ import templates.Family.*
 
 object ComparableOps : TemplateGroupBase() {
 
+    init {
+        defaultBuilder {
+            specialFor(Unsigned) {
+                since("1.3")
+                annotation("@ExperimentalUnsignedTypes")
+                sourceFile(SourceFile.UComparisons)
+            }
+        }
+    }
+
     private val numericPrimitives = PrimitiveType.numericPrimitives.sortedBy { it.capacity }.toSet()
     private val intPrimitives = setOf(PrimitiveType.Int, PrimitiveType.Long)
     private val shortIntPrimitives = setOf(PrimitiveType.Byte, PrimitiveType.Short)
@@ -133,6 +143,7 @@ object ComparableOps : TemplateGroupBase() {
     val f_minOf_2 = fn("minOf(a: T, b: T)") {
         include(Generic)
         include(Primitives, numericPrimitives)
+        include(Unsigned)
     } builder {
         sourceFile(SourceFile.Comparisons)
         since("1.1")
@@ -145,46 +156,66 @@ object ComparableOps : TemplateGroupBase() {
             If values are equal, returns the first one.
             """
         }
+        val defaultImpl = "if (a <= b) a else b"
+        body { "return $defaultImpl" }
+
+        specialFor(Primitives, Unsigned) {
+            doc { "Returns the smaller of two values." }
+        }
         // TODO: Add a note about NaN propagation for floats.
         specialFor(Primitives) {
             inlineOnly()
-            doc {
-                """Returns the smaller of two values."""
-            }
             var convertBack = "to$primitive()"
             on(Platform.JS) {
                 suppress("DEPRECATION_ERROR")
                 convertBack = "unsafeCast<$primitive>()"
             }
-            body {
-                "return Math.min(a, b)"
+            on(Platform.JVM) {
+                body { "return Math.min(a, b)" }
+            }
+            on(Platform.JS) {
+                body { "return Math.min(a, b)" }
+                if (primitive == PrimitiveType.Long) {
+                    inline(suppressWarning = true)
+                    body { "return $defaultImpl" }
+                }
             }
             if (primitive in shortIntPrimitives) {
                 body { "return Math.min(a.toInt(), b.toInt()).$convertBack" }
+                on(Platform.Native) {
+                    body { "return minOf(a.toInt(), b.toInt()).$convertBack" }
+                }
             }
-            on(Platform.JS) {
-                if (primitive == PrimitiveType.Long) {
-                    inline(suppressWarning = true)
-                    body { "return if (a <= b) a else b" }
+            if (primitive?.isFloatingPoint() == true) {
+                on(Platform.Native) {
+                    body {
+                        """
+                        return when {
+                            a.isNaN() -> a
+                            b.isNaN() -> b
+                            else -> if (a.compareTo(b) <= 0) a else b
+                        }
+                        """
+                    }
                 }
             }
         }
-        on(Platform.JS) { /* just to make expect, KT-22520 */ }
-        body(Generic) {
-            "return if (a <= b) a else b"
+        specialFor(Generic) {
+            on(Platform.JS) { /* just to make expect, KT-22520 */ }
         }
     }
 
-    val f_minOf = fn("minOf(a: T, b: T, c: T)") {
+    val f_minOf_3 = fn("minOf(a: T, b: T, c: T)") {
         include(Generic)
         include(Primitives, numericPrimitives)
+        include(Unsigned)
     } builder {
         sourceFile(SourceFile.Comparisons)
         since("1.1")
         typeParam("T : Comparable<T>")
         returns("T")
         receiver("")
-        specialFor(Primitives) { inlineOnly() }
+        specialFor(Primitives, Unsigned) { inlineOnly() }
         // TODO: Add a note about NaN propagation for floats.
         doc {
             """
@@ -194,10 +225,15 @@ object ComparableOps : TemplateGroupBase() {
         body {
             "return minOf(a, minOf(b, c))"
         }
-        on(Platform.JS) { /* just to make expect, KT-22520 */ }
+        specialFor(Primitives, Generic) {
+            on(Platform.JS) { /* just to make expect, KT-22520 */ }
+        }
         specialFor(Primitives) {
             if (primitive in shortIntPrimitives) {
-                body { "return Math.min(a.toInt(), Math.min(b.toInt(), c.toInt())).to$primitive()" }
+                body { "return minOf(a.toInt(), minOf(b.toInt(), c.toInt())).to$primitive()" }
+                on(Platform.JVM) {
+                    body { "return Math.min(a.toInt(), Math.min(b.toInt(), c.toInt())).to$primitive()" }
+                }
                 on(Platform.JS) {
                     suppress("DEPRECATION_ERROR")
                     body { "return Math.min(a.toInt(), b.toInt(), c.toInt()).unsafeCast<$primitive>()" }
@@ -250,6 +286,7 @@ object ComparableOps : TemplateGroupBase() {
     val f_maxOf_2 = fn("maxOf(a: T, b: T)") {
         include(Generic)
         include(Primitives, numericPrimitives)
+        include(Unsigned)
     } builder {
         sourceFile(SourceFile.Comparisons)
         since("1.1")
@@ -262,46 +299,62 @@ object ComparableOps : TemplateGroupBase() {
             If values are equal, returns the first one.
             """
         }
+        val defaultImpl = "if (a >= b) a else b"
+        body { "return $defaultImpl" }
+
+        specialFor(Primitives, Unsigned) {
+            doc { "Returns the greater of two values." }
+        }
         // TODO: Add a note about NaN propagation for floats.
         specialFor(Primitives) {
             inlineOnly()
-            doc {
-                """Returns the greater of two values."""
-            }
             var convertBack = "to$primitive()"
             on(Platform.JS) {
                 suppress("DEPRECATION_ERROR")
                 convertBack = "unsafeCast<$primitive>()"
             }
-            body {
-                "return Math.max(a, b)"
+            on(Platform.JVM) {
+                body { "return Math.max(a, b)" }
+            }
+            on(Platform.JS) {
+                body { "return Math.max(a, b)" }
+                if (primitive == PrimitiveType.Long) {
+                    inline(suppressWarning = true)
+                    body { "return $defaultImpl" }
+                }
             }
             if (primitive in shortIntPrimitives) {
                 body { "return Math.max(a.toInt(), b.toInt()).$convertBack" }
+                on(Platform.Native) {
+                    body { "return maxOf(a.toInt(), b.toInt()).$convertBack" }
+                }
             }
-            on(Platform.JS) {
-                if (primitive == PrimitiveType.Long) {
-                    inline(suppressWarning = true)
-                    body { "return if (a >= b) a else b" }
+            if (primitive?.isFloatingPoint() == true) {
+                on(Platform.Native) {
+                    body {
+                        """
+                        return if (a.compareTo(b) >= 0) a else b
+                        """
+                    }
                 }
             }
         }
-        on(Platform.JS) { /* just to make expect, KT-22520 */ }
-        body(Generic) {
-            "return if (a >= b) a else b"
+        specialFor(Generic) {
+            on(Platform.JS) { /* just to make expect, KT-22520 */ }
         }
     }
 
     val f_maxOf_3 = fn("maxOf(a: T, b: T, c: T)") {
         include(Generic)
         include(Primitives, numericPrimitives)
+        include(Unsigned)
     } builder {
         sourceFile(SourceFile.Comparisons)
         since("1.1")
         typeParam("T : Comparable<T>")
         returns("T")
         receiver("")
-        specialFor(Primitives) { inlineOnly() }
+        specialFor(Primitives, Unsigned) { inlineOnly() }
         // TODO: Add a note about NaN propagation for floats.
         doc {
             """
@@ -311,10 +364,15 @@ object ComparableOps : TemplateGroupBase() {
         body {
             "return maxOf(a, maxOf(b, c))"
         }
-        on(Platform.JS) { /* just to make expect, KT-22520 */ }
+        specialFor(Primitives, Generic) {
+            on(Platform.JS) { /* just to make expect, KT-22520 */ }
+        }
         specialFor(Primitives) {
             if (primitive in shortIntPrimitives) {
-                body { "return Math.max(a.toInt(), Math.max(b.toInt(), c.toInt())).to$primitive()" }
+                body { "return maxOf(a.toInt(), maxOf(b.toInt(), c.toInt())).to$primitive()" }
+                on(Platform.JVM) {
+                    body { "return Math.max(a.toInt(), Math.max(b.toInt(), c.toInt())).to$primitive()" }
+                }
                 on(Platform.JS) {
                     suppress("DEPRECATION_ERROR")
                     body { "return Math.max(a.toInt(), b.toInt(), c.toInt()).unsafeCast<$primitive>()" }

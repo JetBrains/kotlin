@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.inspections.branchedTransformations.IfThenToSafeAccessInspection
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingOffsetIndependentIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.*
+import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
@@ -78,6 +79,9 @@ class IfThenToElvisIntention : SelfTargetingOffsetIndependentIntention<KtIfExpre
             val ifThenToSelectData = element.buildSelectTransformationData() ?: return
 
             val factory = KtPsiFactory(element)
+
+            val commentSaver = CommentSaver(element, saveLineBreaks = false)
+
             val elvis = runWriteAction {
                 val replacedBaseClause = ifThenToSelectData.replacedBaseClause(factory)
                 val newExpr = element.replaced(
@@ -87,7 +91,10 @@ class IfThenToElvisIntention : SelfTargetingOffsetIndependentIntention<KtIfExpre
                         ifThenToSelectData.negatedClause!!
                     )
                 )
-                KtPsiUtil.deparenthesize(newExpr) as KtBinaryExpression
+
+                (KtPsiUtil.deparenthesize(newExpr) as KtBinaryExpression).also {
+                    commentSaver.restore(it)
+                }
             }
 
             if (editor != null) {

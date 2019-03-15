@@ -22,18 +22,19 @@ dependencies {
     }
 
     compileOnly(project(":kotlin-reflect-api"))
-    compile(project(":kotlin-stdlib"))
+    compile(kotlinStdlib())
     compile(project(":core:descriptors")) { isTransitive = false }
     compile(project(":compiler:psi")) { isTransitive = false }
     compile(project(":core:descriptors.jvm")) { isTransitive = false }
     compile(project(":core:util.runtime")) { isTransitive = false }
     compile(project(":compiler:light-classes")) { isTransitive = false }
+    compile(project(":core:type-system")) { isTransitive = false }
     compile(project(":compiler:frontend")) { isTransitive = false }
     compile(project(":compiler:frontend.common")) { isTransitive = false }
     compile(project(":compiler:frontend.java")) { isTransitive = false }
     compile(project(":compiler:util")) { isTransitive = false }
     compile(project(":js:js.frontend")) { isTransitive = false }
-    compile(projectClasses(":idea"))
+    compile(project(":idea")) { isTransitive = false }
     compile(project(":idea:idea-jvm")) { isTransitive = false }
     compile(project(":idea:idea-core")) { isTransitive = false }
     compile(project(":idea:ide-common")) { isTransitive = false }
@@ -44,7 +45,7 @@ dependencies {
 
     if (intellijUltimateEnabled) {
         compileOnly(intellijUltimatePluginDep("NodeJS"))
-        compileOnly(intellijUltimateDep()) { includeJars("annotations", "trove4j", "openapi", "platform-api", "platform-impl", "java-api", "java-impl", "idea", "util", "jdom") }
+        compileOnly(intellijUltimateDep()) { includeJars("trove4j", "openapi", "platform-api", "platform-impl", "java-api", "java-impl", "idea", "util", "jdom") }
         compileOnly(intellijUltimatePluginDep("CSS"))
         compileOnly(intellijUltimatePluginDep("DatabaseTools"))
         compileOnly(intellijUltimatePluginDep("JavaEE"))
@@ -76,7 +77,7 @@ dependencies {
     testRuntime(project(":kotlin-native:kotlin-native-utils")) { isTransitive = false }
 
     if (intellijUltimateEnabled) {
-        testCompileOnly(intellijUltimateDep()) { includeJars("platform-api", "platform-impl", "gson", "annotations", "trove4j", "openapi", "idea", "util", "jdom", rootProject = rootProject) }
+        testCompileOnly(intellijUltimateDep()) { includeJars("platform-api", "platform-impl", "gson", "trove4j", "openapi", "idea", "util", "jdom", rootProject = rootProject) }
     }
     testCompile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
 

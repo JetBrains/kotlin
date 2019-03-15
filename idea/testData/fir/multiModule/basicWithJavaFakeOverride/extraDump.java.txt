@@ -1,0 +1,4 @@
+<T> public open class A : R|java/lang/Object| {
+    public open operator function foo(t: R|ft<T, T?>|!): R|ft<T, T?>|!
+
+}

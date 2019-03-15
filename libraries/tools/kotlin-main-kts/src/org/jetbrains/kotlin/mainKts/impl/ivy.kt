@@ -55,7 +55,7 @@ class IvyResolver : GenericRepositoryWithBridge {
                 URLResolver().apply {
                     isM2compatible = true
                     name = "central"
-                    addArtifactPattern("http://repo1.maven.org/maven2/$DEFAULT_ARTIFACT_PATTERN")
+                    addArtifactPattern("https://repo1.maven.org/maven2/$DEFAULT_ARTIFACT_PATTERN")
                 }
             )
         }

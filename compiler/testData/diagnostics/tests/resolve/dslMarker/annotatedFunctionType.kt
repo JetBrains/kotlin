@@ -1,4 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
+// !WITH_NEW_INFERENCE
 
 @Target(AnnotationTarget.TYPE)
 @DslMarker
@@ -20,7 +21,7 @@ fun baz4(x: @MyDsl B.() -> Unit) {}
 fun @MyDsl A.baz5() {
     baz4 {
         bar()
-        <!DSL_SCOPE_VIOLATION_WARNING!>foo<!>()
+        <!OI;DSL_SCOPE_VIOLATION_WARNING!>foo<!>()
     }
 }
 
@@ -35,21 +36,21 @@ fun main() {
     baz3 {
         baz2 {
             bar()
-            <!DSL_SCOPE_VIOLATION_WARNING!>foo<!>()
+            <!OI;DSL_SCOPE_VIOLATION_WARNING!>foo<!>()
         }
     }
 
     baz1 {
         baz4 {
             bar()
-            <!DSL_SCOPE_VIOLATION_WARNING!>foo<!>()
+            <!OI;DSL_SCOPE_VIOLATION_WARNING!>foo<!>()
         }
     }
 
     baz3 {
         baz4 {
             bar()
-            <!DSL_SCOPE_VIOLATION_WARNING!>foo<!>()
+            <!OI;DSL_SCOPE_VIOLATION_WARNING!>foo<!>()
         }
     }
 

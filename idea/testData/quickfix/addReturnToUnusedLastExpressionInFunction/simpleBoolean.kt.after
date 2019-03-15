@@ -1,0 +1,4 @@
+// "Add 'return' before the expression" "true"
+fun test(): Boolean {
+    return true
+}

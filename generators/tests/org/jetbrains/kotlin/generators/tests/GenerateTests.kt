@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.generators.util.KT_OR_KTS
 import org.jetbrains.kotlin.generators.util.KT_OR_KTS_WITHOUT_DOTS_IN_NAME
 import org.jetbrains.kotlin.generators.util.KT_WITHOUT_DOTS_IN_NAME
 import org.jetbrains.kotlin.idea.AbstractExpressionSelectionTest
-import org.jetbrains.kotlin.idea.AbstractKotlinTypeAliasByExpansionShortNameIndexTest
+import org.jetbrains.kotlin.idea.index.AbstractKotlinTypeAliasByExpansionShortNameIndexTest
 import org.jetbrains.kotlin.idea.AbstractSmartSelectionTest
 import org.jetbrains.kotlin.idea.actions.AbstractGotoTestOrCodeActionTest
 import org.jetbrains.kotlin.idea.caches.resolve.AbstractIdeCompiledLightClassTest
@@ -91,6 +91,7 @@ import org.jetbrains.kotlin.idea.editor.AbstractMultiLineStringIndentTest
 import org.jetbrains.kotlin.idea.editor.backspaceHandler.AbstractBackspaceHandlerTest
 import org.jetbrains.kotlin.idea.editor.quickDoc.AbstractQuickDocProviderTest
 import org.jetbrains.kotlin.idea.filters.AbstractKotlinExceptionFilterTest
+import org.jetbrains.kotlin.idea.fir.AbstractFirMultiModuleResolveTest
 import org.jetbrains.kotlin.idea.folding.AbstractKotlinFoldingTest
 import org.jetbrains.kotlin.idea.hierarchy.AbstractHierarchyTest
 import org.jetbrains.kotlin.idea.hierarchy.AbstractHierarchyWithLibTest
@@ -146,7 +147,6 @@ import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterForWebDemoTest
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterMultiFileTest
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterSingleFileTest
 import org.jetbrains.kotlin.jps.build.*
-import org.jetbrains.kotlin.jps.build.android.AbstractAndroidJpsTestCase
 import org.jetbrains.kotlin.jps.build.dependeciestxt.actualizeMppJpsIncTestCaseDirs
 import org.jetbrains.kotlin.jps.incremental.AbstractJsProtoComparisonTest
 import org.jetbrains.kotlin.jps.incremental.AbstractJvmProtoComparisonTest
@@ -527,7 +527,7 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractOutOfBlockModificationTest> {
-            model("codeInsight/outOfBlock")
+            model("codeInsight/outOfBlock", pattern = KT_OR_KTS)
         }
 
         testClass<AbstractDataFlowValueRenderingTest> {
@@ -636,10 +636,6 @@ fun main(args: Array<String>) {
             model("debugger/smartStepInto")
         }
 
-        testClass<AbstractBeforeExtractFunctionInsertionTest> {
-            model("debugger/insertBeforeExtractFunction", extension = "kt")
-        }
-
         testClass<AbstractKotlinSteppingTest> {
             model("debugger/tinyApp/src/stepping/stepIntoAndSmartStepInto", pattern = KT_WITHOUT_DOTS_IN_NAME, testMethod = "doStepIntoTest", testClassName = "StepInto")
             model("debugger/tinyApp/src/stepping/stepIntoAndSmartStepInto", pattern = KT_WITHOUT_DOTS_IN_NAME, testMethod = "doSmartStepIntoTest", testClassName = "SmartStepInto")
@@ -654,6 +650,10 @@ fun main(args: Array<String>) {
         testClass<AbstractKotlinEvaluateExpressionTest> {
             model("debugger/tinyApp/src/evaluate/singleBreakpoint", testMethod = "doSingleBreakpointTest")
             model("debugger/tinyApp/src/evaluate/multipleBreakpoints", testMethod = "doMultipleBreakpointsTest")
+        }
+
+        testClass<AbstractAsyncStackTraceTest> {
+            model("debugger/tinyApp/src/asyncStackTrace")
         }
 
         testClass<AbstractFileRankingTest> {
@@ -804,6 +804,10 @@ fun main(args: Array<String>) {
             model("scratch", extension = "kts", testMethod = "doCompilingTest", testClassName = "Compiling", recursive = false)
             model("scratch", extension = "kts", testMethod = "doReplTest", testClassName = "Repl", recursive = false)
             model("scratch/multiFile", extension = null, testMethod = "doMultiFileTest", recursive = false)
+        }
+
+        testClass<AbstractFirMultiModuleResolveTest> {
+            model("fir/multiModule", recursive = false, extension = null)
         }
     }
 
@@ -1201,12 +1205,6 @@ fun main(args: Array<String>) {
 
         testClass<AbstractAndroidGutterIconTest> {
             model("android/gutterIcon")
-        }
-    }
-
-    testGroup("plugins/android-extensions/android-extensions-jps/test", "plugins/android-extensions/android-extensions-jps/testData") {
-        testClass<AbstractAndroidJpsTestCase> {
-            model("android", recursive = false, extension = null)
         }
     }
 }

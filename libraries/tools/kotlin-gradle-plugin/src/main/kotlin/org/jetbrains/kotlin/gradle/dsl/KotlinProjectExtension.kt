@@ -34,6 +34,12 @@ internal fun Project.createKotlinExtension(extensionClass: KClass<out KotlinProj
 internal val Project.kotlinExtension: KotlinProjectExtension
     get() = extensions.getByName(KOTLIN_PROJECT_EXTENSION_NAME) as KotlinProjectExtension
 
+internal val Project.multiplatformExtensionOrNull: KotlinMultiplatformExtension?
+    get() = extensions.findByName(KOTLIN_PROJECT_EXTENSION_NAME) as? KotlinMultiplatformExtension
+
+internal val Project.multiplatformExtension: KotlinMultiplatformExtension
+    get() = extensions.getByName(KOTLIN_PROJECT_EXTENSION_NAME) as KotlinMultiplatformExtension
+
 open class KotlinProjectExtension {
     val experimental: ExperimentalExtension
         get() = DslObject(this).extensions.getByType(ExperimentalExtension::class.java)
@@ -51,13 +57,7 @@ open class KotlinSingleJavaTargetExtension : KotlinProjectExtension() {
     internal lateinit var target: KotlinWithJavaTarget<*>
 }
 
-open class KotlinJvmProjectExtension : KotlinSingleJavaTargetExtension() {
-    /**
-     * With Gradle 4.0+, disables the separate output directory for Kotlin, falling back to sharing the deprecated
-     * single classes directory per source set. With Gradle < 4.0, has no effect.
-     * */
-    var copyClassesToJavaOutput = false
-}
+open class KotlinJvmProjectExtension : KotlinSingleJavaTargetExtension()
 
 open class ExperimentalExtension {
     var coroutines: Coroutines? = null

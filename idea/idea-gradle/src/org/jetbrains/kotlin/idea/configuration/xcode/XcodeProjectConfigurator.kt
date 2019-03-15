@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,6 +11,8 @@ import java.io.BufferedWriter
 class XcodeProjectConfigurator {
 
     private fun VirtualFile.bufferedWriter() = getOutputStream(this).bufferedWriter()
+
+    private val mppDirName = "app"
 
     fun createSkeleton(rootDir: VirtualFile) {
         val iosDir = rootDir.createChildDirectory(this, "iosApp")
@@ -32,7 +34,7 @@ class XcodeProjectConfigurator {
             tests.write(
                 """
 import XCTest
-import app
+import $mppDirName
 
 class iosAppTests: XCTestCase {
     func testExample() {
@@ -68,7 +70,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             viewController.write(
                 """
 import UIKit
-import app
+import $mppDirName
 
 class ViewController: UIViewController {
     override func viewDidLoad() {
@@ -86,7 +88,7 @@ class ViewController: UIViewController {
             testInfo.write(
                 """
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "https://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
@@ -112,7 +114,7 @@ class ViewController: UIViewController {
             sourceInfo.write(
                 """
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "https://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
@@ -257,8 +259,8 @@ class ViewController: UIViewController {
 		F861D7E6207FA40F0085E80D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F861D7E4207FA40F0085E80D /* Main.storyboard */; };
 		F861D7EB207FA4100085E80D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F861D7E9207FA4100085E80D /* LaunchScreen.storyboard */; };
 		F861D7F6207FA4100085E80D /* iosAppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F861D7F5207FA4100085E80D /* iosAppTests.swift */; };
-		F861D80C207FA4200085E80D /* app.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F861D805207FA4200085E80D /* app.framework */; };
-		F861D80D207FA4200085E80D /* app.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F861D805207FA4200085E80D /* app.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F861D80C207FA4200085E80D /* $mppDirName.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F861D805207FA4200085E80D /* $mppDirName.framework */; };
+		F861D80D207FA4200085E80D /* $mppDirName.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F861D805207FA4200085E80D /* $mppDirName.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -274,7 +276,7 @@ class ViewController: UIViewController {
 			containerPortal = F861D7D5207FA40F0085E80D /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = F861D804207FA4200085E80D;
-			remoteInfo = app;
+			remoteInfo = $mppDirName;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -285,7 +287,7 @@ class ViewController: UIViewController {
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				F861D80D207FA4200085E80D /* app.framework in Embed Frameworks */,
+				F861D80D207FA4200085E80D /* $mppDirName.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -293,7 +295,7 @@ class ViewController: UIViewController {
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		F861D7DD207FA40F0085E80D /* iosApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iosApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F861D7DD207FA40F0085E80D /* iosApp.$mppDirName */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iosApp.$mppDirName; sourceTree = BUILT_PRODUCTS_DIR; };
 		F861D7E0207FA40F0085E80D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F861D7E2207FA40F0085E80D /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		F861D7E5207FA40F0085E80D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -302,8 +304,8 @@ class ViewController: UIViewController {
 		F861D7F1207FA4100085E80D /* iosAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = iosAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F861D7F5207FA4100085E80D /* iosAppTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iosAppTests.swift; sourceTree = "<group>"; };
 		F861D7F7207FA4100085E80D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		F861D805207FA4200085E80D /* app.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = app.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		F861D813207FA4520085E80D /* app */ = {isa = PBXFileReference; lastKnownFileType = folder; name = app; path = ../app; sourceTree = "<group>"; };
+		F861D805207FA4200085E80D /* $mppDirName.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = $mppDirName.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		F861D813207FA4520085E80D /* $mppDirName */ = {isa = PBXFileReference; lastKnownFileType = folder; name = $mppDirName; path = ../$mppDirName; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -311,7 +313,7 @@ class ViewController: UIViewController {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F861D80C207FA4200085E80D /* app.framework in Frameworks */,
+				F861D80C207FA4200085E80D /* $mppDirName.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -328,7 +330,7 @@ class ViewController: UIViewController {
 		F861D7D4207FA40F0085E80D = {
 			isa = PBXGroup;
 			children = (
-				F861D813207FA4520085E80D /* app */,
+				F861D813207FA4520085E80D /* $mppDirName */,
 				F861D7DF207FA40F0085E80D /* iosApp */,
 				F861D7F4207FA4100085E80D /* iosAppTests */,
 				F861D7DE207FA40F0085E80D /* Products */,
@@ -338,9 +340,9 @@ class ViewController: UIViewController {
 		F861D7DE207FA40F0085E80D /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				F861D7DD207FA40F0085E80D /* iosApp.app */,
+				F861D7DD207FA40F0085E80D /* iosApp.$mppDirName */,
 				F861D7F1207FA4100085E80D /* iosAppTests.xctest */,
-				F861D805207FA4200085E80D /* app.framework */,
+				F861D805207FA4200085E80D /* $mppDirName.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -385,7 +387,7 @@ class ViewController: UIViewController {
 			);
 			name = iosApp;
 			productName = iosApp;
-			productReference = F861D7DD207FA40F0085E80D /* iosApp.app */;
+			productReference = F861D7DD207FA40F0085E80D /* iosApp.$mppDirName */;
 			productType = "com.apple.product-type.application";
 		};
 		F861D7F0207FA4100085E80D /* iosAppTests */ = {
@@ -406,9 +408,9 @@ class ViewController: UIViewController {
 			productReference = F861D7F1207FA4100085E80D /* iosAppTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		F861D804207FA4200085E80D /* app */ = {
+		F861D804207FA4200085E80D /* $mppDirName */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = F861D80E207FA4200085E80D /* Build configuration list for PBXNativeTarget "app" */;
+			buildConfigurationList = F861D80E207FA4200085E80D /* Build configuration list for PBXNativeTarget "$mppDirName" */;
 			buildPhases = (
 				F861D812207FA4320085E80D /* ShellScript */,
 			);
@@ -416,9 +418,9 @@ class ViewController: UIViewController {
 			);
 			dependencies = (
 			);
-			name = app;
-			productName = app;
-			productReference = F861D805207FA4200085E80D /* app.framework */;
+			name = $mppDirName;
+			productName = $mppDirName;
+			productReference = F861D805207FA4200085E80D /* $mppDirName.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
@@ -457,7 +459,7 @@ class ViewController: UIViewController {
 			targets = (
 				F861D7DC207FA40F0085E80D /* iosApp */,
 				F861D7F0207FA4100085E80D /* iosAppTests */,
-				F861D804207FA4200085E80D /* app */,
+				F861D804207FA4200085E80D /* $mppDirName */,
 			);
 		};
 /* End PBXProject section */
@@ -493,7 +495,7 @@ class ViewController: UIViewController {
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${"$"}SRCROOT/../gradlew\" -p \"${"$"}SRCROOT/../app\" copyFramework \\\n-Pconfiguration.build.dir=\"${"$"}CONFIGURATION_BUILD_DIR\"          \\\n-Pkotlin.build.type=\"${"$"}KOTLIN_BUILD_TYPE\"                      \\\n-Pkotlin.target=\"${"$"}KOTLIN_TARGET\"";
+			shellScript = "\"${"$"}SRCROOT/../gradlew\" -p \"${"$"}SRCROOT/../$mppDirName\" copyFramework \\\n-Pconfiguration.build.dir=\"${"$"}CONFIGURATION_BUILD_DIR\"          \\\n-Pkotlin.build.type=\"${"$"}KOTLIN_BUILD_TYPE\"                      \\\n-Pkotlin.target=\"${"$"}KOTLIN_TARGET\"";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -525,7 +527,7 @@ class ViewController: UIViewController {
 		};
 		F861D80B207FA4200085E80D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = F861D804207FA4200085E80D /* app */;
+			target = F861D804207FA4200085E80D /* $mppDirName */;
 			targetProxy = F861D80A207FA4200085E80D /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -724,7 +726,7 @@ class ViewController: UIViewController {
 				PRODUCT_NAME = "${'$'}(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "${'$'}(BUILT_PRODUCTS_DIR)/iosApp.app/iosApp";
+				TEST_HOST = "${'$'}(BUILT_PRODUCTS_DIR)/iosApp.$mppDirName/iosApp";
 			};
 			name = Debug;
 		};
@@ -744,7 +746,7 @@ class ViewController: UIViewController {
 				PRODUCT_NAME = "${'$'}(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "${'$'}(BUILT_PRODUCTS_DIR)/iosApp.app/iosApp";
+				TEST_HOST = "${'$'}(BUILT_PRODUCTS_DIR)/iosApp.$mppDirName/iosApp";
 			};
 			name = Release;
 		};
@@ -769,7 +771,7 @@ class ViewController: UIViewController {
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.app;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.$mppDirName;
 				PRODUCT_NAME = "${'$'}(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 4.0;
@@ -800,7 +802,7 @@ class ViewController: UIViewController {
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.app;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.$mppDirName;
 				PRODUCT_NAME = "${'$'}(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 4.0;
@@ -840,7 +842,7 @@ class ViewController: UIViewController {
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		F861D80E207FA4200085E80D /* Build configuration list for PBXNativeTarget "app" */ = {
+		F861D80E207FA4200085E80D /* Build configuration list for PBXNativeTarget "$mppDirName" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F861D80F207FA4200085E80D /* Debug */,

@@ -31,6 +31,11 @@ public class CompareContext<out T>(public val expected: T, public val actual: T)
         assertFailEquals({ expected.getter() }, { actual.getter() })
     }
 
+    public inline fun <reified E : Throwable> propertyFailsWith(crossinline getter: T.() -> Unit) {
+        assertFailsWith<E> { expected.getter() }
+        assertFailsWith<E> { actual.getter() }
+    }
+
     public fun <P> compareProperty(getter: T.() -> P, block: CompareContext<P>.() -> Unit) {
         compare(expected.getter(), actual.getter(), block)
     }

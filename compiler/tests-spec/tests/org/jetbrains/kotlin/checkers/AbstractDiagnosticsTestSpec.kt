@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.checkers
 
+import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.TestExceptionsComparator
+import org.jetbrains.kotlin.TestsExceptionType
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.psi.KtFile
@@ -18,22 +20,9 @@ import org.jetbrains.kotlin.test.*
 import org.junit.Assert
 import java.io.File
 import java.util.regex.Matcher
-import java.util.regex.Pattern
 
 abstract class AbstractDiagnosticsTestSpec : AbstractDiagnosticsTest() {
     companion object {
-        // map of pairs: source helper filename - target helper filename
-        private val directives = mapOf(
-            "WITH_BASIC_TYPES" to "basicTypes.kt",
-            "WITH_CLASSES" to "classes.kt",
-            "WITH_ENUM_CLASSES" to "enumClasses.kt",
-            "WITH_SEALED_CLASSES" to "sealedClasses.kt",
-            "WITH_FUNCTIONS" to "functions.kt",
-            "WITH_OBJECTS" to "objects.kt",
-            "WITH_TYPEALIASES" to "typeAliases.kt",
-            "WITH_CONTRACT_FUNCTIONS" to "contractFunctions.kt"
-        )
-
         private val withoutDescriptorsTestGroups = listOf(
             "linked/when-expression"
         )
@@ -41,8 +30,6 @@ abstract class AbstractDiagnosticsTestSpec : AbstractDiagnosticsTest() {
         private const val MODULE_PATH = "compiler/tests-spec"
         private const val DIAGNOSTICS_TESTDATA_PATH = "$MODULE_PATH/testData/diagnostics"
         private const val HELPERS_PATH = "$DIAGNOSTICS_TESTDATA_PATH/helpers"
-        private val exceptionPattern =
-            Pattern.compile("""Exception while analyzing expression at \((?<lineNumber>\d+),(?<symbolNumber>\d+)\) in /(?<filename>.*?)$""")
     }
 
     lateinit var specTest: AbstractSpecTest
@@ -67,13 +54,14 @@ abstract class AbstractDiagnosticsTestSpec : AbstractDiagnosticsTest() {
     override fun getKtFiles(testFiles: List<TestFile>, includeExtras: Boolean): List<KtFile> {
         val ktFiles = super.getKtFiles(testFiles, includeExtras) as ArrayList
 
-        if (includeExtras) {
-            for ((name, filename) in directives) {
-                if (checkDirective(name, testFiles)) {
-                    val declarations = File("$HELPERS_PATH/$filename").readText()
-                    ktFiles.add(KotlinTestUtils.createFile(filename, declarations, project))
-                }
-            }
+        if (specTest.helpers == null) return ktFiles
+
+        specTest.helpers?.forEach {
+            val filename = "$it.kt"
+            val helperContent = FileUtil.loadFile(File("$HELPERS_PATH/$filename"), true)
+            ktFiles.add(
+                KotlinTestUtils.createFile(filename, helperContent, project)
+            )
         }
 
         return ktFiles
@@ -91,9 +79,8 @@ abstract class AbstractDiagnosticsTestSpec : AbstractDiagnosticsTest() {
 
         println(specTest)
 
-        val checkUnexpectedBehaviour: (Matcher?) -> Pair<Boolean, Set<Int>?> = l@{ matches ->
-            if (specTest.unexpectedBehavior) return@l Pair(true, null)
-            if (matches == null) return@l Pair(false, null)
+        val computeExceptionPoint: (Matcher?) -> Set<Int>? = l@{ matches ->
+            if (matches == null) return@l null
 
             val lineNumber = matches.group("lineNumber").toInt()
             val symbolNumber = matches.group("symbolNumber").toInt()
@@ -103,10 +90,11 @@ abstract class AbstractDiagnosticsTestSpec : AbstractDiagnosticsTest() {
             val testCases = specTest.cases.byRanges[filename]
             val testCasesWithSamePosition = testCases!!.floorEntry(exceptionPosition).value
 
-            return@l Pair(testCasesWithSamePosition.all { it.value.unexpectedBehavior }, testCasesWithSamePosition.keys.toSet())
+            return@l testCasesWithSamePosition.keys.toSet()
         }
 
-        TestExceptionsComparator(testDataFile).runAndCompareWithExpected(checkUnexpectedBehaviour) {
+        val exceptionsInCases = specTest.cases.byNumbers.entries.associate { it.key to it.value.exception }
+        TestExceptionsComparator(testDataFile).run(specTest.exception, exceptionsInCases, computeExceptionPoint) {
             super.analyzeAndCheck(testDataFile, files)
         }
     }

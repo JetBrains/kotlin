@@ -1,0 +1,42 @@
+FILE fqName:<root> fileName:/dynamicCall.kt
+  FUN name:test1 visibility:public modality:FINAL <> (d:dynamic) returnType:dynamic flags:
+    VALUE_PARAMETER name:d index:0 type:dynamic flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='test1(dynamic): dynamic'
+        DYN_OP operator=INVOKE type=dynamic
+          receiver: DYN_MEMBER memberName='member' type=dynamic
+            GET_VAR 'value-parameter d: dynamic' type=dynamic origin=null
+          0: CONST Int type=kotlin.Int value=1
+          1: CONST Int type=kotlin.Int value=2
+          2: CONST Int type=kotlin.Int value=3
+  FUN name:test2 visibility:public modality:FINAL <> (d:dynamic) returnType:dynamic flags:
+    VALUE_PARAMETER name:d index:0 type:dynamic flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='test2(dynamic): dynamic'
+        BLOCK type=dynamic origin=SAFE_CALL
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:dynamic flags:val
+            GET_VAR 'value-parameter d: dynamic' type=dynamic origin=null
+          WHEN type=dynamic origin=null
+            BRANCH
+              if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
+                arg0: GET_VAR 'tmp0_safe_receiver: dynamic' type=dynamic origin=null
+                arg1: CONST Null type=kotlin.Nothing? value=null
+              then: CONST Null type=kotlin.Nothing? value=null
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: DYN_OP operator=INVOKE type=dynamic
+                receiver: DYN_MEMBER memberName='member' type=dynamic
+                  GET_VAR 'tmp0_safe_receiver: dynamic' type=dynamic origin=null
+                0: CONST Int type=kotlin.Int value=1
+                1: CONST Int type=kotlin.Int value=2
+                2: CONST Int type=kotlin.Int value=3
+  FUN name:test3 visibility:public modality:FINAL <> (d:dynamic) returnType:dynamic flags:
+    VALUE_PARAMETER name:d index:0 type:dynamic flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='test3(dynamic): dynamic'
+        DYN_OP operator=INVOKE type=dynamic
+          receiver: DYN_MEMBER memberName='member' type=dynamic
+            GET_VAR 'value-parameter d: dynamic' type=dynamic origin=null
+          0: CONST Int type=kotlin.Int value=1
+          1: CONST Int type=kotlin.Int value=2
+          2: CONST Int type=kotlin.Int value=3

@@ -8,6 +8,7 @@ dependencies {
     compile(project(":idea"))
     compile(project(":compiler:light-classes"))
     compile(project(":compiler:frontend.java"))
+    compile(project(":compiler:backend.jvm")) // TODO: fix import (workaround for jps build)
     compileOnly(intellijDep())
     compileOnly(commonDep("com.google.code.findbugs", "jsr305"))
 
@@ -28,7 +29,7 @@ sourceSets {
     "test" { none() }
 }
 
-configureInstrumentation()
+configureFormInstrumentation()
 
 runtimeJar {
     archiveName = "jvm-ide.jar"

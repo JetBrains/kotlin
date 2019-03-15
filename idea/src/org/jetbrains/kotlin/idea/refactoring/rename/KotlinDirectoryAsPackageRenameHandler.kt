@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.refactoring.rename
 
-import org.jetbrains.kotlin.statistics.KotlinStatisticsTrigger
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
@@ -25,18 +24,19 @@ import com.intellij.psi.PsiFile
 import com.intellij.refactoring.rename.DirectoryAsPackageRenameHandler
 import org.jetbrains.kotlin.psi.psiUtil.isIdentifier
 import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
-import org.jetbrains.kotlin.statistics.KotlinIdeRefactoringTrigger
+import org.jetbrains.kotlin.idea.statistics.KotlinEventTrigger
+import org.jetbrains.kotlin.idea.statistics.KotlinStatisticsTrigger
 
 class KotlinDirectoryAsPackageRenameHandler : DirectoryAsPackageRenameHandler() {
     override fun isIdentifier(name: String, project: Project): Boolean = name.quoteIfNeeded().isIdentifier()
     override fun invoke(project: Project, elements: Array<out PsiElement>, dataContext: DataContext?) {
         super.invoke(project, elements, dataContext)
-        KotlinStatisticsTrigger.trigger(KotlinIdeRefactoringTrigger::class.java, this.javaClass.simpleName)
+        KotlinStatisticsTrigger.trigger(KotlinEventTrigger.KotlinIdeRefactoringTrigger, this.javaClass.simpleName)
     }
 
     override fun invoke(project: Project, editor: Editor?, file: PsiFile?, dataContext: DataContext?) {
         super.invoke(project, editor, file, dataContext)
-        KotlinStatisticsTrigger.trigger(KotlinIdeRefactoringTrigger::class.java, this.javaClass.simpleName)
+        KotlinStatisticsTrigger.trigger(KotlinEventTrigger.KotlinIdeRefactoringTrigger, this.javaClass.simpleName)
     }
 
 }

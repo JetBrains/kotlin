@@ -157,9 +157,13 @@ class KtLightAnnotationForSourceEntry(
             val valueArguments = callEntry.value.arguments
             val argument = valueArguments.firstOrNull()?.getArgumentExpression() ?: return null
 
-            if (!callEntry.key.type.let { KotlinBuiltIns.isArray(it) }) return null
+            if (!callEntry.key.type.let { KotlinBuiltIns.isArrayOrPrimitiveArray(it) }) return null
 
-            if (argument !is KtStringTemplateExpression && argument !is KtConstantExpression && getAnnotationName(argument) == null) {
+            if (argument !is KtStringTemplateExpression &&
+                argument !is KtConstantExpression &&
+                argument !is KtClassLiteralExpression &&
+                getAnnotationName(argument) == null
+            ) {
                 return null
             }
 
@@ -404,7 +408,7 @@ private fun getAnnotationName(callee: KtExpression): String? {
     return null
 }
 
-@TestOnly
+@get:TestOnly
 var accessAnnotationsClsDelegateIsAllowed = false
 
 @TestOnly

@@ -60,7 +60,7 @@ import java.util.*
 
 abstract class AbstractGradleMultiplatformWizardTest : ProjectWizardTestCase<AbstractProjectWizard>() {
 
-    private val pluginVersion = "1.3.20-eap-25"
+    private val pluginVersion = "1.3.21"
 
     override fun createWizard(project: Project?, directory: File): AbstractProjectWizard {
         return NewProjectWizard(project, ModulesProvider.EMPTY_MODULES_PROVIDER, directory.path)

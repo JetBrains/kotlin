@@ -67,8 +67,11 @@ import static org.jetbrains.kotlin.codegen.CodegenUtilKt.isGenericToArray;
 import static org.jetbrains.kotlin.codegen.CodegenUtilKt.isNonGenericToArray;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.*;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.enumEntryNeedSubclass;
+import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.getDelegatedLocalVariableMetadata;
 import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtils2Kt.initDefaultSourceMappingIfNeeded;
 import static org.jetbrains.kotlin.load.java.JvmAbi.*;
+import static org.jetbrains.kotlin.resolve.BindingContext.INDEXED_LVALUE_GET;
+import static org.jetbrains.kotlin.resolve.BindingContext.INDEXED_LVALUE_SET;
 import static org.jetbrains.kotlin.resolve.BindingContextUtils.getNotNull;
 import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
@@ -795,16 +798,14 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 !properVisibilityForCompanionObjectInstanceField &&
                 (hasPrivateOrProtectedProperVisibility || hasPackagePrivateProperVisibility ||
                  isNonIntrinsicPrivateCompanionObjectInInterface(companionObjectDescriptor));
-        boolean doNotGeneratePublic =
-                properVisibilityForCompanionObjectInstanceField && hasPrivateOrProtectedProperVisibility;
-        int fieldAccessFlags;
-        if (doNotGeneratePublic) {
-            fieldAccessFlags = ACC_STATIC | ACC_FINAL;
+        boolean fieldIsForcedToBePublic =
+                JvmCodegenUtil.isJvmInterface(descriptor) ||
+                !properVisibilityForCompanionObjectInstanceField;
+        int fieldAccessFlags = ACC_STATIC | ACC_FINAL;
+        if (fieldIsForcedToBePublic) {
+            fieldAccessFlags |= ACC_PUBLIC;
         }
         else {
-            fieldAccessFlags = ACC_PUBLIC | ACC_STATIC | ACC_FINAL;
-        }
-        if (properVisibilityForCompanionObjectInstanceField) {
             fieldAccessFlags |= properFieldVisibilityFlag;
         }
         if (fieldShouldBeDeprecated) {
@@ -912,7 +913,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             if (state.getClassBuilderMode().generateBodies && info.defaultValue == null) {
                 ExpressionCodegen codegen = createOrGetClInitCodegen();
                 int companionObjectIndex = putCompanionObjectInLocalVar(codegen);
-                StackValue.local(companionObjectIndex, OBJECT_TYPE).put(OBJECT_TYPE, codegen.v);
+                StackValue.local(companionObjectIndex, OBJECT_TYPE).put(codegen.v);
                 copyFieldFromCompanionObject(property);
             }
         }
@@ -975,7 +976,12 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         ClassDescriptor classDescriptor = ((ConstructorDescriptor) containingDeclaration).getConstructedClass();
                         if (classDescriptor == ImplementationBodyCodegen.this.descriptor) return;
                     }
-                    lookupInContext(descriptor);
+                    if (lookupInContext(descriptor)) {
+                        if (isDelegatedLocalVariable(descriptor)) {
+                            VariableDescriptor metadata = getDelegatedLocalVariableMetadata((VariableDescriptor) descriptor, bindingContext);
+                            lookupInContext(metadata);
+                        }
+                    }
                 }
             }
 
@@ -998,8 +1004,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 }
             }
 
-            private void lookupInContext(@NotNull DeclarationDescriptor toLookup) {
-                context.lookupInContext(toLookup, StackValue.LOCAL_0, state, true);
+            private boolean lookupInContext(@NotNull DeclarationDescriptor toLookup) {
+                return context.lookupInContext(toLookup, StackValue.LOCAL_0, state, true) != null;
             }
 
             @Override
@@ -1022,6 +1028,22 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             @Override
             public void visitSuperExpression(@NotNull KtSuperExpression expression) {
                 lookupInContext(ExpressionCodegen.getSuperCallLabelTarget(context, expression));
+            }
+
+            @Override
+            public void visitArrayAccessExpression(@NotNull KtArrayAccessExpression expression) {
+                ResolvedCall<FunctionDescriptor> resolvedGetCall = bindingContext.get(INDEXED_LVALUE_GET, expression);
+                if (resolvedGetCall != null) {
+                    ReceiverValue receiver = resolvedGetCall.getDispatchReceiver();
+                    lookupReceiver(receiver);
+                }
+
+                ResolvedCall<FunctionDescriptor> resolvedSetCall = bindingContext.get(INDEXED_LVALUE_SET, expression);
+                if (resolvedSetCall != null) {
+                    ReceiverValue receiver = resolvedSetCall.getDispatchReceiver();
+                    lookupReceiver(receiver);
+                }
+                super.visitArrayAccessExpression(expression);
             }
         };
 

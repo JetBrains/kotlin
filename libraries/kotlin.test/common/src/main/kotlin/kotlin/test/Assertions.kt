@@ -14,6 +14,7 @@ package kotlin.test
 
 import kotlin.contracts.*
 import kotlin.internal.*
+import kotlin.native.concurrent.ThreadLocal
 import kotlin.reflect.KClass
 
 /**
@@ -23,6 +24,7 @@ val asserter: Asserter
     get() = _asserter ?: lookupAsserter()
 
 /** Used to override current asserter internally */
+@ThreadLocal
 internal var _asserter: Asserter? = null
 
 /** Asserts that the given [block] returns `true`. */

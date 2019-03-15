@@ -27,4 +27,4 @@ fun doubleToInt(a: dynamic) = js("""
     return a | 0;
 """).unsafeCast<Int>()
 
-fun numberToChar(a: dynamic) = Char(numberToInt(a))
+fun numberToChar(a: dynamic) = Char(numberToInt(a) and 0xFFFF)

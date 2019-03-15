@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license 
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license 
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -37,9 +37,17 @@ internal constructor(@PublishedApi internal val storage: LongArray) : Collection
         override fun nextULong() = if (index < array.size) array[index++].toULong() else throw NoSuchElementException(index.toString())
     }
 
-    override fun contains(element: ULong): Boolean = storage.contains(element.toLong())
+    override fun contains(element: ULong): Boolean {
+        // TODO: Eliminate this check after KT-30016 gets fixed.
+        // Currently JS BE does not generate special bridge method for this method.
+        if ((element as Any?) !is ULong) return false
 
-    override fun containsAll(elements: Collection<ULong>): Boolean = elements.all { storage.contains(it.toLong()) }
+        return storage.contains(element.toLong())
+    }
+
+    override fun containsAll(elements: Collection<ULong>): Boolean {
+        return (elements as Collection<*>).all { it is ULong && storage.contains(it.toLong()) }
+    }
 
     override fun isEmpty(): Boolean = this.storage.size == 0
 }

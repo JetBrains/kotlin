@@ -19,7 +19,7 @@ class MavenImportListener(val project: Project) : MavenProjectsManager.Listener 
             MavenImportListener.TOPIC,
             MavenImportListener { _: Collection<MavenProject>, _: List<Module> ->
                 notifyOutdatedBundledCompilerIfNecessary(project)
-                KotlinMigrationProjectComponent.getInstance(project).onImportFinished()
+                KotlinMigrationProjectComponent.getInstanceIfNotDisposed(project)?.onImportFinished()
             }
         )
 
@@ -27,6 +27,6 @@ class MavenImportListener(val project: Project) : MavenProjectsManager.Listener 
     }
 
     override fun projectsScheduled() {
-        KotlinMigrationProjectComponent.getInstance(project).onImportAboutToStart()
+        KotlinMigrationProjectComponent.getInstanceIfNotDisposed(project)?.onImportAboutToStart()
     }
 }

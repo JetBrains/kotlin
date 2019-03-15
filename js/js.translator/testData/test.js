@@ -104,5 +104,5 @@ function runTest(testRunner, location) {
 }
 
 function supplyAsserter(kotlinTest) {
-    kotlinTest.kotlin.test.overrideAsserter_wbnzx$(new kotlinTest.kotlin.test.DefaultAsserter());
+    kotlinTest.kotlin.test.overrideAsserter_wbnzx$(kotlinTest.kotlin.test.DefaultAsserter);
 }

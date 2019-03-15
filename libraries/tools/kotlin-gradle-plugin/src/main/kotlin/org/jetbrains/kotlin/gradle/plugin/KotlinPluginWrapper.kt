@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSetFactory
 import org.jetbrains.kotlin.gradle.tasks.KOTLIN_COMPILER_EMBEDDABLE
 import org.jetbrains.kotlin.gradle.tasks.KOTLIN_MODULE_GROUP
+import org.jetbrains.kotlin.gradle.utils.checkGradleCompatibility
 import java.io.FileNotFoundException
 import java.util.*
 import javax.inject.Inject
@@ -49,6 +50,8 @@ abstract class KotlinBasePluginWrapper(
         DefaultKotlinSourceSetFactory(project, fileResolver)
 
     override fun apply(project: Project) {
+        checkGradleCompatibility()
+
         project.configurations.maybeCreate(COMPILER_CLASSPATH_CONFIGURATION_NAME).defaultDependencies {
             it.add(project.dependencies.create("$KOTLIN_MODULE_GROUP:$KOTLIN_COMPILER_EMBEDDABLE:$kotlinPluginVersion"))
         }
@@ -63,6 +66,8 @@ abstract class KotlinBasePluginWrapper(
         // TODO: consider only set if if daemon or parallel compilation are enabled, though this way it should be safe too
         System.setProperty(org.jetbrains.kotlin.cli.common.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, "true")
         val kotlinGradleBuildServices = KotlinGradleBuildServices.getInstance(project.gradle)
+
+        kotlinGradleBuildServices.detectKotlinPluginLoadedInMultipleProjects(project, kotlinPluginVersion)
 
         project.createKotlinExtension(projectExtensionClass).apply {
             fun kotlinSourceSetContainer(factory: NamedDomainObjectFactory<KotlinSourceSet>) =

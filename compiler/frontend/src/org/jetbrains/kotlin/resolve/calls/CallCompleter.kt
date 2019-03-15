@@ -9,12 +9,18 @@ import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
 import org.jetbrains.kotlin.builtins.isFunctionOrSuspendFunctionType
 import org.jetbrains.kotlin.contracts.EffectSystem
+import org.jetbrains.kotlin.contracts.description.ContractProviderKey
+import org.jetbrains.kotlin.contracts.description.LazyContractProvider
+import org.jetbrains.kotlin.contracts.parsing.isContractCallDescriptor
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.isContractDescriptionCallPsiCheck
+import org.jetbrains.kotlin.psi.psiUtil.isFirstStatement
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.BindingContext.CONSTRAINT_SYSTEM_COMPLETER
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS
@@ -129,6 +135,20 @@ class CallCompleter(
         context: BasicCallResolutionContext,
         tracing: TracingStrategy
     ) {
+        context.call.callElement.safeAs<KtExpression>()?.let { callExpression ->
+            if (callExpression.isFirstStatement() && callExpression.isContractDescriptionCallPsiCheck()) {
+                if (resolvedCall?.resultingDescriptor?.isContractCallDescriptor() != true) {
+                    context.scope.ownerDescriptor
+                        .safeAs<FunctionDescriptor>()
+                        ?.getUserData(ContractProviderKey)
+                        ?.safeAs<LazyContractProvider>()
+                        ?.setContractDescription(null)
+                } else {
+                    context.trace.record(BindingContext.IS_CONTRACT_DECLARATION_BLOCK, callExpression, true)
+                }
+            }
+        }
+
         if (resolvedCall == null || resolvedCall.isCompleted || resolvedCall.constraintSystem == null) {
             completeArguments(context, results)
             resolvedCall?.updateResultDataFlowInfoUsingEffects(context.trace)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -31,6 +31,29 @@ class InlayTypeHintsTest : KotlinLightCodeInsightFixtureTestCase() {
 
     fun testDestructuringType() {
         checkLocalVariable("""fun foo() { val (i<hint text=": Int" />, s<hint text=": String" />) = 1 to "" }""")
+    }
+
+    fun testQualifiedReferences() {
+        checkLocalVariable("""
+            package p
+            class A {
+                class B {
+                    class C {
+                        class D
+                    }
+                }
+                inner class E
+                enum class F { enumCase }
+            }
+            fun foo() {
+                val v1 = A.B.C.D()
+                val v2 = p.A.B.C.D()
+                val v3<hint text=": A.E"/> = A().E()
+                val v4 = p.A.F.enumCase
+                val v5 = A.F.enumCase
+                val v6 = p.A()
+            }
+        """)
     }
 
     fun testPropertyType() {

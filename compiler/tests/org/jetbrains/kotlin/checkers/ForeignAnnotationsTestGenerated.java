@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -32,6 +32,11 @@ public class ForeignAnnotationsTestGenerated extends AbstractForeignAnnotationsT
     @TestMetadata("androidRecently.kt")
     public void testAndroidRecently() throws Exception {
         runTest("compiler/testData/foreignAnnotations/tests/androidRecently.kt");
+    }
+
+    @TestMetadata("androidSdk.kt")
+    public void testAndroidSdk() throws Exception {
+        runTest("compiler/testData/foreignAnnotations/tests/androidSdk.kt");
     }
 
     @TestMetadata("android_support.kt")

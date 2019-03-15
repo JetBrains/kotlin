@@ -26,14 +26,12 @@ import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.incremental.ChangedFiles
 import org.jetbrains.kotlin.gradle.internal.CompilerArgumentAwareWithInput
 import org.jetbrains.kotlin.gradle.internal.prepareCompilerArguments
-import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
-import org.jetbrains.kotlin.gradle.logging.kotlinDebug
-import org.jetbrains.kotlin.gradle.logging.kotlinWarn
+import org.jetbrains.kotlin.gradle.internal.tasks.TaskWithLocalState
+import org.jetbrains.kotlin.gradle.internal.tasks.allOutputFiles
+import org.jetbrains.kotlin.gradle.logging.*
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.utils.ParsedGradleVersion
-import org.jetbrains.kotlin.gradle.utils.isParentOf
-import org.jetbrains.kotlin.gradle.utils.pathsAsStringRelativeTo
-import org.jetbrains.kotlin.gradle.utils.toSortedPathsArray
+import org.jetbrains.kotlin.gradle.report.BuildReportMode
+import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.jetbrains.kotlin.incremental.classpathAsList
 import org.jetbrains.kotlin.incremental.destinationAsFile
@@ -47,7 +45,11 @@ const val KOTLIN_BUILD_DIR_NAME = "kotlin"
 const val USING_JVM_INCREMENTAL_COMPILATION_MESSAGE = "Using Kotlin/JVM incremental compilation"
 const val USING_JS_INCREMENTAL_COMPILATION_MESSAGE = "Using Kotlin/JS incremental compilation"
 
-abstract class AbstractKotlinCompileTool<T : CommonToolArguments>() : AbstractCompile(), CompilerArgumentAwareWithInput<T> {
+abstract class AbstractKotlinCompileTool<T : CommonToolArguments>
+    : AbstractCompile(),
+    CompilerArgumentAwareWithInput<T>,
+    TaskWithLocalState {
+
     private fun useCompilerClasspathConfigurationMessage(propertyName: String) {
         logger.kotlinWarn(
             "'$path.$propertyName' is deprecated and will be removed soon. " +
@@ -119,6 +121,8 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     internal val taskBuildDirectory: File
         get() = File(File(project.buildDir, KOTLIN_BUILD_DIR_NAME), name)
 
+    override fun localStateDirectories(): FileCollection = project.files(taskBuildDirectory)
+
     // indicates that task should compile kotlin incrementally if possible
     // it's not possible when IncrementalTaskInputs#isIncremental returns false (i.e first build)
     @get:Input
@@ -130,11 +134,14 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
         }
 
     @get:Internal
+    internal var buildReportMode: BuildReportMode? = null
+
+    @get:Internal
     internal val buildHistoryFile: File
         get() = File(taskBuildDirectory, "build-history.bin")
 
     @get:Input
-    internal var useModuleDetection: Boolean = false
+    internal open var useModuleDetection: Boolean = false
 
     @get:Internal
     protected val multiModuleICSettings: MultiModuleICSettings
@@ -248,6 +255,8 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
         }
     }
 
+    private val kotlinLogger by lazy { GradleKotlinLogger(logger) }
+
     internal open fun compilerRunner(): GradleCompilerRunner =
         GradleCompilerRunner(this)
 
@@ -256,14 +265,41 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     }
 
     @TaskAction
-    open fun execute(inputs: IncrementalTaskInputs): Unit {
+    fun execute(inputs: IncrementalTaskInputs) {
+        // If task throws exception, but its outputs are changed during execution,
+        // then Gradle forces next build to be non-incremental (see Gradle's DefaultTaskArtifactStateRepository#persistNewOutputs)
+        // To prevent this, we backup outputs before incremental build and restore when exception is thrown
+        val outputsBackup: TaskOutputsBackup? =
+            if (incremental && inputs.isIncremental)
+                kotlinLogger.logTime("Backing up outputs for incremental build") {
+                    TaskOutputsBackup(allOutputFiles())
+                }
+            else null
+
+        if (!incremental) {
+            clearLocalState("IC is disabled")
+        }
+
+        try {
+            executeImpl(inputs)
+        } catch (t: Throwable) {
+            if (outputsBackup != null) {
+                kotlinLogger.logTime("Restoring previous outputs on error") {
+                    outputsBackup.restoreOutputs()
+                }
+            }
+            throw t
+        }
+    }
+
+    private fun executeImpl(inputs: IncrementalTaskInputs) {
         // Check that the JDK tools are available in Gradle (fail-fast, instead of a fail during the compiler run):
         findToolsJar()
 
         val sourceRoots = getSourceRoots()
         val allKotlinSources = sourceRoots.kotlinSourceFiles
 
-        logger.kotlinDebug { "all kotlin sources: ${allKotlinSources.pathsAsStringRelativeTo(project.rootProject.projectDir)}" }
+        logger.kotlinDebug { "All kotlin sources: ${allKotlinSources.pathsAsStringRelativeTo(project.rootProject.projectDir)}" }
 
         if (allKotlinSources.isEmpty()) {
             logger.kotlinDebug { "No Kotlin files found, skipping Kotlin compiler task" }
@@ -280,7 +316,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     internal abstract fun getSourceRoots(): SourceRoots
 
     /**
-     * Compiler might be executed asynchronuosly. Do not do anything requiring end of compilation after this function is called.
+     * Compiler might be executed asynchronously. Do not do anything requiring end of compilation after this function is called.
      * @see [GradleKotlinCompilerWork]
      */
     internal abstract fun callCompilerAsync(args: T, sourceRoots: SourceRoots, changedFiles: ChangedFiles)
@@ -403,7 +439,8 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
 
         val environment = GradleCompilerEnvironment(
             computedCompilerClasspath, messageCollector, outputItemCollector,
-            localStateDirectories = localStateDirectories(),
+            outputFiles = allOutputFiles(),
+            buildReportMode = buildReportMode,
             incrementalCompilationEnvironment = icEnv
         )
         compilerRunner.runJvmCompilerAsync(
@@ -560,7 +597,8 @@ open class Kotlin2JsCompile : AbstractKotlinCompile<K2JSCompilerArguments>(), Ko
 
         val environment = GradleCompilerEnvironment(
             computedCompilerClasspath, messageCollector, outputItemCollector,
-            localStateDirectories = localStateDirectories(),
+            outputFiles = allOutputFiles(),
+            buildReportMode = buildReportMode,
             incrementalCompilationEnvironment = icEnv
         )
         compilerRunner.runJsCompilerAsync(sourceRoots.kotlinSourceFiles, commonSourceSet.toList(), args, environment)

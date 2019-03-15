@@ -1,8 +1,0 @@
-<component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="[JPS] Generate All Tests" type="Application" factoryName="Application">
-    <option name="MAIN_CLASS_NAME" value="org.jetbrains.kotlin.pill.generateAllTests.Main" />
-    <module name="generate-all-tests.test" />
-    <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
-    <method />
-  </configuration>
-</component>

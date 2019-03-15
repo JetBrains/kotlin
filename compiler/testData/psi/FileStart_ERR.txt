@@ -14,9 +14,12 @@ KtFile: FileStart_ERR.kt
     PsiElement(DOT)('.')
   PsiErrorElement:Expecting a top level declaration
     PsiElement(IDENTIFIER)('bar')
+  PsiErrorElement:imports are only allowed in the beginning of file
+    <empty list>
   PsiWhiteSpace('\n')
-  PsiErrorElement:Expecting a top level declaration
-    PsiElement(IDENTIFIER)('import')
-  PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting a top level declaration
-    PsiElement(IDENTIFIER)('foo')
+  IMPORT_LIST
+    IMPORT_DIRECTIVE
+      PsiElement(import)('import')
+      PsiWhiteSpace(' ')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('foo')

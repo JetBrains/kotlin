@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -87,6 +87,11 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
     @TestMetadata("defaultImpls.kt")
     public void testDefaultImpls() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/defaultImpls.kt");
+    }
+
+    @TestMetadata("enumImports.kt")
+    public void testEnumImports() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/enumImports.kt");
     }
 
     @TestMetadata("enums.kt")
@@ -269,6 +274,11 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/kt27126.kt");
     }
 
+    @TestMetadata("kt28306.kt")
+    public void testKt28306() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/kt28306.kt");
+    }
+
     @TestMetadata("lazyProperty.kt")
     public void testLazyProperty() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/lazyProperty.kt");
@@ -362,6 +372,11 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
     @TestMetadata("repeatableAnnotations.kt")
     public void testRepeatableAnnotations() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/repeatableAnnotations.kt");
+    }
+
+    @TestMetadata("secondaryConstructor.kt")
+    public void testSecondaryConstructor() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/secondaryConstructor.kt");
     }
 
     @TestMetadata("severalPackageParts.kt")

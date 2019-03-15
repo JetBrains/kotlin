@@ -23,7 +23,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager
 import org.jetbrains.kotlin.idea.core.script.StandardIdeScriptDefinition
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
-import org.jetbrains.kotlin.script.findScriptDefinition
+import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.findScriptDefinition
 
 class KotlinScriptResolveScopeProvider : ResolveScopeProvider() {
     companion object {
@@ -32,7 +32,7 @@ class KotlinScriptResolveScopeProvider : ResolveScopeProvider() {
     }
 
     override fun getResolveScope(file: VirtualFile, project: Project): GlobalSearchScope? {
-        val scriptDefinition = findScriptDefinition(file, project)
+        val scriptDefinition = file.findScriptDefinition(project)
         // TODO: this should get this particular scripts dependencies
         return when {
             scriptDefinition == null -> null

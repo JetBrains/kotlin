@@ -138,6 +138,20 @@ class IntegerValueTypeConstant(
 
             return IntegerValueTypeConstant(value, module, newParameters, convertedFromSigned = true)
         }
+
+        fun IntegerValueTypeConstant.convertToSignedConstant(module: ModuleDescriptor): IntegerValueTypeConstant {
+            val newParameters = CompileTimeConstant.Parameters(
+                parameters.canBeUsedInAnnotation,
+                parameters.isPure,
+                isUnsignedNumberLiteral = false,
+                isUnsignedLongNumberLiteral = parameters.isUnsignedLongNumberLiteral,
+                usesVariableAsConstant = parameters.usesVariableAsConstant,
+                usesNonConstValAsConstant = parameters.usesNonConstValAsConstant,
+                isConvertableConstVal = parameters.isConvertableConstVal
+            )
+
+            return IntegerValueTypeConstant(value, module, newParameters, convertedFromSigned = true)
+        }
     }
 
     private val typeConstructor = IntegerValueTypeConstructor(value.toLong(), module, parameters)

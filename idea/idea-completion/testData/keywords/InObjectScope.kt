@@ -28,7 +28,7 @@ object Test {
 // EXIST:  external
 // EXIST:  annotation class
 // EXIST:  const val
-// EXIST:  suspend
+// EXIST:  suspend fun
 // EXIST:  typealias
 // EXIST:  expect
 // EXIST:  actual

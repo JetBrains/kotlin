@@ -1,0 +1,8 @@
+public open class AnnotatedField : R|java/lang/Object| {
+    @R|test/AnnotatedField.Anno|(String(static)) public final static property x(val): R|kotlin/Int|
+        public get(): R|kotlin/Int|
+
+    @R|test/AnnotatedField.Anno|(String(member)) public final property y(val): R|kotlin/Int|
+        public get(): R|kotlin/Int|
+
+}

@@ -1,0 +1,10 @@
+FILE: jvm.kt
+    public final class User : R|AnnotatedDerived| {
+        public constructor(): super<R|AnnotatedDerived|>()
+
+        public final function test(): R|kotlin/Unit| {
+            val x: R|error: Not supported: FirImplicitTypeRefImpl| = R|/AnnotatedDerived.foo|(String(123))
+            val y: R|error: Not supported: FirImplicitTypeRefImpl| = R|/AnnotatedDerived.foo|(Null(null))
+        }
+
+    }

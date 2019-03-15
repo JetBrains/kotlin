@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.ir.types
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -42,10 +44,10 @@ val IrType.classifierOrFail: IrClassifierSymbol
 val IrType.classifierOrNull: IrClassifierSymbol?
     get() = safeAs<IrSimpleType>()?.classifier
 
-fun IrType.makeNotNull() =
+fun IrType.makeNotNull(addKotlinType:Boolean = true) =
     if (this is IrSimpleType && this.hasQuestionMark)
         IrSimpleTypeImpl(
-            makeKotlinType(classifier, arguments, false),
+            if (addKotlinType) makeKotlinType(classifier, arguments, false) else null,
             classifier,
             false,
             arguments,
@@ -55,10 +57,10 @@ fun IrType.makeNotNull() =
     else
         this
 
-fun IrType.makeNullable() =
+fun IrType.makeNullable(addKotlinType:Boolean = true) =
     if (this is IrSimpleType && !this.hasQuestionMark)
         IrSimpleTypeImpl(
-            makeKotlinType(classifier, arguments, true),
+            if (addKotlinType) makeKotlinType(classifier, arguments, true) else null,
             classifier,
             true,
             arguments,
@@ -68,6 +70,9 @@ fun IrType.makeNullable() =
     else
         this
 
+// TODO: get rid of this
+var irTypeKotlinBuiltIns: KotlinBuiltIns? = null
+
 fun IrType.toKotlinType(): KotlinType {
     originalKotlinType?.let {
         return it
@@ -75,6 +80,7 @@ fun IrType.toKotlinType(): KotlinType {
 
     return when (this) {
         is IrSimpleType -> makeKotlinType(classifier, arguments, hasQuestionMark)
+        is IrDynamicType -> createDynamicType(irTypeKotlinBuiltIns!!)
         else -> TODO(toString())
     }
 }

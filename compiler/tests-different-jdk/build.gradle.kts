@@ -25,7 +25,7 @@ sourceSets {
 fun Project.codegenTest(target: Int, jvm: Int,
                         jdk: String = "JDK_${if (jvm <= 8) "1" else ""}$jvm",
                         body: Test.() -> Unit): Test = projectTest("codegenTarget${target}Jvm${jvm}Test") {
-    dependsOn(*testDistProjects.map { "$it:dist" }.toTypedArray())
+    dependsOn(":dist")
     workingDir = rootDir
 
     filter.includeTestsMatching("org.jetbrains.kotlin.codegen.jdk.JvmTarget${target}OnJvm${jvm}")

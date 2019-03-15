@@ -50,6 +50,8 @@ projectTest {
     dependsOn(":dist")
 }
 
+publish()
+
 runtimeJar {
     fromEmbeddedComponents()
 }
@@ -58,5 +60,3 @@ sourcesJar()
 javadocJar()
 
 dist()
-
-publish()

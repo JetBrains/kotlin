@@ -23,8 +23,8 @@ import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 import org.jetbrains.kotlin.resolve.calls.tower.isSynthesized
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
-internal class PropertiesHighlightingVisitor(holder: AnnotationHolder, bindingContext: BindingContext)
-    : AfterAnalysisHighlightingVisitor(holder, bindingContext) {
+internal class PropertiesHighlightingVisitor(holder: AnnotationHolder, bindingContext: BindingContext) :
+    AfterAnalysisHighlightingVisitor(holder, bindingContext) {
 
     override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
         if (expression.parent is KtThisExpression) {
@@ -47,8 +47,9 @@ internal class PropertiesHighlightingVisitor(holder: AnnotationHolder, bindingCo
             }
         } ?: attributeKeyByPropertyType(target)
 
-        highlightName(expression, attributesKey)
-
+        if (attributesKey != null) {
+            highlightName(expression, attributesKey)
+        }
     }
 
     override fun visitProperty(property: KtProperty) {
@@ -78,16 +79,22 @@ internal class PropertiesHighlightingVisitor(holder: AnnotationHolder, bindingCo
         elementToHighlight: PsiElement,
         descriptor: PropertyDescriptor
     ) {
-        highlightName(
-            elementToHighlight,
+        val textAttributesKey =
             attributeKeyForDeclarationFromExtensions(elementToHighlight, descriptor) ?: attributeKeyByPropertyType(descriptor)
-        )
+
+        if (textAttributesKey != null) {
+            highlightName(
+                elementToHighlight,
+                textAttributesKey
+            )
+        }
     }
 
-    private fun attributeKeyByPropertyType(descriptor: PropertyDescriptor): TextAttributesKey {
+    private fun attributeKeyByPropertyType(descriptor: PropertyDescriptor): TextAttributesKey? {
         return when {
             descriptor.isDynamic() ->
-                DYNAMIC_PROPERTY_CALL
+                // The property is set in VariablesHighlightingVisitor
+                null
 
             descriptor.extensionReceiverParameter != null ->
                 if (descriptor.isSynthesized) SYNTHETIC_EXTENSION_PROPERTY else EXTENSION_PROPERTY

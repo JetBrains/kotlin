@@ -40,6 +40,9 @@
         <extensionPoint qualifiedName="org.jetbrains.kotlin.scriptTemplatesProvider"
                         interface="org.jetbrains.kotlin.script.ScriptTemplatesProvider"
                         area="IDEA_PROJECT"/>
+        <extensionPoint qualifiedName="org.jetbrains.kotlin.extraImportsProviderExtension"
+                        interface="org.jetbrains.kotlin.resolve.extensions.ExtraImportsProviderExtension"
+                        area="IDEA_PROJECT"/>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.facetConfigurationExtension"
                         interface="org.jetbrains.kotlin.idea.facet.KotlinFacetConfigurationExtension"/>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.versionInfoProvider"

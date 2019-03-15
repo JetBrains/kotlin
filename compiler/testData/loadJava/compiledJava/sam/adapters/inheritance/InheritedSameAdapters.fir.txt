@@ -1,0 +1,2 @@
+public abstract interface InheritedSameAdapters : R|java/lang/Object| {
+}

@@ -66,15 +66,14 @@ fun File.toScriptSource(): SourceCode = FileScriptSource(this)
 /**
  * The implementation of the ScriptSource for a script in a String
  */
-open class StringScriptSource(val source: String) : SourceCode {
+open class StringScriptSource(val source: String, override val name: String? = null) : SourceCode {
 
     override val text: String get() = source
 
-    override val name: String? = null
     override val locationId: String? = null
 }
 
 /**
  * Converts the String into the SourceCode
  */
-fun String.toScriptSource(): SourceCode = StringScriptSource(this)
+fun String.toScriptSource(name: String? = null): SourceCode = StringScriptSource(this, name)

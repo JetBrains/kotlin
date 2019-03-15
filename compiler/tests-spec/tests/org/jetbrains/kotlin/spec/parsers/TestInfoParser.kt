@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.spec.parsers
 
 import com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.TestsExceptionType
 import org.jetbrains.kotlin.spec.*
 import org.jetbrains.kotlin.spec.models.CommonInfoElementType
 import org.jetbrains.kotlin.spec.models.CommonSpecTestFileInfoElementType
@@ -18,13 +19,14 @@ import java.io.File
 data class ParsedTestFile(
     val testArea: TestArea,
     val testType: TestType,
-    val sections: List<String>,
     val testNumber: Int,
     val testDescription: String,
     val testInfoElements: SpecTestInfoElements<SpecTestInfoElementType>,
     val testCasesSet: SpecTestCasesSet,
     val unexpectedBehavior: Boolean,
-    val issues: Set<String>
+    val issues: Set<String>,
+    val helpers: Set<String>?,
+    val exception: TestsExceptionType?
 )
 
 fun parseTestInfo(testFilePath: String, testFiles: TestFiles, linkedTestType: SpecTestLinkedType): ParsedTestFile {
@@ -43,16 +45,18 @@ fun parseTestInfo(testFilePath: String, testFiles: TestFiles, linkedTestType: Sp
         arrayOf(*CommonInfoElementType.values(), *CommonSpecTestFileInfoElementType.values(), *linkedTestType.infoElements.value),
         testInfoByContentMatcher.group("infoElements")
     )
+    val helpers = testInfoElements[CommonSpecTestFileInfoElementType.HELPERS]?.content?.splitByComma()?.toSet()
 
     return ParsedTestFile(
         testArea = TestArea.valueOf(testInfoByContentMatcher.group("testArea").withUnderscores()),
         testType = TestType.valueOf(testInfoByContentMatcher.group("testType")),
-        sections = testInfoElements[CommonSpecTestFileInfoElementType.SECTIONS]!!.content.splitByComma(),
         testNumber = testInfoElements[CommonSpecTestFileInfoElementType.NUMBER]!!.content.toInt(),
         testDescription = testInfoElements[CommonSpecTestFileInfoElementType.DESCRIPTION]!!.content,
         testInfoElements = testInfoElements,
         testCasesSet = parseTestCases(testFiles),
         unexpectedBehavior = testInfoElements.contains(CommonInfoElementType.UNEXPECTED_BEHAVIOUR),
-        issues = CommonParser.parseIssues(testInfoElements[CommonInfoElementType.ISSUES])
+        issues = CommonParser.parseIssues(testInfoElements[CommonInfoElementType.ISSUES]),
+        helpers = helpers,
+        exception = testInfoElements[CommonInfoElementType.EXCEPTION]?.content?.let { TestsExceptionType.fromValue(it) }
     )
 }

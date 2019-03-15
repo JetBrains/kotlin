@@ -8,10 +8,11 @@ jvmTarget = "1.6"
 
 dependencies {
     compile(project(":kotlin-script-runtime"))
-    compile(project(":kotlin-stdlib"))
+    compile(kotlinStdlib())
     compile(project(":kotlin-scripting-common"))
     compile(project(":kotlin-scripting-jvm"))
     compile(project(":kotlin-script-util"))
+    compile(project(":kotlin-scripting-compiler"))
     compileOnly(project(":compiler:cli"))
     compileOnly(project(":kotlin-reflect-api"))
     compileOnly(intellijCoreDep())
@@ -19,7 +20,7 @@ dependencies {
     runtime(project(":kotlin-reflect"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(commonDep("junit"))
-    testRuntime(project(":kotlin-reflect"))
+    testCompile(project(":compiler:daemon-common")) // TODO: fix import (workaround for jps build)
 }
 
 sourceSets {
@@ -27,9 +28,10 @@ sourceSets {
     "test" { projectDefault() }
 }
 
+publish()
+
 standardPublicJars()
 
-publish()
 
 projectTest {
     workingDir = rootDir

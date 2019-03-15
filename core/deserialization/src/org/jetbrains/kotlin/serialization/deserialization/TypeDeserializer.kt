@@ -25,6 +25,7 @@ class TypeDeserializer(
     private val parent: TypeDeserializer?,
     typeParameterProtos: List<ProtoBuf.TypeParameter>,
     private val debugName: String,
+    private val containerPresentableName: String,
     var experimentalSuspendFunctionTypeEncountered: Boolean = false
 ) {
     private val classDescriptors: (Int) -> ClassDescriptor? = c.storageManager.createMemoizedFunctionWithNullableValues { fqNameIndex ->
@@ -112,7 +113,9 @@ class TypeDeserializer(
             proto.hasClassName() -> (classDescriptors(proto.className) ?: notFoundClass(proto.className)).typeConstructor
             proto.hasTypeParameter() ->
                 typeParameterTypeConstructor(proto.typeParameter)
-                    ?: ErrorUtils.createErrorTypeConstructor("Unknown type parameter ${proto.typeParameter}")
+                    ?: ErrorUtils.createErrorTypeConstructor(
+                        "Unknown type parameter ${proto.typeParameter}. Please try recompiling module containing \"$containerPresentableName\""
+                    )
             proto.hasTypeParameterName() -> {
                 val container = c.containingDeclaration
                 val name = c.nameResolver.getString(proto.typeParameterName)

@@ -6,8 +6,6 @@ plugins {
     id("jps-compatible")
 }
 
-jvmTarget = "1.6"
-
 dependencies {
     testRuntime(intellijDep())
 
@@ -42,7 +40,6 @@ dependencies {
     testCompile(intellijDep())
 
     testRuntime(project(":idea:idea-jvm"))
-    testRuntime(project(":plugins:android-extensions-jps"))
     testRuntime(project(":sam-with-receiver-ide-plugin"))
     testRuntime(project(":noarg-ide-plugin"))
     testRuntime(project(":allopen-ide-plugin"))
@@ -60,13 +57,13 @@ dependencies {
         testRuntime(intellijPluginDep("maven"))
     }
     testRuntime(intellijPluginDep("android"))
-    (Platform[181].orHigher.or(Ide.AS31)) {
+    if (Platform[181].orHigher()) {
         testRuntime(intellijPluginDep("smali"))
     }
 }
 
 sourceSets {
-    if (Ide.AS33.orHigher()) {
+    if (Ide.AS33.orHigher() || Ide.IJ191.orHigher()) {
         "main" { }
         "test" { }
     } else {

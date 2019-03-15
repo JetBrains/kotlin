@@ -6,7 +6,7 @@ plugins {
 }
 
 dependencies {
-    compile(project(":kotlin-stdlib"))
+    compile(kotlinStdlib())
 }
 
 jvmTarget = "1.6"
@@ -16,10 +16,10 @@ sourceSets {
     "test" {}
 }
 
+publish()
+
 runtimeJar()
 sourcesJar()
 javadocJar()
 
 dist(targetName = "kotlin-annotation-processing-runtime.jar")
-
-publish()

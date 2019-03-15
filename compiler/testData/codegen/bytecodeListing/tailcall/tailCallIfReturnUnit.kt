@@ -1,6 +1,7 @@
 // WITH_RUNTIME
+// COMMON_COROUTINES_TEST
 
-import kotlin.coroutines.intrinsics.*
+import COROUTINES_PACKAGE.intrinsics.*
 
 fun check() = true
 

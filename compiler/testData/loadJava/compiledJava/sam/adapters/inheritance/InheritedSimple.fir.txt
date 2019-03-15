@@ -1,0 +1,2 @@
+public abstract interface InheritedSimple : R|java/lang/Object| {
+}

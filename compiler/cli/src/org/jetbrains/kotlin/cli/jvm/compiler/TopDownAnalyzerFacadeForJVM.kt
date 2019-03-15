@@ -140,7 +140,7 @@ object TopDownAnalyzerFacadeForJVM {
         val sourceScope = if (separateModules) sourceModuleSearchScope else GlobalSearchScope.allScope(project)
         val moduleClassResolver = SourceOrBinaryModuleClassResolver(sourceScope)
 
-        val jvmTarget = configuration.get(JVMConfigurationKeys.JVM_TARGET) ?: JvmTarget.JVM_1_6
+        val jvmTarget = configuration.get(JVMConfigurationKeys.JVM_TARGET, JvmTarget.DEFAULT)
         val languageVersionSettings = configuration.languageVersionSettings
 
         val optionalBuiltInsModule =

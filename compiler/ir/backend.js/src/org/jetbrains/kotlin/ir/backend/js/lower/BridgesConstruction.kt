@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.bridges.FunctionHandle
+import org.jetbrains.kotlin.backend.common.bridges.findInterfaceImplementation
 import org.jetbrains.kotlin.backend.common.bridges.generateBridges
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
@@ -14,10 +15,11 @@ import org.jetbrains.kotlin.backend.common.ir.isSuspend
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.asString
+import org.jetbrains.kotlin.ir.backend.js.utils.getJsName
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
@@ -25,10 +27,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.isUnit
-import org.jetbrains.kotlin.ir.util.isInterface
-import org.jetbrains.kotlin.ir.util.isReal
-import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 // Constructs bridges for inherited generic functions
@@ -59,11 +58,6 @@ class BridgesConstruction(val context: JsIrBackendContext) : ClassLoweringPass {
             .filter { !it.isStaticMethodOfClass }
             .toList()
             .forEach { generateBridges(it, irClass) }
-
-        irClass.declarations
-            .filterIsInstance<IrProperty>()
-            .flatMap { listOfNotNull(it.getter, it.setter) }
-            .forEach { generateBridges(it, irClass) }
     }
 
     private fun generateBridges(function: IrSimpleFunction, irClass: IrClass) {
@@ -77,14 +71,16 @@ class BridgesConstruction(val context: JsIrBackendContext) : ClassLoweringPass {
         )
 
         for ((from, to) in bridgesToGenerate) {
-            if (to.function.visibility == Visibilities.INVISIBLE_FAKE)
-                continue
-
             if (!from.function.parentAsClass.isInterface &&
                 from.function.isReal &&
                 from.function.modality != Modality.ABSTRACT &&
                 !to.function.isReal
             ) {
+                continue
+            }
+
+            if (from.function.correspondingProperty != null && from.function.isEffectivelyExternal()) {
+                // TODO: Revisit bridges from external properties
                 continue
             }
 
@@ -101,18 +97,24 @@ class BridgesConstruction(val context: JsIrBackendContext) : ClassLoweringPass {
         delegateTo: IrSimpleFunction
     ): IrFunction {
 
+        val origin =
+            if (bridge.isEffectivelyExternal())
+                JsLoweredDeclarationOrigin.BRIDGE_TO_EXTERNAL_FUNCTION
+            else
+                IrDeclarationOrigin.BRIDGE
+
         // TODO: Support offsets for debug info
         val irFunction = JsIrBuilder.buildFunction(
             bridge.name,
             bridge.returnType,
-            delegateTo.parent,
+            function.parent,
             bridge.visibility,
             bridge.modality, // TODO: should copy modality?
             bridge.isInline,
             bridge.isExternal,
             bridge.isTailrec,
             bridge.isSuspend,
-            IrDeclarationOrigin.BRIDGE
+            origin
         ).apply {
 
             // TODO: should dispatch receiver be copied?
@@ -166,13 +168,13 @@ class BridgesConstruction(val context: JsIrBackendContext) : ClassLoweringPass {
 // Handle for common.bridges
 data class IrBasedFunctionHandle(val function: IrSimpleFunction) : FunctionHandle {
 
-    override val isDeclaration: Boolean = true
+    override val isDeclaration: Boolean = function.isReal || findInterfaceImplementation(function.descriptor) != null
 
     override val isAbstract: Boolean =
         function.modality == Modality.ABSTRACT
 
-    override val isInterfaceDeclaration =
-        function.parentAsClass.isInterface
+    override val mayBeUsedAsSuperImplementation =
+        !function.parentAsClass.isInterface
 
     override fun getOverridden() =
         function.overriddenSymbols.map { IrBasedFunctionHandle(it.owner) }
@@ -186,16 +188,25 @@ class FunctionAndSignature(val function: IrSimpleFunction) {
     // Currently strings are used for compatibility with a hack-based name generator
 
     private data class Signature(
-        val name: Name,
-        val extensionReceiverType: String?,
-        val valueParameters: List<String?>
+        val name: String,
+        val extensionReceiverType: String? = null,
+        val valueParameters: List<String?> = emptyList(),
+        val returnType: String? = null
     )
 
-    private val signature = Signature(
-        function.name,
-        function.extensionReceiverParameter?.type?.asString(),
-        function.valueParameters.map { it.type.asString() }
-    )
+    private val jsName = function.getJsName()
+    private val signature = when {
+        jsName != null -> Signature(jsName)
+        function.isEffectivelyExternal() -> Signature(function.name.asString())
+        else -> Signature(
+            function.name.asString(),
+            function.extensionReceiverParameter?.type?.asString(),
+            function.valueParameters.map { it.type.asString() },
+            // Return type used in signature for inline classes only because
+            // they are binary incompatible with supertypes and require bridges.
+            function.returnType.run { if (isInlined()) asString() else null }
+        )
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

@@ -1,4 +1,3 @@
-
 description = "Kotlin Serialization Compiler Plugin"
 
 plugins {
@@ -6,18 +5,17 @@ plugins {
     id("jps-compatible")
 }
 
-jvmTarget = "1.6"
-
 dependencies {
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 
     compile(project(":compiler:plugin-api"))
     compile(project(":compiler:frontend"))
     compile(project(":compiler:backend"))
+    compile(project(":compiler:ir.backend.common"))
     compile(project(":js:js.frontend"))
     compile(project(":js:js.translator"))
 
-    runtime(project(":kotlin-stdlib"))
+    runtime(kotlinStdlib())
 }
 
 sourceSets {

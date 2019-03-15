@@ -238,6 +238,18 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     )
     var profilePhases: Boolean by FreezableVar(false)
 
+    @Argument(
+        value = "-Xcheck-phase-conditions",
+        description = "Check pre- and postconditions on phases"
+    )
+    var checkPhaseConditions: Boolean by FreezableVar(false)
+
+    @Argument(
+        value = "-Xcheck-sticky-phase-conditions",
+        description = "Run sticky condition checks on subsequent phases as well. Implies -Xcheck-conditions"
+    )
+    var checkStickyPhaseConditions: Boolean by FreezableVar(false)
+
     open fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {
             put(AnalysisFlags.skipMetadataVersionCheck, skipMetadataVersionCheck)
@@ -331,7 +343,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         }
     }
 
-    fun configureLanguageVersionSettings(collector: MessageCollector): LanguageVersionSettings {
+    fun toLanguageVersionSettings(collector: MessageCollector): LanguageVersionSettings {
 
         // If only "-api-version" is specified, language version is assumed to be the latest stable
         val languageVersion = parseVersion(collector, languageVersion, "language") ?: LanguageVersion.LATEST_STABLE

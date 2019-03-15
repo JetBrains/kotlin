@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -27,6 +27,8 @@ class KotlinJvmDeclarationSearcherTest : KotlinLightCodeInsightFixtureTestCase()
 
             class SomeClass(val field: String) {
 
+                private var privateField: Int = 1
+
                 lateinit var anotherField:String
 
                 constructor(i: Int): this(i.toString()){}
@@ -41,8 +43,9 @@ class KotlinJvmDeclarationSearcherTest : KotlinLightCodeInsightFixtureTestCase()
         """,
         JvmDeclared("class SomeClass", JvmClass::class, JvmMethod::class),
         JvmDeclared("(val field: String)", JvmMethod::class),
+        JvmDeclared("private var privateField", com.intellij.lang.jvm.JvmField::class),
         JvmDeclared("lateinit var anotherField", JvmMethod::class, JvmMethod::class, com.intellij.lang.jvm.JvmField::class),
-        JvmDeclared("val field: String", JvmParameter::class, JvmMethod::class),
+        JvmDeclared("val field: String", JvmParameter::class, JvmMethod::class, com.intellij.lang.jvm.JvmField::class),
         JvmDeclared("constructor(i: Int)", JvmMethod::class),
         JvmDeclared("i: Int", JvmParameter::class),
         JvmDeclared("a: Long", JvmParameter::class, JvmParameter::class),

@@ -6,7 +6,7 @@ FILE fqName:<root> fileName:/builtinMap.kt
     VALUE_PARAMETER name:pair index:0 type:kotlin.Pair<K1, V1> flags:
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='plus(Pair<K1, V1>) on Map<out K1, V1>: Map<K1, V1>'
-        WHEN type=kotlin.collections.Map<K1, V1> origin=null
+        WHEN type=kotlin.collections.Map<K1, V1> origin=IF
           BRANCH
             if: CALL 'isEmpty(): Boolean' type=kotlin.Boolean origin=null
               $this: GET_VAR 'this@plus: Map<out K1, V1>' type=kotlin.collections.Map<out K1, V1> origin=null

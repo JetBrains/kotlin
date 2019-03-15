@@ -46,7 +46,7 @@ dependencies {
     proguardLibraryJars(files(firstFromJavaHomeThatExists("jre/lib/rt.jar", "../Classes/classes.jar"),
                               firstFromJavaHomeThatExists("jre/lib/jsse.jar", "../Classes/jsse.jar"),
                               toolsJar()))
-    proguardLibraryJars(project(":kotlin-stdlib"))
+    proguardLibraryJars(kotlinStdlib())
     proguardLibraryJars(project(":kotlin-reflect"))
 }
 
@@ -54,6 +54,8 @@ sourceSets {
     "main" { projectDefault() }
     "test" { }
 }
+
+publish()
 
 noDefaultJar()
 
@@ -98,5 +100,3 @@ dist(
 
 sourcesJar()
 javadocJar()
-
-publish()

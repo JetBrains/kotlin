@@ -10,16 +10,19 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
 import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.checker.CaptureStatus
 import org.jetbrains.kotlin.types.checker.NewCapturedType
 import org.jetbrains.kotlin.types.checker.NewCapturedTypeConstructor
+import org.jetbrains.kotlin.types.model.CaptureStatus
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
 // todo problem: intersection types in constrains: A <: Number, B <: Inv<A & Any> =>? B <: Inv<out Number & Any>
-class ConstraintIncorporator(val typeApproximator: TypeApproximator) {
+class ConstraintIncorporator(
+    val typeApproximator: TypeApproximator,
+    val trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle
+) {
 
     interface Context {
         val allTypeVariablesWithConstraints: Collection<VariableWithConstraints>
@@ -99,9 +102,10 @@ class ConstraintIncorporator(val typeApproximator: TypeApproximator) {
         otherVariable: NewTypeVariable,
         otherConstraint: Constraint
     ) {
+        val baseConstraintType = baseConstraint.type
         val typeForApproximation = when (otherConstraint.kind) {
             ConstraintKind.EQUALITY -> {
-                baseConstraint.type.substitute(otherVariable, otherConstraint.type)
+                baseConstraintType.substituteTypeVariable(otherVariable, otherConstraint.type)
             }
             ConstraintKind.UPPER -> {
                 val newCapturedTypeConstructor = NewCapturedTypeConstructor(
@@ -113,7 +117,7 @@ class ConstraintIncorporator(val typeApproximator: TypeApproximator) {
                     newCapturedTypeConstructor,
                     lowerType = null
                 )
-                baseConstraint.type.substitute(otherVariable, temporaryCapturedType)
+                baseConstraintType.substituteTypeVariable(otherVariable, temporaryCapturedType)
             }
             ConstraintKind.LOWER -> {
                 val newCapturedTypeConstructor = NewCapturedTypeConstructor(
@@ -125,21 +129,22 @@ class ConstraintIncorporator(val typeApproximator: TypeApproximator) {
                     newCapturedTypeConstructor,
                     lowerType = otherConstraint.type
                 )
-                baseConstraint.type.substitute(otherVariable, temporaryCapturedType)
+                baseConstraintType.substituteTypeVariable(otherVariable, temporaryCapturedType)
             }
         }
 
         if (baseConstraint.kind != ConstraintKind.UPPER) {
-            c.addNewIncorporatedConstraint(approximateCapturedTypes(typeForApproximation, toSuper = false), targetVariable.defaultType)
+            val generatedConstraintType = approximateCapturedTypes(typeForApproximation, toSuper = false)
+            if (!trivialConstraintTypeInferenceOracle.isGeneratedConstraintTrivial(otherConstraint, generatedConstraintType)) {
+                c.addNewIncorporatedConstraint(generatedConstraintType, targetVariable.defaultType)
+            }
         }
         if (baseConstraint.kind != ConstraintKind.LOWER) {
-            c.addNewIncorporatedConstraint(targetVariable.defaultType, approximateCapturedTypes(typeForApproximation, toSuper = true))
+            val generatedConstraintType = approximateCapturedTypes(typeForApproximation, toSuper = true)
+            if (!trivialConstraintTypeInferenceOracle.isGeneratedConstraintTrivial(otherConstraint, generatedConstraintType)) {
+                c.addNewIncorporatedConstraint(targetVariable.defaultType, generatedConstraintType)
+            }
         }
-    }
-
-    private fun UnwrappedType.substitute(typeVariable: NewTypeVariable, value: UnwrappedType): UnwrappedType {
-        val substitutor = NewTypeSubstitutorByConstructorMap(mapOf(typeVariable.freshTypeConstructor to value))
-        return substitutor.safeSubstitute(this)
     }
 
     private fun approximateCapturedTypes(type: UnwrappedType, toSuper: Boolean): UnwrappedType =

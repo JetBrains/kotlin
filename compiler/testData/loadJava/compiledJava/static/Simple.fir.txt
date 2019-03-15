@@ -1,0 +1,6 @@
+public open class Simple : R|java/lang/Object| {
+    public open static operator function bar(): R|kotlin/Unit|
+
+    public open operator function foo(): R|kotlin/Unit|
+
+}

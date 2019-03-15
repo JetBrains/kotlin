@@ -10,10 +10,24 @@ import org.jetbrains.kotlin.idea.configuration.KotlinGradleMobileMultiplatformMo
 import org.jetbrains.kotlin.idea.configuration.KotlinGradleMobileSharedMultiplatformModuleBuilder
 import org.jetbrains.kotlin.idea.configuration.KotlinGradleSharedMultiplatformModuleBuilder
 import org.jetbrains.kotlin.idea.configuration.KotlinGradleWebMultiplatformModuleBuilder
+import org.jetbrains.kotlin.idea.test.KotlinSdkCreationChecker
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.Test
 
 class GradleMultiplatformWizardTest : AbstractGradleMultiplatformWizardTest() {
+
+    lateinit var sdkCreationChecker: KotlinSdkCreationChecker
+
+    override fun setUp() {
+        super.setUp()
+        sdkCreationChecker = KotlinSdkCreationChecker()
+    }
+
+    override fun tearDown() {
+        sdkCreationChecker.removeNewKotlinSdk()
+        super.tearDown()
+    }
+
     @Test
     fun testMobile() {
         // TODO: add import & tests here when we will be able to locate Android SDK automatically (see KT-27635)

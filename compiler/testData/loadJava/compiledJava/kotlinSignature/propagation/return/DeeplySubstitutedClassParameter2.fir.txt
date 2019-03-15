@@ -1,0 +1,2 @@
+public abstract interface DeeplySubstitutedClassParameter2 : R|java/lang/Object| {
+}

@@ -11,7 +11,7 @@
     <renameHandler implementation="org.jetbrains.kotlin.idea.refactoring.rename.RenameJvmNameHandler"/>
     <renameHandler implementation="org.jetbrains.kotlin.idea.refactoring.rename.RenameBackingFieldReferenceHandler"/>
     <renameHandler implementation="org.jetbrains.kotlin.idea.refactoring.rename.RenameClassByCompanionObjectShortReferenceHandler"/>
-    <renameHandler implementation="org.jetbrains.kotlin.idea.refactoring.rename.RenameByLabeledReferenceInLambdaArgumentHandler"/>
+    <renameHandler implementation="org.jetbrains.kotlin.idea.refactoring.rename.RenameByLabeledReferenceHandler"/>
     <renameHandler implementation="org.jetbrains.kotlin.idea.refactoring.rename.RenameImportAliasByReferenceHandler"/>
     <renameHandler implementation="org.jetbrains.kotlin.idea.refactoring.rename.KotlinMemberInplaceRenameHandler"/>
     <renameHandler implementation="org.jetbrains.kotlin.idea.refactoring.rename.KotlinVariableInplaceRenameHandler"/>
@@ -28,5 +28,8 @@
     <idePlatformKind implementation="org.jetbrains.kotlin.platform.impl.CommonIdePlatformKind"/>
 
     <idePlatformKindTooling implementation="org.jetbrains.kotlin.idea.core.platform.impl.CommonIdePlatformKindTooling"/>
+
+    <syntheticResolveExtension implementation="org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingResolveExtension"/>
+    <extraImportsProviderExtension implementation="org.jetbrains.kotlin.scripting.compiler.plugin.ScriptExtraImportsProviderExtension"/>
   </extensions>
 </idea-plugin>

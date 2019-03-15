@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
-import org.jetbrains.kotlin.backend.common.makePhase
+import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
@@ -27,6 +27,12 @@ import org.jetbrains.kotlin.ir.util.transformDeclarationsFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import java.util.*
+
+val innerClassesPhase = makeIrFilePhase(
+    ::InnerClassesLowering,
+    name = "InnerClasses",
+    description = "Move inner classes to toplevel"
+)
 
 class InnerClassesLowering(val context: BackendContext) : ClassLoweringPass {
     override fun lower(irClass: IrClass) {
@@ -135,14 +141,7 @@ class InnerClassesLowering(val context: BackendContext) : ClassLoweringPass {
                         }
 
                         val outerThisField = context.declarationFactory.getOuterThisField(innerClass)
-                        irThis = IrGetFieldImpl(
-                            startOffset,
-                            endOffset,
-                            outerThisField.symbol,
-                            innerClass.defaultType,
-                            irThis,
-                            origin
-                        )
+                        irThis = IrGetFieldImpl(startOffset, endOffset, outerThisField.symbol, outerThisField.type, irThis, origin)
 
                         val outer = innerClass.parent
                         innerClass = outer as? IrClass ?:
@@ -168,6 +167,12 @@ class InnerClassesLowering(val context: BackendContext) : ClassLoweringPass {
         }
     }
 }
+
+val innerClassConstructorCallsPhase = makeIrFilePhase(
+    ::InnerClassConstructorCallsLowering,
+    name = "InnerClassConstructorCalls",
+    description = "Handle constructor calls for inner classes"
+)
 
 class InnerClassConstructorCallsLowering(val context: BackendContext) : BodyLoweringPass {
     override fun lower(irBody: IrBody) {

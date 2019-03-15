@@ -1,0 +1,4 @@
+public open class StableName : R|java/lang/Object| {
+    public open operator function connect(@R|kotlin/annotations/jvm/internal/ParameterName|(String(host)) host: R|ft<kotlin/String, kotlin/String?>|!): R|kotlin/Unit|
+
+}

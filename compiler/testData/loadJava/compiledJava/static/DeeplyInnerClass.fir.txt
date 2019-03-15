@@ -1,0 +1,2 @@
+public open class DeeplyInnerClass : R|java/lang/Object| {
+}

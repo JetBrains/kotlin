@@ -26,8 +26,10 @@ import org.jetbrains.kotlin.psi.KtFile
 
 interface CodegenFactory {
     fun generateModule(state: GenerationState, files: Collection<KtFile?>, errorHandler: CompilationErrorHandler)
-    fun createPackageCodegen(state: GenerationState, files: Collection<KtFile>, fqName: FqName, registry: PackagePartRegistry): PackageCodegen
-    fun createMultifileClassCodegen(state: GenerationState, files: Collection<KtFile>, fqName: FqName, registry: PackagePartRegistry): MultifileClassCodegen
+
+    fun createPackageCodegen(state: GenerationState, files: Collection<KtFile>, fqName: FqName): PackageCodegen
+
+    fun createMultifileClassCodegen(state: GenerationState, files: Collection<KtFile>, fqName: FqName): MultifileClassCodegen
 
     companion object {
         fun doCheckCancelled(state: GenerationState) {
@@ -69,11 +71,11 @@ object DefaultCodegenFactory : CodegenFactory {
         }
     }
 
-    override fun createPackageCodegen(state: GenerationState, files: Collection<KtFile>, fqName: FqName, registry: PackagePartRegistry) =
-            PackageCodegenImpl(state, files, fqName, registry)
+    override fun createPackageCodegen(state: GenerationState, files: Collection<KtFile>, fqName: FqName) =
+            PackageCodegenImpl(state, files, fqName)
 
-    override fun createMultifileClassCodegen(state: GenerationState, files: Collection<KtFile>, fqName: FqName, registry: PackagePartRegistry) =
-            MultifileClassCodegenImpl(state, files, fqName, registry)
+    override fun createMultifileClassCodegen(state: GenerationState, files: Collection<KtFile>, fqName: FqName) =
+            MultifileClassCodegenImpl(state, files, fqName)
 
     private fun generateMultifileClass(
             state: GenerationState,
@@ -96,5 +98,4 @@ object DefaultCodegenFactory : CodegenFactory {
         val codegen = state.factory.forPackage(packageFqName, jetFiles)
         codegen.generate(errorHandler)
     }
-
 }

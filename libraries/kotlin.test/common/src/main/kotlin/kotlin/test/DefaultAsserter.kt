@@ -8,8 +8,7 @@ package kotlin.test
 /**
  * Default [Asserter] implementation to avoid dependency on JUnit or TestNG.
  */
-// TODO: make object in 1.2
-class DefaultAsserter : Asserter {
+object DefaultAsserter : Asserter {
     override fun fail(message: String?): Nothing {
         if (message == null)
             throw AssertionError()
@@ -17,3 +16,9 @@ class DefaultAsserter : Asserter {
             throw AssertionError(message)
     }
 }
+
+@Deprecated("DefaultAsserter is an object now, constructor call is not required anymore",
+        ReplaceWith("DefaultAsserter", "kotlin.test.DefaultAsserter"))
+@kotlin.js.JsName("DefaultAsserterConstructor")
+@Suppress("FunctionName")
+fun DefaultAsserter(): DefaultAsserter = DefaultAsserter

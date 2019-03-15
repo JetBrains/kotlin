@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.*
+import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -26,6 +27,12 @@ import org.jetbrains.kotlin.ir.util.explicitParameters
 import org.jetbrains.kotlin.ir.util.getArgumentsWithIr
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+
+val tailrecPhase = makeIrFilePhase(
+    ::TailrecLowering,
+    name = "Tailrec",
+    description = "Handle tailrec calls"
+)
 
 /**
  * This pass lowers tail recursion calls in `tailrec` functions.
@@ -53,7 +60,7 @@ private fun lowerTailRecursionCalls(context: BackendContext, irFunction: IrFunct
     irFunction.body = builder.irBlockBody {
         // Define variables containing current values of parameters:
         val parameterToVariable = parameters.associate {
-            it to irTemporaryVar(irGet(it), nameHint = it.symbol.suggestVariableName(), parent = irFunction)
+            it to irTemporaryVar(irGet(it), nameHint = it.symbol.suggestVariableName())
         }
         // (these variables are to be updated on any tail call).
 
@@ -65,7 +72,7 @@ private fun lowerTailRecursionCalls(context: BackendContext, irFunction: IrFunct
                 // Read variables containing current values of parameters:
                 val parameterToNew = parameters.associate {
                     val variable = parameterToVariable[it]!!
-                    it to irTemporary(irGet(variable), nameHint = it.symbol.suggestVariableName()).also { it.parent = irFunction }
+                    it to irTemporary(irGet(variable), nameHint = it.symbol.suggestVariableName())
                 }
 
                 val transformer = BodyTransformer(

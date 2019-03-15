@@ -20,7 +20,7 @@ FILE fqName:<root> fileName:/javaInnerClass.kt
     PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL flags:var
       FIELD FAKE_OVERRIDE name:x type:kotlin.Int visibility:public flags:
         overridden:
-          FIELD IR_EXTERNAL_DECLARATION_STUB name:x type:kotlin.Int visibility:public flags:
+          FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:x type:kotlin.Int visibility:public flags:
     FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN <> ($this:J) returnType:kotlin.Unit flags:
       overridden:
         FUN IR_EXTERNAL_JAVA_DECLARATION_STUB name:bar visibility:public modality:OPEN <> ($this:J) returnType:kotlin.Unit flags:

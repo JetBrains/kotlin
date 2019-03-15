@@ -31,7 +31,9 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrSymbolDeclaration
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStringConcatenation
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isNullableAny
+import org.jetbrains.kotlin.ir.types.toIrType
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.functions
@@ -55,9 +57,10 @@ private class StringConcatenationTransformer(val lower: StringConcatenationLower
     private val buildersStack = mutableListOf<IrBuilderWithScope>()
     private val context = lower.context
     private val builtIns = context.builtIns
+    private val irBuiltIns = context.irBuiltIns
 
     private val typesWithSpecialAppendFunction =
-        PrimitiveType.values().map { builtIns.getPrimitiveKotlinType(it) } + builtIns.stringType
+        PrimitiveType.values().map { builtIns.getPrimitiveKotlinType(it).toIrType()!! } + irBuiltIns.stringType
 
     private val nameToString = Name.identifier("toString")
     private val nameAppend = Name.identifier("append")
@@ -79,7 +82,7 @@ private class StringConcatenationTransformer(val lower: StringConcatenationLower
     }
 
 
-    private val appendFunctions: Map<KotlinType, IrSimpleFunction?> =
+    private val appendFunctions: Map<IrType, IrSimpleFunction?> =
         typesWithSpecialAppendFunction.map { type ->
             type to stringBuilder.functions.toList().atMostOne {
                 it.name == nameAppend &&
@@ -88,7 +91,7 @@ private class StringConcatenationTransformer(val lower: StringConcatenationLower
             }
         }.toMap()
 
-    private fun typeToAppendFunction(type: KotlinType): IrSimpleFunction {
+    private fun typeToAppendFunction(type: IrType): IrSimpleFunction {
         return appendFunctions[type] ?: defaultAppendFunction
     }
 
@@ -100,7 +103,7 @@ private class StringConcatenationTransformer(val lower: StringConcatenationLower
         return blockBuilder.irBlock(expression) {
             val stringBuilderImpl = irTemporary(irCall(constructor))
             expression.arguments.forEach { arg ->
-                val appendFunction = typeToAppendFunction(arg.type.toKotlinType())
+                val appendFunction = typeToAppendFunction(arg.type)
                 +irCall(appendFunction).apply {
                     dispatchReceiver = irGet(stringBuilderImpl)
                     putValueArgument(0, arg)

@@ -58,7 +58,7 @@ internal fun IrModuleFragment.replaceUnboundSymbols(context: JsIrBackendContext)
         descriptor,
         symbolTable = context.symbolTable,
         irBuiltIns = context.irBuiltIns
-    ).generateUnboundSymbolsAsDependencies(this)
+    ).generateUnboundSymbolsAsDependencies()
 }
 
 private class DeclarationSymbolCollector : IrElementVisitorVoid {

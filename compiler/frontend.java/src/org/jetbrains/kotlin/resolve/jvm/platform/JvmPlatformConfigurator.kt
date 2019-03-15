@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.load.java.sam.JvmSamConversionTransformer
 import org.jetbrains.kotlin.load.java.sam.SamConversionResolverImpl
 import org.jetbrains.kotlin.resolve.PlatformConfiguratorBase
-import org.jetbrains.kotlin.resolve.calls.checkers.ReifiedTypeParameterSubstitutionChecker
 import org.jetbrains.kotlin.resolve.checkers.BigFunctionTypeAvailabilityChecker
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.jvm.*
@@ -37,18 +36,19 @@ object JvmPlatformConfigurator : PlatformConfiguratorBase(
         StrictfpApplicabilityChecker(),
         ExpectedActualDeclarationChecker(listOf(JavaActualAnnotationArgumentExtractor())),
         JvmAnnotationsTargetNonExistentAccessorChecker(),
-        BadInheritedJavaSignaturesChecker
+        BadInheritedJavaSignaturesChecker,
+        JvmMultifileClassStateChecker,
+        SynchronizedOnInlineMethodChecker
     ),
 
     additionalCallCheckers = listOf(
         JavaAnnotationCallChecker(),
-        SuspensionPointInSynchronizedCallChecker(),
+        SuspensionPointInsideMutexLockChecker(),
         JavaClassOnCompanionChecker(),
         ProtectedInSuperClassCompanionCallChecker(),
         UnsupportedSyntheticCallableReferenceChecker(),
         SuperCallWithDefaultArgumentsChecker(),
         ProtectedSyntheticExtensionCallChecker,
-        ReifiedTypeParameterSubstitutionChecker(),
         RuntimeAssertionsOnExtensionReceiverCallChecker,
         ApiVersionIsAtLeastArgumentsChecker,
         InconsistentOperatorFromJavaCallChecker

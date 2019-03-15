@@ -1,0 +1,4 @@
+public open class NotNullParameter : R|java/lang/Object| {
+    public open operator function hi(@R|org/jetbrains/annotations/NotNull|() param: R|kotlin/String|): R|kotlin/Unit|
+
+}

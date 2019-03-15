@@ -1,0 +1,4 @@
+public open class MethodWithFunctionTypes : R|java/lang/Object| {
+    public open operator function foo(f: R|ft<kotlin/Function1<ft<kotlin/String, kotlin/String?>, ft<kotlin/String, kotlin/String?>>, kotlin/Function1<ft<kotlin/String, kotlin/String?>, ft<kotlin/String, kotlin/String?>>?>|!): R|ft<kotlin/Function0<ft<kotlin/String, kotlin/String?>>, kotlin/Function0<ft<kotlin/String, kotlin/String?>>?>|!
+
+}

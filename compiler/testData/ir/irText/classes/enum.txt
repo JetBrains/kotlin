@@ -132,7 +132,7 @@ FILE fqName:<root> fileName:/enum.kt
     FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:TestEnum2 flags:
       VALUE_PARAMETER name:value index:0 type:kotlin.String flags:
       SYNTHETIC_BODY kind=ENUM_VALUEOF
-  CLASS ENUM_CLASS name:TestEnum3 modality:FINAL visibility:public flags: superTypes:[kotlin.Enum<TestEnum3>]
+  CLASS ENUM_CLASS name:TestEnum3 modality:ABSTRACT visibility:public flags: superTypes:[kotlin.Enum<TestEnum3>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestEnum3 flags:
     CONSTRUCTOR visibility:private <> () returnType:TestEnum3 flags:primary
       BLOCK_BODY
@@ -247,7 +247,7 @@ FILE fqName:<root> fileName:/enum.kt
     FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:TestEnum3 flags:
       VALUE_PARAMETER name:value index:0 type:kotlin.String flags:
       SYNTHETIC_BODY kind=ENUM_VALUEOF
-  CLASS ENUM_CLASS name:TestEnum4 modality:FINAL visibility:public flags: superTypes:[kotlin.Enum<TestEnum4>]
+  CLASS ENUM_CLASS name:TestEnum4 modality:ABSTRACT visibility:public flags: superTypes:[kotlin.Enum<TestEnum4>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestEnum4 flags:
     CONSTRUCTOR visibility:private <> (x:kotlin.Int) returnType:TestEnum4 flags:primary
       VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:

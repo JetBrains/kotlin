@@ -8,16 +8,19 @@ package org.jetbrains.kotlin.idea.inspections
 import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 
 class RedundantGetterInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
         return propertyAccessorVisitor { accessor ->
             if (accessor.isRedundantGetter()) {
-                holder.registerProblem(accessor,
-                                       "Redundant getter",
-                                       ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                                       RemoveRedundantGetterFix())
+                holder.registerProblem(
+                    accessor,
+                    "Redundant getter",
+                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                    RemoveRedundantGetterFix()
+                )
             }
         }
     }
@@ -25,6 +28,7 @@ class RedundantGetterInspection : AbstractKotlinInspection(), CleanupLocalInspec
 
 private fun KtPropertyAccessor.isRedundantGetter(): Boolean {
     if (!isGetter) return false
+    if (hasModifier(KtTokens.EXTERNAL_KEYWORD)) return false
     if (annotationEntries.isNotEmpty()) return false
     val expression = bodyExpression ?: return true
     if (expression is KtNameReferenceExpression) {

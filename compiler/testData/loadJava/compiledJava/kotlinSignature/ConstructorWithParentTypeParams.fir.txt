@@ -1,0 +1,4 @@
+<T> public open class ConstructorWithParentTypeParams : R|java/lang/Object| {
+    public final function ConstructorWithParentTypeParams(first: R|ft<T, T?>|!): R|test/ConstructorWithParentTypeParams|
+
+}

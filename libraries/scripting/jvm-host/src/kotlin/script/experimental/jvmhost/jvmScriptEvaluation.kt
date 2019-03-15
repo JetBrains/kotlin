@@ -10,16 +10,18 @@ package kotlin.script.experimental.jvmhost
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.util.PropertiesCollection
 
-open class JvmScriptEvaluationConfiguration : PropertiesCollection.Builder() {
+interface JvmScriptEvaluationConfigurationKeys
 
-    companion object : JvmScriptEvaluationConfiguration()
+open class JvmScriptEvaluationConfigurationBuilder : PropertiesCollection.Builder(), JvmScriptEvaluationConfigurationKeys {
+
+    companion object : JvmScriptEvaluationConfigurationBuilder()
 }
 
-val JvmScriptEvaluationConfiguration.baseClassLoader by PropertiesCollection.key<ClassLoader?>(Thread.currentThread().contextClassLoader)
+val JvmScriptEvaluationConfigurationKeys.baseClassLoader by PropertiesCollection.key<ClassLoader?>(Thread.currentThread().contextClassLoader)
 
-val JvmScriptEvaluationConfiguration.actualClassLoader by PropertiesCollection.key<ClassLoader?>()
+val JvmScriptEvaluationConfigurationKeys.actualClassLoader by PropertiesCollection.key<ClassLoader?>()
 
-val ScriptEvaluationConfiguration.jvm get() = JvmScriptEvaluationConfiguration()
+val ScriptEvaluationConfigurationKeys.jvm get() = JvmScriptEvaluationConfigurationBuilder()
 
 open class BasicJvmScriptEvaluator : ScriptEvaluator {
 
@@ -28,66 +30,56 @@ open class BasicJvmScriptEvaluator : ScriptEvaluator {
         scriptEvaluationConfiguration: ScriptEvaluationConfiguration?
     ): ResultWithDiagnostics<EvaluationResult> =
         try {
-            val res = compiledScript.getClass(scriptEvaluationConfiguration)
-            when (res) {
-                is ResultWithDiagnostics.Failure -> res
-                is ResultWithDiagnostics.Success -> {
-                    // in the future, when (if) we'll stop to compile everything into constructor
-                    // run as SAM
-                    // return res
-                    val scriptClass = res.value
+            val actualEvaluationConfiguration = scriptEvaluationConfiguration ?: ScriptEvaluationConfiguration()
+            compiledScript.getClass(actualEvaluationConfiguration).onSuccess { scriptClass ->
+                // in the future, when (if) we'll stop to compile everything into constructor
+                // run as SAM
+                // return res
+
+                // for other scripts we need evaluation configuration with actualClassloader set,
+                // so they are loaded in the same classloader as the "main" script
+                val updatedEvalConfiguration =
+                    if (actualEvaluationConfiguration.containsKey(ScriptEvaluationConfiguration.jvm.actualClassLoader))
+                        actualEvaluationConfiguration
+                    else
+                        ScriptEvaluationConfiguration(actualEvaluationConfiguration) {
+                            ScriptEvaluationConfiguration.jvm.actualClassLoader(scriptClass.java.classLoader)
+                        }
+
+                val sharedScripts = actualEvaluationConfiguration[ScriptEvaluationConfiguration.scriptsInstancesSharingMap]
+
+                val instanceFromShared = sharedScripts?.get(scriptClass)
+
+                if (instanceFromShared != null) {
+                    instanceFromShared.asSuccess(updatedEvalConfiguration)
+                } else {
+
                     val args = ArrayList<Any?>()
-                    scriptEvaluationConfiguration?.get(ScriptEvaluationConfiguration.providedProperties)?.forEach {
-                        args.add(it.value)
-                    }
-                    scriptEvaluationConfiguration?.get(ScriptEvaluationConfiguration.implicitReceivers)?.let {
+
+                    updatedEvalConfiguration[ScriptEvaluationConfiguration.constructorArgs]?.let {
                         args.addAll(it)
                     }
-                    val importedScriptsReports = ArrayList<ScriptDiagnostic>()
-                    var importedScriptsLoadingFailed = false
-
-                    // for other scripts we need evaluation configuration with actualClassloader set,
-                    // so they are loaded in the same classloader as the "main" script
-                    val updatedEvalConfiguration = when {
-                        scriptEvaluationConfiguration == null -> ScriptEvaluationConfiguration {
-                            // TODO: find out why dsl syntax doesn't work here
-                            set(JvmScriptEvaluationConfiguration.actualClassLoader, scriptClass.java.classLoader)
-                        }
-                        scriptEvaluationConfiguration.getNoDefault(JvmScriptEvaluationConfiguration.actualClassLoader) == null -> ScriptEvaluationConfiguration(scriptEvaluationConfiguration) {
-                            // TODO: find out why dsl syntax doesn't work here
-                            set(JvmScriptEvaluationConfiguration.actualClassLoader, scriptClass.java.classLoader)
-                        }
-                        else -> scriptEvaluationConfiguration
+                    actualEvaluationConfiguration[ScriptEvaluationConfiguration.providedProperties]?.forEach {
+                        args.add(it.value)
+                    }
+                    actualEvaluationConfiguration[ScriptEvaluationConfiguration.implicitReceivers]?.let {
+                        args.addAll(it)
                     }
 
-                    compiledScript.otherScripts.forEach {
-                        // TODO: in the future other scripts could be used for other purposes, so args here should be added only for actually imported scripts
-                        // (it means that we should keep mapping somewhere (or reuse one with source dependencies) between imported scrips and e.g. fqnames)
-                        val importedScriptEvalRes = invoke(it, updatedEvalConfiguration)
-                        importedScriptsReports.addAll(importedScriptEvalRes.reports)
-                        when (importedScriptEvalRes) {
-                            is ResultWithDiagnostics.Success -> {
-                                // TODO: checks and diagnostics
-                                args.add((importedScriptEvalRes.value.returnValue as ResultValue.Value).value)
-                            }
-                            else -> {
-                                importedScriptsLoadingFailed = true
-                                return@forEach
-                            }
-                        }
-                    }
-                    if (importedScriptsLoadingFailed) {
-                        ResultWithDiagnostics.Failure(importedScriptsReports)
-                    } else {
+                    compiledScript.otherScripts.mapSuccess {
+                        invoke(it, updatedEvalConfiguration)
+                    }.onSuccess { importedScriptsEvalResults ->
 
-                        updatedEvalConfiguration[ScriptEvaluationConfiguration.constructorArgs]?.let {
-                            args.addAll(it)
+                        importedScriptsEvalResults.forEach {
+                            args.add((it.returnValue as ResultValue.Value).scriptInstance)
                         }
+
                         val ctor = scriptClass.java.constructors.single()
                         val instance = ctor.newInstance(*args.toArray())
 
-                        // TODO: fix result value
-                        ResultWithDiagnostics.Success(EvaluationResult(ResultValue.Value("", instance, ""), updatedEvalConfiguration))
+                        sharedScripts?.put(scriptClass, instance)
+
+                        instance.asSuccess(updatedEvalConfiguration)
                     }
                 }
             }
@@ -95,3 +87,7 @@ open class BasicJvmScriptEvaluator : ScriptEvaluator {
             ResultWithDiagnostics.Failure(e.asDiagnostics("Error evaluating script", path = compiledScript.sourceLocationId))
         }
 }
+
+private fun Any.asSuccess(updatedEvalConfiguration: ScriptEvaluationConfiguration) =
+// TODO: fix result value when ready
+    ResultWithDiagnostics.Success(EvaluationResult(ResultValue.Value("", this, "", this), updatedEvalConfiguration))

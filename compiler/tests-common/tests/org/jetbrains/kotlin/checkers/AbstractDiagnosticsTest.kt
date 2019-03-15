@@ -84,11 +84,11 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         if (files.any(TestFile::checkLazyLog)) {
             lazyOperationsLog = LazyOperationsLog(HASH_SANITIZER)
             storageManager = LoggingStorageManager(
-                LockBasedStorageManager.createWithExceptionHandling(tracker),
+                LockBasedStorageManager.createWithExceptionHandling("AbstractDiagnosticTest", tracker),
                 lazyOperationsLog.addRecordFunction
             )
         } else {
-            storageManager = LockBasedStorageManager.createWithExceptionHandling(tracker)
+            storageManager = LockBasedStorageManager.createWithExceptionHandling("AbstractDiagnosticTest", tracker)
         }
 
         val context = SimpleGlobalContext(storageManager, tracker)
@@ -175,9 +175,15 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
                 if (platform is MultiTargetPlatform.Specific) platform to moduleBindings[testModule]!!
                 else null
             }
+            val moduleDescriptor = modules[module]!!
+
             ok = ok and testFile.getActualText(
-                moduleBindings[module]!!, implementingModulesBindings, actualText,
-                shouldSkipJvmSignatureDiagnostics(groupedByModule) || isCommonModule
+                moduleBindings[module]!!,
+                implementingModulesBindings,
+                actualText,
+                shouldSkipJvmSignatureDiagnostics(groupedByModule) || isCommonModule,
+                languageVersionSettingsByModule[module]!!,
+                moduleDescriptor
             )
         }
 
@@ -280,7 +286,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
             }
         }
 
-        return result ?: JvmTarget.JVM_1_6
+        return result ?: JvmTarget.DEFAULT
     }
 
     private fun checkDynamicCallDescriptors(expectedFile: File, testFiles: List<TestFile>) {

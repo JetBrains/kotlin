@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 var result = "Fail"
 
 interface A {

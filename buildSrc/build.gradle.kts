@@ -4,7 +4,7 @@ buildscript {
 
     val buildSrcKotlinVersion: String by extra(findProperty("buildSrc.kotlin.version")?.toString() ?: embeddedKotlinVersion)
     val buildSrcKotlinRepo: String? by extra(findProperty("buildSrc.kotlin.repo") as String?)
-    extra["versions.shadow"] = "2.0.2"
+    extra["versions.shadow"] = "4.0.3"
     extra["versions.native-platform"] = "0.14"
 
     repositories {
@@ -59,7 +59,7 @@ fun Project.getBooleanProperty(name: String): Boolean? = this.findProperty(name)
 }
 
 rootProject.apply {
-    from(rootProject.file("../versions.gradle.kts"))
+    from(rootProject.file("../gradle/versions.gradle.kts"))
 }
 
 val isTeamcityBuild = project.hasProperty("teamcity") || System.getenv("TEAMCITY_VERSION") != null
@@ -87,6 +87,7 @@ repositories {
 
     jcenter()
     maven("https://jetbrains.bintray.com/intellij-third-party-dependencies/")
+    maven("https://plugins.gradle.org/m2/")
 }
 
 dependencies {
@@ -97,6 +98,8 @@ dependencies {
 
     compile("com.github.jengelman.gradle.plugins:shadow:${property("versions.shadow")}")
     compile("org.jetbrains.intellij.deps:asm-all:7.0")
+
+    compile("gradle.plugin.org.jetbrains.gradle.plugin.idea-ext:gradle-idea-ext:0.4.2")
 }
 
 samWithReceiver {

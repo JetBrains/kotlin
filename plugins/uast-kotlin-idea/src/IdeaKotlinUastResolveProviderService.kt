@@ -16,11 +16,14 @@
 
 package org.jetbrains.uast.kotlin.internal
 
+import com.intellij.openapi.module.ModuleManager
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.ProjectRootModificationTracker
 import com.intellij.psi.PsiElement
+import com.intellij.psi.util.CachedValueProvider.Result
+import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
-import org.jetbrains.kotlin.codegen.state.IncompatibleClassTracker
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
-import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -31,6 +34,7 @@ import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -42,13 +46,18 @@ class IdeaKotlinUastResolveProviderService : KotlinUastResolveProviderService {
     override fun getTypeMapper(element: KtElement): KotlinTypeMapper? {
         return KotlinTypeMapper(
             getBindingContext(element), ClassBuilderMode.LIGHT_CLASSES,
-            IncompatibleClassTracker.DoNothing, JvmAbi.DEFAULT_MODULE_NAME, JvmTarget.DEFAULT,
-            element.languageVersionSettings,
-            false
+            JvmAbi.DEFAULT_MODULE_NAME, element.languageVersionSettings
         )
     }
 
     override fun isJvmElement(psiElement: PsiElement): Boolean {
+        if (allModulesSupportJvm(psiElement.project)) return true
+
+        val containingFile = psiElement.containingFile
+        if (containingFile is KtFile) {
+            return TargetPlatformDetector.getPlatform(containingFile) is JvmPlatform
+        }
+
         val module = psiElement.module
         return module == null || TargetPlatformDetector.getPlatform(module) is JvmPlatform
     }
@@ -63,4 +72,16 @@ class IdeaKotlinUastResolveProviderService : KotlinUastResolveProviderService {
         val call = ktElement.getCall(bindingContext) ?: return emptySequence()
         return call.resolveCandidates(bindingContext, resolutionFacade).map { it.candidateDescriptor }.asSequence()
     }
+
+    private fun allModulesSupportJvm(project: Project): Boolean =
+        CachedValuesManager.getManager(project)
+            .getCachedValue(project, {
+                Result.create(
+                    ModuleManager.getInstance(project).modules.all { module ->
+                        TargetPlatformDetector.getPlatform(module) is JvmPlatform
+                    },
+                    ProjectRootModificationTracker.getInstance(project)
+                )
+            })
+
 }

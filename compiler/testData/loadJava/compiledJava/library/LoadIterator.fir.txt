@@ -1,0 +1,6 @@
+<T> public abstract interface LoadIterator : R|java/lang/Object| {
+    public abstract operator function getIterator(): R|ft<kotlin/collections/MutableIterator<ft<T, T?>>, kotlin/collections/Iterator<ft<T, T?>>?>|!
+
+    public abstract operator function setIterator(iterator: R|ft<kotlin/collections/MutableIterator<ft<T, T?>>, kotlin/collections/Iterator<ft<T, T?>>?>|!): R|kotlin/Unit|
+
+}

@@ -169,7 +169,15 @@ class BinaryJavaMethod(
 ) : BinaryJavaMethodBase(
         flags, containingClass, valueParameters, typeParameters, name
 ), JavaMethod {
-    override var hasAnnotationParameterDefaultValue: Boolean = false
+    override var annotationParameterDefaultValue: JavaAnnotationArgument? = null
+        internal set(value) {
+            if (field != null) {
+                throw AssertionError(
+                    "Annotation method cannot have two default values: $this (old=$field, new=$value)"
+                )
+            }
+            field = value
+        }
 }
 
 class BinaryJavaConstructor(

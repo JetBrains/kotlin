@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -39,6 +39,101 @@ public class IrJsTextTestCaseGenerated extends AbstractIrJsTextTestCase {
 
         public void testAllFilesPresentInDynamic() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/irJsText/dynamic"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("dynamicAndMembersOfAny.kt")
+        public void testDynamicAndMembersOfAny() throws Exception {
+            runTest("compiler/testData/ir/irJsText/dynamic/dynamicAndMembersOfAny.kt");
+        }
+
+        @TestMetadata("dynamicArrayAccess.kt")
+        public void testDynamicArrayAccess() throws Exception {
+            runTest("compiler/testData/ir/irJsText/dynamic/dynamicArrayAccess.kt");
+        }
+
+        @TestMetadata("dynamicArrayAssignment.kt")
+        public void testDynamicArrayAssignment() throws Exception {
+            runTest("compiler/testData/ir/irJsText/dynamic/dynamicArrayAssignment.kt");
+        }
+
+        @TestMetadata("dynamicArrayAugmentedAssignment.kt")
+        public void testDynamicArrayAugmentedAssignment() throws Exception {
+            runTest("compiler/testData/ir/irJsText/dynamic/dynamicArrayAugmentedAssignment.kt");
+        }
+
+        @TestMetadata("dynamicArrayIncrementDecrement.kt")
+        public void testDynamicArrayIncrementDecrement() throws Exception {
+            runTest("compiler/testData/ir/irJsText/dynamic/dynamicArrayIncrementDecrement.kt");
+        }
+
+        @TestMetadata("dynamicBinaryEqualityOperator.kt")
+        public void testDynamicBinaryEqualityOperator() throws Exception {
+            runTest("compiler/testData/ir/irJsText/dynamic/dynamicBinaryEqualityOperator.kt");
+        }
+
+        @TestMetadata("dynamicBinaryLogicalOperator.kt")
+        public void testDynamicBinaryLogicalOperator() throws Exception {
+            runTest("compiler/testData/ir/irJsText/dynamic/dynamicBinaryLogicalOperator.kt");
+        }
+
+        @TestMetadata("dynamicBinaryOperator.kt")
+        public void testDynamicBinaryOperator() throws Exception {
+            runTest("compiler/testData/ir/irJsText/dynamic/dynamicBinaryOperator.kt");
+        }
+
+        @TestMetadata("dynamicBinaryRelationalOperator.kt")
+        public void testDynamicBinaryRelationalOperator() throws Exception {
+            runTest("compiler/testData/ir/irJsText/dynamic/dynamicBinaryRelationalOperator.kt");
+        }
+
+        @TestMetadata("dynamicCall.kt")
+        public void testDynamicCall() throws Exception {
+            runTest("compiler/testData/ir/irJsText/dynamic/dynamicCall.kt");
+        }
+
+        @TestMetadata("dynamicElvisOperator.kt")
+        public void testDynamicElvisOperator() throws Exception {
+            runTest("compiler/testData/ir/irJsText/dynamic/dynamicElvisOperator.kt");
+        }
+
+        @TestMetadata("dynamicExclExclOperator.kt")
+        public void testDynamicExclExclOperator() throws Exception {
+            runTest("compiler/testData/ir/irJsText/dynamic/dynamicExclExclOperator.kt");
+        }
+
+        @TestMetadata("dynamicInfixCall.kt")
+        public void testDynamicInfixCall() throws Exception {
+            runTest("compiler/testData/ir/irJsText/dynamic/dynamicInfixCall.kt");
+        }
+
+        @TestMetadata("dynamicMemberAccess.kt")
+        public void testDynamicMemberAccess() throws Exception {
+            runTest("compiler/testData/ir/irJsText/dynamic/dynamicMemberAccess.kt");
+        }
+
+        @TestMetadata("dynamicMemberAssignment.kt")
+        public void testDynamicMemberAssignment() throws Exception {
+            runTest("compiler/testData/ir/irJsText/dynamic/dynamicMemberAssignment.kt");
+        }
+
+        @TestMetadata("dynamicMemberAugmentedAssignment.kt")
+        public void testDynamicMemberAugmentedAssignment() throws Exception {
+            runTest("compiler/testData/ir/irJsText/dynamic/dynamicMemberAugmentedAssignment.kt");
+        }
+
+        @TestMetadata("dynamicMemberIncrementDecrement.kt")
+        public void testDynamicMemberIncrementDecrement() throws Exception {
+            runTest("compiler/testData/ir/irJsText/dynamic/dynamicMemberIncrementDecrement.kt");
+        }
+
+        @TestMetadata("dynamicUnaryOperator.kt")
+        public void testDynamicUnaryOperator() throws Exception {
+            runTest("compiler/testData/ir/irJsText/dynamic/dynamicUnaryOperator.kt");
+        }
+
+        @TestMetadata("dynamicWithImplicitCast.kt")
+        public void testDynamicWithImplicitCast() throws Exception {
+            runTest("compiler/testData/ir/irJsText/dynamic/dynamicWithImplicitCast.kt");
         }
 
         @TestMetadata("invokeOperator.kt")

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.cli.serviceLoaderLite
 
 import org.jetbrains.kotlin.cli.jvm.plugins.ServiceLoaderLite
 import org.jetbrains.kotlin.cli.jvm.plugins.ServiceLoaderLite.ServiceLoadingException
+import java.io.File
 import javax.annotation.processing.Processor
 
 class ServiceLoaderLiteTest : AbstractServiceLoaderLiteTest() {
@@ -111,6 +112,12 @@ class ServiceLoaderLiteTest : AbstractServiceLoaderLiteTest() {
             assertTrue("test.Bar" in impls)
             assertTrue("test.Zoo" in impls)
         }
+    }
+
+    fun testWrongJarName() {
+        val file = File(tmpdir, "foo.tar.gz")
+        file.writeText("foobar")
+        ServiceLoaderLite.findImplementations(Processor::class.java, listOf(file))
     }
 }
 

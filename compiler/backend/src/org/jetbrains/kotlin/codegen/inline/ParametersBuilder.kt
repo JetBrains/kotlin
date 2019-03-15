@@ -28,10 +28,12 @@ class ParametersBuilder private constructor() {
     }
 
     fun addNextValueParameter(type: Type, skipped: Boolean, remapValue: StackValue?, parameterIndex: Int): ParameterInfo {
-        return addParameter(ParameterInfo(
+        return addParameter(
+            ParameterInfo(
                 type, skipped, nextParameterOffset, remapValue,
                 if (parameterIndex == -1) nextValueParameterIndex else parameterIndex + valueParamFirstIndex
-        ))
+            )
+        )
     }
 
     fun addCapturedParam(original: CapturedParamInfo, newFieldName: String): CapturedParamInfo {
@@ -49,15 +51,15 @@ class ParametersBuilder private constructor() {
     }
 
     fun addCapturedParam(
-            containingLambdaType: Type,
-            fieldName: String,
-            newFieldName: String,
-            type: Type,
-            skipped: Boolean,
-            original: ParameterInfo?
+        containingLambdaType: Type,
+        fieldName: String,
+        newFieldName: String,
+        type: Type,
+        skipped: Boolean,
+        original: ParameterInfo?
     ): CapturedParamInfo {
         val info = CapturedParamInfo(
-                CapturedParamDesc(containingLambdaType, fieldName, type), newFieldName, skipped, nextParameterOffset, original?.index ?: -1
+            CapturedParamDesc(containingLambdaType, fieldName, type), newFieldName, skipped, nextParameterOffset, original?.index ?: -1
         )
         if (original != null) {
             info.lambda = original.lambda
@@ -65,7 +67,7 @@ class ParametersBuilder private constructor() {
         return addParameter(info)
     }
 
-    private fun <T: ParameterInfo> addParameter(info: T): T {
+    private fun <T : ParameterInfo> addParameter(info: T): T {
         params.add(info)
         nextParameterOffset += info.getType().size
         if (info !is CapturedParamInfo) {
@@ -94,8 +96,7 @@ class ParametersBuilder private constructor() {
         return Parameters(params.map { param ->
             if (param is CapturedParamInfo) {
                 param.cloneWithNewDeclarationIndex(nextDeclarationIndex++)
-            }
-            else {
+            } else {
                 param
             }
         })

@@ -33,8 +33,7 @@ inline fun <K, V> SLRUMap<K, V>.getOrPut(key: K, defaultValue: () -> V): V {
         val answer = defaultValue()
         put(key, answer)
         answer
-    }
-    else {
+    } else {
         value
     }
 }

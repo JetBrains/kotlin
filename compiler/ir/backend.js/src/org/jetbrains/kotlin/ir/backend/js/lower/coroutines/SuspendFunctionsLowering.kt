@@ -307,12 +307,12 @@ internal class SuspendFunctionsLowering(val context: JsIrBackendContext): FileLo
             if (unboundFunctionParameters != null) {
                 // Suspend lambda inherits SuspendFunction.
                 val numberOfParameters = unboundFunctionParameters.size
-                suspendFunctionClass = context.suspendFunctions[numberOfParameters].owner
+                suspendFunctionClass = context.suspendFunctionN(numberOfParameters).owner
                 val unboundParameterTypes = unboundFunctionParameters.map { it.type }
                 suspendFunctionClassTypeArguments = unboundParameterTypes + irFunction.returnType
                 superTypes += suspendFunctionClass.typeWith(suspendFunctionClassTypeArguments)
 
-                functionClass = context.functions[numberOfParameters + 1].owner
+                functionClass = context.functionN(numberOfParameters + 1).owner
                 val continuationType = continuationClassSymbol.typeWith(irFunction.returnType)
                 functionClassTypeArguments = unboundParameterTypes + continuationType + context.irBuiltIns.anyNType
                 superTypes += functionClass.typeWith(functionClassTypeArguments)
@@ -629,7 +629,7 @@ internal class SuspendFunctionsLowering(val context: JsIrBackendContext): FileLo
                     DECLARATION_ORIGIN_COROUTINE_IMPL,
                     symbol,
                     Name.identifier("create"),
-                    Visibilities.PRIVATE,
+                    Visibilities.PROTECTED,
                     Modality.FINAL,
                     coroutineClass.defaultType,
                     false,
@@ -706,7 +706,7 @@ internal class SuspendFunctionsLowering(val context: JsIrBackendContext): FileLo
                     DECLARATION_ORIGIN_COROUTINE_IMPL,
                     symbol,
                     Name.identifier("invoke"),
-                    Visibilities.PRIVATE,
+                    Visibilities.PROTECTED,
                     Modality.FINAL,
                     irFunction.returnType,
                     false,
@@ -763,7 +763,7 @@ internal class SuspendFunctionsLowering(val context: JsIrBackendContext): FileLo
         }
 
         private fun addField(name: Name, type: IrType, isMutable: Boolean): IrField {
-            val descriptor = WrappedPropertyDescriptor()
+            val descriptor = WrappedFieldDescriptor()
             val symbol = IrFieldSymbolImpl(descriptor)
             return IrFieldImpl(
                 irFunction.startOffset,

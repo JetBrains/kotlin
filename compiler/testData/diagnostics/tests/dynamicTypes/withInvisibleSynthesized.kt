@@ -20,7 +20,7 @@ public class J {
 import p.*
 
 class K: J.C() {
-    fun <!UNSUPPORTED, DYNAMIC_RECEIVER_NOT_ALLOWED!>dynamic<!>.test() {
+    fun <!DYNAMIC_RECEIVER_NOT_ALLOWED, UNSUPPORTED!>dynamic<!>.test() {
         <!DEBUG_INFO_DYNAMIC!>sam<!>(null)
         <!DEBUG_INFO_DYNAMIC!>sam<!>(
             name = null,

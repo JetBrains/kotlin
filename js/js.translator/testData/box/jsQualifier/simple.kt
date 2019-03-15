@@ -1,5 +1,5 @@
-// IGNORE_BACKEND: JS_IR
 // EXPECTED_REACHABLE_NODES: 1282
+// IGNORE_BACKEND: JS_IR
 // MODULE: lib
 // FILE: lib.kt
 @file:JsQualifier("a.b")

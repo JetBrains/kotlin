@@ -1,0 +1,6 @@
+public open class MethodWithMappedClasses : R|java/lang/Object| {
+    public open operator function copy(dest: R|ft<kotlin/collections/MutableList<in T>, kotlin/collections/List<in T>?>|!, src: R|ft<kotlin/collections/MutableList<ft<T, T?>>, kotlin/collections/List<ft<T, T?>>?>|!): R|kotlin/Unit|
+
+    public open operator function copyMap(dest: R|ft<kotlin/collections/MutableMap<ft<kotlin/String, kotlin/String?>, in T>, kotlin/collections/Map<ft<kotlin/String, kotlin/String?>, in T>?>|!, src: R|ft<kotlin/collections/MutableMap<ft<kotlin/String, kotlin/String?>, ft<T, T?>>, kotlin/collections/Map<ft<kotlin/String, kotlin/String?>, ft<T, T?>>?>|!): R|kotlin/Unit|
+
+}

@@ -9,10 +9,10 @@ KtFile: HttpLink.kt
     KDOC_SECTION
       PsiElement(KDOC_LEADING_ASTERISK)('*')
       PsiElement(KDOC_TEXT)(' ')
-      PsiElement(KDOC_MARKDOWN_INLINE_LINK)('[Kotlin](http://kotlinlang.org)')
+      PsiElement(KDOC_MARKDOWN_INLINE_LINK)('[Kotlin](https://kotlinlang.org)')
       PsiElement(KDOC_TEXT)(' is made by [JetBrains][1]')
       PsiWhiteSpace('\n ')
       PsiElement(KDOC_LEADING_ASTERISK)('*')
-      PsiElement(KDOC_TEXT)(' [1]: http://www.jetbrains.com/')
+      PsiElement(KDOC_TEXT)(' [1]: https://www.jetbrains.com/')
     PsiWhiteSpace('\n ')
     PsiElement(KDOC_END)('*/')

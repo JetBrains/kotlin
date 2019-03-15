@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.refactoring.rename
 
-import org.jetbrains.kotlin.statistics.KotlinStatisticsTrigger
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiReference
@@ -15,7 +14,8 @@ import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.idea.references.SyntheticPropertyAccessorReference
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.statistics.KotlinIdeRefactoringTrigger
+import org.jetbrains.kotlin.idea.statistics.KotlinEventTrigger
+import org.jetbrains.kotlin.idea.statistics.KotlinStatisticsTrigger
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.utils.ifEmpty
 
@@ -28,7 +28,7 @@ class KotlinAwareJavaGetterRenameProcessor : RenameJavaMethodProcessor() {
         val propertyName = SyntheticJavaPropertyDescriptor.propertyNameByGetMethodName(Name.identifier(getter.name)) ?: return getterReferences
         val setterName = JvmAbi.setterName(propertyName.asString())
         val containingClass = getter.containingClass ?: return getterReferences
-        KotlinStatisticsTrigger.trigger(KotlinIdeRefactoringTrigger::class.java, this::class.java.name)
+        KotlinStatisticsTrigger.trigger(KotlinEventTrigger.KotlinIdeRefactoringTrigger, this::class.java.name)
         val setterReferences = containingClass
             .findMethodsByName(setterName, true)
             .filter { it.parameters.size == 1 && it.returnType == PsiType.VOID }

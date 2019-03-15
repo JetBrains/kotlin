@@ -10,7 +10,6 @@ import com.intellij.openapi.util.io.FileUtil;
 import junit.framework.ComparisonFailure;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
-import org.jetbrains.kotlin.checkers.CompilerTestLanguageVersionSettings;
 import org.jetbrains.kotlin.checkers.CompilerTestLanguageVersionSettingsKt;
 import org.jetbrains.kotlin.cli.common.config.ContentRootsKt;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
@@ -35,13 +34,9 @@ import org.junit.Assert;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 
-import static java.util.Collections.emptyMap;
 import static org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil.*;
 import static org.jetbrains.kotlin.test.KotlinTestUtils.*;
 import static org.jetbrains.kotlin.test.util.DescriptorValidator.ValidationVisitor.errorTypesAllowed;
@@ -67,9 +62,13 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         if (useJavacWrapper()) return;
 
         List<File> kotlinSources = FileUtil.findFilesByMask(Pattern.compile(".+\\.kt"), sourcesDir);
-        KotlinCoreEnvironment environment =
-                KotlinTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable, ConfigurationKind.JDK_ONLY);
+
+        KotlinCoreEnvironment environment = KotlinCoreEnvironment.createForTests(
+                myTestRootDisposable, newConfiguration(ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, getClasspath(),
+                                                       Collections.emptyList()), EnvironmentConfigFiles.JVM_CONFIG_FILES
+        );
         registerJavacIfNeeded(environment);
+        configureEnvironment(environment);
 
         compileKotlinToDirAndGetModule(kotlinSources, tmpdir, environment);
 
@@ -84,6 +83,19 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
     @NotNull
     protected File getExpectedFile(@NotNull String expectedFileName) {
         return new File(expectedFileName);
+    }
+
+    @NotNull
+    private List<File> getClasspath(File... files) {
+        List<File> classpath = new ArrayList<>(getExtraClasspath());
+        classpath.add(getAnnotationsJar());
+        classpath.addAll(Arrays.asList(files));
+        return classpath;
+    }
+
+    @NotNull
+    protected List<File> getExtraClasspath() {
+        return Collections.emptyList();
     }
 
     protected void doTestCompiledJavaIncludeObjectMethods(@NotNull String javaFileName) throws Exception {
@@ -108,7 +120,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         File ktFile = new File(ktFileName);
         File txtFile = getTxtFileFromKtFile(ktFileName);
 
-        CompilerConfiguration configuration = newConfiguration(configurationKind, TestJdkKind.MOCK_JDK, getAnnotationsJar());
+        CompilerConfiguration configuration = newConfiguration(configurationKind, TestJdkKind.MOCK_JDK, getClasspath(), Collections.emptyList());
         if (useTypeTableInSerializer) {
             configuration.put(JVMConfigurationKeys.USE_TYPE_TABLE, true);
         }
@@ -118,6 +130,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         KotlinCoreEnvironment environment =
                 KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
         registerJavacIfNeeded(environment);
+        configureEnvironment(environment);
         ModuleDescriptor module = compileKotlinToDirAndGetModule(Collections.singletonList(ktFile), tmpdir, environment);
 
         PackageViewDescriptor packageFromSource = module.getPackage(TEST_PACKAGE_FQNAME);
@@ -125,7 +138,8 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
 
         PackageViewDescriptor packageFromBinary = LoadDescriptorUtil.loadTestPackageAndBindingContextFromJavaRoot(
                 tmpdir, getTestRootDisposable(), getJdkKind(), configurationKind, true, false, useJavacWrapper(),
-                configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS)
+                configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS),
+                getExtraClasspath(), this::configureEnvironment
         ).first;
 
         for (DeclarationDescriptor descriptor : DescriptorUtils.getAllDescriptors(packageFromBinary.getMemberScope())) {
@@ -173,6 +187,8 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
 
     protected void registerJavacIfNeeded(KotlinCoreEnvironment environment) {}
 
+    protected void configureEnvironment(KotlinCoreEnvironment environment) {}
+
     protected void doTestJavaAgainstKotlin(String expectedFileName) throws Exception {
         File expectedFile = new File(expectedFileName);
         File sourcesDir = new File(expectedFileName.replaceFirst("\\.txt$", ""));
@@ -187,6 +203,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         KotlinCoreEnvironment environment =
                 KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
         registerJavacIfNeeded(environment);
+        configureEnvironment(environment);
         AnalysisResult result = TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
                 environment.getProject(), environment.getSourceFiles(), new NoScopeRecordCliBindingTrace(),
                 configuration, environment::createPackagePartProvider
@@ -213,10 +230,11 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
 
         KotlinCoreEnvironment environment = KotlinCoreEnvironment.createForTests(
                 getTestRootDisposable(),
-                newConfiguration(ConfigurationKind.JDK_ONLY, getJdkKind(), getAnnotationsJar(), libraryOut),
+                newConfiguration(ConfigurationKind.JDK_ONLY, getJdkKind(), getClasspath(libraryOut), Collections.emptyList()),
                 EnvironmentConfigFiles.JVM_CONFIG_FILES
         );
         registerJavacIfNeeded(environment);
+        configureEnvironment(environment);
         KtFile ktFile = KotlinTestUtils.createFile(kotlinSrc.getPath(), FileUtil.loadFile(kotlinSrc, true), environment.getProject());
 
         ModuleDescriptor module = JvmResolveUtil.analyzeAndCheckForErrors(Collections.singleton(ktFile), environment).getModuleDescriptor();
@@ -288,7 +306,8 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
     ) throws IOException {
         compileJavaWithAnnotationsJar(javaFiles, outDir);
         return loadTestPackageAndBindingContextFromJavaRoot(outDir, myTestRootDisposable, getJdkKind(), configurationKind, true,
-                                                            useFastClassFilesReading(), useJavacWrapper(), null);
+                                                            useFastClassFilesReading(), useJavacWrapper(), null,
+                                                            getExtraClasspath(), this::configureEnvironment);
     }
 
     private static void checkJavaPackage(

@@ -213,14 +213,22 @@ object JavaToKotlinClassMap : PlatformToKotlinClassMap {
             emptySet<ClassDescriptor>()
     }
 
-    fun isMutable(mutable: ClassDescriptor): Boolean = mutableToReadOnly.containsKey(DescriptorUtils.getFqName(mutable))
+    fun mutableToReadOnly(fqNameUnsafe: FqNameUnsafe?): FqName? = mutableToReadOnly[fqNameUnsafe]
+
+    fun readOnlyToMutable(fqNameUnsafe: FqNameUnsafe?): FqName? = readOnlyToMutable[fqNameUnsafe]
+
+    fun isMutable(fqNameUnsafe: FqNameUnsafe?): Boolean = mutableToReadOnly.containsKey(fqNameUnsafe)
+
+    fun isMutable(mutable: ClassDescriptor): Boolean = isMutable(DescriptorUtils.getFqName(mutable))
 
     fun isMutable(type: KotlinType): Boolean {
         val classDescriptor = TypeUtils.getClassDescriptor(type)
         return classDescriptor != null && isMutable(classDescriptor)
     }
 
-    fun isReadOnly(readOnly: ClassDescriptor): Boolean = readOnlyToMutable.containsKey(DescriptorUtils.getFqName(readOnly))
+    fun isReadOnly(fqNameUnsafe: FqNameUnsafe?): Boolean = readOnlyToMutable.containsKey(fqNameUnsafe)
+
+    fun isReadOnly(readOnly: ClassDescriptor): Boolean = isReadOnly(DescriptorUtils.getFqName(readOnly))
 
     fun isReadOnly(type: KotlinType): Boolean {
         val classDescriptor = TypeUtils.getClassDescriptor(type)

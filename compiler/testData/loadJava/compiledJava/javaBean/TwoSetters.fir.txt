@@ -1,0 +1,6 @@
+public open class TwoSetters : R|java/lang/Object| {
+    public open operator function setSize(size: R|ft<kotlin/String, kotlin/String?>|!): R|kotlin/Unit|
+
+    public open operator function setSize(size: R|kotlin/Int|): R|kotlin/Unit|
+
+}

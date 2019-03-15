@@ -19,7 +19,8 @@ import com.intellij.util.Query
 import org.jetbrains.jps.model.java.JavaModuleSourceRootTypes
 import org.jetbrains.jps.model.java.JavaSourceRootProperties
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
-import org.jetbrains.kotlin.config.KotlinSourceRootType
+import org.jetbrains.kotlin.config.SourceKotlinRootType
+import org.jetbrains.kotlin.config.TestSourceKotlinRootType
 import org.jetbrains.kotlin.idea.caches.PerModulePackageCacheService
 import org.jetbrains.kotlin.idea.roots.invalidateProjectRoots
 import org.jetbrains.kotlin.idea.util.rootManager
@@ -79,7 +80,7 @@ private fun findLongestExistingPackage(module: Module, packageName: String): Psi
 }
 
 private val kotlinSourceRootTypes: Set<JpsModuleSourceRootType<JavaSourceRootProperties>> =
-    setOf(KotlinSourceRootType.Source, KotlinSourceRootType.TestSource) + JavaModuleSourceRootTypes.SOURCES
+    setOf(SourceKotlinRootType, TestSourceKotlinRootType) + JavaModuleSourceRootTypes.SOURCES
 
 private fun Module.getNonGeneratedKotlinSourceRoots(): List<VirtualFile> {
     val result = mutableListOf<VirtualFile>()

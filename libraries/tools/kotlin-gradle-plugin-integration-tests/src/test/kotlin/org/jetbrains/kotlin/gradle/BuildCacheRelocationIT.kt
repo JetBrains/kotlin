@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.jetbrains.kotlin.gradle.util.AGPVersion
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Test
@@ -30,7 +31,7 @@ class BuildCacheRelocationIT : BaseGradleIT() {
     override fun defaultBuildOptions(): BuildOptions =
         super.defaultBuildOptions().copy(
             withBuildCache = true,
-            androidGradlePluginVersion = "3.1.0",
+            androidGradlePluginVersion = AGPVersion.v3_1_0,
             androidHome = KotlinTestUtils.findAndroidSdk()
         )
 

@@ -28,8 +28,6 @@ import org.jetbrains.kotlin.ir.expressions.IrExpressionWithCopy
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.types.classifierOrFail
-import org.jetbrains.kotlin.load.java.sam.SamAdapterDescriptor
-import org.jetbrains.kotlin.load.java.sam.SingleAbstractMethodUtils
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -42,7 +40,6 @@ import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getSuperCallExpressio
 import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
-import org.jetbrains.kotlin.synthetic.SamAdapterExtensionFunctionDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
 
@@ -134,14 +131,10 @@ private fun StatementGenerator.shouldGenerateReceiverAsSingletonReference(receiv
 }
 
 private fun StatementGenerator.generateThisOrSuperReceiver(receiver: ReceiverValue, classDescriptor: ClassDescriptor): IrExpression {
-    val expressionReceiver =
-        receiver as? ExpressionReceiver ?: throw AssertionError("'this' or 'super' receiver should be an expression receiver")
+    val expressionReceiver = receiver as? ExpressionReceiver
+        ?: throw AssertionError("'this' or 'super' receiver should be an expression receiver")
     val ktReceiver = expressionReceiver.expression
-    return IrGetValueImpl(
-        ktReceiver.startOffsetSkippingComments, ktReceiver.endOffset,
-        expressionReceiver.type.toIrType(),
-        context.symbolTable.referenceValueParameter(classDescriptor.thisAsReceiverParameter)
-    )
+    return generateThisReceiver(ktReceiver.startOffsetSkippingComments, ktReceiver.endOffset, expressionReceiver.type, classDescriptor)
 }
 
 fun StatementGenerator.generateBackingFieldReceiver(
@@ -271,8 +264,13 @@ fun StatementGenerator.generateValueArgumentUsing(
     when (valueArgument) {
         is DefaultValueArgument ->
             null
-        is ExpressionValueArgument ->
-            generateArgumentExpression(valueArgument.valueArgument!!.getArgumentExpression()!!)
+        is ExpressionValueArgument -> {
+            val valueArgument1 = valueArgument.valueArgument
+                ?: throw AssertionError("No value argument: $valueArgument")
+            val argumentExpression = valueArgument1.getArgumentExpression()
+                ?: throw AssertionError("No argument expression: $valueArgument1")
+            generateArgumentExpression(argumentExpression)
+        }
         is VarargValueArgument ->
             generateVarargExpressionUsing(valueArgument, valueParameter, generateArgumentExpression)
         else ->
@@ -382,11 +380,7 @@ private fun StatementGenerator.pregenerateValueArguments(call: CallBuilder, reso
 }
 
 private fun StatementGenerator.generateSamConversionForValueArgumentsIfRequired(call: CallBuilder, originalDescriptor: CallableDescriptor) {
-    val underlyingDescriptor = when (originalDescriptor) {
-        is SamAdapterDescriptor<*> -> originalDescriptor.baseDescriptorForSynthetic
-        is SamAdapterExtensionFunctionDescriptor -> originalDescriptor.baseDescriptorForSynthetic
-        else -> return
-    }
+    val underlyingDescriptor = context.extensions.samConversion.getOriginalForSamAdapter(originalDescriptor) ?: return
 
     val originalValueParameters = originalDescriptor.valueParameters
     val underlyingValueParameters = underlyingDescriptor.valueParameters
@@ -404,7 +398,7 @@ private fun StatementGenerator.generateSamConversionForValueArgumentsIfRequired(
         val originalParameterType = originalValueParameters[i].type
         val underlyingParameterType = underlyingValueParameters[i].type
 
-        if (!SingleAbstractMethodUtils.isSamType(underlyingParameterType)) continue
+        if (!context.extensions.samConversion.isSamType(underlyingParameterType)) continue
         if (!originalParameterType.isFunctionTypeOrSubtype) continue
 
         val originalArgument = call.irValueArgumentsByIndex[i] ?: continue
@@ -436,7 +430,7 @@ fun StatementGenerator.pregenerateValueArgumentsUsing(
 }
 
 fun StatementGenerator.pregenerateCallReceivers(resolvedCall: ResolvedCall<*>): CallBuilder {
-    val call = unwrapCallableDescriptorAndTypeArguments(resolvedCall)
+    val call = unwrapCallableDescriptorAndTypeArguments(resolvedCall, context.extensions.samConversion)
 
     call.callReceiver = generateCallReceiver(
         resolvedCall.call.callElement,
@@ -451,20 +445,21 @@ fun StatementGenerator.pregenerateCallReceivers(resolvedCall: ResolvedCall<*>): 
     return call
 }
 
-private fun unwrapSpecialDescriptor(originalDescriptor: CallableDescriptor): CallableDescriptor =
-    when (originalDescriptor) {
-        is ImportedFromObjectCallableDescriptor<*> -> unwrapSpecialDescriptor(originalDescriptor.callableFromObject)
-        is TypeAliasConstructorDescriptor -> originalDescriptor.underlyingConstructorDescriptor
-        is SamAdapterDescriptor<*> -> unwrapSpecialDescriptor(originalDescriptor.baseDescriptorForSynthetic)
-        is SamAdapterExtensionFunctionDescriptor -> unwrapSpecialDescriptor(originalDescriptor.baseDescriptorForSynthetic)
-        else -> originalDescriptor
+private fun unwrapSpecialDescriptor(
+    descriptor: CallableDescriptor,
+    samConversion: GeneratorExtensions.SamConversion
+): CallableDescriptor =
+    when (descriptor) {
+        is ImportedFromObjectCallableDescriptor<*> -> unwrapSpecialDescriptor(descriptor.callableFromObject, samConversion)
+        is TypeAliasConstructorDescriptor -> descriptor.underlyingConstructorDescriptor
+        else -> samConversion.getOriginalForSamAdapter(descriptor)?.let { unwrapSpecialDescriptor(it, samConversion) } ?: descriptor
     }
 
-fun unwrapCallableDescriptorAndTypeArguments(resolvedCall: ResolvedCall<*>): CallBuilder {
+fun unwrapCallableDescriptorAndTypeArguments(resolvedCall: ResolvedCall<*>, samConversion: GeneratorExtensions.SamConversion): CallBuilder {
     val originalDescriptor = resolvedCall.resultingDescriptor
     val candidateDescriptor = resolvedCall.candidateDescriptor
 
-    val unwrappedDescriptor = unwrapSpecialDescriptor(originalDescriptor)
+    val unwrappedDescriptor = unwrapSpecialDescriptor(originalDescriptor, samConversion)
 
     val originalTypeArguments = resolvedCall.typeArguments
     val unsubstitutedUnwrappedDescriptor = unwrappedDescriptor.original

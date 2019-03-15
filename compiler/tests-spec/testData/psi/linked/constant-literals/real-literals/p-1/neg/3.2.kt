@@ -1,9 +1,8 @@
 /*
  * KOTLIN PSI SPEC TEST (NEGATIVE)
  *
- * SECTIONS: constant-literals, real-literals
- * PARAGRAPH: 1
- * SENTENCE: [3] A real literal may also be followed by a type suffix (f or F).
+ * SPEC VERSION: 0.1-draft
+ * PLACES: constant-literals, real-literals -> paragraph 1 -> sentence 3
  * NUMBER: 2
  * DESCRIPTION: A float suffix in the real literals right after a several dots (possibly separated by digits).
  */

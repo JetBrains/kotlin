@@ -1,0 +1,25 @@
+FILE: destructuring.kt
+    public? final? data class Some {
+        public? constructor(first: Int, second: Double, third: String): super<kotlin/Any>()
+
+        public? final? property first(val): Int
+            public? get(): Int
+
+        public? final? property second(val): Double
+            public? get(): Double
+
+        public? final? property third(val): String
+            public? get(): String
+
+    }
+    public? final? function foo(some: Some): kotlin/Unit {
+        val <destruct>: <implicit> = some#
+        var x: <implicit> = component1(<destruct>#)
+        var y: <implicit> = component2(<destruct>#)
+        var z: String = component3(<destruct>#)
+        val <unary>: <implicit> = x#
+        x# = inc#(<unary>#)
+        <unary>#
+        y# *= Double(2.0)
+        z# = String()
+    }

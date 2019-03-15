@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 
-enum class HintType(desc: String, enabled: Boolean) {
+enum class HintType(val desc: String, defaultEnabled: Boolean) {
 
     PROPERTY_HINT("Show property type hints", false) {
         override fun provideHints(elem: PsiElement): List<InlayInfo> {
@@ -86,9 +86,11 @@ enum class HintType(desc: String, enabled: Boolean) {
             elem is KtExpression && elem !is KtFunctionLiteral && !elem.isNameReferenceInCall()
 
         override fun provideHints(elem: PsiElement): List<InlayInfo> {
-            if (elem is KtExpression) {
-                return provideLambdaReturnValueHints(elem)
-            }
+            // Will be painted with ReturnHintLinePainter
+
+            // Enable/Disable setting will be present in the list with other hints.
+            // Enable action will be provided by the platform.
+            // Disable action need to be reimplemented as hints are not actually added, see DisableReturnLambdaHintOptionAction.
 
             return emptyList()
         }
@@ -133,11 +135,12 @@ enum class HintType(desc: String, enabled: Boolean) {
 
     abstract fun isApplicable(elem: PsiElement): Boolean
     abstract fun provideHints(elem: PsiElement): List<InlayInfo>
-    val option = Option("SHOW_${this.name}", desc, enabled)
+    val option = Option("SHOW_${this.name}", desc, defaultEnabled)
     val enabled
         get() = option.get()
 }
 
+@Suppress("UnstableApiUsage")
 class KotlinInlayParameterHintsProvider : InlayParameterHintsProvider {
 
     override fun getSupportedOptions(): List<Option> = HintType.values().map { it.option }
@@ -160,8 +163,10 @@ class KotlinInlayParameterHintsProvider : InlayParameterHintsProvider {
         }
     }
 
-    override fun getParameterHints(element: PsiElement?): List<InlayInfo> =
-        HintType.resolveToEnabled(element)?.provideHints(element!!) ?: emptyList()
+    override fun getParameterHints(element: PsiElement?): List<InlayInfo> {
+        val resolveToEnabled = HintType.resolveToEnabled(element) ?: return emptyList()
+        return resolveToEnabled.provideHints(element!!)
+    }
 
     override fun getBlackListDependencyLanguage(): Language = JavaLanguage.INSTANCE
 
@@ -188,5 +193,5 @@ class KotlinInlayParameterHintsProvider : InlayParameterHintsProvider {
     }
 }
 
-private fun PsiElement.isNameReferenceInCall() =
+fun PsiElement.isNameReferenceInCall() =
     this is KtNameReferenceExpression && parent is KtCallExpression

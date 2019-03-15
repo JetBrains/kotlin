@@ -106,6 +106,18 @@ open class FirDeclarationStatusImpl(
             this[DATA] = value
         }
 
+    override var isSuspend: Boolean
+        get() = this[SUSPEND]
+        set(value) {
+            this[SUSPEND] = value
+        }
+
+    override var isStatic: Boolean
+        get() = this[STATIC]
+        set(value) {
+            this[STATIC] = value
+        }
+
     private enum class Modifier(val mask: Int) {
         EXPECT(0x1),
         ACTUAL(0x2),
@@ -119,7 +131,9 @@ open class FirDeclarationStatusImpl(
         LATEINIT(0x200),
         INNER(0x400),
         COMPANION(0x800),
-        DATA(0x1000)
+        DATA(0x1000),
+        SUSPEND(0x2000),
+        STATIC(0x4000)
     }
 
     fun resolved(visibility: Visibility, modality: Modality): FirDeclarationStatus {

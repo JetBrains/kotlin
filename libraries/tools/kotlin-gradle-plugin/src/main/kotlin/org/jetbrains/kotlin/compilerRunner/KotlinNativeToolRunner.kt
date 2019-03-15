@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.compilerRunner
 import org.gradle.api.Named
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
+import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import org.jetbrains.kotlin.konan.KonanVersion
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -103,6 +104,7 @@ internal abstract class KonanCliRunner(
 
     override val additionalSystemProperties = mutableMapOf(
         "konan.home" to project.konanHome,
+        MessageRenderer.PROPERTY_KEY to MessageRenderer.GRADLE_STYLE.name,
         "java.library.path" to "${project.konanHome}/konan/nativelib"
     )
 
@@ -157,13 +159,12 @@ internal class KonanInteropRunner(project: Project, additionalJvmArgs: List<Stri
                 project.file("${project.konanHome}/konan/konan.properties").inputStream().use(::load)
             }
             val toolchainDir = konanProperties.getProperty("targetToolchain.mingw_x64")
-
             if (toolchainDir != null) {
                 environment.put(
                     "PATH",
                     DependencyDirectories.defaultDependenciesRoot
-                        .resolve("\\$toolchainDir\\bin;${environment.get("PATH")}")
-                        .absolutePath
+                        .resolve("$toolchainDir/bin")
+                        .absolutePath + ";${System.getenv("PATH")}"
                 )
             }
         }

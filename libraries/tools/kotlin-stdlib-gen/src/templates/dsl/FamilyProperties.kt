@@ -15,7 +15,7 @@ val Family.DocExtension.element: String
 
 val Family.CodeExtension.size: String
     get() = when (family) {
-        Iterables, Collections, Lists, Sets, Maps, InvariantArraysOfObjects, ArraysOfObjects, ArraysOfPrimitives -> "size"
+        Iterables, Collections, Lists, Sets, Maps, InvariantArraysOfObjects, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned -> "size"
         CharSequences, Strings -> "length"
         else -> error("size property isn't supported for $family")
     }

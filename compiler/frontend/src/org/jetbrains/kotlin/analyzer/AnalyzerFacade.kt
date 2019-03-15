@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
-import org.jetbrains.kotlin.resolve.MultiTargetPlatform
 import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.storage.StorageManager
@@ -93,7 +92,6 @@ class ResolverForProjectImpl<M : ModuleInfo>(
     private val projectContext: ProjectContext,
     modules: Collection<M>,
     private val modulesContent: (M) -> ModuleContent<M>,
-    private val modulePlatforms: (M) -> MultiTargetPlatform?,
     private val moduleLanguageSettingsProvider: LanguageSettingsProvider,
     private val resolverForModuleFactoryByPlatform: (TargetPlatform?) -> ResolverForModuleFactory,
     private val platformParameters: (TargetPlatform) -> PlatformAnalysisParameters,
@@ -256,7 +254,7 @@ class ResolverForProjectImpl<M : ModuleInfo>(
             module.name,
             projectContext.storageManager,
             builtIns,
-            modulePlatforms(module),
+            module.platform?.multiTargetPlatform,
             module.capabilities,
             module.stableName
         )
@@ -289,6 +287,12 @@ fun ModuleInfo.flatten(): List<ModuleInfo> = when (this) {
 
 interface TrackableModuleInfo : ModuleInfo {
     fun createModificationTracker(): ModificationTracker
+}
+
+interface LibraryModuleInfo : ModuleInfo {
+    override val platform: TargetPlatform
+
+    fun getLibraryRoots(): Collection<String>
 }
 
 abstract class ResolverForModuleFactory {

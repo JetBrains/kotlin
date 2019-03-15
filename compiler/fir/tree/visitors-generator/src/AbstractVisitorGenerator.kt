@@ -10,11 +10,11 @@ import org.jetbrains.kotlin.utils.Printer
 abstract class AbstractVisitorGenerator(val referencesData: DataCollector.ReferencesData) {
     fun Printer.generateFunction(
         name: String,
-        parameters: Map<String, String>,
+        parameters: Map<String, DataCollector.NameWithTypeParameters>,
         returnType: String,
         override: Boolean = false,
         final: Boolean = false,
-        typeParameters: List<String> = emptyList(),
+        typeParametersWithBounds: List<String> = emptyList(),
         body: (Printer.() -> Unit)?
     ) {
 
@@ -33,15 +33,15 @@ abstract class AbstractVisitorGenerator(val referencesData: DataCollector.Refere
             }
         }
         printWithNoIndent("fun ")
-        if (typeParameters.isNotEmpty()) {
+        if (typeParametersWithBounds.isNotEmpty()) {
             printWithNoIndent("<")
-            separatedOneLine(typeParameters, ", ")
+            separatedOneLine(typeParametersWithBounds, ", ")
             printWithNoIndent("> ")
         }
         printWithNoIndent(name, "(")
         parameters
-            .flatMap { (a, b) ->
-                listOf(a, ": ", b, ", ")
+            .flatMap { (parameterName, typeNameWithTypeParameters) ->
+                listOf(parameterName, ": ", typeNameWithTypeParameters.asStringWithoutBounds(), ", ")
             }.dropLast(1)
             .forEach {
                 printWithNoIndent(it)
@@ -74,7 +74,7 @@ abstract class AbstractVisitorGenerator(val referencesData: DataCollector.Refere
         printWithNoIndent(")")
     }
 
-    protected fun Printer.separatedOneLine(iterable: Iterable<Any>, separator: Any) {
+    private fun Printer.separatedOneLine(iterable: Iterable<Any>, separator: Any) {
         var first = true
         for (element in iterable) {
             if (!first) {
@@ -86,7 +86,7 @@ abstract class AbstractVisitorGenerator(val referencesData: DataCollector.Refere
         }
     }
 
-    protected fun Printer.generateDefaultImports() {
+    private fun Printer.generateDefaultImports() {
         referencesData.usedPackages.forEach {
             println("import ", it.asString(), ".*")
         }
@@ -118,8 +118,8 @@ abstract class AbstractVisitorGenerator(val referencesData: DataCollector.Refere
 
 
     fun allElementTypes() =
-        referencesData.back.let {
-            it.keys + it.values.flatten()
+        referencesData.direct.let { map ->
+            map.keys + map.values.flatten()
         }.distinct()
 
     abstract fun Printer.generateContent()

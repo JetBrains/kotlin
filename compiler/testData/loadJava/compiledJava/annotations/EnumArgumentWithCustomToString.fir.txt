@@ -1,0 +1,4 @@
+public open class EnumArgumentWithCustomToString : R|java/lang/Object| {
+    @R|test/EnumArgumentWithCustomToString.EnumAnno|(R|test/EnumArgumentWithCustomToString.E.CAKE|()) @R|test/EnumArgumentWithCustomToString.EnumArrayAnno|(<implicitArrayOf>(R|test/EnumArgumentWithCustomToString.E.CAKE|(), R|test/EnumArgumentWithCustomToString.E.CAKE|())) public/*package*/ open operator function annotated(): R|kotlin/Unit|
+
+}

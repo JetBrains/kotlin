@@ -1,0 +1,6 @@
+public open class ModalityOfFakeOverrides : R|java/util/AbstractList<java/lang/String>| {
+    @R|java/lang/Override|() @R|org/jetbrains/annotations/NotNull|() public open operator function get(index: R|kotlin/Int|): R|kotlin/String|
+
+    @R|java/lang/Override|() public open operator function size(): R|kotlin/Int|
+
+}

@@ -20,7 +20,11 @@ import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-internal data class DeprecatedByAnnotation(val annotation: AnnotationDescriptor, override val target: DeclarationDescriptor) : Deprecation {
+internal data class DeprecatedByAnnotation(
+    val annotation: AnnotationDescriptor,
+    override val target: DeclarationDescriptor,
+    override val propagatesToOverrides: Boolean
+) : Deprecation {
     override val deprecationLevel: DeprecationLevelValue
         get() = when (annotation.argumentValue("level")?.safeAs<EnumValue>()?.enumEntryName?.asString()) {
             "WARNING" -> WARNING

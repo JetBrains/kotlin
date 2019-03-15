@@ -1,0 +1,4 @@
+public abstract interface GenericMethodParameters : R|java/lang/Object| {
+    public abstract operator function method(a: R|kotlin/Array<ft<A, A?>>|, b: R|ft<B, B?>|!): R|kotlin/Unit|
+
+}

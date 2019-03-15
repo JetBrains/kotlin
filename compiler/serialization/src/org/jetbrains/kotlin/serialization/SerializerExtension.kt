@@ -36,31 +36,35 @@ abstract class SerializerExtension {
 
 
     open fun serializeClass(
-            descriptor: ClassDescriptor,
-            proto: ProtoBuf.Class.Builder,
-            versionRequirementTable: MutableVersionRequirementTable,
-            childSerializer: DescriptorSerializer
+        descriptor: ClassDescriptor,
+        proto: ProtoBuf.Class.Builder,
+        versionRequirementTable: MutableVersionRequirementTable,
+        childSerializer: DescriptorSerializer
     ) {
     }
 
     open fun serializePackage(packageFqName: FqName, proto: ProtoBuf.Package.Builder) {
     }
 
-    open fun serializeConstructor(descriptor: ConstructorDescriptor,
-                                  proto: ProtoBuf.Constructor.Builder,
-                                  childSerializer: DescriptorSerializer) {
+    open fun serializeConstructor(
+        descriptor: ConstructorDescriptor,
+        proto: ProtoBuf.Constructor.Builder,
+        childSerializer: DescriptorSerializer
+    ) {
     }
 
-    open fun serializeFunction(descriptor: FunctionDescriptor,
-                               proto: ProtoBuf.Function.Builder,
-                               childSerializer: DescriptorSerializer) {
+    open fun serializeFunction(
+        descriptor: FunctionDescriptor,
+        proto: ProtoBuf.Function.Builder,
+        childSerializer: DescriptorSerializer
+    ) {
     }
 
     open fun serializeProperty(
-            descriptor: PropertyDescriptor,
-            proto: ProtoBuf.Property.Builder,
-            versionRequirementTable: MutableVersionRequirementTable,
-            childSerializer: DescriptorSerializer
+        descriptor: PropertyDescriptor,
+        proto: ProtoBuf.Property.Builder,
+        versionRequirementTable: MutableVersionRequirementTable?,
+        childSerializer: DescriptorSerializer
     ) {
     }
 

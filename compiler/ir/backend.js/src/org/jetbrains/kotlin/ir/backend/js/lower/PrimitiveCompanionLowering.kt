@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetObjectValue
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
 import org.jetbrains.kotlin.ir.types.isPrimitiveType
+import org.jetbrains.kotlin.ir.types.isString
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -26,7 +27,7 @@ class PrimitiveCompanionLowering(val context: JsIrBackendContext) : FileLowering
                 val declaration = symbol.owner
                 if (!declaration.isCompanion) return expression
                 val parent = declaration.parent as IrClass
-                if (!parent.defaultType.isPrimitiveType()) return expression
+                if (!parent.defaultType.isPrimitiveType() && !parent.defaultType.isString()) return expression
                 val actualCompanion = context.primitiveCompanionObjects[parent.name] ?: return expression
                 return expression.run { IrGetObjectValueImpl(startOffset, endOffset, actualCompanion.owner.defaultType, actualCompanion) }
             }

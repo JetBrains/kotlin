@@ -132,16 +132,9 @@ public class IdeStubIndexService extends StubIndexService {
         }
     }
 
-    // Drop suppression and fix warning after abandoning 173 branch
-    // BUNCH: 173
-    @SuppressWarnings({"ConstantConditions", "CastCanBeRemovedNarrowingVariableType"})
     @Nullable
     private static KotlinModifierListStub getModifierListStub(@NotNull KotlinClassOrObjectStub<? extends KtClassOrObject> stub) {
-        StubElement<?> childStub = stub.findChildStubByType(KtStubElementTypes.MODIFIER_LIST);
-        if (!(childStub instanceof KotlinModifierListStub)) {
-            return null;
-        }
-        return (KotlinModifierListStub) childStub;
+        return stub.findChildStubByType(KtStubElementTypes.MODIFIER_LIST);
     }
 
     @Override

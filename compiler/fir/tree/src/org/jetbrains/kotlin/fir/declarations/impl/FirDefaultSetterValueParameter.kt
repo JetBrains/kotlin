@@ -11,14 +11,14 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.transformSingle
-import org.jetbrains.kotlin.fir.types.FirType
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.name.Name
 
 class FirDefaultSetterValueParameter(
     session: FirSession,
     psi: PsiElement?,
-    override var returnType: FirType
+    override var returnTypeRef: FirTypeRef
 ) : FirAbstractNamedAnnotatedDeclaration(session, psi, name), FirValueParameter {
     override val isCrossinline = false
 
@@ -29,7 +29,7 @@ class FirDefaultSetterValueParameter(
     override val defaultValue: FirExpression? = null
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
-        returnType = returnType.transformSingle(transformer, data)
+        returnTypeRef = returnTypeRef.transformSingle(transformer, data)
 
         return super<FirAbstractNamedAnnotatedDeclaration>.transformChildren(transformer, data)
     }
