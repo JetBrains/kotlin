@@ -10,9 +10,10 @@ import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.builders.irGet
+import org.jetbrains.kotlin.ir.builders.irSetField
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
@@ -20,151 +21,92 @@ import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.classifierOrNull
-import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.util.transformDeclarationsFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import java.util.*
 
 val innerClassesPhase = makeIrFilePhase(
     ::InnerClassesLowering,
     name = "InnerClasses",
-    description = "Move inner classes to toplevel"
+    description = "Add 'outer this' fields to inner classes"
 )
 
 class InnerClassesLowering(val context: BackendContext) : ClassLoweringPass {
+    private val IrValueSymbol.classForImplicitThis: IrClass?
+        // TODO: is this the correct way to get the class?
+        // -1 means value is either IMPLICIT or EXTENSION receiver
+        get() = if (this is IrValueParameterSymbol && owner.index == -1 && owner.name.isSpecial /* <this> */)
+            owner.type.classifierOrNull?.owner as IrClass
+        else
+            null
+
     override fun lower(irClass: IrClass) {
-        InnerClassTransformer(irClass).lowerInnerClass()
-    }
+        if (!irClass.isInner) return
 
-    private inner class InnerClassTransformer(val irClass: IrClass) {
-        lateinit var outerThisField: IrField
-
+        val parentThisField = context.declarationFactory.getOuterThisField(irClass)
         val oldConstructorParameterToNew = HashMap<IrValueParameter, IrValueParameter>()
 
-        fun lowerInnerClass() {
-            if (!irClass.isInner) return
-
-            createOuterThisField()
-            lowerConstructors()
-            lowerConstructorParameterUsages()
-            lowerOuterThisReferences()
-        }
-
-        private fun createOuterThisField() {
-            val field = context.declarationFactory.getOuterThisField(irClass)
-            outerThisField = field
-            irClass.declarations += field
-        }
-
-        private fun lowerConstructors() {
-            irClass.transformDeclarationsFlat { irMember ->
-                if (irMember is IrConstructor)
-                    listOf(lowerConstructor(irMember))
-                else
-                    null
-            }
-        }
-
-        private fun lowerConstructor(irConstructor: IrConstructor): IrConstructor {
-            val startOffset = irConstructor.startOffset
-            val endOffset = irConstructor.endOffset
-
+        fun lowerConstructor(irConstructor: IrConstructor): IrConstructor {
             val loweredConstructor = context.declarationFactory.getInnerClassConstructorWithOuterThisParameter(irConstructor)
-            val outerThisValueParameter = loweredConstructor.valueParameters[0].symbol
+            val outerThisParameter = loweredConstructor.valueParameters[0]
 
             irConstructor.valueParameters.forEach { old ->
                 oldConstructorParameterToNew[old] = loweredConstructor.valueParameters[old.index + 1]
             }
 
             val blockBody = irConstructor.body as? IrBlockBody ?: throw AssertionError("Unexpected constructor body: ${irConstructor.body}")
-
-            val instanceInitializerIndex = blockBody.statements.indexOfFirst { it is IrInstanceInitializerCall }
-
-            // Initializing constructor: initialize 'this.this$0' with '$outer'
-            blockBody.statements.add(
-                0,
-                IrSetFieldImpl(
-                    startOffset, endOffset, outerThisField.symbol,
-                    IrGetValueImpl(startOffset, endOffset, irClass.thisReceiver!!.symbol),
-                    IrGetValueImpl(startOffset, endOffset, outerThisValueParameter),
-                    context.irBuiltIns.unitType
-                )
-            )
-            if (instanceInitializerIndex < 0) {
-                // Delegating constructor: invoke old constructor with dispatch receiver '$outer'
-                val delegatingConstructorCall = (blockBody.statements.find { it is IrDelegatingConstructorCall }
-                    ?: throw AssertionError("Delegating constructor call expected: ${irConstructor.dump()}")
-                        ) as IrDelegatingConstructorCall
-                delegatingConstructorCall.dispatchReceiver = IrGetValueImpl(
-                    delegatingConstructorCall.startOffset, delegatingConstructorCall.endOffset, outerThisValueParameter
-                )
+            context.createIrBuilder(irConstructor.symbol, irConstructor.startOffset, irConstructor.endOffset).apply {
+                blockBody.statements.add(0, irSetField(irGet(irClass.thisReceiver!!), parentThisField, irGet(outerThisParameter)))
+            }
+            if (blockBody.statements.find { it is IrInstanceInitializerCall } == null) {
+                val delegatingConstructorCall =
+                    blockBody.statements.find { it is IrDelegatingConstructorCall } as IrDelegatingConstructorCall?
+                        ?: throw AssertionError("Delegating constructor call expected: ${irConstructor.dump()}")
+                delegatingConstructorCall.apply { dispatchReceiver = IrGetValueImpl(startOffset, endOffset, outerThisParameter.symbol) }
             }
             blockBody.patchDeclarationParents(loweredConstructor)
             loweredConstructor.body = blockBody
             return loweredConstructor
         }
 
-        private fun lowerConstructorParameterUsages() {
-            irClass.transformChildrenVoid(VariableRemapper(oldConstructorParameterToNew))
-        }
+        irClass.declarations += parentThisField
+        irClass.transformDeclarationsFlat { irMember -> (irMember as? IrConstructor)?.let { listOf(lowerConstructor(it)) } }
+        irClass.transformChildrenVoid(VariableRemapper(oldConstructorParameterToNew))
 
-        private fun lowerOuterThisReferences() {
-            irClass.transformChildrenVoid(object : IrElementTransformerVoid() {
+        irClass.transformChildrenVoid(object : IrElementTransformerVoid() {
+            // TODO: maybe add another transformer that skips specified elements
+            override fun visitClass(declaration: IrClass): IrStatement =
+                declaration
 
+            override fun visitGetValue(expression: IrGetValue): IrExpression {
+                expression.transformChildrenVoid(this)
 
-                override fun visitClass(declaration: IrClass): IrStatement =
-                //TODO: maybe add another transformer that skips specified elements
-                    declaration
+                val implicitThisClass = expression.symbol.classForImplicitThis
+                if (implicitThisClass == null || implicitThisClass == irClass) return expression
 
-                override fun visitGetValue(expression: IrGetValue): IrExpression {
-                    expression.transformChildrenVoid(this)
+                val startOffset = expression.startOffset
+                val endOffset = expression.endOffset
+                val origin = expression.origin
 
-                    val implicitThisClass = expression.symbol.getClassForImplicitThis() ?: return expression
-
-                    if (implicitThisClass == irClass) return expression
-
-                    val startOffset = expression.startOffset
-                    val endOffset = expression.endOffset
-                    val origin = expression.origin
-
-                    var irThis: IrExpression = IrGetValueImpl(startOffset, endOffset, irClass.thisReceiver!!.symbol, origin)
-                    var innerClass = irClass
-
-                    while (innerClass != implicitThisClass) {
-                        if (!innerClass.isInner) {
-                            // Captured 'this' unrelated to inner classes nesting hierarchy, leave it as is -
-                            // should be transformed by closures conversion.
-                            return expression
-                        }
-
-                        val outerThisField = context.declarationFactory.getOuterThisField(innerClass)
-                        irThis = IrGetFieldImpl(startOffset, endOffset, outerThisField.symbol, outerThisField.type, irThis, origin)
-
-                        val outer = innerClass.parent
-                        innerClass = outer as? IrClass ?:
-                                throw AssertionError("Unexpected containing declaration for inner class $innerClass: $outer")
+                var irThis: IrExpression = IrGetValueImpl(startOffset, endOffset, irClass.thisReceiver!!.symbol, origin)
+                var innerClass = irClass
+                while (innerClass != implicitThisClass) {
+                    if (!innerClass.isInner) {
+                        // Captured 'this' unrelated to inner classes nesting hierarchy, leave it as is -
+                        // should be transformed by closures conversion.
+                        return expression
                     }
 
-                    return irThis
+                    val outerThisField = context.declarationFactory.getOuterThisField(innerClass)
+                    irThis = IrGetFieldImpl(startOffset, endOffset, outerThisField.symbol, outerThisField.type, irThis, origin)
+                    innerClass = innerClass.parentAsClass
                 }
-            })
-        }
-
-        private fun IrValueSymbol.getClassForImplicitThis(): IrClass? {
-            //TODO: is it correct way to get class
-            if (this is IrValueParameterSymbol) {
-                val declaration = owner
-                if (declaration.index == -1) { // means value is either IMPLICIT or EXTENSION receiver
-                    if (declaration.name.isSpecial) { // whether name is <this>
-                        return owner.type.classifierOrNull?.owner as IrClass
-                    }
-                }
+                return irThis
             }
-            return null
-        }
+        })
     }
 }
 
