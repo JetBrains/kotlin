@@ -20,13 +20,12 @@ import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
-import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.ProtoBuf
-import org.jetbrains.kotlin.metadata.deserialization.*
-import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
+import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
+import org.jetbrains.kotlin.metadata.deserialization.NameResolver
+import org.jetbrains.kotlin.metadata.deserialization.TypeTable
+import org.jetbrains.kotlin.metadata.deserialization.VersionRequirementTable
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.MessageLite
@@ -168,27 +167,6 @@ internal fun Any?.asKPropertyImpl(): KPropertyImpl<*>? =
 
 internal fun Any?.asKCallableImpl(): KCallableImpl<*>? =
     this as? KCallableImpl<*> ?: asKFunctionImpl() ?: asKPropertyImpl()
-
-internal val ReflectKotlinClass.packageModuleName: String?
-    get() {
-        val header = classHeader
-        if (!header.metadataVersion.isCompatible()) return null
-
-        return when (header.kind) {
-            KotlinClassHeader.Kind.FILE_FACADE, KotlinClassHeader.Kind.MULTIFILE_CLASS_PART -> {
-                // TODO: avoid reading and parsing metadata twice (here and later in KPackageImpl#descriptor)
-                val (nameResolver, proto) = JvmProtoBufUtil.readPackageDataFrom(header.data!!, header.strings!!)
-                // If no packageModuleName extension is written, the name is assumed to be JvmAbi.DEFAULT_MODULE_NAME
-                // (see JvmSerializerExtension.serializePackage)
-                proto.getExtensionOrNull(JvmProtoBuf.packageModuleName)?.let(nameResolver::getString) ?: JvmAbi.DEFAULT_MODULE_NAME
-            }
-            KotlinClassHeader.Kind.MULTIFILE_CLASS -> {
-                val partName = header.multifilePartNames.firstOrNull() ?: return null
-                ReflectKotlinClass.create(klass.classLoader.loadClass(partName.replace('/', '.')))?.packageModuleName
-            }
-            else -> null
-        }
-    }
 
 internal val CallableDescriptor.instanceReceiverParameter: ReceiverParameterDescriptor?
     get() =
