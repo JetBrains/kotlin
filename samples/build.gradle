@@ -53,6 +53,7 @@ task buildSamplesWithPlatformLibs() {
         dependsOn ':objc:assemble'
         dependsOn ':opengl:assemble'
         dependsOn ':uikit:assemble'
+        dependsOn ':coverage:assemble'
     }
 
     if (MPPTools.isWindows()) {

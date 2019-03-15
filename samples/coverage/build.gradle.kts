@@ -21,9 +21,7 @@ kotlin {
 
     macosX64("macos") {
         binaries {
-            executable(listOf(DEBUG)) {
-                entryPoint = "coverage.main"
-            }
+            executable(listOf(DEBUG))
         }
         binaries.getExecutable("test", DEBUG).apply {
             freeCompilerArgs = mutableListOf(

@@ -17,7 +17,10 @@ pluginManagement {
 enableFeaturePreview('GRADLE_METADATA')
 
 /*
- * The following projects are only available for certain platforms:
+ * The following projects are only available for certain platforms.
+ * 
+ * IMPORTANT: If a new sample doesn't include interop with third-party libraries,
+ * add it into the 'buildSamplesWithPlatfromLibs' task in the root build.gradle.
  */
 if (MPPTools.isMacos() || MPPTools.isLinux() || MPPTools.isWindows()) {
     include ':csvparser'
