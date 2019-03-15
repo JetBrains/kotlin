@@ -40,12 +40,12 @@ class KotlinTemplatesFactory : ProjectTemplatesFactory() {
     override fun createTemplates(group: String?, context: WizardContext?): Array<out ProjectTemplate> {
         val result = mutableListOf<ProjectTemplate>(
                 BuilderBasedTemplate(KotlinModuleBuilder(JvmPlatform,
-                                                         "Kotlin/JVM",
-                                                         "Kotlin project with JVM target based on IntelliJ IDEA build system",
+                                                         "JVM | IDEA",
+                                                         "Kotlin project with a JVM target based on the IntelliJ IDEA build system",
                                                          KotlinIcons.SMALL_LOGO)),
 
-                BuilderBasedTemplate(KotlinModuleBuilder(JsPlatform, "Kotlin/JS",
-                                                         "Kotlin project with JavaScript target based on IntelliJ IDEA build system",
+                BuilderBasedTemplate(KotlinModuleBuilder(JsPlatform, "JS | IDEA",
+                                                         "Kotlin project with a JavaScript target based on the IntelliJ IDEA build system",
                                                          KotlinIcons.JS)
                 )
         )

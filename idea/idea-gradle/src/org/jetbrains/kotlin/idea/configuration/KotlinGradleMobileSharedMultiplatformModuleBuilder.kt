@@ -25,10 +25,10 @@ class KotlinGradleMobileSharedMultiplatformModuleBuilder : KotlinGradleAbstractM
 
     override fun getBuilderId() = "kotlin.gradle.multiplatform.mobileshared"
 
-    override fun getPresentableName() = "Mobile Shared Library"
+    override fun getPresentableName() = "Mobile Shared Library | Gradle"
 
     override fun getDescription() =
-        "Multiplatform Gradle projects allow sharing the same Kotlin code between two mobile platforms (JVM/Android, Native)."
+        "Multiplatform Gradle project allowing reuse of the same Kotlin code between two mobile platforms (JVM/Android and Native)"
 
     override fun createProjectSkeleton(rootDir: VirtualFile) {
         val src = rootDir.createChildDirectory(this, "src")
