@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -45,9 +46,14 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
     private val IrMemberAccessExpression.field: IrFieldSymbol?
         get() = (this as? IrPropertyReference)?.field
 
+    // Reflection metadata for local properties is serialized under the signature "<v#$N>" attached to the containing class.
+    // This maps properties to values of N.
+    private val localPropertyIndices = mutableMapOf<IrSymbol, Int>()
+
     private val IrMemberAccessExpression.signature: String
-        // Plain Java fields do not have a getter, but can be referenced nonetheless.
-        get() = getter?.owner?.let { context.state.typeMapper.mapSignatureSkipGeneric(it.descriptor).toString() }
+        get() = localPropertyIndices[getter]?.let { "<v#$it>" }
+            ?: getter?.owner?.let { context.state.typeMapper.mapSignatureSkipGeneric(it.descriptor).toString() }
+            // Plain Java fields do not have a getter, but can be referenced nonetheless.
             ?: TODO("plain Java field signature")
 
     private val IrMemberAccessExpression.symbol: IrSymbol
@@ -74,18 +80,29 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
     private val kPropertiesFieldType =
         context.ir.symbols.array.createType(false, listOf(makeTypeProjection(kPropertyType, Variance.OUT_VARIANCE)))
 
+    // Return some declaration the parent of which is the containing class/package for the referenced property. This is
+    // a bit of a hack, as the reason for not returning the container itself is the `mapImplementationOwner` call below.
+    // TODO: move after LocalDeclarationsLowering and always use the getter/field? (not possible right now:
+    //       need Java field support to move below PropertiesToFieldsLowering)
+    private val IrMemberAccessExpression.propertyContainerChild: IrDeclaration?
+        get() {
+            var current: IrDeclaration? = getter?.owner ?: field?.owner
+            while (current?.parent is IrFunction)
+                current = current.parent as IrFunction
+            return current
+        }
+
     // TODO: remove code duplication with CallableReferenceLowering
     private val IrMemberAccessExpression.parentJavaClassReference
         get() = IrClassReferenceImpl(
             startOffset, endOffset,
             plainJavaClass.defaultType,
             plainJavaClass.symbol,
-            CrIrType(context.state.typeMapper.mapImplementationOwner(descriptor))
+            CrIrType(context.state.typeMapper.mapImplementationOwner(propertyContainerChild!!.descriptor))
         )
 
     private fun IrBuilderWithScope.buildReflectedContainerReference(expression: IrMemberAccessExpression): IrExpression {
-        val parent = expression.getter?.owner?.parent ?: expression.field?.owner?.parent
-        return when (parent) {
+        return when (expression.propertyContainerChild?.parent) {
             is IrPackageFragment -> irCall(getOrCreateKotlinPackage).apply {
                 putValueArgument(0, expression.parentJavaClassReference)
                 putValueArgument(1, irString(this@PropertyReferenceLowering.context.state.moduleName))
@@ -93,7 +110,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
             is IrClass -> irCall(getOrCreateKotlinClass).apply {
                 putValueArgument(0, expression.parentJavaClassReference)
             }
-            else -> irNull()
+            else -> throw AssertionError("referenced property not inside a class/package fragment")
         }
     }
 
@@ -136,10 +153,16 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
             isFinal = true
             isStatic = true
         }
+        var localPropertiesInClass = 0
 
         irClass.transformChildrenVoid(object : IrElementTransformerVoidWithContext() {
             override fun visitPropertyReference(expression: IrPropertyReference): IrExpression =
                 cachedKProperty(expression)
+
+            override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty): IrStatement {
+                localPropertyIndices[declaration.getter.symbol] = localPropertiesInClass++
+                return super.visitLocalDelegatedProperty(declaration)
+            }
 
             override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference): IrExpression =
                 cachedKProperty(expression)
