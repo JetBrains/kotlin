@@ -79,6 +79,10 @@
       <add-to-group group-id="KotlinToolsGroup"/>
     </action>
 
+    <action id="CopyKotlinProjectInformation" class="org.jetbrains.kotlin.idea.actions.internal.CopyKotlinProjectOverviewAction"
+            text="Copy Kotlin Project Overview To Clipboard">
+    </action>
+
     <action id="KotlinCodeMigration" class="org.jetbrains.kotlin.idea.migration.CodeMigrationAction"
             text="Run Code Migrations">
       <!-- TODO: Not assigned to any group because there should be a panel for filling migration options -->
