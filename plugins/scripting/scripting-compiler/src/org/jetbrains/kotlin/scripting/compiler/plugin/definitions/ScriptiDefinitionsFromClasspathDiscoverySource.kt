@@ -23,6 +23,7 @@ import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.templates.ScriptTemplateDefinition
 
 internal const val SCRIPT_DEFINITION_MARKERS_PATH = "META-INF/kotlin/script/templates/"
+internal const val SCRIPT_DEFINITION_MARKERS_EXTENSION_WITH_DOT = ".classname"
 
 class ScriptDefinitionsFromClasspathDiscoverySource(
     private val classpath: List<File>,
@@ -61,7 +62,7 @@ internal fun discoverScriptTemplatesInClasspath(
                         if (jar.getJarEntry(SCRIPT_DEFINITION_MARKERS_PATH) != null) {
                             val definitionNames = jar.entries().asSequence().mapNotNull {
                                 if (it.isDirectory || !it.name.startsWith(SCRIPT_DEFINITION_MARKERS_PATH)) null
-                                else it.name.removePrefix(SCRIPT_DEFINITION_MARKERS_PATH)
+                                else it.name.removePrefix(SCRIPT_DEFINITION_MARKERS_PATH).removeSuffix(SCRIPT_DEFINITION_MARKERS_EXTENSION_WITH_DOT)
                             }.toList()
                             val (loadedDefinitions, notFoundClasses) =
                                     definitionNames.partitionLoadJarDefinitions(jar, loader, scriptResolverEnv, messageCollector)
