@@ -122,3 +122,27 @@ class SimpleCreatingClassFilesAndResources : SimpleProcessor() {
         return false
     }
 }
+
+class SimpleGeneratingIfTypeDoesNotExist: SimpleProcessor() {
+    override fun process(annotations: MutableSet<out TypeElement>, roundEnv: RoundEnvironment): Boolean {
+        if (annotations.isEmpty()) return false
+
+        roundEnv.getElementsAnnotatedWith(annotations.single()).forEach { element ->
+            element as TypeElement
+            val generatedName = "${element.qualifiedName}Generated"
+
+            if (processingEnv.elementUtils.getTypeElement(generatedName) == null) {
+                filer.createSourceFile(generatedName, element).openWriter().use {
+                    it.write(
+                        """
+                package test;
+                public class ${element.simpleName}Generated {}
+            """.trimIndent()
+                    )
+                }
+            }
+        }
+
+        return false
+    }
+}

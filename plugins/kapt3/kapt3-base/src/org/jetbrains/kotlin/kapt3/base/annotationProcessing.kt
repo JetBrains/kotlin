@@ -12,8 +12,10 @@ import com.sun.tools.javac.processing.JavacFiler
 import com.sun.tools.javac.processing.JavacProcessingEnvironment
 import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.base.kapt3.KaptFlag
-import org.jetbrains.kotlin.base.kapt3.collectJavaSourceFiles
-import org.jetbrains.kotlin.kapt3.base.incremental.*
+import org.jetbrains.kotlin.kapt3.base.incremental.DeclaredProcType
+import org.jetbrains.kotlin.kapt3.base.incremental.GeneratedTypesTaskListener
+import org.jetbrains.kotlin.kapt3.base.incremental.IncrementalProcessor
+import org.jetbrains.kotlin.kapt3.base.incremental.MentionedTypesTaskListener
 import org.jetbrains.kotlin.kapt3.base.util.KaptBaseError
 import org.jetbrains.kotlin.kapt3.base.util.isJava9OrLater
 import org.jetbrains.kotlin.kapt3.base.util.measureTimeMillisWithResult
@@ -50,8 +52,8 @@ fun KaptContext.doAnnotationProcessing(
         }
         val parsedJavaFiles = parseJavaFiles(javaSourceFiles)
 
-        val listener = cacheManager?.let {
-            if (processors.any { it.kind == DeclaredProcType.NON_INCREMENTAL}) return@let null
+        val sourcesStructureListener = cacheManager?.let {
+            if (processors.any { it.kind == DeclaredProcType.NON_INCREMENTAL }) return@let null
 
             val recordTypesListener = MentionedTypesTaskListener(cacheManager.javaCache, processingEnvironment.elementUtils)
             compiler.getTaskListeners().add(recordTypesListener)
@@ -64,15 +66,19 @@ fun KaptContext.doAnnotationProcessing(
                 CompileState.PARSE, compiler.enterTrees(parsedJavaFiles + additionalSources)
             )
 
-            listener?.let { compiler.getTaskListeners().remove(it) }
+            val generatedSourcesListener = sourcesStructureListener?.let {
+                compiler.getTaskListeners().remove(it)
+                GeneratedTypesTaskListener(cacheManager!!.javaCache)
+            }?.also { compiler.getTaskListeners().add(it) }
 
             if (isJava9OrLater()) {
                 val processAnnotationsMethod = compiler.javaClass.getMethod("processAnnotations", JavacList::class.java)
                 processAnnotationsMethod.invoke(compiler, analyzedFiles)
                 compiler
             } else {
-                val processAnnotations = compiler.processAnnotations(analyzedFiles)
-                processAnnotations
+                compiler.processAnnotations(analyzedFiles).also {
+                    generatedSourcesListener?.let { compiler.getTaskListeners().remove(it) }
+                }
             }
         } catch (e: AnnotationProcessingError) {
             throw KaptBaseError(KaptBaseError.Kind.EXCEPTION, e.cause ?: e)
