@@ -15,29 +15,31 @@
  */
 
 buildscript {
-    ext.rootBuildDirectory = "$rootDir/.."
-    apply from: "$rootBuildDirectory/gradle/loadRootProperties.gradle"
-    apply from: "$rootBuildDirectory/gradle/kotlinGradlePlugin.gradle"
+    val rootBuildDirectory = "$rootDir/.."
+    extra["rootBuildDirectory"] = rootBuildDirectory
+    apply(from = "$rootBuildDirectory/gradle/loadRootProperties.gradle")
+    apply(from = "$rootBuildDirectory/gradle/kotlinGradlePlugin.gradle")
 }
+
+
+val buildKotlinCompilerRepo: String by project
+val sharedRepo: String by project
+
+val repos = listOf(
+    buildKotlinCompilerRepo,
+    "https://cache-redirector.jetbrains.com/maven-central",
+    "https://kotlin.bintray.com/kotlinx",
+    sharedRepo
+)
 
 allprojects {
     repositories {
-        maven {
-            url buildKotlinCompilerRepo
-        }
-        maven {
-            url 'https://cache-redirector.jetbrains.com/maven-central'
-        }
-
-        maven {
-            url "https://kotlin.bintray.com/kotlinx"
-        }
-        maven {
-            url sharedRepo
+        repos.forEach { repoUrl ->
+            maven { setUrl(repoUrl) }
         }
     }
 }
 
 dependencies {
-    runtime project(':plugins')
+    runtime(project(":plugins"))
 }
