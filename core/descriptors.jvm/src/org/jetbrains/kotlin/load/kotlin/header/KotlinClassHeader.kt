@@ -23,15 +23,15 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmBytecodeBinaryVersio
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 
 class KotlinClassHeader(
-        val kind: KotlinClassHeader.Kind,
-        val metadataVersion: JvmMetadataVersion,
-        val bytecodeVersion: JvmBytecodeBinaryVersion,
-        val data: Array<String>?,
-        val incompatibleData: Array<String>?,
-        val strings: Array<String>?,
-        val extraString: String?,
-        val extraInt: Int,
-        val packageName: String?
+    val kind: KotlinClassHeader.Kind,
+    val metadataVersion: JvmMetadataVersion,
+    val bytecodeVersion: JvmBytecodeBinaryVersion,
+    val data: Array<String>?,
+    val incompatibleData: Array<String>?,
+    val strings: Array<String>?,
+    val extraString: String?,
+    val extraInt: Int,
+    val packageName: String?
 ) {
     // See kotlin.Metadata
     enum class Kind(val id: Int) {
@@ -68,9 +68,7 @@ class KotlinClassHeader(
                 INHERITING
             else
                 DELEGATING
-        }
-        else
-            null
+        } else null
 
     val isPreRelease: Boolean
         get() = (extraInt and JvmAnnotationNames.METADATA_PRE_RELEASE_FLAG) != 0

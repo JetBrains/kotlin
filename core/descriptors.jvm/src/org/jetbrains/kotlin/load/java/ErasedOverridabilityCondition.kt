@@ -27,15 +27,19 @@ import org.jetbrains.kotlin.resolve.ExternalOverridabilityCondition.Result
 import org.jetbrains.kotlin.resolve.OverridingUtil
 
 class ErasedOverridabilityCondition : ExternalOverridabilityCondition {
-    override fun isOverridable(superDescriptor: CallableDescriptor, subDescriptor: CallableDescriptor, subClassDescriptor: ClassDescriptor?): Result {
+    override fun isOverridable(
+        superDescriptor: CallableDescriptor,
+        subDescriptor: CallableDescriptor,
+        subClassDescriptor: ClassDescriptor?
+    ): Result {
         if (subDescriptor !is JavaMethodDescriptor || subDescriptor.typeParameters.isNotEmpty()) return Result.UNKNOWN
 
         val basicOverridability = OverridingUtil.getBasicOverridabilityProblem(superDescriptor, subDescriptor)?.result
         if (basicOverridability != null) return Result.UNKNOWN
 
         val signatureTypes = subDescriptor.valueParameters.asSequence().map { it.type } +
-                             subDescriptor.returnType!! +
-                             listOfNotNull(subDescriptor.extensionReceiverParameter?.type)
+                subDescriptor.returnType!! +
+                listOfNotNull(subDescriptor.extensionReceiverParameter?.type)
 
         if (signatureTypes.any { it.arguments.isNotEmpty() && it.unwrap() !is RawTypeImpl }) return Result.UNKNOWN
 
@@ -47,10 +51,10 @@ class ErasedOverridabilityCondition : ExternalOverridabilityCondition {
         }
 
         val overridabilityResult =
-                OverridingUtil.DEFAULT.isOverridableByWithoutExternalConditions(erasedSuper, subDescriptor, false).result
+            OverridingUtil.DEFAULT.isOverridableByWithoutExternalConditions(erasedSuper, subDescriptor, false).result
         return when (overridabilityResult) {
             OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE -> Result.OVERRIDABLE
-            else ->  Result.UNKNOWN
+            else -> Result.UNKNOWN
         }
     }
 

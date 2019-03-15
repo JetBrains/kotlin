@@ -22,7 +22,7 @@ import java.lang.reflect.AnnotatedElement
 import java.lang.reflect.TypeVariable
 
 class ReflectJavaTypeParameter(
-        val typeVariable: TypeVariable<*>
+    val typeVariable: TypeVariable<*>
 ) : ReflectJavaElement(), JavaTypeParameter, ReflectJavaAnnotationOwner {
     override val upperBounds: List<ReflectJavaClassifierType>
         get() {

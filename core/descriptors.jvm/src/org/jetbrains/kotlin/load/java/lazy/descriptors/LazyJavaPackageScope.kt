@@ -56,7 +56,7 @@ class LazyJavaPackageScope(
             val requestClassId = ClassId(ownerDescriptor.fqName, request.name)
 
             val kotlinClassOrClassFileContent =
-            // These branches should be semantically equal, but the first one could be faster
+                // These branches should be semantically equal, but the first one could be faster
                 if (request.javaClass != null)
                     c.components.kotlinClassFinder.findKotlinClassOrContent(request.javaClass)
                 else

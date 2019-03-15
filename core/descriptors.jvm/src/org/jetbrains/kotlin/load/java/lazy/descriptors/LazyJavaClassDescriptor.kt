@@ -39,13 +39,15 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
 
 class LazyJavaClassDescriptor(
-        val outerContext: LazyJavaResolverContext,
-        containingDeclaration: DeclarationDescriptor,
-        val jClass: JavaClass,
-        private val additionalSupertypeClassDescriptor: ClassDescriptor? = null
-) : ClassDescriptorBase(outerContext.storageManager, containingDeclaration, jClass.name,
-                        outerContext.components.sourceElementFactory.source(jClass),
-                        /* isExternal = */ false), JavaClassDescriptor {
+    val outerContext: LazyJavaResolverContext,
+    containingDeclaration: DeclarationDescriptor,
+    val jClass: JavaClass,
+    private val additionalSupertypeClassDescriptor: ClassDescriptor? = null
+) : ClassDescriptorBase(
+    outerContext.storageManager, containingDeclaration, jClass.name,
+    outerContext.components.sourceElementFactory.source(jClass),
+    /* isExternal = */ false
+), JavaClassDescriptor {
 
     companion object {
         @JvmStatic
@@ -69,9 +71,9 @@ class LazyJavaClassDescriptor(
         else -> ClassKind.CLASS
     }
 
-    private val modality = if (jClass.isAnnotationType)
-                               Modality.FINAL
-                           else Modality.convertFromFlags(jClass.isAbstract || jClass.isInterface, !jClass.isFinal)
+    private val modality =
+        if (jClass.isAnnotationType) Modality.FINAL
+        else Modality.convertFromFlags(jClass.isAbstract || jClass.isInterface, !jClass.isFinal)
 
     private val visibility = jClass.visibility
     private val isInner = jClass.outerClass != null && !jClass.isStatic
@@ -86,7 +88,7 @@ class LazyJavaClassDescriptor(
     // Kotlin considers this "private in package" just as "private" and thinks they are invisible for inheritors,
     // so their functions are invisible fake which is not true.
     override fun getVisibility() =
-            if (visibility == Visibilities.PRIVATE && jClass.outerClass == null) JavaVisibilities.PACKAGE_VISIBILITY else visibility
+        if (visibility == Visibilities.PRIVATE && jClass.outerClass == null) JavaVisibilities.PACKAGE_VISIBILITY else visibility
 
     override fun isInner() = isInner
     override fun isData() = false
@@ -116,8 +118,7 @@ class LazyJavaClassDescriptor(
     override val annotations = c.resolveAnnotations(jClass)
 
     private val declaredParameters = c.storageManager.createLazyValue {
-        jClass.typeParameters.map {
-            p ->
+        jClass.typeParameters.map { p ->
             c.typeParameterResolver.resolveTypeParameter(p)
                 ?: throw AssertionError("Parameter $p surely belongs to class $jClass, so it must be resolved")
         }
@@ -125,7 +126,8 @@ class LazyJavaClassDescriptor(
 
     override fun getDeclaredTypeParameters() = declaredParameters()
 
-    override fun getDefaultFunctionTypeForSamInterface(): SimpleType? = c.components.samConversionResolver.resolveFunctionTypeIfSamInterface(this)
+    override fun getDefaultFunctionTypeForSamInterface(): SimpleType? =
+        c.components.samConversionResolver.resolveFunctionTypeIfSamInterface(this)
 
     override fun isDefinitelyNotSamInterface(): Boolean {
         if (kind != ClassKind.INTERFACE) return true
@@ -152,7 +154,7 @@ class LazyJavaClassDescriptor(
     // Checks if any part of compiler has requested scope content
     // It's necessary for IC to figure out if there is a need to track symbols in the class
     fun wasScopeContentRequested() =
-            getUnsubstitutedMemberScope().wasContentRequested() || staticScope.wasContentRequested()
+        getUnsubstitutedMemberScope().wasContentRequested() || staticScope.wasContentRequested()
 
     override fun getSealedSubclasses(): Collection<ClassDescriptor> = emptyList()
 
@@ -190,10 +192,11 @@ class LazyJavaClassDescriptor(
             // Add fake supertype kotlin.collection.Collection<E> to java.util.Collection<E> class if needed
             // Only needed when calculating built-ins member scope
             result.addIfNotNull(
-                    additionalSupertypeClassDescriptor?.let {
-                        createMappedTypeParametersSubstitution(it, this@LazyJavaClassDescriptor)
-                                .buildSubstitutor().substitute(it.defaultType, Variance.INVARIANT)
-                    })
+                additionalSupertypeClassDescriptor?.let {
+                    createMappedTypeParametersSubstitution(it, this@LazyJavaClassDescriptor)
+                        .buildSubstitutor().substitute(it.defaultType, Variance.INVARIANT)
+                }
+            )
 
             result.addIfNotNull(purelyImplementedSupertype)
 
@@ -212,7 +215,7 @@ class LazyJavaClassDescriptor(
             }
 
             val purelyImplementedFqName =
-                    annotatedPurelyImplementedFqName
+                annotatedPurelyImplementedFqName
                     ?: FakePureImplementationsProvider.getPurelyImplementedInterface(fqNameSafe)
                     ?: return null
 
@@ -224,12 +227,10 @@ class LazyJavaClassDescriptor(
 
             val parametersAsTypeProjections = when {
                 typeParameterCount == supertypeParameterCount ->
-                    typeParameters.map {
-                        parameter ->
+                    typeParameters.map { parameter ->
                         TypeProjectionImpl(Variance.INVARIANT, parameter.defaultType)
                     }
-                typeParameterCount == 1 && supertypeParameterCount > 1 && annotatedPurelyImplementedFqName == null ->
-                {
+                typeParameterCount == 1 && supertypeParameterCount > 1 && annotatedPurelyImplementedFqName == null -> {
                     val parameter = TypeProjectionImpl(Variance.INVARIANT, typeParameters.single().defaultType)
                     (1..supertypeParameterCount).map { parameter } // TODO: List(supertypeParameterCount) { parameter }
                 }
@@ -241,7 +242,7 @@ class LazyJavaClassDescriptor(
 
         private fun getPurelyImplementsFqNameFromAnnotation(): FqName? {
             val annotation =
-                    this@LazyJavaClassDescriptor.annotations.findAnnotation(JvmAnnotationNames.PURELY_IMPLEMENTS_ANNOTATION)
+                this@LazyJavaClassDescriptor.annotations.findAnnotation(JvmAnnotationNames.PURELY_IMPLEMENTS_ANNOTATION)
                     ?: return null
 
             val fqNameString = (annotation.allValueArguments.values.singleOrNull() as? StringValue)?.value ?: return null
@@ -262,8 +263,9 @@ class LazyJavaClassDescriptor(
 
     // Only needed when calculating built-ins member scope
     internal fun copy(
-            javaResolverCache: JavaResolverCache, additionalSupertypeClassDescriptor: ClassDescriptor?
-    ) = LazyJavaClassDescriptor(
-            c.replaceComponents(c.components.replace(javaResolverCache = javaResolverCache)),
-            containingDeclaration, jClass, additionalSupertypeClassDescriptor)
+        javaResolverCache: JavaResolverCache, additionalSupertypeClassDescriptor: ClassDescriptor?
+    ): LazyJavaClassDescriptor = LazyJavaClassDescriptor(
+        c.replaceComponents(c.components.replace(javaResolverCache = javaResolverCache)),
+        containingDeclaration, jClass, additionalSupertypeClassDescriptor
+    )
 }

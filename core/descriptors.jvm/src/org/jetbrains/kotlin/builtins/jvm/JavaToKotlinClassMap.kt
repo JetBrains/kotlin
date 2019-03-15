@@ -258,7 +258,7 @@ object JavaToKotlinClassMap : PlatformToKotlinClassMap {
         mutabilityKindName: String
     ): ClassDescriptor {
         val oppositeClassFqName = map[DescriptorUtils.getFqName(descriptor)]
-                ?: throw IllegalArgumentException("Given class $descriptor is not a $mutabilityKindName collection")
+            ?: throw IllegalArgumentException("Given class $descriptor is not a $mutabilityKindName collection")
         return descriptor.builtIns.getBuiltInClassByFqName(oppositeClassFqName)
     }
 }

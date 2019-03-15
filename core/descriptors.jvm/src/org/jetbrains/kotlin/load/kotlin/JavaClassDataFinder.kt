@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.serialization.deserialization.ClassData
 import org.jetbrains.kotlin.serialization.deserialization.ClassDataFinder
 
 class JavaClassDataFinder(
-        internal val kotlinClassFinder: KotlinClassFinder,
-        private val deserializedDescriptorResolver: DeserializedDescriptorResolver
+    internal val kotlinClassFinder: KotlinClassFinder,
+    private val deserializedDescriptorResolver: DeserializedDescriptorResolver
 ) : ClassDataFinder {
     override fun findClassData(classId: ClassId): ClassData? {
         val kotlinClass = kotlinClassFinder.findKotlinClass(classId) ?: return null

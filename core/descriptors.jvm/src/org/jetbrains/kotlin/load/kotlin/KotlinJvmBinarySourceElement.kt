@@ -22,9 +22,9 @@ import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErr
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 class KotlinJvmBinarySourceElement(
-        val binaryClass: KotlinJvmBinaryClass,
-        override val incompatibility: IncompatibleVersionErrorData<JvmMetadataVersion>? = null,
-        override val isPreReleaseInvisible: Boolean = false
+    val binaryClass: KotlinJvmBinaryClass,
+    override val incompatibility: IncompatibleVersionErrorData<JvmMetadataVersion>? = null,
+    override val isPreReleaseInvisible: Boolean = false
 ) : DeserializedContainerSource {
     override val presentableString: String
         get() = "Class '${binaryClass.classId.asSingleFqName().asString()}'"

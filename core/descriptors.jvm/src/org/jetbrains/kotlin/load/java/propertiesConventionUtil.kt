@@ -21,17 +21,21 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeSmart
 import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties.getPropertyNameCandidatesBySpecialGetterName
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeSmartForCompiler
 
+fun propertyNameByGetMethodName(methodName: Name): Name? =
+    propertyNameFromAccessorMethodName(methodName, "get") ?: propertyNameFromAccessorMethodName(methodName, "is", removePrefix = false)
 
-fun propertyNameByGetMethodName(methodName: Name): Name?
-        = propertyNameFromAccessorMethodName(methodName, "get") ?: propertyNameFromAccessorMethodName(methodName, "is", removePrefix = false)
+fun propertyNameBySetMethodName(methodName: Name, withIsPrefix: Boolean): Name? =
+    propertyNameFromAccessorMethodName(methodName, "set", addPrefix = if (withIsPrefix) "is" else null)
 
-fun propertyNameBySetMethodName(methodName: Name, withIsPrefix: Boolean): Name?
-        = propertyNameFromAccessorMethodName(methodName, "set", addPrefix = if (withIsPrefix) "is" else null)
+fun propertyNamesBySetMethodName(methodName: Name) =
+    listOf(propertyNameBySetMethodName(methodName, false), propertyNameBySetMethodName(methodName, true)).filterNotNull()
 
-fun propertyNamesBySetMethodName(methodName: Name)
-        = listOf(propertyNameBySetMethodName(methodName, false), propertyNameBySetMethodName(methodName, true)).filterNotNull()
-
-private fun propertyNameFromAccessorMethodName(methodName: Name, prefix: String, removePrefix: Boolean = true, addPrefix: String? = null): Name? {
+private fun propertyNameFromAccessorMethodName(
+    methodName: Name,
+    prefix: String,
+    removePrefix: Boolean = true,
+    addPrefix: String? = null
+): Name? {
     if (methodName.isSpecial) return null
     val identifier = methodName.identifier
     if (!identifier.startsWith(prefix)) return null

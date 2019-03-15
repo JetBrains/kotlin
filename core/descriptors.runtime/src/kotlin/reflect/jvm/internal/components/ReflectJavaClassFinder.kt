@@ -30,8 +30,8 @@ class ReflectJavaClassFinder(private val classLoader: ClassLoader) : JavaClassFi
         val packageFqName = classId.packageFqName
         val relativeClassName = classId.relativeClassName.asString().replace('.', '$')
         val name =
-                if (packageFqName.isRoot) relativeClassName
-                else packageFqName.asString() + "." + relativeClassName
+            if (packageFqName.isRoot) relativeClassName
+            else packageFqName.asString() + "." + relativeClassName
 
         val klass = classLoader.tryLoadClass(name)
         return if (klass != null) ReflectJavaClass(klass) else null
@@ -46,9 +46,8 @@ class ReflectJavaClassFinder(private val classLoader: ClassLoader) : JavaClassFi
 }
 
 fun ClassLoader.tryLoadClass(fqName: String) =
-        try {
-            loadClass(fqName)
-        }
-        catch (e: ClassNotFoundException) {
-            null
-        }
+    try {
+        loadClass(fqName)
+    } catch (e: ClassNotFoundException) {
+        null
+    }

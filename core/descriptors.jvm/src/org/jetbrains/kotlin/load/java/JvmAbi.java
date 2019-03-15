@@ -75,7 +75,6 @@ public final class JvmAbi {
         return startsWithIsPrefix(propertyName)
                ? propertyName
                : GET_PREFIX + CapitalizeDecapitalizeKt.capitalizeAsciiOnly(propertyName);
-
     }
 
     @NotNull

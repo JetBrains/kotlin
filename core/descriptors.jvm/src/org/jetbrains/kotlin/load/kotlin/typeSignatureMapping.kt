@@ -123,12 +123,12 @@ fun <T : Any> mapType(
                 descriptorTypeWriter?.writeArrayType()
 
                 arrayElementType =
-                        mapType(
-                            memberType, factory,
-                            mode.toGenericArgumentMode(memberProjection.projectionKind),
-                            typeMappingConfiguration, descriptorTypeWriter, writeGenericType,
-                            isIrBackend
-                        )
+                    mapType(
+                        memberType, factory,
+                        mode.toGenericArgumentMode(memberProjection.projectionKind),
+                        typeMappingConfiguration, descriptorTypeWriter, writeGenericType,
+                        isIrBackend
+                    )
 
                 descriptorTypeWriter?.writeArrayEnd()
             }
@@ -365,11 +365,11 @@ open class JvmDescriptorTypeWriter<T : Any>(private val jvmTypeFactory: JvmTypeF
     protected fun writeJvmTypeAsIs(type: T) {
         if (jvmCurrentType == null) {
             jvmCurrentType =
-                    if (jvmCurrentTypeArrayLevel > 0) {
-                        jvmTypeFactory.createFromString("[".repeat(jvmCurrentTypeArrayLevel) + jvmTypeFactory.toString(type))
-                    } else {
-                        type
-                    }
+                if (jvmCurrentTypeArrayLevel > 0) {
+                    jvmTypeFactory.createFromString("[".repeat(jvmCurrentTypeArrayLevel) + jvmTypeFactory.toString(type))
+                } else {
+                    type
+                }
         }
     }
 

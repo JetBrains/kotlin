@@ -35,23 +35,22 @@ import kotlin.reflect.jvm.internal.structure.isEnumClassOrSpecializedEnumEntryCl
 
 @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
 private val TYPES_ELIGIBLE_FOR_SIMPLE_VISIT = setOf<Class<*>>(
-        // Primitives
-        java.lang.Integer::class.java, java.lang.Character::class.java, java.lang.Byte::class.java, java.lang.Long::class.java,
-        java.lang.Short::class.java, java.lang.Boolean::class.java, java.lang.Double::class.java, java.lang.Float::class.java,
-        // Arrays of primitives
-        IntArray::class.java, CharArray::class.java, ByteArray::class.java, LongArray::class.java,
-        ShortArray::class.java, BooleanArray::class.java, DoubleArray::class.java, FloatArray::class.java,
-        // Others
-        Class::class.java, String::class.java
+    // Primitives
+    java.lang.Integer::class.java, java.lang.Character::class.java, java.lang.Byte::class.java, java.lang.Long::class.java,
+    java.lang.Short::class.java, java.lang.Boolean::class.java, java.lang.Double::class.java, java.lang.Float::class.java,
+    // Arrays of primitives
+    IntArray::class.java, CharArray::class.java, ByteArray::class.java, LongArray::class.java,
+    ShortArray::class.java, BooleanArray::class.java, DoubleArray::class.java, FloatArray::class.java,
+    // Others
+    Class::class.java, String::class.java
 )
 
 class ReflectKotlinClass private constructor(
-        val klass: Class<*>,
-        override val classHeader: KotlinClassHeader
+    val klass: Class<*>,
+    override val classHeader: KotlinClassHeader
 ) : KotlinJvmBinaryClass {
 
     companion object Factory {
-
         fun create(klass: Class<*>): ReflectKotlinClass? {
             val headerReader = ReadKotlinClassHeaderAnnotationVisitor()
             ReflectClassStructure.loadClassAnnotations(klass, headerReader)
@@ -137,7 +136,7 @@ private object ReflectClassStructure {
                     for (annotation in annotations) {
                         val annotationType = annotation.annotationClass.java
                         visitor.visitParameterAnnotation(
-                                parameterIndex + shift, annotationType.classId, ReflectAnnotationSource(annotation)
+                            parameterIndex + shift, annotationType.classId, ReflectAnnotationSource(annotation)
                         )?.let {
                             processAnnotationArguments(it, annotation, annotationType)
                         }
@@ -169,15 +168,14 @@ private object ReflectClassStructure {
     }
 
     private fun processAnnotationArguments(
-            visitor: KotlinJvmBinaryClass.AnnotationArgumentVisitor,
-            annotation: Annotation,
-            annotationType: Class<*>
+        visitor: KotlinJvmBinaryClass.AnnotationArgumentVisitor,
+        annotation: Annotation,
+        annotationType: Class<*>
     ) {
         for (method in annotationType.declaredMethods) {
             val value = try {
                 method(annotation)!!
-            }
-            catch (e: IllegalAccessException) {
+            } catch (e: IllegalAccessException) {
                 // This is possible if the annotation class is package local. In this case, we can't read the value into descriptor.
                 // However, this might be OK, because we do not use any data from AnnotationDescriptor in KAnnotatedElement implementations
                 // anyway; we use the source element and the underlying physical Annotation object to implement the needed API
@@ -241,13 +239,11 @@ private object ReflectClassStructure {
                     for (element in value as Array<*>) {
                         v.visitEnum(enumClassId, Name.identifier((element as Enum<*>).name))
                     }
-                }
-                else if (componentType == Class::class.java) {
+                } else if (componentType == Class::class.java) {
                     for (element in value as Array<*>) {
                         v.visitClassLiteral((element as Class<*>).classLiteralValue())
                     }
-                }
-                else {
+                } else {
                     for (element in value as Array<*>) {
                         v.visit(element)
                     }

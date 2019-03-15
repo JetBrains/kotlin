@@ -19,7 +19,7 @@ package kotlin.reflect.jvm.internal.structure
 import org.jetbrains.kotlin.load.java.structure.JavaWildcardType
 import java.lang.reflect.WildcardType
 
-class ReflectJavaWildcardType(override val reflectType: WildcardType): ReflectJavaType(), JavaWildcardType {
+class ReflectJavaWildcardType(override val reflectType: WildcardType) : ReflectJavaType(), JavaWildcardType {
     override val bound: ReflectJavaType?
         get() {
             val upperBounds = reflectType.upperBounds

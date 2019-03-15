@@ -103,12 +103,10 @@ class DeserializedDescriptorResolver {
         try {
             try {
                 return block()
-            }
-            catch (e: InvalidProtocolBufferException) {
+            } catch (e: InvalidProtocolBufferException) {
                 throw IllegalStateException("Could not read data from ${klass.location}", e)
             }
-        }
-        catch (e: Throwable) {
+        } catch (e: Throwable) {
             if (skipMetadataVersionCheck || klass.classHeader.metadataVersion.isCompatible()) {
                 throw e
             }
@@ -122,7 +120,7 @@ class DeserializedDescriptorResolver {
         internal val KOTLIN_CLASS = setOf(KotlinClassHeader.Kind.CLASS)
 
         private val KOTLIN_FILE_FACADE_OR_MULTIFILE_CLASS_PART =
-                setOf(KotlinClassHeader.Kind.FILE_FACADE, KotlinClassHeader.Kind.MULTIFILE_CLASS_PART)
+            setOf(KotlinClassHeader.Kind.FILE_FACADE, KotlinClassHeader.Kind.MULTIFILE_CLASS_PART)
 
         private val KOTLIN_1_1_EAP_METADATA_VERSION = JvmMetadataVersion(1, 1, 2)
 

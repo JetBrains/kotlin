@@ -28,9 +28,10 @@ abstract class LazyJavaStaticScope(c: LazyJavaResolverContext) : LazyJavaScope(c
     override fun getDispatchReceiverParameter() = null
 
     override fun resolveMethodSignature(
-            method: JavaMethod, methodTypeParameters: List<TypeParameterDescriptor>, returnType: KotlinType,
-            valueParameters: List<ValueParameterDescriptor>
-    ) = LazyJavaScope.MethodSignatureData(returnType, null, valueParameters, methodTypeParameters, false, emptyList())
+        method: JavaMethod, methodTypeParameters: List<TypeParameterDescriptor>, returnType: KotlinType,
+        valueParameters: List<ValueParameterDescriptor>
+    ): MethodSignatureData =
+        LazyJavaScope.MethodSignatureData(returnType, null, valueParameters, methodTypeParameters, false, emptyList())
 
     override fun computeNonDeclaredProperties(name: Name, result: MutableCollection<PropertyDescriptor>) {
         //no undeclared properties

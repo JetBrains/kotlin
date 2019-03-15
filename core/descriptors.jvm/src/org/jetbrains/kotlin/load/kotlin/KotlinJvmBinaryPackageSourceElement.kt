@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor
 
 class KotlinJvmBinaryPackageSourceElement(
-        private val packageFragment: LazyJavaPackageFragment
+    private val packageFragment: LazyJavaPackageFragment
 ) : SourceElement {
     override fun toString() = "$packageFragment: ${packageFragment.binaryClasses.keys}"
 

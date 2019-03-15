@@ -30,16 +30,16 @@ import org.jetbrains.kotlin.storage.StorageManager
 // This class is needed only for easier injection: exact types of needed components are specified in the constructor here.
 // Otherwise injector generator is not smart enough to deduce, for example, which package fragment provider DeserializationComponents needs
 class DeserializationComponentsForJava(
-        storageManager: StorageManager,
-        moduleDescriptor: ModuleDescriptor,
-        configuration: DeserializationConfiguration,
-        classDataFinder: JavaClassDataFinder,
-        annotationAndConstantLoader: BinaryClassAnnotationAndConstantLoaderImpl,
-        packageFragmentProvider: LazyJavaPackageFragmentProvider,
-        notFoundClasses: NotFoundClasses,
-        errorReporter: ErrorReporter,
-        lookupTracker: LookupTracker,
-        contractDeserializer: ContractDeserializer
+    storageManager: StorageManager,
+    moduleDescriptor: ModuleDescriptor,
+    configuration: DeserializationConfiguration,
+    classDataFinder: JavaClassDataFinder,
+    annotationAndConstantLoader: BinaryClassAnnotationAndConstantLoaderImpl,
+    packageFragmentProvider: LazyJavaPackageFragmentProvider,
+    notFoundClasses: NotFoundClasses,
+    errorReporter: ErrorReporter,
+    lookupTracker: LookupTracker,
+    contractDeserializer: ContractDeserializer
 ) {
     val components: DeserializationComponents
 
@@ -47,12 +47,12 @@ class DeserializationComponentsForJava(
         // currently built-ins may be not an instance of JvmBuiltIns only in case of built-ins serialization
         val jvmBuiltIns = moduleDescriptor.builtIns as? JvmBuiltIns
         components = DeserializationComponents(
-                storageManager, moduleDescriptor, configuration, classDataFinder, annotationAndConstantLoader, packageFragmentProvider,
-                LocalClassifierTypeSettings.Default, errorReporter, lookupTracker, JavaFlexibleTypeDeserializer,
-                emptyList(), notFoundClasses, contractDeserializer,
-                additionalClassPartsProvider = jvmBuiltIns?.settings ?: AdditionalClassPartsProvider.None,
-                platformDependentDeclarationFilter = jvmBuiltIns?.settings ?: PlatformDependentDeclarationFilter.NoPlatformDependent,
-                extensionRegistryLite = JvmProtoBufUtil.EXTENSION_REGISTRY
+            storageManager, moduleDescriptor, configuration, classDataFinder, annotationAndConstantLoader, packageFragmentProvider,
+            LocalClassifierTypeSettings.Default, errorReporter, lookupTracker, JavaFlexibleTypeDeserializer,
+            emptyList(), notFoundClasses, contractDeserializer,
+            additionalClassPartsProvider = jvmBuiltIns?.settings ?: AdditionalClassPartsProvider.None,
+            platformDependentDeclarationFilter = jvmBuiltIns?.settings ?: PlatformDependentDeclarationFilter.NoPlatformDependent,
+            extensionRegistryLite = JvmProtoBufUtil.EXTENSION_REGISTRY
         )
     }
 }

@@ -47,7 +47,7 @@ abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
         private val renderer = DescriptorRenderer.withOptions {
             withDefinedIn = false
             excludedAnnotationClasses = setOf(
-                    FqName(ExpectedLoadErrorsUtil.ANNOTATION_CLASS_NAME)
+                FqName(ExpectedLoadErrorsUtil.ANNOTATION_CLASS_NAME)
             )
             overrideRenderingPolicy = OverrideRenderingPolicy.RENDER_OPEN_OVERRIDE
             parameterNameRenderingPolicy = ParameterNameRenderingPolicy.NONE
@@ -71,8 +71,8 @@ abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
         if (InTextDirectivesUtils.isDirectiveDefined(text, "SKIP_IN_RUNTIME_TEST")) return
 
         val jdkKind =
-                if (InTextDirectivesUtils.isDirectiveDefined(text, "FULL_JDK")) TestJdkKind.FULL_JDK
-                else defaultJdkKind
+            if (InTextDirectivesUtils.isDirectiveDefined(text, "FULL_JDK")) TestJdkKind.FULL_JDK
+            else defaultJdkKind
 
         compileFile(file, text, jdkKind)
 
@@ -81,14 +81,14 @@ abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
         val actual = createReflectedPackageView(classLoader, KotlinTestUtils.TEST_MODULE_NAME)
 
         val comparatorConfiguration = Configuration(
-                /* checkPrimaryConstructors = */ fileName.endsWith(".kt"),
-                /* checkPropertyAccessors = */ true,
-                /* includeMethodsOfKotlinAny = */ false,
-                /* renderDeclarationsFromOtherModules = */ true,
-                /* checkFunctionContract = */ false,
-                // Skip Java annotation constructors because order of their parameters is not retained at runtime
-                { descriptor -> !descriptor!!.isJavaAnnotationConstructor() },
-                errorTypesForbidden(), renderer
+            /* checkPrimaryConstructors = */ fileName.endsWith(".kt"),
+            /* checkPropertyAccessors = */ true,
+            /* includeMethodsOfKotlinAny = */ false,
+            /* renderDeclarationsFromOtherModules = */ true,
+            /* checkFunctionContract = */ false,
+            // Skip Java annotation constructors because order of their parameters is not retained at runtime
+            { descriptor -> !descriptor!!.isJavaAnnotationConstructor() },
+            errorTypesForbidden(), renderer
         )
 
         val differentResultFile = KotlinTestUtils.replaceExtension(file, "runtime.txt")
@@ -98,16 +98,16 @@ abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
         }
 
         val expected = LoadDescriptorUtil.loadTestPackageAndBindingContextFromJavaRoot(
-                tmpdir, testRootDisposable, jdkKind, ConfigurationKind.ALL, true, false, false, null
+            tmpdir, testRootDisposable, jdkKind, ConfigurationKind.ALL, true, false, false, null
         ).first
 
         RecursiveDescriptorComparator.validateAndCompareDescriptors(expected, actual, comparatorConfiguration, null)
     }
 
     private fun DeclarationDescriptor.isJavaAnnotationConstructor() =
-            this is ClassConstructorDescriptor &&
-            containingDeclaration is JavaClassDescriptor &&
-            containingDeclaration.kind == ClassKind.ANNOTATION_CLASS
+        this is ClassConstructorDescriptor &&
+                containingDeclaration is JavaClassDescriptor &&
+                containingDeclaration.kind == ClassKind.ANNOTATION_CLASS
 
     private fun compileFile(file: File, text: String, jdkKind: TestJdkKind) {
         val fileName = file.name
@@ -124,7 +124,7 @@ abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
             }
             fileName.endsWith(".kt") -> {
                 val environment = KotlinTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
-                        myTestRootDisposable, ConfigurationKind.ALL, jdkKind
+                    myTestRootDisposable, ConfigurationKind.ALL, jdkKind
                 )
                 for (root in environment.configuration.getList(CLIConfigurationKeys.CONTENT_ROOTS)) {
                     LOG.info("root: " + root.toString())
@@ -157,8 +157,7 @@ abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
                 if (!packageScopes.contains(packageView.memberScope)) {
                     packageScopes.add(packageView.memberScope)
                 }
-            }
-            else if (header == null || header.kind == KotlinClassHeader.Kind.CLASS) {
+            } else if (header == null || header.kind == KotlinClassHeader.Kind.CLASS) {
                 // Either a normal Kotlin class or a Java class
                 val classId = klass.classId
                 if (!classId.isLocal) {
@@ -180,16 +179,18 @@ abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
         val adaptedSource = typeAnnotations.fold(text) { text, annotation -> text.replace("@$annotation", "") }
         if ("@Retention" !in adaptedSource) {
             return adaptedSource.replace(
-                    "@interface",
-                    "@java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.RUNTIME) @interface"
+                "@interface",
+                "@java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.RUNTIME) @interface"
             )
         }
         return adaptedSource
     }
 
-    private class SyntheticPackageViewForTest(override val module: ModuleDescriptor,
-                                              packageScopes: List<MemberScope>,
-                                              classes: List<ClassifierDescriptor>) : PackageViewDescriptor {
+    private class SyntheticPackageViewForTest(
+        override val module: ModuleDescriptor,
+        packageScopes: List<MemberScope>,
+        classes: List<ClassifierDescriptor>
+    ) : PackageViewDescriptor {
         private val scope: MemberScope
 
         init {
@@ -204,13 +205,13 @@ abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
         override val memberScope: MemberScope
             get() = scope
         override val fragments: List<PackageFragmentDescriptor> = listOf(
-                object : PackageFragmentDescriptorImpl(module, fqName) {
-                    override fun getMemberScope(): MemberScope = scope
-                }
+            object : PackageFragmentDescriptorImpl(module, fqName) {
+                override fun getMemberScope(): MemberScope = scope
+            }
         )
 
         override fun <R, D> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R =
-                visitor.visitPackageViewDescriptor(this, data)
+            visitor.visitPackageViewDescriptor(this, data)
 
         override fun getContainingDeclaration() = null
         override fun getOriginal() = throw UnsupportedOperationException()
@@ -226,16 +227,23 @@ abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
         init {
             for (classifier in classifiers) {
                 classifierMap.put(classifier.name, classifier)?.let {
-                    throw IllegalStateException(String.format("Redeclaration: %s (%s) and %s (%s) (no line info available)",
-                                                              DescriptorUtils.getFqName(it), it,
-                                                              DescriptorUtils.getFqName(classifier), classifier))
+                    throw IllegalStateException(
+                        String.format(
+                            "Redeclaration: %s (%s) and %s (%s) (no line info available)",
+                            DescriptorUtils.getFqName(it), it,
+                            DescriptorUtils.getFqName(classifier), classifier
+                        )
+                    )
                 }
             }
         }
 
         override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? = classifierMap[name]
 
-        override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> = classifierMap.values
+        override fun getContributedDescriptors(
+            kindFilter: DescriptorKindFilter,
+            nameFilter: (Name) -> Boolean
+        ): Collection<DeclarationDescriptor> = classifierMap.values
 
         override fun printScopeStructure(p: Printer) {
             p.println("runtime descriptor loader test")

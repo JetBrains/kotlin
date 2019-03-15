@@ -30,8 +30,10 @@ object FakePureImplementationsProvider {
     init {
         FQ_NAMES.mutableList implementedWith fqNameListOf("java.util.ArrayList", "java.util.LinkedList")
         FQ_NAMES.mutableSet implementedWith fqNameListOf("java.util.HashSet", "java.util.TreeSet", "java.util.LinkedHashSet")
-        FQ_NAMES.mutableMap implementedWith fqNameListOf("java.util.HashMap", "java.util.TreeMap", "java.util.LinkedHashMap",
-                                                         "java.util.concurrent.ConcurrentHashMap", "java.util.concurrent.ConcurrentSkipListMap")
+        FQ_NAMES.mutableMap implementedWith fqNameListOf(
+            "java.util.HashMap", "java.util.TreeMap", "java.util.LinkedHashMap",
+            "java.util.concurrent.ConcurrentHashMap", "java.util.concurrent.ConcurrentSkipListMap"
+        )
         FqName("java.util.function.Function") implementedWith fqNameListOf("java.util.function.UnaryOperator")
         FqName("java.util.function.BiFunction") implementedWith fqNameListOf("java.util.function.BinaryOperator")
     }

@@ -318,7 +318,7 @@ class LazyJavaClassMemberScope(
             result.addAll(
                 additionalOverrides.map { resolvedOverride ->
                     val overriddenBuiltin = resolvedOverride.getOverriddenSpecialBuiltin()
-                            ?: return@map resolvedOverride
+                        ?: return@map resolvedOverride
 
                     resolvedOverride.createHiddenCopyIfBuiltinAlreadyAccidentallyOverridden(overriddenBuiltin, allDescriptors)
                 })
@@ -353,7 +353,7 @@ class LazyJavaClassMemberScope(
     ): SimpleFunctionDescriptor? {
         val overriddenBuiltin =
             BuiltinMethodsWithSpecialGenericSignature.getOverriddenBuiltinFunctionWithErasedValueParametersInJava(descriptor)
-                    ?: return null
+                ?: return null
 
         return createOverrideForBuiltinFunctionWithErasedParameterIfNeeded(overriddenBuiltin, functions)
             ?.takeIf(this::isVisibleAsFunctionInCurrentClass)
@@ -639,13 +639,13 @@ class LazyJavaClassMemberScope(
         if (methodNamedValue != null) {
             val parameterNamedValueJavaType = methodNamedValue.returnType
             val (parameterType, varargType) =
-                    if (parameterNamedValueJavaType is JavaArrayType)
-                        Pair(
-                            c.typeResolver.transformArrayType(parameterNamedValueJavaType, attr, isVararg = true),
-                            c.typeResolver.transformJavaType(parameterNamedValueJavaType.componentType, attr)
-                        )
-                    else
-                        Pair(c.typeResolver.transformJavaType(parameterNamedValueJavaType, attr), null)
+                if (parameterNamedValueJavaType is JavaArrayType)
+                    Pair(
+                        c.typeResolver.transformArrayType(parameterNamedValueJavaType, attr, isVararg = true),
+                        c.typeResolver.transformJavaType(parameterNamedValueJavaType.componentType, attr)
+                    )
+                else
+                    Pair(c.typeResolver.transformJavaType(parameterNamedValueJavaType, attr), null)
 
             result.addAnnotationValueParameter(constructor, 0, methodNamedValue, parameterType, varargType)
         }

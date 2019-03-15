@@ -23,6 +23,6 @@ interface JavaSourceElementFactory {
     fun source(javaElement: JavaElement): JavaSourceElement
 }
 
-interface JavaSourceElement: SourceElement {
+interface JavaSourceElement : SourceElement {
     val javaElement: JavaElement
 }

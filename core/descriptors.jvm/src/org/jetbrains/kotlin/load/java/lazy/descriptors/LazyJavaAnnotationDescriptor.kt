@@ -37,8 +37,8 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.isError
 
 class LazyJavaAnnotationDescriptor(
-        private val c: LazyJavaResolverContext,
-        private val javaAnnotation: JavaAnnotation
+    private val c: LazyJavaResolverContext,
+    private val javaAnnotation: JavaAnnotation
 ) : AnnotationDescriptor {
     override val fqName by c.storageManager.createNullableLazyValue {
         javaAnnotation.classId?.asSingleFqName()
@@ -47,8 +47,8 @@ class LazyJavaAnnotationDescriptor(
     override val type by c.storageManager.createLazyValue {
         val fqName = fqName ?: return@createLazyValue ErrorUtils.createErrorType("No fqName: $javaAnnotation")
         val annotationClass = JavaToKotlinClassMap.mapJavaToKotlin(fqName, c.module.builtIns)
-                              ?: javaAnnotation.resolve()?.let { javaClass -> c.components.moduleClassResolver.resolveClass(javaClass) }
-                              ?: createTypeForMissingDependencies(fqName)
+            ?: javaAnnotation.resolve()?.let { javaClass -> c.components.moduleClassResolver.resolveClass(javaClass) }
+            ?: createTypeForMissingDependencies(fqName)
         annotationClass.defaultType
     }
 
@@ -80,15 +80,15 @@ class LazyJavaAnnotationDescriptor(
         if (type.isError) return null
 
         val arrayType =
-                DescriptorResolverUtils.getAnnotationParameterByName(argumentName, annotationClass!!)?.type
-                 // Try to load annotation arguments even if the annotation class is not found
-                 ?: c.components.module.builtIns.getArrayType(
-                        Variance.INVARIANT,
-                        ErrorUtils.createErrorType("Unknown array element type")
-                    )
+            DescriptorResolverUtils.getAnnotationParameterByName(argumentName, annotationClass!!)?.type
+            // Try to load annotation arguments even if the annotation class is not found
+                ?: c.components.module.builtIns.getArrayType(
+                    Variance.INVARIANT,
+                    ErrorUtils.createErrorType("Unknown array element type")
+                )
 
-        val values = elements.map {
-            argument -> resolveAnnotationArgument(argument) ?: NullValue()
+        val values = elements.map { argument ->
+            resolveAnnotationArgument(argument) ?: NullValue()
         }
 
         return ConstantValueFactory.createArrayValue(values, arrayType)
@@ -108,8 +108,8 @@ class LazyJavaAnnotationDescriptor(
     }
 
     private fun createTypeForMissingDependencies(fqName: FqName) =
-            c.module.findNonGenericClassAcrossDependencies(
-                    ClassId.topLevel(fqName),
-                    c.components.deserializedDescriptorResolver.components.notFoundClasses
-            )
+        c.module.findNonGenericClassAcrossDependencies(
+            ClassId.topLevel(fqName),
+            c.components.deserializedDescriptorResolver.components.notFoundClasses
+        )
 }

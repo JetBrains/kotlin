@@ -244,9 +244,9 @@ class SignatureEnhancement(
 
         private fun KotlinType.extractQualifiers(): JavaTypeQualifiers {
             val (lower, upper) =
-                    if (this.isFlexible())
-                        asFlexibleType().let { Pair(it.lowerBound, it.upperBound) }
-                    else Pair(this, this)
+                if (this.isFlexible())
+                    asFlexibleType().let { Pair(it.lowerBound, it.upperBound) }
+                else Pair(this, this)
 
             val mapping = JavaToKotlinClassMap
             return JavaTypeQualifiers(

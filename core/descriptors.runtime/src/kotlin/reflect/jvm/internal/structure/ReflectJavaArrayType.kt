@@ -21,7 +21,7 @@ import java.lang.reflect.GenericArrayType
 import java.lang.reflect.Type
 
 class ReflectJavaArrayType(override val reflectType: Type) : ReflectJavaType(), JavaArrayType {
-    override val componentType: ReflectJavaType = with (reflectType) {
+    override val componentType: ReflectJavaType = with(reflectType) {
         when {
             this is GenericArrayType -> ReflectJavaType.create(genericComponentType)
             this is Class<*> && isArray() -> ReflectJavaType.create(getComponentType())
