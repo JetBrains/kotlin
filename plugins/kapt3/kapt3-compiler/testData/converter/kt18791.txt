@@ -134,6 +134,8 @@ public final class MyActivity {
     public final int propD = app.B.id.textView;
     public int propE = app.B.id.textView;
     private final int propF = 0;
+    private final int p0 = 0;
+    private final int p1 = 5;
 
     @Bind(id = lib.R.id.textView)
     public static void a$annotations() {
@@ -222,6 +224,18 @@ public final class MyActivity {
 
     public final int getPropF() {
         return 0;
+    }
+
+    public final int getP0() {
+        return 0;
+    }
+
+    public final int getP1() {
+        return 0;
+    }
+
+    public MyActivity(int p0, int p1) {
+        super();
     }
 
     public MyActivity() {
