@@ -878,7 +878,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                         val lParen = superCall.argumentList.firstChild
                         targetEditor.caretModel.moveToOffset(lParen.endOffset)
                     } else {
-                        targetEditor.caretModel.moveToOffset(newJavaMember.startOffset)
+                        targetEditor.caretModel.moveToOffset(newJavaMember.nameIdentifier?.startOffset ?: newJavaMember.startOffset)
                     }
                 }
             }

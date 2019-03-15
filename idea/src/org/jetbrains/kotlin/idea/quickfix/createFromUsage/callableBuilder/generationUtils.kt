@@ -54,7 +54,7 @@ fun setupEditorSelection(editor: Editor, declaration: KtNamedDeclaration) {
             }
         }
         is KtClassOrObject -> {
-            caretModel.moveToOffset(declaration.startOffset)
+            caretModel.moveToOffset(declaration.nameIdentifier?.startOffset ?: declaration.startOffset)
         }
         is KtProperty -> {
             caretModel.moveToOffset(declaration.endOffset)
