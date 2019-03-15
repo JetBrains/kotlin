@@ -276,6 +276,12 @@ public interface MutableSet<E> : Set<E>, MutableCollection<E> {
     override fun iterator(): MutableIterator<E>
 
     // Modification Operations
+
+    /**
+     * Adds the specified element to the set.
+     *
+     * @return `true` if the element has been added, `false` if the element is already contained in the set.
+     */
     override fun add(element: E): Boolean
 
     override fun remove(element: E): Boolean
