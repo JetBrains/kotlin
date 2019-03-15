@@ -77,9 +77,19 @@ class InnerClassesLowering(val context: BackendContext) : ClassLoweringPass {
         irClass.transformChildrenVoid(VariableRemapper(oldConstructorParameterToNew))
 
         irClass.transformChildrenVoid(object : IrElementTransformerVoid() {
+            private var enclosingConstructor: IrConstructor? = null
+
             // TODO: maybe add another transformer that skips specified elements
             override fun visitClass(declaration: IrClass): IrStatement =
                 declaration
+
+            override fun visitConstructor(declaration: IrConstructor): IrStatement =
+                try {
+                    enclosingConstructor = declaration
+                    super.visitConstructor(declaration)
+                } finally {
+                    enclosingConstructor = null
+                }
 
             override fun visitGetValue(expression: IrGetValue): IrExpression {
                 expression.transformChildrenVoid(this)
@@ -100,8 +110,14 @@ class InnerClassesLowering(val context: BackendContext) : ClassLoweringPass {
                         return expression
                     }
 
-                    val outerThisField = context.declarationFactory.getOuterThisField(innerClass)
-                    irThis = IrGetFieldImpl(startOffset, endOffset, outerThisField.symbol, outerThisField.type, irThis, origin)
+                    irThis = if (enclosingConstructor != null && irClass == innerClass) {
+                        // Might be before a super() call (e.g. an argument to one), in which case the JVM bytecode verifier will reject
+                        // an attempt to access the field. Good thing we have a local variable as well.
+                        IrGetValueImpl(startOffset, endOffset, enclosingConstructor!!.valueParameters[0].symbol, origin)
+                    } else {
+                        val outerThisField = context.declarationFactory.getOuterThisField(innerClass)
+                        IrGetFieldImpl(startOffset, endOffset, outerThisField.symbol, outerThisField.type, irThis, origin)
+                    }
                     innerClass = innerClass.parentAsClass
                 }
                 return irThis
