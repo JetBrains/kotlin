@@ -2656,6 +2656,21 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     runTest("idea/testData/quickfix/createFromUsage/createClass/callExpression/expectedTypeBySuperFunction.kt");
                 }
 
+                @TestMetadata("inReturn.kt")
+                public void testInReturn() throws Exception {
+                    runTest("idea/testData/quickfix/createFromUsage/createClass/callExpression/inReturn.kt");
+                }
+
+                @TestMetadata("inReturn2.kt")
+                public void testInReturn2() throws Exception {
+                    runTest("idea/testData/quickfix/createFromUsage/createClass/callExpression/inReturn2.kt");
+                }
+
+                @TestMetadata("notApplicableInReturn.kt")
+                public void testNotApplicableInReturn() throws Exception {
+                    runTest("idea/testData/quickfix/createFromUsage/createClass/callExpression/notApplicableInReturn.kt");
+                }
+
                 @TestMetadata("quotedName.kt")
                 public void testQuotedName() throws Exception {
                     runTest("idea/testData/quickfix/createFromUsage/createClass/callExpression/quotedName.kt");

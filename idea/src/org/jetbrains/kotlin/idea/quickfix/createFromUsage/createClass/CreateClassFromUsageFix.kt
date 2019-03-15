@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
+import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.utils.SmartList
 import java.util.*
 import com.intellij.codeInsight.daemon.impl.quickfix.ClassKind as IdeaClassKind
@@ -221,7 +222,11 @@ open class CreateClassFromUsageFix<E : KtElement> protected constructor(
                         is PsiPackage -> createFileByPackage(selectedParent, editor, file)
                         else -> throw AssertionError("Unexpected element: " + selectedParent.text)
                     } ?: return@runWriteAction
-                val constructorInfo = ClassWithPrimaryConstructorInfo(classInfo, expectedTypeInfo)
+                val constructorInfo = ClassWithPrimaryConstructorInfo(
+                    classInfo,
+                    // Need for #KT-22137
+                    if (expectedTypeInfo.isUnit) TypeInfo.Empty else expectedTypeInfo
+                )
                 val builder = CallableBuilderConfiguration(
                     Collections.singletonList(constructorInfo),
                     element,
@@ -274,3 +279,5 @@ open class CreateClassFromUsageFix<E : KtElement> protected constructor(
         }
     }
 }
+
+private val TypeInfo.isUnit: Boolean get() = ((this as? TypeInfo.DelegatingTypeInfo)?.delegate as? TypeInfo.ByType)?.theType?.isUnit() == true
