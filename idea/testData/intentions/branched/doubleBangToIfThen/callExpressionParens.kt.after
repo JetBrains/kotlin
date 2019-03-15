@@ -3,13 +3,6 @@ fun foo(): String? {
     return "foo"
 }
 
-class A {
-    fun f(): Int {
-        return 42
-    }
-}
-
 fun main(args: Array<String>) {
-    val a: A? = A()
-    if (a != null) a.f() else throw NullPointerException("Expression 'a' must not be null")
+    if (foo() == null) throw NullPointerException("Expression 'foo()' must not be null")
 }
