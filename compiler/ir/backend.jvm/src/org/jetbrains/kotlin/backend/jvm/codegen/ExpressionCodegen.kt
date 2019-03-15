@@ -10,8 +10,6 @@ import org.jetbrains.kotlin.backend.jvm.intrinsics.ComparisonIntrinsic
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicFunction
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
 import org.jetbrains.kotlin.backend.jvm.lower.CrIrType
-import org.jetbrains.kotlin.backend.jvm.lower.JvmBuiltinOptimizationLowering.Companion.isNegation
-import org.jetbrains.kotlin.backend.jvm.lower.JvmBuiltinOptimizationLowering.Companion.negationArgument
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.*
@@ -22,6 +20,7 @@ import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeParametersUsages
 import org.jetbrains.kotlin.codegen.inline.TypeParameterMappings
 import org.jetbrains.kotlin.codegen.intrinsics.JavaClassProperty
+import org.jetbrains.kotlin.codegen.intrinsics.Not
 import org.jetbrains.kotlin.codegen.pseudoInsns.fakeAlwaysFalseIfeq
 import org.jetbrains.kotlin.codegen.pseudoInsns.fakeAlwaysTrueIfeq
 import org.jetbrains.kotlin.codegen.pseudoInsns.fixStackAndJump
@@ -751,8 +750,8 @@ class ExpressionCodegen(
         // Instead of materializing a negated value when used for control flow, flip the branch
         // targets instead. This significantly cuts down the amount of branches and loads of
         // const_0 and const_1 in the generated java bytecode.
-        if (isNegation(condition, classCodegen.context)) {
-            condition = negationArgument(condition as IrCall)
+        if (condition is IrCall && classCodegen.context.state.intrinsics.getIntrinsic(condition.symbol.descriptor) is Not) {
+            condition = condition.dispatchReceiver!!
             jumpIfFalse = !jumpIfFalse
         }
 

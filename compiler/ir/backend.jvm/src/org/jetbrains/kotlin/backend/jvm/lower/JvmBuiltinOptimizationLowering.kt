@@ -33,22 +33,6 @@ internal val jvmBuiltinOptimizationLoweringPhase = makeIrFilePhase(
 
 class JvmBuiltinOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass {
 
-    companion object {
-        fun isNegation(expression: IrExpression, context: JvmBackendContext): Boolean {
-            // TODO: there should be only one representation of the 'not' operator.
-            return expression is IrCall &&
-                    (expression.symbol == context.irBuiltIns.booleanNotSymbol ||
-                            context.state.intrinsics.getIntrinsic(expression.symbol.descriptor) is Not)
-        }
-
-        fun negationArgument(call: IrCall): IrExpression {
-            // TODO: there should be only one representation of the 'not' operator.
-            // Once there is only the IR definition the negation argument will
-            // always be a value argument and this method can be removed.
-            return call.dispatchReceiver ?: call.getValueArgument(0)!!
-        }
-    }
-
     private fun hasNoSideEffectsForNullCompare(expression: IrExpression): Boolean {
         return expression.type.isPrimitiveType() && (expression is IrConst<*> || expression is IrGetValue)
     }
@@ -80,11 +64,13 @@ class JvmBuiltinOptimizationLowering(val context: JvmBackendContext) : FileLower
         irFile.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitCall(expression: IrCall): IrExpression {
                 expression.transformChildrenVoid(this)
-                return if (isNegation(expression, context) && isNegation(negationArgument(expression), context)) {
-                    // TODO: This lowering is currently JvmBackend specific because there are multiple
-                    // definitions of the boolean 'not' operator. Once there is only the irBuiltins
-                    // definition this lowering could be shared with other backends.
-                    negationArgument(negationArgument(expression) as IrCall)
+                return if (context.state.intrinsics.getIntrinsic(expression.symbol.descriptor) is Not) {
+                    val negationArgument = expression.dispatchReceiver!!
+                    if (negationArgument is IrCall && context.state.intrinsics.getIntrinsic(negationArgument.symbol.descriptor) is Not) {
+                        negationArgument.dispatchReceiver!!
+                    } else {
+                        expression
+                    }
                 } else if (isNullCheckOfPrimitiveTypeValue(expression, context)) {
                     val left = expression.getValueArgument(0)!!
                     val nonNullArgument = if (left.isNullConst()) expression.getValueArgument(1)!! else left

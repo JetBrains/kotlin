@@ -81,6 +81,12 @@ private val expectDeclarationsRemovingPhase = makeJsModulePhase(
     description = "Remove expect declaration from module fragment"
 )
 
+private val builtinRemovalLoweringPhase = makeJsModulePhase(
+    ::BuiltinRemovalLowering,
+    name = "BuiltinRemovalLowering",
+    description = "Replace usages of builtins with actual library method calls"
+)
+
 private val lateinitLoweringPhase = makeJsModulePhase(
     ::LateinitLowering,
     name = "LateinitLowering",
@@ -341,6 +347,7 @@ val jsPhases = namedIrModulePhase(
     name = "IrModuleLowering",
     description = "IR module lowering",
     lower = expectDeclarationsRemovingPhase then
+            builtinRemovalLoweringPhase then
             functionInliningPhase then
             lateinitLoweringPhase then
             tailrecLoweringPhase then
