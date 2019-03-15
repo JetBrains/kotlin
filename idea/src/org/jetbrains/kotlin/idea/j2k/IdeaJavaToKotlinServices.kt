@@ -16,13 +16,14 @@
 
 package org.jetbrains.kotlin.idea.j2k
 
-import com.intellij.codeInspection.dataFlow.DfaUtil
-import com.intellij.codeInspection.dataFlow.Nullness
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiVariable
+import org.jetbrains.kotlin.idea.util.compat.dfaCheckNullability
+import org.jetbrains.kotlin.idea.util.compat.dfaInferMethodNullability
 import org.jetbrains.kotlin.j2k.*
 import org.jetbrains.kotlin.j2k.ast.Nullability
+import org.jetbrains.kotlin.idea.util.compat.Nullability as IntellijNullability
 
 object IdeaJavaToKotlinServices : JavaToKotlinConverterServices {
     override val referenceSearcher: ReferenceSearcher
@@ -47,14 +48,14 @@ object IdeaSuperMethodSearcher : SuperMethodsSearcher {
 
 private object IdeaJavaDataFlowAnalyzerFacade : JavaDataFlowAnalyzerFacade {
     override fun variableNullability(variable: PsiVariable, context: PsiElement): Nullability =
-            DfaUtil.checkNullness(variable, context).toJ2KNullability()
+        dfaCheckNullability(variable, context).toJ2KNullability()
 
     override fun methodNullability(method: PsiMethod): Nullability =
-            DfaUtil.inferMethodNullity(method).toJ2KNullability()
+        dfaInferMethodNullability(method).toJ2KNullability()
 
-    private fun Nullness.toJ2KNullability() = when (this) {
-        Nullness.UNKNOWN -> Nullability.Default
-        Nullness.NOT_NULL -> Nullability.NotNull
-        Nullness.NULLABLE -> Nullability.Nullable
+    private fun IntellijNullability.toJ2KNullability() = when (this) {
+        IntellijNullability.UNKNOWN -> Nullability.Default
+        IntellijNullability.NOT_NULL -> Nullability.NotNull
+        IntellijNullability.NULLABLE -> Nullability.Nullable
     }
 }

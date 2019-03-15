@@ -119,6 +119,7 @@
           <Problem reference="com.intellij.testFramework.PlatformTestCase#createModuleAt" reason="Not static anymore in 181 after 7dacf096c47d2125e17031c71a037b63ab00ec53" />
           <Problem reference="com.intellij.testFramework.PlatformTestCase#doCreateRealModuleIn" reason="Not static anymore in 181 after 7dacf096c47d2125e17031c71a037b63ab00ec53" />
           <Problem reference="com.intellij.openapi.progress.ProgressManager#getProgressIndicator" reason="Nullable in 181. Temporary use progressIndicatorNullable instead." />
+          <Problem reference="com.intellij.codeInspection.dataFlow.Nullness" reason="Deprecated since 182. Use org.jetbrains.kotlin.idea.util.compat.Nullability instead." />
         </list>
       </option>
     </inspection_tool>
