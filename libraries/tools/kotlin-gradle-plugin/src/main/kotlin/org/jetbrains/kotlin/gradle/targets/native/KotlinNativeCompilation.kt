@@ -1,4 +1,4 @@
- /*
+/*
  * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
@@ -11,6 +11,7 @@ import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.file.SourceDirectorySet
+import org.gradle.api.invocation.Gradle
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeBinaryContainer
@@ -19,37 +20,38 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationWithResources
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
-import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.io.File
+import java.util.*
 
 private const val OLD_BINARY_API_DEPRECATION =
     "Use the `binaries` block instead. See: https://kotlinlang.org/docs/reference/building-mpp-with-gradle.html#building-final-native-binaries"
 
-private fun KotlinNativeCompilation.printDeprecationWarning() {
-    SingleWarningPerBuild.show(
-        target.project,
-        """
-            Some native binaries in this build are configured using deprecated APIs. Use the `binaries` block instead.
-            The following APIs are deprecated:
-                KotlinNativeCompilation.buildTypes
-                KotlinNativeCompilation.outputKinds
-                KotlinNativeCompilation.outputKinds(...)
-                KotlinNativeCompilation.outputKind(...)
-                KotlinNativeCompilation.entryPoint
-                KotlinNativeCompilation.entryPoint(...)
-                KotlinNativeCompilation.linkerOpts
-                KotlinNativeCompilation.linkerOpts(...)
-                KotlinNativeCompilation.findLinkTask(...)
-                KotlinNativeCompilation.getLinkTask(...)
-                KotlinNativeCompilation.findBinary(...)
-                KotlinNativeCompilation.getBinary(...)
-                KotlinNativeCompilation.linkTaskName(...)
+private val usedDeprecatedAPIs = WeakHashMap<Project, MutableSet<String>>()
 
+private fun showDeprecationWarning(gradle: Gradle) {
+    val rootProject = gradle.rootProject
+    val deprecatedAPIs = usedDeprecatedAPIs[rootProject]?.sorted()?.joinToString(separator = "\n") { "|    $it" }.orEmpty()
+    if (deprecatedAPIs.isNotEmpty()) {
+        rootProject.logger.warn(
+            """
+            |
+            |Some native binaries in this build are configured using deprecated DSL elements. Use the `binaries` DSL block instead.
+            |The following deprecated DSL elements are used in this build:
+            $deprecatedAPIs
+            |
+            |See details about the `binaries` block at https://kotlinlang.org/docs/reference/building-mpp-with-gradle.html#building-final-native-binaries
+            """.trimMargin()
+        )
+    }
+}
 
-            See details about the `binaries` block at https://kotlinlang.org/docs/reference/building-mpp-with-gradle.html#building-final-native-binaries
-        """.trimIndent()
-    )
+private fun KotlinNativeCompilation.registerDeprecatedApi(api: String) = with(target.project.rootProject) {
+    val deprecatedAPIs = usedDeprecatedAPIs.computeIfAbsent(this) {
+        gradle.projectsEvaluated(::showDeprecationWarning)
+        mutableSetOf()
+    }
+    deprecatedAPIs.add(api)
 }
 
 class KotlinNativeCompilation(
@@ -84,7 +86,7 @@ class KotlinNativeCompilation(
             target.compilations.getByName(it)
         }
 
-     // Used only to support the old APIs. TODO@binaries: Remove when the old APIs are removed.
+    // Used only to support the old APIs. TODO@binaries: Remove when the old APIs are removed.
     internal val binaries = mutableMapOf<Pair<NativeOutputKind, NativeBuildType>, NativeBinary>()
 
     // Native-specific DSL.
@@ -102,9 +104,9 @@ class KotlinNativeCompilation(
 
     @Deprecated(OLD_BINARY_API_DEPRECATION)
     var buildTypes: MutableList<NativeBuildType>
-        get() = buildTypesNoWarn.also { printDeprecationWarning() }
+        get() = buildTypesNoWarn.also { registerDeprecatedApi("KotlinNativeCompilation.buildTypes") }
         set(value) {
-            printDeprecationWarning()
+            registerDeprecatedApi("KotlinNativeCompilation.buildTypes")
             buildTypesNoWarn = value
         }
 
@@ -115,27 +117,32 @@ class KotlinNativeCompilation(
 
     @Deprecated(OLD_BINARY_API_DEPRECATION)
     var outputKinds: MutableList<NativeOutputKind>
-        get() = outputKindsNoWarn.also { printDeprecationWarning() }
+        get() = outputKindsNoWarn.also { registerDeprecatedApi("KotlinNativeCompilation.outputKinds") }
         set(value) {
-            printDeprecationWarning()
+            registerDeprecatedApi("KotlinNativeCompilation.outputKinds")
             outputKindsNoWarn = value
         }
 
     @Deprecated(OLD_BINARY_API_DEPRECATION)
-    fun outputKind(kind: NativeOutputKind) = outputKinds.add(kind)
+    fun outputKind(kind: NativeOutputKind) = outputKinds.add(kind).also {
+        registerDeprecatedApi("KotlinNativeCompilation.outputKind(...)")
+    }
 
     @Deprecated(OLD_BINARY_API_DEPRECATION)
     fun outputKinds(vararg kinds: NativeOutputKind) {
+        registerDeprecatedApi("KotlinNativeCompilation.outputKinds(...)")
         outputKinds = kinds.toMutableList()
     }
 
     @Deprecated(OLD_BINARY_API_DEPRECATION)
     fun outputKinds(vararg kinds: String) {
+        registerDeprecatedApi("KotlinNativeCompilation.outputKinds(...)")
         outputKinds = kinds.map { NativeOutputKind.valueOf(it.toUpperCase()) }.toMutableList()
     }
 
     @Deprecated(OLD_BINARY_API_DEPRECATION)
     fun outputKinds(kinds: List<Any>) {
+        registerDeprecatedApi("KotlinNativeCompilation.outputKinds(...)")
         outputKinds = kinds.map {
             when (it) {
                 is NativeOutputKind -> it
@@ -152,14 +159,15 @@ class KotlinNativeCompilation(
 
     @Deprecated(OLD_BINARY_API_DEPRECATION)
     var entryPoint: String?
-        get() = entryPointNoWarn.also { printDeprecationWarning() }
+        get() = entryPointNoWarn.also { registerDeprecatedApi("KotlinNativeCompilation.entryPoint") }
         set(value) {
-            printDeprecationWarning()
+            registerDeprecatedApi("KotlinNativeCompilation.entryPoint")
             entryPointNoWarn = value
         }
 
     @Deprecated(OLD_BINARY_API_DEPRECATION)
     fun entryPoint(value: String) {
+        registerDeprecatedApi("KotlinNativeCompilation.entryPoint(...)")
         entryPoint = value
     }
 
@@ -175,9 +183,9 @@ class KotlinNativeCompilation(
 
     @Deprecated(OLD_BINARY_API_DEPRECATION)
     var linkerOpts: MutableList<String>
-        get() = linkerOptsNoWarn.also { printDeprecationWarning() }
+        get() = linkerOptsNoWarn.also { registerDeprecatedApi("KotlinNativeCompilation.linkerOpts") }
         set(value) {
-            printDeprecationWarning()
+            registerDeprecatedApi("KotlinNativeCompilation.linkerOpts")
             linkerOptsNoWarn = value
         }
 
@@ -185,49 +193,53 @@ class KotlinNativeCompilation(
     fun cinterops(action: Action<NamedDomainObjectContainer<DefaultCInteropSettings>>) = action.execute(cinterops)
 
     @Deprecated(OLD_BINARY_API_DEPRECATION)
-    fun linkerOpts(vararg values: String) = linkerOpts(values.toList())
+    fun linkerOpts(vararg values: String) = linkerOpts(values.toList()).also {
+        registerDeprecatedApi("KotlinNativeCompilation.linkerOpts(...)")
+    }
+
     @Deprecated(OLD_BINARY_API_DEPRECATION)
     fun linkerOpts(values: List<String>) {
+        registerDeprecatedApi("KotlinNativeCompilation.linkerOpts(...)")
         linkerOpts.addAll(values)
     }
 
     // Task accessors.
     @Deprecated(OLD_BINARY_API_DEPRECATION)
     fun findLinkTask(kind: NativeOutputKind, buildType: NativeBuildType): KotlinNativeLink? =
-        binaries[kind to buildType]?.linkTask.also { printDeprecationWarning() }
+        binaries[kind to buildType]?.linkTask.also { registerDeprecatedApi("KotlinNativeCompilation.findLinkTask(...)") }
 
     @Deprecated(OLD_BINARY_API_DEPRECATION)
     fun getLinkTask(kind: NativeOutputKind, buildType: NativeBuildType): KotlinNativeLink =
-        findLinkTask(kind, buildType).also { printDeprecationWarning() }
+        findLinkTask(kind, buildType).also { registerDeprecatedApi("KotlinNativeCompilation.getLinkTask(...)") }
             ?: throw IllegalArgumentException("Cannot find a link task for the binary kind '$kind' and the build type '$buildType'")
 
     @Deprecated(OLD_BINARY_API_DEPRECATION)
     fun findLinkTask(kind: String, buildType: String) =
         findLinkTask(NativeOutputKind.valueOf(kind.toUpperCase()), NativeBuildType.valueOf(buildType.toUpperCase()))
-            .also { printDeprecationWarning() }
+            .also { registerDeprecatedApi("KotlinNativeCompilation.findLinkTask(...)") }
 
     @Deprecated(OLD_BINARY_API_DEPRECATION)
     fun getLinkTask(kind: String, buildType: String) =
         getLinkTask(NativeOutputKind.valueOf(kind.toUpperCase()), NativeBuildType.valueOf(buildType.toUpperCase()))
-            .also { printDeprecationWarning() }
+            .also { registerDeprecatedApi("KotlinNativeCompilation.getLinkTask(...)") }
 
     @Deprecated(OLD_BINARY_API_DEPRECATION)
     fun findBinary(kind: NativeOutputKind, buildType: NativeBuildType): File? =
-        findLinkTask(kind, buildType)?.outputFile?.get().also { printDeprecationWarning() }
+        findLinkTask(kind, buildType)?.outputFile?.get().also { registerDeprecatedApi("KotlinNativeCompilation.findBinary(...)") }
 
     @Deprecated(OLD_BINARY_API_DEPRECATION)
     fun getBinary(kind: NativeOutputKind, buildType: NativeBuildType): File =
-        getLinkTask(kind, buildType).outputFile.get().also { printDeprecationWarning() }
+        getLinkTask(kind, buildType).outputFile.get().also { registerDeprecatedApi("KotlinNativeCompilation.getBinary(...)") }
 
     @Deprecated(OLD_BINARY_API_DEPRECATION)
     fun findBinary(kind: String, buildType: String) =
         findBinary(NativeOutputKind.valueOf(kind.toUpperCase()), NativeBuildType.valueOf(buildType.toUpperCase()))
-            .also { printDeprecationWarning() }
+            .also { registerDeprecatedApi("KotlinNativeCompilation.findBinary(...)") }
 
     @Deprecated(OLD_BINARY_API_DEPRECATION)
     fun getBinary(kind: String, buildType: String) =
         getBinary(NativeOutputKind.valueOf(kind.toUpperCase()), NativeBuildType.valueOf(buildType.toUpperCase()))
-            .also { printDeprecationWarning() }
+            .also { registerDeprecatedApi("KotlinNativeCompilation.getBinary(...)") }
 
     // Naming
     override val processResourcesTaskName: String
@@ -239,12 +251,12 @@ class KotlinNativeCompilation(
             "link",
             KotlinNativeBinaryContainer.generateBinaryName(compilationName, buildType, kind.taskNameClassifier),
             target.targetName
-        ).also { printDeprecationWarning() }
+        ).also { registerDeprecatedApi("KotlinNativeCompilation.linkTaskName(...)") }
 
     @Deprecated(OLD_BINARY_API_DEPRECATION)
     fun linkTaskName(kind: String, buildType: String) =
         linkTaskName(NativeOutputKind.valueOf(kind.toUpperCase()), NativeBuildType.valueOf(buildType.toUpperCase()))
-            .also { printDeprecationWarning() }
+            .also { registerDeprecatedApi("KotlinNativeCompilation.linkTaskName(...)") }
 
     override val compileDependencyConfigurationName: String
         get() = lowerCamelCaseName(
