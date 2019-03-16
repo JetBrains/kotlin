@@ -388,6 +388,9 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
 
             before(INDICES).spaces(0)
             before(WHERE_KEYWORD).spaces(1)
+
+            afterInside(GET_KEYWORD, PROPERTY_ACCESSOR).spaces(0)
+            afterInside(SET_KEYWORD, PROPERTY_ACCESSOR).spaces(0)
         }
         custom {
 

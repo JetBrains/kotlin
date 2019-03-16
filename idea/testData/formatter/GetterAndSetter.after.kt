@@ -1,9 +1,9 @@
 class Test {
     var test: Int
-        get () {
+        get() {
             return 0
         }
-        set (value) {
+        set(value) {
             throw NotSupportedException()
         }
 }
