@@ -2294,14 +2294,14 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
                 runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/tailCalls/localFunctions.kt");
             }
 
-            @TestMetadata("nothingTypedSuspendFunction.kt")
+            @TestMetadata("nothingTypedSuspendFunction_1_2.kt")
             public void testNothingTypedSuspendFunction_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/tailCalls/nothingTypedSuspendFunction.kt", "kotlin.coroutines.experimental");
+                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/tailCalls/nothingTypedSuspendFunction_1_2.kt");
             }
 
-            @TestMetadata("nothingTypedSuspendFunction.kt")
+            @TestMetadata("nothingTypedSuspendFunction_1_3.kt")
             public void testNothingTypedSuspendFunction_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/tailCalls/nothingTypedSuspendFunction.kt", "kotlin.coroutines");
+                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/tailCalls/nothingTypedSuspendFunction_1_3.kt");
             }
 
             @TestMetadata("recursive.kt")
