@@ -44,10 +44,11 @@ class UnfoldReturnToWhenIntention : LowPriorityAction, SelfTargetingRangeIntenti
         val whenExpression = element.returnedExpression as KtWhenExpression
         val newWhenExpression = whenExpression.copied()
 
+        val labelName = element.getLabelName()
         whenExpression.entries.zip(newWhenExpression.entries).forEach { (entry, newEntry) ->
             val expr = entry.expression!!.lastBlockStatementOrThis()
             val newExpr = newEntry.expression!!.lastBlockStatementOrThis()
-            newExpr.replace(UnfoldReturnToIfIntention.createReturnExpression(expr, psiFactory, context))
+            newExpr.replace(UnfoldReturnToIfIntention.createReturnExpression(expr, labelName, psiFactory, context))
         }
         element.replace(newWhenExpression)
     }
