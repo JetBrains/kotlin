@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.guessTypes
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.slicer.compat.PsiElement_N183_NN191
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isPlainWithEscapes
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
@@ -75,17 +76,21 @@ class KotlinSliceProvider : SliceLanguageSupportProvider, SliceUsageTransformer 
         return listOf(KotlinSliceUsage(usage.element, usage.parent, 0, false))
     }
 
-    override fun getExpressionAtCaret(atCaret: PsiElement?, dataFlowToThis: Boolean): KtExpression? {
+    override fun getExpressionAtCaret(atCaret: PsiElement_N183_NN191, dataFlowToThis: Boolean): KtExpression? {
+        // BUNCH: 183
+        @Suppress("SENSELESS_COMPARISON")
+        if (atCaret == null) return null
+
         val element =
-                atCaret?.parentsWithSelf
-                        ?.firstOrNull {
-                            it is KtProperty ||
+            atCaret.parentsWithSelf
+                .firstOrNull {
+                    it is KtProperty ||
                             it is KtParameter ||
                             it is KtDeclarationWithBody ||
                             (it is KtClass && !it.hasExplicitPrimaryConstructor()) ||
                             (it is KtExpression && it !is KtDeclaration)
-                        }
-                        ?.let { KtPsiUtil.safeDeparenthesize(it as KtExpression) } ?: return null
+                }
+                ?.let { KtPsiUtil.safeDeparenthesize(it as KtExpression) } ?: return null
         if (dataFlowToThis) {
             if (element is KtConstantExpression) return null
             if (element is KtStringTemplateExpression && element.isPlainWithEscapes()) return null
