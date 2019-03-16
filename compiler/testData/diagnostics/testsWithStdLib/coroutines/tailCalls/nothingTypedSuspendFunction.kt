@@ -4,6 +4,6 @@ import COROUTINES_PACKAGE.*
 import COROUTINES_PACKAGE.intrinsics.*
 
 suspend fun suspendLogAndThrow(exception: Throwable): Nothing = <!IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>suspendCoroutineUninterceptedOrReturn<!> { c ->
-    c.resumeWithException(exception)
+    c.<!IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>resumeWithException<!>(exception)
     COROUTINE_SUSPENDED
 }
