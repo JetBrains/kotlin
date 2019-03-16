@@ -3416,6 +3416,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                     runTest("idea/testData/intentions/branched/unfolding/returnToIf/innerIfTransformed.kt");
                 }
 
+                @TestMetadata("labeledReturn.kt")
+                public void testLabeledReturn() throws Exception {
+                    runTest("idea/testData/intentions/branched/unfolding/returnToIf/labeledReturn.kt");
+                }
+
                 @TestMetadata("simpleIf.kt")
                 public void testSimpleIf() throws Exception {
                     runTest("idea/testData/intentions/branched/unfolding/returnToIf/simpleIf.kt");
@@ -3442,6 +3447,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 @TestMetadata("innerWhenTransformed.kt")
                 public void testInnerWhenTransformed() throws Exception {
                     runTest("idea/testData/intentions/branched/unfolding/returnToWhen/innerWhenTransformed.kt");
+                }
+
+                @TestMetadata("labeledReturn.kt")
+                public void testLabeledReturn() throws Exception {
+                    runTest("idea/testData/intentions/branched/unfolding/returnToWhen/labeledReturn.kt");
                 }
 
                 @TestMetadata("simpleWhen.kt")
