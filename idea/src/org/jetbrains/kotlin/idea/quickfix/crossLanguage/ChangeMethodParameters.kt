@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.load.java.NULLABLE_ANNOTATIONS
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -134,9 +135,6 @@ internal class ChangeMethodParameters(
         for ((action, parameter) in parametersMapped) {
             when (action) {
                 is ParameterModification.Add -> {
-                    for (expectedAnnotation in action.expectedAnnotations) {
-                        addAnnotationEntry(parameter, expectedAnnotation, null)
-                    }
                     target.valueParameterList!!.addParameter(parameter)
                 }
 
@@ -169,10 +167,19 @@ internal class ChangeMethodParameters(
                 functionDescriptor.typeParameters,
                 paramsToAdd.mapIndexed { index, parameter ->
                     ValueParameterDescriptorImpl(
-                        this, null, index, Annotations.EMPTY,
+                        this,
+                        null,
+                        index,
+                        Annotations.create(parameter.expectedAnnotations.map {
+                            annotationRequestToDescriptor(functionDescriptor.module, it)
+                        }),
                         Name.identifier(parameter.name),
-                        parameter.ktType, false,
-                        false, false, null, SourceElement.NO_SOURCE
+                        parameter.ktType,
+                        false,
+                        false,
+                        false,
+                        null,
+                        SourceElement.NO_SOURCE
                     )
                 },
                 functionDescriptor.returnType,

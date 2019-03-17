@@ -233,7 +233,7 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
             """import pkg.myannotation.JavaAnnotation
                 |
                 |class Foo {
-                |   @JavaAnnotation("foo", param = 2)
+                |   @JavaAnnotation(param = 2, value = "foo")
                 |   fun bar(){}
                 |   @JavaAnnotation(param = 2, value = "foo")
                 |   fun baz(){}

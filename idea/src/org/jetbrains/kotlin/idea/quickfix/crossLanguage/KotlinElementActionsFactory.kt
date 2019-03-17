@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
@@ -52,6 +53,7 @@ import org.jetbrains.kotlin.idea.quickfix.RemoveModifierFix
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable.CreateCallableFromUsageFix
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.approximateFlexibleTypes
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -74,9 +76,12 @@ import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
 import org.jetbrains.kotlin.resolve.AnnotationChecker
 import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.resolve.constants.*
+import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.typeUtil.supertypes
@@ -437,7 +442,12 @@ class KotlinElementActionsFactory : JvmElementActionsFactory() {
 
         override fun invoke(project: Project, editor: Editor?, file: PsiFile?) {
             val target = pointer.element ?: return
-            val entry = addAnnotationEntry(target, request, annotationTarget)
+            val module = (target as? KtDeclaration)?.resolveToDescriptorIfAny()?.module ?: return
+            val entry = target.addAnnotationEntry(
+                KtPsiFactory(target).createAnnotationEntry(
+                    renderAnnotation(module, request, annotationTarget)
+                )
+            )
             ShortenReferences.DEFAULT.process(entry)
         }
 
@@ -449,54 +459,42 @@ class KotlinElementActionsFactory : JvmElementActionsFactory() {
     }
 }
 
-internal fun addAnnotationEntry(
-    target: KtModifierListOwner,
+internal fun renderAnnotation(
+    moduleDescriptor: ModuleDescriptor,
     request: AnnotationRequest,
     annotationTarget: AnnotationUseSiteTarget?
-): KtAnnotationEntry {
-    val annotationClass = JavaPsiFacade.getInstance(target.project).findClass(request.qualifiedName, target.resolveScope)
+): String {
+    val annotationDescriptor = annotationRequestToDescriptor(moduleDescriptor, request)
 
-    val kotlinAnnotation = annotationClass?.language == KotlinLanguage.INSTANCE
-
-    val annotationUseSiteTargetPrefix = run prefixEvaluation@{
-        if (annotationTarget == null) return@prefixEvaluation ""
-
-        val moduleDescriptor = (target as? KtDeclaration)?.resolveToDescriptorIfAny()?.module ?: return@prefixEvaluation ""
-        val annotationClassDescriptor = moduleDescriptor.resolveClassByFqName(
-            FqName(request.qualifiedName), NoLookupLocation.FROM_IDE
-        ) ?: return@prefixEvaluation ""
-
+    val annotationUseSiteTarget = run correctedUseSite@{
+        if (annotationTarget == null) return@correctedUseSite null
         val applicableTargetSet =
-            AnnotationChecker.applicableTargetSet(annotationClassDescriptor) ?: KotlinTarget.DEFAULT_TARGET_SET
-
-        if (KotlinTarget.PROPERTY !in applicableTargetSet) return@prefixEvaluation ""
-
-        "${annotationTarget.renderName}:"
+            annotationDescriptor.annotationClass?.let { AnnotationChecker.applicableTargetSet(it) } ?: KotlinTarget.DEFAULT_TARGET_SET
+        if (KotlinTarget.PROPERTY !in applicableTargetSet) return@correctedUseSite null
+        annotationTarget
     }
 
-    // could be generated via descriptor when KT-30478 is fixed
-    val entry = target.addAnnotationEntry(
-        KtPsiFactory(target)
-            .createAnnotationEntry(
-                "@$annotationUseSiteTargetPrefix${request.qualifiedName}${
-                request.attributes.takeIf { it.isNotEmpty() }?.mapIndexed { i, p ->
-                    if (!kotlinAnnotation && i == 0 && p.name == "value")
-                        renderAttributeValue(p.value).toString()
-                    else
-                        "${p.name} = ${renderAttributeValue(p.value)}"
-                }?.joinToString(", ", "(", ")") ?: ""
-                }"
-            )
-    )
-    return entry
+    return IdeDescriptorRenderers.SOURCE_CODE.withOptions {
+        renderDefaultAnnotationArguments = true
+    }.renderAnnotation(annotationDescriptor, annotationUseSiteTarget)
 }
 
-private fun renderAttributeValue(annotationAttributeRequest: AnnotationAttributeValueRequest) =
-    when (annotationAttributeRequest) {
-        is AnnotationAttributeValueRequest.PrimitiveValue -> annotationAttributeRequest.value
-        is AnnotationAttributeValueRequest.StringValue -> "\"" + annotationAttributeRequest.value + "\""
-    }
+internal fun annotationRequestToDescriptor(moduleDescriptor: ModuleDescriptor, request: AnnotationRequest): AnnotationDescriptorImpl {
+    val annotationClassDescriptor = moduleDescriptor.resolveClassByFqName(FqName(request.qualifiedName), NoLookupLocation.FROM_IDE)
 
+    return AnnotationDescriptorImpl(
+        annotationClassDescriptor?.defaultType ?: ErrorUtils.createUnresolvedType(request.qualifiedName, emptyList()),
+        request.attributes.map { r ->
+            Name.identifier(r.name) to (when (val v = r.value) {
+                is AnnotationAttributeValueRequest.PrimitiveValue ->
+                    ConstantValueFactory.createConstantValue(v.value)
+
+                is AnnotationAttributeValueRequest.StringValue -> StringValue(v.value)
+            })
+        }.toMap(),
+        SourceElement.NO_SOURCE
+    )
+}
 
 private fun PsiType.collectTypeParameters(): List<PsiTypeParameter> {
     val results = ArrayList<PsiTypeParameter>()
