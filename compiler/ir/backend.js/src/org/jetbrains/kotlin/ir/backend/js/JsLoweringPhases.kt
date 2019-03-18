@@ -32,8 +32,8 @@ private fun validationCallback(context: JsIrBackendContext, module: IrModuleFrag
         checkTypes = false,
         checkDescriptors = false
     )
-//    module.accept(IrValidator(context, validatorConfig), null)
-//    module.accept(CheckDeclarationParentsVisitor, null)
+    module.accept(IrValidator(context, validatorConfig), null)
+    module.accept(CheckDeclarationParentsVisitor, null)
 }
 
 private fun makeJsModulePhase(
