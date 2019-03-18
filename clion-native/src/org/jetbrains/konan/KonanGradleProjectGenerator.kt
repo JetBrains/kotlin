@@ -126,7 +126,7 @@ private class TemplateListPanel {
 
     fun setTemplates(templates: List<KonanProjectTemplate>) {
         this.templates = templates
-        templates.forEach { templateListModel.addElement(it.name) }
+        templates.forEach { templateListModel.addElement(it.visibleName) }
         listWithFilter.revalidate()
     }
 

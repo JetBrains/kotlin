@@ -4,8 +4,6 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.io.createSymbolicLink
-import com.intellij.util.io.exists
-import com.intellij.util.io.readText
 import com.intellij.util.io.systemIndependentPath
 import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor
 import org.intellij.markdown.html.HtmlGenerator
@@ -18,39 +16,38 @@ import org.jetbrains.konan.util.mergeTemplate
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.File
 import java.io.IOException
-import java.nio.file.FileVisitResult
-import java.nio.file.Files
-import java.nio.file.Path
 import java.nio.file.Paths
-import java.nio.file.SimpleFileVisitor
-import java.nio.file.attribute.BasicFileAttributes
-import java.util.stream.Collectors
+import java.util.*
 
 class KonanProjectTemplate(
-        val name: String,
+        private val templateDir: File,
+        val visibleName: String,
+        private val weight: Int, // the lesser, the more preferred
         private val readme: String?
+) : Comparable<KonanProjectTemplate> {
 
-) {
+    override fun compareTo(other: KonanProjectTemplate) = (weight - other.weight).takeIf { it != 0 } ?: visibleName.compareTo(other.visibleName)
+
     class Loaded(
             val extraFiles: List<TemplateFile>
     )
 
     interface TemplateFile {
         fun create(base: VirtualFile): VirtualFile {
-            val dir = VfsUtil.createDirectoryIfMissing(base, relativePath.parent?.systemIndependentPath ?: "")
-            return dir.findOrCreateChildData(this, relativePath.fileName.toString()).apply {
+            val dir = VfsUtil.createDirectoryIfMissing(base, relativePath.toPath().parent?.systemIndependentPath ?: "")
+            return dir.findOrCreateChildData(this, relativePath.name).apply {
                 setBinaryContent(content())
             }
         }
 
-        val relativePath: Path
+        val relativePath: File
         val openInEditor: Boolean
 
         fun content(): ByteArray
     }
 
     class TemplateTextFile(
-            override val relativePath: Path,
+            override val relativePath: File,
             private val textContent: String,
             override val openInEditor: Boolean
     ) : TemplateFile {
@@ -58,7 +55,7 @@ class KonanProjectTemplate(
     }
 
     class TemplateBinaryFile(
-            override val relativePath: Path,
+            override val relativePath: File,
             private val binaryContent: ByteArray
     ) : TemplateFile {
         override val openInEditor: Boolean = false
@@ -66,7 +63,7 @@ class KonanProjectTemplate(
     }
 
     class TemplateSymlinkFile(
-            override val relativePath: Path,
+            override val relativePath: File,
             private val link: String
     ) : TemplateFile {
         override val openInEditor: Boolean = false
@@ -88,60 +85,54 @@ class KonanProjectTemplate(
             return HtmlGenerator(readme, root, flavour).generateHtml()
         }
 
-    fun load(): Loaded = withProjectTemplateDirectory { templatesDir ->
+    fun load(): Loaded {
         val extraFiles = mutableListOf<TemplateFile>()
-        val templateDir = templatesDir.resolve("gradle/$name")
 
-        Files.walkFileTree(templateDir, object : SimpleFileVisitor<Path>() {
-            override fun visitFile(filePath: Path, attributes: BasicFileAttributes): FileVisitResult {
-                val file = filePath.toFile()
-                val relPath = templateDir.relativize(filePath)
+        templateDir.walkTopDown().filter { it.isFile }.forEach { file ->
+            val relPath = file.relativeTo(templateDir)
 
-                when {
-                    file.name == "template.symlinks" -> { /* Do we still need this? */
-                        file.readLines().forEach { link ->
-                            extraFiles += TemplateSymlinkFile(relPath.parent, link)
-                        }
-                    }
-                    file.extension in MAYBE_TEMPLATE_FILES -> {
-                        extraFiles.addIfNotNull(getTemplateTextFile(file, relPath))
-                    }
-                    else -> {
-                        extraFiles += TemplateBinaryFile(relPath, file.readBytes())
+            when {
+                file.name == TEMPLATE_SYMLINKS_FILE -> { /* Do we still need this? */
+                    file.readLines().forEach { link ->
+                        extraFiles += TemplateSymlinkFile(relPath.parentFile, link)
                     }
                 }
-                return FileVisitResult.CONTINUE
+                file.name == TEMPLATE_INFO_FILE -> { /* Skip */ }
+                file.extension in MAYBE_TEMPLATE_FILES -> {
+                    extraFiles.addIfNotNull(getTemplateTextFile(file, relPath))
+                }
+                else -> {
+                    extraFiles += TemplateBinaryFile(relPath, file.readBytes())
+                }
             }
-        })
+        }
 
-        Loaded(extraFiles)
+        return Loaded(extraFiles)
     }
 
     companion object {
         fun listAll(): List<KonanProjectTemplate> = withProjectTemplateDirectory { projectTemplatesDir ->
-            val allTemplates = projectTemplatesDir.resolve("gradle")
-            check(allTemplates.exists())
+            val gradleTemplatesDir = projectTemplatesDir.resolve("gradle")
+            check(gradleTemplatesDir.isDirectory)
 
-            Files.list(allTemplates).collect(Collectors.toList()).map { path ->
-                val readme: String? = try {
-                    Files.list(path)
-                            .filter { it.fileName.toString().toLowerCase() == "readme.md" }
-                            .findAny()
-                            .orElse(null)
-                            ?.readText()
-                } catch (_: IOException) {
-                    null
-                }
-                KonanProjectTemplate(path.fileName.toString(), readme)
-            }
+            gradleTemplatesDir.listFiles()
+                    .filter { it.isDirectory }
+                    .mapNotNull(::getTemplate)
+                    .sorted()
         }
+
+        private const val TEMPLATE_SYMLINKS_FILE = "template.symlinks"
+        private const val TEMPLATE_INFO_FILE = "template.info"
+
+        private const val TEMPLATE_INFO_PROPERTY_NAME = "name"
+        private const val TEMPLATE_INFO_PROPERTY_WEIGHT = "weight"
 
         private val MAYBE_TEMPLATE_FILES = setOf("kt", "kts")
 
         private const val FILE_MARKER_OPEN_IN_EDITOR = "OPEN-IN-EDITOR"
         private const val FILE_MARKER_SKIP_IF_RELEASE = "SKIP-IF-RELEASE"
 
-        private fun getTemplateTextFile(file: File, relPath: Path): TemplateTextFile? {
+        private fun getTemplateTextFile(file: File, relPath: File): TemplateTextFile? {
             val fileContents = file.readText()
             val firstLine = fileContents.substringBefore('\n')
 
@@ -156,11 +147,38 @@ class KonanProjectTemplate(
 
             return TemplateTextFile(relPath, renderedText, openInEditor)
         }
+
+        private fun getTemplate(templateDir: File) : KonanProjectTemplate? {
+            val templateInfo = try {
+                val templateInfoFile = templateDir.resolve(TEMPLATE_INFO_FILE).takeIf { it.isFile } ?: return null
+                templateInfoFile.inputStream().use { istream -> Properties().also { it.load(istream) } }
+            } catch (_: IOException) {
+                null
+            }
+
+            val name = templateInfo?.get(TEMPLATE_INFO_PROPERTY_NAME)?.toString() ?: templateDir.name
+            val weight = templateInfo?.get(TEMPLATE_INFO_PROPERTY_WEIGHT)?.toString()?.toInt() ?: 100
+
+            val readme: String? = try {
+                templateDir.listFiles()
+                        .firstOrNull { it.name.toLowerCase() == "readme.md" }
+                        ?.readText(Charsets.UTF_8)
+            } catch (_: IOException) {
+                null
+            }
+
+            return KonanProjectTemplate(
+                    templateDir = templateDir,
+                    visibleName = name,
+                    weight = weight,
+                    readme = readme
+            )
+        }
     }
 }
 
-private fun <T> withProjectTemplateDirectory(f: (Path) -> T): T {
-    val projectTemplatesDir = Paths.get(cidrKotlinPlugin.path.path, "templates/")
-    FileUtil.ensureExists(projectTemplatesDir.toFile())
+private fun <T> withProjectTemplateDirectory(f: (File) -> T): T {
+    val projectTemplatesDir = Paths.get(cidrKotlinPlugin.path.path, "templates/").toFile()
+    FileUtil.ensureExists(projectTemplatesDir)
     return f(projectTemplatesDir)
 }
