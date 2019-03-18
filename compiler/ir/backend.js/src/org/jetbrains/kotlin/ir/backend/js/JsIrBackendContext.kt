@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.descriptors.KnownPackageFragmentDescr
 import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
+import org.jetbrains.kotlin.backend.common.phaser.createPhaseConfig
 import org.jetbrains.kotlin.backend.js.JsDeclarationFactory
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -49,7 +50,7 @@ class JsIrBackendContext(
 
     override val builtIns = module.builtIns
 
-    val phaseConfig = PhaseConfig(jsPhases, configuration)
+    val phaseConfig = createPhaseConfig(jsPhases, configuration)
     override var inVerbosePhase: Boolean = false
 
     val externalNestedClasses = mutableListOf<IrClass>()

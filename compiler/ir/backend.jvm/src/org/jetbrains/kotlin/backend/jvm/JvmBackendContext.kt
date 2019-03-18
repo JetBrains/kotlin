@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
+import org.jetbrains.kotlin.backend.common.phaser.createPhaseConfig
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmDeclarationFactory
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmSharedVariablesManager
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -38,7 +39,7 @@ class JvmBackendContext(
 
     override val ir = JvmIr(irModuleFragment, symbolTable)
 
-    val phaseConfig = PhaseConfig(jvmPhases, state.configuration)
+    val phaseConfig = createPhaseConfig(jvmPhases, state.configuration)
     override var inVerbosePhase: Boolean = false
 
     override val configuration get() = state.configuration

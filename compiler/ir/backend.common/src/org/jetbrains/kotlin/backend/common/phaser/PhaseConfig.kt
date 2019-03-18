@@ -9,43 +9,68 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 
-class PhaseConfig(private val compoundPhase: CompilerPhase<*, *, *>, config: CompilerConfiguration) {
-
+fun createPhaseConfig(compoundPhase: CompilerPhase<*, *, *>, config: CompilerConfiguration): PhaseConfig {
     val phases = compoundPhase.getNamedSubphases().fold(mutableMapOf<String, AnyNamedPhase>()) { acc, (_, phase) ->
         check(phase.name !in acc) { "Duplicate phase name '${phase.name}'"}
         acc[phase.name] = phase
         acc
     }
-    private val enabledMut = computeEnabled(config).toMutableSet()
 
-    val enabled: Set<AnyNamedPhase> get() = enabledMut
+    val enabled = computeEnabled(phases, config).toMutableSet()
+    val verbose = phaseSetFromConfiguration(phases, config, CommonConfigurationKeys.VERBOSE_PHASES)
 
-    val verbose = phaseSetFromConfiguration(config, CommonConfigurationKeys.VERBOSE_PHASES)
-    val toDumpStateBefore: Set<AnyNamedPhase>
-
-    val toDumpStateAfter: Set<AnyNamedPhase>
-    val toValidateStateBefore: Set<AnyNamedPhase>
-
-    val toValidateStateAfter: Set<AnyNamedPhase>
-
-    init {
-        with(CommonConfigurationKeys) {
-            val beforeDumpSet = phaseSetFromConfiguration(config, PHASES_TO_DUMP_STATE_BEFORE)
-            val afterDumpSet = phaseSetFromConfiguration(config, PHASES_TO_DUMP_STATE_AFTER)
-            val bothDumpSet = phaseSetFromConfiguration(config, PHASES_TO_DUMP_STATE)
-            toDumpStateBefore = beforeDumpSet + bothDumpSet
-            toDumpStateAfter = afterDumpSet + bothDumpSet
-            val beforeValidateSet = phaseSetFromConfiguration(config, PHASES_TO_VALIDATE_BEFORE)
-            val afterValidateSet = phaseSetFromConfiguration(config, PHASES_TO_VALIDATE_AFTER)
-            val bothValidateSet = phaseSetFromConfiguration(config, PHASES_TO_VALIDATE)
-            toValidateStateBefore = beforeValidateSet + bothValidateSet
-            toValidateStateAfter = afterValidateSet + bothValidateSet
-        }
-    }
+    val beforeDumpSet = phaseSetFromConfiguration(phases, config, CommonConfigurationKeys.PHASES_TO_DUMP_STATE_BEFORE)
+    val afterDumpSet = phaseSetFromConfiguration(phases, config, CommonConfigurationKeys.PHASES_TO_DUMP_STATE_AFTER)
+    val bothDumpSet = phaseSetFromConfiguration(phases, config, CommonConfigurationKeys.PHASES_TO_DUMP_STATE)
+    val toDumpStateBefore = beforeDumpSet + bothDumpSet
+    val toDumpStateAfter = afterDumpSet + bothDumpSet
+    val beforeValidateSet = phaseSetFromConfiguration(phases, config, CommonConfigurationKeys.PHASES_TO_VALIDATE_BEFORE)
+    val afterValidateSet = phaseSetFromConfiguration(phases, config, CommonConfigurationKeys.PHASES_TO_VALIDATE_AFTER)
+    val bothValidateSet = phaseSetFromConfiguration(phases, config, CommonConfigurationKeys.PHASES_TO_VALIDATE)
+    val toValidateStateBefore = beforeValidateSet + bothValidateSet
+    val toValidateStateAfter = afterValidateSet + bothValidateSet
 
     val needProfiling = config.getBoolean(CommonConfigurationKeys.PROFILE_PHASES)
     val checkConditions = config.getBoolean(CommonConfigurationKeys.CHECK_PHASE_CONDITIONS)
     val checkStickyConditions = config.getBoolean(CommonConfigurationKeys.CHECK_STICKY_CONDITIONS)
+
+    return PhaseConfig(compoundPhase, phases, enabled, verbose, toDumpStateBefore, toDumpStateAfter, toValidateStateBefore, toValidateStateAfter, needProfiling, checkConditions, checkStickyConditions)
+}
+
+private fun computeEnabled(
+    phases: MutableMap<String, AnyNamedPhase>,
+    config: CompilerConfiguration
+): Set<AnyNamedPhase> {
+    val disabledPhases = phaseSetFromConfiguration(phases, config, CommonConfigurationKeys.DISABLED_PHASES)
+    return phases.values.toSet() - disabledPhases
+}
+
+private fun phaseSetFromConfiguration(
+    phases: MutableMap<String, AnyNamedPhase>,
+    config: CompilerConfiguration,
+    key: CompilerConfigurationKey<Set<String>>
+): Set<AnyNamedPhase> {
+    val phaseNames = config.get(key) ?: emptySet()
+    if ("ALL" in phaseNames) return phases.values.toSet()
+    return phaseNames.map { phases[it]!! }.toSet()
+}
+
+class PhaseConfig(
+    private val compoundPhase: CompilerPhase<*, *, *>,
+    private val phases: MutableMap<String, AnyNamedPhase>,
+    enabled: MutableSet<AnyNamedPhase>,
+    val verbose: Set<AnyNamedPhase>,
+    val toDumpStateBefore: Set<AnyNamedPhase>,
+    val toDumpStateAfter: Set<AnyNamedPhase>,
+    val toValidateStateBefore: Set<AnyNamedPhase>,
+    val toValidateStateAfter: Set<AnyNamedPhase>,
+    val needProfiling: Boolean,
+    val checkConditions: Boolean,
+    val checkStickyConditions: Boolean
+) {
+    private val enabledMut = enabled
+
+    val enabled: Set<AnyNamedPhase> get() = enabledMut
 
     fun known(name: String): String {
         if (phases[name] == null) {
@@ -63,18 +88,6 @@ class PhaseConfig(private val compoundPhase: CompilerPhase<*, *, *>, config: Com
         }
     }
 
-    private fun computeEnabled(config: CompilerConfiguration) =
-            with(CommonConfigurationKeys) {
-                val disabledPhases = phaseSetFromConfiguration(config, DISABLED_PHASES)
-                phases.values.toSet() - disabledPhases
-            }
-
-    private fun phaseSetFromConfiguration(config: CompilerConfiguration, key: CompilerConfigurationKey<Set<String>>): Set<AnyNamedPhase> {
-        val phaseNames = config.get(key) ?: emptySet()
-        if ("ALL" in phaseNames) return phases.values.toSet()
-        return phaseNames.map { phases[it]!! }.toSet()
-    }
-
     fun enable(phase: AnyNamedPhase) {
         enabledMut.add(phase)
     }
@@ -82,6 +95,7 @@ class PhaseConfig(private val compoundPhase: CompilerPhase<*, *, *>, config: Com
     fun disable(phase: AnyNamedPhase) {
         enabledMut.remove(phase)
     }
+
     fun switch(phase: AnyNamedPhase, onOff: Boolean) {
         if (onOff) {
             enable(phase)
