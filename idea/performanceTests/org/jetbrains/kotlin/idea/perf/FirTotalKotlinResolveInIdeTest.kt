@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.doFirResolveTestBench
 import org.jetbrains.kotlin.fir.java.FirJavaModuleBasedSession
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
+import org.jetbrains.kotlin.fir.progress
 import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveTransformer
@@ -33,7 +34,6 @@ import org.jetbrains.kotlin.idea.caches.project.*
 import org.jetbrains.kotlin.idea.fir.IdeFirDependenciesSymbolProvider
 import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
-import kotlin.math.ceil
 
 class FirTotalKotlinResolveInIdeTest : ModuleTestCase() {
     private val projectRootFile = File(".")
@@ -55,18 +55,6 @@ class FirTotalKotlinResolveInIdeTest : ModuleTestCase() {
             moduleInfo, sessionProvider, moduleInfo.contentScope(),
             IdeFirDependenciesSymbolProvider(moduleInfo as ModuleSourceInfo, project, sessionProvider)
         )
-    }
-
-    private fun <T> Collection<T>.progress(label: String, step: Double = 0.1): Sequence<T> {
-        val intStep = (this.size * step).toInt()
-        val percentStep = ceil(this.size * 0.01).toInt()
-        var progress = 0
-        return asSequence().onEach {
-            if (progress % intStep == 0) {
-                println("$label: ${progress / percentStep}% ($progress/${this.size})")
-            }
-            progress++
-        }
     }
 
     override fun setUp() {
