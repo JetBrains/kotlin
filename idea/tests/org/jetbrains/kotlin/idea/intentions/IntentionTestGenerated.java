@@ -17553,6 +17553,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/useWithIndex/customTypeWithIterator.kt");
         }
 
+        @TestMetadata("destructuringDeclaration.kt")
+        public void testDestructuringDeclaration() throws Exception {
+            runTest("idea/testData/intentions/useWithIndex/destructuringDeclaration.kt");
+        }
+
         @TestMetadata("indexIncrementTwice.kt")
         public void testIndexIncrementTwice() throws Exception {
             runTest("idea/testData/intentions/useWithIndex/indexIncrementTwice.kt");
