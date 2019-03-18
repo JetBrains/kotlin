@@ -25,7 +25,9 @@ FileReader(propertiesFile).use {
     val properties = Properties()
     properties.load(it)
     properties.forEach { (k, v) ->
-        rootProject.extra[k.toString()] = v
+        val key = k.toString()
+        val propertyValue = findProperty(key)?.toString()
+        rootProject.extra[key] = propertyValue ?: v
     }
 }
 
