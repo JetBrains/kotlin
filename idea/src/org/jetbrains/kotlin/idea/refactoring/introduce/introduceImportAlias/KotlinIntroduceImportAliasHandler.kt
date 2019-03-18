@@ -13,6 +13,7 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiNamedElement
+import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.refactoring.RefactoringActionHandler
 import com.intellij.refactoring.rename.inplace.VariableInplaceRenamer
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.idea.refactoring.selectElement
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.references.resolveMainReferenceToDescriptors
+import org.jetbrains.kotlin.idea.search.fileScope
 import org.jetbrains.kotlin.idea.search.usagesSearch.isImportUsage
 import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex
 import org.jetbrains.kotlin.idea.stubindex.KotlinFunctionShortNameIndex
@@ -61,13 +63,14 @@ object KotlinIntroduceImportAliasHandler : RefactoringActionHandler {
         val file = element.containingKtFile
         val declarationDescriptors = file.resolveImportReference(fqName)
 
+        val fileSearchScope = file.fileScope()
+        val resolveScope = file.resolveScope
         val usages = declarationDescriptors.flatMap { descriptor ->
             val isExtension = descriptor.isExtension
-            findPsiElements(project, file, descriptor).flatMap {
-                ReferencesSearch.search(it, file.useScope)
-                    .findAll().asSequence().filter { reference -> reference.element.containingFile == file }
+            findPsiElements(project, resolveScope, descriptor).flatMap {
+                ReferencesSearch.search(it, fileSearchScope)
+                    .findAll()
                     .map { reference -> UsageContext(reference as KtSimpleNameReference, isExtension = isExtension) }
-                    .toList()
             }
         }
 
@@ -119,10 +122,9 @@ private fun cleanImport(file: KtFile, fqName: FqName) {
     file.importDirectives.find { it.alias == null && fqName == it.importedFqName }?.delete()
 }
 
-private fun findPsiElements(project: Project, file: KtFile, descriptor: DeclarationDescriptor): Collection<PsiElement> {
+private fun findPsiElements(project: Project, resolveScope: GlobalSearchScope, descriptor: DeclarationDescriptor): Collection<PsiElement> {
     descriptor.findPsi()?.let { return listOf(it) }
     val fqName = descriptor.importableFqName ?: return emptyList()
-    val resolveScope = file.resolveScope
     return when (descriptor) {
         is DeserializedClassDescriptor -> KotlinFullClassNameIndex.getInstance()[fqName.asString(), project, resolveScope]
         is DeserializedSimpleFunctionDescriptor -> KotlinFunctionShortNameIndex.getInstance()[fqName.shortName().asString(), project, resolveScope]
