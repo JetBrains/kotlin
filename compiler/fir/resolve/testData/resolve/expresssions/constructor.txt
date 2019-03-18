@@ -1,0 +1,15 @@
+FILE: constructor.kt
+    public final class C {
+        public constructor(): super<R|kotlin/Any|>()
+
+        public final fun create(): R|C| {
+            ^create R|/C.C|()
+        }
+
+    }
+    public final fun foo(): R|C| {
+        ^foo R|/C.C|()
+    }
+    public final fun bar(): R|C| {
+        ^bar R|/foo|().R|/C.create|()
+    }
