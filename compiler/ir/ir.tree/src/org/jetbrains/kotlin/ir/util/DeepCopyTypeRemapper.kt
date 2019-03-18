@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrTypeProjectionImpl
-import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 
 class DeepCopyTypeRemapper(
     private val symbolRemapper: SymbolRemapper
@@ -43,7 +42,7 @@ class DeepCopyTypeRemapper(
         val annotations = type.annotations.map { it.transform(deepCopy, null) as IrCall }
 
         return IrSimpleTypeImpl(
-            type.originalKotlinType,
+            null,
             symbolRemapper.getReferencedClassifier(type.classifier),
             type.hasQuestionMark,
             arguments,

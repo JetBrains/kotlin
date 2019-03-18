@@ -16,11 +16,11 @@
 
 package org.jetbrains.kotlin.backend.common
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
@@ -28,12 +28,11 @@ import org.jetbrains.kotlin.ir.util.isAnnotationClass
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
-import org.jetbrains.kotlin.types.KotlinType
 
 typealias ReportError = (element: IrElement, message: String) -> Unit
 
 class CheckIrElementVisitor(
-    val builtIns: KotlinBuiltIns,
+    val irBuiltIns: IrBuiltIns,
     val reportError: ReportError,
     val config: IrValidatorConfig
 ) : IrElementVisitorVoid {
@@ -50,13 +49,13 @@ class CheckIrElementVisitor(
         // Nothing to do.
     }
 
-    private fun IrExpression.ensureTypeIs(expectedType: KotlinType) {
+    private fun IrExpression.ensureTypeIs(expectedType: IrType) {
         if (!config.checkTypes)
             return
 
         // TODO: compare IR types instead.
-        if (expectedType != type.toKotlinType()) {
-            reportError(this, "unexpected expression.type: expected $expectedType, got ${type.toKotlinType()}")
+        if (expectedType.isEqualTo(type)) {
+            reportError(this, "unexpected expression.type: expected $expectedType, got ${type.render()}")
         }
     }
 
@@ -70,16 +69,16 @@ class CheckIrElementVisitor(
         super.visitConst(expression)
 
         val naturalType = when (expression.kind) {
-            IrConstKind.Null -> builtIns.nullableNothingType
-            IrConstKind.Boolean -> builtIns.booleanType
-            IrConstKind.Char -> builtIns.charType
-            IrConstKind.Byte -> builtIns.byteType
-            IrConstKind.Short -> builtIns.shortType
-            IrConstKind.Int -> builtIns.intType
-            IrConstKind.Long -> builtIns.longType
-            IrConstKind.String -> builtIns.stringType
-            IrConstKind.Float -> builtIns.floatType
-            IrConstKind.Double -> builtIns.doubleType
+            IrConstKind.Null -> irBuiltIns.nothingNType
+            IrConstKind.Boolean -> irBuiltIns.booleanType
+            IrConstKind.Char -> irBuiltIns.charType
+            IrConstKind.Byte -> irBuiltIns.byteType
+            IrConstKind.Short -> irBuiltIns.shortType
+            IrConstKind.Int -> irBuiltIns.intType
+            IrConstKind.Long -> irBuiltIns.longType
+            IrConstKind.String -> irBuiltIns.stringType
+            IrConstKind.Float -> irBuiltIns.floatType
+            IrConstKind.Double -> irBuiltIns.doubleType
         }
 
         expression.ensureTypeIs(naturalType)
@@ -88,13 +87,13 @@ class CheckIrElementVisitor(
     override fun visitStringConcatenation(expression: IrStringConcatenation) {
         super.visitStringConcatenation(expression)
 
-        expression.ensureTypeIs(builtIns.stringType)
+        expression.ensureTypeIs(irBuiltIns.stringType)
     }
 
     override fun visitGetObjectValue(expression: IrGetObjectValue) {
         super.visitGetObjectValue(expression)
 
-        expression.ensureTypeIs(expression.descriptor.defaultType)
+        expression.ensureTypeIs(expression.symbol.createType(false, emptyList()))
     }
 
     // TODO: visitGetEnumValue
@@ -102,25 +101,25 @@ class CheckIrElementVisitor(
     override fun visitGetValue(expression: IrGetValue) {
         super.visitGetValue(expression)
 
-        expression.ensureTypeIs(expression.descriptor.type)
+        expression.ensureTypeIs(expression.symbol.owner.type)
     }
 
     override fun visitSetVariable(expression: IrSetVariable) {
         super.visitSetVariable(expression)
 
-        expression.ensureTypeIs(builtIns.unitType)
+        expression.ensureTypeIs(irBuiltIns.unitType)
     }
 
     override fun visitGetField(expression: IrGetField) {
         super.visitGetField(expression)
 
-        expression.ensureTypeIs(expression.descriptor.type)
+        expression.ensureTypeIs(expression.symbol.owner.type)
     }
 
     override fun visitSetField(expression: IrSetField) {
         super.visitSetField(expression)
 
-        expression.ensureTypeIs(builtIns.unitType)
+        expression.ensureTypeIs(irBuiltIns.unitType)
     }
 
     override fun visitCall(expression: IrCall) {
@@ -132,12 +131,8 @@ class CheckIrElementVisitor(
             reportError(expression, "Dispatch receivers with 'dynamic' type are not allowed")
         }
 
-        val returnType = expression.descriptor.returnType
-        if (returnType == null) {
-            reportError(expression, "${expression.descriptor} return type is null")
-        } else {
-            expression.ensureTypeIs(returnType)
-        }
+        val returnType = expression.symbol.owner.returnType
+        expression.ensureTypeIs(returnType)
 
         expression.superQualifierSymbol?.ensureBound(expression)
     }
@@ -145,19 +140,19 @@ class CheckIrElementVisitor(
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall) {
         super.visitDelegatingConstructorCall(expression)
 
-        expression.ensureTypeIs(builtIns.unitType)
+        expression.ensureTypeIs(irBuiltIns.unitType)
     }
 
     override fun visitEnumConstructorCall(expression: IrEnumConstructorCall) {
         super.visitEnumConstructorCall(expression)
 
-        expression.ensureTypeIs(builtIns.unitType)
+        expression.ensureTypeIs(irBuiltIns.unitType)
     }
 
     override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall) {
         super.visitInstanceInitializerCall(expression)
 
-        expression.ensureTypeIs(builtIns.unitType)
+        expression.ensureTypeIs(irBuiltIns.unitType)
         expression.classSymbol.ensureBound(expression)
     }
 
@@ -173,11 +168,11 @@ class CheckIrElementVisitor(
             IrTypeOperator.IMPLICIT_NOTNULL,
             IrTypeOperator.IMPLICIT_COERCION_TO_UNIT,
             IrTypeOperator.IMPLICIT_INTEGER_COERCION,
-            IrTypeOperator.SAM_CONVERSION -> typeOperand.toKotlinType()
+            IrTypeOperator.SAM_CONVERSION -> typeOperand
 
-            IrTypeOperator.SAFE_CAST -> typeOperand.makeNullable().toKotlinType()
+            IrTypeOperator.SAFE_CAST -> typeOperand.makeNullable()
 
-            IrTypeOperator.INSTANCEOF, IrTypeOperator.NOT_INSTANCEOF -> builtIns.booleanType
+            IrTypeOperator.INSTANCEOF, IrTypeOperator.NOT_INSTANCEOF -> irBuiltIns.booleanType
         }
 
         if (operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT && !typeOperand.isUnit()) {
@@ -192,26 +187,26 @@ class CheckIrElementVisitor(
     override fun visitLoop(loop: IrLoop) {
         super.visitLoop(loop)
 
-        loop.ensureTypeIs(builtIns.unitType)
+        loop.ensureTypeIs(irBuiltIns.unitType)
     }
 
     override fun visitBreakContinue(jump: IrBreakContinue) {
         super.visitBreakContinue(jump)
 
-        jump.ensureTypeIs(builtIns.nothingType)
+        jump.ensureTypeIs(irBuiltIns.nothingType)
     }
 
     override fun visitReturn(expression: IrReturn) {
         super.visitReturn(expression)
 
-        expression.ensureTypeIs(builtIns.nothingType)
+        expression.ensureTypeIs(irBuiltIns.nothingType)
         expression.returnTargetSymbol.ensureBound(expression)
     }
 
     override fun visitThrow(expression: IrThrow) {
         super.visitThrow(expression)
 
-        expression.ensureTypeIs(builtIns.nothingType)
+        expression.ensureTypeIs(irBuiltIns.nothingType)
     }
 
     override fun visitClass(declaration: IrClass) {

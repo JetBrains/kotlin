@@ -43,6 +43,24 @@ fun IrType.isEqualTo(that: IrType): Boolean {
     return false
 }
 
+fun IrTypeArgument.toHashCode(): Int = when (this) {
+    is IrTypeProjection -> 31 * type.toHashCode() + variance.hashCode()
+    is IrStarProjection -> hashCode()
+    else -> 0
+}
+
+fun IrType.toHashCode(): Int {
+    if (this is IrDynamicType) return -1
+    if (this is IrErrorType) return 0
+
+    require(this is IrSimpleType)
+
+    var result = classifier.hashCode()
+
+    result = 31 * result + arguments.fold(0) { a, t -> 31 * a + t.toHashCode() }
+    return 31 * result + if (hasQuestionMark) 1 else 0
+}
+
 fun Collection<IrClassifierSymbol>.commonSuperclass(): IrClassifierSymbol {
     var superClassifiers: MutableSet<IrClassifierSymbol>? = null
 

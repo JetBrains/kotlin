@@ -19,28 +19,20 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.atMostOne
-import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
-import org.jetbrains.kotlin.ir.builders.irCall
-import org.jetbrains.kotlin.ir.builders.irGet
-import org.jetbrains.kotlin.ir.builders.irTemporary
+import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrSymbolDeclaration
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStringConcatenation
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.isNullableAny
-import org.jetbrains.kotlin.ir.types.toIrType
-import org.jetbrains.kotlin.ir.types.toKotlinType
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.KotlinType
 
 
 /**
@@ -56,11 +48,9 @@ private class StringConcatenationTransformer(val lower: StringConcatenationLower
 
     private val buildersStack = mutableListOf<IrBuilderWithScope>()
     private val context = lower.context
-    private val builtIns = context.builtIns
     private val irBuiltIns = context.irBuiltIns
 
-    private val typesWithSpecialAppendFunction =
-        PrimitiveType.values().map { builtIns.getPrimitiveKotlinType(it).toIrType()!! } + irBuiltIns.stringType
+    private val typesWithSpecialAppendFunction = irBuiltIns.primitiveIrTypes + irBuiltIns.stringType
 
     private val nameToString = Name.identifier("toString")
     private val nameAppend = Name.identifier("append")
@@ -87,7 +77,7 @@ private class StringConcatenationTransformer(val lower: StringConcatenationLower
             type to stringBuilder.functions.toList().atMostOne {
                 it.name == nameAppend &&
                         it.valueParameters.size == 1 &&
-                        it.valueParameters.single().type.toKotlinType() == type
+                        it.valueParameters.single().type.isEqualTo(type)
             }
         }.toMap()
 
@@ -101,7 +91,7 @@ private class StringConcatenationTransformer(val lower: StringConcatenationLower
         expression.transformChildrenVoid(this)
         val blockBuilder = buildersStack.last()
         return blockBuilder.irBlock(expression) {
-            val stringBuilderImpl = irTemporary(irCall(constructor))
+            val stringBuilderImpl = createTmpVariable(irCall(constructor))
             expression.arguments.forEach { arg ->
                 val appendFunction = typeToAppendFunction(arg.type)
                 +irCall(appendFunction).apply {

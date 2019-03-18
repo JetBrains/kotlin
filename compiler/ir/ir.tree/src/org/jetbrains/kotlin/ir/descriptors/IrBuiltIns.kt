@@ -170,6 +170,8 @@ class IrBuiltIns(
     val throwableType by lazy { builtIns.throwable.defaultType.toIrType() }
     val throwableClass by lazy { builtIns.throwable.toIrSymbol() }
 
+    val primitiveIrTypes by lazy { listOf(booleanType, charType, byteType, shortType, intType, floatType, longType, doubleType) }
+
     val kCallableClass = builtIns.getBuiltInClassByFqName(KotlinBuiltIns.FQ_NAMES.kCallable.toSafe()).toIrSymbol()
     val kPropertyClass = builtIns.getBuiltInClassByFqName(KotlinBuiltIns.FQ_NAMES.kPropertyFqName.toSafe()).toIrSymbol()
 

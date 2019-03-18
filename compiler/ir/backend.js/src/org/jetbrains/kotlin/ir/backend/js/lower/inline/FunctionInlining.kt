@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrReturnableBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
-import org.jetbrains.kotlin.ir.types.irTypeKotlinBuiltIns
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -46,7 +45,6 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
     //-------------------------------------------------------------------------//
 
     fun inline(irModule: IrModuleFragment): IrElement {
-        irTypeKotlinBuiltIns = irModule.irBuiltins.builtIns
         return irModule.accept(this, data = null)
     }
 

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.bridges.findInterfaceImplementation
 import org.jetbrains.kotlin.backend.common.bridges.generateBridges
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
+import org.jetbrains.kotlin.backend.common.ir.isMethodOfAny
 import org.jetbrains.kotlin.backend.common.ir.isSuspend
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
@@ -62,7 +63,7 @@ class BridgesConstruction(val context: JsIrBackendContext) : ClassLoweringPass {
 
     private fun generateBridges(function: IrSimpleFunction, irClass: IrClass) {
         // equals(Any?), hashCode(), toString() never need bridges
-        if (DescriptorUtils.isMethodOfAny(function.descriptor))
+        if (function.isMethodOfAny())
             return
 
         val bridgesToGenerate = generateBridges(
@@ -167,8 +168,7 @@ class BridgesConstruction(val context: JsIrBackendContext) : ClassLoweringPass {
 
 // Handle for common.bridges
 data class IrBasedFunctionHandle(val function: IrSimpleFunction) : FunctionHandle {
-
-    override val isDeclaration: Boolean = function.isReal || findInterfaceImplementation(function.descriptor) != null
+    override val isDeclaration = function.run { isReal || findInterfaceImplementation() != null }
 
     override val isAbstract: Boolean =
         function.modality == Modality.ABSTRACT

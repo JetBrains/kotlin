@@ -5,53 +5,20 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower.inline
 
-import org.jetbrains.kotlin.backend.common.*
-import org.jetbrains.kotlin.backend.common.IrElementVisitorVoidWithContext
 import org.jetbrains.kotlin.backend.common.descriptors.*
-import org.jetbrains.kotlin.backend.common.lower.SimpleMemberScope
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.impl.*
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.*
-import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptorImpl
-import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
-import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.*
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.DescriptorFactory
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
-import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperInterfaces
-import org.jetbrains.kotlin.storage.LockBasedStorageManager
-import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.typeUtil.immediateSupertypes
-
-internal fun KotlinType?.createExtensionReceiver(owner: CallableDescriptor): ReceiverParameterDescriptor? =
-    DescriptorFactory.createExtensionReceiverParameterForCallable(
-        owner,
-        this,
-        Annotations.EMPTY
-    )
-
-fun ReferenceSymbolTable.translateErased(type: KotlinType): IrSimpleType {
-    val descriptor = TypeUtils.getClassDescriptor(type) ?: return translateErased(type.immediateSupertypes().first())
-    val classSymbol = this.referenceClass(descriptor)
-
-    val nullable = type.isMarkedNullable
-    val arguments = type.arguments.map { IrStarProjectionImpl }
-
-    return classSymbol.createType(nullable, arguments)
-}
 
 internal class DeepCopyIrTreeWithSymbolsForInliner(val context: Context,
                                                    val typeArguments: Map<IrTypeParameterSymbol, IrType?>?,

@@ -131,7 +131,7 @@ class ThrowableSuccessorsLowering(val context: JsIrBackendContext) : FileLowerin
                 else -> {
                     val arg = expression.getValueArgument(0)!!
                     when {
-                        arg.type.makeNotNull(false).isThrowable() -> Pair(nullValue(), arg)
+                        arg.type.makeNotNull().isThrowable() -> Pair(nullValue(), arg)
                         else -> Pair(arg, nullValue())
                     }
                 }
@@ -307,7 +307,7 @@ class ThrowableSuccessorsLowering(val context: JsIrBackendContext) : FileLowerin
                     val irVal = JsIrBuilder.buildVar(arg.type, parent, initializer = arg)
                     val argValue = JsIrBuilder.buildGetValue(irVal.symbol)
                     when {
-                        arg.type.makeNotNull(false).isThrowable() -> Triple(safeCallToString(irVal), argValue, listOf(irVal))
+                        arg.type.makeNotNull().isThrowable() -> Triple(safeCallToString(irVal), argValue, listOf(irVal))
                         else -> Triple(argValue, nullValue(), listOf(irVal))
                     }
                 }

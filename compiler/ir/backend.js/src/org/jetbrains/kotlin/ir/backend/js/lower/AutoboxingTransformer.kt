@@ -62,7 +62,7 @@ class AutoboxingTransformer(val context: JsIrBackendContext) : AbstractValueUsag
         }
 
         // // TODO: Default parameters are passed as nulls and they need not to be unboxed. Fix this
-        if (actualType.makeNotNull(false).isNothing())
+        if (actualType.makeNotNull().isNothing())
             return this
 
         val expectedType = type

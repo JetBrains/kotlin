@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.ir
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.utils.OperatorNames
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.types.toKotlinType
+import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.name.Name
 
 class JsIrArithBuilder(val context: JsIrBackendContext) {
@@ -16,7 +16,7 @@ class JsIrArithBuilder(val context: JsIrBackendContext) {
     val symbols = context.ir.symbols
 
     private fun buildBinaryOperator(name: Name, l: IrExpression, r: IrExpression): IrExpression {
-        val symbol = context.getOperatorByName(name, l.type.toKotlinType())
+        val symbol = context.getOperatorByName(name, l.type as IrSimpleType)
         return JsIrBuilder.buildCall(symbol!!).apply {
             dispatchReceiver = l
             putValueArgument(0, r)
@@ -24,7 +24,7 @@ class JsIrArithBuilder(val context: JsIrBackendContext) {
     }
 
     private fun buildUnaryOperator(name: Name, v: IrExpression): IrExpression {
-        val symbol = context.getOperatorByName(name, v.type.toKotlinType())!!
+        val symbol = context.getOperatorByName(name, v.type as IrSimpleType)!!
         return JsIrBuilder.buildCall(symbol).apply { dispatchReceiver = v }
     }
 

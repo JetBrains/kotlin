@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.utils.getPrimitiveArrayElementType
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrArithBuilder
@@ -186,7 +185,7 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
                     }
                 }
 
-                val toNotNullable = toType.makeNotNull(false)
+                val toNotNullable = toType.makeNotNull()
                 val argumentInstance = argument()
                 val instanceCheck = generateTypeCheckNonNull(argumentInstance, toNotNullable)
                 val isFromNullable = argumentInstance.type.isNullable()
@@ -247,7 +246,7 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
                 // TODO either remove functions with reified type parameters or support this case
                 // assert(!typeParameter.isReified) { "reified parameters have to be lowered before" }
                 return typeParameter.superTypes.fold(litTrue) { r, t ->
-                    val check = generateTypeCheckNonNull(argument.copy(), t.makeNotNull(false))
+                    val check = generateTypeCheckNonNull(argument.copy(), t.makeNotNull())
                     calculator.and(r, check)
                 }
             }

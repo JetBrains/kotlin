@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.ir.backend.js.ir.createTmpVariable
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
@@ -413,7 +412,7 @@ class EnumClassTransformer(val context: JsIrBackendContext, private val irClass:
     }
 
     private fun createEnumEntryInstanceVariables() = enumEntries.map { enumEntry ->
-        val type = enumEntry.getType(irClass).makeNullable(false)
+        val type = enumEntry.getType(irClass).makeNullable()
         val name = "${enumName}_${enumEntry.name.identifier}_instance"
         val result = builder.run {
             scope.createTmpVariable(irImplicitCast(irNull(), type), name)

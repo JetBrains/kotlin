@@ -122,7 +122,7 @@ open class DefaultArgumentStubGenerator(
                     irGet(parameter)
                 }
 
-                val temporaryVariable = irTemporary(argument, nameHint = parameter.name.asString())
+                val temporaryVariable = createTmpVariable(argument, nameHint = parameter.name.asString())
                 temporaryVariable.parent = newIrFunction
 
                 params.add(temporaryVariable)

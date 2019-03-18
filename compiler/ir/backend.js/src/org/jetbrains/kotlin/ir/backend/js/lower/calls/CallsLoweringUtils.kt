@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.SimpleType
 
@@ -68,16 +67,11 @@ internal class SimpleMemberKey(val klass: IrType, val name: Name) {
         other as SimpleMemberKey
 
         if (name != other.name) return false
-        if (klass.originalKotlinType != other.klass.originalKotlinType) return false
 
-        return true
+        return klass.isEqualTo(other.klass)
     }
 
-    override fun hashCode(): Int {
-        var result = klass.originalKotlinType?.hashCode() ?: 0
-        result = 31 * result + name.hashCode()
-        return result
-    }
+    override fun hashCode() = 31 * klass.toHashCode() + name.hashCode()
 }
 
 enum class PrimitiveType {
@@ -88,7 +82,7 @@ enum class PrimitiveType {
     OTHER
 }
 
-fun IrType.getPrimitiveType() = makeNotNull(false).run {
+fun IrType.getPrimitiveType() = makeNotNull().run {
     when {
         isBoolean() -> PrimitiveType.BOOLEAN
         isByte() || isShort() || isInt() -> PrimitiveType.INTEGER_NUMBER

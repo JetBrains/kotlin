@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
-import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -61,7 +60,7 @@ class InlineClassLowering(val context: BackendContext) {
                 // Secondary ctors of inline class must delegate to some other constructors.
                 // Use these delegating call later to initialize this variable.
                 lateinit var thisVar: IrVariable
-                val parameterMapping = result.valueParameters.associateBy { it ->
+                val parameterMapping = result.valueParameters.associateBy {
                     irConstructor.valueParameters[it.index].symbol
                 }
 
@@ -70,9 +69,8 @@ class InlineClassLowering(val context: BackendContext) {
                         override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
                             expression.transformChildrenVoid()
                             return irBlock(expression) {
-                                thisVar = irTemporary(
+                                thisVar = createTmpVariable(
                                     expression,
-                                    typeHint = irClass.defaultType.toKotlinType(),
                                     irType = irClass.defaultType
                                 )
                                 thisVar.parent = result
