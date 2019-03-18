@@ -118,9 +118,9 @@ public final class Test {
 import java.lang.System;
 
 /**
- * * Test2
- * * Multiline
- * * documentation.
+ * Test2
+ * Multiline
+ * documentation.
  */
 @kotlin.Metadata()
 public final class Test2 {
@@ -184,7 +184,7 @@ public final class Test4 {
 import java.lang.System;
 
 /**
- * * `/ * Failure * /`
+ * `/ * Failure * /`
  */
 @kotlin.Metadata()
 public abstract interface TestComponent {
