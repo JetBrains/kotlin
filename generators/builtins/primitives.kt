@@ -278,39 +278,44 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
         val thisName = fromIntegral.capitalized
         val otherName = toIntegral.capitalized
 
-        return if (compareByDomainCapacity(toIntegral, fromIntegral) < 0) {
-            if (toIntegral == PrimitiveType.CHAR) {
+        return if (toIntegral == PrimitiveType.CHAR) {
+            if (fromIntegral == PrimitiveType.SHORT) {
                 """
-                 * Returns the `$otherName` with the numeric value equal to this value truncated to ${toIntegral.bitSize} bits.
-                 */
+                * The resulting `Char` code is equal to this value reinterpreted as an unsigned number,
+                * i.e. it has the same binary representation as this `Short`.
+                */
                 """
-            } else {
+            } else if (fromIntegral == PrimitiveType.BYTE) {
                 """
-                 * If this value is in [$otherName.MIN_VALUE]..[$otherName.MAX_VALUE], the resulting `$otherName` value represents
-                 * the same numerical value as this `$thisName`.
-                 *
-                 * The resulting `$otherName` value is represented by the least significant ${toIntegral.bitSize} bits of this `$thisName` value.
-                 */
-                """
-            }
-        } else if (compareByDomainCapacity(toIntegral, fromIntegral) > 0) {
-            if (toIntegral == PrimitiveType.CHAR) {
-                """
-                 * Returns the `$otherName` with the numeric value equal to this value sign-extended to ${toIntegral.bitSize} bits.
-                 */
+                * If this value is non-negative, the resulting `Char` code is equal to this value.
+                *
+                * The least significant 8 bits of the resulting `Char` code are the same as the bits of this `Byte` value,
+                * whereas the most significant 8 bits are filled with the sign bit of this value.
+                */
                 """
             } else {
                 """
-                 * The resulting `$otherName` value represents the same numerical value as this `$thisName`.
-                 *
-                 * The least significant ${fromIntegral.bitSize} bits of the resulting `$otherName` value are the same as the binary representation of this `$thisName` value,
-                 * whereas the most significant ${toIntegral.bitSize - fromIntegral.bitSize} bits are filled with the bit sign of this value.
-                 */
+                * If this value is in the range of `Char` codes `Char.MIN_VALUE..Char.MAX_VALUE`,
+                * the resulting `Char` code is equal to this value.
+                *
+                * The resulting `Char` code is represented by the least significant 16 bits of this `$thisName` value.
+                */
                 """
             }
-        } else { // Short -> Char
+        } else if (compareByDomainCapacity(toIntegral, fromIntegral) < 0) {
             """
-             * Returns the `$otherName` with the numeric value equal to this value.
+             * If this value is in [$otherName.MIN_VALUE]..[$otherName.MAX_VALUE], the resulting `$otherName` value represents
+             * the same numerical value as this `$thisName`.
+             *
+             * The resulting `$otherName` value is represented by the least significant ${toIntegral.bitSize} bits of this `$thisName` value.
+             */
+            """
+        } else {
+            """
+             * The resulting `$otherName` value represents the same numerical value as this `$thisName`.
+             *
+             * The least significant ${fromIntegral.bitSize} bits of the resulting `$otherName` value are the same as the binary representation of this `$thisName` value,
+             * whereas the most significant ${toIntegral.bitSize - fromIntegral.bitSize} bits are filled with the bit sign of this value.
              */
             """
         }

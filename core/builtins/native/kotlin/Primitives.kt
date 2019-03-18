@@ -191,7 +191,10 @@ public class Byte private constructor() : Number(), Comparable<Byte> {
     /**
      * Converts this [Byte] value to [Char].
      *
-     * Returns the `Char` with the numeric value equal to this value sign-extended to 16 bits.
+     * If this value is non-negative, the resulting `Char` code is equal to this value.
+     *
+     * The least significant 8 bits of the resulting `Char` code are the same as the bits of this `Byte` value,
+     * whereas the most significant 8 bits are filled with the sign bit of this value.
      */
     public override fun toChar(): Char
     /**
@@ -426,7 +429,8 @@ public class Short private constructor() : Number(), Comparable<Short> {
     /**
      * Converts this [Short] value to [Char].
      *
-     * Returns the `Char` with the numeric value equal to this value.
+     * The resulting `Char` code is equal to this value reinterpreted as an unsigned number,
+     * i.e. it has the same binary representation as this `Short`.
      */
     public override fun toChar(): Char
     /** Returns this value. */
@@ -669,7 +673,10 @@ public class Int private constructor() : Number(), Comparable<Int> {
     /**
      * Converts this [Int] value to [Char].
      *
-     * Returns the `Char` with the numeric value equal to this value truncated to 16 bits.
+     * If this value is in the range of `Char` codes `Char.MIN_VALUE..Char.MAX_VALUE`,
+     * the resulting `Char` code is equal to this value.
+     *
+     * The resulting `Char` code is represented by the least significant 16 bits of this `Int` value.
      */
     public override fun toChar(): Char
     /**
@@ -914,7 +921,10 @@ public class Long private constructor() : Number(), Comparable<Long> {
     /**
      * Converts this [Long] value to [Char].
      *
-     * Returns the `Char` with the numeric value equal to this value truncated to 16 bits.
+     * If this value is in the range of `Char` codes `Char.MIN_VALUE..Char.MAX_VALUE`,
+     * the resulting `Char` code is equal to this value.
+     *
+     * The resulting `Char` code is represented by the least significant 16 bits of this `Long` value.
      */
     public override fun toChar(): Char
     /**
