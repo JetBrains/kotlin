@@ -180,6 +180,32 @@ object AbstractTypeChecker {
         return isSubtypeOfForSingleClassifierType(subType.lowerBoundIfFlexible(), superType.upperBoundIfFlexible())
     }
 
+    private fun AbstractTypeCheckerContext.checkSubtypeForIntegerLiteralType(subType: SimpleTypeMarker, superType: SimpleTypeMarker): Boolean? {
+        if (!subType.isIntegerLiteralType() && !superType.isIntegerLiteralType()) return null
+
+        fun typeInIntegerLiteralType(integerLiteralType: SimpleTypeMarker, type: SimpleTypeMarker): Boolean =
+            integerLiteralType.possibleIntegerTypes().any { it.typeConstructor() == type.typeConstructor() }
+
+        when {
+            subType.isIntegerLiteralType() && superType.isIntegerLiteralType() -> {
+                return true
+            }
+
+            subType.isIntegerLiteralType() -> {
+                if (typeInIntegerLiteralType(subType, superType)) {
+                    return true
+                }
+            }
+
+            superType.isIntegerLiteralType() -> {
+                if (typeInIntegerLiteralType(superType, subType)) {
+                    return true
+                }
+            }
+        }
+        return null
+    }
+
     private fun AbstractTypeCheckerContext.hasNothingSupertype(type: SimpleTypeMarker) = // todo add tests
         anySupertype(type, { it.typeConstructor().isNothingConstructor() }) {
             if (it.isClassType()) {
@@ -198,6 +224,11 @@ object AbstractTypeChecker {
         }
 
         if (!AbstractNullabilityChecker.isPossibleSubtype(this, subType, superType)) return false
+
+        checkSubtypeForIntegerLiteralType(subType.lowerBoundIfFlexible(), superType.upperBoundIfFlexible())?.let {
+            addSubtypeConstraint(subType, superType)
+            return it
+        }
 
         val superConstructor = superType.typeConstructor()
 
@@ -397,7 +428,7 @@ object AbstractTypeChecker {
         }
 
         // i.e. superType is not a classType
-        if (!constructor.isClassTypeConstructor()) {
+        if (!constructor.isClassTypeConstructor() && !constructor.isIntegerLiteralTypeConstructor()) {
             return collectAllSupertypesWithGivenTypeConstructor(baseType, constructor)
         }
 

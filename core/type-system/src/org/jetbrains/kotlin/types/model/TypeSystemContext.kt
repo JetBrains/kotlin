@@ -81,6 +81,7 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     fun TypeConstructorMarker.supertypes(): Collection<KotlinTypeMarker>
     fun TypeConstructorMarker.isIntersection(): Boolean
     fun TypeConstructorMarker.isClassTypeConstructor(): Boolean
+    fun TypeConstructorMarker.isIntegerLiteralTypeConstructor(): Boolean
 
     fun TypeParameterMarker.getVariance(): TypeVariance
     fun TypeParameterMarker.upperBoundCount(): Int
@@ -104,6 +105,10 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
         (asSimpleType() ?: lowerBoundIfFlexible()).typeConstructor()
 
     fun SimpleTypeMarker.isClassType(): Boolean = typeConstructor().isClassTypeConstructor()
+
+    fun SimpleTypeMarker.isIntegerLiteralType(): Boolean = typeConstructor().isIntegerLiteralTypeConstructor()
+
+    fun SimpleTypeMarker.possibleIntegerTypes(): Collection<KotlinTypeMarker>
 
     fun TypeConstructorMarker.isCommonFinalClassConstructor(): Boolean
 

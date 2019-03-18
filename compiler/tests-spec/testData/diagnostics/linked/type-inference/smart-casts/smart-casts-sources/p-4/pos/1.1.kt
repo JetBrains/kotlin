@@ -222,7 +222,7 @@ fun case_16() {
 }
 
 // TESTCASE NUMBER: 17
-val case_17 = <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<{Boolean & Byte & Int & Long & Short}> & java.io.Serializable}")!>if (nullableIntProperty == null) 0 else {
+val case_17 = <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<{Boolean & Int}> & java.io.Serializable}")!>if (nullableIntProperty == null) 0 else {
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?")!>nullableIntProperty<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?"), DEBUG_INFO_SMARTCAST!>nullableIntProperty<!>.equals(nullableIntProperty)
 }<!>

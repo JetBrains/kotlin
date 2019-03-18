@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.calls.inference.CapturedType
+import org.jetbrains.kotlin.resolve.constants.IntegerLiteralTypeConstructor
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.types.model.CaptureStatus
@@ -18,6 +19,17 @@ interface ClassicTypeSystemContext : TypeSystemContext {
     override fun TypeConstructorMarker.isDenotable(): Boolean {
         require(this is TypeConstructor, this::errorMessage)
         return this.isDenotable
+    }
+
+    override fun TypeConstructorMarker.isIntegerLiteralTypeConstructor(): Boolean {
+        require(this is TypeConstructor, this::errorMessage)
+        return this is IntegerLiteralTypeConstructor
+    }
+
+    override fun SimpleTypeMarker.possibleIntegerTypes(): Collection<KotlinTypeMarker> {
+        val typeConstructor = typeConstructor()
+        require(typeConstructor is IntegerLiteralTypeConstructor, this::errorMessage)
+        return typeConstructor.possibleTypes
     }
 
     override fun SimpleTypeMarker.withNullability(nullable: Boolean): SimpleTypeMarker {
@@ -221,7 +233,7 @@ interface ClassicTypeSystemContext : TypeSystemContext {
         require(this is SimpleType, this::errorMessage)
         return !isError &&
                 constructor.declarationDescriptor !is TypeAliasDescriptor &&
-                (constructor.declarationDescriptor != null || this is CapturedType || this is NewCapturedType || this is DefinitelyNotNullType)
+                (constructor.declarationDescriptor != null || this is CapturedType || this is NewCapturedType || this is DefinitelyNotNullType || constructor is IntegerLiteralTypeConstructor)
     }
 
     override fun KotlinTypeMarker.isNotNullNothing(): Boolean {

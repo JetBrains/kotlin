@@ -612,6 +612,11 @@ public abstract class KotlinBuiltIns {
     }
 
     @NotNull
+    public SimpleType getNumberType() {
+        return getNumber().getDefaultType();
+    }
+
+    @NotNull
     public SimpleType getByteType() {
         return getPrimitiveKotlinType(BYTE);
     }

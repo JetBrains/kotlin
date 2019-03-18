@@ -241,10 +241,10 @@ abstract class TypeCheckerContextForConstraintSystem : ClassicTypeCheckerContext
 
     private fun assertInputTypes(subType: UnwrappedType, superType: UnwrappedType) {
         fun correctSubType(subType: SimpleType) =
-            subType.isSingleClassifierType || subType.isIntersectionType || isMyTypeVariable(subType) || subType.isError
+            subType.isSingleClassifierType || subType.isIntersectionType || isMyTypeVariable(subType) || subType.isError || subType.isIntegerLiteralType
 
         fun correctSuperType(superType: SimpleType) =
-            superType.isSingleClassifierType || superType.isIntersectionType || isMyTypeVariable(superType) || superType.isError
+            superType.isSingleClassifierType || superType.isIntersectionType || isMyTypeVariable(superType) || superType.isError || superType.isIntegerLiteralType
 
         assert(subType.bothBounds(::correctSubType)) {
             "Not singleClassifierType and not intersection subType: $subType"

@@ -20,7 +20,9 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.resolve.constants.IntegerLiteralTypeConstructor
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
 
 object KotlinTypeFactory {
     private fun computeMemberScope(constructor: TypeConstructor, arguments: List<TypeProjection>): MemberScope {
@@ -95,6 +97,19 @@ object KotlinTypeFactory {
         if (lowerBound == upperBound) return lowerBound
         return FlexibleTypeImpl(lowerBound, upperBound)
     }
+
+    @JvmStatic
+    fun integerLiteralType(
+        annotations: Annotations,
+        constructor: IntegerLiteralTypeConstructor,
+        nullable: Boolean
+    ): SimpleType = simpleTypeWithNonTrivialMemberScope(
+        annotations,
+        constructor,
+        emptyList(),
+        nullable,
+        ErrorUtils.createErrorScope("Scope for integer literal type", true)
+    )
 }
 
 private class SimpleTypeImpl(

@@ -14,12 +14,10 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage.Empt
 import org.jetbrains.kotlin.resolve.calls.inference.model.ExpectedTypeConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.forceResolution
-import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor
+import org.jetbrains.kotlin.resolve.constants.IntegerLiteralTypeConstructor
 import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.IntersectionTypeConstructor
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.UnwrappedType
-import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberType
 
 class KotlinCallCompleter(
     private val postponedArgumentsAnalyzer: PostponedArgumentsAnalyzer,
@@ -202,17 +200,9 @@ class KotlinCallCompleter(
         val variableWithConstraints = csBuilder.currentStorage().notFixedTypeVariables[constructor] ?: return false
         val constraints = variableWithConstraints.constraints
         return constraints.isNotEmpty() && constraints.all {
-            !trivialConstraintTypeInferenceOracle.isTrivialConstraint(it) && !it.type.isIntegerValueType() &&
+            !trivialConstraintTypeInferenceOracle.isTrivialConstraint(it) && it.type.constructor !is IntegerLiteralTypeConstructor &&
                     it.kind.isLower() && csBuilder.isProperType(it.type)
         }
-    }
-
-    private fun UnwrappedType.isIntegerValueType(): Boolean {
-        if (constructor is IntegerValueTypeConstructor) return true
-        if (constructor is IntersectionTypeConstructor)
-            return constructor.supertypes.all { it.isPrimitiveNumberType() }
-
-        return false
     }
 
     private fun KotlinResolutionCandidate.computeReturnTypeWithSmartCastInfo(

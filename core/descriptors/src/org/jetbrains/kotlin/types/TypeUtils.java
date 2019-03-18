@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.constants.IntegerLiteralTypeConstructor;
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
@@ -496,6 +497,30 @@ public class TypeUtils {
             }
         }
         return getDefaultPrimitiveNumberType(numberValueTypeConstructor);
+    }
+
+    @NotNull
+    public static KotlinType getPrimitiveNumberType(
+            @NotNull IntegerLiteralTypeConstructor literalTypeConstructor,
+            @NotNull KotlinType expectedType
+    ) {
+        if (noExpectedType(expectedType) || KotlinTypeKt.isError(expectedType)) {
+            return literalTypeConstructor.getApproximatedType();
+        }
+
+        // If approximated type does not mathc expected type then expected type is very
+        //  specific type (e.g. Comparable<Byte>), so only one of possible types could match it
+        KotlinType approximatedType = literalTypeConstructor.getApproximatedType();
+        if (KotlinTypeChecker.DEFAULT.isSubtypeOf(approximatedType, expectedType)) {
+            return approximatedType;
+        }
+
+        for (KotlinType primitiveNumberType : literalTypeConstructor.getPossibleTypes()) {
+            if (KotlinTypeChecker.DEFAULT.isSubtypeOf(primitiveNumberType, expectedType)) {
+                return primitiveNumberType;
+            }
+        }
+        return literalTypeConstructor.getApproximatedType();
     }
 
     public static boolean isTypeParameter(@NotNull KotlinType type) {

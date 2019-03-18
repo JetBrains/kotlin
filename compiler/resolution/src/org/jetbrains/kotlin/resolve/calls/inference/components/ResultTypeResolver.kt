@@ -21,10 +21,8 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirec
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
 import org.jetbrains.kotlin.resolve.calls.inference.model.checkConstraint
-import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.intersectTypes
-import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberType
 
 class ResultTypeResolver(
     val typeApproximator: TypeApproximator,
@@ -88,7 +86,6 @@ class ResultTypeResolver(
         val lowerConstraints = variableWithConstraints.constraints.filter { it.kind == ConstraintKind.LOWER && c.isProperType(it.type) }
         if (lowerConstraints.isNotEmpty()) {
             val commonSuperType = NewCommonSuperTypeCalculator.commonSuperType(lowerConstraints.map { it.type })
-            val adjustedCommonSuperType = adjustCommonSupertypeWithKnowledgeOfNumberTypes(commonSuperType)
             /**
              *
              * fun <T> Array<out T>.intersect(other: Iterable<T>) {
@@ -108,44 +105,12 @@ class ResultTypeResolver(
              */
 
             return typeApproximator.approximateToSuperType(
-                adjustedCommonSuperType,
-                TypeApproximatorConfiguration.CapturedTypesApproximation
-            )
-                    ?: adjustedCommonSuperType
+                commonSuperType,
+                TypeApproximatorConfiguration.CapturedAndIntegerLiteralsTypesApproximation
+            ) ?: commonSuperType
         }
 
         return null
-    }
-
-    private fun adjustCommonSupertypeWithKnowledgeOfNumberTypes(commonSuperType: UnwrappedType): UnwrappedType {
-        val constructor = commonSuperType.constructor
-
-        return when (constructor) {
-            is IntegerValueTypeConstructor,
-            is IntersectionTypeConstructor -> {
-                val newSupertypes = arrayListOf<UnwrappedType>()
-                val numberSupertypes = arrayListOf<KotlinType>()
-                for (supertype in constructor.supertypes.map { it.unwrap() }) {
-                    if (supertype.isPrimitiveNumberType())
-                        numberSupertypes.add(supertype)
-                    else
-                        newSupertypes.add(supertype)
-                }
-
-
-                val representativeNumberType = TypeUtils.getDefaultPrimitiveNumberType(numberSupertypes)
-                if (representativeNumberType != null) {
-                    newSupertypes.add(representativeNumberType.unwrap())
-                } else {
-                    newSupertypes.addAll(numberSupertypes.map { it.unwrap() })
-                }
-
-                intersectTypes(newSupertypes).makeNullableAsSpecified(commonSuperType.isMarkedNullable)
-            }
-
-            else ->
-                commonSuperType
-        }
     }
 
     private fun findSuperType(c: Context, variableWithConstraints: VariableWithConstraints): UnwrappedType? {
@@ -153,7 +118,7 @@ class ResultTypeResolver(
         if (upperConstraints.isNotEmpty()) {
             val upperType = intersectTypes(upperConstraints.map { it.type })
 
-            return typeApproximator.approximateToSubType(upperType, TypeApproximatorConfiguration.CapturedTypesApproximation) ?: upperType
+            return typeApproximator.approximateToSubType(upperType, TypeApproximatorConfiguration.CapturedAndIntegerLiteralsTypesApproximation) ?: upperType
         }
         return null
     }

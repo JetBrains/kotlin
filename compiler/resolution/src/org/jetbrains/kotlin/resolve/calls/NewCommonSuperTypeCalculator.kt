@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve.calls
 
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.resolve.constants.IntegerLiteralTypeConstructor
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.*
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
@@ -113,6 +114,8 @@ object NewCommonSuperTypeCalculator {
 
         val explicitSupertypes = uniqueTypes.filterSupertypes()
         if (explicitSupertypes.size == 1) return explicitSupertypes.single()
+
+        IntegerLiteralTypeConstructor.findCommonSuperType(explicitSupertypes)?.let { return it }
 
         return findSuperTypeConstructorsAndIntersectResult(explicitSupertypes, depth)
     }
