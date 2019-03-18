@@ -36,10 +36,10 @@ abstract internal class KonanBackendContext(val config: KonanConfig) : CommonBac
         KonanSharedVariablesManager(this)
     }
 
-    override fun getInternalClass(name: String): ClassDescriptor =
+    fun getKonanInternalClass(name: String): ClassDescriptor =
             builtIns.kotlinNativeInternal.getContributedClassifier(Name.identifier(name), NoLookupLocation.FROM_BACKEND) as ClassDescriptor
 
-    override fun getInternalFunctions(name: String): List<FunctionDescriptor> =
+    fun getKonanInternalFunctions(name: String): List<FunctionDescriptor> =
             builtIns.kotlinNativeInternal.getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BACKEND).toList()
 
     val messageCollector: MessageCollector

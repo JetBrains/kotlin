@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.konan.lower
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.ScopeWithIr
 import org.jetbrains.kotlin.backend.common.ir.createTemporaryVariableWithWrappedDescriptor
+import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.isBuiltInIntercepted
 import org.jetbrains.kotlin.backend.common.isBuiltInSuspendCoroutineUninterceptedOrReturn
 import org.jetbrains.kotlin.backend.common.lower.CoroutineIntrinsicLambdaOrigin
@@ -42,7 +43,7 @@ internal class FunctionInlining(val context: Context) : IrElementTransformerVoid
         val callSite = super.visitCall(expression) as IrCall
         if (!callSite.symbol.owner.needsInlining)
             return callSite
-        if (callSite.symbol == context.ir.symbols.lateinitIsInitializedPropertyGetter)
+        if (Symbols.isLateinitIsInitializedPropertyGetter(callSite.symbol))
             return callSite
 
         val callee = getFunctionDeclaration(callSite.symbol)

@@ -220,7 +220,7 @@ internal class HeaderProcessor(
         return if (type.classifierOrNull == progressionType.elementType(context).classifierOrNull) {
             this
         } else {
-            val function = symbols.getFunction(progressionType.numberCastFunctionName, type.toKotlinType())
+            val function = symbols.getNoParamFunction(progressionType.numberCastFunctionName, type.toKotlinType())
             IrCallImpl(startOffset, endOffset, function.owner.returnType, function)
                     .apply { dispatchReceiver = this@castIfNecessary }
         }

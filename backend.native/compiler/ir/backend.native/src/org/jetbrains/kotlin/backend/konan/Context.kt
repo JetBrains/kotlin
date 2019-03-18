@@ -201,10 +201,6 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     override val declarationFactory
         get() = TODO("not implemented")
 
-    override fun getClass(fqName: FqName): ClassDescriptor {
-        TODO("not implemented")
-    }
-
     lateinit var moduleDescriptor: ModuleDescriptor
 
     lateinit var objCExport: ObjCExport
