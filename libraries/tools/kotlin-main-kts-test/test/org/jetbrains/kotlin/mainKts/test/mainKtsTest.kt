@@ -44,6 +44,21 @@ class MainKtsTest {
         )
     }
 
+//    @Test
+    // this test is disabled: the resolving works fine, but ivy resolver is not processing "pom"-type dependencies correctly (
+    //  as far as I can tell)
+    // TODO: 1. find non-default but non-pom dependency suitable for an example to test resolving
+    // TODO: 2. implement proper handling of pom-typed dependencies (e.g. consider to reimplement it on aether as in JarRepositoryManager (from IDEA))
+    fun testResolveWithArtifactType() {
+        val res = evalFile(File("testData/resolve-moneta.main.kts"))
+
+        Assert.assertTrue(
+            "test failed:\n  ${res.reports.joinToString("\n  ") { it.message + if (it.exception == null) "" else ": ${it.exception}" }}",
+            res is ResultWithDiagnostics.Success
+        )
+    }
+
+
     @Test
     fun testUnresolvedJunit() {
         val res = evalFile(File("testData/hello-unresolved-junit.main.kts"))
@@ -60,10 +75,10 @@ class MainKtsTest {
         val res = evalFile(File("testData/hello-resolve-error.main.kts"))
 
         Assert.assertTrue(
-            "test failed - expecting a failure with the message \"Unknown set of arguments to maven resolver: abracadabra\" but received " +
+            "test failed - expecting a failure with the message \"Unrecognized set of arguments to maven resolver: abracadabra\" but received " +
                     (if (res is ResultWithDiagnostics.Failure) "failure" else "success") +
                     ":\n  ${res.reports.joinToString("\n  ") { it.message + if (it.exception == null) "" else ": ${it.exception}" }}",
-            res is ResultWithDiagnostics.Failure && res.reports.any { it.message.contains("Unknown set of arguments to maven resolver: abracadabra") })
+            res is ResultWithDiagnostics.Failure && res.reports.any { it.message.contains("Unrecognized set of arguments to ivy resolver: abracadabra") })
     }
 
     @Test
