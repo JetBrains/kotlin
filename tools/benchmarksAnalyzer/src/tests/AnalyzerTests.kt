@@ -25,12 +25,12 @@ class AnalyzerTests {
     private val eps = 0.000001
 
     private fun createMeanVarianceBenchmarks(): Pair<MeanVarianceBenchmark, MeanVarianceBenchmark> {
-        val firstMean = BenchmarkResult("testBenchmark", BenchmarkResult.Status.PASSED, 9.0, 9.0, 10, 10)
-        val firstVariance = BenchmarkResult("testBenchmark", BenchmarkResult.Status.PASSED, 0.0001, 0.0001, 10, 10)
+        val firstMean = BenchmarkResult("testBenchmark", BenchmarkResult.Status.PASSED, 9.0, BenchmarkResult.Metric.EXECUTION_TIME, 9.0, 10, 10)
+        val firstVariance = BenchmarkResult("testBenchmark", BenchmarkResult.Status.PASSED, 0.0001, BenchmarkResult.Metric.EXECUTION_TIME, 0.0001, 10, 10)
         val first = MeanVarianceBenchmark(firstMean, firstVariance)
 
-        val secondMean = BenchmarkResult("testBenchmark", BenchmarkResult.Status.PASSED, 10.0, 10.0, 10, 10)
-        val secondVariance = BenchmarkResult("testBenchmark", BenchmarkResult.Status.PASSED, 0.0001, 0.0001, 10, 10)
+        val secondMean = BenchmarkResult("testBenchmark", BenchmarkResult.Status.PASSED, 10.0, BenchmarkResult.Metric.EXECUTION_TIME, 10.0, 10, 10)
+        val secondVariance = BenchmarkResult("testBenchmark", BenchmarkResult.Status.PASSED, 0.0001, BenchmarkResult.Metric.EXECUTION_TIME, 0.0001, 10, 10)
         val second = MeanVarianceBenchmark(secondMean, secondVariance)
 
         return Pair(first, second)

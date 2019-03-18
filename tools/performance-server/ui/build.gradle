@@ -1,0 +1,69 @@
+buildscript {
+    ext.rootBuildDirectory = file('../../..')
+
+    apply from: "$rootBuildDirectory/gradle/loadRootProperties.gradle"
+    apply from: "$rootBuildDirectory/gradle/kotlinGradlePlugin.gradle"
+
+    repositories {
+        maven {
+            url 'https://cache-redirector.jetbrains.com/jcenter'
+        }
+        maven {
+            url kotlinCompilerRepo
+        }
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+    }
+}
+
+repositories {
+    maven {
+        url 'https://cache-redirector.jetbrains.com/jcenter'
+    }
+    maven {
+        url kotlinCompilerRepo
+    }
+    maven {
+        url buildKotlinCompilerRepo
+    }
+}
+
+apply plugin: 'kotlin2js'
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlinVersion"
+}
+
+compileKotlin2Js {
+    kotlinOptions.outputFile = "${projectDir}/js/main.js"
+    kotlinOptions.main = "call"
+}
+
+sourceSets {
+    main.kotlin.srcDirs += "src"
+    main.kotlin.srcDirs += "../../benchmarks/shared/src"
+    main.kotlin.srcDirs += "../shared/src"
+    main.output.resourcesDir = "build/js/resources"
+}
+
+task copyResources(type: Copy) {
+    from sourceSets.main.resources.srcDirs
+    into file(buildDir.path + "/js")
+}
+
+build.doLast {
+    configurations.compile.each { File file ->
+        copy {
+            includeEmptyDirs = false
+
+            from zipTree(file.absolutePath)
+            into "${projectDir}/lib/kotlin"
+            include { fileTreeElement ->
+                def path = fileTreeElement.path
+                path.endsWith(".js") && (path.startsWith("META-INF/resources/") || !path.startsWith("META-INF/"))
+            }
+        }
+    }
+}

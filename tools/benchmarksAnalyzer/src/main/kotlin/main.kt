@@ -20,6 +20,7 @@ import org.jetbrains.analyzer.SummaryBenchmarksReport
 import org.jetbrains.kliopt.*
 import org.jetbrains.renders.*
 import org.jetbrains.report.BenchmarksReport
+import org.jetbrains.report.BenchmarkResult
 import org.jetbrains.report.json.JsonTreeParser
 
 abstract class Connector {
@@ -77,7 +78,60 @@ fun getFileContent(fileName: String, user: String? = null): String {
     }
 }
 
+fun getBenchmarkReport(fileName: String, user: String? = null) =
+        BenchmarksReport.create(JsonTreeParser.parse(getFileContent(fileName, user)))
+
+// Prints text summary by users request.
+fun summaryAction(argParser: ArgParser) {
+    val benchsReport = SummaryBenchmarksReport(getBenchmarkReport(argParser.get<String>("mainReport")!!, argParser.get<String>("user")))
+    val results = mutableListOf<String>()
+    results.apply {
+        add(benchsReport.failedBenchmarks.size.toString())
+        argParser.getAll<String>("exec-samples")?. let {
+            val filter = if (it.first() == "all") null else it
+            add(benchsReport.getResultsByMetric(BenchmarkResult.Metric.EXECUTION_TIME,
+                    argParser.get<String>("exec")!! == "geomean", filter).joinToString(";"))
+        }
+        argParser.getAll<String>("compile-samples")?. let {
+            val filter = if (it.first() == "all") null else it
+            add(benchsReport.getResultsByMetric(BenchmarkResult.Metric.COMPILE_TIME,
+                    argParser.get<String>("compile")!! == "geomean", filter).joinToString(";"))
+        }
+        argParser.getAll<String>("codesize-samples")?. let {
+            val filter = if (it.first() == "all") null else it
+            add(benchsReport.getResultsByMetric(BenchmarkResult.Metric.CODE_SIZE,
+                    argParser.get<String>("codesize")!! == "geomean", filter).joinToString(";"))
+        }
+    }
+    println(results.joinToString())
+}
+
 fun main(args: Array<String>) {
+
+    val actions = mapOf( "summary" to Action(
+            ::summaryAction,
+            ArgParser(
+                    listOf(
+                        OptionDescriptor(ArgType.Choice(listOf("samples", "geomean")), "exec",
+                                description = "Execution time way of calculation", defaultValue = "geomean"),
+                        OptionDescriptor(ArgType.String(), "exec-samples",
+                                description = "Samples used for execution time metric (value 'all' allows use all samples)",
+                                delimiter = ","),
+                        OptionDescriptor(ArgType.Choice(listOf("samples", "geomean")), "compile",
+                                description = "Compile time way of calculation", defaultValue = "geomean"),
+                        OptionDescriptor(ArgType.String(), "compile-samples",
+                                description = "Samples used for compile time metric (value 'all' allows use all samples)",
+                                delimiter = ","),
+                        OptionDescriptor(ArgType.Choice(listOf("samples", "geomean")), "codesize",
+                                description = "Code size way of calculation", defaultValue = "geomean"),
+                        OptionDescriptor(ArgType.String(), "codesize-samples",
+                                description = "Samples used for code size metric (value 'all' allows use all samples)",
+                                delimiter = ","),
+                        OptionDescriptor(ArgType.String(), "user", "u", "User access information for authorization")
+                ), listOf(ArgDescriptor(ArgType.String(), "mainReport", "Main report for analysis"))
+            )
+        )
+    )
 
     val options = listOf(
             OptionDescriptor(ArgType.String(), "output", "o", "Output file"),
@@ -94,16 +148,12 @@ fun main(args: Array<String>) {
     )
 
     // Parse args.
-    val argParser = ArgParser(options, arguments)
+    val argParser = ArgParser(options, arguments, actions)
     if (argParser.parse(args)) {
         // Read contents of file.
-        val mainBenchsResults = getFileContent(argParser.get<String>("mainReport")!!, argParser.get<String>("user"))
-        val mainReportElement = JsonTreeParser.parse(mainBenchsResults)
-        val mainBenchsReport = BenchmarksReport.create(mainReportElement)
+        val mainBenchsReport = getBenchmarkReport(argParser.get<String>("mainReport")!!, argParser.get<String>("user"))
         var compareToBenchsReport = argParser.get<String>("compareToReport")?.let {
-            val compareToResults = getFileContent(it, argParser.get<String>("user"))
-            val compareToReportElement = JsonTreeParser.parse(compareToResults)
-            BenchmarksReport.create(compareToReportElement)
+            getBenchmarkReport(it, argParser.get<String>("user"))
         }
 
         val renders = argParser.getAll<String>("renders")

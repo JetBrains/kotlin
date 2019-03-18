@@ -242,26 +242,38 @@ data class Environment(val machine: Machine, val jdk: JDKInstance): JsonSerializ
 }
 
 class BenchmarkResult(val name: String, val status: Status,
-                      val score: Double, val runtimeInUs: Double,
+                      val score: Double, val metric: Metric, val runtimeInUs: Double,
                       val repeat: Int, val warmup: Int): JsonSerializable {
 
-    constructor(name: String, score: Double) : this(name, Status.PASSED, score, 0.0, 0, 0)
+    enum class Metric(val suffix: String, val value: String) {
+        EXECUTION_TIME("", "EXECUTION_TIME"),
+        CODE_SIZE(".codeSize", "CODE_SIZE"),
+        COMPILE_TIME(".compileTime", "COMPILE_TIME")
+    }
+
+    constructor(name: String, score: Double) : this(name, Status.PASSED, score, Metric.EXECUTION_TIME, 0.0, 0, 0)
 
     companion object: EntityFromJsonFactory<BenchmarkResult> {
 
         override fun create(data: JsonElement): BenchmarkResult {
             if (data is JsonObject) {
-                val name = elementToString(data.getRequiredField("name"), "name")
+                var name = elementToString(data.getRequiredField("name"), "name")
+                val metricElement = data.getOptionalField("metric")
+                val metric = if (metricElement != null && metricElement is JsonLiteral)
+                                metricFromString(metricElement.unquoted()) ?: Metric.EXECUTION_TIME
+                            else Metric.EXECUTION_TIME
+                name += metric.suffix
                 val statusElement = data.getRequiredField("status")
                 if (statusElement is JsonLiteral) {
                     val status = statusFromString(statusElement.unquoted())
                             ?: error("Status should be PASSED or FAILED")
+
                     val score = elementToDouble(data.getRequiredField("score"), "score")
                     val runtimeInUs = elementToDouble(data.getRequiredField("runtimeInUs"), "runtimeInUs")
                     val repeat = elementToInt(data.getRequiredField("repeat"), "repeat")
                     val warmup = elementToInt(data.getRequiredField("warmup"), "warmup")
 
-                    return BenchmarkResult(name, status, score, runtimeInUs, repeat, warmup)
+                    return BenchmarkResult(name, status, score, metric, runtimeInUs, repeat, warmup)
                 } else {
                     error("Status should be string literal.")
                 }
@@ -271,6 +283,7 @@ class BenchmarkResult(val name: String, val status: Status,
         }
 
         fun statusFromString(s: String): Status? = Status.values().find { it.value == s }
+        fun metricFromString(s: String): Metric? = Metric.values().find { it.value == s }
     }
 
     enum class Status(val value: String) {
@@ -281,9 +294,10 @@ class BenchmarkResult(val name: String, val status: Status,
     override fun toJson(): String {
         return """
         {
-            "name": "$name",
+            "name": "${name.removeSuffix(metric.suffix)}",
             "status": "${status.value}",
             "score": ${score},
+            "metric": "${metric.value}",
             "runtimeInUs": ${runtimeInUs},
             "repeat": ${repeat},
             "warmup": ${warmup}

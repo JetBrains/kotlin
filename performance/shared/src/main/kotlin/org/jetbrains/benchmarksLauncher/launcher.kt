@@ -61,7 +61,7 @@ abstract class Launcher(val numWarmIterations: Int, val numberOfAttempts: Int, v
                 samples[k] = scaledTime
                 // Save benchmark object
                 benchmarkResults.add(BenchmarkResult("$prefix$it", BenchmarkResult.Status.PASSED,
-                        scaledTime / 1000, scaledTime / 1000,
+                        scaledTime / 1000, BenchmarkResult.Metric.EXECUTION_TIME, scaledTime / 1000,
                         k + 1, numWarmIterations))
             }
         }

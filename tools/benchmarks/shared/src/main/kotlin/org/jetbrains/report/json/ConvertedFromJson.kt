@@ -36,6 +36,13 @@ interface ConvertedFromJson {
                 element.unquoted()
             else
                 error("Field '$name' in '$element' is expected to be a string. Please, check origin files.")
+
+    fun elementToStringOrNull(element: JsonElement, name:String): String? =
+            when (element) {
+                is JsonLiteral -> element.unquoted()
+                is JsonNull -> null
+                else -> error("Field '$name' in '$element' is expected to be a string. Please, check origin files.")
+            }
 }
 
 fun JsonObject.getRequiredField(fieldName: String): JsonElement {

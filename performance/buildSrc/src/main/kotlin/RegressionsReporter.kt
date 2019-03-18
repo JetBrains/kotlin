@@ -222,11 +222,14 @@ open class RegressionsReporter : DefaultTask() {
         arrayOf("$analyzer", "-r", "statistics", "$currentBenchmarksReportFile", "bintray:$compareToBuildNumber:$target:$bintrayFileName", "-o", "$summaryFile")
                 .runCommand()
 
-        val reportLink = "http://kotlin-native-performance.labs.jb.gg/?" +
+        val reportLink = "https://kotlin-native-perf-summary.labs.jb.gg/?target=$target&build=$buildNumber"
+        val detailedReportLink = "https://kotlin-native-performance.labs.jb.gg/?" +
                 "report=bintray:$buildNumber:$target:$bintrayFileName&" +
                 "compareTo=bintray:$compareToBuildNumber:$target:$bintrayFileName"
 
-        val title = "\n*Performance report for target $target (build $buildNumber)* - $reportLink\n"
+        val title = "\n*Performance report for target $target (build $buildNumber)* - $reportLink\n" +
+                "*Detailed info - * $detailedReportLink"
+
         val header = "$title\n$changesInfo\n\nCompare to build $compareToBuildNumber: $compareToBuildLink\n\n"
         val footer = "*Benchmarks statistics:* $testReportUrl"
         val message = "$header\n$footer\n"

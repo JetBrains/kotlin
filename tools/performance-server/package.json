@@ -1,0 +1,16 @@
+{
+  "name": "performance-server",
+  "version": "1.0.0",
+  "main": "server/app.js",
+  "scripts": {
+    "start": "node server/app.js"
+  },
+  "dependencies": {
+    "body-parser": "~1.18.3",
+    "debug": "~4.1.1",
+    "express": "~4.16.4",
+    "kotlin": "^1.3.21",
+    "sync-request": "~6.0.0",
+    "ejs": "~2.6.1"
+  }
+}

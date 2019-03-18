@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>
+        Benchmarks report
+    </title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chartist/0.11.0/chartist.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js">
+    </script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js">
+    </script>
+</head>
+<body>
+
+<header class="navbar navbar-expand navbar-dark flex-column flex-md-row bd-navbar" style="background-color:#161616;">
+    <img src="https://dashboard.snapcraft.io/site_media/appmedia/2018/04/256px-kotlin-logo-svg.png" style="width:60px;height:60px;">
+
+    <span class="navbar-brand mb-0 h1">
+        Benchmarks report
+      </span>
+</header>
+<div class="container-fluid">
+    <p>
+    <div class="row">
+        <div class="col">
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <label class="input-group-text" for="inputGroupTarget">Target</label>
+                </div>
+                <select class="custom-select" id="inputGroupTarget">
+                    <option value="Linux">Linux</option>
+                    <option value="MacOSX">Mac OS X</option>
+                    <option value="Windows10">Windows 10</option>
+                </select>
+            </div>
+        </div>
+        <div class="col">
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <label class="input-group-text" for="inputGroupBuildType">Build type</label>
+                </div>
+                <select class="custom-select" id="inputGroupBuildType">
+                    <option value="dev">Dev builds</option>
+                    <option value="day">Day</option>
+                    <option value="release">Releases</option>
+                </select>
+            </div>
+        </div>
+        <div class="col">
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">Highlighted build</span>
+                </div>
+                <input id="highligted_build" type="text" class="form-control" placeholder="" aria-label="build" aria-describedby="basic-addon1">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <h4>Execution time</h4>
+            <div id="exec_chart" class="chart"></div>
+        </div>
+    </div>
+    <p style="margin-top: 40px">
+    <div class="row">
+        <div class="col">
+            <h4>Compile time</h4>
+            <div id="compile_chart" class="chart"></div>
+        </div>
+    </div>
+    <p style="margin-top: 40px">
+    <div class="row">
+        <div class="col">
+            <h4>Code size</h4>
+            <div id="codesize_chart" class="chart"></div>
+        </div>
+    </div>
+    <p style="margin-top: 40px">
+
+    <div class="row">
+        <div class="col">
+            <h4>Bundle size</h4>
+            <div id="bundlesize_chart" class="chart"></div>
+        </div>
+    </div>
+    <p style="margin-top: 40px">
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartist/0.11.0/chartist.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartist-plugin-legend/0.6.2/chartist-plugin-legend.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.devbridge-autocomplete/1.4.9/jquery.autocomplete.min.js"></script>
+<script src="lib/kotlin/kotlin.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

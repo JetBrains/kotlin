@@ -55,6 +55,8 @@ sealed class ArgType(val hasParameter: kotlin.Boolean) {
     }
 }
 
+data class Action(val callback: (parser: ArgParser) -> Unit, val parser: ArgParser)
+
 // Common descriptor both for options and positional arguments.
 abstract class Descriptor(val type: ArgType,
                           val longName: String,
@@ -120,7 +122,7 @@ class ArgDescriptor(
 
 // Arguments parser.
 class ArgParser(optionsList: List<OptionDescriptor>, argsList: List<ArgDescriptor> = listOf<ArgDescriptor>(),
-                useDefaultHelpShortName: Boolean = true) {
+                val actions: Map<String, Action> = emptyMap(), useDefaultHelpShortName: Boolean = true) {
     private val options = optionsList.union(if (useDefaultHelpShortName)
         listOf(OptionDescriptor(ArgType.Boolean(), "help", "h", "Usage info"))
             else
@@ -212,6 +214,16 @@ class ArgParser(optionsList: List<OptionDescriptor>, argsList: List<ArgDescripto
         valuesOrigin = descriptorsKeys.map { it to ValueOrigin.UNSET }.toMap().toMutableMap()
         while (index < args.size) {
             val arg = args[index]
+            // Check for actions.
+            actions.forEach { (name, action) ->
+                if (arg == name) {
+                    // Use parser for this action.
+                    val parseResult = action.parser.parse(args.slice(index + 1..args.size - 1).toTypedArray())
+                    if (parseResult)
+                        action.callback(action.parser)
+                    return false
+                }
+            }
             if (arg.startsWith('-')) {
                 // Option is found.
                 val name = shortNames[arg.substring(1)] ?: arg.substring(1)

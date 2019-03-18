@@ -86,9 +86,9 @@ fun getFileSize(filePath: String): Long? {
 
 fun getCodeSizeBenchmark(programName: String, filePath: String): BenchmarkResult {
     val codeSize = getFileSize(filePath)
-    return BenchmarkResult("$programName.codeSize",
+    return BenchmarkResult("$programName",
             codeSize?. let { BenchmarkResult.Status.PASSED } ?: run { BenchmarkResult.Status.FAILED },
-            codeSize?.toDouble() ?: 0.0, codeSize?.toDouble() ?: 0.0, 1, 0)
+            codeSize?.toDouble() ?: 0.0, BenchmarkResult.Metric.CODE_SIZE, codeSize?.toDouble() ?: 0.0, 1, 0)
 }
 
 // Create benchmarks json report based on information get from gradle project
@@ -184,7 +184,7 @@ fun getCompileBenchmarkTime(programName: String, tasksNames: Iterable<String>, r
             status = if (exitCodes["$it$number"] != 0) BenchmarkResult.Status.FAILED else status
         }
 
-        BenchmarkResult("$programName.compileTime", status, time, time, number, 0)
+        BenchmarkResult("$programName", status, time, BenchmarkResult.Metric.COMPILE_TIME, time, number, 0)
     }.toList()
 
 
@@ -197,9 +197,9 @@ class TaskTimerListener: TaskExecutionListener {
             val time = tasksNames.map { tasksTimes[it] ?: 0.0 }.sum()
             // TODO get this info from gradle plugin with exit code end stacktrace.
             val status = tasksNames.map { tasksTimes.containsKey(it) }.reduce { a, b -> a && b }
-            return BenchmarkResult("$programName.compileTime",
+            return BenchmarkResult("$programName",
                                     if (status) BenchmarkResult.Status.PASSED else BenchmarkResult.Status.FAILED,
-                                    time, time, 1, 0)
+                                    time, BenchmarkResult.Metric.COMPILE_TIME, time, 1, 0)
         }
 
         fun getTime(taskName: String) = tasksTimes[taskName] ?: 0.0

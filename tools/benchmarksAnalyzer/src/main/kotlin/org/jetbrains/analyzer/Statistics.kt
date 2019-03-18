@@ -82,7 +82,7 @@ data class MeanVarianceBenchmark(val meanBenchmark: BenchmarkResult, val varianc
 
 }
 
-fun geometricMean(values: List<Double>, totalNumber: Int = values.size) =
+fun geometricMean(values: Collection<Double>, totalNumber: Int = values.size) =
     values.asSequence().filter{ it != 0.0 }.map { it.pow(1.0 / totalNumber) }.reduce { a, b -> a * b }
 
 fun computeMeanVariance(samples: List<Double>): MeanVariance {
@@ -97,6 +97,7 @@ fun computeMeanVariance(samples: List<Double>): MeanVariance {
 fun collectMeanResults(benchmarks: Map<String, List<BenchmarkResult>>): BenchmarksTable {
     return benchmarks.map {(name, resultsSet) ->
         val repeatedSequence = IntArray(resultsSet.size)
+        var metric = BenchmarkResult.Metric.EXECUTION_TIME
         var currentStatus = BenchmarkResult.Status.PASSED
         var currentWarmup = -1
 
@@ -111,6 +112,7 @@ fun collectMeanResults(benchmarks: Map<String, List<BenchmarkResult>>): Benchmar
                 if (result.warmup != currentWarmup)
                     println("Check data consistency. Warmup value for benchmark '${result.name}' differs.")
             currentWarmup = result.warmup
+            metric = result.metric
         }
 
         repeatedSequence.sort()
@@ -125,10 +127,10 @@ fun collectMeanResults(benchmarks: Map<String, List<BenchmarkResult>>): Benchmar
         // Create mean and variance benchmarks result.
         val scoreMeanVariance = computeMeanVariance(resultsSet.map { it.score })
         val runtimeInUsMeanVariance = computeMeanVariance(resultsSet.map { it.runtimeInUs })
-        val meanBenchmark = BenchmarkResult(name, currentStatus, scoreMeanVariance.mean,
+        val meanBenchmark = BenchmarkResult(name, currentStatus, scoreMeanVariance.mean, metric,
                 runtimeInUsMeanVariance.mean, repeatedSequence[resultsSet.size - 1],
                 currentWarmup)
-        val varianceBenchmark = BenchmarkResult(name, currentStatus, scoreMeanVariance.variance,
+        val varianceBenchmark = BenchmarkResult(name, currentStatus, scoreMeanVariance.variance, metric,
                 runtimeInUsMeanVariance.variance, repeatedSequence[resultsSet.size - 1],
                 currentWarmup)
         name to MeanVarianceBenchmark(meanBenchmark, varianceBenchmark)

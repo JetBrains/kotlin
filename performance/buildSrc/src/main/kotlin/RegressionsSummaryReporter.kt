@@ -29,6 +29,8 @@ open class RegressionsSummaryReporter : DefaultTask() {
     @Input
     lateinit var targetsResultFiles: Map<String, String>
 
+    const val performanceServer = "https://kotlin-native-perf-summary.labs.jb.gg/"
+
     @TaskAction
     fun run() {
         // Get TeamCity properties.
@@ -59,6 +61,7 @@ open class RegressionsSummaryReporter : DefaultTask() {
         }
 
         val message = buildString {
+            append("*Performance summary on charts* - $performanceServer\n")
             results.forEach { (property, targets) ->
                 append("$property: ${targets.map {(target, value) -> "$value ($target)"}.joinToString(" | ")}\n")
             }
