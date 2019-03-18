@@ -14,6 +14,7 @@ dependencies {
     compile(project(":compiler:backend-common"))
     compile(project(":compiler:backend"))
     compile(project(":compiler:backend.jvm"))
+    compile(project(":compiler:ir.backend.common"))
     compile(project(":compiler:light-classes"))
     compile(project(":compiler:serialization"))
     compile(project(":compiler:plugin-api"))

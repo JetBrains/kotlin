@@ -22,7 +22,9 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.util.Alarm
 import org.jetbrains.kotlin.analyzer.common.CommonPlatform
+import org.jetbrains.kotlin.backend.common.phaser.createDefaultPhaseConfig
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
+import org.jetbrains.kotlin.backend.jvm.jvmPhases
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.CompilationErrorHandler
@@ -318,7 +320,7 @@ class KotlinBytecodeToolWindow(private val myProject: Project, private val toolW
                 .generateDeclaredClassFilter(generateClassFilter)
                 .codegenFactory(
                     if (configuration.getBoolean(JVMConfigurationKeys.IR))
-                        JvmIrCodegenFactory
+                        JvmIrCodegenFactory(createDefaultPhaseConfig(jvmPhases))
                     else
                         DefaultCodegenFactory
                 )

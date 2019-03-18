@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
+import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.context.PackageContext
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -25,7 +26,7 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
 
-object JvmIrCodegenFactory : CodegenFactory {
+class JvmIrCodegenFactory(private val phaseConfig: PhaseConfig) : CodegenFactory {
 
     override fun generateModule(state: GenerationState, files: Collection<KtFile?>, errorHandler: CompilationErrorHandler) {
         assert(!files.any { it == null })
@@ -33,7 +34,7 @@ object JvmIrCodegenFactory : CodegenFactory {
         val psi2ir = Psi2IrTranslator(state.languageVersionSettings)
         val psi2irContext = psi2ir.createGeneratorContext(state.module, state.bindingContext, extensions = JvmGeneratorExtensions)
         val irModuleFragment = psi2ir.generateModuleFragment(psi2irContext, files as Collection<KtFile>)
-        JvmBackendFacade.doGenerateFilesInternal(state, errorHandler, irModuleFragment, psi2irContext)
+        JvmBackendFacade.doGenerateFilesInternal(state, errorHandler, irModuleFragment, psi2irContext, phaseConfig)
     }
 
     override fun createPackageCodegen(state: GenerationState, files: Collection<KtFile>, fqName: FqName): PackageCodegen {
@@ -41,7 +42,7 @@ object JvmIrCodegenFactory : CodegenFactory {
 
         return object : PackageCodegen {
             override fun generate(errorHandler: CompilationErrorHandler) {
-                JvmBackendFacade.doGenerateFiles(files, state, errorHandler)
+                JvmBackendFacade.doGenerateFiles(files, state, errorHandler, phaseConfig)
             }
 
             override fun generateClassOrObject(classOrObject: KtClassOrObject, packagePartContext: PackageContext) {

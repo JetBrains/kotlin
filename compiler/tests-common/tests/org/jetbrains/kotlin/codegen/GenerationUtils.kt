@@ -18,7 +18,9 @@ package org.jetbrains.kotlin.codegen
 
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.TestsCompiletimeError
+import org.jetbrains.kotlin.backend.common.phaser.createPhaseConfig
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
+import org.jetbrains.kotlin.backend.jvm.jvmPhases
 import org.jetbrains.kotlin.cli.common.output.writeAllTo
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
@@ -74,7 +76,8 @@ object GenerationUtils {
             files.first().project, classBuilderFactory, analysisResult.moduleDescriptor, analysisResult.bindingContext,
             files, configuration
         ).codegenFactory(
-            if (configuration.getBoolean(JVMConfigurationKeys.IR)) JvmIrCodegenFactory else DefaultCodegenFactory
+            if (configuration.getBoolean(JVMConfigurationKeys.IR)) JvmIrCodegenFactory(createPhaseConfig(jvmPhases, configuration))
+            else DefaultCodegenFactory
         ).build()
         if (analysisResult.shouldGenerateCode) {
             KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION)

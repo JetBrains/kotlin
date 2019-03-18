@@ -54,7 +54,7 @@ private val propertiesPhase = makeIrFilePhase(
     stickyPostconditions = setOf((PropertiesLowering)::checkNoProperties)
 )
 
-internal val jvmPhases = namedIrFilePhase(
+val jvmPhases = namedIrFilePhase(
     name = "IrLowering",
     description = "IR lowering",
     lower = expectDeclarationsRemovingPhase then

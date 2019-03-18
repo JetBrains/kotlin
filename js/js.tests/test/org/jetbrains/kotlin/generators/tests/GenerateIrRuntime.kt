@@ -9,11 +9,13 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
+import org.jetbrains.kotlin.backend.common.phaser.createPhaseConfig
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.ir.backend.js.CompilationMode
 import org.jetbrains.kotlin.ir.backend.js.compile
+import org.jetbrains.kotlin.ir.backend.js.jsPhases
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.test.JsIrTestRuntime
 import org.jetbrains.kotlin.psi.KtFile
@@ -57,10 +59,12 @@ fun main() {
 
 
     fun buildKlib(sources: List<String>, outputPath: String) {
+        val configuration = buildConfiguration(environment)
         compile(
             project = environment.project,
             files = sources.map(::createPsiFile),
-            configuration = buildConfiguration(environment),
+            configuration = configuration,
+            phaseConfig = createPhaseConfig(jsPhases, configuration),
             compileMode = CompilationMode.KLIB,
             immediateDependencies = emptyList(),
             allDependencies = emptyList(),

@@ -31,7 +31,9 @@ import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.asJava.FilteredJvmDiagnostics
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
 import org.jetbrains.kotlin.backend.common.output.SimpleOutputFileCollection
+import org.jetbrains.kotlin.backend.common.phaser.createPhaseConfig
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
+import org.jetbrains.kotlin.backend.jvm.jvmPhases
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsage
@@ -434,6 +436,7 @@ object KotlinToJVMBytecodeCompiler {
         sourceFiles: List<KtFile>,
         module: Module?
     ): GenerationState {
+        val isIR = configuration.getBoolean(JVMConfigurationKeys.IR)
         val generationState = GenerationState.Builder(
             environment.project,
             ClassBuilderFactories.BINARIES,
@@ -442,7 +445,7 @@ object KotlinToJVMBytecodeCompiler {
             sourceFiles,
             configuration
         )
-            .codegenFactory(if (configuration.getBoolean(JVMConfigurationKeys.IR)) JvmIrCodegenFactory else DefaultCodegenFactory)
+            .codegenFactory(if (isIR) JvmIrCodegenFactory(createPhaseConfig(jvmPhases, configuration)) else DefaultCodegenFactory)
             .withModule(module)
             .onIndependentPartCompilationEnd(createOutputFilesFlushingCallbackIfPossible(configuration))
             .build()

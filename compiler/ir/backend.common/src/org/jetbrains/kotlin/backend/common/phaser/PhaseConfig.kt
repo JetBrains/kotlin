@@ -10,12 +10,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 
 fun createPhaseConfig(compoundPhase: CompilerPhase<*, *, *>, config: CompilerConfiguration): PhaseConfig {
-    val phases = compoundPhase.getNamedSubphases().fold(mutableMapOf<String, AnyNamedPhase>()) { acc, (_, phase) ->
-        check(phase.name !in acc) { "Duplicate phase name '${phase.name}'"}
-        acc[phase.name] = phase
-        acc
-    }
-
+    val phases = compoundPhase.toPhaseMap()
     val enabled = computeEnabled(phases, config).toMutableSet()
     val verbose = phaseSetFromConfiguration(phases, config, CommonConfigurationKeys.VERBOSE_PHASES)
 
@@ -36,6 +31,25 @@ fun createPhaseConfig(compoundPhase: CompilerPhase<*, *, *>, config: CompilerCon
 
     return PhaseConfig(compoundPhase, phases, enabled, verbose, toDumpStateBefore, toDumpStateAfter, toValidateStateBefore, toValidateStateAfter, needProfiling, checkConditions, checkStickyConditions)
 }
+
+fun createDefaultPhaseConfig(compoundPhase: CompilerPhase<*, *, *>): PhaseConfig {
+    val phases = compoundPhase.toPhaseMap()
+    val enabled = phases.values.toMutableSet()
+
+    return PhaseConfig(
+        compoundPhase, phases, enabled, emptySet(), emptySet(), emptySet(), emptySet(), emptySet(),
+        needProfiling = false,
+        checkConditions = false,
+        checkStickyConditions = false
+    )
+}
+
+private fun CompilerPhase<*, *, *>.toPhaseMap(): MutableMap<String, AnyNamedPhase> =
+    getNamedSubphases().fold(mutableMapOf()) { acc, (_, phase) ->
+        check(phase.name !in acc) { "Duplicate phase name '${phase.name}'"}
+        acc[phase.name] = phase
+        acc
+    }
 
 private fun computeEnabled(
     phases: MutableMap<String, AnyNamedPhase>,

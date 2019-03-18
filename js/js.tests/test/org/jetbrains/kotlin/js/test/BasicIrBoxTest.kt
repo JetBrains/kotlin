@@ -5,11 +5,9 @@
 
 package org.jetbrains.kotlin.js.test
 
+import org.jetbrains.kotlin.backend.common.phaser.createPhaseConfig
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.ir.backend.js.CompilationMode
-import org.jetbrains.kotlin.ir.backend.js.KlibModuleRef
-import org.jetbrains.kotlin.ir.backend.js.TranslationResult
-import org.jetbrains.kotlin.ir.backend.js.compile
+import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.facade.MainCallParameters
@@ -112,6 +110,7 @@ abstract class BasicIrBoxTest(
             project = config.project,
             files = filesToCompile,
             configuration = config.configuration,
+            phaseConfig = createPhaseConfig(jsPhases, config.configuration),
             compileMode = if (isMainModule) CompilationMode.JS else CompilationMode.KLIB,
             immediateDependencies = dependencies,
             allDependencies = allDependencies,
