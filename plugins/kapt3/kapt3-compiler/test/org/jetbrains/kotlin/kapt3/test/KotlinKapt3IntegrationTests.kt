@@ -56,7 +56,7 @@ class KotlinKapt3IntegrationTests : AbstractKotlinKapt3IntegrationTest(), Java9T
     fun testComments() = test("Simple", "test.MyAnnotation") { _, _, env ->
         fun commentOf(className: String) = env.elementUtils.getDocComment(env.elementUtils.getTypeElement(className))
 
-        assert(commentOf("test.Simple") == " * KDoc comment.\n")
+        assert(commentOf("test.Simple") == " KDoc comment.\n")
         assert(commentOf("test.EnumClass") == null) // simple comment - not saved
         assert(commentOf("test.MyAnnotation") == null) // multiline comment - not saved
     }
