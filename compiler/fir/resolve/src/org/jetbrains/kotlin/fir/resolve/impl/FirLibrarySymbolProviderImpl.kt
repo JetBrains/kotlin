@@ -113,7 +113,7 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider 
 
 
                     val superTypesDeserialized = classProto.supertypes(typeTable).map { supertypeProto ->
-                        typeDeserializer.classLikeType(supertypeProto)
+                        typeDeserializer.simpleType(supertypeProto)
                     }// TODO: + c.components.additionalClassPartsProvider.getSupertypes(this@DeserializedClassDescriptor)
 
                     superTypesDeserialized.mapNotNullTo(superTypeRefs) {

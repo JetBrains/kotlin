@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeAbbreviatedTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
+import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
@@ -38,13 +39,13 @@ class FirTypeDeserializer(
     fun type(proto: ProtoBuf.Type): ConeKotlinType {
         if (proto.hasFlexibleTypeCapabilitiesId()) {
             val id = nameResolver.getString(proto.flexibleTypeCapabilitiesId)
-            val lowerBound = classLikeType(proto)
-            val upperBound = classLikeType(proto.flexibleUpperBound(typeTable)!!)
+            val lowerBound = simpleType(proto)
+            val upperBound = simpleType(proto.flexibleUpperBound(typeTable)!!)
             return ConeFlexibleType(lowerBound!!, upperBound!!)
             //c.components.flexibleTypeDeserializer.create(proto, id, lowerBound, upperBound)
         }
 
-        return classLikeType(proto) ?: ConeKotlinErrorType("?!id:0")
+        return simpleType(proto) ?: ConeKotlinErrorType("?!id:0")
     }
 
 
@@ -53,16 +54,16 @@ class FirTypeDeserializer(
 
     private val typeParameterDescriptors =
         if (typeParameterProtos.isEmpty()) {
-            mapOf<Int, ConeTypeParameterLookupTag>()
+            mapOf<Int, ConeTypeParameterSymbol>()
         } else {
-            val result = LinkedHashMap<Int, ConeTypeParameterLookupTag>()
+            val result = LinkedHashMap<Int, ConeTypeParameterSymbol>()
             for ((index, proto) in typeParameterProtos.withIndex()) {
                 result[proto.id] = LibraryTypeParameterSymbol(nameResolver.getName(proto.name))
             }
             result
         }
 
-    val ownTypeParameters: List<ConeTypeParameterLookupTag>
+    val ownTypeParameters: List<ConeTypeParameterSymbol>
         get() = typeParameterDescriptors.values.toList()
 
 
@@ -74,12 +75,11 @@ class FirTypeDeserializer(
         it.symbol
     }
 
-    fun classLikeType(proto: ProtoBuf.Type): ConeClassLikeType? {
+    fun simpleType(proto: ProtoBuf.Type): ConeLookupTagBasedType? {
 
-        val constructor = typeSymbol(proto) as? ConeClassLikeLookupTag ?: return null
-//        if (ErrorUtils.isError(constructor.declarationDescriptor)) {
-//            return ErrorUtils.createErrorTypeWithCustomConstructor(constructor.toString(), constructor)
-//        }
+        val constructor = typeSymbol(proto) ?: return null
+        if (constructor is ConeTypeParameterLookupTag) return ConeTypeParameterTypeImpl(constructor, isNullable = false)
+        if (constructor !is ConeClassLikeLookupTag) return null
 
         fun ProtoBuf.Type.collectAllArguments(): List<ProtoBuf.Type.Argument> =
             argumentList + outerType(typeTable)?.collectAllArguments().orEmpty()
