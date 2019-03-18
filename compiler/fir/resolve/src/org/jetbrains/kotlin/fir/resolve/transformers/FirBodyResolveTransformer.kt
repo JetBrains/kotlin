@@ -9,8 +9,6 @@ import com.google.common.collect.LinkedHashMultimap
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.impl.FirFunctionCallImpl
-import org.jetbrains.kotlin.fir.expressions.impl.FirQualifiedAccessExpressionImpl
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReferenceImpl
 import org.jetbrains.kotlin.fir.references.FirSimpleNamedReference
@@ -101,7 +99,7 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
             }
             FirOperation.SAFE_AS -> {
                 bindingContext[resolved] =
-                        resolved.typeRef.withReplacedConeType(
+                    resolved.typeRef.withReplacedConeType(
                         session,
                         resolved.typeRef.coneTypeUnsafe().withNullability(ConeNullability.NULLABLE)
                     )
@@ -130,26 +128,15 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
 
     val jump = ReturnTypeCalculatorWithJump(session)
 
-    private fun runTowerResolver(
-        checkers: List<ApplicabilityChecker>
-    ): ApplicabilityChecker? {
-        val callResolver = CallResolver(jump)
-        callResolver.scopes = (scopes + localScopes)
-        callResolver.checkers = checkers
-        callResolver.session = session
-
-        return callResolver.runTowerResolver()
-    }
-
     private fun <T> storeTypeFromCallee(access: T) where T : FirQualifiedAccess, T : FirExpression {
         bindingContext[access] =
-                when (val newCallee = access.calleeReference) {
-                    is FirErrorNamedReference ->
-                        FirErrorTypeRefImpl(session, access.psi, newCallee.errorReason)
-                    is FirResolvedCallableReference ->
-                        jump.tryCalculateReturnType(newCallee.callableSymbol.firUnsafe())
-                    else -> return
-                }
+            when (val newCallee = access.calleeReference) {
+                is FirErrorNamedReference ->
+                    FirErrorTypeRefImpl(session, access.psi, newCallee.errorReason)
+                is FirResolvedCallableReference ->
+                    jump.tryCalculateReturnType(newCallee.callableSymbol.firUnsafe())
+                else -> return
+            }
     }
 
     override fun transformQualifiedAccessExpression(
@@ -170,18 +157,21 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
 
         qualifiedAccessExpression.explicitReceiver?.visitNoTransform(this, null)
 
-        val checkers = listOf(VariableApplicabilityChecker(callee.name).apply {
-            expectedType = data as FirTypeRef?
-            explicitReceiverType = qualifiedAccessExpression.explicitReceiver?.resultType
-        })
+        val receiver = qualifiedAccessExpression.explicitReceiver
 
-        val result = runTowerResolver(checkers)
-        if (result != null) {
-            val resultExpression = qualifiedAccessExpression.transformCalleeReference(this, result.successCandidates())
-            storeTypeFromCallee(resultExpression as FirQualifiedAccessExpression)
-            return resultExpression.compose()
-        }
-        return qualifiedAccessExpression.compose()
+        //val checkers = listOf(VariableApplicabilityChecker(callee.name))
+
+        val info = CallInfo(true, receiver, 0)
+        val resolver = CallResolver(jump, session)
+        resolver.callInfo = info
+        resolver.scopes = (scopes + localScopes).asReversed()
+
+        val consumer = createVariableConsumer(session, callee.name, qualifiedAccessExpression.explicitReceiver, qualifiedAccessExpression.explicitReceiver?.resultType)
+        val result = resolver.runTowerResolver(consumer)
+        val successCandidates = result.successCandidates()
+        val resultExpression = qualifiedAccessExpression.transformCalleeReference(this, successCandidates)
+        storeTypeFromCallee(resultExpression as FirQualifiedAccessExpression)
+        return resultExpression.compose()
     }
 
     override fun transformFunctionCall(functionCall: FirFunctionCall, data: Any?): CompositeTransformResult<FirStatement> {
@@ -197,46 +187,47 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
         val receiver = functionCall.explicitReceiver
         val arguments = functionCall.arguments
 
-        val checkers = listOf(FunctionApplicabilityChecker(name).apply {
-            expectedType = expectedTypeRef
-            explicitReceiverType = receiver?.resultType
-            parameterCount = arguments.size
-        }, VariableInvokeApplicabilityChecker(name).apply {
-            expectedType = expectedTypeRef
-            variableChecker.apply {
-                expectedType = expectedTypeRef
-                explicitReceiverType = receiver?.resultType
-            }
-            parameterCount = arguments.size
-        })
+
+        val info = CallInfo(false, receiver, arguments.size)
+        val resolver = CallResolver(jump, session)
+        resolver.callInfo = info
+        resolver.scopes = (scopes + localScopes).asReversed()
 
 
-                val result = runTowerResolver(checkers)
 
-        val resultExpression = when (result) {
-            is VariableInvokeApplicabilityChecker -> {
-                FirFunctionCallImpl(functionCall.session, functionCall.psi, safe = functionCall.safe).apply {
-                    calleeReference =
-                            functionCall.calleeReference.transformSingle(this@FirBodyResolveTransformer, result.successCandidates())
-                    explicitReceiver =
-                            FirQualifiedAccessExpressionImpl(
-                                functionCall.session,
-                                functionCall.calleeReference.psi,
-                                functionCall.safe
-                            ).apply {
-                                calleeReference = createResolvedNamedReference(
-                                    functionCall.calleeReference,
-                                    result.variableChecker.successCandidates() as List<ConeCallableSymbol>
-                                )
-                                explicitReceiver = functionCall.explicitReceiver
-                            }
-                }
-            }
-            is ApplicabilityChecker -> {
-                functionCall.transformCalleeReference(this, result.successCandidates())
-            }
-            else -> functionCall
-        }
+        val consumer = createFunctionConsumer(session, name, receiver, receiver?.resultType)
+        val result = resolver.runTowerResolver(consumer)
+        val successCandidates = result.successCandidates()
+
+//        fun isInvoke()
+//
+//        val resultExpression =
+//
+//        when {
+//            successCandidates.singleOrNull() as? ConeCallableSymbol -> {
+//                FirFunctionCallImpl(functionCall.session, functionCall.psi, safe = functionCall.safe).apply {
+//                    calleeReference =
+//                        functionCall.calleeReference.transformSingle(this@FirBodyResolveTransformer, result.successCandidates())
+//                    explicitReceiver =
+//                        FirQualifiedAccessExpressionImpl(
+//                            functionCall.session,
+//                            functionCall.calleeReference.psi,
+//                            functionCall.safe
+//                        ).apply {
+//                            calleeReference = createResolvedNamedReference(
+//                                functionCall.calleeReference,
+//                                result.variableChecker.successCandidates() as List<ConeCallableSymbol>
+//                            )
+//                            explicitReceiver = functionCall.explicitReceiver
+//                        }
+//                }
+//            }
+//            is ApplicabilityChecker -> {
+//                functionCall.transformCalleeReference(this, result.successCandidates())
+//            }
+//            else -> functionCall
+//        }
+        val resultExpression = functionCall.transformCalleeReference(this, successCandidates)
 
         storeTypeFromCallee(resultExpression as FirFunctionCall)
         return resultExpression.compose()

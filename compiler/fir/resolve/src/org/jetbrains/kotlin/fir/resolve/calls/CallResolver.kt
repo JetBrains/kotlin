@@ -7,9 +7,8 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.scope
@@ -22,70 +21,294 @@ import org.jetbrains.kotlin.fir.scopes.processClassifiersByNameWithAction
 import org.jetbrains.kotlin.fir.service
 import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.ConeTypeCheckerContext
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.AbstractTypeChecker
-import java.util.*
-import kotlin.collections.LinkedHashSet
+import org.jetbrains.kotlin.utils.addToStdlib.cast
 
-class CallResolver(val typeCalculator: ReturnTypeCalculator) {
 
-    lateinit var checkers: List<ApplicabilityChecker>
-    lateinit var scopes: List<FirScope>
+class CallInfo(
+    val variableAccess: Boolean,
+    val explicitReceiver: FirExpression?,
+    val argumentCount: Int
+) {
 
-    private val names = LinkedHashSet<Name>()
-    private val newNames = mutableSetOf<Name>()
+}
 
-    fun pushName(name: Name) {
-        newNames += name
+interface CheckerSink {
+    fun reportApplicability(new: CandidateApplicability)
+}
+
+
+class CheckerSinkImpl : CheckerSink {
+    var current = CandidateApplicability.RESOLVED
+    override fun reportApplicability(new: CandidateApplicability) {
+        if (new < current) current = new
+    }
+}
+
+private abstract class Checker {
+    abstract fun check(candidate: Candidate, sink: CheckerSink, callInfo: CallInfo)
+
+}
+
+private object MapArguments : Checker() {
+    override fun check(candidate: Candidate, sink: CheckerSink, callInfo: CallInfo) {
+        val symbol = candidate.symbol as? FirFunctionSymbol ?: return sink.reportApplicability(CandidateApplicability.HIDDEN)
+        if (symbol.firUnsafe<FirFunction>().valueParameters.size != callInfo.argumentCount) {
+            return sink.reportApplicability(CandidateApplicability.PARAMETER_MAPPING_ERROR)
+        }
     }
 
-    fun runTowerResolver(): ApplicabilityChecker? {
-        processedScopes.clear()
-        newNames.clear()
-        names.clear()
+}
 
-        var successChecker: ApplicabilityChecker? = null
 
-        checkers.forEach {
-            it.initNames(this.names)
+class Candidate(val symbol: ConeSymbol) {}
+
+
+enum class TowerDataKind {
+    EMPTY,
+    TOWER_LEVEL
+}
+
+interface TowerScopeLevel {
+
+    sealed class Token<out T : ConeSymbol> {
+        object Properties : Token<ConePropertySymbol>()
+
+        object Functions : Token<ConeFunctionSymbol>()
+        object Objects : Token<ConeClassifierSymbol>()
+    }
+
+    fun <T : ConeSymbol> processElementsByName(
+        token: Token<T>,
+        name: Name,
+        extensionReceiver: ReceiverValueWithPossibleTypes?,
+        processor: TowerScopeLevelProcessor<T>
+    ): ProcessorAction
+
+    interface TowerScopeLevelProcessor<T : ConeSymbol> {
+        fun consumeCandidate(symbol: T, boundDispatchReceiver: ReceiverValueWithPossibleTypes?): ProcessorAction
+    }
+
+    object Empty : TowerScopeLevel {
+        override fun <T : ConeSymbol> processElementsByName(
+            token: Token<T>,
+            name: Name,
+            extensionReceiver: ReceiverValueWithPossibleTypes?,
+            processor: TowerScopeLevelProcessor<T>
+        ): ProcessorAction = ProcessorAction.NEXT
+    }
+}
+
+interface ReceiverValue {
+    val type: ConeKotlinType
+}
+
+interface ReceiverValueWithPossibleTypes : ReceiverValue
+
+class MemberScopeTowerLevel(
+    val session: FirSession,
+    val dispatchReceiver: ReceiverValueWithPossibleTypes
+) : TowerScopeLevel {
+
+
+    private fun <T : ConeSymbol> processMembers(
+        output: TowerScopeLevel.TowerScopeLevelProcessor<T>,
+        takeMembers: FirScope.(processor: (T) -> ProcessorAction) -> ProcessorAction
+    ): ProcessorAction {
+        return dispatchReceiver.type.scope(session)?.takeMembers { output.consumeCandidate(it, dispatchReceiver) } ?: ProcessorAction.NEXT
+    }
+
+    override fun <T : ConeSymbol> processElementsByName(
+        token: TowerScopeLevel.Token<T>,
+        name: Name,
+        extensionReceiver: ReceiverValueWithPossibleTypes?,
+        processor: TowerScopeLevel.TowerScopeLevelProcessor<T>
+    ): ProcessorAction {
+        return when (token) {
+            TowerScopeLevel.Token.Properties -> processMembers(processor) { this.processPropertiesByName(name, it.cast()) }
+            TowerScopeLevel.Token.Functions -> processMembers(processor) { this.processFunctionsByName(name, it.cast()) }
+            TowerScopeLevel.Token.Objects -> ProcessorAction.NEXT
         }
+    }
 
-        for ((index, scope) in scopes.asReversed().withIndex()) {
-            names.addAll(newNames)
-            newNames.clear()
+}
 
-            processedScopes.add(scope)
+class ScopeTowerLevel(
+    val session: FirSession,
+    val scope: FirScope
+) : TowerScopeLevel {
+    override fun <T : ConeSymbol> processElementsByName(
+        token: TowerScopeLevel.Token<T>,
+        name: Name,
+        extensionReceiver: ReceiverValueWithPossibleTypes?,
+        processor: TowerScopeLevel.TowerScopeLevelProcessor<T>
+    ): ProcessorAction {
+        return when (token) {
 
-            names.forEach { name ->
-                fun process(symbol: ConeSymbol): ProcessorAction {
-                    for (checker in checkers) {
-                        checker.consumeCandidate(index, symbol, this)
+            TowerScopeLevel.Token.Properties -> scope.processPropertiesByName(name) { processor.consumeCandidate(it as T, null) }
+            TowerScopeLevel.Token.Functions -> scope.processFunctionsByName(name) { processor.consumeCandidate(it as T, null) }
+            TowerScopeLevel.Token.Objects -> scope.processClassifiersByNameWithAction(name, FirPosition.OTHER) {
+                processor.consumeCandidate(
+                    it as T,
+                    null
+                )
+            }
+        }
+    }
+
+}
+
+
+abstract class TowerDataConsumer {
+    abstract fun consume(
+        kind: TowerDataKind,
+        implicitReceiverType: ConeKotlinType?,
+        towerScopeLevel: TowerScopeLevel,
+        resultCollector: CandidateCollector
+    ): ProcessorAction
+}
+
+
+fun createVariableConsumer(
+    session: FirSession,
+    name: Name,
+    explicitReceiver: FirExpression?,
+    explicitReceiverType: FirTypeRef?
+): TowerDataConsumer {
+    return createSimpleConsumer(session, name, TowerScopeLevel.Token.Properties, explicitReceiver, explicitReceiverType)
+}
+
+fun createFunctionConsumer(
+    session: FirSession,
+    name: Name,
+    explicitReceiver: FirExpression?,
+    explicitReceiverType: FirTypeRef?
+): TowerDataConsumer {
+    return createSimpleConsumer(session, name, TowerScopeLevel.Token.Functions, explicitReceiver, explicitReceiverType)
+}
+
+
+fun createSimpleConsumer(
+    session: FirSession,
+    name: Name,
+    token: TowerScopeLevel.Token<*>,
+    explicitReceiver: FirExpression?,
+    explicitReceiverType: FirTypeRef?
+): TowerDataConsumer {
+    return if (explicitReceiver != null) {
+        ExplicitReceiverTowerDataConsumer(session, name, token, object : ReceiverValueWithPossibleTypes {
+            override val type: ConeKotlinType
+                get() = explicitReceiverType!!.coneTypeUnsafe()
+        })
+    } else {
+        NoExplicitReceiverTowerDataConsumer(session, name, token)
+    }
+}
+
+class ExplicitReceiverTowerDataConsumer<T : ConeSymbol>(
+    val session: FirSession,
+    val name: Name,
+    val token: TowerScopeLevel.Token<T>,
+    val explicitReceiver: ReceiverValueWithPossibleTypes
+) : TowerDataConsumer() {
+
+    var groupId = 0
+
+    override fun consume(
+        kind: TowerDataKind,
+        implicitReceiverType: ConeKotlinType?,
+        towerScopeLevel: TowerScopeLevel,
+        resultCollector: CandidateCollector
+    ): ProcessorAction {
+        groupId++
+        return when (kind) {
+            TowerDataKind.EMPTY ->
+                MemberScopeTowerLevel(session, explicitReceiver).processElementsByName(
+                    token,
+                    name,
+                    null,
+                    object : TowerScopeLevel.TowerScopeLevelProcessor<T> {
+                        override fun consumeCandidate(symbol: T, boundDispatchReceiver: ReceiverValueWithPossibleTypes?): ProcessorAction {
+                            resultCollector.consumeCandidate(groupId, symbol)
+                            return ProcessorAction.NEXT
+                        }
                     }
-                    return ProcessorAction.NEXT
-                }
-
-                scope.processClassifiersByNameWithAction(name, FirPosition.OTHER, ::process)
-                scope.processPropertiesByName(name, ::process)
-                scope.processFunctionsByName(name, ::process)
-            }
-
-            successChecker = checkers.maxBy { it.currentApplicability }
-
-            if (successChecker?.currentApplicability == CandidateApplicability.RESOLVED) {
-                break
-            }
-
+                )
+            TowerDataKind.TOWER_LEVEL ->
+                towerScopeLevel.processElementsByName(
+                    token,
+                    name,
+                    explicitReceiver,
+                    object : TowerScopeLevel.TowerScopeLevelProcessor<T> {
+                        override fun consumeCandidate(symbol: T, boundDispatchReceiver: ReceiverValueWithPossibleTypes?): ProcessorAction {
+                            resultCollector.consumeCandidate(groupId, symbol)
+                            return ProcessorAction.NEXT
+                        }
+                    }
+                )
         }
-
-        return successChecker
     }
 
-    lateinit var session: FirSession
-    val processedScopes = mutableListOf<FirScope>()
+}
+
+class NoExplicitReceiverTowerDataConsumer<T : ConeSymbol>(
+    val session: FirSession,
+    val name: Name,
+    val token: TowerScopeLevel.Token<T>
+) : TowerDataConsumer() {
+    var groupId = 0
+
+
+    override fun consume(
+        kind: TowerDataKind,
+        implicitReceiverType: ConeKotlinType?,
+        towerScopeLevel: TowerScopeLevel,
+        resultCollector: CandidateCollector
+    ): ProcessorAction {
+        groupId++
+        return when (kind) {
+
+            TowerDataKind.TOWER_LEVEL -> {
+                towerScopeLevel.processElementsByName(
+                    token,
+                    name,
+                    null,
+                    object : TowerScopeLevel.TowerScopeLevelProcessor<T> {
+                        override fun consumeCandidate(symbol: T, boundDispatchReceiver: ReceiverValueWithPossibleTypes?): ProcessorAction {
+                            resultCollector.consumeCandidate(groupId, symbol)
+                            return ProcessorAction.NEXT
+                        }
+                    }
+                )
+            }
+            else -> ProcessorAction.NEXT
+        }
+    }
+
+}
+
+class CallResolver(val typeCalculator: ReturnTypeCalculator, val session: FirSession) {
+
+    var callInfo: CallInfo? = null
+
+    var scopes: List<FirScope>? = null
+
+    fun runTowerResolver(towerDataConsumer: TowerDataConsumer): CandidateCollector {
+        val collector = CandidateCollector(callInfo!!)
+
+        towerDataConsumer.consume(TowerDataKind.EMPTY, null, TowerScopeLevel.Empty, collector)
+
+        for (scope in scopes!!) {
+            towerDataConsumer.consume(TowerDataKind.TOWER_LEVEL, null, ScopeTowerLevel(session, scope), collector)
+        }
+
+        return collector
+    }
+
 
 }
 
@@ -99,9 +322,7 @@ enum class CandidateApplicability {
     RESOLVED
 }
 
-
-// TODO: Extract from this transformer
-abstract class ApplicabilityChecker {
+class CandidateCollector(val callInfo: CallInfo) {
 
     val groupNumbers = mutableListOf<Int>()
     val candidates = mutableListOf<ConeSymbol>()
@@ -109,35 +330,27 @@ abstract class ApplicabilityChecker {
 
     var currentApplicability = CandidateApplicability.HIDDEN
 
-    var expectedType: FirTypeRef? = null
-    var explicitReceiverType: FirTypeRef? = null
-
 
     fun newDataSet() {
         groupNumbers.clear()
         candidates.clear()
-        expectedType = null
         currentApplicability = CandidateApplicability.HIDDEN
     }
 
-    protected open fun getApplicability(
+    protected fun getApplicability(
         group: Int,
-        symbol: ConeSymbol,
-        resolver: CallResolver
+        symbol: ConeSymbol
     ): CandidateApplicability {
-        val declaration = (symbol as? FirBasedSymbol<*>)?.fir
-            ?: return CandidateApplicability.HIDDEN
-        declaration as FirDeclaration
 
-        if (declaration is FirCallableDeclaration) {
-            if ((declaration.receiverTypeRef == null) != (explicitReceiverType == null)) return CandidateApplicability.PARAMETER_MAPPING_ERROR
-        }
+        val sink = CheckerSinkImpl()
 
-        return CandidateApplicability.RESOLVED
+        MapArguments.check(Candidate(symbol), sink, callInfo)
+
+        return sink.current
     }
 
-    open fun consumeCandidate(group: Int, symbol: ConeSymbol, resolver: CallResolver) {
-        val applicability = getApplicability(group, symbol, resolver)
+    fun consumeCandidate(group: Int, symbol: ConeSymbol) {
+        val applicability = getApplicability(group, symbol)
 
         if (applicability > currentApplicability) {
             groupNumbers.clear()
@@ -152,19 +365,13 @@ abstract class ApplicabilityChecker {
         }
     }
 
-    abstract fun initNames(names: LinkedHashSet<Name>)
 
-    open fun isSuccessful(index: Int, candidate: ConeSymbol): Boolean {
-        return true
-    }
-
-    open fun successCandidates(): List<ConeSymbol> {
+    fun successCandidates(): List<ConeSymbol> {
         if (groupNumbers.isEmpty()) return emptyList()
         val result = mutableListOf<ConeSymbol>()
         var bestGroup = groupNumbers.first()
         for ((index, candidate) in candidates.withIndex()) {
             val group = groupNumbers[index]
-            if (!isSuccessful(index, candidate)) continue
             if (bestGroup > group) {
                 bestGroup = group
                 result.clear()
@@ -174,195 +381,6 @@ abstract class ApplicabilityChecker {
             }
         }
         return result
-    }
-}
-
-open class VariableApplicabilityChecker(val name: Name) : ApplicabilityChecker() {
-    override fun initNames(names: LinkedHashSet<Name>) {
-        names.add(name)
-    }
-
-    override fun consumeCandidate(group: Int, symbol: ConeSymbol, resolver: CallResolver) {
-        if (symbol !is ConeVariableSymbol) return
-        if (symbol.callableId.callableName != name) return
-        super.consumeCandidate(group, symbol, resolver)
-    }
-}
-
-class VariableInvokeApplicabilityChecker(val variableName: Name) : FunctionApplicabilityChecker(invoke) {
-
-    val variableChecker = object : VariableApplicabilityChecker(variableName) {
-        override fun isSuccessful(index: Int, candidate: ConeSymbol): Boolean {
-            return matchedProperties[index]
-        }
-    }
-    private var matchedProperties = BitSet()
-    private var lookupInvoke = false
-
-    override fun initNames(names: LinkedHashSet<Name>) {
-        names.add(variableName)
-//        if (lookupInvoke) {
-//            names.add(name)
-//        }
-    }
-
-    private fun isInvokeApplicableOn(propertySymbol: ConeSymbol, invokeSymbol: ConeCallableSymbol): Boolean {
-        return true //TODO: Actual type-check here
-    }
-
-    override fun getApplicability(
-        group: Int,
-        symbol: ConeSymbol,
-        resolver: CallResolver
-    ): CandidateApplicability {
-
-        symbol as ConeCallableSymbol
-        val declaration = (symbol as? FirBasedSymbol<*>)?.fir
-            ?: return CandidateApplicability.HIDDEN
-        declaration as FirDeclaration
-
-        if (declaration is FirFunction) {
-            if (declaration.valueParameters.size != parameterCount) return CandidateApplicability.PARAMETER_MAPPING_ERROR
-        }
-
-        var applicable = false
-
-        fun processCandidates(candidates: Iterable<IndexedValue<ConeSymbol>>) {
-            for ((index, candidate) in candidates) {
-                val invokeApplicableOn = isInvokeApplicableOn(candidate, symbol)
-                if (invokeApplicableOn) {
-                    applicable = true
-                }
-                matchedProperties[index] = invokeApplicableOn
-
-            }
-        }
-
-        if (group == -1) {
-            processCandidates(listOf(variableChecker.candidates.withIndex().last()))
-        } else {
-            processCandidates(variableChecker.candidates.withIndex())
-        }
-
-        if (applicable) {
-            return CandidateApplicability.RESOLVED
-        }
-        return CandidateApplicability.PARAMETER_MAPPING_ERROR
-    }
-
-    private fun checkSuccess(): Boolean {
-        return currentApplicability == CandidateApplicability.RESOLVED
-    }
-
-
-    override fun consumeCandidate(group: Int, symbol: ConeSymbol, resolver: CallResolver) {
-        if (symbol is ConeVariableSymbol && symbol.callableId.callableName == variableName) {
-            variableChecker.consumeCandidate(group, symbol, resolver)
-
-            val lastCandidate = variableChecker.candidates.lastOrNull()
-            if (variableChecker.currentApplicability == CandidateApplicability.RESOLVED && lastCandidate == symbol) {
-
-                val receiverScope =
-                    resolver.typeCalculator.tryCalculateReturnType(lastCandidate.firUnsafe()).type
-                        .scope(resolver.session)
-
-
-                if (!lookupInvoke) resolver.pushName(invoke)
-                lookupInvoke = true
-
-                receiverScope?.processFunctionsByName(invoke) { candidate ->
-                    this.consumeCandidate(-1, candidate, resolver)
-                    ProcessorAction.NEXT
-                }
-                if (checkSuccess()) return
-
-                for ((index, scope) in resolver.processedScopes.withIndex()) {
-                    scope.processFunctionsByName(invoke) { candidate ->
-                        this.consumeCandidate(index, candidate, resolver)
-                        ProcessorAction.NEXT
-                    }
-                    if (checkSuccess()) return
-                }
-
-            }
-        }
-
-        super.consumeCandidate(group, symbol, resolver)
-    }
-
-
-    companion object {
-        val invoke = Name.identifier("invoke")
-    }
-}
-
-
-class ClassifierApplicabilityChecker(val name: Name) : ApplicabilityChecker() {
-    override fun initNames(names: LinkedHashSet<Name>) {
-        names.add(name)
-    }
-
-    override fun consumeCandidate(group: Int, symbol: ConeSymbol, resolver: CallResolver) {
-        if (symbol !is ConeClassifierSymbol) return
-        if (symbol.toLookupTag().name != name) return
-        super.consumeCandidate(group, symbol, resolver)
-    }
-
-}
-
-open class FunctionApplicabilityChecker(val name: Name) : ApplicabilityChecker() {
-
-    var parameterCount = 0
-
-    override fun initNames(names: LinkedHashSet<Name>) {
-        names.add(name)
-    }
-
-    lateinit var session: FirSession
-
-    override fun getApplicability(
-        group: Int,
-        symbol: ConeSymbol,
-        resolver: CallResolver
-    ): CandidateApplicability {
-        val declaration = symbol.firUnsafe<FirCallableDeclaration>()
-
-        if (declaration is FirFunction && declaration.valueParameters.size != parameterCount) return CandidateApplicability.PARAMETER_MAPPING_ERROR
-
-
-        var extensionReceiver = declaration.receiverTypeRef?.coneTypeUnsafe()
-        var dispatchReceiver = declaration.dispatchReceiverType(session)
-
-        val explicitReceiverType = explicitReceiverType?.coneTypeUnsafe()
-
-
-        if (explicitReceiverType != null) {
-            if (dispatchReceiver != null && explicitReceiverType.isSubtypeOf(dispatchReceiver, session)) {
-                dispatchReceiver = null
-            }
-            if (extensionReceiver != null && explicitReceiverType.isSubtypeOf(extensionReceiver, session)) {
-                extensionReceiver = null
-            }
-            if (extensionReceiver != null || dispatchReceiver != null) return CandidateApplicability.WRONG_RECEIVER
-        }
-
-        return CandidateApplicability.RESOLVED
-    }
-
-    fun ConeKotlinType.isSubtypeOf(type: ConeKotlinType, session: FirSession): Boolean {
-        return try {
-            AbstractTypeChecker.isSubtypeOf(ConeTypeCheckerContext(true, session), this, type)
-        } catch (e: IllegalStateException) {
-
-            throw RuntimeException("Sub-typing error: subType = ${this.render()}, superType = ${type.render()}", e)
-        }
-    }
-
-    override fun consumeCandidate(group: Int, symbol: ConeSymbol, resolver: CallResolver) {
-        if (symbol !is ConeFunctionSymbol) return
-        if (symbol.callableId.callableName != name) return
-        session = resolver.session
-        super.consumeCandidate(group, symbol, resolver)
     }
 }
 
