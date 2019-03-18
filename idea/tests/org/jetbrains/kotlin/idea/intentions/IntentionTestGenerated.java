@@ -10080,6 +10080,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/introduceImportAlias/conflictLocalName.kt");
         }
 
+        @TestMetadata("conflictLocalName2.kt")
+        public void testConflictLocalName2() throws Exception {
+            runTest("idea/testData/intentions/introduceImportAlias/conflictLocalName2.kt");
+        }
+
         @TestMetadata("conflictPackage.kt")
         public void testConflictPackage() throws Exception {
             runTest("idea/testData/intentions/introduceImportAlias/conflictPackage.kt");

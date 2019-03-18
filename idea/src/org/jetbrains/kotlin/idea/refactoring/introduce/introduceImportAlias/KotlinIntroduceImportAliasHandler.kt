@@ -17,6 +17,7 @@ import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.refactoring.RefactoringActionHandler
 import com.intellij.refactoring.rename.inplace.VariableInplaceRenamer
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
@@ -46,6 +47,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.resolve.PropertyImportedFromObject
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.resolve.scopes.utils.findPackage
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
@@ -70,15 +72,21 @@ object KotlinIntroduceImportAliasHandler : RefactoringActionHandler {
         }
 
         val oldName = element.mainReference.value
-        val scope = file.getResolutionScope()
+        val scopes = usages.mapNotNull {
+            val expression = it.reference.element
+            expression.getResolutionScope(expression.analyze(BodyResolveMode.PARTIAL_FOR_COMPLETION))
+        }.distinct()
+
         val validator = fun(name: String): Boolean {
             if (oldName == name) return false
             val identifier = Name.identifier(name)
 
-            return scope.getAllAccessibleFunctions(identifier).isEmpty()
-                    && scope.getAllAccessibleVariables(identifier).isEmpty()
-                    && scope.findClassifier(identifier, NoLookupLocation.FROM_IDE) == null
-                    && scope.findPackage(identifier) == null
+            return scopes.all { scope ->
+                scope.getAllAccessibleFunctions(identifier).isEmpty()
+                        && scope.getAllAccessibleVariables(identifier).isEmpty()
+                        && scope.findClassifier(identifier, NoLookupLocation.FROM_IDE) == null
+                        && scope.findPackage(identifier) == null
+            }
         }
 
         val suggestionsName = KotlinNameSuggester.suggestNamesByFqName(fqName, validator = validator)
