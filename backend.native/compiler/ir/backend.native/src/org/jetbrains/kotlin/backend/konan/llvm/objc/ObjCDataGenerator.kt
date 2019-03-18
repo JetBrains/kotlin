@@ -89,16 +89,48 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
     )
 
     fun emitEmptyClass(name: String, superName: String) {
+        emitClass(name, superName, instanceMethods = emptyList())
+    }
+
+    class Method(val selector: String, val encoding: String, val imp: ConstPointer)
+
+    fun emitClass(name: String, superName: String, instanceMethods: List<Method>) {
         val runtime = context.llvm.runtime
         fun struct(name: String) = runtime.getStructType(name)
 
         val classRoType = struct("_class_ro_t")
+        val methodType = struct("_objc_method")
         val methodListType = struct("__method_list_t")
         val protocolListType = struct("_objc_protocol_list")
         val ivarListType = struct("_ivar_list_t")
         val propListType = struct("_prop_list_t")
 
         val classNameLiteral = classNames.get(name)
+
+        fun emitInstanceMethodList(): ConstPointer {
+            if (instanceMethods.isEmpty()) return NullPointer(methodListType)
+
+            val methodStructs = instanceMethods.map {
+                Struct(methodType, selectors.get(it.selector), encodings.get(it.encoding), it.imp.bitcast(int8TypePtr))
+            }
+
+            val methodList = Struct(
+                    Int32(LLVMABISizeOfType(codegen.llvmTargetData, methodType).toInt()),
+                    Int32(instanceMethods.size),
+                    ConstArray(methodType, methodStructs)
+            )
+
+            val globalName = "\u0001l_OBJC_\$_INSTANCE_METHODS_$name"
+            val global = context.llvm.staticData.placeGlobal(globalName, methodList).also {
+                it.setLinkage(LLVMLinkage.LLVMPrivateLinkage)
+                it.setAlignment(runtime.pointerAlignment)
+                it.setSection("__DATA, __objc_const")
+            }
+
+            context.llvm.compilerUsedGlobals += global.llvmGlobal
+
+            return global.pointer.bitcast(pointerType(methodListType))
+        }
 
         fun buildClassRo(isMetaclass: Boolean): ConstPointer {
             // TODO: add NonFragileABI_Class_CompiledByARC flag?
@@ -124,7 +156,7 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
             fields += Int32(size)
             fields += NullPointer(int8Type) // ivar layout name
             fields += classNameLiteral
-            fields += NullPointer(methodListType)
+            fields += if (isMetaclass) NullPointer(methodListType) else emitInstanceMethodList()
             fields += NullPointer(protocolListType)
             fields += NullPointer(ivarListType)
             fields += NullPointer(int8Type) // ivar layout
@@ -219,6 +251,9 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
 
     private val selectors =
             CStringLiteralsTable("OBJC_METH_VAR_NAME_",  "__TEXT,__objc_methname,cstring_literals")
+
+    private val encodings =
+            CStringLiteralsTable("OBJC_METH_VAR_TYPE_", "__TEXT,__objc_methtype,cstring_literals")
 
     private inner class CStringLiteralsTable(val label: String, val section: String) {
 
