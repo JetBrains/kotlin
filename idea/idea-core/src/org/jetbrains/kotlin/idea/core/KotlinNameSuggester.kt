@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getOutermostParenthesizerOrThis
 import org.jetbrains.kotlin.psi.psiUtil.isIdentifier
@@ -32,6 +33,8 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.builtIns
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeAsciiOnly
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeSmart
 import java.util.*
 
@@ -105,6 +108,35 @@ object KotlinNameSuggester {
         }
 
         return result
+    }
+
+    fun suggestNamesByFqName(
+        fqName: FqName,
+        ignoreCompanion: Boolean = true,
+        validator: (String) -> Boolean = { true },
+        defaultName: () -> String? = { null }
+    ): Collection<String> {
+        val result = LinkedHashSet<String>()
+
+        var name = ""
+        fqName.asString().split('.').asReversed().forEach {
+            if (ignoreCompanion && it == "Companion") return@forEach
+            name = name.withPrefix(it)
+            result.addName(name, validator)
+        }
+
+        if (result.isEmpty()) {
+            result.addName(defaultName(), validator)
+        }
+
+        return result
+    }
+
+    private fun String.withPrefix(prefix: String): String {
+        if (isEmpty()) return prefix
+        val c = this[0]
+        return (if (c in 'a'..'z') prefix.decapitalizeAsciiOnly()
+        else prefix.capitalizeAsciiOnly()) + capitalizeAsciiOnly()
     }
 
     private val COMMON_TYPE_PARAMETER_NAMES = listOf("T", "U", "V", "W", "X", "Y", "Z")
