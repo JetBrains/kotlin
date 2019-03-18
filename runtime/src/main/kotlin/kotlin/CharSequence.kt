@@ -16,6 +16,8 @@ public interface CharSequence {
 
     /**
      * Returns the character at the specified [index] in this character sequence.
+     *
+     * @throws [IndexOutOfBoundsException] if the [index] is out of bounds of this character sequence.
      */
     public operator fun get(index: Int): Char
 

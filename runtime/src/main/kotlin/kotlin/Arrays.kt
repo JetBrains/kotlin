@@ -35,9 +35,19 @@ public final class ByteArray {
     public val size: Int
         get() = getArrayLength()
 
+    /**
+     * Returns the array element at the given [index].  This method can be called using the index operator.
+     *
+     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
+     */
     @SymbolName("Kotlin_ByteArray_get")
     external public operator fun get(index: Int): Byte
 
+    /**
+     * Sets the element at the given [index] to the given [value]. This method can be called using the index operator.
+     *
+     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
+     */
     @SymbolName("Kotlin_ByteArray_set")
     external public operator fun set(index: Int, value: Byte): Unit
 
@@ -87,9 +97,19 @@ public final class CharArray {
     public val size: Int
         get() = getArrayLength()
 
+    /**
+     * Returns the array element at the given [index].  This method can be called using the index operator.
+     *
+     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
+     */
     @SymbolName("Kotlin_CharArray_get")
     external public operator fun get(index: Int): Char
 
+    /**
+     * Sets the element at the given [index] to the given [value]. This method can be called using the index operator.
+     *
+     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
+     */
     @SymbolName("Kotlin_CharArray_set")
     external public operator fun set(index: Int, value: Char): Unit
 
@@ -139,9 +159,19 @@ public final class ShortArray {
     public val size: Int
         get() = getArrayLength()
 
+    /**
+     * Returns the array element at the given [index].  This method can be called using the index operator.
+     *
+     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
+     */
     @SymbolName("Kotlin_ShortArray_get")
     external public operator fun get(index: Int): Short
 
+    /**
+     * Sets the element at the given [index] to the given [value]. This method can be called using the index operator.
+     *
+     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
+     */
     @SymbolName("Kotlin_ShortArray_set")
     external public operator fun set(index: Int, value: Short): Unit
 
@@ -191,9 +221,19 @@ public final class IntArray {
     public val size: Int
         get() = getArrayLength()
 
+    /**
+     * Returns the array element at the given [index].  This method can be called using the index operator.
+     *
+     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
+     */
     @SymbolName("Kotlin_IntArray_get")
     external public operator fun get(index: Int): Int
 
+    /**
+     * Sets the element at the given [index] to the given [value]. This method can be called using the index operator.
+     *
+     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
+     */
     @SymbolName("Kotlin_IntArray_set")
     external public operator fun set(index: Int, value: Int): Unit
 
@@ -243,9 +283,19 @@ public final class LongArray {
     public val size: Int
         get() = getArrayLength()
 
+    /**
+     * Returns the array element at the given [index].  This method can be called using the index operator.
+     *
+     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
+     */
     @SymbolName("Kotlin_LongArray_get")
     external public operator fun get(index: Int): Long
 
+    /**
+     * Sets the element at the given [index] to the given [value]. This method can be called using the index operator.
+     *
+     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
+     */
     @SymbolName("Kotlin_LongArray_set")
     external public operator fun set(index: Int, value: Long): Unit
 
@@ -295,9 +345,19 @@ public final class FloatArray {
     public val size: Int
         get() = getArrayLength()
 
+    /**
+     * Returns the array element at the given [index].  This method can be called using the index operator.
+     *
+     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
+     */
     @SymbolName("Kotlin_FloatArray_get")
     external public operator fun get(index: Int): Float
 
+    /**
+     * Sets the element at the given [index] to the given [value]. This method can be called using the index operator.
+     *
+     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
+     */
     @SymbolName("Kotlin_FloatArray_set")
     external public operator fun set(index: Int, value: Float): Unit
 
@@ -343,9 +403,19 @@ public final class DoubleArray {
     public val size: Int
         get() = getArrayLength()
 
+    /**
+     * Returns the array element at the given [index].  This method can be called using the index operator.
+     *
+     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
+     */
     @SymbolName("Kotlin_DoubleArray_get")
     external public operator fun get(index: Int): Double
 
+    /**
+     * Sets the element at the given [index] to the given [value]. This method can be called using the index operator.
+     *
+     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
+     */
     @SymbolName("Kotlin_DoubleArray_set")
     external public operator fun set(index: Int, value: Double): Unit
 
@@ -391,9 +461,19 @@ public final class BooleanArray {
     public val size: Int
         get() = getArrayLength()
 
+    /**
+     * Returns the array element at the given [index].  This method can be called using the index operator.
+     *
+     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
+     */
     @SymbolName("Kotlin_BooleanArray_get")
     external public operator fun get(index: Int): Boolean
 
+    /**
+     * Sets the element at the given [index] to the given [value]. This method can be called using the index operator.
+     *
+     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
+     */
     @SymbolName("Kotlin_BooleanArray_set")
     external public operator fun set(index: Int, value: Boolean): Unit
 

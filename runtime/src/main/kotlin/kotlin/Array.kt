@@ -45,10 +45,12 @@ public final class Array<T> {
 
     /**
      * Returns the array element at the specified [index]. This method can be called using the
-     * index operator:
+     * index operator.
      * ```
      * value = arr[index]
      * ```
+     *
+     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     @SymbolName("Kotlin_Array_get")
     @PointsTo(0b0100, 0, 0b0001) // <this> points to <return>, <return> points to <this>.
@@ -56,10 +58,12 @@ public final class Array<T> {
 
     /**
      * Sets the array element at the specified [index] to the specified [value]. This method can
-     * be called using the index operator:
+     * be called using the index operator.
      * ```
      * arr[index] = value
      * ```
+     *
+     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     @SymbolName("Kotlin_Array_set")
     @PointsTo(0b0100, 0, 0b0001) // <this> points to <value>, <value> points to <this>.
