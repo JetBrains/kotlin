@@ -49,12 +49,6 @@ class DiagnosticReporterByTrackingStrategy(
             )
             InstantiationOfAbstractClass::class.java -> tracingStrategy.instantiationOfAbstractClass(trace)
             AbstractSuperCall::class.java -> tracingStrategy.abstractSuperCall(trace)
-            OnlyInputTypesDiagnostic::class.java -> {
-                val typeVariable = (diagnostic as OnlyInputTypesDiagnostic).typeVariable as? TypeVariableFromCallableDescriptor ?: return
-                psiKotlinCall.psiCall.calleeExpression?.let {
-                    trace.report(TYPE_INFERENCE_ONLY_INPUT_TYPES.on(it, typeVariable.originalTypeParameter))
-                }
-            }
         }
     }
 

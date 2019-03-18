@@ -13,16 +13,12 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintS
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.ResultTypeResolver
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
-import org.jetbrains.kotlin.resolve.calls.model.OnlyInputTypesDiagnostic
-import org.jetbrains.kotlin.types.IntersectionTypeConstructor
 import org.jetbrains.kotlin.types.StubType
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.UnwrappedType
-import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.utils.SmartList
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class NewConstraintSystemImpl(
     private val constraintInjector: ConstraintInjector,
@@ -246,8 +242,7 @@ class NewConstraintSystemImpl(
         checkState(State.BUILDING, State.COMPLETION)
 
         constraintInjector.addInitialEqualityConstraint(this, variable.defaultType, resultType, FixVariableConstraintPosition(variable))
-        val variableWithConstraints = notFixedTypeVariables.remove(variable.freshTypeConstructor)
-        checkOnlyInputTypesAnnotation(variableWithConstraints, resultType)
+        notFixedTypeVariables.remove(variable.freshTypeConstructor)
 
         for (variableWithConstraint in notFixedTypeVariables.values) {
             variableWithConstraint.removeConstrains {
@@ -256,21 +251,6 @@ class NewConstraintSystemImpl(
         }
 
         storage.fixedTypeVariables[variable.freshTypeConstructor] = resultType
-    }
-
-    private fun checkOnlyInputTypesAnnotation(
-        variableWithConstraints: MutableVariableWithConstraints?,
-        resultType: UnwrappedType
-    ) {
-        if (variableWithConstraints == null || !variableWithConstraints.typeVariable.hasOnlyInputTypesAnnotation()) return
-        val resultTypeIsInputType = variableWithConstraints.projectedInputCallTypes.any { inputType ->
-            inputType.constructor.safeAs<IntersectionTypeConstructor>()?.let { constructor ->
-                constructor.supertypes.any { NewKotlinTypeChecker.equalTypes(resultType, it) }
-            } ?: NewKotlinTypeChecker.equalTypes(resultType, inputType)
-        }
-        if (!resultTypeIsInputType) {
-            addError(OnlyInputTypesDiagnostic(variableWithConstraints.typeVariable))
-        }
     }
 
     // KotlinConstraintSystemCompleter.Context, PostponedArgumentsAnalyzer.Context
