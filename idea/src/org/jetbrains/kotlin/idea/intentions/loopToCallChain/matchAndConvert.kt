@@ -379,6 +379,7 @@ data class IntroduceIndexData(
 )
 
 fun matchIndexToIntroduce(loop: KtForExpression, reformat: Boolean): IntroduceIndexData? {
+    if (loop.destructuringDeclaration != null) return null
     val (inputVariable, indexVariable) = extractLoopData(loop) ?: return null
     if (indexVariable != null) return null // loop is already with "withIndex"
 
