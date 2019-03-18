@@ -195,7 +195,7 @@ fun IrBuilderWithScope.irEquals(arg1: IrExpression, arg2: IrExpression, origin: 
 
 fun IrBuilderWithScope.irNotEquals(arg1: IrExpression, arg2: IrExpression) =
     primitiveOp1(
-        startOffset, endOffset, context.irBuiltIns.booleanNotSymbol, IrStatementOrigin.EXCLEQ,
+        startOffset, endOffset, context.irBuiltIns.booleanNotSymbol, context.irBuiltIns.booleanType, IrStatementOrigin.EXCLEQ,
         irEquals(arg1, arg2, origin = IrStatementOrigin.EXCLEQ)
     )
 

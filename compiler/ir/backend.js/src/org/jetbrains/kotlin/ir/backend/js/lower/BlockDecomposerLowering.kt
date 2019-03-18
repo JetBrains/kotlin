@@ -266,7 +266,7 @@ class BlockDecomposerTransformer(private val context: JsIrBackendContext) : IrEl
                 val newLoopCondition = newCondition.statements.last() as IrExpression
 
                 val breakCond = JsIrBuilder.buildCall(booleanNotSymbol).apply {
-                    putValueArgument(0, newLoopCondition)
+                    dispatchReceiver = newLoopCondition
                 }
 
                 newLoopBody.statements += JsIrBuilder.buildIfElse(unitType, breakCond, thenBlock)

@@ -30,7 +30,7 @@ internal fun IrModuleFragment.replaceUnboundSymbols(context: JsIrBackendContext)
     val collector = DeclarationSymbolCollector()
     with(collector) {
         with(irBuiltins) {
-            for (op in arrayOf(eqeqeqFun, eqeqFun, throwNpeFun, booleanNotFun, noWhenBranchMatchedExceptionFun) +
+            for (op in arrayOf(eqeqeqFun, eqeqFun, throwNpeFun, noWhenBranchMatchedExceptionFun) +
                     lessFunByOperandType.values +
                     lessOrEqualFunByOperandType.values +
                     greaterOrEqualFunByOperandType.values +

@@ -18016,13 +18016,9 @@ public final class KotlinIr {
        */
       NULLARY(1, 2),
       /**
-       * <code>UNARY = 3;</code>
-       */
-      UNARY(2, 3),
-      /**
        * <code>BINARY = 4;</code>
        */
-      BINARY(3, 4),
+      BINARY(2, 4),
       ;
 
       /**
@@ -18033,10 +18029,6 @@ public final class KotlinIr {
        * <code>NULLARY = 2;</code>
        */
       public static final int NULLARY_VALUE = 2;
-      /**
-       * <code>UNARY = 3;</code>
-       */
-      public static final int UNARY_VALUE = 3;
       /**
        * <code>BINARY = 4;</code>
        */
@@ -18049,7 +18041,6 @@ public final class KotlinIr {
         switch (value) {
           case 1: return NOT_PRIMITIVE;
           case 2: return NULLARY;
-          case 3: return UNARY;
           case 4: return BINARY;
           default: return null;
         }

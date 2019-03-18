@@ -107,54 +107,6 @@ class IrNullaryPrimitiveImpl(
         IrNullaryPrimitiveImpl(startOffset, endOffset, type, newOrigin, newCallee)
 }
 
-class IrUnaryPrimitiveImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
-    origin: IrStatementOrigin?,
-    symbol: IrFunctionSymbol
-) : IrPrimitiveCallBase(startOffset, endOffset, type, origin, symbol, 1),
-    IrCallWithShallowCopy {
-
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        type: IrType,
-        origin: IrStatementOrigin?,
-        symbol: IrFunctionSymbol,
-        argument: IrExpression
-    ) : this(startOffset, endOffset, type, origin, symbol) {
-        this.argument = argument
-    }
-
-    lateinit var argument: IrExpression
-
-    override fun getValueArgument(index: Int): IrExpression? {
-        return when (index) {
-            ARGUMENT0 -> argument
-            else -> null
-        }
-    }
-
-    override fun putValueArgument(index: Int, valueArgument: IrExpression?) {
-        when (index) {
-            ARGUMENT0 -> argument = valueArgument ?: throw AssertionError("Primitive call $descriptor argument is null")
-            else -> throw AssertionError("Primitive call $descriptor: no such argument index $index")
-        }
-    }
-
-    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        argument.accept(visitor, data)
-    }
-
-    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        argument = argument.transform(transformer, data)
-    }
-
-    override fun shallowCopy(newOrigin: IrStatementOrigin?, newCallee: IrFunctionSymbol, newSuperQualifier: IrClassSymbol?): IrCall =
-        IrUnaryPrimitiveImpl(startOffset, endOffset, type, newOrigin, newCallee)
-}
-
 class IrBinaryPrimitiveImpl(
     startOffset: Int,
     endOffset: Int,

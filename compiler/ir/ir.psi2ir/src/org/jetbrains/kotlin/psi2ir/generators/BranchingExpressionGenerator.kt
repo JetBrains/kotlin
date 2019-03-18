@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.buildStatement
 import org.jetbrains.kotlin.ir.builders.irIfThenMaybeElse
+import org.jetbrains.kotlin.ir.builders.primitiveOp1
 import org.jetbrains.kotlin.ir.builders.whenComma
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
@@ -218,10 +219,11 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
             irSubject.defaultLoad()
         )
         return if (ktCondition.isNegated)
-            IrUnaryPrimitiveImpl(
+            primitiveOp1(
                 ktCondition.startOffsetSkippingComments, ktCondition.endOffset,
+                context.irBuiltIns.booleanNotSymbol,
                 context.irBuiltIns.booleanType,
-                IrStatementOrigin.EXCL, context.irBuiltIns.booleanNotSymbol,
+                IrStatementOrigin.EXCL,
                 irInstanceOf
             )
         else
@@ -237,10 +239,11 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
             IrStatementOrigin.IN ->
                 irInCall
             IrStatementOrigin.NOT_IN ->
-                IrUnaryPrimitiveImpl(
+                primitiveOp1(
                     ktCondition.startOffsetSkippingComments, ktCondition.endOffset,
+                    context.irBuiltIns.booleanNotSymbol,
                     context.irBuiltIns.booleanType,
-                    IrStatementOrigin.EXCL, context.irBuiltIns.booleanNotSymbol,
+                    IrStatementOrigin.EXCL,
                     irInCall
                 )
             else -> throw AssertionError("Expected 'in' or '!in', got $inOperator")

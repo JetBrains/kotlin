@@ -232,7 +232,6 @@ message IrCall {
   enum Primitive {
     NOT_PRIMITIVE = 1;
     NULLARY = 2;
-    UNARY = 3;
     BINARY = 4;
   }
   required Primitive kind = 1;

@@ -113,7 +113,7 @@ fun IrBuilderWithScope.irIfThen(condition: IrExpression, thenPart: IrExpression)
     }
 
 fun IrBuilderWithScope.irNot(arg: IrExpression) =
-    primitiveOp1(startOffset, endOffset, context.irBuiltIns.booleanNotSymbol, IrStatementOrigin.EXCL, arg)
+    primitiveOp1(startOffset, endOffset, context.irBuiltIns.booleanNotSymbol, context.irBuiltIns.booleanType, IrStatementOrigin.EXCL, arg)
 
 fun IrBuilderWithScope.irThrow(arg: IrExpression) =
     IrThrowImpl(startOffset, endOffset, context.irBuiltIns.nothingType, arg)

@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrBinaryPrimitiveImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrNullaryPrimitiveImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrUnaryPrimitiveImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -350,8 +349,6 @@ open class IrModuleSerializer(
     private fun irCallToPrimitiveKind(call: IrCall): KotlinIr.IrCall.Primitive = when (call) {
         is IrNullaryPrimitiveImpl
         -> KotlinIr.IrCall.Primitive.NULLARY
-        is IrUnaryPrimitiveImpl
-        -> KotlinIr.IrCall.Primitive.UNARY
         is IrBinaryPrimitiveImpl
         -> KotlinIr.IrCall.Primitive.BINARY
         else

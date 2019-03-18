@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
@@ -195,7 +196,6 @@ class IrBuiltIns(
     val throwNpeFun = defineOperator(OperatorNames.THROW_NPE, nothing, listOf())
     val throwCceFun = defineOperator(OperatorNames.THROW_CCE, nothing, listOf())
     val throwIseFun = defineOperator(OperatorNames.THROW_ISE, nothing, listOf())
-    val booleanNotFun = defineOperator(OperatorNames.NOT, bool, listOf(bool))
     val noWhenBranchMatchedExceptionFun = defineOperator(OperatorNames.NO_WHEN_BRANCH_MATCHED_EXCEPTION, nothing, listOf())
     val illegalArgumentExceptionFun = defineOperator(OperatorNames.ILLEGAL_ARGUMENT_EXCEPTION, nothing, listOf(string))
 
@@ -203,7 +203,7 @@ class IrBuiltIns(
     val eqeq = eqeqFun.descriptor
     val throwNpe = throwNpeFun.descriptor
     val throwCce = throwCceFun.descriptor
-    val booleanNot = booleanNotFun.descriptor
+    val booleanNot = builtIns.boolean.unsubstitutedMemberScope.getContributedFunctions(Name.identifier("not"), NoLookupLocation.FROM_BACKEND).single()
     val noWhenBranchMatchedException = noWhenBranchMatchedExceptionFun.descriptor
     val illegalArgumentException = illegalArgumentExceptionFun.descriptor
 
@@ -212,7 +212,7 @@ class IrBuiltIns(
     val throwNpeSymbol = throwNpeFun.symbol
     val throwCceSymbol = throwCceFun.symbol
     val throwIseSymbol = throwIseFun.symbol
-    val booleanNotSymbol = booleanNotFun.symbol
+    val booleanNotSymbol = symbolTable.referenceSimpleFunction(booleanNot)
     val noWhenBranchMatchedExceptionSymbol = noWhenBranchMatchedExceptionFun.symbol
     val illegalArgumentExceptionSymbol = illegalArgumentExceptionFun.symbol
 
@@ -262,7 +262,6 @@ class IrBuiltIns(
         const val EQEQ = "EQEQ"
         const val EQEQEQ = "EQEQEQ"
         const val IEEE754_EQUALS = "ieee754equals"
-        const val NOT = "NOT"
         const val THROW_NPE = "THROW_NPE"
         const val THROW_CCE = "THROW_CCE"
         const val THROW_ISE = "THROW_ISE"

@@ -233,7 +233,7 @@ class StateMachineBuilder(
         l.condition.acceptVoid(this)
 
         transformLastExpression {
-            val exitCond = JsIrBuilder.buildCall(booleanNotSymbol).apply { putValueArgument(0, it) }
+            val exitCond = JsIrBuilder.buildCall(booleanNotSymbol).apply { dispatchReceiver = it }
             val irBreak = buildDispatchBlock(exit)
             JsIrBuilder.buildIfElse(unit, exitCond, irBreak)
         }
