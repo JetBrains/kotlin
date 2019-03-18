@@ -26,18 +26,13 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.renderer.AnnotationArgumentsRenderingPolicy
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.utils.Printer
 
-fun IrElement.dump(
-    symbolRenderer: IrSymbolRenderer = IrSymbolRenderer.Default,
-    typeRenderer: IrTypeRenderer = IrTypeRenderer.Default
-): String {
-    val sb = StringBuilder()
-    accept(DumpIrTreeVisitor(sb, symbolRenderer, typeRenderer), "")
-    return sb.toString()
-}
+fun IrElement.dump(): String =
+    StringBuilder().also { sb ->
+        accept(DumpIrTreeVisitor(sb), "")
+    }.toString()
 
 fun IrFile.dumpTreesFromLineNumber(lineNumber: Int): String {
     val sb = StringBuilder()
@@ -46,22 +41,12 @@ fun IrFile.dumpTreesFromLineNumber(lineNumber: Int): String {
 }
 
 class DumpIrTreeVisitor(
-    out: Appendable,
-    symbolRenderer: IrSymbolRenderer = IrSymbolRenderer.Default,
-    private val typeRenderer: IrTypeRenderer = IrTypeRenderer.Default
+    out: Appendable
 ) : IrElementVisitor<Unit, String> {
 
-    private fun IrType.render() = typeRenderer.render(this)
-
     private val printer = Printer(out, "  ")
-    private val elementRenderer = RenderIrElementVisitor(symbolRenderer, typeRenderer)
-
-    companion object {
-        val ANNOTATIONS_RENDERER = DescriptorRenderer.withOptions {
-            verbose = true
-            annotationArgumentsRenderingPolicy = AnnotationArgumentsRenderingPolicy.UNLESS_EMPTY
-        }
-    }
+    private val elementRenderer = RenderIrElementVisitor()
+    private fun IrType.render() = elementRenderer.renderType(this)
 
     override fun visitElement(element: IrElement, data: String) {
         element.dumpLabeledElementWith(data) {
@@ -103,7 +88,7 @@ class DumpIrTreeVisitor(
     override fun visitSimpleFunction(declaration: IrSimpleFunction, data: String) {
         declaration.dumpLabeledElementWith(data) {
             dumpAnnotations(declaration)
-            declaration.correspondingProperty?.dumpInternal("correspondingProperty")
+            declaration.correspondingPropertySymbol?.dumpInternal("correspondingProperty")
             declaration.overriddenSymbols.dumpItems<IrSymbol>("overridden") {
                 it.dumpDeclarationElementOrDescriptor()
             }
@@ -288,13 +273,11 @@ class DumpIrTreeVisitor(
         }
     }
 
-    private inline fun <T> Collection<T>.dumpItemsWith(caption: String, renderElement: (T) -> String) {
-        if (isEmpty()) return
-        indented(caption) {
-            forEach {
-                printer.println(renderElement(it))
-            }
-        }
+    private fun IrSymbol.dumpInternal(label: String? = null) {
+        if (isBound)
+            owner.dumpInternal(label)
+        else
+            printer.println("$label: UNBOUND ${javaClass.simpleName}")
     }
 
     private fun IrElement.dumpInternal(label: String? = null) {

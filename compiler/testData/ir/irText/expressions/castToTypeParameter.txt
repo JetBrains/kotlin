@@ -1,102 +1,102 @@
 FILE fqName:<root> fileName:/castToTypeParameter.kt
-  FUN name:castFun visibility:public modality:FINAL <T> (x:kotlin.Any) returnType:<root>.castFun.T flags:[]
+  FUN name:castFun visibility:public modality:FINAL <T> (x:kotlin.Any) returnType:T of <root>.castFun 
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
-    VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:[]
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any 
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='FUN name:castFun visibility:public modality:FINAL <T> (x:kotlin.Any) returnType:<root>.castFun.T flags:[]'
-        TYPE_OP type=<root>.castFun.T origin=CAST typeOperand=<root>.castFun.T
+      RETURN type=kotlin.Nothing from='public final fun castFun <T> (x: kotlin.Any): T of <root>.castFun declared in <root>'
+        TYPE_OP type=T of <root>.castFun origin=CAST typeOperand=T of <root>.castFun
           typeOperand: TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
-          GET_VAR 'VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:[]' type=kotlin.Any origin=null
-  FUN name:castExtFun visibility:public modality:FINAL <T> ($receiver:kotlin.Any) returnType:<root>.castExtFun.T flags:[]
+          GET_VAR 'x: kotlin.Any declared in <root>.castFun' type=kotlin.Any origin=null
+  FUN name:castExtFun visibility:public modality:FINAL <T> ($receiver:kotlin.Any) returnType:T of <root>.castExtFun 
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
-    $receiver: VALUE_PARAMETER name:<this> type:kotlin.Any flags:[]
+    $receiver: VALUE_PARAMETER name:<this> type:kotlin.Any 
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='FUN name:castExtFun visibility:public modality:FINAL <T> ($receiver:kotlin.Any) returnType:<root>.castExtFun.T flags:[]'
-        TYPE_OP type=<root>.castExtFun.T origin=CAST typeOperand=<root>.castExtFun.T
+      RETURN type=kotlin.Nothing from='public final fun castExtFun <T> (): T of <root>.castExtFun declared in <root>'
+        TYPE_OP type=T of <root>.castExtFun origin=CAST typeOperand=T of <root>.castExtFun
           typeOperand: TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
-          GET_VAR 'VALUE_PARAMETER name:<this> type:kotlin.Any flags:[]' type=kotlin.Any origin=null
-  PROPERTY name:castExtVal visibility:public modality:FINAL flags:[val]
-    FUN name:<get-castExtVal> visibility:public modality:FINAL <T> ($receiver:<root>.<get-castExtVal>.T) returnType:<root>.<get-castExtVal>.T flags:[]
-      correspondingProperty: PROPERTY name:castExtVal visibility:public modality:FINAL flags:[val]
+          GET_VAR '<this>: kotlin.Any declared in <root>.castExtFun' type=kotlin.Any origin=null
+  PROPERTY name:castExtVal visibility:public modality:FINAL [val] 
+    FUN name:<get-castExtVal> visibility:public modality:FINAL <T> ($receiver:T of <root>.<get-castExtVal>) returnType:T of <root>.<get-castExtVal> 
+      correspondingProperty: PROPERTY name:castExtVal visibility:public modality:FINAL [val] 
       TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
-      $receiver: VALUE_PARAMETER name:<this> type:<root>.<get-castExtVal>.T flags:[]
+      $receiver: VALUE_PARAMETER name:<this> type:T of <root>.<get-castExtVal> 
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='FUN name:<get-castExtVal> visibility:public modality:FINAL <T> ($receiver:<root>.<get-castExtVal>.T) returnType:<root>.<get-castExtVal>.T flags:[]'
-          TYPE_OP type=<root>.<get-castExtVal>.T origin=CAST typeOperand=<root>.<get-castExtVal>.T
+        RETURN type=kotlin.Nothing from='public final fun <get-castExtVal> <T> (): T of <root>.<get-castExtVal> declared in <root>'
+          TYPE_OP type=T of <root>.<get-castExtVal> origin=CAST typeOperand=T of <root>.<get-castExtVal>
             typeOperand: TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
-            GET_VAR 'VALUE_PARAMETER name:<this> type:<root>.<get-castExtVal>.T flags:[]' type=<root>.<get-castExtVal>.T origin=null
-  CLASS CLASS name:Host modality:FINAL visibility:public flags:[] superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Host<<root>.Host.T> flags:[]
+            GET_VAR '<this>: T of <root>.<get-castExtVal> declared in <root>.<get-castExtVal>' type=T of <root>.<get-castExtVal> origin=null
+  CLASS CLASS name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Host<T of <root>.Host> 
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
-    CONSTRUCTOR visibility:public <> () returnType:<root>.Host<<root>.Host.T> flags:[primary]
+    CONSTRUCTOR visibility:public <> () returnType:<root>.Host<T of <root>.Host> [primary] 
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> () returnType:kotlin.Any flags:[primary]'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Host modality:FINAL visibility:public flags:[] superTypes:[kotlin.Any]'
-    FUN name:castMemberFun visibility:public modality:FINAL <> ($this:<root>.Host<<root>.Host.T>, x:kotlin.Any) returnType:<root>.Host.T flags:[]
-      $this: VALUE_PARAMETER name:<this> type:<root>.Host<<root>.Host.T> flags:[]
-      VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:[]
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]'
+    FUN name:castMemberFun visibility:public modality:FINAL <> ($this:<root>.Host<T of <root>.Host>, x:kotlin.Any) returnType:T of <root>.Host 
+      $this: VALUE_PARAMETER name:<this> type:<root>.Host<T of <root>.Host> 
+      VALUE_PARAMETER name:x index:0 type:kotlin.Any 
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='FUN name:castMemberFun visibility:public modality:FINAL <> ($this:<root>.Host<<root>.Host.T>, x:kotlin.Any) returnType:<root>.Host.T flags:[]'
-          TYPE_OP type=<root>.Host.T origin=CAST typeOperand=<root>.Host.T
+        RETURN type=kotlin.Nothing from='public final fun castMemberFun (x: kotlin.Any): T of <root>.Host declared in <root>.Host'
+          TYPE_OP type=T of <root>.Host origin=CAST typeOperand=T of <root>.Host
             typeOperand: TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
-            GET_VAR 'VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:[]' type=kotlin.Any origin=null
-    FUN name:castGenericMemberFun visibility:public modality:FINAL <TF> ($this:<root>.Host<<root>.Host.T>, x:kotlin.Any) returnType:<root>.Host.castGenericMemberFun.TF flags:[]
+            GET_VAR 'x: kotlin.Any declared in <root>.Host.castMemberFun' type=kotlin.Any origin=null
+    FUN name:castGenericMemberFun visibility:public modality:FINAL <TF> ($this:<root>.Host<T of <root>.Host>, x:kotlin.Any) returnType:TF of <root>.Host.castGenericMemberFun 
       TYPE_PARAMETER name:TF index:0 variance: superTypes:[kotlin.Any?]
-      $this: VALUE_PARAMETER name:<this> type:<root>.Host<<root>.Host.T> flags:[]
-      VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:[]
+      $this: VALUE_PARAMETER name:<this> type:<root>.Host<T of <root>.Host> 
+      VALUE_PARAMETER name:x index:0 type:kotlin.Any 
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='FUN name:castGenericMemberFun visibility:public modality:FINAL <TF> ($this:<root>.Host<<root>.Host.T>, x:kotlin.Any) returnType:<root>.Host.castGenericMemberFun.TF flags:[]'
-          TYPE_OP type=<root>.Host.castGenericMemberFun.TF origin=CAST typeOperand=<root>.Host.castGenericMemberFun.TF
+        RETURN type=kotlin.Nothing from='public final fun castGenericMemberFun <TF> (x: kotlin.Any): TF of <root>.Host.castGenericMemberFun declared in <root>.Host'
+          TYPE_OP type=TF of <root>.Host.castGenericMemberFun origin=CAST typeOperand=TF of <root>.Host.castGenericMemberFun
             typeOperand: TYPE_PARAMETER name:TF index:0 variance: superTypes:[kotlin.Any?]
-            GET_VAR 'VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:[]' type=kotlin.Any origin=null
-    FUN name:castMemberExtFun visibility:public modality:FINAL <> ($this:<root>.Host<<root>.Host.T>, $receiver:kotlin.Any) returnType:<root>.Host.T flags:[]
-      $this: VALUE_PARAMETER name:<this> type:<root>.Host<<root>.Host.T> flags:[]
-      $receiver: VALUE_PARAMETER name:<this> type:kotlin.Any flags:[]
+            GET_VAR 'x: kotlin.Any declared in <root>.Host.castGenericMemberFun' type=kotlin.Any origin=null
+    FUN name:castMemberExtFun visibility:public modality:FINAL <> ($this:<root>.Host<T of <root>.Host>, $receiver:kotlin.Any) returnType:T of <root>.Host 
+      $this: VALUE_PARAMETER name:<this> type:<root>.Host<T of <root>.Host> 
+      $receiver: VALUE_PARAMETER name:<this> type:kotlin.Any 
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='FUN name:castMemberExtFun visibility:public modality:FINAL <> ($this:<root>.Host<<root>.Host.T>, $receiver:kotlin.Any) returnType:<root>.Host.T flags:[]'
-          TYPE_OP type=<root>.Host.T origin=CAST typeOperand=<root>.Host.T
+        RETURN type=kotlin.Nothing from='public final fun castMemberExtFun (): T of <root>.Host declared in <root>.Host'
+          TYPE_OP type=T of <root>.Host origin=CAST typeOperand=T of <root>.Host
             typeOperand: TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
-            GET_VAR 'VALUE_PARAMETER name:<this> type:kotlin.Any flags:[]' type=kotlin.Any origin=null
-    FUN name:castGenericMemberExtFun visibility:public modality:FINAL <TF> ($this:<root>.Host<<root>.Host.T>, $receiver:kotlin.Any) returnType:<root>.Host.castGenericMemberExtFun.TF flags:[]
+            GET_VAR '<this>: kotlin.Any declared in <root>.Host.castMemberExtFun' type=kotlin.Any origin=null
+    FUN name:castGenericMemberExtFun visibility:public modality:FINAL <TF> ($this:<root>.Host<T of <root>.Host>, $receiver:kotlin.Any) returnType:TF of <root>.Host.castGenericMemberExtFun 
       TYPE_PARAMETER name:TF index:0 variance: superTypes:[kotlin.Any?]
-      $this: VALUE_PARAMETER name:<this> type:<root>.Host<<root>.Host.T> flags:[]
-      $receiver: VALUE_PARAMETER name:<this> type:kotlin.Any flags:[]
+      $this: VALUE_PARAMETER name:<this> type:<root>.Host<T of <root>.Host> 
+      $receiver: VALUE_PARAMETER name:<this> type:kotlin.Any 
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='FUN name:castGenericMemberExtFun visibility:public modality:FINAL <TF> ($this:<root>.Host<<root>.Host.T>, $receiver:kotlin.Any) returnType:<root>.Host.castGenericMemberExtFun.TF flags:[]'
-          TYPE_OP type=<root>.Host.castGenericMemberExtFun.TF origin=CAST typeOperand=<root>.Host.castGenericMemberExtFun.TF
+        RETURN type=kotlin.Nothing from='public final fun castGenericMemberExtFun <TF> (): TF of <root>.Host.castGenericMemberExtFun declared in <root>.Host'
+          TYPE_OP type=TF of <root>.Host.castGenericMemberExtFun origin=CAST typeOperand=TF of <root>.Host.castGenericMemberExtFun
             typeOperand: TYPE_PARAMETER name:TF index:0 variance: superTypes:[kotlin.Any?]
-            GET_VAR 'VALUE_PARAMETER name:<this> type:kotlin.Any flags:[]' type=kotlin.Any origin=null
-    PROPERTY name:castMemberExtVal visibility:public modality:FINAL flags:[val]
-      FUN name:<get-castMemberExtVal> visibility:public modality:FINAL <> ($this:<root>.Host<<root>.Host.T>, $receiver:kotlin.Any) returnType:<root>.Host.T flags:[]
-        correspondingProperty: PROPERTY name:castMemberExtVal visibility:public modality:FINAL flags:[val]
-        $this: VALUE_PARAMETER name:<this> type:<root>.Host<<root>.Host.T> flags:[]
-        $receiver: VALUE_PARAMETER name:<this> type:kotlin.Any flags:[]
+            GET_VAR '<this>: kotlin.Any declared in <root>.Host.castGenericMemberExtFun' type=kotlin.Any origin=null
+    PROPERTY name:castMemberExtVal visibility:public modality:FINAL [val] 
+      FUN name:<get-castMemberExtVal> visibility:public modality:FINAL <> ($this:<root>.Host<T of <root>.Host>, $receiver:kotlin.Any) returnType:T of <root>.Host 
+        correspondingProperty: PROPERTY name:castMemberExtVal visibility:public modality:FINAL [val] 
+        $this: VALUE_PARAMETER name:<this> type:<root>.Host<T of <root>.Host> 
+        $receiver: VALUE_PARAMETER name:<this> type:kotlin.Any 
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='FUN name:<get-castMemberExtVal> visibility:public modality:FINAL <> ($this:<root>.Host<<root>.Host.T>, $receiver:kotlin.Any) returnType:<root>.Host.T flags:[]'
-            TYPE_OP type=<root>.Host.T origin=CAST typeOperand=<root>.Host.T
+          RETURN type=kotlin.Nothing from='public final fun <get-castMemberExtVal> (): T of <root>.Host declared in <root>.Host'
+            TYPE_OP type=T of <root>.Host origin=CAST typeOperand=T of <root>.Host
               typeOperand: TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
-              GET_VAR 'VALUE_PARAMETER name:<this> type:kotlin.Any flags:[]' type=kotlin.Any origin=null
-    PROPERTY name:castGenericMemberExtVal visibility:public modality:FINAL flags:[val]
-      FUN name:<get-castGenericMemberExtVal> visibility:public modality:FINAL <TV> ($this:<root>.Host<<root>.Host.T>, $receiver:<root>.Host.<get-castGenericMemberExtVal>.TV) returnType:<root>.Host.<get-castGenericMemberExtVal>.TV flags:[]
-        correspondingProperty: PROPERTY name:castGenericMemberExtVal visibility:public modality:FINAL flags:[val]
+              GET_VAR '<this>: kotlin.Any declared in <root>.Host.<get-castMemberExtVal>' type=kotlin.Any origin=null
+    PROPERTY name:castGenericMemberExtVal visibility:public modality:FINAL [val] 
+      FUN name:<get-castGenericMemberExtVal> visibility:public modality:FINAL <TV> ($this:<root>.Host<T of <root>.Host>, $receiver:TV of <root>.Host.<get-castGenericMemberExtVal>) returnType:TV of <root>.Host.<get-castGenericMemberExtVal> 
+        correspondingProperty: PROPERTY name:castGenericMemberExtVal visibility:public modality:FINAL [val] 
         TYPE_PARAMETER name:TV index:0 variance: superTypes:[kotlin.Any?]
-        $this: VALUE_PARAMETER name:<this> type:<root>.Host<<root>.Host.T> flags:[]
-        $receiver: VALUE_PARAMETER name:<this> type:<root>.Host.<get-castGenericMemberExtVal>.TV flags:[]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Host<T of <root>.Host> 
+        $receiver: VALUE_PARAMETER name:<this> type:TV of <root>.Host.<get-castGenericMemberExtVal> 
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='FUN name:<get-castGenericMemberExtVal> visibility:public modality:FINAL <TV> ($this:<root>.Host<<root>.Host.T>, $receiver:<root>.Host.<get-castGenericMemberExtVal>.TV) returnType:<root>.Host.<get-castGenericMemberExtVal>.TV flags:[]'
-            TYPE_OP type=<root>.Host.<get-castGenericMemberExtVal>.TV origin=CAST typeOperand=<root>.Host.<get-castGenericMemberExtVal>.TV
+          RETURN type=kotlin.Nothing from='public final fun <get-castGenericMemberExtVal> <TV> (): TV of <root>.Host.<get-castGenericMemberExtVal> declared in <root>.Host'
+            TYPE_OP type=TV of <root>.Host.<get-castGenericMemberExtVal> origin=CAST typeOperand=TV of <root>.Host.<get-castGenericMemberExtVal>
               typeOperand: TYPE_PARAMETER name:TV index:0 variance: superTypes:[kotlin.Any?]
-              GET_VAR 'VALUE_PARAMETER name:<this> type:<root>.Host.<get-castGenericMemberExtVal>.TV flags:[]' type=<root>.Host.<get-castGenericMemberExtVal>.TV origin=null
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:[]
+              GET_VAR '<this>: TV of <root>.Host.<get-castGenericMemberExtVal> declared in <root>.Host.<get-castGenericMemberExtVal>' type=TV of <root>.Host.<get-castGenericMemberExtVal> origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:[]
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:[]
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:[]
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:[]
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:[]
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:[]
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:[]
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:[]
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:[]
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 

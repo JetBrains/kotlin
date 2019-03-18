@@ -1,87 +1,87 @@
 FILE fqName:<root> fileName:/kt16905.kt
-  CLASS CLASS name:Outer modality:FINAL visibility:public flags:[] superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer flags:[]
-    CONSTRUCTOR visibility:public <> () returnType:<root>.Outer flags:[primary]
+  CLASS CLASS name:Outer modality:FINAL visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer 
+    CONSTRUCTOR visibility:public <> () returnType:<root>.Outer [primary] 
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> () returnType:kotlin.Any flags:[primary]'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Outer modality:FINAL visibility:public flags:[] superTypes:[kotlin.Any]'
-    CLASS CLASS name:Inner modality:OPEN visibility:public flags:[inner] superTypes:[kotlin.Any]
-      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer.Inner flags:[]
-      CONSTRUCTOR visibility:public <> ($this:<root>.Outer) returnType:<root>.Outer.Inner flags:[primary]
-        $outer: VALUE_PARAMETER name:<this> type:<root>.Outer flags:[]
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Outer modality:FINAL visibility:public superTypes:[kotlin.Any]'
+    CLASS CLASS name:Inner modality:OPEN visibility:public [inner] superTypes:[kotlin.Any]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer.Inner 
+      CONSTRUCTOR visibility:public <> ($this:<root>.Outer) returnType:<root>.Outer.Inner [primary] 
+        $outer: VALUE_PARAMETER name:<this> type:<root>.Outer 
         BLOCK_BODY
-          DELEGATING_CONSTRUCTOR_CALL 'CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> () returnType:kotlin.Any flags:[primary]'
-          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Inner modality:OPEN visibility:public flags:[inner] superTypes:[kotlin.Any]'
-      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:[]
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Inner modality:OPEN visibility:public [inner] superTypes:[kotlin.Any]'
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
         overridden:
-          FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:[]
-        $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:[]
-        VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:[]
-      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:[]
+          FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+        VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
         overridden:
-          FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:[]
-        $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:[]
-      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:[]
+          FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
         overridden:
-          FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:[]
-        $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:[]
-    CLASS CLASS name:InnerDerived0 modality:FINAL visibility:public flags:[inner] superTypes:[<root>.Outer.Inner]
-      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer.InnerDerived0 flags:[]
-      CONSTRUCTOR visibility:public <> ($this:<root>.Outer) returnType:<root>.Outer.InnerDerived0 flags:[primary]
-        $outer: VALUE_PARAMETER name:<this> type:<root>.Outer flags:[]
+          FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+    CLASS CLASS name:InnerDerived0 modality:FINAL visibility:public [inner] superTypes:[<root>.Outer.Inner]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer.InnerDerived0 
+      CONSTRUCTOR visibility:public <> ($this:<root>.Outer) returnType:<root>.Outer.InnerDerived0 [primary] 
+        $outer: VALUE_PARAMETER name:<this> type:<root>.Outer 
         BLOCK_BODY
-          DELEGATING_CONSTRUCTOR_CALL 'CONSTRUCTOR visibility:public <> ($this:<root>.Outer) returnType:<root>.Outer.Inner flags:[primary]'
-            $this: GET_VAR 'VALUE_PARAMETER name:<this> type:<root>.Outer flags:[]' type=<root>.Outer origin=null
-          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:InnerDerived0 modality:FINAL visibility:public flags:[inner] superTypes:[<root>.Outer.Inner]'
-      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:[]
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Outer.Inner'
+            $this: GET_VAR '<this>: <root>.Outer declared in <root>.Outer.InnerDerived0.<init>' type=<root>.Outer origin=null
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:InnerDerived0 modality:FINAL visibility:public [inner] superTypes:[<root>.Outer.Inner]'
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
         overridden:
-          FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:[]
-        $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:[]
-        VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:[]
-      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:[]
+          FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+        VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
         overridden:
-          FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:[]
-        $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:[]
-      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:[]
+          FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
         overridden:
-          FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:[]
-        $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:[]
-    CLASS CLASS name:InnerDerived1 modality:FINAL visibility:public flags:[inner] superTypes:[<root>.Outer.Inner]
-      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer.InnerDerived1 flags:[]
-      CONSTRUCTOR visibility:public <> ($this:<root>.Outer) returnType:<root>.Outer.InnerDerived1 flags:[primary]
-        $outer: VALUE_PARAMETER name:<this> type:<root>.Outer flags:[]
+          FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+    CLASS CLASS name:InnerDerived1 modality:FINAL visibility:public [inner] superTypes:[<root>.Outer.Inner]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer.InnerDerived1 
+      CONSTRUCTOR visibility:public <> ($this:<root>.Outer) returnType:<root>.Outer.InnerDerived1 [primary] 
+        $outer: VALUE_PARAMETER name:<this> type:<root>.Outer 
         BLOCK_BODY
-          DELEGATING_CONSTRUCTOR_CALL 'CONSTRUCTOR visibility:public <> ($this:<root>.Outer) returnType:<root>.Outer.Inner flags:[primary]'
-            $this: GET_VAR 'VALUE_PARAMETER name:<this> type:<root>.Outer flags:[]' type=<root>.Outer origin=null
-          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:InnerDerived1 modality:FINAL visibility:public flags:[inner] superTypes:[<root>.Outer.Inner]'
-      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:[]
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Outer.Inner'
+            $this: GET_VAR '<this>: <root>.Outer declared in <root>.Outer.InnerDerived1.<init>' type=<root>.Outer origin=null
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:InnerDerived1 modality:FINAL visibility:public [inner] superTypes:[<root>.Outer.Inner]'
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
         overridden:
-          FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:[]
-        $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:[]
-        VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:[]
-      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:[]
+          FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+        VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
         overridden:
-          FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:[]
-        $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:[]
-      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:[]
+          FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
         overridden:
-          FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:[]
-        $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:[]
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:[]
+          FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:[]
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:[]
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:[]
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:[]
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:[]
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:[]
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:[]
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:[]
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:[]
-  FUN name:test visibility:public modality:FINAL <> () returnType:<root>.Outer.Inner flags:[]
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+  FUN name:test visibility:public modality:FINAL <> () returnType:<root>.Outer.Inner 
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='FUN name:test visibility:public modality:FINAL <> () returnType:<root>.Outer.Inner flags:[]'
-        CALL 'CONSTRUCTOR visibility:public <> ($this:<root>.Outer) returnType:<root>.Outer.Inner flags:[primary]' type=<root>.Outer.Inner origin=null
-          $this: CALL 'CONSTRUCTOR visibility:public <> () returnType:<root>.Outer flags:[primary]' type=<root>.Outer origin=null
+      RETURN type=kotlin.Nothing from='public final fun test (): <root>.Outer.Inner declared in <root>'
+        CALL 'public constructor <init> () [primary] declared in <root>.Outer.Inner' type=<root>.Outer.Inner origin=null
+          $this: CALL 'public constructor <init> () [primary] declared in <root>.Outer' type=<root>.Outer origin=null

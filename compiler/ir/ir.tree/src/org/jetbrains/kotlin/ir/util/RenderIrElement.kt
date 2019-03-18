@@ -25,101 +25,201 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
-import org.jetbrains.kotlin.renderer.OverrideRenderingPolicy
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addIfNotNull
 
-fun IrElement.render(
-    symbolRenderer: IrSymbolRenderer = IrSymbolRenderer.Default,
-    typeRenderer: IrTypeRenderer = IrTypeRenderer.Default
-) =
-    accept(RenderIrElementVisitor(symbolRenderer, typeRenderer), null)
+fun IrElement.render() =
+    accept(RenderIrElementVisitor(), null)
 
-interface IrSymbolRenderer {
-    fun render(symbol: IrSymbol): String
+class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
 
-    object Default : IrSymbolRenderer {
-        override fun render(symbol: IrSymbol): String =
-            symbol.run {
-                if (isBound) owner.render() else "UNBOUND ${this.javaClass.simpleName}"
+    fun renderType(type: IrType) = type.render()
+
+    private fun IrType.render() =
+        "${renderTypeAnnotations(annotations)}${renderTypeInner()}"
+
+    private fun IrType.renderTypeInner() =
+        when (this) {
+            is IrDynamicType -> "dynamic"
+
+            is IrErrorType -> "IrErrorType"
+
+            is IrSimpleType -> buildString {
+                append(classifier.renderClassifierFqn())
+                if (arguments.isNotEmpty()) {
+                    append(
+                        arguments.joinToString(prefix = "<", postfix = ">", separator = ", ") {
+                            it.renderTypeArgument()
+                        }
+                    )
+                }
+                if (hasQuestionMark) {
+                    append('?')
+                }
             }
-    }
-}
 
-interface IrTypeRenderer {
-    fun render(type: IrType): String
-
-    object Default : IrTypeRenderer {
-        override fun render(type: IrType): String {
-            return type.run { "${renderTypeAnnotations(annotations)}${renderTypeInner()}" }
+            else -> "{${javaClass.simpleName} $this}"
         }
 
-        private fun renderTypeAnnotations(annotations: List<IrCall>) =
-            if (annotations.isEmpty())
-                ""
-            else
-                annotations.joinToString(prefix = "", postfix = " ", separator = " ") { "@[${it.render()}]" }
+    private fun IrTypeArgument.renderTypeArgument(): String =
+        when (this) {
+            is IrStarProjection -> "*"
+
+            is IrTypeProjection -> buildString {
+                append(variance.label)
+                if (variance != Variance.INVARIANT) append(' ')
+                append(type.render())
+            }
+
+            else -> "IrTypeArgument[$this]"
+        }
 
 
-        private fun IrType.renderTypeInner(): String =
-            when (this) {
-                is IrDynamicType -> "dynamic"
+    private fun renderTypeAnnotations(annotations: List<IrCall>) =
+        if (annotations.isEmpty())
+            ""
+        else
+            annotations.joinToString(prefix = "", postfix = " ", separator = " ") { "@[${it.render()}]" }
 
-                is IrErrorType -> "ERROR"
+    private fun IrSymbol.renderReference() =
+        if (isBound)
+            owner.accept(symbolReferenceRenderer, null)
+        else
+            "UNBOUND ${javaClass.simpleName}"
 
-                is IrSimpleType -> buildString {
-                    append(classifier.renderClassifierFqn())
-                    if (arguments.isNotEmpty()) {
-                        append(
-                            arguments.joinToString(prefix = "<", postfix = ">", separator = ", ") {
-                                it.renderTypeArgument()
-                            }
-                        )
+    private val symbolReferenceRenderer = BoundSymbolReferenceRenderer()
+
+    private inner class BoundSymbolReferenceRenderer :
+        IrElementVisitor<String, Nothing?> {
+
+        override fun visitElement(element: IrElement, data: Nothing?) =
+            element.accept(this@RenderIrElementVisitor, null)
+
+        override fun visitVariable(declaration: IrVariable, data: Nothing?) =
+            buildString {
+                if (declaration.isVar) append("var ") else append("val ")
+
+                append(declaration.name.asString())
+                append(": ")
+                append(declaration.type.render())
+                append(' ')
+
+                append(declaration.renderVariableFlags())
+
+                renderDeclaredIn(declaration)
+            }
+
+        override fun visitValueParameter(declaration: IrValueParameter, data: Nothing?) =
+            buildString {
+                append(declaration.name.asString())
+                append(": ")
+                append(declaration.type.render())
+                append(' ')
+
+                append(declaration.renderValueParameterFlags())
+
+                renderDeclaredIn(declaration)
+            }
+
+        override fun visitFunction(declaration: IrFunction, data: Nothing?) =
+            buildString {
+                append(declaration.visibility)
+                append(' ')
+
+                if (declaration is IrSimpleFunction) {
+                    append(declaration.modality.toString().toLowerCase())
+                    append(' ')
+                }
+
+                when (declaration) {
+                    is IrSimpleFunction -> append("fun ")
+                    is IrConstructor -> append("constructor ")
+                    else -> append("{${declaration.javaClass.simpleName}}")
+                }
+
+                append(declaration.name.asString())
+                append(' ')
+
+                if (declaration.typeParameters.isNotEmpty()) {
+                    appendListWith(declaration.typeParameters, "<", ">", ", ") { typeParameter ->
+                        append(typeParameter.name.asString())
                     }
-                    if (hasQuestionMark) {
-                        append('?')
+                    append(' ')
+                }
+
+                appendListWith(declaration.valueParameters, "(", ")", ", ") { valueParameter ->
+                    val varargElementType = valueParameter.varargElementType
+                    if (varargElementType != null) {
+                        append("vararg ")
+                        append(valueParameter.name.asString())
+                        append(": ")
+                        append(varargElementType.render())
+                    } else {
+                        append(valueParameter.name.asString())
+                        append(": ")
+                        append(valueParameter.type.render())
                     }
                 }
 
+                if (declaration is IrSimpleFunction) {
+                    append(": ")
+                    append(declaration.returnType.render())
+                }
+                append(' ')
+
+                when (declaration) {
+                    is IrSimpleFunction -> append(declaration.renderSimpleFunctionFlags())
+                    is IrConstructor -> append(declaration.renderConstructorFlags())
+                }
+
+                renderDeclaredIn(declaration)
+            }
+
+        private fun StringBuilder.renderDeclaredIn(irDeclaration: IrDeclaration) {
+            append("declared in ")
+            renderParentOfReferencedDeclaration(irDeclaration)
+        }
+
+        private fun StringBuilder.renderParentOfReferencedDeclaration(declaration: IrDeclaration) {
+            val parent = try {
+                declaration.parent
+            } catch (e: Exception) {
+                append("<no parent>")
+                return
+            }
+            when (parent) {
+                is IrPackageFragment -> {
+                    val fqn = parent.fqName.asString()
+                    append(if (fqn.isEmpty()) "<root>" else fqn)
+                }
+                is IrDeclaration -> {
+                    renderParentOfReferencedDeclaration(parent)
+                    append('.')
+                    if (parent is IrDeclarationWithName) {
+                        append(parent.name)
+                    } else {
+                        renderElementNameFallback(parent)
+                    }
+                }
                 else ->
-                    originalKotlinType?.let {
-                        "$this[=${DECLARATION_RENDERER.renderType(it)}]"
-                    } ?: "IrType without originalKotlinType: $this"
+                    renderElementNameFallback(parent)
             }
+        }
 
-        private fun IrTypeArgument.renderTypeArgument(): String =
-            when (this) {
-                is IrStarProjection -> "*"
-
-                is IrTypeProjection -> buildString {
-                    append(variance.label)
-                    if (variance != Variance.INVARIANT) append(' ')
-                    append(render(type))
-                }
-
-                else -> "IrTypeArgument[$this]"
-            }
+        private fun StringBuilder.renderElementNameFallback(element: Any) {
+            append('{')
+            append(element.javaClass.simpleName)
+            append('}')
+        }
     }
-}
-
-class RenderIrElementVisitor(
-    private val symbolRenderer: IrSymbolRenderer = IrSymbolRenderer.Default,
-    private val typeRenderer: IrTypeRenderer = IrTypeRenderer.Default
-) : IrElementVisitor<String, Nothing?> {
-
-    private fun IrType.render() = typeRenderer.render(this)
-    private fun IrSymbol.renderReference() = symbolRenderer.render(this)
 
     override fun visitElement(element: IrElement, data: Nothing?): String =
-        "?ELEMENT? ${element::class.java.simpleName} $this"
+        "?ELEMENT? ${element::class.java.simpleName} $element"
 
     override fun visitDeclaration(declaration: IrDeclaration, data: Nothing?): String =
-        "?DECLARATION? ${declaration::class.java.simpleName} $this"
+        "?DECLARATION? ${declaration::class.java.simpleName} $declaration"
 
     override fun visitModuleFragment(declaration: IrModuleFragment, data: Nothing?): String =
         "MODULE_FRAGMENT name:${declaration.name}"
@@ -140,11 +240,16 @@ class RenderIrElementVisitor(
                     renderTypeParameters() + " " +
                     renderValueParameterTypes() + " " +
                     "returnType:${returnType.render()} " +
-                    "flags:${renderSimpleFunctionFlags()}"
+                    renderSimpleFunctionFlags()
         }
 
     private fun renderFlagsList(vararg flags: String?) =
-        flags.filterNotNull().joinToString(prefix = "[", postfix = "]", separator = ",")
+        flags.filterNotNull().run {
+            if (isNotEmpty())
+                joinToString(prefix = "[", postfix = "] ", separator = ",")
+            else
+                ""
+        }
 
     private fun IrSimpleFunction.renderSimpleFunctionFlags(): String =
         renderFlagsList(
@@ -171,7 +276,7 @@ class RenderIrElementVisitor(
                     renderTypeParameters() + " " +
                     renderValueParameterTypes() + " " +
                     "returnType:${returnType.render()} " +
-                    "flags:${renderConstructorFlags()}"
+                    renderConstructorFlags()
         }
 
     private fun IrConstructor.renderConstructorFlags() =
@@ -185,7 +290,7 @@ class RenderIrElementVisitor(
         declaration.run {
             "PROPERTY ${renderOriginIfNonTrivial()}" +
                     "name:$name visibility:$visibility modality:$modality " +
-                    "flags:${renderPropertyFlags()}"
+                    renderPropertyFlags()
         }
 
     private fun IrProperty.renderPropertyFlags() =
@@ -200,7 +305,7 @@ class RenderIrElementVisitor(
     override fun visitField(declaration: IrField, data: Nothing?): String =
         "FIELD ${declaration.renderOriginIfNonTrivial()}" +
                 "name:${declaration.name} type:${declaration.type.render()} visibility:${declaration.visibility} " +
-                "flags:${declaration.renderFieldFlags()}"
+                declaration.renderFieldFlags()
 
     private fun IrField.renderFieldFlags() =
         renderFlagsList(
@@ -213,7 +318,7 @@ class RenderIrElementVisitor(
         declaration.run {
             "CLASS ${renderOriginIfNonTrivial()}" +
                     "$kind name:$name modality:$modality visibility:$visibility " +
-                    "flags:${renderClassFlags()} " +
+                    renderClassFlags() +
                     "superTypes:[${superTypes.joinToString(separator = "; ") { it.render() }}]"
         }
 
@@ -228,7 +333,7 @@ class RenderIrElementVisitor(
 
     override fun visitVariable(declaration: IrVariable, data: Nothing?): String =
         "VAR ${declaration.renderOriginIfNonTrivial()}" +
-                "name:${declaration.name} type:${declaration.type.render()} flags:${declaration.renderVariableFlags()}"
+                "name:${declaration.name} type:${declaration.type.render()} ${declaration.renderVariableFlags()}"
 
     private fun IrVariable.renderVariableFlags(): String =
         renderFlagsList(
@@ -257,7 +362,7 @@ class RenderIrElementVisitor(
                     (if (index >= 0) "index:$index " else "") +
                     "type:${type.render()} " +
                     (varargElementType?.let { "varargElementType:${it.render()} " } ?: "") +
-                    "flags:${renderValueParameterFlags()}"
+                    renderValueParameterFlags()
         }
 
     private fun IrValueParameter.renderValueParameterFlags(): String =
@@ -380,7 +485,7 @@ class RenderIrElementVisitor(
     override fun visitPropertyReference(expression: IrPropertyReference, data: Nothing?): String =
         buildString {
             append("PROPERTY_REFERENCE ")
-            append("'${expression.descriptor.ref()}' ")
+            append("'${expression.symbol.renderReference()}' ")
             appendNullableAttribute("field=", expression.field) { "'${it.renderReference()}'" }
             appendNullableAttribute("getter=", expression.getter) { "'${it.renderReference()}'" }
             appendNullableAttribute("setter=", expression.setter) { "'${it.renderReference()}'" }
@@ -438,16 +543,6 @@ class RenderIrElementVisitor(
 }
 
 @Deprecated("Rewrite descriptor-based code")
-private val DECLARATION_RENDERER = DescriptorRenderer.withOptions {
-    withDefinedIn = false
-    overrideRenderingPolicy = OverrideRenderingPolicy.RENDER_OPEN_OVERRIDE
-    includePropertyConstant = true
-    classifierNamePolicy = ClassifierNamePolicy.FULLY_QUALIFIED
-    verbose = false
-    modifiers = DescriptorRendererModifier.ALL
-}
-
-@Deprecated("Rewrite descriptor-based code")
 private val REFERENCE_RENDERER = DescriptorRenderer.ONLY_NAMES_WITH_SHORT_TYPES
 
 internal fun IrDeclaration.name(): String =
@@ -478,20 +573,15 @@ internal fun IrClass.renderClassFqn(): String =
     StringBuilder().also { renderDeclarationFqn(it) }.toString()
 
 internal fun IrTypeParameter.renderTypeParameterFqn(): String =
-    StringBuilder().also { renderDeclarationFqn(it) }.toString()
+    StringBuilder().also { sb ->
+        sb.append(name.asString())
+        sb.append(" of ")
+        renderDeclarationParentFqn(sb)
+    }.toString()
 
 private fun IrDeclaration.renderDeclarationFqn(sb: StringBuilder) {
-    try {
-        val parent = this.parent
-        if (parent is IrDeclaration) {
-            parent.renderDeclarationFqn(sb)
-        } else if (parent is IrPackageFragment) {
-            sb.append(parent.fqName.toString())
-        }
-        sb.append('.')
-    } catch (e: UninitializedPropertyAccessException) {
-        sb.append("<uninitialized parent>.")
-    }
+    renderDeclarationParentFqn(sb)
+    sb.append('.')
     if (this is IrDeclarationWithName) {
         sb.append(name.asString())
     } else {
@@ -499,4 +589,34 @@ private fun IrDeclaration.renderDeclarationFqn(sb: StringBuilder) {
     }
 }
 
-fun IrType.render() = IrTypeRenderer.Default.render(this)
+private fun IrDeclaration.renderDeclarationParentFqn(sb: StringBuilder) {
+    try {
+        val parent = this.parent
+        if (parent is IrDeclaration) {
+            parent.renderDeclarationFqn(sb)
+        } else if (parent is IrPackageFragment) {
+            sb.append(parent.fqName.toString())
+        }
+    } catch (e: UninitializedPropertyAccessException) {
+        sb.append("<uninitialized parent>")
+    }
+}
+
+fun IrType.render() = RenderIrElementVisitor().renderType(this)
+
+internal inline fun <T> StringBuilder.appendListWith(
+    list: List<T>,
+    prefix: String,
+    postfix: String,
+    separator: String,
+    renderItem: StringBuilder.(T) -> Unit
+) {
+    append(prefix)
+    var isFirst = true
+    for (item in list) {
+        if (!isFirst) append(separator)
+        renderItem(item)
+        isFirst = false
+    }
+    append(postfix)
+}

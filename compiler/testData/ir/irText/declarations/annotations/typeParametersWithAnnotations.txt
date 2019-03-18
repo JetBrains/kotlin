@@ -1,26 +1,26 @@
 FILE fqName:<root> fileName:/typeParametersWithAnnotations.kt
-  CLASS ANNOTATION_CLASS name:Anno modality:FINAL visibility:public flags:[] superTypes:[kotlin.Annotation]
+  CLASS ANNOTATION_CLASS name:Anno modality:FINAL visibility:public superTypes:[kotlin.Annotation]
     annotations:
-      CALL 'CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> (allowedTargets:kotlin.Array<out kotlin.annotation.AnnotationTarget>) returnType:kotlin.annotation.Target flags:[primary]' type=kotlin.annotation.Target origin=null
+      CALL 'public constructor <init> (vararg allowedTargets: kotlin.annotation.AnnotationTarget) [primary] declared in kotlin.annotation.Target' type=kotlin.annotation.Target origin=null
         allowedTargets: VARARG type=kotlin.Array<out kotlin.annotation.AnnotationTarget> varargElementType=kotlin.annotation.AnnotationTarget
           GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:TYPE_PARAMETER' type=kotlin.annotation.AnnotationTarget
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Anno flags:[]
-    CONSTRUCTOR visibility:public <> () returnType:<root>.Anno flags:[primary]
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:[]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Anno 
+    CONSTRUCTOR visibility:public <> () returnType:<root>.Anno [primary] 
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
-        FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:[]
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:[]
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:[]
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:[]
+        FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
       overridden:
-        FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:[]
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:[]
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:[]
+        FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
       overridden:
-        FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:[]
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:[]
-  FUN name:foo visibility:public modality:FINAL <T> () returnType:kotlin.Unit flags:[]
+        FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+  FUN name:foo visibility:public modality:FINAL <T> () returnType:kotlin.Unit 
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
       annotations:
-        CALL 'CONSTRUCTOR visibility:public <> () returnType:<root>.Anno flags:[primary]' type=<root>.Anno origin=null
+        CALL 'public constructor <init> () [primary] declared in <root>.Anno' type=<root>.Anno origin=null
     BLOCK_BODY

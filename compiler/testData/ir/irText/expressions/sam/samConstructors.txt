@@ -1,27 +1,27 @@
 FILE fqName:<root> fileName:/samConstructors.kt
-  FUN name:test1 visibility:public modality:FINAL <> () returnType:java.lang.Runnable flags:[]
+  FUN name:test1 visibility:public modality:FINAL <> () returnType:java.lang.Runnable 
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='FUN name:test1 visibility:public modality:FINAL <> () returnType:java.lang.Runnable flags:[]'
+      RETURN type=kotlin.Nothing from='public final fun test1 (): java.lang.Runnable declared in <root>'
         TYPE_OP type=java.lang.Runnable origin=SAM_CONVERSION typeOperand=java.lang.Runnable
-          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Runnable modality:ABSTRACT visibility:public flags:[] superTypes:[kotlin.Any]
+          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Runnable modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
           BLOCK type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit flags:[]
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit 
               BLOCK_BODY
-                RETURN type=kotlin.Nothing from='FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit flags:[]'
-                  GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public flags:[] superTypes:[kotlin.Any]' type=kotlin.Unit
-            FUNCTION_REFERENCE 'FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit flags:[]' type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
-  FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.Function0<kotlin.Unit>) returnType:java.lang.Runnable flags:[]
-    VALUE_PARAMETER name:a index:0 type:kotlin.Function0<kotlin.Unit> flags:[]
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test1'
+                  GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+            FUNCTION_REFERENCE 'local final fun <anonymous> (): kotlin.Unit declared in <root>.test1' type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+  FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.Function0<kotlin.Unit>) returnType:java.lang.Runnable 
+    VALUE_PARAMETER name:a index:0 type:kotlin.Function0<kotlin.Unit> 
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.Function0<kotlin.Unit>) returnType:java.lang.Runnable flags:[]'
+      RETURN type=kotlin.Nothing from='public final fun test2 (a: kotlin.Function0<kotlin.Unit>): java.lang.Runnable declared in <root>'
         TYPE_OP type=java.lang.Runnable origin=SAM_CONVERSION typeOperand=java.lang.Runnable
-          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Runnable modality:ABSTRACT visibility:public flags:[] superTypes:[kotlin.Any]
-          GET_VAR 'VALUE_PARAMETER name:a index:0 type:kotlin.Function0<kotlin.Unit> flags:[]' type=kotlin.Function0<kotlin.Unit> origin=null
-  FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:[]
+          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Runnable modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
+          GET_VAR 'a: kotlin.Function0<kotlin.Unit> declared in <root>.test2' type=kotlin.Function0<kotlin.Unit> origin=null
+  FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
-  FUN name:test3 visibility:public modality:FINAL <> () returnType:java.lang.Runnable flags:[]
+  FUN name:test3 visibility:public modality:FINAL <> () returnType:java.lang.Runnable 
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='FUN name:test3 visibility:public modality:FINAL <> () returnType:java.lang.Runnable flags:[]'
+      RETURN type=kotlin.Nothing from='public final fun test3 (): java.lang.Runnable declared in <root>'
         TYPE_OP type=java.lang.Runnable origin=SAM_CONVERSION typeOperand=java.lang.Runnable
-          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Runnable modality:ABSTRACT visibility:public flags:[] superTypes:[kotlin.Any]
-          FUNCTION_REFERENCE 'FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:[]' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null
+          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Runnable modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
+          FUNCTION_REFERENCE 'public final fun foo (): kotlin.Unit declared in <root>' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null
