@@ -1,5 +1,5 @@
 package foo
 
 fun main() {
-    f { it * 2 }
+    A()
 }
