@@ -31,6 +31,22 @@ interface PlatformSpecificExtension<S : PlatformSpecificExtension<S>>
 abstract class PlatformExtensionsClashResolver<E : PlatformSpecificExtension<E>>(val applicableTo: Class<E>) {
     abstract fun resolveExtensionsClash(extensions: List<E>): E
 
+    abstract class PreferNonDefault<E : PlatformSpecificExtension<E>>(
+        private val defaultValue: E,
+        applicableTo: Class<E>
+    ) : PlatformExtensionsClashResolver<E>(applicableTo) {
+
+        override fun resolveExtensionsClash(extensions: List<E>): E {
+            val nonDefaultExtensions = extensions.filter { it != defaultValue }
+
+            return when (nonDefaultExtensions.size) {
+                0 -> defaultValue
+                1 -> nonDefaultExtensions.single()
+                else -> throw IllegalStateException("Can't resolve clash, several non-default extensions provided: ${extensions.joinToString()}")
+            }
+        }
+    }
+
     abstract class UseAnyOf<E : PlatformSpecificExtension<E>>(
         private val value: E,
         applicableTo: Class<E>

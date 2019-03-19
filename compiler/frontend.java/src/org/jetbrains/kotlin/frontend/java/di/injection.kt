@@ -24,10 +24,10 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.*
 import org.jetbrains.kotlin.context.ModuleContext
-import org.jetbrains.kotlin.contracts.ContractDeserializerImpl
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.frontend.di.configureIncrementalCompilation
 import org.jetbrains.kotlin.frontend.di.configureModule
-import org.jetbrains.kotlin.frontend.di.configurePlatformIndependentIncrementalCompilationComponents
+import org.jetbrains.kotlin.frontend.di.configureStandardResolveComponents
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.java.AbstractJavaClassFinder
@@ -44,7 +44,6 @@ import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformCompilerServices
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
-import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 
 fun createContainerForLazyResolveWithJava(
@@ -63,46 +62,49 @@ fun createContainerForLazyResolveWithJava(
     configureJavaClassFinder: (StorageComponentContainer.() -> Unit)? = null,
     javaClassTracker: JavaClassesTracker? = null
 ): StorageComponentContainer = createContainer("LazyResolveWithJava", JvmPlatformCompilerServices) {
-    configureModule(moduleContext, moduleContentScope, targetPlaform, JvmPlatformCompilerServices, bindingTrace, languageVersionSettings)
+    configureModule(moduleContext, targetPlaform, JvmPlatformCompilerServices, bindingTrace, languageVersionSettings)
 
-    configurePlatformIndependentIncrementalCompilationComponents(lookupTracker, expectActualTracker)
+    configureIncrementalCompilation(lookupTracker, expectActualTracker)
+    configureStandardResolveComponents()
 
-    useImpl<ResolveSession>()
-    useImpl<LazyTopDownAnalyzer>()
-    useImpl<AnnotationResolverImpl>()
-    useImpl<CompilerDeserializationConfiguration>()
-    useImpl<ContractDeserializerImpl>()
-
+    useInstance(moduleContentScope)
     useInstance(packagePartProvider)
-    useInstance(moduleClassResolver)
     useInstance(declarationProviderFactory)
 
+    useInstance(VirtualFileFinderFactory.getInstance(moduleContext.project).create(moduleContentScope))
+
     configureJavaSpecificComponents(
-        moduleContext, moduleContentScope, useBuiltInsProvider, languageVersionSettings, configureJavaClassFinder, javaClassTracker
+        moduleContext, moduleClassResolver, languageVersionSettings, configureJavaClassFinder,
+        javaClassTracker, useBuiltInsProvider
     )
 
     targetEnvironment.configure(this)
 
 }.apply {
+    initializeJavaSpecificComponents(bindingTrace)
+}
+
+// FIXME(dsavvinov): get rid of that
+fun StorageComponentContainer.initializeJavaSpecificComponents(bindingTrace: BindingTrace) {
     get<AbstractJavaClassFinder>().initialize(bindingTrace, get<KotlinCodeAnalyzer>())
 }
 
 fun StorageComponentContainer.configureJavaSpecificComponents(
     moduleContext: ModuleContext,
-    moduleContentScope: GlobalSearchScope,
-    useBuiltInsProvider: Boolean,
+    moduleClassResolver: ModuleClassResolver,
     languageVersionSettings: LanguageVersionSettings,
     configureJavaClassFinder: (StorageComponentContainer.() -> Unit)?,
-    javaClassTracker: JavaClassesTracker?
+    javaClassTracker: JavaClassesTracker?,
+    useBuiltInsProvider: Boolean
 ) {
     useImpl<JavaDescriptorResolver>()
     useImpl<DeserializationComponentsForJava>()
-    useInstance(VirtualFileFinderFactory.getInstance(moduleContext.project).create(moduleContentScope))
     useInstance(JavaPropertyInitializerEvaluatorImpl)
     useImpl<SignaturePropagatorImpl>()
     useImpl<TraceBasedErrorReporter>()
     useInstance(InternalFlexibleTypeTransformer)
     useInstance(JavaDeprecationSettings)
+    useInstance(moduleClassResolver)
 
     // configureJavaClassFinder != null <=> javac integration is enabled
     if (configureJavaClassFinder != null) {

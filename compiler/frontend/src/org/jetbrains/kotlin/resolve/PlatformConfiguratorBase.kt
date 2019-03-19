@@ -77,6 +77,15 @@ private val DEFAULT_CLASH_RESOLVERS = listOf<PlatformExtensionsClashResolver<*>>
     CoroutineCompatibilitySupportClashesResolver()
 )
 
+fun StorageComponentContainer.configureDefaultCheckers() {
+    DEFAULT_DECLARATION_CHECKERS.forEach { useInstance(it) }
+    DEFAULT_CALL_CHECKERS.forEach { useInstance(it) }
+    DEFAULT_TYPE_CHECKERS.forEach { useInstance(it) }
+    DEFAULT_CLASSIFIER_USAGE_CHECKERS.forEach { useInstance(it) }
+    DEFAULT_ANNOTATION_CHECKERS.forEach { useInstance(it) }
+    DEFAULT_CLASH_RESOLVERS.forEach { useClashResolver(it) }
+}
+
 
 abstract class PlatformConfiguratorBase(
     val dynamicTypesSettings: DynamicTypesSettings,
@@ -93,32 +102,31 @@ abstract class PlatformConfiguratorBase(
     val overridesBackwardCompatibilityHelper: OverridesBackwardCompatibilityHelper,
     val declarationReturnTypeSanitizer: DeclarationReturnTypeSanitizer
 ) : PlatformConfigurator {
-    private val declarationCheckers: List<DeclarationChecker> = DEFAULT_DECLARATION_CHECKERS + additionalDeclarationCheckers
-    private val callCheckers: List<CallChecker> = DEFAULT_CALL_CHECKERS + additionalCallCheckers
-    private val typeCheckers: List<AdditionalTypeChecker> = DEFAULT_TYPE_CHECKERS + additionalTypeCheckers
-    private val classifierUsageCheckers: List<ClassifierUsageChecker> =
-        DEFAULT_CLASSIFIER_USAGE_CHECKERS + additionalClassifierUsageCheckers
-    private val annotationCheckers: List<AdditionalAnnotationChecker> = DEFAULT_ANNOTATION_CHECKERS + additionalAnnotationCheckers
-    private val clashResolvers: List<PlatformExtensionsClashResolver<*>> = DEFAULT_CLASH_RESOLVERS + additionalClashResolvers
-
     override val platformSpecificContainer = composeContainer(this::class.java.simpleName) {
-        useInstance(dynamicTypesSettings)
-        declarationCheckers.forEach { useInstance(it) }
-        callCheckers.forEach { useInstance(it) }
-        typeCheckers.forEach { useInstance(it) }
-        classifierUsageCheckers.forEach { useInstance(it) }
-        annotationCheckers.forEach { useInstance(it) }
-        clashResolvers.forEach { useClashResolver(it) }
-        useInstance(identifierChecker)
-        useInstance(overloadFilter)
-        useInstance(platformToKotlinClassMap)
-        useInstance(delegationFilter)
-        useInstance(overridesBackwardCompatibilityHelper)
-        useInstance(declarationReturnTypeSanitizer)
+        configureDefaultCheckers()
+        configureExtensionsAndCheckers(this)
     }
 
     override fun configureModuleDependentCheckers(container: StorageComponentContainer) {
         container.useImpl<ExperimentalMarkerDeclarationAnnotationChecker>()
+    }
+
+    fun configureExtensionsAndCheckers(container: StorageComponentContainer) {
+        with(container) {
+            useInstance(dynamicTypesSettings)
+            additionalDeclarationCheckers.forEach { useInstance(it) }
+            additionalCallCheckers.forEach { useInstance(it) }
+            additionalTypeCheckers.forEach { useInstance(it) }
+            additionalClassifierUsageCheckers.forEach { useInstance(it) }
+            additionalAnnotationCheckers.forEach { useInstance(it) }
+            additionalClashResolvers.forEach { useClashResolver(it) }
+            useInstance(identifierChecker)
+            useInstance(overloadFilter)
+            useInstance(platformToKotlinClassMap)
+            useInstance(delegationFilter)
+            useInstance(overridesBackwardCompatibilityHelper)
+            useInstance(declarationReturnTypeSanitizer)
+        }
     }
 }
 

@@ -24,7 +24,9 @@ import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.frontend.di.configureIncrementalCompilation
 import org.jetbrains.kotlin.frontend.di.configureModule
+import org.jetbrains.kotlin.frontend.di.configureStandardResolveComponents
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.js.resolve.JsPlatformCompilerServices
@@ -51,15 +53,12 @@ fun createTopDownAnalyzerForJs(
             languageVersionSettings
         )
 
+        configureIncrementalCompilation(lookupTracker, expectActualTracker)
+        configureStandardResolveComponents()
+
         useInstance(declarationProviderFactory)
-        useImpl<AnnotationResolverImpl>()
-
         CompilerEnvironment.configure(this)
-        useInstance(lookupTracker)
-        useInstance(expectActualTracker)
 
-        useImpl<ResolveSession>()
-        useImpl<LazyTopDownAnalyzer>()
     }.apply {
         val packagePartProviders = mutableListOf(get<KotlinCodeAnalyzer>().packageFragmentProvider)
         val moduleDescriptor = get<ModuleDescriptorImpl>()

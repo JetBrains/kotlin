@@ -35,6 +35,8 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.frontend.di.configureModule
+import org.jetbrains.kotlin.frontend.di.configureStandardResolveComponents
+import org.jetbrains.kotlin.frontend.di.createContainerToResolveCommonCode
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
@@ -103,37 +105,6 @@ open class CommonResolverForModuleFactory(
         return ResolverForModule(CompositePackageFragmentProvider(packageFragmentProviders), container)
     }
 
-    private fun createContainerToResolveCommonCode(
-        moduleContext: ModuleContext,
-        bindingTrace: BindingTrace,
-        declarationProviderFactory: DeclarationProviderFactory,
-        moduleContentScope: GlobalSearchScope,
-        targetEnvironment: TargetEnvironment,
-        metadataPartProvider: MetadataPartProvider,
-        languageVersionSettings: LanguageVersionSettings,
-        platform: TargetPlatform,
-        compilerServices: PlatformDependentCompilerServices
-    ): StorageComponentContainer = createContainer("ResolveCommonCode", compilerServices) {
-        configureModule(moduleContext, platform, compilerServices, bindingTrace, languageVersionSettings)
-
-        useInstance(moduleContentScope)
-        useInstance(LookupTracker.DO_NOTHING)
-        useInstance(ExpectActualTracker.DoNothing)
-        useImpl<ResolveSession>()
-        useImpl<LazyTopDownAnalyzer>()
-        useImpl<AnnotationResolverImpl>()
-        useImpl<CompilerDeserializationConfiguration>()
-        useInstance(metadataPartProvider)
-        useInstance(declarationProviderFactory)
-        useImpl<MetadataPackageFragmentProvider>()
-        useImpl<ContractDeserializerImpl>()
-
-        val metadataFinderFactory = ServiceManager.getService(moduleContext.project, MetadataFinderFactory::class.java)
-                ?: error("No MetadataFinderFactory in project")
-        useInstance(metadataFinderFactory.create(moduleContentScope))
-
-        targetEnvironment.configure(this)
-    }
 
     companion object {
         fun analyzeFiles(
