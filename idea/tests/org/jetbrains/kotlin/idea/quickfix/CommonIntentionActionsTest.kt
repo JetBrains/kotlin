@@ -11,11 +11,9 @@ import com.intellij.lang.jvm.JvmElement
 import com.intellij.lang.jvm.JvmModifier
 import com.intellij.lang.jvm.actions.*
 import com.intellij.lang.jvm.types.JvmSubstitutor
-import com.intellij.lang.jvm.types.JvmType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Pair.pair
 import com.intellij.psi.*
-import com.intellij.psi.codeStyle.SuggestedNameInfo
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 import junit.framework.TestCase
@@ -23,9 +21,6 @@ import org.jetbrains.kotlin.asJava.toLightElements
 import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.psi.KtModifierListOwner
-import org.jetbrains.uast.UMethod
-import org.jetbrains.uast.UParameter
-import org.jetbrains.uast.UastContext
 import org.jetbrains.uast.toUElement
 import org.junit.Assert
 
@@ -56,8 +51,6 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         override fun isValid(): Boolean = true
 
     }
-
-    private class NameInfo(vararg names: String) : SuggestedNameInfo(names)
 
     override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE_FULL_JDK
 
@@ -632,56 +625,11 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         """.trim().trimMargin(), true)
     }
 
-    fun testSetParameters() {
-        myFixture.configureByText(
-            "foo.kt", """
-        |class Foo {
-        |    fun ba<caret>r() {}
-        |}
-        """.trim().trimMargin()
-        )
-
-
-        myFixture.launchAction(
-            com.intellij.lang.jvm.actions.createChangeParametersActions(
-                myFixture.atCaret<UMethod>().javaPsi,
-                setMethodParametersRequest(
-                    linkedMapOf<String, JvmType>(
-                        "i" to PsiType.INT,
-                        "file" to PsiType.getTypeByName("java.io.File", project, myFixture.file.resolveScope)
-                    ).entries
-                )
-            ).findWithText("Change method parameters to '(i: Int, file: File)'")
-        )
-        myFixture.checkResult(
-            """
-        import java.io.File
-
-        class Foo {
-            fun bar(i: Int, file: File) {}
-        }
-        """.trimIndent(), true
-        )
-    }
-
-    private fun makeParams(vararg psyTypes: PsiType): List<UParameter> {
-        val uastContext = UastContext(myFixture.project)
-        val factory = JavaPsiFacade.getElementFactory(myFixture.project)
-        val parameters = psyTypes.mapIndexed { index, psiType -> factory.createParameter("param$index", psiType) }
-        return parameters.map { uastContext.convertElement(it, null, UParameter::class.java) as UParameter }
-    }
 
     private fun expectedTypes(vararg psiTypes: PsiType) = psiTypes.map { expectedType(it) }
 
     private fun expectedParams(vararg psyTypes: PsiType) =
         psyTypes.mapIndexed { index, psiType -> expectedParameter(expectedTypes(psiType), "param$index") }
-
-    private inline fun <reified T : JvmElement> CodeInsightTestFixture.atCaret() = elementAtCaret.toUElement() as T
-
-    @Suppress("CAST_NEVER_SUCCEEDS")
-    private fun List<IntentionAction>.findWithText(text: String): IntentionAction =
-            this.firstOrNull { it.text == text } ?:
-            Assert.fail("intention with text '$text' was not found, only ${this.joinToString { "\"${it.text}\"" }} available") as Nothing
 
     class FieldRequest(
         private val project: Project,
@@ -703,7 +651,14 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         override fun isValid(): Boolean = true
     }
 
-
 }
+
+internal inline fun <reified T : JvmElement> CodeInsightTestFixture.atCaret() = elementAtCaret.toUElement() as T
+
+@Suppress("CAST_NEVER_SUCCEEDS")
+internal fun List<IntentionAction>.findWithText(text: String): IntentionAction =
+    this.firstOrNull { it.text == text } ?:
+    Assert.fail("intention with text '$text' was not found, only ${this.joinToString { "\"${it.text}\"" }} available") as Nothing
+
 
 
