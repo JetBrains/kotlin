@@ -351,6 +351,21 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext {
 
 
 
+    override fun SimpleTypeMarker.isStubType(): Boolean {
+        return false // TODO
+    }
+
+    override fun intersectTypes(types: List<SimpleTypeMarker>): SimpleTypeMarker {
+        return types.first() // TODO: proper implementation
+    }
+
+    override fun intersectTypes(types: List<KotlinTypeMarker>): KotlinTypeMarker {
+        return types.first() // TODO: proper implementation
+    }
+
+    override fun prepareType(type: KotlinTypeMarker): KotlinTypeMarker {
+        return type
+    }
 }
 
 class ConeTypeCheckerContext(override val isErrorTypeEqualsToAnything: Boolean, override val session: FirSession) :
@@ -368,8 +383,8 @@ class ConeTypeCheckerContext(override val isErrorTypeEqualsToAnything: Boolean, 
         return a == b
     }
 
-    override fun intersectTypes(types: List<KotlinTypeMarker>): KotlinTypeMarker {
-        return types.first() // TODO: proper implementation
+    override fun prepareType(type: KotlinTypeMarker): KotlinTypeMarker {
+        return super<ConeTypeContext>.prepareType(type)
     }
 
     override val KotlinTypeMarker.isAllowedTypeVariable: Boolean
