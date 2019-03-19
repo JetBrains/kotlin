@@ -1077,6 +1077,11 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             runTest("idea/testData/debugger/tinyApp/src/stepping/custom/fwPropertyInInterface.kt");
         }
 
+        @TestMetadata("initBlocks.kt")
+        public void testInitBlocks() throws Exception {
+            runTest("idea/testData/debugger/tinyApp/src/stepping/custom/initBlocks.kt");
+        }
+
         @TestMetadata("inlineInObject.kt")
         public void testInlineInObject() throws Exception {
             runTest("idea/testData/debugger/tinyApp/src/stepping/custom/inlineInObject.kt");

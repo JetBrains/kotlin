@@ -191,6 +191,11 @@ public class LineNumberTestGenerated extends AbstractLineNumberTest {
             runTest("compiler/testData/lineNumber/custom/inTheEndOfLambdaArgumentOfInlineCall.kt");
         }
 
+        @TestMetadata("initBlocks.kt")
+        public void testInitBlocks() throws Exception {
+            runTest("compiler/testData/lineNumber/custom/initBlocks.kt");
+        }
+
         @TestMetadata("multilineFunctionCall.kt")
         public void testMultilineFunctionCall() throws Exception {
             runTest("compiler/testData/lineNumber/custom/multilineFunctionCall.kt");
