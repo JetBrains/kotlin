@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.impl.FirClassImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirTypeParameterImpl
-import org.jetbrains.kotlin.fir.deserialization.FirDeserializationComponents
 import org.jetbrains.kotlin.fir.deserialization.FirDeserializationContext
 import org.jetbrains.kotlin.fir.deserialization.FirTypeDeserializer
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
@@ -28,7 +27,10 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
-import org.jetbrains.kotlin.metadata.deserialization.*
+import org.jetbrains.kotlin.metadata.deserialization.Flags
+import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
+import org.jetbrains.kotlin.metadata.deserialization.TypeTable
+import org.jetbrains.kotlin.metadata.deserialization.supertypes
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -65,20 +67,7 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider 
         val classDataFinder = ProtoBasedClassDataFinder(packageProto, nameResolver, version) { SourceElement.NO_SOURCE }
 
         private val memberDeserializer by lazy {
-            FirDeserializationContext(
-                nameResolver, TypeTable(packageProto.`package`.typeTable),
-                VersionRequirementTable.EMPTY, // TODO:
-                session,
-                fqName,
-                null,
-                FirTypeDeserializer(
-                    nameResolver,
-                    TypeTable(packageProto.`package`.typeTable),
-                    emptyList(),
-                    null
-                ),
-                FirDeserializationComponents()
-            ).memberDeserializer
+            FirDeserializationContext.createForPackage(fqName, packageProto, nameResolver, session).memberDeserializer
         }
 
         val lookup = mutableMapOf<ClassId, ConeClassLikeSymbol>()
@@ -120,7 +109,6 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider 
                         null
                     )
 
-
                     val superTypesDeserialized = classProto.supertypes(typeTable).map { supertypeProto ->
                         typeDeserializer.simpleType(supertypeProto)
                     }// TODO: + c.components.additionalClassPartsProvider.getSupertypes(this@DeserializedClassDescriptor)
@@ -130,21 +118,10 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider 
                         FirResolvedTypeRefImpl(this@BuiltInsPackageFragment.session, null, it, false, emptyList())
                     }
 
-                    val classTypeTable = TypeTable(classProto.typeTable)
-                    val classDeserializer = FirDeserializationContext(
-                        nameResolver, classTypeTable,
-                        VersionRequirementTable.EMPTY, // TODO:
-                        this@BuiltInsPackageFragment.session,
-                        fqName,
-                        null,
-                        FirTypeDeserializer(
-                            nameResolver,
-                            classTypeTable,
-                            classProto.typeParameterList,
-                            null
-                        ),
-                        FirDeserializationComponents()
-                    ).memberDeserializer
+                    val classDeserializer =
+                        FirDeserializationContext
+                            .createForClass(classId, classProto, nameResolver, this@BuiltInsPackageFragment.session)
+                            .memberDeserializer
 
                     // TODO: properties + nested classes
                     declarations += classData.classProto.functionList.map(classDeserializer::loadFunction)

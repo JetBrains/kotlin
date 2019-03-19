@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.protobuf.MessageLite
@@ -50,6 +51,54 @@ class FirDeserializationContext(
     )
 
     val memberDeserializer: FirMemberDeserializer = FirMemberDeserializer(this)
+
+    companion object {
+        fun createForPackage(
+            fqName: FqName,
+            packageProto: ProtoBuf.PackageFragment,
+            nameResolver: NameResolver,
+            session: FirSession
+        ): FirDeserializationContext {
+            val typeTable = TypeTable(packageProto.`package`.typeTable)
+            return FirDeserializationContext(
+                nameResolver, typeTable,
+                VersionRequirementTable.EMPTY, // TODO:
+                session,
+                fqName,
+                null,
+                FirTypeDeserializer(
+                    nameResolver,
+                    typeTable,
+                    emptyList(),
+                    null
+                ),
+                FirDeserializationComponents()
+            )
+        }
+
+        fun createForClass(
+            classId: ClassId,
+            classProto: ProtoBuf.Class,
+            nameResolver: NameResolver,
+            session: FirSession
+        ): FirDeserializationContext {
+            val classTypeTable = TypeTable(classProto.typeTable)
+            return FirDeserializationContext(
+                nameResolver, classTypeTable,
+                VersionRequirementTable.EMPTY, // TODO:
+                session,
+                classId.packageFqName,
+                classId.relativeClassName,
+                FirTypeDeserializer(
+                    nameResolver,
+                    classTypeTable,
+                    classProto.typeParameterList,
+                    null
+                ),
+                FirDeserializationComponents()
+            )
+        }
+    }
 }
 
 // TODO: Move something here
