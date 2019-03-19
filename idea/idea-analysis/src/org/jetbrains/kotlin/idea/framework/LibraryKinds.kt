@@ -49,7 +49,7 @@ object JSLibraryKind : PersistentLibraryKind<DummyLibraryProperties>("kotlin.js"
 
 object CommonLibraryKind : PersistentLibraryKind<DummyLibraryProperties>("kotlin.common"), KotlinLibraryKind {
     override val compilerPlatform: TargetPlatform
-        get() = DefaultBuiltInPlatforms.commonPlatform
+        get() = DefaultBuiltInPlatforms.newCommonPlatform
 
     override fun createDefaultProperties() = DummyLibraryProperties.INSTANCE!!
 }

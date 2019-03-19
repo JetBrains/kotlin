@@ -114,7 +114,7 @@ public class DefaultModalityModifiersTest extends KotlinTestWithEnvironment {
                     moduleContext,
                     new FileBasedDeclarationProviderFactory(moduleContext.getStorageManager(), files),
                     new BindingTraceContext(),
-                    DefaultBuiltInPlatforms.INSTANCE.getCommonPlatform(),
+                    DefaultBuiltInPlatforms.INSTANCE.getNewCommonPlatform(),
                     CommonPlatformCompilerServices.INSTANCE,
                     CompilerEnvironment.INSTANCE,
                     LanguageVersionSettingsImpl.DEFAULT

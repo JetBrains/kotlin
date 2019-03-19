@@ -587,7 +587,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         val platform =
             when {
                 nameSuffix.isEmpty() -> null // TODO(dsavvinov): this leads to 'null'-platforms in ModuleDescriptor
-                nameSuffix == "COMMON" -> DefaultBuiltInPlatforms.commonPlatform
+                nameSuffix == "COMMON" -> DefaultBuiltInPlatforms.newCommonPlatform
                 nameSuffix == "JVM" -> DefaultBuiltInPlatforms.jvmPlatform // TODO(dsavvinov): determine JvmTarget precisely
                 nameSuffix == "JS" -> DefaultBuiltInPlatforms.jsPlatform
                 nameSuffix == "NATIVE" -> DefaultBuiltInPlatforms.konanPlatform

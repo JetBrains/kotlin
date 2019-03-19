@@ -78,7 +78,7 @@ abstract class AbstractCodeInsightActionTest : KotlinLightCodeInsightFixtureTest
                 val targetPlatform = when (targetPlatformName) {
                     "JVM" -> DefaultBuiltInPlatforms.jvmPlatform
                     "JavaScript" -> DefaultBuiltInPlatforms.jsPlatform
-                    "Common" -> DefaultBuiltInPlatforms.commonPlatform
+                    "Common" -> DefaultBuiltInPlatforms.newCommonPlatform
                     else -> error("Unexpected platforms name: $targetPlatformName")
                 }
                 mainPsiFile.forcedTargetPlatform = targetPlatform

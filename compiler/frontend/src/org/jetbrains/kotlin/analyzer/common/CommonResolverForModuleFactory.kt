@@ -143,7 +143,7 @@ open class CommonResolverForModuleFactory(
                     CommonResolverForModuleFactory(
                         CommonAnalysisParameters(metadataPartProviderFactory),
                         CompilerEnvironment,
-                        DefaultBuiltInPlatforms.commonPlatform
+                        DefaultBuiltInPlatforms.newCommonPlatform
                     )
                 }
             )

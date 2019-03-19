@@ -158,7 +158,7 @@ class KotlinNonJvmSourceRootConverterProvider : ConverterProvider("kotlin-non-jv
                             }
                         }
 
-                    return if (hasCommonStdlib) DefaultBuiltInPlatforms.commonPlatform else null
+                    return if (hasCommonStdlib) DefaultBuiltInPlatforms.newCommonPlatform else null
                 }
 
                 private fun ModuleSettings.detectPlatform(): TargetPlatform {
