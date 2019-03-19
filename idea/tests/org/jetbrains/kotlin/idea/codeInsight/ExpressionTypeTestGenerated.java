@@ -34,6 +34,11 @@ public class ExpressionTypeTestGenerated extends AbstractExpressionTypeTest {
         runTest("idea/testData/codeInsight/expressionType/AnonymousObject.kt");
     }
 
+    @TestMetadata("ArgumentName.kt")
+    public void testArgumentName() throws Exception {
+        runTest("idea/testData/codeInsight/expressionType/ArgumentName.kt");
+    }
+
     @TestMetadata("BlockBodyFunction.kt")
     public void testBlockBodyFunction() throws Exception {
         runTest("idea/testData/codeInsight/expressionType/BlockBodyFunction.kt");
