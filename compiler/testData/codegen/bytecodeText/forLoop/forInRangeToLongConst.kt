@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 const val N = 42L
 
 fun test(): Long {
