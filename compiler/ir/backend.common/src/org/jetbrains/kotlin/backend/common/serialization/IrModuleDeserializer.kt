@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.*
-import org.jetbrains.kotlin.ir.util.IrDeserializer
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatement.*
@@ -44,7 +43,7 @@ abstract class IrModuleDeserializer(
     val logger: LoggingContext,
     val builtIns: IrBuiltIns,
     val symbolTable: SymbolTable
-) : IrDeserializer {
+) {
 
     abstract fun deserializeIrSymbol(proto: KotlinIr.IrSymbol): IrSymbol
     abstract fun deserializeIrType(proto: KotlinIr.IrTypeIndex): IrType
@@ -1102,10 +1101,9 @@ abstract class IrModuleDeserializer(
     private val allKnownOrigins =
         IrDeclarationOrigin::class.nestedClasses.toList() + DeclarationFactory.FIELD_FOR_OUTER_THIS::class
     val originIndex = allKnownOrigins.map { it.objectInstance as IrDeclarationOriginImpl }.associateBy { it.name }
-    val irrelevantOrigin = object : IrDeclarationOriginImpl("irrelevant") {}
     fun deserializeIrDeclarationOrigin(proto: KotlinIr.IrDeclarationOrigin) = originIndex[deserializeString(proto.custom)]!!
 
-    protected fun deserializeDeclaration(proto: KotlinIr.IrDeclaration, parent: IrDeclarationParent?): IrDeclaration {
+    public open fun deserializeDeclaration(proto: KotlinIr.IrDeclaration, parent: IrDeclarationParent?): IrDeclaration {
 
         val start = proto.coordinates.startOffset
         val end = proto.coordinates.endOffset
@@ -1168,3 +1166,5 @@ abstract class IrModuleDeserializer(
         return declaration
     }
 }
+
+val irrelevantOrigin = object : IrDeclarationOriginImpl("irrelevant") {}
