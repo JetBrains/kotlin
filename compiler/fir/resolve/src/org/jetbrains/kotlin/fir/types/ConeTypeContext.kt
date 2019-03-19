@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.expandedConeType
 import org.jetbrains.kotlin.fir.declarations.superConeTypes
+import org.jetbrains.kotlin.fir.resolve.calls.ConeTypeVariableTypeConstructor
 import org.jetbrains.kotlin.fir.resolve.directExpansionType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.withArguments
@@ -179,7 +180,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext {
     override fun TypeConstructorMarker.parametersCount(): Int {
         //require(this is ConeSymbol)
         return when (this) {
-            is ConeTypeParameterSymbol, is ConeCapturedTypeConstructor, is ErrorTypeConstructor -> 0
+            is ConeTypeParameterSymbol, is ConeCapturedTypeConstructor, is ErrorTypeConstructor, is ConeTypeVariableTypeConstructor -> 0
             is FirClassSymbol -> fir.typeParameters.size
             is FirTypeAliasSymbol -> fir.typeParameters.size
             else -> error("?!:10")
@@ -200,7 +201,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext {
         if (this is ErrorTypeConstructor) return emptyList()
         //require(this is ConeSymbol)
         return when (this) {
-            is ConeTypeParameterSymbol -> emptyList()
+            is ConeTypeParameterSymbol, is ConeTypeVariableTypeConstructor -> emptyList()
             is FirClassSymbol -> fir.superConeTypes
             is FirTypeAliasSymbol -> listOfNotNull(fir.expandedConeType)
             is ConeCapturedTypeConstructor -> supertypes!!

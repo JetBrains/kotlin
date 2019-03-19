@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.types.checker.NewCapturedType
 import org.jetbrains.kotlin.types.model.*
 import java.util.*
 
-class ConstraintInjector(val constraintIncorporator: ConstraintIncorporator, val typeApproximator: TypeApproximator) {
+class ConstraintInjector(val constraintIncorporator: ConstraintIncorporator, val typeApproximator: AbstractTypeApproximator) {
     private val ALLOWED_DEPTH_DELTA_FOR_INCORPORATION = 1
 
     interface Context : TypeSystemInferenceExtensionContext {

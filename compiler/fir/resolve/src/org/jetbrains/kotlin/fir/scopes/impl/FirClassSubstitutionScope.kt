@@ -65,6 +65,8 @@ class FirClassSubstitutionScope(
             }
             @Suppress("UNCHECKED_CAST")
             return when (this) {
+                is ConeDefinitelyNotNullType -> TODO("not supported")
+                is ConeTypeVariableType -> TODO("error?")
                 is ConeKotlinErrorType -> error("Trying to substitute arguments for error type")
                 is ConeTypeParameterType -> error("Trying to substitute arguments for type parameter")
                 is ConeClassTypeImpl -> ConeClassTypeImpl(

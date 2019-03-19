@@ -153,6 +153,11 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
             }
     }
 
+    val inferenceComponents = InferenceComponents(object : ConeInferenceContext {
+        override val session: FirSession
+            get() = this@FirBodyResolveTransformer.session
+    })
+
     override fun transformQualifiedAccessExpression(
         qualifiedAccessExpression: FirQualifiedAccessExpression,
         data: Any?
