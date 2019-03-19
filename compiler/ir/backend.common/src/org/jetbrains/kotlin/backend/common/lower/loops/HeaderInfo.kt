@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.lower.matchers.IrCallMatcher
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -52,7 +51,7 @@ internal sealed class HeaderInfo(
     val progressionType: ProgressionType,
     val lowerBound: IrExpression,
     val upperBound: IrExpression,
-    val step: IrExpression?, // null value denotes default step (1)
+    val step: IrExpression,
     val increasing: Boolean,
     val closed: Boolean
 )
@@ -61,7 +60,7 @@ internal class ProgressionHeaderInfo(
     progressionType: ProgressionType,
     lowerBound: IrExpression,
     upperBound: IrExpression,
-    step: IrExpression? = null,
+    step: IrExpression,
     increasing: Boolean = true,
     closed: Boolean = true
 ) : HeaderInfo(progressionType, lowerBound, upperBound, step, increasing, closed)
@@ -69,12 +68,13 @@ internal class ProgressionHeaderInfo(
 internal class ArrayHeaderInfo(
     lowerBound: IrExpression,
     upperBound: IrExpression,
-    val arrayDeclaration: IrValueDeclaration
+    step: IrExpression,
+    val arrayVariable: IrVariable
 ) : HeaderInfo(
     ProgressionType.INT_PROGRESSION,
     lowerBound,
     upperBound,
-    step = null,
+    step,
     increasing = true,
     closed = false
 )
@@ -102,9 +102,9 @@ private class ProgressionHeaderInfoBuilder(val context: CommonBackendContext) : 
 
     private val progressionHandlers = listOf(
         IndicesHandler(context),
-        UntilHandler(progressionElementTypes),
-        DownToHandler(progressionElementTypes),
-        RangeToHandler(progressionElementTypes)
+        UntilHandler(context, progressionElementTypes),
+        DownToHandler(context, progressionElementTypes),
+        RangeToHandler(context, progressionElementTypes)
     )
 
     override fun visitElement(element: IrElement, data: Nothing?): HeaderInfo? = null

@@ -14,16 +14,19 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irInt
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.classifierOrNull
+import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.properties
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.SimpleType
 
 // TODO: What if functions like Int.rangeTo(Char) will be added to stdlib later?
-internal class RangeToHandler(val progressionElementTypes: Collection<SimpleType>) : ProgressionHandler {
+internal class RangeToHandler(private val context: CommonBackendContext, private val progressionElementTypes: Collection<SimpleType>) :
+    ProgressionHandler {
     override val matcher = SimpleCalleeMatcher {
         dispatchReceiver { it != null && it.type.toKotlinType() in progressionElementTypes }
         fqName { it.pathSegments().last() == Name.identifier("rangeTo") }
@@ -32,49 +35,64 @@ internal class RangeToHandler(val progressionElementTypes: Collection<SimpleType
     }
 
     override fun build(call: IrCall, data: ProgressionType) =
-        ProgressionHeaderInfo(data, call.dispatchReceiver!!, call.getValueArgument(0)!!)
+        with(context.createIrBuilder(call.symbol, call.startOffset, call.endOffset)) {
+            ProgressionHeaderInfo(
+                data,
+                lowerBound = call.dispatchReceiver!!,
+                upperBound = call.getValueArgument(0)!!,
+                step = irInt(1)
+            )
+        }
 }
 
-internal class DownToHandler(val progressionElementTypes: Collection<SimpleType>) : ProgressionHandler {
+internal class DownToHandler(private val context: CommonBackendContext, private val progressionElementTypes: Collection<SimpleType>) :
+    ProgressionHandler {
     override val matcher = SimpleCalleeMatcher {
         singleArgumentExtension(FqName("kotlin.ranges.downTo"), progressionElementTypes)
+        parameterCount { it == 1 }
         parameter(0) { it.type.toKotlinType() in progressionElementTypes }
     }
 
     override fun build(call: IrCall, data: ProgressionType): HeaderInfo? =
-        ProgressionHeaderInfo(
-            data,
-            call.extensionReceiver!!,
-            call.getValueArgument(0)!!,
-            increasing = false
-        )
+        with(context.createIrBuilder(call.symbol, call.startOffset, call.endOffset)) {
+            ProgressionHeaderInfo(
+                data,
+                lowerBound = call.extensionReceiver!!,
+                upperBound = call.getValueArgument(0)!!,
+                step = irInt(-1),
+                increasing = false
+            )
+        }
 }
 
-internal class UntilHandler(val progressionElementTypes: Collection<SimpleType>) : ProgressionHandler {
+internal class UntilHandler(private val context: CommonBackendContext, private val progressionElementTypes: Collection<SimpleType>) :
+    ProgressionHandler {
     override val matcher = SimpleCalleeMatcher {
         singleArgumentExtension(FqName("kotlin.ranges.until"), progressionElementTypes)
+        parameterCount { it == 1 }
         parameter(0) { it.type.toKotlinType() in progressionElementTypes }
     }
 
     override fun build(call: IrCall, data: ProgressionType): HeaderInfo? =
-        ProgressionHeaderInfo(
-            data,
-            call.extensionReceiver!!,
-            call.getValueArgument(0)!!,
-            closed = false
-        )
+        with(context.createIrBuilder(call.symbol, call.startOffset, call.endOffset)) {
+            ProgressionHeaderInfo(
+                data,
+                lowerBound = call.extensionReceiver!!,
+                upperBound = call.getValueArgument(0)!!,
+                step = irInt(1),
+                closed = false
+            )
+        }
 }
 
 internal class IndicesHandler(val context: CommonBackendContext) : ProgressionHandler {
 
-    override val matcher = createIrCallMatcher {
-        callee {
-            fqName { it == FqName("kotlin.collections.<get-indices>") }
-            parameterCount { it == 0 }
-        }
+    override val matcher = SimpleCalleeMatcher {
         // TODO: Handle Collection<*>.indices
         // TODO: Handle CharSequence.indices
         extensionReceiver { it != null && KotlinBuiltIns.isArrayOrPrimitiveArray(it.type.toKotlinType()) }
+        fqName { it == FqName("kotlin.collections.<get-indices>") }
+        parameterCount { it == 0 }
     }
 
     override fun build(call: IrCall, data: ProgressionType): HeaderInfo? =
@@ -85,7 +103,13 @@ internal class IndicesHandler(val context: CommonBackendContext) : ProgressionHa
             val upperBound = irCall(arraySizeProperty.getter!!).apply {
                 dispatchReceiver = call.extensionReceiver
             }
-            ProgressionHeaderInfo(data, lowerBound, upperBound, closed = false)
+            ProgressionHeaderInfo(
+                data,
+                lowerBound,
+                upperBound,
+                step = irInt(1),
+                closed = false
+            )
         }
 
 }
@@ -114,6 +138,11 @@ internal class ArrayIterationHandler(val context: CommonBackendContext) : Header
             val upperBound = irCall(arraySizeProperty.getter!!).apply {
                 dispatchReceiver = irGet(arrayReference)
             }
-            ArrayHeaderInfo(irInt(0), upperBound, arrayReference)
+            ArrayHeaderInfo(
+                lowerBound = irInt(0),
+                upperBound = upperBound,
+                step = irInt(1),
+                arrayVariable = arrayReference
+            )
         }
 }
