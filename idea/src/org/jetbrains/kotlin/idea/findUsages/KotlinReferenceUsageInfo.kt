@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.findUsages
 
 import com.intellij.psi.PsiReference
 import com.intellij.usageView.UsageInfo
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 class KotlinReferenceUsageInfo(reference: PsiReference) : UsageInfo(reference) {
     private val referenceType = reference::class.java

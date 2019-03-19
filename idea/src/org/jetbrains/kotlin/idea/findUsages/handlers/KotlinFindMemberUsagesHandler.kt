@@ -135,8 +135,7 @@ abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration> protected c
                 val detector = KotlinReadWriteAccessDetector()
 
                 return FilteredQuery(result) {
-                    val access = detector.getReferenceAccess(element, it)
-                    when (access) {
+                    when (detector.getReferenceAccess(element, it)) {
                         ReadWriteAccessDetector.Access.Read -> kotlinOptions.isReadAccess
                         ReadWriteAccessDetector.Access.Write -> kotlinOptions.isWriteAccess
                         ReadWriteAccessDetector.Access.ReadWrite -> kotlinOptions.isReadWriteAccess
@@ -168,7 +167,7 @@ abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration> protected c
         private val kotlinOptions = options as KotlinCallableFindUsagesOptions
 
         override fun buildTaskList(): Boolean {
-            val referenceProcessor = KotlinFindUsagesHandler.createReferenceProcessor(processor)
+            val referenceProcessor = createReferenceProcessor(processor)
             val uniqueProcessor = CommonProcessors.UniqueProcessor(processor)
 
             if (options.isUsages) {
@@ -202,7 +201,7 @@ abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration> protected c
                     val overriders = HierarchySearchRequest(element, options.searchScope, true).searchOverriders()
                     overriders.all {
                         val element = runReadAction { it.takeIf { it.isValid }?.navigationElement } ?: return@all true
-                        KotlinFindUsagesHandler.processUsage(uniqueProcessor, element)
+                        processUsage(uniqueProcessor, element)
                     }
                 }
             }

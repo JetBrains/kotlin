@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.idea.findUsages.handlers.KotlinTypeParameterFindUsag
 import org.jetbrains.kotlin.idea.refactoring.checkSuperMethods
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parameterIndex
-import java.lang.IllegalArgumentException
 
 class KotlinFindUsagesHandlerFactory(project: Project) : FindUsagesHandlerFactory() {
     val javaHandlerFactory = JavaFindUsagesHandlerFactory(project)
@@ -47,12 +46,12 @@ class KotlinFindUsagesHandlerFactory(project: Project) : FindUsagesHandlerFactor
     val defaultOptions = FindUsagesOptions(project)
 
     override fun canFindUsages(element: PsiElement): Boolean =
-            element is KtClassOrObject ||
-            element is KtNamedFunction ||
-            element is KtProperty ||
-            element is KtParameter ||
-            element is KtTypeParameter ||
-            element is KtConstructor<*>
+        element is KtClassOrObject ||
+                element is KtNamedFunction ||
+                element is KtProperty ||
+                element is KtParameter ||
+                element is KtTypeParameter ||
+                element is KtConstructor<*>
 
     override fun createFindUsagesHandler(element: PsiElement, forHighlightUsages: Boolean): FindUsagesHandler {
         when (element) {
@@ -114,8 +113,7 @@ class KotlinFindUsagesHandlerFactory(project: Project) : FindUsagesHandlerFactor
                 val target = declarations.single().unwrapped ?: return FindUsagesHandler.NULL_HANDLER
                 if (target is KtNamedDeclaration) {
                     KotlinFindMemberUsagesHandler.getInstance(target, factory = this)
-                }
-                else {
+                } else {
                     javaHandlerFactory.createFindUsagesHandler(target, false)!!
                 }
             }
@@ -125,10 +123,12 @@ class KotlinFindUsagesHandlerFactory(project: Project) : FindUsagesHandlerFactor
     }
 
     private fun askWhetherShouldSearchForParameterInOverridingMethods(parameter: KtParameter): Boolean {
-        return Messages.showOkCancelDialog(parameter.project,
-                                           FindBundle.message("find.parameter.usages.in.overriding.methods.prompt", parameter.name),
-                                           FindBundle.message("find.parameter.usages.in.overriding.methods.title"),
-                                           CommonBundle.getYesButtonText(), CommonBundle.getNoButtonText(),
-                                           Messages.getQuestionIcon()) == Messages.OK
+        return Messages.showOkCancelDialog(
+            parameter.project,
+            FindBundle.message("find.parameter.usages.in.overriding.methods.prompt", parameter.name),
+            FindBundle.message("find.parameter.usages.in.overriding.methods.title"),
+            CommonBundle.getYesButtonText(), CommonBundle.getNoButtonText(),
+            Messages.getQuestionIcon()
+        ) == Messages.OK
     }
 }
