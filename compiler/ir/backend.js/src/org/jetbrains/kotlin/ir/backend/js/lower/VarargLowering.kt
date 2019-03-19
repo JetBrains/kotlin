@@ -128,7 +128,7 @@ private class VarargTransformer(
                     expression.startOffset,
                     expression.endOffset,
                     expression.type,
-                    context.intrinsics.jsArraySlice.symbol
+                    context.intrinsics.jsArraySlice
                 ).apply {
                     putValueArgument(0, segments.first())
                 }

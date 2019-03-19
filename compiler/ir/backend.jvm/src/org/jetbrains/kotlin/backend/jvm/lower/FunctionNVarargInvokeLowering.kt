@@ -124,7 +124,7 @@ private class FunctionNVarargInvokeLowering(var context: JvmBackendContext) : Cl
                                                 )
                                                 +irIfThen(
                                                     irNotIs(irGet(argValue), type),
-                                                    irCall(context.irBuiltIns.illegalArgumentExceptionFun).apply {
+                                                    irCall(context.irBuiltIns.illegalArgumentExceptionSymbol).apply {
                                                         putValueArgument(0, irString("Wrong type, expected $type"))
                                                     }
                                                 )
@@ -143,7 +143,7 @@ private class FunctionNVarargInvokeLowering(var context: JvmBackendContext) : Cl
                     separator = " or ",
                     postfix = " arguments to invoke call"
                 )
-                +irCall(context.irBuiltIns.illegalArgumentExceptionFun.symbol).apply {
+                +irCall(context.irBuiltIns.illegalArgumentExceptionSymbol).apply {
                     putValueArgument(0, irString(throwMessage))
                 }
             }

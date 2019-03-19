@@ -25,14 +25,14 @@ class ReflectionCallsTransformer(private val context: JsIrBackendContext) : Call
                 { call ->
                     call.symbol.owner.dispatchReceiverParameter?.run { type.isSubtypeOfClass(context.irBuiltIns.kCallableClass) } ?: false
                 },
-                { call -> irCall(call, context.intrinsics.jsName.symbol, dispatchReceiverAsFirstArgument = true) })
+                { call -> irCall(call, context.intrinsics.jsName, dispatchReceiverAsFirstArgument = true) })
 
             addWithPredicate(
                 Name.identifier(Namer.KPROPERTY_GET),
                 { call ->
                     call.symbol.owner.dispatchReceiverParameter?.run { type.isSubtypeOfClass(context.irBuiltIns.kPropertyClass) } ?: false
                 },
-                { call -> irCall(call, context.intrinsics.jsPropertyGet.symbol, dispatchReceiverAsFirstArgument = true) }
+                { call -> irCall(call, context.intrinsics.jsPropertyGet, dispatchReceiverAsFirstArgument = true) }
             )
 
             addWithPredicate(
@@ -40,7 +40,7 @@ class ReflectionCallsTransformer(private val context: JsIrBackendContext) : Call
                 { call ->
                     call.symbol.owner.dispatchReceiverParameter?.run { type.isSubtypeOfClass(context.irBuiltIns.kPropertyClass) } ?: false
                 },
-                { call -> irCall(call, context.intrinsics.jsPropertySet.symbol, dispatchReceiverAsFirstArgument = true) }
+                { call -> irCall(call, context.intrinsics.jsPropertySet, dispatchReceiverAsFirstArgument = true) }
             )
         }
     }

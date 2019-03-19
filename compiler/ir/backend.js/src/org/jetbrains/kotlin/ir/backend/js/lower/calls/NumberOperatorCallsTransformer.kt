@@ -97,7 +97,7 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
 
     private fun irBinaryOp(
         call: IrCall,
-        intrinsic: IrFunction,
+        intrinsic: IrFunctionSymbol,
         toInt32: Boolean = false
     ): IrExpression {
         val newCall = irCall(call, intrinsic, dispatchReceiverAsFirstArgument = true)
@@ -128,7 +128,7 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
             result.isInt() -> when {
 
                 lhs.isInt() && rhs.isInt() ->
-                    irBinaryOp(call, intrinsics.jsImul.owner)
+                    irBinaryOp(call, intrinsics.jsImul)
 
                 else ->
                     irBinaryOp(call, intrinsics.jsMult, toInt32 = true)
@@ -150,8 +150,8 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
     private fun transformDecrement(call: IrCall) =
         transformCrement(call, intrinsics.jsMinus)
 
-    private fun transformCrement(call: IrCall, correspondingBinaryOp: IrFunction): IrExpression {
-        val operation = irCall(call, correspondingBinaryOp.symbol, dispatchReceiverAsFirstArgument = true).apply {
+    private fun transformCrement(call: IrCall, correspondingBinaryOp: IrFunctionSymbol): IrExpression {
+        val operation = irCall(call, correspondingBinaryOp, dispatchReceiverAsFirstArgument = true).apply {
             putValueArgument(1, buildInt(1))
         }
 
@@ -231,7 +231,7 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
         }
 
     private fun toInt32(e: IrExpression) =
-        JsIrBuilder.buildCall(intrinsics.jsBitOr.symbol, irBuiltIns.intType).apply {
+        JsIrBuilder.buildCall(intrinsics.jsBitOr, irBuiltIns.intType).apply {
             putValueArgument(0, e)
             putValueArgument(1, buildInt(0))
         }

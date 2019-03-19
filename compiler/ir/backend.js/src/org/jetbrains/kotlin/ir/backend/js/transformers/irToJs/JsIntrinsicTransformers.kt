@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.util.getInlineClassBackingField
@@ -235,21 +236,21 @@ private fun MutableMap<IrSymbol, IrCallTransformer>.addIfNotNull(symbol: IrSymbo
     put(symbol, t)
 }
 
-private fun MutableMap<IrSymbol, IrCallTransformer>.binOp(function: IrFunction, op: JsBinaryOperator) {
+private fun MutableMap<IrSymbol, IrCallTransformer>.binOp(function: IrFunctionSymbol, op: JsBinaryOperator) {
     withTranslatedArgs(function) { JsBinaryOperation(op, it[0], it[1]) }
 }
 
-private fun MutableMap<IrSymbol, IrCallTransformer>.prefixOp(function: IrFunction, op: JsUnaryOperator) {
+private fun MutableMap<IrSymbol, IrCallTransformer>.prefixOp(function: IrFunctionSymbol, op: JsUnaryOperator) {
     withTranslatedArgs(function) { JsPrefixOperation(op, it[0]) }
 }
 
-private fun MutableMap<IrSymbol, IrCallTransformer>.postfixOp(function: IrFunction, op: JsUnaryOperator) {
+private fun MutableMap<IrSymbol, IrCallTransformer>.postfixOp(function: IrFunctionSymbol, op: JsUnaryOperator) {
     withTranslatedArgs(function) { JsPostfixOperation(op, it[0]) }
 }
 
 private inline fun MutableMap<IrSymbol, IrCallTransformer>.withTranslatedArgs(
-    function: IrFunction,
+    function: IrFunctionSymbol,
     crossinline t: (List<JsExpression>) -> JsExpression
 ) {
-    put(function.symbol) { call, context -> t(translateCallArguments(call, context)) }
+    put(function) { call, context -> t(translateCallArguments(call, context)) }
 }

@@ -494,7 +494,7 @@ private class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringP
             }
 
             private fun createEnumValueOfBody(): IrBody {
-                val enumValueOf = context.irBuiltIns.enumValueOfFun
+                val enumValueOf = context.irBuiltIns.enumValueOfSymbol
                 val returnType = irClass.defaultType
 
                 val unsubstitutedValueOfDescriptor = enumValueOf.descriptor
@@ -508,9 +508,9 @@ private class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringP
                         UNDEFINED_OFFSET,
                         UNDEFINED_OFFSET,
                         returnType,
-                        enumValueOf.symbol,
+                        enumValueOf,
                         substitutedValueOfDescriptor,
-                        enumValueOf.typeParameters.size
+                        enumValueOf.owner.typeParameters.size
                     )
                 irValueOfCall.putTypeArgument(0, irClass.defaultType)
                 irValueOfCall.putValueArgument(

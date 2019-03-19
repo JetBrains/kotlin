@@ -45,8 +45,8 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
     //    private val isCharSymbol get() = context.intrinsics.isCharSymbol
     private val isObjectSymbol get() = context.intrinsics.isObjectSymbol
 
-    private val instanceOfIntrinsicSymbol = context.intrinsics.jsInstanceOf.symbol
-    private val typeOfIntrinsicSymbol = context.intrinsics.jsTypeOf.symbol
+    private val instanceOfIntrinsicSymbol = context.intrinsics.jsInstanceOf
+    private val typeOfIntrinsicSymbol = context.intrinsics.jsTypeOf
     private val jsClassIntrinsicSymbol = context.intrinsics.jsClass
 
     private val stringMarker get() = JsIrBuilder.buildString(context.irBuiltIns.stringType, "string")
