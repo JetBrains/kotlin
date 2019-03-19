@@ -10,13 +10,10 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
-import org.jetbrains.kotlin.fir.references.FirResolvedCallableReferenceImpl
 import org.jetbrains.kotlin.fir.references.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.resolve.calls.CallInfo
-import org.jetbrains.kotlin.fir.resolve.calls.CallResolver
-import org.jetbrains.kotlin.fir.resolve.calls.createFunctionConsumer
-import org.jetbrains.kotlin.fir.resolve.calls.createVariableConsumer
+import org.jetbrains.kotlin.fir.resolve.calls.*
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.addImportingScopes
 import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
@@ -24,16 +21,17 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirTopLevelDeclaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
 import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
-import org.jetbrains.kotlin.fir.types.impl.FirComputingImplicitTypeRef
-import org.jetbrains.kotlin.fir.types.impl.FirErrorTypeRefImpl
-import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
+import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.compose
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubstitutor
+import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
+import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
+import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOnly: Boolean) : FirTransformer<Any?>() {
@@ -115,7 +113,7 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
                 resolved.resultType =
                     resolved.conversionTypeRef.withReplacedConeType(
                         session,
-                        resolved.conversionTypeRef.coneTypeUnsafe<ConeKotlinType>().withNullability(ConeNullability.NULLABLE)
+                        resolved.conversionTypeRef.coneTypeUnsafe().withNullability(ConeNullability.NULLABLE)
                     )
             }
             else -> error("Unknown type operator")
@@ -143,15 +141,35 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
     val jump = ReturnTypeCalculatorWithJump(session)
 
     private fun <T> storeTypeFromCallee(access: T) where T : FirQualifiedAccess, T : FirExpression {
-        access.resultType =
-            when (val newCallee = access.calleeReference) {
-                is FirErrorNamedReference ->
-                    FirErrorTypeRefImpl(session, access.psi, newCallee.errorReason)
-                is FirResolvedCallableReference ->
-                    jump.tryCalculateReturnType(newCallee.callableSymbol.firUnsafe())
-                else -> return
-            }
+        access.resultType = typeFromCallee(access)
     }
+
+    private fun <T> typeFromCallee(access: T): FirResolvedTypeRef where T : FirQualifiedAccess, T : FirExpression {
+        return when (val newCallee = access.calleeReference) {
+            is FirErrorNamedReference ->
+                FirErrorTypeRefImpl(session, access.psi, newCallee.errorReason)
+            is FirResolvedCallableReference ->
+                jump.tryCalculateReturnType(newCallee.callableSymbol.firUnsafe())
+            else -> error("Failed to extract type from: $newCallee")
+        }
+    }
+
+    val inferenceComponents = InferenceComponents(object : ConeInferenceContext, TypeSystemInferenceExtensionContextDelegate {
+        override fun findCommonIntegerLiteralTypesSuperType(explicitSupertypes: List<SimpleTypeMarker>): SimpleTypeMarker? {
+            TODO("not implemented")
+        }
+
+        override fun TypeConstructorMarker.getApproximatedIntegerLiteralType(): KotlinTypeMarker {
+            TODO("not implemented")
+        }
+
+        override val session: FirSession
+            get() = this@FirBodyResolveTransformer.session
+
+        override fun KotlinTypeMarker.removeExactAnnotation(): KotlinTypeMarker {
+            return this
+        }
+    })
 
     override fun transformQualifiedAccessExpression(
         qualifiedAccessExpression: FirQualifiedAccessExpression,
@@ -180,13 +198,9 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
         }
         val callee = qualifiedAccessExpression.calleeReference as? FirSimpleNamedReference ?: return qualifiedAccessExpression.compose()
 
-        qualifiedAccessExpression.explicitReceiver?.visitNoTransform(this, null)
+        val receiver = qualifiedAccessExpression.explicitReceiver?.transformSingle(this, null)
 
-        val receiver = qualifiedAccessExpression.explicitReceiver
-
-        //val checkers = listOf(VariableApplicabilityChecker(callee.name))
-
-        val info = CallInfo(true, receiver, 0)
+        val info = CallInfo(CallKind.VariableAccess, receiver, emptyList(), emptyList()) { it.resultType }
         val resolver = CallResolver(jump, session)
         resolver.callInfo = info
         resolver.scopes = (scopes + localScopes).asReversed()
@@ -194,40 +208,44 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
         val consumer = createVariableConsumer(
             session,
             callee.name,
-            qualifiedAccessExpression.explicitReceiver,
-            qualifiedAccessExpression.explicitReceiver?.resultType
+            info, inferenceComponents
         )
         val result = resolver.runTowerResolver(consumer)
-        val successCandidates = result.successCandidates()
-        val resultExpression = qualifiedAccessExpression.transformCalleeReference(this, successCandidates)
+
+        val nameReference = createResolvedNamedReference(
+            callee,
+            result.bestCandidates(),
+            result.currentApplicability
+        )
+
+        val resultExpression =
+            qualifiedAccessExpression.transformCalleeReference(StoreNameReference, nameReference)
         storeTypeFromCallee(resultExpression as FirQualifiedAccessExpression)
         return resultExpression.compose()
     }
 
-    override fun transformFunctionCall(functionCall: FirFunctionCall, data: Any?): CompositeTransformResult<FirStatement> {
+    private fun resolveCallAndSelectCandidate(functionCall: FirFunctionCall, expectedTypeRef: FirTypeRef?): FirFunctionCall {
 
         val functionCall = functionCall.transformChildren(this, null) as FirFunctionCall
 
-        if (functionCall.calleeReference !is FirSimpleNamedReference) return functionCall.compose()
-
         val name = functionCall.calleeReference.name
-
-        val expectedTypeRef = data as FirTypeRef?
 
         val receiver = functionCall.explicitReceiver
         val arguments = functionCall.arguments
+        val typeArguments = functionCall.typeArguments
 
 
-        val info = CallInfo(false, receiver, arguments.size)
+        val info = CallInfo(CallKind.Function, receiver, arguments, typeArguments) { it.resultType }
         val resolver = CallResolver(jump, session)
         resolver.callInfo = info
         resolver.scopes = (scopes + localScopes).asReversed()
 
-
-
-        val consumer = createFunctionConsumer(session, name, receiver, receiver?.resultType)
+        val consumer = createFunctionConsumer(session, name, info, inferenceComponents)
         val result = resolver.runTowerResolver(consumer)
-        val successCandidates = result.successCandidates()
+        val bestCandidates = result.bestCandidates()
+        val reducedCandidates = ConeOverloadConflictResolver(TypeSpecificityComparator.NONE, inferenceComponents)
+            .chooseMaximallySpecificCandidates(bestCandidates, discriminateGenerics = false)
+
 
 //        fun isInvoke()
 //
@@ -257,33 +275,103 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
 //            }
 //            else -> functionCall
 //        }
-        val resultExpression = functionCall.transformCalleeReference(this, successCandidates)
+        val nameReference = createResolvedNamedReference(
+            functionCall.calleeReference,
+            reducedCandidates,
+            result.currentApplicability
+        )
 
-        storeTypeFromCallee(resultExpression as FirFunctionCall)
-        return resultExpression.compose()
+        val resultExpression = functionCall.transformCalleeReference(StoreNameReference, nameReference) as FirFunctionCall
+        val typeRef = typeFromCallee(functionCall)
+        if (typeRef.type is ConeKotlinErrorType) {
+            functionCall.resultType = typeRef
+        }
+        return resultExpression
     }
 
-    private fun createResolvedNamedReference(namedReference: FirNamedReference, candidates: List<ConeCallableSymbol>): FirNamedReference {
+    private fun completeTypeInference(functionCall: FirFunctionCall, expectedTypeRef: FirTypeRef?): FirFunctionCall {
+        val typeRef = typeFromCallee(functionCall)
+        if (typeRef.type is ConeKotlinErrorType) {
+            functionCall.resultType = typeRef
+            return functionCall
+        }
+        val candidate = functionCall.candidate() ?: return functionCall
+        val initialSubstitutor = candidate.substitutor
+
+        val initialType = initialSubstitutor.substituteOrSelf(typeRef.type)
+
+        val completionMode = candidate.computeCompletionMode(inferenceComponents, expectedTypeRef, initialType)
+        val completer = ConstraintSystemCompleter(inferenceComponents)
+        completer.complete(candidate.system.asConstraintSystemCompleterContext(), completionMode, initialType)
+
+
+        if (completionMode == KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode.FULL) {
+            val finalSubstitutor =
+                candidate.system.asReadOnlyStorage().buildAbstractResultingSubstitutor(inferenceComponents.ctx) as ConeSubstitutor
+            return functionCall.transformSingle(
+                FirCallCompleterTransformer(session, finalSubstitutor, jump),
+                null
+            )
+        }
+        return functionCall
+    }
+
+    override fun transformFunctionCall(functionCall: FirFunctionCall, data: Any?): CompositeTransformResult<FirStatement> {
+        if (functionCall.calleeReference !is FirSimpleNamedReference) return functionCall.compose()
+        val expectedTypeRef = data as FirTypeRef?
+        val completeInference =
+            try {
+                val resultExpression = resolveCallAndSelectCandidate(functionCall, expectedTypeRef)
+                completeTypeInference(resultExpression, expectedTypeRef)
+            } catch (e: Throwable) {
+                throw RuntimeException("While resolving call ${functionCall.render()}", e)
+            }
+
+
+        return completeInference.compose()
+
+    }
+
+    private fun describeSymbol(symbol: ConeSymbol): String {
+        return when (symbol) {
+            is ConeClassLikeSymbol -> symbol.classId.asString()
+            is ConeCallableSymbol -> symbol.callableId.toString()
+            else -> "$symbol"
+        }
+    }
+
+    private fun createResolvedNamedReference(
+        namedReference: FirNamedReference,
+        candidates: Collection<Candidate>,
+        applicability: CandidateApplicability
+    ): FirNamedReference {
         val name = namedReference.name
-        return when (candidates.size) {
-            0 -> FirErrorNamedReference(
+        return when {
+            candidates.isEmpty() -> FirErrorNamedReference(
                 namedReference.session, namedReference.psi, "Unresolved name: $name"
             )
-            1 -> FirResolvedCallableReferenceImpl(
+            applicability < CandidateApplicability.RESOLVED -> {
+                FirErrorNamedReference(
+                    namedReference.session,
+                    namedReference.psi,
+                    "Inapplicable($applicability): ${candidates.map { describeSymbol(it.symbol) }}"
+                )
+            }
+            candidates.size == 1 -> FirNamedReferenceWithCandidate(
                 namedReference.session, namedReference.psi,
                 name, candidates.single()
             )
             else -> FirErrorNamedReference(
-                namedReference.session, namedReference.psi, "Ambiguity: $name, ${candidates.map { it.callableId }}"
+                namedReference.session, namedReference.psi, "Ambiguity: $name, ${candidates.map { describeSymbol(it.symbol) }}"
             )
         }
     }
 
-    override fun transformNamedReference(namedReference: FirNamedReference, data: Any?): CompositeTransformResult<FirNamedReference> {
-        if (namedReference is FirErrorNamedReference || namedReference is FirResolvedCallableReference) return namedReference.compose()
-        val referents = data as? List<ConeCallableSymbol> ?: return namedReference.compose()
-        return createResolvedNamedReference(namedReference, referents).compose()
-    }
+//    override fun transformNamedReference(namedReference: FirNamedReference, data: Any?): CompositeTransformResult<FirNamedReference> {
+//        if (namedReference is FirErrorNamedReference || namedReference is FirResolvedCallableReference) return namedReference.compose()
+//        val referents = data as? List<ConeCallableSymbol> ?: return namedReference.compose()
+//        return createResolvedNamedReference(namedReference, referents).compose()
+//    }
 
 
     override fun transformBlock(block: FirBlock, data: Any?): CompositeTransformResult<FirStatement> {
@@ -315,10 +403,10 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
     }
 
     override fun <T> transformConstExpression(constExpression: FirConstExpression<T>, data: Any?): CompositeTransformResult<FirStatement> {
-        val expectedType = data as? FirTypeRef
+        val expectedType = data as FirTypeRef?
 
         val kind = constExpression.kind
-        if (expectedType is FirImplicitTypeRef || expectedType == null ||
+        if (expectedType == null || expectedType is FirImplicitTypeRef || expectedType == null ||
             kind == IrConstKind.Null || kind == IrConstKind.Boolean || kind == IrConstKind.Char
         ) {
             val symbol = when (kind) {
@@ -424,7 +512,7 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
 
     override fun transformExpression(expression: FirExpression, data: Any?): CompositeTransformResult<FirStatement> {
         if (expression.resultType is FirImplicitTypeRef) {
-            val type = FirErrorTypeRefImpl(session, expression.psi, "Type calculating for ${expression.render()} is not supported")
+            val type = FirErrorTypeRefImpl(session, expression.psi, "Type calculating for ${expression::class} is not supported")
             expression.resultType = type
         }
         return super.transformExpression(expression, data)
@@ -567,4 +655,17 @@ inline fun <reified T : FirElement> ConeSymbol.firSafeNullable(): T? {
 
 interface ReturnTypeCalculator {
     fun tryCalculateReturnType(declaration: FirTypedDeclaration): FirResolvedTypeRef
+}
+
+private object StoreNameReference : FirTransformer<FirNamedReference>() {
+    override fun <E : FirElement> transformElement(element: E, data: FirNamedReference): CompositeTransformResult<E> {
+        return element.compose()
+    }
+
+    override fun transformNamedReference(
+        namedReference: FirNamedReference,
+        data: FirNamedReference
+    ): CompositeTransformResult<FirNamedReference> {
+        return data.compose()
+    }
 }

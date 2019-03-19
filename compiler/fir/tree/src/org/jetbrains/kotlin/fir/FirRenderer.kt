@@ -34,6 +34,8 @@ fun FirElement.render(): String = buildString { this@render.accept(FirRenderer(t
 
 fun ConeKotlinType.render(): String {
     return when (this) {
+        is ConeTypeVariableType -> "TypeVariable(${this.lookupTag.name})"
+        is ConeDefinitelyNotNullType -> "${original.render()}!"
         is ConeKotlinErrorType -> "error: $reason"
         is ConeClassErrorType -> "class error: $reason"
         is ConeCapturedType -> "captured type: lowerType = ${lowerType?.render()}"

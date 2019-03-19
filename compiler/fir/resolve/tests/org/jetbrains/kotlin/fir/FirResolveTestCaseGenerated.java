@@ -159,6 +159,11 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/expresssions"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("checkArguments.kt")
+        public void testCheckArguments() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/checkArguments.kt");
+        }
+
         @TestMetadata("constructor.kt")
         public void testConstructor() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/constructor.kt");
@@ -187,6 +192,36 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
         @TestMetadata("when.kt")
         public void testWhen() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/when.kt");
+        }
+
+        @TestMetadata("compiler/fir/resolve/testData/resolve/expresssions/inference")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Inference extends AbstractFirResolveTestCase {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInInference() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(),
+                                                                new File("compiler/fir/resolve/testData/resolve/expresssions/inference"),
+                                                                Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("id.kt")
+            public void testId() throws Exception {
+                runTest("compiler/fir/resolve/testData/resolve/expresssions/inference/id.kt");
+            }
+
+            @TestMetadata("typeParameters.kt")
+            public void testTypeParameters() throws Exception {
+                runTest("compiler/fir/resolve/testData/resolve/expresssions/inference/typeParameters.kt");
+            }
+
+            @TestMetadata("typeParameters2.kt")
+            public void testTypeParameters2() throws Exception {
+                runTest("compiler/fir/resolve/testData/resolve/expresssions/inference/typeParameters2.kt");
+            }
         }
 
         @TestMetadata("compiler/fir/resolve/testData/resolve/expresssions/invoke")

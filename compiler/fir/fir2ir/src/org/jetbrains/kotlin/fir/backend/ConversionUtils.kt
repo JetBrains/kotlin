@@ -55,6 +55,7 @@ fun ConeKotlinType.toIrType(session: FirSession, declarationStorage: Fir2IrDecla
             upperBound.toIrType(session, declarationStorage)
         }
         is ConeCapturedType -> TODO()
+        is ConeDefinitelyNotNullType -> TODO()
     }
 }
 
@@ -102,7 +103,7 @@ fun FirReference.toSymbol(declarationStorage: Fir2IrDeclarationStorage): IrSymbo
 
 fun FirNamedReference.toSymbol(declarationStorage: Fir2IrDeclarationStorage): IrSymbol? {
     if (this is FirResolvedCallableReference) {
-        when (val callableSymbol = this.callableSymbol) {
+        when (val callableSymbol = this.coneSymbol) {
             is FirFunctionSymbol -> return callableSymbol.toFunctionSymbol(declarationStorage)
             is FirPropertySymbol -> return callableSymbol.toPropertySymbol(declarationStorage)
             is FirVariableSymbol -> return callableSymbol.toValueSymbol(declarationStorage)

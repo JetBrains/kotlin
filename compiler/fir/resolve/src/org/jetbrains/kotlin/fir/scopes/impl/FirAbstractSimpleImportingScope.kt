@@ -52,7 +52,7 @@ abstract class FirAbstractSimpleImportingScope(session: FirSession) : FirAbstrac
         if (imports.isEmpty()) return ProcessorAction.NEXT
 
         for (import in imports) {
-            if (processCallables(import, name, token, processor).stop()) {
+            if (processCallables(import, import.importedName!!, token, processor).stop()) {
                 return ProcessorAction.STOP
             }
         }

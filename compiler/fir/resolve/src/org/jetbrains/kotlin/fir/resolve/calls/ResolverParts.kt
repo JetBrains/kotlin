@@ -10,17 +10,33 @@ import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 
 
-sealed class ResolutionStage {
+abstract class ResolutionStage {
     abstract fun check(candidate: Candidate, sink: CheckerSink, callInfo: CallInfo)
 }
 
-sealed class CheckerStage : ResolutionStage()
+abstract class CheckerStage : ResolutionStage()
 
 internal object MapArguments : ResolutionStage() {
     override fun check(candidate: Candidate, sink: CheckerSink, callInfo: CallInfo) {
         val symbol = candidate.symbol as? FirFunctionSymbol ?: return sink.reportApplicability(CandidateApplicability.HIDDEN)
-        if (symbol.firUnsafe<FirFunction>().valueParameters.size != callInfo.argumentCount) {
+        if (symbol.firUnsafe<FirFunction>().valueParameters.size != callInfo.arguments.size) {
             return sink.reportApplicability(CandidateApplicability.PARAMETER_MAPPING_ERROR)
+        }
+    }
+
+}
+
+internal object CheckArguments : CheckerStage() {
+    override fun check(candidate: Candidate, sink: CheckerSink, callInfo: CallInfo) {
+        val symbol = candidate.symbol as? FirFunctionSymbol ?: error("Can't check arguments for non function")
+        val declaration = symbol.fir as FirFunction
+        for ((parameter, argument) in declaration.valueParameters.zip(callInfo.arguments)) {
+
+            candidate.resolveArgument(argument, parameter, isReceiver = false, typeProvider = callInfo.typeProvider, sink = sink)
+        }
+
+        if (candidate.system.hasContradiction) {
+            sink.reportApplicability(CandidateApplicability.INAPPLICABLE)
         }
     }
 
@@ -28,8 +44,8 @@ internal object MapArguments : ResolutionStage() {
 
 
 internal fun functionCallResolutionSequence() =
-    listOf<ResolutionStage>(MapArguments)
+    listOf<ResolutionStage>(MapArguments, CreateFreshTypeVariableSubstitutorStage, CheckArguments)
 
 
 internal fun qualifiedAccessResolutionSequence() =
-    listOf<ResolutionStage>()
+    listOf<ResolutionStage>(CreateFreshTypeVariableSubstitutorStage)
