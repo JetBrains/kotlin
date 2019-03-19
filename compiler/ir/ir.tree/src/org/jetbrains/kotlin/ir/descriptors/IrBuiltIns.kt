@@ -127,7 +127,6 @@ class IrBuiltIns(
 
     val collectionClass = builtIns.collection.toIrSymbol()
 
-    val arrayType = builtIns.array.toIrType(symbolTable = symbolTable)
     val arrayClass = builtIns.array.toIrSymbol()
 
     val throwableType = builtIns.throwable.defaultType.toIrType()

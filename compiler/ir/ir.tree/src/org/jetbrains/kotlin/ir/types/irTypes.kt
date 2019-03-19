@@ -107,11 +107,6 @@ private fun makeKotlinType(
     return classifier.descriptor.defaultType.replace(newArguments = kotlinTypeArguments).makeNullableAsSpecified(hasQuestionMark)
 }
 
-fun ClassifierDescriptor.toIrType(hasQuestionMark: Boolean = false, symbolTable: SymbolTable? = null): IrType {
-    val symbol = getSymbol(symbolTable)
-    return IrSimpleTypeImpl(defaultType, symbol, hasQuestionMark, listOf(), listOf())
-}
-
 val IrTypeParameter.defaultType: IrType
     get() = IrSimpleTypeImpl(
         symbol,
