@@ -11,15 +11,26 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.inspections.collections.isCalling
 import org.jetbrains.kotlin.idea.intentions.ReplaceItWithExplicitFunctionLiteralParamIntention
+import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.refactoring.rename.KotlinVariableInplaceRenameHandler
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class NestedLambdaShadowedImplicitParameterInspection : AbstractKotlinInspection() {
+    companion object {
+        val scopeFunctions = listOf(
+            "kotlin.also",
+            "kotlin.let",
+            "kotlin.takeIf",
+            "kotlin.takeUnless"
+        ).map { FqName(it) }
+    }
+
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return lambdaExpressionVisitor(fun(lambda: KtLambdaExpression) {
             if (lambda.valueParameters.isNotEmpty()) return
@@ -28,6 +39,13 @@ class NestedLambdaShadowedImplicitParameterInspection : AbstractKotlinInspection
             val context = lambda.analyze()
             val implicitParameter = lambda.getImplicitParameter(context) ?: return
             if (lambda.getParentImplicitParameterLambda(context) == null) return
+
+            val qualifiedExpression = lambda.getStrictParentOfType<KtQualifiedExpression>()
+            if (qualifiedExpression != null) {
+                val receiver = qualifiedExpression.receiverExpression
+                val call = qualifiedExpression.callExpression
+                if (receiver.text == "it" && call?.isCalling(scopeFunctions, context) == true) return
+            }
 
             val containingFile = lambda.containingFile
             lambda.forEachDescendantOfType<KtNameReferenceExpression> {
