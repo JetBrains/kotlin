@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicFunction
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
 import org.jetbrains.kotlin.backend.jvm.lower.CrIrType
 import org.jetbrains.kotlin.backend.jvm.lower.JvmBuiltinOptimizationLowering.Companion.isNegation
-import org.jetbrains.kotlin.backend.jvm.lower.JvmBuiltinOptimizationLowering.Companion.negationArgument
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.*
@@ -748,7 +747,7 @@ class ExpressionCodegen(
         // targets instead. This significantly cuts down the amount of branches and loads of
         // const_0 and const_1 in the generated java bytecode.
         if (isNegation(condition, classCodegen.context)) {
-            condition = negationArgument(condition as IrCall)
+            condition = (condition as IrCall).dispatchReceiver!!
             jumpIfFalse = !jumpIfFalse
         }
 
