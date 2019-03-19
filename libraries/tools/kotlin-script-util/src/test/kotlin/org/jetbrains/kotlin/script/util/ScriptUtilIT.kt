@@ -107,6 +107,17 @@ done
         }
     }
 
+    @Test
+    fun testResolveStdJUnitDynVer() {
+        val (_, err) = captureOutAndErr {
+            Assert.assertNull(compileScript("args-junit-dynver-error.kts", StandardArgsScriptTemplateWithMavenResolving::class))
+        }
+        Assert.assertTrue("Expecting error: unresolved reference: assertThrows", err.contains("error: unresolved reference: assertThrows"))
+
+        val scriptClass = compileScript("args-junit-dynver.kts", StandardArgsScriptTemplateWithMavenResolving::class)
+        Assert.assertNotNull(scriptClass)
+    }
+
     private fun compileScript(
             scriptFileName: String,
             scriptTemplate: KClass<out Any>,
@@ -170,18 +181,24 @@ done
     private fun String.linesSplitTrim() =
             split('\n','\r').map(String::trim).filter(String::isNotBlank)
 
-    private fun captureOut(body: () -> Unit): String {
+    private fun captureOut(body: () -> Unit): String = captureOutAndErr(body).first
+
+    private fun captureOutAndErr(body: () -> Unit): Pair<String, String> {
         val outStream = ByteArrayOutputStream()
+        val errStream = ByteArrayOutputStream()
         val prevOut = System.out
+        val prevErr = System.err
         System.setOut(PrintStream(outStream))
+        System.setErr(PrintStream(errStream))
         try {
             body()
-        }
-        finally {
+        } finally {
             System.out.flush()
+            System.err.flush()
             System.setOut(prevOut)
+            System.setErr(prevErr)
         }
-        return outStream.toString()
+        return outStream.toString() to errStream.toString()
     }
 }
 

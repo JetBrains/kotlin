@@ -37,11 +37,7 @@ class MainKtsTest {
     @Test
     fun testResolveJunit() {
         val res = evalFile(File("testData/hello-resolve-junit.main.kts"))
-
-        Assert.assertTrue(
-            "test failed:\n  ${res.reports.joinToString("\n  ") { it.message + if (it.exception == null) "" else ": ${it.exception}" }}",
-            res is ResultWithDiagnostics.Success
-        )
+        assertSucceeded(res)
     }
 
 //    @Test
@@ -51,44 +47,34 @@ class MainKtsTest {
     // TODO: 2. implement proper handling of pom-typed dependencies (e.g. consider to reimplement it on aether as in JarRepositoryManager (from IDEA))
     fun testResolveWithArtifactType() {
         val res = evalFile(File("testData/resolve-moneta.main.kts"))
-
-        Assert.assertTrue(
-            "test failed:\n  ${res.reports.joinToString("\n  ") { it.message + if (it.exception == null) "" else ": ${it.exception}" }}",
-            res is ResultWithDiagnostics.Success
-        )
+        assertSucceeded(res)
     }
 
+    @Test
+    fun testResolveJunitDynamicVer() {
+        val errRes = evalFile(File("testData/hello-resolve-junit-dynver-error.main.kts"))
+        assertFailed("Unresolved reference: assertThrows", errRes)
+
+        val res = evalFile(File("testData/hello-resolve-junit-dynver.main.kts"))
+        assertSucceeded(res)
+    }
 
     @Test
     fun testUnresolvedJunit() {
         val res = evalFile(File("testData/hello-unresolved-junit.main.kts"))
-
-        Assert.assertTrue(
-            "test failed - expecting a failure with the message \"Unresolved reference: junit\" but received " +
-                    (if (res is ResultWithDiagnostics.Failure) "failure" else "success") +
-                    ":\n  ${res.reports.joinToString("\n  ") { it.message + if (it.exception == null) "" else ": ${it.exception}" }}",
-            res is ResultWithDiagnostics.Failure && res.reports.any { it.message.contains("Unresolved reference: junit") })
+        assertFailed("Unresolved reference: junit", res)
     }
 
     @Test
     fun testResolveError() {
         val res = evalFile(File("testData/hello-resolve-error.main.kts"))
-
-        Assert.assertTrue(
-            "test failed - expecting a failure with the message \"Unrecognized set of arguments to maven resolver: abracadabra\" but received " +
-                    (if (res is ResultWithDiagnostics.Failure) "failure" else "success") +
-                    ":\n  ${res.reports.joinToString("\n  ") { it.message + if (it.exception == null) "" else ": ${it.exception}" }}",
-            res is ResultWithDiagnostics.Failure && res.reports.any { it.message.contains("Unrecognized set of arguments to ivy resolver: abracadabra") })
+        assertFailed("Unrecognized set of arguments to ivy resolver: abracadabra", res)
     }
 
     @Test
     fun testResolveLog4jAndDocopt() {
         val res = evalFile(File("testData/resolve-log4j-and-docopt.main.kts"))
-
-        Assert.assertTrue(
-            "test failed:\n  ${res.reports.joinToString("\n  ") { it.message + if (it.exception == null) "" else ": ${it.exception}" }}",
-            res is ResultWithDiagnostics.Success
-        )
+        assertSucceeded(res)
     }
 
     @Test
@@ -96,14 +82,26 @@ class MainKtsTest {
 
         val out = captureOut {
             val res = evalFile(File("testData/import-test.main.kts"))
-
-            Assert.assertTrue(
-                "test failed:\n  ${res.reports.joinToString("\n  ") { it.message + if (it.exception == null) "" else ": ${it.exception}" }}",
-                res is ResultWithDiagnostics.Success
-            )
+            assertSucceeded(res)
         }.lines()
 
         Assert.assertEquals(listOf("Hi from common", "Hi from middle", "sharedVar == 5"), out)
+    }
+
+    private fun assertSucceeded(res: ResultWithDiagnostics<EvaluationResult>) {
+        Assert.assertTrue(
+            "test failed:\n  ${res.reports.joinToString("\n  ") { it.message + if (it.exception == null) "" else ": ${it.exception}" }}",
+            res is ResultWithDiagnostics.Success
+        )
+    }
+
+    private fun assertFailed(expectedError: String, res: ResultWithDiagnostics<EvaluationResult>) {
+        Assert.assertTrue(
+            "test failed - expecting a failure with the message \"$expectedError\" but received " +
+                    (if (res is ResultWithDiagnostics.Failure) "failure" else "success") +
+                    ":\n  ${res.reports.joinToString("\n  ") { it.message + if (it.exception == null) "" else ": ${it.exception}" }}",
+            res is ResultWithDiagnostics.Failure && res.reports.any { it.message.contains("$expectedError") }
+        )
     }
 }
 
