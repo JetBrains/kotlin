@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementAsConstructorParameter
 import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMembersHandler
 import org.jetbrains.kotlin.idea.inspections.*
+import org.jetbrains.kotlin.idea.intentions.AbstractAddAccessorsIntention
 import org.jetbrains.kotlin.idea.intentions.AddValVarToConstructorParameterAction
 import org.jetbrains.kotlin.idea.intentions.ConvertPropertyInitializerToGetterIntention
 import org.jetbrains.kotlin.idea.intentions.MoveMemberToCompanionObjectIntention
@@ -603,5 +604,8 @@ class QuickFixRegistrar : QuickFixContributor {
         CONSTANT_EXPECTED_TYPE_MISMATCH.registerFactory(SurroundWithLambdaFix)
 
         NO_SET_METHOD.registerFactory(ChangeToMutableCollectionFix)
+
+        MUST_BE_INITIALIZED_OR_BE_ABSTRACT.registerFactory(AbstractAddAccessorsIntention)
+        MUST_BE_INITIALIZED.registerFactory(AbstractAddAccessorsIntention)
     }
 }

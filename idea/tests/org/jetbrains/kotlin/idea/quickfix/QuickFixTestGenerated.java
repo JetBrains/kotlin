@@ -846,6 +846,39 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/addPropertyAccessors")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class AddPropertyAccessors extends AbstractQuickFixTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInAddPropertyAccessors() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addPropertyAccessors"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("val.kt")
+        public void testVal() throws Exception {
+            runTest("idea/testData/quickfix/addPropertyAccessors/val.kt");
+        }
+
+        @TestMetadata("var.kt")
+        public void testVar() throws Exception {
+            runTest("idea/testData/quickfix/addPropertyAccessors/var.kt");
+        }
+
+        @TestMetadata("varHasGetter.kt")
+        public void testVarHasGetter() throws Exception {
+            runTest("idea/testData/quickfix/addPropertyAccessors/varHasGetter.kt");
+        }
+
+        @TestMetadata("varHasSetter.kt")
+        public void testVarHasSetter() throws Exception {
+            runTest("idea/testData/quickfix/addPropertyAccessors/varHasSetter.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/addPropertyToSupertype")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
