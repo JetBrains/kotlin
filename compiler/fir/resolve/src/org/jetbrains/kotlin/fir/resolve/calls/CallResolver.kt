@@ -7,13 +7,11 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
-import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
 import org.jetbrains.kotlin.fir.scopes.FirPosition
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
@@ -21,11 +19,11 @@ import org.jetbrains.kotlin.fir.scopes.processClassifiersByNameWithAction
 import org.jetbrains.kotlin.fir.service
 import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 
@@ -49,23 +47,27 @@ class CheckerSinkImpl : CheckerSink {
     }
 }
 
-private abstract class Checker {
-    abstract fun check(candidate: Candidate, sink: CheckerSink, callInfo: CallInfo)
 
-}
+class Candidate(
+    val symbol: ConeSymbol,
+    val receiverKind: ExplicitReceiverKind,
+    val callKind: CallKind
+)
 
-private object MapArguments : Checker() {
-    override fun check(candidate: Candidate, sink: CheckerSink, callInfo: CallInfo) {
-        val symbol = candidate.symbol as? FirFunctionSymbol ?: return sink.reportApplicability(CandidateApplicability.HIDDEN)
-        if (symbol.firUnsafe<FirFunction>().valueParameters.size != callInfo.argumentCount) {
-            return sink.reportApplicability(CandidateApplicability.PARAMETER_MAPPING_ERROR)
+sealed class CallKind {
+    abstract fun sequence(): List<ResolutionStage>
+    object Function : CallKind() {
+        override fun sequence(): List<ResolutionStage> {
+            return functionCallResolutionSequence()
         }
     }
 
+    object VariableAccess : CallKind() {
+        override fun sequence(): List<ResolutionStage> {
+            return qualifiedAccessResolutionSequence()
+        }
+    }
 }
-
-
-class Candidate(val symbol: ConeSymbol) {}
 
 
 enum class TowerDataKind {
@@ -179,7 +181,7 @@ fun createVariableConsumer(
     explicitReceiver: FirExpression?,
     explicitReceiverType: FirTypeRef?
 ): TowerDataConsumer {
-    return createSimpleConsumer(session, name, TowerScopeLevel.Token.Properties, explicitReceiver, explicitReceiverType)
+    return createSimpleConsumer(session, name, TowerScopeLevel.Token.Properties, explicitReceiver, explicitReceiverType, CallKind.VariableAccess)
 }
 
 fun createFunctionConsumer(
@@ -188,7 +190,7 @@ fun createFunctionConsumer(
     explicitReceiver: FirExpression?,
     explicitReceiverType: FirTypeRef?
 ): TowerDataConsumer {
-    return createSimpleConsumer(session, name, TowerScopeLevel.Token.Functions, explicitReceiver, explicitReceiverType)
+    return createSimpleConsumer(session, name, TowerScopeLevel.Token.Functions, explicitReceiver, explicitReceiverType, CallKind.Function)
 }
 
 
@@ -197,15 +199,16 @@ fun createSimpleConsumer(
     name: Name,
     token: TowerScopeLevel.Token<*>,
     explicitReceiver: FirExpression?,
-    explicitReceiverType: FirTypeRef?
+    explicitReceiverType: FirTypeRef?,
+    callKind: CallKind
 ): TowerDataConsumer {
     return if (explicitReceiver != null) {
         ExplicitReceiverTowerDataConsumer(session, name, token, object : ReceiverValueWithPossibleTypes {
             override val type: ConeKotlinType
                 get() = explicitReceiverType!!.coneTypeUnsafe()
-        })
+        }, callKind)
     } else {
-        NoExplicitReceiverTowerDataConsumer(session, name, token)
+        NoExplicitReceiverTowerDataConsumer(session, name, token, callKind)
     }
 }
 
@@ -213,7 +216,8 @@ class ExplicitReceiverTowerDataConsumer<T : ConeSymbol>(
     val session: FirSession,
     val name: Name,
     val token: TowerScopeLevel.Token<T>,
-    val explicitReceiver: ReceiverValueWithPossibleTypes
+    val explicitReceiver: ReceiverValueWithPossibleTypes,
+    val callKind: CallKind
 ) : TowerDataConsumer() {
 
     var groupId = 0
@@ -233,7 +237,7 @@ class ExplicitReceiverTowerDataConsumer<T : ConeSymbol>(
                     null,
                     object : TowerScopeLevel.TowerScopeLevelProcessor<T> {
                         override fun consumeCandidate(symbol: T, boundDispatchReceiver: ReceiverValueWithPossibleTypes?): ProcessorAction {
-                            resultCollector.consumeCandidate(groupId, symbol)
+                            resultCollector.consumeCandidate(groupId, Candidate(symbol, ExplicitReceiverKind.DISPATCH_RECEIVER, callKind))
                             return ProcessorAction.NEXT
                         }
                     }
@@ -245,7 +249,7 @@ class ExplicitReceiverTowerDataConsumer<T : ConeSymbol>(
                     explicitReceiver,
                     object : TowerScopeLevel.TowerScopeLevelProcessor<T> {
                         override fun consumeCandidate(symbol: T, boundDispatchReceiver: ReceiverValueWithPossibleTypes?): ProcessorAction {
-                            resultCollector.consumeCandidate(groupId, symbol)
+                            resultCollector.consumeCandidate(groupId, Candidate(symbol, ExplicitReceiverKind.EXTENSION_RECEIVER, callKind))
                             return ProcessorAction.NEXT
                         }
                     }
@@ -258,7 +262,8 @@ class ExplicitReceiverTowerDataConsumer<T : ConeSymbol>(
 class NoExplicitReceiverTowerDataConsumer<T : ConeSymbol>(
     val session: FirSession,
     val name: Name,
-    val token: TowerScopeLevel.Token<T>
+    val token: TowerScopeLevel.Token<T>,
+    val callKind: CallKind
 ) : TowerDataConsumer() {
     var groupId = 0
 
@@ -279,7 +284,7 @@ class NoExplicitReceiverTowerDataConsumer<T : ConeSymbol>(
                     null,
                     object : TowerScopeLevel.TowerScopeLevelProcessor<T> {
                         override fun consumeCandidate(symbol: T, boundDispatchReceiver: ReceiverValueWithPossibleTypes?): ProcessorAction {
-                            resultCollector.consumeCandidate(groupId, symbol)
+                            resultCollector.consumeCandidate(groupId, Candidate(symbol, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, callKind))
                             return ProcessorAction.NEXT
                         }
                     }
@@ -325,7 +330,7 @@ enum class CandidateApplicability {
 class CandidateCollector(val callInfo: CallInfo) {
 
     val groupNumbers = mutableListOf<Int>()
-    val candidates = mutableListOf<ConeSymbol>()
+    val candidates = mutableListOf<Candidate>()
 
 
     var currentApplicability = CandidateApplicability.HIDDEN
@@ -339,18 +344,21 @@ class CandidateCollector(val callInfo: CallInfo) {
 
     protected fun getApplicability(
         group: Int,
-        symbol: ConeSymbol
+        candidate: Candidate
     ): CandidateApplicability {
 
         val sink = CheckerSinkImpl()
 
-        MapArguments.check(Candidate(symbol), sink, callInfo)
+
+        candidate.callKind.sequence().forEach {
+            it.check(candidate, sink, callInfo)
+        }
 
         return sink.current
     }
 
-    fun consumeCandidate(group: Int, symbol: ConeSymbol) {
-        val applicability = getApplicability(group, symbol)
+    fun consumeCandidate(group: Int, candidate: Candidate) {
+        val applicability = getApplicability(group, candidate)
 
         if (applicability > currentApplicability) {
             groupNumbers.clear()
@@ -360,7 +368,7 @@ class CandidateCollector(val callInfo: CallInfo) {
 
 
         if (applicability == currentApplicability) {
-            candidates.add(symbol)
+            candidates.add(candidate)
             groupNumbers.add(group)
         }
     }
@@ -377,7 +385,7 @@ class CandidateCollector(val callInfo: CallInfo) {
                 result.clear()
             }
             if (bestGroup == group) {
-                result.add(candidate)
+                result.add(candidate.symbol)
             }
         }
         return result
