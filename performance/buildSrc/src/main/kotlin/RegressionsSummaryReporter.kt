@@ -29,7 +29,7 @@ open class RegressionsSummaryReporter : DefaultTask() {
     @Input
     lateinit var targetsResultFiles: Map<String, String>
 
-    const val performanceServer = "https://kotlin-native-perf-summary.labs.jb.gg/"
+    val performanceServer = "https://kotlin-native-perf-summary.labs.jb.gg/"
 
     @TaskAction
     fun run() {
