@@ -239,7 +239,7 @@ abstract class AbstractKotlinTarget(
 }
 
 internal fun KotlinTarget.disambiguateName(simpleName: String) =
-    lowerCamelCaseName(disambiguationClassifier, simpleName)
+    lowerCamelCaseName(targetName, simpleName)
 
 internal fun javaApiUsageForMavenScoping() =
     if (isGradleVersionAtLeast(5, 3)) {
