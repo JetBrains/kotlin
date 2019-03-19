@@ -13,6 +13,7 @@ import com.intellij.psi.impl.source.PostprocessReformattingAspect
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.analysis.analyzeAsReplacement
+import org.jetbrains.kotlin.idea.caches.resolve.allowResolveInWriteAction
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.idea.imports.getImportableTargets
@@ -199,7 +200,10 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
 
             // step 2: analyze collected elements with resolve and decide which can be shortened now and which need descriptors to be imported before shortening
             val allElementsToAnalyze = visitors.flatMap { visitor -> visitor.getElementsToAnalyze().map { it.element } }
-            val bindingContext = file.getResolutionFacade().analyze(allElementsToAnalyze, BodyResolveMode.PARTIAL_WITH_CFA)
+            val bindingContext = allowResolveInWriteAction {
+                file.getResolutionFacade().analyze(allElementsToAnalyze, BodyResolveMode.PARTIAL_WITH_CFA)
+            }
+
             processors.forEach { it.analyzeCollectedElements(bindingContext) }
 
             // step 3: shorten elements that can be shortened right now

@@ -20,6 +20,7 @@ import com.intellij.lang.SmartEnterProcessorWithFixers
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.isFunctionType
+import org.jetbrains.kotlin.idea.caches.resolve.allowResolveInWriteAction
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.editor.KotlinSmartEnterHandler
 import org.jetbrains.kotlin.psi.KtCallExpression
@@ -29,7 +30,7 @@ class KotlinLastLambdaParameterFixer : SmartEnterProcessorWithFixers.Fixer<Kotli
     override fun apply(editor: Editor, processor: KotlinSmartEnterHandler, element: PsiElement) {
         if (element !is KtCallExpression) return
 
-        val resolvedCall = element.resolveToCall() ?: return
+        val resolvedCall = allowResolveInWriteAction { element.resolveToCall() } ?: return
 
         val valueParameters = resolvedCall.candidateDescriptor.valueParameters
 
