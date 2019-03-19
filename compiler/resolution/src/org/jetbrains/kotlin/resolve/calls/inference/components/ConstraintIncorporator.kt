@@ -16,7 +16,7 @@ import java.util.*
 
 // todo problem: intersection types in constrains: A <: Number, B <: Inv<A & Any> =>? B <: Inv<out Number & Any>
 class ConstraintIncorporator(
-    val typeApproximator: TypeApproximator,
+    val typeApproximator: AbstractTypeApproximator,
     val trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle
 ) {
 
