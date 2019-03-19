@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.scope
@@ -205,7 +206,8 @@ fun createSimpleConsumer(
     return if (explicitReceiver != null) {
         ExplicitReceiverTowerDataConsumer(session, name, token, object : ReceiverValueWithPossibleTypes {
             override val type: ConeKotlinType
-                get() = explicitReceiverType!!.coneTypeUnsafe()
+                get() = explicitReceiverType?.coneTypeUnsafe()
+                    ?: throw AssertionError("No type calculated for ${explicitReceiver.renderWithType()}")
         }, callKind)
     } else {
         NoExplicitReceiverTowerDataConsumer(session, name, token, callKind)

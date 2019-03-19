@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.fir.visitors.compose
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.*
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addIfNotNull
 
@@ -35,7 +37,10 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
         return (element.transformChildren(this, data) as E).compose()
     }
 
+    private var packageFqName = FqName.ROOT
+
     override fun transformFile(file: FirFile, data: Any?): CompositeTransformResult<FirFile> {
+        packageFqName = file.packageFqName
         return withScopeCleanup(scopes) {
             scopes += FirTopLevelDeclaredMemberScope(file, session)
             super.transformFile(file, data)
@@ -283,7 +288,7 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
     }
 
     override fun <T> transformConstExpression(constExpression: FirConstExpression<T>, data: Any?): CompositeTransformResult<FirStatement> {
-        if (data == null) return constExpression.compose()
+        if (data == null) return super.transformConstExpression(constExpression, data)
         val expectedType = data as FirTypeRef
 
         if (expectedType is FirImplicitTypeRef) {
@@ -315,7 +320,11 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
     @Deprecated("It is temp", level = DeprecationLevel.WARNING, replaceWith = ReplaceWith("TODO(\"что-то нормальное\")"))
     val bindingContext = mutableMapOf<FirExpression, FirTypeRef>()
 
-    val FirExpression.resultType: FirTypeRef? get() = bindingContext[this]
+    var FirExpression.resultType: FirTypeRef?
+        get() = bindingContext[this]
+        set(type) {
+            if (type != null) bindingContext[this] = type
+        }
 
 
     override fun transformNamedFunction(namedFunction: FirNamedFunction, data: Any?): CompositeTransformResult<FirDeclaration> {
@@ -383,6 +392,14 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
     override fun transformProperty(property: FirProperty, data: Any?): CompositeTransformResult<FirDeclaration> {
         if (property.returnTypeRef !is FirImplicitTypeRef && implicitTypeOnly) return property.compose()
         return transformVariable(property, data)
+    }
+
+    override fun transformExpression(expression: FirExpression, data: Any?): CompositeTransformResult<FirStatement> {
+        if (expression.resultType == null) {
+            val type = FirErrorTypeRefImpl(session, expression.psi, "Type calculating for ${expression.render()} is not supported")
+            expression.resultType = type
+        }
+        return super.transformExpression(expression, data)
     }
 
     fun <D> FirElement.visitNoTransform(transformer: FirTransformer<D>, data: D) {
