@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.backend.common.phaser.AnyNamedPhase
 import org.jetbrains.kotlin.backend.common.phaser.CompilerPhase
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.toPhaseMap
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
@@ -54,5 +56,15 @@ private fun phaseSetFromConfiguration(
 ): Set<AnyNamedPhase> {
     val phaseNames = config.get(key) ?: emptySet()
     if ("ALL" in phaseNames) return phases.values.toSet()
-    return phaseNames.map { phases[it]!! }.toSet()
+    return phaseNames.mapNotNull {
+        phases[it] ?: run {
+            warn(config, "no phase named $it, ignoring")
+            null
+        }
+    }.toSet()
+}
+
+private fun warn(config: CompilerConfiguration, message: String) {
+    val messageCollector = config.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY) ?: MessageCollector.NONE
+    messageCollector.report(CompilerMessageSeverity.WARNING, message)
 }

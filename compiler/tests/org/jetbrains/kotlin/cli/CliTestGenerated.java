@@ -486,6 +486,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/nonExistingClassPathAndAnnotationsPath.args");
         }
 
+        @TestMetadata("nonExistingPhaseName.args")
+        public void testNonExistingPhaseName() throws Exception {
+            runTest("compiler/testData/cli/jvm/nonExistingPhaseName.args");
+        }
+
         @TestMetadata("nonExistingSourcePath.args")
         public void testNonExistingSourcePath() throws Exception {
             runTest("compiler/testData/cli/jvm/nonExistingSourcePath.args");
