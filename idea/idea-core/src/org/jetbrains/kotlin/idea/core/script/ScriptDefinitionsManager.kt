@@ -69,6 +69,8 @@ class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinit
     private var definitionsByContributor = mutableMapOf<ScriptDefinitionContributor, List<KotlinScriptDefinition>>()
     private var definitions: List<KotlinScriptDefinition>? = null
 
+    private val failedContributorsHashes = HashSet<Int>()
+
     private val scriptDefinitionsCacheLock = ReentrantReadWriteLock()
     private val scriptDefinitionsCache = SLRUMap<String, KotlinScriptDefinition>(10, 10)
 
@@ -195,13 +197,14 @@ class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinit
     }
 
     private fun ScriptDefinitionContributor.safeGetDefinitions(): List<KotlinScriptDefinition> {
-        return try {
-            getDefinitions()
+        if (!failedContributorsHashes.contains(this@safeGetDefinitions.hashCode())) try {
+            return getDefinitions()
         } catch (t: Throwable) {
-            // TODO: review exception handling
-            // possibly log, see KT-19276
-            emptyList()
+            // reporting failed loading only once
+            LOG.error("[kts] cannot load script definitions using $this", t)
+            failedContributorsHashes.add(this@safeGetDefinitions.hashCode())
         }
+        return emptyList()
     }
 
     companion object {
