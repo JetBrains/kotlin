@@ -4,6 +4,13 @@ object Delegate {
     operator fun setValue(thisRef: Any?, kProp: Any, value: Int) {}
 }
 
+open class C {
+    var varWithPrivateSet: Int = 1
+        private set
+    var varWithProtectedSet: Int = 1
+        protected set
+}
+
 val valWithBackingField = 1
 
 val test_valWithBackingField = ::valWithBackingField
@@ -43,6 +50,9 @@ val test_constVal = ::constVal
 
 val test_J_CONST = J::CONST
 val test_J_nonConst = J::nonConst
+
+val test_varWithPrivateSet = C::varWithPrivateSet
+val test_varWithProtectedSet = C::varWithProtectedSet
 
 // FILE: J.java
 public class J {
