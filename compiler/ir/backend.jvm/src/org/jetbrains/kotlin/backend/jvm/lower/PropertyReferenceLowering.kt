@@ -36,6 +36,10 @@ internal val propertyReferencePhase = makeIrFilePhase(
 )
 
 internal class PropertyReferenceLowering(val context: JvmBackendContext) : ClassLoweringPass {
+    // Reflection metadata for local properties is serialized under the signature "<v#$N>" attached to the containing class.
+    // This maps properties to values of N.
+    private val localPropertyIndices = mutableMapOf<IrSymbol, Int>()
+
     // TODO: join IrLocalDelegatedPropertyReference and IrPropertyReference via the class hierarchy?
     private val IrMemberAccessExpression.getter: IrFunctionSymbol?
         get() = (this as? IrPropertyReference)?.getter ?: (this as? IrLocalDelegatedPropertyReference)?.getter
@@ -46,14 +50,11 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
     private val IrMemberAccessExpression.field: IrFieldSymbol?
         get() = (this as? IrPropertyReference)?.field
 
-    // Reflection metadata for local properties is serialized under the signature "<v#$N>" attached to the containing class.
-    // This maps properties to values of N.
-    private val localPropertyIndices = mutableMapOf<IrSymbol, Int>()
-
     private val IrMemberAccessExpression.signature: String
         get() = localPropertyIndices[getter]?.let { "<v#$it>" }
             ?: getter?.owner?.let { context.state.typeMapper.mapSignatureSkipGeneric(it.descriptor).toString() }
-            // Plain Java fields do not have a getter, but can be referenced nonetheless.
+            // Plain Java fields do not have a getter, but can be referenced nonetheless. The signature should be
+            // the one that a getter would have, if it existed.
             ?: TODO("plain Java field signature")
 
     private val IrMemberAccessExpression.symbol: IrSymbol
@@ -88,7 +89,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
         get() {
             var current: IrDeclaration? = getter?.owner ?: field?.owner
             while (current?.parent is IrFunction)
-                current = current.parent as IrFunction
+                current = current.parent as IrFunction // Local delegated property.
             return current
         }
 
@@ -98,18 +99,25 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
             startOffset, endOffset,
             plainJavaClass.defaultType,
             plainJavaClass.symbol,
+            // TODO: when the parent is an interface, this should map to DefaultImpls. However, that requires
+            //       moving this lowering below InterfaceLowering; see another TODO above.
             CrIrType(context.state.typeMapper.mapImplementationOwner(propertyContainerChild!!.descriptor))
         )
 
     private fun IrBuilderWithScope.buildReflectedContainerReference(expression: IrMemberAccessExpression): IrExpression {
-        return when (expression.propertyContainerChild?.parent) {
-            is IrPackageFragment -> irCall(getOrCreateKotlinPackage).apply {
-                putValueArgument(0, expression.parentJavaClassReference)
-                putValueArgument(1, irString(this@PropertyReferenceLowering.context.state.moduleName))
-            }
-            is IrClass -> irCall(getOrCreateKotlinClass).apply {
-                putValueArgument(0, expression.parentJavaClassReference)
-            }
+        val parent = expression.propertyContainerChild?.parent
+        return when {
+            // FileClassLowering creates a class to which all package-level declarations are moved. However, it does not
+            // fix the declarations' parents (yet), which is why we check for both a file class and a package fragment.
+            parent is IrPackageFragment || (parent is IrClass && parent.origin == IrDeclarationOrigin.FILE_CLASS) ->
+                irCall(getOrCreateKotlinPackage).apply {
+                    putValueArgument(0, expression.parentJavaClassReference)
+                    putValueArgument(1, irString(this@PropertyReferenceLowering.context.state.moduleName))
+                }
+            parent is IrClass ->
+                irCall(getOrCreateKotlinClass).apply {
+                    putValueArgument(0, expression.parentJavaClassReference)
+                }
             else -> throw AssertionError("referenced property not inside a class/package fragment")
         }
     }
@@ -152,17 +160,18 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
             origin = JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE
             isFinal = true
             isStatic = true
+            // TODO: make the visibility package-local. Currently it's more permissive to allow access from inline functions.
         }
         var localPropertiesInClass = 0
 
         irClass.transformChildrenVoid(object : IrElementTransformerVoidWithContext() {
-            override fun visitPropertyReference(expression: IrPropertyReference): IrExpression =
-                cachedKProperty(expression)
-
             override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty): IrStatement {
                 localPropertyIndices[declaration.getter.symbol] = localPropertiesInClass++
                 return super.visitLocalDelegatedProperty(declaration)
             }
+
+            override fun visitPropertyReference(expression: IrPropertyReference): IrExpression =
+                cachedKProperty(expression)
 
             override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference): IrExpression =
                 cachedKProperty(expression)
@@ -192,6 +201,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
 
             // Create an instance of KProperty that uses Java reflection to locate the getter and the setter. This kind of reference
             // does not support local variables or bound receivers (e.g. `Class()::field`) and is slower, but takes up less space.
+            // Example: `C::property` -> `Reflection.property1(PropertyReference1Impl(C::class, "property", "getProperty()LType;"))`.
             private fun createReflectedKProperty(expression: IrMemberAccessExpression): IrExpression {
                 val referenceKind = propertyReferenceKindFor(expression)
                 return context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset).run {
@@ -205,8 +215,20 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
                 }
             }
 
-            // Create an instance of KProperty that overrides the get() and set() method to directly call getX() and setX() on the object.
-            // This is (relatively) fast, but space-inefficient. Also, the instances can store bound receivers in their fields.
+            // Create an instance of KProperty that overrides the get() and set() methods to directly call getX() and setX() on the object.
+            // This is (relatively) fast, but space-inefficient. Also, the instances can store bound receivers in their fields. Example:
+            //
+            //    class C$property$0 : PropertyReference0 {
+            //        constructor(boundReceiver: C) : super(boundReceiver)
+            //        override val name = "property"
+            //        override fun getOwner() = C::class
+            //        override fun getSignature() = "getProperty()LType;"
+            //        override fun get(): T = receiver.property
+            //        override fun set(value: T) { receiver.property = value }
+            //    }
+            //
+            // and then `C()::property` -> `C$property$0(C())`.
+            //
             private fun createSpecializedKProperty(expression: IrMemberAccessExpression): IrExpression {
                 val bound = expression.dispatchReceiver != null || expression.extensionReceiver != null
                 val referenceClass = kPropertyClasses.getOrPut(PropertyClassCacheKey(expression.symbol, bound)) {
@@ -335,7 +357,8 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
             }
         })
 
-        // Put new field at the beginning so that static delegated properties with initializers work correctly.
+        // Put the new field at the beginning so that static delegated properties with initializers work correctly.
+        // Since we do not cache property references with bound receivers, the new field does not reference anything else.
         if (kProperties.isNotEmpty()) {
             irClass.declarations.add(0, kPropertiesField.apply {
                 parent = irClass
