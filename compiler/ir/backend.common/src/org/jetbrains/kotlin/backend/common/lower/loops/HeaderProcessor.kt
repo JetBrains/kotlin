@@ -122,12 +122,6 @@ internal class ArrayLoopHeader(
     }
 }
 
-private fun ProgressionType.elementType(context: CommonBackendContext): IrType = when (this) {
-    ProgressionType.INT_PROGRESSION -> context.irBuiltIns.intType
-    ProgressionType.LONG_PROGRESSION -> context.irBuiltIns.longType
-    ProgressionType.CHAR_PROGRESSION -> context.irBuiltIns.charType
-}
-
 // Given the for loop iterator variable, extract information about iterable subject
 // and create ForLoopHeader from it.
 internal class HeaderProcessor(
@@ -228,7 +222,7 @@ internal class HeaderProcessor(
 
 
     private fun IrExpression.castIfNecessary(progressionType: ProgressionType): IrExpression {
-        return if (type.toKotlinType() == progressionType.elementType(context).toKotlinType()) {
+        return if (type.toKotlinType() == progressionType.elementType(context.irBuiltIns).toKotlinType()) {
             this
         } else {
             val function = type.getClass()!!.functions.first { it.name == progressionType.numberCastFunctionName }
@@ -252,7 +246,7 @@ internal class HeaderProcessor(
     }
 
     private fun HeaderInfo.defaultStep(startOffset: Int, endOffset: Int): IrExpression {
-        val type = progressionType.elementType(context)
+        val type = progressionType.elementType(context.irBuiltIns)
         val step = if (increasing) 1 else -1
         return when {
             type.isInt() || type.isChar() ->
