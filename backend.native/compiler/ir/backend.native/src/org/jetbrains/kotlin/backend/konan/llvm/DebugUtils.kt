@@ -8,11 +8,10 @@ package org.jetbrains.kotlin.backend.konan.llvm
 import kotlinx.cinterop.allocArrayOf
 import kotlinx.cinterop.memScoped
 import llvm.*
-import org.jetbrains.kotlin.backend.konan.SYNTHETIC_OFFSET
-import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.KonanConfig
-import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
+import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.UnsignedType
+import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.ir.SourceManager.FileEntry
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -20,6 +19,7 @@ import org.jetbrains.kotlin.js.descriptorUtils.getJetTypeFqName
 import org.jetbrains.kotlin.konan.CURRENT
 import org.jetbrains.kotlin.konan.KonanVersion
 import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 
@@ -68,14 +68,14 @@ internal class DebugInfo internal constructor(override val context: Context):Con
     var types = mutableMapOf<KotlinType, DITypeOpaqueRef>()
 
     val llvmTypes = mapOf<KotlinType, LLVMTypeRef>(
-            context.builtIns.booleanType to LLVMInt8Type()!!,
-            context.builtIns.byteType    to LLVMInt8Type()!!,
-            context.builtIns.charType    to LLVMInt8Type()!!,
-            context.builtIns.shortType   to LLVMInt16Type()!!,
-            context.builtIns.intType     to LLVMInt32Type()!!,
-            context.builtIns.longType    to LLVMInt64Type()!!,
-            context.builtIns.floatType   to LLVMFloatType()!!,
-            context.builtIns.doubleType  to LLVMDoubleType()!!)
+            context.builtIns.booleanType to context.llvm.llvmInt8,
+            context.builtIns.byteType    to context.llvm.llvmInt8,
+            context.builtIns.charType    to context.llvm.llvmInt8,
+            context.builtIns.shortType   to context.llvm.llvmInt16,
+            context.builtIns.intType     to context.llvm.llvmInt32,
+            context.builtIns.longType    to context.llvm.llvmInt64,
+            context.builtIns.floatType   to context.llvm.llvmFloat,
+            context.builtIns.doubleType  to context.llvm.llvmDouble)
     val intTypes = listOf<KotlinType>(context.builtIns.byteType, context.builtIns.shortType, context.builtIns.intType, context.builtIns.longType)
     val realTypes = listOf<KotlinType>(context.builtIns.floatType, context.builtIns.doubleType)
     val llvmTypeSizes = llvmTypes.map { it.key to LLVMSizeOfTypeInBits(llvmTargetData, it.value) }.toMap()
@@ -161,7 +161,7 @@ internal fun generateDebugInfoHeader(context: Context) {
 @Suppress("UNCHECKED_CAST")
 internal fun KotlinType.dwarfType(context: Context, targetData: LLVMTargetDataRef): DITypeOpaqueRef {
     when {
-        KotlinBuiltIns.isPrimitiveType(this) -> return debugInfoBaseType(context, targetData, this.getJetTypeFqName(false), llvmType(context), encoding(context).value.toInt())
+        this.computePrimitiveBinaryTypeOrNull() != null -> return debugInfoBaseType(context, targetData, this.getJetTypeFqName(false), llvmType(context), encoding(context).value.toInt())
         else -> {
             val classDescriptor = TypeUtils.getClassDescriptor(this)
             return when {
@@ -211,15 +211,28 @@ internal fun KotlinType.size(context:Context) = context.debugInfo.llvmTypeSizes.
 
 internal fun KotlinType.alignment(context:Context) = context.debugInfo.llvmTypeAlignments.getOrDefault(this, context.debugInfo.otherTypeAlignment).toLong()
 
-internal fun KotlinType.llvmType(context:Context): LLVMTypeRef = context.debugInfo.llvmTypes.getOrDefault(this, context.debugInfo.otherLlvmType)
+internal fun KotlinType.llvmType(context:Context): LLVMTypeRef = context.debugInfo.llvmTypes.getOrElse(this) {
+    when(computePrimitiveBinaryTypeOrNull()) {
+        PrimitiveBinaryType.BYTE -> context.llvm.llvmInt8
+        PrimitiveBinaryType.SHORT -> context.llvm.llvmInt16
+        PrimitiveBinaryType.INT -> context.llvm.llvmInt32
+        PrimitiveBinaryType.LONG -> context.llvm.llvmInt64
+        PrimitiveBinaryType.FLOAT -> context.llvm.llvmFloat
+        PrimitiveBinaryType.DOUBLE -> context.llvm.llvmDouble
+        else -> context.debugInfo.otherLlvmType
+    }
+}
 
-internal fun KotlinType.encoding(context: Context): DwarfTypeKind = when {
-    this in context.debugInfo.intTypes            -> DwarfTypeKind.DW_ATE_signed
-    this in context.debugInfo.realTypes           -> DwarfTypeKind.DW_ATE_float
-    KotlinBuiltIns.isBoolean(this)          -> DwarfTypeKind.DW_ATE_boolean
-    KotlinBuiltIns.isChar(this)             -> DwarfTypeKind.DW_ATE_unsigned
-    (!KotlinBuiltIns.isPrimitiveType(this)) -> DwarfTypeKind.DW_ATE_address
-    else                                          -> TODO(toString())
+internal fun KotlinType.encoding(context: Context): DwarfTypeKind = when(computePrimitiveBinaryTypeOrNull()) {
+    PrimitiveBinaryType.FLOAT -> DwarfTypeKind.DW_ATE_float
+    PrimitiveBinaryType.DOUBLE -> DwarfTypeKind.DW_ATE_float
+    PrimitiveBinaryType.BOOLEAN -> DwarfTypeKind.DW_ATE_boolean
+    PrimitiveBinaryType.POINTER -> DwarfTypeKind.DW_ATE_address
+    else -> {
+        //TODO: not recursive.
+        if (UnsignedTypes.isUnsignedType(this)) DwarfTypeKind.DW_ATE_unsigned
+        else DwarfTypeKind.DW_ATE_signed
+    }
 }
 
 internal fun alignTo(value:Long, align:Long):Long = (value + align - 1) / align * align

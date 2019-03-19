@@ -489,4 +489,10 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
             override fun getValue(thisRef: Llvm, property: KProperty<*>): LLVMValueRef = value
         }
     }
+    val llvmInt8 = LLVMInt8Type()!!
+    val llvmInt16 = LLVMInt16Type()!!
+    val llvmInt32 = LLVMInt32Type()!!
+    val llvmInt64 = LLVMInt64Type()!!
+    val llvmFloat = LLVMFloatType()!!
+    val llvmDouble = LLVMDoubleType()!!
 }
