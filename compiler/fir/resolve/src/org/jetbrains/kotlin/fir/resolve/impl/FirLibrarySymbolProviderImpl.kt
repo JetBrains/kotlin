@@ -16,29 +16,21 @@ import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.impl.FirClassImpl
-import org.jetbrains.kotlin.fir.declarations.impl.FirTypeParameterImpl
 import org.jetbrains.kotlin.fir.deserialization.FirDeserializationContext
-import org.jetbrains.kotlin.fir.deserialization.FirTypeDeserializer
+import org.jetbrains.kotlin.fir.deserialization.deserializeClassToSymbol
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.getOrPut
 import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
-import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
-import org.jetbrains.kotlin.metadata.deserialization.TypeTable
-import org.jetbrains.kotlin.metadata.deserialization.supertypes
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.ProtoBasedClassDataFinder
-import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.serialization.deserialization.getName
-import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import java.io.InputStream
 
@@ -72,61 +64,13 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider 
 
         val lookup = mutableMapOf<ClassId, ConeClassLikeSymbol>()
 
-        private fun createTypeParameterSymbol(name: Name): FirTypeParameterSymbol {
-            val firSymbol = FirTypeParameterSymbol()
-            FirTypeParameterImpl(session, null, firSymbol, name, variance = Variance.INVARIANT, isReified = false)
-            return firSymbol
-        }
-
         fun getClassLikeSymbolByFqName(classId: ClassId): ConeClassLikeSymbol? {
             if (classId !in classDataFinder.allClassIds) return null
             return lookup.getOrPut(classId, { FirClassSymbol(classId) }) { symbol ->
                 val classData = classDataFinder.findClassData(classId)!!
                 val classProto = classData.classProto
-                val flags = classProto.flags
-                val kind = Flags.CLASS_KIND.get(flags)
-                FirClassImpl(
-                    session, null, symbol, classId.shortClassName,
-                    ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags)),
-                    ProtoEnumFlags.modality(Flags.MODALITY.get(flags)),
-                    Flags.IS_EXPECT_CLASS.get(flags), false,
-                    ProtoEnumFlags.classKind(kind),
-                    Flags.IS_INNER.get(flags),
-                    kind == ProtoBuf.Class.Kind.COMPANION_OBJECT,
-                    Flags.IS_DATA.get(classProto.flags),
-                    Flags.IS_INLINE_CLASS.get(classProto.flags)
-                ).apply {
-                    for (typeParameter in classProto.typeParameterList) {
-                        typeParameters += createTypeParameterSymbol(classData.nameResolver.getName(typeParameter.name)).fir
-                    }
-                    //addAnnotationsFrom(classProto) ? TODO
 
-                    val typeTable = TypeTable(classData.classProto.typeTable)
-                    val typeDeserializer = FirTypeDeserializer(
-                        classData.nameResolver,
-                        typeTable,
-                        classData.classProto.typeParameterList,
-                        null
-                    )
-
-                    val superTypesDeserialized = classProto.supertypes(typeTable).map { supertypeProto ->
-                        typeDeserializer.simpleType(supertypeProto)
-                    }// TODO: + c.components.additionalClassPartsProvider.getSupertypes(this@DeserializedClassDescriptor)
-
-                    superTypesDeserialized.mapNotNullTo(superTypeRefs) {
-                        if (it == null) return@mapNotNullTo null
-                        FirResolvedTypeRefImpl(this@BuiltInsPackageFragment.session, null, it, false, emptyList())
-                    }
-
-                    val classDeserializer =
-                        FirDeserializationContext
-                            .createForClass(classId, classProto, nameResolver, this@BuiltInsPackageFragment.session)
-                            .memberDeserializer
-
-                    // TODO: properties + nested classes
-                    declarations += classData.classProto.functionList.map(classDeserializer::loadFunction)
-
-                }
+                deserializeClassToSymbol(classId, classProto, symbol, nameResolver, session)
             }
         }
 
