@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.utils.isSubtypeOf
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irGet
@@ -26,7 +25,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrWhileLoopImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -143,15 +141,7 @@ internal class HeaderProcessor(
     fun processHeader(variable: IrVariable): ForLoopHeader? {
 
         assert(variable.origin == IrDeclarationOrigin.FOR_LOOP_ITERATOR)
-        // Create iterator type with star projections.
-        val iteratorType = symbols.iterator.run {
-            createType(
-                hasQuestionMark = false,
-                arguments = descriptor.declaredTypeParameters.map { IrStarProjectionImpl }
-            )
-        }
-
-        if (!variable.type.isSubtypeOf(iteratorType)) {
+        if (!variable.type.isSubtypeOfClass(symbols.iterator)) {
             return null
         }
         val builder = context.createIrBuilder(scopeOwnerSymbol(), variable.startOffset, variable.endOffset)
@@ -249,8 +239,8 @@ internal class HeaderProcessor(
         return if (type.toKotlinType() == progressionType.elementType(context).toKotlinType()) {
             this
         } else {
-            val function = symbols.getFunction(progressionType.numberCastFunctionName, type.toKotlinType())
-            IrCallImpl(startOffset, endOffset, function.owner.returnType, function)
+            val function = type.getClass()!!.functions.first { it.name == progressionType.numberCastFunctionName }
+            IrCallImpl(startOffset, endOffset, function.returnType, function.symbol)
                 .apply { dispatchReceiver = this@castIfNecessary }
         }
     }

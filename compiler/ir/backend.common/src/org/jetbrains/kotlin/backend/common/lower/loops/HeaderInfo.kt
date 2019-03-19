@@ -7,14 +7,13 @@ package org.jetbrains.kotlin.backend.common.lower.loops
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.lower.matchers.IrCallMatcher
-import org.jetbrains.kotlin.backend.common.utils.isSubtypeOf
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.types.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
@@ -95,9 +94,9 @@ private class ProgressionHeaderInfoBuilder(val context: CommonBackendContext) : 
     )
 
     private fun IrType.getProgressionType(): ProgressionType? = when {
-        isSubtypeOf(symbols.charProgression.owner.defaultType) -> ProgressionType.CHAR_PROGRESSION
-        isSubtypeOf(symbols.intProgression.owner.defaultType) -> ProgressionType.INT_PROGRESSION
-        isSubtypeOf(symbols.longProgression.owner.defaultType) -> ProgressionType.LONG_PROGRESSION
+        isSubtypeOfClass(symbols.charProgression) -> ProgressionType.CHAR_PROGRESSION
+        isSubtypeOfClass(symbols.intProgression) -> ProgressionType.INT_PROGRESSION
+        isSubtypeOfClass(symbols.longProgression) -> ProgressionType.LONG_PROGRESSION
         else -> null
     }
 
