@@ -172,6 +172,7 @@ private fun simulator(project: Project) : ExecutorService = object : ExecutorSer
 private fun sshExecutor(project: Project) : ExecutorService = object : ExecutorService {
 
     private val remote: String = project.property("remote").toString()
+    private val sshArgs: List<String> = System.getenv("SSH_ARGS")?.split(" ") ?: emptyList()
 
     // Unique remote dir name to be used in the target host
     private val remoteDir = run {
@@ -190,7 +191,7 @@ private fun sshExecutor(project: Project) : ExecutorService = object : ExecutorS
                 upload(executable)
                 executable = "$remoteDir/${File(executable).name}"
                 execFile = executable
-                commandLine = arrayListOf("/usr/bin/ssh", remote) + commandLine
+                commandLine = arrayListOf("/usr/bin/ssh") + sshArgs + remote + commandLine
             }
         }
         cleanup(execFile!!)
@@ -199,19 +200,19 @@ private fun sshExecutor(project: Project) : ExecutorService = object : ExecutorS
 
     private fun createRemoteDir() {
         project.exec {
-            it.commandLine("ssh", remote, "mkdir", "-p", remoteDir)
+            it.commandLine = arrayListOf("/usr/bin/ssh") + sshArgs + remote + "mkdir" + "-p" + remoteDir
         }
     }
 
     private fun upload(fileName: String) {
         project.exec {
-            it.commandLine("scp", fileName, "$remote:$remoteDir")
+            it.commandLine = arrayListOf("/usr/bin/scp") + sshArgs + fileName + "$remote:$remoteDir"
         }
     }
 
     private fun cleanup(fileName: String) {
         project.exec {
-            it.commandLine("ssh", remote, "rm", fileName)
+            it.commandLine = arrayListOf("/usr/bin/ssh") + sshArgs + remote + "rm" + fileName
         }
     }
 }
