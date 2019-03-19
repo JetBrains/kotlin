@@ -70,7 +70,7 @@ object ServiceLocator {
                 "jar" -> {
                     val file = JarFile(URL(it.file.substringBefore("!")).toFile())
                     try {
-                        val jarPath = it.file.substringAfterLast("!").removePrefix("/")
+                        val jarPath = it.file.substringAfterLast("!").removeSurrounding("/")
                         file.entries()
                                 .asSequence()
                                 .filter { entry -> !entry.isDirectory && entry.path == jarPath && entry.extension == "properties" }
