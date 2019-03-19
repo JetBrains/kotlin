@@ -207,7 +207,7 @@ private data class RootInfo(
 )
 
 private sealed class Dependency
-private class ModuleDependency(val moduleId: ModuleId) : Dependency()
+private data class ModuleDependency(val moduleId: ModuleId) : Dependency()
 private object StdlibDependency : Dependency()
 private object FullJdkDependency : Dependency()
 private object CoroutinesDependency : Dependency()
