@@ -30,8 +30,9 @@ import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.jvm.tasks.Jar
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
-import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
+import org.jetbrains.kotlin.gradle.dsl.KotlinSingleJavaTargetExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.internal.Kapt3KotlinGradleSubplugin
 import org.jetbrains.kotlin.gradle.internal.KaptVariantData
@@ -42,7 +43,6 @@ import org.jetbrains.kotlin.gradle.model.builder.KotlinModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
 import org.jetbrains.kotlin.gradle.tasks.*
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.utils.*
 import java.io.File
 import java.net.URL
@@ -398,8 +398,6 @@ internal abstract class AbstractKotlinPlugin(
     }
 
     companion object {
-        const val KOTLIN_TARGET_NAME = "kotlin"
-
         fun configureProjectGlobalSettings(project: Project, kotlinPluginVersion: String) {
             configureDefaultVersionsResolutionStrategy(project, kotlinPluginVersion)
             configureClassInspectionForIC(project)
@@ -558,19 +556,18 @@ internal fun configureDefaultVersionsResolutionStrategy(project: Project, kotlin
 internal open class KotlinPlugin(
     kotlinPluginVersion: String,
     registry: ToolingModelBuilderRegistry
-) : AbstractKotlinPlugin(KotlinTasksProvider(targetDisambiguationClassifier), kotlinPluginVersion, registry) {
+) : AbstractKotlinPlugin(KotlinTasksProvider(targetName), kotlinPluginVersion, registry) {
 
     companion object {
-        // Don't add anything to the task names
-        private const val targetDisambiguationClassifier: String = ""
+        private const val targetName = "" // use empty suffix for the task names
     }
 
     override fun buildSourceSetProcessor(project: Project, compilation: KotlinCompilation<*>, kotlinPluginVersion: String) =
         Kotlin2JvmSourceSetProcessor(project, tasksProvider, compilation, kotlinPluginVersion)
 
     override fun apply(project: Project) {
-        val target = KotlinWithJavaTarget<KotlinJvmOptions>(project, KotlinPlatformType.jvm, KOTLIN_TARGET_NAME).apply {
-            disambiguationClassifier = targetDisambiguationClassifier
+        val target = KotlinWithJavaTarget<KotlinJvmOptions>(project, KotlinPlatformType.jvm, targetName).apply {
+            disambiguationClassifier = null // don't add anything to the task names
         }
         (project.kotlinExtension as KotlinJvmProjectExtension).target = target
 
@@ -583,10 +580,10 @@ internal open class KotlinPlugin(
 internal open class KotlinCommonPlugin(
     kotlinPluginVersion: String,
     registry: ToolingModelBuilderRegistry
-) : AbstractKotlinPlugin(KotlinTasksProvider(targetDisambiguationClassifier), kotlinPluginVersion, registry) {
+) : AbstractKotlinPlugin(KotlinTasksProvider(targetName), kotlinPluginVersion, registry) {
 
     companion object {
-        private const val targetDisambiguationClassifier = "common"
+        private const val targetName = "common"
     }
 
     override fun buildSourceSetProcessor(
@@ -597,9 +594,7 @@ internal open class KotlinCommonPlugin(
         KotlinCommonSourceSetProcessor(project, compilation, tasksProvider, kotlinPluginVersion)
 
     override fun apply(project: Project) {
-        val target = KotlinWithJavaTarget<KotlinMultiplatformCommonOptions>(project, KotlinPlatformType.common, KOTLIN_TARGET_NAME).apply {
-            disambiguationClassifier = targetDisambiguationClassifier
-        }
+        val target = KotlinWithJavaTarget<KotlinMultiplatformCommonOptions>(project, KotlinPlatformType.common, targetName)
         (project.kotlinExtension as KotlinCommonProjectExtension).target = target
 
         super.apply(project)
@@ -609,10 +604,10 @@ internal open class KotlinCommonPlugin(
 internal open class Kotlin2JsPlugin(
     kotlinPluginVersion: String,
     registry: ToolingModelBuilderRegistry
-) : AbstractKotlinPlugin(KotlinTasksProvider(targetDisambiguationClassifier), kotlinPluginVersion, registry) {
+) : AbstractKotlinPlugin(KotlinTasksProvider(targetName), kotlinPluginVersion, registry) {
 
     companion object {
-        private const val targetDisambiguationClassifier = "2Js"
+        private const val targetName = "2Js"
     }
 
     override fun buildSourceSetProcessor(
@@ -625,9 +620,7 @@ internal open class Kotlin2JsPlugin(
         )
 
     override fun apply(project: Project) {
-        val target = KotlinWithJavaTarget<KotlinJsOptions>(project, KotlinPlatformType.js, KOTLIN_TARGET_NAME).apply {
-            disambiguationClassifier = targetDisambiguationClassifier
-        }
+        val target = KotlinWithJavaTarget<KotlinJsOptions>(project, KotlinPlatformType.js, targetName)
 
         (project.kotlinExtension as Kotlin2JsProjectExtension).target = target
         super.apply(project)

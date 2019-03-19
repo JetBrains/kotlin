@@ -25,19 +25,13 @@ import java.util.concurrent.Callable
 
 internal fun KotlinCompilation<*>.composeName(prefix: String? = null, suffix: String? = null): String {
     val compilationNamePart = compilationName.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME }
-    val targetNamePart =
-        if (target is KotlinWithJavaTarget<*>)
-            "" // no name disambiguation is needed for single-platform projects
-        else target.disambiguationClassifier
+    val targetNamePart = target.disambiguationClassifier
 
     return lowerCamelCaseName(prefix, targetNamePart, compilationNamePart, suffix)
 }
 
 internal val KotlinCompilation<*>.defaultSourceSetName: String
-    get() = when (this) {
-        is KotlinWithJavaCompilation<*> -> compilationName // no name disambiguation is needed for single-platform projects
-        else -> lowerCamelCaseName(target.disambiguationClassifier, compilationName)
-    }
+    get() = lowerCamelCaseName(target.disambiguationClassifier, compilationName)
 
 abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
     target: KotlinTarget,
@@ -153,7 +147,7 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
             "compile",
             compilationName.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME },
             "Kotlin",
-            target.disambiguationClassifier
+            target.targetName
         )
 
     override val compileAllTaskName: String
