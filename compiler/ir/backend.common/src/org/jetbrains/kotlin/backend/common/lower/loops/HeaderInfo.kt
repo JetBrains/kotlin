@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.backend.common.lower.loops
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.lower.matchers.IrCallMatcher
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.types.IrType
@@ -27,6 +29,22 @@ enum class ProgressionType(val numberCastFunctionName: Name) {
     INT_PROGRESSION(Name.identifier("toInt")),
     LONG_PROGRESSION(Name.identifier("toLong")),
     CHAR_PROGRESSION(Name.identifier("toChar"));
+
+    /** Returns the [IrType] of the `first`/`last` properties and elements in the progression. */
+    fun elementType(builtIns: IrBuiltIns): IrType = when (this) {
+        ProgressionType.INT_PROGRESSION -> builtIns.intType
+        ProgressionType.LONG_PROGRESSION -> builtIns.longType
+        ProgressionType.CHAR_PROGRESSION -> builtIns.charType
+    }
+
+    companion object {
+        fun fromIrType(irType: IrType, symbols: Symbols<CommonBackendContext>): ProgressionType? = when {
+            irType.isSubtypeOfClass(symbols.charProgression) -> ProgressionType.CHAR_PROGRESSION
+            irType.isSubtypeOfClass(symbols.intProgression) -> ProgressionType.INT_PROGRESSION
+            irType.isSubtypeOfClass(symbols.longProgression) -> ProgressionType.LONG_PROGRESSION
+            else -> null
+        }
+    }
 }
 
 // Information about loop that is required by HeaderProcessor to build ForLoopHeader
@@ -89,17 +107,10 @@ private class ProgressionHeaderInfoBuilder(val context: CommonBackendContext) : 
         RangeToHandler(progressionElementTypes)
     )
 
-    private fun IrType.getProgressionType(): ProgressionType? = when {
-        isSubtypeOfClass(symbols.charProgression) -> ProgressionType.CHAR_PROGRESSION
-        isSubtypeOfClass(symbols.intProgression) -> ProgressionType.INT_PROGRESSION
-        isSubtypeOfClass(symbols.longProgression) -> ProgressionType.LONG_PROGRESSION
-        else -> null
-    }
-
     override fun visitElement(element: IrElement, data: Nothing?): HeaderInfo? = null
 
     override fun visitCall(expression: IrCall, data: Nothing?): HeaderInfo? {
-        val progressionType = expression.type.getProgressionType()
+        val progressionType = ProgressionType.fromIrType(expression.type, symbols)
             ?: return null
         return progressionHandlers.firstNotNullResult { it.handle(expression, progressionType) }
     }
