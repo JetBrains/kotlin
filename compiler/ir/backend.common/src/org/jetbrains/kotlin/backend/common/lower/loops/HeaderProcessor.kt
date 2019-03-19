@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrDoWhileLoopImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrWhileLoopImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -93,7 +92,7 @@ internal class ArrayLoopHeader(
     step: IrVariable
 ) : ForLoopHeader(inductionVariable, bound, last, step, ProgressionType.INT_PROGRESSION) {
 
-    private val arrayDeclaration = headerInfo.arrayDeclaration
+    private val arrayDeclaration = headerInfo.arrayVariable
 
     override fun initializeLoopVariable(symbols: Symbols<CommonBackendContext>, builder: DeclarationIrBuilder) = with(builder) {
         val arrayClass = (arrayDeclaration.type.classifierOrNull) as IrClassSymbol
@@ -143,7 +142,7 @@ internal class HeaderProcessor(
         val progressionInfo = headerInfoBuilder.build(variable)
             ?: return null
         if (progressionInfo is ArrayHeaderInfo) {
-            progressionInfo.arrayDeclaration.parent = variable.parent
+            progressionInfo.arrayVariable.parent = variable.parent
         }
         with(builder) {
             with(progressionInfo) {
@@ -168,11 +167,7 @@ internal class HeaderProcessor(
                     origin = IrDeclarationOrigin.FOR_LOOP_IMPLICIT_VARIABLE
                 )
 
-                val stepExpression = if (step != null) {
-                    ensureNotNullable(if (increasing) step else step.unaryMinus())
-                } else {
-                    defaultStep(startOffset, endOffset)
-                }
+                val stepExpression = ensureNotNullable(step)
 
                 val stepValue = scope.createTemporaryVariable(
                     stepExpression,
@@ -237,23 +232,4 @@ internal class HeaderProcessor(
         } else {
             expression
         }
-
-    private fun IrExpression.unaryMinus(): IrExpression {
-        val unaryOperator = symbols.getUnaryOperator(OperatorNameConventions.UNARY_MINUS, type.toKotlinType())
-        return IrCallImpl(startOffset, endOffset, unaryOperator.owner.returnType, unaryOperator).apply {
-            dispatchReceiver = this@unaryMinus
-        }
-    }
-
-    private fun HeaderInfo.defaultStep(startOffset: Int, endOffset: Int): IrExpression {
-        val type = progressionType.elementType(context.irBuiltIns)
-        val step = if (increasing) 1 else -1
-        return when {
-            type.isInt() || type.isChar() ->
-                IrConstImpl.int(startOffset, endOffset, context.irBuiltIns.intType, step)
-            type.isLong() ->
-                IrConstImpl.long(startOffset, endOffset, context.irBuiltIns.longType, step.toLong())
-            else -> throw IllegalArgumentException()
-        }
-    }
 }
