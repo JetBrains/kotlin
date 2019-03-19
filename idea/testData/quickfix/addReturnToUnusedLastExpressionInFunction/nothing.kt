@@ -2,5 +2,5 @@
 // ACTION: Add '@Throws' annotation
 
 fun test(): Nothing {
-    <caret>throw RuntimeException("test")
+    <caret>throw Throwable("Error")
 }
