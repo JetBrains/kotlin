@@ -23,6 +23,7 @@ import org.jetbrains.jps.backwardRefs.JavaCompilerBackwardReferenceIndex;
 import org.jetbrains.jps.backwardRefs.SignatureData;
 import org.jetbrains.jps.backwardRefs.index.CompilerReferenceIndex;
 import org.jetbrains.jps.backwardRefs.index.JavaCompilerIndices;
+import org.jetbrains.jps.incremental.storage.MaybeRelativizer;
 
 import java.io.File;
 import java.io.IOException;
@@ -50,7 +51,7 @@ public class JavaBackwardReferenceIndexReaderFactory implements CompilerReferenc
     }
 
     try {
-      return new BackwardReferenceReader(buildDir);
+      return new BackwardReferenceReader(project, buildDir);
     }
     catch (RuntimeException e) {
       LOG.error("An exception while initialization of compiler reference index.", e);
@@ -59,8 +60,8 @@ public class JavaBackwardReferenceIndexReaderFactory implements CompilerReferenc
   }
 
   public static class BackwardReferenceReader extends CompilerReferenceReader<JavaCompilerBackwardReferenceIndex> {
-    protected BackwardReferenceReader(File buildDir) {
-      super(buildDir, new JavaCompilerBackwardReferenceIndex(buildDir, true));
+    protected BackwardReferenceReader(Project project, File buildDir) {
+      super(buildDir, new JavaCompilerBackwardReferenceIndex(buildDir, new MaybeRelativizer(project.getBasePath()), true));
     }
 
     @Override
