@@ -16,18 +16,21 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
+import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
+import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
 import org.jetbrains.kotlin.idea.refactoring.isAbstract
-import org.jetbrains.kotlin.idea.util.findAnnotation
 import org.jetbrains.kotlin.idea.util.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 abstract class AbstractAddAccessorsIntention(
     private val addGetter: Boolean,
@@ -45,25 +48,56 @@ abstract class AbstractAddAccessorsIntention(
         val descriptor = element.resolveToDescriptorIfAny() as? CallableMemberDescriptor ?: return null
         if (descriptor.isExpect) return null
 
+        val hasInitializer = element.hasInitializer()
+        if (element.typeReference == null && !hasInitializer) return null
         if (addSetter && (!element.isVar || element.setter != null)) return null
-        if (addGetter && ((element.typeReference == null && element.initializer == null) || element.getter != null)) return null
-        return element.nameIdentifier?.textRange
+        if (addGetter && element.getter != null) return null
+        return if (hasInitializer) element.nameIdentifier?.textRange else element.textRange
     }
 
     override fun applyTo(element: KtProperty, editor: Editor?) {
+        val hasInitializer = element.hasInitializer()
         val psiFactory = KtPsiFactory(element)
         if (addGetter) {
-            val expression = psiFactory.createExpression("field")
+            val expression = if (hasInitializer) psiFactory.createExpression("field") else psiFactory.createBlock("TODO()")
             val getter = psiFactory.createPropertyGetter(expression)
-            if (element.setter != null)
+            val added = if (element.setter != null) {
                 element.addBefore(getter, element.setter)
-            else
+            } else {
                 element.add(getter)
+            }
+            if (!hasInitializer) {
+                (added as? KtPropertyAccessor)?.bodyBlockExpression?.statements?.firstOrNull()?.also {
+                    editor?.caretModel?.moveToOffset(it.startOffset)
+                }
+            }
         }
         if (addSetter) {
-            val expression = psiFactory.createBlock("field = value")
+            val expression = if (hasInitializer) psiFactory.createBlock("field = value") else psiFactory.createEmptyBody()
             val setter = psiFactory.createPropertySetter(expression)
-            element.add(setter)
+            val added = element.add(setter)
+            if (!hasInitializer && !addGetter) {
+                (added as? KtPropertyAccessor)?.bodyBlockExpression?.lBrace?.also {
+                    editor?.caretModel?.moveToOffset(it.startOffset + 1)
+                }
+            }
+        }
+    }
+
+    companion object : KotlinSingleIntentionActionFactory() {
+        override fun createAction(diagnostic: Diagnostic): IntentionAction? {
+            val property = diagnostic.psiElement as? KtProperty ?: return null
+            return if (property.isVar) {
+                val getter = property.getter
+                val setter = property.setter
+                when {
+                    getter == null && setter == null -> AddPropertyAccessorsIntention()
+                    getter == null -> AddPropertyGetterIntention()
+                    else -> AddPropertySetterIntention()
+                }
+            } else {
+                AddPropertyGetterIntention()
+            }
         }
     }
 }
