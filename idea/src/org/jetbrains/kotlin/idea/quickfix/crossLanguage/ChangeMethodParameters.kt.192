@@ -5,6 +5,7 @@
 package org.jetbrains.kotlin.idea.quickfix.crossLanguage
 
 import com.intellij.codeInsight.daemon.QuickFixBundle
+import com.intellij.lang.jvm.actions.AnnotationRequest
 import com.intellij.lang.jvm.actions.ChangeParametersRequest
 import com.intellij.lang.jvm.actions.ExpectedParameter
 import com.intellij.openapi.diagnostic.Logger
@@ -65,6 +66,7 @@ internal class ChangeMethodParameters(
         data class Add(
             val name: String,
             val ktType: KotlinType,
+            val expectedAnnotations: Collection<AnnotationRequest>,
             val beforeAnchor: KtParameter?
         ) : ParameterModification()
     }
@@ -115,6 +117,7 @@ internal class ChangeMethodParameters(
             collected + ParameterModification.Add(
                 expectedHead.semanticNames.firstOrNull() ?: "param$index",
                 kotlinType,
+                expectedHead.expectedAnnotations,
                 currentParameters.firstOrNull { anchor ->
                     expectedParameters.any {
                         it is ChangeParametersRequest.ExistingParameterWrapper && it.existingKtParameter == anchor
@@ -144,6 +147,9 @@ internal class ChangeMethodParameters(
             when (action) {
                 is ParameterModification.Add -> {
                     val parameter = parametersGenerated.getValue(action)
+                    for (expectedAnnotation in action.expectedAnnotations) {
+                        addAnnotationEntry(parameter, expectedAnnotation, null)
+                    }
                     val anchor = action.beforeAnchor
                     if (anchor != null) {
                         target.valueParameterList!!.addParameterBefore(parameter, anchor)

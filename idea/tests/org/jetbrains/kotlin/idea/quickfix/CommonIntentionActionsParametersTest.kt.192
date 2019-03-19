@@ -67,7 +67,8 @@ class CommonIntentionActionsParametersTest : LightPlatformCodeInsightFixtureTest
 
         runParametersTransformation("Change method parameters to '(a: Int, file: File)'") { currentParameters ->
             currentParameters + expectedParameter(
-                PsiType.getTypeByName("java.io.File", project, myFixture.file.resolveScope), "file"
+                PsiType.getTypeByName("java.io.File", project, myFixture.file.resolveScope), "file",
+                listOf(annotationRequest("Anno", intAttribute("i", 8)))
             )
         }
 
@@ -76,7 +77,7 @@ class CommonIntentionActionsParametersTest : LightPlatformCodeInsightFixtureTest
             import java.io.File
 
             class Foo {
-                fun bar(@Anno(3) a: Int, file: File) {}
+                fun bar(@Anno(3) a: Int, @Anno(i = 8) file: File) {}
             }
             """.trimIndent(), true
         )
@@ -96,7 +97,8 @@ class CommonIntentionActionsParametersTest : LightPlatformCodeInsightFixtureTest
         runParametersTransformation("Change method parameters to '(file: File, a: Int)'") { currentParameters ->
             listOf(
                 expectedParameter(
-                    PsiType.getTypeByName("java.io.File", project, myFixture.file.resolveScope), "file"
+                    PsiType.getTypeByName("java.io.File", project, myFixture.file.resolveScope), "file",
+                    listOf(annotationRequest("Anno", intAttribute("i", 8)))
                 )
             ) + currentParameters
         }
@@ -106,7 +108,7 @@ class CommonIntentionActionsParametersTest : LightPlatformCodeInsightFixtureTest
             import java.io.File
 
             class Foo {
-                fun bar(file: File, @Anno(3) a: Int) {}
+                fun bar(@Anno(i = 8) file: File, @Anno(3) a: Int) {}
             }
             """.trimIndent(), true
         )
@@ -125,7 +127,8 @@ class CommonIntentionActionsParametersTest : LightPlatformCodeInsightFixtureTest
         runParametersTransformation("Change method parameters to '(a: Int, file: File, c: Int)'") { currentParameters ->
             ArrayList<ExpectedParameter>(currentParameters).apply {
                 this[1] = expectedParameter(
-                    PsiType.getTypeByName("java.io.File", project, myFixture.file.resolveScope), "file"
+                    PsiType.getTypeByName("java.io.File", project, myFixture.file.resolveScope), "file",
+                    listOf(annotationRequest("Anno", intAttribute("i", 8)))
                 )
             }
         }
@@ -135,7 +138,7 @@ class CommonIntentionActionsParametersTest : LightPlatformCodeInsightFixtureTest
             import java.io.File
 
             class Foo {
-                fun bar(@Anno(1) a: Int, file: File, @Anno(3) c: Int) {}
+                fun bar(@Anno(1) a: Int, @Anno(i = 8) file: File, @Anno(3) c: Int) {}
             }
             """.trimIndent(), true
         )
