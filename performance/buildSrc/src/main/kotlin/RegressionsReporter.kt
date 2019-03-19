@@ -24,23 +24,6 @@ import java.net.URL
 import java.util.Base64
 import java.util.Properties
 
-// Run command line from string.
-fun Array<String>.runCommand(workingDir: File = File("."),
-                      timeoutAmount: Long = 60,
-                      timeoutUnit: TimeUnit = TimeUnit.SECONDS): String {
-    return try {
-        ProcessBuilder(*this)
-                .directory(workingDir)
-                .redirectOutput(ProcessBuilder.Redirect.PIPE)
-                .redirectError(ProcessBuilder.Redirect.PIPE)
-                .start().apply {
-                    waitFor(timeoutAmount, timeoutUnit)
-                }.inputStream.bufferedReader().readText()
-    } catch (e: IOException) {
-        error("Couldn't run command $this")
-    }
-}
-
 data class Commit(val revision: String, val developer: String, val webUrlWithDescription: String)
 
 // List of commits.
@@ -78,6 +61,7 @@ class CommitsList(data: JsonElement): ConvertedFromJson {
  * @property htmlReport name of result html report
  * @property defaultBranch name of default branch
  * @property summaryFile name of file with short summary
+ * @property bundleBuild property to show if current build is full or not
  */
 open class RegressionsReporter : DefaultTask() {
 
@@ -113,6 +97,9 @@ open class RegressionsReporter : DefaultTask() {
 
     @Input
     lateinit var summaryFile: String
+
+    @Input
+    var bundleBuild: Boolean = false
 
     private fun tabUrl(buildId: String, buildTypeId: String, tab: String) =
             "$teamCityUrl/viewLog.html?buildId=$buildId&buildTypeId=$buildTypeId&tab=$tab"
@@ -239,8 +226,10 @@ open class RegressionsReporter : DefaultTask() {
         session.connect()
 
         if (branch == defaultBranch) {
-            val channel = session.findChannelByName(buildProperties.getProperty("konan-channel-name"))
-            session.sendMessage(channel, message)
+            if (bundleBuild) {
+                val channel = session.findChannelByName(buildProperties.getProperty("konan-channel-name"))
+                session.sendMessage(channel, message)
+            }
         } else {
             changesList.commits.filter { it.developer in slackUsers }. map { it.developer }
                     .toSet().forEach {

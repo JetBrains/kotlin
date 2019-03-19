@@ -82,6 +82,9 @@ fun getChartOptions(samples: Array<String>): dynamic {
     val axisXObject: dynamic = object{}
     axisXObject["offset"] = 40
     chartOptions["axisX"] = axisXObject
+    val axisYObject: dynamic = object{}
+    axisYObject["offset"] = 70
+    chartOptions["axisY"] = axisYObject
     val legendObject: dynamic = object{}
     legendObject["legendNames"] = samples
     chartOptions["plugins"] = arrayOf(Chartist.plugins.legend(legendObject))
@@ -236,7 +239,7 @@ fun main(args: Array<String>) {
     val labels = mutableListOf<String>()
     val executionTime = mutableMapOf<String, MutableList<Double?>>()
     val compileTime = mutableMapOf<String, MutableList<Double?>>()
-    val codeSize = mutableMapOf<String, MutableList<Int?>>()
+    val codeSize = mutableMapOf<String, MutableList<Double?>>()
     val bundleSize = mutableListOf<Int?>()
 
     builds.forEach {
@@ -248,7 +251,7 @@ fun main(args: Array<String>) {
         }
         separateValues(it.executionTime, executionTime) { value -> value.toDouble() }
         separateValues(it.compileTime, compileTime) { value -> value.toDouble() }
-        separateValues(it.codeSize, codeSize) { value -> value.toInt() }
+        separateValues(it.codeSize, codeSize) { value -> value.toDouble() }
         bundleSize.add(it.bundleSize?.toInt())
     }
 
