@@ -78,98 +78,97 @@ class IrBuiltIns(
     private fun List<SimpleType>.defineComparisonOperatorForEachType(name: String) =
         associate { it to defineComparisonOperator(name, it) }
 
-    private class IrTypeMapper(val type: () -> IrType, val nType: () -> IrType)
+    val any = builtIns.anyType
+    val anyN = builtIns.nullableAnyType
+    val anyType = any.toIrType()
+    val anyClass = builtIns.any.toIrSymbol()
+    val anyNType = anyType.withHasQuestionMark(true)
+
+    val bool = builtIns.booleanType
+    val booleanType = bool.toIrType()
+    val booleanClass = builtIns.boolean.toIrSymbol()
+
+    val char = builtIns.charType
+    val charType = char.toIrType()
+    val charClass = builtIns.char.toIrSymbol()
+
+    val number = builtIns.number.defaultType
+    val numberType = number.toIrType()
+    val numberClass = builtIns.number.toIrSymbol()
+
+    val byte = builtIns.byteType
+    val byteType = byte.toIrType()
+    val byteClass = builtIns.byte.toIrSymbol()
+
+    val short = builtIns.shortType
+    val shortType = short.toIrType()
+    val shortClass = builtIns.short.toIrSymbol()
+
+    val int = builtIns.intType
+    val intType = int.toIrType()
+    val intClass = builtIns.int.toIrSymbol()
+
+    val long = builtIns.longType
+    val longType = long.toIrType()
+    val longClass = builtIns.long.toIrSymbol()
+
+    val float = builtIns.floatType
+    val floatType = float.toIrType()
+    val floatClass = builtIns.float.toIrSymbol()
+
+    val double = builtIns.doubleType
+    val doubleType = double.toIrType()
+    val doubleClass = builtIns.double.toIrSymbol()
+
+    val nothing = builtIns.nothingType
+    val nothingN = builtIns.nullableNothingType
+    val nothingType = nothing.toIrType()
+    val nothingClass = builtIns.nothing.toIrSymbol()
+    val nothingNType = nothingType.withHasQuestionMark(true)
+
+    val unit = builtIns.unitType
+    val unitType = unit.toIrType()
+    val unitClass = builtIns.unit.toIrSymbol()
+
+    val string = builtIns.stringType
+    val stringType = string.toIrType()
+    val stringClass = builtIns.string.toIrSymbol()
+
+    val collectionClass = builtIns.collection.toIrSymbol()
+
+    val arrayType = builtIns.array.toIrType(symbolTable = symbolTable)
+    val arrayClass = builtIns.array.toIrSymbol()
+
+    val throwableType = builtIns.throwable.defaultType.toIrType()
+    val throwableClass = builtIns.throwable.toIrSymbol()
+
+    private class IrTypeMapper(val type: IrType, val nType: IrType)
 
     private fun buildNullableType(irType: IrType) = with(irType as IrSimpleType) {
         IrSimpleTypeImpl(classifier, true, arguments, annotations)
     }
 
-    private val primitiveTypesLazyMapping = mapOf<ClassifierDescriptor, IrTypeMapper>(
-        builtIns.any to IrTypeMapper({ anyType }, { anyNType }),
-        builtIns.boolean to IrTypeMapper({ booleanType }, { buildNullableType(booleanType) }),
-        builtIns.char to IrTypeMapper({ charType }, { buildNullableType(charType) }),
-        builtIns.number to IrTypeMapper({ numberType }, { buildNullableType(numberType) }),
-        builtIns.byte to IrTypeMapper({ byteType }, { buildNullableType(byteType) }),
-        builtIns.short to IrTypeMapper({ shortType }, { buildNullableType(shortType) }),
-        builtIns.int to IrTypeMapper({ intType }, { buildNullableType(intType) }),
-        builtIns.long to IrTypeMapper({ longType }, { buildNullableType(longType) }),
-        builtIns.float to IrTypeMapper({ floatType }, { buildNullableType(floatType) }),
-        builtIns.double to IrTypeMapper({ doubleType }, { buildNullableType(doubleType) }),
-        builtIns.nothing to IrTypeMapper({ nothingType }, { nothingNType }),
-        builtIns.unit to IrTypeMapper({ unitType }, { buildNullableType(unitType) }),
-        builtIns.string to IrTypeMapper({ stringType }, { buildNullableType(stringType) }),
-        builtIns.throwable to IrTypeMapper({ throwableType }, { buildNullableType(throwableType) })//,
-//        builtIns.array to IrTypeMapper({ arrayType }, { buildNullableType(arrayType) })
+    private val primitiveTypesMapping = mapOf(
+        builtIns.any to IrTypeMapper(anyType, anyNType),
+        builtIns.boolean to IrTypeMapper(booleanType, buildNullableType(booleanType)),
+        builtIns.char to IrTypeMapper(charType, buildNullableType(charType)),
+        builtIns.number to IrTypeMapper(numberType, buildNullableType(numberType)),
+        builtIns.byte to IrTypeMapper(byteType, buildNullableType(byteType)),
+        builtIns.short to IrTypeMapper(shortType, buildNullableType(shortType)),
+        builtIns.int to IrTypeMapper(intType, buildNullableType(intType)),
+        builtIns.long to IrTypeMapper(longType, buildNullableType(longType)),
+        builtIns.float to IrTypeMapper(floatType, buildNullableType(floatType)),
+        builtIns.double to IrTypeMapper(doubleType, buildNullableType(doubleType)),
+        builtIns.nothing to IrTypeMapper(nothingType, nothingNType),
+        builtIns.unit to IrTypeMapper(unitType, buildNullableType(unitType)),
+        builtIns.string to IrTypeMapper(stringType, buildNullableType(stringType)),
+        builtIns.throwable to IrTypeMapper(throwableType, buildNullableType(throwableType))
     )
 
     fun getPrimitiveTypeOrNullByDescriptor(descriptor: ClassifierDescriptor, isNullable: Boolean) =
-        primitiveTypesLazyMapping[descriptor]?.let {
-            if (isNullable) it.nType() else it.type()
+        primitiveTypesMapping[descriptor]?.let {
+            if (isNullable) it.nType else it.type
         } as IrSimpleType?
-
-    val any = builtIns.anyType
-    val anyN = builtIns.nullableAnyType
-    val anyType by lazy { any.toIrType() }
-    val anyClass by lazy { builtIns.any.toIrSymbol() }
-    val anyNType by lazy { anyType.withHasQuestionMark(true) }
-
-    val bool = builtIns.booleanType
-    val booleanType by lazy { bool.toIrType() }
-    val booleanClass by lazy { builtIns.boolean.toIrSymbol() }
-
-    val char = builtIns.charType
-    val charType by lazy { char.toIrType() }
-    val charClass by lazy { builtIns.char.toIrSymbol() }
-
-    val number = builtIns.number.defaultType
-    val numberType by lazy { number.toIrType() }
-    val numberClass by lazy { builtIns.number.toIrSymbol() }
-
-    val byte = builtIns.byteType
-    val byteType by lazy { byte.toIrType() }
-    val byteClass by lazy { builtIns.byte.toIrSymbol() }
-
-    val short = builtIns.shortType
-    val shortType by lazy { short.toIrType() }
-    val shortClass by lazy { builtIns.short.toIrSymbol() }
-
-    val int = builtIns.intType
-    val intType by lazy { int.toIrType() }
-    val intClass by lazy { builtIns.int.toIrSymbol() }
-
-    val long = builtIns.longType
-    val longType by lazy { long.toIrType() }
-    val longClass by lazy { builtIns.long.toIrSymbol() }
-
-    val float = builtIns.floatType
-    val floatType by lazy { float.toIrType() }
-    val floatClass by lazy { builtIns.float.toIrSymbol() }
-
-    val double = builtIns.doubleType
-    val doubleType by lazy { double.toIrType() }
-    val doubleClass by lazy { builtIns.double.toIrSymbol() }
-
-    val nothing = builtIns.nothingType
-    val nothingN = builtIns.nullableNothingType
-    val nothingType by lazy { nothing.toIrType() }
-    val nothingClass by lazy { builtIns.nothing.toIrSymbol() }
-    val nothingNType by lazy { nothingType.withHasQuestionMark(true) }
-
-    val unit = builtIns.unitType
-    val unitType by lazy { unit.toIrType() }
-    val unitClass by lazy { builtIns.unit.toIrSymbol() }
-
-    val string = builtIns.stringType
-    val stringType by lazy { string.toIrType() }
-    val stringClass by lazy { builtIns.string.toIrSymbol() }
-
-    val collectionClass = builtIns.collection.toIrSymbol()
-
-    val arrayType by lazy { builtIns.array.toIrType(symbolTable = symbolTable) }
-    val arrayClass by lazy { builtIns.array.toIrSymbol() }
-
-    val throwableType by lazy { builtIns.throwable.defaultType.toIrType() }
-    val throwableClass by lazy { builtIns.throwable.toIrSymbol() }
 
     val primitiveIrTypes by lazy { listOf(booleanType, charType, byteType, shortType, intType, floatType, longType, doubleType) }
 
