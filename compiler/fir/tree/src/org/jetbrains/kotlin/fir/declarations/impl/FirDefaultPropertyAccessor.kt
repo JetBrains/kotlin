@@ -8,24 +8,21 @@ package org.jetbrains.kotlin.fir.declarations.impl
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
-import org.jetbrains.kotlin.fir.transformInplace
-import org.jetbrains.kotlin.fir.transformSingle
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
 abstract class FirDefaultPropertyAccessor(
-    final override val session: FirSession,
-    final override val psi: PsiElement?,
+    session: FirSession,
+    psi: PsiElement?,
     final override val isGetter: Boolean,
     visibility: Visibility
-) : FirPropertyAccessor {
+) : FirAbstractElement(session, psi), FirPropertyAccessor {
     override var status = FirDeclarationStatusImpl(
         session, visibility, Modality.FINAL
     )

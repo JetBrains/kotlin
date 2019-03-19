@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.fir.FirNamedReference
 import org.jetbrains.kotlin.fir.FirResolvedCallableReference
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
@@ -23,16 +24,19 @@ import org.jetbrains.kotlin.fir.visitors.compose
 
 class FirAccessResolveTransformer : FirAbstractTreeTransformerWithSuperTypes(reversedScopePriority = true) {
 
+    private lateinit var session: FirSession
+
     override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirFile> {
+        session = file.fileSession
         return withScopeCleanup {
-            towerScope.scopes += FirTopLevelDeclaredMemberScope(file, file.session)
+            towerScope.scopes += FirTopLevelDeclaredMemberScope(file, session)
             super.transformFile(file, data)
         }
     }
 
     override fun transformRegularClass(regularClass: FirRegularClass, data: Nothing?): CompositeTransformResult<FirDeclaration> {
         return withScopeCleanup {
-            towerScope.scopes += regularClass.buildUseSiteScope(regularClass.session)
+            towerScope.scopes += regularClass.buildUseSiteScope(session)
             super.transformRegularClass(regularClass, data)
         }
     }
@@ -109,14 +113,14 @@ class FirAccessResolveTransformer : FirAbstractTreeTransformerWithSuperTypes(rev
 
         return when (referents.size) {
             0 -> FirErrorNamedReference(
-                namedReference.session, namedReference.psi, "Unresolved name: $name"
+                session, namedReference.psi, "Unresolved name: $name"
             ).compose()
             1 -> FirResolvedCallableReferenceImpl(
-                namedReference.session, namedReference.psi,
+                session, namedReference.psi,
                 name, referents.single()
             ).compose()
             else -> FirErrorNamedReference(
-                namedReference.session, namedReference.psi, "Ambiguity: $name, ${referents.map { it.callableId }}"
+                session, namedReference.psi, "Ambiguity: $name, ${referents.map { it.callableId }}"
             ).compose()
         }
 

@@ -120,15 +120,15 @@ class FirClassSubstitutionScope(
                 psi,
                 symbol,
                 name,
-                member.receiverTypeRef?.withReplacedConeType(newReceiverType),
-                member.returnTypeRef.withReplacedConeType(newReturnType)
+                member.receiverTypeRef?.withReplacedConeType(this@FirClassSubstitutionScope.session, newReceiverType),
+                member.returnTypeRef.withReplacedConeType(this@FirClassSubstitutionScope.session, newReturnType)
             ).apply {
                 status = member.status as FirDeclarationStatusImpl
                 valueParameters += member.valueParameters.zip(newParameterTypes) { valueParameter, newType ->
                     with(valueParameter) {
                         FirValueParameterImpl(
                             this@FirClassSubstitutionScope.session, psi,
-                            name, this.returnTypeRef.withReplacedConeType(newType),
+                            name, this.returnTypeRef.withReplacedConeType(this@FirClassSubstitutionScope.session, newType),
                             defaultValue, isCrossinline, isNoinline, isVararg
                         )
                     }
@@ -140,7 +140,7 @@ class FirClassSubstitutionScope(
 }
 
 
-fun FirTypeRef.withReplacedConeType(newType: ConeKotlinType?): FirResolvedTypeRef {
+fun FirTypeRef.withReplacedConeType(session: FirSession, newType: ConeKotlinType?): FirResolvedTypeRef {
     require(this is FirResolvedTypeRef)
     if (newType == null) return this
 

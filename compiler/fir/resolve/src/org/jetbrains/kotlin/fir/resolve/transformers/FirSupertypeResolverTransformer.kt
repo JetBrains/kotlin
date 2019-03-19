@@ -29,7 +29,7 @@ class FirSupertypeResolverTransformer : FirAbstractTreeTransformer() {
     private val fullyComputed: MutableSet<ClassId> = mutableSetOf()
 
     override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirFile> {
-        firSession = file.session
+        firSession = file.fileSession
         return super.transformFile(file, data)
     }
 
@@ -176,7 +176,7 @@ class FirSupertypeResolverTransformer : FirAbstractTreeTransformer() {
             data: Nothing?
         ): CompositeTransformResult<FirDeclaration> {
             return withScopeCleanup {
-                val session = regularClass.session
+                // ? Is it Ok to use original file session here ?
                 val firProvider = FirProvider.getInstance(session)
                 val classId = regularClass.symbol.classId
                 lookupSuperTypes(regularClass, lookupInterfaces = false, deep = true, useSiteSession = session)

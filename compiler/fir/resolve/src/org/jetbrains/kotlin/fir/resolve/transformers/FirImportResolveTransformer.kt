@@ -24,13 +24,17 @@ class FirImportResolveTransformer() : FirAbstractTreeTransformer() {
 
     private lateinit var symbolProvider: FirSymbolProvider
 
+    private lateinit var session: FirSession
+
     constructor(session: FirSession) : this() {
+        this.session = session
         // TODO: clarify this
         symbolProvider = FirSymbolProvider.getInstance(session)
     }
 
     override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirFile> {
-        symbolProvider = FirSymbolProvider.getInstance(file.session)
+        session = file.fileSession
+        symbolProvider = FirSymbolProvider.getInstance(file.fileSession)
         return file.also { it.transformChildren(this, null) }.compose()
     }
 
@@ -42,7 +46,7 @@ class FirImportResolveTransformer() : FirAbstractTreeTransformer() {
             var firstPart = fqName
 
             if (import.isAllUnder && symbolProvider.getPackage(firstPart) != null) {
-                return FirResolvedPackageStarImport(import, firstPart).compose()
+                return FirResolvedPackageStarImport(session, import, firstPart).compose()
             }
 
             while (!firstPart.isRoot) {
@@ -56,7 +60,7 @@ class FirImportResolveTransformer() : FirAbstractTreeTransformer() {
                 val foundSymbol = symbolProvider.getClassLikeSymbolByFqName(resolvedFqName)
 
                 if (foundSymbol != null) {
-                    return FirResolvedImportImpl(import, resolvedFqName).compose()
+                    return FirResolvedImportImpl(session, import, resolvedFqName).compose()
                 }
             }
         }

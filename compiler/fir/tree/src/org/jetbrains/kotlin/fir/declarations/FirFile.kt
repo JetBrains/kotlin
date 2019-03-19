@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.fir.BaseTransformedType
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.VisitedSupertype
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -13,6 +14,11 @@ import org.jetbrains.kotlin.name.FqName
 
 @BaseTransformedType
 interface FirFile : @VisitedSupertype FirPackageFragment, FirDeclaration, FirAnnotationContainer {
+
+    @Suppress("DEPRECATION")
+    val fileSession: FirSession
+        get() = session
+
     val name: String
 
     val packageFqName: FqName

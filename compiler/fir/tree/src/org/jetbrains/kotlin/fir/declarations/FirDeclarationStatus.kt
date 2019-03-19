@@ -48,9 +48,6 @@ interface FirDeclarationStatus : FirElement {
 
     val isStatic: Boolean
 
-    override val psi: PsiElement?
-        get() = null
-
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitDeclarationStatus(this, data)
 }

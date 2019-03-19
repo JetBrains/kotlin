@@ -20,7 +20,7 @@ open class FirTypeResolveTransformer : FirAbstractTreeTransformerWithSuperTypes(
     private lateinit var session: FirSession
 
     override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirFile> {
-        session = file.session
+        session = file.fileSession
         return withScopeCleanup {
             towerScope.addImportingScopes(file, session)
             super.transformFile(file, data)
@@ -36,7 +36,7 @@ open class FirTypeResolveTransformer : FirAbstractTreeTransformerWithSuperTypes(
         }
 
         return withScopeCleanup {
-            val session = regularClass.session
+            val session = session
             val firProvider = FirProvider.getInstance(session)
             val classId = regularClass.symbol.classId
             lookupSuperTypes(regularClass, lookupInterfaces = false, deep = true, useSiteSession = session)

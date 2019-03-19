@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.declarations.impl
 
-import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirAbstractElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirImport
 import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
@@ -14,9 +14,10 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 class FirResolvedImportImpl(
+    session: FirSession,
     val delegate: FirImport,
     override val resolvedFqName: ClassId
-) : FirResolvedImport, FirImport {
+) : FirAbstractElement(session, delegate.psi), FirResolvedImport, FirImport {
     override val packageFqName: FqName
         get() = resolvedFqName.packageFqName
 
@@ -31,10 +32,4 @@ class FirResolvedImportImpl(
 
     override val isAllUnder: Boolean
         get() = delegate.isAllUnder
-
-    override val psi: PsiElement?
-        get() = delegate.psi
-
-    override val session: FirSession
-        get() = delegate.session
 }

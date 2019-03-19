@@ -7,15 +7,16 @@ package org.jetbrains.kotlin.fir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.fir.FirAbstractElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl.Modifier.*
 
 open class FirDeclarationStatusImpl(
-    final override val session: FirSession,
+    session: FirSession,
     override val visibility: Visibility,
     override val modality: Modality?
-) : FirDeclarationStatus {
+) : FirAbstractElement(session, null), FirDeclarationStatus {
     protected var flags: Int = 0
 
     private operator fun get(modifier: Modifier): Boolean = (flags and modifier.mask) != 0

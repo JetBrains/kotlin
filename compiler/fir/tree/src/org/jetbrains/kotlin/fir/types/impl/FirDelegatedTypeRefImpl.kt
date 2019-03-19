@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.types.impl
 
 import org.jetbrains.kotlin.fir.FirAbstractElement
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.transformSingle
@@ -15,9 +16,10 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
 class FirDelegatedTypeRefImpl(
+    session: FirSession,
     override var typeRef: FirTypeRef,
     override var delegate: FirExpression?
-) : FirAbstractElement(typeRef.session, typeRef.psi), FirDelegatedTypeRef {
+) : FirAbstractElement(session, typeRef.psi), FirDelegatedTypeRef {
     override val annotations: List<FirAnnotationCall>
         get() = typeRef.annotations
 
