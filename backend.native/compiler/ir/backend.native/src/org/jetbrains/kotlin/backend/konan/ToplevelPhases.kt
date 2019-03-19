@@ -269,7 +269,8 @@ internal val bitcodePhase = namedIrModulePhase(
                 cStubsPhase
 )
 
-internal val toplevelPhase = namedUnitPhase(
+// Have to hide Context as type parameter in order to expose toplevelPhase outside of this module.
+val toplevelPhase: CompilerPhase<*, Unit, Unit> = namedUnitPhase(
         name = "Compiler",
         description = "The whole compilation process",
         lower = frontendPhase then

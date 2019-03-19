@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan
 
+import org.jetbrains.kotlin.backend.common.phaser.CompilerPhase
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 
@@ -27,6 +28,6 @@ fun runTopLevelPhases(konanConfig: KonanConfig, environment: KotlinCoreEnvironme
 
     if (konanConfig.infoArgsOnly) return
 
-    toplevelPhase.invokeToplevel(context.phaseConfig, context, Unit)
+    (toplevelPhase as CompilerPhase<Context, Unit, Unit>).invokeToplevel(context.phaseConfig, context, Unit)
 }
 

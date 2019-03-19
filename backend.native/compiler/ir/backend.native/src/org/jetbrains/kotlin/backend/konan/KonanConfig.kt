@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -33,6 +34,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     internal val platformManager = PlatformManager(distribution)
     internal val targetManager = platformManager.targetManager(configuration.get(KonanConfigKeys.TARGET))
     internal val target = targetManager.target
+    internal val phaseConfig = configuration.get(CLIConfigurationKeys.PHASE_CONFIG)!!
 
     val linkOnly: Boolean =
             configuration.kotlinSourceRoots.isEmpty() && libraryNames.isNotEmpty() && produce.isNativeBinary
