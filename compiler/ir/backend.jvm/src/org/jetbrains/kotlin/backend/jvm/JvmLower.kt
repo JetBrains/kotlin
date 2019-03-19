@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.lower.*
+import org.jetbrains.kotlin.backend.common.lower.loops.forLoopsPhase
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.jvm.lower.*
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -86,6 +87,7 @@ val jvmPhases = namedIrFilePhase(
 
             innerClassesPhase then
             innerClassConstructorCallsPhase then
+            forLoopsPhase then
 
             makePatchParentsPhase(2) then
 

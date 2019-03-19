@@ -200,16 +200,8 @@ internal class HeaderProcessor(
                         dispatchReceiver = irGet(upperBoundTmpVariable)
                     }
                 }
-                // In case of `step` we need to calculate the last element.
-                val lastElement =
-                    if (needLastCalculation) {
-                        TODO("Implement and use irGetProgressionLast")
-//                        irGetProgressionLast(progressionType, inductionVariable, lastExpression, stepValue)
-                    } else {
-                        lastExpression
-                    }
                 val lastValue = scope.createTemporaryVariable(
-                    lastElement,
+                    lastExpression,
                     nameHint = "last",
                     origin = IrDeclarationOrigin.FOR_LOOP_IMPLICIT_VARIABLE
                 )
@@ -270,21 +262,4 @@ internal class HeaderProcessor(
             else -> throw IllegalArgumentException()
         }
     }
-
-//    private fun irGetProgressionLast(
-//        progressionType: ProgressionType,
-//        first: IrVariable,
-//        lastExpression: IrExpression,
-//        step: IrVariable
-//    ): IrExpression {
-//        val symbol = symbols.getProgressionLast[progressionType.elementType(context).toKotlinType()]
-//            ?: throw IllegalArgumentException("No `getProgressionLast` for type ${step.type} ${lastExpression.type}")
-//        val startOffset = lastExpression.startOffset
-//        val endOffset = lastExpression.endOffset
-//        return IrCallImpl(startOffset, endOffset, symbol.owner.returnType, symbol).apply {
-//            putValueArgument(0, IrGetValueImpl(startOffset, endOffset, first.type, first.symbol))
-//            putValueArgument(1, lastExpression)
-//            putValueArgument(2, IrGetValueImpl(startOffset, endOffset, step.type, step.symbol))
-//        }
-//    }
 }

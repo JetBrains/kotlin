@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.backend.common.lower.loops
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.lower.matchers.IrCallMatcher
 import org.jetbrains.kotlin.backend.common.lower.matchers.SimpleCalleeMatcher
 import org.jetbrains.kotlin.backend.common.lower.matchers.createIrCallMatcher
 import org.jetbrains.kotlin.backend.common.lower.matchers.singleArgumentExtension
@@ -20,7 +18,6 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.properties
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.SimpleType
@@ -91,76 +88,6 @@ internal class IndicesHandler(val context: CommonBackendContext) : ProgressionHa
             ProgressionHeaderInfo(data, lowerBound, upperBound, closed = false)
         }
 
-}
-
-internal class StepHandler(context: CommonBackendContext, val visitor: IrElementVisitor<HeaderInfo?, Nothing?>) : ProgressionHandler {
-    private val symbols = context.ir.symbols
-
-    override val matcher: IrCallMatcher = SimpleCalleeMatcher {
-        singleArgumentExtension(FqName("kotlin.ranges.step"), symbols.progressionClassesTypes)
-        parameter(0) { it.type.isInt() || it.type.isLong() }
-    }
-
-    private fun isDefaultStep(step: IrExpression?) =
-        step == null || (step is IrConst<*> && step.isOne())
-
-    override fun build(call: IrCall, data: ProgressionType): HeaderInfo? {
-        val nestedInfo = call.extensionReceiver!!.accept(visitor, null)
-            ?: return null
-
-        // Due to KT-27607 nested non-default steps could lead to incorrect behaviour.
-        // So disable optimization of such rare cases for now.
-        if (!isDefaultStep(nestedInfo.step)) {
-            return null
-        }
-
-        val newStep = call.getValueArgument(0)!!
-        val (newStepCheck, needBoundCalculation) = irCheckProgressionStep(symbols, data, newStep)
-        return ProgressionHeaderInfo(
-            data,
-            nestedInfo.lowerBound,
-            nestedInfo.upperBound,
-            newStepCheck,
-            nestedInfo.increasing,
-            needBoundCalculation,
-            nestedInfo.closed
-        )
-    }
-
-    private fun IrConst<*>.isOne() = when (kind) {
-        IrConstKind.Long -> value as Long == 1L
-        IrConstKind.Int -> value as Int == 1
-        else -> false
-    }
-
-    private fun IrExpression.isPositiveConst() = this is IrConst<*> &&
-            ((kind == IrConstKind.Long && value as Long > 0) || (kind == IrConstKind.Int && value as Int > 0))
-
-    // Used only by the assert.
-    private fun stepHasRightType(step: IrExpression, progressionType: ProgressionType) = when (progressionType) {
-
-        ProgressionType.CHAR_PROGRESSION,
-        ProgressionType.INT_PROGRESSION -> step.type.makeNotNull().isInt()
-
-        ProgressionType.LONG_PROGRESSION -> step.type.makeNotNull().isLong()
-    }
-
-    private fun irCheckProgressionStep(symbols: Symbols<CommonBackendContext>, progressionType: ProgressionType, step: IrExpression) =
-        if (step.isPositiveConst()) {
-            step to !(step as IrConst<*>).isOne()
-        } else
-            TODO("Implement call to checkProgressionStep")
-//        {
-//            // The frontend checks if the step has a right type (Long for LongProgression and Int for {Int/Char}Progression)
-//            // so there is no need to cast it.
-//            assert(stepHasRightType(step, progressionType))
-//
-//            val symbol = symbols.checkProgressionStep[step.type.makeNotNull().toKotlinType()]
-//                ?: throw IllegalArgumentException("No `checkProgressionStep` for type ${step.type}")
-//            IrCallImpl(step.startOffset, step.endOffset, symbol.owner.returnType, symbol).apply {
-//                putValueArgument(0, step)
-//            } to true
-//        }
 }
 
 internal class ArrayIterationHandler(val context: CommonBackendContext) : HeaderInfoHandler<Nothing?> {

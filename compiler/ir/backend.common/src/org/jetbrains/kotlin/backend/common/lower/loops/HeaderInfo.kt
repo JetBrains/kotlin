@@ -36,7 +36,6 @@ internal sealed class HeaderInfo(
     val upperBound: IrExpression,
     val step: IrExpression?, // null value denotes default step (1)
     val increasing: Boolean,
-    val needLastCalculation: Boolean,
     val closed: Boolean
 )
 
@@ -46,9 +45,8 @@ internal class ProgressionHeaderInfo(
     upperBound: IrExpression,
     step: IrExpression? = null,
     increasing: Boolean = true,
-    needLastCalculation: Boolean = false,
     closed: Boolean = true
-) : HeaderInfo(progressionType, lowerBound, upperBound, step, increasing, needLastCalculation, closed)
+) : HeaderInfo(progressionType, lowerBound, upperBound, step, increasing, closed)
 
 internal class ArrayHeaderInfo(
     lowerBound: IrExpression,
@@ -60,7 +58,6 @@ internal class ArrayHeaderInfo(
     upperBound,
     step = null,
     increasing = true,
-    needLastCalculation = false,
     closed = false
 )
 
@@ -89,7 +86,6 @@ private class ProgressionHeaderInfoBuilder(val context: CommonBackendContext) : 
         IndicesHandler(context),
         UntilHandler(progressionElementTypes),
         DownToHandler(progressionElementTypes),
-        StepHandler(context, this),
         RangeToHandler(progressionElementTypes)
     )
 
