@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
@@ -199,6 +198,11 @@ abstract class KotlinManglerImpl: KotlinMangler {
             return "ktype:" + this.fqNameSafe.toString()
         }
 
+    val IrTypeParameter.symbolName: String
+        get() {
+            val containingDeclarationPart = parent.fqNameSafe
+            return "ktypeparam:$containingDeclarationPart$name"
+        }
 
 // This is a little extension over what's used in real mangling
 // since some declarations never appear in the bitcode symbols.
@@ -213,6 +217,8 @@ abstract class KotlinManglerImpl: KotlinMangler {
         is IrField
         -> this.symbolName
         is IrEnumEntry
+        -> this.symbolName
+        is IrTypeParameter
         -> this.symbolName
         else -> error("Unexpected exported declaration: $this")
     }
