@@ -10125,6 +10125,16 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/introduceImportAlias/notApplicableStar.kt");
         }
 
+        @TestMetadata("notApplicableSuper.kt")
+        public void testNotApplicableSuper() throws Exception {
+            runTest("idea/testData/intentions/introduceImportAlias/notApplicableSuper.kt");
+        }
+
+        @TestMetadata("notApplicableThis.kt")
+        public void testNotApplicableThis() throws Exception {
+            runTest("idea/testData/intentions/introduceImportAlias/notApplicableThis.kt");
+        }
+
         @TestMetadata("onImport.kt")
         public void testOnImport() throws Exception {
             runTest("idea/testData/intentions/introduceImportAlias/onImport.kt");
