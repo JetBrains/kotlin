@@ -6,5 +6,5 @@ repositories {
     maven { url "https://dl.bintray.com/kotlin/kotlin-dev" }
 }
 dependencies {
-    compile 'com.github.jengelman.gradle.plugins:shadow:2.0.1'
+    compile 'com.github.jengelman.gradle.plugins:shadow:2.0.4'
 }
