@@ -2,7 +2,6 @@ package org.jetbrains.dokka
 
 import org.jetbrains.dokka.DokkaConfiguration.PackageOptions
 import ru.yole.jkid.deserialization.deserialize
-import java.io.File
 import java.util.function.BiConsumer
 
 
@@ -44,36 +43,7 @@ class DokkaBootstrapImpl : DokkaBootstrap {
             = configure(DokkaProxyLogger(logger), deserialize<DokkaConfigurationImpl>(serializedConfigurationJSON))
 
     fun configure(logger: DokkaLogger, configuration: DokkaConfiguration) = with(configuration) {
-        generator = DokkaGenerator(
-                logger,
-                classpath,
-                sourceRoots,
-                samples,
-                includes,
-                moduleName,
-                DocumentationOptions(
-                    outputDir = outputDir,
-                    outputFormat = format,
-                    includeNonPublic = includeNonPublic,
-                    includeRootPackage = includeRootPackage,
-                    reportUndocumented = reportUndocumented,
-                    skipEmptyPackages = skipEmptyPackages,
-                    skipDeprecated = skipDeprecated,
-                    jdkVersion = jdkVersion,
-                    generateIndexPages = generateIndexPages,
-                    sourceLinks = sourceLinks,
-                    impliedPlatforms = impliedPlatforms,
-                    perPackageOptions = perPackageOptions,
-                    externalDocumentationLinks = externalDocumentationLinks,
-                    noStdlibLink = noStdlibLink,
-                    noJdkLink = noJdkLink,
-                    languageVersion = languageVersion,
-                    apiVersion = apiVersion,
-                    cacheRoot = cacheRoot,
-                    suppressedFiles = suppressedFiles.map { File(it) }.toSet(),
-                    collectInheritedExtensionsFromLibraries = collectInheritedExtensionsFromLibraries
-                )
-        )
+        generator = DokkaGenerator(configuration, logger)
     }
 
     override fun generate() = generator.generate()
