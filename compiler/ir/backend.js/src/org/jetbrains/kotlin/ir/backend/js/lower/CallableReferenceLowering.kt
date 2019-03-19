@@ -276,7 +276,7 @@ class CallableReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
         val declaration = propertyReference.delegate.owner
         val factoryName = createPropertyFactoryName(declaration)
         val factoryFunction = buildFactoryFunction(propertyReference.getter.owner, propertyReference, factoryName)
-        val closureFunction = buildClosureFunction(context.irBuiltIns.throwIseFun, factoryFunction, propertyReference, arity)
+        val closureFunction = buildClosureFunction(context.irBuiltIns.throwIseSymbol.owner, factoryFunction, propertyReference, arity)
 
         val additionalDeclarations = generateFactoryBodyWithGuard(factoryFunction) {
             val statements = mutableListOf<IrStatement>(closureFunction)

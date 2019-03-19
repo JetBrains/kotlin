@@ -22,15 +22,13 @@ class JsDescriptorReferenceDeserializer(
         DescriptorReferenceDeserializer(currentModule, mutableMapOf<UniqIdKey, UniqIdKey>()),
         DescriptorUniqIdAware by JsDescriptorUniqIdAware {
 
-    val knownBuiltInsDescriptors = mutableMapOf<DeclarationDescriptor, UniqId>()
-
     override fun resolveSpecialDescriptor(fqn: FqName) = builtIns.builtIns.getBuiltInClassByFqName(fqn)
 
     override fun checkIfSpecialDescriptorId(id: Long) =
         (FUNCTION_INDEX_START + BUILT_IN_UNIQ_ID_CLASS_OFFSET) <= id && id < (FUNCTION_INDEX_START + BUILT_IN_UNIQ_ID_GAP)
 
     override fun getDescriptorIdOrNull(descriptor: DeclarationDescriptor) =
-        knownBuiltInsDescriptors[descriptor]?.index ?: if (isBuiltInFunction(descriptor))
+        if (isBuiltInFunction(descriptor))
             FUNCTION_INDEX_START + builtInFunctionId(descriptor)
         else null
 

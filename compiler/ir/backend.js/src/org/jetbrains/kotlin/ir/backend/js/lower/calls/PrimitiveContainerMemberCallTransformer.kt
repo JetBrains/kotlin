@@ -25,12 +25,12 @@ class PrimitiveContainerMemberCallTransformer(private val context: JsIrBackendCo
             add(context.intrinsics.array.sizeProperty, context.intrinsics.jsArrayLength, true)
             add(context.intrinsics.array.getFunction, context.intrinsics.jsArrayGet, true)
             add(context.intrinsics.array.setFunction, context.intrinsics.jsArraySet, true)
-            add(context.intrinsics.array.iterator, context.intrinsics.jsArrayIteratorFunction.owner, true)
+            add(context.intrinsics.array.iterator, context.intrinsics.jsArrayIteratorFunction, true)
             for ((key, elementType) in context.intrinsics.primitiveArrays) {
                 add(key.sizeProperty, context.intrinsics.jsArrayLength, true)
                 add(key.getFunction, context.intrinsics.jsArrayGet, true)
                 add(key.setFunction, context.intrinsics.jsArraySet, true)
-                add(key.iterator, context.intrinsics.jsPrimitiveArrayIteratorFunctions[elementType]!!.owner, true)
+                add(key.iterator, context.intrinsics.jsPrimitiveArrayIteratorFunctions[elementType]!!, true)
 
                 // TODO irCall?
                 add(key.sizeConstructor) { call ->
@@ -46,11 +46,11 @@ class PrimitiveContainerMemberCallTransformer(private val context: JsIrBackendCo
             }
 
             add(context.irBuiltIns.stringClass.lengthProperty, context.intrinsics.jsArrayLength, true)
-            add(context.irBuiltIns.stringClass.getFunction, intrinsics.jsCharSequenceGet.owner, true)
-            add(context.irBuiltIns.stringClass.subSequence, intrinsics.jsCharSequenceSubSequence.owner, true)
-            add(intrinsics.charSequenceLengthPropertyGetterSymbol, intrinsics.jsCharSequenceLength.owner, true)
-            add(intrinsics.charSequenceGetFunctionSymbol, intrinsics.jsCharSequenceGet.owner, true)
-            add(intrinsics.charSequenceSubSequenceFunctionSymbol, intrinsics.jsCharSequenceSubSequence.owner, true)
+            add(context.irBuiltIns.stringClass.getFunction, intrinsics.jsCharSequenceGet, true)
+            add(context.irBuiltIns.stringClass.subSequence, intrinsics.jsCharSequenceSubSequence, true)
+            add(intrinsics.charSequenceLengthPropertyGetterSymbol, intrinsics.jsCharSequenceLength, true)
+            add(intrinsics.charSequenceGetFunctionSymbol, intrinsics.jsCharSequenceGet, true)
+            add(intrinsics.charSequenceSubSequenceFunctionSymbol, intrinsics.jsCharSequenceSubSequence, true)
         }
     }
 

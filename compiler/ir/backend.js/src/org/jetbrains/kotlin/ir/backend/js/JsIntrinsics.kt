@@ -214,7 +214,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val jsPrimitiveArrayIteratorFunctions =
         PrimitiveType.values().associate { it to getInternalFunction("${it.typeName.asString().toLowerCase()}ArrayIterator") }
 
-    val arrayLiteral = unOp("arrayLiteral").symbol
+    val arrayLiteral = unOp("arrayLiteral")
 
     val primitiveToTypedArrayMap = EnumMap(
         mapOf(
@@ -229,14 +229,14 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val primitiveToSizeConstructor =
         PrimitiveType.values().associate { type ->
             type to (primitiveToTypedArrayMap[type]?.let {
-                unOp("${it.toLowerCase()}Array").symbol
+                unOp("${it.toLowerCase()}Array")
             } ?: getInternalFunction("${type.typeName.asString().toLowerCase()}Array"))
         }
 
     val primitiveToLiteralConstructor =
         PrimitiveType.values().associate { type ->
             type to (primitiveToTypedArrayMap[type]?.let {
-                unOp("${it.toLowerCase()}ArrayOf").symbol
+                unOp("${it.toLowerCase()}ArrayOf")
             } ?: getInternalFunction("${type.typeName.asString().toLowerCase()}ArrayOf"))
         }
 

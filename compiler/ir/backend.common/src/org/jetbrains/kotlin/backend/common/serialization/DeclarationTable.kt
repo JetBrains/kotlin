@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrAnonymousInitializerImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 
 class DescriptorTable {
     private val descriptors = mutableMapOf<DeclarationDescriptor, Long>()
@@ -21,18 +22,19 @@ class DescriptorTable {
 // TODO: We don't manage id clashes anyhow now.
 abstract class DeclarationTable(val builtIns: IrBuiltIns, val descriptorTable: DescriptorTable, mangler: KotlinMangler): KotlinMangler by mangler {
 
+    private val builtInsTable = mutableMapOf<IrSymbol, UniqId>()
     private val table = mutableMapOf<IrDeclaration, UniqId>()
     val descriptors = descriptorTable
     protected abstract var currentIndex: Long
 
     open fun loadKnownBuiltins(): Long {
         builtIns.knownBuiltins.forEach {
-            table.put(it, UniqId(currentIndex++, false))
+            builtInsTable[it] = UniqId(currentIndex++, false)
         }
         return currentIndex
     }
 
-    fun uniqIdByDeclaration(value: IrDeclaration) = table.getOrPut(value) {
+    fun uniqIdByDeclaration(value: IrDeclaration) = (value as? IrSymbolOwner)?.let { builtInsTable[it.symbol] } ?: table.getOrPut(value) {
         computeUniqIdByDeclaration(value)
     }
 
@@ -55,4 +57,4 @@ abstract class DeclarationTable(val builtIns: IrBuiltIns, val descriptorTable: D
 
 // This is what we pre-populate tables with
 val IrBuiltIns.knownBuiltins
-    get() = irBuiltInsExternalPackageFragment.declarations
+    get() = irBuiltInsSymbols

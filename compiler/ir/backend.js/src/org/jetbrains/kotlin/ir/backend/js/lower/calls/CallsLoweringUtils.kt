@@ -16,15 +16,15 @@ import org.jetbrains.kotlin.types.SimpleType
 
 typealias SymbolToTransformer = MutableMap<IrFunctionSymbol, (IrCall) -> IrExpression>
 
-internal fun SymbolToTransformer.add(from: Map<SimpleType, IrFunction>, to: IrFunction) {
+internal fun SymbolToTransformer.add(from: Map<SimpleType, IrFunctionSymbol>, to: IrFunctionSymbol) {
     from.forEach { _, func ->
-        add(func.symbol, to)
+        add(func, to)
     }
 }
 
-internal fun SymbolToTransformer.add(from: Map<SimpleType, IrFunction>, to: (IrCall) -> IrExpression) {
+internal fun SymbolToTransformer.add(from: Map<SimpleType, IrFunctionSymbol>, to: (IrCall) -> IrExpression) {
     from.forEach { _, func ->
-        add(func.symbol, to)
+        add(func, to)
     }
 }
 
@@ -32,8 +32,8 @@ internal fun SymbolToTransformer.add(from: IrFunctionSymbol, to: (IrCall) -> IrE
     put(from, to)
 }
 
-internal fun SymbolToTransformer.add(from: IrFunctionSymbol, to: IrFunction, dispatchReceiverAsFirstArgument: Boolean = false) {
-    put(from) { call -> irCall(call, to.symbol, dispatchReceiverAsFirstArgument) }
+internal fun SymbolToTransformer.add(from: IrFunctionSymbol, to: IrFunctionSymbol, dispatchReceiverAsFirstArgument: Boolean = false) {
+    put(from) { call -> irCall(call, to, dispatchReceiverAsFirstArgument) }
 }
 
 internal fun <K> MutableMap<K, (IrCall) -> IrExpression>.addWithPredicate(

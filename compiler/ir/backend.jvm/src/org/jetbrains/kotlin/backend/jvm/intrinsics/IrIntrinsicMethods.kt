@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -32,9 +33,9 @@ class IrIntrinsicMethods(irBuiltIns: IrBuiltIns) {
 
     private val irMapping = hashMapOf<CallableMemberDescriptor, IntrinsicMethod>()
 
-    private fun createPrimitiveComparisonIntrinsics(typeToIrFun: Map<SimpleType, IrSimpleFunction>, operator: KtSingleValueToken) {
-        for ((type, irFun) in typeToIrFun) {
-            irMapping[irFun.descriptor] = PrimitiveComparison(type, operator)
+    private fun createPrimitiveComparisonIntrinsics(typeToIrFun: Map<SimpleType, IrSimpleFunctionSymbol>, operator: KtSingleValueToken) {
+        for ((type, irFunSymbol) in typeToIrFun) {
+            irMapping[irFunSymbol.descriptor] = PrimitiveComparison(type, operator)
         }
     }
 
