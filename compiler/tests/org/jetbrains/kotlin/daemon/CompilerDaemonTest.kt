@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.daemon
 
+import com.intellij.openapi.util.io.FileUtil
 import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
@@ -357,8 +358,8 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
     fun testDaemonExitsOnClientFlagDeletedWithActiveSessions() {
         val daemonOptions = DaemonOptions(autoshutdownIdleSeconds = 1000, shutdownDelayMilliseconds = 1, runFilesPath = File(tmpdir, getTestName(true)).absolutePath)
-        val clientFlag = createTempFile(getTestName(true), "-client.alive")
-        val sessionFlag = createTempFile(getTestName(true), "-session.alive")
+        val clientFlag = FileUtil.createTempFile(getTestName(true), "-client.alive")
+        val sessionFlag = FileUtil.createTempFile(getTestName(true), "-session.alive")
         try {
             withLogFile("kotlin-daemon-test") { logFile ->
                 val daemonJVMOptions = makeTestDaemonJvmOptions(logFile)
@@ -383,8 +384,8 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
     fun testDaemonExitsOnClientFlagDeletedWithAllSessionsReleased() {
         val daemonOptions = DaemonOptions(autoshutdownIdleSeconds = 1000, shutdownDelayMilliseconds = 1, runFilesPath = File(tmpdir, getTestName(true)).absolutePath)
-        val clientFlag = createTempFile(getTestName(true), "-client.alive")
-        val sessionFlag = createTempFile(getTestName(true), "-session.alive")
+        val clientFlag = FileUtil.createTempFile(getTestName(true), "-client.alive")
+        val sessionFlag = FileUtil.createTempFile(getTestName(true), "-session.alive")
         try {
             withLogFile("kotlin-daemon-test") { logFile ->
                 val daemonJVMOptions = makeTestDaemonJvmOptions(logFile)
@@ -412,8 +413,8 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
     fun testDaemonCancelShutdownOnANewClient() {
         val daemonOptions = DaemonOptions(autoshutdownIdleSeconds = 1000, shutdownDelayMilliseconds = 3000, runFilesPath = File(tmpdir, getTestName(true)).absolutePath)
-        val clientFlag = createTempFile(getTestName(true), "-client.alive")
-        val clientFlag2 = createTempFile(getTestName(true), "-client.alive")
+        val clientFlag = FileUtil.createTempFile(getTestName(true), "-client.alive")
+        val clientFlag2 = FileUtil.createTempFile(getTestName(true), "-client.alive")
         try {
             withLogFile("kotlin-daemon-test") { logFile ->
                 val daemonJVMOptions = makeTestDaemonJvmOptions(logFile)
@@ -454,7 +455,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
      *  (the same solution is used in kotlin daemon client - see next commit)
      */
     fun testDaemonExecutionViaIntermediateProcess() {
-        val clientAliveFile = createTempFile("kotlin-daemon-transitive-run-test", ".run")
+        val clientAliveFile = FileUtil.createTempFile("kotlin-daemon-transitive-run-test", ".run")
         val daemonOptions = makeTestDaemonOptions(getTestName(true))
         val jar = tmpdir.absolutePath + File.separator + "hello.jar"
         val args = listOf(
@@ -911,7 +912,7 @@ fun restoreSystemProperty(propertyName: String, backupValue: String?) {
 }
 
 internal inline fun withFlagFile(prefix: String, suffix: String? = null, body: (File) -> Unit) {
-    val file = createTempFile(prefix, suffix)
+    val file = FileUtil.createTempFile(prefix, suffix)
     try {
         body(file)
     }
@@ -921,7 +922,7 @@ internal inline fun withFlagFile(prefix: String, suffix: String? = null, body: (
 }
 
 internal inline fun withLogFile(prefix: String, suffix: String = ".log", printLogOnException: Boolean = true, body: (File) -> Unit) {
-    val logFile = createTempFile(prefix, suffix)
+    val logFile = FileUtil.createTempFile(prefix, suffix)
     try {
         body(logFile)
     }
