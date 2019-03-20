@@ -118,7 +118,7 @@ class ConvertMemberToExtensionIntention :
         val project = file.project
         val outermostParent = KtPsiUtil.getOutermostParent(element, file, false)
 
-        val ktFilesToAddImports = SmartList<KtFile>()
+        val ktFilesToAddImports = LinkedHashSet<KtFile>()
         val javaCallsToFix = SmartList<PsiMethodCallExpression>()
         for (ref in ReferencesSearch.search(element)) {
             when (ref) {
