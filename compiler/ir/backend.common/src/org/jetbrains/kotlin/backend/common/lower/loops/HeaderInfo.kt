@@ -60,8 +60,7 @@ internal sealed class HeaderInfo(
     val progressionType: ProgressionType,
     val first: IrExpression,
     val last: IrExpression,
-    val step: IrExpression,
-    val closed: Boolean
+    val step: IrExpression
 ) {
     val direction: ProgressionDirection by lazy {
         // If step is a constant (either Int or Long), then we can determine the direction.
@@ -81,9 +80,9 @@ internal class ProgressionHeaderInfo(
     first: IrExpression,
     last: IrExpression,
     step: IrExpression,
-    closed: Boolean = true,
+    val additionalVariables: List<IrVariable> = listOf(),
     val additionalNotEmptyCondition: IrExpression? = null
-) : HeaderInfo(progressionType, first, last, step, closed)
+) : HeaderInfo(progressionType, first, last, step)
 
 internal class ArrayHeaderInfo(
     first: IrExpression,
@@ -94,8 +93,7 @@ internal class ArrayHeaderInfo(
     ProgressionType.INT_PROGRESSION,
     first,
     last,
-    step,
-    closed = false
+    step
 )
 
 internal interface HeaderInfoHandler<T> {
