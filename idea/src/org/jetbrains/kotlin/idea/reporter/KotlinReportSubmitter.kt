@@ -96,7 +96,7 @@ class KotlinReportSubmitter : ITNReporterCompat() {
                             null
                         )
                     } catch (e: IOException) {
-                        // Do not report connection problems
+                        LOG.warn(e)
                         null
                     } catch (e: KotlinPluginUpdater.Companion.ResponseParseException) {
                         // Exception won't be shown, but will be logged
