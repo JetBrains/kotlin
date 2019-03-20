@@ -1,0 +1,27 @@
+FILE: checkArguments.kt
+    public final class A {
+        public constructor(): super<R|kotlin/Any|>()
+
+    }
+    public open class B {
+        public constructor(): super<R|kotlin/Any|>()
+
+    }
+    public final class C : R|B| {
+        public constructor(): super<R|kotlin/Any|>()
+
+    }
+    public final fun bar(a: R|A|): R|A| {
+        ^bar R|<local>/a|
+    }
+    public final fun bar(b: R|B|): R|B| {
+        ^bar R|<local>/b|
+    }
+    public final fun foo(): R|kotlin/Unit| {
+        lval a: R|A| = R|/A.A|()
+        lval b: R|B| = R|/B.B|()
+        lval c: R|C| = R|/C.C|()
+        lval ra: R|A| = R|/bar|(R|<local>/a|)
+        lval rb: R|B| = R|/bar|(R|<local>/b|)
+        lval rc: R|B| = R|/bar|(R|<local>/c|)
+    }

@@ -22,14 +22,21 @@ import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 
+
+
 class CallInfo(
-    val variableAccess: Boolean,
+    val callKind: CallKind,
+
     val explicitReceiver: FirExpression?,
-    val argumentCount: Int
+
+    val arguments: List<FirExpression>,
+
+    val typeProvider: (FirExpression) -> FirTypeRef?
 ) {
 
 }
@@ -50,11 +57,19 @@ class CheckerSinkImpl : CheckerSink {
 class Candidate(
     val symbol: ConeSymbol,
     val receiverKind: ExplicitReceiverKind,
-    val callKind: CallKind
-)
+    private val inferenceComponents: InferenceComponents,
+    private val baseSystem: ConstraintStorage
+) {
+    val system by lazy {
+        val system = inferenceComponents.createConstraintSystem()
+        system.addOtherSystem(baseSystem)
+        system
+    }
+}
 
 sealed class CallKind {
     abstract fun sequence(): List<ResolutionStage>
+
     object Function : CallKind() {
         override fun sequence(): List<ResolutionStage> {
             return functionCallResolutionSequence()
@@ -177,19 +192,31 @@ abstract class TowerDataConsumer {
 fun createVariableConsumer(
     session: FirSession,
     name: Name,
-    explicitReceiver: FirExpression?,
-    explicitReceiverType: FirTypeRef?
+    callInfo: CallInfo,
+    inferenceComponents: InferenceComponents
 ): TowerDataConsumer {
-    return createSimpleConsumer(session, name, TowerScopeLevel.Token.Properties, explicitReceiver, explicitReceiverType, CallKind.VariableAccess)
+    return createSimpleConsumer(
+        session,
+        name,
+        TowerScopeLevel.Token.Properties,
+        callInfo,
+        inferenceComponents
+    )
 }
 
 fun createFunctionConsumer(
     session: FirSession,
     name: Name,
-    explicitReceiver: FirExpression?,
-    explicitReceiverType: FirTypeRef?
+    callInfo: CallInfo,
+    inferenceComponents: InferenceComponents
 ): TowerDataConsumer {
-    return createSimpleConsumer(session, name, TowerScopeLevel.Token.Functions, explicitReceiver, explicitReceiverType, CallKind.Function)
+    return createSimpleConsumer(
+        session,
+        name,
+        TowerScopeLevel.Token.Functions,
+        callInfo,
+        inferenceComponents
+    )
 }
 
 
@@ -197,18 +224,44 @@ fun createSimpleConsumer(
     session: FirSession,
     name: Name,
     token: TowerScopeLevel.Token<*>,
-    explicitReceiver: FirExpression?,
-    explicitReceiverType: FirTypeRef?,
-    callKind: CallKind
+    callInfo: CallInfo,
+    inferenceComponents: InferenceComponents
 ): TowerDataConsumer {
-    return if (explicitReceiver != null) {
-        ExplicitReceiverTowerDataConsumer(session, name, token, object : ReceiverValueWithPossibleTypes {
-            override val type: ConeKotlinType
-                get() = explicitReceiverType?.coneTypeSafe()
-                    ?: ConeKotlinErrorType("No type calculated for: ${explicitReceiver.renderWithType()}") // TODO: assert here
-        }, callKind)
+    val factory = CandidateFactory(inferenceComponents)
+    return if (callInfo.explicitReceiver != null) {
+        ExplicitReceiverTowerDataConsumer(
+            session,
+            name,
+            token,
+            object : ReceiverValueWithPossibleTypes {
+                override val type: ConeKotlinType
+                    get() = callInfo.typeProvider(callInfo.explicitReceiver)?.coneTypeSafe()
+                        ?: ConeKotlinErrorType("No type calculated for: ${callInfo.explicitReceiver.renderWithType()}") // TODO: assert here
+            },
+            factory
+        )
     } else {
-        NoExplicitReceiverTowerDataConsumer(session, name, token, callKind)
+        NoExplicitReceiverTowerDataConsumer(session, name, token, factory)
+    }
+}
+
+class CandidateFactory(
+    val inferenceComponents: InferenceComponents
+) {
+
+    val baseSystem: ConstraintStorage
+
+    init {
+        val system = inferenceComponents.createConstraintSystem()
+        baseSystem = system.asReadOnlyStorage()
+    }
+
+    fun createCandidate(
+        symbol: ConeSymbol,
+        boundDispatchReceiver: ReceiverValueWithPossibleTypes?,
+        explicitReceiverKind: ExplicitReceiverKind
+    ): Candidate {
+        return Candidate(symbol, explicitReceiverKind, inferenceComponents, baseSystem)
     }
 }
 
@@ -217,7 +270,7 @@ class ExplicitReceiverTowerDataConsumer<T : ConeSymbol>(
     val name: Name,
     val token: TowerScopeLevel.Token<T>,
     val explicitReceiver: ReceiverValueWithPossibleTypes,
-    val callKind: CallKind
+    val candidateFactory: CandidateFactory
 ) : TowerDataConsumer() {
 
     var groupId = 0
@@ -237,7 +290,14 @@ class ExplicitReceiverTowerDataConsumer<T : ConeSymbol>(
                     null,
                     object : TowerScopeLevel.TowerScopeLevelProcessor<T> {
                         override fun consumeCandidate(symbol: T, boundDispatchReceiver: ReceiverValueWithPossibleTypes?): ProcessorAction {
-                            resultCollector.consumeCandidate(groupId, Candidate(symbol, ExplicitReceiverKind.DISPATCH_RECEIVER, callKind))
+                            resultCollector.consumeCandidate(
+                                groupId,
+                                candidateFactory.createCandidate(
+                                    symbol,
+                                    boundDispatchReceiver,
+                                    ExplicitReceiverKind.DISPATCH_RECEIVER
+                                )
+                            )
                             return ProcessorAction.NEXT
                         }
                     }
@@ -249,7 +309,14 @@ class ExplicitReceiverTowerDataConsumer<T : ConeSymbol>(
                     explicitReceiver,
                     object : TowerScopeLevel.TowerScopeLevelProcessor<T> {
                         override fun consumeCandidate(symbol: T, boundDispatchReceiver: ReceiverValueWithPossibleTypes?): ProcessorAction {
-                            resultCollector.consumeCandidate(groupId, Candidate(symbol, ExplicitReceiverKind.EXTENSION_RECEIVER, callKind))
+                            resultCollector.consumeCandidate(
+                                groupId,
+                                candidateFactory.createCandidate(
+                                    symbol,
+                                    boundDispatchReceiver,
+                                    ExplicitReceiverKind.EXTENSION_RECEIVER
+                                )
+                            )
                             return ProcessorAction.NEXT
                         }
                     }
@@ -263,7 +330,7 @@ class NoExplicitReceiverTowerDataConsumer<T : ConeSymbol>(
     val session: FirSession,
     val name: Name,
     val token: TowerScopeLevel.Token<T>,
-    val callKind: CallKind
+    val candidateFactory: CandidateFactory
 ) : TowerDataConsumer() {
     var groupId = 0
 
@@ -284,7 +351,10 @@ class NoExplicitReceiverTowerDataConsumer<T : ConeSymbol>(
                     null,
                     object : TowerScopeLevel.TowerScopeLevelProcessor<T> {
                         override fun consumeCandidate(symbol: T, boundDispatchReceiver: ReceiverValueWithPossibleTypes?): ProcessorAction {
-                            resultCollector.consumeCandidate(groupId, Candidate(symbol, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, callKind))
+                            resultCollector.consumeCandidate(
+                                groupId,
+                                candidateFactory.createCandidate(symbol, boundDispatchReceiver, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER)
+                            )
                             return ProcessorAction.NEXT
                         }
                     }
@@ -350,7 +420,7 @@ class CandidateCollector(val callInfo: CallInfo) {
         val sink = CheckerSinkImpl()
 
 
-        candidate.callKind.sequence().forEach {
+        callInfo.callKind.sequence().forEach {
             it.check(candidate, sink, callInfo)
         }
 
