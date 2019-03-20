@@ -83,7 +83,7 @@ internal val LOG = Logger.getInstance("#org.jetbrains.kotlin.idea.debugger.evalu
 internal const val GENERATED_FUNCTION_NAME = "generated_for_debugger_fun"
 internal const val GENERATED_CLASS_NAME = "Generated_for_debugger_class"
 
-object KotlinEvaluationBuilder : EvaluatorBuilder {
+object KotlinEvaluatorBuilder : EvaluatorBuilder {
     override fun build(codeFragment: PsiElement, position: SourcePosition?): ExpressionEvaluator {
         if (codeFragment !is KtCodeFragment || position == null) {
             return EvaluatorBuilderImpl.getInstance().build(codeFragment, position)
