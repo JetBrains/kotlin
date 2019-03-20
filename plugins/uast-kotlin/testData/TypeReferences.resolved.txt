@@ -5,10 +5,13 @@ UTypeReferenceExpression (name = java.lang.String) -> USimpleNameReferenceExpres
     UBinaryExpression (operator = +) -> USimpleNameReferenceExpression (identifier = +) -> null: null
     UBinaryExpression (operator = +) -> USimpleNameReferenceExpression (identifier = varWithoutType) -> LightVariableBuilder:varWithoutType: varWithoutType
     UReturnExpression -> USimpleNameReferenceExpression (identifier = result) -> LightVariableBuilder:result: result
+UTypeReferenceExpression (name = <ErrorType>) -> USimpleNameReferenceExpression (identifier = List) -> PsiClass:List: List
+UTypeReferenceExpression (name = <ErrorType>) -> USimpleNameReferenceExpression (identifier = List) -> PsiClass:List: List
+UTypeReferenceExpression (name = <ErrorType>) -> USimpleNameReferenceExpression (identifier = String) -> PsiClass:String: String
 UTypeReferenceExpression (name = T) -> USimpleNameReferenceExpression (identifier = T) -> KotlinLightTypeParameter:T: T
     ULocalVariable (name = a) -> USimpleNameReferenceExpression (identifier = arg) -> Light Parameter: arg
     UTypeReferenceExpression (name = T) -> USimpleNameReferenceExpression (identifier = T) -> KotlinLightTypeParameter:T: T
-    ULocalVariable (name = var708e1d08) -> USimpleNameReferenceExpression (identifier = arg) -> Light Parameter: arg
+    ULocalVariable (name = var708e23eb) -> USimpleNameReferenceExpression (identifier = arg) -> Light Parameter: arg
     UExpressionList (elvis) -> USimpleNameReferenceExpression (identifier = ?:) -> null: null
     UTypeReferenceExpression (name = java.util.List<? extends T>) -> USimpleNameReferenceExpression (identifier = List) -> PsiClass:List: List
     UTypeReferenceExpression (name = T) -> USimpleNameReferenceExpression (identifier = T) -> KotlinLightTypeParameter:T: T
@@ -25,6 +28,7 @@ UTypeReferenceExpression (name = T) -> USimpleNameReferenceExpression (identifie
     UTypeReferenceExpression (name = java.util.List<? extends java.util.List<? extends java.lang.String>>) -> USimpleNameReferenceExpression (identifier = List) -> PsiClass:List: List
     UTypeReferenceExpression (name = java.util.List<? extends java.lang.String>) -> USimpleNameReferenceExpression (identifier = List) -> PsiClass:List: List
     UTypeReferenceExpression (name = java.lang.String) -> USimpleNameReferenceExpression (identifier = String) -> PsiClass:String: String
+    UTypeReferenceExpression (name = java.util.List<? extends java.util.List<? extends java.lang.String>>) -> USimpleNameReferenceExpression (identifier = ListOfLists) -> PsiClass:List: List
     UTypeReferenceExpression (name = java.util.List<? extends java.util.List<? extends T>>) -> USimpleNameReferenceExpression (identifier = List) -> PsiClass:List: List
     UTypeReferenceExpression (name = java.util.List<? extends T>) -> USimpleNameReferenceExpression (identifier = List) -> PsiClass:List: List
     UTypeReferenceExpression (name = T) -> USimpleNameReferenceExpression (identifier = T) -> KotlinLightTypeParameter:T: T
