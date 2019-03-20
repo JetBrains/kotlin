@@ -80,7 +80,11 @@ open class ConvertToStringTemplateIntention : SelfTargetingOffsetIndependentInte
         fun buildText(expr: KtExpression?, forceBraces: Boolean): String {
             if (expr == null) return ""
             val expression = KtPsiUtil.safeDeparenthesize(expr).let {
-                if ((it as? KtDotQualifiedExpression)?.isToString() == true) it.receiverExpression else it
+                when {
+                    (it as? KtDotQualifiedExpression)?.isToString() == true -> it.receiverExpression
+                    it is KtLambdaExpression -> expr
+                    else -> it
+                }
             }
             val expressionText = expression.text
             when (expression) {
@@ -125,17 +129,6 @@ open class ConvertToStringTemplateIntention : SelfTargetingOffsetIndependentInte
 
                 is KtThisExpression ->
                     return "$" + (if (forceBraces || expression.labelQualifier != null) "{$expressionText}" else expressionText)
-
-                is KtLambdaExpression -> {
-                    if (expression.bodyExpression?.statements?.isNotEmpty() == true) {
-                        var element = expression.bodyExpression!!.statements.first().lastChild
-                        while (element.lastChild != null) {
-                            element = element.lastChild
-                        }
-                        val lambdaValue = element.text
-                        return "\${$lambdaValue@$expressionText}"
-                    }
-                }
             }
 
             return "\${$expressionText}"
