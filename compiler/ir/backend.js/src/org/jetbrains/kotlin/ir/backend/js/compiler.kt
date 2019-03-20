@@ -138,7 +138,7 @@ fun compile(
     val psi2IrContext = psi2IrTranslator.createGeneratorContext(moduleDescriptor, analysisResult.bindingContext, symbolTable)
     val irBuiltIns = psi2IrContext.irBuiltIns
 
-    var deserializer = JsIrLinker(moduleDescriptor, logggg, irBuiltIns, symbolTable)
+    val deserializer = JsIrLinker(moduleDescriptor, logggg, irBuiltIns, symbolTable)
 
     val deserializedModuleFragments = sortedImmediateDependencies.map {
         val moduleFile = File(it.klibPath, moduleHeaderFileName)

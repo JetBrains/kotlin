@@ -10,8 +10,6 @@ import org.jetbrains.kotlin.backend.common.library.CombinedIrFileReader
 import org.jetbrains.kotlin.backend.common.library.DeclarationId
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.backend.common.serialization.knownBuiltins
-import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
@@ -48,5 +46,18 @@ class JsIrLinker(
         val irFile = File(klibLocation, "ir/irCombined.knd")
         moduleToReaderMap[moduleDescriptor] = CombinedIrFileReader(irFile)
         return deserializeIrModuleHeader(moduleDescriptor, byteArray, deserializationStrategy)
+    }
+
+    override fun declareForwardDeclarations() {
+        // since for `knownBuiltIns` such as FunctionN it is possible to have unbound symbols after deserialization
+        // reference them through out lazy symbol table
+        with(symbolTable) {
+            ArrayList(unboundClasses).forEach { lazyWrapper.referenceClass(it.descriptor) }
+            ArrayList(unboundConstructors).forEach { lazyWrapper.referenceConstructor(it.descriptor) }
+            ArrayList(unboundEnumEntries).forEach { lazyWrapper.referenceEnumEntry(it.descriptor) }
+            ArrayList(unboundFields).forEach { lazyWrapper.referenceField(it.descriptor) }
+            ArrayList(unboundSimpleFunctions).forEach { lazyWrapper.referenceSimpleFunction(it.descriptor) }
+            ArrayList(unboundTypeParameters).forEach { lazyWrapper.referenceTypeParameter(it.descriptor) }
+        }
     }
 }
