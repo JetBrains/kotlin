@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.PathUtil.KOTLIN_SCRIPTING_COMMON_JAR
 import org.jetbrains.kotlin.utils.PathUtil.KOTLIN_SCRIPTING_COMPILER_PLUGIN_JAR
+import org.jetbrains.kotlin.utils.PathUtil.KOTLIN_SCRIPTING_IMPL_JAR
 import org.jetbrains.kotlin.utils.PathUtil.KOTLIN_SCRIPTING_JVM_JAR
 import java.io.File
 import kotlin.reflect.KClass
@@ -49,8 +50,8 @@ class CustomScriptCodegenTest : CodegenTestCase() {
                 File(TestScriptWithReceivers::class.java.protectionDomain.codeSource.location.toURI().path) +
                 with(PathUtil.kotlinPathsForDistDirectory) {
                     arrayOf(
-                        KOTLIN_SCRIPTING_COMPILER_PLUGIN_JAR, KOTLIN_SCRIPTING_COMMON_JAR,
-                        KOTLIN_SCRIPTING_JVM_JAR
+                        KOTLIN_SCRIPTING_COMPILER_PLUGIN_JAR, KOTLIN_SCRIPTING_IMPL_JAR,
+                        KOTLIN_SCRIPTING_COMMON_JAR, KOTLIN_SCRIPTING_JVM_JAR
                     ).mapNotNull { File(libPath, it).also { assertTrue("$it not found", it.exists()) } }
                 }
 

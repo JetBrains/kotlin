@@ -29,6 +29,6 @@
 
     <idePlatformKindTooling implementation="org.jetbrains.kotlin.idea.core.platform.impl.CommonIdePlatformKindTooling"/>
 
-    <syntheticResolveExtension implementation="org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingResolveExtension"/>
+    <syntheticResolveExtension implementation="org.jetbrains.kotlin.scripting.shared.extensions.ScriptingResolveExtension"/>
   </extensions>
 </idea-plugin>
