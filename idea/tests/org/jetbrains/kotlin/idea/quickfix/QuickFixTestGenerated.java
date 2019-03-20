@@ -13775,6 +13775,16 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/when/addElseBranchEnumStatement.kt");
         }
 
+        @TestMetadata("addRemainingBranchesBlankLine.kt")
+        public void testAddRemainingBranchesBlankLine() throws Exception {
+            runTest("idea/testData/quickfix/when/addRemainingBranchesBlankLine.kt");
+        }
+
+        @TestMetadata("addRemainingBranchesBlankLineWithComment.kt")
+        public void testAddRemainingBranchesBlankLineWithComment() throws Exception {
+            runTest("idea/testData/quickfix/when/addRemainingBranchesBlankLineWithComment.kt");
+        }
+
         @TestMetadata("addRemainingBranchesBoolean.kt")
         public void testAddRemainingBranchesBoolean() throws Exception {
             runTest("idea/testData/quickfix/when/addRemainingBranchesBoolean.kt");
