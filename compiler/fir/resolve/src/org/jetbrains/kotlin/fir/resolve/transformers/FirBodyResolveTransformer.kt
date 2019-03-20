@@ -257,8 +257,7 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
 
 
     override fun transformBlock(block: FirBlock, data: Any?): CompositeTransformResult<FirStatement> {
-
-        block.transformChildren(this, data)
+        val block = super.transformBlock(block, data).single as FirBlock
         val statement = block.statements.lastOrNull()
 
         val resultExpression = when (statement) {
@@ -267,7 +266,7 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
             else -> null
         }
         resultExpression?.resultType?.let { bindingContext[block] = it }
-        return super.transformBlock(block, data)
+        return block.compose()
     }
 
     private fun commonSuperType(types: List<FirTypeRef>): FirTypeRef? {
@@ -275,12 +274,12 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
     }
 
     override fun transformWhenExpression(whenExpression: FirWhenExpression, data: Any?): CompositeTransformResult<FirStatement> {
+        val whenExpression = super.transformWhenExpression(whenExpression, data).single as FirWhenExpression
         val type = commonSuperType(whenExpression.branches.mapNotNull {
-            it.result.visitNoTransform(this, data)
             it.result.resultType
         })
         if (type != null) bindingContext[whenExpression] = type
-        return super.transformWhenExpression(whenExpression, data)
+        return whenExpression.compose()
     }
 
     override fun <T> transformConstExpression(constExpression: FirConstExpression<T>, data: Any?): CompositeTransformResult<FirStatement> {
