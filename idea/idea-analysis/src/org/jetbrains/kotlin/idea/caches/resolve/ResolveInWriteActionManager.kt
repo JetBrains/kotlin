@@ -6,29 +6,8 @@
 package org.jetbrains.kotlin.idea.caches.resolve
 
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.diagnostic.ControlFlowException
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.module.ModuleUtil
-import com.intellij.openapi.project.IndexNotReadyException
-import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiNamedElement
-import org.jetbrains.kotlin.analyzer.AnalysisResult
-import org.jetbrains.kotlin.analyzer.ModuleInfo
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.idea.KotlinPluginUtil
-import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
-import org.jetbrains.kotlin.idea.caches.project.getNullableModuleInfo
-import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.TargetPlatform
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
+import com.intellij.openapi.util.registry.Registry
 
 /**
  * Temporary allow resolve in write action.
@@ -53,7 +32,9 @@ internal object ResolveInWriteActionManager {
         if (!application.isWriteAccessAllowed) return
 
         if (application.isUnitTestMode) return
-        if (application.isInternal && !KotlinPluginUtil.isSnapshotVersion()) return
+
+        @Suppress("InvalidBundleOrProperty")
+        if (!Registry.`is`("kotlin.write.resolve.check", false)) return
 
         LOG.error("Resolve is not allowed under the write action!")
     }

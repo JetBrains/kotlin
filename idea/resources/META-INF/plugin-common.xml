@@ -361,6 +361,12 @@
 
     <errorHandler implementation="org.jetbrains.kotlin.idea.reporter.KotlinReportSubmitter"/>
 
+    <registryKey
+        key="kotlin.write.resolve.check"
+        description="Whether to enable the check for resolve activated from the write action"
+        defaultValue="false"
+        restartRequired="false"/>
+
     <internalFileTemplate name="Kotlin File"/>
     <internalFileTemplate name="Kotlin Class"/>
     <internalFileTemplate name="Kotlin Enum"/>
