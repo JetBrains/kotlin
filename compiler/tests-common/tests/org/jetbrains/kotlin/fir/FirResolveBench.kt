@@ -32,35 +32,43 @@ fun doFirResolveTestBench(
 
     val timePerTransformer = mutableMapOf<KClass<*>, Long>()
     val counterPerTransformer = mutableMapOf<KClass<*>, Long>()
-    val totalLength = 0
     var resolvedTypes = 0
     var errorTypes = 0
     var unresolvedTypes = 0
 
+    val fails = mutableListOf<Pair<KClass<*>, Throwable>>()
 
     try {
         for ((stage, transformer) in transformers.withIndex()) {
             println("Starting stage #$stage. $transformer")
             val firFileSequence = if (withProgress) firFiles.progress("   ~ ") else firFiles.asSequence()
             for (firFile in firFileSequence) {
+                var fail = false
                 val time = measureNanoTime {
                     try {
                         transformer.transformFile(firFile, null)
                     } catch (e: Throwable) {
                         val ktFile = firFile.psi as KtFile
                         println("Fail in file: ${ktFile.virtualFilePath}")
-                        println(ktFile.text)
-                        throw e
+                        fail = true
+                        fails += transformer::class to e
+                        //println(ktFile.text)
+                        //throw e
                     }
                 }
-                timePerTransformer.merge(transformer::class, time) { a, b -> a + b }
-                counterPerTransformer.merge(transformer::class, 1) { a, b -> a + b }
+                if (!fail) {
+                    timePerTransformer.merge(transformer::class, time) { a, b -> a + b }
+                    counterPerTransformer.merge(transformer::class, 1) { a, b -> a + b }
+                }
                 //totalLength += StringBuilder().apply { FirRenderer(this).visitFile(firFile) }.length
             }
         }
 
-
-        println("SUCCESS!")
+        if (fails.none()) {
+            println("SUCCESS!")
+        } else {
+            println("ERROR!")
+        }
     } finally {
 
         var implicitTypes = 0
@@ -81,9 +89,10 @@ fun doFirResolveTestBench(
                     }
                     val line = (document?.getLineNumber(psi.startOffset) ?: 0)
                     val char = psi.startOffset - (document?.getLineStartOffset(line) ?: 0)
-                    val report = "u: ${psi.containingFile?.virtualFile?.path}: (${line + 1}:$char): $problem"
+                    val report = "e: ${psi.containingFile?.virtualFile?.path}: (${line + 1}:$char): $problem"
                     errorTypesReports[problem] = report
                 }
+
                 override fun visitElement(element: FirElement) {
                     element.acceptChildren(this)
                 }
@@ -93,7 +102,7 @@ fun doFirResolveTestBench(
 
                     if (typeRef.psi != null) {
                         val psi = typeRef.psi!!
-                        val problem = typeRef.renderWithType()
+                        val problem = "${typeRef::class.simpleName}: ${typeRef.render()}"
                         reportProblem(problem, psi)
                     }
                 }
@@ -105,8 +114,9 @@ fun doFirResolveTestBench(
                         if (resolvedTypeRef.psi == null) {
                             implicitTypes++
                         } else {
+                            errorTypes++
                             val psi = resolvedTypeRef.psi!!
-                            val problem = "$type with psi `${psi.text}`"
+                            val problem = "${resolvedTypeRef::class.simpleName} -> ${type::class.simpleName}: ${type.render()}"
                             reportProblem(problem, psi)
                         }
                     }
@@ -118,8 +128,6 @@ fun doFirResolveTestBench(
             println(it.value)
         }
 
-
-        println("TOTAL LENGTH: $totalLength")
         println("UNRESOLVED TYPES: $unresolvedTypes")
         println("RESOLVED TYPES: $resolvedTypes")
         println("GOOD TYPES: ${resolvedTypes - errorTypes}")
@@ -131,7 +139,12 @@ fun doFirResolveTestBench(
 
         timePerTransformer.forEach { (transformer, time) ->
             val counter = counterPerTransformer[transformer]!!
-            println("${transformer.simpleName}, TIME: ${time * 1e-6} ms, TIME PER FILE: ${(time / counter) * 1e-6} ms, FILES: $counter")
+            println("${transformer.simpleName}, TIME: ${time * 1e-6} ms, TIME PER FILE: ${(time / counter) * 1e-6} ms, FILES: OK/E/T $counter/${firFiles.size - counter}/${firFiles.size}")
+        }
+
+        if (fails.any()) {
+            val (transformerClass, failure) = fails.first()
+            throw AssertionError("Failures detected in ${transformerClass.simpleName}", failure)
         }
     }
 }
