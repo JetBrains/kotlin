@@ -157,6 +157,11 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
                 val type = types.lastOrNull() ?: ConeKotlinErrorType("Unresolved this@$labelName")
                 bindingContext[qualifiedAccessExpression] = FirResolvedTypeRefImpl(session, null, type, false, emptyList())
             }
+            is FirSuperReference -> {
+                qualifiedAccessExpression.resultType =
+                    FirErrorTypeRefImpl(session, qualifiedAccessExpression.psi, "Unsupported: super type") //TODO
+
+            }
         }
         val callee = qualifiedAccessExpression.calleeReference as? FirSimpleNamedReference ?: return qualifiedAccessExpression.compose()
 
