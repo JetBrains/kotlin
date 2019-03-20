@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.fir
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.resolve.FirProvider
+import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.types.ConeClassErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinErrorType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
@@ -18,6 +20,14 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import kotlin.math.max
 import kotlin.reflect.KClass
 import kotlin.system.measureNanoTime
+
+
+fun checkFirProvidersConsistency(firFiles: List<FirFile>) {
+    for ((session, files) in firFiles.groupBy { it.session }) {
+        val provider = session.service<FirProvider>() as FirProviderImpl
+        provider.ensureConsistent(files)
+    }
+}
 
 fun doFirResolveTestBench(
     firFiles: List<FirFile>,
@@ -62,6 +72,7 @@ fun doFirResolveTestBench(
                 }
                 //totalLength += StringBuilder().apply { FirRenderer(this).visitFile(firFile) }.length
             }
+            checkFirProvidersConsistency(firFiles)
         }
 
         if (fails.none()) {
