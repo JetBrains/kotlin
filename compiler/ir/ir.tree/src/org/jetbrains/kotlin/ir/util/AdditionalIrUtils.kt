@@ -3,20 +3,16 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.backend.common.serialization
+package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.ir.SourceManager
+import org.jetbrains.kotlin.ir.SourceRangeInfo
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.ir.SourceRangeInfo
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import java.io.File
@@ -84,9 +80,6 @@ private val IrCall.annotationClass
 fun List<IrCall>.hasAnnotation(fqName: FqName): Boolean =
     this.any { it.annotationClass.fqNameSafe == fqName }
 
-fun IrAnnotationContainer.hasAnnotation(fqName: FqName) =
-    this.annotations.hasAnnotation(fqName)
-
 fun List<IrCall>.findAnnotation(fqName: FqName): IrCall? = this.firstOrNull {
     it.annotationClass.fqNameSafe == fqName
 }
@@ -99,10 +92,6 @@ val IrDeclaration.fileEntry: SourceManager.FileEntry
             else -> TODO("Unexpected declaration parent")
         }
     }
-
-val IrClass.isInterface: Boolean
-    get() = (this.kind == ClassKind.INTERFACE)
-
 
 fun IrClass.companionObject() = this.declarations.singleOrNull {it is IrClass && it.isCompanion }
 

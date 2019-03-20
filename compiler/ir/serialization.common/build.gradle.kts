@@ -7,13 +7,8 @@ dependencies {
     compile(project(":compiler:util"))
     compile(project(":compiler:frontend"))
     compile(project(":compiler:backend-common"))
-    compile(project(":compiler:ir.tree"))
-    compile(project(":compiler:ir.psi2ir"))
     compile(project(":compiler:ir.backend.common"))
-    compile(project(":compiler:serialization.common"))
-    compile(project(":js:js.ast"))
-    compile(project(":js:js.frontend"))
-
+    compile(project(":compiler:ir.tree"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 }
 
