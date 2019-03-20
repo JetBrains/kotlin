@@ -24,6 +24,7 @@ import org.w3c.dom.*
 // API for interop with JS library Chartist.
 external class ChartistPlugins {
     fun legend(data: dynamic): dynamic
+    fun ctAxisTitle(data: dynamic): dynamic
 }
 
 external object Chartist {
@@ -73,7 +74,7 @@ fun getChartData(labels: List<String>, valuesList: Collection<List<*>>): dynamic
     return chartData
 }
 
-fun getChartOptions(samples: Array<String>): dynamic {
+fun getChartOptions(samples: Array<String>, yTitle: String): dynamic {
     val chartOptions: dynamic = object{}
     chartOptions["fullWidth"] = true
     val paddingObject: dynamic = object{}
@@ -83,11 +84,22 @@ fun getChartOptions(samples: Array<String>): dynamic {
     axisXObject["offset"] = 40
     chartOptions["axisX"] = axisXObject
     val axisYObject: dynamic = object{}
-    axisYObject["offset"] = 70
+    axisYObject["offset"] = 90
     chartOptions["axisY"] = axisYObject
     val legendObject: dynamic = object{}
     legendObject["legendNames"] = samples
-    chartOptions["plugins"] = arrayOf(Chartist.plugins.legend(legendObject))
+    val titleObject: dynamic = object{}
+    val axisYTitle: dynamic = object{}
+    axisYTitle["axisTitle"] = yTitle
+    axisYTitle["axisClass"] = "ct-axis-title"
+    val titleOffset: dynamic = {}
+    titleOffset["x"] = 15
+    titleOffset["y"] = 15
+    axisYTitle["offset"] = titleOffset
+    axisYTitle["textAnchor"] = "middle"
+    axisYTitle["flipTitle"] = true
+    titleObject["axisY"] = axisYTitle
+    chartOptions["plugins"] = arrayOf(Chartist.plugins.legend(legendObject), Chartist.plugins.ctAxisTitle(titleObject))
     return chartOptions
 }
 
@@ -168,9 +180,7 @@ fun main(args: Array<String>) {
         val parsedParameter = it.split("=", limit = 2)
         if (parsedParameter.size == 2) {
             val (key, value) = parsedParameter
-            if (parameters.containsKey(key)) {
-                parameters[key] = value
-            }
+            parameters[key] = value
         }
     }
 
@@ -251,23 +261,31 @@ fun main(args: Array<String>) {
         }
         separateValues(it.executionTime, executionTime) { value -> value.toDouble() }
         separateValues(it.compileTime, compileTime) { value -> value.toDouble() }
-        separateValues(it.codeSize, codeSize) { value -> value.toDouble() }
-        bundleSize.add(it.bundleSize?.toInt())
+        separateValues(it.codeSize, codeSize) { value -> value.toDouble() / 1024.0 }
+        bundleSize.add(it.bundleSize?.toInt()?. let { it / 1024 / 1024 })
     }
 
     // Draw charts.
     val execChart = Chartist.Line("#exec_chart", getChartData(labels, executionTime.values),
-            getChartOptions(executionTime.keys.toTypedArray()))
+            getChartOptions(executionTime.keys.toTypedArray(), "Time, microseconds"))
     val compileChart = Chartist.Line("#compile_chart", getChartData(labels, compileTime.values),
-            getChartOptions(compileTime.keys.toTypedArray()))
+            getChartOptions(compileTime.keys.toTypedArray(), "Time, microseconds"))
     val codeSizeChart = Chartist.Line("#codesize_chart", getChartData(labels, codeSize.values),
-            getChartOptions(codeSize.keys.toTypedArray()))
+            getChartOptions(codeSize.keys.toTypedArray(), "Size, KB"))
     val bundleSizeChart = Chartist.Line("#bundlesize_chart", getChartData(labels, listOf(bundleSize)),
-            getChartOptions(arrayOf("Bundle size")))
+            getChartOptions(arrayOf("Bundle size"), "Size, MB"))
 
     // Tooltips and higlights.
     customizeChart(execChart, "exec_chart", js("$(\"#exec_chart\")"), builds, parameters)
     customizeChart(compileChart, "compile_chart", js("$(\"#compile_chart\")"), builds, parameters)
     customizeChart(codeSizeChart, "codesize_chart", js("$(\"#codesize_chart\")"), builds, parameters)
     customizeChart(bundleSizeChart, "bundlesize_chart", js("$(\"#bundlesize_chart\")"), builds, parameters)
+
+    // Auto reload.
+    parameters["refresh"]?.let {
+        // Set event.
+        window.setInterval({
+            window.location.reload()
+        }, it.toInt() * 1000)
+    }
 }

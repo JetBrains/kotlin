@@ -91,7 +91,10 @@ open class BuildRegister : DefaultTask() {
         val teamCityUser = buildProperties.getProperty("teamcity.auth.userId")
         val teamCityPassword = buildProperties.getProperty("teamcity.auth.password")
         val buildNumber = buildProperties.getProperty("build.number")
-        val branch = buildProperties.getProperty("teamcity.build.branch")
+
+        // Get branch.
+        val currentBuild = getBuild("id:$buildId", teamCityUser, teamCityPassword)
+        val branch = getBuildProperty(currentBuild,"branchName")
 
         // Get summary information.
         val output = arrayOf("$analyzer", "summary", "-exec-samples", "all", "-compile", "samples",
