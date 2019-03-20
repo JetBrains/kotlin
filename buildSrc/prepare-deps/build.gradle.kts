@@ -283,6 +283,16 @@ val build by tasks.creating {
     }
 }
 
+// Task to delete legacy repo locations
+tasks.create("cleanLegacy", Delete::class.java) {
+    delete("$projectDir/android-dx")
+    delete("$projectDir/intellij-sdk")
+}
+
+tasks.create("clean", Delete::class.java) {
+    delete(customDepsRepoDir)
+}
+
 fun buildIvyRepositoryTask(
     configuration: Configuration,
     organization: String,
