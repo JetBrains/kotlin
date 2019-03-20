@@ -24,7 +24,7 @@ fun test(z: Z) {
 operator fun <T> Z.plus(a: A<T>): A<T> = a
 
 fun test1(z: Z) {
-    id(z <!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>+<!> <!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>newA<!>())
+    <!NI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>id<!>(z <!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>+<!> <!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>newA<!>())
     <!NI;UNREACHABLE_CODE!>val a: A<Z> = z + newA()<!>
     <!NI;UNREACHABLE_CODE!>val b: A<Z> = z.plus(newA())<!>
     <!NI;UNREACHABLE_CODE!>val c: A<Z> = id(z + newA())<!>
@@ -56,7 +56,7 @@ fun test3(z: Z) {
 
 //'in' operation
 fun test4(collection: Collection<A<*>>) {
-    id(<!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>newA<!>() in collection)
+    <!NI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>id<!>(<!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>newA<!>() in collection)
     <!NI;UNREACHABLE_CODE!>id(newA<Int>() in collection)<!>
 }
 

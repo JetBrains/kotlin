@@ -22,5 +22,5 @@ val b: () -> Unit = l@{
 val c: () -> Unit = {
     // Interesting enough, for such expessions we use expected type Unit
     // (compare that with the previous case, where we didn't used expected type Unit for "hello")
-    materialize()
+    <!NI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>materialize<!>()
 }

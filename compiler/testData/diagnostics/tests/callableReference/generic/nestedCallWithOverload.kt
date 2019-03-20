@@ -7,16 +7,16 @@ fun <T> id(x: T): T = x
 fun <T> baz(x: T, y: T): T = TODO()
 
 fun test() {
-    val x1: (Int) -> Unit = id(id(::foo))
-    val x2: (Int) -> Unit = baz(id(::foo), ::foo)
-    val x3: (Int) -> Unit = baz(id(::foo), id(id(::foo)))
-    val x4: (String) -> Unit = baz(id(::foo), id(id(::foo)))
-    val x5: (Double) -> Unit = baz(id(::<!NI;DEBUG_INFO_MISSING_UNRESOLVED, OI;NONE_APPLICABLE!>foo<!>), id(id(::<!NI;DEBUG_INFO_MISSING_UNRESOLVED, OI;NONE_APPLICABLE!>foo<!>)))
+    <!NI;UNREACHABLE_CODE!>val x1: (Int) -> Unit = id(<!><!NI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>id<!>(::<!NI;DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>)<!NI;UNREACHABLE_CODE!>)<!>
+    <!NI;UNREACHABLE_CODE!>val x2: (Int) -> Unit = baz(<!NI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>id<!>(::<!NI;DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>), ::foo)<!>
+    <!NI;UNREACHABLE_CODE!>val x3: (Int) -> Unit = baz(<!NI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>id<!>(::<!NI;DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>), <!NI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>id<!>(<!NI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>id<!>(::<!NI;DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>)))<!>
+    <!NI;UNREACHABLE_CODE!>val x4: (String) -> Unit = baz(<!NI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>id<!>(::<!NI;DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>), <!NI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>id<!>(<!NI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>id<!>(::<!NI;DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>)))<!>
+    <!NI;UNREACHABLE_CODE!>val x5: (Double) -> Unit = baz(<!NI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>id<!>(::<!NI;DEBUG_INFO_MISSING_UNRESOLVED, OI;NONE_APPLICABLE!>foo<!>), <!NI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>id<!>(<!NI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>id<!>(::<!NI;DEBUG_INFO_MISSING_UNRESOLVED, OI;NONE_APPLICABLE!>foo<!>)))<!>
 
 
-    id<(Int) -> Unit>(id(id(::foo)))
-    id(id<(Int) -> Unit>(::foo))
-    baz<(Int) -> Unit>(id(::foo), id(id(::foo)))
-    baz(id(::foo), id(id<(Int) -> Unit>(::foo)))
-    baz(id(::foo), id<(Int) -> Unit>(id(::foo)))
+    <!NI;UNREACHABLE_CODE!>id<(Int) -> Unit>(<!NI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>id<!>(<!NI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>id<!>(::<!NI;DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>)))<!>
+    <!NI;UNREACHABLE_CODE!>id(id<(Int) -> Unit>(::foo))<!>
+    <!NI;UNREACHABLE_CODE!>baz<(Int) -> Unit>(<!NI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>id<!>(::<!NI;DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>), <!NI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>id<!>(<!NI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>id<!>(::<!NI;DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>)))<!>
+    <!NI;UNREACHABLE_CODE!>baz(<!NI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>id<!>(::<!NI;DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>), id(id<(Int) -> Unit>(::foo)))<!>
+    <!NI;UNREACHABLE_CODE!>baz(<!NI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>id<!>(::<!NI;DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>), id<(Int) -> Unit>(<!NI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>id<!>(::<!NI;DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>)))<!>
 }

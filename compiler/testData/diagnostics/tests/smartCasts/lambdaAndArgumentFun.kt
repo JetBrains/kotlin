@@ -10,5 +10,5 @@ fun use() {
     // Write to x is AFTER
     <!DEBUG_INFO_SMARTCAST!>x<!>.hashCode()
     // No smart cast should be here!
-    foo(bar { x = null }, <!SMARTCAST_IMPOSSIBLE!>x<!>.hashCode())
+    <!UNREACHABLE_CODE!>foo(<!><!IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>bar<!> { x = null }, <!UNREACHABLE_CODE!><!SMARTCAST_IMPOSSIBLE!>x<!>.hashCode())<!>
 }

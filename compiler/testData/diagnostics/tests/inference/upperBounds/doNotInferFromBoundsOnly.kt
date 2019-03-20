@@ -6,7 +6,7 @@ interface A
 fun <T> emptyList(): List<T> = throw Exception()
 
 fun test1() {
-    <!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>emptyList<!>()
+    <!NI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER, OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>emptyList<!>()
 }
 
 //--------------

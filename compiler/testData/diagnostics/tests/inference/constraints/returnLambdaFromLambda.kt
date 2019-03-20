@@ -9,13 +9,13 @@ fun testLambda() {
         { it -> <!DEBUG_INFO_SMARTCAST!>x<!> + it }
     }
 
-    val twoLambda: (Int) -> Int = myRun {
+    val twoLambda: (Int) -> Int = <!TYPE_MISMATCH!>myRun {
         val x: Int = 1
-        run {
+        <!TYPE_MISMATCH!>run {
             val y: Int = 2
             { x + y }
-        }
-    }
+        }<!>
+    }<!>
 
 }
 

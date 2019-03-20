@@ -11,13 +11,13 @@ fun case_1() {
 }
 
 fun case_2() {
-    test_1 { null!! }
-    test_2 { null!! }
+    <!IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>test_1<!> { null!! }
+    <!UNREACHABLE_CODE!>test_2 { null!! }<!>
 }
 
 fun case_3() {
-    test_1 { throw Exception() }
-    test_2 { throw Exception() }
+    <!IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>test_1<!> { throw Exception() }
+    <!UNREACHABLE_CODE!>test_2 { throw Exception() }<!>
 }
 
 fun case_6() {
@@ -39,5 +39,5 @@ class Context<T>
 fun <T> Any.decodeIn(typeFrom: Context<in T>): T = something()
 
 fun <T> Any?.decodeOut(typeFrom: Context<out T>): T {
-    return this?.<!IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>decodeIn<!>(typeFrom) ?: <!UNRESOLVED_REFERENCE!>error<!>("")
+    return this?.<!IMPLICIT_NOTHING_AS_TYPE_PARAMETER, IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>decodeIn<!>(typeFrom) ?: <!UNRESOLVED_REFERENCE!>error<!>("")
 }

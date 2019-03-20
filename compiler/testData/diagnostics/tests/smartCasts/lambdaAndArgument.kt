@@ -10,5 +10,5 @@ fun use() {
     // Write is AFTER
     <!DEBUG_INFO_SMARTCAST!>x<!>.hashCode()
     // x is nullable at the second argument
-    foo(bar { x = null }, x!!)
+    <!UNREACHABLE_CODE!>foo(<!><!IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>bar<!> { x = null }, <!UNREACHABLE_CODE!>x!!)<!>
 }

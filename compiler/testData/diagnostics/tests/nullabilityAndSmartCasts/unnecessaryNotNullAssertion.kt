@@ -7,18 +7,18 @@ fun <T> nullable(): T? = null
 fun <T> dependOn(x: T) = x
 
 fun test() {
-    takeNotNull(notNull()<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>)
-    takeNotNull(nullable()!!)
+    <!NI;UNREACHABLE_CODE!>takeNotNull(<!><!NI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>notNull<!>()<!NI;UNREACHABLE_CODE!><!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>)<!>
+    <!NI;UNREACHABLE_CODE!>takeNotNull(<!NI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>nullable<!>()!!)<!>
 
-    var x: String? = null
-    takeNotNull(dependOn(x)!!)
-    takeNotNull(dependOn(dependOn(x))!!)
-    takeNotNull(dependOn(dependOn(x)!!))
-    takeNotNull(dependOn(dependOn(x!!)))
+    <!NI;UNREACHABLE_CODE!>var x: String? = null<!>
+    <!NI;UNREACHABLE_CODE!>takeNotNull(dependOn(x)!!)<!>
+    <!NI;UNREACHABLE_CODE!>takeNotNull(dependOn(dependOn(x))!!)<!>
+    <!NI;UNREACHABLE_CODE!>takeNotNull(dependOn(dependOn(x)!!))<!>
+    <!NI;UNREACHABLE_CODE!>takeNotNull(dependOn(dependOn(x!!)))<!>
 
-    if (x != null) {
+    <!NI;UNREACHABLE_CODE!>if (x != null) {
         takeNotNull(dependOn(x)<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>)
         takeNotNull(dependOn(dependOn(x))<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>)
         takeNotNull(dependOn(dependOn(x)<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>))
-    }
+    }<!>
 }
