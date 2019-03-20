@@ -91,8 +91,9 @@ class KotlinReportSubmitter : ITNReporterCompat() {
                 val releaseDate =
                     try {
                         KotlinPluginUpdater.fetchPluginReleaseDate(
-                            KotlinPluginUtil.KOTLIN_PLUGIN_ID.idString,
-                            KotlinPluginUtil.getPluginVersion()
+                            KotlinPluginUtil.KOTLIN_PLUGIN_ID,
+                            KotlinPluginUtil.getPluginVersion(),
+                            null
                         )
                     } catch (e: IOException) {
                         // Do not report connection problems

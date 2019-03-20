@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.idea
 
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonIOException
+import com.google.gson.JsonSyntaxException
 import com.intellij.ide.actions.ShowFilePathAction
 import com.intellij.ide.plugins.*
 import com.intellij.ide.util.PropertiesComponent
@@ -15,6 +18,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.*
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
@@ -27,8 +31,6 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Alarm
 import com.intellij.util.io.HttpRequests
 import com.intellij.util.text.VersionComparatorUtil
-import org.jdom.Attribute
-import org.jdom.DataConversionException
 import org.jetbrains.kotlin.idea.update.verify
 import java.io.File
 import java.io.IOException
@@ -330,40 +332,50 @@ class KotlinPluginUpdater(private val propertiesComponent: PropertiesComponent) 
 
         class ResponseParseException(message: String, cause: Exception? = null) : IllegalStateException(message, cause)
 
-        @Throws(IOException::class, ResponseParseException::class)
-        fun fetchPluginReleaseDate(pluginId: String, version: String): LocalDate? {
-            // Need a better request (MP-2157)
-            val url = "https://plugins.jetbrains.com/plugins/list?pluginId=$pluginId&pluginVersion=$version"
+        @Suppress("SpellCheckingInspection")
+        private class PluginDTO {
+            var cdate: String? = null
+            var channel: String? = null
+        }
 
-            val responseDoc = HttpRequests.request(url).connect {
-                JDOMUtil.load(it.inputStream)
-            }
-
-            if (responseDoc.name != "plugin-repository") {
-                throw ResponseParseException("No plugin repository element")
-            }
-
-            val dateAttribute: Attribute = responseDoc
-                .getChild("category")
-                ?.getChildren("idea-plugin")
-                ?.mapNotNull { pluginElement ->
-                    if (pluginElement.getChild("version")?.text == version) {
-                        pluginElement.getAttribute("date")
-                    } else {
-                        null
-                    }
+        // TODO: remove when fetching by string id is implemented
+        private fun toMarketplaceId(pluginId: PluginId): Int {
+            return when (pluginId.idString) {
+                "org.jetbrains.kotlin" -> 6954
+                "org.jetbrains.kotlin.native.clion" -> 10454
+                "org.jetbrains.kotlin.native.appcode" -> 10619
+                else -> {
+                    LOG.error("Unknown plugin id: ${pluginId.idString}")
+                    6954
                 }
-                ?.singleOrNull()
-                ?: throw ResponseParseException("Can't find current plugin version")
-
-            val dateLong = try {
-                dateAttribute.longValue
-            } catch (e: DataConversionException) {
-                throw ResponseParseException("Can't convert date value to long", e)
             }
+        }
+
+        @Throws(IOException::class, ResponseParseException::class)
+        fun fetchPluginReleaseDate(pluginId: PluginId, version: String, channel: String?): LocalDate? {
+            val marketplaceId = toMarketplaceId(pluginId)
+            val url = "https://plugins.jetbrains.com/api/plugins/$marketplaceId/updates/version/$version"
+
+            val pluginDTOs: Array<PluginDTO> = try {
+                HttpRequests.request(url).connect {
+                    GsonBuilder().create().fromJson(it.inputStream.reader(), Array<PluginDTO>::class.java)
+                }
+            } catch (ioException: JsonIOException) {
+                throw IOException(ioException)
+            } catch (syntaxException: JsonSyntaxException) {
+                throw ResponseParseException("Can't parse json response", syntaxException)
+            }
+
+            val selectedPluginDTO = pluginDTOs.singleOrNull { it.channel == channel || (it.channel == "" && channel == null) }
+                ?: return null
+
+            val dateString = selectedPluginDTO.cdate ?: throw ResponseParseException("Empty cdate")
 
             return try {
+                val dateLong = dateString.toLong()
                 Instant.ofEpochMilli(dateLong).atZone(ZoneOffset.UTC).toLocalDate()
+            } catch (e: NumberFormatException) {
+                throw ResponseParseException("Can't parse long date", e)
             } catch (e: DateTimeException) {
                 throw ResponseParseException("Can't convert to date", e)
             }
