@@ -10,12 +10,9 @@ import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.builders.irCall
-import org.jetbrains.kotlin.ir.builders.irGet
-import org.jetbrains.kotlin.ir.builders.irImplicitCast
+import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrVariable
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
@@ -34,33 +31,26 @@ internal sealed class ForLoopHeader(
     val bound: IrVariable,
     val last: IrVariable,
     val step: IrVariable,
-    val progressionType: ProgressionType
+    val progressionType: ProgressionType,
+    val needsEmptinessCheck: Boolean
 ) {
     abstract fun initializeLoopVariable(symbols: Symbols<CommonBackendContext>, builder: DeclarationIrBuilder): IrExpression
 
     abstract val declarations: List<IrStatement>
 
-    abstract fun buildBody(builder: DeclarationIrBuilder, loop: IrLoop, newBody: IrExpression?): IrLoop
+    abstract fun buildInnerLoop(builder: DeclarationIrBuilder, loop: IrLoop, newBody: IrExpression?): IrLoop
+
+    abstract fun buildNotEmptyCondition(builder: DeclarationIrBuilder): IrExpression?
 }
 
 internal class ProgressionLoopHeader(
-    headerInfo: ProgressionHeaderInfo,
+    private val headerInfo: ProgressionHeaderInfo,
     inductionVariable: IrVariable,
     bound: IrVariable,
     last: IrVariable,
     step: IrVariable,
     var loopVariable: IrVariable? = null
-) : ForLoopHeader(inductionVariable, bound, last, step, headerInfo.progressionType) {
-
-    val closed = headerInfo.closed
-
-    private val direction = headerInfo.direction
-
-    // TODO: Handle UNKNOWN direction, which requires a complex expression for the emptiness check
-    fun comparingFunction(builtIns: IrBuiltIns) = if (direction == ProgressionDirection.INCREASING)
-        builtIns.lessOrEqualFunByOperandType[builtIns.int]?.symbol!!
-    else
-        builtIns.greaterOrEqualFunByOperandType[builtIns.int]?.symbol!!
+) : ForLoopHeader(inductionVariable, bound, last, step, headerInfo.progressionType, needsEmptinessCheck = true) {
 
     override fun initializeLoopVariable(symbols: Symbols<CommonBackendContext>, builder: DeclarationIrBuilder) = with(builder) {
         irGet(inductionVariable)
@@ -69,7 +59,7 @@ internal class ProgressionLoopHeader(
     override val declarations: List<IrStatement>
         get() = listOf(inductionVariable, step, bound, last)
 
-    override fun buildBody(builder: DeclarationIrBuilder, loop: IrLoop, newBody: IrExpression?): IrLoop = with(builder) {
+    override fun buildInnerLoop(builder: DeclarationIrBuilder, loop: IrLoop, newBody: IrExpression?): IrLoop = with(builder) {
         assert(loopVariable != null)
         val newCondition = irCall(context.irBuiltIns.booleanNotSymbol).apply {
             putValueArgument(0, irCall(context.irBuiltIns.eqeqSymbol).apply {
@@ -83,31 +73,78 @@ internal class ProgressionLoopHeader(
             body = newBody
         }
     }
+
+    override fun buildNotEmptyCondition(builder: DeclarationIrBuilder): IrExpression? =
+        with(builder) {
+            val builtIns = context.irBuiltIns
+            val progressionKotlinType = progressionType.elementType(builtIns).toKotlinType()
+            val lessOrEqualFun = builtIns.lessOrEqualFunByOperandType[progressionKotlinType]!!
+
+            // TODO: Additional condition for `for (i in a until MIN_VALUE)` corner case
+            when (headerInfo.direction) {
+                ProgressionDirection.DECREASING ->
+                    // last <= inductionVariable
+                    irCall(lessOrEqualFun).apply {
+                        putValueArgument(0, irGet(last))
+                        putValueArgument(1, irGet(inductionVariable))
+                    }
+                ProgressionDirection.INCREASING ->
+                    // inductionVariable <= last
+                    irCall(lessOrEqualFun).apply {
+                        putValueArgument(0, irGet(inductionVariable))
+                        putValueArgument(1, irGet(last))
+                    }
+                ProgressionDirection.UNKNOWN -> {
+                    // If the direction is unknown, we check depending on the "step" value:
+                    //   (step > 0 && inductionVariable <= last) || (step < 0 || last <= inductionVariable)
+                    val stepKotlinType = progressionType.stepType(builtIns).toKotlinType()
+                    val zero = if (progressionType == ProgressionType.LONG_PROGRESSION) irLong(0) else irInt(0)
+                    context.oror(
+                        context.andand(
+                            irCall(builtIns.greaterFunByOperandType[stepKotlinType]!!).apply {
+                                putValueArgument(0, irGet(step))
+                                putValueArgument(1, zero)
+                            },
+                            irCall(lessOrEqualFun).apply {
+                                putValueArgument(0, irGet(inductionVariable))
+                                putValueArgument(1, irGet(last))
+                            }),
+                        context.andand(
+                            irCall(builtIns.lessFunByOperandType[stepKotlinType]!!).apply {
+                                putValueArgument(0, irGet(step))
+                                putValueArgument(1, zero)
+                            },
+                            irCall(lessOrEqualFun).apply {
+                                putValueArgument(0, irGet(last))
+                                putValueArgument(1, irGet(inductionVariable))
+                            })
+                    )
+                }
+            }
+        }
 }
 
 internal class ArrayLoopHeader(
-    headerInfo: ArrayHeaderInfo,
+    private val headerInfo: ArrayHeaderInfo,
     inductionVariable: IrVariable,
     bound: IrVariable,
     last: IrVariable,
     step: IrVariable
-) : ForLoopHeader(inductionVariable, bound, last, step, ProgressionType.INT_PROGRESSION) {
-
-    private val arrayDeclaration = headerInfo.arrayVariable
+) : ForLoopHeader(inductionVariable, bound, last, step, ProgressionType.INT_PROGRESSION, needsEmptinessCheck = false) {
 
     override fun initializeLoopVariable(symbols: Symbols<CommonBackendContext>, builder: DeclarationIrBuilder) = with(builder) {
-        val arrayClass = (arrayDeclaration.type.classifierOrNull) as IrClassSymbol
+        val arrayClass = (headerInfo.arrayVariable.type.classifierOrNull) as IrClassSymbol
         val arrayGetFun = arrayClass.owner.functions.find { it.name.toString() == "get" }!!
         irCall(arrayGetFun).apply {
-            dispatchReceiver = irGet(arrayDeclaration)
+            dispatchReceiver = irGet(headerInfo.arrayVariable)
             putValueArgument(0, irGet(inductionVariable))
         }
     }
 
     override val declarations: List<IrStatement>
-        get() = listOf(arrayDeclaration, inductionVariable, step, bound, last)
+        get() = listOf(headerInfo.arrayVariable, inductionVariable, step, bound, last)
 
-    override fun buildBody(builder: DeclarationIrBuilder, loop: IrLoop, newBody: IrExpression?): IrLoop = with(builder) {
+    override fun buildInnerLoop(builder: DeclarationIrBuilder, loop: IrLoop, newBody: IrExpression?): IrLoop = with(builder) {
         val builtIns = context.irBuiltIns
         val callee = builtIns.lessOrEqualFunByOperandType[builtIns.int]?.symbol!!
         val newCondition = irCall(callee).apply {
@@ -120,6 +157,9 @@ internal class ArrayLoopHeader(
             body = newBody
         }
     }
+
+    // No surrounding emptiness check is needed with a while loop.
+    override fun buildNotEmptyCondition(builder: DeclarationIrBuilder): IrExpression? = null
 }
 
 // Given the for loop iterator variable, extract information about iterable subject

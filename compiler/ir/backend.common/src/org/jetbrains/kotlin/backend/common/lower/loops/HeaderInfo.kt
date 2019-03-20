@@ -37,6 +37,12 @@ enum class ProgressionType(val numberCastFunctionName: Name) {
         ProgressionType.CHAR_PROGRESSION -> builtIns.charType
     }
 
+    /** Returns the [IrType] of the `step` property in the progression. */
+    fun stepType(builtIns: IrBuiltIns): IrType = when (this) {
+        ProgressionType.INT_PROGRESSION, ProgressionType.CHAR_PROGRESSION -> builtIns.intType
+        ProgressionType.LONG_PROGRESSION -> builtIns.longType
+    }
+
     companion object {
         fun fromIrType(irType: IrType, symbols: Symbols<CommonBackendContext>): ProgressionType? = when {
             irType.isSubtypeOfClass(symbols.charProgression) -> ProgressionType.CHAR_PROGRESSION
