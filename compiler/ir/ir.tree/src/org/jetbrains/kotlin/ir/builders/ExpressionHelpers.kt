@@ -282,6 +282,9 @@ fun IrBuilderWithScope.irInt(value: Int) =
 fun IrBuilderWithScope.irLong(value: Long) =
     IrConstImpl.long(startOffset, endOffset, context.irBuiltIns.longType, value)
 
+fun IrBuilderWithScope.irChar(value: Char) =
+    IrConstImpl.char(startOffset, endOffset, context.irBuiltIns.charType, value)
+
 fun IrBuilderWithScope.irString(value: String) =
     IrConstImpl.string(startOffset, endOffset, context.irBuiltIns.stringType, value)
 

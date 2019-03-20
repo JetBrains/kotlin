@@ -81,7 +81,8 @@ internal class ProgressionHeaderInfo(
     lowerBound: IrExpression,
     upperBound: IrExpression,
     step: IrExpression,
-    closed: Boolean = true
+    closed: Boolean = true,
+    val additionalNotEmptyCondition: IrExpression? = null
 ) : HeaderInfo(progressionType, lowerBound, upperBound, step, closed)
 
 internal class ArrayHeaderInfo(

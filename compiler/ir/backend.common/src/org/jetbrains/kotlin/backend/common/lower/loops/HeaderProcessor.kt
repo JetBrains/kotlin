@@ -80,8 +80,7 @@ internal class ProgressionLoopHeader(
             val progressionKotlinType = progressionType.elementType(builtIns).toKotlinType()
             val lessOrEqualFun = builtIns.lessOrEqualFunByOperandType[progressionKotlinType]!!
 
-            // TODO: Additional condition for `for (i in a until MIN_VALUE)` corner case
-            when (headerInfo.direction) {
+            val notEmptyCondition = when (headerInfo.direction) {
                 ProgressionDirection.DECREASING ->
                     // last <= inductionVariable
                     irCall(lessOrEqualFun).apply {
@@ -121,6 +120,11 @@ internal class ProgressionLoopHeader(
                     )
                 }
             }
+
+            if (headerInfo.additionalNotEmptyCondition != null) context.andand(
+                headerInfo.additionalNotEmptyCondition,
+                notEmptyCondition
+            ) else notEmptyCondition
         }
 }
 
