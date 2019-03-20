@@ -45,7 +45,7 @@ class KotlinUBinaryExpression(
     override val operatorIdentifier: UIdentifier?
         get() = KotlinUIdentifier(psi.operationReference.getReferencedNameElement(), this)
 
-    override fun resolveOperator() = psi.operationReference.resolveCallToDeclaration(context = this) as? PsiMethod
+    override fun resolveOperator() = psi.operationReference.resolveCallToDeclaration() as? PsiMethod
 
     override val operator = when (psi.operationToken) {
         KtTokens.EQ -> UastBinaryOperator.ASSIGN
