@@ -11,11 +11,11 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.DescriptorFromSymbolWithAccessControl
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.SmartList
@@ -57,7 +57,7 @@ class IrFunctionImpl(
         symbol.descriptor.isSuspend
     )
 
-    override val descriptor: FunctionDescriptor = symbol.descriptor
+    override val descriptor: FunctionDescriptor by DescriptorFromSymbolWithAccessControl
 
     override val overriddenSymbols: MutableList<IrSimpleFunctionSymbol> = SmartList()
 

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.DescriptorFromSymbolWithAccessControl
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
@@ -78,7 +79,7 @@ class IrVariableImpl(
         symbol.bind(this)
     }
 
-    override val descriptor: VariableDescriptor get() = symbol.descriptor
+    override val descriptor: VariableDescriptor by DescriptorFromSymbolWithAccessControl
 
     override var initializer: IrExpression? = null
 

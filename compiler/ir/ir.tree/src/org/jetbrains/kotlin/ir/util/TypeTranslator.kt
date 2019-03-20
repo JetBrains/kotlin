@@ -35,14 +35,14 @@ class TypeTranslator(
     fun enterScope(irElement: IrTypeParametersContainer) {
         typeParametersResolver.enterTypeParameterScope(irElement)
         if (enterTableScope) {
-            symbolTable.enterScope(irElement.descriptor)
+            symbolTable.enterScope(irElement.descriptorWithoutAccessCheck)
         }
     }
 
     fun leaveScope(irElement: IrTypeParametersContainer) {
         typeParametersResolver.leaveTypeParameterScope()
         if (enterTableScope) {
-            symbolTable.leaveScope(irElement.descriptor)
+            symbolTable.leaveScope(irElement.descriptorWithoutAccessCheck)
         }
     }
 

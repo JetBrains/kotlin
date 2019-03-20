@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
+import org.jetbrains.kotlin.ir.util.DescriptorFromSymbolWithAccessControl
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.FqName
@@ -51,7 +52,7 @@ class IrFileImpl(
         symbol.bind(this)
     }
 
-    override val packageFragmentDescriptor: PackageFragmentDescriptor get() = symbol.descriptor
+    override val packageFragmentDescriptor: PackageFragmentDescriptor by DescriptorFromSymbolWithAccessControl
 
     override val declarations: MutableList<IrDeclaration> = ArrayList()
 

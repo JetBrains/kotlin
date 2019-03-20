@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.DescriptorFromSymbolWithAccessControl
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
@@ -73,7 +74,7 @@ class IrValueParameterImpl(
     ) :
             this(startOffset, endOffset, origin, IrValueParameterSymbolImpl(descriptor), type, varargElementType)
 
-    override val descriptor: ParameterDescriptor = symbol.descriptor
+    override val descriptor: ParameterDescriptor by DescriptorFromSymbolWithAccessControl
 
     init {
         symbol.bind(this)

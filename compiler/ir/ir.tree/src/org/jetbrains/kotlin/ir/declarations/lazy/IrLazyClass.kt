@@ -13,9 +13,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
-import org.jetbrains.kotlin.ir.util.TypeTranslator
-import org.jetbrains.kotlin.ir.util.transform
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
@@ -68,7 +66,7 @@ class IrLazyClass(
 
     override val annotations: MutableList<IrCall> = arrayListOf()
 
-    override val descriptor: ClassDescriptor get() = symbol.descriptor
+    override val descriptor: ClassDescriptor by DescriptorFromSymbolWithAccessControl
 
     override var thisReceiver: IrValueParameter? by lazyVar {
         typeTranslator.buildWithScope(this) {
@@ -80,6 +78,7 @@ class IrLazyClass(
     override val declarations: MutableList<IrDeclaration> by lazyVar {
         ArrayList<IrDeclaration>().also {
             typeTranslator.buildWithScope(this) {
+                val descriptor = descriptorWithoutAccessCheck
                 generateChildStubs(descriptor.constructors, it)
                 generateMemberStubs(descriptor.defaultType.memberScope, it)
                 generateMemberStubs(descriptor.staticScope, it)
@@ -92,7 +91,7 @@ class IrLazyClass(
     }
 
     override val typeParameters: MutableList<IrTypeParameter> by lazy {
-        descriptor.declaredTypeParameters.mapTo(arrayListOf()) {
+        descriptorWithoutAccessCheck.declaredTypeParameters.mapTo(arrayListOf()) {
             stubGenerator.generateOrGetTypeParameterStub(it)
         }
     }
@@ -100,7 +99,7 @@ class IrLazyClass(
     override val superTypes: MutableList<IrType> by lazy {
         typeTranslator.buildWithScope(this) {
             // TODO get rid of code duplication, see ClassGenerator#generateClass
-            descriptor.typeConstructor.supertypes.mapNotNullTo(arrayListOf()) {
+            descriptorWithoutAccessCheck.typeConstructor.supertypes.mapNotNullTo(arrayListOf()) {
                 it.toIrType()
             }
         }

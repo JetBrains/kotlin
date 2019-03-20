@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.DescriptorFromSymbolWithAccessControl
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
@@ -75,7 +76,7 @@ class IrFieldImpl(
         symbol.bind(this)
     }
 
-    override val descriptor: PropertyDescriptor = symbol.descriptor
+    override val descriptor: PropertyDescriptor by DescriptorFromSymbolWithAccessControl
 
     override var initializer: IrExpressionBody? = null
 

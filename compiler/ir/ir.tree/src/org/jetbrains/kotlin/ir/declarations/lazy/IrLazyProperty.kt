@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
+import org.jetbrains.kotlin.ir.util.DescriptorFromSymbolWithAccessControl
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -68,8 +69,7 @@ class IrLazyProperty(
         symbol.bind(this)
     }
 
-    override val descriptor: PropertyDescriptor
-        get() = symbol.descriptor
+    override val descriptor: PropertyDescriptor by DescriptorFromSymbolWithAccessControl
 
     override var backingField: IrField? by lazyVar {
         if (descriptor.hasBackingField(bindingContext)) {

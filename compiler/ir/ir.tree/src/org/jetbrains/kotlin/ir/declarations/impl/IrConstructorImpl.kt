@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.DescriptorFromSymbolWithAccessControl
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
@@ -68,7 +69,7 @@ class IrConstructorImpl(
         symbol.bind(this)
     }
 
-    override val descriptor: ClassConstructorDescriptor get() = symbol.descriptor
+    override val descriptor: ClassConstructorDescriptor by DescriptorFromSymbolWithAccessControl
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitConstructor(this, data)

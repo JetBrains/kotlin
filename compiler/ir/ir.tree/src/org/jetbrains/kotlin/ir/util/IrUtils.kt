@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
@@ -185,9 +184,9 @@ val IrFunction.explicitParameters: List<IrValueParameter>
 val IrClass.defaultType: IrSimpleType
     get() = this.thisReceiver!!.type as IrSimpleType
 
-val IrSimpleFunction.isReal: Boolean get() = descriptor.kind.isReal
+val IrSimpleFunction.isReal: Boolean get() = descriptorWithoutAccessCheck.kind.isReal
 
-val IrSimpleFunction.isSynthesized: Boolean get() = descriptor.kind == CallableMemberDescriptor.Kind.SYNTHESIZED
+val IrSimpleFunction.isSynthesized: Boolean get() = descriptorWithoutAccessCheck.kind == CallableMemberDescriptor.Kind.SYNTHESIZED
 
 val IrSimpleFunction.isFakeOverride: Boolean get() = origin == IrDeclarationOrigin.FAKE_OVERRIDE
 
@@ -293,12 +292,12 @@ tailrec fun IrElement.getPackageFragment(): IrPackageFragment? {
 
 fun IrAnnotationContainer.getAnnotation(name: FqName) =
     annotations.find {
-        it.symbol.owner.parentAsClass.descriptor.fqNameSafe == name
+        it.symbol.owner.parentAsClass.getFqName() == name
     }
 
 fun IrAnnotationContainer.hasAnnotation(name: FqName) =
     annotations.any {
-        it.symbol.owner.parentAsClass.descriptor.fqNameSafe == name
+        it.symbol.owner.parentAsClass.getFqName() == name
     }
 
 fun IrAnnotationContainer.hasAnnotation(symbol: IrClassSymbol) =
@@ -447,14 +446,15 @@ private fun IrCall.copyTypeAndValueArgumentsFrom(
     }
 }
 
-val IrDeclaration.file: IrFile get() = parent.let {
-    when (it) {
-        is IrFile -> it
-        is IrPackageFragment -> TODO("Unknown file")
-        is IrDeclaration -> it.file
-        else -> TODO("Unexpected declaration parent")
+val IrDeclaration.file: IrFile
+    get() = parent.let {
+        when (it) {
+            is IrFile -> it
+            is IrPackageFragment -> TODO("Unknown file")
+            is IrDeclaration -> it.file
+            else -> TODO("Unexpected declaration parent")
+        }
     }
-}
 
 fun IrDeclarationWithName.getFqName(): FqName? {
     val parentFqName = when (val parent = parent) {

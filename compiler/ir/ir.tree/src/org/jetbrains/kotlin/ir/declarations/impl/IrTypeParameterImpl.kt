@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.DescriptorFromSymbolWithAccessControl
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
@@ -78,7 +79,7 @@ class IrTypeParameterImpl(
         symbol.bind(this)
     }
 
-    override val descriptor: TypeParameterDescriptor get() = symbol.descriptor
+    override val descriptor: TypeParameterDescriptor by DescriptorFromSymbolWithAccessControl
 
     override val superTypes: MutableList<IrType> = SmartList()
 

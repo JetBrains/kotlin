@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.TypeTranslator
+import org.jetbrains.kotlin.ir.util.descriptorWithoutAccessCheck
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -57,7 +58,7 @@ abstract class IrLazyDeclarationBase(
         set(_) = error("We should never need to store metadata of external declarations.")
 
     private fun createLazyParent(): IrDeclarationParent? {
-        val currentDescriptor = descriptor
+        val currentDescriptor = descriptorWithoutAccessCheck
 
         val containingDeclaration =
             ((currentDescriptor as? PropertyAccessorDescriptor)?.correspondingProperty ?: currentDescriptor).containingDeclaration

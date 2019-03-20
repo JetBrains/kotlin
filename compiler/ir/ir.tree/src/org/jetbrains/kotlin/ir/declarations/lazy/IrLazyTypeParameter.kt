@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
+import org.jetbrains.kotlin.ir.util.DescriptorFromSymbolWithAccessControl
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -50,7 +51,7 @@ class IrLazyTypeParameter(
                 stubGenerator, TypeTranslator
             )
 
-    override val descriptor: TypeParameterDescriptor get() = symbol.descriptor
+    override val descriptor: TypeParameterDescriptor by DescriptorFromSymbolWithAccessControl
 
     init {
         symbol.bind(this)

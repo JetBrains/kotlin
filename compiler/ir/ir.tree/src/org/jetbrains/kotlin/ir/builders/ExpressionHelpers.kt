@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
+import org.jetbrains.kotlin.ir.util.descriptorWithoutAccessCheck
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
@@ -223,7 +224,7 @@ fun IrBuilderWithScope.irSet(type: IrType, receiver: IrExpression?, getterSymbol
     )
 
 fun IrBuilderWithScope.irCall(callee: IrFunctionSymbol, type: IrType, typeArguments: List<IrType> = emptyList()): IrCall =
-    IrCallImpl(startOffset, endOffset, type, callee, callee.descriptor).apply {
+    IrCallImpl(startOffset, endOffset, type, callee).apply {
         typeArguments.forEachIndexed { index, irType ->
             this.putTypeArgument(index, irType)
         }
@@ -236,14 +237,14 @@ fun IrBuilderWithScope.irCall(callee: IrFunctionSymbol, descriptor: FunctionDesc
     IrCallImpl(startOffset, endOffset, type, callee, descriptor)
 
 fun IrBuilderWithScope.irCall(callee: IrFunction): IrCall =
-    irCall(callee.symbol, callee.descriptor, callee.returnType)
+    irCall(callee.symbol, callee.returnType)
 
 fun IrBuilderWithScope.irCall(callee: IrFunction, origin: IrStatementOrigin): IrCall =
     IrCallImpl(startOffset, endOffset, callee.returnType, callee.symbol, callee.descriptor, origin)
 
 fun IrBuilderWithScope.irDelegatingConstructorCall(callee: IrConstructor): IrDelegatingConstructorCall =
-    IrDelegatingConstructorCallImpl(startOffset, endOffset, callee.returnType, callee.symbol, callee.descriptor,
-            callee.parentAsClass.typeParameters.size, callee.valueParameters.size)
+    IrDelegatingConstructorCallImpl(startOffset, endOffset, callee.returnType, callee.symbol, callee.descriptorWithoutAccessCheck,
+                                    callee.parentAsClass.typeParameters.size, callee.valueParameters.size)
 
 fun IrBuilderWithScope.irCallOp(
     callee: IrFunctionSymbol,

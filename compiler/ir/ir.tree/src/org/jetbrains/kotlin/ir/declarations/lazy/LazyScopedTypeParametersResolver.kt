@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 import org.jetbrains.kotlin.ir.util.TypeParametersResolver
+import org.jetbrains.kotlin.ir.util.descriptorWithoutAccessCheck
 import java.util.*
 
 class LazyScopedTypeParametersResolver(private val symbolTable: ReferenceSymbolTable) : TypeParametersResolver {
@@ -31,7 +32,7 @@ class LazyScopedTypeParametersResolver(private val symbolTable: ReferenceSymbolT
         //there should be enough to process only parent typeparameters
         return typeParameterScopes.firstOrNull()?.let { parent ->
             parent.typeParameters.firstOrNull {
-                it.descriptor == typeParameterDescriptor
+                it.descriptorWithoutAccessCheck == typeParameterDescriptor
             }?.symbol
         } ?: null
     }

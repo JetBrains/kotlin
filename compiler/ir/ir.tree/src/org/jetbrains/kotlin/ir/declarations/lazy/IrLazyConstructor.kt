@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
+import org.jetbrains.kotlin.ir.util.DescriptorFromSymbolWithAccessControl
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
@@ -61,7 +62,7 @@ class IrLazyConstructor(
         symbol.bind(this)
     }
 
-    override val descriptor: ClassConstructorDescriptor get() = symbol.descriptor
+    override val descriptor: ClassConstructorDescriptor by DescriptorFromSymbolWithAccessControl
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitConstructor(this, data)

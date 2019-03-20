@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.DescriptorFromSymbolWithAccessControl
 import org.jetbrains.kotlin.ir.util.transform
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -71,7 +72,7 @@ class IrClassImpl(
         symbol.bind(this)
     }
 
-    override val descriptor: ClassDescriptor get() = symbol.descriptor
+    override val descriptor: ClassDescriptor by DescriptorFromSymbolWithAccessControl
 
     override var thisReceiver: IrValueParameter? = null
 

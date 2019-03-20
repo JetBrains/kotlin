@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
+import org.jetbrains.kotlin.ir.util.DescriptorFromSymbolWithAccessControl
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -42,7 +43,7 @@ class IrLazyEnumEntryImpl(
         symbol.bind(this)
     }
 
-    override val descriptor: ClassDescriptor get() = symbol.descriptor
+    override val descriptor: ClassDescriptor by DescriptorFromSymbolWithAccessControl
     override val name: Name = symbol.descriptor.name
 
     override var correspondingClass: IrClass? = null
