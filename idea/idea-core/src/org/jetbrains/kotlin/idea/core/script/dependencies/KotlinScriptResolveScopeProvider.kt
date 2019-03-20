@@ -23,7 +23,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager
 import org.jetbrains.kotlin.idea.core.script.StandardIdeScriptDefinition
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
-import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.findScriptDefinition
+import org.jetbrains.kotlin.scripting.shared.definitions.findScriptDefinition
 
 class KotlinScriptResolveScopeProvider : ResolveScopeProvider() {
     companion object {

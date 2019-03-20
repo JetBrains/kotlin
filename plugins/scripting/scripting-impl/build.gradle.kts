@@ -1,5 +1,5 @@
 
-description = "Kotlin Scripting Compiler Plugin"
+description = "Kotlin Scripting Implementation - shared part"
 
 plugins {
     kotlin("jvm")
@@ -9,25 +9,15 @@ plugins {
 dependencies {
     compileOnly(project(":compiler:frontend"))
     compileOnly(project(":compiler:frontend.java"))
+    compileOnly(project(":compiler:frontend.script"))
     compileOnly(project(":compiler:psi"))
-    compileOnly(project(":compiler:plugin-api"))
-    compileOnly(project(":compiler:cli"))
+    compileOnly(project(":compiler:cli-common"))
     compile(project(":kotlin-scripting-common"))
     compile(project(":kotlin-scripting-jvm"))
-    compile(project(":kotlin-scripting-impl"))
     compile(kotlinStdlib())
     compileOnly(project(":kotlin-reflect-api"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-
-    testCompile(project(":compiler:frontend"))
-    testCompile(project(":compiler:frontend.script"))
-    testCompile(project(":compiler:plugin-api"))
-    testCompile(project(":compiler:util"))
-    testCompile(project(":compiler:cli"))
-    testCompile(project(":compiler:cli-common"))
-    testCompile(project(":compiler:frontend.java"))
-    testCompile(projectTests(":compiler:tests-common"))
-    testCompile(commonDep("junit:junit"))
+    compileOnly(intellijDep()) { includeJars("asm-all", rootProject = rootProject) }
 }
 
 sourceSets {
@@ -50,6 +40,8 @@ sourcesJar()
 javadocJar()
 
 dist()
+
+ideaPlugin()
 
 projectTest {
     workingDir = rootDir

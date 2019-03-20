@@ -67,6 +67,8 @@ object PathUtil {
     const val KOTLIN_SCRIPTING_JVM_JAR = "$KOTLIN_SCRIPTING_JVM_NAME.jar"
     const val KOTLIN_SCRIPTING_COMPILER_PLUGIN_NAME = "kotlin-scripting-compiler"
     const val KOTLIN_SCRIPTING_COMPILER_PLUGIN_JAR = "$KOTLIN_SCRIPTING_COMPILER_PLUGIN_NAME.jar"
+    const val KOTLIN_SCRIPTING_IMPL_NAME = "kotlin-scripting-impl"
+    const val KOTLIN_SCRIPTING_IMPL_JAR = "$KOTLIN_SCRIPTING_IMPL_NAME.jar"
 
     const val KOTLIN_TEST_NAME = "kotlin-test"
     const val KOTLIN_TEST_JAR = "$KOTLIN_TEST_NAME.jar"

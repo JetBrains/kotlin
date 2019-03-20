@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.script.ScriptReportSink
 import org.jetbrains.kotlin.scripting.legacy.CliScriptDefinitionProvider
 import org.jetbrains.kotlin.scripting.legacy.CliScriptDependenciesProvider
 import org.jetbrains.kotlin.scripting.legacy.CliScriptReportSink
+import org.jetbrains.kotlin.scripting.shared.extensions.ScriptExtraImportsProviderExtension
+import org.jetbrains.kotlin.scripting.shared.extensions.ScriptingResolveExtension
 
 class ScriptingCompilerConfigurationComponentRegistrar : ComponentRegistrar {
     override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
@@ -34,7 +36,9 @@ class ScriptingCompilerConfigurationComponentRegistrar : ComponentRegistrar {
             CliScriptDependenciesProvider(project)
         )
         SyntheticResolveExtension.registerExtension(project, ScriptingResolveExtension())
-        ExtraImportsProviderExtension.registerExtension(project, ScriptExtraImportsProviderExtension())
+        ExtraImportsProviderExtension.registerExtension(project,
+                                                        ScriptExtraImportsProviderExtension()
+        )
 
         val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
         if (messageCollector != null) {

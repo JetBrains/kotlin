@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.LegacyResolverWrapper
 import org.jetbrains.kotlin.script.asResolveFailure
-import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.findScriptDefinition
+import org.jetbrains.kotlin.scripting.shared.definitions.findScriptDefinition
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.write

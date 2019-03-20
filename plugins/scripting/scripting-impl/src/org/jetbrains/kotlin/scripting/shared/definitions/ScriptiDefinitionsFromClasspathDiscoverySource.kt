@@ -3,7 +3,7 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.scripting.compiler.plugin.definitions
+package org.jetbrains.kotlin.scripting.shared.definitions
 
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -125,7 +125,7 @@ internal fun discoverScriptTemplatesInClasspath(
     }
 }
 
-internal fun loadScriptTemplatesFromClasspath(
+fun loadScriptTemplatesFromClasspath(
     scriptTemplates: List<String>,
     classpath: List<File>,
     dependenciesClasspath: List<File>,

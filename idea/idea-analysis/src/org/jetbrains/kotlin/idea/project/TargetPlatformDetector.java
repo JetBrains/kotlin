@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
 import org.jetbrains.kotlin.resolve.TargetPlatform;
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 import org.jetbrains.kotlin.script.KotlinScriptDefinition;
-import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.DefinitionsKt;
+import org.jetbrains.kotlin.scripting.shared.definitions.DefinitionsKt;
 
 public class TargetPlatformDetector {
     public static final TargetPlatformDetector INSTANCE = new TargetPlatformDetector();

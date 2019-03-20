@@ -3,7 +3,7 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.scripting.compiler.plugin.definitions
+package org.jetbrains.kotlin.scripting.shared.definitions
 
 import com.intellij.openapi.fileTypes.LanguageFileType
 import org.jetbrains.kotlin.idea.KotlinFileType

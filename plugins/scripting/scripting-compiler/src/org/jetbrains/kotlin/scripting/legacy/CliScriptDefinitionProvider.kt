@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.scripting.legacy
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.ScriptDefinitionsSource
 import org.jetbrains.kotlin.script.StandardScriptDefinition
+import org.jetbrains.kotlin.scripting.shared.definitions.LazyScriptDefinitionProvider
 import kotlin.concurrent.write
 
 open class CliScriptDefinitionProvider : LazyScriptDefinitionProvider() {

@@ -3,7 +3,7 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.scripting.compiler.plugin
+package org.jetbrains.kotlin.scripting.shared.extensions
 
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
@@ -29,6 +29,10 @@ class ScriptExtraImportsProviderExtension : ExtraImportsProviderExtension {
     override fun getExtraImports(ktFile: KtFile): Collection<KtImportInfo> =
         ktFile.takeIf { it.isScript() }?.let { file ->
             val scriptDependencies = ScriptDependenciesProvider.getInstance(file.project)?.getScriptDependencies(file.originalFile)
-            scriptDependencies?.imports?.map { ScriptExtraImportImpl(ImportPath.fromString(it)) }
+            scriptDependencies?.imports?.map {
+                ScriptExtraImportImpl(
+                    ImportPath.fromString(it)
+                )
+            }
         }.orEmpty()
 }

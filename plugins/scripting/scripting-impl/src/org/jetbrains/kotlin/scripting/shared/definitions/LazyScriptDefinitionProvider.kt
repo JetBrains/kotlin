@@ -3,7 +3,7 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.scripting.legacy
+package org.jetbrains.kotlin.scripting.shared.definitions
 
 import com.intellij.ide.highlighter.JavaFileType
 import org.jetbrains.kotlin.idea.KotlinFileType

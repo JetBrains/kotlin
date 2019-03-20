@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.scripting.shared.KOTLIN_SCRIPTING_PLUGIN_ID
 
 object ScriptingConfigurationKeys {
     val DISABLE_SCRIPTING_PLUGIN_OPTION: CompilerConfigurationKey<Boolean> =
@@ -63,10 +64,9 @@ class ScriptingCommandLineProcessor : CommandLineProcessor {
             required = false, allowMultipleOccurrences = true
         )
 
-        val PLUGIN_ID = "kotlin.scripting"
     }
 
-    override val pluginId = PLUGIN_ID
+    override val pluginId = KOTLIN_SCRIPTING_PLUGIN_ID
     override val pluginOptions =
         listOf(
             DISABLE_SCRIPTING_PLUGIN_OPTION,

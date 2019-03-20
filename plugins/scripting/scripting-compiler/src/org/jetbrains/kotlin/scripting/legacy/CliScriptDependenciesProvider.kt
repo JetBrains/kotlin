@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.script.ScriptContentLoader
 import org.jetbrains.kotlin.script.ScriptDependenciesProvider
 import org.jetbrains.kotlin.script.ScriptReportSink
 import org.jetbrains.kotlin.script.adjustByDefinition
-import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.findScriptDefinition
+import org.jetbrains.kotlin.scripting.shared.definitions.findScriptDefinition
 import java.io.File
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read

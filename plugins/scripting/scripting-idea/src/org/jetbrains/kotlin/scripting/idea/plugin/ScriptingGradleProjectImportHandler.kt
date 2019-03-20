@@ -8,13 +8,13 @@ package org.jetbrains.kotlin.scripting.idea.plugin
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.idea.configuration.GradleProjectImportHandler
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
-import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCommandLineProcessor
+import org.jetbrains.kotlin.scripting.shared.KOTLIN_SCRIPTING_PLUGIN_ID
 import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData
 import java.io.File
 
 class ScriptingGradleProjectImportHandler : GradleProjectImportHandler {
 
-    val compilerPluginId = ScriptingCommandLineProcessor.PLUGIN_ID
+    val compilerPluginId = KOTLIN_SCRIPTING_PLUGIN_ID
     val gradlePluginJars = listOf(
         "scripting-gradle", // obsolete artifact name, only for compatibility with 1.2.5x, where it was introduced (and immediately dropped afterwards)
         "scripting-compiler",

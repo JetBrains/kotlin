@@ -98,7 +98,7 @@ dependencies {
     testRuntime(project(":allopen-ide-plugin")) { isTransitive = false }
     testRuntime(project(":kotlin-allopen-compiler-plugin")) { isTransitive = false }
     testRuntime(project(":kotlin-scripting-idea")) { isTransitive = false }
-    testRuntime(project(":kotlin-scripting-compiler")) { isTransitive = false }
+    testRuntime(project(":kotlin-scripting-impl")) { isTransitive = false }
     testRuntime(project(":kotlinx-serialization-compiler-plugin")) { isTransitive = false }
     testRuntime(project(":kotlinx-serialization-ide-plugin")) { isTransitive = false }
     testRuntime(project(":plugins:kapt3-idea")) { isTransitive = false }

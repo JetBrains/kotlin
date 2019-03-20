@@ -25,7 +25,7 @@ import com.intellij.util.io.URLUtil
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.core.script.dependencies.SyncScriptDependenciesLoader
 import org.jetbrains.kotlin.script.ScriptDependenciesProvider
-import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.findScriptDefinition
+import org.jetbrains.kotlin.scripting.shared.definitions.findScriptDefinition
 import java.io.File
 import kotlin.script.experimental.dependencies.ScriptDependencies
 

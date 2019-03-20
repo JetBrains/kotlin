@@ -7,7 +7,7 @@ plugins {
 }
 
 dependencies {
-    compile(project(":kotlin-scripting-compiler"))
+    compile(project(":kotlin-scripting-impl"))
     compile(project(":kotlin-scripting-intellij"))
     compileOnly(project(":idea:idea-gradle"))
     compileOnly(project(":idea:idea-core"))

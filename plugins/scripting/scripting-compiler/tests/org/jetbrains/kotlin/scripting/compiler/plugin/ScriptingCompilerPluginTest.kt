@@ -20,9 +20,9 @@ import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.SCRIPT_DEFINITION_MARKERS_PATH
-import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.discoverScriptTemplatesInClasspath
-import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.loadScriptTemplatesFromClasspath
+import org.jetbrains.kotlin.scripting.shared.definitions.SCRIPT_DEFINITION_MARKERS_PATH
+import org.jetbrains.kotlin.scripting.shared.definitions.discoverScriptTemplatesInClasspath
+import org.jetbrains.kotlin.scripting.shared.definitions.loadScriptTemplatesFromClasspath
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir

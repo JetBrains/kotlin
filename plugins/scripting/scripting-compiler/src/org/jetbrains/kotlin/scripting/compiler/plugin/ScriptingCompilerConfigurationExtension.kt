@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.extensions.CompilerConfigurationExtension
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.script.ScriptDefinitionProvider
 import org.jetbrains.kotlin.script.StandardScriptDefinition
-import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.ScriptDefinitionsFromClasspathDiscoverySource
-import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.loadScriptTemplatesFromClasspath
+import org.jetbrains.kotlin.scripting.shared.definitions.ScriptDefinitionsFromClasspathDiscoverySource
+import org.jetbrains.kotlin.scripting.shared.definitions.loadScriptTemplatesFromClasspath
 import org.jetbrains.kotlin.scripting.legacy.CliScriptDefinitionProvider
 import java.io.File
 

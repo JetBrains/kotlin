@@ -29,7 +29,7 @@
 
     <idePlatformKindTooling implementation="org.jetbrains.kotlin.idea.core.platform.impl.CommonIdePlatformKindTooling"/>
 
-    <syntheticResolveExtension implementation="org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingResolveExtension"/>
-    <extraImportsProviderExtension implementation="org.jetbrains.kotlin.scripting.compiler.plugin.ScriptExtraImportsProviderExtension"/>
+    <syntheticResolveExtension implementation="org.jetbrains.kotlin.scripting.shared.extensions.ScriptingResolveExtension"/>
+    <extraImportsProviderExtension implementation="org.jetbrains.kotlin.scripting.shared.extensions.ScriptExtraImportsProviderExtension"/>
   </extensions>
 </idea-plugin>
