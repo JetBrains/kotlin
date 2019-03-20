@@ -1,6 +1,7 @@
+
 import java.io.FileReader
-import java.util.Properties
 import java.nio.file.Path
+import java.util.*
 
 fun locatePropertiesFile(): Pair<File, Boolean> {
     rootProject.findProject(":kotlin-ultimate")?.let { kotlinUltimateProject ->
@@ -24,7 +25,9 @@ FileReader(propertiesFile).use {
     val properties = Properties()
     properties.load(it)
     properties.forEach { (k, v) ->
-        rootProject.extra[k.toString()] = v
+        val key = k.toString()
+        val propertyValue = findProperty(key)?.toString()
+        rootProject.extra[key] = propertyValue ?: v
     }
 }
 
@@ -52,9 +55,22 @@ rootProject.extra["artifactsForCidrDir"] = artifactsForCidrDir
 rootProject.extra["clionPluginDir"] = artifactsForCidrDir.resolve("clionPlugin/Kotlin")
 rootProject.extra["appcodePluginDir"] = artifactsForCidrDir.resolve("appcodePlugin/Kotlin")
 
+rootProject.extra["cidrUnscrambledJarDir"] = rootProject.extra["clionUnscrambledJarDir"]
+
 if (isStandaloneBuild) {
     // setup additional properties that are required only when running in standalone mode:
-    rootProject.extra["clionDir"] = externalDepsDir("cidr", "clion-$clionVersion")
+    val useAppCodeForCommon = findProperty("useAppCodeForCommon")?.toString()?.let { java.lang.Boolean.parseBoolean(it) } ?: false
+    if (useAppCodeForCommon) {
+        rootProject.extra["cidrIdeDir"] = externalDepsDir("cidr", "appcode-$appcodeVersion")
+        rootProject.extra["cidrIdeArtifact"] = "${rootProject.extra["appcodeRepo"]}:$appcodeVersion:AppCode-$appcodeVersion.sit"
+        rootProject.extra["cidrPlatformDepsDir"] = rootProject.extra["appcodePlatformDepsDir"]
+        rootProject.extra["cidrUnscrambledJarDir"] = rootProject.extra["appcodeUnscrambledJarDir"]
+    } 
+    else {
+        rootProject.extra["cidrIdeDir"] = externalDepsDir("cidr", "clion-$clionVersion")
+        rootProject.extra["cidrIdeArtifact"] = "${rootProject.extra["clionRepo"]}:$clionVersion:CLion-$clionVersion.tar.gz"
+        rootProject.extra["cidrPlatformDepsDir"] = rootProject.extra["clionPlatformDepsDir"]
+    }
 
     val ideaPluginForCidrVersion: String = rootProject.extra["versions.ideaPluginForCidr"] as String
     val ideaPluginForCidrBuildNumber: String = ideaPluginForCidrVersion
