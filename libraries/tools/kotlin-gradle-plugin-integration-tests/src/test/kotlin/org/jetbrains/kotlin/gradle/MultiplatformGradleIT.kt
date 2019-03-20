@@ -297,7 +297,7 @@ class MultiplatformGradleIT : BaseGradleIT() {
     }
 
     @Test
-    fun testMppNodeJsTestRun() = with(Project("new-mpp-js-tests", GradleVersionRequired.AtLeast("4.10.2"))) {
+    fun testMppNodeJsTestRun() = with(Project("new-mpp-js-tests", GradleVersionRequired.AtLeast("5.0"))) {
         setupWorkingDir()
         gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
         gradleSettingsScript().modify(::transformBuildScriptWithPluginsDsl)
@@ -307,12 +307,12 @@ class MultiplatformGradleIT : BaseGradleIT() {
             assertSuccessful()
 
             assertTasksRegisteredAndNotRealized(
-                ":clientKotlinJsNodeModules",
-                ":clientKotlinJsNodeModulesTestRuntime",
+                ":kotlinNodeJsTestRuntimeExtract",
+
+                ":clientTestNodeModules",
                 ":clientTest",
 
-                ":serverKotlinJsNodeModules",
-                ":serverKotlinJsNodeModulesTestRuntime",
+                ":serverTestNodeModules",
                 ":serverTest"
             )
         }
@@ -321,12 +321,12 @@ class MultiplatformGradleIT : BaseGradleIT() {
             assertSuccessful()
 
             assertTasksExecuted(
-                ":clientKotlinJsNodeModules",
-                ":clientKotlinJsNodeModulesTestRuntime",
+                ":kotlinNodeJsTestRuntimeExtract",
+
+                ":clientTestNodeModules",
                 ":clientTest",
 
-                ":serverKotlinJsNodeModules",
-                ":serverKotlinJsNodeModulesTestRuntime",
+                ":serverTestNodeModules",
                 ":serverTest"
             )
 
@@ -339,12 +339,12 @@ class MultiplatformGradleIT : BaseGradleIT() {
             assertSuccessful()
 
             assertTasksUpToDate(
-                ":clientKotlinJsNodeModules",
-                ":clientKotlinJsNodeModulesTestRuntime",
+                ":kotlinNodeJsTestRuntimeExtract",
+
+                ":clientTestNodeModules",
                 ":clientTest",
 
-                ":serverKotlinJsNodeModules",
-                ":serverKotlinJsNodeModulesTestRuntime",
+                ":serverTestNodeModules",
                 ":serverTest"
             )
         }
@@ -356,15 +356,14 @@ class MultiplatformGradleIT : BaseGradleIT() {
             assertSuccessful()
 
             assertTasksUpToDate(
-                ":clientKotlinJsNodeModulesTestRuntime",
-                ":serverKotlinJsNodeModulesTestRuntime"
+                ":kotlinNodeJsTestRuntimeExtract"
             )
 
             assertTasksExecuted(
-                ":clientKotlinJsNodeModules",
+                ":clientTestNodeModules",
                 ":clientTest",
 
-                ":serverKotlinJsNodeModules",
+                ":serverTestNodeModules",
                 ":serverTest"
             )
 

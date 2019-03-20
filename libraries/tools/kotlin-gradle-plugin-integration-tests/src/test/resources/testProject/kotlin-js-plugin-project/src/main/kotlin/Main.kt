@@ -1,15 +1,23 @@
 package com.example
 
-import kotlinx.html.dom.create
-import kotlinx.html.js.div
-import kotlinx.html.p
-import kotlin.browser.document
+import kotlinx.html.a
+import kotlinx.html.body
+import kotlinx.html.div
+import kotlinx.html.html
+import kotlinx.html.stream.appendHTML
 
 fun hello() = "hello"
 
 fun main() {
-    document.create.div {
-        p { hello() }
-    }
-    console.log(hello())
+    println(
+            StringBuilder().appendHTML().html {
+                body {
+                    div {
+                        a("https://kotlinlang.org") {
+                            hello()
+                        }
+                    }
+                }
+            }
+    )
 }

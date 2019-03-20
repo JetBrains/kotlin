@@ -8,4 +8,4 @@ package org.jetbrains.kotlin.gradle.utils
 /**
  * Utility for functions annotated with @Inject
  */
-val injected: Nothing get() = error("Should be injected");
+internal val injected: Nothing get() = error("Should be injected");

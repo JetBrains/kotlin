@@ -45,8 +45,7 @@ open class KotlinNodeJsTestTask : AbstractTestTask() {
     var nodeModulesToLoad: Set<String> = setOf()
 
     @InputFile
-    @Optional
-    var testRuntimeNodeModule: File? = null
+    lateinit var testRuntimeNodeModule: File
 
     @Suppress("UnstableApiUsage")
     private val filterExt: DefaultTestFilter
@@ -99,7 +98,7 @@ open class KotlinNodeJsTestTask : AbstractTestTask() {
 
         return TCServiceMessagesTestExecutionSpec(
             extendedForkOptions,
-            listOf(finalTestRuntimeNodeModule.absolutePath) + cliArgs.toList(),
+            listOf(testRuntimeNodeModule.absolutePath) + cliArgs.toList(),
             clientSettings
         )
     }
@@ -108,14 +107,41 @@ open class KotlinNodeJsTestTask : AbstractTestTask() {
     open val execHandleFactory: ExecHandleFactory
         get() = injected
 
-    private val finalTestRuntimeNodeModule: File
-        get() = testRuntimeNodeModule
-            ?: nodeModulesDir!!.resolve(".bin").resolve(kotlinNodeJsTestRuntimeBin)
-
     override fun createTestExecuter() = TCServiceMessagesTestExecutor(
         execHandleFactory,
         buildOperationExecutor
     )
+}
+
+data class KotlinNodeJsTestRunnerCliArgs(
+    val moduleNames: List<String>,
+    val include: Collection<String> = listOf(),
+    val exclude: Collection<String> = listOf(),
+    val ignoredTestSuites: IgnoredTestSuitesReporting = IgnoredTestSuitesReporting.reportAllInnerTestsAsIgnored
+) {
+    fun toList(): List<String> = mutableListOf<String>().also { args ->
+        if (include.isNotEmpty()) {
+            args.add("--include")
+            args.add(include.joinToString(","))
+        }
+
+        if (exclude.isNotEmpty()) {
+            args.add("--exclude")
+            args.add(exclude.joinToString(","))
+        }
+
+        if (ignoredTestSuites !== IgnoredTestSuitesReporting.reportAllInnerTestsAsIgnored) {
+            args.add("--ignoredTestSuites")
+            args.add(ignoredTestSuites.name)
+        }
+
+        args.addAll(moduleNames)
+    }
+
+    @Suppress("EnumEntryName")
+    enum class IgnoredTestSuitesReporting {
+        skip, reportAsIgnoredTest, reportAllInnerTestsAsIgnored
+    }
 }
 
 private fun MutableMap<String, Any>.addPath(key: String, path: String) {

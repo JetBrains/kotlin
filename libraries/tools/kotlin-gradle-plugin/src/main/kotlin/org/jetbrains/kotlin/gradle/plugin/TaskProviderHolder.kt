@@ -16,13 +16,13 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
-import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.tasks.TaskProvider
 
-class TaskProviderHolder<T : Task>(project: Project, private val name: String, type: Class<T>, configureAction: (T) -> (Unit)) :
-    TaskHolder<T> {
-    private val provider: TaskProvider<T> = project.tasks.register(name, type, configureAction)
+class TaskProviderHolder<T : Task>(
+    private val name: String,
+    private val provider: TaskProvider<T>
+) : TaskHolder<T> {
 
     override fun getTaskOrProvider(): Any = provider
 

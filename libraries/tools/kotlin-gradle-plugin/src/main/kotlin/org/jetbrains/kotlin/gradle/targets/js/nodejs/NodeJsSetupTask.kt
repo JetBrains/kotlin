@@ -35,10 +35,15 @@ open class NodeJsSetupTask : DefaultTask() {
         val repo = project.repositories.ivy { repo ->
             repo.name = "Node Distributions at ${settings.distBaseUrl}"
             repo.url = URI(settings.distBaseUrl)
-            repo.layout("pattern") { layout ->
-                layout as IvyPatternRepositoryLayout
-                layout.artifact("v[revision]/[artifact](-v[revision]-[classifier]).[ext]")
-                layout.ivy("v[revision]/ivy.xml")
+
+            if (isGradleVersionAtLeast(5, 0)) {
+                repo.patternLayout { layout ->
+                    configureNodeJsIvyPatternLayout(layout)
+                }
+            } else {
+                repo.layout("pattern") { layout ->
+                    configureNodeJsIvyPatternLayout(layout as IvyPatternRepositoryLayout)
+                }
             }
             repo.metadataSources { it.artifact() }
 
@@ -60,6 +65,11 @@ open class NodeJsSetupTask : DefaultTask() {
         if (!env.isWindows) {
             File(env.nodeExec).setExecutable(true)
         }
+    }
+
+    private fun configureNodeJsIvyPatternLayout(layout: IvyPatternRepositoryLayout) {
+        layout.artifact("v[revision]/[artifact](-v[revision]-[classifier]).[ext]")
+        layout.ivy("v[revision]/ivy.xml")
     }
 
     private fun unpackNodeArchive(archive: File, destination: File) {

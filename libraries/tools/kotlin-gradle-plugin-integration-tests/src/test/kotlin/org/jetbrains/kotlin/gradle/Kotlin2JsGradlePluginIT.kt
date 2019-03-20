@@ -379,6 +379,8 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
             assertTrue { "kotlin-stdlib-js</artifactId><version>$kotlinVersion</version><scope>runtime</scope>" in pomText }
 
             assertFileExists(moduleDir + "kotlin-js-plugin-1.0-sources.jar")
+
+            assertTestResults("testProject/kotlin-js-plugin-project/tests.xml", "test")
         }
     }
 }

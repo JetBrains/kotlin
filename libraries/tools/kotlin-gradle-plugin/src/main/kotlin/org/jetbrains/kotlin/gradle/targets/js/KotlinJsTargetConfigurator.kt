@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.targets.js
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 
 class KotlinJsTargetConfigurator(kotlinPluginVersion: String) :
@@ -19,13 +18,24 @@ class KotlinJsTargetConfigurator(kotlinPluginVersion: String) :
         return Kotlin2JsSourceSetProcessor(compilation.target.project, tasksProvider, compilation, kotlinPluginVersion)
     }
 
+    override fun configureCompilations(platformTarget: KotlinOnlyTarget<KotlinJsCompilation>) {
+        super.configureCompilations(platformTarget)
+
+        platformTarget.compilations.all {
+            it.compileKotlinTask.kotlinOptions.moduleKind = "umd"
+        }
+    }
+
     override fun configureTest(target: KotlinOnlyTarget<KotlinJsCompilation>) {
         target.compilations.all {
-            it.compileKotlinTask.kotlinOptions.moduleKind = "umd"
-
-            if (it.name == KotlinCompilation.TEST_COMPILATION_NAME) {
+            if (isTestCompilation(it)) {
                 KotlinJsCompilationTestsConfigurator(it).configure()
             }
         }
+    }
+
+    companion object {
+        internal fun isTestCompilation(it: KotlinJsCompilation) =
+            it.name == KotlinCompilation.TEST_COMPILATION_NAME
     }
 }

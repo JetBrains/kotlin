@@ -26,7 +26,7 @@ tasks {
         args = listOf("build")
 
         inputs.dir(projectDir.resolve("src"))
-        outputs.file(projectDir.resolve("lib/kotlin-js-test.js"))
+        outputs.file(projectDir.resolve("lib/kotlin-test-nodejs-runner.js"))
     }
 
     create<Delete>("cleanYarn") {
@@ -43,7 +43,7 @@ tasks {
 }
 
 artifacts {
-    add("archives", projectDir.resolve("lib/kotlin-js-test.js")) {
+    add("archives", projectDir.resolve("lib/kotlin-test-nodejs-runner.js")) {
         builtBy("yarnBuild")
     }
 }

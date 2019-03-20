@@ -22,27 +22,27 @@ open class KotlinJsNodeModulesTask : DefaultTask() {
 
     @TaskAction
     fun copyFromRuntimeClasspath() {
-        project.copy { copy ->
-            copy.includeEmptyDirs = false
+        project.sync { sync ->
+            sync.includeEmptyDirs = false
 
             classpath.forEach {
-                if (it.isZip) copy.from(project.zipTree(it))
-                else copy.from(it)
+                if (it.isZip) sync.from(project.zipTree(it))
+                else sync.from(it)
             }
 
-            copy.include { fileTreeElement ->
+            sync.include { fileTreeElement ->
                 isKotlinJsRuntimeFile(fileTreeElement.file)
             }
 
-            copy.into(nodeModulesDir)
+            sync.into(nodeModulesDir)
         }
     }
 }
 
-val File.isZip
+private val File.isZip
     get() = isFile && name.endsWith(".jar")
 
-fun isKotlinJsRuntimeFile(file: File): Boolean {
+internal fun isKotlinJsRuntimeFile(file: File): Boolean {
     if (!file.isFile) return false
     val name = file.name
     return (name.endsWith(".js") && !name.endsWith(".meta.js"))

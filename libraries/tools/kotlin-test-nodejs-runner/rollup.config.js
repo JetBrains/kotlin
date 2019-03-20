@@ -9,7 +9,7 @@ export default [
     {
         input: './cli.ts',
         output: {
-            file: 'lib/kotlin-js-test.js',
+            file: 'lib/kotlin-test-nodejs-runner.js',
             format: 'cjs',
             banner: '#!/usr/bin/env node'
         },

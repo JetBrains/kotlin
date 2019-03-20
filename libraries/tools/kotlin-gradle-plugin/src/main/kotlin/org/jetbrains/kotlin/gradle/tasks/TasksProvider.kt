@@ -18,25 +18,54 @@ package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.UnknownTaskException
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.defaultSourceSetName
 import org.jetbrains.kotlin.gradle.plugin.sources.applyLanguageSettingsToKotlinTask
 
 internal val useLazyTaskConfiguration = org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast(4, 9)
+internal val canLocateTask = org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast(5, 0)
 
 /**
- * Registers the task with name @param name and type @param type and initialization script @param body
- * If gradle with version <4.9 is used the task will be created
+ * Registers the task with [name] and [type] and initialization script [body]
+ * If Gradle with version <4.9 is used the task will be created
  */
 internal fun <T : Task> registerTask(project: Project, name: String, type: Class<T>, body: (T) -> (Unit)): TaskHolder<T> {
     return if (useLazyTaskConfiguration) {
-        TaskProviderHolder(project, name, type) { with(it, body) }
+        TaskProviderHolder(name, project.tasks.register(name, type) { with(it, body) })
     } else {
         val result = LegacyTaskHolder(project.tasks.create(name, type))
         with(result.doGetTask(), body)
         result
     }
+}
+
+/**
+ * Locates a task by [name] and [type], without triggering its creation or configuration.
+ */
+internal fun <T : Task> locateTask(project: Project, name: String, type: Class<T>): TaskHolder<T>? =
+    if (canLocateTask) {
+        try {
+            TaskProviderHolder(name, project.tasks.named(name, type))
+        } catch (e: UnknownTaskException) {
+            null
+        }
+    } else {
+        project.tasks.findByName(name)?.let {
+            check(type.isInstance(it))
+
+            @Suppress("UNCHECKED_CAST")
+            LegacyTaskHolder(it as T)
+        }
+    }
+
+/**
+ * Locates a task by [name] and [type], without triggering its creation or configuration or registers new task
+ * with [name], type [T] and initialization script [body]
+ */
+internal inline fun <reified T : Task> Project.locateOrRegisterTask(name: String, noinline body: (T) -> (Unit)): TaskHolder<T> {
+    return locateTask(project, name, T::class.java) ?: registerTask(project, name, T::class.java, body)
 }
 
 internal open class KotlinTasksProvider(val targetName: String) {
