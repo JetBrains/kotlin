@@ -57,6 +57,7 @@ class IntrinsicType {
 
         const val GET_CONTINUATION              = "GET_CONTINUATION"
         const val RETURN_IF_SUSPEND             = "RETURN_IF_SUSPEND"
+        const val COROUTINE_LAUNCHPAD           = "COROUTINE_LAUNCHPAD"
 
         // Interop
         const val INTEROP_READ_PRIMITIVE        = "INTEROP_READ_PRIMITIVE"

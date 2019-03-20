@@ -63,38 +63,11 @@ internal val deserializeDFGPhase = makeKonanModuleOpPhase(
 internal val devirtualizationPhase = makeKonanModuleOpPhase(
         name = "Devirtualization",
         description = "Devirtualization",
-        prerequisite = setOf(buildDFGPhase, deserializeDFGPhase),
+        prerequisite = setOf(buildDFGPhase),
         op = { context, irModule ->
-            context.externalModulesDFG?.let { externalModulesDFG ->
-                context.devirtualizationAnalysisResult = Devirtualization.run(
-                        irModule, context, context.moduleDFG!!, externalModulesDFG
-                )
-
-                val privateFunctions = context.moduleDFG!!.symbolTable.getPrivateFunctionsTableForExport()
-                privateFunctions.forEachIndexed { index, it ->
-                    val function = context.codegenVisitor.codegen.llvmFunction(it.first)
-                    LLVMAddAlias(
-                            context.llvmModule,
-                            function.type,
-                            function,
-                            irModule.descriptor.privateFunctionSymbolName(index, it.second.name)
-                    )!!
-                }
-                context.privateFunctions = privateFunctions
-
-                val privateClasses = context.moduleDFG!!.symbolTable.getPrivateClassesTableForExport()
-
-                privateClasses.forEachIndexed { index, it ->
-                    val typeInfoPtr = context.codegenVisitor.codegen.typeInfoValue(it.first)
-                    LLVMAddAlias(
-                            context.llvmModule,
-                            typeInfoPtr.type,
-                            typeInfoPtr,
-                            irModule.descriptor.privateClassSymbolName(index, it.second.name)
-                    )!!
-                }
-                context.privateClasses = privateClasses
-            }
+            context.devirtualizationAnalysisResult = Devirtualization.run(
+                    irModule, context, context.moduleDFG!!, ExternalModulesDFG(emptyList(), emptyMap(), emptyMap(), emptyMap())
+            )
         }
 )
 

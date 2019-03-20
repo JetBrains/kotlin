@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.backend.konan.library.KonanLibraryWriter
 import org.jetbrains.kotlin.backend.konan.library.LinkData
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_BRIDGE_METHOD
-import org.jetbrains.kotlin.backend.konan.optimizations.DataFlowIR
 import org.jetbrains.kotlin.backend.konan.optimizations.Devirtualization
 import org.jetbrains.kotlin.backend.konan.optimizations.ExternalModulesDFG
 import org.jetbrains.kotlin.backend.konan.optimizations.ModuleDFG
@@ -320,9 +319,6 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     val cStubsManager = CStubsManager()
 
     val coverage = CoverageManager(this)
-
-    lateinit var privateFunctions: List<Pair<IrFunction, DataFlowIR.FunctionSymbol.Declared>>
-    lateinit var privateClasses: List<Pair<IrClass, DataFlowIR.Type.Declared>>
 
     // Cache used for source offset->(line,column) mapping.
     val fileEntryCache = mutableMapOf<String, SourceManager.FileEntry>()

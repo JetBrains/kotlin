@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.llvm.coverage.*
-import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.backend.konan.optimizations.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.UnsignedType
@@ -220,8 +219,8 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         override val exceptionHandler: ExceptionHandler
             get() = currentCodeContext.exceptionHandler
 
-        override fun evaluateCall(function: IrFunction, args: List<LLVMValueRef>, resultLifetime: Lifetime): LLVMValueRef =
-                evaluateSimpleFunctionCall(function, args, resultLifetime)
+        override fun evaluateCall(function: IrFunction, args: List<LLVMValueRef>, resultLifetime: Lifetime, superClass: IrClass?) =
+                evaluateSimpleFunctionCall(function, args, resultLifetime, superClass)
 
         override fun evaluateExplicitArgs(expression: IrMemberAccessExpression): List<LLVMValueRef> =
                 this@CodeGeneratorVisitor.evaluateExplicitArgs(expression)
@@ -794,9 +793,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             is IrSuspendableExpression ->
                                         return evaluateSuspendableExpression  (value)
             is IrSuspensionPoint     -> return evaluateSuspensionPoint        (value)
-            is IrPrivateFunctionCall -> return evaluatePrivateFunctionCall    (value)
-            is IrPrivateClassReference ->
-                                        return evaluatePrivateClassReference  (value)
+            is IrClassReference ->      return evaluateClassReference         (value)
             else                     -> {
                 TODO(ir2string(value))
             }
@@ -2017,42 +2014,8 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     //-------------------------------------------------------------------------//
 
-    private fun evaluatePrivateFunctionCall(callee: IrPrivateFunctionCall): LLVMValueRef {
-        val args = (0 until callee.valueArgumentsCount).map { index ->
-            callee.getValueArgument(index)?.let { evaluateExpression(it) }
-                    ?: run {
-                        assert(index == callee.valueArgumentsCount - 1) { "Only last argument may be null - for suspend functions" }
-                        getContinuation()
-                    }
-        }
-        val dfgSymbol = callee.dfgSymbol
-        val functionIndex = callee.functionIndex
-        val function = if (callee.moduleDescriptor == context.irModule!!.descriptor) {
-            codegen.llvmFunction(context.privateFunctions[functionIndex].first)
-        } else {
-            context.llvm.externalFunction(
-                    callee.moduleDescriptor.privateFunctionSymbolName(functionIndex, callee.dfgSymbol.name),
-                    codegen.getLlvmFunctionType(dfgSymbol),
-                    callee.moduleDescriptor.llvmSymbolOrigin
-
-            )
-        }
-        return call(dfgSymbol, function, args, resultLifetime = Lifetime.GLOBAL)
-    }
-
-    //-------------------------------------------------------------------------//
-
-    private fun evaluatePrivateClassReference(classReference: IrPrivateClassReference): LLVMValueRef {
-        val classIndex = classReference.classIndex
-        val typeInfoPtr = if (classReference.moduleDescriptor == context.irModule!!.descriptor) {
-            codegen.typeInfoValue(context.privateClasses[classIndex].first)
-        } else {
-            codegen.importGlobal(
-                    classReference.moduleDescriptor.privateClassSymbolName(classIndex, classReference.dfgSymbol.name),
-                    codegen.kTypeInfo,
-                    classReference.moduleDescriptor.llvmSymbolOrigin
-            )
-        }
+    private fun evaluateClassReference(classReference: IrClassReference): LLVMValueRef {
+        val typeInfoPtr = codegen.typeInfoValue(classReference.symbol.owner as IrClass)
         return functionGenerationContext.bitcast(int8TypePtr, typeInfoPtr)
     }
 

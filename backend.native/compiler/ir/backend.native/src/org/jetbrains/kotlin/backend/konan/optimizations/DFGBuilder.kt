@@ -479,11 +479,32 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
             )
         }
 
+        private fun IrType.erasure(): IrType {
+            if (this !is IrSimpleType) return this
+
+            val classifier = this.classifier
+            return when (classifier) {
+                is IrClassSymbol -> this
+                is IrTypeParameterSymbol -> {
+                    val upperBound = classifier.owner.superTypes.singleOrNull() ?:
+                    TODO("${classifier.descriptor} : ${classifier.descriptor.upperBounds}")
+
+                    if (this.hasQuestionMark) {
+                        // `T?`
+                        upperBound.erasure().makeNullable()
+                    } else {
+                        upperBound.erasure()
+                    }
+                }
+                else -> TODO(classifier.toString())
+            }
+        }
+
         private fun expressionToEdge(expression: IrExpression) =
                 if (expression is IrTypeOperatorCall && expression.operator.isCast())
                     DataFlowIR.Edge(
                             getNode(expression.argument),
-                            symbolTable.mapClassReferenceType(expression.typeOperand.getClass()!!)
+                            symbolTable.mapClassReferenceType(expression.typeOperand.erasure().getClass()!!)
                     )
                 else DataFlowIR.Edge(getNode(expression), null)
 

@@ -268,6 +268,8 @@ internal val bitcodePhase = namedIrModulePhase(
         lower = contextLLVMSetupPhase then
                 RTTIPhase then
                 generateDebugInfoHeaderPhase then
+                buildDFGPhase then
+                serializeDFGPhase then
                 deserializeDFGPhase then
                 devirtualizationPhase then
                 escapeAnalysisPhase then
@@ -295,8 +297,6 @@ internal val toplevelPhase = namedUnitPhase(
                                 dependenciesLowerPhase then // Then lower all libraries in topological order.
                                                             // With that we guarantee that inline functions are unlowered while being inlined.
                                 moduleIndexForCodegenPhase then
-                                buildDFGPhase then
-                                serializeDFGPhase then
                                 bitcodePhase then
                                 produceOutputPhase then
                                 verifyBitcodePhase then
@@ -309,9 +309,7 @@ internal val toplevelPhase = namedUnitPhase(
 internal fun PhaseConfig.konanPhasesConfig(config: KonanConfig) {
     with(config.configuration) {
         disable(compileTimeEvaluatePhase)
-        disable(buildDFGPhase)
         disable(deserializeDFGPhase)
-        disable(devirtualizationPhase)
         disable(escapeAnalysisPhase)
         disable(serializeDFGPhase)
 

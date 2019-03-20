@@ -6,10 +6,8 @@
 package org.jetbrains.kotlin.backend.konan.ir
 
 import org.jetbrains.kotlin.backend.konan.SYNTHETIC_OFFSET
-import org.jetbrains.kotlin.backend.konan.optimizations.DataFlowIR
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.SourceManager.FileEntry
 import org.jetbrains.kotlin.ir.SourceRangeInfo
@@ -18,14 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrContainerExpressionBase
-import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBase
-import org.jetbrains.kotlin.ir.expressions.impl.IrTerminalDeclarationReferenceBase
-import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
-import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
-import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.konan.file.File
@@ -131,91 +122,4 @@ class IrFileImpl(entry: SourceManager.FileEntry) : IrFile {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         TODO("not implemented")
     }
-}
-
-//-----------------------------------------------------------------------------//
-
-internal interface IrPrivateFunctionCall : IrExpression {
-    val valueArgumentsCount: Int
-    fun getValueArgument(index: Int): IrExpression?
-    fun putValueArgument(index: Int, valueArgument: IrExpression?)
-    fun removeValueArgument(index: Int)
-
-    val virtualCallee: IrCall?
-    val dfgSymbol: DataFlowIR.FunctionSymbol.Declared
-    val moduleDescriptor: ModuleDescriptor
-    val totalFunctions: Int
-    val functionIndex: Int
-}
-
-internal class IrPrivateFunctionCallImpl(startOffset: Int,
-                                         endOffset: Int,
-                                         type: IrType,
-                                         override val valueArgumentsCount: Int,
-                                         override val virtualCallee: IrCall?,
-                                         override val dfgSymbol: DataFlowIR.FunctionSymbol.Declared,
-                                         override val moduleDescriptor: ModuleDescriptor,
-                                         override val totalFunctions: Int,
-                                         override val functionIndex: Int
-) : IrPrivateFunctionCall, IrExpressionBase(startOffset, endOffset, type) {
-
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
-        return visitor.visitExpression(this, data)
-    }
-
-    private val argumentsByParameterIndex: Array<IrExpression?> = arrayOfNulls(valueArgumentsCount)
-
-    override fun getValueArgument(index: Int): IrExpression? {
-        if (index >= valueArgumentsCount) {
-            throw AssertionError("$this: No such value argument slot: $index")
-        }
-        return argumentsByParameterIndex[index]
-    }
-
-    override fun putValueArgument(index: Int, valueArgument: IrExpression?) {
-        if (index >= valueArgumentsCount) {
-            throw AssertionError("$this: No such value argument slot: $index")
-        }
-        argumentsByParameterIndex[index] = valueArgument
-    }
-
-    override fun removeValueArgument(index: Int) {
-        argumentsByParameterIndex[index] = null
-    }
-
-    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        argumentsByParameterIndex.forEach { it?.accept(visitor, data) }
-    }
-
-    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        argumentsByParameterIndex.forEachIndexed { i, irExpression ->
-            argumentsByParameterIndex[i] = irExpression?.transform(transformer, data)
-        }
-    }
-}
-
-internal interface IrPrivateClassReference : IrClassReference {
-    val moduleDescriptor: ModuleDescriptor
-    val totalClasses: Int
-    val classIndex: Int
-    val dfgSymbol: DataFlowIR.Type.Declared
-}
-
-internal class IrPrivateClassReferenceImpl(startOffset: Int,
-                                           endOffset: Int,
-                                           type: IrType,
-                                           symbol: IrClassifierSymbol,
-                                           override val classType: IrType,
-                                           override val moduleDescriptor: ModuleDescriptor,
-                                           override val totalClasses: Int,
-                                           override val classIndex: Int,
-                                           override val dfgSymbol: DataFlowIR.Type.Declared
-) : IrPrivateClassReference,
-        IrTerminalDeclarationReferenceBase<IrClassifierSymbol, ClassifierDescriptor>(
-                startOffset, endOffset, type,
-                symbol, symbol.descriptor
-        )
-{
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-            visitor.visitClassReference(this, data)
 }

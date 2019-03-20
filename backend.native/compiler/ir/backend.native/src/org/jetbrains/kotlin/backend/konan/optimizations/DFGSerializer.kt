@@ -986,7 +986,7 @@ internal object DFGSerializer {
                                     ++module.numberOfClasses
                                 DataFlowIR.Type.Public(public.hash, public.intestines.base.isFinal,
                                         public.intestines.base.isAbstract, public.intestines.base.primitiveBinaryType,
-                                        module, symbolTableIndex, public.intestines.base.name).also {
+                                        module, symbolTableIndex, null, public.intestines.base.name).also {
                                     publicTypesMap.put(it.hash, it)
                                     allTypes += it
                                 }
@@ -998,7 +998,7 @@ internal object DFGSerializer {
                                     ++module.numberOfClasses
                                 DataFlowIR.Type.Private(privateTypeIndex++, private.intestines.base.isFinal,
                                         private.intestines.base.isAbstract, private.intestines.base.primitiveBinaryType,
-                                        module, symbolTableIndex, private.intestines.base.name).also {
+                                        module, symbolTableIndex, null, private.intestines.base.name).also {
                                     allTypes += it
                                 }
                             }
@@ -1013,14 +1013,14 @@ internal object DFGSerializer {
                     val private = it.private
                     when {
                         external != null ->
-                            DataFlowIR.FunctionSymbol.External(external.hash, attributes, external.name)
+                            DataFlowIR.FunctionSymbol.External(external.hash, attributes, null, external.name)
 
                         public != null -> {
                             val symbolTableIndex = public.index
                             if (symbolTableIndex >= 0)
                                 ++module.numberOfFunctions
                             DataFlowIR.FunctionSymbol.Public(public.hash,
-                                    module, symbolTableIndex, attributes, null, public.name).also {
+                                    module, symbolTableIndex, attributes, null, null, public.name).also {
                                 publicFunctionsMap.put(it.hash, it)
                             }
                         }
@@ -1030,7 +1030,7 @@ internal object DFGSerializer {
                             if (symbolTableIndex >= 0)
                                 ++module.numberOfFunctions
                             DataFlowIR.FunctionSymbol.Private(privateFunIndex++,
-                                    module, symbolTableIndex, attributes, null, private.name)
+                                    module, symbolTableIndex, attributes, null, null, private.name)
                         }
                     }.apply {
                         escapes = it.base.escapes

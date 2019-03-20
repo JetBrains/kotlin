@@ -15,16 +15,11 @@ import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.getInlinedClass
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
-import org.jetbrains.kotlin.backend.konan.ir.IrPrivateClassReferenceImpl
-import org.jetbrains.kotlin.backend.konan.ir.IrPrivateFunctionCall
-import org.jetbrains.kotlin.backend.konan.ir.IrPrivateFunctionCallImpl
-import org.jetbrains.kotlin.backend.konan.ir.getErasedTypeClass
+import org.jetbrains.kotlin.backend.konan.ir.isSuspend
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.*
@@ -1016,7 +1011,7 @@ internal object Devirtualization {
                         .filter { it.key.irCallSite != null }
                         .associate { it.key.irCallSite!! to it.value }
         devirtualize(irModule, context, externalModulesDFG, devirtualizedCallSites)
-        removeRedundantCoercions(irModule, context, moduleDFG, externalModulesDFG)
+        removeRedundantCoercions(irModule, context)
         return AnalysisResult(devirtualizationAnalysisResult)
     }
 
@@ -1034,12 +1029,9 @@ internal object Devirtualization {
     private val specialNames = listOf("<box>", "<unbox>")
 
     // TODO: do it more reliably.
-    private fun IrExpression.isBoxOrUnboxCall() =
-            (this is IrCall && symbol.owner.name.asString().let { specialNames.contains(it) })
-                    || (this is IrPrivateFunctionCall && specialNames.any { dfgSymbol.name?.contains(it) == true })
+    private fun IrExpression.isBoxOrUnboxCall() = (this is IrCall && symbol.owner.name.asString().let { specialNames.contains(it) })
 
-    private fun devirtualize(irModule: IrModuleFragment, context: Context,
-                             externalModulesDFG: ExternalModulesDFG,
+    private fun devirtualize(irModule: IrModuleFragment, context: Context, externalModulesDFG: ExternalModulesDFG,
                              devirtualizedCallSites: Map<IrCall, DevirtualizedCallSite>) {
         val symbols = context.ir.symbols
         val nativePtrEqualityOperatorSymbol = symbols.areEqualByValue[PrimitiveBinaryType.POINTER]!!
@@ -1067,17 +1059,7 @@ internal object Devirtualization {
         fun IrBuilderWithScope.irCoerce(value: IrExpression, coercion: DataFlowIR.FunctionSymbol.Declared?) =
                 if (coercion == null)
                     value
-                else IrPrivateFunctionCallImpl(
-                        startOffset         = startOffset,
-                        endOffset           = endOffset,
-                        type                = value.type, // TODO: What type is actually must be here?
-                        valueArgumentsCount = 1,
-                        virtualCallee       = null,
-                        dfgSymbol           = coercion,
-                        moduleDescriptor    = coercion.module.descriptor,
-                        totalFunctions      = coercion.module.numberOfFunctions,
-                        functionIndex       = coercion.symbolTableIndex
-                ).apply {
+                else irCall(coercion.irFunction!!).apply {
                     putValueArgument(0, value)
                 }
 
@@ -1124,45 +1106,80 @@ internal object Devirtualization {
             }
             if (actualType.boxFunction == null)
                 return targetType.unboxFunction!!.resolved() as DataFlowIR.FunctionSymbol.Declared
-            return actualType.boxFunction!!.resolved() as DataFlowIR.FunctionSymbol.Declared
+            return actualType.boxFunction.resolved() as DataFlowIR.FunctionSymbol.Declared
         }
 
-        fun irDevirtualizedCall(callee: IrCall, actualType: IrType, devirtualizedCallee: DataFlowIR.FunctionSymbol.Declared) =
-                IrPrivateFunctionCallImpl(
-                        startOffset         = callee.startOffset,
-                        endOffset           = callee.endOffset,
-                        type                = actualType,
-                        valueArgumentsCount = devirtualizedCallee.parameters.size,
-                        virtualCallee       = callee,
-                        dfgSymbol           = devirtualizedCallee,
-                        moduleDescriptor    = devirtualizedCallee.module.descriptor,
-                        totalFunctions      = devirtualizedCallee.module.numberOfFunctions,
-                        functionIndex       = devirtualizedCallee.symbolTableIndex
-                )
+        fun IrCallImpl.putArgument(index: Int, value: IrExpression) {
+            var receiversCount = 0
+            val callee = symbol.owner
+            if (callee.dispatchReceiverParameter != null)
+                ++receiversCount
+            if (callee.extensionReceiverParameter != null)
+                ++receiversCount
+            if (index >= receiversCount)
+                putValueArgument(index - receiversCount, value)
+            else {
+                if (callee.dispatchReceiverParameter != null && index == 0)
+                    dispatchReceiver = value
+                else
+                    extensionReceiver = value
+            }
+        }
+
+        fun IrBuilderWithScope.irDevirtualizedCall(callSite: IrCall,
+                                                   actualType: IrType,
+                                                   devirtualizedCallee: DevirtualizedCallee,
+                                                   arguments: List<IrExpression>): IrCall {
+            val actualCallee = devirtualizedCallee.callee.irFunction!!
+            val call = IrCallImpl(
+                    callSite.startOffset, callSite.endOffset,
+                    actualType,
+                    actualCallee.symbol,
+                    actualCallee.descriptor,
+                    actualCallee.typeParameters.size,
+                    actualCallee.valueParameters.size,
+                    callSite.origin,
+                    actualCallee.parentAsClass.symbol
+            )
+            if (actualCallee.explicitParameters.size == arguments.size) {
+                arguments.forEachIndexed { index, argument -> call.putArgument(index, argument) }
+                return call
+            }
+            assert(actualCallee.isSuspend && actualCallee.explicitParameters.size == arguments.size - 1) {
+                "Incorrect number of arguments: expected [${actualCallee.explicitParameters.size}] but was [${arguments.size - 1}]\n" +
+                        actualCallee.dump()
+            }
+            val continuation = arguments.last()
+            for (index in 0..arguments.size - 2)
+                call.putArgument(index, arguments[index])
+            return irCall(context.ir.symbols.coroutineLaunchpad, actualType).apply {
+                putValueArgument(0, call)
+                putValueArgument(1, continuation)
+            }
+        }
 
         fun IrBuilderWithScope.irDevirtualizedCall(callee: IrCall, actualType: IrType,
-                                                   actualCallee: DataFlowIR.FunctionSymbol.Declared,
-                                                   parameters: List<PossiblyCoercedValue>) =
-                actualCallee.bridgeTarget.let {
-                    if (it == null)
-                        irDevirtualizedCall(callee, actualType, actualCallee).apply {
-                            parameters.forEachIndexed { index, value ->
-                                putValueArgument(index, value.getFullValue(this@irDevirtualizedCall))
-                            }
-                        }
-                    else {
-                        val bridgeTarget = it.resolved() as DataFlowIR.FunctionSymbol.Declared
-                        val callResult = irDevirtualizedCall(callee, actualType, bridgeTarget).apply {
-                            parameters.forEachIndexed { index, value ->
+                                                   devirtualizedCallee: DevirtualizedCallee,
+                                                   arguments: List<PossiblyCoercedValue>): IrExpression {
+            val actualCallee = devirtualizedCallee.callee as DataFlowIR.FunctionSymbol.Declared
+            return actualCallee.bridgeTarget.let { bridgeTarget ->
+                if (bridgeTarget == null)
+                    irDevirtualizedCall(callee, actualType,
+                            devirtualizedCallee,
+                            arguments.map { it.getFullValue(this@irDevirtualizedCall) })
+                else {
+                    val callResult = irDevirtualizedCall(callee, actualType,
+                            DevirtualizedCallee(devirtualizedCallee.receiverType, bridgeTarget),
+                            arguments.mapIndexed { index, value ->
                                 val coercion = getTypeConversion(actualCallee.parameters[index], bridgeTarget.parameters[index])
                                 val fullValue = value.getFullValue(this@irDevirtualizedCall)
-                                putValueArgument(index, coercion?.let { irCoerce(fullValue, coercion) } ?: fullValue)
-                            }
-                        }
-                        val returnCoercion = getTypeConversion(bridgeTarget.returnParameter, actualCallee.returnParameter)
-                        irCoerce(callResult, returnCoercion)
-                    }
+                                coercion?.let { irCoerce(fullValue, coercion) } ?: fullValue
+                            })
+                    val returnCoercion = getTypeConversion(bridgeTarget.returnParameter, actualCallee.returnParameter)
+                    irCoerce(callResult, returnCoercion)
                 }
+            }
+        }
 
         irModule.transformChildrenVoid(object: IrElementTransformerVoidWithContext() {
             override fun visitCall(expression: IrCall): IrExpression {
@@ -1208,37 +1225,31 @@ internal object Devirtualization {
                         }
 
                         optimize && possibleCallees.size == 1 -> { // Monomorphic callsite.
-                            val actualCallee = possibleCallees[0].callee as DataFlowIR.FunctionSymbol.Declared
                             irBlock(expression) {
                                 val parameters = expression.getArgumentsWithSymbols().mapIndexed { index, arg ->
                                     irSplitCoercion(arg.second, "arg$index", arg.first.owner.type)
                                 }
-                                +irDevirtualizedCall(expression, type, actualCallee, parameters)
+                                +irDevirtualizedCall(expression, type, possibleCallees[0], parameters)
                             }
                         }
 
                         else -> irBlock(expression) {
-                            val parameters = expression.getArgumentsWithSymbols().mapIndexed { index, arg ->
+                            val arguments = expression.getArgumentsWithSymbols().mapIndexed { index, arg ->
                                 irSplitCoercion(arg.second, "arg$index", arg.first.owner.type)
                             }
                             val typeInfo = irTemporary(irCall(symbols.getObjectTypeInfo).apply {
-                                putValueArgument(0, parameters[0].getFullValue(this@irBlock))
+                                putValueArgument(0, arguments[0].getFullValue(this@irBlock))
                             })
 
                             val branches = mutableListOf<IrBranchImpl>()
                             possibleCallees.mapIndexedTo(branches) { index, devirtualizedCallee ->
-                                val actualCallee = devirtualizedCallee.callee as DataFlowIR.FunctionSymbol.Declared
                                 val actualReceiverType = devirtualizedCallee.receiverType as DataFlowIR.Type.Declared
-                                val expectedTypeInfo = IrPrivateClassReferenceImpl(
-                                        startOffset      = startOffset,
-                                        endOffset        = endOffset,
-                                        type             = symbols.nativePtrType,
-                                        symbol           = dispatchReceiver.type.getErasedTypeClass(),
-                                        classType        = dispatchReceiver.type,
-                                        moduleDescriptor = actualReceiverType.module!!.descriptor,
-                                        totalClasses     = actualReceiverType.module.numberOfClasses,
-                                        classIndex       = actualReceiverType.symbolTableIndex,
-                                        dfgSymbol        = actualReceiverType)
+                                val expectedTypeInfo = IrClassReferenceImpl(
+                                        startOffset, endOffset,
+                                        symbols.nativePtrType,
+                                        actualReceiverType.irClass!!.symbol,
+                                        actualReceiverType.irClass.defaultType
+                                )
                                 val condition =
                                         if (optimize && index == possibleCallees.size - 1)
                                             irTrue() // Don't check last type in optimize mode.
@@ -1251,7 +1262,7 @@ internal object Devirtualization {
                                         startOffset = startOffset,
                                         endOffset   = endOffset,
                                         condition   = condition,
-                                        result      = irDevirtualizedCall(expression, type, actualCallee, parameters)
+                                        result      = irDevirtualizedCall(expression, type, devirtualizedCallee, arguments)
                                 )
                             }
                             if (!optimize) { // Add else branch throwing exception for debug purposes.
@@ -1285,14 +1296,7 @@ internal object Devirtualization {
         })
     }
 
-    private fun removeRedundantCoercions(irModule: IrModuleFragment, context: Context,
-                                         moduleDFG: ModuleDFG, externalModulesDFG: ExternalModulesDFG) {
-
-        fun DataFlowIR.FunctionSymbol.resolved(): DataFlowIR.FunctionSymbol {
-            if (this is DataFlowIR.FunctionSymbol.External)
-                return externalModulesDFG.publicFunctions[this.hash] ?: this
-            return this
-        }
+    private fun removeRedundantCoercions(irModule: IrModuleFragment, context: Context) {
 
         class PossiblyFoldedExpression(val expression: IrExpression, val folded: Boolean) {
             fun getFullExpression(coercion: IrCall, cast: IrTypeOperatorCall?): IrExpression {
@@ -1355,21 +1359,12 @@ internal object Devirtualization {
 
                 val coercionDeclaringClass = coercion.symbol.owner.parentAsClass
                 if (expression.isBoxOrUnboxCall()) {
+                    expression as IrCall
                     val result =
-                            (expression as? IrCall)?.let {
-                                if (coercionDeclaringClass == it.symbol.owner.parentAsClass)
-                                    it.getArguments().single().second
-                                else expression
-                            } ?: (expression as IrPrivateFunctionCall).let {
-                                val argarg = it.getValueArgument(0)!!
-                                val boxFunction = context.getBoxFunction(coercionDeclaringClass)
-                                val unboxFunction = context.getUnboxFunction(coercionDeclaringClass)
-                                val boxFunctionSymbol = moduleDFG.symbolTable.mapFunction(boxFunction).resolved()
-                                val unboxFunctionSymbol = moduleDFG.symbolTable.mapFunction(unboxFunction).resolved()
-                                if (it.dfgSymbol == boxFunctionSymbol || it.dfgSymbol == unboxFunctionSymbol)
-                                    argarg
-                                else it
-                            }
+                            if (coercionDeclaringClass == expression.symbol.owner.parentAsClass)
+                                expression.getArguments().single().second
+                            else expression
+
                     return PossiblyFoldedExpression(result.transformIfAsked(), result != expression)
                 }
                 return when (expression) {
