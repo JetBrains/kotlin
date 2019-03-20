@@ -27,9 +27,11 @@ class FirSupertypeResolverTransformer : FirAbstractTreeTransformer() {
     private lateinit var firSession: FirSession
     private val currentlyComputing: MutableSet<ClassId> = mutableSetOf()
     private val fullyComputed: MutableSet<ClassId> = mutableSetOf()
+    private lateinit var file: FirFile
 
     override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirFile> {
-        firSession = file.fileSession
+        firSession = file.session
+        this.file = file
         return super.transformFile(file, data)
     }
 
@@ -62,10 +64,8 @@ class FirSupertypeResolverTransformer : FirAbstractTreeTransformer() {
 
         if (classId in fullyComputed) return classLikeDeclaration
 
-        val firFile = firSession.getService(FirProvider::class).getFirClassifierContainerFile(classId)
-
-        val visitor = ResolveSuperTypesTask(firSession, classId, firFile, currentlyComputing, fullyComputed)
-        firFile.accept(visitor, null).single
+        val visitor = ResolveSuperTypesTask(firSession, classId, file, currentlyComputing, fullyComputed)
+        file.accept(visitor, null).single
 
         return visitor.resultingClass
     }
