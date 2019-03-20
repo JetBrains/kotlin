@@ -134,12 +134,20 @@ private class ProgressionHeaderInfoBuilder(val context: CommonBackendContext) : 
 }
 
 internal class HeaderInfoBuilder(context: CommonBackendContext) {
-    private val progressionInfoBuilder = ProgressionHeaderInfoBuilder(context)
+    private val progressionHeaderInfoBuilder = ProgressionHeaderInfoBuilder(context)
     private val arrayIterationHandler = ArrayIterationHandler(context)
+    private val defaultProgressionHandler = DefaultProgressionHandler(context)
 
     fun build(variable: IrVariable): HeaderInfo? {
-        val initializer = variable.initializer!! as IrCall
+        // TODO: Merge DefaultProgressionHandler into ProgressionHeaderInfoBuilder. Not
+        // straightforward because ProgressionHeaderInfoBuilder works only on calls and not just
+        // any progression expression (i.e., progression may not be a call result).
+
+        // DefaultProgressionHandler must come AFTER ProgressionHeaderInfoBuilder, which handles
+        // more specialized forms of progressions.
+        val initializer = variable.initializer as IrCall
         return arrayIterationHandler.handle(initializer, null)
-            ?: initializer.dispatchReceiver?.accept(progressionInfoBuilder, null)
+            ?: initializer.dispatchReceiver?.accept(progressionHeaderInfoBuilder, null)
+            ?: defaultProgressionHandler.handle(initializer, null)
     }
 }
