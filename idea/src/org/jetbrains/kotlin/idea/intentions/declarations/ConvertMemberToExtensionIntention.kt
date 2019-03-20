@@ -37,14 +37,19 @@ import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.getReturnTypeReference
 import org.jetbrains.kotlin.idea.refactoring.withExpectedActuals
 import org.jetbrains.kotlin.idea.references.KtReference
-import org.jetbrains.kotlin.idea.util.*
+import org.jetbrains.kotlin.idea.util.ImportInsertHelper
+import org.jetbrains.kotlin.idea.util.actualsForExpected
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.idea.util.isExpectDeclaration
+import org.jetbrains.kotlin.idea.util.liftToExpected
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.utils.addIfNotNull
 
-class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallableDeclaration>(KtCallableDeclaration::class.java, "Convert member to extension"), LowPriorityAction {
+class ConvertMemberToExtensionIntention :
+    SelfTargetingRangeIntention<KtCallableDeclaration>(KtCallableDeclaration::class.java, "Convert member to extension"),
+    LowPriorityAction {
     private fun isApplicable(element: KtCallableDeclaration): Boolean {
         val classBody = element.parent as? KtClassBody ?: return false
         if (classBody.parent !is KtClass) return false
@@ -87,14 +92,13 @@ class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallable
 
                     val parent = bodyToSelect.parent
                     val lastSibling =
-                            if (parent is KtBlockExpression)
-                                parent.rBrace?.siblings(forward = false, withItself = false)?.first { it !is PsiWhiteSpace }
-                            else
-                                bodyToSelect.siblings(forward = true, withItself = false).lastOrNull()
+                        if (parent is KtBlockExpression)
+                            parent.rBrace?.siblings(forward = false, withItself = false)?.first { it !is PsiWhiteSpace }
+                        else
+                            bodyToSelect.siblings(forward = true, withItself = false).lastOrNull()
                     val endOffset = lastSibling?.endOffset ?: range.endOffset
                     selectionModel.setSelection(range.startOffset, endOffset)
-                }
-                else {
+                } else {
                     moveCaret(extension.textOffset, ScrollType.CENTER)
                 }
             }
@@ -102,8 +106,8 @@ class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallable
     }
 
     private fun processSingleDeclaration(
-            element: KtCallableDeclaration,
-            allowExpected: Boolean
+        element: KtCallableDeclaration,
+        allowExpected: Boolean
     ): Pair<KtCallableDeclaration, KtExpression?> {
         val descriptor = element.unsafeResolveToDescriptor()
         val containingClass = descriptor.containingDeclaration as ClassDescriptor
@@ -142,8 +146,7 @@ class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallable
         if (typeParameterList != null) {
             if (extension.typeParameterList != null) {
                 extension.typeParameterList!!.replace(typeParameterList)
-            }
-            else {
+            } else {
                 extension.addBefore(typeParameterList, extension.receiverTypeReference)
                 extension.addBefore(psiFactory.createWhiteSpace(), extension.receiverTypeReference)
             }
@@ -168,11 +171,11 @@ class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallable
         }
 
         val bodyText = getFunctionBodyTextFromTemplate(
-                project,
-                if (extension is KtFunction) TemplateKind.FUNCTION else TemplateKind.PROPERTY_INITIALIZER,
-                extension.name,
-                extension.getReturnTypeReference()?.text ?: "Unit",
-                extension.containingClassOrObject?.fqName
+            project,
+            if (extension is KtFunction) TemplateKind.FUNCTION else TemplateKind.PROPERTY_INITIALIZER,
+            extension.name,
+            extension.getReturnTypeReference()?.text ?: "Unit",
+            extension.containingClassOrObject?.fqName
         )
 
         when (extension) {
@@ -196,8 +199,7 @@ class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallable
                         getter = extension.addAfter(templateGetter, extension.typeReference) as KtPropertyAccessor
                         extension.addBefore(psiFactory.createNewLine(), getter)
                         selectBody(getter)
-                    }
-                    else if (!getter.hasBody()) {
+                    } else if (!getter.hasBody()) {
                         getter = getter.replace(templateGetter) as KtPropertyAccessor
                         selectBody(getter)
                     }
@@ -208,8 +210,7 @@ class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallable
                             setter = extension.addAfter(templateSetter, getter) as KtPropertyAccessor
                             extension.addBefore(psiFactory.createNewLine(), setter)
                             selectBody(setter)
-                        }
-                        else if (!setter.hasBody()) {
+                        } else if (!setter.hasBody()) {
                             setter = setter.replace(templateSetter) as KtPropertyAccessor
                             selectBody(setter)
                         }
@@ -248,15 +249,15 @@ class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallable
         }
 
         return Messages.showYesNoDialog(
-                "Do you want to make new extension an expected declaration?",
-                text,
-                Messages.getQuestionIcon()
+            "Do you want to make new extension an expected declaration?",
+            text,
+            Messages.getQuestionIcon()
         ) == Messages.YES
     }
 
     private fun createExtensionCallableAndPrepareBodyToSelect(
-            element: KtCallableDeclaration,
-            allowExpected: Boolean = true
+        element: KtCallableDeclaration,
+        allowExpected: Boolean = true
     ): Pair<KtCallableDeclaration, KtExpression?> {
         val expectedDeclaration = element.liftToExpected() as? KtCallableDeclaration
         if (expectedDeclaration != null) {
