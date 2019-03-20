@@ -38,8 +38,8 @@ internal class RangeToHandler(private val context: CommonBackendContext, private
         with(context.createIrBuilder(call.symbol, call.startOffset, call.endOffset)) {
             ProgressionHeaderInfo(
                 data,
-                lowerBound = call.dispatchReceiver!!,
-                upperBound = call.getValueArgument(0)!!,
+                first = call.dispatchReceiver!!,
+                last = call.getValueArgument(0)!!,
                 step = irInt(1)
             )
         }
@@ -57,8 +57,8 @@ internal class DownToHandler(private val context: CommonBackendContext, private 
         with(context.createIrBuilder(call.symbol, call.startOffset, call.endOffset)) {
             ProgressionHeaderInfo(
                 data,
-                lowerBound = call.extensionReceiver!!,
-                upperBound = call.getValueArgument(0)!!,
+                first = call.extensionReceiver!!,
+                last = call.getValueArgument(0)!!,
                 step = irInt(-1)
             )
         }
@@ -98,8 +98,8 @@ internal class UntilHandler(private val context: CommonBackendContext, private v
             // TODO: Do not add additionalEmptinessCondition if "bound" is const and > MIN_VALUE
             ProgressionHeaderInfo(
                 data,
-                lowerBound = call.extensionReceiver!!,
-                upperBound = call.getValueArgument(0)!!,
+                first = call.extensionReceiver!!,
+                last = call.getValueArgument(0)!!,
                 step = irInt(1),
                 closed = false,
                 additionalNotEmptyCondition = buildMinValueConditionIfNecessary(data, call.getValueArgument(0)!!)
@@ -194,8 +194,8 @@ internal class ArrayIterationHandler(val context: CommonBackendContext) : Header
                 dispatchReceiver = irGet(arrayReference)
             }
             ArrayHeaderInfo(
-                lowerBound = irInt(0),
-                upperBound = upperBound,
+                first = irInt(0),
+                last = upperBound,
                 step = irInt(1),
                 arrayVariable = arrayReference
             )
