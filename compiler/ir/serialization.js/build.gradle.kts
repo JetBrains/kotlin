@@ -11,7 +11,6 @@ dependencies {
     compile(project(":compiler:ir.psi2ir"))
     compile(project(":compiler:ir.backend.common"))
     compile(project(":compiler:ir.serialization.common"))
-    compile(project(":compiler:ir.serialization.js"))
     compile(project(":js:js.ast"))
     compile(project(":js:js.frontend"))
 

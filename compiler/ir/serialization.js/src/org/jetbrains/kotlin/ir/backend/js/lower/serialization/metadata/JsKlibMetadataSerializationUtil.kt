@@ -30,7 +30,7 @@ import java.io.ByteArrayOutputStream
 import java.util.zip.GZIPInputStream
 import java.util.zip.GZIPOutputStream
 
-internal object JsKlibMetadataSerializationUtil {
+object JsKlibMetadataSerializationUtil {
     const val CLASS_METADATA_FILE_EXTENSION: String = "klm"
 
     fun serializeMetadata(
