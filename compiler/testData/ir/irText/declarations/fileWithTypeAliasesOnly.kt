@@ -1,0 +1,1 @@
+typealias Bar<T> = (T) -> String
