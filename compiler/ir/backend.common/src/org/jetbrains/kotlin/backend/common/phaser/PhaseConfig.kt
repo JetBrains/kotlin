@@ -5,18 +5,6 @@
 
 package org.jetbrains.kotlin.backend.common.phaser
 
-fun createDefaultPhaseConfig(compoundPhase: CompilerPhase<*, *, *>): PhaseConfig {
-    val phases = compoundPhase.toPhaseMap()
-    val enabled = phases.values.toMutableSet()
-
-    return PhaseConfig(
-        compoundPhase, phases, enabled, emptySet(), emptySet(), emptySet(), emptySet(), emptySet(),
-        needProfiling = false,
-        checkConditions = false,
-        checkStickyConditions = false
-    )
-}
-
 fun CompilerPhase<*, *, *>.toPhaseMap(): MutableMap<String, AnyNamedPhase> =
     getNamedSubphases().fold(mutableMapOf()) { acc, (_, phase) ->
         check(phase.name !in acc) { "Duplicate phase name '${phase.name}'"}
@@ -26,16 +14,16 @@ fun CompilerPhase<*, *, *>.toPhaseMap(): MutableMap<String, AnyNamedPhase> =
 
 class PhaseConfig(
     private val compoundPhase: CompilerPhase<*, *, *>,
-    private val phases: MutableMap<String, AnyNamedPhase>,
-    enabled: MutableSet<AnyNamedPhase>,
-    val verbose: Set<AnyNamedPhase>,
-    val toDumpStateBefore: Set<AnyNamedPhase>,
-    val toDumpStateAfter: Set<AnyNamedPhase>,
-    val toValidateStateBefore: Set<AnyNamedPhase>,
-    val toValidateStateAfter: Set<AnyNamedPhase>,
-    val needProfiling: Boolean,
-    val checkConditions: Boolean,
-    val checkStickyConditions: Boolean
+    private val phases: MutableMap<String, AnyNamedPhase> = compoundPhase.toPhaseMap(),
+    enabled: MutableSet<AnyNamedPhase> = phases.values.toMutableSet(),
+    val verbose: Set<AnyNamedPhase> = emptySet(),
+    val toDumpStateBefore: Set<AnyNamedPhase> = emptySet(),
+    val toDumpStateAfter: Set<AnyNamedPhase> = emptySet(),
+    val toValidateStateBefore: Set<AnyNamedPhase> = emptySet(),
+    val toValidateStateAfter: Set<AnyNamedPhase> = emptySet(),
+    val needProfiling: Boolean = false,
+    val checkConditions: Boolean = false,
+    val checkStickyConditions: Boolean = false
 ) {
     private val enabledMut = enabled
 
