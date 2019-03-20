@@ -86,7 +86,7 @@ internal const val GENERATED_CLASS_NAME = "Generated_for_debugger_class"
 object KotlinEvaluationBuilder : EvaluatorBuilder {
     override fun build(codeFragment: PsiElement, position: SourcePosition?): ExpressionEvaluator {
         if (codeFragment !is KtCodeFragment || position == null) {
-            return EvaluatorBuilderImpl.getInstance()!!.build(codeFragment, position)
+            return EvaluatorBuilderImpl.getInstance().build(codeFragment, position)
         }
 
         if (position.line < 0 && position.file !is KtFile) {
