@@ -105,7 +105,10 @@ val KotlinType?.toClassDescriptor: ClassDescriptor?
     }
 
 internal val ClassDescriptor.shouldHaveGeneratedMethodsInCompanion: Boolean
-    get() = this.kind == ClassKind.CLASS && annotations.hasAnnotation(SerializationAnnotations.serializableAnnotationFqName)
+    get() = this.isSerializableObject || this.kind == ClassKind.CLASS && annotations.hasAnnotation(SerializationAnnotations.serializableAnnotationFqName)
+
+internal val ClassDescriptor.isSerializableObject: Boolean
+    get() = kind == ClassKind.OBJECT && hasSerializableAnnotationWithoutArgs
 
 internal val ClassDescriptor.isInternalSerializable: Boolean //todo normal checking
     get() {
@@ -159,7 +162,7 @@ internal val ClassDescriptor?.classSerializer: ClassDescriptor?
     }
 
 internal val ClassDescriptor.hasCompanionObjectAsSerializer: Boolean
-    get() = companionObjectDescriptor?.serializerForClass == this.defaultType
+    get() = isSerializableObject || companionObjectDescriptor?.serializerForClass == this.defaultType
 
 internal fun ClassDescriptor.isSerializerWhichRequiersKClass() = classId in setOf(enumSerializerId, contextSerializerId, polymorphicSerializerId)
 
@@ -177,6 +180,7 @@ internal val KotlinType.genericIndex: Int?
     get() = (this.constructor.declarationDescriptor as? TypeParameterDescriptor)?.index
 
 internal fun getSerializableClassDescriptorByCompanion(thisDescriptor: ClassDescriptor): ClassDescriptor? {
+    if (thisDescriptor.isSerializableObject) return thisDescriptor
     if (!thisDescriptor.isCompanionObject) return null
     val classDescriptor = (thisDescriptor.containingDeclaration as? ClassDescriptor) ?: return null
     if (!classDescriptor.shouldHaveGeneratedMethodsInCompanion) return null

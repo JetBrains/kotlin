@@ -21,7 +21,10 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializableCompanionCodegen
+import org.jetbrains.kotlinx.serialization.compiler.backend.common.findTypeSerializer
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
+import org.jetbrains.kotlinx.serialization.compiler.resolve.getSerializableClassDescriptorByCompanion
+import org.jetbrains.kotlinx.serialization.compiler.resolve.shouldHaveGeneratedMethodsInCompanion
 
 class SerializableCompanionIrGenerator(
     val irClass: IrClass,
@@ -82,30 +85,21 @@ class SerializableCompanionIrGenerator(
 
     override fun generateSerializerGetter(methodDescriptor: FunctionDescriptor) =
         irClass.contributeFunction(methodDescriptor, fromStubs = true) { getter ->
-            val serializer = serializableDescriptor.classSerializer!!
-            val expr = when {
-                serializer.kind == ClassKind.OBJECT -> irGetObject(serializer)
-                serializer.isSerializerWhichRequiersKClass() -> {
-                    val serializableType = serializableDescriptor.defaultType
-                    irInvoke(
-                        null,
-                        compilerContext.externalSymbols.referenceConstructor(serializer.unsubstitutedPrimaryConstructor!!),
-                        typeArguments = listOf(serializableType.toIrType()),
-                        valueArguments = listOf(classReference(serializableType)),
-                        returnTypeHint = getter.returnType
-                    )
-                }
-                else -> {
-                    val desc = requireNotNull(
-                        findSerializerConstructorForTypeArgumentsSerializers(serializer)
-                    ) { "Generated serializer does not have constructor with required number of arguments" }
-                    val ctor = compilerContext.externalSymbols.referenceConstructor(desc)
-                    val typeArgs = getter.typeParameters.map { it.defaultType }
-                    val args: List<IrExpression> = getter.valueParameters.map { irGet(it) }
-                    irInvoke(null, ctor, typeArgs, args, returnTypeHint = getter.returnType)
-                }
-            }
+            val serializer = requireNotNull(
+                findTypeSerializer(
+                    serializableDescriptor.module,
+                    serializableDescriptor.toSimpleType()
+                )
+            )
+            val args: List<IrExpression> = getter.valueParameters.map { irGet(it) }
+            val expr = serializerInstance(
+                this@SerializableCompanionIrGenerator,
+                serializableDescriptor, serializer,
+                serializableDescriptor.module,
+                serializableDescriptor.defaultType
+            ) { args[it] }
             patchSerializableClassWithMarkerAnnotation(serializer)
-            +irReturn(expr)
+            +irReturn(requireNotNull(expr))
         }
+
 }

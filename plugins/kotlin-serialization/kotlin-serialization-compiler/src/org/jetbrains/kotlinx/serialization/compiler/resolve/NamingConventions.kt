@@ -76,6 +76,7 @@ object SerialEntityNames {
 
 object SpecialBuiltins {
     const val referenceArraySerializer = "ReferenceArraySerializer"
+    const val objectSerializer = "ObjectSerializer"
     const val enumSerializer = "EnumSerializer"
     const val polymorphicSerializer = "PolymorphicSerializer"
     const val contextSerializer = "ContextSerializer"

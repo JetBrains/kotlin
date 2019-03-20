@@ -17,40 +17,45 @@
 package org.jetbrains.kotlinx.serialization.compiler.backend.js
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.JsNameRef
+import org.jetbrains.kotlin.js.backend.ast.JsReturn
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.declaration.DeclarationBodyVisitor
-import org.jetbrains.kotlin.js.translate.expression.ExpressionVisitor
 import org.jetbrains.kotlin.psi.KtPureClassOrObject
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializableCompanionCodegen
-import org.jetbrains.kotlinx.serialization.compiler.resolve.*
+import org.jetbrains.kotlinx.serialization.compiler.backend.common.findTypeSerializer
+import org.jetbrains.kotlinx.serialization.compiler.resolve.getSerializableClassDescriptorByCompanion
+import org.jetbrains.kotlinx.serialization.compiler.resolve.shouldHaveGeneratedMethodsInCompanion
+import org.jetbrains.kotlinx.serialization.compiler.resolve.toSimpleType
 
 class SerializableCompanionJsTranslator(
     declaration: ClassDescriptor,
     val translator: DeclarationBodyVisitor,
     val context: TranslationContext
-): SerializableCompanionCodegen(declaration, context.bindingContext()) {
+) : SerializableCompanionCodegen(declaration, context.bindingContext()) {
 
     override fun generateSerializerGetter(methodDescriptor: FunctionDescriptor) {
-        val f = context.buildFunction(methodDescriptor) {jsFun, context ->
-            val serializer = serializableDescriptor.classSerializer!!
-            val stmt: JsExpression = when {
-                serializer.kind == ClassKind.OBJECT -> context.serializerObjectGetter(serializer)
-                serializer.isSerializerWhichRequiersKClass() -> JsNew(
-                    context.translateQualifiedReference(serializer),
-                    listOf(ExpressionVisitor.getObjectKClass(context, serializableDescriptor))
+        val f = context.buildFunction(methodDescriptor) { jsFun, context ->
+            val serializer = requireNotNull(
+                findTypeSerializer(
+                    serializableDescriptor.module,
+                    serializableDescriptor.toSimpleType()
                 )
-                else -> {
-                    val args = jsFun.parameters.map { JsNameRef(it.name) }
-                    val ref = context.getInnerNameForDescriptor(
-                        requireNotNull(
-                            findSerializerConstructorForTypeArgumentsSerializers(serializer)
-                        ) { "Generated serializer does not have constructor with required number of arguments" })
-                    JsInvocation(ref.makeRef(), args)
-                }
-            }
+            )
+            val args = jsFun.parameters.map { JsNameRef(it.name) }
+            val stmt =
+                requireNotNull(
+                    serializerInstance(
+                        context,
+                        serializer,
+                        serializableDescriptor.module,
+                        serializableDescriptor.defaultType,
+                        genericGetter = {
+                            args[it]
+                        })
+                )
             +JsReturn(stmt)
         }
         translator.addFunction(methodDescriptor, f, null)

@@ -18,6 +18,7 @@ package org.jetbrains.kotlinx.serialization.compiler.extensions
 
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.name.Name
@@ -43,7 +44,7 @@ open class SerializationResolveExtension : SyntheticResolveExtension {
     }
 
     override fun getSyntheticFunctionNames(thisDescriptor: ClassDescriptor): List<Name> = when {
-        thisDescriptor.isCompanionObject && getSerializableClassDescriptorByCompanion(thisDescriptor) != null ->
+        thisDescriptor.isSerializableObject || thisDescriptor.isCompanionObject && getSerializableClassDescriptorByCompanion(thisDescriptor) != null ->
             listOf(SerialEntityNames.SERIALIZER_PROVIDER_NAME)
         else -> emptyList()
     }
@@ -65,7 +66,8 @@ open class SerializationResolveExtension : SyntheticResolveExtension {
     }
 
     override fun getSyntheticCompanionObjectNameIfNeeded(thisDescriptor: ClassDescriptor): Name? =
-        if (thisDescriptor.shouldHaveGeneratedMethodsInCompanion) SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
+        if (thisDescriptor.kind == ClassKind.CLASS && thisDescriptor.annotations.hasAnnotation(SerializationAnnotations.serializableAnnotationFqName))
+            SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
         else null
 
     override fun addSyntheticSupertypes(thisDescriptor: ClassDescriptor, supertypes: MutableList<KotlinType>) {
