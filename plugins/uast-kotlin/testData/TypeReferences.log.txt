@@ -28,14 +28,14 @@ UFile (package = )
                     ULocalVariable (name = at)
                         UExpressionList (elvis)
                             UDeclarationsExpression
-                                ULocalVariable (name = var708e1d08)
+                                ULocalVariable (name = var708e23eb)
                                     UAnnotation (fqName = org.jetbrains.annotations.Nullable)
                                     USimpleNameReferenceExpression (identifier = arg)
                             UIfExpression
                                 UBinaryExpression (operator = !=)
-                                    USimpleNameReferenceExpression (identifier = var708e1d08)
+                                    USimpleNameReferenceExpression (identifier = var708e23eb)
                                     ULiteralExpression (value = null)
-                                USimpleNameReferenceExpression (identifier = var708e1d08)
+                                USimpleNameReferenceExpression (identifier = var708e23eb)
                                 UReturnExpression
                 UDeclarationsExpression
                     ULocalVariable (name = tl)
@@ -59,6 +59,8 @@ UFile (package = )
                                                 USimpleNameReferenceExpression (identifier = toString, resolvesTo = null)
                 UDeclarationsExpression
                     ULocalVariable (name = lls)
+                UDeclarationsExpression
+                    ULocalVariable (name = llsAliased)
                 UDeclarationsExpression
                     ULocalVariable (name = llt)
                 UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))

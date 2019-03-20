@@ -5,6 +5,7 @@ fun foo(parameter: Int): String {
     return result
 }
 
+typealias ListOfLists = List<List<String>>
 
 fun <T> parameterizedFoo(arg: T?) {
     val a = arg
@@ -13,6 +14,7 @@ fun <T> parameterizedFoo(arg: T?) {
     val tl: List<T> = listOf(at)
     val tsl: List<String> = tl.map { it.toString() }
     val lls: List<List<String>>
+    val llsAliased: ListOfLists
     val llt: List<List<T>>
 
     parameterizedFoo<List<String>>(emptyList())

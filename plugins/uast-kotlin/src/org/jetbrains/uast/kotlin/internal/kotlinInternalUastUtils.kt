@@ -66,7 +66,7 @@ import java.text.StringCharacterIterator
 internal val KOTLIN_CACHED_UELEMENT_KEY = Key.create<WeakReference<UElement>>("cached-kotlin-uelement")
 
 @Suppress("NOTHING_TO_INLINE")
-internal inline fun String?.orAnonymous(kind: String = ""): String = this ?: "<anonymous"+(if (kind.isNotBlank()) " $kind" else "")+">"
+internal inline fun String?.orAnonymous(kind: String = ""): String = this ?: "<anonymous" + (if (kind.isNotBlank()) " $kind" else "") + ">"
 
 internal fun DeclarationDescriptor.toSource(): PsiElement? {
     return try {
@@ -115,6 +115,16 @@ internal fun resolveContainingDeserializedClass(context: KtElement, memberDescri
         else -> return null
     }
 }
+
+internal fun resolveToPsiClass(uElement: UElement, declarationDescriptor: DeclarationDescriptor, context: KtElement): PsiClass? =
+    when (declarationDescriptor) {
+        is ConstructorDescriptor -> declarationDescriptor.returnType
+        is ClassDescriptor -> declarationDescriptor.defaultType
+        is TypeParameterDescriptor -> declarationDescriptor.defaultType
+        is TypeAliasDescriptor -> declarationDescriptor.expandedType
+        else -> null
+    }?.toPsiType(uElement, context, true).let { PsiTypesUtil.getPsiClass(it) }
+
 
 private fun resolveDeserialized(context: KtElement, descriptor: DeclarationDescriptor): PsiMethod? {
     if (descriptor !is DeserializedCallableMemberDescriptor) return null
@@ -338,3 +348,5 @@ internal fun KotlinULambdaExpression.getFunctionalInterfaceType(): PsiType? {
 }
 
 internal fun unwrapFakeFileForLightClass(file: PsiFile): PsiFile = (file as? FakeFileForLightClass)?.ktFile ?: file
+
+
