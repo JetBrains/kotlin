@@ -30,7 +30,7 @@ class FirSupertypeResolverTransformer : FirAbstractTreeTransformer() {
     private lateinit var file: FirFile
 
     override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirFile> {
-        firSession = file.session
+        firSession = file.fileSession
         this.file = file
         return super.transformFile(file, data)
     }
