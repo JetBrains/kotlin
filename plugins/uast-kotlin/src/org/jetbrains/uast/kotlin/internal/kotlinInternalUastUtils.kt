@@ -268,6 +268,11 @@ internal fun PsiElement.getMaybeLightElement(): PsiElement? {
             val lightElement = toLightElements().firstOrNull()
             if (lightElement != null) return lightElement
 
+            if (this is KtPrimaryConstructor) {
+                // annotations don't have constructors (but in Kotlin they do), so resolving to the class here
+                (this.parent as? KtClassOrObject)?.takeIf { it.isAnnotation() }?.toLightClass()?.let { return it }
+            }
+
             when (val uElement = this.toUElement()) {
                 is UDeclaration -> uElement.javaPsi
                 is UDeclarationsExpression -> uElement.declarations.firstOrNull()?.javaPsi
