@@ -11,7 +11,10 @@ import org.jetbrains.kotlin.backend.common.descriptors.*
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -27,9 +30,13 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.descriptorWithoutAccessCheck
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.util.transformDeclarationsFlat
-import org.jetbrains.kotlin.ir.visitors.*
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
 import java.util.*
@@ -303,7 +310,7 @@ class LocalDeclarationsLowering(
                     expression.startOffset, expression.endOffset,
                     context.irBuiltIns.unitType,
                     newCallee.symbol,
-                    newCallee.descriptor,
+                    newCallee.descriptorWithoutAccessCheck,
                     expression.typeArgumentsCount
                 ).also {
                     it.fillArguments2(expression, newCallee)
@@ -361,7 +368,7 @@ class LocalDeclarationsLowering(
                     expression.startOffset, expression.endOffset,
                     expression.type, // TODO functional type for transformed descriptor
                     newCallee.symbol,
-                    newCallee.descriptor,
+                    newCallee.descriptorWithoutAccessCheck as FunctionDescriptor,
                     expression.typeArgumentsCount,
                     expression.origin
                 ).also {
@@ -462,8 +469,8 @@ class LocalDeclarationsLowering(
                     oldCall.startOffset, oldCall.endOffset,
                     newCallee.returnType,
                     newCallee.symbol,
-                    newCallee.descriptor,
                     oldCall.typeArgumentsCount,
+                    newCallee.valueParameters.size,
                     oldCall.origin, oldCall.superQualifierSymbol
                 ).also {
                     it.copyTypeArgumentsFrom(oldCall)
@@ -506,7 +513,7 @@ class LocalDeclarationsLowering(
             val oldDeclaration = localFunctionContext.declaration as IrSimpleFunction
 
             val memberOwner = memberDeclaration.parent
-            val newDescriptor = WrappedSimpleFunctionDescriptor(oldDeclaration.descriptor)
+            val newDescriptor = WrappedSimpleFunctionDescriptor(oldDeclaration.descriptorWithoutAccessCheck)
             val newSymbol = IrSimpleFunctionSymbolImpl(newDescriptor)
             val newName = generateNameForLiftedDeclaration(oldDeclaration, memberOwner)
 
@@ -601,7 +608,7 @@ class LocalDeclarationsLowering(
             val localClassContext = localClasses[oldDeclaration.parent]!!
             val capturedValues = localClassContext.closure.capturedValues
 
-            val newDescriptor = WrappedClassConstructorDescriptor(oldDeclaration.descriptor.annotations, oldDeclaration.descriptor.source)
+            val newDescriptor = WrappedClassConstructorDescriptor(oldDeclaration.descriptorWithoutAccessCheck.annotations, oldDeclaration.descriptorWithoutAccessCheck.source)
             val newSymbol = IrConstructorSymbolImpl(newDescriptor)
 
             val newDeclaration = IrConstructorImpl(

@@ -5,8 +5,14 @@
 
 package org.jetbrains.kotlin.backend.common.lower
 
-import org.jetbrains.kotlin.backend.common.*
-import org.jetbrains.kotlin.backend.common.descriptors.*
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.DeclarationContainerLoweringPass
+import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.FunctionLoweringPass
+import org.jetbrains.kotlin.backend.common.descriptors.WrappedClassConstructorDescriptor
+import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
+import org.jetbrains.kotlin.backend.common.descriptors.WrappedValueParameterDescriptor
+import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
 import org.jetbrains.kotlin.backend.common.ir.ir2string
@@ -273,8 +279,8 @@ open class DefaultParameterInjector(
                     endOffset = expression.endOffset,
                     type = symbol.owner.returnType,
                     symbol = symbol,
-                    descriptor = descriptor,
                     typeArgumentsCount = expression.typeArgumentsCount,
+                    valueArgumentsCount = symbol.owner.valueParameters.size, //expression.valueArgumentsCount???
                     origin = DEFAULT_DISPATCH_CALL,
                     superQualifierSymbol = expression.superQualifierSymbol
                 )
@@ -461,7 +467,7 @@ private fun IrFunction.generateDefaultsFunctionImpl(
 private fun buildFunctionDeclaration(irFunction: IrFunction, origin: IrDeclarationOrigin): IrFunction {
     when (irFunction) {
         is IrConstructor -> {
-            val descriptor = WrappedClassConstructorDescriptor(irFunction.descriptor.annotations, irFunction.descriptor.source)
+            val descriptor = WrappedClassConstructorDescriptor(irFunction.descriptorWithoutAccessCheck.annotations, irFunction.descriptorWithoutAccessCheck.source)
             return IrConstructorImpl(
                 irFunction.startOffset,
                 irFunction.endOffset,
@@ -479,7 +485,7 @@ private fun buildFunctionDeclaration(irFunction: IrFunction, origin: IrDeclarati
             }
         }
         is IrSimpleFunction -> {
-            val descriptor = WrappedSimpleFunctionDescriptor(irFunction.descriptor.annotations, irFunction.descriptor.source)
+            val descriptor = WrappedSimpleFunctionDescriptor(irFunction.descriptorWithoutAccessCheck.annotations, irFunction.descriptorWithoutAccessCheck.source)
             val name = Name.identifier("${irFunction.name}\$default")
 
             return IrFunctionImpl(

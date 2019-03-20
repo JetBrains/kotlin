@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.descriptors.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.util.AccessToDescriptors
 import org.jetbrains.kotlin.ir.util.DescriptorsRemapper
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.parentAsClass
@@ -22,8 +23,10 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
  */
 
 inline fun <reified T : IrElement> T.deepCopyWithWrappedDescriptors(initialParent: IrDeclarationParent? = null): T =
-    deepCopyWithSymbols(initialParent, DescriptorsToIrRemapper).also {
-        it.acceptVoid(WrappedDescriptorPatcher)
+    AccessToDescriptors.allowed {
+        deepCopyWithSymbols(initialParent, DescriptorsToIrRemapper).also {
+            it.acceptVoid(WrappedDescriptorPatcher)
+        }
     }
 
 object DescriptorsToIrRemapper : DescriptorsRemapper {

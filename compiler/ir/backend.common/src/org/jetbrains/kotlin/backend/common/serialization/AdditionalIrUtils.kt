@@ -5,18 +5,17 @@
 
 package org.jetbrains.kotlin.backend.common.serialization
 
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.SourceManager
+import org.jetbrains.kotlin.ir.SourceRangeInfo
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.util.AccessToDescriptors
+import org.jetbrains.kotlin.ir.util.descriptorWithoutAccessCheck
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.ir.SourceRangeInfo
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import java.io.File
@@ -65,6 +64,8 @@ val IrValueParameter.isVararg get() = this.varargElementType != null
 val IrFunction.isSuspend get() = this is IrSimpleFunction && this.isSuspend
 
 val IrFunction.isReal get() = this.origin != IrDeclarationOrigin.FAKE_OVERRIDE
+
+val IrDeclaration.isExpect get() = descriptorWithoutAccessCheck.isExpectMember
 
 fun IrSimpleFunction.overrides(other: IrSimpleFunction): Boolean {
     if (this == other) return true
@@ -133,7 +134,7 @@ fun IrDeclaration.findTopLevelDeclaration(): IrDeclaration = when {
 }
 
 val IrDeclaration.isAnonymousObject get() = DescriptorUtils.isAnonymousObject(this.descriptor)
-val IrDeclaration.isLocal get() = DescriptorUtils.isLocal(this.descriptor)
+val IrDeclaration.isLocal get() = AccessToDescriptors.allowed { DescriptorUtils.isLocal(this.descriptor) }
 
 val IrDeclaration.module get() = this.descriptor.module
 

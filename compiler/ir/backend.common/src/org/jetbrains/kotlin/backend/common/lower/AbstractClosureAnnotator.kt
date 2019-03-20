@@ -19,14 +19,13 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.peek
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
+import org.jetbrains.kotlin.backend.common.serialization.isLocal
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 // TODO: synchronize with JVM BE
 // TODO: rename the file.
@@ -201,7 +200,7 @@ class ClosureAnnotator(declaration: IrDeclaration) {
         }
 
         private fun processMemberAccess(declaration: IrDeclaration) {
-            if (DescriptorUtils.isLocal(declaration.descriptor)) {
+            if (declaration.isLocal) {
                 val builder = closureBuilders[declaration]
                 builder?.let {
                     closuresStack.peek()?.include(builder)
