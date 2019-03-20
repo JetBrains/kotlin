@@ -128,11 +128,11 @@ pluginBundle {
         id = "org.jetbrains.kotlin.jvm",
         display = "Kotlin JVM plugin"
     )
-    create(
-        name = "kotlinJsPlugin",
-        id = "org.jetbrains.kotlin.js",
-        display = "Kotlin JS plugin"
-    )
+//    create(
+//        name = "kotlinJsPlugin",
+//        id = "org.jetbrains.kotlin.js",
+//        display = "Kotlin JS plugin"
+//    )
     create(
         name = "kotlinMultiplatformPlugin",
         id = "org.jetbrains.kotlin.multiplatform",

@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Test
 import java.io.File
 import java.util.zip.ZipFile
+import kotlin.test.Ignore
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -350,6 +351,7 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
         }
     }
 
+    @Ignore
     @Test
     fun testNewKotlinJsPlugin() = with(Project("kotlin-js-plugin-project", GradleVersionRequired.AtLeast("4.10.2"))) {
         setupWorkingDir()
