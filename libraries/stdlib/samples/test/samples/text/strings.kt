@@ -26,7 +26,7 @@ class Strings {
     @Sample
     fun trimIndent() {
         val withoutIndent =
-                """
+            """
                     ABC
                     123
                     456
@@ -137,6 +137,7 @@ class Strings {
         val noPadding = "abcde".padEnd(3)
         assertPrints("'$noPadding'", "'abcde'")
     }
+
     @Sample
     fun clearStringBuilder() {
         val builder = StringBuilder()
@@ -286,7 +287,13 @@ class Strings {
 
     @Sample
     fun indexOf() {
-        val word = "Brandy"
-        assertPrints(word.indexOf("a"), "2")
+        fun getSubstringDetails(str: String, toFind: String): String {
+            return "Found $toFind in $str at position ${str.indexOf(toFind)}"
+        }
+
+        val str = "Kotlin"
+        val toFind = "otli"
+
+        assertPrints(getSubstringDetails(str, toFind), "Found otli in Kotlin at position 1")
     }
 }
