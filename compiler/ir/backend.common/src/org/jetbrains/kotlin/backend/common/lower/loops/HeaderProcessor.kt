@@ -23,12 +23,10 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.isNullable
-import org.jetbrains.kotlin.util.OperatorNameConventions
 
 /** Contains information about variables used in the loop. */
 internal sealed class ForLoopHeader(
     val inductionVariable: IrVariable,
-    val bound: IrVariable,
     val last: IrVariable,
     val step: IrVariable,
     val progressionType: ProgressionType,
@@ -47,17 +45,16 @@ internal sealed class ForLoopHeader(
 internal class ProgressionLoopHeader(
     private val headerInfo: ProgressionHeaderInfo,
     inductionVariable: IrVariable,
-    bound: IrVariable,
     last: IrVariable,
     step: IrVariable
-) : ForLoopHeader(inductionVariable, bound, last, step, headerInfo.progressionType, needsEmptinessCheck = true) {
+) : ForLoopHeader(inductionVariable, last, step, headerInfo.progressionType, needsEmptinessCheck = true) {
 
     override fun initializeLoopVariable(symbols: Symbols<CommonBackendContext>, builder: DeclarationIrBuilder) = with(builder) {
         irGet(inductionVariable)
     }
 
     override val declarations: List<IrStatement>
-        get() = listOf(inductionVariable, step, bound, last)
+        get() = headerInfo.additionalVariables + listOf(inductionVariable, step, last)
 
     override fun buildInnerLoop(builder: DeclarationIrBuilder, loop: IrLoop, newBody: IrExpression?): IrLoop = with(builder) {
         assert(loopVariable != null)
@@ -131,10 +128,9 @@ internal class ProgressionLoopHeader(
 internal class ArrayLoopHeader(
     private val headerInfo: ArrayHeaderInfo,
     inductionVariable: IrVariable,
-    bound: IrVariable,
     last: IrVariable,
     step: IrVariable
-) : ForLoopHeader(inductionVariable, bound, last, step, ProgressionType.INT_PROGRESSION, needsEmptinessCheck = false) {
+) : ForLoopHeader(inductionVariable, last, step, ProgressionType.INT_PROGRESSION, needsEmptinessCheck = false) {
 
     override fun initializeLoopVariable(symbols: Symbols<CommonBackendContext>, builder: DeclarationIrBuilder) = with(builder) {
         val arrayClass = (headerInfo.arrayVariable.type.classifierOrNull) as IrClassSymbol
@@ -146,7 +142,7 @@ internal class ArrayLoopHeader(
     }
 
     override val declarations: List<IrStatement>
-        get() = listOf(headerInfo.arrayVariable, inductionVariable, step, bound, last)
+        get() = listOf(headerInfo.arrayVariable, inductionVariable, step, last)
 
     override fun buildInnerLoop(builder: DeclarationIrBuilder, loop: IrLoop, newBody: IrExpression?): IrLoop = with(builder) {
         val builtIns = context.irBuiltIns
@@ -182,23 +178,28 @@ internal class HeaderProcessor(
         if (!variable.type.isSubtypeOfClass(symbols.iterator)) {
             return null
         }
+
+        // Collect loop information.
+        val headerInfo = headerInfoBuilder.build(variable)
+            ?: return null // If the iterable is not supported.
+
         val builder = context.createIrBuilder(scopeOwnerSymbol(), variable.startOffset, variable.endOffset)
-        // Collect loop info and form the loop header composite.
-        val progressionInfo = headerInfoBuilder.build(variable)
-            ?: return null
-        if (progressionInfo is ArrayHeaderInfo) {
-            progressionInfo.arrayVariable.parent = variable.parent
-        }
-        with(builder) {
-            with(progressionInfo) {
-                /**
-                 * For this loop:
-                 * `for (i in a() .. b() step c() step d())`
-                 * We need to call functions in the following order: a, b, c, d.
-                 * So we call b() before step calculations and then call last element calculation function (if required).
-                 */
-                // Due to features of PSI2IR we can obtain nullable arguments here while actually
-                // they are non-nullable (the frontend takes care about this). So we need to cast them to non-nullable.
+        with(builder) builder@{
+            with(headerInfo) {
+                // For this loop:
+                //
+                // ```
+                // for (i in first()..last() step step())
+                // ```
+                //
+                // ...the functions may have side-effects so we need to call them in the following
+                // order: first(), last(), step().
+                //
+                // We also need to cast them to conform to the progression type so that operations
+                // in the induction variable within the loop are more efficient.
+                //
+                // In the above example, if first() is a Long and last() is an Int, this creates a
+                // LongProgression so last(), should be cast to a Long.
                 val inductionVariable = scope.createTemporaryVariable(
                     first.castIfNecessary(progressionType),
                     nameHint = "inductionVariable",
@@ -206,52 +207,32 @@ internal class HeaderProcessor(
                     origin = IrDeclarationOrigin.FOR_LOOP_IMPLICIT_VARIABLE
                 )
 
-                val upperBoundTmpVariable = scope.createTemporaryVariable(
-                    ensureNotNullable(last.castIfNecessary(progressionType)),
-                    nameHint = "upperBound",
-                    origin = IrDeclarationOrigin.FOR_LOOP_IMPLICIT_VARIABLE
-                )
-
-                val stepExpression = ensureNotNullable(step)
-
-                val stepValue = scope.createTemporaryVariable(
-                    stepExpression,
-                    nameHint = "step",
-                    origin = IrDeclarationOrigin.FOR_LOOP_IMPLICIT_VARIABLE
-                )
-
-                // Calculate the last element of the progression
-                // The last element can be:
-                //    boundValue, if step is 1 and the range is closed.
-                //    boundValue - 1, if step is 1 and the range is open.
-                //    getProgressionLast(inductionVariable, boundValue, step), if step != 1 and the range is closed.
-                //    getProgressionLast(inductionVariable, boundValue - 1, step), if step != 1 and the range is open.
-                val lastExpression = if (closed) {
-                    irGet(upperBoundTmpVariable)
-                } else {
-                    val decrementSymbol = symbols.getUnaryOperator(OperatorNameConventions.DEC, upperBoundTmpVariable.type.toKotlinType())
-                    irCall(decrementSymbol.owner).apply {
-                        dispatchReceiver = irGet(upperBoundTmpVariable)
-                    }
-                }
+                // Due to features of PSI2IR we can obtain nullable arguments here while actually
+                // they are non-nullable (the frontend takes care about this). So we need to cast
+                // them to non-nullable.
+                // TODO: Confirm if casting to non-nullable is still necessary
                 val lastValue = scope.createTemporaryVariable(
-                    lastExpression,
+                    ensureNotNullable(last.castIfNecessary(progressionType)),
                     nameHint = "last",
                     origin = IrDeclarationOrigin.FOR_LOOP_IMPLICIT_VARIABLE
                 )
 
-                return when (progressionInfo) {
+                val stepValue = scope.createTemporaryVariable(
+                    ensureNotNullable(step),
+                    nameHint = "step",
+                    origin = IrDeclarationOrigin.FOR_LOOP_IMPLICIT_VARIABLE
+                )
+
+                return when (headerInfo) {
                     is ArrayHeaderInfo -> ArrayLoopHeader(
-                        progressionInfo,
+                        headerInfo,
                         inductionVariable,
-                        upperBoundTmpVariable,
                         lastValue,
                         stepValue
                     )
                     is ProgressionHeaderInfo -> ProgressionLoopHeader(
-                        progressionInfo,
+                        headerInfo,
                         inductionVariable,
-                        upperBoundTmpVariable,
                         lastValue,
                         stepValue
                     )

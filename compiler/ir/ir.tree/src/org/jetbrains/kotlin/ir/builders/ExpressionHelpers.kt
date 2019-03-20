@@ -249,11 +249,12 @@ fun IrBuilderWithScope.irCallOp(
     callee: IrFunctionSymbol,
     type: IrType,
     dispatchReceiver: IrExpression,
-    argument: IrExpression
+    argument: IrExpression? = null
 ): IrCall =
     irCall(callee, type).apply {
         this.dispatchReceiver = dispatchReceiver
-        putValueArgument(0, argument)
+        if (argument != null)
+            putValueArgument(0, argument)
     }
 
 fun IrBuilderWithScope.typeOperator(
