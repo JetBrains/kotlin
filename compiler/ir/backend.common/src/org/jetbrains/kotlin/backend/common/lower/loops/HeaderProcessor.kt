@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrDoWhileLoopImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrWhileLoopImpl
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.functions
@@ -33,12 +32,21 @@ internal sealed class ForLoopHeader(
     val needsEmptinessCheck: Boolean,
     var loopVariable: IrVariable? = null
 ) {
+    /** Expression used to initialize the loop variable at the beginning of the loop. */
     abstract fun initializeLoopVariable(symbols: Symbols<CommonBackendContext>, builder: DeclarationIrBuilder): IrExpression
 
+    /** Declarations used in the loop condition and body (e.g., induction variable). */
     abstract val declarations: List<IrStatement>
 
+    /** Builds a new loop from the old loop. */
     abstract fun buildInnerLoop(builder: DeclarationIrBuilder, loop: IrLoop, newBody: IrExpression?): IrLoop
 
+    /**
+     * A condition used in a check surrounding the loop checking for an empty loop. The expression
+     * should evaluate to true if the loop is NOT empty.
+     *
+     * Returns null if no check is needed for the for-loop.
+     */
     abstract fun buildNotEmptyCondition(builder: DeclarationIrBuilder): IrExpression?
 }
 
@@ -50,6 +58,7 @@ internal class ProgressionLoopHeader(
 ) : ForLoopHeader(inductionVariable, last, step, headerInfo.progressionType, needsEmptinessCheck = true) {
 
     override fun initializeLoopVariable(symbols: Symbols<CommonBackendContext>, builder: DeclarationIrBuilder) = with(builder) {
+        // loopVariable = inductionVariable
         irGet(inductionVariable)
     }
 
@@ -57,6 +66,7 @@ internal class ProgressionLoopHeader(
         get() = headerInfo.additionalVariables + listOf(inductionVariable, step, last)
 
     override fun buildInnerLoop(builder: DeclarationIrBuilder, loop: IrLoop, newBody: IrExpression?): IrLoop = with(builder) {
+        // Condition: loopVariable != last
         assert(loopVariable != null)
         val newCondition = irCall(context.irBuiltIns.booleanNotSymbol).apply {
             putValueArgument(0, irCall(context.irBuiltIns.eqeqSymbol).apply {
@@ -64,6 +74,8 @@ internal class ProgressionLoopHeader(
                 putValueArgument(1, irGet(last))
             })
         }
+
+        // TODO: Build while loop (instead of do-while) where possible, e.g., in "until" ranges, or when "last" is known to be < MAX_VALUE
         IrDoWhileLoopImpl(loop.startOffset, loop.endOffset, loop.type, loop.origin).apply {
             label = loop.label
             condition = newCondition
@@ -133,8 +145,8 @@ internal class ArrayLoopHeader(
 ) : ForLoopHeader(inductionVariable, last, step, ProgressionType.INT_PROGRESSION, needsEmptinessCheck = false) {
 
     override fun initializeLoopVariable(symbols: Symbols<CommonBackendContext>, builder: DeclarationIrBuilder) = with(builder) {
-        val arrayClass = (headerInfo.arrayVariable.type.classifierOrNull) as IrClassSymbol
-        val arrayGetFun = arrayClass.owner.functions.find { it.name.toString() == "get" }!!
+        // loopVariable = array[inductionVariable]
+        val arrayGetFun = headerInfo.arrayVariable.type.getClass()!!.functions.first { it.name.asString() == "get" }
         irCall(arrayGetFun).apply {
             dispatchReceiver = irGet(headerInfo.arrayVariable)
             putValueArgument(0, irGet(inductionVariable))
@@ -145,12 +157,14 @@ internal class ArrayLoopHeader(
         get() = listOf(headerInfo.arrayVariable, inductionVariable, step, last)
 
     override fun buildInnerLoop(builder: DeclarationIrBuilder, loop: IrLoop, newBody: IrExpression?): IrLoop = with(builder) {
+        // Condition: loopVariable != last
         val builtIns = context.irBuiltIns
-        val callee = builtIns.lessOrEqualFunByOperandType[builtIns.int]?.symbol!!
+        val callee = builtIns.lessOrEqualFunByOperandType[builtIns.int]!!
         val newCondition = irCall(callee).apply {
             putValueArgument(0, irGet(inductionVariable))
             putValueArgument(1, irGet(last))
         }
+
         IrWhileLoopImpl(loop.startOffset, loop.endOffset, loop.type, loop.origin).apply {
             label = loop.label
             condition = newCondition
@@ -162,8 +176,10 @@ internal class ArrayLoopHeader(
     override fun buildNotEmptyCondition(builder: DeclarationIrBuilder): IrExpression? = null
 }
 
-// Given the for loop iterator variable, extract information about iterable subject
-// and create ForLoopHeader from it.
+/**
+ * Given the for-loop iterator variable, extract information about the iterable subject
+ * and create a [ForLoopHeader] from it.
+ */
 internal class HeaderProcessor(
     private val context: CommonBackendContext,
     private val headerInfoBuilder: HeaderInfoBuilder,
@@ -172,8 +188,15 @@ internal class HeaderProcessor(
 
     private val symbols = context.ir.symbols
 
+    /**
+     * Extracts information for building the for-loop (as a [ForLoopHeader]) from the given
+     * "header" statement that stores the iterator into the loop variable
+     * (e.g., `val it = someIterable.iterator()`).
+     *
+     * Returns null if the for-loop cannot be lowered.
+     */
     fun processHeader(variable: IrVariable): ForLoopHeader? {
-
+        // Verify the variable type is a subtype of Iterator<*>.
         assert(variable.origin == IrDeclarationOrigin.FOR_LOOP_ITERATOR)
         if (!variable.type.isSubtypeOfClass(symbols.iterator)) {
             return null
@@ -181,7 +204,7 @@ internal class HeaderProcessor(
 
         // Collect loop information.
         val headerInfo = headerInfoBuilder.build(variable)
-            ?: return null // If the iterable is not supported.
+            ?: return null  // If the iterable is not supported.
 
         val builder = context.createIrBuilder(scopeOwnerSymbol(), variable.startOffset, variable.endOffset)
         with(builder) builder@{
