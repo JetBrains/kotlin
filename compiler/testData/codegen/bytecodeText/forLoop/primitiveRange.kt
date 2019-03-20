@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 fun f(r: IntRange) {
     for (i in r) {
     }
@@ -9,3 +8,4 @@ fun f(r: IntRange) {
 // 0 getEnd
 // 1 getFirst
 // 1 getLast
+// 1 getStep

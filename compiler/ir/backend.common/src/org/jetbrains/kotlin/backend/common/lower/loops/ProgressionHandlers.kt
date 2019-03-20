@@ -161,6 +161,44 @@ internal class IndicesHandler(val context: CommonBackendContext) : ProgressionHa
         }
 }
 
+/** Builds a [HeaderInfo] for progressions not handled by more specialized handlers. */
+internal class DefaultProgressionHandler(private val context: CommonBackendContext) : HeaderInfoHandler<Nothing?> {
+
+    private val symbols = context.ir.symbols
+
+    override val matcher = createIrCallMatcher {
+        origin { it == IrStatementOrigin.FOR_LOOP_ITERATOR }
+        dispatchReceiver { it != null && ProgressionType.fromIrType(it.type, symbols) != null }
+    }
+
+    override fun build(call: IrCall, progressionType: Nothing?): HeaderInfo? =
+        with(context.createIrBuilder(call.symbol, call.startOffset, call.endOffset)) {
+            // Directly use the `first/last/step` properties of the progression.
+            val progression = scope.createTemporaryVariable(call.dispatchReceiver!!)
+            val progressionClass = progression.type.getClass()!!
+            val firstProperty = progressionClass.properties.first { it.name.asString() == "first" }
+            val first = irCall(firstProperty.getter!!).apply {
+                dispatchReceiver = irGet(progression)
+            }
+            val lastProperty = progressionClass.properties.first { it.name.asString() == "last" }
+            val last = irCall(lastProperty.getter!!).apply {
+                dispatchReceiver = irGet(progression)
+            }
+            val stepProperty = progressionClass.properties.first { it.name.asString() == "step" }
+            val step = irCall(stepProperty.getter!!).apply {
+                dispatchReceiver = irGet(progression)
+            }
+
+            ProgressionHeaderInfo(
+                ProgressionType.fromIrType(progression.type, symbols)!!,
+                first,
+                last,
+                step,
+                additionalVariables = listOf(progression)
+            )
+        }
+}
+
 internal class ArrayIterationHandler(private val context: CommonBackendContext) : HeaderInfoHandler<Nothing?> {
 
     private val intDecFun = ProgressionType.INT_PROGRESSION.decFun(context.irBuiltIns)
