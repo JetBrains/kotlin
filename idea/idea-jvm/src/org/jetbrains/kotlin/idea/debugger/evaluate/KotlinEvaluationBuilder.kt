@@ -299,7 +299,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                 EvaluatorValueConverter(context).unref(returnValue)
             }
         } catch (e: Throwable) {
-            LOG.error("Unable to evaluate expression with compilation", e)
+            LOG.error("Unable to evaluate the expression with compilation", e)
             return null
         }
     }
