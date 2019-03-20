@@ -16,6 +16,7 @@
 
 import org.w3c.xhr.*
 import kotlin.js.json
+import kotlin.js.Date
 import org.jetbrains.report.json.*
 import org.jetbrains.build.Build
 
@@ -114,11 +115,23 @@ data class BuildRegister(val buildId: String, val teamCityUser: String, val team
 
     private fun sendTeamCityRequest(url: String) = sendGetRequest(url, teamCityUser, teamCityPassword)
 
+    private fun format(timeValue: Int): String =
+            if (timeValue < 10) "0$timeValue" else "$timeValue"
+
     fun getBuildInformation(): BuildInfo {
         val buildNumber = sendTeamCityRequest("$teamCityBuildUrl/number")
         val branch = sendTeamCityRequest("$teamCityBuildUrl/branchName")
         val startTime = sendTeamCityRequest("$teamCityBuildUrl/startDate")
-        val finishTime = sendTeamCityRequest("$teamCityBuildUrl/finishDate")
+        val currentTime = Date()
+        val timeZone = currentTime.getTimezoneOffset() / -60    // Convert to hours.
+        // Get finish time as current time, because buid on TeamCity isn't finished.
+        val finishTime = "${format(currentTime.getFullYear())}" +
+                "${format(currentTime.getMonth() + 1)}" +
+                "${format(currentTime.getDate())}" +
+                "T${format(currentTime.getHours())}" +
+                "${format(currentTime.getMinutes())}" +
+                "${format(currentTime.getSeconds())}" +
+                "${if (timeZone > 0) "+" else "-"}${format(timeZone)}${format(0)}"
         return BuildInfo(buildNumber, branch, startTime, finishTime)
     }
 }
