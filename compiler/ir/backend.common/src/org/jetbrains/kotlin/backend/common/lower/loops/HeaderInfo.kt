@@ -26,10 +26,10 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 // TODO: Handle UIntProgression, ULongProgression
 
 /** Represents a progression type in the Kotlin stdlib. */
-enum class ProgressionType(val numberCastFunctionName: Name) {
-    INT_PROGRESSION(Name.identifier("toInt")),
-    LONG_PROGRESSION(Name.identifier("toLong")),
-    CHAR_PROGRESSION(Name.identifier("toChar"));
+enum class ProgressionType(val elementCastFunctionName: Name, val stepCastFunctionName: Name) {
+    INT_PROGRESSION(Name.identifier("toInt"), Name.identifier("toInt")),
+    LONG_PROGRESSION(Name.identifier("toLong"), Name.identifier("toLong")),
+    CHAR_PROGRESSION(Name.identifier("toChar"), Name.identifier("toInt"));
 
     /** Returns the [IrType] of the `first`/`last` properties and elements in the progression. */
     fun elementType(builtIns: IrBuiltIns): IrType = when (this) {
