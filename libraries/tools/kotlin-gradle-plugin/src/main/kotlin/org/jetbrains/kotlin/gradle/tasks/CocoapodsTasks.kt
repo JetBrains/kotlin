@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.*
+import org.gradle.api.tasks.wrapper.Wrapper
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.KOTLIN_TARGET_FOR_DEVICE
@@ -37,6 +38,14 @@ open class PodspecTask : DefaultTask() {
             val versionSuffix = if (pod.version != null) ", '${pod.version}'" else ""
             "|    spec.dependency '${pod.name}'$versionSuffix"
         }.joinToString(separator = "\n")
+
+        // Try to construct a path to Gradle wrapper. If there is no wrapper, just run the local Gradle.
+        val gradleWrapper = (project.rootProject.tasks.getByName("wrapper") as? Wrapper)?.scriptFile
+        val gradleCommand = if (gradleWrapper != null && gradleWrapper.exists()) {
+            "\$REPO_ROOT/${gradleWrapper.toRelativeString(project.projectDir)}"
+        } else {
+            "gradle"
+        }
 
         outputFile.writeText("""
             |Pod::Spec.new do |spec|
@@ -69,7 +78,7 @@ open class PodspecTask : DefaultTask() {
             |            :script => <<-SCRIPT
             |                set -ev
             |                REPO_ROOT="${'$'}PODS_TARGET_SRCROOT"
-            |                ${'$'}REPO_ROOT/gradlew -p "${'$'}REPO_ROOT" syncFramework \
+            |                "$gradleCommand" -p "${'$'}REPO_ROOT" syncFramework \
             |                    -P${KotlinCocoapodsPlugin.TARGET_PROPERTY}=${'$'}KOTLIN_TARGET \
             |                    -P${KotlinCocoapodsPlugin.CONFIGURATION_PROPERTY}=${'$'}CONFIGURATION \
             |                    -P${KotlinCocoapodsPlugin.CFLAGS_PROPERTY}="${'$'}OTHER_CFLAGS" \
