@@ -9,29 +9,25 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
+import org.jetbrains.kotlin.backend.common.serialization.DescriptorTable
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.functions.functionInterfacePackageFragmentProvider
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.backend.common.serialization.DescriptorTable
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.ir.backend.js.lower.inline.replaceUnboundSymbols
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsDeclarationTable
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrModuleSerializer
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.newJsDescriptorUniqId
-import org.jetbrains.kotlin.ir.backend.js.lower.serialization.metadata.JsKlibMetadataModuleDescriptor
-import org.jetbrains.kotlin.ir.backend.js.lower.serialization.metadata.JsKlibMetadataSerializationUtil
-import org.jetbrains.kotlin.ir.backend.js.lower.serialization.metadata.JsKlibMetadataVersion
-import org.jetbrains.kotlin.ir.backend.js.lower.serialization.metadata.createJsKlibMetadataPackageFragmentProvider
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.metadata.*
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.util.AccessToDescriptors
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
@@ -92,6 +88,8 @@ fun compile(
     outputKlibPath: String
 ): TranslationResult {
 
+    AccessToDescriptors.forbidden()
+
     val deserializedModuleParts: Map<KlibModuleRef, JsKlibMetadataParts> =
         allDependencies.associateWith { loadKlibMetadataParts(it) }
 
@@ -149,7 +147,7 @@ fun compile(
         deserializer.deserializeIrModuleHeader(depsDescriptors.getModuleDescriptor(it))!!
     }
 
-    val moduleFragment = psi2IrTranslator.generateModuleFragment(psi2IrContext, files, deserializer)
+    val moduleFragment = AccessToDescriptors.allowed { psi2IrTranslator.generateModuleFragment(psi2IrContext, files, deserializer) }
 
     if (compileMode == CompilationMode.KLIB) {
         deserializedModuleFragments.forEach {
@@ -157,29 +155,33 @@ fun compile(
         }
         deserializedModuleFragments.forEach { it.patchDeclarationParents() }
         val moduleName = configuration.get(CommonConfigurationKeys.MODULE_NAME) as String
-        serializeModuleIntoKlib(
-            moduleName,
-            configuration.metadataVersion,
-            configuration.languageVersionSettings,
-            psi2IrContext.symbolTable,
-            psi2IrContext.bindingContext,
-            outputKlibPath,
-            immediateDependencies,
-            moduleFragment
-        )
+        AccessToDescriptors.allowed {
+            serializeModuleIntoKlib(
+                moduleName,
+                configuration.metadataVersion,
+                configuration.languageVersionSettings,
+                psi2IrContext.symbolTable,
+                psi2IrContext.bindingContext,
+                outputKlibPath,
+                immediateDependencies,
+                moduleFragment
+            )
+        }
 
         return TranslationResult.CompiledKlib
     }
 
-    val context = JsIrBackendContext(moduleDescriptor, irBuiltIns, symbolTable, moduleFragment, configuration, phaseConfig)
+    val context = AccessToDescriptors.allowed { JsIrBackendContext(moduleDescriptor, irBuiltIns, symbolTable, moduleFragment, configuration, phaseConfig) }
 
-    deserializedModuleFragments.forEach {
-        ExternalDependenciesGenerator(
-            it.descriptor,
-            symbolTable,
-            irBuiltIns,
-            deserializer = deserializer
-        ).generateUnboundSymbolsAsDependencies()
+    AccessToDescriptors.allowed {
+        deserializedModuleFragments.forEach {
+            ExternalDependenciesGenerator(
+                it.descriptor,
+                symbolTable,
+                irBuiltIns,
+                deserializer = deserializer
+            ).generateUnboundSymbolsAsDependencies()
+        }
     }
 
     // TODO: check the order

@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.bridges.FunctionHandle
-import org.jetbrains.kotlin.backend.common.bridges.findInterfaceImplementation
 import org.jetbrains.kotlin.backend.common.bridges.generateBridges
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
@@ -29,7 +28,6 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 // Constructs bridges for inherited generic functions
 //
@@ -120,7 +118,7 @@ class BridgesConstruction(val context: JsIrBackendContext) : ClassLoweringPass {
 
             // TODO: should dispatch receiver be copied?
             dispatchReceiverParameter = bridge.dispatchReceiverParameter?.run {
-                IrValueParameterImpl(startOffset, endOffset, origin, descriptor, type, varargElementType).also { it.parent = this@apply }
+                IrValueParameterImpl(startOffset, endOffset, origin, descriptorWithoutAccessCheck, type, varargElementType).also { it.parent = this@apply }
             }
             extensionReceiverParameter = bridge.extensionReceiverParameter?.copyTo(this)
             copyTypeParametersFrom(bridge)

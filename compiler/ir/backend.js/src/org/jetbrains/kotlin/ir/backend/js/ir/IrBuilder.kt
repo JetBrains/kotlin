@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
+import org.jetbrains.kotlin.ir.util.AccessToDescriptors
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 
@@ -43,7 +44,7 @@ object JsIrBuilder {
             type ?: target.owner.returnType,
             target,
             target.descriptor,
-            target.descriptor.typeParametersCount,
+            AccessToDescriptors.allowed { target.descriptor.typeParametersCount },
             SYNTHESIZED_STATEMENT
         ).apply {
             typeArguments?.let {

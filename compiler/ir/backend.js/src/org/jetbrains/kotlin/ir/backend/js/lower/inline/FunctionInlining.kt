@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.serialization.fqNameSafe
 import org.jetbrains.kotlin.backend.common.serialization.hasAnnotation
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
@@ -141,7 +142,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
             val evaluationStatements = evaluateArguments(callSite, copiedCallee)
             val statements = (copiedCallee.body as IrBlockBody).statements
 
-            val irReturnableBlockSymbol = IrReturnableBlockSymbolImpl(copiedCallee.descriptor.original)
+            val irReturnableBlockSymbol = IrReturnableBlockSymbolImpl(copiedCallee.descriptorWithoutAccessCheck.original as FunctionDescriptor)
             val startOffset = callee.startOffset
             val endOffset = callee.endOffset
             val irBuilder = context.createIrBuilder(irReturnableBlockSymbol, startOffset, endOffset)

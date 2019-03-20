@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.ir.copyParameterDeclarationsFrom
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
+import org.jetbrains.kotlin.backend.common.serialization.isExpect
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -85,7 +86,7 @@ class EnumClassLowering(val context: JsIrBackendContext) : DeclarationContainerL
     override fun lower(irDeclarationContainer: IrDeclarationContainer) {
         irDeclarationContainer.transformDeclarationsFlat { declaration ->
             if (declaration is IrClass && declaration.isEnumClass &&
-                !declaration.descriptor.isExpect && !declaration.isEffectivelyExternal()
+                !declaration.isExpect && !declaration.isEffectivelyExternal()
             ) {
                 EnumClassTransformer(context, declaration).transform()
             } else null
@@ -103,7 +104,7 @@ class EnumClassConstructorLowering(val context: JsIrBackendContext) : Declaratio
     override fun lower(irDeclarationContainer: IrDeclarationContainer) {
         irDeclarationContainer.transformDeclarationsFlat { declaration ->
             if (declaration is IrClass && declaration.isEnumClass &&
-                !declaration.descriptor.isExpect && !declaration.isEffectivelyExternal()
+                !declaration.isExpect && !declaration.isEffectivelyExternal()
             ) {
                 EnumClassConstructorTransformer(context, declaration).transform()
             } else null

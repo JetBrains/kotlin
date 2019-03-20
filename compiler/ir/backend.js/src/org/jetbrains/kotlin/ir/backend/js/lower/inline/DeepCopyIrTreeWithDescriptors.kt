@@ -24,7 +24,9 @@ internal class DeepCopyIrTreeWithSymbolsForInliner(val context: Context,
                                                    val typeArguments: Map<IrTypeParameterSymbol, IrType?>?,
                                                    val parent: IrDeclarationParent?) {
 
-    fun copy(irElement: IrElement): IrElement {
+    fun copy(irElement: IrElement): IrElement = AccessToDescriptors.allowed { doCopy(irElement) }
+
+    private fun doCopy(irElement: IrElement): IrElement {
         // Create new symbols.
         irElement.acceptVoid(symbolRemapper)
 

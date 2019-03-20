@@ -7,8 +7,9 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.isOverridableOrOverrides
-import org.jetbrains.kotlin.backend.common.lower.DefaultArgumentStubGenerator
 import org.jetbrains.kotlin.backend.common.lower.DEFAULT_DISPATCH_CALL
+import org.jetbrains.kotlin.backend.common.lower.DefaultArgumentStubGenerator
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.builders.IrBlockBodyBuilder
 import org.jetbrains.kotlin.ir.builders.irCall
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
+import org.jetbrains.kotlin.ir.util.descriptorWithoutAccessCheck
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.FqName
@@ -84,7 +86,7 @@ class JsDefaultCallbackGenerator(val context: JsIrBackendContext): BodyLoweringP
                 endOffset,
                 context.irBuiltIns.anyType,
                 originalFunction.symbol,
-                originalFunction.descriptor,
+                originalFunction.descriptorWithoutAccessCheck as FunctionDescriptor,
                 0,
                 BIND_CALL
             )
@@ -96,7 +98,7 @@ class JsDefaultCallbackGenerator(val context: JsIrBackendContext): BodyLoweringP
                 endOffset,
                 context.irBuiltIns.anyType,
                 context.intrinsics.jsBind.symbol,
-                context.intrinsics.jsBind.descriptor,
+                context.intrinsics.jsBind.descriptorWithoutAccessCheck,
                 BIND_CALL,
                 superQualifierSymbol
             )

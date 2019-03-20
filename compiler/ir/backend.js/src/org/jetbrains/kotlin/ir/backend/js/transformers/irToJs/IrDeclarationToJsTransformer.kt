@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
+import org.jetbrains.kotlin.backend.common.serialization.isExpect
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.js.backend.ast.JsDeclarationScope
@@ -15,7 +16,7 @@ import org.jetbrains.kotlin.js.backend.ast.JsVars
 class IrDeclarationToJsTransformer : BaseIrElementToJsNodeTransformer<JsStatement, JsGenerationContext> {
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction, context: JsGenerationContext): JsStatement {
-        if (declaration.descriptor.isExpect) return JsEmpty // TODO: fix it in Psi2Ir
+        if (declaration.isExpect) return JsEmpty // TODO: fix it in Psi2Ir
         return declaration.accept(IrFunctionToJsTransformer(), context).makeStmt()
     }
 
