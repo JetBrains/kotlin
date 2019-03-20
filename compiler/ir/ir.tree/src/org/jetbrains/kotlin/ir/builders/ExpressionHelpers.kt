@@ -279,6 +279,9 @@ fun IrBuilderWithScope.irImplicitCast(argument: IrExpression, type: IrType) =
 fun IrBuilderWithScope.irInt(value: Int) =
     IrConstImpl.int(startOffset, endOffset, context.irBuiltIns.intType, value)
 
+fun IrBuilderWithScope.irLong(value: Long) =
+    IrConstImpl.long(startOffset, endOffset, context.irBuiltIns.longType, value)
+
 fun IrBuilderWithScope.irString(value: String) =
     IrConstImpl.string(startOffset, endOffset, context.irBuiltIns.stringType, value)
 

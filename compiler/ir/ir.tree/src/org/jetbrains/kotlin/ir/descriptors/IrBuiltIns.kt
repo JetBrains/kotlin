@@ -181,7 +181,7 @@ class IrBuiltIns(
 
     // TODO switch to IrType
     val primitiveTypes = listOf(bool, char, byte, short, int, long, float, double)
-    val primitiveTypesWithComparisons = listOf(int, long, float, double)
+    val primitiveTypesWithComparisons = listOf(char, byte, short, int, long, float, double)
     val primitiveFloatingPointTypes = listOf(float, double)
 
     val lessFunByOperandType = primitiveTypesWithComparisons.defineComparisonOperatorForEachType(OperatorNames.LESS)

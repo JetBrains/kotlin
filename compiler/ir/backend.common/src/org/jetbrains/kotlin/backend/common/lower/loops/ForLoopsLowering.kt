@@ -130,7 +130,8 @@ private class RangeLoopTransformer(
         if (loop.origin != IrStatementOrigin.FOR_LOOP_INNER_WHILE) {
             return super.visitWhileLoop(loop)
         }
-        return with(context.createIrBuilder(getScopeOwnerSymbol(), loop.startOffset, loop.endOffset)) {
+
+        with(context.createIrBuilder(getScopeOwnerSymbol(), loop.startOffset, loop.endOffset)) {
             val newBody = loop.body?.transform(this@RangeLoopTransformer, null)?.let {
                 if (it is IrContainerExpression && !it.isTransparentScope) {
                     IrCompositeImpl(startOffset, endOffset, it.type, it.origin, it.statements)
@@ -140,72 +141,16 @@ private class RangeLoopTransformer(
             }
             val loopHeader = getLoopHeader(loop.condition)
                 ?: return super.visitWhileLoop(loop)
-            val newLoop = loopHeader.buildBody(this, loop, newBody)
+            val newLoop = loopHeader.buildInnerLoop(this, loop, newBody)
             oldLoopToNewLoop[loop] = newLoop
-            // Build a check for an empty progression before the loop.
-            if (loopHeader is ProgressionLoopHeader) {
-                buildEmptinessCheck(newLoop, loopHeader)
-            } else {
-                newLoop
+
+            // Surround the new loop with a check for an empty loop, if necessary.
+            if (loopHeader.needsEmptinessCheck) {
+                val notEmptyCondition = loopHeader.buildNotEmptyCondition(this@with)
+                if (notEmptyCondition != null)
+                    return irIfThen(notEmptyCondition, newLoop)
             }
-        }
-    }
-
-    private fun DeclarationIrBuilder.buildMinValueCondition(forLoopHeader: ForLoopHeader): IrExpression {
-        // Condition for a corner case: for (i in a until Int.MIN_VALUE) {}.
-        // Check if forLoopHeader.bound > MIN_VALUE.
-        val progressionType = forLoopHeader.progressionType
-        val irBuiltIns = context.irBuiltIns
-        val minConst = when (progressionType) {
-            ProgressionType.INT_PROGRESSION -> IrConstImpl
-                .int(startOffset, endOffset, irBuiltIns.intType, Int.MIN_VALUE)
-            ProgressionType.CHAR_PROGRESSION -> IrConstImpl
-                .char(startOffset, endOffset, irBuiltIns.charType, 0.toChar())
-            ProgressionType.LONG_PROGRESSION -> IrConstImpl
-                .long(startOffset, endOffset, irBuiltIns.longType, Long.MIN_VALUE)
-        }
-        val compareTo = symbols.getBinaryOperator(
-            OperatorNameConventions.COMPARE_TO,
-            forLoopHeader.bound.type.toKotlinType(),
-            minConst.type.toKotlinType()
-        )
-        return irCall(irBuiltIns.greaterFunByOperandType[irBuiltIns.int]?.symbol!!).apply {
-            val compareToCall = irCall(compareTo).apply {
-                dispatchReceiver = irGet(forLoopHeader.bound)
-                putValueArgument(0, minConst)
-            }
-            putValueArgument(0, compareToCall)
-            putValueArgument(1, irInt(0))
-        }
-    }
-
-    private fun DeclarationIrBuilder.buildEmptinessCheck(loop: IrLoop, loopHeader: ProgressionLoopHeader): IrExpression {
-        val builtIns = context.irBuiltIns
-        val comparingBuiltIn = loopHeader.comparingFunction(builtIns)
-
-        // Check if inductionVariable <= last (or >= in case of downTo).
-        // TODO: Use comparingBuiltIn directly
-        val compareTo = symbols.getBinaryOperator(
-            OperatorNameConventions.COMPARE_TO,
-            loopHeader.inductionVariable.type.toKotlinType(),
-            loopHeader.last.type.toKotlinType()
-        )
-
-        val check = irCall(comparingBuiltIn).apply {
-            putValueArgument(
-                0,
-                irCallOp(compareTo, compareTo.owner.returnType, irGet(loopHeader.inductionVariable), irGet(loopHeader.last))
-            )
-            putValueArgument(1, irInt(0))
-        }
-
-        // Process closed and open ranges in different manners.
-        return if (loopHeader.closed) {
-            irIfThen(check, loop)   // if (inductionVariable <= last) { loop }
-        } else {
-            // Take into account a corner case: for (i in a until Int.MIN_VALUE) {}.
-            // if (inductionVariable <= last && bound > MIN_VALUE) { loop }
-            irIfThen(check, irIfThen(buildMinValueCondition(loopHeader), loop))
+            return newLoop
         }
     }
 
