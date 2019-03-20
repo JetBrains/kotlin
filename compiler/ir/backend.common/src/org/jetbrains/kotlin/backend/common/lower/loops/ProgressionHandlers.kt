@@ -6,15 +6,15 @@
 package org.jetbrains.kotlin.backend.common.lower.loops
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.matchers.SimpleCalleeMatcher
 import org.jetbrains.kotlin.backend.common.lower.matchers.createIrCallMatcher
 import org.jetbrains.kotlin.backend.common.lower.matchers.singleArgumentExtension
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.ir.builders.irCall
-import org.jetbrains.kotlin.ir.builders.irGet
-import org.jetbrains.kotlin.ir.builders.irInt
+import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.classifierOrNull
@@ -74,14 +74,54 @@ internal class UntilHandler(private val context: CommonBackendContext, private v
 
     override fun build(call: IrCall, data: ProgressionType): HeaderInfo? =
         with(context.createIrBuilder(call.symbol, call.startOffset, call.endOffset)) {
+            //
+            // An additional emptiness condition is required for the corner case:
+            //
+            // ```
+            // for (i in a until MIN_VALUE) {}
+            // ```
+            //
+            // ...which should always be considered an empty range. When the given bound is MIN_VALUE, and because `last = bound - 1`,
+            // "last" will underflow to MAX_VALUE, therefore the default emptiness check:
+            //
+            // ```
+            // if (first <= last) { /* loop */ }
+            // ```
+            //
+            // ...will always be true and won't consider the range as empty. Therefore, we need to add an additional condition to the
+            // emptiness check so that it becomes:
+            //
+            // ```
+            // if (first <= last && bound > MIN_VALUE) { /* loop */ }
+            // ```
+            //
+            // TODO: Do not add additionalEmptinessCondition if "bound" is const and > MIN_VALUE
             ProgressionHeaderInfo(
                 data,
                 lowerBound = call.extensionReceiver!!,
                 upperBound = call.getValueArgument(0)!!,
                 step = irInt(1),
-                closed = false
+                closed = false,
+                additionalNotEmptyCondition = buildMinValueConditionIfNecessary(data, call.getValueArgument(0)!!)
             )
         }
+
+    private fun DeclarationIrBuilder.buildMinValueConditionIfNecessary(
+        progressionType: ProgressionType,
+        bound: IrExpression
+    ): IrExpression? {
+        val irBuiltIns = context.irBuiltIns
+        val minConst = when (progressionType) {
+            ProgressionType.INT_PROGRESSION -> irInt(Int.MIN_VALUE)
+            ProgressionType.CHAR_PROGRESSION -> irChar(Char.MIN_VALUE)
+            ProgressionType.LONG_PROGRESSION -> irLong(Long.MIN_VALUE)
+        }
+        val progressionKotlinType = progressionType.elementType(irBuiltIns).toKotlinType()
+        return irCall(irBuiltIns.greaterFunByOperandType[progressionKotlinType]!!).apply {
+            putValueArgument(0, bound)
+            putValueArgument(1, minConst)
+        }
+    }
 }
 
 internal class IndicesHandler(val context: CommonBackendContext) : ProgressionHandler {
@@ -111,6 +151,22 @@ internal class IndicesHandler(val context: CommonBackendContext) : ProgressionHa
             )
         }
 
+    private fun DeclarationIrBuilder.buildMinValueConditionIfNecessary(
+        progressionType: ProgressionType,
+        bound: IrExpression
+    ): IrExpression? {
+        val irBuiltIns = context.irBuiltIns
+        val minConst = when (progressionType) {
+            ProgressionType.INT_PROGRESSION -> irInt(Int.MIN_VALUE)
+            ProgressionType.CHAR_PROGRESSION -> irChar(Char.MIN_VALUE)
+            ProgressionType.LONG_PROGRESSION -> irLong(Long.MIN_VALUE)
+        }
+        val progressionKotlinType = progressionType.elementType(irBuiltIns).toKotlinType()
+        return irCall(irBuiltIns.greaterFunByOperandType[progressionKotlinType]!!).apply {
+            putValueArgument(0, bound)
+            putValueArgument(1, minConst)
+        }
+    }
 }
 
 internal class ArrayIterationHandler(val context: CommonBackendContext) : HeaderInfoHandler<Nothing?> {

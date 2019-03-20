@@ -1,5 +1,3 @@
-// TODO: Enable after corner case is addressed
-// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 
 import kotlin.test.assertEquals
