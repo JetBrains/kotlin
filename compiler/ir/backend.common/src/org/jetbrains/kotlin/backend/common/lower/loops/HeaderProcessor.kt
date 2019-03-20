@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.isNullable
+import org.jetbrains.kotlin.name.Name
 
 /** Contains information about variables used in the loop. */
 internal sealed class ForLoopHeader(
@@ -224,7 +225,10 @@ internal class HeaderProcessor(
                 // In the above example, if first() is a Long and last() is an Int, this creates a
                 // LongProgression so last(), should be cast to a Long.
                 val inductionVariable = scope.createTemporaryVariable(
-                    first.castIfNecessary(progressionType),
+                    first.castIfNecessary(
+                        progressionType.elementType(context.irBuiltIns),
+                        progressionType.elementCastFunctionName
+                    ),
                     nameHint = "inductionVariable",
                     isMutable = true,
                     origin = IrDeclarationOrigin.FOR_LOOP_IMPLICIT_VARIABLE
@@ -235,13 +239,23 @@ internal class HeaderProcessor(
                 // them to non-nullable.
                 // TODO: Confirm if casting to non-nullable is still necessary
                 val lastValue = scope.createTemporaryVariable(
-                    ensureNotNullable(last.castIfNecessary(progressionType)),
+                    ensureNotNullable(
+                        last.castIfNecessary(
+                            progressionType.elementType(context.irBuiltIns),
+                            progressionType.elementCastFunctionName
+                        )
+                    ),
                     nameHint = "last",
                     origin = IrDeclarationOrigin.FOR_LOOP_IMPLICIT_VARIABLE
                 )
 
                 val stepValue = scope.createTemporaryVariable(
-                    ensureNotNullable(step),
+                    ensureNotNullable(
+                        step.castIfNecessary(
+                            progressionType.stepType(context.irBuiltIns),
+                            progressionType.stepCastFunctionName
+                        )
+                    ),
                     nameHint = "step",
                     origin = IrDeclarationOrigin.FOR_LOOP_IMPLICIT_VARIABLE
                 )
@@ -265,11 +279,11 @@ internal class HeaderProcessor(
     }
 
 
-    private fun IrExpression.castIfNecessary(progressionType: ProgressionType): IrExpression {
-        return if (type.toKotlinType() == progressionType.elementType(context.irBuiltIns).toKotlinType()) {
+    private fun IrExpression.castIfNecessary(targetType: IrType, numberCastFunctionName: Name): IrExpression {
+        return if (type.toKotlinType() == targetType.toKotlinType()) {
             this
         } else {
-            val function = type.getClass()!!.functions.first { it.name == progressionType.numberCastFunctionName }
+            val function = type.getClass()!!.functions.first { it.name == numberCastFunctionName }
             IrCallImpl(startOffset, endOffset, function.returnType, function.symbol)
                 .apply { dispatchReceiver = this@castIfNecessary }
         }
