@@ -32,7 +32,8 @@ internal sealed class ForLoopHeader(
     val last: IrVariable,
     val step: IrVariable,
     val progressionType: ProgressionType,
-    val needsEmptinessCheck: Boolean
+    val needsEmptinessCheck: Boolean,
+    var loopVariable: IrVariable? = null
 ) {
     abstract fun initializeLoopVariable(symbols: Symbols<CommonBackendContext>, builder: DeclarationIrBuilder): IrExpression
 
@@ -48,8 +49,7 @@ internal class ProgressionLoopHeader(
     inductionVariable: IrVariable,
     bound: IrVariable,
     last: IrVariable,
-    step: IrVariable,
-    var loopVariable: IrVariable? = null
+    step: IrVariable
 ) : ForLoopHeader(inductionVariable, bound, last, step, headerInfo.progressionType, needsEmptinessCheck = true) {
 
     override fun initializeLoopVariable(symbols: Symbols<CommonBackendContext>, builder: DeclarationIrBuilder) = with(builder) {
@@ -200,14 +200,14 @@ internal class HeaderProcessor(
                 // Due to features of PSI2IR we can obtain nullable arguments here while actually
                 // they are non-nullable (the frontend takes care about this). So we need to cast them to non-nullable.
                 val inductionVariable = scope.createTemporaryVariable(
-                    lowerBound.castIfNecessary(progressionType),
+                    first.castIfNecessary(progressionType),
                     nameHint = "inductionVariable",
                     isMutable = true,
                     origin = IrDeclarationOrigin.FOR_LOOP_IMPLICIT_VARIABLE
                 )
 
                 val upperBoundTmpVariable = scope.createTemporaryVariable(
-                    ensureNotNullable(upperBound.castIfNecessary(progressionType)),
+                    ensureNotNullable(last.castIfNecessary(progressionType)),
                     nameHint = "upperBound",
                     origin = IrDeclarationOrigin.FOR_LOOP_IMPLICIT_VARIABLE
                 )

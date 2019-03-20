@@ -58,8 +58,8 @@ internal enum class ProgressionDirection { DECREASING, INCREASING, UNKNOWN }
 // Information about loop that is required by HeaderProcessor to build ForLoopHeader
 internal sealed class HeaderInfo(
     val progressionType: ProgressionType,
-    val lowerBound: IrExpression,
-    val upperBound: IrExpression,
+    val first: IrExpression,
+    val last: IrExpression,
     val step: IrExpression,
     val closed: Boolean
 ) {
@@ -78,22 +78,22 @@ internal sealed class HeaderInfo(
 
 internal class ProgressionHeaderInfo(
     progressionType: ProgressionType,
-    lowerBound: IrExpression,
-    upperBound: IrExpression,
+    first: IrExpression,
+    last: IrExpression,
     step: IrExpression,
     closed: Boolean = true,
     val additionalNotEmptyCondition: IrExpression? = null
-) : HeaderInfo(progressionType, lowerBound, upperBound, step, closed)
+) : HeaderInfo(progressionType, first, last, step, closed)
 
 internal class ArrayHeaderInfo(
-    lowerBound: IrExpression,
-    upperBound: IrExpression,
+    first: IrExpression,
+    last: IrExpression,
     step: IrExpression,
     val arrayVariable: IrVariable
 ) : HeaderInfo(
     ProgressionType.INT_PROGRESSION,
-    lowerBound,
-    upperBound,
+    first,
+    last,
     step,
     closed = false
 )
