@@ -59,6 +59,11 @@ public class AddImportTestGenerated extends AbstractAddImportTest {
         runTest("idea/testData/addImport/CommentsNoPackageDirective.kt");
     }
 
+    @TestMetadata("ConflictingLocalRef.kt")
+    public void testConflictingLocalRef() throws Exception {
+        runTest("idea/testData/addImport/ConflictingLocalRef.kt");
+    }
+
     @TestMetadata("ConflictingNameAppearsAndHasUsage1.kt")
     public void testConflictingNameAppearsAndHasUsage1() throws Exception {
         runTest("idea/testData/addImport/ConflictingNameAppearsAndHasUsage1.kt");
