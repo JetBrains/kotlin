@@ -59,8 +59,7 @@ internal class DownToHandler(private val context: CommonBackendContext, private 
                 data,
                 lowerBound = call.extensionReceiver!!,
                 upperBound = call.getValueArgument(0)!!,
-                step = irInt(-1),
-                increasing = false
+                step = irInt(-1)
             )
         }
 }
