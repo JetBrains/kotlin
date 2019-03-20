@@ -22,9 +22,10 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 // TODO: Handle withIndex()
 // TODO: Handle reversed()
-// TODO: Handle direct iteration on Ranges/Progressions (e.g., NOT using rangeTo or step)
 // TODO: Handle Strings/CharSequences
+// TODO: Handle UIntProgression, ULongProgression
 
+/** Represents a progression type in the Kotlin stdlib. */
 enum class ProgressionType(val numberCastFunctionName: Name) {
     INT_PROGRESSION(Name.identifier("toInt")),
     LONG_PROGRESSION(Name.identifier("toLong")),
@@ -55,7 +56,7 @@ enum class ProgressionType(val numberCastFunctionName: Name) {
 
 internal enum class ProgressionDirection { DECREASING, INCREASING, UNKNOWN }
 
-// Information about loop that is required by HeaderProcessor to build ForLoopHeader
+/** Information about a loop that is required by [HeaderProcessor] to build a [ForLoopHeader]. */
 internal sealed class HeaderInfo(
     val progressionType: ProgressionType,
     val first: IrExpression,
@@ -75,6 +76,7 @@ internal sealed class HeaderInfo(
     }
 }
 
+/** Information about a for-loop over a progression. */
 internal class ProgressionHeaderInfo(
     progressionType: ProgressionType,
     first: IrExpression,
@@ -84,6 +86,7 @@ internal class ProgressionHeaderInfo(
     val additionalNotEmptyCondition: IrExpression? = null
 ) : HeaderInfo(progressionType, first, last, step)
 
+/** Information about a for-loop over an array. The internal induction variable used is an Int. */
 internal class ArrayHeaderInfo(
     first: IrExpression,
     last: IrExpression,
@@ -96,6 +99,7 @@ internal class ArrayHeaderInfo(
     step
 )
 
+/** Matches a call to `iterator()` and builds a [HeaderInfo] out of the call's context. */
 internal interface HeaderInfoHandler<T> {
     val matcher: IrCallMatcher
 
@@ -109,13 +113,16 @@ internal interface HeaderInfoHandler<T> {
 }
 internal typealias ProgressionHandler = HeaderInfoHandler<ProgressionType>
 
-// We need to wrap builder into visitor because of `StepHandler` which has to visit its subtree
-// to get information about underlying progression.
+/**
+ * Handles a call to `iterator()` on more specialized forms of progressions, built using extension
+ * and member functions/properties in the stdlib (e.g., `.indices`, `downTo`).
+ */
 private class ProgressionHeaderInfoBuilder(val context: CommonBackendContext) : IrElementVisitor<HeaderInfo?, Nothing?> {
 
     private val symbols = context.ir.symbols
 
-    private val progressionElementTypes = symbols.integerClassesTypes + symbols.char.descriptor.defaultType
+    // TODO: Include unsigned types
+    private val progressionElementTypes = symbols.integerClassesTypes + context.irBuiltIns.char
 
     private val progressionHandlers = listOf(
         IndicesHandler(context),
@@ -127,6 +134,7 @@ private class ProgressionHeaderInfoBuilder(val context: CommonBackendContext) : 
     override fun visitElement(element: IrElement, data: Nothing?): HeaderInfo? = null
 
     override fun visitCall(expression: IrCall, data: Nothing?): HeaderInfo? {
+        // Return the HeaderInfo from the first successful match.
         val progressionType = ProgressionType.fromIrType(expression.type, symbols)
             ?: return null
         return progressionHandlers.firstNotNullResult { it.handle(expression, progressionType) }

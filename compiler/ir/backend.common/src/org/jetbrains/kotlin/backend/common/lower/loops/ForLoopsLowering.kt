@@ -20,7 +20,9 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
+import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.toKotlinType
+import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -34,8 +36,46 @@ val forLoopsPhase = makeIrFilePhase(
 /**
  * This lowering pass optimizes for-loops.
  *
- * Replace iteration over ranges (X.indices, a..b, etc.) and arrays with
- * simple while loop over primitive induction variable.
+ * Replace iteration over progressions (e.g., X.indices, a..b) and arrays with
+ * a simple while loop over primitive induction variable.
+ *
+ * For example, this loop:
+ *
+ * ```
+ * for (i in first..last step foo) { ... }
+ * ```
+ *
+ * is represented in IR in such a manner:
+ *
+ * ```
+ * val it = (first..last step foo).iterator()
+ * while (it.hasNext()) {
+ *     val i = it.next()
+ *     ...
+ * }
+ * ```
+ *
+ * We transform it into the following loop:
+ *
+ * ```
+ * var it = first
+ * if (it <= last) {  // (it >= last if the progression is decreasing)
+ *     do {
+ *         val i = it++
+ *         ...
+ *     } while (i != last)
+ * }
+ * ```
+ *
+ * In case of iteration over array we transform it into following:
+ *
+ * ```
+ * while (it <= array.size - 1) {
+ *     val i = array[it]
+ *     it++
+ *     ...
+ * }
+ * ```
  */
 internal class ForLoopsLowering(val context: CommonBackendContext) : FileLoweringPass {
 
@@ -45,6 +85,7 @@ internal class ForLoopsLowering(val context: CommonBackendContext) : FileLowerin
         val oldLoopToNewLoop = mutableMapOf<IrLoop, IrLoop>()
         val transformer = RangeLoopTransformer(context, oldLoopToNewLoop, headerInfoBuilder)
         irFile.transformChildrenVoid(transformer)
+
         // Update references in break/continue.
         irFile.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitBreakContinue(jump: IrBreakContinue): IrExpression {
@@ -81,11 +122,21 @@ private class RangeLoopTransformer(
         } ?: super.visitVariable(declaration)
     }
 
+    /**
+     * Lowers the "header" statement that stores the iterator into the loop variable
+     * (e.g., `val it = someIterable.iterator()`) and gather information for building the for-loop
+     * (as a [ForLoopHeader]).
+     *
+     * Returns null if the for-loop cannot be lowered.
+     */
     private fun processHeader(variable: IrVariable): IrStatement? {
         assert(variable.symbol !in iteratorToLoopHeader)
         val forLoopInfo = headerProcessor.processHeader(variable)
-            ?: return null
+            ?: return null  // If the for-loop cannot be lowered.
         iteratorToLoopHeader[variable.symbol] = forLoopInfo
+
+        // Lower into a composite with additional declarations (e.g., induction variable)
+        // used in the loop condition and body.
         return IrCompositeImpl(
             variable.startOffset,
             variable.endOffset,
@@ -95,43 +146,15 @@ private class RangeLoopTransformer(
         )
     }
 
-    /**
-     * This loop
-     *
-     * for (i in first..last step foo) { ... }
-     *
-     * is represented in IR in such a manner:
-     *
-     * val it = (first..last step foo).iterator()
-     * while (it.hasNext()) {
-     *     val i = it.next()
-     *     ...
-     * }
-     *
-     * We transform it into the following loop:
-     *
-     * var it = first
-     * if (it <= last) {  // (it >= last if the progression is decreasing)
-     *     do {
-     *         val i = it++
-     *         ...
-     *     } while (i != last)
-     * }
-     *
-     * In case of iteration over array we transform it into following:
-     * while (i <= array.size - 1) {
-     *     val element = array[i]
-     *     i++
-     *     ...
-     * }
-     */
-    // TODO:  Lower `for (i in a until b)` to loop with precondition: for (i = a; i < b; a++);
     override fun visitWhileLoop(loop: IrWhileLoop): IrExpression {
         if (loop.origin != IrStatementOrigin.FOR_LOOP_INNER_WHILE) {
             return super.visitWhileLoop(loop)
         }
 
         with(context.createIrBuilder(getScopeOwnerSymbol(), loop.startOffset, loop.endOffset)) {
+            // Visit the loop body to process the "next" statement and lower nested loops.
+            // Processing the "next" statement is necessary for building loops that need to
+            // reference the loop variable in the loop condition.
             val newBody = loop.body?.transform(this@RangeLoopTransformer, null)?.let {
                 if (it is IrContainerExpression && !it.isTransparentScope) {
                     IrCompositeImpl(startOffset, endOffset, it.type, it.origin, it.statements)
@@ -139,9 +162,12 @@ private class RangeLoopTransformer(
                     it
                 }
             }
+
             val loopHeader = getLoopHeader(loop.condition)
-                ?: return super.visitWhileLoop(loop)
+                ?: return super.visitWhileLoop(loop)  // If the for-loop cannot be lowered.
             val newLoop = loopHeader.buildInnerLoop(this, loop, newBody)
+
+            // Update mapping from old to new loop so we can later update references in break/continue.
             oldLoopToNewLoop[loop] = newLoop
 
             // Surround the new loop with a check for an empty loop, if necessary.
@@ -154,36 +180,55 @@ private class RangeLoopTransformer(
         }
     }
 
-    private fun getLoopHeader(oldCondition: IrExpression): ForLoopHeader? {
-        if (oldCondition !is IrCall || oldCondition.origin != IrStatementOrigin.FOR_LOOP_HAS_NEXT) {
+    private fun getLoopHeader(expression: IrExpression): ForLoopHeader? {
+        if (expression !is IrCall
+            || (expression.origin != IrStatementOrigin.FOR_LOOP_HAS_NEXT
+                    && expression.origin != IrStatementOrigin.FOR_LOOP_NEXT)
+        ) {
             return null
         }
-        val irIteratorAccess = oldCondition.dispatchReceiver as? IrGetValue
-            ?: throw AssertionError()
+        val iterator = expression.dispatchReceiver as IrGetValue
+
         // Return null if we didn't lower the corresponding header.
-        return iteratorToLoopHeader[irIteratorAccess.symbol]
+        return iteratorToLoopHeader[iterator.symbol]
     }
 
-    // Lower getting a next induction variable value.
-    fun processNext(variable: IrVariable): IrExpression? {
+    /**
+     * Lowers the "next" statement that stores the next element in the iterable into the
+     * loop variable, e.g., `val i = it.next()`.
+     *
+     * Returns null if there was no stored [ForLoopHeader] corresponding to the given "next"
+     * statement.
+     */
+    private fun processNext(variable: IrVariable): IrExpression? {
         val initializer = variable.initializer as IrCall
-
-        val iterator = initializer.dispatchReceiver as? IrGetValue
-            ?: throw AssertionError()
-        val forLoopInfo = iteratorToLoopHeader[iterator.symbol]
-            ?: return null  // If we didn't lower a corresponding header.
-        // TODO: Use PLUS_ASSIGN to increment
-        val plusOperator = symbols.getBinaryOperator(
-            OperatorNameConventions.PLUS,
-            forLoopInfo.inductionVariable.type.toKotlinType(),
-            forLoopInfo.step.type.toKotlinType()
-        )
+        val forLoopInfo = getLoopHeader(initializer)
+            ?: return null  // If the for-loop cannot be lowered.
         forLoopInfo.loopVariable = variable
+
+        // The "next" statement (at the top of the loop):
+        //
+        // ```
+        // val i = it.next()
+        // ```
+        //
+        // ...is lowered into:
+        //
+        // ```
+        // val i = initialValue() // `inductionVariable` for progressions
+        //                        // `array[inductionVariable]` for arrays
+        // inductionVariable = inductionVariable + step
+        // ```
         return with(context.createIrBuilder(getScopeOwnerSymbol(), initializer.startOffset, initializer.endOffset)) {
             variable.initializer = forLoopInfo.initializeLoopVariable(symbols, this)
+            val plusFun = forLoopInfo.inductionVariable.type.getClass()!!.functions.first {
+                it.name.asString() == "plus" &&
+                        it.valueParameters.size == 1 &&
+                        it.valueParameters[0].type.toKotlinType() == forLoopInfo.step.type.toKotlinType()
+            }
             val increment = irSetVar(
                 forLoopInfo.inductionVariable.symbol, irCallOp(
-                    plusOperator, plusOperator.owner.returnType,
+                    plusFun.symbol, plusFun.returnType,
                     irGet(forLoopInfo.inductionVariable),
                     irGet(forLoopInfo.step)
                 )

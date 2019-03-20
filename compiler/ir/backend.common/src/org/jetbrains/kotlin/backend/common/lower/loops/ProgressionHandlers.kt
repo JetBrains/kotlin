@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.SimpleType
 
-// TODO: What if functions like Int.rangeTo(Char) will be added to stdlib later?
+/** Builds a [HeaderInfo] for progressions built using the `rangeTo` function. */
 internal class RangeToHandler(private val context: CommonBackendContext, private val progressionElementTypes: Collection<SimpleType>) :
     ProgressionHandler {
     override val matcher = SimpleCalleeMatcher {
@@ -48,6 +48,7 @@ internal class RangeToHandler(private val context: CommonBackendContext, private
         }
 }
 
+/** Builds a [HeaderInfo] for progressions built using the `downTo` extension function. */
 internal class DownToHandler(private val context: CommonBackendContext, private val progressionElementTypes: Collection<SimpleType>) :
     ProgressionHandler {
     override val matcher = SimpleCalleeMatcher {
@@ -67,6 +68,7 @@ internal class DownToHandler(private val context: CommonBackendContext, private 
         }
 }
 
+/** Builds a [HeaderInfo] for progressions built using the `until` extension function. */
 internal class UntilHandler(private val context: CommonBackendContext, private val progressionElementTypes: Collection<SimpleType>) :
     ProgressionHandler {
     override val matcher = SimpleCalleeMatcher {
@@ -133,6 +135,7 @@ internal class UntilHandler(private val context: CommonBackendContext, private v
     }
 }
 
+/** Builds a [HeaderInfo] for progressions built using the `indices` extension property. */
 internal class IndicesHandler(val context: CommonBackendContext) : ProgressionHandler {
 
     override val matcher = SimpleCalleeMatcher {
@@ -171,7 +174,7 @@ internal class DefaultProgressionHandler(private val context: CommonBackendConte
         dispatchReceiver { it != null && ProgressionType.fromIrType(it.type, symbols) != null }
     }
 
-    override fun build(call: IrCall, progressionType: Nothing?): HeaderInfo? =
+    override fun build(call: IrCall, data: Nothing?): HeaderInfo? =
         with(context.createIrBuilder(call.symbol, call.startOffset, call.endOffset)) {
             // Directly use the `first/last/step` properties of the progression.
             val progression = scope.createTemporaryVariable(call.dispatchReceiver!!)
@@ -199,6 +202,7 @@ internal class DefaultProgressionHandler(private val context: CommonBackendConte
         }
 }
 
+/** Builds a [HeaderInfo] for arrays. */
 internal class ArrayIterationHandler(private val context: CommonBackendContext) : HeaderInfoHandler<Nothing?> {
 
     private val intDecFun = ProgressionType.INT_PROGRESSION.decFun(context.irBuiltIns)
