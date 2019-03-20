@@ -43,18 +43,12 @@ import javax.xml.parsers.DocumentBuilderFactory
 class AndroidExtensionsSubpluginIndicator @Inject internal constructor(private val registry: ToolingModelBuilderRegistry) :
     Plugin<Project> {
     override fun apply(project: Project) {
-        val extension = project.extensions.create("androidExtensions", AndroidExtensionsExtension::class.java)
-
-        extension.setEvaluatedHandler { evaluatedExtension ->
-            if (evaluatedExtension.isExperimental) {
-                addAndroidExtensionsRuntimeIfNeeded(project)
-            }
-        }
-
+        project.extensions.create("androidExtensions", AndroidExtensionsExtension::class.java)
+        addAndroidExtensionsRuntime(project)
         registry.register(KotlinAndroidExtensionModelBuilder())
     }
 
-    private fun addAndroidExtensionsRuntimeIfNeeded(project: Project) {
+    private fun addAndroidExtensionsRuntime(project: Project) {
         val kotlinPluginVersion = project.getKotlinPluginVersion() ?: run {
             project.logger.error("Kotlin plugin should be enabled before 'kotlin-android-extensions'")
             return
