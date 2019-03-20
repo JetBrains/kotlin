@@ -34,7 +34,7 @@ object Kapt {
 
         logger.info { options.logString("stand-alone mode") }
 
-        val javaSourceFiles = options.collectJavaSourceFiles()
+        val javaSourceFiles = options.collectJavaSourceFiles(kaptContext.sourcesToReprocess)
 
         val processorLoader = ProcessorLoader(options, logger)
 

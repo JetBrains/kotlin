@@ -7,7 +7,7 @@ package org.jetbrains.kotlin
 
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
-fun createTextForHelpers(isReleaseCoroutines: Boolean): String {
+fun createTextForHelpers(isReleaseCoroutines: Boolean, checkStateMachine: Boolean): String {
     val coroutinesPackage =
         if (isReleaseCoroutines)
             DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME_RELEASE.asString()
@@ -76,6 +76,46 @@ fun createTextForHelpers(isReleaseCoroutines: Boolean): String {
         else
             ""
 
+    val checkStateMachineString = """
+    object StateMachineChecker {
+        private var counter = 0
+        var finished = false
+
+        var proceed: () -> Unit = {}
+
+        suspend fun suspendHere() = suspendCoroutine<Unit> { c ->
+            counter++
+            proceed = { c.resume(Unit) }
+        }
+
+        fun check(numberOfSuspensions: Int) {
+            for (i in 1..numberOfSuspensions) {
+                if (counter != i) error("Wrong state-machine generated: suspendHere called should be called exactly once in one state. Expected " + i + ", got " + counter)
+                proceed()
+            }
+            if (counter != numberOfSuspensions)
+                error("Wrong state-machine generated: suspendHere called should be called exactly once in one state. Expected " + numberOfSuspensions + ", got " + counter)
+            if (finished) error("Wrong state-machine generated: it is finished early")
+            proceed()
+            if (!finished) error("Wrong state-machine generated: it is not finished yet")
+        }
+    }
+    object CheckStateMachineContinuation: ContinuationAdapter<Unit>() {
+        override val context: CoroutineContext
+            get() = EmptyCoroutineContext
+
+        override fun resume(value: Unit) {
+            StateMachineChecker.proceed = {
+                StateMachineChecker.finished = true
+            }
+        }
+
+        override fun resumeWithException(exception: Throwable) {
+            throw exception
+        }
+    }
+    """.trimIndent()
+
     return """
             |package helpers
             |import $coroutinesPackage.*
@@ -100,5 +140,7 @@ fun createTextForHelpers(isReleaseCoroutines: Boolean): String {
             |    override val context: CoroutineContext = EmptyCoroutineContext
             |    $continuationAdapterBody
             |}
+            |
+            |${if (checkStateMachine) checkStateMachineString else ""}
         """.trimMargin()
 }

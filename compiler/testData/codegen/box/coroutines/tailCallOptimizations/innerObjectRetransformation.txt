@@ -1,0 +1,179 @@
+@kotlin.Metadata
+public interface flow/Flow {
+    public abstract @org.jetbrains.annotations.Nullable method collect(@org.jetbrains.annotations.NotNull p0: flow.FlowCollector, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
+}
+
+@kotlin.Metadata
+public interface flow/FlowCollector {
+    public abstract @org.jetbrains.annotations.Nullable method emit(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
+}
+
+@kotlin.coroutines.jvm.internal.DebugMetadata
+@kotlin.Metadata
+final class flow/InnerObjectRetransformationKt$box$1 {
+    field label: int
+    inner class flow/InnerObjectRetransformationKt$box$1
+    method <init>(p0: kotlin.coroutines.Continuation): void
+    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
+    public final method invoke(p0: java.lang.Object): java.lang.Object
+    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+}
+
+@kotlin.Metadata
+public final class flow/InnerObjectRetransformationKt$check$$inlined$collect$1$1 {
+    field label: int
+    synthetic field result: java.lang.Object
+    synthetic final field this$0: flow.InnerObjectRetransformationKt$check$$inlined$collect$1
+    inner class flow/InnerObjectRetransformationKt$check$$inlined$collect$1
+    inner class flow/InnerObjectRetransformationKt$check$$inlined$collect$1$1
+    public method <init>(p0: flow.InnerObjectRetransformationKt$check$$inlined$collect$1, p1: kotlin.coroutines.Continuation): void
+    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+}
+
+@kotlin.Metadata
+public final class flow/InnerObjectRetransformationKt$check$$inlined$collect$1 {
+    inner class flow/InnerObjectRetransformationKt$check$$inlined$collect$1
+    inner class flow/InnerObjectRetransformationKt$check$$inlined$collect$1$1
+    public method <init>(): void
+    public @org.jetbrains.annotations.Nullable method emit(@org.jetbrains.annotations.NotNull p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
+}
+
+@kotlin.Metadata
+@kotlin.coroutines.jvm.internal.DebugMetadata
+public final class flow/InnerObjectRetransformationKt$check$$inlined$flow$1$1 {
+    field L$0: java.lang.Object
+    field L$1: java.lang.Object
+    field L$2: java.lang.Object
+    field L$3: java.lang.Object
+    field label: int
+    synthetic field result: java.lang.Object
+    synthetic final field this$0: flow.InnerObjectRetransformationKt$check$$inlined$flow$1
+    inner class flow/InnerObjectRetransformationKt$check$$inlined$flow$1
+    inner class flow/InnerObjectRetransformationKt$check$$inlined$flow$1$1
+    public method <init>(p0: flow.InnerObjectRetransformationKt$check$$inlined$flow$1, p1: kotlin.coroutines.Continuation): void
+    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+}
+
+@kotlin.Metadata
+public final class flow/InnerObjectRetransformationKt$check$$inlined$flow$1 {
+    inner class flow/InnerObjectRetransformationKt$check$$inlined$flow$1
+    inner class flow/InnerObjectRetransformationKt$check$$inlined$flow$1$1
+    public method <init>(): void
+    public @org.jetbrains.annotations.Nullable method collect(@org.jetbrains.annotations.NotNull p0: flow.FlowCollector, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
+}
+
+@kotlin.Metadata
+public final class flow/InnerObjectRetransformationKt$check$$inlined$flowWith$1 {
+    synthetic final field $this_flowWith$inlined: flow.Flow
+    inner class flow/InnerObjectRetransformationKt$check$$inlined$flowWith$1
+    inner class flow/InnerObjectRetransformationKt$flowWith$$inlined$flow$2$1
+    public method <init>(p0: flow.Flow): void
+    public @org.jetbrains.annotations.Nullable method collect(@org.jetbrains.annotations.NotNull p0: flow.FlowCollector, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
+}
+
+@kotlin.Metadata
+@kotlin.coroutines.jvm.internal.DebugMetadata
+final class flow/InnerObjectRetransformationKt$check$1 {
+    field L$0: java.lang.Object
+    field label: int
+    synthetic field result: java.lang.Object
+    inner class flow/InnerObjectRetransformationKt$check$1
+    method <init>(p0: kotlin.coroutines.Continuation): void
+    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+}
+
+@kotlin.Metadata
+public final class flow/InnerObjectRetransformationKt$collect$2$emit$1 {
+    field label: int
+    synthetic field result: java.lang.Object
+    synthetic final field this$0: flow.InnerObjectRetransformationKt$collect$2
+    inner class flow/InnerObjectRetransformationKt$collect$2
+    inner class flow/InnerObjectRetransformationKt$collect$2$emit$1
+    public method <init>(p0: flow.InnerObjectRetransformationKt$collect$2, p1: kotlin.coroutines.Continuation): void
+    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+}
+
+@kotlin.Metadata
+public final class flow/InnerObjectRetransformationKt$collect$2 {
+    synthetic final field $action: kotlin.jvm.functions.Function2
+    inner class flow/InnerObjectRetransformationKt$collect$2
+    inner class flow/InnerObjectRetransformationKt$collect$2$emit$1
+    public method <init>(p0: kotlin.jvm.functions.Function2): void
+    public @org.jetbrains.annotations.Nullable method emit(@org.jetbrains.annotations.NotNull p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
+}
+
+@kotlin.Metadata
+public final class flow/InnerObjectRetransformationKt$flow$1$collect$1 {
+    field label: int
+    synthetic field result: java.lang.Object
+    synthetic final field this$0: flow.InnerObjectRetransformationKt$flow$1
+    inner class flow/InnerObjectRetransformationKt$flow$1
+    inner class flow/InnerObjectRetransformationKt$flow$1$collect$1
+    public method <init>(p0: flow.InnerObjectRetransformationKt$flow$1, p1: kotlin.coroutines.Continuation): void
+    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+}
+
+@kotlin.Metadata
+public final class flow/InnerObjectRetransformationKt$flow$1 {
+    synthetic final field $block: kotlin.jvm.functions.Function2
+    inner class flow/InnerObjectRetransformationKt$flow$1
+    inner class flow/InnerObjectRetransformationKt$flow$1$collect$1
+    public method <init>(p0: kotlin.jvm.functions.Function2): void
+    public @org.jetbrains.annotations.Nullable method collect(@org.jetbrains.annotations.NotNull p0: flow.FlowCollector, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
+}
+
+@kotlin.Metadata
+public final class flow/InnerObjectRetransformationKt$flowWith$$inlined$flow$1$1 {
+    field label: int
+    synthetic field result: java.lang.Object
+    synthetic final field this$0: flow.InnerObjectRetransformationKt$flowWith$$inlined$flow$1
+    inner class flow/InnerObjectRetransformationKt$flowWith$$inlined$flow$1
+    inner class flow/InnerObjectRetransformationKt$flowWith$$inlined$flow$1$1
+    public method <init>(p0: flow.InnerObjectRetransformationKt$flowWith$$inlined$flow$1, p1: kotlin.coroutines.Continuation): void
+    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+}
+
+@kotlin.Metadata
+public final class flow/InnerObjectRetransformationKt$flowWith$$inlined$flow$1 {
+    synthetic final field $builderBlock$inlined: kotlin.jvm.functions.Function2
+    synthetic final field $this_flowWith$inlined: flow.Flow
+    inner class flow/InnerObjectRetransformationKt$flowWith$$inlined$flow$1
+    inner class flow/InnerObjectRetransformationKt$flowWith$$inlined$flow$1$1
+    public method <init>(p0: flow.Flow, p1: kotlin.jvm.functions.Function2): void
+    public @org.jetbrains.annotations.Nullable method collect(@org.jetbrains.annotations.NotNull p0: flow.FlowCollector, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
+}
+
+@kotlin.Metadata
+public final class flow/InnerObjectRetransformationKt$flowWith$$inlined$flow$2$1 {
+    field label: int
+    synthetic field result: java.lang.Object
+    synthetic final field this$0: flow.InnerObjectRetransformationKt$flowWith$$inlined$flow$2
+    inner class flow/InnerObjectRetransformationKt$flowWith$$inlined$flow$2
+    inner class flow/InnerObjectRetransformationKt$flowWith$$inlined$flow$2$1
+    public method <init>(p0: flow.InnerObjectRetransformationKt$flowWith$$inlined$flow$2, p1: kotlin.coroutines.Continuation): void
+    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+}
+
+@kotlin.Metadata
+public final class flow/InnerObjectRetransformationKt$flowWith$$inlined$flow$2 {
+    synthetic final field $builderBlock$inlined: kotlin.jvm.functions.Function2
+    synthetic final field $this_flowWith$inlined: flow.Flow
+    inner class flow/InnerObjectRetransformationKt$flowWith$$inlined$flow$2
+    inner class flow/InnerObjectRetransformationKt$flowWith$$inlined$flow$2$1
+    public method <init>(p0: flow.Flow, p1: kotlin.jvm.functions.Function2): void
+    public @org.jetbrains.annotations.Nullable method collect(@org.jetbrains.annotations.NotNull p0: flow.FlowCollector, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
+}
+
+@kotlin.Metadata
+public final class flow/InnerObjectRetransformationKt {
+    inner class flow/InnerObjectRetransformationKt$box$1
+    inner class flow/InnerObjectRetransformationKt$check$1
+    inner class flow/InnerObjectRetransformationKt$collect$2
+    inner class flow/InnerObjectRetransformationKt$flow$1
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static method builder(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): void
+    public final static @org.jetbrains.annotations.Nullable method check(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
+    private final static method collect(@org.jetbrains.annotations.NotNull p0: flow.Flow, p1: kotlin.jvm.functions.Function2, p2: kotlin.coroutines.Continuation): java.lang.Object
+    public final static @org.jetbrains.annotations.NotNull method flow(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function2): flow.Flow
+    public final static @org.jetbrains.annotations.NotNull method flowWith(@org.jetbrains.annotations.NotNull p0: flow.Flow, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function2): flow.Flow
+}

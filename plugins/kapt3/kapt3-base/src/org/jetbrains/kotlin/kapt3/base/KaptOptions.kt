@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.base.kapt3
 
+import org.jetbrains.kotlin.kapt3.base.incremental.SourcesToReprocess
 import java.io.File
 import java.nio.file.Files
 
@@ -12,6 +13,11 @@ class KaptOptions(
     val projectBaseDir: File?,
     val compileClasspath: List<File>,
     val javaSourceRoots: List<File>,
+
+    val changedFiles: List<File>,
+    val compiledSources: List<File>,
+    val incrementalCache: File?,
+    val classpathFqNamesHistory: File?,
 
     val sourcesOutputDir: File,
     val classesOutputDir: File,
@@ -35,6 +41,11 @@ class KaptOptions(
         var projectBaseDir: File? = null
         val compileClasspath: MutableList<File> = mutableListOf()
         val javaSourceRoots: MutableList<File> = mutableListOf()
+
+        val changedFiles: MutableList<File> = mutableListOf()
+        val compiledSources: MutableList<File> = mutableListOf()
+        var incrementalCache: File? = null
+        var classpathFqNamesHistory: File? = null
 
         var sourcesOutputDir: File? = null
         var classesOutputDir: File? = null
@@ -62,6 +73,7 @@ class KaptOptions(
 
             return KaptOptions(
                 projectBaseDir, compileClasspath, javaSourceRoots,
+                changedFiles, compiledSources, incrementalCache, classpathFqNamesHistory,
                 sourcesOutputDir, classesOutputDir, stubsOutputDir, incrementalDataOutputDir,
                 processingClasspath, processors, processingOptions, javacOptions, KaptFlags.fromSet(flags),
                 mode, detectMemoryLeaks
@@ -116,12 +128,19 @@ enum class AptMode(override val stringValue: String) : KaptSelector {
         get() = this != APT_ONLY
 }
 
-fun KaptOptions.collectJavaSourceFiles(): List<File> {
-    return (javaSourceRoots + stubsOutputDir)
-        .sortedBy { Files.isSymbolicLink(it.toPath()) } // Get non-symbolic paths first
-        .flatMap { root -> root.walk().filter { it.isFile && it.extension == "java" }.toList() }
-        .sortedBy { Files.isSymbolicLink(it.toPath()) } // This time is for .java files
-        .distinctBy { it.canonicalPath }
+fun KaptOptions.collectJavaSourceFiles(sourcesToReprocess: SourcesToReprocess = SourcesToReprocess.FullRebuild): List<File> {
+    fun allSources(): List<File> {
+        return (javaSourceRoots + stubsOutputDir)
+            .sortedBy { Files.isSymbolicLink(it.toPath()) } // Get non-symbolic paths first
+            .flatMap { root -> root.walk().filter { it.isFile && it.extension == "java" }.toList() }
+            .sortedBy { Files.isSymbolicLink(it.toPath()) } // This time is for .java files
+            .distinctBy { it.canonicalPath }
+    }
+
+    return when (sourcesToReprocess) {
+        is SourcesToReprocess.FullRebuild -> allSources()
+        is SourcesToReprocess.Incremental -> sourcesToReprocess.toReprocess.filter { it.exists() }
+    }
 }
 
 fun KaptOptions.logString(additionalInfo: String = "") = buildString {
@@ -146,4 +165,9 @@ fun KaptOptions.logString(additionalInfo: String = "") = buildString {
 
     appendln("AP options: $processingOptions")
     appendln("Javac options: $javacOptions")
+
+    appendln("[incremental apt] Changed files: $changedFiles")
+    appendln("[incremental apt] Compiled sources directories: ${compiledSources.joinToString()}")
+    appendln("[incremental apt] Cache directory for incremental compilation: $incrementalCache")
+    appendln("[incremental apt] Classpath fq names history dir: $classpathFqNamesHistory")
 }

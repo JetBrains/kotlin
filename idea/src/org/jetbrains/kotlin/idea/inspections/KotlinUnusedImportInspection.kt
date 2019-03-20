@@ -41,6 +41,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.PsiUtilBase
 import com.intellij.util.DocumentUtil
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.targetDescriptors
 import org.jetbrains.kotlin.idea.imports.KotlinImportOptimizer
 import org.jetbrains.kotlin.idea.imports.OptimizedImportsBuilder
@@ -91,6 +92,7 @@ class KotlinUnusedImportInspection : AbstractKotlinInspection() {
             val importPaths = HashSet<ImportPath>(directives.size)
             val unusedImports = ArrayList<KtImportDirective>()
 
+            val resolutionFacade = file.getResolutionFacade()
             for (directive in directives) {
                 val importPath = directive.importPath ?: continue
                 if (importPath.alias != null) continue // highlighting of unused alias imports not supported yet
@@ -98,11 +100,13 @@ class KotlinUnusedImportInspection : AbstractKotlinInspection() {
                 val isUsed = when {
                     !importPaths.add(importPath) -> false
                     importPath.isAllUnder -> importPath.fqName in parentFqNames
-                    else -> importPath.fqName in fqNames
+                    importPath.fqName in fqNames -> true
+                    // case for type alias
+                    else -> directive.targetDescriptors(resolutionFacade).firstOrNull()?.let { it.importableFqName in fqNames } ?: false
                 }
 
                 if (!isUsed) {
-                    if (directive.targetDescriptors().isEmpty()) continue // do not highlight unresolved imports as unused
+                    if (directive.targetDescriptors(resolutionFacade).isEmpty()) continue // do not highlight unresolved imports as unused
                     unusedImports += directive
                 }
             }
@@ -195,14 +199,14 @@ class KotlinUnusedImportInspection : AbstractKotlinInspection() {
 
         val document = editor.document
         var hasErrors = false
-        DaemonCodeAnalyzerEx.processHighlights(document, project, HighlightSeverity.ERROR, 0, document.textLength, { highlightInfo ->
+        DaemonCodeAnalyzerEx.processHighlights(document, project, HighlightSeverity.ERROR, 0, document.textLength) { highlightInfo ->
             if (!importsRange.containsRange(highlightInfo.startOffset, highlightInfo.endOffset)) {
                 hasErrors = true
                 false
             } else {
                 true
             }
-        })
+        }
         if (hasErrors) return false
 
         return DaemonListeners.canChangeFileSilently(file)

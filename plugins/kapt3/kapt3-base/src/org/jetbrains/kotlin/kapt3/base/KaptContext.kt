@@ -13,6 +13,8 @@ import com.sun.tools.javac.util.Log
 import com.sun.tools.javac.util.Options
 import org.jetbrains.kotlin.base.kapt3.KaptFlag
 import org.jetbrains.kotlin.base.kapt3.KaptOptions
+import org.jetbrains.kotlin.kapt3.base.incremental.JavaClassCacheManager
+import org.jetbrains.kotlin.kapt3.base.incremental.SourcesToReprocess
 import org.jetbrains.kotlin.kapt3.base.javac.KaptJavaCompiler
 import org.jetbrains.kotlin.kapt3.base.javac.KaptJavaFileManager
 import org.jetbrains.kotlin.kapt3.base.javac.KaptJavaLog
@@ -29,6 +31,9 @@ open class KaptContext(val options: KaptOptions, val withJdk: Boolean, val logge
     val fileManager: KaptJavaFileManager
     private val javacOptions: Options
     val javaLog: KaptJavaLog
+    val cacheManager: JavaClassCacheManager?
+
+    val sourcesToReprocess: SourcesToReprocess
 
     protected open fun preregisterTreeMaker(context: Context) {}
 
@@ -50,6 +55,13 @@ open class KaptContext(val options: KaptOptions, val withJdk: Boolean, val logge
         preregisterTreeMaker(context)
 
         KaptJavaCompiler.preRegister(context)
+
+        cacheManager = options.incrementalCache?.let {
+            JavaClassCacheManager(it, options.classpathFqNamesHistory!!)
+        }
+        sourcesToReprocess = cacheManager?.invalidateAndGetDirtyFiles(
+            options.changedFiles.filter { it.extension == "java" }
+        ) ?: SourcesToReprocess.FullRebuild
 
         javacOptions = Options.instance(context).apply {
             for ((key, value) in options.processingOptions) {
@@ -76,8 +88,14 @@ open class KaptContext(val options: KaptOptions, val withJdk: Boolean, val logge
                 put("accessInternalAPI", "true")
             }
 
+            val compileClasspath = if (sourcesToReprocess is SourcesToReprocess.FullRebuild || options.changedFiles.isEmpty()) {
+                options.compileClasspath
+            } else {
+                options.compileClasspath + options.compiledSources
+            }
+
             putJavacOption("CLASSPATH", "CLASS_PATH",
-                           options.compileClasspath.joinToString(File.pathSeparator) { it.canonicalPath })
+                           compileClasspath.joinToString(File.pathSeparator) { it.canonicalPath })
 
             @Suppress("SpellCheckingInspection")
             putJavacOption("PROCESSORPATH", "PROCESSOR_PATH",
@@ -93,6 +111,10 @@ open class KaptContext(val options: KaptOptions, val withJdk: Boolean, val logge
         }
 
         fileManager = context.get(JavaFileManager::class.java) as KaptJavaFileManager
+        if (sourcesToReprocess is SourcesToReprocess.Incremental) {
+            fileManager.typeToIgnore = sourcesToReprocess.dirtyTypes
+            fileManager.rootsToFilter = options.compiledSources.toSet()
+        }
 
         if (isJava9OrLater()) {
             for (option in Option.getJavacFileManagerOptions()) {
@@ -110,6 +132,7 @@ open class KaptContext(val options: KaptOptions, val withJdk: Boolean, val logge
     }
 
     override fun close() {
+        cacheManager?.close()
         compiler.close()
         fileManager.close()
     }

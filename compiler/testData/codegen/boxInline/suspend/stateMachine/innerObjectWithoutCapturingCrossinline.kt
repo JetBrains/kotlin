@@ -4,16 +4,10 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
 // NO_CHECK_LAMBDA_INLINING
+// CHECK_STATE_MACHINE
 
 import COROUTINES_PACKAGE.intrinsics.*
 import helpers.*
-
-var i = 0;
-
-suspend fun suspendHere() = suspendCoroutineUninterceptedOrReturn<Unit> {
-    i++
-    COROUTINE_SUSPENDED
-}
 
 interface SuspendRunnable {
     suspend fun run()
@@ -22,11 +16,11 @@ interface SuspendRunnable {
 suspend inline fun crossinlineMe(crossinline c: suspend () -> Unit) {
     val o = object : SuspendRunnable {
         override suspend fun run() {
-            suspendHere()
-            suspendHere()
-            suspendHere()
-            suspendHere()
-            suspendHere()
+            StateMachineChecker.suspendHere()
+            StateMachineChecker.suspendHere()
+            StateMachineChecker.suspendHere()
+            StateMachineChecker.suspendHere()
+            StateMachineChecker.suspendHere()
         }
     }
     o.run()
@@ -39,7 +33,7 @@ import COROUTINES_PACKAGE.*
 import helpers.*
 
 fun builder(c: suspend () -> Unit) {
-    c.startCoroutine(EmptyContinuation)
+    c.startCoroutine(CheckStateMachineContinuation)
 }
 
 fun box(): String {
@@ -49,6 +43,6 @@ fun box(): String {
             res = "FAIL 1"
         }
     }
-    if (i != 1) return "FAIL 2"
+    StateMachineChecker.check(numberOfSuspensions = 5)
     return res
 }

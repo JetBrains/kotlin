@@ -3291,6 +3291,11 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         public void testNotRemoveImportsForTypeAliases() throws Exception {
             runTest("idea/testData/quickfix/optimizeImports/notRemoveImportsForTypeAliases.before.Main.kt");
         }
+
+        @TestMetadata("notRemoveImportsForTypeAliases2.before.Main.kt")
+        public void testNotRemoveImportsForTypeAliases2() throws Exception {
+            runTest("idea/testData/quickfix/optimizeImports/notRemoveImportsForTypeAliases2.before.Main.kt");
+        }
     }
 
     @TestMetadata("idea/testData/quickfix/override")

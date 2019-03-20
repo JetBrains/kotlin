@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskLoggers
 import org.jetbrains.kotlin.gradle.report.BuildReportMode
 import org.jetbrains.kotlin.gradle.report.TaskExecutionResult
+import org.jetbrains.kotlin.gradle.tasks.clearLocalState
 import org.jetbrains.kotlin.gradle.tasks.throwGradleExceptionIfError
 import org.jetbrains.kotlin.gradle.utils.stackTraceAsString
 import org.jetbrains.kotlin.incremental.ChangedFiles
@@ -273,7 +274,8 @@ internal class GradleKotlinCompilerWork @Inject constructor(
             usePreciseJavaTracking = icEnv.usePreciseJavaTracking,
             outputFiles = outputFiles,
             multiModuleICSettings = icEnv.multiModuleICSettings,
-            modulesInfo = incrementalModuleInfo!!
+            modulesInfo = incrementalModuleInfo!!,
+            classpathFqNamesHistory = icEnv.classpathFqNamesHistory
         )
 
         log.info("Options for KOTLIN DAEMON: $compilationOptions")
@@ -291,8 +293,10 @@ internal class GradleKotlinCompilerWork @Inject constructor(
         return result
     }
 
-    private fun compileOutOfProcess(): ExitCode =
-        try {
+    private fun compileOutOfProcess(): ExitCode {
+        clearLocalState(outputFiles, log, reason = "out-of-process execution strategy is non-incremental")
+
+        return try {
             runToolInSeparateProcess(compilerArgs, compilerClassName, compilerFullClasspath, log)
         } finally {
             reportExecutionResultIfNeeded {
@@ -302,17 +306,20 @@ internal class GradleKotlinCompilerWork @Inject constructor(
                 )
             }
         }
+    }
 
     private fun compileInProcess(messageCollector: MessageCollector): ExitCode {
+        clearLocalState(outputFiles, log, reason = "in-process execution strategy is non-incremental")
+
         // in-process compiler should always be run in a different thread
         // to avoid leaking thread locals from compiler (see KT-28037)
         val threadPool = Executors.newSingleThreadExecutor()
         val bufferingMessageCollector = GradleBufferingMessageCollector()
-        try {
+        return try {
             val future = threadPool.submit(Callable {
                 compileInProcessImpl(bufferingMessageCollector)
             })
-            return future.get()
+            future.get()
         } finally {
             bufferingMessageCollector.flush(messageCollector)
             threadPool.shutdown()
