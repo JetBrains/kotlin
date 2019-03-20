@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.framework.isGradleModule
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.platform.impl.isJavaScript
+import org.jetbrains.kotlin.resolve.isJs
 import org.jetbrains.plugins.gradle.settings.GradleSystemRunningSettings
 
 val Module.jsTestOutputFilePath: String?
@@ -47,7 +48,7 @@ val Module.jsProductionOutputFilePath: String?
         return JpsPathUtil.urlToPath("$outputDir/$name.js")
     }
 
-fun Module.asJsModule(): Module? = takeIf { it.platform.isJavaScript }
+fun Module.asJsModule(): Module? = takeIf { it.platform.isJs() }
 
 val Module.shouldUseJpsOutput: Boolean
     get() = !(isGradleModule() && GradleSystemRunningSettings.getInstance().isUseGradleAwareMake)

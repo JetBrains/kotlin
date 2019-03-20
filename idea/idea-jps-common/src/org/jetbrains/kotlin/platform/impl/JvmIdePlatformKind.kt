@@ -9,40 +9,30 @@ package org.jetbrains.kotlin.platform.impl
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.resolve.JvmTarget
-import org.jetbrains.kotlin.platform.IdePlatform
 import org.jetbrains.kotlin.platform.IdePlatformKind
 import org.jetbrains.kotlin.resolve.DefaultBuiltInPlatforms
-import org.jetbrains.kotlin.resolve.toTargetPlatform
+import org.jetbrains.kotlin.resolve.TargetPlatform
 
 object JvmIdePlatformKind : IdePlatformKind<JvmIdePlatformKind>() {
 
-    override fun platformByCompilerArguments(arguments: CommonCompilerArguments): IdePlatform<JvmIdePlatformKind, CommonCompilerArguments>? {
+    override fun platformByCompilerArguments(arguments: CommonCompilerArguments): TargetPlatform? {
         return if (arguments is K2JVMCompilerArguments) {
-            val jvmTarget = arguments.jvmTarget ?: JvmTarget.DEFAULT.description
-            JvmIdePlatformKind.platforms.firstOrNull { it.version.description >= jvmTarget }
+            val jvmTarget = arguments.jvmTarget?.let { JvmTarget.fromString(it) } ?: JvmTarget.DEFAULT
+            DefaultBuiltInPlatforms.jvmPlatformByTargetVersion(jvmTarget)
         } else null
     }
 
-    override val compilerPlatform get() = DefaultBuiltInPlatforms.jvmPlatform
+    override fun createArguments(): CommonCompilerArguments {
+        return K2JVMCompilerArguments()
+    }
 
-    override val platforms = JvmTarget.values().map { ver -> Platform(ver) }
-    override val defaultPlatform get() = Platform(JvmTarget.JVM_1_6)
+    override val platforms = JvmTarget.values().map { ver -> DefaultBuiltInPlatforms.jvmPlatformByTargetVersion(ver) }
+    override val defaultPlatform get() = DefaultBuiltInPlatforms.jvmPlatform
 
     override val argumentsClass get() = K2JVMCompilerArguments::class.java
 
     override val name get() = "JVM"
-
-    data class Platform(override val version: JvmTarget) : IdePlatform<JvmIdePlatformKind, K2JVMCompilerArguments>() {
-        override val kind get() = JvmIdePlatformKind
-
-        override fun createArguments(init: K2JVMCompilerArguments.() -> Unit) = K2JVMCompilerArguments()
-            .apply(init)
-            .apply { jvmTarget = this@Platform.version.description }
-    }
 }
 
 val IdePlatformKind<*>?.isJvm
     get() = this is JvmIdePlatformKind
-
-val IdePlatform<*, *>?.isJvm
-    get() = this is JvmIdePlatformKind.Platform

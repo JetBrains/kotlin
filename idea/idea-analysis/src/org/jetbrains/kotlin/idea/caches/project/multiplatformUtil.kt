@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.idea.facet.KotlinFacetType.Companion.ID
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.util.rootManager
 import org.jetbrains.kotlin.platform.impl.CommonIdePlatformKind
-import org.jetbrains.kotlin.platform.impl.isCommon
+import org.jetbrains.kotlin.resolve.isCommon
 
 val Module.isNewMPPModule: Boolean
     get() = facetSettings?.kind?.isNewMPP ?: false
@@ -37,7 +37,7 @@ val Module.sourceType: SourceType?
 val Module.isMPPModule: Boolean
     get() {
         val settings = facetSettings ?: return false
-        return settings.platform.isCommon ||
+        return settings.platform.isCommon() ||
                 settings.implementedModuleNames.isNotEmpty() ||
                 settings.kind.isNewMPP
     }
@@ -65,7 +65,7 @@ val Module.implementedModules: List<Module>
             CachedValueProvider.Result(
                 if (isNewMPPModule) {
                     rootManager.dependencies.filter {
-                        it.isNewMPPModule && it.platform is CommonIdePlatformKind.Platform && it.externalProjectId == externalProjectId
+                        it.isNewMPPModule && it.platform.isCommon() && it.externalProjectId == externalProjectId
                     }
                 } else {
                     val modelsProvider = IdeModelsProviderImpl(project)

@@ -36,9 +36,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.config.KotlinFacetSettings;
 import org.jetbrains.kotlin.idea.facet.KotlinFacet;
-import org.jetbrains.kotlin.platform.IdePlatform;
+import org.jetbrains.kotlin.platform.IdePlatformKindUtil;
 import org.jetbrains.kotlin.platform.impl.CommonIdePlatformUtil;
 import org.jetbrains.kotlin.platform.impl.NativeIdePlatformUtil;
+import org.jetbrains.kotlin.resolve.TargetPlatform;
+import org.jetbrains.kotlin.resolve.TargetPlatformKt;
 import org.jetbrains.plugins.gradle.execution.build.CachedModuleDataFinder;
 import org.jetbrains.plugins.gradle.execution.build.GradleProjectTaskRunner;
 import org.jetbrains.plugins.gradle.service.project.GradleBuildSrcProjectsResolver;
@@ -292,10 +294,10 @@ class KotlinMPPGradleProjectTaskRunner extends ProjectTaskRunner
         final KotlinFacet kotlinFacet = KotlinFacet.Companion.get(module);
         if (kotlinFacet == null) return false;
 
-        final IdePlatform platform = kotlinFacet.getConfiguration().getSettings().getPlatform();
+        final TargetPlatform platform = kotlinFacet.getConfiguration().getSettings().getPlatform();
         if (platform == null) return false;
 
-        return NativeIdePlatformUtil.isKotlinNative(platform);
+        return TargetPlatformKt.isNative(platform);
     }
 
     private static boolean isCommonProductionSourceModule(Module module) {
@@ -305,10 +307,10 @@ class KotlinMPPGradleProjectTaskRunner extends ProjectTaskRunner
         final KotlinFacetSettings facetSettings = kotlinFacet.getConfiguration().getSettings();
         if (facetSettings.isTestModule()) return false;
 
-        final IdePlatform platform = facetSettings.getPlatform();
+        final TargetPlatform platform = facetSettings.getPlatform();
         if (platform == null) return false;
 
-        return CommonIdePlatformUtil.isCommon(platform);
+        return TargetPlatformKt.isCommon(platform);
     }
 
     private static Collection<String> findNativeGradleBuildTasks(Collection<String> gradleTasks, String sourceSetName) {

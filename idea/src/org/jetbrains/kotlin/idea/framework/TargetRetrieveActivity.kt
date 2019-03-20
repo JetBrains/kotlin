@@ -17,17 +17,22 @@ import org.jetbrains.kotlin.platform.impl.isJvm
 import org.jetbrains.kotlin.platform.impl.isKotlinNative
 import org.jetbrains.kotlin.idea.statistics.KotlinEventTrigger
 import org.jetbrains.kotlin.idea.statistics.KotlinStatisticsTrigger
+import org.jetbrains.kotlin.resolve.isCommon
+import org.jetbrains.kotlin.resolve.isJs
+import org.jetbrains.kotlin.resolve.isJvm
+import org.jetbrains.kotlin.resolve.isNative
 
 class TargetRetrieveActivity : StartupActivity {
 
     override fun runActivity(project: Project) {
         project.allModules().forEach {
             val buildSystem = it.getBuildSystemType()
+            // TODO(dsavvinov): review that
             val platform = when {
-                it.platform.isJvm -> "jvm"
-                it.platform.isJavaScript -> "js"
-                it.platform.isCommon -> "common"
-                it.platform.isKotlinNative -> "native"
+                it.platform.isJvm() -> "jvm"
+                it.platform.isJs() -> "js"
+                it.platform.isCommon() -> "common"
+                it.platform.isNative() -> "native"
                 else -> "unknown"
             }
             when {

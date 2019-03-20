@@ -16,7 +16,6 @@ import org.jetbrains.jps.util.JpsPathUtil
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.project.platform
-import org.jetbrains.kotlin.platform.IdePlatform
 
 class MessageCollector {
     private val builder = StringBuilder()

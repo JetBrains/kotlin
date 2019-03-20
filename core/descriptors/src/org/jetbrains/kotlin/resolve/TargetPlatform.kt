@@ -8,33 +8,54 @@ package org.jetbrains.kotlin.resolve
 data class TargetPlatform(val componentPlatforms: Set<SimplePlatform>) : Collection<SimplePlatform> by componentPlatforms {
     init {
         if (componentPlatforms.isEmpty()) throw IllegalArgumentException("Don't instantiate TargetPlatform with empty set of platforms")
-//        if (componentPlatforms.any { it is CommonPlatform }) throw IllegalArgumentException("Don't instantiate TargetPlatform with CommonPlatform")
     }
 
-    @Deprecated("Introduces legacy CommonPlatform, use just 'single' or 'singleOrNull' extensions instead")
-    fun convertToOldPlatforms(): SimplePlatform = componentPlatforms.singleOrNull() ?: DefaultBuiltInPlatforms.commonPlatform.single()
-
-    inline fun <reified T : SimplePlatform> subplatformOfType(): T? = componentPlatforms.filterIsInstance<T>().singleOrNull()
+    override fun toString(): String = presentableDescription
 }
 
+inline fun <reified T : SimplePlatform> TargetPlatform.subplatformOfType(): T? = componentPlatforms.filterIsInstance<T>().singleOrNull()
+fun <T> TargetPlatform.subplatformOfType(klass: Class<T>): T? = componentPlatforms.filterIsInstance(klass).singleOrNull()
+
+/**
+ * Returns human-readable description, mapping multiplatform to 'Common (experimental)'
+ *
+ * Do not use it unless it is important for some kind of backward compatibility, prefer
+ * 'presentableDescription' instead, which provides more informative description for
+ * multiplatform.
+ */
+val TargetPlatform.oldFashionedDescription: String
+    get() = when (val singlePlatform = singleOrNull()) {
+        is JdkPlatform -> singlePlatform.platformName + " " + singlePlatform.targetVersion
+        null -> "Common (experimental)"
+        else -> singlePlatform.platformName
+    }
+
+/**
+ * Renders multiplatform in form
+ *      '$PLATFORM_1 / $PLATFORM_2 / ...'
+ * e.g.
+ *      'JVM (1.8) / JS / Native'
+ */
+val TargetPlatform.presentableDescription: String
+    get() = componentPlatforms.joinToString(separator = "/")
+
 inline fun <reified T : SimplePlatform> TargetPlatform?.has(): Boolean =
-    this != null && (subplatformOfType<T>() != null || subplatformOfType<CommonPlatform>() != null)
+    this != null && subplatformOfType<T>() != null
 
 sealed class SimplePlatform(val platformName: String) {
     override fun toString(): String = platformName
 }
-abstract class CommonPlatform : SimplePlatform("Common")
-
 abstract class KonanPlatform : SimplePlatform("Native")
 abstract class JvmPlatform : SimplePlatform("JVM")
-data class JdkPlatform(val targetVersion: JvmTarget) : JvmPlatform()
+data class JdkPlatform(val targetVersion: JvmTarget) : JvmPlatform() {
+    override fun toString(): String = "$platformName ($targetVersion)"
+}
 
 
 abstract class JsPlatform : SimplePlatform("JS")
 
 interface KotlinBuiltInPlatforms {
     val konanPlatform: TargetPlatform
-    val commonPlatform: TargetPlatform
     val jvmPlatform: TargetPlatform
     val jvm16: TargetPlatform
     val jvm18: TargetPlatform
@@ -47,8 +68,6 @@ interface KotlinBuiltInPlatforms {
 
 object DefaultBuiltInPlatforms : KotlinBuiltInPlatforms {
     override val konanPlatform: TargetPlatform = object : KonanPlatform() {}.toTargetPlatform()
-
-    override val commonPlatform: TargetPlatform = object : CommonPlatform() {}.toTargetPlatform()
 
     override val jvmPlatform: TargetPlatform = JdkPlatform(JvmTarget.DEFAULT).toTargetPlatform()
     override val jvm16: TargetPlatform = JdkPlatform(JvmTarget.JVM_1_6).toTargetPlatform()
@@ -73,11 +92,7 @@ fun TargetPlatform?.isJvm(): Boolean =
 fun TargetPlatform?.isJs(): Boolean =
     this?.singleOrNull() is JsPlatform
 
-fun TargetPlatform?.isCommon(): Boolean = when (this?.size) {
-    0 -> false
-    1 -> this == DefaultBuiltInPlatforms.commonPlatform
-    else -> true
-}
+fun TargetPlatform?.isCommon(): Boolean = this != null && this.size > 1
 
 fun SimplePlatform.toTargetPlatform(): TargetPlatform = TargetPlatform(setOf(this))
 
@@ -115,6 +130,3 @@ interface TargetPlatformVersion {
         override val description = ""
     }
 }
-
-fun TargetPlatform.normalize(): TargetPlatform = if (this.has<CommonPlatform>()) DefaultBuiltInPlatforms.newCommonPlatform else this
-

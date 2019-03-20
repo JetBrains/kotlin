@@ -41,12 +41,14 @@ import org.jetbrains.kotlin.idea.facet.KotlinFacet;
 import org.jetbrains.kotlin.idea.roots.RootUtilsKt;
 import org.jetbrains.kotlin.idea.util.CidrUtil;
 import org.jetbrains.kotlin.idea.util.application.ApplicationUtilsKt;
-import org.jetbrains.kotlin.platform.IdePlatform;
 import org.jetbrains.kotlin.platform.IdePlatformKind;
 import org.jetbrains.kotlin.platform.impl.JsIdePlatformUtil;
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformUtil;
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind;
+import org.jetbrains.kotlin.resolve.JdkPlatform;
 import org.jetbrains.kotlin.resolve.JvmTarget;
+import org.jetbrains.kotlin.resolve.TargetPlatform;
+import org.jetbrains.kotlin.resolve.TargetPlatformKt;
 
 import javax.swing.*;
 import java.util.*;
@@ -356,8 +358,8 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
 
     @SuppressWarnings("unchecked")
     private void fillJvmVersionList() {
-        for (IdePlatform<JvmIdePlatformKind, ?> jvm : JvmIdePlatformKind.INSTANCE.getPlatforms()) {
-            jvmVersionComboBox.addItem(jvm.getVersion().getDescription());
+        for (TargetPlatform jvm : JvmIdePlatformKind.INSTANCE.getPlatforms()) {
+            jvmVersionComboBox.addItem(TargetPlatformKt.subplatformOfType(jvm, JdkPlatform.class).getTargetVersion().getDescription());
         }
     }
 

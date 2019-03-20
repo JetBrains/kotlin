@@ -22,9 +22,9 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.copyBean
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
-import org.jetbrains.kotlin.platform.IdePlatform
 import org.jetbrains.kotlin.platform.IdePlatformKind
 import org.jetbrains.kotlin.resolve.JvmTarget
+import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.TargetPlatformVersion
 import org.jetbrains.kotlin.utils.DescriptionAware
 
@@ -189,7 +189,7 @@ class KotlinFacetSettings {
             compilerArguments!!.apiVersion = value?.versionString
         }
 
-    val platform: IdePlatform<*, *>?
+    val platform: TargetPlatform?
         get() {
             val compilerArguments = this.compilerArguments ?: return null
             return IdePlatformKind.platformByCompilerArguments(compilerArguments)

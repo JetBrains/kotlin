@@ -23,7 +23,7 @@ import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.platform.IdePlatform;
+import org.jetbrains.kotlin.platform.DefaultIdeTargetPlatformKindProviderKt;
 import org.jetbrains.kotlin.platform.IdePlatformKindUtil;
 import org.jetbrains.kotlin.resolve.TargetPlatform;
 
@@ -38,8 +38,8 @@ public class ProjectStructureUtil {
         CachedValue<TargetPlatform> result = module.getUserData(PLATFORM_FOR_MODULE);
         if (result == null) {
             result = CachedValuesManager.getManager(module.getProject()).createCachedValue(() -> {
-                IdePlatform<?, ?> platform = IdePlatformKindUtil.orDefault(PlatformKt.getPlatform(module));
-                return CachedValueProvider.Result.create(platform.getKind().getCompilerPlatform(),
+                TargetPlatform platform = DefaultIdeTargetPlatformKindProviderKt.orDefault(PlatformKt.getPlatform(module));
+                return CachedValueProvider.Result.create(platform,
                                                          ProjectRootModificationTracker.getInstance(module.getProject()));
             }, false);
 

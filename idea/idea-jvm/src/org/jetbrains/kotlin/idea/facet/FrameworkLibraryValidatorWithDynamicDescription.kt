@@ -26,9 +26,10 @@ import com.intellij.openapi.roots.ui.configuration.libraries.AddCustomLibraryDia
 import com.intellij.openapi.roots.ui.configuration.libraries.CustomLibraryDescription
 import com.intellij.openapi.roots.ui.configuration.libraries.LibraryPresentationManager
 import org.jetbrains.kotlin.idea.platform.tooling
-import org.jetbrains.kotlin.platform.IdePlatform
 import org.jetbrains.kotlin.platform.IdePlatformKind
+import org.jetbrains.kotlin.platform.idePlatformKind
 import org.jetbrains.kotlin.platform.impl.isCommon
+import org.jetbrains.kotlin.resolve.TargetPlatform
 import javax.swing.JComponent
 
 // Based on com.intellij.facet.impl.ui.libraries.FrameworkLibraryValidatorImpl
@@ -36,7 +37,7 @@ class FrameworkLibraryValidatorWithDynamicDescription(
         private val context: LibrariesValidatorContext,
         private val validatorsManager: FacetValidatorsManager,
         private val libraryCategoryName: String,
-        private val getPlatform: () -> IdePlatform<*, *>
+        private val getPlatform: () -> TargetPlatform
 ) : FrameworkLibraryValidator() {
     private val IdePlatformKind<*>.libraryDescription: CustomLibraryDescription?
         get() = this.tooling.getLibraryDescription(context.module.project)
@@ -70,10 +71,10 @@ class FrameworkLibraryValidatorWithDynamicDescription(
     override fun check(): ValidationResult {
         val targetPlatform = getPlatform()
 
-        if (checkLibraryIsConfigured(targetPlatform.kind)) {
+        if (checkLibraryIsConfigured(targetPlatform.idePlatformKind)) {
             val conflictingPlatforms = IdePlatformKind.ALL_KINDS
                 .filter {
-                    !it.isCommon && it.name != targetPlatform.kind.name
+                    !it.isCommon && it.name != targetPlatform.idePlatformKind.name
                             && it.libraryDescription != null && checkLibraryIsConfigured(it)
                 }
 
@@ -87,7 +88,7 @@ class FrameworkLibraryValidatorWithDynamicDescription(
 
         return ValidationResult(
                 IdeBundle.message("label.missed.libraries.text", libraryCategoryName),
-                LibrariesQuickFix(targetPlatform.kind.libraryDescription!!)
+                LibrariesQuickFix(targetPlatform.idePlatformKind.libraryDescription!!)
         )
     }
 

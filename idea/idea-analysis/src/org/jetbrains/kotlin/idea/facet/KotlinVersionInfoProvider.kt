@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.platform.IdePlatformKind
 import org.jetbrains.kotlin.platform.orDefault
 import org.jetbrains.kotlin.config.VersionView
+import org.jetbrains.kotlin.platform.idePlatformKind
 
 interface KotlinVersionInfoProvider {
     companion object {
@@ -92,7 +93,7 @@ private fun Iterable<String>.addReleaseVersionIfNecessary(shouldAdd: Boolean): I
 
 fun getRuntimeLibraryVersion(module: Module): String? {
     val targetPlatform = KotlinFacetSettingsProvider.getInstance(module.project).getInitializedSettings(module).platform
-    val versions = getRuntimeLibraryVersions(module, null, targetPlatform.orDefault().kind)
+    val versions = getRuntimeLibraryVersions(module, null, targetPlatform.orDefault().idePlatformKind)
     return versions.toSet().singleOrNull()
 }
 

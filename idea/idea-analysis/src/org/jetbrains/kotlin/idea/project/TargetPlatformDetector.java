@@ -67,12 +67,12 @@ public class TargetPlatformDetector {
             }
         }
 
-        return DefaultIdeTargetPlatformKindProvider.Companion.getDefaultCompilerPlatform();
+        return DefaultIdeTargetPlatformKindProvider.Companion.getDefaultPlatform();
     }
 
     @NotNull
     public static TargetPlatform getPlatform(@NotNull Module module) {
-        return TargetPlatformKt.normalize(ProjectStructureUtil.getCachedPlatformForModule(module));
+        return ProjectStructureUtil.getCachedPlatformForModule(module);
     }
 
 }

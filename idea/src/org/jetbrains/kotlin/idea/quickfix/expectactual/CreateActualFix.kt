@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.idea.util.actualsForExpected
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.resolve.oldFashionedDescription
 
 sealed class CreateActualFix<D : KtNamedDeclaration>(
     declaration: D,
@@ -41,7 +42,7 @@ sealed class CreateActualFix<D : KtNamedDeclaration>(
     generateIt: KtPsiFactory.(Project, D) -> D?
 ) : AbstractCreateDeclarationFix<D>(declaration, actualModule, generateIt) {
 
-    override fun getText() = "Create actual $elementType for module ${module.name} (${actualPlatform.convertToOldPlatforms().platformName})"
+    override fun getText() = "Create actual $elementType for module ${module.name} (${actualPlatform.oldFashionedDescription})"
 
     final override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val actualFile = getOrCreateImplementationFile() ?: return

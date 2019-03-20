@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker.Companion.allStrongIncompatibilities
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
+import org.jetbrains.kotlin.resolve.oldFashionedDescription
 
 class OptionalExpectationInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession) =
@@ -52,7 +53,7 @@ class OptionalExpectationInspection : AbstractKotlinInspection() {
                 val actualModule = (actualModuleDescriptor.getCapability(ModuleInfo.Capability) as? ModuleSourceInfo)?.module ?: continue
                 holder.registerProblem(
                     classOrObject.nameIdentifier ?: classOrObject,
-                    "Optionally expected annotation has no actual annotation in module $displayedName for platforms ${platform.convertToOldPlatforms().platformName}",
+                    "Optionally expected annotation has no actual annotation in module $displayedName for platforms ${platform.oldFashionedDescription}",
                     // NB: some highlighting is not suggested for this inspection
                     ProblemHighlightType.INFORMATION,
                     IntentionWrapper(CreateActualClassFix(classOrObject, actualModule, platform), classOrObject.containingFile)

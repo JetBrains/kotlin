@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.idea.facet.initializeIfNeeded
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.KotlinJdkAndLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.jetbrains.kotlin.platform.IdePlatform
+import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.junit.Assert
@@ -131,7 +131,7 @@ abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
 }
 
 fun Module.createFacet(
-    platformKind: IdePlatform<*, *>? = null,
+    platformKind: TargetPlatform? = null,
     useProjectSettings: Boolean = true,
     implementedModuleName: String? = null
 ) {

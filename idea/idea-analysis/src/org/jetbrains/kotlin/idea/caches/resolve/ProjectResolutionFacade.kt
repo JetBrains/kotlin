@@ -159,12 +159,11 @@ internal class ProjectResolutionFacade(
 //                    else -> PlatformAnalysisParameters.Empty
 //                }
 //                platform.idePlatformKind.resolution.createResolverForModuleFactory(parameters, IdeaEnvironment, platform)
-                val normalizedPlatform = modulePlatform!!.normalize()
                 CompositeResolverForModuleFactory(
                     commonPlatformParameters,
                     jvmPlatformParameters,
-                    normalizedPlatform,
-                    CompositeCompilerServices(normalizedPlatform.componentPlatforms.map { it.toTargetPlatform().findCompilerServices })
+                    modulePlatform!!,
+                    CompositeCompilerServices(modulePlatform.componentPlatforms.map { it.toTargetPlatform().findCompilerServices })
                 )
             },
             builtIns = builtIns,
@@ -236,6 +235,3 @@ internal class ProjectResolutionFacade(
         }
     }
 }
-
-
-private fun TargetPlatform.normalize(): TargetPlatform = if (this.has<CommonPlatform>()) DefaultBuiltInPlatforms.newCommonPlatform else this

@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import org.jetbrains.kotlin.platform.impl.CommonIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.JsIdePlatformKind
+import org.jetbrains.kotlin.resolve.isCommon
+import org.jetbrains.kotlin.resolve.isJs
 
 /**
  * This StartupActivity creates KotlinSdk for projects containing JS or Common modules.
@@ -21,7 +23,7 @@ class CreateKotlinSdkActivity : StartupActivity {
 
     override fun runActivity(project: Project) {
         val kotlinSdkIsRequired = project.allModules().any {
-            it.platform is JsIdePlatformKind.Platform || it.platform is CommonIdePlatformKind.Platform
+            it.platform.isJs() || it.platform.isCommon()
         }
         if (kotlinSdkIsRequired) {
             KotlinSdkType.setUpIfNeeded()

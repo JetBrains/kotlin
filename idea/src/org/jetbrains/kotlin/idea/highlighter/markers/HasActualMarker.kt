@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.util.actualsForExpected
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.resolve.oldFashionedDescription
 
 private fun ModuleDescriptor?.getPlatformName(): String? {
     if (this == null) return null
@@ -34,7 +35,7 @@ private fun ModuleDescriptor?.getPlatformName(): String? {
         return "Android"
     }
     val platform = platforms ?: return null
-    return platform.convertToOldPlatforms().platformName
+    return platform.oldFashionedDescription
 }
 
 fun getPlatformActualTooltip(declaration: KtDeclaration): String? {

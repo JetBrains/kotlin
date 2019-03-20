@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.platform.tooling
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.util.projectStructure.module
+import org.jetbrains.kotlin.platform.idePlatformKind
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -63,7 +64,7 @@ class KotlinTestRunLineMarkerContributor : RunLineMarkerContributor() {
         val descriptor = declaration.resolveToDescriptorIfAny() ?: return null
 
         val targetPlatform = declaration.module?.platform ?: return null
-        val icon = targetPlatform.kind.tooling.getTestIcon(declaration, descriptor) ?: return null
+        val icon = targetPlatform.idePlatformKind.tooling.getTestIcon(declaration, descriptor) ?: return null
         return RunLineMarkerContributor.Info(icon, { "Run Test" }, ExecutorAction.getActions())
     }
 }
