@@ -280,10 +280,7 @@ internal fun PsiElement.getMaybeLightElement(): PsiElement? {
     }
 }
 
-internal fun KtElement.resolveCallToDeclaration(
-    context: KotlinAbstractUElement,
-    resultingDescriptor: DeclarationDescriptor? = null
-): PsiElement? {
+internal fun KtElement.resolveCallToDeclaration(resultingDescriptor: DeclarationDescriptor? = null): PsiElement? {
     val descriptor = resultingDescriptor ?: run {
         val resolvedCall = getResolvedCall(analyze()) ?: return null
         resolvedCall.resultingDescriptor

@@ -43,7 +43,7 @@ open class KotlinUSimpleReferenceExpression(
     givenParent: UElement?
 ) : KotlinAbstractUExpression(givenParent), USimpleNameReferenceExpression, KotlinUElementWithType, KotlinEvaluatableUElement {
     private val resolvedDeclaration: PsiElement? by lz {
-        psi.resolveCallToDeclaration(this)?.let { return@lz it }
+        psi.resolveCallToDeclaration()?.let { return@lz it }
 
         val declarationDescriptor = psi.analyze()[BindingContext.REFERENCE_TARGET, psi] ?: return@lz null
 
