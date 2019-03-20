@@ -170,7 +170,7 @@ class SerializerJsTranslator(descriptor: ClassDescriptor,
             if (property.transient) continue
             // output.writeXxxElementValue(classDesc, index, value)
             val sti = getSerialTypeInfo(property)
-            val innerSerial = serializerInstance(sti.serializer, property.module, property.type, property.genericIndex)
+            val innerSerial = serializerInstance(context, sti.serializer, property.module, property.type, property.genericIndex)
             val invocation = if (innerSerial == null) {
                 val writeFunc =
                         kOutputClass.getFuncDesc("${CallingConventions.encode}${sti.elementMethodPrefix}${CallingConventions.elementPostfix}").single()
@@ -275,7 +275,7 @@ class SerializerJsTranslator(descriptor: ClassDescriptor,
                     case(JsIntLiteral(i)) {
                         // input.readXxxElementValue
                         val sti = getSerialTypeInfo(property)
-                        val innerSerial = serializerInstance(sti.serializer, property.module, property.type, property.genericIndex)
+                        val innerSerial = serializerInstance(context, sti.serializer, property.module, property.type, property.genericIndex)
                         val call: JsExpression = if (innerSerial == null) {
                             val unknownSer = (sti.elementMethodPrefix.isEmpty())
                             val readFunc =

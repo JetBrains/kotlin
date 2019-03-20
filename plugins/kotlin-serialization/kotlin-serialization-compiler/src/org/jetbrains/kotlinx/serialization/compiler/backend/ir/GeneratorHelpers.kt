@@ -38,11 +38,10 @@ import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
+import org.jetbrains.kotlinx.serialization.compiler.backend.common.AbstractSerialGenerator
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.findTypeSerializerOrContext
-import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.contextSerializerId
-import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.enumSerializerId
-import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.polymorphicSerializerId
-import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.referenceArraySerializerId
+import org.jetbrains.kotlinx.serialization.compiler.backend.common.serialName
+import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 
 val BackendContext.externalSymbols: ReferenceSymbolTable get() = ir.symbols.externalSymbolTable
@@ -513,14 +512,32 @@ interface IrBuilderExtension {
         module: ModuleDescriptor,
         kType: KotlinType,
         genericIndex: Int? = null
+    ): IrExpression? = serializerInstance(
+        enclosingGenerator,
+        serializableDescriptor,
+        serializerClassOriginal,
+        module,
+        kType,
+        genericIndex
+    ) {
+        val prop = enclosingGenerator.localSerializersFieldsDescriptors[it]
+        irGetField(irGet(dispatchReceiverParameter), compilerContext.localSymbolTable.referenceField(prop).owner)
+    }
+
+    fun IrBuilderWithScope.serializerInstance(
+        enclosingGenerator: AbstractSerialGenerator,
+        serializableDescriptor: ClassDescriptor,
+        serializerClassOriginal: ClassDescriptor?,
+        module: ModuleDescriptor,
+        kType: KotlinType,
+        genericIndex: Int? = null,
+        genericGetter: (Int) -> IrExpression
     ): IrExpression? {
         val nullableSerClass =
             compilerContext.externalSymbols.referenceClass(module.getClassFromInternalSerializationPackage(SpecialBuiltins.nullableSerializer))
         if (serializerClassOriginal == null) {
             if (genericIndex == null) return null
-
-            val prop = enclosingGenerator.localSerializersFieldsDescriptors[genericIndex]
-            return irGetField(irGet(dispatchReceiverParameter), compilerContext.localSymbolTable.referenceField(prop).owner)
+            return genericGetter(genericIndex)
         }
         if (serializerClassOriginal.kind == ClassKind.OBJECT) {
             return irGetObject(serializerClassOriginal)
@@ -531,6 +548,10 @@ interface IrBuilderExtension {
             when (serializerClassOriginal.classId) {
                 contextSerializerId, polymorphicSerializerId -> {
                     args = listOf(classReference(kType))
+                    typeArgs = listOf(kType.toIrType())
+                }
+                objectSerializerId -> {
+                    args = listOf(irString(kType.serialName()), irGetObject(kType.toClassDescriptor!!))
                     typeArgs = listOf(kType.toIrType())
                 }
                 enumSerializerId -> {
@@ -556,12 +577,12 @@ interface IrBuilderExtension {
                         )
                         val expr = serializerInstance(
                             enclosingGenerator,
-                            dispatchReceiverParameter,
                             serializableDescriptor,
                             argSer,
                             module,
                             it.type,
-                            it.type.genericIndex
+                            it.type.genericIndex,
+                            genericGetter
                         )
                             ?: return null
                         wrapWithNullableSerializerIfNeeded(module, it.type, expr, nullableSerClass)
