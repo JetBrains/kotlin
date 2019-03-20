@@ -30,7 +30,7 @@ interface FirProvider : FirSymbolProvider {
 
     fun getFirClassifierContainerFile(fqName: ClassId): FirFile
 
-    fun getFirCallableContainerFile(callableId: CallableId): FirFile?
+    fun getFirCallableContainerFile(symbol: ConeCallableSymbol): FirFile?
 
     companion object {
         fun getInstance(session: FirSession): FirProvider = session.service()

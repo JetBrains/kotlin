@@ -460,11 +460,12 @@ class ReturnTypeCalculatorWithJump(val session: FirSession) : ReturnTypeCalculat
         require(declaration is FirCallableMemberDeclaration) { "${declaration::class}: ${declaration.render()}" }
 
 
-        val id = (declaration.symbol as ConeCallableSymbol).callableId
+        val symbol = declaration.symbol as ConeCallableSymbol
+        val id = symbol.callableId
 
         val provider = session.service<FirProvider>()
 
-        val file = provider.getFirCallableContainerFile(id)
+        val file = provider.getFirCallableContainerFile(symbol)
 
         val outerClasses = generateSequence(id.classId) { classId ->
             classId.outerClassId

@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 class FirProviderImpl(val session: FirSession) : FirProvider {
-    override fun getFirCallableContainerFile(callableId: CallableId): FirFile? {
-        return callableContainerMap[callableId]
+    override fun getFirCallableContainerFile(symbol: ConeCallableSymbol): FirFile? {
+        return callableContainerMap[symbol]
     }
 
     override fun getClassLikeSymbolByFqName(classId: ClassId): ConeClassLikeSymbol? {
@@ -30,8 +30,6 @@ class FirProviderImpl(val session: FirSession) : FirProvider {
 
     override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<ConeCallableSymbol> {
         return (callableMap[CallableId(packageFqName, null, name)] ?: emptyList())
-            .filterIsInstance<FirSymbolOwner<*>>()
-            .mapNotNull { it.symbol as? ConeCallableSymbol }
     }
 
     override fun getClassDeclaredMemberScope(classId: ClassId) =
@@ -69,9 +67,10 @@ class FirProviderImpl(val session: FirSession) : FirProvider {
             }
 
             override fun visitCallableMemberDeclaration(callableMemberDeclaration: FirCallableMemberDeclaration) {
-                val callableId = (callableMemberDeclaration.symbol as ConeCallableSymbol).callableId
-                callableMap.merge(callableId, listOf(callableMemberDeclaration)) { a, b -> a + b }
-                callableContainerMap[callableId] = file
+                val symbol = callableMemberDeclaration.symbol as ConeCallableSymbol
+                val callableId = symbol.callableId
+                callableMap.merge(callableId, listOf(symbol)) { a, b -> a + b }
+                callableContainerMap[symbol] = file
             }
 
             override fun visitConstructor(constructor: FirConstructor) {
@@ -91,8 +90,8 @@ class FirProviderImpl(val session: FirSession) : FirProvider {
     private val fileMap = mutableMapOf<FqName, List<FirFile>>()
     private val classifierMap = mutableMapOf<ClassId, FirClassLikeDeclaration>()
     private val classifierContainerFileMap = mutableMapOf<ClassId, FirFile>()
-    private val callableMap = mutableMapOf<CallableId, List<FirNamedDeclaration>>()
-    private val callableContainerMap = mutableMapOf<CallableId, FirFile>()
+    private val callableMap = mutableMapOf<CallableId, List<ConeCallableSymbol>>()
+    private val callableContainerMap = mutableMapOf<ConeCallableSymbol, FirFile>()
 
     override fun getFirFilesByPackage(fqName: FqName): List<FirFile> {
         return fileMap[fqName].orEmpty()
