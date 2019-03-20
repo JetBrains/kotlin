@@ -796,10 +796,12 @@ abstract class BasicBoxTest(
             KotlinCoreEnvironment.createForTests(testRootDisposable, CompilerConfiguration(), EnvironmentConfigFiles.JS_CONFIG_FILES)
 
     companion object {
-        val METADATA_CACHE = (JsConfig.JS_STDLIB + JsConfig.JS_KOTLIN_TEST).flatMap { path ->
-            KotlinJavascriptMetadataUtils.loadMetadata(path).map { metadata ->
-                val parts = KotlinJavascriptSerializationUtil.readModuleAsProto(metadata.body, metadata.version)
-                JsModuleDescriptor(metadata.moduleName, parts.kind, parts.importedModules, parts)
+        val METADATA_CACHE by lazy {
+            (JsConfig.JS_STDLIB + JsConfig.JS_KOTLIN_TEST).flatMap { path ->
+                KotlinJavascriptMetadataUtils.loadMetadata(path).map { metadata ->
+                    val parts = KotlinJavascriptSerializationUtil.readModuleAsProto(metadata.body, metadata.version)
+                    JsModuleDescriptor(metadata.moduleName, parts.kind, parts.importedModules, parts)
+                }
             }
         }
 
