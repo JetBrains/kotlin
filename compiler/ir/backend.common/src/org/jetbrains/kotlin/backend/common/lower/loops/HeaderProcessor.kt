@@ -54,9 +54,10 @@ internal class ProgressionLoopHeader(
 
     val closed = headerInfo.closed
 
-    private val increasing = headerInfo.increasing
+    private val direction = headerInfo.direction
 
-    fun comparingFunction(builtIns: IrBuiltIns) = if (increasing)
+    // TODO: Handle UNKNOWN direction, which requires a complex expression for the emptiness check
+    fun comparingFunction(builtIns: IrBuiltIns) = if (direction == ProgressionDirection.INCREASING)
         builtIns.lessOrEqualFunByOperandType[builtIns.int]?.symbol!!
     else
         builtIns.greaterOrEqualFunByOperandType[builtIns.int]?.symbol!!

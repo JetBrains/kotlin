@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isSubtypeOfClass
@@ -46,24 +47,36 @@ enum class ProgressionType(val numberCastFunctionName: Name) {
     }
 }
 
+internal enum class ProgressionDirection { DECREASING, INCREASING, UNKNOWN }
+
 // Information about loop that is required by HeaderProcessor to build ForLoopHeader
 internal sealed class HeaderInfo(
     val progressionType: ProgressionType,
     val lowerBound: IrExpression,
     val upperBound: IrExpression,
     val step: IrExpression,
-    val increasing: Boolean,
     val closed: Boolean
-)
+) {
+    val direction: ProgressionDirection by lazy {
+        // If step is a constant (either Int or Long), then we can determine the direction.
+        val stepValue = (step as? IrConst<*>)?.value as? Number?
+        val stepValueAsLong = stepValue?.toLong()
+        when {
+            stepValueAsLong == null -> ProgressionDirection.UNKNOWN
+            stepValueAsLong < 0L -> ProgressionDirection.DECREASING
+            stepValueAsLong > 0L -> ProgressionDirection.INCREASING
+            else -> ProgressionDirection.UNKNOWN
+        }
+    }
+}
 
 internal class ProgressionHeaderInfo(
     progressionType: ProgressionType,
     lowerBound: IrExpression,
     upperBound: IrExpression,
     step: IrExpression,
-    increasing: Boolean = true,
     closed: Boolean = true
-) : HeaderInfo(progressionType, lowerBound, upperBound, step, increasing, closed)
+) : HeaderInfo(progressionType, lowerBound, upperBound, step, closed)
 
 internal class ArrayHeaderInfo(
     lowerBound: IrExpression,
@@ -75,7 +88,6 @@ internal class ArrayHeaderInfo(
     lowerBound,
     upperBound,
     step,
-    increasing = true,
     closed = false
 )
 
