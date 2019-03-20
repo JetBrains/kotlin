@@ -113,7 +113,7 @@ open class KotlinCocoapodsPlugin: Plugin<Project> {
         project.createSyncFrameworkTask(fatFrameworkTask.destinationDir, fatFrameworkTask)
     }
 
-    private fun createSyncForSimpleFramework(
+    private fun createSyncForRegularFramework(
         project: Project,
         kotlinExtension: KotlinMultiplatformExtension,
         requestedBuildType: String,
@@ -140,7 +140,7 @@ open class KotlinCocoapodsPlugin: Plugin<Project> {
             createSyncForFatFramework(project, kotlinExtension, requestedBuildType)
         } else {
             // A requested target doesn't require building a fat framework.
-            createSyncForSimpleFramework(project, kotlinExtension, requestedBuildType, HostManager().targetByName(requestedTargetName))
+            createSyncForRegularFramework(project, kotlinExtension, requestedBuildType, HostManager().targetByName(requestedTargetName))
         }
     }
 
