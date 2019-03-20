@@ -287,7 +287,7 @@ object TopDownAnalyzerFacadeForJVM {
         configuration: CompilerConfiguration,
         createBuiltInsFromModule: Boolean
     ): MutableModuleContext {
-        val projectContext = ProjectContext(project)
+        val projectContext = ProjectContext(project, "TopDownAnalyzer for JVM")
         val builtIns = JvmBuiltIns(projectContext.storageManager, !createBuiltInsFromModule)
         return ContextForNewModule(
             projectContext, Name.special("<${configuration.getNotNull(CommonConfigurationKeys.MODULE_NAME)}>"), builtIns, null

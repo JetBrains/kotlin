@@ -9,10 +9,10 @@ import org.jetbrains.kotlin.context.GlobalContextImpl
 import org.jetbrains.kotlin.storage.ExceptionTracker
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
-internal fun GlobalContextImpl.contextWithNewLockAndCompositeExceptionTracker(): GlobalContextImpl {
+internal fun GlobalContextImpl.contextWithNewLockAndCompositeExceptionTracker(debugName: String): GlobalContextImpl {
     val newExceptionTracker = CompositeExceptionTracker(this.exceptionTracker)
     return GlobalContextImpl(
-        LockBasedStorageManager.createWithExceptionHandling("GlobalContextUtils", newExceptionTracker),
+        LockBasedStorageManager.createWithExceptionHandling(debugName, newExceptionTracker),
         newExceptionTracker
     )
 }

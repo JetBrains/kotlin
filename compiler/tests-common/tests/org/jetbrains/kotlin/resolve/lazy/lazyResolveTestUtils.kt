@@ -37,7 +37,7 @@ fun createResolveSessionForFiles(
     syntheticFiles: Collection<KtFile>,
     addBuiltIns: Boolean
 ): ResolveSession {
-    val projectContext = ProjectContext(project)
+    val projectContext = ProjectContext(project, "lazy resolve test utils")
     val testModule =
         TestModule(addBuiltIns)
     val platformParameters = JvmPlatformParameters(
