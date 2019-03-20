@@ -9,27 +9,27 @@
         <element id="file-copy" path="$PROJECT_DIR$/prepare/compiler/build/tmp/packCompiler/MANIFEST.MF" />
       </element>
       <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/builtins/1.3.30-dev-1945/f5c03880d3dc304ef5dacc511310e12dac983ba6/builtins-1.3.30-dev-1945.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/buildSrc/prepare-deps/intellij-sdk/build/repo/kotlin.build.custom.deps/183.5153.4/intellij/lib/asm-all-7.0.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/buildSrc/prepare-deps/intellij-sdk/build/repo/kotlin.build.custom.deps/183.5153.4/intellij/lib/guava-25.1-jre.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/buildSrc/prepare-deps/intellij-sdk/build/repo/kotlin.build.custom.deps/183.5153.4/intellij-core/intellij-core.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/dependencies/repo/kotlin.build/183.5153.4/intellij/lib/asm-all-7.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/dependencies/repo/kotlin.build/183.5153.4/intellij/lib/guava-25.1-jre.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/dependencies/repo/kotlin.build/183.5153.4/intellij-core/intellij-core.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.fusesource.jansi/jansi/1.16/b1aaf0028852164ab6b4057192ccd0ba7dedd3a5/jansi-1.16.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/buildSrc/prepare-deps/intellij-sdk/build/repo/kotlin.build.custom.deps/183.5153.4/intellij-core/java-compatibility-1.0.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/dependencies/repo/kotlin.build/183.5153.4/intellij-core/java-compatibility-1.0.1.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.javaslang/javaslang/2.0.6/415b0d40db4890849270c2a5cb50050fc6ee7636/javaslang-2.0.6.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.javaslang/javaslang-match/2.0.6/d57a666939103b659813de52102d3ff0baa8ad5f/javaslang-match-2.0.6.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/javax.inject/javax.inject/1/6975da39a7040257bd51d21a231b76c915872d38/javax.inject-1.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/buildSrc/prepare-deps/intellij-sdk/build/repo/kotlin.build.custom.deps/183.5153.4/intellij/lib/jdom.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/dependencies/repo/kotlin.build/183.5153.4/intellij/lib/jdom.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jline/jline/3.3.1/d8a30137fe4ee2246b71b3915baac767d348c5bb/jline-3.3.1.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/buildSrc/prepare-deps/intellij-sdk/build/repo/kotlin.build.custom.deps/183.5153.4/intellij/lib/jna-platform.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/buildSrc/prepare-deps/intellij-sdk/build/repo/kotlin.build.custom.deps/183.5153.4/intellij/lib/jna.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/buildSrc/prepare-deps/intellij-sdk/build/repo/kotlin.build.custom.deps/183.5153.4/jps-standalone/jps-model.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/dependencies/repo/kotlin.build/183.5153.4/intellij/lib/jna-platform.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/dependencies/repo/kotlin.build/183.5153.4/intellij/lib/jna.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/dependencies/repo/kotlin.build/183.5153.4/jps-standalone/jps-model.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.code.findbugs/jsr305/1.3.9/40719ea6961c0cb6afaeb6a921eaa1f6afd4cfdf/jsr305-1.3.9.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlinx/kotlinx-coroutines-core/1.0.1/f33e8dab753f33d1bbb07cca664fd6f13d993d7e/kotlinx-coroutines-core-1.0.1.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/buildSrc/prepare-deps/intellij-sdk/build/repo/kotlin.build.custom.deps/183.5153.4/intellij/lib/log4j.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/buildSrc/prepare-deps/intellij-sdk/build/repo/kotlin.build.custom.deps/183.5153.4/intellij/lib/lz4-1.3.0.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/buildSrc/prepare-deps/intellij-sdk/build/repo/kotlin.build.custom.deps/183.5153.4/intellij/lib/oro-2.0.8.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/buildSrc/prepare-deps/intellij-sdk/build/repo/kotlin.build.custom.deps/183.5153.4/intellij/lib/picocontainer-1.2.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/dependencies/repo/kotlin.build/183.5153.4/intellij/lib/log4j.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/dependencies/repo/kotlin.build/183.5153.4/intellij/lib/lz4-1.3.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/dependencies/repo/kotlin.build/183.5153.4/intellij/lib/oro-2.0.8.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/dependencies/repo/kotlin.build/183.5153.4/intellij/lib/picocontainer-1.2.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/protobuf-relocated/2.6.1/9a9536949348fae596f4878243dffd0ed351993d/protobuf-relocated-2.6.1.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/buildSrc/prepare-deps/intellij-sdk/build/repo/kotlin.build.custom.deps/183.5153.4/intellij/lib/streamex-0.6.7.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/dependencies/repo/kotlin.build/183.5153.4/intellij/lib/streamex-0.6.7.jar" path-in-jar="/" />
       <element id="module-output" name="kotlin.compiler.backend-common.main" />
       <element id="module-output" name="kotlin.compiler.backend.js.main" />
       <element id="module-output" name="kotlin.compiler.backend.jvm.main" />
