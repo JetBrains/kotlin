@@ -9,6 +9,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin
+import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.KOTLIN_TARGET_FOR_DEVICE
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.cocoapodsBuildDirs
 import java.io.File
@@ -56,7 +57,7 @@ open class PodspecTask : DefaultTask() {
             |
             |    spec.pod_target_xcconfig = {
             |        'KOTLIN_TARGET[sdk=iphonesimulator*]' => 'ios_x64',
-            |        'KOTLIN_TARGET[sdk=iphoneos*]' => 'ios_arm64',
+            |        'KOTLIN_TARGET[sdk=iphoneos*]' => '$KOTLIN_TARGET_FOR_DEVICE',
             |        'KOTLIN_TARGET[sdk=macosx*]' => 'macos_x64'
             |    }
             |

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.cocoapods
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.tasks.Sync
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
@@ -16,11 +17,13 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.tasks.DefFileTask
 import org.jetbrains.kotlin.gradle.tasks.DummyFrameworkTask
+import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
 import org.jetbrains.kotlin.gradle.tasks.PodspecTask
 import org.jetbrains.kotlin.gradle.utils.asValidTaskName
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
 internal val Project.cocoapodsBuildDirs: CocoapodsBuildDirs
@@ -35,6 +38,9 @@ internal class CocoapodsBuildDirs(val project: Project) {
 
     val defs: File
         get() = root.resolve("defs")
+
+    fun fatFramework(buildType: String) =
+        root.resolve("fat-frameworks/${buildType.toLowerCase()}")
 }
 
 internal fun String.asValidFrameworkName() = replace('-', '_')
@@ -55,12 +61,71 @@ open class KotlinCocoapodsPlugin: Plugin<Project> {
             it.value.replace("\"", "")
         }.toList()
 
+    private fun KotlinMultiplatformExtension.targetsForPlatform(requestedPlatform: KonanTarget) =
+        supportedTargets().matching { it.konanTarget == requestedPlatform }
+
     private fun createDefaultFrameworks(kotlinExtension: KotlinMultiplatformExtension) {
         kotlinExtension.supportedTargets().all { target ->
             target.binaries.framework {
                 isStatic = true
             }
         }
+    }
+
+    private fun Project.createSyncFrameworkTask(originalDirectory: File, buildingTask: Task) =
+        tasks.create("syncFramework", Sync::class.java) {
+            it.group = TASK_GROUP
+            it.description = "Copies a framework for given platform and build type into the CocoaPods build directory"
+
+            it.dependsOn(buildingTask)
+            it.from(originalDirectory)
+            it.destinationDir = cocoapodsBuildDirs.framework
+        }
+
+    private fun createSyncForFatFramework(
+        project: Project,
+        kotlinExtension: KotlinMultiplatformExtension,
+        requestedBuildType: String
+    ) {
+        // We create a fat framework only for device platforms: iosArm64 and iosArm32.
+        val fatPlatforms = listOf(KonanTarget.IOS_ARM64, KonanTarget.IOS_ARM32)
+        val fatTargets = fatPlatforms.associate { it to kotlinExtension.targetsForPlatform(it) }
+
+        check(fatTargets.values.any { it.isNotEmpty() }) { "The project doesn't contain a target for iOS device" }
+        fatTargets.forEach { platform, targets ->
+            check(targets.size <= 1) {
+                "The project has more than one target for the requested platform: `${platform.visibleName}`"
+            }
+        }
+
+        val fatFrameworkTask = project.tasks.create("fatFramework", FatFrameworkTask::class.java) { task ->
+            task.group = TASK_GROUP
+            task.description = "Creates a fat framework for ARM32 and ARM64 architectures"
+            task.destinationDir = project.cocoapodsBuildDirs.fatFramework(requestedBuildType)
+
+            fatTargets.forEach { _, targets ->
+                targets.singleOrNull()?.let {
+                    task.from(it.binaries.getFramework(requestedBuildType))
+                }
+            }
+        }
+
+        project.createSyncFrameworkTask(fatFrameworkTask.destinationDir, fatFrameworkTask)
+    }
+
+    private fun createSyncForSimpleFramework(
+        project: Project,
+        kotlinExtension: KotlinMultiplatformExtension,
+        requestedBuildType: String,
+        requestedTarget: KonanTarget
+    ) {
+        val targets = kotlinExtension.targetsForPlatform(requestedTarget)
+
+        check(targets.isNotEmpty()) { "The project doesn't contain a target for the requested platform: `${requestedTarget.visibleName}`" }
+        check(targets.size == 1) { "The project has more than one target for the requested platform: `${requestedTarget.visibleName}`" }
+
+        val frameworkLinkTask = targets.single().binaries.getFramework(requestedBuildType).linkTask
+        project.createSyncFrameworkTask(frameworkLinkTask.destinationDir, frameworkLinkTask)
     }
 
     private fun createSyncTask(
@@ -70,23 +135,12 @@ open class KotlinCocoapodsPlugin: Plugin<Project> {
         val requestedTargetName = project.findProperty(TARGET_PROPERTY)?.toString() ?: return@whenEvaluated
         val requestedBuildType = project.findProperty(CONFIGURATION_PROPERTY)?.toString()?.toUpperCase() ?: return@whenEvaluated
 
-        val requestedTarget = HostManager().targetByName(requestedTargetName)
-
-        val targets = kotlinExtension.supportedTargets().matching {
-            it.konanTarget == requestedTarget
-        }
-
-        check(targets.isNotEmpty()) { "The project doesn't contain a target for the requested platform: $requestedTargetName" }
-        check(targets.size == 1) { "The project has more than one targets for the requested platform: $requestedTargetName" }
-
-        val framework =  targets.single().binaries.getFramework(requestedBuildType)
-        project.tasks.create("syncFramework", Sync::class.java) {
-            it.group = TASK_GROUP
-            it.description = "Copies a framework for given platform and build type into the CocoaPods build directory"
-
-            it.dependsOn(framework.linkTask)
-            it.from(framework.linkTask.destinationDir)
-            it.destinationDir = cocoapodsBuildDirs.framework
+        if (requestedTargetName == KOTLIN_TARGET_FOR_DEVICE) {
+            // A required target is a device and we need to build a fat framework.
+            createSyncForFatFramework(project, kotlinExtension, requestedBuildType)
+        } else {
+            // A requested target doesn't require building a fat framework.
+            createSyncForSimpleFramework(project, kotlinExtension, requestedBuildType, HostManager().targetByName(requestedTargetName))
         }
     }
 
@@ -110,18 +164,18 @@ open class KotlinCocoapodsPlugin: Plugin<Project> {
         cocoapodsExtension: CocoapodsExtension
     ) {
         cocoapodsExtension.pods.all { pod ->
+            val defTask = project.tasks.create(
+                lowerCamelCaseName("generateDef", pod.name).asValidTaskName(),
+                DefFileTask::class.java
+            ) {
+                it.pod = pod
+                it.description = "Generates a def file for CocoaPods dependency ${pod.name}"
+                // This task is an implementation detail so we don't add it in any group
+                // to avoid showing it in the `tasks` output.
+            }
+
             kotlinExtension.supportedTargets().all { target ->
                 target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).cinterops.create(pod.name) { interop ->
-
-                    val defTask = project.tasks.create(
-                        lowerCamelCaseName("generateDef", pod.name, target.name).asValidTaskName(),
-                        DefFileTask::class.java
-                    ) {
-                        it.pod = pod
-                        it.description = "Generates a def file for CocoaPods dependency ${pod.name} for target ${target.name}"
-                        // This task is an implementation detail so we don't add it in any group
-                        // to avoid showing it in the `tasks` output.
-                    }
 
                     project.tasks.getByPath(interop.interopProcessingTaskName).dependsOn(defTask)
                     interop.defFile = defTask.outputFile
@@ -168,6 +222,10 @@ open class KotlinCocoapodsPlugin: Plugin<Project> {
         const val CFLAGS_PROPERTY = "kotlin.native.cocoapods.cflags"
         const val HEADER_PATHS_PROPERTY = "kotlin.native.cocoapods.paths.headers"
         const val FRAMEWORK_PATHS_PROPERTY = "kotlin.native.cocoapods.paths.frameworks"
+
+        // Used in Xcode script phase to indicate that the framework is being built for a device
+        // so we should generate a fat framework with arm32 and arm64 binaries.
+        const val KOTLIN_TARGET_FOR_DEVICE = "ios_arm"
 
     }
 }
