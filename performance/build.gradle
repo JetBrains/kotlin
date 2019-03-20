@@ -82,6 +82,7 @@ private def uploadBenchmarkResultToBintray(String fileName) {
 }
 
 task registerBuild(type: BuildRegister) {
+    onlyBranch = project.findProperty('kotlin.register.only.branch')
     // Get bundle size.
     bundleSize = null
     if (project.findProperty('kotlin.bundleBuild') != null) {

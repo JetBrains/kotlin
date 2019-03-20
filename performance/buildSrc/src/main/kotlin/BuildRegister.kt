@@ -34,12 +34,15 @@ import java.util.Properties
  * @property currentBenchmarksReportFile  path to file with becnhmarks result
  * @property analyzer path to analyzer tool
  * @property bundleSize size of build
+ * @property onlyBranch register only builds for branch
  */
 open class BuildRegister : DefaultTask() {
     @Input
     lateinit var currentBenchmarksReportFile: String
     @Input
     lateinit var analyzer: String
+
+    var onlyBranch: String? = null
 
     var bundleSize: Int? = null
 
@@ -88,6 +91,7 @@ open class BuildRegister : DefaultTask() {
         val teamCityUser = buildProperties.getProperty("teamcity.auth.userId")
         val teamCityPassword = buildProperties.getProperty("teamcity.auth.password")
         val buildNumber = buildProperties.getProperty("build.number")
+        val branch = buildProperties.getProperty("teamcity.build.branch")
 
         // Get summary information.
         val output = arrayOf("$analyzer", "summary", "-exec-samples", "all", "-compile", "samples",
@@ -132,6 +136,11 @@ open class BuildRegister : DefaultTask() {
             append("\"codeSize\": \"$codeSizeInfo\",")
             append("\"bundleSize\": ${bundleSize?.let {"\"$bundleSize\""} ?: bundleSize}}")
         }
-        println(sendPostRequest("$performanceServer/register", requestBody))
+        if (onlyBranch == null || onlyBranch == branch) {
+            println(sendPostRequest("$performanceServer/register", requestBody))
+        } else {
+            println("Skipping registration. Current branch $branch, need registration for $onlyBranch!")
+        }
+
     }
 }
