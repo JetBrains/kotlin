@@ -8,7 +8,6 @@ FILE fqName:<root> fileName:/typeParameterWithPrimitiveNumericSupertype.kt
         WHEN type=kotlin.Boolean origin=ANDAND
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Int
-              typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Int>; java.io.Serializable]
               GET_VAR 'x: kotlin.Any declared in <root>.test0' type=kotlin.Any origin=null
             then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
               arg0: GET_VAR 'x: kotlin.Any declared in <root>.test0' type=kotlin.Any origin=null
@@ -25,11 +24,9 @@ FILE fqName:<root> fileName:/typeParameterWithPrimitiveNumericSupertype.kt
         WHEN type=kotlin.Boolean origin=ANDAND
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Float
-              typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Float modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Float>; java.io.Serializable]
               GET_VAR 'x: kotlin.Any declared in <root>.test1' type=kotlin.Any origin=null
             then: CALL 'public final fun ieee754equals (arg0: kotlin.Float?, arg1: kotlin.Float?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
               arg0: TYPE_OP type=kotlin.Float origin=IMPLICIT_CAST typeOperand=kotlin.Float
-                typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Float modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Float>; java.io.Serializable]
                 GET_VAR 'x: kotlin.Any declared in <root>.test1' type=kotlin.Any origin=null
               arg1: GET_VAR 'y: T of <root>.test1 declared in <root>.test1' type=T of <root>.test1 origin=null
           BRANCH
@@ -44,12 +41,10 @@ FILE fqName:<root> fileName:/typeParameterWithPrimitiveNumericSupertype.kt
         WHEN type=kotlin.Boolean origin=ANDAND
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Float
-              typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Float modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Float>; java.io.Serializable]
               GET_VAR 'x: kotlin.Any declared in <root>.test2' type=kotlin.Any origin=null
             then: CALL 'public final fun ieee754equals (arg0: kotlin.Double?, arg1: kotlin.Double?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
               arg0: CALL 'public open fun toDouble (): kotlin.Double declared in kotlin.Float' type=kotlin.Double origin=null
                 $this: TYPE_OP type=kotlin.Float origin=IMPLICIT_CAST typeOperand=kotlin.Float
-                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Float modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Float>; java.io.Serializable]
                   GET_VAR 'x: kotlin.Any declared in <root>.test2' type=kotlin.Any origin=null
               arg1: GET_VAR 'y: T of <root>.test2 declared in <root>.test2' type=T of <root>.test2 origin=null
           BRANCH
@@ -64,12 +59,10 @@ FILE fqName:<root> fileName:/typeParameterWithPrimitiveNumericSupertype.kt
         WHEN type=kotlin.Boolean origin=ANDAND
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Int
-              typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Int>; java.io.Serializable]
               GET_VAR 'x: kotlin.Any declared in <root>.test3' type=kotlin.Any origin=null
             then: CALL 'public final fun ieee754equals (arg0: kotlin.Float?, arg1: kotlin.Float?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
               arg0: CALL 'public open fun toFloat (): kotlin.Float declared in kotlin.Int' type=kotlin.Float origin=null
                 $this: TYPE_OP type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
-                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Int>; java.io.Serializable]
                   GET_VAR 'x: kotlin.Any declared in <root>.test3' type=kotlin.Any origin=null
               arg1: GET_VAR 'y: T of <root>.test3 declared in <root>.test3' type=T of <root>.test3 origin=null
           BRANCH
@@ -84,12 +77,10 @@ FILE fqName:<root> fileName:/typeParameterWithPrimitiveNumericSupertype.kt
         WHEN type=kotlin.Boolean origin=ANDAND
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Int
-              typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Int>; java.io.Serializable]
               GET_VAR 'x: kotlin.Any declared in <root>.test4' type=kotlin.Any origin=null
             then: CALL 'public final fun ieee754equals (arg0: kotlin.Float?, arg1: kotlin.Float?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
               arg0: CALL 'public open fun toFloat (): kotlin.Float declared in kotlin.Int' type=kotlin.Float origin=null
                 $this: TYPE_OP type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
-                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Int>; java.io.Serializable]
                   GET_VAR 'x: kotlin.Any declared in <root>.test4' type=kotlin.Any origin=null
               arg1: GET_VAR 'y: T of <root>.test4 declared in <root>.test4' type=T of <root>.test4 origin=null
           BRANCH
@@ -105,12 +96,10 @@ FILE fqName:<root> fileName:/typeParameterWithPrimitiveNumericSupertype.kt
         WHEN type=kotlin.Boolean origin=ANDAND
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Int
-              typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Int>; java.io.Serializable]
               GET_VAR 'x: kotlin.Any declared in <root>.test5' type=kotlin.Any origin=null
             then: CALL 'public final fun ieee754equals (arg0: kotlin.Float?, arg1: kotlin.Float?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
               arg0: CALL 'public open fun toFloat (): kotlin.Float declared in kotlin.Int' type=kotlin.Float origin=null
                 $this: TYPE_OP type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
-                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Int>; java.io.Serializable]
                   GET_VAR 'x: kotlin.Any declared in <root>.test5' type=kotlin.Any origin=null
               arg1: GET_VAR 'y: R of <root>.test5 declared in <root>.test5' type=R of <root>.test5 origin=null
           BRANCH
@@ -125,7 +114,6 @@ FILE fqName:<root> fileName:/typeParameterWithPrimitiveNumericSupertype.kt
         WHEN type=kotlin.Boolean origin=ANDAND
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Int
-              typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Int>; java.io.Serializable]
               GET_VAR 'x: kotlin.Any declared in <root>.test6' type=kotlin.Any origin=null
             then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
               arg0: GET_VAR 'x: kotlin.Any declared in <root>.test6' type=kotlin.Any origin=null
@@ -149,27 +137,25 @@ FILE fqName:<root> fileName:/typeParameterWithPrimitiveNumericSupertype.kt
           WHEN type=kotlin.Boolean origin=ANDAND
             BRANCH
               if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Double
-                typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Double>; java.io.Serializable]
                 GET_VAR 'y: kotlin.Any declared in <root>.F.testCapturedType' type=kotlin.Any origin=null
               then: CALL 'public final fun ieee754equals (arg0: kotlin.Double?, arg1: kotlin.Double?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                 arg0: CALL 'public open fun toDouble (): kotlin.Double declared in kotlin.Float' type=kotlin.Double origin=null
                   $this: GET_VAR 'x: T of <root>.F declared in <root>.F.testCapturedType' type=T of <root>.F origin=null
                 arg1: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
-                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Double>; java.io.Serializable]
                   GET_VAR 'y: kotlin.Any declared in <root>.F.testCapturedType' type=kotlin.Any origin=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: CONST Boolean type=kotlin.Boolean value=false
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
       VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
+        public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 

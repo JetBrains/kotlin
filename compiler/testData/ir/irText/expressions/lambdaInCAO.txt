@@ -50,7 +50,6 @@ FILE fqName:<root> fileName:/lambdaInCAO.kt
     VALUE_PARAMETER name:a index:0 type:kotlin.Any 
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]
         BLOCK type=kotlin.Int origin=POSTFIX_INCR
           VAR IR_TEMPORARY_VARIABLE name:tmp0_array type:kotlin.Any [val] 
             GET_VAR 'a: kotlin.Any declared in <root>.test3' type=kotlin.Any origin=null

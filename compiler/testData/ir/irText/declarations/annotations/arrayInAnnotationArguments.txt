@@ -16,16 +16,16 @@ FILE fqName:<root> fileName:/arrayInAnnotationArguments.kt
               receiver: GET_VAR '<this>: <root>.TestAnnWithIntArray declared in <root>.TestAnnWithIntArray.<get-x>' type=<root>.TestAnnWithIntArray origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
-        FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Annotation
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
       VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
       overridden:
-        FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
+        public open fun hashCode (): kotlin.Int declared in kotlin.Annotation
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
       overridden:
-        FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
+        public open fun toString (): kotlin.String declared in kotlin.Annotation
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
   CLASS ANNOTATION_CLASS name:TestAnnWithStringArray modality:FINAL visibility:public superTypes:[kotlin.Annotation]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestAnnWithStringArray 
@@ -44,16 +44,16 @@ FILE fqName:<root> fileName:/arrayInAnnotationArguments.kt
               receiver: GET_VAR '<this>: <root>.TestAnnWithStringArray declared in <root>.TestAnnWithStringArray.<get-x>' type=<root>.TestAnnWithStringArray origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
-        FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Annotation
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
       VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
       overridden:
-        FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
+        public open fun hashCode (): kotlin.Int declared in kotlin.Annotation
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
       overridden:
-        FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
+        public open fun toString (): kotlin.String declared in kotlin.Annotation
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
   FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     annotations:

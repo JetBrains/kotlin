@@ -71,7 +71,7 @@ FILE fqName:<root> fileName:/delegatedProperties.kt
           RETURN type=kotlin.Nothing from='public final fun <get-test3> (): kotlin.Any declared in <root>.C'
             CALL 'public final fun getValue <V, V1> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): V1 of kotlin.collections.getValue [inline] declared in kotlin.collections' type=kotlin.Any origin=null
               <V>: kotlin.Any
-              <V1 : V>: kotlin.Any
+              <V1>: kotlin.Any
               $receiver: GET_FIELD 'FIELD DELEGATE name:test3$delegate type:kotlin.collections.MutableMap<kotlin.String, kotlin.Any> visibility:private [final] ' type=kotlin.collections.MutableMap<kotlin.String, kotlin.Any> origin=null
                 receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-test3>' type=<root>.C origin=null
               thisRef: GET_VAR '<this>: <root>.C declared in <root>.C.<get-test3>' type=<root>.C origin=null
@@ -91,16 +91,16 @@ FILE fqName:<root> fileName:/delegatedProperties.kt
               value: GET_VAR '<set-?>: kotlin.Any declared in <root>.C.<set-test3>' type=kotlin.Any origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
       VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
+        public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
   PROPERTY name:test4 visibility:public modality:FINAL [delegated,var] 
     FIELD DELEGATE name:test4$delegate type:java.util.HashMap<kotlin.String, kotlin.Any> visibility:private [final,static] 
@@ -114,7 +114,7 @@ FILE fqName:<root> fileName:/delegatedProperties.kt
         RETURN type=kotlin.Nothing from='public final fun <get-test4> (): kotlin.Any declared in <root>'
           CALL 'public final fun getValue <V, V1> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): V1 of kotlin.collections.getValue [inline] declared in kotlin.collections' type=kotlin.Any origin=null
             <V>: kotlin.Any
-            <V1 : V>: kotlin.Any
+            <V1>: kotlin.Any
             $receiver: GET_FIELD 'FIELD DELEGATE name:test4$delegate type:java.util.HashMap<kotlin.String, kotlin.Any> visibility:private [final,static] ' type=java.util.HashMap<kotlin.String, kotlin.Any> origin=null
             thisRef: CONST Null type=kotlin.Nothing? value=null
             property: PROPERTY_REFERENCE 'PROPERTY name:test4 visibility:public modality:FINAL [delegated,var] ' field=null getter='public final fun <get-test4> (): kotlin.Any declared in <root>' setter='public final fun <set-test4> (<set-?>: kotlin.Any): kotlin.Unit declared in <root>' type=kotlin.reflect.KMutableProperty0<kotlin.Any> origin=PROPERTY_REFERENCE_FOR_DELEGATE

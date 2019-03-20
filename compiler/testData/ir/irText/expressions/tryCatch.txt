@@ -23,7 +23,6 @@ FILE fqName:<root> fileName:/tryCatch.kt
               CALL 'public final fun println (): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
               CONST Int type=kotlin.Int value=24
           finally: TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-            typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]
             BLOCK type=kotlin.Int origin=null
               CALL 'public final fun println (): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
               CONST Int type=kotlin.Int value=555

@@ -37,6 +37,8 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
 
     fun renderType(type: IrType) = type.render()
 
+    fun renderSymbolReference(symbol: IrSymbol) = symbol.renderReference()
+
     private fun IrType.render() =
         "${renderTypeAnnotations(annotations)}${renderTypeInner()}"
 

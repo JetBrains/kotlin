@@ -21,7 +21,6 @@ FILE fqName:<root> fileName:/whenByFloatingPoint.kt
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.Double
-            typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Double>; java.io.Serializable]
             GET_VAR 'x: kotlin.Any declared in <root>.testSmartCastInWhenSubject' type=kotlin.Any origin=null
           then: RETURN type=kotlin.Nothing from='public final fun testSmartCastInWhenSubject (x: kotlin.Any): kotlin.Int declared in <root>'
             CONST Int type=kotlin.Int value=-1
@@ -33,7 +32,6 @@ FILE fqName:<root> fileName:/whenByFloatingPoint.kt
             BRANCH
               if: CALL 'public final fun ieee754equals (arg0: kotlin.Double?, arg1: kotlin.Double?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                 arg0: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
-                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Double>; java.io.Serializable]
                   GET_VAR 'val tmp0_subject: kotlin.Any [val] declared in <root>.testSmartCastInWhenSubject' type=kotlin.Any origin=null
                 arg1: CONST Double type=kotlin.Double value=0.0
               then: CONST Int type=kotlin.Int value=0
@@ -47,7 +45,6 @@ FILE fqName:<root> fileName:/whenByFloatingPoint.kt
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.Double
-            typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Double>; java.io.Serializable]
             GET_VAR 'y: kotlin.Any declared in <root>.testSmartCastInWhenCondition' type=kotlin.Any origin=null
           then: RETURN type=kotlin.Nothing from='public final fun testSmartCastInWhenCondition (x: kotlin.Double, y: kotlin.Any): kotlin.Int declared in <root>'
             CONST Int type=kotlin.Int value=-1
@@ -60,7 +57,6 @@ FILE fqName:<root> fileName:/whenByFloatingPoint.kt
               if: CALL 'public final fun ieee754equals (arg0: kotlin.Double?, arg1: kotlin.Double?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                 arg0: GET_VAR 'val tmp0_subject: kotlin.Double [val] declared in <root>.testSmartCastInWhenCondition' type=kotlin.Double origin=null
                 arg1: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
-                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Double>; java.io.Serializable]
                   GET_VAR 'y: kotlin.Any declared in <root>.testSmartCastInWhenCondition' type=kotlin.Any origin=null
               then: CONST Int type=kotlin.Int value=0
             BRANCH
@@ -77,13 +73,11 @@ FILE fqName:<root> fileName:/whenByFloatingPoint.kt
             BRANCH
               if: CALL 'public final fun NOT (arg0: kotlin.Boolean): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCL
                 arg0: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Double
-                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Double>; java.io.Serializable]
                   GET_VAR 'val tmp0_subject: kotlin.Any [val] declared in <root>.testSmartCastInWhenConditionInBranch' type=kotlin.Any origin=null
               then: CONST Int type=kotlin.Int value=-1
             BRANCH
               if: CALL 'public final fun ieee754equals (arg0: kotlin.Double?, arg1: kotlin.Double?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                 arg0: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
-                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Double>; java.io.Serializable]
                   GET_VAR 'val tmp0_subject: kotlin.Any [val] declared in <root>.testSmartCastInWhenConditionInBranch' type=kotlin.Any origin=null
                 arg1: CONST Double type=kotlin.Double value=0.0
               then: CONST Int type=kotlin.Int value=0
@@ -97,14 +91,12 @@ FILE fqName:<root> fileName:/whenByFloatingPoint.kt
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.Double
-            typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Double>; java.io.Serializable]
             GET_VAR 'x: kotlin.Any declared in <root>.testSmartCastToDifferentTypes' type=kotlin.Any origin=null
           then: RETURN type=kotlin.Nothing from='public final fun testSmartCastToDifferentTypes (x: kotlin.Any, y: kotlin.Any): kotlin.Int declared in <root>'
             CONST Int type=kotlin.Int value=-1
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.Float
-            typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Float modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Float>; java.io.Serializable]
             GET_VAR 'y: kotlin.Any declared in <root>.testSmartCastToDifferentTypes' type=kotlin.Any origin=null
           then: RETURN type=kotlin.Nothing from='public final fun testSmartCastToDifferentTypes (x: kotlin.Any, y: kotlin.Any): kotlin.Int declared in <root>'
             CONST Int type=kotlin.Int value=-1
@@ -116,11 +108,9 @@ FILE fqName:<root> fileName:/whenByFloatingPoint.kt
             BRANCH
               if: CALL 'public final fun ieee754equals (arg0: kotlin.Double?, arg1: kotlin.Double?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                 arg0: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
-                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Double>; java.io.Serializable]
                   GET_VAR 'val tmp0_subject: kotlin.Any [val] declared in <root>.testSmartCastToDifferentTypes' type=kotlin.Any origin=null
                 arg1: CALL 'public open fun toDouble (): kotlin.Double declared in kotlin.Float' type=kotlin.Double origin=null
                   $this: TYPE_OP type=kotlin.Float origin=IMPLICIT_CAST typeOperand=kotlin.Float
-                    typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Float modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Float>; java.io.Serializable]
                     GET_VAR 'y: kotlin.Any declared in <root>.testSmartCastToDifferentTypes' type=kotlin.Any origin=null
               then: CONST Int type=kotlin.Int value=0
             BRANCH
@@ -146,14 +136,12 @@ FILE fqName:<root> fileName:/whenByFloatingPoint.kt
                   x: WHEN type=kotlin.Double origin=IF
                     BRANCH
                       if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.Double
-                        typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Double>; java.io.Serializable]
                         GET_VAR 'x: kotlin.Any declared in <root>.testWithPrematureExitInConditionSubexpression' type=kotlin.Any origin=null
                       then: RETURN type=kotlin.Nothing from='public final fun testWithPrematureExitInConditionSubexpression (x: kotlin.Any): kotlin.Int declared in <root>'
                         CONST Int type=kotlin.Int value=42
                     BRANCH
                       if: CONST Boolean type=kotlin.Boolean value=true
                       then: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
-                        typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Double>; java.io.Serializable]
                         GET_VAR 'x: kotlin.Any declared in <root>.testWithPrematureExitInConditionSubexpression' type=kotlin.Any origin=null
               then: CONST Int type=kotlin.Int value=0
             BRANCH

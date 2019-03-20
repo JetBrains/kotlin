@@ -15,7 +15,6 @@ FILE fqName:<root> fileName:/nullableFloatingPointEqeq.kt
         WHEN type=kotlin.Boolean origin=ANDAND
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Float?
-              typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Float modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Float>; java.io.Serializable]
               GET_VAR 'y: kotlin.Any? declared in <root>.testDF' type=kotlin.Any? origin=null
             then: CALL 'public final fun ieee754equals (arg0: kotlin.Double?, arg1: kotlin.Double?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
               arg0: GET_VAR 'x: kotlin.Double? declared in <root>.testDF' type=kotlin.Double? origin=null
@@ -32,7 +31,6 @@ FILE fqName:<root> fileName:/nullableFloatingPointEqeq.kt
                     if: CONST Boolean type=kotlin.Boolean value=true
                     then: CALL 'public open fun toDouble (): kotlin.Double declared in kotlin.Float' type=kotlin.Double origin=null
                       $this: TYPE_OP type=kotlin.Float origin=IMPLICIT_CAST typeOperand=kotlin.Float
-                        typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Float modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Float>; java.io.Serializable]
                         GET_VAR 'val tmp0_safe_receiver: kotlin.Any? [val] declared in <root>.testDF' type=kotlin.Any? origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
@@ -45,7 +43,6 @@ FILE fqName:<root> fileName:/nullableFloatingPointEqeq.kt
         WHEN type=kotlin.Boolean origin=ANDAND
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Int?
-              typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Int>; java.io.Serializable]
               GET_VAR 'y: kotlin.Any? declared in <root>.testDI' type=kotlin.Any? origin=null
             then: CALL 'public final fun ieee754equals (arg0: kotlin.Double?, arg1: kotlin.Double?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
               arg0: GET_VAR 'x: kotlin.Double? declared in <root>.testDI' type=kotlin.Double? origin=null
@@ -62,7 +59,6 @@ FILE fqName:<root> fileName:/nullableFloatingPointEqeq.kt
                     if: CONST Boolean type=kotlin.Boolean value=true
                     then: CALL 'public open fun toDouble (): kotlin.Double declared in kotlin.Int' type=kotlin.Double origin=null
                       $this: TYPE_OP type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
-                        typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Int>; java.io.Serializable]
                         GET_VAR 'val tmp0_safe_receiver: kotlin.Any? [val] declared in <root>.testDI' type=kotlin.Any? origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
@@ -77,10 +73,8 @@ FILE fqName:<root> fileName:/nullableFloatingPointEqeq.kt
             if: WHEN type=kotlin.Boolean origin=ANDAND
               BRANCH
                 if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Int?
-                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Int>; java.io.Serializable]
                   GET_VAR 'x: kotlin.Any? declared in <root>.testDI2' type=kotlin.Any? origin=null
                 then: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Double
-                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Double>; java.io.Serializable]
                   GET_VAR 'y: kotlin.Any? declared in <root>.testDI2' type=kotlin.Any? origin=null
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
@@ -99,10 +93,8 @@ FILE fqName:<root> fileName:/nullableFloatingPointEqeq.kt
                     if: CONST Boolean type=kotlin.Boolean value=true
                     then: CALL 'public open fun toDouble (): kotlin.Double declared in kotlin.Int' type=kotlin.Double origin=null
                       $this: TYPE_OP type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
-                        typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Int>; java.io.Serializable]
                         GET_VAR 'val tmp0_safe_receiver: kotlin.Any? [val] declared in <root>.testDI2' type=kotlin.Any? origin=null
               arg1: TYPE_OP type=kotlin.Double? origin=IMPLICIT_CAST typeOperand=kotlin.Double?
-                typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Double>; java.io.Serializable]
                 GET_VAR 'y: kotlin.Any? declared in <root>.testDI2' type=kotlin.Any? origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true

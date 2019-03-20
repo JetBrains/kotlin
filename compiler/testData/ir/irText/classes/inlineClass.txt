@@ -19,7 +19,7 @@ FILE fqName:<root> fileName:/inlineClass.kt
               receiver: GET_VAR '<this>: <root>.Test declared in <root>.Test.<get-x>' type=<root>.Test origin=null
     FUN GENERATED_INLINE_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.Test) returnType:kotlin.String 
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
+        public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:<root>.Test 
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.Test'
@@ -31,7 +31,7 @@ FILE fqName:<root> fileName:/inlineClass.kt
             CONST String type=kotlin.String value=")"
     FUN GENERATED_INLINE_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.Test) returnType:kotlin.Int 
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:<root>.Test 
       BLOCK_BODY
         VAR IR_TEMPORARY_VARIABLE name:tmp0_result type:kotlin.Int [var] 
@@ -44,20 +44,18 @@ FILE fqName:<root> fileName:/inlineClass.kt
           GET_VAR 'var tmp0_result: kotlin.Int [var] declared in <root>.Test.hashCode' type=kotlin.Int origin=null
     FUN GENERATED_INLINE_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.Test, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:<root>.Test 
       VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
       BLOCK_BODY
         WHEN type=kotlin.Unit origin=null
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=<root>.Test
-              typeOperand: CLASS CLASS name:Test modality:FINAL visibility:public [inline] superTypes:[kotlin.Any]
               GET_VAR 'other: kotlin.Any? declared in <root>.Test.equals' type=kotlin.Any? origin=null
             then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Test'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:<root>.Test [val] 
           TYPE_OP type=<root>.Test origin=CAST typeOperand=<root>.Test
-            typeOperand: CLASS CLASS name:Test modality:FINAL visibility:public [inline] superTypes:[kotlin.Any]
             GET_VAR 'other: kotlin.Any? declared in <root>.Test.equals' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
           BRANCH

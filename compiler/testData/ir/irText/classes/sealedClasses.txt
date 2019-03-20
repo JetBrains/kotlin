@@ -25,16 +25,16 @@ FILE fqName:<root> fileName:/sealedClasses.kt
                 receiver: GET_VAR '<this>: <root>.Expr.Const declared in <root>.Expr.Const.<get-number>' type=<root>.Expr.Const origin=null
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
         overridden:
-          FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Expr
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
         VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
       FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
         overridden:
-          FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
+          public open fun hashCode (): kotlin.Int declared in <root>.Expr
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
       FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
         overridden:
-          FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
+          public open fun toString (): kotlin.String declared in <root>.Expr
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
     CLASS CLASS name:Sum modality:FINAL visibility:public superTypes:[<root>.Expr]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Expr.Sum 
@@ -68,16 +68,16 @@ FILE fqName:<root> fileName:/sealedClasses.kt
                 receiver: GET_VAR '<this>: <root>.Expr.Sum declared in <root>.Expr.Sum.<get-e2>' type=<root>.Expr.Sum origin=null
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
         overridden:
-          FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Expr
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
         VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
       FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
         overridden:
-          FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
+          public open fun hashCode (): kotlin.Int declared in <root>.Expr
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
       FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
         overridden:
-          FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
+          public open fun toString (): kotlin.String declared in <root>.Expr
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
     CLASS OBJECT name:NotANumber modality:FINAL visibility:public superTypes:[<root>.Expr]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Expr.NotANumber 
@@ -87,27 +87,27 @@ FILE fqName:<root> fileName:/sealedClasses.kt
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:NotANumber modality:FINAL visibility:public superTypes:[<root>.Expr]'
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
         overridden:
-          FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Expr
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
         VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
       FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
         overridden:
-          FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
+          public open fun hashCode (): kotlin.Int declared in <root>.Expr
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
       FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
         overridden:
-          FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
+          public open fun toString (): kotlin.String declared in <root>.Expr
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
       VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
+        public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 

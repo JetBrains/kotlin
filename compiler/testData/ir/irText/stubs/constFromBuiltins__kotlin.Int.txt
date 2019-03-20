@@ -15,7 +15,7 @@ CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:publ
     VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl> 
   FUN IR_EXTERNAL_DECLARATION_STUB name:compareTo visibility:public modality:OPEN <> ($this:kotlin.Int, other:kotlin.Int) returnType:kotlin.Int 
     overridden:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:compareTo visibility:public modality:ABSTRACT <> ($this:<unbound IrClassSymbolImpl><<unbound IrTypeParameterSymbolImpl>>, other:<unbound IrTypeParameterSymbolImpl>) returnType:kotlin.Int 
+      public abstract fun compareTo (other: <unbound IrTypeParameterSymbolImpl>): kotlin.Int declared in kotlin.Comparable
     $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
     VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int 
   FUN IR_EXTERNAL_DECLARATION_STUB name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:kotlin.Int 
@@ -46,14 +46,14 @@ CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:publ
     VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl> 
   FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:<unbound IrClassSymbolImpl>, other:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> 
     overridden:
-      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:<unbound IrClassSymbolImpl>, other:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> 
-      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:<unbound IrClassSymbolImpl>, other:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> 
+      public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.Number
+      public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.Comparable
     $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:<unbound IrClassSymbolImpl> 
     VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl>? 
   FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:<unbound IrClassSymbolImpl>) returnType:kotlin.Int 
     overridden:
-      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:<unbound IrClassSymbolImpl>) returnType:kotlin.Int 
-      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:<unbound IrClassSymbolImpl>) returnType:kotlin.Int 
+      public open fun hashCode (): kotlin.Int declared in kotlin.Number
+      public open fun hashCode (): kotlin.Int declared in kotlin.Comparable
     $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:<unbound IrClassSymbolImpl> 
   FUN IR_EXTERNAL_DECLARATION_STUB name:inc visibility:public modality:FINAL <> ($this:kotlin.Int) returnType:kotlin.Int 
     $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
@@ -172,36 +172,36 @@ CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:publ
     VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl> 
   FUN IR_EXTERNAL_DECLARATION_STUB name:toByte visibility:public modality:OPEN <> ($this:kotlin.Int) returnType:<unbound IrClassSymbolImpl> 
     overridden:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:toByte visibility:public modality:ABSTRACT <> ($this:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> 
+      public abstract fun toByte (): <unbound IrClassSymbolImpl> declared in kotlin.Number
     $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
   FUN IR_EXTERNAL_DECLARATION_STUB name:toChar visibility:public modality:OPEN <> ($this:kotlin.Int) returnType:<unbound IrClassSymbolImpl> 
     overridden:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:toChar visibility:public modality:ABSTRACT <> ($this:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> 
+      public abstract fun toChar (): <unbound IrClassSymbolImpl> declared in kotlin.Number
     $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
   FUN IR_EXTERNAL_DECLARATION_STUB name:toDouble visibility:public modality:OPEN <> ($this:kotlin.Int) returnType:<unbound IrClassSymbolImpl> 
     overridden:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:toDouble visibility:public modality:ABSTRACT <> ($this:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> 
+      public abstract fun toDouble (): <unbound IrClassSymbolImpl> declared in kotlin.Number
     $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
   FUN IR_EXTERNAL_DECLARATION_STUB name:toFloat visibility:public modality:OPEN <> ($this:kotlin.Int) returnType:<unbound IrClassSymbolImpl> 
     overridden:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:toFloat visibility:public modality:ABSTRACT <> ($this:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> 
+      public abstract fun toFloat (): <unbound IrClassSymbolImpl> declared in kotlin.Number
     $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
   FUN IR_EXTERNAL_DECLARATION_STUB name:toInt visibility:public modality:OPEN <> ($this:kotlin.Int) returnType:kotlin.Int 
     overridden:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:toInt visibility:public modality:ABSTRACT <> ($this:<unbound IrClassSymbolImpl>) returnType:kotlin.Int 
+      public abstract fun toInt (): kotlin.Int declared in kotlin.Number
     $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
   FUN IR_EXTERNAL_DECLARATION_STUB name:toLong visibility:public modality:OPEN <> ($this:kotlin.Int) returnType:<unbound IrClassSymbolImpl> 
     overridden:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:toLong visibility:public modality:ABSTRACT <> ($this:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> 
+      public abstract fun toLong (): <unbound IrClassSymbolImpl> declared in kotlin.Number
     $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
   FUN IR_EXTERNAL_DECLARATION_STUB name:toShort visibility:public modality:OPEN <> ($this:kotlin.Int) returnType:<unbound IrClassSymbolImpl> 
     overridden:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:toShort visibility:public modality:ABSTRACT <> ($this:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> 
+      public abstract fun toShort (): <unbound IrClassSymbolImpl> declared in kotlin.Number
     $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
   FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> 
     overridden:
-      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> 
-      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> 
+      public open fun toString (): <unbound IrClassSymbolImpl> declared in kotlin.Number
+      public open fun toString (): <unbound IrClassSymbolImpl> declared in kotlin.Comparable
     $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:<unbound IrClassSymbolImpl> 
   FUN IR_EXTERNAL_DECLARATION_STUB name:unaryMinus visibility:public modality:FINAL <> ($this:kotlin.Int) returnType:kotlin.Int 
     $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
@@ -246,14 +246,14 @@ CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:publ
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int.Companion 
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:<unbound IrClassSymbolImpl>, other:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> 
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:<unbound IrClassSymbolImpl>, other:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> 
-      $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:<unbound IrClassSymbolImpl> 
-      VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl>? 
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:<unbound IrClassSymbolImpl>) returnType:kotlin.Int 
+        public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.Any
+      $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Any
+      VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:<unbound IrClassSymbolImpl>) returnType:kotlin.Int 
-      $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:<unbound IrClassSymbolImpl> 
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> 
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:<unbound IrClassSymbolImpl>
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> 
-      $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:<unbound IrClassSymbolImpl> 
+        public open fun toString (): <unbound IrClassSymbolImpl> declared in kotlin.Any
+      $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Any

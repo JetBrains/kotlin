@@ -15,12 +15,10 @@ FILE fqName:<root> fileName:/floatingPointLess.kt
         WHEN type=kotlin.Boolean origin=ANDAND
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Double
-              typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Double>; java.io.Serializable]
               GET_VAR 'y: kotlin.Any declared in <root>.test2d' type=kotlin.Any origin=null
             then: CALL 'public final fun less (arg0: kotlin.Double, arg1: kotlin.Double): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=LT
               arg0: GET_VAR 'x: kotlin.Double declared in <root>.test2d' type=kotlin.Double origin=null
               arg1: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
-                typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Double>; java.io.Serializable]
                 GET_VAR 'y: kotlin.Any declared in <root>.test2d' type=kotlin.Any origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
@@ -35,20 +33,16 @@ FILE fqName:<root> fileName:/floatingPointLess.kt
             if: WHEN type=kotlin.Boolean origin=ANDAND
               BRANCH
                 if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Double
-                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Double>; java.io.Serializable]
                   GET_VAR 'x: kotlin.Any declared in <root>.test3d' type=kotlin.Any origin=null
                 then: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Double
-                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Double>; java.io.Serializable]
                   GET_VAR 'y: kotlin.Any declared in <root>.test3d' type=kotlin.Any origin=null
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: CONST Boolean type=kotlin.Boolean value=false
             then: CALL 'public final fun less (arg0: kotlin.Double, arg1: kotlin.Double): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=LT
               arg0: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
-                typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Double>; java.io.Serializable]
                 GET_VAR 'x: kotlin.Any declared in <root>.test3d' type=kotlin.Any origin=null
               arg1: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
-                typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Double>; java.io.Serializable]
                 GET_VAR 'y: kotlin.Any declared in <root>.test3d' type=kotlin.Any origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
@@ -69,12 +63,10 @@ FILE fqName:<root> fileName:/floatingPointLess.kt
         WHEN type=kotlin.Boolean origin=ANDAND
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Float
-              typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Float modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Float>; java.io.Serializable]
               GET_VAR 'y: kotlin.Any declared in <root>.test2f' type=kotlin.Any origin=null
             then: CALL 'public final fun less (arg0: kotlin.Float, arg1: kotlin.Float): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=LT
               arg0: GET_VAR 'x: kotlin.Float declared in <root>.test2f' type=kotlin.Float origin=null
               arg1: TYPE_OP type=kotlin.Float origin=IMPLICIT_CAST typeOperand=kotlin.Float
-                typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Float modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Float>; java.io.Serializable]
                 GET_VAR 'y: kotlin.Any declared in <root>.test2f' type=kotlin.Any origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
@@ -89,20 +81,16 @@ FILE fqName:<root> fileName:/floatingPointLess.kt
             if: WHEN type=kotlin.Boolean origin=ANDAND
               BRANCH
                 if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Float
-                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Float modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Float>; java.io.Serializable]
                   GET_VAR 'x: kotlin.Any declared in <root>.test3f' type=kotlin.Any origin=null
                 then: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Float
-                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Float modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Float>; java.io.Serializable]
                   GET_VAR 'y: kotlin.Any declared in <root>.test3f' type=kotlin.Any origin=null
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: CONST Boolean type=kotlin.Boolean value=false
             then: CALL 'public final fun less (arg0: kotlin.Float, arg1: kotlin.Float): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=LT
               arg0: TYPE_OP type=kotlin.Float origin=IMPLICIT_CAST typeOperand=kotlin.Float
-                typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Float modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Float>; java.io.Serializable]
                 GET_VAR 'x: kotlin.Any declared in <root>.test3f' type=kotlin.Any origin=null
               arg1: TYPE_OP type=kotlin.Float origin=IMPLICIT_CAST typeOperand=kotlin.Float
-                typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Float modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Float>; java.io.Serializable]
                 GET_VAR 'y: kotlin.Any declared in <root>.test3f' type=kotlin.Any origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
@@ -117,10 +105,8 @@ FILE fqName:<root> fileName:/floatingPointLess.kt
             if: WHEN type=kotlin.Boolean origin=ANDAND
               BRANCH
                 if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Float
-                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Float modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Float>; java.io.Serializable]
                   GET_VAR 'x: kotlin.Any declared in <root>.testFD' type=kotlin.Any origin=null
                 then: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Double
-                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Double>; java.io.Serializable]
                   GET_VAR 'y: kotlin.Any declared in <root>.testFD' type=kotlin.Any origin=null
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
@@ -128,10 +114,8 @@ FILE fqName:<root> fileName:/floatingPointLess.kt
             then: CALL 'public final fun less (arg0: kotlin.Double, arg1: kotlin.Double): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=LT
               arg0: CALL 'public open fun toDouble (): kotlin.Double declared in kotlin.Float' type=kotlin.Double origin=null
                 $this: TYPE_OP type=kotlin.Float origin=IMPLICIT_CAST typeOperand=kotlin.Float
-                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Float modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Float>; java.io.Serializable]
                   GET_VAR 'x: kotlin.Any declared in <root>.testFD' type=kotlin.Any origin=null
               arg1: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
-                typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Double>; java.io.Serializable]
                 GET_VAR 'y: kotlin.Any declared in <root>.testFD' type=kotlin.Any origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
@@ -146,21 +130,17 @@ FILE fqName:<root> fileName:/floatingPointLess.kt
             if: WHEN type=kotlin.Boolean origin=ANDAND
               BRANCH
                 if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Double
-                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Double>; java.io.Serializable]
                   GET_VAR 'x: kotlin.Any declared in <root>.testDF' type=kotlin.Any origin=null
                 then: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Float
-                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Float modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Float>; java.io.Serializable]
                   GET_VAR 'y: kotlin.Any declared in <root>.testDF' type=kotlin.Any origin=null
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: CONST Boolean type=kotlin.Boolean value=false
             then: CALL 'public final fun less (arg0: kotlin.Double, arg1: kotlin.Double): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=LT
               arg0: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
-                typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Double>; java.io.Serializable]
                 GET_VAR 'x: kotlin.Any declared in <root>.testDF' type=kotlin.Any origin=null
               arg1: CALL 'public open fun toDouble (): kotlin.Double declared in kotlin.Float' type=kotlin.Double origin=null
                 $this: TYPE_OP type=kotlin.Float origin=IMPLICIT_CAST typeOperand=kotlin.Float
-                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Float modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Float>; java.io.Serializable]
                   GET_VAR 'y: kotlin.Any declared in <root>.testDF' type=kotlin.Any origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true

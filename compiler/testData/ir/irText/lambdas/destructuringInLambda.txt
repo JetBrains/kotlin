@@ -58,7 +58,7 @@ FILE fqName:<root> fileName:/destructuringInLambda.kt
             y: GET_VAR 'y: kotlin.Int declared in <root>.A.copy' type=kotlin.Int origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.A) returnType:kotlin.String 
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
+        public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:<root>.A 
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.A'
@@ -74,7 +74,7 @@ FILE fqName:<root> fileName:/destructuringInLambda.kt
             CONST String type=kotlin.String value=")"
     FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.A) returnType:kotlin.Int 
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:<root>.A 
       BLOCK_BODY
         VAR IR_TEMPORARY_VARIABLE name:tmp0_result type:kotlin.Int [var] 
@@ -95,7 +95,7 @@ FILE fqName:<root> fileName:/destructuringInLambda.kt
           GET_VAR 'var tmp0_result: kotlin.Int [var] declared in <root>.A.hashCode' type=kotlin.Int origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.A, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:<root>.A 
       VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
       BLOCK_BODY
@@ -109,13 +109,11 @@ FILE fqName:<root> fileName:/destructuringInLambda.kt
         WHEN type=kotlin.Unit origin=null
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=<root>.A
-              typeOperand: CLASS CLASS name:A modality:FINAL visibility:public [data] superTypes:[kotlin.Any]
               GET_VAR 'other: kotlin.Any? declared in <root>.A.equals' type=kotlin.Any? origin=null
             then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.A'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:<root>.A [val] 
           TYPE_OP type=<root>.A origin=CAST typeOperand=<root>.A
-            typeOperand: CLASS CLASS name:A modality:FINAL visibility:public [data] superTypes:[kotlin.Any]
             GET_VAR 'other: kotlin.Any? declared in <root>.A.equals' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
           BRANCH

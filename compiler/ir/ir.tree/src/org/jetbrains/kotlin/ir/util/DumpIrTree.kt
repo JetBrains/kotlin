@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.ir.util
 
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.declarations.*
@@ -26,7 +25,6 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.utils.Printer
 
 fun IrElement.dump(): String =
@@ -90,7 +88,7 @@ class DumpIrTreeVisitor(
             dumpAnnotations(declaration)
             declaration.correspondingPropertySymbol?.dumpInternal("correspondingProperty")
             declaration.overriddenSymbols.dumpItems<IrSymbol>("overridden") {
-                it.dumpDeclarationElementOrDescriptor()
+                it.dump()
             }
             declaration.typeParameters.dumpElements()
             declaration.dispatchReceiverParameter?.accept(this, "\$this")
@@ -106,16 +104,12 @@ class DumpIrTreeVisitor(
         }
     }
 
-    private fun IrSymbol.dumpDeclarationElementOrDescriptor(label: String? = null) {
-        when {
-            isBound ->
-                owner.dumpInternal(label)
-            label != null ->
-                printer.println("$label: ", "UNBOUND: ", DescriptorRenderer.COMPACT.render(descriptor))
-            else ->
-                printer.println("UNBOUND: ", DescriptorRenderer.COMPACT.render(descriptor))
-        }
-    }
+    private fun IrSymbol.dump(label: String? = null) =
+        printer.println(
+            elementRenderer.renderSymbolReference(this).let {
+                if (label != null) "$label: $it" else it
+            }
+        )
 
     override fun visitConstructor(declaration: IrConstructor, data: String) {
         declaration.dumpLabeledElementWith(data) {
@@ -140,7 +134,7 @@ class DumpIrTreeVisitor(
         declaration.dumpLabeledElementWith(data) {
             dumpAnnotations(declaration)
             declaration.overriddenSymbols.dumpItems("overridden") {
-                it.dumpDeclarationElementOrDescriptor()
+                it.dump()
             }
             declaration.initializer?.accept(this, "")
         }
@@ -170,26 +164,91 @@ class DumpIrTreeVisitor(
             dumpTypeArguments(expression)
             expression.dispatchReceiver?.accept(this, "\$this")
             expression.extensionReceiver?.accept(this, "\$receiver")
-            for (valueParameter in expression.descriptor.valueParameters) {
-                expression.getValueArgument(valueParameter.index)?.accept(this, valueParameter.name.asString())
+            val valueParameterNames = expression.getValueParameterNames(expression.valueArgumentsCount)
+            for (index in 0 until expression.valueArgumentsCount) {
+                expression.getValueArgument(index)?.accept(this, valueParameterNames[index])
             }
         }
     }
 
     private fun dumpTypeArguments(expression: IrMemberAccessExpression) {
+        val typeParameterNames = expression.getTypeParameterNames(expression.typeArgumentsCount)
         for (index in 0 until expression.typeArgumentsCount) {
             printer.println(
-                "${expression.descriptor.renderTypeParameter(index)}: ${expression.renderTypeArgument(index)}"
+                "<${typeParameterNames[index]}>: ${expression.renderTypeArgument(index)}"
             )
         }
     }
 
-    private fun CallableDescriptor.renderTypeParameter(index: Int): String {
-        val typeParameter = original.typeParameters.getOrNull(index)
-        return if (typeParameter != null)
-            DescriptorRenderer.ONLY_NAMES_WITH_SHORT_TYPES.render(typeParameter)
+    private fun IrMemberAccessExpression.getTypeParameterNames(expectedCount: Int): List<String> =
+        if (this is IrDeclarationReference && symbol.isBound)
+            symbol.owner.getTypeParameterNames(expectedCount)
+        else if (this is IrCallableReference)
+            getPlaceholderParameterNames(expectedCount) // TODO IrCallableReference should be an IrDeclarationReference
         else
-            "<`$index>"
+            getPlaceholderParameterNames(expectedCount)
+
+    private fun IrMemberAccessExpression.getValueParameterNames(expectedCount: Int): List<String> =
+        if (this is IrDeclarationReference && symbol.isBound)
+            symbol.owner.getValueParameterNames(expectedCount)
+        else if (this is IrCallableReference)
+            getPlaceholderParameterNames(expectedCount) // TODO IrCallableReference should be an IrDeclarationReference
+        else
+            getPlaceholderParameterNames(expectedCount)
+
+    private fun getPlaceholderParameterNames(expectedCount: Int) =
+        (1..expectedCount).map { "$it" }
+
+    private fun IrSymbolOwner.getTypeParameterNames(expectedCount: Int): List<String> =
+        if (this is IrTypeParametersContainer) {
+            val typeParameters = if (this is IrConstructor) getFullTypeParametersList() else this.typeParameters
+            (0 until expectedCount).map {
+                if (it < typeParameters.size)
+                    typeParameters[it].name.asString()
+                else
+                    "${it + 1}"
+            }
+        } else {
+            getPlaceholderParameterNames(expectedCount)
+        }
+
+    private fun IrSymbolOwner.getValueParameterNames(expectedCount: Int): List<String> =
+        if (this is IrFunction) {
+            (0 until expectedCount).map {
+                if (it < valueParameters.size)
+                    valueParameters[it].name.asString()
+                else
+                    "${it + 1}"
+            }
+        } else {
+            getPlaceholderParameterNames(expectedCount)
+        }
+
+    private fun IrConstructor.getFullTypeParametersList(): List<IrTypeParameter> =
+        getConstructedClassTypeParameters().apply { addAll(typeParameters) }
+
+    private fun IrConstructor.getConstructedClassTypeParameters(): MutableList<IrTypeParameter> {
+        val typeParameters = ArrayList<IrTypeParameter>()
+        val parentClass = try {
+            parent as? IrClass ?: return typeParameters
+        } catch (e: Exception) {
+            return typeParameters
+        }
+        parentClass.collectClassTypeParameters(typeParameters)
+        return typeParameters
+    }
+
+    private fun IrClass.collectClassTypeParameters(typeParameters: MutableList<IrTypeParameter>) {
+        var currentClass = this
+        while (true) {
+            typeParameters.addAll(currentClass.typeParameters)
+            if (!currentClass.isInner) return
+            currentClass = try {
+                currentClass.parent as? IrClass ?: return
+            } catch (e: Exception) {
+                return
+            }
+        }
     }
 
     private fun IrMemberAccessExpression.renderTypeArgument(index: Int): String =
@@ -245,7 +304,6 @@ class DumpIrTreeVisitor(
 
     override fun visitTypeOperator(expression: IrTypeOperatorCall, data: String) {
         expression.dumpLabeledElementWith(data) {
-            expression.typeOperandClassifier.dumpDeclarationElementOrDescriptor("typeOperand")
             expression.acceptChildren(this, "")
         }
     }

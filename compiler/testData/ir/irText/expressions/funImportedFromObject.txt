@@ -13,20 +13,20 @@ FILE fqName:test fileName:/funImportedFromObject.kt
           CONST String type=kotlin.String value="OK"
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
       VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
+        public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
   FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.String 
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test (): kotlin.String declared in test'
         CALL 'public final fun foo <T> (): kotlin.String [inline] declared in test.Host' type=kotlin.String origin=null
-          <reified T>: kotlin.Any
+          <T>: kotlin.Any
           $this: GET_OBJECT 'CLASS OBJECT name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]' type=test.Host

@@ -13,16 +13,16 @@ FILE fqName:<root> fileName:/thisReferenceBeforeClassDeclared.kt
                 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.WithCompanion]'
             FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
               overridden:
-                FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
+                public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.WithCompanion
               $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
               VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
             FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
               overridden:
-                FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
+                public open fun hashCode (): kotlin.Int declared in <root>.WithCompanion
               $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
             FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
               overridden:
-                FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
+                public open fun toString (): kotlin.String declared in <root>.WithCompanion
               $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
           CALL 'public constructor <init> () [primary] declared in <root>.test.<no name provided>' type=<root>.test.<no name provided> origin=OBJECT_LITERAL
       VAR name:test2 type:<root>.test.<no name provided> [val] 
@@ -37,16 +37,16 @@ FILE fqName:<root> fileName:/thisReferenceBeforeClassDeclared.kt
                 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.WithCompanion]'
             FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
               overridden:
-                FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
+                public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.WithCompanion
               $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
               VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
             FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
               overridden:
-                FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
+                public open fun hashCode (): kotlin.Int declared in <root>.WithCompanion
               $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
             FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
               overridden:
-                FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
+                public open fun toString (): kotlin.String declared in <root>.WithCompanion
               $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
           CALL 'public constructor <init> () [primary] declared in <root>.test.<no name provided>' type=<root>.test.<no name provided> origin=OBJECT_LITERAL
   CLASS CLASS name:WithCompanion modality:OPEN visibility:public superTypes:[kotlin.Any]
@@ -69,27 +69,27 @@ FILE fqName:<root> fileName:/thisReferenceBeforeClassDeclared.kt
             GET_VAR '<this>: <root>.WithCompanion.Companion declared in <root>.WithCompanion.Companion.foo' type=<root>.WithCompanion.Companion origin=null
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
         overridden:
-          FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
         VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
       FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
         overridden:
-          FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
+          public open fun hashCode (): kotlin.Int declared in kotlin.Any
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
       FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
         overridden:
-          FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
+          public open fun toString (): kotlin.String declared in kotlin.Any
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
       VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
+        public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 

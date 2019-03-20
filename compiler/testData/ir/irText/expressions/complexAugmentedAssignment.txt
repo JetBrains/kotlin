@@ -76,42 +76,42 @@ FILE fqName:<root> fileName:/complexAugmentedAssignment.kt
                 value: GET_VAR '<set-?>: kotlin.Int declared in <root>.X1.X2.X3.<set-x3>' type=kotlin.Int origin=null
         FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
           overridden:
-            FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
+            public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
           $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
           VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
         FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
           overridden:
-            FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
+            public open fun hashCode (): kotlin.Int declared in kotlin.Any
           $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
         FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
           overridden:
-            FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
+            public open fun toString (): kotlin.String declared in kotlin.Any
           $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
         overridden:
-          FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
         VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
       FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
         overridden:
-          FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
+          public open fun hashCode (): kotlin.Int declared in kotlin.Any
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
       FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
         overridden:
-          FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
+          public open fun toString (): kotlin.String declared in kotlin.Any
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
       VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
+        public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
   FUN name:test1 visibility:public modality:FINAL <> (a:kotlin.IntArray) returnType:kotlin.Unit 
     VALUE_PARAMETER name:a index:0 type:kotlin.IntArray 
@@ -119,7 +119,6 @@ FILE fqName:<root> fileName:/complexAugmentedAssignment.kt
       VAR name:i type:kotlin.Int [var] 
         CONST Int type=kotlin.Int value=0
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]
         BLOCK type=kotlin.Int origin=POSTFIX_INCR
           VAR IR_TEMPORARY_VARIABLE name:tmp1_array type:kotlin.IntArray [val] 
             GET_VAR 'a: kotlin.IntArray declared in <root>.test1' type=kotlin.IntArray origin=null
@@ -144,7 +143,6 @@ FILE fqName:<root> fileName:/complexAugmentedAssignment.kt
   FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]
         BLOCK type=kotlin.Int origin=POSTFIX_INCR
           VAR IR_TEMPORARY_VARIABLE name:tmp0_this type:<root>.X1 [val] 
             GET_OBJECT 'CLASS OBJECT name:X1 modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.X1
@@ -158,7 +156,6 @@ FILE fqName:<root> fileName:/complexAugmentedAssignment.kt
                 $this: GET_VAR 'val tmp1: kotlin.Int [val] declared in <root>.test2' type=kotlin.Int origin=null
             GET_VAR 'val tmp1: kotlin.Int [val] declared in <root>.test2' type=kotlin.Int origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]
         BLOCK type=kotlin.Int origin=POSTFIX_INCR
           VAR IR_TEMPORARY_VARIABLE name:tmp2_this type:<root>.X1.X2 [val] 
             GET_OBJECT 'CLASS OBJECT name:X2 modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.X1.X2
@@ -172,7 +169,6 @@ FILE fqName:<root> fileName:/complexAugmentedAssignment.kt
                 $this: GET_VAR 'val tmp3: kotlin.Int [val] declared in <root>.test2' type=kotlin.Int origin=null
             GET_VAR 'val tmp3: kotlin.Int [val] declared in <root>.test2' type=kotlin.Int origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]
         BLOCK type=kotlin.Int origin=POSTFIX_INCR
           VAR IR_TEMPORARY_VARIABLE name:tmp4_this type:<root>.X1.X2.X3 [val] 
             GET_OBJECT 'CLASS OBJECT name:X3 modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.X1.X2.X3
@@ -215,16 +211,16 @@ FILE fqName:<root> fileName:/complexAugmentedAssignment.kt
             value: GET_VAR '<set-?>: kotlin.Int declared in <root>.B.<set-s>' type=kotlin.Int origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
       VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
+        public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
   CLASS OBJECT name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Host 
@@ -249,16 +245,16 @@ FILE fqName:<root> fileName:/complexAugmentedAssignment.kt
                 $this: GET_VAR 'b: <root>.B declared in <root>.Host.plusAssign' type=<root>.B origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
       VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
+        public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
   FUN name:test3 visibility:public modality:FINAL <> ($receiver:<root>.Host, v:<root>.B) returnType:kotlin.Unit 
     $receiver: VALUE_PARAMETER name:<this> type:<root>.Host 

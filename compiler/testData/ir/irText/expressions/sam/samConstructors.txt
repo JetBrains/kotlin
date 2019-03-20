@@ -3,7 +3,6 @@ FILE fqName:<root> fileName:/samConstructors.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test1 (): java.lang.Runnable declared in <root>'
         TYPE_OP type=java.lang.Runnable origin=SAM_CONVERSION typeOperand=java.lang.Runnable
-          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Runnable modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
           BLOCK type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit 
               BLOCK_BODY
@@ -15,7 +14,6 @@ FILE fqName:<root> fileName:/samConstructors.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test2 (a: kotlin.Function0<kotlin.Unit>): java.lang.Runnable declared in <root>'
         TYPE_OP type=java.lang.Runnable origin=SAM_CONVERSION typeOperand=java.lang.Runnable
-          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Runnable modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
           GET_VAR 'a: kotlin.Function0<kotlin.Unit> declared in <root>.test2' type=kotlin.Function0<kotlin.Unit> origin=null
   FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
@@ -23,5 +21,4 @@ FILE fqName:<root> fileName:/samConstructors.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test3 (): java.lang.Runnable declared in <root>'
         TYPE_OP type=java.lang.Runnable origin=SAM_CONVERSION typeOperand=java.lang.Runnable
-          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Runnable modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
           FUNCTION_REFERENCE 'public final fun foo (): kotlin.Unit declared in <root>' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null

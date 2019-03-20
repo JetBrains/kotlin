@@ -99,38 +99,29 @@ FILE fqName:<root> fileName:/signedToUnsignedConversions_test.kt
     BLOCK_BODY
       CALL 'public final fun takeUByte (u: kotlin.UByte): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         u: TYPE_OP type=kotlin.UByte origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.UByte
-          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:UByte modality:FINAL visibility:public [inline] superTypes:[kotlin.Comparable<kotlin.UByte>]
           CALL 'public final fun <get-IMPLICIT_INT> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
       CALL 'public final fun takeUByte (u: kotlin.UByte): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         u: TYPE_OP type=kotlin.UByte origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.UByte
-          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:UByte modality:FINAL visibility:public [inline] superTypes:[kotlin.Comparable<kotlin.UByte>]
           CALL 'public final fun <get-EXPLICIT_INT> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
       CALL 'public final fun takeUShort (u: kotlin.UShort): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         u: TYPE_OP type=kotlin.UShort origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.UShort
-          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:UShort modality:FINAL visibility:public [inline] superTypes:[kotlin.Comparable<kotlin.UShort>]
           CALL 'public final fun <get-IMPLICIT_INT> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
       CALL 'public final fun takeUShort (u: kotlin.UShort): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         u: TYPE_OP type=kotlin.UShort origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.UShort
-          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:UShort modality:FINAL visibility:public [inline] superTypes:[kotlin.Comparable<kotlin.UShort>]
           CALL 'public final fun <get-BIGGER_THAN_UBYTE> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
       CALL 'public final fun takeUInt (u: kotlin.UInt): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         u: TYPE_OP type=kotlin.UInt origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.UInt
-          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:UInt modality:FINAL visibility:public [inline] superTypes:[kotlin.Comparable<kotlin.UInt>]
           CALL 'public final fun <get-IMPLICIT_INT> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
       CALL 'public final fun takeULong (u: kotlin.ULong): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         u: TYPE_OP type=kotlin.ULong origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.ULong
-          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:ULong modality:FINAL visibility:public [inline] superTypes:[kotlin.Comparable<kotlin.ULong>]
           CALL 'public final fun <get-IMPLICIT_INT> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
       CALL 'public final fun takeUBytes (vararg u: kotlin.UByte): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         u: VARARG type=kotlin.UByteArray varargElementType=kotlin.UByte
           TYPE_OP type=kotlin.UByte origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.UByte
-            typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:UByte modality:FINAL visibility:public [inline] superTypes:[kotlin.Comparable<kotlin.UByte>]
             CALL 'public final fun <get-IMPLICIT_INT> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
           TYPE_OP type=kotlin.UByte origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.UByte
-            typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:UByte modality:FINAL visibility:public [inline] superTypes:[kotlin.Comparable<kotlin.UByte>]
             CALL 'public final fun <get-EXPLICIT_INT> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
           CONST Byte type=kotlin.UByte value=42
       CALL 'public final fun takeLong (l: kotlin.Long): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         l: TYPE_OP type=kotlin.Long origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.Long
-          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Long modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Long>; java.io.Serializable]
           CALL 'public final fun <get-IMPLICIT_INT> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY

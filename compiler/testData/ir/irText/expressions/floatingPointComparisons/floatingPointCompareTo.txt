@@ -15,13 +15,11 @@ FILE fqName:<root> fileName:/floatingPointCompareTo.kt
         WHEN type=kotlin.Boolean origin=ANDAND
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Double
-              typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Double>; java.io.Serializable]
               GET_VAR 'y: kotlin.Any declared in <root>.test2d' type=kotlin.Any origin=null
             then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
               arg0: CALL 'public open fun compareTo (other: kotlin.Double): kotlin.Int declared in kotlin.Double' type=kotlin.Int origin=null
                 $this: GET_VAR 'x: kotlin.Double declared in <root>.test2d' type=kotlin.Double origin=null
                 other: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
-                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Double>; java.io.Serializable]
                   GET_VAR 'y: kotlin.Any declared in <root>.test2d' type=kotlin.Any origin=null
               arg1: CONST Int type=kotlin.Int value=0
           BRANCH
@@ -37,10 +35,8 @@ FILE fqName:<root> fileName:/floatingPointCompareTo.kt
             if: WHEN type=kotlin.Boolean origin=ANDAND
               BRANCH
                 if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Double
-                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Double>; java.io.Serializable]
                   GET_VAR 'x: kotlin.Any declared in <root>.test3d' type=kotlin.Any origin=null
                 then: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Double
-                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Double>; java.io.Serializable]
                   GET_VAR 'y: kotlin.Any declared in <root>.test3d' type=kotlin.Any origin=null
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
@@ -48,10 +44,8 @@ FILE fqName:<root> fileName:/floatingPointCompareTo.kt
             then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
               arg0: CALL 'public open fun compareTo (other: kotlin.Double): kotlin.Int declared in kotlin.Double' type=kotlin.Int origin=null
                 $this: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
-                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Double>; java.io.Serializable]
                   GET_VAR 'x: kotlin.Any declared in <root>.test3d' type=kotlin.Any origin=null
                 other: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
-                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Double>; java.io.Serializable]
                   GET_VAR 'y: kotlin.Any declared in <root>.test3d' type=kotlin.Any origin=null
               arg1: CONST Int type=kotlin.Int value=0
           BRANCH
@@ -73,13 +67,11 @@ FILE fqName:<root> fileName:/floatingPointCompareTo.kt
         WHEN type=kotlin.Boolean origin=ANDAND
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Float
-              typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Float modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Float>; java.io.Serializable]
               GET_VAR 'y: kotlin.Any declared in <root>.test2f' type=kotlin.Any origin=null
             then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
               arg0: CALL 'public open fun compareTo (other: kotlin.Float): kotlin.Int declared in kotlin.Float' type=kotlin.Int origin=null
                 $this: GET_VAR 'x: kotlin.Float declared in <root>.test2f' type=kotlin.Float origin=null
                 other: TYPE_OP type=kotlin.Float origin=IMPLICIT_CAST typeOperand=kotlin.Float
-                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Float modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Float>; java.io.Serializable]
                   GET_VAR 'y: kotlin.Any declared in <root>.test2f' type=kotlin.Any origin=null
               arg1: CONST Int type=kotlin.Int value=0
           BRANCH
@@ -95,10 +87,8 @@ FILE fqName:<root> fileName:/floatingPointCompareTo.kt
             if: WHEN type=kotlin.Boolean origin=ANDAND
               BRANCH
                 if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Float
-                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Float modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Float>; java.io.Serializable]
                   GET_VAR 'x: kotlin.Any declared in <root>.test3f' type=kotlin.Any origin=null
                 then: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Float
-                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Float modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Float>; java.io.Serializable]
                   GET_VAR 'y: kotlin.Any declared in <root>.test3f' type=kotlin.Any origin=null
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
@@ -106,10 +96,8 @@ FILE fqName:<root> fileName:/floatingPointCompareTo.kt
             then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
               arg0: CALL 'public open fun compareTo (other: kotlin.Float): kotlin.Int declared in kotlin.Float' type=kotlin.Int origin=null
                 $this: TYPE_OP type=kotlin.Float origin=IMPLICIT_CAST typeOperand=kotlin.Float
-                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Float modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Float>; java.io.Serializable]
                   GET_VAR 'x: kotlin.Any declared in <root>.test3f' type=kotlin.Any origin=null
                 other: TYPE_OP type=kotlin.Float origin=IMPLICIT_CAST typeOperand=kotlin.Float
-                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Float modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Float>; java.io.Serializable]
                   GET_VAR 'y: kotlin.Any declared in <root>.test3f' type=kotlin.Any origin=null
               arg1: CONST Int type=kotlin.Int value=0
           BRANCH
@@ -125,10 +113,8 @@ FILE fqName:<root> fileName:/floatingPointCompareTo.kt
             if: WHEN type=kotlin.Boolean origin=ANDAND
               BRANCH
                 if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Float
-                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Float modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Float>; java.io.Serializable]
                   GET_VAR 'x: kotlin.Any declared in <root>.testFD' type=kotlin.Any origin=null
                 then: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Double
-                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Double>; java.io.Serializable]
                   GET_VAR 'y: kotlin.Any declared in <root>.testFD' type=kotlin.Any origin=null
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
@@ -136,10 +122,8 @@ FILE fqName:<root> fileName:/floatingPointCompareTo.kt
             then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
               arg0: CALL 'public final fun compareTo (other: kotlin.Double): kotlin.Int declared in kotlin.Float' type=kotlin.Int origin=null
                 $this: TYPE_OP type=kotlin.Float origin=IMPLICIT_CAST typeOperand=kotlin.Float
-                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Float modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Float>; java.io.Serializable]
                   GET_VAR 'x: kotlin.Any declared in <root>.testFD' type=kotlin.Any origin=null
                 other: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
-                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Double>; java.io.Serializable]
                   GET_VAR 'y: kotlin.Any declared in <root>.testFD' type=kotlin.Any origin=null
               arg1: CONST Int type=kotlin.Int value=0
           BRANCH
@@ -155,10 +139,8 @@ FILE fqName:<root> fileName:/floatingPointCompareTo.kt
             if: WHEN type=kotlin.Boolean origin=ANDAND
               BRANCH
                 if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Double
-                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Double>; java.io.Serializable]
                   GET_VAR 'x: kotlin.Any declared in <root>.testDF' type=kotlin.Any origin=null
                 then: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Float
-                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Float modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Float>; java.io.Serializable]
                   GET_VAR 'y: kotlin.Any declared in <root>.testDF' type=kotlin.Any origin=null
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
@@ -166,10 +148,8 @@ FILE fqName:<root> fileName:/floatingPointCompareTo.kt
             then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
               arg0: CALL 'public final fun compareTo (other: kotlin.Float): kotlin.Int declared in kotlin.Double' type=kotlin.Int origin=null
                 $this: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
-                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Double>; java.io.Serializable]
                   GET_VAR 'x: kotlin.Any declared in <root>.testDF' type=kotlin.Any origin=null
                 other: TYPE_OP type=kotlin.Float origin=IMPLICIT_CAST typeOperand=kotlin.Float
-                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Float modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Float>; java.io.Serializable]
                   GET_VAR 'y: kotlin.Any declared in <root>.testDF' type=kotlin.Any origin=null
               arg1: CONST Int type=kotlin.Int value=0
           BRANCH
@@ -191,13 +171,11 @@ FILE fqName:<root> fileName:/floatingPointCompareTo.kt
         WHEN type=kotlin.Boolean origin=ANDAND
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Float
-              typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Float modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Float>; java.io.Serializable]
               GET_VAR 'x: kotlin.Any declared in <root>.test2fr' type=kotlin.Any origin=null
             then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
               arg0: CALL 'public open fun compareTo (other: kotlin.Float): kotlin.Int declared in kotlin.Float' type=kotlin.Int origin=null
                 $this: GET_VAR '<this>: kotlin.Float declared in <root>.test2fr' type=kotlin.Float origin=null
                 other: TYPE_OP type=kotlin.Float origin=IMPLICIT_CAST typeOperand=kotlin.Float
-                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Float modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Float>; java.io.Serializable]
                   GET_VAR 'x: kotlin.Any declared in <root>.test2fr' type=kotlin.Any origin=null
               arg1: CONST Int type=kotlin.Int value=0
           BRANCH
@@ -211,13 +189,11 @@ FILE fqName:<root> fileName:/floatingPointCompareTo.kt
         WHEN type=kotlin.Boolean origin=ANDAND
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Double
-              typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Double>; java.io.Serializable]
               GET_VAR 'x: kotlin.Any declared in <root>.test3fr' type=kotlin.Any origin=null
             then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
               arg0: CALL 'public final fun compareTo (other: kotlin.Double): kotlin.Int declared in kotlin.Float' type=kotlin.Int origin=null
                 $this: GET_VAR '<this>: kotlin.Float declared in <root>.test3fr' type=kotlin.Float origin=null
                 other: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
-                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Double>; java.io.Serializable]
                   GET_VAR 'x: kotlin.Any declared in <root>.test3fr' type=kotlin.Any origin=null
               arg1: CONST Int type=kotlin.Int value=0
           BRANCH
