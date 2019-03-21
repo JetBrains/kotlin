@@ -69,7 +69,6 @@ abstract class ExecutionStrategyIT : BaseGradleIT() {
             assertContains(finishMessage)
             checkOutput()
             assertNoWarnings()
-            assertFileExists(kotlinClassesDir(subproject = "app") + "foo/B.class")
         }
 
         val classesKt = project.projectDir.getFileByName("classes.kt")
