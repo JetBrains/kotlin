@@ -80,6 +80,9 @@ fun KotlinType.isPrimitiveNumberOrNullableType(): Boolean =
 
 fun KotlinType.isTypeParameter(): Boolean = TypeUtils.isTypeParameter(this)
 
+fun KotlinType.upperBoundedByPrimitiveNumberOrNullableType(): Boolean =
+    TypeUtils.getTypeParameterDescriptorOrNull(this)?.upperBounds?.any { it.isPrimitiveNumberOrNullableType() } == true
+
 fun KotlinType.isInterface(): Boolean = (constructor.declarationDescriptor as? ClassDescriptor)?.kind == ClassKind.INTERFACE
 fun KotlinType.isEnum(): Boolean = (constructor.declarationDescriptor as? ClassDescriptor)?.kind == ClassKind.ENUM_CLASS
 
