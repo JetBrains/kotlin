@@ -4357,6 +4357,31 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/moveVariableDeclarationIntoWhen"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("inBinaryExpression.kt")
+        public void testInBinaryExpression() throws Exception {
+            runTest("idea/testData/inspectionsLocal/moveVariableDeclarationIntoWhen/inBinaryExpression.kt");
+        }
+
+        @TestMetadata("inProperty.kt")
+        public void testInProperty() throws Exception {
+            runTest("idea/testData/inspectionsLocal/moveVariableDeclarationIntoWhen/inProperty.kt");
+        }
+
+        @TestMetadata("inReturnExpression.kt")
+        public void testInReturnExpression() throws Exception {
+            runTest("idea/testData/inspectionsLocal/moveVariableDeclarationIntoWhen/inReturnExpression.kt");
+        }
+
+        @TestMetadata("inUnaryAndProperty.kt")
+        public void testInUnaryAndProperty() throws Exception {
+            runTest("idea/testData/inspectionsLocal/moveVariableDeclarationIntoWhen/inUnaryAndProperty.kt");
+        }
+
+        @TestMetadata("notApplicableInBinaryExpression.kt")
+        public void testNotApplicableInBinaryExpression() throws Exception {
+            runTest("idea/testData/inspectionsLocal/moveVariableDeclarationIntoWhen/notApplicableInBinaryExpression.kt");
+        }
+
         @TestMetadata("notApplicableOtherName.kt")
         public void testNotApplicableOtherName() throws Exception {
             runTest("idea/testData/inspectionsLocal/moveVariableDeclarationIntoWhen/notApplicableOtherName.kt");

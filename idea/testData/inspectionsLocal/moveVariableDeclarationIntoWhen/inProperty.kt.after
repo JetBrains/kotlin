@@ -1,0 +1,8 @@
+fun test() = 42
+
+fun foo() {
+    val b = when (val a = test()) {
+        1 -> a
+        else -> 24
+    }
+}

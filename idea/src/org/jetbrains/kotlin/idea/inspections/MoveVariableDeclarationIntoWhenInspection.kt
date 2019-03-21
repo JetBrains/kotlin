@@ -60,8 +60,24 @@ private fun KtProperty.action(element: KtElement): Action = when (val elementUsa
 }
 
 private fun KtWhenExpression.findDeclarationNear(): KtProperty? {
-    val previousProperty = previousStatement() as? KtProperty ?: return null
+    val previousProperty = previousStatement() as? KtProperty
+        ?: previousPropertyFromParent()
+        ?: return null
     return previousProperty.takeIf { !it.isVar && it.hasInitializer() && it.nameIdentifier?.text == subjectExpression?.text }
+}
+
+private tailrec fun KtExpression.previousPropertyFromParent(): KtProperty? {
+    val parentExpression = parent as? KtExpression ?: return null
+    if (this != when (parentExpression) {
+            is KtProperty -> parentExpression.initializer
+            is KtReturnExpression -> parentExpression.returnedExpression
+            is KtBinaryExpression -> parentExpression.left
+            is KtUnaryExpression -> parentExpression.baseExpression
+            else -> null
+        }
+    ) return null
+
+    return parentExpression.previousStatement() as? KtProperty ?: parentExpression.previousPropertyFromParent()
 }
 
 private class VariableDeclarationIntoWhenFix(
