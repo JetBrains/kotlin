@@ -157,6 +157,12 @@ abstract class KotlinIrLinker(
                     if (!deserializedTopLevels.contains(it)) reachableTopLevels.add(it) // Assuming forward declarations are always top levels.
                 }
 
+                descriptor?.module?.let {
+                    if (!deserializersForModules.containsKey(it) && !it.isForwardDeclarationModule) {
+                        deserializeIrModuleHeader(it)!!
+                    }
+                }
+
                 referenceDeserializedSymbol(proto, descriptor)
             }
             if (symbol.descriptor is ClassDescriptor &&
