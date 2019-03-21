@@ -9064,19 +9064,9 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/ieee754/differentTypesComparison.kt");
         }
 
-        @TestMetadata("equalsDouble.kt")
-        public void testEqualsDouble() throws Exception {
-            runTest("compiler/testData/codegen/box/ieee754/equalsDouble.kt");
-        }
-
         @TestMetadata("equalsDouble_properIeeeComparisons.kt")
         public void testEqualsDouble_properIeeeComparisons() throws Exception {
             runTest("compiler/testData/codegen/box/ieee754/equalsDouble_properIeeeComparisons.kt");
-        }
-
-        @TestMetadata("equalsFloat.kt")
-        public void testEqualsFloat() throws Exception {
-            runTest("compiler/testData/codegen/box/ieee754/equalsFloat.kt");
         }
 
         @TestMetadata("equalsFloat_properIeeeComparisons.kt")
@@ -9084,29 +9074,14 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/ieee754/equalsFloat_properIeeeComparisons.kt");
         }
 
-        @TestMetadata("equalsNaN.kt")
-        public void testEqualsNaN() throws Exception {
-            runTest("compiler/testData/codegen/box/ieee754/equalsNaN.kt");
-        }
-
         @TestMetadata("equalsNaN_properIeeeComparisons.kt")
         public void testEqualsNaN_properIeeeComparisons() throws Exception {
             runTest("compiler/testData/codegen/box/ieee754/equalsNaN_properIeeeComparisons.kt");
         }
 
-        @TestMetadata("equalsNullableDouble.kt")
-        public void testEqualsNullableDouble() throws Exception {
-            runTest("compiler/testData/codegen/box/ieee754/equalsNullableDouble.kt");
-        }
-
         @TestMetadata("equalsNullableDouble_properIeeeComparisons.kt")
         public void testEqualsNullableDouble_properIeeeComparisons() throws Exception {
             runTest("compiler/testData/codegen/box/ieee754/equalsNullableDouble_properIeeeComparisons.kt");
-        }
-
-        @TestMetadata("equalsNullableFloat.kt")
-        public void testEqualsNullableFloat() throws Exception {
-            runTest("compiler/testData/codegen/box/ieee754/equalsNullableFloat.kt");
         }
 
         @TestMetadata("equalsNullableFloat_properIeeeComparisons.kt")
@@ -9129,19 +9104,9 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/ieee754/generic.kt");
         }
 
-        @TestMetadata("greaterDouble.kt")
-        public void testGreaterDouble() throws Exception {
-            runTest("compiler/testData/codegen/box/ieee754/greaterDouble.kt");
-        }
-
         @TestMetadata("greaterDouble_properIeeeComparisons.kt")
         public void testGreaterDouble_properIeeeComparisons() throws Exception {
             runTest("compiler/testData/codegen/box/ieee754/greaterDouble_properIeeeComparisons.kt");
-        }
-
-        @TestMetadata("greaterFloat.kt")
-        public void testGreaterFloat() throws Exception {
-            runTest("compiler/testData/codegen/box/ieee754/greaterFloat.kt");
         }
 
         @TestMetadata("greaterFloat_properIeeeComparisons.kt")
@@ -9154,11 +9119,6 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/ieee754/inline.kt");
         }
 
-        @TestMetadata("lessDouble.kt")
-        public void testLessDouble() throws Exception {
-            runTest("compiler/testData/codegen/box/ieee754/lessDouble.kt");
-        }
-
         @TestMetadata("lessDouble_properIeeeAndNewInference.kt")
         public void testLessDouble_properIeeeAndNewInference() throws Exception {
             runTest("compiler/testData/codegen/box/ieee754/lessDouble_properIeeeAndNewInference.kt");
@@ -9167,11 +9127,6 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
         @TestMetadata("lessDouble_properIeeeComparisons.kt")
         public void testLessDouble_properIeeeComparisons() throws Exception {
             runTest("compiler/testData/codegen/box/ieee754/lessDouble_properIeeeComparisons.kt");
-        }
-
-        @TestMetadata("lessFloat.kt")
-        public void testLessFloat() throws Exception {
-            runTest("compiler/testData/codegen/box/ieee754/lessFloat.kt");
         }
 
         @TestMetadata("lessFloat_properIeeeComparisons.kt")
@@ -9269,11 +9224,6 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/ieee754/smartCastToDoubleAndComparableToDouble.kt");
         }
 
-        @TestMetadata("when.kt")
-        public void testWhen() throws Exception {
-            runTest("compiler/testData/codegen/box/ieee754/when.kt");
-        }
-
         @TestMetadata("when10.kt")
         public void testWhen10() throws Exception {
             runTest("compiler/testData/codegen/box/ieee754/when10.kt");
@@ -9282,11 +9232,6 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
         @TestMetadata("when10_properIeeeComparisons.kt")
         public void testWhen10_properIeeeComparisons() throws Exception {
             runTest("compiler/testData/codegen/box/ieee754/when10_properIeeeComparisons.kt");
-        }
-
-        @TestMetadata("whenNoSubject.kt")
-        public void testWhenNoSubject() throws Exception {
-            runTest("compiler/testData/codegen/box/ieee754/whenNoSubject.kt");
         }
 
         @TestMetadata("whenNoSubject_properIeeeComparisons.kt")
