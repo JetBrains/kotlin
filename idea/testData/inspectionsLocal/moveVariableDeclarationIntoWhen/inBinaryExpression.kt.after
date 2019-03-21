@@ -1,0 +1,8 @@
+fun test() = true
+
+fun foo(): Int {
+    return when (test()) {
+        true -> 42
+        else -> null
+    } ?: 55
+}
