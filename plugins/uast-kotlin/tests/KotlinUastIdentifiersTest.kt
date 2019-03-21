@@ -24,4 +24,7 @@ class KotlinUastIdentifiersTest : AbstractKotlinIdentifiersTest() {
     @Test
     fun testAnonymous() = doTest("Anonymous")
 
+    @Test
+    fun testSuperCalls() = doTest("SuperCalls")
+
 }

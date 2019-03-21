@@ -19,6 +19,7 @@ runnable2 -> USimpleNameReferenceExpression (identifier = runnable2) from KtName
 run -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) from KtNameReferenceExpression
 Runnable -> USimpleNameReferenceExpression (identifier = Runnable) from KtNameReferenceExpression
 Closeable -> USimpleNameReferenceExpression (identifier = Closeable) from KtNameReferenceExpression
+InputStream -> USimpleNameReferenceExpression (identifier = InputStream) from KtObjectLiteralExpression
 InputStream -> UObjectLiteralExpression from KtNameReferenceExpression
 Runnable -> USimpleNameReferenceExpression (identifier = Runnable) from KtNameReferenceExpression
 Int -> USimpleNameReferenceExpression (identifier = Int) from KtNameReferenceExpression
