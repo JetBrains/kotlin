@@ -18,20 +18,20 @@ fun createPhaseConfig(
     arguments: CommonCompilerArguments,
     messageCollector: MessageCollector
 ): PhaseConfig {
-    fun warn(message: String) = messageCollector.report(CompilerMessageSeverity.WARNING, message)
+    fun report(message: String) = messageCollector.report(CompilerMessageSeverity.ERROR, message)
 
     val phases = compoundPhase.toPhaseMap()
-    val enabled = computeEnabled(phases, arguments.disablePhases, ::warn).toMutableSet()
-    val verbose = phaseSetFromArguments(phases, arguments.verbosePhases, ::warn)
+    val enabled = computeEnabled(phases, arguments.disablePhases, ::report).toMutableSet()
+    val verbose = phaseSetFromArguments(phases, arguments.verbosePhases, ::report)
 
-    val beforeDumpSet = phaseSetFromArguments(phases, arguments.phasesToDumpBefore, ::warn)
-    val afterDumpSet = phaseSetFromArguments(phases, arguments.phasesToDumpAfter, ::warn)
-    val bothDumpSet = phaseSetFromArguments(phases, arguments.phasesToDump, ::warn)
+    val beforeDumpSet = phaseSetFromArguments(phases, arguments.phasesToDumpBefore, ::report)
+    val afterDumpSet = phaseSetFromArguments(phases, arguments.phasesToDumpAfter, ::report)
+    val bothDumpSet = phaseSetFromArguments(phases, arguments.phasesToDump, ::report)
     val toDumpStateBefore = beforeDumpSet + bothDumpSet
     val toDumpStateAfter = afterDumpSet + bothDumpSet
-    val beforeValidateSet = phaseSetFromArguments(phases, arguments.phasesToValidateBefore, ::warn)
-    val afterValidateSet = phaseSetFromArguments(phases, arguments.phasesToValidateAfter, ::warn)
-    val bothValidateSet = phaseSetFromArguments(phases, arguments.phasesToValidate, ::warn)
+    val beforeValidateSet = phaseSetFromArguments(phases, arguments.phasesToValidateBefore, ::report)
+    val afterValidateSet = phaseSetFromArguments(phases, arguments.phasesToValidateAfter, ::report)
+    val bothValidateSet = phaseSetFromArguments(phases, arguments.phasesToValidate, ::report)
     val toValidateStateBefore = beforeValidateSet + bothValidateSet
     val toValidateStateAfter = afterValidateSet + bothValidateSet
 
@@ -55,22 +55,22 @@ fun createPhaseConfig(
 private fun computeEnabled(
     phases: MutableMap<String, AnyNamedPhase>,
     namesOfDisabled: Array<String>?,
-    warn: (String) -> Unit
+    report: (String) -> Unit
 ): Set<AnyNamedPhase> {
-    val disabledPhases = phaseSetFromArguments(phases, namesOfDisabled, warn)
+    val disabledPhases = phaseSetFromArguments(phases, namesOfDisabled, report)
     return phases.values.toSet() - disabledPhases
 }
 
 private fun phaseSetFromArguments(
     phases: MutableMap<String, AnyNamedPhase>,
     names: Array<String>?,
-    warn: (String) -> Unit
+    report: (String) -> Unit
 ): Set<AnyNamedPhase> {
     if (names == null) return emptySet()
     if ("ALL" in names) return phases.values.toSet()
     return names.mapNotNull {
         phases[it] ?: run {
-            warn("no phase named $it, ignoring")
+            report("no phase named $it")
             null
         }
     }.toSet()
