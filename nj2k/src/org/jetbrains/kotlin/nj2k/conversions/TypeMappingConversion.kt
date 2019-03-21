@@ -107,7 +107,7 @@ class TypeMappingConversion(val context: ConversionContext) : RecursiveApplicabl
                 JKClassTypeImpl(
                     context.symbolProvider.provideByFqName(type.arrayFqName()),
                     if (type is JKJavaPrimitiveType) emptyList() else listOf(type.mapType(typeElement)),
-                    type.nullability
+                    nullability
                 )
             else -> this
         }

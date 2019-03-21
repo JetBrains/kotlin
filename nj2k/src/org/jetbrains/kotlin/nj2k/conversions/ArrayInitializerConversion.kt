@@ -44,7 +44,7 @@ class ArrayInitializerConversion(private val context: ConversionContext) : Recur
                 JKJavaMethodCallExpressionImpl(
                     context.symbolProvider.provideByFqName("kotlin/arrayOfNulls"),
                     JKArgumentListImpl(dimensions[0]),
-                    JKTypeArgumentListImpl(listOf(JKTypeElementImpl(type.updateNullability(Nullability.NotNull))))
+                    JKTypeArgumentListImpl(listOf(JKTypeElementImpl(type)))
                 )
             } else {
                 JKJavaNewExpressionImpl(
@@ -75,7 +75,7 @@ class ArrayInitializerConversion(private val context: ConversionContext) : Recur
             resultType = JKClassTypeImpl(
                 context.symbolProvider.provideByFqName(KotlinBuiltIns.FQ_NAMES.array.asString()),
                 listOf(resultType),
-                Nullability.NotNull
+                Nullability.Default
             )
         }
         return JKJavaMethodCallExpressionImpl(
