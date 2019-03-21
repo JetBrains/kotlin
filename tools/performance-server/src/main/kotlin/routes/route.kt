@@ -67,16 +67,16 @@ object LocalCache {
     fun delete(target: String, builds: Iterable<String>, bintrayUser: String, bintrayPassword: String): Boolean {
         // Delete from bintray.
         val buildsDescription = getBuildsInfoFromBintray(target).lines()
-        val initialBuildsNumber = buildsDescription.size
-        buildsDescription.filter {
+
+        val newBuildsDescription = buildsDescription.filter {
             val buildNumber = it.substringBefore(',')
             buildNumber !in builds
         }
 
-        if (buildsDescription.size < initialBuildsNumber) {
+        if (newBuildsDescription.size < buildsDescription.size) {
             // Upload new version of file.
             val uploadUrl = "$uploadBintrayUrl/$bintrayPackage/latest/$target/$buildsFileName?publish=1&override=1"
-            sendUploadRequest(uploadUrl, buildsDescription.joinToString("\n"), bintrayUser, bintrayPassword)
+            sendUploadRequest(uploadUrl, newBuildsDescription.joinToString("\n"), bintrayUser, bintrayPassword)
 
             // Reload values.
             clean(target)
@@ -189,7 +189,7 @@ fun getBuildsInfoFromBintray(target: String) =
         sendGetRequest("$downloadBintrayUrl/$target/$buildsFileName")
 
 // Parse  and postprocess result of response with build description.
-fun prepareBuildsResponse(builds: Collection<String>, type: String, buildNumber: String? = null): List<Build> {
+fun prepareBuildsResponse(builds: Collection<String>, type: String, branch: String, buildNumber: String? = null): List<Build> {
     val buildsObjects = mutableListOf<Build>()
     builds.forEach {
         val tokens = it.split(",").map { it.trim() }
@@ -197,7 +197,8 @@ fun prepareBuildsResponse(builds: Collection<String>, type: String, buildNumber:
             error("Build description $it doesn't contain all necessary information. " +
                     "File with data could be corrupted.")
         }
-        if (tokens[5] == type || type == "day" || tokens[0] == buildNumber) {
+        if ((tokens[5] == type || type == "day") && (branch == tokens[3] || branch == "all")
+                || tokens[0] == buildNumber) {
             buildsObjects.add(Build(tokens[0], tokens[1], tokens[2], tokens[3],
                     tokens[4], tokens[5], tokens[6].toInt(), tokens[7], tokens[8], tokens[9],
                     if (tokens[10] == "-") null else tokens[10]))
@@ -233,7 +234,7 @@ fun router() {
         buildsDescription += "${buildInfo.buildNumber}, ${buildInfo.startTime}, ${buildInfo.finishTime}, " +
                 "${buildInfo.branch}, $commitsDescription, ${register.buildType}, ${register.failuresNumber}, " +
                 "${register.executionTime}, ${register.compileTime}, ${register.codeSize}, " +
-                "${register?.bundleSize ?: "-"}\n"
+                "${register.bundleSize ?: "-"}\n"
 
         // Upload new version of file.
         val uploadUrl = "$uploadBintrayUrl/$bintrayPackage/latest/${register.target}/${buildsFileName}?publish=1&override=1"
@@ -247,22 +248,22 @@ fun router() {
     })
 
     // Get list of builds.
-    router.get("/builds/:target/:type/:id", { request, response ->
+    router.get("/builds/:target/:type/:branch/:id", { request, response ->
         val builds = LocalCache[request.params.target, request.params.id]
-        response.json(prepareBuildsResponse(builds, request.params.type, request.params.id))
+        response.json(prepareBuildsResponse(builds, request.params.type, request.params.branch, request.params.id))
     })
 
-    router.get("/builds/:target/:type", { request, response ->
+    router.get("/builds/:target/:type/:branch", { request, response ->
         val builds = LocalCache[request.params.target]
-        response.json(prepareBuildsResponse(builds, request.params.type))
+        response.json(prepareBuildsResponse(builds, request.params.type, request.params.branch))
     })
 
-    router.get("/clean", { request, response ->
+    router.get("/clean", { _, response ->
         LocalCache.clean()
         response.sendStatus(200)
     })
 
-    router.get("/fill", { request, response ->
+    router.get("/fill", { _, response ->
         LocalCache.fill()
         response.sendStatus(200)
     })
@@ -272,12 +273,13 @@ fun router() {
         val result = LocalCache.delete(request.params.target, buildsToDelete, request.query.user, request.query.key)
         if (result) {
             response.sendStatus(200)
+        } else {
+            response.sendStatus(404)
         }
-        response.sendStatus(404)
     })
 
     // Main page.
-    router.get("/", { request, response ->
+    router.get("/", { _, response ->
         response.render("index")
     })
 

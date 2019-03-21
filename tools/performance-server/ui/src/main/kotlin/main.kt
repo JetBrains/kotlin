@@ -67,14 +67,19 @@ fun <T : Any> separateValues(values: String, valuesContainer: MutableMap<String,
     }
 }
 
-fun getChartData(labels: List<String>, valuesList: Collection<List<*>>): dynamic {
+fun getChartData(labels: List<String>, valuesList: Collection<List<*>>, className: String? = null): dynamic {
     val chartData: dynamic = object{}
     chartData["labels"] = labels.toTypedArray()
-    chartData["series"] = valuesList.map { it.toTypedArray() }.toTypedArray()
+    chartData["series"] = valuesList.map {
+        val series: dynamic = object{}
+        series["data"] = it.toTypedArray()
+        className?.let { series["className"] = className }
+        series
+    }.toTypedArray()
     return chartData
 }
 
-fun getChartOptions(samples: Array<String>, yTitle: String): dynamic {
+fun getChartOptions(samples: Array<String>, yTitle: String, classNames: Array<String>? = null): dynamic {
     val chartOptions: dynamic = object{}
     chartOptions["fullWidth"] = true
     val paddingObject: dynamic = object{}
@@ -88,6 +93,7 @@ fun getChartOptions(samples: Array<String>, yTitle: String): dynamic {
     chartOptions["axisY"] = axisYObject
     val legendObject: dynamic = object{}
     legendObject["legendNames"] = samples
+    classNames?.let { legendObject["classNames"] = classNames }
     val titleObject: dynamic = object{}
     val axisYTitle: dynamic = object{}
     axisYTitle["axisTitle"] = yTitle
@@ -101,6 +107,10 @@ fun getChartOptions(samples: Array<String>, yTitle: String): dynamic {
     titleObject["axisY"] = axisYTitle
     chartOptions["plugins"] = arrayOf(Chartist.plugins.legend(legendObject), Chartist.plugins.ctAxisTitle(titleObject))
     return chartOptions
+}
+
+fun redirect(url: String) {
+    window.location.href = url
 }
 
 fun customizeChart(chart: dynamic, chartContainer: String, jquerySelector: dynamic, builds: List<Build>,
@@ -155,7 +165,7 @@ fun customizeChart(chart: dynamic, chartContainer: String, jquerySelector: dynam
             element._node.setAttribute("title", information)
             element._node.setAttribute("data-chart-tooltip", chartContainer)
             element._node.addEventListener("click", {
-                window.location.replace(linkToDetailedInfo)
+                redirect(linkToDetailedInfo)
             })
         }
     })
@@ -175,7 +185,7 @@ fun main(args: Array<String>) {
     // Get parameters from request.
     val url = window.location.href
     val parametersPart = url.substringAfter("?").split('&')
-    val parameters = mutableMapOf("target" to "Linux", "type" to "dev", "build" to "")
+    val parameters = mutableMapOf("target" to "Linux", "type" to "dev", "build" to "", "branch" to "master")
     parametersPart.forEach {
         val parsedParameter = it.split("=", limit = 2)
         if (parsedParameter.size == 2) {
@@ -189,6 +199,7 @@ fun main(args: Array<String>) {
         append("$serverUrl")
         append("/${parameters["target"]}")
         append("/${parameters["type"]}")
+        append("/${parameters["branch"]}")
         append("/${parameters["build"]}")
     }
     val response = sendGetRequest(buildsUrl)
@@ -205,23 +216,32 @@ fun main(args: Array<String>) {
     // Change inputs values connected with parameters and add events listeners.
     document.querySelector("#inputGroupTarget [value=\"${parameters["target"]}\"]")?.setAttribute("selected", "true")
     document.querySelector("#inputGroupBuildType [value=\"${parameters["type"]}\"]")?.setAttribute("selected", "true")
+    document.querySelector("#inputGroupBranch [value=\"${parameters["branch"]}\"]")?.setAttribute("selected", "true")
     (document.getElementById("highligted_build") as HTMLInputElement).value = parameters["build"]!!
 
     // Add onChange events for fields.
     js("$('#inputGroupTarget')").change({
         val newValue = js("$(this).val()")
         if (newValue != parameters["target"]) {
-            val newLink = "http://${window.location.host}/?target=$newValue&type=${parameters["type"]}" +
+            val newLink = "http://${window.location.host}/?target=$newValue&type=${parameters["type"]}&branch=${parameters["branch"]}" +
                     "${if (parameters["build"]!!.isEmpty()) "" else "&build=${parameters["build"]}"}"
-            window.location.replace(newLink)
+            window.location.href = newLink
         }
     })
     js("$('#inputGroupBuildType')").change({
         val newValue = js("$(this).val()")
         if (newValue != parameters["type"]) {
-            val newLink = "http://${window.location.host}/?target=${parameters["target"]}&type=$newValue" +
+            val newLink = "http://${window.location.host}/?target=${parameters["target"]}&type=$newValue&branch=${parameters["branch"]}" +
                     "${if (parameters["build"]!!.isEmpty()) "" else "&build=${parameters["build"]}"}"
-            window.location.replace(newLink)
+            window.location.href = newLink
+        }
+    })
+    js("$('#inputGroupBranch')").change({
+        val newValue = js("$(this).val()")
+        if (newValue != parameters["branch"]) {
+            val newLink = "http://${window.location.host}/?target=${parameters["target"]}&type=${parameters["type"]}&branch=$newValue" +
+                    "${if (parameters["build"]!!.isEmpty()) "" else "&build=${parameters["build"]}"}"
+            window.location.href = newLink
         }
     })
 
@@ -231,7 +251,7 @@ fun main(args: Array<String>) {
         if (suggestion.value != parameters["build"]) {
             val newLink = "http://${window.location.host}/?target=${parameters["target"]}&type=${parameters["type"]}" +
                     "${if (suggestion.value.isEmpty()) "" else "&build=${suggestion.value}"}"
-            window.location.replace(newLink)
+            window.location.href = newLink
         }
     }
     js("$( \"#highligted_build\" )").autocomplete(autocompleteParameters)
@@ -240,7 +260,7 @@ fun main(args: Array<String>) {
         if (newValue.isEmpty() || newValue in builds.map {it.buildNumber}) {
             val newLink = "http://${window.location.host}/?target=${parameters["target"]}&type=${parameters["type"]}" +
                     "${if (newValue.isEmpty()) "" else "&build=$newValue"}"
-            window.location.replace(newLink)
+            window.location.href = newLink
         }
     })
 
@@ -260,20 +280,22 @@ fun main(args: Array<String>) {
             labels.add(it.buildNumber)
         }
         separateValues(it.executionTime, executionTime) { value -> value.toDouble() }
-        separateValues(it.compileTime, compileTime) { value -> value.toDouble() }
+        separateValues(it.compileTime, compileTime) { value -> value.toDouble() / 1000 }
         separateValues(it.codeSize, codeSize) { value -> value.toDouble() / 1024.0 }
         bundleSize.add(it.bundleSize?.toInt()?. let { it / 1024 / 1024 })
     }
+
+    val sizeClassName = "ct-series-c"
 
     // Draw charts.
     val execChart = Chartist.Line("#exec_chart", getChartData(labels, executionTime.values),
             getChartOptions(executionTime.keys.toTypedArray(), "Time, microseconds"))
     val compileChart = Chartist.Line("#compile_chart", getChartData(labels, compileTime.values),
-            getChartOptions(compileTime.keys.toTypedArray(), "Time, microseconds"))
-    val codeSizeChart = Chartist.Line("#codesize_chart", getChartData(labels, codeSize.values),
-            getChartOptions(codeSize.keys.toTypedArray(), "Size, KB"))
-    val bundleSizeChart = Chartist.Line("#bundlesize_chart", getChartData(labels, listOf(bundleSize)),
-            getChartOptions(arrayOf("Bundle size"), "Size, MB"))
+            getChartOptions(compileTime.keys.toTypedArray(), "Time, milliseconds"))
+    val codeSizeChart = Chartist.Line("#codesize_chart", getChartData(labels, codeSize.values, sizeClassName),
+            getChartOptions(codeSize.keys.toTypedArray(), "Size, KB", arrayOf("ct-series-2")))
+    val bundleSizeChart = Chartist.Line("#bundlesize_chart", getChartData(labels, listOf(bundleSize), sizeClassName),
+            getChartOptions(arrayOf("Bundle size"), "Size, MB", arrayOf("ct-series-2")))
 
     // Tooltips and higlights.
     customizeChart(execChart, "exec_chart", js("$(\"#exec_chart\")"), builds, parameters)
