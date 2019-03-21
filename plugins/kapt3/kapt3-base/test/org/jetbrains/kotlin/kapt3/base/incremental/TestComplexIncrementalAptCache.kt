@@ -48,7 +48,7 @@ class TestComplexIncrementalAptCache {
                 srcFiles,
                 listOf(processor),
                 generatedSources
-            ) { trees -> MentionedTypesTaskListener(cache.javaCache, trees) }
+            ) { elements, trees -> MentionedTypesTaskListener(cache.javaCache, elements, trees) }
             cache.updateCache(listOf(processor))
         }
     }
