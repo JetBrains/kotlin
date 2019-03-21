@@ -28,12 +28,14 @@ interface SymbolRemapper {
     fun getDeclaredEnumEntry(symbol: IrEnumEntrySymbol): IrEnumEntrySymbol
     fun getDeclaredExternalPackageFragment(symbol: IrExternalPackageFragmentSymbol): IrExternalPackageFragmentSymbol
     fun getDeclaredVariable(symbol: IrVariableSymbol): IrVariableSymbol
+    fun getDeclaredLocalDelegatedProperty(symbol: IrLocalDelegatedPropertySymbol): IrLocalDelegatedPropertySymbol
     fun getDeclaredTypeParameter(symbol: IrTypeParameterSymbol): IrTypeParameterSymbol
     fun getDeclaredValueParameter(symbol: IrValueParameterSymbol): IrValueParameterSymbol
     fun getReferencedClass(symbol: IrClassSymbol): IrClassSymbol
     fun getReferencedClassOrNull(symbol: IrClassSymbol?): IrClassSymbol?
     fun getReferencedEnumEntry(symbol: IrEnumEntrySymbol): IrEnumEntrySymbol
     fun getReferencedVariable(symbol: IrVariableSymbol): IrVariableSymbol
+    fun getReferencedLocalDelegatedProperty(symbol: IrLocalDelegatedPropertySymbol): IrLocalDelegatedPropertySymbol
     fun getReferencedField(symbol: IrFieldSymbol): IrFieldSymbol
     fun getReferencedConstructor(symbol: IrConstructorSymbol): IrConstructorSymbol
     fun getReferencedValue(symbol: IrValueSymbol): IrValueSymbol

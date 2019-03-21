@@ -63,4 +63,7 @@ interface IrSymbolVisitor<out R, in D> {
 
     fun visitPropertySymbol(symbol: IrPropertySymbol, data: D) =
         visitSymbol(symbol, data)
+
+    fun visitLocalDelegatedPropertySymbol(symbol: IrLocalDelegatedPropertySymbol, data: D) =
+        visitSymbol(symbol, data)
 }

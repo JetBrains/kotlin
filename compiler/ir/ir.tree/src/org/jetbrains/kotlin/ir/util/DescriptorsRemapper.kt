@@ -30,6 +30,7 @@ interface DescriptorsRemapper {
     fun remapDeclaredTypeParameter(descriptor: TypeParameterDescriptor): TypeParameterDescriptor = descriptor
     fun remapDeclaredValueParameter(descriptor: ParameterDescriptor): ParameterDescriptor = descriptor
     fun remapDeclaredVariable(descriptor: VariableDescriptor): VariableDescriptor = descriptor
+    fun remapDeclaredLocalDelegatedProperty(descriptor: VariableDescriptorWithAccessors): VariableDescriptorWithAccessors = descriptor
 
-    object DEFAULT : DescriptorsRemapper
+    object Default : DescriptorsRemapper
 }

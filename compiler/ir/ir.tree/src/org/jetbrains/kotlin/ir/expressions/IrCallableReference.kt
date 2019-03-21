@@ -41,6 +41,7 @@ interface IrPropertyReference : IrCallableReference {
 
 interface IrLocalDelegatedPropertyReference : IrCallableReference {
     override val descriptor: VariableDescriptorWithAccessors
+    val symbol: IrLocalDelegatedPropertySymbol
     val delegate: IrVariableSymbol
     val getter: IrSimpleFunctionSymbol
     val setter: IrSimpleFunctionSymbol?

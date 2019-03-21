@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrLocalDelegatedPropertyImpl
 import org.jetbrains.kotlin.ir.descriptors.IrLocalDelegatedPropertyDelegateDescriptor
 import org.jetbrains.kotlin.ir.descriptors.IrLocalDelegatedPropertyDelegateDescriptorImpl
 import org.jetbrains.kotlin.ir.descriptors.IrPropertyDelegateDescriptor
@@ -228,7 +227,7 @@ class DelegatedPropertyGenerator(declarationGenerator: DeclarationGenerator) : D
     ): IrLocalDelegatedProperty {
         val kPropertyType = getKPropertyTypeForLocalDelegatedProperty(variableDescriptor)
 
-        val irLocalDelegatedProperty = IrLocalDelegatedPropertyImpl(
+        val irLocalDelegatedProperty = context.symbolTable.declareLocalDelegatedProperty(
             ktProperty.startOffsetSkippingComments, ktProperty.endOffset, IrDeclarationOrigin.DEFINED,
             variableDescriptor,
             variableDescriptor.type.toIrType()

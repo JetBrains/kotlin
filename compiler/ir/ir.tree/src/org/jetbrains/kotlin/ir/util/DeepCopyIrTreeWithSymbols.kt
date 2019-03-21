@@ -33,7 +33,7 @@ import java.util.*
 
 inline fun <reified T : IrElement> T.deepCopyWithSymbols(
     initialParent: IrDeclarationParent? = null,
-    descriptorRemapper: DescriptorsRemapper = DescriptorsRemapper.DEFAULT
+    descriptorRemapper: DescriptorsRemapper = DescriptorsRemapper.Default
 ): T {
     val symbolRemapper = DeepCopySymbolRemapper(descriptorRemapper)
     acceptVoid(symbolRemapper)
@@ -238,13 +238,13 @@ open class DeepCopyIrTreeWithSymbols(
         IrLocalDelegatedPropertyImpl(
             declaration.startOffset, declaration.endOffset,
             mapDeclarationOrigin(declaration.origin),
-            declaration.descriptor, // TODO
-            declaration.type.remapType(),
-            declaration.delegate.transform(),
-            declaration.getter.transform(),
-            declaration.setter?.transform()
+            symbolRemapper.getDeclaredLocalDelegatedProperty(declaration.symbol),
+            declaration.type.remapType()
         ).apply {
             transformAnnotations(declaration)
+            delegate = declaration.delegate.transform()
+            getter = declaration.getter.transform()
+            setter = declaration.setter?.transform()
         }
 
     override fun visitEnumEntry(declaration: IrEnumEntry): IrEnumEntry =
@@ -573,7 +573,7 @@ open class DeepCopyIrTreeWithSymbols(
         IrLocalDelegatedPropertyReferenceImpl(
             expression.startOffset, expression.endOffset,
             expression.type.remapType(),
-            expression.descriptor,
+            symbolRemapper.getReferencedLocalDelegatedProperty(expression.symbol),
             symbolRemapper.getReferencedVariable(expression.delegate),
             symbolRemapper.getReferencedSimpleFunction(expression.getter),
             expression.setter?.let { symbolRemapper.getReferencedSimpleFunction(it) },

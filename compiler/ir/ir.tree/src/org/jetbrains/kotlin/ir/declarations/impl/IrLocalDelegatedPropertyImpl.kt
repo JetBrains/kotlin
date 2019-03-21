@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrLocalDelegatedProperty
 import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.symbols.IrLocalDelegatedPropertySymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrLocalDelegatedPropertySymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -30,7 +32,7 @@ class IrLocalDelegatedPropertyImpl(
     startOffset: Int,
     endOffset: Int,
     origin: IrDeclarationOrigin,
-    override val descriptor: VariableDescriptorWithAccessors,
+    override val symbol: IrLocalDelegatedPropertySymbol,
     override val name: Name,
     override val type: IrType,
     override val isVar: Boolean
@@ -38,6 +40,39 @@ class IrLocalDelegatedPropertyImpl(
     IrDeclarationBase(startOffset, endOffset, origin),
     IrLocalDelegatedProperty {
 
+    init {
+        symbol.bind(this)
+    }
+
+    constructor(
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        symbol: IrLocalDelegatedPropertySymbol,
+        type: IrType
+    ) : this(
+        startOffset, endOffset, origin, symbol,
+        symbol.descriptor.name,
+        type,
+        symbol.descriptor.isVar
+    )
+
+    @Deprecated("Creates unbound symbol")
+    constructor(
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        descriptor: VariableDescriptorWithAccessors,
+        name: Name,
+        type: IrType,
+        isVar: Boolean
+    ) : this(
+        startOffset, endOffset, origin,
+        IrLocalDelegatedPropertySymbolImpl(descriptor),
+        name, type, isVar
+    )
+
+    @Deprecated("Creates unbound symbol")
     constructor(
         startOffset: Int,
         endOffset: Int,
@@ -45,21 +80,12 @@ class IrLocalDelegatedPropertyImpl(
         descriptor: VariableDescriptorWithAccessors,
         type: IrType
     ) : this(
-        startOffset, endOffset, origin, descriptor,
+        startOffset, endOffset, origin,
+        IrLocalDelegatedPropertySymbolImpl(descriptor),
         descriptor.name, type, descriptor.isVar
     )
 
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        descriptor: VariableDescriptorWithAccessors,
-        type: IrType,
-        delegate: IrVariable
-    ) : this(startOffset, endOffset, origin, descriptor, type) {
-        this.delegate = delegate
-    }
-
+    @Deprecated("Creates unbound symbol")
     constructor(
         startOffset: Int,
         endOffset: Int,
@@ -75,8 +101,13 @@ class IrLocalDelegatedPropertyImpl(
         this.setter = setter
     }
 
+    override val descriptor: VariableDescriptorWithAccessors
+        get() = symbol.descriptor
+
     override lateinit var delegate: IrVariable
+
     override lateinit var getter: IrFunction
+
     override var setter: IrFunction? = null
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =

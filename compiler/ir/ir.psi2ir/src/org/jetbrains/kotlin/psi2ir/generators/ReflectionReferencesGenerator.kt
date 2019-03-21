@@ -121,7 +121,7 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
 
         return IrLocalDelegatedPropertyReferenceImpl(
             startOffset, endOffset, type.toIrType(),
-            variableDescriptor,
+            context.symbolTable.referenceLocalDelegatedProperty(variableDescriptor),
             irDelegateSymbol, getterSymbol, setterSymbol,
             origin
         )

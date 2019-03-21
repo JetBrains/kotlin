@@ -319,6 +319,7 @@ private class IrUnboundSymbolReplacer(
     }
 
     override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference): IrExpression {
+        val localDelegatedProperty = expression.symbol.replaceOrSame(SymbolTable::referenceLocalDelegatedProperty)
         val delegate = expression.delegate.replaceOrSame(SymbolTable::referenceVariable)
         val getter = expression.getter.replace(SymbolTable::referenceSimpleFunction) ?: expression.getter
         val setter = expression.setter?.replace(SymbolTable::referenceSimpleFunction) ?: expression.setter
@@ -329,9 +330,11 @@ private class IrUnboundSymbolReplacer(
 
         expression.transformChildrenVoid(this)
         return with(expression) {
-            IrLocalDelegatedPropertyReferenceImpl(startOffset, endOffset, type, descriptor,
-                    delegate, getter, setter, origin).also {
-
+            IrLocalDelegatedPropertyReferenceImpl(
+                startOffset, endOffset, type,
+                localDelegatedProperty,
+                delegate, getter, setter, origin
+            ).also {
                 it.copyArgumentsFrom(this)
             }
         }
