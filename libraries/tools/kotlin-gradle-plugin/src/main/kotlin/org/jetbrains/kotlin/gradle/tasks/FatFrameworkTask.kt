@@ -202,7 +202,7 @@ open class FatFrameworkTask: DefaultTask() {
 
     private fun runLipo(inputFiles: Map<Architecture, File>, outputFile: File) =
         project.exec {
-            it.executable = "lipo"
+            it.executable = "/usr/bin/lipo"
             it.args = mutableListOf("-create").apply {
                 inputFiles.forEach { (arch, binary) ->
                     addAll(listOf("-arch", arch.lipoArg, binary.absolutePath))
