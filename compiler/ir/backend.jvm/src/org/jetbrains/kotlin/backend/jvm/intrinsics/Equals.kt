@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberOrNullableType
+import org.jetbrains.kotlin.types.typeUtil.upperBoundedByPrimitiveNumberOrNullableType
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
@@ -97,10 +98,12 @@ class Ieee754Equals(val operandType: Type) : IntrinsicMethod() {
         }
 
         val arg0Type = expression.getValueArgument(0)!!.type.toKotlinType()
-        if (!arg0Type.isPrimitiveNumberOrNullableType()) throw AssertionError("Should be primitive or nullable primitive type: $arg0Type")
+        if (!arg0Type.isPrimitiveNumberOrNullableType() && !arg0Type.upperBoundedByPrimitiveNumberOrNullableType())
+            throw AssertionError("Should be primitive or nullable primitive type: $arg0Type")
 
         val arg1Type = expression.getValueArgument(1)!!.type.toKotlinType()
-        if (!arg1Type.isPrimitiveNumberOrNullableType()) throw AssertionError("Should be primitive or nullable primitive type: $arg1Type")
+        if (!arg1Type.isPrimitiveNumberOrNullableType() && !arg1Type.upperBoundedByPrimitiveNumberOrNullableType())
+            throw AssertionError("Should be primitive or nullable primitive type: $arg1Type")
 
         val arg0isNullable = arg0Type.isMarkedNullable
         val arg1isNullable = arg1Type.isMarkedNullable
@@ -124,7 +127,6 @@ class Ieee754Equals(val operandType: Type) : IntrinsicMethod() {
                 Ieee754AreEqual(boxedOperandType, boxedOperandType)
         }
     }
-
 }
 
 class TotalOrderEquals(operandType: Type) : IntrinsicMethod() {

@@ -1,5 +1,4 @@
 // !LANGUAGE: +ProperIeee754Comparisons
-// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 
 import kotlin.test.*
