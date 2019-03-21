@@ -37,6 +37,8 @@ val clionPlugin: Task by packageCidrPlugin(
         clionPlatformDepsDir
 )
 
+val zipCLionPlugin: Task by zipCidrPlugin(clionPlugin, clionPluginZipPath)
+
 val clionUpdatePluginsXml: Task by cidrUpdatePluginsXml(
         preparePluginXml,
         clionHumanFriendlyVersion,

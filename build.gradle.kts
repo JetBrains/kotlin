@@ -37,7 +37,4 @@ rootProject.apply {
     from(ultimateProject(":").file("versions.gradle.kts"))
 }
 
-val zipCLionPlugin: Task by zipCidrPlugin("clionPlugin", clionPluginZipPath)
-val zipAppCodePlugin: Task by zipCidrPlugin("appcodePlugin", appcodePluginZipPath)
-
 tasks["clean"].doLast { delete("dist") }

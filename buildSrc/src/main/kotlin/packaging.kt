@@ -64,9 +64,7 @@ fun Project.packageCidrPlugin(
     }
 }
 
-fun Project.zipCidrPlugin(cidrPluginTaskName: String, cidrPluginZipPath: File) = tasks.creating(Zip::class) {
-    val cidrPluginTask = getTasksByName(cidrPluginTaskName, true).single()
-
+fun Project.zipCidrPlugin(cidrPluginTask: Task, cidrPluginZipPath: File) = tasks.creating(Zip::class) {
     destinationDirectory.value = cidrPluginZipPath.parentFile
     archiveFileName.value = cidrPluginZipPath.name
 

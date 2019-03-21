@@ -37,6 +37,8 @@ val appcodePlugin: Task by packageCidrPlugin(
         appcodePlatformDepsDir
 )
 
+val zipAppCodePlugin: Task by zipCidrPlugin(appcodePlugin, appcodePluginZipPath)
+
 val appcodeUpdatePluginsXml: Task by cidrUpdatePluginsXml(
         preparePluginXml,
         appcodeHumanFriendlyVersion,
