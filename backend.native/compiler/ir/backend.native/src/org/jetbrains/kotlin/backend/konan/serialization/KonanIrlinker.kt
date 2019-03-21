@@ -20,12 +20,10 @@ import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.serialization.DescriptorUniqIdAware
 import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
 import org.jetbrains.kotlin.backend.common.serialization.UniqId
-import org.jetbrains.kotlin.backend.common.serialization.UniqIdKey
 import org.jetbrains.kotlin.backend.konan.descriptors.konanLibrary
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.SymbolTable
 
 class KonanIrLinker(
@@ -33,13 +31,22 @@ class KonanIrLinker(
     logger: LoggingContext,
     builtIns: IrBuiltIns,
     symbolTable: SymbolTable,
-    val forwardModuleDescriptor: ModuleDescriptor?)
-    : KotlinIrLinker(logger, builtIns, symbolTable, forwardModuleDescriptor, 0L),
+    forwardModuleDescriptor: ModuleDescriptor?,
+    exportedDependencies: List<ModuleDescriptor>
+) : KotlinIrLinker(logger, builtIns, symbolTable, exportedDependencies, forwardModuleDescriptor, 0L),
     DescriptorUniqIdAware by KonanDescriptorUniqIdAware {
 
-    private val forwardDeclarations = mutableSetOf<IrSymbol>()
+    override val descriptorReferenceDeserializer =
+        KonanDescriptorReferenceDeserializer(currentModule, resolvedForwardDeclarations)
 
-    override val descriptorReferenceDeserializer = KonanDescriptorReferenceDeserializer(currentModule, resolvedForwardDeclarations)
+    override fun reader(moduleDescriptor: ModuleDescriptor, uniqId: UniqId) =
+        moduleDescriptor.konanLibrary!!.irDeclaration(uniqId.index, uniqId.isLocal)
 
-    override fun reader(moduleDescriptor: ModuleDescriptor, uniqId: UniqId) = moduleDescriptor.konanLibrary!!.irDeclaration(uniqId.index, uniqId.isLocal)
+    override val ModuleDescriptor.irHeader get() = this.konanLibrary!!.irHeader
+
+    val modules: Map<String, IrModuleFragment> get() = mutableMapOf<String, IrModuleFragment>().apply {
+        deserializersForModules.forEach {
+            this.put(it.key.konanLibrary!!.libraryName, it.value.module)
+        }
+    }
 }

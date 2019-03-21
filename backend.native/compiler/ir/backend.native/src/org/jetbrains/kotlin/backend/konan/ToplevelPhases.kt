@@ -74,10 +74,9 @@ internal val psiToIrPhase = konanUnitPhase(
                     this as LoggingContext,
                     generatorContext.irBuiltIns,
                     generatorContext.symbolTable,
-                    forwardDeclarationsModuleDescriptor
+                    forwardDeclarationsModuleDescriptor,
+                    getExportedDependencies()
             )
-
-            val modules = mutableMapOf<String, IrModuleFragment>()
 
             var dependenciesCount = 0
             while (true) {
@@ -86,26 +85,17 @@ internal val psiToIrPhase = konanUnitPhase(
                     config.librariesWithDependencies(moduleDescriptor).contains(it.konanLibrary)
                 }
                 for (dependency in dependencies) {
-                    val konanLibrary = dependency.konanLibrary!!
-                    if (modules.containsKey(konanLibrary.libraryName)) continue
-                    konanLibrary.irHeader?.let { header ->
-                        // TODO: consider skip deserializing explicitly exported declarations for libraries.
-                        // Now it's not valid because of all dependencies that must be computed.
-                        val deserializationStrategy = if (getExportedDependencies().contains(dependency))
-                            DeserializationStrategy.ALL else DeserializationStrategy.EXPLICITLY_EXPORTED
-                        modules[konanLibrary.libraryName] = deserializer.deserializeIrModuleHeader(dependency, header, deserializationStrategy)
-                    }
+                    deserializer.deserializeIrModuleHeader(dependency)
                 }
                 if (dependencies.size == dependenciesCount) break
                 dependenciesCount = dependencies.size
             }
 
-
             val symbols = KonanSymbols(this, generatorContext.symbolTable, generatorContext.symbolTable.lazyWrapper)
             val module = translator.generateModuleFragment(generatorContext, environment.getSourceFiles(), deserializer)
 
             irModule = module
-            irModules = modules
+            irModules = deserializer.modules
             ir.symbols = symbols
 
 //        validateIrModule(this, module)
