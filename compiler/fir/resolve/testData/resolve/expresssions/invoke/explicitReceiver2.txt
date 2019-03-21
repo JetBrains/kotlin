@@ -1,5 +1,5 @@
 FILE: explicitReceiver2.kt
-    public final class Bar {
+    public final class Bar : R|kotlin/Any| {
         public constructor(): super<R|kotlin/Any|>()
 
         public final operator fun invoke(): R|Foo| {
@@ -9,7 +9,7 @@ FILE: explicitReceiver2.kt
     }
     public final fun x(): R|kotlin/Unit| {
     }
-    public final class Foo {
+    public final class Foo : R|kotlin/Any| {
         public constructor(): super<R|kotlin/Any|>()
 
         public final operator fun R|Bar|.invoke(): R|Foo| {

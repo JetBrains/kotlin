@@ -1,7 +1,7 @@
 FILE: Base.kt
     public abstract interface First {
     }
-    public open class Second {
+    public open class Second : R|kotlin/Any| {
         public constructor(): super<R|kotlin/Any|>()
 
         public open fun R|First|.foo(s: R|kotlin/String|, i: R|kotlin/Int|): R|kotlin/Unit| {

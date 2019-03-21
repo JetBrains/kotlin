@@ -1,5 +1,5 @@
 FILE: common.kt
-    <T> public open expect class A {
+    <T> public open expect class A : R|kotlin/Any| {
         public constructor(): super<R|kotlin/Any|>()
 
         public open fun foo(arg: R|T|): R|kotlin/Unit|

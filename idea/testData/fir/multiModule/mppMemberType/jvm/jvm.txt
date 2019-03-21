@@ -1,5 +1,5 @@
 FILE: jvm.kt
-    public final actual class MyList {
+    public final actual class MyList : R|kotlin/Any| {
         public constructor(): super<R|kotlin/Any|>()
 
         public final actual fun get(i: R|kotlin/Int|): R|kotlin/Int| {

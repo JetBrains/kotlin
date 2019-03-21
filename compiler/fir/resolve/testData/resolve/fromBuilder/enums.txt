@@ -1,24 +1,24 @@
 FILE: enums.kt
-    public final enum class Order {
+    public final enum class Order : R|kotlin/Enum| {
         private constructor(): super<R|kotlin/Enum|>()
 
-        public final enum entry FIRST {
+        public final enum entry FIRST : R|kotlin/Any| {
             public constructor(): super<R|kotlin/Any|>()
 
         }
 
-        public final enum entry SECOND {
+        public final enum entry SECOND : R|kotlin/Any| {
             public constructor(): super<R|kotlin/Any|>()
 
         }
 
-        public final enum entry THIRD {
+        public final enum entry THIRD : R|kotlin/Any| {
             public constructor(): super<R|kotlin/Any|>()
 
         }
 
     }
-    public final enum class Planet {
+    public final enum class Planet : R|kotlin/Enum| {
         private constructor(m: R|kotlin/Double|, r: R|kotlin/Double|): super<R|kotlin/Enum|>()
 
         public final val m: R|kotlin/Double|
@@ -59,7 +59,7 @@ FILE: enums.kt
 
         public abstract fun sayHello(): R|kotlin/Unit|
 
-        public final companion object Companion {
+        public final companion object Companion : R|kotlin/Any| {
             public constructor(): super<R|kotlin/Any|>()
 
             public final const val G: R|kotlin/Double| = Double(6.67E-11)

@@ -1,5 +1,5 @@
 FILE: jvm.kt
-    public abstract class X {
+    public abstract class X : R|kotlin/Any| {
         public constructor(): super<R|kotlin/Any|>()
 
         public final fun bar(): R|kotlin/Unit| {

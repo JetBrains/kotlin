@@ -1,15 +1,15 @@
 FILE: enum.kt
     public abstract interface Some {
     }
-    public final object O1 : R|Some| {
+    public final object O1 : R|Some|, R|kotlin/Any| {
         public constructor(): super<R|kotlin/Any|>()
 
     }
-    public final object O2 : R|Some| {
+    public final object O2 : R|Some|, R|kotlin/Any| {
         public constructor(): super<R|kotlin/Any|>()
 
     }
-    public final enum class SomeEnum {
+    public final enum class SomeEnum : R|kotlin/Enum| {
         private constructor(x: R|Some|): super<R|kotlin/Enum|>()
 
         public final val x: R|Some|

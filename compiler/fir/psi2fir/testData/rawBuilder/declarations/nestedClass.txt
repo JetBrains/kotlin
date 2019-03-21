@@ -1,12 +1,12 @@
 FILE: nestedClass.kt
-    public? abstract class Base {
+    public? abstract class Base : kotlin/Any {
         public? constructor(s: String): super<kotlin/Any>()
 
         public? final? val s: String
             public? get(): String
 
     }
-    public? final? class Outer {
+    public? final? class Outer : kotlin/Any {
         public? constructor(): super<kotlin/Any>()
 
         public? final? class Derived : Base {

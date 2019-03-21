@@ -1,7 +1,7 @@
 FILE: explicitReceiver.kt
     public final fun x(): R|kotlin/Unit| {
     }
-    public final class Foo {
+    public final class Foo : R|kotlin/Any| {
         public constructor(): super<R|kotlin/Any|>()
 
         public final val x: R|Foo| = R|/Foo.Foo|()

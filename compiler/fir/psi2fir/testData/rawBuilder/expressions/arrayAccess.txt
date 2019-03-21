@@ -4,7 +4,7 @@ FILE: arrayAccess.kt
     public? final? fun foo(): <implicit> {
         ^foo Int(1)
     }
-    public? final? class Wrapper {
+    public? final? class Wrapper : kotlin/Any {
         public? constructor(v: IntArray): super<kotlin/Any>()
 
         public? final? val v: IntArray

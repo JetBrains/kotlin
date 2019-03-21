@@ -1,5 +1,5 @@
 FILE: annotated.kt
-    @Target(AnnotationTarget#.EXPRESSION#) @Retention(AnnotationRetention#.SOURCE#) public? final? annotation class Ann {
+    @Target(AnnotationTarget#.EXPRESSION#) @Retention(AnnotationRetention#.SOURCE#) public? final? annotation class Ann : kotlin/Any {
         public? constructor(): super<kotlin/Any>()
 
     }
@@ -22,7 +22,7 @@ FILE: annotated.kt
 
         ^foo Int(42)
     }
-    public? final? data class Two {
+    public? final? data class Two : kotlin/Any {
         public? constructor(x: Int, y: Int): super<kotlin/Any>()
 
     }

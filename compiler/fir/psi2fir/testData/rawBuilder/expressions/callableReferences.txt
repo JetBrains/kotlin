@@ -1,5 +1,5 @@
 FILE: callableReferences.kt
-    public? final? class A {
+    public? final? class A : kotlin/Any {
         public? constructor(): super<kotlin/Any>()
 
         public? final? fun foo(): kotlin/Unit {

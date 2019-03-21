@@ -1,8 +1,8 @@
 FILE: NestedOfAliasedType.kt
-    public abstract class A {
+    public abstract class A : R|kotlin/Any| {
         public constructor(): super<R|kotlin/Any|>()
 
-        public abstract class Nested {
+        public abstract class Nested : R|kotlin/Any| {
             public constructor(): super<R|kotlin/Any|>()
 
         }

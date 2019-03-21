@@ -341,9 +341,13 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
             if (this is KtClass && this.isInterface()) return delegatedSuperTypeRef
 
             fun isEnum() = this is KtClass && this.isEnum()
+            val defaultDelegatedSuperTypeRef = if (isEnum()) implicitEnumType else implicitAnyType
+            if (delegatedSuperTypeRef == null && this.hasPrimaryConstructor()) {
+                container.superTypeRefs += defaultDelegatedSuperTypeRef
+            }
             // TODO: in case we have no primary constructor,
             // it may be not possible to determine delegated super type right here
-            delegatedSuperTypeRef = delegatedSuperTypeRef ?: (if (isEnum()) implicitEnumType else implicitAnyType)
+            delegatedSuperTypeRef = delegatedSuperTypeRef ?: defaultDelegatedSuperTypeRef
             if (!this.hasPrimaryConstructor()) return delegatedSuperTypeRef
 
             val firPrimaryConstructor = primaryConstructor.toFirConstructor(

@@ -1,9 +1,9 @@
 FILE: this.kt
-    public final class Bar {
+    public final class Bar : R|kotlin/Any| {
         public constructor(): super<R|kotlin/Any|>()
 
     }
-    public final class Foo {
+    public final class Foo : R|kotlin/Any| {
         public constructor(): super<R|kotlin/Any|>()
 
         public final fun bar(): R|Foo| {

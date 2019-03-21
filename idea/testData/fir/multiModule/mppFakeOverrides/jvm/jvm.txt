@@ -1,5 +1,5 @@
 FILE: jvm.kt
-    <T> public open actual class A {
+    <T> public open actual class A : R|kotlin/Any| {
         public constructor(): super<R|kotlin/Any|>()
 
         public open actual fun foo(arg: R|T|): R|kotlin/Unit| {

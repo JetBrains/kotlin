@@ -1,10 +1,10 @@
 FILE: typeParameterVsNested.kt
     public? final? interface Some {
     }
-    <T : Some> public? abstract class My {
+    <T : Some> public? abstract class My : kotlin/Any {
         public? constructor(): super<kotlin/Any>()
 
-        public? final? inner class T {
+        public? final? inner class T : kotlin/Any {
             public? constructor(): super<kotlin/Any>()
 
         }

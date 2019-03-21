@@ -1,5 +1,5 @@
 FILE: sealedStarImport.kt
-    public abstract class Factory {
+    public abstract class Factory : R|kotlin/Any| {
         public constructor(): super<R|kotlin/Any|>()
 
         public abstract fun createTest(): R|error: Symbol not found, for `Test`|

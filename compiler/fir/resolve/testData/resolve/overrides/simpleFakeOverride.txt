@@ -1,5 +1,5 @@
 FILE: simpleFakeOverride.kt
-    <T> public open class A {
+    <T> public open class A : R|kotlin/Any| {
         public constructor(): super<R|kotlin/Any|>()
 
         public final fun foo(t: R|T|): R|T| {
@@ -7,7 +7,7 @@ FILE: simpleFakeOverride.kt
         }
 
     }
-    public final class Some {
+    public final class Some : R|kotlin/Any| {
         public constructor(): super<R|kotlin/Any|>()
 
     }

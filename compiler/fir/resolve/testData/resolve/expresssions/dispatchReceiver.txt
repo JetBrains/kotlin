@@ -3,7 +3,7 @@ FILE: dispatchReceiver.kt
         public abstract fun check(): R|kotlin/Unit|
 
     }
-    public final class My {
+    public final class My : R|kotlin/Any| {
         public constructor(): super<R|kotlin/Any|>()
 
         public final lateinit var delegate: R|Base|

@@ -1,6 +1,6 @@
 FILE: Annotations.kt
     @FILE:R|annotations/Simple|()
-    @R|annotations/WithInt|(Int(42)) public abstract class First {
+    @R|annotations/WithInt|(Int(42)) public abstract class First : R|kotlin/Any| {
         public constructor(): super<R|kotlin/Any|>()
 
         @R|annotations/Simple|() public abstract fun foo(@R|annotations/WithString|(String(abc)) arg: @R|annotations/Simple|() R|kotlin/Double|): R|kotlin/Unit|

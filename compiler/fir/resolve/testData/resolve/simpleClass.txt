@@ -6,7 +6,7 @@ FILE: simpleClass.kt
             public get(): R|kotlin/Boolean|
 
     }
-    public final class SomeClass : R|SomeInterface| {
+    public final class SomeClass : R|SomeInterface|, R|kotlin/Any| {
         public constructor(): super<R|kotlin/Any|>()
 
         private final val baz: R|kotlin/Int| = Int(42)

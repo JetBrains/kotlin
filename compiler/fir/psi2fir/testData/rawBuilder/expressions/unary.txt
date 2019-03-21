@@ -34,7 +34,7 @@ FILE: unary.kt
         }
 
     }
-    public? final? class X {
+    public? final? class X : kotlin/Any {
         public? constructor(i: Int): super<kotlin/Any>()
 
         public? final? val i: Int
@@ -71,7 +71,7 @@ FILE: unary.kt
         }
 
     }
-    public? final? class Y {
+    public? final? class Y : kotlin/Any {
         public? constructor(arr: Array<Int>): super<kotlin/Any>()
 
         public? final? val arr: Array<Int>

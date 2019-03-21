@@ -1,5 +1,5 @@
 FILE: destructuring.kt
-    public? final? data class Some {
+    public? final? data class Some : kotlin/Any {
         public? constructor(first: Int, second: Double, third: String): super<kotlin/Any>()
 
         public? final? val first: Int

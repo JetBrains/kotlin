@@ -6,7 +6,7 @@ FILE: simpleClass.kt
             public? get(): Boolean
 
     }
-    public? final? class SomeClass : SomeInterface {
+    public? final? class SomeClass : SomeInterface, kotlin/Any {
         public? constructor(): super<kotlin/Any>()
 
         private final? val baz: <implicit> = Int(42)
@@ -28,7 +28,7 @@ FILE: simpleClass.kt
             public? set(value: Double): kotlin/Unit
 
     }
-    public? final? inline class InlineClass {
+    public? final? inline class InlineClass : kotlin/Any {
         public? constructor(): super<kotlin/Any>()
 
     }

@@ -1,5 +1,5 @@
 FILE: NestedSuperType.kt
-    public abstract class My {
+    public abstract class My : R|kotlin/Any| {
         public constructor(): super<R|kotlin/Any|>()
 
         public abstract class NestedOne : R|p/My| {

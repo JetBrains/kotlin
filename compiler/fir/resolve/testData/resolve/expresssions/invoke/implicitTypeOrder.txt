@@ -1,5 +1,5 @@
 FILE: implicitTypeOrder.kt
-    public final class A {
+    public final class A : R|kotlin/Any| {
         public constructor(): super<R|kotlin/Any|>()
 
         public final fun bar(): R|A| {

@@ -12,7 +12,7 @@ FILE: super.kt
         }
 
     }
-    public? final? class C : A, B {
+    public? final? class C : A, B, kotlin/Any {
         public? constructor(): super<kotlin/Any>()
 
         public? open? override fun bar(): kotlin/Unit {

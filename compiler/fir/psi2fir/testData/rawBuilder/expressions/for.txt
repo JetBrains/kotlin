@@ -24,7 +24,7 @@ FILE: for.kt
         }
 
     }
-    public? final? data class Some {
+    public? final? data class Some : kotlin/Any {
         public? constructor(x: Int, y: Int): super<kotlin/Any>()
 
         public? final? val x: Int

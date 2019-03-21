@@ -1,5 +1,5 @@
 FILE: threeReceivers.kt
-    public final class Bar {
+    public final class Bar : R|kotlin/Any| {
         public constructor(): super<R|kotlin/Any|>()
 
         public final fun R|FooBar|.invoke(): R|Bar| {
@@ -7,15 +7,15 @@ FILE: threeReceivers.kt
         }
 
     }
-    public final class Buz {
+    public final class Buz : R|kotlin/Any| {
         public constructor(): super<R|kotlin/Any|>()
 
     }
-    public final class FooBar {
+    public final class FooBar : R|kotlin/Any| {
         public constructor(): super<R|kotlin/Any|>()
 
     }
-    public final class Foo {
+    public final class Foo : R|kotlin/Any| {
         public constructor(): super<R|kotlin/Any|>()
 
         public final val R|Buz|.foobar: R|Bar|

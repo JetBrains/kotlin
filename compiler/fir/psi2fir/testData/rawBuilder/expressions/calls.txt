@@ -8,7 +8,7 @@ FILE: calls.kt
     public? final? fun testRegular(): Int {
         ^testRegular distance#(Int(3), Int(4))
     }
-    public? final? class My {
+    public? final? class My : kotlin/Any {
         public? constructor(x: Int): super<kotlin/Any>()
 
         public? final? var x: Int

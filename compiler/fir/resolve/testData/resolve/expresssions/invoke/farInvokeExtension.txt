@@ -4,7 +4,7 @@ FILE: farInvokeExtension.kt
     public final operator fun R|kotlin/Int|.invoke(): R|Foo| {
         ^invoke this@Foo
     }
-    public final class Foo {
+    public final class Foo : R|kotlin/Any| {
         public constructor(): super<R|kotlin/Any|>()
 
         public final val x: R|kotlin/Int| = Int(0)

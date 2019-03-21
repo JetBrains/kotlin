@@ -1,5 +1,5 @@
 FILE: simple.kt
-    public open class A {
+    public open class A : R|kotlin/Any| {
         public constructor(): super<R|kotlin/Any|>()
 
         public open fun foo(): R|A| {

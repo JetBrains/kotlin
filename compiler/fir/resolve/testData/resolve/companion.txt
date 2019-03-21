@@ -1,11 +1,11 @@
 FILE: companion.kt
-    public abstract class Some {
+    public abstract class Some : R|kotlin/Any| {
         public constructor(): super<R|kotlin/Any|>()
 
-        public final companion object Companion {
+        public final companion object Companion : R|kotlin/Any| {
             public constructor(): super<R|kotlin/Any|>()
 
-            public final class InCompanion {
+            public final class InCompanion : R|kotlin/Any| {
                 public constructor(): super<R|kotlin/Any|>()
 
             }
@@ -16,13 +16,13 @@ FILE: companion.kt
             public get(): R|test/Some.Companion.InCompanion|
 
     }
-    public abstract class Another {
+    public abstract class Another : R|kotlin/Any| {
         public constructor(): super<R|kotlin/Any|>()
 
-        public final companion object NamedCompanion {
+        public final companion object NamedCompanion : R|kotlin/Any| {
             public constructor(): super<R|kotlin/Any|>()
 
-            public final class InCompanion {
+            public final class InCompanion : R|kotlin/Any| {
                 public constructor(): super<R|kotlin/Any|>()
 
             }

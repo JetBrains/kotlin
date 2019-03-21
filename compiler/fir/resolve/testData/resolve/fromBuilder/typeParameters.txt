@@ -7,7 +7,7 @@ FILE: typeParameters.kt
     }
     public final typealias StringList = R|List<out kotlin/String>|
     public final typealias AnyList = R|List<*>|
-    <out T : R|kotlin/Any|> public abstract class AbstractList : R|List<T>| {
+    <out T : R|kotlin/Any|> public abstract class AbstractList : R|List<T>|, R|kotlin/Any| {
         public constructor(): super<R|kotlin/Any|>()
 
     }

@@ -1,5 +1,5 @@
 FILE: lambda.kt
-    public? final? data class Tuple {
+    public? final? data class Tuple : kotlin/Any {
         public? constructor(x: Int, y: Int): super<kotlin/Any>()
 
         public? final? val x: Int
