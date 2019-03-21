@@ -1103,7 +1103,7 @@ abstract class IrModuleDeserializer(
     val originIndex = allKnownOrigins.map { it.objectInstance as IrDeclarationOriginImpl }.associateBy { it.name }
     fun deserializeIrDeclarationOrigin(proto: KotlinIr.IrDeclarationOrigin) = originIndex[deserializeString(proto.custom)]!!
 
-    public open fun deserializeDeclaration(proto: KotlinIr.IrDeclaration, parent: IrDeclarationParent?): IrDeclaration {
+    open fun deserializeDeclaration(proto: KotlinIr.IrDeclaration, parent: IrDeclarationParent?): IrDeclaration {
 
         val start = proto.coordinates.startOffset
         val end = proto.coordinates.endOffset

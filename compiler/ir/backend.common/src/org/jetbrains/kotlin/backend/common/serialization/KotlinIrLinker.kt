@@ -38,6 +38,7 @@ abstract class KotlinIrLinker(
     val logger: LoggingContext,
     val builtIns: IrBuiltIns,
     val symbolTable: SymbolTable,
+    val exportedDependencies: List<ModuleDescriptor>,
     private val forwardModuleDescriptor: ModuleDescriptor?,
     private val firstKnownBuiltinsIndex: Long
 ) : DescriptorUniqIdAware, IrDeserializer {
@@ -45,18 +46,23 @@ abstract class KotlinIrLinker(
     protected val deserializedSymbols = mutableMapOf<UniqIdKey, IrSymbol>()
     private val reachableTopLevels = mutableSetOf<UniqIdKey>()
     private val deserializedTopLevels = mutableSetOf<UniqIdKey>()
+
+    //TODO: This is Native specific. Eliminate me.
     private val forwardDeclarations = mutableSetOf<IrSymbol>()
-
-    private val deserializersForModules = mutableMapOf<ModuleDescriptor, IrDeserializerForModule>()
-
     val resolvedForwardDeclarations = mutableMapOf<UniqIdKey, UniqIdKey>()
+
+    protected val deserializersForModules = mutableMapOf<ModuleDescriptor, IrDeserializerForModule>()
 
     inner class IrDeserializerForModule(
         private val moduleDescriptor: ModuleDescriptor,
-        private val moduleProto: KotlinIr.IrModule
+        private val moduleProto: KotlinIr.IrModule,
+        private val deserializationStrategy: DeserializationStrategy
     ) : IrModuleDeserializer(logger, builtIns, symbolTable) {
 
         private var moduleLoops = mutableMapOf<Int, IrLoopBase>()
+
+        // This is a heavy initializer
+        val module = deserializeIrModuleHeader(moduleProto)
 
         private fun referenceDeserializedSymbol(
             proto: KotlinIr.IrSymbolData,
@@ -176,12 +182,65 @@ abstract class KotlinIrLinker(
                 isSetter = proto.isSetter,
                 isTypeParameter = proto.isTypeParameter
             )
-
-
+        // TODO: this is JS specific. Eliminate me.
         override fun getPrimitiveTypeOrNull(symbol: IrClassifierSymbol, hasQuestionMark: Boolean) =
             this@KotlinIrLinker.getPrimitiveTypeOrNull(symbol, hasQuestionMark)
+
+        fun deserializeIrFile(fileProto: KotlinIr.IrFile): IrFile {
+
+            val fileEntry = NaiveSourceBasedFileEntryImpl(
+                this.deserializeString(fileProto.fileEntry.name),
+                fileProto.fileEntry.lineStartOffsetsList.toIntArray()
+            )
+
+            // TODO: we need to store "" in protobuf, I suppose. Or better yet, reuse fqname storage from metadata.
+            val fqName = this.deserializeString(fileProto.fqName)
+                .let { if (it == "<root>") FqName.ROOT else FqName(it) }
+
+            val packageFragmentDescriptor = EmptyPackageFragmentDescriptor(moduleDescriptor, fqName)
+
+            val symbol = IrFileSymbolImpl(packageFragmentDescriptor)
+            val file = IrFileImpl(fileEntry, symbol, fqName)
+
+            file.annotations.addAll(deserializeAnnotations(fileProto.annotations))
+
+            fileProto.declarationIdList.forEach {
+                val uniqIdKey = it.uniqIdKey(moduleDescriptor)
+                reversedFileIndex.put(uniqIdKey, file)
+            }
+
+            when (deserializationStrategy) {
+                DeserializationStrategy.EXPLICITLY_EXPORTED -> {
+                    fileProto.explicitlyExportedToCompilerList.forEach {
+                        val symbolProto = moduleProto.symbolTable.getSymbols(it.index)
+                        reachableTopLevels.add(symbolProto.topLevelUniqId.uniqIdKey(moduleDescriptor))
+                    }
+                }
+                DeserializationStrategy.ALL -> {
+                    fileProto.declarationIdList.forEach {
+                        val uniqIdKey = it.uniqIdKey(moduleDescriptor)
+                        reachableTopLevels.add(uniqIdKey)
+                    }
+                }
+                else -> error("Unixpected deserialization strategy")
+            }
+
+            return file
+        }
+
+        fun deserializeIrModuleHeader(
+            proto: KotlinIr.IrModule
+        ): IrModuleFragment {
+            val files = proto.fileList.map {
+                deserializeIrFile(it)
+            }
+            val module = IrModuleFragmentImpl(moduleDescriptor, builtIns, files)
+            module.patchDeclarationParents(null)
+            return module
+        }
     }
 
+    // TODO: this is JS specific. Eliminate me.
     protected open fun getPrimitiveTypeOrNull(symbol: IrClassifierSymbol, hasQuestionMark: Boolean): IrSimpleType? = null
 
     protected abstract val descriptorReferenceDeserializer: DescriptorReferenceDeserializer
@@ -214,10 +273,8 @@ abstract class KotlinIrLinker(
 
     private fun deserializeTopLevelDeclaration(uniqIdKey: UniqIdKey): IrDeclaration {
         val proto = loadTopLevelDeclarationProto(uniqIdKey)
-        return deserializersForModules[uniqIdKey.moduleOfOrigin]!!.deserializeDeclaration(
-            proto,
-            reversedFileIndex[uniqIdKey]!!
-        )
+        return deserializersForModules[uniqIdKey.moduleOfOrigin]!!
+            .deserializeDeclaration(proto, reversedFileIndex[uniqIdKey]!!)
     }
 
     protected abstract fun reader(moduleDescriptor: ModuleDescriptor, uniqId: UniqId): ByteArray
@@ -225,6 +282,32 @@ abstract class KotlinIrLinker(
     private fun loadTopLevelDeclarationProto(uniqIdKey: UniqIdKey): KotlinIr.IrDeclaration {
         val stream = reader(uniqIdKey.moduleOfOrigin!!, uniqIdKey.uniqId).codedInputStream
         return KotlinIr.IrDeclaration.parseFrom(stream, newInstance())
+    }
+
+    private fun deserializeAllReachableTopLevels() {
+        do {
+            val key = reachableTopLevels.first()
+            val moduleOfOrigin = key.moduleOfOrigin
+
+            if (deserializedSymbols[key]?.isBound == true ||
+                // The key.moduleOrigin is null for uniqIds that we haven't seen in any of the library headers.
+                // Just skip it for now and handle it elsewhere.
+                moduleOfOrigin == null
+            ) {
+
+                reachableTopLevels.remove(key)
+                deserializedTopLevels.add(key)
+                continue
+            }
+
+            val reachable = deserializeTopLevelDeclaration(key)
+            val file = reversedFileIndex[key]!!
+            file.declarations.add(reachable)
+            reachable.patchDeclarationParents(file)
+
+            reachableTopLevels.remove(key)
+            deserializedTopLevels.add(key)
+        } while (reachableTopLevels.isNotEmpty())
     }
 
     private fun findDeserializedDeclarationForDescriptor(descriptor: DeclarationDescriptor): DeclarationDescriptor? {
@@ -247,29 +330,7 @@ abstract class KotlinIrLinker(
 
         reachableTopLevels.add(topLevelKey)
 
-        do {
-            val key = reachableTopLevels.first()
-
-            if (deserializedSymbols[key]?.isBound == true ||
-                // The key.moduleOrigin is null for uniqIds that we haven't seen in any of the library headers.
-                // Just skip it for now and handle it elsewhere.
-                key.moduleOfOrigin == null
-            ) {
-
-                reachableTopLevels.remove(key)
-                deserializedTopLevels.add(key)
-                continue
-            }
-
-            val reachable = deserializeTopLevelDeclaration(key)
-            val file = reversedFileIndex[key]!!
-            file.declarations.add(reachable)
-            reachable.patchDeclarationParents(file)
-
-            reachableTopLevels.remove(key)
-            deserializedTopLevels.add(key)
-        } while (reachableTopLevels.isNotEmpty())
-
+        deserializeAllReachableTopLevels()
         return topLevelDescriptor
     }
 
@@ -294,6 +355,7 @@ abstract class KotlinIrLinker(
             ?: error("findDeserializedDeclaration: property descriptor $propertyDescriptor} is not present in propertyTable after deserialization}")
     }
 
+    // TODO: This is Native specific. Eliminate me.
     override fun declareForwardDeclarations() {
         if (forwardModuleDescriptor == null) return
 
@@ -328,71 +390,34 @@ abstract class KotlinIrLinker(
         }
     }
 
-    fun deserializeIrFile(
-        fileProto: KotlinIr.IrFile,
-        moduleDescriptor: ModuleDescriptor,
-        deseralizationStrategy: DeserializationStrategy
-    ): IrFile {
-
-        val moduleDeserializer = deserializersForModules[moduleDescriptor]!!
-
-        val fileEntry = NaiveSourceBasedFileEntryImpl(
-            moduleDeserializer.deserializeString(fileProto.fileEntry.name),
-            fileProto.fileEntry.lineStartOffsetsList.toIntArray()
-        )
-
-        // TODO: we need to store "" in protobuf, I suppose. Or better yet, reuse fqname storage from metadata.
-        val fqName = moduleDeserializer.deserializeString(fileProto.fqName)
-            .let { if (it == "<root>") FqName.ROOT else FqName(it) }
-
-        val packageFragmentDescriptor = EmptyPackageFragmentDescriptor(moduleDescriptor, fqName)
-
-        val symbol = IrFileSymbolImpl(packageFragmentDescriptor)
-        val file = IrFileImpl(fileEntry, symbol, fqName)
-
-        fileProto.declarationIdList.forEach {
-            val uniqIdKey = it.uniqIdKey(moduleDescriptor)
-            reversedFileIndex.put(uniqIdKey, file)
-
-            if (deseralizationStrategy == DeserializationStrategy.ALL) {
-                file.declarations.add(deserializeTopLevelDeclaration(uniqIdKey))
-            }
-        }
-
-        val annotations = moduleDeserializer.deserializeAnnotations(fileProto.annotations)
-        file.annotations.addAll(annotations)
-
-
-        if (deseralizationStrategy == DeserializationStrategy.EXPLICITLY_EXPORTED)
-            fileProto.explicitlyExportedToCompilerList.forEach { moduleDeserializer.deserializeIrSymbol(it) }
-
-        return file
-    }
-
-    fun deserializeIrModuleHeader(
-        proto: KotlinIr.IrModule,
-        moduleDescriptor: ModuleDescriptor,
-        deserializationStrategy: DeserializationStrategy
-    ): IrModuleFragment {
-
-        deserializersForModules[moduleDescriptor] = IrDeserializerForModule(moduleDescriptor, proto)
-
-        val files = proto.fileList.map {
-            deserializeIrFile(it, moduleDescriptor, deserializationStrategy)
-        }
-        val module = IrModuleFragmentImpl(moduleDescriptor, builtIns, files)
-        module.patchDeclarationParents(null)
-        return module
-    }
-
     fun deserializeIrModuleHeader(
         moduleDescriptor: ModuleDescriptor,
         byteArray: ByteArray,
         deserializationStrategy: DeserializationStrategy = DeserializationStrategy.ONLY_REFERENCED
     ): IrModuleFragment {
-        val proto = KotlinIr.IrModule.parseFrom(byteArray.codedInputStream, newInstance())
-        return deserializeIrModuleHeader(proto, moduleDescriptor, deserializationStrategy)
+        val deserializerForModule = deserializersForModules.getOrPut(moduleDescriptor) {
+            val proto = KotlinIr.IrModule.parseFrom(byteArray.codedInputStream, newInstance())
+            IrDeserializerForModule(moduleDescriptor, proto, deserializationStrategy)
+        }
+        // The IrModule and its IrFiles have been created during module initialization.
+        return deserializerForModule.module
     }
+
+    abstract val ModuleDescriptor.irHeader: ByteArray?
+
+    fun deserializeIrModuleHeader(moduleDescriptor: ModuleDescriptor): IrModuleFragment? =
+        // TODO: do we really allow libraries without any IR?
+        moduleDescriptor.irHeader?.let { header ->
+            // TODO: consider skip deserializing explicitly exported declarations for libraries.
+            // Now it's not valid because of all dependencies that must be computed.
+            val deserializationStrategy =
+                if (exportedDependencies.contains(moduleDescriptor)) {
+                    DeserializationStrategy.ALL
+                } else {
+                    DeserializationStrategy.EXPLICITLY_EXPORTED
+                }
+            deserializeIrModuleHeader(moduleDescriptor, header, deserializationStrategy)
+        }
 }
 
 enum class DeserializationStrategy {
