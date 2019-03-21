@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
+import org.jetbrains.kotlin.gradle.internal.kapt.incremental.KaptIncrementalChanges
 import org.jetbrains.kotlin.gradle.internal.tasks.allOutputFiles
 import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
 import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
@@ -73,11 +74,11 @@ open class KaptWithKotlincTask : KaptTask(), CompilerArgumentAwareWithInput<K2JV
         logger.debug("Running kapt annotation processing using the Kotlin compiler")
         checkAnnotationProcessorClasspath()
 
-        val incrementalChanges = getChangedFiles(inputs)
-        when {
-            incrementalChanges.isNotEmpty() -> {
-                changedFiles = incrementalChanges
-                classpathChanges = emptyList()
+        val incrementalChanges = getIncrementalChanges(inputs)
+        when (incrementalChanges) {
+            is KaptIncrementalChanges.Known -> {
+                changedFiles = incrementalChanges.changedSources.toList()
+                classpathChanges = incrementalChanges.changedClasspathJvmNames.toList()
                 processIncrementally = true
             }
             else -> {
