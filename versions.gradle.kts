@@ -59,7 +59,7 @@ rootProject.extra["cidrUnscrambledJarDir"] = rootProject.extra["clionUnscrambled
 
 if (isStandaloneBuild) {
     // setup additional properties that are required only when running in standalone mode:
-    val useAppCodeForCommon = findProperty("useAppCodeForCommon")?.toString()?.let { java.lang.Boolean.parseBoolean(it) } ?: false
+    val useAppCodeForCommon = findProperty("useAppCodeForCommon")?.toString()?.toBoolean() ?: false
     if (useAppCodeForCommon) {
         rootProject.extra["cidrIdeDir"] = externalDepsDir("cidr", "appcode-$appcodeVersion")
         rootProject.extra["cidrIdeArtifact"] = "${rootProject.extra["appcodeRepo"]}:$appcodeVersion:AppCode-$appcodeVersion.sit"
