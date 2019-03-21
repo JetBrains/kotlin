@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import java.io.ByteArrayOutputStream
 import java.io.File
 
 private val Framework.files: IosFrameworkFiles
@@ -179,6 +180,7 @@ open class FatFrameworkTask: DefaultTask() {
     private inner class PlistBuddyRunner(val plist: File) {
 
         val commands = mutableListOf<String>()
+        var ignoreExitValue = false
 
         fun run() = project.exec { exec ->
             exec.executable = "/usr/libexec/PlistBuddy"
@@ -186,6 +188,11 @@ open class FatFrameworkTask: DefaultTask() {
                 exec.args("-c", it)
             }
             exec.args(plist.absolutePath)
+            exec.isIgnoreExitValue = ignoreExitValue
+            // Hide process output.
+            val dummyStream = ByteArrayOutputStream()
+            exec.standardOutput = dummyStream
+            exec.errorOutput = dummyStream
         }
 
         fun add(entry: String, value: String) = commands.add("Add \"$entry\" string \"$value\"")
@@ -260,6 +267,14 @@ open class FatFrameworkTask: DefaultTask() {
             it.into(outputFile.parentFile)
         }
 
+        // Remove required device capabilities (if they exist).
+        processPlist(outputFile) {
+            // Hack: the plist may have no such entry so we need to ignore the exit code of PlistBuddy.
+            // TODO: Handle this in a better way.
+            ignoreExitValue = true
+            delete(":UIRequiredDeviceCapabilities")
+        }
+
         // TODO: What should we do with bundle id?
         processPlist(outputFile) {
             // Set framework name in the plist file.
@@ -267,7 +282,6 @@ open class FatFrameworkTask: DefaultTask() {
             set(":CFBundleName", frameworkName)
 
             // Remove all platform-specific sections.
-            delete(":UIRequiredDeviceCapabilities")
             delete(":CFBundleSupportedPlatforms:0")
 
             // Add supported platforms.
