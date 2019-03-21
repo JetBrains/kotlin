@@ -13,6 +13,7 @@ import org.gradle.api.tasks.incremental.IncrementalTaskInputs
 import org.gradle.workers.IsolationMode
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.gradle.internal.Kapt3KotlinGradleSubplugin.Companion.KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME
+import org.jetbrains.kotlin.gradle.internal.kapt.incremental.KaptIncrementalChanges
 import org.jetbrains.kotlin.gradle.plugin.KotlinAndroidPluginWrapper
 import org.jetbrains.kotlin.gradle.tasks.findKotlinStdlibClasspath
 import org.jetbrains.kotlin.gradle.tasks.findToolsJar
@@ -49,7 +50,11 @@ open class KaptWithoutKotlincTask @Inject constructor(private val workerExecutor
         logger.info("Running kapt annotation processing using the Gradle Worker API")
         checkAnnotationProcessorClasspath()
 
-        val incrementalChanges = getChangedFiles(inputs)
+        val incrementalChanges = getIncrementalChanges(inputs)
+        val (changedFiles, classpathChanges) = when (incrementalChanges) {
+            is KaptIncrementalChanges.Unknown -> Pair(emptyList<File>(), emptyList<String>())
+            is KaptIncrementalChanges.Known -> Pair(incrementalChanges.changedSources.toList(), incrementalChanges.changedClasspathJvmNames)
+        }
 
         val compileClasspath = classpath.files.toMutableList()
         if (project.plugins.none { it is KotlinAndroidPluginWrapper }) {
@@ -67,11 +72,11 @@ open class KaptWithoutKotlincTask @Inject constructor(private val workerExecutor
             compileClasspath,
             javaSourceRoots.toList(),
 
-            incrementalChanges,
+            changedFiles,
             getCompiledSources(),
             incAptCache,
-            emptyList(),
-            incrementalChanges.isNotEmpty(),
+            classpathChanges.toList(),
+            incrementalChanges is KaptIncrementalChanges.Known,
 
             destinationDir,
             classesDir,

@@ -6,6 +6,10 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.ConventionTask
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
+import org.jetbrains.kotlin.gradle.internal.kapt.incremental.KaptClasspathChanges
+import org.jetbrains.kotlin.gradle.internal.kapt.incremental.ClasspathSnapshot
+import org.jetbrains.kotlin.gradle.internal.kapt.incremental.KaptIncrementalChanges
+import org.jetbrains.kotlin.gradle.internal.kapt.incremental.UnknownSnapshot
 import org.jetbrains.kotlin.gradle.internal.tasks.TaskWithLocalState
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.cacheOnlyIfEnabledForKotlin
@@ -46,6 +50,12 @@ abstract class KaptTask : ConventionTask(), TaskWithLocalState {
 
     @get:Internal
     internal lateinit var kaptClasspathConfigurations: List<Configuration>
+
+
+    @get:PathSensitive(PathSensitivity.NONE)
+    @get:Optional
+    @get:InputFiles
+    internal var classpathStructure: FileCollection? = null
 
     /** Output directory that contains caches necessary to support incremental annotation processing. */
     @get:OutputDirectory
@@ -156,23 +166,67 @@ abstract class KaptTask : ConventionTask(), TaskWithLocalState {
     @Internal
     protected fun getCompiledSources() = listOfNotNull(kotlinCompileTask.destinationDir, kotlinCompileTask.javaOutputDir)
 
-    protected fun getChangedFiles(inputs: IncrementalTaskInputs): List<File> {
-        if (!isIncremental || !inputs.isIncremental || !getCompiledSources().all { it.exists() }) {
-            clearLocalState()
-            return emptyList()
+    protected fun getIncrementalChanges(inputs: IncrementalTaskInputs): KaptIncrementalChanges {
+        val changedFiles = getChangedFiles(inputs)
+
+        return if (isIncremental) {
+            val classpathChanges = if (changedFiles.isEmpty()) {
+                classpath.files
+            } else {
+                classpath.files.let { cp ->
+                    changedFiles.filter { cp.contains(it) }
+                }
+            }
+            val classpathStatus = findClasspathChanges(classpathChanges)
+            when (classpathStatus) {
+                is KaptClasspathChanges.Unknown -> KaptIncrementalChanges.Unknown
+                is KaptClasspathChanges.Known -> KaptIncrementalChanges.Known(
+                    changedFiles.filter { it.extension == "java" }.toSet(), classpathStatus.names
+                )
+            }
         } else {
-            val changes = with(mutableSetOf<File>()) {
+            KaptIncrementalChanges.Unknown
+        }
+    }
+
+    private fun getChangedFiles(inputs: IncrementalTaskInputs): List<File> {
+        return if (!isIncremental || !inputs.isIncremental) {
+            clearLocalState()
+            emptyList()
+        } else {
+            with(mutableSetOf<File>()) {
                 inputs.outOfDate { this.add(it.file) }
                 inputs.removed { this.add(it.file) }
                 return@with this.toList()
             }
+        }
+    }
 
-            return if (changes.all { it.extension == "java" }) {
-                changes
-            } else {
-                emptyList()
+    private fun findClasspathChanges(changedClasspath: Iterable<File>): KaptClasspathChanges {
+        incAptCache!!.mkdirs()
+
+        val startTime = System.currentTimeMillis()
+
+        val previousSnapshot = ClasspathSnapshot.ClasspathSnapshotFactory.loadFrom(incAptCache!!)
+        val currentSnapshot = ClasspathSnapshot.ClasspathSnapshotFactory.createCurrent(incAptCache!!, classpath.files.toList(), classpathStructure!!.files)
+
+        val classpathChanges = currentSnapshot.diff(previousSnapshot, changedClasspath.toSet())
+        currentSnapshot.writeToCache()
+
+        if (logger.isInfoEnabled) {
+            val time = "Took ${System.currentTimeMillis() - startTime}ms."
+            when {
+                previousSnapshot == UnknownSnapshot ->
+                    logger.info("Initializing classpath information for KAPT. $time")
+                classpathChanges == KaptClasspathChanges.Unknown ->
+                    logger.info("Unable to use existing data, re-initializing classpath information for KAPT. $time")
+                else -> {
+                    classpathChanges as KaptClasspathChanges.Known
+                    logger.info("Full list of impacted classpath names: ${classpathChanges.names}. $time")
+                }
             }
         }
+        return classpathChanges
     }
 
     private fun hasAnnotationProcessors(file: File): Boolean {

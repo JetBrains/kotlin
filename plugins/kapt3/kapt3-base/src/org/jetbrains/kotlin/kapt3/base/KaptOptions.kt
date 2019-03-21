@@ -171,6 +171,6 @@ fun KaptOptions.logString(additionalInfo: String = "") = buildString {
     appendln("[incremental apt] Changed files: $changedFiles")
     appendln("[incremental apt] Compiled sources directories: ${compiledSources.joinToString()}")
     appendln("[incremental apt] Cache directory for incremental compilation: $incrementalCache")
-    appendln("[incremental apt] Changes classpath names: ${classpathChanges.joinToString()}")
+    appendln("[incremental apt] Changed classpath names: ${classpathChanges.joinToString()}")
     appendln("[incremental apt] If processing incrementally: $processIncrementally")
 }

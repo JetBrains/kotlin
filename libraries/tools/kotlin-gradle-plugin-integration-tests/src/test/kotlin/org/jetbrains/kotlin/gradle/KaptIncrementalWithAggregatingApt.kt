@@ -71,4 +71,69 @@ class KaptIncrementalWithAggregatingApt : KaptIncrementalIT() {
             )
         }
     }
+
+    @Test
+    fun testClasspathChanges() {
+        val project = Project(
+            "incrementalMultiproject",
+            GradleVersionRequired.None
+        ).apply {
+            setupWorkingDir()
+            val processorPath = generateProcessor("AGGREGATING")
+
+            projectDir.resolve("app/build.gradle").appendText(
+                """
+
+                    apply plugin: "kotlin-kapt"
+                dependencies {
+                  implementation "org.jetbrains.kotlin:kotlin-stdlib:${'$'}kotlin_version"
+                  kapt files("${processorPath.invariantSeparatorsPath}")
+                }
+            """.trimIndent()
+            )
+
+            projectDir.resolve("lib/build.gradle").appendText(
+                """
+
+                dependencies {
+                  implementation "org.jetbrains.kotlin:kotlin-stdlib:${'$'}kotlin_version"
+                }
+            """.trimIndent()
+            )
+        }
+
+        project.build("clean", ":app:build") {
+            assertSuccessful()
+        }
+
+        project.projectFile("A.kt").modify { current ->
+            val lastBrace = current.lastIndexOf("}")
+            current.substring(0, lastBrace) + "fun anotherFun() {}\n }"
+        }
+        project.build("build") {
+            assertSuccessful()
+
+            assertEquals(
+                setOf(
+                    fileInWorkingDir("app/build/tmp/kapt3/stubs/main/foo/AA.java").absolutePath,
+                    fileInWorkingDir("app/build/tmp/kapt3/stubs/main/foo/AAA.java").absolutePath,
+                    fileInWorkingDir("app/build/tmp/kapt3/stubs/main/foo/BB.java").absolutePath,
+                    fileInWorkingDir("app/build/tmp/kapt3/stubs/main/foo/FooUseAKt.java").absolutePath,
+                    fileInWorkingDir("app/build/tmp/kapt3/stubs/main/foo/FooUseBKt.java").absolutePath,
+                    fileInWorkingDir("app/build/tmp/kapt3/stubs/main/foo/FooUseAAKt.java").absolutePath,
+                    fileInWorkingDir("app/build/tmp/kapt3/stubs/main/foo/FooUseBBKt.java").absolutePath
+
+                ), getProcessedSources(output)
+            )
+        }
+
+        project.projectFile("A.kt").modify { current ->
+            val lastBrace = current.lastIndexOf("}")
+            current.substring(0, lastBrace) + "private fun privateFunction() {}\n }"
+        }
+        project.build("build") {
+            assertSuccessful()
+            assertTrue(getProcessedSources(output).isEmpty())
+        }
+    }
 }

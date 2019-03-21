@@ -5,6 +5,7 @@ import org.jetbrains.org.objectweb.asm.util.TraceClassVisitor
 import java.io.File
 import java.io.PrintWriter
 import java.io.StringWriter
+import javax.tools.ToolProvider
 
 fun classFileBytecodeString(classFile: File): String {
     val out = StringWriter()
@@ -28,5 +29,17 @@ fun checkBytecodeNotContains(classFile: File, strings: Iterable<String>) {
     val bytecode = classFileBytecodeString(classFile)
     for (string in strings) {
         assert(!bytecode.contains(string)) { "Bytecode should NOT contain '$string':\n$bytecode" }
+    }
+}
+
+fun compileSources(sources: Collection<File>, outputDir: File) {
+    val compiler = ToolProvider.getSystemJavaCompiler()
+    compiler.getStandardFileManager(null, null, null).use { fileManager ->
+        val compilationTask =
+            compiler.getTask(
+                null, fileManager, null, listOf("-d", outputDir.absolutePath), null, fileManager.getJavaFileObjectsFromFiles(sources)
+            )
+
+        compilationTask.call()
     }
 }
