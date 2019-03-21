@@ -8,9 +8,14 @@ package org.jetbrains.kotlin.resolve.calls.inference.model
 import org.jetbrains.kotlin.resolve.calls.inference.trimToSize
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
+import org.jetbrains.kotlin.types.TypeConstructor
+import org.jetbrains.kotlin.types.UnwrappedType
+import org.jetbrains.kotlin.types.checker.NewCapturedType
+import org.jetbrains.kotlin.types.typeUtil.unCapture
 import kotlin.collections.ArrayList
 import kotlin.collections.LinkedHashMap
 
@@ -26,6 +31,16 @@ class MutableVariableWithConstraints(
             }
             return simplifiedConstraints!!
         }
+
+    // see @OnlyInputTypes annotation
+    val projectedInputCallTypes: Collection<UnwrappedType>
+        get() =
+            mutableConstraints.filter {
+                val position = it.position.from
+                position is ArgumentConstraintPosition || position is ReceiverConstraintPosition || position is ExpectedTypeConstraintPosition
+            }.map {
+                (it.type as KotlinType).unCapture().unwrap()
+            }
 
     private val mutableConstraints = ArrayList(constraints)
 
