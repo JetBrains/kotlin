@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.GENERATE_WRAPPER_PROPERTY
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.KOTLIN_TARGET_FOR_DEVICE
+import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.SYNC_TASK_NAME
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.cocoapodsBuildDirs
 import java.io.File
@@ -51,6 +52,7 @@ open class PodspecTask : DefaultTask() {
         }
 
         val gradleCommand = "\$REPO_ROOT/${gradleWrapper!!.toRelativeString(project.projectDir)}"
+        val syncTask = "${project.path}:$SYNC_TASK_NAME"
 
 
         outputFile.writeText("""
@@ -84,7 +86,7 @@ open class PodspecTask : DefaultTask() {
             |            :script => <<-SCRIPT
             |                set -ev
             |                REPO_ROOT="${'$'}PODS_TARGET_SRCROOT"
-            |                "$gradleCommand" -p "${'$'}REPO_ROOT" syncFramework \
+            |                "$gradleCommand" -p "${'$'}REPO_ROOT" $syncTask \
             |                    -P${KotlinCocoapodsPlugin.TARGET_PROPERTY}=${'$'}KOTLIN_TARGET \
             |                    -P${KotlinCocoapodsPlugin.CONFIGURATION_PROPERTY}=${'$'}CONFIGURATION \
             |                    -P${KotlinCocoapodsPlugin.CFLAGS_PROPERTY}="${'$'}OTHER_CFLAGS" \

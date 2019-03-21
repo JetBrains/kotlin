@@ -73,7 +73,7 @@ open class KotlinCocoapodsPlugin: Plugin<Project> {
     }
 
     private fun Project.createSyncFrameworkTask(originalDirectory: File, buildingTask: Task) =
-        tasks.create("syncFramework", Sync::class.java) {
+        tasks.create(SYNC_TASK_NAME, Sync::class.java) {
             it.group = TASK_GROUP
             it.description = "Copies a framework for given platform and build type into the CocoaPods build directory"
 
@@ -225,6 +225,7 @@ open class KotlinCocoapodsPlugin: Plugin<Project> {
     companion object {
         const val EXTENSION_NAME = "cocoapods"
         const val TASK_GROUP = "CocoaPods"
+        const val SYNC_TASK_NAME = "syncFramework"
 
         // We don't move these properties in PropertiesProvider because
         // they are not intended to be overridden in local.properties.
