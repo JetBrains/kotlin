@@ -17,6 +17,7 @@ dependencies {
     compile(projectTests(":compiler:cli"))
     compile(projectTests(":idea:idea-maven"))
     compile(projectTests(":j2k"))
+    compile(projectTests(":nj2k"))
     compile(projectTests(":idea:idea-android"))
     compile(projectTests(":jps-plugin"))
     compile(projectTests(":plugins:jvm-abi-gen"))
