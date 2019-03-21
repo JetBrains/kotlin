@@ -163,6 +163,10 @@ open class KotlinCocoapodsPlugin: Plugin<Project> {
             it.description = "Generates a podspec file for CocoaPods import"
             it.settings = cocoapodsExtension
             it.dependsOn(dummyFrameworkTask)
+            val generateWrapper = project.findProperty(GENERATE_WRAPPER_PROPERTY)?.toString()?.toBoolean() ?: false
+            if (generateWrapper) {
+                it.dependsOn(":wrapper")
+            }
         }
     }
 
@@ -230,6 +234,8 @@ open class KotlinCocoapodsPlugin: Plugin<Project> {
         const val CFLAGS_PROPERTY = "kotlin.native.cocoapods.cflags"
         const val HEADER_PATHS_PROPERTY = "kotlin.native.cocoapods.paths.headers"
         const val FRAMEWORK_PATHS_PROPERTY = "kotlin.native.cocoapods.paths.frameworks"
+
+        const val GENERATE_WRAPPER_PROPERTY = "kotlin.native.cocoapods.generate.wrapper"
 
         // Used in Xcode script phase to indicate that the framework is being built for a device
         // so we should generate a fat framework with arm32 and arm64 binaries.
