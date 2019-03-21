@@ -36,3 +36,10 @@ val appcodePlugin: Task by packageCidrPlugin(
         platformDepsJar,
         appcodePlatformDepsDir
 )
+
+val appcodeUpdatePluginsXml: Task by cidrUpdatePluginsXml(
+        preparePluginXml,
+        appcodeHumanFriendlyVersion,
+        appcodePluginZipPath,
+        appcodeCustomPluginRepoUrl
+)

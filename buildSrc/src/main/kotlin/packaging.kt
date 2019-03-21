@@ -14,6 +14,7 @@ import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.bundling.Zip
 import org.gradle.kotlin.dsl.*
 import java.io.File
+import java.net.URL
 
 internal val EXCLUDES_LIST_FROM_IDEA_PLUGIN = listOf(
     "lib/android-*.jar", // no need Android stuff
@@ -74,5 +75,48 @@ fun Project.zipCidrPlugin(cidrPluginTaskName: String, cidrPluginZipPath: File) =
 
     doLast {
         logger.lifecycle("Plugin artifacts packed to $cidrPluginZipPath")
+    }
+}
+
+fun Project.cidrUpdatePluginsXml(
+        pluginXmlTask: Task,
+        cidrProductHumanFriendlyVersion: String,
+        cidrPluginZipPath: File,
+        cidrCustomPluginRepoUrl: URL
+) = tasks.creating {
+    dependsOn(pluginXmlTask)
+
+    val updatePluginsXmlFile = cidrPluginZipPath.parentFile.resolve("updatePlugins-$cidrProductHumanFriendlyVersion.xml")
+    outputs.file(updatePluginsXmlFile)
+
+    val cidrPluginZipDeploymentUrl = URL(cidrCustomPluginRepoUrl, cidrPluginZipPath.name)
+    inputs.property("${project.name}-$name-cidrPluginZipDeploymentUrl", cidrPluginZipDeploymentUrl)
+
+    doLast {
+        val extractedData = pluginXmlTask.outputs
+                .files
+                .asFileTree
+                .singleFile
+                .extractXmlElements(setOf("id", "version", "description", "idea-version"))
+
+        val id by extractedData
+        val version by extractedData
+        val description by extractedData
+
+        val ideaVersion = extractedData.getValue("idea-version").second
+        val sinceBuild = ideaVersion.getValue("since-build")
+        val untilBuild = ideaVersion.getValue("until-build")
+
+        updatePluginsXmlFile.writeText("""
+            <plugins>
+                <plugin id="${id.first}" url="$cidrPluginZipDeploymentUrl" version="${version.first}">
+                    <idea-version since-build="$sinceBuild" until-build="$untilBuild"/>
+                    <description>${description.first}</description>
+                </plugin>
+            </plugins>
+           """.trimIndent()
+        )
+
+        logger.lifecycle("Custom plugin repository XML descriptor written to $updatePluginsXmlFile")
     }
 }

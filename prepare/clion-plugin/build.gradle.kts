@@ -36,3 +36,10 @@ val clionPlugin: Task by packageCidrPlugin(
         platformDepsJar,
         clionPlatformDepsDir
 )
+
+val clionUpdatePluginsXml: Task by cidrUpdatePluginsXml(
+        preparePluginXml,
+        clionHumanFriendlyVersion,
+        clionPluginZipPath,
+        clionCustomPluginRepoUrl
+)
