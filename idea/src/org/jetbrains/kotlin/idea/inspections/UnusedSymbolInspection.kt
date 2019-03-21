@@ -295,7 +295,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
         }
 
         return (declaration is KtObjectDeclaration && declaration.isCompanion() &&
-                declaration.getBody()?.declarations?.isNotEmpty() == true) ||
+                declaration.body?.declarations?.isNotEmpty() == true) ||
                 hasReferences(declaration, descriptor, restrictedScope) ||
                 hasOverrides(declaration, restrictedScope) ||
                 hasFakeOverrides(declaration, restrictedScope) ||
