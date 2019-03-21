@@ -2370,6 +2370,15 @@
                      language="kotlin"
     />
 
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ConvertNaNEqualityInspection"
+                     displayName="Convert equality check with 'NaN' to 'isNaN' call"
+                     groupPath="Kotlin"
+                     groupName="Probable bugs"
+                     enabledByDefault="true"
+                     level="WARNING"
+                     language="kotlin"
+    />
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.UnusedEqualsInspection"
                      displayName="Unused equals expression"
                      groupPath="Kotlin"
