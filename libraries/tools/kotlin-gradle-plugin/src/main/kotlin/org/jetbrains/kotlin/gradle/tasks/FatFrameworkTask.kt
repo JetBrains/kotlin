@@ -171,17 +171,26 @@ open class FatFrameworkTask: DefaultTask() {
 
     // Runs the PlistBuddy utility with the given commands to configure the given plist file.
     private fun processPlist(plist: File, commands: PlistBuddyRunner.() -> Unit) =
-        PlistBuddyRunner(plist).commands()
+        PlistBuddyRunner(plist).apply {
+            commands()
+        }.run()
+
 
     private inner class PlistBuddyRunner(val plist: File) {
-        fun run(command: String) = project.exec {
-            it.executable = "/usr/libexec/PlistBuddy"
-            it.args("-c", command, plist.absolutePath)
+
+        val commands = mutableListOf<String>()
+
+        fun run() = project.exec { exec ->
+            exec.executable = "/usr/libexec/PlistBuddy"
+            commands.forEach {
+                exec.args("-c", it)
+            }
+            exec.args(plist.absolutePath)
         }
 
-        fun add(entry: String, value: String) = run("Add \"$entry\" string \"$value\"")
-        fun set(entry: String, value: String) = run("Set \"$entry\" \"$value\"")
-        fun delete(entry: String) = run("Delete \"$entry\"")
+        fun add(entry: String, value: String) = commands.add("Add \"$entry\" string \"$value\"")
+        fun set(entry: String, value: String) = commands.add("Set \"$entry\" \"$value\"")
+        fun delete(entry: String) = commands.add("Delete \"$entry\"")
     }
 
     private fun runLipo(inputFiles: Map<Architecture, File>, outputFile: File) =
@@ -267,7 +276,7 @@ open class FatFrameworkTask: DefaultTask() {
 
         // Copy dSYM's Info.plist.
         // It doesn't contain target-specific info or framework names except the bundle id so there is no need to edit it.
-        // TODO: handle bunde id.
+        // TODO: handle bundle id.
         project.copy {
             it.from(dsymInputs.values.first().infoPlist)
             it.into(fatDsym.infoPlist)
@@ -283,5 +292,6 @@ open class FatFrameworkTask: DefaultTask() {
         mergeHeaders(fatFramework.header)
         createModuleFile(fatFramework.moduleFile, frameworkName)
         mergePlists(fatFramework.infoPlist, frameworkName)
+        mergeDSYM()
     }
 }
