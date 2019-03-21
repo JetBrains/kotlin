@@ -50,4 +50,4 @@ FILE fqName:<root> fileName:/localDelegatedPropertiesWithAnnotations.kt
                 <T>: kotlin.Int
                 $receiver: GET_VAR 'val test$delegate: kotlin.Lazy<kotlin.Int> [val] declared in <root>.foo' type=kotlin.Lazy<kotlin.Int> origin=null
                 thisRef: CONST Null type=kotlin.Nothing? value=null
-                property: LOCAL_DELEGATED_PROPERTY_REFERENCE 'test: Int' delegate='val test$delegate: kotlin.Lazy<kotlin.Int> [val] declared in <root>.foo' getter='local final fun <get-test> (): kotlin.Int declared in <root>.foo' setter=null type=kotlin.reflect.KProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+                property: LOCAL_DELEGATED_PROPERTY_REFERENCE 'val test: kotlin.Int by (...)' delegate='val test$delegate: kotlin.Lazy<kotlin.Int> [val] declared in <root>.foo' getter='local final fun <get-test> (): kotlin.Int declared in <root>.foo' setter=null type=kotlin.reflect.KProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE

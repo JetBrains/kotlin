@@ -85,7 +85,7 @@ FILE fqName:<root> fileName:/topLevel.kt
           $this: CALL 'public constructor <init> (value: kotlin.String) [primary] declared in <root>.DelegateProvider' type=<root>.DelegateProvider origin=null
             value: CONST String type=kotlin.String value="OK"
           thisRef: CONST Null type=kotlin.Nothing? value=null
-          property: PROPERTY_REFERENCE 'PROPERTY name:testTopLevel visibility:public modality:FINAL [delegated,val] ' field=null getter='public final fun <get-testTopLevel> (): kotlin.String declared in <root>' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+          property: PROPERTY_REFERENCE 'public final testTopLevel: kotlin.String [delegated,val] ' field=null getter='public final fun <get-testTopLevel> (): kotlin.String declared in <root>' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
     FUN DELEGATED_PROPERTY_ACCESSOR name:<get-testTopLevel> visibility:public modality:FINAL <> () returnType:kotlin.String 
       correspondingProperty: PROPERTY name:testTopLevel visibility:public modality:FINAL [delegated,val] 
       BLOCK_BODY
@@ -93,4 +93,4 @@ FILE fqName:<root> fileName:/topLevel.kt
           CALL 'public final fun getValue (thisRef: kotlin.Any?, property: kotlin.Any?): kotlin.String declared in <root>.Delegate' type=kotlin.String origin=null
             $this: GET_FIELD 'FIELD DELEGATE name:testTopLevel$delegate type:<root>.Delegate visibility:private [final,static] ' type=<root>.Delegate origin=null
             thisRef: CONST Null type=kotlin.Nothing? value=null
-            property: PROPERTY_REFERENCE 'PROPERTY name:testTopLevel visibility:public modality:FINAL [delegated,val] ' field=null getter='public final fun <get-testTopLevel> (): kotlin.String declared in <root>' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+            property: PROPERTY_REFERENCE 'public final testTopLevel: kotlin.String [delegated,val] ' field=null getter='public final fun <get-testTopLevel> (): kotlin.String declared in <root>' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE

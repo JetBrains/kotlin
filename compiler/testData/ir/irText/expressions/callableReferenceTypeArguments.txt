@@ -35,7 +35,7 @@ FILE fqName:<root> fileName:/callableReferenceTypeArguments.kt
     FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Function1<kotlin.Int, kotlin.Unit> visibility:public [final,static] 
       EXPRESSION_BODY
         FUNCTION_REFERENCE 'public final fun topLevel1 <T> (x: T of <root>.topLevel1): kotlin.Unit [inline] declared in <root>' type=kotlin.reflect.KFunction1<@[CALL 'public constructor <init> (name: kotlin.String) [primary] declared in kotlin.ParameterName' type=kotlin.ParameterName origin=null] kotlin.Int, kotlin.Unit> origin=null
-          <1>: kotlin.Int
+          <T>: kotlin.Int
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:kotlin.Function1<kotlin.Int, kotlin.Unit> 
       correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL [val] 
       BLOCK_BODY
@@ -45,7 +45,7 @@ FILE fqName:<root> fileName:/callableReferenceTypeArguments.kt
     FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Function1<kotlin.collections.List<kotlin.String>, kotlin.Unit> visibility:public [final,static] 
       EXPRESSION_BODY
         FUNCTION_REFERENCE 'public final fun topLevel2 <T> (x: kotlin.collections.List<T of <root>.topLevel2>): kotlin.Unit [inline] declared in <root>' type=kotlin.reflect.KFunction1<@[CALL 'public constructor <init> (name: kotlin.String) [primary] declared in kotlin.ParameterName' type=kotlin.ParameterName origin=null] kotlin.collections.List<kotlin.String>, kotlin.Unit> origin=null
-          <1>: kotlin.String
+          <T>: kotlin.String
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:kotlin.Function1<kotlin.collections.List<kotlin.String>, kotlin.Unit> 
       correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL [val] 
       BLOCK_BODY
@@ -55,7 +55,7 @@ FILE fqName:<root> fileName:/callableReferenceTypeArguments.kt
     FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.Function1<kotlin.Int, kotlin.Unit> visibility:public [final,static] 
       EXPRESSION_BODY
         FUNCTION_REFERENCE 'public final fun objectMember <T> (x: T of <root>.Host.objectMember): kotlin.Unit [inline] declared in <root>.Host' type=kotlin.reflect.KFunction1<@[CALL 'public constructor <init> (name: kotlin.String) [primary] declared in kotlin.ParameterName' type=kotlin.ParameterName origin=null] kotlin.Int, kotlin.Unit> origin=null
-          <1>: kotlin.Int
+          <T>: kotlin.Int
           $this: GET_OBJECT 'CLASS OBJECT name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.Host
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL <> () returnType:kotlin.Function1<kotlin.Int, kotlin.Unit> 
       correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL [val] 

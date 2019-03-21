@@ -91,7 +91,7 @@ FILE fqName:<root> fileName:/member.kt
             $this: CALL 'public constructor <init> (value: kotlin.String) [primary] declared in <root>.DelegateProvider' type=<root>.DelegateProvider origin=null
               value: CONST String type=kotlin.String value="OK"
             thisRef: GET_VAR '<this>: <root>.Host declared in <root>.Host' type=<root>.Host origin=null
-            property: PROPERTY_REFERENCE 'PROPERTY name:testMember visibility:public modality:FINAL [delegated,val] ' field=null getter='public final fun <get-testMember> (): kotlin.String declared in <root>.Host' setter=null type=kotlin.reflect.KProperty1<<root>.Host, kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+            property: PROPERTY_REFERENCE 'public final testMember: kotlin.String [delegated,val] ' field=null getter='public final fun <get-testMember> (): kotlin.String declared in <root>.Host' setter=null type=kotlin.reflect.KProperty1<<root>.Host, kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
       FUN DELEGATED_PROPERTY_ACCESSOR name:<get-testMember> visibility:public modality:FINAL <> ($this:<root>.Host) returnType:kotlin.String 
         correspondingProperty: PROPERTY name:testMember visibility:public modality:FINAL [delegated,val] 
         $this: VALUE_PARAMETER name:<this> type:<root>.Host 
@@ -101,7 +101,7 @@ FILE fqName:<root> fileName:/member.kt
               $this: GET_FIELD 'FIELD DELEGATE name:testMember$delegate type:<root>.Delegate visibility:private [final] ' type=<root>.Delegate origin=null
                 receiver: GET_VAR '<this>: <root>.Host declared in <root>.Host.<get-testMember>' type=<root>.Host origin=null
               thisRef: GET_VAR '<this>: <root>.Host declared in <root>.Host.<get-testMember>' type=<root>.Host origin=null
-              property: PROPERTY_REFERENCE 'PROPERTY name:testMember visibility:public modality:FINAL [delegated,val] ' field=null getter='public final fun <get-testMember> (): kotlin.String declared in <root>.Host' setter=null type=kotlin.reflect.KProperty1<<root>.Host, kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+              property: PROPERTY_REFERENCE 'public final testMember: kotlin.String [delegated,val] ' field=null getter='public final fun <get-testMember> (): kotlin.String declared in <root>.Host' setter=null type=kotlin.reflect.KProperty1<<root>.Host, kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any

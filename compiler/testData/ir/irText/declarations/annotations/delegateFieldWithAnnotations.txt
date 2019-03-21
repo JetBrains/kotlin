@@ -36,4 +36,4 @@ FILE fqName:<root> fileName:/delegateFieldWithAnnotations.kt
             <T>: kotlin.Int
             $receiver: GET_FIELD 'FIELD DELEGATE name:test1$delegate type:kotlin.Lazy<kotlin.Int> visibility:private [final,static] ' type=kotlin.Lazy<kotlin.Int> origin=null
             thisRef: CONST Null type=kotlin.Nothing? value=null
-            property: PROPERTY_REFERENCE 'PROPERTY name:test1 visibility:public modality:FINAL [delegated,val] ' field=null getter='public final fun <get-test1> (): kotlin.Int declared in <root>' setter=null type=kotlin.reflect.KProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+            property: PROPERTY_REFERENCE 'public final test1: kotlin.Int [delegated,val] ' field=null getter='public final fun <get-test1> (): kotlin.Int declared in <root>' setter=null type=kotlin.reflect.KProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE

@@ -62,7 +62,7 @@ FILE fqName:<root> fileName:/memberExtension.kt
             $this: GET_VAR '<this>: <root>.Host declared in <root>.Host' type=<root>.Host origin=null
             $receiver: CONST String type=kotlin.String value="K"
             host: GET_VAR '<this>: <root>.Host declared in <root>.Host' type=<root>.Host origin=null
-            p: PROPERTY_REFERENCE 'PROPERTY name:plusK visibility:public modality:FINAL [delegated,val] ' field=null getter='public final fun <get-plusK> (): kotlin.String declared in <root>.Host' setter=null type=kotlin.reflect.KProperty2<kotlin.String, <root>.Host, kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+            p: PROPERTY_REFERENCE 'public final plusK: kotlin.String [delegated,val] ' field=null getter='public final fun <get-plusK> (): kotlin.String declared in <root>.Host' setter=null type=kotlin.reflect.KProperty2<kotlin.String, <root>.Host, kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
       FUN DELEGATED_PROPERTY_ACCESSOR name:<get-plusK> visibility:public modality:FINAL <> ($this:<root>.Host, $receiver:kotlin.String) returnType:kotlin.String 
         correspondingProperty: PROPERTY name:plusK visibility:public modality:FINAL [delegated,val] 
         $this: VALUE_PARAMETER name:<this> type:<root>.Host 
@@ -73,7 +73,7 @@ FILE fqName:<root> fileName:/memberExtension.kt
               $this: GET_FIELD 'FIELD DELEGATE name:plusK$delegate type:<root>.Host.StringDelegate visibility:private [final] ' type=<root>.Host.StringDelegate origin=null
                 receiver: GET_VAR '<this>: <root>.Host declared in <root>.Host.<get-plusK>' type=<root>.Host origin=null
               receiver: GET_VAR '<this>: kotlin.String declared in <root>.Host.<get-plusK>' type=kotlin.String origin=null
-              p: PROPERTY_REFERENCE 'PROPERTY name:plusK visibility:public modality:FINAL [delegated,val] ' field=null getter='public final fun <get-plusK> (): kotlin.String declared in <root>.Host' setter=null type=kotlin.reflect.KProperty2<kotlin.String, <root>.Host, kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+              p: PROPERTY_REFERENCE 'public final plusK: kotlin.String [delegated,val] ' field=null getter='public final fun <get-plusK> (): kotlin.String declared in <root>.Host' setter=null type=kotlin.reflect.KProperty2<kotlin.String, <root>.Host, kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
     PROPERTY name:ok visibility:public modality:FINAL [val] 
       FIELD PROPERTY_BACKING_FIELD name:ok type:kotlin.String visibility:public [final] 
         EXPRESSION_BODY

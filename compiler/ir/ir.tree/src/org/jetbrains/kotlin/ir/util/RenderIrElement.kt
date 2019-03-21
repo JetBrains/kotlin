@@ -144,12 +144,7 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
                 append(declaration.name.asString())
                 append(' ')
 
-                if (declaration.typeParameters.isNotEmpty()) {
-                    appendListWith(declaration.typeParameters, "<", ">", ", ") { typeParameter ->
-                        append(typeParameter.name.asString())
-                    }
-                    append(' ')
-                }
+                renderTypeParameters(declaration)
 
                 appendListWith(declaration.valueParameters, "(", ")", ", ") { valueParameter ->
                     val varargElementType = valueParameter.varargElementType
@@ -177,6 +172,43 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
                 }
 
                 renderDeclaredIn(declaration)
+            }
+
+        private fun StringBuilder.renderTypeParameters(declaration: IrTypeParametersContainer) {
+            if (declaration.typeParameters.isNotEmpty()) {
+                appendListWith(declaration.typeParameters, "<", ">", ", ") { typeParameter ->
+                    append(typeParameter.name.asString())
+                }
+                append(' ')
+            }
+        }
+
+        override fun visitProperty(declaration: IrProperty, data: Nothing?) =
+            buildString {
+                append(declaration.visibility)
+                append(' ')
+                append(declaration.modality.toString().toLowerCase())
+                append(' ')
+
+                append(declaration.name.asString())
+
+                val type = declaration.getter?.returnType ?: declaration.backingField?.type
+                if (type != null) {
+                    append(": ")
+                    append(type.render())
+                }
+
+                append(' ')
+                append(declaration.renderPropertyFlags())
+            }
+
+        override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty, data: Nothing?): String =
+            buildString {
+                if (declaration.isVar) append("var ") else append("val ")
+                append(declaration.name.asString())
+                append(": ")
+                append(declaration.type.render())
+                append(" by (...)")
             }
 
         private fun StringBuilder.renderDeclaredIn(irDeclaration: IrDeclaration) {
@@ -508,7 +540,7 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
     override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference, data: Nothing?): String =
         buildString {
             append("LOCAL_DELEGATED_PROPERTY_REFERENCE ")
-            append("'${expression.descriptor.ref()}' ")
+            append("'${expression.symbol.renderReference()}' ")
             append("delegate='${expression.delegate.renderReference()}' ")
             append("getter='${expression.getter.renderReference()}' ")
             appendNullableAttribute("setter=", expression.setter) { "'${it.renderReference()}'" }
@@ -535,17 +567,17 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
         "DYN_MEMBER memberName='${expression.memberName}' type=${expression.type.render()}"
 
     override fun visitErrorDeclaration(declaration: IrErrorDeclaration, data: Nothing?): String =
-        "ERROR_DECL ${declaration.descriptor::class.java.simpleName} ${declaration.descriptor.ref()}"
+        "ERROR_DECL ${declaration.descriptor::class.java.simpleName} " +
+                descriptorRendererForErrorDeclarations.renderDescriptor(declaration.descriptor.original)
 
     override fun visitErrorExpression(expression: IrErrorExpression, data: Nothing?): String =
         "ERROR_EXPR '${expression.description}' type=${expression.type.render()}"
 
     override fun visitErrorCallExpression(expression: IrErrorCallExpression, data: Nothing?): String =
         "ERROR_CALL '${expression.description}' type=${expression.type.render()}"
-}
 
-@Deprecated("Rewrite descriptor-based code")
-private val REFERENCE_RENDERER = DescriptorRenderer.ONLY_NAMES_WITH_SHORT_TYPES
+    private val descriptorRendererForErrorDeclarations = DescriptorRenderer.ONLY_NAMES_WITH_SHORT_TYPES
+}
 
 internal fun IrDeclaration.name(): String =
     descriptor.name.toString()
@@ -555,9 +587,6 @@ internal fun DescriptorRenderer.renderDescriptor(descriptor: DeclarationDescript
         "this@${descriptor.containingDeclaration.name}: ${descriptor.type}"
     else
         render(descriptor)
-
-internal fun DeclarationDescriptor.ref(): String =
-    REFERENCE_RENDERER.renderDescriptor(this.original)
 
 internal fun IrDeclaration.renderOriginIfNonTrivial(): String =
     if (origin != IrDeclarationOrigin.DEFINED) "$origin " else ""

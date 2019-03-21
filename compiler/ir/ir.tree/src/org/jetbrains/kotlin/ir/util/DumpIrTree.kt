@@ -183,16 +183,12 @@ class DumpIrTreeVisitor(
     private fun IrMemberAccessExpression.getTypeParameterNames(expectedCount: Int): List<String> =
         if (this is IrDeclarationReference && symbol.isBound)
             symbol.owner.getTypeParameterNames(expectedCount)
-        else if (this is IrCallableReference)
-            getPlaceholderParameterNames(expectedCount) // TODO IrCallableReference should be an IrDeclarationReference
         else
             getPlaceholderParameterNames(expectedCount)
 
     private fun IrMemberAccessExpression.getValueParameterNames(expectedCount: Int): List<String> =
         if (this is IrDeclarationReference && symbol.isBound)
             symbol.owner.getValueParameterNames(expectedCount)
-        else if (this is IrCallableReference)
-            getPlaceholderParameterNames(expectedCount) // TODO IrCallableReference should be an IrDeclarationReference
         else
             getPlaceholderParameterNames(expectedCount)
 

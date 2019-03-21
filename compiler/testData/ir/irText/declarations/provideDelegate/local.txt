@@ -86,11 +86,11 @@ FILE fqName:<root> fileName:/local.kt
             $this: CALL 'public constructor <init> (value: kotlin.String) [primary] declared in <root>.DelegateProvider' type=<root>.DelegateProvider origin=null
               value: CONST String type=kotlin.String value="OK"
             thisRef: CONST Null type=kotlin.Nothing? value=null
-            property: LOCAL_DELEGATED_PROPERTY_REFERENCE 'testMember: String' delegate='val testMember$delegate: <root>.Delegate [val] declared in <root>.foo' getter='local final fun <get-testMember> (): kotlin.String declared in <root>.foo' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+            property: LOCAL_DELEGATED_PROPERTY_REFERENCE 'val testMember: kotlin.String by (...)' delegate='val testMember$delegate: <root>.Delegate [val] declared in <root>.foo' getter='local final fun <get-testMember> (): kotlin.String declared in <root>.foo' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
         FUN DELEGATED_PROPERTY_ACCESSOR name:<get-testMember> visibility:local modality:FINAL <> () returnType:kotlin.String 
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='local final fun <get-testMember> (): kotlin.String declared in <root>.foo'
               CALL 'public final fun getValue (thisRef: kotlin.Any?, property: kotlin.Any?): kotlin.String declared in <root>.Delegate' type=kotlin.String origin=null
                 $this: GET_VAR 'val testMember$delegate: <root>.Delegate [val] declared in <root>.foo' type=<root>.Delegate origin=null
                 thisRef: CONST Null type=kotlin.Nothing? value=null
-                property: LOCAL_DELEGATED_PROPERTY_REFERENCE 'testMember: String' delegate='val testMember$delegate: <root>.Delegate [val] declared in <root>.foo' getter='local final fun <get-testMember> (): kotlin.String declared in <root>.foo' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+                property: LOCAL_DELEGATED_PROPERTY_REFERENCE 'val testMember: kotlin.String by (...)' delegate='val testMember$delegate: <root>.Delegate [val] declared in <root>.foo' getter='local final fun <get-testMember> (): kotlin.String declared in <root>.foo' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE

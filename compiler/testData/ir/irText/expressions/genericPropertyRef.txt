@@ -68,7 +68,7 @@ FILE fqName:<root> fileName:/genericPropertyRef.kt
     FIELD DELEGATE name:additionalText$delegate type:<root>.DVal visibility:private [final,static] 
       EXPRESSION_BODY
         CALL 'public constructor <init> (kmember: kotlin.Any) [primary] declared in <root>.DVal' type=<root>.DVal origin=null
-          kmember: PROPERTY_REFERENCE 'PROPERTY name:text visibility:public modality:FINAL [var] ' field=null getter='public final fun <get-text> (): kotlin.String? declared in <root>.Value' setter='public final fun <set-text> (<set-?>: kotlin.String?): kotlin.Unit declared in <root>.Value' type=kotlin.reflect.KMutableProperty1<<root>.Value<T of <root>.<get-additionalText>>, kotlin.String?> origin=null
+          kmember: PROPERTY_REFERENCE 'public final text: kotlin.String? [var] ' field=null getter='public final fun <get-text> (): kotlin.String? declared in <root>.Value' setter='public final fun <set-text> (<set-?>: kotlin.String?): kotlin.Unit declared in <root>.Value' type=kotlin.reflect.KMutableProperty1<<root>.Value<T of <root>.<get-additionalText>>, kotlin.String?> origin=null
     FUN DELEGATED_PROPERTY_ACCESSOR name:<get-additionalText> visibility:public modality:FINAL <T> ($receiver:<root>.Value<T of <root>.<get-additionalText>>) returnType:kotlin.Int 
       correspondingProperty: PROPERTY name:additionalText visibility:public modality:FINAL [delegated,val] 
       TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
@@ -78,13 +78,13 @@ FILE fqName:<root> fileName:/genericPropertyRef.kt
           CALL 'public final fun getValue (t: kotlin.Any?, p: kotlin.Any): kotlin.Int declared in <root>.DVal' type=kotlin.Int origin=null
             $this: GET_FIELD 'FIELD DELEGATE name:additionalText$delegate type:<root>.DVal visibility:private [final,static] ' type=<root>.DVal origin=null
             t: GET_VAR '<this>: <root>.Value<T of <root>.<get-additionalText>> declared in <root>.<get-additionalText>' type=<root>.Value<T of <root>.<get-additionalText>> origin=null
-            p: PROPERTY_REFERENCE 'PROPERTY name:additionalText visibility:public modality:FINAL [delegated,val] ' field=null getter='public final fun <get-additionalText> <T> (): kotlin.Int declared in <root>' setter=null type=kotlin.reflect.KProperty1<<root>.Value<T of <root>.<get-additionalText>>, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+            p: PROPERTY_REFERENCE 'public final additionalText: kotlin.Int [delegated,val] ' field=null getter='public final fun <get-additionalText> <T> (): kotlin.Int declared in <root>' setter=null type=kotlin.reflect.KProperty1<<root>.Value<T of <root>.<get-additionalText>>, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
               <1>: <none>
   PROPERTY name:additionalValue visibility:public modality:FINAL [delegated,val] 
     FIELD DELEGATE name:additionalValue$delegate type:<root>.DVal visibility:private [final,static] 
       EXPRESSION_BODY
         CALL 'public constructor <init> (kmember: kotlin.Any) [primary] declared in <root>.DVal' type=<root>.DVal origin=null
-          kmember: PROPERTY_REFERENCE 'PROPERTY name:value visibility:public modality:FINAL [var] ' field=null getter='public final fun <get-value> (): T of <root>.Value declared in <root>.Value' setter='public final fun <set-value> (<set-?>: T of <root>.Value): kotlin.Unit declared in <root>.Value' type=kotlin.reflect.KMutableProperty1<<root>.Value<T of <root>.<get-additionalValue>>, T of <root>.<get-additionalValue>> origin=null
+          kmember: PROPERTY_REFERENCE 'public final value: T of <root>.Value [var] ' field=null getter='public final fun <get-value> (): T of <root>.Value declared in <root>.Value' setter='public final fun <set-value> (<set-?>: T of <root>.Value): kotlin.Unit declared in <root>.Value' type=kotlin.reflect.KMutableProperty1<<root>.Value<T of <root>.<get-additionalValue>>, T of <root>.<get-additionalValue>> origin=null
     FUN DELEGATED_PROPERTY_ACCESSOR name:<get-additionalValue> visibility:public modality:FINAL <T> ($receiver:<root>.Value<T of <root>.<get-additionalValue>>) returnType:kotlin.Int 
       correspondingProperty: PROPERTY name:additionalValue visibility:public modality:FINAL [delegated,val] 
       TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
@@ -94,7 +94,7 @@ FILE fqName:<root> fileName:/genericPropertyRef.kt
           CALL 'public final fun getValue (t: kotlin.Any?, p: kotlin.Any): kotlin.Int declared in <root>.DVal' type=kotlin.Int origin=null
             $this: GET_FIELD 'FIELD DELEGATE name:additionalValue$delegate type:<root>.DVal visibility:private [final,static] ' type=<root>.DVal origin=null
             t: GET_VAR '<this>: <root>.Value<T of <root>.<get-additionalValue>> declared in <root>.<get-additionalValue>' type=<root>.Value<T of <root>.<get-additionalValue>> origin=null
-            p: PROPERTY_REFERENCE 'PROPERTY name:additionalValue visibility:public modality:FINAL [delegated,val] ' field=null getter='public final fun <get-additionalValue> <T> (): kotlin.Int declared in <root>' setter=null type=kotlin.reflect.KProperty1<<root>.Value<T of <root>.<get-additionalValue>>, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+            p: PROPERTY_REFERENCE 'public final additionalValue: kotlin.Int [delegated,val] ' field=null getter='public final fun <get-additionalValue> <T> (): kotlin.Int declared in <root>' setter=null type=kotlin.reflect.KProperty1<<root>.Value<T of <root>.<get-additionalValue>>, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
               <1>: <none>
   CLASS CLASS name:DVal modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.DVal 
@@ -185,7 +185,7 @@ FILE fqName:<root> fileName:/genericPropertyRef.kt
   PROPERTY name:barRef visibility:public modality:FINAL [val] 
     FIELD PROPERTY_BACKING_FIELD name:barRef type:kotlin.reflect.KMutableProperty1<kotlin.String?, kotlin.String?> visibility:public [final,static] 
       EXPRESSION_BODY
-        PROPERTY_REFERENCE 'PROPERTY name:bar visibility:public modality:FINAL [var] ' field=null getter='public final fun <get-bar> <T> (): T of <root>.<get-bar> declared in <root>' setter='public final fun <set-bar> <T> (value: T of <root>.<set-bar>): kotlin.Unit declared in <root>' type=kotlin.reflect.KMutableProperty1<kotlin.String?, kotlin.String?> origin=null
+        PROPERTY_REFERENCE 'public final bar: T of <root>.<get-bar> [var] ' field=null getter='public final fun <get-bar> <T> (): T of <root>.<get-bar> declared in <root>' setter='public final fun <set-bar> <T> (value: T of <root>.<set-bar>): kotlin.Unit declared in <root>' type=kotlin.reflect.KMutableProperty1<kotlin.String?, kotlin.String?> origin=null
           <1>: kotlin.String?
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-barRef> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KMutableProperty1<kotlin.String?, kotlin.String?> 
       correspondingProperty: PROPERTY name:barRef visibility:public modality:FINAL [val] 
