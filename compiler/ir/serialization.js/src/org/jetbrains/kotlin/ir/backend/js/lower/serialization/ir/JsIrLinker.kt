@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.library.CombinedIrFileReader
 import org.jetbrains.kotlin.backend.common.library.DeclarationId
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.backend.js.JS_KLIBRARY_CAPABILITY
 import org.jetbrains.kotlin.ir.backend.js.moduleHeaderFileName
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns

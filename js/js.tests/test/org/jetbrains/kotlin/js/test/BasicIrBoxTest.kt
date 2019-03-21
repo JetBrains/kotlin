@@ -109,25 +109,30 @@ abstract class BasicIrBoxTest(
             if (!isMainModule) it.replace("_v5.js", "/") else it
         }
 
-        val result: TranslationResult = compile(
-            project = config.project,
-            files = filesToCompile,
-            configuration = config.configuration,
-            phaseConfig = config.configuration.get(CLIConfigurationKeys.PHASE_CONFIG) ?: PhaseConfig(jsPhases),
-            compileMode = if (isMainModule) CompilationMode.JS else CompilationMode.KLIB,
-            immediateDependencies = dependencies,
-            allDependencies = allDependencies,
-            outputKlibPath = actualOutputFile
-        )
+        if (isMainModule) {
+            val jsCode = compile(
+                project = config.project,
+                files = filesToCompile,
+                configuration = config.configuration,
+                phaseConfig = config.configuration.get(CLIConfigurationKeys.PHASE_CONFIG) ?: PhaseConfig(jsPhases),
+                immediateDependencies = dependencies,
+                allDependencies = allDependencies
+            )
 
-        val moduleName = config.configuration.get(CommonConfigurationKeys.MODULE_NAME) as String
-        val module = KlibModuleRef(moduleName, actualOutputFile)
-
-        compilationCache[outputFile.name.replace(".js", ".meta.js")] = module
-
-        if (result is TranslationResult.CompiledJsCode) {
-            val wrappedCode = wrapWithModuleEmulationMarkers(result.jsCode, moduleId = config.moduleId, moduleKind = config.moduleKind)
+            val wrappedCode = wrapWithModuleEmulationMarkers(jsCode, moduleId = config.moduleId, moduleKind = config.moduleKind)
             outputFile.write(wrappedCode)
+
+        } else {
+            val module = generateKLib(
+                project = config.project,
+                files = filesToCompile,
+                configuration = config.configuration,
+                immediateDependencies = dependencies,
+                allDependencies = allDependencies,
+                outputKlibPath = actualOutputFile
+            )
+
+            compilationCache[outputFile.name.replace(".js", ".meta.js")] = module
         }
     }
 
