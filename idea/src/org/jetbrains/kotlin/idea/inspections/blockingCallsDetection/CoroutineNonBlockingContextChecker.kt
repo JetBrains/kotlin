@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.project.getLanguageVersionSettings
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
+import org.jetbrains.kotlin.idea.util.projectStructure.module
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
@@ -30,7 +32,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 class CoroutineNonBlockingContextChecker : NonBlockingContextChecker {
 
     override fun isApplicable(file: PsiFile): Boolean {
-        val languageVersionSettings = file.project.getLanguageVersionSettings()
+        val languageVersionSettings = file.module?.languageVersionSettings ?: file.project.getLanguageVersionSettings()
         return languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
     }
 
