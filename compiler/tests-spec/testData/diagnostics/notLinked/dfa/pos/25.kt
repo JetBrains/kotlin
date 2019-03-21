@@ -26,7 +26,6 @@ open class Case1<K : Number> {
                     <!DEBUG_INFO_EXPRESSION_TYPE("L & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>x<!>.get(0)
                     <!DEBUG_INFO_EXPRESSION_TYPE("M & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>x<!>.size
                     <!DEBUG_INFO_EXPRESSION_TYPE("M & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>x<!>.isEmpty()
-                    <!DEBUG_INFO_EXPRESSION_TYPE("M & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>x<!>[null]
                 }
             }
         }
