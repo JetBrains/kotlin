@@ -73,7 +73,7 @@ class TestSimpleIncrementalAptCache {
             srcFiles,
             listOf(processor),
             generatedSources
-        ) { elementUtils -> MentionedTypesTaskListener(cache.javaCache, elementUtils) }
+        ) { elementUtils, trees -> MentionedTypesTaskListener(cache.javaCache, elementUtils, trees) }
         cache.updateCache(listOf(processor))
     }
 }

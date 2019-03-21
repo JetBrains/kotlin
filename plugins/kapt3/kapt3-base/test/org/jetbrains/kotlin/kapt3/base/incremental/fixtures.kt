@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.kapt.base.test.org.jetbrains.kotlin.kapt3.base.incremental
 
 import com.sun.source.util.TaskListener
+import com.sun.source.util.Trees
 import com.sun.tools.javac.api.JavacTaskImpl
 import org.jetbrains.kotlin.kapt3.base.incremental.DeclaredProcType
 import org.jetbrains.kotlin.kapt3.base.incremental.IncrementalProcessor
@@ -27,7 +28,8 @@ fun runAnnotationProcessing(
     srcFiles: List<File>,
     processor: List<IncrementalProcessor>,
     generatedSources: File,
-    listener: (Elements) -> TaskListener? = { null }
+    classpath: List<File> = emptyList(),
+    listener: (Elements, Trees) -> TaskListener? = { _, _ -> null }
 ) {
     val compiler = ToolProvider.getSystemJavaCompiler()
     compiler.getStandardFileManager(null, null, null).use { fileManager ->
@@ -37,12 +39,12 @@ fun runAnnotationProcessing(
                 null,
                 fileManager,
                 null,
-                listOf("-proc:only", "-s", generatedSources.absolutePath, "-d", generatedSources.absolutePath),
+                listOf("-proc:only", "-s", generatedSources.absolutePath, "-d", generatedSources.absolutePath, "-cp", classpath.joinToString(separator = File.pathSeparator)),
                 null,
                 javaSrcs
             ) as JavacTaskImpl
 
-        val taskListener = listener(compilationTask.elements)
+        val taskListener = listener(compilationTask.elements, Trees.instance(compilationTask))
         taskListener?.let { compilationTask.addTaskListener(it) }
 
         compilationTask.setProcessors(processor)
