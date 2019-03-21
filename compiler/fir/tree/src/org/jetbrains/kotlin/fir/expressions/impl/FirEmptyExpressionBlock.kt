@@ -10,6 +10,6 @@ import org.jetbrains.kotlin.fir.expressions.FirBlock
 
 class FirEmptyExpressionBlock(
     session: FirSession
-) : FirAbstractAnnotatedElement(session, null), FirBlock {
+) : FirAbstractBlock(session, null), FirBlock {
     override val statements = listOf()
 }

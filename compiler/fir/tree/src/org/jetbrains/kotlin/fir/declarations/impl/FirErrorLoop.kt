@@ -17,7 +17,7 @@ class FirErrorLoop(
     session: FirSession,
     psi: PsiElement?,
     override val reason: String
-) : FirAbstractElement(session, psi), FirErrorExpression, FirLoop {
+) : FirAbstractElement(session, psi), FirErrorStatement, FirLoop {
     override val annotations: List<FirAnnotationCall> = listOf()
 
     override val condition: FirExpression = FirErrorExpressionImpl(session, psi, reason)
@@ -25,7 +25,7 @@ class FirErrorLoop(
     override val block: FirBlock = FirEmptyExpressionBlock(session)
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R {
-        return super<FirErrorExpression>.accept(visitor, data)
+        return super<FirErrorStatement>.accept(visitor, data)
     }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {

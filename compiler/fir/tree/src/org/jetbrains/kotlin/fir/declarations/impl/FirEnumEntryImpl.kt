@@ -11,8 +11,14 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.transformInplace
+import org.jetbrains.kotlin.fir.transformSingle
+import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.name.Name
 
 class FirEnumEntryImpl(
@@ -35,5 +41,18 @@ class FirEnumEntryImpl(
     isData = false,
     isInline = false
 ), FirEnumEntry {
+    override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(session, null)
+
     override val arguments = mutableListOf<FirExpression>()
+
+    override fun replaceTypeRef(newTypeRef: FirTypeRef) {
+        typeRef = newTypeRef
+    }
+
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirRegularClass {
+        typeRef = typeRef.transformSingle(transformer, data)
+        arguments.transformInplace(transformer, data)
+
+        return super<FirClassImpl>.transformChildren(transformer, data)
+    }
 }

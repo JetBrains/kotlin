@@ -15,12 +15,12 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 class FirSingleExpressionBlock(
     session: FirSession,
     private var statement: FirStatement
-) : FirAbstractAnnotatedElement(session, statement.psi), FirBlock {
+) : FirAbstractBlock(session, statement.psi), FirBlock {
     override val statements
         get() = listOf(statement)
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         statement = statement.transformSingle(transformer, data)
-        return super<FirAbstractAnnotatedElement>.transformChildren(transformer, data)
+        return super<FirAbstractBlock>.transformChildren(transformer, data)
     }
 }

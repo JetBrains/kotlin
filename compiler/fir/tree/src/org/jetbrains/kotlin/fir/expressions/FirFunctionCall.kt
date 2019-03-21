@@ -23,6 +23,7 @@ interface FirFunctionCall : @VisitedSupertype FirCall, FirQualifiedAccess, FirTy
         for (typeArgument in typeArguments) {
             typeArgument.accept(visitor, data)
         }
+        typeRef.accept(visitor, data)
         super<FirQualifiedAccess>.acceptChildren(visitor, data)
     }
 }

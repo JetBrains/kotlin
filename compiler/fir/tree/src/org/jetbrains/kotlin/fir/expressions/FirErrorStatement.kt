@@ -5,12 +5,11 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
-import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
-interface FirClassReferenceExpression : FirExpression {
-    val classTypeRef: FirTypeRef
+interface FirErrorStatement : FirStatement {
+    val reason: String
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
-        visitor.visitClassReferenceExpression(this, data)
+        visitor.visitErrorStatement(this, data)
 }

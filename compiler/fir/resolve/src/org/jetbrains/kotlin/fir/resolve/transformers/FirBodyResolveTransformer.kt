@@ -100,13 +100,13 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
                 )
             }
             FirOperation.AS -> {
-                bindingContext[resolved] = resolved.typeRef
+                bindingContext[resolved] = resolved.conversionTypeRef
             }
             FirOperation.SAFE_AS -> {
                 bindingContext[resolved] =
-                    resolved.typeRef.withReplacedConeType(
+                    resolved.conversionTypeRef.withReplacedConeType(
                         session,
-                        resolved.typeRef.coneTypeUnsafe().withNullability(ConeNullability.NULLABLE)
+                        resolved.conversionTypeRef.coneTypeUnsafe().withNullability(ConeNullability.NULLABLE)
                     )
             }
             else -> error("Unknown type operator")

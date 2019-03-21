@@ -180,6 +180,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitClass(modifiableClass, null)
     }
 
+    open fun visitErrorStatement(errorStatement: FirErrorStatement) {
+        visitStatement(errorStatement, null)
+    }
+
     open fun visitExpression(expression: FirExpression) {
         visitStatement(expression, null)
     }
@@ -502,6 +506,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitErrorExpression(errorExpression: FirErrorExpression, data: Nothing?) {
         visitErrorExpression(errorExpression)
+    }
+
+    final override fun visitErrorStatement(errorStatement: FirErrorStatement, data: Nothing?) {
+        visitErrorStatement(errorStatement)
     }
 
     final override fun visitErrorTypeRef(errorTypeRef: FirErrorTypeRef, data: Nothing?) {

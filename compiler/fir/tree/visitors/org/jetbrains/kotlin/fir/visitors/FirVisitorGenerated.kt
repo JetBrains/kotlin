@@ -180,6 +180,10 @@ abstract class FirVisitor<out R, in D> {
         return visitClass(modifiableClass, data)
     }
 
+    open fun visitErrorStatement(errorStatement: FirErrorStatement, data: D): R {
+        return visitStatement(errorStatement, data)
+    }
+
     open fun visitExpression(expression: FirExpression, data: D): R {
         return visitStatement(expression, data)
     }

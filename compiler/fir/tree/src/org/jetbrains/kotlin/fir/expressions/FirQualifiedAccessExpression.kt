@@ -14,5 +14,6 @@ interface FirQualifiedAccessExpression : @VisitedSupertype FirQualifiedAccess, F
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         super<FirQualifiedAccess>.acceptChildren(visitor, data)
+        typeRef.accept(visitor, data)
     }
 }

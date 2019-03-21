@@ -19,6 +19,7 @@ interface FirEnumEntry : @VisitedSupertype FirRegularClass, FirCall {
         for (argument in arguments) {
             argument.accept(visitor, data)
         }
+        typeRef.accept(visitor, data)
         super<FirRegularClass>.acceptChildren(visitor, data)
     }
 }

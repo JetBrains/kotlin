@@ -16,10 +16,10 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 class FirClassReferenceExpressionImpl(
     session: FirSession,
     psi: PsiElement?,
-    override var typeRef: FirTypeRef
+    override var classTypeRef: FirTypeRef
 ) : FirAbstractExpression(session, psi), FirClassReferenceExpression {
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
-        typeRef = typeRef.transformSingle(transformer, data)
+        classTypeRef = classTypeRef.transformSingle(transformer, data)
         return super<FirAbstractExpression>.transformChildren(transformer, data)
     }
 }

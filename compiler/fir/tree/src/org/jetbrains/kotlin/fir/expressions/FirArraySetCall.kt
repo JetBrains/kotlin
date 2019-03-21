@@ -22,6 +22,7 @@ interface FirArraySetCall : @VisitedSupertype FirCall, FirAssignment {
             index.accept(visitor, data)
         }
         acceptAnnotations(visitor, data)
+        typeRef.accept(visitor, data)
         super<FirAssignment>.acceptChildren(visitor, data)
     }
 }
