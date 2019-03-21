@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.io.File
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
@@ -70,13 +71,22 @@ private const val patternApt = "Processing java sources with annotation processo
 fun getProcessedSources(output: String): Set<String> {
     val logging = output.lines().single { it.contains(patternApt) }
     val indexOf = logging.indexOf(patternApt) + patternApt.length
-    return logging.drop(indexOf).split(",").map { it.trim() }.toSet()
+    return logging.drop(indexOf).split(",").map { it.trim() }.filter { !it.isEmpty() }.toSet()
 }
 
-fun BaseGradleIT.Project.setupIncrementalAptProject(procType: String) {
+fun BaseGradleIT.Project.setupIncrementalAptProject(procType: String, buildFile: File = projectDir.resolve("build.gradle")) {
     setupWorkingDir()
-    val buildFile = projectDir.resolve("build.gradle")
     val content = buildFile.readText()
+    val processorPath = generateProcessor(procType)
+
+    val updatedContent = content.replace(
+        Regex("^\\s*kapt\\s\"org\\.jetbrain.*$", RegexOption.MULTILINE),
+        "    kapt files(\"${processorPath.invariantSeparatorsPath}\")"
+    )
+    buildFile.writeText(updatedContent)
+}
+
+fun BaseGradleIT.Project.generateProcessor(procType: String): File {
     val processorPath = projectDir.resolve("incrementalProcessor.jar")
 
     ZipOutputStream(processorPath.outputStream()).use {
@@ -92,10 +102,5 @@ fun BaseGradleIT.Project.setupIncrementalAptProject(procType: String) {
         it.write(IncrementalProcessor::class.java.name.toByteArray())
         it.closeEntry()
     }
-
-    val updatedContent = content.replace(
-        Regex("^\\s*kapt\\s\"org\\.jetbrain.*$", RegexOption.MULTILINE),
-        "    kapt files(\"${processorPath.invariantSeparatorsPath}\")"
-    )
-    buildFile.writeText(updatedContent)
+    return processorPath
 }

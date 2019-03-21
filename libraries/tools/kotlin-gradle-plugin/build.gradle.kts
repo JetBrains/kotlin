@@ -62,7 +62,10 @@ dependencies {
     runtime(projectRuntimeJar(":kotlin-scripting-compiler-embeddable"))
     runtime(project(":kotlin-reflect"))
 
-    jarContents(compileOnly(intellijDep()) { includeJars("serviceMessages") })
+    jarContents(compileOnly(intellijDep()) {
+        includeJars("serviceMessages")
+        includeJars("asm-all", rootProject = rootProject)
+    })
     jarContents(projectArchives(":kotlin-test-nodejs-runner"))
 
     // com.android.tools.build:gradle has ~50 unneeded transitive dependencies
