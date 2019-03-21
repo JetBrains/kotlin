@@ -40,7 +40,8 @@ class KonanDescriptorReferenceDeserializer(
         isDefaultConstructor: Boolean,
         isFakeOverride: Boolean,
         isGetter: Boolean,
-        isSetter: Boolean
+        isSetter: Boolean,
+        isTypeParameter: Boolean
     ): DeclarationDescriptor {
         val packageFqName = packageFqNameString.let {
             if (it == "<root>") FqName.ROOT else FqName(it)
@@ -84,6 +85,10 @@ class KonanDescriptorReferenceDeserializer(
         if (isEnumSpecial) {
             return clazz!!.getStaticScope()
                 .getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BACKEND).single()
+        }
+
+        if (isTypeParameter) {
+            return clazz!!.declaredTypeParameters.first { it.name.asString() == name }
         }
 
         val membersWithIndices = getMembers(members)
