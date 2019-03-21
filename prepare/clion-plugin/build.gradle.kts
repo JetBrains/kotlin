@@ -1,13 +1,18 @@
 import org.jetbrains.kotlin.ultimate.*
+import java.net.URL
 
 plugins {
     kotlin("jvm")
 }
 
 val clionVersion: String by rootProject.extra
+val clionFriendlyVersion: String by rootProject.extra
 val clionVersionStrict: Boolean by rootProject.extra
 val clionPlatformDepsDir: File by rootProject.extra
 val clionPluginDir: File by rootProject.extra
+val clionPluginVersionFull: String by rootProject.extra
+val clionPluginZipPath: File by rootProject.extra
+val clionCustomPluginRepoUrl: URL by rootProject.extra
 
 // Do not rename, used in pill importer
 val projectsToShadow: List<String> by extra(listOf(ultimatePath(":clion-native")))
@@ -41,7 +46,7 @@ val zipCLionPlugin: Task by zipCidrPlugin(clionPlugin, clionPluginZipPath)
 
 val clionUpdatePluginsXml: Task by cidrUpdatePluginsXml(
         preparePluginXml,
-        clionHumanFriendlyVersion,
+        clionFriendlyVersion,
         clionPluginZipPath,
         clionCustomPluginRepoUrl
 )

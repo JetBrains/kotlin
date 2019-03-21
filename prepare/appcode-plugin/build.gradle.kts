@@ -1,13 +1,18 @@
 import org.jetbrains.kotlin.ultimate.*
+import java.net.URL
 
 plugins {
     kotlin("jvm")
 }
 
 val appcodeVersion: String by rootProject.extra
+val appcodeFriendlyVersion: String by rootProject.extra
 val appcodeVersionStrict: Boolean by rootProject.extra
 val appcodePlatformDepsDir: File by rootProject.extra
 val appcodePluginDir: File by rootProject.extra
+val appcodePluginVersionFull: String by rootProject.extra
+val appcodePluginZipPath: File by rootProject.extra
+val appcodeCustomPluginRepoUrl: URL by rootProject.extra
 
 // Do not rename, used in pill importer
 val projectsToShadow: List<String> by extra(listOf(ultimatePath(":appcode-native")))
@@ -41,7 +46,7 @@ val zipAppCodePlugin: Task by zipCidrPlugin(appcodePlugin, appcodePluginZipPath)
 
 val appcodeUpdatePluginsXml: Task by cidrUpdatePluginsXml(
         preparePluginXml,
-        appcodeHumanFriendlyVersion,
+        appcodeFriendlyVersion,
         appcodePluginZipPath,
         appcodeCustomPluginRepoUrl
 )

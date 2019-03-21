@@ -78,13 +78,13 @@ fun Project.zipCidrPlugin(cidrPluginTask: Task, cidrPluginZipPath: File) = tasks
 
 fun Project.cidrUpdatePluginsXml(
         pluginXmlTask: Task,
-        cidrProductHumanFriendlyVersion: String,
+        cidrProductFriendlyVersion: String,
         cidrPluginZipPath: File,
         cidrCustomPluginRepoUrl: URL
 ) = tasks.creating {
     dependsOn(pluginXmlTask)
 
-    val updatePluginsXmlFile = cidrPluginZipPath.parentFile.resolve("updatePlugins-$cidrProductHumanFriendlyVersion.xml")
+    val updatePluginsXmlFile = cidrPluginZipPath.parentFile.resolve("updatePlugins-$cidrProductFriendlyVersion.xml")
     outputs.file(updatePluginsXmlFile)
 
     val cidrPluginZipDeploymentUrl = URL(cidrCustomPluginRepoUrl, cidrPluginZipPath.name)
