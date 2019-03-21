@@ -10,6 +10,7 @@ import org.gradle.api.tasks.*
 import org.gradle.api.tasks.wrapper.Wrapper
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin
+import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.GENERATE_WRAPPER_PROPERTY
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.KOTLIN_TARGET_FOR_DEVICE
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.cocoapodsBuildDirs
@@ -41,9 +42,9 @@ open class PodspecTask : DefaultTask() {
         val gradleWrapper = (project.rootProject.tasks.getByName("wrapper") as? Wrapper)?.scriptFile
         require(gradleWrapper != null && gradleWrapper.exists()) {
             """
-            The Gradle wrapper is required to run the build from Xcode. To generate the wrapper, run:
+            The Gradle wrapper is required to run the build from Xcode.
 
-                gradle :wrapper
+            Please run the same command with `-P$GENERATE_WRAPPER_PROPERTY=true` or run the `:wrapper` task to generate the wrapper manually.
 
             See details about the wrapper at https://docs.gradle.org/current/userguide/gradle_wrapper.html
             """.trimIndent()
