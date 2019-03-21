@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.kapt3.base.incremental
 
 import com.sun.source.tree.*
-import com.sun.source.util.SimpleTreeVisitor
-import com.sun.source.util.TaskEvent
-import com.sun.source.util.TaskListener
+import com.sun.source.util.*
 import com.sun.tools.javac.code.Symbol
 import com.sun.tools.javac.tree.JCTree
 import java.io.File
@@ -19,7 +17,8 @@ import javax.lang.model.util.Elements
 
 class MentionedTypesTaskListener(
     private val cache: JavaClassCache,
-    private val elementUtils: Elements
+    private val elementUtils: Elements,
+    private val trees: Trees
 ) : TaskListener {
 
     var time = 0L
@@ -35,7 +34,7 @@ class MentionedTypesTaskListener(
 
         val structure = SourceFileStructure(e.sourceFile.toUri())
 
-        val treeVisitor = TypeTreeVisitor(elementUtils, structure)
+        val treeVisitor = TypeTreeVisitor(elementUtils, trees, compilationUnit, structure)
         compilationUnit.typeDecls.forEach {
             it.accept(treeVisitor, Visibility.ABI)
         }
@@ -48,8 +47,10 @@ private enum class Visibility {
     ABI, NON_ABI
 }
 
-private class TypeTreeVisitor(val elementUtils: Elements, val sourceStructure: SourceFileStructure) :
+private class TypeTreeVisitor(val elementUtils: Elements, val trees: Trees, val compilationUnit: CompilationUnitTree,  val sourceStructure: SourceFileStructure) :
     SimpleTreeVisitor<Void, Visibility>() {
+
+    val constantTreeVisitor = ConstantTreeVisitor(sourceStructure)
 
     /** Handle annotations on this class, including the @Inherited ones as those are not visible using Tree APIs. */
     private fun handleClassAnnotations(classSymbol: Symbol.ClassSymbol) {
@@ -90,6 +91,9 @@ private class TypeTreeVisitor(val elementUtils: Elements, val sourceStructure: S
         visit(node.returnType, methodVisibility)
         node.parameters.forEach { visit(it, methodVisibility) }
         visit(node.defaultValue, methodVisibility)
+        node.defaultValue?.let {
+            constantTreeVisitor.scan(trees.getPath(compilationUnit, it), null)
+        }
         node.throws.forEach { visit(it, methodVisibility) }
         node.typeParameters.forEach { visit(it, methodVisibility) }
 
@@ -109,6 +113,8 @@ private class TypeTreeVisitor(val elementUtils: Elements, val sourceStructure: S
             val flags = node.modifiers.getFlags()
 
             node.sym.constValue?.let { constValue ->
+                constantTreeVisitor.scan(trees.getPath(compilationUnit, node.init), null)
+
                 if (flags.contains(Modifier.FINAL)
                     && flags.contains(Modifier.STATIC)
                     && !flags.contains(Modifier.PRIVATE)
@@ -149,7 +155,10 @@ private class TypeTreeVisitor(val elementUtils: Elements, val sourceStructure: S
 
     override fun visitAnnotation(node: AnnotationTree, visibility: Visibility): Void? {
         visit(node.annotationType, visibility)
-        node.arguments.forEach { visit(it, visibility) }
+        node.arguments.forEach {
+            visit(it, visibility)
+            constantTreeVisitor.scan(TreePath.getPath(compilationUnit, it), null)
+        }
 
         return null
     }
@@ -191,6 +200,37 @@ private class TypeTreeVisitor(val elementUtils: Elements, val sourceStructure: S
             Visibility.NON_ABI -> sourceStructure.addPrivateType(qualifiedName)
         }
         return true
+    }
+}
+
+/**
+ * Visits a constant initializer expression, and extracts all references to constants, either through field select (A.MY_FIELD) or
+ * identifier (MY_FIELD, which happens if A.MY_FIELD is statically imported).
+ */
+private class ConstantTreeVisitor(val sourceStructure: SourceFileStructure) : TreePathScanner<Void, Void>() {
+
+
+    override fun visitAssignment(node: AssignmentTree, p: Void?): Void? {
+        // Annotation element values are in "element = expression" form, and we only want to analyze "expression" part. So ignore variable.
+        scan(node.expression, p)
+        return null
+    }
+
+    override fun visitMemberSelect(node: MemberSelectTree, p: Void?): Void? {
+        addConstantSymbol((node as JCTree.JCFieldAccess).sym)
+        return null
+    }
+
+    override fun visitIdentifier(node: IdentifierTree, p: Void?): Void? {
+        addConstantSymbol((node as JCTree.JCIdent).sym)
+        return null
+    }
+
+    private fun addConstantSymbol(sym: Symbol) {
+        val name = sym.name
+        val containingClass = sym.owner
+
+        sourceStructure.addMentionedConstant(containingClass.qualifiedName.toString(), name.toString())
     }
 }
 

@@ -44,7 +44,7 @@ class TestInheritedAnnotation {
                 srcFiles,
                 listOf(processor),
                 generatedSources
-            ) { trees -> MentionedTypesTaskListener(cache.javaCache, trees) }
+            ) { elementUtils, trees -> MentionedTypesTaskListener(cache.javaCache, elementUtils, trees) }
             cache.updateCache(listOf(processor))
         }
     }
