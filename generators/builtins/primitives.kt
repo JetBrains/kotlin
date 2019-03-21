@@ -315,7 +315,7 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
              * The resulting `$otherName` value represents the same numerical value as this `$thisName`.
              *
              * The least significant ${fromIntegral.bitSize} bits of the resulting `$otherName` value are the same as the binary representation of this `$thisName` value,
-             * whereas the most significant ${toIntegral.bitSize - fromIntegral.bitSize} bits are filled with the bit sign of this value.
+             * whereas the most significant ${toIntegral.bitSize - fromIntegral.bitSize} bits are filled with the sign bit of this value.
              */
             """
         }
