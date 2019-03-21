@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.common.phaser
 
 fun CompilerPhase<*, *, *>.toPhaseMap(): MutableMap<String, AnyNamedPhase> =
     getNamedSubphases().fold(mutableMapOf()) { acc, (_, phase) ->
-        check(phase.name !in acc) { "Duplicate phase name '${phase.name}'"}
+        check(phase.name !in acc) { "Duplicate phase name '${phase.name}'" }
         acc[phase.name] = phase
         acc
     }
@@ -21,6 +21,7 @@ class PhaseConfig(
     val toDumpStateAfter: Set<AnyNamedPhase> = emptySet(),
     val toValidateStateBefore: Set<AnyNamedPhase> = emptySet(),
     val toValidateStateAfter: Set<AnyNamedPhase> = emptySet(),
+    val namesOfElementsExcludedFromDumping: Set<String> = emptySet(),
     val needProfiling: Boolean = false,
     val checkConditions: Boolean = false,
     val checkStickyConditions: Boolean = false

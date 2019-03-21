@@ -41,45 +41,6 @@ object CommonConfigurationKeys {
 
     @JvmField
     val METADATA_VERSION = CompilerConfigurationKey.create<BinaryVersion>("metadata version")
-
-    @JvmField
-    val LIST_PHASES = CompilerConfigurationKey.create<Boolean>("list names of backend phases")
-
-    @JvmField
-    val DISABLED_PHASES = CompilerConfigurationKey.create<Set<String>>("disable backend phases")
-
-    @JvmField
-    val PHASES_TO_DUMP_STATE_BEFORE = CompilerConfigurationKey.create<Set<String>>("backend phases where we dump compiler state before the phase")
-
-    @JvmField
-    val PHASES_TO_DUMP_STATE_AFTER = CompilerConfigurationKey.create<Set<String>>("backend phases where we dump compiler state after the phase")
-
-    @JvmField
-    val PHASES_TO_DUMP_STATE = CompilerConfigurationKey.create<Set<String>>("backend phases where we dump compiler state both before and after the phase")
-
-    @JvmField
-    val PHASES_TO_VALIDATE_BEFORE = CompilerConfigurationKey.create<Set<String>>("backend phases where we validate Ir before the phase")
-
-    @JvmField
-    val PHASES_TO_VALIDATE_AFTER = CompilerConfigurationKey.create<Set<String>>("backend phases where we validate Ir after the phase")
-
-    @JvmField
-    val PHASES_TO_VALIDATE = CompilerConfigurationKey.create<Set<String>>("backend phases where we validate Ir both before and after the phase")
-
-    @JvmField
-    val VERBOSE_PHASES = CompilerConfigurationKey.create<Set<String>>("verbose backend phases")
-
-    @JvmField
-    val PROFILE_PHASES = CompilerConfigurationKey.create<Boolean>("profile backend phase execution")
-
-    @JvmField
-    val CHECK_PHASE_CONDITIONS = CompilerConfigurationKey.create<Boolean>("run pre- and postcondition checkers for phases")
-
-    @JvmField
-    val CHECK_STICKY_CONDITIONS = CompilerConfigurationKey.create<Boolean>("run sticky postcondition checkers on subsequent phases as well")
-
-    @JvmField
-    val EXCLUDED_ELEMENTS_FROM_DUMPING = CompilerConfigurationKey.create<Set<String>>("lowering elements which shouldn't be dumped at all")
 }
 
 var CompilerConfiguration.languageVersionSettings: LanguageVersionSettings

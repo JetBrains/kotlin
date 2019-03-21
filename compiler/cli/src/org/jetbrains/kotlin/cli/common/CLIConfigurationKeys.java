@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.cli.common;
 
+import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig;
 import org.jetbrains.kotlin.cli.common.config.ContentRoot;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
 import org.jetbrains.kotlin.config.CompilerConfigurationKey;
@@ -43,6 +44,9 @@ public class CLIConfigurationKeys {
 
     public static final CompilerConfigurationKey<File> METADATA_DESTINATION_DIRECTORY =
             CompilerConfigurationKey.create("metadata destination directory");
+
+    public static final CompilerConfigurationKey<PhaseConfig> PHASE_CONFIG =
+            CompilerConfigurationKey.create("phase configuration");
 
     private CLIConfigurationKeys() {
     }

@@ -57,7 +57,7 @@ typealias AnyNamedPhase = NamedCompilerPhase<*, *, *>
 enum class BeforeOrAfter { BEFORE, AFTER }
 
 interface PhaseDumperVerifier<in Context : CommonBackendContext, Data> {
-    fun dump(phase: AnyNamedPhase, context: Context, data: Data, beforeOrAfter: BeforeOrAfter)
+    fun dump(phase: AnyNamedPhase, phaseConfig: PhaseConfig, data: Data, beforeOrAfter: BeforeOrAfter)
     fun verify(context: Context, data: Data)
 }
 
@@ -97,7 +97,7 @@ abstract class AbstractNamedPhaseWrapper<in Context : CommonBackendContext, Inpu
     }
 
     private fun runBefore(phaseConfig: PhaseConfig, context: Context, input: Input) {
-        checkAndRun(phaseConfig.toDumpStateBefore) { inputDumperVerifier.dump(this, context, input, BeforeOrAfter.BEFORE) }
+        checkAndRun(phaseConfig.toDumpStateBefore) { inputDumperVerifier.dump(this, phaseConfig, input, BeforeOrAfter.BEFORE) }
         checkAndRun(phaseConfig.toValidateStateBefore) { inputDumperVerifier.verify(context, input) }
         if (phaseConfig.checkConditions) {
             for (pre in preconditions) pre(input)
@@ -115,7 +115,7 @@ abstract class AbstractNamedPhaseWrapper<in Context : CommonBackendContext, Inpu
     }
 
     private fun runAfter(phaseConfig: PhaseConfig, phaserState: PhaserState<Input>, context: Context, output: Output) {
-        checkAndRun(phaseConfig.toDumpStateAfter) { outputDumperVerifier.dump(this, context, output, BeforeOrAfter.AFTER) }
+        checkAndRun(phaseConfig.toDumpStateAfter) { outputDumperVerifier.dump(this, phaseConfig, output, BeforeOrAfter.AFTER) }
         checkAndRun(phaseConfig.toValidateStateAfter) { outputDumperVerifier.verify(context, output) }
         if (phaseConfig.checkConditions) {
             for (post in postconditions) post(output)

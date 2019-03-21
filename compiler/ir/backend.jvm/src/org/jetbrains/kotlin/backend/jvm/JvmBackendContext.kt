@@ -44,12 +44,6 @@ class JvmBackendContext(
 
     override val configuration get() = state.configuration
 
-    init {
-        if (state.configuration.get(CommonConfigurationKeys.LIST_PHASES) == true) {
-            phaseConfig.list()
-        }
-    }
-
     private fun getJvmInternalClass(name: String): ClassDescriptor {
         return getClass(FqName("kotlin.jvm.internal").child(Name.identifier(name)))
     }

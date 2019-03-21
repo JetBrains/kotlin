@@ -39,22 +39,6 @@ fun <A : CommonCompilerArguments> CompilerConfiguration.setupCommonArguments(
     }
 
     setupLanguageVersionSettings(arguments)
-
-    put(CommonConfigurationKeys.LIST_PHASES, arguments.listPhases)
-
-    listOf(
-        CommonConfigurationKeys.DISABLED_PHASES to arguments.disablePhases,
-        CommonConfigurationKeys.VERBOSE_PHASES to arguments.verbosePhases,
-        CommonConfigurationKeys.PHASES_TO_DUMP_STATE_BEFORE to arguments.phasesToDumpBefore,
-        CommonConfigurationKeys.PHASES_TO_DUMP_STATE_AFTER to arguments.phasesToDumpAfter,
-        CommonConfigurationKeys.PHASES_TO_DUMP_STATE to arguments.phasesToDump
-    ).forEach { (k, v) ->
-        if (v != null) put(k, setOf(*v))
-    }
-
-    put(CommonConfigurationKeys.PROFILE_PHASES, arguments.profilePhases)
-    put(CommonConfigurationKeys.CHECK_PHASE_CONDITIONS, arguments.checkPhaseConditions or arguments.checkStickyPhaseConditions)
-    put(CommonConfigurationKeys.CHECK_STICKY_CONDITIONS, arguments.checkStickyPhaseConditions)
 }
 
 fun <A : CommonCompilerArguments> CompilerConfiguration.setupLanguageVersionSettings(arguments: A) {

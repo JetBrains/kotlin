@@ -9,7 +9,8 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
-import org.jetbrains.kotlin.cli.common.createPhaseConfig
+import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.*
@@ -64,7 +65,7 @@ fun main() {
             project = environment.project,
             files = sources.map(::createPsiFile),
             configuration = configuration,
-            phaseConfig = createPhaseConfig(jsPhases, configuration),
+            phaseConfig = configuration.get(CLIConfigurationKeys.PHASE_CONFIG) ?: PhaseConfig(jsPhases),
             compileMode = CompilationMode.KLIB,
             immediateDependencies = emptyList(),
             allDependencies = emptyList(),

@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.js.test
 
-import org.jetbrains.kotlin.cli.common.createPhaseConfig
+import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
@@ -110,7 +111,7 @@ abstract class BasicIrBoxTest(
             project = config.project,
             files = filesToCompile,
             configuration = config.configuration,
-            phaseConfig = createPhaseConfig(jsPhases, config.configuration),
+            phaseConfig = config.configuration.get(CLIConfigurationKeys.PHASE_CONFIG) ?: PhaseConfig(jsPhases),
             compileMode = if (isMainModule) CompilationMode.JS else CompilationMode.KLIB,
             immediateDependencies = dependencies,
             allDependencies = allDependencies,
