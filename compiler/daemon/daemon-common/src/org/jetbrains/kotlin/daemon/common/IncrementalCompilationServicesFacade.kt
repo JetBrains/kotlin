@@ -60,19 +60,4 @@ interface IncrementalCompilationServicesFacade : Remote {
 
     @Throws(RemoteException::class)
     fun revert()
-
-    // ChangesRegistry
-    @Throws(RemoteException::class)
-    fun registerChanges(timestamp: Long, dirtyData: SimpleDirtyData)
-
-    @Throws(RemoteException::class)
-    fun unknownChanges(timestamp: Long)
-
-    @Throws(RemoteException::class)
-    fun getChanges(artifact: File, sinceTS: Long): Iterable<SimpleDirtyData>?
 }
-
-class SimpleDirtyData(
-        val dirtyLookupSymbols: List<String>,
-        val dirtyClassesFqNames: List<String>
-) : Serializable
