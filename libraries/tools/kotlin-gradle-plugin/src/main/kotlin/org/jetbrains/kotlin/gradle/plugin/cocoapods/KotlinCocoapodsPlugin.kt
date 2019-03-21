@@ -85,11 +85,10 @@ open class KotlinCocoapodsPlugin: Plugin<Project> {
     private fun createSyncForFatFramework(
         project: Project,
         kotlinExtension: KotlinMultiplatformExtension,
-        requestedBuildType: String
+        requestedBuildType: String,
+        requestedPlatforms: List<KonanTarget>
     ) {
-        // We create a fat framework only for device platforms: iosArm64 and iosArm32.
-        val fatPlatforms = listOf(KonanTarget.IOS_ARM64, KonanTarget.IOS_ARM32)
-        val fatTargets = fatPlatforms.associate { it to kotlinExtension.targetsForPlatform(it) }
+        val fatTargets = requestedPlatforms.associate { it to kotlinExtension.targetsForPlatform(it) }
 
         check(fatTargets.values.any { it.isNotEmpty() }) { "The project doesn't contain a target for iOS device" }
         fatTargets.forEach { platform, targets ->
@@ -117,12 +116,12 @@ open class KotlinCocoapodsPlugin: Plugin<Project> {
         project: Project,
         kotlinExtension: KotlinMultiplatformExtension,
         requestedBuildType: String,
-        requestedTarget: KonanTarget
+        requestedPlatform: KonanTarget
     ) {
-        val targets = kotlinExtension.targetsForPlatform(requestedTarget)
+        val targets = kotlinExtension.targetsForPlatform(requestedPlatform)
 
-        check(targets.isNotEmpty()) { "The project doesn't contain a target for the requested platform: `${requestedTarget.visibleName}`" }
-        check(targets.size == 1) { "The project has more than one target for the requested platform: `${requestedTarget.visibleName}`" }
+        check(targets.isNotEmpty()) { "The project doesn't contain a target for the requested platform: `${requestedPlatform.visibleName}`" }
+        check(targets.size == 1) { "The project has more than one target for the requested platform: `${requestedPlatform.visibleName}`" }
 
         val frameworkLinkTask = targets.single().binaries.getFramework(requestedBuildType).linkTask
         project.createSyncFrameworkTask(frameworkLinkTask.destinationDir, frameworkLinkTask)
@@ -136,8 +135,17 @@ open class KotlinCocoapodsPlugin: Plugin<Project> {
         val requestedBuildType = project.findProperty(CONFIGURATION_PROPERTY)?.toString()?.toUpperCase() ?: return@whenEvaluated
 
         if (requestedTargetName == KOTLIN_TARGET_FOR_DEVICE) {
-            // A required target is a device and we need to build a fat framework.
-            createSyncForFatFramework(project, kotlinExtension, requestedBuildType)
+            // We create a fat framework only for device platforms: iosArm64 and iosArm32.
+            val devicePlatforms = listOf(KonanTarget.IOS_ARM64, KonanTarget.IOS_ARM32)
+            val deviceTargets = devicePlatforms.flatMap { kotlinExtension.targetsForPlatform(it) }
+
+            if (deviceTargets.size == 1) {
+                // Fast path: there is only one device target. There is no need to build a fat framework.
+                createSyncForRegularFramework(project, kotlinExtension, requestedBuildType, deviceTargets.single().konanTarget)
+            } else {
+                // There are several device targets so we need to build a fat framework.
+                createSyncForFatFramework(project, kotlinExtension, requestedBuildType, devicePlatforms)
+            }
         } else {
             // A requested target doesn't require building a fat framework.
             createSyncForRegularFramework(project, kotlinExtension, requestedBuildType, HostManager().targetByName(requestedTargetName))
