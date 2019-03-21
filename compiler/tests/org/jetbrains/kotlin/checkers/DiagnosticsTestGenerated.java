@@ -8088,6 +8088,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/generics/Projections.kt");
             }
 
+            @TestMetadata("protectedSuperCall.kt")
+            public void testProtectedSuperCall() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/generics/protectedSuperCall.kt");
+            }
+
             @TestMetadata("PseudoRawTypes.kt")
             public void testPseudoRawTypes() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/generics/PseudoRawTypes.kt");
