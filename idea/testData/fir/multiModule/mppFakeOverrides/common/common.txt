@@ -2,7 +2,7 @@ FILE: common.kt
     <T> public open expect class A {
         public constructor(): super<R|kotlin/Any|>()
 
-        public open function foo(arg: R|T|): R|kotlin/Unit|
+        public open fun foo(arg: R|T|): R|kotlin/Unit|
 
     }
     public open class B : R|A<kotlin/String>| {
@@ -12,12 +12,12 @@ FILE: common.kt
     public open class C : R|B| {
         public constructor(): super<R|B|>()
 
-        public open function bar(arg: R|kotlin/String|): R|kotlin/String| {
-            return@@@bar <Unresolved name: arg>#
+        public open fun bar(arg: R|kotlin/String|): R|kotlin/String| {
+            ^bar R|<local>/arg|
         }
 
-        public open function baz(arg: R|kotlin/CharSequence|): R|kotlin/String| {
-            return@@@baz <Unresolved name: arg>#.<Unresolved name: toString>#()
+        public open fun baz(arg: R|kotlin/CharSequence|): R|kotlin/String| {
+            ^baz R|<local>/arg|.<Unresolved name: toString>#()
         }
 
     }

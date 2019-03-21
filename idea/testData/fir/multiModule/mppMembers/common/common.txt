@@ -2,7 +2,7 @@ FILE: common.kt
     public open expect class A {
         public constructor(): super<R|kotlin/Any|>()
 
-        public final function foo(): R|kotlin/Unit|
+        public final fun foo(): R|kotlin/Unit|
 
     }
     public open class B : R|A| {

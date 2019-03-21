@@ -2,15 +2,15 @@ FILE: B.kt
     public final class B : R|A| {
         public constructor(): super<R|A|>()
 
-        public final override function foo(): R|B| {
-            return@@@foo this#
+        public final override fun foo(): R|B| {
+            ^foo this#
         }
 
-        public final function bar(): R|B| {
-            return@@@bar this#
+        public final fun bar(): R|B| {
+            ^bar this#
         }
 
-        public final function test(): R|kotlin/Unit| {
+        public final fun test(): R|kotlin/Unit| {
             R|/B.foo|()
             R|/B.bar|()
         }
