@@ -66,7 +66,7 @@ open class FatFrameworkTask: DefaultTask() {
     /**
      * A collection of frameworks used ot build the fat framework.
      */
-    @get:Internal  // We take it into account as an input in the inputFiles property.
+    @get:Internal  // We take it into account as an input in the inputFrameworkFiles property.
     val frameworks: Collection<Framework>
         get() = archToFramework.values
 
@@ -131,11 +131,13 @@ open class FatFrameworkTask: DefaultTask() {
             val konanTarget = it.target.konanTarget
             val arch = konanTarget.architecture
             require(konanTarget.family == Family.IOS) {
-                "Cannot add a framework with target '${konanTarget.visibleName}' in the fat framework: " +
+                "Cannot add a framework with target '${konanTarget.visibleName}' to the fat framework: " +
                         "fat frameworks are available only for iOS binaries."
             }
             require(!archToFramework.containsKey(arch)) {
-                "This fat framework already has a binary for architecture `${arch.name.toLowerCase()}`"
+                val alreadyAdded = archToFramework.getValue(arch)
+                "This fat framework already has a binary for architecture `${arch.name.toLowerCase()}` " +
+                        "(${alreadyAdded.name} for target `${alreadyAdded.target.name}`)"
             }
             archToFramework[arch] = it
             dependsOn(it.linkTask)
