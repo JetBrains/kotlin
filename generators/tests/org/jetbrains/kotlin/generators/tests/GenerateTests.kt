@@ -973,8 +973,9 @@ fun main(args: Array<String>) {
         }
     }
 
-        testClass<AbstractNewJavaToKotlinConverterNewSingleFileTest> {
-            model("newFileOrElement", extension = "java")
+    testGroup("nj2k/tests", "nj2k/testData/") {
+        testClass<AbstractNullabilityAnalysisTest> {
+            model("fileOrElement")
         }
     }
 
