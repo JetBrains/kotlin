@@ -212,6 +212,8 @@ extra["compilerModules"] = arrayOf(
         ":compiler:ir.backend.common",
         ":compiler:backend.jvm",
         ":compiler:backend.js",
+        ":compiler:ir.serialization.common",
+        ":compiler:ir.serialization.js",
         ":compiler:backend-common",
         ":compiler:backend",
         ":compiler:plugin-api",

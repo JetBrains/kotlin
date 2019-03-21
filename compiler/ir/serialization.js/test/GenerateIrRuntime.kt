@@ -3,20 +3,19 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.generators.tests
+package org.jetbrains.kotlin.ir.backend.js
 
-import com.intellij.openapi.Disposable
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.ir.backend.js.generateKLib
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
-import org.jetbrains.kotlin.js.test.JsIrTestRuntime
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.serialization.js.ModuleKind
+
+import com.intellij.openapi.Disposable
+import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 
 fun buildConfiguration(environment: KotlinCoreEnvironment): CompilerConfiguration {
     val runtimeConfiguration = environment.configuration.copy()

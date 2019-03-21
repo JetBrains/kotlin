@@ -4,6 +4,7 @@ plugins {
 }
 
 dependencies {
+    // TODO: decouple from backend.common
     compile(project(":compiler:ir.backend.common"))
     compile(project(":compiler:ir.tree"))
 }

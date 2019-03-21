@@ -24,8 +24,7 @@ abstract class AbstractWebDemoExamplesTest(relativePath: String) : BasicBoxTest(
         testPackage: String?,
         testFunction: String,
         expectedResult: String,
-        withModuleSystem: Boolean,
-        runtime: JsIrTestRuntime
+        withModuleSystem: Boolean
     ) {
         testChecker.checkStdout(jsFiles, expectedResult)
     }

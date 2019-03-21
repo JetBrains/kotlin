@@ -45,7 +45,7 @@ fun compile(
     moduleFragment.files.clear()
     moduleFragment.files += irFiles
 
-    // TODO Why is this needed?
+    // Create stubs
     ExternalDependenciesGenerator(
         moduleDescriptor = moduleDescriptor,
         symbolTable = symbolTable,

@@ -3,7 +3,7 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.js.test
+package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
@@ -62,7 +62,7 @@ private val fullRuntimeSources = listOfKtFilesFrom(
 
     "core/builtins/src/kotlin/Unit.kt",
     unimplementedNativeBuiltInsDir.path,
-    BasicBoxTest.COMMON_FILES_DIR_PATH
+    "js/js.translator/testData/_commonFiles"
 ) - listOfKtFilesFrom(
     "libraries/stdlib/common/src/kotlin/JvmAnnotationsH.kt",
     "libraries/stdlib/src/kotlin/annotations/Multiplatform.kt",
@@ -117,7 +117,7 @@ private val fullRuntimeSources = listOfKtFilesFrom(
     "libraries/stdlib/js/src/kotlin/builtins.kt"
 )
 
-val reducedRuntimeSources = fullRuntimeSources - listOfKtFilesFrom(
+private val reducedRuntimeSources = fullRuntimeSources - listOfKtFilesFrom(
     "libraries/stdlib/unsigned",
     "libraries/stdlib/common/src/generated/_Arrays.kt",
     "libraries/stdlib/common/src/generated/_Collections.kt",
@@ -167,7 +167,7 @@ val reducedRuntimeSources = fullRuntimeSources - listOfKtFilesFrom(
 )
 
 private fun listOfKtFilesFrom(vararg paths: String): List<String> {
-    val currentDir = File(".")
+    val currentDir = File("")
     return paths.flatMap { path ->
         File(path)
             .walkTopDown()
