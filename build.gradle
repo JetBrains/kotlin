@@ -423,6 +423,10 @@ task bundle(type: (isWindows()) ? Zip : Tar) {
         include 'RELEASE_NOTES.md'
         into baseName
     }
+    from(project.rootDir) {
+        include 'licenses/**'
+        into baseName
+    }
 
     destinationDir = file('.')
 
@@ -473,6 +477,10 @@ configure([samplesZip, samplesTar]) {
     from(file('samples')) {
         // Process properties files separately.
         exclude '**/gradle.properties'
+    }
+
+    from(project.rootDir) {
+        include 'licenses/**'
     }
 
     from(file('samples')) {
