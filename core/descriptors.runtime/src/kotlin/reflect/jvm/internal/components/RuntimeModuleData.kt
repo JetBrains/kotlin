@@ -57,7 +57,7 @@ class RuntimeModuleData private constructor(
     companion object {
         fun create(classLoader: ClassLoader): RuntimeModuleData {
             val storageManager = LockBasedStorageManager("RuntimeModuleData")
-            val builtIns = JvmBuiltIns(storageManager, false)
+            val builtIns = JvmBuiltIns(storageManager, JvmBuiltIns.Kind.FROM_DEPENDENCIES)
             val module = ModuleDescriptorImpl(Name.special("<runtime module for $classLoader>"), storageManager, builtIns)
             builtIns.builtInsModule = module
 
@@ -93,8 +93,8 @@ class RuntimeModuleData private constructor(
                 RuntimeErrorReporter, LookupTracker.DO_NOTHING, ContractDeserializer.DEFAULT
             )
             val builtinsProvider = JvmBuiltInsPackageFragmentProvider(
-                    storageManager, reflectKotlinClassFinder, module, notFoundClasses, builtIns.settings, builtIns.settings,
-                    DeserializationConfiguration.Default
+                storageManager, reflectKotlinClassFinder, module, notFoundClasses, builtIns.settings, builtIns.settings,
+                DeserializationConfiguration.Default
             )
 
             singleModuleClassResolver.resolver = javaDescriptorResolver

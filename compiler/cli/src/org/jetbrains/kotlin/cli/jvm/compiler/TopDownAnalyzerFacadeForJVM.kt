@@ -142,7 +142,7 @@ object TopDownAnalyzerFacadeForJVM {
         val jvmTarget = configuration.get(JVMConfigurationKeys.JVM_TARGET, JvmTarget.DEFAULT)
         val languageVersionSettings = configuration.languageVersionSettings
 
-        val fallbackBuiltIns = JvmBuiltIns(storageManager, loadBuiltInsFromCurrentClassLoader = true, isFallback = true).apply {
+        val fallbackBuiltIns = JvmBuiltIns(storageManager, JvmBuiltIns.Kind.FALLBACK).apply {
             initialize(builtInsModule, languageVersionSettings)
         }.builtInsModule
 
@@ -269,7 +269,7 @@ object TopDownAnalyzerFacadeForJVM {
 
     private fun createModuleContext(project: Project, configuration: CompilerConfiguration): MutableModuleContext {
         val projectContext = ProjectContext(project)
-        val builtIns = JvmBuiltIns(projectContext.storageManager, false)
+        val builtIns = JvmBuiltIns(projectContext.storageManager, JvmBuiltIns.Kind.FROM_DEPENDENCIES)
         return ContextForNewModule(
             projectContext, Name.special("<${configuration.getNotNull(CommonConfigurationKeys.MODULE_NAME)}>"), builtIns, null
         ).apply {
