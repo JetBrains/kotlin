@@ -30,7 +30,6 @@ open class PodspecTask : DefaultTask() {
     lateinit var settings: CocoapodsExtension
 
     // TODO: Handle Framework name customization - rename the framework during sync process.
-    // TODO: Support fat arm32/arm64 frameworks.
     @TaskAction
     fun generate() {
         val frameworkDir = project.cocoapodsBuildDirs.framework.relativeTo(outputFile.parentFile).path
@@ -39,13 +38,19 @@ open class PodspecTask : DefaultTask() {
             "|    spec.dependency '${pod.name}'$versionSuffix"
         }.joinToString(separator = "\n")
 
-        // Try to construct a path to Gradle wrapper. If there is no wrapper, just run the local Gradle.
         val gradleWrapper = (project.rootProject.tasks.getByName("wrapper") as? Wrapper)?.scriptFile
-        val gradleCommand = if (gradleWrapper != null && gradleWrapper.exists()) {
-            "\$REPO_ROOT/${gradleWrapper.toRelativeString(project.projectDir)}"
-        } else {
-            "gradle"
+        require(gradleWrapper != null && gradleWrapper.exists()) {
+            """
+            The Gradle wrapper is required to run the build from Xcode. To generate the wrapper, run:
+
+                gradle :wrapper
+
+            See details about the wrapper at https://docs.gradle.org/current/userguide/gradle_wrapper.html
+            """.trimIndent()
         }
+
+        val gradleCommand = "\$REPO_ROOT/${gradleWrapper!!.toRelativeString(project.projectDir)}"
+
 
         outputFile.writeText("""
             |Pod::Spec.new do |spec|
