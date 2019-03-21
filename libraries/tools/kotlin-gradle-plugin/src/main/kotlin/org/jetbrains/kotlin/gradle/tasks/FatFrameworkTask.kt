@@ -208,10 +208,32 @@ open class FatFrameworkTask: DefaultTask() {
         runLipo(archToFramework.mapValues { (_, framework) -> framework.files.binary }, outputFile)
 
     private fun mergeHeaders(outputFile: File) = outputFile.writer().use { writer ->
-        archToFramework.forEach { (arch, framework) ->
-            writer.appendln("#ifdef ${arch.clangMacro}\n")
-            writer.appendln(framework.files.header.readText())
-            writer.appendln("#endif\n")
+
+        val headerContents = archToFramework.mapValues { (_, framework) ->
+            framework.files.header.readText()
+        }
+
+        if (headerContents.values.distinct().size == 1) {
+            // If all headers have the same declarations, just write content of one of them.
+            writer.write(headerContents.values.first())
+        } else {
+            // If header contents differ, surround each of them with #ifdefs.
+            headerContents.toList().forEachIndexed { i, (arch, content) ->
+                val macro = arch.clangMacro
+                if (i == 0) {
+                    writer.appendln("#if defined($macro)\n")
+                } else {
+                    writer.appendln("#elif defined($macro)\n")
+                }
+                writer.appendln(content)
+            }
+            writer.appendln(
+                """
+                #else
+                #error Unsupported platform
+                #endif
+                """.trimIndent()
+            )
         }
     }
 
