@@ -162,8 +162,8 @@ FILE fqName:<root> fileName:/useImportedMember.kt
     BLOCK_BODY
       WHEN type=kotlin.Unit origin=IF
         BRANCH
-          if: CALL 'public final fun NOT (arg0: kotlin.Boolean): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
-            arg0: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+          if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+            $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
               arg0: CALL 'public final fun f (s: kotlin.Int): kotlin.Int declared in <root>.C' type=kotlin.Int origin=null
                 $this: GET_OBJECT 'CLASS OBJECT name:C modality:FINAL visibility:public superTypes:[<root>.BaseClass; <root>.I<kotlin.String>]' type=<root>.C
                 s: CONST Int type=kotlin.Int value=1
@@ -172,8 +172,8 @@ FILE fqName:<root> fileName:/useImportedMember.kt
             CONST String type=kotlin.String value="1"
       WHEN type=kotlin.Unit origin=IF
         BRANCH
-          if: CALL 'public final fun NOT (arg0: kotlin.Boolean): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
-            arg0: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+          if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+            $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
               arg0: CALL 'public final fun f (s: kotlin.String): kotlin.Int declared in <root>.C' type=kotlin.Int origin=null
                 $this: GET_OBJECT 'CLASS OBJECT name:C modality:FINAL visibility:public superTypes:[<root>.BaseClass; <root>.I<kotlin.String>]' type=<root>.C
                 s: CONST String type=kotlin.String value="s"
@@ -182,8 +182,8 @@ FILE fqName:<root> fileName:/useImportedMember.kt
             CONST String type=kotlin.String value="2"
       WHEN type=kotlin.Unit origin=IF
         BRANCH
-          if: CALL 'public final fun NOT (arg0: kotlin.Boolean): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
-            arg0: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+          if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+            $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
               arg0: CALL 'public final fun f (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=null
                 $this: GET_OBJECT 'CLASS OBJECT name:C modality:FINAL visibility:public superTypes:[<root>.BaseClass; <root>.I<kotlin.String>]' type=<root>.C
                 $receiver: CONST Boolean type=kotlin.Boolean value=true
@@ -192,8 +192,8 @@ FILE fqName:<root> fileName:/useImportedMember.kt
             CONST String type=kotlin.String value="3"
       WHEN type=kotlin.Unit origin=IF
         BRANCH
-          if: CALL 'public final fun NOT (arg0: kotlin.Boolean): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
-            arg0: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+          if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+            $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
               arg0: CALL 'public final fun <get-p> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=GET_PROPERTY
                 $this: GET_OBJECT 'CLASS OBJECT name:C modality:FINAL visibility:public superTypes:[<root>.BaseClass; <root>.I<kotlin.String>]' type=<root>.C
               arg1: CONST Int type=kotlin.Int value=4
@@ -204,8 +204,8 @@ FILE fqName:<root> fileName:/useImportedMember.kt
         <set-?>: CONST Int type=kotlin.Int value=5
       WHEN type=kotlin.Unit origin=IF
         BRANCH
-          if: CALL 'public final fun NOT (arg0: kotlin.Boolean): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
-            arg0: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+          if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+            $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
               arg0: CALL 'public final fun <get-p> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=GET_PROPERTY
                 $this: GET_OBJECT 'CLASS OBJECT name:C modality:FINAL visibility:public superTypes:[<root>.BaseClass; <root>.I<kotlin.String>]' type=<root>.C
               arg1: CONST Int type=kotlin.Int value=5
@@ -213,8 +213,8 @@ FILE fqName:<root> fileName:/useImportedMember.kt
             CONST String type=kotlin.String value="5"
       WHEN type=kotlin.Unit origin=IF
         BRANCH
-          if: CALL 'public final fun NOT (arg0: kotlin.Boolean): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
-            arg0: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+          if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+            $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
               arg0: CALL 'public final fun <get-ext> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=GET_PROPERTY
                 $this: GET_OBJECT 'CLASS OBJECT name:C modality:FINAL visibility:public superTypes:[<root>.BaseClass; <root>.I<kotlin.String>]' type=<root>.C
                 $receiver: CONST Int type=kotlin.Int value=5
@@ -223,8 +223,8 @@ FILE fqName:<root> fileName:/useImportedMember.kt
             CONST String type=kotlin.String value="6"
       WHEN type=kotlin.Unit origin=IF
         BRANCH
-          if: CALL 'public final fun NOT (arg0: kotlin.Boolean): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
-            arg0: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+          if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+            $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
               arg0: CALL 'public final fun g1 <T> (t: T of <root>.C.g1): T of <root>.C.g1 declared in <root>.C' type=kotlin.String origin=null
                 <T>: kotlin.String
                 $this: GET_OBJECT 'CLASS OBJECT name:C modality:FINAL visibility:public superTypes:[<root>.BaseClass; <root>.I<kotlin.String>]' type=<root>.C
@@ -234,8 +234,8 @@ FILE fqName:<root> fileName:/useImportedMember.kt
             CONST String type=kotlin.String value="7"
       WHEN type=kotlin.Unit origin=IF
         BRANCH
-          if: CALL 'public final fun NOT (arg0: kotlin.Boolean): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
-            arg0: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+          if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+            $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
               arg0: CALL 'public final fun <get-g2> <T> (): T of <root>.C.<get-g2> declared in <root>.C' type=kotlin.String origin=GET_PROPERTY
                 <T>: kotlin.String
                 $this: GET_OBJECT 'CLASS OBJECT name:C modality:FINAL visibility:public superTypes:[<root>.BaseClass; <root>.I<kotlin.String>]' type=<root>.C
@@ -245,8 +245,8 @@ FILE fqName:<root> fileName:/useImportedMember.kt
             CONST String type=kotlin.String value="8"
       WHEN type=kotlin.Unit origin=IF
         BRANCH
-          if: CALL 'public final fun NOT (arg0: kotlin.Boolean): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
-            arg0: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+          if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+            $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
               arg0: CALL 'public open fun fromInterface <T> (): T of <root>.C.fromInterface declared in <root>.C' type=kotlin.Int origin=null
                 <T>: kotlin.Int
                 $this: GET_OBJECT 'CLASS OBJECT name:C modality:FINAL visibility:public superTypes:[<root>.BaseClass; <root>.I<kotlin.String>]' type=<root>.C
@@ -256,8 +256,8 @@ FILE fqName:<root> fileName:/useImportedMember.kt
             CONST String type=kotlin.String value="9"
       WHEN type=kotlin.Unit origin=IF
         BRANCH
-          if: CALL 'public final fun NOT (arg0: kotlin.Boolean): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
-            arg0: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+          if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+            $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
               arg0: CALL 'public final fun <get-fromClass> <T> (): T of <root>.C.<get-fromClass> declared in <root>.C' type=kotlin.String origin=GET_PROPERTY
                 <T>: kotlin.String
                 $this: GET_OBJECT 'CLASS OBJECT name:C modality:FINAL visibility:public superTypes:[<root>.BaseClass; <root>.I<kotlin.String>]' type=<root>.C
@@ -267,8 +267,8 @@ FILE fqName:<root> fileName:/useImportedMember.kt
             CONST String type=kotlin.String value="10"
       WHEN type=kotlin.Unit origin=IF
         BRANCH
-          if: CALL 'public final fun NOT (arg0: kotlin.Boolean): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
-            arg0: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+          if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+            $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
               arg0: CALL 'public open fun genericFromSuper (g: kotlin.String): kotlin.String declared in <root>.C' type=kotlin.String origin=null
                 $this: GET_OBJECT 'CLASS OBJECT name:C modality:FINAL visibility:public superTypes:[<root>.BaseClass; <root>.I<kotlin.String>]' type=<root>.C
                 g: CONST String type=kotlin.String value="11"

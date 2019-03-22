@@ -5,8 +5,8 @@ FILE fqName:<root> fileName:/kt27933.kt
         CONST String type=kotlin.String value=""
       WHEN type=kotlin.Unit origin=IF
         BRANCH
-          if: CALL 'public final fun NOT (arg0: kotlin.Boolean): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
-            arg0: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+          if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+            $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
               arg0: GET_VAR 'var r: kotlin.String [var] declared in <root>.box' type=kotlin.String origin=null
               arg1: CONST String type=kotlin.String value=""
           then: BLOCK type=kotlin.Nothing origin=IF

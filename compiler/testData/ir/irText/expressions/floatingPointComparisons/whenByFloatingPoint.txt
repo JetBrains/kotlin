@@ -71,8 +71,8 @@ FILE fqName:<root> fileName:/whenByFloatingPoint.kt
             GET_VAR 'x: kotlin.Any declared in <root>.testSmartCastInWhenConditionInBranch' type=kotlin.Any origin=null
           WHEN type=kotlin.Int origin=WHEN
             BRANCH
-              if: CALL 'public final fun NOT (arg0: kotlin.Boolean): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCL
-                arg0: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Double
+              if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCL
+                $this: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Double
                   GET_VAR 'val tmp0_subject: kotlin.Any [val] declared in <root>.testSmartCastInWhenConditionInBranch' type=kotlin.Any origin=null
               then: CONST Int type=kotlin.Int value=-1
             BRANCH

@@ -91,8 +91,8 @@ FILE fqName:<root> fileName:/lambdaInDataClassDefaultParameter.kt
             GET_VAR 'other: kotlin.Any? declared in <root>.A.equals' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
           BRANCH
-            if: CALL 'public final fun NOT (arg0: kotlin.Boolean): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
-              arg0: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+            if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
                 arg0: CALL 'public final fun <get-runA> (): @[CALL 'public constructor <init> () [primary] declared in kotlin.ExtensionFunctionType' type=kotlin.ExtensionFunctionType origin=null] kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit> declared in <root>.A' type=@[CALL 'public constructor <init> () [primary] declared in kotlin.ExtensionFunctionType' type=kotlin.ExtensionFunctionType origin=null] kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit> origin=GET_PROPERTY
                   $this: GET_VAR '<this>: <root>.A declared in <root>.A.equals' type=<root>.A origin=null
                 arg1: CALL 'public final fun <get-runA> (): @[CALL 'public constructor <init> () [primary] declared in kotlin.ExtensionFunctionType' type=kotlin.ExtensionFunctionType origin=null] kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit> declared in <root>.A' type=@[CALL 'public constructor <init> () [primary] declared in kotlin.ExtensionFunctionType' type=kotlin.ExtensionFunctionType origin=null] kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit> origin=GET_PROPERTY
@@ -206,8 +206,8 @@ FILE fqName:<root> fileName:/lambdaInDataClassDefaultParameter.kt
             GET_VAR 'other: kotlin.Any? declared in <root>.B.equals' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
           BRANCH
-            if: CALL 'public final fun NOT (arg0: kotlin.Boolean): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
-              arg0: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+            if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
                 arg0: CALL 'public final fun <get-x> (): kotlin.Any declared in <root>.B' type=kotlin.Any origin=GET_PROPERTY
                   $this: GET_VAR '<this>: <root>.B declared in <root>.B.equals' type=<root>.B origin=null
                 arg1: CALL 'public final fun <get-x> (): kotlin.Any declared in <root>.B' type=kotlin.Any origin=GET_PROPERTY

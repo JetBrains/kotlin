@@ -15,8 +15,8 @@ FILE fqName:<root> fileName:/coercionInLoop.kt
         body: BLOCK type=kotlin.Unit origin=null
           WHEN type=kotlin.Unit origin=IF
             BRANCH
-              if: CALL 'public final fun NOT (arg0: kotlin.Boolean): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
-                arg0: CALL 'public final fun ieee754equals (arg0: kotlin.Double?, arg1: kotlin.Double?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+              if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+                $this: CALL 'public final fun ieee754equals (arg0: kotlin.Double?, arg1: kotlin.Double?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
                   arg0: CALL 'public final fun get (index: kotlin.Int): kotlin.Double declared in kotlin.DoubleArray' type=kotlin.Double origin=GET_ARRAY_ELEMENT
                     $this: GET_VAR 'val a: kotlin.DoubleArray [val] declared in <root>.box' type=kotlin.DoubleArray origin=null
                     index: GET_VAR 'var i: kotlin.Int [var] declared in <root>.box' type=kotlin.Int origin=null

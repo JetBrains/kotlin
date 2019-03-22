@@ -12,8 +12,8 @@ FILE fqName:<root> fileName:/in.kt
     VALUE_PARAMETER name:x index:1 type:kotlin.collections.Collection<kotlin.Any> 
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test2 (a: kotlin.Any, x: kotlin.collections.Collection<kotlin.Any>): kotlin.Boolean declared in <root>'
-        CALL 'public final fun NOT (arg0: kotlin.Boolean): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=NOT_IN
-          arg0: CALL 'public abstract fun contains (element: E of kotlin.collections.Collection): kotlin.Boolean declared in kotlin.collections.Collection' type=kotlin.Boolean origin=NOT_IN
+        CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=NOT_IN
+          $this: CALL 'public abstract fun contains (element: E of kotlin.collections.Collection): kotlin.Boolean declared in kotlin.collections.Collection' type=kotlin.Boolean origin=NOT_IN
             $this: GET_VAR 'x: kotlin.collections.Collection<kotlin.Any> declared in <root>.test2' type=kotlin.collections.Collection<kotlin.Any> origin=null
             element: GET_VAR 'a: kotlin.Any declared in <root>.test2' type=kotlin.Any origin=null
   FUN name:test3 visibility:public modality:FINAL <T> (a:T of <root>.test3, x:kotlin.collections.Collection<T of <root>.test3>) returnType:kotlin.Boolean 
@@ -31,7 +31,7 @@ FILE fqName:<root> fileName:/in.kt
     VALUE_PARAMETER name:x index:1 type:kotlin.collections.Collection<T of <root>.test4> 
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test4 <T> (a: T of <root>.test4, x: kotlin.collections.Collection<T of <root>.test4>): kotlin.Boolean declared in <root>'
-        CALL 'public final fun NOT (arg0: kotlin.Boolean): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=NOT_IN
-          arg0: CALL 'public abstract fun contains (element: E of kotlin.collections.Collection): kotlin.Boolean declared in kotlin.collections.Collection' type=kotlin.Boolean origin=NOT_IN
+        CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=NOT_IN
+          $this: CALL 'public abstract fun contains (element: E of kotlin.collections.Collection): kotlin.Boolean declared in kotlin.collections.Collection' type=kotlin.Boolean origin=NOT_IN
             $this: GET_VAR 'x: kotlin.collections.Collection<T of <root>.test4> declared in <root>.test4' type=kotlin.collections.Collection<T of <root>.test4> origin=null
             element: GET_VAR 'a: T of <root>.test4 declared in <root>.test4' type=T of <root>.test4 origin=null
