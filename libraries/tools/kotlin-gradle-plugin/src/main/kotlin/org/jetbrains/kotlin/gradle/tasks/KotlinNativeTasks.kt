@@ -63,7 +63,7 @@ internal fun MutableList<String>.addFileArgs(parameter: String, values: Collecti
 
 internal fun MutableList<String>.addListArg(parameter: String, values: List<String>) {
     if (values.isNotEmpty()) {
-        addArg(parameter, values.joinToString(separator = " "))
+        addArg(parameter, values.map { "\"$it\"" }.joinToString(separator = " "))
     }
 }
 
@@ -521,18 +521,18 @@ open class CInteropProcess : DefaultTask() {
             addFileArgs("-header", headers)
 
             compilerOpts.forEach {
-                addArg("-copt", it)
+                addArg("-compilerOpt", it)
             }
 
             linkerOpts.forEach {
-                addArg("-lopt", it)
+                addArg("-linkerOpt", it)
             }
 
             libraries.files.filterExternalKlibs(project).forEach { library ->
                 addArg("-library", library.absolutePath)
             }
 
-            addArgs("-copt", allHeadersDirs.map { "-I${it.absolutePath}" })
+            addArgs("-compilerOpt", allHeadersDirs.map { "-I${it.absolutePath}" })
             addArgs("-headerFilterAdditionalSearchPrefix", headerFilterDirs.map { it.absolutePath })
 
             addAll(extraOpts)
