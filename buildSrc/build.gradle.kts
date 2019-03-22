@@ -92,6 +92,7 @@ repositories {
 }
 
 dependencies {
+    compile(kotlin("stdlib", embeddedKotlinVersion))
     compile("net.rubygrapefruit:native-platform:${property("versions.native-platform")}")
     compile("net.rubygrapefruit:native-platform-windows-amd64:${property("versions.native-platform")}")
     compile("net.rubygrapefruit:native-platform-windows-i386:${property("versions.native-platform")}")
