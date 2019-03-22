@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.idea.inspections.blockingCallsDetection
 import com.intellij.codeInspection.blockingCallsDetection.NonBlockingContextChecker
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.parentsOfType
 import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
 import org.jetbrains.kotlin.builtins.isSuspendFunctionType
@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.idea.project.getLanguageVersionSettings
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypes
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getParameterForArgument
@@ -40,9 +42,9 @@ class CoroutineNonBlockingContextChecker : NonBlockingContextChecker {
 
         val containingLambda = element.parents
             .firstOrNull { it is KtLambdaExpression && it.analyze().get(BindingContext.LAMBDA_INVOCATIONS, it) == null }
-        val containingArgument = PsiTreeUtil.getParentOfType(containingLambda, KtValueArgument::class.java)
+        val containingArgument = containingLambda?.getParentOfType<KtValueArgument>(true, KtCallableDeclaration::class.java)
         if (containingArgument != null) {
-            val callExpression = PsiTreeUtil.getParentOfType(containingArgument, KtCallExpression::class.java) ?: return false
+            val callExpression = containingArgument.getParentOfType<KtCallExpression>(true) ?: return false
             val call = callExpression.resolveToCall(BodyResolveMode.PARTIAL) ?: return false
 
             val argumentDescriptor = call.getFirstArgument()?.resolveToCall()?.resultingDescriptor
@@ -61,8 +63,16 @@ class CoroutineNonBlockingContextChecker : NonBlockingContextChecker {
             return hasRestrictSuspensionAnnotation != true && type.isSuspendFunctionType
         }
 
-        val callingMethod = PsiTreeUtil.getParentOfType(element, KtNamedFunction::class.java) ?: return false
-        return callingMethod.hasModifier(KtTokens.SUSPEND_KEYWORD)
+        if (containingLambda == null) {
+            return element.parentsOfType<KtNamedFunction>()
+                .take(2)
+                .firstOrNull { function -> function.nameIdentifier != null }
+                ?.hasModifier(KtTokens.SUSPEND_KEYWORD) ?: false
+        }
+        val containingPropertyOrFunction: KtCallableDeclaration? =
+            containingLambda.getParentOfTypes(true, KtProperty::class.java, KtNamedFunction::class.java)
+        if (containingPropertyOrFunction?.typeReference?.hasModifier(KtTokens.SUSPEND_KEYWORD) == true) return true
+        return containingPropertyOrFunction?.hasModifier(KtTokens.SUSPEND_KEYWORD) == true
     }
 
     private fun ResolvedCall<*>.getFirstArgument(): KtExpression? =
