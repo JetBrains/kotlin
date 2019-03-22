@@ -10,15 +10,18 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 class RedundantGetterInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
         return propertyAccessorVisitor { accessor ->
+            val rangeInElement = accessor.namePlaceholder.textRange?.shiftRight(-accessor.startOffset) ?: return@propertyAccessorVisitor
             if (accessor.isRedundantGetter()) {
                 holder.registerProblem(
                     accessor,
                     "Redundant getter",
                     ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                    rangeInElement,
                     RemoveRedundantGetterFix()
                 )
             }
