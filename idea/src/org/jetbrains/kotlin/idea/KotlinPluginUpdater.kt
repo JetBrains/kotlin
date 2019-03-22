@@ -336,6 +336,11 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
         private class PluginDTO {
             var cdate: String? = null
             var channel: String? = null
+            // `true` if the version is seen in plugin site and available for download.
+            // Maybe be `false` if author requested version deletion.
+            var listed: Boolean = true
+            // `true` if version is approved and verified
+            var approve: Boolean = true
         }
 
         // TODO: remove when fetching by string id is implemented
@@ -366,7 +371,10 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
                 throw ResponseParseException("Can't parse json response", syntaxException)
             }
 
-            val selectedPluginDTO = pluginDTOs.singleOrNull { it.channel == channel || (it.channel == "" && channel == null) }
+            val selectedPluginDTO = pluginDTOs
+                .firstOrNull {
+                    it.listed && it.approve && (it.channel == channel || (it.channel == "" && channel == null))
+                }
                 ?: return null
 
             val dateString = selectedPluginDTO.cdate ?: throw ResponseParseException("Empty cdate")
