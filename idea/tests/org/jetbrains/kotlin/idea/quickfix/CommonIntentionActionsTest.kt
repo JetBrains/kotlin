@@ -31,7 +31,7 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         private val modifiers: Collection<JvmModifier> = emptyList(),
         private val returnType: ExpectedTypes = emptyList(),
         private val annotations: Collection<AnnotationRequest> = emptyList(),
-        parameters: List<ExpectedParameter> = emptyList(),
+        @Suppress("MissingRecentApi") parameters: List<ExpectedParameter> = emptyList(),
         private val targetSubstitutor: JvmSubstitutor = PsiJvmSubstitutor(project, PsiSubstitutor.EMPTY)
     ) : CreateMethodRequest {
         private val expectedParameters = parameters
@@ -44,6 +44,7 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
 
         override fun getAnnotations() = annotations
 
+        @Suppress("MissingRecentApi")
         override fun getExpectedParameters(): List<ExpectedParameter> = expectedParameters
 
         override fun getReturnType() = returnType
@@ -63,7 +64,7 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
 
         myFixture.launchAction(
                 createModifierActions(
-                        myFixture.atCaret(), MemberRequest.Modifier(JvmModifier.FINAL, false)
+                        myFixture.atCaret(), TestModifierRequest(JvmModifier.FINAL, false)
                 ).findWithText("Make 'bar' open")
         )
         myFixture.checkResult("""
@@ -82,7 +83,7 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
 
         myFixture.launchAction(
                 createModifierActions(
-                        myFixture.atCaret(), MemberRequest.Modifier(JvmModifier.PRIVATE, true)
+                        myFixture.atCaret(), TestModifierRequest(JvmModifier.PRIVATE, true)
                 ).findWithText("Make 'Foo' private")
         )
         myFixture.checkResult("""
@@ -101,7 +102,7 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
 
         myFixture.launchAction(
                 createModifierActions(
-                        myFixture.atCaret(), MemberRequest.Modifier(JvmModifier.PRIVATE, false)
+                        myFixture.atCaret(), TestModifierRequest(JvmModifier.PRIVATE, false)
                 ).findWithText("Remove 'private' modifier")
         )
         myFixture.checkResult("""
@@ -120,7 +121,7 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
 
         myFixture.launchAction(
             createModifierActions(
-                myFixture.atCaret(), MemberRequest.Modifier(JvmModifier.PUBLIC, true)
+                myFixture.atCaret(), TestModifierRequest(JvmModifier.PUBLIC, true)
             ).findWithText("Remove 'private' modifier")
         )
         myFixture.checkResult(
@@ -139,7 +140,7 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
 
         myFixture.launchAction(
             createModifierActions(
-                myFixture.atCaret(), MemberRequest.Modifier(JvmModifier.PUBLIC, true)
+                myFixture.atCaret(), TestModifierRequest(JvmModifier.PUBLIC, true)
             ).findWithText("Remove 'protected' modifier")
         )
         myFixture.checkResult(
@@ -158,7 +159,7 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
 
         myFixture.launchAction(
             createModifierActions(
-                myFixture.atCaret(), MemberRequest.Modifier(JvmModifier.PUBLIC, true)
+                myFixture.atCaret(), TestModifierRequest(JvmModifier.PUBLIC, true)
             ).findWithText("Remove 'internal' modifier")
         )
         myFixture.checkResult(
@@ -347,7 +348,7 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
                         |}""".trim().trimMargin()
         )
 
-        assertEmpty(createModifierActions(myFixture.atCaret(), MemberRequest.Modifier(JvmModifier.PUBLIC, true)))
+        assertEmpty(createModifierActions(myFixture.atCaret(), TestModifierRequest(JvmModifier.PUBLIC, true)))
     }
 
     fun testDontMakeFunInObjectsOpen() {
@@ -356,7 +357,7 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
             fun bar<caret>(){}
         }
         """.trim())
-        assertEmpty(createModifierActions(myFixture.atCaret(), MemberRequest.Modifier(JvmModifier.FINAL, false)))
+        assertEmpty(createModifierActions(myFixture.atCaret(), TestModifierRequest(JvmModifier.FINAL, false)))
     }
 
     fun testAddVoidVoidMethod() {
@@ -595,7 +596,7 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
 
 
     private fun createFieldActions(atCaret: JvmClass, fieldRequest: CreateFieldRequest): List<IntentionAction> =
-        com.intellij.lang.jvm.actions.EP_NAME.extensions.flatMap { it.createAddFieldActions(atCaret, fieldRequest) }
+        EP_NAME.extensions.flatMap { it.createAddFieldActions(atCaret, fieldRequest) }
 
     fun testAddStringValProperty() {
         myFixture.configureByText("foo.kt", """
@@ -644,7 +645,7 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         override fun isConstant(): Boolean = false
 
         override fun getFieldType(): List<ExpectedType> =
-            com.intellij.lang.jvm.actions.expectedTypes(PsiType.getTypeByName(type, project, project.allScope()))
+            expectedTypes(PsiType.getTypeByName(type, project, project.allScope()))
 
         override fun getFieldName(): String = name
 
@@ -654,6 +655,13 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
 }
 
 internal inline fun <reified T : JvmElement> CodeInsightTestFixture.atCaret() = elementAtCaret.toUElement() as T
+
+@Suppress("MissingRecentApi")
+private class TestModifierRequest(private val _modifier: JvmModifier, private val shouldBePresent: Boolean) : ChangeModifierRequest {
+    override fun shouldBePresent(): Boolean = shouldBePresent
+    override fun isValid(): Boolean = true
+    override fun getModifier(): JvmModifier = _modifier
+}
 
 @Suppress("CAST_NEVER_SUCCEEDS")
 internal fun List<IntentionAction>.findWithText(text: String): IntentionAction =

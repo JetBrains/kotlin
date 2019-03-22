@@ -32,7 +32,7 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         private val modifiers: Collection<JvmModifier> = emptyList(),
         private val returnType: ExpectedTypes = emptyList(),
         private val annotations: Collection<AnnotationRequest> = emptyList(),
-        parameters: List<ExpectedParameter> = emptyList(),
+        @Suppress("MissingRecentApi") parameters: List<ExpectedParameter> = emptyList(),
         private val targetSubstitutor: JvmSubstitutor = PsiJvmSubstitutor(project, PsiSubstitutor.EMPTY)
     ) : CreateMethodRequest {
         private val expectedParameters = parameters
@@ -45,6 +45,7 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
 
         override fun getAnnotations() = annotations
 
+        @Suppress("MissingRecentApi")
         override fun getExpectedParameters(): List<ExpectedParameter> = expectedParameters
 
         override fun getReturnType() = returnType
