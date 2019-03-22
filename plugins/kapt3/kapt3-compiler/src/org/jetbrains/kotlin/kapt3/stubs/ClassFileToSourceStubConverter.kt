@@ -640,10 +640,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
 
         lineMappings.registerField(containingClass, field)
 
-        val initializer = explicitInitializer
-            ?: convertPropertyInitializer(field)
-            ?: if (isFinal(field.access)) convertLiteralExpression(getDefaultValue(type)) else null
-
+        val initializer = explicitInitializer ?: convertPropertyInitializer(field)
         return treeMaker.VarDef(modifiers, treeMaker.name(name), typeExpression, initializer).keepKdocComments(field)
     }
 
@@ -670,6 +667,11 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
             if (const != null && !const.isError && const.canBeUsedInAnnotations && !const.usesNonConstValAsConstant) {
                 return convertConstantValueArguments(const.getValue(propertyType), listOf(propertyInitializer))
             }
+        }
+
+        if (isFinal(field.access)) {
+            val type = Type.getType(field.desc)
+            return convertLiteralExpression(getDefaultValue(type))
         }
 
         return null
