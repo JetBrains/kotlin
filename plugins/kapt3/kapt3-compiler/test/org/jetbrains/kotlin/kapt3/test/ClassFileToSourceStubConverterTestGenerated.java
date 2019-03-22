@@ -413,9 +413,4 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
     public void testTopLevel() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/topLevel.kt");
     }
-
-    @TestMetadata("unsafePropertyInitializers.kt")
-    public void testUnsafePropertyInitializers() throws Exception {
-        runTest("plugins/kapt3/kapt3-compiler/testData/converter/unsafePropertyInitializers.kt");
-    }
 }
