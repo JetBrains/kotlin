@@ -52,6 +52,7 @@ abstract class KotlinIrLinker(
     val resolvedForwardDeclarations = mutableMapOf<UniqIdKey, UniqIdKey>()
 
     protected val deserializersForModules = mutableMapOf<ModuleDescriptor, IrDeserializerForModule>()
+    val fileAnnotations = mutableMapOf<IrFile, KotlinIr.Annotations>()
 
     inner class IrDeserializerForModule(
         private val moduleDescriptor: ModuleDescriptor,
@@ -202,7 +203,8 @@ abstract class KotlinIrLinker(
             val symbol = IrFileSymbolImpl(packageFragmentDescriptor)
             val file = IrFileImpl(fileEntry, symbol, fqName)
 
-            file.annotations.addAll(deserializeAnnotations(fileProto.annotations))
+            // We deserialize file annotations on first file use.
+            fileAnnotations.put(file, fileProto.annotations)
 
             fileProto.declarationIdList.forEach {
                 val uniqIdKey = it.uniqIdKey(moduleDescriptor)
@@ -284,6 +286,12 @@ abstract class KotlinIrLinker(
         return KotlinIr.IrDeclaration.parseFrom(stream, newInstance())
     }
 
+    private fun deserializeFileAnnotationsIfFirstUse(module: ModuleDescriptor, file: IrFile) {
+        val annotations = fileAnnotations[file] ?: return
+        file.annotations.addAll(deserializersForModules[module]!!.deserializeAnnotations(annotations))
+        fileAnnotations.remove(file)
+    }
+
     private fun deserializeAllReachableTopLevels() {
         do {
             val key = reachableTopLevels.first()
@@ -304,6 +312,7 @@ abstract class KotlinIrLinker(
             val file = reversedFileIndex[key]!!
             file.declarations.add(reachable)
             reachable.patchDeclarationParents(file)
+            deserializeFileAnnotationsIfFirstUse(moduleOfOrigin, file)
 
             reachableTopLevels.remove(key)
             deserializedTopLevels.add(key)
