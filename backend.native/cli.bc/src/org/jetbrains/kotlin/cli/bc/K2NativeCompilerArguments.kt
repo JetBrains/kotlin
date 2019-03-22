@@ -29,6 +29,9 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-generate-worker-test-runner",
             shortName = "-trw", description = "Produce a worker runner for unit tests")
     var generateWorkerTestRunner = false
+    @Argument(value = "-generate-no-exit-test-runner",
+            shortName = "-trn", description = "Produce a runner for unit tests not forcing exit")
+    var generateNoExitTestRunner = false
 
     @Argument(value="-include-binary", deprecatedName = "-includeBinary", shortName = "-ib", valueDescription = "<path>", description = "Pack external binary within the klib")
     var includeBinaries: Array<String>? = null

@@ -371,7 +371,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                                         val address = context.llvmDeclarations.forStaticField(it).storage
                                         if (it.storageClass == FieldStorage.SHARED)
                                             freeze(initialization, currentCodeContext.exceptionHandler)
-                                        storeAny(initialization, address)
+                                        storeAny(initialization, address, false)
                                     }
                                 }
                             }
@@ -385,7 +385,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                                    if (it.storageClass == FieldStorage.THREAD_LOCAL) {
                                        val initialization = evaluateExpression(it.initializer!!.expression)
                                        val address = context.llvmDeclarations.forStaticField(it).storage
-                                       storeAny(initialization, address)
+                                       storeAny(initialization, address, false)
                                     }
                                 }
                             }
@@ -397,10 +397,10 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                         // Only if a subject for memory management.
                         if (it.type.binaryTypeIsReference() && it.storageClass == FieldStorage.THREAD_LOCAL) {
                             val address = context.llvmDeclarations.forStaticField(it).storage
-                            storeAny(codegen.kNullObjHeaderPtr, address)
+                            storeHeapRef(codegen.kNullObjHeaderPtr, address)
                         }
                     }
-                    context.llvm.objects.forEach { storeAny(codegen.kNullObjHeaderPtr, it) }
+                    context.llvm.objects.forEach { storeHeapRef(codegen.kNullObjHeaderPtr, it) }
                     ret(null)
                 }
 
@@ -410,10 +410,10 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                             .forEach {
                                 if (it.type.binaryTypeIsReference() && it.storageClass != FieldStorage.THREAD_LOCAL) {
                                     val address = context.llvmDeclarations.forStaticField(it).storage
-                                    storeAny(codegen.kNullObjHeaderPtr, address)
+                                    storeHeapRef(codegen.kNullObjHeaderPtr, address)
                                 }
                             }
-                    context.llvm.sharedObjects.forEach { storeAny(codegen.kNullObjHeaderPtr, it) }
+                    context.llvm.sharedObjects.forEach { storeHeapRef(codegen.kNullObjHeaderPtr, it) }
                     ret(null)
                 }
             }
@@ -1469,7 +1469,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                         listOf(functionGenerationContext.bitcast(codegen.kObjHeaderPtr, thisPtr)),
                         Lifetime.IRRELEVANT, ExceptionHandler.Caller)
             }
-            functionGenerationContext.storeAny(valueToAssign, fieldPtrOfClass(thisPtr, value.symbol.owner))
+            functionGenerationContext.storeAny(valueToAssign, fieldPtrOfClass(thisPtr, value.symbol.owner), false)
         } else {
             assert(value.receiver == null)
             val globalValue = context.llvmDeclarations.forStaticField(value.symbol.owner).storage
@@ -1477,7 +1477,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                 functionGenerationContext.checkMainThread(currentCodeContext.exceptionHandler)
             if (value.symbol.owner.storageClass == FieldStorage.SHARED)
                 functionGenerationContext.freeze(valueToAssign, currentCodeContext.exceptionHandler)
-            functionGenerationContext.storeAny(valueToAssign, globalValue)
+            functionGenerationContext.storeAny(valueToAssign, globalValue, false)
         }
 
         assert (value.type.isUnit())

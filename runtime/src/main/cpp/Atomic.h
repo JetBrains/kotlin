@@ -60,4 +60,10 @@ ALWAYS_INLINE inline T atomicGet(volatile T* where) {
 #endif
 }
 
+static ALWAYS_INLINE inline void synchronize() {
+#ifndef KONAN_NO_THREADS
+  __sync_synchronize();
+#endif
+}
+
 #endif // RUNTIME_ATOMIC_H

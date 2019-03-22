@@ -184,7 +184,7 @@ OBJ_GETTER(Kotlin_AtomicReference_compareAndSwap, KRef thiz, KRef expectedValue,
     Kotlin_AtomicReference_checkIfFrozen(newValue);
     // See Kotlin_AtomicReference_get() for explanations, why locking is needed.
     AtomicReferenceLayout* ref = asAtomicReference(thiz);
-    RETURN_RESULT_OF(SwapRefLocked, &ref->value_, expectedValue, newValue, &ref->lock_);
+    RETURN_RESULT_OF(SwapHeapRefLocked, &ref->value_, expectedValue, newValue, &ref->lock_);
 }
 
 KBoolean Kotlin_AtomicReference_compareAndSet(KRef thiz, KRef expectedValue, KRef newValue) {
@@ -192,14 +192,14 @@ KBoolean Kotlin_AtomicReference_compareAndSet(KRef thiz, KRef expectedValue, KRe
     // See Kotlin_AtomicReference_get() for explanations, why locking is needed.
     AtomicReferenceLayout* ref = asAtomicReference(thiz);
     ObjHolder holder;
-    auto old = SwapRefLocked(&ref->value_, expectedValue, newValue, &ref->lock_, holder.slot());
+    auto old = SwapHeapRefLocked(&ref->value_, expectedValue, newValue, &ref->lock_, holder.slot());
     return old == expectedValue;
 }
 
 void Kotlin_AtomicReference_set(KRef thiz, KRef newValue) {
     Kotlin_AtomicReference_checkIfFrozen(newValue);
     AtomicReferenceLayout* ref = asAtomicReference(thiz);
-    SetRefLocked(&ref->value_, newValue, &ref->lock_);
+    SetHeapRefLocked(&ref->value_, newValue, &ref->lock_);
 }
 
 OBJ_GETTER(Kotlin_AtomicReference_get, KRef thiz) {

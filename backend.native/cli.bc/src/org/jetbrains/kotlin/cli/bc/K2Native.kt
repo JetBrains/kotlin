@@ -181,6 +181,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 when {
                     arguments.generateWorkerTestRunner -> put(GENERATE_TEST_RUNNER, TestRunnerKind.WORKER)
                     arguments.generateTestRunner -> put(GENERATE_TEST_RUNNER, TestRunnerKind.MAIN_THREAD)
+                    arguments.generateNoExitTestRunner -> put(GENERATE_TEST_RUNNER, TestRunnerKind.MAIN_THREAD_NO_EXIT)
                     else -> put(GENERATE_TEST_RUNNER, TestRunnerKind.NONE)
                 }
                 // We need to download dependencies only if we use them ( = there are files to compile).

@@ -31,3 +31,7 @@ fun worker(args: Array<String>) {
     worker.requestTermination().result
     exitProcess(result)
 }
+
+fun mainNoExit(args: Array<String>) {
+    testLauncherEntryPoint(args)
+}

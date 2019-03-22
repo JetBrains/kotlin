@@ -51,6 +51,7 @@ private fun defaultEntryName(config: CompilerConfiguration): String =
     when (config.get(KonanConfigKeys.GENERATE_TEST_RUNNER)) {
         TestRunnerKind.MAIN_THREAD -> "kotlin.native.internal.test.main"
         TestRunnerKind.WORKER -> "kotlin.native.internal.test.worker"
+        TestRunnerKind.MAIN_THREAD_NO_EXIT -> "kotlin.native.internal.test.mainNoExit"
         else -> "main"
     }
 

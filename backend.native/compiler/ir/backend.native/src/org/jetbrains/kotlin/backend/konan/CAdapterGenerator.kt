@@ -849,7 +849,7 @@ internal class CAdapterGenerator(
         |#define RUNTIME_USED __attribute__((used))
         |
         |extern "C" {
-        |void UpdateRef(KObjHeader**, const KObjHeader*) RUNTIME_NOTHROW;
+        |void UpdateHeapRef(KObjHeader**, const KObjHeader*) RUNTIME_NOTHROW;
         |KObjHeader* AllocInstance(const KTypeInfo*, KObjHeader**) RUNTIME_NOTHROW;
         |KObjHeader* DerefStablePointer(void*, KObjHeader**) RUNTIME_NOTHROW;
         |void* CreateStablePointer(KObjHeader*) RUNTIME_NOTHROW;
@@ -866,10 +866,10 @@ internal class CAdapterGenerator(
         |public:
         |  KObjHolder() : obj_(nullptr) {}
         |  explicit KObjHolder(const KObjHeader* obj) : obj_(nullptr) {
-        |    UpdateRef(&obj_, obj);
+        |    UpdateHeapRef(&obj_, obj);
         |  }
         |  ~KObjHolder() {
-        |    UpdateRef(&obj_, nullptr);
+        |    UpdateHeapRef(&obj_, nullptr);
         |  }
         |  KObjHeader* obj() { return obj_; }
         |  KObjHeader** slot() { return &obj_; }

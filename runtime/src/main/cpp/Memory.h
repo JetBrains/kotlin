@@ -492,7 +492,7 @@ void WeakReferenceCounterClear(ObjHeader* counter);
 // Reference management scheme we use assumes significant degree of flexibility, so that
 // one could implement either pure reference counting scheme, or tracing collector without
 // much ado.
-// Most important primitive is UpdateRef() API, which modifies location to use new
+// Most important primitive is Update*Ref() API, which modifies location to use new
 // object reference. In pure reference counted scheme it will check old value,
 // decrement reference, increment counter on the new value, and store it into the field.
 // In tracing collector-like scheme, only field updates counts, and all other operations are
@@ -508,23 +508,27 @@ void WeakReferenceCounterClear(ObjHeader* counter);
 //    in intermediate frames when throwing
 //
 
-// Sets location.
-void SetRef(ObjHeader** location, const ObjHeader* object) RUNTIME_NOTHROW;
-// Updates location.
-void UpdateRef(ObjHeader** location, const ObjHeader* object) RUNTIME_NOTHROW;
+// Sets heap location.
+void SetHeapRef(ObjHeader** location, const ObjHeader* object) RUNTIME_NOTHROW;
+// Zeroes heap location.
+void ZeroHeapRef(ObjHeader** location) RUNTIME_NOTHROW;
+// Zeroes stack location.
+void ZeroStackRef(ObjHeader** location) RUNTIME_NOTHROW;
+// Updates stack location.
+void UpdateStackRef(ObjHeader** location, const ObjHeader* object) RUNTIME_NOTHROW;
+// Updates heap/static data location.
+void UpdateHeapRef(ObjHeader** location, const ObjHeader* object) RUNTIME_NOTHROW;
 // Updates location if it is null, atomically.
-void UpdateRefIfNull(ObjHeader** location, const ObjHeader* object) RUNTIME_NOTHROW;
+void UpdateHeapRefIfNull(ObjHeader** location, const ObjHeader* object) RUNTIME_NOTHROW;
 // Updates reference in return slot.
 void UpdateReturnRef(ObjHeader** returnSlot, const ObjHeader* object) RUNTIME_NOTHROW;
 // Compares and swaps reference with taken lock.
-OBJ_GETTER(SwapRefLocked,
+OBJ_GETTER(SwapHeapRefLocked,
     ObjHeader** location, ObjHeader* expectedValue, ObjHeader* newValue, int32_t* spinlock) RUNTIME_NOTHROW;
 // Sets reference with taken lock.
-void SetRefLocked(ObjHeader** location, ObjHeader* newValue, int32_t* spinlock) RUNTIME_NOTHROW;
+void SetHeapRefLocked(ObjHeader** location, ObjHeader* newValue, int32_t* spinlock) RUNTIME_NOTHROW;
 // Reads reference with taken lock.
 OBJ_GETTER(ReadRefLocked, ObjHeader** location, int32_t* spinlock) RUNTIME_NOTHROW;
-// Optimization: release all references in range.
-void ReleaseRefs(ObjHeader** start, int count) RUNTIME_NOTHROW;
 // Called on frame enter, if it has object slots.
 void EnterFrame(ObjHeader** start, int parameters, int count) RUNTIME_NOTHROW;
 // Called on frame leave, if it has object slots.
@@ -563,16 +567,16 @@ class ObjHolder {
    ObjHolder() : obj_(nullptr) {}
 
    explicit ObjHolder(const ObjHeader* obj) {
-     ::SetRef(&obj_, obj);
+     ::SetHeapRef(&obj_, obj);
    }
    ~ObjHolder() {
-     ::UpdateRef(&obj_, nullptr);
+     ::ZeroHeapRef(&obj_);
    }
 
    ObjHeader* obj() { return obj_; }
    const ObjHeader* obj() const { return obj_; }
    ObjHeader** slot() { return &obj_; }
-   void clear() { ::UpdateRef(&obj_, nullptr); }
+   void clear() { ::ZeroHeapRef(&obj_); }
 
   private:
    ObjHeader* obj_;
@@ -586,7 +590,7 @@ class KRefSharedHolder {
   }
 
   inline void init(ObjHeader* obj) {
-    SetRef(slotToInit(), obj);
+    SetHeapRef(slotToInit(), obj);
   }
 
   inline ObjHeader* ref() const {
@@ -596,7 +600,7 @@ class KRefSharedHolder {
 
   inline void dispose() {
     verifyRefOwner();
-    UpdateRef(&obj_, nullptr);
+    ZeroHeapRef(&obj_);
   }
 
  private:
