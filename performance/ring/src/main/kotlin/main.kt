@@ -45,6 +45,7 @@ class RingLauncher(numWarmIterations: Int, numberOfAttempts: Int, prefix: String
     val stringBenchmark = StringBenchmark()
     val switchBenchmark = SwitchBenchmark()
     val withIndiciesBenchmark = WithIndiciesBenchmark()
+    val callsBenchmark = CallsBenchmark()
 
     override val benchmarks = BenchmarksCollection(
             mutableMapOf(
@@ -215,7 +216,16 @@ class RingLauncher(numWarmIterations: Int, numberOfAttempts: Int, prefix: String
                     "Switch.testSealedWhenSwitch" to switchBenchmark::testSealedWhenSwitch,
                     "WithIndicies.withIndicies" to withIndiciesBenchmark::withIndicies,
                     "WithIndicies.withIndiciesManual" to withIndiciesBenchmark::withIndiciesManual,
-                    "OctoTest" to ::octoTest
+                    "OctoTest" to ::octoTest,
+                    "Calls.finalMethod" to callsBenchmark::finalMethodCall,
+                    "Calls.openMethodMonomorphic" to callsBenchmark::classOpenMethodCall_MonomorphicCallsite,
+                    "Calls.openMethodBimorphic" to callsBenchmark::classOpenMethodCall_BimorphicCallsite,
+                    "Calls.openMethodTrimorphic" to callsBenchmark::classOpenMethodCall_BimorphicCallsite,
+                    "Calls.interfaceMethodMonomorphic" to callsBenchmark::interfaceMethodCall_MonomorphicCallsite,
+                    "Calls.interfaceMethodBimorphic" to callsBenchmark::interfaceMethodCall_BimorphicCallsite,
+                    "Calls.interfaceMethodTrimorphic" to callsBenchmark::interfaceMethodCall_BimorphicCallsite,
+                    "Calls.returnBoxUnboxFolding" to callsBenchmark::returnBoxUnboxFolding,
+                    "Calls.parameterBoxUnboxFolding" to callsBenchmark::parameterBoxUnboxFolding
             )
     )
 }
