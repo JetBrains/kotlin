@@ -1194,7 +1194,10 @@ internal object Devirtualization {
 
                 val descriptor = expression.descriptor
                 val owner = (descriptor.containingDeclaration as ClassDescriptor)
-                val maxUnfoldFactor = if (owner.isInterface) 3 else 1
+                // TODO: Think how to evaluate different unfold factors (in terms of both execution speed and code size).
+                val classMaxUnfoldFactor = 3
+                val interfaceMaxUnfoldFactor = 3
+                val maxUnfoldFactor = if (owner.isInterface) interfaceMaxUnfoldFactor else classMaxUnfoldFactor
                 if (possibleCallees.size > maxUnfoldFactor) {
                     // Callsite too complicated to devirtualize.
                     return expression
