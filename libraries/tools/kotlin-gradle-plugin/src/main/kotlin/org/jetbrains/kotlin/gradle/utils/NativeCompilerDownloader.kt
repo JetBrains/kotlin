@@ -25,7 +25,7 @@ class NativeCompilerDownloader(
 ) {
 
     internal companion object {
-        val DEFAULT_KONAN_VERSION = KonanVersionImpl(MetaVersion.EAP, 1, 2, 0, 8554)
+        val DEFAULT_KONAN_VERSION = KonanVersionImpl(MetaVersion.EAP, 1, 2, 0, 8865)
         const val BASE_DOWNLOAD_URL = "https://download.jetbrains.com/kotlin/native/builds"
     }
 
