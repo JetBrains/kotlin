@@ -105,19 +105,6 @@ object KonanMangler : KotlinManglerImpl() {
                         if ((this@platformSpecificFunctionName as? IrSimpleFunction)?.correspondingProperty != null) {
                             append("#Accessor")
                         }
-
-                        // We happen to have the clashing combinations such as
-                        //@ObjCMethod("issueChallengeToPlayers:message:", "objcKniBridge1165")
-                        //external fun GKScore.issueChallengeToPlayers(playerIDs: List<*>?, message: String?): Unit
-                        //@ObjCMethod("issueChallengeToPlayers:message:", "objcKniBridge1172")
-                        //external fun GKScore.issueChallengeToPlayers(playerIDs: List<*>?, message: String?): Unit
-                        // So disambiguate by the name of the bridge for now.
-                        // TODO: idealy we'd never generate such identical declarations.
-
-                        if (this@platformSpecificFunctionName is IrSimpleFunction && this@platformSpecificFunctionName.hasObjCMethodAnnotation()) {
-                            this@platformSpecificFunctionName.objCMethodArgValue("selector")?.let { append("#$it") }
-                            this@platformSpecificFunctionName.objCMethodArgValue("bridge")?.let { append("#$it") }
-                        }
                     }
                 }
             return null
