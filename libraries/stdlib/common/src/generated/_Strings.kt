@@ -1045,11 +1045,13 @@ public fun CharSequence.max(): Char? {
 public inline fun <R : Comparable<R>> CharSequence.maxBy(selector: (Char) -> R): Char? {
     if (isEmpty()) return null
     var maxElem = this[0]
-    var maxValue = selector(maxElem)
-    for (i in 1..lastIndex) {
-        val e = this[i]
+    val lastIndex = this.lastIndex
+    if (lastIndex == 0) return maxElem
+    var maxValue: R? = null
+    for (i in 0..lastIndex) {
+        val e = if (i == 0) maxElem else this[i]
         val v = selector(e)
-        if (maxValue < v) {
+        if (maxValue == null || maxValue < v) {
             maxElem = e
             maxValue = v
         }
@@ -1091,11 +1093,13 @@ public fun CharSequence.min(): Char? {
 public inline fun <R : Comparable<R>> CharSequence.minBy(selector: (Char) -> R): Char? {
     if (isEmpty()) return null
     var minElem = this[0]
-    var minValue = selector(minElem)
-    for (i in 1..lastIndex) {
-        val e = this[i]
+    val lastIndex = this.lastIndex
+    if (lastIndex == 0) return minElem
+    var minValue: R? = null
+    for (i in 0..lastIndex) {
+        val e = if (i == 0) minElem else this[i]
         val v = selector(e)
-        if (minValue > v) {
+        if (minValue == null || minValue > v) {
             minElem = e
             minValue = v
         }

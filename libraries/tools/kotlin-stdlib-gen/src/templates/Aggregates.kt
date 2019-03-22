@@ -343,14 +343,14 @@ object Aggregates : TemplateGroupBase() {
         body {
             """
             val iterator = iterator()
-            if (!iterator.hasNext()) return null
 
-            var minElem = iterator.next()
-            var minValue = selector(minElem)
+            var minElem: T? = null
+            var minValue: R? = null
             while (iterator.hasNext()) {
                 val e = iterator.next()
+                if (minElem == null && !iterator.hasNext()) return e
                 val v = selector(e)
-                if (minValue > v) {
+                if (minValue == null || minValue > v) {
                     minElem = e
                     minValue = v
                 }
@@ -363,11 +363,13 @@ object Aggregates : TemplateGroupBase() {
             if (isEmpty()) return null
 
             var minElem = this[0]
-            var minValue = selector(minElem)
-            for (i in 1..lastIndex) {
-                val e = this[i]
+            val lastIndex = this.lastIndex
+            if (lastIndex == 0) return minElem
+            var minValue: R? = null
+            for (i in 0..lastIndex) {
+                val e = if (i == 0) minElem else this[i]
                 val v = selector(e)
-                if (minValue > v) {
+                if (minValue == null || minValue > v) {
                     minElem = e
                     minValue = v
                 }
@@ -427,14 +429,14 @@ object Aggregates : TemplateGroupBase() {
         body {
             """
             val iterator = iterator()
-            if (!iterator.hasNext()) return null
 
-            var maxElem = iterator.next()
-            var maxValue = selector(maxElem)
+            var maxElem: T? = null
+            var maxValue: R? = null
             while (iterator.hasNext()) {
                 val e = iterator.next()
+                if (maxElem == null && !iterator.hasNext()) return e
                 val v = selector(e)
-                if (maxValue < v) {
+                if (maxValue == null || maxValue < v) {
                     maxElem = e
                     maxValue = v
                 }
@@ -447,11 +449,13 @@ object Aggregates : TemplateGroupBase() {
             if (isEmpty()) return null
 
             var maxElem = this[0]
-            var maxValue = selector(maxElem)
-            for (i in 1..lastIndex) {
-                val e = this[i]
+            val lastIndex = this.lastIndex
+            if (lastIndex == 0) return maxElem
+            var maxValue: R? = null
+            for (i in 0..lastIndex) {
+                val e = if (i == 0) maxElem else this[i]
                 val v = selector(e)
-                if (maxValue < v) {
+                if (maxValue == null || maxValue < v) {
                     maxElem = e
                     maxValue = v
                 }
