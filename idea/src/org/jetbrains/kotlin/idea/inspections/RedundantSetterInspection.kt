@@ -11,15 +11,18 @@ import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 class RedundantSetterInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
         return propertyAccessorVisitor { accessor ->
+            val rangeInElement = accessor.namePlaceholder.textRange?.shiftRight(-accessor.startOffset) ?: return@propertyAccessorVisitor
             if (accessor.isRedundantSetter()) {
                 holder.registerProblem(
                     accessor,
                     "Redundant setter",
                     ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                    rangeInElement,
                     RemoveRedundantSetterFix()
                 )
             }
