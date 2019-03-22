@@ -151,7 +151,7 @@
     </group>
 
     <action id="KotlinThrowException" class="org.jetbrains.kotlin.idea.actions.internal.KotlinThrowExceptionAction"
-            text="Throw Kotlin Plugin Exception"/>
+            text="Drop an error from Kotlin plugin"/>
 
     <action id="ExtractFunctionToScope" class="org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ExtractFunctionToScopeAction"
             text="Function to _Scope...">
