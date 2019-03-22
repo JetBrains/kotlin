@@ -54,7 +54,7 @@ fun IrType.isFunctionTypeOrSubtype(): Boolean = DFS.ifAny(listOf(this), { it.sup
 
 fun IrType.isTypeParameter() = classifierOrNull is IrTypeParameterSymbol
 
-fun IrType.isInterface() = (classifierOrNull?.owner as? IrClass)?.kind == ClassKind.INTERFACE
+fun IrType.isInterface() = classOrNull?.owner?.kind == ClassKind.INTERFACE
 
 fun IrType.isFunctionOrKFunction() = isFunction() || isKFunction()
 
