@@ -338,23 +338,9 @@ class KotlinPluginUpdater(private val propertiesComponent: PropertiesComponent) 
             var channel: String? = null
         }
 
-        // TODO: remove when fetching by string id is implemented
-        private fun toMarketplaceId(pluginId: PluginId): Int {
-            return when (pluginId.idString) {
-                "org.jetbrains.kotlin" -> 6954
-                "org.jetbrains.kotlin.native.clion" -> 10454
-                "org.jetbrains.kotlin.native.appcode" -> 10619
-                else -> {
-                    LOG.error("Unknown plugin id: ${pluginId.idString}")
-                    6954
-                }
-            }
-        }
-
         @Throws(IOException::class, ResponseParseException::class)
         fun fetchPluginReleaseDate(pluginId: PluginId, version: String, channel: String?): LocalDate? {
-            val marketplaceId = toMarketplaceId(pluginId)
-            val url = "https://plugins.jetbrains.com/api/plugins/$marketplaceId/updates/version/$version"
+            val url = "https://plugins.jetbrains.com/api/plugins/${pluginId.idString}/updates?version=$version"
 
             val pluginDTOs: Array<PluginDTO> = try {
                 HttpRequests.request(url).connect {
