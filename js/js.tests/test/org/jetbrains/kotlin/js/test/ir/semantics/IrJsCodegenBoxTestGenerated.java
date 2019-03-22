@@ -9204,16 +9204,6 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/ieee754/smartCastOnWhenSubjectAfterCheckInBranch_properIeeeComparisons.kt");
         }
 
-        @TestMetadata("smartCastToDifferentTypes.kt")
-        public void testSmartCastToDifferentTypes() throws Exception {
-            runTest("compiler/testData/codegen/box/ieee754/smartCastToDifferentTypes.kt");
-        }
-
-        @TestMetadata("smartCastToDifferentTypesWithNumericPromotion.kt")
-        public void testSmartCastToDifferentTypesWithNumericPromotion() throws Exception {
-            runTest("compiler/testData/codegen/box/ieee754/smartCastToDifferentTypesWithNumericPromotion.kt");
-        }
-
         @TestMetadata("smartCastToDifferentTypesWithNumericPromotion_properIeeeComparisons.kt")
         public void testSmartCastToDifferentTypesWithNumericPromotion_properIeeeComparisons() throws Exception {
             runTest("compiler/testData/codegen/box/ieee754/smartCastToDifferentTypesWithNumericPromotion_properIeeeComparisons.kt");
@@ -9227,11 +9217,6 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
         @TestMetadata("smartCastToDoubleAndComparableToDouble.kt")
         public void testSmartCastToDoubleAndComparableToDouble() throws Exception {
             runTest("compiler/testData/codegen/box/ieee754/smartCastToDoubleAndComparableToDouble.kt");
-        }
-
-        @TestMetadata("when10.kt")
-        public void testWhen10() throws Exception {
-            runTest("compiler/testData/codegen/box/ieee754/when10.kt");
         }
 
         @TestMetadata("when10_properIeeeComparisons.kt")
