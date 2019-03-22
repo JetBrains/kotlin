@@ -36,6 +36,11 @@ git config --global pull.rebase true
 This will avoid your local repo having too many merge commits
 which will help keep your pull request simple and easy to apply.
 
+## Intention/QuickFix/Inspection
+
+Please read the [Intention/QuickFix/Inspection Quick Notes](intentions_inspections_quickfixes.md) if you are
+going to implement inspection, intention or add a quick fix.
+
 ## Checklist
 
 Before submitting the pull request, make sure that you can say "YES" to each point in this short checklist:
