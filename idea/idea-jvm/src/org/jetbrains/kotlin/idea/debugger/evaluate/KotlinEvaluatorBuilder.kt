@@ -416,10 +416,6 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
     }
 }
 
-internal fun SuspendContext.getInvokePolicy(): Int {
-    return if (suspendPolicy == EventRequest.SUSPEND_EVENT_THREAD) ObjectReference.INVOKE_SINGLE_THREADED else 0
-}
-
 fun Type.getClassDescriptor(
     scope: GlobalSearchScope,
     mapBuiltIns: Boolean = true,

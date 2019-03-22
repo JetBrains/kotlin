@@ -15,6 +15,7 @@ import com.intellij.debugger.jdi.StackFrameProxyImpl
 import com.intellij.debugger.jdi.VirtualMachineProxyImpl
 import com.intellij.openapi.project.Project
 import com.sun.jdi.*
+import com.sun.jdi.request.EventRequest
 import org.jetbrains.org.objectweb.asm.Type
 
 class ExecutionContext(val evaluationContext: EvaluationContextImpl, val frameProxy: StackFrameProxyImpl) {
@@ -33,7 +34,10 @@ class ExecutionContext(val evaluationContext: EvaluationContextImpl, val framePr
     val project: Project
         get() = evaluationContext.project
 
-    val invokePolicy = evaluationContext.suspendContext.getInvokePolicy()
+    val invokePolicy = run {
+        val suspendContext = evaluationContext.suspendContext
+        if (suspendContext.suspendPolicy == EventRequest.SUSPEND_EVENT_THREAD) ObjectReference.INVOKE_SINGLE_THREADED else 0
+    }
 
     @Throws(EvaluateException::class)
     fun invokeMethod(obj: ObjectReference, method: Method, args: List<Value?>): Value? {
