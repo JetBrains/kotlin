@@ -1,7 +1,10 @@
 package org.jetbrains.dokka
 
+import com.intellij.openapi.util.Pass
+import kotlinx.serialization.*
+import kotlinx.serialization.json.Json
 import org.jetbrains.dokka.DokkaConfiguration.PackageOptions
-import ru.yole.jkid.deserialization.deserialize
+
 import java.util.function.BiConsumer
 
 
@@ -40,10 +43,34 @@ class DokkaBootstrapImpl : DokkaBootstrap {
     lateinit var generator: DokkaGenerator
 
     override fun configure(logger: BiConsumer<String, String>, serializedConfigurationJSON: String)
-            = configure(DokkaProxyLogger(logger), deserialize<DokkaConfigurationImpl>(serializedConfigurationJSON))
+            = configure(DokkaProxyLogger(logger), Json.parse(DokkaConfigurationImpl.serializer(), serializedConfigurationJSON))
 
-    fun configure(logger: DokkaLogger, configuration: DokkaConfiguration) = with(configuration) {
-        generator = DokkaGenerator(configuration, logger)
+    fun configure(logger: DokkaLogger, configuration: DokkaConfigurationImpl) = with(configuration) {
+
+        fun defaultLinks(config: PassConfigurationImpl): List<ExternalDocumentationLinkImpl> {
+            val links = mutableListOf<ExternalDocumentationLinkImpl>()
+            if (!config.noJdkLink)
+                links += DokkaConfiguration.ExternalDocumentationLink
+                    .Builder("https://docs.oracle.com/javase/${config.jdkVersion}/docs/api/")
+                    .build() as ExternalDocumentationLinkImpl
+
+            if (!config.noStdlibLink)
+                links += DokkaConfiguration.ExternalDocumentationLink
+                    .Builder("https://kotlinlang.org/api/latest/jvm/stdlib/")
+                    .build() as ExternalDocumentationLinkImpl
+            return links
+        }
+
+        val configurationWithLinks =
+            configuration.copy(passesConfigurations =
+            passesConfigurations
+                .map {
+                    val links: List<ExternalDocumentationLinkImpl> = it.externalDocumentationLinks + defaultLinks(it)
+                    it.copy(externalDocumentationLinks = links)
+                }
+            )
+
+        generator = DokkaGenerator(configurationWithLinks, logger)
     }
 
     override fun generate() = generator.generate()

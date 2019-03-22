@@ -1,21 +1,25 @@
 package org.jetbrains.dokka
 
-import ru.yole.jkid.CustomSerializer
-import ru.yole.jkid.ValueSerializer
-import ru.yole.jkid.deserialization.JKidException
-import java.io.Serializable
+import kotlinx.serialization.*
+import kotlinx.serialization.internal.StringDescriptor
 import java.net.URL
 
 
-class UrlSerializer : ValueSerializer<URL?> {
-    override fun fromJsonValue(jsonValue: Any?): URL? {
-        if (jsonValue !is String?)
-            throw JKidException("Expected string representation of URL, got: $jsonValue")
-        return jsonValue?.let { URL(jsonValue) }
+@Serializer(forClass = URL::class)
+object UrlSerializer: KSerializer<URL> {
+
+    override val descriptor: SerialDescriptor =
+        StringDescriptor.withName("WithCustomDefault")
+
+    override fun deserialize(decoder: Decoder): URL {
+        return URL(decoder.decodeString())
     }
 
-    override fun toJsonValue(value: URL?): Any? = value?.toExternalForm()
+    override fun serialize(encoder: Encoder, obj: URL) {
+        encoder.encodeString(obj.toExternalForm())
+    }
 }
+
 
 enum class Platform(val key: String) {
     jvm("jvm"),
@@ -93,8 +97,8 @@ interface DokkaConfiguration {
     }
 
     interface ExternalDocumentationLink {
-        @CustomSerializer(UrlSerializer::class) val url: URL
-        @CustomSerializer(UrlSerializer::class) val packageListUrl: URL
+        @Serializable(with = UrlSerializer::class) val url: URL
+        @Serializable(with = UrlSerializer::class) val packageListUrl: URL
 
         open class Builder(open var url: URL? = null,
                            open var packageListUrl: URL? = null) {
@@ -102,25 +106,12 @@ interface DokkaConfiguration {
             constructor(root: String, packageList: String? = null) : this(URL(root), packageList?.let { URL(it) })
 
             fun build(): DokkaConfiguration.ExternalDocumentationLink =
-                    if (packageListUrl != null && url != null)
-                        ExternalDocumentationLinkImpl(url!!, packageListUrl!!)
-                    else if (url != null)
-                        ExternalDocumentationLinkImpl(url!!, URL(url!!, "package-list"))
-                    else
-                        throw IllegalArgumentException("url or url && packageListUrl must not be null for external documentation link")
+                if (packageListUrl != null && url != null)
+                    ExternalDocumentationLinkImpl(url!!, packageListUrl!!)
+                else if (url != null)
+                    ExternalDocumentationLinkImpl(url!!, URL(url!!, "package-list"))
+                else
+                    throw IllegalArgumentException("url or url && packageListUrl must not be null for external documentation link")
         }
     }
 }
-
-data class SerializeOnlyDokkaConfiguration(
-    override val outputDir: String,
-    override val format: String,
-    override val generateIndexPages: Boolean,
-    override val cacheRoot: String?,
-    override val impliedPlatforms: List<String>,
-    override val passesConfigurations: List<DokkaConfiguration.PassConfiguration>
-) : DokkaConfiguration
-
-
-data class ExternalDocumentationLinkImpl(@CustomSerializer(UrlSerializer::class) override val url: URL,
-                                         @CustomSerializer(UrlSerializer::class) override val packageListUrl: URL) : Serializable, DokkaConfiguration.ExternalDocumentationLink
