@@ -651,28 +651,24 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         val value = field.value
 
         val origin = kaptContext.origins[field]
-        val initializer = when (val element = origin?.element) {
-            is KtProperty -> element.initializer
-            is KtParameter -> element.defaultValue
-            else -> null
-        }
+        val propertyInitializer = (origin?.element as? KtProperty)?.initializer
 
         if (value != null) {
-            if (initializer != null) {
-                return convertConstantValueArguments(value, listOf(initializer))
+            if (propertyInitializer != null) {
+                return convertConstantValueArguments(value, listOf(propertyInitializer))
             }
 
             return convertValueOfPrimitiveTypeOrString(value)
         }
 
         val propertyType = (origin?.descriptor as? PropertyDescriptor)?.returnType
-        if (initializer != null && propertyType != null) {
+        if (propertyInitializer != null && propertyType != null) {
             val moduleDescriptor = kaptContext.generationState.module
             val evaluator = ConstantExpressionEvaluator(moduleDescriptor, LanguageVersionSettingsImpl.DEFAULT, kaptContext.project)
             val trace = DelegatingBindingTrace(kaptContext.bindingContext, "Kapt")
-            val const = evaluator.evaluateExpression(initializer, trace, propertyType)
+            val const = evaluator.evaluateExpression(propertyInitializer, trace, propertyType)
             if (const != null && !const.isError && const.canBeUsedInAnnotations && !const.usesNonConstValAsConstant) {
-                return convertConstantValueArguments(const.getValue(propertyType), listOf(initializer))
+                return convertConstantValueArguments(const.getValue(propertyType), listOf(propertyInitializer))
             }
         }
 

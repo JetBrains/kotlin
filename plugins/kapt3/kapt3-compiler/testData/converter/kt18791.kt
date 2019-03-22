@@ -66,8 +66,7 @@ annotation class Anno(
         val a8: Double,
         val a9: String)
 
-// TODO generate the right default field value for 'p0'
-class MyActivity(val p0: Int = lib.R.id.textView, val p1: Int = 5) {
+class MyActivity {
     @Bind(LibR.id.textView)
     @BindField(LibR.id.textView)
     val a = 0
