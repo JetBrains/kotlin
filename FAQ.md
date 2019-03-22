@@ -67,6 +67,23 @@ targets {
 
 </div>
 
+### Q: How do I rename the iOS framework? (main.framework)
+
+A: Use the `baseName` option. This will also set the module name.
+
+```groovy
+targets {
+    fromPreset(presets.iosArm64, 'myapp') {
+       compilations.main.outputKinds 'FRAMEWORK'
+       binaries {
+          framework {
+              baseName = "TheName"
+          }
+       }
+    }
+}
+```
+
 ### Q: How do I enable bitcode for my Kotlin framework?
 
 A: By default gradle plugin adds it on iOS target.
