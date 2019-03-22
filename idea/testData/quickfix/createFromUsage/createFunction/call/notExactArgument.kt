@@ -1,5 +1,6 @@
 // "Create function 'synchronized'" "false"
 // ACTION: Convert expression to 'Int'
+// ACTION: Round using roundToInt()
 // ERROR: Type mismatch: inferred type is Float but Int was expected
 // WITH_RUNTIME
 
