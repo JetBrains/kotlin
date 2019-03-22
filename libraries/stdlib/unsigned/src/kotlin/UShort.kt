@@ -184,7 +184,7 @@ public inline class UShort @PublishedApi internal constructor(@PublishedApi inte
      *
      * The resulting `Int` value represents the same numerical value as this `UShort`.
      *
-     * The least significant 16 bits of the resulting `Int` value are the same as the binary representation of this `UShort` value,
+     * The least significant 16 bits of the resulting `Int` value are the same as the bits of this `UShort` value,
      * whereas the most significant 16 bits are filled with zeros.
      */
     @kotlin.internal.InlineOnly
@@ -194,7 +194,7 @@ public inline class UShort @PublishedApi internal constructor(@PublishedApi inte
      *
      * The resulting `Long` value represents the same numerical value as this `UShort`.
      *
-     * The least significant 16 bits of the resulting `Long` value are the same as the binary representation of this `UShort` value,
+     * The least significant 16 bits of the resulting `Long` value are the same as the bits of this `UShort` value,
      * whereas the most significant 48 bits are filled with zeros.
      */
     @kotlin.internal.InlineOnly
@@ -218,7 +218,7 @@ public inline class UShort @PublishedApi internal constructor(@PublishedApi inte
      *
      * The resulting `UInt` value represents the same numerical value as this `UShort`.
      *
-     * The least significant 16 bits of the resulting `UInt` value are the same as the binary representation of this `UShort` value,
+     * The least significant 16 bits of the resulting `UInt` value are the same as the bits of this `UShort` value,
      * whereas the most significant 16 bits are filled with zeros.
      */
     @kotlin.internal.InlineOnly
@@ -228,7 +228,7 @@ public inline class UShort @PublishedApi internal constructor(@PublishedApi inte
      *
      * The resulting `ULong` value represents the same numerical value as this `UShort`.
      *
-     * The least significant 16 bits of the resulting `ULong` value are the same as the binary representation of this `UShort` value,
+     * The least significant 16 bits of the resulting `ULong` value are the same as the bits of this `UShort` value,
      * whereas the most significant 48 bits are filled with zeros.
      */
     @kotlin.internal.InlineOnly
@@ -258,7 +258,7 @@ public inline class UShort @PublishedApi internal constructor(@PublishedApi inte
  *
  * If this value is positive, the resulting `UShort` value represents the same numerical value as this `Byte`.
  *
- * The least significant 8 bits of the resulting `UShort` value are the same as the binary representation of this `Byte` value,
+ * The least significant 8 bits of the resulting `UShort` value are the same as the bits of this `Byte` value,
  * whereas the most significant 8 bits are filled with the sign bit of this value.
  */
 @SinceKotlin("1.3")

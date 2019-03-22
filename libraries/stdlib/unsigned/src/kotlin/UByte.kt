@@ -173,7 +173,7 @@ public inline class UByte @PublishedApi internal constructor(@PublishedApi inter
      *
      * The resulting `Short` value represents the same numerical value as this `UByte`.
      *
-     * The least significant 8 bits of the resulting `Short` value are the same as the binary representation of this `UByte` value,
+     * The least significant 8 bits of the resulting `Short` value are the same as the bits of this `UByte` value,
      * whereas the most significant 8 bits are filled with zeros.
      */
     @kotlin.internal.InlineOnly
@@ -183,7 +183,7 @@ public inline class UByte @PublishedApi internal constructor(@PublishedApi inter
      *
      * The resulting `Int` value represents the same numerical value as this `UByte`.
      *
-     * The least significant 8 bits of the resulting `Int` value are the same as the binary representation of this `UByte` value,
+     * The least significant 8 bits of the resulting `Int` value are the same as the bits of this `UByte` value,
      * whereas the most significant 24 bits are filled with zeros.
      */
     @kotlin.internal.InlineOnly
@@ -193,7 +193,7 @@ public inline class UByte @PublishedApi internal constructor(@PublishedApi inter
      *
      * The resulting `Long` value represents the same numerical value as this `UByte`.
      *
-     * The least significant 8 bits of the resulting `Long` value are the same as the binary representation of this `UByte` value,
+     * The least significant 8 bits of the resulting `Long` value are the same as the bits of this `UByte` value,
      * whereas the most significant 56 bits are filled with zeros.
      */
     @kotlin.internal.InlineOnly
@@ -207,7 +207,7 @@ public inline class UByte @PublishedApi internal constructor(@PublishedApi inter
      *
      * The resulting `UShort` value represents the same numerical value as this `UByte`.
      *
-     * The least significant 8 bits of the resulting `UShort` value are the same as the binary representation of this `UByte` value,
+     * The least significant 8 bits of the resulting `UShort` value are the same as the bits of this `UByte` value,
      * whereas the most significant 8 bits are filled with zeros.
      */
     @kotlin.internal.InlineOnly
@@ -217,7 +217,7 @@ public inline class UByte @PublishedApi internal constructor(@PublishedApi inter
      *
      * The resulting `UInt` value represents the same numerical value as this `UByte`.
      *
-     * The least significant 8 bits of the resulting `UInt` value are the same as the binary representation of this `UByte` value,
+     * The least significant 8 bits of the resulting `UInt` value are the same as the bits of this `UByte` value,
      * whereas the most significant 24 bits are filled with zeros.
      */
     @kotlin.internal.InlineOnly
@@ -227,7 +227,7 @@ public inline class UByte @PublishedApi internal constructor(@PublishedApi inter
      *
      * The resulting `ULong` value represents the same numerical value as this `UByte`.
      *
-     * The least significant 8 bits of the resulting `ULong` value are the same as the binary representation of this `UByte` value,
+     * The least significant 8 bits of the resulting `ULong` value are the same as the bits of this `UByte` value,
      * whereas the most significant 56 bits are filled with zeros.
      */
     @kotlin.internal.InlineOnly
