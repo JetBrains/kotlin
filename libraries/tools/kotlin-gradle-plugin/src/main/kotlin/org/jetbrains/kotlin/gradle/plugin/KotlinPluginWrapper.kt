@@ -33,8 +33,7 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlugin
 import org.jetbrains.kotlin.gradle.tasks.KOTLIN_COMPILER_EMBEDDABLE
 import org.jetbrains.kotlin.gradle.tasks.KOTLIN_MODULE_GROUP
 import org.jetbrains.kotlin.gradle.utils.checkGradleCompatibility
-import java.io.FileNotFoundException
-import java.util.*
+import org.jetbrains.kotlin.gradle.utils.loadPropertyFromResources
 import javax.inject.Inject
 import kotlin.reflect.KClass
 
@@ -168,14 +167,7 @@ fun Project.getKotlinPluginVersion(): String? =
 
 fun Plugin<*>.loadKotlinVersionFromResource(log: Logger): String {
     log.kotlinDebug("Loading version information")
-    val props = Properties()
-    val propFileName = "project.properties"
-    val inputStream = javaClass.classLoader!!.getResourceAsStream(propFileName)
-        ?: throw FileNotFoundException("property file '$propFileName' not found in the classpath")
-
-    props.load(inputStream)
-
-    val projectVersion = props["project.version"] as String
+    val projectVersion = loadPropertyFromResources("project.properties", "project.version")
     log.kotlinDebug("Found project version [$projectVersion]")
     return projectVersion
 }

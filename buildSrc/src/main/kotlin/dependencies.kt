@@ -96,6 +96,8 @@ val Project.protobufRepo: String
 fun Project.protobufLite(): String = "org.jetbrains.kotlin:protobuf-lite:$protobufVersion"
 fun Project.protobufFull(): String = "org.jetbrains.kotlin:protobuf-relocated:$protobufVersion"
 
+val Project.kotlinNativeVersion: String get() = property("versions.kotlin-native") as String
+
 fun File.matchMaybeVersionedArtifact(baseName: String) = name.matches(baseName.toMaybeVersionedJarRegex())
 
 private val wildcardsRe = """[^*?]+|(\*)|(\?)""".toRegex()

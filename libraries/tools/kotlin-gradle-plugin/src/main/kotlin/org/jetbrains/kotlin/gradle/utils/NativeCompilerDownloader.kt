@@ -12,8 +12,8 @@ import org.gradle.api.file.FileTree
 import org.gradle.api.logging.Logger
 import org.jetbrains.kotlin.compilerRunner.KonanCompilerRunner
 import org.jetbrains.kotlin.compilerRunner.konanVersion
+import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.konan.KonanVersion
-import org.jetbrains.kotlin.konan.KonanVersionImpl
 import org.jetbrains.kotlin.konan.MetaVersion
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
@@ -25,7 +25,9 @@ class NativeCompilerDownloader(
 ) {
 
     internal companion object {
-        val DEFAULT_KONAN_VERSION = KonanVersionImpl(MetaVersion.EAP, 1, 2, 0, 8879)
+        val DEFAULT_KONAN_VERSION: KonanVersion by lazy {
+            KonanVersion.fromString(loadPropertyFromResources("project.properties", "kotlin.native.version"))
+        }
         const val BASE_DOWNLOAD_URL = "https://download.jetbrains.com/kotlin/native/builds"
     }
 
@@ -92,8 +94,8 @@ class NativeCompilerDownloader(
         val configuration = project.configurations.detachedConfiguration(compilerDependency)
         val archive = configuration.files.single()
 
-        logger.info("Use Kotlin/Native compiler archive: ${archive.absolutePath}")
-        logger.lifecycle("Unpack Kotlin/Native compiler (version $versionString)...")
+        logger.kotlinInfo("Using Kotlin/Native compiler archive: ${archive.absolutePath}")
+        logger.lifecycle("Unpacking Kotlin/Native compiler (version $versionString)...")
         project.copy {
             it.from(archiveFileTree(archive))
             it.into(DependencyDirectories.localKonanDir)

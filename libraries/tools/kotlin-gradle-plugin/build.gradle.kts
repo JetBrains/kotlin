@@ -101,12 +101,15 @@ tasks {
     }
 
     named<ProcessResources>("processResources") {
-        val propertiesToExpand = mapOf("projectVersion" to project.version)
+        val propertiesToExpand = mapOf(
+            "projectVersion" to project.version,
+            "kotlinNativeVersion" to project.kotlinNativeVersion
+        )
         for ((name, value) in propertiesToExpand) {
             inputs.property(name, value)
         }
         filesMatching("project.properties") {
-            expand("projectVersion" to project.version)
+            expand(propertiesToExpand)
         }
     }
 
