@@ -201,7 +201,7 @@ public inline class UInt @PublishedApi internal constructor(@PublishedApi intern
      *
      * The resulting `Long` value represents the same numerical value as this `UInt`.
      *
-     * The least significant 32 bits of the resulting `Long` value are the same as the binary representation of this `UInt` value,
+     * The least significant 32 bits of the resulting `Long` value are the same as the bits of this `UInt` value,
      * whereas the most significant 32 bits are filled with zeros.
      */
     @kotlin.internal.InlineOnly
@@ -235,7 +235,7 @@ public inline class UInt @PublishedApi internal constructor(@PublishedApi intern
      *
      * The resulting `ULong` value represents the same numerical value as this `UInt`.
      *
-     * The least significant 32 bits of the resulting `ULong` value are the same as the binary representation of this `UInt` value,
+     * The least significant 32 bits of the resulting `ULong` value are the same as the bits of this `UInt` value,
      * whereas the most significant 32 bits are filled with zeros.
      */
     @kotlin.internal.InlineOnly
@@ -267,7 +267,7 @@ public inline class UInt @PublishedApi internal constructor(@PublishedApi intern
  *
  * If this value is positive, the resulting `UInt` value represents the same numerical value as this `Byte`.
  *
- * The least significant 8 bits of the resulting `UInt` value are the same as the binary representation of this `Byte` value,
+ * The least significant 8 bits of the resulting `UInt` value are the same as the bits of this `Byte` value,
  * whereas the most significant 24 bits are filled with the sign bit of this value.
  */
 @SinceKotlin("1.3")
@@ -279,7 +279,7 @@ public inline fun Byte.toUInt(): UInt = UInt(this.toInt())
  *
  * If this value is positive, the resulting `UInt` value represents the same numerical value as this `Short`.
  *
- * The least significant 16 bits of the resulting `UInt` value are the same as the binary representation of this `Short` value,
+ * The least significant 16 bits of the resulting `UInt` value are the same as the bits of this `Short` value,
  * whereas the most significant 16 bits are filled with the sign bit of this value.
  */
 @SinceKotlin("1.3")

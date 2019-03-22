@@ -202,7 +202,7 @@ public class Byte private constructor() : Number(), Comparable<Byte> {
      *
      * The resulting `Short` value represents the same numerical value as this `Byte`.
      *
-     * The least significant 8 bits of the resulting `Short` value are the same as the binary representation of this `Byte` value,
+     * The least significant 8 bits of the resulting `Short` value are the same as the bits of this `Byte` value,
      * whereas the most significant 8 bits are filled with the sign bit of this value.
      */
     public override fun toShort(): Short
@@ -211,7 +211,7 @@ public class Byte private constructor() : Number(), Comparable<Byte> {
      *
      * The resulting `Int` value represents the same numerical value as this `Byte`.
      *
-     * The least significant 8 bits of the resulting `Int` value are the same as the binary representation of this `Byte` value,
+     * The least significant 8 bits of the resulting `Int` value are the same as the bits of this `Byte` value,
      * whereas the most significant 24 bits are filled with the sign bit of this value.
      */
     public override fun toInt(): Int
@@ -220,7 +220,7 @@ public class Byte private constructor() : Number(), Comparable<Byte> {
      *
      * The resulting `Long` value represents the same numerical value as this `Byte`.
      *
-     * The least significant 8 bits of the resulting `Long` value are the same as the binary representation of this `Byte` value,
+     * The least significant 8 bits of the resulting `Long` value are the same as the bits of this `Byte` value,
      * whereas the most significant 56 bits are filled with the sign bit of this value.
      */
     public override fun toLong(): Long
@@ -440,7 +440,7 @@ public class Short private constructor() : Number(), Comparable<Short> {
      *
      * The resulting `Int` value represents the same numerical value as this `Short`.
      *
-     * The least significant 16 bits of the resulting `Int` value are the same as the binary representation of this `Short` value,
+     * The least significant 16 bits of the resulting `Int` value are the same as the bits of this `Short` value,
      * whereas the most significant 16 bits are filled with the sign bit of this value.
      */
     public override fun toInt(): Int
@@ -449,7 +449,7 @@ public class Short private constructor() : Number(), Comparable<Short> {
      *
      * The resulting `Long` value represents the same numerical value as this `Short`.
      *
-     * The least significant 16 bits of the resulting `Long` value are the same as the binary representation of this `Short` value,
+     * The least significant 16 bits of the resulting `Long` value are the same as the bits of this `Short` value,
      * whereas the most significant 48 bits are filled with the sign bit of this value.
      */
     public override fun toLong(): Long
@@ -695,7 +695,7 @@ public class Int private constructor() : Number(), Comparable<Int> {
      *
      * The resulting `Long` value represents the same numerical value as this `Int`.
      *
-     * The least significant 32 bits of the resulting `Long` value are the same as the binary representation of this `Int` value,
+     * The least significant 32 bits of the resulting `Long` value are the same as the bits of this `Int` value,
      * whereas the most significant 32 bits are filled with the sign bit of this value.
      */
     public override fun toLong(): Long

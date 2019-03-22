@@ -224,7 +224,7 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
                 else -> {
                     out.println("     * The resulting `$signed` value represents the same numerical value as this `$className`.")
                     out.println("     *")
-                    out.println("     * The ${lsb(type.bitSize)} of the resulting `$signed` value are the same as the binary representation of this `$className` value,")
+                    out.println("     * The ${lsb(type.bitSize)} of the resulting `$signed` value are the same as the bits of this `$className` value,")
                     out.println("     * whereas the ${msb(otherType.bitSize - type.bitSize)} are filled with zeros.")
                 }
             }
@@ -257,7 +257,7 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
                     else -> {
                         out.println("     * The resulting `$name` value represents the same numerical value as this `$className`.")
                         out.println("     *")
-                        out.println("     * The ${lsb(type.bitSize)} of the resulting `$name` value are the same as the binary representation of this `$className` value,")
+                        out.println("     * The ${lsb(type.bitSize)} of the resulting `$name` value are the same as the bits of this `$className` value,")
                         out.println("     * whereas the ${msb(otherType.bitSize - type.bitSize)} are filled with zeros.")
                     }
                 }
@@ -311,7 +311,7 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
                 otherType < type -> {
                     out.println(" * If this value is positive, the resulting `$className` value represents the same numerical value as this `$otherSigned`.")
                     out.println(" *")
-                    out.println(" * The ${lsb(otherType.bitSize)} of the resulting `$className` value are the same as the binary representation of this `$otherSigned` value,")
+                    out.println(" * The ${lsb(otherType.bitSize)} of the resulting `$className` value are the same as the bits of this `$otherSigned` value,")
                     out.println(" * whereas the ${msb(type.bitSize - otherType.bitSize)} are filled with the sign bit of this value.")
                 }
                 otherType == type -> {
