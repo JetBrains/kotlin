@@ -39,6 +39,7 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiWhiteSpace
+import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.PsiUtilBase
 import com.intellij.util.DocumentUtil
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
@@ -154,26 +155,26 @@ class KotlinUnusedImportInspection : AbstractKotlinInspection() {
         val highlightingSession = HighlightingSessionImpl.getHighlightingSession(file, progress)
 
         val project = highlightingSession.project
-        val editor = PsiUtilBase.findEditor(file)
-        if (editor != null) {
-            val modificationStamp = editor.document.modificationStamp
-            val invokeFixLater = Disposable {
-                // later because should invoke when highlighting is finished
-                ApplicationManager.getApplication().invokeLater {
-                    if (timeToOptimizeImportsOnTheFly(file, editor, project) && editor.document.modificationStamp == modificationStamp) {
-                        optimizeImportsOnTheFly(file, optimizedImports, editor, project)
-                    }
+
+        val modificationCount = PsiModificationTracker.SERVICE.getInstance(project).modificationCount
+        val invokeFixLater = Disposable {
+            // later because should invoke when highlighting is finished
+            ApplicationManager.getApplication().invokeLater {
+                val editor = PsiUtilBase.findEditor(file)
+                val currentModificationCount = PsiModificationTracker.SERVICE.getInstance(project).modificationCount
+                if (editor != null && currentModificationCount == modificationCount && timeToOptimizeImportsOnTheFly(file, editor, project)) {
+                    optimizeImportsOnTheFly(file, optimizedImports, editor, project)
                 }
             }
+        }
 
-            if (Disposer.isDisposed(progress)) return
-            Disposer.register(progress, invokeFixLater)
+        if (Disposer.isDisposed(progress)) return
+        Disposer.register(progress, invokeFixLater)
 
-            if (progress.isCanceled) {
-                Disposer.dispose(invokeFixLater)
-                Disposer.dispose(progress)
-                progress.checkCanceled()
-            }
+        if (progress.isCanceled) {
+            Disposer.dispose(invokeFixLater)
+            Disposer.dispose(progress)
+            progress.checkCanceled()
         }
     }
 
