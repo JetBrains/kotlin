@@ -139,7 +139,12 @@ class TotalOrderEquals(operandType: Type) : IntrinsicMethod() {
     ): IrIntrinsicFunction =
         object : IrIntrinsicFunction(expression, signature, context, listOf(boxedType, boxedType)) {
             override fun genInvokeInstruction(v: InstructionAdapter) {
-                v.invokevirtual(boxedType.internalName, "equals", Type.getMethodDescriptor(Type.BOOLEAN_TYPE, AsmTypes.OBJECT_TYPE), false)
+                v.invokestatic(
+                    IntrinsicMethods.INTRINSICS_CLASS_NAME,
+                    "areEqual",
+                    Type.getMethodDescriptor(Type.BOOLEAN_TYPE, AsmTypes.OBJECT_TYPE, AsmTypes.OBJECT_TYPE),
+                    false
+                )
             }
         }
 }
