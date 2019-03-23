@@ -12,10 +12,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.nj2k.conversions.multiResolveFqName
 import org.jetbrains.kotlin.nj2k.conversions.resolveFqName
-import org.jetbrains.kotlin.nj2k.tree.JKClass
-import org.jetbrains.kotlin.nj2k.tree.JKDeclaration
-import org.jetbrains.kotlin.nj2k.tree.JKMethod
-import org.jetbrains.kotlin.nj2k.tree.JKVariable
+import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -86,7 +83,7 @@ class JKSymbolProvider {
         }
 
     fun transferSymbol(to: JKDeclaration, from: JKDeclaration) = symbolsByJK[from]!!.let {
-        it as JKUniverseSymbol<*>
+        it as JKUniverseSymbol<JKTreeElement>
         it.target = to
         symbolsByJK[to] = it
     }
