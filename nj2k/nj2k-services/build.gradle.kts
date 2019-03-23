@@ -7,7 +7,6 @@ plugins {
 dependencies {
     testRuntime(intellijDep())
 
-    compile(project(":kotlin-stdlib-jdk8"))
     compileOnly(project(":kotlin-reflect-api"))
     compile(project(":core:descriptors"))
     compile(project(":core:descriptors.jvm"))
