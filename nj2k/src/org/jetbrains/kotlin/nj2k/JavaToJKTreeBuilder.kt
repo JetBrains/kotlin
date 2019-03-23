@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.idea.caches.lightClasses.KtLightClassForDecompiledDeclaration
 import org.jetbrains.kotlin.idea.j2k.IdeaDocCommentConverter
 import org.jetbrains.kotlin.idea.j2k.content
+import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.j2k.ReferenceSearcher
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -53,9 +54,10 @@ import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 
-class JavaToJKTreeBuilder(
+class JavaToJKTreeBuilder constructor(
     var symbolProvider: JKSymbolProvider,
-    converterServices: NewJavaToKotlinServices
+    converterServices: NewJavaToKotlinServices,
+    private val importStorage: ImportStorage
 ) {
 
     private val expressionTreeMapper = ExpressionTreeMapper()
@@ -294,12 +296,14 @@ class JavaToJKTreeBuilder(
                         is KtNamedFunction -> {
                             if (origin.isExtensionDeclaration()) {
                                 val receiver = arguments.expressions.firstOrNull()?.toJK()?.parenthesizeIfBinaryExpression()
+                                origin.fqName?.also { importStorage.addImport(it) }
                                 JKJavaMethodCallExpressionImpl(
                                     symbolProvider.provideDirectSymbol(origin) as JKMethodSymbol,
                                     arguments.expressions.drop(1).map { it.toJK() }.toArgumentList(),
                                     typeArguments
                                 ).qualified(receiver)
                             } else {
+                                origin.fqName?.also { importStorage.addImport(it) }
                                 JKJavaMethodCallExpressionImpl(
                                     symbolProvider.provideDirectSymbol(origin) as JKMethodSymbol,
                                     arguments.toJK(),
@@ -308,6 +312,7 @@ class JavaToJKTreeBuilder(
                             }
                         }
                         is KtProperty, is KtPropertyAccessor, is KtParameter -> {
+                            origin.getKotlinFqName()?.also { importStorage.addImport(it) }
                             val property =
                                 if (origin is KtPropertyAccessor) origin.parent as KtProperty
                                 else origin as KtNamedDeclaration

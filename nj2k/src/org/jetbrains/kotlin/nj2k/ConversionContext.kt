@@ -13,7 +13,8 @@ import org.jetbrains.kotlin.nj2k.tree.JKElement
 data class ConversionContext(
     val symbolProvider: JKSymbolProvider,
     val converter: NewJavaToKotlinConverter,
-    val inConversionContext: (PsiElement) -> Boolean
+    val inConversionContext: (PsiElement) -> Boolean,
+    val importStorage: ImportStorage
 ) {
     val project: Project get() = converter.project
     val typeFlavorCalculator = TypeFlavorCalculator(object : TypeFlavorConverterFacade {
@@ -26,4 +27,5 @@ data class ConversionContext(
 
         override fun inConversionScope(element: PsiElement): Boolean = inConversionContext(element)
     })
+
 }

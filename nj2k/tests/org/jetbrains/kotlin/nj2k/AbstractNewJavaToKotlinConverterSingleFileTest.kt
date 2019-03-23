@@ -20,7 +20,6 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.j2k.IdeaJavaToKotlinServices
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterSingleFileTest
 import org.jetbrains.kotlin.j2k.ConverterSettings
-import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
@@ -34,12 +33,8 @@ abstract class AbstractNewJavaToKotlinConverterSingleFileTest : AbstractJavaToKo
 
     override fun fileToKotlin(text: String, settings: ConverterSettings, project: Project): String {
         val file = createJavaFile(text)
-        val factory = KtPsiFactory(project, true)
-
         return NewJavaToKotlinConverter(project, settings, IdeaJavaToKotlinServices)
-            .filesToKotlin(listOf(file), NewJ2kPostProcessor(true, settings)).let { (results, _) ->
-                factory.createFileWithLightClassSupport("Dummy.kt", results.single(), file)
-            }.text
+            .filesToKotlin(listOf(file), NewJ2kPostProcessor(true, settings)).results.single()
     }
 
     override fun provideExpectedFile(javaPath: String): File =

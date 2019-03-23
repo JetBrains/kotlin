@@ -21,7 +21,6 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.j2k.*
 import org.jetbrains.kotlin.nj2k.tree.JKTreeElement
 import org.jetbrains.kotlin.nj2k.tree.prettyDebugPrintTree
-import org.jetbrains.kotlin.psi.KtPsiFactory
 
 class NewJavaToKotlinConverter(
     val project: Project,
@@ -43,20 +42,25 @@ class NewJavaToKotlinConverter(
     override fun elementsToKotlin(inputElements: List<PsiElement>, processor: WithProgressProcessor): Result {
         val symbolProvider = JKSymbolProvider()
         symbolProvider.preBuildTree(inputElements)
-        val treeBuilder = JavaToJKTreeBuilder(symbolProvider, converterServices)
+        val importStorage = ImportStorage()
+        val treeBuilder = JavaToJKTreeBuilder(symbolProvider, converterServices, importStorage)
         val asts = inputElements.mapNotNull(treeBuilder::buildTree)
-        val factory = KtPsiFactory(project, true)
 
         val context = ConversionContext(
             symbolProvider,
             this,
-            { it.containingFile in inputElements }
+            { it.containingFile in inputElements },
+            importStorage
         )
         ConversionsRunner.doApply(asts, context)
         val kotlinCodes = asts.map { NewCodeBuilder().run { printCodeOut(it) } }
         return Result(
             kotlinCodes.map { code ->
-                ElementResult(code, emptySet(), ParseContext.TOP_LEVEL)
+                ElementResult(
+                    code,
+                    importsToAdd = importStorage.getImports(),
+                    parseContext = ParseContext.TOP_LEVEL
+                )
             },
             null
         )
