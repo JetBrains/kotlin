@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.ir.backend.js.utils.getJsQualifier
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.symbols.IrExternalPackageFragmentSymbol
-import org.jetbrains.kotlin.ir.util.getFqName
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.name.FqName
@@ -66,7 +66,7 @@ fun moveBodilessDeclarationsToSeparatePlace(context: JsIrBackendContext, module:
     )
 
     fun isBuiltInClass(declaration: IrDeclaration): Boolean =
-        declaration is IrClass && declaration.getFqName() in BODILESS_BUILTIN_CLASSES
+        declaration is IrClass && declaration.fqNameWhenAvailable in BODILESS_BUILTIN_CLASSES
 
     fun collectExternalClasses(container: IrDeclarationContainer, includeCurrentLevel: Boolean): List<IrClass> {
         val externalClasses =

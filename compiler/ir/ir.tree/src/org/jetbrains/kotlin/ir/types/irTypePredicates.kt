@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.util.getFqName
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.resolve.DescriptorUtils.getFqName
 
@@ -27,7 +27,7 @@ private fun classFqNameEquals(symbol: IrClassSymbol, fqName: FqNameUnsafe): Bool
     if (symbol.isBound) classFqNameEquals(symbol.owner, fqName) else classFqNameEquals(symbol.descriptor, fqName)
 
 private fun classFqNameEquals(declaration: IrClass, fqName: FqNameUnsafe): Boolean =
-    declaration.name == fqName.shortName() && fqName == declaration.getFqName()?.toUnsafe()
+    declaration.name == fqName.shortName() && fqName == declaration.fqNameWhenAvailable?.toUnsafe()
 
 private fun classFqNameEquals(descriptor: ClassDescriptor, fqName: FqNameUnsafe): Boolean =
     descriptor.name == fqName.shortName() && fqName == getFqName(descriptor)

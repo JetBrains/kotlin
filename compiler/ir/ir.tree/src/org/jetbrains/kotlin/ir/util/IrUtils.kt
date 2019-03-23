@@ -463,12 +463,3 @@ val IrDeclaration.file: IrFile get() = parent.let {
         else -> TODO("Unexpected declaration parent")
     }
 }
-
-fun IrDeclarationWithName.getFqName(): FqName? {
-    val parentFqName = when (val parent = parent) {
-        is IrPackageFragment -> parent.fqName
-        is IrDeclarationWithName -> parent.getFqName()
-        else -> null
-    }
-    return parentFqName?.child(name)
-}

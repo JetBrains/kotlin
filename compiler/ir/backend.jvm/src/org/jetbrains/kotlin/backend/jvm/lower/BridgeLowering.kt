@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.name.FqName
@@ -389,7 +390,7 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
 
     private fun makeDescription(classFqName: String, funName: String, arity: Int) = SpecialMethodDescription(FqName(classFqName), Name.identifier(funName), arity)
 
-    private fun IrSimpleFunction.toDescription() = SpecialMethodDescription(parentAsClass.fqName, name, valueParameters.size)
+    private fun IrSimpleFunction.toDescription() = SpecialMethodDescription(parentAsClass.fqNameWhenAvailable, name, valueParameters.size)
 
     private fun constFalse(bridge: IrSimpleFunction) =
         IrConstImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.booleanType, IrConstKind.Boolean, false)
@@ -434,11 +435,11 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
         override fun getOverridden() = irFunction.overriddenSymbols.map { FunctionHandleForIrFunction(it.owner) }
 
         override fun hashCode(): Int =
-            irFunction.parent.safeAs<IrClass>()?.fqName.hashCode() + 31 * irFunction.getJvmSignature().hashCode()
+            irFunction.parent.safeAs<IrClass>()?.fqNameWhenAvailable.hashCode() + 31 * irFunction.getJvmSignature().hashCode()
 
         override fun equals(other: Any?): Boolean =
             other is FunctionHandleForIrFunction &&
-                    irFunction.parent.safeAs<IrClass>()?.fqName == other.irFunction.parent.safeAs<IrClass>()?.fqName &&
+                    irFunction.parent.safeAs<IrClass>()?.fqNameWhenAvailable == other.irFunction.parent.safeAs<IrClass>()?.fqNameWhenAvailable &&
                     irFunction.getJvmSignature() == other.irFunction.getJvmSignature()
     }
 
