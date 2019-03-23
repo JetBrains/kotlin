@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.core.moveFunctionLiteralOutsideParenthesesIfPossible
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.core.setVisibility
 import org.jetbrains.kotlin.idea.inspections.*
@@ -38,6 +37,7 @@ import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isTrivialSta
 import org.jetbrains.kotlin.idea.quickfix.RemoveModifierFix
 import org.jetbrains.kotlin.idea.quickfix.RemoveUselessCastFix
 import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.j2k.ConverterSettings
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
@@ -173,76 +173,6 @@ object J2KPostProcessingRegistrarImpl : J2KPostProcessingRegistrar {
                 return {
                     if (intention.applicabilityRange(tElement) != null) { // check availability of the intention again because something could change
                         intention.applyTo(element, null)
-                    }
-                }
-            }
-        })
-    }
-
-    private inline fun <TInspection : AbstractKotlinInspection> registerGeneralInspectionBasedProcessing(
-        inspection: TInspection,
-        acceptInformationLevel: Boolean = false
-    ) {
-        _processings.add(object : J2kPostProcessing {
-            override val writeActionNeeded = false
-
-            fun <D : CommonProblemDescriptor> QuickFix<D>.applyFixSmart(project: Project, descriptor: D) {
-                if (descriptor is ProblemDescriptor) {
-                    if (this is IntentionWrapper) {
-                        @Suppress("NOT_YET_SUPPORTED_IN_INLINE")
-                        fun applySelfTargetingIntention(action: SelfTargetingIntention<PsiElement>) {
-                            val target = action.getTarget(descriptor.psiElement.startOffset, descriptor.psiElement.containingFile) ?: return
-                            if (!action.isApplicableTo(target, descriptor.psiElement.startOffset)) return
-                            action.applyTo(target, null)
-                        }
-
-                        @Suppress("NOT_YET_SUPPORTED_IN_INLINE")
-                        fun applyQuickFixActionBase(action: QuickFixActionBase<PsiElement>) {
-                            if (!action.isAvailable(project, null, descriptor.psiElement.containingFile)) return
-                            action.invoke(project, null, descriptor.psiElement.containingFile)
-                        }
-
-
-                        @Suppress("NOT_YET_SUPPORTED_IN_INLINE")
-                        fun applyIntention() {
-                            val action = this.action
-                            when (action) {
-                                is SelfTargetingIntention<*> -> applySelfTargetingIntention(action as SelfTargetingIntention<PsiElement>)
-                                is QuickFixActionBase<*> -> applyQuickFixActionBase(action)
-                            }
-                        }
-
-
-                        if (this.startInWriteAction()) {
-                            ApplicationManager.getApplication().runWriteAction(::applyIntention)
-                        } else {
-                            applyIntention()
-                        }
-
-                    }
-                }
-
-                ApplicationManager.getApplication().runWriteAction {
-                    this.applyFix(project, descriptor)
-                }
-            }
-
-            override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
-                val holder = ProblemsHolder(InspectionManager.getInstance(element.project), element.containingFile, false)
-                val visitor = inspection.buildVisitor(
-                    holder,
-                    false,
-                    LocalInspectionToolSession(element.containingFile, 0, element.containingFile.endOffset)
-                )
-                element.accept(visitor)
-                if (!holder.hasResults()) return null
-                return {
-                    holder.results.clear()
-                    element.accept(visitor)
-                    if (holder.hasResults()) {
-                        holder.results
-                            .filter { acceptInformationLevel || it.highlightType != ProblemHighlightType.INFORMATION }
-                            .forEach { it.fixes?.firstOrNull()?.applyFixSmart(element.project, it) }
                     }
                 }
             }

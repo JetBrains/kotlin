@@ -36,7 +36,9 @@ import org.jetbrains.kotlin.j2k.PostProcessor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
+import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import java.util.*
 
@@ -71,20 +73,17 @@ class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
                                 runWriteAction {
                                     action()
                                 }
-                            }
-                            else {
+                            } else {
                                 action()
                             }
-                        }
-                        else {
+                        } else {
                             modificationStamp = null
                         }
                     }
                 }
 
                 if (modificationStamp == file.modificationStamp) break
-            }
-            while (elementToActions.isNotEmpty())
+            } while (elementToActions.isNotEmpty())
 
 
             if (formatCode) {
@@ -95,8 +94,7 @@ class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
                             if (rangeMarker.isValid) {
                                 codeStyleManager.reformatRange(file, rangeMarker.startOffset, rangeMarker.endOffset)
                             }
-                        }
-                        else {
+                        } else {
                             codeStyleManager.reformat(file)
                         }
                         Unit
@@ -122,12 +120,16 @@ class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
                     super.visitElement(element)
 
                     if (rangeResult == RangeFilterResult.PROCESS) {
-                        J2KPostProcessingRegistrar.processings.forEach { processing ->
+                        J2KPostProcessingRegistrarImpl.processings.forEach { processing ->
                             val action = processing.createAction(element, diagnostics)
                             if (action != null) {
-                                availableActions.add(ActionData(element, action,
-                                                                J2KPostProcessingRegistrar.priority(processing),
-                                                                processing.writeActionNeeded))
+                                availableActions.add(
+                                    ActionData(
+                                        element, action,
+                                        J2KPostProcessingRegistrarImpl.priority(processing),
+                                        processing.writeActionNeeded
+                                    )
+                                )
                             }
                         }
                     }

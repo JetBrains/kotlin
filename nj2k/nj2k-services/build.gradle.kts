@@ -26,7 +26,6 @@ dependencies {
     compile(projectRuntimeJar(":kotlin-daemon-client"))
     compile(project(":kotlin-compiler-runner")) { isTransitive = false }
     compile(project(":compiler:plugin-api"))
-    compile(project(":eval4j"))
     compile(project(":j2k"))
     compile(project(":nj2k"))
     compile(project(":idea"))
