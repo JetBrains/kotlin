@@ -369,7 +369,7 @@ class DeclarationsChecker(
             upperBoundCheckRequests.add(DescriptorResolver.UpperBoundCheckRequest(name, typeReference, type))
         }
 
-        DescriptorResolver.checkUpperBoundTypes(trace, upperBoundCheckRequests)
+        DescriptorResolver.checkUpperBoundTypes(trace, upperBoundCheckRequests, false)
 
         for (request in upperBoundCheckRequests) {
             DescriptorResolver.checkBounds(request.upperBound, request.upperBoundType, trace)

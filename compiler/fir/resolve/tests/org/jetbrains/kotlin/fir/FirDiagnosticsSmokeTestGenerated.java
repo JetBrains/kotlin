@@ -8031,6 +8031,16 @@ public class FirDiagnosticsSmokeTestGenerated extends AbstractFirDiagnosticsSmok
             runTest("compiler/testData/diagnostics/tests/generics/doNotCaptureSupertype.kt");
         }
 
+        @TestMetadata("finalUpperBoundWithOverride.kt")
+        public void testFinalUpperBoundWithOverride() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/generics/finalUpperBoundWithOverride.kt");
+        }
+
+        @TestMetadata("finalUpperBoundWithoutOverride.kt")
+        public void testFinalUpperBoundWithoutOverride() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/generics/finalUpperBoundWithoutOverride.kt");
+        }
+
         @TestMetadata("genericsInType.kt")
         public void testGenericsInType() throws Exception {
             runTest("compiler/testData/diagnostics/tests/generics/genericsInType.kt");
