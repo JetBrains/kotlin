@@ -108,6 +108,7 @@ private class AdditionalClassAnnotationLowering(private val context: JvmBackendC
     private val etField = buildEnumEntry(elementTypeEnum, "FIELD")
     private val etLocalVariable = buildEnumEntry(elementTypeEnum, "LOCAL_VARIABLE")
     private val etMethod = buildEnumEntry(elementTypeEnum, "METHOD")
+    private val tModule = buildEnumEntry(elementTypeEnum, "MODULE")
     private val etPackage = buildEnumEntry(elementTypeEnum, "PACKAGE")
     private val etParameter = buildEnumEntry(elementTypeEnum, "PARAMETER")
     private val etType = buildEnumEntry(elementTypeEnum, "TYPE")
@@ -183,11 +184,19 @@ private class AdditionalClassAnnotationLowering(private val context: JvmBackendC
             JvmTarget.JVM_1_8 to mutableMapOf(
                 KotlinTarget.TYPE_PARAMETER to etTypeParameter,
                 KotlinTarget.TYPE to etTypeUse
-            )
+            ),
+            JvmTarget.JVM_9 to mutableMapOf(),
+            JvmTarget.JVM_10 to mutableMapOf(),
+            JvmTarget.JVM_11 to mutableMapOf(),
+            JvmTarget.JVM_12 to mutableMapOf()
         )
 
     init {
         annotationTargetMaps[JvmTarget.JVM_1_8]!!.putAll(annotationTargetMaps[JvmTarget.JVM_1_6]!!.toList())
+        annotationTargetMaps[JvmTarget.JVM_9]!!.putAll(annotationTargetMaps[JvmTarget.JVM_1_8]!!.toList())
+        annotationTargetMaps[JvmTarget.JVM_10]!!.putAll(annotationTargetMaps[JvmTarget.JVM_9]!!.toList())
+        annotationTargetMaps[JvmTarget.JVM_11]!!.putAll(annotationTargetMaps[JvmTarget.JVM_10]!!.toList())
+        annotationTargetMaps[JvmTarget.JVM_12]!!.putAll(annotationTargetMaps[JvmTarget.JVM_11]!!.toList())
     }
 
 
