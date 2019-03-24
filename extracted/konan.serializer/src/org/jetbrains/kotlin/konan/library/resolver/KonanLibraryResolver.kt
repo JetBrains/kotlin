@@ -37,7 +37,7 @@ val TopologicalLibraryOrder: LibraryOrder = { input ->
 
     fun visit(node: KonanResolvedLibrary, result: MutableList<KonanResolvedLibrary>) {
         if (visited.contains(node)) return
-        if (tempMarks.contains(node)) error("Cyclic dependency in library graph.")
+        if (tempMarks.contains(node)) error("Cyclic dependency in library graph for: ${node.library.libraryName}")
         tempMarks.add(node)
         node.resolvedDependencies.forEach {
             visit(it, result)
