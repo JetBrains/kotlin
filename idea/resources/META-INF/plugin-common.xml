@@ -2359,6 +2359,15 @@
                      language="kotlin"
     />
 
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReplaceWithEnumMapInspection"
+                     displayName="Replace with EnumMap"
+                     groupPath="Kotlin"
+                     groupName="Other problems"
+                     enabledByDefault="true"
+                     level="WARNING"
+                     language="kotlin"
+    />
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.DataClassPrivateConstructorInspection"
                      displayName="Private data class constructor is exposed via the 'copy' method"
                      groupPath="Kotlin"
