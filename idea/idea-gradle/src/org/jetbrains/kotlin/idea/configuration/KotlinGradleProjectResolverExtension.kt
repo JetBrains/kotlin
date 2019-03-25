@@ -196,7 +196,7 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
         if (LOG.isDebugEnabled) {
             LOG.debug("Start populate module dependencies. Gradle module: [$gradleModule], Ide module: [$ideModule], Ide project: [$ideProject]")
         }
-        val mppModel = resolverCtx.getExtraProject(gradleModule, KotlinMPPGradleModel::class.java)
+        val mppModel = resolverCtx.getExtraProject(gradleModule, KotlinMPPGradleModel::class.java)?.let { KotlinMPPGradleModelImpl(it) }
         if (mppModel != null) {
             mppModel.targets.forEach { target ->
                 KotlinStatisticsTrigger.trigger(
