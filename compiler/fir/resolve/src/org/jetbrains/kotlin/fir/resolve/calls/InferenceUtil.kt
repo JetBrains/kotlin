@@ -105,7 +105,58 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
     }
 
     override fun KotlinTypeMarker.contains(predicate: (KotlinTypeMarker) -> Boolean): Boolean {
-        TODO("not implemented")
+        return this.containsInternal(predicate)
+    }
+
+    private fun KotlinTypeMarker?.containsInternal(
+        predicate: (KotlinTypeMarker) -> Boolean,
+        visited: HashSet<KotlinTypeMarker> = hashSetOf()
+    ): Boolean {
+        if (this == null) return false
+        if (this in visited) return false
+        visited += this
+
+        /*
+        TODO:?
+        UnwrappedType unwrappedType = type.unwrap();
+         */
+
+        if (predicate(this)) return true
+
+        val flexibleType = this.asFlexibleType()
+        if (flexibleType != null
+            && (flexibleType.lowerBound().containsInternal(predicate, visited)
+                    || flexibleType.upperBound().containsInternal(predicate, visited))
+        ) {
+            return true
+        }
+
+
+        if (this is DefinitelyNotNullTypeMarker
+            && this.original().containsInternal(predicate, visited)
+        ) {
+            return true
+        }
+        /*
+        TODO:
+
+        TypeConstructor typeConstructor = type.getConstructor();
+        if (typeConstructor instanceof IntersectionTypeConstructor) {
+            IntersectionTypeConstructor intersectionTypeConstructor = (IntersectionTypeConstructor) typeConstructor;
+            for (KotlinType supertype : intersectionTypeConstructor.getSupertypes()) {
+                if (contains(supertype, isSpecialType, visited)) return true;
+            }
+            return false;
+        }
+         */
+
+        val simpleType = this.asSimpleType() ?: return false
+        repeat(simpleType.argumentsCount()) { index ->
+            val argument = simpleType.getArgument(index)
+            if (!argument.isStarProjection() && argument.getType().containsInternal(predicate, visited)) return true
+        }
+
+        return false
     }
 
     override fun TypeConstructorMarker.isUnitTypeConstructor(): Boolean {
@@ -244,7 +295,6 @@ class ConeTypeVariableTypeConstructor(val debugName: String) : ConeSymbol, ConeC
 
 
 }
-
 
 
 class ConeTypeVariable(name: String) : TypeVariableMarker {
