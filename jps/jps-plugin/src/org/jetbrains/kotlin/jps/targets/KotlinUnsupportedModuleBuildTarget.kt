@@ -15,12 +15,13 @@ import org.jetbrains.kotlin.jps.build.KotlinCompileContext
 import org.jetbrains.kotlin.jps.build.KotlinDirtySourceFilesHolder
 import org.jetbrains.kotlin.jps.incremental.JpsIncrementalCache
 import org.jetbrains.kotlin.jps.model.platform
+import org.jetbrains.kotlin.platform.idePlatformKind
 
 class KotlinUnsupportedModuleBuildTarget(
     kotlinContext: KotlinCompileContext,
     jpsModuleBuildTarget: ModuleBuildTarget
 ) : KotlinModuleBuildTarget<BuildMetaInfo>(kotlinContext, jpsModuleBuildTarget) {
-    val kind = module.platform?.kind?.name
+    val kind = module.platform?.idePlatformKind?.name
 
     private fun shouldNotBeCalled(): Nothing = error("Should not be called")
 
