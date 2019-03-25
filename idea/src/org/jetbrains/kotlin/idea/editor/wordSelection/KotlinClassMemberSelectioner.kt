@@ -24,7 +24,10 @@ class KotlinClassMemberSelectioner : ExtendWordSelectionHandlerBase() {
         val lastChild = parent.lastChild ?: return null
         val startElement = firstChild.getNextSiblingIgnoringWhitespace() ?: firstChild
         val endElement = lastChild.getPrevSiblingIgnoringWhitespace() ?: lastChild
-        val textRange = TextRange(startElement.textRange.startOffset, endElement.textRange.endOffset)
+        val startOffset = startElement.textRange.startOffset
+        val endOffset = endElement.textRange.endOffset
+        if (startOffset >= endOffset) return null
+        val textRange = TextRange(startOffset, endOffset)
         return expandToWholeLinesWithBlanks(editorText, textRange)
     }
 }
