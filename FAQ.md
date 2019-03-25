@@ -15,11 +15,11 @@ garbage.
 
 ### Q: How do I create a shared library?
 
-A: Use the `-produce dynamic` compiler switch, or `compilations.main.outputKinds 'DYNAMIC'` in Gradle, i.e.
+A: Use the `-produce dynamic` compiler switch, or `binaries.sharedLib()` in Gradle, i.e.
 ```groovy
 targets {
     fromPreset(presets.iosArm64, 'mylib') {
-       compilations.main.outputKinds 'DYNAMIC'
+        binaries.sharedLib()
     }
 }
 ```
@@ -31,11 +31,11 @@ Kotlin/Native.
 
 ### Q: How do I create a static library or an object file?
 
-A: Use the `-produce static` compiler switch, or `compilations.main.outputKinds 'STATIC'` in Gradle, i.e.
+A: Use the `-produce static` compiler switch, or `binaries.staticLib()` in Gradle, i.e.
 ```groovy
 targets {
     fromPreset(presets.iosArm64, 'mylib') {
-       compilations.main.outputKinds 'STATIC'
+        binaries.staticLib()
     }
 }
 ```
@@ -59,8 +59,8 @@ A: Use the `-module-name` compiler option or matching Gradle DSL statement, i.e.
 ```groovy
 targets {
     fromPreset(presets.iosArm64, 'myapp') {
-       compilations.main.outputKinds 'FRAMEWORK'
-       compilations.main.extraOpts '-module-name', 'TheName'
+        binaries.framework()
+        compilations.main.extraOpts '-module-name', 'TheName'
     }
 }
 ```
@@ -97,9 +97,13 @@ Setting this in a Gradle DSL:
 ```groovy
 targets {
     fromPreset(presets.iosArm64, 'myapp') {
-        compilations.main.outputKinds 'FRAMEWORK'
-        compilations.main.embedBitcode BitcodeEmbeddingMode.BITCODE // for release binaries
-        // or BitcodeEmbeddingMode.MARKER for debug binaries
+        binaries {
+            framework {
+                // Use "marker" to embed the bitcode marker (for debug builds).
+                // Use "disable" to disable embedding.
+                embedBitcode "bitcode" // for release binaries.
+            }
+        }
     }
 }
 ```
