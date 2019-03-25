@@ -92,8 +92,8 @@ class ScriptDependenciesUpdater(
     }
 
     private fun updateDependencies(file: VirtualFile, scriptDef: KotlinScriptDefinition) {
-        val loader = when (scriptDef.dependencyResolver) {
-            is AsyncDependenciesResolver, is LegacyResolverWrapper -> asyncLoader
+        val loader = when {
+            isAsyncDependencyResolver(scriptDef) -> asyncLoader
             else -> syncLoader
         }
         loader.updateDependencies(file, scriptDef)
@@ -167,11 +167,16 @@ class ScriptDependenciesUpdater(
     }
 
     private fun areDependenciesCached(file: VirtualFile): Boolean {
-        return cache[file] != null
+        return cache[file] != null || file.scriptDependencies != null
     }
 
     private fun areDependenciesCached(files: List<VirtualFile>): Boolean {
         return files.all { areDependenciesCached(it) }
+    }
+
+    private fun isAsyncDependencyResolver(scriptDef: KotlinScriptDefinition): Boolean {
+        val dependencyResolver = scriptDef.dependencyResolver
+        return dependencyResolver is AsyncDependenciesResolver || dependencyResolver is LegacyResolverWrapper
     }
 
     companion object {
@@ -181,6 +186,11 @@ class ScriptDependenciesUpdater(
 
         fun areDependenciesCached(file: KtFile): Boolean {
             return getInstance(file.project).areDependenciesCached(file.virtualFile)
+        }
+
+        fun isAsyncDependencyResolver(file: KtFile): Boolean {
+            val scriptDefinition = file.virtualFile.findScriptDefinition(file.project) ?: return false
+            return getInstance(file.project).isAsyncDependencyResolver(scriptDefinition)
         }
     }
 }

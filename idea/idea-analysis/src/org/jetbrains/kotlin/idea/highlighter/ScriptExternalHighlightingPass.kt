@@ -60,7 +60,8 @@ class ScriptExternalHighlightingPass(
             )
         }
 
-        if (!ScriptDependenciesUpdater.areDependenciesCached(file)) {
+        // show notification only for async resolvers, for others file analysis is in progress until all dependencies are ready
+        if (!ScriptDependenciesUpdater.areDependenciesCached(file) && ScriptDependenciesUpdater.isAsyncDependencyResolver(file)) {
             showNotification(
                 file,
                 "Highlighting in scripts is not available until all Script Dependencies are loaded"
