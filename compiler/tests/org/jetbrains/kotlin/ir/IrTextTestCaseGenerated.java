@@ -1518,6 +1518,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/stubs/genericClassInDifferentModule.kt");
         }
 
+        @TestMetadata("javaConstructorWithTypeParameters.kt")
+        public void testJavaConstructorWithTypeParameters() throws Exception {
+            runTest("compiler/testData/ir/irText/stubs/javaConstructorWithTypeParameters.kt");
+        }
+
         @TestMetadata("javaEnum.kt")
         public void testJavaEnum() throws Exception {
             runTest("compiler/testData/ir/irText/stubs/javaEnum.kt");
