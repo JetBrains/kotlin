@@ -12,13 +12,13 @@ fun case_1() {
 }
 
 fun case_2() {
-    <!NI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>test_1<!> { null!! }
-    <!NI;UNREACHABLE_CODE!>test_2 { null!! }<!>
+    test_1 { null!! }
+    test_2 { null!! }
 }
 
 fun case_3() {
-    <!NI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>test_1<!> { throw Exception() }
-    <!NI;UNREACHABLE_CODE!>test_2 { throw Exception() }<!>
+    test_1 { throw Exception() }
+    test_2 { throw Exception() }
 }
 
 fun case_6() {

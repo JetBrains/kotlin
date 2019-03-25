@@ -106,7 +106,6 @@ class ConstraintInjector(val constraintIncorporator: ConstraintIncorporator, val
 
         if (constraintType is SimpleType) {
             if (constraint.kind == UPPER && constraintType.isNullableAny()) return true // T <: Any?
-            if (constraint.kind == LOWER && constraintType.isNothing()) return true // T >: Nothing
         }
 
         return false
