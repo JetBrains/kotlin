@@ -54,10 +54,7 @@ import org.jetbrains.kotlin.idea.util.liftToExpected
 import org.jetbrains.kotlin.idea.util.runOnExpectAndAllActuals
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
-import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
-import org.jetbrains.kotlin.psi.psiUtil.parameterIndex
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.SmartSet
@@ -131,6 +128,11 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
                 findKotlinParameterUsages(declaration)
             }
 
+            if (declaration is KtNamedDeclaration && declaration.isPrivateNestedClassOrObject) {
+                declaration.containingKtFile.importDirectives.mapNotNullTo(usages) {
+                    if (it.importedFqName == declaration.fqName) SafeDeleteImportDirectiveUsageInfo(it, declaration) else null
+                }
+            }
             return getSearchInfo(declaration)
         }
 

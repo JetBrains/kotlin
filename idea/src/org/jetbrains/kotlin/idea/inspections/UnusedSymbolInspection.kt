@@ -519,12 +519,5 @@ class SafeDeleteFix(declaration: KtDeclaration) : LocalQuickFix {
 }
 
 private fun safeDelete(project: Project, declaration: PsiElement) {
-    if (declaration is KtNamedDeclaration && declaration.isPrivateNestedClassOrObject) {
-        runWriteAction {
-            declaration.containingKtFile.importDirectives.forEach {
-                if (it.importedFqName == declaration.fqName) it.delete()
-            }
-        }
-    }
     SafeDeleteHandler.invoke(project, arrayOf(declaration), false)
 }
