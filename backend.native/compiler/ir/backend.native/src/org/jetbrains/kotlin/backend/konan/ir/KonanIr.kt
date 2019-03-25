@@ -101,8 +101,6 @@ class IrFileImpl(entry: SourceManager.FileEntry) : IrFile {
         get() = TODO("not implemented")
     override val fqName: FqName
         get() = TODO("not implemented")
-    override val fileAnnotations: MutableList<AnnotationDescriptor>
-        get() = TODO("not implemented")
     override val symbol: IrFileSymbol
         get() = TODO("not implemented")
     override val packageFragmentDescriptor: PackageFragmentDescriptor

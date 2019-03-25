@@ -721,12 +721,6 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     //-------------------------------------------------------------------------//
 
-    override fun visitTypeAlias(declaration: IrTypeAlias) {
-        // Nothing to do.
-    }
-
-    //-------------------------------------------------------------------------//
-
     override fun visitProperty(declaration: IrProperty) {
         declaration.getter?.acceptVoid(this)
         declaration.setter?.acceptVoid(this)

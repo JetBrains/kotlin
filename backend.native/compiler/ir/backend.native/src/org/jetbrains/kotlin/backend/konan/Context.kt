@@ -210,7 +210,7 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
 
     override val configuration get() = config.configuration
 
-    val phaseConfig = PhaseConfig(toplevelPhase, config.configuration)
+    val phaseConfig = PhaseConfig(toplevelPhase)
 
     private val packageScope by lazy { builtIns.builtInsModule.getPackage(KonanFqNames.internalPackageName).memberScope }
 
