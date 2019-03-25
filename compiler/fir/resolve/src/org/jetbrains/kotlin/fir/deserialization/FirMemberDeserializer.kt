@@ -41,7 +41,9 @@ class FirDeserializationContext(
     val components: FirDeserializationComponents
 ) {
     fun childContext(
-        typeParameterProtos: List<ProtoBuf.TypeParameter>
+        typeParameterProtos: List<ProtoBuf.TypeParameter>,
+        nameResolver: NameResolver = this.nameResolver,
+        typeTable: TypeTable = this.typeTable
     ): FirDeserializationContext = FirDeserializationContext(
         nameResolver, typeTable, versionRequirementTable, session, packageFqName, relativeClassName,
         FirTypeDeserializer(
@@ -55,44 +57,50 @@ class FirDeserializationContext(
     companion object {
         fun createForPackage(
             fqName: FqName,
-            packageProto: ProtoBuf.PackageFragment,
+            packageProto: ProtoBuf.Package,
             nameResolver: NameResolver,
             session: FirSession
-        ): FirDeserializationContext {
-            val typeTable = TypeTable(packageProto.`package`.typeTable)
-            return FirDeserializationContext(
-                nameResolver, typeTable,
-                VersionRequirementTable.EMPTY, // TODO:
-                session,
-                fqName,
-                null,
-                FirTypeDeserializer(
-                    nameResolver,
-                    typeTable,
-                    emptyList(),
-                    null
-                ),
-                FirDeserializationComponents()
-            )
-        }
+        ) = createRootContext(
+            nameResolver,
+            TypeTable(packageProto.typeTable),
+            session,
+            fqName,
+            relativeClassName = null,
+            typeParameterProtos = emptyList()
+        )
 
         fun createForClass(
             classId: ClassId,
             classProto: ProtoBuf.Class,
             nameResolver: NameResolver,
             session: FirSession
+        ) = createRootContext(
+            nameResolver,
+            TypeTable(classProto.typeTable),
+            session,
+            classId.packageFqName,
+            classId.relativeClassName,
+            classProto.typeParameterList
+        )
+
+        private fun createRootContext(
+            nameResolver: NameResolver,
+            typeTable: TypeTable,
+            session: FirSession,
+            packageFqName: FqName,
+            relativeClassName: FqName?,
+            typeParameterProtos: List<ProtoBuf.TypeParameter>
         ): FirDeserializationContext {
-            val classTypeTable = TypeTable(classProto.typeTable)
             return FirDeserializationContext(
-                nameResolver, classTypeTable,
+                nameResolver, typeTable,
                 VersionRequirementTable.EMPTY, // TODO:
                 session,
-                classId.packageFqName,
-                classId.relativeClassName,
+                packageFqName,
+                relativeClassName,
                 FirTypeDeserializer(
                     nameResolver,
-                    classTypeTable,
-                    classProto.typeParameterList,
+                    typeTable,
+                    typeParameterProtos,
                     null
                 ),
                 FirDeserializationComponents()

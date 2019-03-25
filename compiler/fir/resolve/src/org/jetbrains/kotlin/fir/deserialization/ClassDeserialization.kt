@@ -27,7 +27,9 @@ fun deserializeClassToSymbol(
     classProto: ProtoBuf.Class,
     symbol: FirClassSymbol,
     nameResolver: NameResolver,
-    session: FirSession
+    session: FirSession,
+    parentContext: FirDeserializationContext? = null,
+    deserializeNestedClass: (ClassId, FirDeserializationContext) -> FirClassSymbol?
 ) {
     val flags = classProto.flags
     val kind = Flags.CLASS_KIND.get(flags)
@@ -47,15 +49,15 @@ fun deserializeClassToSymbol(
         }
         //addAnnotationsFrom(classProto) ? TODO
 
-        val typeTable = TypeTable(classProto.typeTable)
-        val typeDeserializer = FirTypeDeserializer(
-            nameResolver,
-            typeTable,
-            classProto.typeParameterList,
-            null
-        )
+        val context =
+            parentContext?.childContext(classProto.typeParameterList, nameResolver, TypeTable(classProto.typeTable))
+                ?: FirDeserializationContext
+                    .createForClass(classId, classProto, nameResolver, session)
 
-        val superTypesDeserialized = classProto.supertypes(typeTable).map { supertypeProto ->
+        val typeDeserializer = context.typeDeserializer
+        val classDeserializer = context.memberDeserializer
+
+        val superTypesDeserialized = classProto.supertypes(context.typeTable).map { supertypeProto ->
             typeDeserializer.simpleType(supertypeProto)
         }// TODO: + c.components.additionalClassPartsProvider.getSupertypes(this@DeserializedClassDescriptor)
 
@@ -64,13 +66,13 @@ fun deserializeClassToSymbol(
             FirResolvedTypeRefImpl(session, null, it, false, emptyList())
         }
 
-        val classDeserializer =
-            FirDeserializationContext
-                .createForClass(classId, classProto, nameResolver, session)
-                .memberDeserializer
-
-        // TODO: properties + nested classes
+        // TODO: properties
         declarations += classProto.functionList.map(classDeserializer::loadFunction)
+
+        declarations += classProto.nestedClassNameList.mapNotNull { nestedNameId ->
+            val nestedClassId = classId.createNestedClassId(Name.identifier(nameResolver.getString(nestedNameId)))
+            deserializeNestedClass(nestedClassId, context)?.fir
+        }
     }
 }
 

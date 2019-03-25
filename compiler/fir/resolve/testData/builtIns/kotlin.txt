@@ -60,6 +60,9 @@ public final class Boolean : R|kotlin/Comparable<kotlin/Boolean>| {
 
     public final infix fun xor(other: R|kotlin/Boolean|): R|kotlin/Boolean|
 
+    public final companion object Companion : R|kotlin/Any| {
+    }
+
 }
 
 public final class BooleanArray : R|kotlin/Any| {
@@ -186,6 +189,9 @@ public final class Byte : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Byte>| {
 
     public final operator fun unaryPlus(): R|kotlin/Int|
 
+    public final companion object Companion : R|kotlin/Any| {
+    }
+
 }
 
 public final class ByteArray : R|kotlin/Any| {
@@ -225,6 +231,9 @@ public final class Char : R|kotlin/Comparable<kotlin/Char>| {
     public final fun toLong(): R|kotlin/Long|
 
     public final fun toShort(): R|kotlin/Short|
+
+    public final companion object Companion : R|kotlin/Any| {
+    }
 
 }
 
@@ -367,6 +376,9 @@ public final class Double : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Double>
 
     public final operator fun unaryPlus(): R|kotlin/Double|
 
+    public final companion object Companion : R|kotlin/Any| {
+    }
+
 }
 
 public final class DoubleArray : R|kotlin/Any| {
@@ -391,6 +403,9 @@ public final annotation class DslMarker : R|kotlin/Annotation| {
     public final fun hashCode(): R|kotlin/Int|
 
     public open fun toString(): R|kotlin/String|
+
+    public final companion object Companion : R|kotlin/Any| {
+    }
 
 }
 
@@ -503,6 +518,9 @@ public final class Float : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Float>| 
     public final operator fun unaryMinus(): R|kotlin/Float|
 
     public final operator fun unaryPlus(): R|kotlin/Float|
+
+    public final companion object Companion : R|kotlin/Any| {
+    }
 
 }
 
@@ -647,6 +665,9 @@ public final class Int : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Int>| {
 
     public final infix fun xor(other: R|kotlin/Int|): R|kotlin/Int|
 
+    public final companion object Companion : R|kotlin/Any| {
+    }
+
 }
 
 public final class IntArray : R|kotlin/Any| {
@@ -786,6 +807,9 @@ public final class Long : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Long>| {
     public final infix fun ushr(bitCount: R|kotlin/Int|): R|kotlin/Long|
 
     public final infix fun xor(other: R|kotlin/Long|): R|kotlin/Long|
+
+    public final companion object Companion : R|kotlin/Any| {
+    }
 
 }
 
@@ -942,6 +966,9 @@ public final class Short : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Short>| 
 
     public final operator fun unaryPlus(): R|kotlin/Int|
 
+    public final companion object Companion : R|kotlin/Any| {
+    }
+
 }
 
 public final class ShortArray : R|kotlin/Any| {
@@ -964,6 +991,9 @@ public final class String : R|kotlin/Comparable<kotlin/String>|, R|kotlin/CharSe
     public final operator fun plus(other: R|kotlin/Any|): R|kotlin/String|
 
     public open fun subSequence(startIndex: R|kotlin/Int|, endIndex: R|kotlin/Int|): R|kotlin/CharSequence|
+
+    public final companion object Companion : R|kotlin/Any| {
+    }
 
 }
 

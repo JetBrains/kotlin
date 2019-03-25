@@ -9,6 +9,11 @@ public open class CharProgression : R|kotlin/collections/Iterable<kotlin/Char>| 
 
     public open fun toString(): R|kotlin/String|
 
+    public final companion object Companion : R|kotlin/Any| {
+        public final fun fromClosedRange(rangeStart: R|kotlin/Char|, rangeEnd: R|kotlin/Char|, step: R|kotlin/Int|): R|kotlin/ranges/CharProgression|
+
+    }
+
 }
 
 internal final class CharProgressionIterator : R|kotlin/collections/CharIterator| {
@@ -28,6 +33,9 @@ public final class CharRange : R|kotlin/ranges/CharProgression|, R|kotlin/ranges
     public open fun isEmpty(): R|kotlin/Boolean|
 
     public open fun toString(): R|kotlin/String|
+
+    public final companion object Companion : R|kotlin/Any| {
+    }
 
 }
 
@@ -49,6 +57,11 @@ public open class IntProgression : R|kotlin/collections/Iterable<kotlin/Int>| {
 
     public open fun toString(): R|kotlin/String|
 
+    public final companion object Companion : R|kotlin/Any| {
+        public final fun fromClosedRange(rangeStart: R|kotlin/Int|, rangeEnd: R|kotlin/Int|, step: R|kotlin/Int|): R|kotlin/ranges/IntProgression|
+
+    }
+
 }
 
 internal final class IntProgressionIterator : R|kotlin/collections/IntIterator| {
@@ -69,6 +82,9 @@ public final class IntRange : R|kotlin/ranges/IntProgression|, R|kotlin/ranges/C
 
     public open fun toString(): R|kotlin/String|
 
+    public final companion object Companion : R|kotlin/Any| {
+    }
+
 }
 
 public open class LongProgression : R|kotlin/collections/Iterable<kotlin/Long>| {
@@ -81,6 +97,11 @@ public open class LongProgression : R|kotlin/collections/Iterable<kotlin/Long>| 
     public open operator fun iterator(): R|kotlin/collections/LongIterator|
 
     public open fun toString(): R|kotlin/String|
+
+    public final companion object Companion : R|kotlin/Any| {
+        public final fun fromClosedRange(rangeStart: R|kotlin/Long|, rangeEnd: R|kotlin/Long|, step: R|kotlin/Long|): R|kotlin/ranges/LongProgression|
+
+    }
 
 }
 
@@ -101,6 +122,9 @@ public final class LongRange : R|kotlin/ranges/LongProgression|, R|kotlin/ranges
     public open fun isEmpty(): R|kotlin/Boolean|
 
     public open fun toString(): R|kotlin/String|
+
+    public final companion object Companion : R|kotlin/Any| {
+    }
 
 }
 

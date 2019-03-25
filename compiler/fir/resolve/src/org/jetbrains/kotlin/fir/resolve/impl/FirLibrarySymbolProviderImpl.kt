@@ -62,15 +62,25 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider 
             FirDeserializationContext.createForPackage(fqName, packageProto, nameResolver, session).memberDeserializer
         }
 
-        val lookup = mutableMapOf<ClassId, ConeClassLikeSymbol>()
+        val lookup = mutableMapOf<ClassId, FirClassSymbol>()
 
-        fun getClassLikeSymbolByFqName(classId: ClassId): ConeClassLikeSymbol? {
+        fun getClassLikeSymbolByFqName(classId: ClassId): ConeClassLikeSymbol? =
+            findAndDeserializeClass(classId)
+
+        private fun findAndDeserializeClass(
+            classId: ClassId,
+            parentContext: FirDeserializationContext? = null
+        ): FirClassSymbol? {
             if (classId !in classDataFinder.allClassIds) return null
             return lookup.getOrPut(classId, { FirClassSymbol(classId) }) { symbol ->
                 val classData = classDataFinder.findClassData(classId)!!
                 val classProto = classData.classProto
 
-                deserializeClassToSymbol(classId, classProto, symbol, nameResolver, session)
+                deserializeClassToSymbol(
+                    classId, classProto, symbol, nameResolver, session,
+                    parentContext,
+                    this::findAndDeserializeClass
+                )
             }
         }
 

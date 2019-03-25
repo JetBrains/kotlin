@@ -119,6 +119,9 @@ public abstract class LongIterator : R|kotlin/collections/Iterator<kotlin/Long>|
 
     public abstract fun isEmpty(): R|kotlin/Boolean|
 
+    <K, V> public abstract interface Entry : R|kotlin/Any| {
+    }
+
 }
 
 <E> public abstract interface MutableCollection : R|kotlin/collections/Collection<E>|, R|kotlin/collections/MutableIterable<E>| {
@@ -200,6 +203,11 @@ public abstract class LongIterator : R|kotlin/collections/Iterator<kotlin/Long>|
     public abstract fun remove(key: R|K|): R|V|
 
     public open fun remove(key: R|K|, value: R|V|): R|kotlin/Boolean|
+
+    <K, V> public abstract interface MutableEntry : R|kotlin/collections/Map.Entry<K, V>| {
+        public abstract fun setValue(newValue: R|V|): R|V|
+
+    }
 
 }
 
