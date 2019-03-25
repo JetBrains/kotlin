@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.impl.FirClassImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirTypeParameterImpl
+import org.jetbrains.kotlin.fir.deserialization.FirDeserializationComponents
+import org.jetbrains.kotlin.fir.deserialization.FirDeserializationContext
 import org.jetbrains.kotlin.fir.deserialization.FirTypeDeserializer
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.getOrPut
@@ -26,10 +28,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
-import org.jetbrains.kotlin.metadata.deserialization.Flags
-import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
-import org.jetbrains.kotlin.metadata.deserialization.TypeTable
-import org.jetbrains.kotlin.metadata.deserialization.supertypes
+import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -42,11 +41,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import java.io.InputStream
 
 class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider {
-    override fun getCallableSymbols(callableId: CallableId): List<ConeCallableSymbol> {
-        // TODO
-        return emptyList()
-    }
-
     private class BuiltInsPackageFragment(stream: InputStream, val fqName: FqName, val session: FirSession) {
         lateinit var version: BuiltInsBinaryVersion
 
@@ -70,6 +64,22 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider 
 
         val classDataFinder = ProtoBasedClassDataFinder(packageProto, nameResolver, version) { SourceElement.NO_SOURCE }
 
+        private val memberDeserializer by lazy {
+            FirDeserializationContext(
+                nameResolver, TypeTable(packageProto.`package`.typeTable),
+                VersionRequirementTable.EMPTY, // TODO:
+                session,
+                fqName,
+                null,
+                FirTypeDeserializer(
+                    nameResolver,
+                    TypeTable(packageProto.`package`.typeTable),
+                    emptyList(),
+                    null
+                ),
+                FirDeserializationComponents()
+            ).memberDeserializer
+        }
 
         val lookup = mutableMapOf<ClassId, ConeClassLikeSymbol>()
 
@@ -124,6 +134,16 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider 
                 }
             }
         }
+
+        fun getTopLevelCallableSymbols(name: Name): List<ConeCallableSymbol> {
+            return packageProto.`package`.functionList.filter { nameResolver.getName(it.name) == name }.map {
+                memberDeserializer.loadFunction(it).symbol
+            }
+        }
+
+        fun getAllCallableNames(): Set<Name> {
+            return packageProto.`package`.functionList.mapTo(mutableSetOf()) { nameResolver.getName(it.name) }
+        }
     }
 
     override fun getPackage(fqName: FqName): FqName? {
@@ -175,5 +195,22 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider 
                 }
             }
         }
+    }
+
+    override fun getCallableSymbols(callableId: CallableId): List<ConeCallableSymbol> {
+        if (callableId.classId != null) {
+            // TODO: Support classes
+            return emptyList()
+        }
+
+        return allPackageFragments[callableId.packageName]?.flatMap {
+            it.getTopLevelCallableSymbols(callableId.callableName)
+        } ?: emptyList()
+    }
+
+    override fun getAllCallableNamesInPackage(fqName: FqName): Set<Name> {
+        return allPackageFragments[fqName]?.flatMapTo(mutableSetOf()) {
+            it.getAllCallableNames()
+        } ?: emptySet()
     }
 }

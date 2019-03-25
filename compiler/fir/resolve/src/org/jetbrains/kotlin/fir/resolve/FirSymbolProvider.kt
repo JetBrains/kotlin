@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.service
 import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 
 interface FirSymbolProvider {
 
@@ -25,6 +26,8 @@ interface FirSymbolProvider {
     }
 
     fun getCallableSymbols(callableId: CallableId): List<ConeCallableSymbol>
+
+    fun getAllCallableNamesInPackage(fqName: FqName): Set<Name> = emptySet()
 
     fun getPackage(fqName: FqName): FqName? // TODO: Replace to symbol sometime
 

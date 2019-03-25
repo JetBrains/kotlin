@@ -1,0 +1,30 @@
+<T> public final inline fun arrayOf(vararg elements: R|kotlin/Array<out T>|): R|kotlin/Array<T>|
+
+<T> public final fun arrayOfNulls(size: R|kotlin/Int|): R|kotlin/Array<T>|
+
+public final fun booleanArrayOf(vararg elements: R|kotlin/BooleanArray|): R|kotlin/BooleanArray|
+
+public final fun byteArrayOf(vararg elements: R|kotlin/ByteArray|): R|kotlin/ByteArray|
+
+public final fun charArrayOf(vararg elements: R|kotlin/CharArray|): R|kotlin/CharArray|
+
+public final fun doubleArrayOf(vararg elements: R|kotlin/DoubleArray|): R|kotlin/DoubleArray|
+
+<T> public final inline fun emptyArray(): R|kotlin/Array<T>|
+
+<T> public final inline fun enumValueOf(name: R|kotlin/String|): R|T|
+
+<T> public final inline fun enumValues(): R|kotlin/Array<T>|
+
+public final fun floatArrayOf(vararg elements: R|kotlin/FloatArray|): R|kotlin/FloatArray|
+
+public final fun intArrayOf(vararg elements: R|kotlin/IntArray|): R|kotlin/IntArray|
+
+public final fun longArrayOf(vararg elements: R|kotlin/LongArray|): R|kotlin/LongArray|
+
+public final fun shortArrayOf(vararg elements: R|kotlin/ShortArray|): R|kotlin/ShortArray|
+
+public final operator fun R|kotlin/String|.plus(other: R|kotlin/Any|): R|kotlin/String|
+
+public final fun R|kotlin/Any|.toString(): R|kotlin/String|
+

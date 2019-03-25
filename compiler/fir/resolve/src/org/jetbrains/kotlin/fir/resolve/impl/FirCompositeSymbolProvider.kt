@@ -11,15 +11,12 @@ import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 class FirCompositeSymbolProvider(val providers: List<FirSymbolProvider>) : FirSymbolProvider {
     override fun getCallableSymbols(callableId: CallableId): List<ConeCallableSymbol> {
-        for (provider in providers) {
-            val symbols = provider.getCallableSymbols(callableId)
-            if (symbols.isNotEmpty()) return symbols
-        }
-        return emptyList()
+        return providers.flatMap { it.getCallableSymbols(callableId) }
     }
 
     override fun getPackage(fqName: FqName): FqName? {
@@ -28,5 +25,9 @@ class FirCompositeSymbolProvider(val providers: List<FirSymbolProvider>) : FirSy
 
     override fun getClassLikeSymbolByFqName(classId: ClassId): ConeClassLikeSymbol? {
         return providers.firstNotNullResult { it.getClassLikeSymbolByFqName(classId) }
+    }
+
+    override fun getAllCallableNamesInPackage(fqName: FqName): Set<Name> {
+        return providers.flatMapTo(mutableSetOf()) { it.getAllCallableNamesInPackage(fqName) }
     }
 }

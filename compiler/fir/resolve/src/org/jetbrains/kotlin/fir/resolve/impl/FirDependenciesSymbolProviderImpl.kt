@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 
 class FirDependenciesSymbolProviderImpl(val session: FirSession) : AbstractFirSymbolProvider() {
     private val dependencyProviders by lazy {
@@ -26,13 +27,8 @@ class FirDependenciesSymbolProviderImpl(val session: FirSession) : AbstractFirSy
 
     override fun getCallableSymbols(callableId: CallableId): List<ConeCallableSymbol> {
         return callableCache.lookupCacheOrCalculate(callableId) {
-            for (provider in dependencyProviders) {
-                provider.getCallableSymbols(callableId).let {
-                    if (it.isNotEmpty()) return@lookupCacheOrCalculate it
-                }
-            }
-            emptyList()
-        }.orEmpty()
+            dependencyProviders.flatMap { provider -> provider.getCallableSymbols(callableId) }
+        } ?: emptyList()
     }
 
     override fun getClassLikeSymbolByFqName(classId: ClassId): ConeClassLikeSymbol? {
@@ -55,5 +51,9 @@ class FirDependenciesSymbolProviderImpl(val session: FirSession) : AbstractFirSy
             }
             null
         }
+    }
+
+    override fun getAllCallableNamesInPackage(fqName: FqName): Set<Name> {
+        return dependencyProviders.flatMapTo(mutableSetOf()) { it.getAllCallableNamesInPackage(fqName) }
     }
 }
