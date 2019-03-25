@@ -13,20 +13,21 @@ import org.jetbrains.kotlin.platform.impl.CommonIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.JsIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.NativeIdePlatformKind
-import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 abstract class IdePlatformKind<Kind : IdePlatformKind<Kind>> {
-    abstract val compilerPlatform: TargetPlatform
-    abstract val platforms: List<IdePlatform<Kind, *>>
+    abstract val platforms: List<TargetPlatform>
 
-    abstract val defaultPlatform: IdePlatform<Kind, *>
+    abstract val defaultPlatform: TargetPlatform
 
-    abstract fun platformByCompilerArguments(arguments: CommonCompilerArguments): IdePlatform<Kind, CommonCompilerArguments>?
+    abstract fun platformByCompilerArguments(arguments: CommonCompilerArguments): TargetPlatform?
 
     abstract val argumentsClass: Class<out CommonCompilerArguments>
 
     abstract val name: String
+
+    abstract fun createArguments(): CommonCompilerArguments
 
     override fun equals(other: Any?): Boolean = javaClass == other?.javaClass
     override fun hashCode(): Int = javaClass.hashCode()
@@ -57,21 +58,17 @@ abstract class IdePlatformKind<Kind : IdePlatformKind<Kind>> {
 
         val All_PLATFORMS by lazy { ALL_KINDS.flatMap { it.platforms } }
 
-        val IDE_PLATFORMS_BY_COMPILER_PLATFORMS by lazy { ALL_KINDS.map { it.compilerPlatform to it }.toMap() }
+        val IDE_PLATFORMS_BY_COMPILER_PLATFORMS by lazy {
+            ALL_KINDS.flatMap { idePlatformKind ->
+                idePlatformKind.platforms.map { compilerPlatform -> compilerPlatform to idePlatformKind }
+            }.toMap()
+        }
 
-        fun <Args : CommonCompilerArguments> platformByCompilerArguments(arguments: Args): IdePlatform<*, *>? =
+        fun <Args : CommonCompilerArguments> platformByCompilerArguments(arguments: Args): TargetPlatform? =
             ALL_KINDS.firstNotNullResult { it.platformByCompilerArguments(arguments) }
 
     }
 }
 
 val TargetPlatform.idePlatformKind: IdePlatformKind<*>
-    get() = IdePlatformKind.IDE_PLATFORMS_BY_COMPILER_PLATFORMS[this] ?: error("Unknown platform $this")
-
-fun IdePlatformKind<*>?.orDefault(): IdePlatformKind<*> {
-    return this ?: DefaultIdeTargetPlatformKindProvider.defaultPlatform.kind
-}
-
-fun IdePlatform<*, *>?.orDefault(): IdePlatform<*, *> {
-    return this ?: DefaultIdeTargetPlatformKindProvider.defaultPlatform
-}
+        get() = IdePlatformKind.IDE_PLATFORMS_BY_COMPILER_PLATFORMS[this] ?: error("Unknown platform $this")

@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.jps.incremental.*
 import org.jetbrains.kotlin.jps.model.JpsKotlinFacetModuleExtension
 import org.jetbrains.kotlin.jps.model.kotlinFacet
 import org.jetbrains.kotlin.jps.targets.KotlinModuleBuildTarget
+import org.jetbrains.kotlin.platform.idePlatformKind
 import org.jetbrains.kotlin.platform.impl.isJavaScript
 import org.jetbrains.kotlin.platform.impl.isJvm
 import org.jetbrains.kotlin.platform.orDefault
@@ -537,7 +538,7 @@ abstract class AbstractIncrementalJpsTest(
 
     private fun configureRequiredLibraries() {
         myProject.modules.forEach { module ->
-            val platformKind = module.kotlinFacet?.settings?.platform?.kind.orDefault()
+            val platformKind = module.kotlinFacet?.settings?.platform?.idePlatformKind.orDefault()
 
             when {
                 platformKind.isJvm -> {

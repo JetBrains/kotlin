@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.idea.stubs.createFacet
 import org.jetbrains.kotlin.idea.test.KotlinJdkAndLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
+import org.jetbrains.kotlin.resolve.DefaultBuiltInPlatforms
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.utils.ReportLevel
 
@@ -32,7 +33,7 @@ class Jsr305HighlightingTest : KotlinLightCodeInsightFixtureTestCase() {
         ) {
             override fun configureModule(module: Module, model: ModifiableRootModel) {
                 super.configureModule(module, model)
-                module.createFacet(JvmIdePlatformKind.Platform(JvmTarget.JVM_1_8))
+                module.createFacet(DefaultBuiltInPlatforms.jvm18)
                 val facetSettings = KotlinFacetSettingsProvider.getInstance(project).getInitializedSettings(module)
 
                 facetSettings.apply {

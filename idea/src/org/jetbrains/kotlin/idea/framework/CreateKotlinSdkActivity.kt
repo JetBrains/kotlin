@@ -10,7 +10,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
-import org.jetbrains.kotlin.platform.impl.isJvm
+import org.jetbrains.kotlin.resolve.isCommon
+import org.jetbrains.kotlin.resolve.isJs
 
 /**
  * This StartupActivity creates KotlinSdk for projects containing non-jvm modules.
@@ -21,7 +22,7 @@ class CreateKotlinSdkActivity : StartupActivity, DumbAware {
 
     override fun runActivity(project: Project) {
         val kotlinSdkIsRequired = project.allModules().any {
-            !it.platform.isJvm
+            it.platform.isJs() || it.platform.isCommon()
         }
         if (kotlinSdkIsRequired) {
             KotlinSdkType.setUpIfNeeded()

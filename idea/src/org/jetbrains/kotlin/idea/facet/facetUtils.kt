@@ -40,21 +40,23 @@ import org.jetbrains.kotlin.idea.framework.KotlinSdkType
 import org.jetbrains.kotlin.idea.platform.tooling
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.platform.DefaultIdeTargetPlatformKindProvider
-import org.jetbrains.kotlin.platform.IdePlatform
 import org.jetbrains.kotlin.platform.IdePlatformKind
+import org.jetbrains.kotlin.platform.idePlatformKind
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
 import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
+import org.jetbrains.kotlin.resolve.DefaultBuiltInPlatforms
 import org.jetbrains.kotlin.resolve.JvmTarget
+import org.jetbrains.kotlin.resolve.TargetPlatform
 import kotlin.reflect.KProperty1
 
 var Module.hasExternalSdkConfiguration: Boolean
         by NotNullableUserDataProperty(Key.create<Boolean>("HAS_EXTERNAL_SDK_CONFIGURATION"), false)
 
 // TODO: migrate to DefaultTargetPlatformKindProvider?
-private fun getDefaultTargetPlatform(module: Module, rootModel: ModuleRootModel?): IdePlatform<*, *> {
+private fun getDefaultTargetPlatform(module: Module, rootModel: ModuleRootModel?): TargetPlatform {
     val platformKind = IdePlatformKind.ALL_KINDS.firstOrNull {
         getRuntimeLibraryVersions(module, rootModel, it).isNotEmpty()
-    } ?: DefaultIdeTargetPlatformKindProvider.defaultPlatform.kind
+    } ?: DefaultIdeTargetPlatformKindProvider.defaultPlatform.idePlatformKind
     if (platformKind == JvmIdePlatformKind) {
         var jvmTarget = Kotlin2JvmCompilerArgumentsHolder.getInstance(module.project).settings.jvmTarget?.let { JvmTarget.fromString(it) }
         if (jvmTarget == null) {
@@ -64,7 +66,7 @@ private fun getDefaultTargetPlatform(module: Module, rootModel: ModuleRootModel?
                 jvmTarget = JvmTarget.JVM_1_8
             }
         }
-        return if (jvmTarget != null) JvmIdePlatformKind.Platform(jvmTarget) else JvmIdePlatformKind.defaultPlatform
+        return if (jvmTarget != null) DefaultBuiltInPlatforms.jvmPlatformByTargetVersion(jvmTarget) else DefaultBuiltInPlatforms.jvmPlatform
     }
     return platformKind.defaultPlatform
 }
@@ -72,7 +74,7 @@ private fun getDefaultTargetPlatform(module: Module, rootModel: ModuleRootModel?
 fun KotlinFacetSettings.initializeIfNeeded(
     module: Module,
     rootModel: ModuleRootModel?,
-    platform: IdePlatform<*, *>? = null, // if null, detect by module dependencies
+    platform: TargetPlatform? = null, // if null, detect by module dependencies
     compilerVersion: String? = null
 ) {
     val project = module.project
@@ -89,7 +91,7 @@ fun KotlinFacetSettings.initializeIfNeeded(
     if (compilerArguments == null) {
         val targetPlatform = platform ?: getDefaultTargetPlatform(module, rootModel)
         compilerArguments = targetPlatform.createArguments {
-            targetPlatform.kind.tooling.compilerArgumentsForProject(module.project)?.let { mergeBeans(it, this) }
+            targetPlatform.idePlatformKind.tooling.compilerArgumentsForProject(module.project)?.let { mergeBeans(it, this) }
             mergeBeans(commonArguments, this)
         }
     }
@@ -107,7 +109,7 @@ fun KotlinFacetSettings.initializeIfNeeded(
                 getLibraryLanguageLevel(
                     module,
                     rootModel,
-                    this.platform?.kind,
+                    this.platform?.idePlatformKind,
                     coerceRuntimeLibraryVersionToReleased = compilerVersion == null
                 )
             )
@@ -148,7 +150,7 @@ fun Module.getOrCreateFacet(
 fun KotlinFacet.configureFacet(
     compilerVersion: String?,
     coroutineSupport: LanguageFeature.State,
-    platform: IdePlatform<*, *>?, // if null, detect by module dependencies
+    platform: TargetPlatform?, // if null, detect by module dependencies
     modelsProvider: IdeModifiableModelsProvider
 ) {
     val module = module

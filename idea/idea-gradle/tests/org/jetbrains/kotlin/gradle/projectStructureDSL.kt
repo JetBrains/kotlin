@@ -16,7 +16,8 @@ import org.jetbrains.jps.util.JpsPathUtil
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.project.platform
-import org.jetbrains.kotlin.platform.IdePlatform
+import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.resolve.presentableDescription
 
 class MessageCollector {
     private val builder = StringBuilder()
@@ -108,11 +109,11 @@ class ModuleInfo(
         }
     }
 
-    fun platform(platform: IdePlatform<*, *>) {
+    fun platform(platform: TargetPlatform) {
         val actualPlatform = module.platform
         if (actualPlatform != platform) {
             projectInfo.messageCollector.report(
-                "Module '${module.name}': expected platform '${platform.description}' but found '${actualPlatform?.description}'"
+                "Module '${module.name}': expected platform '${platform.presentableDescription}' but found '${actualPlatform?.presentableDescription}'"
             )
         }
     }

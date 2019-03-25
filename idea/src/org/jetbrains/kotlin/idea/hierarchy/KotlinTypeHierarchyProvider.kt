@@ -41,12 +41,13 @@ import org.jetbrains.kotlin.psi.KtConstructor
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.resolve.isJvm
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class KotlinTypeHierarchyProvider : JavaTypeHierarchyProvider() {
     private fun getOriginalPsiClassOrCreateLightClass(classOrObject: KtClassOrObject, module: Module?): PsiClass? {
         val fqName = classOrObject.fqName
-        if (fqName != null && module?.platform.isJvm) {
+        if (fqName != null && module?.platform.isJvm()) {
             val javaClassId = JavaToKotlinClassMap.mapKotlinToJava(fqName.toUnsafe())
             if (javaClassId != null) {
                 return JavaPsiFacade.getInstance(classOrObject.project).findClass(

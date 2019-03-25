@@ -9,35 +9,30 @@ package org.jetbrains.kotlin.platform.impl
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.resolve.TargetPlatformVersion
-import org.jetbrains.kotlin.platform.IdePlatform
 import org.jetbrains.kotlin.platform.IdePlatformKind
 import org.jetbrains.kotlin.resolve.DefaultBuiltInPlatforms
+import org.jetbrains.kotlin.resolve.TargetPlatform
 
 object JsIdePlatformKind : IdePlatformKind<JsIdePlatformKind>() {
 
-    override fun platformByCompilerArguments(arguments: CommonCompilerArguments): IdePlatform<JsIdePlatformKind, CommonCompilerArguments>? {
-        return if (arguments is K2JSCompilerArguments) Platform
-        else null
+    override fun platformByCompilerArguments(arguments: CommonCompilerArguments): TargetPlatform? {
+        return if (arguments is K2JSCompilerArguments)
+            DefaultBuiltInPlatforms.jsPlatform
+        else
+            null
     }
 
-    override val compilerPlatform get() = DefaultBuiltInPlatforms.jsPlatform
+    override val platforms get() = listOf(DefaultBuiltInPlatforms.jsPlatform)
+    override val defaultPlatform get() = DefaultBuiltInPlatforms.jsPlatform
 
-    override val platforms get() = listOf(Platform)
-    override val defaultPlatform get() = Platform
+    override fun createArguments(): CommonCompilerArguments {
+        return K2JSCompilerArguments()
+    }
 
     override val argumentsClass get() = K2JSCompilerArguments::class.java
 
     override val name get() = "JavaScript"
-
-    object Platform : IdePlatform<JsIdePlatformKind, K2JSCompilerArguments>() {
-        override val kind get() = JsIdePlatformKind
-        override val version get() = TargetPlatformVersion.NoVersion
-        override fun createArguments(init: K2JSCompilerArguments.() -> Unit) = K2JSCompilerArguments().apply(init)
-    }
 }
 
 val IdePlatformKind<*>?.isJavaScript
     get() = this is JsIdePlatformKind
-
-val IdePlatform<*, *>?.isJavaScript
-    get() = this is JsIdePlatformKind.Platform

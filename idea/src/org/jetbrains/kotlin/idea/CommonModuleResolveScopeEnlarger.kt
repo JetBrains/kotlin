@@ -18,13 +18,15 @@ import org.jetbrains.kotlin.idea.caches.project.implementingModules
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.platform.impl.isCommon
 import org.jetbrains.kotlin.platform.impl.isJvm
+import org.jetbrains.kotlin.resolve.isCommon
+import org.jetbrains.kotlin.resolve.isJvm
 
 class CommonModuleResolveScopeEnlarger : ResolveScopeEnlarger() {
     override fun getAdditionalResolveScope(file: VirtualFile, project: Project): SearchScope? {
         val module = ProjectFileIndex.getInstance(project).getModuleForFile(file) ?: return null
-        if (!module.platform.isCommon) return null
+        if (!module.platform.isCommon()) return null
 
-        val implementingModule = module.implementingModules.find { it.platform.isJvm } ?: return null
+        val implementingModule = module.implementingModules.find { it.platform.isJvm() } ?: return null
 
         var result = GlobalSearchScope.EMPTY_SCOPE
         for (entry in ModuleRootManager.getInstance(implementingModule).orderEntries) {

@@ -49,8 +49,8 @@ val Module.jsProductionOutputFilePath: String?
         return JpsPathUtil.urlToPath("$outputDir/$name.js")
     }
 
-fun Module.asJsModule(): Module? = when (TargetPlatformDetector.getPlatform(this)) {
-    is CommonPlatform -> implementingModules.firstOrNull { TargetPlatformDetector.getPlatform(it) is JsPlatform }
+fun Module.asJsModule(): Module? = when (TargetPlatformDetector.getPlatforms(this)) {
+    is CommonPlatform -> implementingModules.firstOrNull { TargetPlatformDetector.getPlatforms(it) is JsPlatform }
     is JsPlatform -> this
     else -> null
 }

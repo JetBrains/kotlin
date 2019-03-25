@@ -99,7 +99,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
     ): ProjectResolutionFacade {
         val sdk = dependenciesModuleInfo.sdk
         val platform = /* Fallback to Common platform in CIDR (Java is not supported there) */
-            DefaultIdeTargetPlatformKindProvider.defaultCompilerPlatform // TODO: Js scripts?
+            DefaultIdeTargetPlatformKindProvider.defaultPlatform // TODO: Js scripts?
         val settings = PlatformAnalysisSettings(
             platform, sdk, true,
             LanguageFeature.ReleaseCoroutines.defaultState == LanguageFeature.State.ENABLED
