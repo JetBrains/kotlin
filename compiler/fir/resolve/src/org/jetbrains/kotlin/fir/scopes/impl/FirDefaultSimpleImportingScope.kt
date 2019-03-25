@@ -23,6 +23,6 @@ class FirDefaultSimpleImportingScope(session: FirSession) : FirAbstractSimpleImp
             ?.map {
                 FirImportImpl(session, null, it.fqName, isAllUnder = false, aliasName = null)
                     .resolve(importResolveTransformer)
-            }?.groupBy { it.resolvedFqName.shortClassName } ?: emptyMap()
+            }?.groupBy { it.importedName!! } ?: emptyMap()
     }
 }

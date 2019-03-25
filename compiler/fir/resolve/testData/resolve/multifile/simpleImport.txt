@@ -3,3 +3,7 @@ FILE: simpleImport.kt
         public constructor(): super<R|b/MyClass|>()
 
     }
+    public final fun bar(): R|kotlin/Unit| {
+        R|b/foo|()
+        R|b/I|()
+    }

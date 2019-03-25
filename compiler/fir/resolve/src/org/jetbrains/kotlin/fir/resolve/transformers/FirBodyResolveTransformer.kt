@@ -13,17 +13,25 @@ import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReferenceImpl
 import org.jetbrains.kotlin.fir.references.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.resolve.calls.*
-import org.jetbrains.kotlin.fir.scopes.*
-import org.jetbrains.kotlin.fir.scopes.impl.*
+import org.jetbrains.kotlin.fir.resolve.calls.CallInfo
+import org.jetbrains.kotlin.fir.resolve.calls.CallResolver
+import org.jetbrains.kotlin.fir.resolve.calls.createFunctionConsumer
+import org.jetbrains.kotlin.fir.resolve.calls.createVariableConsumer
+import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.addImportingScopes
+import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirTopLevelDeclaredMemberScope
+import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
 import org.jetbrains.kotlin.fir.symbols.*
+import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
+import org.jetbrains.kotlin.fir.types.impl.FirComputingImplicitTypeRef
+import org.jetbrains.kotlin.fir.types.impl.FirErrorTypeRefImpl
+import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.compose
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
-import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.impl.*
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -42,6 +50,7 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
     override fun transformFile(file: FirFile, data: Any?): CompositeTransformResult<FirFile> {
         packageFqName = file.packageFqName
         return withScopeCleanup(scopes) {
+            scopes.addImportingScopes(file, session)
             scopes += FirTopLevelDeclaredMemberScope(file, session)
             super.transformFile(file, data)
         }
