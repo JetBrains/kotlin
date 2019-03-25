@@ -64,7 +64,7 @@ object TopDownAnalyzerFacadeForJS {
 
         val moduleName = configuration[CommonConfigurationKeys.MODULE_NAME]!!
         val context = ContextForNewModule(
-            ProjectContext(project),
+            ProjectContext(project, "TopDownAnalyzer for JS"),
             Name.special("<$moduleName>"),
             builtIns,
             platform = null
