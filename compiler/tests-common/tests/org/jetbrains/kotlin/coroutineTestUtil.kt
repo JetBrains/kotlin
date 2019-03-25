@@ -77,7 +77,7 @@ fun createTextForHelpers(isReleaseCoroutines: Boolean, checkStateMachine: Boolea
             ""
 
     val checkStateMachineString = """
-    object StateMachineChecker {
+    class StateMachineCheckerClass {
         private var counter = 0
         var finished = false
 
@@ -106,6 +106,7 @@ fun createTextForHelpers(isReleaseCoroutines: Boolean, checkStateMachine: Boolea
             if (!finished) error("Wrong state-machine generated: it is not finished yet")
         }
     }
+    val StateMachineChecker = StateMachineCheckerClass()
     object CheckStateMachineContinuation: ContinuationAdapter<Unit>() {
         override val context: CoroutineContext
             get() = EmptyCoroutineContext
