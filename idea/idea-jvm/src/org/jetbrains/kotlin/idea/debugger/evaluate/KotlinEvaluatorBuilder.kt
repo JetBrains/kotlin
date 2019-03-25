@@ -18,25 +18,20 @@ package org.jetbrains.kotlin.idea.debugger.evaluate
 
 import com.intellij.debugger.SourcePosition
 import com.intellij.debugger.engine.DebugProcessImpl
-import com.intellij.debugger.engine.SuspendContext
 import com.intellij.debugger.engine.evaluation.EvaluateException
 import com.intellij.debugger.engine.evaluation.EvaluateExceptionUtil
 import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
 import com.intellij.debugger.engine.evaluation.expression.*
-import com.intellij.diagnostic.LogMessageEx
 import com.intellij.openapi.diagnostic.Attachment
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.project.DumbService
 import com.intellij.psi.JavaPsiFacade
-import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.testFramework.runInEdtAndWait
-import com.intellij.util.ExceptionUtil
 import com.sun.jdi.*
 import com.sun.jdi.Value
-import com.sun.jdi.request.EventRequest
 import org.jetbrains.eval4j.*
 import org.jetbrains.eval4j.Value as Eval4JValue
 import org.jetbrains.eval4j.jdi.JDIEval
@@ -85,36 +80,15 @@ internal const val GENERATED_CLASS_NAME = "Generated_for_debugger_class"
 
 object KotlinEvaluatorBuilder : EvaluatorBuilder {
     override fun build(codeFragment: PsiElement, position: SourcePosition?): ExpressionEvaluator {
-        if (codeFragment !is KtCodeFragment || position == null) {
+        if (codeFragment !is KtCodeFragment) {
             return EvaluatorBuilderImpl.getInstance().build(codeFragment, position)
         }
 
-        if (position.line < 0 && position.file !is KtFile) {
-            evaluationException("Couldn't evaluate Kotlin expression at $position")
-        }
+        val context = codeFragment.context ?: evaluationException("Cannot evaluate an expression without a context")
+        val file = context.containingFile
 
-        val file = position.file
-        if (file is KtFile && position.line >= 0) {
-            val document = PsiDocumentManager.getInstance(file.project).getDocument(file)
-            if (document == null || document.lineCount < position.line) {
-                evaluationException(
-                    "Couldn't evaluate Kotlin expression: breakpoint is placed outside the file. " +
-                            "It may happen when you've changed source file after starting a debug process."
-                )
-            }
-        }
-
-        if (codeFragment.context !is KtElement) {
-            val attachments = arrayOf(
-                attachmentByPsiFile(position.file),
-                attachmentByPsiFile(codeFragment),
-                Attachment("breakpoint.info", "line: ${position.line}")
-            )
-
-            LOG.error(
-                "Trying to evaluate ${codeFragment::class.java} with context ${codeFragment.context?.javaClass}",
-                mergeAttachments(*attachments)
-            )
+        if (file !is KtFile) {
+            reportError(codeFragment, position, "Unknown context${codeFragment.context?.javaClass}")
             evaluationException("Couldn't evaluate Kotlin expression in this context")
         }
 
@@ -122,7 +96,7 @@ object KotlinEvaluatorBuilder : EvaluatorBuilder {
     }
 }
 
-class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: SourcePosition) : Evaluator {
+class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: SourcePosition?) : Evaluator {
     override fun evaluate(context: EvaluationContextImpl): Any? {
         if (codeFragment.text.isEmpty()) {
             return context.debugProcess.virtualMachineProxy.mirrorOfVoid()
@@ -157,25 +131,10 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                 evaluationException(e)
             }
 
-            val text = runReadAction { codeFragment.context?.text ?: "null" }
-            val attachments = arrayOf(
-                attachmentByPsiFile(sourcePosition.file),
-                attachmentByPsiFile(codeFragment),
-                Attachment("breakpoint.info", "line: ${runReadAction { sourcePosition.line }}"),
-                Attachment("context.info", text)
-            )
-
-            LOG.error(
-                @Suppress("DEPRECATION")
-                LogMessageEx.createEvent(
-                    "Couldn't evaluate expression",
-                    ExceptionUtil.getThrowableText(e),
-                    mergeAttachments(*attachments)
-                )
-            )
+            reportError(codeFragment, sourcePosition, e.message ?: "An exception occurred", e)
 
             val cause = if (e.message != null) ": ${e.message}" else ""
-            evaluationException("An exception occurs during Evaluate Expression Action $cause")
+            evaluationException("Cannot evaluate the expression: $cause")
         }
     }
 
@@ -464,6 +423,23 @@ private fun isSpecialException(th: Throwable): Boolean {
         is VMDisconnectedException -> true
         else -> false
     }
+}
+
+private fun reportError(codeFragment: KtCodeFragment, position: SourcePosition?, message: String, throwable: Throwable? = null) {
+    val contextFile = codeFragment.context?.containingFile
+
+    val attachments = arrayOf(
+        attachmentByPsiFile(contextFile),
+        attachmentByPsiFile(codeFragment),
+        Attachment("breakpoint.info", "Position: " + position?.run { "${file.name}:$line" }),
+        Attachment("context.info", runReadAction { codeFragment.context?.text ?: "null" })
+    )
+
+    LOG.error(
+        "Cannot evaluate a code fragment of type " + codeFragment::class.java + ": " + message.decapitalize(),
+        throwable,
+        mergeAttachments(*attachments)
+    )
 }
 
 private fun evaluationException(msg: String): Nothing = throw EvaluateExceptionUtil.createEvaluateException(msg)
