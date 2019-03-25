@@ -86,19 +86,19 @@ fun StorageComponentContainer.configureDefaultCheckers() {
 
 
 abstract class PlatformConfiguratorBase(
-    private val dynamicTypesSettings: DynamicTypesSettings,
-    private val additionalDeclarationCheckers: List<DeclarationChecker>,
-    private val additionalCallCheckers: List<CallChecker>,
-    private val additionalTypeCheckers: List<AdditionalTypeChecker>,
-    private val additionalClassifierUsageCheckers: List<ClassifierUsageChecker>,
-    private val additionalAnnotationCheckers: List<AdditionalAnnotationChecker>,
-    private val additionalClashResolvers: List<PlatformExtensionsClashResolver<*>>,
-    private val identifierChecker: IdentifierChecker,
-    private val overloadFilter: OverloadFilter,
-    private val platformToKotlinClassMap: PlatformToKotlinClassMap,
-    private val delegationFilter: DelegationFilter,
-    private val overridesBackwardCompatibilityHelper: OverridesBackwardCompatibilityHelper,
-    private val declarationReturnTypeSanitizer: DeclarationReturnTypeSanitizer
+    val dynamicTypesSettings: DynamicTypesSettings,
+    val additionalDeclarationCheckers: List<DeclarationChecker>,
+    val additionalCallCheckers: List<CallChecker>,
+    val additionalTypeCheckers: List<AdditionalTypeChecker>,
+    val additionalClassifierUsageCheckers: List<ClassifierUsageChecker>,
+    val additionalAnnotationCheckers: List<AdditionalAnnotationChecker>,
+    val additionalClashResolvers: List<PlatformExtensionsClashResolver<*>>,
+    val identifierChecker: IdentifierChecker,
+    val overloadFilter: OverloadFilter,
+    val platformToKotlinClassMap: PlatformToKotlinClassMap,
+    val delegationFilter: DelegationFilter,
+    val overridesBackwardCompatibilityHelper: OverridesBackwardCompatibilityHelper,
+    val declarationReturnTypeSanitizer: DeclarationReturnTypeSanitizer
 ) : PlatformConfigurator {
     override val platformSpecificContainer = composeContainer(this::class.java.simpleName) {
         configureDefaultCheckers()
