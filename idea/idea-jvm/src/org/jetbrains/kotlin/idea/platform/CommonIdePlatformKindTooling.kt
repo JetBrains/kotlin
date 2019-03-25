@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.idea.platform.IdePlatformKindTooling
 import org.jetbrains.kotlin.idea.platform.tooling
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.util.module
+import org.jetbrains.kotlin.platform.idePlatformKind
 import org.jetbrains.kotlin.platform.impl.CommonIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.isCommon
 import org.jetbrains.kotlin.psi.KtFunction
@@ -62,7 +63,7 @@ object CommonIdePlatformKindTooling : IdePlatformKindTooling() {
     override fun acceptsAsEntryPoint(function: KtFunction): Boolean {
         val module = function.containingKtFile.module ?: return false
         return module.implementingModules.any { implementingModule ->
-            implementingModule.platform?.kind?.takeIf { !it.isCommon }?.tooling?.acceptsAsEntryPoint(function) ?: false
+            implementingModule.platform?.idePlatformKind?.takeIf { !it.isCommon }?.tooling?.acceptsAsEntryPoint(function) ?: false
         }
     }
 }

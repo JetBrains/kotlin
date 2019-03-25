@@ -9,35 +9,29 @@ package org.jetbrains.kotlin.platform.impl
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.platform.CommonPlatforms
-import org.jetbrains.kotlin.platform.IdePlatform
 import org.jetbrains.kotlin.platform.IdePlatformKind
-import org.jetbrains.kotlin.platform.TargetPlatformVersion
+import org.jetbrains.kotlin.platform.TargetPlatform
 
 object CommonIdePlatformKind : IdePlatformKind<CommonIdePlatformKind>() {
 
-    override fun platformByCompilerArguments(arguments: CommonCompilerArguments): IdePlatform<CommonIdePlatformKind, CommonCompilerArguments>? {
-        return if (arguments is K2MetadataCompilerArguments) Platform
-        else null
+    override fun platformByCompilerArguments(arguments: CommonCompilerArguments): TargetPlatform? {
+        return if (arguments is K2MetadataCompilerArguments)
+            CommonPlatforms.defaultCommonPlatform
+        else
+            null
     }
 
-    override val compilerPlatform get() = CommonPlatforms.defaultCommonPlatform
+    override fun createArguments(): CommonCompilerArguments {
+        return K2MetadataCompilerArguments() // TODO(dsavvinov): review that, as now MPP !== K2Metadata
+    }
 
-    override val platforms get() = listOf(Platform)
-    override val defaultPlatform get() = Platform
+    override val platforms get() = listOf(CommonPlatforms.defaultCommonPlatform)
+    override val defaultPlatform get() = CommonPlatforms.defaultCommonPlatform
 
     override val argumentsClass get() = K2MetadataCompilerArguments::class.java
 
     override val name get() = "Common (experimental)"
-
-    object Platform : IdePlatform<CommonIdePlatformKind, CommonCompilerArguments>() {
-        override val kind get() = CommonIdePlatformKind
-        override val version get() = TargetPlatformVersion.NoVersion
-        override fun createArguments(init: CommonCompilerArguments.() -> Unit) = K2MetadataCompilerArguments().apply(init)
-    }
 }
 
 val IdePlatformKind<*>?.isCommon
     get() = this is CommonIdePlatformKind
-
-val IdePlatform<*, *>?.isCommon
-    get() = this is CommonIdePlatformKind.Platform

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.platform.impl.NativeIdePlatformKind
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.konan.KonanPlatforms
 import javax.swing.Icon
 
 class NativeIdePlatformKindTooling : IdePlatformKindTooling() {
@@ -45,7 +46,7 @@ class NativeIdePlatformKindTooling : IdePlatformKindTooling() {
 
 object NativeLibraryKind : PersistentLibraryKind<DummyLibraryProperties>("kotlin.native"), KotlinLibraryKind {
     override val compilerPlatform: TargetPlatform
-        get() = NativeIdePlatformKind.compilerPlatform
+        get() = KonanPlatforms.defaultKonanPlatform
 
     override fun createDefaultProperties() = DummyLibraryProperties.INSTANCE!!
 }
