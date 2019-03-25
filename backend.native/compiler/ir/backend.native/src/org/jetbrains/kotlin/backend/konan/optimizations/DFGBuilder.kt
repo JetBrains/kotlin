@@ -545,8 +545,12 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                         when (value) {
                             is IrGetValue -> getNode(value)
 
-                            is IrVararg,
-                            is IrFunctionReference -> DataFlowIR.Node.Const(symbolTable.mapType(value.type))
+                            is IrVararg -> DataFlowIR.Node.Const(symbolTable.mapType(value.type))
+
+                            is IrFunctionReference -> {
+                                val callee = value.symbol.owner
+                                DataFlowIR.Node.FunctionReference(symbolTable.mapFunction(callee), symbolTable.mapType(value.type))
+                            }
 
                             is IrConst<*> ->
                                 if (value.value == null)

@@ -254,6 +254,8 @@ internal object DataFlowIR {
 
         class AllocInstance(val type: Type) : Node()
 
+        class FunctionReference(val symbol: FunctionSymbol, val type: Type) : Node()
+
         class FieldRead(val receiver: Edge?, val field: Field, val ir: IrGetField?) : Node()
 
         class FieldWrite(val receiver: Edge?, val field: Field, val value: Edge) : Node()
@@ -301,6 +303,9 @@ internal object DataFlowIR {
 
                 is Node.AllocInstance ->
                     "        ALLOC INSTANCE ${node.type}\n"
+
+                is Node.FunctionReference ->
+                    "        FUNCTION REFERENCE ${node.symbol}\n"
 
                 is Node.StaticCall -> {
                     val result = StringBuilder()

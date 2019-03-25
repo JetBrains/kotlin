@@ -358,6 +358,9 @@ internal object Devirtualization {
                         is DataFlowIR.Node.StaticCall ->
                             dfs(node.callee)
 
+                        is DataFlowIR.Node.FunctionReference ->
+                            dfs(node.symbol)
+
                         is DataFlowIR.Node.FieldRead ->
                             if (entryPoint == null && node.field.type.isFinal)
                                 addInstantiatingClass(node.field.type)
@@ -960,6 +963,10 @@ internal object Devirtualization {
                         }
 
                         is DataFlowIR.Node.AllocInstance -> {
+                            concreteClass(node.type.resolved())
+                        }
+
+                        is DataFlowIR.Node.FunctionReference -> {
                             concreteClass(node.type.resolved())
                         }
 
