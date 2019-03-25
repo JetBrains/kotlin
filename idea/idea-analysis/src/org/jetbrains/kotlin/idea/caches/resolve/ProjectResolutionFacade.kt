@@ -27,6 +27,8 @@ import org.jetbrains.kotlin.analyzer.*
 import org.jetbrains.kotlin.analyzer.common.CommonAnalysisParameters
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
+import org.jetbrains.kotlin.caches.resolve.CompositeAnalyzerServices
+import org.jetbrains.kotlin.caches.resolve.CompositeResolverForModuleFactory
 import org.jetbrains.kotlin.caches.resolve.resolution
 import org.jetbrains.kotlin.context.GlobalContextImpl
 import org.jetbrains.kotlin.context.ProjectContext
@@ -37,6 +39,7 @@ import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.getNullableModuleInfo
 import org.jetbrains.kotlin.idea.compiler.IDELanguageSettingsProvider
 import org.jetbrains.kotlin.idea.project.IdeaEnvironment
+import org.jetbrains.kotlin.idea.project.findAnalyzerServices
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.platform.idePlatformKind
@@ -48,7 +51,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.CompositeBindingContext
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
-import org.jetbrains.kotlin.idea.project.findCompilerServices
+import org.jetbrains.kotlin.idea.project.findAnalyzerServices
 import org.jetbrains.kotlin.platform.toTargetPlatform
 
 internal class ProjectResolutionFacade(
@@ -143,15 +146,19 @@ internal class ProjectResolutionFacade(
             modulesContentFactory,
             moduleLanguageSettingsProvider = IDELanguageSettingsProvider,
             resolverForModuleFactoryByPlatform = { modulePlatform ->
-                val platform = modulePlatform ?: TODO()
-                platform.idePlatformKind.resolution.resolverForModuleFactory
-            },
-            platformParameters = { platform ->
-                when {
-                    platform.isJvm() -> jvmPlatformParameters
-                    platform.isCommon() -> commonPlatformParameters
-                    else -> PlatformAnalysisParameters.Empty
-                }
+//                val platform = modulePlatform ?: TODO()
+//                val parameters = when {
+//                    platform.isJvm() -> jvmPlatformParameters
+//                    platform.isCommon() -> commonPlatformParameters
+//                    else -> PlatformAnalysisParameters.Empty
+//                }
+//                platform.idePlatformKind.resolution.createResolverForModuleFactory(parameters, IdeaEnvironment, platform)
+                CompositeResolverForModuleFactory(
+                    commonPlatformParameters,
+                    jvmPlatformParameters,
+                    modulePlatform!!,
+                    CompositeAnalyzerServices(modulePlatform.componentPlatforms.map { it.toTargetPlatform().findAnalyzerServices })
+                )
             },
             targetEnvironment = IdeaEnvironment,
             builtIns = builtIns,
