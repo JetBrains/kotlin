@@ -67,14 +67,13 @@ targets {
 
 </div>
 
-### Q: How do I rename the iOS framework? (main.framework)
+### Q: How do I rename the iOS framework? (default name is _\<project name\>_.framework)
 
 A: Use the `baseName` option. This will also set the module name.
 
 ```groovy
 targets {
     fromPreset(presets.iosArm64, 'myapp') {
-       compilations.main.outputKinds 'FRAMEWORK'
        binaries {
           framework {
               baseName = "TheName"
