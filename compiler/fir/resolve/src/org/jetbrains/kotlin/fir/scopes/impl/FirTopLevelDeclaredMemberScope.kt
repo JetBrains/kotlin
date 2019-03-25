@@ -7,13 +7,14 @@ package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.resolve.getClassDeclaredCallableSymbols
+import org.jetbrains.kotlin.fir.resolve.buildUseSiteScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction.NEXT
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction.STOP
 import org.jetbrains.kotlin.fir.symbols.ConeFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.ConePropertySymbol
 import org.jetbrains.kotlin.fir.symbols.ConeVariableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
@@ -25,9 +26,10 @@ class FirTopLevelDeclaredMemberScope(
     private val packageFqName = file.packageFqName
 
     override fun processFunctionsByName(name: Name, processor: (ConeFunctionSymbol) -> ProcessorAction): ProcessorAction {
-        val constructors = provider.getClassDeclaredCallableSymbols(ClassId.topLevel(packageFqName.child(name)), name)
-        for (symbol in constructors) {
-            if (symbol is ConeFunctionSymbol && !processor(symbol)) {
+        val matchedClass = provider.getClassLikeSymbolByFqName(ClassId(packageFqName, name))
+
+        if (matchedClass != null && matchedClass is FirClassSymbol) {
+            if (matchedClass.fir.buildUseSiteScope(session).processFunctionsByName(name, processor) == STOP) {
                 return STOP
             }
         }
