@@ -1,1 +1,240 @@
+public abstract class BooleanIterator : R|kotlin/collections/Iterator<kotlin/Boolean>| {
+    public final operator fun next(): R|kotlin/Boolean|
+
+    public abstract fun nextBoolean(): R|kotlin/Boolean|
+
+}
+
+public abstract class ByteIterator : R|kotlin/collections/Iterator<kotlin/Byte>| {
+    public final operator fun next(): R|kotlin/Byte|
+
+    public abstract fun nextByte(): R|kotlin/Byte|
+
+}
+
+public abstract class CharIterator : R|kotlin/collections/Iterator<kotlin/Char>| {
+    public final operator fun next(): R|kotlin/Char|
+
+    public abstract fun nextChar(): R|kotlin/Char|
+
+}
+
+<E> public abstract interface Collection : R|kotlin/collections/Iterable<E>| {
+    public abstract operator fun contains(element: R|E|): R|kotlin/Boolean|
+
+    public abstract fun containsAll(elements: R|kotlin/collections/Collection<E>|): R|kotlin/Boolean|
+
+    public abstract fun isEmpty(): R|kotlin/Boolean|
+
+    public abstract operator fun iterator(): R|kotlin/collections/Iterator<E>|
+
+}
+
+public abstract class DoubleIterator : R|kotlin/collections/Iterator<kotlin/Double>| {
+    public final operator fun next(): R|kotlin/Double|
+
+    public abstract fun nextDouble(): R|kotlin/Double|
+
+}
+
+public abstract class FloatIterator : R|kotlin/collections/Iterator<kotlin/Float>| {
+    public final operator fun next(): R|kotlin/Float|
+
+    public abstract fun nextFloat(): R|kotlin/Float|
+
+}
+
+public abstract class IntIterator : R|kotlin/collections/Iterator<kotlin/Int>| {
+    public final operator fun next(): R|kotlin/Int|
+
+    public abstract fun nextInt(): R|kotlin/Int|
+
+}
+
+<T> public abstract interface Iterable : R|kotlin/Any| {
+    public abstract operator fun iterator(): R|kotlin/collections/Iterator<T>|
+
+}
+
+<T> public abstract interface Iterator : R|kotlin/Any| {
+    public abstract operator fun hasNext(): R|kotlin/Boolean|
+
+    public abstract operator fun next(): R|T|
+
+}
+
+<E> public abstract interface List : R|kotlin/collections/Collection<E>| {
+    public abstract operator fun contains(element: R|E|): R|kotlin/Boolean|
+
+    public abstract fun containsAll(elements: R|kotlin/collections/Collection<E>|): R|kotlin/Boolean|
+
+    public abstract operator fun get(index: R|kotlin/Int|): R|E|
+
+    public abstract fun indexOf(element: R|E|): R|kotlin/Int|
+
+    public abstract fun isEmpty(): R|kotlin/Boolean|
+
+    public abstract operator fun iterator(): R|kotlin/collections/Iterator<E>|
+
+    public abstract fun lastIndexOf(element: R|E|): R|kotlin/Int|
+
+    public abstract fun listIterator(): R|kotlin/collections/ListIterator<E>|
+
+    public abstract fun listIterator(index: R|kotlin/Int|): R|kotlin/collections/ListIterator<E>|
+
+    public abstract fun subList(fromIndex: R|kotlin/Int|, toIndex: R|kotlin/Int|): R|kotlin/collections/List<E>|
+
+}
+
+<T> public abstract interface ListIterator : R|kotlin/collections/Iterator<T>| {
+    public abstract operator fun hasNext(): R|kotlin/Boolean|
+
+    public abstract fun hasPrevious(): R|kotlin/Boolean|
+
+    public abstract operator fun next(): R|T|
+
+    public abstract fun nextIndex(): R|kotlin/Int|
+
+    public abstract fun previous(): R|T|
+
+    public abstract fun previousIndex(): R|kotlin/Int|
+
+}
+
+public abstract class LongIterator : R|kotlin/collections/Iterator<kotlin/Long>| {
+    public final operator fun next(): R|kotlin/Long|
+
+    public abstract fun nextLong(): R|kotlin/Long|
+
+}
+
+<K, V> public abstract interface Map : R|kotlin/Any| {
+    public abstract fun containsKey(key: R|K|): R|kotlin/Boolean|
+
+    public abstract fun containsValue(value: R|V|): R|kotlin/Boolean|
+
+    public abstract operator fun get(key: R|K|): R|V|
+
+    public open fun getOrDefault(key: R|K|, defaultValue: R|V|): R|V|
+
+    public abstract fun isEmpty(): R|kotlin/Boolean|
+
+}
+
+<E> public abstract interface MutableCollection : R|kotlin/collections/Collection<E>|, R|kotlin/collections/MutableIterable<E>| {
+    public abstract fun add(element: R|E|): R|kotlin/Boolean|
+
+    public abstract fun addAll(elements: R|kotlin/collections/Collection<E>|): R|kotlin/Boolean|
+
+    public abstract fun clear(): R|kotlin/Unit|
+
+    public abstract operator fun iterator(): R|kotlin/collections/MutableIterator<E>|
+
+    public abstract fun remove(element: R|E|): R|kotlin/Boolean|
+
+    public abstract fun removeAll(elements: R|kotlin/collections/Collection<E>|): R|kotlin/Boolean|
+
+    public abstract fun retainAll(elements: R|kotlin/collections/Collection<E>|): R|kotlin/Boolean|
+
+}
+
+<T> public abstract interface MutableIterable : R|kotlin/collections/Iterable<T>| {
+    public abstract operator fun iterator(): R|kotlin/collections/MutableIterator<T>|
+
+}
+
+<T> public abstract interface MutableIterator : R|kotlin/collections/Iterator<T>| {
+    public abstract fun remove(): R|kotlin/Unit|
+
+}
+
+<E> public abstract interface MutableList : R|kotlin/collections/List<E>|, R|kotlin/collections/MutableCollection<E>| {
+    public abstract fun add(element: R|E|): R|kotlin/Boolean|
+
+    public abstract fun add(index: R|kotlin/Int|, element: R|E|): R|kotlin/Unit|
+
+    public abstract fun addAll(index: R|kotlin/Int|, elements: R|kotlin/collections/Collection<E>|): R|kotlin/Boolean|
+
+    public abstract fun addAll(elements: R|kotlin/collections/Collection<E>|): R|kotlin/Boolean|
+
+    public abstract fun clear(): R|kotlin/Unit|
+
+    public abstract fun listIterator(): R|kotlin/collections/MutableListIterator<E>|
+
+    public abstract fun listIterator(index: R|kotlin/Int|): R|kotlin/collections/MutableListIterator<E>|
+
+    public abstract fun remove(element: R|E|): R|kotlin/Boolean|
+
+    public abstract fun removeAll(elements: R|kotlin/collections/Collection<E>|): R|kotlin/Boolean|
+
+    public abstract fun removeAt(index: R|kotlin/Int|): R|E|
+
+    public abstract fun retainAll(elements: R|kotlin/collections/Collection<E>|): R|kotlin/Boolean|
+
+    public abstract operator fun set(index: R|kotlin/Int|, element: R|E|): R|E|
+
+    public abstract fun subList(fromIndex: R|kotlin/Int|, toIndex: R|kotlin/Int|): R|kotlin/collections/MutableList<E>|
+
+}
+
+<T> public abstract interface MutableListIterator : R|kotlin/collections/ListIterator<T>|, R|kotlin/collections/MutableIterator<T>| {
+    public abstract fun add(element: R|T|): R|kotlin/Unit|
+
+    public abstract operator fun hasNext(): R|kotlin/Boolean|
+
+    public abstract operator fun next(): R|T|
+
+    public abstract fun remove(): R|kotlin/Unit|
+
+    public abstract fun set(element: R|T|): R|kotlin/Unit|
+
+}
+
+<K, V> public abstract interface MutableMap : R|kotlin/collections/Map<K, V>| {
+    public abstract fun clear(): R|kotlin/Unit|
+
+    public abstract fun put(key: R|K|, value: R|V|): R|V|
+
+    public abstract fun putAll(from: R|kotlin/collections/Map<out K, V>|): R|kotlin/Unit|
+
+    public abstract fun remove(key: R|K|): R|V|
+
+    public open fun remove(key: R|K|, value: R|V|): R|kotlin/Boolean|
+
+}
+
+<E> public abstract interface MutableSet : R|kotlin/collections/Set<E>|, R|kotlin/collections/MutableCollection<E>| {
+    public abstract fun add(element: R|E|): R|kotlin/Boolean|
+
+    public abstract fun addAll(elements: R|kotlin/collections/Collection<E>|): R|kotlin/Boolean|
+
+    public abstract fun clear(): R|kotlin/Unit|
+
+    public abstract operator fun iterator(): R|kotlin/collections/MutableIterator<E>|
+
+    public abstract fun remove(element: R|E|): R|kotlin/Boolean|
+
+    public abstract fun removeAll(elements: R|kotlin/collections/Collection<E>|): R|kotlin/Boolean|
+
+    public abstract fun retainAll(elements: R|kotlin/collections/Collection<E>|): R|kotlin/Boolean|
+
+}
+
+<E> public abstract interface Set : R|kotlin/collections/Collection<E>| {
+    public abstract operator fun contains(element: R|E|): R|kotlin/Boolean|
+
+    public abstract fun containsAll(elements: R|kotlin/collections/Collection<E>|): R|kotlin/Boolean|
+
+    public abstract fun isEmpty(): R|kotlin/Boolean|
+
+    public abstract operator fun iterator(): R|kotlin/collections/Iterator<E>|
+
+}
+
+public abstract class ShortIterator : R|kotlin/collections/Iterator<kotlin/Short>| {
+    public final operator fun next(): R|kotlin/Short|
+
+    public abstract fun nextShort(): R|kotlin/Short|
+
+}
 

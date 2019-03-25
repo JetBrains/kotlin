@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -22,30 +24,38 @@ class BuiltInsDeserializationForFirTestCase : AbstractFirResolveWithSessionTestC
         return createEnvironmentWithJdk(ConfigurationKind.ALL, TestJdkKind.FULL_JDK)
     }
 
-    fun testCallables() {
+    fun testBuiltInPackagesContent() {
         for (packageFqName in listOf(
             KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME,
             KotlinBuiltIns.COLLECTIONS_PACKAGE_FQ_NAME,
             KotlinBuiltIns.RANGES_PACKAGE_FQ_NAME
         )) {
-            checkCallablesInPackage(packageFqName)
+            checkPackageContent(packageFqName)
         }
     }
 
-    private fun checkCallablesInPackage(packageFqName: FqName) {
+    private fun checkPackageContent(packageFqName: FqName) {
         val session = createSession(project, GlobalSearchScope.allScope(project))
         val provider = session.getService(FirSymbolProvider::class)
-        val names = provider.getAllCallableNamesInPackage(packageFqName)
 
         val builder = StringBuilder()
         val firRenderer = FirRenderer(builder)
 
-        for (name in names) {
+        for (name in provider.getAllCallableNamesInPackage(packageFqName)) {
             for (symbol in provider.getCallableSymbols(CallableId(packageFqName, null, name))) {
                 (symbol as FirCallableSymbol).fir.accept(firRenderer)
                 builder.appendln()
             }
         }
+
+        for (name in provider.getClassNamesInPackage(packageFqName)) {
+            val classLikeSymbol =
+                provider.getClassLikeSymbolByFqName(ClassId.topLevel(packageFqName.child(name))) as FirClassSymbol?
+                    ?: continue
+            classLikeSymbol.fir.accept(firRenderer)
+            builder.appendln()
+        }
+
 
         KotlinTestUtils.assertEqualsToFile(
             File("compiler/fir/resolve/testData/builtIns/" + packageFqName.asString().replace('.', '-') + ".txt"),

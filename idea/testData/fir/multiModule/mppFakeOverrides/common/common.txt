@@ -17,7 +17,7 @@ FILE: common.kt
         }
 
         public open fun baz(arg: R|kotlin/CharSequence|): R|kotlin/String| {
-            ^baz R|<local>/arg|.<Unresolved name: toString>#()
+            ^baz R|<local>/arg|.R|kotlin/Any.toString|()
         }
 
     }

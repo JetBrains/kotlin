@@ -28,6 +28,10 @@ interface FirSymbolProvider {
     fun getCallableSymbols(callableId: CallableId): List<ConeCallableSymbol>
 
     fun getAllCallableNamesInPackage(fqName: FqName): Set<Name> = emptySet()
+    fun getClassNamesInPackage(fqName: FqName): Set<Name> = emptySet()
+
+    fun getAllCallableNamesInClass(classId: ClassId): Set<Name> = emptySet()
+    fun getNestedClassesNamesInClass(classId: ClassId): Set<Name> = emptySet()
 
     fun getPackage(fqName: FqName): FqName? // TODO: Replace to symbol sometime
 
