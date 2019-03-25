@@ -34,8 +34,10 @@ import org.jetbrains.kotlin.idea.framework.LibraryEffectiveKindProviderKt;
 import org.jetbrains.kotlin.idea.project.PlatformKt;
 import org.jetbrains.kotlin.idea.util.Java9StructureUtilKt;
 import org.jetbrains.kotlin.idea.versions.KotlinRuntimeLibraryUtilKt;
-import org.jetbrains.kotlin.platform.impl.JsIdePlatformKind;
-import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind;
+import org.jetbrains.kotlin.config.JvmTarget;
+import org.jetbrains.kotlin.platform.TargetPlatform;
+import org.jetbrains.kotlin.platform.js.JsPlatforms;
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms;
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleKt;
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner;
 import org.jetbrains.kotlin.utils.PathUtil;
@@ -206,7 +208,7 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
         assertEquals(false, settings.getUseProjectSettings());
         assertEquals("1.1", settings.getLanguageLevel().getDescription());
         assertEquals("1.0", settings.getApiLevel().getDescription());
-        assertEquals(new JvmIdePlatformKind.Platform(JvmTarget.JVM_1_8), settings.getPlatform());
+        assertEquals(JvmPlatforms.INSTANCE.getJvm18(), settings.getPlatform());
         assertEquals("1.1", arguments.getLanguageVersion());
         assertEquals("1.0", arguments.getApiVersion());
         assertEquals(LanguageFeature.State.ENABLED_WITH_WARNING, CoroutineSupport.byCompilerArguments(arguments));
@@ -221,7 +223,7 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
         assertEquals(false, settings.getUseProjectSettings());
         assertEquals("1.1", settings.getLanguageLevel().getDescription());
         assertEquals("1.0", settings.getApiLevel().getDescription());
-        assertEquals(JsIdePlatformKind.Platform.INSTANCE, settings.getPlatform());
+        assertEquals(JsPlatforms.INSTANCE.getDefaultJsPlatform(), settings.getPlatform());
         assertEquals("1.1", arguments.getLanguageVersion());
         assertEquals("1.0", arguments.getApiVersion());
         assertEquals(LanguageFeature.State.ENABLED_WITH_WARNING, CoroutineSupport.byCompilerArguments(arguments));
@@ -236,7 +238,7 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
         assertEquals(false, settings.getUseProjectSettings());
         assertEquals("1.1", settings.getLanguageLevel().getDescription());
         assertEquals("1.0", settings.getApiLevel().getDescription());
-        assertEquals(new JvmIdePlatformKind.Platform(JvmTarget.JVM_1_8), settings.getPlatform());
+        assertEquals(JvmPlatforms.INSTANCE.getJvm18(), settings.getPlatform());
         assertEquals("1.1", arguments.getLanguageVersion());
         assertEquals("1.0", arguments.getApiVersion());
         assertEquals(LanguageFeature.State.ENABLED, CoroutineSupport.byCompilerArguments(arguments));
@@ -251,7 +253,7 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
         assertEquals(false, settings.getUseProjectSettings());
         assertEquals("1.1", settings.getLanguageLevel().getDescription());
         assertEquals("1.0", settings.getApiLevel().getDescription());
-        assertEquals(JsIdePlatformKind.Platform.INSTANCE, settings.getPlatform());
+        assertEquals(JsPlatforms.INSTANCE.getDefaultJsPlatform(), settings.getPlatform());
         assertEquals("1.1", arguments.getLanguageVersion());
         assertEquals("1.0", arguments.getApiVersion());
         assertEquals(LanguageFeature.State.ENABLED_WITH_ERROR, CoroutineSupport.byCompilerArguments(arguments));
@@ -266,7 +268,7 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
         assertEquals(false, settings.getUseProjectSettings());
         assertEquals("1.1", settings.getLanguageLevel().getDescription());
         assertEquals("1.0", settings.getApiLevel().getDescription());
-        assertEquals(new JvmIdePlatformKind.Platform(JvmTarget.JVM_1_8), settings.getPlatform());
+        assertEquals(JvmPlatforms.INSTANCE.getJvm18(), settings.getPlatform());
         assertEquals("1.1", arguments.getLanguageVersion());
         assertEquals("1.0", arguments.getApiVersion());
         assertEquals(LanguageFeature.State.ENABLED, CoroutineSupport.byCompilerArguments(arguments));
@@ -276,7 +278,7 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
 
     public void testJvmProjectWithJvmTarget11() {
         KotlinFacetSettings settings = KotlinFacetSettingsProvider.Companion.getInstance(myProject).getInitializedSettings(getModule());
-        assertEquals(new JvmIdePlatformKind.Platform(JvmTarget.JVM_11), settings.getPlatform());
+        assertEquals(JvmPlatforms.INSTANCE.jvmPlatformByTargetVersion(JvmTarget.JVM_11), settings.getPlatform());
     }
 
     public void testImplementsDependency() {
@@ -342,7 +344,7 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
         IdeModifiableModelsProviderImpl modelsProvider = new IdeModifiableModelsProviderImpl(getProject());
         try {
             KotlinFacet facet = FacetUtilsKt.getOrCreateFacet(getModule(), modelsProvider, false, null, false);
-            JvmIdePlatformKind.Platform platform = new JvmIdePlatformKind.Platform(jvmTarget);
+            TargetPlatform platform = JvmPlatforms.INSTANCE.jvmPlatformByTargetVersion(jvmTarget);
             FacetUtilsKt.configureFacet(
                     facet,
                     "1.1",
@@ -370,7 +372,7 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
     }
 
     public void testProjectWithoutFacetWithJvmTarget18() {
-        assertEquals(new JvmIdePlatformKind.Platform(JvmTarget.JVM_1_8), PlatformKt.getPlatform(getModule()));
+        assertEquals(JvmPlatforms.INSTANCE.getJvm18(), PlatformKt.getPlatform(getModule()));
     }
 
     private static class LibraryCountingRootPolicy extends RootPolicy<Integer> {

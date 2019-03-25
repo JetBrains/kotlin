@@ -13,6 +13,7 @@ import com.intellij.openapi.module.Module
 import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
 import org.jetbrains.kotlin.idea.configuration.KotlinTargetData
 import org.jetbrains.kotlin.platform.impl.isCommon
+import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.plugins.gradle.execution.test.runner.GradleTestTasksProvider
 import org.jetbrains.plugins.gradle.service.project.GradleProjectResolverUtil
 import org.jetbrains.plugins.gradle.util.GradleConstants
@@ -51,7 +52,7 @@ class KotlinMPPGradleTestTasksProvider : GradleTestTasksProvider {
 
     private fun isTestCommonModule(module: Module): Boolean {
         val settings = KotlinFacetSettingsProvider.getInstance(module.project).getInitializedSettings(module)
-        return settings.platform.isCommon && settings.isTestModule
+        return settings.platform.isCommon() && settings.isTestModule
     }
 
     private fun getTaskNames(task: TaskData, namePrefix: String): List<String> {

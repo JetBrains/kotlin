@@ -20,9 +20,12 @@ import org.jetbrains.kotlin.idea.stubs.AbstractMultiModuleTest
 import org.jetbrains.kotlin.idea.stubs.createFacet
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.jetbrains.kotlin.platform.IdePlatform
-import org.jetbrains.kotlin.platform.impl.*
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.platform.*
+import org.jetbrains.kotlin.platform.js.JsPlatforms
+import org.jetbrains.kotlin.platform.jvm.isJvm
+import org.jetbrains.kotlin.platform.js.isJs
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import java.io.File
 
 // allows to configure a test mpp project
@@ -45,11 +48,11 @@ fun AbstractMultiModuleTest.setupMppProjectFromDirStructure(testRoot: File) {
                 is ModuleDependency -> module.addDependency(modulesById[it.moduleId]!!)
                 is StdlibDependency -> {
                     when {
-                        platform.isCommon -> module.addLibrary(
+                        platform.isCommon() -> module.addLibrary(
                             ForTestCompileRuntime.stdlibCommonForTests(), kind = CommonLibraryKind
                         )
-                        platform.isJvm -> module.addLibrary(ForTestCompileRuntime.runtimeJarForTests())
-                        platform.isJavaScript -> module.addLibrary(ForTestCompileRuntime.stdlibJsForTests(), kind = JSLibraryKind)
+                        platform.isJvm() -> module.addLibrary(ForTestCompileRuntime.runtimeJarForTests())
+                        platform.isJs() -> module.addLibrary(ForTestCompileRuntime.stdlibJsForTests(), kind = JSLibraryKind)
                         else -> error("Unknown platform $this")
                     }
                 }
@@ -60,8 +63,8 @@ fun AbstractMultiModuleTest.setupMppProjectFromDirStructure(testRoot: File) {
                 }
                 is CoroutinesDependency -> module.enableCoroutines()
                 is KotlinTestDependency -> when {
-                    platform.isJvm -> module.addLibrary(ForTestCompileRuntime.kotlinTestJUnitJarForTests())
-                    platform.isJavaScript -> module.addLibrary(ForTestCompileRuntime.kotlinTestJsJarForTests(), kind = JSLibraryKind)
+                    platform.isJvm() -> module.addLibrary(ForTestCompileRuntime.kotlinTestJUnitJarForTests())
+                    platform.isJs() -> module.addLibrary(ForTestCompileRuntime.kotlinTestJsJarForTests(), kind = JSLibraryKind)
                 }
             }
         }
@@ -70,9 +73,9 @@ fun AbstractMultiModuleTest.setupMppProjectFromDirStructure(testRoot: File) {
     modulesById.forEach { (nameAndPlatform, module) ->
         val (name, platform) = nameAndPlatform
         when {
-            platform.isCommon -> module.createFacet(platform, useProjectSettings = false)
+            platform.isCommon() -> module.createFacet(platform, useProjectSettings = false)
             else -> {
-                val commonModuleId = ModuleId(name, CommonIdePlatformKind.Platform)
+                val commonModuleId = ModuleId(name, CommonPlatforms.defaultCommonPlatform)
 
                 module.createFacet(platform, implementedModuleName = commonModuleId.ideaModuleName())
                 module.enableMultiPlatform()
@@ -93,7 +96,7 @@ private fun AbstractMultiModuleTest.createModuleWithRoots(
     for ((_, isTestRoot, moduleRoot) in infos) {
         addRoot(module, moduleRoot, isTestRoot)
 
-        if (moduleId.platform.isJavaScript && isTestRoot) {
+        if (moduleId.platform.isJs() && isTestRoot) {
             setupJsTestOutput(module)
         }
     }
@@ -126,11 +129,11 @@ private fun AbstractMultiModuleTest.createModule(name: String): Module {
 
 private val testSuffixes = setOf("test", "tests")
 private val platformNames = mapOf(
-    listOf("header", "common", "expect") to CommonIdePlatformKind.Platform,
-    listOf("java", "jvm") to JvmIdePlatformKind.defaultPlatform,
-    listOf("java8", "jvm8") to JvmIdePlatformKind.Platform(JvmTarget.JVM_1_8),
-    listOf("java6", "jvm6") to JvmIdePlatformKind.Platform(JvmTarget.JVM_1_6),
-    listOf("js", "javascript") to JsIdePlatformKind.Platform
+    listOf("header", "common", "expect") to CommonPlatforms.defaultCommonPlatform,
+    listOf("java", "jvm") to JvmPlatforms.defaultJvmPlatform,
+    listOf("java8", "jvm8") to JvmPlatforms.jvm18,
+    listOf("java6", "jvm6") to JvmPlatforms.jvm16,
+    listOf("js", "javascript") to JsPlatforms.defaultJsPlatform
 )
 
 private fun parseDirName(dir: File): RootInfo {
@@ -159,7 +162,7 @@ private fun parseModuleId(parts: List<String>): ModuleId {
     val platform = parsePlatform(parts)
     val name = parseModuleName(parts)
     val id = parseIndex(parts) ?: 0
-    assert(id == 0 || !platform.isCommon)
+    assert(id == 0 || !platform.isCommon())
     return ModuleId(name, platform, id)
 }
 
@@ -182,7 +185,7 @@ private fun parseIndex(parts: List<String>): Int? {
 
 private data class ModuleId(
     val groupName: String,
-    val platform: IdePlatform<*, *>,
+    val platform: TargetPlatform,
     val index: Int = 0
 ) {
     fun ideaModuleName(): String {
@@ -191,11 +194,11 @@ private data class ModuleId(
     }
 }
 
-private val IdePlatform<*, *>.presentableName: String
+private val TargetPlatform.presentableName: String
     get() = when {
-        isCommon -> "Common"
-        isJvm -> "JVM"
-        isJavaScript -> "JS"
+        isCommon() -> "Common"
+        isJvm() -> "JVM"
+        isJs() -> "JS"
         else -> error("Unknown platform $this")
     }
 

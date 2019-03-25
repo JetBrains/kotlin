@@ -42,15 +42,16 @@ import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerSettings
 import org.jetbrains.kotlin.idea.facet.getLibraryLanguageLevel
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.DefaultIdeTargetPlatformKindProvider
-import org.jetbrains.kotlin.platform.IdePlatform
 import org.jetbrains.kotlin.platform.IdePlatformKind
-import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
-import org.jetbrains.kotlin.platform.impl.isCommon
+import org.jetbrains.kotlin.platform.idePlatformKind
+import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.UserDataProperty
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.impl.isCommon
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.utils.Jsr305State
 import java.io.File
 
@@ -64,7 +65,7 @@ var KtFile.forcedTargetPlatform: TargetPlatform? by UserDataProperty(Key.create(
 
 fun Module.getAndCacheLanguageLevelByDependencies(): LanguageVersion {
     val facetSettings = KotlinFacetSettingsProvider.getInstance(project).getInitializedSettings(this)
-    val languageLevel = getLibraryLanguageLevel(this, null, facetSettings.platform?.kind)
+    val languageLevel = getLibraryLanguageLevel(this, null, facetSettings.platform?.idePlatformKind)
 
     // Preserve inferred version in facet/project settings
     if (facetSettings.useProjectSettings) {
@@ -196,7 +197,7 @@ private fun Module.computeLanguageVersionSettings(): LanguageVersionSettings {
 
     val languageFeatures = facetSettings.mergedCompilerArguments?.configureLanguageFeatures(MessageCollector.NONE)?.apply {
         configureCoroutinesSupport(facetSettings.coroutineSupport, languageVersion)
-        configureMultiplatformSupport(facetSettings.platform?.kind, this@computeLanguageVersionSettings)
+        configureMultiplatformSupport(facetSettings.platform?.idePlatformKind, this@computeLanguageVersionSettings)
         configureNewInferenceSupportInIDE(project)
     }.orEmpty()
 
@@ -210,26 +211,26 @@ private fun Module.computeLanguageVersionSettings(): LanguageVersionSettings {
     )
 }
 
-val Module.platform: IdePlatform<*, *>?
+val Module.platform: TargetPlatform?
     get() = KotlinFacetSettingsProvider.getInstance(project).getInitializedSettings(this).platform ?: project.platform
 
 // FIXME(dsavvinov): this logic is clearly wrong in MPP environment; review and fix
-val Project.platform: IdePlatform<*, *>?
+val Project.platform: TargetPlatform?
     get() {
         val jvmTarget = Kotlin2JvmCompilerArgumentsHolder.getInstance(this).settings.jvmTarget ?: return null
         val version = JvmTarget.fromString(jvmTarget) ?: return null
-        return JvmIdePlatformKind.Platform(version)
+        return JvmPlatforms.jvmPlatformByTargetVersion(version)
     }
 
 private val Module.implementsCommonModule: Boolean
-    get() = !platform.isCommon
-            && ModuleRootManager.getInstance(this).dependencies.any { it.platform.isCommon }
+    get() = !platform.isCommon() // FIXME(dsavvinov): this doesn't seems right, in multilevel-MPP 'common' modules can implement other commons
+            && ModuleRootManager.getInstance(this).dependencies.any { it.platform.isCommon() }
 
 private fun parseArguments(
-    platformKind: IdePlatform<*, *>,
+    platformKind: TargetPlatform,
     additionalArguments: List<String>
 ): CommonCompilerArguments {
-    return platformKind.createArguments().also { parseCommandLineArguments(additionalArguments, it) }
+    return platformKind.createArguments { parseCommandLineArguments(additionalArguments, this) }
 }
 
 fun MutableMap<LanguageFeature, LanguageFeature.State>.configureCoroutinesSupport(

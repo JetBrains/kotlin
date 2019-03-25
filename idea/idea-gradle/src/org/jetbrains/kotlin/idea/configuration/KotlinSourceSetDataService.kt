@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.idea.inspections.gradle.findKotlinPluginVersion
 import org.jetbrains.kotlin.idea.platform.IdePlatformKindTooling
 import org.jetbrains.kotlin.idea.roots.migrateNonJvmSourceFolders
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.plugins.gradle.model.data.BuildScriptClasspathData
 import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData
 
@@ -99,10 +100,12 @@ class KotlinSourceSetDataService : AbstractProjectDataService<GradleSourceSetDat
                 ?.let { findKotlinPluginVersion(it) }// ?: return null TODO: Fix in CLion or our plugin KT-27623
 
             val platformKind = IdePlatformKindTooling.getTooling(kotlinSourceSet.platform).kind
+
+            // FIXME(dsavvinov): it seems to convert platforms back-and-forth, clean-up needed
             val platform = when (platformKind) {
                 is JvmIdePlatformKind -> {
                     val target = JvmTarget.fromString(moduleData.targetCompatibility ?: "") ?: JvmTarget.DEFAULT
-                    JvmIdePlatformKind.Platform(target)
+                    JvmPlatforms.jvmPlatformByTargetVersion(target)
                 }
                 else -> platformKind.defaultPlatform
             }
