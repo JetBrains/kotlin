@@ -69,6 +69,6 @@ FILE fqName:foo fileName:/nativeNativeKotlin.kt
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String 
     BLOCK_BODY
       VAR name:c type:foo.C [val] 
-        CALL 'public constructor <init> () [primary] declared in foo.C' type=foo.C origin=null
+        CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in foo.C' type=foo.C origin=null
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in foo'
         CONST String type=kotlin.String value="OK"

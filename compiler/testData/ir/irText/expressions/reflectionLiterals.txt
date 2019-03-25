@@ -73,7 +73,7 @@ FILE fqName:<root> fileName:/reflectionLiterals.kt
     FIELD PROPERTY_BACKING_FIELD name:test5 type:kotlin.reflect.KFunction0<kotlin.Unit> visibility:public [final,static] 
       EXPRESSION_BODY
         FUNCTION_REFERENCE 'public final fun foo (): kotlin.Unit declared in <root>.A' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null
-          $this: CALL 'public constructor <init> () [primary] declared in <root>.A' type=<root>.A origin=null
+          $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A' type=<root>.A origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test5> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KFunction0<kotlin.Unit> 
       correspondingProperty: PROPERTY name:test5 visibility:public modality:FINAL [val] 
       BLOCK_BODY

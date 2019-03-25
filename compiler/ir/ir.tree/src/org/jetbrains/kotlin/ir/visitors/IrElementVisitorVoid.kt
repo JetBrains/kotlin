@@ -158,6 +158,9 @@ interface IrElementVisitorVoid : IrElementVisitor<Unit, Nothing?> {
     fun visitCall(expression: IrCall) = visitFunctionAccess(expression)
     override fun visitCall(expression: IrCall, data: Nothing?) = visitCall(expression)
 
+    fun visitConstructorCall(expression: IrConstructorCall) = visitFunctionAccess(expression)
+    override fun visitConstructorCall(expression: IrConstructorCall, data: Nothing?) = visitConstructorCall(expression)
+
     fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall) = visitFunctionAccess(expression)
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: Nothing?) =
         visitDelegatingConstructorCall(expression)

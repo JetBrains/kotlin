@@ -2,7 +2,7 @@ FILE fqName:<root> fileName:/coercionInLoop.kt
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String 
     BLOCK_BODY
       VAR name:a type:kotlin.DoubleArray [val] 
-        CALL 'public constructor <init> (size: kotlin.Int) [primary] declared in kotlin.DoubleArray' type=kotlin.DoubleArray origin=null
+        CONSTRUCTOR_CALL 'public constructor <init> (size: kotlin.Int) [primary] declared in kotlin.DoubleArray' type=kotlin.DoubleArray origin=null
           size: CONST Int type=kotlin.Int value=5
       VAR name:x type:kotlin.collections.DoubleIterator [val] 
         CALL 'public final fun iterator (): kotlin.collections.DoubleIterator declared in kotlin.DoubleArray' type=kotlin.collections.DoubleIterator origin=null

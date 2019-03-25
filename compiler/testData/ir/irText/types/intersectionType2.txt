@@ -90,9 +90,9 @@ FILE fqName:<root> fileName:/intersectionType2.kt
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Any 
               BLOCK_BODY
                 VAR name:mm type:<root>.B [val] 
-                  CALL 'public constructor <init> () [primary] declared in <root>.B' type=<root>.B origin=null
+                  CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.B' type=<root>.B origin=null
                 VAR name:nn type:<root>.C [val] 
-                  CALL 'public constructor <init> () [primary] declared in <root>.C' type=<root>.C origin=null
+                  CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.C' type=<root>.C origin=null
                 VAR name:c type:kotlin.Any [val] 
                   WHEN type=kotlin.Any origin=IF
                     BRANCH

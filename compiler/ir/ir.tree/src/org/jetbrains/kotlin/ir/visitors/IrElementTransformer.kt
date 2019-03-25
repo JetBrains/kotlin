@@ -87,6 +87,7 @@ interface IrElementTransformer<in D> : IrElementVisitor<IrElement, D> {
     override fun visitMemberAccess(expression: IrMemberAccessExpression, data: D): IrElement = visitExpression(expression, data)
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: D): IrElement = visitMemberAccess(expression, data)
     override fun visitCall(expression: IrCall, data: D) = visitFunctionAccess(expression, data)
+    override fun visitConstructorCall(expression: IrConstructorCall, data: D): IrElement = visitFunctionAccess(expression, data)
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: D) = visitFunctionAccess(expression, data)
     override fun visitEnumConstructorCall(expression: IrEnumConstructorCall, data: D) = visitFunctionAccess(expression, data)
     override fun visitGetClass(expression: IrGetClass, data: D) = visitExpression(expression, data)

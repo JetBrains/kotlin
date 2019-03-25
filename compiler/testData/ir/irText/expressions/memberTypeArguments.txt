@@ -23,8 +23,8 @@ FILE fqName:<root> fileName:/memberTypeArguments.kt
       VALUE_PARAMETER name:newValue index:0 type:T of <root>.GenericClass 
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun withNewValue (newValue: T of <root>.GenericClass): <root>.GenericClass<T of <root>.GenericClass> declared in <root>.GenericClass'
-          CALL 'public constructor <init> (value: T of <root>.GenericClass) [primary] declared in <root>.GenericClass' type=<root>.GenericClass<T of <root>.GenericClass> origin=null
-            <T>: T of <root>.GenericClass
+          CONSTRUCTOR_CALL 'public constructor <init> (value: T of <root>.GenericClass) [primary] declared in <root>.GenericClass' type=<root>.GenericClass<T of <root>.GenericClass> origin=null
+            <class: T>: T of <root>.GenericClass
             value: GET_VAR 'newValue: T of <root>.GenericClass declared in <root>.GenericClass.withNewValue' type=T of <root>.GenericClass origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:

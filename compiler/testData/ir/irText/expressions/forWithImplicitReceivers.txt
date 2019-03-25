@@ -64,7 +64,7 @@ FILE fqName:<root> fileName:/forWithImplicitReceivers.kt
       $receiver: VALUE_PARAMETER name:<this> type:<root>.FiveTimes 
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun iterator (): <root>.IntCell declared in <root>.IReceiver'
-          CALL 'public constructor <init> (value: kotlin.Int) [primary] declared in <root>.IntCell' type=<root>.IntCell origin=null
+          CONSTRUCTOR_CALL 'public constructor <init> (value: kotlin.Int) [primary] declared in <root>.IntCell' type=<root>.IntCell origin=null
             value: CONST Int type=kotlin.Int value=5
     FUN name:hasNext visibility:public modality:OPEN <> ($this:<root>.IReceiver, $receiver:<root>.IntCell) returnType:kotlin.Boolean 
       $this: VALUE_PARAMETER name:<this> type:<root>.IReceiver 

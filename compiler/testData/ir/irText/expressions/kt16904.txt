@@ -8,7 +8,7 @@ FILE fqName:<root> fileName:/kt16904.kt
     PROPERTY name:x visibility:public modality:FINAL [val] 
       FIELD PROPERTY_BACKING_FIELD name:x type:<root>.B visibility:public [final] 
         EXPRESSION_BODY
-          CALL 'public constructor <init> () [primary] declared in <root>.B' type=<root>.B origin=null
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.B' type=<root>.B origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:<root>.A) returnType:<root>.B 
         correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [val] 
         $this: VALUE_PARAMETER name:<this> type:<root>.A 

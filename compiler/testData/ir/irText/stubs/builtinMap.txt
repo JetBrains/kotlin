@@ -18,9 +18,9 @@ FILE fqName:<root> fileName:/builtinMap.kt
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CALL 'public final fun apply <T> (block: @[CALL 'public constructor <init> () [primary] declared in kotlin.ExtensionFunctionType' type=kotlin.ExtensionFunctionType origin=null] kotlin.Function1<T of kotlin.apply, kotlin.Unit>): T of kotlin.apply [inline] declared in kotlin' type=java.util.LinkedHashMap<K1 of <root>.plus?, V1 of <root>.plus?> origin=null
               <T>: java.util.LinkedHashMap<K1 of <root>.plus?, V1 of <root>.plus?>
-              $receiver: CALL 'public constructor <init> (p0: kotlin.collections.Map<out K of java.util.LinkedHashMap?, V of java.util.LinkedHashMap?>?) declared in java.util.LinkedHashMap' type=java.util.LinkedHashMap<K1 of <root>.plus?, V1 of <root>.plus?> origin=null
-                <K>: K1 of <root>.plus?
-                <V>: V1 of <root>.plus?
+              $receiver: CONSTRUCTOR_CALL 'public constructor <init> (p0: kotlin.collections.Map<out K of java.util.LinkedHashMap?, V of java.util.LinkedHashMap?>?) declared in java.util.LinkedHashMap' type=java.util.LinkedHashMap<K1 of <root>.plus?, V1 of <root>.plus?> origin=null
+                <class: K>: K1 of <root>.plus?
+                <class: V>: V1 of <root>.plus?
                 p0: GET_VAR '<this>: kotlin.collections.Map<out K1 of <root>.plus, V1 of <root>.plus> declared in <root>.plus' type=kotlin.collections.Map<out K1 of <root>.plus, V1 of <root>.plus> origin=null
               block: BLOCK type=@[CALL 'public constructor <init> () [primary] declared in kotlin.ExtensionFunctionType' type=kotlin.ExtensionFunctionType origin=null] kotlin.Function1<java.util.LinkedHashMap<K1 of <root>.plus?, V1 of <root>.plus?>, kotlin.Unit> origin=LAMBDA
                 FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:java.util.LinkedHashMap<K1 of <root>.plus?, V1 of <root>.plus?>) returnType:kotlin.Unit 

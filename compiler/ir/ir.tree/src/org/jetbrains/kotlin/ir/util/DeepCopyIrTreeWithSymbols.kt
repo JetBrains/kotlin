@@ -457,6 +457,23 @@ open class DeepCopyIrTreeWithSymbols(
             transformValueArguments(expression)
         }
 
+    override fun visitConstructorCall(expression: IrConstructorCall): IrConstructorCall {
+        val constructorSymbol = symbolRemapper.getReferencedConstructor(expression.symbol)
+        return IrConstructorCallImpl(
+            expression.startOffset, expression.endOffset,
+            expression.type.remapType(),
+            constructorSymbol,
+            constructorSymbol.descriptor,
+            expression.typeArgumentsCount,
+            expression.constructorTypeArgumentsCount,
+            expression.valueArgumentsCount,
+            mapStatementOrigin(expression.origin)
+        ).apply {
+            copyRemappedTypeArgumentsFrom(expression)
+            transformValueArguments(expression)
+        }
+    }
+
     private fun IrMemberAccessExpression.copyRemappedTypeArgumentsFrom(other: IrMemberAccessExpression) {
         assert(typeArgumentsCount == other.typeArgumentsCount) {
             "Mismatching type arguments: $typeArgumentsCount vs ${other.typeArgumentsCount} "

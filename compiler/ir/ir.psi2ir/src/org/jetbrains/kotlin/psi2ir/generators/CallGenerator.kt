@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.types.IrDynamicType
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.util.referenceFunction
 import org.jetbrains.kotlin.ir.util.render
@@ -34,7 +35,6 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.classValueType
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
@@ -50,6 +50,8 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
         return when (descriptor) {
             is PropertyDescriptor ->
                 generatePropertyGetterCall(descriptor, startOffset, endOffset, call)
+            is ClassConstructorDescriptor ->
+                generateConstructorCall(descriptor, startOffset, endOffset, origin, call)
             is FunctionDescriptor ->
                 generateFunctionCall(descriptor, startOffset, endOffset, origin, call)
             else ->
@@ -143,7 +145,7 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
                 this.dispatchReceiver = dispatchReceiver?.load()
                 this.extensionReceiver = extensionReceiver?.load()
             }
-            addParametersToCall(startOffset, endOffset, call, irCall, descriptor.builtIns.unitType)
+            addParametersToCall(startOffset, endOffset, call, irCall, context.irBuiltIns.unitType)
         }
 
     fun generateEnumConstructorSuperCall(startOffset: Int, endOffset: Int, call: CallBuilder): IrExpression {
@@ -156,8 +158,9 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
             if (dispatchReceiver != null) throw AssertionError("Dispatch receiver should be null: $dispatchReceiver")
             if (extensionReceiver != null) throw AssertionError("Extension receiver should be null: $extensionReceiver")
             val constructorSymbol = context.symbolTable.referenceConstructor(constructorDescriptor.original)
-            val irCall = IrEnumConstructorCallImpl(startOffset, endOffset, constructorDescriptor.returnType.toIrType(), constructorSymbol)
-            addParametersToCall(startOffset, endOffset, call, irCall, constructorDescriptor.returnType)
+            val irResultType = constructorDescriptor.returnType.toIrType()
+            val irCall = IrEnumConstructorCallImpl(startOffset, endOffset, irResultType, constructorSymbol)
+            addParametersToCall(startOffset, endOffset, call, irCall, irResultType)
         }
     }
 
@@ -234,6 +237,35 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
         return dispatchReceiver
     }
 
+    private fun generateConstructorCall(
+        constructorDescriptor: ClassConstructorDescriptor,
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrStatementOrigin?,
+        call: CallBuilder
+    ): IrExpression =
+        call.callReceiver.call { dispatchReceiverValue, extensionReceiverValue ->
+            val irType = constructorDescriptor.returnType.toIrType()
+            val classTypeParametersCount = constructorDescriptor.constructedClass.original.declaredTypeParameters.size
+            val totalTypeParametersCount = constructorDescriptor.typeParameters.size
+
+            IrConstructorCallImpl(
+                startOffset, endOffset,
+                irType,
+                context.symbolTable.referenceConstructor(constructorDescriptor.original),
+                constructorDescriptor,
+                typeArgumentsCount = totalTypeParametersCount,
+                constructorTypeArgumentsCount = totalTypeParametersCount - classTypeParametersCount,
+                valueArgumentsCount = constructorDescriptor.valueParameters.size,
+                origin = origin
+            ).run {
+                putTypeArguments(call.typeArguments) { it.toIrType() }
+                dispatchReceiver = dispatchReceiverValue?.load()
+                extensionReceiver = extensionReceiverValue?.load()
+                addParametersToCall(startOffset, endOffset, call, this, irType)
+            }
+        }
+
     private fun generateFunctionCall(
         functionDescriptor: FunctionDescriptor,
         startOffset: Int,
@@ -242,8 +274,7 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
         call: CallBuilder
     ): IrExpression =
         call.callReceiver.call { dispatchReceiverValue, extensionReceiverValue ->
-            val returnType = functionDescriptor.returnType!!
-            val irType = returnType.toIrType()
+            val irType = functionDescriptor.returnType!!.toIrType()
 
             if (functionDescriptor.isDynamic()) {
                 fun makeDynamicOperatorExpression(operator: IrDynamicOperator) =
@@ -294,21 +325,19 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
                         )
                 }
             } else {
-                val functionSymbol = context.symbolTable.referenceFunction(functionDescriptor.original)
-                val superQualifierSymbol = call.superQualifier?.let { context.symbolTable.referenceClass(it) }
-                val irCall = IrCallImpl(
+                IrCallImpl(
                     startOffset, endOffset,
                     irType,
-                    functionSymbol,
+                    context.symbolTable.referenceFunction(functionDescriptor.original),
                     functionDescriptor,
                     origin,
-                    superQualifierSymbol
-                ).apply {
+                    call.superQualifier?.let { context.symbolTable.referenceClass(it) }
+                ).run {
                     putTypeArguments(call.typeArguments) { it.toIrType() }
-                    this.dispatchReceiver = dispatchReceiverValue?.load()
-                    this.extensionReceiver = extensionReceiverValue?.load()
+                    dispatchReceiver = dispatchReceiverValue?.load()
+                    extensionReceiver = extensionReceiverValue?.load()
+                    addParametersToCall(startOffset, endOffset, call, this, irType)
                 }
-                addParametersToCall(startOffset, endOffset, call, irCall, returnType)
             }
         }
 
@@ -317,10 +346,10 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
         endOffset: Int,
         call: CallBuilder,
         irCall: IrFunctionAccessExpression,
-        returnType: KotlinType
+        irResultType: IrType
     ): IrExpression =
         if (call.isValueArgumentReorderingRequired()) {
-            generateCallWithArgumentReordering(irCall, startOffset, endOffset, call, returnType)
+            generateCallWithArgumentReordering(irCall, startOffset, endOffset, call, irResultType)
         } else {
             val valueArguments = call.getValueArgumentsInParameterOrder()
             for ((index, valueArgument) in valueArguments.withIndex()) {
@@ -334,14 +363,14 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
         startOffset: Int,
         endOffset: Int,
         call: CallBuilder,
-        resultType: KotlinType
+        irResultType: IrType
     ): IrExpression {
         val resolvedCall = call.original
 
         val valueArgumentsInEvaluationOrder = resolvedCall.valueArguments.values
         val valueParameters = resolvedCall.resultingDescriptor.valueParameters
 
-        val irBlock = IrBlockImpl(startOffset, endOffset, resultType.toIrType(), IrStatementOrigin.ARGUMENTS_REORDERING_FOR_CALL)
+        val irBlock = IrBlockImpl(startOffset, endOffset, irResultType, IrStatementOrigin.ARGUMENTS_REORDERING_FOR_CALL)
 
         val valueArgumentsToValueParameters = HashMap<ResolvedValueArgument, ValueParameterDescriptor>()
         for ((index, valueArgument) in resolvedCall.valueArgumentsByIndex!!.withIndex()) {

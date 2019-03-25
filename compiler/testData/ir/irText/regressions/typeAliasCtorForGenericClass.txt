@@ -34,10 +34,10 @@ FILE fqName:<root> fileName:/typeAliasCtorForGenericClass.kt
   FUN name:bar visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
       VAR name:b type:<root>.A<kotlin.Int> [val] 
-        CALL 'public constructor <init> (q: Q of <root>.A) [primary] declared in <root>.A' type=<root>.A<kotlin.Int> origin=null
-          <Q>: kotlin.Int
+        CONSTRUCTOR_CALL 'public constructor <init> (q: Q of <root>.A) [primary] declared in <root>.A' type=<root>.A<kotlin.Int> origin=null
+          <class: Q>: kotlin.Int
           q: CONST Int type=kotlin.Int value=2
       VAR name:b2 type:<root>.A<<root>.A<kotlin.Int>> [val] 
-        CALL 'public constructor <init> (q: Q of <root>.A) [primary] declared in <root>.A' type=<root>.A<<root>.A<kotlin.Int>> origin=null
-          <Q>: <root>.A<kotlin.Int>
+        CONSTRUCTOR_CALL 'public constructor <init> (q: Q of <root>.A) [primary] declared in <root>.A' type=<root>.A<<root>.A<kotlin.Int>> origin=null
+          <class: Q>: <root>.A<kotlin.Int>
           q: GET_VAR 'val b: <root>.A<kotlin.Int> [val] declared in <root>.bar' type=<root>.A<kotlin.Int> origin=null

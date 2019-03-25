@@ -171,12 +171,34 @@ class DumpIrTreeVisitor(
         }
     }
 
+    override fun visitConstructorCall(expression: IrConstructorCall, data: String) {
+        expression.dumpLabeledElementWith(data) {
+            dumpTypeArguments(expression)
+            expression.outerClassReceiver?.accept(this, "\$outer")
+            val valueParameterNames = expression.getValueParameterNames(expression.valueArgumentsCount)
+            for (index in 0 until expression.valueArgumentsCount) {
+                expression.getValueArgument(index)?.accept(this, valueParameterNames[index])
+            }
+        }
+    }
+
     private fun dumpTypeArguments(expression: IrMemberAccessExpression) {
         val typeParameterNames = expression.getTypeParameterNames(expression.typeArgumentsCount)
         for (index in 0 until expression.typeArgumentsCount) {
-            printer.println(
-                "<${typeParameterNames[index]}>: ${expression.renderTypeArgument(index)}"
-            )
+            printer.println("<${typeParameterNames[index]}>: ${expression.renderTypeArgument(index)}")
+        }
+    }
+
+    private fun dumpTypeArguments(expression: IrConstructorCall) {
+        val typeParameterNames = expression.getTypeParameterNames(expression.typeArgumentsCount)
+        for (index in 0 until expression.typeArgumentsCount) {
+            val typeParameterName = typeParameterNames[index]
+            val parameterLabel =
+                if (index < expression.classTypeArgumentsCount)
+                    "class: $typeParameterName"
+                else
+                    typeParameterName
+            printer.println("<$parameterLabel>: ${expression.renderTypeArgument(index)}")
         }
     }
 
@@ -220,31 +242,13 @@ class DumpIrTreeVisitor(
             getPlaceholderParameterNames(expectedCount)
         }
 
-    private fun IrConstructor.getFullTypeParametersList(): List<IrTypeParameter> =
-        getConstructedClassTypeParameters().apply { addAll(typeParameters) }
-
-    private fun IrConstructor.getConstructedClassTypeParameters(): MutableList<IrTypeParameter> {
-        val typeParameters = ArrayList<IrTypeParameter>()
+    private fun IrConstructor.getFullTypeParametersList(): List<IrTypeParameter> {
         val parentClass = try {
             parent as? IrClass ?: return typeParameters
         } catch (e: Exception) {
             return typeParameters
         }
-        parentClass.collectClassTypeParameters(typeParameters)
-        return typeParameters
-    }
-
-    private fun IrClass.collectClassTypeParameters(typeParameters: MutableList<IrTypeParameter>) {
-        var currentClass = this
-        while (true) {
-            typeParameters.addAll(currentClass.typeParameters)
-            if (!currentClass.isInner) return
-            currentClass = try {
-                currentClass.parent as? IrClass ?: return
-            } catch (e: Exception) {
-                return
-            }
-        }
+        return parentClass.typeParameters + typeParameters
     }
 
     private fun IrMemberAccessExpression.renderTypeArgument(index: Int): String =

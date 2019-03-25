@@ -39,6 +39,9 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
 
     fun renderSymbolReference(symbol: IrSymbol) = symbol.renderReference()
 
+    private inline fun buildTrimEnd(fn: StringBuilder.() -> Unit): String =
+        buildString(fn).trimEnd()
+
     private fun IrType.render() =
         "${renderTypeAnnotations(annotations)}${renderTypeInner()}"
 
@@ -48,7 +51,7 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
 
             is IrErrorType -> "IrErrorType"
 
-            is IrSimpleType -> buildString {
+            is IrSimpleType -> buildTrimEnd {
                 append(classifier.renderClassifierFqn())
                 if (arguments.isNotEmpty()) {
                     append(
@@ -69,7 +72,7 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
         when (this) {
             is IrStarProjection -> "*"
 
-            is IrTypeProjection -> buildString {
+            is IrTypeProjection -> buildTrimEnd {
                 append(variance.label)
                 if (variance != Variance.INVARIANT) append(' ')
                 append(type.render())
@@ -100,7 +103,7 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
             element.accept(this@RenderIrElementVisitor, null)
 
         override fun visitVariable(declaration: IrVariable, data: Nothing?) =
-            buildString {
+            buildTrimEnd {
                 if (declaration.isVar) append("var ") else append("val ")
 
                 append(declaration.name.asString())
@@ -114,7 +117,7 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
             }
 
         override fun visitValueParameter(declaration: IrValueParameter, data: Nothing?) =
-            buildString {
+            buildTrimEnd {
                 append(declaration.name.asString())
                 append(": ")
                 append(declaration.type.render())
@@ -126,7 +129,7 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
             }
 
         override fun visitFunction(declaration: IrFunction, data: Nothing?) =
-            buildString {
+            buildTrimEnd {
                 append(declaration.visibility)
                 append(' ')
 
@@ -184,7 +187,7 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
         }
 
         override fun visitProperty(declaration: IrProperty, data: Nothing?) =
-            buildString {
+            buildTrimEnd {
                 append(declaration.visibility)
                 append(' ')
                 append(declaration.modality.toString().toLowerCase())
@@ -203,7 +206,7 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
             }
 
         override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty, data: Nothing?): String =
-            buildString {
+            buildTrimEnd {
                 if (declaration.isVar) append("var ") else append("val ")
                 append(declaration.name.asString())
                 append(": ")
@@ -459,6 +462,9 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
     private fun IrCall.renderSuperQualifier(): String =
         superQualifierSymbol?.let { "superQualifier='${it.renderReference()}' " } ?: ""
 
+    override fun visitConstructorCall(expression: IrConstructorCall, data: Nothing?): String =
+        "CONSTRUCTOR_CALL '${expression.symbol.renderReference()}' type=${expression.type.render()} origin=${expression.origin}"
+
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: Nothing?): String =
         "DELEGATING_CONSTRUCTOR_CALL '${expression.symbol.renderReference()}'"
 
@@ -517,7 +523,7 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
         "FUNCTION_REFERENCE '${expression.symbol.renderReference()}' type=${expression.type.render()} origin=${expression.origin}"
 
     override fun visitPropertyReference(expression: IrPropertyReference, data: Nothing?): String =
-        buildString {
+        buildTrimEnd {
             append("PROPERTY_REFERENCE ")
             append("'${expression.symbol.renderReference()}' ")
             appendNullableAttribute("field=", expression.field) { "'${it.renderReference()}'" }
@@ -538,7 +544,7 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
     }
 
     override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference, data: Nothing?): String =
-        buildString {
+        buildTrimEnd {
             append("LOCAL_DELEGATED_PROPERTY_REFERENCE ")
             append("'${expression.symbol.renderReference()}' ")
             append("delegate='${expression.delegate.renderReference()}' ")

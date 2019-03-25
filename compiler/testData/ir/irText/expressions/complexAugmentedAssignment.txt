@@ -263,5 +263,5 @@ FILE fqName:<root> fileName:/complexAugmentedAssignment.kt
       CALL 'public final fun plusAssign (b: <root>.B): kotlin.Unit declared in <root>.Host' type=kotlin.Unit origin=PLUSEQ
         $this: GET_VAR '<this>: <root>.Host declared in <root>.test3' type=<root>.Host origin=null
         $receiver: GET_VAR 'v: <root>.B declared in <root>.test3' type=<root>.B origin=PLUSEQ
-        b: CALL 'public constructor <init> (s: kotlin.Int) [primary] declared in <root>.B' type=<root>.B origin=null
+        b: CONSTRUCTOR_CALL 'public constructor <init> (s: kotlin.Int) [primary] declared in <root>.B' type=<root>.B origin=null
           s: CONST Int type=kotlin.Int value=1000

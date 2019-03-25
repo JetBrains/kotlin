@@ -166,6 +166,9 @@ abstract class IrElementTransformerVoid : IrElementTransformer<Nothing?> {
     open fun visitCall(expression: IrCall) = visitFunctionAccess(expression)
     final override fun visitCall(expression: IrCall, data: Nothing?) = visitCall(expression)
 
+    open fun visitConstructorCall(expression: IrConstructorCall) = visitFunctionAccess(expression)
+    final override fun visitConstructorCall(expression: IrConstructorCall, data: Nothing?) = visitConstructorCall(expression)
+
     open fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall) = visitFunctionAccess(expression)
     final override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: Nothing?) =
         visitDelegatingConstructorCall(expression)

@@ -83,5 +83,5 @@ FILE fqName:<root> fileName:/kt16905.kt
   FUN name:test visibility:public modality:FINAL <> () returnType:<root>.Outer.Inner 
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test (): <root>.Outer.Inner declared in <root>'
-        CALL 'public constructor <init> () [primary] declared in <root>.Outer.Inner' type=<root>.Outer.Inner origin=null
-          $this: CALL 'public constructor <init> () [primary] declared in <root>.Outer' type=<root>.Outer origin=null
+        CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Outer.Inner' type=<root>.Outer.Inner origin=null
+          $outer: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Outer' type=<root>.Outer origin=null

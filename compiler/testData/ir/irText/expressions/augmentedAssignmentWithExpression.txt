@@ -31,7 +31,7 @@ FILE fqName:<root> fileName:/augmentedAssignmentWithExpression.kt
   FUN name:foo visibility:public modality:FINAL <> () returnType:<root>.Host 
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun foo (): <root>.Host declared in <root>'
-        CALL 'public constructor <init> () [primary] declared in <root>.Host' type=<root>.Host origin=null
+        CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Host' type=<root>.Host origin=null
   FUN name:test2 visibility:public modality:FINAL <> ($receiver:<root>.Host) returnType:kotlin.Unit 
     $receiver: VALUE_PARAMETER name:<this> type:<root>.Host 
     BLOCK_BODY

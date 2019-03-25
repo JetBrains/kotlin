@@ -62,7 +62,7 @@ FILE fqName:<root> fileName:/local.kt
       VALUE_PARAMETER name:property index:1 type:kotlin.Any? 
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun provideDelegate (thisRef: kotlin.Any?, property: kotlin.Any?): <root>.Delegate declared in <root>.DelegateProvider'
-          CALL 'public constructor <init> (value: kotlin.String) [primary] declared in <root>.Delegate' type=<root>.Delegate origin=null
+          CONSTRUCTOR_CALL 'public constructor <init> (value: kotlin.String) [primary] declared in <root>.Delegate' type=<root>.Delegate origin=null
             value: CALL 'public final fun <get-value> (): kotlin.String declared in <root>.DelegateProvider' type=kotlin.String origin=GET_PROPERTY
               $this: GET_VAR '<this>: <root>.DelegateProvider declared in <root>.DelegateProvider.provideDelegate' type=<root>.DelegateProvider origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
@@ -83,7 +83,7 @@ FILE fqName:<root> fileName:/local.kt
       LOCAL_DELEGATED_PROPERTY name:testMember type:kotlin.String flags:val
         VAR DELEGATE name:testMember$delegate type:<root>.Delegate [val] 
           CALL 'public final fun provideDelegate (thisRef: kotlin.Any?, property: kotlin.Any?): <root>.Delegate declared in <root>.DelegateProvider' type=<root>.Delegate origin=null
-            $this: CALL 'public constructor <init> (value: kotlin.String) [primary] declared in <root>.DelegateProvider' type=<root>.DelegateProvider origin=null
+            $this: CONSTRUCTOR_CALL 'public constructor <init> (value: kotlin.String) [primary] declared in <root>.DelegateProvider' type=<root>.DelegateProvider origin=null
               value: CONST String type=kotlin.String value="OK"
             thisRef: CONST Null type=kotlin.Nothing? value=null
             property: LOCAL_DELEGATED_PROPERTY_REFERENCE 'val testMember: kotlin.String by (...)' delegate='val testMember$delegate: <root>.Delegate [val] declared in <root>.foo' getter='local final fun <get-testMember> (): kotlin.String declared in <root>.foo' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE

@@ -55,14 +55,14 @@ FILE fqName:<root> fileName:/intersectionType1.kt
         CALL 'public final fun arrayOf <T> (vararg elements: T of kotlin.arrayOf): kotlin.Array<T of kotlin.arrayOf> [inline] declared in kotlin' type=kotlin.Array<<root>.In<kotlin.Int>> origin=null
           <T>: <root>.In<kotlin.Int>
           elements: VARARG type=kotlin.Array<out <root>.In<kotlin.Int>> varargElementType=<root>.In<kotlin.Int>
-            CALL 'public constructor <init> () [primary] declared in <root>.In' type=<root>.In<kotlin.Int> origin=null
-              <I>: kotlin.Int
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.In' type=<root>.In<kotlin.Int> origin=null
+              <class: I>: kotlin.Int
       VAR name:a2 type:kotlin.Array<<root>.In<kotlin.String>> [val] 
         CALL 'public final fun arrayOf <T> (vararg elements: T of kotlin.arrayOf): kotlin.Array<T of kotlin.arrayOf> [inline] declared in kotlin' type=kotlin.Array<<root>.In<kotlin.String>> origin=null
           <T>: <root>.In<kotlin.String>
           elements: VARARG type=kotlin.Array<out <root>.In<kotlin.String>> varargElementType=<root>.In<kotlin.String>
-            CALL 'public constructor <init> () [primary] declared in <root>.In' type=<root>.In<kotlin.String> origin=null
-              <I>: kotlin.String
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.In' type=<root>.In<kotlin.String> origin=null
+              <class: I>: kotlin.String
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public final fun foo <T> (a: kotlin.Array<<root>.In<T of <root>.foo>>, b: kotlin.Array<<root>.In<kotlin.String>>): kotlin.Boolean declared in <root>' type=kotlin.Boolean origin=null
           <T>: kotlin.Int
