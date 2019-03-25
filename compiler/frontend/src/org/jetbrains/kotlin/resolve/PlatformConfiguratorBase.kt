@@ -77,19 +77,19 @@ fun StorageComponentContainer.configureDefaultCheckers() {
 
 
 abstract class PlatformConfiguratorBase(
-    private val dynamicTypesSettings: DynamicTypesSettings? = null,
-    private val additionalDeclarationCheckers: List<DeclarationChecker> = emptyList(),
-    private val additionalCallCheckers: List<CallChecker> = emptyList(),
-    private val additionalTypeCheckers: List<AdditionalTypeChecker> = emptyList(),
-    private val additionalClassifierUsageCheckers: List<ClassifierUsageChecker> = emptyList(),
-    private val additionalAnnotationCheckers: List<AdditionalAnnotationChecker> = emptyList(),
-    private val additionalClashResolvers: List<PlatformExtensionsClashResolver<*>> = emptyList(),
-    private val identifierChecker: IdentifierChecker? = null,
-    private val overloadFilter: OverloadFilter? = null,
-    private val platformToKotlinClassMap: PlatformToKotlinClassMap? = null,
-    private val delegationFilter: DelegationFilter? = null,
-    private val overridesBackwardCompatibilityHelper: OverridesBackwardCompatibilityHelper? = null,
-    private val declarationReturnTypeSanitizer: DeclarationReturnTypeSanitizer? = null
+    val dynamicTypesSettings: DynamicTypesSettings? = null,
+    val additionalDeclarationCheckers: List<DeclarationChecker> = emptyList(),
+    val additionalCallCheckers: List<CallChecker> = emptyList(),
+    val additionalTypeCheckers: List<AdditionalTypeChecker> = emptyList(),
+    val additionalClassifierUsageCheckers: List<ClassifierUsageChecker> = emptyList(),
+    val additionalAnnotationCheckers: List<AdditionalAnnotationChecker> = emptyList(),
+    val additionalClashResolvers: List<PlatformExtensionsClashResolver<*>> = emptyList(),
+    val identifierChecker: IdentifierChecker? = null,
+    val overloadFilter: OverloadFilter? = null,
+    val platformToKotlinClassMap: PlatformToKotlinClassMap? = null,
+    val delegationFilter: DelegationFilter? = null,
+    val overridesBackwardCompatibilityHelper: OverridesBackwardCompatibilityHelper? = null,
+    val declarationReturnTypeSanitizer: DeclarationReturnTypeSanitizer? = null
 ) : PlatformConfigurator {
     override val platformSpecificContainer = composeContainer(this::class.java.simpleName) {
         configureDefaultCheckers()
@@ -100,7 +100,7 @@ abstract class PlatformConfiguratorBase(
         container.useImpl<ExperimentalMarkerDeclarationAnnotationChecker>()
     }
 
-    private fun configureExtensionsAndCheckers(container: StorageComponentContainer) {
+    fun configureExtensionsAndCheckers(container: StorageComponentContainer) {
         with(container) {
             useInstanceIfNotNull(dynamicTypesSettings)
             additionalDeclarationCheckers.forEach { useInstance(it) }
