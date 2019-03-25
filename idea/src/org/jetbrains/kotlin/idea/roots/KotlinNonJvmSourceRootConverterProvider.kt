@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.js.isJs
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.jvm.isJvm
+import org.jetbrains.kotlin.platform.idePlatformKind
 import org.jetbrains.kotlin.utils.PathUtil
 
 class KotlinNonJvmSourceRootConverterProvider : ConverterProvider("kotlin-non-jvm-source-roots") {
@@ -139,7 +140,7 @@ class KotlinNonJvmSourceRootConverterProvider : ConverterProvider("kotlin-non-jv
                     getFacetElement(KotlinFacetType.ID)
                         ?.getChild(JpsFacetSerializer.CONFIGURATION_TAG)
                         ?.getFacetPlatformByConfigurationElement()
-                        ?.kind?.compilerPlatform
+
 
                 private fun ModuleSettings.detectPlatformByDependencies(): TargetPlatform? {
                     var hasCommonStdlib = false

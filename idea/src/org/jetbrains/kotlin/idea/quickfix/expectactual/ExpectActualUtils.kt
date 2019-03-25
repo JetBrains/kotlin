@@ -292,7 +292,7 @@ private fun KotlinType.checkAccessibility(accessibleClasses: List<KtClassOrObjec
         return
     }
     val declaration = DescriptorToSourceUtils.descriptorToDeclaration(classifierDescriptor)
-    if (declaration?.module?.platform?.kind?.isCommon == true) {
+    if (declaration?.module?.platform?.isCommon() == true) {
         // Common classes are Ok again
         return
     }

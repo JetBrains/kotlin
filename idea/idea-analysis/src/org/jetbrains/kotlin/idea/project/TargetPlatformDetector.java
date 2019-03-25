@@ -25,7 +25,6 @@ import com.intellij.psi.PsiFile;
 import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.platform.DefaultIdeTargetPlatformKindProvider;
-import org.jetbrains.kotlin.platform.IdePlatform;
 import org.jetbrains.kotlin.platform.IdePlatformKind;
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms;
 import org.jetbrains.kotlin.psi.KtCodeFragment;
@@ -66,8 +65,7 @@ public class TargetPlatformDetector {
             KotlinScriptDefinition scriptDefinition = DefinitionsKt.scriptDefinition(file);
             if (scriptDefinition != null) {
                 String platformNameFromScriptDefinition = scriptDefinition.getPlatform();
-                for (IdePlatform platform : IdePlatformKind.Companion.getAll_PLATFORMS()) {
-                    TargetPlatform compilerPlatform = platform.getKind().getCompilerPlatform();
+                for (TargetPlatform compilerPlatform : IdePlatformKind.Companion.getAll_PLATFORMS()) {
                     // FIXME(dsavvinov): get rid of matching by name
                     SimplePlatform simplePlatform = CollectionsKt.single(compilerPlatform);
                     if (simplePlatform.getPlatformName().equals(platformNameFromScriptDefinition)) {
@@ -85,7 +83,7 @@ public class TargetPlatformDetector {
             }
         }
 
-        return DefaultIdeTargetPlatformKindProvider.Companion.getDefaultCompilerPlatform();
+        return DefaultIdeTargetPlatformKindProvider.Companion.getDefaultPlatform();
     }
 
     @NotNull
