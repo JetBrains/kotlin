@@ -8121,6 +8121,11 @@ public class FirDiagnosticsSmokeTestGenerated extends AbstractFirDiagnosticsSmok
             runTest("compiler/testData/diagnostics/tests/generics/kt1575-Function.kt");
         }
 
+        @TestMetadata("kt30590.kt")
+        public void testKt30590() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/generics/kt30590.kt");
+        }
+
         @TestMetadata("kt5508.kt")
         public void testKt5508() throws Exception {
             runTest("compiler/testData/diagnostics/tests/generics/kt5508.kt");
