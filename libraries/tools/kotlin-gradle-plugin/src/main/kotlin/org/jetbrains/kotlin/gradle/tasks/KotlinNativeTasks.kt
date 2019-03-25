@@ -398,7 +398,9 @@ open class KotlinNativeLink : AbstractKotlinNativeCompile() {
                 Framework.BitcodeEmbeddingMode.BITCODE -> add("-Xembed-bitcode")
                 else -> { /* Do nothing. */ }
             }
-            addListArg("-linker-options", linkerOpts)
+            linkerOpts.forEach {
+                addArg("-linker-option", it)
+            }
             exportLibraries.files.filterExternalKlibs(project).forEach {
                 add("-Xexport-library=${it.absolutePath}")
             }
