@@ -22,21 +22,21 @@ fun <T> nullable(): T? = null
 fun <T> dependOn(x: T) = x
 
 fun test() {
-    <!UNREACHABLE_CODE!>takeNotNull(<!><!IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>notNull<!>() <!UNREACHABLE_CODE!><!USELESS_ELVIS!>?: ""<!>)<!>
-    <!UNREACHABLE_CODE!>takeNotNull(<!IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>nullable<!>() ?: "")<!>
+    takeNotNull(notNull() ?: "")
+    takeNotNull(nullable() ?: "")
 
-    <!UNREACHABLE_CODE!>val x: String? = null<!>
-    <!UNREACHABLE_CODE!>takeNotNull(dependOn(x) ?: "")<!>
-    <!UNREACHABLE_CODE!>takeNotNull(dependOn(dependOn(x)) ?: "")<!>
-    <!UNREACHABLE_CODE!>takeNotNull(dependOn(dependOn(x as String)) <!USELESS_ELVIS!>?: ""<!>)<!>
+    val x: String? = null
+    takeNotNull(dependOn(x) ?: "")
+    takeNotNull(dependOn(dependOn(x)) ?: "")
+    takeNotNull(dependOn(dependOn(x as String)) <!USELESS_ELVIS!>?: ""<!>)
 
-    <!UNREACHABLE_CODE!>if (x != null) {
+    if (x != null) {
         takeNotNull(dependOn(x) <!USELESS_ELVIS!>?: ""<!>)
         takeNotNull(dependOn(dependOn(x)) <!USELESS_ELVIS!>?: ""<!>)
         takeNotNull(dependOn(dependOn(x) as? String) ?: "")
-    }<!>
+    }
 
-    <!UNREACHABLE_CODE!>takeNotNull(bar()!!)<!>
+    takeNotNull(bar()!!)
 }
 
 inline fun <reified T : Any> reifiedNull(): T? = null

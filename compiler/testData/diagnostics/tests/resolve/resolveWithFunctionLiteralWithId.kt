@@ -18,15 +18,15 @@ fun foo(i: Int, f: (Int)->Int) = f(i)
 fun <T> id(t: T) = t
 
 fun test() {
-    <!UNREACHABLE_CODE!>foo(<!>1, <!IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>id<!> { x1 ->
-        <!UNREACHABLE_CODE!>foo(<!>2, <!IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>id<!> { <!UNUSED_ANONYMOUS_PARAMETER!>x2<!> ->
-            <!UNREACHABLE_CODE!>foo(<!>3, <!IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>id<!> { <!UNUSED_ANONYMOUS_PARAMETER!>x3<!> ->
-                <!UNREACHABLE_CODE!>foo(<!>4, <!IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>id<!> { <!UNUSED_ANONYMOUS_PARAMETER!>x4<!> ->
-                    <!UNREACHABLE_CODE!>foo(<!>5, <!IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>id<!> { <!UNUSED_ANONYMOUS_PARAMETER!>x5<!> ->
-                        x1 <!UNREACHABLE_CODE!>+ x2 + x3 + x4 + x5 + A.iii<!>
-                    }<!UNREACHABLE_CODE!>)<!>
-                }<!UNREACHABLE_CODE!>)<!>
-            }<!UNREACHABLE_CODE!>)<!>
-        }<!UNREACHABLE_CODE!>)<!>
-    }<!UNREACHABLE_CODE!>)<!>
+    foo(1, id { x1 ->
+        foo(2, id { x2 ->
+            foo(3, id { x3 ->
+                foo(4, id { x4 ->
+                    foo(5, id { x5 ->
+                        x1 + x2 + x3 + x4 + x5 + A.iii
+                    })
+                })
+            })
+        })
+    })
 }

@@ -18,7 +18,7 @@ fun foo(a: A) {
 
     val <!UNUSED_VARIABLE!>b<!> : () -> Unit = {
         if (true) {
-            a.<!NI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>gen<!>()  // unit can be inferred
+            a.gen()  // unit can be inferred
         }
         else {
             Unit

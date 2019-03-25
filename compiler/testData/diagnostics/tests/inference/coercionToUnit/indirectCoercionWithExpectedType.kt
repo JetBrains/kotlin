@@ -19,13 +19,13 @@ fun c(): Unit = run {
         // Attention!
         // In OI expected type 'Unit' isn't applied here because of implementation quirks (note that OI still applies Unit in case 'e')
         // In NI, it is applied and call is correctly inferred, which is consistent with the previous case
-        <!NI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER, OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>materialize<!>()
+        <!NI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER, NI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER, OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>materialize<!>()
     }
 }
 
 fun d(): Unit = run outer@{
     run inner@{
-        <!NI;UNREACHABLE_CODE!>return@inner<!> <!NI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER, OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>materialize<!>()
+        <!NI;UNREACHABLE_CODE!>return@inner<!> <!NI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER, NI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER, OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>materialize<!>()
     }
 }
 

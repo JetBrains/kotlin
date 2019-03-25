@@ -4,7 +4,7 @@ fun bar(x: Int) = x + 1
 fun f1(x: Int?) {
     bar(<!TYPE_MISMATCH!>x<!>)
     if (x != null) bar(x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>)
-    if (x == null) <!NI;UNREACHABLE_CODE, OI;UNREACHABLE_CODE!>bar(<!><!ALWAYS_NULL!>x<!>!!<!NI;UNREACHABLE_CODE, OI;UNREACHABLE_CODE!>)<!>
+    if (x == null) <!OI;UNREACHABLE_CODE!>bar(<!><!ALWAYS_NULL!>x<!>!!<!OI;UNREACHABLE_CODE!>)<!>
 }
 
 fun f2(x: Int?) {    

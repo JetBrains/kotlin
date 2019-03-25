@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 // FILE: TestClass.java
 import org.jetbrains.annotations.Nullable;
 public class TestClass {
@@ -10,7 +12,7 @@ public class TestClass {
 fun run() {
     val testClass = TestClass()
     // inferred as `set<Nothing>()`, return type is Nothing!
-    testClass.set("test", null)
+    testClass.<!OI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>set<!>("test", null)
 
     // Should not be unreachable
     run()

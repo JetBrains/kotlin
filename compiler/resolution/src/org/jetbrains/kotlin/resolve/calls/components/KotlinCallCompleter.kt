@@ -200,7 +200,8 @@ class KotlinCallCompleter(
 
         val constructor = typeVariable.constructor
         val variableWithConstraints = csBuilder.currentStorage().notFixedTypeVariables[constructor] ?: return false
-        return variableWithConstraints.constraints.all {
+        val constraints = variableWithConstraints.constraints
+        return constraints.isNotEmpty() && constraints.all {
             !trivialConstraintTypeInferenceOracle.isTrivialConstraint(it) && !it.type.isIntegerValueType() &&
                     it.kind.isLower() && csBuilder.isProperType(it.type)
         }

@@ -22,11 +22,11 @@ fun foo(i: Int, f: (Int) -> Int) = f(i)
 fun <T> id(t: T) = t
 
 fun test() {
-    foo(1, id(fun(x1: Int) =
-          foo(2, id(fun(x2: Int) =
-                foo(3, id(fun(x3: Int) =
-                      foo(4, id(fun(x4: Int) =
-                            foo(5, id(fun(x5: Int) =
+    <!NI;OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>(1, id(fun(x1: Int) =
+          <!NI;OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>(2, id(fun(x2: Int) =
+                <!NI;OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>(3, id(fun(x3: Int) =
+                      <!NI;OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>(4, id(fun(x4: Int) =
+                            <!NI;OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>(5, id(fun(x5: Int) =
                                   x1 + x2 + x3 + x4 + x5 + A.iii
                             ))
                       ))
