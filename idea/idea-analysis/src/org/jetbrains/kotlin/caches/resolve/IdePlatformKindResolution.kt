@@ -20,16 +20,21 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.roots.libraries.PersistentLibraryKind
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.PlatformAnalysisParameters
 import org.jetbrains.kotlin.analyzer.ResolverForModuleFactory
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.context.ProjectContext
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.extensions.ApplicationExtensionDescriptor
 import org.jetbrains.kotlin.idea.caches.project.LibraryInfo
 import org.jetbrains.kotlin.idea.caches.resolve.PlatformAnalysisSettings
 import org.jetbrains.kotlin.platform.IdePlatformKind
 import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.storage.StorageManager
 
 interface IdePlatformKindResolution {
     val kind: IdePlatformKind<*>
@@ -39,6 +44,13 @@ interface IdePlatformKindResolution {
     fun createResolverForModuleFactory(settings: PlatformAnalysisParameters, environment: TargetEnvironment, platform: TargetPlatform): ResolverForModuleFactory
 
     fun isLibraryFileForPlatform(virtualFile: VirtualFile): Boolean
+
+    fun createPlatformSpecificPackageFragmentProvider(
+        moduleInfo: ModuleInfo,
+        storageManager: StorageManager,
+        languageVersionSettings: LanguageVersionSettings,
+        moduleDescriptor: ModuleDescriptor
+    ): PackageFragmentProvider? = null
 
     val libraryKind: PersistentLibraryKind<*>?
 

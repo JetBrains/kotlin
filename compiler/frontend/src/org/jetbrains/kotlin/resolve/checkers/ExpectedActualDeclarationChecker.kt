@@ -47,7 +47,7 @@ import java.io.File
 open class ExpectedActualDeclarationChecker(
     val moduleStructureOracle: ModuleStructureOracle,
     val argumentExtractor: ActualAnnotationArgumentExtractor
-) : DeclarationChecker {
+) : DeclarationChecker, PlatformSpecificExtension<ExpectedActualDeclarationChecker> {
     interface ActualAnnotationArgumentExtractor : PlatformSpecificExtension<ActualAnnotationArgumentExtractor> {
         fun extractDefaultValue(parameter: ValueParameterDescriptor, expectedType: KotlinType): ConstantValue<*>?
 
