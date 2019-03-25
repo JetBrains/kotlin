@@ -52,7 +52,10 @@ import org.jetbrains.kotlin.resolve.CompositeBindingContext
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import org.jetbrains.kotlin.idea.project.findAnalyzerServices
+import org.jetbrains.kotlin.platform.DefaultIdeTargetPlatformKindProvider
 import org.jetbrains.kotlin.platform.toTargetPlatform
+
+private const val USE_COMPOSITE_ANALYSIS: Boolean = true
 
 internal class ProjectResolutionFacade(
     private val debugString: String,
@@ -139,28 +142,31 @@ internal class ProjectResolutionFacade(
             metadataPartProviderFactory = { IDEPackagePartProvider(it.moduleContentScope) }
         )
 
-        val resolverForProject = ResolverForProjectImpl(
+        @Suppress("ConstantConditionIf") val resolverForProject = ResolverForProjectImpl(
             resolverDebugName,
             projectContext,
             modulesToCreateResolversFor,
             modulesContentFactory,
             moduleLanguageSettingsProvider = IDELanguageSettingsProvider,
             resolverForModuleFactoryByPlatform = { modulePlatform ->
-//                val platform = modulePlatform ?: TODO()
-//                val parameters = when {
-//                    platform.isJvm() -> jvmPlatformParameters
-//                    platform.isCommon() -> commonPlatformParameters
-//                    else -> PlatformAnalysisParameters.Empty
-//                }
-//                platform.idePlatformKind.resolution.createResolverForModuleFactory(parameters, IdeaEnvironment, platform)
-                CompositeResolverForModuleFactory(
-                    commonPlatformParameters,
-                    jvmPlatformParameters,
-                    modulePlatform!!,
-                    CompositeAnalyzerServices(modulePlatform.componentPlatforms.map { it.toTargetPlatform().findAnalyzerServices })
-                )
+                val platform = modulePlatform ?: DefaultIdeTargetPlatformKindProvider.defaultPlatform
+                val parameters = when {
+                    platform.isJvm() -> jvmPlatformParameters
+                    platform.isCommon() -> commonPlatformParameters
+                    else -> PlatformAnalysisParameters.Empty
+                }
+
+                if (USE_COMPOSITE_ANALYSIS) {
+                    platform.idePlatformKind.resolution.createResolverForModuleFactory(parameters, IdeaEnvironment, platform)
+                } else {
+                    CompositeResolverForModuleFactory(
+                        commonPlatformParameters,
+                        jvmPlatformParameters,
+                        platform,
+                        CompositeAnalyzerServices(platform.componentPlatforms.map { it.toTargetPlatform().findAnalyzerServices })
+                    )
+                }
             },
-            targetEnvironment = IdeaEnvironment,
             builtIns = builtIns,
             delegateResolver = delegateResolverForProject,
             firstDependency = settings.sdk?.let { SdkInfo(project, it) },
