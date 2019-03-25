@@ -17,11 +17,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 // This file contains some IR utilities which actually use descriptors.
 // TODO: port this code to IR.
 
-internal val IrDeclaration.isAnonymousObject get() = DescriptorUtils.isAnonymousObject(this.descriptor)
-internal val IrDeclaration.isLocal get() = DescriptorUtils.isLocal(this.descriptor)
-
-internal val IrDeclaration.module get() = this.descriptor.module
-
 internal fun IrFunction.getObjCMethodInfo() = this.descriptor.getObjCMethodInfo()
 internal fun IrFunction.getExternalObjCMethodInfo() = this.descriptor.getExternalObjCMethodInfo()
 internal fun IrFunction.isObjCClassMethod() = this.descriptor.isObjCClassMethod()

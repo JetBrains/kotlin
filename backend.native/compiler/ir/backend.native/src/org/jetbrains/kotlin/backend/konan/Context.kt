@@ -215,6 +215,7 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     private val packageScope by lazy { builtIns.builtInsModule.getPackage(KonanFqNames.internalPackageName).memberScope }
 
     val nativePtr by lazy { packageScope.getContributedClassifier(NATIVE_PTR_NAME) as ClassDescriptor }
+    val nonNullNativePtr by lazy { packageScope.getContributedClassifier(NON_NULL_NATIVE_PTR_NAME) as ClassDescriptor }
     val getNativeNullPtr  by lazy { packageScope.getContributedFunctions("getNativeNullPtr").single() }
     val immutableBlobOf by lazy {
         builtIns.builtInsModule.getPackage(KonanFqNames.packageName).memberScope.getContributedFunctions("immutableBlobOf").single()
@@ -458,6 +459,8 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     lateinit var lifetimes: MutableMap<IrElement, Lifetime>
     lateinit var codegenVisitor: CodeGeneratorVisitor
     var devirtualizationAnalysisResult: Devirtualization.AnalysisResult? = null
+
+    var referencedFunctions: Set<IrFunction>? = null
 
     val isNativeLibrary: Boolean by lazy {
         val kind = config.configuration.get(KonanConfigKeys.PRODUCE)

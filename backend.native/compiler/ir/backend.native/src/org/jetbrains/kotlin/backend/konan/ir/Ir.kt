@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -53,7 +54,9 @@ internal class KonanSymbols(context: Context, private val symbolTable: SymbolTab
     val string = symbolTable.referenceClass(builtIns.string)
     val enum = symbolTable.referenceClass(builtIns.enum)
     val nativePtr = symbolTable.referenceClass(context.nativePtr)
+    val nativePointed = symbolTable.referenceClass(context.interopBuiltIns.nativePointed)
     val nativePtrType = nativePtr.typeWith(arguments = emptyList())
+    val nonNullNativePtr = symbolTable.referenceClass(context.nonNullNativePtr)
 
     private fun unsignedClass(unsignedType: UnsignedType): IrClassSymbol = classById(unsignedType.classId)
 
@@ -350,6 +353,13 @@ internal class KonanSymbols(context: Context, private val symbolTable: SymbolTab
     val restrictedContinuationImpl = topLevelClass("kotlin.coroutines.native.internal.RestrictedContinuationImpl")
 
     val continuationImpl = topLevelClass("kotlin.coroutines.native.internal.ContinuationImpl")
+
+    val invokeSuspendFunction =
+            symbolTable.referenceSimpleFunction(
+                    baseContinuationImpl.descriptor.unsubstitutedMemberScope
+                            .getContributedFunctions(Name.identifier("invokeSuspend"), NoLookupLocation.FROM_BACKEND)
+                            .single()
+            )
 
     override val coroutineSuspendedGetter = symbolTable.referenceSimpleFunction(
             coroutinesIntrinsicsPackage

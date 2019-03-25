@@ -8,6 +8,7 @@ object RuntimeNames {
     val exportForCompilerAnnotation = FqName("kotlin.native.internal.ExportForCompiler")
     val exportTypeInfoAnnotation = FqName("kotlin.native.internal.ExportTypeInfo")
     val cCall = FqName("kotlinx.cinterop.internal.CCall")
+    val objCMethodImp = FqName("kotlinx.cinterop.ObjCMethodImp")
     val independent = FqName("kotlin.native.internal.Independent")
     val filterExceptions = FqName("kotlin.native.internal.FilterExceptions")
     val kotlinNativeInternalPackageName = FqName.fromSegments(listOf("kotlin", "native", "internal"))

@@ -10,8 +10,6 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.*
-import org.jetbrains.kotlin.backend.konan.ir.isAnonymousObject
-import org.jetbrains.kotlin.backend.konan.ir.isLocal
 import org.jetbrains.kotlin.backend.konan.isExternalObjCClassMethod
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.*
@@ -249,7 +247,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
         // TODO: compile-time resolution limits binary compatibility.
         val vtableEntries = context.getLayoutBuilder(irClass).vtableEntries.map {
             val implementation = it.implementation
-            if (implementation == null || implementation.isExternalObjCClassMethod()) {
+            if (implementation == null || implementation.isExternalObjCClassMethod() || context.referencedFunctions?.contains(implementation) == false) {
                 NullPointer(int8Type)
             } else {
                 implementation.entryPointAddress
@@ -269,7 +267,10 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
 
             // TODO: compile-time resolution limits binary compatibility.
             val implementation = it.implementation
-            val methodEntryPoint = implementation?.entryPointAddress
+            val methodEntryPoint =
+                if (implementation == null || context.referencedFunctions?.contains(implementation) == false)
+                    null
+                else implementation.entryPointAddress
             MethodTableRecord(nameSignature, methodEntryPoint)
         }.sortedBy { it.nameSignature.value }
     }

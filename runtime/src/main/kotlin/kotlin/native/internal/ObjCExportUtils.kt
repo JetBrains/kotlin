@@ -286,6 +286,7 @@ private fun Kotlin_ObjCExport_isUnchecked(exception: Throwable): Boolean =
 
 @PublishedApi
 @SymbolName("Kotlin_ObjCExport_trapOnUndeclaredException")
+@ExportForCppRuntime
 internal external fun trapOnUndeclaredException(exception: Throwable)
 
 @ExportForCppRuntime

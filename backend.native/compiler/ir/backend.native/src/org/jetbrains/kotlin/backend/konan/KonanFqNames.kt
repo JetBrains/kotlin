@@ -10,13 +10,14 @@ import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 
 internal const val NATIVE_PTR_NAME = "NativePtr"
+internal const val NON_NULL_NATIVE_PTR_NAME = "NonNullNativePtr"
 
 object KonanFqNames {
 
     val packageName = FqName("kotlin.native")
     val internalPackageName = FqName("kotlin.native.internal")
     val nativePtr = internalPackageName.child(Name.identifier(NATIVE_PTR_NAME)).toUnsafe()
-    val nonNullNativePtr = FqNameUnsafe("kotlin.native.internal.NonNullNativePtr")
+    val nonNullNativePtr = internalPackageName.child(Name.identifier(NON_NULL_NATIVE_PTR_NAME)).toUnsafe()
     val throws = FqName("kotlin.native.Throws")
 }
 

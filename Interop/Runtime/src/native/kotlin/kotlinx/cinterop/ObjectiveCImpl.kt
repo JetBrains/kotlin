@@ -19,6 +19,7 @@
 package kotlinx.cinterop
 import kotlin.native.*
 import kotlin.native.internal.ExportTypeInfo
+import kotlin.native.internal.ExportForCppRuntime
 import kotlin.native.internal.TypedIntrinsic
 import kotlin.native.internal.IntrinsicType
 
@@ -63,6 +64,7 @@ internal fun <T : Any?> Any?.uncheckedCast(): T = @Suppress("UNCHECKED_CAST") (t
 @SymbolName("Kotlin_Interop_refFromObjC")
 external fun <T> interpretObjCPointerOrNull(objcPtr: NativePtr): T?
 
+@ExportForCppRuntime
 inline fun <T : Any> interpretObjCPointer(objcPtr: NativePtr): T = interpretObjCPointerOrNull<T>(objcPtr)!!
 
 @SymbolName("Kotlin_Interop_refToObjC")

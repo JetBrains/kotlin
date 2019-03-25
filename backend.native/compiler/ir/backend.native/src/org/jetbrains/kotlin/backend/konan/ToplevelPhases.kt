@@ -291,13 +291,14 @@ internal val dependenciesLowerPhase = SameTypeNamedPhaseWrapper(
 internal val bitcodePhase = namedIrModulePhase(
         name = "Bitcode",
         description = "LLVM Bitcode generation",
-        lower = contextLLVMSetupPhase then
-                RTTIPhase then
-                generateDebugInfoHeaderPhase then
-                buildDFGPhase then
+        lower = buildDFGPhase then
                 serializeDFGPhase then
                 deserializeDFGPhase then
                 devirtualizationPhase then
+                dcePhase then
+                contextLLVMSetupPhase then
+                RTTIPhase then
+                generateDebugInfoHeaderPhase then
                 escapeAnalysisPhase then
                 codegenPhase then
                 finalizeDebugInfoPhase then

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.hasAnnotation
+import org.jetbrains.kotlin.ir.util.isReal
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.ExternalOverridabilityCondition
@@ -223,6 +224,7 @@ fun ConstructorDescriptor.objCConstructorIsDesignated(): Boolean {
 
 val IrConstructor.isObjCConstructor get() = this.descriptor.annotations.hasAnnotation(objCConstructorFqName)
 
+// TODO-DCE-OBJC-INIT: Selector should be preserved by DCE.
 fun IrConstructor.getObjCInitMethod(): IrSimpleFunction? {
     return this.descriptor.annotations.findAnnotation(objCConstructorFqName)?.let {
         val initSelector = it.getStringValue("initSelector")

@@ -13,11 +13,11 @@ import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.allOverriddenFunctions
-import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.backend.konan.descriptors.target
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.llvm.functionName
 import org.jetbrains.kotlin.backend.konan.llvm.localHash
+import org.jetbrains.kotlin.backend.konan.llvm.longName
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -212,12 +212,16 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
             }
 
             override fun visitFunction(declaration: IrFunction) {
-                declaration.body?.let {
+                val body = declaration.body
+                if (body == null) {
+                    // External function or intrinsic.
+                    symbolTable.mapFunction(declaration)
+                } else {
                     DEBUG_OUTPUT(0) {
                         println("Analysing function ${declaration.descriptor}")
                         println("IR: ${ir2stringWhole(declaration)}")
                     }
-                    analyze(declaration, it)
+                    analyze(declaration, body)
                 }
             }
 

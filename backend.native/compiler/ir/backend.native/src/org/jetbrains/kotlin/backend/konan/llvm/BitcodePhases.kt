@@ -8,7 +8,13 @@ package org.jetbrains.kotlin.backend.konan.llvm
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.optimizations.*
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.*
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal val contextLLVMSetupPhase = makeKonanModuleOpPhase(
         name = "ContextLLVMSetup",
@@ -71,6 +77,98 @@ internal val devirtualizationPhase = makeKonanModuleOpPhase(
         }
 )
 
+internal val IrFunction.longName: String
+        get() = "${(parent as? IrClass)?.name?.asString() ?: "<root>"}.${(this as? IrSimpleFunction)?.name ?: "<init>"}"
+
+internal val dcePhase = makeKonanModuleOpPhase(
+        name = "DCEPhase",
+        description = "Dead code elimination",
+        prerequisite = setOf(devirtualizationPhase),
+        op = { context, _ ->
+            val externalModulesDFG = ExternalModulesDFG(emptyList(), emptyMap(), emptyMap(), emptyMap())
+
+            val callGraph = CallGraphBuilder(
+                    context, context.moduleDFG!!,
+                    externalModulesDFG,
+                    context.devirtualizationAnalysisResult!!,
+                    true
+            ).build()
+
+            val referencedFunctions = mutableSetOf<IrFunction>()
+            for (node in callGraph.directEdges.values) {
+                if (!node.symbol.isGlobalInitializer)
+                    referencedFunctions.add(node.symbol.irFunction ?: error("No IR for: ${node.symbol}"))
+                node.callSites.forEach {
+                    assert (!it.isVirtual) { "There should be no virtual calls in the call graph, but was: ${it.actualCallee}" }
+                    referencedFunctions.add(it.actualCallee.irFunction ?: error("No IR for: ${it.actualCallee}"))
+                }
+            }
+
+            context.irModule!!.acceptChildrenVoid(object: IrElementVisitorVoid {
+                override fun visitElement(element: IrElement) {
+                    element.acceptChildrenVoid(this)
+                }
+
+                override fun visitFunction(declaration: IrFunction) {
+                    // TODO: Generalize somehow, not that graceful.
+                    if (declaration.name == OperatorNameConventions.INVOKE
+                            && declaration.parent.let { it is IrClass && it.defaultType.isFunction() }) {
+                        referencedFunctions.add(declaration)
+                    }
+                    super.visitFunction(declaration)
+                }
+
+                override fun visitConstructor(declaration: IrConstructor) {
+                    // TODO: NativePointed is the only inline class for which the field's type and
+                    //       the constructor parameter's type are different.
+                    //       Thus we need to conserve the constructor no matter if it was actually referenced somehow or not.
+                    //       See [IrTypeInlineClassesSupport.getInlinedClassUnderlyingType] why.
+                    if (declaration.parentAsClass.name.asString() == InteropFqNames.nativePointedName && declaration.isPrimary)
+                        referencedFunctions.add(declaration)
+                    super.visitConstructor(declaration)
+                }
+
+                override fun visitClass(declaration: IrClass) {
+                    context.getLayoutBuilder(declaration).associatedObjects.values.forEach {
+                        assert (it.kind == ClassKind.OBJECT) { "An object expected but was ${it.dump()}" }
+                        referencedFunctions.add(it.constructors.single())
+                    }
+                    super.visitClass(declaration)
+                }
+            })
+
+            context.irModule!!.transformChildrenVoid(object: IrElementTransformerVoid() {
+                override fun visitFile(declaration: IrFile): IrFile {
+                    declaration.declarations.removeAll {
+                        (it is IrFunction && !referencedFunctions.contains(it))
+                    }
+                    return super.visitFile(declaration)
+                }
+
+                override fun visitClass(declaration: IrClass): IrStatement {
+                    if (declaration == context.ir.symbols.nativePointed)
+                        return super.visitClass(declaration)
+                    declaration.declarations.removeAll {
+                        (it is IrFunction && it.isReal && !referencedFunctions.contains(it))
+                    }
+                    return super.visitClass(declaration)
+                }
+
+                override fun visitProperty(declaration: IrProperty): IrStatement {
+                    if (declaration.getter.let { it != null && it.isReal && !referencedFunctions.contains(it) }) {
+                        declaration.getter = null
+                    }
+                    if (declaration.setter.let { it != null && it.isReal && !referencedFunctions.contains(it) }) {
+                        declaration.setter = null
+                    }
+                    return super.visitProperty(declaration)
+                }
+            })
+
+            context.referencedFunctions = referencedFunctions
+        }
+)
+
 internal val escapeAnalysisPhase = makeKonanModuleOpPhase(
         // Disabled by default !!!!
         name = "EscapeAnalysis",
@@ -81,7 +179,7 @@ internal val escapeAnalysisPhase = makeKonanModuleOpPhase(
                 val callGraph = CallGraphBuilder(
                         context, context.moduleDFG!!,
                         externalModulesDFG,
-                        context.devirtualizationAnalysisResult,
+                        context.devirtualizationAnalysisResult!!,
                         false
                 ).build()
                 EscapeAnalysis.computeLifetimes(

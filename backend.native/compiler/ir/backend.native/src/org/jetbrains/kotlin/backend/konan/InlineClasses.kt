@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.konan.ir.containsNull
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -275,6 +276,6 @@ private object IrTypeInlineClassesSupport : InlineClassesSupport<IrClass, IrType
             .firstOrNull { it.descriptor.fqNameUnsafe == InteropFqNames.nativePointed }
 
     override fun getInlinedClassUnderlyingType(clazz: IrClass): IrType =
-            clazz.constructors.first { it.isPrimary }.valueParameters.single().type
-
+            clazz.constructors.firstOrNull { it.isPrimary }?.valueParameters?.single()?.type
+                    ?: clazz.declarations.filterIsInstance<IrProperty>().single { it.backingField != null }.backingField!!.type
 }

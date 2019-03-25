@@ -23,23 +23,6 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-
-val IrDeclaration.name: Name
-    get() = when (this) {
-        is IrSimpleFunction -> this.name
-        is IrClass -> this.name
-        is IrEnumEntry -> this.name
-        is IrProperty -> this.name
-        is IrLocalDelegatedProperty -> this.name
-        is IrField -> this.name
-        is IrVariable -> this.name
-        is IrConstructor -> SPECIAL_INIT_NAME
-        is IrValueParameter -> this.name
-        else -> error(this)
-    }
-
-private val SPECIAL_INIT_NAME = Name.special("<init>")
-
 val IrField.fqNameForIrSerialization: FqName get() = this.parent.fqNameForIrSerialization.child(this.name)
 
 /**
@@ -65,14 +48,6 @@ fun IrClass.isAny() = this.fqNameForIrSerialization == KotlinBuiltIns.FQ_NAMES.a
 fun IrClass.isNothing() = this.fqNameForIrSerialization == KotlinBuiltIns.FQ_NAMES.nothing.toSafe()
 
 fun IrClass.getSuperInterfaces() = this.superClasses.map { it.owner }.filter { it.isInterface }
-
-val IrProperty.konanBackingField: IrField?
-    get() {
-        assert(this.isReal)
-        return this.backingField
-    }
-
-val IrFunction.isReal get() = this.origin != IrDeclarationOrigin.FAKE_OVERRIDE
 
 // Note: psi2ir doesn't set `origin = FAKE_OVERRIDE` for fields and properties yet.
 val IrProperty.isReal: Boolean get() = this.descriptor.kind.isReal
