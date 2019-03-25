@@ -20,6 +20,7 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.container.PlatformSpecificExtension
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
@@ -41,7 +42,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.ifEmpty
 import java.io.File
 
-class ExpectedActualDeclarationChecker(val argumentExtractors: List<ActualAnnotationArgumentExtractor> = emptyList()) : DeclarationChecker {
+open class ExpectedActualDeclarationChecker(val argumentExtractors: List<ActualAnnotationArgumentExtractor> = emptyList()) : DeclarationChecker,
+    PlatformSpecificExtension<ExpectedActualDeclarationChecker> {
     interface ActualAnnotationArgumentExtractor {
         fun extractDefaultValue(parameter: ValueParameterDescriptor, expectedType: KotlinType): ConstantValue<*>?
     }
