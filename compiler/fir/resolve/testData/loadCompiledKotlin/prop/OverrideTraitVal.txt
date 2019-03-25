@@ -1,0 +1,5 @@
+public open class Subclass : R|test/Trait| {
+}
+
+public abstract interface Trait : R|kotlin/Any| {
+}

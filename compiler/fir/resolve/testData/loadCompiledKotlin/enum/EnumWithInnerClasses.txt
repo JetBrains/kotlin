@@ -1,0 +1,13 @@
+public final enum class Enum : R|kotlin/Enum<test/Enum>| {
+    public final fun f(): R|kotlin/Int|
+
+    public final inner class Inner : R|kotlin/Any| {
+    }
+
+    public final class Nested : R|kotlin/Any| {
+    }
+
+    public abstract interface Trait : R|kotlin/Any| {
+    }
+
+}

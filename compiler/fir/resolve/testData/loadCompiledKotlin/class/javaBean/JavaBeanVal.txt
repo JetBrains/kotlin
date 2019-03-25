@@ -1,0 +1,4 @@
+public open class JavaBeanVal : R|kotlin/Any| {
+    public open fun getColor(): R|kotlin/String|
+
+}

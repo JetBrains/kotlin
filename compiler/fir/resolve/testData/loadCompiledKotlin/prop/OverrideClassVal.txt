@@ -1,0 +1,5 @@
+public open class BaseClass : R|kotlin/Any| {
+}
+
+public open class Subclass : R|test/BaseClass| {
+}

@@ -1,0 +1,4 @@
+public open class Max : R|kotlin/Any| {
+    <T> public open fun max(p0: R|kotlin/collections/Collection<T>|): R|T|
+
+}

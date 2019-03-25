@@ -1,0 +1,8 @@
+public abstract interface Sub : R|test/Super1|, R|test/Super2| {
+}
+
+public abstract interface Super1 : R|kotlin/Any| {
+}
+
+public abstract interface Super2 : R|kotlin/Any| {
+}

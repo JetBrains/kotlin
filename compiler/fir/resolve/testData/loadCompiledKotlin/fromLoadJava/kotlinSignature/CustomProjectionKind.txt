@@ -1,0 +1,4 @@
+public open class CustomProjectionKind : R|kotlin/Any| {
+    public open fun foo(): R|kotlin/collections/MutableList<out kotlin/Number>|
+
+}

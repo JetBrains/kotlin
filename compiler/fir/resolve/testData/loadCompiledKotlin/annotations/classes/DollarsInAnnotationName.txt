@@ -1,0 +1,11 @@
+public final annotation class $$$$$$ : R|kotlin/Annotation| {
+}
+
+public final class A : R|kotlin/Any| {
+}
+
+public final annotation class Anno$tation : R|kotlin/Annotation| {
+}
+
+public final class Cla$s : R|kotlin/Any| {
+}

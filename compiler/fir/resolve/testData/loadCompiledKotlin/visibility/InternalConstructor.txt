@@ -1,0 +1,2 @@
+public final class InternalConstructor : R|kotlin/Any| {
+}

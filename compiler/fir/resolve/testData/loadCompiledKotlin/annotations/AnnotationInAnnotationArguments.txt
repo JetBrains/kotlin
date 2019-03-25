@@ -1,0 +1,14 @@
+public final class AnnotationInAnnotationArguments : R|kotlin/Any| {
+}
+
+public final enum class E : R|kotlin/Enum<test/E>| {
+}
+
+public final annotation class EnumOption : R|kotlin/Annotation| {
+}
+
+public final annotation class OptionGroups : R|kotlin/Annotation| {
+}
+
+public final annotation class StringOptions : R|kotlin/Annotation| {
+}

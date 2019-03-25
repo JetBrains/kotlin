@@ -1,0 +1,4 @@
+public open class NotNullIntArray : R|kotlin/Any| {
+    public open fun hi(): R|kotlin/IntArray|
+
+}

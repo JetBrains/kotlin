@@ -1,0 +1,4 @@
+public open class MethodWithFunctionTypes : R|kotlin/Any| {
+    public open fun foo(f: R|kotlin/Function1<kotlin/String, kotlin/String>|): R|kotlin/Function1<kotlin/String, kotlin/String>|
+
+}

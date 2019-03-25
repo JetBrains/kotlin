@@ -1,0 +1,12 @@
+public abstract interface InheritNullability : R|kotlin/Any| {
+    public abstract interface Sub : R|test/InheritNullability.Super| {
+        <B> public abstract fun foo(a: R|B|): R|kotlin/Unit|
+
+    }
+
+    public abstract interface Super : R|kotlin/Any| {
+        <A> public abstract fun foo(a: R|A|): R|kotlin/Unit|
+
+    }
+
+}

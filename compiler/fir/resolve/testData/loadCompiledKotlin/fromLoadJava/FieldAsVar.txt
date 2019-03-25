@@ -1,0 +1,2 @@
+public final class FieldAsVar : R|kotlin/Any| {
+}

@@ -1,0 +1,5 @@
+public abstract class Aaa : R|kotlin/Any| {
+}
+
+public final class Bbb : R|test/Aaa| {
+}

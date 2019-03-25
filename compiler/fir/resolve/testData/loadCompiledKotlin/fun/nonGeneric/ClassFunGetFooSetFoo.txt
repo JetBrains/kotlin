@@ -1,0 +1,6 @@
+public final class ClassFunGetFoo : R|kotlin/Any| {
+    public final fun getFoo(): R|kotlin/Int|
+
+    public final fun setFoo(p: R|kotlin/Int|): R|kotlin/Unit|
+
+}

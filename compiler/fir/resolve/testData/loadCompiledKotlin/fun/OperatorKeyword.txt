@@ -1,0 +1,4 @@
+public final class Example : R|kotlin/Any| {
+    public final operator fun plus(other: R|test/Example|): R|kotlin/Unit|
+
+}

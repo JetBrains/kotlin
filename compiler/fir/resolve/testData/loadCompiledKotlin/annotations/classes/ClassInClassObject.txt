@@ -1,0 +1,11 @@
+public final annotation class Anno : R|kotlin/Annotation| {
+}
+
+public final class Class : R|kotlin/Any| {
+    public final companion object Companion : R|kotlin/Any| {
+        public final class Nested : R|kotlin/Any| {
+        }
+
+    }
+
+}

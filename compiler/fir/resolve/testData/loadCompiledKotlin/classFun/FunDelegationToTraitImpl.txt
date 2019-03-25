@@ -1,0 +1,7 @@
+public abstract interface A : R|kotlin/Any| {
+    public open fun f(): R|kotlin/String|
+
+}
+
+public final class B : R|test/A| {
+}

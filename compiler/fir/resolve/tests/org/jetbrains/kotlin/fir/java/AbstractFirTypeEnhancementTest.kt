@@ -142,7 +142,7 @@ abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
 
         val scope = GlobalSearchScope.filesScope(project, virtualFiles)
             .uniteWith(TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(project))
-        val session = createSession(project, scope)
+        val session = createSession(environment, scope)
 
         val topPsiClasses = psiFiles.flatMap { it.getChildrenOfType<PsiClass>().toList() }
 

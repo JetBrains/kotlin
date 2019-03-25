@@ -1,0 +1,2 @@
+public final annotation class SimpleAnnotation : R|kotlin/Annotation| {
+}

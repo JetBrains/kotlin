@@ -1,0 +1,4 @@
+public final class ExtFunInClass : R|kotlin/Any| {
+    public final fun R|kotlin/Int|.shuffle(): R|kotlin/Int|
+
+}

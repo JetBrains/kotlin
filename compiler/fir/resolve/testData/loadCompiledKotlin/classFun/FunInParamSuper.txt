@@ -1,0 +1,7 @@
+<T> public open class Base : R|kotlin/Any| {
+    public final fun foo(): R|T|
+
+}
+
+public final class Inh : R|test/Base<kotlin/String>| {
+}

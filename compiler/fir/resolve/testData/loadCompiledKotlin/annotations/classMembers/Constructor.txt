@@ -1,0 +1,5 @@
+public final annotation class Anno : R|kotlin/Annotation| {
+}
+
+public final class Constructor : R|kotlin/Any| {
+}

@@ -1,0 +1,2 @@
+public final enum class EnumWithPrimitiveConstructorParameter : R|kotlin/Enum<test/EnumWithPrimitiveConstructorParameter>| {
+}

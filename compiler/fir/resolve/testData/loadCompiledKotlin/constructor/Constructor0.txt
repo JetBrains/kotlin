@@ -1,0 +1,2 @@
+public final class ClassWithConstructor0 : R|kotlin/Any| {
+}

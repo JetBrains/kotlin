@@ -1,0 +1,2 @@
+public final class C : R|java/util/ArrayList<kotlin/String>| {
+}

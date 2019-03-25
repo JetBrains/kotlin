@@ -1,0 +1,9 @@
+public final fun typeAnnotation(): R|kotlin/Unit|
+
+public final annotation class A : R|kotlin/Annotation| {
+}
+
+public final class TypeParameterAnnotation : R|kotlin/Any| {
+    <T> public final fun foo(x: R|T|): R|kotlin/Unit|
+
+}

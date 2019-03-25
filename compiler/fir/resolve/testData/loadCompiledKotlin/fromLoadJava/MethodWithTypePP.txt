@@ -1,0 +1,4 @@
+public final class MethodWithTypePP : R|kotlin/Any| {
+    <P, Q> public final fun f(): R|kotlin/Unit|
+
+}

@@ -1,0 +1,11 @@
+public final class Class : R|kotlin/Any| {
+}
+
+public final annotation class DoubleAnno : R|kotlin/Annotation| {
+}
+
+public final annotation class IntAnno : R|kotlin/Annotation| {
+}
+
+public final annotation class StringAnno : R|kotlin/Annotation| {
+}

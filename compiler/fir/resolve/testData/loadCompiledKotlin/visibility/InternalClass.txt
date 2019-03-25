@@ -1,0 +1,2 @@
+internal final class InternalClass : R|kotlin/Any| {
+}

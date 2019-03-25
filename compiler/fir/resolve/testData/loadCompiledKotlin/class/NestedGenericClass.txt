@@ -1,0 +1,5 @@
+public final class Outer : R|kotlin/Any| {
+    <T> public final class Nested : R|kotlin/Any| {
+    }
+
+}

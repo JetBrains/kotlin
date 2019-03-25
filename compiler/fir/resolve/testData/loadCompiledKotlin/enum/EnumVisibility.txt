@@ -1,0 +1,8 @@
+internal final enum class In : R|kotlin/Enum<test/In>| {
+}
+
+private final enum class Pr : R|kotlin/Enum<test/Pr>| {
+}
+
+public final enum class Pu : R|kotlin/Enum<test/Pu>| {
+}

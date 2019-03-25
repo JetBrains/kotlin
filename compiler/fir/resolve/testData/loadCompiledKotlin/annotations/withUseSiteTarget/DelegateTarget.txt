@@ -1,0 +1,10 @@
+public final annotation class Anno : R|kotlin/Annotation| {
+}
+
+public final class Class : R|kotlin/Any| {
+}
+
+public final class CustomDelegate : R|kotlin/Any| {
+    public final operator fun getValue(thisRef: R|kotlin/Any|, prop: R|kotlin/reflect/KProperty<*>|): R|kotlin/String|
+
+}

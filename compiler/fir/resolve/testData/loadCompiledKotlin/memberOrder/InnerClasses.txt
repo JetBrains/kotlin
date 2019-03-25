@@ -1,0 +1,20 @@
+public final class O : R|kotlin/Any| {
+    public final class A1 : R|kotlin/Any| {
+    }
+
+    public final inner class A2 : R|kotlin/Any| {
+    }
+
+    public final class B1 : R|kotlin/Any| {
+    }
+
+    public final inner class B2 : R|kotlin/Any| {
+    }
+
+    public abstract interface C1 : R|kotlin/Any| {
+    }
+
+    public abstract interface C2 : R|kotlin/Any| {
+    }
+
+}

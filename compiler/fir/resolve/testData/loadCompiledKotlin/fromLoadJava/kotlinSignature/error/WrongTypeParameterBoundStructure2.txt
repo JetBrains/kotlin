@@ -1,0 +1,4 @@
+public open class WrongTypeParameterBoundStructure2 : R|kotlin/Any| {
+    <A, B> public open fun foo(p0: R|A|, p1: R|kotlin/collections/List<B>|): R|kotlin/Unit|
+
+}

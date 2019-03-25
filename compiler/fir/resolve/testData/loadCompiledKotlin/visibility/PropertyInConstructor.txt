@@ -1,0 +1,5 @@
+public open class Base : R|kotlin/Any| {
+}
+
+public final class Child : R|test/Base| {
+}

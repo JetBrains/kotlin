@@ -1,0 +1,12 @@
+public final class B : R|test/X|, R|test/Y| {
+    public open fun foo(): R|kotlin/Unit|
+
+}
+
+public abstract interface X : R|kotlin/Any| {
+    public abstract fun foo(): R|kotlin/Unit|
+
+}
+
+public abstract interface Y : R|test/X| {
+}

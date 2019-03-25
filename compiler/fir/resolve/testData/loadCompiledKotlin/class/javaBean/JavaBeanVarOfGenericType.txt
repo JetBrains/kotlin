@@ -1,0 +1,6 @@
+<P> public open class JavaBeanVarOfGenericType : R|kotlin/Any| {
+    public open fun getCharacters(): R|java/util/ArrayList<P>|
+
+    public open fun setCharacters(p0: R|java/util/ArrayList<P>|): R|kotlin/Unit|
+
+}

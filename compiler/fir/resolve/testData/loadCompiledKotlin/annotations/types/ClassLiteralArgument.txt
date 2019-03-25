@@ -1,0 +1,25 @@
+public final class A : R|kotlin/Any| {
+    public final fun arrays(s: R|kotlin/Array<kotlin/Int>|, t: R|kotlin/Array<kotlin/IntArray>|, u: R|kotlin/Array<kotlin/Array<kotlin/Int>>|, v: R|kotlin/Array<kotlin/Array<kotlin/Array<kotlin/String>>>|): R|kotlin/Unit|
+
+    public final fun generic(s: R|kotlin/String|): R|kotlin/Unit|
+
+    public final fun innerGeneric(s: R|kotlin/String|): R|kotlin/Unit|
+
+    public final fun simple(s: R|kotlin/String|): R|kotlin/Unit|
+
+}
+
+public final annotation class Ann : R|kotlin/Annotation| {
+}
+
+<T> public final class Generic : R|kotlin/Any| {
+}
+
+<A, B> public final class InnerGeneric : R|kotlin/Any| {
+    <C, D> public final inner class Inner : R|kotlin/Any| {
+    }
+
+}
+
+public final class Simple : R|kotlin/Any| {
+}

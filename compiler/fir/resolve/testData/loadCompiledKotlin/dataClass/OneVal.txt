@@ -1,0 +1,12 @@
+public final data class DataClass : R|kotlin/Any| {
+    public final operator fun component1(): R|kotlin/String|
+
+    public final fun copy(x: R|kotlin/String|): R|test/DataClass|
+
+    public open operator fun equals(other: R|kotlin/Any|): R|kotlin/Boolean|
+
+    public open fun hashCode(): R|kotlin/Int|
+
+    public open fun toString(): R|kotlin/String|
+
+}

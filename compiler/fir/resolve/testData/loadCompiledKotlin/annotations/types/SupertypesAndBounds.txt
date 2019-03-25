@@ -1,0 +1,7 @@
+public final annotation class A : R|kotlin/Annotation| {
+}
+
+<T> public abstract interface Foo : R|java/io/Serializable| {
+    <E, F> public abstract fun bar(): R|kotlin/Unit|
+
+}

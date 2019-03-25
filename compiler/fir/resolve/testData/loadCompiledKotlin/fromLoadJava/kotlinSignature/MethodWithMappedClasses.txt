@@ -1,0 +1,4 @@
+public open class MethodWithMappedClasses : R|kotlin/Any| {
+    <T> public open fun copy(dest: R|kotlin/collections/MutableList<in T>|, src: R|kotlin/collections/List<T>|): R|kotlin/Unit|
+
+}

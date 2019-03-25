@@ -1,0 +1,5 @@
+public open class ClassVarModality : R|kotlin/Any| {
+}
+
+public abstract class ClassVarModalityAbstract : R|kotlin/Any| {
+}

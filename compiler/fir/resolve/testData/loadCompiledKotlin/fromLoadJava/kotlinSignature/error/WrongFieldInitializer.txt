@@ -1,0 +1,2 @@
+public open class WrongFieldInitializer : R|kotlin/Any| {
+}

@@ -1,0 +1,8 @@
+public final annotation class Anno : R|kotlin/Annotation| {
+}
+
+public final class Class : R|kotlin/Any| {
+    public abstract interface Trait : R|kotlin/Any| {
+    }
+
+}

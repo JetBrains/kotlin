@@ -1,0 +1,8 @@
+<P> public abstract interface Bbb : R|kotlin/Any| {
+}
+
+public final class ClassObjectExtendsTraitWithTP : R|kotlin/Any| {
+    public final companion object Companion : R|test/Bbb<kotlin/String>| {
+    }
+
+}

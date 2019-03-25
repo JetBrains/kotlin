@@ -1,0 +1,2 @@
+public open class PropertySimpleType : R|kotlin/Any| {
+}

@@ -1,0 +1,5 @@
+public final class A : R|kotlin/Any| {
+    public final class TestConstructor : R|kotlin/Any| {
+    }
+
+}

@@ -1,0 +1,2 @@
+public final object Bar : R|kotlin/Any| {
+}

@@ -1,0 +1,6 @@
+public final fun builder(c: R|error: createSuspendFunctionType not supported|): R|kotlin/Unit|
+
+public final class Controller : R|kotlin/Any| {
+    public final suspend fun suspendFun(): R|kotlin/Unit|
+
+}

@@ -1,0 +1,4 @@
+public abstract class ModifierAbstract : R|kotlin/Any| {
+    public abstract fun abs(): R|kotlin/Int|
+
+}

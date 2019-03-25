@@ -1,0 +1,2 @@
+<P, Q> public final class ClassTwoParams : R|kotlin/Any| {
+}

@@ -1,0 +1,9 @@
+public final class A : R|kotlin/Any| {
+}
+
+<T> public final class MyProperty : R|kotlin/Any| {
+    public final operator fun getValue(t: R|T|, p: R|kotlin/reflect/KProperty<*>|): R|kotlin/Int|
+
+    public final operator fun setValue(t: R|T|, p: R|kotlin/reflect/KProperty<*>|, i: R|kotlin/Int|): R|kotlin/Unit|
+
+}

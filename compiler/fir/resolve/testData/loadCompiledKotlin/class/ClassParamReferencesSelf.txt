@@ -1,0 +1,5 @@
+<A> public final class ClassParamReferencesSelf : R|kotlin/Any| {
+}
+
+<P> public abstract interface TraitWithP : R|kotlin/Any| {
+}

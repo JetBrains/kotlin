@@ -1,0 +1,2 @@
+<T> public open class PropertyArrayTypes : R|kotlin/Any| {
+}

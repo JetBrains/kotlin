@@ -1,0 +1,2 @@
+private final class PrivateClass : R|kotlin/Any| {
+}

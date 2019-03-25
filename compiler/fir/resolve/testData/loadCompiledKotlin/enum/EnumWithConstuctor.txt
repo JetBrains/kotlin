@@ -1,0 +1,2 @@
+public final enum class En : R|kotlin/Enum<test/En>| {
+}

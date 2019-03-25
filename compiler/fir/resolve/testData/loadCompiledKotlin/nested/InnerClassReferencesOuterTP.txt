@@ -1,0 +1,5 @@
+<P> public final class InnerClassReferencesOuterTP : R|kotlin/Any| {
+    <Q> public final inner class Inner : R|kotlin/Any| {
+    }
+
+}

@@ -1,0 +1,2 @@
+<T> public final class ExtValInClass : R|kotlin/Any| {
+}

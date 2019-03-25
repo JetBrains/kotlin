@@ -1,0 +1,4 @@
+public final class River : R|kotlin/Any| {
+    public final fun song(): R|kotlin/Int|
+
+}

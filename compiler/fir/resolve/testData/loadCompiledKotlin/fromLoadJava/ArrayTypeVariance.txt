@@ -1,0 +1,4 @@
+public final class ArrayTypeVariance : R|kotlin/Any| {
+    public final fun toArray(p0: R|kotlin/Array<out kotlin/Any>|): R|kotlin/Array<kotlin/Any>|
+
+}

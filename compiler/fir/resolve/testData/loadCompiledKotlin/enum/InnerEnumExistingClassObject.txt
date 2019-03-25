@@ -1,0 +1,8 @@
+public final class A : R|kotlin/Any| {
+    public final companion object Companion : R|kotlin/Any| {
+    }
+
+    public final enum class E : R|kotlin/Enum<test/A.E>| {
+    }
+
+}

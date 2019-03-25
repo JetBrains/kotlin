@@ -1,0 +1,53 @@
+internal final class IntInt : R|kotlin/Any| {
+    internal final companion object Companion : R|kotlin/Any| {
+    }
+
+}
+
+internal final class IntPri : R|kotlin/Any| {
+    private final companion object Companion : R|kotlin/Any| {
+    }
+
+}
+
+internal final class IntPub : R|kotlin/Any| {
+    public final companion object Companion : R|kotlin/Any| {
+    }
+
+}
+
+private final class PriInt : R|kotlin/Any| {
+    internal final companion object Companion : R|kotlin/Any| {
+    }
+
+}
+
+private final class PriPri : R|kotlin/Any| {
+    private final companion object Companion : R|kotlin/Any| {
+    }
+
+}
+
+private final class PriPub : R|kotlin/Any| {
+    public final companion object Companion : R|kotlin/Any| {
+    }
+
+}
+
+public final class PubInt : R|kotlin/Any| {
+    internal final companion object Companion : R|kotlin/Any| {
+    }
+
+}
+
+public final class PubPri : R|kotlin/Any| {
+    private final companion object Companion : R|kotlin/Any| {
+    }
+
+}
+
+public final class PubPub : R|kotlin/Any| {
+    public final companion object Companion : R|kotlin/Any| {
+    }
+
+}

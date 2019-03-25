@@ -1,0 +1,8 @@
+public final annotation class A : R|kotlin/Annotation| {
+}
+
+public final annotation class B : R|kotlin/Annotation| {
+}
+
+public abstract interface I : R|kotlin/Any| {
+}

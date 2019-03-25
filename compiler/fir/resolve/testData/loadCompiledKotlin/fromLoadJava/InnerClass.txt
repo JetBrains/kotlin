@@ -1,0 +1,5 @@
+public open class InnerClass : R|kotlin/Any| {
+    public open inner class Inner : R|kotlin/Any| {
+    }
+
+}

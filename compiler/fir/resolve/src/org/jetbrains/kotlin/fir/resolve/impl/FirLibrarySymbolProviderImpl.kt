@@ -59,7 +59,7 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider 
         val classDataFinder = ProtoBasedClassDataFinder(packageProto, nameResolver, version) { SourceElement.NO_SOURCE }
 
         private val memberDeserializer by lazy {
-            FirDeserializationContext.createForPackage(fqName, packageProto, nameResolver, session).memberDeserializer
+            FirDeserializationContext.createForPackage(fqName, packageProto.`package`, nameResolver, session).memberDeserializer
         }
 
         val lookup = mutableMapOf<ClassId, FirClassSymbol>()

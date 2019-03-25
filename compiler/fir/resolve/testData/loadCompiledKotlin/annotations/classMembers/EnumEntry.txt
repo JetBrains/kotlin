@@ -1,0 +1,8 @@
+public final annotation class Anno : R|kotlin/Annotation| {
+}
+
+public final annotation class Bnno : R|kotlin/Annotation| {
+}
+
+public final enum class Eee : R|kotlin/Enum<test/Eee>| {
+}

@@ -1,0 +1,17 @@
+public final class A : R|kotlin/Any| {
+    public final companion object Companion : R|kotlin/Any| {
+        public final annotation class Anno1 : R|kotlin/Annotation| {
+        }
+
+        public final class B : R|kotlin/Any| {
+            public final annotation class Anno2 : R|kotlin/Annotation| {
+            }
+
+        }
+
+    }
+
+}
+
+public final class C : R|kotlin/Any| {
+}

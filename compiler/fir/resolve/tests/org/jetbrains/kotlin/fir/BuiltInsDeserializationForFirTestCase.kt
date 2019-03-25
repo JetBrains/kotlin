@@ -35,7 +35,7 @@ class BuiltInsDeserializationForFirTestCase : AbstractFirResolveWithSessionTestC
     }
 
     private fun checkPackageContent(packageFqName: FqName) {
-        val session = createSession(project, GlobalSearchScope.allScope(project))
+        val session = createSession(environment, GlobalSearchScope.allScope(project))
         val provider = session.getService(FirSymbolProvider::class)
 
         val builder = StringBuilder()

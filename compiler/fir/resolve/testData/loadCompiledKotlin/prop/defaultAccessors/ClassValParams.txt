@@ -1,0 +1,2 @@
+public final class ClassValParams : R|kotlin/Any| {
+}

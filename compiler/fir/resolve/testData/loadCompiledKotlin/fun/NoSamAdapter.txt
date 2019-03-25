@@ -1,0 +1,6 @@
+public final fun foo(r: R|java/lang/Runnable|): R|kotlin/Unit|
+
+public abstract interface TaskObject : R|kotlin/Any| {
+    public abstract fun foo(r: R|java/lang/Runnable|): R|kotlin/Unit|
+
+}

@@ -1,0 +1,9 @@
+<R, T> public abstract interface Rec : R|kotlin/Any| {
+    public abstract fun t(): R|T|
+
+}
+
+public abstract interface Super : R|kotlin/Any| {
+    public open fun foo(p: R|test/Rec<*, *>|): R|test/Rec<*, *>|
+
+}

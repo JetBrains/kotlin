@@ -1,0 +1,4 @@
+<I> public final class A : R|kotlin/Any| {
+    private/*private to this*/ final fun bas(): R|I|
+
+}

@@ -1,0 +1,4 @@
+<P> public final fun foo(x: R|kotlin/Function1<test/Foo<P>, kotlin/Unit>|): R|kotlin/Unit|
+
+<T> public final class Foo : R|kotlin/Any| {
+}

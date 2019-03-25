@@ -1,0 +1,2 @@
+public open class ConstructorGenericUpperBound : R|kotlin/Any| {
+}

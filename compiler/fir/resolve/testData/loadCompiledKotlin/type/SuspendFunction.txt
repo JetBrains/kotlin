@@ -1,0 +1,8 @@
+public final fun test1(): R|error: createSuspendFunctionType not supported|
+
+public final fun test2(): R|error: createSuspendFunctionType not supported|
+
+public final fun test3(): R|kotlin/collections/List<error: createSuspendFunctionType not supported>|
+
+public final fun test4(): R|error: createSuspendFunctionType not supported|
+

@@ -1,0 +1,7 @@
+public final annotation class Anno : R|kotlin/Annotation| {
+}
+
+public final class Class : R|kotlin/Any| {
+    public final fun R|kotlin/String|.foo(x: R|kotlin/Int|): R|kotlin/Int|
+
+}

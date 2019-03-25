@@ -1,0 +1,11 @@
+public final annotation class A : R|kotlin/Annotation| {
+}
+
+public final class Outer : R|kotlin/Any| {
+    public final inner class Inner : R|kotlin/Any| {
+    }
+
+    public final class Nested : R|kotlin/Any| {
+    }
+
+}
