@@ -76,7 +76,10 @@ class JsVersionRequirementTest : AbstractVersionRequirementTest() {
 
     private fun createModule(environment: KotlinCoreEnvironment): MutableModuleContext {
         val config = JsConfig(environment.project, environment.configuration)
-        return ContextForNewModule(ProjectContext(environment.project), Name.special("<test>"), JsPlatformCompilerServices.builtIns, null).apply {
+        return ContextForNewModule(
+            ProjectContext(environment.project, "ProjectContext"),
+            Name.special("<test>"), JsPlatformCompilerServices.builtIns, null
+        ).apply {
             setDependencies(listOf(module) + config.moduleDescriptors + module.builtIns.builtInsModule)
         }
     }

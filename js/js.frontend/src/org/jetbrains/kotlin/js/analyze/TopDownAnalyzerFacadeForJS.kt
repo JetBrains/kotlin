@@ -55,7 +55,7 @@ object TopDownAnalyzerFacadeForJS {
         require(!thisIsBuiltInsModule || customBuiltInsModule == null) {
             "Can't simultaneously use custom built-ins module and set current module as built-ins"
         }
-        val projectContext = ProjectContext(project)
+        val projectContext = ProjectContext(project, "TopDownAnalyzer for JS")
 
         val builtIns = when {
             thisIsBuiltInsModule -> object : KotlinBuiltIns(projectContext.storageManager) {}

@@ -80,7 +80,7 @@ object CommonResolverForModuleFactory : ResolverForModuleFactory() {
         @Suppress("NAME_SHADOWING")
         val resolver = ResolverForProjectImpl(
             "sources for metadata serializer",
-            ProjectContext(project),
+            ProjectContext(project, "metadata serializer"),
             listOf(moduleInfo),
             modulesContent = { ModuleContent(it, files, GlobalSearchScope.allScope(project)) },
             moduleLanguageSettingsProvider = object : LanguageSettingsProvider {

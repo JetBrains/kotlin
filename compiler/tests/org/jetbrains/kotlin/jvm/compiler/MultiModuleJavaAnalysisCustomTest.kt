@@ -72,7 +72,7 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
         val moduleDirs = File(PATH_TO_TEST_ROOT_DIR).listFiles { it -> it.isDirectory }!!
         val environment = createEnvironment(moduleDirs)
         val modules = setupModules(environment, moduleDirs)
-        val projectContext = ProjectContext(environment.project)
+        val projectContext = ProjectContext(environment.project, "MultiModuleJavaAnalysisTest")
         val builtIns = JvmBuiltIns(projectContext.storageManager, JvmBuiltIns.Kind.FROM_CLASS_LOADER)
         val resolverForProject = ResolverForProjectImpl(
             "test",
