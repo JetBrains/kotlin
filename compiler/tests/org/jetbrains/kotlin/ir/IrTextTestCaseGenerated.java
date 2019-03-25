@@ -907,6 +907,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/expressions/ifElseIf.kt");
         }
 
+        @TestMetadata("implicitCastInReturnFromConstructor.kt")
+        public void testImplicitCastInReturnFromConstructor() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/implicitCastInReturnFromConstructor.kt");
+        }
+
         @TestMetadata("implicitCastOnPlatformType.kt")
         public void testImplicitCastOnPlatformType() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/implicitCastOnPlatformType.kt");
