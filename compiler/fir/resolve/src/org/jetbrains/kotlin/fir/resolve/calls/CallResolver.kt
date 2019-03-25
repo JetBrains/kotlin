@@ -20,10 +20,7 @@ import org.jetbrains.kotlin.fir.scopes.processClassifiersByNameWithAction
 import org.jetbrains.kotlin.fir.service
 import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinErrorType
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.utils.addToStdlib.cast
@@ -207,7 +204,7 @@ fun createSimpleConsumer(
     return if (explicitReceiver != null) {
         ExplicitReceiverTowerDataConsumer(session, name, token, object : ReceiverValueWithPossibleTypes {
             override val type: ConeKotlinType
-                get() = explicitReceiverType?.coneTypeUnsafe()
+                get() = explicitReceiverType?.coneTypeSafe()
                     ?: ConeKotlinErrorType("No type calculated for: ${explicitReceiver.renderWithType()}") // TODO: assert here
         }, callKind)
     } else {
