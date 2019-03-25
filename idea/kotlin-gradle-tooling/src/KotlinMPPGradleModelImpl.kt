@@ -13,7 +13,9 @@ data class KotlinSourceSetImpl(
     override val sourceDirs: Set<File>,
     override val resourceDirs: Set<File>,
     override val dependencies: Set<KotlinDependency>,
-    override val dependsOnSourceSets: Set<String>
+    override val dependsOnSourceSets: Set<String>,
+    val defaultPlatform: KotlinPlatform = KotlinPlatform.COMMON,
+    val defaultIsTestModule: Boolean = false
 ) : KotlinSourceSet {
 
     constructor(kotlinSourceSet: KotlinSourceSet) : this(
@@ -22,13 +24,15 @@ data class KotlinSourceSetImpl(
         HashSet(kotlinSourceSet.sourceDirs),
         HashSet(kotlinSourceSet.resourceDirs),
         kotlinSourceSet.dependencies.map { it.deepCopy() }.toSet(),
-        HashSet(kotlinSourceSet.dependsOnSourceSets)
+        HashSet(kotlinSourceSet.dependsOnSourceSets),
+        kotlinSourceSet.platform,
+        kotlinSourceSet.isTestModule
     )
 
-    override var platform: KotlinPlatform = KotlinPlatform.COMMON
+    override var platform: KotlinPlatform = defaultPlatform
         internal set
 
-    override var isTestModule: Boolean = false
+    override var isTestModule: Boolean = defaultIsTestModule
         internal set
 
     override fun toString() = name
@@ -121,6 +125,15 @@ data class KotlinTargetImpl(
     override val jar: KotlinTargetJar?
 ) : KotlinTarget {
     override fun toString() = name
+
+    constructor(target: KotlinTarget) : this(
+        target.name,
+        target.presetName,
+        target.disambiguationClassifier,
+        KotlinPlatform.byId(target.platform.id) ?: KotlinPlatform.COMMON,
+        target.compilations.map { KotlinCompilationImpl(it) }.toList(),
+        KotlinTargetJarImpl(target.jar?.archiveFile)
+    )
 }
 
 data class ExtraFeaturesImpl(
@@ -132,4 +145,12 @@ data class KotlinMPPGradleModelImpl(
     override val targets: Collection<KotlinTarget>,
     override val extraFeatures: ExtraFeatures,
     override val kotlinNativeHome: String
-) : KotlinMPPGradleModel
+) : KotlinMPPGradleModel {
+
+    constructor(mppModel: KotlinMPPGradleModel) : this(
+        mppModel.sourceSets.mapValues { KotlinSourceSetImpl(it.value) },
+        mppModel.targets.map { KotlinTargetImpl(it) }.toList(),
+        ExtraFeaturesImpl(mppModel.extraFeatures.coroutinesState),
+        mppModel.kotlinNativeHome
+    )
+}

@@ -83,7 +83,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
             super.populateModuleCompileOutputSettings(gradleModule, ideModule)
         }
 
-        val mppModel = resolverCtx.getExtraProject(gradleModule, KotlinMPPGradleModel::class.java) ?: return
+        val mppModel = resolverCtx.getExtraProject(gradleModule, KotlinMPPGradleModel::class.java)?.let { KotlinMPPGradleModelImpl(it) } ?: return
         val ideaOutDir = File(ideModule.data.linkedExternalProjectPath, "out")
         val projectDataNode = ideModule.getDataNode(ProjectKeys.PROJECT)!!
         val moduleOutputsMap = projectDataNode.getUserData(MODULES_OUTPUTS)!!
@@ -164,7 +164,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
             val mainModuleFileDirectoryPath = mainModuleData.moduleFileDirectoryPath
 
             val externalProject = resolverCtx.getExtraProject(gradleModule, ExternalProject::class.java)
-            val mppModel = resolverCtx.getExtraProject(gradleModule, KotlinMPPGradleModel::class.java)
+            val mppModel = resolverCtx.getExtraProject(gradleModule, KotlinMPPGradleModel::class.java)?.let { KotlinMPPGradleModelImpl(it) }
             if (mppModel == null || externalProject == null) return
 
             val jdkName = gradleModule.jdkNameIfAny
@@ -311,7 +311,8 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
             ideModule: DataNode<ModuleData>,
             resolverCtx: ProjectResolverContext
         ) {
-            val mppModel = resolverCtx.getExtraProject(gradleModule, KotlinMPPGradleModel::class.java) ?: return
+            val mppModel =
+                resolverCtx.getExtraProject(gradleModule, KotlinMPPGradleModel::class.java)?.let { KotlinMPPGradleModelImpl(it) } ?: return
             if (resolverCtx.getExtraProject(gradleModule, ExternalProject::class.java) == null) return
             processSourceSets(gradleModule, mppModel, ideModule, resolverCtx) { dataNode, sourceSet ->
                 if (dataNode == null || sourceSet.platform == KotlinPlatform.ANDROID) return@processSourceSets
@@ -338,7 +339,8 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
             ideModule: DataNode<ModuleData>,
             resolverCtx: ProjectResolverContext
         ) {
-            val mppModel = resolverCtx.getExtraProject(gradleModule, KotlinMPPGradleModel::class.java) ?: return
+            val mppModel =
+                resolverCtx.getExtraProject(gradleModule, KotlinMPPGradleModel::class.java)?.let { KotlinMPPGradleModelImpl(it) } ?: return
             val sourceSetMap = ideProject.getUserData(GradleProjectResolver.RESOLVED_SOURCE_SETS) ?: return
             val artifactsMap = ideProject.getUserData(CONFIGURATION_ARTIFACTS) ?: return
             val substitutor = KotlinNativeLibrariesDependencySubstitutor(mppModel, gradleModule, resolverCtx)
