@@ -68,3 +68,14 @@
   /* Set the colour of this series line */
   stroke: mediumorchid;
 }
+
+.ct-series-d .ct-line {
+  /* Set the colour of this series line */
+  stroke: mediumorchid;
+}
+
+.ct-series-d .ct-point {
+  /* Set the colour of this series line */
+  stroke: mediumorchid;
+  stroke-width: 20;
+}
