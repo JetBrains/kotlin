@@ -27,7 +27,6 @@ class FirJavaModuleBasedSession(
                 listOf(
                     service<FirProvider>(),
                     JavaSymbolProvider(this, sessionProvider.project, scope),
-                    FirLibrarySymbolProviderImpl(this),
                     dependenciesProvider ?: FirDependenciesSymbolProviderImpl(this)
                 )
             )

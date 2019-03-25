@@ -5,9 +5,8 @@
 
 package org.jetbrains.kotlin.fir.deserialization
 
-import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
-import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.resolve.toTypeProjection
+import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -18,13 +17,11 @@ import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.serialization.deserialization.getName
-import java.lang.RuntimeException
 import java.util.*
 
 class FirTypeDeserializer(
     val nameResolver: NameResolver,
     val typeTable: TypeTable,
-    val symbolProvider: FirSymbolProvider,
     typeParameterProtos: List<ProtoBuf.TypeParameter>,
     val parent: FirTypeDeserializer?
 ) {

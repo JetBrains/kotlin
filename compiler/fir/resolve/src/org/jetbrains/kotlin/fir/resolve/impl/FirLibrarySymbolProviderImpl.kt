@@ -7,14 +7,20 @@ package org.jetbrains.kotlin.fir.resolve.impl
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.impl.FirClassImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirTypeParameterImpl
 import org.jetbrains.kotlin.fir.deserialization.FirTypeDeserializer
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.getOrPut
-import org.jetbrains.kotlin.fir.symbols.*
+import org.jetbrains.kotlin.fir.symbols.CallableId
+import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.ConeClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
@@ -73,7 +79,7 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider 
             return firSymbol
         }
 
-        fun getClassLikeSymbolByFqName(classId: ClassId, provider: FirSymbolProvider): ConeClassLikeSymbol? {
+        fun getClassLikeSymbolByFqName(classId: ClassId): ConeClassLikeSymbol? {
 
             if (classId !in classDataFinder.allClassIds) return null
             return lookup.getOrPut(classId, { FirClassSymbol(classId) }) { symbol ->
@@ -101,7 +107,6 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider 
                     val typeDeserializer = FirTypeDeserializer(
                         classData.nameResolver,
                         typeTable,
-                        provider,
                         classData.classProto.typeParameterList,
                         null
                     )
@@ -144,7 +149,7 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider 
 
     override fun getClassLikeSymbolByFqName(classId: ClassId): ConeClassLikeSymbol? {
         return allPackageFragments[classId.packageFqName]?.firstNotNullResult {
-            it.getClassLikeSymbolByFqName(classId, this)
+            it.getClassLikeSymbolByFqName(classId)
         } ?: with(classId) {
             val className = relativeClassName.asString()
             val kind = FunctionClassDescriptor.Kind.byClassNamePrefix(packageFqName, className) ?: return@with null
