@@ -8,8 +8,18 @@ package org.jetbrains.kotlin.idea.configuration
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.ProjectKeys
+import com.intellij.openapi.externalSystem.model.project.LibraryData
+import com.intellij.openapi.externalSystem.model.project.ProjectData
+import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProvider
+import com.intellij.openapi.externalSystem.service.project.IdeUIModifiableModelsProvider
+import com.intellij.openapi.externalSystem.service.project.manage.AbstractProjectDataService
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
+import com.intellij.openapi.externalSystem.util.ExternalSystemConstants
+import com.intellij.openapi.externalSystem.util.Order
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.DependencyScope
+import com.intellij.openapi.roots.LibraryOrderEntry
+import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.util.Key
 import org.gradle.tooling.model.idea.IdeaModule
 import org.jetbrains.kotlin.gradle.KotlinMPPGradleModel
@@ -25,6 +35,49 @@ import org.jetbrains.plugins.gradle.model.FileCollectionDependency
 import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData
 import org.jetbrains.plugins.gradle.service.project.ProjectResolverContext
 import java.io.File
+
+// KT-30490. This `ProjectDataService` must be executed immediately after
+// `com.intellij.openapi.externalSystem.service.project.manage.LibraryDataService` to clean-up KLIBs before any other actions taken on them.
+@Order(ExternalSystemConstants.BUILTIN_LIBRARY_DATA_SERVICE_ORDER + 1) // force
+class KotlinNativeLibraryDataService : AbstractProjectDataService<LibraryData, Library>() {
+    override fun getTargetDataKey() = ProjectKeys.LIBRARY
+
+    // See also `com.intellij.openapi.externalSystem.service.project.manage.LibraryDataService.postProcess()`
+    override fun postProcess(
+        toImport: MutableCollection<DataNode<LibraryData>>,
+        projectData: ProjectData?,
+        project: Project,
+        modelsProvider: IdeModifiableModelsProvider
+    ) {
+        if (projectData == null || modelsProvider is IdeUIModifiableModelsProvider) return
+
+        val librariesModel = modelsProvider.modifiableProjectLibrariesModel
+        val potentialOrphans = HashMap<String, Library>()
+
+        librariesModel.libraries.forEach { library ->
+            val libraryName = library.name?.takeIf { it.startsWith(KOTLIN_NATIVE_LIBRARY_PREFIX_PLUS_SPACE) } ?: return@forEach
+            potentialOrphans[libraryName] = library
+        }
+
+        if (potentialOrphans.isEmpty()) return
+
+        modelsProvider.modules.forEach { module ->
+            modelsProvider.getOrderEntries(module).forEach inner@{ orderEntry ->
+                val libraryOrderEntry = orderEntry as? LibraryOrderEntry ?: return@inner
+                if (libraryOrderEntry.isModuleLevel) return@inner
+
+                val libraryName = (libraryOrderEntry.library?.name ?: libraryOrderEntry.libraryName)
+                    ?.takeIf { it.startsWith(KOTLIN_NATIVE_LIBRARY_PREFIX_PLUS_SPACE) } ?: return@inner
+
+                potentialOrphans.remove(libraryName)
+            }
+        }
+
+        potentialOrphans.keys.forEach { libraryName ->
+            librariesModel.getLibraryByName(libraryName)?.let { librariesModel.removeLibrary(it) }
+        }
+    }
+}
 
 // KT-29613, KT-29783
 internal class KotlinNativeLibrariesDependencySubstitutor(
@@ -100,7 +153,7 @@ internal class KotlinNativeLibrariesDependencySubstitutor(
         val nonNullKotlinVersion = kotlinVersion ?: return NoSubstitute
 
         val platformNamePart = libraryInfo.platform?.let { " [$it]" }.orEmpty()
-        val newLibraryName = "$KOTLIN_NATIVE_LIBRARY_PREFIX $nonNullKotlinVersion - ${libraryInfo.name}$platformNamePart"
+        val newLibraryName = "$KOTLIN_NATIVE_LIBRARY_PREFIX_PLUS_SPACE$nonNullKotlinVersion - ${libraryInfo.name}$platformNamePart"
 
         val substitute = DefaultExternalLibraryDependency().apply {
             name = newLibraryName
@@ -145,5 +198,6 @@ private sealed class DependencySubstitute {
 }
 
 private const val KOTLIN_NATIVE_LIBRARY_PREFIX = "Kotlin/Native"
+private const val KOTLIN_NATIVE_LIBRARY_PREFIX_PLUS_SPACE = "$KOTLIN_NATIVE_LIBRARY_PREFIX "
 private const val KOTLIN_NATIVE_LEGACY_GROUP_ID = KOTLIN_NATIVE_LIBRARY_PREFIX
 private const val GRADLE_LIBRARY_PREFIX = "Gradle: "
