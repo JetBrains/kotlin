@@ -518,8 +518,6 @@ class SafeDeleteFix(declaration: KtDeclaration) : LocalQuickFix {
     }
 }
 
-private val KtNamedDeclaration.isPrivateNestedClassOrObject: Boolean get() = this is KtClassOrObject && isPrivate() && !isTopLevel()
-
 private fun safeDelete(project: Project, declaration: PsiElement) {
     if (declaration is KtNamedDeclaration && declaration.isPrivateNestedClassOrObject) {
         runWriteAction {
