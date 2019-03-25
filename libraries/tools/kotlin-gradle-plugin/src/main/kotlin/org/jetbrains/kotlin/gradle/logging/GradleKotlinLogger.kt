@@ -25,6 +25,10 @@ internal class GradleKotlinLogger(private val log: Logger) : KotlinLogger {
         log.warn(msg)
     }
 
+    fun lifecycle(msg: String) {
+        log.lifecycle(msg)
+    }
+
     override val isDebugEnabled: Boolean
         get() = log.isDebugEnabled
 }
