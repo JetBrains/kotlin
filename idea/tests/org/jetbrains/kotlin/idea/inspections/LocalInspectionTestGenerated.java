@@ -8219,6 +8219,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/suspiciousVarProperty/hasBackingFieldRef2.kt");
         }
 
+        @TestMetadata("hasBackingFieldRef3.kt")
+        public void testHasBackingFieldRef3() throws Exception {
+            runTest("idea/testData/inspectionsLocal/suspiciousVarProperty/hasBackingFieldRef3.kt");
+        }
+
         @TestMetadata("hasSetter.kt")
         public void testHasSetter() throws Exception {
             runTest("idea/testData/inspectionsLocal/suspiciousVarProperty/hasSetter.kt");
