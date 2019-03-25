@@ -43,11 +43,7 @@ import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.core.deleteElementAndCleanParent
-import org.jetbrains.kotlin.idea.refactoring.checkSuperMethods
-import org.jetbrains.kotlin.idea.refactoring.formatClass
-import org.jetbrains.kotlin.idea.refactoring.formatFunction
-import org.jetbrains.kotlin.idea.refactoring.withExpectedActuals
-import org.jetbrains.kotlin.idea.refactoring.isTrueJavaMethod
+import org.jetbrains.kotlin.idea.refactoring.*
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOptions
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchParameters
@@ -58,7 +54,10 @@ import org.jetbrains.kotlin.idea.util.liftToExpected
 import org.jetbrains.kotlin.idea.util.runOnExpectAndAllActuals
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
+import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
+import org.jetbrains.kotlin.psi.psiUtil.parameterIndex
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.SmartSet
@@ -84,7 +83,7 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
 
         fun getIgnoranceCondition() = Condition<PsiElement> {
             if (it is KtFile) return@Condition false
-            deleteSet.any { element -> JavaSafeDeleteProcessor.isInside(it, element.unwrapped) }
+            deleteSet.any { element -> isInside(it, element.unwrapped) }
         }
 
         fun getSearchInfo(element: PsiElement) = NonCodeUsageSearchInfo(getIgnoranceCondition(), element)
@@ -122,7 +121,7 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
 
         fun findKotlinDeclarationUsages(declaration: KtDeclaration): NonCodeUsageSearchInfo {
             searchKotlinDeclarationReferences(declaration).mapNotNullTo(usages) { reference ->
-                val refElement = reference.element ?: return@mapNotNullTo null
+                val refElement = reference.element
                 refElement.getNonStrictParentOfType<KtImportDirective>()?.let { importDirective ->
                     SafeDeleteImportDirectiveUsageInfo(importDirective, element)
                 } ?: SafeDeleteReferenceSimpleDeleteUsageInfo(refElement, declaration, false)
@@ -323,7 +322,7 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
     override fun findConflicts(element: PsiElement, allElementsToDelete: Array<out PsiElement>): MutableCollection<String>? {
         if (element is KtNamedFunction || element is KtProperty) {
             val jetClass = element.getNonStrictParentOfType<KtClass>()
-            if (jetClass == null || jetClass.getBody() != element.parent) return null
+            if (jetClass == null || jetClass.body != element.parent) return null
 
             val modifierList = jetClass.modifierList
             if (modifierList != null && modifierList.hasModifier(KtTokens.ABSTRACT_KEYWORD)) return null
@@ -367,7 +366,7 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
             }
         }
 
-        if (!overridingMethodUsages.isEmpty()) {
+        if (overridingMethodUsages.isNotEmpty()) {
             if (ApplicationManager.getApplication()!!.isUnitTestMode) {
                 result.addAll(overridingMethodUsages)
             } else {
