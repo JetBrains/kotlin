@@ -69,13 +69,13 @@ fun Project.addIdeaNativeModuleDeps() {
             add("compile", project(":idea:idea-native"))
             add("compile", project(":idea:idea-gradle-native"))
 
-            // Java APIs (from Big Kotlin project)
-            val javaApis = add(
-                    "compile",
-                    "kotlin.build.custom.deps:intellij:${rootProject.extra["versions.intellijSdk"]}"
-            ) as ExternalModuleDependency
+            // Detect IDE name and version
+            val ideName = if (rootProject.findProperty("intellijUltimateEnabled")?.toString()?.toBoolean() == true) "ideaIU" else "ideaIC" // TODO: what if AndroidStudio?
+            val ideVersion = rootProject.extra["versions.intellijSdk"] as String
 
-            with(javaApis) {
+            // Java APIs (from Big Kotlin project)
+            val javaApis = add("compile", "kotlin.build:$ideName:$ideVersion") as ExternalModuleDependency
+            with (javaApis) {
                 artifact {
                     name = "java-api"
                     type = "jar"
