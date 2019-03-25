@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.js.tasks
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.*
+import org.jetbrains.kotlin.gradle.targets.js.internal.RewriteSourceMapFilterReader
 import java.io.File
 
 open class KotlinJsNodeModulesTask : DefaultTask() {
@@ -34,17 +35,29 @@ open class KotlinJsNodeModulesTask : DefaultTask() {
                 isKotlinJsRuntimeFile(fileTreeElement.file)
             }
 
+            sync.eachFile {
+                if (it.name.endsWith(".js.map")) {
+                    it.filter(
+                        mapOf(
+                            "srcSourceRoot" to it.file.parentFile,
+                            "targetSourceRoot" to nodeModulesDir
+                        ),
+                        RewriteSourceMapFilterReader::class.java
+                    )
+                }
+            }
+
             sync.into(nodeModulesDir)
         }
     }
 }
 
 private val File.isZip
-    get() = isFile && name.endsWith(".jar")
+    get() = isFile && (name.endsWith(".jar") || name.endsWith(".zip"))
 
 internal fun isKotlinJsRuntimeFile(file: File): Boolean {
     if (!file.isFile) return false
     val name = file.name
     return (name.endsWith(".js") && !name.endsWith(".meta.js"))
-            || name.endsWith(".js.map")
+        || name.endsWith(".js.map")
 }

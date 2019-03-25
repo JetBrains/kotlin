@@ -38,14 +38,14 @@ open class KotlinNodeJsTestTask : AbstractTestTask() {
     var excludes = mutableSetOf<String>()
 
     @InputDirectory
-    var nodeModulesDir: File? = null
+    lateinit var nodeModulesDir: File
 
     @Input
     @SkipWhenEmpty
     var nodeModulesToLoad: Set<String> = setOf()
 
-    @InputFile
-    lateinit var testRuntimeNodeModule: File
+    @Input
+    lateinit var testRuntimeNodeModules: Collection<String>
 
     @Suppress("UnstableApiUsage")
     private val filterExt: DefaultTestFilter
@@ -69,6 +69,9 @@ open class KotlinNodeJsTestTask : AbstractTestTask() {
     val nodeJsWorkingDirCanonicalPath: String
         @Input get() = nodeJsProcessOptions.workingDir.canonicalPath
 
+    @Input
+    var debug: Boolean = false
+
     fun nodeJs(options: ProcessForkOptions.() -> Unit) {
         options(nodeJsProcessOptions)
     }
@@ -77,7 +80,13 @@ open class KotlinNodeJsTestTask : AbstractTestTask() {
         val extendedForkOptions = DefaultProcessForkOptions(fileResolver)
         nodeJsProcessOptions.copyTo(extendedForkOptions)
 
-        extendedForkOptions.environment.addPath("NODE_PATH", nodeModulesDir!!.canonicalPath)
+        extendedForkOptions.environment.addPath("NODE_PATH", nodeModulesDir.canonicalPath)
+
+        val nodeJsArgs = mutableListOf<String>()
+
+        if (debug) {
+            nodeJsArgs.add("--inspect-brk")
+        }
 
         val cliArgs = KotlinNodeJsTestRunnerCliArgs(
             nodeModulesToLoad.toList(),
@@ -98,7 +107,12 @@ open class KotlinNodeJsTestTask : AbstractTestTask() {
 
         return TCServiceMessagesTestExecutionSpec(
             extendedForkOptions,
-            listOf(testRuntimeNodeModule.absolutePath) + cliArgs.toList(),
+            nodeJsArgs +
+                testRuntimeNodeModules
+                    .map { nodeModulesDir.resolve(it) }
+                    .filter { it.exists() }
+                    .map { it.absolutePath } +
+                cliArgs.toList(),
             clientSettings
         )
     }

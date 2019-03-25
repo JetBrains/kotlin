@@ -311,8 +311,6 @@ class MultiplatformGradleIT : BaseGradleIT() {
             assertSuccessful()
 
             assertTasksRegisteredAndNotRealized(
-                ":kotlinNodeJsTestRuntimeExtract",
-
                 ":clientTestNodeModules",
                 ":clientTest",
 
@@ -325,13 +323,29 @@ class MultiplatformGradleIT : BaseGradleIT() {
             assertSuccessful()
 
             assertTasksExecuted(
-                ":kotlinNodeJsTestRuntimeExtract",
-
                 ":clientTestNodeModules",
                 ":clientTest",
 
                 ":serverTestNodeModules",
                 ":serverTest"
+            )
+
+            assertFileExists("build/client_test_node_modules/kotlin.js")
+            assertFileExists("build/client_test_node_modules/kotlin.js.map")
+            assertFileExists("build/client_test_node_modules/kotlin-test.js")
+            assertFileExists("build/client_test_node_modules/kotlin-test.js.map")
+            assertFileExists("build/client_test_node_modules/kotlin-test-nodejs-runner.js")
+            assertFileExists("build/client_test_node_modules/kotlin-test-nodejs-runner.js.map")
+            assertFileExists("build/client_test_node_modules/kotlin-nodejs-source-map-support.js")
+            assertFileExists("build/client_test_node_modules/kotlin-nodejs-source-map-support.js.map")
+            assertFileExists("build/client_test_node_modules/new-mpp-js-tests.js")
+            assertFileExists("build/client_test_node_modules/new-mpp-js-tests.js.map")
+            assertFileExists("build/client_test_node_modules/new-mpp-js-tests_test.js")
+            assertFileExists("build/client_test_node_modules/new-mpp-js-tests_test.js.map")
+
+            assertFileContains(
+                "build/client_test_node_modules/new-mpp-js-tests_test.js.map",
+                "\"sources\":[\"../../src/commonTest/kotlin/CommonTest.kt\"]"
             )
 
             assertTestResults("testProject/new-mpp-js-tests/TEST-CommonTest.xml", "clientTest")
@@ -343,8 +357,6 @@ class MultiplatformGradleIT : BaseGradleIT() {
             assertSuccessful()
 
             assertTasksUpToDate(
-                ":kotlinNodeJsTestRuntimeExtract",
-
                 ":clientTestNodeModules",
                 ":clientTest",
 
@@ -358,10 +370,6 @@ class MultiplatformGradleIT : BaseGradleIT() {
 
         build("check") {
             assertSuccessful()
-
-            assertTasksUpToDate(
-                ":kotlinNodeJsTestRuntimeExtract"
-            )
 
             assertTasksExecuted(
                 ":clientTestNodeModules",

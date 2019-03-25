@@ -68,7 +68,8 @@ projectTest {
         ":examples:annotation-processor-example:install",
         ":kotlin-scripting-common:install",
         ":kotlin-scripting-jvm:install",
-        ":kotlin-scripting-compiler-embeddable:install"
+        ":kotlin-scripting-compiler-embeddable:install",
+        ":kotlin-test-nodejs-runner:install"
     )
     exclude(jpsIncrementalTestsClass)
 }

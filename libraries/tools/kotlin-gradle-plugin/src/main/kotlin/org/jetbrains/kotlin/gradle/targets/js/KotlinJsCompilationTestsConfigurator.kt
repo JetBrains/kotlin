@@ -63,6 +63,10 @@ internal class KotlinJsCompilationTestsConfigurator(
         get() = classpath.plus(project.files(destinationDir))
 
     fun configure() {
+        compilation.dependencies {
+            implementation(kotlin("test-nodejs-runner"))
+        }
+
         val nodeModulesTask = registerTask(
             project,
             disambiguateCamelCased("nodeModules", true),
@@ -79,20 +83,13 @@ internal class KotlinJsCompilationTestsConfigurator(
         }
 
         val projectWithNodeJsPlugin = NodeJsPlugin.ensureAppliedInHierarchy(target.project)
-        val kotlinJsExtractTestRunnerTask = project.kotlinNodeJsTestRuntimeExtractTask
 
         val testTask = registerTask(project, testTaskName, KotlinNodeJsTestTask::class.java) { testJs ->
             testJs.group = "verification"
 
-            testJs.dependsOn(
-                nodeModulesTask.getTaskOrProvider(),
-                kotlinJsExtractTestRunnerTask.getTaskOrProvider()
-            )
+            testJs.dependsOn(nodeModulesTask.getTaskOrProvider())
 
             testJs.onlyIf {
-                // run only if there is org.jetbrains.kotlin:kotlin-test-js in classpath
-                // (kotlin-test-nodejs-runner.js requires kotlin-test.js)
-                nodeModulesDir.resolve("kotlin-test.js").exists()
                 compileTestKotlin2Js.outputFile.exists()
             }
 
@@ -103,7 +100,10 @@ internal class KotlinJsCompilationTestsConfigurator(
             testJs.nodeJsProcessOptions.workingDir = project.projectDir
 
             testJs.nodeModulesDir = nodeModulesDir
-            testJs.testRuntimeNodeModule = project.extractedKotlinTestNodeJsRunner
+            testJs.testRuntimeNodeModules = listOf(
+                "kotlin-test-nodejs-runner.js",
+                "kotlin-nodejs-source-map-support.js"
+            )
             testJs.nodeModulesToLoad = setOf(compileTestKotlin2Js.outputFile.name)
 
             val htmlReport = DslObject(testJs.reports.html)
