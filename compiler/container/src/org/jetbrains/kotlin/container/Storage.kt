@@ -34,7 +34,7 @@ enum class ComponentStorageState {
     Disposed
 }
 
-internal class InvalidCardinalityException(message: String, val descriptors: Collection<ComponentDescriptor>) : Exception(message)
+internal class InvalidCardinalityException(message: String) : Exception(message)
 
 class ComponentStorage(private val myId: String, parent: ComponentStorage?) : ValueResolver {
     var state = ComponentStorageState.Initial
@@ -58,7 +58,10 @@ class ComponentStorage(private val myId: String, parent: ComponentStorage?) : Va
             registerDependency(request, context)
 
             if (entry.size > 1)
-                throw InvalidCardinalityException("Request $request cannot be satisfied because there is more than one type registered", entry)
+                throw InvalidCardinalityException(
+                    "Request $request cannot be satisfied because there is more than one type registered\n" +
+                            "Clashed registrations: ${entry.joinToString()}"
+                )
             return entry.singleOrNull()
         }
         return null
