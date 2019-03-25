@@ -23,7 +23,7 @@ import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.templates.ScriptTemplateDefinition
 
 const val SCRIPT_DEFINITION_MARKERS_PATH = "META-INF/kotlin/script/templates/"
-internal const val SCRIPT_DEFINITION_MARKERS_EXTENSION_WITH_DOT = ".classname"
+const val SCRIPT_DEFINITION_MARKERS_EXTENSION_WITH_DOT = ".classname"
 
 class ScriptDefinitionsFromClasspathDiscoverySource(
     private val classpath: List<File>,
