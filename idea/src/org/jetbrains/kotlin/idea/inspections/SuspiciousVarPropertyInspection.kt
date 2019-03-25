@@ -40,7 +40,7 @@ class SuspiciousVarPropertyInspection : AbstractKotlinInspection() {
 
     companion object {
         private fun KtPropertyAccessor.hasBackingFieldReference(): Boolean {
-            val bodyExpression = this.bodyExpression ?: return false
+            val bodyExpression = this.bodyExpression ?: return true
             return bodyExpression.isBackingFieldReference(property) || bodyExpression.anyDescendantOfType<KtNameReferenceExpression> {
                 it.isBackingFieldReference(property)
             }
