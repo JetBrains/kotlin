@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.daemon.client.DaemonReportingTargets
 import org.jetbrains.kotlin.daemon.client.launchProcessWithFallback
+import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.FieldVisitor
@@ -82,12 +83,20 @@ internal fun runToolInSeparateProcess(
     // important to read inputStream, otherwise the process may hang on some systems
     val readErrThread = thread {
         process.errorStream!!.bufferedReader().forEachLine {
-            System.err.println(it)
+            logger.error(it)
         }
     }
-    process.inputStream!!.bufferedReader().forEachLine {
-        System.out.println(it)
+
+    if (logger is GradleKotlinLogger) {
+        process.inputStream!!.bufferedReader().forEachLine {
+            logger.lifecycle(it)
+        }
+    } else {
+        process.inputStream!!.bufferedReader().forEachLine {
+            System.out.println(it)
+        }
     }
+
     readErrThread.join()
 
     val exitCode = process.waitFor()
