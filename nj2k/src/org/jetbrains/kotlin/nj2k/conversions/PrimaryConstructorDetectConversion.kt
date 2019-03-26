@@ -33,6 +33,10 @@ class PrimaryConstructorDetectConversion(private val context: ConversionContext)
         if (primaryConstructorCandidate.block.statements.isNotEmpty()) {
             val initDeclaration = JKKtInitDeclarationImpl(primaryConstructorCandidate.block)
                 .withNonCodeElementsFrom(primaryConstructorCandidate)
+            primaryConstructorCandidate.clearNonCodeElements()
+            for (modifierElement in primaryConstructorCandidate.modifierElements()) {
+                modifierElement.clearNonCodeElements()
+            }
             element.classBody.declarations =
                 element.classBody.declarations.replace(primaryConstructorCandidate, initDeclaration)
         } else {

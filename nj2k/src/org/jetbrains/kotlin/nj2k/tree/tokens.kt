@@ -43,6 +43,10 @@ fun JKTreeElement.commentsFromInside(): List<JKCommentElement> {
 inline fun <reified T : JKNonCodeElementsListOwner> T.withNonCodeElementsFrom(other: JKNonCodeElementsListOwner): T =
     also { it.takeNonCodeElementsFrom(other) }
 
+inline fun JKNonCodeElementsListOwner.clearNonCodeElements() {
+    leftNonCodeElements = emptyList()
+    rightNonCodeElements = emptyList()
+}
 
 interface JKTokenElement : JKNonCodeElementsListOwner {
     val text: String
