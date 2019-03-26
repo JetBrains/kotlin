@@ -48,8 +48,7 @@ FILE fqName:<root> fileName:/classLiteralInAnnotation.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
   FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     annotations:
-      CALL 'public constructor <init> (klass: kotlin.reflect.KClass<*>) [primary] declared in <root>.A' type=<root>.A origin=null
-        klass: CLASS_REFERENCE 'CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.reflect.KClass<<root>.C>
+      A(klass = CLASS_REFERENCE 'CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.reflect.KClass<<root>.C>)
     BLOCK_BODY
   FUN name:test2 visibility:public modality:FINAL <T> () returnType:kotlin.Any [inline] 
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
@@ -58,8 +57,7 @@ FILE fqName:<root> fileName:/classLiteralInAnnotation.kt
         BLOCK type=<root>.test2.<no name provided><T of <root>.test2> origin=OBJECT_LITERAL
           CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]
             annotations:
-              CALL 'public constructor <init> (klass: kotlin.reflect.KClass<*>) [primary] declared in <root>.A' type=<root>.A origin=null
-                klass: CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public superTypes:[]' type=kotlin.reflect.KClass<kotlin.Any>
+              A(klass = CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public superTypes:[]' type=kotlin.reflect.KClass<kotlin.Any>)
             $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.test2.<no name provided><T of <root>.test2> 
             CONSTRUCTOR visibility:public <> () returnType:<root>.test2.<no name provided><T of <root>.test2> [primary] 
               BLOCK_BODY
@@ -89,8 +87,7 @@ FILE fqName:<root> fileName:/classLiteralInAnnotation.kt
           BLOCK type=<root>.<get-test3>.<no name provided> origin=OBJECT_LITERAL
             CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]
               annotations:
-                CALL 'public constructor <init> (klass: kotlin.reflect.KClass<*>) [primary] declared in <root>.A' type=<root>.A origin=null
-                  klass: CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public superTypes:[]' type=kotlin.reflect.KClass<kotlin.Any>
+                A(klass = CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public superTypes:[]' type=kotlin.reflect.KClass<kotlin.Any>)
               $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.<get-test3>.<no name provided> 
               CONSTRUCTOR visibility:public <> () returnType:<root>.<get-test3>.<no name provided> [primary] 
                 BLOCK_BODY
@@ -120,8 +117,7 @@ FILE fqName:<root> fileName:/classLiteralInAnnotation.kt
           BLOCK type=<root>.<set-test3>.<no name provided> origin=OBJECT_LITERAL
             CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]
               annotations:
-                CALL 'public constructor <init> (klass: kotlin.reflect.KClass<*>) [primary] declared in <root>.A' type=<root>.A origin=null
-                  klass: CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public superTypes:[]' type=kotlin.reflect.KClass<kotlin.Any>
+                A(klass = CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public superTypes:[]' type=kotlin.reflect.KClass<kotlin.Any>)
               $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.<set-test3>.<no name provided> 
               CONSTRUCTOR visibility:public <> () returnType:<root>.<set-test3>.<no name provided> [primary] 
                 BLOCK_BODY

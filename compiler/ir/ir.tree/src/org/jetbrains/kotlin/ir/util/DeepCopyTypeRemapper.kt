@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
-import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
@@ -39,14 +39,15 @@ class DeepCopyTypeRemapper(
             }
         }
 
-        val annotations = type.annotations.map { it.transform(deepCopy, null) as IrCall }
+        val annotations = type.annotations.map { it.transform(deepCopy, null) as IrConstructorCall }
 
         return IrSimpleTypeImpl(
             null,
             symbolRemapper.getReferencedClassifier(type.classifier),
             type.hasQuestionMark,
             arguments,
-            annotations)
+            annotations
+        )
     }
 
 }

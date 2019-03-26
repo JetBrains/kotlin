@@ -90,8 +90,7 @@ FILE fqName:<root> fileName:/delegatedPropertyAccessorsWithAnnotations.kt
           value: CONST Int type=kotlin.Int value=1
     FUN DELEGATED_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:kotlin.Int 
       annotations:
-        CALL 'public constructor <init> (x: kotlin.String) [primary] declared in <root>.A' type=<root>.A origin=null
-          x: CONST String type=kotlin.String value="test1.get"
+        A(x = 'test1.get')
       correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL [delegated,val] 
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test1> (): kotlin.Int declared in <root>'
@@ -106,8 +105,7 @@ FILE fqName:<root> fileName:/delegatedPropertyAccessorsWithAnnotations.kt
           value: CONST Int type=kotlin.Int value=2
     FUN DELEGATED_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:kotlin.Int 
       annotations:
-        CALL 'public constructor <init> (x: kotlin.String) [primary] declared in <root>.A' type=<root>.A origin=null
-          x: CONST String type=kotlin.String value="test2.get"
+        A(x = 'test2.get')
       correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL [delegated,var] 
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test2> (): kotlin.Int declared in <root>'
@@ -117,13 +115,11 @@ FILE fqName:<root> fileName:/delegatedPropertyAccessorsWithAnnotations.kt
             kProp: PROPERTY_REFERENCE 'public final test2: kotlin.Int [delegated,var]' field=null getter='public final fun <get-test2> (): kotlin.Int declared in <root>' setter='public final fun <set-test2> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
     FUN DELEGATED_PROPERTY_ACCESSOR name:<set-test2> visibility:public modality:FINAL <> (<set-?>:kotlin.Int) returnType:kotlin.Unit 
       annotations:
-        CALL 'public constructor <init> (x: kotlin.String) [primary] declared in <root>.A' type=<root>.A origin=null
-          x: CONST String type=kotlin.String value="test2.set"
+        A(x = 'test2.set')
       correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL [delegated,var] 
       VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int 
         annotations:
-          CALL 'public constructor <init> (x: kotlin.String) [primary] declared in <root>.A' type=<root>.A origin=null
-            x: CONST String type=kotlin.String value="test2.set.param"
+          A(x = 'test2.set.param')
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <set-test2> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>'
           CALL 'public final fun setValue (thisRef: kotlin.Any?, kProp: kotlin.Any?, newValue: kotlin.Int): kotlin.Unit declared in <root>.Cell' type=kotlin.Unit origin=null

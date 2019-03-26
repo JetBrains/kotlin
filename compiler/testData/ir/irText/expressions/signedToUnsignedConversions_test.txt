@@ -1,7 +1,7 @@
 FILE fqName:<root> fileName:/signedToUnsignedConversions_test.kt
   PROPERTY name:IMPLICIT_INT visibility:public modality:FINAL [const,val] 
     annotations:
-      CALL 'public constructor <init> () [primary] declared in kotlin.internal.ImplicitIntegerCoercion' type=kotlin.internal.ImplicitIntegerCoercion origin=null
+      ImplicitIntegerCoercion
     FIELD PROPERTY_BACKING_FIELD name:IMPLICIT_INT type:kotlin.Int visibility:public [final,static] 
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value=255
@@ -12,7 +12,7 @@ FILE fqName:<root> fileName:/signedToUnsignedConversions_test.kt
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:IMPLICIT_INT type:kotlin.Int visibility:public [final,static] ' type=kotlin.Int origin=null
   PROPERTY name:EXPLICIT_INT visibility:public modality:FINAL [const,val] 
     annotations:
-      CALL 'public constructor <init> () [primary] declared in kotlin.internal.ImplicitIntegerCoercion' type=kotlin.internal.ImplicitIntegerCoercion origin=null
+      ImplicitIntegerCoercion
     FIELD PROPERTY_BACKING_FIELD name:EXPLICIT_INT type:kotlin.Int visibility:public [final,static] 
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value=255
@@ -23,7 +23,7 @@ FILE fqName:<root> fileName:/signedToUnsignedConversions_test.kt
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:EXPLICIT_INT type:kotlin.Int visibility:public [final,static] ' type=kotlin.Int origin=null
   PROPERTY name:LONG_CONST visibility:public modality:FINAL [const,val] 
     annotations:
-      CALL 'public constructor <init> () [primary] declared in kotlin.internal.ImplicitIntegerCoercion' type=kotlin.internal.ImplicitIntegerCoercion origin=null
+      ImplicitIntegerCoercion
     FIELD PROPERTY_BACKING_FIELD name:LONG_CONST type:kotlin.Long visibility:public [final,static] 
       EXPRESSION_BODY
         CONST Long type=kotlin.Long value=255
@@ -34,7 +34,7 @@ FILE fqName:<root> fileName:/signedToUnsignedConversions_test.kt
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:LONG_CONST type:kotlin.Long visibility:public [final,static] ' type=kotlin.Long origin=null
   PROPERTY name:NON_CONST visibility:public modality:FINAL [val] 
     annotations:
-      CALL 'public constructor <init> () [primary] declared in kotlin.internal.ImplicitIntegerCoercion' type=kotlin.internal.ImplicitIntegerCoercion origin=null
+      ImplicitIntegerCoercion
     FIELD PROPERTY_BACKING_FIELD name:NON_CONST type:kotlin.Int visibility:public [final,static] 
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value=255
@@ -45,7 +45,7 @@ FILE fqName:<root> fileName:/signedToUnsignedConversions_test.kt
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:NON_CONST type:kotlin.Int visibility:public [final,static] ' type=kotlin.Int origin=null
   PROPERTY name:BIGGER_THAN_UBYTE visibility:public modality:FINAL [const,val] 
     annotations:
-      CALL 'public constructor <init> () [primary] declared in kotlin.internal.ImplicitIntegerCoercion' type=kotlin.internal.ImplicitIntegerCoercion origin=null
+      ImplicitIntegerCoercion
     FIELD PROPERTY_BACKING_FIELD name:BIGGER_THAN_UBYTE type:kotlin.Int visibility:public [final,static] 
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value=256
@@ -56,7 +56,7 @@ FILE fqName:<root> fileName:/signedToUnsignedConversions_test.kt
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:BIGGER_THAN_UBYTE type:kotlin.Int visibility:public [final,static] ' type=kotlin.Int origin=null
   PROPERTY name:UINT_CONST visibility:public modality:FINAL [const,val] 
     annotations:
-      CALL 'public constructor <init> () [primary] declared in kotlin.internal.ImplicitIntegerCoercion' type=kotlin.internal.ImplicitIntegerCoercion origin=null
+      ImplicitIntegerCoercion
     FIELD PROPERTY_BACKING_FIELD name:UINT_CONST type:kotlin.UInt visibility:public [final,static] 
       EXPRESSION_BODY
         CONST Int type=kotlin.UInt value=42
@@ -68,32 +68,32 @@ FILE fqName:<root> fileName:/signedToUnsignedConversions_test.kt
   FUN name:takeUByte visibility:public modality:FINAL <> (u:kotlin.UByte) returnType:kotlin.Unit 
     VALUE_PARAMETER name:u index:0 type:kotlin.UByte 
       annotations:
-        CALL 'public constructor <init> () [primary] declared in kotlin.internal.ImplicitIntegerCoercion' type=kotlin.internal.ImplicitIntegerCoercion origin=null
+        ImplicitIntegerCoercion
     BLOCK_BODY
   FUN name:takeUShort visibility:public modality:FINAL <> (u:kotlin.UShort) returnType:kotlin.Unit 
     VALUE_PARAMETER name:u index:0 type:kotlin.UShort 
       annotations:
-        CALL 'public constructor <init> () [primary] declared in kotlin.internal.ImplicitIntegerCoercion' type=kotlin.internal.ImplicitIntegerCoercion origin=null
+        ImplicitIntegerCoercion
     BLOCK_BODY
   FUN name:takeUInt visibility:public modality:FINAL <> (u:kotlin.UInt) returnType:kotlin.Unit 
     VALUE_PARAMETER name:u index:0 type:kotlin.UInt 
       annotations:
-        CALL 'public constructor <init> () [primary] declared in kotlin.internal.ImplicitIntegerCoercion' type=kotlin.internal.ImplicitIntegerCoercion origin=null
+        ImplicitIntegerCoercion
     BLOCK_BODY
   FUN name:takeULong visibility:public modality:FINAL <> (u:kotlin.ULong) returnType:kotlin.Unit 
     VALUE_PARAMETER name:u index:0 type:kotlin.ULong 
       annotations:
-        CALL 'public constructor <init> () [primary] declared in kotlin.internal.ImplicitIntegerCoercion' type=kotlin.internal.ImplicitIntegerCoercion origin=null
+        ImplicitIntegerCoercion
     BLOCK_BODY
   FUN name:takeUBytes visibility:public modality:FINAL <> (u:kotlin.UByteArray) returnType:kotlin.Unit 
     VALUE_PARAMETER name:u index:0 type:kotlin.UByteArray varargElementType:kotlin.UByte [vararg] 
       annotations:
-        CALL 'public constructor <init> () [primary] declared in kotlin.internal.ImplicitIntegerCoercion' type=kotlin.internal.ImplicitIntegerCoercion origin=null
+        ImplicitIntegerCoercion
     BLOCK_BODY
   FUN name:takeLong visibility:public modality:FINAL <> (l:kotlin.Long) returnType:kotlin.Unit 
     VALUE_PARAMETER name:l index:0 type:kotlin.Long 
       annotations:
-        CALL 'public constructor <init> () [primary] declared in kotlin.internal.ImplicitIntegerCoercion' type=kotlin.internal.ImplicitIntegerCoercion origin=null
+        ImplicitIntegerCoercion
     BLOCK_BODY
   FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY

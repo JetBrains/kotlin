@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
-import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 
 interface IrAnnotationContainer {
-    val annotations: MutableList<IrCall>
+    val annotations: MutableList<IrConstructorCall>
 }

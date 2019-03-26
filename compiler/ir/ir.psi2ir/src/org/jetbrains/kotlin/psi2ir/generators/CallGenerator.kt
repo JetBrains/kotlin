@@ -246,18 +246,11 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
     ): IrExpression =
         call.callReceiver.call { dispatchReceiverValue, extensionReceiverValue ->
             val irType = constructorDescriptor.returnType.toIrType()
-            val classTypeParametersCount = constructorDescriptor.constructedClass.original.declaredTypeParameters.size
-            val totalTypeParametersCount = constructorDescriptor.typeParameters.size
-
-            IrConstructorCallImpl(
+            IrConstructorCallImpl.fromSymbolDescriptor(
                 startOffset, endOffset,
                 irType,
                 context.symbolTable.referenceConstructor(constructorDescriptor.original),
-                constructorDescriptor,
-                typeArgumentsCount = totalTypeParametersCount,
-                constructorTypeArgumentsCount = totalTypeParametersCount - classTypeParametersCount,
-                valueArgumentsCount = constructorDescriptor.valueParameters.size,
-                origin = origin
+                origin
             ).run {
                 putTypeArguments(call.typeArguments) { it.toIrType() }
                 dispatchReceiver = dispatchReceiverValue?.load()

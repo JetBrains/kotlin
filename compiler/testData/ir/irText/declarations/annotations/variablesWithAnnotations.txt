@@ -31,11 +31,9 @@ FILE fqName:<root> fileName:/variablesWithAnnotations.kt
     BLOCK_BODY
       VAR name:testVal type:kotlin.String [val] 
         annotations:
-          CALL 'public constructor <init> (x: kotlin.String) [primary] declared in <root>.TestAnn' type=<root>.TestAnn origin=null
-            x: CONST String type=kotlin.String value="foo/testVal"
+          TestAnn(x = 'foo/testVal')
         CONST String type=kotlin.String value="testVal"
       VAR name:testVar type:kotlin.String [var] 
         annotations:
-          CALL 'public constructor <init> (x: kotlin.String) [primary] declared in <root>.TestAnn' type=<root>.TestAnn origin=null
-            x: CONST String type=kotlin.String value="foo/testVar"
+          TestAnn(x = 'foo/testVar')
         CONST String type=kotlin.String value="testVar"

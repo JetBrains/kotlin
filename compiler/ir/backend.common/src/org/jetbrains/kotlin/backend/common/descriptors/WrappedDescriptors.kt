@@ -48,8 +48,8 @@ abstract class WrappedDeclarationDescriptor<T : IrDeclaration>(annotations: Anno
         Annotations.create(ownerAnnotations.map { it.toAnnotationDescriptor() })
     }
 
-    private fun IrCall.toAnnotationDescriptor(): AnnotationDescriptor {
-        assert(symbol.owner is IrConstructor && symbol.owner.parentAsClass.isAnnotationClass) {
+    private fun IrConstructorCall.toAnnotationDescriptor(): AnnotationDescriptor {
+        assert(symbol.owner.parentAsClass.isAnnotationClass) {
             "Expected call to constructor of annotation class but was: ${this.dump()}"
         }
         return AnnotationDescriptorImpl(
@@ -88,7 +88,7 @@ abstract class WrappedDeclarationDescriptor<T : IrDeclaration>(annotations: Anno
 
             this is IrClassReference -> KClassValue(classType.classifierOrFail.descriptor.classId!!, /*TODO*/0)
 
-            this is IrCall -> AnnotationValue(this.toAnnotationDescriptor())
+            this is IrConstructorCall -> AnnotationValue(this.toAnnotationDescriptor())
 
             else -> error("$this is not expected: ${this.dump()}")
         }

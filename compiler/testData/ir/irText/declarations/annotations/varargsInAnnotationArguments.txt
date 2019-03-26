@@ -85,88 +85,13 @@ FILE fqName:<root> fileName:/varargsInAnnotationArguments.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
   FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     annotations:
-      CALL 'public constructor <init> (vararg xs: kotlin.Int) [primary] declared in <root>.A1' type=<root>.A1 origin=null
-        xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
-          CONST Int type=kotlin.Int value=1
-          CONST Int type=kotlin.Int value=2
-          CONST Int type=kotlin.Int value=3
-      CALL 'public constructor <init> (vararg xs: kotlin.String) [primary] declared in <root>.A2' type=<root>.A2 origin=null
-        xs: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
-          CONST String type=kotlin.String value="a"
-          CONST String type=kotlin.String value="b"
-          CONST String type=kotlin.String value="c"
-      CALL 'public constructor <init> (vararg xs: <root>.A1) [primary] declared in <root>.AA' type=<root>.AA origin=null
-        xs: VARARG type=kotlin.Array<out <root>.A1> varargElementType=<root>.A1
-          CALL 'public constructor <init> (vararg xs: kotlin.Int) [primary] declared in <root>.A1' type=<root>.A1 origin=null
-            xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
-              CONST Int type=kotlin.Int value=4
-          CALL 'public constructor <init> (vararg xs: kotlin.Int) [primary] declared in <root>.A1' type=<root>.A1 origin=null
-            xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
-              CONST Int type=kotlin.Int value=5
-          CALL 'public constructor <init> (vararg xs: kotlin.Int) [primary] declared in <root>.A1' type=<root>.A1 origin=null
-            xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
-              CONST Int type=kotlin.Int value=6
-      CALL 'public constructor <init> (vararg xs: kotlin.Int) [primary] declared in <root>.A1' type=<root>.A1 origin=null
-        xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
-          CONST Int type=kotlin.Int value=1
-          CONST Int type=kotlin.Int value=2
-          CONST Int type=kotlin.Int value=3
-      CALL 'public constructor <init> (vararg xs: kotlin.String) [primary] declared in <root>.A2' type=<root>.A2 origin=null
-        xs: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
-          CONST String type=kotlin.String value="a"
-          CONST String type=kotlin.String value="b"
-          CONST String type=kotlin.String value="c"
-      CALL 'public constructor <init> (vararg xs: <root>.A1) [primary] declared in <root>.AA' type=<root>.AA origin=null
-        xs: VARARG type=kotlin.Array<out <root>.A1> varargElementType=<root>.A1
-          CALL 'public constructor <init> (vararg xs: kotlin.Int) [primary] declared in <root>.A1' type=<root>.A1 origin=null
-            xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
-              CONST Int type=kotlin.Int value=4
-          CALL 'public constructor <init> (vararg xs: kotlin.Int) [primary] declared in <root>.A1' type=<root>.A1 origin=null
-            xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
-              CONST Int type=kotlin.Int value=5
-          CALL 'public constructor <init> (vararg xs: kotlin.Int) [primary] declared in <root>.A1' type=<root>.A1 origin=null
-            xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
-              CONST Int type=kotlin.Int value=6
-      CALL 'public constructor <init> (vararg xs: kotlin.Int) [primary] declared in <root>.A1' type=<root>.A1 origin=null
-        xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
-          CONST Int type=kotlin.Int value=1
-          CONST Int type=kotlin.Int value=2
-          CONST Int type=kotlin.Int value=3
-      CALL 'public constructor <init> (vararg xs: kotlin.String) [primary] declared in <root>.A2' type=<root>.A2 origin=null
-        xs: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
-          CONST String type=kotlin.String value="a"
-          CONST String type=kotlin.String value="b"
-          CONST String type=kotlin.String value="c"
-      CALL 'public constructor <init> (vararg xs: <root>.A1) [primary] declared in <root>.AA' type=<root>.AA origin=null
-        xs: VARARG type=kotlin.Array<out <root>.A1> varargElementType=<root>.A1
-          CALL 'public constructor <init> (vararg xs: kotlin.Int) [primary] declared in <root>.A1' type=<root>.A1 origin=null
-            xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
-              CONST Int type=kotlin.Int value=4
-          CALL 'public constructor <init> (vararg xs: kotlin.Int) [primary] declared in <root>.A1' type=<root>.A1 origin=null
-            xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
-              CONST Int type=kotlin.Int value=5
-          CALL 'public constructor <init> (vararg xs: kotlin.Int) [primary] declared in <root>.A1' type=<root>.A1 origin=null
-            xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
-              CONST Int type=kotlin.Int value=6
+      A1(xs = ['1', '2', '3'])
+      A2(xs = ['a', 'b', 'c'])
+      AA(xs = [A1(xs = ['4']), A1(xs = ['5']), A1(xs = ['6'])])
     BLOCK_BODY
   FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     annotations:
-      CALL 'public constructor <init> (vararg xs: kotlin.Int) [primary] declared in <root>.A1' type=<root>.A1 origin=null
-        xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
-      CALL 'public constructor <init> (vararg xs: kotlin.String) [primary] declared in <root>.A2' type=<root>.A2 origin=null
-        xs: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
-      CALL 'public constructor <init> (vararg xs: <root>.A1) [primary] declared in <root>.AA' type=<root>.AA origin=null
-        xs: VARARG type=kotlin.Array<out <root>.A1> varargElementType=<root>.A1
-      CALL 'public constructor <init> (vararg xs: kotlin.Int) [primary] declared in <root>.A1' type=<root>.A1 origin=null
-        xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
-      CALL 'public constructor <init> (vararg xs: kotlin.String) [primary] declared in <root>.A2' type=<root>.A2 origin=null
-        xs: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
-      CALL 'public constructor <init> (vararg xs: <root>.A1) [primary] declared in <root>.AA' type=<root>.AA origin=null
-        xs: VARARG type=kotlin.Array<out <root>.A1> varargElementType=<root>.A1
-      CALL 'public constructor <init> (vararg xs: kotlin.Int) [primary] declared in <root>.A1' type=<root>.A1 origin=null
-        xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
-      CALL 'public constructor <init> (vararg xs: kotlin.String) [primary] declared in <root>.A2' type=<root>.A2 origin=null
-        xs: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
-      CALL 'public constructor <init> (vararg xs: <root>.A1) [primary] declared in <root>.AA' type=<root>.AA origin=null
-        xs: VARARG type=kotlin.Array<out <root>.A1> varargElementType=<root>.A1
+      A1(xs = [])
+      A2(xs = [])
+      AA(xs = [])
     BLOCK_BODY

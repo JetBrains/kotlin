@@ -57,47 +57,11 @@ FILE fqName:<root> fileName:/arrayInAnnotationArguments.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
   FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     annotations:
-      CALL 'public constructor <init> (x: kotlin.IntArray) [primary] declared in <root>.TestAnnWithIntArray' type=<root>.TestAnnWithIntArray origin=null
-        x: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
-          CONST Int type=kotlin.Int value=1
-          CONST Int type=kotlin.Int value=2
-          CONST Int type=kotlin.Int value=3
-      CALL 'public constructor <init> (x: kotlin.Array<kotlin.String>) [primary] declared in <root>.TestAnnWithStringArray' type=<root>.TestAnnWithStringArray origin=null
-        x: VARARG type=kotlin.Array<kotlin.String> varargElementType=kotlin.String
-          CONST String type=kotlin.String value="a"
-          CONST String type=kotlin.String value="b"
-          CONST String type=kotlin.String value="c"
-      CALL 'public constructor <init> (x: kotlin.IntArray) [primary] declared in <root>.TestAnnWithIntArray' type=<root>.TestAnnWithIntArray origin=null
-        x: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
-          CONST Int type=kotlin.Int value=1
-          CONST Int type=kotlin.Int value=2
-          CONST Int type=kotlin.Int value=3
-      CALL 'public constructor <init> (x: kotlin.Array<kotlin.String>) [primary] declared in <root>.TestAnnWithStringArray' type=<root>.TestAnnWithStringArray origin=null
-        x: VARARG type=kotlin.Array<kotlin.String> varargElementType=kotlin.String
-          CONST String type=kotlin.String value="a"
-          CONST String type=kotlin.String value="b"
-          CONST String type=kotlin.String value="c"
+      TestAnnWithIntArray(x = ['1', '2', '3'])
+      TestAnnWithStringArray(x = ['a', 'b', 'c'])
     BLOCK_BODY
   FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     annotations:
-      CALL 'public constructor <init> (x: kotlin.IntArray) [primary] declared in <root>.TestAnnWithIntArray' type=<root>.TestAnnWithIntArray origin=null
-        x: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
-          CONST Int type=kotlin.Int value=4
-          CONST Int type=kotlin.Int value=5
-          CONST Int type=kotlin.Int value=6
-      CALL 'public constructor <init> (x: kotlin.Array<kotlin.String>) [primary] declared in <root>.TestAnnWithStringArray' type=<root>.TestAnnWithStringArray origin=null
-        x: VARARG type=kotlin.Array<kotlin.String> varargElementType=kotlin.String
-          CONST String type=kotlin.String value="d"
-          CONST String type=kotlin.String value="e"
-          CONST String type=kotlin.String value="f"
-      CALL 'public constructor <init> (x: kotlin.IntArray) [primary] declared in <root>.TestAnnWithIntArray' type=<root>.TestAnnWithIntArray origin=null
-        x: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
-          CONST Int type=kotlin.Int value=4
-          CONST Int type=kotlin.Int value=5
-          CONST Int type=kotlin.Int value=6
-      CALL 'public constructor <init> (x: kotlin.Array<kotlin.String>) [primary] declared in <root>.TestAnnWithStringArray' type=<root>.TestAnnWithStringArray origin=null
-        x: VARARG type=kotlin.Array<kotlin.String> varargElementType=kotlin.String
-          CONST String type=kotlin.String value="d"
-          CONST String type=kotlin.String value="e"
-          CONST String type=kotlin.String value="f"
+      TestAnnWithIntArray(x = ['4', '5', '6'])
+      TestAnnWithStringArray(x = ['d', 'e', 'f'])
     BLOCK_BODY

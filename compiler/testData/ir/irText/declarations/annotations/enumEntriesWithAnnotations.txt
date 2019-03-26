@@ -36,18 +36,15 @@ FILE fqName:<root> fileName:/enumEntriesWithAnnotations.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:TestEnum modality:OPEN visibility:public superTypes:[kotlin.Enum<<root>.TestEnum>]'
     ENUM_ENTRY name:ENTRY1
       annotations:
-        CALL 'public constructor <init> (x: kotlin.String) [primary] declared in <root>.TestAnn' type=<root>.TestAnn origin=null
-          x: CONST String type=kotlin.String value="ENTRY1"
+        TestAnn(x = 'ENTRY1')
       init: ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestEnum'
     ENUM_ENTRY name:ENTRY2
       annotations:
-        CALL 'public constructor <init> (x: kotlin.String) [primary] declared in <root>.TestAnn' type=<root>.TestAnn origin=null
-          x: CONST String type=kotlin.String value="ENTRY2"
+        TestAnn(x = 'ENTRY2')
       init: ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestEnum.ENTRY2'
       class: CLASS ENUM_ENTRY name:ENTRY2 modality:FINAL visibility:public superTypes:[<root>.TestEnum]
         annotations:
-          CALL 'public constructor <init> (x: kotlin.String) [primary] declared in <root>.TestAnn' type=<root>.TestAnn origin=null
-            x: CONST String type=kotlin.String value="ENTRY2"
+          TestAnn(x = 'ENTRY2')
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestEnum.ENTRY2 
         CONSTRUCTOR visibility:private <> () returnType:<root>.TestEnum.ENTRY2 [primary] 
           BLOCK_BODY

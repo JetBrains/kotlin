@@ -29,6 +29,5 @@ FILE fqName:<root> fileName:/functionsWithAnnotations.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
   FUN name:testSimpleFunction visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     annotations:
-      CALL 'public constructor <init> (x: kotlin.Int) [primary] declared in <root>.TestAnn' type=<root>.TestAnn origin=null
-        x: CONST Int type=kotlin.Int value=42
+      TestAnn(x = '42')
     BLOCK_BODY

@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
-import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
@@ -55,7 +55,7 @@ class IrFileImpl(
 
     override val declarations: MutableList<IrDeclaration> = ArrayList()
 
-    override val annotations: MutableList<IrCall> = ArrayList()
+    override val annotations: MutableList<IrConstructorCall> = ArrayList()
 
     override var metadata: MetadataSource.File? = null
 

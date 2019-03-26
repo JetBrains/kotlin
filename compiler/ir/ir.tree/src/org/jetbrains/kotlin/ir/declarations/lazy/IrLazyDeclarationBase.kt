@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.impl.IrDeclarationBase
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -50,7 +51,7 @@ abstract class IrLazyDeclarationBase(
         createLazyParent()!!
     }
 
-    override val annotations: MutableList<IrCall> by lazy {
+    override val annotations: MutableList<IrConstructorCall> by lazy {
         descriptor.annotations.map {
             typeTranslator.constantValueGenerator.generateAnnotationConstructorCall(it)
         }.toMutableList()

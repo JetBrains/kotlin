@@ -25,7 +25,7 @@ FILE fqName:<root> fileName:/receiverParameterWithAnnotations.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.A 
       $receiver: VALUE_PARAMETER name:<this> type:kotlin.String 
         annotations:
-          CALL 'public constructor <init> () [primary] declared in <root>.Ann' type=<root>.Ann origin=null
+          Ann
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun f (): kotlin.String declared in <root>.A'
           CONST String type=kotlin.String value=""
@@ -35,7 +35,7 @@ FILE fqName:<root> fileName:/receiverParameterWithAnnotations.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.A 
         $receiver: VALUE_PARAMETER name:<this> type:kotlin.String? 
           annotations:
-            CALL 'public constructor <init> () [primary] declared in <root>.Ann' type=<root>.Ann origin=null
+            Ann
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-p> (): kotlin.String declared in <root>.A'
             CONST String type=kotlin.String value=""
@@ -55,7 +55,7 @@ FILE fqName:<root> fileName:/receiverParameterWithAnnotations.kt
   FUN name:topLevelF visibility:public modality:FINAL <> ($receiver:kotlin.String?) returnType:kotlin.String 
     $receiver: VALUE_PARAMETER name:<this> type:kotlin.String? 
       annotations:
-        CALL 'public constructor <init> () [primary] declared in <root>.Ann' type=<root>.Ann origin=null
+        Ann
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun topLevelF (): kotlin.String declared in <root>'
         CONST String type=kotlin.String value=""
@@ -64,7 +64,7 @@ FILE fqName:<root> fileName:/receiverParameterWithAnnotations.kt
       correspondingProperty: PROPERTY name:topLevelP visibility:public modality:FINAL [val] 
       $receiver: VALUE_PARAMETER name:<this> type:kotlin.String 
         annotations:
-          CALL 'public constructor <init> () [primary] declared in <root>.Ann' type=<root>.Ann origin=null
+          Ann
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-topLevelP> (): kotlin.String declared in <root>'
           CONST String type=kotlin.String value=""

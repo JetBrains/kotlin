@@ -91,6 +91,5 @@ FILE fqName:<root> fileName:/enumsInAnnotationArguments.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
   FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     annotations:
-      CALL 'public constructor <init> (x: <root>.En) [primary] declared in <root>.TestAnn' type=<root>.TestAnn origin=null
-        x: GET_ENUM 'ENUM_ENTRY name:A' type=<root>.En
+      TestAnn(x = GET_ENUM 'ENUM_ENTRY name:A' type=<root>.En)
     BLOCK_BODY

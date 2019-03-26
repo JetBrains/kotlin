@@ -32,8 +32,7 @@ FILE fqName:<root> fileName:/localDelegatedPropertiesWithAnnotations.kt
     BLOCK_BODY
       LOCAL_DELEGATED_PROPERTY name:test type:kotlin.Int flags:val
         annotations:
-          CALL 'public constructor <init> (x: kotlin.String) [primary] declared in <root>.A' type=<root>.A origin=null
-            x: CONST String type=kotlin.String value="foo/test"
+          A(x = 'foo/test')
         VAR DELEGATE name:test$delegate type:kotlin.Lazy<kotlin.Int> [val] 
           CALL 'public final fun lazy <T> (initializer: kotlin.Function0<T of kotlin.lazy>): kotlin.Lazy<T of kotlin.lazy> declared in kotlin' type=kotlin.Lazy<kotlin.Int> origin=null
             <T>: kotlin.Int

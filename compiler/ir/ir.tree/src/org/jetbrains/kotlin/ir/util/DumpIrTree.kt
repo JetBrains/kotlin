@@ -99,8 +99,8 @@ class DumpIrTreeVisitor(
     }
 
     private fun dumpAnnotations(element: IrAnnotationContainer) {
-        element.annotations.dumpItems("annotations") {
-            element.annotations.dumpElements()
+        element.annotations.dumpItems("annotations") { irAnnotation: IrConstructorCall ->
+            printer.println(elementRenderer.renderAsAnnotation(irAnnotation))
         }
     }
 
@@ -164,7 +164,7 @@ class DumpIrTreeVisitor(
             dumpTypeArguments(expression)
             expression.dispatchReceiver?.accept(this, "\$this")
             expression.extensionReceiver?.accept(this, "\$receiver")
-            val valueParameterNames = expression.getValueParameterNames(expression.valueArgumentsCount)
+            val valueParameterNames = expression.getValueParameterNamesForDebug()
             for (index in 0 until expression.valueArgumentsCount) {
                 expression.getValueArgument(index)?.accept(this, valueParameterNames[index])
             }
@@ -175,10 +175,14 @@ class DumpIrTreeVisitor(
         expression.dumpLabeledElementWith(data) {
             dumpTypeArguments(expression)
             expression.outerClassReceiver?.accept(this, "\$outer")
-            val valueParameterNames = expression.getValueParameterNames(expression.valueArgumentsCount)
-            for (index in 0 until expression.valueArgumentsCount) {
-                expression.getValueArgument(index)?.accept(this, valueParameterNames[index])
-            }
+            dumpConstructorValueArguments(expression)
+        }
+    }
+
+    private fun dumpConstructorValueArguments(expression: IrConstructorCall) {
+        val valueParameterNames = expression.getValueParameterNamesForDebug()
+        for (index in 0 until expression.valueArgumentsCount) {
+            expression.getValueArgument(index)?.accept(this, valueParameterNames[index])
         }
     }
 
@@ -208,33 +212,12 @@ class DumpIrTreeVisitor(
         else
             getPlaceholderParameterNames(expectedCount)
 
-    private fun IrMemberAccessExpression.getValueParameterNames(expectedCount: Int): List<String> =
-        if (this is IrDeclarationReference && symbol.isBound)
-            symbol.owner.getValueParameterNames(expectedCount)
-        else
-            getPlaceholderParameterNames(expectedCount)
-
-    private fun getPlaceholderParameterNames(expectedCount: Int) =
-        (1..expectedCount).map { "$it" }
-
     private fun IrSymbolOwner.getTypeParameterNames(expectedCount: Int): List<String> =
         if (this is IrTypeParametersContainer) {
             val typeParameters = if (this is IrConstructor) getFullTypeParametersList() else this.typeParameters
             (0 until expectedCount).map {
                 if (it < typeParameters.size)
                     typeParameters[it].name.asString()
-                else
-                    "${it + 1}"
-            }
-        } else {
-            getPlaceholderParameterNames(expectedCount)
-        }
-
-    private fun IrSymbolOwner.getValueParameterNames(expectedCount: Int): List<String> =
-        if (this is IrFunction) {
-            (0 until expectedCount).map {
-                if (it < valueParameters.size)
-                    valueParameters[it].name.asString()
                 else
                     "${it + 1}"
             }
@@ -378,3 +361,24 @@ class DumpTreeFromSourceLineVisitor(
         element.acceptChildrenVoid(this)
     }
 }
+
+internal fun IrMemberAccessExpression.getValueParameterNamesForDebug(): List<String> {
+    val expectedCount = valueArgumentsCount
+    return if (this is IrDeclarationReference && symbol.isBound) {
+        val owner = symbol.owner
+        if (owner is IrFunction) {
+            (0 until expectedCount).map {
+                if (it < owner.valueParameters.size)
+                    owner.valueParameters[it].name.asString()
+                else
+                    "${it + 1}"
+            }
+        } else {
+            getPlaceholderParameterNames(expectedCount)
+        }
+    } else
+        getPlaceholderParameterNames(expectedCount)
+}
+
+internal fun getPlaceholderParameterNames(expectedCount: Int) =
+    (1..expectedCount).map { "$it" }

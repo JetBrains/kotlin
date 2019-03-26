@@ -39,6 +39,53 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
 
     fun renderSymbolReference(symbol: IrSymbol) = symbol.renderReference()
 
+    fun renderAsAnnotation(irAnnotation: IrConstructorCall): String =
+        StringBuilder().also { it.renderAsAnnotation(irAnnotation) }.toString()
+
+    private fun StringBuilder.renderAsAnnotation(irAnnotation: IrConstructorCall) {
+        val annotationClassName = try {
+            irAnnotation.symbol.owner.parentAsClass.name.asString()
+        } catch (e: Exception) {
+            "<unbound>"
+        }
+        append(annotationClassName)
+
+        if (irAnnotation.valueArgumentsCount == 0) return
+
+        val valueParameterNames = irAnnotation.getValueParameterNamesForDebug()
+        var first = true
+        append("(")
+        for (i in 0 until irAnnotation.valueArgumentsCount) {
+            if (first) {
+                first = false
+            } else {
+                append(", ")
+            }
+            append(valueParameterNames[i])
+            append(" = ")
+            renderAsAnnotationArgument(irAnnotation.getValueArgument(i))
+        }
+        append(")")
+    }
+
+    private fun StringBuilder.renderAsAnnotationArgument(irElement: IrElement?) {
+        when (irElement) {
+            null -> append("<null>")
+            is IrConstructorCall -> renderAsAnnotation(irElement)
+            is IrConst<*> -> {
+                append('\'')
+                append(irElement.value.toString())
+                append('\'')
+            }
+            is IrVararg -> {
+                appendListWith(irElement.elements, "[", "]", ", ") {
+                    renderAsAnnotationArgument(it)
+                }
+            }
+            else -> append(irElement.accept(this@RenderIrElementVisitor, null))
+        }
+    }
+
     private inline fun buildTrimEnd(fn: StringBuilder.() -> Unit): String =
         buildString(fn).trimEnd()
 
@@ -82,11 +129,11 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
         }
 
 
-    private fun renderTypeAnnotations(annotations: List<IrCall>) =
+    private fun renderTypeAnnotations(annotations: List<IrConstructorCall>) =
         if (annotations.isEmpty())
             ""
         else
-            annotations.joinToString(prefix = "", postfix = " ", separator = " ") { "@[${it.render()}]" }
+            annotations.joinToString(prefix = "", postfix = " ", separator = " ") { "@[${renderAsAnnotation(it)}]" }
 
     private fun IrSymbol.renderReference() =
         if (isBound)

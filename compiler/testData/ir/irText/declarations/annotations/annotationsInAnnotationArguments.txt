@@ -85,22 +85,6 @@ FILE fqName:<root> fileName:/annotationsInAnnotationArguments.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
   FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     annotations:
-      CALL 'public constructor <init> (a: <root>.A1) [primary] declared in <root>.A2' type=<root>.A2 origin=null
-        a: CALL 'public constructor <init> (x: kotlin.Int) [primary] declared in <root>.A1' type=<root>.A1 origin=null
-          x: CONST Int type=kotlin.Int value=42
-      CALL 'public constructor <init> (xs: kotlin.Array<<root>.A1>) [primary] declared in <root>.AA' type=<root>.AA origin=null
-        xs: VARARG type=kotlin.Array<<root>.A1> varargElementType=<root>.A1
-          CALL 'public constructor <init> (x: kotlin.Int) [primary] declared in <root>.A1' type=<root>.A1 origin=null
-            x: CONST Int type=kotlin.Int value=1
-          CALL 'public constructor <init> (x: kotlin.Int) [primary] declared in <root>.A1' type=<root>.A1 origin=null
-            x: CONST Int type=kotlin.Int value=2
-      CALL 'public constructor <init> (a: <root>.A1) [primary] declared in <root>.A2' type=<root>.A2 origin=null
-        a: CALL 'public constructor <init> (x: kotlin.Int) [primary] declared in <root>.A1' type=<root>.A1 origin=null
-          x: CONST Int type=kotlin.Int value=42
-      CALL 'public constructor <init> (xs: kotlin.Array<<root>.A1>) [primary] declared in <root>.AA' type=<root>.AA origin=null
-        xs: VARARG type=kotlin.Array<<root>.A1> varargElementType=<root>.A1
-          CALL 'public constructor <init> (x: kotlin.Int) [primary] declared in <root>.A1' type=<root>.A1 origin=null
-            x: CONST Int type=kotlin.Int value=1
-          CALL 'public constructor <init> (x: kotlin.Int) [primary] declared in <root>.A1' type=<root>.A1 origin=null
-            x: CONST Int type=kotlin.Int value=2
+      A2(a = A1(x = '42'))
+      AA(xs = [A1(x = '1'), A1(x = '2')])
     BLOCK_BODY

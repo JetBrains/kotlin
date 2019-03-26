@@ -31,15 +31,13 @@ FILE fqName:<root> fileName:/constructorsWithAnnotations.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestClass 
     CONSTRUCTOR visibility:public <> () returnType:<root>.TestClass [primary] 
       annotations:
-        CALL 'public constructor <init> (x: kotlin.Int) [primary] declared in <root>.TestAnn' type=<root>.TestAnn origin=null
-          x: CONST Int type=kotlin.Int value=1
+        TestAnn(x = '1')
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TestClass modality:FINAL visibility:public superTypes:[kotlin.Any]'
     CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:<root>.TestClass 
       annotations:
-        CALL 'public constructor <init> (x: kotlin.Int) [primary] declared in <root>.TestAnn' type=<root>.TestAnn origin=null
-          x: CONST Int type=kotlin.Int value=2
+        TestAnn(x = '2')
       VALUE_PARAMETER name:x index:0 type:kotlin.Int 
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.TestClass'

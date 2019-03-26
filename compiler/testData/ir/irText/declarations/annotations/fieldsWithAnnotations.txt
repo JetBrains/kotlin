@@ -30,8 +30,7 @@ FILE fqName:<root> fileName:/fieldsWithAnnotations.kt
   PROPERTY name:testVal visibility:public modality:FINAL [val] 
     FIELD PROPERTY_BACKING_FIELD name:testVal type:kotlin.String visibility:public [final,static] 
       annotations:
-        CALL 'public constructor <init> (x: kotlin.String) [primary] declared in <root>.TestAnn' type=<root>.TestAnn origin=null
-          x: CONST String type=kotlin.String value="testVal.field"
+        TestAnn(x = 'testVal.field')
       EXPRESSION_BODY
         CONST String type=kotlin.String value="a val"
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testVal> visibility:public modality:FINAL <> () returnType:kotlin.String 
@@ -42,8 +41,7 @@ FILE fqName:<root> fileName:/fieldsWithAnnotations.kt
   PROPERTY name:testVar visibility:public modality:FINAL [var] 
     FIELD PROPERTY_BACKING_FIELD name:testVar type:kotlin.String visibility:public [static] 
       annotations:
-        CALL 'public constructor <init> (x: kotlin.String) [primary] declared in <root>.TestAnn' type=<root>.TestAnn origin=null
-          x: CONST String type=kotlin.String value="testVar.field"
+        TestAnn(x = 'testVar.field')
       EXPRESSION_BODY
         CONST String type=kotlin.String value="a var"
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testVar> visibility:public modality:FINAL <> () returnType:kotlin.String 

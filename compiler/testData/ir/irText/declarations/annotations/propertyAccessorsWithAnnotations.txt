@@ -30,8 +30,7 @@ FILE fqName:<root> fileName:/propertyAccessorsWithAnnotations.kt
   PROPERTY name:test1 visibility:public modality:FINAL [val] 
     FUN name:<get-test1> visibility:public modality:FINAL <> () returnType:kotlin.String 
       annotations:
-        CALL 'public constructor <init> (x: kotlin.String) [primary] declared in <root>.TestAnn' type=<root>.TestAnn origin=null
-          x: CONST String type=kotlin.String value="test1.get"
+        TestAnn(x = 'test1.get')
       correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL [val] 
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test1> (): kotlin.String declared in <root>'
@@ -39,16 +38,14 @@ FILE fqName:<root> fileName:/propertyAccessorsWithAnnotations.kt
   PROPERTY name:test2 visibility:public modality:FINAL [var] 
     FUN name:<get-test2> visibility:public modality:FINAL <> () returnType:kotlin.String 
       annotations:
-        CALL 'public constructor <init> (x: kotlin.String) [primary] declared in <root>.TestAnn' type=<root>.TestAnn origin=null
-          x: CONST String type=kotlin.String value="test2.get"
+        TestAnn(x = 'test2.get')
       correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL [var] 
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test2> (): kotlin.String declared in <root>'
           CONST String type=kotlin.String value=""
     FUN name:<set-test2> visibility:public modality:FINAL <> (value:kotlin.String) returnType:kotlin.Unit 
       annotations:
-        CALL 'public constructor <init> (x: kotlin.String) [primary] declared in <root>.TestAnn' type=<root>.TestAnn origin=null
-          x: CONST String type=kotlin.String value="test2.set"
+        TestAnn(x = 'test2.set')
       correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL [var] 
       VALUE_PARAMETER name:value index:0 type:kotlin.String 
       BLOCK_BODY
@@ -58,8 +55,7 @@ FILE fqName:<root> fileName:/propertyAccessorsWithAnnotations.kt
         CONST String type=kotlin.String value=""
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL <> () returnType:kotlin.String 
       annotations:
-        CALL 'public constructor <init> (x: kotlin.String) [primary] declared in <root>.TestAnn' type=<root>.TestAnn origin=null
-          x: CONST String type=kotlin.String value="test3.get"
+        TestAnn(x = 'test3.get')
       correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL [val] 
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test3> (): kotlin.String declared in <root>'
@@ -70,16 +66,14 @@ FILE fqName:<root> fileName:/propertyAccessorsWithAnnotations.kt
         CONST String type=kotlin.String value=""
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test4> visibility:public modality:FINAL <> () returnType:kotlin.String 
       annotations:
-        CALL 'public constructor <init> (x: kotlin.String) [primary] declared in <root>.TestAnn' type=<root>.TestAnn origin=null
-          x: CONST String type=kotlin.String value="test4.get"
+        TestAnn(x = 'test4.get')
       correspondingProperty: PROPERTY name:test4 visibility:public modality:FINAL [var] 
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test4> (): kotlin.String declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.String visibility:public [static] ' type=kotlin.String origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<set-test4> visibility:public modality:FINAL <> (<set-?>:kotlin.String) returnType:kotlin.Unit 
       annotations:
-        CALL 'public constructor <init> (x: kotlin.String) [primary] declared in <root>.TestAnn' type=<root>.TestAnn origin=null
-          x: CONST String type=kotlin.String value="test4.set"
+        TestAnn(x = 'test4.set')
       correspondingProperty: PROPERTY name:test4 visibility:public modality:FINAL [var] 
       VALUE_PARAMETER name:<set-?> index:0 type:kotlin.String 
       BLOCK_BODY

@@ -15,9 +15,9 @@ FILE fqName:<root> fileName:/lambdas.kt
         RETURN type=kotlin.Nothing from='public final fun <get-test1> (): kotlin.Function1<kotlin.String, kotlin.String> declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Function1<kotlin.String, kotlin.String> visibility:public [final,static] ' type=kotlin.Function1<kotlin.String, kotlin.String> origin=null
   PROPERTY name:test2 visibility:public modality:FINAL [val] 
-    FIELD PROPERTY_BACKING_FIELD name:test2 type:@[CALL 'public constructor <init> () [primary] declared in kotlin.ExtensionFunctionType' type=kotlin.ExtensionFunctionType origin=null] kotlin.Function2<kotlin.Any, kotlin.Any, kotlin.Any> visibility:public [final,static] 
+    FIELD PROPERTY_BACKING_FIELD name:test2 type:@[ExtensionFunctionType] kotlin.Function2<kotlin.Any, kotlin.Any, kotlin.Any> visibility:public [final,static] 
       EXPRESSION_BODY
-        BLOCK type=@[CALL 'public constructor <init> () [primary] declared in kotlin.ExtensionFunctionType' type=kotlin.ExtensionFunctionType origin=null] kotlin.Function2<kotlin.Any, kotlin.Any, kotlin.Int> origin=LAMBDA
+        BLOCK type=@[ExtensionFunctionType] kotlin.Function2<kotlin.Any, kotlin.Any, kotlin.Int> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:kotlin.Any, it:kotlin.Any) returnType:kotlin.Int 
             $receiver: VALUE_PARAMETER name:<this> type:kotlin.Any 
             VALUE_PARAMETER name:it index:0 type:kotlin.Any 
@@ -25,12 +25,12 @@ FILE fqName:<root> fileName:/lambdas.kt
               RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.Any): kotlin.Int declared in <root>.test2'
                 CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Any' type=kotlin.Int origin=null
                   $this: GET_VAR 'it: kotlin.Any declared in <root>.test2.<anonymous>' type=kotlin.Any origin=null
-          FUNCTION_REFERENCE 'local final fun <anonymous> (it: kotlin.Any): kotlin.Int declared in <root>.test2' type=@[CALL 'public constructor <init> () [primary] declared in kotlin.ExtensionFunctionType' type=kotlin.ExtensionFunctionType origin=null] kotlin.Function2<kotlin.Any, kotlin.Any, kotlin.Int> origin=LAMBDA
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:@[CALL 'public constructor <init> () [primary] declared in kotlin.ExtensionFunctionType' type=kotlin.ExtensionFunctionType origin=null] kotlin.Function2<kotlin.Any, kotlin.Any, kotlin.Any> 
+          FUNCTION_REFERENCE 'local final fun <anonymous> (it: kotlin.Any): kotlin.Int declared in <root>.test2' type=@[ExtensionFunctionType] kotlin.Function2<kotlin.Any, kotlin.Any, kotlin.Int> origin=LAMBDA
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:@[ExtensionFunctionType] kotlin.Function2<kotlin.Any, kotlin.Any, kotlin.Any> 
       correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL [val] 
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-test2> (): @[CALL 'public constructor <init> () [primary] declared in kotlin.ExtensionFunctionType' type=kotlin.ExtensionFunctionType origin=null] kotlin.Function2<kotlin.Any, kotlin.Any, kotlin.Any> declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test2 type:@[CALL 'public constructor <init> () [primary] declared in kotlin.ExtensionFunctionType' type=kotlin.ExtensionFunctionType origin=null] kotlin.Function2<kotlin.Any, kotlin.Any, kotlin.Any> visibility:public [final,static] ' type=@[CALL 'public constructor <init> () [primary] declared in kotlin.ExtensionFunctionType' type=kotlin.ExtensionFunctionType origin=null] kotlin.Function2<kotlin.Any, kotlin.Any, kotlin.Any> origin=null
+        RETURN type=kotlin.Nothing from='public final fun <get-test2> (): @[ExtensionFunctionType] kotlin.Function2<kotlin.Any, kotlin.Any, kotlin.Any> declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test2 type:@[ExtensionFunctionType] kotlin.Function2<kotlin.Any, kotlin.Any, kotlin.Any> visibility:public [final,static] ' type=@[ExtensionFunctionType] kotlin.Function2<kotlin.Any, kotlin.Any, kotlin.Any> origin=null
   PROPERTY name:test3 visibility:public modality:FINAL [val] 
     FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.Function2<kotlin.Int, kotlin.Int, kotlin.Unit> visibility:public [final,static] 
       EXPRESSION_BODY

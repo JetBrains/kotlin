@@ -5,11 +5,12 @@
 
 package org.jetbrains.kotlin.ir.util
 
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.SourceRangeInfo
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -74,15 +75,15 @@ fun IrSimpleFunction.overrides(other: IrSimpleFunction): Boolean {
     return false
 }
 
-private val IrCall.annotationClass
-    get() = (this.symbol.owner as IrConstructor).constructedClass
+private val IrConstructorCall.annotationClass
+    get() = this.symbol.owner.constructedClass
 
-fun List<IrCall>.hasAnnotation(fqName: FqName): Boolean =
-    this.any { it.annotationClass.fqNameSafe == fqName }
+fun List<IrConstructorCall>.hasAnnotation(fqName: FqName): Boolean =
+    any { it.annotationClass.fqNameSafe == fqName }
 
-fun List<IrCall>.findAnnotation(fqName: FqName): IrCall? = this.firstOrNull {
-    it.annotationClass.fqNameSafe == fqName
-}
+fun List<IrConstructorCall>.findAnnotation(fqName: FqName): IrConstructorCall? =
+    firstOrNull { it.annotationClass.fqNameSafe == fqName }
+
 val IrDeclaration.fileEntry: SourceManager.FileEntry
     get() = parent.let {
         when (it) {

@@ -299,7 +299,7 @@ tailrec fun IrElement.getPackageFragment(): IrPackageFragment? {
     }
 }
 
-fun IrAnnotationContainer.getAnnotation(name: FqName) =
+fun IrAnnotationContainer.getAnnotation(name: FqName): IrConstructorCall? =
     annotations.find {
         it.symbol.owner.parentAsClass.descriptor.fqNameSafe == name
     }

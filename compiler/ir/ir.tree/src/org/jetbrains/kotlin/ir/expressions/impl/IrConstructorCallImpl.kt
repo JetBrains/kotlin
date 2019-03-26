@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
@@ -28,4 +29,52 @@ class IrConstructorCallImpl(
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitConstructorCall(this, data)
+
+    companion object {
+        fun fromSymbolDescriptor(
+            startOffset: Int,
+            endOffset: Int,
+            type: IrType,
+            constructorSymbol: IrConstructorSymbol,
+            origin: IrStatementOrigin? = null
+        ): IrConstructorCallImpl {
+            val constructorDescriptor = constructorSymbol.descriptor
+            val classTypeParametersCount = constructorDescriptor.constructedClass.original.declaredTypeParameters.size
+            val totalTypeParametersCount = constructorDescriptor.typeParameters.size
+            val valueParametersCount = constructorDescriptor.valueParameters.size
+
+            return IrConstructorCallImpl(
+                startOffset, endOffset,
+                type,
+                constructorSymbol,
+                constructorDescriptor,
+                totalTypeParametersCount,
+                totalTypeParametersCount - classTypeParametersCount,
+                valueParametersCount,
+                origin
+            )
+        }
+
+        fun fromSymbolDescriptor(
+            type: IrType,
+            constructorSymbol: IrConstructorSymbol,
+            origin: IrStatementOrigin? = null
+        ): IrConstructorCallImpl {
+            val constructorDescriptor = constructorSymbol.descriptor
+            val classTypeParametersCount = constructorDescriptor.constructedClass.original.declaredTypeParameters.size
+            val totalTypeParametersCount = constructorDescriptor.typeParameters.size
+            val valueParametersCount = constructorDescriptor.valueParameters.size
+
+            return IrConstructorCallImpl(
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                type,
+                constructorSymbol, constructorDescriptor,
+                totalTypeParametersCount,
+                totalTypeParametersCount - classTypeParametersCount,
+                valueParametersCount,
+                origin
+            )
+        }
+    }
 }
+

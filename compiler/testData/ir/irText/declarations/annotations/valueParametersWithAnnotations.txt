@@ -30,16 +30,14 @@ FILE fqName:<root> fileName:/valueParametersWithAnnotations.kt
   FUN name:testFun visibility:public modality:FINAL <> (x:kotlin.Int) returnType:kotlin.Unit 
     VALUE_PARAMETER name:x index:0 type:kotlin.Int 
       annotations:
-        CALL 'public constructor <init> (x: kotlin.String) [primary] declared in <root>.TestAnn' type=<root>.TestAnn origin=null
-          x: CONST String type=kotlin.String value="testFun.x"
+        TestAnn(x = 'testFun.x')
     BLOCK_BODY
   CLASS CLASS name:TestClassConstructor1 modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestClassConstructor1 
     CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:<root>.TestClassConstructor1 [primary] 
       VALUE_PARAMETER name:x index:0 type:kotlin.Int 
         annotations:
-          CALL 'public constructor <init> (x: kotlin.String) [primary] declared in <root>.TestAnn' type=<root>.TestAnn origin=null
-            x: CONST String type=kotlin.String value="TestClassConstructor1.x"
+          TestAnn(x = 'TestClassConstructor1.x')
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TestClassConstructor1 modality:FINAL visibility:public superTypes:[kotlin.Any]'

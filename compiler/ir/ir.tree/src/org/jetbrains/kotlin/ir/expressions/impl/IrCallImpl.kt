@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
@@ -44,6 +45,12 @@ class IrCallImpl(
         origin
     ),
     IrCall {
+
+    init {
+        if (symbol is IrClassSymbol) {
+            throw AssertionError("Should be IrConstructorCall: $descriptor")
+        }
+    }
 
     constructor(
         startOffset: Int,

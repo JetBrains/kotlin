@@ -18,7 +18,7 @@ FILE fqName:<root> fileName:/delegateFieldWithAnnotations.kt
   PROPERTY name:test1 visibility:public modality:FINAL [delegated,val] 
     FIELD DELEGATE name:test1$delegate type:kotlin.Lazy<kotlin.Int> visibility:private [final,static] 
       annotations:
-        CALL 'public constructor <init> () [primary] declared in <root>.Ann' type=<root>.Ann origin=null
+        Ann
       EXPRESSION_BODY
         CALL 'public final fun lazy <T> (initializer: kotlin.Function0<T of kotlin.lazy>): kotlin.Lazy<T of kotlin.lazy> declared in kotlin' type=kotlin.Lazy<kotlin.Int> origin=null
           <T>: kotlin.Int

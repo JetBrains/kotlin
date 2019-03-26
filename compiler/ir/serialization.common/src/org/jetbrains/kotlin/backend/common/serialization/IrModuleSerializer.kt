@@ -173,10 +173,10 @@ open class IrModuleSerializer(
         Variance.INVARIANT -> KotlinIr.IrTypeVariance.INV
     }
 
-    fun serializeAnnotations(annotations: List<IrCall>): KotlinIr.Annotations {
+    fun serializeAnnotations(annotations: List<IrConstructorCall>): KotlinIr.Annotations {
         val proto = KotlinIr.Annotations.newBuilder()
         annotations.forEach {
-            proto.addAnnotation(serializeCall(it))
+            proto.addAnnotation(serializeConstructorCall(it))
         }
         return proto.build()
     }
@@ -245,12 +245,12 @@ open class IrModuleSerializer(
     }
 
     // This is just IrType repacked as a data class, good to address a hash map.
-    data class IrTypeKey (
+    data class IrTypeKey(
         val kind: IrTypeKind,
         val classifier: IrClassifierSymbol?,
         val hasQuestionMark: Boolean?,
         val arguments: List<IrTypeArgumentKey>?,
-        val annotations: List<IrCall>
+        val annotations: List<IrConstructorCall>
     )
 
     data class IrTypeArgumentKey (
@@ -398,6 +398,13 @@ open class IrModuleSerializer(
         proto.memberAccess = serializeMemberAccessCommon(call)
         return proto.build()
     }
+
+    private fun serializeConstructorCall(call: IrConstructorCall): KotlinIr.IrConstructorCall =
+        KotlinIr.IrConstructorCall.newBuilder().apply {
+            symbol = serializeIrSymbol(call.symbol)
+            constructorTypeArgumentsCount = call.constructorTypeArgumentsCount
+            memberAccess = serializeMemberAccessCommon(call)
+        }.build()
 
     private fun serializeFunctionReference(callable: IrFunctionReference): KotlinIr.IrFunctionReference {
         val proto = KotlinIr.IrFunctionReference.newBuilder()

@@ -1,17 +1,13 @@
 FILE fqName:<root> fileName:/javaAnnotation.kt
   FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     annotations:
-      CALL 'public/*package*/ constructor <init> (value: kotlin.String, i: kotlin.Int) [primary] declared in <root>.JavaAnn' type=<root>.JavaAnn origin=null
+      JavaAnn(value = <null>, i = <null>)
     BLOCK_BODY
   FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     annotations:
-      CALL 'public/*package*/ constructor <init> (value: kotlin.String, i: kotlin.Int) [primary] declared in <root>.JavaAnn' type=<root>.JavaAnn origin=null
-        value: CONST String type=kotlin.String value="abc"
-        i: CONST Int type=kotlin.Int value=123
+      JavaAnn(value = 'abc', i = '123')
     BLOCK_BODY
   FUN name:test3 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     annotations:
-      CALL 'public/*package*/ constructor <init> (value: kotlin.String, i: kotlin.Int) [primary] declared in <root>.JavaAnn' type=<root>.JavaAnn origin=null
-        value: CONST String type=kotlin.String value="abc"
-        i: CONST Int type=kotlin.Int value=123
+      JavaAnn(value = 'abc', i = '123')
     BLOCK_BODY

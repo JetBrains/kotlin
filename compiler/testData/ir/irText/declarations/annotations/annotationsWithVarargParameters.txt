@@ -29,19 +29,13 @@ FILE fqName:<root> fileName:/annotationsWithVarargParameters.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
   FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     annotations:
-      CALL 'public constructor <init> (vararg xs: kotlin.String) [primary] declared in <root>.A' type=<root>.A origin=null
-        xs: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
-          CONST String type=kotlin.String value="abc"
-          CONST String type=kotlin.String value="def"
+      A(xs = ['abc', 'def'])
     BLOCK_BODY
   FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     annotations:
-      CALL 'public constructor <init> (vararg xs: kotlin.String) [primary] declared in <root>.A' type=<root>.A origin=null
-        xs: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
-          CONST String type=kotlin.String value="abc"
+      A(xs = ['abc'])
     BLOCK_BODY
   FUN name:test3 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     annotations:
-      CALL 'public constructor <init> (vararg xs: kotlin.String) [primary] declared in <root>.A' type=<root>.A origin=null
-        xs: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
+      A(xs = [])
     BLOCK_BODY

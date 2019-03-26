@@ -45,26 +45,21 @@ FILE fqName:<root> fileName:/annotationsWithDefaultParameterValues.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
   FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     annotations:
-      CALL 'public constructor <init> (x: kotlin.String, y: kotlin.Int) [primary] declared in <root>.A' type=<root>.A origin=null
-        x: CONST String type=kotlin.String value="abc"
-        y: CONST Int type=kotlin.Int value=123
+      A(x = 'abc', y = '123')
     BLOCK_BODY
   FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     annotations:
-      CALL 'public constructor <init> (x: kotlin.String, y: kotlin.Int) [primary] declared in <root>.A' type=<root>.A origin=null
-        x: CONST String type=kotlin.String value="def"
+      A(x = 'def', y = <null>)
     BLOCK_BODY
   FUN name:test3 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     annotations:
-      CALL 'public constructor <init> (x: kotlin.String, y: kotlin.Int) [primary] declared in <root>.A' type=<root>.A origin=null
-        x: CONST String type=kotlin.String value="ghi"
+      A(x = 'ghi', y = <null>)
     BLOCK_BODY
   FUN name:test4 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     annotations:
-      CALL 'public constructor <init> (x: kotlin.String, y: kotlin.Int) [primary] declared in <root>.A' type=<root>.A origin=null
-        y: CONST Int type=kotlin.Int value=456
+      A(x = <null>, y = '456')
     BLOCK_BODY
   FUN name:test5 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     annotations:
-      CALL 'public constructor <init> (x: kotlin.String, y: kotlin.Int) [primary] declared in <root>.A' type=<root>.A origin=null
+      A(x = <null>, y = <null>)
     BLOCK_BODY
