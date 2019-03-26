@@ -24,7 +24,7 @@
 // EXIST:  sealed class
 // EXIST:  sealed class TopScope
 // EXIST:  data class
-// EXIST:  data class TopScope
+// EXIST:  { "lookupString":"data class", "itemText":"data class", "tailText":" TopScope(...)", "attributes":"bold" }
 // EXIST:  inline
 // EXIST:  tailrec
 // EXIST:  external

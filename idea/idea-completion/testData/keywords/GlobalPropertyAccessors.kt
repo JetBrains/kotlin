@@ -38,7 +38,7 @@ var a : Int
 // EXIST:  sealed class
 // EXIST:  sealed class GlobalPropertyAccessors
 // EXIST:  data class
-// EXIST:  data class GlobalPropertyAccessors
+// EXIST:  { "lookupString":"data class", "itemText":"data class", "tailText":" GlobalPropertyAccessors(...)", "attributes":"bold" }
 // EXIST:  inline
 // EXIST:  tailrec
 // EXIST:  external
