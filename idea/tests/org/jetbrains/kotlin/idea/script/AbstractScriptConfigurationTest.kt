@@ -181,7 +181,7 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
         }
 
         if (configureConflictingModule in environment) {
-            val sharedLib = LocalFileSystem.getInstance().findFileByIoFile(environment["lib-classes"] as File)!!
+            val sharedLib = VfsUtil.findFileByIoFile(environment["lib-classes"] as File, true)!!
             if (module == null) {
                 myModule = createTestModuleByName("mainModule")
             }

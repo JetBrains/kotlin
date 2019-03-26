@@ -426,11 +426,30 @@ public class KotlinTestUtils {
         return normalizeFile(FileUtil.createTempDirectory(name, "", false));
     }
 
+    @NotNull
+    public static File tmpDirForReusableLibrary(String name) throws IOException {
+        File answer = normalizeFile(FileUtil.createTempDirectory(new File(System.getProperty("java.io.tmpdir")), name, ""));
+        deleteOnShutdown(answer);
+        return answer;
+    }
+
     private static File normalizeFile(File file) throws IOException {
         // Get canonical file to be sure that it's the same as inside the compiler,
         // for example, on Windows, if a canonical path contains any space from FileUtil.createTempDirectory we will get
         // a File with short names (8.3) in its path and it will break some normalization passes in tests.
         return file.getCanonicalFile();
+    }
+
+    private static void deleteOnShutdown(File file) {
+        if (filesToDelete.isEmpty()) {
+            ShutDownTracker.getInstance().registerShutdownTask(() -> {
+                for (File victim : filesToDelete) {
+                    FileUtil.delete(victim);
+                }
+            });
+        }
+
+        filesToDelete.add(file);
     }
 
     @NotNull
