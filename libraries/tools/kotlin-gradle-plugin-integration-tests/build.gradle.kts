@@ -51,12 +51,15 @@ projectTest {
     dependsOn(":kotlin-gradle-plugin:validateTaskProperties")
     dependsOn(
         ":kotlin-allopen:install",
+        ":kotlin-allopen:plugin-marker:install",
         ":kotlin-noarg:install",
+        ":kotlin-allopen:plugin-marker:install",
         ":kotlin-sam-with-receiver:install",
         ":kotlin-android-extensions:install",
         ":kotlin-build-common:install",
         ":kotlin-compiler-embeddable:install",
         ":kotlin-gradle-plugin:install",
+        ":kotlin-gradle-plugin:plugin-marker:install",
         ":kotlin-reflect:install",
         ":kotlin-annotation-processing-gradle:install",
         ":kotlin-test:kotlin-test-jvm:install",

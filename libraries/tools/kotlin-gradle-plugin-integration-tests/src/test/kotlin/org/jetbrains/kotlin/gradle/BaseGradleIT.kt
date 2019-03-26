@@ -11,6 +11,7 @@ import org.jdom.output.XMLOutputter
 import org.jetbrains.kotlin.gradle.model.ModelContainer
 import org.jetbrains.kotlin.gradle.model.ModelFetcherBuildAction
 import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.test.util.trimTrailingWhitespaces
 import org.junit.After
 import org.junit.AfterClass
 import org.junit.Assert
@@ -611,12 +612,9 @@ abstract class BaseGradleIT {
         }
 
         val actualTestResults = readAndCleanupTestResults(testReportDir, projectDir)
-        val expectedTestResults = resourcesRootFile.resolve(assertionFileName).readText()
+        val expectedTestResults = prettyPrintXml(resourcesRootFile.resolve(assertionFileName).readText())
 
-        assertEquals(
-                prettyPrintXml(expectedTestResults),
-                prettyPrintXml(actualTestResults)
-        )
+        assertEquals(expectedTestResults, actualTestResults)
     }
 
     private fun readAndCleanupTestResults(testReportDir: File, projectDir: File): String {
@@ -628,14 +626,20 @@ abstract class BaseGradleIT {
                     it.name.replace(".xml", ".A.xml")
                 }
 
-        val xmlString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<results>\n" +
-                files.joinToString("") {
+        val xmlString = buildString {
+            appendln("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
+            appendln("<results>")
+            files.forEach {
+                appendln(
                     it.readText()
-                            .replace(projectDir.absolutePath, "/\$PROJECT_DIR$")
-                            .replace(projectDir.name, "\$PROJECT_NAME$")
-                            .replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n", "")
-                } +
-                "</results>"
+                        .trimTrailingWhitespaces()
+                        .replace(projectDir.absolutePath, "/\$PROJECT_DIR$")
+                        .replace(projectDir.name, "\$PROJECT_NAME$")
+                        .replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n", "")
+                )
+            }
+            appendln("</results>")
+        }
 
         val doc = SAXBuilder().build(xmlString.reader())
         val skipAttrs = setOf("timestamp", "hostname", "time", "message")
