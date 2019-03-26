@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi2ir.PsiSourceManager
 
 class JvmBackendContext(
@@ -41,18 +40,10 @@ class JvmBackendContext(
 
     override val configuration get() = state.configuration
 
-    internal fun getJvmInternalClass(name: String): ClassDescriptor {
-        return getClass(FqName("kotlin.jvm.internal").child(Name.identifier(name)))
-    }
-
     internal fun getClass(fqName: FqName): ClassDescriptor {
         return state.module.getPackage(fqName.parent()).memberScope.getContributedClassifier(
             fqName.shortName(), NoLookupLocation.FROM_BACKEND
         ) as ClassDescriptor? ?: error("Class is not found: $fqName")
-    }
-
-    fun getIrClass(fqName: FqName): IrClassSymbol {
-        return ir.symbols.externalSymbolTable.referenceClass(getClass(fqName))
     }
 
     override fun log(message: () -> String) {

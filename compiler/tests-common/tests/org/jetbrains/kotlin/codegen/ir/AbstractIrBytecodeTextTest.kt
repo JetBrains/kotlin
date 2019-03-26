@@ -8,10 +8,7 @@ package org.jetbrains.kotlin.codegen.ir
 import org.jetbrains.kotlin.codegen.AbstractBytecodeTextTest
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.test.ConfigurationKind
 
 abstract class AbstractIrBytecodeTextTest : AbstractBytecodeTextTest() {
     override fun updateConfiguration(configuration: CompilerConfiguration) = configuration.put(JVMConfigurationKeys.IR, true)
-
-    override fun extractConfigurationKind(files: MutableList<TestFile>): ConfigurationKind = ConfigurationKind.ALL
 }

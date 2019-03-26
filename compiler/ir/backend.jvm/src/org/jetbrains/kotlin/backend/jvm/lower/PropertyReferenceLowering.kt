@@ -18,14 +18,20 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.types.impl.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.types.createType
+import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
+import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
+import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.*
+import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 
@@ -60,18 +66,6 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
     private val IrMemberAccessExpression.symbol: IrSymbol
         get() = getter?.owner?.symbol ?: field!!.owner.symbol
 
-    private val plainJavaClass =
-        context.getIrClass(FqName("java.lang.Class")).owner
-
-    private val reflectionClass =
-        context.getIrClass(FqName("kotlin.jvm.internal.Reflection")).owner
-
-    private val getOrCreateKotlinClass =
-        reflectionClass.functions.single { it.name.asString() == "getOrCreateKotlinClass" && it.valueParameters.size == 1 }
-
-    private val getOrCreateKotlinPackage =
-        reflectionClass.functions.single { it.name.asString() == "getOrCreateKotlinPackage" && it.valueParameters.size == 2 }
-
     private val arrayItemGetter =
         context.ir.symbols.array.owner.functions.single { it.name.asString() == "get" }
 
@@ -101,8 +95,8 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
     private val IrMemberAccessExpression.parentJavaClassReference
         get() = IrClassReferenceImpl(
             startOffset, endOffset,
-            plainJavaClass.defaultType,
-            plainJavaClass.symbol,
+            context.ir.symbols.javaLangClass.typeWith(),
+            context.ir.symbols.javaLangClass,
             // TODO: when the parent is an interface, this should map to DefaultImpls. However, that requires
             //       moving this lowering below InterfaceLowering; see another TODO above.
             CrIrType(context.state.typeMapper.mapImplementationOwner(propertyContainerChild!!.descriptor))
@@ -110,16 +104,17 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
 
     private fun IrBuilderWithScope.buildReflectedContainerReference(expression: IrMemberAccessExpression): IrExpression {
         val parent = expression.propertyContainerChild?.parent
+        val context = this@PropertyReferenceLowering.context
         return when {
             // FileClassLowering creates a class to which all package-level declarations are moved. However, it does not
             // fix the declarations' parents (yet), which is why we check for both a file class and a package fragment.
             parent is IrPackageFragment || (parent is IrClass && parent.origin == IrDeclarationOrigin.FILE_CLASS) ->
-                irCall(getOrCreateKotlinPackage).apply {
+                irCall(context.ir.symbols.getOrCreateKotlinPackage).apply {
                     putValueArgument(0, expression.parentJavaClassReference)
-                    putValueArgument(1, irString(this@PropertyReferenceLowering.context.state.moduleName))
+                    putValueArgument(1, irString(context.state.moduleName))
                 }
             parent is IrClass ->
-                irCall(getOrCreateKotlinClass).apply {
+                irCall(context.ir.symbols.getOrCreateKotlinClass).apply {
                     putValueArgument(0, expression.parentJavaClassReference)
                 }
             else -> throw AssertionError("referenced property not inside a class/package fragment")
@@ -133,9 +128,9 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
     )
 
     private fun propertyReferenceKind(mutable: Boolean, i: Int) = PropertyReferenceKind(
-        context.getIrClass(FqName("kotlin.jvm.internal.${if (mutable) "Mutable" else ""}PropertyReference$i")),
-        context.getIrClass(FqName("kotlin.jvm.internal.${if (mutable) "Mutable" else ""}PropertyReference${i}Impl")),
-        reflectionClass.functions.single { it.name.asString() == (if (mutable) "mutableProperty$i" else "property$i") }
+        context.ir.symbols.getPropertyReferenceClass(mutable, i, false),
+        context.ir.symbols.getPropertyReferenceClass(mutable, i, true),
+        context.ir.symbols.reflection.owner.functions.single { it.name.asString() == (if (mutable) "mutableProperty$i" else "property$i") }
     )
 
     private fun propertyReferenceKindFor(expression: IrMemberAccessExpression): PropertyReferenceKind =
@@ -295,7 +290,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
                 fun buildOverride(method: IrSimpleFunction, build: IrBlockBodyBuilder.(List<IrValueParameter>) -> IrExpression) =
                     buildFun {
                         setSourceRange(expression)
-                        name = if (method.name.asString() == "<get-name>") Name.identifier("getName") else method.name
+                        name = method.name
                         returnType = method.returnType
                         visibility = method.visibility
                         origin = referenceClass.origin
@@ -329,7 +324,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
                     }
                 }
 
-                buildOverride(superClass.properties.single { it.name.asString() == "name" }.getter!!) {
+                buildOverride(superClass.functions.single { it.name.asString() == "getName" }) {
                     irString(expression.descriptor.name.asString())
                 }
 

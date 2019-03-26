@@ -19,22 +19,11 @@ package org.jetbrains.kotlin.codegen.ir
 import org.jetbrains.kotlin.codegen.AbstractBlackBoxCodegenTest
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.TargetBackend
 
 abstract class AbstractIrBlackBoxCodegenTest : AbstractBlackBoxCodegenTest() {
     override fun updateConfiguration(configuration: CompilerConfiguration) {
         configuration.put(JVMConfigurationKeys.IR, true)
-    }
-
-    //symbols are constructed with stdlib descriptors so stdlib should be presented
-    // TODO rewrite symbols building
-    override fun extractConfigurationKind(files: MutableList<TestFile>): ConfigurationKind {
-        val result = super.extractConfigurationKind(files)
-        return when (result) {
-            ConfigurationKind.JDK_NO_RUNTIME, ConfigurationKind.JDK_ONLY -> ConfigurationKind.NO_KOTLIN_REFLECT
-            else -> result
-        }
     }
 
     override fun getBackend() = TargetBackend.JVM_IR
