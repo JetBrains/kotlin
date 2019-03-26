@@ -52,6 +52,12 @@ inline fun buildField(b: IrFieldBuilder.() -> Unit) =
         buildField()
     }
 
+inline fun IrDeclarationContainer.addField(b: IrFieldBuilder.() -> Unit) =
+    buildField(b).also { field ->
+        field.parent = this
+        declarations.add(field)
+    }
+
 fun IrPropertyBuilder.buildProperty(): IrProperty {
     val wrappedDescriptor = WrappedPropertyDescriptor()
     return IrPropertyImpl(

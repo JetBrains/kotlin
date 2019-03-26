@@ -72,6 +72,7 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
                 val opCall = statementGenerator.pregenerateCallReceivers(opResolvedCall)
                 opCall.setExplicitReceiverValue(irLValue)
                 opCall.irValueArgumentsByIndex[0] = ktRight.genExpr()
+                statementGenerator.generateSamConversionForValueArgumentsIfRequired(opCall, opResolvedCall.resultingDescriptor)
                 val irOpCall = CallGenerator(statementGenerator).generateCall(ktExpression, opCall, origin)
 
                 if (isSimpleAssignment) {
