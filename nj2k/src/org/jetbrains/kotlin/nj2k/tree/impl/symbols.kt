@@ -274,6 +274,21 @@ class JKUnresolvedClassSymbol(override val target: String) : JKClassSymbol, JKUn
         get() = target.substringAfterLast('.')
 }
 
+interface JKPackageSymbol : JKNamedSymbol {
+    override val target: PsiPackage
+}
+
+class JKMultiversePackageSymbol(override val target: PsiPackage) : JKPackageSymbol {
+    override val declaredIn
+        get() = TODO("not implemented")
+
+    override val name: String
+        get() = target.name.orEmpty()
+
+    override val fqName: String
+        get() = target.qualifiedName
+}
+
 
 fun JKSymbol.deepestFqName(): String? {
     fun Any.deepestFqNameForTarget(): String? =

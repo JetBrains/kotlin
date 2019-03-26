@@ -422,6 +422,11 @@ class JKFieldAccessExpressionImpl(override var identifier: JKFieldSymbol) : JKFi
     PsiOwner by PsiOwnerImpl() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitFieldAccessExpression(this, data)
 }
+class JKPackageAccessExpressionImpl(override var identifier: JKPackageSymbol) : JKPackageAccessExpression, JKElementBase(),
+    PsiOwner by PsiOwnerImpl() {
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitPackageAccessExpression(this, data)
+}
+
 
 val JKStatement.statements: List<JKStatement>
     get() =

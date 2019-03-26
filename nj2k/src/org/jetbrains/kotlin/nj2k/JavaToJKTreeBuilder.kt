@@ -377,6 +377,7 @@ class JavaToJKTreeBuilder constructor(
             return when (symbol) {
                 is JKClassSymbol -> JKClassAccessExpressionImpl(symbol)
                 is JKFieldSymbol -> JKFieldAccessExpressionImpl(symbol)
+                is JKPackageSymbol -> JKPackageAccessExpressionImpl(symbol)
                 else -> TODO()
             }.qualified(qualifierExpression?.toJK()).also {
                 it.assignNonCodeElements(this)

@@ -47,6 +47,7 @@ interface JKVisitor<out R, in D> {
     fun visitTypeArgumentListOwner(typeArgumentListOwner: JKTypeArgumentListOwner, data: D): R = visitTreeElement(typeArgumentListOwner, data)
     fun visitMethodCallExpression(methodCallExpression: JKMethodCallExpression, data: D): R = visitExpression(methodCallExpression, data)
     fun visitFieldAccessExpression(fieldAccessExpression: JKFieldAccessExpression, data: D): R = visitAssignableExpression(fieldAccessExpression, data)
+    fun visitPackageAccessExpression(packageAccessExpression: JKPackageAccessExpression, data: D): R = visitAssignableExpression(packageAccessExpression, data)
     fun visitClassAccessExpression(classAccessExpression: JKClassAccessExpression, data: D): R = visitExpression(classAccessExpression, data)
     fun visitArrayAccessExpression(arrayAccessExpression: JKArrayAccessExpression, data: D): R = visitAssignableExpression(arrayAccessExpression, data)
     fun visitParenthesizedExpression(parenthesizedExpression: JKParenthesizedExpression, data: D): R = visitExpression(parenthesizedExpression, data)

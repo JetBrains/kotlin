@@ -358,6 +358,14 @@ interface JKVisitorWithCommentsPrinting : JKVisitorVoid {
 
     fun visitFieldAccessExpressionRaw(fieldAccessExpression: JKFieldAccessExpression) = visitAssignableExpressionRaw(fieldAccessExpression)
 
+    override fun visitPackageAccessExpression(packageAccessExpression: JKPackageAccessExpression) {
+        printLeftNonCodeElements(packageAccessExpression)
+        visitPackageAccessExpressionRaw(packageAccessExpression)
+        printRightNonCodeElements(packageAccessExpression)
+    }
+
+    fun visitPackageAccessExpressionRaw(packageAccessExpression: JKPackageAccessExpression) = visitAssignableExpressionRaw(packageAccessExpression)
+
     override fun visitClassAccessExpression(classAccessExpression: JKClassAccessExpression) {
         printLeftNonCodeElements(classAccessExpression)
         visitClassAccessExpressionRaw(classAccessExpression)

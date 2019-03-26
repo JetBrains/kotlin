@@ -91,6 +91,8 @@ interface JKVisitorVoid : JKVisitor<Unit, Nothing?> {
     override fun visitMethodCallExpression(methodCallExpression: JKMethodCallExpression, data: Nothing?) = visitMethodCallExpression(methodCallExpression)
     fun visitFieldAccessExpression(fieldAccessExpression: JKFieldAccessExpression) = visitAssignableExpression(fieldAccessExpression, null)
     override fun visitFieldAccessExpression(fieldAccessExpression: JKFieldAccessExpression, data: Nothing?) = visitFieldAccessExpression(fieldAccessExpression)
+    fun visitPackageAccessExpression(packageAccessExpression: JKPackageAccessExpression) = visitAssignableExpression(packageAccessExpression, null)
+    override fun visitPackageAccessExpression(packageAccessExpression: JKPackageAccessExpression, data: Nothing?) = visitPackageAccessExpression(packageAccessExpression)
     fun visitClassAccessExpression(classAccessExpression: JKClassAccessExpression) = visitExpression(classAccessExpression, null)
     override fun visitClassAccessExpression(classAccessExpression: JKClassAccessExpression, data: Nothing?) = visitClassAccessExpression(classAccessExpression)
     fun visitArrayAccessExpression(arrayAccessExpression: JKArrayAccessExpression) = visitAssignableExpression(arrayAccessExpression, null)

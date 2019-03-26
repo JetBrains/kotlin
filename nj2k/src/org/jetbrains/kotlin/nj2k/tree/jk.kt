@@ -333,6 +333,10 @@ interface JKFieldAccessExpression : JKAssignableExpression {
     val identifier: JKFieldSymbol
 }
 
+interface JKPackageAccessExpression : JKAssignableExpression {
+    val identifier: JKPackageSymbol
+}
+
 interface JKClassAccessExpression : JKExpression {
     val identifier: JKClassSymbol
 }

@@ -745,6 +745,10 @@ class NewCodeBuilder {
             printer.par(SQUARE) { arrayAccessExpression.indexExpression.accept(this) }
         }
 
+        override fun visitPackageAccessExpressionRaw(packageAccessExpression: JKPackageAccessExpression) {
+            printer.printWithNoIndent(packageAccessExpression.identifier.name.escaped())
+        }
+
         override fun visitDelegationConstructorCallRaw(delegationConstructorCall: JKDelegationConstructorCall) {
             delegationConstructorCall.expression.accept(this)
             printer.par {
