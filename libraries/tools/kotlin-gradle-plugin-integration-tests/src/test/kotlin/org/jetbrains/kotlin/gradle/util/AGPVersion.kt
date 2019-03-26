@@ -21,5 +21,6 @@ class AGPVersion private constructor(private val versionNumber: VersionNumber) {
         val v3_0_0 = fromString("3.0.0")
         val v3_1_0 = fromString("3.1.0")
         val v3_2_0 = fromString("3.2.0")
+        val v3_3_2 = fromString("3.3.2")
     }
 }
