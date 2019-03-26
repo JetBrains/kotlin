@@ -18,9 +18,11 @@ package org.jetbrains.kotlin.resolve.calls.inference.components
 
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
 import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirectionCalculator.ResolveDirection
+import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
 import org.jetbrains.kotlin.resolve.calls.inference.model.checkConstraint
+import org.jetbrains.kotlin.resolve.constants.IntegerLiteralTypeConstructor
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.intersectTypes
 
@@ -42,7 +44,7 @@ class ResultTypeResolver(
     }
 
     fun findResultTypeOrNull(c: Context, variableWithConstraints: VariableWithConstraints, direction: ResolveDirection): UnwrappedType? {
-        findResultIfThereIsEqualsConstraint(c, variableWithConstraints, allowedFixToNotProperType = false)?.let { return it }
+        findResultIfThereIsEqualsConstraint(c, variableWithConstraints)?.let { return it }
 
         val subType = findSubType(c, variableWithConstraints)
         val superType = findSuperType(c, variableWithConstraints)
@@ -123,24 +125,22 @@ class ResultTypeResolver(
         return null
     }
 
-    fun findResultIfThereIsEqualsConstraint(
-        c: Context,
-        variableWithConstraints: VariableWithConstraints,
-        allowedFixToNotProperType: Boolean = false
-    ): UnwrappedType? {
-        val properEqualsConstraint = variableWithConstraints.constraints.filter {
+    fun findResultIfThereIsEqualsConstraint(c: Context, variableWithConstraints: VariableWithConstraints): UnwrappedType? {
+        val properEqualityConstraints = variableWithConstraints.constraints.filter {
             it.kind == ConstraintKind.EQUALITY && c.isProperType(it.type)
         }
 
-        if (properEqualsConstraint.isNotEmpty()) {
-            return properEqualsConstraint.map { it.type }.singleBestRepresentative()?.unwrap()
-                    ?: properEqualsConstraint.first().type // seems like constraint system has contradiction
-        }
-        if (!allowedFixToNotProperType) return null
+        return representativeFromEqualityConstraints(properEqualityConstraints)
+    }
 
-        val notProperEqualsConstraint = variableWithConstraints.constraints.filter { it.kind == ConstraintKind.EQUALITY }
+    // Discriminate integer literal types as they are less specific than separate integer types (Int, Short...)
+    private fun representativeFromEqualityConstraints(constraints: List<Constraint>): UnwrappedType? {
+        if (constraints.isEmpty()) return null
 
-        // may be we should just firstOrNull
-        return notProperEqualsConstraint.singleOrNull()?.type
+        val constraintTypes = constraints.map { it.type }
+        val nonLiteralTypes = constraintTypes.filter { it.constructor !is IntegerLiteralTypeConstructor }
+        return nonLiteralTypes.singleBestRepresentative()?.unwrap()
+            ?: constraintTypes.singleBestRepresentative()?.unwrap()
+            ?: constraintTypes.first() // seems like constraint system has contradiction
     }
 }

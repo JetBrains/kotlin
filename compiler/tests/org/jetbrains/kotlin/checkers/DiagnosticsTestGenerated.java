@@ -14127,6 +14127,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/numbers/intValuesOutOfRange.kt");
             }
 
+            @TestMetadata("numberAsUnionAndIntersection.kt")
+            public void testNumberAsUnionAndIntersection() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/numbers/numberAsUnionAndIntersection.kt");
+            }
+
             @TestMetadata("numbersInSimpleConstraints.kt")
             public void testNumbersInSimpleConstraints() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/numbers/numbersInSimpleConstraints.kt");

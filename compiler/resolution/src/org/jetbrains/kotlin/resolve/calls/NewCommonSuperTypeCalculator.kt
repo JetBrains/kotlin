@@ -81,7 +81,9 @@ object NewCommonSuperTypeCalculator {
     private fun List<SimpleType>.uniquify(): List<SimpleType> {
         val uniqueTypes = arrayListOf<SimpleType>()
         for (type in this) {
-            val isNewUniqueType = uniqueTypes.all { !NewKotlinTypeChecker.equalTypes(it, type) }
+            val isNewUniqueType = uniqueTypes.all {
+                !NewKotlinTypeChecker.equalTypes(it, type) || it.constructor is IntegerLiteralTypeConstructor
+            }
             if (isNewUniqueType) {
                 uniqueTypes += type
             }
