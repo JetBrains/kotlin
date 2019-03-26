@@ -155,7 +155,7 @@ enum IrTypeVariance { // Should we import metadata variance, or better stay sepa
 }
 
 message Annotations {
-  repeated IrCall annotation = 1;
+  repeated IrConstructorCall annotation = 1;
 }
 
 message TypeArguments {
@@ -238,6 +238,12 @@ message IrCall {
   required IrSymbol symbol = 2;
   required MemberAccessCommon member_access = 3;
   optional IrSymbol super = 4;
+}
+
+message IrConstructorCall {
+  required IrSymbol symbol = 1;
+  required int32 constructor_type_arguments_count = 2;
+  required MemberAccessCommon member_access = 3;
 }
 
 message IrFunctionReference {
@@ -485,6 +491,7 @@ message IrOperation {
     IrDynamicMemberExpression dynamic_member = 29;
     IrDynamicOperatorExpression dynamic_operator = 30;
     IrLocalDelegatedPropertyReference local_delegated_property_reference = 31;
+    IrConstructorCall constructor_call = 32;
   }
 }
 
