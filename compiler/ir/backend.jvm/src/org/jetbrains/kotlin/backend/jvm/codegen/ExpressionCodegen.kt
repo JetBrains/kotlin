@@ -268,25 +268,23 @@ class ExpressionCodegen(
 
     override fun visitCall(expression: IrCall, data: BlockInfo): PromisedValue {
         expression.markLineNumber(startOffset = true)
-        if (expression.descriptor is ConstructorDescriptor) {
-            return generateNewCall(expression, data)
-        }
         return generateCall(expression, expression.superQualifier, data)
     }
 
-    private fun generateNewCall(expression: IrCall, data: BlockInfo): PromisedValue {
+    override fun visitConstructorCall(expression: IrConstructorCall, data: BlockInfo): PromisedValue {
         val type = expression.asmType
         if (type.sort == Type.ARRAY) {
+            //noinspection ConstantConditions
             return generateNewArray(expression, data)
         }
 
         mv.anew(expression.asmType)
         mv.dup()
-        generateCall(expression, expression.superQualifier, data)
+        generateCall(expression, null, data)
         return expression.onStack
     }
 
-    private fun generateNewArray(expression: IrCall, data: BlockInfo): PromisedValue {
+    fun generateNewArray(expression: IrConstructorCall, data: BlockInfo): PromisedValue {
         val args = expression.descriptor.valueParameters
         assert(args.size == 1 || args.size == 2) { "Unknown constructor called: " + args.size + " arguments" }
 
@@ -297,7 +295,7 @@ class ExpressionCodegen(
             return expression.onStack
         }
 
-        return generateCall(expression, expression.superQualifier, data)
+        return generateCall(expression, null, data)
     }
 
     private fun generateCall(expression: IrFunctionAccessExpression, superQualifier: ClassDescriptor?, data: BlockInfo): PromisedValue {
