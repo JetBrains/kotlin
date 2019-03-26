@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.util.OperatorNameConventions
 
 val forLoopsPhase = makeIrFilePhase(
     ::ForLoopsLowering,
@@ -171,12 +170,7 @@ private class RangeLoopTransformer(
             oldLoopToNewLoop[loop] = newLoop
 
             // Surround the new loop with a check for an empty loop, if necessary.
-            if (loopHeader.needsEmptinessCheck) {
-                val notEmptyCondition = loopHeader.buildNotEmptyCondition(this@with)
-                if (notEmptyCondition != null)
-                    return irIfThen(notEmptyCondition, newLoop)
-            }
-            return newLoop
+            return loopHeader.buildNotEmptyConditionIfNecessary(this@with)?.let { irIfThen(it, newLoop) } ?: newLoop
         }
     }
 

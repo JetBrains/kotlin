@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 fun test(): Int {
     var sum = 0
     for (i in 1 until 6) {
@@ -12,4 +11,4 @@ fun test(): Int {
 // 0 getEnd
 // 0 getFirst
 // 0 getLast
-// 1 IF
+// 0 getStep

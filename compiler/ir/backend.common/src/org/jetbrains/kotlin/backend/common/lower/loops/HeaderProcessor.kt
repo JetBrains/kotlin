@@ -30,7 +30,6 @@ internal sealed class ForLoopHeader(
     val last: IrVariable,
     val step: IrVariable,
     val progressionType: ProgressionType,
-    val needsEmptinessCheck: Boolean,
     var loopVariable: IrVariable? = null
 ) {
     /** Expression used to initialize the loop variable at the beginning of the loop. */
@@ -48,7 +47,7 @@ internal sealed class ForLoopHeader(
      *
      * Returns null if no check is needed for the for-loop.
      */
-    abstract fun buildNotEmptyCondition(builder: DeclarationIrBuilder): IrExpression?
+    abstract fun buildNotEmptyConditionIfNecessary(builder: DeclarationIrBuilder): IrExpression?
 }
 
 internal class ProgressionLoopHeader(
@@ -56,7 +55,7 @@ internal class ProgressionLoopHeader(
     inductionVariable: IrVariable,
     last: IrVariable,
     step: IrVariable
-) : ForLoopHeader(inductionVariable, last, step, headerInfo.progressionType, needsEmptinessCheck = true) {
+) : ForLoopHeader(inductionVariable, last, step, headerInfo.progressionType) {
 
     override fun initializeLoopVariable(symbols: Symbols<CommonBackendContext>, builder: DeclarationIrBuilder) = with(builder) {
         // loopVariable = inductionVariable
@@ -64,17 +63,17 @@ internal class ProgressionLoopHeader(
     }
 
     override val declarations: List<IrStatement>
-        get() = headerInfo.additionalVariables + listOf(inductionVariable, step, last)
+        get() = headerInfo.additionalVariables + listOf(inductionVariable, last, step)
 
     override fun buildInnerLoop(builder: DeclarationIrBuilder, loop: IrLoop, newBody: IrExpression?): IrLoop = with(builder) {
         // Condition: loopVariable != last
         assert(loopVariable != null)
-        val newCondition = irCall(context.irBuiltIns.booleanNotSymbol).apply {
-            putValueArgument(0, irCall(context.irBuiltIns.eqeqSymbol).apply {
-                putValueArgument(0, irGet(loopVariable!!))
-                putValueArgument(1, irGet(last))
-            })
-        }
+        val booleanNotFun = context.irBuiltIns.booleanClass.functions.first { it.owner.name.asString() == "not" }
+        val newCondition = irCallOp(booleanNotFun, booleanNotFun.owner.returnType, irCall(context.irBuiltIns.eqeqSymbol).apply {
+            putValueArgument(0, irGet(loopVariable!!))
+            putValueArgument(1, irGet(last))
+        })
+
 
         // TODO: Build while loop (instead of do-while) where possible, e.g., in "until" ranges, or when "last" is known to be < MAX_VALUE
         IrDoWhileLoopImpl(loop.startOffset, loop.endOffset, loop.type, loop.origin).apply {
@@ -84,12 +83,13 @@ internal class ProgressionLoopHeader(
         }
     }
 
-    override fun buildNotEmptyCondition(builder: DeclarationIrBuilder): IrExpression? =
+    override fun buildNotEmptyConditionIfNecessary(builder: DeclarationIrBuilder): IrExpression? =
         with(builder) {
             val builtIns = context.irBuiltIns
             val progressionKotlinType = progressionType.elementType(builtIns).toKotlinType()
             val lessOrEqualFun = builtIns.lessOrEqualFunByOperandType[progressionKotlinType]!!
 
+            // The default "not empty" condition depends on the direction.
             val notEmptyCondition = when (headerInfo.direction) {
                 ProgressionDirection.DECREASING ->
                     // last <= inductionVariable
@@ -143,7 +143,7 @@ internal class ArrayLoopHeader(
     inductionVariable: IrVariable,
     last: IrVariable,
     step: IrVariable
-) : ForLoopHeader(inductionVariable, last, step, ProgressionType.INT_PROGRESSION, needsEmptinessCheck = false) {
+) : ForLoopHeader(inductionVariable, last, step, ProgressionType.INT_PROGRESSION) {
 
     override fun initializeLoopVariable(symbols: Symbols<CommonBackendContext>, builder: DeclarationIrBuilder) = with(builder) {
         // loopVariable = array[inductionVariable]
@@ -155,7 +155,7 @@ internal class ArrayLoopHeader(
     }
 
     override val declarations: List<IrStatement>
-        get() = listOf(headerInfo.arrayVariable, inductionVariable, step, last)
+        get() = listOf(headerInfo.arrayVariable, inductionVariable, last, step)
 
     override fun buildInnerLoop(builder: DeclarationIrBuilder, loop: IrLoop, newBody: IrExpression?): IrLoop = with(builder) {
         // Condition: loopVariable != last
@@ -174,7 +174,7 @@ internal class ArrayLoopHeader(
     }
 
     // No surrounding emptiness check is needed with a while loop.
-    override fun buildNotEmptyCondition(builder: DeclarationIrBuilder): IrExpression? = null
+    override fun buildNotEmptyConditionIfNecessary(builder: DeclarationIrBuilder): IrExpression? = null
 }
 
 /**
@@ -277,22 +277,21 @@ internal class HeaderProcessor(
             }
         }
     }
+}
 
-
-    private fun IrExpression.castIfNecessary(targetType: IrType, numberCastFunctionName: Name): IrExpression {
-        return if (type.toKotlinType() == targetType.toKotlinType()) {
-            this
-        } else {
-            val function = type.getClass()!!.functions.first { it.name == numberCastFunctionName }
-            IrCallImpl(startOffset, endOffset, function.returnType, function.symbol)
-                .apply { dispatchReceiver = this@castIfNecessary }
-        }
+internal fun DeclarationIrBuilder.ensureNotNullable(expression: IrExpression) =
+    if (expression.type is IrSimpleType && expression.type.isNullable()) {
+        irImplicitCast(expression, expression.type.makeNotNull())
+    } else {
+        expression
     }
 
-    private fun DeclarationIrBuilder.ensureNotNullable(expression: IrExpression) =
-        if (expression.type is IrSimpleType && expression.type.isNullable()) {
-            irImplicitCast(expression, expression.type.makeNotNull())
-        } else {
-            expression
-        }
+internal fun IrExpression.castIfNecessary(targetType: IrType, numberCastFunctionName: Name): IrExpression {
+    return if (type.toKotlinType() == targetType.toKotlinType()) {
+        this
+    } else {
+        val function = type.getClass()!!.functions.first { it.name == numberCastFunctionName }
+        IrCallImpl(startOffset, endOffset, function.returnType, function.symbol)
+            .apply { dispatchReceiver = this@castIfNecessary }
+    }
 }
