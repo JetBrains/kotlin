@@ -171,6 +171,12 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
                     FirErrorTypeRefImpl(session, qualifiedAccessExpression.psi, "Unsupported: super type") //TODO
 
             }
+            is FirResolvedCallableReference -> {
+                if (qualifiedAccessExpression.typeRef !is FirResolvedTypeRef) {
+                    qualifiedAccessExpression.resultType =
+                        jump.tryCalculateReturnType(callee.callableSymbol.firUnsafe<FirCallableDeclaration>())
+                }
+            }
         }
         val callee = qualifiedAccessExpression.calleeReference as? FirSimpleNamedReference ?: return qualifiedAccessExpression.compose()
 
