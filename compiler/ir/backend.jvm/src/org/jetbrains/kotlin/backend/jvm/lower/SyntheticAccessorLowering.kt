@@ -260,7 +260,14 @@ private class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElem
                 accessorSymbol as IrConstructorSymbol, accessorSymbol.descriptor,
                 oldExpression.typeArgumentsCount
             )
-            else -> error("Need IrCall or IrDelegatingConstructor call, got $oldExpression")
+            is IrConstructorCall ->
+                IrConstructorCallImpl.fromSymbolDescriptor(
+                    oldExpression.startOffset, oldExpression.endOffset,
+                    oldExpression.type,
+                    accessorSymbol as IrConstructorSymbol
+                )
+            else ->
+                error("Unexpected IrFunctionAccessExpression: $oldExpression")
         }
         newExpression.copyTypeArgumentsFrom(oldExpression)
         val receiverAndArgs = oldExpression.receiverAndArgs()

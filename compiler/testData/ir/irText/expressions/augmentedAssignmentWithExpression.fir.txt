@@ -1,46 +1,46 @@
 FILE fqName:<root> fileName:/augmentedAssignmentWithExpression.kt
   CLASS CLASS name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Host
-    CONSTRUCTOR visibility:public <> () returnType:<root>.Host [primary]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Host 
+    CONSTRUCTOR visibility:public <> () returnType:<root>.Host [primary] 
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]'
-    FUN name:plusAssign visibility:public modality:FINAL <> ($this:<root>.Host, x:kotlin.Int) returnType:kotlin.Unit
-      $this: VALUE_PARAMETER name:<this> type:<root>.Host
-      VALUE_PARAMETER name:x index:0 type:kotlin.Int
+    FUN name:plusAssign visibility:public modality:FINAL <> ($this:<root>.Host, x:kotlin.Int) returnType:kotlin.Unit 
+      $this: VALUE_PARAMETER name:<this> type:<root>.Host 
+      VALUE_PARAMETER name:x index:0 type:kotlin.Int 
       BLOCK_BODY
-    FUN name:test1 visibility:public modality:FINAL <> ($this:<root>.Host) returnType:kotlin.Unit
-      $this: VALUE_PARAMETER name:<this> type:<root>.Host
+    FUN name:test1 visibility:public modality:FINAL <> ($this:<root>.Host) returnType:kotlin.Unit 
+      $this: VALUE_PARAMETER name:<this> type:<root>.Host 
       BLOCK_BODY
         ERROR_CALL 'Unresolved reference: this#' type=IrErrorType
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
       overridden:
         public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  FUN name:foo visibility:public modality:FINAL <> () returnType:<root>.Host
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+  FUN name:foo visibility:public modality:FINAL <> () returnType:<root>.Host 
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun foo (): <root>.Host declared in <root>'
-        CALL 'public constructor <init> () [primary] declared in <root>.Host' type=<root>.Host origin=null
-  FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+        CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Host' type=<root>.Host origin=null
+  FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
       ERROR_CALL 'Unresolved reference: this#' type=IrErrorType
-  FUN name:test3 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+  FUN name:test3 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
-      VAR name:<complex-set> type:<root>.Host [val]
+      VAR name:<complex-set> type:<root>.Host [val] 
         CALL 'public final fun foo (): <root>.Host declared in <root>' type=<root>.Host origin=null
       ERROR_CALL 'Unresolved reference: R|<local>/<complex-set>|' type=IrErrorType
-  FUN name:test4 visibility:public modality:FINAL <> (a:kotlin.Function0) returnType:kotlin.Unit
-    VALUE_PARAMETER name:a index:0 type:kotlin.Function0
+  FUN name:test4 visibility:public modality:FINAL <> (a:kotlin.Function0) returnType:kotlin.Unit 
+    VALUE_PARAMETER name:a index:0 type:kotlin.Function0 
     BLOCK_BODY
-      VAR name:<complex-set> type:IrErrorType [val]
+      VAR name:<complex-set> type:IrErrorType [val] 
         ERROR_CALL 'Unresolved reference: <Unresolved name: a>#' type=IrErrorType
       ERROR_CALL 'Unresolved reference: R|<local>/<complex-set>|' type=IrErrorType

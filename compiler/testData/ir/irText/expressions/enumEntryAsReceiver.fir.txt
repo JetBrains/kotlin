@@ -1,84 +1,84 @@
 FILE fqName:<root> fileName:/enumEntryAsReceiver.kt
   CLASS ENUM_CLASS name:X modality:FINAL visibility:public superTypes:[kotlin.Enum]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.X
-    CONSTRUCTOR visibility:private <> () returnType:<root>.X [primary]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.X 
+    CONSTRUCTOR visibility:private <> () returnType:<root>.X [primary] 
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, ordinal: kotlin.Int) [primary] declared in kotlin.Enum'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:X modality:FINAL visibility:public superTypes:[kotlin.Enum]'
     CLASS ENUM_ENTRY name:B modality:FINAL visibility:public superTypes:[kotlin.Any]
-      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.X.B
-      CONSTRUCTOR visibility:public <> () returnType:<root>.X.B [primary]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.X.B 
+      CONSTRUCTOR visibility:public <> () returnType:<root>.X.B [primary] 
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:B modality:FINAL visibility:public superTypes:[kotlin.Any]'
-      PROPERTY name:value2 visibility:public modality:FINAL [val]
-        FIELD PROPERTY_BACKING_FIELD name:value2 type:kotlin.String visibility:public [final]
+      PROPERTY name:value2 visibility:public modality:FINAL [val] 
+        FIELD PROPERTY_BACKING_FIELD name:value2 type:kotlin.String visibility:public [final] 
           EXPRESSION_BODY
             CONST String type=kotlin.String value="OK"
-        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value2> visibility:public modality:FINAL <> ($this:<root>.X.B) returnType:kotlin.String
-          correspondingProperty: PROPERTY name:value2 visibility:public modality:FINAL [val]
-          $this: VALUE_PARAMETER name:<this> type:<root>.X.B
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value2> visibility:public modality:FINAL <> ($this:<root>.X.B) returnType:kotlin.String 
+          correspondingProperty: PROPERTY name:value2 visibility:public modality:FINAL [val] 
+          $this: VALUE_PARAMETER name:<this> type:<root>.X.B 
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='public final fun <get-value2> (): kotlin.String declared in <root>.X.B'
               GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value2 type:kotlin.String visibility:public [final] ' type=kotlin.String origin=null
                 receiver: GET_VAR '<this>: <root>.X.B declared in <root>.X.B.<get-value2>' type=<root>.X.B origin=null
-      PROPERTY name:value visibility:public modality:FINAL [val]
-        FIELD PROPERTY_BACKING_FIELD name:value type:IrErrorType visibility:public [final]
+      PROPERTY name:value visibility:public modality:FINAL [val] 
+        FIELD PROPERTY_BACKING_FIELD name:value type:IrErrorType visibility:public [final] 
           EXPRESSION_BODY
             BLOCK type=IrErrorType origin=LAMBDA
-              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($this:<root>.X.B) returnType:IrErrorType
-                $this: VALUE_PARAMETER name:<this> type:<root>.X.B
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($this:<root>.X.B) returnType:IrErrorType 
+                $this: VALUE_PARAMETER name:<this> type:<root>.X.B 
                 BLOCK_BODY
                   RETURN type=kotlin.Nothing from='local final fun <anonymous> (): IrErrorType declared in <root>.X.B.value'
                     CALL 'public final fun <get-value2> (): kotlin.String declared in <root>.X.B' type=kotlin.String origin=null
               FUNCTION_REFERENCE 'local final fun <anonymous> (): IrErrorType declared in <root>.X.B.value' type=IrErrorType origin=LAMBDA
-        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:FINAL <> ($this:<root>.X.B) returnType:IrErrorType
-          correspondingProperty: PROPERTY name:value visibility:public modality:FINAL [val]
-          $this: VALUE_PARAMETER name:<this> type:<root>.X.B
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:FINAL <> ($this:<root>.X.B) returnType:IrErrorType 
+          correspondingProperty: PROPERTY name:value visibility:public modality:FINAL [val] 
+          $this: VALUE_PARAMETER name:<this> type:<root>.X.B 
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='public final fun <get-value> (): IrErrorType declared in <root>.X.B'
               GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:IrErrorType visibility:public [final] ' type=IrErrorType origin=null
                 receiver: GET_VAR '<this>: <root>.X.B declared in <root>.X.B.<get-value>' type=<root>.X.B origin=null
-      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
         overridden:
           public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-        VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+        VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
         overridden:
           public open fun hashCode (): kotlin.Int declared in kotlin.Any
-        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
         overridden:
           public open fun toString (): kotlin.String declared in kotlin.Any
-        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    PROPERTY name:value visibility:public modality:ABSTRACT [val]
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:ABSTRACT <> ($this:<root>.X) returnType:kotlin.Function0
-        correspondingProperty: PROPERTY name:value visibility:public modality:ABSTRACT [val]
-        $this: VALUE_PARAMETER name:<this> type:<root>.X
-    FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum) returnType:kotlin.Any
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+    PROPERTY name:value visibility:public modality:ABSTRACT [val] 
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:ABSTRACT <> ($this:<root>.X) returnType:kotlin.Function0 
+        correspondingProperty: PROPERTY name:value visibility:public modality:ABSTRACT [val] 
+        $this: VALUE_PARAMETER name:<this> type:<root>.X 
+    FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum) returnType:kotlin.Any 
       overridden:
         protected final fun clone (): kotlin.Any declared in kotlin.Enum
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum
-    FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum, other:E of <uninitialized parent>) returnType:kotlin.Int
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum 
+    FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum, other:E of <uninitialized parent>) returnType:kotlin.Int 
       overridden:
         public final fun compareTo (other: E of <uninitialized parent>): kotlin.Int declared in kotlin.Enum
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum
-      VALUE_PARAMETER name:other index:0 type:E of <uninitialized parent>
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:FINAL <> ($this:kotlin.Enum, other:kotlin.Any?) returnType:kotlin.Boolean
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum 
+      VALUE_PARAMETER name:other index:0 type:E of <uninitialized parent> 
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:FINAL <> ($this:kotlin.Enum, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
         public final fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Enum
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:FINAL <> ($this:kotlin.Enum) returnType:kotlin.Int
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum 
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:FINAL <> ($this:kotlin.Enum) returnType:kotlin.Int 
       overridden:
         public final fun hashCode (): kotlin.Int declared in kotlin.Enum
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Enum) returnType:kotlin.String
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum 
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Enum) returnType:kotlin.String 
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Enum
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum
-  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum 
+  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String 
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
         ERROR_CALL 'Unresolved reference: <Unresolved name: value>#' type=IrErrorType

@@ -1,12 +1,12 @@
 FILE fqName:<root> fileName:/coercionInLoop.kt
-  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
+  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String 
     BLOCK_BODY
-      VAR name:a type:IrErrorType [val]
+      VAR name:a type:IrErrorType [val] 
         ERROR_CALL 'Unresolved reference: <Unresolved name: DoubleArray>#' type=IrErrorType
           CONST Int type=kotlin.Int value=5
-      VAR name:x type:IrErrorType [val]
+      VAR name:x type:IrErrorType [val] 
         ERROR_CALL 'Unresolved reference: <Unresolved name: iterator>#' type=IrErrorType
-      VAR name:i type:kotlin.Int [var]
+      VAR name:i type:kotlin.Int [var] 
         CONST Int type=kotlin.Int value=0
       WHILE label=null origin=WHILE_LOOP
         condition: ERROR_CALL 'Unresolved reference: <Unresolved name: hasNext>#' type=IrErrorType
@@ -19,10 +19,9 @@ FILE fqName:<root> fileName:/coercionInLoop.kt
                     GET_VAR 'var i: kotlin.Int [var] declared in <root>.box' type=kotlin.Int origin=null
                   arg1: ERROR_CALL 'Unresolved reference: <Unresolved name: next>#' type=IrErrorType
               then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
-                STRING_CONCATENATION type=kotlin.String
-                  CONST String type=kotlin.String value="Fail "
-                  GET_VAR 'var i: kotlin.Int [var] declared in <root>.box' type=kotlin.Int origin=null
-          VAR name:<unary> type:kotlin.Int [val]
+                CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=null
+                  other: GET_VAR 'var i: kotlin.Int [var] declared in <root>.box' type=kotlin.Int origin=null
+          VAR name:<unary> type:kotlin.Int [val] 
             GET_VAR 'var i: kotlin.Int [var] declared in <root>.box' type=kotlin.Int origin=null
           ERROR_CALL 'Unresolved reference: R|<local>/i|' type=IrErrorType
           GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.box' type=kotlin.Int origin=null

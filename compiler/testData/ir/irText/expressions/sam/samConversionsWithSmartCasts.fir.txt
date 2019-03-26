@@ -1,6 +1,6 @@
 FILE fqName:<root> fileName:/samConversionsWithSmartCasts.kt
-  FUN name:test1 visibility:public modality:FINAL <> (a:kotlin.Function0) returnType:kotlin.Unit
-    VALUE_PARAMETER name:a index:0 type:kotlin.Function0
+  FUN name:test1 visibility:public modality:FINAL <> (a:kotlin.Function0) returnType:kotlin.Unit 
+    VALUE_PARAMETER name:a index:0 type:kotlin.Function0 
     BLOCK_BODY
       WHEN type=kotlin.Unit origin=IF
         BRANCH
@@ -8,8 +8,8 @@ FILE fqName:<root> fileName:/samConversionsWithSmartCasts.kt
             GET_VAR 'a: kotlin.Function0 declared in <root>.test1' type=kotlin.Function0 origin=null
           then: ERROR_CALL 'Unresolved reference: <Unresolved name: runStatic>#' type=IrErrorType
             GET_VAR 'a: kotlin.Function0 declared in <root>.test1' type=kotlin.Function0 origin=null
-  FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.Function0) returnType:kotlin.Unit
-    VALUE_PARAMETER name:a index:0 type:kotlin.Function0
+  FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.Function0) returnType:kotlin.Unit 
+    VALUE_PARAMETER name:a index:0 type:kotlin.Function0 
     BLOCK_BODY
       WHEN type=kotlin.Unit origin=IF
         BRANCH
@@ -17,8 +17,8 @@ FILE fqName:<root> fileName:/samConversionsWithSmartCasts.kt
             GET_VAR 'a: kotlin.Function0 declared in <root>.test2' type=kotlin.Function0 origin=null
           then: ERROR_CALL 'Unresolved reference: <Unresolved name: run1>#' type=IrErrorType
             GET_VAR 'a: kotlin.Function0 declared in <root>.test2' type=kotlin.Function0 origin=null
-  FUN name:test3 visibility:public modality:FINAL <> (a:kotlin.Function0) returnType:kotlin.Unit
-    VALUE_PARAMETER name:a index:0 type:kotlin.Function0
+  FUN name:test3 visibility:public modality:FINAL <> (a:kotlin.Function0) returnType:kotlin.Unit 
+    VALUE_PARAMETER name:a index:0 type:kotlin.Function0 
     BLOCK_BODY
       WHEN type=kotlin.Unit origin=IF
         BRANCH
@@ -27,9 +27,9 @@ FILE fqName:<root> fileName:/samConversionsWithSmartCasts.kt
           then: ERROR_CALL 'Unresolved reference: <Unresolved name: run2>#' type=IrErrorType
             GET_VAR 'a: kotlin.Function0 declared in <root>.test3' type=kotlin.Function0 origin=null
             GET_VAR 'a: kotlin.Function0 declared in <root>.test3' type=kotlin.Function0 origin=null
-  FUN name:test4 visibility:public modality:FINAL <> (a:kotlin.Function0, b:kotlin.Function0) returnType:kotlin.Unit
-    VALUE_PARAMETER name:a index:0 type:kotlin.Function0
-    VALUE_PARAMETER name:b index:1 type:kotlin.Function0
+  FUN name:test4 visibility:public modality:FINAL <> (a:kotlin.Function0, b:kotlin.Function0) returnType:kotlin.Unit 
+    VALUE_PARAMETER name:a index:0 type:kotlin.Function0 
+    VALUE_PARAMETER name:b index:1 type:kotlin.Function0 
     BLOCK_BODY
       WHEN type=kotlin.Unit origin=IF
         BRANCH
@@ -38,8 +38,8 @@ FILE fqName:<root> fileName:/samConversionsWithSmartCasts.kt
           then: ERROR_CALL 'Unresolved reference: <Unresolved name: run2>#' type=IrErrorType
             GET_VAR 'a: kotlin.Function0 declared in <root>.test4' type=kotlin.Function0 origin=null
             GET_VAR 'b: kotlin.Function0 declared in <root>.test4' type=kotlin.Function0 origin=null
-  FUN name:test5 visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit
-    VALUE_PARAMETER name:a index:0 type:kotlin.Any
+  FUN name:test5 visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit 
+    VALUE_PARAMETER name:a index:0 type:kotlin.Any 
     BLOCK_BODY
       WHEN type=kotlin.Unit origin=IF
         BRANCH
@@ -47,8 +47,8 @@ FILE fqName:<root> fileName:/samConversionsWithSmartCasts.kt
             GET_VAR 'a: kotlin.Any declared in <root>.test5' type=kotlin.Any origin=null
           then: ERROR_CALL 'Unresolved reference: <Unresolved name: run1>#' type=IrErrorType
             GET_VAR 'a: kotlin.Any declared in <root>.test5' type=kotlin.Any origin=null
-  FUN name:test5x visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit
-    VALUE_PARAMETER name:a index:0 type:kotlin.Any
+  FUN name:test5x visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit 
+    VALUE_PARAMETER name:a index:0 type:kotlin.Any 
     BLOCK_BODY
       WHEN type=kotlin.Unit origin=IF
         BRANCH
@@ -59,27 +59,27 @@ FILE fqName:<root> fileName:/samConversionsWithSmartCasts.kt
               GET_VAR 'a: kotlin.Any declared in <root>.test5x' type=kotlin.Any origin=null
             ERROR_CALL 'Unresolved reference: <Unresolved name: run1>#' type=IrErrorType
               GET_VAR 'a: kotlin.Any declared in <root>.test5x' type=kotlin.Any origin=null
-  FUN name:test6 visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit
-    VALUE_PARAMETER name:a index:0 type:kotlin.Any
+  FUN name:test6 visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit 
+    VALUE_PARAMETER name:a index:0 type:kotlin.Any 
     BLOCK_BODY
       TYPE_OP type=kotlin.Function0 origin=CAST typeOperand=kotlin.Function0
         GET_VAR 'a: kotlin.Any declared in <root>.test6' type=kotlin.Any origin=null
       ERROR_CALL 'Unresolved reference: <Unresolved name: run1>#' type=IrErrorType
         GET_VAR 'a: kotlin.Any declared in <root>.test6' type=kotlin.Any origin=null
-  FUN name:test7 visibility:public modality:FINAL <> (a:kotlin.Function1) returnType:kotlin.Unit
-    VALUE_PARAMETER name:a index:0 type:kotlin.Function1
+  FUN name:test7 visibility:public modality:FINAL <> (a:kotlin.Function1) returnType:kotlin.Unit 
+    VALUE_PARAMETER name:a index:0 type:kotlin.Function1 
     BLOCK_BODY
       TYPE_OP type=kotlin.Function0 origin=CAST typeOperand=kotlin.Function0
         GET_VAR 'a: kotlin.Function1 declared in <root>.test7' type=kotlin.Function1 origin=null
       ERROR_CALL 'Unresolved reference: <Unresolved name: run1>#' type=IrErrorType
         GET_VAR 'a: kotlin.Function1 declared in <root>.test7' type=kotlin.Function1 origin=null
-  FUN name:test8 visibility:public modality:FINAL <> (a:kotlin.Function0) returnType:kotlin.Unit
-    VALUE_PARAMETER name:a index:0 type:kotlin.Function0
+  FUN name:test8 visibility:public modality:FINAL <> (a:kotlin.Function0) returnType:kotlin.Unit 
+    VALUE_PARAMETER name:a index:0 type:kotlin.Function0 
     BLOCK_BODY
       ERROR_CALL 'Unresolved reference: <Unresolved name: run1>#' type=IrErrorType
         ERROR_CALL 'Unresolved reference: <Unresolved name: id>#' type=IrErrorType
           GET_VAR 'a: kotlin.Function0 declared in <root>.test8' type=kotlin.Function0 origin=null
-  FUN name:test9 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+  FUN name:test9 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
       ERROR_CALL 'Unresolved reference: <Unresolved name: run1>#' type=IrErrorType
         ERROR_CALL 'Unresolved reference: <Unresolved name: test9>#' type=IrErrorType

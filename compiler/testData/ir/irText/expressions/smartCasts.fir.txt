@@ -1,22 +1,22 @@
 FILE fqName:<root> fileName:/smartCasts.kt
-  FUN name:expectsString visibility:public modality:FINAL <> (s:kotlin.String) returnType:kotlin.Unit
-    VALUE_PARAMETER name:s index:0 type:kotlin.String
+  FUN name:expectsString visibility:public modality:FINAL <> (s:kotlin.String) returnType:kotlin.Unit 
+    VALUE_PARAMETER name:s index:0 type:kotlin.String 
     BLOCK_BODY
-  FUN name:expectsInt visibility:public modality:FINAL <> (i:kotlin.Int) returnType:kotlin.Unit
-    VALUE_PARAMETER name:i index:0 type:kotlin.Int
+  FUN name:expectsInt visibility:public modality:FINAL <> (i:kotlin.Int) returnType:kotlin.Unit 
+    VALUE_PARAMETER name:i index:0 type:kotlin.Int 
     BLOCK_BODY
-  FUN name:overloaded visibility:public modality:FINAL <> (s:kotlin.String) returnType:kotlin.String
-    VALUE_PARAMETER name:s index:0 type:kotlin.String
+  FUN name:overloaded visibility:public modality:FINAL <> (s:kotlin.String) returnType:kotlin.String 
+    VALUE_PARAMETER name:s index:0 type:kotlin.String 
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun overloaded (s: kotlin.String): kotlin.String declared in <root>'
         GET_VAR 's: kotlin.String declared in <root>.overloaded' type=kotlin.String origin=null
-  FUN name:overloaded visibility:public modality:FINAL <> (x:kotlin.Any) returnType:kotlin.Any
-    VALUE_PARAMETER name:x index:0 type:kotlin.Any
+  FUN name:overloaded visibility:public modality:FINAL <> (x:kotlin.Any) returnType:kotlin.Any 
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any 
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun overloaded (x: kotlin.Any): kotlin.Any declared in <root>'
         GET_VAR 'x: kotlin.Any declared in <root>.overloaded' type=kotlin.Any origin=null
-  FUN name:test1 visibility:public modality:FINAL <> (x:kotlin.Any) returnType:kotlin.Unit
-    VALUE_PARAMETER name:x index:0 type:kotlin.Any
+  FUN name:test1 visibility:public modality:FINAL <> (x:kotlin.Any) returnType:kotlin.Unit 
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any 
     BLOCK_BODY
       WHEN type=kotlin.Unit origin=IF
         BRANCH
@@ -33,8 +33,8 @@ FILE fqName:<root> fileName:/smartCasts.kt
       CALL 'public final fun expectsString (s: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         s: ERROR_CALL 'Unresolved reference: <Ambiguity: overloaded, [/overloaded, /overloaded]>#' type=IrErrorType
           GET_VAR 'x: kotlin.Any declared in <root>.test1' type=kotlin.Any origin=null
-  FUN name:test2 visibility:public modality:FINAL <> (x:kotlin.Any) returnType:kotlin.String
-    VALUE_PARAMETER name:x index:0 type:kotlin.Any
+  FUN name:test2 visibility:public modality:FINAL <> (x:kotlin.Any) returnType:kotlin.String 
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any 
     BLOCK_BODY
       WHEN type=kotlin.String origin=IF
         BRANCH
@@ -45,8 +45,8 @@ FILE fqName:<root> fileName:/smartCasts.kt
       RETURN type=kotlin.Nothing from='public final fun test2 (x: kotlin.Any): kotlin.String declared in <root>'
         ERROR_CALL 'Unresolved reference: <Ambiguity: overloaded, [/overloaded, /overloaded]>#' type=IrErrorType
           GET_VAR 'x: kotlin.Any declared in <root>.test2' type=kotlin.Any origin=null
-  FUN name:test3 visibility:public modality:FINAL <> (x:kotlin.Any) returnType:kotlin.String
-    VALUE_PARAMETER name:x index:0 type:kotlin.Any
+  FUN name:test3 visibility:public modality:FINAL <> (x:kotlin.Any) returnType:kotlin.String 
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any 
     BLOCK_BODY
       WHEN type=kotlin.String origin=IF
         BRANCH

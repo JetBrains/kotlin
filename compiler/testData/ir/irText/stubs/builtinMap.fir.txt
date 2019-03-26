@@ -1,8 +1,8 @@
 FILE fqName:<root> fileName:/builtinMap.kt
-  FUN name:plus visibility:public modality:FINAL <K1, V1> (pair:kotlin.Pair<K1 of <root>.plus, V1 of <root>.plus>) returnType:kotlin.collections.Map<K1 of <root>.plus, V1 of <root>.plus>
+  FUN name:plus visibility:public modality:FINAL <K1, V1> (pair:kotlin.Pair<K1 of <root>.plus, V1 of <root>.plus>) returnType:kotlin.collections.Map<K1 of <root>.plus, V1 of <root>.plus> 
     TYPE_PARAMETER name:K1 index:0 variance: superTypes:[]
     TYPE_PARAMETER name:V1 index:0 variance: superTypes:[]
-    VALUE_PARAMETER name:pair index:0 type:kotlin.Pair<K1 of <root>.plus, V1 of <root>.plus>
+    VALUE_PARAMETER name:pair index:0 type:kotlin.Pair<K1 of <root>.plus, V1 of <root>.plus> 
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun plus <K1, V1> (pair: kotlin.Pair<K1 of <root>.plus, V1 of <root>.plus>): kotlin.collections.Map<K1 of <root>.plus, V1 of <root>.plus> declared in <root>'
         WHEN type=kotlin.collections.Map<K1 of <root>.plus, V1 of <root>.plus> origin=IF
@@ -14,7 +14,7 @@ FILE fqName:<root> fileName:/builtinMap.kt
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CALL 'public final fun apply (block: kotlin.Function1<T of <uninitialized parent>, kotlin.Unit>): T of <uninitialized parent> [inline] declared in kotlin' type=T of <uninitialized parent> origin=null
               block: BLOCK type=IrErrorType origin=LAMBDA
-                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:IrErrorType
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:IrErrorType 
                   BLOCK_BODY
                     RETURN type=kotlin.Nothing from='local final fun <anonymous> (): IrErrorType declared in <root>.plus'
                       ERROR_CALL 'Unresolved reference: <Unresolved name: put>#' type=IrErrorType

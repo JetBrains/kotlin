@@ -1,14 +1,14 @@
 FILE fqName:<root> fileName:/localDelegatedProperties.kt
-  FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+  FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
-      VAR name:x type:IrErrorType [val]
+      VAR name:x type:IrErrorType [val] 
       ERROR_CALL 'Unresolved reference: <Ambiguity: println, [kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println]>#' type=IrErrorType
         GET_VAR 'val x: IrErrorType [val] declared in <root>.test1' type=IrErrorType origin=null
-  FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+  FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
-      VAR name:x type:IrErrorType [var]
+      VAR name:x type:IrErrorType [var] 
       ERROR_CALL 'Unresolved reference: R|<local>/x|' type=IrErrorType
-      VAR name:<unary> type:IrErrorType [val]
+      VAR name:<unary> type:IrErrorType [val] 
         GET_VAR 'var x: IrErrorType [var] declared in <root>.test2' type=IrErrorType origin=null
       ERROR_CALL 'Unresolved reference: R|<local>/x|' type=IrErrorType
       GET_VAR 'val <unary>: IrErrorType [val] declared in <root>.test2' type=IrErrorType origin=null

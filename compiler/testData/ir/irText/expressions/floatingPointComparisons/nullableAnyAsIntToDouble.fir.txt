@@ -1,7 +1,7 @@
 FILE fqName:<root> fileName:/nullableAnyAsIntToDouble.kt
-  FUN name:test visibility:public modality:FINAL <> (x:kotlin.Any?, y:kotlin.Double) returnType:kotlin.Boolean
-    VALUE_PARAMETER name:x index:0 type:kotlin.Any?
-    VALUE_PARAMETER name:y index:1 type:kotlin.Double
+  FUN name:test visibility:public modality:FINAL <> (x:kotlin.Any?, y:kotlin.Double) returnType:kotlin.Boolean 
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any? 
+    VALUE_PARAMETER name:y index:1 type:kotlin.Double 
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test (x: kotlin.Any?, y: kotlin.Double): kotlin.Boolean declared in <root>'
         WHEN type=kotlin.Boolean origin=ANDAND

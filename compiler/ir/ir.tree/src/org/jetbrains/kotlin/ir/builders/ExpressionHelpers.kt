@@ -235,13 +235,17 @@ fun IrBuilderWithScope.irCall(
         }
     }
 
-fun IrBuilderWithScope.irCallConstructor(callee: IrConstructorSymbol, typeArguments: List<IrType>): IrCall =
-        TODO("IrConstructorCall")
-//    IrCallImpl(startOffset, endOffset, callee.owner.returnType, callee, callee.descriptor, typeArguments.size, callee.owner.valueParameters.size).apply {
-//        typeArguments.forEachIndexed { index, irType ->
-//            this.putTypeArgument(index, irType)
-//        }
-//    }
+fun IrBuilderWithScope.irCallConstructor(callee: IrConstructorSymbol, typeArguments: List<IrType>): IrConstructorCall =
+    IrConstructorCallImpl.fromSymbolOwner(
+        startOffset,
+        endOffset,
+        callee.owner.returnType,
+        callee
+    ).apply {
+        typeArguments.forEachIndexed { index, irType ->
+            this.putTypeArgument(index, irType)
+        }
+    }
 
 fun IrBuilderWithScope.irCall(callee: IrSimpleFunctionSymbol, type: IrType): IrCall =
     IrCallImpl(startOffset, endOffset, type, callee, callee.descriptor)

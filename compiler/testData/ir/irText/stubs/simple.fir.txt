@@ -1,11 +1,11 @@
 FILE fqName:<root> fileName:/simple.kt
-  PROPERTY name:test visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:test type:IrErrorType visibility:public [final,static]
+  PROPERTY name:test visibility:public modality:FINAL [val] 
+    FIELD PROPERTY_BACKING_FIELD name:test type:IrErrorType visibility:public [final,static] 
       EXPRESSION_BODY
         ERROR_CALL 'Unresolved reference: <Ambiguity: plus, [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]>#' type=IrErrorType
           CONST Int type=kotlin.Int value=2
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test> visibility:public modality:FINAL <> () returnType:IrErrorType
-      correspondingProperty: PROPERTY name:test visibility:public modality:FINAL [val]
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test> visibility:public modality:FINAL <> () returnType:IrErrorType 
+      correspondingProperty: PROPERTY name:test visibility:public modality:FINAL [val] 
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test> (): IrErrorType declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test type:IrErrorType visibility:public [final,static] ' type=IrErrorType origin=null

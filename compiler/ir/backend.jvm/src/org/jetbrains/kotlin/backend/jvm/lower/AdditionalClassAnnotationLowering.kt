@@ -24,11 +24,11 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrEnumEntryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
-import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
 import org.jetbrains.kotlin.ir.expressions.IrVararg
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetEnumValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrEnumEntrySymbolImpl
@@ -142,7 +142,7 @@ private class AdditionalClassAnnotationLowering(private val context: JvmBackendC
         }
 
         irClass.annotations.add(
-            IrCallImpl(
+            IrConstructorCallImpl.fromSymbolOwner(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, documentedConstructor.returnType, documentedConstructor.symbol
             )
         )
@@ -160,7 +160,7 @@ private class AdditionalClassAnnotationLowering(private val context: JvmBackendC
         val javaRetentionPolicy = annotationRetentionMap[kotlinRetentionPolicy] ?: rpRuntime
 
         irClass.annotations.add(
-            IrCallImpl(
+            IrConstructorCallImpl.fromSymbolOwner(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, retentionConstructor.returnType, retentionConstructor.symbol
             ).apply {
                 putValueArgument(
@@ -228,7 +228,7 @@ private class AdditionalClassAnnotationLowering(private val context: JvmBackendC
         }
 
         irClass.annotations.add(
-            IrCallImpl(
+            IrConstructorCallImpl.fromSymbolOwner(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, targetConstructor.returnType, targetConstructor.symbol
             ).apply {
                 putValueArgument(0, vararg)
@@ -239,7 +239,7 @@ private class AdditionalClassAnnotationLowering(private val context: JvmBackendC
 }
 
 // To be generalized to IrMemberAccessExpression as soon as properties get symbols.
-private fun IrCall.getValueArgument(name: Name): IrExpression? {
+private fun IrConstructorCall.getValueArgument(name: Name): IrExpression? {
     val index = symbol.owner.valueParameters.find { it.name == name }?.index ?: return null
     return getValueArgument(index)
 }
@@ -253,7 +253,7 @@ private fun IrClass.applicableTargetSet(): Set<KotlinTarget>? {
     return loadAnnotationTargets(targetEntry)
 }
 
-private fun loadAnnotationTargets(targetEntry: IrCall): Set<KotlinTarget>? {
+private fun loadAnnotationTargets(targetEntry: IrConstructorCall): Set<KotlinTarget>? {
     val valueArgument = targetEntry.getValueArgument(TARGET_ALLOWED_TARGETS)
             as? IrVararg ?: return null
     return valueArgument.elements.filterIsInstance<IrGetEnumValue>().mapNotNull {

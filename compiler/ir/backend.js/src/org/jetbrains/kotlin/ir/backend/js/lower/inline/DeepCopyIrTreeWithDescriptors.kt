@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
@@ -168,7 +169,7 @@ internal class DeepCopyIrTreeWithSymbolsForInliner(
                 kotlinType = null
                 classifier = symbolRemapper.getReferencedClassifier(type.classifier)
                 arguments = remapTypeArguments(type.arguments)
-                annotations = type.annotations.map { it.transform(copier, null) as IrCall }
+                annotations = type.annotations.map { it.transform(copier, null) as IrConstructorCall }
             }
         }
     }

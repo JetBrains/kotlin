@@ -184,6 +184,11 @@ class ClosureAnnotator(declaration: IrDeclaration) {
             processMemberAccess(expression.symbol.owner)
         }
 
+        override fun visitConstructorCall(expression: IrConstructorCall) {
+            expression.acceptChildrenVoid(this)
+            processMemberAccess(expression.symbol.owner)
+        }
+
         override fun visitEnumConstructorCall(expression: IrEnumConstructorCall) {
             expression.acceptChildrenVoid(this)
             processMemberAccess(expression.symbol.owner)

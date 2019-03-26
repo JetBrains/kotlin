@@ -1,35 +1,35 @@
 FILE fqName:<root> fileName:/vararg.kt
-  PROPERTY name:test1 visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Array<T of <uninitialized parent>> visibility:public [final,static]
+  PROPERTY name:test1 visibility:public modality:FINAL [val] 
+    FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Array<T of <uninitialized parent>> visibility:public [final,static] 
       EXPRESSION_BODY
         CALL 'public final fun arrayOf (elements: kotlin.Array<out T of <uninitialized parent>>): kotlin.Array<T of <uninitialized parent>> [inline] declared in kotlin' type=kotlin.Array<T of <uninitialized parent>> origin=null
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:kotlin.Array<T of <uninitialized parent>>
-      correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL [val]
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:kotlin.Array<T of <uninitialized parent>> 
+      correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL [val] 
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test1> (): kotlin.Array<T of <uninitialized parent>> declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Array<T of <uninitialized parent>> visibility:public [final,static] ' type=kotlin.Array<T of <uninitialized parent>> origin=null
-  PROPERTY name:test2 visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Array<T of <uninitialized parent>> visibility:public [final,static]
+  PROPERTY name:test2 visibility:public modality:FINAL [val] 
+    FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Array<T of <uninitialized parent>> visibility:public [final,static] 
       EXPRESSION_BODY
         ERROR_CALL 'Cannot bind 3 arguments to arrayOf call with 1 parameters' type=kotlin.Array<T of <uninitialized parent>>
           CONST String type=kotlin.String value="1"
           CONST String type=kotlin.String value="2"
           CONST String type=kotlin.String value="3"
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:kotlin.Array<T of <uninitialized parent>>
-      correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL [val]
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:kotlin.Array<T of <uninitialized parent>> 
+      correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL [val] 
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test2> (): kotlin.Array<T of <uninitialized parent>> declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Array<T of <uninitialized parent>> visibility:public [final,static] ' type=kotlin.Array<T of <uninitialized parent>> origin=null
-  PROPERTY name:test3 visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.Array<T of <uninitialized parent>> visibility:public [final,static]
+  PROPERTY name:test3 visibility:public modality:FINAL [val] 
+    FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.Array<T of <uninitialized parent>> visibility:public [final,static] 
       EXPRESSION_BODY
         ERROR_CALL 'Cannot bind 4 arguments to arrayOf call with 1 parameters' type=kotlin.Array<T of <uninitialized parent>>
           CONST String type=kotlin.String value="0"
           CALL 'public final fun <get-test2> (): kotlin.Array<T of <uninitialized parent>> declared in <root>' type=kotlin.Array<T of <uninitialized parent>> origin=null
           CALL 'public final fun <get-test1> (): kotlin.Array<T of <uninitialized parent>> declared in <root>' type=kotlin.Array<T of <uninitialized parent>> origin=null
           CONST String type=kotlin.String value="4"
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL <> () returnType:kotlin.Array<T of <uninitialized parent>>
-      correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL [val]
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL <> () returnType:kotlin.Array<T of <uninitialized parent>> 
+      correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL [val] 
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test3> (): kotlin.Array<T of <uninitialized parent>> declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.Array<T of <uninitialized parent>> visibility:public [final,static] ' type=kotlin.Array<T of <uninitialized parent>> origin=null

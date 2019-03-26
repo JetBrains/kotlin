@@ -44,7 +44,7 @@ class IrSimpleTypeBuilder {
     var classifier: IrClassifierSymbol? = null
     var hasQuestionMark = false
     var arguments: List<IrTypeArgument> = emptyList()
-    var annotations: List<IrCall> = emptyList()
+    var annotations: List<IrConstructorCall> = emptyList()
     var variance = Variance.INVARIANT
 }
 

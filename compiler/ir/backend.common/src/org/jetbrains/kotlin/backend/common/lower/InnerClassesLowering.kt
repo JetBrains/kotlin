@@ -135,19 +135,17 @@ val innerClassConstructorCallsPhase = makeIrFilePhase(
 class InnerClassConstructorCallsLowering(val context: BackendContext) : BodyLoweringPass {
     override fun lower(irBody: IrBody) {
         irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
-            override fun visitCall(expression: IrCall): IrExpression {
+            override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
                 expression.transformChildrenVoid(this)
 
                 val dispatchReceiver = expression.dispatchReceiver ?: return expression
-                val callee = expression.symbol as? IrConstructorSymbol ?: return expression
-                val parent = callee.owner.parent as? IrClass ?: return expression
+                val callee = expression.symbol
+                val parent = callee.owner.parentAsClass
                 if (!parent.isInner) return expression
 
                 val newCallee = context.declarationFactory.getInnerClassConstructorWithOuterThisParameter(callee.owner)
-                val newCall = IrCallImpl(
-                    expression.startOffset, expression.endOffset, expression.type, newCallee.symbol, newCallee.descriptor,
-                    0, // TODO type arguments map
-                    expression.origin
+                val newCall = IrConstructorCallImpl.fromSymbolOwner(
+                    expression.startOffset, expression.endOffset, expression.type, newCallee.symbol, expression.origin
                 )
 
                 newCall.putValueArgument(0, dispatchReceiver)
@@ -163,7 +161,7 @@ class InnerClassConstructorCallsLowering(val context: BackendContext) : BodyLowe
 
                 val dispatchReceiver = expression.dispatchReceiver ?: return expression
                 val classConstructor = expression.symbol.owner
-                if (!(classConstructor.parent as IrClass).isInner) return expression
+                if (!classConstructor.parentAsClass.isInner) return expression
 
                 val newCallee = context.declarationFactory.getInnerClassConstructorWithOuterThisParameter(classConstructor)
                 val newCall = IrDelegatingConstructorCallImpl(

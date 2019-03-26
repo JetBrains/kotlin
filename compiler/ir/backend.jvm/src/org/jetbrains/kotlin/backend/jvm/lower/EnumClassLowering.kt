@@ -399,7 +399,7 @@ private class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringP
 
         private inner class InEnumEntryInitializer(enumEntry: IrEnumEntry) : InEnumEntry(enumEntry) {
             override fun createConstructorCall(startOffset: Int, endOffset: Int, loweredConstructor: IrConstructor) =
-                IrCallImpl(
+                IrConstructorCallImpl.fromSymbolDescriptor(
                     startOffset,
                     endOffset,
                     loweredConstructor.symbol.owner.parentAsClass.defaultType,

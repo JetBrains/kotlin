@@ -1,46 +1,46 @@
 FILE fqName:<root> fileName:/kt28456.kt
   CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
-    CONSTRUCTOR visibility:public <> () returnType:<root>.A [primary]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A 
+    CONSTRUCTOR visibility:public <> () returnType:<root>.A [primary] 
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]'
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
       overridden:
         public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  FUN name:get visibility:public modality:FINAL <> (xs:kotlin.Int) returnType:kotlin.Int
-    VALUE_PARAMETER name:xs index:0 type:kotlin.Int
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+  FUN name:get visibility:public modality:FINAL <> (xs:kotlin.Int) returnType:kotlin.Int 
+    VALUE_PARAMETER name:xs index:0 type:kotlin.Int 
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun get (xs: kotlin.Int): kotlin.Int declared in <root>'
         CONST Int type=kotlin.Int value=0
-  FUN name:set visibility:public modality:FINAL <> (i:kotlin.Int, j:kotlin.Int, v:kotlin.Int) returnType:kotlin.Unit
-    VALUE_PARAMETER name:i index:0 type:kotlin.Int
-    VALUE_PARAMETER name:j index:1 type:kotlin.Int
-    VALUE_PARAMETER name:v index:2 type:kotlin.Int
+  FUN name:set visibility:public modality:FINAL <> (i:kotlin.Int, j:kotlin.Int, v:kotlin.Int) returnType:kotlin.Unit 
+    VALUE_PARAMETER name:i index:0 type:kotlin.Int 
+    VALUE_PARAMETER name:j index:1 type:kotlin.Int 
+    VALUE_PARAMETER name:v index:2 type:kotlin.Int 
     BLOCK_BODY
-  FUN name:testSimpleAssignment visibility:public modality:FINAL <> (a:<root>.A) returnType:kotlin.Unit
-    VALUE_PARAMETER name:a index:0 type:<root>.A
+  FUN name:testSimpleAssignment visibility:public modality:FINAL <> (a:<root>.A) returnType:kotlin.Unit 
+    VALUE_PARAMETER name:a index:0 type:<root>.A 
     BLOCK_BODY
       CALL 'public final fun set (i: kotlin.Int, j: kotlin.Int, v: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         i: CONST Int type=kotlin.Int value=1
         j: CONST Int type=kotlin.Int value=2
         v: CONST Int type=kotlin.Int value=0
-  FUN name:testPostfixIncrement visibility:public modality:FINAL <> (a:<root>.A) returnType:kotlin.Int
-    VALUE_PARAMETER name:a index:0 type:<root>.A
+  FUN name:testPostfixIncrement visibility:public modality:FINAL <> (a:<root>.A) returnType:kotlin.Int 
+    VALUE_PARAMETER name:a index:0 type:<root>.A 
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testPostfixIncrement (a: <root>.A): kotlin.Int declared in <root>'
         BLOCK type=kotlin.Int origin=null
-          VAR name:<unary> type:kotlin.Int [val]
+          VAR name:<unary> type:kotlin.Int [val] 
             ERROR_CALL 'Cannot bind 2 arguments to get call with 1 parameters' type=kotlin.Int
               CONST Int type=kotlin.Int value=1
               CONST Int type=kotlin.Int value=2
@@ -50,7 +50,7 @@ FILE fqName:<root> fileName:/kt28456.kt
             v: ERROR_CALL 'Unresolved reference: <Unresolved name: inc>#' type=IrErrorType
               GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.testPostfixIncrement' type=kotlin.Int origin=null
           GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.testPostfixIncrement' type=kotlin.Int origin=null
-  FUN name:testCompoundAssignment visibility:public modality:FINAL <> (a:<root>.A) returnType:kotlin.Unit
-    VALUE_PARAMETER name:a index:0 type:<root>.A
+  FUN name:testCompoundAssignment visibility:public modality:FINAL <> (a:<root>.A) returnType:kotlin.Unit 
+    VALUE_PARAMETER name:a index:0 type:<root>.A 
     BLOCK_BODY
       ERROR_CALL 'FirArraySetCall (resolve isn't supported yet)' type=kotlin.Unit

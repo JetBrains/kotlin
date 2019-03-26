@@ -1,7 +1,7 @@
 FILE fqName:<root> fileName:/whileDoWhile.kt
-  FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit
+  FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
-      VAR name:x type:kotlin.Int [var]
+      VAR name:x type:kotlin.Int [var] 
         CONST Int type=kotlin.Int value=0
       WHILE label=null origin=WHILE_LOOP
         condition: ERROR_CALL 'Comparison of arguments with different types: kotlin/Int, kotlin/Unit' type=kotlin.Boolean
@@ -9,14 +9,14 @@ FILE fqName:<root> fileName:/whileDoWhile.kt
       WHILE label=null origin=WHILE_LOOP
         condition: ERROR_CALL 'Comparison of arguments with different types: kotlin/Int, kotlin/Unit' type=kotlin.Boolean
         body: BLOCK type=kotlin.Int origin=null
-          VAR name:<unary> type:kotlin.Int [val]
+          VAR name:<unary> type:kotlin.Int [val] 
             GET_VAR 'var x: kotlin.Int [var] declared in <root>.test' type=kotlin.Int origin=null
           ERROR_CALL 'Unresolved reference: R|<local>/x|' type=IrErrorType
           GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.test' type=kotlin.Int origin=null
       WHILE label=null origin=WHILE_LOOP
         condition: ERROR_CALL 'Comparison of arguments with different types: kotlin/Int, kotlin/Unit' type=kotlin.Boolean
         body: BLOCK type=kotlin.Int origin=null
-          VAR name:<unary> type:kotlin.Int [val]
+          VAR name:<unary> type:kotlin.Int [val] 
             GET_VAR 'var x: kotlin.Int [var] declared in <root>.test' type=kotlin.Int origin=null
           ERROR_CALL 'Unresolved reference: R|<local>/x|' type=IrErrorType
           GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.test' type=kotlin.Int origin=null
@@ -25,21 +25,21 @@ FILE fqName:<root> fileName:/whileDoWhile.kt
         condition: ERROR_CALL 'Comparison of arguments with different types: kotlin/Int, kotlin/Unit' type=kotlin.Boolean
       DO_WHILE label=null origin=DO_WHILE_LOOP
         body: BLOCK type=kotlin.Int origin=null
-          VAR name:<unary> type:kotlin.Int [val]
+          VAR name:<unary> type:kotlin.Int [val] 
             GET_VAR 'var x: kotlin.Int [var] declared in <root>.test' type=kotlin.Int origin=null
           ERROR_CALL 'Unresolved reference: R|<local>/x|' type=IrErrorType
           GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.test' type=kotlin.Int origin=null
         condition: ERROR_CALL 'Comparison of arguments with different types: kotlin/Int, kotlin/Unit' type=kotlin.Boolean
       DO_WHILE label=null origin=DO_WHILE_LOOP
         body: BLOCK type=kotlin.Int origin=null
-          VAR name:<unary> type:kotlin.Int [val]
+          VAR name:<unary> type:kotlin.Int [val] 
             GET_VAR 'var x: kotlin.Int [var] declared in <root>.test' type=kotlin.Int origin=null
           ERROR_CALL 'Unresolved reference: R|<local>/x|' type=IrErrorType
           GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.test' type=kotlin.Int origin=null
         condition: ERROR_CALL 'Comparison of arguments with different types: kotlin/Int, kotlin/Unit' type=kotlin.Boolean
-  FUN name:testSmartcastInCondition visibility:public modality:FINAL <> () returnType:kotlin.Unit
+  FUN name:testSmartcastInCondition visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
-      VAR name:a type:kotlin.Any? [val]
+      VAR name:a type:kotlin.Any? [val] 
         CONST Null type=kotlin.Nothing? value=null
       WHEN type=kotlin.Unit origin=IF
         BRANCH

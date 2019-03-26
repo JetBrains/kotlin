@@ -1,57 +1,57 @@
 FILE fqName:<root> fileName:/augmentedAssignment2.kt
   CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
-    CONSTRUCTOR visibility:public <> () returnType:<root>.A [primary]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A 
+    CONSTRUCTOR visibility:public <> () returnType:<root>.A [primary] 
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]'
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
       overridden:
         public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  FUN name:plusAssign visibility:public modality:FINAL <> (s:kotlin.String) returnType:kotlin.Unit
-    VALUE_PARAMETER name:s index:0 type:kotlin.String
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+  FUN name:plusAssign visibility:public modality:FINAL <> (s:kotlin.String) returnType:kotlin.Unit 
+    VALUE_PARAMETER name:s index:0 type:kotlin.String 
     BLOCK_BODY
-  FUN name:minusAssign visibility:public modality:FINAL <> (s:kotlin.String) returnType:kotlin.Unit
-    VALUE_PARAMETER name:s index:0 type:kotlin.String
+  FUN name:minusAssign visibility:public modality:FINAL <> (s:kotlin.String) returnType:kotlin.Unit 
+    VALUE_PARAMETER name:s index:0 type:kotlin.String 
     BLOCK_BODY
-  FUN name:timesAssign visibility:public modality:FINAL <> (s:kotlin.String) returnType:kotlin.Unit
-    VALUE_PARAMETER name:s index:0 type:kotlin.String
+  FUN name:timesAssign visibility:public modality:FINAL <> (s:kotlin.String) returnType:kotlin.Unit 
+    VALUE_PARAMETER name:s index:0 type:kotlin.String 
     BLOCK_BODY
-  FUN name:divAssign visibility:public modality:FINAL <> (s:kotlin.String) returnType:kotlin.Unit
-    VALUE_PARAMETER name:s index:0 type:kotlin.String
+  FUN name:divAssign visibility:public modality:FINAL <> (s:kotlin.String) returnType:kotlin.Unit 
+    VALUE_PARAMETER name:s index:0 type:kotlin.String 
     BLOCK_BODY
-  FUN name:remAssign visibility:public modality:FINAL <> (s:kotlin.String) returnType:kotlin.Unit
-    VALUE_PARAMETER name:s index:0 type:kotlin.String
+  FUN name:remAssign visibility:public modality:FINAL <> (s:kotlin.String) returnType:kotlin.Unit 
+    VALUE_PARAMETER name:s index:0 type:kotlin.String 
     BLOCK_BODY
-  PROPERTY name:p visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:p type:<root>.A visibility:public [final,static]
+  PROPERTY name:p visibility:public modality:FINAL [val] 
+    FIELD PROPERTY_BACKING_FIELD name:p type:<root>.A visibility:public [final,static] 
       EXPRESSION_BODY
-        CALL 'public constructor <init> () [primary] declared in <root>.A' type=<root>.A origin=null
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-p> visibility:public modality:FINAL <> () returnType:<root>.A
-      correspondingProperty: PROPERTY name:p visibility:public modality:FINAL [val]
+        CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A' type=<root>.A origin=null
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-p> visibility:public modality:FINAL <> () returnType:<root>.A 
+      correspondingProperty: PROPERTY name:p visibility:public modality:FINAL [val] 
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-p> (): <root>.A declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:<root>.A visibility:public [final,static] ' type=<root>.A origin=null
-  FUN name:testVariable visibility:public modality:FINAL <> () returnType:kotlin.Unit
+  FUN name:testVariable visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
-      VAR name:a type:<root>.A [val]
-        CALL 'public constructor <init> () [primary] declared in <root>.A' type=<root>.A origin=null
+      VAR name:a type:<root>.A [val] 
+        CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A' type=<root>.A origin=null
       ERROR_CALL 'Unresolved reference: R|<local>/a|' type=IrErrorType
       ERROR_CALL 'Unresolved reference: R|<local>/a|' type=IrErrorType
       ERROR_CALL 'Unresolved reference: R|<local>/a|' type=IrErrorType
       ERROR_CALL 'Unresolved reference: R|<local>/a|' type=IrErrorType
       ERROR_CALL 'Unresolved reference: R|<local>/a|' type=IrErrorType
-  FUN name:testProperty visibility:public modality:FINAL <> () returnType:kotlin.Unit
+  FUN name:testProperty visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
       SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:<root>.A visibility:public [final,static] ' type=<root>.A origin=null
         value: CONST String type=kotlin.String value="+="

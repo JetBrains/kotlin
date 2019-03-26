@@ -1,78 +1,78 @@
 FILE fqName:<root> fileName:/delegatedProperties.kt
-  PROPERTY name:test1 visibility:public modality:FINAL [delegated,val]
-    FIELD PROPERTY_BACKING_FIELD name:test1 type:IrErrorType visibility:public [final,static]
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:IrErrorType
-      correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL [delegated,val]
+  PROPERTY name:test1 visibility:public modality:FINAL [delegated,val] 
+    FIELD PROPERTY_BACKING_FIELD name:test1 type:IrErrorType visibility:public [final,static] 
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:IrErrorType 
+      correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL [delegated,val] 
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test1> (): IrErrorType declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test1 type:IrErrorType visibility:public [final,static] ' type=IrErrorType origin=null
   CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
-    CONSTRUCTOR visibility:public <> (map:kotlin.collections.MutableMap<kotlin.String, kotlin.Any>) returnType:<root>.C [primary]
-      VALUE_PARAMETER name:map index:0 type:kotlin.collections.MutableMap<kotlin.String, kotlin.Any>
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C 
+    CONSTRUCTOR visibility:public <> (map:kotlin.collections.MutableMap<kotlin.String, kotlin.Any>) returnType:<root>.C [primary] 
+      VALUE_PARAMETER name:map index:0 type:kotlin.collections.MutableMap<kotlin.String, kotlin.Any> 
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]'
-    PROPERTY name:map visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.MutableMap<kotlin.String, kotlin.Any> visibility:public [final]
+    PROPERTY name:map visibility:public modality:FINAL [val] 
+      FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.MutableMap<kotlin.String, kotlin.Any> visibility:public [final] 
         EXPRESSION_BODY
           GET_VAR 'map: kotlin.collections.MutableMap<kotlin.String, kotlin.Any> declared in <root>.C.<init>' type=kotlin.collections.MutableMap<kotlin.String, kotlin.Any> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-map> visibility:public modality:FINAL <> ($this:<root>.C) returnType:kotlin.collections.MutableMap<kotlin.String, kotlin.Any>
-        correspondingProperty: PROPERTY name:map visibility:public modality:FINAL [val]
-        $this: VALUE_PARAMETER name:<this> type:<root>.C
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-map> visibility:public modality:FINAL <> ($this:<root>.C) returnType:kotlin.collections.MutableMap<kotlin.String, kotlin.Any> 
+        correspondingProperty: PROPERTY name:map visibility:public modality:FINAL [val] 
+        $this: VALUE_PARAMETER name:<this> type:<root>.C 
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-map> (): kotlin.collections.MutableMap<kotlin.String, kotlin.Any> declared in <root>.C'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.MutableMap<kotlin.String, kotlin.Any> visibility:public [final] ' type=kotlin.collections.MutableMap<kotlin.String, kotlin.Any> origin=null
               receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-map>' type=<root>.C origin=null
-    PROPERTY name:test2 visibility:public modality:FINAL [delegated,val]
-      FIELD PROPERTY_BACKING_FIELD name:test2 type:IrErrorType visibility:public [final]
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> ($this:<root>.C) returnType:IrErrorType
-        correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL [delegated,val]
-        $this: VALUE_PARAMETER name:<this> type:<root>.C
+    PROPERTY name:test2 visibility:public modality:FINAL [delegated,val] 
+      FIELD PROPERTY_BACKING_FIELD name:test2 type:IrErrorType visibility:public [final] 
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> ($this:<root>.C) returnType:IrErrorType 
+        correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL [delegated,val] 
+        $this: VALUE_PARAMETER name:<this> type:<root>.C 
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-test2> (): IrErrorType declared in <root>.C'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test2 type:IrErrorType visibility:public [final] ' type=IrErrorType origin=null
               receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-test2>' type=<root>.C origin=null
-    PROPERTY name:test3 visibility:public modality:FINAL [delegated,var]
-      FIELD PROPERTY_BACKING_FIELD name:test3 type:IrErrorType visibility:public
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL <> ($this:<root>.C) returnType:IrErrorType
-        correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL [delegated,var]
-        $this: VALUE_PARAMETER name:<this> type:<root>.C
+    PROPERTY name:test3 visibility:public modality:FINAL [delegated,var] 
+      FIELD PROPERTY_BACKING_FIELD name:test3 type:IrErrorType visibility:public 
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL <> ($this:<root>.C) returnType:IrErrorType 
+        correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL [delegated,var] 
+        $this: VALUE_PARAMETER name:<this> type:<root>.C 
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-test3> (): IrErrorType declared in <root>.C'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test3 type:IrErrorType visibility:public ' type=IrErrorType origin=null
               receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-test3>' type=<root>.C origin=null
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-test3> visibility:public modality:FINAL <> ($this:<root>.C, <set-?>:IrErrorType) returnType:kotlin.Unit
-        correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL [delegated,var]
-        $this: VALUE_PARAMETER name:<this> type:<root>.C
-        VALUE_PARAMETER name:<set-?> index:0 type:IrErrorType
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-test3> visibility:public modality:FINAL <> ($this:<root>.C, <set-?>:IrErrorType) returnType:kotlin.Unit 
+        correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL [delegated,var] 
+        $this: VALUE_PARAMETER name:<this> type:<root>.C 
+        VALUE_PARAMETER name:<set-?> index:0 type:IrErrorType 
         BLOCK_BODY
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test3 type:IrErrorType visibility:public ' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<set-test3>' type=<root>.C origin=null
             value: GET_VAR '<set-?>: IrErrorType declared in <root>.C.<set-test3>' type=IrErrorType origin=null
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
       overridden:
         public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  PROPERTY name:test4 visibility:public modality:FINAL [delegated,var]
-    FIELD PROPERTY_BACKING_FIELD name:test4 type:IrErrorType visibility:public [static]
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test4> visibility:public modality:FINAL <> () returnType:IrErrorType
-      correspondingProperty: PROPERTY name:test4 visibility:public modality:FINAL [delegated,var]
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+  PROPERTY name:test4 visibility:public modality:FINAL [delegated,var] 
+    FIELD PROPERTY_BACKING_FIELD name:test4 type:IrErrorType visibility:public [static] 
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test4> visibility:public modality:FINAL <> () returnType:IrErrorType 
+      correspondingProperty: PROPERTY name:test4 visibility:public modality:FINAL [delegated,var] 
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test4> (): IrErrorType declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test4 type:IrErrorType visibility:public [static] ' type=IrErrorType origin=null
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-test4> visibility:public modality:FINAL <> (<set-?>:IrErrorType) returnType:kotlin.Unit
-      correspondingProperty: PROPERTY name:test4 visibility:public modality:FINAL [delegated,var]
-      VALUE_PARAMETER name:<set-?> index:0 type:IrErrorType
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-test4> visibility:public modality:FINAL <> (<set-?>:IrErrorType) returnType:kotlin.Unit 
+      correspondingProperty: PROPERTY name:test4 visibility:public modality:FINAL [delegated,var] 
+      VALUE_PARAMETER name:<set-?> index:0 type:IrErrorType 
       BLOCK_BODY
         SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test4 type:IrErrorType visibility:public [static] ' type=kotlin.Unit origin=null
           value: GET_VAR '<set-?>: IrErrorType declared in <root>.<set-test4>' type=IrErrorType origin=null

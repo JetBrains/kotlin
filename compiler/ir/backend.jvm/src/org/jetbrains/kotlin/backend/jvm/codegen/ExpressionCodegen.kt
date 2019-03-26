@@ -268,6 +268,9 @@ class ExpressionCodegen(
 
     override fun visitCall(expression: IrCall, data: BlockInfo): PromisedValue {
         expression.markLineNumber(startOffset = true)
+        if (expression.descriptor is ConstructorDescriptor) {
+            throw AssertionError("IrCall with ConstructorDescriptor: ${expression.javaClass.simpleName}")
+        }
         return generateCall(expression, expression.superQualifier, data)
     }
 
@@ -318,7 +321,8 @@ class ExpressionCodegen(
         receiver?.apply {
             callGenerator.genValueAndPut(
                 null, this,
-                if (isSuperCall) receiver.asmType else callable.dispatchReceiverType!!,
+                if (isSuperCall) receiver.asmType else callable.dispatchReceiverType
+                    ?: throw AssertionError("No dispatch receiver type: ${expression.render()}"),
                 -1, this@ExpressionCodegen, data
             )
         }
@@ -1045,8 +1049,7 @@ class ExpressionCodegen(
     private fun resolveToCallable(irCall: IrMemberAccessExpression, isSuper: Boolean): Callable {
         var descriptor = irCall.descriptor
         if (descriptor is TypeAliasConstructorDescriptor) {
-            //TODO where is best to unwrap?
-            descriptor = descriptor.underlyingConstructorDescriptor
+            throw AssertionError("TypeAliasConstructorDescriptor should be unwrapped in psi2ir: $descriptor")
         }
         if (descriptor is PropertyDescriptor) {
             descriptor = descriptor.getter!!

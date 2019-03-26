@@ -1,7 +1,7 @@
 FILE fqName:<root> fileName:/kt27933.kt
-  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
+  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String 
     BLOCK_BODY
-      VAR name:r type:kotlin.String [var]
+      VAR name:r type:kotlin.String [var] 
         CONST String type=kotlin.String value=""
       WHEN type=kotlin.String origin=IF
         BRANCH

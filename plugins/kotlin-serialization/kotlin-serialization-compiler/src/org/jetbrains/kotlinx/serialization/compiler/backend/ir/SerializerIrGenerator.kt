@@ -132,7 +132,7 @@ class SerializerIrGenerator(val irClass: IrClass, override val compilerContext: 
     }
 
     private fun IrBlockBodyBuilder.copySerialInfoAnnotationsToDescriptor(
-        annotations: List<IrCall>,
+        annotations: List<IrConstructorCall>,
         receiver: IrExpression,
         method: IrFunctionSymbol
     ) {

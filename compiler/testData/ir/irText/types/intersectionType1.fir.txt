@@ -1,54 +1,56 @@
 FILE fqName:<root> fileName:/intersectionType1.kt
   CLASS CLASS name:In modality:FINAL visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.In
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.In 
     TYPE_PARAMETER name:I index:0 variance:in superTypes:[]
-    CONSTRUCTOR visibility:public <> () returnType:<root>.In<I of <root>.In> [primary]
+    CONSTRUCTOR visibility:public <> () returnType:<root>.In<I of <root>.In> [primary] 
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:In modality:FINAL visibility:public superTypes:[kotlin.Any]'
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
       overridden:
         public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  FUN name:select visibility:public modality:FINAL <S> (x:S of <root>.select, y:S of <root>.select) returnType:S of <root>.select
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+  FUN name:select visibility:public modality:FINAL <S> (x:S of <root>.select, y:S of <root>.select) returnType:S of <root>.select 
     TYPE_PARAMETER name:S index:0 variance: superTypes:[]
-    VALUE_PARAMETER name:x index:0 type:S of <root>.select
-    VALUE_PARAMETER name:y index:1 type:S of <root>.select
+    VALUE_PARAMETER name:x index:0 type:S of <root>.select 
+    VALUE_PARAMETER name:y index:1 type:S of <root>.select 
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun select <S> (x: S of <root>.select, y: S of <root>.select): S of <root>.select declared in <root>'
         GET_VAR 'x: S of <root>.select declared in <root>.select' type=S of <root>.select origin=null
-  FUN name:foo visibility:public modality:FINAL <T> (a:kotlin.Array<<root>.In<T of <root>.foo>>, b:kotlin.Array<<root>.In<kotlin.String>>) returnType:kotlin.Boolean
+  FUN name:foo visibility:public modality:FINAL <T> (a:kotlin.Array<<root>.In<T of <root>.foo>>, b:kotlin.Array<<root>.In<kotlin.String>>) returnType:kotlin.Boolean 
     TYPE_PARAMETER name:T index:0 variance: superTypes:[]
-    VALUE_PARAMETER name:a index:0 type:kotlin.Array<<root>.In<T of <root>.foo>>
-    VALUE_PARAMETER name:b index:1 type:kotlin.Array<<root>.In<kotlin.String>>
+    VALUE_PARAMETER name:a index:0 type:kotlin.Array<<root>.In<T of <root>.foo>> 
+    VALUE_PARAMETER name:b index:1 type:kotlin.Array<<root>.In<kotlin.String>> 
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun foo <T> (a: kotlin.Array<<root>.In<T of <root>.foo>>, b: kotlin.Array<<root>.In<kotlin.String>>): kotlin.Boolean declared in <root>'
         CALL 'public final fun ofType <K> (y: kotlin.Any?): kotlin.Boolean [inline] declared in <root>' type=kotlin.Boolean origin=null
           y: CONST Boolean type=kotlin.Boolean value=true
-  FUN name:ofType visibility:public modality:FINAL <K> (y:kotlin.Any?) returnType:kotlin.Boolean [inline]
+  FUN name:ofType visibility:public modality:FINAL <K> (y:kotlin.Any?) returnType:kotlin.Boolean [inline] 
     TYPE_PARAMETER name:K index:0 variance: superTypes:[]
-    VALUE_PARAMETER name:y index:0 type:kotlin.Any?
+    VALUE_PARAMETER name:y index:0 type:kotlin.Any? 
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun ofType <K> (y: kotlin.Any?): kotlin.Boolean [inline] declared in <root>'
         TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=K of <root>.ofType
           GET_VAR 'y: kotlin.Any? declared in <root>.ofType' type=kotlin.Any? origin=null
-  FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit
+  FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
-      VAR name:a1 type:kotlin.Array<T of <uninitialized parent>> [val]
+      VAR name:a1 type:kotlin.Array<T of <uninitialized parent>> [val] 
         CALL 'public final fun arrayOf (elements: kotlin.Array<out T of <uninitialized parent>>): kotlin.Array<T of <uninitialized parent>> [inline] declared in kotlin' type=kotlin.Array<T of <uninitialized parent>> origin=null
-          elements: CALL 'public constructor <init> () [primary] declared in <root>.In' type=<root>.In<I of <root>.In> origin=null
-      VAR name:a2 type:kotlin.Array<T of <uninitialized parent>> [val]
+          elements: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.In' type=<root>.In<I of <root>.In> origin=null
+            <class: I>: <none>
+      VAR name:a2 type:kotlin.Array<T of <uninitialized parent>> [val] 
         CALL 'public final fun arrayOf (elements: kotlin.Array<out T of <uninitialized parent>>): kotlin.Array<T of <uninitialized parent>> [inline] declared in kotlin' type=kotlin.Array<T of <uninitialized parent>> origin=null
-          elements: CALL 'public constructor <init> () [primary] declared in <root>.In' type=<root>.In<I of <root>.In> origin=null
+          elements: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.In' type=<root>.In<I of <root>.In> origin=null
+            <class: I>: <none>
       CALL 'public final fun foo <T> (a: kotlin.Array<<root>.In<T of <root>.foo>>, b: kotlin.Array<<root>.In<kotlin.String>>): kotlin.Boolean declared in <root>' type=kotlin.Boolean origin=null
         <T>: <none>
         a: GET_VAR 'val a1: kotlin.Array<T of <uninitialized parent>> [val] declared in <root>.test' type=kotlin.Array<T of <uninitialized parent>> origin=null

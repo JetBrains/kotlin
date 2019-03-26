@@ -1,56 +1,56 @@
 FILE fqName:<root> fileName:/nonLocalReturn.kt
-  FUN name:test0 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+  FUN name:test0 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
       ERROR_CALL 'Unresolved reference: <Ambiguity: run, [kotlin/run, kotlin/run]>#' type=IrErrorType
         BLOCK type=IrErrorType origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:IrErrorType
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:IrErrorType 
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='local final fun <anonymous> (): IrErrorType declared in <root>.test0'
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): IrErrorType declared in <root>.test0'
                   GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
           FUNCTION_REFERENCE 'local final fun <anonymous> (): IrErrorType declared in <root>.test0' type=IrErrorType origin=LAMBDA
-  FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+  FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
       ERROR_CALL 'Unresolved reference: <Ambiguity: run, [kotlin/run, kotlin/run]>#' type=IrErrorType
         BLOCK type=IrErrorType origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:IrErrorType
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:IrErrorType 
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='local final fun <anonymous> (): IrErrorType declared in <root>.test1'
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): IrErrorType declared in <root>.test1'
                   GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
           FUNCTION_REFERENCE 'local final fun <anonymous> (): IrErrorType declared in <root>.test1' type=IrErrorType origin=LAMBDA
-  FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+  FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
       ERROR_CALL 'Unresolved reference: <Ambiguity: run, [kotlin/run, kotlin/run]>#' type=IrErrorType
         BLOCK type=IrErrorType origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:IrErrorType
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:IrErrorType 
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='local final fun <anonymous> (): IrErrorType declared in <root>.test2'
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): IrErrorType declared in <root>.test2'
                   GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
           FUNCTION_REFERENCE 'local final fun <anonymous> (): IrErrorType declared in <root>.test2' type=IrErrorType origin=LAMBDA
-  FUN name:test3 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+  FUN name:test3 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
       ERROR_CALL 'Unresolved reference: <Ambiguity: run, [kotlin/run, kotlin/run]>#' type=IrErrorType
         BLOCK type=IrErrorType origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:IrErrorType
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:IrErrorType 
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='local final fun <anonymous> (): IrErrorType declared in <root>.test3'
                 ERROR_CALL 'Unresolved reference: <Ambiguity: run, [kotlin/run, kotlin/run]>#' type=IrErrorType
                   BLOCK type=IrErrorType origin=LAMBDA
-                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:IrErrorType
+                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:IrErrorType 
                       BLOCK_BODY
                         RETURN type=kotlin.Nothing from='local final fun <anonymous> (): IrErrorType declared in <root>.test3.<anonymous>'
                           RETURN type=kotlin.Nothing from='local final fun <anonymous> (): IrErrorType declared in <root>.test3.<anonymous>'
                             GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
                     FUNCTION_REFERENCE 'local final fun <anonymous> (): IrErrorType declared in <root>.test3.<anonymous>' type=IrErrorType origin=LAMBDA
           FUNCTION_REFERENCE 'local final fun <anonymous> (): IrErrorType declared in <root>.test3' type=IrErrorType origin=LAMBDA
-  FUN name:testLrmFoo1 visibility:public modality:FINAL <> (ints:kotlin.collections.List<kotlin.Int>) returnType:kotlin.Unit
-    VALUE_PARAMETER name:ints index:0 type:kotlin.collections.List<kotlin.Int>
+  FUN name:testLrmFoo1 visibility:public modality:FINAL <> (ints:kotlin.collections.List<kotlin.Int>) returnType:kotlin.Unit 
+    VALUE_PARAMETER name:ints index:0 type:kotlin.collections.List<kotlin.Int> 
     BLOCK_BODY
       ERROR_CALL 'Unresolved reference: <Ambiguity: forEach, [kotlin/collections/forEach, kotlin/collections/forEach, kotlin/collections/forEach, kotlin/collections/forEach, kotlin/collections/forEach, kotlin/collections/forEach, kotlin/collections/forEach, kotlin/collections/forEach, kotlin/collections/forEach, kotlin/collections/forEach, kotlin/collections/forEach, kotlin/collections/forEach, kotlin/collections/forEach, kotlin/collections/forEach, kotlin/collections/forEach, kotlin/collections/forEach, kotlin/sequences/forEach, kotlin/text/forEach]>#' type=IrErrorType
         BLOCK type=IrErrorType origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:IrErrorType
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:IrErrorType 
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='local final fun <anonymous> (): IrErrorType declared in <root>.testLrmFoo1'
                 BLOCK type=IrErrorType origin=null
@@ -64,12 +64,12 @@ FILE fqName:<root> fileName:/nonLocalReturn.kt
                   ERROR_CALL 'Unresolved reference: <Ambiguity: print, [kotlin/io/print, kotlin/io/print, kotlin/io/print, kotlin/io/print, kotlin/io/print, kotlin/io/print, kotlin/io/print, kotlin/io/print, kotlin/io/print, kotlin/io/print]>#' type=IrErrorType
                     ERROR_CALL 'Unresolved reference: <Unresolved name: it>#' type=IrErrorType
           FUNCTION_REFERENCE 'local final fun <anonymous> (): IrErrorType declared in <root>.testLrmFoo1' type=IrErrorType origin=LAMBDA
-  FUN name:testLrmFoo2 visibility:public modality:FINAL <> (ints:kotlin.collections.List<kotlin.Int>) returnType:kotlin.Unit
-    VALUE_PARAMETER name:ints index:0 type:kotlin.collections.List<kotlin.Int>
+  FUN name:testLrmFoo2 visibility:public modality:FINAL <> (ints:kotlin.collections.List<kotlin.Int>) returnType:kotlin.Unit 
+    VALUE_PARAMETER name:ints index:0 type:kotlin.collections.List<kotlin.Int> 
     BLOCK_BODY
       ERROR_CALL 'Unresolved reference: <Ambiguity: forEach, [kotlin/collections/forEach, kotlin/collections/forEach, kotlin/collections/forEach, kotlin/collections/forEach, kotlin/collections/forEach, kotlin/collections/forEach, kotlin/collections/forEach, kotlin/collections/forEach, kotlin/collections/forEach, kotlin/collections/forEach, kotlin/collections/forEach, kotlin/collections/forEach, kotlin/collections/forEach, kotlin/collections/forEach, kotlin/collections/forEach, kotlin/collections/forEach, kotlin/sequences/forEach, kotlin/text/forEach]>#' type=IrErrorType
         BLOCK type=IrErrorType origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:IrErrorType
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:IrErrorType 
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='local final fun <anonymous> (): IrErrorType declared in <root>.testLrmFoo2'
                 BLOCK type=IrErrorType origin=null
