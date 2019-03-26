@@ -46,6 +46,8 @@ internal class TestRunner(val suites: List<TestSuite>, args: Array<String>) {
                         "--ktest_filter" -> setGTestFilterFromArg(value)
                         "--ktest_regex_filter" -> setRegexFilterFromArg(value, true)
                         "--ktest_negative_regex_filter" -> setRegexFilterFromArg(value, false)
+                        "--ktest_gradle_filter" -> setGradleFilterFromArg(value, true)
+                        "--ktest_negative_gradle_filter" -> setGradleFilterFromArg(value, false)
                         "--ktest_repeat",
                         "--gtest_repeat" -> iterations = value.toIntOrNull() ?: throw IllegalArgumentException("Cannot parse number: $value")
                         else -> if (key.startsWith("--ktest_")) {
@@ -61,7 +63,7 @@ internal class TestRunner(val suites: List<TestSuite>, args: Array<String>) {
     inner class FilteredSuite(val innerSuite: TestSuite) : TestSuite by innerSuite {
 
         private val TestCase.matchFilters: Boolean
-            get() = filters.map { it(this) }.all { it }
+            get() = filters.all { it(this) }
 
         override val size: Int
             get() = testCases.size
@@ -146,6 +148,29 @@ internal class TestRunner(val suites: List<TestSuite>, args: Array<String>) {
         }
     }
 
+    private fun setGradleFilterFromArg(filter: String, positive: Boolean = true) {
+        if (filter.isEmpty()) {
+            throw IllegalArgumentException("Empty filter")
+        }
+
+        val patterns = filter.split(',').map { pattern ->
+            pattern.split('*').joinToString(separator = ".*") { Regex.escape(it) }.toRegex()
+        }
+
+        fun TestCase.matches(pattern: Regex) =
+            prettyName.matches(pattern) || suite.name.matches(pattern)
+
+        if (positive) {
+            filters.add { testCase ->
+                patterns.any { testCase.matches(it) }
+            }
+        } else {
+            filters.add { testCase ->
+                patterns.none { testCase.matches(it) }
+            }
+        }
+    }
+
     private fun setLoggerFromArg(logger: String) {
         when (logger.toUpperCase()) {
             "GTEST" -> this.logger = GTestLogger()
@@ -173,6 +198,16 @@ internal class TestRunner(val suites: List<TestSuite>, args: Array<String>) {
             |
             |--ktest_negative_regex_filter=PATTERN               - Run only the tests whose name doesn't match the pattern.
             |                                                      The pattern is a Kotlin regular expression.
+            |
+            |--ktest_gradle_filter=PATTERNS                      - Run only the tests which matches the at least one of the patterns.
+            |                                                      '*' matches any number of characters, ',' separates patterns.
+            |                                                      A test matches a pattern if:
+            |                                                          - its name matches the pattern or
+            |                                                          - its class name matches the pattern.
+            |
+            |--ktest_negative_gradle_filter=PATTERNS             - Don't run tests if they match at least one of the patterns.
+            |                                                      The pattern is the same as for the ktest_gradle_filter option.
+            |
             |--gtest_repeat=COUNT
             |--ktest_repeat=COUNT                                - Run the tests repeatedly.
             |                                                      Use a negative count to repeat forever.
