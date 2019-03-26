@@ -224,6 +224,11 @@ public class OutOfBlockModificationTestGenerated extends AbstractOutOfBlockModif
         runTest("idea/testData/codeInsight/outOfBlock/scriptInLambdaExpression.kts");
     }
 
+    @TestMetadata("scriptTopLevelCallExpression.kts")
+    public void testScriptTopLevelCallExpression() throws Exception {
+        runTest("idea/testData/codeInsight/outOfBlock/scriptTopLevelCallExpression.kts");
+    }
+
     @TestMetadata("scriptTopLevelExpression.kts")
     public void testScriptTopLevelExpression() throws Exception {
         runTest("idea/testData/codeInsight/outOfBlock/scriptTopLevelExpression.kts");
