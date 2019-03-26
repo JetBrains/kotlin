@@ -47,7 +47,7 @@ class IrCallImpl(
     IrCall {
 
     init {
-        if (symbol is IrClassSymbol) {
+        if (descriptor is ConstructorDescriptor) {
             throw AssertionError("Should be IrConstructorCall: $descriptor")
         }
     }
