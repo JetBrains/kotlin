@@ -57,6 +57,7 @@ abstract class ScriptDependenciesLoader(protected val project: Project) {
                 file.addScriptDependenciesNotificationPanel(result, project) {
                     saveDependencies(it, file, scriptDef)
                     attachReportsIfChanged(it, file, scriptDef)
+                    submitMakeRootsChange()
                 }
             } else {
                 saveDependencies(result, file, scriptDef)
