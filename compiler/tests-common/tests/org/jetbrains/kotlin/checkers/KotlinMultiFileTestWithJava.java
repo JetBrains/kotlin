@@ -43,13 +43,6 @@ public abstract class KotlinMultiFileTestWithJava<M, F> extends KtUsefulTestCase
         coroutinesPackage = "";
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-        if (javaFilesDir != null) FileUtil.delete(javaFilesDir);
-        if (kotlinSourceRoot != null) FileUtil.delete(kotlinSourceRoot);
-        super.tearDown();
-    }
-
     public class ModuleAndDependencies {
         final M module;
         final List<String> dependencies;
