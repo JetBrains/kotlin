@@ -268,7 +268,6 @@ internal class GradleKotlinCompilerWork @Inject constructor(
             outputFiles = outputFiles,
             multiModuleICSettings = icEnv.multiModuleICSettings,
             modulesInfo = incrementalModuleInfo!!,
-            classpathFqNamesHistory = icEnv.classpathFqNamesHistory,
             kotlinScriptExtensions = kotlinScriptExtensions
         )
 

@@ -57,11 +57,16 @@ open class KaptContext(val options: KaptOptions, val withJdk: Boolean, val logge
         KaptJavaCompiler.preRegister(context)
 
         cacheManager = options.incrementalCache?.let {
-            JavaClassCacheManager(it, options.classpathFqNamesHistory!!)
+            JavaClassCacheManager(it)
         }
-        sourcesToReprocess = cacheManager?.invalidateAndGetDirtyFiles(
-            options.changedFiles.filter { it.extension == "java" }
-        ) ?: SourcesToReprocess.FullRebuild
+        if (options.processIncrementally) {
+            sourcesToReprocess =
+                cacheManager?.invalidateAndGetDirtyFiles(
+                    options.changedFiles, options.classpathChanges
+                ) ?: SourcesToReprocess.FullRebuild
+        } else {
+            sourcesToReprocess = SourcesToReprocess.FullRebuild
+        }
 
         javacOptions = Options.instance(context).apply {
             for ((key, value) in options.processingOptions) {
@@ -88,7 +93,7 @@ open class KaptContext(val options: KaptOptions, val withJdk: Boolean, val logge
                 put("accessInternalAPI", "true")
             }
 
-            val compileClasspath = if (sourcesToReprocess is SourcesToReprocess.FullRebuild || options.changedFiles.isEmpty()) {
+            val compileClasspath = if (sourcesToReprocess is SourcesToReprocess.FullRebuild) {
                 options.compileClasspath
             } else {
                 options.compileClasspath + options.compiledSources

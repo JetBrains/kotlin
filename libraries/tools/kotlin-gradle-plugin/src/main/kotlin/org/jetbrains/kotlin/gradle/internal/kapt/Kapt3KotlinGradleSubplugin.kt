@@ -234,9 +234,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         )
 
         val kaptGenerateStubsTask = context.createKaptGenerateStubsTask()
-        val kaptTask = context.createKaptKotlinTask(
-            useWorkerApi = project.isUseWorkerApi(),
-            classpathHistoryDir = kaptGenerateStubsTask.getClasspathFqNamesHistoryDir())
+        val kaptTask = context.createKaptKotlinTask(useWorkerApi = project.isUseWorkerApi())
 
         kaptGenerateStubsTask.source(*kaptConfigurations.toTypedArray())
 
@@ -374,7 +372,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         }
     }
 
-    private fun Kapt3SubpluginContext.createKaptKotlinTask(useWorkerApi: Boolean, classpathHistoryDir: File? = null): KaptTask {
+    private fun Kapt3SubpluginContext.createKaptKotlinTask(useWorkerApi: Boolean): KaptTask {
         val taskClass = if (useWorkerApi) KaptWithoutKotlincTask::class.java else KaptWithKotlincTask::class.java
         val kaptTask = project.tasks.create(getKaptTaskName("kapt"), taskClass)
 
@@ -391,7 +389,6 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         kaptTask.isIncremental = project.isIncrementalKapt()
         if (kaptTask.isIncremental) {
             kaptTask.incAptCache = getKaptIncrementalAnnotationProcessingCache()
-            kaptTask.classpathDirtyFqNamesHistoryDir = project.files(classpathHistoryDir)
         }
 
         kotlinCompilation?.run {
@@ -422,10 +419,6 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
                 kaptTask.pluginOptions.addPluginArgument(
                     getCompilerPluginId(),
                     SubpluginOption("incrementalCache", kaptTask.incAptCache!!.absolutePath))
-
-                kaptTask.pluginOptions.addPluginArgument(
-                    getCompilerPluginId(),
-                    SubpluginOption("classpathFqNamesHistory", kaptTask.classpathDirtyFqNamesHistoryDir.singleFile!!.absolutePath))
             }
 
             buildAndAddOptionsTo(kaptTask, kaptTask.pluginOptions, aptMode = "apt")

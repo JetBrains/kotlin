@@ -100,7 +100,8 @@ class Kapt3CommandLineProcessor : CommandLineProcessor {
             CHANGED_FILES -> changedFiles.addAll(value.split(File.pathSeparator).map { File(it) })
             COMPILED_SOURCES_DIR -> compiledSources.addAll(value.split(File.pathSeparator).map { File(it) })
             INCREMENTAL_CACHE -> incrementalCache = File(value)
-            CLASSPATH_FQ_NAMES_HISTORY -> classpathFqNamesHistory = File(value)
+            CLASSPATH_CHANGES -> classpathChanges.addAll(value.split(File.pathSeparator).map { it })
+            PROCESS_INCREMENTALLY -> processIncrementally = value.toBoolean()
 
             ANNOTATION_PROCESSOR_CLASSPATH_OPTION -> processingClasspath += File(value)
             ANNOTATION_PROCESSORS_OPTION -> processors.addAll(value.split(',').map { it.trim() }.filter { it.isNotEmpty() })

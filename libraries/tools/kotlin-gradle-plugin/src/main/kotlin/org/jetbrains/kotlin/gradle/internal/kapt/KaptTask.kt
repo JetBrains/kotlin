@@ -67,9 +67,6 @@ abstract class KaptTask : ConventionTask(), TaskWithLocalState {
     @get:Input
     internal var includeCompileClasspath: Boolean = true
 
-    @get:InputFiles
-    internal var classpathDirtyFqNamesHistoryDir: FileCollection = project.files()
-
     @get:Input
     internal var isIncremental = true
 
@@ -160,14 +157,20 @@ abstract class KaptTask : ConventionTask(), TaskWithLocalState {
     protected fun getCompiledSources() = listOfNotNull(kotlinCompileTask.destinationDir, kotlinCompileTask.javaOutputDir)
 
     protected fun getChangedFiles(inputs: IncrementalTaskInputs): List<File> {
-        return if (!isIncremental || !inputs.isIncremental || !getCompiledSources().all { it.exists() }) {
+        if (!isIncremental || !inputs.isIncremental || !getCompiledSources().all { it.exists() }) {
             clearLocalState()
-            emptyList()
+            return emptyList()
         } else {
-            with(mutableSetOf<File>()) {
+            val changes = with(mutableSetOf<File>()) {
                 inputs.outOfDate { this.add(it.file) }
                 inputs.removed { this.add(it.file) }
                 return@with this.toList()
+            }
+
+            return if (changes.all { it.extension == "java" }) {
+                changes
+            } else {
+                emptyList()
             }
         }
     }

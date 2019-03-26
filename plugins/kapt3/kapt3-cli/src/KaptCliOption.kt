@@ -90,10 +90,16 @@ enum class KaptCliOption(
         "Use only in apt mode. Output directory for cache necessary to support incremental annotation processing."
     ),
 
-    CLASSPATH_FQ_NAMES_HISTORY(
-        "classpathFqNamesHistory",
-        "<path>",
-        "Use only in apt mode. Directory containing history of classpath fq name changes."
+    CLASSPATH_CHANGES(
+        "classpathChange",
+        "<jvmInternalName,[jvmInternalName,...]>",
+        "Use only in apt mode. Classpath jvm internal names that changed."
+    ),
+
+    PROCESS_INCREMENTALLY(
+        "processIncrementally",
+        "boolean",
+        "Use only in apt mode. Enables incremental apt processing"
     ),
 
     ANNOTATION_PROCESSOR_CLASSPATH_OPTION(

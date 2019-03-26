@@ -435,8 +435,7 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
                 taskBuildDirectory,
                 usePreciseJavaTracking = usePreciseJavaTracking,
                 disableMultiModuleIC = disableMultiModuleIC(),
-                multiModuleICSettings = multiModuleICSettings,
-                classpathFqNamesHistory = getClasspathFqNamesHistoryDir()
+                multiModuleICSettings = multiModuleICSettings
             )
         } else null
 
@@ -478,10 +477,6 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
 
         return false
     }
-
-    @Optional
-    @Internal
-    internal open fun getClasspathFqNamesHistoryDir(): File? = null
 
     // override setSource to track source directory sets and files (for generated android folders)
     override fun setSource(sources: Any?) {

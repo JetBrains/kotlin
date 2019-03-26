@@ -16,17 +16,13 @@ import org.gradle.api.tasks.incremental.IncrementalTaskInputs
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
-import org.jetbrains.kotlin.compilerRunner.IncrementalCompilationEnvironment
-import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
-import org.jetbrains.kotlin.gradle.incremental.ChangedFiles
 import org.jetbrains.kotlin.gradle.internal.tasks.allOutputFiles
+import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
+import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
 import org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
-import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
-import org.jetbrains.kotlin.gradle.tasks.clearLocalState
 import org.jetbrains.kotlin.gradle.utils.toSortedPathsArray
-import org.jetbrains.kotlin.incremental.ChangedFiles
 import java.io.File
 
 open class KaptWithKotlincTask : KaptTask(), CompilerArgumentAwareWithInput<K2JVMCompilerArguments> {
@@ -54,7 +50,10 @@ open class KaptWithKotlincTask : KaptTask(), CompilerArgumentAwareWithInput<K2JV
         val pluginOptionsWithKapt: CompilerPluginOptions = pluginOptions.withWrappedKaptOptions(
             withApClasspath = kaptClasspath,
             changedFiles = changedFiles,
-            compiledSourcesDir = getCompiledSources())
+            classpathChanges = classpathChanges,
+            compiledSourcesDir = getCompiledSources(),
+            processIncrementally = processIncrementally
+        )
 
         args.pluginOptions = (pluginOptionsWithKapt.arguments + args.pluginOptions!!).toTypedArray()
 
@@ -66,13 +65,25 @@ open class KaptWithKotlincTask : KaptTask(), CompilerArgumentAwareWithInput<K2JV
      * in the task action.
      */
     private var changedFiles: List<File> = emptyList()
+    private var classpathChanges: List<String> = emptyList()
+    private var processIncrementally = false
 
     @TaskAction
     fun compile(inputs: IncrementalTaskInputs) {
         logger.debug("Running kapt annotation processing using the Kotlin compiler")
         checkAnnotationProcessorClasspath()
 
-        changedFiles = getChangedFiles(inputs)
+        val incrementalChanges = getChangedFiles(inputs)
+        when {
+            incrementalChanges.isNotEmpty() -> {
+                changedFiles = incrementalChanges
+                classpathChanges = emptyList()
+                processIncrementally = true
+            }
+            else -> {
+                // do nothing
+            }
+        }
 
         val args = prepareCompilerArguments()
 
