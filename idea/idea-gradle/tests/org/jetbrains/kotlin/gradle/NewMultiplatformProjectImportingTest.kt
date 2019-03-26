@@ -479,6 +479,23 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
         }
     }
 
+    @Test
+    fun testDetectAndroidSources() {
+        configureByFiles()
+        createProjectSubFile(
+            "local.properties",
+            "sdk.dir=/${KotlinTestUtils.getAndroidSdkSystemIndependentPath()}"
+        )
+        importProject(true)
+        checkProjectStructure(exhaustiveModuleList = false, exhaustiveDependencyList = false, exhaustiveSourceSourceRootList = false) {
+            module("multiplatformb") {
+                sourceFolder("multiplatformb/src/androidMain/kotlin", JavaSourceRootType.SOURCE)
+
+
+            }
+        }
+    }
+
     /**
      * This test is inherited form testPlatformToCommonExpectedByInComposite and actually tests
      * dependencies in multiplatform project included in composite build
