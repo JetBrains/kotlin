@@ -75,11 +75,15 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
     private val arrayItemGetter =
         context.ir.symbols.array.owner.functions.single { it.name.asString() == "get" }
 
-    private val kPropertyType =
-        context.getIrClass(FqName("kotlin.reflect.KProperty")).owner.defaultType
+    private val kPropertyStarType = IrSimpleTypeImpl(
+        context.irBuiltIns.kPropertyClass,
+        false,
+        listOf(makeTypeProjection(context.irBuiltIns.anyNType, Variance.OUT_VARIANCE)),
+        emptyList()
+    )
 
     private val kPropertiesFieldType =
-        context.ir.symbols.array.createType(false, listOf(makeTypeProjection(kPropertyType, Variance.OUT_VARIANCE)))
+        context.ir.symbols.array.createType(false, listOf(makeTypeProjection(kPropertyStarType, Variance.OUT_VARIANCE)))
 
     // Return some declaration the parent of which is the containing class/package for the referenced property. This is
     // a bit of a hack, as the reason for not returning the container itself is the `mapImplementationOwner` call below.
@@ -365,7 +369,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
                 initializer = context.createIrBuilder(irClass.symbol).run {
                     val initializers = kProperties.values.sortedBy { it.index }.map { it.initializer }
                     irExprBody(irCall(this@PropertyReferenceLowering.context.ir.symbols.arrayOf).apply {
-                        putValueArgument(0, IrVarargImpl(startOffset, endOffset, kPropertiesFieldType, kPropertyType, initializers))
+                        putValueArgument(0, IrVarargImpl(startOffset, endOffset, kPropertiesFieldType, kPropertyStarType, initializers))
                     })
                 }
             })
