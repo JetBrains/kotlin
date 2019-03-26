@@ -1005,7 +1005,7 @@ class JavaToJKTreeBuilder constructor(
         }
 
 
-        val leftInnerTokens = children.asSequence().toNonCodeElements()
+        val leftInnerTokens = children.asSequence().toNonCodeElements().reversed()
         val rightInnerTokens =
             if (children.isEmpty()) emptyList()
             else generateSequence(children.last()) { it.prevSibling }
@@ -1013,11 +1013,8 @@ class JavaToJKTreeBuilder constructor(
                 .reversed()
 
 
-        val leftTokens = generateSequence(prevSibling) { it.prevSibling }
-            .toNonCodeElements()
-            .reversed()
-
-        return (leftInnerTokens + prevNonCodeElementsWithParent()) to (rightInnerTokens + nextNonCodeElementsWithParent())
+        return (leftInnerTokens + prevNonCodeElementsWithParent()).reversed() to
+                (rightInnerTokens + nextNonCodeElementsWithParent())
     }
 
     private fun JKNonCodeElementsListOwner.assignNonCodeElements(psi: PsiElement?) {
