@@ -245,6 +245,6 @@ class IrBuiltIns(
         const val THROW_CCE = "THROW_CCE"
         const val THROW_ISE = "THROW_ISE"
         const val NO_WHEN_BRANCH_MATCHED_EXCEPTION = "noWhenBranchMatchedException"
-        const val ILLEGAL_ARGUMENT_EXCEPTION = "illegalArgumentException "
+        const val ILLEGAL_ARGUMENT_EXCEPTION = "illegalArgumentException"
     }
 }

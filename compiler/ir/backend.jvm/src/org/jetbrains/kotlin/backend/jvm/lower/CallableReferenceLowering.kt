@@ -213,7 +213,7 @@ internal class CallableReferenceLowering(val context: JvmBackendContext) : FileL
             val lastParameterType = unboundCalleeParameters.lastOrNull()?.type
             if ((lastParameterType as? IrSimpleType)?.classifier == continuationClass) {
                 // If the last parameter is Continuation<> inherit from SuspendFunction.
-                suspendFunctionClass = context.getIrClass(FqName("kotlin.Suspendfunction${numberOfParameters - 1}")).owner
+                suspendFunctionClass = context.getIrClass(FqName("kotlin.coroutines.SuspendFunction${numberOfParameters - 1}")).owner
                 val suspendFunctionClassTypeParameters = functionParameterTypes.dropLast(1) +
                         (lastParameterType.arguments.single() as IrTypeProjection).type
                 functionReferenceClassSuperTypes += IrSimpleTypeImpl(

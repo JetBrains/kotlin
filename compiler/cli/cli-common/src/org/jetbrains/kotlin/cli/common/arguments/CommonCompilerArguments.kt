@@ -270,7 +270,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
     @Argument(
         value = "-Xcheck-sticky-phase-conditions",
-        description = "Run sticky condition checks on subsequent phases as well. Implies -Xcheck-conditions"
+        description = "Run sticky condition checks on subsequent phases as well. Implies -Xcheck-phase-conditions"
     )
     var checkStickyPhaseConditions: Boolean by FreezableVar(false)
 
