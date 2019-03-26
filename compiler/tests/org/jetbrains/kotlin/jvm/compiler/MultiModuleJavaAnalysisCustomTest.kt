@@ -64,7 +64,7 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
         override val platform: TargetPlatform
             get() = JvmPlatforms.defaultJvmPlatform
 
-        override val compilerServices: PlatformDependentCompilerServices?
+        override val compilerServices: PlatformDependentCompilerServices
             get() = JvmPlatformCompilerServices
     }
 

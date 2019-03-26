@@ -69,6 +69,6 @@ private class TestModule(val dependsOnBuiltIns: Boolean) : ModuleInfo {
     override val platform: TargetPlatform
         get() = JvmPlatforms.defaultJvmPlatform
 
-    override val compilerServices: PlatformDependentCompilerServices?
+    override val compilerServices: PlatformDependentCompilerServices
         get() = JvmPlatformCompilerServices
 }
