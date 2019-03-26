@@ -106,6 +106,7 @@ dependencies {
     }
     packedJars(protobufFull())
     packedJars(kotlinBuiltins())
+    
     sideJars(project(":kotlin-script-runtime"))
     sideJars(kotlinStdlib("jdk8"))
     sideJars(project(":kotlin-reflect"))
@@ -113,7 +114,7 @@ dependencies {
     sideJars(commonDep("io.javaslang", "javaslang"))
     sideJars(commonDep("javax.inject"))
     sideJars(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-jdk8"))
-    sideJars(commonDep("org.jetbrains", "markdown")) { isTransitive = false }
+    sideJars(commonDep("org.jetbrains", "markdown"))
 }
 
 val jar = runtimeJar {
