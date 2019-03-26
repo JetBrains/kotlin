@@ -8673,6 +8673,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/unusedSymbol/dataInlineClassDeclaration.kt");
         }
 
+        @TestMetadata("enumSecondaryConstructor.kt")
+        public void testEnumSecondaryConstructor() throws Exception {
+            runTest("idea/testData/inspectionsLocal/unusedSymbol/enumSecondaryConstructor.kt");
+        }
+
         @TestMetadata("functionWithInlineClass.kt")
         public void testFunctionWithInlineClass() throws Exception {
             runTest("idea/testData/inspectionsLocal/unusedSymbol/functionWithInlineClass.kt");

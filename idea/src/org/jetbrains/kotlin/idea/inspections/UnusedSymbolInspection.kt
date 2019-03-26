@@ -198,6 +198,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
             // Simple PSI-based checks
             if (declaration is KtObjectDeclaration && declaration.isCompanion()) return // never mark companion object as unused (there are too many reasons it can be needed for)
 
+            if (declaration is KtSecondaryConstructor && declaration.containingClass()?.isEnum() == true) return
             if (declaration.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return
             if (declaration is KtProperty && declaration.isLocal) return
             if (declaration is KtParameter && (declaration.getParent().parent !is KtPrimaryConstructor || !declaration.hasValOrVar())) return
