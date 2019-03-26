@@ -1,10 +1,10 @@
 internal interface I {
-    fun foo(i: Int, c: Char, s: String?)
+    fun foo(i: Int, c: Char, s: String)
     fun bar()
 }
 
 internal open class A : I {
-    override fun foo(i: Int, c: Char, s: String?) {
+    override fun foo(i: Int, c: Char, s: String) {
         println("foo$i$c$s")
     }
 

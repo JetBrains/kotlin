@@ -1,0 +1,1 @@
+val d2: Array<IntArray?> = arrayOfNulls(5)

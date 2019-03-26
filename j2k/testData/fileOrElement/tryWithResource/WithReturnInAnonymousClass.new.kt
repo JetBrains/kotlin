@@ -1,10 +1,8 @@
-import java.io.ByteArrayInputStream
-import java.io.IOException
-import java.io.InputStream
+import java.io.*
 
 internal interface I {
     @Throws(IOException::class)
-    fun doIt(stream: InputStream?): Int
+    fun doIt(stream: InputStream): Int
 }
 
 class C {
@@ -21,7 +19,7 @@ class C {
     }
 
     @Throws(IOException::class)
-    internal fun bar(i: I, stream: InputStream?): Int {
+    internal fun bar(i: I, stream: InputStream): Int {
         return i.doIt(stream)
     }
 }

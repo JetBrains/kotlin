@@ -1,19 +1,19 @@
 // ERROR: Property must be initialized or be abstract
 class Identifier {
-    val name: String?
+    val name: String
     private var myHasDollar = false
     private var myNullable = true
 
-    constructor(name: String?) {
+    constructor(name: String) {
         this.name = name
     }
 
-    constructor(name: String?, isNullable: Boolean) {
+    constructor(name: String, isNullable: Boolean) {
         this.name = name
         myNullable = isNullable
     }
 
-    constructor(name: String?, hasDollar: Boolean, isNullable: Boolean) {
+    constructor(name: String, hasDollar: Boolean, isNullable: Boolean) {
         this.name = name
         myHasDollar = hasDollar
         myNullable = isNullable

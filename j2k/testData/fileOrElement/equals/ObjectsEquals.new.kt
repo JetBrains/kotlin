@@ -1,3 +1,5 @@
+import java.util.Objects
+
 internal interface I
 
 internal class C {

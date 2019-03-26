@@ -1,5 +1,5 @@
 class C {
-    var x: String? = ""
+    var x = ""
         set(x) {
             println("old value: " + this.x)
             field = x

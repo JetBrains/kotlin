@@ -5,6 +5,6 @@ import java.util.Properties
 internal object A {
     fun foo(): Map<String?, String?> {
         val props = Properties()
-        return HashMap(props as Map<*, *>)
+        return HashMap<Any, Any?>(props as Map<*, *>)
     }
 }

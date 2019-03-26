@@ -23,7 +23,7 @@ internal enum class EE {
 }
 
 internal class X {
-    fun foo(i1: I?, i2: I?, s1: String?, s2: String?, c1: C?, c2: C?, i: Int, o1: O?, o2: O?, e1: E?, e2: E?, bb1: BB?, bb2: BB?, arr1: IntArray, arr2: IntArray, ee1: EE?, ee2: EE?) {
+    fun foo(i1: I?, i2: I?, s1: String, s2: String, c1: C, c2: C, i: Int, o1: O, o2: O, e1: E, e2: E, bb1: BB, bb2: BB, arr1: IntArray, arr2: IntArray, ee1: EE?, ee2: EE) {
         if (i1 === i2) return
         if (s1 === s2) return
         if (c1 == c2) return

@@ -1,5 +1,5 @@
 internal class CtorComment {
-    var myA: String?
+    var myA: String
 
     /**
      * This constructor is especially useful
@@ -9,7 +9,7 @@ internal class CtorComment {
     }
 }
 
+internal class CtorComment2
 /**
  * This constructor is especially useful
  */
-internal class CtorComment2

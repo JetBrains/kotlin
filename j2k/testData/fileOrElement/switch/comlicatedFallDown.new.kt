@@ -1,7 +1,7 @@
 package demo
 
 object SwitchDemo {
-    fun print(o: Any?) {
+    fun print(o: Any) {
         println(o)
     }
 

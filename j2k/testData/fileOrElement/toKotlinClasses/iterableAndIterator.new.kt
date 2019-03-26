@@ -7,7 +7,7 @@ internal class Test : Iterable<String?> {
         return null
     }
 
-    fun push(i: Iterator<String?>?): Iterator<String?>? {
+    fun push(i: Iterator<String>): Iterator<String> {
         return i
     }
 }
@@ -17,7 +17,7 @@ internal class FullTest : Iterable<String?> {
         return null
     }
 
-    fun push(i: Iterator<String?>?): Iterator<String?>? {
+    fun push(i: Iterator<String>): Iterator<String> {
         return i
     }
 }

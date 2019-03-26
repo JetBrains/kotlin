@@ -1,5 +1,5 @@
 class C {
-    var x: String? = ""
+    var x = ""
         get() {
             println("getter invoked")
             return field

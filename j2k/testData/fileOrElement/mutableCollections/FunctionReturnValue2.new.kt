@@ -1,21 +1,21 @@
-import java.util.ArrayList
+import java.util.*
 
 internal class A {
-    private val collection: MutableCollection<String?>?
+    private val collection: MutableCollection<String>
 
     init {
         collection = createCollection()
     }
 
-    fun createCollection(): MutableCollection<String?> {
+    fun createCollection(): MutableCollection<String> {
         return ArrayList()
     }
 
     fun foo() {
-        collection!!.add("1")
+        collection.add("1")
     }
 
-    fun getCollection(): Collection<String?>? {
+    fun getCollection(): Collection<String> {
         return collection
     }
 }

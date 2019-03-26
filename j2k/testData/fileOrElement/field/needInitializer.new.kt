@@ -1,5 +1,5 @@
 class Init {
-    var field1: String?
+    var field1: String
     var field2: String? = null
 
     var field3: Int

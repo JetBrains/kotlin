@@ -1,5 +1,5 @@
 internal class User {
     fun main() {
-        val list: List<String?> = ArrayList()
+        val list: List<String> = ArrayList()
     }
 }

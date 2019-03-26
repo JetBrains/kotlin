@@ -1,6 +1,6 @@
 internal class A {
     @JvmOverloads
-    fun foo(i: Int, c: Char = 'a', s: String? = "") {
+    fun foo(i: Int, c: Char = 'a', s: String = "") {
         println("foo$i$c$s")
     }
 

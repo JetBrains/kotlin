@@ -1,5 +1,3 @@
-// ERROR: Type mismatch: inferred type is Any? but Any was expected
-// ERROR: Type mismatch: inferred type is Any? but Any was expected
 internal class A {
     @JvmOverloads
     fun foo(s: String? = null): Any {
@@ -13,7 +11,7 @@ internal class A {
     }
 
     fun bar(): Any {
-        return bar(null)
+        return bar(null)!!
     }
 
     fun bar1(s: String?): Any? {
@@ -22,7 +20,7 @@ internal class A {
     }
 
     fun bar1(): Any {
-        return bar1(null)
+        return bar1(null)!!
     }
 
     @Deprecated("")

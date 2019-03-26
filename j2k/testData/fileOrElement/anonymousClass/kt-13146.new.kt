@@ -1,5 +1,5 @@
 class Test {
-    var someRunnable: Runnable? = object : Runnable {
+    var someRunnable: Runnable = object : Runnable {
         override fun run() {
             this.run()
         }
@@ -15,7 +15,7 @@ class Test2 {
 }
 
 class Handler {
-    fun postDelayed(r: Runnable?, time: Long) {}
+    fun postDelayed(r: Runnable, time: Long) {}
 }
 
 class Test3 {

@@ -6,7 +6,6 @@ internal class C {
     var string: String? = null
     val `object`: Any?
         get() {
-
             foo(object : I {
                 override val int: Int
                     get() = 0
@@ -14,6 +13,5 @@ internal class C {
             return string
         }
 
-    fun foo(i: I?) {
-    }
+    fun foo(i: I) {}
 }

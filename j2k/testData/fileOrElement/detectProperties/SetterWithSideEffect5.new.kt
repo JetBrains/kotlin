@@ -1,5 +1,5 @@
 class C {
-    var x: String? = ""
+    var x = ""
         set(x) {
             println("setter invoked")
             field = x

@@ -5,21 +5,16 @@ internal class Container {
 }
 
 internal object One {
-    var myContainer: Container? = Container()
+    var myContainer = Container()
 }
 
 internal class Test {
     fun test() {
-        if (One.myContainer!!.myBoolean)
-            println("Ok")
-
-        val s = if (One.myContainer!!.myBoolean) "YES" else "NO"
-
-        while (One.myContainer!!.myBoolean)
-            println("Ok")
-
+        if (One.myContainer.myBoolean) println("Ok")
+        val s = if (One.myContainer.myBoolean) "YES" else "NO"
+        while (One.myContainer.myBoolean) println("Ok")
         do {
             println("Ok")
-        } while (One.myContainer!!.myBoolean)
+        } while (One.myContainer.myBoolean)
     }
 }

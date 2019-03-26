@@ -1,6 +1,6 @@
 // ERROR: Property must be initialized or be abstract
 class Test {
-    private val myName: String?
+    private val myName: String
     internal var a = false
     internal var b = 0.0
     internal var c = 0f
@@ -11,13 +11,13 @@ class Test {
 
     constructor() {}
 
-    constructor(name: String?) {
+    constructor(name: String) {
         myName = foo(name)
     }
 
     companion object {
 
-        internal fun foo(n: String?): String {
+        internal fun foo(n: String): String {
             return ""
         }
     }

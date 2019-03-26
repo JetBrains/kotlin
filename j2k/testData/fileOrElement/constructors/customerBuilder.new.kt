@@ -1,6 +1,6 @@
 package org.test.customer
 
-internal class Customer(val firstName: String?, val lastName: String?) {
+internal class Customer(val firstName: String, val lastName: String) {
     init {
         doSmthBefore()
         doSmthAfter()
@@ -12,14 +12,14 @@ internal class Customer(val firstName: String?, val lastName: String?) {
 }
 
 internal class CustomerBuilder {
-    var _firstName: String? = "Homer"
-    var _lastName: String? = "Simpson"
-    fun WithFirstName(firstName: String?): CustomerBuilder {
+    var _firstName = "Homer"
+    var _lastName = "Simpson"
+    fun WithFirstName(firstName: String): CustomerBuilder {
         _firstName = firstName
         return this
     }
 
-    fun WithLastName(lastName: String?): CustomerBuilder {
+    fun WithLastName(lastName: String): CustomerBuilder {
         _lastName = lastName
         return this
     }

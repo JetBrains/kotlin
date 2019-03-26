@@ -9,7 +9,7 @@ internal class A {
     private val l8 = +1L
 
     fun foo1(l: Long) {}
-    fun foo2(l: Long?) {}
+    fun foo2(l: Long) {}
 
     fun bar() {
         foo1(1)
