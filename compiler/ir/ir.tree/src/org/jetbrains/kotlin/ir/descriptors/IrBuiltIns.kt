@@ -133,27 +133,27 @@ class IrBuiltIns(
     val throwableType = builtIns.throwable.defaultType.toIrType()
     val throwableClass = builtIns.throwable.toIrSymbol()
 
-    private class IrTypeMapper(val type: IrType, val nType: IrType)
-
-    private fun buildNullableType(irType: IrType) = with(irType as IrSimpleType) {
-        IrSimpleTypeImpl(classifier, true, arguments, annotations)
+    private class IrTypeMapper(val type: IrType) {
+        val nType: IrType = with(type as IrSimpleType) {
+            IrSimpleTypeImpl(classifier, true, arguments, annotations)
+        }
     }
 
     private val primitiveTypesMapping = mapOf(
-        builtIns.any to IrTypeMapper(anyType, anyNType),
-        builtIns.boolean to IrTypeMapper(booleanType, buildNullableType(booleanType)),
-        builtIns.char to IrTypeMapper(charType, buildNullableType(charType)),
-        builtIns.number to IrTypeMapper(numberType, buildNullableType(numberType)),
-        builtIns.byte to IrTypeMapper(byteType, buildNullableType(byteType)),
-        builtIns.short to IrTypeMapper(shortType, buildNullableType(shortType)),
-        builtIns.int to IrTypeMapper(intType, buildNullableType(intType)),
-        builtIns.long to IrTypeMapper(longType, buildNullableType(longType)),
-        builtIns.float to IrTypeMapper(floatType, buildNullableType(floatType)),
-        builtIns.double to IrTypeMapper(doubleType, buildNullableType(doubleType)),
-        builtIns.nothing to IrTypeMapper(nothingType, nothingNType),
-        builtIns.unit to IrTypeMapper(unitType, buildNullableType(unitType)),
-        builtIns.string to IrTypeMapper(stringType, buildNullableType(stringType)),
-        builtIns.throwable to IrTypeMapper(throwableType, buildNullableType(throwableType))
+        builtIns.any to IrTypeMapper(anyType),
+        builtIns.boolean to IrTypeMapper(booleanType),
+        builtIns.char to IrTypeMapper(charType),
+        builtIns.number to IrTypeMapper(numberType),
+        builtIns.byte to IrTypeMapper(byteType),
+        builtIns.short to IrTypeMapper(shortType),
+        builtIns.int to IrTypeMapper(intType),
+        builtIns.long to IrTypeMapper(longType),
+        builtIns.float to IrTypeMapper(floatType),
+        builtIns.double to IrTypeMapper(doubleType),
+        builtIns.nothing to IrTypeMapper(nothingType),
+        builtIns.unit to IrTypeMapper(unitType),
+        builtIns.string to IrTypeMapper(stringType),
+        builtIns.throwable to IrTypeMapper(throwableType)
     )
 
     fun getPrimitiveTypeOrNullByDescriptor(descriptor: ClassifierDescriptor, isNullable: Boolean) =
