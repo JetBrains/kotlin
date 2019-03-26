@@ -114,8 +114,7 @@ dependencies {
     sideJars(project(":kotlin-compiler-client-embeddable"))
     sideJars(commonDep("io.javaslang", "javaslang"))
     sideJars(commonDep("javax.inject"))
-    sideJars(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
-    sideJars(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-jdk8")) { isTransitive = false }
+    sideJars(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-jdk8"))
     sideJars(commonDep("org.jetbrains", "markdown")) { isTransitive = false }
 }
 
