@@ -26,26 +26,44 @@ internal class MutableTestStatistics: TestStatistics {
     override var totalSuites: Int = 0; private set
 
     override val failed: Int
-        get() = failedTests_.size
+        get() = _failedTests.size
 
     override val hasFailedTests: Boolean
-        get() = failedTests_.isNotEmpty()
+        get() = _failedTests.isNotEmpty()
 
-    private val failedTests_ = mutableListOf<TestCase>()
+    private val _failedTests = mutableListOf<TestCase>()
     override val failedTests: Collection<TestCase>
-        get() = failedTests_
+        get() = _failedTests
 
-    fun registerSuite() { totalSuites++ }
+    fun registerSuite(count: Int = 1) {
+        require(count > 0)
+        totalSuites += count
+    }
 
-    fun registerPass() { total++; passed++ }
-    fun registerFail(testCase: TestCase) { total++; failedTests_.add(testCase) }
-    fun registerIgnore() { total++; ignored++ }
+    fun registerPass(count: Int = 1) {
+        require(count > 0)
+        total += count
+        passed += count
+    }
+
+    fun registerFail(testCases: Collection<TestCase>) {
+        total += testCases.size
+        _failedTests.addAll(testCases)
+    }
+
+    fun registerFail(testCase: TestCase) = registerFail(listOf(testCase))
+
+    fun registerIgnore(count: Int = 1) {
+        require(count > 0)
+        total += count
+        ignored += count
+    }
 
     fun reset() {
         total = 0
         passed = 0
         ignored = 0
         totalSuites = 0
-        failedTests_.clear()
+        _failedTests.clear()
     }
 }

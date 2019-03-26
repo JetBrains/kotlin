@@ -40,6 +40,13 @@ internal class TeamCityLogger : BaseTestLogger() {
     override fun startSuite(suite: TestSuite) = report("testSuiteStarted" +
             " name='${suite.tcName}'" +
             " locationHint='ktest:suite://${suite.tcName}'")
+
+    override fun ignoreSuite(suite: TestSuite) {
+        startSuite(suite)
+        suite.testCases.values.forEach { ignore(it) }
+        finishSuite(suite, 0L)
+    }
+
     override fun finishSuite(suite: TestSuite, timeMillis: Long) = report("testSuiteFinished name='${suite.tcName}'")
 
     override fun pass(testCase: TestCase, timeMillis: Long) = finish(testCase, timeMillis)
