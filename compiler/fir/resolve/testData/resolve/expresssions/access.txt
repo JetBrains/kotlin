@@ -51,14 +51,14 @@ FILE: access.kt
         lval d: R|kotlin/String| = String()
         lval c: <ERROR TYPE REF: Unresolved name: c> = <Unresolved name: c>#
         <Unresolved name: abc>#()
-        public final fun bcd(): R|kotlin/Unit| {
+        local final fun bcd(): R|kotlin/Unit| {
         }
 
-        public final fun abc(): R|kotlin/Unit| {
+        local final fun abc(): R|kotlin/Unit| {
             lval a: R|kotlin/String| = R|<local>/d|
             lval b: R|kotlin/String| = R|<local>/a|
             R|<local>/bcd|()
-            public final fun dcb(): R|kotlin/Unit| {
+            local final fun dcb(): R|kotlin/Unit| {
             }
 
             R|<local>/dcb|()
