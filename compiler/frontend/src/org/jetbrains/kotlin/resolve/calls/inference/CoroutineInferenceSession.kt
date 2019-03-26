@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.resolve.calls.inference
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
@@ -22,9 +21,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
-import org.jetbrains.kotlin.resolve.calls.model.KotlinCallComponents
-import org.jetbrains.kotlin.resolve.calls.model.KotlinResolutionCandidate
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedLambdaAtom
+import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.*
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.types.StubType
@@ -51,19 +48,25 @@ class CoroutineInferenceSession(
 ) : ManyCandidatesResolver<CallableDescriptor>(
     psiCallResolver, postponedArgumentsAnalyzer, kotlinConstraintSystemCompleter, callComponents, builtIns
 ) {
-    private val suspendCompletedCalls = arrayListOf<PSICompletedCallInfo>()
-    private val normalCompletedCalls = arrayListOf<PSICompletedCallInfo>()
+    private val commonCalls = arrayListOf<PSICompletedCallInfo>()
+    private val diagnostics = arrayListOf<KotlinCallDiagnostic>()
 
     override fun shouldRunCompletion(candidate: KotlinResolutionCandidate): Boolean = true
 
     override fun addCompletedCallInfo(callInfo: CompletedCallInfo) {
         require(callInfo is PSICompletedCallInfo) { "Wrong instance of callInfo: $callInfo" }
 
-        val candidateDescriptor = callInfo.callResolutionResult.resultCallAtom.candidateDescriptor
-        if (candidateDescriptor is FunctionDescriptor && candidateDescriptor.isSuspend)
-            suspendCompletedCalls.add(callInfo)
-        else
-            normalCompletedCalls.add(callInfo)
+        commonCalls.add(callInfo)
+
+        val isApplicableCall =
+            callComponents.statelessCallbacks.isApplicableCallForBuilderInference(
+                callInfo.resolvedCall.resultingDescriptor,
+                callComponents.languageVersionSettings
+            )
+
+        if (!isApplicableCall) {
+            diagnostics.add(NonApplicableCallForBuilderInferenceDiagnostic(callInfo.callResolutionResult.resultCallAtom.atom))
+        }
     }
 
     override fun writeOnlyStubs(): Boolean {
@@ -140,8 +143,11 @@ class CoroutineInferenceSession(
 
         integrateConstraints(commonSystem, initialStorage, nonFixedToVariablesSubstitutor)
 
-        for (suspendCall in suspendCompletedCalls) {
-            integrateConstraints(commonSystem, suspendCall.callResolutionResult.constraintSystem, nonFixedToVariablesSubstitutor)
+        for (call in commonCalls) {
+            integrateConstraints(commonSystem, call.callResolutionResult.constraintSystem, nonFixedToVariablesSubstitutor)
+        }
+        for (diagnostic in diagnostics) {
+            commonSystem.addError(diagnostic)
         }
 
         return commonSystem
@@ -155,7 +161,7 @@ class CoroutineInferenceSession(
 
         val nonFixedTypesToResultSubstitutor = ComposedSubstitutor(commonSystemSubstitutor, nonFixedToVariablesSubstitutor)
 
-        for (completedCall in suspendCompletedCalls + normalCompletedCalls) {
+        for (completedCall in commonCalls) {
             val resultCallAtom = completedCall.callResolutionResult.resultCallAtom
             val call = resultCallAtom.atom.getResolvedPsiKotlinCall<CallableDescriptor>(trace) ?: continue
 

@@ -100,26 +100,26 @@ class KotlinToResolvedCallTransformer(
                     PSIPartialCallInfo(baseResolvedCall, context, tracingStrategy)
                 )
 
-                createStubResolvedCallAndWriteItToTrace(candidate, context.trace, baseResolvedCall.diagnostics)
+                createStubResolvedCallAndWriteItToTrace(candidate, context.trace, baseResolvedCall.diagnostics, substitutor = null)
             }
 
             is CompletedCallResolutionResult, is ErrorCallResolutionResult -> {
                 val candidate = (baseResolvedCall as SingleCallResolutionResult).resultCallAtom
 
-                if (baseResolvedCall is CompletedCallResolutionResult) {
-                    context.inferenceSession.addCompletedCallInfo(PSICompletedCallInfo(baseResolvedCall, context, tracingStrategy))
-                }
-
+                val resultSubstitutor = baseResolvedCall.constraintSystem.buildResultingSubstitutor()
                 if (context.inferenceSession.writeOnlyStubs()) {
-                    return createStubResolvedCallAndWriteItToTrace(
+                    val stub = createStubResolvedCallAndWriteItToTrace(
                         candidate,
                         context.trace,
                         baseResolvedCall.diagnostics,
-                        completedCall = true
+                        substitutor = resultSubstitutor
                     )
+
+                    forwardCallToInferenceSession(baseResolvedCall, context, stub, tracingStrategy)
+
+                    return stub as ResolvedCall<D>
                 }
 
-                val resultSubstitutor = baseResolvedCall.constraintSystem.buildResultingSubstitutor()
                 val ktPrimitiveCompleter = ResolvedAtomCompleter(
                     resultSubstitutor, context, this, expressionTypingServices, argumentTypeResolver,
                     doubleColonExpressionResolver, builtIns, deprecationResolver, moduleDescriptor, dataFlowValueFactory
@@ -129,7 +129,10 @@ class KotlinToResolvedCallTransformer(
                     ktPrimitiveCompleter.completeAll(subKtPrimitive)
                 }
 
-                ktPrimitiveCompleter.completeResolvedCall(candidate, baseResolvedCall.diagnostics) as ResolvedCall<D>
+                val resolvedCall = ktPrimitiveCompleter.completeResolvedCall(candidate, baseResolvedCall.diagnostics) as ResolvedCall<D>
+                forwardCallToInferenceSession(baseResolvedCall, context, resolvedCall, tracingStrategy)
+
+                resolvedCall
             }
 
             is SingleCallResolutionResult -> error("Call resolution result for one candidate didn't transformed: $baseResolvedCall")
@@ -137,13 +140,23 @@ class KotlinToResolvedCallTransformer(
         }
     }
 
+    private fun forwardCallToInferenceSession(
+        baseResolvedCall: CallResolutionResult,
+        context: BasicCallResolutionContext,
+        resolvedCall: ResolvedCall<*>,
+        tracingStrategy: TracingStrategy
+    ) {
+        if (baseResolvedCall is CompletedCallResolutionResult) {
+            context.inferenceSession.addCompletedCallInfo(PSICompletedCallInfo(baseResolvedCall, context, resolvedCall, tracingStrategy))
+        }
+    }
+
     fun <D : CallableDescriptor> createStubResolvedCallAndWriteItToTrace(
         candidate: ResolvedCallAtom,
         trace: BindingTrace,
         diagnostics: Collection<KotlinCallDiagnostic>,
-        completedCall: Boolean = false
+        substitutor: NewTypeSubstitutor?
     ): ResolvedCall<D> {
-        val substitutor = if (completedCall) NewTypeSubstitutorByConstructorMap(emptyMap()) else null
         val result = transformToResolvedCall<D>(candidate, trace, substitutor, diagnostics)
         val psiKotlinCall = candidate.atom.psiKotlinCall
         val tracing = psiKotlinCall.safeAs<PSIKotlinCallForInvoke>()?.baseCall?.tracingStrategy ?: psiKotlinCall.tracingStrategy

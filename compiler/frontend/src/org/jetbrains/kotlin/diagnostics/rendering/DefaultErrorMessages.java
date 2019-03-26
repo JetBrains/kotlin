@@ -633,6 +633,7 @@ public class DefaultErrorMessages {
         MAP.put(UNSUPPORTED, "Unsupported [{0}]", STRING);
         MAP.put(NEW_INFERENCE_ERROR, "New inference error [{0}]", STRING);
         MAP.put(NEW_INFERENCE_DIAGNOSTIC, "New inference [{0}]", STRING);
+        MAP.put(NON_APPLICABLE_CALL_FOR_BUILDER_INFERENCE, "Non-applicable call for builder inference");
 
         MAP.put(UNSUPPORTED_FEATURE, "{0}", new LanguageFeatureMessageRenderer(LanguageFeatureMessageRenderer.Type.UNSUPPORTED));
         MAP.put(EXPERIMENTAL_FEATURE_WARNING, "{0}", new LanguageFeatureMessageRenderer(LanguageFeatureMessageRenderer.Type.WARNING));

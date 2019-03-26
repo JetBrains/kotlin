@@ -30,7 +30,7 @@ val memberWithoutAnn = <!NI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER, OI;TYPE_INFERENC
 }
 
 val extension = <!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>build<!> {
-    extensionAdd("foo")
+    <!NI;NON_APPLICABLE_CALL_FOR_BUILDER_INFERENCE!>extensionAdd("foo")<!>
 }
 
 val safeExtension = build {

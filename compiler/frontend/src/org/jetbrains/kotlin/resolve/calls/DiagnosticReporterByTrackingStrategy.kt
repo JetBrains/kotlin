@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.diagnostics.Errors.BadNamedArgumentsTarget.INVOKE_ON_FUNCTION_TYPE
 import org.jetbrains.kotlin.diagnostics.Errors.BadNamedArgumentsTarget.NON_KOTLIN_FUNCTION
+import org.jetbrains.kotlin.diagnostics.reportDiagnosticOnce
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -49,6 +50,10 @@ class DiagnosticReporterByTrackingStrategy(
             )
             InstantiationOfAbstractClass::class.java -> tracingStrategy.instantiationOfAbstractClass(trace)
             AbstractSuperCall::class.java -> tracingStrategy.abstractSuperCall(trace)
+            NonApplicableCallForBuilderInferenceDiagnostic::class.java -> {
+                val reportOn = (diagnostic as NonApplicableCallForBuilderInferenceDiagnostic).kotlinCall
+                trace.reportDiagnosticOnce(Errors.NON_APPLICABLE_CALL_FOR_BUILDER_INFERENCE.on(reportOn.psiKotlinCall.psiCall.callElement))
+            }
         }
     }
 
