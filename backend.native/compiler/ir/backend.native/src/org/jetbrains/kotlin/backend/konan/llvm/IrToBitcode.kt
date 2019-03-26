@@ -2102,7 +2102,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         with(functionGenerationContext) {
             return when {
                 function == ib.eqeqeqFun -> icmpEq(args[0], args[1])
-                function == ib.booleanNotFun -> icmpNe(args[0], kTrue)
+                function.symbol == ib.booleanNotSymbol -> icmpNe(args[0], kTrue)
 
                 function.isComparisonFunction(ib.greaterFunByOperandType) -> {
                     if (args[0].type.isFloatingPoint()) fcmpGt(args[0], args[1])

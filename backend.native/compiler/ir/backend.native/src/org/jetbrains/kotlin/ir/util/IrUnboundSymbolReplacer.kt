@@ -24,7 +24,7 @@ internal fun IrModuleFragment.replaceUnboundSymbols(context: Context) {
     val collector = DeclarationSymbolCollector()
     with(collector) {
         with(irBuiltins) {
-            for (op in arrayOf(eqeqeqFun, eqeqFun, throwNpeFun, booleanNotFun, noWhenBranchMatchedExceptionFun) +
+            for (op in arrayOf(eqeqeqFun, eqeqFun, throwNpeFun, noWhenBranchMatchedExceptionFun) +
                     lessFunByOperandType.values +
                     lessOrEqualFunByOperandType.values +
                     greaterOrEqualFunByOperandType.values +
@@ -319,7 +319,7 @@ private class IrUnboundSymbolReplacer(
 
         expression.transformChildrenVoid(this)
         return with(expression) {
-            IrLocalDelegatedPropertyReferenceImpl(startOffset, endOffset, type, descriptor,
+            IrLocalDelegatedPropertyReferenceImpl(startOffset, endOffset, type, symbol,
                     delegate, getter, setter, origin).also {
 
                 it.copyArgumentsFrom(this)

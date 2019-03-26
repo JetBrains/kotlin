@@ -63,10 +63,10 @@ internal class ProgressionLoopHeader(
     override fun buildBody(builder: DeclarationIrBuilder, loop: IrLoop, newBody: IrExpression?): IrLoop = with (builder) {
         assert(loopVariable != null)
         val newCondition = irCall(context.irBuiltIns.booleanNotSymbol).apply {
-            putValueArgument(0, irCall(context.irBuiltIns.eqeqSymbol).apply {
+            dispatchReceiver = irCall(context.irBuiltIns.eqeqSymbol).apply {
                 putValueArgument(0, irGet(loopVariable!!))
                 putValueArgument(1, irGet(last))
-            })
+            }
         }
         IrDoWhileLoopImpl(loop.startOffset, loop.endOffset, loop.type, loop.origin).apply {
             label = loop.label
