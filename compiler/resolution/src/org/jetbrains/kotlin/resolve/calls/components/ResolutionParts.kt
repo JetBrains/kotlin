@@ -236,6 +236,9 @@ internal object PostponedVariablesInitializerResolutionPart : ResolutionPart() {
             val receiverType = parameter.type.getReceiverTypeFromFunctionType() ?: continue
 
             for (freshVariable in resolvedCall.substitutor.freshVariables) {
+                if (resolvedCall.typeArgumentMappingByOriginal.getTypeArgument(freshVariable.originalTypeParameter) is SimpleTypeArgument)
+                    continue
+
                 if (csBuilder.isPostponedTypeVariable(freshVariable)) continue
                 if (receiverType.contains { it.constructor == freshVariable.originalTypeParameter.typeConstructor }) {
                     csBuilder.markPostponedVariable(freshVariable)

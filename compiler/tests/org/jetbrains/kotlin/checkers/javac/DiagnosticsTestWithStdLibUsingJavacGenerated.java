@@ -1802,6 +1802,11 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
                 runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/applyInsideCoroutine.kt");
             }
 
+            @TestMetadata("chainCallWithExtensionExplicitTypes.kt")
+            public void testChainCallWithExtensionExplicitTypes() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/chainCallWithExtensionExplicitTypes.kt");
+            }
+
             @TestMetadata("correctMember.kt")
             public void testCorrectMember() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/correctMember.kt");
