@@ -109,6 +109,11 @@ class TypeMappingConversion(val context: ConversionContext) : RecursiveApplicabl
                     if (type is JKJavaPrimitiveType) emptyList() else listOf(type.mapType(typeElement)),
                     nullability
                 )
+            is JKVarianceTypeParameterType ->
+                JKVarianceTypeParameterTypeImpl(
+                    variance,
+                    boundType.mapType(null)
+                )
             else -> this
         }
 
