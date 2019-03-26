@@ -413,7 +413,9 @@ public class KotlinTestUtils {
 
     @NotNull
     public static File tmpDirForTest(@NotNull String testClassName, @NotNull String testName) throws IOException {
-        return normalizeFile(FileUtil.createTempDirectory(testClassName, testName, false));
+        File answer = normalizeFile(FileUtil.createTempDirectory(testClassName, testName));
+        deleteOnShutdown(answer);
+        return answer;
     }
 
     @NotNull
@@ -423,7 +425,10 @@ public class KotlinTestUtils {
 
     @NotNull
     public static File tmpDir(String name) throws IOException {
-        return normalizeFile(FileUtil.createTempDirectory(name, "", false));
+        // We should use this form. otherwise directory will be deleted on each test.
+        File answer = normalizeFile(FileUtil.createTempDirectory(new File(System.getProperty("java.io.tmpdir")), name, ""));
+        deleteOnShutdown(answer);
+        return answer;
     }
 
     private static File normalizeFile(File file) throws IOException {
@@ -431,6 +436,18 @@ public class KotlinTestUtils {
         // for example, on Windows, if a canonical path contains any space from FileUtil.createTempDirectory we will get
         // a File with short names (8.3) in its path and it will break some normalization passes in tests.
         return file.getCanonicalFile();
+    }
+
+    private static void deleteOnShutdown(File file) {
+        if (filesToDelete.isEmpty()) {
+            ShutDownTracker.getInstance().registerShutdownTask(() -> {
+                for (File victim : filesToDelete) {
+                    FileUtil.delete(victim);
+                }
+            });
+        }
+
+        filesToDelete.add(file);
     }
 
     @NotNull

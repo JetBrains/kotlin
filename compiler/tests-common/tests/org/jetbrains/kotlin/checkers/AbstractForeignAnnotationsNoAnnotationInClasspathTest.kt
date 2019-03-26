@@ -22,11 +22,7 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
 abstract class AbstractForeignAnnotationsNoAnnotationInClasspathTest : AbstractForeignAnnotationsTest() {
-    // This should be executed after setUp runs, since setUp changes the root folder
-    // for temporary files.
-    private val compiledJavaPath by lazy {
-        KotlinTestUtils.tmpDir("java-compiled-files")
-    }
+    private val compiledJavaPath = KotlinTestUtils.tmpDir("java-compiled-files")
 
     override fun getExtraClasspath(): List<File> {
         val foreignAnnotations = createJarWithForeignAnnotations()

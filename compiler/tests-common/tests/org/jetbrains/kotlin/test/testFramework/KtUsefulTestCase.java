@@ -76,7 +76,7 @@ public abstract class KtUsefulTestCase extends TestCase {
     private static final String ourPathToKeep = null;
     private final List<String> myPathsToKeep = new ArrayList<>();
 
-    private File myTempDir;
+    private String myTempDir;
 
     static {
         // Radar #5755208: Command line Java applications need a way to launch without a Dock icon.
@@ -100,8 +100,8 @@ public abstract class KtUsefulTestCase extends TestCase {
         String testName =  FileUtil.sanitizeFileName(getTestName(true));
         if (StringUtil.isEmptyOrSpaces(testName)) testName = "";
         testName = new File(testName).getName(); // in case the test name contains file separators
-        myTempDir = FileUtil.createTempDirectory(TEMP_DIR_MARKER, testName, false);
-        FileUtil.resetCanonicalTempPathCache(myTempDir.getPath());
+        myTempDir = new File(ORIGINAL_TEMP_DIR, TEMP_DIR_MARKER + testName).getPath();
+        FileUtil.resetCanonicalTempPathCache(myTempDir);
         boolean isStressTest = isStressTest();
         ApplicationInfoImpl.setInStressTest(isStressTest);
         // turn off Disposer debugging for performance tests
@@ -119,7 +119,7 @@ public abstract class KtUsefulTestCase extends TestCase {
             Disposer.setDebugMode(oldDisposerDebug);
             FileUtil.resetCanonicalTempPathCache(ORIGINAL_TEMP_DIR);
             if (hasTmpFilesToKeep()) {
-                File[] files = myTempDir.listFiles();
+                File[] files = new File(myTempDir).listFiles();
                 if (files != null) {
                     for (File file : files) {
                         if (!shouldKeepTmpFile(file)) {
@@ -127,8 +127,9 @@ public abstract class KtUsefulTestCase extends TestCase {
                         }
                     }
                 }
-            } else {
-                FileUtil.delete(myTempDir);
+            }
+            else {
+                FileUtil.delete(new File(myTempDir));
             }
         }
 
