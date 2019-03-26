@@ -65,6 +65,9 @@ object CommonResolverForModuleFactory : ResolverForModuleFactory() {
         override fun dependencyOnBuiltIns(): ModuleInfo.DependencyOnBuiltIns =
             if (dependOnOldBuiltIns) ModuleInfo.DependencyOnBuiltIns.LAST else ModuleInfo.DependencyOnBuiltIns.NONE
 
+        override val platform: TargetPlatform
+            get() = DefaultBuiltInPlatforms.commonPlatform
+
         override val compilerServices: PlatformDependentCompilerServices
             get() = CommonPlatformCompilerServices
     }

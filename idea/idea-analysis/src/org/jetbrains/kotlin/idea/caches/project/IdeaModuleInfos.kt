@@ -43,10 +43,13 @@ import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.idea.util.isInSourceContentWithoutInjected
 import org.jetbrains.kotlin.idea.util.rootManager
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.DefaultIdeTargetPlatformKindProvider
 import org.jetbrains.kotlin.platform.idePlatformKind
+import org.jetbrains.kotlin.resolve.DefaultBuiltInPlatforms
 import org.jetbrains.kotlin.resolve.PlatformDependentCompilerServices
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.GlobalSearchScopeWithModuleSources
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformCompilerServices
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
@@ -319,10 +322,10 @@ data class LibrarySourceInfo(val project: Project, val library: Library, overrid
         return createLibraryInfo(project, library)
     }
 
-    override val platform: TargetPlatform?
+    override val platform: TargetPlatform
         get() = binariesModuleInfo.platform
 
-    override val compilerServices: PlatformDependentCompilerServices?
+    override val compilerServices: PlatformDependentCompilerServices
         get() = binariesModuleInfo.compilerServices
 
     override fun toString() = "LibrarySourceInfo(libraryName=${library.name})"
@@ -338,6 +341,12 @@ data class SdkInfo(val project: Project, val sdk: Sdk) : IdeaModuleInfo {
     override fun contentScope(): GlobalSearchScope = SdkScope(project, sdk)
 
     override fun dependencies(): List<IdeaModuleInfo> = listOf(this)
+
+    override val platform: TargetPlatform
+        get() = DefaultBuiltInPlatforms.jvmPlatform // TODO(dsavvinov): provide proper target version
+
+    override val compilerServices: PlatformDependentCompilerServices
+        get() = JvmPlatformCompilerServices
 }
 
 object NotUnderContentRootModuleInfo : IdeaModuleInfo {
@@ -351,11 +360,11 @@ object NotUnderContentRootModuleInfo : IdeaModuleInfo {
     //TODO: (module refactoring) dependency on runtime can be of use here
     override fun dependencies(): List<IdeaModuleInfo> = listOf(this)
 
-    override val platform: TargetPlatform?
-        get() = null
+    override val platform: TargetPlatform
+        get() = DefaultIdeTargetPlatformKindProvider.defaultPlatform
 
-    override val compilerServices: PlatformDependentCompilerServices?
-        get() = null
+    override val compilerServices: PlatformDependentCompilerServices
+        get() = platform.findCompilerServices
 }
 
 private class LibraryWithoutSourceScope(project: Project, private val library: Library) :
@@ -439,14 +448,14 @@ data class PlatformModuleInfo(
 
     override val containedModules: List<ModuleSourceInfo> = listOf(platformModule) + commonModules
 
-    override val platform: TargetPlatform?
+    override val platform: TargetPlatform
         get() = platformModule.platform
 
     override val moduleOrigin: ModuleOrigin
         get() = platformModule.moduleOrigin
 
-    override val compilerServices: PlatformDependentCompilerServices?
-        get() = platform?.findCompilerServices
+    override val compilerServices: PlatformDependentCompilerServices
+        get() = platform.findCompilerServices
 
     override fun dependencies() = platformModule.dependencies()
 
