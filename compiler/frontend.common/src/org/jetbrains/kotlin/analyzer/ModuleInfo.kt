@@ -16,8 +16,8 @@ interface ModuleInfo {
     val displayedName: String get() = name.asString()
     fun dependencies(): List<ModuleInfo>
     val expectedBy: List<ModuleInfo> get() = emptyList()
-    val platform: TargetPlatform? get() = null
-    val compilerServices: PlatformDependentCompilerServices? get() = null
+    val platform: TargetPlatform
+    val compilerServices: PlatformDependentCompilerServices
     fun modulesWhoseInternalsAreVisible(): Collection<ModuleInfo> = listOf()
     val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>
         get() = mapOf(Capability to this)

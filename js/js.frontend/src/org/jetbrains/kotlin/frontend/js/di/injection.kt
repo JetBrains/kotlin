@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.frontend.di.configureModule
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.js.resolve.JsPlatformCompilerServices
+import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
@@ -45,7 +46,7 @@ fun createTopDownAnalyzerForJs(
     val storageComponentContainer = createContainer("TopDownAnalyzerForJs", JsPlatformCompilerServices) {
         configureModule(
             moduleContext,
-            DefaultBuiltInPlatforms.jsPlatform,
+            JsPlatforms.defaultJsPlatform,
             JsPlatformCompilerServices,
             bindingTrace
         )
