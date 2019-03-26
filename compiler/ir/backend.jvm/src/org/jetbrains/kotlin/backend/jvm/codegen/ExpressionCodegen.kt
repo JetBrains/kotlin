@@ -49,6 +49,8 @@ import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.typeUtil.isNothing
+import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typesApproximation.approximateCapturedTypes
 import org.jetbrains.kotlin.types.upperIfFlexible
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
@@ -127,16 +129,13 @@ class ExpressionCodegen(
         val result = irFunction.body!!.accept(this, info)
         markFunctionLineNumber()
         val returnType = typeMapper.mapReturnType(irFunction.descriptor)
-        if (irFunction.body is IrExpressionBody) {
+        val body = irFunction.body!!
+        // If this function has an expression body, return the result of that expression.
+        // Otherwise, if it does not end in a return statement, it must be void-returning,
+        // and an explicit return instruction at the end is still required to pass validation.
+        if (body !is IrStatementContainer || body.statements.lastOrNull() !is IrReturn) {
+            coerce(result.type, returnType, mv)
             mv.areturn(returnType)
-            //TODO merge branch inside next one
-        } else if (!endsWithReturn(irFunction.body!!)) {
-            if (returnType == Type.VOID_TYPE) {
-                mv.areturn(returnType)
-            } else {
-                StackValue.none().put(returnType, null, mv)
-                mv.areturn(returnType)
-            }
         }
         writeLocalVariablesInTable(info)
         writeParameterInLocalVariableTable(startLabel)
@@ -194,19 +193,9 @@ class ExpressionCodegen(
         )
     }
 
-    private fun endsWithReturn(body: IrBody): Boolean {
-        val lastStatement = if (body is IrStatementContainer) {
-            body.statements.lastOrNull() ?: body
-        } else body
-        return lastStatement is IrReturn
-    }
-
-    override fun visitBlockBody(body: IrBlockBody, data: BlockInfo): StackValue {
-        return body.statements.fold(none()) { _, exp ->
-            exp.accept(this, data).also {
-                (exp as? IrExpression)?.markEndOfStatementIfNeeded()
-            }
-        }
+    private fun StackValue.discard(): StackValue {
+        coerce(type, Type.VOID_TYPE, mv)
+        return none()
     }
 
     override fun visitBlock(expression: IrBlock, data: BlockInfo): StackValue {
@@ -244,13 +233,21 @@ class ExpressionCodegen(
         }
     }
 
-    override fun visitContainerExpression(expression: IrContainerExpression, data: BlockInfo): StackValue {
-        val result = expression.statements.fold(none()) { _, exp ->
-            //coerceNotToUnit(r.type, Type.VOID_TYPE)
-            exp.accept(this, data)
+    private fun visitStatementContainer(container: IrStatementContainer, data: BlockInfo): StackValue {
+        return container.statements.fold(none()) { prev, exp ->
+            prev.discard()
+            gen(exp, data).also {
+                (exp as? IrExpression)?.markEndOfStatementIfNeeded()
+            }
         }
-        // Blocks with nothing type do not generate a value on the stack.
-        if (expression.type.isNothing()) return none()
+    }
+
+    override fun visitBlockBody(body: IrBlockBody, data: BlockInfo): StackValue {
+        return visitStatementContainer(body, data).discard()
+    }
+
+    override fun visitContainerExpression(expression: IrContainerExpression, data: BlockInfo): StackValue {
+        val result = visitStatementContainer(expression, data)
         return coerceNotToUnit(result.type, result.kotlinType, expression.type.toKotlinType())
     }
 
@@ -458,19 +455,21 @@ class ExpressionCodegen(
 
     override fun visitSetField(expression: IrSetField, data: BlockInfo): StackValue {
         val expressionValue = expression.value
-        if (irFunction is IrConstructor && irFunction.isPrimary) {
-            // Do not add redundant field initializers that initialize to default values.
-            // "expression.origin == null" means that the field is initialized when it is declared,
-            // i.e., not in an initializer block or constructor body.
-            if (expression.origin == null && expressionValue is IrConst<*> && isDefaultValueForType(
-                    expression.symbol.owner.type, expressionValue
-                )
-            ) return none()
+        // Do not add redundant field initializers that initialize to default values.
+        // "expression.origin == null" means that the field is initialized when it is declared,
+        // i.e., not in an initializer block or constructor body.
+        val skip = irFunction is IrConstructor && irFunction.isPrimary &&
+                expression.origin == null && expressionValue is IrConst<*> &&
+                isDefaultValueForType(expression.symbol.owner.type, expressionValue)
+        if (!skip) {
+            expression.markLineNumber(startOffset = true)
+            val fieldValue = generateFieldValue(expression, data)
+            fieldValue.store(expressionValue.accept(this, data), mv)
         }
-        expression.markLineNumber(startOffset = true)
-        val fieldValue = generateFieldValue(expression, data)
-        fieldValue.store(expressionValue.accept(this, data), mv)
-        return none()
+        // Assignments can be used as expressions, so return a value. Redundant pushes
+        // will be eliminated by the peephole optimizer.
+        putUnitInstance(mv)
+        return onStack(AsmTypes.UNIT_TYPE)
     }
 
 
@@ -538,7 +537,10 @@ class ExpressionCodegen(
         expression.value.markLineNumber(startOffset = true)
         val value = expression.value.accept(this, data)
         StackValue.local(findLocalIndex(expression.symbol), expression.descriptor.asmType).store(value, mv)
-        return none()
+        // Assignments can be used as expressions, so return a value. Redundant pushes
+        // will be eliminated by the peephole optimizer.
+        putUnitInstance(mv)
+        return onStack(AsmTypes.UNIT_TYPE)
     }
 
     override fun <T> visitConst(expression: IrConst<T>, data: BlockInfo): StackValue {
@@ -681,57 +683,46 @@ class ExpressionCodegen(
 
     override fun visitWhen(expression: IrWhen, data: BlockInfo): StackValue {
         expression.markLineNumber(startOffset = true)
-        val switch = SwitchGenerator(expression, data, this).generate()
-        return switch ?: genIfWithBranches(expression.branches[0], data, expression.type.toKotlinType(), expression.branches.drop(1))
-    }
+        SwitchGenerator(expression, data, this).generate()?.let { return it }
 
-    private fun genIfWithBranches(branch: IrBranch, data: BlockInfo, type: KotlinType, otherBranches: List<IrBranch>): StackValue {
-        // True or false conditions known at compile time need not be generated.
-        val shouldGenerateCondition = !branch.condition.isFalseConst() && !branch.condition.isTrueConst()
-        // Body of an always-false-condition need not be generated.
-        val shouldGenerateBody = !branch.condition.isFalseConst()
-        // Don't generate the tail if it doesn't exist or isn't reachable.
-        val shouldGenerateTail = !otherBranches.isEmpty() && !branch.condition.isTrueConst()
-
-        val elseLabel = Label()
+        val type = expression.type.toKotlinType()
         val endLabel = Label()
-
-        if (shouldGenerateCondition) {
-            genConditionalJumpWithOptimizationsIfPossible(branch.condition, data, elseLabel)
-        } else {
-            // Even when a condition isn't generated, a linenumber and nop is still required so that a debugger can break on the line of the
-            // condition, except for the explicit "else".
-            if (branch !is IrElseBranch) {
-                branch.condition.markLineNumber(startOffset = true)
-                mv.nop()
+        var exhaustive = false
+        for (branch in expression.branches) {
+            val elseLabel = Label()
+            if (branch.condition.isFalseConst() || branch.condition.isTrueConst()) {
+                // True or false conditions known at compile time need not be generated. A linenumber and nop are still required
+                // for a debugger to break on the line of the condition.
+                if (branch !is IrElseBranch) {
+                    branch.condition.markLineNumber(startOffset = true)
+                    mv.nop()
+                }
+                if (branch.condition.isFalseConst())
+                    continue // The branch body is dead code.
+            } else {
+                genConditionalJumpWithOptimizationsIfPossible(branch.condition, data, elseLabel)
             }
-        }
-
-        val resultFromBody = if (shouldGenerateBody) {
-            val thenBranch = branch.result
-            val result = thenBranch.run {
-                val stackValue = gen(this, data)
-                coerceNotToUnit(stackValue.type, stackValue.kotlinType, type)
+            gen(branch.result, data).let {
+                coerceNotToUnit(it.type, it.kotlinType, type)
+            }
+            if (branch.condition.isTrueConst()) {
+                exhaustive = true
+                break // The rest of the expression is dead code.
             }
             mv.goTo(endLabel)
             mv.mark(elseLabel)
-            result
-        } else {
-            none()
         }
 
-        val resultFromTail = if (shouldGenerateTail) {
-            val nextBranch = otherBranches.first()
-            genIfWithBranches(nextBranch, data, type, otherBranches.drop(1))
-        } else {
-            none()
+        if (!exhaustive) {
+            // TODO: make all non-exhaustive `if`/`when` return Nothing.
+            if (type.isUnit())
+                putUnitInstance(mv)
+            else if (!type.isNothing())
+                throw AssertionError("non-exhaustive `if`/`when` wants to return $type")
         }
 
-        // endLabel is only used to jump from end-of-then-body to the end of the whole if cascade.
-        if (shouldGenerateBody)
-            mv.mark(endLabel)
-
-        return if (shouldGenerateBody) resultFromBody else resultFromTail
+        mv.mark(endLabel)
+        return if (type.isNothing()) none() else expression.onStack
     }
 
     private fun genConditionalJumpWithOptimizationsIfPossible(
@@ -814,8 +805,7 @@ class ExpressionCodegen(
             IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> {
                 val result = expression.argument.accept(this, data)
                 expression.argument.markEndOfStatementIfNeeded()
-                coerce(result.type, Type.VOID_TYPE, mv)
-                return none()
+                return result.discard()
             }
 
             IrTypeOperator.IMPLICIT_CAST -> {
@@ -931,8 +921,8 @@ class ExpressionCodegen(
 
         with(LoopInfo(loop, continueLabel, endLabel)) {
             data.addInfo(this)
-            loop.body?.apply {
-                gen(this, data)
+            loop.body?.let {
+                gen(it, data).discard()
             }
             data.removeInfo(this)
         }
@@ -991,8 +981,8 @@ class ExpressionCodegen(
 
         with(LoopInfo(loop, continueLabel, endLabel)) {
             data.addInfo(this)
-            loop.body?.apply {
-                gen(this, data)
+            loop.body?.let {
+                gen(it, data).discard()
             }
             data.removeInfo(this)
         }
@@ -1229,7 +1219,8 @@ class ExpressionCodegen(
 
     internal fun coerceNotToUnit(fromType: Type, fromKotlinType: KotlinType?, toKotlinType: KotlinType): StackValue {
         val asmToType = toKotlinType.asmType
-        if (asmToType != AsmTypes.UNIT_TYPE || TypeUtils.isNullableType(toKotlinType)) {
+        // A void should still be materialized as a Unit to avoid stack depth mismatches.
+        if (asmToType != AsmTypes.UNIT_TYPE || fromType == Type.VOID_TYPE || TypeUtils.isNullableType(toKotlinType)) {
             coerce(fromType, fromKotlinType, asmToType, toKotlinType, mv)
             return onStack(asmToType, toKotlinType)
         }

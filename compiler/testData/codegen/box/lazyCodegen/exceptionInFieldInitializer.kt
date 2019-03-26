@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 class A(val p: String) {
     val prop: String = throw RuntimeException()
 }

@@ -28,8 +28,6 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
 
     // @return null if the IrWhen cannot be emitted as lookupswitch or tableswitch.
     fun generate(): StackValue? {
-        val endLabel = Label()
-        var defaultLabel = endLabel
         val expressionToLabels = ArrayList<ExpressionToLabel>()
         var elseExpression: IrExpression? = null
         val callToLabels = ArrayList<CallToLabel>()
@@ -38,7 +36,6 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
         for (branch in expression.branches) {
             if (branch is IrElseBranch) {
                 elseExpression = branch.result
-                defaultLabel = Label()
             } else {
                 val conditions = matchConditions(branch.condition) ?: return null
                 val thenLabel = Label()
@@ -73,8 +70,6 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
             areConstIntComparisons(calls) ->
                 IntSwitch(
                     subject,
-                    defaultLabel,
-                    endLabel,
                     elseExpression,
                     expressionToLabels,
                     cases
@@ -82,8 +77,6 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
             areConstStringComparisons(calls) ->
                 StringSwitch(
                     subject,
-                    defaultLabel,
-                    endLabel,
                     elseExpression,
                     expressionToLabels,
                     cases
@@ -197,11 +190,12 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
 
     abstract inner class Switch(
         val subject: IrGetValue,
-        val defaultLabel: Label,
-        val endLabel: Label,
         val elseExpression: IrExpression?,
         val expressionToLabels: ArrayList<ExpressionToLabel>
     ) {
+        protected val endLabel = Label()
+        protected val defaultLabel = Label()
+
         open fun shouldOptimize() = false
 
         open fun genOptimizedIfEnoughCases(): StackValue? {
@@ -251,14 +245,13 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
         }
 
         protected fun genElseExpression(): StackValue {
+            mv.visitLabel(defaultLabel)
             return if (elseExpression == null) {
-                // There's no else part. No stack value will be generated.
-                StackValue.putUnitInstance(mv)
-                onStack(Type.VOID_TYPE)
+                // There's no else part. Generate Unit if needed.
+                coerceNotToUnit(Type.VOID_TYPE, null, expression.type.toKotlinType())
             } else {
                 // Generate the else part.
-                mv.visitLabel(defaultLabel)
-                val stackValue = elseExpression.run { gen(this, data) }
+                val stackValue = gen(elseExpression, data)
                 coerceNotToUnit(stackValue.type, stackValue.kotlinType, expression.type.toKotlinType())
             }
         }
@@ -266,12 +259,10 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
 
     inner class IntSwitch(
         subject: IrGetValue,
-        defaultLabel: Label,
-        endLabel: Label,
         elseExpression: IrExpression?,
         expressionToLabels: ArrayList<ExpressionToLabel>,
         private val cases: List<ValueToLabel>
-    ) : Switch(subject, defaultLabel, endLabel, elseExpression, expressionToLabels) {
+    ) : Switch(subject, elseExpression, expressionToLabels) {
 
         // IF is more compact when there are only 1 or fewer branches, in addition to else.
         override fun shouldOptimize() = cases.size > 1
@@ -326,12 +317,10 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
 
     inner class StringSwitch(
         subject: IrGetValue,
-        defaultLabel: Label,
-        endLabel: Label,
         elseExpression: IrExpression?,
         expressionToLabels: ArrayList<ExpressionToLabel>,
         private val cases: List<ValueToLabel>
-    ) : Switch(subject, defaultLabel, endLabel, elseExpression, expressionToLabels) {
+    ) : Switch(subject, elseExpression, expressionToLabels) {
 
         private val hashToStringAndExprLabels = HashMap<Int, ArrayList<ValueToLabel>>()
         private val hashAndSwitchLabels = ArrayList<ValueToLabel>()
