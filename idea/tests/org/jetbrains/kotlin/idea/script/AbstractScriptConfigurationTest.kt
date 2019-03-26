@@ -331,7 +331,8 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
     }
 
     private fun compileLibToDir(srcDir: File, vararg classpath: String): File {
-        val outDir = KotlinTestUtils.tmpDir("${getTestName(false)}${srcDir.name}Out")
+        //TODO: tmpDir would be enough, but there is tricky fail under AS otherwise
+        val outDir = KotlinTestUtils.tmpDirForReusableLibrary("${getTestName(false)}${srcDir.name}Out")
 
         val kotlinSourceFiles = FileUtil.findFilesByMask(Pattern.compile(".+\\.kt$"), srcDir)
         if (kotlinSourceFiles.isNotEmpty()) {

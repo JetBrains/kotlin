@@ -428,9 +428,7 @@ public class KotlinTestUtils {
 
     @NotNull
     public static File tmpDirForReusableLibrary(String name) throws IOException {
-        File answer = normalizeFile(FileUtil.createTempDirectory(new File(System.getProperty("java.io.tmpdir")), name, ""));
-        deleteOnShutdown(answer);
-        return answer;
+        return normalizeFile(FileUtil.createTempDirectory(new File(System.getProperty("java.io.tmpdir")), name, "", true));
     }
 
     private static File normalizeFile(File file) throws IOException {

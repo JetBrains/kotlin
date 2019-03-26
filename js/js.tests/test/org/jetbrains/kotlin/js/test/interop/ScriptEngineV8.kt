@@ -9,18 +9,13 @@ import com.eclipsesource.v8.V8
 import com.eclipsesource.v8.V8Array
 import com.eclipsesource.v8.V8Object
 import com.eclipsesource.v8.utils.V8ObjectUtils
-import com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
 class ScriptEngineV8 : ScriptEngine {
     companion object {
         // It's important that this is not created per test, but rather per process.
-        val LIBRARY_PATH_BASE = FileUtil.createTempDirectory(
-            File(System.getProperty("java.io.tmpdir")),
-            "j2v8_library_path",
-            "",
-            true
-        ).path
+        val LIBRARY_PATH_BASE = KotlinTestUtils.tmpDirForReusableLibrary("j2v8_library_path").path
     }
 
     override fun <T> releaseObject(t: T) {
