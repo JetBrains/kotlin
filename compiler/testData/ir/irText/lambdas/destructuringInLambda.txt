@@ -53,7 +53,7 @@ FILE fqName:<root> fileName:/destructuringInLambda.kt
             $this: GET_VAR '<this>: <root>.A declared in <root>.A.copy' type=<root>.A origin=null
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun copy (x: kotlin.Int, y: kotlin.Int): <root>.A declared in <root>.A'
-          CALL 'public constructor <init> (x: kotlin.Int, y: kotlin.Int) [primary] declared in <root>.A' type=<root>.A origin=null
+          CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.Int, y: kotlin.Int) [primary] declared in <root>.A' type=<root>.A origin=null
             x: GET_VAR 'x: kotlin.Int declared in <root>.A.copy' type=kotlin.Int origin=null
             y: GET_VAR 'y: kotlin.Int declared in <root>.A.copy' type=kotlin.Int origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.A) returnType:kotlin.String 

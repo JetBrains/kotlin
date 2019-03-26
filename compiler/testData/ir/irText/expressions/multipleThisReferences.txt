@@ -119,7 +119,7 @@ FILE fqName:<root> fileName:/multipleThisReferences.kt
                 overridden:
                   public open fun toString (): kotlin.String declared in <root>.Outer.Inner
                 $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
-            CALL 'public constructor <init> () [primary] declared in <root>.Host.test.<no name provided>' type=<root>.Host.test.<no name provided> origin=OBJECT_LITERAL
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Host.test.<no name provided>' type=<root>.Host.test.<no name provided> origin=OBJECT_LITERAL
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any

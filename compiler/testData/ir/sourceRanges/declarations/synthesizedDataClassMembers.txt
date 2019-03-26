@@ -72,7 +72,7 @@
             @0:0..4:1 GET_VAR '<this>: <root>.C declared in <root>.C.copy' type=<root>.C origin=null
       @0:0..4:1 BLOCK_BODY
         @0:0..4:1 RETURN type=kotlin.Nothing from='public final fun copy (x: kotlin.Int, y: kotlin.String, z: kotlin.Any): <root>.C declared in <root>.C'
-          @0:0..4:1 CALL 'public constructor <init> (x: kotlin.Int, y: kotlin.String, z: kotlin.Any) [primary] declared in <root>.C' type=<root>.C origin=null
+          @0:0..4:1 CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.Int, y: kotlin.String, z: kotlin.Any) [primary] declared in <root>.C' type=<root>.C origin=null
             @0:0..4:1 GET_VAR 'x: kotlin.Int declared in <root>.C.copy' type=kotlin.Int origin=null
             @0:0..4:1 GET_VAR 'y: kotlin.String declared in <root>.C.copy' type=kotlin.String origin=null
             @0:0..4:1 GET_VAR 'z: kotlin.Any declared in <root>.C.copy' type=kotlin.Any origin=null

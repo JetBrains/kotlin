@@ -76,7 +76,7 @@ FILE fqName:<root> fileName:/classLiteralInAnnotation.kt
               overridden:
                 public open fun toString (): kotlin.String declared in kotlin.Any
               $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
-          CALL 'public constructor <init> () [primary] declared in <root>.test2.<no name provided>' type=<root>.test2.<no name provided><T of <root>.test2> origin=OBJECT_LITERAL
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.test2.<no name provided>' type=<root>.test2.<no name provided><T of <root>.test2> origin=OBJECT_LITERAL
   PROPERTY name:test3 visibility:public modality:FINAL [var] 
     FUN name:<get-test3> visibility:public modality:FINAL <T> ($receiver:T of <root>.<get-test3>) returnType:kotlin.Any [inline] 
       correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL [var] 
@@ -106,7 +106,7 @@ FILE fqName:<root> fileName:/classLiteralInAnnotation.kt
                 overridden:
                   public open fun toString (): kotlin.String declared in kotlin.Any
                 $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
-            CALL 'public constructor <init> () [primary] declared in <root>.<get-test3>.<no name provided>' type=<root>.<get-test3>.<no name provided> origin=OBJECT_LITERAL
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.<get-test3>.<no name provided>' type=<root>.<get-test3>.<no name provided> origin=OBJECT_LITERAL
     FUN name:<set-test3> visibility:public modality:FINAL <T> ($receiver:T of <root>.<set-test3>, v:kotlin.Any) returnType:kotlin.Unit [inline] 
       correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL [var] 
       TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
@@ -136,4 +136,4 @@ FILE fqName:<root> fileName:/classLiteralInAnnotation.kt
                 overridden:
                   public open fun toString (): kotlin.String declared in kotlin.Any
                 $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
-            CALL 'public constructor <init> () [primary] declared in <root>.<set-test3>.<no name provided>' type=<root>.<set-test3>.<no name provided> origin=OBJECT_LITERAL
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.<set-test3>.<no name provided>' type=<root>.<set-test3>.<no name provided> origin=OBJECT_LITERAL

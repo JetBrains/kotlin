@@ -75,7 +75,7 @@ FILE fqName:<root> fileName:/dataClasses.kt
             $this: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.copy' type=<root>.Test1 origin=null
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun copy (x: kotlin.Int, y: kotlin.String, z: kotlin.Any): <root>.Test1 declared in <root>.Test1'
-          CALL 'public constructor <init> (x: kotlin.Int, y: kotlin.String, z: kotlin.Any) [primary] declared in <root>.Test1' type=<root>.Test1 origin=null
+          CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.Int, y: kotlin.String, z: kotlin.Any) [primary] declared in <root>.Test1' type=<root>.Test1 origin=null
             x: GET_VAR 'x: kotlin.Int declared in <root>.Test1.copy' type=kotlin.Int origin=null
             y: GET_VAR 'y: kotlin.String declared in <root>.Test1.copy' type=kotlin.String origin=null
             z: GET_VAR 'z: kotlin.Any declared in <root>.Test1.copy' type=kotlin.Any origin=null
@@ -214,7 +214,7 @@ FILE fqName:<root> fileName:/dataClasses.kt
             $this: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.copy' type=<root>.Test2 origin=null
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun copy (x: kotlin.Any?): <root>.Test2 declared in <root>.Test2'
-          CALL 'public constructor <init> (x: kotlin.Any?) [primary] declared in <root>.Test2' type=<root>.Test2 origin=null
+          CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.Any?) [primary] declared in <root>.Test2' type=<root>.Test2 origin=null
             x: GET_VAR 'x: kotlin.Any? declared in <root>.Test2.copy' type=kotlin.Any? origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.Test2) returnType:kotlin.String 
       overridden:
@@ -384,7 +384,7 @@ FILE fqName:<root> fileName:/dataClasses.kt
             $this: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3.copy' type=<root>.Test3 origin=null
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun copy (d: kotlin.Double, dn: kotlin.Double?, f: kotlin.Float, df: kotlin.Float?): <root>.Test3 declared in <root>.Test3'
-          CALL 'public constructor <init> (d: kotlin.Double, dn: kotlin.Double?, f: kotlin.Float, df: kotlin.Float?) [primary] declared in <root>.Test3' type=<root>.Test3 origin=null
+          CONSTRUCTOR_CALL 'public constructor <init> (d: kotlin.Double, dn: kotlin.Double?, f: kotlin.Float, df: kotlin.Float?) [primary] declared in <root>.Test3' type=<root>.Test3 origin=null
             d: GET_VAR 'd: kotlin.Double declared in <root>.Test3.copy' type=kotlin.Double origin=null
             dn: GET_VAR 'dn: kotlin.Double? declared in <root>.Test3.copy' type=kotlin.Double? origin=null
             f: GET_VAR 'f: kotlin.Float declared in <root>.Test3.copy' type=kotlin.Float origin=null

@@ -203,7 +203,8 @@ fun IrBuilderWithScope.irGet(type: IrType, receiver: IrExpression?, getterSymbol
     IrGetterCallImpl(
         startOffset, endOffset,
         type,
-        getterSymbol, getterSymbol.descriptor,
+        getterSymbol as IrSimpleFunctionSymbol,
+        getterSymbol.descriptor,
         typeArgumentsCount = 0,
         dispatchReceiver = receiver,
         extensionReceiver = null,
@@ -214,7 +215,8 @@ fun IrBuilderWithScope.irSet(type: IrType, receiver: IrExpression?, getterSymbol
     IrSetterCallImpl(
         startOffset, endOffset,
         type,
-        getterSymbol, getterSymbol.descriptor,
+        getterSymbol as IrSimpleFunctionSymbol,
+        getterSymbol.descriptor,
         typeArgumentsCount = 0,
         dispatchReceiver = receiver,
         extensionReceiver = null,
@@ -222,42 +224,72 @@ fun IrBuilderWithScope.irSet(type: IrType, receiver: IrExpression?, getterSymbol
         origin = IrStatementOrigin.EQ
     )
 
-fun IrBuilderWithScope.irCall(callee: IrFunctionSymbol, type: IrType, typeArguments: List<IrType> = emptyList()): IrCall =
-    IrCallImpl(startOffset, endOffset, type, callee, callee.descriptor).apply {
+fun IrBuilderWithScope.irCall(
+    callee: IrFunctionSymbol,
+    type: IrType,
+    typeArguments: List<IrType>
+): IrMemberAccessExpression =
+    irCall(callee, type).apply {
         typeArguments.forEachIndexed { index, irType ->
             this.putTypeArgument(index, irType)
         }
     }
 
 fun IrBuilderWithScope.irCallConstructor(callee: IrConstructorSymbol, typeArguments: List<IrType>): IrCall =
-    IrCallImpl(startOffset, endOffset, callee.owner.returnType, callee, callee.descriptor, typeArguments.size, callee.owner.valueParameters.size).apply {
-        typeArguments.forEachIndexed { index, irType ->
-            this.putTypeArgument(index, irType)
-        }
+        TODO("IrConstructorCall")
+//    IrCallImpl(startOffset, endOffset, callee.owner.returnType, callee, callee.descriptor, typeArguments.size, callee.owner.valueParameters.size).apply {
+//        typeArguments.forEachIndexed { index, irType ->
+//            this.putTypeArgument(index, irType)
+//        }
+//    }
+
+fun IrBuilderWithScope.irCall(callee: IrSimpleFunctionSymbol, type: IrType): IrCall =
+    IrCallImpl(startOffset, endOffset, type, callee, callee.descriptor)
+
+fun IrBuilderWithScope.irCall(callee: IrConstructorSymbol, type: IrType): IrConstructorCall =
+    IrConstructorCallImpl.fromSymbolDescriptor(startOffset, endOffset, type, callee)
+
+fun IrBuilderWithScope.irCall(callee: IrFunctionSymbol, type: IrType): IrMemberAccessExpression =
+    when (callee) {
+        is IrConstructorSymbol -> irCall(callee, type)
+        is IrSimpleFunctionSymbol -> irCall(callee, type)
+        else -> throw AssertionError("Unexpected callee: $callee")
     }
 
-fun IrBuilderWithScope.irCall(callee: IrFunctionSymbol): IrCall =
-    IrCallImpl(startOffset, endOffset, callee.owner.returnType, callee, callee.descriptor)
+fun IrBuilderWithScope.irCall(callee: IrSimpleFunctionSymbol): IrCall =
+    irCall(callee, callee.owner.returnType)
+
+fun IrBuilderWithScope.irCall(callee: IrConstructorSymbol): IrConstructorCall =
+    irCall(callee, callee.owner.returnType)
+
+fun IrBuilderWithScope.irCall(callee: IrFunctionSymbol): IrMemberAccessExpression =
+    irCall(callee, callee.owner.returnType)
 
 fun IrBuilderWithScope.irCall(callee: IrFunctionSymbol, descriptor: FunctionDescriptor, type: IrType): IrCall =
-    IrCallImpl(startOffset, endOffset, type, callee, descriptor)
+    IrCallImpl(startOffset, endOffset, type, callee as IrSimpleFunctionSymbol, descriptor)
 
-fun IrBuilderWithScope.irCall(callee: IrFunction): IrCall =
-    irCall(callee.symbol, callee.descriptor, callee.returnType)
+fun IrBuilderWithScope.irCall(callee: IrFunction): IrMemberAccessExpression =
+    irCall(callee.symbol)
 
 fun IrBuilderWithScope.irCall(callee: IrFunction, origin: IrStatementOrigin): IrCall =
-    IrCallImpl(startOffset, endOffset, callee.returnType, callee.symbol, callee.descriptor, origin)
+    IrCallImpl(
+        startOffset, endOffset, callee.returnType,
+        callee.symbol as IrSimpleFunctionSymbol,
+        callee.descriptor, origin
+    )
 
 fun IrBuilderWithScope.irDelegatingConstructorCall(callee: IrConstructor): IrDelegatingConstructorCall =
-    IrDelegatingConstructorCallImpl(startOffset, endOffset, callee.returnType, callee.symbol, callee.descriptor,
-            callee.parentAsClass.typeParameters.size, callee.valueParameters.size)
+    IrDelegatingConstructorCallImpl(
+        startOffset, endOffset, callee.returnType, callee.symbol, callee.descriptor,
+        callee.parentAsClass.typeParameters.size, callee.valueParameters.size
+    )
 
 fun IrBuilderWithScope.irCallOp(
     callee: IrFunctionSymbol,
     type: IrType,
     dispatchReceiver: IrExpression,
     argument: IrExpression? = null
-): IrCall =
+): IrMemberAccessExpression =
     irCall(callee, type).apply {
         this.dispatchReceiver = dispatchReceiver
         if (argument != null)
