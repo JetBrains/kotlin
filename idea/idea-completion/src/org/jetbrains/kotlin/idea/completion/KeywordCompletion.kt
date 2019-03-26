@@ -129,12 +129,15 @@ object KeywordCompletion {
             if (constructText != null && !applicableAsCompound) {
                 val element = createKeywordConstructLookupElement(position.project, keyword, constructText)
                 consumer(element)
-            }
-            else {
+            } else {
                 if (listOf(CLASS_KEYWORD, OBJECT_KEYWORD, INTERFACE_KEYWORD).any { keyword.endsWith(it.value) }) {
                     val topLevelClassName = getTopLevelClassName(position)
                     if (topLevelClassName != null) {
-                        consumer(createLookupElementBuilder("$keyword $topLevelClassName", position))
+                        if (keyword.startsWith(DATA_KEYWORD.value)) {
+                            consumer(createKeywordConstructLookupElement(position.project, keyword, "$keyword $topLevelClassName(caret)"))
+                        } else {
+                            consumer(createLookupElementBuilder("$keyword $topLevelClassName", position))
+                        }
                     }
                 }
                 consumer(createLookupElementBuilder(keyword, position))
