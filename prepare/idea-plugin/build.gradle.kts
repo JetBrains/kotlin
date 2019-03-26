@@ -107,8 +107,6 @@ dependencies {
     packedJars(protobufFull())
     packedJars(kotlinBuiltins())
     sideJars(project(":kotlin-script-runtime"))
-    sideJars(kotlinStdlib())
-    sideJars(kotlinStdlib("jdk7"))
     sideJars(kotlinStdlib("jdk8"))
     sideJars(project(":kotlin-reflect"))
     sideJars(project(":kotlin-compiler-client-embeddable"))
