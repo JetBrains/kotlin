@@ -793,7 +793,8 @@ class JavaToJKTreeBuilder constructor(
             return JKParameterImpl(
                 type,
                 nameIdentifier.toJK(),
-                isVarArgs
+                isVarArgs,
+                annotationList = annotationList(null)
             ).also {
                 symbolProvider.provideUniverseSymbol(this, it)
                 it.psi = this
