@@ -16,6 +16,7 @@ object StandardClassIds {
 
     val Nothing = "Nothing".baseId()
     val Any = "Any".baseId()
+    val Array = "Array".baseId()
 
     val Boolean = "Boolean".baseId()
     val Char = "Char".baseId()
@@ -30,4 +31,5 @@ object StandardClassIds {
     val Float = "Float".baseId()
     val Double = "Double".baseId()
 
+    fun byName(name: String) = name.baseId()
 }
