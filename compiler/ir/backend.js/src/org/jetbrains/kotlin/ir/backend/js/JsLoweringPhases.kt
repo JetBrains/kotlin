@@ -333,10 +333,17 @@ private val callsLoweringPhase = makeJsModulePhase(
     description = "Handle intrinsics"
 )
 
+private val testGenerationPhase = makeJsModulePhase(
+    ::TestGenerator,
+    name = "TestGenerationLowering",
+    description = "Generate invocations to kotlin.test suite and test functions"
+)
+
 val jsPhases = namedIrModulePhase(
     name = "IrModuleLowering",
     description = "IR module lowering",
-    lower = expectDeclarationsRemovingPhase then
+    lower = testGenerationPhase then
+            expectDeclarationsRemovingPhase then
             functionInliningPhase then
             lateinitLoweringPhase then
             tailrecLoweringPhase then

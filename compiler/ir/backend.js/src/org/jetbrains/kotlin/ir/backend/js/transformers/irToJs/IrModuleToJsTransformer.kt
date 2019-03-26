@@ -49,6 +49,10 @@ class IrModuleToJsTransformer(private val backendContext: JsIrBackendContext) : 
         statements += postDeclarationBlock
         statements += context.staticContext.initializerBlock
 
+        if (backendContext.hasTests) {
+            statements += JsInvocation(context.getNameForSymbol(backendContext.testContainer.symbol).makeRef()).makeStmt()
+        }
+
         return statements
     }
 

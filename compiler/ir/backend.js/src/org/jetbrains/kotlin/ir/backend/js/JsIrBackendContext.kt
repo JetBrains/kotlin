@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.SourceRangeInfo
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.lower.CallableReferenceKey
 import org.jetbrains.kotlin.ir.backend.js.lower.ConstructorPair
 import org.jetbrains.kotlin.ir.backend.js.utils.OperatorNames
@@ -80,6 +81,17 @@ class JsIrBackendContext(
             irModuleFragment.files += it
         }
     }
+
+    private var testContainerField: IrSimpleFunction? = null
+
+    val hasTests get() = testContainerField != null
+
+    val testContainer
+        get() = testContainerField ?: JsIrBuilder.buildFunction("test fun", irBuiltIns.unitType, implicitDeclarationFile).apply {
+            body = JsIrBuilder.buildBlockBody(emptyList())
+            testContainerField = this
+            implicitDeclarationFile.declarations += this
+        }
 
     override val sharedVariablesManager = JsSharedVariablesManager(irBuiltIns, implicitDeclarationFile)
     override val declarationFactory = JsDeclarationFactory()
@@ -223,6 +235,9 @@ class JsIrBackendContext(
     val newThrowableSymbol = symbolTable.referenceSimpleFunction(getJsInternalFunction("newThrowable"))
 
     val throwISEymbol = symbolTable.referenceSimpleFunction(getFunctions(kotlinPackageFqn.child(Name.identifier("THROW_ISE"))).single())
+
+    val suiteFun = getFunctions(FqName("kotlin.test.suite")).singleOrNull()?.let { symbolTable.referenceSimpleFunction(it) }
+    val testFun = getFunctions(FqName("kotlin.test.test")).singleOrNull()?.let { symbolTable.referenceSimpleFunction(it) }
 
     val coroutineImplLabelPropertyGetter by lazy { ir.symbols.coroutineImpl.getPropertyGetter("state")!!.owner }
     val coroutineImplLabelPropertySetter by lazy { ir.symbols.coroutineImpl.getPropertySetter("state")!!.owner }

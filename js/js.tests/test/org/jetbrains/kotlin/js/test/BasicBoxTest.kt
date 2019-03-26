@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProviderImpl
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumerImpl
 import org.jetbrains.kotlin.incremental.js.TranslationResultValue
-import org.jetbrains.kotlin.ir.backend.js.JsIrTestRuntime
 import org.jetbrains.kotlin.js.JavaScript
 import org.jetbrains.kotlin.js.backend.JsToStringGenerationVisitor
 import org.jetbrains.kotlin.js.backend.ast.*
@@ -110,11 +109,7 @@ abstract class BasicBoxTest(
             fileContent = fileContent.replace("COROUTINES_PACKAGE", coroutinesPackage)
         }
 
-        val runtimeType =
-            if (KJS_WITH_FULL_RUNTIME.matcher(fileContent).find())
-                JsIrTestRuntime.FULL
-            else
-                JsIrTestRuntime.DEFAULT
+        val needsFullIrRuntime = KJS_WITH_FULL_RUNTIME.matcher(fileContent).find()
 
         val actualMainCallParameters = if (CALL_MAIN_PATTERN.matcher(fileContent).find()) MainCallParameters.mainWithArguments(listOf("testArg")) else mainCallParameters
 
@@ -150,7 +145,7 @@ abstract class BasicBoxTest(
                     file.parent, module, outputFileName, dependencies, allDependencies, friends, modules.size > 1,
                     !SKIP_SOURCEMAP_REMAPPING.matcher(fileContent).find(),
                     outputPrefixFile, outputPostfixFile, actualMainCallParameters, testPackage, testFunction,
-                    runtimeType, isMainModule
+                    needsFullIrRuntime, isMainModule
                 )
 
                 when {
@@ -333,7 +328,7 @@ abstract class BasicBoxTest(
         mainCallParameters: MainCallParameters,
         testPackage: String?,
         testFunction: String,
-        runtime: JsIrTestRuntime,
+        needsFullIrRuntime: Boolean,
         isMainModule: Boolean
     ) {
         val kotlinFiles =  module.files.filter { it.fileName.endsWith(".kt") }
@@ -356,13 +351,13 @@ abstract class BasicBoxTest(
         val incrementalData = IncrementalData()
         translateFiles(
             psiFiles.map(TranslationUnit::SourceFile), outputFile, config, outputPrefixFile, outputPostfixFile,
-            mainCallParameters, incrementalData, remap, testPackage, testFunction, runtime, isMainModule
+            mainCallParameters, incrementalData, remap, testPackage, testFunction, needsFullIrRuntime, isMainModule
         )
 
         if (incrementalCompilationChecksEnabled && module.hasFilesToRecompile) {
             checkIncrementalCompilation(
                 sourceDirs, module, kotlinFiles, dependencies, allDependencies, friends, multiModule, remap,
-                outputFile, outputPrefixFile, outputPostfixFile, mainCallParameters, incrementalData, testPackage, testFunction, runtime
+                outputFile, outputPrefixFile, outputPostfixFile, mainCallParameters, incrementalData, testPackage, testFunction, needsFullIrRuntime
             )
         }
     }
@@ -383,7 +378,7 @@ abstract class BasicBoxTest(
         incrementalData: IncrementalData,
         testPackage: String?,
         testFunction: String,
-        runtime: JsIrTestRuntime
+        needsFullIrRuntime: Boolean
     ) {
         val sourceToTranslationUnit = hashMapOf<File, TranslationUnit>()
         for (testFile in kotlinFiles) {
@@ -405,7 +400,7 @@ abstract class BasicBoxTest(
 
         translateFiles(
             translationUnits, recompiledOutputFile, recompiledConfig, outputPrefixFile, outputPostfixFile,
-            mainCallParameters, incrementalData, remap, testPackage, testFunction, runtime, false
+            mainCallParameters, incrementalData, remap, testPackage, testFunction, needsFullIrRuntime, false
         )
 
         val originalOutput = FileUtil.loadFile(outputFile)
@@ -470,7 +465,7 @@ abstract class BasicBoxTest(
         remap: Boolean,
         testPackage: String?,
         testFunction: String,
-        runtime: JsIrTestRuntime,
+        needsFullIrRuntime: Boolean,
         isMainModule: Boolean
     ) {
         val translator = K2JSTranslator(config, false)

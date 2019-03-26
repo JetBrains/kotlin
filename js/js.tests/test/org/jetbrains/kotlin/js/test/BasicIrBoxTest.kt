@@ -7,7 +7,10 @@ package org.jetbrains.kotlin.js.test
 
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.ir.backend.js.*
+import org.jetbrains.kotlin.ir.backend.js.KlibModuleRef
+import org.jetbrains.kotlin.ir.backend.js.compile
+import org.jetbrains.kotlin.ir.backend.js.generateKLib
+import org.jetbrains.kotlin.ir.backend.js.jsPhases
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.facade.MainCallParameters
@@ -15,13 +18,9 @@ import org.jetbrains.kotlin.js.facade.TranslationUnit
 import org.jetbrains.kotlin.test.TargetBackend
 import java.io.File
 
-private val fullRuntimeKlibPath = "js/js.translator/testData/out/klibs/runtimeFull/"
-private val defaultRuntimeKlibPath = "js/js.translator/testData/out/klibs/runtimeDefault/"
-
-private val JS_IR_RUNTIME_MODULE_NAME = "JS_IR_RUNTIME"
-
-private val fullRuntimeKlib = KlibModuleRef(JS_IR_RUNTIME_MODULE_NAME, fullRuntimeKlibPath)
-private val defaultRuntimeKlib = KlibModuleRef(JS_IR_RUNTIME_MODULE_NAME, defaultRuntimeKlibPath)
+private val fullRuntimeKlib = KlibModuleRef("JS_IR_RUNTIME", "compiler/ir/serialization.js/build/fullRuntime/klib")
+private val defaultRuntimeKlib = KlibModuleRef("JS_IR_RUNTIME", "compiler/ir/serialization.js/build/reducedRuntime/klib")
+private val kotlinTestKLib = KlibModuleRef("kotlin.test", "compiler/ir/serialization.js/build/kotlin.test/klib")
 
 abstract class BasicIrBoxTest(
     pathToTestDir: String,
@@ -53,10 +52,6 @@ abstract class BasicIrBoxTest(
 
     override val testChecker get() = if (runTestInNashorn) NashornIrJsTestChecker() else V8IrJsTestChecker
 
-    private val runtimes = mapOf(
-        JsIrTestRuntime.DEFAULT to defaultRuntimeKlib,
-        JsIrTestRuntime.FULL to fullRuntimeKlib)
-
     override fun translateFiles(
         units: List<TranslationUnit>,
         outputFile: File,
@@ -68,7 +63,7 @@ abstract class BasicIrBoxTest(
         remap: Boolean,
         testPackage: String?,
         testFunction: String,
-        runtime: JsIrTestRuntime,
+        needsFullIrRuntime: Boolean,
         isMainModule: Boolean
     ) {
         val filesToCompile = units
@@ -76,34 +71,19 @@ abstract class BasicIrBoxTest(
             // TODO: split input files to some parts (global common, local common, test)
             .filterNot { it.virtualFilePath.contains(BasicBoxTest.COMMON_FILES_DIR_PATH) }
 
-//        config.configuration.put(CommonConfigurationKeys.EXCLUDED_ELEMENTS_FROM_DUMPING, setOf("<JS_IR_RUNTIME>"))
-//        config.configuration.put(
-//            CommonConfigurationKeys.PHASES_TO_VALIDATE_AFTER,
-//            setOf(
-//                "RemoveInlineFunctionsWithReifiedTypeParametersLowering",
-//                "InnerClassConstructorCallsLowering",
-//                "InlineClassLowering", "ConstLowering"
-//            )
-//        )
-
-        val runtimeKlib = runtimes[runtime]!!
+        val runtimeKlibs = if (needsFullIrRuntime) listOf(fullRuntimeKlib, kotlinTestKLib) else listOf(defaultRuntimeKlib)
 
         val libraries = config.configuration[JSConfigurationKeys.LIBRARIES]!!.map { File(it).name }
         val transitiveLibraries = config.configuration[JSConfigurationKeys.TRANSITIVE_LIBRARIES]!!.map { File(it).name }
 
         // TODO: Add proper depencencies
-        val dependencies = listOf(runtimeKlib) + libraries.map {
+        val dependencies = runtimeKlibs + libraries.map {
             compilationCache[it] ?: error("Can't find compiled module for dependency $it")
         }
 
-        val allDependencies = listOf(runtimeKlib) + transitiveLibraries.map {
+        val allDependencies = runtimeKlibs + transitiveLibraries.map {
             compilationCache[it] ?: error("Can't find compiled module for dependency $it")
         }
-
-//        config.configuration.put(CommonConfigurationKeys.PHASES_TO_DUMP_STATE, setOf("UnitMaterializationLowering"))
-//        config.configuration.put(CommonConfigurationKeys.PHASES_TO_DUMP_STATE_BEFORE, setOf("ReturnableBlockLowering"))
-//        config.configuration.put(CommonConfigurationKeys.PHASES_TO_DUMP_STATE_AFTER, setOf("MultipleCatchesLowering"))
-//        config.configuration.put(CommonConfigurationKeys.PHASES_TO_VALIDATE, setOf("ALL"))
 
         val actualOutputFile = outputFile.absolutePath.let {
             if (!isMainModule) it.replace("_v5.js", "/") else it

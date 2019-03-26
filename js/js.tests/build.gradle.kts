@@ -71,7 +71,11 @@ sourceSets {
 fun Test.setUpBoxTests(jsEnabled: Boolean, jsIrEnabled: Boolean) {
     dependsOn(":dist")
     if (jsEnabled) dependsOn(testJsRuntime)
-    if (jsIrEnabled) dependsOn(":compiler:ir.serialization.js:generateIrRuntimeKlib")
+    if (jsIrEnabled) {
+        dependsOn(":compiler:ir.serialization.js:generateFullRuntimeKLib")
+        dependsOn(":compiler:ir.serialization.js:generateReducedRuntimeKLib")
+        dependsOn(":compiler:ir.serialization.js:generateKotlinTestKLib")
+    }
 
     if (jsEnabled && !jsIrEnabled) exclude("org/jetbrains/kotlin/js/test/ir/semantics/*")
     if (!jsEnabled && jsIrEnabled) include("org/jetbrains/kotlin/js/test/ir/semantics/*")
