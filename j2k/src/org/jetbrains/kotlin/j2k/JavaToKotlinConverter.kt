@@ -16,9 +16,12 @@
 
 package org.jetbrains.kotlin.j2k
 
+import com.intellij.codeInsight.documentation.DocumentationManager
 import com.intellij.lang.java.JavaLanguage
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.RangeMarker
 import com.intellij.openapi.progress.*
 import com.intellij.openapi.project.Project
@@ -35,6 +38,9 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import java.util.*
+import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
+
 
 interface PostProcessor {
     fun insertImport(file: KtFile, fqName: FqName)
@@ -58,6 +64,7 @@ data class Result(val results: List<ElementResult?>, val externalCodeProcessing:
 
 data class FilesResult(val results: List<String>, val externalCodeProcessing: ExternalCodeProcessing?)
 
+
 abstract class JavaToKotlinConverter(private val project: Project) {
     protected abstract fun elementsToKotlin(inputElements: List<PsiElement>, processor: WithProgressProcessor): Result
 
@@ -80,7 +87,12 @@ abstract class JavaToKotlinConverter(private val project: Project) {
                     KtPsiFactory(project).createFileWithLightClassSupport("dummy.kt", result!!.text, files[i])
                 })
 
-                result!!.importsToAdd.forEach { postProcessor.insertImport(kotlinFile, it) }
+
+                CommandProcessor.getInstance().executeCommand(project, {
+                    result!!.importsToAdd.forEach {
+                        postProcessor.insertImport(kotlinFile, it)
+                    }
+                }, "Adding imports to Kotlin code", null)
 
                 AfterConversionPass(project, postProcessor).run(kotlinFile, range = null)
 
@@ -321,12 +333,12 @@ open class DelegatingProgressIndicator : WrappedProgressIndicator, StandardProgr
         delegate = indicator
     }
 
-        constructor() {
-            // BUNCH: 181
-            @Suppress("IncompatibleAPI")
-            val indicator: ProgressIndicator? = ProgressManager.getInstance().progressIndicator
-            delegate = indicator ?: EmptyProgressIndicator()
-        }
+    constructor() {
+        // BUNCH: 181
+        @Suppress("IncompatibleAPI")
+        val indicator: ProgressIndicator? = ProgressManager.getInstance().progressIndicator
+        delegate = indicator ?: EmptyProgressIndicator()
+    }
 
     override fun start() = delegate.start()
     override fun stop() = delegate.stop()
