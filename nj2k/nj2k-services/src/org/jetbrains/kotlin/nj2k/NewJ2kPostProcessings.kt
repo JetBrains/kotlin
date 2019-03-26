@@ -34,16 +34,19 @@ import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.I
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isNullExpression
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isTrivialStatementBody
 import org.jetbrains.kotlin.idea.quickfix.*
+import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.references.readWriteAccess
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.j2k.ConverterSettings
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.nj2k.postProcessing.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -152,7 +155,7 @@ object NewJ2KPostProcessingRegistrar {
             }
             ,
             registerGeneralInspectionBasedProcessing(RedundantUnitReturnTypeInspection()),
-
+            JavaObjectEqualsToEqOperator(),
             RemoveExplicitPropertyType(),
             RemoveRedundantNullability(),
 
@@ -750,6 +753,41 @@ object NewJ2KPostProcessingRegistrar {
                 }
             }
         }
+    }
+
+    private class JavaObjectEqualsToEqOperator : NewJ2kPostProcessing {
+        companion object {
+            private val CALL_FQ_NAME = FqName("java.util.Objects.equals")
+        }
+
+        private fun check(callExpression: KtCallExpression): Boolean {
+            if (callExpression.valueArguments.size != 2) return false
+            if (callExpression.valueArguments.any { it.getArgumentExpression() == null }) return false
+            val target = callExpression.calleeExpression
+                .safeAs<KtReferenceExpression>()
+                ?.resolve()
+                ?: return false
+            return target.getKotlinFqName() == CALL_FQ_NAME
+        }
+
+        override fun createAction(element: PsiElement, diagnostics: Diagnostics): (() -> Unit)? {
+            if (element !is KtCallExpression) return null
+            if (!check(element)) return null
+            return {
+                if (element.isValid() && check(element)) {
+                    val factory = KtPsiFactory(element)
+                    element.getQualifiedExpressionForSelectorOrThis().replace(
+                        factory.createExpressionByPattern(
+                            "($0 == $1)",
+                            element.valueArguments[0].getArgumentExpression()!!,
+                            element.valueArguments[1].getArgumentExpression()!!
+                        )
+                    )
+                }
+            }
+        }
+
+        override val writeActionNeeded: Boolean = true
     }
 
     private class RemoveRedundantExpressionQualifierProcessing : NewJ2kPostProcessing {
