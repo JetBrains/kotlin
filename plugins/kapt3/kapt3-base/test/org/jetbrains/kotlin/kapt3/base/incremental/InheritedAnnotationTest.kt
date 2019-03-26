@@ -30,7 +30,7 @@ class TestInheritedAnnotation {
         @BeforeClass
         fun setUp() {
             val classpathHistory = tmp.newFolder()
-            cache = JavaClassCacheManager(tmp.newFolder(), classpathHistory)
+            cache = JavaClassCacheManager(tmp.newFolder())
             generatedSources = tmp.newFolder()
             cache.close()
             classpathHistory.resolve("0").createNewFile()

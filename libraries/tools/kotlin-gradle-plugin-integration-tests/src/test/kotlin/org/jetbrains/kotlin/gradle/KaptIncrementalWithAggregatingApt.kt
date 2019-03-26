@@ -35,25 +35,13 @@ class KaptIncrementalWithAggregatingApt : KaptIncrementalIT() {
     fun testIncrementalChanges() {
         val project = getProject()
 
-        var aptTimestamp = 0L
-
         project.build("clean", "build") {
             assertSuccessful()
-
-            val classpathHistory =
-                fileInWorkingDir("build/kotlin/kaptGenerateStubsKotlin/classpath-fq-history").listFiles().asList().single()
-            val stubsTimestamp = classpathHistory.name.toLong()
-
-            aptTimestamp = fileInWorkingDir("build/tmp/kapt3/incApCache/main/last-build-ts.bin").readText().toLong()
-            assertTrue(stubsTimestamp < aptTimestamp)
         }
 
         project.projectFile("useB.kt").modify { current -> "$current\nfun otherFunction() {}" }
         project.build("build") {
             assertSuccessful()
-
-            val newAptTimestamp = fileInWorkingDir("build/tmp/kapt3/incApCache/main/last-build-ts.bin").readText().toLong()
-            assertTrue(aptTimestamp < newAptTimestamp)
 
             assertEquals(
                 setOf(

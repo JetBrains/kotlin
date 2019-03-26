@@ -109,8 +109,7 @@ class IncrementalJvmCompilerRunner(
     buildHistoryFile: File,
     outputFiles: Collection<File>,
     private val modulesApiHistory: ModulesApiHistory,
-    override val kotlinSourceFilesExtensions: List<String> = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS,
-    private val classpathFqNamesHistory: File? = null
+    override val kotlinSourceFilesExtensions: List<String> = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 ) : IncrementalCompilerRunner<K2JVMCompilerArguments, IncrementalJvmCachesManager>(
     workingDir,
     "caches-jvm",
@@ -254,28 +253,6 @@ class IncrementalJvmCompilerRunner(
             val destinationDir = args.destinationAsFile
             destinationDir.mkdirs()
             args.classpathAsList = listOf(destinationDir) + args.classpathAsList
-        }
-    }
-
-    override fun processChangesAfterBuild(compilationMode: CompilationMode, currentBuildInfo: BuildInfo, dirtyData: DirtyData) {
-        super.processChangesAfterBuild(compilationMode, currentBuildInfo, dirtyData)
-
-        classpathFqNamesHistory ?: return
-        classpathFqNamesHistory.mkdirs()
-
-        val historyFiles = classpathFqNamesHistory.listFiles()
-        if (dirtyClasspathChanges.isEmpty() && historyFiles.isNotEmpty()) {
-            // Don't write an empty file. We check there is at least one file so that downstream task can mark what it has processed.
-            return
-        }
-
-        if (historyFiles.size > 10) {
-            historyFiles.minBy { it.lastModified() }!!.delete()
-        }
-        val newHistoryFile = classpathFqNamesHistory.resolve(System.currentTimeMillis().toString())
-        ObjectOutputStream(newHistoryFile.outputStream().buffered()).use {
-            val listOfNames = dirtyClasspathChanges.map { it.toString() }.toList()
-            it.writeObject(listOfNames)
         }
     }
 

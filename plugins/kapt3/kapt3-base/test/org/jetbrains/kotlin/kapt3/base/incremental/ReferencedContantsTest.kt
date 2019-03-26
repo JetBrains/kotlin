@@ -32,11 +32,9 @@ class ReferencedConstantsTest {
             val compiledClasses = tmp.newFolder()
             compileSources(listOf(MY_TEST_DIR.resolve("CKlass.java")), compiledClasses)
 
-            val classpathHistory = tmp.newFolder()
-            cache = JavaClassCacheManager(tmp.newFolder(), classpathHistory)
+            cache = JavaClassCacheManager(tmp.newFolder())
             generatedSources = tmp.newFolder()
             cache.close()
-            classpathHistory.resolve("0").createNewFile()
             val processor = SimpleProcessor().toAggregating()
             val srcFiles = listOf(
                 "A.java",
