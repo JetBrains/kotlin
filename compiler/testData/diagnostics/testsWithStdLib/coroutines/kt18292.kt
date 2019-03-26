@@ -15,6 +15,6 @@ suspend fun fib(n: Long) =
     async {
         when {
             n < 2 -> n
-            else -> <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>fib(n - 1)<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>await<!>() <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>+<!> fib(n - 2).<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>await<!>()
+            else -> <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!><!NI;DEBUG_INFO_MISSING_UNRESOLVED!>fib<!>(<!NI;DEBUG_INFO_MISSING_UNRESOLVED!>n<!> <!NI;DEBUG_INFO_MISSING_UNRESOLVED!>-<!> 1)<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>await<!>() <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>+<!> fib(n - 2).<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>await<!>()
         }
     }

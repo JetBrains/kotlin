@@ -31,7 +31,7 @@ fun foo() {
     genericBuilder<Int> { <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>""<!> }
 
     val y = { 1 }
-    <!OI;TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR!>genericBuilder<!>(<!TYPE_MISMATCH!>y<!>)
+    <!NI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER, OI;TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR!>genericBuilder<!>(<!TYPE_MISMATCH!>y<!>)
 
     <!NI;UNREACHABLE_CODE!>unitBuilder {}<!>
     <!NI;UNREACHABLE_CODE!>unitBuilder { <!OI;UNUSED_EXPRESSION!>1<!> }<!>
