@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 // FILE: WeirdComparator.java
 
 import java.util.*;

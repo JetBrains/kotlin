@@ -82,6 +82,7 @@ val jvmPhases = namedIrFilePhase(
             makePatchParentsPhase(1) then
 
             jvmLocalDeclarationsPhase then
+            singleAbstractMethodPhase then
             callableReferencePhase then
             functionNVarargInvokePhase then
 
