@@ -37,7 +37,7 @@ FILE: unary.kt
     public? final? class X : kotlin/Any {
         public? constructor(i: Int): super<kotlin/Any>()
 
-        public? final? val i: Int
+        public? final? val i: Int = R|<local>/i|
             public? get(): Int
 
     }
@@ -74,7 +74,7 @@ FILE: unary.kt
     public? final? class Y : kotlin/Any {
         public? constructor(arr: Array<Int>): super<kotlin/Any>()
 
-        public? final? val arr: Array<Int>
+        public? final? val arr: Array<Int> = R|<local>/arr|
             public? get(): Array<Int>
 
     }

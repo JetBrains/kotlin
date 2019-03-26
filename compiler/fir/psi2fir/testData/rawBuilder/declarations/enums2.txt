@@ -12,7 +12,7 @@ FILE: enums2.kt
     public? final? enum class SomeEnum : kotlin/Enum {
         public? constructor(x: Some): super<kotlin/Enum>()
 
-        public? final? val x: Some
+        public? final? val x: Some = R|<local>/x|
             public? get(): Some
 
         public? final enum entry FIRST : SomeEnum {

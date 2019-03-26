@@ -12,7 +12,7 @@ FILE: Annotations.kt
     @R|annotations/WithString|(String(xyz)) public final class Second : @R|annotations/WithInt|(Int(0)) R|test/First| {
         public constructor(y: R|kotlin/Char|): super<@R|annotations/WithInt|(Int(0)) R|test/First|>()
 
-        public final val y: R|kotlin/Char|
+        public final val y: R|kotlin/Char| = R|<local>/y|
             public get(): R|kotlin/Char|
 
         public final override fun foo(arg: R|kotlin/Double|): R|kotlin/Unit| {

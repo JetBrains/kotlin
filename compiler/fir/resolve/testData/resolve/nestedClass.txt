@@ -2,7 +2,7 @@ FILE: nestedClass.kt
     public abstract class Base : R|kotlin/Any| {
         public constructor(s: R|kotlin/String|): super<R|kotlin/Any|>()
 
-        public final val s: R|kotlin/String|
+        public final val s: R|kotlin/String| = R|<local>/s|
             public get(): R|kotlin/String|
 
     }

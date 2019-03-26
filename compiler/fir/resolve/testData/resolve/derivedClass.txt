@@ -2,7 +2,7 @@ FILE: derivedClass.kt
     <T> public open class Base : R|kotlin/Any| {
         public constructor(x: R|T|): super<R|kotlin/Any|>()
 
-        public final val x: R|T|
+        public final val x: R|T| = R|<local>/x|
             public get(): R|T|
 
     }

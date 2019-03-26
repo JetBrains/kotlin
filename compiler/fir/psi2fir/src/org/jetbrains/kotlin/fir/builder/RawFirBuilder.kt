@@ -16,10 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.labels.FirLabelImpl
-import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
-import org.jetbrains.kotlin.fir.references.FirExplicitSuperReference
-import org.jetbrains.kotlin.fir.references.FirSimpleNamedReference
-import org.jetbrains.kotlin.fir.references.FirExplicitThisReference
+import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -260,7 +257,7 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
             return firValueParameter
         }
 
-        private fun KtParameter.toFirProperty(): FirProperty {
+        private fun KtParameter.toFirProperty(firParameter: FirValueParameter): FirProperty {
             require(hasValOrVar())
             val type = typeReference.toFirOrErrorType()
             val firProperty = FirMemberPropertyImpl(
@@ -278,7 +275,11 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
                 receiverTypeRef = null,
                 returnTypeRef = type,
                 isVar = isMutable,
-                initializer = null,
+                initializer = FirQualifiedAccessExpressionImpl(session, this).apply {
+                    calleeReference = FirPropertyFromParameterCallableReference(
+                        this@RawFirBuilder.session, this@toFirProperty, nameAsSafeName, firParameter.symbol
+                    )
+                },
                 getter = FirDefaultPropertyGetter(session, this, type, visibility),
                 setter = FirDefaultPropertySetter(session, this, type, visibility),
                 delegate = null
@@ -511,15 +512,19 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
                 classOrObject.extractTypeParametersTo(firClass)
                 val delegatedSelfType = classOrObject.toDelegatedSelfType(firClass)
                 val delegatedSuperType = classOrObject.extractSuperTypeListEntriesTo(firClass, delegatedSelfType)
-                classOrObject.primaryConstructor?.valueParameters?.forEach {
-                    if (it.hasValOrVar()) {
-                        firClass.declarations += it.toFirProperty()
+                val primaryConstructor = classOrObject.primaryConstructor
+                val firPrimaryConstructor = firClass.declarations.firstOrNull() as? FirConstructor
+                if (primaryConstructor != null && firPrimaryConstructor != null) {
+                    primaryConstructor.valueParameters.zip(firPrimaryConstructor.valueParameters).forEach { (ktParameter, firParameter) ->
+                        if (ktParameter.hasValOrVar()) {
+                            firClass.declarations += ktParameter.toFirProperty(firParameter)
+                        }
                     }
                 }
 
                 for (declaration in classOrObject.declarations) {
                     firClass.declarations += declaration.toFirDeclaration(
-                        delegatedSuperType, delegatedSelfType, hasPrimaryConstructor = classOrObject.primaryConstructor != null
+                        delegatedSuperType, delegatedSelfType, hasPrimaryConstructor = primaryConstructor != null
                     )
                 }
 

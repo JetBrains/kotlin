@@ -11,7 +11,7 @@ FILE: calls.kt
     public? final? class My : kotlin/Any {
         public? constructor(x: Int): super<kotlin/Any>()
 
-        public? final? var x: Int
+        public? final? var x: Int = R|<local>/x|
             public? get(): Int
             public? set(value: Int): kotlin/Unit
 

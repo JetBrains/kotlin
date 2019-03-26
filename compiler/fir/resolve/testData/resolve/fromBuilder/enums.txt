@@ -21,10 +21,10 @@ FILE: enums.kt
     public final enum class Planet : R|kotlin/Enum| {
         private constructor(m: R|kotlin/Double|, r: R|kotlin/Double|): super<R|kotlin/Enum|>()
 
-        public final val m: R|kotlin/Double|
+        public final val m: R|kotlin/Double| = R|<local>/m|
             public get(): R|kotlin/Double|
 
-        internal final val r: R|kotlin/Double|
+        internal final val r: R|kotlin/Double| = R|<local>/r|
             internal get(): R|kotlin/Double|
 
         public final enum entry MERCURY : R|Planet| {
