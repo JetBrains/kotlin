@@ -11,10 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.expandedConeType
 import org.jetbrains.kotlin.fir.declarations.superConeTypes
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.impl.FirClassDeclaredMemberScope
-import org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope
-import org.jetbrains.kotlin.fir.scopes.impl.FirClassUseSiteScope
-import org.jetbrains.kotlin.fir.scopes.impl.FirCompositeScope
+import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -39,7 +36,7 @@ fun FirRegularClass.buildUseSiteScope(useSiteSession: FirSession): FirScope {
 
 private fun FirRegularClass.buildDefaultUseSiteScope(useSiteSession: FirSession): FirScope {
     val superTypeScope = FirCompositeScope(mutableListOf())
-    val declaredScope = FirClassDeclaredMemberScope(this, useSiteSession)
+    val declaredScope = FirClassDeclaredMemberScope(this)
     lookupSuperTypes(this, lookupInterfaces = true, deep = false, useSiteSession = useSiteSession)
         .mapNotNullTo(superTypeScope.scopes) { useSiteSuperType ->
             if (useSiteSuperType is ConeClassErrorType) return@mapNotNullTo null

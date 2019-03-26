@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.constructType
+import org.jetbrains.kotlin.fir.resolve.getClassDeclaredCallableSymbols
 import org.jetbrains.kotlin.fir.service
-import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
@@ -237,8 +237,8 @@ private fun JavaAnnotationArgument.toFirExpression(session: FirSession): FirExpr
                 val classId = this@toFirExpression.enumClassId
                 val entryName = this@toFirExpression.entryName
                 val calleeReference = if (classId != null && entryName != null) {
-                    val callableSymbol = session.service<FirSymbolProvider>().getCallableSymbols(
-                        CallableId(classId.packageFqName, classId.relativeClassName, entryName)
+                    val callableSymbol = session.service<FirSymbolProvider>().getClassDeclaredCallableSymbols(
+                        classId, entryName
                     ).firstOrNull()
                     callableSymbol?.let {
                         FirResolvedCallableReferenceImpl(session, null, entryName, it)

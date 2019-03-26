@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.java.deserialization
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirNamedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
@@ -15,7 +14,7 @@ import org.jetbrains.kotlin.fir.deserialization.FirDeserializationContext
 import org.jetbrains.kotlin.fir.deserialization.deserializeClassToSymbol
 import org.jetbrains.kotlin.fir.resolve.AbstractFirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.getOrPut
-import org.jetbrains.kotlin.fir.symbols.CallableId
+import org.jetbrains.kotlin.fir.scopes.impl.FirClassDeclaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -81,21 +80,16 @@ class KotlinDeserializedJvmSymbolsProvider(
         }
     }
 
-    override fun getCallableSymbols(callableId: CallableId): List<ConeCallableSymbol> {
-        if (callableId.classId != null) {
-            return getClassDeclarations(callableId.classId!!).filterIsInstance<FirCallableMemberDeclaration>()
-                .filter { it.name == callableId.callableName }
-                .map { it.symbol }
-        }
-
-        val packageFqName = callableId.packageName
-
+    override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<ConeCallableSymbol> {
         return getPackageParts(packageFqName).flatMap { (packageProto, context) ->
             packageProto.functionList.map {
                 context.memberDeserializer.loadFunction(it).symbol
-            }.filter { callableSymbol -> callableSymbol.callableId.callableName == callableId.callableName }
+            }.filter { callableSymbol -> callableSymbol.callableId.callableName == name }
         }
     }
+
+    override fun getClassDeclaredMemberScope(classId: ClassId) =
+        findRegularClass(classId)?.let(::FirClassDeclaredMemberScope)
 
     private fun getPackageParts(packageFqName: FqName): Collection<Pair<ProtoBuf.Package, FirDeserializationContext>> {
         return packagePartsCache.getOrPut(packageFqName) {
@@ -115,10 +109,13 @@ class KotlinDeserializedJvmSymbolsProvider(
             .mapTo(sortedSetOf(), JavaClass::name)
 
     private fun getClassDeclarations(classId: ClassId): List<FirDeclaration> {
-        @Suppress("UNCHECKED_CAST")
-        val classSymbol = getClassLikeSymbolByFqName(classId) as? FirBasedSymbol<FirRegularClass> ?: return emptyList()
-        return classSymbol.fir.declarations
+        return findRegularClass(classId)?.declarations ?: emptyList()
     }
+
+
+    private fun findRegularClass(classId: ClassId): FirRegularClass? =
+        @Suppress("UNCHECKED_CAST")
+        (getClassLikeSymbolByFqName(classId) as? FirBasedSymbol<FirRegularClass>)?.fir
 
     override fun getAllCallableNamesInClass(classId: ClassId): Set<Name> =
         getClassDeclarations(classId)

@@ -9,10 +9,15 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.FirProvider
-import org.jetbrains.kotlin.fir.symbols.*
+import org.jetbrains.kotlin.fir.scopes.impl.FirClassDeclaredMemberScope
+import org.jetbrains.kotlin.fir.symbols.CallableId
+import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.FirSymbolOwner
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 
 class FirProviderImpl(val session: FirSession) : FirProvider {
     override fun getFirCallableContainerFile(callableId: CallableId): FirFile? {
@@ -23,11 +28,14 @@ class FirProviderImpl(val session: FirSession) : FirProvider {
         return (getFirClassifierByFqName(classId) as? FirSymbolOwner<*>)?.symbol as? ConeClassLikeSymbol
     }
 
-    override fun getCallableSymbols(callableId: CallableId): List<ConeCallableSymbol> {
-        return (callableMap[callableId] ?: emptyList())
+    override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<ConeCallableSymbol> {
+        return (callableMap[CallableId(packageFqName, null, name)] ?: emptyList())
             .filterIsInstance<FirSymbolOwner<*>>()
             .mapNotNull { it.symbol as? ConeCallableSymbol }
     }
+
+    override fun getClassDeclaredMemberScope(classId: ClassId) =
+        (getFirClassifierByFqName(classId) as? FirRegularClass)?.let(::FirClassDeclaredMemberScope)
 
     override fun getFirClassifierContainerFile(fqName: ClassId): FirFile {
         return classifierContainerFileMap[fqName] ?: error("Couldn't find container for $fqName")

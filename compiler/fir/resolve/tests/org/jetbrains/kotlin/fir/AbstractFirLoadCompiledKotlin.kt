@@ -9,7 +9,6 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
-import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil.compileKotlinToDirAndGetModule
@@ -66,7 +65,7 @@ abstract class AbstractFirLoadCompiledKotlin : AbstractFirResolveWithSessionTest
         val firRenderer = FirRenderer(builder)
 
         for (name in provider.getAllCallableNamesInPackage(packageFqName)) {
-            for (symbol in provider.getCallableSymbols(CallableId(packageFqName, null, name))) {
+            for (symbol in provider.getTopLevelCallableSymbols(packageFqName, name)) {
                 (symbol as FirCallableSymbol).fir.accept(firRenderer)
                 builder.appendln()
             }

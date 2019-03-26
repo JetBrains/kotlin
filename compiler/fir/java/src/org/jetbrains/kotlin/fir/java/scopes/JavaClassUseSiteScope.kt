@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.java.toNotNullConeKotlinType
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractProviderBasedScope
-import org.jetbrains.kotlin.fir.scopes.impl.FirClassDeclaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeVariableSymbol
@@ -28,7 +27,7 @@ class JavaClassUseSiteScope(
     klass: FirRegularClass,
     session: FirSession,
     internal val superTypesScope: FirScope,
-    private val declaredMemberScope: FirClassDeclaredMemberScope
+    private val declaredMemberScope: FirScope
 ) : FirAbstractProviderBasedScope(session, lookupInFir = true) {
     internal val symbol = klass.symbol
 
