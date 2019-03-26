@@ -8728,6 +8728,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/unusedSymbol/typeAlias.kt");
         }
 
+        @TestMetadata("unusedEnumEntry.kt")
+        public void testUnusedEnumEntry() throws Exception {
+            runTest("idea/testData/inspectionsLocal/unusedSymbol/unusedEnumEntry.kt");
+        }
+
         @TestMetadata("withJvmNameUsedFromKotlin.kt")
         public void testWithJvmNameUsedFromKotlin() throws Exception {
             runTest("idea/testData/inspectionsLocal/unusedSymbol/withJvmNameUsedFromKotlin.kt");
