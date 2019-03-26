@@ -772,12 +772,14 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
                 (kotlinAndroidTarget.compilations as NamedDomainObjectCollection<in KotlinJvmAndroidCompilation>).add(compilation)
             }
 
-            val subpluginEnvironment = SubpluginEnvironment.loadSubplugins(project, kotlinConfigurationTools.kotlinPluginVersion)
-            val compilation = kotlinAndroidTarget.compilations.getByName(getVariantName(variant))
-            applySubplugins(project, compilation, variant, subpluginEnvironment)
         }
 
         project.whenEvaluated {
+            forEachVariant(project) { variant ->
+                val subpluginEnvironment = SubpluginEnvironment.loadSubplugins(project, kotlinConfigurationTools.kotlinPluginVersion)
+                val compilation = kotlinAndroidTarget.compilations.getByName(getVariantName(variant))
+                applySubplugins(project, compilation, variant, subpluginEnvironment)
+            }
             checkAndroidAnnotationProcessorDependencyUsage(project)
         }
     }
