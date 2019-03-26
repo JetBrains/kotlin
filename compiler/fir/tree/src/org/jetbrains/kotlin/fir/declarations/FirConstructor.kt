@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 @BaseTransformedType
 interface FirConstructor : @VisitedSupertype FirFunction, FirCallableMemberDeclaration {
 
+    val isPrimary: Boolean get() = false
+
     override val isOverride: Boolean get() = status.isOverride
 
     val delegatedConstructor: FirDelegatedConstructorCall?
