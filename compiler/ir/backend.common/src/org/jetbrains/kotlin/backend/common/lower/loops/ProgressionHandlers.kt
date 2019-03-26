@@ -81,46 +81,41 @@ internal class UntilHandler(private val context: CommonBackendContext, private v
         with(context.createIrBuilder(call.symbol, call.startOffset, call.endOffset)) {
             // `last = bound - 1` for the loop `for (i in first until bound)`.
             val bound = scope.createTemporaryVariable(
-                call.getValueArgument(0)!!, nameHint = "bound",
+                ensureNotNullable(
+                    call.getValueArgument(0)!!.castIfNecessary(
+                        data.elementType(context.irBuiltIns),
+                        data.elementCastFunctionName
+                    )
+                ), nameHint = "bound",
                 origin = IrDeclarationOrigin.FOR_LOOP_IMPLICIT_VARIABLE
             )
             val decFun = data.decFun(context.irBuiltIns)
-            val last = irCallOp(decFun.symbol, bound.type, call.getValueArgument(0)!!)
+            val last = irCallOp(decFun.symbol, bound.type, irGet(bound))
 
-            // An additional emptiness condition is required for the corner case:
+            // The default "not empty" check cannot be used for the required for the corner case:
             //
-            // ```
-            // for (i in a until MIN_VALUE) {}
-            // ```
+            //   for (i in a until MIN_VALUE) {}
             //
             // ...which should always be considered an empty range. When the given bound is MIN_VALUE, and because `last = bound - 1`,
-            // "last" will underflow to MAX_VALUE, therefore the default emptiness check:
+            // "last" will underflow to MAX_VALUE, therefore the default "not empty" check:
             //
-            // ```
-            // if (first <= last) { /* loop */ }
-            // ```
+            //   if (first <= last) { /* loop */ }
             //
             // ...will always be true and won't consider the range as empty. Therefore, we need to add an additional condition to the
             // emptiness check so that it becomes:
             //
-            // ```
-            // if (first <= last && bound > MIN_VALUE) { /* loop */ }
-            // ```
-            // TODO: Do not add additionalEmptinessCondition if "bound" is const and > MIN_VALUE
+            //   if (first <= last && bound > MIN_VALUE) { /* loop */ }
             ProgressionHeaderInfo(
                 data,
                 first = call.extensionReceiver!!,
                 last = last,
                 step = irInt(1),
                 additionalVariables = listOf(bound),
-                additionalNotEmptyCondition = buildMinValueConditionIfNecessary(data, irGet(bound))
+                additionalNotEmptyCondition = buildMinValueCondition(data, irGet(bound))
             )
         }
 
-    private fun DeclarationIrBuilder.buildMinValueConditionIfNecessary(
-        progressionType: ProgressionType,
-        bound: IrExpression
-    ): IrExpression? {
+    private fun DeclarationIrBuilder.buildMinValueCondition(progressionType: ProgressionType, bound: IrExpression): IrExpression {
         val irBuiltIns = context.irBuiltIns
         val minConst = when (progressionType) {
             ProgressionType.INT_PROGRESSION -> irInt(Int.MIN_VALUE)
