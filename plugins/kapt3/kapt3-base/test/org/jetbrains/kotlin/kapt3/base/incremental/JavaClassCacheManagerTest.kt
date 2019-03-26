@@ -22,13 +22,11 @@ class JavaClassCacheManagerTest {
 
     private lateinit var cache: JavaClassCacheManager
     private lateinit var cacheDir: File
-    private lateinit var classpathHistory: File
 
     @Before
     fun setUp() {
         cacheDir = tmp.newFolder()
-        classpathHistory = tmp.newFolder()
-        cache = JavaClassCacheManager(cacheDir, classpathHistory)
+        cache = JavaClassCacheManager(cacheDir)
     }
 
 
@@ -38,7 +36,6 @@ class JavaClassCacheManagerTest {
 
         assertTrue(cacheDir.resolve("java-cache.bin").exists())
         assertTrue(cacheDir.resolve("apt-cache.bin").exists())
-        assertTrue(cacheDir.resolve("last-build-ts.bin").exists())
     }
 
     @Test
@@ -59,7 +56,7 @@ class JavaClassCacheManagerTest {
         }
         prepareForIncremental()
 
-        val dirtyFiles = cache.invalidateAndGetDirtyFiles(listOf(File("Mentioned.java"))) as SourcesToReprocess.Incremental
+        val dirtyFiles = cache.invalidateAndGetDirtyFiles(listOf(File("Mentioned.java")), emptyList()) as SourcesToReprocess.Incremental
         assertEquals(
             listOf(
                 File("Mentioned.java").absoluteFile,
@@ -87,7 +84,7 @@ class JavaClassCacheManagerTest {
         }
         prepareForIncremental()
 
-        val dirtyFiles = cache.invalidateAndGetDirtyFiles(listOf(File("Mentioned.java"))) as SourcesToReprocess.Incremental
+        val dirtyFiles = cache.invalidateAndGetDirtyFiles(listOf(File("Mentioned.java")), emptyList()) as SourcesToReprocess.Incremental
         assertEquals(
             listOf(
                 File("Mentioned.java").absoluteFile,
@@ -115,7 +112,7 @@ class JavaClassCacheManagerTest {
         }
         prepareForIncremental()
 
-        val dirtyFiles = cache.invalidateAndGetDirtyFiles(listOf(File("TwoTypes.java"))) as SourcesToReprocess.Incremental
+        val dirtyFiles = cache.invalidateAndGetDirtyFiles(listOf(File("TwoTypes.java")), emptyList()) as SourcesToReprocess.Incremental
         assertEquals(
             listOf(
                 File("TwoTypes.java").absoluteFile,
@@ -126,48 +123,16 @@ class JavaClassCacheManagerTest {
     }
 
     @Test
-    fun testNoClasspathHistory() {
-        SourceFileStructure(File("Src.java").toURI()).also {
-            it.addDeclaredType("test.Src")
-            cache.javaCache.addSourceStructure(it)
-        }
-        cache.close()
-        classpathHistory.resolve(Long.MAX_VALUE.toString()).createNewFile()
-
-        val dirtyFiles = cache.invalidateAndGetDirtyFiles(listOf())
-        assertEquals(SourcesToReprocess.FullRebuild, dirtyFiles)
-    }
-
-    @Test
-    fun testWithClasspathHistoryButNoNewChanges() {
+    fun testWithClasspathChanges() {
         SourceFileStructure(File("Src.java").toURI()).also {
             it.addDeclaredType("test.Src")
             it.addMentionedType("test.Mentioned")
             cache.javaCache.addSourceStructure(it)
         }
         prepareForIncremental()
-        ObjectOutputStream(classpathHistory.resolve("0").outputStream()).use {
-            it.writeObject(listOf("test.Mentioned"))
-        }
 
-        val dirtyFiles = cache.invalidateAndGetDirtyFiles(listOf()) as SourcesToReprocess.Incremental
-        assertEquals(emptyList<File>(), dirtyFiles.toReprocess)
-    }
-
-    @Test
-    fun testWithClasspathHistoryWithChanges() {
-        SourceFileStructure(File("Src.java").toURI()).also {
-            it.addDeclaredType("test.Src")
-            it.addMentionedType("test.Mentioned")
-            cache.javaCache.addSourceStructure(it)
-        }
-        prepareForIncremental()
-        ObjectOutputStream(classpathHistory.resolve(Long.MAX_VALUE.toString()).outputStream()).use {
-            it.writeObject(listOf("test.Mentioned"))
-        }
-
-        val dirtyFiles = cache.invalidateAndGetDirtyFiles(listOf())
-        assertEquals(SourcesToReprocess.FullRebuild, dirtyFiles)
+        val dirtyFiles = cache.invalidateAndGetDirtyFiles(listOf(), listOf("test/Mentioned")) as SourcesToReprocess.Incremental
+        assertEquals(listOf(File("Src.java").absoluteFile), dirtyFiles.toReprocess)
     }
 
     @Test
@@ -187,7 +152,7 @@ class JavaClassCacheManagerTest {
         }
         prepareForIncremental()
 
-        val dirtyFiles = cache.invalidateAndGetDirtyFiles(listOf(File("Constants.java")))
+        val dirtyFiles = cache.invalidateAndGetDirtyFiles(listOf(File("Constants.java")), emptyList())
         assertEquals(SourcesToReprocess.FullRebuild, dirtyFiles)
     }
 
@@ -217,7 +182,6 @@ class JavaClassCacheManagerTest {
 
     private fun prepareForIncremental() {
         cache.close()
-        classpathHistory.resolve("0").createNewFile()
-        cache = JavaClassCacheManager(cacheDir, classpathHistory)
+        cache = JavaClassCacheManager(cacheDir)
     }
 }

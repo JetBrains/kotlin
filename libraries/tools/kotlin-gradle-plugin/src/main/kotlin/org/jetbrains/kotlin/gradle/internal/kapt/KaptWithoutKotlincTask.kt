@@ -12,10 +12,8 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
 import org.gradle.workers.IsolationMode
 import org.gradle.workers.WorkerExecutor
-import org.jetbrains.kotlin.gradle.incremental.ChangedFiles
 import org.jetbrains.kotlin.gradle.internal.Kapt3KotlinGradleSubplugin.Companion.KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinAndroidPluginWrapper
-import org.jetbrains.kotlin.gradle.tasks.clearLocalState
 import org.jetbrains.kotlin.gradle.tasks.findKotlinStdlibClasspath
 import org.jetbrains.kotlin.gradle.tasks.findToolsJar
 import org.jetbrains.kotlin.utils.PathUtil
@@ -51,6 +49,8 @@ open class KaptWithoutKotlincTask @Inject constructor(private val workerExecutor
         logger.info("Running kapt annotation processing using the Gradle Worker API")
         checkAnnotationProcessorClasspath()
 
+        val incrementalChanges = getChangedFiles(inputs)
+
         val compileClasspath = classpath.files.toMutableList()
         if (project.plugins.none { it is KotlinAndroidPluginWrapper }) {
             compileClasspath.addAll(0, PathUtil.getJdkClassesRootsFromCurrentJre())
@@ -67,10 +67,11 @@ open class KaptWithoutKotlincTask @Inject constructor(private val workerExecutor
             compileClasspath,
             javaSourceRoots.toList(),
 
-            getChangedFiles(inputs),
+            incrementalChanges,
             getCompiledSources(),
             incAptCache,
-            classpathDirtyFqNamesHistoryDir.singleOrNull(),
+            emptyList(),
+            incrementalChanges.isNotEmpty(),
 
             destinationDir,
             classesDir,
@@ -93,7 +94,7 @@ open class KaptWithoutKotlincTask @Inject constructor(private val workerExecutor
 
         workerExecutor.submit(KaptExecution::class.java) { config ->
             val isolationModeStr = project.findProperty("kapt.workers.isolation") as String? ?: "none"
-            config.isolationMode = when(isolationModeStr.toLowerCase()) {
+            config.isolationMode = when (isolationModeStr.toLowerCase()) {
                 "process" -> IsolationMode.PROCESS
                 "none" -> IsolationMode.NONE
                 else -> IsolationMode.NONE
@@ -147,7 +148,7 @@ private class KaptExecution @Inject constructor(
         }
     }
 
-    private fun createKaptOptions(classLoader: ClassLoader) = with (optionsForWorker) {
+    private fun createKaptOptions(classLoader: ClassLoader) = with(optionsForWorker) {
         val flags = kaptClass(classLoader).declaredMethods.single { it.name == "kaptFlags" }.invoke(null, flags)
 
         val mode = Class.forName("org.jetbrains.kotlin.base.kapt3.AptMode", true, classLoader)
@@ -164,7 +165,8 @@ private class KaptExecution @Inject constructor(
             changedFiles,
             compiledSources,
             incAptCache,
-            classpathFqNamesHistory,
+            classpathChanges,
+            processIncrementally,
 
             sourcesOutputDir,
             classesOutputDir,
@@ -200,7 +202,8 @@ private data class KaptOptionsForWorker(
     val changedFiles: List<File>,
     val compiledSources: List<File>,
     val incAptCache: File?,
-    val classpathFqNamesHistory: File?,
+    val classpathChanges: List<String>,
+    val processIncrementally: Boolean,
 
     val sourcesOutputDir: File,
     val classesOutputDir: File,

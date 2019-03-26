@@ -64,8 +64,7 @@ class IncrementalCompilationOptions(
          */
         val outputFiles: List<File>,
     val multiModuleICSettings: MultiModuleICSettings,
-    val modulesInfo: IncrementalModuleInfo,
-    val classpathFqNamesHistory: File? = null
+    val modulesInfo: IncrementalModuleInfo
 ) : CompilationOptions(compilerMode, targetPlatform, reportCategories, reportSeverity, requestedCompilationResults) {
     companion object {
         const val serialVersionUID: Long = 0
@@ -81,7 +80,6 @@ class IncrementalCompilationOptions(
                "multiModuleICSettings=$multiModuleICSettings, " +
                "usePreciseJavaTracking=$usePreciseJavaTracking" +
                "outputFiles=$outputFiles" +
-               "classpathFqNamesHistory=$classpathFqNamesHistory" +
                ")"
     }
 }

@@ -274,8 +274,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
             usePreciseJavaTracking = icEnv.usePreciseJavaTracking,
             outputFiles = outputFiles,
             multiModuleICSettings = icEnv.multiModuleICSettings,
-            modulesInfo = incrementalModuleInfo!!,
-            classpathFqNamesHistory = icEnv.classpathFqNamesHistory
+            modulesInfo = incrementalModuleInfo!!
         )
 
         log.info("Options for KOTLIN DAEMON: $compilationOptions")

@@ -583,19 +583,15 @@ class CompileServiceImpl(
             }
         }
 
-        val outputFiles = incrementalCompilationOptions.outputFiles.toMutableList()
-        incrementalCompilationOptions.classpathFqNamesHistory?.let { outputFiles.add(it) }
-
         val compiler = IncrementalJvmCompilerRunner(
             workingDir,
             javaSourceRoots,
             reporter,
             buildHistoryFile = incrementalCompilationOptions.multiModuleICSettings.buildHistoryFile,
-            outputFiles = outputFiles,
+            outputFiles = incrementalCompilationOptions.outputFiles,
             usePreciseJavaTracking = incrementalCompilationOptions.usePreciseJavaTracking,
             modulesApiHistory = modulesApiHistory,
-            kotlinSourceFilesExtensions = allKotlinExtensions,
-            classpathFqNamesHistory = incrementalCompilationOptions.classpathFqNamesHistory
+            kotlinSourceFilesExtensions = allKotlinExtensions
         )
         return try {
             compiler.compile(allKotlinFiles, k2jvmArgs, compilerMessageCollector, changedFiles)

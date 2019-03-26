@@ -17,7 +17,8 @@ class KaptOptions(
     val changedFiles: List<File>,
     val compiledSources: List<File>,
     val incrementalCache: File?,
-    val classpathFqNamesHistory: File?,
+    val classpathChanges: List<String>,
+    val processIncrementally: Boolean,
 
     val sourcesOutputDir: File,
     val classesOutputDir: File,
@@ -45,12 +46,13 @@ class KaptOptions(
         val changedFiles: MutableList<File> = mutableListOf()
         val compiledSources: MutableList<File> = mutableListOf()
         var incrementalCache: File? = null
-        var classpathFqNamesHistory: File? = null
+        val classpathChanges: MutableList<String> = mutableListOf()
 
         var sourcesOutputDir: File? = null
         var classesOutputDir: File? = null
         var stubsOutputDir: File? = null
         var incrementalDataOutputDir: File? = null
+        var processIncrementally: Boolean = false
 
         val processingClasspath: MutableList<File> = mutableListOf()
         val processors: MutableList<String> = mutableListOf()
@@ -73,7 +75,7 @@ class KaptOptions(
 
             return KaptOptions(
                 projectBaseDir, compileClasspath, javaSourceRoots,
-                changedFiles, compiledSources, incrementalCache, classpathFqNamesHistory,
+                changedFiles, compiledSources, incrementalCache, classpathChanges, processIncrementally,
                 sourcesOutputDir, classesOutputDir, stubsOutputDir, incrementalDataOutputDir,
                 processingClasspath, processors, processingOptions, javacOptions, KaptFlags.fromSet(flags),
                 mode, detectMemoryLeaks
@@ -169,5 +171,6 @@ fun KaptOptions.logString(additionalInfo: String = "") = buildString {
     appendln("[incremental apt] Changed files: $changedFiles")
     appendln("[incremental apt] Compiled sources directories: ${compiledSources.joinToString()}")
     appendln("[incremental apt] Cache directory for incremental compilation: $incrementalCache")
-    appendln("[incremental apt] Classpath fq names history dir: $classpathFqNamesHistory")
+    appendln("[incremental apt] Changes classpath names: ${classpathChanges.joinToString()}")
+    appendln("[incremental apt] If processing incrementally: $processIncrementally")
 }

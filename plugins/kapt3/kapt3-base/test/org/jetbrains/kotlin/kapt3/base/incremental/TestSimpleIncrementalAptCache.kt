@@ -27,18 +27,16 @@ class TestSimpleIncrementalAptCache {
 
     @Before
     fun setUp() {
-        val classpathHistory = tmp.newFolder()
-        cache = JavaClassCacheManager(tmp.newFolder(), classpathHistory)
+        cache = JavaClassCacheManager(tmp.newFolder())
         generatedSources = tmp.newFolder()
         cache.close()
-        classpathHistory.resolve("0").createNewFile()
     }
 
     @Test
     fun testAggregatingAnnotations() {
         runProcessor(SimpleProcessor().toAggregating())
 
-        val dirtyFiles = cache.invalidateAndGetDirtyFiles(listOf(TEST_DATA_DIR.resolve("User.java"))) as SourcesToReprocess.Incremental
+        val dirtyFiles = cache.invalidateAndGetDirtyFiles(listOf(TEST_DATA_DIR.resolve("User.java")), emptyList()) as SourcesToReprocess.Incremental
         assertEquals(
             listOf(TEST_DATA_DIR.resolve("User.java").absoluteFile, TEST_DATA_DIR.resolve("Address.java").absoluteFile),
             dirtyFiles.toReprocess
@@ -51,7 +49,7 @@ class TestSimpleIncrementalAptCache {
     fun testIsolatingAnnotations() {
         runProcessor(SimpleProcessor().toIsolating())
 
-        val dirtyFiles = cache.invalidateAndGetDirtyFiles(listOf(TEST_DATA_DIR.resolve("User.java"))) as SourcesToReprocess.Incremental
+        val dirtyFiles = cache.invalidateAndGetDirtyFiles(listOf(TEST_DATA_DIR.resolve("User.java")), emptyList()) as SourcesToReprocess.Incremental
         assertFalse(generatedSources.resolve("test/UserGenerated.java").exists())
         assertEquals(
             listOf(TEST_DATA_DIR.resolve("User.java").absoluteFile),
@@ -63,7 +61,7 @@ class TestSimpleIncrementalAptCache {
     fun testNonIncremental() {
         runProcessor(SimpleProcessor().toNonIncremental())
 
-        val dirtyFiles = cache.invalidateAndGetDirtyFiles(listOf(TEST_DATA_DIR.resolve("User.java")))
+        val dirtyFiles = cache.invalidateAndGetDirtyFiles(listOf(TEST_DATA_DIR.resolve("User.java")), emptyList())
         assertTrue(dirtyFiles is SourcesToReprocess.FullRebuild)
     }
 
