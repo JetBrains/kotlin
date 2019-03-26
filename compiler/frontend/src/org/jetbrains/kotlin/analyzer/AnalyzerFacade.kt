@@ -193,7 +193,7 @@ class ResolverForProjectImpl<M : ModuleInfo>(
                     descriptor as ModuleDescriptorImpl,
                     projectContext.withModule(descriptor),
                     moduleContent,
-                    platformParameters(module.platform ?: TODO("Missing platform!")),
+                    platformParameters(module.platform),
                     targetEnvironment,
                     this@ResolverForProjectImpl,
                     languageVersionSettings
