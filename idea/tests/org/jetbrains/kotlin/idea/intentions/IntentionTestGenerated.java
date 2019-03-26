@@ -13850,6 +13850,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         public void testUnnecessaryBrackets6() throws Exception {
             runTest("idea/testData/intentions/removeCurlyBracesFromTemplate/unnecessaryBrackets6.kt");
         }
+
+        @TestMetadata("unnecessaryBrackets7.kt")
+        public void testUnnecessaryBrackets7() throws Exception {
+            runTest("idea/testData/intentions/removeCurlyBracesFromTemplate/unnecessaryBrackets7.kt");
+        }
     }
 
     @TestMetadata("idea/testData/intentions/removeEmptyClassBody")

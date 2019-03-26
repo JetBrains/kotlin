@@ -521,7 +521,7 @@ fun KtBlockStringTemplateEntry.canDropBraces() =
     expression is KtNameReferenceExpression && canPlaceAfterSimpleNameEntry(nextSibling)
 
 fun KtBlockStringTemplateEntry.dropBraces(): KtSimpleNameStringTemplateEntry {
-    val name = (expression as KtNameReferenceExpression).getReferencedName()
+    val name = (expression as KtNameReferenceExpression).getReferencedNameElement().text
     val newEntry = KtPsiFactory(this).createSimpleNameStringTemplateEntry(name)
     return replaced(newEntry)
 }
