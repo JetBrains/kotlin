@@ -78,10 +78,11 @@ object ConversionsRunner {
 
             //Kotlin --> Kotlin conversions
             +InnerClassConversion()
+            +FilterImportsConversion()
             +StaticsToCompanionExtractConversion()
             +InterfaceWithFieldConversion()
             +ClassToObjectPromotionConversion(context)
-            +ImportStatementConversion()
+            +CollectImportsConversion(context)
             +SortClassMembersConversion()
         }
 

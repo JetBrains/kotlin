@@ -5,14 +5,28 @@
 
 package org.jetbrains.kotlin.nj2k
 
+import org.jetbrains.kotlin.load.java.NULLABILITY_ANNOTATIONS
 import org.jetbrains.kotlin.name.FqName
 
 class ImportStorage {
     private val imports = mutableSetOf<FqName>()
 
     fun addImport(import: FqName) {
-        imports += import
+        if (isImportNeeded(import)) {
+            imports += import
+        }
     }
 
     fun getImports(): Set<FqName> = imports
+
+    companion object {
+        fun isImportNeeded(fqName: FqName): Boolean {
+            if (fqName in NULLABILITY_ANNOTATIONS) return false
+            return true
+        }
+
+        inline fun isImportNeeded(fqName: String): Boolean =
+            isImportNeeded(FqName(fqName))
+
+    }
 }
