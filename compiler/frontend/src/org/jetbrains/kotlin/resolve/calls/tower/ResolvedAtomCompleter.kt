@@ -133,7 +133,13 @@ class ResolvedAtomCompleter(
             resultSubstitutor.safeSubstitute(lambda.returnType)
         }
 
-        updateTraceForLambda(lambda, topLevelTrace, returnType)
+        val approximatedReturnType =
+            TypeApproximator().approximateDeclarationType(
+                returnType,
+                local = true,
+                languageVersionSettings = topLevelCallContext.languageVersionSettings
+            )
+        updateTraceForLambda(lambda, topLevelTrace, approximatedReturnType)
 
         for (lambdaResult in lambda.resultArguments) {
             val resultValueArgument = lambdaResult as? PSIKotlinCallArgument ?: continue
