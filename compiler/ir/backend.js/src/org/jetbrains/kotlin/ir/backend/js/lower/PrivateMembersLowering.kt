@@ -67,7 +67,7 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : ClassLoweringPas
                     IrFunctionReferenceImpl(
                         expression.startOffset, expression.endOffset,
                         expression.type,
-                        it.symbol, it.descriptor,
+                        it.symbol,
                         expression.typeArgumentsCount, expression.valueArgumentsCount,
                         expression.origin
                     )
