@@ -26,9 +26,9 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 
 class ClassUsageReplacementStrategy(
-        typeReplacement: KtUserType?,
-        constructorReplacement: CodeToInline?,
-        project: Project
+    typeReplacement: KtUserType?,
+    constructorReplacement: CodeToInline?,
+    project: Project
 ) : UsageReplacementStrategy {
 
     private val factory = KtPsiFactory(project)
@@ -45,8 +45,7 @@ class ClassUsageReplacementStrategy(
 
         constructorReplacementStrategy?.createReplacer(usage)?.let { return it }
 
-        val parent = usage.parent
-        when (parent) {
+        when (val parent = usage.parent) {
             is KtUserType -> {
                 if (typeReplacement == null) return null
                 return {
@@ -91,8 +90,7 @@ class ClassUsageReplacementStrategy(
 
         val result = if (expressionToReplace != newExpression) {
             expressionToReplace.replaced(newExpression)
-        }
-        else {
+        } else {
             expressionToReplace
         }
 

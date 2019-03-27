@@ -354,12 +354,11 @@ class CodeInliner<TCallElement : KtElement>(
             return Argument(valueAssigned, bindingContext.getType(valueAssigned))
         }
 
-        val resolvedArgument = resolvedCall.valueArguments[parameter]!!
-        when (resolvedArgument) {
+        when (val resolvedArgument = resolvedCall.valueArguments[parameter] ?: return null) {
             is ExpressionValueArgument -> {
-                val valueArgument = resolvedArgument.valueArgument!!
-                val expression = valueArgument.getArgumentExpression()!!
-                expression.mark(USER_CODE_KEY)
+                val valueArgument = resolvedArgument.valueArgument
+                val expression = valueArgument?.getArgumentExpression()
+                expression?.mark(USER_CODE_KEY) ?: return null
                 if (valueArgument is LambdaArgument) {
                     expression.mark(WAS_FUNCTION_LITERAL_ARGUMENT_KEY)
                 }
@@ -447,9 +446,9 @@ class CodeInliner<TCallElement : KtElement>(
             ShortenReferences { ShortenReferences.Options(removeThis = true) }.process(it, shortenFilter)
         }
 
-        newElements.forEach {
+        newElements.forEach { element ->
             // clean up user data
-            it.forEachDescendantOfType<KtExpression> {
+            element.forEachDescendantOfType<KtExpression> {
                 it.clear(USER_CODE_KEY)
                 it.clear(CodeToInline.PARAMETER_USAGE_KEY)
                 it.clear(CodeToInline.TYPE_PARAMETER_USAGE_KEY)
@@ -457,7 +456,7 @@ class CodeInliner<TCallElement : KtElement>(
                 it.clear(RECEIVER_VALUE_KEY)
                 it.clear(WAS_FUNCTION_LITERAL_ARGUMENT_KEY)
             }
-            it.forEachDescendantOfType<KtValueArgument> {
+            element.forEachDescendantOfType<KtValueArgument> {
                 it.clear(MAKE_ARGUMENT_NAMED_KEY)
                 it.clear(DEFAULT_PARAMETER_VALUE_KEY)
             }
