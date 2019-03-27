@@ -544,6 +544,11 @@ inline fun <reified T : FirElement> ConeSymbol.firUnsafe(): T {
     return fir
 }
 
+inline fun <reified T : FirElement> ConeSymbol.firSafeNullable(): T? {
+    if (this !is FirBasedSymbol<*>) return null
+    return fir as? T
+}
+
 
 interface ReturnTypeCalculator {
     fun tryCalculateReturnType(declaration: FirTypedDeclaration): FirResolvedTypeRef
