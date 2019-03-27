@@ -673,18 +673,14 @@ class ExpressionCodegen(
     }
 
     override fun visitReturn(expression: IrReturn, data: BlockInfo): StackValue {
-        val value = expression.value.apply {
-            gen(this, returnType, data)
-        }
-
         val afterReturnLabel = Label()
-        generateFinallyBlocksIfNeeded(returnType, afterReturnLabel, data)
-
+        gen(expression.value, returnType, data)
+        unwindBlockStack(afterReturnLabel, data, null)
         expression.markLineNumber(startOffset = true)
         mv.areturn(returnType)
         mv.mark(afterReturnLabel)
         mv.nop()/*TODO check RESTORE_STACK_IN_TRY_CATCH processor*/
-        return expression.onStack
+        return none()
     }
 
     override fun visitWhen(expression: IrWhen, data: BlockInfo): StackValue {
@@ -1065,21 +1061,6 @@ class ExpressionCodegen(
             mv.goTo(tryCatchBlockEnd)
         }
         tryInfo.gaps.add(gapStart to (afterJumpLabel ?: markNewLabel()))
-    }
-
-    private fun generateFinallyBlocksIfNeeded(returnType: Type, afterReturnLabel: Label, data: BlockInfo) {
-        if (data.infos.firstIsInstanceOrNull<TryInfo>() != null) {
-            if (Type.VOID_TYPE != returnType) {
-                val returnValIndex = frame.enterTemp(returnType)
-                val localForReturnValue = StackValue.local(returnValIndex, returnType)
-                localForReturnValue.store(StackValue.onStack(returnType), mv)
-                unwindBlockStack(afterReturnLabel, data, null)
-                localForReturnValue.put(returnType, mv)
-                frame.leaveTemp(returnType)
-            } else {
-                unwindBlockStack(afterReturnLabel, data, null)
-            }
-        }
     }
 
     override fun visitThrow(expression: IrThrow, data: BlockInfo): StackValue {
