@@ -2233,6 +2233,16 @@ task args0(type: RunStandaloneKonanTest) {
     source = "runtime/basic/args0.kt"
 }
 
+task multiargs(type: RunStandaloneKonanTest) {
+    arguments = ["AAA", "BB", "C"]
+    multiRuns = true
+    multiArguments = [["1", "2", "3"], ["---"], ["Hello", "world"]]
+    goldValue = "AAA\nBB\nC\n1\n2\n3" +
+            "AAA\nBB\nC\n---" +
+            "AAA\nBB\nC\nHello\nworld\n"
+    source = "runtime/basic/args0.kt"
+}
+
 task spread_operator_0(type: RunKonanTest) {
     goldValue = "[K, o, t, l, i, n,  , i, s,  , c, o, o, l,  , l, a, n, g, u, a, g, e]\n"
     source = "codegen/basics/spread_operator_0.kt"

@@ -287,6 +287,8 @@ abstract class KonanTest extends JavaExec {
 
         def times = multiRuns ? multiArguments.size() : 1
 
+        def result = compilerMessagesText
+        def exitCodeMismatch = false
         for (int i = 0; i < times; i++) {
             ExecResult execResult = project.execute {
 
@@ -305,11 +307,11 @@ abstract class KonanTest extends JavaExec {
 
                 ignoreExitValue = true
             }
-            def result = compilerMessagesText + out.toString("UTF-8")
+            def currentResult = out.toString("UTF-8")
+            println(currentResult)
+            result += currentResult
 
-            println(result)
-
-            def exitCodeMismatch = execResult.exitValue != expectedExitStatus
+            exitCodeMismatch |= execResult.exitValue != expectedExitStatus
             if (exitCodeMismatch) {
                 def message = "Expected exit status: $expectedExitStatus, actual: ${execResult.exitValue}"
                 if (this.expectedFail) {
@@ -318,25 +320,25 @@ abstract class KonanTest extends JavaExec {
                     throw new TestFailedException("Test failed on iteration $i. $message")
                 }
             }
-
-            result = result.replace(System.lineSeparator(), "\n")
-            def goldValueMismatch = !outputChecker.apply(result)
-            if (goldValueMismatch) {
-                def message
-                if (goldValue != null) {
-                    message = "Iteration $i. Expected output: $goldValue, actual output: $result"
-                } else {
-                    message = "Iteration $i. Actual output doesn't match output checker: $result"
-                }
-                if (this.expectedFail) {
-                    println("Expected failure. $message")
-                } else {
-                    throw new TestFailedException("Test failed on iteration $i. $message")
-                }
-            }
-
-            if (!exitCodeMismatch && !goldValueMismatch && this.expectedFail) println("Unexpected pass")
         }
+
+        result = result.replace(System.lineSeparator(), "\n")
+        def goldValueMismatch = !outputChecker.apply(result)
+        if (goldValueMismatch) {
+            def message
+            if (goldValue != null) {
+                message = "Expected output: $goldValue, actual output: $result"
+            } else {
+                message = "Actual output doesn't match output checker: $result"
+            }
+            if (this.expectedFail) {
+                println("Expected failure. $message")
+            } else {
+                throw new TestFailedException("Test failed. $message")
+            }
+        }
+
+        if (!exitCodeMismatch && !goldValueMismatch && this.expectedFail) println("Unexpected pass")
     }
 }
 
