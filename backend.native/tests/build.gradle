@@ -1543,6 +1543,11 @@ task coroutines_controlFlow_while2(type: RunKonanTest) {
     source = "codegen/coroutines/controlFlow_while2.kt"
 }
 
+task coroutines_returnsNothing1(type: RunKonanTest) {
+    goldValue = "OK\n"
+    source = "codegen/coroutines/returnsNothing1.kt"
+}
+
 task coroutines_returnsUnit1(type: RunKonanTest) {
     goldValue = "117\ns1\n0\n"
     source = "codegen/coroutines/returnsUnit1.kt"
