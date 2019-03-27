@@ -287,7 +287,6 @@ abstract class KonanTest extends JavaExec {
 
         def times = multiRuns ? multiArguments.size() : 1
 
-        def result = compilerMessagesText
         def exitCodeMismatch = false
         for (int i = 0; i < times; i++) {
             ExecResult execResult = project.execute {
@@ -307,9 +306,6 @@ abstract class KonanTest extends JavaExec {
 
                 ignoreExitValue = true
             }
-            def currentResult = out.toString("UTF-8")
-            println(currentResult)
-            result += currentResult
 
             exitCodeMismatch |= execResult.exitValue != expectedExitStatus
             if (exitCodeMismatch) {
@@ -317,11 +313,12 @@ abstract class KonanTest extends JavaExec {
                 if (this.expectedFail) {
                     println("Expected failure. $message")
                 } else {
-                    throw new TestFailedException("Test failed on iteration $i. $message")
+                    throw new TestFailedException("Test failed on iteration $i. $message\n ${out.toString("UTF-8")}")
                 }
             }
         }
-
+        def result = compilerMessagesText + out.toString("UTF-8")
+        println(result)
         result = result.replace(System.lineSeparator(), "\n")
         def goldValueMismatch = !outputChecker.apply(result)
         if (goldValueMismatch) {

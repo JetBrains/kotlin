@@ -2237,8 +2237,8 @@ task multiargs(type: RunStandaloneKonanTest) {
     arguments = ["AAA", "BB", "C"]
     multiRuns = true
     multiArguments = [["1", "2", "3"], ["---"], ["Hello", "world"]]
-    goldValue = "AAA\nBB\nC\n1\n2\n3" +
-            "AAA\nBB\nC\n---" +
+    goldValue = "AAA\nBB\nC\n1\n2\n3\n" +
+            "AAA\nBB\nC\n---\n" +
             "AAA\nBB\nC\nHello\nworld\n"
     source = "runtime/basic/args0.kt"
 }
