@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
-import org.jetbrains.kotlin.idea.quickfix.replaceWith.ReplaceProtectedToPublishedApiCallFix.Companion.newName
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.js.descriptorUtils.getJetTypeFqName
 import org.jetbrains.kotlin.name.Name
@@ -40,42 +39,42 @@ import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 import org.jetbrains.kotlin.resolve.source.getPsi
 
 class ReplaceProtectedToPublishedApiCallFix(
-        element: KtExpression,
-        val classOwnerPointer: SmartPsiElementPointer<KtClass>,
-        val originalName: String,
-        val paramNames: Map<String, String>,
-        val newSignature: String,
-        val isProperty: Boolean,
-        val isVar: Boolean,
-        val isPublishedMemberAlreadyExists: Boolean
-) : KotlinQuickFixAction<KtExpression>(element)  {
+    element: KtExpression,
+    val classOwnerPointer: SmartPsiElementPointer<KtClass>,
+    val originalName: String,
+    val paramNames: Map<String, String>,
+    val newSignature: String,
+    val isProperty: Boolean,
+    val isVar: Boolean,
+    val isPublishedMemberAlreadyExists: Boolean
+) : KotlinQuickFixAction<KtExpression>(element) {
 
     override fun getFamilyName() = "Replace with @PublishedApi bridge call"
 
-    override fun getText() = "Replace with generated @PublishedApi bridge call '${originalName.newNameQuoted}${if (!isProperty) "(...)" else ""}'"
+    override fun getText() =
+        "Replace with generated @PublishedApi bridge call '${originalName.newNameQuoted}${if (!isProperty) "(...)" else ""}'"
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return
         if (!isPublishedMemberAlreadyExists) {
             val classOwner = classOwnerPointer.element ?: return
             val newMember: KtDeclaration =
-                    if (isProperty) {
-                        KtPsiFactory(classOwner).createProperty(
-                                "@kotlin.PublishedApi\n" +
+                if (isProperty) {
+                    KtPsiFactory(classOwner).createProperty(
+                        "@kotlin.PublishedApi\n" +
                                 "internal " + newSignature +
                                 "\n" +
                                 "get() = $originalName\n" +
                                 if (isVar) "set(value) { $originalName = value }" else ""
-                        )
+                    )
 
-                    }
-                    else {
-                        KtPsiFactory(classOwner).createFunction(
-                                "@kotlin.PublishedApi\n" +
+                } else {
+                    KtPsiFactory(classOwner).createFunction(
+                        "@kotlin.PublishedApi\n" +
                                 "internal " + newSignature +
                                 " = $originalName(${paramNames.keys.joinToString(", ") { it }})"
-                        )
-                    }
+                    )
+                }
 
             ShortenReferences.DEFAULT.process(classOwner.addDeclaration(newMember))
         }
@@ -100,13 +99,12 @@ class ReplaceProtectedToPublishedApiCallFix(
             val signature = signatureRenderer.render(descriptor)
             val originalName = descriptor.name.asString()
             val newSignature =
-                    if (isProperty) {
-                        signature.replaceFirst("$originalName:", "${originalName.newNameQuoted}:")
-                    }
-                    else {
-                        signature.replaceFirst("$originalName(", "${originalName.newNameQuoted}(")
-                    }
-            val paramNameAndType = descriptor.valueParameters.associate { it.name.asString() to it.type.getJetTypeFqName(false)}
+                if (isProperty) {
+                    signature.replaceFirst("$originalName:", "${originalName.newNameQuoted}:")
+                } else {
+                    signature.replaceFirst("$originalName(", "${originalName.newNameQuoted}(")
+                }
+            val paramNameAndType = descriptor.valueParameters.associate { it.name.asString() to it.type.getJetTypeFqName(false) }
             val classDescriptor = descriptor.containingDeclaration as? ClassDescriptor ?: return null
             val source = classDescriptor.source.getPsi() as? KtClass ?: return null
 
@@ -119,8 +117,8 @@ class ReplaceProtectedToPublishedApiCallFix(
             }
 
             return ReplaceProtectedToPublishedApiCallFix(
-                    psiElement, source.createSmartPointer(), originalName, paramNameAndType, newSignature,
-                    isProperty, isVar, isPublishedMemberAlreadyExists
+                psiElement, source.createSmartPointer(), originalName, paramNameAndType, newSignature,
+                isProperty, isVar, isPublishedMemberAlreadyExists
             )
         }
 
@@ -128,6 +126,6 @@ class ReplaceProtectedToPublishedApiCallFix(
             get() = "access\$$this"
 
         val String.newNameQuoted: String
-                get() = "`$newName`"
+            get() = "`$newName`"
     }
 }

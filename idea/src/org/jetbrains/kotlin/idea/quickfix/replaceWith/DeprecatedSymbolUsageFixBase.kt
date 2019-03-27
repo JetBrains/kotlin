@@ -120,7 +120,7 @@ abstract class DeprecatedSymbolUsageFixBase(
                 else -> throw IllegalStateException("Bad QuickFixRegistrar configuration")
             }
 
-            val replacement = DeprecatedSymbolUsageFixBase.fetchReplaceWithPattern(descriptor, nameExpression.project) ?: return null
+            val replacement = fetchReplaceWithPattern(descriptor, nameExpression.project) ?: return null
             return Data(nameExpression, replacement, descriptor)
         }
 
@@ -135,10 +135,10 @@ abstract class DeprecatedSymbolUsageFixBase(
             val bindingContext = resolutionFacade.analyze(element, BodyResolveMode.PARTIAL)
             var target = element.mainReference.resolveToDescriptors(bindingContext).singleOrNull() ?: return null
 
-            var replacePatternFromSymbol = DeprecatedSymbolUsageFixBase.fetchReplaceWithPattern(target, resolutionFacade.project)
+            var replacePatternFromSymbol = fetchReplaceWithPattern(target, resolutionFacade.project)
             if (replacePatternFromSymbol == null && target is ConstructorDescriptor) {
                 target = target.containingDeclaration
-                replacePatternFromSymbol = DeprecatedSymbolUsageFixBase.fetchReplaceWithPattern(target, resolutionFacade.project)
+                replacePatternFromSymbol = fetchReplaceWithPattern(target, resolutionFacade.project)
             }
 
             // check that ReplaceWith hasn't changed
@@ -207,7 +207,7 @@ abstract class DeprecatedSymbolUsageFixBase(
             project: Project, classifier: ClassifierDescriptorWithTypeParameters, typeAlias: PsiElement
         ): ConstructorDescriptor? {
             val specialReplaceWithForConstructor = classifier.constructors.filter {
-                DeprecatedSymbolUsageFixBase.fetchReplaceWithPattern(it, project) != null
+                fetchReplaceWithPattern(it, project) != null
             }.toSet()
 
             if (specialReplaceWithForConstructor.isEmpty()) {
