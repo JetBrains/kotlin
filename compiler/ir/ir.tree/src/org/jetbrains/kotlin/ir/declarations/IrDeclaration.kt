@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.ir.DescriptorInIrDeclaration
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -33,6 +34,7 @@ interface IrMetadataSourceOwner : IrElement {
 }
 
 interface IrDeclaration : IrStatement, IrAnnotationContainer, IrMetadataSourceOwner {
+    @DescriptorInIrDeclaration
     val descriptor: DeclarationDescriptor
     var origin: IrDeclarationOrigin
 

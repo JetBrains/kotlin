@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.ir.DescriptorInIrDeclaration
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 
 interface IrProperty :
@@ -25,6 +26,7 @@ interface IrProperty :
     IrDeclarationWithVisibility,
     IrSymbolOwner {
 
+    @DescriptorInIrDeclaration
     override val descriptor: PropertyDescriptor
     override val symbol: IrPropertySymbol
 
