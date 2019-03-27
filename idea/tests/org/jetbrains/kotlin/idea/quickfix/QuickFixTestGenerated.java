@@ -6041,6 +6041,21 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 runTest("idea/testData/quickfix/deprecatedSymbolUsage/classUsages/constructorUsage4.kt");
             }
 
+            @TestMetadata("constructorUsageWithTypeArgument.kt")
+            public void testConstructorUsageWithTypeArgument() throws Exception {
+                runTest("idea/testData/quickfix/deprecatedSymbolUsage/classUsages/constructorUsageWithTypeArgument.kt");
+            }
+
+            @TestMetadata("constructorUsageWithTypeArgument2.kt")
+            public void testConstructorUsageWithTypeArgument2() throws Exception {
+                runTest("idea/testData/quickfix/deprecatedSymbolUsage/classUsages/constructorUsageWithTypeArgument2.kt");
+            }
+
+            @TestMetadata("constructorUsageWithTypeArgument3.kt")
+            public void testConstructorUsageWithTypeArgument3() throws Exception {
+                runTest("idea/testData/quickfix/deprecatedSymbolUsage/classUsages/constructorUsageWithTypeArgument3.kt");
+            }
+
             @TestMetadata("imports.kt")
             public void testImports() throws Exception {
                 runTest("idea/testData/quickfix/deprecatedSymbolUsage/classUsages/imports.kt");
@@ -6081,6 +6096,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 runTest("idea/testData/quickfix/deprecatedSymbolUsage/classUsages/inTypeArgument.kt");
             }
 
+            @TestMetadata("innerType.kt")
+            public void testInnerType() throws Exception {
+                runTest("idea/testData/quickfix/deprecatedSymbolUsage/classUsages/innerType.kt");
+            }
+
             @TestMetadata("nestedClassToNestedClass.kt")
             public void testNestedClassToNestedClass() throws Exception {
                 runTest("idea/testData/quickfix/deprecatedSymbolUsage/classUsages/nestedClassToNestedClass.kt");
@@ -6089,6 +6109,16 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @TestMetadata("noAnnotationConstructorUsage.kt")
             public void testNoAnnotationConstructorUsage() throws Exception {
                 runTest("idea/testData/quickfix/deprecatedSymbolUsage/classUsages/noAnnotationConstructorUsage.kt");
+            }
+
+            @TestMetadata("noMatchTypeArgument.kt")
+            public void testNoMatchTypeArgument() throws Exception {
+                runTest("idea/testData/quickfix/deprecatedSymbolUsage/classUsages/noMatchTypeArgument.kt");
+            }
+
+            @TestMetadata("noMatchTypeArgument2.kt")
+            public void testNoMatchTypeArgument2() throws Exception {
+                runTest("idea/testData/quickfix/deprecatedSymbolUsage/classUsages/noMatchTypeArgument2.kt");
             }
 
             @TestMetadata("qualifiedClassName.kt")
@@ -6557,6 +6587,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @TestMetadata("typeAliasWithAllGenericParams.kt")
             public void testTypeAliasWithAllGenericParams() throws Exception {
                 runTest("idea/testData/quickfix/deprecatedSymbolUsage/typeAliases/typeAliasWithAllGenericParams.kt");
+            }
+
+            @TestMetadata("withTypeArgument.kt")
+            public void testWithTypeArgument() throws Exception {
+                runTest("idea/testData/quickfix/deprecatedSymbolUsage/typeAliases/withTypeArgument.kt");
             }
 
             @TestMetadata("idea/testData/quickfix/deprecatedSymbolUsage/typeAliases/wholeProject")

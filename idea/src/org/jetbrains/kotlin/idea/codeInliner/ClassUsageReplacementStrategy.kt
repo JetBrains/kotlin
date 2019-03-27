@@ -49,9 +49,15 @@ class ClassUsageReplacementStrategy(
             is KtUserType -> {
                 if (typeReplacement == null) return null
                 return {
+                    val oldArgumentList = parent.typeArgumentList?.copy() as? KtTypeArgumentList
                     val replaced = parent.replaced(typeReplacement)
+                    val newArgumentList = replaced.typeArgumentList
+                    if (oldArgumentList != null && oldArgumentList.arguments.size == newArgumentList?.arguments?.size) {
+                        newArgumentList.replace(oldArgumentList)
+                    }
+
                     ShortenReferences.DEFAULT.process(replaced)
-                } //TODO: type arguments and type arguments of outer class are lost
+                }
             }
 
             is KtCallExpression -> {
@@ -80,7 +86,15 @@ class ClassUsageReplacementStrategy(
     }
 
     private fun replaceConstructorCallWithOtherTypeConstruction(callExpression: KtCallExpression): KtElement {
-        callExpression.calleeExpression!!.replace(typeReplacement!!.referenceExpression!!)
+        val referenceExpression = typeReplacement?.referenceExpression ?: error("Couldn't find referenceExpression")
+        callExpression.calleeExpression?.replace(referenceExpression)
+
+        val typeArgumentList = callExpression.typeArgumentList
+        if (typeArgumentList != null && typeReplacement.typeArguments.size != typeArgumentList.arguments.size) {
+            val newTypeArgumentList = typeReplacement.typeArgumentList
+            if (newTypeArgumentList != null) typeArgumentList.replace(newTypeArgumentList.copy())
+            else typeArgumentList.delete()
+        }
 
         val expressionToReplace = callExpression.getQualifiedExpressionForSelectorOrThis()
         val newExpression = if (typeReplacementQualifierAsExpression != null)
