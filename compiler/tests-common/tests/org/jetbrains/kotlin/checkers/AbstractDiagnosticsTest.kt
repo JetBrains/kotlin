@@ -605,7 +605,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
     }
 
     protected open fun createSealedModule(storageManager: StorageManager): ModuleDescriptorImpl =
-        createModule("test-module", storageManager).apply {
+        createModule("test-module-jvm", storageManager).apply {
             setDependencies(this, builtIns.builtInsModule)
         }
 
