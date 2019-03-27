@@ -74,6 +74,10 @@
                 </executions>
                 <configuration>
                     <jvmTarget>1.8</jvmTarget>
+                    <args>
+                        <arg>-Xuse-experimental=kotlin.Experimental</arg>
+                        <arg>-Xuse-experimental=org.jetbrains.kotlin.ir.DescriptorInIrDeclaration</arg>
+                    </args>
                 </configuration>
             </plugin>
             <plugin>
