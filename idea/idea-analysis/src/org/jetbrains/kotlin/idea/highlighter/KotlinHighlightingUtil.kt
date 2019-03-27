@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.highlighter
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.idea.caches.project.NotUnderContentRootModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.idea.core.script.IdeScriptReportSink
@@ -36,12 +37,14 @@ object KotlinHighlightingUtil {
             return true
         }
 
-        if (ktFile.isScript()) {
-            return shouldHighlightScript(ktFile)
+        if (OutsidersPsiFileSupportWrapper.isOutsiderFile(ktFile.virtualFile)) {
+            val origin = OutsidersPsiFileSupportUtils.getOutsiderFileOrigin(ktFile.project, ktFile.virtualFile) ?: return false
+            val psiFileOrigin = PsiManager.getInstance(ktFile.project).findFile(origin) ?: return false
+            return shouldHighlight(psiFileOrigin)
         }
 
-        if (OutsidersPsiFileSupportWrapper.isOutsiderFile(ktFile.virtualFile)) {
-            return true
+        if (ktFile.isScript()) {
+            return shouldHighlightScript(ktFile)
         }
 
         return ProjectRootsUtil.isInProjectOrLibraryContent(ktFile) && ktFile.getModuleInfo() !is NotUnderContentRootModuleInfo

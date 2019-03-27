@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.core.script.dependencies
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.core.script.scriptDependencies
-import kotlin.script.experimental.dependencies.ScriptDependencies
 
 class FromFileAttributeScriptDependenciesLoader(project: Project) : ScriptDependenciesLoader(project) {
 
@@ -18,15 +17,7 @@ class FromFileAttributeScriptDependenciesLoader(project: Project) : ScriptDepend
 
     override fun loadDependencies(file: VirtualFile) {
         val deserializedDependencies = file.scriptDependencies ?: return
-        saveToCache(deserializedDependencies, file)
-    }
-
-    private fun saveToCache(deserialized: ScriptDependencies, file: VirtualFile) {
-        val rootsChanged = cache.hasNotCachedRoots(deserialized)
-        cache.save(file, deserialized)
-        if (rootsChanged) {
-            shouldNotifyRootsChanged = true
-        }
+        saveToCache(file, deserializedDependencies)
     }
 
     override fun shouldShowNotification(): Boolean = false

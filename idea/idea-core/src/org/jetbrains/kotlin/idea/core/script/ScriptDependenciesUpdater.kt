@@ -35,6 +35,7 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.core.script.dependencies.AsyncScriptDependenciesLoader
 import org.jetbrains.kotlin.idea.core.script.dependencies.FromFileAttributeScriptDependenciesLoader
+import org.jetbrains.kotlin.idea.core.script.dependencies.OutsiderFileDependenciesLoader
 import org.jetbrains.kotlin.idea.core.script.dependencies.SyncScriptDependenciesLoader
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.psi.KtFile
@@ -54,6 +55,7 @@ class ScriptDependenciesUpdater(
 
     private val loaders = arrayListOf(
         FromFileAttributeScriptDependenciesLoader(project),
+        OutsiderFileDependenciesLoader(project),
         AsyncScriptDependenciesLoader(project),
         SyncScriptDependenciesLoader(project)
     )
