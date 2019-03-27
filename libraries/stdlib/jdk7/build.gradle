@@ -101,7 +101,7 @@ task testJdk6Tests(type: Test) {
         testClassesDirs = project(':kotlin-stdlib').sourceSets.test.output
         classpath = files(
                 testClassesDirs,
-                configurations.testCompile
+                sourceSets.test.compileClasspath
         )
     }
 }
