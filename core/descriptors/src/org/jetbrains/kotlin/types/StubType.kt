@@ -24,9 +24,7 @@ class StubType(
     override val annotations: Annotations
         get() = Annotations.EMPTY
 
-    override fun replaceAnnotations(newAnnotations: Annotations): SimpleType {
-        error("Shouldn't be called on non-fixed type")
-    }
+    override fun replaceAnnotations(newAnnotations: Annotations): SimpleType = this
 
     override fun makeNullableAsSpecified(newNullability: Boolean): SimpleType {
         return if (newNullability == isMarkedNullable)
