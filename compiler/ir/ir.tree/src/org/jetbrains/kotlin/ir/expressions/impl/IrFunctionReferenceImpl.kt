@@ -23,7 +23,9 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-class IrFunctionReferenceImpl(
+class IrFunctionReferenceImpl
+@Deprecated("Don't use descriptor-based API")
+constructor(
     startOffset: Int,
     endOffset: Int,
     type: IrType,
@@ -43,6 +45,7 @@ class IrFunctionReferenceImpl(
     ),
     IrFunctionReference {
 
+    @Deprecated("Don't use descriptor-based API")
     constructor(
         startOffset: Int,
         endOffset: Int,
@@ -52,6 +55,16 @@ class IrFunctionReferenceImpl(
         typeArgumentsCount: Int,
         origin: IrStatementOrigin? = null
     ) : this(startOffset, endOffset, type, symbol, descriptor, typeArgumentsCount, descriptor.valueParameters.size, origin)
+
+    constructor(
+        startOffset: Int,
+        endOffset: Int,
+        type: IrType,
+        symbol: IrFunctionSymbol,
+        typeArgumentsCount: Int,
+        valueArgumentsCount: Int,
+        origin: IrStatementOrigin? = null
+    ) : this(startOffset, endOffset, type, symbol, symbol.descriptor, typeArgumentsCount, valueArgumentsCount, origin)
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitFunctionReference(this, data)
