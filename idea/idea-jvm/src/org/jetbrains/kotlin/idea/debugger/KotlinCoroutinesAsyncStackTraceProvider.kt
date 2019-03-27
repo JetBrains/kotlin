@@ -54,7 +54,12 @@ class KotlinCoroutinesAsyncStackTraceProvider : KotlinCoroutinesAsyncStackTraceP
         val evaluationContext = EvaluationContextImpl(suspendContext, frameProxy)
         val context = ExecutionContext(evaluationContext, frameProxy)
 
-        val debugMetadataKtType = context.findClass(DEBUG_METADATA_KT) as? ClassType ?: return null
+        val debugMetadataKtType = try {
+            context.findClass(DEBUG_METADATA_KT) as? ClassType
+        } catch (e: Throwable) {
+            // DebugMetadataKt not found, probably old kotlin-stdlib version
+            return null
+        } ?: return null
 
         val asyncContext = AsyncStackTraceContext(context, method, debugMetadataKtType)
         return asyncContext.getAsyncStackTraceForSuspendLambda() ?: asyncContext.getAsyncStackTraceForSuspendFunction()
