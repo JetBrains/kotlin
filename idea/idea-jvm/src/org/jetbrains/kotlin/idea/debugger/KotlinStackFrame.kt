@@ -111,6 +111,24 @@ class KotlinStackFrame(frame: StackFrameProxyImpl) : JavaStackFrame(StackFrameDe
             return true
         }
 
+        return removeCallSiteThisInInlineFunction(evaluationContext, children)
+    }
+
+    private fun removeCallSiteThisInInlineFunction(evaluationContext: EvaluationContextImpl, children: XValueChildrenList): Boolean {
+        val frameProxy = evaluationContext.frameProxy
+
+        val variables = frameProxy?.safeVisibleVariables() ?: return false
+        val inlineDepth = VariableFinder.getInlineDepth(variables)
+        val declarationSiteThis = variables.firstOrNull { v ->
+            val name = v.name()
+            name.endsWith(INLINE_FUN_VAR_SUFFIX) && name.dropInlineSuffix() == AsmUtil.INLINE_DECLARATION_SITE_THIS
+        }
+
+        if (inlineDepth > 0 && declarationSiteThis != null) {
+            ExistingInstanceThis.find(children)?.remove()
+            return true
+        }
+
         return false
     }
 

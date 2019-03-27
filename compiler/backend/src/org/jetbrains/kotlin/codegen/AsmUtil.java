@@ -104,6 +104,8 @@ public class AsmUtil {
 
     public static final String LABELED_THIS_FIELD = THIS + "_";
 
+    public static final String INLINE_DECLARATION_SITE_THIS = "this_";
+
     public static final String LABELED_THIS_PARAMETER = "$" + THIS + "$";
 
     public static final String CAPTURED_THIS_FIELD = "this$0";

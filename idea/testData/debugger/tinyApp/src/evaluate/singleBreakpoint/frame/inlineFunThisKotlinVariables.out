@@ -1,0 +1,11 @@
+LineBreakpoint created at inlineFunThisKotlinVariables.kt:12
+Run Java
+Connected to the target VM
+inlineFunThisKotlinVariables.kt:12
+ frame    = useInline:12, Same {inlineFunThisKotlinVariables}
+   local    = this: inlineFunThisKotlinVariables.Different = {inlineFunThisKotlinVariables.Different@uniqueID} (sp = null)
+              - Class has no fields
+Disconnected from the target VM
+
+Process finished with exit code 0
+1

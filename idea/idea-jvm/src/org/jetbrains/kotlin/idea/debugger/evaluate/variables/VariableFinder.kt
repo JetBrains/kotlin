@@ -75,10 +75,7 @@ class VariableFinder(private val context: ExecutionContext) {
             return EvaluateExceptionUtil.createEvaluateException(message)
         }
 
-        // org.jetbrains.kotlin.codegen.inline.MethodInliner.prepareNode
-        private const val OUTER_THIS_FOR_INLINE = AsmUtil.THIS + '_'
-
-        val inlinedThisRegex = getLocalVariableNameRegexInlineAware(OUTER_THIS_FOR_INLINE)
+        val inlinedThisRegex = getLocalVariableNameRegexInlineAware(AsmUtil.INLINE_DECLARATION_SITE_THIS)
 
         private fun getCapturedVariableNameRegex(capturedName: String): Regex {
             val escapedName = Regex.escape(capturedName)
