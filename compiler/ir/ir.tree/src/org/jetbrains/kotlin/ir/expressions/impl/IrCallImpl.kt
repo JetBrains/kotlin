@@ -26,7 +26,10 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-class IrCallImpl(
+
+class IrCallImpl
+@Deprecated("Don't use descriptor-based API")
+constructor(
     startOffset: Int,
     endOffset: Int,
     type: IrType,
@@ -45,6 +48,7 @@ class IrCallImpl(
     ),
     IrCall {
 
+    @Deprecated("Don't use descriptor-based API")
     constructor(
         startOffset: Int,
         endOffset: Int,
@@ -70,6 +74,20 @@ class IrCallImpl(
     ) : this(
         startOffset, endOffset, type, symbol, descriptor, typeArgumentsCount,
         descriptor.valueParameters.size, origin, superQualifierSymbol
+    )
+
+    constructor(
+        startOffset: Int,
+        endOffset: Int,
+        type: IrType,
+        symbol: IrFunctionSymbol,
+        typeArgumentsCount: Int,
+        valueArgumentsCount: Int,
+        origin: IrStatementOrigin? = null,
+        superQualifierSymbol: IrClassSymbol? = null
+    ) : this(
+        startOffset, endOffset, type, symbol, symbol.descriptor, typeArgumentsCount,
+        valueArgumentsCount, origin, superQualifierSymbol
     )
 
     constructor(startOffset: Int, endOffset: Int, type: IrType, symbol: IrFunctionSymbol) :
