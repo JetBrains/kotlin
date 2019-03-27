@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.ir.declarations
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.DescriptorInIrDeclaration
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 
@@ -26,6 +27,7 @@ interface IrClass :
     IrSymbolDeclaration<IrClassSymbol>, IrDeclarationWithName, IrDeclarationWithVisibility,
     IrDeclarationContainer, IrTypeParametersContainer {
 
+    @DescriptorInIrDeclaration
     override val descriptor: ClassDescriptor
 
     val kind: ClassKind

@@ -17,12 +17,14 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.ir.DescriptorInIrDeclaration
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.types.Variance
 
 interface IrTypeParameter : IrSymbolDeclaration<IrTypeParameterSymbol>, IrDeclarationWithName {
+    @DescriptorInIrDeclaration
     override val descriptor: TypeParameterDescriptor
 
     val variance: Variance
