@@ -21,7 +21,6 @@
     </inspection_tool>
     <inspection_tool class="BooleanMethodIsAlwaysInverted" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="BusyWait" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="CStyleArrayDeclaration" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="CastConflictsWithInstanceof" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="CastToIncompatibleInterface" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="ChainedEquality" enabled="false" level="WARNING" enabled_by_default="true" />
@@ -76,6 +75,7 @@
       <option name="m_ignoreLoopsWithoutConditions" value="false" />
     </inspection_tool>
     <inspection_tool class="ForLoopThatDoesntUseLoopVariable" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GrPackage" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="HtmlUnknownTag" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="myValues">
         <value>
@@ -322,16 +322,11 @@
     </inspection_tool>
     <inspection_tool class="SSBasedInspection" enabled="true" level="WARNING" enabled_by_default="true">
       <searchConfiguration name="SwingUtilities.invokeLater" text="SwingUtilities.invokeLater($runnable$)" recursive="false" caseInsensitive="false" type="JAVA">
-        <constraint name="Instance" regexp="SwingUtilities" minCount="0" target="true" within="" contains="" />
-        <constraint name="MethodCall" within="" contains="" />
-        <constraint name="Parameter" minCount="0" maxCount="2147483647" within="" contains="" />
         <constraint name="__context__" within="" contains="" />
         <constraint name="runnable" within="" contains="" />
       </searchConfiguration>
       <replaceConfiguration name="DirectCallOfDispose" text="$Instance$.dispose()" recursive="false" caseInsensitive="false" type="JAVA" reformatAccordingToStyle="true" shortenFQN="true" replacement="Disposer.dispose($Instance$)">
         <constraint name="Instance" regexp="super" nameOfExprType="Disposable" withinHierarchy="true" exprTypeWithinHierarchy="true" minCount="0" negateName="true" within="" contains="" />
-        <constraint name="MethodCall" target="true" within="" contains="" />
-        <constraint name="Parameter" minCount="0" maxCount="2147483647" within="" contains="" />
         <constraint name="__context__" within="" contains="" />
       </replaceConfiguration>
       <replaceConfiguration name="new Object[0]" text="new Object[0]" recursive="false" caseInsensitive="true" type="JAVA" reformatAccordingToStyle="true" shortenFQN="true" replacement="com.intellij.util.ArrayUtil.EMPTY_OBJECT_ARRAY" />
@@ -395,6 +390,7 @@
     </inspection_tool>
     <inspection_tool class="StringEquality" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="StringEqualsEmptyString" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="StringOperationCanBeSimplifiedMerged" />
     <inspection_tool class="SwitchStatementWithConfusingDeclaration" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="SynchronizeOnThis" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="SystemOutErr" enabled="true" level="WARNING" enabled_by_default="true">
