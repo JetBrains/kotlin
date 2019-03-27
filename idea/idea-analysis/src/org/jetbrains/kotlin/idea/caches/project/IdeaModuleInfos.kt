@@ -48,6 +48,10 @@ import org.jetbrains.kotlin.platform.idePlatformKind
 import org.jetbrains.kotlin.resolve.PlatformDependentCompilerServices
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.isCommon
+import org.jetbrains.kotlin.platform.js.isJs
+import org.jetbrains.kotlin.platform.jvm.isJvm
+import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.resolve.jvm.GlobalSearchScopeWithModuleSources
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformCompilerServices
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -116,6 +120,13 @@ private fun ideaModelDependencies(
     forProduction: Boolean,
     platform: TargetPlatform
 ): List<IdeaModuleInfo> {
+    fun TargetPlatform.canDependOn(other: TargetPlatform): Boolean {
+        return this.isJvm() && other.isJvm() ||
+                this.isJs() && other.isJs() ||
+                this.isNative() && other.isNative() ||
+                this.isCommon() && other.isCommon()
+    }
+
     //NOTE: lib dependencies can be processed several times during recursive traversal
     val result = LinkedHashSet<IdeaModuleInfo>()
     val dependencyEnumerator = ModuleRootManager.getInstance(module).orderEntries().compileOnly().recursively().exportedOnly()
@@ -128,7 +139,7 @@ private fun ideaModelDependencies(
         }
         true
     }
-    return result.filterNot { it is LibraryInfo && it.platform != platform }
+    return result.filterNot { it is LibraryInfo && !platform.canDependOn(it.platform) }
 }
 
 interface ModuleSourceInfo : IdeaModuleInfo, TrackableModuleInfo {
