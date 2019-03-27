@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.ir.declarations.impl
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.ir.DescriptorInIrDeclaration
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrPropertySymbolImpl
@@ -125,6 +126,7 @@ class IrPropertyImpl(
         symbol.bind(this)
     }
 
+    @DescriptorInIrDeclaration
     override val descriptor: PropertyDescriptor = symbol.descriptor
 
     override var backingField: IrField? = null

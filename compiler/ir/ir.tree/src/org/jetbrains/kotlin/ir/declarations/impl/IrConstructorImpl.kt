@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.ir.DescriptorInIrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.expressions.IrBody
@@ -68,6 +69,7 @@ class IrConstructorImpl(
         symbol.bind(this)
     }
 
+    @DescriptorInIrDeclaration
     override val descriptor: ClassConstructorDescriptor get() = symbol.descriptor
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =

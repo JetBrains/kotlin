@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.ir.declarations.impl
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.ir.DescriptorInIrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
@@ -57,6 +57,7 @@ class IrFunctionImpl(
         symbol.descriptor.isSuspend
     )
 
+    @DescriptorInIrDeclaration
     override val descriptor: FunctionDescriptor = symbol.descriptor
 
     override val overriddenSymbols: MutableList<IrSimpleFunctionSymbol> = SmartList()

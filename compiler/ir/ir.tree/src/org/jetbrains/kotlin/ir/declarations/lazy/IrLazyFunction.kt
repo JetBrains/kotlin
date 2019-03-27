@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.declarations.lazy
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.ir.DescriptorInIrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -59,6 +60,7 @@ class IrLazyFunction(
         TypeTranslator
     )
 
+    @DescriptorInIrDeclaration
     override val descriptor: FunctionDescriptor = symbol.descriptor
 
     override val typeParameters: MutableList<IrTypeParameter> by lazy {
