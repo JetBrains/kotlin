@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.ir.declarations.impl
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.DescriptorInIrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
 import org.jetbrains.kotlin.ir.symbols.IrExternalPackageFragmentSymbol
@@ -38,6 +39,7 @@ class IrExternalPackageFragmentImpl(
         symbol.bind(this)
     }
 
+    @DescriptorInIrDeclaration
     override val packageFragmentDescriptor: PackageFragmentDescriptor get() = symbol.descriptor
 
     override val declarations: MutableList<IrDeclaration> = ArrayList()

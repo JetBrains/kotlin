@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.ir.DescriptorInIrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrErrorDeclaration
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 class IrErrorDeclarationImpl(
     startOffset: Int,
     endOffset: Int,
+    @property:DescriptorInIrDeclaration
     override val descriptor: DeclarationDescriptor
 ) : IrDeclarationBase(startOffset, endOffset, IrDeclarationOrigin.DEFINED), IrErrorDeclaration {
 

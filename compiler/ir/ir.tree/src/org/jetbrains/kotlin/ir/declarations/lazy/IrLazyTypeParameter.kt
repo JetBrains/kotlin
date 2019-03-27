@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.declarations.lazy
 
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.ir.DescriptorInIrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
@@ -50,6 +51,7 @@ class IrLazyTypeParameter(
                 stubGenerator, TypeTranslator
             )
 
+    @DescriptorInIrDeclaration
     override val descriptor: TypeParameterDescriptor get() = symbol.descriptor
 
     init {
