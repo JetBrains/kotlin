@@ -5,6 +5,15 @@
 
 package org.jetbrains.kotlin.ir.backend.js.utils
 
+import org.jetbrains.kotlin.backend.common.ir.isSuspend
+import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
+import org.jetbrains.kotlin.ir.expressions.IrLoop
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.js.backend.ast.*
@@ -30,7 +39,7 @@ class JsGenerationContext(
         get() = if (isCoroutineDoResume()) {
             JsThisRef()
         } else {
-            if (currentFunction!!.descriptor.isSuspend) {
+            if (currentFunction!!.isSuspend) {
                 JsNameRef(currentScope.declareName(Namer.CONTINUATION))
             } else {
                 getNameForValueDeclaration(currentFunction.valueParameters.last()).makeRef()

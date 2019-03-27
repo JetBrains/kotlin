@@ -58,8 +58,6 @@ private val SPECIAL_INIT_NAME = Name.special("<init>")
 
 val IrValueParameter.isVararg get() = this.varargElementType != null
 
-val IrFunction.isSuspend get() = this is IrSimpleFunction && this.isSuspend
-
 val IrFunction.isReal get() = this.origin != IrDeclarationOrigin.FAKE_OVERRIDE
 
 fun IrSimpleFunction.overrides(other: IrSimpleFunction): Boolean {
