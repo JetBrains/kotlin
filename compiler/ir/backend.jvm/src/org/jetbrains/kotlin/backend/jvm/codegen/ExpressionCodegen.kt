@@ -1000,7 +1000,11 @@ class ExpressionCodegen(
         val tryRegions = getCurrentTryIntervals(tryInfo, tryBlockStart, tryBlockEnd)
 
         val tryCatchBlockEnd = Label()
-        genFinallyBlockOrGoto(tryInfo, tryCatchBlockEnd, null, data)
+        if (tryInfo != null) {
+            data.handleBlock { genFinallyBlock(tryInfo, tryCatchBlockEnd, null, data) }
+        } else {
+            mv.goTo(tryCatchBlockEnd)
+        }
 
         val catches = aTry.catches
         for (clause in catches) {
@@ -1023,31 +1027,27 @@ class ExpressionCodegen(
                 index
             )
 
-            genFinallyBlockOrGoto(
-                tryInfo,
-                if (clause != catches.last() || aTry.finallyExpression != null) tryCatchBlockEnd else null,
-                null,
-                data
-            )
+            if (tryInfo != null) {
+                data.handleBlock { genFinallyBlock(tryInfo, tryCatchBlockEnd, null, data) }
+            } else if (clause != catches.last()) {
+                mv.goTo(tryCatchBlockEnd)
+            }
 
             generateExceptionTable(clauseStart, tryRegions, descriptorType.internalName)
         }
 
         //for default catch clause
-        if (aTry.finallyExpression != null) {
-            val defaultCatchStart = Label()
-            mv.mark(defaultCatchStart)
+        if (tryInfo != null) {
+            val defaultCatchStart = markNewLabel()
             val savedException = frame.enterTemp(JAVA_THROWABLE_TYPE)
             mv.store(savedException, JAVA_THROWABLE_TYPE)
-
-            val defaultCatchEnd = Label()
-            mv.mark(defaultCatchEnd)
+            val defaultCatchEnd = markNewLabel()
 
             //do it before finally block generation
             //javac also generates entry in exception table for default catch clause too!!!! so defaultCatchEnd as end parameter
             val defaultCatchRegions = getCurrentTryIntervals(tryInfo, tryBlockStart, defaultCatchEnd)
 
-            genFinallyBlockOrGoto(tryInfo, null, null, data)
+            data.handleBlock { genFinallyBlock(tryInfo, null, null, data) }
 
             mv.load(savedException, JAVA_THROWABLE_TYPE)
             frame.leaveTemp(JAVA_THROWABLE_TYPE)
@@ -1082,14 +1082,6 @@ class ExpressionCodegen(
             val endRegion = catchedRegions[i + 1]
             mv.visitTryCatchBlock(startRegion, endRegion, catchStart, exception)
             i += 2
-        }
-    }
-
-    private fun genFinallyBlockOrGoto(tryInfo: TryInfo?, tryCatchBlockEnd: Label?, afterJumpLabel: Label?, data: BlockInfo) {
-        if (tryInfo != null) {
-            data.handleBlock { genFinallyBlock(tryInfo, tryCatchBlockEnd, afterJumpLabel, data) }
-        } else if (tryCatchBlockEnd != null) {
-            mv.goTo(tryCatchBlockEnd)
         }
     }
 
