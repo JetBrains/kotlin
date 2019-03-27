@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 description = "Kotlin Serialization Compiler Plugin"
 
 plugins {
@@ -29,4 +31,12 @@ dist(targetName = the<BasePluginConvention>().archivesBaseName + ".jar")
 
 ideaPlugin {
     from(jar)
+}
+
+val compileKotlin: KotlinCompile by tasks
+
+compileKotlin.kotlinOptions {
+    freeCompilerArgs = freeCompilerArgs + listOf(
+        "-Xuse-experimental=kotlin.Experimental",
+        "-Xuse-experimental=org.jetbrains.kotlin.ir.DescriptorInIrDeclaration")
 }

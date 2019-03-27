@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm")
@@ -15,3 +16,10 @@ sourceSets {
     "test" {}
 }
 
+val compileKotlin: KotlinCompile by tasks
+
+compileKotlin.kotlinOptions {
+    freeCompilerArgs = freeCompilerArgs + listOf(
+        "-Xuse-experimental=kotlin.Experimental",
+        "-Xuse-experimental=org.jetbrains.kotlin.ir.DescriptorInIrDeclaration")
+}
