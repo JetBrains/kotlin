@@ -74,10 +74,6 @@ class BlockInfo private constructor(val parent: BlockInfo?) {
         this@apply.infos.addAll(this@BlockInfo.infos)
     }
 
-    fun isEmpty(): Boolean = infos.isEmpty()
-
-    fun hasFinallyBlocks(): Boolean = infos.firstIsInstanceOrNull<TryInfo>() != null
-
     inline fun <R> withBlock(info: ExpressionInfo, f: (ExpressionInfo) -> R): R {
         infos.add(info)
         try {
@@ -87,7 +83,10 @@ class BlockInfo private constructor(val parent: BlockInfo?) {
         }
     }
 
-    inline fun <R> handleBlock(f: (ExpressionInfo) -> R): R {
+    inline fun <R> handleBlock(f: (ExpressionInfo) -> R): R? {
+        if (infos.isEmpty()) {
+            return null
+        }
         val top = infos.pop()
         try {
             return f(top)
@@ -954,37 +953,24 @@ class ExpressionCodegen(
         return StackValue.none()
     }
 
-    override fun visitBreakContinue(jump: IrBreakContinue, data: BlockInfo): StackValue {
-        jump.markLineNumber(startOffset = true)
-        generateBreakOrContinueExpression(jump, Label(), data)
-        return none()
+    private fun unwindBlockStack(endLabel: Label, data: BlockInfo, loop: IrLoop? = null): LoopInfo? {
+        return data.handleBlock {
+            when {
+                it is TryInfo -> genFinallyBlock(it, null, endLabel, data)
+                it is LoopInfo && it.loop == loop -> return it
+            }
+            unwindBlockStack(endLabel, data, loop)
+        }
     }
 
-    private fun generateBreakOrContinueExpression(
-        expression: IrBreakContinue,
-        afterBreakContinueLabel: Label,
-        data: BlockInfo
-    ) {
-        if (data.isEmpty()) {
-            throw UnsupportedOperationException("Target label for break/continue not found")
-        }
-
-        data.handleBlock { stackElement ->
-            when (stackElement) {
-                is TryInfo -> genFinallyBlock(stackElement, null, afterBreakContinueLabel, data)
-                is LoopInfo -> {
-                    val loop = expression.loop
-                    if (loop == stackElement.loop) {
-                        val label = if (expression is IrBreak) stackElement.breakLabel else stackElement.continueLabel
-                        mv.fixStackAndJump(label)
-                        mv.mark(afterBreakContinueLabel)
-                        return
-                    }
-                }
-                else -> throw UnsupportedOperationException("Wrong BlockStackElement in processing stack")
-            }
-            generateBreakOrContinueExpression(expression, afterBreakContinueLabel, data)
-        }
+    override fun visitBreakContinue(jump: IrBreakContinue, data: BlockInfo): StackValue {
+        jump.markLineNumber(startOffset = true)
+        val endLabel = Label()
+        val stackElement = unwindBlockStack(endLabel, data, jump.loop)
+            ?: throw AssertionError("Target label for break/continue not found")
+        mv.fixStackAndJump(if (jump is IrBreak) stackElement.breakLabel else stackElement.continueLabel)
+        mv.mark(endLabel)
+        return none()
     }
 
     override fun visitDoWhileLoop(loop: IrDoWhileLoop, data: BlockInfo): StackValue {
@@ -1120,29 +1106,16 @@ class ExpressionCodegen(
     }
 
     private fun generateFinallyBlocksIfNeeded(returnType: Type, afterReturnLabel: Label, data: BlockInfo) {
-        if (data.hasFinallyBlocks()) {
+        if (data.infos.firstIsInstanceOrNull<TryInfo>() != null) {
             if (Type.VOID_TYPE != returnType) {
                 val returnValIndex = frame.enterTemp(returnType)
                 val localForReturnValue = StackValue.local(returnValIndex, returnType)
                 localForReturnValue.store(StackValue.onStack(returnType), mv)
-                doFinallyOnReturn(afterReturnLabel, data)
+                unwindBlockStack(afterReturnLabel, data, null)
                 localForReturnValue.put(returnType, mv)
                 frame.leaveTemp(returnType)
             } else {
-                doFinallyOnReturn(afterReturnLabel, data)
-            }
-        }
-    }
-
-    private fun doFinallyOnReturn(afterReturnLabel: Label, data: BlockInfo) {
-        if (!data.isEmpty()) {
-            data.handleBlock { stackElement ->
-                when (stackElement) {
-                    is TryInfo -> genFinallyBlock(stackElement, null, afterReturnLabel, data)
-                    is LoopInfo -> {}
-                    else -> throw UnsupportedOperationException("Wrong BlockStackElement in processing stack")
-                }
-                doFinallyOnReturn(afterReturnLabel, data)
+                unwindBlockStack(afterReturnLabel, data, null)
             }
         }
     }
