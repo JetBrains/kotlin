@@ -933,7 +933,10 @@ class ExpressionCodegen(
     private fun unwindBlockStack(endLabel: Label, data: BlockInfo, loop: IrLoop? = null): LoopInfo? {
         return data.handleBlock {
             when {
-                it is TryInfo -> genFinallyBlock(it, null, endLabel, data)
+                it is TryInfo -> {
+                    it.gaps.add(markNewLabel() to endLabel)
+                    gen(it.onExit, data).discard()
+                }
                 it is LoopInfo && it.loop == loop -> return it
             }
             unwindBlockStack(endLabel, data, loop)
@@ -985,7 +988,10 @@ class ExpressionCodegen(
         val tryBlockGaps = tryInfo?.gaps?.toList() ?: listOf()
         val tryCatchBlockEnd = Label()
         if (tryInfo != null) {
-            data.handleBlock { genFinallyBlock(tryInfo, tryCatchBlockEnd, null, data) }
+            data.handleBlock { gen(tryInfo.onExit, data).discard() }
+            tryInfo.onExit.markLineNumber(startOffset = false)
+            mv.goTo(tryCatchBlockEnd)
+            tryInfo.gaps.add(tryBlockEnd to markNewLabel())
         } else {
             mv.goTo(tryCatchBlockEnd)
         }
@@ -1012,7 +1018,10 @@ class ExpressionCodegen(
             )
 
             if (tryInfo != null) {
-                data.handleBlock { genFinallyBlock(tryInfo, tryCatchBlockEnd, null, data) }
+                data.handleBlock { gen(tryInfo.onExit, data).discard() }
+                tryInfo.onExit.markLineNumber(startOffset = false)
+                mv.goTo(tryCatchBlockEnd)
+                tryInfo.gaps.add(clauseEnd to markNewLabel())
             } else if (clause != catches.last()) {
                 mv.goTo(tryCatchBlockEnd)
             }
@@ -1031,7 +1040,7 @@ class ExpressionCodegen(
 
             val finallyStart = markNewLabel()
             // Nothing will cover anything after this point, so don't bother recording the gap here.
-            data.handleBlock { gen(aTry.finallyExpression!!, data).discard() }
+            data.handleBlock { gen(tryInfo.onExit, data).discard() }
             mv.load(savedException, JAVA_THROWABLE_TYPE)
             frame.leaveTemp(JAVA_THROWABLE_TYPE)
             mv.athrow()
@@ -1051,16 +1060,6 @@ class ExpressionCodegen(
             gapEnd
         }
         mv.visitTryCatchBlock(lastRegionStart, tryEnd, catchStart, type)
-    }
-
-    private fun genFinallyBlock(tryInfo: TryInfo, tryCatchBlockEnd: Label?, afterJumpLabel: Label?, data: BlockInfo) {
-        val gapStart = markNewLabel()
-        gen(tryInfo.onExit, data).discard()
-        if (tryCatchBlockEnd != null) {
-            tryInfo.onExit.markLineNumber(startOffset = false)
-            mv.goTo(tryCatchBlockEnd)
-        }
-        tryInfo.gaps.add(gapStart to (afterJumpLabel ?: markNewLabel()))
     }
 
     override fun visitThrow(expression: IrThrow, data: BlockInfo): StackValue {
