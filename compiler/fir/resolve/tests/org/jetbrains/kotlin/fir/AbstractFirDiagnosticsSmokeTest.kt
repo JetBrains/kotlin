@@ -172,7 +172,7 @@ abstract class AbstractFirDiagnosticsSmokeTest : BaseDiagnosticsTest() {
     }
 
     protected open fun createSealedModule(): TestModuleInfo =
-        createModule("test-module").apply {
+        createModule("test-module-jvm").apply {
             dependencies += builtInsModuleInfo
         }
 
