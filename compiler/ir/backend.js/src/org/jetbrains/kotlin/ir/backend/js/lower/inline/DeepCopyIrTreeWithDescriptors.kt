@@ -5,18 +5,17 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower.inline
 
-import org.jetbrains.kotlin.backend.common.descriptors.*
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.backend.common.DescriptorsToIrRemapper
+import org.jetbrains.kotlin.backend.common.WrappedDescriptorPatcher
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
+import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.Name
 
@@ -35,53 +34,7 @@ internal class DeepCopyIrTreeWithSymbolsForInliner(val context: Context,
         val result = irElement.transform(copier, data = null)
 
         // Bind newly created IR with wrapped descriptors.
-        result.acceptVoid(object: IrElementVisitorVoid {
-            override fun visitElement(element: IrElement) {
-                element.acceptChildrenVoid(this)
-            }
-
-            override fun visitClass(declaration: IrClass) {
-                (declaration.descriptor as WrappedClassDescriptor).bind(declaration)
-                declaration.acceptChildrenVoid(this)
-            }
-
-            override fun visitConstructor(declaration: IrConstructor) {
-                (declaration.descriptor as WrappedClassConstructorDescriptor).bind(declaration)
-                declaration.acceptChildrenVoid(this)
-            }
-
-            override fun visitEnumEntry(declaration: IrEnumEntry) {
-                (declaration.descriptor as WrappedClassDescriptor).bind(
-                        declaration.correspondingClass ?: declaration.parentAsClass)
-                declaration.acceptChildrenVoid(this)
-            }
-
-            override fun visitField(declaration: IrField) {
-                (declaration.descriptor as? WrappedFieldDescriptor)?.bind(declaration)
-                declaration.acceptChildrenVoid(this)
-            }
-
-            override fun visitFunction(declaration: IrFunction) {
-                (declaration.descriptor as WrappedSimpleFunctionDescriptor).bind(declaration as IrSimpleFunction)
-                declaration.acceptChildrenVoid(this)
-            }
-
-            override fun visitValueParameter(declaration: IrValueParameter) {
-                (declaration.descriptor as? WrappedValueParameterDescriptor)?.bind(declaration)
-                (declaration.descriptor as? WrappedReceiverParameterDescriptor)?.bind(declaration)
-                declaration.acceptChildrenVoid(this)
-            }
-
-            override fun visitTypeParameter(declaration: IrTypeParameter) {
-                (declaration.descriptor as WrappedTypeParameterDescriptor).bind(declaration)
-                declaration.acceptChildrenVoid(this)
-            }
-
-            override fun visitVariable(declaration: IrVariable) {
-                (declaration.descriptor as WrappedVariableDescriptor).bind(declaration)
-                declaration.acceptChildrenVoid(this)
-            }
-        })
+        result.acceptVoid(WrappedDescriptorPatcher)
 
         result.patchDeclarationParents(parent)
         return result
@@ -103,35 +56,6 @@ internal class DeepCopyIrTreeWithSymbolsForInliner(val context: Context,
         override fun getVariableName(symbol: IrVariableSymbol) = map.getOrPut(symbol) { generateCopyName(symbol.owner.name) }
         override fun getTypeParameterName(symbol: IrTypeParameterSymbol) = symbol.owner.name
         override fun getValueParameterName(symbol: IrValueParameterSymbol) = symbol.owner.name
-    }
-
-    private inner class DescriptorsToIrRemapper : DescriptorsRemapper {
-        override fun remapDeclaredClass(descriptor: ClassDescriptor) =
-                WrappedClassDescriptor(descriptor.annotations, descriptor.source)
-
-        override fun remapDeclaredConstructor(descriptor: ClassConstructorDescriptor) =
-                WrappedClassConstructorDescriptor(descriptor.annotations, descriptor.source)
-
-        override fun remapDeclaredEnumEntry(descriptor: ClassDescriptor) =
-                WrappedClassDescriptor(descriptor.annotations, descriptor.source)
-
-        override fun remapDeclaredField(descriptor: PropertyDescriptor) =
-                WrappedFieldDescriptor(descriptor.annotations, descriptor.source)
-
-        override fun remapDeclaredSimpleFunction(descriptor: FunctionDescriptor) =
-                WrappedSimpleFunctionDescriptor(descriptor.annotations, descriptor.source)
-
-        override fun remapDeclaredTypeParameter(descriptor: TypeParameterDescriptor) =
-                WrappedTypeParameterDescriptor(descriptor.annotations, descriptor.source)
-
-        override fun remapDeclaredVariable(descriptor: VariableDescriptor) =
-                WrappedVariableDescriptor(descriptor.annotations, descriptor.source)
-
-        override fun remapDeclaredValueParameter(descriptor: ParameterDescriptor): ParameterDescriptor =
-                if (descriptor is ReceiverParameterDescriptor)
-                    WrappedReceiverParameterDescriptor(descriptor.annotations, descriptor.source)
-                else
-                    WrappedValueParameterDescriptor(descriptor.annotations, descriptor.source)
     }
 
     private inner class InlinerTypeRemapper(val symbolRemapper: SymbolRemapper,
@@ -191,7 +115,7 @@ internal class DeepCopyIrTreeWithSymbolsForInliner(val context: Context,
         }
     }
 
-    private val symbolRemapper = SymbolRemapperImpl(DescriptorsToIrRemapper())
+    private val symbolRemapper = SymbolRemapperImpl(DescriptorsToIrRemapper)
     private val copier = DeepCopyIrTreeWithSymbols(
             symbolRemapper,
             InlinerTypeRemapper(symbolRemapper, typeArguments),
