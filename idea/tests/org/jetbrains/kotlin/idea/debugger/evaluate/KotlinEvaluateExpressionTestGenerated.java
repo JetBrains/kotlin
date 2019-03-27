@@ -141,6 +141,11 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/escapedNames.kt");
         }
 
+        @TestMetadata("experimentalApi.kt")
+        public void testExperimentalApi() throws Exception {
+            runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/experimentalApi.kt");
+        }
+
         @TestMetadata("extractLocalVariables.kt")
         public void testExtractLocalVariables() throws Exception {
             runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/extractLocalVariables.kt");
