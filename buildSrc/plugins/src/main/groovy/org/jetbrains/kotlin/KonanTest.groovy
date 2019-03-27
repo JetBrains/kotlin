@@ -47,6 +47,9 @@ abstract class KonanTest extends JavaExec {
     List<String> arguments = null
     List<String> flags = null
 
+    boolean multiRuns = false
+    List<List<String>> multiArguments = null
+
     boolean enabled = true
     boolean expectedFail = false
     boolean run = true
@@ -281,51 +284,59 @@ abstract class KonanTest extends JavaExec {
 
         out = new ByteArrayOutputStream()
         //TODO Add test timeout
-        ExecResult execResult = project.execute {
 
-            commandLine exe
+        def times = multiRuns ? multiArguments.size() : 1
 
-            if (arguments != null) {
-                args arguments
+        for (int i = 0; i < times; i++) {
+            ExecResult execResult = project.execute {
+
+                commandLine exe
+
+                if (arguments != null) {
+                    args arguments
+                }
+                if (multiRuns && multiArguments[i] != null) {
+                    args multiArguments[i]
+                }
+                if (testData != null) {
+                    standardInput = new ByteArrayInputStream(testData.bytes)
+                }
+                standardOutput = out
+
+                ignoreExitValue = true
             }
-            if (testData != null) {
-                standardInput = new ByteArrayInputStream(testData.bytes)
-            }
-            standardOutput = out
+            def result = compilerMessagesText + out.toString("UTF-8")
 
-            ignoreExitValue = true
+            println(result)
+
+            def exitCodeMismatch = execResult.exitValue != expectedExitStatus
+            if (exitCodeMismatch) {
+                def message = "Expected exit status: $expectedExitStatus, actual: ${execResult.exitValue}"
+                if (this.expectedFail) {
+                    println("Expected failure. $message")
+                } else {
+                    throw new TestFailedException("Test failed on iteration $i. $message")
+                }
+            }
+
+            result = result.replace(System.lineSeparator(), "\n")
+            def goldValueMismatch = !outputChecker.apply(result)
+            if (goldValueMismatch) {
+                def message
+                if (goldValue != null) {
+                    message = "Iteration $i. Expected output: $goldValue, actual output: $result"
+                } else {
+                    message = "Iteration $i. Actual output doesn't match output checker: $result"
+                }
+                if (this.expectedFail) {
+                    println("Expected failure. $message")
+                } else {
+                    throw new TestFailedException("Test failed on iteration $i. $message")
+                }
+            }
+
+            if (!exitCodeMismatch && !goldValueMismatch && this.expectedFail) println("Unexpected pass")
         }
-        def result = compilerMessagesText + out.toString("UTF-8")
-
-        println(result)
-
-        def exitCodeMismatch = execResult.exitValue != expectedExitStatus
-        if (exitCodeMismatch) {
-            def message = "Expected exit status: $expectedExitStatus, actual: ${execResult.exitValue}"
-            if (this.expectedFail) {
-                println("Expected failure. $message")
-            } else {
-                throw new TestFailedException("Test failed. $message")
-            }
-        }
-
-        result = result.replace(System.lineSeparator(), "\n")
-        def goldValueMismatch = !outputChecker.apply(result)
-        if (goldValueMismatch) {
-            def message
-            if (goldValue != null) {
-                message = "Expected output: $goldValue, actual output: $result"
-            } else {
-                message = "Actual output doesn't match output checker: $result"
-            }
-            if (this.expectedFail) {
-                println("Expected failure. $message")
-            } else {
-                throw new TestFailedException("Test failed. $message")
-            }
-        }
-
-        if (!exitCodeMismatch && !goldValueMismatch && this.expectedFail) println("Unexpected pass")
     }
 }
 
