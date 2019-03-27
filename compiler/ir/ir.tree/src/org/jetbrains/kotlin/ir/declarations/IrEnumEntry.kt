@@ -17,10 +17,12 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.ir.DescriptorInIrDeclaration
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
 
 interface IrEnumEntry : IrSymbolDeclaration<IrEnumEntrySymbol>, IrDeclarationWithName {
+    @DescriptorInIrDeclaration
     override val descriptor: ClassDescriptor
 
     var correspondingClass: IrClass?

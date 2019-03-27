@@ -17,9 +17,9 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.ir.DescriptorInIrDeclaration
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.SourceManager
-import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.symbols.IrExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPackageFragmentSymbol
@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.name.FqName
 import java.io.File
 
 interface IrPackageFragment : IrElement, IrDeclarationContainer, IrSymbolOwner {
+    @DescriptorInIrDeclaration
     val packageFragmentDescriptor: PackageFragmentDescriptor
     override val symbol: IrPackageFragmentSymbol
 

@@ -17,14 +17,15 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
+import org.jetbrains.kotlin.ir.DescriptorInIrDeclaration
 import org.jetbrains.kotlin.ir.symbols.IrLocalDelegatedPropertySymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 
 interface IrLocalDelegatedProperty :
     IrDeclarationWithName,
     IrSymbolOwner {
 
+    @DescriptorInIrDeclaration
     override val descriptor: VariableDescriptorWithAccessors
     override val symbol: IrLocalDelegatedPropertySymbol
 

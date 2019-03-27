@@ -17,10 +17,12 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
+import org.jetbrains.kotlin.ir.DescriptorInIrDeclaration
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 
 
 interface IrConstructor : IrFunction, IrSymbolDeclaration<IrConstructorSymbol> {
+    @DescriptorInIrDeclaration
     override val descriptor: ClassConstructorDescriptor
 
     val isPrimary: Boolean
