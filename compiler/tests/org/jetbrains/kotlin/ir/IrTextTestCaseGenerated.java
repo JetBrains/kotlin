@@ -1356,6 +1356,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             public void testSamConversionsWithSmartCasts() throws Exception {
                 runTest("compiler/testData/ir/irText/expressions/sam/samConversionsWithSmartCasts.kt");
             }
+
+            @TestMetadata("samOperators.kt")
+            public void testSamOperators() throws Exception {
+                runTest("compiler/testData/ir/irText/expressions/sam/samOperators.kt");
+            }
         }
     }
 
