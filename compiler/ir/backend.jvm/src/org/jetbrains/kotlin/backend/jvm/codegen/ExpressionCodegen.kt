@@ -58,12 +58,14 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import java.util.*
 
-open class ExpressionInfo(val expression: IrExpression)
+sealed class ExpressionInfo()
 
-class LoopInfo(val loop: IrLoop, val continueLabel: Label, val breakLabel: Label) : ExpressionInfo(loop)
+class LoopInfo(val loop: IrLoop, val continueLabel: Label, val breakLabel: Label) : ExpressionInfo()
 
-class TryInfo(val tryBlock: IrTry) : ExpressionInfo(tryBlock) {
-    val gaps = mutableListOf<Label>()
+class TryInfo(val onExit: IrExpression) : ExpressionInfo() {
+    // Regions corresponding to copy-pasted contents of the `finally` block.
+    // These should not be covered by `catch` clauses.
+    val gaps = mutableListOf<Pair<Label, Label>>()
 }
 
 class BlockInfo private constructor(val parent: BlockInfo?) {
@@ -76,7 +78,7 @@ class BlockInfo private constructor(val parent: BlockInfo?) {
 
     fun hasFinallyBlocks(): Boolean = infos.firstIsInstanceOrNull<TryInfo>() != null
 
-    inline fun <R> withBlock(info: ExpressionInfo, f: (ExpressionInfo) -> R): R {
+    inline fun <T : ExpressionInfo, R> withBlock(info: T, f: (T) -> R): R {
         infos.add(info)
         try {
             return f(info)
@@ -1021,7 +1023,7 @@ class ExpressionCodegen(
     override fun visitTry(aTry: IrTry, data: BlockInfo): StackValue {
         aTry.markLineNumber(startOffset = true)
         return if (aTry.finallyExpression != null)
-            data.withBlock(TryInfo(aTry)) { visitTryWithInfo(aTry, data, it as TryInfo) }
+            data.withBlock(TryInfo(aTry.finallyExpression!!)) { visitTryWithInfo(aTry, data, it) }
         else
             visitTryWithInfo(aTry, data, null)
     }
@@ -1039,9 +1041,7 @@ class ExpressionCodegen(
         }
 
         val tryBlockEnd = markNewLabel()
-
-        val tryRegions = getCurrentTryIntervals(tryInfo, tryBlockStart, tryBlockEnd)
-
+        val tryBlockGaps = tryInfo?.gaps?.toList() ?: listOf()
         val tryCatchBlockEnd = Label()
         if (tryInfo != null) {
             data.handleBlock { genFinallyBlock(tryInfo, tryCatchBlockEnd, null, data) }
@@ -1080,28 +1080,27 @@ class ExpressionCodegen(
                 mv.goTo(tryCatchBlockEnd)
             }
 
-            generateExceptionTable(clauseStart, tryRegions, descriptorType.internalName)
+            genTryCatchCover(clauseStart, tryBlockStart, tryBlockEnd, tryBlockGaps, descriptorType.internalName)
         }
 
-        //for default catch clause
         if (tryInfo != null) {
+            // Generate `try { ... } catch (e: Any?) { <finally>; throw e }` around every part of
+            // the try-catch that is not a copy-pasted `finally` block.
             val defaultCatchStart = markNewLabel()
+            // While keeping this value on the stack should be enough, the bytecode validator will
+            // complain if a catch block does not start with ASTORE.
             val savedException = frame.enterTemp(JAVA_THROWABLE_TYPE)
             mv.store(savedException, JAVA_THROWABLE_TYPE)
-            val defaultCatchEnd = markNewLabel()
 
-            //do it before finally block generation
-            //javac also generates entry in exception table for default catch clause too!!!! so defaultCatchEnd as end parameter
-            val defaultCatchRegions = getCurrentTryIntervals(tryInfo, tryBlockStart, defaultCatchEnd)
-
+            val finallyStart = markNewLabel()
+            val finallyGaps = tryInfo.gaps.toList()
             data.handleBlock { genFinallyBlock(tryInfo, null, null, data) }
-
             mv.load(savedException, JAVA_THROWABLE_TYPE)
             frame.leaveTemp(JAVA_THROWABLE_TYPE)
-
             mv.athrow()
 
-            generateExceptionTable(defaultCatchStart, defaultCatchRegions, null)
+            // Include the ASTORE into the covered region. This is used by the inliner to detect try-finally.
+            genTryCatchCover(defaultCatchStart, tryBlockStart, finallyStart, finallyGaps, null)
         }
 
         mv.mark(tryCatchBlockEnd)
@@ -1110,52 +1109,34 @@ class ExpressionCodegen(
             savedValue.put(mv)
             frame.leaveTemp(aTry.asmType)
         }
+        // TODO: generate a common `finally` for try & catch blocks here? Right now this breaks the inliner.
         return aTry.onStack
     }
 
-    private fun getCurrentTryIntervals(
-        finallyBlockStackElement: TryInfo?,
-        blockStart: Label,
-        blockEnd: Label
-    ): List<Label> {
-        val gapsInBlock = if (finallyBlockStackElement != null) ArrayList<Label>(finallyBlockStackElement.gaps) else emptyList<Label>()
-        assert(gapsInBlock.size % 2 == 0)
-        val blockRegions = ArrayList<Label>(gapsInBlock.size + 2)
-        blockRegions.add(blockStart)
-        blockRegions.addAll(gapsInBlock)
-        blockRegions.add(blockEnd)
-        return blockRegions
-    }
-
-    private fun generateExceptionTable(catchStart: Label, catchedRegions: List<Label>, exception: String?) {
-        var i = 0
-        while (i < catchedRegions.size) {
-            val startRegion = catchedRegions[i]
-            val endRegion = catchedRegions[i + 1]
-            mv.visitTryCatchBlock(startRegion, endRegion, catchStart, exception)
-            i += 2
+    private fun genTryCatchCover(catchStart: Label, tryStart: Label, tryEnd: Label, tryGaps: List<Pair<Label, Label>>, type: String?) {
+        val lastRegionStart = tryGaps.fold(tryStart) { regionStart, (gapStart, gapEnd) ->
+            mv.visitTryCatchBlock(regionStart, gapStart, catchStart, type)
+            gapEnd
         }
+        mv.visitTryCatchBlock(lastRegionStart, tryEnd, catchStart, type)
     }
 
     private fun genFinallyBlock(tryInfo: TryInfo, tryCatchBlockEnd: Label?, afterJumpLabel: Label?, data: BlockInfo) {
-        assert(tryInfo.gaps.size % 2 == 0) { "Finally block gaps are inconsistent" }
-        tryInfo.gaps.add(markNewLabel())
+        val gapStart = markNewLabel()
         finallyDepth++
         if (isFinallyMarkerRequired()) {
             generateFinallyMarker(mv, finallyDepth, true)
         }
-        gen(tryInfo.tryBlock.finallyExpression!!, data).discard()
-
+        gen(tryInfo.onExit, data).discard()
         if (isFinallyMarkerRequired()) {
             generateFinallyMarker(mv, finallyDepth, false)
         }
         finallyDepth--
-
         if (tryCatchBlockEnd != null) {
-            tryInfo.tryBlock.finallyExpression!!.markLineNumber(startOffset = false)
+            tryInfo.onExit.markLineNumber(startOffset = false)
             mv.goTo(tryCatchBlockEnd)
         }
-        tryInfo.gaps.add(afterJumpLabel ?: markNewLabel())
+        tryInfo.gaps.add(gapStart to (afterJumpLabel ?: markNewLabel()))
     }
 
     fun generateFinallyBlocksIfNeeded(returnType: Type, afterReturnLabel: Label, data: BlockInfo) {
