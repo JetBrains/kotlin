@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.codegen.pseudoInsns.fakeAlwaysFalseIfeq
 import org.jetbrains.kotlin.codegen.pseudoInsns.fakeAlwaysTrueIfeq
 import org.jetbrains.kotlin.codegen.pseudoInsns.fixStackAndJump
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
-import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.isReleaseCoroutines
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
@@ -35,7 +34,6 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isMarkedNullable
-import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -1279,7 +1277,8 @@ class ExpressionCodegen(
 
         // We should inline callable containing reified type parameters even if inline is disabled
         // because they may contain something to reify and straight call will probably fail at runtime
-        val isInline = descriptor.isInlineCall(state)
+        val isInline = (!state.isInlineDisabled || InlineUtil.containsReifiedTypeParameters(descriptor)) &&
+                (InlineUtil.isInline(descriptor) || InlineUtil.isArrayConstructorWithLambda(descriptor))
 
         if (!isInline) return IrCallGenerator.DefaultCallGenerator
 
@@ -1376,11 +1375,6 @@ class ExpressionCodegen(
     }
 }
 
-private class DefaultArg(val index: Int)
-
-private class Vararg(val index: Int)
-
-
 fun DefaultCallArgs.generateOnStackIfNeeded(callGenerator: IrCallGenerator, isConstructor: Boolean, codegen: ExpressionCodegen): Boolean {
     val toInts = toInts()
     if (!toInts.isEmpty()) {
@@ -1399,7 +1393,3 @@ fun DefaultCallArgs.generateOnStackIfNeeded(callGenerator: IrCallGenerator, isCo
     }
     return toInts.isNotEmpty()
 }
-
-internal fun CallableDescriptor.isInlineCall(state: GenerationState) =
-    (!state.isInlineDisabled || InlineUtil.containsReifiedTypeParameters(this)) &&
-            (InlineUtil.isInline(this) || InlineUtil.isArrayConstructorWithLambda(this))
