@@ -7,10 +7,14 @@ import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.types.IrTypeArgument
+import org.jetbrains.kotlin.ir.types.defaultType
+import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializableCompanionCodegen
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 
@@ -47,8 +51,9 @@ class SerializableCompanionIrGenerator(
                     irInvoke(
                         null,
                         compilerContext.externalSymbols.referenceConstructor(serializer.unsubstitutedPrimaryConstructor!!),
-                        listOf(serializableType.toIrType()),
-                        listOf(classReference(serializableType))
+                        typeArguments = listOf(serializableType.toIrType()),
+                        valueArguments = listOf(classReference(serializableType)),
+                        returnTypeHint = getter.returnType
                     )
                 }
                 else -> {
@@ -56,8 +61,9 @@ class SerializableCompanionIrGenerator(
                         KSerializerDescriptorResolver.findSerializerConstructorForTypeArgumentsSerializers(serializer)
                     ) { "Generated serializer does not have constructor with required number of arguments" }
                     val ctor = compilerContext.externalSymbols.referenceConstructor(desc)
+                    val typeArgs = getter.typeParameters.map { it.defaultType }
                     val args: List<IrExpression> = getter.valueParameters.map { irGet(it) }
-                    irInvoke(null, ctor, *args.toTypedArray())
+                    irInvoke(null, ctor, typeArgs, args, returnTypeHint = getter.returnType)
                 }
             }
             +irReturn(expr)
