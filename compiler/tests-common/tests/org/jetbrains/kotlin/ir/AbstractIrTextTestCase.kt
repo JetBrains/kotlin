@@ -19,10 +19,7 @@ package org.jetbrains.kotlin.ir
 import com.intellij.openapi.util.text.StringUtil
 import junit.framework.TestCase
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -112,6 +109,7 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
         IrVerifier().verifyWithAssert(irFile)
     }
 
+    @UseExperimental(DescriptorInIrDeclaration::class)
     private class IrVerifier : IrElementVisitorVoid {
         private val errors = ArrayList<String>()
 
