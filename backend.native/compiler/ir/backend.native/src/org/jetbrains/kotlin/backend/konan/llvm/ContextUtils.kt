@@ -380,6 +380,8 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
                 .filter { (!it.isDefault && !context.config.purgeUserLibs) || imports.bitcodeIsUsed(it) }
     }
 
+    val additionalProducedBitcodeFiles = mutableListOf<String>()
+
     val staticData = StaticData(context)
 
     private val target = context.config.target
