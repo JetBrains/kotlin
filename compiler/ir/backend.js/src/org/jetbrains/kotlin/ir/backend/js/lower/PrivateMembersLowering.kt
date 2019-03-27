@@ -96,8 +96,9 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : ClassLoweringPas
                 val newExpression = IrCallImpl(
                     expression.startOffset, expression.endOffset,
                     expression.type,
-                    staticTarget.symbol, staticTarget.descriptor,
-                    expression.typeArgumentsCount,
+                    staticTarget.symbol,
+                    staticTarget.typeParameters.size,
+                    staticTarget.valueParameters.size,
                     expression.origin,
                     expression.superQualifierSymbol
                 )
