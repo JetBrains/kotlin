@@ -1,12 +1,14 @@
-@file:Suppress("unused") // usages in build scripts are not tracked properly
+@file:Suppress("unused")
 
+// usages in build scripts are not tracked properly
+
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.tasks.AbstractCopyTask
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.kotlin.dsl.extra
 import org.gradle.kotlin.dsl.project
 import java.io.File
@@ -73,8 +75,8 @@ fun Project.ideaUltimatePreloadedDeps(vararg artifactBaseNames: String, subdir: 
 
 fun Project.kotlinDep(artifactBaseName: String, version: String): String = "org.jetbrains.kotlin:kotlin-$artifactBaseName:$version"
 
-val Project.useBootstrapStdlib: Boolean get() =
-    findProperty("jpsBuild")?.toString() == "true"
+val Project.useBootstrapStdlib: Boolean
+    get() = kotlinBuildProperties.isInJpsBuildIdeaSync
 
 fun Project.kotlinStdlib(suffix: String? = null): Any {
     return if (useBootstrapStdlib)

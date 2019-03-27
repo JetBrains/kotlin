@@ -1,7 +1,6 @@
 import java.io.File
 import org.gradle.api.tasks.bundling.Jar
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile
 
 plugins {
     kotlin("jvm")
@@ -67,7 +66,7 @@ dependencies {
     antLauncherJar(files(toolsJar()))
 
     // For JPS build
-    if (System.getProperty("idea.active") != null) {
+    if (project.kotlinBuildProperties.isInJpsBuildIdeaSync) {
         testRuntimeOnly(files("${rootProject.projectDir}/dist/kotlinc/lib/kotlin-reflect.jar"))
     }
 }

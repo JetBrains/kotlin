@@ -2,7 +2,6 @@ import org.jetbrains.gradle.ext.*
 import org.jetbrains.kotlin.ideaExt.*
 import org.jetbrains.kotlin.buildUtils.idea.*
 
-val isJpsBuildEnabled = findProperty("jpsBuild")?.toString() == "true"
 val ideaPluginDir: File by extra
 val ideaSandboxDir: File by extra
 val ideaSdkPath: String
@@ -29,7 +28,7 @@ fun org.jetbrains.gradle.ext.JUnit.configureForKotlin() {
     workingDirectory = rootDir.toString()
 }
 
-if (isJpsBuildEnabled && System.getProperty("idea.active") != null) {
+if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
     allprojects {
         apply(mapOf("plugin" to "idea"))
     }
