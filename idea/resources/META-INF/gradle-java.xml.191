@@ -1,5 +1,4 @@
 <idea-plugin>
-    <depends optional="true" config-file="gradle-groovy.xml">org.intellij.groovy</depends>
     <extensions defaultExtensionNs="org.jetbrains.plugins.gradle">
         <frameworkSupport implementation="org.jetbrains.kotlin.idea.configuration.GradleKotlinJavaFrameworkSupportProvider"/>
         <frameworkSupport implementation="org.jetbrains.kotlin.idea.configuration.GradleKotlinJSFrameworkSupportProvider"/>
