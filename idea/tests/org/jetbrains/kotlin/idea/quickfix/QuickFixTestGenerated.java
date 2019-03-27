@@ -10121,6 +10121,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/removeUnused/notTriangle.kt");
         }
 
+        @TestMetadata("secondaryLocalClassConstructor.kt")
+        public void testSecondaryLocalClassConstructor() throws Exception {
+            runTest("idea/testData/quickfix/removeUnused/secondaryLocalClassConstructor.kt");
+        }
+
         @TestMetadata("simpleUnusedEnumEntry.kt")
         public void testSimpleUnusedEnumEntry() throws Exception {
             runTest("idea/testData/quickfix/removeUnused/simpleUnusedEnumEntry.kt");

@@ -8728,6 +8728,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/unusedSymbol/propertyOfInlineClassType.kt");
         }
 
+        @TestMetadata("secondaryLocalClassConstructor.kt")
+        public void testSecondaryLocalClassConstructor() throws Exception {
+            runTest("idea/testData/inspectionsLocal/unusedSymbol/secondaryLocalClassConstructor.kt");
+        }
+
         @TestMetadata("typeAlias.kt")
         public void testTypeAlias() throws Exception {
             runTest("idea/testData/inspectionsLocal/unusedSymbol/typeAlias.kt");
