@@ -409,6 +409,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
     private val executeImplProducerClassSymbol = symbols.functions[0]
     private val executeImplProducerInvoke = executeImplProducerClassSymbol.owner.simpleFunctions()
             .single { it.name == OperatorNameConventions.INVOKE }
+    private val reinterpret = symbols.reinterpret
 
     private inner class FunctionDFGBuilder(val expressionValuesExtractor: ExpressionValuesExtractor,
                                            val variableValues: VariableValues,
@@ -589,6 +590,8 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                                     DataFlowIR.Node.AllocInstance(symbolTable.mapClassReferenceType(
                                             value.getTypeArgument(0)!!.getClass()!!
                                     ))
+
+                                reinterpret -> getNode(value.extensionReceiver!!)
 
                                 initInstanceSymbol -> {
                                     val thiz = expressionToEdge(value.getValueArgument(0)!!)
