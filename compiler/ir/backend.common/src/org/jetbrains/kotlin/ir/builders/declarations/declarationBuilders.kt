@@ -113,9 +113,9 @@ inline fun IrFunction.addValueParameter(b: IrValueParameterBuilder.() -> Unit): 
         }
     }
 
-fun IrFunction.addValueParameter(name: Name, type: IrType, origin: IrDeclarationOrigin): IrValueParameter =
+fun IrFunction.addValueParameter(name: String, type: IrType, origin: IrDeclarationOrigin): IrValueParameter =
     addValueParameter {
-        this.name = name
+        this.name = Name.identifier(name)
         this.type = type
         this.origin = origin
     }
