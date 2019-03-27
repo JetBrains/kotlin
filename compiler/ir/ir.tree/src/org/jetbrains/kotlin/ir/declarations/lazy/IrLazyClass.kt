@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.ir.DescriptorInIrDeclaration
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
@@ -66,6 +66,7 @@ class IrLazyClass(
         symbol.bind(this)
     }
 
+    @DescriptorInIrDeclaration
     override val descriptor: ClassDescriptor get() = symbol.descriptor
 
     override var thisReceiver: IrValueParameter? by lazyVar {

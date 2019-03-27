@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
+import org.jetbrains.kotlin.ir.DescriptorInIrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrLocalDelegatedProperty
@@ -101,6 +102,7 @@ class IrLocalDelegatedPropertyImpl(
         this.setter = setter
     }
 
+    @DescriptorInIrDeclaration
     override val descriptor: VariableDescriptorWithAccessors
         get() = symbol.descriptor
 

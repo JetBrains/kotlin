@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.ir.DescriptorInIrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrAnonymousInitializer
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
@@ -37,6 +38,7 @@ class IrAnonymousInitializerImpl(
         symbol.bind(this)
     }
 
+    @DescriptorInIrDeclaration
     override val descriptor: ClassDescriptor get() = symbol.descriptor
 
     override lateinit var body: IrBlockBody
