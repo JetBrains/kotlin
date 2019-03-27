@@ -488,7 +488,7 @@ class ExpressionCodegen(
         // i.e., not in an initializer block or constructor body.
         val skip = irFunction is IrConstructor && irFunction.isPrimary &&
                 expression.origin == null && expressionValue is IrConst<*> &&
-                isDefaultValueForType(expression.symbol.owner.type, expressionValue)
+                isDefaultValueForType(expression.symbol.owner.type.asmType, expressionValue.value)
         if (!skip) {
             expression.markLineNumber(startOffset = true)
             val fieldValue = generateFieldValue(expression, data)
@@ -505,32 +505,16 @@ class ExpressionCodegen(
      * Returns true if the given constant value is the JVM's default value for the given type.
      * See: https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-2.html#jvms-2.3
      */
-    private fun isDefaultValueForType(fieldType: IrType, constExpression: IrConst<*>): Boolean {
-        val value = constExpression.value
-        val type = constExpression.asmType
-        if (isPrimitive(type)) {
-            if (!fieldType.isMarkedNullable() && value is Number) {
-                if (type in setOf(Type.INT_TYPE, Type.BYTE_TYPE, Type.LONG_TYPE, Type.SHORT_TYPE) && value.toLong() == 0L) {
-                    return true
-                }
-                if (type === Type.DOUBLE_TYPE && value.toDouble().equals(0.0)) {
-                    return true
-                }
-                if (type === Type.FLOAT_TYPE && value.toFloat().equals(0.0f)) {
-                    return true
-                }
-            }
-            if (type === Type.BOOLEAN_TYPE && value is Boolean && !value) {
-                return true
-            }
-            if (type === Type.CHAR_TYPE && value is Char && value.toInt() == 0) {
-                return true
-            }
-        } else if (value == null) {
-            return true
+    private fun isDefaultValueForType(type: Type, value: Any?): Boolean =
+        when (type) {
+            Type.BOOLEAN_TYPE -> value is Boolean && !value
+            Type.CHAR_TYPE -> value is Char && value.toInt() == 0
+            Type.BYTE_TYPE, Type.SHORT_TYPE, Type.INT_TYPE, Type.LONG_TYPE -> value is Number && value.toLong() == 0L
+            // Must use `equals` for these two to differentiate between +0.0 and -0.0:
+            Type.FLOAT_TYPE -> value is Number && value.toFloat().equals(0.0f)
+            Type.DOUBLE_TYPE -> value is Number && value.toDouble().equals(0.0)
+            else -> !isPrimitive(type) && value == null
         }
-        return false
-    }
 
     private fun generateLocal(symbol: IrSymbol, type: Type): StackValue {
         val index = findLocalIndex(symbol)
