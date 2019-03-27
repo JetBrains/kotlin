@@ -139,7 +139,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
             val evaluationStatements = evaluateArguments(callSite, copiedCallee)
             val statements = (copiedCallee.body as IrBlockBody).statements
 
-            val irReturnableBlockSymbol = IrReturnableBlockSymbolImpl(copiedCallee.descriptor.original)
+            val irReturnableBlockSymbol = IrReturnableBlockSymbolImpl(copiedCallee.symbol.descriptor)
             val startOffset = callee.startOffset
             val endOffset = callee.endOffset
             val irBuilder = context.createIrBuilder(irReturnableBlockSymbol, startOffset, endOffset)
@@ -382,7 +382,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
                     }
 
                     else -> {
-                        val message = "Incomplete expression: call to ${callee.descriptor} " +
+                        val message = "Incomplete expression: call to ${callee.render()} " +
                                 "has no argument at index ${parameter.index}"
                         throw Error(message)
                     }
