@@ -133,7 +133,6 @@ class AnonymousObjectTransformer(
         val coroutineTransformer = CoroutineTransformer(
             inliningContext,
             classBuilder,
-            sourceInfo,
             methodsToTransform,
             superClassName
         )
