@@ -175,42 +175,24 @@ class ExpressionCodegen(
         mv.visitCode()
         val startLabel = markNewLabel()
         val info = BlockInfo.create()
-        val result = irFunction.body!!.accept(this, info)
-        markFunctionLineNumber()
-        val returnType = typeMapper.mapReturnType(irFunction.descriptor)
         val body = irFunction.body!!
+        val result = gen(body, info)
         // If this function has an expression body, return the result of that expression.
         // Otherwise, if it does not end in a return statement, it must be void-returning,
         // and an explicit return instruction at the end is still required to pass validation.
         if (body !is IrStatementContainer || body.statements.lastOrNull() !is IrReturn) {
+            val returnType = typeMapper.mapReturnType(irFunction.descriptor)
+            // Allow setting a breakpoint on the closing brace of a void-returning function
+            // without an explicit return, or the `class Something(` line of a primary constructor.
+            if (irFunction.origin != JvmLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER) {
+                irFunction.markLineNumber(startOffset = irFunction is IrConstructor && irFunction.isPrimary)
+            }
             coerce(result.type, returnType, mv)
             mv.areturn(returnType)
         }
         writeLocalVariablesInTable(info)
         writeParameterInLocalVariableTable(startLabel)
         mv.visitEnd()
-    }
-
-    private fun markFunctionLineNumber() {
-        if (irFunction.origin == JvmLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER) {
-            return
-        }
-        if (irFunction is IrConstructor && irFunction.isPrimary) {
-            irFunction.markLineNumber(startOffset = true)
-            return
-        }
-        val lastElement = irFunction.body!!.getLastElement()
-        if (lastElement !is IrReturn) {
-            irFunction.markLineNumber(startOffset = false)
-        }
-    }
-
-    private fun IrElement.getLastElement(): IrElement {
-        return when (this) {
-            is IrStatementContainer -> if (this.statements.isEmpty()) this else this.statements[this.statements.size - 1].getLastElement()
-            is IrExpressionBody -> this.expression.getLastElement()
-            else -> this
-        }
     }
 
     private fun writeParameterInLocalVariableTable(startLabel: Label) {
