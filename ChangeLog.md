@@ -87,6 +87,7 @@
 - [`KT-29376`](https://youtrack.jetbrains.com/issue/KT-29376) Report a deprecation warning when comparing enum to any other incompatible type
 - [`KT-29884`](https://youtrack.jetbrains.com/issue/KT-29884) Report warning on @Synchronized on inline method
 - [`KT-30073`](https://youtrack.jetbrains.com/issue/KT-30073) ClassCastException on coroutine start with crossinline lambda
+- [`KT-30597`](https://youtrack.jetbrains.com/issue/KT-30597) "Extend selection" throws exception in empty class body case
 
 ### IDE
 
@@ -183,6 +184,7 @@
 - [`KT-29465`](https://youtrack.jetbrains.com/issue/KT-29465) IndexNotReadyException on context menu invocation for build.gradle.kts file
 - [`KT-29707`](https://youtrack.jetbrains.com/issue/KT-29707) "Navigate declaration" navigates to compiled class in gradle cache folder instead of classes defined in gradle buildSrc folder
 - [`KT-29832`](https://youtrack.jetbrains.com/issue/KT-29832) Multiple Script Definitions for settings.gradle.kts
+- [`KT-30623`](https://youtrack.jetbrains.com/issue/KT-30623) Errors in build.gradle.kts after applying new script dependencies
 
 ### IDE. Hints
 
@@ -280,6 +282,7 @@
 - [`KT-30414`](https://youtrack.jetbrains.com/issue/KT-30414) "Replace return with 'if' expression" drops return label
 - [`KT-30426`](https://youtrack.jetbrains.com/issue/KT-30426) Don't preserve extra line when adding remaining branches for when
 - [`KT-30433`](https://youtrack.jetbrains.com/issue/KT-30433) "Convert member to extension" doesn't update external Kotlin calls
+- [`KT-30117`](https://youtrack.jetbrains.com/issue/KT-30117) Kotlin unused import analysis accesses file editor manager model outside UI thread
 
 ### IDE. Multiplatform
 
