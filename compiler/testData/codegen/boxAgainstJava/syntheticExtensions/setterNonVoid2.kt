@@ -17,7 +17,7 @@ class JavaClass {
 
 fun box(): String {
     val javaClass = JavaClass()
-    if (javaClass.x.isEmpty()) {
+    if (javaClass.x == "") {
         javaClass.x = "OK"
     }
     return javaClass.x

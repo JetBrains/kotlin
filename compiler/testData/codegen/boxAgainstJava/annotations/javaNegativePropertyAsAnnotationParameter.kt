@@ -1,3 +1,4 @@
+// WITH_RUNTIME
 // FILE: Foo.java
 
 class Foo {
