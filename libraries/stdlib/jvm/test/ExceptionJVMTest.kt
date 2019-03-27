@@ -65,4 +65,11 @@ class ExceptionJVMTest {
         exception.stackTrace = stackTrace
         assertArrayNotSameButEquals(stackTrace, exception.stackTrace)
     }
+
+    @Test fun addSuppressedDoesNotThrow() {
+        val e1 = Throwable()
+        val e2 = Exception("Suppressed")
+
+        e1.addSuppressed(e2)
+    }
 }
