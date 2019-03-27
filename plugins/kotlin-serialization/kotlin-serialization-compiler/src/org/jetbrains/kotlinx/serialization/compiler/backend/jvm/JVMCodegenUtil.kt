@@ -360,7 +360,14 @@ fun AbstractSerialGenerator.getSerialTypeInfo(property: SerializableProperty, ty
                         // reference elements
                         serializer = property.module.findClassAcrossModuleDependencies(referenceArraySerializerId)
                     }
-                    else -> TODO("primitive arrays are not supported yet")
+                    else -> {
+                        serializer = findTypeSerializerOrContext(
+                            property.module,
+                            property.type,
+                            property.descriptor.annotations,
+                            property.descriptor.findPsi()
+                        )
+                    }
                     // primitive elements are not supported yet
                 }
             }

@@ -70,7 +70,6 @@ fun AbstractSerialGenerator.getSerialTypeInfo(property: SerializableProperty): S
         )
         KotlinBuiltIns.isString(T) -> SerialTypeInfo(property, "String")
         KotlinBuiltIns.isUnit(T) -> SerialTypeInfo(property, "Unit", unit = true)
-        KotlinBuiltIns.isPrimitiveArray(T) -> TODO("primitive arrays are not supported yet")
         KotlinBuiltIns.isNonPrimitiveArray(T.toClassDescriptor!!) -> {
             val serializer = property.serializableWith?.toClassDescriptor ?: property.module.findClassAcrossModuleDependencies(
                 referenceArraySerializerId
@@ -165,6 +164,14 @@ fun findStandardKotlinTypeSerializer(module: ModuleDescriptor, kType: KotlinType
         "kotlin.collections.Map", "kotlin.collections.LinkedHashMap", "kotlin.collections.MutableMap" -> "LinkedHashMapSerializer"
         "kotlin.collections.HashMap" -> "HashMapSerializer"
         "kotlin.collections.Map.Entry" -> "MapEntrySerializer"
+        "kotlin.ByteArray" -> "ByteArraySerializer"
+        "kotlin.ShortArray" -> "ShortArraySerializer"
+        "kotlin.IntArray" -> "IntArraySerializer"
+        "kotlin.LongArray" -> "LongArraySerializer"
+        "kotlin.CharArray" -> "CharArraySerializer"
+        "kotlin.FloatArray" -> "FloatArraySerializer"
+        "kotlin.DoubleArray" -> "DoubleArraySerializer"
+        "kotlin.BooleanArray" -> "BooleanArraySerializer"
         "java.lang.Boolean" -> "BooleanSerializer"
         "java.lang.Byte" -> "ByteSerializer"
         "java.lang.Short" -> "ShortSerializer"
