@@ -189,7 +189,7 @@ class ScriptDependenciesUpdater(
         }
 
         fun isAsyncDependencyResolver(file: KtFile): Boolean {
-            val scriptDefinition = file.virtualFile.findScriptDefinition(file.project) ?: return false
+            val scriptDefinition = findScriptDefinition(file.virtualFile, file.project) ?: return false
             return getInstance(file.project).isAsyncDependencyResolver(scriptDefinition)
         }
     }
