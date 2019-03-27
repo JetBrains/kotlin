@@ -124,6 +124,53 @@ class ExpressionCodegen(
 
     private val fileEntry = sourceManager.getFileEntry(irFunction.fileParent)
 
+    private val KotlinType.asmType: Type
+        get() = typeMapper.mapType(this)
+
+    private val IrType.asmType: Type
+        get() = toKotlinType().asmType
+
+    private val CallableDescriptor.asmType: Type
+        get() = typeMapper.mapType(this)
+
+    private val IrExpression.asmType: Type
+        get() = type.asmType
+
+    val IrExpression.onStack: StackValue
+        get() = StackValue.onStack(asmType, type.toKotlinType())
+
+    private fun StackValue.discard(): StackValue {
+        coerce(type, Type.VOID_TYPE, mv)
+        return none()
+    }
+
+    private fun StackValue.coerce(toKotlinType: KotlinType): StackValue {
+        coerce(type, kotlinType, toKotlinType.asmType, toKotlinType, mv)
+        return onStack(toKotlinType.asmType, toKotlinType)
+    }
+
+    internal fun coerceNotToUnit(fromType: Type, fromKotlinType: KotlinType?, toKotlinType: KotlinType): StackValue {
+        // A void should still be materialized as a Unit to avoid stack depth mismatches.
+        if (toKotlinType.isUnit() && fromType != Type.VOID_TYPE)
+            return onStack(fromType, fromKotlinType)
+        return onStack(fromType, fromKotlinType).coerce(toKotlinType)
+    }
+
+    private fun markNewLabel() = Label().apply { mv.visitLabel(this) }
+
+    private fun IrElement.markLineNumber(startOffset: Boolean) {
+        val offset = if (startOffset) this.startOffset else endOffset
+        if (offset < 0) {
+            return
+        }
+        val lineNumber = fileEntry.getLineNumber(offset) + 1
+        assert(lineNumber > 0)
+        if (lastLineNumber != lineNumber) {
+            lastLineNumber = lineNumber
+            mv.visitLineNumber(lineNumber, markNewLabel())
+        }
+    }
+
     fun generate() {
         mv.visitCode()
         val startLabel = markNewLabel()
@@ -193,11 +240,6 @@ class ExpressionCodegen(
             nameForDestructuredParameter ?: param.name.asString(),
             type.descriptor, null, startLabel, markNewLabel(), findLocalIndex(param.symbol)
         )
-    }
-
-    private fun StackValue.discard(): StackValue {
-        coerce(type, Type.VOID_TYPE, mv)
-        return none()
     }
 
     override fun visitBlock(expression: IrBlock, data: BlockInfo): StackValue {
@@ -1170,22 +1212,6 @@ class ExpressionCodegen(
 
     }
 
-    internal fun coerceNotToUnit(fromType: Type, fromKotlinType: KotlinType?, toKotlinType: KotlinType): StackValue {
-        val asmToType = toKotlinType.asmType
-        // A void should still be materialized as a Unit to avoid stack depth mismatches.
-        if (asmToType != AsmTypes.UNIT_TYPE || fromType == Type.VOID_TYPE || TypeUtils.isNullableType(toKotlinType)) {
-            coerce(fromType, fromKotlinType, asmToType, toKotlinType, mv)
-            return onStack(asmToType, toKotlinType)
-        }
-        return onStack(fromType, fromKotlinType)
-    }
-
-    val IrExpression.asmType: Type
-        get() = typeMapper.mapType(this.type.toKotlinType())
-
-    val IrExpression.onStack: StackValue
-        get() = StackValue.onStack(this.asmType)
-
     private fun resolveToCallable(irCall: IrMemberAccessExpression, isSuper: Boolean): Callable {
         val intrinsic = intrinsics.getIntrinsic(irCall.descriptor.original as CallableMemberDescriptor)
         if (intrinsic != null) {
@@ -1214,13 +1240,6 @@ class ExpressionCodegen(
         }
         return typeMapper.mapToCallableMethod(descriptor as FunctionDescriptor, isSuper)
     }
-
-    private val KotlinType.asmType: Type
-        get() = typeMapper.mapType(this)
-
-    private val CallableDescriptor.asmType: Type
-        get() = typeMapper.mapType(this)
-
 
     private fun getOrCreateCallGenerator(
         descriptor: CallableDescriptor,
@@ -1311,22 +1330,6 @@ class ExpressionCodegen(
 
     override fun markLineNumberAfterInlineIfNeeded() {
         //TODO
-    }
-
-    private fun markNewLabel() = Label().apply { mv.visitLabel(this) }
-
-    private fun IrElement.markLineNumber(startOffset: Boolean) {
-        val offset = if (startOffset) this.startOffset else endOffset
-        if (offset < 0) {
-            return
-        }
-        val lineNumber = fileEntry.getLineNumber(offset) + 1
-        assert(lineNumber > 0)
-        if (lastLineNumber == lineNumber) {
-            return
-        }
-        lastLineNumber = lineNumber
-        mv.visitLineNumber(lineNumber, markNewLabel())
     }
 }
 
