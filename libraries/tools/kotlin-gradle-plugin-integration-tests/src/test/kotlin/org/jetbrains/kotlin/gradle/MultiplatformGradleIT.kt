@@ -276,6 +276,10 @@ class MultiplatformGradleIT : BaseGradleIT() {
             gradleBuildScript(module).appendText(sourceSetDeclaration)
         }
 
+        gradleBuildScript("libJvm").appendText(
+            "\ndependencies { ${sourceSetName}Compile \"org.jetbrains.kotlin:kotlin-stdlib:${"$"}kotlin_version\" }"
+        )
+
         listOf(
             "expect fun foo(): String" to "lib/src/$sourceSetName/kotlin",
             "actual fun foo(): String = \"jvm\"" to "libJvm/src/$sourceSetName/kotlin",
