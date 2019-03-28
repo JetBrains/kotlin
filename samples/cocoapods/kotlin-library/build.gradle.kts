@@ -14,9 +14,14 @@ version = "1.0"
 
 kotlin {
     // Add a platform switching to have an IDE support.
-    val buildForDevice = System.getenv("SDK_NAME")?.startsWith("iphoneos") ?: false
+    val buildForDevice = project.findProperty("kotlin.native.cocoapods.target") == "ios_arm"
     if (buildForDevice) {
-        iosArm64("iOS")
+        iosArm64("iOS64")
+        iosArm32("iOS32")
+
+        val iOSMain by sourceSets.creating
+        sourceSets["iOS64Main"].dependsOn(iOSMain)
+        sourceSets["iOS32Main"].dependsOn(iOSMain)
     } else {
         iosX64("iOS")
     }
