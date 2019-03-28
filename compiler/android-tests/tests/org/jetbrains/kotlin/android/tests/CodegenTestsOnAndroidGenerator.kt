@@ -80,7 +80,6 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
 
         FileWriter(File(testSourceFilePath).also { it.parentFile.mkdirs() }).use {
             val p = Printer(it)
-            p.print(FileUtil.loadFile(File("license/LICENSE.txt")))
             p.println(
                 """package $testClassPackage;
                 |
