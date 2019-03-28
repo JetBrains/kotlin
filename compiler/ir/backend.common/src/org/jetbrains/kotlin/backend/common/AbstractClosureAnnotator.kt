@@ -17,11 +17,12 @@
 package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.DescriptorInIrDeclaration
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrLocalDelegatedProperty
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrValueAccessExpression
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -30,6 +31,8 @@ import java.util.*
 
 class Closure(val capturedValues: List<ValueDescriptor>)
 
+// TODO: unused?
+@UseExperimental(DescriptorInIrDeclaration::class)
 abstract class AbstractClosureAnnotator : IrElementVisitorVoid {
     protected abstract fun recordFunctionClosure(functionDescriptor: FunctionDescriptor, closure: Closure)
     protected abstract fun recordClassClosure(classDescriptor: ClassDescriptor, closure: Closure)
