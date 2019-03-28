@@ -212,22 +212,19 @@ internal class ArrayIterationHandler(private val context: CommonBackendContext) 
         with(context.createIrBuilder(call.symbol, call.startOffset, call.endOffset)) {
             // Consider the case like:
             //
-            // ```
-            // for (elem in A) { f(elem) }`
-            // ```
+            //   for (elem in A) { f(elem) }`
             //
             // If we lower it to:
             //
-            // ```
-            // for (i in A.indices) { f(A[i]) }
-            // ```
+            //   for (i in A.indices) { f(A[i]) }
             //
             // ...then we will break program behaviour if `A` is an expression with side-effect. Instead, we lower it to:
             //
-            // ```
-            // val a = A
-            // for (i in a.indices) { f(a[i]) }
-            // ```
+            //   val a = A
+            //   for (i in a.indices) { f(a[i]) }
+            //
+            // This also ensures that the semantics of re-assignment of array variables used in the loop is consistent with the semantics
+            // proposed in https://youtrack.jetbrains.com/issue/KT-21354.
             val arrayReference = scope.createTemporaryVariable(
                 call.dispatchReceiver!!, nameHint = "array",
                 origin = IrDeclarationOrigin.FOR_LOOP_IMPLICIT_VARIABLE
