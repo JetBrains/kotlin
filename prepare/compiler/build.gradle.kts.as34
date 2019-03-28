@@ -71,7 +71,7 @@ dependencies {
 
     trove4jJar(intellijDep()) { includeIntellijCoreJarDependencies(project) { it.startsWith("trove4j") } }
 
-    fatJarContents(project(":core:builtins"))
+    fatJarContents(kotlinBuiltins())
     fatJarContents(commonDep("javax.inject"))
     fatJarContents(commonDep("org.jline", "jline"))
     fatJarContents(commonDep("org.fusesource.jansi", "jansi"))

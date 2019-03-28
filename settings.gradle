@@ -73,7 +73,6 @@ include ":kotlin-build-common",
         ":core:descriptors.runtime",
         ":core:metadata",
         ":core:metadata.jvm",
-        ":core:builtins",
         ":core:util.runtime",
         ":dependencies:android-sdk",
         ":idea:fir-view",
@@ -229,7 +228,8 @@ if (flags.inJpsBuildIdeaSync) {
     include ":kotlin-idl2k"
     project(':kotlin-idl2k').projectDir = file("$rootDir/libraries/tools/idl2k")
     
-    include ":kotlin-stdlib-common",
+    include ":core:builtins",
+            ":kotlin-stdlib-common",
             ":kotlin-stdlib",
             ":kotlin-stdlib-js",
             ":kotlin-stdlib-jdk7",

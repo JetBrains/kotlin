@@ -23,7 +23,7 @@ sourceSets {
 }
 
 dependencies {
-    compile(project(":core:builtins"))
+    compile(kotlinBuiltins())
 }
 
 publish()

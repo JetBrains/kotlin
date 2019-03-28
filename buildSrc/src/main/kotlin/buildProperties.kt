@@ -52,6 +52,9 @@ class KotlinBuildProperties(
 
     val includeJava9: Boolean
         get() = !isInJpsBuildIdeaSync
+
+    val useBootstrapStdlib: Boolean
+        get() = isInJpsBuildIdeaSync
 }
 
 private const val extensionName = "kotlinBuildFlags"

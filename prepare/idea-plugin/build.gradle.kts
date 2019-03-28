@@ -78,7 +78,7 @@ val sideJars by configurations.creating
 
 dependencies {
     packedJars(protobufFull())
-    packedJars(project(":core:builtins"))
+    packedJars(kotlinBuiltins())
     sideJars(project(":kotlin-script-runtime"))
     sideJars(kotlinStdlib())
     sideJars(kotlinStdlib("jdk7"))
