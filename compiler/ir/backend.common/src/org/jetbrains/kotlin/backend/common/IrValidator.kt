@@ -17,7 +17,10 @@
 package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -106,11 +109,11 @@ object CheckDeclarationParentsVisitor : IrElementVisitor<Unit, IrDeclarationPare
         val parent = try {
             declaration.parent
         } catch (e: Throwable) {
-            error("$declaration for ${declaration.descriptor} has no parent")
+            error("${declaration.render()} has no parent")
         }
 
         if (parent != expectedParent) {
-            error("$declaration for ${declaration.descriptor} has unexpected parent $parent")
+            error("${declaration.render()} has unexpected parent ${if (parent is IrDeclaration) parent.render() else parent.toString()}")
         }
     }
 }
