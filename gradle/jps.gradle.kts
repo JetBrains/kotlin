@@ -7,6 +7,10 @@ val ideaSandboxDir: File by extra
 val ideaSdkPath: String
     get() = IntellijRootUtils.getIntellijRootDir(rootProject).absolutePath
 
+val intellijUltimateEnabled : Boolean by rootProject.extra
+val ideaUltimatePluginDir: File by rootProject.extra
+val ideaUltimateSandboxDir: File by rootProject.extra
+
 fun org.jetbrains.gradle.ext.JUnit.configureForKotlin() {
     vmParameters = listOf(
         "-ea",
@@ -61,24 +65,36 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
                     }
 
                     runConfigurations {
-                        application("[JPS] IDEA") {
-                            moduleName = "kotlin.idea-runner.main"
-                            workingDirectory = File(intellijRootDir(), "bin").toString()
-                            mainClass = "com.intellij.idea.Main"
-                            jvmArgs = listOf(
-                                "-Xmx1250m",
-                                "-XX:ReservedCodeCacheSize=240m",
-                                "-XX:+HeapDumpOnOutOfMemoryError",
-                                "-ea",
-                                "-Didea.is.internal=true",
-                                "-Didea.debug.mode=true",
-                                "-Didea.system.path=${ideaSandboxDir.absolutePath}",
-                                "-Didea.config.path=${ideaSandboxDir.absolutePath}/config",
-                                "-Dapple.laf.useScreenMenuBar=true",
-                                "-Dapple.awt.graphics.UseQuartz=true",
-                                "-Dsun.io.useCanonCaches=false",
-                                "-Dplugin.path=${ideaPluginDir.absolutePath}"
-                            ).joinToString(" ")
+                        fun idea(
+                            title: String,
+                            sandboxDir: File,
+                            pluginDir: File
+                        ) {
+                            application(title) {
+                                moduleName = "kotlin.idea-runner.main"
+                                workingDirectory = File(intellijRootDir(), "bin").toString()
+                                mainClass = "com.intellij.idea.Main"
+                                jvmArgs = listOf(
+                                    "-Xmx1250m",
+                                    "-XX:ReservedCodeCacheSize=240m",
+                                    "-XX:+HeapDumpOnOutOfMemoryError",
+                                    "-ea",
+                                    "-Didea.is.internal=true",
+                                    "-Didea.debug.mode=true",
+                                    "-Didea.system.path=${sandboxDir.absolutePath}",
+                                    "-Didea.config.path=${sandboxDir.absolutePath}/config",
+                                    "-Dapple.laf.useScreenMenuBar=true",
+                                    "-Dapple.awt.graphics.UseQuartz=true",
+                                    "-Dsun.io.useCanonCaches=false",
+                                    "-Dplugin.path=${pluginDir.absolutePath}"
+                                ).joinToString(" ")
+                            }
+                        }
+
+                        idea("[JPS] IDEA", ideaSandboxDir, ideaPluginDir)
+
+                        if (intellijUltimateEnabled) {
+                            idea("[JPS] IDEA Ultimate", ideaUltimateSandboxDir, ideaPluginDir)
                         }
 
                         application("[JPS] Generate All Tests") {
@@ -96,6 +112,14 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
                             moduleName = "kotlin.idea.test"
                             pattern = "org.jetbrains.kotlin.*"
                             configureForKotlin()
+                        }
+
+                        if (intellijUltimateEnabled) {
+                            junit("[JPS] All IDEA Ultimate Plugin Tests") {
+                                moduleName = "kotlin.ultimate.test"
+                                pattern = "org.jetbrains.kotlin.*"
+                                configureForKotlin()
+                            }
                         }
 
                         junit("[JPS] Compiler Tests") {
