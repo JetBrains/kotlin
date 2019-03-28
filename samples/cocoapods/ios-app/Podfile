@@ -1,0 +1,6 @@
+# Either use_frameworks! or use_modular_headers! must be specified.
+use_frameworks!
+
+target 'ios-app' do
+    pod 'kotlin_library', :path => '../kotlin-library'
+end
