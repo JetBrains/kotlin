@@ -280,7 +280,7 @@ abstract class KotlinIrLinker(
 
     private val UniqIdKey.moduleOfOrigin
         get() =
-            this.moduleDescriptor ?: reversedFileIndex[this]?.packageFragmentDescriptor?.containingDeclaration
+            this.moduleDescriptor ?: reversedFileIndex[this]?.symbol?.descriptor?.containingDeclaration
 
     private fun deserializeTopLevelDeclaration(uniqIdKey: UniqIdKey): IrDeclaration {
         val proto = loadTopLevelDeclarationProto(uniqIdKey)
