@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.backend.common.descriptors.*
+import org.jetbrains.kotlin.backend.common.ir.rebindWrappedDescriptor
+import org.jetbrains.kotlin.backend.common.ir.tryToRebindWrappedDescriptor
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -61,45 +63,43 @@ object WrappedDescriptorPatcher : IrElementVisitorVoid {
     }
 
     override fun visitClass(declaration: IrClass) {
-        (declaration.descriptor as WrappedClassDescriptor).bind(declaration)
+        declaration.rebindWrappedDescriptor()
         declaration.acceptChildrenVoid(this)
     }
 
     override fun visitConstructor(declaration: IrConstructor) {
-        (declaration.descriptor as WrappedClassConstructorDescriptor).bind(declaration)
+        declaration.rebindWrappedDescriptor()
         declaration.acceptChildrenVoid(this)
     }
 
     override fun visitEnumEntry(declaration: IrEnumEntry) {
-        (declaration.descriptor as WrappedClassDescriptor).bind(
-            declaration.correspondingClass ?: declaration.parentAsClass
-        )
+        declaration.rebindWrappedDescriptor(declaration.correspondingClass ?: declaration.parentAsClass)
         declaration.acceptChildrenVoid(this)
     }
 
     override fun visitField(declaration: IrField) {
-        (declaration.descriptor as? WrappedFieldDescriptor)?.bind(declaration)
+        declaration.tryToRebindWrappedDescriptor<IrField, WrappedFieldDescriptor>()
         declaration.acceptChildrenVoid(this)
     }
 
     override fun visitFunction(declaration: IrFunction) {
-        (declaration.descriptor as WrappedSimpleFunctionDescriptor).bind(declaration as IrSimpleFunction)
+        declaration.rebindWrappedDescriptor()
         declaration.acceptChildrenVoid(this)
     }
 
     override fun visitValueParameter(declaration: IrValueParameter) {
-        (declaration.descriptor as? WrappedValueParameterDescriptor)?.bind(declaration)
-        (declaration.descriptor as? WrappedReceiverParameterDescriptor)?.bind(declaration)
+        declaration.tryToRebindWrappedDescriptor<IrValueParameter, WrappedValueParameterDescriptor>()
+        declaration.tryToRebindWrappedDescriptor<IrValueParameter, WrappedReceiverParameterDescriptor>()
         declaration.acceptChildrenVoid(this)
     }
 
     override fun visitTypeParameter(declaration: IrTypeParameter) {
-        (declaration.descriptor as WrappedTypeParameterDescriptor).bind(declaration)
+        declaration.rebindWrappedDescriptor()
         declaration.acceptChildrenVoid(this)
     }
 
     override fun visitVariable(declaration: IrVariable) {
-        (declaration.descriptor as WrappedVariableDescriptor).bind(declaration)
+        declaration.rebindWrappedDescriptor()
         declaration.acceptChildrenVoid(this)
     }
 }
