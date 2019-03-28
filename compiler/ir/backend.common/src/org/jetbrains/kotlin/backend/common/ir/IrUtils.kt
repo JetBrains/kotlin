@@ -86,7 +86,7 @@ fun IrClass.addSimpleDelegatingConstructor(
             listOf(
                 IrDelegatingConstructorCallImpl(
                     startOffset, endOffset, irBuiltIns.unitType,
-                    superConstructor.symbol, superConstructor.descriptor,
+                    superConstructor.symbol,
                     0, superConstructor.valueParameters.size
                 ).apply {
                     constructor.valueParameters.forEachIndexed { idx, parameter ->
@@ -173,7 +173,7 @@ fun IrFunction.copyParameterDeclarationsFrom(from: IrFunction) {
 
     // TODO: should dispatch receiver be copied?
     dispatchReceiverParameter = from.dispatchReceiverParameter?.let {
-        IrValueParameterImpl(it.startOffset, it.endOffset, it.origin, it.descriptor, it.type, it.varargElementType).also {
+        IrValueParameterImpl(it.startOffset, it.endOffset, it.origin, it.symbol.descriptor, it.type, it.varargElementType).also {
             it.parent = this
         }
     }
@@ -322,6 +322,7 @@ fun Scope.createTemporaryVariableWithWrappedDescriptor(
     ).apply { descriptor.bind(this) }
 }
 
+// TODO: move to backend.jvm?
 fun IrClass.createImplicitParameterDeclarationWithWrappedDescriptor() {
     val thisReceiverDescriptor = WrappedReceiverParameterDescriptor()
     thisReceiver = IrValueParameterImpl(
@@ -330,7 +331,7 @@ fun IrClass.createImplicitParameterDeclarationWithWrappedDescriptor() {
         IrValueParameterSymbolImpl(thisReceiverDescriptor),
         Name.identifier("<this>"),
         index = -1,
-        type = this.symbol.typeWith(this.typeParameters.map { it.defaultType }),
+        type = this.symbol.typeWith(emptyList()),
         varargElementType = null,
         isCrossinline = false,
         isNoinline = false
@@ -340,7 +341,6 @@ fun IrClass.createImplicitParameterDeclarationWithWrappedDescriptor() {
     }
 
     assert(typeParameters.isEmpty())
-    assert(descriptor.declaredTypeParameters.isEmpty())
 }
 
 fun isElseBranch(branch: IrBranch) = branch is IrElseBranch || ((branch.condition as? IrConst<Boolean>)?.value == true)
