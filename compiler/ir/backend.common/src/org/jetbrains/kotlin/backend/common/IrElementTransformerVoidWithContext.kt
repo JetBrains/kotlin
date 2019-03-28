@@ -16,13 +16,16 @@
 
 package org.jetbrains.kotlin.backend.common
 
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
-import org.jetbrains.kotlin.descriptors.*
 
 class ScopeWithIr(val scope: Scope, val irElement: IrElement)
 
@@ -45,7 +48,7 @@ abstract class IrElementTransformerVoidWithContext : IrElementTransformerVoid() 
     }
 
     override final fun visitProperty(declaration: IrProperty): IrStatement {
-        scopeStack.push(ScopeWithIr(Scope(declaration.descriptor), declaration))
+        scopeStack.push(ScopeWithIr(Scope(declaration.symbol), declaration))
         val result = visitPropertyNew(declaration)
         scopeStack.pop()
         return result
@@ -115,20 +118,20 @@ abstract class IrElementVisitorVoidWithContext : IrElementVisitorVoid {
     }
 
     override final fun visitProperty(declaration: IrProperty) {
-        scopeStack.push(ScopeWithIr(Scope(declaration.descriptor), declaration))
+        scopeStack.push(ScopeWithIr(Scope(declaration.symbol), declaration))
         visitPropertyNew(declaration)
         scopeStack.pop()
     }
 
     override final fun visitField(declaration: IrField) {
-        val isDelegated = declaration.descriptor.isDelegated
+        val isDelegated = declaration.correspondingPropertySymbol?.owner?.isDelegated ?: false
         if (isDelegated) scopeStack.push(ScopeWithIr(Scope(declaration.symbol), declaration))
         visitFieldNew(declaration)
         if (isDelegated) scopeStack.pop()
     }
 
     override final fun visitFunction(declaration: IrFunction) {
-        scopeStack.push(ScopeWithIr(Scope(declaration.descriptor), declaration))
+        scopeStack.push(ScopeWithIr(Scope(declaration.symbol), declaration))
         visitFunctionNew(declaration)
         scopeStack.pop()
     }
