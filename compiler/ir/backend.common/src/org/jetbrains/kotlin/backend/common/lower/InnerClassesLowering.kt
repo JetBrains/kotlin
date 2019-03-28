@@ -21,10 +21,7 @@ import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.ir.util.patchDeclarationParents
-import org.jetbrains.kotlin.ir.util.transformDeclarationsFlat
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
@@ -145,8 +142,10 @@ class InnerClassConstructorCallsLowering(val context: BackendContext) : BodyLowe
 
                 val newCallee = context.declarationFactory.getInnerClassConstructorWithOuterThisParameter(callee.owner)
                 val newCall = IrCallImpl(
-                    expression.startOffset, expression.endOffset, expression.type, newCallee.symbol, newCallee.descriptor,
+                    expression.startOffset, expression.endOffset,
+                    expression.type, newCallee.symbol,
                     0, // TODO type arguments map
+                    newCallee.valueParameters.size,
                     expression.origin
                 )
 
@@ -167,7 +166,7 @@ class InnerClassConstructorCallsLowering(val context: BackendContext) : BodyLowe
 
                 val newCallee = context.declarationFactory.getInnerClassConstructorWithOuterThisParameter(classConstructor)
                 val newCall = IrDelegatingConstructorCallImpl(
-                    expression.startOffset, expression.endOffset, context.irBuiltIns.unitType, newCallee.symbol, newCallee.descriptor,
+                    expression.startOffset, expression.endOffset, context.irBuiltIns.unitType, newCallee.symbol, newCallee.symbol.descriptor,
                     classConstructor.typeParameters.size
                 ).apply { copyTypeArgumentsFrom(expression) }
 
@@ -194,7 +193,7 @@ class InnerClassConstructorCallsLowering(val context: BackendContext) : BodyLowe
                         endOffset,
                         type,
                         newCallee.symbol,
-                        newCallee.descriptor,
+                        newCallee.symbol.descriptor,
                         typeArgumentsCount,
                         origin
                     )
@@ -218,4 +217,3 @@ class InnerClassConstructorCallsLowering(val context: BackendContext) : BodyLowe
         })
     }
 }
-
