@@ -13,7 +13,7 @@ versions.ideaPluginForCidr=1.3.40-dev-392
 versions.ideaPluginForCidr.ide=IJ2018.3-1
 versions.ideaPluginForCidr.repo=Kotlin_dev_CompilerAllPlugins
 
-versions.appcode=191.6183.28
+versions.appcode=191.6183.83
 versions.appcode.strict=true
 versions.appcode.repo=ijplatform_IjPlatform191_Cidr_AppCode_PublicInstallers
 
