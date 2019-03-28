@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.codegen.inline.NUMBERED_FUNCTION_PREFIX
 import org.jetbrains.kotlin.codegen.inline.ReificationArgument
 import org.jetbrains.kotlin.codegen.intrinsics.TypeIntrinsics
 import org.jetbrains.kotlin.codegen.optimization.common.asSequence
-import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.*
@@ -315,15 +314,16 @@ fun MemberDescriptor.isToArrayFromCollection(): Boolean {
 fun FqName.topLevelClassInternalName() = JvmClassName.byClassId(ClassId(parent(), shortName())).internalName
 fun FqName.topLevelClassAsmType(): Type = Type.getObjectType(topLevelClassInternalName())
 
-fun initializeVariablesForDestructuredLambdaParameters(codegen: ExpressionCodegen, valueParameters: List<ValueParameterDescriptor>) {
+fun initializeVariablesForDestructuredLambdaParameters(codegen: ExpressionCodegen, valueParameters: List<ValueParameterDescriptor>, endLabel: Label? = null) {
     // Do not write line numbers until destructuring happens
     // (otherwise destructuring variables will be uninitialized in the beginning of lambda)
     codegen.runWithShouldMarkLineNumbers(false) {
         for (parameterDescriptor in valueParameters) {
             if (parameterDescriptor !is ValueParameterDescriptorImpl.WithDestructuringDeclaration) continue
 
-            for (entry in parameterDescriptor.destructuringVariables.filterOutDescriptorsWithSpecialNames()) {
-                codegen.myFrameMap.enter(entry, codegen.typeMapper.mapType(entry.type))
+            val variables = parameterDescriptor.destructuringVariables.filterOutDescriptorsWithSpecialNames()
+            val indices = variables.map {
+                codegen.myFrameMap.enter(it, codegen.typeMapper.mapType(it.type))
             }
 
             val destructuringDeclaration =
@@ -335,6 +335,21 @@ fun initializeVariablesForDestructuredLambdaParameters(codegen: ExpressionCodege
                 TransientReceiver(parameterDescriptor.type),
                 codegen.findLocalOrCapturedValue(parameterDescriptor) ?: error("Local var not found for parameter $parameterDescriptor")
             )
+
+            if (endLabel != null) {
+                val label = Label()
+                codegen.v.mark(label)
+                for ((index, entry) in indices.zip(variables)) {
+                    codegen.v.visitLocalVariable(
+                        entry.name.asString(),
+                        codegen.typeMapper.mapType(entry.type).descriptor,
+                        null,
+                        label,
+                        endLabel,
+                        index
+                    )
+                }
+            }
         }
     }
 }

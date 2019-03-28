@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -802,8 +802,22 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
                     wereChanges[0] = true;
                 }
             }
+
+            Function0<List<VariableDescriptor>> destructuringVariablesAction = null;
+            if (unsubstitutedValueParameter instanceof ValueParameterDescriptorImpl.WithDestructuringDeclaration) {
+                final List<VariableDescriptor> destructuringVariables =
+                        ((ValueParameterDescriptorImpl.WithDestructuringDeclaration) unsubstitutedValueParameter)
+                                .getDestructuringVariables();
+                destructuringVariablesAction = new Function0<List<VariableDescriptor>>() {
+                    @Override
+                    public List<VariableDescriptor> invoke() {
+                        return destructuringVariables;
+                    }
+                };
+            }
+
             result.add(
-                    new ValueParameterDescriptorImpl(
+                    ValueParameterDescriptorImpl.createWithDestructuringDeclarations(
                             substitutedDescriptor,
                             dropOriginal ? null : unsubstitutedValueParameter,
                             unsubstitutedValueParameter.getIndex(),
@@ -814,7 +828,8 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
                             unsubstitutedValueParameter.isCrossinline(),
                             unsubstitutedValueParameter.isNoinline(),
                             substituteVarargElementType,
-                            preserveSourceElement ? unsubstitutedValueParameter.getSource() : SourceElement.NO_SOURCE
+                            preserveSourceElement ? unsubstitutedValueParameter.getSource() : SourceElement.NO_SOURCE,
+                            destructuringVariablesAction
                     )
             );
         }

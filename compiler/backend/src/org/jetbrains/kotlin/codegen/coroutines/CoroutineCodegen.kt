@@ -38,11 +38,13 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.sure
+import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.commons.Method
+import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
 abstract class AbstractCoroutineCodegen(
     outerExpressionCodegen: ExpressionCodegen,
@@ -175,6 +177,8 @@ class CoroutineCodegenForLambda private constructor(
     private val createCoroutineDescriptor by lazy {
         if (generateErasedCreate) getErasedCreateFunction() else getCreateFunction()
     }
+
+    private val endLabel = Label()
 
     private fun getCreateFunction(): SimpleFunctionDescriptor = SimpleFunctionDescriptorImpl.create(
         funDescriptor.containingDeclaration,
@@ -425,12 +429,19 @@ class CoroutineCodegenForLambda private constructor(
 
             val newIndex = myFrameMap.enter(parameter, mappedType)
             v.store(newIndex, mappedType)
+
+            val name =
+                if (parameter is ReceiverParameterDescriptor) AsmUtil.RECEIVER_PARAMETER_NAME
+                else (getNameForDestructuredParameterOrNull(parameter as ValueParameterDescriptor) ?: parameter.name.asString())
+            val label = Label()
+            v.mark(label)
+            v.visitLocalVariable(name, mappedType.descriptor, null, label, endLabel, newIndex)
         }
 
-        initializeVariablesForDestructuredLambdaParameters(this, originalSuspendFunctionDescriptor.valueParameters)
+        initializeVariablesForDestructuredLambdaParameters(this, originalSuspendFunctionDescriptor.valueParameters, endLabel)
     }
 
-    private fun allFunctionParameters() =
+    private fun allFunctionParameters(): List<ParameterDescriptor> =
         originalSuspendFunctionDescriptor.extensionReceiverParameter.let(::listOfNotNull) +
                 originalSuspendFunctionDescriptor.valueParameters
 
@@ -452,9 +463,10 @@ class CoroutineCodegenForLambda private constructor(
             object : FunctionGenerationStrategy.FunctionDefault(state, element as KtDeclarationWithBody) {
 
                 override fun wrapMethodVisitor(mv: MethodVisitor, access: Int, name: String, desc: String): MethodVisitor {
-                    if (forInline) return super.wrapMethodVisitor(mv, access, name, desc)
+                    val addEndLabelMethodVisitor = AddEndLabelMethodVisitor(mv, access, name, desc, endLabel)
+                    if (forInline) return super.wrapMethodVisitor(addEndLabelMethodVisitor, access, name, desc)
                     return CoroutineTransformerMethodVisitor(
-                        mv, access, name, desc, null, null,
+                        addEndLabelMethodVisitor, access, name, desc, null, null,
                         obtainClassBuilderForCoroutineState = { v },
                         element = element,
                         diagnostics = state.diagnostics,
@@ -499,6 +511,22 @@ class CoroutineCodegenForLambda private constructor(
                 expressionCodegen.bindingContext[CAPTURES_CROSSINLINE_LAMBDA, originalSuspendLambdaDescriptor] == true
             )
         }
+    }
+}
+
+private class AddEndLabelMethodVisitor(
+    delegate: MethodVisitor,
+    access: Int,
+    name: String,
+    desc: String,
+    private val endLabel: Label
+): TransformationMethodVisitor(delegate, access, name, desc, null, null) {
+    override fun performTransformations(methodNode: MethodNode) {
+        methodNode.instructions.add(
+            withInstructionAdapter {
+                mark(endLabel)
+            }
+        )
     }
 }
 
