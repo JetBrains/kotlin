@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.ir.DescriptorInIrDeclaration
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -216,9 +217,10 @@ class CheckIrElementVisitor(
             // Check that all functions and properties from memberScope are present in IR
             // (including FAKE_OVERRIDE ones).
 
-            val allDescriptors = declaration.descriptor.unsubstitutedMemberScope
+            val allDescriptors = declaration.symbol.descriptor.unsubstitutedMemberScope
                     .getContributedDescriptors().filterIsInstance<CallableMemberDescriptor>()
 
+            @UseExperimental(DescriptorInIrDeclaration::class)
             val presentDescriptors = declaration.declarations.map { it.descriptor }
 
             val missingDescriptors = allDescriptors - presentDescriptors
