@@ -247,10 +247,6 @@ class JKJavaNewExpressionImpl(
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaNewExpression(this, data)
 }
 
-class JKJavaDefaultNewExpressionImpl(
-    override val classSymbol: JKClassSymbol
-) : JKJavaDefaultNewExpression, JKElementBase(), PsiOwner by PsiOwnerImpl()
-
 class JKJavaNewEmptyArrayImpl(initializer: List<JKExpression>, type: JKTypeElement) : JKJavaNewEmptyArray, JKBranchElementBase(),
     PsiOwner by PsiOwnerImpl() {
     override val type by child(type)
