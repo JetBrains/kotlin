@@ -15,9 +15,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.OverridingUtil
 
-internal val DeclarationDescriptor.isExpectMember: Boolean
-    get() = this is MemberDescriptor && this.isExpect
-
 internal val DeclarationDescriptor.isSerializableExpectClass: Boolean
     get() = this is ClassDescriptor && ExpectedActualDeclarationChecker.shouldGenerateExpectClass(this)
 
