@@ -125,6 +125,8 @@ tasks.withType<Test> {
 
     systemProperty("kotlinVersion", rootProject.extra["kotlinVersion"] as String)
     systemProperty("runnerGradleVersion", gradle.gradleVersion)
+    systemProperty("jdk10Home", rootProject.extra["JDK_10"] as String)
+    systemProperty("jdk11Home", rootProject.extra["JDK_11"] as String)
 
     val mavenLocalRepo = System.getProperty("maven.repo.local")
     if (mavenLocalRepo != null) {
