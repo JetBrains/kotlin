@@ -57,33 +57,4 @@ class RangeTo : IntrinsicMethod() {
             }
         }
     }
-//
-//    override fun toCallable(method: CallableMethod): Callable {
-//        val argType = rangeTypeToPrimitiveType(method.returnType)
-//        return object : IntrinsicCallable(
-//                method.returnType,
-//                method.valueParameterTypes.map { argType },
-//                nullOr(method.dispatchReceiverType, argType),
-//                nullOr(method.extensionReceiverType, argType)
-//        ) {
-//            override fun afterReceiverGeneration(v: InstructionAdapter) {
-//                v.anew(returnType)
-//                when (argType.size) {
-//                    1 -> {
-//                        v.dupX1()
-//                        v.swap()
-//                    }
-//                    2 -> {
-//                        v.dup()
-//                        v.dup2X2()
-//                        v.pop2()
-//                    }
-//                }
-//            }
-//
-//            override fun invokeIntrinsic(v: InstructionAdapter) {
-//                v.invokespecial(returnType.internalName, "<init>", Type.getMethodDescriptor(Type.VOID_TYPE, argType, argType), false)
-//            }
-//        }
-//    }
 }
