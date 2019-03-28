@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -251,8 +250,8 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
                 if (hasDefaultValue()) {
                     { defaultValue }.toFirExpression("Should have default value")
                 } else null,
-                isCrossinline = hasModifier(KtTokens.CROSSINLINE_KEYWORD),
-                isNoinline = hasModifier(KtTokens.NOINLINE_KEYWORD),
+                isCrossinline = hasModifier(CROSSINLINE_KEYWORD),
+                isNoinline = hasModifier(NOINLINE_KEYWORD),
                 isVararg = isVarArg
             )
             extractAnnotationsTo(firValueParameter)
@@ -271,7 +270,7 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
                 modality,
                 hasExpectModifier(),
                 hasActualModifier(),
-                isOverride = hasModifier(KtTokens.OVERRIDE_KEYWORD),
+                isOverride = hasModifier(OVERRIDE_KEYWORD),
                 isConst = false,
                 isLateInit = false,
                 receiverTypeRef = null,
@@ -510,10 +509,10 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
                     classOrObject.hasExpectModifier(),
                     classOrObject.hasActualModifier(),
                     classKind,
-                    isInner = classOrObject.hasModifier(KtTokens.INNER_KEYWORD),
+                    isInner = classOrObject.hasModifier(INNER_KEYWORD),
                     isCompanion = (classOrObject as? KtObjectDeclaration)?.isCompanion() == true,
                     isData = (classOrObject as? KtClass)?.isData() == true,
-                    isInline = classOrObject.hasModifier(KtTokens.INLINE_KEYWORD)
+                    isInline = classOrObject.hasModifier(INLINE_KEYWORD)
                 )
                 classOrObject.extractAnnotationsTo(firClass)
                 classOrObject.extractTypeParametersTo(firClass)
@@ -607,13 +606,13 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
                     function.modality,
                     function.hasExpectModifier(),
                     function.hasActualModifier(),
-                    function.hasModifier(KtTokens.OVERRIDE_KEYWORD),
-                    function.hasModifier(KtTokens.OPERATOR_KEYWORD),
-                    function.hasModifier(KtTokens.INFIX_KEYWORD),
-                    function.hasModifier(KtTokens.INLINE_KEYWORD),
-                    function.hasModifier(KtTokens.TAILREC_KEYWORD),
-                    function.hasModifier(KtTokens.EXTERNAL_KEYWORD),
-                    function.hasModifier(KtTokens.SUSPEND_KEYWORD),
+                    function.hasModifier(OVERRIDE_KEYWORD),
+                    function.hasModifier(OPERATOR_KEYWORD),
+                    function.hasModifier(INFIX_KEYWORD),
+                    function.hasModifier(INLINE_KEYWORD),
+                    function.hasModifier(TAILREC_KEYWORD),
+                    function.hasModifier(EXTERNAL_KEYWORD),
+                    function.hasModifier(SUSPEND_KEYWORD),
                     receiverType,
                     returnType
                 )
@@ -753,9 +752,9 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
                     property.modality,
                     property.hasExpectModifier(),
                     property.hasActualModifier(),
-                    property.hasModifier(KtTokens.OVERRIDE_KEYWORD),
-                    property.hasModifier(KtTokens.CONST_KEYWORD),
-                    property.hasModifier(KtTokens.LATEINIT_KEYWORD),
+                    property.hasModifier(OVERRIDE_KEYWORD),
+                    property.hasModifier(CONST_KEYWORD),
+                    property.hasModifier(LATEINIT_KEYWORD),
                     property.receiverTypeReference.convertSafe(),
                     propertyType,
                     isVar,
@@ -780,8 +779,7 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
             fun KtTypeElement?.unwrapNullable(): KtTypeElement? =
                 if (this is KtNullableType) this.innerType.unwrapNullable() else this
 
-            val unwrappedElement = typeElement.unwrapNullable()
-            val firType = when (unwrappedElement) {
+            val firType = when (val unwrappedElement = typeElement.unwrapNullable()) {
                 is KtDynamicType -> FirDynamicTypeRefImpl(session, typeReference, isNullable)
                 is KtUserType -> {
                     var referenceExpression = unwrappedElement.referenceExpression
@@ -851,7 +849,7 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
                 FirTypeParameterSymbol(),
                 parameterName,
                 parameter.variance,
-                parameter.hasModifier(KtTokens.REIFIED_KEYWORD)
+                parameter.hasModifier(REIFIED_KEYWORD)
             )
             parameter.extractAnnotationsTo(firTypeParameter)
             val extendsBound = parameter.extendsBound
@@ -1120,9 +1118,8 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
                         explicitReceiver = generateAccessExpression(this@RawFirBuilder.session, expression, iteratorName)
                     }
                 ).configure {
-                    val body = expression.body
                     // NB: just body.toFirBlock() isn't acceptable here because we need to add some statements
-                    val block = when (body) {
+                    val block = when (val body = expression.body) {
                         is KtBlockExpression -> body.accept(this@Visitor, Unit) as FirBlockImpl
                         null -> FirBlockImpl(this@RawFirBuilder.session, body)
                         else -> FirBlockImpl(this@RawFirBuilder.session, body).apply { statements += body.toFirStatement() }
@@ -1143,7 +1140,7 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
                                 multiDeclaration,
                                 firLoopParameter,
                                 tmpVariable = true,
-                                extractAnnotationsTo =  { extractAnnotationsTo(it) }
+                                extractAnnotationsTo = { extractAnnotationsTo(it) }
                             ) { toFirOrImplicitType() }
                             if (destructuringBlock is FirBlock) {
                                 for ((index, statement) in destructuringBlock.statements.withIndex()) {
@@ -1209,11 +1206,11 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
         override fun visitBinaryExpression(expression: KtBinaryExpression, data: Unit): FirElement {
             val operationToken = expression.operationToken
             val rightArgument = expression.right.toFirExpression("No right operand")
-            if (operationToken == KtTokens.ELVIS) {
+            if (operationToken == ELVIS) {
                 return expression.elvisToWhen()
             }
             val conventionCallName = operationToken.toBinaryName()
-            return if (conventionCallName != null || operationToken == KtTokens.IDENTIFIER) {
+            return if (conventionCallName != null || operationToken == IDENTIFIER) {
                 FirFunctionCallImpl(
                     session, expression
                 ).apply {
@@ -1258,7 +1255,7 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
         override fun visitUnaryExpression(expression: KtUnaryExpression, data: Unit): FirElement {
             val operationToken = expression.operationToken
             val argument = expression.baseExpression
-            if (operationToken == KtTokens.EXCLEXCL) {
+            if (operationToken == EXCLEXCL) {
                 return expression.bangBangToWhen()
             }
             val conventionCallName = operationToken.toUnaryName()
