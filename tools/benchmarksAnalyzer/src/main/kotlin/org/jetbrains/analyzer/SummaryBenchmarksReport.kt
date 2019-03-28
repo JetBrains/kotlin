@@ -133,7 +133,8 @@ class SummaryBenchmarksReport (val currentReport: BenchmarksReport,
         }
     }
 
-    fun getResultsByMetric(metric: BenchmarkResult.Metric, getGeoMean: Boolean = true, filter: List<String>? = null): List<Double>  {
+    fun getResultsByMetric(metric: BenchmarkResult.Metric, getGeoMean: Boolean = true, filter: List<String>? = null,
+                           normalizeData: Map<String, Map<String, Double>>? = null): List<Double>  {
         val benchmarks = filter?.let {
             mergedReport.filter { entry ->
                 filter.find {
@@ -148,7 +149,14 @@ class SummaryBenchmarksReport (val currentReport: BenchmarksReport,
         if (filteredBenchmarks.isEmpty()) {
             error("There is no benchmarks for metric $metric")
         }
-        val results = filteredBenchmarks.map { entry -> entry.key.removeSuffix(metric.suffix) to entry.value.first!!.meanBenchmark.score }.toMap()
+        val results = filteredBenchmarks.map { entry ->
+            val score = entry.value.first!!.meanBenchmark.score
+            val name = entry.key.removeSuffix(metric.suffix)
+            val value = normalizeData?.let {
+                it.get(name)?.get("$metric")?.let { score / it }
+                        ?: error("No normalization data for benchmark $name and metric $metric")
+            } ?: score
+            name to value }.toMap()
         if (getGeoMean) {
             return listOf(geometricMean(results.values))
         }

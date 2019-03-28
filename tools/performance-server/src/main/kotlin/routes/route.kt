@@ -24,6 +24,7 @@ const val teamCityUrl = "https://buildserver.labs.intellij.net/app/rest"
 const val downloadBintrayUrl = "https://dl.bintray.com/content/lepilkinaelena/KotlinNativePerformance"
 const val uploadBintrayUrl = "https://api.bintray.com/content/lepilkinaelena/KotlinNativePerformance"
 const val buildsFileName = "buildsSummary.csv"
+const val goldenResultsFileName = "goldenResults.csv"
 const val bintrayPackage = "builds"
 const val buildsInfoPartsNumber = 11
 
@@ -108,6 +109,9 @@ object LocalCache {
         return builds
     }
 }
+
+data class GoldenResult(val benchmarkName: String, val metric: String, val value: Double)
+data class GoldenResultsInfo(val bintrayUser: String, val bintrayPassword: String, val goldenResults: Array<GoldenResult>)
 
 // Build information provided from request.
 data class BuildInfo(val buildNumber: String, val branch: String, val startTime: String,
@@ -197,11 +201,7 @@ fun checkBuildType(currentType: String, targetType: String): Boolean {
 fun prepareBuildsResponse(builds: Collection<String>, type: String, branch: String, buildNumber: String? = null): List<Build> {
     val buildsObjects = mutableListOf<Build>()
     builds.forEach {
-        val tokens = it.split(",").map { it.trim() }
-        if (tokens.size != buildsInfoPartsNumber) {
-            error("Build description $it doesn't contain all necessary information. " +
-                    "File with data could be corrupted.")
-        }
+        val tokens = buildDescriptionToTokens(it)
         if ((checkBuildType(tokens[5], type) || type == "day") && (branch == tokens[3] || branch == "all")
                 || tokens[0] == buildNumber) {
             buildsObjects.add(Build(tokens[0], tokens[1], tokens[2], tokens[3],
@@ -210,6 +210,15 @@ fun prepareBuildsResponse(builds: Collection<String>, type: String, branch: Stri
         }
     }
     return buildsObjects
+}
+
+fun buildDescriptionToTokens(buildDescription: String): List<String> {
+    val tokens = buildDescription.split(",").map { it.trim() }
+    if (tokens.size != buildsInfoPartsNumber) {
+        error("Build description $buildDescription doesn't contain all necessary information. " +
+                "File with data could be corrupted.")
+    }
+    return tokens
 }
 
 // Routing of requests to current server.
@@ -262,6 +271,20 @@ fun router() {
         response.sendStatus(200)
     })
 
+    // Register golden results to normalize on Bintray.
+    router.post("/registerGolden", { request, response ->
+        val goldenResultsInfo = JSON.parse<GoldenResultsInfo>(JSON.stringify(request.body))
+        val buildsDescription = StringBuilder(sendGetRequest("$downloadBintrayUrl/$goldenResultsFileName"))
+        goldenResultsInfo.goldenResults.forEach {
+            buildsDescription.append("${it.benchmarkName}, ${it.metric}, ${it.value}\n")
+        }
+        // Upload new version of file.
+        val uploadUrl = "$uploadBintrayUrl/$bintrayPackage/latest/$goldenResultsFileName?publish=1&override=1"
+        sendUploadRequest(uploadUrl, buildsDescription.toString(), goldenResultsInfo.bintrayUser, goldenResultsInfo.bintrayPassword)
+        // Send response.
+        response.sendStatus(200)
+    })
+
     // Get list of builds.
     router.get("/builds/:target/:type/:branch/:id", { request, response ->
         val builds = LocalCache[request.params.target, request.params.id]
@@ -271,6 +294,16 @@ fun router() {
     router.get("/builds/:target/:type/:branch", { request, response ->
         val builds = LocalCache[request.params.target]
         response.json(prepareBuildsResponse(builds, request.params.type, request.params.branch))
+    })
+
+    router.get("/branches/:target", { request, response ->
+        val builds = LocalCache[request.params.target]
+        response.json(builds.map { buildDescriptionToTokens(it)[3] }.distinct())
+    })
+
+    router.get("/buildsNumbers/:target", { request, response ->
+        val builds = LocalCache[request.params.target]
+        response.json(builds.map { buildDescriptionToTokens(it)[0] }.distinct())
     })
 
     router.get("/clean", { _, response ->

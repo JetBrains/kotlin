@@ -50,7 +50,7 @@ sealed class ArgType(val hasParameter: kotlin.Boolean) {
             get() = "{ Value should be one of $values }"
 
         override fun check(value: kotlin.String, name: kotlin.String) {
-            if (value !in values) error("Option $name is expected to be obe of $values. $value is provided.")
+            if (value !in values) error("Option $name is expected to be one of $values. $value is provided.")
         }
     }
 }

@@ -19,6 +19,7 @@ import org.w3c.xhr.*
 import org.jetbrains.report.json.*
 import org.jetbrains.build.Build
 import kotlin.js.*
+import kotlin.math.ceil
 import org.w3c.dom.*
 
 // API for interop with JS library Chartist.
@@ -30,6 +31,7 @@ external class ChartistPlugins {
 external object Chartist {
     class Svg(form: String, parameters: dynamic, chartArea: String)
     val plugins: ChartistPlugins
+    val Interpolation: dynamic
     fun Line(query: String, data: dynamic, options: dynamic): dynamic
 }
 
@@ -87,6 +89,15 @@ fun getChartOptions(samples: Array<String>, yTitle: String, classNames: Array<St
     chartOptions["chartPadding"] = paddingObject
     val axisXObject: dynamic = object{}
     axisXObject["offset"] = 40
+    axisXObject["labelInterpolationFnc"] = { value, index, labels ->
+        val labelsCount = 30
+        val skipNumber = ceil((labels.length as Int).toDouble() / labelsCount).toInt()
+        if (skipNumber > 1) {
+            if (index % skipNumber  == 0) value else null
+        } else {
+            value
+        }
+    }
     chartOptions["axisX"] = axisXObject
     val axisYObject: dynamic = object{}
     axisYObject["offset"] = 90
@@ -105,6 +116,9 @@ fun getChartOptions(samples: Array<String>, yTitle: String, classNames: Array<St
     axisYTitle["textAnchor"] = "middle"
     axisYTitle["flipTitle"] = true
     titleObject["axisY"] = axisYTitle
+    val interpolationObject: dynamic = {}
+    interpolationObject["fillHoles"] = true
+    chartOptions["lineSmooth"] = Chartist.Interpolation.simple(interpolationObject)
     chartOptions["plugins"] = arrayOf(Chartist.plugins.legend(legendObject), Chartist.plugins.ctAxisTitle(titleObject))
     return chartOptions
 }
@@ -148,6 +162,7 @@ fun customizeChart(chart: dynamic, chartContainer: String, jquerySelector: dynam
                     else ""}"
             val information = buildString {
                 append("<a href=\"$linkToDetailedInfo\">${currentBuild.buildNumber}</a><br>")
+                append("Value: ${data.value.y.toFixed(4)}<br>")
                 if (currentBuild.failuresNumber > 0) {
                     append("failures: ${currentBuild.failuresNumber}<br>")
                 }
@@ -180,7 +195,7 @@ fun customizeChart(chart: dynamic, chartContainer: String, jquerySelector: dynam
 }
 
 fun main(args: Array<String>) {
-    val serverUrl = "https://kotlin-native-perf-summary.labs.jb.gg/builds"
+    val serverUrl = "https://kotlin-native-perf-summary.labs.jb.gg"
 
     // Get parameters from request.
     val url = window.location.href
@@ -196,7 +211,7 @@ fun main(args: Array<String>) {
 
     // Get builds.
     val buildsUrl = buildString {
-        append("$serverUrl")
+        append("$serverUrl/builds")
         append("/${parameters["target"]}")
         append("/${parameters["type"]}")
         append("/${parameters["branch"]}")
@@ -208,10 +223,16 @@ fun main(args: Array<String>) {
     if (data !is JsonArray) {
         error("Response is expected to be an array.")
     }
-    val builds = data.jsonArray.map { Build.create(it as JsonObject) }
+    val builds = data.jsonArray.map { Build.create(it as JsonObject) }.sortedBy { it.buildNumber.substringAfterLast("-") }
+
+    val branchesUrl = "$serverUrl/branches/${parameters["target"]}"
+
+    val branches: Array<String> = JSON.parse(sendGetRequest(branchesUrl))
+    val releaseBranches = branches.filter { "v\\d+\\.\\d+\\.\\d+-fixes".toRegex().find(it) != null }
 
     // Fill autocomplete list.
-    val buildsNumbers = builds.map { json("value" to it.buildNumber, "data" to it.buildNumber) }.toTypedArray()
+    val buildsNumbersUrl = "$serverUrl/buildsNumbers/${parameters["target"]}"
+    val buildsNumbers: Array<String> = JSON.parse(sendGetRequest(buildsNumbersUrl))
 
     // Change inputs values connected with parameters and add events listeners.
     document.querySelector("#inputGroupTarget [value=\"${parameters["target"]}\"]")?.setAttribute("selected", "true")
@@ -244,6 +265,12 @@ fun main(args: Array<String>) {
             window.location.href = newLink
         }
     })
+
+    // Add release branches to selector.
+    releaseBranches.forEach {
+        val option = Option(it, it)
+        js("$('#inputGroupBranch')").append(js("$(option)"))
+    }
 
     val autocompleteParameters: dynamic = object{}
     autocompleteParameters["lookup"] = buildsNumbers
@@ -294,7 +321,7 @@ fun main(args: Array<String>) {
             getChartOptions(compileTime.keys.toTypedArray(), "Time, milliseconds"))
     val codeSizeChart = Chartist.Line("#codesize_chart", getChartData(labels, codeSize.values, sizeClassName),
             getChartOptions(codeSize.keys.toTypedArray(), "Size, KB", arrayOf("ct-series-2")))
-    val bundleSizeChart = Chartist.Line("#bundlesize_chart", getChartData(labels, listOf(bundleSize), "ct-series-d"),
+    val bundleSizeChart = Chartist.Line("#bundlesize_chart", getChartData(labels, listOf(bundleSize), sizeClassName),
             getChartOptions(arrayOf("Bundle size"), "Size, MB", arrayOf("ct-series-2")))
 
     // Tooltips and higlights.
