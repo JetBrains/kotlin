@@ -85,9 +85,20 @@ open class FrameworkTest : DefaultTask() {
     }
 
     private fun runTest(testExecutable: Path) {
+        val target = project.testTarget()
+        val platform = project.platformManager().platform(target)
+        val configs = platform.configurables as AppleConfigurables
+        val swiftPlatform = when (target) {
+            KonanTarget.IOS_X64 -> "iphonesimulator"
+            KonanTarget.IOS_ARM32, KonanTarget.IOS_ARM64 -> "iphoneos"
+            KonanTarget.MACOS_X64 -> "macosx"
+            else -> throw IllegalStateException("Test target $target is not supported")
+        }
+        val libraryPath = configs.absoluteTargetToolchain + "/usr/lib/swift/$swiftPlatform"
         val executor = (project.convention.plugins["executor"] as? ExecutorService)
                 ?: throw RuntimeException("Executor wasn't found")
-        val (stdOut, stdErr, exitCode) = runProcess(executor = executor::execute,
+        val (stdOut, stdErr, exitCode) = runProcess(
+                executor = executor.add(Action { it.environment = mapOf("DYLD_LIBRARY_PATH" to libraryPath) })::execute,
                 executable = testExecutable.toString())
 
         println("""

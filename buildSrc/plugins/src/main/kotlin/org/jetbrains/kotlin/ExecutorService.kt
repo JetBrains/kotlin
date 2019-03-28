@@ -129,6 +129,19 @@ fun runProcess(executor: (Action<in ExecSpec>) -> ExecResult?,
                executable: String, vararg args: String) = runProcess(executor, executable, args.toList())
 
 /**
+ * Creates a new executor service with additional action [actionParameter] executed after the main one.
+ * The following is an example how to pass an environment parameter
+ * @code `executor.add(Action { it.environment = mapOf("JAVA_OPTS" to "-verbose:gc") })::execute`
+ */
+fun ExecutorService.add(actionParameter: Action<in ExecSpec>) = object : ExecutorService {
+    override fun execute(action: Action<in ExecSpec>): ExecResult? =
+            this@add.execute(Action {
+                action.execute(it)
+                actionParameter.execute(it)
+            })
+}
+
+/**
  * Returns Project's process executor
  * @see Project.exec
  */
