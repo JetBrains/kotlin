@@ -70,7 +70,7 @@ class PropertiesLowering(
             null
 
     private fun createSyntheticMethodForAnnotations(declaration: IrProperty, origin: IrDeclarationOrigin, name: String): IrFunctionImpl {
-        val descriptor = WrappedSimpleFunctionDescriptor(declaration.descriptor.annotations)
+        val descriptor = WrappedSimpleFunctionDescriptor(declaration.symbol.descriptor.annotations)
         val symbol = IrSimpleFunctionSymbolImpl(descriptor)
         // TODO: ACC_DEPRECATED
         return IrFunctionImpl(
