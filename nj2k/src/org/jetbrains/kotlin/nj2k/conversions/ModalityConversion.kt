@@ -36,8 +36,8 @@ class ModalityConversion(private val context: ConversionContext) : RecursiveAppl
     }
 
     private fun processMethod(method: JKJavaMethod) {
-        val psi = method.psi<PsiMethod>()!!
-        val containingClass = method.parentOfType<JKClass>()!!
+        val psi = method.psi<PsiMethod>() ?: return
+        val containingClass = method.parentOfType<JKClass>() ?: return
         method.modality = when {
             method.modality != Modality.ABSTRACT
                     && psi.findSuperMethods().isNotEmpty() -> Modality.OVERRIDE
@@ -54,7 +54,7 @@ class ModalityConversion(private val context: ConversionContext) : RecursiveAppl
     }
 
     private fun processField(field: JKField) {
-        val containingClass = field.parentOfType<JKClass>()!!
+        val containingClass = field.parentOfType<JKClass>() ?: return
         if (containingClass.classKind == JKClass.ClassKind.INTERFACE) {
             field.modality = Modality.FINAL
         }
