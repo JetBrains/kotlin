@@ -68,10 +68,7 @@ internal fun KtTypeElement.classReference(): ClassReference {
         is PsiClass -> JavaClassReference(target)
         is KtTypeAlias -> target.getTypeReference()?.typeElement?.classReference()!!
         is KtTypeParameter -> TypeParameterClassReference(target)
-        else -> {
-            println("no class ref for `$text`")
-            UnknownClassReference(text)
-        }
+        else -> UnknownClassReference(text)
     }
 }
 
