@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.backend.jvm.intrinsics
 
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.codegen.Callable
-import org.jetbrains.kotlin.codegen.CallableMethod
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.types.toKotlinType
@@ -16,18 +14,11 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
 
 abstract class IntrinsicMethod {
-
-    open fun toCallable(
+    abstract fun toCallable(
         expression: IrMemberAccessExpression,
         signature: JvmMethodSignature,
         context: JvmBackendContext
-    ): IrIntrinsicFunction {
-        TODO()
-    }
-
-    open fun toCallable(method: CallableMethod): Callable {
-        throw UnsupportedOperationException("Not implemented")
-    }
+    ): IrIntrinsicFunction
 
     companion object {
         fun calcReceiverType(call: IrMemberAccessExpression, context: JvmBackendContext): Type {
