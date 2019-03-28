@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.descriptors.IrBasedDeclarationDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.toKotlinType
@@ -31,9 +32,12 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
+import java.lang.UnsupportedOperationException
 
 
-abstract class WrappedDeclarationDescriptor<T : IrDeclaration>(annotations: Annotations) : DeclarationDescriptor {
+abstract class WrappedDeclarationDescriptor<T : IrDeclaration>(annotations: Annotations) :
+    DeclarationDescriptor, IrBasedDeclarationDescriptor {
+
     private val annotations_ = annotations
 
     override val annotations: Annotations
@@ -112,9 +116,8 @@ abstract class WrappedCallableDescriptor<T : IrDeclaration>(
 ) : CallableDescriptor, WrappedDeclarationDescriptor<T>(annotations) {
     override fun getOriginal() = this
 
-    override fun substitute(substitutor: TypeSubstitutor): CallableDescriptor {
-        TODO("not implemented")
-    }
+    override fun substitute(substitutor: TypeSubstitutor): CallableDescriptor =
+        throw UnsupportedOperationException("Wrapped descriptors SHOULD NOT be substituted")
 
     override fun getOverriddenDescriptors(): Collection<CallableDescriptor> {
         TODO("not implemented")
@@ -190,9 +193,8 @@ open class WrappedValueParameterDescriptor(
 
     override fun getOriginal() = this
 
-    override fun substitute(substitutor: TypeSubstitutor): ValueParameterDescriptor {
-        TODO("")
-    }
+    override fun substitute(substitutor: TypeSubstitutor): ValueParameterDescriptor =
+        throw UnsupportedOperationException("Wrapped descriptors SHOULD NOT be substituted")
 
     override fun getReturnType(): KotlinType? = owner.type.toKotlinType()
 
@@ -583,9 +585,8 @@ open class WrappedClassDescriptor(
 
     override fun isExpect() = false
 
-    override fun substitute(substitutor: TypeSubstitutor): ClassifierDescriptorWithTypeParameters {
-        TODO("not implemented")
-    }
+    override fun substitute(substitutor: TypeSubstitutor): ClassifierDescriptorWithTypeParameters =
+        throw UnsupportedOperationException("Wrapped descriptors SHOULD NOT be substituted")
 
     override fun isActual() = false
 
@@ -696,9 +697,8 @@ open class WrappedEnumEntryDescriptor(
 
     override fun isExpect() = false
 
-    override fun substitute(substitutor: TypeSubstitutor): ClassifierDescriptorWithTypeParameters {
-        TODO("not implemented")
-    }
+    override fun substitute(substitutor: TypeSubstitutor): ClassifierDescriptorWithTypeParameters =
+        throw UnsupportedOperationException("Wrapped descriptors SHOULD NOT be substituted")
 
     override fun isActual() = false
 
@@ -783,9 +783,8 @@ open class WrappedPropertyDescriptor(
 
     override fun isExpect() = false
 
-    override fun substitute(substitutor: TypeSubstitutor): PropertyDescriptor {
-        TODO("not implemented")
-    }
+    override fun substitute(substitutor: TypeSubstitutor): PropertyDescriptor =
+        throw UnsupportedOperationException("Wrapped descriptors SHOULD NOT be substituted")
 
     override fun isActual() = false
 
@@ -888,9 +887,8 @@ open class WrappedFieldDescriptor(
 
     override fun isExpect() = false
 
-    override fun substitute(substitutor: TypeSubstitutor): PropertyDescriptor {
-        TODO("not implemented")
-    }
+    override fun substitute(substitutor: TypeSubstitutor): PropertyDescriptor =
+        throw UnsupportedOperationException("Wrapped descriptors SHOULD NOT be substituted")
 
     override fun isActual() = false
 

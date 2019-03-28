@@ -17,20 +17,15 @@
 package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazySymbolTable
-import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 interface IrDeserializer {
     fun findDeserializedDeclaration(symbol: IrSymbol): IrDeclaration?
@@ -78,10 +73,15 @@ open class SymbolTable : ReferenceSymbolTable {
         abstract fun set(d: D, s: S)
 
         inline fun declare(d: D, createSymbol: () -> S, createOwner: (S) -> B): B {
-            val existing = get(d)
+            @Suppress("UNCHECKED_CAST")
+            val d0 = d.original as D
+            assert(d0 === d) {
+                "Non-original descriptor in declaration: $d\n\tExpected: $d0"
+            }
+            val existing = get(d0)
             val symbol = if (existing == null) {
                 val new = createSymbol()
-                set(d, new)
+                set(d0, new)
                 new
             } else {
                 unboundSymbols.remove(existing)
@@ -91,13 +91,18 @@ open class SymbolTable : ReferenceSymbolTable {
         }
 
         inline fun referenced(d: D, orElse: () -> S): S {
-            val s = get(d)
+            @Suppress("UNCHECKED_CAST")
+            val d0 = d.original as D
+            assert(d0 === d) {
+                "Non-original descriptor in declaration: $d\n\tExpected: $d0"
+            }
+            val s = get(d0)
             if (s == null) {
                 val new = orElse()
                 assert(unboundSymbols.add(new)) {
                     "Symbol for ${new.descriptor} was already referenced"
                 }
-                set(d, new)
+                set(d0, new)
                 return new
             }
             return s
@@ -112,13 +117,6 @@ open class SymbolTable : ReferenceSymbolTable {
 
         override fun set(d: D, s: S) {
             descriptorToSymbol[d] = s
-        }
-
-        fun copyTo(other: FlatSymbolTable<D, B, S>) {
-            for ((d, s) in descriptorToSymbol) {
-                other.descriptorToSymbol[d] = s
-            }
-            other.unboundSymbols.addAll(unboundSymbols)
         }
     }
 
