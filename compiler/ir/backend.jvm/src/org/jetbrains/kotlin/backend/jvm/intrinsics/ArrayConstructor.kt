@@ -34,10 +34,14 @@ object ArrayConstructor : IntrinsicMethod() {
     ): IrIntrinsicFunction {
         return object : IrIntrinsicFunction(expression, signature, context, expression.argTypes(context)) {
 
-            override fun invoke(v: InstructionAdapter, codegen: ExpressionCodegen, data: BlockInfo): StackValue =
-                codegen.generateCall(expression, this, data).let {
-                    return StackValue.onStack(Type.getObjectType("[" + AsmTypes.OBJECT_TYPE.internalName))
+            override fun invoke(v: InstructionAdapter, codegen: ExpressionCodegen, data: BlockInfo): StackValue {
+                // TODO fix this hack
+                val result = codegen.generateCall(expression, this, data)
+                with(codegen) {
+                    result.materialize()
                 }
+                return StackValue.onStack(Type.getObjectType("[" + AsmTypes.OBJECT_TYPE.internalName))
+            }
         }
     }
 }
