@@ -8,7 +8,7 @@
     <string>com.jetbrains.konan.KotlinNativeFrameworkBase</string>
     <key>Ancestors</key>
     <array>
-        <string>com.apple.dt.unit.base</string>
+        <string>com.apple.dt.unit.bundleBase</string>
         <string>com.jetbrains.konan.KotlinNativeBase</string>
     </array>
     <key>Targets</key>
@@ -39,6 +39,8 @@
     <array>
         <string>src/___PACKAGENAMEASIDENTIFIER___Main/kotlin/KotlinNativeFramework.kt:comments</string>
         <string>src/___PACKAGENAMEASIDENTIFIER___Main/kotlin/KotlinNativeFramework.kt:body</string>
+        <string>Info.plist:Framework</string>
+        <string>Info.plist:NSHumanReadableCopyright</string>
     </array>
     <key>Definitions</key>
     <dict>
@@ -59,6 +61,16 @@
         <string>class KotlinNativeFramework {
     fun helloFromKotlin() = "Hello from Kotlin!"
 }</string>
+        <key>Info.plist:Framework</key>
+        <string>&lt;key&gt;CFBundlePackageType&lt;/key&gt;
+            &lt;string&gt;FMWK&lt;/string&gt;
+        </string>
+        <key>Info.plist:ProductVersion</key>
+        <string>&lt;key&gt;CFBundleVersion&lt;/key&gt;
+            &lt;string&gt;$(CURRENT_PROJECT_VERSION)&lt;/string&gt;
+            &lt;key&gt;CFBundleShortVersionString&lt;/key&gt;
+            &lt;string&gt;1.0&lt;/string&gt;
+        </string>
     </dict>
 </dict>
 </plist>
