@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.core.script
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
@@ -18,9 +19,12 @@ import org.jetbrains.kotlin.psi.UserDataProperty
 import kotlin.script.experimental.dependencies.DependenciesResolver.ResolveResult
 
 fun VirtualFile.removeScriptDependenciesNotificationPanel(project: Project) {
-    val editor = FileEditorManager.getInstance(project).getSelectedEditor(this) ?: return
-    editor.notificationPanel?.let { FileEditorManager.getInstance(project).removeTopComponent(editor, it) }
-    editor.notificationPanel = null
+    withSelectedEditor(project) { manager ->
+        notificationPanel?.let {
+            manager.removeTopComponent(this, it)
+        }
+        notificationPanel = null
+    }
 }
 
 fun VirtualFile.addScriptDependenciesNotificationPanel(
@@ -28,18 +32,30 @@ fun VirtualFile.addScriptDependenciesNotificationPanel(
     project: Project,
     onClick: (ResolveResult) -> Unit
 ) {
-    val editor = FileEditorManager.getInstance(project).getSelectedEditor(this) ?: return
-    val existingPanel = editor.notificationPanel
-    if (existingPanel != null) {
-        if (existingPanel.resolveResult.dependencies == resolveResult.dependencies) return
-        editor.notificationPanel?.let {
-            FileEditorManager.getInstance(project).removeTopComponent(editor, it)
+    withSelectedEditor(project) { manager ->
+        val existingPanel = notificationPanel
+        if (existingPanel != null) {
+            if (existingPanel.resolveResult.dependencies == resolveResult.dependencies) {
+                return@withSelectedEditor
+            }
+            notificationPanel?.let {
+                manager.removeTopComponent(this, it)
+            }
+        }
+
+        val panel = NewScriptDependenciesNotificationPanel(onClick, resolveResult, project)
+        notificationPanel = panel
+        manager.addTopComponent(this, panel)
+    }
+}
+
+private fun VirtualFile.withSelectedEditor(project: Project, f: FileEditor.(FileEditorManager) -> Unit) {
+    ApplicationManager.getApplication().invokeLater {
+        val fileEditorManager = FileEditorManager.getInstance(project)
+        (fileEditorManager.getSelectedEditor(this))?.let {
+            f(it, fileEditorManager)
         }
     }
-
-    val panel = NewScriptDependenciesNotificationPanel(onClick, resolveResult, project)
-    editor.notificationPanel = panel
-    FileEditorManager.getInstance(project).addTopComponent(editor, panel)
 }
 
 private var FileEditor.notificationPanel: NewScriptDependenciesNotificationPanel? by UserDataProperty<FileEditor, NewScriptDependenciesNotificationPanel>(Key.create("script.dependencies.panel"))
