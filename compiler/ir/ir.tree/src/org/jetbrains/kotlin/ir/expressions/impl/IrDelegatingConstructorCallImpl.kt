@@ -17,17 +17,23 @@
 package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
+import org.jetbrains.kotlin.ir.DescriptorInIrDeclaration
 import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
 import org.jetbrains.kotlin.ir.expressions.typeParametersCount
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-class IrDelegatingConstructorCallImpl(
+class IrDelegatingConstructorCallImpl
+@Deprecated("...")
+private constructor(
     startOffset: Int,
     endOffset: Int,
     type: IrType,
     override val symbol: IrConstructorSymbol,
+    // TODO: it's impossible to use symbol.descriptor now since sometimes we get substituted descriptor
+    //  and, for example, it by InsertImplicitCasts.
+    @DescriptorInIrDeclaration
     override val descriptor: ClassConstructorDescriptor,
     typeArgumentsCount: Int,
     valueArgumentsCount: Int
@@ -40,6 +46,15 @@ class IrDelegatingConstructorCallImpl(
         valueArgumentsCount = valueArgumentsCount
     ),
     IrDelegatingConstructorCall {
+
+    constructor(
+        startOffset: Int,
+        endOffset: Int,
+        type: IrType,
+        symbol: IrConstructorSymbol,
+        typeArgumentsCount: Int,
+        valueArgumentsCount: Int
+    ) : this(startOffset, endOffset, type, symbol, symbol.descriptor, typeArgumentsCount, valueArgumentsCount)
 
     constructor(
         startOffset: Int,
