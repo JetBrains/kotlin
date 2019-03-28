@@ -3,6 +3,8 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
+@file:UseExperimental(DescriptorInIrDeclaration::class)
+
 package org.jetbrains.kotlin.backend.common.descriptors
 
 import org.jetbrains.kotlin.descriptors.*
@@ -10,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl
+import org.jetbrains.kotlin.ir.DescriptorInIrDeclaration
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBasedDeclarationDescriptor
@@ -34,10 +37,10 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
 import java.lang.UnsupportedOperationException
 
-
+// TODO issue: why annotation file is not enough?
+@UseExperimental(DescriptorInIrDeclaration::class)
 abstract class WrappedDeclarationDescriptor<T : IrDeclaration>(annotations: Annotations) :
     DeclarationDescriptor, IrBasedDeclarationDescriptor {
-
     private val annotations_ = annotations
 
     override val annotations: Annotations
@@ -164,6 +167,7 @@ abstract class WrappedCallableDescriptor<T : IrDeclaration>(
 
 // TODO: (Roman Artemev) do not create this kind of descriptor for dispatch receiver parameters
 // WrappedReceiverParameterDescriptor should be used instead
+@UseExperimental(DescriptorInIrDeclaration::class)
 open class WrappedValueParameterDescriptor(
     annotations: Annotations = Annotations.EMPTY,
     sourceElement: SourceElement = SourceElement.NO_SOURCE
@@ -206,6 +210,7 @@ open class WrappedValueParameterDescriptor(
     }
 }
 
+@UseExperimental(DescriptorInIrDeclaration::class)
 open class WrappedReceiverParameterDescriptor(
     annotations: Annotations = Annotations.EMPTY,
     sourceElement: SourceElement = SourceElement.NO_SOURCE
@@ -243,6 +248,7 @@ open class WrappedReceiverParameterDescriptor(
     }
 }
 
+@UseExperimental(DescriptorInIrDeclaration::class)
 open class WrappedTypeParameterDescriptor(
     annotations: Annotations = Annotations.EMPTY,
     sourceElement: SourceElement = SourceElement.NO_SOURCE
@@ -307,6 +313,7 @@ open class WrappedTypeParameterDescriptor(
 
 }
 
+@UseExperimental(DescriptorInIrDeclaration::class)
 open class WrappedVariableDescriptor(
     annotations: Annotations = Annotations.EMPTY,
     sourceElement: SourceElement = SourceElement.NO_SOURCE
@@ -342,6 +349,7 @@ open class WrappedVariableDescriptor(
     }
 }
 
+@UseExperimental(DescriptorInIrDeclaration::class)
 open class WrappedSimpleFunctionDescriptor(
     annotations: Annotations = Annotations.EMPTY,
     sourceElement: SourceElement = SourceElement.NO_SOURCE
@@ -435,6 +443,7 @@ open class WrappedSimpleFunctionDescriptor(
     }
 }
 
+@UseExperimental(DescriptorInIrDeclaration::class)
 open class WrappedClassConstructorDescriptor(
     annotations: Annotations = Annotations.EMPTY,
     sourceElement: SourceElement = SourceElement.NO_SOURCE
@@ -527,6 +536,7 @@ open class WrappedClassConstructorDescriptor(
     }
 }
 
+@UseExperimental(DescriptorInIrDeclaration::class)
 open class WrappedClassDescriptor(
     annotations: Annotations = Annotations.EMPTY,
     private val sourceElement: SourceElement = SourceElement.NO_SOURCE
@@ -635,6 +645,7 @@ class LazyTypeConstructor(
 
 }
 
+@UseExperimental(DescriptorInIrDeclaration::class)
 open class WrappedEnumEntryDescriptor(
     annotations: Annotations = Annotations.EMPTY,
     private val sourceElement: SourceElement = SourceElement.NO_SOURCE
@@ -725,7 +736,7 @@ open class WrappedEnumEntryDescriptor(
     }
 }
 
-
+@UseExperimental(DescriptorInIrDeclaration::class)
 open class WrappedPropertyDescriptor(
     annotations: Annotations = Annotations.EMPTY,
     private val sourceElement: SourceElement = SourceElement.NO_SOURCE
@@ -834,6 +845,7 @@ open class WrappedPropertyDescriptor(
     override fun <V : Any?> getUserData(key: CallableDescriptor.UserDataKey<V>?): V? = null
 }
 
+@UseExperimental(DescriptorInIrDeclaration::class)
 open class WrappedFieldDescriptor(
     annotations: Annotations = Annotations.EMPTY,
     private val sourceElement: SourceElement = SourceElement.NO_SOURCE
