@@ -1,3 +1,2 @@
-//statement
-int x = 2;
-x & 2;
+//expression
+x & 2

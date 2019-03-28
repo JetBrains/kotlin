@@ -6,7 +6,7 @@ public class Test {
     private Listener listener = new Listener() {
         @Override
         public void onChange(int visibility) {
-            int a = (visibility & 1)
+            val a = (visibility & 1)
         }
     }
 }

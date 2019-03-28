@@ -1,1 +1,1 @@
-val o = null as Any?
+null as Any?

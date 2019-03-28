@@ -1,0 +1,2 @@
+//statement
+i = 1;

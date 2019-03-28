@@ -21,7 +21,11 @@ import org.jetbrains.kotlin.idea.j2k.IdeaJavaToKotlinServices
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterSingleFileTest
 import org.jetbrains.kotlin.j2k.ConverterSettings
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.junit.AfterClass
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.test.AfterTest
 
 abstract class AbstractNewJavaToKotlinConverterSingleFileTest : AbstractJavaToKotlinConverterSingleFileTest() {
     override fun compareResults(expectedFile: File, actual: String) {

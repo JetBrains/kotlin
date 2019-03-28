@@ -1,2 +1,2 @@
-class Base {}
+//class
 final class A extends Base {}

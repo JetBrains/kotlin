@@ -1,3 +1,2 @@
-interface I {}
-class Base {}
+//class
 final class A extends Base implements I {}

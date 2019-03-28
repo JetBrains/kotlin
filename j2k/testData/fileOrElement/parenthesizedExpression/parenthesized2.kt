@@ -1,2 +1,1 @@
-val str = ''
-(str.toString() + "abc").length
+(str.toString() + "abc").foo()

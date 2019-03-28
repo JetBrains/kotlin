@@ -13,7 +13,6 @@ internal class Customer(val firstName: String, val lastName: String) {
 
 internal class CustomerBuilder {
     var _firstName = "Homer"
-    var _firstName = "Homer"
     var _lastName = "Simpson"
 
     fun WithFirstName(firstName: String): CustomerBuilder {

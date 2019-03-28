@@ -1,2 +1,2 @@
 //statement
-Boolean i = false;
+Boolean i = 10;

@@ -1,5 +1,4 @@
 import java.io.*;
-import java.io.*;
 
 class FileRead {
     public static void main(String args[]) {

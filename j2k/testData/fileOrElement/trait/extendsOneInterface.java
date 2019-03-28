@@ -1,2 +1,2 @@
-interface I {}
+//class
 interface A extends I {}

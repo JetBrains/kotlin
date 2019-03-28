@@ -1,3 +1,2 @@
-//statement
-Character str = ''
-(str.toString() + "abc").length()
+//expression
+(str.toString() + "abc").foo()
