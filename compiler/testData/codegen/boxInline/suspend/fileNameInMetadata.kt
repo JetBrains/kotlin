@@ -23,6 +23,10 @@ inline suspend fun <T : Any> Flow<T>.collect(crossinline action: suspend (T) -> 
         override suspend fun emit(value: T) = action(value)
     })
 
+inline suspend fun inlineMe(crossinline block: suspend () -> Unit) = suspend {
+    block()
+}
+
 // FILE: Test.kt
 
 import flow.*
@@ -43,6 +47,14 @@ fun box(): String {
             str = "$continuation"
         }.collect {
         }
+    }
+    if ("(Test.kt:" !in str) return str
+    builder {
+        inlineMe {
+            var continuation: Continuation<Unit>? = null
+            suspendCoroutineUninterceptedOrReturn<Unit> { continuation = it; Unit }
+            str = "$continuation"
+        }()
     }
     if ("(Test.kt:" !in str) return str
     return "OK"

@@ -109,8 +109,7 @@ class CoroutineTransformer(
                 languageVersionSettings = state.languageVersionSettings,
                 shouldPreserveClassInitialization = state.constructorCallNormalizationMode.shouldPreserveClassInitialization,
                 containingClassInternalName = classBuilder.thisName,
-                isForNamedFunction = false,
-                isCrossinlineLambda = inliningContext.isContinuation
+                isForNamedFunction = false
             )
         }
     }

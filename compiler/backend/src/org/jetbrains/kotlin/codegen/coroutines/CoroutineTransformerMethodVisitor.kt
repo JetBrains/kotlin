@@ -66,9 +66,7 @@ class CoroutineTransformerMethodVisitor(
     // It's only matters for named functions, may differ from '!isStatic(access)' in case of DefaultImpls
     private val needDispatchReceiver: Boolean = false,
     // May differ from containingClassInternalName in case of DefaultImpls
-    private val internalNameForDispatchReceiver: String? = null,
-    // For crossinline lambdas we do not generate DebugMetadata annotation, otherwise it will be generated twice
-    private val isCrossinlineLambda: Boolean = false
+    private val internalNameForDispatchReceiver: String? = null
 ) : TransformationMethodVisitor(delegate, access, name, desc, signature, exceptions) {
 
     private val classBuilderForCoroutineState: ClassBuilder by lazy(obtainClassBuilderForCoroutineState)
@@ -193,7 +191,7 @@ class CoroutineTransformerMethodVisitor(
 
         fixLvtForParameters(methodNode, startLabel, endLabel)
 
-        if (languageVersionSettings.isReleaseCoroutines() && !isCrossinlineLambda) {
+        if (languageVersionSettings.isReleaseCoroutines()) {
             writeDebugMetadata(methodNode, suspensionPointLineNumbers, spilledToVariableMapping)
         }
     }
