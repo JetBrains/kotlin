@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrType.KindCas
 import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrTypeArgument.KindCase.STAR
 import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrTypeArgument.KindCase.TYPE
 import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrVarargElement.VarargElementCase
+import org.jetbrains.kotlin.backend.common.ir.rebindWrappedDescriptor
+import org.jetbrains.kotlin.backend.common.ir.tryToRebindWrappedDescriptor
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -31,6 +33,14 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatement.*
+import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrOperation.OperationCase.*
+import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrConst.ValueCase.*
+import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrDeclarator.DeclaratorCase.*
+import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrType.KindCase.*
+import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrVarargElement.VarargElementCase
+import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrTypeArgument.KindCase.*
+import org.jetbrains.kotlin.ir.DescriptorInIrDeclaration
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 
@@ -1103,14 +1113,15 @@ abstract class IrModuleDeserializer(
         val getter = if (proto.hasGetter()) deserializeIrFunction(proto.getter, start, end, origin) else null
         val setter = if (proto.hasSetter()) deserializeIrFunction(proto.setter, start, end, origin) else null
 
-        backingField?.let { (it.descriptor as? WrappedFieldDescriptor)?.bind(it) }
-        getter?.let { (it.descriptor as? WrappedSimpleFunctionDescriptor)?.bind(it) }
-        setter?.let { (it.descriptor as? WrappedSimpleFunctionDescriptor)?.bind(it) }
+        backingField?.tryToRebindWrappedDescriptor<IrField, WrappedFieldDescriptor>()
+        getter?.tryToRebindWrappedDescriptor<IrSimpleFunction, WrappedSimpleFunctionDescriptor>()
+        setter?.tryToRebindWrappedDescriptor<IrSimpleFunction, WrappedSimpleFunctionDescriptor>()
 
         val descriptor =
             if (proto.hasDescriptorReference())
                 deserializeDescriptorReference(proto.descriptorReference) as PropertyDescriptor
             else
+                @UseExperimental(DescriptorInIrDeclaration::class)
                 backingField?.descriptor as? WrappedPropertyDescriptor // If field's descriptor coincides with property's.
                     ?: getterToPropertyDescriptorMap.getOrPut(getter!!.symbol) { WrappedPropertyDescriptor() }
 
@@ -1196,25 +1207,9 @@ abstract class IrModuleDeserializer(
 
         parent?.let { declaration.parent = it }
 
-        val descriptor = declaration.descriptor
+        declaration.rebindWrappedDescriptor()
 
-        if (descriptor is WrappedDeclarationDescriptor<*>) {
-            when (declaration) {
-                is IrValueParameter ->
-                    if (descriptor is WrappedValueParameterDescriptor) descriptor.bind(declaration)
-                    else (descriptor as WrappedReceiverParameterDescriptor).bind(declaration)
-                is IrVariable -> (descriptor as WrappedVariableDescriptor).bind(declaration)
-                is IrTypeParameter -> (descriptor as WrappedTypeParameterDescriptor).bind(declaration)
-                is IrAnonymousInitializer -> (descriptor as WrappedClassDescriptor).bind(parent!! as IrClass)
-                is IrClass -> (descriptor as WrappedClassDescriptor).bind(declaration)
-                is IrConstructor -> (descriptor as WrappedClassConstructorDescriptor).bind(declaration)
-                is IrField -> (descriptor as WrappedFieldDescriptor).bind(declaration)
-                is IrProperty -> (descriptor as WrappedPropertyDescriptor).bind(declaration)
-                is IrEnumEntry -> (descriptor as WrappedEnumEntryDescriptor).bind(declaration)
-                is IrSimpleFunction -> (descriptor as WrappedSimpleFunctionDescriptor).bind(declaration)
-            }
-        }
-        logger.log { "### Deserialized declaration: ${descriptor} -> ${ir2string(declaration)}" }
+        logger.log { "### Deserialized declaration: ${declaration.render()} -> ${ir2string(declaration)}" }
 
         return declaration
     }
