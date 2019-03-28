@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.ir.util
 
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.ir.DescriptorInIrDeclaration
 import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.SourceRangeInfo
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -119,8 +121,10 @@ fun IrDeclaration.findTopLevelDeclaration(): IrDeclaration = when {
         (this.parent as IrDeclaration).findTopLevelDeclaration()
 }
 
+@UseExperimental(DescriptorInIrDeclaration::class)
 val IrDeclaration.isAnonymousObject get() = DescriptorUtils.isAnonymousObject(this.descriptor)
 
+@UseExperimental(DescriptorInIrDeclaration::class)
 val IrDeclaration.module get() = this.descriptor.module
 
 const val SYNTHETIC_OFFSET = -2
