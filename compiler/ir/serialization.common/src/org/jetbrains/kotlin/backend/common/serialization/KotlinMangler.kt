@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.ir.DescriptorInIrDeclaration
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
@@ -41,6 +42,7 @@ abstract class KotlinManglerImpl: KotlinMangler {
      * and so should be computable from the descriptor itself without checking a backend state.
      */
     override tailrec fun IrDeclaration.isExported(): Boolean {
+        @UseExperimental(DescriptorInIrDeclaration::class)
         // TODO: revise
         val descriptorAnnotations = this.descriptor.annotations
 
@@ -60,6 +62,7 @@ abstract class KotlinManglerImpl: KotlinMangler {
         }
 
         if (this is IrFunction) {
+            @UseExperimental(DescriptorInIrDeclaration::class)
             val descriptor = this.descriptor
             // TODO: this code is required because accessor doesn't have a reference to property.
             if (descriptor is PropertyAccessorDescriptor) {
