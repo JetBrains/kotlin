@@ -120,7 +120,6 @@ fun IrDeclaration.findTopLevelDeclaration(): IrDeclaration = when {
 }
 
 val IrDeclaration.isAnonymousObject get() = DescriptorUtils.isAnonymousObject(this.descriptor)
-val IrDeclaration.isLocal get() = DescriptorUtils.isLocal(this.descriptor)
 
 val IrDeclaration.module get() = this.descriptor.module
 
