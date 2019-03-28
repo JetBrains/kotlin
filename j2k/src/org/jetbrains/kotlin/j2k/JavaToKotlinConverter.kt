@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.j2k
 import com.intellij.codeInsight.documentation.DocumentationManager
 import com.intellij.lang.java.JavaLanguage
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Document
@@ -28,7 +29,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Computable
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.DummyHolder
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.idea.core.util.EDT
 import org.jetbrains.kotlin.j2k.ast.Element
 import org.jetbrains.kotlin.j2k.usageProcessing.ExternalCodeProcessor
 import org.jetbrains.kotlin.j2k.usageProcessing.UsageProcessing
@@ -89,11 +93,15 @@ abstract class JavaToKotlinConverter(private val project: Project) {
                 })
 
 
-                CommandProcessor.getInstance().executeCommand(project, {
-                    result!!.importsToAdd.forEach {
-                        postProcessor.insertImport(kotlinFile, it)
+                CommandProcessor.getInstance().runUndoTransparentAction {
+                    runBlocking(EDT.ModalityStateElement(ModalityState.defaultModalityState())) {
+                        withContext(EDT) {
+                            result!!.importsToAdd.forEach {
+                                postProcessor.insertImport(kotlinFile, it)
+                            }
+                        }
                     }
-                }, "Adding imports to Kotlin code", null)
+                }
 
                 AfterConversionPass(project, postProcessor).run(kotlinFile, range = null)
 
