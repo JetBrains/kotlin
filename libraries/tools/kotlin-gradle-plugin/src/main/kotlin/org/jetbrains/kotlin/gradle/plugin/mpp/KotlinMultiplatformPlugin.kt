@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
+import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
 import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
 import org.jetbrains.kotlin.gradle.utils.checkGradleCompatibility
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -88,6 +89,8 @@ class KotlinMultiplatformPlugin(
 
         // propagate compiler plugin options to the source set language settings
         setupCompilerPluginOptions(project)
+
+        project.pluginManager.apply(ScriptingGradleSubplugin::class.java)
 
         UnusedSourceSetsChecker.checkSourceSets(project)
     }
