@@ -3,22 +3,22 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-@file:UseExperimental(DescriptorInIrDeclaration::class)
-
 package org.jetbrains.kotlin.backend.common.ir
 
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedDeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.ir.DescriptorInIrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 
-@UseExperimental(DescriptorInIrDeclaration::class)
-val IrDeclaration.isExpect get() = descriptor.let { it is MemberDescriptor && it.isExpect }
+val IrDeclaration.isExpect get() = descriptorWithoutAccessCheck.let { it is MemberDescriptor && it.isExpect }
 
-@UseExperimental(DescriptorInIrDeclaration::class)
+val IrDeclaration.isLocal get() = DescriptorUtils.isLocal(this.descriptorWithoutAccessCheck)
+
 fun <T : IrDeclaration> T.rebindWrappedDescriptor(to: T = this) {
     @Suppress("UNCHECKED_CAST")
-    (descriptor as WrappedDeclarationDescriptor<T>).bind(to)
+    (descriptorWithoutAccessCheck as WrappedDeclarationDescriptor<T>).bind(to)
 }
 
 @UseExperimental(DescriptorInIrDeclaration::class)
@@ -26,3 +26,8 @@ inline fun <T : IrDeclaration, reified WD : WrappedDeclarationDescriptor<T>> T.t
     @Suppress("UNCHECKED_CAST")
     (descriptor as? WD)?.bind(to)
 }
+
+@UseExperimental(DescriptorInIrDeclaration::class)
+private val IrDeclaration.descriptorWithoutAccessCheck: DeclarationDescriptor
+    get() = descriptor
+
