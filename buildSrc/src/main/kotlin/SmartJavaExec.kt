@@ -8,9 +8,13 @@ import org.gradle.kotlin.dsl.task
  * that can be found in the license/LICENSE.txt file.
  */
 
-fun Project.smartJavaExec(configure: JavaExec.() -> Unit) = task<JavaExec> javaExec@{
+fun Project.smartJavaExec(configure: JavaExec.() -> Unit) = task<JavaExec> {
     configure()
+    passClasspathInJar()
+}
 
+// Moves the classpath into a jar metadata, to shorten the command line length and to avoid hitting the limit on Windows
+fun JavaExec.passClasspathInJar() {
     val jarTask = project.task("${name}WriteClassPath", Jar::class) {
         val classpath = classpath
         val main = main
@@ -28,11 +32,9 @@ fun Project.smartJavaExec(configure: JavaExec.() -> Unit) = task<JavaExec> javaE
                 )
             }
         }
-        archiveName = "$main.${this@javaExec.name}.classpath.container.$extension"
+        archiveName = "$main.${this@passClasspathInJar.name}.classpath.container.$extension"
         destinationDir = temporaryDir
     }
-
-
 
     dependsOn(jarTask)
 
@@ -43,6 +45,5 @@ fun Project.smartJavaExec(configure: JavaExec.() -> Unit) = task<JavaExec> javaE
         val copyArgs = args.orEmpty().toList()
         args(jarTask.outputs.files.singleFile)
         args(copyArgs)
-
     }
 }
