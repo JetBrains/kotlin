@@ -235,6 +235,7 @@ public class AtomicReference<T>(private var value_: T) {
 
     /**
      * Compares value with [expected] and replaces it with [new] value if values matches.
+     * Note that comparison is identity-based, not value-based.
      * If [new] value is not null, it must be frozen or permanent object.
      *
      * @param expected the expected value
@@ -247,6 +248,7 @@ public class AtomicReference<T>(private var value_: T) {
 
     /**
      * Compares value with [expected] and replaces it with [new] value if values matches.
+     * Note that comparison is identity-based, not value-based.
      *
      * @param expected the expected value
      * @param new the new value
@@ -269,4 +271,87 @@ public class AtomicReference<T>(private var value_: T) {
     @SymbolName("Kotlin_AtomicReference_get")
     private external fun getImpl(): Any?
 
+}
+
+
+/**
+ * An atomic reference to a Kotlin object. Can be used in concurrent scenarious, but must be frozen first,
+ * otherwise behaves as regular box for the value.
+ */
+@NoReorderFields
+public class FreezableAtomicReference<T>(private var value_: T) {
+    // A spinlock to fix potential ARC race.
+    private var lock: Int = 0
+
+    /**
+     * The referenced value.
+     * Gets the value or sets the [new] value. If [new] value is not null,
+     * and `this` is frozen - it must be frozen or permanent object.
+     *
+     * @throws InvalidMutabilityException if the value is not frozen or a permanent object
+     */
+    public var value: T
+        get() = @Suppress("UNCHECKED_CAST")(getImpl() as T)
+        set(new) {
+            if (this.isFrozen)
+                setImpl(new)
+            else
+                value_ = new
+        }
+
+    /**
+     * Compares value with [expected] and replaces it with [new] value if values matches.
+     * If [new] value is not null and object is frozen, it must be frozen or permanent object.
+     *
+     * @param expected the expected value
+     * @param new the new value
+     * @throws InvalidMutabilityException if the value is not frozen or a permanent object
+     * @return the old value
+     */
+     public fun compareAndSwap(expected: T, new: T): T {
+        return if (this.isFrozen) @Suppress("UNCHECKED_CAST")(compareAndSwapImpl(expected, new) as T) else {
+            val old = value_
+            if (old === expected) value_ = new
+            old
+        }
+    }
+
+    /**
+     * Compares value with [expected] and replaces it with [new] value if values matches.
+     * Note that comparison is identity-based, not value-based.
+     *
+     * @param expected the expected value
+     * @param new the new value
+     * @return true if successful
+     */
+    public fun compareAndSet(expected: T, new: T): Boolean {
+        if (this.isFrozen) return compareAndSetImpl(expected, new)
+        val old = value_
+        if (old === expected) {
+            value_ = new
+            return true
+        } else {
+            return false
+        }
+    }
+
+    /**
+     * Returns the string representation of this object.
+     *
+     * @return string representation of this object
+     */
+    public override fun toString(): String = "Freezable atomic reference to $value"
+
+    // Implementation details.
+    @SymbolName("Kotlin_AtomicReference_set")
+    private external fun setImpl(new: Any?): Unit
+
+    @SymbolName("Kotlin_AtomicReference_get")
+    private external fun getImpl(): Any?
+
+    @SymbolName("Kotlin_AtomicReference_compareAndSwap")
+    private external fun compareAndSwapImpl(expected: Any?, new: Any?): Any?
+
+    @SymbolName("Kotlin_AtomicReference_compareAndSet")
+    private external fun compareAndSetImpl(expected: Any?, new: Any?): Boolean
 }

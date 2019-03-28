@@ -103,6 +103,24 @@ fun test6() {
     assertEquals(239L, long.value)
 }
 
+
+fun test7() {
+    val ref = FreezableAtomicReference(Array(1) { "hey" })
+    ref.value[0] = "ho"
+    assertEquals(ref.value[0], "ho")
+    ref.value = Array(1) { "po" }
+    assertEquals(ref.value[0], "po")
+    ref.freeze()
+    assertFailsWith<InvalidMutabilityException> {
+        ref.value = Array(1) { "no" }
+    }
+    assertFailsWith<InvalidMutabilityException> {
+        ref.value[0] = "go"
+    }
+    ref.value = Array(1) { "so" }.freeze()
+    assertEquals(ref.value[0], "so")
+}
+
 @Test fun runTest() {
     val COUNT = 20
     val workers = Array(COUNT, { _ -> Worker.start()})
@@ -113,9 +131,11 @@ fun test6() {
     test4()
     test5()
     test6()
+    test7()
 
     workers.forEach {
         it.requestTermination().result
     }
     println("OK")
 }
+
