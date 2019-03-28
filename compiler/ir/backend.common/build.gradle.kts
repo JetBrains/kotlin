@@ -21,7 +21,5 @@ sourceSets {
 val compileKotlin: KotlinCompile by tasks
 
 compileKotlin.kotlinOptions {
-    freeCompilerArgs = freeCompilerArgs + listOf(
-        "-Xuse-experimental=kotlin.Experimental",
-        "-Xuse-experimental=org.jetbrains.kotlin.ir.DescriptorInIrDeclaration")
+    freeCompilerArgs = freeCompilerArgs + listOf("-Xuse-experimental=kotlin.Experimental")
 }
