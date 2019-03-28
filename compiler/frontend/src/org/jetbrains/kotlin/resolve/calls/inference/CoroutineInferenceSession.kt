@@ -162,14 +162,14 @@ class CoroutineInferenceSession(
         val nonFixedTypesToResultSubstitutor = ComposedSubstitutor(commonSystemSubstitutor, nonFixedToVariablesSubstitutor)
 
         for (completedCall in commonCalls) {
-            val resultCallAtom = completedCall.callResolutionResult.resultCallAtom
-            val call = resultCallAtom.atom.getResolvedPsiKotlinCall<CallableDescriptor>(trace) ?: continue
-
             updateCall(completedCall, nonFixedTypesToResultSubstitutor, nonFixedTypesToResult)
 
-            val resultingDescriptor = call.resultingDescriptor
             kotlinToResolvedCallTransformer.reportCallDiagnostic(
-                completedCall.context, trace, resultCallAtom, resultingDescriptor, commonSystem.diagnostics
+                completedCall.context,
+                trace,
+                completedCall.callResolutionResult.resultCallAtom,
+                completedCall.resolvedCall.resultingDescriptor,
+                commonSystem.diagnostics
             )
         }
 
