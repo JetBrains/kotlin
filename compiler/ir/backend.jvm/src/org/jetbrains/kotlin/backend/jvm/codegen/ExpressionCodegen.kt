@@ -879,14 +879,7 @@ class ExpressionCodegen(
         val tryBlockEnd = markNewLabel()
         val tryBlockGaps = tryInfo?.gaps?.toList() ?: listOf()
         val tryCatchBlockEnd = Label()
-        if (tryInfo != null) {
-            data.handleBlock { tryInfo.onExit.accept(this, data).discard() }
-            tryInfo.onExit.markLineNumber(startOffset = false)
-            mv.goTo(tryCatchBlockEnd)
-            tryInfo.gaps.add(tryBlockEnd to markNewLabel())
-        } else {
-            mv.goTo(tryCatchBlockEnd)
-        }
+        mv.goTo(tryCatchBlockEnd)
 
         val catches = aTry.catches
         for (clause in catches) {
@@ -909,12 +902,7 @@ class ExpressionCodegen(
                 index
             )
 
-            if (tryInfo != null) {
-                data.handleBlock { tryInfo.onExit.accept(this, data).discard() }
-                tryInfo.onExit.markLineNumber(startOffset = false)
-                mv.goTo(tryCatchBlockEnd)
-                tryInfo.gaps.add(clauseEnd to markNewLabel())
-            } else if (clause != catches.last()) {
+            if (tryInfo != null || clause !== catches.last()) {
                 mv.goTo(tryCatchBlockEnd)
             }
 
@@ -925,6 +913,8 @@ class ExpressionCodegen(
             // Generate `try { ... } catch (e: Any?) { <finally>; throw e }` around every part of
             // the try-catch that is not a copy-pasted `finally` block.
             val defaultCatchStart = markNewLabel()
+            // TODO remove this hack; it is currently needed to avoid confusing the inliner.
+            tryInfo.gaps.add(defaultCatchStart to defaultCatchStart)
             // While keeping this value on the stack should be enough, the bytecode validator will
             // complain if a catch block does not start with ASTORE.
             val savedException = frame.enterTemp(AsmTypes.JAVA_THROWABLE_TYPE)
@@ -937,12 +927,17 @@ class ExpressionCodegen(
             frame.leaveTemp(AsmTypes.JAVA_THROWABLE_TYPE)
             mv.athrow()
 
-            // Include the ASTORE into the covered region. That's what javac does as well.
+            // Covering the ASTORE is not necessary, it is part of the above hack.
             genTryCatchCover(defaultCatchStart, tryBlockStart, finallyStart, tryInfo.gaps, null)
         }
 
         mv.mark(tryCatchBlockEnd)
-        // TODO: generate a common `finally` for try & catch blocks here? Right now this breaks the inliner.
+        if (tryInfo != null) {
+            data.handleBlock { tryInfo.onExit.accept(this, data).discard() }
+            // TODO should probably also add this breakpoint to other copies of `finally`?
+            tryInfo.onExit.markLineNumber(startOffset = false)
+            mv.nop()
+        }
         return tryResult
     }
 
