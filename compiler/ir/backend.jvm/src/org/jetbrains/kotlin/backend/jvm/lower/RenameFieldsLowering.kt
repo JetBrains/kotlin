@@ -48,9 +48,18 @@ private class RenameFieldsLowering(val context: CommonBackendContext) : FileLowe
 
             var count = 0
             // We never rename JvmField properties, since they are public ABI. Therefore we consider the JvmField-annotated property first,
-            // in order to make sure it'll claim its original name
-            // TODO: also do not rename const properties
-            for (field in fields.sortedByDescending { it.isJvmField }) {
+            // in order to make sure it'll claim its original name.
+            // If there are non-static and static (moved from companion) fields with the same name, we try to make static properties retain
+            // their original names first, since this is what the old JVM backend did. However this can easily be changed without any
+            // major binary compatibility consequences (modulo access to private members via Java reflection).
+            for (field in fields.sortedBy {
+                when {
+                    // TODO: also do not rename const properties
+                    it.isJvmField -> 0
+                    it.isStatic -> 1
+                    else -> 2
+                }
+            }) {
                 val oldName = field.name
                 val newName = if (count == 0) oldName else Name.identifier(oldName.asString() + "$$count")
                 count++
