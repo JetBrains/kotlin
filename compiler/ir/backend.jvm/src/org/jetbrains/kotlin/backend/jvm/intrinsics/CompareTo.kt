@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.backend.jvm.intrinsics
 
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.codegen.BlockInfo
+import org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.AsmUtil.comparisonOperandType
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
@@ -63,18 +65,7 @@ class CompareTo : IntrinsicMethod() {
 class PrimitiveComparison(
     private val primitiveNumberType: KotlinType,
     private val operatorToken: KtSingleValueToken
-) : IntrinsicMethod(), ComparisonIntrinsic {
-
-    override fun genStackValue(expression: IrMemberAccessExpression, context: JvmBackendContext): StackValue {
-        val parameterType = context.state.typeMapper.mapType(primitiveNumberType)
-
-        return StackValue.cmp(
-            operatorToken,
-            parameterType,
-            StackValue.onStack(parameterType, primitiveNumberType),
-            StackValue.onStack(parameterType, primitiveNumberType)
-        )
-    }
+) : IntrinsicMethod() {
 
     override fun toCallable(
         expression: IrMemberAccessExpression,
@@ -84,10 +75,15 @@ class PrimitiveComparison(
         val parameterType = context.state.typeMapper.mapType(primitiveNumberType)
 
         return object : IrIntrinsicFunction(expression, signature, context, listOf(parameterType, parameterType)) {
-            override fun genInvokeInstruction(v: InstructionAdapter) {
-                genStackValue(expression, context).put(Type.BOOLEAN_TYPE, v)
+            override fun invoke(v: InstructionAdapter, codegen: ExpressionCodegen, data: BlockInfo): StackValue {
+                loadArguments(codegen, data)
+                return StackValue.cmp(
+                    operatorToken,
+                    parameterType,
+                    StackValue.onStack(parameterType, primitiveNumberType),
+                    StackValue.onStack(parameterType, primitiveNumberType)
+                )
             }
         }
     }
-
 }

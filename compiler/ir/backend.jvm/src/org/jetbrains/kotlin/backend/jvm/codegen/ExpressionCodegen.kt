@@ -7,9 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.common.descriptors.propertyIfAccessor
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.intrinsics.ComparisonIntrinsic
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicFunction
-import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
 import org.jetbrains.kotlin.backend.jvm.lower.CrIrType
 import org.jetbrains.kotlin.backend.jvm.lower.JvmBuiltinOptimizationLowering.Companion.isNegation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -737,53 +735,6 @@ class ExpressionCodegen(
         if (isNegation(condition, classCodegen.context)) {
             condition = (condition as IrCall).dispatchReceiver!!
             jumpIfFalse = !jumpIfFalse
-        }
-
-        // Do not materialize null constants to check for null. Instead use the JVM bytecode
-        // ifnull and ifnonnull instructions.
-        if (condition is IrCall
-            && condition.symbol == classCodegen.context.irBuiltIns.eqeqSymbol
-            && (condition.getValueArgument(0)!!.isNullConst() || condition.getValueArgument(1)!!.isNullConst())
-        ) {
-            val left = condition.getValueArgument(0)!!
-            val right = condition.getValueArgument(1)!!
-            (if (left.isNullConst()) right else left).accept(this, data).materialize()
-            if (jumpIfFalse) {
-                mv.ifnonnull(jumpToLabel)
-            } else {
-                mv.ifnull(jumpToLabel)
-            }
-            return
-        }
-
-        // For comparison intrinsics, branch directly based on the comparison instead of
-        // materializing a boolean and performing and extra jump.
-        if (condition is IrCall) {
-            val intrinsic = classCodegen.context.irIntrinsics.getIntrinsic(condition.descriptor.original as CallableMemberDescriptor)
-            if (intrinsic is ComparisonIntrinsic) {
-                val callable = resolveToCallable(condition, false)
-                (callable as IrIntrinsicFunction).loadArguments(this, data)
-                val stackValue = intrinsic.genStackValue(condition, classCodegen.context)
-                BranchedValue.condJump(stackValue, jumpToLabel, jumpIfFalse, mv)
-                return
-            }
-        }
-
-        // For instance of type operators, branch directly on the instanceof result instead
-        // of materializing a boolean and performing an extra jump.
-        // TODO after redundant materialization is removed, this will be unnecessary
-        if (condition is IrTypeOperatorCall &&
-            (condition.operator == IrTypeOperator.NOT_INSTANCEOF || condition.operator == IrTypeOperator.INSTANCEOF)
-        ) {
-            val asmType = condition.typeOperand.toKotlinType().asmType
-            condition.argument.accept(this, data).coerce(AsmTypes.OBJECT_TYPE).materialize()
-            val type = boxType(asmType)
-            generateIsCheck(mv, condition.typeOperand.toKotlinType(), type, state.languageVersionSettings.isReleaseCoroutines())
-            if (condition.operator == IrTypeOperator.NOT_INSTANCEOF) {
-                jumpIfFalse = !jumpIfFalse
-            }
-            BranchedValue.condJump(onStack(Type.BOOLEAN_TYPE), jumpToLabel, jumpIfFalse, mv)
-            return
         }
 
         BranchedValue.condJump(condition.accept(this, data), jumpToLabel, jumpIfFalse, mv)
