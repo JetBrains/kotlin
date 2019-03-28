@@ -57,6 +57,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.types.isNullable
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.utils.mapToIndex
 import java.util.*
@@ -67,15 +68,20 @@ interface J2kPostProcessing {
     val writeActionNeeded: Boolean
 }
 
-object J2KPostProcessingRegistrar {
+interface J2KPostProcessingRegistrar {
+    val processings: Collection<J2kPostProcessing>
+    fun priority(processing: J2kPostProcessing): Int
+}
+
+object J2KPostProcessingRegistrarImpl : J2KPostProcessingRegistrar {
     private val _processings = ArrayList<J2kPostProcessing>()
 
-    val processings: Collection<J2kPostProcessing>
+    override val processings: Collection<J2kPostProcessing>
         get() = _processings
 
     private val processingsToPriorityMap = HashMap<J2kPostProcessing, Int>()
 
-    fun priority(processing: J2kPostProcessing): Int = processingsToPriorityMap[processing]!!
+    override fun priority(processing: J2kPostProcessing): Int = processingsToPriorityMap[processing]!!
 
     init {
         _processings.add(RemoveExplicitTypeArgumentsProcessing())
@@ -91,18 +97,8 @@ object J2KPostProcessingRegistrar {
         registerInspectionBasedProcessing(ReplacePutWithAssignmentInspection())
         _processings.add(UseExpressionBodyProcessing())
         registerInspectionBasedProcessing(UnnecessaryVariableInspection())
-        registerGeneralInspectionBasedProcessing(RedundantModalityModifierInspection())
-        registerGeneralInspectionBasedProcessing(RedundantVisibilityModifierInspection())
-        registerGeneralInspectionBasedProcessing(RedundantExplicitTypeInspection())
-        registerGeneralInspectionBasedProcessing(RedundantUnitReturnTypeInspection())
-        registerGeneralInspectionBasedProcessing(RedundantGetterInspection())
-        registerGeneralInspectionBasedProcessing(RedundantSetterInspection())
-
-        _processings.add(RemoveExplicitPropertyType())
-        registerGeneralInspectionBasedProcessing(CanBeValInspection(ignoreNotUsedVals = false))
 
         registerIntentionBasedProcessing(FoldInitializerAndIfToElvisIntention())
-        registerIntentionBasedProcessing(RemoveEmptyClassBodyIntention())
 
         registerIntentionBasedProcessing(FoldIfToReturnIntention()) { it.then.isTrivialStatementBody() && it.`else`.isTrivialStatementBody() }
         registerIntentionBasedProcessing(FoldIfToReturnAsymmetricallyIntention()) { it.then.isTrivialStatementBody() && (KtPsiUtil.skipTrailingWhitespacesAndComments(it) as KtReturnExpression).returnedExpression.isTrivialStatementBody() }
@@ -120,15 +116,6 @@ object J2KPostProcessingRegistrar {
         registerIntentionBasedProcessing(RemoveRedundantCallsOfConversionMethodsIntention())
         registerInspectionBasedProcessing(JavaMapForEachInspection())
 
-        _processings.add(object : J2kPostProcessing {
-            override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? =
-                {
-                    OptimizeImportsProcessor(element.project, element.containingKtFile).run()
-                    PsiDocumentManager.getInstance(element.project).commitAllDocuments()
-                }
-
-            override val writeActionNeeded: Boolean = true
-        })
 
         registerDiagnosticBasedProcessing<KtBinaryExpressionWithTypeRHS>(Errors.USELESS_CAST) { element, _ ->
             val expression = RemoveUselessCastFix.invoke(element)
@@ -148,25 +135,10 @@ object J2KPostProcessingRegistrar {
             fix.invoke()
         }
 
-        registerDiagnosticBasedProcessing<KtModifierListOwner>(Errors.NON_FINAL_MEMBER_IN_FINAL_CLASS) { _, diagnostic ->
-            val fix =
-                RemoveModifierFix
-                    .createRemoveModifierFromListOwnerFactory(KtTokens.OPEN_KEYWORD)
-                    .createActions(diagnostic).single() as RemoveModifierFix
-            fix.invoke()
-        }
-        registerDiagnosticBasedProcessing<KtModifierListOwner>(Errors.NON_FINAL_MEMBER_IN_OBJECT) { _, diagnostic ->
-            val fix =
-                RemoveModifierFix
-                    .createRemoveModifierFromListOwnerFactory(KtTokens.OPEN_KEYWORD)
-                    .createActions(diagnostic).single() as RemoveModifierFix
-            fix.invoke()
-        }
-
         registerDiagnosticBasedProcessingFactory(
-                Errors.VAL_REASSIGNMENT, Errors.CAPTURED_VAL_INITIALIZATION, Errors.CAPTURED_MEMBER_VAL_INITIALIZATION
+            Errors.VAL_REASSIGNMENT, Errors.CAPTURED_VAL_INITIALIZATION, Errors.CAPTURED_MEMBER_VAL_INITIALIZATION
         ) {
-            element: KtSimpleNameExpression, _: Diagnostic ->
+                element: KtSimpleNameExpression, _: Diagnostic ->
             val property = element.mainReference.resolve() as? KtProperty
             if (property == null) {
                 null
@@ -193,8 +165,8 @@ object J2KPostProcessingRegistrar {
     }
 
     private inline fun <reified TElement : KtElement, TIntention: SelfTargetingRangeIntention<TElement>> registerIntentionBasedProcessing(
-            intention: TIntention,
-            noinline additionalChecker: (TElement) -> Boolean = { true }
+        intention: TIntention,
+        noinline additionalChecker: (TElement) -> Boolean = { true }
     ) {
         _processings.add(object : J2kPostProcessing {
             // Intention can either need or not need write action
@@ -286,10 +258,10 @@ object J2KPostProcessingRegistrar {
 
     private inline fun
             <reified TElement : KtElement,
-            TInspection: AbstractApplicabilityBasedInspection<TElement>> registerInspectionBasedProcessing(
+                    TInspection: AbstractApplicabilityBasedInspection<TElement>> registerInspectionBasedProcessing(
 
-            inspection: TInspection,
-            acceptInformationLevel: Boolean = false
+        inspection: TInspection,
+        acceptInformationLevel: Boolean = false
     ) {
         _processings.add(object : J2kPostProcessing {
             // Inspection can either need or not need write action
@@ -314,15 +286,15 @@ object J2KPostProcessingRegistrar {
     }
 
     private inline fun <reified TElement : KtElement> registerDiagnosticBasedProcessing(
-            vararg diagnosticFactory: DiagnosticFactory<*>,
-            crossinline fix: (TElement, Diagnostic) -> Unit
+        vararg diagnosticFactory: DiagnosticFactory<*>,
+        crossinline fix: (TElement, Diagnostic) -> Unit
     ) {
         registerDiagnosticBasedProcessingFactory(*diagnosticFactory) { element: TElement, diagnostic: Diagnostic -> { fix(element, diagnostic) } }
     }
 
     private inline fun <reified TElement : KtElement> registerDiagnosticBasedProcessingFactory(
-            vararg diagnosticFactory: DiagnosticFactory<*>,
-            crossinline fixFactory: (TElement, Diagnostic) -> (() -> Unit)?
+        vararg diagnosticFactory: DiagnosticFactory<*>,
+        crossinline fixFactory: (TElement, Diagnostic) -> (() -> Unit)?
     ) {
         _processings.add(object : J2kPostProcessing {
             // ???
@@ -334,35 +306,6 @@ object J2KPostProcessingRegistrar {
                 return fixFactory(element as TElement, diagnostic)
             }
         })
-    }
-
-    private class RemoveExplicitPropertyType : J2kPostProcessing {
-        override val writeActionNeeded = true
-
-        override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
-            if (element !is KtProperty) return null
-
-            fun check(element: KtProperty): Boolean {
-                val initializer = element.initializer ?: return false
-                val withoutExpectedType = initializer.analyzeInContext(initializer.getResolutionScope())
-                val descriptor = element.resolveToDescriptorIfAny() as? CallableDescriptor ?: return false
-                return when (withoutExpectedType.getType(initializer)) {
-                    descriptor.returnType,
-                    descriptor.returnType?.makeNotNullable() -> true
-                    else -> false
-                }
-            }
-
-            if (!check(element)) {
-                return null
-            } else {
-                return {
-                    if (element.isValid && check(element)) {
-                        element.typeReference = null
-                    }
-                }
-            }
-        }
     }
 
     private class RemoveExplicitTypeArgumentsProcessing : J2kPostProcessing {
@@ -427,7 +370,7 @@ object J2KPostProcessingRegistrar {
 
             return {
                 RedundantSamConstructorInspection.samConstructorCallsToBeConverted(element)
-                        .forEach { RedundantSamConstructorInspection.replaceSamConstructorCall(it) }
+                    .forEach { RedundantSamConstructorInspection.replaceSamConstructorCall(it) }
             }
         }
     }
@@ -478,7 +421,7 @@ object J2KPostProcessingRegistrar {
                 element.operationToken != KtTokens.PLUS ||
                 diagnostics.forElement(element.operationReference).none {
                     it.factory == Errors.UNRESOLVED_REFERENCE_WRONG_RECEIVER
-                    || it.factory  == Errors.NONE_APPLICABLE
+                            || it.factory  == Errors.NONE_APPLICABLE
                 })
                 return null
 

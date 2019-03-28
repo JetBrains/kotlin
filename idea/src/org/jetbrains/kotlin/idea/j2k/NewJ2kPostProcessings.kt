@@ -18,16 +18,15 @@ package org.jetbrains.kotlin.idea.j2k
 
 import com.intellij.codeInsight.actions.OptimizeImportsProcessor
 import com.intellij.codeInspection.*
-import com.intellij.codeInspection.ex.LocalInspectionToolWrapper
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
+import com.intellij.psi.util.parentOfType
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -44,11 +43,14 @@ import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.F
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.FoldIfToReturnIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToElvisIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isTrivialStatementBody
-import org.jetbrains.kotlin.idea.quickfix.ChangeVariableMutabilityFix
+import org.jetbrains.kotlin.idea.j2k.postProcessing.ConvertDataClass
+import org.jetbrains.kotlin.idea.j2k.postProcessing.ConvertGettersAndSetters
 import org.jetbrains.kotlin.idea.quickfix.QuickFixActionBase
 import org.jetbrains.kotlin.idea.quickfix.RemoveModifierFix
 import org.jetbrains.kotlin.idea.quickfix.RemoveUselessCastFix
+import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.references.readWriteAccess
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -62,276 +64,304 @@ import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.utils.mapToIndex
 import java.util.*
 
-object NewJ2KPostProcessingRegistrarImpl: J2KPostProcessingRegistrar {
-    private val _processings = ArrayList<J2kPostProcessing>()
+object NewJ2KPostProcessingRegistrarImpl : J2KPostProcessingRegistrar {
 
-    override val processings: Collection<J2kPostProcessing>
-        get() = _processings
+    private fun Processing.processings(): Sequence<J2kPostProcessing> =
+        when (this) {
+            is SingleProcessing -> sequenceOf(processing)
+            is ProcessingGroup -> processings.asSequence().flatMap { it.processings() }
+            else -> sequenceOf()
+        }
+
 
     private val processingsToPriorityMap = HashMap<J2kPostProcessing, Int>()
 
     override fun priority(processing: J2kPostProcessing): Int = processingsToPriorityMap[processing]!!
 
-    init {
-        _processings.add(RemoveExplicitTypeArgumentsProcessing())
-        _processings.add(RemoveRedundantOverrideVisibilityProcessing())
-        registerInspectionBasedProcessing(MoveLambdaOutsideParenthesesInspection())
-        _processings.add(FixObjectStringConcatenationProcessing())
-        _processings.add(ConvertToStringTemplateProcessing())
-        _processings.add(UsePropertyAccessSyntaxProcessing())
-        _processings.add(UninitializedVariableReferenceFromInitializerToThisReferenceProcessing())
-        _processings.add(UnresolvedVariableReferenceFromInitializerToThisReferenceProcessing())
-        _processings.add(RemoveRedundantSamAdaptersProcessing())
-        _processings.add(RemoveRedundantCastToNullableProcessing())
-        registerInspectionBasedProcessing(ReplacePutWithAssignmentInspection())
-        _processings.add(UseExpressionBodyProcessing())
-        registerInspectionBasedProcessing(UnnecessaryVariableInspection())
-        registerGeneralInspectionBasedProcessing(RedundantModalityModifierInspection())
-        registerGeneralInspectionBasedProcessing(RedundantVisibilityModifierInspection())
-        registerGeneralInspectionBasedProcessing(RedundantExplicitTypeInspection())
-        registerGeneralInspectionBasedProcessing(RedundantUnitReturnTypeInspection())
-        registerGeneralInspectionBasedProcessing(RedundantGetterInspection())
-        registerGeneralInspectionBasedProcessing(RedundantSetterInspection())
+    override val mainProcessings = ProcessingGroup(
+        SingleProcessing(VarToVal()),
+        ProcessingGroup(
+            SingleProcessing(ConvertGettersAndSetters()),
+            registerGeneralInspectionBasedProcessing(RedundantModalityModifierInspection()),
+            registerGeneralInspectionBasedProcessing(RedundantVisibilityModifierInspection()),
+            registerGeneralInspectionBasedProcessing(RedundantGetterInspection()),
+            registerGeneralInspectionBasedProcessing(RedundantSetterInspection())
+        ),
+        SingleProcessing(ConvertDataClass()),
+        ProcessingGroup(
+            registerGeneralInspectionBasedProcessing(ExplicitThisInspection()),
 
-        _processings.add(RemoveExplicitPropertyType())
-        _processings.add(RemoveRedundantNullability())
+            SingleProcessing(RemoveExplicitTypeArgumentsProcessing()),
+            SingleProcessing(RemoveRedundantOverrideVisibilityProcessing()),
+            registerInspectionBasedProcessing(MoveLambdaOutsideParenthesesInspection()),
+            SingleProcessing(FixObjectStringConcatenationProcessing()),
+            SingleProcessing(ConvertToStringTemplateProcessing()),
+            SingleProcessing(UsePropertyAccessSyntaxProcessing()),
+            SingleProcessing(UninitializedVariableReferenceFromInitializerToThisReferenceProcessing()),
+            SingleProcessing(UnresolvedVariableReferenceFromInitializerToThisReferenceProcessing()),
+            SingleProcessing(RemoveRedundantSamAdaptersProcessing()),
+            SingleProcessing(RemoveRedundantCastToNullableProcessing()),
+            registerInspectionBasedProcessing(ReplacePutWithAssignmentInspection()),
+            SingleProcessing(UseExpressionBodyProcessing()),
+            registerInspectionBasedProcessing(UnnecessaryVariableInspection()),
+            registerGeneralInspectionBasedProcessing(RedundantExplicitTypeInspection()),
+            registerGeneralInspectionBasedProcessing(RedundantUnitReturnTypeInspection()),
 
-        registerGeneralInspectionBasedProcessing(CanBeValInspection(ignoreNotUsedVals = false))
+            SingleProcessing(RemoveExplicitPropertyType()),
+            SingleProcessing(RemoveRedundantNullability()),
 
-        registerIntentionBasedProcessing(FoldInitializerAndIfToElvisIntention())
-        registerIntentionBasedProcessing(RemoveEmptyClassBodyIntention())
+            registerGeneralInspectionBasedProcessing(CanBeValInspection(ignoreNotUsedVals = false)),
 
-        registerIntentionBasedProcessing(FoldIfToReturnIntention()) { it.then.isTrivialStatementBody() && it.`else`.isTrivialStatementBody() }
-        registerIntentionBasedProcessing(FoldIfToReturnAsymmetricallyIntention()) { it.then.isTrivialStatementBody() && (KtPsiUtil.skipTrailingWhitespacesAndComments(it) as KtReturnExpression).returnedExpression.isTrivialStatementBody() }
+            registerIntentionBasedProcessing(FoldInitializerAndIfToElvisIntention()),
+            registerGeneralInspectionBasedProcessing(RedundantSemicolonInspection()),
+            registerIntentionBasedProcessing(RemoveEmptyClassBodyIntention()),
 
-        registerInspectionBasedProcessing(IfThenToSafeAccessInspection())
-        registerIntentionBasedProcessing(IfThenToElvisIntention())
-        registerInspectionBasedProcessing(SimplifyNegatedBinaryExpressionInspection())
-        registerInspectionBasedProcessing(ReplaceGetOrSetInspection())
-        registerIntentionBasedProcessing(AddOperatorModifierIntention())
-        registerIntentionBasedProcessing(ObjectLiteralToLambdaIntention())
-        registerIntentionBasedProcessing(AnonymousFunctionToLambdaIntention())
-        registerIntentionBasedProcessing(RemoveUnnecessaryParenthesesIntention())
-        registerIntentionBasedProcessing(DestructureIntention())
-        registerInspectionBasedProcessing(SimplifyAssertNotNullInspection())
-        registerIntentionBasedProcessing(RemoveRedundantCallsOfConversionMethodsIntention())
-        registerGeneralInspectionBasedProcessing(LiftReturnOrAssignmentInspection())
+            registerIntentionBasedProcessing(FoldIfToReturnIntention()) { it.then.isTrivialStatementBody() && it.`else`.isTrivialStatementBody() },
+            registerIntentionBasedProcessing(FoldIfToReturnAsymmetricallyIntention()) {
+                it.then.isTrivialStatementBody() && (KtPsiUtil.skipTrailingWhitespacesAndComments(
+                    it
+                ) as KtReturnExpression).returnedExpression.isTrivialStatementBody()
+            },
 
-        _processings.add(object : J2kPostProcessing {
-            override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? =
-                {
-                    OptimizeImportsProcessor(element.project, element.containingKtFile).run()
-                    PsiDocumentManager.getInstance(element.project).commitAllDocuments()
+
+            registerInspectionBasedProcessing(IfThenToSafeAccessInspection()),
+            registerInspectionBasedProcessing(IfThenToSafeAccessInspection()),
+            registerIntentionBasedProcessing(IfThenToElvisIntention()),
+            registerInspectionBasedProcessing(SimplifyNegatedBinaryExpressionInspection()),
+            registerInspectionBasedProcessing(ReplaceGetOrSetInspection()),
+            registerIntentionBasedProcessing(AddOperatorModifierIntention()),
+            registerIntentionBasedProcessing(ObjectLiteralToLambdaIntention()),
+            registerIntentionBasedProcessing(AnonymousFunctionToLambdaIntention()),
+            registerIntentionBasedProcessing(RemoveUnnecessaryParenthesesIntention()),
+            registerIntentionBasedProcessing(DestructureIntention()),
+            registerInspectionBasedProcessing(SimplifyAssertNotNullInspection()),
+            registerIntentionBasedProcessing(RemoveRedundantCallsOfConversionMethodsIntention()),
+            registerGeneralInspectionBasedProcessing(LiftReturnOrAssignmentInspection()),
+
+            SingleProcessing(object : J2kPostProcessing {
+                override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? =
+                    {
+                        OptimizeImportsProcessor(element.project, element.containingKtFile).run()
+                        PsiDocumentManager.getInstance(element.project).commitAllDocuments()
+                    }
+
+                override val writeActionNeeded: Boolean = true
+            }),
+
+            registerDiagnosticBasedProcessing<KtBinaryExpressionWithTypeRHS>(Errors.USELESS_CAST) { element, _ ->
+                val expression = RemoveUselessCastFix.invoke(element)
+
+                val variable = expression.parent as? KtProperty
+                if (variable != null && expression == variable.initializer && variable.isLocal) {
+                    val ref = ReferencesSearch.search(variable, LocalSearchScope(variable.containingFile)).findAll().singleOrNull()
+                    if (ref != null && ref.element is KtSimpleNameExpression) {
+                        ref.element.replace(expression)
+                        variable.delete()
+                    }
                 }
+            },
 
-            override val writeActionNeeded: Boolean = true
-        })
+            registerDiagnosticBasedProcessing<KtTypeProjection>(Errors.REDUNDANT_PROJECTION) { _, diagnostic ->
+                val fix = RemoveModifierFix.createRemoveProjectionFactory(true).createActions(diagnostic).single() as RemoveModifierFix
+                fix.invoke()
+            },
 
-        registerDiagnosticBasedProcessing<KtBinaryExpressionWithTypeRHS>(Errors.USELESS_CAST) { element, _ ->
-            val expression = RemoveUselessCastFix.invoke(element)
+            registerDiagnosticBasedProcessing<KtModifierListOwner>(Errors.NON_FINAL_MEMBER_IN_FINAL_CLASS) { _, diagnostic ->
+                val fix =
+                    RemoveModifierFix
+                        .createRemoveModifierFromListOwnerFactory(KtTokens.OPEN_KEYWORD)
+                        .createActions(diagnostic).single() as RemoveModifierFix
+                fix.invoke()
+            },
+            registerDiagnosticBasedProcessing<KtModifierListOwner>(Errors.NON_FINAL_MEMBER_IN_OBJECT) { _, diagnostic ->
+                val fix =
+                    RemoveModifierFix
+                        .createRemoveModifierFromListOwnerFactory(KtTokens.OPEN_KEYWORD)
+                        .createActions(diagnostic).single() as RemoveModifierFix
+                fix.invoke()
+            },
 
-            val variable = expression.parent as? KtProperty
-            if (variable != null && expression == variable.initializer && variable.isLocal) {
-                val ref = ReferencesSearch.search(variable, LocalSearchScope(variable.containingFile)).findAll().singleOrNull()
-                if (ref != null && ref.element is KtSimpleNameExpression) {
-                    ref.element.replace(expression)
-                    variable.delete()
-                }
-            }
-        }
-
-        registerDiagnosticBasedProcessing<KtTypeProjection>(Errors.REDUNDANT_PROJECTION) { _, diagnostic ->
-            val fix = RemoveModifierFix.createRemoveProjectionFactory(true).createActions(diagnostic).single() as RemoveModifierFix
-            fix.invoke()
-        }
-
-        registerDiagnosticBasedProcessing<KtModifierListOwner>(Errors.NON_FINAL_MEMBER_IN_FINAL_CLASS) { _, diagnostic ->
-            val fix =
-                RemoveModifierFix
-                    .createRemoveModifierFromListOwnerFactory(KtTokens.OPEN_KEYWORD)
-                    .createActions(diagnostic).single() as RemoveModifierFix
-            fix.invoke()
-        }
-        registerDiagnosticBasedProcessing<KtModifierListOwner>(Errors.NON_FINAL_MEMBER_IN_OBJECT) { _, diagnostic ->
-            val fix =
-                RemoveModifierFix
-                    .createRemoveModifierFromListOwnerFactory(KtTokens.OPEN_KEYWORD)
-                    .createActions(diagnostic).single() as RemoveModifierFix
-            fix.invoke()
-        }
-
-        registerDiagnosticBasedProcessingFactory(
+            registerDiagnosticBasedProcessingFactory(
                 Errors.VAL_REASSIGNMENT, Errors.CAPTURED_VAL_INITIALIZATION, Errors.CAPTURED_MEMBER_VAL_INITIALIZATION
-        ) {
-            element: KtSimpleNameExpression, _: Diagnostic ->
-            val property = element.mainReference.resolve() as? KtProperty
-            if (property == null) {
-                null
-            }
-            else {
-                {
-                    if (!property.isVar) {
-                        property.valOrVarKeyword.replace(KtPsiFactory(element.project).createVarKeyword())
+            ) { element: KtSimpleNameExpression, _: Diagnostic ->
+                val property = element.mainReference.resolve() as? KtProperty
+                if (property == null) {
+                    null
+                } else {
+                    {
+                        if (!property.isVar) {
+                            property.valOrVarKeyword.replace(KtPsiFactory(element.project).createVarKeyword())
+                        }
                     }
+                }
+            },
+
+            registerDiagnosticBasedProcessing<KtSimpleNameExpression>(Errors.UNNECESSARY_NOT_NULL_ASSERTION) { element, _ ->
+                val exclExclExpr = element.parent as KtUnaryExpression
+                val baseExpression = exclExclExpr.baseExpression!!
+                val context = baseExpression.analyze(BodyResolveMode.PARTIAL_WITH_DIAGNOSTICS)
+                if (context.diagnostics.forElement(element).any { it.factory == Errors.UNNECESSARY_NOT_NULL_ASSERTION }) {
+                    exclExclExpr.replace(baseExpression)
+                }
+            }
+        )
+    )
+
+    override val processings: Collection<J2kPostProcessing> =
+        mainProcessings.processings().toList()
+
+
+    init {
+        processingsToPriorityMap.putAll(processings.mapToIndex())
+    }
+
+
+    private inline fun <reified TElement : KtElement, TIntention : SelfTargetingRangeIntention<TElement>> registerIntentionBasedProcessing(
+        intention: TIntention,
+        noinline additionalChecker: (TElement) -> Boolean = { true }
+    ) = SingleProcessing(object : J2kPostProcessing {
+        // Intention can either need or not need write action
+        override val writeActionNeeded = intention.startInWriteAction()
+
+        override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
+            if (!TElement::class.java.isInstance(element)) return null
+            val tElement = element as TElement
+            if (intention.applicabilityRange(tElement) == null) return null
+            if (!additionalChecker(tElement)) return null
+            return {
+                if (intention.applicabilityRange(tElement) != null) { // check availability of the intention again because something could change
+                    intention.applyTo(element, null)
                 }
             }
         }
-
-        registerDiagnosticBasedProcessing<KtSimpleNameExpression>(Errors.UNNECESSARY_NOT_NULL_ASSERTION) { element, _ ->
-            val exclExclExpr = element.parent as KtUnaryExpression
-            val baseExpression = exclExclExpr.baseExpression!!
-            val context = baseExpression.analyze(BodyResolveMode.PARTIAL_WITH_DIAGNOSTICS)
-            if (context.diagnostics.forElement(element).any { it.factory == Errors.UNNECESSARY_NOT_NULL_ASSERTION }) {
-                exclExclExpr.replace(baseExpression)
-            }
-        }
-
-        processingsToPriorityMap.putAll(_processings.mapToIndex())
     }
+    )
 
-    private inline fun <reified TElement : KtElement, TIntention: SelfTargetingRangeIntention<TElement>> registerIntentionBasedProcessing(
-            intention: TIntention,
-            noinline additionalChecker: (TElement) -> Boolean = { true }
-    ) {
-        _processings.add(object : J2kPostProcessing {
-            // Intention can either need or not need write action
-            override val writeActionNeeded = intention.startInWriteAction()
-
-            override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
-                if (!TElement::class.java.isInstance(element)) return null
-                val tElement = element as TElement
-                if (intention.applicabilityRange(tElement) == null) return null
-                if (!additionalChecker(tElement)) return null
-                return {
-                    if (intention.applicabilityRange(tElement) != null) { // check availability of the intention again because something could change
-                        intention.applyTo(element, null)
-                    }
-                }
-            }
-        })
-    }
 
     private inline fun <TInspection : AbstractKotlinInspection> registerGeneralInspectionBasedProcessing(
         inspection: TInspection,
         acceptInformationLevel: Boolean = false
-    ) {
-        _processings.add(object : J2kPostProcessing {
-            override val writeActionNeeded = false
+    ) = SingleProcessing(object : J2kPostProcessing {
+        override val writeActionNeeded = false
 
-            fun <D : CommonProblemDescriptor> QuickFix<D>.applyFixSmart(project: Project, descriptor: D) {
-                if (descriptor is ProblemDescriptor) {
-                    if (this is IntentionWrapper) {
-                        @Suppress("NOT_YET_SUPPORTED_IN_INLINE")
-                        fun applySelfTargetingIntention(action: SelfTargetingIntention<PsiElement>) {
-                            val target = action.getTarget(descriptor.psiElement.startOffset, descriptor.psiElement.containingFile) ?: return
-                            if (!action.isApplicableTo(target, descriptor.psiElement.startOffset)) return
-                            action.applyTo(target, null)
-                        }
-
-                        @Suppress("NOT_YET_SUPPORTED_IN_INLINE")
-                        fun applyQuickFixActionBase(action: QuickFixActionBase<PsiElement>) {
-                            if (!action.isAvailable(project, null, descriptor.psiElement.containingFile)) return
-                            action.invoke(project, null, descriptor.psiElement.containingFile)
-                        }
-
-
-                        @Suppress("NOT_YET_SUPPORTED_IN_INLINE")
-                        fun applyIntention() {
-                            val action = this.action
-                            when (action) {
-                                is SelfTargetingIntention<*> -> applySelfTargetingIntention(action as SelfTargetingIntention<PsiElement>)
-                                is QuickFixActionBase<*> -> applyQuickFixActionBase(action)
-                            }
-                        }
-
-
-                        if (this.startInWriteAction()) {
-                            ApplicationManager.getApplication().runWriteAction(::applyIntention)
-                        } else {
-                            applyIntention()
-                        }
-
+        fun <D : CommonProblemDescriptor> QuickFix<D>.applyFixSmart(project: Project, descriptor: D) {
+            if (descriptor is ProblemDescriptor) {
+                if (this is IntentionWrapper) {
+                    @Suppress("NOT_YET_SUPPORTED_IN_INLINE")
+                    fun applySelfTargetingIntention(action: SelfTargetingIntention<PsiElement>) {
+                        val target = action.getTarget(descriptor.psiElement.startOffset, descriptor.psiElement.containingFile) ?: return
+                        if (!action.isApplicableTo(target, descriptor.psiElement.startOffset)) return
+                        action.applyTo(target, null)
                     }
-                }
 
-                ApplicationManager.getApplication().runWriteAction {
-                    this.applyFix(project, descriptor)
+                    @Suppress("NOT_YET_SUPPORTED_IN_INLINE")
+                    fun applyQuickFixActionBase(action: QuickFixActionBase<PsiElement>) {
+                        if (!action.isAvailable(project, null, descriptor.psiElement.containingFile)) return
+                        action.invoke(project, null, descriptor.psiElement.containingFile)
+                    }
+
+
+                    @Suppress("NOT_YET_SUPPORTED_IN_INLINE")
+                    fun applyIntention() {
+                        val action = this.action
+                        when (action) {
+                            is SelfTargetingIntention<*> -> applySelfTargetingIntention(action as SelfTargetingIntention<PsiElement>)
+                            is QuickFixActionBase<*> -> applyQuickFixActionBase(action)
+                        }
+                    }
+
+
+                    if (this.startInWriteAction()) {
+                        ApplicationManager.getApplication().runWriteAction(::applyIntention)
+                    } else {
+                        applyIntention()
+                    }
+
                 }
             }
 
-            override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
-                val holder = ProblemsHolder(InspectionManager.getInstance(element.project), element.containingFile, false)
-                val visitor = inspection.buildVisitor(
-                    holder,
-                    false,
-                    LocalInspectionToolSession(element.containingFile, 0, element.containingFile.endOffset)
-                )
+            ApplicationManager.getApplication().runWriteAction {
+                this.applyFix(project, descriptor)
+            }
+        }
+
+        override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
+            val holder = ProblemsHolder(InspectionManager.getInstance(element.project), element.containingFile, false)
+            val visitor = inspection.buildVisitor(
+                holder,
+                false,
+                LocalInspectionToolSession(element.containingFile, 0, element.containingFile.endOffset)
+            )
+            element.accept(visitor)
+            if (!holder.hasResults()) return null
+            return {
+                holder.results.clear()
                 element.accept(visitor)
-                if (!holder.hasResults()) return null
-                return {
-                    holder.results.clear()
-                    element.accept(visitor)
-                    if (holder.hasResults()) {
-                        holder.results
-                            .filter { acceptInformationLevel || it.highlightType != ProblemHighlightType.INFORMATION }
-                            .forEach { it.fixes?.firstOrNull()?.applyFixSmart(element.project, it) }
-                    }
+                if (holder.hasResults()) {
+                    holder.results
+                        .filter { acceptInformationLevel || it.highlightType != ProblemHighlightType.INFORMATION }
+                        .forEach { it.fixes?.firstOrNull()?.applyFixSmart(element.project, it) }
                 }
             }
-        })
-    }
+        }
+    })
+
 
     private inline fun
             <reified TElement : KtElement,
-            TInspection: AbstractApplicabilityBasedInspection<TElement>> registerInspectionBasedProcessing(
+                    TInspection : AbstractApplicabilityBasedInspection<TElement>> registerInspectionBasedProcessing(
 
-            inspection: TInspection,
-            acceptInformationLevel: Boolean = false
-    ) {
-        _processings.add(object : J2kPostProcessing {
-            // Inspection can either need or not need write action
-            override val writeActionNeeded = inspection.startFixInWriteAction
+        inspection: TInspection,
+        acceptInformationLevel: Boolean = false
+    ) = SingleProcessing(object : J2kPostProcessing {
+        // Inspection can either need or not need write action
+        override val writeActionNeeded = inspection.startFixInWriteAction
 
-            private fun isApplicable(element: TElement): Boolean {
-                if (!inspection.isApplicable(element)) return false
-                return acceptInformationLevel || inspection.inspectionHighlightType(element) != ProblemHighlightType.INFORMATION
-            }
+        private fun isApplicable(element: TElement): Boolean {
+            if (!inspection.isApplicable(element)) return false
+            return acceptInformationLevel || inspection.inspectionHighlightType(element) != ProblemHighlightType.INFORMATION
+        }
 
-            override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
-                if (!TElement::class.java.isInstance(element)) return null
-                val tElement = element as TElement
-                if (!isApplicable(tElement)) return null
-                return {
-                    if (isApplicable(tElement)) { // check availability of the inspection again because something could change
-                        inspection.applyTo(inspection.inspectionTarget(tElement))
-                    }
+        override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
+            if (!TElement::class.java.isInstance(element)) return null
+            val tElement = element as TElement
+            if (!isApplicable(tElement)) return null
+            return {
+                if (isApplicable(tElement)) { // check availability of the inspection again because something could change
+                    inspection.applyTo(inspection.inspectionTarget(tElement))
                 }
             }
-        })
-    }
+        }
+    })
+
 
     private inline fun <reified TElement : KtElement> registerDiagnosticBasedProcessing(
-            vararg diagnosticFactory: DiagnosticFactory<*>,
-            crossinline fix: (TElement, Diagnostic) -> Unit
-    ) {
-        registerDiagnosticBasedProcessingFactory(*diagnosticFactory) { element: TElement, diagnostic: Diagnostic -> { fix(element, diagnostic) } }
+        vararg diagnosticFactory: DiagnosticFactory<*>,
+        crossinline fix: (TElement, Diagnostic) -> Unit
+    ) = registerDiagnosticBasedProcessingFactory(*diagnosticFactory) { element: TElement, diagnostic: Diagnostic ->
+        {
+            fix(
+                element,
+                diagnostic
+            )
+        }
     }
+
 
     private inline fun <reified TElement : KtElement> registerDiagnosticBasedProcessingFactory(
-            vararg diagnosticFactory: DiagnosticFactory<*>,
-            crossinline fixFactory: (TElement, Diagnostic) -> (() -> Unit)?
-    ) {
-        _processings.add(object : J2kPostProcessing {
-            // ???
-            override val writeActionNeeded = true
+        vararg diagnosticFactory: DiagnosticFactory<*>,
+        crossinline fixFactory: (TElement, Diagnostic) -> (() -> Unit)?
+    ) = SingleProcessing(object : J2kPostProcessing {
+        // ???
+        override val writeActionNeeded = true
 
-            override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
-                if (!TElement::class.java.isInstance(element)) return null
-                val diagnostic = diagnostics.forElement(element).firstOrNull { it.factory in diagnosticFactory } ?: return null
-                return fixFactory(element as TElement, diagnostic)
-            }
-        })
-    }
+        override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
+            if (!TElement::class.java.isInstance(element)) return null
+            val diagnostic = diagnostics.forElement(element).firstOrNull { it.factory in diagnosticFactory } ?: return null
+            return fixFactory(element as TElement, diagnostic)
+        }
+    })
+
 
     private class RemoveExplicitPropertyType : J2kPostProcessing {
         override val writeActionNeeded = true
@@ -344,8 +374,8 @@ object NewJ2KPostProcessingRegistrarImpl: J2KPostProcessingRegistrar {
                 val withoutExpectedType = initializer.analyzeInContext(initializer.getResolutionScope())
                 val descriptor = element.resolveToDescriptorIfAny() as? CallableDescriptor ?: return false
                 return when (withoutExpectedType.getType(initializer)) {
-                    descriptor.returnType,
-                    descriptor.returnType?.makeNotNullable() -> true
+                    descriptor.returnType -> true
+                    descriptor.returnType?.makeNotNullable() -> !element.isVar
                     else -> false
                 }
             }
@@ -401,7 +431,11 @@ object NewJ2KPostProcessingRegistrarImpl: J2KPostProcessingRegistrar {
         override val writeActionNeeded = true
 
         override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
-            if (element !is KtTypeArgumentList || !RemoveExplicitTypeArgumentsIntention.isApplicableTo(element, approximateFlexible = true)) return null
+            if (element !is KtTypeArgumentList || !RemoveExplicitTypeArgumentsIntention.isApplicableTo(
+                    element,
+                    approximateFlexible = true
+                )
+            ) return null
 
             return {
                 if (RemoveExplicitTypeArgumentsIntention.isApplicableTo(element, approximateFlexible = true)) {
@@ -427,10 +461,12 @@ object NewJ2KPostProcessingRegistrarImpl: J2KPostProcessingRegistrar {
         private val intention = ConvertToStringTemplateIntention()
 
         override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
-            if (element is KtBinaryExpression && intention.isApplicableTo(element) && ConvertToStringTemplateIntention.shouldSuggestToConvert(element)) {
+            if (element is KtBinaryExpression && intention.isApplicableTo(element) && ConvertToStringTemplateIntention.shouldSuggestToConvert(
+                    element
+                )
+            ) {
                 return { intention.applyTo(element, null) }
-            }
-            else {
+            } else {
                 return null
             }
         }
@@ -459,7 +495,7 @@ object NewJ2KPostProcessingRegistrarImpl: J2KPostProcessingRegistrar {
 
             return {
                 RedundantSamConstructorInspection.samConstructorCallsToBeConverted(element)
-                        .forEach { RedundantSamConstructorInspection.replaceSamConstructorCall(it) }
+                    .forEach { RedundantSamConstructorInspection.replaceSamConstructorCall(it) }
             }
         }
     }
@@ -510,8 +546,9 @@ object NewJ2KPostProcessingRegistrarImpl: J2KPostProcessingRegistrar {
                 element.operationToken != KtTokens.PLUS ||
                 diagnostics.forElement(element.operationReference).none {
                     it.factory == Errors.UNRESOLVED_REFERENCE_WRONG_RECEIVER
-                    || it.factory  == Errors.NONE_APPLICABLE
-                })
+                            || it.factory == Errors.NONE_APPLICABLE
+                }
+            )
                 return null
 
             val bindingContext = element.analyze()
@@ -562,11 +599,47 @@ object NewJ2KPostProcessingRegistrarImpl: J2KPostProcessingRegistrar {
             val variable = anonymousObject.getParentOfType<KtVariableDeclaration>(true) ?: return null
 
             if (variable.nameAsName == element.getReferencedNameAsName() &&
-                variable.initializer?.getChildOfType<KtClassOrObject>() == anonymousObject) {
+                variable.initializer?.getChildOfType<KtClassOrObject>() == anonymousObject
+            ) {
                 return { element.replaced(KtPsiFactory(element).createThisExpression()) }
             }
 
             return null
         }
     }
+
+    private class VarToVal : J2kPostProcessing {
+        override val writeActionNeeded = true
+
+        private fun KtProperty.hasWriteUsages(): Boolean =
+            ReferencesSearch.search(this, useScope).any { usage ->
+                (usage as? KtSimpleNameReference)?.element?.let {
+                    it.readWriteAccess(useResolveForReadWrite = true).isWrite
+                            && it.parentOfType<KtAnonymousInitializer>() == null//TODO properly check
+                } == true
+            }
+
+        override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
+            if (element !is KtProperty) return null
+
+            fun check(element: KtProperty): Boolean {
+                if (!element.isVar) return false
+                if (!element.isPrivate()) return false
+                return !element.hasWriteUsages()
+            }
+
+            if (!check(element)) {
+                return null
+            } else {
+                return {
+                    if (element.isValid && check(element)) {
+                        val factory = KtPsiFactory(element)
+                        element.valOrVarKeyword.replace(factory.createValKeyword())
+                        println()
+                    }
+                }
+            }
+        }
+    }
+
 }
