@@ -61,7 +61,7 @@ class DeprecatedSymbolUsageFix(
             if (targetDescriptors.isEmpty()) return false
 
             return targetDescriptors.all {
-                fetchReplaceWithPattern(it, import.project) != null
+                fetchReplaceWithPattern(it, import.project, null) != null
             }
         }
     }

@@ -1,4 +1,4 @@
-// "Replace with 'NewClass<T>'" "true"
+// "Replace with 'NewClass<Int>'" "true"
 package ppp
 
 @Deprecated("renamed", ReplaceWith("NewClass<T>"))

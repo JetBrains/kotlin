@@ -17,10 +17,15 @@
 package org.jetbrains.kotlin.idea.codeInliner
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.stubindex.KotlinClassShortNameIndex
+import org.jetbrains.kotlin.idea.util.replaceOrCreateTypeArgumentList
+import org.jetbrains.kotlin.ir.expressions.typeParametersCount
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
@@ -87,14 +92,28 @@ class ClassUsageReplacementStrategy(
 
     private fun replaceConstructorCallWithOtherTypeConstruction(callExpression: KtCallExpression): KtElement {
         val referenceExpression = typeReplacement?.referenceExpression ?: error("Couldn't find referenceExpression")
-        callExpression.calleeExpression?.replace(referenceExpression)
+        val classFromReplacement = KotlinClassShortNameIndex
+            .getInstance()[referenceExpression.text, callExpression.project, callExpression.resolveScope]
+            .firstOrNull()
+
+        val replacementTypeArgumentList = typeReplacement.typeArgumentList
+        val replacementTypeArgumentCount = classFromReplacement?.typeParameters?.size
+            ?: replacementTypeArgumentList?.arguments?.size
 
         val typeArgumentList = callExpression.typeArgumentList
-        if (typeArgumentList != null && typeReplacement.typeArguments.size != typeArgumentList.arguments.size) {
-            val newTypeArgumentList = typeReplacement.typeArgumentList
-            if (newTypeArgumentList != null) typeArgumentList.replace(newTypeArgumentList.copy())
-            else typeArgumentList.delete()
+        val callDescriptor = callExpression.resolveToCall()
+            ?.resultingDescriptor
+            ?.let { if (it is TypeAliasConstructorDescriptor) it.underlyingConstructorDescriptor else it }
+        val typeArgumentCount = callDescriptor?.typeParametersCount ?: typeArgumentList?.arguments?.size
+
+        if (typeArgumentCount != replacementTypeArgumentCount) {
+            if (replacementTypeArgumentList == null) typeArgumentList?.delete()
+            else callExpression.replaceOrCreateTypeArgumentList(
+                replacementTypeArgumentList.copy() as KtTypeArgumentList
+            )
         }
+
+        callExpression.calleeExpression?.replace(referenceExpression)
 
         val expressionToReplace = callExpression.getQualifiedExpressionForSelectorOrThis()
         val newExpression = if (typeReplacementQualifierAsExpression != null)
