@@ -16,7 +16,7 @@ given URL.
    Kotlin/Native library will be generated.
 
 3. Navigate to the [ios-app](ios-app) directory and install the dependencies. The generated
-   podspec is already added in the Podfile, so just run
+   podspec is already added to the Podfile, so just run
     ```
     pod install
     ```
