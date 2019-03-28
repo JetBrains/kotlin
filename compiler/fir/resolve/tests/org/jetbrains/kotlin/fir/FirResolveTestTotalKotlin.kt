@@ -16,8 +16,10 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveTransformer
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.junit.Ignore
 import java.io.File
 
+@Ignore
 @TestDataPath("/")
 class FirResolveTestTotalKotlin : AbstractFirResolveWithSessionTestCase() {
 
