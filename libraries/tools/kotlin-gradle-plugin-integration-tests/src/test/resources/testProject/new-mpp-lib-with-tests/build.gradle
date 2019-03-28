@@ -37,7 +37,8 @@ kotlin {
         }
         configure([main, jvmWithoutJavaMain]) {
         	dependencies {
-        		implementation 'org.jetbrains.kotlin:kotlin-stdlib'
+				implementation 'org.jetbrains.kotlin:kotlin-stdlib'
+        		implementation 'org.jetbrains.kotlin:kotlin-script-runtime'
         	}
         }
         configure([test, jvmWithoutJavaTest]) {

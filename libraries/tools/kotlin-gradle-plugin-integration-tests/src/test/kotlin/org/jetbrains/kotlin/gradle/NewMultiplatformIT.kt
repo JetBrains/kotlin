@@ -398,6 +398,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                     arrayOf(
                         it + "com/example/lib/CommonKt.class",
                         it + "com/example/lib/MainKt.class",
+                        it + "Script.class",
                         it + "META-INF/new-mpp-lib-with-tests.kotlin_module"
                     )
                 },
