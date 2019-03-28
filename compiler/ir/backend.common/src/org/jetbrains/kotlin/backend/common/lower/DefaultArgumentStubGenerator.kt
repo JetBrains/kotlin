@@ -5,8 +5,14 @@
 
 package org.jetbrains.kotlin.backend.common.lower
 
-import org.jetbrains.kotlin.backend.common.*
-import org.jetbrains.kotlin.backend.common.descriptors.*
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.DeclarationContainerLoweringPass
+import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.FunctionLoweringPass
+import org.jetbrains.kotlin.backend.common.descriptors.WrappedClassConstructorDescriptor
+import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
+import org.jetbrains.kotlin.backend.common.descriptors.WrappedValueParameterDescriptor
+import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
 import org.jetbrains.kotlin.backend.common.ir.ir2string
@@ -459,9 +465,10 @@ private fun IrFunction.generateDefaultsFunctionImpl(
 }
 
 private fun buildFunctionDeclaration(irFunction: IrFunction, origin: IrDeclarationOrigin): IrFunction {
+    val funDescriptor = irFunction.symbol.descriptor
     when (irFunction) {
         is IrConstructor -> {
-            val descriptor = WrappedClassConstructorDescriptor(irFunction.descriptor.annotations, irFunction.descriptor.source)
+            val descriptor = WrappedClassConstructorDescriptor(funDescriptor.annotations, funDescriptor.source)
             return IrConstructorImpl(
                 irFunction.startOffset,
                 irFunction.endOffset,
@@ -479,7 +486,7 @@ private fun buildFunctionDeclaration(irFunction: IrFunction, origin: IrDeclarati
             }
         }
         is IrSimpleFunction -> {
-            val descriptor = WrappedSimpleFunctionDescriptor(irFunction.descriptor.annotations, irFunction.descriptor.source)
+            val descriptor = WrappedSimpleFunctionDescriptor(funDescriptor.annotations, funDescriptor.source)
             val name = Name.identifier("${irFunction.name}\$default")
 
             return IrFunctionImpl(
