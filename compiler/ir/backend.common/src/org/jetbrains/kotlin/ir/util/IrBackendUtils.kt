@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.name.Name
 
 fun IrClassSymbol.getPropertyDeclaration(name: String) =
     this.owner.declarations.filterIsInstance<IrProperty>()
-        .atMostOne { it.descriptor.name == Name.identifier(name) }
+        .atMostOne { it.name == Name.identifier(name) } ///
 
 fun IrClassSymbol.getSimpleFunction(name: String): IrSimpleFunctionSymbol? =
         owner.findDeclaration<IrSimpleFunction> { it.name.asString() == name }?.symbol
