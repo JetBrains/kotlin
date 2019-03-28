@@ -6,12 +6,23 @@
 package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.LoggingContext
-import org.jetbrains.kotlin.backend.common.descriptors.*
+import org.jetbrains.kotlin.backend.common.descriptors.WrappedClassDescriptor
+import org.jetbrains.kotlin.backend.common.descriptors.WrappedFieldDescriptor
+import org.jetbrains.kotlin.backend.common.descriptors.WrappedPropertyDescriptor
+import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.backend.common.ir.DeclarationFactory
 import org.jetbrains.kotlin.backend.common.ir.ir2string
-import org.jetbrains.kotlin.backend.common.ir.rebindWrappedDescriptor
 import org.jetbrains.kotlin.backend.common.ir.tryToRebindWrappedDescriptor
+import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrConst.ValueCase.*
+import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrDeclarator.DeclaratorCase.*
+import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrOperation.OperationCase.*
+import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatement.StatementCase
+import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrType.KindCase.*
+import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrTypeArgument.KindCase.STAR
+import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrTypeArgument.KindCase.TYPE
+import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrVarargElement.VarargElementCase
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.DescriptorInIrDeclaration
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -25,14 +36,6 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatement.*
-import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrOperation.OperationCase.*
-import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrConst.ValueCase.*
-import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrDeclarator.DeclaratorCase.*
-import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrType.KindCase.*
-import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrVarargElement.VarargElementCase
-import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrTypeArgument.KindCase.*
-import org.jetbrains.kotlin.ir.DescriptorInIrDeclaration
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 
@@ -1145,7 +1148,7 @@ abstract class IrModuleDeserializer(
 
         parent?.let { declaration.parent = it }
 
-        declaration.rebindWrappedDescriptor()
+        declaration.tryToRebindWrappedDescriptor()
 
         logger.log { "### Deserialized declaration: ${declaration.render()} -> ${ir2string(declaration)}" }
 
