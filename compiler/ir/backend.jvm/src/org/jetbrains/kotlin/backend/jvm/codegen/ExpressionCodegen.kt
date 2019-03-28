@@ -679,7 +679,7 @@ class ExpressionCodegen(
                 if (branch.condition.isFalseConst())
                     continue // The branch body is dead code.
             } else {
-                genConditionalJumpWithOptimizationsIfPossible(branch.condition, data, elseLabel)
+                BranchedValue.condJump(branch.condition.accept(this, data), elseLabel, true, mv)
             }
             val result = branch.result.accept(this, data).coerce(expression.type).materializeNonUnit()
             if (branch.condition.isTrueConst()) {
@@ -695,26 +695,6 @@ class ExpressionCodegen(
         val result = none().coerce(expression.type).materializeNonUnit()
         mv.mark(endLabel)
         return result
-    }
-
-    private fun genConditionalJumpWithOptimizationsIfPossible(
-        originalCondition: IrExpression,
-        data: BlockInfo,
-        jumpToLabel: Label,
-        originalJumpIfFalse: Boolean = true
-    ) {
-        var condition = originalCondition
-        var jumpIfFalse = originalJumpIfFalse
-
-        // Instead of materializing a negated value when used for control flow, flip the branch
-        // targets instead. This significantly cuts down the amount of branches and loads of
-        // const_0 and const_1 in the generated java bytecode.
-        if (isNegation(condition, classCodegen.context)) {
-            condition = (condition as IrCall).dispatchReceiver!!
-            jumpIfFalse = !jumpIfFalse
-        }
-
-        BranchedValue.condJump(condition.accept(this, data), jumpToLabel, jumpIfFalse, mv)
     }
 
     override fun visitTypeOperator(expression: IrTypeOperatorCall, data: BlockInfo): StackValue {
@@ -826,7 +806,7 @@ class ExpressionCodegen(
                 mv.fakeAlwaysTrueIfeq(label)
             }
         } else {
-            genConditionalJumpWithOptimizationsIfPossible(condition, data, label, jumpIfFalse)
+            BranchedValue.condJump(condition.accept(this, data), label, jumpIfFalse, mv)
         }
     }
 
