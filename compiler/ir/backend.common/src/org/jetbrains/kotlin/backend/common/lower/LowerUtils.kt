@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
-import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -74,7 +73,7 @@ class VariableRemapper(val mapping: Map<IrValueParameter, IrValueParameter>) : A
 
 class VariableRemapperDesc(val mapping: Map<ValueDescriptor, IrValueParameter>) : AbstractVariableRemapper() {
     override fun remapVariable(value: IrValueDeclaration): IrValueParameter? =
-        mapping[value.descriptor]
+        mapping[value.symbol.descriptor]
 }
 
 fun BackendContext.createIrBuilder(
@@ -211,9 +210,9 @@ fun IrConstructor.callsSuper(irBuiltIns: IrBuiltIns): Boolean {
             val delegatingClass = expression.symbol.owner.parent as IrClass
             // TODO: figure out why Lazy IR multiplies Declarations for descriptors and fix it
             // It happens because of IrBuiltIns whose IrDeclarations are different for runtime and test
-            if (delegatingClass.descriptor == superClass.classifierOrFail.descriptor)
+            if (delegatingClass.symbol.descriptor == superClass.classifierOrFail.descriptor)
                 callsSuper = true
-            else if (delegatingClass.descriptor != constructedClass.descriptor)
+            else if (delegatingClass.symbol.descriptor != constructedClass.symbol.descriptor)
                 throw AssertionError(
                     "Expected either call to another constructor of the class being constructed or" +
                             " call to super class constructor. But was: $delegatingClass"
