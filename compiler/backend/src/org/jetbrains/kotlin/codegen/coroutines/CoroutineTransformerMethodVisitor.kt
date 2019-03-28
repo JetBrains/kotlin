@@ -60,7 +60,6 @@ class CoroutineTransformerMethodVisitor(
     private val isForNamedFunction: Boolean,
     private val shouldPreserveClassInitialization: Boolean,
     private val languageVersionSettings: LanguageVersionSettings,
-    private val sourceFile: String,
     // These two are needed to report diagnostics about suspension points inside critical section
     private val element: KtElement,
     private val diagnostics: DiagnosticSink,
@@ -73,7 +72,8 @@ class CoroutineTransformerMethodVisitor(
 ) : TransformationMethodVisitor(delegate, access, name, desc, signature, exceptions) {
 
     private val classBuilderForCoroutineState: ClassBuilder by lazy(obtainClassBuilderForCoroutineState)
-    private val lineNumber = element?.let { CodegenUtil.getLineNumberForElement(it, false) } ?: 0
+    private val lineNumber = CodegenUtil.getLineNumberForElement(element, false) ?: 0
+    private val sourceFile = element.containingKtFile.name
 
     private var continuationIndex = if (isForNamedFunction) -1 else 0
     private var dataIndex = if (isForNamedFunction) -1 else 1

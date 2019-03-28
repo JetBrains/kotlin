@@ -110,7 +110,6 @@ class CoroutineTransformer(
                 shouldPreserveClassInitialization = state.constructorCallNormalizationMode.shouldPreserveClassInitialization,
                 containingClassInternalName = classBuilder.thisName,
                 isForNamedFunction = false,
-                sourceFile = element.containingKtFile.name,
                 isCrossinlineLambda = inliningContext.isContinuation
             )
         }
@@ -138,8 +137,7 @@ class CoroutineTransformer(
                 containingClassInternalName = classBuilder.thisName,
                 isForNamedFunction = true,
                 needDispatchReceiver = true,
-                internalNameForDispatchReceiver = classBuilder.thisName,
-                sourceFile = element.containingKtFile.name
+                internalNameForDispatchReceiver = classBuilder.thisName
             )
         }
     }
