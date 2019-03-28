@@ -16585,11 +16585,6 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
                 public void testAllFilesPresentInGetDelegate() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/properties/getDelegate"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS_IR, true);
                 }
-
-                @TestMetadata("noSetAccessibleTrue.kt")
-                public void testNoSetAccessibleTrue() throws Exception {
-                    runTest("compiler/testData/codegen/box/reflection/properties/getDelegate/noSetAccessibleTrue.kt");
-                }
             }
 
             @TestMetadata("compiler/testData/codegen/box/reflection/properties/jvmField")

@@ -17730,11 +17730,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 public void testAllFilesPresentInGetDelegate() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/properties/getDelegate"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
                 }
-
-                @TestMetadata("noSetAccessibleTrue.kt")
-                public void testNoSetAccessibleTrue() throws Exception {
-                    runTest("compiler/testData/codegen/box/reflection/properties/getDelegate/noSetAccessibleTrue.kt");
-                }
             }
 
             @TestMetadata("compiler/testData/codegen/box/reflection/properties/jvmField")

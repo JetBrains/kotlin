@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
 import org.jetbrains.kotlin.ir.descriptors.IrLocalDelegatedPropertyDelegateDescriptor
 import org.jetbrains.kotlin.ir.descriptors.IrLocalDelegatedPropertyDelegateDescriptorImpl
 import org.jetbrains.kotlin.ir.descriptors.IrPropertyDelegateDescriptor
@@ -122,10 +123,17 @@ class DelegatedPropertyGenerator(declarationGenerator: DeclarationGenerator) : D
         val delegateType = getDelegatedPropertyDelegateType(propertyDescriptor, ktDelegate)
         val delegateDescriptor = createPropertyDelegateDescriptor(propertyDescriptor, delegateType, kPropertyType)
 
+        val startOffset = ktDelegate.startOffsetSkippingComments
+        val endOffset = ktDelegate.endOffset
+        val origin = IrDeclarationOrigin.DELEGATE
+        val type = delegateDescriptor.type.toIrType()
         return context.symbolTable.declareField(
-            ktDelegate.startOffsetSkippingComments, ktDelegate.endOffset, IrDeclarationOrigin.DELEGATE,
-            delegateDescriptor, delegateDescriptor.type.toIrType()
-        ).also { irDelegate ->
+            startOffset, endOffset, origin, delegateDescriptor, type
+        ) {
+            IrFieldImpl(startOffset, endOffset, origin, it, type).apply {
+                metadata = MetadataSource.Property(propertyDescriptor)
+            }
+        }.also { irDelegate ->
             irDelegate.initializer = generateInitializerBodyForPropertyDelegate(
                 propertyDescriptor, kPropertyType, ktDelegate,
                 irDelegate.symbol
