@@ -496,6 +496,7 @@ class JavaToJKTreeBuilder constructor(
     }
 
     private inner class DeclarationMapper(val expressionTreeMapper: ExpressionTreeMapper) {
+
         fun PsiTypeParameterList.toJK(): JKTypeParameterList =
             JKTypeParameterListImpl(typeParameters.map { it.toJK() })
                 .also {
@@ -705,7 +706,8 @@ class JavaToJKTreeBuilder constructor(
 
         fun PsiAnnotation.toJK(): JKAnnotation =
             JKAnnotationImpl(
-                symbolProvider.provideSymbol(nameReferenceElement!!),
+                symbolProvider.provideSymbol(nameReferenceElement!!).safeAs<JKClassSymbol>()
+                    ?: JKUnresolvedClassSymbol(nameReferenceElement!!.text),
                 parameterList.attributes.map { parameter ->
                     if (parameter.nameIdentifier != null) {
                         JKAnnotationNameParameterImpl(
@@ -954,7 +956,14 @@ class JavaToJKTreeBuilder constructor(
     fun buildTree(psi: PsiElement): JKTreeElement? =
         when (psi) {
             is PsiJavaFile -> psi.toJK()
-            else -> error("Cannot convert non-java file")
+            is PsiExpression -> with(expressionTreeMapper) { psi.toJK() }
+            is PsiStatement -> with(declarationMapper) { psi.toJK() }
+            is PsiClass -> with(declarationMapper) { psi.toJK() }
+            is PsiField -> with(declarationMapper) { psi.toJK() }
+            is PsiMethod -> with(declarationMapper) { psi.toJK() }
+            is PsiAnnotation -> with(declarationMapper) { psi.toJK() }
+            else ->
+                null
         }
 
     private val tokenCache = mutableMapOf<PsiElement, JKNonCodeElement>()

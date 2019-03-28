@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.nj2k
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiExpression
+import com.intellij.psi.PsiStatement
 import org.jetbrains.kotlin.j2k.*
 import org.jetbrains.kotlin.nj2k.tree.JKTreeElement
 import org.jetbrains.kotlin.nj2k.tree.prettyDebugPrintTree
@@ -49,7 +51,9 @@ class NewJavaToKotlinConverter(
         symbolProvider.preBuildTree(inputElements)
         val importStorage = ImportStorage()
         val treeBuilder = JavaToJKTreeBuilder(symbolProvider, converterServices, importStorage)
-        val asts = inputElements.mapNotNull(treeBuilder::buildTree)
+        val asts = inputElements.map { element ->
+            element to treeBuilder.buildTree(element)
+        }
 
         val context = ConversionContext(
             symbolProvider,
@@ -57,17 +61,22 @@ class NewJavaToKotlinConverter(
             { it.containingFile in inputElements },
             importStorage
         )
-        ConversionsRunner.doApply(asts, context)
-        val kotlinCodes = asts.map { NewCodeBuilder().run { printCodeOut(it) } }
-        return Result(
-            kotlinCodes.map { code ->
-                ElementResult(
-                    code,
-                    importsToAdd = importStorage.getImports(),
-                    parseContext = ParseContext.TOP_LEVEL
-                )
-            },
-            null
-        )
+
+        ConversionsRunner.doApply(asts.mapNotNull { it.second }, context)
+        val results = asts.map { (element, ast) ->
+            if (ast == null) return@map null
+            val code = NewCodeBuilder().run { printCodeOut(ast) }
+            val parseContext = when (element) {
+                is PsiStatement, is PsiExpression -> ParseContext.CODE_BLOCK
+                else -> ParseContext.TOP_LEVEL
+            }
+            ElementResult(
+                code,
+                importsToAdd = importStorage.getImports(),
+                parseContext = parseContext
+            )
+        }
+
+        return Result(results, null)
     }
 }
