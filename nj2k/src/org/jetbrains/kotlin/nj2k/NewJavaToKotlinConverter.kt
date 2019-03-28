@@ -21,6 +21,8 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.j2k.*
 import org.jetbrains.kotlin.nj2k.tree.JKTreeElement
 import org.jetbrains.kotlin.nj2k.tree.prettyDebugPrintTree
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtPsiFactory
 
 class NewJavaToKotlinConverter(
     val project: Project,
@@ -30,6 +32,9 @@ class NewJavaToKotlinConverter(
     val converterServices = object : NewJavaToKotlinServices {
         override val oldServices = oldConverterServices
     }
+
+    override fun createDummyKtFile(text: String, project: Project, context: PsiElement): KtFile =
+        KtPsiFactory(project).createFileWithLightClassSupport("dummy.kt", text, context)
 
     private fun List<JKTreeElement>.prettyPrintTrees() = buildString {
         for (tree in this@prettyPrintTrees) {

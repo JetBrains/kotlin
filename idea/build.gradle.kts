@@ -96,6 +96,7 @@ dependencies {
     testRuntime(project(":idea:idea-android")) { isTransitive = false }
     testRuntime(project(":plugins:lint")) { isTransitive = false }
     testRuntime(project(":plugins:uast-kotlin"))
+    testRuntime(project(":nj2k:nj2k-services")) { isTransitive = false }
 
     (rootProject.extra["compilerModules"] as Array<String>).forEach {
         testRuntime(project(it))

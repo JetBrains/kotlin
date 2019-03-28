@@ -67,6 +67,7 @@ data class FilesResult(val results: List<String>, val externalCodeProcessing: Ex
 
 abstract class JavaToKotlinConverter(private val project: Project) {
     protected abstract fun elementsToKotlin(inputElements: List<PsiElement>, processor: WithProgressProcessor): Result
+    protected abstract fun createDummyKtFile(text: String, project: Project, context: PsiElement): KtFile
 
     private val LOG = Logger.getInstance("#org.jetbrains.kotlin.j2k.JavaToKotlinConverter")
 
@@ -84,7 +85,7 @@ abstract class JavaToKotlinConverter(private val project: Project) {
             val (i, result) = pair
             try {
                 val kotlinFile = ApplicationManager.getApplication().runReadAction(Computable {
-                    KtPsiFactory(project).createFileWithLightClassSupport("dummy.kt", result!!.text, files[i])
+                    createDummyKtFile(result!!.text, project, files[i])
                 })
 
 
@@ -119,7 +120,10 @@ class OldJavaToKotlinConverter(
     private val services: JavaToKotlinConverterServices
 ) : JavaToKotlinConverter(project) {
 
-    protected override fun elementsToKotlin(inputElements: List<PsiElement>, processor: WithProgressProcessor): Result {
+    override fun createDummyKtFile(text: String, project: Project, context: PsiElement): KtFile =
+        KtPsiFactory(project).createAnalyzableFile("dummy.kt", text, context)
+
+    override fun elementsToKotlin(inputElements: List<PsiElement>, processor: WithProgressProcessor): Result {
         try {
             val usageProcessings = LinkedHashMap<PsiElement, MutableCollection<UsageProcessing>>()
             val usageProcessingCollector: (UsageProcessing) -> Unit = {

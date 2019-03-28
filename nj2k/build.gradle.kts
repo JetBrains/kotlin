@@ -8,11 +8,9 @@ plugins {
 dependencies {
     testRuntime(intellijDep())
 
-    compile(project(":j2k"))
-    testCompile(files(project(":j2k").dependencyProject.sourceSets.getByName("test").output))
-
+    compile(kotlinStdlib())
     compile(project(":idea:idea-core"))
-    compile(project(":kotlin-stdlib"))
+    compile(project(":j2k"))
     compile(project(":compiler:frontend"))
     compile(project(":compiler:frontend.java"))
     compile(project(":compiler:light-classes"))
@@ -20,6 +18,7 @@ dependencies {
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 
     testCompile(project(":idea"))
+    testCompile(projectTests(":j2k"))
     testCompile(project(":nj2k:nj2k-services"))
     testCompile(projectTests(":idea:idea-test-framework"))
     testCompile(project(":compiler:light-classes"))
@@ -61,6 +60,7 @@ dependencies {
     testRuntime(intellijPluginDep("properties"))
     testRuntime(intellijPluginDep("java-i18n"))
     testRuntime(intellijPluginDep("java-decompiler"))
+    testRuntime(project(":plugins:kapt3-idea")) { isTransitive = false }
 }
 
 sourceSets {
@@ -73,11 +73,8 @@ projectTest {
     workingDir = rootDir
 }
 
+
 testsJar()
-
-
-val test: Test by tasks
-val cleanTest by tasks
 
 configureFreeCompilerArg(true, "-Xeffect-system")
 configureFreeCompilerArg(true, "-Xnew-inference")
@@ -93,6 +90,4 @@ fun configureFreeCompilerArg(isEnabled: Boolean, compilerArgument: String) {
         }
     }
 }
-
 ideaPlugin()
-
