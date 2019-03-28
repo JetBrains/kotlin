@@ -22,10 +22,7 @@ import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
-import org.jetbrains.kotlin.psi.KtDeclarationWithBody
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
@@ -431,8 +428,10 @@ class CoroutineCodegenForLambda private constructor(
             v.store(newIndex, mappedType)
 
             val name =
-                if (parameter is ReceiverParameterDescriptor) AsmUtil.RECEIVER_PARAMETER_NAME
-                else (getNameForDestructuredParameterOrNull(parameter as ValueParameterDescriptor) ?: parameter.name.asString())
+                if (parameter is ReceiverParameterDescriptor)
+                    AsmUtil.getNameForReceiverParameter(originalSuspendFunctionDescriptor, bindingContext, languageVersionSettings)
+                else
+                    (getNameForDestructuredParameterOrNull(parameter as ValueParameterDescriptor) ?: parameter.name.asString())
             val label = Label()
             v.mark(label)
             v.visitLocalVariable(name, mappedType.descriptor, null, label, endLabel, newIndex)
@@ -478,6 +477,9 @@ class CoroutineCodegenForLambda private constructor(
                 }
 
                 override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
+                    if (element is KtFunctionLiteral) {
+                        recordCallLabelForLambdaArgument(element, state.bindingTrace)
+                    }
                     codegen.initializeCoroutineParameters()
                     super.doGenerateBody(codegen, signature)
                 }
