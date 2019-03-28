@@ -126,11 +126,6 @@ class ConvertGettersAndSetters : NewJ2kPostProcessing {
         )
     }
 
-    private val keywords = KtTokens.KEYWORDS.types.map { (it as KtKeywordToken).value }.toSet()
-
-    private fun String.escaped() =
-        if (this in keywords) "`$this`"
-        else this
 
     private fun KtFunction.getterName() =
         name?.takeIf { JvmAbi.isGetterName(it) }

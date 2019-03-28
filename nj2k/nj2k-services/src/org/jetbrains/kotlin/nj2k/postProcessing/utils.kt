@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.lexer.KtKeywordToken
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
@@ -77,3 +79,9 @@ fun KtElement.hasUsagesOutsideOf(inElement: KtElement, outsideElements: List<KtE
     ReferencesSearch.search(this, LocalSearchScope(inElement)).any { reference ->
         outsideElements.none { it.isAncestor(reference.element) }
     }
+
+fun String.escaped() =
+    if (this in keywords || '$' in this) "`$this`"
+    else this
+
+private val keywords = KtTokens.KEYWORDS.types.map { (it as KtKeywordToken).value }.toSet()

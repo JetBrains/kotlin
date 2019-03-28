@@ -23,12 +23,13 @@ import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 class ConvertDataClass : NewJ2kPostProcessing {
     override val writeActionNeeded: Boolean = true
 
-    fun KtCallableDeclaration.rename(newName: String) {
+    private fun KtCallableDeclaration.rename(newName: String) {
         val factory = KtPsiFactory(this)
+        val escapedName = newName.escaped()
         ReferencesSearch.search(this, LocalSearchScope(containingKtFile)).forEach {
-            it.element.replace(factory.createExpression(newName))
+            it.element.replace(factory.createExpression(escapedName))
         }
-        setName(newName)
+        setName(escapedName)
     }
 
     private data class DataClassInfo(
