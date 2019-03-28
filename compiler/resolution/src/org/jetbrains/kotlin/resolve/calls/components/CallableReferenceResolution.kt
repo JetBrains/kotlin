@@ -315,7 +315,7 @@ class CallableReferencesCandidateFactory(
 
                 return callComponents.reflectionTypes.getKFunctionType(
                     Annotations.EMPTY, null, argumentsAndReceivers, null,
-                    returnType, descriptor.builtIns, isSuspend = false
+                    returnType, descriptor.builtIns, descriptor.isSuspend
                 ) to defaults
             }
             else -> error("Unsupported descriptor type: $descriptor")
@@ -347,15 +347,20 @@ fun extractInputOutputTypesFromCallableReferenceExpectedType(expectedType: Unwra
     if (expectedType == null) return null
 
     return when {
-        expectedType.isFunctionType ->
+        expectedType.isFunctionType || expectedType.isSuspendFunctionType ->
             extractInputOutputTypesFromFunctionType(expectedType)
 
         ReflectionTypes.isBaseTypeForNumberedReferenceTypes(expectedType) ->
             InputOutputTypes(emptyList(), expectedType.arguments.single().type.unwrap())
 
-        ReflectionTypes.isNumberedKFunctionOrKSuspendFunction(expectedType) -> {
+        ReflectionTypes.isNumberedKFunction(expectedType) -> {
             val functionFromSupertype = expectedType.immediateSupertypes().first { it.isFunctionType }.unwrap()
             extractInputOutputTypesFromFunctionType(functionFromSupertype)
+        }
+
+        ReflectionTypes.isNumberedKSuspendFunction(expectedType) -> {
+            val kSuspendFunctionType = expectedType.immediateSupertypes().first { it.isSuspendFunctionType }.unwrap()
+            extractInputOutputTypesFromFunctionType(kSuspendFunctionType)
         }
 
         ReflectionTypes.isNumberedKPropertyOrKMutablePropertyType(expectedType) -> {
