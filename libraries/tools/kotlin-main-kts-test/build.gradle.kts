@@ -10,10 +10,13 @@ dependencies {
     testCompile(project(":kotlin-scripting-jvm-host-embeddable"))
     testCompile(commonDep("junit"))
     compileOnly("org.apache.ivy:ivy:2.4.0") // for jps/pill
+
+    if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
+        testCompile(project(":kotlin-scripting-jvm-host"))
+    }
 }
 
 sourceSets {
     "main" { }
     "test" { projectDefault() }
 }
-
