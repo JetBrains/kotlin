@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.backend.jvm.codegen.BlockInfo
 import org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.AsmUtil.comparisonOperandType
 import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
@@ -66,24 +67,14 @@ class PrimitiveComparison(
     private val primitiveNumberType: KotlinType,
     private val operatorToken: KtSingleValueToken
 ) : IntrinsicMethod() {
-
-    override fun toCallable(
-        expression: IrMemberAccessExpression,
-        signature: JvmMethodSignature,
-        context: JvmBackendContext
-    ): IrIntrinsicFunction {
-        val parameterType = context.state.typeMapper.mapType(primitiveNumberType)
-
-        return object : IrIntrinsicFunction(expression, signature, context, listOf(parameterType, parameterType)) {
-            override fun invoke(v: InstructionAdapter, codegen: ExpressionCodegen, data: BlockInfo): StackValue {
-                loadArguments(codegen, data)
-                return StackValue.cmp(
-                    operatorToken,
-                    parameterType,
-                    StackValue.onStack(parameterType, primitiveNumberType),
-                    StackValue.onStack(parameterType, primitiveNumberType)
-                )
-            }
-        }
+    override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): StackValue? {
+        val parameterType = codegen.typeMapper.mapType(primitiveNumberType)
+        val (left, right) = expression.receiverAndArgs()
+        return StackValue.cmp(
+            operatorToken,
+            parameterType,
+            codegen.gen(left, parameterType, data),
+            codegen.gen(right, parameterType, data)
+        )
     }
 }

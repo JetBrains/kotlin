@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.AsmUtil.*
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
+import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.types.toKotlinType
@@ -27,40 +28,27 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 class Equals(val operator: IElementType) : IntrinsicMethod() {
-
-    override fun toCallable(
-        expression: IrMemberAccessExpression,
-        signature: JvmMethodSignature,
-        context: JvmBackendContext
-    ): IrIntrinsicFunction {
-        val receiverAndArgs = expression.receiverAndArgs().apply {
-            assert(size == 2) { "Equals expects 2 arguments, but ${joinToString()}" }
-        }
-
-        val (leftArg, rightArg) = receiverAndArgs
-        var leftType = context.state.typeMapper.mapType(leftArg.type.toKotlinType())
-        var rightType = context.state.typeMapper.mapType(rightArg.type.toKotlinType())
+    override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): StackValue? {
+        val (leftArg, rightArg) = expression.receiverAndArgs()
+        var leftType = codegen.typeMapper.mapType(leftArg.type.toKotlinType())
+        var rightType = codegen.typeMapper.mapType(rightArg.type.toKotlinType())
         if (isPrimitive(leftType) != isPrimitive(rightType)) {
             leftType = boxType(leftType)
             rightType = boxType(rightType)
         }
 
-        return object : IrIntrinsicFunction(expression, signature, context, listOf(leftType, rightType)) {
-            override fun invoke(v: InstructionAdapter, codegen: ExpressionCodegen, data: BlockInfo): StackValue {
-                val opToken = expression.origin
-                return if (leftArg.isNullConst() || rightArg.isNullConst()) {
-                    val other = if (leftArg.isNullConst()) rightArg else leftArg
-                    StackValue.compareWithNull(other.accept(codegen, data), Opcodes.IFNONNULL)
-                } else if (leftType.isFloatingPoint && rightType.isFloatingPoint) {
-                    genEqualsBoxedOnStack(operator)
-                } else if (opToken === IrStatementOrigin.EQEQEQ || opToken === IrStatementOrigin.EXCLEQEQ) {
-                    // TODO: always casting to the type of the left operand in case of primitives looks wrong
-                    val operandType = if (isPrimitive(leftType)) leftType else OBJECT_TYPE
-                    StackValue.cmp(operator, operandType, codegen.gen(leftArg, operandType, data), codegen.gen(rightArg, operandType, data))
-                } else {
-                    genEqualsForExpressionsOnStack(operator, codegen.gen(leftArg, leftType, data), codegen.gen(rightArg, rightType, data))
-                }
-            }
+        val opToken = expression.origin
+        return if (leftArg.isNullConst() || rightArg.isNullConst()) {
+            val other = if (leftArg.isNullConst()) rightArg else leftArg
+            return StackValue.compareWithNull(other.accept(codegen, data), Opcodes.IFNONNULL)
+        } else if (leftType.isFloatingPoint && rightType.isFloatingPoint) {
+            genEqualsBoxedOnStack(operator)
+        } else if (opToken === IrStatementOrigin.EQEQEQ || opToken === IrStatementOrigin.EXCLEQEQ) {
+            // TODO: always casting to the type of the left operand in case of primitives looks wrong
+            val operandType = if (isPrimitive(leftType)) leftType else OBJECT_TYPE
+            StackValue.cmp(operator, operandType, codegen.gen(leftArg, operandType, data), codegen.gen(rightArg, operandType, data))
+        } else {
+            genEqualsForExpressionsOnStack(operator, codegen.gen(leftArg, leftType, data), codegen.gen(rightArg, rightType, data))
         }
     }
 
@@ -122,3 +110,4 @@ class Ieee754Equals(val operandType: Type) : IntrinsicMethod() {
         }
     }
 }
+
