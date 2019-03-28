@@ -25,6 +25,9 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.checkConstraint
 import org.jetbrains.kotlin.resolve.constants.IntegerLiteralTypeConstructor
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.intersectTypes
+import org.jetbrains.kotlin.types.checker.isIntegerLiteralType
+import org.jetbrains.kotlin.types.typeUtil.contains
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class ResultTypeResolver(
     val typeApproximator: TypeApproximator,
@@ -87,7 +90,8 @@ class ResultTypeResolver(
     private fun findSubType(c: Context, variableWithConstraints: VariableWithConstraints): UnwrappedType? {
         val lowerConstraints = variableWithConstraints.constraints.filter { it.kind == ConstraintKind.LOWER && c.isProperType(it.type) }
         if (lowerConstraints.isNotEmpty()) {
-            val commonSuperType = NewCommonSuperTypeCalculator.commonSuperType(lowerConstraints.map { it.type })
+            val types = sinkIntegerLiteralTypes(lowerConstraints.map { it.type })
+            val commonSuperType = NewCommonSuperTypeCalculator.commonSuperType(types)
             /**
              *
              * fun <T> Array<out T>.intersect(other: Iterable<T>) {
@@ -113,6 +117,14 @@ class ResultTypeResolver(
         }
 
         return null
+    }
+
+    private fun sinkIntegerLiteralTypes(types: List<UnwrappedType>): List<UnwrappedType> {
+        return types.sortedBy { type ->
+
+            val containsILT = type.contains { it.unwrap().safeAs<SimpleType>()?.isIntegerLiteralType ?: false }
+            if (containsILT) 1 else 0
+        }
     }
 
     private fun findSuperType(c: Context, variableWithConstraints: VariableWithConstraints): UnwrappedType? {
