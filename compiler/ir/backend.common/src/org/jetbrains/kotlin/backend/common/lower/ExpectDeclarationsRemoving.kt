@@ -7,6 +7,9 @@ package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.ir.getAnnotationClass
+import org.jetbrains.kotlin.backend.common.ir.isExpect
+import org.jetbrains.kotlin.backend.common.serialization.constructedClass
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -15,6 +18,8 @@ import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.ir.util.isAnnotationClass
 import org.jetbrains.kotlin.ir.util.referenceFunction
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -32,8 +37,7 @@ class ExpectDeclarationsRemoving(val context: BackendContext) : FileLoweringPass
     override fun lower(irFile: IrFile) {
         // All declarations with `isExpect == true` are nested into a top-level declaration with `isExpect == true`.
         irFile.declarations.removeAll {
-            val descriptor = it.descriptor
-            if (descriptor is MemberDescriptor && descriptor.isExpect) {
+            if (it.isExpect) {
                 copyDefaultArgumentsFromExpectToActual(it)
                 true
             } else {
@@ -57,11 +61,13 @@ class ExpectDeclarationsRemoving(val context: BackendContext) : FileLoweringPass
                 val index = declaration.index
                 assert(function.valueParameters[index] == declaration)
 
-                if (function is IrConstructor &&
-                    ExpectedActualDeclarationChecker.isOptionalAnnotationClass(
-                        function.descriptor.constructedClass
-                    )
-                ) {
+                fun IrClass.isOptionalAnnotationClass(): Boolean {
+                    if (!isAnnotationClass) return false
+                    if (!isExpect) return false
+                    return annotations.any { it.getAnnotationClass().fqNameWhenAvailable == ExpectedActualDeclarationChecker.OPTIONAL_EXPECTATION_FQ_NAME }
+                }
+
+                if (function is IrConstructor && function.constructedClass.isOptionalAnnotationClass()) {
                     return
                 }
 
@@ -80,10 +86,10 @@ class ExpectDeclarationsRemoving(val context: BackendContext) : FileLoweringPass
     }
 
     private fun IrFunction.findActualForExpected(): IrFunction =
-        context.ir.symbols.externalSymbolTable.referenceFunction(descriptor.findActualForExpect()).owner
+        context.ir.symbols.externalSymbolTable.referenceFunction(symbol.descriptor.findActualForExpect()).owner
 
     private fun IrClass.findActualForExpected(): IrClass =
-        context.ir.symbols.externalSymbolTable.referenceClass(descriptor.findActualForExpect()).owner
+        context.ir.symbols.externalSymbolTable.referenceClass(symbol.descriptor.findActualForExpect()).owner
 
     private inline fun <reified T : MemberDescriptor> T.findActualForExpect() = with(ExpectedActualResolver) {
         val descriptor = this@findActualForExpect
