@@ -15,9 +15,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.OverridingUtil
 
-internal val DeclarationDescriptor.isSerializableExpectClass: Boolean
-    get() = this is ClassDescriptor && ExpectedActualDeclarationChecker.shouldGenerateExpectClass(this)
-
 internal tailrec fun DeclarationDescriptor.findPackage(): PackageFragmentDescriptor {
     return if (this is PackageFragmentDescriptor) this
     else this.containingDeclaration!!.findPackage()
