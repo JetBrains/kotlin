@@ -23,46 +23,35 @@ import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.JKKtFunctionImpl
 import org.jetbrains.kotlin.nj2k.tree.impl.psi
 
-class JavaMethodToKotlinFunctionConversion(private val context: ConversionContext) : TransformerBasedConversion() {
-    override fun visitTreeElement(element: JKTreeElement) {
-        element.acceptChildren(this, null)
-    }
+class JavaMethodToKotlinFunctionConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
+    override fun applyToElement(element: JKTreeElement): JKTreeElement {
+        if (element !is JKJavaMethod) return recurse(element)
 
-    override fun visitClassBody(classBody: JKClassBody) {
-        somethingChanged = true
-
-        classBody.declarations = classBody.declarations.map { declaration ->
-            if (declaration is JKJavaMethod) {
-                declaration.invalidate()
-
-                JKKtFunctionImpl(
-                    declaration.returnType,
-                    declaration.name,
-                    declaration.parameters,
-                    declaration.block,
-                    declaration.typeParameterList,
-                    declaration.annotationList.also {
-                        if (declaration.throwsList.isNotEmpty()) {
-                            it.annotations +=
-                                throwAnnotation(
-                                    declaration.throwsList.map { it.type.updateNullabilityRecursively(Nullability.NotNull) },
-                                    context.symbolProvider
-                                )
-                        }
-                    },
-                    declaration.extraModifierElements,
-                    declaration.visibilityElement,
-                    declaration.modalityElement
-                ).also {
-                    it.psi = declaration.psi
-                    context.symbolProvider.transferSymbol(it, declaration)
-                    it.leftParen.takeNonCodeElementsFrom(declaration.leftParen)
-                    it.rightParen.takeNonCodeElementsFrom(declaration.rightParen)
-                }.withNonCodeElementsFrom(declaration)
-            } else {
-                declaration
-            }
-        }
-        classBody.acceptChildren(this)
+        element.invalidate()
+        val kotlinFunction = JKKtFunctionImpl(
+            element.returnType,
+            element.name,
+            element.parameters,
+            element.block,
+            element.typeParameterList,
+            element.annotationList.also {
+                if (element.throwsList.isNotEmpty()) {
+                    it.annotations +=
+                        throwAnnotation(
+                            element.throwsList.map { it.type.updateNullabilityRecursively(Nullability.NotNull) },
+                            context.symbolProvider
+                        )
+                }
+            },
+            element.extraModifierElements,
+            element.visibilityElement,
+            element.modalityElement
+        ).also {
+            it.psi = element.psi
+            context.symbolProvider.transferSymbol(it, element)
+            it.leftParen.takeNonCodeElementsFrom(element.leftParen)
+            it.rightParen.takeNonCodeElementsFrom(element.rightParen)
+        }.withNonCodeElementsFrom(element)
+        return recurse(kotlinFunction)
     }
 }
