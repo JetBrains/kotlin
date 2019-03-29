@@ -10,11 +10,10 @@ import com.intellij.openapi.roots.libraries.DummyLibraryProperties
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.roots.libraries.PersistentLibraryKind
 import com.intellij.openapi.roots.ui.configuration.libraries.CustomLibraryDescription
-import org.jetbrains.kotlin.ide.konan.analyzer.NativeAnalyzerFacade
+import org.jetbrains.kotlin.ide.konan.analyzer.NativeResolverForModuleFactory
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.gradle.KotlinPlatform
-import org.jetbrains.kotlin.idea.framework.CustomLibraryDescriptorWithDeferredConfig
 import org.jetbrains.kotlin.idea.framework.KotlinLibraryKind
 import org.jetbrains.kotlin.idea.platform.IdePlatformKindTooling
 import org.jetbrains.kotlin.platform.impl.NativeIdePlatformKind
@@ -29,7 +28,7 @@ class NativeIdePlatformKindTooling : IdePlatformKindTooling() {
 
     override fun compilerArgumentsForProject(project: Project): CommonCompilerArguments? = null
 
-    override val resolverForModuleFactory get() = NativeAnalyzerFacade
+    override val resolverForModuleFactory get() = NativeResolverForModuleFactory
 
     override val mavenLibraryIds: List<String> get() = emptyList()
     override val gradlePluginId: String get() = ""
