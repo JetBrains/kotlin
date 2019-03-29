@@ -181,7 +181,7 @@ class LocalDeclarationsLowering(
         val localClasses: MutableMap<IrClass, LocalClassContext> = LinkedHashMap()
         val localClassConstructors: MutableMap<IrConstructor, LocalClassConstructorContext> = LinkedHashMap()
 
-        val transformedDeclarations = mutableMapOf<IrDeclaration, IrDeclaration>()
+        val transformedDeclarations = mutableMapOf<IrSymbolOwner, IrDeclaration>()
 
         val IrFunction.transformed: IrFunction?
             get() = transformedDeclarations[this] as IrFunction?
@@ -391,7 +391,7 @@ class LocalDeclarationsLowering(
             }
 
             override fun visitDeclaration(declaration: IrDeclaration): IrStatement {
-                if (declaration in transformedDeclarations) {
+                if (declaration is IrSymbolOwner && declaration in transformedDeclarations) {
                     TODO()
                 }
                 return super.visitDeclaration(declaration)
