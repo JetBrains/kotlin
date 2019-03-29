@@ -8,10 +8,7 @@ package org.jetbrains.kotlin.ir.declarations.lazy
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
@@ -25,7 +22,7 @@ abstract class IrLazyDeclarationBase(
     override var origin: IrDeclarationOrigin,
     private val stubGenerator: DeclarationStubGenerator,
     protected val typeTranslator: TypeTranslator
-) : IrElementBase(startOffset, endOffset), IrDeclaration {
+) : IrElementBase(startOffset, endOffset), IrDeclaration, IrSymbolOwner {
 
     protected fun KotlinType.toIrType() = typeTranslator.translateType(this)
 
@@ -49,6 +46,9 @@ abstract class IrLazyDeclarationBase(
     override var parent: IrDeclarationParent by lazyVar {
         createLazyParent()!!
     }
+
+    private val IrSymbolOwner.descriptor: DeclarationDescriptor
+        get() = symbol.descriptor
 
     override val annotations: MutableList<IrCall> by lazy {
         descriptor.annotations.map {
