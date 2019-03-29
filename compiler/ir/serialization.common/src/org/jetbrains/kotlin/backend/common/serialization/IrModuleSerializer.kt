@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.ir.ir2string
+import org.jetbrains.kotlin.backend.common.ir.isExpect
 import org.jetbrains.kotlin.backend.common.library.CombinedIrFileWriter
 import org.jetbrains.kotlin.backend.common.library.DeclarationId
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -1109,7 +1110,7 @@ open class IrModuleSerializer(
             .setAnnotations(serializeAnnotations(file.annotations))
 
         file.declarations.forEach {
-            if (it.isSerializableExpectClass) {
+            if (it.isExpect && !it.isSerializableExpectClass) {
                 writer.skipDeclaration()
                 return@forEach
             }
