@@ -51,7 +51,7 @@ val KonanLibrary.uniqueName
     get() = manifestProperties.getProperty(KLIB_PROPERTY_UNIQUE_NAME)!!
 
 val KonanLibrary.unresolvedDependencies: List<UnresolvedLibrary>
-    get() = manifestProperties.propertyList(KLIB_PROPERTY_DEPENDS)
+    get() = manifestProperties.propertyList(KLIB_PROPERTY_DEPENDS, escapeInQuotes = true)
             .map {
                 UnresolvedLibrary(it, manifestProperties.getProperty("dependency_version_$it"))
             }
@@ -63,11 +63,11 @@ val KonanLibrary.packageFqName
     get() = manifestProperties.getProperty(KLIB_PROPERTY_PACKAGE)
 
 val KonanLibrary.exportForwardDeclarations
-    get() = manifestProperties.getProperty(KLIB_PROPERTY_EXPORT_FORWARD_DECLARATIONS)
-            .split(' ').asSequence()
+    get() = manifestProperties.propertyList(KLIB_PROPERTY_EXPORT_FORWARD_DECLARATIONS, escapeInQuotes = true)
+            .asSequence()
             .map { it.trim() }
             .filter { it.isNotEmpty() }
             .toList()
 
 val KonanLibrary.includedHeaders
-    get() = manifestProperties.getProperty(KLIB_PROPERTY_INCLUDED_HEADERS).split(' ')
+    get() = manifestProperties.propertyList(KLIB_PROPERTY_INCLUDED_HEADERS, escapeInQuotes = true)

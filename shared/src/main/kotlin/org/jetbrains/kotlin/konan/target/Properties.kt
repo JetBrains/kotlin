@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.konan.properties
 // FIXME(ddol): KLIB-REFACTORING-CLEANUP: remove the whole file!
 
 import org.jetbrains.kotlin.konan.file.*
+import org.jetbrains.kotlin.konan.util.parseSpaceSeparatedArgs
 
 typealias Properties = java.util.Properties
 
@@ -47,11 +48,11 @@ fun Properties.propertyString(key: String, suffix: String? = null): String? = ge
  * functionality borrowed from def file parser and unified for interop tool
  * and kotlin compiler.
  */
-fun Properties.propertyList(key: String, suffix: String? = null): List<String> {
+fun Properties.propertyList(key: String, suffix: String? = null, escapeInQuotes: Boolean = false): List<String> {
     val value = this.getProperty(key.suffix(suffix)) ?: this.getProperty(key)
     if (value?.isBlank() == true) return emptyList()
-
-    return value?.split(Regex("\\s+")) ?: emptyList()
+    return if (escapeInQuotes) value?.let { parseSpaceSeparatedArgs(it) } ?: emptyList()
+        else value?.split(Regex("\\s+")) ?: emptyList()
 }
 
 fun Properties.hasProperty(key: String, suffix: String? = null): Boolean
