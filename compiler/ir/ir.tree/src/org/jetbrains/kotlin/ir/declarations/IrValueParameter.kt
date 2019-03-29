@@ -24,9 +24,6 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 
 interface IrValueParameter : IrValueDeclaration, IrSymbolDeclaration<IrValueParameterSymbol> {
-    @DescriptorInIrDeclaration
-    override val descriptor: ParameterDescriptor
-
     val index: Int
     val varargElementType: IrType?
     val isCrossinline: Boolean
