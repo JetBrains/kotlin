@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.descriptor
 import org.jetbrains.kotlin.ir.types.IrType
 
 fun SymbolTable.declareSimpleFunctionWithOverrides(
