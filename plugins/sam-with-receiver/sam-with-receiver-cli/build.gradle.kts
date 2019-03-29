@@ -25,17 +25,13 @@ sourceSets {
 
 publish()
 
-val jar = runtimeJar {}
+runtimeJar()
 sourcesJar()
 javadocJar()
 testsJar {}
 
 dist {
     rename("kotlin-", "")
-}
-
-ideaPlugin {
-    from(jar)
 }
 
 projectTest {

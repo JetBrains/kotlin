@@ -55,5 +55,3 @@ sourcesJar()
 javadocJar()
 
 dist()
-
-ideaPlugin()

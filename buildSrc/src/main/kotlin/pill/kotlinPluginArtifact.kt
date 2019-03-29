@@ -131,7 +131,7 @@ fun generateKotlinPluginArtifactFile(rootProject: Project): PFile {
 
                     kotlinPluginJar.add(FileCopy(File(rootProject.projectDir, "resources/kotlinManifest.properties")))
 
-                    for (jarFile in sourcePath.project.configurations.getByName("packedJars").resolve()) {
+                    for (jarFile in sourcePath.project.configurations.getByName("embedded").resolve()) {
                         kotlinPluginJar.add(ExtractedDirectory(jarFile))
                     }
 

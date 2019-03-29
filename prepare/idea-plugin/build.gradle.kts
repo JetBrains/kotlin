@@ -8,7 +8,7 @@ repositories {
     maven("https://jetbrains.bintray.com/markdown")
 }
 
-// Do not rename, used in pill importer
+// PILL: used in pill importer
 val projectsToShadow by extra(listOf(
         ":plugins:annotation-based-compiler-plugins-ide-support",
         ":core:type-system",
@@ -95,33 +95,48 @@ val projectsToShadow by extra(listOf(
             emptyArray<String>()
 ))
 
-// Do not rename, used in pill importer
-val packedJars by configurations.creating
-
+val embedded by configurations.creating // PILL: used in pill importer
 val libraries by configurations.creating
+val jpsPlugin by configurations.creating
+
+configurations.all {
+    resolutionStrategy {
+        preferProjectModules()
+    }
+}
 
 dependencies {
     projectsToShadow.forEach {
-        packedJars(project(it)) { isTransitive = false }
+        embedded(project(it)) { isTransitive = false }
     }
-    packedJars(protobufFull())
-    packedJars(kotlinBuiltins())
+    embedded(protobufFull())
+    embedded(kotlinBuiltins())
 
-    libraries(project(":kotlin-script-runtime"))
-    libraries(kotlinStdlib("jdk8"))
-    libraries(project(":kotlin-reflect"))
-    libraries(project(":kotlin-compiler-client-embeddable"))
-    libraries(commonDep("io.javaslang", "javaslang"))
     libraries(commonDep("javax.inject"))
     libraries(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-jdk8"))
     libraries(commonDep("org.jetbrains", "markdown"))
+    libraries(commonDep("io.javaslang", "javaslang"))
+
+    libraries(kotlinStdlib("jdk8"))
+    libraries(project(":kotlin-reflect"))
+    libraries(project(":kotlin-compiler-client-embeddable"))
+    libraries(project(":kotlin-daemon-client"))
+    libraries(project(":kotlin-sam-with-receiver-compiler-plugin"))
+    libraries(project(":kotlin-script-runtime"))
+    libraries(project(":kotlin-script-util"))
+    libraries(project(":kotlin-scripting-common"))
+    libraries(project(":kotlin-scripting-impl"))
+    libraries(project(":kotlin-scripting-intellij"))
+    libraries(project(":kotlin-scripting-jvm"))
+
+    jpsPlugin(project(":kotlin-jps-plugin"))
 }
 
 val jar = runtimeJar {
-    dependsOn(packedJars)
+    dependsOn(embedded)
     from("$rootDir/resources/kotlinManifest.properties")
     from {
-        packedJars.files.map(::zipTree)
+        embedded.files.map(::zipTree)
     }
 
     archiveName = "kotlin-plugin.jar"
@@ -132,4 +147,7 @@ ideaPlugin {
     dependsOn(":dist")
     from(jar)
     from(libraries)
+    from(jpsPlugin) {
+        into("jps")
+    }
 }
