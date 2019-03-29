@@ -73,9 +73,6 @@ class IrFieldImpl(
         symbol.bind(this)
     }
 
-    @DescriptorInIrDeclaration
-    override val descriptor: PropertyDescriptor = symbol.descriptor
-
     override var initializer: IrExpressionBody? = null
 
     @Suppress("OverridingDeprecatedMember")
