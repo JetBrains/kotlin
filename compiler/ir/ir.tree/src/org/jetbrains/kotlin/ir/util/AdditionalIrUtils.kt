@@ -122,10 +122,10 @@ fun IrDeclaration.findTopLevelDeclaration(): IrDeclaration = when {
 }
 
 @UseExperimental(DescriptorInIrDeclaration::class)
-val IrDeclaration.isAnonymousObject get() = DescriptorUtils.isAnonymousObject(this.descriptor)
+internal val IrDeclaration.isAnonymousObject get() = DescriptorUtils.isAnonymousObject(this.descriptor)
 
 @UseExperimental(DescriptorInIrDeclaration::class)
-val IrDeclaration.module get() = this.descriptor.module
+internal val IrDeclaration.module get() = this.descriptor.module
 
 const val SYNTHETIC_OFFSET = -2
 
