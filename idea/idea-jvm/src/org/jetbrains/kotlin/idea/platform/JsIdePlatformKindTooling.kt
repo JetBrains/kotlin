@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.idea.js.KotlinJSRunConfigurationDataProvider
 import org.jetbrains.kotlin.idea.platform.IdePlatformKindTooling
 import org.jetbrains.kotlin.idea.run.multiplatform.KotlinMultiplatformRunLocationsProvider
 import org.jetbrains.kotlin.idea.util.string.joinWithEscape
-import org.jetbrains.kotlin.js.resolve.JsAnalyzerFacade
+import org.jetbrains.kotlin.js.resolve.JsResolverForModuleFactory
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.impl.JsIdePlatformKind
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -49,7 +49,7 @@ class JsIdePlatformKindTooling : IdePlatformKindTooling() {
 
     override fun compilerArgumentsForProject(project: Project) = Kotlin2JsCompilerArgumentsHolder.getInstance(project).settings
 
-    override val resolverForModuleFactory = JsAnalyzerFacade
+    override val resolverForModuleFactory = JsResolverForModuleFactory
 
     override val mavenLibraryIds = listOf(PathUtil.JS_LIB_NAME, MAVEN_OLD_JS_STDLIB_ID)
     override val gradlePluginId = "kotlin-platform-js"

@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.resolve.konan.platform.KonanPlatform
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService.Companion.createDeclarationProviderFactory
 
-object NativeAnalyzerFacade : ResolverForModuleFactory() {
+object NativeResolverForModuleFactory : ResolverForModuleFactory() {
     override val targetPlatform: TargetPlatform
         get() = KonanPlatform
 

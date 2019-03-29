@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.caches.resolve
 import com.intellij.openapi.roots.libraries.PersistentLibraryKind
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.analyzer.ResolverForModuleFactory
-import org.jetbrains.kotlin.analyzer.common.CommonAnalyzerFacade
+import org.jetbrains.kotlin.analyzer.common.CommonResolverForModuleFactory
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.context.ProjectContext
@@ -28,7 +28,7 @@ class CommonPlatformKindResolution : IdePlatformKindResolution {
     override val kind get() = CommonIdePlatformKind
 
     override val resolverForModuleFactory: ResolverForModuleFactory
-        get() = CommonAnalyzerFacade
+        get() = CommonResolverForModuleFactory
 
     override fun createBuiltIns(settings: PlatformAnalysisSettings, projectContext: ProjectContext): KotlinBuiltIns {
         return DefaultBuiltIns.Instance

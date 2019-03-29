@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.idea.core.platform.impl
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.libraries.Library
-import org.jetbrains.kotlin.analyzer.common.CommonAnalyzerFacade
+import org.jetbrains.kotlin.analyzer.common.CommonResolverForModuleFactory
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.gradle.KotlinPlatform
@@ -33,7 +33,7 @@ object CommonIdePlatformKindTooling : IdePlatformKindTooling() {
 
     override fun compilerArgumentsForProject(project: Project): CommonCompilerArguments? = null
 
-    override val resolverForModuleFactory = CommonAnalyzerFacade
+    override val resolverForModuleFactory = CommonResolverForModuleFactory
 
     override val mavenLibraryIds = listOf(MAVEN_COMMON_STDLIB_ID)
     override val gradlePluginId = "kotlin-platform-common"

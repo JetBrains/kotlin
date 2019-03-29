@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.idea.caches.resolve.PlatformAnalysisSettings
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
-import org.jetbrains.kotlin.resolve.jvm.JvmAnalyzerFacade
+import org.jetbrains.kotlin.resolve.jvm.JvmResolverForModuleFactory
 
 class JvmPlatformKindResolution : IdePlatformKindResolution {
     override fun isLibraryFileForPlatform(virtualFile: VirtualFile): Boolean {
@@ -27,7 +27,7 @@ class JvmPlatformKindResolution : IdePlatformKindResolution {
     override val kind get() = JvmIdePlatformKind
 
     override val resolverForModuleFactory: ResolverForModuleFactory
-        get() = JvmAnalyzerFacade
+        get() = JvmResolverForModuleFactory
 
     override fun createBuiltIns(settings: PlatformAnalysisSettings, projectContext: ProjectContext): KotlinBuiltIns =
         if (settings.sdk != null)
