@@ -1651,13 +1651,14 @@ public fun <T : Comparable<T>> Iterable<T>.max(): T? {
  */
 public inline fun <T, R : Comparable<R>> Iterable<T>.maxBy(selector: (T) -> R): T? {
     val iterator = iterator()
-    var maxElem: T? = null
-    var maxValue: R? = null
+    if (!iterator.hasNext()) return null
+    var maxElem = iterator.next()
+    if (!iterator.hasNext()) return maxElem
+    var maxValue = selector(maxElem)
     while (iterator.hasNext()) {
         val e = iterator.next()
-        if (maxElem == null && !iterator.hasNext()) return e
         val v = selector(e)
-        if (maxValue == null || maxValue < v) {
+        if (maxValue < v) {
             maxElem = e
             maxValue = v
         }
@@ -1738,13 +1739,14 @@ public fun <T : Comparable<T>> Iterable<T>.min(): T? {
  */
 public inline fun <T, R : Comparable<R>> Iterable<T>.minBy(selector: (T) -> R): T? {
     val iterator = iterator()
-    var minElem: T? = null
-    var minValue: R? = null
+    if (!iterator.hasNext()) return null
+    var minElem = iterator.next()
+    if (!iterator.hasNext()) return minElem
+    var minValue = selector(minElem)
     while (iterator.hasNext()) {
         val e = iterator.next()
-        if (minElem == null && !iterator.hasNext()) return e
         val v = selector(e)
-        if (minValue == null || minValue > v) {
+        if (minValue > v) {
             minElem = e
             minValue = v
         }

@@ -4861,11 +4861,11 @@ public inline fun <R : Comparable<R>> UIntArray.maxBy(selector: (UInt) -> R): UI
     var maxElem = this[0]
     val lastIndex = this.lastIndex
     if (lastIndex == 0) return maxElem
-    var maxValue: R? = null
-    for (i in 0..lastIndex) {
-        val e = if (i == 0) maxElem else this[i]
+    var maxValue = selector(maxElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
         val v = selector(e)
-        if (maxValue == null || maxValue < v) {
+        if (maxValue < v) {
             maxElem = e
             maxValue = v
         }
@@ -4886,11 +4886,11 @@ public inline fun <R : Comparable<R>> ULongArray.maxBy(selector: (ULong) -> R): 
     var maxElem = this[0]
     val lastIndex = this.lastIndex
     if (lastIndex == 0) return maxElem
-    var maxValue: R? = null
-    for (i in 0..lastIndex) {
-        val e = if (i == 0) maxElem else this[i]
+    var maxValue = selector(maxElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
         val v = selector(e)
-        if (maxValue == null || maxValue < v) {
+        if (maxValue < v) {
             maxElem = e
             maxValue = v
         }
@@ -4911,11 +4911,11 @@ public inline fun <R : Comparable<R>> UByteArray.maxBy(selector: (UByte) -> R): 
     var maxElem = this[0]
     val lastIndex = this.lastIndex
     if (lastIndex == 0) return maxElem
-    var maxValue: R? = null
-    for (i in 0..lastIndex) {
-        val e = if (i == 0) maxElem else this[i]
+    var maxValue = selector(maxElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
         val v = selector(e)
-        if (maxValue == null || maxValue < v) {
+        if (maxValue < v) {
             maxElem = e
             maxValue = v
         }
@@ -4936,11 +4936,11 @@ public inline fun <R : Comparable<R>> UShortArray.maxBy(selector: (UShort) -> R)
     var maxElem = this[0]
     val lastIndex = this.lastIndex
     if (lastIndex == 0) return maxElem
-    var maxValue: R? = null
-    for (i in 0..lastIndex) {
-        val e = if (i == 0) maxElem else this[i]
+    var maxValue = selector(maxElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
         val v = selector(e)
-        if (maxValue == null || maxValue < v) {
+        if (maxValue < v) {
             maxElem = e
             maxValue = v
         }
@@ -5081,11 +5081,11 @@ public inline fun <R : Comparable<R>> UIntArray.minBy(selector: (UInt) -> R): UI
     var minElem = this[0]
     val lastIndex = this.lastIndex
     if (lastIndex == 0) return minElem
-    var minValue: R? = null
-    for (i in 0..lastIndex) {
-        val e = if (i == 0) minElem else this[i]
+    var minValue = selector(minElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
         val v = selector(e)
-        if (minValue == null || minValue > v) {
+        if (minValue > v) {
             minElem = e
             minValue = v
         }
@@ -5106,11 +5106,11 @@ public inline fun <R : Comparable<R>> ULongArray.minBy(selector: (ULong) -> R): 
     var minElem = this[0]
     val lastIndex = this.lastIndex
     if (lastIndex == 0) return minElem
-    var minValue: R? = null
-    for (i in 0..lastIndex) {
-        val e = if (i == 0) minElem else this[i]
+    var minValue = selector(minElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
         val v = selector(e)
-        if (minValue == null || minValue > v) {
+        if (minValue > v) {
             minElem = e
             minValue = v
         }
@@ -5131,11 +5131,11 @@ public inline fun <R : Comparable<R>> UByteArray.minBy(selector: (UByte) -> R): 
     var minElem = this[0]
     val lastIndex = this.lastIndex
     if (lastIndex == 0) return minElem
-    var minValue: R? = null
-    for (i in 0..lastIndex) {
-        val e = if (i == 0) minElem else this[i]
+    var minValue = selector(minElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
         val v = selector(e)
-        if (minValue == null || minValue > v) {
+        if (minValue > v) {
             minElem = e
             minValue = v
         }
@@ -5156,11 +5156,11 @@ public inline fun <R : Comparable<R>> UShortArray.minBy(selector: (UShort) -> R)
     var minElem = this[0]
     val lastIndex = this.lastIndex
     if (lastIndex == 0) return minElem
-    var minValue: R? = null
-    for (i in 0..lastIndex) {
-        val e = if (i == 0) minElem else this[i]
+    var minValue = selector(minElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
         val v = selector(e)
-        if (minValue == null || minValue > v) {
+        if (minValue > v) {
             minElem = e
             minValue = v
         }
