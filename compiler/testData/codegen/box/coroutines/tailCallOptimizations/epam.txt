@@ -1,3 +1,4 @@
+@kotlin.coroutines.jvm.internal.DebugMetadata
 @kotlin.Metadata
 public final class EpamKt$box$1$invokeSuspend$$inlined$zip$1 {
     synthetic final field $source1: MyDeferred
