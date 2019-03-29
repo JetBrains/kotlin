@@ -1,0 +1,6 @@
+import kotlin.math.cos
+
+// WITH_RUNTIME
+fun test(x: Double) {
+    cos(x)
+}
