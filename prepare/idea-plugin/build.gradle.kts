@@ -98,7 +98,7 @@ val projectsToShadow by extra(listOf(
 // Do not rename, used in pill importer
 val packedJars by configurations.creating
 
-val sideJars by configurations.creating
+val libraries by configurations.creating
 
 dependencies {
     projectsToShadow.forEach {
@@ -106,15 +106,15 @@ dependencies {
     }
     packedJars(protobufFull())
     packedJars(kotlinBuiltins())
-    
-    sideJars(project(":kotlin-script-runtime"))
-    sideJars(kotlinStdlib("jdk8"))
-    sideJars(project(":kotlin-reflect"))
-    sideJars(project(":kotlin-compiler-client-embeddable"))
-    sideJars(commonDep("io.javaslang", "javaslang"))
-    sideJars(commonDep("javax.inject"))
-    sideJars(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-jdk8"))
-    sideJars(commonDep("org.jetbrains", "markdown"))
+
+    libraries(project(":kotlin-script-runtime"))
+    libraries(kotlinStdlib("jdk8"))
+    libraries(project(":kotlin-reflect"))
+    libraries(project(":kotlin-compiler-client-embeddable"))
+    libraries(commonDep("io.javaslang", "javaslang"))
+    libraries(commonDep("javax.inject"))
+    libraries(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-jdk8"))
+    libraries(commonDep("org.jetbrains", "markdown"))
 }
 
 val jar = runtimeJar {
@@ -131,5 +131,5 @@ ideaPlugin {
     duplicatesStrategy = DuplicatesStrategy.FAIL // Investigation is required if we have multiple jars with same name
     dependsOn(":dist")
     from(jar)
-    from(sideJars)
+    from(libraries)
 }
