@@ -69,18 +69,24 @@ class JavaToJKTreeBuilder constructor(
     private fun PsiJavaFile.toJK(): JKFile =
         JKFileImpl(
             packageStatement?.toJK() ?: JKPackageDeclarationImpl(JKNameIdentifierImpl("")),
-            importList?.toJK().orEmpty(),
+            importList.toJK(filterOutUsedImports = true),
             with(declarationMapper) { classes.map { it.toJK() } }
         )
 
-    private fun PsiImportList.toJK(): List<JKImportStatement> =
-        importStatements.filter { import ->
-            when {
-                import.isSingleUnusedImport() -> true
-                import.isOnDemand -> true
-                else -> false
-            }
-        }.map { it.toJK() }
+    private fun PsiImportList?.toJK(filterOutUsedImports: Boolean): JKImportList =
+        JKImportListImpl(
+            this?.importStatements?.let { imports ->
+                if (filterOutUsedImports) {
+                    imports.filter { import ->
+                        when {
+                            import.isSingleUnusedImport() -> true
+                            import.isOnDemand -> true
+                            else -> false
+                        }
+                    }
+                } else imports.toList()
+            }?.map { it.toJK() }.orEmpty()
+        )
 
 
     private fun PsiImportStatement.isSingleUnusedImport(): Boolean {
@@ -953,7 +959,7 @@ class JavaToJKTreeBuilder constructor(
         }.last()
 
 
-    fun buildTree(psi: PsiElement): JKTreeElement? =
+    fun buildTree(psi: PsiElement): JKTreeRoot? =
         when (psi) {
             is PsiJavaFile -> psi.toJK()
             is PsiExpression -> with(expressionTreeMapper) { psi.toJK() }
@@ -962,9 +968,16 @@ class JavaToJKTreeBuilder constructor(
             is PsiField -> with(declarationMapper) { psi.toJK() }
             is PsiMethod -> with(declarationMapper) { psi.toJK() }
             is PsiAnnotation -> with(declarationMapper) { psi.toJK() }
-            else ->
-                null
-        }
+            is PsiImportList -> psi.toJK(filterOutUsedImports = false)
+            is PsiImportStatement -> psi.toJK()
+            is PsiJavaCodeReferenceElement ->
+                if (psi.parent is PsiReferenceList) {
+                    val factory = JavaPsiFacade.getInstance(psi.project).elementFactory
+                    val type = factory.createType(psi)
+                    JKTypeElementImpl(type.toJK(symbolProvider).updateNullabilityRecursively(Nullability.NotNull))
+                } else null
+            else -> null
+        }?.let { JKTreeRootImpl(it) }
 
     private val tokenCache = mutableMapOf<PsiElement, JKNonCodeElement>()
 

@@ -36,14 +36,14 @@ class JKTreeRootImpl(element: JKTreeElement) : JKTreeRoot, JKBranchElementBase()
 
 class JKFileImpl(
     packageDeclaration: JKPackageDeclaration,
-    importList: List<JKImportStatement>,
+    importList: JKImportList,
     declarationList: List<JKDeclaration>
 ) : JKFile, JKBranchElementBase(),
     PsiOwner by PsiOwnerImpl() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitFile(this, data)
 
     override var packageDeclaration: JKPackageDeclaration by child(packageDeclaration)
-    override var importList: List<JKImportStatement> by children(importList)
+    override var importList: JKImportList by child(importList)
     override var declarationList by children(declarationList)
 }
 
@@ -572,6 +572,12 @@ class JKImportStatementImpl(name: JKNameIdentifier) : JKImportStatement, JKBranc
 
     override var rightNonCodeElements: List<JKNonCodeElement> = listOf(JKSpaceElementImpl("\n"))
 }
+
+class JKImportListImpl(imports: List<JKImportStatement>) : JKImportList, JKBranchElementBase() {
+    override var imports by children(imports)
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitImportList(this, data)
+}
+
 
 class JKAnnotationParameterImpl(value: JKAnnotationMemberValue) : JKAnnotationParameter, JKBranchElementBase() {
     override var value: JKAnnotationMemberValue by child(value)

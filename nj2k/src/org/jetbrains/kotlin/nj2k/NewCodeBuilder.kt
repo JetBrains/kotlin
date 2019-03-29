@@ -172,7 +172,7 @@ class NewCodeBuilder {
             if (file.packageDeclaration.packageName.value.isNotEmpty()) {
                 file.packageDeclaration.accept(this)
             }
-            file.importList.forEach { it.accept(this) }
+            file.importList.accept(this)
             file.declarationList.forEach { it.accept(this) }
         }
 
@@ -186,6 +186,10 @@ class NewCodeBuilder {
             val packageNameEscaped =
                 packageDeclaration.packageName.value.escapedAsQualifiedName()
             printer.printlnWithNoIndent(packageNameEscaped)
+        }
+
+        override fun visitImportListRaw(importList: JKImportList) {
+            importList.imports.forEach { it.accept(this) }
         }
 
         override fun visitImportStatementRaw(importStatement: JKImportStatement) {

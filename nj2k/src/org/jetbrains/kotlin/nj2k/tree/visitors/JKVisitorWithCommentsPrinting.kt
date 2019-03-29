@@ -38,6 +38,14 @@ interface JKVisitorWithCommentsPrinting : JKVisitorVoid {
 
     fun visitImportStatementRaw(importStatement: JKImportStatement) = visitTreeElementRaw(importStatement)
 
+    override fun visitImportList(importList: JKImportList) {
+        printLeftNonCodeElements(importList)
+        visitImportListRaw(importList)
+        printRightNonCodeElements(importList)
+    }
+
+    fun visitImportListRaw(importList: JKImportList) = visitTreeElementRaw(importList)
+
     override fun visitFile(file: JKFile) {
         printLeftNonCodeElements(file)
         visitFileRaw(file)

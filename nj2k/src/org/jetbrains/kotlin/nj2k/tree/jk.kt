@@ -48,9 +48,13 @@ interface JKImportStatement : JKTreeElement {
     val name: JKNameIdentifier
 }
 
+interface JKImportList : JKTreeElement {
+    var imports: List<JKImportStatement>
+}
+
 interface JKFile : JKTreeElement, JKBranchElement {
     var packageDeclaration: JKPackageDeclaration
-    var importList: List<JKImportStatement>
+    var importList: JKImportList
     var declarationList: List<JKDeclaration>
 }
 

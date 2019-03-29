@@ -11,6 +11,8 @@ interface JKVisitorVoid : JKVisitor<Unit, Nothing?> {
     override fun visitDeclaration(declaration: JKDeclaration, data: Nothing?) = visitDeclaration(declaration)
     fun visitImportStatement(importStatement: JKImportStatement) = visitTreeElement(importStatement, null)
     override fun visitImportStatement(importStatement: JKImportStatement, data: Nothing?) = visitImportStatement(importStatement)
+    fun visitImportList(importList: JKImportList) = visitTreeElement(importList, null)
+    override fun visitImportList(importList: JKImportList, data: Nothing?) = visitImportList(importList)
     fun visitFile(file: JKFile) = visitTreeElement(file, null)
     override fun visitFile(file: JKFile, data: Nothing?) = visitFile(file)
     fun visitClass(klass: JKClass) = visitDeclaration(klass, null)
