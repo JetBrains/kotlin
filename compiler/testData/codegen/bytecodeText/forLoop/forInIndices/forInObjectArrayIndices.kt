@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 fun test() {
     var sum = 0
     for (i in arrayOf("", "", "", "").indices) {
@@ -12,6 +11,4 @@ fun test() {
 // 0 getFirst
 // 0 getLast
 
-// 0 IF_ICMPGT
-// 0 IF_ICMPEQ
-// 1 IF_ICMPGE
+// 1 IF_ICMP

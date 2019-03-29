@@ -1,5 +1,7 @@
-fun f() {
-    for (i in 1..2) {
+const val M = Long.MAX_VALUE
+
+fun f(a: Long) {
+    for (i in a..M) {
     }
 }
 
@@ -9,4 +11,5 @@ fun f() {
 // 0 getFirst
 // 0 getLast
 // 0 getStep
-// 1 IF_ICMP
+// 2 LCMP
+// 2 IF

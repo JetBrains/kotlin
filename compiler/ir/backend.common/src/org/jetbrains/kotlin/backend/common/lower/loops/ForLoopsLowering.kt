@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.functions
+import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
@@ -39,41 +40,50 @@ val forLoopsPhase = makeIrFilePhase(
  * a simple while loop over primitive induction variable.
  *
  * For example, this loop:
- *
  * ```
- * for (i in first..last step foo) { ... }
+ *   for (i in first..last) { // Do something with i }
  * ```
- *
  * is represented in IR in such a manner:
+ * ```
+ *   val it = (first..last).iterator()
+ *   while (it.hasNext()) {
+ *       val i = it.next()
+ *       // Do something with i
+ *   }
+ * ```
+ * We transform it into one of the following loops:
  *
  * ```
- * val it = (first..last step foo).iterator()
- * while (it.hasNext()) {
- *     val i = it.next()
- *     ...
- * }
- * ```
+ *   // 1. If the induction variable cannot overflow, i.e., `last` is const and != MAX_VALUE (if increasing, or MIN_VALUE if decreasing),
+ *   //    OR if loop is an until loop (e.g., `for (i in first until last)`):
  *
- * We transform it into the following loop:
+ *   var inductionVar = first
+ *   while (inductionVar <= last) {  // (inductionVar >= last if the progression is decreasing)
+ *       val i = inductionVar
+ *       inductionVar++
+ *       // Do something with i
+ *   }
  *
- * ```
- * var it = first
- * if (it <= last) {  // (it >= last if the progression is decreasing)
- *     do {
- *         val i = it++
- *         ...
- *     } while (i != last)
- * }
- * ```
+ *   // 2. If the induction variable CAN overflow, i.e., `last` is not const or is MAX/MIN_VALUE:
  *
- * In case of iteration over array we transform it into following:
- *
+ *   var inductionVar = first
+ *   if (inductionVar <= last) {  // (inductionVar >= last if the progression is decreasing)
+ *       // Loop is not empty
+ *       do {
+ *           val i = inductionVar
+ *           inductionVar++
+ *           // Do something with i
+ *       } while (i != last)
+ *   }
  * ```
- * while (it <= array.size - 1) {
- *     val i = array[it]
- *     it++
- *     ...
- * }
+ * In case of iteration over an array, we transform it into the following:
+ * ```
+ *   var inductionVar = 0
+ *   val last = array.size - 1
+ *   while (inductionVar <= last) {
+ *       val i = array[inductionVar++]
+ *       // Do something with i
+ *   }
  * ```
  */
 internal class ForLoopsLowering(val context: CommonBackendContext) : FileLoweringPass {
@@ -202,17 +212,13 @@ private class RangeLoopTransformer(
 
         // The "next" statement (at the top of the loop):
         //
-        // ```
-        // val i = it.next()
-        // ```
+        //   val i = it.next()
         //
         // ...is lowered into:
         //
-        // ```
-        // val i = initialValue() // `inductionVariable` for progressions
-        //                        // `array[inductionVariable]` for arrays
-        // inductionVariable = inductionVariable + step
-        // ```
+        //   val i = initializeLoopVariable() // `inductionVariable` for progressions
+        //                                    // `array[inductionVariable]` for arrays
+        //   inductionVariable = inductionVariable + step
         return with(context.createIrBuilder(getScopeOwnerSymbol(), initializer.startOffset, initializer.endOffset)) {
             variable.initializer = forLoopInfo.initializeLoopVariable(symbols, this)
             val plusFun = forLoopInfo.inductionVariable.type.getClass()!!.functions.first {

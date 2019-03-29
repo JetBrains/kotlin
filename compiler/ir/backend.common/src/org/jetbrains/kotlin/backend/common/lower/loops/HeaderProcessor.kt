@@ -66,24 +66,36 @@ internal class ProgressionLoopHeader(
         get() = headerInfo.additionalVariables + listOf(inductionVariable, last, step)
 
     override fun buildInnerLoop(builder: DeclarationIrBuilder, loop: IrLoop, newBody: IrExpression?): IrLoop = with(builder) {
-        // Condition: loopVariable != last
-        assert(loopVariable != null)
-        val booleanNotFun = context.irBuiltIns.booleanClass.functions.first { it.owner.name.asString() == "not" }
-        val newCondition = irCallOp(booleanNotFun, booleanNotFun.owner.returnType, irCall(context.irBuiltIns.eqeqSymbol).apply {
-            putValueArgument(0, irGet(loopVariable!!))
-            putValueArgument(1, irGet(last))
-        })
-
-
-        // TODO: Build while loop (instead of do-while) where possible, e.g., in "until" ranges, or when "last" is known to be < MAX_VALUE
-        IrDoWhileLoopImpl(loop.startOffset, loop.endOffset, loop.type, loop.origin).apply {
-            label = loop.label
-            condition = newCondition
-            body = newBody
+        if (headerInfo.canOverflow) {
+            // Condition: loopVariable != last. We cannot use the induction variable because it can overflow.
+            assert(loopVariable != null)
+            val booleanNotFun = context.irBuiltIns.booleanClass.functions.first { it.owner.name.asString() == "not" }
+            val newCondition = irCallOp(booleanNotFun, booleanNotFun.owner.returnType, irCall(context.irBuiltIns.eqeqSymbol).apply {
+                putValueArgument(0, irGet(loopVariable!!))
+                putValueArgument(1, irGet(last))
+            })
+            IrDoWhileLoopImpl(loop.startOffset, loop.endOffset, loop.type, loop.origin).apply {
+                label = loop.label
+                condition = newCondition
+                body = newBody
+            }
+        } else {
+            // If the induction variable cannot overflow, use a while loop using the "not empty" condition.
+            val newCondition = buildNotEmptyCondition(this@with)
+            IrWhileLoopImpl(loop.startOffset, loop.endOffset, loop.type, loop.origin).apply {
+                label = loop.label
+                condition = newCondition
+                body = newBody
+            }
         }
     }
 
+    // If the induction variable cannot overflow, we do NOT need the enclosing "not empty" check because the for-loop is lowered into a
+    // while loop that uses the "not empty" condition (see buildInnerLoop()); the enclosing check would be redundant.
     override fun buildNotEmptyConditionIfNecessary(builder: DeclarationIrBuilder): IrExpression? =
+        if (headerInfo.canOverflow) buildNotEmptyCondition(builder) else null
+
+    private fun buildNotEmptyCondition(builder: DeclarationIrBuilder): IrExpression =
         with(builder) {
             val builtIns = context.irBuiltIns
             val progressionKotlinType = progressionType.elementType(builtIns).toKotlinType()
@@ -158,7 +170,7 @@ internal class ArrayLoopHeader(
         get() = listOf(headerInfo.arrayVariable, inductionVariable, last, step)
 
     override fun buildInnerLoop(builder: DeclarationIrBuilder, loop: IrLoop, newBody: IrExpression?): IrLoop = with(builder) {
-        // Condition: loopVariable != last
+        // Condition: inductionVariable != last
         val builtIns = context.irBuiltIns
         val callee = builtIns.lessOrEqualFunByOperandType[builtIns.int]!!
         val newCondition = irCall(callee).apply {

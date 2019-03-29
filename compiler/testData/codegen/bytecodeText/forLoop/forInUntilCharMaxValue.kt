@@ -1,5 +1,7 @@
-fun f() {
-    for (i in 1..2) {
+const val M = Char.MAX_VALUE
+
+fun f(a: Char) {
+    for (i in a until M) {
     }
 }
 
