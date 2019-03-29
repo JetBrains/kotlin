@@ -46,8 +46,8 @@ open class KaptWithKotlincTask : KaptTask(), CompilerArgumentAwareWithInput<K2JV
 
     override fun createCompilerArgs(): K2JVMCompilerArguments = K2JVMCompilerArguments()
 
-    override fun setupCompilerArgs(args: K2JVMCompilerArguments, defaultsOnly: Boolean) {
-        kotlinCompileTask.setupCompilerArgs(args)
+    override fun setupCompilerArgs(args: K2JVMCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
+        kotlinCompileTask.setupCompilerArgs(args, ignoreClasspathResolutionErrors = ignoreClasspathResolutionErrors)
 
         args.pluginClasspaths = pluginClasspath.toSortedPathsArray()
 

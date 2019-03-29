@@ -989,6 +989,17 @@ class GradleFacetImportTest : GradleImportingTestCase() {
         TestCase.assertEquals("1.1", holder.settings.languageVersion)
     }
 
+    @Ignore //TODO enable this test after the Kotlin gradle plugin with required fixes is released
+    @Test
+    fun testImportCompilerArgumentsWithInvalidDependencies() {
+        configureByFiles()
+        importProject()
+        with(facetSettings("project_main")) {
+            Assert.assertEquals("1.8", (mergedCompilerArguments as K2JVMCompilerArguments).jvmTarget)
+        }
+
+    }
+
     private fun checkStableModuleName(projectName: String, expectedName: String, platform: TargetPlatform, isProduction: Boolean) {
         val module = getModule(projectName)
         val moduleInfo = if (isProduction) module.productionSourceInfo() else module.testSourceInfo()

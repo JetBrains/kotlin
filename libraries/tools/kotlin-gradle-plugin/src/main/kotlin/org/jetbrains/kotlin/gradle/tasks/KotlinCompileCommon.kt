@@ -46,9 +46,9 @@ open class KotlinCompileCommon : AbstractKotlinCompile<K2MetadataCompilerArgumen
     override fun findKotlinCompilerClasspath(project: Project): List<File> =
         findKotlinMetadataCompilerClasspath(project)
 
-    override fun setupCompilerArgs(args: K2MetadataCompilerArguments, defaultsOnly: Boolean) {
+    override fun setupCompilerArgs(args: K2MetadataCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
         args.apply { fillDefaultValues() }
-        super.setupCompilerArgs(args, defaultsOnly)
+        super.setupCompilerArgs(args, defaultsOnly = defaultsOnly, ignoreClasspathResolutionErrors = ignoreClasspathResolutionErrors)
 
         args.moduleName = friendTask?.moduleName ?: this@KotlinCompileCommon.moduleName
 

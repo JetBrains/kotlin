@@ -325,7 +325,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
      */
     internal abstract fun callCompilerAsync(args: T, sourceRoots: SourceRoots, changedFiles: ChangedFiles)
 
-    override fun setupCompilerArgs(args: T, defaultsOnly: Boolean) {
+    override fun setupCompilerArgs(args: T, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
         args.coroutinesState = when (coroutines) {
             Coroutines.ENABLE -> CommonCompilerArguments.ENABLE
             Coroutines.WARN -> CommonCompilerArguments.WARN
@@ -393,9 +393,9 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
     override fun createCompilerArgs(): K2JVMCompilerArguments =
         K2JVMCompilerArguments()
 
-    override fun setupCompilerArgs(args: K2JVMCompilerArguments, defaultsOnly: Boolean) {
+    override fun setupCompilerArgs(args: K2JVMCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
         args.apply { fillDefaultValues() }
-        super.setupCompilerArgs(args, defaultsOnly)
+        super.setupCompilerArgs(args, defaultsOnly = defaultsOnly, ignoreClasspathResolutionErrors = ignoreClasspathResolutionErrors)
 
         args.moduleName = friendTask?.moduleName ?: moduleName
         logger.kotlinDebug { "args.moduleName = ${args.moduleName}" }
@@ -406,7 +406,11 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         if (defaultsOnly) return
 
         args.allowNoSourceFiles = true
-        args.classpathAsList = compileClasspath.toList()
+        args.classpathAsList = try {
+            compileClasspath.toList()
+        } catch (e: Exception) {
+            if (ignoreClasspathResolutionErrors) emptyList() else throw(e)
+        }
         args.destinationAsFile = destinationDir
         parentKotlinOptionsImpl?.updateArguments(args)
         kotlinOptionsImpl.updateArguments(args)
@@ -539,9 +543,9 @@ open class Kotlin2JsCompile : AbstractKotlinCompile<K2JSCompilerArguments>(), Ko
     override fun createCompilerArgs(): K2JSCompilerArguments =
         K2JSCompilerArguments()
 
-    override fun setupCompilerArgs(args: K2JSCompilerArguments, defaultsOnly: Boolean) {
+    override fun setupCompilerArgs(args: K2JSCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
         args.apply { fillDefaultValues() }
-        super.setupCompilerArgs(args, defaultsOnly)
+        super.setupCompilerArgs(args, defaultsOnly = defaultsOnly, ignoreClasspathResolutionErrors = ignoreClasspathResolutionErrors)
 
         args.outputFile = outputFile.canonicalPath
 

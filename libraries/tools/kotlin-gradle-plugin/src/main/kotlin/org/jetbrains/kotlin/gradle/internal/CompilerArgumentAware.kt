@@ -25,6 +25,9 @@ interface CompilerArgumentAware<T : CommonToolArguments> {
     val serializedCompilerArguments: List<String>
         get() = ArgumentUtils.convertArgumentsToStringList(prepareCompilerArguments())
 
+    val serializedCompilerArgumentsIgnoreClasspathIssues: List<String>
+        get() = ArgumentUtils.convertArgumentsToStringList(prepareCompilerArguments(ignoreClasspathResolutionErrors = true))
+
     val defaultSerializedCompilerArguments: List<String>
         get() = createCompilerArgs()
             .also { setupCompilerArgs(it, defaultsOnly = true) }
@@ -34,11 +37,11 @@ interface CompilerArgumentAware<T : CommonToolArguments> {
         get() = CompilerArgumentsGradleInput.createInputsMap(prepareCompilerArguments())
 
     fun createCompilerArgs(): T
-    fun setupCompilerArgs(args: T, defaultsOnly: Boolean = false)
+    fun setupCompilerArgs(args: T, defaultsOnly: Boolean = false, ignoreClasspathResolutionErrors: Boolean = false)
 }
 
-internal fun <T : CommonToolArguments> CompilerArgumentAware<T>.prepareCompilerArguments() =
-    createCompilerArgs().also { setupCompilerArgs(it) }
+internal fun <T : CommonToolArguments> CompilerArgumentAware<T>.prepareCompilerArguments(ignoreClasspathResolutionErrors: Boolean = false) =
+    createCompilerArgs().also { setupCompilerArgs(it, ignoreClasspathResolutionErrors = ignoreClasspathResolutionErrors) }
 
 interface CompilerArgumentAwareWithInput<T : CommonToolArguments> : CompilerArgumentAware<T> {
     @get:Internal

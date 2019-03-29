@@ -123,12 +123,12 @@ class KotlinGradleModelBuilder : AbstractKotlinGradleModelBuilder() {
     private fun Project.pathOrName() = if (path == ":") name else path
 
     @Suppress("UNCHECKED_CAST")
-    private fun Task.getCompilerArguments(methodName: String): List<String> {
+    private fun Task.getCompilerArguments(methodName: String): List<String>? {
         return try {
             javaClass.getDeclaredMethod(methodName).invoke(this) as List<String>
         } catch (e: Exception) {
             // No argument accessor method is available
-            emptyList()
+            null
         }
     }
 
@@ -175,7 +175,8 @@ class KotlinGradleModelBuilder : AbstractKotlinGradleModelBuilder() {
 
             val sourceSetName = compileTask.getSourceSetName()
             val currentArguments = compileTask.getCompilerArguments("getSerializedCompilerArguments")
-            val defaultArguments = compileTask.getCompilerArguments("getDefaultSerializedCompilerArguments")
+                ?: compileTask.getCompilerArguments("getSerializedCompilerArgumentsIgnoreClasspathIssues") ?: emptyList()
+            val defaultArguments = compileTask.getCompilerArguments("getDefaultSerializedCompilerArguments").orEmpty()
             val dependencyClasspath = compileTask.getDependencyClasspath()
             compilerArgumentsBySourceSet[sourceSetName] = ArgsInfoImpl(currentArguments, defaultArguments, dependencyClasspath)
         }
