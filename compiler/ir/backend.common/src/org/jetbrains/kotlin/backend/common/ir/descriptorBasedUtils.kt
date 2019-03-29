@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.ir.DescriptorInIrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.descriptor
+import org.jetbrains.kotlin.ir.declarations.descriptorOrNull
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 val IrDeclaration.isExpect get() = descriptorWithoutAccessCheck.let { it is MemberDescriptor && it.isExpect }
@@ -24,7 +26,7 @@ fun <T : IrDeclaration> T.rebindWrappedDescriptor(to: T = this) {
 @UseExperimental(DescriptorInIrDeclaration::class)
 inline fun <T : IrDeclaration, reified WD : WrappedDeclarationDescriptor<T>> T.tryToRebindWrappedDescriptor(to: T = this) {
     @Suppress("UNCHECKED_CAST")
-    (descriptor as? WD)?.bind(to)
+    (descriptorOrNull as? WD)?.bind(to)
 }
 
 @UseExperimental(DescriptorInIrDeclaration::class)
