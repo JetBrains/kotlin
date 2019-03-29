@@ -39,15 +39,17 @@ import java.util.List;
 import static org.junit.Assert.assertTrue;
 
 public class CodegenTestUtil {
-    private CodegenTestUtil() {}
+    private CodegenTestUtil() {
+    }
 
     @NotNull
     public static ClassFileFactory generateFiles(@NotNull KotlinCoreEnvironment environment, @NotNull CodegenTestFiles files) {
         return GenerationUtils.compileFiles(files.getPsiFiles(), environment).getFactory();
     }
 
-    public static void assertThrows(@NotNull Method foo, @NotNull Class<? extends Throwable> exceptionClass,
-            @Nullable Object instance, @NotNull Object... args) throws IllegalAccessException {
+    public static void assertThrows(
+            @NotNull Method foo, @NotNull Class<? extends Throwable> exceptionClass, @Nullable Object instance, @NotNull Object... args
+    ) throws IllegalAccessException {
         boolean caught = false;
         try {
             foo.invoke(instance, args);

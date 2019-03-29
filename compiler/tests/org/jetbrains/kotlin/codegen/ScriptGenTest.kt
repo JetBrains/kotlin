@@ -46,16 +46,16 @@ class ScriptGenTest : CodegenTestCase() {
     override fun setUp() {
         super.setUp()
         additionalDependencies =
-                System.getenv("PROJECT_CLASSES_DIRS")?.split(File.pathSeparator)?.map { File(it) }
+            System.getenv("PROJECT_CLASSES_DIRS")?.split(File.pathSeparator)?.map { File(it) }
                 ?: listOf(
                     "compiler/build/classes/kotlin/test",
                     "build/compiler/classes/kotlin/test",
                     "out/test/compiler.test",
                     "out/test/compiler_test"
                 )
-                        .mapNotNull { File(it).canonicalFile.takeIf { it.isDirectory } }
-                        .takeIf { it.isNotEmpty() }
-                ?: throw IllegalStateException("Unable to get classes output dirs, set PROJECT_CLASSES_DIRS environment variable")
+                    .mapNotNull { File(it).canonicalFile.takeIf(File::isDirectory) }
+                    .takeIf { it.isNotEmpty() }
+                        ?: throw IllegalStateException("Unable to get classes output dirs, set PROJECT_CLASSES_DIRS environment variable")
     }
 
     fun testLanguage() {
@@ -136,7 +136,9 @@ class ScriptGenTest : CodegenTestCase() {
     }
 }
 
+@Suppress("unused")
 @ScriptTemplateDefinition(
-        scriptFilePattern =".*\\.lang\\.kts",
-        resolver = TestKotlinScriptDependenciesResolver::class)
+    scriptFilePattern = ".*\\.lang\\.kts",
+    resolver = TestKotlinScriptDependenciesResolver::class
+)
 abstract class ScriptWithIntParam(val num: Int)

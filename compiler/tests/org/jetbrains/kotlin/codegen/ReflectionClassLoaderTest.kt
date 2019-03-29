@@ -39,18 +39,18 @@ class ReflectionClassLoaderTest : CodegenTestCase() {
     }
 
     fun testSimpleDifferentClassLoaders() {
-        loadFile(prefix + "/differentClassLoaders.kt")
+        loadFile("$prefix/differentClassLoaders.kt")
 
         doTest(
-                createClassLoader(),
-                createClassLoader()
+            createClassLoader(),
+            createClassLoader()
         )
     }
 
     fun testClassLoaderWithNonTrivialEqualsAndHashCode() {
         // Check that class loaders do not participate as keys in hash maps (use identity hash maps instead)
 
-        loadFile(prefix + "/differentClassLoaders.kt")
+        loadFile("$prefix/differentClassLoaders.kt")
 
         class BrokenEqualsClassLoader(parent: ClassLoader) : ClassLoader(parent) {
             override fun equals(other: Any?) = true
@@ -58,23 +58,23 @@ class ReflectionClassLoaderTest : CodegenTestCase() {
         }
 
         doTest(
-                BrokenEqualsClassLoader(createClassLoader()),
-                BrokenEqualsClassLoader(createClassLoader())
+            BrokenEqualsClassLoader(createClassLoader()),
+            BrokenEqualsClassLoader(createClassLoader())
         )
     }
 
     fun testParentFirst() {
         // Check that for a child class loader, a class reference would be the same as for his parent
 
-        loadFile(prefix + "/parentFirst.kt")
+        loadFile("$prefix/parentFirst.kt")
 
         class ChildClassLoader(parent: ClassLoader) : ClassLoader(parent)
 
         val parent = createClassLoader()
 
         doTest(
-                parent,
-                ChildClassLoader(parent)
+            parent,
+            ChildClassLoader(parent)
         )
     }
 }

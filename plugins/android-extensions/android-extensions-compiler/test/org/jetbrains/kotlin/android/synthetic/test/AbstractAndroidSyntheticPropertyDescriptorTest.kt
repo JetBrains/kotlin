@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.android.synthetic.test
@@ -41,20 +30,20 @@ abstract class AbstractAndroidSyntheticPropertyDescriptorTest : KtUsefulTestCase
         val analysisResult = JvmResolveUtil.analyzeAndCheckForErrors(listOf(), env)
 
         val fragmentProvider =
-                ext.getPackageFragmentProvider(
-                        project, analysisResult.moduleDescriptor, LockBasedStorageManager.NO_LOCKS,
-                        KotlinTestUtils.DUMMY_EXCEPTION_ON_ERROR_TRACE, null, LookupTracker.DO_NOTHING
-                ) as AndroidSyntheticPackageFragmentProvider
+            ext.getPackageFragmentProvider(
+                project, analysisResult.moduleDescriptor, LockBasedStorageManager.NO_LOCKS,
+                KotlinTestUtils.DUMMY_EXCEPTION_ON_ERROR_TRACE, null, LookupTracker.DO_NOTHING
+            ) as AndroidSyntheticPackageFragmentProvider
 
         val renderer = DescriptorRenderer.COMPACT_WITH_MODIFIERS
         val expected = fragmentProvider.packages.values
             .map { it() }
             .sortedBy { it.fqName.asString() }
-            .joinToString(separator = "\n\n\n") {
-                val descriptors = it.getMemberScope().getContributedDescriptors()
+            .joinToString(separator = "\n\n\n") { packageFragment ->
+                val descriptors = packageFragment.getMemberScope().getContributedDescriptors()
                     .sortedWith(MemberComparator.INSTANCE)
-                    .map { "    " + renderer.render(it) }.joinToString("\n")
-                it.fqName.asString() + (if (descriptors.isNotEmpty()) "\n\n" + descriptors else "")
+                    .joinToString("\n") { "    " + renderer.render(it) }
+                packageFragment.fqName.asString() + (if (descriptors.isNotEmpty()) "\n\n" + descriptors else "")
             }
 
         KotlinTestUtils.assertEqualsToFile(File(path, "result.txt"), expected)

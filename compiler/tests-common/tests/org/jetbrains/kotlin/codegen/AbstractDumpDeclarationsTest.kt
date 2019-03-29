@@ -17,7 +17,7 @@ abstract class AbstractDumpDeclarationsTest : CodegenTestCase() {
 
     override fun doMultiFileTest(wholeFile: File, files: List<TestFile>, javaFilesDir: File?) {
         val expectedResult = KotlinTestUtils.replaceExtension(wholeFile, "json")
-        dumpToFile = KotlinTestUtils.tmpDirForTest(this).resolve(name + ".json")
+        dumpToFile = KotlinTestUtils.tmpDirForTest(this).resolve("$name.json")
         compile(files, null)
         classFileFactory.generationState.destroy()
         KotlinTestUtils.assertEqualsToFile(expectedResult, dumpToFile.readText()) {

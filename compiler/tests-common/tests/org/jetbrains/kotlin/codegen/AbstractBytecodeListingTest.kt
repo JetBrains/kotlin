@@ -34,7 +34,7 @@ abstract class AbstractBytecodeListingTest : CodegenTestCase() {
     }
 
     private fun isWithSignatures(wholeFile: File): Boolean =
-            WITH_SIGNATURES.containsMatchIn(wholeFile.readText())
+        WITH_SIGNATURES.containsMatchIn(wholeFile.readText())
 
     companion object {
         private val WITH_SIGNATURES = Regex.fromLiteral("// WITH_SIGNATURES")
@@ -132,13 +132,7 @@ class BytecodeListingTextCollectingVisitor(val filter: Filter, val withSignature
             }
         }.toString()
 
-    override fun visitMethod(
-            access: Int,
-            name: String,
-            desc: String,
-            signature: String?,
-            exceptions: Array<out String>?
-    ): MethodVisitor? {
+    override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?): MethodVisitor? {
         if (!filter.shouldWriteMethod(access, name, desc)) {
             return null
         }
@@ -176,7 +170,7 @@ class BytecodeListingTextCollectingVisitor(val filter: Filter, val withSignature
                 }.joinToString()
                 val signatureIfRequired = if (withSignatures) "<$signature> " else ""
                 declarationsInsideClass.add(
-                        Declaration("${signatureIfRequired}method $name($parameterWithAnnotations): $returnType", methodAnnotations)
+                    Declaration("${signatureIfRequired}method $name($parameterWithAnnotations): $returnType", methodAnnotations)
                 )
                 super.visitEnd()
             }
@@ -218,14 +212,7 @@ class BytecodeListingTextCollectingVisitor(val filter: Filter, val withSignature
         return super.visitAnnotation(desc, visible)
     }
 
-    override fun visit(
-            version: Int,
-            access: Int,
-            name: String,
-            signature: String?,
-            superName: String?,
-            interfaces: Array<out String>?
-    ) {
+    override fun visit(version: Int, access: Int, name: String, signature: String?, superName: String?, interfaces: Array<out String>?) {
         className = name
         classAccess = access
         classSignature = signature

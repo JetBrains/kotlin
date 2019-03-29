@@ -26,8 +26,7 @@ abstract class AbstractCompileKotlinAgainstInlineKotlinTest : AbstractCompileKot
             val sourceFiles = factory1.inputFiles + factory2.inputFiles
             InlineTestUtil.checkNoCallsToInline(allGeneratedFiles.filterClassFiles(), sourceFiles)
             SMAPTestUtil.checkSMAP(files, allGeneratedFiles.filterClassFiles(), true)
-        }
-        catch (e: Throwable) {
+        } catch (e: Throwable) {
             println("FIRST:\n\n${factory1.createText()}\n\nSECOND:\n\n${factory2.createText()}")
             throw e
         }

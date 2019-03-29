@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.script.loadScriptingPlugin
-import org.jetbrains.kotlin.script.util.scriptCompilationClasspathFromContextOrStlib
 import org.jetbrains.kotlin.scripting.configuration.configureScriptDefinitions
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
@@ -25,6 +24,7 @@ import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.implicitReceivers
 import kotlin.script.experimental.api.providedProperties
+import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContextOrStdlib
 
 abstract class AbstractCustomScriptCodegenTest : CodegenTestCase() {
     private lateinit var scriptDefinitions: List<String>
@@ -56,14 +56,14 @@ abstract class AbstractCustomScriptCodegenTest : CodegenTestCase() {
         scriptDefinitions = InTextDirectivesUtils.findListWithPrefixes(content, "KOTLIN_SCRIPT_DEFINITION:")
         if (scriptDefinitions.isNotEmpty()) {
             additionalDependencies =
-                    scriptCompilationClasspathFromContextOrStlib("tests-common", "kotlin-stdlib") +
-                    File(TestScriptWithReceivers::class.java.protectionDomain.codeSource.location.toURI().path) +
-                    with(PathUtil.kotlinPathsForDistDirectory) {
-                        arrayOf(
-                            KOTLIN_SCRIPTING_COMPILER_PLUGIN_JAR, KOTLIN_SCRIPTING_COMPILER_IMPL_JAR,
-                            KOTLIN_SCRIPTING_COMMON_JAR, KOTLIN_SCRIPTING_JVM_JAR
-                        ).mapNotNull { File(libPath, it).takeIf { it.exists() } }
-                    }
+                scriptCompilationClasspathFromContextOrStdlib("tests-common", "kotlin-stdlib") +
+                        File(TestScriptWithReceivers::class.java.protectionDomain.codeSource.location.toURI().path) +
+                        with(PathUtil.kotlinPathsForDistDirectory) {
+                            arrayOf(
+                                KOTLIN_SCRIPTING_COMPILER_PLUGIN_JAR, KOTLIN_SCRIPTING_COMPILER_IMPL_JAR,
+                                KOTLIN_SCRIPTING_COMMON_JAR, KOTLIN_SCRIPTING_JVM_JAR
+                            ).mapNotNull { File(libPath, it).takeIf(File::exists) }
+                        }
         }
 
         createEnvironmentWithMockJdkAndIdeaAnnotations(configurationKind, files, TestJdkKind.FULL_JDK)

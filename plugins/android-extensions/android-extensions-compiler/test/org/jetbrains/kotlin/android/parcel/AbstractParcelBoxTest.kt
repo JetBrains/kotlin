@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.android.parcel
@@ -37,11 +26,11 @@ import java.util.concurrent.TimeUnit
 
 abstract class AbstractParcelBoxTest : CodegenTestCase() {
     protected companion object {
-        val BASE_DIR = "plugins/android-extensions/android-extensions-compiler/testData/parcel/box"
+        const val BASE_DIR = "plugins/android-extensions/android-extensions-compiler/testData/parcel/box"
         val LIBRARY_KT = File(File(BASE_DIR).parentFile, "boxLib.kt")
 
         private val JUNIT_GENERATED_TEST_CLASS_BYTES by lazy { constructSyntheticTestClass() }
-        private val JUNIT_GENERATED_TEST_CLASS_FQNAME = "test.JunitTest"
+        private const val JUNIT_GENERATED_TEST_CLASS_FQNAME = "test.JunitTest"
 
         private fun constructSyntheticTestClass(): ByteArray {
             return with(ClassWriter(COMPUTE_MAXS or COMPUTE_FRAMES)) {
@@ -104,12 +93,12 @@ abstract class AbstractParcelBoxTest : CodegenTestCase() {
     }
 
     override fun doTest(filePath: String) {
-        super.doTest(File(BASE_DIR, filePath + ".kt").absolutePath)
+        super.doTest(File(BASE_DIR, "$filePath.kt").absolutePath)
     }
 
     private val androidPluginPath: String by lazy {
         System.getProperty("ideaSdk.androidPlugin.path")?.takeIf { File(it).isDirectory }
-        ?: throw RuntimeException("Unable to get a valid path from 'ideaSdk.androidPlugin.path' property, please point it to the Idea android plugin location")
+            ?: throw RuntimeException("Unable to get a valid path from 'ideaSdk.androidPlugin.path' property, please point it to the Idea android plugin location")
     }
 
     private fun getClasspathForTest(): List<File> {
@@ -117,10 +106,10 @@ abstract class AbstractParcelBoxTest : CodegenTestCase() {
         val layoutLibJars = listOf(File(androidPluginPath, "layoutlib.jar"), File(androidPluginPath, "layoutlib-api.jar"))
 
         val robolectricClasspath = System.getProperty("robolectric.classpath")
-                                   ?: throw RuntimeException("Unable to get a valid classpath from 'robolectric.classpath' property, please set it accordingly")
+            ?: throw RuntimeException("Unable to get a valid classpath from 'robolectric.classpath' property, please set it accordingly")
         val robolectricJars = robolectricClasspath.split(File.pathSeparator)
-                .map { File(it) }
-                .sortedBy { it.nameWithoutExtension }
+            .map { File(it) }
+            .sortedBy { it.nameWithoutExtension }
 
         val junitCoreResourceName = JUnitCore::class.java.name.replace('.', '/') + ".class"
         val junitJar = File(JUnitCore::class.java.classLoader.getResource(junitCoreResourceName).file.substringBeforeLast('!'))
@@ -151,12 +140,12 @@ abstract class AbstractParcelBoxTest : CodegenTestCase() {
             classFileFactory.getClassFiles().forEach { writeClass(it.relativePath, it.asByteArray()) }
 
             val process = ProcessBuilder(
-                    javaExe.absolutePath,
-                    "-ea",
-                    "-classpath",
-                    (libraryClasspath + dirForTestClasses).joinToString(File.pathSeparator),
-                    JUnitCore::class.java.name,
-                    JUNIT_GENERATED_TEST_CLASS_FQNAME
+                javaExe.absolutePath,
+                "-ea",
+                "-classpath",
+                (libraryClasspath + dirForTestClasses).joinToString(File.pathSeparator),
+                JUnitCore::class.java.name,
+                JUNIT_GENERATED_TEST_CLASS_FQNAME
             ).inheritIO().start()
 
             process.waitFor(3, TimeUnit.MINUTES)

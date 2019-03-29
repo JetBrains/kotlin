@@ -68,7 +68,7 @@ public class ControlStructuresTest extends CodegenTestCase {
     public void testCompareToNull() throws Exception {
         loadText("fun foo(a: String?, b: String?): Boolean = a == null && b !== null && null == a && null !== b");
         String text = generateToText();
-        assertTrue(!text.contains("java/lang/Object.equals"));
+        assertFalse(text.contains("java/lang/Object.equals"));
         Method main = generateFunction();
         assertEquals(true, main.invoke(null, null, "lala"));
         assertEquals(false, main.invoke(null, null, null));

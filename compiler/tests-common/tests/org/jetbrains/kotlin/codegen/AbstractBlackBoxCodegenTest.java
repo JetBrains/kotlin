@@ -33,9 +33,9 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
 
     @Override
     protected void doMultiFileTest(
-        @NotNull File wholeFile,
-        @NotNull List<TestFile> files,
-        @Nullable File javaFilesDir
+            @NotNull File wholeFile,
+            @NotNull List<TestFile> files,
+            @Nullable File javaFilesDir
     ) throws Exception {
         boolean isIgnored = IGNORE_EXPECTED_FAILURES && InTextDirectivesUtils.isIgnoredTarget(getBackend(), wholeFile);
 

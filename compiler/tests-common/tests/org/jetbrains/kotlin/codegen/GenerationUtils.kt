@@ -47,10 +47,6 @@ object GenerationUtils {
         }
 
     @JvmStatic
-    fun compileFile(ktFile: KtFile, environment: KotlinCoreEnvironment): ClassFileFactory =
-        compileFiles(listOf(ktFile), environment).factory
-
-    @JvmStatic
     @JvmOverloads
     fun compileFiles(
         files: List<KtFile>,

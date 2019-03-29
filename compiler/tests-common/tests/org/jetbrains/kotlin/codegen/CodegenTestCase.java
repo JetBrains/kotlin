@@ -56,7 +56,6 @@ import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -82,7 +81,7 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
     private static final String DEFAULT_TEST_FILE_NAME = "a_test";
     private static final String DEFAULT_JVM_TARGET_FOR_TEST = "kotlin.test.default.jvm.target";
     private static final String JAVA_COMPILATION_TARGET = "kotlin.test.java.compilation.target";
-    public static final String RUN_BOX_TEST_IN_SEPARATE_PROCESS_PORT = "kotlin.test.box.in.separate.process.port";
+    private static final String RUN_BOX_TEST_IN_SEPARATE_PROCESS_PORT = "kotlin.test.box.in.separate.process.port";
 
     protected KotlinCoreEnvironment myEnvironment;
     protected CodegenTestFiles myFiles;
@@ -90,7 +89,7 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
     protected GeneratedClassLoader initializedClassLoader;
     protected File javaClassesOutputDirectory = null;
     protected List<File> additionalDependencies = null;
-    protected String coroutinesPackage;
+    protected String coroutinesPackage = "";
 
     protected ConfigurationKind configurationKind = ConfigurationKind.JDK_ONLY;
     private final String defaultJvmTarget = System.getProperty(DEFAULT_JVM_TARGET_FOR_TEST);
@@ -99,7 +98,7 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
 
     protected final void createEnvironmentWithMockJdkAndIdeaAnnotations(
             @NotNull ConfigurationKind configurationKind,
-            @Nullable File... javaSourceRoots
+            @NotNull File... javaSourceRoots
     ) {
         createEnvironmentWithMockJdkAndIdeaAnnotations(configurationKind, Collections.emptyList(), TestJdkKind.MOCK_JDK, javaSourceRoots);
     }
@@ -118,7 +117,7 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
             @NotNull ConfigurationKind configurationKind,
             @NotNull List<TestFile> testFilesWithConfigurationDirectives,
             @NotNull TestJdkKind testJdkKind,
-            @Nullable File... javaSourceRoots
+            @NotNull File... javaSourceRoots
     ) {
         if (myEnvironment != null) {
             throw new IllegalStateException("must not set up myEnvironment twice");
@@ -161,7 +160,7 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
         updateConfigurationByDirectivesInTestFiles(testFilesWithConfigurationDirectives, configuration, "");
     }
 
-    protected static void updateConfigurationByDirectivesInTestFiles(
+    private static void updateConfigurationByDirectivesInTestFiles(
             @NotNull List<TestFile> testFilesWithConfigurationDirectives,
             @NotNull CompilerConfiguration configuration,
             @NotNull String coroutinesPackage
@@ -307,12 +306,6 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
     }
 
     @Override
-    protected void setUp() throws Exception {
-        coroutinesPackage = "";
-        super.setUp();
-    }
-
-    @Override
     protected void tearDown() throws Exception {
         myFiles = null;
         myEnvironment = null;
@@ -343,7 +336,8 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
             assert myFiles == null : "Should not initialize myFiles twice";
             myFiles = CodegenTestFiles.create(file.getName(), content, myEnvironment.getProject());
             return content;
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
@@ -512,44 +506,46 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
     }
 
     @NotNull
-    protected ClassFileFactory generateClassesInFile(boolean reportProblems) {
-        if (classFileFactory == null) {
-            try {
-                GenerationState generationState = GenerationUtils.compileFiles(
-                        myFiles.getPsiFiles(), myEnvironment, getClassBuilderFactory(),
-                        new NoScopeRecordCliBindingTrace()
-                );
-                classFileFactory = generationState.getFactory();
+    private ClassFileFactory generateClassesInFile(boolean reportProblems) {
+        if (classFileFactory != null) return classFileFactory;
 
-                if (verifyWithDex() && DxChecker.RUN_DX_CHECKER) {
-                    DxChecker.check(classFileFactory);
-                }
+        try {
+            GenerationState generationState = GenerationUtils.compileFiles(
+                    myFiles.getPsiFiles(), myEnvironment, getClassBuilderFactory(),
+                    new NoScopeRecordCliBindingTrace()
+            );
+            classFileFactory = generationState.getFactory();
+
+            if (verifyWithDex() && DxChecker.RUN_DX_CHECKER) {
+                DxChecker.check(classFileFactory);
             }
-            catch (TestsCompiletimeError e) {
-                if (reportProblems) {
-                    e.getOriginal().printStackTrace();
-                    System.err.println("Generating instructions as text...");
-                    try {
-                        if (classFileFactory == null) {
-                            System.err.println("Cannot generate text: exception was thrown during generation");
-                        }
-                        else {
-                            System.err.println(classFileFactory.createText());
-                        }
+        }
+        catch (TestsCompiletimeError e) {
+            if (reportProblems) {
+                e.getOriginal().printStackTrace();
+                System.err.println("Generating instructions as text...");
+                try {
+                    if (classFileFactory == null) {
+                        System.err.println("Cannot generate text: exception was thrown during generation");
                     }
-                    catch (Throwable e1) {
-                        System.err.println("Exception thrown while trying to generate text, the actual exception follows:");
-                        e1.printStackTrace();
-                        System.err.println("-----------------------------------------------------------------------------");
+                    else {
+                        System.err.println(classFileFactory.createText());
                     }
-                    System.err.println("See exceptions above");
-                } else {
-                    System.err.println("Compilation failure");
                 }
-                throw e;
-            } catch (Throwable e) {
-                throw new TestsCompilerError(e);
+                catch (Throwable e1) {
+                    System.err.println("Exception thrown while trying to generate text, the actual exception follows:");
+                    e1.printStackTrace();
+                    System.err.println("-----------------------------------------------------------------------------");
+                }
+                System.err.println("See exceptions above");
             }
+            else {
+                System.err.println("Compilation failure");
+            }
+            throw e;
+        }
+        catch (Throwable e) {
+            throw new TestsCompilerError(e);
         }
         return classFileFactory;
     }
@@ -558,7 +554,7 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
         return true;
     }
 
-    protected static boolean verifyAllFilesWithAsm(ClassFileFactory factory, ClassLoader loader, boolean reportProblems) {
+    private static boolean verifyAllFilesWithAsm(ClassFileFactory factory, ClassLoader loader, boolean reportProblems) {
         boolean noErrors = true;
         for (OutputFile file : ClassFileUtilsKt.getClassFiles(factory)) {
             noErrors &= verifyWithAsm(file, loader, reportProblems);
@@ -607,7 +603,8 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
         Class<?> aClass = generateFacadeClass();
         try {
             return findTheOnlyMethod(aClass);
-        } catch (Error e) {
+        }
+        catch (Error e) {
             System.out.println(generateToText());
             throw e;
         }
@@ -618,22 +615,11 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
         return findDeclaredMethodByName(generateFacadeClass(), name);
     }
 
-    @NotNull
-    @SuppressWarnings("unchecked")
-    public Class<? extends Annotation> loadAnnotationClassQuietly(@NotNull String fqName) {
-        try {
-            return (Class<? extends Annotation>) initializedClassLoader.loadClass(fqName);
-        }
-        catch (ClassNotFoundException e) {
-            throw ExceptionUtilsKt.rethrow(e);
-        }
-    }
-
     protected void updateConfiguration(@NotNull CompilerConfiguration configuration) {
 
     }
 
-    protected ClassBuilderFactory getClassBuilderFactory(){
+    protected ClassBuilderFactory getClassBuilderFactory() {
         return ClassBuilderFactories.TEST;
     }
 
@@ -641,7 +627,7 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
 
     }
 
-    protected void setCustomDefaultJvmTarget(CompilerConfiguration configuration) {
+    private void setCustomDefaultJvmTarget(CompilerConfiguration configuration) {
         JvmTarget target = configuration.get(JVMConfigurationKeys.JVM_TARGET);
         if (target == null && defaultJvmTarget != null) {
             JvmTarget value = JvmTarget.fromString(defaultJvmTarget);
@@ -663,8 +649,8 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
             boolean reportProblems
     ) {
         configurationKind = extractConfigurationKind(files);
-        boolean loadAndroidAnnotations = files.stream().anyMatch(it ->
-                InTextDirectivesUtils.isDirectiveDefined(it.content, "ANDROID_ANNOTATIONS")
+        boolean loadAndroidAnnotations = files.stream().anyMatch(
+                it -> InTextDirectivesUtils.isDirectiveDefined(it.content, "ANDROID_ANNOTATIONS")
         );
 
         List<String> javacOptions = extractJavacOptions(files);
@@ -744,7 +730,7 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
         return javacOptions;
     }
 
-    protected void updateJavacOptions(List<String> javacOptions) {
+    private void updateJavacOptions(List<String> javacOptions) {
         if (javaCompilationTarget != null && !javacOptions.contains("-target")) {
             javacOptions.add("-source");
             javacOptions.add(javaCompilationTarget);
@@ -832,9 +818,9 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
     }
 
     protected void doMultiFileTest(
-        @NotNull File wholeFile,
-        @NotNull List<TestFile> files,
-        @Nullable File javaFilesDir
+            @NotNull File wholeFile,
+            @NotNull List<TestFile> files,
+            @Nullable File javaFilesDir
     ) throws Exception {
         throw new UnsupportedOperationException("Multi-file test cases are not supported in this test");
     }
@@ -843,7 +829,7 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
             throws IOException, InvocationTargetException, IllegalAccessException {
         Class<?> aClass = getGeneratedClass(classLoader, className);
         Method method = getBoxMethodOrNull(aClass);
-        assertTrue("Can't find box method in " + aClass,method != null);
+        assertNotNull("Can't find box method in " + aClass, method);
         callBoxMethodAndCheckResult(classLoader, aClass, method);
     }
 
@@ -876,7 +862,8 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
         List<URL> classPath = extractUrls(classLoader);
         if (classLoader instanceof GeneratedClassLoader) {
             File outDir = KotlinTestUtils.tmpDirForTest(this);
-            SimpleOutputFileCollection currentOutput = new SimpleOutputFileCollection(((GeneratedClassLoader) classLoader).getAllGeneratedFiles());
+            SimpleOutputFileCollection currentOutput =
+                    new SimpleOutputFileCollection(((GeneratedClassLoader) classLoader).getAllGeneratedFiles());
             writeAllTo(currentOutput, outDir);
             classPath.add(0, outDir.toURI().toURL());
         }

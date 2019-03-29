@@ -20,6 +20,6 @@ import org.jetbrains.kotlin.codegen.AbstractBlackBoxCodegenTest
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 
-abstract class AbstractIrBlackBoxInlineCodegenTest: AbstractBlackBoxCodegenTest() {
+abstract class AbstractIrBlackBoxInlineCodegenTest : AbstractBlackBoxCodegenTest() {
     override fun updateConfiguration(configuration: CompilerConfiguration) = configuration.put(JVMConfigurationKeys.IR, true)
 }

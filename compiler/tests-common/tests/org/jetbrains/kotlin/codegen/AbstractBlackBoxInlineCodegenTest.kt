@@ -24,8 +24,7 @@ abstract class AbstractBlackBoxInlineCodegenTest : AbstractBlackBoxCodegenTest()
         try {
             InlineTestUtil.checkNoCallsToInline(initializedClassLoader.allGeneratedFiles.filterClassFiles(), myFiles.psiFiles)
             SMAPTestUtil.checkSMAP(files, generateClassesInFile().getClassFiles(), false)
-        }
-        catch (e: Throwable) {
+        } catch (e: Throwable) {
             println(generateToText())
             throw e
         }

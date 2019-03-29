@@ -171,6 +171,7 @@ public class PackageGenTest extends CodegenTestCase {
         assertEquals("beer", result.toString());
     }
 
+    @SuppressWarnings("StringOperationCanBeSimplified")
     public void testJavaEquals() throws Exception {
         loadText("fun foo(s1: String, s2: String) = s1 == s2");
         Method main = generateFunction();
@@ -178,6 +179,7 @@ public class PackageGenTest extends CodegenTestCase {
         assertEquals(Boolean.FALSE, main.invoke(null, new String("kotlin"), new String("ceylon")));
     }
 
+    @SuppressWarnings("StringOperationCanBeSimplified")
     public void testJavaNotEquals() throws Exception {
         loadText("fun foo(s1: String, s2: String) = s1 != s2");
         Method main = generateFunction();
@@ -200,6 +202,7 @@ public class PackageGenTest extends CodegenTestCase {
         assertEquals(Boolean.FALSE, main.invoke(null, "kotlin"));
     }
 
+    @SuppressWarnings("StringOperationCanBeSimplified")
     public void testTripleEq() throws Exception {
         loadText("fun foo(s1: String?, s2: String?) = s1 === s2");
         Method main = generateFunction();
@@ -209,6 +212,7 @@ public class PackageGenTest extends CodegenTestCase {
         assertEquals(Boolean.FALSE, main.invoke(null, s1, s2));
     }
 
+    @SuppressWarnings("StringOperationCanBeSimplified")
     public void testTripleNotEq() throws Exception {
         loadText("fun foo(s1: String?, s2: String?) = s1 !== s2");
         Method main = generateFunction();
@@ -301,7 +305,7 @@ public class PackageGenTest extends CodegenTestCase {
         assertEquals(610, c.gridx);
     }
 
-    public void testIncrementAsLastOperation() throws Exception {
+    public void testIncrementAsLastOperation() {
         loadText("fun foo() { var a = 0; a++; }");
         generateFunction();  // make sure we're not falling off end of code
     }
@@ -440,7 +444,7 @@ public class PackageGenTest extends CodegenTestCase {
     public void testExplicitCallOfBooleanNotIntrinsic() throws Exception {
         loadText("fun foo(a: Boolean) = a.not()");
         Method main = generateFunction();
-        assertEquals(false, ((Boolean) main.invoke(null, true)).booleanValue());
+        assertFalse(((Boolean) main.invoke(null, true)).booleanValue());
     }
 
     public void testAppendArrayToString() throws Exception {

@@ -29,7 +29,7 @@ import kotlin.collections.ArrayList
 abstract class AbstractLineNumberTest : CodegenTestCase() {
 
     override fun doMultiFileTest(
-        wholeFile: File, files: MutableList<CodegenTestCase.TestFile>, javaFilesDir: File?
+        wholeFile: File, files: MutableList<TestFile>, javaFilesDir: File?
     ) {
         val isCustomTest = wholeFile.parentFile.name.equals("custom", ignoreCase = true)
         if (!isCustomTest) {
@@ -159,7 +159,7 @@ abstract class AbstractLineNumberTest : CodegenTestCase() {
         private val TEST_LINE_NUMBER_PATTERN = Pattern.compile("^.*test.$LINE_NUMBER_FUN\\(\\).*$")
 
         private fun createLineNumberDeclaration() =
-            CodegenTestCase.TestFile(
+            TestFile(
                 "$LINE_NUMBER_FUN.kt",
                 "package test;\n\npublic fun $LINE_NUMBER_FUN(): Int = 0\n"
             )
