@@ -36,7 +36,7 @@ public abstract class Random {
     public open fun nextInt(): Int = nextBits(32)
 
     /**
-     * Gets the next random non-negative `Int` from the random number generator not greater than the specified [until] bound.
+     * Gets the next random non-negative `Int` from the random number generator less than the specified [until] bound.
      *
      * Generates an `Int` random value uniformly distributed between `0` (inclusive) and the specified [until] bound (exclusive).
      *
@@ -85,7 +85,7 @@ public abstract class Random {
     public open fun nextLong(): Long = nextInt().toLong().shl(32) + nextInt()
 
     /**
-     * Gets the next random non-negative `Long` from the random number generator not greater than the specified [until] bound.
+     * Gets the next random non-negative `Long` from the random number generator less than the specified [until] bound.
      *
      * Generates a `Long` random value uniformly distributed between `0` (inclusive) and the specified [until] bound (exclusive).
      *
@@ -152,7 +152,7 @@ public abstract class Random {
     public open fun nextDouble(): Double = doubleFromParts(nextBits(26), nextBits(27))
 
     /**
-     * Gets the next random non-negative `Double` from the random number generator not greater than the specified [until] bound.
+     * Gets the next random non-negative `Double` from the random number generator less than the specified [until] bound.
      *
      * Generates a `Double` random value uniformly distributed between 0 (inclusive) and [until] (exclusive).
      *
