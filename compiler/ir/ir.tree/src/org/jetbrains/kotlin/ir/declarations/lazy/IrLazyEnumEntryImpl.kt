@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.ir.declarations.lazy
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.ir.DescriptorInIrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
@@ -42,9 +40,6 @@ class IrLazyEnumEntryImpl(
     init {
         symbol.bind(this)
     }
-
-    @DescriptorInIrDeclaration
-    override val descriptor: ClassDescriptor get() = symbol.descriptor
 
     override val name: Name = symbol.descriptor.name
 
