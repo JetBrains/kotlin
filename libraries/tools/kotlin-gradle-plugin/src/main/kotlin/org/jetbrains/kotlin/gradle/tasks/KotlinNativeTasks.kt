@@ -61,12 +61,6 @@ internal fun MutableList<String>.addFileArgs(parameter: String, values: Collecti
     }
 }
 
-internal fun MutableList<String>.addListArg(parameter: String, values: List<String>) {
-    if (values.isNotEmpty()) {
-        addArg(parameter, values.joinToString(separator = " "))
-    }
-}
-
 private fun File.providedByCompiler(project: Project): Boolean =
     toPath().startsWith(project.file(project.konanHome).resolve("klib").toPath())
 
@@ -398,7 +392,9 @@ open class KotlinNativeLink : AbstractKotlinNativeCompile() {
                 Framework.BitcodeEmbeddingMode.BITCODE -> add("-Xembed-bitcode")
                 else -> { /* Do nothing. */ }
             }
-            addListArg("-linker-options", linkerOpts)
+            linkerOpts.forEach {
+                addArg("-linker-option", it)
+            }
             exportLibraries.files.filterExternalKlibs(project).forEach {
                 add("-Xexport-library=${it.absolutePath}")
             }
@@ -521,18 +517,18 @@ open class CInteropProcess : DefaultTask() {
             addFileArgs("-header", headers)
 
             compilerOpts.forEach {
-                addArg("-copt", it)
+                addArg("-compilerOpt", it)
             }
 
             linkerOpts.forEach {
-                addArg("-lopt", it)
+                addArg("-linkerOpt", it)
             }
 
             libraries.files.filterExternalKlibs(project).forEach { library ->
                 addArg("-library", library.absolutePath)
             }
 
-            addArgs("-copt", allHeadersDirs.map { "-I${it.absolutePath}" })
+            addArgs("-compilerOpt", allHeadersDirs.map { "-I${it.absolutePath}" })
             addArgs("-headerFilterAdditionalSearchPrefix", headerFilterDirs.map { it.absolutePath })
 
             addAll(extraOpts)
