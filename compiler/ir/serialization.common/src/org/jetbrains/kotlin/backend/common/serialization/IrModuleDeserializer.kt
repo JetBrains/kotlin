@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.LoggingContext
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedClassDescriptor
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedFieldDescriptor
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedPropertyDescriptor
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
@@ -1161,7 +1160,7 @@ abstract class IrModuleDeserializer(
         end: Int,
         origin: IrDeclarationOrigin
     ): IrDeclaration {
-        return IrErrorDeclarationImpl(start, end, WrappedClassDescriptor())
+        return IrErrorDeclarationImpl(start, end, "") // TODO restore description?
     }
 
     private val allKnownOrigins =

@@ -567,26 +567,14 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
         "DYN_MEMBER memberName='${expression.memberName}' type=${expression.type.render()}"
 
     override fun visitErrorDeclaration(declaration: IrErrorDeclaration, data: Nothing?): String =
-        "ERROR_DECL ${declaration.descriptor::class.java.simpleName} " +
-                descriptorRendererForErrorDeclarations.renderDescriptor(declaration.descriptor.original)
+        "ERROR_DECL '${declaration.description}'" // TODO add tests
 
     override fun visitErrorExpression(expression: IrErrorExpression, data: Nothing?): String =
         "ERROR_EXPR '${expression.description}' type=${expression.type.render()}"
 
     override fun visitErrorCallExpression(expression: IrErrorCallExpression, data: Nothing?): String =
         "ERROR_CALL '${expression.description}' type=${expression.type.render()}"
-
-    private val descriptorRendererForErrorDeclarations = DescriptorRenderer.ONLY_NAMES_WITH_SHORT_TYPES
 }
-
-internal fun IrDeclaration.name(): String =
-    descriptor.name.toString()
-
-internal fun DescriptorRenderer.renderDescriptor(descriptor: DeclarationDescriptor): String =
-    if (descriptor is ReceiverParameterDescriptor)
-        "this@${descriptor.containingDeclaration.name}: ${descriptor.type}"
-    else
-        render(descriptor)
 
 internal fun IrDeclaration.renderOriginIfNonTrivial(): String =
     if (origin != IrDeclarationOrigin.DEFINED) "$origin " else ""

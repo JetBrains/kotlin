@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.psi2ir.endOffsetOrUndefined
 import org.jetbrains.kotlin.psi2ir.startOffsetOrUndefined
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -53,7 +52,7 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
             else ->
                 IrErrorDeclarationImpl(
                     ktDeclaration.startOffsetSkippingComments, ktDeclaration.endOffset,
-                    getOrFail(BindingContext.DECLARATION_TO_DESCRIPTOR, ktDeclaration)
+                    "Unknown declaration type: ${ktDeclaration::class.java.simpleName}"
                 )
         }
 
