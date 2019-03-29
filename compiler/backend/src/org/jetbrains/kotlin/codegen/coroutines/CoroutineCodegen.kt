@@ -62,7 +62,7 @@ abstract class AbstractCoroutineCodegen(
         if (languageVersionSettings.isReleaseCoroutines())
             createImplMethod(
                 INVOKE_SUSPEND_METHOD_NAME,
-                "\$result" to classDescriptor.module.getResult(classDescriptor.builtIns.anyType)
+                SUSPEND_CALL_RESULT_NAME to classDescriptor.module.getResult(classDescriptor.builtIns.anyType)
             )
         else
             createImplMethod(

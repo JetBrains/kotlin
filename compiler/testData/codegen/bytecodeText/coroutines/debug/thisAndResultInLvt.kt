@@ -22,4 +22,4 @@ class A {
 // 1 LOCALVARIABLE a LA; L0 L.* 1
 // 1 LOCALVARIABLE s Ljava/lang/String; L0 L.* 2
 // 1 LOCALVARIABLE block Lkotlin/jvm/functions/Function2; L0 L.* 3
-// 1 LOCALVARIABLE \$continuation Lkotlin/coroutines/Continuation; L2 L7 6
+// 1 LOCALVARIABLE \$continuation Lkotlin/coroutines/Continuation; L2 L.* 6

@@ -47,6 +47,7 @@ private const val COROUTINES_METADATA_CLASS_NAME_JVM_NAME = "c"
 private const val COROUTINES_METADATA_VERSION_JVM_NAME = "v"
 
 const val SUSPEND_FUNCTION_CONTINUATION_PARAMETER = "\$completion"
+const val SUSPEND_CALL_RESULT_NAME = "\$result"
 
 class CoroutineTransformerMethodVisitor(
     delegate: MethodVisitor,
@@ -315,18 +316,28 @@ class CoroutineTransformerMethodVisitor(
 
     // Warning! This is _continuation_, not _completion_, it can be allocated inside the method, thus, it is incorrect to treat it
     // as a parameter
-    private fun addContinuationToLvt(methodNode: MethodNode, startLabel: LabelNode) {
-        val endLabel = LabelNode()
-        methodNode.instructions.insert(methodNode.instructions.last, endLabel)
-        methodNode.localVariables.add(
-            LocalVariableNode(
-                CONTINUATION_VARIABLE_NAME,
-                languageVersionSettings.continuationAsmType().descriptor,
-                null,
-                startLabel,
-                endLabel,
-                continuationIndex
-            )
+    private fun addContinuationAndResultToLvt(
+        methodNode: MethodNode,
+        startLabel: Label,
+        resultStartLabel: Label
+    ) {
+        val endLabel = Label()
+        methodNode.instructions.add(withInstructionAdapter { mark(endLabel) })
+        methodNode.visitLocalVariable(
+            CONTINUATION_VARIABLE_NAME,
+            languageVersionSettings.continuationAsmType().descriptor,
+            null,
+            startLabel,
+            endLabel,
+            continuationIndex
+        )
+        methodNode.visitLocalVariable(
+            SUSPEND_CALL_RESULT_NAME,
+            AsmTypes.OBJECT_TYPE.descriptor,
+            null,
+            resultStartLabel,
+            endLabel,
+            dataIndex
         )
     }
 
@@ -454,11 +465,14 @@ class CoroutineTransformerMethodVisitor(
 
             visitLabel(afterCoroutineStateCreated)
 
-            addContinuationToLvt(methodNode, LabelNode(afterCoroutineStateCreated))
-
             visitVarInsn(Opcodes.ALOAD, continuationIndex)
             getfield(classBuilderForCoroutineState.thisName, languageVersionSettings.dataFieldName(), AsmTypes.OBJECT_TYPE.descriptor)
             visitVarInsn(Opcodes.ASTORE, dataIndex)
+
+            val resultStartLabel = Label()
+            visitLabel(resultStartLabel)
+
+            addContinuationAndResultToLvt(methodNode, afterCoroutineStateCreated, resultStartLabel)
 
             if (!languageVersionSettings.isReleaseCoroutines()) {
                 visitVarInsn(Opcodes.ALOAD, continuationIndex)
