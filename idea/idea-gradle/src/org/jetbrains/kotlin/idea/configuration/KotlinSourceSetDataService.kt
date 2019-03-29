@@ -19,7 +19,7 @@ import com.intellij.openapi.roots.ExportableOrderEntry
 import com.intellij.openapi.roots.ModifiableRootModel
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.config.CoroutineSupport
-import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.resolve.JvmTarget
 import org.jetbrains.kotlin.config.KotlinModuleKind
 import org.jetbrains.kotlin.gradle.KotlinCompilation
 import org.jetbrains.kotlin.gradle.KotlinModule
@@ -99,6 +99,8 @@ class KotlinSourceSetDataService : AbstractProjectDataService<GradleSourceSetDat
                 ?.let { findKotlinPluginVersion(it) }// ?: return null TODO: Fix in CLion or our plugin KT-27623
 
             val platformKind = IdePlatformKindTooling.getTooling(kotlinSourceSet.platform).kind
+
+            // TODO: remove it when we'll get rid of IdePlatform
             val platform = when (platformKind) {
                 is JvmIdePlatformKind -> {
                     val target = JvmTarget.fromString(moduleData.targetCompatibility ?: "") ?: JvmTarget.DEFAULT

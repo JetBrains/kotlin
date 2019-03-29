@@ -72,7 +72,7 @@ import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.resolve.isJvm
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.descriptors.findPackageFragmentForFile
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
@@ -277,7 +277,7 @@ class MoveConflictChecker(
         val baseScope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(this)
 
         val targetPlatform = TargetPlatformDetector.getPlatform(this)
-        if (targetPlatform is JvmPlatform) return baseScope
+        if (targetPlatform.isJvm()) return baseScope
 
         return ModuleRootManager.getInstance(this)
             .orderEntries

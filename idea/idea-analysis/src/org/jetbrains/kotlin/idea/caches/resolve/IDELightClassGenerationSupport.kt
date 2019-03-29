@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.codegen.state.IncompatibleClassTracker
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
-import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.resolve.JvmTarget
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor

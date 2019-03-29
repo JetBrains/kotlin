@@ -7,10 +7,10 @@
 package org.jetbrains.kotlin.platform.impl
 
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.config.TargetPlatformVersion
+import org.jetbrains.kotlin.resolve.TargetPlatformVersion
 import org.jetbrains.kotlin.platform.IdePlatform
 import org.jetbrains.kotlin.platform.IdePlatformKind
-import org.jetbrains.kotlin.resolve.konan.platform.KonanPlatform
+import org.jetbrains.kotlin.resolve.DefaultBuiltInPlatforms
 
 object NativeIdePlatformKind : IdePlatformKind<NativeIdePlatformKind>() {
 
@@ -19,7 +19,7 @@ object NativeIdePlatformKind : IdePlatformKind<NativeIdePlatformKind>() {
         else null
     }
 
-    override val compilerPlatform get() = KonanPlatform
+    override val compilerPlatform get() = DefaultBuiltInPlatforms.konanPlatform
 
     override val platforms get() = listOf(Platform)
     override val defaultPlatform get() = Platform

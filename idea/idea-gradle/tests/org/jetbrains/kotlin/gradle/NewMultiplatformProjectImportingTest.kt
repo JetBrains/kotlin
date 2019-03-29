@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle
 import com.intellij.openapi.roots.*
 import org.jetbrains.jps.model.java.JavaResourceRootType
 import org.jetbrains.jps.model.java.JavaSourceRootType
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.idea.codeInsight.gradle.ExternalSystemImportingTestCase
 import org.jetbrains.kotlin.idea.codeInsight.gradle.MultiplePluginVersionGradleImportingTestCase

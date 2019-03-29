@@ -73,9 +73,9 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
 import org.jetbrains.kotlin.resolve.AnnotationChecker
+import org.jetbrains.kotlin.resolve.DefaultBuiltInPlatforms
 import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
@@ -362,7 +362,7 @@ class KotlinElementActionsFactory : JvmElementActionsFactory() {
         if (!modifierBuilder.isValid) return emptyList()
 
         val resolutionFacade = KotlinCacheService.getInstance(targetContainer.project)
-            .getResolutionFacadeByFile(targetContainer.containingFile, JvmPlatform) ?: return emptyList()
+            .getResolutionFacadeByFile(targetContainer.containingFile, DefaultBuiltInPlatforms.jvmPlatform) ?: return emptyList()
         val returnTypeInfo = request.returnType.toKotlinTypeInfo(resolutionFacade)
         val parameters = request.parameters as List<Pair<SuggestedNameInfo, List<ExpectedType>>>
         val parameterInfos = parameters.map { (suggestedNames, expectedTypes) ->

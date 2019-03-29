@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.resolve.TargetPlatform
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.resolve.isJvm
 import org.jetbrains.kotlin.samWithReceiver.SamWithReceiverCommandLineProcessor.Companion.SUPPORTED_PRESETS
 import org.jetbrains.kotlin.samWithReceiver.SamWithReceiverConfigurationKeys.ANNOTATION
 import org.jetbrains.kotlin.samWithReceiver.SamWithReceiverConfigurationKeys.PRESET
@@ -74,7 +74,7 @@ class SamWithReceiverComponentRegistrar : ComponentRegistrar {
 
 class CliSamWithReceiverComponentContributor(val annotations: List<String>): StorageComponentContainerContributor {
     override fun registerModuleComponents(container: StorageComponentContainer, platform: TargetPlatform, moduleDescriptor: ModuleDescriptor) {
-        if (platform != JvmPlatform) return
+        if (!platform.isJvm()) return
 
         container.useInstance(SamWithReceiverResolverExtension(annotations))
     }

@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypesAndPredicate
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.resolve.isJvm
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.getAbbreviatedType
@@ -30,7 +30,7 @@ class AddThrowsAnnotationIntention : SelfTargetingIntention<KtThrowExpression>(
 ) {
 
     override fun isApplicableTo(element: KtThrowExpression, caretOffset: Int): Boolean {
-        if (element.platform != JvmPlatform) return false
+        if (!element.platform.isJvm()) return false
         val containingDeclaration = element.getContainingDeclaration() ?: return false
 
         val type = element.thrownExpression?.resolveToCall()?.resultingDescriptor?.returnType ?: return false

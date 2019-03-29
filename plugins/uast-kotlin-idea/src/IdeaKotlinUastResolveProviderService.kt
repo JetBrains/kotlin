@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.resolve.isJvm
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.uast.kotlin.KotlinUastResolveProviderService
 
@@ -55,11 +55,11 @@ class IdeaKotlinUastResolveProviderService : KotlinUastResolveProviderService {
 
         val containingFile = psiElement.containingFile
         if (containingFile is KtFile) {
-            return TargetPlatformDetector.getPlatform(containingFile) is JvmPlatform
+            return TargetPlatformDetector.getPlatform(containingFile).isJvm()
         }
 
         val module = psiElement.module
-        return module == null || TargetPlatformDetector.getPlatform(module) is JvmPlatform
+        return module == null || TargetPlatformDetector.getPlatform(module).isJvm()
     }
 
     override fun getLanguageVersionSettings(element: KtElement): LanguageVersionSettings {
@@ -78,7 +78,7 @@ class IdeaKotlinUastResolveProviderService : KotlinUastResolveProviderService {
             .getCachedValue(project, {
                 Result.create(
                     ModuleManager.getInstance(project).modules.all { module ->
-                        TargetPlatformDetector.getPlatform(module) is JvmPlatform
+                        TargetPlatformDetector.getPlatform(module).isJvm()
                     },
                     ProjectRootModificationTracker.getInstance(project)
                 )

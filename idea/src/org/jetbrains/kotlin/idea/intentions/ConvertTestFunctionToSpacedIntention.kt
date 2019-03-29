@@ -27,13 +27,13 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.refactoring.rename.RenameProcessor
-import org.jetbrains.kotlin.analyzer.common.CommonPlatform
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
+import org.jetbrains.kotlin.resolve.isCommon
+import org.jetbrains.kotlin.resolve.isJs
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeSmart
 import org.jetbrains.kotlin.utils.SmartList
 
@@ -54,7 +54,7 @@ sealed class ConvertTestFunctionToSpacedIntention(case: String) : SelfTargetingR
 
     override fun applicabilityRange(element: KtNamedFunction): TextRange? {
         val platform = element.platform
-        if (platform is CommonPlatform || platform is JsPlatform) return null
+        if (platform.isCommon() || platform.isJs()) return null
         val range = element.nameIdentifier?.textRange ?: return null
 
         val name = element.name ?: return null

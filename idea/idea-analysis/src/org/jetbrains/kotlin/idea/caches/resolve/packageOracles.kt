@@ -28,14 +28,14 @@ import org.jetbrains.kotlin.idea.caches.project.projectSourceModules
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isSubpackageOf
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.resolve.isJvm
 
 class IdePackageOracleFactory(val project: Project) : PackageOracleFactory {
     override fun createOracle(moduleInfo: ModuleInfo): PackageOracle {
         if (moduleInfo !is IdeaModuleInfo) return PackageOracle.Optimistic
 
-        return when (moduleInfo.platform) {
-            JvmPlatform -> when (moduleInfo.moduleOrigin) {
+        return when {
+            moduleInfo.platform.isJvm() -> when (moduleInfo.moduleOrigin) {
                 ModuleOrigin.LIBRARY -> JavaPackagesOracle(moduleInfo, project)
                 ModuleOrigin.MODULE -> JvmSourceOracle(moduleInfo, project)
                 ModuleOrigin.OTHER -> PackageOracle.Optimistic

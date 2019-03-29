@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.ide.konan.decompiler.KotlinNativeLoadingMetadataCache
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.idea.caches.project.LibraryInfo
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.LoggingErrorReporter
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.util.KonanFactories.DefaultPackageFragmentsFactory
@@ -29,11 +28,9 @@ import org.jetbrains.kotlin.konan.library.KonanLibraryLayout
 import org.jetbrains.kotlin.konan.library.KonanLibrarySource.KonanLibraryDir
 import org.jetbrains.kotlin.konan.library.KonanLibrarySource.KonanLibraryFile
 import org.jetbrains.kotlin.konan.library.MetadataReader
-import org.jetbrains.kotlin.konan.library.createKonanLibrary
 import org.jetbrains.kotlin.metadata.konan.KonanProtoBuf
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
-import org.jetbrains.kotlin.resolve.konan.platform.KonanPlatform
 import org.jetbrains.kotlin.storage.StorageManager
 
 const val KOTLIN_NATIVE_CURRENT_ABI_VERSION = 1

@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.platform.impl
 
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
-import org.jetbrains.kotlin.config.TargetPlatformVersion
-import org.jetbrains.kotlin.js.resolve.JsPlatform
+import org.jetbrains.kotlin.resolve.TargetPlatformVersion
 import org.jetbrains.kotlin.platform.IdePlatform
 import org.jetbrains.kotlin.platform.IdePlatformKind
+import org.jetbrains.kotlin.resolve.DefaultBuiltInPlatforms
 
 object JsIdePlatformKind : IdePlatformKind<JsIdePlatformKind>() {
 
@@ -20,7 +20,7 @@ object JsIdePlatformKind : IdePlatformKind<JsIdePlatformKind>() {
         else null
     }
 
-    override val compilerPlatform get() = JsPlatform
+    override val compilerPlatform get() = DefaultBuiltInPlatforms.jsPlatform
 
     override val platforms get() = listOf(Platform)
     override val defaultPlatform get() = Platform

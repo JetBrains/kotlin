@@ -25,12 +25,11 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtReferenceExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.resolve.AnalyzingUtils
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.MultiTargetPlatform
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
+import org.jetbrains.kotlin.resolve.isCommon
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.noTypeInfo
 import java.util.*
@@ -48,7 +47,7 @@ object CheckerTestUtil {
 
     fun getDiagnosticsIncludingSyntaxErrors(
         bindingContext: BindingContext,
-        implementingModulesBindings: List<Pair<MultiTargetPlatform, BindingContext>>,
+        implementingModulesBindings: List<Pair<TargetPlatform, BindingContext>>,
         root: PsiElement,
         markDynamicCalls: Boolean,
         dynamicCallDescriptors: MutableList<DeclarationDescriptor>,
@@ -70,10 +69,11 @@ object CheckerTestUtil {
             moduleDescriptor,
             diagnosedRanges
         )
-        val sortedBindings = implementingModulesBindings.sortedBy { it.first }
+
+        val sortedBindings = implementingModulesBindings.sortedBy { it.first.oldFashionedDescription }
 
         for ((platform, second) in sortedBindings) {
-            assert(platform is MultiTargetPlatform.Specific) { "Implementing module must have a specific platform: $platform" }
+            assert(!platform.isCommon()) { "Implementing module must have a specific platform: $platform" }
 
             result.addAll(
                 getDiagnosticsIncludingSyntaxErrors(
@@ -81,7 +81,7 @@ object CheckerTestUtil {
                     root,
                     markDynamicCalls,
                     dynamicCallDescriptors,
-                    (platform as MultiTargetPlatform.Specific).platform,
+                    platform.single().platformName,
                     withNewInference,
                     languageVersionSettings,
                     dataFlowValueFactory,

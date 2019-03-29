@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
-import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.js.resolve.JsPlatformCompilerServices
 import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil.TEST_PACKAGE_FQNAME
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration

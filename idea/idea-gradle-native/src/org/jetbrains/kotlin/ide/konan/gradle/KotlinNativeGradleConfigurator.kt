@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.ide.konan.hasKotlinNativeRuntimeInScope
 import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinStatus
 import org.jetbrains.kotlin.idea.configuration.KotlinWithGradleConfigurator
 import org.jetbrains.kotlin.idea.configuration.ModuleSourceRootGroup
-import org.jetbrains.kotlin.resolve.konan.platform.KonanPlatform
+import org.jetbrains.kotlin.resolve.DefaultBuiltInPlatforms
 
 
 open class KotlinNativeGradleConfigurator : KotlinWithGradleConfigurator() {
@@ -29,7 +29,7 @@ open class KotlinNativeGradleConfigurator : KotlinWithGradleConfigurator() {
 
     override val name: String get() = NAME
 
-    override val targetPlatform get() = KonanPlatform
+    override val targetPlatform get() = DefaultBuiltInPlatforms.konanPlatform
 
     override val presentableText get() = PRESENTABLE_TEXT
 

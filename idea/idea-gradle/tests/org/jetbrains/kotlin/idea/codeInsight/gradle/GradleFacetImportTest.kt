@@ -47,12 +47,10 @@ import org.jetbrains.kotlin.idea.framework.KotlinSdkType
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import org.jetbrains.kotlin.idea.util.projectStructure.sdk
-import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.isCommon
 import org.jetbrains.kotlin.platform.impl.isJavaScript
-import org.jetbrains.kotlin.resolve.TargetPlatform
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.resolve.JvmTarget
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Assert
 import org.junit.Test
@@ -2192,9 +2190,9 @@ compileTestKotlin {
         )
         importProject()
 
-        checkStableModuleName("project_main", "project", JsPlatform, isProduction = true)
+        checkStableModuleName("project_main", "project", DefaultBuiltInPlatforms.jsPlatform, isProduction = true)
         // Note "_test" suffix: this is current behavior of K2JS Compiler
-        checkStableModuleName("project_test", "project_test", JsPlatform, isProduction = false)
+        checkStableModuleName("project_test", "project_test", DefaultBuiltInPlatforms.jsPlatform, isProduction = false)
 
         assertAllModulesConfigured()
     }
@@ -2230,8 +2228,8 @@ compileTestKotlin {
         )
         importProject()
 
-        checkStableModuleName("project_main", "project", JvmPlatform, isProduction = true)
-        checkStableModuleName("project_test", "project", JvmPlatform, isProduction = false)
+        checkStableModuleName("project_main", "project", DefaultBuiltInPlatforms.jvmPlatform, isProduction = true)
+        checkStableModuleName("project_test", "project", DefaultBuiltInPlatforms.jvmPlatform, isProduction = false)
 
         assertAllModulesConfigured()
     }

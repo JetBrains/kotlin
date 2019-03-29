@@ -20,7 +20,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.idea.maven.plugins.api.MavenFixedValueReferenceProvider
 import org.jetbrains.kotlin.cli.common.arguments.DefaultValues
-import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.resolve.JvmTarget
 import org.jetbrains.kotlin.config.LanguageVersion
 
 class MavenLanguageVersionsCompletionProvider : MavenFixedValueReferenceProvider(

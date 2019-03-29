@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.idea.completion.CompletionBindingContextProvider
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.resolve.DefaultBuiltInPlatforms
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
@@ -82,7 +82,7 @@ abstract class AbstractCompletionIncrementalResolveTest : KotlinLightCodeInsight
             }
 
             testCompletion(FileUtil.loadFile(file, true),
-                           JvmPlatform,
+                           DefaultBuiltInPlatforms.jvmPlatform,
                            { completionType, count -> myFixture.complete(completionType, count) },
                            additionalValidDirectives = listOf(TYPE_DIRECTIVE_PREFIX, BACKSPACES_DIRECTIVE_PREFIX))
 

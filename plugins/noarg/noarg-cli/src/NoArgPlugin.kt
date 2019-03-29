@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.noarg.NoArgConfigurationKeys.INVOKE_INITIALIZERS
 import org.jetbrains.kotlin.noarg.NoArgConfigurationKeys.PRESET
 import org.jetbrains.kotlin.noarg.diagnostic.CliNoArgDeclarationChecker
 import org.jetbrains.kotlin.resolve.TargetPlatform
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.resolve.isJvm
 
 object NoArgConfigurationKeys {
     val ANNOTATION: CompilerConfigurationKey<List<String>> =
@@ -89,9 +89,9 @@ class NoArgComponentRegistrar : ComponentRegistrar {
 
 class CliNoArgComponentContainerContributor(val annotations: List<String>) : StorageComponentContainerContributor {
     override fun registerModuleComponents(
-            container: StorageComponentContainer, platform: TargetPlatform, moduleDescriptor: ModuleDescriptor
+        container: StorageComponentContainer, platform: TargetPlatform, moduleDescriptor: ModuleDescriptor
     ) {
-        if (platform != JvmPlatform) return
+        if (!platform.isJvm()) return
 
         container.useInstance(CliNoArgDeclarationChecker(annotations))
     }

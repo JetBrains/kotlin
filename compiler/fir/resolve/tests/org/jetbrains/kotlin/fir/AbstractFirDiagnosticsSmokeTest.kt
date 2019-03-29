@@ -22,12 +22,12 @@ import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveTransformer
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.MultiTargetPlatform
-import org.jetbrains.kotlin.resolve.PlatformDependentCompilerServices
+import org.jetbrains.kotlin.resolve.DefaultBuiltInPlatforms
 import org.jetbrains.kotlin.resolve.TargetPlatform
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.resolve.PlatformDependentCompilerServices
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformCompilerServices
 import java.io.File
+import java.lang.IllegalStateException
 import java.util.*
 
 abstract class AbstractFirDiagnosticsSmokeTest : BaseDiagnosticsTest() {
@@ -130,21 +130,24 @@ abstract class AbstractFirDiagnosticsSmokeTest : BaseDiagnosticsTest() {
     private val builtInsModuleInfo = BuiltInModuleInfo(Name.special("<built-ins>"))
 
     protected open fun createModule(moduleName: String): TestModuleInfo {
-        val nameSuffix = moduleName.substringAfterLast("-", "")
+        val nameSuffix = moduleName.substringAfterLast("-", "").toUpperCase()
         // TODO: use platform
-        @Suppress("UNUSED_VARIABLE")
+        @Suppress("UNUSED_VARIBALE")
         val platform =
             when {
-                nameSuffix.isEmpty() -> null
-                nameSuffix == "common" -> MultiTargetPlatform.Common
-                else -> MultiTargetPlatform.Specific(nameSuffix.toUpperCase())
+                nameSuffix.isEmpty() -> null // TODO(dsavvinov): this leads to 'null'-platform in ModuleDescriptor
+                nameSuffix == "COMMON" -> DefaultBuiltInPlatforms.commonPlatform
+                nameSuffix == "JVM" -> DefaultBuiltInPlatforms.jvmPlatform // TODO(dsavvinov): determine JvmTarget precisely
+                nameSuffix == "JS" -> DefaultBuiltInPlatforms.jsPlatform
+                nameSuffix == "NATIVE" -> DefaultBuiltInPlatforms.konanPlatform
+                else -> throw IllegalStateException("Can't determine platform by name $nameSuffix")
             }
         return TestModuleInfo(Name.special("<$moduleName>"))
     }
 
     class BuiltInModuleInfo(override val name: Name) : ModuleInfo {
         override val platform: TargetPlatform?
-            get() = JvmPlatform
+            get() = DefaultBuiltInPlatforms.jvmPlatform
 
         override val compilerServices: PlatformDependentCompilerServices
             get() = JvmPlatformCompilerServices
@@ -156,7 +159,7 @@ abstract class AbstractFirDiagnosticsSmokeTest : BaseDiagnosticsTest() {
 
     protected class TestModuleInfo(override val name: Name) : ModuleInfo {
         override val platform: TargetPlatform?
-            get() = JvmPlatform
+            get() = DefaultBuiltInPlatforms.jvmPlatform
 
         override val compilerServices: PlatformDependentCompilerServices
             get() = JvmPlatformCompilerServices

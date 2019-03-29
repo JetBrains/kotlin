@@ -42,8 +42,8 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
+import org.jetbrains.kotlin.resolve.isJvm
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.utils.decodePluginOptions
 
 object AndroidConfigurationKeys {
@@ -163,9 +163,9 @@ class AndroidComponentRegistrar : ComponentRegistrar {
 
 class AndroidExtensionPropertiesComponentContainerContributor : StorageComponentContainerContributor {
     override fun registerModuleComponents(
-            container: StorageComponentContainer, platform: TargetPlatform, moduleDescriptor: ModuleDescriptor
+        container: StorageComponentContainer, platform: TargetPlatform, moduleDescriptor: ModuleDescriptor
     ) {
-        if (platform != JvmPlatform) return
+        if (!platform.isJvm()) return
 
         container.useInstance(AndroidExtensionPropertiesCallChecker())
         container.useInstance(ParcelableDeclarationChecker())

@@ -11,12 +11,11 @@ import com.intellij.openapi.fileTypes.FileTypeFactory
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.konan.library.KLIB_METADATA_FILE_EXTENSION
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
-import org.jetbrains.kotlin.resolve.konan.platform.KonanPlatform
 import org.jetbrains.kotlin.serialization.konan.KonanSerializerProtocol
 import org.jetbrains.kotlin.serialization.konan.NullFlexibleTypeDeserializer
 
 class KotlinNativeMetadataDecompiler : KotlinNativeMetadataDecompilerBase<KotlinNativeMetadataVersion>(
-    KotlinNativeMetaFileType, KonanPlatform, KonanSerializerProtocol, NullFlexibleTypeDeserializer,
+    KotlinNativeMetaFileType, KonanSerializerProtocol, NullFlexibleTypeDeserializer,
     KotlinNativeMetadataVersion.DEFAULT_INSTANCE,
     KotlinNativeMetadataVersion.INVALID_VERSION,
     KotlinNativeMetaFileType.STUB_VERSION

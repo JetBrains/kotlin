@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.decompiler.builtIns
 import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.analyzer.common.CommonPlatform
 import org.jetbrains.kotlin.idea.decompiler.common.FileWithMetadata
 import org.jetbrains.kotlin.idea.decompiler.common.KotlinMetadataDecompiler
 import org.jetbrains.kotlin.metadata.ProtoBuf

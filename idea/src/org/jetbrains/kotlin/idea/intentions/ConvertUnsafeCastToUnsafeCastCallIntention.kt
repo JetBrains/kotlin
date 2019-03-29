@@ -8,12 +8,12 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.project.platform
-import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtBinaryExpressionWithTypeRHS
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.createExpressionByPattern
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.isJs
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.TypeUtils
 
@@ -22,7 +22,7 @@ class ConvertUnsafeCastToUnsafeCastCallIntention : SelfTargetingIntention<KtBina
 ) {
 
     override fun isApplicableTo(element: KtBinaryExpressionWithTypeRHS, caretOffset: Int): Boolean {
-        if (element.platform != JsPlatform) return false
+        if (!element.platform.isJs()) return false
 
         if (element.operationReference.getReferencedNameElementType() != KtTokens.AS_KEYWORD) return false
 

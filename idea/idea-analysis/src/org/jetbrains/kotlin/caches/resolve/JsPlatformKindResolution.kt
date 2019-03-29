@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.idea.caches.resolve.PlatformAnalysisSettings
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.js.resolve.JsResolverForModuleFactory
-import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.js.resolve.JsPlatformCompilerServices
 import org.jetbrains.kotlin.platform.impl.JsIdePlatformKind
 

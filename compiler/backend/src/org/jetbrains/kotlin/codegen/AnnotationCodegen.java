@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
-import org.jetbrains.kotlin.config.JvmTarget;
+import org.jetbrains.kotlin.resolve.JvmTarget;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.*;
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
@@ -242,6 +242,7 @@ public abstract class AnnotationCodegen {
         jvm8.put(KotlinTarget.TYPE_PARAMETER, ElementType.TYPE_PARAMETER);
         jvm8.put(KotlinTarget.TYPE, ElementType.TYPE_USE);
 
+        // TODO: switch to platforms?
         annotationTargetMaps.put(JvmTarget.JVM_1_6, jvm6);
         annotationTargetMaps.put(JvmTarget.JVM_1_8, jvm8);
         annotationTargetMaps.put(JvmTarget.JVM_9, jvm8);

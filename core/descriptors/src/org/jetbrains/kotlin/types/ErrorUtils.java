@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.kotlin.incremental.components.LookupLocation;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.resolve.TargetPlatform;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
@@ -78,6 +79,12 @@ public class ErrorUtils {
             @Override
             public Name getStableName() {
                 return Name.special("<ERROR MODULE>");
+            }
+
+            @Nullable
+            @Override
+            public TargetPlatform getPlatform() {
+                return null;
             }
 
             @NotNull

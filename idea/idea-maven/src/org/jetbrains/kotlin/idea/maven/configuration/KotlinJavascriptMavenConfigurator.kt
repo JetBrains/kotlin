@@ -21,7 +21,7 @@ import org.jetbrains.idea.maven.dom.model.MavenDomPlugin
 import org.jetbrains.kotlin.idea.configuration.hasKotlinJsRuntimeInScope
 import org.jetbrains.kotlin.idea.maven.PomFile
 import org.jetbrains.kotlin.idea.versions.MAVEN_JS_STDLIB_ID
-import org.jetbrains.kotlin.js.resolve.JsPlatform
+import org.jetbrains.kotlin.resolve.DefaultBuiltInPlatforms
 import org.jetbrains.kotlin.resolve.TargetPlatform
 
 class KotlinJavascriptMavenConfigurator :
@@ -43,7 +43,7 @@ class KotlinJavascriptMavenConfigurator :
     }
 
     override val targetPlatform: TargetPlatform
-        get() = JsPlatform
+        get() = DefaultBuiltInPlatforms.jsPlatform
 
     override fun getMinimumSupportedVersion() = "1.1.0"
 

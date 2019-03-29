@@ -167,8 +167,9 @@ object TopDownAnalyzerFacadeForJVM {
             val dependencyScope = GlobalSearchScope.notScope(sourceScope)
 
             val dependenciesContainer = createContainerForTopDownAnalyzerForJvm(
+                DefaultBuiltInPlatforms.jvmPlatformByTargetVersion(jvmTarget), // TODO(dsavvinov): do not pass JvmTarget around
                 dependenciesContext, trace, DeclarationProviderFactory.EMPTY, dependencyScope, lookupTracker, expectActualTracker,
-                packagePartProvider(dependencyScope), moduleClassResolver, targetEnvironment, jvmTarget, languageVersionSettings,
+                packagePartProvider(dependencyScope), moduleClassResolver, targetEnvironment, languageVersionSettings,
                 configureJavaClassFinder
             )
 
@@ -196,8 +197,9 @@ object TopDownAnalyzerFacadeForJVM {
         // to be stored in CliLightClassGenerationSupport, and it better be the source one (otherwise light classes would not be found)
         // TODO: get rid of duplicate invocation of CodeAnalyzerInitializer#initialize, or refactor CliLightClassGenerationSupport
         val container = createContainerForTopDownAnalyzerForJvm(
+            DefaultBuiltInPlatforms.jvmPlatformByTargetVersion(jvmTarget),
             moduleContext, trace, declarationProviderFactory(storageManager, files), sourceScope, lookupTracker, expectActualTracker,
-            partProvider, moduleClassResolver, targetEnvironment, jvmTarget, languageVersionSettings, configureJavaClassFinder,
+            partProvider, moduleClassResolver, targetEnvironment, languageVersionSettings, configureJavaClassFinder,
             configuration[JVMConfigurationKeys.JAVA_CLASSES_TRACKER]
         ).apply {
             initJvmBuiltInsForTopDownAnalysis()

@@ -21,7 +21,6 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsPackageFragmentProvider
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
-import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.*
@@ -43,7 +42,6 @@ import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformCompilerServices
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
@@ -78,22 +76,22 @@ private fun StorageComponentContainer.configureJavaTopDownAnalysis(
 }
 
 fun createContainerForLazyResolveWithJava(
-        moduleContext: ModuleContext,
-        bindingTrace: BindingTrace,
-        declarationProviderFactory: DeclarationProviderFactory,
-        moduleContentScope: GlobalSearchScope,
-        moduleClassResolver: ModuleClassResolver,
-        targetEnvironment: TargetEnvironment,
-        lookupTracker: LookupTracker,
-        expectActualTracker: ExpectActualTracker,
-        packagePartProvider: PackagePartProvider,
-        jvmTarget: JvmTarget,
-        languageVersionSettings: LanguageVersionSettings,
-        useBuiltInsProvider: Boolean,
-        configureJavaClassFinder: (StorageComponentContainer.() -> Unit)? = null,
-        javaClassTracker: JavaClassesTracker? = null
+    jvmPlatform: TargetPlatform,
+    moduleContext: ModuleContext,
+    bindingTrace: BindingTrace,
+    declarationProviderFactory: DeclarationProviderFactory,
+    moduleContentScope: GlobalSearchScope,
+    moduleClassResolver: ModuleClassResolver,
+    targetEnvironment: TargetEnvironment,
+    lookupTracker: LookupTracker,
+    expectActualTracker: ExpectActualTracker,
+    packagePartProvider: PackagePartProvider,
+    languageVersionSettings: LanguageVersionSettings,
+    useBuiltInsProvider: Boolean,
+    configureJavaClassFinder: (StorageComponentContainer.() -> Unit)? = null,
+    javaClassTracker: JavaClassesTracker? = null
 ): StorageComponentContainer = createContainer("LazyResolveWithJava", JvmPlatformCompilerServices) {
-    configureModule(moduleContext, JvmPlatform, jvmTarget, JvmPlatformCompilerServices, bindingTrace)
+    configureModule(moduleContext, jvmPlatform, JvmPlatformCompilerServices, bindingTrace)
     configureJavaTopDownAnalysis(moduleContentScope, moduleContext.project, lookupTracker, expectActualTracker)
 
     if (configureJavaClassFinder != null) {
@@ -133,22 +131,22 @@ fun createContainerForLazyResolveWithJava(
 
 
 fun createContainerForTopDownAnalyzerForJvm(
-        moduleContext: ModuleContext,
-        bindingTrace: BindingTrace,
-        declarationProviderFactory: DeclarationProviderFactory,
-        moduleContentScope: GlobalSearchScope,
-        lookupTracker: LookupTracker,
-        expectActualTracker: ExpectActualTracker,
-        packagePartProvider: PackagePartProvider,
-        moduleClassResolver: ModuleClassResolver,
-        targetEnvironment: TargetEnvironment,
-        jvmTarget: JvmTarget,
-        languageVersionSettings: LanguageVersionSettings,
-        configureJavaClassFinder: (StorageComponentContainer.() -> Unit)? = null,
-        javaClassTracker: JavaClassesTracker? = null
+    jvmPlatform: TargetPlatform,
+    moduleContext: ModuleContext,
+    bindingTrace: BindingTrace,
+    declarationProviderFactory: DeclarationProviderFactory,
+    moduleContentScope: GlobalSearchScope,
+    lookupTracker: LookupTracker,
+    expectActualTracker: ExpectActualTracker,
+    packagePartProvider: PackagePartProvider,
+    moduleClassResolver: ModuleClassResolver,
+    targetEnvironment: TargetEnvironment,
+    languageVersionSettings: LanguageVersionSettings,
+    configureJavaClassFinder: (StorageComponentContainer.() -> Unit)? = null,
+    javaClassTracker: JavaClassesTracker? = null
 ): ComponentProvider = createContainerForLazyResolveWithJava(
-        moduleContext, bindingTrace, declarationProviderFactory, moduleContentScope, moduleClassResolver,
-        targetEnvironment, lookupTracker, expectActualTracker, packagePartProvider, jvmTarget, languageVersionSettings,
+        jvmPlatform, moduleContext, bindingTrace, declarationProviderFactory, moduleContentScope, moduleClassResolver,
+        targetEnvironment, lookupTracker, expectActualTracker, packagePartProvider, languageVersionSettings,
         useBuiltInsProvider = true,
         configureJavaClassFinder = configureJavaClassFinder,
         javaClassTracker = javaClassTracker

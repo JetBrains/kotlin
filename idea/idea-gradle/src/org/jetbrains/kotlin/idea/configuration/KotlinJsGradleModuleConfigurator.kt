@@ -20,13 +20,13 @@ import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.idea.versions.MAVEN_JS_STDLIB_ID
-import org.jetbrains.kotlin.js.resolve.JsPlatform
+import org.jetbrains.kotlin.resolve.DefaultBuiltInPlatforms
 import org.jetbrains.kotlin.resolve.TargetPlatform
 
 class KotlinJsGradleModuleConfigurator : KotlinWithGradleConfigurator() {
     override val name: String = "gradle-js"
     override val presentableText: String = "JavaScript with Gradle"
-    override val targetPlatform: TargetPlatform = JsPlatform
+    override val targetPlatform: TargetPlatform = DefaultBuiltInPlatforms.jsPlatform
     override val kotlinPluginName: String = KOTLIN_JS
     override fun getKotlinPluginExpression(forKotlinDsl: Boolean): String =
         if (forKotlinDsl) "id(\"kotlin2js\")" else "id 'kotlin2js'"

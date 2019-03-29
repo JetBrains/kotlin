@@ -22,6 +22,7 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.ContainerUtil
+import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.cfg.ControlFlowInformationProvider
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.SimpleGlobalContext
@@ -717,7 +718,6 @@ class ResolveElementCache(
             trace,
             targetPlatform,
             statementFilter,
-            file.jvmTarget,
             targetPlatform.findCompilerServices,
             file.languageVersionSettings
         ).get()

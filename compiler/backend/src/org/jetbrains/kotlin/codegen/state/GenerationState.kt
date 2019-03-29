@@ -181,6 +181,7 @@ class GenerationState private constructor(
 
     val languageVersionSettings = configuration.languageVersionSettings
 
+    // TODO: switch to platforms API?
     val target = configuration.get(JVMConfigurationKeys.JVM_TARGET) ?: JvmTarget.DEFAULT
 
     val moduleName: String = moduleName ?: JvmCodegenUtil.getModuleName(module)

@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.builtins.PrimitiveType;
 import org.jetbrains.kotlin.codegen.AsmUtil;
-import org.jetbrains.kotlin.config.JvmTarget;
+import org.jetbrains.kotlin.resolve.JvmTarget;
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;

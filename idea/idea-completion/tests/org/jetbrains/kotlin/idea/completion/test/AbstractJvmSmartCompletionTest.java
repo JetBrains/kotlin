@@ -9,8 +9,8 @@ import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor;
+import org.jetbrains.kotlin.resolve.DefaultBuiltInPlatforms;
 import org.jetbrains.kotlin.resolve.TargetPlatform;
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 
 public abstract class AbstractJvmSmartCompletionTest extends KotlinFixtureCompletionBaseTestCase {
     @NotNull
@@ -22,7 +22,7 @@ public abstract class AbstractJvmSmartCompletionTest extends KotlinFixtureComple
     @NotNull
     @Override
     public TargetPlatform getPlatform() {
-        return JvmPlatform.INSTANCE;
+        return DefaultBuiltInPlatforms.INSTANCE.getJvmPlatform();
     }
 
     @NotNull

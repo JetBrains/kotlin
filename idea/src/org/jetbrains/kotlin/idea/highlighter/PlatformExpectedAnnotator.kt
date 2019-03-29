@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.highlighter
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.Annotator
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analyzer.common.CommonPlatform
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.idea.caches.project.implementingDescriptors
@@ -35,6 +34,7 @@ import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.diagnostics.SimpleDiagnostics
+import org.jetbrains.kotlin.resolve.isCommon
 import org.jetbrains.kotlin.resolve.jvm.multiplatform.JavaActualAnnotationArgumentExtractor
 
 class PlatformExpectedAnnotator : Annotator {
@@ -42,7 +42,7 @@ class PlatformExpectedAnnotator : Annotator {
         val declaration = element as? KtNamedDeclaration ?: return
         if (!isExpectedDeclaration(declaration)) return
 
-        if (TargetPlatformDetector.getPlatform(declaration.containingKtFile) !is CommonPlatform) return
+        if (!TargetPlatformDetector.getPlatform(declaration.containingKtFile).isCommon()) return
 
         val implementingModules = declaration.findModuleDescriptor().implementingDescriptors
         if (implementingModules.isEmpty()) return

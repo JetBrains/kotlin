@@ -17,9 +17,11 @@
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.resolve.JvmTarget
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.bytecodeVersion
+import org.jetbrains.kotlin.config.getDescription
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassOrPackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -69,8 +71,8 @@ class InlinePlatformCompatibilityChecker(val jvmTarget: JvmTarget, languageVersi
                 context.trace.report(
                     ErrorsJvm.INLINE_FROM_HIGHER_PLATFORM.on(
                         reportOn,
-                        JvmTarget.getDescription(inliningBytecodeVersion),
-                        JvmTarget.getDescription(compilingBytecodeVersion)
+                        getDescription(inliningBytecodeVersion),
+                        getDescription(compilingBytecodeVersion)
                     )
                 )
                 return
@@ -84,8 +86,8 @@ class InlinePlatformCompatibilityChecker(val jvmTarget: JvmTarget, languageVersi
                 context.trace.report(
                     ErrorsJvm.INLINE_FROM_HIGHER_PLATFORM.on(
                         reportOn,
-                        JvmTarget.getDescription(inliningBytecodeVersionProper),
-                        JvmTarget.getDescription(compilingBytecodeVersion)
+                        getDescription(inliningBytecodeVersionProper),
+                        getDescription(compilingBytecodeVersion)
                     )
                 )
             } else {
@@ -93,8 +95,8 @@ class InlinePlatformCompatibilityChecker(val jvmTarget: JvmTarget, languageVersi
                 context.trace.report(
                     ErrorsJvm.INLINE_FROM_HIGHER_PLATFORM_WARNING.on(
                         reportOn,
-                        JvmTarget.getDescription(inliningBytecodeVersionProper),
-                        JvmTarget.getDescription(compilingBytecodeVersion)
+                        getDescription(inliningBytecodeVersionProper),
+                        getDescription(compilingBytecodeVersion)
                     )
                 )
             }

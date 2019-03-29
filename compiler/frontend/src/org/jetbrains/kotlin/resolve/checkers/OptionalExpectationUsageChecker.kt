@@ -9,9 +9,8 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.MultiTargetPlatform
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.resolve.getMultiTargetPlatform
+import org.jetbrains.kotlin.resolve.descriptorUtil.platform
+import org.jetbrains.kotlin.resolve.isCommon
 import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 
 class OptionalExpectationUsageChecker : ClassifierUsageChecker {
@@ -23,8 +22,9 @@ class OptionalExpectationUsageChecker : ClassifierUsageChecker {
         }
 
         val ktFile = element.containingFile as KtFile
+        // TODO: platforms-api-unification
         // The first part is for the compiler, and the second one is for IDE
-        if (ktFile.isCommonSource != true && targetDescriptor.module.getMultiTargetPlatform() != MultiTargetPlatform.Common) {
+        if (ktFile.isCommonSource != true && !targetDescriptor.platform.isCommon()) {
             context.trace.report(Errors.OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE.on(element))
         }
     }

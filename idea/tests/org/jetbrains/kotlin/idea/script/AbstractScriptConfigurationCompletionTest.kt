@@ -6,15 +6,19 @@
 package org.jetbrains.kotlin.idea.script
 
 import org.jetbrains.kotlin.idea.completion.test.testCompletion
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.resolve.DefaultBuiltInPlatforms
 
 abstract class AbstractScriptConfigurationCompletionTest : AbstractScriptConfigurationTest() {
     fun doTest(path: String) {
         configureScriptFile(path)
-        testCompletion(file.text, JvmPlatform, additionalValidDirectives = switches, complete = { completionType, count ->
-            setType(completionType)
-            complete(count)
-            myItems
-        })
+        testCompletion(
+            file.text,
+            DefaultBuiltInPlatforms.jvmPlatform,
+            additionalValidDirectives = switches,
+            complete = { completionType, count ->
+                setType(completionType)
+                complete(count)
+                myItems
+            })
     }
 }

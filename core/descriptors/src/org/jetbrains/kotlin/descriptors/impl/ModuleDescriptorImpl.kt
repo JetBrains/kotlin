@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.MultiTargetPlatform
+import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.sure
 import java.lang.IllegalArgumentException
@@ -34,8 +34,8 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
     private val storageManager: StorageManager,
     override val builtIns: KotlinBuiltIns,
     // May be null in compiler context, should be not-null in IDE context
-    multiTargetPlatform: MultiTargetPlatform? = null,
-    capabilities: Map<ModuleDescriptor.Capability<*>, Any?> = emptyMap(),
+    override val platform: TargetPlatform? = null,
+    private val capabilities: Map<ModuleDescriptor.Capability<*>, Any?> = emptyMap(),
     override val stableName: Name? = null
 ) : DeclarationDescriptorImpl(Annotations.EMPTY, moduleName), ModuleDescriptor {
     init {
@@ -43,8 +43,6 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
             throw IllegalArgumentException("Module name must be special: $moduleName")
         }
     }
-
-    private val capabilities = capabilities + (multiTargetPlatform?.let { mapOf(MultiTargetPlatform.CAPABILITY to it) } ?: emptyMap())
 
     private var dependencies: ModuleDependencies? = null
     private var packageFragmentProviderForModuleContent: PackageFragmentProvider? = null

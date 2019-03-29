@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.quickfix.replaceWith
 
+import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext

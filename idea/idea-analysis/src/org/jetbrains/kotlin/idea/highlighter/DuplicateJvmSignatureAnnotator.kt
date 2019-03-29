@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.resolve.isJvm
 
 class DuplicateJvmSignatureAnnotator : Annotator {
     override fun annotate(element: PsiElement, holder: AnnotationHolder) {
@@ -34,7 +34,7 @@ class DuplicateJvmSignatureAnnotator : Annotator {
         if (!ProjectRootsUtil.isInProjectSource(element)) return
 
         val file = element.containingFile
-        if (file !is KtFile || TargetPlatformDetector.getPlatform(file) !== JvmPlatform) return
+        if (file !is KtFile || !TargetPlatformDetector.getPlatform(file).isJvm()) return
 
         val otherDiagnostics = when (element) {
             is KtDeclaration -> element.analyzeWithContent()

@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.platform
 
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.config.TargetPlatformVersion
+import org.jetbrains.kotlin.resolve.TargetPlatformVersion
 import org.jetbrains.kotlin.utils.DescriptionAware
 
 abstract class IdePlatform<Kind : IdePlatformKind<Kind>, out Arguments : CommonCompilerArguments> : DescriptionAware {

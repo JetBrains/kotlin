@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.config;
 import org.jetbrains.kotlin.load.java.JavaClassesTracker;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents;
 import org.jetbrains.kotlin.modules.Module;
+import org.jetbrains.kotlin.resolve.JvmTarget;
 import org.jetbrains.kotlin.script.KotlinScriptDefinition;
 import org.jetbrains.kotlin.script.ScriptDefinitionsSource;
 

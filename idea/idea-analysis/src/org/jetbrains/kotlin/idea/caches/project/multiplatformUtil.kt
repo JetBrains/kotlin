@@ -14,7 +14,6 @@ import com.intellij.openapi.roots.ProjectRootModificationTracker
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
 import org.jetbrains.kotlin.analyzer.ModuleInfo
-import org.jetbrains.kotlin.analyzer.common.CommonPlatform
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.project.SourceType.PRODUCTION
@@ -27,6 +26,7 @@ import org.jetbrains.kotlin.idea.util.rootManager
 import org.jetbrains.kotlin.platform.impl.CommonIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.isCommon
 import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.resolve.isCommon
 
 val Module.isNewMPPModule: Boolean
     get() = facetSettings?.kind?.isNewMPP ?: false
@@ -119,15 +119,16 @@ private fun ModuleSourceInfo.toDescriptor() = KotlinCacheService.getInstance(mod
     .getResolutionFacadeByModuleInfo(this, platform)?.moduleDescriptor
 
 fun PsiElement.getPlatformModuleInfo(desiredPlatform: TargetPlatform): PlatformModuleInfo? {
-    assert(desiredPlatform !is CommonPlatform) { "Platform module cannot have Common platform" }
+    assert(!desiredPlatform.isCommon()) { "Platform module cannot have Common platform" }
     val moduleInfo = getNullableModuleInfo() as? ModuleSourceInfo ?: return null
-    return when (moduleInfo.platform) {
-        is CommonPlatform -> {
+    val platform = moduleInfo.platform
+    return when {
+        platform.isCommon() -> {
             val correspondingImplementingModule = moduleInfo.module.implementingModules.map { it.toInfo(moduleInfo.sourceType) }
                 .firstOrNull { it?.platform == desiredPlatform } ?: return null
             PlatformModuleInfo(correspondingImplementingModule, correspondingImplementingModule.expectedBy)
         }
-        desiredPlatform -> {
+        platform == desiredPlatform -> {
             val expectedBy = moduleInfo.expectedBy.takeIf { it.isNotEmpty() } ?: return null
             PlatformModuleInfo(moduleInfo, expectedBy)
         }

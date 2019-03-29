@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.getContainingClass
+import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
@@ -56,6 +57,9 @@ val DeclarationDescriptor.isExtension: Boolean
 
 val DeclarationDescriptor.module: ModuleDescriptor
     get() = DescriptorUtils.getContainingModule(this)
+
+val DeclarationDescriptor.platform: TargetPlatform?
+    get() = module.platform
 
 fun ModuleDescriptor.resolveTopLevelClass(topLevelClassFqName: FqName, location: LookupLocation): ClassDescriptor? {
     assert(!topLevelClassFqName.isRoot)

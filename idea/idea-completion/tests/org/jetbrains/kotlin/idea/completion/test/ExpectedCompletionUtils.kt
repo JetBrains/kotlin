@@ -19,9 +19,7 @@ import org.jetbrains.kotlin.idea.completion.LookupElementFactory
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.test.AstAccessControl
 import org.jetbrains.kotlin.idea.util.module
-import org.jetbrains.kotlin.js.resolve.JsPlatform
-import org.jetbrains.kotlin.resolve.TargetPlatform
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.junit.Assert
 import java.util.*
@@ -87,7 +85,7 @@ object ExpectedCompletionUtils {
         }
     }
 
-    private val UNSUPPORTED_PLATFORM_MESSAGE = "Only $JvmPlatform and $JsPlatform platforms are supported"
+    private val UNSUPPORTED_PLATFORM_MESSAGE = "Only ${DefaultBuiltInPlatforms.jvmPlatform} and ${DefaultBuiltInPlatforms.jsPlatform} platforms are supported"
 
     private val EXIST_LINE_PREFIX = "EXIST:"
 
@@ -135,19 +133,19 @@ object ExpectedCompletionUtils {
             AstAccessControl.ALLOW_AST_ACCESS_DIRECTIVE)
 
     fun itemsShouldExist(fileText: String, platform: TargetPlatform?): Array<CompletionProposal> {
-        return when (platform) {
-            is JvmPlatform -> processProposalAssertions(fileText, EXIST_LINE_PREFIX, EXIST_JAVA_ONLY_LINE_PREFIX)
-            JsPlatform -> processProposalAssertions(fileText, EXIST_LINE_PREFIX, EXIST_JS_ONLY_LINE_PREFIX)
-            null -> processProposalAssertions(fileText, EXIST_LINE_PREFIX)
+        return when {
+            platform.isJvm() -> processProposalAssertions(fileText, EXIST_LINE_PREFIX, EXIST_JAVA_ONLY_LINE_PREFIX)
+            platform.isJs() -> processProposalAssertions(fileText, EXIST_LINE_PREFIX, EXIST_JS_ONLY_LINE_PREFIX)
+            platform == null -> processProposalAssertions(fileText, EXIST_LINE_PREFIX)
             else -> throw IllegalArgumentException(UNSUPPORTED_PLATFORM_MESSAGE)
         }
     }
 
     fun itemsShouldAbsent(fileText: String, platform: TargetPlatform?): Array<CompletionProposal> {
-        return when (platform) {
-            is JvmPlatform -> processProposalAssertions(fileText, ABSENT_LINE_PREFIX, ABSENT_JAVA_LINE_PREFIX, EXIST_JS_ONLY_LINE_PREFIX)
-            JsPlatform -> processProposalAssertions(fileText, ABSENT_LINE_PREFIX, ABSENT_JS_LINE_PREFIX, EXIST_JAVA_ONLY_LINE_PREFIX)
-            null -> processProposalAssertions(fileText, ABSENT_LINE_PREFIX)
+        return when {
+            platform.isJvm() -> processProposalAssertions(fileText, ABSENT_LINE_PREFIX, ABSENT_JAVA_LINE_PREFIX, EXIST_JS_ONLY_LINE_PREFIX)
+            platform.isJs() -> processProposalAssertions(fileText, ABSENT_LINE_PREFIX, ABSENT_JS_LINE_PREFIX, EXIST_JAVA_ONLY_LINE_PREFIX)
+            platform == null -> processProposalAssertions(fileText, ABSENT_LINE_PREFIX)
             else -> throw IllegalArgumentException(UNSUPPORTED_PLATFORM_MESSAGE)
         }
     }
@@ -179,10 +177,10 @@ object ExpectedCompletionUtils {
     }
 
     fun getExpectedNumber(fileText: String, platform: TargetPlatform?): Int? {
-        return when (platform) {
-            null -> InTextDirectivesUtils.getPrefixedInt(fileText, NUMBER_LINE_PREFIX)
-            is JvmPlatform -> getPlatformExpectedNumber(fileText, NUMBER_JAVA_LINE_PREFIX)
-            JsPlatform -> getPlatformExpectedNumber(fileText, NUMBER_JS_LINE_PREFIX)
+        return when {
+            platform == null -> InTextDirectivesUtils.getPrefixedInt(fileText, NUMBER_LINE_PREFIX)
+            platform.isJvm() -> getPlatformExpectedNumber(fileText, NUMBER_JAVA_LINE_PREFIX)
+            platform.isJs() -> getPlatformExpectedNumber(fileText, NUMBER_JS_LINE_PREFIX)
             else -> throw IllegalArgumentException(UNSUPPORTED_PLATFORM_MESSAGE)
         }
     }

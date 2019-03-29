@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
-import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.js.resolve.JsPlatformCompilerServices
 import org.jetbrains.kotlin.js.resolve.MODULE_KIND
 import org.jetbrains.kotlin.name.Name
@@ -69,7 +68,7 @@ object TopDownAnalyzerFacadeForJS {
             projectContext,
             Name.special("<$moduleName>"),
             builtIns,
-            multiTargetPlatform = null
+            platform = null
         )
 
         val additionalPackages = mutableListOf<PackageFragmentProvider>()

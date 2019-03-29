@@ -29,7 +29,8 @@ import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.resolve.DefaultBuiltInPlatforms
+import org.jetbrains.kotlin.resolve.isJvm
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.utils.sure
 import java.util.*
@@ -240,7 +241,7 @@ class IDEKotlinAsJavaSupport(private val project: Project): KotlinAsJavaSupport(
     // thus we need to ensure that resolver will be built by the file from platform part of the module
     // (resolver built by a file from the common part will have no knowledge of the platform part)
     // the actual of order of files that resolver receives is controlled by *findFilesForFacade* method
-    private fun Collection<KtFile>.platformSourcesFirst() = sortedByDescending { it.platform == JvmPlatform }
+    private fun Collection<KtFile>.platformSourcesFirst() = sortedByDescending { it.platform.isJvm() }
 
     private fun getLightClassForDecompiledClassOrObject(decompiledClassOrObject: KtClassOrObject): KtLightClassForDecompiledDeclaration? {
         if (decompiledClassOrObject is KtEnumEntry) {
@@ -326,5 +327,5 @@ class IDEKotlinAsJavaSupport(private val project: Project): KotlinAsJavaSupport(
 }
 
 internal fun PsiElement.getModuleInfoPreferringJvmPlatform(): IdeaModuleInfo {
-    return getPlatformModuleInfo(JvmPlatform) ?: getModuleInfo()
+    return getPlatformModuleInfo(DefaultBuiltInPlatforms.jvmPlatform) ?: getModuleInfo()
 }

@@ -28,7 +28,6 @@ import com.intellij.patterns.PatternCondition
 import com.intellij.patterns.StandardPatterns
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.ProcessingContext
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.project.ModuleOrigin
 import org.jetbrains.kotlin.idea.caches.project.OriginCapability
@@ -38,15 +37,13 @@ import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
-import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.MultiTargetPlatform
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.resolve.getMultiTargetPlatform
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.resolve.isCommon
+import org.jetbrains.kotlin.resolve.isJvm
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.types.TypeUtils
@@ -88,7 +85,7 @@ abstract class CompletionSession(
     protected val resolutionFacade = file.getResolutionFacade()
     protected val moduleDescriptor = resolutionFacade.moduleDescriptor
     protected val project = position.project
-    protected val isJvmModule = TargetPlatformDetector.getPlatform(parameters.originalFile as KtFile) == JvmPlatform
+    protected val isJvmModule = TargetPlatformDetector.getPlatform(parameters.originalFile as KtFile).isJvm()
     protected val isDebuggerContext = file is KtCodeFragment
 
     protected val nameExpression: KtSimpleNameExpression?
@@ -149,7 +146,7 @@ abstract class CompletionSession(
             { CompletionBenchmarkSink.instance.onFlush(this) },
             prefixMatcher, parameters, resultSet,
             createSorter(), (file as? KtCodeFragment)?.extraCompletionFilter,
-            moduleDescriptor.getMultiTargetPlatform() === MultiTargetPlatform.Common
+            moduleDescriptor.platform.isCommon()
         )
     }
 

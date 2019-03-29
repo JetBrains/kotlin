@@ -25,22 +25,22 @@ import org.jetbrains.kotlin.idea.core.isAndroidModule
 import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.util.actualsForExpected
 import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.resolve.MultiTargetPlatform
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.resolve.getMultiTargetPlatform
+import org.jetbrains.kotlin.resolve.isCommon
+import org.jetbrains.kotlin.resolve.oldFashionedDescription
 
-private fun ModuleDescriptor?.getMultiTargetPlatformName(): String? {
+private fun ModuleDescriptor?.getPlatformName(): String? {
     if (this == null) return null
     val moduleInfo = getCapability(ModuleInfo.Capability) as? ModuleSourceInfo
     if (moduleInfo != null && moduleInfo.module.isAndroidModule()) {
         return "Android"
     }
-    val platform = getMultiTargetPlatform() ?: return null
-    return when (platform) {
-        is MultiTargetPlatform.Specific ->
-            platform.platform
-        MultiTargetPlatform.Common ->
-            "common"
+    val platform = platform ?: return null
+
+    // TODO(dsavvinov): use better description
+    return when {
+        platform.isCommon() -> "common"
+        else -> platform.single().platformName
     }
 }
 
@@ -50,7 +50,7 @@ fun getPlatformActualTooltip(declaration: KtDeclaration): String? {
 
     return actualDeclarations.asSequence()
         .mapNotNull { it.toDescriptor()?.module }
-        .groupBy { it.getMultiTargetPlatformName() }
+        .groupBy { it.getPlatformName() }
         .filter { (platform, _) -> platform != null }
         .entries
         .joinToString(prefix = "Has actuals in ") { (platform, modules) ->

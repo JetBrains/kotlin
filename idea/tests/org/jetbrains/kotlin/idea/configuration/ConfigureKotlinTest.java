@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.idea.util.Java9StructureUtilKt;
 import org.jetbrains.kotlin.idea.versions.KotlinRuntimeLibraryUtilKt;
 import org.jetbrains.kotlin.platform.impl.JsIdePlatformKind;
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind;
+import org.jetbrains.kotlin.resolve.JvmTarget;
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleKt;
 import org.jetbrains.kotlin.utils.PathUtil;
 

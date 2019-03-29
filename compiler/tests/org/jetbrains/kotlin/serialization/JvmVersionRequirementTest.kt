@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil
 import org.jetbrains.kotlin.metadata.ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION
 import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement
+import org.jetbrains.kotlin.resolve.JvmTarget
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils

@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.resolve.isJvm
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
@@ -68,7 +68,7 @@ class AllClassesCompletion(private val parameters: CompletionParameters,
                     .forEach { classifierDescriptorCollector(it) }
         }
 
-        if (TargetPlatformDetector.getPlatform(parameters.originalFile as KtFile) == JvmPlatform) {
+        if (TargetPlatformDetector.getPlatform(parameters.originalFile as KtFile).isJvm()) {
             addAdaptedJavaCompletion(javaClassCollector)
         }
     }

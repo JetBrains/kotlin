@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.externalDescriptors
+import org.jetbrains.kotlin.resolve.DefaultBuiltInPlatforms
+import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
@@ -175,6 +177,9 @@ private object DebugLabelModuleDescriptor
             }
         }
     }
+
+    override val platform: TargetPlatform?
+        get() = DefaultBuiltInPlatforms.jvmPlatform
 
     override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName> {
         return emptyList()

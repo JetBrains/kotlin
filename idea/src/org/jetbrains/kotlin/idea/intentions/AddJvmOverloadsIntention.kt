@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.resolve.isJvm
 
 private val annotationFqName = FqName("kotlin.jvm.JvmOverloads")
 
@@ -69,7 +69,7 @@ class AddJvmOverloadsIntention : SelfTargetingIntention<KtModifierListOwner>(
 
         text = "Add '@JvmOverloads' annotation to $targetName"
 
-        return TargetPlatformDetector.getPlatform(element.containingKtFile) == JvmPlatform
+        return TargetPlatformDetector.getPlatform(element.containingKtFile).isJvm()
                && parameters.any { it.hasDefaultValue() }
                && element.findAnnotation(annotationFqName) == null
     }

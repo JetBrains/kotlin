@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.checkers.diagnostics.factories.DebugInfoDiagnosticFa
 import org.jetbrains.kotlin.checkers.diagnostics.factories.SyntaxErrorDiagnosticFactory
 import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.resolve.JvmTarget
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.MultiTargetPlatform
+import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactoryImpl
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -223,7 +223,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
 
         fun getActualText(
             bindingContext: BindingContext,
-            implementingModulesBindings: List<Pair<MultiTargetPlatform, BindingContext>>,
+            implementingModulesBindings: List<Pair<TargetPlatform, BindingContext>>,
             actualText: StringBuilder,
             skipJvmSignatureDiagnostics: Boolean,
             languageVersionSettings: LanguageVersionSettings,

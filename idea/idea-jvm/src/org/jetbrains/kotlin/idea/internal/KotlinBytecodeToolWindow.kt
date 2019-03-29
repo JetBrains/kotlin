@@ -21,7 +21,6 @@ import com.intellij.openapi.util.Pair
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.util.Alarm
-import org.jetbrains.kotlin.analyzer.common.CommonPlatform
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.backend.jvm.jvmPhases
@@ -43,7 +42,10 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScript
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.resolve.DefaultBuiltInPlatforms
+import org.jetbrains.kotlin.resolve.JvmTarget
+import org.jetbrains.kotlin.resolve.isCommon
+import org.jetbrains.kotlin.resolve.isJvm
 import org.jetbrains.kotlin.utils.join
 import java.awt.BorderLayout
 import java.awt.FlowLayout
@@ -280,10 +282,10 @@ class KotlinBytecodeToolWindow(private val myProject: Project, private val toolW
             configuration: CompilerConfiguration
         ): GenerationState? {
             val platform = ktFile.platform
-            if (platform !is CommonPlatform && platform !is JvmPlatform) return null
+            if (!platform.isCommon() && !platform.isJvm()) return null
 
             val resolutionFacade = KotlinCacheService.getInstance(ktFile.project)
-                .getResolutionFacadeByFile(ktFile, JvmPlatform)
+                .getResolutionFacadeByFile(ktFile, DefaultBuiltInPlatforms.jvmPlatform)
                     ?: return null
 
             val bindingContextForFile = resolutionFacade.analyzeWithAllCompilerChecks(listOf(ktFile)).bindingContext

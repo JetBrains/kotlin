@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.resolve.DefaultBuiltInPlatforms
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
@@ -57,7 +57,8 @@ class CodeFragmentCompletionInLibraryTest : AbstractJvmBasicCompletionTest() {
     private fun testCompletionInLibraryCodeFragment(fragmentText: String, vararg completionDirectives: String) {
         setupFixtureByCodeFragment(fragmentText)
         val directives = completionDirectives.map { "//$it" }.joinToString(separator = "\n")
-        testCompletion(directives, JvmPlatform, { completionType, count -> myFixture.complete(completionType, count) })
+        testCompletion(directives,
+                       DefaultBuiltInPlatforms.jvmPlatform, { completionType, count -> myFixture.complete(completionType, count) })
     }
 
     private fun setupFixtureByCodeFragment(fragmentText: String) {

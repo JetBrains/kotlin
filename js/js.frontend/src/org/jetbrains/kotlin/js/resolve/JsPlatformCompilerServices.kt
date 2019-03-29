@@ -22,11 +22,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.storage.StorageManager
 
-object JsPlatform : TargetPlatform("JS") {
-    override val platform: MultiTargetPlatform
-        get() = MultiTargetPlatform.Specific(platformName)
-}
-
 object JsPlatformCompilerServices : PlatformDependentCompilerServices() {
     override fun computePlatformSpecificDefaultImports(storageManager: StorageManager, result: MutableList<ImportPath>) {
         result.add(ImportPath.fromString("kotlin.js.*"))

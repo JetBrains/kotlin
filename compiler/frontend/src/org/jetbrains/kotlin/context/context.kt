@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.MultiTargetPlatform
+import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.storage.ExceptionTracker
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
@@ -99,8 +99,8 @@ fun ContextForNewModule(
     projectContext: ProjectContext,
     moduleName: Name,
     builtIns: KotlinBuiltIns,
-    multiTargetPlatform: MultiTargetPlatform?
+    platform: TargetPlatform?
 ): MutableModuleContext {
-    val module = ModuleDescriptorImpl(moduleName, projectContext.storageManager, builtIns, multiTargetPlatform)
+    val module = ModuleDescriptorImpl(moduleName, projectContext.storageManager, builtIns, platform)
     return MutableModuleContextImpl(module, projectContext)
 }

@@ -37,16 +37,13 @@ import org.jetbrains.kotlin.idea.search.and
 import org.jetbrains.kotlin.idea.search.restrictToKotlinSources
 import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.js.resolve.JsTypeSpecificityComparator
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
-import org.jetbrains.kotlin.resolve.OverloadChecker
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getExplicitReceiverValue
@@ -54,7 +51,6 @@ import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getImplicitReceiverVa
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
 import org.jetbrains.kotlin.resolve.jvm.JvmTypeSpecificityComparator
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
@@ -166,9 +162,10 @@ internal fun checkRedeclarations(
         is FunctionDescriptor,
         is ClassifierDescriptor -> {
             val psi = (descriptor as? DeclarationDescriptorWithSource)?.source?.getPsi() as? KtElement ?: return
-            val typeSpecificityComparator = when (TargetPlatformDetector.getPlatform(psi.containingKtFile)) {
-                is JvmPlatform -> JvmTypeSpecificityComparator
-                is JsPlatform -> JsTypeSpecificityComparator
+            val platform = TargetPlatformDetector.getPlatform(psi.containingKtFile)
+            val typeSpecificityComparator = when {
+                platform.isJvm() -> JvmTypeSpecificityComparator
+                platform.isJs() -> JsTypeSpecificityComparator
                 else -> TypeSpecificityComparator.NONE
             }
             OverloadChecker(typeSpecificityComparator)

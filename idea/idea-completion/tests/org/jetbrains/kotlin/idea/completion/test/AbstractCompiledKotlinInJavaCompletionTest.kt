@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.idea.completion.test
 
 import com.intellij.codeInsight.completion.CompletionType
 import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.resolve.DefaultBuiltInPlatforms
 
 abstract class AbstractCompiledKotlinInJavaCompletionTest : KotlinFixtureCompletionBaseTestCase() {
-    override fun getPlatform() = JvmPlatform
+    override fun getPlatform() = DefaultBuiltInPlatforms.jvmPlatform
 
     override fun getProjectDescriptor() =
         SdkAndMockLibraryProjectDescriptor(COMPLETION_TEST_DATA_BASE_PATH + "/injava/mockLib", false)

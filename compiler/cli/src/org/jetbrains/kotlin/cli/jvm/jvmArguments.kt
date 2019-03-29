@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
 import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.resolve.JvmTarget
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File

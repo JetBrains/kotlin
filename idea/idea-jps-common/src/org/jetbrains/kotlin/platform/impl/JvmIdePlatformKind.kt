@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.platform.impl
 
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.resolve.JvmTarget
 import org.jetbrains.kotlin.platform.IdePlatform
 import org.jetbrains.kotlin.platform.IdePlatformKind
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.resolve.DefaultBuiltInPlatforms
 
 object JvmIdePlatformKind : IdePlatformKind<JvmIdePlatformKind>() {
 
@@ -22,7 +22,7 @@ object JvmIdePlatformKind : IdePlatformKind<JvmIdePlatformKind>() {
         } else null
     }
 
-    override val compilerPlatform get() = JvmPlatform
+    override val compilerPlatform get() = DefaultBuiltInPlatforms.jvmPlatform
 
     override val platforms = JvmTarget.values().map { ver -> Platform(ver) }
     override val defaultPlatform get() = Platform(JvmTarget.DEFAULT)

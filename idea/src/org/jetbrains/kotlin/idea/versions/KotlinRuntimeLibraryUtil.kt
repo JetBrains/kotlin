@@ -40,7 +40,7 @@ import com.intellij.util.indexing.FileBasedIndex
 import com.intellij.util.indexing.ScalarIndexExtension
 import com.intellij.util.text.VersionComparatorUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.resolve.JvmTarget
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.idea.framework.JavaRuntimeDetectionUtil
 import org.jetbrains.kotlin.idea.framework.isExternalLibrary

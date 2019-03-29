@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.config.*;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.resolve.JvmTarget;
 import org.jetbrains.kotlin.script.ScriptDependenciesProvider;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;

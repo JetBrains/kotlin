@@ -47,7 +47,6 @@ import org.jetbrains.kotlin.platform.idePlatformKind
 import org.jetbrains.kotlin.resolve.PlatformDependentCompilerServices
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.GlobalSearchScopeWithModuleSources
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 

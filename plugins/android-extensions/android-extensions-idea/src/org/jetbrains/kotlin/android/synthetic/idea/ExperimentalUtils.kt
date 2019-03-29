@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.android.synthetic.AndroidComponentRegistrar.Companio
 import org.jetbrains.kotlin.compiler.plugin.AbstractCliOption
 import org.jetbrains.kotlin.idea.core.unwrapModuleSourceInfo
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.resolve.isJvm
 
 private val ANNOTATION_OPTION_PREFIX = "plugin:$ANDROID_COMPILER_PLUGIN_ID:"
 
@@ -53,7 +53,7 @@ private fun isTestMode(module: Module): Boolean {
 internal val Module.androidExtensionsIsEnabled: Boolean
     get() = isTestMode(this) || getOptionValueInFacet(ENABLED_OPTION) == "true"
 
-internal fun ModuleInfo.findAndroidModuleInfo() = unwrapModuleSourceInfo()?.takeIf { it.platform is JvmPlatform }
+internal fun ModuleInfo.findAndroidModuleInfo() = unwrapModuleSourceInfo()?.takeIf { it.platform.isJvm() }
 
 internal val ModuleInfo.androidExtensionsIsEnabled: Boolean
     get() {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,16 +7,10 @@ package org.jetbrains.kotlin.resolve
 
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
-import java.util.*
-
-abstract class TargetPlatform(val platformName: String) {
-    override fun toString() = platformName
-    abstract val platform: MultiTargetPlatform
-}
+import java.util.ArrayList
 
 abstract class PlatformDependentCompilerServices {
     private data class DefaultImportsKey(val includeKotlinComparisons: Boolean, val includeLowPriorityImports: Boolean)
@@ -69,16 +63,14 @@ abstract class PlatformDependentCompilerServices {
     fun getDefaultImports(includeKotlinComparisons: Boolean): List<ImportPath> {
         return getDefaultImports(
             if (includeKotlinComparisons) LanguageVersionSettingsImpl.DEFAULT
-            else LanguageVersionSettingsImpl(LanguageVersion.KOTLIN_1_0, ApiVersion.KOTLIN_1_0),
+            else LanguageVersionSettingsImpl(
+                LanguageVersion.KOTLIN_1_0,
+                ApiVersion.KOTLIN_1_0
+            ),
             true
         )
     }
 
-    open fun dependencyOnBuiltIns(): ModuleInfo.DependencyOnBuiltIns = ModuleInfo.DependencyOnBuiltIns.LAST
-}
-
-interface PlatformConfigurator {
-    val platformSpecificContainer: StorageComponentContainer
-    fun configureModuleComponents(container: StorageComponentContainer)
-    fun configureModuleDependentCheckers(container: StorageComponentContainer)
+    open fun dependencyOnBuiltIns(): ModuleInfo.DependencyOnBuiltIns =
+        ModuleInfo.DependencyOnBuiltIns.LAST
 }

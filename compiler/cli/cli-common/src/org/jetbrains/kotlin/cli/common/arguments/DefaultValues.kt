@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.cli.common.arguments
 
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.CALL
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.NO_CALL
-import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.resolve.JvmTarget
 import org.jetbrains.kotlin.config.LanguageVersion
 
 open class DefaultValues(val defaultValue: String, val possibleValues: List<String>? = null) {
@@ -36,8 +36,8 @@ open class DefaultValues(val defaultValue: String, val possibleValues: List<Stri
     )
 
     object JvmTargetVersions : DefaultValues(
-            "\"" + JvmTarget.DEFAULT.description + "\"",
-            JvmTarget.values().map { "\"${it.description}\"" }
+        "\"" + JvmTarget.DEFAULT.description + "\"",
+        JvmTarget.values().map { "\"${it.description}\"" }
     )
 
     object JsEcmaVersions : DefaultValues(

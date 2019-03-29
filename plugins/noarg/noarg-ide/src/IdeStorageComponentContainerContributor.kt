@@ -22,13 +22,13 @@ import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.resolve.TargetPlatform
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.resolve.isJvm
 
 class IdeNoArgComponentContainerContributor(val project: Project) : StorageComponentContainerContributor {
     override fun registerModuleComponents(
-            container: StorageComponentContainer, platform: TargetPlatform, moduleDescriptor: ModuleDescriptor
+        container: StorageComponentContainer, platform: TargetPlatform, moduleDescriptor: ModuleDescriptor
     ) {
-        if (platform != JvmPlatform) return
+        if (platform.isJvm()) return
 
         container.useInstance(IdeNoArgDeclarationChecker(project))
     }

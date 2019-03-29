@@ -46,8 +46,8 @@ import org.jetbrains.kotlin.kapt3.util.MessageCollectorBackedKaptLogger
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.resolve.isJvm
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.utils.decodePluginOptions
 import java.io.ByteArrayInputStream
 import java.io.File
@@ -241,7 +241,7 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
             platform: TargetPlatform,
             moduleDescriptor: ModuleDescriptor
         ) {
-            if (platform != JvmPlatform) return
+            if (!platform.isJvm()) return
             container.useInstance(KaptAnonymousTypeTransformer())
         }
     }

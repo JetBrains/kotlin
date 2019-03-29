@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.platform.IdePlatformKind;
 import org.jetbrains.kotlin.platform.impl.JsIdePlatformUtil;
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformUtil;
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind;
+import org.jetbrains.kotlin.resolve.JvmTarget;
 
 import javax.swing.*;
 import java.util.*;

@@ -33,12 +33,11 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.resolve.MultiTargetPlatform
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.ExperimentalUsageChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.resolve.getMultiTargetPlatform
+import org.jetbrains.kotlin.resolve.isCommon
 import org.jetbrains.kotlin.types.AbbreviatedType
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -288,7 +287,7 @@ private fun KotlinType.checkAccessibility(accessibleClasses: List<KtClassOrObjec
     }
     val classifierDescriptor = constructor.declarationDescriptor as? ClassifierDescriptorWithTypeParameters ?: return
     val moduleDescriptor = classifierDescriptor.module
-    if (moduleDescriptor.getMultiTargetPlatform() == MultiTargetPlatform.Common) {
+    if (moduleDescriptor.platform.isCommon()) {
         // Common classes are Ok; unfortunately this check does not work correctly for simple (non-expect) classes from common module
         return
     }

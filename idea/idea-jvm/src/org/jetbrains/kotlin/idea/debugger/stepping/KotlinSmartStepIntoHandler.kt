@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
 import org.jetbrains.kotlin.builtins.isSuspendFunctionType
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
-import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.resolve.JvmTarget
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithAllCompilerChecks

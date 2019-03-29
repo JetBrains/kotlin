@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.renderer.*;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.MemberComparator;
-import org.jetbrains.kotlin.resolve.MultiTargetPlatform;
+import org.jetbrains.kotlin.resolve.TargetPlatformKt;
 import org.jetbrains.kotlin.resolve.scopes.ChainedMemberScope;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
@@ -243,7 +243,7 @@ public class RecursiveDescriptorComparator {
 
         // 'expected' declarations do not belong to the platform-specific module, even though they participate in the analysis
         if (descriptor instanceof MemberDescriptor && ((MemberDescriptor) descriptor).isExpect() &&
-            module.getCapability(MultiTargetPlatform.CAPABILITY) != MultiTargetPlatform.Common.INSTANCE) return false;
+            !TargetPlatformKt.isCommon(module.getPlatform())) return false;
 
         return module.equals(DescriptorUtils.getContainingModule(descriptor));
     }

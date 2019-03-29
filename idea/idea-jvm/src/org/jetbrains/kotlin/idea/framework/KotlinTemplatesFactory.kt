@@ -24,8 +24,7 @@ import com.intellij.platform.ProjectTemplate
 import com.intellij.platform.ProjectTemplatesFactory
 import com.intellij.platform.templates.BuilderBasedTemplate
 import org.jetbrains.kotlin.idea.KotlinIcons
-import org.jetbrains.kotlin.js.resolve.JsPlatform
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.resolve.DefaultBuiltInPlatforms
 
 class KotlinTemplatesFactory : ProjectTemplatesFactory() {
     companion object {
@@ -39,15 +38,22 @@ class KotlinTemplatesFactory : ProjectTemplatesFactory() {
 
     override fun createTemplates(group: String?, context: WizardContext?): Array<out ProjectTemplate> {
         val result = mutableListOf<ProjectTemplate>(
-                BuilderBasedTemplate(KotlinModuleBuilder(JvmPlatform,
-                                                         "JVM | IDEA",
-                                                         "Kotlin project with a JVM target based on the IntelliJ IDEA build system",
-                                                         KotlinIcons.SMALL_LOGO)),
-
-                BuilderBasedTemplate(KotlinModuleBuilder(JsPlatform, "JS | IDEA",
-                                                         "Kotlin project with a JavaScript target based on the IntelliJ IDEA build system",
-                                                         KotlinIcons.JS)
+            BuilderBasedTemplate(
+                KotlinModuleBuilder(
+                    DefaultBuiltInPlatforms.jsPlatform,
+                    "JVM | IDEA",
+                    "Kotlin project with a JVM target based on the IntelliJ IDEA build system",
+                    KotlinIcons.SMALL_LOGO
                 )
+            ),
+
+            BuilderBasedTemplate(
+                KotlinModuleBuilder(
+                    DefaultBuiltInPlatforms.jsPlatform, "JS | IDEA",
+                    "Kotlin project with a JavaScript target based on the IntelliJ IDEA build system",
+                    KotlinIcons.JS
+                )
+            )
         )
         result.addAll(Extensions.getExtensions(EP_NAME).map { BuilderBasedTemplate(it) })
         return result.toTypedArray()

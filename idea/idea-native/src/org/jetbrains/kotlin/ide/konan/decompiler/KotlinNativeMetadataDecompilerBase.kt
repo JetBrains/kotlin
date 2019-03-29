@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.metadata.konan.KonanProtoBuf
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.serialization.deserialization.ClassDeserializer
 import org.jetbrains.kotlin.serialization.deserialization.FlexibleTypeDeserializer
@@ -31,7 +30,6 @@ import java.io.IOException
 
 abstract class KotlinNativeMetadataDecompilerBase<out V : BinaryVersion>(
     private val fileType: FileType,
-    private val targetPlatform: TargetPlatform,
     private val serializerProtocol: SerializerExtensionProtocol,
     private val flexibleTypeDeserializer: FlexibleTypeDeserializer,
     private val expectedBinaryVersion: V,
