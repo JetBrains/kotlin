@@ -1,0 +1,23 @@
+group 'Again'
+version '1.0-SNAPSHOT'
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0")
+    }
+}
+
+apply plugin: 'kotlin-platform-js'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib-common:1.1.0"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-js:1.1.0"
+} 

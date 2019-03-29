@@ -1,0 +1,33 @@
+group 'Again'
+version '1.0-SNAPSHOT'
+
+buildscript {
+    repositories {
+        mavenCentral()
+        mavenLocal()
+        maven {
+            url 'https://dl.bintray.com/kotlin/kotlin-dev'
+        }
+    }
+
+    dependencies {
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3-SNAPSHOT")
+    }
+}
+
+apply plugin: 'kotlin'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib:1.1.2-5"
+    compile "some_invalid:dependency:1.0.0"
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}

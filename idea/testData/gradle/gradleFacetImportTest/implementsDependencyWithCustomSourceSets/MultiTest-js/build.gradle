@@ -1,0 +1,38 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
+        }
+    }
+    dependencies {
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0")
+    }
+}
+
+apply plugin: 'kotlin-platform-js'
+
+sourceSets {
+    myMain {
+        kotlin {
+            srcDir 'src'
+        }
+    }
+    myTest {
+        kotlin {
+            srcDir 'test'
+        }
+    }
+}
+
+repositories {
+        mavenCentral()
+        maven {
+            url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
+        }
+    }
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib-js:1.1.0"
+    implement project(":")
+}

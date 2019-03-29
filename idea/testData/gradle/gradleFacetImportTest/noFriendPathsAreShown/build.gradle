@@ -1,0 +1,25 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+url 'https://dl.bintray.com/kotlin/kotlin-dev'
+        }
+    }
+
+    dependencies {
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.70-eap-4")
+    }
+}
+
+apply plugin: 'kotlin'
+
+repositories {
+    mavenCentral()
+    maven {
+        url 'https://dl.bintray.com/kotlin/kotlin-dev'
+    }
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib:1.2.70-eap-4"
+} 

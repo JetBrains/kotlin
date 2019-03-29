@@ -1,0 +1,29 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
+        }
+    }
+
+    dependencies {
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0")
+    }
+}
+
+apply plugin: 'kotlin'
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib:1.1.0"
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "1.7"
+    kotlinOptions.freeCompilerArgs = ["-Xsingle-module", "-Xdump-declarations-to", "tmp"]
+}
+
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "1.6"
+    kotlinOptions.apiVersion = "1.0"
+    kotlinOptions.freeCompilerArgs = ["-Xdump-declarations-to", "tmpTest"]
+} 
