@@ -8,8 +8,10 @@ package org.jetbrains.kotlin.ir.declarations.lazy
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.ir.DescriptorInIrDeclaration
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrField
+import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.TypeTranslator
@@ -66,8 +68,7 @@ class IrLazyProperty(
         symbol.bind(this)
     }
 
-    @DescriptorInIrDeclaration
-    override val descriptor: PropertyDescriptor
+    private val IrProperty.descriptor: PropertyDescriptor
         get() = symbol.descriptor
 
     override var backingField: IrField? by lazyVar {

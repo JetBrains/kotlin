@@ -51,9 +51,6 @@ class IrLazyTypeParameter(
                 stubGenerator, TypeTranslator
             )
 
-    @DescriptorInIrDeclaration
-    override val descriptor: TypeParameterDescriptor get() = symbol.descriptor
-
     init {
         symbol.bind(this)
     }
