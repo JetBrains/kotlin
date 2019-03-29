@@ -2975,9 +2975,15 @@ public final class kotlin/io/FilesKt {
 	public static final fun useLines (Ljava/io/File;Ljava/nio/charset/Charset;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 	public static synthetic fun useLines$default (Ljava/io/File;Ljava/nio/charset/Charset;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Ljava/lang/Object;
 	public static final fun walk (Ljava/io/File;Lkotlin/io/FileWalkDirection;)Lkotlin/io/FileTreeWalk;
+	public static final fun walk (Ljava/io/File;Lkotlin/io/FileWalkDirection;Lkotlin/io/WalkAlgorithm;)Lkotlin/io/FileTreeWalk;
 	public static synthetic fun walk$default (Ljava/io/File;Lkotlin/io/FileWalkDirection;ILjava/lang/Object;)Lkotlin/io/FileTreeWalk;
+	public static synthetic fun walk$default (Ljava/io/File;Lkotlin/io/FileWalkDirection;Lkotlin/io/WalkAlgorithm;ILjava/lang/Object;)Lkotlin/io/FileTreeWalk;
 	public static final fun walkBottomUp (Ljava/io/File;)Lkotlin/io/FileTreeWalk;
+	public static final fun walkBottomUpWithAlgorithm (Ljava/io/File;Lkotlin/io/WalkAlgorithm;)Lkotlin/io/FileTreeWalk;
+	public static synthetic fun walkBottomUpWithAlgorithm$default (Ljava/io/File;Lkotlin/io/WalkAlgorithm;ILjava/lang/Object;)Lkotlin/io/FileTreeWalk;
 	public static final fun walkTopDown (Ljava/io/File;)Lkotlin/io/FileTreeWalk;
+	public static final fun walkTopDownWithAlgorithm (Ljava/io/File;Lkotlin/io/WalkAlgorithm;)Lkotlin/io/FileTreeWalk;
+	public static synthetic fun walkTopDownWithAlgorithm$default (Ljava/io/File;Lkotlin/io/WalkAlgorithm;ILjava/lang/Object;)Lkotlin/io/FileTreeWalk;
 	public static final fun writeBytes (Ljava/io/File;[B)V
 	public static final fun writeText (Ljava/io/File;Ljava/lang/String;Ljava/nio/charset/Charset;)V
 	public static synthetic fun writeText$default (Ljava/io/File;Ljava/lang/String;Ljava/nio/charset/Charset;ILjava/lang/Object;)V
@@ -3004,6 +3010,13 @@ public final class kotlin/io/TextStreamsKt {
 	public static final fun readLines (Ljava/io/Reader;)Ljava/util/List;
 	public static final fun readText (Ljava/io/Reader;)Ljava/lang/String;
 	public static final fun useLines (Ljava/io/Reader;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
+}
+
+public final class kotlin/io/WalkAlgorithm : java/lang/Enum {
+	public static final field BFS Lkotlin/io/WalkAlgorithm;
+	public static final field DFS Lkotlin/io/WalkAlgorithm;
+	public static fun valueOf (Ljava/lang/String;)Lkotlin/io/WalkAlgorithm;
+	public static fun values ()[Lkotlin/io/WalkAlgorithm;
 }
 
 public final class kotlin/jvm/JvmClassMappingKt {

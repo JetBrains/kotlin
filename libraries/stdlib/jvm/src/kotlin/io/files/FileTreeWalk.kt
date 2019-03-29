@@ -10,8 +10,22 @@ package kotlin.io
 
 import java.io.File
 import java.io.IOException
-import java.util.ArrayDeque
+import java.util.*
 
+/**
+ * An enumeration to describe possible algorithms to traverse.
+ * There are two of them: search in breadth (same directory depth)
+ */
+public enum class WalkAlgorithm {
+    /**
+     * Breadth-first search
+     */
+    BFS,
+    /**
+     *  Depth-first search
+     */
+    DFS
+}
 /**
  * An enumeration to describe possible walk directions.
  * There are two of them: beginning from parents, ending with children,
@@ -21,15 +35,14 @@ public enum class FileWalkDirection {
     /** Depth-first search, directory is visited BEFORE its files */
     TOP_DOWN,
     /** Depth-first search, directory is visited AFTER its files */
-    BOTTOM_UP
-    // Do we want also breadth-first search?
+    BOTTOM_UP;
 }
 
 /**
  * This class is intended to implement different file traversal methods.
  * It allows to iterate through all files inside a given directory.
  *
- * Use [File.walk], [File.walkTopDown] or [File.walkBottomUp] extension functions to instantiate a `FileTreeWalk` instance.
+ * Use [File.walk], [File.walkTopDown],[File.walkBottomUp],[File.walkBottomUpWithAlgorithm] or [File.walkTopDownWithAlgorithm] extension functions to instantiate a `FileTreeWalk` instance.
 
  * If the file path given is just a file, walker iterates only it.
  * If the file path given does not exist, walker iterates nothing, i.e. it's equivalent to an empty sequence.
@@ -37,13 +50,14 @@ public enum class FileWalkDirection {
 public class FileTreeWalk private constructor(
     private val start: File,
     private val direction: FileWalkDirection = FileWalkDirection.TOP_DOWN,
+    private val algorithm: WalkAlgorithm = WalkAlgorithm.DFS,
     private val onEnter: ((File) -> Boolean)?,
     private val onLeave: ((File) -> Unit)?,
     private val onFail: ((f: File, e: IOException) -> Unit)?,
     private val maxDepth: Int = Int.MAX_VALUE
 ) : Sequence<File> {
 
-    internal constructor(start: File, direction: FileWalkDirection = FileWalkDirection.TOP_DOWN) : this(start, direction, null, null, null)
+    internal constructor(start: File, direction: FileWalkDirection = FileWalkDirection.TOP_DOWN, algorithm: WalkAlgorithm = WalkAlgorithm.DFS) : this(start, direction, algorithm, null, null, null)
 
 
     /** Returns an iterator walking through files. */
@@ -67,6 +81,8 @@ public class FileTreeWalk private constructor(
 
         // Stack of directory states, beginning from the start directory
         private val state = ArrayDeque<WalkState>()
+        private var currentDepth = 0
+        private var previousDepth: Int = 0
 
         init {
             when {
@@ -74,10 +90,18 @@ public class FileTreeWalk private constructor(
                 start.isFile -> state.push(SingleFileState(start))
                 else -> done()
             }
+
+            val pathComponents = start.toComponents()
+            currentDepth = pathComponents.size
         }
 
         override fun computeNext() {
-            val nextFile = gotoNext()
+            val nextFile: File?
+            if (algorithm.equals(WalkAlgorithm.BFS)) {
+                nextFile = gotoNextBfs()
+            } else {
+                nextFile = gotoNextDfs()
+            }
             if (nextFile != null)
                 setNext(nextFile)
             else
@@ -92,14 +116,14 @@ public class FileTreeWalk private constructor(
             }
         }
 
-        private tailrec fun gotoNext(): File? {
+        private tailrec fun gotoNextDfs(): File? {
             // Take next file from the top of the stack or return if there's nothing left
             val topState = state.peek() ?: return null
             val file = topState.step()
             if (file == null) {
                 // There is nothing more on the top of the stack, go back
                 state.pop()
-                return gotoNext()
+                return gotoNextDfs()
             } else {
                 // Check that file/directory matches the filter
                 if (file == topState.root || !file.isDirectory || state.size >= maxDepth) {
@@ -108,9 +132,38 @@ public class FileTreeWalk private constructor(
                 } else {
                     // Proceed to a sub-directory
                     state.push(directoryState(file))
-                    return gotoNext()
+                    return gotoNextDfs()
                 }
             }
+        }
+
+        /**
+         * Walking with BFS algorithm
+         */
+        private fun gotoNextBfs(): File? {
+            val walkState = state.poll() ?: return null
+            val file = walkState.root
+            if (currentDepth >= maxDepth) {
+                return file
+            }
+
+            // To process maximum depth
+            val nameCount = file.toComponents().size
+            if (nameCount > previousDepth) {
+                previousDepth = nameCount
+                currentDepth++
+            }
+            val listFiles = file.listFiles()
+            if (listFiles != null) {
+                for (fileItem in listFiles) {
+                    if (fileItem.isDirectory) {
+                        state.add(directoryState(fileItem))
+                    } else {
+                        state.add(SingleFileState(fileItem))
+                    }
+                }
+            }
+            return file
         }
 
         /** Visiting in bottom-up order */
@@ -247,7 +300,7 @@ public class FileTreeWalk private constructor(
     public fun maxDepth(depth: Int): FileTreeWalk {
         if (depth <= 0)
             throw IllegalArgumentException("depth must be positive, but was $depth.")
-        return FileTreeWalk(start, direction, onEnter, onLeave, onFail, depth)
+        return FileTreeWalk(start, direction, algorithm, onEnter, onLeave, onFail, depth)
     }
 }
 
@@ -260,13 +313,26 @@ public fun File.walk(direction: FileWalkDirection = FileWalkDirection.TOP_DOWN):
     FileTreeWalk(this, direction)
 
 /**
+ * Gets a sequence for visiting this directory and all its content.
+ *
+ * @param direction walk direction, top-down (by default) or bottom-up.
+ * @param algorithm algorithm by which traversing is doing.
+ */
+public fun File.walk(direction: FileWalkDirection = FileWalkDirection.TOP_DOWN, algorithm: WalkAlgorithm = WalkAlgorithm.DFS): FileTreeWalk =
+    FileTreeWalk(this, direction, algorithm)
+
+/**
  * Gets a sequence for visiting this directory and all its content in top-down order.
  * Depth-first search is used and directories are visited before all their files.
  */
 public fun File.walkTopDown(): FileTreeWalk = walk(FileWalkDirection.TOP_DOWN)
+
+public fun File.walkTopDownWithAlgorithm(algorithm: WalkAlgorithm = WalkAlgorithm.DFS): FileTreeWalk = walk(FileWalkDirection.TOP_DOWN, algorithm)
 
 /**
  * Gets a sequence for visiting this directory and all its content in bottom-up order.
  * Depth-first search is used and directories are visited after all their files.
  */
 public fun File.walkBottomUp(): FileTreeWalk = walk(FileWalkDirection.BOTTOM_UP)
+
+public fun File.walkBottomUpWithAlgorithm(algorithm: WalkAlgorithm = WalkAlgorithm.DFS): FileTreeWalk = walk(FileWalkDirection.BOTTOM_UP, algorithm)
