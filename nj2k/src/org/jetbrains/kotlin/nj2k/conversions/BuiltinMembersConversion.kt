@@ -43,10 +43,17 @@ class BuiltinMembersConversion(private val context: ConversionContext) : Recursi
     private fun JKExpression.getConversion(): Conversion? = when (this) {
         is JKMethodCallExpression ->
             conversions[identifier.deepestFqName()]?.firstOrNull { conversion ->
-                conversion.from is Method && conversion.byArgumentsFilter?.invoke(arguments.arguments.map { it.value }) ?: true
+                if (conversion.from !is Method) return@firstOrNull false
+                if (conversion.filter?.invoke(this) == false) return@firstOrNull false
+                if (conversion.byArgumentsFilter?.invoke(arguments.arguments.map { it.value }) == false) return@firstOrNull false
+                true
             }
         is JKFieldAccessExpression ->
-            conversions[identifier.deepestFqName()]?.firstOrNull { conversion -> conversion.from is Field }
+            conversions[identifier.deepestFqName()]?.firstOrNull { conversion ->
+                if (conversion.from !is Field) return@firstOrNull false
+                if (conversion.filter?.invoke(this) == false) return@firstOrNull false
+                true
+            }
         else -> null
     }
 
@@ -150,6 +157,7 @@ class BuiltinMembersConversion(private val context: ConversionContext) : Recursi
         val from: SymbolInfo,
         val to: Info,
         val replaceType: ReplaceType = ReplaceType.REPLACE_SELECTOR,
+        val filter: ((JKExpression) -> Boolean)? = null,
         val byArgumentsFilter: ((List<JKExpression>) -> Boolean)? = null,
         val argumentsProvider: ((JKArgumentList) -> JKArgumentList)? = null,
         val actionAfter: ((JKExpression) -> JKExpression)? = null
@@ -161,6 +169,9 @@ class BuiltinMembersConversion(private val context: ConversionContext) : Recursi
     private infix fun Conversion.withReplaceType(replaceType: ReplaceType) =
         copy(replaceType = replaceType)
 
+    private infix fun Conversion.withFilter(filter: (JKExpression) -> Boolean) =
+        copy(filter = filter)
+
     private infix fun Conversion.withByArgumentsFilter(filter: (List<JKExpression>) -> Boolean) =
         copy(byArgumentsFilter = filter)
 
@@ -168,11 +179,19 @@ class BuiltinMembersConversion(private val context: ConversionContext) : Recursi
         copy(argumentsProvider = argumentsProvider)
 
     private infix fun Conversion.andAfter(actionAfter: (JKExpression) -> JKExpression) =
-        copy(actionAfter = actionAfter)
+        copy(actionAfter = actionAfter).also { println() }
 
     private val conversions: Map<String, List<Conversion>> =
         listOf(
             Method("java.lang.Integer.intValue") convertTo Method("kotlin.Int.toInt"),//TODO do not list all variants
+
+            Method("java.io.PrintStream.println") convertTo Method("kotlin.io.println")
+                    withReplaceType ReplaceType.FULL_REPLACE
+                    withFilter ::isSystemOutCall,
+
+            Method("java.io.PrintStream.print") convertTo Method("kotlin.io.print")
+                    withReplaceType ReplaceType.FULL_REPLACE
+                    withFilter ::isSystemOutCall,
 
             Method("java.lang.Object.getClass") convertTo Field("kotlin.jvm.javaClass"),
 
@@ -377,6 +396,19 @@ class BuiltinMembersConversion(private val context: ConversionContext) : Recursi
 
     private fun JKExpression.callOn(symbol: JKMethodSymbol, vararg arguments: JKExpression) =
         callOn(symbol, arguments.map { JKArgumentImpl(it) })
+
+    private fun isSystemOutCall(expression: JKExpression): Boolean =
+        expression.parent
+            ?.safeAs<JKQualifiedExpression>()
+            ?.receiver
+            ?.let { receiver ->
+                when (receiver) {
+                    is JKFieldAccessExpression -> receiver
+                    is JKQualifiedExpression -> receiver.selector as? JKFieldAccessExpression
+                    else -> null
+                }
+            }?.identifier
+            ?.deepestFqName() == "java.lang.System.out"
 
 
     private fun JKExpression.castToTypedArray() =

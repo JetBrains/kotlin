@@ -54,7 +54,6 @@ object ConversionsRunner {
             +StaticInitDeclarationConversion()
             +ImplicitInitializerConversion(context)
             +ParameterModificationInMethodCallsConversion(context)
-            +PrintlnConversion(context)
             +BlockToRunConversion(context)
             +PrimaryConstructorDetectConversion(context)
             +InsertDefaultPrimaryConstructorConversion(context)
