@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.*
 import org.jetbrains.kotlin.codegen.ExpressionCodegen.putReifiedOperationMarkerIfTypeIsReifiedParameter
-import org.jetbrains.kotlin.codegen.StackValue.*
 import org.jetbrains.kotlin.codegen.inline.NameGenerator
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeParametersUsages
@@ -147,7 +146,7 @@ class ExpressionCodegen(
     // idempotent and must always be done before generating other values or emitting raw bytecode.
     internal fun StackValue.materialize(): StackValue {
         put(type, kotlinType, mv)
-        return onStack(type, kotlinType)
+        return StackValue.onStack(type, kotlinType)
     }
 
     // Same as above, but if the type is Unit, do not materialize the actual push of a constant value.
@@ -291,7 +290,7 @@ class ExpressionCodegen(
     }
 
     private fun visitStatementContainer(container: IrStatementContainer, data: BlockInfo): StackValue =
-        container.statements.fold(none()) { prev, exp ->
+        container.statements.fold(StackValue.none()) { prev, exp ->
             prev.discard()
             exp.accept(this, data).also { (exp as? IrExpression)?.markEndOfStatementIfNeeded() }
         }
@@ -425,10 +424,10 @@ class ExpressionCodegen(
             mv.athrow()
             return expression.onStack
         } else if (expression.descriptor is ConstructorDescriptor) {
-            return none()
+            return StackValue.none()
         }
 
-        return onStack(callable.returnType, returnType).coerce(expression.type)
+        return StackValue.onStack(callable.returnType, returnType).coerce(expression.type)
     }
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: BlockInfo): StackValue {
@@ -449,7 +448,7 @@ class ExpressionCodegen(
         }
 
         data.variables.add(VariableInfo(declaration, index, varType, markNewLabel()))
-        return none()
+        return StackValue.none()
     }
 
     override fun visitGetValue(expression: IrGetValue, data: BlockInfo): StackValue {
@@ -492,7 +491,7 @@ class ExpressionCodegen(
             expression.markLineNumber(startOffset = true)
             generateFieldValue(expression, data, true).store(expressionValue.accept(this, data), mv)
         }
-        return none().coerce(expression.type)
+        return StackValue.none().coerce(expression.type)
     }
 
     /**
@@ -527,7 +526,7 @@ class ExpressionCodegen(
         expression.value.markLineNumber(startOffset = true)
         val value = expression.value.accept(this, data)
         StackValue.local(findLocalIndex(expression.symbol), expression.descriptor.asmType).store(value, mv)
-        return none().coerce(expression.type)
+        return StackValue.none().coerce(expression.type)
     }
 
     override fun <T> visitConst(expression: IrConst<T>, data: BlockInfo): StackValue {
@@ -549,7 +548,7 @@ class ExpressionCodegen(
     // TODO maybe remove?
     override fun visitClass(declaration: IrClass, data: BlockInfo): StackValue {
         classCodegen.generateLocalClass(declaration)
-        return none()
+        return StackValue.none()
     }
 
     override fun visitVararg(expression: IrVararg, data: BlockInfo): StackValue {
@@ -657,7 +656,7 @@ class ExpressionCodegen(
         mv.areturn(returnType)
         mv.mark(afterReturnLabel)
         mv.nop()/*TODO check RESTORE_STACK_IN_TRY_CATCH processor*/
-        return none()
+        return StackValue.none()
     }
 
     override fun visitWhen(expression: IrWhen, data: BlockInfo): StackValue {
@@ -690,7 +689,7 @@ class ExpressionCodegen(
         }
         // Produce the default value for the type. Doesn't really matter right now, as non-exhaustive
         // conditionals cannot be used as expressions.
-        val result = none().coerce(expression.type).materializeNonUnit()
+        val result = StackValue.none().coerce(expression.type).materializeNonUnit()
         mv.mark(endLabel)
         return result
     }
@@ -715,7 +714,7 @@ class ExpressionCodegen(
                     mv, expression.typeOperand.toKotlinType(), boxedType, expression.operator == IrTypeOperator.SAFE_CAST,
                     state.languageVersionSettings.isReleaseCoroutines()
                 )
-                onStack(boxedType).coerce(expression.type)
+                StackValue.onStack(boxedType).coerce(expression.type)
             }
 
             IrTypeOperator.INSTANCEOF, IrTypeOperator.NOT_INSTANCEOF -> {
@@ -842,7 +841,7 @@ class ExpressionCodegen(
             ?: throw AssertionError("Target label for break/continue not found")
         mv.fixStackAndJump(if (jump is IrBreak) stackElement.breakLabel else stackElement.continueLabel)
         mv.mark(endLabel)
-        return none()
+        return StackValue.none()
     }
 
     override fun visitDoWhileLoop(loop: IrDoWhileLoop, data: BlockInfo): StackValue {
@@ -953,7 +952,7 @@ class ExpressionCodegen(
         expression.markLineNumber(startOffset = true)
         expression.value.accept(this, data).coerce(AsmTypes.JAVA_THROWABLE_TYPE).materialize()
         mv.athrow()
-        return none()
+        return StackValue.none()
     }
 
     override fun visitGetClass(expression: IrGetClass, data: BlockInfo): StackValue {
