@@ -263,7 +263,7 @@ open class DeepCopyIrTreeWithSymbols(
         IrAnonymousInitializerImpl(
             declaration.startOffset, declaration.endOffset,
             mapDeclarationOrigin(declaration.origin),
-            IrAnonymousInitializerSymbolImpl(declaration.descriptor)
+            IrAnonymousInitializerSymbolImpl(declaration.symbol.descriptor)
         ).apply {
             body = declaration.body.transform()
         }
@@ -722,7 +722,7 @@ open class DeepCopyIrTreeWithSymbols(
         )
 
     override fun visitErrorDeclaration(declaration: IrErrorDeclaration): IrErrorDeclaration =
-        IrErrorDeclarationImpl(declaration.startOffset, declaration.endOffset, declaration.descriptor)
+        IrErrorDeclarationImpl(declaration.startOffset, declaration.endOffset, declaration.description)
 
     override fun visitErrorExpression(expression: IrErrorExpression): IrErrorExpression =
         IrErrorExpressionImpl(
