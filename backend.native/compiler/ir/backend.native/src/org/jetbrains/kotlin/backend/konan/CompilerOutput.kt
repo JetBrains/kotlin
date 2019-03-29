@@ -6,6 +6,8 @@ package org.jetbrains.kotlin.backend.konan
 
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.library.impl.buildLibrary
+import org.jetbrains.kotlin.backend.konan.llvm.Llvm
+import org.jetbrains.kotlin.backend.konan.llvm.embedLlvmLinkOptions
 import org.jetbrains.kotlin.backend.konan.llvm.parseBitcodeFile
 import org.jetbrains.kotlin.konan.CURRENT
 import org.jetbrains.kotlin.konan.KonanAbiVersion
@@ -74,6 +76,10 @@ internal fun produceOutput(context: Context) {
                 parseAndLinkBitcodeFile(context.llvmModule!!, library)
             }
 
+            if (produce == CompilerOutputKind.FRAMEWORK && context.config.produceStaticFramework) {
+                embedAppleLinkerOptionsToBitcode(context.llvm, context.config)
+            }
+
             LLVMWriteBitcodeToFile(context.llvmModule!!, output)
         }
         CompilerOutputKind.LIBRARY -> {
@@ -120,4 +126,25 @@ private fun parseAndLinkBitcodeFile(llvmModule: LLVMModuleRef, path: String) {
     if (failed != 0) {
         throw Error("failed to link $path") // TODO: retrieve error message from LLVM.
     }
+}
+
+private fun embedAppleLinkerOptionsToBitcode(llvm: Llvm, config: KonanConfig) {
+    fun findEmbeddableOptions(options: List<String>): List<List<String>> {
+        val result = mutableListOf<List<String>>()
+        val iterator = options.iterator()
+        loop@while (iterator.hasNext()) {
+            val option = iterator.next()
+            result += when {
+                option.startsWith("-l") -> listOf(option)
+                option == "-framework" && iterator.hasNext() -> listOf(option, iterator.next())
+                else -> break@loop // Ignore the rest.
+            }
+        }
+        return result
+    }
+
+    val optionsToEmbed = findEmbeddableOptions(config.platform.configurables.linkerKonanFlags) +
+            llvm.nativeDependenciesToLink.flatMap { findEmbeddableOptions(it.linkerOpts) }
+
+    embedLlvmLinkOptions(llvm.llvmModule, optionsToEmbed)
 }

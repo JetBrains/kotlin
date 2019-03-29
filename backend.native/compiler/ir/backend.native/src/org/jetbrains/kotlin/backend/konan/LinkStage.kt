@@ -18,7 +18,7 @@ typealias ExecutableFile = String
 private fun determineLinkerOutput(context: Context): LinkerOutputKind =
     when (context.config.produce) {
         CompilerOutputKind.FRAMEWORK -> {
-            val staticFramework = context.config.configuration.getBoolean(KonanConfigKeys.STATIC_FRAMEWORK)
+            val staticFramework = context.config.produceStaticFramework
             if (staticFramework) LinkerOutputKind.STATIC_LIBRARY else LinkerOutputKind.DYNAMIC_LIBRARY
         }
         CompilerOutputKind.DYNAMIC -> LinkerOutputKind.DYNAMIC_LIBRARY
