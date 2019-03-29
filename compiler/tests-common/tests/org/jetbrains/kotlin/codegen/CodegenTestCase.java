@@ -785,24 +785,21 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
 
     protected void doTest(String filePath) throws Exception {
         File file = new File(filePath);
-        String expectedText = KotlinTestUtils.doLoadFile(file);
         Ref<File> javaFilesDir = Ref.create();
 
-        List<TestFile> testFiles = createTestFiles(file, expectedText, javaFilesDir, "");
+        String expectedText = KotlinTestUtils.doLoadFile(file);
+        if (!coroutinesPackage.isEmpty()) {
+            expectedText = expectedText.replace("COROUTINES_PACKAGE", coroutinesPackage);
+        }
+
+        List<TestFile> testFiles = createTestFiles(file, expectedText, javaFilesDir, coroutinesPackage);
 
         doMultiFileTest(file, testFiles, javaFilesDir.get());
     }
 
     protected void doTestWithCoroutinesPackageReplacement(String filePath, String packageName) throws Exception {
-        File file = new File(filePath);
-        String expectedText = KotlinTestUtils.doLoadFile(file);
-        expectedText = expectedText.replace("COROUTINES_PACKAGE", packageName);
         this.coroutinesPackage = packageName;
-        Ref<File> javaFilesDir = Ref.create();
-
-        List<TestFile> testFiles = createTestFiles(file, expectedText, javaFilesDir, coroutinesPackage);
-
-        doMultiFileTest(file, testFiles, javaFilesDir.get());
+        doTest(filePath);
     }
 
     @NotNull
