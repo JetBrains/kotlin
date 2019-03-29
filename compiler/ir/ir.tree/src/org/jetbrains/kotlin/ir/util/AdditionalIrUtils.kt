@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.ir.util
 
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.ir.DescriptorInIrDeclaration
 import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.SourceRangeInfo
@@ -16,6 +18,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import java.io.File
 
@@ -126,6 +129,14 @@ internal val IrDeclaration.isAnonymousObject get() = DescriptorUtils.isAnonymous
 
 @UseExperimental(DescriptorInIrDeclaration::class)
 internal val IrDeclaration.module get() = this.descriptor.module
+
+internal val IrDeclaration.isSerializableExpectClass: Boolean
+    get() {
+        @UseExperimental(DescriptorInIrDeclaration::class)
+        val d = descriptor
+        return d is MemberDescriptor && d.isExpect &&
+                d is ClassDescriptor && ExpectedActualDeclarationChecker.shouldGenerateExpectClass(d)
+    }
 
 const val SYNTHETIC_OFFSET = -2
 
