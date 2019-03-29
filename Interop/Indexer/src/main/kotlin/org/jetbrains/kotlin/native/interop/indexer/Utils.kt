@@ -428,34 +428,36 @@ internal class ModulesMap(
         val translationUnit: CXTranslationUnit
 ) : Closeable {
 
+    private val modularCompilation: ModularCompilation
     private val index: CXIndex
     private val translationUnitWithModules: CXTranslationUnit
 
-    init {
-        index = clang_createIndex(0, 0)!!
-        try {
-            translationUnitWithModules = object : Compilation by compilation {
-                override val compilerArgs = compilation.compilerArgs + "-fmodules"
-            }.parse(index)
+    private val arena = Arena()
 
-            try {
-                translationUnitWithModules.ensureNoCompileErrors()
-            } catch (e: Throwable) {
-                clang_disposeTranslationUnit(translationUnitWithModules)
-                throw e
-            }
-
-        } catch (e: Throwable) {
-            clang_disposeIndex(index)
-            throw e
-        }
+    private inline fun <T> T.toBeDisposedWith(crossinline block: (T) -> Unit): T = apply {
+        arena.defer { block(this) }
     }
 
     override fun close() {
+        arena.clear()
+    }
+
+    init {
         try {
-            clang_disposeTranslationUnit(translationUnitWithModules)
-        } finally {
-            clang_disposeIndex(index)
+            modularCompilation = ModularCompilation(compilation)
+                    .toBeDisposedWith { it.dispose() }
+
+            index = clang_createIndex(0, 0)!!
+                    .toBeDisposedWith { clang_disposeIndex(it) }
+
+            translationUnitWithModules = modularCompilation.parse(index)
+                    .toBeDisposedWith { clang_disposeTranslationUnit(it) }
+
+            translationUnitWithModules.ensureNoCompileErrors()
+
+        } catch (e: Throwable) {
+            this.close()
+            throw e
         }
     }
 
@@ -725,4 +727,14 @@ tailrec fun Type.unwrapTypedefs(): Type = if (this is Typedef) {
 fun Type.canonicalIsPointerToChar(): Boolean {
     val unwrappedType = this.unwrapTypedefs()
     return unwrappedType is PointerType && unwrappedType.pointeeType.unwrapTypedefs() == CharType
+}
+
+internal interface Disposable {
+    fun dispose()
+}
+
+internal inline fun <T : Disposable, R> T.use(block: (T) -> R): R = try {
+    block(this)
+} finally {
+    this.dispose()
 }
