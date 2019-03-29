@@ -19,7 +19,10 @@ package org.jetbrains.kotlin.ir
 import com.intellij.openapi.util.text.StringUtil
 import junit.framework.TestCase
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -161,9 +164,9 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
             if (containingDeclarationDescriptor != null) {
                 val parent = declaration.parent
                 if (parent is IrDeclaration) {
-                    require(parent.descriptor == containingDeclarationDescriptor) {
-                        "In declaration ${declaration.descriptor}: " +
-                                "Mismatching parent descriptor (${parent.descriptor}) " +
+                    require(parent.descriptorOrNull == containingDeclarationDescriptor) {
+                        "In declaration ${declaration.descriptorOrNull}: " +
+                                "Mismatching parent descriptor (${parent.descriptorOrNull}) " +
                                 "and containing declaration descriptor ($containingDeclarationDescriptor)"
                     }
                 }
