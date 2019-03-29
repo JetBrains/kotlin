@@ -11,9 +11,10 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.namedFunctionVisitor
-import org.jetbrains.kotlin.psi.psiUtil.containingClass
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.typeUtil.isBoolean
@@ -22,10 +23,10 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class KotlinCovariantEqualsInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) = namedFunctionVisitor(fun(function) {
-        if (function.isTopLevel || function.isLocal || function.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return
+        if (function.isTopLevel || function.isLocal) return
         if (function.nameAsName != OperatorNameConventions.EQUALS) return
         val nameIdentifier = function.nameIdentifier ?: return
-        val containingClass = function.containingClass() ?: return
+        val containingClass = function.containingClassOrObject as? KtClass ?: return
 
         val parameter = function.valueParameters.singleOrNull() ?: return
         val typeReference = parameter.typeReference ?: return

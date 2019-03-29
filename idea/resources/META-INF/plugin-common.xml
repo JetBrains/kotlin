@@ -3326,7 +3326,7 @@
                      displayName="Covariant 'equals()'"
                      groupPath="Kotlin"
                      groupName="Probable bugs"
-                     enabledByDefault="false"
+                     enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"
     />

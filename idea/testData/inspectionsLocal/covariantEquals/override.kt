@@ -1,4 +1,5 @@
-// PROBLEM: none
+// PROBLEM: 'equals' should take 'Any?' as its argument
+// FIX: none
 open class Foo {
     open fun equals(other: Foo?): Boolean {
         return true
