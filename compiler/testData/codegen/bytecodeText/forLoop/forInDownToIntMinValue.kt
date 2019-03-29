@@ -1,5 +1,7 @@
-fun f() {
-    for (i in 1..2) {
+const val M = Int.MIN_VALUE
+
+fun f(a: Int) {
+    for (i in a downTo M) {
     }
 }
 
@@ -9,4 +11,4 @@ fun f() {
 // 0 getFirst
 // 0 getLast
 // 0 getStep
-// 1 IF_ICMP
+// 2 IF_ICMP

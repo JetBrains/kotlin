@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.types.getClass
@@ -79,41 +80,64 @@ internal class UntilHandler(private val context: CommonBackendContext, private v
 
     override fun build(call: IrCall, data: ProgressionType): HeaderInfo? =
         with(context.createIrBuilder(call.symbol, call.startOffset, call.endOffset)) {
-            // `last = bound - 1` for the loop `for (i in first until bound)`.
-            val bound = scope.createTemporaryVariable(
-                ensureNotNullable(
-                    call.getValueArgument(0)!!.castIfNecessary(
-                        data.elementType(context.irBuiltIns),
-                        data.elementCastFunctionName
-                    )
-                ), nameHint = "bound",
-                origin = IrDeclarationOrigin.FOR_LOOP_IMPLICIT_VARIABLE
+            val boundArg = call.getValueArgument(0)!!
+            val bound = ensureNotNullable(
+                boundArg.castIfNecessary(
+                    data.elementType(context.irBuiltIns),
+                    data.elementCastFunctionName
+                )
             )
-            val decFun = data.decFun(context.irBuiltIns)
-            val last = irCallOp(decFun.symbol, bound.type, irGet(bound))
+            // `bound` may be needed for an additional condition to the emptiness check (see comments below). If so, store `bound` in a
+            // temporary variable as it may be an expression with side-effects and we should only evaluate it once.
+            val boundVar = if (needsMinValueCondition(data, boundArg)) scope.createTemporaryVariable(
+                bound,
+                nameHint = "bound",
+                origin = IrDeclarationOrigin.FOR_LOOP_IMPLICIT_VARIABLE
+            ) else null
 
-            // The default "not empty" check cannot be used for the required for the corner case:
+            // `last = bound - 1` for the loop `for (i in first until bound)`.
+            val decFun = data.decFun(context.irBuiltIns)
+            val last = irCallOp(decFun.symbol, bound.type, if (boundVar != null) irGet(boundVar) else bound)
+
+            // The default "not empty" check cannot be used for the corner case:
             //
             //   for (i in a until MIN_VALUE) {}
             //
             // ...which should always be considered an empty range. When the given bound is MIN_VALUE, and because `last = bound - 1`,
             // "last" will underflow to MAX_VALUE, therefore the default "not empty" check:
             //
-            //   if (first <= last) { /* loop */ }
+            //   if (inductionVar <= last) { /* loop */ }
             //
             // ...will always be true and won't consider the range as empty. Therefore, we need to add an additional condition to the
-            // emptiness check so that it becomes:
+            // "not empty" check so that it becomes:
             //
-            //   if (first <= last && bound > MIN_VALUE) { /* loop */ }
+            //   if (inductionVar <= last && bound > MIN_VALUE) { /* loop */ }
             ProgressionHeaderInfo(
                 data,
                 first = call.extensionReceiver!!,
                 last = last,
                 step = irInt(1),
-                additionalVariables = listOf(bound),
-                additionalNotEmptyCondition = buildMinValueCondition(data, irGet(bound))
+                canOverflow = false,
+                additionalVariables = listOfNotNull(boundVar),
+                additionalNotEmptyCondition = if (boundVar != null) buildMinValueCondition(data, irGet(boundVar)) else null
             )
         }
+
+    /** Returns true (i.e., min value condition is needed) if `bound` is non-const OR is MIN_VALUE. */
+    private fun needsMinValueCondition(progressionType: ProgressionType, bound: IrExpression): Boolean {
+        val boundValue = (bound as? IrConst<*>)?.value
+        val boundValueAsLong = when (boundValue) {
+            is Number -> boundValue.toLong()
+            is Char -> boundValue.toLong()
+            else -> return true  // If "bound" is not a const Number or Char.
+        }
+        val minValueAsLong = when (progressionType) {
+            ProgressionType.INT_PROGRESSION -> Int.MIN_VALUE.toLong()
+            ProgressionType.CHAR_PROGRESSION -> Char.MIN_VALUE.toLong()
+            ProgressionType.LONG_PROGRESSION -> Long.MIN_VALUE
+        }
+        return minValueAsLong == boundValueAsLong
+    }
 
     private fun DeclarationIrBuilder.buildMinValueCondition(progressionType: ProgressionType, bound: IrExpression): IrExpression {
         val irBuiltIns = context.irBuiltIns
@@ -154,7 +178,8 @@ internal class IndicesHandler(val context: CommonBackendContext) : ProgressionHa
                 data,
                 first = irInt(0),
                 last = last,
-                step = irInt(1)
+                step = irInt(1),
+                canOverflow = false  // Cannot overflow because `last` is at most MAX_VALUE - 1
             )
         }
 }
