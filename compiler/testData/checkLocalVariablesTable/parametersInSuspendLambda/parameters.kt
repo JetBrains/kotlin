@@ -20,4 +20,4 @@ suspend fun foo(data: Data, body: suspend Long.(String, Data, Int) -> Unit) {
 // VARIABLE : NAME=x TYPE=Ljava/lang/String; INDEX=7
 // VARIABLE : NAME=z TYPE=I INDEX=8
 // VARIABLE : NAME=this TYPE=LParametersKt$test$2; INDEX=0
-// VARIABLE : NAME=result TYPE=Ljava/lang/Object; INDEX=1
+// VARIABLE : NAME=$result TYPE=Ljava/lang/Object; INDEX=1

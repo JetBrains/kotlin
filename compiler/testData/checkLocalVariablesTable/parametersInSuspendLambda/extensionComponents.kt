@@ -24,4 +24,4 @@ suspend fun test() = B.bar()
 // VARIABLE : NAME=y_param TYPE=Ljava/lang/String; INDEX=4
 // VARIABLE : NAME=z_param TYPE=I INDEX=5
 // VARIABLE : NAME=this TYPE=LExtensionComponentsKt$bar$3; INDEX=0
-// VARIABLE : NAME=result TYPE=Ljava/lang/Object; INDEX=1
+// VARIABLE : NAME=$result TYPE=Ljava/lang/Object; INDEX=1

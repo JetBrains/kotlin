@@ -15,7 +15,7 @@ class A {
 
 // 1 LOCALVARIABLE this LThisAndResultInLvtKt\$c\$1; L0 L.* 0
 // c's lambda and foo's continuation
-// 2 LOCALVARIABLE result Ljava/lang/Object; L0 L.* 1
+// 2 LOCALVARIABLE \$result Ljava/lang/Object; L0 L.* 1
 
 // foo and <init>
 // 2 LOCALVARIABLE this LA; L0 L.* 0

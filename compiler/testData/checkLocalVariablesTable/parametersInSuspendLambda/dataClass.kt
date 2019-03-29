@@ -17,4 +17,4 @@ suspend fun foo(data: Data, body: suspend (Data) -> Unit) {
 // VARIABLE : NAME=x_param TYPE=Ljava/lang/String; INDEX=3
 // VARIABLE : NAME=y_param TYPE=I INDEX=4
 // VARIABLE : NAME=this TYPE=LDataClassKt$test$2; INDEX=0
-// VARIABLE : NAME=result TYPE=Ljava/lang/Object; INDEX=1
+// VARIABLE : NAME=$result TYPE=Ljava/lang/Object; INDEX=1

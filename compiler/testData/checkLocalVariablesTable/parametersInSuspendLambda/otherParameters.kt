@@ -13,4 +13,4 @@ suspend fun test() = foo(A("O", "K")) { i_param, (x_param, y_param), v_param -> 
 // VARIABLE : NAME=x_param TYPE=Ljava/lang/String; INDEX=5
 // VARIABLE : NAME=y_param TYPE=Ljava/lang/String; INDEX=6
 // VARIABLE : NAME=this TYPE=LOtherParametersKt$test$2; INDEX=0
-// VARIABLE : NAME=result TYPE=Ljava/lang/Object; INDEX=1
+// VARIABLE : NAME=$result TYPE=Ljava/lang/Object; INDEX=1
