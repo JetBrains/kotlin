@@ -8,13 +8,8 @@ import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.declarations.IrAnonymousInitializer
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrProperty
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.TypeTranslator
@@ -94,7 +89,7 @@ class SerializableIrGenerator(
             val serialDescs = serializableProperties.map { it.descriptor }.toSet()
             irClass.declarations.asSequence()
                 .filterIsInstance<IrProperty>()
-                .filter { it.descriptor !in serialDescs }
+                .filter { it.symbol.descriptor !in serialDescs }
                 .filter { it.backingField != null }
                 .mapNotNull { prop -> transformFieldInitializer(prop.backingField!!)?.let { prop to it } }
                 .forEach { (prop, expr) -> +irSetField(irGet(thiz), prop.backingField!!, expr) }
