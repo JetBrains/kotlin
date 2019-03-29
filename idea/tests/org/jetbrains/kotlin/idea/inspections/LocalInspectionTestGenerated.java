@@ -2471,6 +2471,16 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/covariantEquals/inCompanion.kt");
         }
 
+        @TestMetadata("inObject.kt")
+        public void testInObject() throws Exception {
+            runTest("idea/testData/inspectionsLocal/covariantEquals/inObject.kt");
+        }
+
+        @TestMetadata("inObjectLiteral.kt")
+        public void testInObjectLiteral() throws Exception {
+            runTest("idea/testData/inspectionsLocal/covariantEquals/inObjectLiteral.kt");
+        }
+
         @TestMetadata("local.kt")
         public void testLocal() throws Exception {
             runTest("idea/testData/inspectionsLocal/covariantEquals/local.kt");
