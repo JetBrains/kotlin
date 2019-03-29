@@ -5,6 +5,8 @@ import org.jetbrains.kotlin.nj2k.tree.*
 interface JKVisitorVoid : JKVisitor<Unit, Nothing?> {
     fun visitTreeElement(treeElement: JKTreeElement) 
     override fun visitTreeElement(treeElement: JKTreeElement, data: Nothing?) = visitTreeElement(treeElement)
+    fun visitTreeRoot(treeRoot: JKTreeRoot) = visitTreeElement(treeRoot, null)
+    override fun visitTreeRoot(treeRoot: JKTreeRoot, data: Nothing?) = visitTreeRoot(treeRoot)
     fun visitDeclaration(declaration: JKDeclaration) = visitTreeElement(declaration, null)
     override fun visitDeclaration(declaration: JKDeclaration, data: Nothing?) = visitDeclaration(declaration)
     fun visitImportStatement(importStatement: JKImportStatement) = visitTreeElement(importStatement, null)

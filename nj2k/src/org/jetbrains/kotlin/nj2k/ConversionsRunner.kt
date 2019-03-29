@@ -85,7 +85,7 @@ object ConversionsRunner {
             +SortClassMembersConversion()
         }
 
-    fun doApply(trees: List<JKTreeElement>, context: ConversionContext) {
+    fun doApply(trees: List<JKTreeRoot>, context: ConversionContext) {
         val conversion = createRootConversion(context)
         conversion.runConversion(trees, context)
     }

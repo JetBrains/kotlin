@@ -14,6 +14,14 @@ interface JKVisitorWithCommentsPrinting : JKVisitorVoid {
 
     fun visitTreeElementRaw(treeElement: JKTreeElement) 
 
+    override fun visitTreeRoot(treeRoot: JKTreeRoot) {
+        printLeftNonCodeElements(treeRoot)
+        visitTreeRootRaw(treeRoot)
+        printRightNonCodeElements(treeRoot)
+    }
+
+    fun visitTreeRootRaw(treeRoot: JKTreeRoot) = visitTreeElementRaw(treeRoot)
+
     override fun visitDeclaration(declaration: JKDeclaration) {
         printLeftNonCodeElements(declaration)
         visitDeclarationRaw(declaration)

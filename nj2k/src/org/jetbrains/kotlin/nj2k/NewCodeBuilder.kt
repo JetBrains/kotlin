@@ -116,6 +116,10 @@ class NewCodeBuilder {
             printer.print("/* !!! Hit visitElement for element type: ${treeElement::class} !!! */")
         }
 
+        override fun visitTreeRootRaw(treeRoot: JKTreeRoot) {
+            treeRoot.element.accept(this)
+        }
+
         override fun visitKtTryExpressionRaw(ktTryExpression: JKKtTryExpression) {
             printer.printWithNoIndent("try ")
             ktTryExpression.tryBlock.accept(this)

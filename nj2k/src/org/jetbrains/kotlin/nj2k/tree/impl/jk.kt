@@ -29,6 +29,10 @@ import org.jetbrains.kotlin.nj2k.tree.JKLiteralExpression.LiteralType.NULL
 import org.jetbrains.kotlin.nj2k.tree.visitors.JKVisitor
 import org.jetbrains.kotlin.psi.KtClass
 
+class JKTreeRootImpl(element: JKTreeElement) : JKTreeRoot, JKBranchElementBase() {
+    override var element by child(element)
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitTreeRoot(this, data)
+}
 
 class JKFileImpl(
     packageDeclaration: JKPackageDeclaration,
