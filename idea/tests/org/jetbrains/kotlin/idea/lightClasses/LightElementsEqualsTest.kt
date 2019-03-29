@@ -54,7 +54,7 @@ class LightElementsEqualsTest : KotlinLightCodeInsightFixtureTestCase() {
     }
 
 
-    fun `test light elements are "isEquivalentTo" to it's origins`() {
+    fun `test light elements are isEquivalentTo to its origins`() {
         val psiFile = myFixture.configureByText("a.kt", SAMPLE_SOURCE)
         psiFile.accept(object : PsiElementVisitor() {
             override fun visitElement(element: PsiElement) {
