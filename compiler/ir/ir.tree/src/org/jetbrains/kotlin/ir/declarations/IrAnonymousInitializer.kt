@@ -16,14 +16,10 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.ir.DescriptorInIrDeclaration
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.symbols.IrAnonymousInitializerSymbol
 
 interface IrAnonymousInitializer : IrSymbolDeclaration<IrAnonymousInitializerSymbol> {
-    @DescriptorInIrDeclaration
-    override val descriptor: ClassDescriptor // TODO special descriptor for anonymous initializer blocks
     val isStatic: Boolean
 
     var body: IrBlockBody

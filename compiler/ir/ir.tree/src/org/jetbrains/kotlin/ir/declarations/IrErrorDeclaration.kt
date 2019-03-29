@@ -16,5 +16,7 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
-interface IrErrorDeclaration : IrDeclaration
+interface IrErrorDeclaration : IrDeclaration {
+    val description: String
+}
 
