@@ -33,7 +33,7 @@ class KJvmCompiledScript<out ScriptBase : Any>(
     compilationConfiguration: ScriptCompilationConfiguration,
     private var scriptClassFQName: String,
     otherScripts: List<CompiledScript<*>> = emptyList(),
-    private var compiledModule: KJvmCompiledModule? = null
+    internal var compiledModule: KJvmCompiledModule? = null
 ) : CompiledScript<ScriptBase>, Serializable {
 
     private var _sourceLocationId: String? = sourceLocationId

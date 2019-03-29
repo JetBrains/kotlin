@@ -10,6 +10,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Assert
 import org.junit.Test
 import java.io.*
+import java.net.URLClassLoader
 import java.nio.file.Files
 import java.security.MessageDigest
 import kotlin.reflect.KClass
@@ -34,6 +35,36 @@ class ScriptingHostTest : TestCase() {
         val greeting = "Hello from script!"
         val output = captureOut {
             evalScript("println(\"$greeting\")").throwOnFailure()
+        }
+        Assert.assertEquals(greeting, output)
+    }
+
+    @Test
+    fun testSaveToClasses() {
+        val greeting = "Hello from script classes!"
+        val outDir = Files.createTempDirectory("saveToClassesOut").toFile()
+        val compilationConfiguration = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate>()
+        val host = BasicJvmScriptingHost(evaluator = BasicJvmScriptClassFilesGenerator(outDir))
+        host.eval("println(\"$greeting\")".toScriptSource(name = "SavedScript.kts"), compilationConfiguration, null).throwOnFailure()
+        val classloader = URLClassLoader(arrayOf(outDir.toURI().toURL()), ScriptingHostTest::class.java.classLoader)
+        val scriptClass = classloader.loadClass("SavedScript")
+        val output = captureOut {
+            scriptClass.newInstance()
+        }
+        Assert.assertEquals(greeting, output)
+    }
+
+    @Test
+    fun testSaveToJar() {
+        val greeting = "Hello from script jar!"
+        val outJar = Files.createTempFile("saveToJar", ".jar").toFile()
+        val compilationConfiguration = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate>()
+        val host = BasicJvmScriptingHost(evaluator = BasicJvmScriptJarGenerator(outJar))
+        host.eval("println(\"$greeting\")".toScriptSource(name = "SavedScript.kts"), compilationConfiguration, null).throwOnFailure()
+        val classloader = URLClassLoader(arrayOf(outJar.toURI().toURL()), ScriptingHostTest::class.java.classLoader)
+        val scriptClass = classloader.loadClass("SavedScript")
+        val output = captureOut {
+            scriptClass.newInstance()
         }
         Assert.assertEquals(greeting, output)
     }
