@@ -38,9 +38,6 @@ class IrAnonymousInitializerImpl(
         symbol.bind(this)
     }
 
-    @DescriptorInIrDeclaration
-    override val descriptor: ClassDescriptor get() = symbol.descriptor
-
     override lateinit var body: IrBlockBody
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
