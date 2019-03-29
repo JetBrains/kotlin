@@ -61,12 +61,6 @@ internal fun MutableList<String>.addFileArgs(parameter: String, values: Collecti
     }
 }
 
-internal fun MutableList<String>.addListArg(parameter: String, values: List<String>) {
-    if (values.isNotEmpty()) {
-        addArg(parameter, values.joinToString(separator = " "))
-    }
-}
-
 private fun File.providedByCompiler(project: Project): Boolean =
     toPath().startsWith(project.file(project.konanHome).resolve("klib").toPath())
 
