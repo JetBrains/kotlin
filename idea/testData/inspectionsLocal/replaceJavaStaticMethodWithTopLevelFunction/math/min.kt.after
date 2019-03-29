@@ -1,0 +1,6 @@
+import kotlin.math.min
+
+// WITH_RUNTIME
+fun test(x: Double, y: Double) {
+    min(x, y)
+}
