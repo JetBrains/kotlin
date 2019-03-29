@@ -219,10 +219,9 @@ class ImplicitPackagePrefixCache(private val project: Project) {
 class PerModulePackageCacheService(private val project: Project) {
 
     /*
-     * Disposal of entries handled by Module child Disposable registered in packageExists
-     * Actually an StrongMap<Module, SoftMap<ModuleSourceInfo, SoftMap<FqName, Boolean>>>
+     * Actually a StrongMap<Module, DisposableMap>, where DisposableMap wraps a SoftMap<ModuleSourceInfo, SoftMap<FqName, Boolean>>.
      */
-    private val cache = ConcurrentHashMap<Module, ConcurrentMap<ModuleSourceInfo, ConcurrentMap<FqName, Boolean>>>()
+    private val cache = ConcurrentHashMap<Module, DisposableMap>()
     private val implicitPackagePrefixCache = ImplicitPackagePrefixCache(project)
 
     private val pendingVFileChanges: MutableSet<VFileEvent> = mutableSetOf()
@@ -233,6 +232,9 @@ class PerModulePackageCacheService(private val project: Project) {
     internal fun onTooComplexChange(): Unit = synchronized(this) {
         pendingVFileChanges.clear()
         pendingKtFileChanges.clear()
+        for (disposable in cache.values) {
+            Disposer.dispose(disposable)
+        }
         cache.clear()
         implicitPackagePrefixCache.clear()
     }
@@ -323,8 +325,9 @@ class PerModulePackageCacheService(private val project: Project) {
         checkPendingChanges()
 
         val perSourceInfoCache = cache.getOrPut(module) {
-            Disposer.register(module, Disposable { cache.remove(module) })
-            ContainerUtil.createConcurrentSoftMap()
+            DisposableMap(ContainerUtil.createConcurrentSoftMap()) {
+                cache.remove(module)
+            }.also { Disposer.register(module, it) }
         }
         val cacheForCurrentModuleInfo = perSourceInfoCache.getOrPut(moduleInfo) {
             ContainerUtil.createConcurrentSoftMap()
@@ -354,8 +357,14 @@ class PerModulePackageCacheService(private val project: Project) {
     }
 }
 
-
-
+private class DisposableMap(
+    private val delegate: ConcurrentMap<ModuleSourceInfo, ConcurrentMap<FqName, Boolean>>,
+    private val onDispose: () -> Unit
+) : ConcurrentMap<ModuleSourceInfo, ConcurrentMap<FqName, Boolean>> by delegate, Disposable {
+    override fun dispose() {
+        onDispose()
+    }
+}
 
 private fun Logger.debugIfEnabled(project: Project, message: String, withCurrentTrace: Boolean = false) {
     if (ApplicationManager.getApplication().isUnitTestMode && project.DEBUG_LOG_ENABLE_PerModulePackageCache) {
