@@ -921,10 +921,10 @@ open class WrappedFieldDescriptor(
 
     override fun getContainingDeclaration() = (owner.parent as IrSymbolOwner).symbol.descriptor
 
-    override fun isLateInit() = owner.correspondingProperty?.isLateinit ?: false
+    override fun isLateInit() = owner.correspondingPropertySymbol?.owner?.isLateinit ?: false
 
     override fun getExtensionReceiverParameter(): ReceiverParameterDescriptor? =
-        owner.correspondingProperty?.descriptor?.extensionReceiverParameter
+        owner.correspondingPropertySymbol?.descriptor?.extensionReceiverParameter
 
     override fun isExternal() = owner.isExternal
 
