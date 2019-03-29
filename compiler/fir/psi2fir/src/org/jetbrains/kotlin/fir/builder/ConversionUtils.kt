@@ -188,18 +188,15 @@ internal fun FirExpression.generateNotNullOrOther(
     ).apply {
         branches += FirWhenBranchImpl(
             session, psi,
-            FirOperatorCallImpl(session, psi, FirOperation.NOT_EQ).apply {
+            FirOperatorCallImpl(session, psi, FirOperation.EQ).apply {
                 arguments += subjectExpression
                 arguments += FirConstExpressionImpl(session, psi, IrConstKind.Null, null)
             },
-            FirSingleExpressionBlock(
-                session,
-                generateAccessExpression(session, psi, subjectName)
-            )
+            FirSingleExpressionBlock(session, other)
         )
         branches += FirWhenBranchImpl(
             session, other.psi, FirElseIfTrueCondition(session, psi),
-            FirSingleExpressionBlock(session, other)
+            FirSingleExpressionBlock(session, generateAccessExpression(session, psi, subjectName))
         )
     }
 }
