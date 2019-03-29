@@ -12,7 +12,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import junit.framework.TestCase
 import org.jetbrains.kotlin.TestsCompilerError
 import org.jetbrains.kotlin.analyzer.AnalysisResult
-import org.jetbrains.kotlin.analyzer.common.CommonAnalyzerFacade
+import org.jetbrains.kotlin.analyzer.common.CommonResolverForModuleFactory
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
@@ -358,7 +358,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
 
         val platform = moduleDescriptor.getMultiTargetPlatform()
         if (platform == MultiTargetPlatform.Common) {
-            return CommonAnalyzerFacade.analyzeFiles(
+            return CommonResolverForModuleFactory.analyzeFiles(
                 files, moduleDescriptor.name, true, languageVersionSettings,
                 mapOf(
                     MultiTargetPlatform.CAPABILITY to MultiTargetPlatform.Common,

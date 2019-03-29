@@ -55,7 +55,7 @@ class CommonAnalysisParameters(
  * A facade that is used to analyze common (platform-independent) modules in multi-platform projects.
  * See [CommonPlatform]
  */
-object CommonAnalyzerFacade : ResolverForModuleFactory() {
+object CommonResolverForModuleFactory : ResolverForModuleFactory() {
     private class SourceModuleInfo(
         override val name: Name,
         override val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>,
@@ -99,7 +99,7 @@ object CommonAnalyzerFacade : ResolverForModuleFactory() {
                     project: Project
                 ) = TargetPlatformVersion.NoVersion
             },
-            resolverForModuleFactoryByPlatform = { CommonAnalyzerFacade },
+            resolverForModuleFactoryByPlatform = { CommonResolverForModuleFactory },
             platformParameters = { _ -> CommonAnalysisParameters(metadataPartProviderFactory) }
         )
 
