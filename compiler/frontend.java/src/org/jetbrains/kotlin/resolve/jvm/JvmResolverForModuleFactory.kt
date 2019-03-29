@@ -44,7 +44,7 @@ class JvmPlatformParameters(
 ) : PlatformAnalysisParameters
 
 
-object JvmAnalyzerFacade : ResolverForModuleFactory() {
+object JvmResolverForModuleFactory : ResolverForModuleFactory() {
     override fun <M : ModuleInfo> createResolverForModule(
         moduleDescriptor: ModuleDescriptorImpl,
         moduleContext: ModuleContext,
