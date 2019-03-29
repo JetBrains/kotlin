@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
@@ -38,7 +35,7 @@ class AnnotationGenerator(context: GeneratorContext) : IrElementVisitorVoid {
         val annotatedDescriptor =
             if (declaration is IrField && declaration.origin != IrDeclarationOrigin.DELEGATE)
                 declaration.descriptor.backingField
-            else declaration.descriptor
+            else declaration.descriptorOrNull
 
         annotatedDescriptor?.annotations?.mapTo(declaration.annotations) {
             constantValueGenerator.generateAnnotationConstructorCall(it)
