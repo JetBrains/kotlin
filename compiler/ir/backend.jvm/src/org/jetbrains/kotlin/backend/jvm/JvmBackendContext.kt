@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi2ir.PsiSourceManager
@@ -34,16 +35,18 @@ class JvmBackendContext(
     override val declarationFactory: JvmDeclarationFactory = JvmDeclarationFactory(state)
     override val sharedVariablesManager = JvmSharedVariablesManager(state.module, builtIns, irBuiltIns)
 
-    override val ir = JvmIr(irModuleFragment, symbolTable)
+    private val symbolTable = symbolTable.lazyWrapper
+    override val ir = JvmIr(irModuleFragment, this.symbolTable)
 
     override var inVerbosePhase: Boolean = false
 
     override val configuration get() = state.configuration
 
-    internal fun getClass(fqName: FqName): ClassDescriptor {
-        return state.module.getPackage(fqName.parent()).memberScope.getContributedClassifier(
+    internal fun getTopLevelClass(fqName: FqName): IrClassSymbol {
+        val descriptor = state.module.getPackage(fqName.parent()).memberScope.getContributedClassifier(
             fqName.shortName(), NoLookupLocation.FROM_BACKEND
         ) as ClassDescriptor? ?: error("Class is not found: $fqName")
+        return symbolTable.referenceClass(descriptor)
     }
 
     override fun log(message: () -> String) {
@@ -58,8 +61,11 @@ class JvmBackendContext(
         print(message)
     }
 
-    inner class JvmIr(irModuleFragment: IrModuleFragment, symbolTable: SymbolTable) : Ir<JvmBackendContext>(this, irModuleFragment) {
-        override val symbols = JvmSymbols(this@JvmBackendContext, symbolTable.lazyWrapper)
+    inner class JvmIr(
+        irModuleFragment: IrModuleFragment,
+        symbolTable: ReferenceSymbolTable
+    ) : Ir<JvmBackendContext>(this, irModuleFragment) {
+        override val symbols = JvmSymbols(this@JvmBackendContext, symbolTable)
 
         override fun shouldGenerateHandlerParameterForDefaultBodyFun() = true
     }

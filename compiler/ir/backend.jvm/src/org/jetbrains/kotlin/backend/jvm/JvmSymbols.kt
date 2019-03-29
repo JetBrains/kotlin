@@ -76,7 +76,7 @@ class JvmSymbols(
         intrinsicsClass.functions.single { it.owner.name.asString() == "throwUninitializedPropertyAccessException" }
 
     override val stringBuilder: IrClassSymbol
-        get() = symbolTable.referenceClass(context.getClass(FqName("java.lang.StringBuilder")))
+        get() = context.getTopLevelClass(FqName("java.lang.StringBuilder"))
 
     override val defaultConstructorMarker: IrClassSymbol =
         createClass(FqName("kotlin.jvm.internal.DefaultConstructorMarker")) { }.symbol
@@ -91,7 +91,7 @@ class JvmSymbols(
         get() = TODO("not implemented")
 
     val javaLangClass: IrClassSymbol =
-        symbolTable.referenceClass(context.getClass(FqName("java.lang.Class")))
+        context.getTopLevelClass(FqName("java.lang.Class"))
 
     val lambdaClass: IrClassSymbol = createClass(FqName("kotlin.jvm.internal.Lambda")) { klass ->
         klass.addConstructor().apply {
