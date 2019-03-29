@@ -82,15 +82,28 @@ internal fun parseTranslationUnit(
 ): CXTranslationUnit {
 
     memScoped {
-        val result = clang_parseTranslationUnit(
+        val resultVar = alloc<CXTranslationUnitVar>()
+
+        val errorCode = clang_parseTranslationUnit2(
                 index,
                 sourceFile.absolutePath,
                 compilerArgs.toNativeStringArray(memScope), compilerArgs.size,
                 null, 0,
-                options
-        )!!
+                options,
+                resultVar.ptr
+        )
 
-        return result
+        if (errorCode != CXErrorCode.CXError_Success) {
+            val copiedSourceFile = sourceFile.copyTo(createTempFile(suffix = sourceFile.name), overwrite = true)
+
+            error("""
+                clang_parseTranslationUnit2 failed with $errorCode;
+                sourceFile = ${copiedSourceFile.absolutePath}
+                arguments = ${compilerArgs.joinToString(" ")}
+                """.trimIndent())
+        }
+
+        return resultVar.value!!
     }
 }
 
