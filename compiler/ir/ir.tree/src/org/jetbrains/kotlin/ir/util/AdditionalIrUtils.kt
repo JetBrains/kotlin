@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.ir.DescriptorInIrDeclaration
 import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.SourceRangeInfo
@@ -134,8 +133,7 @@ internal val IrDeclaration.isSerializableExpectClass: Boolean
     get() {
         @UseExperimental(DescriptorInIrDeclaration::class)
         val d = descriptor
-        return d is MemberDescriptor && d.isExpect &&
-                d is ClassDescriptor && ExpectedActualDeclarationChecker.shouldGenerateExpectClass(d)
+        return d is ClassDescriptor && ExpectedActualDeclarationChecker.shouldGenerateExpectClass(d)
     }
 
 const val SYNTHETIC_OFFSET = -2
