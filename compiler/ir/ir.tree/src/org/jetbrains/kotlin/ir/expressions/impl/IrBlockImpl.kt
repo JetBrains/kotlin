@@ -18,11 +18,11 @@ package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
@@ -66,12 +66,13 @@ fun IrBlockImpl.inlineStatement(statement: IrStatement) {
 }
 
 class IrReturnableBlockImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
-    override val symbol: IrReturnableBlockSymbol,
-    origin: IrStatementOrigin? = null,
-    override val sourceFileSymbol: IrFileSymbol? = null
+        startOffset: Int,
+        endOffset: Int,
+        type: IrType,
+        override val symbol: IrReturnableBlockSymbol,
+        origin: IrStatementOrigin? = null,
+        override val sourceFileSymbol: IrFileSymbol? = null,
+        override val inlineFunctionSymbol: IrFunctionSymbol? = null
 ) :
     IrContainerExpressionBase(startOffset, endOffset, type, origin),
     IrReturnableBlock {
@@ -85,8 +86,9 @@ class IrReturnableBlockImpl(
         symbol: IrReturnableBlockSymbol,
         origin: IrStatementOrigin?,
         statements: List<IrStatement>,
-        sourceFileSymbol: IrFileSymbol? = null
-    ) : this(startOffset, endOffset, type, symbol, origin, sourceFileSymbol) {
+        sourceFileSymbol: IrFileSymbol? = null,
+        inlineFunctionSymbol: IrFunctionSymbol? = null
+    ) : this(startOffset, endOffset, type, symbol, origin, sourceFileSymbol, inlineFunctionSymbol) {
         this.statements.addAll(statements)
     }
 
