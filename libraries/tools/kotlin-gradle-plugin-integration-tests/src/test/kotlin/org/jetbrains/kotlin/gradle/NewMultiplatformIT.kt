@@ -182,7 +182,7 @@ class NewMultiplatformIT : BaseGradleIT() {
 
                 // Check that linker options were correctly passed to the K/N compiler.
                 checkProgramCompilationCommandLine {
-                    assertTrue(it.contains("-linker-options -L."))
+                    assertTrue(it.contains("-linker-option -L."))
                 }
             }
 
@@ -932,7 +932,7 @@ class NewMultiplatformIT : BaseGradleIT() {
             assertSuccessful()
         }
 
-        // Check that run tasks work find and an entry point can be specified.
+        // Check that run tasks work fine and an entry point can be specified.
         build("runDebugExecutable$hostSuffix") {
             assertSuccessful()
             assertTrue(output.contains("<root>.main"))
@@ -994,7 +994,7 @@ class NewMultiplatformIT : BaseGradleIT() {
             build("linkCustomReleaseFrameworkIos") {
                 assertSuccessful()
                 checkFrameworkCompilationCommandLine {
-                    assertTrue(it.contains("-linker-options -L."))
+                    assertTrue(it.contains("-linker-option -L."))
                     assertTrue(it.contains("-Xtime"))
                     assertTrue(it.contains("-Xstatic-framework"))
                     assertFalse(it.contains("-Xembed-bitcode-marker"))
