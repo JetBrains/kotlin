@@ -1,5 +1,5 @@
 // !LANGUAGE: +NewInference
-// IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND: JVM_IR, JS_IR
 // WITH_RUNTIME
 
 class Foo<C : Any> {
