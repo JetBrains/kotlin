@@ -12,5 +12,4 @@ IOS_DIR="$DIR/ios-app"
 pod --project-directory="$IOS_DIR" install
 
 # Run Xcode to build the app.
-xcodebuild -sdk iphonesimulator12.1 -configuration Release -workspace "$IOS_DIR/ios-app.xcworkspace" -scheme ios-app
-
+xcodebuild -sdk iphonesimulator -arch arm64 -configuration Release -workspace "$IOS_DIR/ios-app.xcworkspace" -scheme ios-app
