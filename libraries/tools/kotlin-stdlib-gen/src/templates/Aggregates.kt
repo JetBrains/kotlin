@@ -348,14 +348,14 @@ object Aggregates : TemplateGroupBase() {
             var minElem = iterator.next()
             if (!iterator.hasNext()) return minElem
             var minValue = selector(minElem)
-            while (iterator.hasNext()) {
+            do {
                 val e = iterator.next()
                 val v = selector(e)
                 if (minValue > v) {
                     minElem = e
                     minValue = v
                 }
-            }
+            } while (iterator.hasNext())
             return minElem
             """
         }
@@ -435,14 +435,14 @@ object Aggregates : TemplateGroupBase() {
             var maxElem = iterator.next()
             if (!iterator.hasNext()) return maxElem
             var maxValue = selector(maxElem)
-            while (iterator.hasNext()) {
+            do {
                 val e = iterator.next()
                 val v = selector(e)
                 if (maxValue < v) {
                     maxElem = e
                     maxValue = v
                 }
-            }
+            } while (iterator.hasNext())
             return maxElem
             """
         }
