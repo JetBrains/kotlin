@@ -13,6 +13,8 @@ package kotlin.collections
 // See: https://github.com/JetBrains/kotlin/tree/master/libraries/stdlib
 //
 
+import kotlin.ranges.contains
+import kotlin.ranges.reversed
 
 /**
  * Returns a list containing all elements that are instances of specified class.
