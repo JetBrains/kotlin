@@ -372,7 +372,7 @@ infix fun DaemonJVMOptions.memorywiseFitsInto(other: DaemonJVMOptions): Boolean 
             .all { (it.get(this).memToBytes() ?: 0) <= (it.get(other).memToBytes() ?: 0) }
 
 fun compareDaemonJVMOptionsMemory(left: DaemonJVMOptions, right: DaemonJVMOptions): Int {
-    val props = daemonJVMOptionsMemoryProps.map { Pair<Long, Long>(it.get(left).memToBytes() ?: 0, it.get(right).memToBytes() ?: 0) }
+    val props = daemonJVMOptionsMemoryProps.map { Pair(it.get(left).memToBytes() ?: 0, it.get(right).memToBytes() ?: 0) }
     return when {
         props.all { it.first == it.second } -> 0
         props.all { it.first <= it.second } -> -1

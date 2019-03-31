@@ -112,7 +112,7 @@ open class OverloadingConflictResolver<C : Any>(
     fun filterOutEquivalentCalls(candidates: Collection<C>): Set<C> {
         candidates.setIfOneOrEmpty()?.let { return it }
 
-        val fromSourcesGoesFirst = candidates.sortedBy<C, Int> { if (isFromSources(it.resultingDescriptor)) 0 else 1 }
+        val fromSourcesGoesFirst = candidates.sortedBy { if (isFromSources(it.resultingDescriptor)) 0 else 1 }
 
         val result = LinkedHashSet<C>()
         outerLoop@ for (meD in fromSourcesGoesFirst) {
