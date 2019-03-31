@@ -38,5 +38,5 @@ public external interface FrameworkAdapter {
      * @param ignored whether the test is ignored
      * @param testFn contains test body invocation
      */
-    fun test(name: String, ignored: Boolean, testFn: () -> Unit)
+    fun test(name: String, ignored: Boolean, testFn: () -> Any)
 }
