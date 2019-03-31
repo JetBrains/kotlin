@@ -234,6 +234,12 @@ fun main(args: Array<String>) {
     val buildsNumbersUrl = "$serverUrl/buildsNumbers/${parameters["target"]}"
     val buildsNumbers: Array<String> = JSON.parse(sendGetRequest(buildsNumbersUrl))
 
+    // Add release branches to selector.
+    releaseBranches.forEach {
+        val option = Option(it, it)
+        js("$('#inputGroupBranch')").append(js("$(option)"))
+    }
+
     // Change inputs values connected with parameters and add events listeners.
     document.querySelector("#inputGroupTarget [value=\"${parameters["target"]}\"]")?.setAttribute("selected", "true")
     document.querySelector("#inputGroupBuildType [value=\"${parameters["type"]}\"]")?.setAttribute("selected", "true")
@@ -265,12 +271,6 @@ fun main(args: Array<String>) {
             window.location.href = newLink
         }
     })
-
-    // Add release branches to selector.
-    releaseBranches.forEach {
-        val option = Option(it, it)
-        js("$('#inputGroupBranch')").append(js("$(option)"))
-    }
 
     val autocompleteParameters: dynamic = object{}
     autocompleteParameters["lookup"] = buildsNumbers
@@ -308,7 +308,7 @@ fun main(args: Array<String>) {
         }
         separateValues(it.executionTime, executionTime) { value -> value.toDouble() }
         separateValues(it.compileTime, compileTime) { value -> value.toDouble() / 1000 }
-        separateValues(it.codeSize, codeSize) { value -> value.toDouble() / 1024.0 }
+        separateValues(it.codeSize, codeSize) { value -> value.toDouble() }
         bundleSize.add(it.bundleSize?.toInt()?. let { it / 1024 / 1024 })
     }
 
@@ -316,11 +316,11 @@ fun main(args: Array<String>) {
 
     // Draw charts.
     val execChart = Chartist.Line("#exec_chart", getChartData(labels, executionTime.values),
-            getChartOptions(executionTime.keys.toTypedArray(), "Time, microseconds"))
+            getChartOptions(executionTime.keys.toTypedArray(), "Normalized time"))
     val compileChart = Chartist.Line("#compile_chart", getChartData(labels, compileTime.values),
             getChartOptions(compileTime.keys.toTypedArray(), "Time, milliseconds"))
     val codeSizeChart = Chartist.Line("#codesize_chart", getChartData(labels, codeSize.values, sizeClassName),
-            getChartOptions(codeSize.keys.toTypedArray(), "Size, KB", arrayOf("ct-series-2")))
+            getChartOptions(codeSize.keys.toTypedArray(), "Normalized size", arrayOf("ct-series-2")))
     val bundleSizeChart = Chartist.Line("#bundlesize_chart", getChartData(labels, listOf(bundleSize), sizeClassName),
             getChartOptions(arrayOf("Bundle size"), "Size, MB", arrayOf("ct-series-2")))
 
