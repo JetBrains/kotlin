@@ -2393,6 +2393,11 @@ public class FirDiagnosticsSmokeTestGenerated extends AbstractFirDiagnosticsSmok
                 runTest("compiler/testData/diagnostics/tests/callableReference/resolve/overloadsMember.kt");
             }
 
+            @TestMetadata("resolveEqualsOperatorWithAnyExpectedType.kt")
+            public void testResolveEqualsOperatorWithAnyExpectedType() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/callableReference/resolve/resolveEqualsOperatorWithAnyExpectedType.kt");
+            }
+
             @TestMetadata("valVsFun.kt")
             public void testValVsFun() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/callableReference/resolve/valVsFun.kt");
