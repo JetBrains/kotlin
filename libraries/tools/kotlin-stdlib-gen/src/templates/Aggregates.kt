@@ -346,15 +346,16 @@ object Aggregates : TemplateGroupBase() {
             if (!iterator.hasNext()) return null
 
             var minElem = iterator.next()
+            if (!iterator.hasNext()) return minElem
             var minValue = selector(minElem)
-            while (iterator.hasNext()) {
+            do {
                 val e = iterator.next()
                 val v = selector(e)
                 if (minValue > v) {
                     minElem = e
                     minValue = v
                 }
-            }
+            } while (iterator.hasNext())
             return minElem
             """
         }
@@ -363,6 +364,8 @@ object Aggregates : TemplateGroupBase() {
             if (isEmpty()) return null
 
             var minElem = this[0]
+            val lastIndex = this.lastIndex
+            if (lastIndex == 0) return minElem
             var minValue = selector(minElem)
             for (i in 1..lastIndex) {
                 val e = this[i]
@@ -430,15 +433,16 @@ object Aggregates : TemplateGroupBase() {
             if (!iterator.hasNext()) return null
 
             var maxElem = iterator.next()
+            if (!iterator.hasNext()) return maxElem
             var maxValue = selector(maxElem)
-            while (iterator.hasNext()) {
+            do {
                 val e = iterator.next()
                 val v = selector(e)
                 if (maxValue < v) {
                     maxElem = e
                     maxValue = v
                 }
-            }
+            } while (iterator.hasNext())
             return maxElem
             """
         }
@@ -447,6 +451,8 @@ object Aggregates : TemplateGroupBase() {
             if (isEmpty()) return null
 
             var maxElem = this[0]
+            val lastIndex = this.lastIndex
+            if (lastIndex == 0) return maxElem
             var maxValue = selector(maxElem)
             for (i in 1..lastIndex) {
                 val e = this[i]
