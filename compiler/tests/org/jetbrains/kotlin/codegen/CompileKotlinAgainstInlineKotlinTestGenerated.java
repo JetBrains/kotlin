@@ -3587,19 +3587,9 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/suspend/callableReference"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
-            @TestMetadata("ordinaryParameter.kt")
-            public void testOrdinaryParameter() throws Exception {
-                runTest("compiler/testData/codegen/boxInline/suspend/callableReference/ordinaryParameter.kt");
-            }
-
             @TestMetadata("simple.kt")
             public void testSimple() throws Exception {
                 runTest("compiler/testData/codegen/boxInline/suspend/callableReference/simple.kt");
-            }
-
-            @TestMetadata("suspendOfOrdinary.kt")
-            public void testSuspendOfOrdinary() throws Exception {
-                runTest("compiler/testData/codegen/boxInline/suspend/callableReference/suspendOfOrdinary.kt");
             }
         }
 
