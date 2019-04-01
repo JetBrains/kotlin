@@ -19,24 +19,21 @@ package org.jetbrains.kotlin.analyzer.common
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.analyzer.*
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.platform.TargetPlatformVersion
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.get
-import org.jetbrains.kotlin.container.useImpl
-import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.context.ProjectContext
-import org.jetbrains.kotlin.contracts.ContractDeserializerImpl
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.container.useImpl
+import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.frontend.di.configureModule
-import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
-import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.frontend.di.configureStandardResolveComponents
 import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
@@ -141,7 +138,7 @@ object CommonResolverForModuleFactory : ResolverForModuleFactory() {
         val trace = CodeAnalyzerInitializer.getInstance(project).createTrace()
         val container = createContainerToResolveCommonCode(
             moduleContext, trace, declarationProviderFactory, moduleContentScope, targetEnvironment, metadataPartProvider,
-            languageVersionSettings
+            languageVersionSettings, CommonPlatforms.defaultCommonPlatform, CommonPlatformCompilerServices
         )
 
         val packageFragmentProviders = listOf(
@@ -151,35 +148,41 @@ object CommonResolverForModuleFactory : ResolverForModuleFactory() {
 
         return ResolverForModule(CompositePackageFragmentProvider(packageFragmentProviders), container)
     }
+}
 
-    private fun createContainerToResolveCommonCode(
-        moduleContext: ModuleContext,
-        bindingTrace: BindingTrace,
-        declarationProviderFactory: DeclarationProviderFactory,
-        moduleContentScope: GlobalSearchScope,
-        targetEnvironment: TargetEnvironment,
-        metadataPartProvider: MetadataPartProvider,
-        languageVersionSettings: LanguageVersionSettings
-    ): StorageComponentContainer = createContainer("ResolveCommonCode", CommonPlatformCompilerServices) {
-        configureModule(moduleContext, DefaultBuiltInPlatforms.commonPlatform, CommonPlatformCompilerServices, bindingTrace, languageVersionSettings)
+private fun createContainerToResolveCommonCode(
+    moduleContext: ModuleContext,
+    bindingTrace: BindingTrace,
+    declarationProviderFactory: DeclarationProviderFactory,
+    moduleContentScope: GlobalSearchScope,
+    targetEnvironment: TargetEnvironment,
+    metadataPartProvider: MetadataPartProvider,
+    languageVersionSettings: LanguageVersionSettings,
+    platform: TargetPlatform,
+    compilerServices: PlatformDependentCompilerServices
+): StorageComponentContainer =
+    createContainer("ResolveCommonCode", compilerServices) {
+        configureModule(moduleContext, platform, compilerServices, bindingTrace, languageVersionSettings)
 
         useInstance(moduleContentScope)
-        useInstance(LookupTracker.DO_NOTHING)
-        useInstance(ExpectActualTracker.DoNothing)
-        useImpl<ResolveSession>()
-        useImpl<LazyTopDownAnalyzer>()
-        useImpl<AnnotationResolverImpl>()
-        useImpl<CompilerDeserializationConfiguration>()
-        useInstance(metadataPartProvider)
         useInstance(declarationProviderFactory)
-        useImpl<MetadataPackageFragmentProvider>()
-        useImpl<ContractDeserializerImpl>()
+
+        configureStandardResolveComponents()
+
+        configureCommonSpecificComponents()
+        useInstance(metadataPartProvider)
         useImpl<SubstitutingScopeProviderImpl>()
 
-        val metadataFinderFactory = ServiceManager.getService(moduleContext.project, MetadataFinderFactory::class.java)
-                ?: error("No MetadataFinderFactory in project")
+        val metadataFinderFactory = ServiceManager.getService(
+            moduleContext.project,
+            MetadataFinderFactory::class.java
+        )
+            ?: error("No MetadataFinderFactory in project")
         useInstance(metadataFinderFactory.create(moduleContentScope))
 
         targetEnvironment.configure(this)
     }
+
+fun StorageComponentContainer.configureCommonSpecificComponents() {
+    useImpl<MetadataPackageFragmentProvider>()
 }

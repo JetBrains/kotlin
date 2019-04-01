@@ -22,11 +22,10 @@ import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useImpl
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.context.ModuleContext
+import org.jetbrains.kotlin.contracts.ContractDeserializerImpl
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.platform.subplatformOfType
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.platform.TargetPlatformVersion
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.components.ClassicTypeSystemContextForCS
@@ -35,7 +34,6 @@ import org.jetbrains.kotlin.resolve.calls.tower.KotlinResolutionStatelessCallbac
 import org.jetbrains.kotlin.resolve.checkers.ExperimentalUsageChecker
 import org.jetbrains.kotlin.resolve.lazy.*
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
-import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 import org.jetbrains.kotlin.types.SubstitutingScopeProviderImpl
 import org.jetbrains.kotlin.types.expressions.DeclarationScopeProviderForLocalClassifierAnalyzer
 import org.jetbrains.kotlin.types.expressions.LocalClassDescriptorHolder
@@ -78,7 +76,30 @@ private fun StorageComponentContainer.configurePlatformIndependentComponents() {
     useImpl<ExperimentalUsageChecker>()
     useImpl<ExperimentalUsageChecker.Overrides>()
     useImpl<ExperimentalUsageChecker.ClassifierUsage>()
+
+    useImpl<ContractDeserializerImpl>()
+    useImpl<CompilerDeserializationConfiguration>()
+
     useImpl<ClassicTypeSystemContextForCS>()
+}
+
+/**
+ * Actually, those should be present in 'configurePlatformIndependentComponents',
+ * but, unfortunately, this is currently impossible, because in some lightweight
+ * containers (see [createContainerForBodyResolve] and similar) some dependencies
+ * are missing
+ *
+ * If you're not doing some trickery with containers, you should use them.
+ */
+fun StorageComponentContainer.configureStandardResolveComponents() {
+    useImpl<ResolveSession>()
+    useImpl<LazyTopDownAnalyzer>()
+    useImpl<AnnotationResolverImpl>()
+}
+
+fun StorageComponentContainer.configureIncrementalCompilation(lookupTracker: LookupTracker, expectActualTracker: ExpectActualTracker) {
+    useInstance(lookupTracker)
+    useInstance(expectActualTracker)
 }
 
 fun createContainerForBodyResolve(
@@ -163,13 +184,11 @@ fun createContainerForLazyResolve(
 ): StorageComponentContainer = createContainer("LazyResolve", compilerServices) {
     configureModule(moduleContext, platform, compilerServices, bindingTrace, languageVersionSettings)
 
-    useInstance(declarationProviderFactory)
+    configureStandardResolveComponents()
 
-    useImpl<AnnotationResolverImpl>()
-    useImpl<CompilerDeserializationConfiguration>()
+    useInstance(declarationProviderFactory)
+    useImpl<SubstitutingScopeProviderImpl>()
+
     targetEnvironment.configure(this)
 
-    useImpl<ResolveSession>()
-    useImpl<LazyTopDownAnalyzer>()
-    useImpl<SubstitutingScopeProviderImpl>()
 }

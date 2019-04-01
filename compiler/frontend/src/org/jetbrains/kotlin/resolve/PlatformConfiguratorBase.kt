@@ -66,15 +66,24 @@ private val DEFAULT_CLASH_RESOLVERS = listOf<PlatformExtensionsClashResolver<*>>
     PlatformExtensionsClashResolver.FallbackToDefault(DynamicTypesSettings(), DynamicTypesSettings::class.java)
 )
 
+fun StorageComponentContainer.configureDefaultCheckers() {
+    DEFAULT_DECLARATION_CHECKERS.forEach { useInstance(it) }
+    DEFAULT_CALL_CHECKERS.forEach { useInstance(it) }
+    DEFAULT_TYPE_CHECKERS.forEach { useInstance(it) }
+    DEFAULT_CLASSIFIER_USAGE_CHECKERS.forEach { useInstance(it) }
+    DEFAULT_ANNOTATION_CHECKERS.forEach { useInstance(it) }
+    DEFAULT_CLASH_RESOLVERS.forEach { useClashResolver(it) }
+}
+
 
 abstract class PlatformConfiguratorBase(
     private val dynamicTypesSettings: DynamicTypesSettings? = null,
-    additionalDeclarationCheckers: List<DeclarationChecker> = emptyList(),
-    additionalCallCheckers: List<CallChecker> = emptyList(),
-    additionalTypeCheckers: List<AdditionalTypeChecker> = emptyList(),
-    additionalClassifierUsageCheckers: List<ClassifierUsageChecker> = emptyList(),
-    additionalAnnotationCheckers: List<AdditionalAnnotationChecker> = emptyList(),
-    additionalClashResolvers: List<PlatformExtensionsClashResolver<*>> = emptyList(),
+    private val additionalDeclarationCheckers: List<DeclarationChecker> = emptyList(),
+    private val additionalCallCheckers: List<CallChecker> = emptyList(),
+    private val additionalTypeCheckers: List<AdditionalTypeChecker> = emptyList(),
+    private val additionalClassifierUsageCheckers: List<ClassifierUsageChecker> = emptyList(),
+    private val additionalAnnotationCheckers: List<AdditionalAnnotationChecker> = emptyList(),
+    private val additionalClashResolvers: List<PlatformExtensionsClashResolver<*>> = emptyList(),
     private val identifierChecker: IdentifierChecker? = null,
     private val overloadFilter: OverloadFilter? = null,
     private val platformToKotlinClassMap: PlatformToKotlinClassMap? = null,
@@ -82,32 +91,31 @@ abstract class PlatformConfiguratorBase(
     private val overridesBackwardCompatibilityHelper: OverridesBackwardCompatibilityHelper? = null,
     private val declarationReturnTypeSanitizer: DeclarationReturnTypeSanitizer? = null
 ) : PlatformConfigurator {
-    private val declarationCheckers: List<DeclarationChecker> = DEFAULT_DECLARATION_CHECKERS + additionalDeclarationCheckers
-    private val callCheckers: List<CallChecker> = DEFAULT_CALL_CHECKERS + additionalCallCheckers
-    private val typeCheckers: List<AdditionalTypeChecker> = DEFAULT_TYPE_CHECKERS + additionalTypeCheckers
-    private val classifierUsageCheckers: List<ClassifierUsageChecker> =
-        DEFAULT_CLASSIFIER_USAGE_CHECKERS + additionalClassifierUsageCheckers
-    private val annotationCheckers: List<AdditionalAnnotationChecker> = DEFAULT_ANNOTATION_CHECKERS + additionalAnnotationCheckers
-    private val clashResolvers: List<PlatformExtensionsClashResolver<*>> = DEFAULT_CLASH_RESOLVERS + additionalClashResolvers
-
     override val platformSpecificContainer = composeContainer(this::class.java.simpleName) {
-        useInstanceIfNotNull(dynamicTypesSettings)
-        declarationCheckers.forEach { useInstance(it) }
-        callCheckers.forEach { useInstance(it) }
-        typeCheckers.forEach { useInstance(it) }
-        classifierUsageCheckers.forEach { useInstance(it) }
-        annotationCheckers.forEach { useInstance(it) }
-        clashResolvers.forEach { useClashResolver(it) }
-        useInstanceIfNotNull(identifierChecker)
-        useInstanceIfNotNull(overloadFilter)
-        useInstanceIfNotNull(platformToKotlinClassMap)
-        useInstanceIfNotNull(delegationFilter)
-        useInstanceIfNotNull(overridesBackwardCompatibilityHelper)
-        useInstanceIfNotNull(declarationReturnTypeSanitizer)
+        configureDefaultCheckers()
+        configureExtensionsAndCheckers(this)
     }
 
     override fun configureModuleDependentCheckers(container: StorageComponentContainer) {
         container.useImpl<ExperimentalMarkerDeclarationAnnotationChecker>()
+    }
+
+    private fun configureExtensionsAndCheckers(container: StorageComponentContainer) {
+        with(container) {
+            useInstanceIfNotNull(dynamicTypesSettings)
+            additionalDeclarationCheckers.forEach { useInstance(it) }
+            additionalCallCheckers.forEach { useInstance(it) }
+            additionalTypeCheckers.forEach { useInstance(it) }
+            additionalClassifierUsageCheckers.forEach { useInstance(it) }
+            additionalAnnotationCheckers.forEach { useInstance(it) }
+            additionalClashResolvers.forEach { useClashResolver(it) }
+            useInstanceIfNotNull(identifierChecker)
+            useInstanceIfNotNull(overloadFilter)
+            useInstanceIfNotNull(platformToKotlinClassMap)
+            useInstanceIfNotNull(delegationFilter)
+            useInstanceIfNotNull(overridesBackwardCompatibilityHelper)
+            useInstanceIfNotNull(declarationReturnTypeSanitizer)
+        }
     }
 }
 
