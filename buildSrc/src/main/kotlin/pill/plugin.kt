@@ -310,7 +310,7 @@ class JpsCompatiblePlugin : Plugin<Project> {
     }
 
     private fun attachPlatformSources(library: PLibrary): PLibrary {
-        val platformSourcesJar = File(platformDir, "../sources/ideaIC-$platformVersion-sources.jar")
+        val platformSourcesJar = File(platformDir, "../../../sources/intellij-$platformVersion-sources.jar")
 
         if (library.classes.any { it.startsWith(platformDir) }) {
             return library.attachSource(platformSourcesJar)
