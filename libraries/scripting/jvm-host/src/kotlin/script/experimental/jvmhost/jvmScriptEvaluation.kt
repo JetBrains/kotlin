@@ -7,6 +7,7 @@
 
 package kotlin.script.experimental.jvmhost
 
+import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.util.PropertiesCollection
 
@@ -30,8 +31,8 @@ open class BasicJvmScriptEvaluator : ScriptEvaluator {
         scriptEvaluationConfiguration: ScriptEvaluationConfiguration?
     ): ResultWithDiagnostics<EvaluationResult> =
         try {
-            val actualEvaluationConfiguration = scriptEvaluationConfiguration ?: ScriptEvaluationConfiguration()
-            compiledScript.getClass(actualEvaluationConfiguration).onSuccess { scriptClass ->
+            val actualEvalConfiguration = scriptEvaluationConfiguration ?: ScriptEvaluationConfiguration()
+            compiledScript.getClass(actualEvalConfiguration).onSuccess { scriptClass ->
                 // in the future, when (if) we'll stop to compile everything into constructor
                 // run as SAM
                 // return res
@@ -39,55 +40,63 @@ open class BasicJvmScriptEvaluator : ScriptEvaluator {
                 // for other scripts we need evaluation configuration with actualClassloader set,
                 // so they are loaded in the same classloader as the "main" script
                 val updatedEvalConfiguration =
-                    if (actualEvaluationConfiguration.containsKey(ScriptEvaluationConfiguration.jvm.actualClassLoader))
-                        actualEvaluationConfiguration
+                    if (actualEvalConfiguration.containsKey(ScriptEvaluationConfiguration.jvm.actualClassLoader))
+                        actualEvalConfiguration
                     else
-                        ScriptEvaluationConfiguration(actualEvaluationConfiguration) {
+                        ScriptEvaluationConfiguration(actualEvalConfiguration) {
                             ScriptEvaluationConfiguration.jvm.actualClassLoader(scriptClass.java.classLoader)
                         }
 
-                val sharedScripts = actualEvaluationConfiguration[ScriptEvaluationConfiguration.scriptsInstancesSharingMap]
+                val sharedScripts = actualEvalConfiguration[ScriptEvaluationConfiguration.scriptsInstancesSharingMap]
 
-                val instanceFromShared = sharedScripts?.get(scriptClass)
-
-                if (instanceFromShared != null) {
-                    instanceFromShared.asSuccess(updatedEvalConfiguration)
-                } else {
-
-                    val args = ArrayList<Any?>()
-
-                    updatedEvalConfiguration[ScriptEvaluationConfiguration.constructorArgs]?.let {
-                        args.addAll(it)
-                    }
-                    actualEvaluationConfiguration[ScriptEvaluationConfiguration.implicitReceivers]?.let {
-                        args.addAll(it)
-                    }
-                    actualEvaluationConfiguration[ScriptEvaluationConfiguration.providedProperties]?.forEach {
-                        args.add(it.value)
-                    }
-
-                    compiledScript.otherScripts.mapSuccess {
+                sharedScripts?.get(scriptClass)?.asSuccess()
+                    ?: compiledScript.otherScripts.mapSuccess {
                         invoke(it, updatedEvalConfiguration)
                     }.onSuccess { importedScriptsEvalResults ->
 
-                        importedScriptsEvalResults.forEach {
-                            args.add((it.returnValue as ResultValue.Value).scriptInstance)
+                        val refinedEvalConfiguration =
+                            updatedEvalConfiguration[ScriptEvaluationConfiguration.refineConfigurationBeforeEvaluate]
+                                ?.handler?.invoke(ScriptEvaluationConfigurationRefinementContext(compiledScript, updatedEvalConfiguration))
+                                ?.onFailure {
+                                    return@invoke ResultWithDiagnostics.Failure(it.reports)
+                                }
+                                ?.resultOrNull()
+                                ?: updatedEvalConfiguration
+
+                        scriptClass.evalWithConfigAndOtherScriptsResults(refinedEvalConfiguration, importedScriptsEvalResults).let {
+                            sharedScripts?.put(scriptClass, it)
+                            ResultWithDiagnostics.Success(it)
                         }
-
-                        val ctor = scriptClass.java.constructors.single()
-                        val instance = ctor.newInstance(*args.toArray())
-
-                        sharedScripts?.put(scriptClass, instance)
-
-                        instance.asSuccess(updatedEvalConfiguration)
                     }
-                }
             }
         } catch (e: Throwable) {
             ResultWithDiagnostics.Failure(e.asDiagnostics("Error evaluating script", path = compiledScript.sourceLocationId))
         }
+
+    private fun KClass<*>.evalWithConfigAndOtherScriptsResults(
+        refinedEvalConfiguration: ScriptEvaluationConfiguration,
+        importedScriptsEvalResults: List<EvaluationResult>
+    ): EvaluationResult {
+        val args = ArrayList<Any?>()
+
+        refinedEvalConfiguration[ScriptEvaluationConfiguration.constructorArgs]?.let {
+            args.addAll(it)
+        }
+        refinedEvalConfiguration[ScriptEvaluationConfiguration.implicitReceivers]?.let {
+            args.addAll(it)
+        }
+        refinedEvalConfiguration[ScriptEvaluationConfiguration.providedProperties]?.forEach {
+            args.add(it.value)
+        }
+
+        importedScriptsEvalResults.forEach {
+            args.add((it.returnValue as ResultValue.Value).scriptInstance)
+        }
+
+        val ctor = java.constructors.single()
+        val instance = ctor.newInstance(*args.toArray())
+
+        return EvaluationResult(ResultValue.Value("", instance, "", instance), refinedEvalConfiguration)
+    }
 }
 
-private fun Any.asSuccess(updatedEvalConfiguration: ScriptEvaluationConfiguration) =
-// TODO: fix result value when ready
-    ResultWithDiagnostics.Success(EvaluationResult(ResultValue.Value("", this, "", this), updatedEvalConfiguration))

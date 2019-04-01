@@ -7,6 +7,7 @@
 
 package kotlin.script.experimental.api
 
+import java.io.Serializable
 import kotlin.reflect.KClass
 import kotlin.script.experimental.util.PropertiesCollection
 
@@ -52,7 +53,12 @@ val ScriptEvaluationConfigurationKeys.constructorArgs by PropertiesCollection.ke
  * only create/evaluate instances if not found, and evaluator will put newly created instances into the map
  * This allows to have a single instance of the script if it is imported several times via different import paths.
  */
-val ScriptEvaluationConfigurationKeys.scriptsInstancesSharingMap by PropertiesCollection.key<MutableMap<KClass<*>, Any>>()
+val ScriptEvaluationConfigurationKeys.scriptsInstancesSharingMap by PropertiesCollection.key<MutableMap<KClass<*>, EvaluationResult>>()
+
+/**
+ * The callback that will be called on the script compilation immediately before starting the compilation
+ */
+val ScriptEvaluationConfigurationKeys.refineConfigurationBeforeEvaluate by PropertiesCollection.key<RefineEvaluationConfigurationData>()
 
 /**
  * A helper to enable scriptsInstancesSharingMap with default implementation
@@ -61,6 +67,25 @@ fun ScriptEvaluationConfiguration.Builder.enableScriptsInstancesSharing() {
     this {
         scriptsInstancesSharingMap(HashMap())
     }
+}
+
+/**
+ * A helper to enable passing lambda directly to the refinement "keyword"
+ */
+fun ScriptEvaluationConfiguration.Builder.refineConfigurationBeforeEvaluate(handler: RefineScriptEvaluationConfigurationHandler) {
+    set(ScriptEvaluationConfiguration.refineConfigurationBeforeEvaluate, RefineEvaluationConfigurationData(handler))
+}
+
+/**
+ * The refinement callback function signature
+ */
+typealias RefineScriptEvaluationConfigurationHandler =
+            (ScriptEvaluationConfigurationRefinementContext) -> ResultWithDiagnostics<ScriptEvaluationConfiguration>
+
+data class RefineEvaluationConfigurationData(
+    val handler: RefineScriptEvaluationConfigurationHandler
+) : Serializable {
+    companion object { private const val serialVersionUID: Long = 1L }
 }
 
 /**
