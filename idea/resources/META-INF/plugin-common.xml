@@ -3360,7 +3360,7 @@
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="false"
-                     level="INFORMATION"
+                     level="WEAK WARNING"
                      language="kotlin"
     />
 

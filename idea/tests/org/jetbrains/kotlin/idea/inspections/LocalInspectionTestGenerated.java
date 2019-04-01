@@ -7149,6 +7149,21 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/replaceNotNullAssertionWithElvisReturn/basic4.kt");
         }
 
+        @TestMetadata("basic5.kt")
+        public void testBasic5() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceNotNullAssertionWithElvisReturn/basic5.kt");
+        }
+
+        @TestMetadata("inLambda.kt")
+        public void testInLambda() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceNotNullAssertionWithElvisReturn/inLambda.kt");
+        }
+
+        @TestMetadata("inLambda2.kt")
+        public void testInLambda2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceNotNullAssertionWithElvisReturn/inLambda2.kt");
+        }
+
         @TestMetadata("notNullFunction.kt")
         public void testNotNullFunction() throws Exception {
             runTest("idea/testData/inspectionsLocal/replaceNotNullAssertionWithElvisReturn/notNullFunction.kt");
