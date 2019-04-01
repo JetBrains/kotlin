@@ -35,11 +35,7 @@ object ArrayConstructor : IntrinsicMethod() {
         return object : IrIntrinsicFunction(expression, signature, context, expression.argTypes(context)) {
 
             override fun invoke(v: InstructionAdapter, codegen: ExpressionCodegen, data: BlockInfo): StackValue {
-                // TODO fix this hack
-                val result = codegen.generateCall(expression, this, data)
-                with(codegen) {
-                    result.materialize()
-                }
+                codegen.generateCall(expression, this, data).materialize()
                 return StackValue.onStack(Type.getObjectType("[" + AsmTypes.OBJECT_TYPE.internalName))
             }
         }

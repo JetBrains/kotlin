@@ -18,18 +18,16 @@ package org.jetbrains.kotlin.backend.jvm.intrinsics
 
 import org.jetbrains.kotlin.backend.jvm.codegen.BlockInfo
 import org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen
-import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.backend.jvm.codegen.PromisedValue
 import org.jetbrains.kotlin.ir.expressions.IrClassReference
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetClass
 
 class KClassJavaProperty : IntrinsicMethod() {
-    override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): StackValue? {
+    override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? {
         val extensionReceiver = expression.extensionReceiver
-        if (extensionReceiver !is IrClassReference && extensionReceiver !is IrGetClass) {
+        if (extensionReceiver !is IrClassReference && extensionReceiver !is IrGetClass)
             return null
-        }
-        codegen.generateClassLiteralReference(extensionReceiver, false, data)
-        return with(codegen) { expression.onStack }
+        return codegen.generateClassLiteralReference(extensionReceiver, false, data)
     }
 }
