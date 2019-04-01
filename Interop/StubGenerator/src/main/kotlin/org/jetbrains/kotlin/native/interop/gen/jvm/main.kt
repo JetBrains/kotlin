@@ -176,12 +176,15 @@ private fun processCLib(args: Array<String>, additionalArgs: Map<String, Any> = 
     val tool = prepareTool(argParser.get<String>("target"), flavor)
 
     val def = DefFile(defFile, tool.substitutions)
-
-    if (flavorName == "native" && argParser.getOrigin("linkerOpts") == ArgParser.ValueOrigin.SET_BY_USER) {
-        warn("-linkerOpts/-lopt option is not supported by cinterop. Please add linker options to .def file or binary compilation instead.")
+    val isLinkerOptsSetByUser = (argParser.getOrigin("linkerOpts") == ArgParser.ValueOrigin.SET_BY_USER) ||
+            (argParser.getOrigin("linkerOpt") == ArgParser.ValueOrigin.SET_BY_USER) ||
+            (argParser.getOrigin("lopt") == ArgParser.ValueOrigin.SET_BY_USER)
+    if (flavorName == "native" && isLinkerOptsSetByUser) {
+        warn("-linkerOpt(s)/-lopt option is not supported by cinterop. Please add linker options to .def file or binary compilation instead.")
     }
 
-    val additionalLinkerOpts = argParser.getValuesAsArray("linkerOpts")
+    val additionalLinkerOpts = argParser.getValuesAsArray("linkerOpts") + argParser.getValuesAsArray("linkerOpt") +
+            argParser.getValuesAsArray("lopt")
     val verbose = argParser.get<Boolean>("verbose")!!
 
     val language = selectNativeLanguage(def.config)
@@ -302,7 +305,8 @@ internal fun buildNativeLibrary(
         imports: ImportsImpl
 ): NativeLibrary {
     val additionalHeaders = arguments.getValuesAsArray("header") + arguments.getValuesAsArray("h")
-    val additionalCompilerOpts = arguments.getValuesAsArray("compilerOpts")
+    val additionalCompilerOpts = arguments.getValuesAsArray("compilerOpts") + arguments.getValuesAsArray("compilerOpt") +
+            arguments.getValuesAsArray("copt")
 
     val headerFiles = def.config.headers + additionalHeaders
     val language = selectNativeLanguage(def.config)

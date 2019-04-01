@@ -121,8 +121,8 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 put(NOMAIN, arguments.nomain)
                 put(LIBRARY_FILES,
                         arguments.libraries.toNonNullList())
-
-                put(LINKER_ARGS, arguments.linkerArguments.toNonNullList())
+                put(LINKER_ARGS, arguments.linkerArguments.toNonNullList() +
+                        arguments.singleLinkerArguments.toNonNullList())
                 arguments.moduleName ?. let{ put(MODULE_NAME, it) }
                 arguments.target ?.let{ put(TARGET, it) }
 

@@ -21,17 +21,17 @@ if (MPPTools.isMacos()) {
                           '-headerFilterAdditionalSearchPrefix', '/usr/include/x86_64-linux-gnu',
                           '-headerFilterAdditionalSearchPrefix', '/usr/include/ffmpeg']
 } else if (MPPTools.isWindows()) {
-    includeDirsFfmpeg += ['-copt', "-I${MPPTools.mingwPath()}/include"]
+    includeDirsFfmpeg += ['-compilerOpt', "-I${MPPTools.mingwPath()}/include"]
 }
 
 def includeDirsSdl = []
 if (MPPTools.isMacos()) {
-    includeDirsSdl += ['-copt', '-I/opt/local/include/SDL2',
-                       '-copt', '-I/usr/local/include/SDL2']
+    includeDirsSdl += ['-compilerOpt', '-I/opt/local/include/SDL2',
+                       '-compilerOpt', '-I/usr/local/include/SDL2']
 } else if (MPPTools.isLinux()) {
-    includeDirsSdl += ['-copt', '-I/usr/include/SDL2']
+    includeDirsSdl += ['-compilerOpt', '-I/usr/include/SDL2']
 } else if (MPPTools.isWindows()) {
-    includeDirsSdl += ['-copt', "-I${MPPTools.mingwPath()}/include/SDL2"]
+    includeDirsSdl += ['-compilerOpt', "-I${MPPTools.mingwPath()}/include/SDL2"]
 }
 
 project.ext {

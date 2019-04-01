@@ -157,7 +157,7 @@ private class RangeLoopTransformer(
         val compareTo = symbols.getBinaryOperator(OperatorNameConventions.COMPARE_TO,
                 forLoopHeader.bound.type.toKotlinType(),
                 minConst.type.toKotlinType())
-        return irCall(irBuiltIns.greaterFunByOperandType[irBuiltIns.int]?.symbol!!).apply {
+        return irCall(irBuiltIns.greaterFunByOperandType[irBuiltIns.int]!!).apply {
             val compareToCall = irCall(compareTo).apply {
                 dispatchReceiver = irGet(forLoopHeader.bound)
                 putValueArgument(0, minConst)

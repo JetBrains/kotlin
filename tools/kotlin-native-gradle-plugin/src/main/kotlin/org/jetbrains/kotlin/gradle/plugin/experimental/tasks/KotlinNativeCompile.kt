@@ -196,7 +196,9 @@ open class KotlinNativeCompile @Inject constructor(internal val binary: Abstract
                 else -> { /* Do nothing. */ }
             }
 
-            addListArg("-linker-options", linkerOpts)
+            linkerOpts.forEach {
+                addArg("-linker-option", it)
+            }
 
             addAll(sources.files.map { it.absolutePath })
             commonSources.files.mapTo(this) { "-Xcommon-sources=${it.absolutePath}" }
