@@ -67,7 +67,7 @@ abstract class AbstractAddAccessorsIntention(
                 element.add(getter)
             }
             if (!hasInitializer) {
-                (added as? KtPropertyAccessor)?.bodyBlockExpression?.statements?.firstOrNull()?.also {
+                (added as? KtPropertyAccessor)?.bodyBlockExpression?.statements?.firstOrNull()?.let {
                     editor?.caretModel?.moveToOffset(it.startOffset)
                 }
             }
@@ -77,7 +77,7 @@ abstract class AbstractAddAccessorsIntention(
             val setter = psiFactory.createPropertySetter(expression)
             val added = element.add(setter)
             if (!hasInitializer && !addGetter) {
-                (added as? KtPropertyAccessor)?.bodyBlockExpression?.lBrace?.also {
+                (added as? KtPropertyAccessor)?.bodyBlockExpression?.lBrace?.let {
                     editor?.caretModel?.moveToOffset(it.startOffset + 1)
                 }
             }
