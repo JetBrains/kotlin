@@ -969,7 +969,7 @@ fun main(args: Array<String>) {
 
     testGroup("nj2k/tests", "nj2k/testData/") {
         testClass<AbstractNullabilityAnalysisTest> {
-            model("nullabilityAnalyzer")
+            model("nullabilityAnalysis")
         }
     }
 
