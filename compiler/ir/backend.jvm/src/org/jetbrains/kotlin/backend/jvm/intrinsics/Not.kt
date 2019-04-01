@@ -17,11 +17,18 @@
 package org.jetbrains.kotlin.backend.jvm.intrinsics
 
 import org.jetbrains.kotlin.backend.jvm.codegen.BlockInfo
+import org.jetbrains.kotlin.backend.jvm.codegen.BooleanValue
 import org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen
-import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.backend.jvm.codegen.coerceToBoolean
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
+import org.jetbrains.org.objectweb.asm.Label
 
 class Not : IntrinsicMethod() {
+    class BooleanNegation(val value: BooleanValue) : BooleanValue(value.codegen) {
+        override fun jumpIfFalse(target: Label) = value.jumpIfTrue(target)
+        override fun jumpIfTrue(target: Label) = value.jumpIfFalse(target)
+    }
+
     override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo) =
-        StackValue.not(expression.dispatchReceiver!!.accept(codegen, data))
+        BooleanNegation(expression.dispatchReceiver!!.accept(codegen, data).coerceToBoolean())
 }
