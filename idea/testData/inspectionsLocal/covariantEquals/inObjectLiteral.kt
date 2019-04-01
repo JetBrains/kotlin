@@ -1,4 +1,5 @@
-// PROBLEM: none
+// PROBLEM: 'equals' should take 'Any?' as its argument
+// FIX: none
 interface F
 
 val f = object : F {

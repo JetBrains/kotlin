@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.namedFunctionVisitor
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -26,14 +26,15 @@ class KotlinCovariantEqualsInspection : AbstractKotlinInspection() {
         if (function.isTopLevel || function.isLocal) return
         if (function.nameAsName != OperatorNameConventions.EQUALS) return
         val nameIdentifier = function.nameIdentifier ?: return
-        val containingClass = function.containingClassOrObject as? KtClass ?: return
+        val classOrObject = function.containingClassOrObject ?: return
+        if (classOrObject is KtObjectDeclaration && classOrObject.isCompanion()) return
 
         val parameter = function.valueParameters.singleOrNull() ?: return
         val typeReference = parameter.typeReference ?: return
         val type = parameter.analyze(BodyResolveMode.PARTIAL)[BindingContext.TYPE, typeReference] ?: return
         if (KotlinBuiltIns.isNullableAny(type)) return
 
-        if (containingClass.body?.children?.any { (it as? KtNamedFunction)?.isEquals() == true } == true) return
+        if (classOrObject.body?.children?.any { (it as? KtNamedFunction)?.isEquals() == true } == true) return
 
         holder.registerProblem(nameIdentifier, "'equals' should take 'Any?' as its argument")
     })
