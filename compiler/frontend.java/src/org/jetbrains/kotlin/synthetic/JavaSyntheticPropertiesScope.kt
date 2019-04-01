@@ -377,9 +377,10 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val l
             newVisibility: Visibility,
             original: PropertyDescriptor?,
             kind: CallableMemberDescriptor.Kind,
-            newName: Name
+            newName: Name,
+            source: SourceElement
         ): PropertyDescriptorImpl {
-            return MyPropertyDescriptor(newOwner, this, annotations, newModality, newVisibility, isVar, newName, kind, source).apply {
+            return MyPropertyDescriptor(newOwner, this, annotations, newModality, newVisibility, isVar, newName, kind, this.source).apply {
                 getMethod = this@MyPropertyDescriptor.getMethod
                 setMethod = this@MyPropertyDescriptor.setMethod
             }

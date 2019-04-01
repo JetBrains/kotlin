@@ -317,7 +317,18 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                 this,
                 c.getStorageManager(),
                 c.getKotlinTypeChecker().getKotlinTypeRefiner(),
-                kotlinTypeRefiner -> new LazyClassMemberScope(c, declarationProvider, this, c.getTrace(), kotlinTypeRefiner)
+                kotlinTypeRefiner -> {
+                    LazyClassMemberScope scopeForDeclaredMembers =
+                            !kotlinTypeRefiner.isRefinementNeededForModule(c.getModuleDescriptor())
+                                ? null
+                            // TODO: or kotlinTypeRefiner.getModuleDescriptor()
+                                : scopesHolderForClass.getScope(c.getKotlinTypeChecker().getKotlinTypeRefiner());
+
+                    return new LazyClassMemberScope(
+                            c, declarationProvider, this, c.getTrace(), kotlinTypeRefiner,
+                            scopeForDeclaredMembers
+                    );
+                }
         );
     }
 

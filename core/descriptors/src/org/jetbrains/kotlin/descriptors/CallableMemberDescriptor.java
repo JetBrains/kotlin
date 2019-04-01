@@ -90,6 +90,9 @@ public interface CallableMemberDescriptor extends CallableDescriptor, MemberDesc
         @NotNull
         CopyBuilder<D> setOriginal(@Nullable CallableMemberDescriptor original);
 
+        @NotNull
+        CopyBuilder<D> setPreserveSourceElement();
+
         @Nullable
         D build();
     }
