@@ -92,7 +92,7 @@ class ImplicitInitializerConversion(private val context: ConversionContext) : Re
             if (initialized) continue
             val parentConstructors =
                 generateSequence(constructor) { it.parentConstructor() }
-            if (parentConstructors.any { constructors[it]!! }) {
+            if (parentConstructors.any { constructors[it] == true }) {
                 parentConstructors.forEach { constructors[it] = true }
             }
         }
