@@ -56,6 +56,11 @@ public final class CrossinlineKt$box$1$doResume$$inlined$filter$1 {
 
 @kotlin.Metadata
 public final class CrossinlineKt$box$1$doResume$$inlined$fold$1$1 {
+    field L$0: java.lang.Object
+    field L$1: java.lang.Object
+    field L$2: java.lang.Object
+    field L$3: java.lang.Object
+    field L$4: java.lang.Object
     synthetic field data: java.lang.Object
     synthetic field exception: java.lang.Throwable
     synthetic final field this$0: CrossinlineKt$box$1$doResume$$inlined$fold$1
@@ -79,6 +84,12 @@ public final class CrossinlineKt$box$1$doResume$$inlined$fold$1 {
 
 @kotlin.Metadata
 public final class CrossinlineKt$box$1$filter$$inlined$source$1$1 {
+    field L$0: java.lang.Object
+    field L$1: java.lang.Object
+    field L$2: java.lang.Object
+    field L$3: java.lang.Object
+    field L$4: java.lang.Object
+    field L$5: java.lang.Object
     synthetic field data: java.lang.Object
     synthetic field exception: java.lang.Throwable
     synthetic final field this$0: CrossinlineKt$box$1$filter$$inlined$source$1
@@ -92,6 +103,10 @@ public final class CrossinlineKt$box$1$filter$$inlined$source$1$1 {
 
 @kotlin.Metadata
 public final class CrossinlineKt$box$1$filter$$inlined$source$1$lambda$1$1 {
+    field L$0: java.lang.Object
+    field L$1: java.lang.Object
+    field L$2: java.lang.Object
+    field L$3: java.lang.Object
     synthetic field data: java.lang.Object
     synthetic field exception: java.lang.Throwable
     synthetic final field this$0: CrossinlineKt$box$1$filter$$inlined$source$1$lambda$1
@@ -111,6 +126,7 @@ public final class CrossinlineKt$box$1$filter$$inlined$source$1$lambda$1 {
     inner class CrossinlineKt$box$1$filter$$inlined$source$1$lambda$1$1
     public method <init>(p0: Sink, p1: CrossinlineKt$box$1$filter$$inlined$source$1): void
     public method close(@org.jetbrains.annotations.Nullable p0: java.lang.Throwable): void
+    public @org.jetbrains.annotations.Nullable method send$$forInline(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.experimental.Continuation): java.lang.Object
     public @org.jetbrains.annotations.Nullable method send(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.experimental.Continuation): java.lang.Object
 }
 
@@ -121,11 +137,17 @@ public final class CrossinlineKt$box$1$filter$$inlined$source$1 {
     inner class CrossinlineKt$box$1$filter$$inlined$source$1
     inner class CrossinlineKt$box$1$filter$$inlined$source$1$1
     public method <init>(p0: SourceCrossinline, p1: kotlin.jvm.functions.Function1): void
+    public @org.jetbrains.annotations.Nullable method consume$$forInline(@org.jetbrains.annotations.NotNull p0: Sink, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.experimental.Continuation): java.lang.Object
     public @org.jetbrains.annotations.Nullable method consume(@org.jetbrains.annotations.NotNull p0: Sink, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.experimental.Continuation): java.lang.Object
 }
 
 @kotlin.Metadata
 public final class CrossinlineKt$box$1$fold$$inlined$consumeEach$1$1 {
+    field L$0: java.lang.Object
+    field L$1: java.lang.Object
+    field L$2: java.lang.Object
+    field L$3: java.lang.Object
+    field L$4: java.lang.Object
     synthetic field data: java.lang.Object
     synthetic field exception: java.lang.Throwable
     synthetic final field this$0: CrossinlineKt$box$1$fold$$inlined$consumeEach$1
@@ -145,6 +167,7 @@ public final class CrossinlineKt$box$1$fold$$inlined$consumeEach$1 {
     inner class CrossinlineKt$box$1$fold$$inlined$consumeEach$1$1
     public method <init>(p0: kotlin.jvm.internal.Ref$ObjectRef, p1: kotlin.jvm.functions.Function3): void
     public method close(@org.jetbrains.annotations.Nullable p0: java.lang.Throwable): void
+    public @org.jetbrains.annotations.Nullable method send$$forInline(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.experimental.Continuation): java.lang.Object
     public @org.jetbrains.annotations.Nullable method send(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.experimental.Continuation): java.lang.Object
 }
 
@@ -183,11 +206,18 @@ public final class CrossinlineKt$consumeEach$2 {
     inner class CrossinlineKt$consumeEach$2$send$1
     public method <init>(p0: kotlin.jvm.functions.Function2): void
     public method close(@org.jetbrains.annotations.Nullable p0: java.lang.Throwable): void
+    public @org.jetbrains.annotations.Nullable method send$$forInline(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.experimental.Continuation): java.lang.Object
     public @org.jetbrains.annotations.Nullable method send(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.experimental.Continuation): java.lang.Object
 }
 
 @kotlin.Metadata
 public final class CrossinlineKt$filter$$inlined$source$1$1 {
+    field L$0: java.lang.Object
+    field L$1: java.lang.Object
+    field L$2: java.lang.Object
+    field L$3: java.lang.Object
+    field L$4: java.lang.Object
+    field L$5: java.lang.Object
     synthetic field data: java.lang.Object
     synthetic field exception: java.lang.Throwable
     synthetic final field this$0: CrossinlineKt$filter$$inlined$source$1
@@ -201,6 +231,10 @@ public final class CrossinlineKt$filter$$inlined$source$1$1 {
 
 @kotlin.Metadata
 public final class CrossinlineKt$filter$$inlined$source$1$lambda$1$1 {
+    field L$0: java.lang.Object
+    field L$1: java.lang.Object
+    field L$2: java.lang.Object
+    field L$3: java.lang.Object
     synthetic field data: java.lang.Object
     synthetic field exception: java.lang.Throwable
     synthetic final field this$0: CrossinlineKt$filter$$inlined$source$1$lambda$1
@@ -220,6 +254,7 @@ public final class CrossinlineKt$filter$$inlined$source$1$lambda$1 {
     inner class CrossinlineKt$filter$$inlined$source$1$lambda$1$1
     public method <init>(p0: Sink, p1: CrossinlineKt$filter$$inlined$source$1): void
     public method close(@org.jetbrains.annotations.Nullable p0: java.lang.Throwable): void
+    public @org.jetbrains.annotations.Nullable method send$$forInline(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.experimental.Continuation): java.lang.Object
     public @org.jetbrains.annotations.Nullable method send(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.experimental.Continuation): java.lang.Object
 }
 
@@ -230,11 +265,17 @@ public final class CrossinlineKt$filter$$inlined$source$1 {
     inner class CrossinlineKt$filter$$inlined$source$1
     inner class CrossinlineKt$filter$$inlined$source$1$1
     public method <init>(p0: SourceCrossinline, p1: kotlin.jvm.functions.Function1): void
+    public @org.jetbrains.annotations.Nullable method consume$$forInline(@org.jetbrains.annotations.NotNull p0: Sink, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.experimental.Continuation): java.lang.Object
     public @org.jetbrains.annotations.Nullable method consume(@org.jetbrains.annotations.NotNull p0: Sink, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.experimental.Continuation): java.lang.Object
 }
 
 @kotlin.Metadata
 public final class CrossinlineKt$fold$$inlined$consumeEach$1$1 {
+    field L$0: java.lang.Object
+    field L$1: java.lang.Object
+    field L$2: java.lang.Object
+    field L$3: java.lang.Object
+    field L$4: java.lang.Object
     synthetic field data: java.lang.Object
     synthetic field exception: java.lang.Throwable
     synthetic final field this$0: CrossinlineKt$fold$$inlined$consumeEach$1
@@ -254,6 +295,7 @@ public final class CrossinlineKt$fold$$inlined$consumeEach$1 {
     inner class CrossinlineKt$fold$$inlined$consumeEach$1$1
     public method <init>(p0: kotlin.jvm.internal.Ref$ObjectRef, p1: kotlin.jvm.functions.Function3): void
     public method close(@org.jetbrains.annotations.Nullable p0: java.lang.Throwable): void
+    public @org.jetbrains.annotations.Nullable method send$$forInline(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.experimental.Continuation): java.lang.Object
     public @org.jetbrains.annotations.Nullable method send(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.experimental.Continuation): java.lang.Object
 }
 
@@ -289,6 +331,9 @@ public final class CrossinlineKt$range$$inlined$source$1 {
 
 @kotlin.Metadata
 public final class CrossinlineKt$source$1$consume$1 {
+    field L$0: java.lang.Object
+    field L$1: java.lang.Object
+    field L$2: java.lang.Object
     synthetic field data: java.lang.Object
     synthetic field exception: java.lang.Throwable
     synthetic final field this$0: CrossinlineKt$source$1
@@ -306,6 +351,7 @@ public final class CrossinlineKt$source$1 {
     inner class CrossinlineKt$source$1
     inner class CrossinlineKt$source$1$consume$1
     public method <init>(p0: kotlin.jvm.functions.Function2): void
+    public @org.jetbrains.annotations.Nullable method consume$$forInline(@org.jetbrains.annotations.NotNull p0: Sink, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.experimental.Continuation): java.lang.Object
     public @org.jetbrains.annotations.Nullable method consume(@org.jetbrains.annotations.NotNull p0: Sink, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.experimental.Continuation): java.lang.Object
 }
 

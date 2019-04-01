@@ -5,12 +5,10 @@
 
 package org.jetbrains.kotlin.codegen.coroutines
 
-import org.jetbrains.kotlin.codegen.ClassBuilder
-import org.jetbrains.kotlin.codegen.ExpressionCodegen
-import org.jetbrains.kotlin.codegen.FunctionGenerationStrategy
-import org.jetbrains.kotlin.codegen.TransformationMethodVisitor
+import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.inline.addFakeContinuationConstructorCallMarker
+import org.jetbrains.kotlin.codegen.inline.coroutines.SurroundSuspendLambdaCallsWithSuspendMarkersMethodVisitor
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.JVMConstructorCallNormalizationMode
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -22,17 +20,19 @@ import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
 open class SuspendFunctionGenerationStrategy(
-        state: GenerationState,
-        protected val originalSuspendDescriptor: FunctionDescriptor,
-        protected val declaration: KtFunction,
-        private val containingClassInternalName: String,
-        private val constructorCallNormalizationMode: JVMConstructorCallNormalizationMode
+    state: GenerationState,
+    protected val originalSuspendDescriptor: FunctionDescriptor,
+    protected val declaration: KtFunction,
+    private val containingClassInternalName: String,
+    private val constructorCallNormalizationMode: JVMConstructorCallNormalizationMode,
+    protected val functionCodegen: FunctionCodegen
 ) : FunctionGenerationStrategy.CodegenBased(state) {
 
     private lateinit var codegen: ExpressionCodegen
@@ -45,7 +45,7 @@ open class SuspendFunctionGenerationStrategy(
             declaration.containingFile
         ).also {
             val coroutineCodegen =
-                    CoroutineCodegenForNamedFunction.create(it, codegen, originalSuspendDescriptor, declaration)
+                CoroutineCodegenForNamedFunction.create(it, codegen, originalSuspendDescriptor, declaration)
             coroutineCodegen.generate()
         }
     }
@@ -53,16 +53,7 @@ open class SuspendFunctionGenerationStrategy(
     override fun wrapMethodVisitor(mv: MethodVisitor, access: Int, name: String, desc: String): MethodVisitor {
         if (access and Opcodes.ACC_ABSTRACT != 0) return mv
 
-        if (state.bindingContext[CodegenBinding.CAPTURES_CROSSINLINE_LAMBDA, originalSuspendDescriptor] == true) {
-            return AddConstructorCallForCoroutineRegeneration(
-                mv, access, name, desc, null, null, this::classBuilderForCoroutineState,
-                containingClassInternalName,
-                originalSuspendDescriptor.dispatchReceiverParameter != null,
-                containingClassInternalNameOrNull(),
-                languageVersionSettings
-            )
-        }
-        return CoroutineTransformerMethodVisitor(
+        val stateMachineBuilder = CoroutineTransformerMethodVisitor(
             mv, access, name, desc, null, null, containingClassInternalName, this::classBuilderForCoroutineState,
             isForNamedFunction = true,
             element = declaration,
@@ -73,10 +64,40 @@ open class SuspendFunctionGenerationStrategy(
             languageVersionSettings = languageVersionSettings,
             sourceFile = declaration.containingFile.name
         )
+
+        val forInline = state.bindingContext[CodegenBinding.CAPTURES_CROSSINLINE_LAMBDA, originalSuspendDescriptor] == true
+        // Both capturing and inline functions share the same suffix, however, inline functions can also be capturing
+        // they are already covered by SuspendInlineFunctionGenerationStrategy, thus, if we generate yet another copy,
+        // we will get name+descriptor clash
+        return if (forInline && !originalSuspendDescriptor.isInline)
+            AddConstructorCallForCoroutineRegeneration(
+                MethodNodeCopyingMethodVisitor(
+                    SurroundSuspendLambdaCallsWithSuspendMarkersMethodVisitor(
+                        stateMachineBuilder,
+                        access, name, desc, containingClassInternalName,
+                        isCapturedSuspendLambda = {
+                            isCapturedSuspendLambda(
+                                functionCodegen.closure.sure {
+                                    "Anonymous object should have closure"
+                                },
+                                it.name,
+                                state.bindingContext
+                            )
+                        }
+                    ), access, name, desc,
+                    newMethod = { origin, newAccess, newName, newDesc ->
+                        functionCodegen.newMethod(origin, newAccess, newName, newDesc, null, null)
+                    }
+                ), access, name, desc, null, null, this::classBuilderForCoroutineState,
+                containingClassInternalName,
+                originalSuspendDescriptor.dispatchReceiverParameter != null,
+                containingClassInternalNameOrNull(),
+                languageVersionSettings
+            ) else stateMachineBuilder
     }
 
     private fun containingClassInternalNameOrNull() =
-            originalSuspendDescriptor.containingDeclaration.safeAs<ClassDescriptor>()?.let(state.typeMapper::mapClass)?.internalName
+        originalSuspendDescriptor.containingDeclaration.safeAs<ClassDescriptor>()?.let(state.typeMapper::mapClass)?.internalName
 
     override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
         this.codegen = codegen
@@ -116,6 +137,7 @@ open class SuspendFunctionGenerationStrategy(
                     languageVersionSettings
                 )
                 addFakeContinuationConstructorCallMarker(this, false)
+                pop() // Otherwise stack-transformation breaks
             })
         }
     }

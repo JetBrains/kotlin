@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.codegen.coroutines.createMethodNodeForSuspendCorouti
 import org.jetbrains.kotlin.codegen.coroutines.isBuiltInSuspendCoroutineUninterceptedOrReturnInJvm
 import org.jetbrains.kotlin.codegen.intrinsics.bytecode
 import org.jetbrains.kotlin.codegen.intrinsics.classId
+import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
+import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicArrayConstructors
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.isReleaseCoroutines
@@ -547,7 +549,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         // 2) for inliner: with mangled name and without state machine
         private fun mangleSuspendInlineFunctionAsmMethodIfNeeded(functionDescriptor: FunctionDescriptor, asmMethod: Method): Method {
             if (!functionDescriptor.isSuspend) return asmMethod
-            return Method("${asmMethod.name}\$\$forInline", asmMethod.descriptor)
+            return Method("${asmMethod.name}$FOR_INLINE_SUFFIX", asmMethod.descriptor)
         }
 
         private fun getDirectMemberAndCallableFromObject(functionDescriptor: FunctionDescriptor): CallableMemberDescriptor {

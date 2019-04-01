@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.backend.common.bridges.Bridge;
+import org.jetbrains.kotlin.codegen.binding.CalculatedClosure;
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegenUtilKt;
@@ -125,7 +126,8 @@ public class FunctionCodegen {
                             CoroutineCodegenUtilKt.<FunctionDescriptor>unwrapInitialDescriptorForSuspendFunction(functionDescriptor),
                             function,
                             v.getThisName(),
-                            state.getConstructorCallNormalizationMode()
+                            state.getConstructorCallNormalizationMode(),
+                            this
                     );
                 } else {
                     strategy = new SuspendInlineFunctionGenerationStrategy(
@@ -1689,5 +1691,10 @@ public class FunctionCodegen {
                 default: return false;
             }
         }
+    }
+
+    @Nullable
+    public CalculatedClosure getClosure() {
+        return owner.closure;
     }
 }

@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.codegen.inline
 
 import com.intellij.util.ArrayUtil
 import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.codegen.coroutines.DEBUG_METADATA_ANNOTATION_ASM_TYPE
+import org.jetbrains.kotlin.codegen.coroutines.isCapturedSuspendLambda
 import org.jetbrains.kotlin.codegen.coroutines.isCoroutineSuperClass
 import org.jetbrains.kotlin.codegen.inline.coroutines.CoroutineTransformer
 import org.jetbrains.kotlin.codegen.serialization.JvmCodegenStringTable
@@ -67,6 +69,8 @@ class AnonymousObjectTransformer(
                     // Empty inner class info because no inner classes are used in kotlin.Metadata and its arguments
                     val innerClassesInfo = FileBasedKotlinClass.InnerClassesInfo()
                     return FileBasedKotlinClass.convertAnnotationVisitor(metadataReader, desc, innerClassesInfo)
+                } else if (desc == DEBUG_METADATA_ANNOTATION_ASM_TYPE.descriptor) {
+                    return null
                 }
                 return super.visitAnnotation(desc, visible)
             }
@@ -135,12 +139,13 @@ class AnonymousObjectTransformer(
             classBuilder,
             methodsToTransform,
             superClassName,
-            additionalFakeParams
+            allCapturedParamBuilder.listCaptured()
         )
-        for (next in methodsToTransform) {
+        loop@for (next in methodsToTransform) {
             val deferringVisitor =
                 when {
-                    coroutineTransformer.shouldTransform(next) -> coroutineTransformer.newMethod(next)
+                    coroutineTransformer.shouldSkip(next) -> continue@loop
+                    coroutineTransformer.shouldGenerateStateMachine(next) -> coroutineTransformer.newMethod(next)
                     else -> newMethod(classBuilder, next)
                 }
             val funResult = inlineMethodAndUpdateGlobalResult(parentRemapper, deferringVisitor, next, allCapturedParamBuilder, false)
@@ -479,6 +484,11 @@ class AnonymousObjectTransformer(
                         alreadyAddedParam?.newFieldName ?: getNewFieldName(desc.fieldName, false),
                         alreadyAddedParam != null
                     )
+                    if (info is PsiExpressionLambda && info.closure.captureVariables.any { it.value.fieldName == desc.fieldName }) {
+                        recapturedParamInfo.functionalArgument = NonInlineableArgumentForInlineableParameterCalledInSuspend(
+                            isCapturedSuspendLambda(info.closure, desc.fieldName, inliningContext.state.bindingContext)
+                        )
+                    }
                     val composed = StackValue.field(
                         desc.type,
                         oldObjectType, /*TODO owner type*/
