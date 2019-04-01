@@ -141,7 +141,7 @@ class KotlinAddImportAction internal constructor(
     }
 
     fun isUnambiguous(): Boolean {
-        return variants.size == 1
+        return variants.size == 1 && variants[0].descriptorsToImport.all { it is ClassDescriptor }
     }
 
     override fun execute(): Boolean {
