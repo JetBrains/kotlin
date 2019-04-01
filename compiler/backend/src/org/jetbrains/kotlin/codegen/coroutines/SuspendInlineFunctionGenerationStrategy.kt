@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,12 +9,12 @@ import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.FunctionCodegen
 import org.jetbrains.kotlin.codegen.FunctionGenerationStrategy
 import org.jetbrains.kotlin.codegen.TransformationMethodVisitor
+import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.JVMConstructorCallNormalizationMode
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.psi.KtFunction
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -29,13 +29,14 @@ class SuspendInlineFunctionGenerationStrategy(
     declaration: KtFunction,
     containingClassInternalName: String,
     constructorCallNormalizationMode: JVMConstructorCallNormalizationMode,
-    private val codegen: FunctionCodegen
+    codegen: FunctionCodegen
 ) : SuspendFunctionGenerationStrategy(
     state,
     originalSuspendDescriptor,
     declaration,
     containingClassInternalName,
-    constructorCallNormalizationMode
+    constructorCallNormalizationMode,
+    codegen
 ) {
     private val defaultStrategy = FunctionGenerationStrategy.FunctionDefault(state, declaration)
 
@@ -43,16 +44,10 @@ class SuspendInlineFunctionGenerationStrategy(
         if (access and Opcodes.ACC_ABSTRACT != 0) return mv
 
         return MethodNodeCopyingMethodVisitor(
-            super.wrapMethodVisitor(mv, access, name, desc),
-            access,
-            name,
-            desc = desc,
-            signature = null,
-            exceptions = null,
-            codegen = codegen,
-            declaration = declaration,
-            originalSuspendDescriptor = originalSuspendDescriptor,
-            isReleaseCoroutines = state.languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
+            super.wrapMethodVisitor(mv, access, name, desc), access, name, desc,
+            newMethod = { origin, newAccess, newName, newDesc ->
+                functionCodegen.newMethod(origin, newAccess, newName, newDesc, null, null)
+            }, keepAccess = false
         )
     }
 
@@ -60,46 +55,26 @@ class SuspendInlineFunctionGenerationStrategy(
         super.doGenerateBody(codegen, signature)
         defaultStrategy.doGenerateBody(codegen, signature)
     }
+}
 
-    private class MethodNodeCopyingMethodVisitor(
-        delegate: MethodVisitor,
-        private val access: Int,
-        private val name: String,
-        private val desc: String,
-        private val signature: String?,
-        private val exceptions: Array<out String>?,
-        private val codegen: FunctionCodegen,
-        private val declaration: KtFunction,
-        private val originalSuspendDescriptor: FunctionDescriptor,
-        private val isReleaseCoroutines: Boolean
-    ) : TransformationMethodVisitor(
-        delegate,
-        calculateAccessForInline(access),
-        "$name\$\$forInline",
-        desc,
-        signature,
-        exceptions
-    ) {
-        override fun performTransformations(methodNode: MethodNode) {
-            val newMethodNode = codegen.newMethod(
-                OtherOrigin(declaration, getOrCreateJvmSuspendFunctionView(originalSuspendDescriptor, isReleaseCoroutines)),
-                calculateAccessForInline(access), "$name\$\$forInline", desc, signature, exceptions
-            )
-            methodNode.instructions.resetLabels()
-            methodNode.accept(newMethodNode)
-        }
+class MethodNodeCopyingMethodVisitor(
+    delegate: MethodVisitor, private val access: Int, private val name: String, private val desc: String,
+    private val newMethod: (JvmDeclarationOrigin, Int, String, String) -> MethodVisitor,
+    private val keepAccess: Boolean = true
+) : TransformationMethodVisitor(
+    delegate, calculateAccessForInline(access, keepAccess), "$name$FOR_INLINE_SUFFIX", desc, null, null
+) {
+    override fun performTransformations(methodNode: MethodNode) {
+        val newMethodNode = newMethod(
+            JvmDeclarationOrigin.NO_ORIGIN, calculateAccessForInline(access, keepAccess), "$name$FOR_INLINE_SUFFIX", desc
+        )
+        methodNode.instructions.resetLabels()
+        methodNode.accept(newMethodNode)
     }
 
     companion object {
-        private fun calculateAccessForInline(access: Int): Int {
-            var accessForInline = access
-            if (accessForInline and Opcodes.ACC_PUBLIC != 0) {
-                accessForInline = accessForInline xor Opcodes.ACC_PUBLIC
-            }
-            if (accessForInline and Opcodes.ACC_PROTECTED != 0) {
-                accessForInline = accessForInline xor Opcodes.ACC_PROTECTED
-            }
-            return accessForInline or Opcodes.ACC_PRIVATE
-        }
+        private fun calculateAccessForInline(access: Int, keepAccess: Boolean): Int =
+            if (keepAccess) access
+            else access or Opcodes.ACC_PRIVATE and Opcodes.ACC_PUBLIC.inv() and Opcodes.ACC_PROTECTED.inv()
     }
 }

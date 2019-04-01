@@ -307,4 +307,6 @@ class PsiExpressionLambda(
 
     val isPropertyReference: Boolean
         get() = propertyReferenceInfo != null
+
+    val captureVariables = closure.captureVariables
 }

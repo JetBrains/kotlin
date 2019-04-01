@@ -125,7 +125,8 @@ public class FunctionCodegen {
                             CoroutineCodegenUtilKt.<FunctionDescriptor>unwrapInitialDescriptorForSuspendFunction(functionDescriptor),
                             function,
                             v.getThisName(),
-                            state.getConstructorCallNormalizationMode()
+                            state.getConstructorCallNormalizationMode(),
+                            this
                     );
                 } else {
                     strategy = new SuspendInlineFunctionGenerationStrategy(
@@ -1641,5 +1642,10 @@ public class FunctionCodegen {
                 default: return false;
             }
         }
+    }
+
+    @Nullable
+    public Map<DeclarationDescriptor, EnclosedValueDescriptor> getCaptureVariables() {
+        return owner.closure == null ? null : owner.closure.getCaptureVariables();
     }
 }
