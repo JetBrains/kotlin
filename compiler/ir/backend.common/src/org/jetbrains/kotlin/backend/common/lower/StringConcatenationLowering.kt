@@ -20,20 +20,23 @@ import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.atMostOne
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
+import org.jetbrains.kotlin.ir.builders.createTmpVariable
+import org.jetbrains.kotlin.ir.builders.irCall
+import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrSymbolDeclaration
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStringConcatenation
-import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.isNullableAny
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
-
 
 /**
  * This lowering pass replaces [IrStringConcatenation]s with StringBuilder appends.
@@ -65,19 +68,17 @@ private class StringConcatenationTransformer(val lower: StringConcatenationLower
     private val toStringFunction = stringBuilder.functions.single {
         it.valueParameters.size == 0 && it.name == nameToString
     }
+
     private val defaultAppendFunction = stringBuilder.functions.single {
         it.name == nameAppend &&
                 it.valueParameters.size == 1 &&
                 it.valueParameters.single().type.isNullableAny()
     }
 
-
     private val appendFunctions: Map<IrType, IrSimpleFunction?> =
         typesWithSpecialAppendFunction.map { type ->
             type to stringBuilder.functions.toList().atMostOne {
-                it.name == nameAppend &&
-                        it.valueParameters.size == 1 &&
-                        it.valueParameters.single().type.isEqualTo(type)
+                it.name == nameAppend && it.valueParameters.singleOrNull()?.type == type
             }
         }.toMap()
 
