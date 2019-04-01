@@ -97,8 +97,10 @@ open class FrameworkTest : DefaultTask() {
         val libraryPath = configs.absoluteTargetToolchain + "/usr/lib/swift/$swiftPlatform"
         val executor = (project.convention.plugins["executor"] as? ExecutorService)
                 ?: throw RuntimeException("Executor wasn't found")
+        // Hopefully, lexicographical comparison will work.
+        val newMacos = System.getProperty("os.version").compareTo("10.14.4") >= 0
         val (stdOut, stdErr, exitCode) = runProcess(
-                executor = executor.add(Action { it.environment = mapOf("DYLD_LIBRARY_PATH" to libraryPath) })::execute,
+                executor = executor.add(Action { it.environment = if (newMacos) emptyMap() else mapOf("DYLD_LIBRARY_PATH" to libraryPath) })::execute,
                 executable = testExecutable.toString())
 
         println("""
