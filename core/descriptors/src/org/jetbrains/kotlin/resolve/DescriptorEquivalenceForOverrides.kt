@@ -57,6 +57,12 @@ object DescriptorEquivalenceForOverrides {
         return a.index == b.index // We ignore type parameter names
     }
 
+    private tailrec fun CallableDescriptor.singleSource(): SourceElement? {
+        if (this !is CallableMemberDescriptor || kind != CallableMemberDescriptor.Kind.FAKE_OVERRIDE) return source
+
+        return overriddenDescriptors.singleOrNull()?.singleSource()
+    }
+
     fun areCallableDescriptorsEquivalent(
         a: CallableDescriptor,
         b: CallableDescriptor,
@@ -64,7 +70,10 @@ object DescriptorEquivalenceForOverrides {
     ): Boolean {
         if (a == b) return true
         if (a.name != b.name) return false
-        if (a.containingDeclaration == b.containingDeclaration) return false
+        if (a.containingDeclaration == b.containingDeclaration) {
+            if (a.singleSource() != b.singleSource()) return false
+            if (a is MemberDescriptor && b is MemberDescriptor && a.isExpect != b.isExpect) return false
+        }
 
         // Distinct locals are not equivalent
         if (DescriptorUtils.isLocal(a) || DescriptorUtils.isLocal(b)) return false
