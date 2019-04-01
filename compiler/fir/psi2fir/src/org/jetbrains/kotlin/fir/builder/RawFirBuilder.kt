@@ -669,9 +669,14 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
                     FirLabelImpl(this@RawFirBuilder.session, expression, it.asString())
                 }
                 val bodyExpression = literal.bodyExpression.toFirExpression("Lambda has no body")
-                if (destructuringBlock is FirBlock && bodyExpression is FirBlockImpl) {
-                    for ((index, statement) in destructuringBlock.statements.withIndex()) {
-                        bodyExpression.statements.add(index, statement)
+                if (bodyExpression is FirBlockImpl) {
+                    if (bodyExpression.statements.isEmpty()) {
+                        bodyExpression.statements.add(FirUnitExpression(this@RawFirBuilder.session, expression))
+                    }
+                    if (destructuringBlock is FirBlock) {
+                        for ((index, statement) in destructuringBlock.statements.withIndex()) {
+                            bodyExpression.statements.add(index, statement)
+                        }
                     }
                 }
                 body = FirSingleExpressionBlock(this@RawFirBuilder.session, bodyExpression.toReturn())

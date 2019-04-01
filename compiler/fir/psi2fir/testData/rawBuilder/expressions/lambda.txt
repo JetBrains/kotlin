@@ -81,3 +81,19 @@ FILE: lambda.kt
         }
         )
     }
+    public? final? val simple: <implicit> = fun <implicit>.<anonymous>(): <implicit> {
+        ^  {
+            Unit
+        }
+
+    }
+
+        public? get(): <implicit>
+    public? final? val another: <implicit> = fun <implicit>.<anonymous>(): <implicit> {
+        ^  {
+            Int(42)
+        }
+
+    }
+
+        public? get(): <implicit>
