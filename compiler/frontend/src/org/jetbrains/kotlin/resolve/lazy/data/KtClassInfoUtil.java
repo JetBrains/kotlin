@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.lazy.data;
 
+import kotlin.DeprecationLevel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.psi.KtClass;
 import org.jetbrains.kotlin.psi.KtClassOrObject;
@@ -23,8 +24,18 @@ import org.jetbrains.kotlin.psi.KtObjectDeclaration;
 
 public class KtClassInfoUtil {
 
+    /**
+     * @deprecated use {@link #createClassOrObjectInfo(KtClassOrObject)} instead.
+     */
+    @Deprecated
+    @kotlin.Deprecated(message = "Use createClassOrObjectInfo(KtClassOrObject) instead", level = DeprecationLevel.ERROR)
     @NotNull
-    public static KtClassOrObjectInfo<? extends KtClassOrObject> createClassLikeInfo(@NotNull KtClassOrObject classOrObject) {
+    public static KtClassLikeInfo createClassLikeInfo(@NotNull KtClassOrObject classOrObject) {
+        return createClassOrObjectInfo(classOrObject);
+    }
+
+    @NotNull
+    public static KtClassOrObjectInfo<? extends KtClassOrObject> createClassOrObjectInfo(@NotNull KtClassOrObject classOrObject) {
         if (classOrObject instanceof KtClass) {
             return new KtClassInfo((KtClass) classOrObject);
         }
