@@ -103,7 +103,7 @@ class JavaToJKTreeBuilder constructor(
             }
 
 
-    private fun PsiImportStatement.toJK(): JKImportStatementImpl {
+    private fun PsiImportStatement.toJK(): JKImportStatement {
         val target = resolve()
         val rawName = text.substringAfter("import").substringBeforeLast(";").trim()
         val name =
@@ -517,21 +517,11 @@ class JavaToJKTreeBuilder constructor(
                 it.assignNonCodeElements(this)
             }
 
-        fun PsiClass.toJK(): JKClass {
-            val classKind: JKClass.ClassKind = when {
-                isAnnotationType -> JKClass.ClassKind.ANNOTATION
-                isEnum -> JKClass.ClassKind.ENUM
-                isInterface -> JKClass.ClassKind.INTERFACE
-                else -> JKClass.ClassKind.CLASS
-            }
-
-            fun PsiReferenceList.mapTypes() =
-                this.referencedTypes.map { JKTypeElementImpl(it.toJK(symbolProvider, Nullability.Default)) }
-
-            return JKClassImpl(
+        fun PsiClass.toJK(): JKClass =
+            JKClassImpl(
                 nameIdentifier.toJK(),
                 inheritanceInfo(),
-                classKind,
+                classKind(),
                 typeParameterList?.toJK() ?: JKTypeParameterListImpl(),
                 createClassBody(),
                 annotationList(this),
@@ -544,7 +534,7 @@ class JavaToJKTreeBuilder constructor(
             }.also {
                 it.assignNonCodeElements(this)
             }
-        }
+
 
         fun PsiClass.inheritanceInfo(): JKInheritanceInfo {
             val implTypes =
@@ -601,18 +591,7 @@ class JavaToJKTreeBuilder constructor(
 
 
         fun PsiMember.modality() =
-            modifierList?.children?.mapNotNull { child ->
-                if (child !is PsiKeyword) return@mapNotNull null
-                when (child.text) {
-                    PsiModifier.FINAL -> Modality.FINAL
-                    PsiModifier.ABSTRACT -> Modality.ABSTRACT
-
-                    else -> null
-                }?.let {
-                    JKModalityModifierElementImpl(it).withAssignedNonCodeElements(child)
-                }
-            }?.firstOrNull() ?: JKModalityModifierElementImpl(Modality.OPEN)
-
+            modality({ ast, psi -> ast.assignNonCodeElements(psi) })
 
         fun PsiMember.extraModifiers() =
             modifierList?.children?.mapNotNull { child ->
@@ -631,56 +610,9 @@ class JavaToJKTreeBuilder constructor(
                 }
             }.orEmpty()
 
-        fun PsiMember.visibility() =
-            modifierList?.children?.mapNotNull { child ->
-                if (child !is PsiKeyword) return@mapNotNull null
-                when (child.text) {
-                    PsiModifier.PACKAGE_LOCAL -> Visibility.PACKAGE_PRIVATE
-                    PsiModifier.PRIVATE -> Visibility.PRIVATE
-                    PsiModifier.PROTECTED -> handleProtectedVisibility()
-                    PsiModifier.PUBLIC -> Visibility.PUBLIC
 
-                    else -> null
-                }?.let {
-                    JKVisibilityModifierElementImpl(it).withAssignedNonCodeElements(child)
-                }
-            }?.firstOrNull() ?: JKVisibilityModifierElementImpl(Visibility.PACKAGE_PRIVATE)
-
-
-        private fun PsiMember.handleProtectedVisibility(): Visibility {
-            val originalClass = containingClass ?: return Visibility.PROTECTED
-            // Search for usages only in Java because java-protected member cannot be used in Kotlin from same package
-            val usages = referenceSearcher.findUsagesForExternalCodeProcessing(this, true, false)
-
-            return if (usages.any { !allowProtected(it.element, this, originalClass) })
-                Visibility.PUBLIC
-            else Visibility.PROTECTED
-        }
-
-        private fun allowProtected(element: PsiElement, member: PsiMember, originalClass: PsiClass): Boolean {
-            if (element.parent is PsiNewExpression && member is PsiMethod && member.isConstructor) {
-                // calls to for protected constructors are allowed only within same class or as super calls
-                return element.parentsWithSelf.contains(originalClass)
-            }
-
-            return element.parentsWithSelf.filterIsInstance<PsiClass>().any { accessContainingClass ->
-                if (!InheritanceUtil.isInheritorOrSelf(accessContainingClass, originalClass, true)) return@any false
-
-                if (element !is PsiReferenceExpression) return@any true
-
-                val qualifierExpression = element.qualifierExpression ?: return@any true
-
-                // super.foo is allowed if 'foo' is protected
-                if (qualifierExpression is PsiSuperExpression) return@any true
-
-                val receiverType = qualifierExpression.type ?: return@any true
-                val resolvedClass = PsiUtil.resolveGenericsClassInType(receiverType).element ?: return@any true
-
-                // receiver type should be subtype of containing class
-                InheritanceUtil.isInheritorOrSelf(resolvedClass, accessContainingClass, true)
-            }
-        }
-
+        private fun PsiMember.visibility(): JKVisibilityModifierElement =
+            visibility(referenceSearcher) { ast, psi -> ast.assignNonCodeElements(psi) }
 
         fun PsiField.toJK(): JKJavaField {
             return JKJavaFieldImpl(

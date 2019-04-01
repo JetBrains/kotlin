@@ -10,10 +10,10 @@ import org.jetbrains.kotlin.nj2k.tree.impl.JKBranchElementBase
 
 abstract class MatchBasedConversion : SequentialBaseConversion {
 
-    fun <R : JKTreeElement, T> applyRecursive(element: R, data: T, func: (JKTreeElement, T) -> JKTreeElement): R  =
+    fun <R : JKTreeElement, T> applyRecursive(element: R, data: T, func: (JKTreeElement, T) -> JKTreeElement): R =
         org.jetbrains.kotlin.nj2k.tree.applyRecursive(element, data, ::onElementChanged, func)
 
-    inline fun <R : JKTreeElement> applyRecursive(element: R, crossinline func: (JKTreeElement) -> JKTreeElement): R {
+    fun <R : JKTreeElement> applyRecursive(element: R, func: (JKTreeElement) -> JKTreeElement): R {
         return applyRecursive(element, null) { it, _ -> func(it) }
     }
 

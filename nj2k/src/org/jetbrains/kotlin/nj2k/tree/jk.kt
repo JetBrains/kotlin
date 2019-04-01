@@ -211,7 +211,6 @@ interface JKVisibilityOwner : JKModifiersListOwner {
 enum class Visibility(override val text: String) : Modifier {
     PUBLIC("public"),
     INTERNAL("internal"),
-    PACKAGE_PRIVATE(""),
     PROTECTED("protected"),
     PRIVATE("private")
 }

@@ -12,15 +12,6 @@ import org.jetbrains.kotlin.nj2k.tree.*
 
 class JavaModifiersConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
-        if (element is JKVisibilityOwner) {
-            if (element.visibility == Visibility.PACKAGE_PRIVATE) {
-                if (element is JKClass && element.isLocalClass()) {
-                    element.visibility = Visibility.PUBLIC
-                } else {
-                    element.visibility = Visibility.INTERNAL
-                }
-            }
-        }
         if (element is JKModalityOwner && element is JKAnnotationListOwner) {
             val overrideAnnotation = element.annotationList.annotationByFqName("java.lang.Override")
             if (overrideAnnotation != null) {
