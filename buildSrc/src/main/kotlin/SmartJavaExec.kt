@@ -42,8 +42,6 @@ fun JavaExec.passClasspathInJar() {
         main = "-jar"
 
         classpath = project.files()
-        val copyArgs = args.orEmpty().toList()
-        args(jarTask.outputs.files.singleFile)
-        args(copyArgs)
+        args = listOf(jarTask.outputs.files.singleFile.path) + args.orEmpty()
     }
 }
