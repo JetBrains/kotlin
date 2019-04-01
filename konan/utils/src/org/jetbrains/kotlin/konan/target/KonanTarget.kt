@@ -190,6 +190,7 @@ open class HostManager(subtargetProvider: SubTargetProvider = NoSubTargets()) {
         ) + zephyrSubtargets,
         KonanTarget.MINGW_X64 to setOf(
             KonanTarget.MINGW_X64,
+            KonanTarget.MINGW_X86,
             KonanTarget.WASM32,
             KonanTarget.LINUX_X64,
             KonanTarget.LINUX_ARM32_HFP,
