@@ -7,8 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.intrinsics
 
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.codegen.BlockInfo
-import org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen
+import org.jetbrains.kotlin.backend.jvm.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.AsmUtil.*
 import org.jetbrains.kotlin.codegen.StackValue
@@ -19,46 +18,46 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.isNullConst
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberOrNullableType
 import org.jetbrains.kotlin.types.typeUtil.upperBoundedByPrimitiveNumberOrNullableType
-import org.jetbrains.org.objectweb.asm.Opcodes
+import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 class Equals(val operator: IElementType) : IntrinsicMethod() {
-    override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): StackValue? {
-        val (leftArg, rightArg) = expression.receiverAndArgs()
-        var leftType = codegen.typeMapper.mapType(leftArg.type.toKotlinType())
-        var rightType = codegen.typeMapper.mapType(rightArg.type.toKotlinType())
-        if (isPrimitive(leftType) != isPrimitive(rightType)) {
-            leftType = boxType(leftType)
-            rightType = boxType(rightType)
-        }
-
-        val opToken = expression.origin
-        return if (leftArg.isNullConst() || rightArg.isNullConst()) {
-            val other = if (leftArg.isNullConst()) rightArg else leftArg
-            return StackValue.compareWithNull(other.accept(codegen, data), Opcodes.IFNONNULL)
-        } else if (leftType.isFloatingPoint && rightType.isFloatingPoint) {
-            genEqualsBoxedOnStack(operator)
-        } else if (opToken === IrStatementOrigin.EQEQEQ || opToken === IrStatementOrigin.EXCLEQEQ) {
-            // TODO: always casting to the type of the left operand in case of primitives looks wrong
-            val operandType = if (isPrimitive(leftType)) leftType else OBJECT_TYPE
-            StackValue.cmp(operator, operandType, codegen.gen(leftArg, operandType, data), codegen.gen(rightArg, operandType, data))
-        } else {
-            genEqualsForExpressionsOnStack(operator, codegen.gen(leftArg, leftType, data), codegen.gen(rightArg, rightType, data))
-        }
+    private class BooleanNullCheck(val value: PromisedValue) : BooleanValue(value.codegen) {
+        override fun jumpIfFalse(target: Label) = value.materialize().also { codegen.mv.ifnonnull(target) }
+        override fun jumpIfTrue(target: Label) = value.materialize().also { codegen.mv.ifnull(target) }
     }
 
-    private val Type.isFloatingPoint: Boolean
-        get() = this == Type.DOUBLE_TYPE || this == Type.FLOAT_TYPE
+    override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? {
+        val (a, b) = expression.receiverAndArgs()
+        if (a.isNullConst() || b.isNullConst()) {
+            return BooleanNullCheck(if (a.isNullConst()) b.accept(codegen, data) else a.accept(codegen, data))
+        }
+
+        val leftType = with(codegen) { a.asmType }
+        val rightType = with(codegen) { b.asmType }
+        val opToken = expression.origin
+        val useEquals = opToken !== IrStatementOrigin.EQEQEQ && opToken !== IrStatementOrigin.EXCLEQEQ &&
+                // `==` is `equals` for objects and floating-point numbers. In the latter case, the difference
+                // is that `equals` is a total order (-0 < +0 and NaN == NaN) and `===` is IEEE754-compliant.
+                (!isPrimitive(leftType) || leftType != rightType || leftType == Type.FLOAT_TYPE || leftType == Type.DOUBLE_TYPE)
+        val operandType = if (!isPrimitive(leftType) || useEquals) AsmTypes.OBJECT_TYPE else leftType
+        val aValue = a.accept(codegen, data).coerce(operandType).materialized
+        val bValue = b.accept(codegen, data).coerce(operandType).materialized
+        if (useEquals) {
+            AsmUtil.genAreEqualCall(codegen.mv)
+            return MaterialValue(codegen, Type.BOOLEAN_TYPE)
+        }
+        return BooleanComparison(operator, aValue, bValue)
+    }
 }
 
 
 class Ieee754Equals(val operandType: Type) : IntrinsicMethod() {
-
     private val boxedOperandType = AsmUtil.boxType(operandType)
 
     override fun toCallable(
@@ -110,4 +109,3 @@ class Ieee754Equals(val operandType: Type) : IntrinsicMethod() {
         }
     }
 }
-

@@ -8,8 +8,7 @@ package org.jetbrains.kotlin.backend.jvm.intrinsics
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.codegen.BlockInfo
 import org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen
-import org.jetbrains.kotlin.codegen.StackValue
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.backend.jvm.codegen.PromisedValue
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
@@ -25,12 +24,14 @@ abstract class IntrinsicMethod {
         context: JvmBackendContext
     ): IrIntrinsicFunction = TODO("implement toCallable() or invoke() of $this")
 
-    open fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): StackValue? =
-        toCallable(
-            expression,
-            codegen.typeMapper.mapSignatureSkipGeneric(expression.descriptor),
-            codegen.context
-        ).invoke(codegen.mv, codegen, data)
+    open fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? =
+        with(codegen) {
+            val descriptor = typeMapper.mapSignatureSkipGeneric(expression.descriptor)
+            val stackValue = toCallable(expression, descriptor, context).invoke(mv, codegen, data)
+            return object : PromisedValue(codegen, stackValue.type) {
+                override fun materialize() = stackValue.put(codegen.mv)
+            }
+        }
 
     companion object {
         fun calcReceiverType(call: IrMemberAccessExpression, context: JvmBackendContext): Type {

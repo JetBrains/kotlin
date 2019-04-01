@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
-import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.`when`.SwitchCodegen.Companion.preferLookupOverSwitch
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.dump
@@ -22,7 +20,7 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
     data class ValueToLabel(val value: Any?, val label: Label)
 
     // @return null if the IrWhen cannot be emitted as lookupswitch or tableswitch.
-    fun generate(): StackValue? {
+    fun generate(): PromisedValue? {
         val expressionToLabels = ArrayList<ExpressionToLabel>()
         var elseExpression: IrExpression? = null
         val callToLabels = ArrayList<CallToLabel>()
@@ -187,7 +185,7 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
 
         open fun shouldOptimize() = false
 
-        open fun genOptimizedIfEnoughCases(): StackValue? {
+        open fun genOptimizedIfEnoughCases(): PromisedValue? {
             if (!shouldOptimize())
                 return null
 
@@ -219,17 +217,17 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
             }
         }
 
-        protected fun genBranchTargets(): StackValue {
+        protected fun genBranchTargets(): PromisedValue {
             with(codegen) {
                 val endLabel = Label()
                 for ((thenExpression, label) in expressionToLabels) {
                     mv.visitLabel(label)
-                    thenExpression.accept(codegen, data).coerce(expression.type).materializeNonUnit()
+                    thenExpression.accept(codegen, data).coerce(expression.asmType).materialized
                     mv.goTo(endLabel)
                 }
                 mv.visitLabel(defaultLabel)
-                val stackValue = elseExpression?.accept(codegen, data) ?: StackValue.none()
-                val result = stackValue.coerce(expression.type).materializeNonUnit()
+                val stackValue = elseExpression?.accept(codegen, data) ?: voidValue
+                val result = stackValue.coerce(expression.asmType).materialized
                 mv.mark(endLabel)
                 return result
             }
