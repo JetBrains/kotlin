@@ -68,10 +68,10 @@ sourceSets {
 }
 
 
-fun Test.setUpBoxTests(jsEnabled: Boolean, jsIrEnabled: Boolean, skipIrKlib: Boolean = false) {
+fun Test.setUpBoxTests(jsEnabled: Boolean, jsIrEnabled: Boolean) {
     dependsOn(":dist")
     if (jsEnabled) dependsOn(testJsRuntime)
-    if (jsIrEnabled && !skipIrKlib) dependsOn(":compiler:ir.serialization.js:generateIrRuntimeKlib")
+    if (jsIrEnabled) dependsOn(":compiler:ir.serialization.js:generateIrRuntimeKlib")
 
     if (jsEnabled && !jsIrEnabled) exclude("org/jetbrains/kotlin/js/test/ir/semantics/*")
     if (!jsEnabled && jsIrEnabled) include("org/jetbrains/kotlin/js/test/ir/semantics/*")
@@ -109,10 +109,6 @@ projectTest("jsIrTest") {
 projectTest("quickTest") {
     setUpBoxTests(jsEnabled = true, jsIrEnabled = false)
     systemProperty("kotlin.js.skipMinificationTest", "true")
-}
-
-projectTest("quickIrTest") {
-    setUpBoxTests(jsEnabled = false, jsIrEnabled = true, skipIrKlib = true)
 }
 
 testsJar {}
