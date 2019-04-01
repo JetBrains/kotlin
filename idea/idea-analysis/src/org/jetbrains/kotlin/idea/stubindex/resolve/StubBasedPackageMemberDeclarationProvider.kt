@@ -75,7 +75,7 @@ class StubBasedPackageMemberDeclarationProvider(
 
     override fun getClassOrObjectDeclarations(name: Name): Collection<KtClassOrObjectInfo<*>> = runReadAction {
         KotlinFullClassNameIndex.getInstance().get(childName(name), project, searchScope)
-            .map { KtClassInfoUtil.createClassLikeInfo(it) }
+            .map { KtClassInfoUtil.createClassOrObjectInfo(it) }
     }
 
     override fun getScriptDeclarations(name: Name): Collection<KtScriptInfo> = runReadAction {
