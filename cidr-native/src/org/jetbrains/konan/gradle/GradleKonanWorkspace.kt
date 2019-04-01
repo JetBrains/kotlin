@@ -108,7 +108,7 @@ private fun loadBuildableElements(project: Project): CachedBuildableElements {
             val configuration = GradleKonanConfiguration(
                 id,
                 konanArtifact.name,
-                "Debug",
+                if (artifactBuildTaskPath.contains("ebug")) "Debug" else "Release",
                 konanArtifact.file,
                 konanArtifact.type,
                 artifactBuildTaskPath,
