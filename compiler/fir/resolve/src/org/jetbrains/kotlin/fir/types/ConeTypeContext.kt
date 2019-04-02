@@ -334,24 +334,6 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext {
                 symbol is FirTypeParameterSymbol
     }
 
-    override fun intersectTypes(types: List<KotlinTypeMarker>): KotlinTypeMarker {
-        TODO("not implemented")
-    }
-
-    override fun intersectTypes(types: List<SimpleTypeMarker>): SimpleTypeMarker {
-        TODO("not implemented")
-    }
-
-    override fun prepareType(type: KotlinTypeMarker): KotlinTypeMarker {
-        TODO("not implemented")
-    }
-
-    override fun SimpleTypeMarker.isStubType(): Boolean {
-        TODO("not implemented")
-    }
-
-
-
     override fun SimpleTypeMarker.isStubType(): Boolean {
         return false // TODO
     }
@@ -393,10 +375,5 @@ class ConeTypeCheckerContext(override val isErrorTypeEqualsToAnything: Boolean, 
 
     override val KotlinTypeMarker.isAllowedTypeVariable: Boolean
         get() = false
-
-
-    override fun prepareType(type: KotlinTypeMarker): KotlinTypeMarker {
-        return super<ConeTypeContext>.prepareType(type)
-    }
 
 }
