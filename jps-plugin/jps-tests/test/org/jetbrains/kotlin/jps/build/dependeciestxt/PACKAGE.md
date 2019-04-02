@@ -26,7 +26,7 @@ Supported module flags:
   - `sourceSetHolder`, `compilationAndSourceSetHolder` (new MPP)
   - `jvm` (default)
   - `js`
-  - `edit`, `editJvm`, `editExcpetActual` - see jps-plugin/testData/incremental/multiplatform/multiModule/README.md
+  - `edit`, `editJvm`, `editExpectActual` - see jps-plugin/testData/incremental/multiplatform/multiModule/README.md
     
 Supported dependency flags:
   - `compile` (default)
@@ -35,4 +35,4 @@ Supported dependency flags:
   - `provided`
   - `expectedBy` (old MPP)
   - `included` (new MPP)
-  - `exproted`
+  - `exported`
