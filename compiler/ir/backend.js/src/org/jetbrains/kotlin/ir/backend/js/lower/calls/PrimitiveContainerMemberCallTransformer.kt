@@ -51,6 +51,8 @@ class PrimitiveContainerMemberCallTransformer(private val context: JsIrBackendCo
             add(intrinsics.charSequenceLengthPropertyGetterSymbol, intrinsics.jsCharSequenceLength, true)
             add(intrinsics.charSequenceGetFunctionSymbol, intrinsics.jsCharSequenceGet, true)
             add(intrinsics.charSequenceSubSequenceFunctionSymbol, intrinsics.jsCharSequenceSubSequence, true)
+            add(context.irBuiltIns.dataClassArrayMemberHashCodeSymbol, context.intrinsics.jsHashCode)
+            add(context.irBuiltIns.dataClassArrayMemberToStringSymbol, context.intrinsics.jsToString)
         }
     }
 
