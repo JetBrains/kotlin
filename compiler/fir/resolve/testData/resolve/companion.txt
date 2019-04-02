@@ -3,7 +3,7 @@ FILE: companion.kt
         public constructor(): super<R|kotlin/Any|>()
 
         public final companion object Companion : R|kotlin/Any| {
-            public constructor(): super<R|kotlin/Any|>()
+            private constructor(): super<R|kotlin/Any|>()
 
             public final class InCompanion : R|kotlin/Any| {
                 public constructor(): super<R|kotlin/Any|>()
@@ -20,7 +20,7 @@ FILE: companion.kt
         public constructor(): super<R|kotlin/Any|>()
 
         public final companion object NamedCompanion : R|kotlin/Any| {
-            public constructor(): super<R|kotlin/Any|>()
+            private constructor(): super<R|kotlin/Any|>()
 
             public final class InCompanion : R|kotlin/Any| {
                 public constructor(): super<R|kotlin/Any|>()

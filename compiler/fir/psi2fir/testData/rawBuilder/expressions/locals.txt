@@ -18,7 +18,7 @@ FILE: locals.kt
         }
 
         lval code: <implicit> = object : Any {
-            public? constructor(): super<Any>()
+            private constructor(): super<Any>()
 
             public? final? fun foo(): <implicit> {
                 ^foo hashCode#()

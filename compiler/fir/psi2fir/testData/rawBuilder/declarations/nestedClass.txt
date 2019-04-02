@@ -15,7 +15,7 @@ FILE: nestedClass.kt
         }
 
         public? final? object Obj : Base {
-            public? constructor(): super<Base>(String())
+            private constructor(): super<Base>(String())
 
         }
 

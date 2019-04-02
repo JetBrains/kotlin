@@ -384,11 +384,19 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
                     superTypeCallEntry?.extractArgumentsTo(this)
                 }
             }
+
+            fun defaultVisibility() =
+                if (owner is KtObjectDeclaration || owner.hasModifier(SEALED_KEYWORD) || owner.hasModifier(ENUM_KEYWORD))
+                // TODO: sealed is FILE_PRIVATE (?) object / enum is HIDDEN (?)
+                    Visibilities.PRIVATE
+                else
+                    Visibilities.UNKNOWN
+
             val firConstructor = FirPrimaryConstructorImpl(
                 session,
                 this ?: owner,
                 FirFunctionSymbol(callableIdForClassConstructor()),
-                this?.visibility ?: Visibilities.UNKNOWN,
+                this?.visibility ?: defaultVisibility(),
                 this?.hasExpectModifier() ?: false,
                 this?.hasActualModifier() ?: false,
                 delegatedSelfTypeRef,

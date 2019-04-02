@@ -1,6 +1,6 @@
 FILE: enums.kt
     public? final? enum class Order : kotlin/Enum {
-        public? constructor(): super<kotlin/Enum>()
+        private constructor(): super<kotlin/Enum>()
 
         public? final enum entry FIRST : kotlin/Any {
             public? constructor(): super<kotlin/Any>()
@@ -60,7 +60,7 @@ FILE: enums.kt
         public? abstract fun sayHello(): kotlin/Unit
 
         public? final? companion object Companion : kotlin/Any {
-            public? constructor(): super<kotlin/Any>()
+            private constructor(): super<kotlin/Any>()
 
             public? final? const val G: <implicit> = Double(6.67E-11)
                 public? get(): <implicit>

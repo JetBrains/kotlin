@@ -60,7 +60,7 @@ FILE: enums.kt
         public abstract fun sayHello(): R|kotlin/Unit|
 
         public final companion object Companion : R|kotlin/Any| {
-            public constructor(): super<R|kotlin/Any|>()
+            private constructor(): super<R|kotlin/Any|>()
 
             public final const val G: R|kotlin/Double| = Double(6.67E-11)
                 public get(): R|kotlin/Double|

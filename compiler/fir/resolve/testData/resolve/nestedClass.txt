@@ -15,7 +15,7 @@ FILE: nestedClass.kt
         }
 
         public final object Obj : R|Base| {
-            public constructor(): super<R|Base|>(String())
+            private constructor(): super<R|Base|>(String())
 
         }
 
