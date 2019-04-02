@@ -83,9 +83,10 @@ class PluginDeclarationProviderFactory(
     }
 
     private fun diagnoseMissingPackageFragmentPerModulePackageCacheMiss(message: String): Nothing {
+        PerModulePackageCacheService.getInstance(project).onTooComplexChange() // Postpone cache rebuild
         throw IllegalStateException(
-                "PerModulePackageCache miss.\n" +
-                message
+            "PerModulePackageCache miss.\n" +
+                    message
         )
     }
 
