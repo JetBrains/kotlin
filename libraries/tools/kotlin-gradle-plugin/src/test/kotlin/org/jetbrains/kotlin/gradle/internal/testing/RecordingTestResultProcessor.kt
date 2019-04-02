@@ -30,7 +30,7 @@ class RecordingTestResultProcessor : TestResultProcessor {
     }
 
     override fun failure(testId: Any, result: Throwable) {
-        line("FAILURE ${result.message} // $testId")
+        line("FAILURE $result // $testId")
     }
 
     override fun completed(testId: Any, event: TestCompleteEvent) {

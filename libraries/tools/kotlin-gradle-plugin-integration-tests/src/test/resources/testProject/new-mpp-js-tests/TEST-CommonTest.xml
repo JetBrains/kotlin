@@ -7,7 +7,7 @@
       <skipped />
     </testcase>
     <testcase name="test3" classname="CommonTest" time="...">
-      <failure message="..." type="org.jetbrains.kotlin.gradle.targets.js.NodeJsTestFailure">...</failure>
+      <failure message="..." type="org.jetbrains.kotlin.gradle.testing.KotlinTestFailure">...</failure>
     </testcase>
     <system-out />
     <system-err />

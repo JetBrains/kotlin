@@ -5,37 +5,23 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.tasks
 
-import org.gradle.api.internal.file.FileResolver
-import org.gradle.api.internal.tasks.testing.filter.DefaultTestFilter
-import org.gradle.api.tasks.*
-import org.gradle.api.tasks.testing.AbstractTestTask
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.SkipWhenEmpty
 import org.gradle.process.ProcessForkOptions
 import org.gradle.process.internal.DefaultProcessForkOptions
-import org.gradle.process.internal.ExecHandleFactory
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
-import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutor
+import org.jetbrains.kotlin.gradle.tasks.KotlinTestTask
 import org.jetbrains.kotlin.gradle.testing.IgnoredTestSuites
 import org.jetbrains.kotlin.gradle.testing.TestsGrouping
-import org.jetbrains.kotlin.gradle.utils.injected
 import java.io.File
-import javax.inject.Inject
 
-open class KotlinNodeJsTestTask : AbstractTestTask() {
+open class KotlinNodeJsTestTask : KotlinTestTask() {
     @Input
     var ignoredTestSuites: IgnoredTestSuites =
         IgnoredTestSuites.showWithContents
-
-    @Input
-    var testsGrouping: TestsGrouping =
-        TestsGrouping.root
-
-    @Input
-    @Optional
-    var targetName: String? = null
-
-    @Input
-    var excludes = mutableSetOf<String>()
 
     @InputDirectory
     lateinit var nodeModulesDir: File
@@ -47,25 +33,15 @@ open class KotlinNodeJsTestTask : AbstractTestTask() {
     @Input
     lateinit var testRuntimeNodeModules: Collection<String>
 
-    @Suppress("UnstableApiUsage")
-    private val filterExt: DefaultTestFilter
-        get() = filter as DefaultTestFilter
-
-    init {
-        filterExt.isFailOnNoMatchingTests = false
-    }
-
-    @get:Inject
-    open val fileResolver: FileResolver
-        get() = injected
-
     @Suppress("LeakingThis")
     @Internal
     val nodeJsProcessOptions: ProcessForkOptions = DefaultProcessForkOptions(fileResolver)
 
+    @Suppress("unused")
     val nodeJsExecutable: String
         @Input get() = nodeJsProcessOptions.executable
 
+    @Suppress("unused")
     val nodeJsWorkingDirCanonicalPath: String
         @Input get() = nodeJsProcessOptions.workingDir.canonicalPath
 
@@ -108,23 +84,15 @@ open class KotlinNodeJsTestTask : AbstractTestTask() {
         return TCServiceMessagesTestExecutionSpec(
             extendedForkOptions,
             nodeJsArgs +
-                testRuntimeNodeModules
-                    .map { nodeModulesDir.resolve(it) }
-                    .filter { it.exists() }
-                    .map { it.absolutePath } +
-                cliArgs.toList(),
+                    testRuntimeNodeModules
+                        .map { nodeModulesDir.resolve(it) }
+                        .filter { it.exists() }
+                        .map { it.absolutePath } +
+                    cliArgs.toList(),
+            true,
             clientSettings
         )
     }
-
-    @get:Inject
-    open val execHandleFactory: ExecHandleFactory
-        get() = injected
-
-    override fun createTestExecuter() = TCServiceMessagesTestExecutor(
-        execHandleFactory,
-        buildOperationExecutor
-    )
 }
 
 data class KotlinNodeJsTestRunnerCliArgs(

@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.gradle.internal.testing.tcsmc
 
+import jetbrains.buildServer.messages.serviceMessages.ServiceMessage
 import org.gradle.internal.operations.OperationIdentifier
 import org.jetbrains.kotlin.gradle.internal.testing.RecordingTestResultProcessor
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClient
@@ -13,6 +14,7 @@ open class TCServiceMessagesClientTest {
     protected var nameOfRootSuiteToReplace: String? = null
     protected var nameOfLeafTestToAppend: String? = null
     protected var skipRoots: Boolean = false
+    protected var treatFailedTestOutputAsStacktrace: Boolean = false
 
     internal fun assertEvents(assertion: String, produceServiceMessage: TCServiceMessagesClient.() -> Unit) {
         val results = RecordingTestResultProcessor()
@@ -36,9 +38,13 @@ open class TCServiceMessagesClientTest {
                 nameOfRootSuiteToAppend,
                 nameOfRootSuiteToReplace,
                 nameOfLeafTestToAppend,
-                skipRoots
+                skipRoots,
+                treatFailedTestOutputAsStacktrace
             ),
             LoggerFactory.getLogger("test")
         )
     }
+
+    internal fun TCServiceMessagesClient.serviceMessage(name: String, attributes: Map<String, String>) =
+        serviceMessage(ServiceMessage.parse(ServiceMessage.asString(name, attributes))!!)
 }

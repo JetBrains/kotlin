@@ -608,7 +608,7 @@ abstract class BaseGradleIT {
         val testReportDir = projectDir.resolve("build/test-results/$testReportName")
 
         if (!testReportDir.isDirectory) {
-            error("Test report dir was not created")
+            error("Test report dir $testReportDir was not created")
         }
 
         val actualTestResults = readAndCleanupTestResults(testReportDir, projectDir)

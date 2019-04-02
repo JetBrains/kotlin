@@ -14,18 +14,19 @@ import org.gradle.api.attributes.Usage.USAGE_ATTRIBUTE
 import org.gradle.api.internal.artifacts.ArtifactAttributes
 import org.gradle.api.internal.artifacts.publish.DefaultPublishArtifact
 import org.gradle.api.internal.plugins.DefaultArtifactPublicationSet
+import org.gradle.api.internal.plugins.DslObject
 import org.gradle.api.plugins.BasePlugin
+import org.gradle.api.reporting.ReportingExtension
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.Exec
 import org.gradle.language.base.plugins.LifecycleBasePlugin
+import org.gradle.testing.base.plugins.TestingBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeBinaryContainer
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.TEST_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinNativeCompile
-import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
-import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
-import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
+import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTestTask
+import org.jetbrains.kotlin.gradle.tasks.*
 import java.io.File
 import java.util.*
 
@@ -127,27 +128,37 @@ open class KotlinNativeTargetConfigurator(
 
     private fun Project.createRunTask(binary: Executable) {
         val taskName = binary.runTaskName ?: return
-        // TODO provide a special exec task for tests.
-        tasks.create(taskName, Exec::class.java).apply {
-            if (binary.isDefaultTestExecutable) {
+
+        if (binary.isDefaultTestExecutable) {
+            tasks.create(taskName, KotlinNativeTestTask::class.java).apply {
+                tasks.maybeCreate(LifecycleBasePlugin.CHECK_TASK_NAME).dependsOn(this)
+
                 group = LifecycleBasePlugin.VERIFICATION_GROUP
                 description = "Executes Kotlin/Native unit tests for target ${binary.target.name}."
-                tasks.maybeCreate(LifecycleBasePlugin.CHECK_TASK_NAME).dependsOn(this)
-                if (project.hasProperty("teamcity.version")) {
-                    args("--ktest_logger=TEAMCITY")
-                }
-            } else {
+
+                enabled = binary.target.konanTarget.isCurrentHost
+
+                executable = binary.outputFile
+                workingDir = project.projectDir.absolutePath
+
+                onlyIf { binary.outputFile.exists() }
+                dependsOn(binary.linkTaskName)
+
+                KotlinTestTask.configureConventions(this)
+            }
+        } else {
+            tasks.create(taskName, Exec::class.java).apply {
                 group = RUN_GROUP
                 description = "Executes Kotlin/Native executable ${binary.name} for target ${binary.target.name}"
+
+                enabled = binary.target.konanTarget.isCurrentHost
+
+                executable = binary.outputFile.absolutePath
+                workingDir = project.projectDir
+
+                onlyIf { binary.outputFile.exists() }
+                dependsOn(binary.linkTaskName)
             }
-
-            enabled = binary.target.konanTarget.isCurrentHost
-
-            executable = binary.outputFile.absolutePath
-            workingDir = project.projectDir
-
-            onlyIf { binary.outputFile.exists() }
-            dependsOn(binary.linkTaskName)
         }
     }
 
