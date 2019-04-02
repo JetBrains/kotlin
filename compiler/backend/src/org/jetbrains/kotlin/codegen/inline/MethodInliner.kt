@@ -9,16 +9,14 @@ import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.coroutines.continuationAsmType
 import org.jetbrains.kotlin.codegen.coroutines.getOrCreateJvmSuspendFunctionView
 import org.jetbrains.kotlin.codegen.inline.FieldRemapper.Companion.foldName
-import org.jetbrains.kotlin.codegen.inline.coroutines.CoroutineTransformer
+import org.jetbrains.kotlin.codegen.inline.coroutines.*
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.codegen.optimization.ApiVersionCallsPreprocessingMethodTransformer
 import org.jetbrains.kotlin.codegen.optimization.FixStackWithLabelNormalizationMethodTransformer
-import org.jetbrains.kotlin.codegen.optimization.common.ControlFlowGraph
-import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
-import org.jetbrains.kotlin.codegen.optimization.common.asSequence
-import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
+import org.jetbrains.kotlin.codegen.optimization.common.*
 import org.jetbrains.kotlin.codegen.optimization.fixStack.peek
 import org.jetbrains.kotlin.codegen.optimization.fixStack.top
+import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
@@ -220,6 +218,9 @@ class MethodInliner(
                     val info = invokeCall.functionalArgument
 
                     if (info !is LambdaInfo) {
+                        if (info == NonInlineableArgumentForInlineableSuspendParameter) {
+                            super.visitMethodInsn(Opcodes.INVOKESTATIC, NOINLINE_CALL_MARKER, NOINLINE_CALL_MARKER, "()V", false)
+                        }
                         //noninlinable lambda
                         super.visitMethodInsn(opcode, owner, name, desc, itf)
                         return
@@ -366,6 +367,8 @@ class MethodInliner(
                     ReifiedTypeInliner.isNeedClassReificationMarker(MethodInsnNode(opcode, owner, name, desc, false))
                 ) {
                     //we shouldn't process here content of inlining lambda it should be reified at external level except default lambdas
+                } else if (owner == NOINLINE_CALL_MARKER && name == NOINLINE_CALL_MARKER) {
+                    // do not generate multiple markers on single invoke
                 } else {
                     super.visitMethodInsn(opcode, owner, name, desc, itf)
                 }
@@ -386,7 +389,21 @@ class MethodInliner(
 
         node.accept(lambdaInliner)
 
-        return resultNode
+        return surroundInvokesWithSuspendMarkersIfNeeded(resultNode)
+    }
+
+    private fun surroundInvokesWithSuspendMarkersIfNeeded(node: MethodNode): MethodNode {
+        val markers = node.instructions.asSequence().filter { it.isNoinlineCallMarker() }.toList()
+        if (markers.isEmpty()) return node
+        val invokes = markers.map { it.next as MethodInsnNode }
+        node.instructions.removeAll(markers)
+
+        val sourceFrames = MethodTransformer.analyze(inlineCallSiteInfo.ownerClassName, node, SourceInterpreter())
+        val toSurround = invokes.mapNotNull { insn ->
+            findReceiverOfInvoke(sourceFrames[node.instructions.indexOf(insn)], insn)?.let { insn to it }
+        }
+        surroundInvokesWithSuspendMarkers(node, toSurround)
+        return node
     }
 
     private fun isDefaultLambdaWithReification(lambdaInfo: LambdaInfo) =
