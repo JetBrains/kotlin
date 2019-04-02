@@ -247,8 +247,8 @@ class NamedNativeInteropConfig implements Named {
                 environment['PATH'] = project.files(project.hostPlatform.clang.clangPaths).asPath +
                         File.pathSeparator + environment['PATH']
 
-                args compilerOpts.collectMany { ['-copt', it] }
-                args linkerOpts.collectMany { ['-lopt', it] }
+                args compilerOpts.collectMany { ['-compilerOpt', it] }
+                args linkerOpts.collectMany { ['-linkerOpt', it] }
 
                 headers.each {
                     args '-header', it
