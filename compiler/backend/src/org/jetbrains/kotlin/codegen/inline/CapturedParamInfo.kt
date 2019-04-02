@@ -14,80 +14,63 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.codegen.inline;
+package org.jetbrains.kotlin.codegen.inline
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.codegen.StackValue;
+import org.jetbrains.kotlin.codegen.StackValue
 
-public class CapturedParamInfo extends ParameterInfo {
-    public final CapturedParamDesc desc;
-    private final String newFieldName;
-    private final boolean skipInConstructor;
+class CapturedParamInfo : ParameterInfo {
+    val desc: CapturedParamDesc
+    val newFieldName: String
+    val isSkipInConstructor: Boolean
 
     //Now used only for bound function reference receiver
-    private boolean synthetic;
+    var isSynthetic: Boolean = false
 
-    public CapturedParamInfo(@NotNull CapturedParamDesc desc, @NotNull String newFieldName, boolean skipped, int index, int remapIndex) {
-        super(desc.getType(), skipped, index, remapIndex, -1);
-        this.desc = desc;
-        this.newFieldName = newFieldName;
-        this.skipInConstructor = false;
-    }
+    val originalFieldName: String
+        get() = desc.fieldName
 
-    public CapturedParamInfo(
-            @NotNull CapturedParamDesc desc,
-            @NotNull String newFieldName,
-            boolean skipped,
-            int index,
-            @Nullable StackValue remapIndex,
-            boolean skipInConstructor,
-            int declarationIndex
+    val containingLambdaName: String
+        get() = desc.containingLambdaName
+
+    constructor(desc: CapturedParamDesc, newFieldName: String, skipped: Boolean, index: Int, remapIndex: Int) : super(
+        desc.type,
+        skipped,
+        index,
+        remapIndex,
+        -1
     ) {
-        super(desc.getType(), skipped, index, remapIndex, declarationIndex);
-        this.desc = desc;
-        this.newFieldName = newFieldName;
-        this.skipInConstructor = skipInConstructor;
+        this.desc = desc
+        this.newFieldName = newFieldName
+        this.isSkipInConstructor = false
     }
 
-    @NotNull
-    public String getNewFieldName() {
-        return newFieldName;
+    constructor(
+        desc: CapturedParamDesc,
+        newFieldName: String,
+        skipped: Boolean,
+        index: Int,
+        remapIndex: StackValue?,
+        skipInConstructor: Boolean,
+        declarationIndex: Int
+    ) : super(desc.type, skipped, index, remapIndex, declarationIndex) {
+        this.desc = desc
+        this.newFieldName = newFieldName
+        this.isSkipInConstructor = skipInConstructor
     }
 
-    @NotNull
-    public String getOriginalFieldName() {
-        return desc.getFieldName();
+    fun cloneWithNewDeclarationIndex(newDeclarationIndex: Int): CapturedParamInfo {
+        val result = CapturedParamInfo(
+            desc, newFieldName, isSkipped, index, remapValue, isSkipInConstructor, newDeclarationIndex
+        )
+        result.functionalArgument = functionalArgument
+        result.isSynthetic = isSynthetic
+        return result
     }
 
-    @NotNull
-    public CapturedParamInfo cloneWithNewDeclarationIndex(int newDeclarationIndex) {
-        CapturedParamInfo result = new CapturedParamInfo(
-                desc, newFieldName, isSkipped(), getIndex(), getRemapValue(), skipInConstructor, newDeclarationIndex
-        );
-        result.setFunctionalArgument(getFunctionalArgument());
-        result.setSynthetic(synthetic);
-        return result;
-    }
+    companion object {
 
-    @NotNull
-    public String getContainingLambdaName() {
-        return desc.getContainingLambdaName();
-    }
-
-    public boolean isSkipInConstructor() {
-        return skipInConstructor;
-    }
-
-    public boolean isSynthetic() {
-        return synthetic;
-    }
-
-    public void setSynthetic(boolean synthetic) {
-        this.synthetic = synthetic;
-    }
-
-    public static boolean isSynthetic(@NotNull ParameterInfo info) {
-        return info instanceof CapturedParamInfo && ((CapturedParamInfo) info).isSynthetic();
+        fun isSynthetic(info: ParameterInfo): Boolean {
+            return info is CapturedParamInfo && info.isSynthetic
+        }
     }
 }
