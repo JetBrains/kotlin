@@ -14,34 +14,12 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.codegen.inline;
+package org.jetbrains.kotlin.codegen.inline
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.org.objectweb.asm.Type;
+import org.jetbrains.org.objectweb.asm.Type
 
-public class CapturedParamDesc {
-    private final Type containingLambdaType;
-    private final String fieldName;
-    private final Type type;
+class CapturedParamDesc(private val containingLambdaType: Type, val fieldName: String, val type: Type) {
 
-    public CapturedParamDesc(@NotNull Type containingLambdaType, @NotNull String fieldName, @NotNull Type type) {
-        this.containingLambdaType = containingLambdaType;
-        this.fieldName = fieldName;
-        this.type = type;
-    }
-
-    @NotNull
-    public String getContainingLambdaName() {
-        return containingLambdaType.getInternalName();
-    }
-
-    @NotNull
-    public String getFieldName() {
-        return fieldName;
-    }
-
-    @NotNull
-    public Type getType() {
-        return type;
-    }
+    val containingLambdaName: String
+        get() = containingLambdaType.internalName
 }
