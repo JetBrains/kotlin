@@ -41,48 +41,59 @@ val forLoopsPhase = makeIrFilePhase(
  *
  * For example, this loop:
  * ```
- *   for (i in first..last) { // Do something with i }
+ *   for (loopVar in A..B) { // Loop body }
  * ```
  * is represented in IR in such a manner:
  * ```
- *   val it = (first..last).iterator()
+ *   val it = (A..B).iterator()
  *   while (it.hasNext()) {
- *       val i = it.next()
- *       // Do something with i
+ *       val loopVar = it.next()
+ *       // Loop body
  *   }
  * ```
  * We transform it into one of the following loops:
  *
  * ```
- *   // 1. If the induction variable cannot overflow, i.e., `last` is const and != MAX_VALUE (if increasing, or MIN_VALUE if decreasing),
- *   //    OR if loop is an until loop (e.g., `for (i in first until last)`):
+ *   // 1. If the induction variable cannot overflow, i.e., `B` is const and != MAX_VALUE (if increasing, or MIN_VALUE if decreasing).
  *
- *   var inductionVar = first
- *   while (inductionVar <= last) {  // (inductionVar >= last if the progression is decreasing)
- *       val i = inductionVar
- *       inductionVar++
- *       // Do something with i
+ *   var inductionVar = A
+ *   var last = B
+ *   while (inductionVar <= last) {  // (`inductionVar >= last` if the progression is decreasing)
+ *       val loopVar = inductionVar
+ *       inductionVar++  // (`inductionVar--` if the progression is decreasing)
+ *       // Loop body
  *   }
  *
  *   // 2. If the induction variable CAN overflow, i.e., `last` is not const or is MAX/MIN_VALUE:
  *
- *   var inductionVar = first
- *   if (inductionVar <= last) {  // (inductionVar >= last if the progression is decreasing)
+ *   var inductionVar = A
+ *   var last = B
+ *   if (inductionVar <= last) {  // (`inductionVar >= last` if the progression is decreasing)
  *       // Loop is not empty
  *       do {
- *           val i = inductionVar
- *           inductionVar++
- *           // Do something with i
- *       } while (i != last)
+ *           val loopVar = inductionVar
+ *           inductionVar++  // (`inductionVar--` if the progression is decreasing)
+ *           // Loop body
+ *       } while (loopVar != last)
+ *   }
+ *
+ *   // 3. If loop is an until loop (e.g., `for (i in A until B)`), it cannot overflow and we use `<` for comparisons:
+ *
+ *   var inductionVar = A
+ *   var last = B
+ *   while (inductionVar < last) {
+ *       val loopVar = inductionVar
+ *       inductionVar++
+ *       // Loop body
  *   }
  * ```
- * In case of iteration over an array, we transform it into the following:
+ * In case of iteration over an array (e.g., `for (i in array)`), we transform it into the following:
  * ```
  *   var inductionVar = 0
- *   val last = array.size - 1
- *   while (inductionVar <= last) {
- *       val i = array[inductionVar++]
- *       // Do something with i
+ *   val last = array.size
+ *   while (inductionVar < last) {
+ *       val loopVar = array[inductionVar++]
+ *       // Loop body
  *   }
  * ```
  */

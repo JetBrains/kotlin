@@ -26,10 +26,10 @@ import org.jetbrains.kotlin.name.Name
 
 /** Contains information about variables used in the loop. */
 internal sealed class ForLoopHeader(
+    protected open val headerInfo: HeaderInfo,
     val inductionVariable: IrVariable,
     val last: IrVariable,
     val step: IrVariable,
-    val progressionType: ProgressionType,
     var loopVariable: IrVariable? = null
 ) {
     /** Expression used to initialize the loop variable at the beginning of the loop. */
@@ -48,26 +48,98 @@ internal sealed class ForLoopHeader(
      * Returns null if no check is needed for the for-loop.
      */
     abstract fun buildNotEmptyConditionIfNecessary(builder: DeclarationIrBuilder): IrExpression?
+
+    protected fun buildLoopCondition(builder: DeclarationIrBuilder): IrExpression =
+        with(builder) {
+            val builtIns = context.irBuiltIns
+            val progressionType = headerInfo.progressionType
+            val progressionKotlinType = progressionType.elementType(builtIns).toKotlinType()
+            val compFun =
+                if (headerInfo.isLastInclusive) builtIns.lessOrEqualFunByOperandType[progressionKotlinType]!!
+                else builtIns.lessFunByOperandType[progressionKotlinType]!!
+
+            // The default condition depends on the direction.
+            return when (headerInfo.direction) {
+                ProgressionDirection.DECREASING ->
+                    // last <= inductionVar (use `<` if last is exclusive)
+                    irCall(compFun).apply {
+                        putValueArgument(0, irGet(last))
+                        putValueArgument(1, irGet(inductionVariable))
+                    }
+                ProgressionDirection.INCREASING ->
+                    // inductionVar <= last (use `<` if last is exclusive)
+                    irCall(compFun).apply {
+                        putValueArgument(0, irGet(inductionVariable))
+                        putValueArgument(1, irGet(last))
+                    }
+                ProgressionDirection.UNKNOWN -> {
+                    // If the direction is unknown, we check depending on the "step" value:
+                    //   // (use `<` if last is exclusive)
+                    //   (step > 0 && inductionVar <= last) || (step < 0 || last <= inductionVar)
+                    val stepKotlinType = progressionType.stepType(builtIns).toKotlinType()
+                    val zero = if (progressionType == ProgressionType.LONG_PROGRESSION) irLong(0) else irInt(0)
+                    context.oror(
+                        context.andand(
+                            irCall(builtIns.greaterFunByOperandType[stepKotlinType]!!).apply {
+                                putValueArgument(0, irGet(step))
+                                putValueArgument(1, zero)
+                            },
+                            irCall(compFun).apply {
+                                putValueArgument(0, irGet(inductionVariable))
+                                putValueArgument(1, irGet(last))
+                            }),
+                        context.andand(
+                            irCall(builtIns.lessFunByOperandType[stepKotlinType]!!).apply {
+                                putValueArgument(0, irGet(step))
+                                putValueArgument(1, zero)
+                            },
+                            irCall(compFun).apply {
+                                putValueArgument(0, irGet(last))
+                                putValueArgument(1, irGet(inductionVariable))
+                            })
+                    )
+                }
+            }
+        }
 }
 
 internal class ProgressionLoopHeader(
-    private val headerInfo: ProgressionHeaderInfo,
+    override val headerInfo: ProgressionHeaderInfo,
     inductionVariable: IrVariable,
     last: IrVariable,
     step: IrVariable
-) : ForLoopHeader(inductionVariable, last, step, headerInfo.progressionType) {
+) : ForLoopHeader(headerInfo, inductionVariable, last, step) {
 
     override fun initializeLoopVariable(symbols: Symbols<CommonBackendContext>, builder: DeclarationIrBuilder) = with(builder) {
         // loopVariable = inductionVariable
         irGet(inductionVariable)
     }
 
+    // For this loop:
+    //
+    //   for (i in first()..last() step step())
+    //
+    // ...the functions may have side-effects so we need to call them in the following order: first() (inductionVariable), last(), step().
+    // Additional variables come first as they may be needed to the subsequent variables.
     override val declarations: List<IrStatement>
         get() = headerInfo.additionalVariables + listOf(inductionVariable, last, step)
 
     override fun buildInnerLoop(builder: DeclarationIrBuilder, loop: IrLoop, newBody: IrExpression?): IrLoop = with(builder) {
         if (headerInfo.canOverflow) {
-            // Condition: loopVariable != last. We cannot use the induction variable because it can overflow.
+            // If the induction variable CAN overflow, we cannot use it in the loop condition. Loop is lowered into something like:
+            //
+            //   var inductionVar = A
+            //   var last = B
+            //   if (inductionVar <= last) {
+            //     // Loop is not empty
+            //     do {
+            //       val loopVar = inductionVar
+            //       inductionVar++
+            //       // Loop body
+            //     } while (loopVar != last)
+            //   }
+            //
+            // The `if (inductionVar <= last)` "not empty" check is added in buildNotEmptyConditionIfNecessary().
             assert(loopVariable != null)
             val booleanNotFun = context.irBuiltIns.booleanClass.functions.first { it.owner.name.asString() == "not" }
             val newCondition = irCallOp(booleanNotFun, booleanNotFun.owner.returnType, irCall(context.irBuiltIns.eqeqSymbol).apply {
@@ -80,85 +152,38 @@ internal class ProgressionLoopHeader(
                 body = newBody
             }
         } else {
-            // If the induction variable cannot overflow, use a while loop using the "not empty" condition.
-            val newCondition = buildNotEmptyCondition(this@with)
+            // If the induction variable can NOT overflow, use a simple while loop. Loop is lowered into something like:
+            //
+            //   var inductionVar = A
+            //   var last = B
+            //   while (inductionVar <= last) {
+            //       val loopVar = inductionVar
+            //       inductionVar++
+            //       // Loop body
+            //   }
             IrWhileLoopImpl(loop.startOffset, loop.endOffset, loop.type, loop.origin).apply {
                 label = loop.label
-                condition = newCondition
+                condition = buildLoopCondition(this@with)
                 body = newBody
             }
         }
     }
 
-    // If the induction variable cannot overflow, we do NOT need the enclosing "not empty" check because the for-loop is lowered into a
-    // while loop that uses the "not empty" condition (see buildInnerLoop()); the enclosing check would be redundant.
+    // If the induction variable can NOT overflow, we do NOT need the enclosing "not empty" check because the for-loop is lowered into a
+    // simple while loop (see buildInnerLoop()); the enclosing check would be redundant.
     override fun buildNotEmptyConditionIfNecessary(builder: DeclarationIrBuilder): IrExpression? =
-        if (headerInfo.canOverflow) buildNotEmptyCondition(builder) else null
-
-    private fun buildNotEmptyCondition(builder: DeclarationIrBuilder): IrExpression =
-        with(builder) {
-            val builtIns = context.irBuiltIns
-            val progressionKotlinType = progressionType.elementType(builtIns).toKotlinType()
-            val lessOrEqualFun = builtIns.lessOrEqualFunByOperandType[progressionKotlinType]!!
-
-            // The default "not empty" condition depends on the direction.
-            val notEmptyCondition = when (headerInfo.direction) {
-                ProgressionDirection.DECREASING ->
-                    // last <= inductionVariable
-                    irCall(lessOrEqualFun).apply {
-                        putValueArgument(0, irGet(last))
-                        putValueArgument(1, irGet(inductionVariable))
-                    }
-                ProgressionDirection.INCREASING ->
-                    // inductionVariable <= last
-                    irCall(lessOrEqualFun).apply {
-                        putValueArgument(0, irGet(inductionVariable))
-                        putValueArgument(1, irGet(last))
-                    }
-                ProgressionDirection.UNKNOWN -> {
-                    // If the direction is unknown, we check depending on the "step" value:
-                    //   (step > 0 && inductionVariable <= last) || (step < 0 || last <= inductionVariable)
-                    val stepKotlinType = progressionType.stepType(builtIns).toKotlinType()
-                    val zero = if (progressionType == ProgressionType.LONG_PROGRESSION) irLong(0) else irInt(0)
-                    context.oror(
-                        context.andand(
-                            irCall(builtIns.greaterFunByOperandType[stepKotlinType]!!).apply {
-                                putValueArgument(0, irGet(step))
-                                putValueArgument(1, zero)
-                            },
-                            irCall(lessOrEqualFun).apply {
-                                putValueArgument(0, irGet(inductionVariable))
-                                putValueArgument(1, irGet(last))
-                            }),
-                        context.andand(
-                            irCall(builtIns.lessFunByOperandType[stepKotlinType]!!).apply {
-                                putValueArgument(0, irGet(step))
-                                putValueArgument(1, zero)
-                            },
-                            irCall(lessOrEqualFun).apply {
-                                putValueArgument(0, irGet(last))
-                                putValueArgument(1, irGet(inductionVariable))
-                            })
-                    )
-                }
-            }
-
-            if (headerInfo.additionalNotEmptyCondition != null) context.andand(
-                headerInfo.additionalNotEmptyCondition,
-                notEmptyCondition
-            ) else notEmptyCondition
-        }
+        if (headerInfo.canOverflow) buildLoopCondition(builder) else null
 }
 
 internal class ArrayLoopHeader(
-    private val headerInfo: ArrayHeaderInfo,
+    override val headerInfo: ArrayHeaderInfo,
     inductionVariable: IrVariable,
     last: IrVariable,
     step: IrVariable
-) : ForLoopHeader(inductionVariable, last, step, ProgressionType.INT_PROGRESSION) {
+) : ForLoopHeader(headerInfo, inductionVariable, last, step) {
 
     override fun initializeLoopVariable(symbols: Symbols<CommonBackendContext>, builder: DeclarationIrBuilder) = with(builder) {
-        // loopVariable = array[inductionVariable]
+        // inductionVar = loopVar[inductionVariable]
         val arrayGetFun = headerInfo.arrayVariable.type.getClass()!!.functions.first { it.name.asString() == "get" }
         irCall(arrayGetFun).apply {
             dispatchReceiver = irGet(headerInfo.arrayVariable)
@@ -170,17 +195,18 @@ internal class ArrayLoopHeader(
         get() = listOf(headerInfo.arrayVariable, inductionVariable, last, step)
 
     override fun buildInnerLoop(builder: DeclarationIrBuilder, loop: IrLoop, newBody: IrExpression?): IrLoop = with(builder) {
-        // Condition: inductionVariable != last
-        val builtIns = context.irBuiltIns
-        val callee = builtIns.lessOrEqualFunByOperandType[builtIns.int]!!
-        val newCondition = irCall(callee).apply {
-            putValueArgument(0, irGet(inductionVariable))
-            putValueArgument(1, irGet(last))
-        }
-
+        // Loop is lowered into something like:
+        //
+        //   var inductionVar = 0
+        //   var last = array.size
+        //   while (inductionVar < last) {
+        //       val loopVar = array[inductionVar++]
+        //       inductionVar++
+        //       // Loop body
+        //   }
         IrWhileLoopImpl(loop.startOffset, loop.endOffset, loop.type, loop.origin).apply {
             label = loop.label
-            condition = newCondition
+            condition = buildLoopCondition(this@with)
             body = newBody
         }
     }
@@ -224,18 +250,13 @@ internal class HeaderProcessor(
             with(headerInfo) {
                 // For this loop:
                 //
-                // ```
-                // for (i in first()..last() step step())
-                // ```
+                //   for (i in first()..last() step step())
                 //
-                // ...the functions may have side-effects so we need to call them in the following
-                // order: first(), last(), step().
-                //
-                // We also need to cast them to conform to the progression type so that operations
-                // in the induction variable within the loop are more efficient.
+                // We need to cast first(), last(). and step() to conform to the progression type so
+                // that operations on the induction variable within the loop are more efficient.
                 //
                 // In the above example, if first() is a Long and last() is an Int, this creates a
-                // LongProgression so last(), should be cast to a Long.
+                // LongProgression so last() should be cast to a Long.
                 val inductionVariable = scope.createTemporaryVariable(
                     first.castIfNecessary(
                         progressionType.elementType(context.irBuiltIns),
