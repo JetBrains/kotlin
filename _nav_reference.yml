@@ -22,6 +22,10 @@
   url: objc_interop.html
   title: "Objective-C and Swift Interop"
 
+- md: COCOAPODS.md
+  url: cocoapods.html
+  title: "CocoaPods Integration"
+
 - md: GRADLE_PLUGIN.md
   url: gradle_plugin.html
   title: "Gradle Plugin"
