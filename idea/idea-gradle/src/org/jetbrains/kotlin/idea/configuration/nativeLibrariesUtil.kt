@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.gradle.KotlinMPPGradleModel
 import org.jetbrains.kotlin.idea.configuration.DependencySubstitute.NoSubstitute
 import org.jetbrains.kotlin.idea.configuration.DependencySubstitute.YesSubstitute
 import org.jetbrains.kotlin.idea.inspections.gradle.findKotlinPluginVersion
+import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
 import org.jetbrains.kotlin.konan.library.lite.LiteKonanLibraryInfoProvider
 import org.jetbrains.plugins.gradle.ExternalDependencyId
 import org.jetbrains.plugins.gradle.model.DefaultExternalLibraryDependency
@@ -156,6 +157,7 @@ internal class KotlinNativeLibrariesDependencySubstitutor(
         val newLibraryName = "$KOTLIN_NATIVE_LIBRARY_PREFIX_PLUS_SPACE$nonNullKotlinVersion - ${libraryInfo.name}$platformNamePart"
 
         val substitute = DefaultExternalLibraryDependency().apply {
+            classpathOrder = if (libraryInfo.name == KONAN_STDLIB_NAME) -1 else 0 // keep stdlib upper
             name = newLibraryName
             packaging = DEFAULT_PACKAGING
             file = libraryFile
