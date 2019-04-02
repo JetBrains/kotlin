@@ -277,15 +277,15 @@ fun parseBitcodeFile(path: String): LLVMModuleRef = memScoped {
 }
 
 private val nounwindAttrKindId by lazy {
-    getAttributeKindId("nounwind")
+    getLlvmAttributeKindId("nounwind")
 }
 
 private val noreturnAttrKindId by lazy {
-    getAttributeKindId("noreturn")
+    getLlvmAttributeKindId("noreturn")
 }
 
 private val signextAttrKindId by lazy {
-    getAttributeKindId("signext")
+    getLlvmAttributeKindId("signext")
 }
 
 
@@ -294,12 +294,12 @@ fun isFunctionNoUnwind(function: LLVMValueRef): Boolean {
     return attribute != null
 }
 
-private fun getAttributeKindId(attributeName: String): Int {
-    val nounwindAttrKindId = LLVMGetEnumAttributeKindForName(attributeName, attributeName.length.signExtend())
-    if (nounwindAttrKindId == 0) {
+internal fun getLlvmAttributeKindId(attributeName: String): Int {
+    val attrKindId = LLVMGetEnumAttributeKindForName(attributeName, attributeName.length.signExtend())
+    if (attrKindId == 0) {
         throw Error("Unable to find '$attributeName' attribute kind id")
     }
-    return nounwindAttrKindId
+    return attrKindId
 }
 
 fun setFunctionNoUnwind(function: LLVMValueRef) {

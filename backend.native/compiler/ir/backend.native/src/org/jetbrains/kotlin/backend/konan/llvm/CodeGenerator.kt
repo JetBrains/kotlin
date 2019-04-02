@@ -424,6 +424,9 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
             call(context.llvm.allocArrayFunction, listOf(typeInfo, count), lifetime, exceptionHandler)
 
     fun unreachable(): LLVMValueRef? {
+        if (context.config.debug) {
+            call(context.llvm.llvmTrap, emptyList())
+        }
         val res = LLVMBuildUnreachable(builder)
         currentPositionHolder.setAfterTerminator()
         return res

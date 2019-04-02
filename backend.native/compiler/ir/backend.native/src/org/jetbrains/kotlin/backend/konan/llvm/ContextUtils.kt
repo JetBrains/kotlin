@@ -296,6 +296,16 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
         return LLVMAddFunction(llvmModule, "llvm.memcpy.p0i8.p0i8.i32", functionType)!!
     }
 
+    private fun llvmIntrinsic(name: String, type: LLVMTypeRef, vararg attributes: String): LLVMValueRef {
+        val result = LLVMAddFunction(llvmModule, name, type)!!
+        attributes.forEach {
+            val kindId = getLlvmAttributeKindId(it)
+            val attribute = LLVMCreateEnumAttribute(LLVMGetTypeContext(type), kindId, 0)!!
+            LLVMAddAttributeAtIndex(result, LLVMAttributeFunctionIndex, attribute)
+        }
+        return result
+    }
+
     internal fun externalFunction(
             name: String,
             type: LLVMTypeRef,
@@ -473,6 +483,12 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
 
     val memsetFunction = importMemset()
     //val memcpyFunction = importMemcpy()
+
+    val llvmTrap = llvmIntrinsic(
+            "llvm.trap",
+            functionType(voidType, false),
+            "cold", "noreturn", "nounwind"
+    )
 
     val usedFunctions = mutableListOf<LLVMValueRef>()
     val usedGlobals = mutableListOf<LLVMValueRef>()
