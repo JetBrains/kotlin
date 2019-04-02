@@ -163,7 +163,7 @@ class JKMultiverseMethodSymbol(override val target: PsiMethod, private val symbo
         get() = target.getKotlinFqName()?.asString() ?: target.name
 }
 
-class JKMultiverseFunctionSymbol(override val target: KtNamedFunction, private val symbolProvider: JKSymbolProvider) : JKMethodSymbol {
+class JKMultiverseFunctionSymbol(override val target: KtFunction, private val symbolProvider: JKSymbolProvider) : JKMethodSymbol {
     override val receiverType: JKType?
         get() = target.receiverTypeReference?.toJK(symbolProvider)
     override val parameterTypes: List<JKType>?
@@ -186,7 +186,7 @@ class JKMultiverseFunctionSymbol(override val target: KtNamedFunction, private v
     override val declaredIn: JKSymbol
         get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
     override val fqName: String
-        get() = target.fqName!!.asString()
+        get() = target.fqName?.asString() ?: target.name!!
 }
 
 class JKUniverseFieldSymbol(override val symbolProvider: JKSymbolProvider) : JKFieldSymbol, JKUniverseSymbol<JKVariable>() {
