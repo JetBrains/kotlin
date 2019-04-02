@@ -1,5 +1,9 @@
 public open class BaseClass : R|kotlin/Any| {
+    public constructor()
+
 }
 
 public open class Subclass : R|test/BaseClass| {
+    public constructor()
+
 }

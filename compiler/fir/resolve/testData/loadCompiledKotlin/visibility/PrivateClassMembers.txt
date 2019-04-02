@@ -1,4 +1,6 @@
 public final class PrivateClassMembers : R|kotlin/Any| {
     private final fun f(): R|kotlin/Int|
 
+    public constructor()
+
 }

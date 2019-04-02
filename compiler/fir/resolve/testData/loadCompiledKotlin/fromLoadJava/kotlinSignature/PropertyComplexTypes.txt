@@ -1,2 +1,4 @@
 <T> public open class PropertyComplexTypes : R|kotlin/Any| {
+    public constructor()
+
 }

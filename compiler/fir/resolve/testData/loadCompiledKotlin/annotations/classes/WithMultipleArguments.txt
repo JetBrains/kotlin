@@ -1,5 +1,9 @@
 public final annotation class Anno : R|kotlin/Annotation| {
+    public constructor(int: R|kotlin/Int|, string: R|kotlin/String|, double: R|kotlin/Double|)
+
 }
 
 public final class Class : R|kotlin/Any| {
+    public constructor()
+
 }

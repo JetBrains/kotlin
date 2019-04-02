@@ -1,2 +1,4 @@
 <T> public open class ConstructorWithNewTypeParams : R|kotlin/Any| {
+    public constructor(first: R|kotlin/Any|)
+
 }

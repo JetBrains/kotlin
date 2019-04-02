@@ -1,4 +1,6 @@
 <P> public open class MethodWithTypePRefClassP : R|kotlin/Any| {
     <Q> public final fun f(): R|kotlin/Unit|
 
+    public constructor()
+
 }

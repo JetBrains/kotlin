@@ -1,2 +1,4 @@
 public open class WrongFieldMutability : R|kotlin/Any| {
+    public constructor()
+
 }

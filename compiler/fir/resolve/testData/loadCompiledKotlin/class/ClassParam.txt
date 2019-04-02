@@ -1,2 +1,4 @@
 <T> public final class Beer : R|kotlin/Any| {
+    public constructor()
+
 }

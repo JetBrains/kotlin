@@ -1,5 +1,9 @@
 public open class ClassVarModality : R|kotlin/Any| {
+    public constructor()
+
 }
 
 public abstract class ClassVarModalityAbstract : R|kotlin/Any| {
+    public constructor()
+
 }

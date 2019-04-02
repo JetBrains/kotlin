@@ -1,4 +1,6 @@
 public open class AllBoundsInWhen : R|kotlin/Any| {
     <T> public open fun foo(): R|kotlin/Unit|
 
+    public constructor()
+
 }

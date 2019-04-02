@@ -1,2 +1,4 @@
 public open class MyException : R|kotlin/Any| {
+    public constructor(p0: R|kotlin/String|?, p1: R|kotlin/Throwable|?)
+
 }

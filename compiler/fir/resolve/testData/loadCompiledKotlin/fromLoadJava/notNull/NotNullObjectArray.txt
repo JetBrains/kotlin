@@ -1,4 +1,6 @@
 public open class NotNullObjectArray : R|kotlin/Any| {
     public open fun hi(): R|kotlin/Array<kotlin/Any>|
 
+    public constructor()
+
 }

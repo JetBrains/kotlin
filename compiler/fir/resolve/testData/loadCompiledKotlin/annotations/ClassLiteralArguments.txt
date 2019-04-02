@@ -1,5 +1,9 @@
 public final annotation class Anno : R|kotlin/Annotation| {
+    public constructor(klass: R|kotlin/reflect/KClass<*>|, klasses: R|kotlin/Array<kotlin/reflect/KClass<*>>|, sarKlass: R|kotlin/reflect/KClass<kotlin/Array<kotlin/String>>|, d2arKlass: R|kotlin/reflect/KClass<kotlin/Array<kotlin/DoubleArray>>|)
+
 }
 
 public final class Klass : R|kotlin/Any| {
+    public constructor()
+
 }

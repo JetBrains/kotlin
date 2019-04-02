@@ -17,4 +17,6 @@ public final class A : R|kotlin/Any| {
 
     public final fun R|kotlin/String|.f3(): R|kotlin/Unit|
 
+    public constructor()
+
 }

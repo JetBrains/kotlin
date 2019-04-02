@@ -1,6 +1,10 @@
 public final class Outer : R|kotlin/Any| {
+    public constructor()
+
     public final object Obj : R|kotlin/Any| {
         public final fun f(): R|kotlin/String|
+
+        private constructor()
 
     }
 

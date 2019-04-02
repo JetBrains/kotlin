@@ -1,4 +1,6 @@
 public final annotation class Anno : R|kotlin/Annotation| {
+    public constructor()
+
 }
 
 public abstract interface Trait : R|kotlin/Any| {

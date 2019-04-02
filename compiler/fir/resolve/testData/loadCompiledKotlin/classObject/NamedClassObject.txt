@@ -1,6 +1,10 @@
 public final class NamedClassObject : R|kotlin/Any| {
+    public constructor()
+
     public final companion object Named : R|kotlin/Any| {
         public final fun f(): R|kotlin/Int|
+
+        private constructor()
 
     }
 

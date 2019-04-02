@@ -1,5 +1,9 @@
 public open class NestedClass : R|kotlin/Any| {
+    public constructor()
+
     public open class Nested : R|kotlin/Any| {
+        public constructor()
+
     }
 
 }

@@ -2,4 +2,6 @@ public abstract interface A : R|kotlin/Any| {
 }
 
 public final class B : R|test/A| {
+    public constructor()
+
 }

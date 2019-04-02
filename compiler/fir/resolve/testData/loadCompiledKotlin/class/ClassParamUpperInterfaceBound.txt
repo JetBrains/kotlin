@@ -1,2 +1,4 @@
 <A> public final class Clock : R|kotlin/Any| {
+    public constructor()
+
 }

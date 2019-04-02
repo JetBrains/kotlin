@@ -1,4 +1,6 @@
 public final class ClassFunGetFoo : R|kotlin/Any| {
     public final fun set(p: R|kotlin/Int|): R|kotlin/Unit|
 
+    public constructor()
+
 }

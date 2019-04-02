@@ -1,11 +1,19 @@
 <test> public final class ConstructorTypeParamClassObjectConflict : R|kotlin/Any| {
+    public constructor()
+
     public final companion object Companion : R|kotlin/Any| {
+        private constructor()
+
     }
 
 }
 
 <test> public final class ConstructorTypeParamClassObjectTypeConflict : R|kotlin/Any| {
+    public constructor()
+
     public final companion object Companion : R|kotlin/Any| {
+        private constructor()
+
         public abstract interface test : R|kotlin/Any| {
         }
 
@@ -14,19 +22,31 @@
 }
 
 public final class TestClassObjectAndClassConflict : R|kotlin/Any| {
+    public constructor()
+
     public final companion object Companion : R|kotlin/Any| {
+        private constructor()
+
     }
 
 }
 
 public final class TestConstructorParamClassObjectConflict : R|kotlin/Any| {
+    public constructor(test: R|kotlin/String|)
+
     public final companion object Companion : R|kotlin/Any| {
+        private constructor()
+
     }
 
 }
 
 public final class TestConstructorValClassObjectConflict : R|kotlin/Any| {
+    public constructor(test: R|kotlin/String|)
+
     public final companion object Companion : R|kotlin/Any| {
+        private constructor()
+
     }
 
 }

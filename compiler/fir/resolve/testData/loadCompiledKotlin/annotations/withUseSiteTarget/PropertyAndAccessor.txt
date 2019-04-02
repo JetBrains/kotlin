@@ -1,7 +1,11 @@
 public final annotation class A : R|kotlin/Annotation| {
+    public constructor(value: R|kotlin/String|)
+
 }
 
 public final annotation class B : R|kotlin/Annotation| {
+    public constructor(value: R|kotlin/Array<kotlin/String>|)
+
 }
 
 public abstract interface I : R|kotlin/Any| {

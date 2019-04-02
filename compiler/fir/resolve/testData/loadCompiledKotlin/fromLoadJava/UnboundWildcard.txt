@@ -1,5 +1,7 @@
 public final class UnboundWildcard : R|kotlin/Any| {
-    public final fun foo(): R|test/UnboundWildcard.MyClass<*>|
+    public final fun foo(): R|test/UnboundWildcard.MyClass<*>|?
+
+    public constructor()
 
     <T> public abstract interface MyClass : R|kotlin/Any| {
     }

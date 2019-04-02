@@ -1,14 +1,24 @@
 public final class O : R|kotlin/Any| {
+    public constructor()
+
     public final class A1 : R|kotlin/Any| {
+        public constructor()
+
     }
 
     public final inner class A2 : R|kotlin/Any| {
+        public constructor()
+
     }
 
     public final class B1 : R|kotlin/Any| {
+        public constructor()
+
     }
 
     public final inner class B2 : R|kotlin/Any| {
+        public constructor()
+
     }
 
     public abstract interface C1 : R|kotlin/Any| {

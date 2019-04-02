@@ -1,2 +1,4 @@
 public open class ConstructorWithSeveralParams : R|kotlin/Any| {
+    public constructor(integer: R|kotlin/Int|, intField: R|kotlin/Int|, collection: R|java/util/ArrayList<kotlin/String>|)
+
 }

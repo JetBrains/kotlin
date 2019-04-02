@@ -1,2 +1,4 @@
 public final enum class EnumWithPrimitiveConstructorParameter : R|kotlin/Enum<test/EnumWithPrimitiveConstructorParameter>| {
+    private constructor(b: R|kotlin/Boolean|)
+
 }

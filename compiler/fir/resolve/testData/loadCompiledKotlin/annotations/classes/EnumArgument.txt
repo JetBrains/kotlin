@@ -1,14 +1,24 @@
 public final annotation class Anno : R|kotlin/Annotation| {
+    public constructor(t: R|java/lang/annotation/ElementType|)
+
 }
 
 public final class Class : R|kotlin/Any| {
+    public constructor()
+
     public final companion object Companion : R|kotlin/Any| {
+        private constructor()
+
     }
 
     public final inner class Inner : R|kotlin/Any| {
+        public constructor()
+
     }
 
     public final class Nested : R|kotlin/Any| {
+        public constructor()
+
     }
 
 }

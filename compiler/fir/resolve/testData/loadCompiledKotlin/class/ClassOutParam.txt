@@ -1,2 +1,4 @@
 <T> public final class Juice : R|kotlin/Any| {
+    public constructor()
+
 }

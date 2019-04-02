@@ -1,2 +1,4 @@
 public open class ConstructorGenericSimple : R|kotlin/Any| {
+    public constructor(p0: R|kotlin/Any|?)
+
 }

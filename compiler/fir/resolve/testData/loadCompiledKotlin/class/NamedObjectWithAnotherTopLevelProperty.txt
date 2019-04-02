@@ -1,4 +1,6 @@
 public final object Obj : R|kotlin/Any| {
     public final fun f(): R|kotlin/String|
 
+    private constructor()
+
 }

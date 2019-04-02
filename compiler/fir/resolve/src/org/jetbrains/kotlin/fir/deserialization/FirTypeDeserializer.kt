@@ -90,7 +90,7 @@ class FirTypeDeserializer(
             //createSuspendFunctionType(annotations, constructor, arguments, proto.nullable)
             ConeClassErrorType("createSuspendFunctionType not supported")
         } else {
-            ConeClassTypeImpl(constructor, arguments, isNullable = false)
+            ConeClassTypeImpl(constructor, arguments, isNullable = proto.nullable)
         }
 
         val abbreviatedTypeProto = proto.abbreviatedType(typeTable) ?: return simpleType

@@ -1,2 +1,4 @@
 public final class TestConstructor : R|kotlin/Any| {
+    public constructor(p: R|kotlin/Int|, s: R|kotlin/Int|)
+
 }

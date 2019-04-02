@@ -1,7 +1,11 @@
 public final class A : R|kotlin/Any| {
     public final fun R|kotlin/String|.myLength(q: R|kotlin/String|): R|kotlin/Int|
 
+    public constructor()
+
 }
 
 public final annotation class Ann : R|kotlin/Annotation| {
+    public constructor()
+
 }

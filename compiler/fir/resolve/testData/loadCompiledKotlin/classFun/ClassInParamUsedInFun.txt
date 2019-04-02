@@ -1,4 +1,6 @@
 <T> public final class ClassParamUsedInFun : R|kotlin/Any| {
     public final fun f(t: R|T|): R|kotlin/Int|
 
+    public constructor()
+
 }

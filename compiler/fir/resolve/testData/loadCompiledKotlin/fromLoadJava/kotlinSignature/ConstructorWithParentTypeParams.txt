@@ -1,2 +1,4 @@
 <T> public open class ConstructorWithParentTypeParams : R|kotlin/Any| {
+    public constructor(first: R|T|)
+
 }

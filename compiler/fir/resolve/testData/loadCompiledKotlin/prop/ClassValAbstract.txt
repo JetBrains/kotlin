@@ -1,2 +1,4 @@
 public abstract class ClassValAbstract : R|kotlin/Any| {
+    public constructor()
+
 }

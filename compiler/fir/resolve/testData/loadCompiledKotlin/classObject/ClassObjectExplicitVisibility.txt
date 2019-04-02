@@ -1,53 +1,89 @@
 internal final class IntInt : R|kotlin/Any| {
+    public constructor()
+
     internal final companion object Companion : R|kotlin/Any| {
+        private constructor()
+
     }
 
 }
 
 internal final class IntPri : R|kotlin/Any| {
+    public constructor()
+
     private final companion object Companion : R|kotlin/Any| {
+        private constructor()
+
     }
 
 }
 
 internal final class IntPub : R|kotlin/Any| {
+    public constructor()
+
     public final companion object Companion : R|kotlin/Any| {
+        private constructor()
+
     }
 
 }
 
 private final class PriInt : R|kotlin/Any| {
+    public constructor()
+
     internal final companion object Companion : R|kotlin/Any| {
+        private constructor()
+
     }
 
 }
 
 private final class PriPri : R|kotlin/Any| {
+    public constructor()
+
     private final companion object Companion : R|kotlin/Any| {
+        private constructor()
+
     }
 
 }
 
 private final class PriPub : R|kotlin/Any| {
+    public constructor()
+
     public final companion object Companion : R|kotlin/Any| {
+        private constructor()
+
     }
 
 }
 
 public final class PubInt : R|kotlin/Any| {
+    public constructor()
+
     internal final companion object Companion : R|kotlin/Any| {
+        private constructor()
+
     }
 
 }
 
 public final class PubPri : R|kotlin/Any| {
+    public constructor()
+
     private final companion object Companion : R|kotlin/Any| {
+        private constructor()
+
     }
 
 }
 
 public final class PubPub : R|kotlin/Any| {
+    public constructor()
+
     public final companion object Companion : R|kotlin/Any| {
+        private constructor()
+
     }
 
 }

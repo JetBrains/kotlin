@@ -1,5 +1,9 @@
 public final class Outer : R|kotlin/Any| {
+    public constructor()
+
     public final class Nested : R|kotlin/Any| {
+        public constructor()
+
     }
 
 }

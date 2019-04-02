@@ -1,2 +1,4 @@
 public final class ClassValParams : R|kotlin/Any| {
+    public constructor(pr1: R|kotlin/String|, pr2: R|kotlin/Int|, pr3: R|kotlin/Long|, pr4: R|java/util/Date|, pr5: R|kotlin/Any|, pr6: R|java/lang/Object|)
+
 }

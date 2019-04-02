@@ -1,4 +1,6 @@
 public final class MethosWithPRefTP : R|kotlin/Any| {
     <P> public final fun f(p0: R|P|): R|kotlin/Unit|
 
+    public constructor()
+
 }

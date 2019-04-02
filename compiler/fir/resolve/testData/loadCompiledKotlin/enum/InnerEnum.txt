@@ -1,5 +1,9 @@
 public final class A : R|kotlin/Any| {
+    public constructor()
+
     public final enum class E : R|kotlin/Enum<test/A.E>| {
+        private constructor()
+
     }
 
 }

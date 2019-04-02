@@ -1,2 +1,4 @@
 <R, P> public open class ClassWithTypePRefNext : R|kotlin/Any| {
+    public constructor()
+
 }

@@ -1,2 +1,4 @@
 public open class SyntaxErrorInFieldAnnotation : R|kotlin/Any| {
+    public constructor()
+
 }

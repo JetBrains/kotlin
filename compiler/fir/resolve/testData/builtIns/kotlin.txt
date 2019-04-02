@@ -24,19 +24,21 @@ public final fun longArrayOf(vararg elements: R|kotlin/LongArray|): R|kotlin/Lon
 
 public final fun shortArrayOf(vararg elements: R|kotlin/ShortArray|): R|kotlin/ShortArray|
 
-public final operator fun R|kotlin/String|.plus(other: R|kotlin/Any|): R|kotlin/String|
+public final operator fun R|kotlin/String|?.plus(other: R|kotlin/Any|?): R|kotlin/String|
 
-public final fun R|kotlin/Any|.toString(): R|kotlin/String|
+public final fun R|kotlin/Any|?.toString(): R|kotlin/String|
 
 public abstract interface Annotation : R|kotlin/Any| {
 }
 
 public open class Any {
-    public open operator fun equals(other: R|kotlin/Any|): R|kotlin/Boolean|
+    public open operator fun equals(other: R|kotlin/Any|?): R|kotlin/Boolean|
 
     public open fun hashCode(): R|kotlin/Int|
 
     public open fun toString(): R|kotlin/String|
+
+    public constructor()
 
 }
 
@@ -46,6 +48,8 @@ public open class Any {
     public final operator fun iterator(): R|kotlin/collections/Iterator<T>|
 
     public final operator fun set(index: R|kotlin/Int|, value: R|T|): R|kotlin/Unit|
+
+    public constructor(size: R|kotlin/Int|, init: R|kotlin/Function1<kotlin/Int, T>|)
 
 }
 
@@ -60,7 +64,11 @@ public final class Boolean : R|kotlin/Comparable<kotlin/Boolean>| {
 
     public final infix fun xor(other: R|kotlin/Boolean|): R|kotlin/Boolean|
 
+    private constructor()
+
     public final companion object Companion : R|kotlin/Any| {
+        private constructor()
+
     }
 
 }
@@ -71,6 +79,10 @@ public final class BooleanArray : R|kotlin/Any| {
     public final operator fun iterator(): R|kotlin/collections/BooleanIterator|
 
     public final operator fun set(index: R|kotlin/Int|, value: R|kotlin/Boolean|): R|kotlin/Unit|
+
+    public constructor(size: R|kotlin/Int|, init: R|kotlin/Function1<kotlin/Int, kotlin/Boolean>|)
+
+    public constructor(size: R|kotlin/Int|)
 
 }
 
@@ -189,7 +201,11 @@ public final class Byte : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Byte>| {
 
     public final operator fun unaryPlus(): R|kotlin/Int|
 
+    private constructor()
+
     public final companion object Companion : R|kotlin/Any| {
+        private constructor()
+
     }
 
 }
@@ -200,6 +216,10 @@ public final class ByteArray : R|kotlin/Any| {
     public final operator fun iterator(): R|kotlin/collections/ByteIterator|
 
     public final operator fun set(index: R|kotlin/Int|, value: R|kotlin/Byte|): R|kotlin/Unit|
+
+    public constructor(size: R|kotlin/Int|, init: R|kotlin/Function1<kotlin/Int, kotlin/Byte>|)
+
+    public constructor(size: R|kotlin/Int|)
 
 }
 
@@ -232,7 +252,11 @@ public final class Char : R|kotlin/Comparable<kotlin/Char>| {
 
     public final fun toShort(): R|kotlin/Short|
 
+    private constructor()
+
     public final companion object Companion : R|kotlin/Any| {
+        private constructor()
+
     }
 
 }
@@ -243,6 +267,10 @@ public final class CharArray : R|kotlin/Any| {
     public final operator fun iterator(): R|kotlin/collections/CharIterator|
 
     public final operator fun set(index: R|kotlin/Int|, value: R|kotlin/Char|): R|kotlin/Unit|
+
+    public constructor(size: R|kotlin/Int|, init: R|kotlin/Function1<kotlin/Int, kotlin/Char>|)
+
+    public constructor(size: R|kotlin/Int|)
 
 }
 
@@ -264,9 +292,13 @@ public abstract interface Cloneable : R|kotlin/Any| {
 }
 
 public final annotation class Deprecated : R|kotlin/Annotation| {
+    public constructor(message: R|kotlin/String|, replaceWith: R|kotlin/ReplaceWith|, level: R|kotlin/DeprecationLevel|)
+
 }
 
 public final enum class DeprecationLevel : R|kotlin/Enum<kotlin/DeprecationLevel>| {
+    private constructor()
+
 }
 
 public final class Double : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Double>| {
@@ -376,7 +408,11 @@ public final class Double : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Double>
 
     public final operator fun unaryPlus(): R|kotlin/Double|
 
+    private constructor()
+
     public final companion object Companion : R|kotlin/Any| {
+        private constructor()
+
     }
 
 }
@@ -388,9 +424,15 @@ public final class DoubleArray : R|kotlin/Any| {
 
     public final operator fun set(index: R|kotlin/Int|, value: R|kotlin/Double|): R|kotlin/Unit|
 
+    public constructor(size: R|kotlin/Int|, init: R|kotlin/Function1<kotlin/Int, kotlin/Double>|)
+
+    public constructor(size: R|kotlin/Int|)
+
 }
 
 public final annotation class DslMarker : R|kotlin/Annotation| {
+    public constructor()
+
 }
 
 <E> public abstract class Enum : R|kotlin/Comparable<E>| {
@@ -398,18 +440,24 @@ public final annotation class DslMarker : R|kotlin/Annotation| {
 
     public final operator fun compareTo(other: R|E|): R|kotlin/Int|
 
-    public final operator fun equals(other: R|kotlin/Any|): R|kotlin/Boolean|
+    public final operator fun equals(other: R|kotlin/Any|?): R|kotlin/Boolean|
 
     public final fun hashCode(): R|kotlin/Int|
 
     public open fun toString(): R|kotlin/String|
 
+    public constructor(name: R|kotlin/String|, ordinal: R|kotlin/Int|)
+
     public final companion object Companion : R|kotlin/Any| {
+        private constructor()
+
     }
 
 }
 
 public final annotation class ExtensionFunctionType : R|kotlin/Annotation| {
+    public constructor()
+
 }
 
 public final class Float : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Float>| {
@@ -519,7 +567,11 @@ public final class Float : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Float>| 
 
     public final operator fun unaryPlus(): R|kotlin/Float|
 
+    private constructor()
+
     public final companion object Companion : R|kotlin/Any| {
+        private constructor()
+
     }
 
 }
@@ -530,6 +582,10 @@ public final class FloatArray : R|kotlin/Any| {
     public final operator fun iterator(): R|kotlin/collections/FloatIterator|
 
     public final operator fun set(index: R|kotlin/Int|, value: R|kotlin/Float|): R|kotlin/Unit|
+
+    public constructor(size: R|kotlin/Int|, init: R|kotlin/Function1<kotlin/Int, kotlin/Float>|)
+
+    public constructor(size: R|kotlin/Int|)
 
 }
 
@@ -665,7 +721,11 @@ public final class Int : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Int>| {
 
     public final infix fun xor(other: R|kotlin/Int|): R|kotlin/Int|
 
+    private constructor()
+
     public final companion object Companion : R|kotlin/Any| {
+        private constructor()
+
     }
 
 }
@@ -676,6 +736,10 @@ public final class IntArray : R|kotlin/Any| {
     public final operator fun iterator(): R|kotlin/collections/IntIterator|
 
     public final operator fun set(index: R|kotlin/Int|, value: R|kotlin/Int|): R|kotlin/Unit|
+
+    public constructor(size: R|kotlin/Int|, init: R|kotlin/Function1<kotlin/Int, kotlin/Int>|)
+
+    public constructor(size: R|kotlin/Int|)
 
 }
 
@@ -808,7 +872,11 @@ public final class Long : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Long>| {
 
     public final infix fun xor(other: R|kotlin/Long|): R|kotlin/Long|
 
+    private constructor()
+
     public final companion object Companion : R|kotlin/Any| {
+        private constructor()
+
     }
 
 }
@@ -820,9 +888,15 @@ public final class LongArray : R|kotlin/Any| {
 
     public final operator fun set(index: R|kotlin/Int|, value: R|kotlin/Long|): R|kotlin/Unit|
 
+    public constructor(size: R|kotlin/Int|, init: R|kotlin/Function1<kotlin/Int, kotlin/Long>|)
+
+    public constructor(size: R|kotlin/Int|)
+
 }
 
 public final class Nothing {
+    private constructor()
+
 }
 
 public abstract class Number : R|kotlin/Any| {
@@ -840,15 +914,23 @@ public abstract class Number : R|kotlin/Any| {
 
     public abstract fun toShort(): R|kotlin/Short|
 
+    public constructor()
+
 }
 
 public final annotation class ParameterName : R|kotlin/Annotation| {
+    public constructor(name: R|kotlin/String|)
+
 }
 
 public final annotation class PublishedApi : R|kotlin/Annotation| {
+    public constructor()
+
 }
 
 public final annotation class ReplaceWith : R|kotlin/Annotation| {
+    public constructor(expression: R|kotlin/String|, vararg imports: R|kotlin/Array<out kotlin/String>|)
+
 }
 
 public final class Short : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Short>| {
@@ -966,7 +1048,11 @@ public final class Short : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Short>| 
 
     public final operator fun unaryPlus(): R|kotlin/Int|
 
+    private constructor()
+
     public final companion object Companion : R|kotlin/Any| {
+        private constructor()
+
     }
 
 }
@@ -978,9 +1064,15 @@ public final class ShortArray : R|kotlin/Any| {
 
     public final operator fun set(index: R|kotlin/Int|, value: R|kotlin/Short|): R|kotlin/Unit|
 
+    public constructor(size: R|kotlin/Int|, init: R|kotlin/Function1<kotlin/Int, kotlin/Short>|)
+
+    public constructor(size: R|kotlin/Int|)
+
 }
 
 public final annotation class SinceKotlin : R|kotlin/Annotation| {
+    public constructor(version: R|kotlin/String|)
+
 }
 
 public final class String : R|kotlin/Comparable<kotlin/String>|, R|kotlin/CharSequence| {
@@ -988,26 +1080,44 @@ public final class String : R|kotlin/Comparable<kotlin/String>|, R|kotlin/CharSe
 
     public open operator fun get(index: R|kotlin/Int|): R|kotlin/Char|
 
-    public final operator fun plus(other: R|kotlin/Any|): R|kotlin/String|
+    public final operator fun plus(other: R|kotlin/Any|?): R|kotlin/String|
 
     public open fun subSequence(startIndex: R|kotlin/Int|, endIndex: R|kotlin/Int|): R|kotlin/CharSequence|
 
+    public constructor()
+
     public final companion object Companion : R|kotlin/Any| {
+        private constructor()
+
     }
 
 }
 
 public final annotation class Suppress : R|kotlin/Annotation| {
+    public constructor(vararg names: R|kotlin/Array<out kotlin/String>|)
+
 }
 
 public open class Throwable : R|kotlin/Any| {
+    public constructor(message: R|kotlin/String|?)
+
+    public constructor(cause: R|kotlin/Throwable|?)
+
+    public constructor()
+
+    public constructor(message: R|kotlin/String|?, cause: R|kotlin/Throwable|?)
+
 }
 
 public final object Unit : R|kotlin/Any| {
     public open fun toString(): R|kotlin/String|
 
+    private constructor()
+
 }
 
 public final annotation class UnsafeVariance : R|kotlin/Annotation| {
+    public constructor()
+
 }
 

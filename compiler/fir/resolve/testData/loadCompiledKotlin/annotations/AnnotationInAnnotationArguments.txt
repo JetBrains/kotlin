@@ -1,14 +1,24 @@
 public final class AnnotationInAnnotationArguments : R|kotlin/Any| {
+    public constructor()
+
 }
 
 public final enum class E : R|kotlin/Enum<test/E>| {
+    private constructor()
+
 }
 
 public final annotation class EnumOption : R|kotlin/Annotation| {
+    public constructor(option: R|test/E|)
+
 }
 
 public final annotation class OptionGroups : R|kotlin/Annotation| {
+    public constructor(o1: R|test/StringOptions|, o2: R|test/EnumOption|)
+
 }
 
 public final annotation class StringOptions : R|kotlin/Annotation| {
+    public constructor(vararg option: R|kotlin/Array<out kotlin/String>|)
+
 }

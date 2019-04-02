@@ -1,2 +1,4 @@
 public final annotation class Ann : R|kotlin/Annotation| {
+    public constructor(value: R|kotlin/String|)
+
 }

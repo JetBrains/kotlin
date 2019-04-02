@@ -2,6 +2,8 @@ public abstract interface Test : R|kotlin/Any| {
     public final companion object Companion : R|kotlin/Any| {
         public final fun incProp4(): R|kotlin/Unit|
 
+        private constructor()
+
     }
 
 }

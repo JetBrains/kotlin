@@ -1,5 +1,9 @@
 public final annotation class Anno : R|kotlin/Annotation| {
+    public constructor()
+
 }
 
 public final class X : R|kotlin/Any| {
+    public constructor()
+
 }

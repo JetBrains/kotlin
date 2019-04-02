@@ -1,26 +1,44 @@
 public final annotation class BooleanAnno : R|kotlin/Annotation| {
+    public constructor(value: R|kotlin/Boolean|)
+
 }
 
 public final annotation class ByteAnno : R|kotlin/Annotation| {
+    public constructor(value: R|kotlin/Byte|)
+
 }
 
 public final annotation class CharAnno : R|kotlin/Annotation| {
+    public constructor(value: R|kotlin/Char|)
+
 }
 
 public final class Class : R|kotlin/Any| {
+    public constructor()
+
 }
 
 public final annotation class DoubleAnno : R|kotlin/Annotation| {
+    public constructor(value: R|kotlin/Double|)
+
 }
 
 public final annotation class FloatAnno : R|kotlin/Annotation| {
+    public constructor(value: R|kotlin/Float|)
+
 }
 
 public final annotation class IntAnno : R|kotlin/Annotation| {
+    public constructor(value: R|kotlin/Int|)
+
 }
 
 public final annotation class LongAnno : R|kotlin/Annotation| {
+    public constructor(value: R|kotlin/Long|)
+
 }
 
 public final annotation class ShortAnno : R|kotlin/Annotation| {
+    public constructor(value: R|kotlin/Short|)
+
 }

@@ -1,2 +1,4 @@
 public open class NoFieldTypeRef : R|kotlin/Any| {
+    public constructor()
+
 }

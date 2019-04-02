@@ -1,7 +1,11 @@
 public final annotation class Anno : R|kotlin/Annotation| {
+    public constructor(t: R|java/lang/annotation/ElementType|)
+
 }
 
 public final class Class : R|kotlin/Any| {
     public final fun foo(): R|kotlin/Unit|
+
+    public constructor()
 
 }

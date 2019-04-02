@@ -1,7 +1,11 @@
 <T> public open class Base : R|kotlin/Any| {
     public final fun foo(): R|T|
 
+    public constructor()
+
 }
 
 public final class Inh : R|test/Base<kotlin/String>| {
+    public constructor()
+
 }

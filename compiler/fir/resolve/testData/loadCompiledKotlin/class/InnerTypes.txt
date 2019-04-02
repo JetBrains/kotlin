@@ -1,15 +1,23 @@
 <E, F> public final class Outer : R|kotlin/Any| {
     public final fun bar(x: R|test/Outer.Inner2<kotlin/String, kotlin/Double>|, y: R|test/Outer.Inner2<E, F>|): R|kotlin/Unit|
 
+    public constructor()
+
     <G, H> public final inner class Inner : R|kotlin/Any| {
+        public constructor()
+
         <I> public final inner class Inner3 : R|kotlin/Any| {
             public final fun foo(x: R|test/Outer.Inner<G, kotlin/Int, kotlin/String, F>|, y: R|test/Outer.Inner<E, kotlin/Double, E, F>|, z: R|test/Outer.Inner.Inner3<kotlin/Double, G, kotlin/Int, kotlin/String, F>|, w: R|test/Outer.Inner.Inner3<*, G, H, E, F>|): R|kotlin/Unit|
+
+            public constructor()
 
         }
 
     }
 
     public final inner class Inner2 : R|kotlin/Any| {
+        public constructor()
+
     }
 
 }

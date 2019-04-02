@@ -1,2 +1,4 @@
 <P, Q> public final class ClassWithTypePP : R|kotlin/Any| {
+    public constructor()
+
 }

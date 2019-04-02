@@ -1,2 +1,4 @@
 public final class ClassWithConstructorWithValueParamWithDefaultValue : R|kotlin/Any| {
+    public constructor(p: R|kotlin/Int|)
+
 }

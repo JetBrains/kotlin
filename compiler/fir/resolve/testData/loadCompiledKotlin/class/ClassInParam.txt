@@ -1,2 +1,4 @@
 <T> public final class Wine : R|kotlin/Any| {
+    public constructor()
+
 }

@@ -1,2 +1,4 @@
 public final class ExtPropInClass : R|kotlin/Any| {
+    public constructor()
+
 }

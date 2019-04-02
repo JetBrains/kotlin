@@ -1,4 +1,6 @@
 public open class VarargInt : R|kotlin/Any| {
     public open fun vararg(vararg p0: R|kotlin/IntArray|): R|kotlin/Unit|
 
+    public constructor()
+
 }

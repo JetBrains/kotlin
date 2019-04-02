@@ -1,8 +1,14 @@
 public final object A : R|kotlin/Any| {
+    private constructor()
+
 }
 
 public final class B : R|kotlin/Any| {
+    public constructor()
+
     public final companion object Companion : R|kotlin/Any| {
+        private constructor()
+
     }
 
 }

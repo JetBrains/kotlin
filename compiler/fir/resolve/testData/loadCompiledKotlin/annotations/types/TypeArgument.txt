@@ -1,4 +1,6 @@
 public final fun foo(bar: R|kotlin/collections/Map<kotlin/String, kotlin/collections/List<kotlin/Int>>|): R|kotlin/Unit|
 
 public final annotation class A : R|kotlin/Annotation| {
+    public constructor()
+
 }

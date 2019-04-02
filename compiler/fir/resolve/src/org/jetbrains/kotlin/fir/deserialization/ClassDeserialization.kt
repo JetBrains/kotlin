@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirClassImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirTypeParameterImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
+import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.Flags
@@ -68,6 +70,19 @@ fun deserializeClassToSymbol(
 
         // TODO: properties
         declarations += classProto.functionList.map(classDeserializer::loadFunction)
+
+        val delegatedSelfType = FirResolvedTypeRefImpl(
+            session,
+            null,
+            ConeClassTypeImpl(
+                symbol.toLookupTag(),
+                typeParameters.map { ConeTypeParameterTypeImpl(it.symbol, false) }.toTypedArray(),
+                false
+            ),
+            isMarkedNullable = false,
+            annotations = emptyList()
+        )
+        declarations += classProto.constructorList.map { classDeserializer.loadConstructor(it, delegatedSelfType) }
 
         declarations += classProto.nestedClassNameList.mapNotNull { nestedNameId ->
             val nestedClassId = classId.createNestedClassId(Name.identifier(nameResolver.getString(nestedNameId)))

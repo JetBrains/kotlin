@@ -1,11 +1,19 @@
 public final class Class : R|kotlin/Any| {
+    public constructor()
+
     public final companion object Companion : R|kotlin/Any| {
+        private constructor()
+
     }
 
     public final inner class Inner : R|kotlin/Any| {
+        public constructor()
+
     }
 
     public final class Nested : R|kotlin/Any| {
+        public constructor()
+
     }
 
 }

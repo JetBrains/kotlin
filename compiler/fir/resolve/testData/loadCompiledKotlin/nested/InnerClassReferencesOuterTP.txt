@@ -1,5 +1,9 @@
 <P> public final class InnerClassReferencesOuterTP : R|kotlin/Any| {
+    public constructor()
+
     <Q> public final inner class Inner : R|kotlin/Any| {
+        public constructor()
+
     }
 
 }

@@ -7,11 +7,10 @@ package org.jetbrains.kotlin.fir.deserialization
 
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.declarations.impl.FirMemberFunctionImpl
-import org.jetbrains.kotlin.fir.declarations.impl.FirTypeParameterImpl
-import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
+import org.jetbrains.kotlin.fir.declarations.impl.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
@@ -158,6 +157,41 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             valueParameters += local.memberDeserializer.valueParameters(proto.valueParameterList)
             annotations += getAnnotations(proto, flags, AnnotatedCallableKind.FUNCTION)
         }
+    }
+
+    fun loadConstructor(proto: ProtoBuf.Constructor, delegatedSelfType: FirTypeRef): FirConstructor {
+        val flags = proto.flags
+        val relativeClassName = c.relativeClassName!!
+        val symbol = FirFunctionSymbol(CallableId(c.packageFqName, relativeClassName, relativeClassName.shortName()))
+        val local = c.childContext(emptyList())
+        val isPrimary = !Flags.IS_SECONDARY.get(flags)
+        return if (isPrimary) {
+            FirPrimaryConstructorImpl(
+                c.session,
+                null,
+                symbol,
+                ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags)),
+                Flags.IS_EXPECT_FUNCTION.get(flags),
+                false,
+                delegatedSelfType,
+                null
+            )
+        } else {
+            FirConstructorImpl(
+                c.session,
+                null,
+                symbol,
+                ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags)),
+                Flags.IS_EXPECT_FUNCTION.get(flags),
+                false,
+                delegatedSelfType,
+                null
+            )
+        }.apply {
+            valueParameters += local.memberDeserializer.valueParameters(proto.valueParameterList)
+            annotations += getAnnotations(proto, flags, AnnotatedCallableKind.FUNCTION)
+        }
+
     }
 
     private fun createTypeParameterSymbol(name: Name): FirTypeParameterSymbol {

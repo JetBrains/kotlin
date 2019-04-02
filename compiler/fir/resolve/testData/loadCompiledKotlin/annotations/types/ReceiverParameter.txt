@@ -1,4 +1,6 @@
 public final fun R|kotlin/String|.foo(): R|kotlin/Unit|
 
 public final annotation class A : R|kotlin/Annotation| {
+    public constructor()
+
 }

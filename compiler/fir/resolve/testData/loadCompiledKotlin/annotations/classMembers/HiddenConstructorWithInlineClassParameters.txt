@@ -1,20 +1,34 @@
 public final annotation class Ann : R|kotlin/Annotation| {
+    public constructor()
+
 }
 
 public sealed class Sealed : R|kotlin/Any| {
+    private constructor(z: R|test/Z|)
+
     public final class Derived : R|test/Sealed| {
+        public constructor(z: R|test/Z|)
+
     }
 
 }
 
 public final class Test : R|kotlin/Any| {
+    public constructor(z: R|test/Z|, a: R|kotlin/Int|)
+
+    private constructor(z: R|test/Z|, s: R|kotlin/String|)
+
+    public constructor(z: R|test/Z|)
+
 }
 
 public final inline class Z : R|kotlin/Any| {
-    public open operator fun equals(other: R|kotlin/Any|): R|kotlin/Boolean|
+    public open operator fun equals(other: R|kotlin/Any|?): R|kotlin/Boolean|
 
     public open fun hashCode(): R|kotlin/Int|
 
     public open fun toString(): R|kotlin/String|
+
+    public constructor(x: R|kotlin/Int|)
 
 }

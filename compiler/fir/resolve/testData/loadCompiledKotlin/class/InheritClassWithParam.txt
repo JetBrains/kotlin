@@ -1,5 +1,9 @@
 <P> public abstract class Aaa : R|kotlin/Any| {
+    public constructor()
+
 }
 
 public final class Bbb : R|test/Aaa<java/util/Random>| {
+    public constructor()
+
 }

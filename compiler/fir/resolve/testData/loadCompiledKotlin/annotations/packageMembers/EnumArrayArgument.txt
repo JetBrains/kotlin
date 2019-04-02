@@ -3,4 +3,6 @@ public final fun baz(): R|kotlin/Unit|
 public final fun foo(): R|kotlin/Unit|
 
 public final annotation class Anno : R|kotlin/Annotation| {
+    public constructor(vararg t: R|kotlin/Array<out java/lang/annotation/ElementType>|)
+
 }

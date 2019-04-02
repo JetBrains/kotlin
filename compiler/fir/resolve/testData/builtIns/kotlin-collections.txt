@@ -3,6 +3,8 @@ public abstract class BooleanIterator : R|kotlin/collections/Iterator<kotlin/Boo
 
     public abstract fun nextBoolean(): R|kotlin/Boolean|
 
+    public constructor()
+
 }
 
 public abstract class ByteIterator : R|kotlin/collections/Iterator<kotlin/Byte>| {
@@ -10,12 +12,16 @@ public abstract class ByteIterator : R|kotlin/collections/Iterator<kotlin/Byte>|
 
     public abstract fun nextByte(): R|kotlin/Byte|
 
+    public constructor()
+
 }
 
 public abstract class CharIterator : R|kotlin/collections/Iterator<kotlin/Char>| {
     public final operator fun next(): R|kotlin/Char|
 
     public abstract fun nextChar(): R|kotlin/Char|
+
+    public constructor()
 
 }
 
@@ -35,6 +41,8 @@ public abstract class DoubleIterator : R|kotlin/collections/Iterator<kotlin/Doub
 
     public abstract fun nextDouble(): R|kotlin/Double|
 
+    public constructor()
+
 }
 
 public abstract class FloatIterator : R|kotlin/collections/Iterator<kotlin/Float>| {
@@ -42,12 +50,16 @@ public abstract class FloatIterator : R|kotlin/collections/Iterator<kotlin/Float
 
     public abstract fun nextFloat(): R|kotlin/Float|
 
+    public constructor()
+
 }
 
 public abstract class IntIterator : R|kotlin/collections/Iterator<kotlin/Int>| {
     public final operator fun next(): R|kotlin/Int|
 
     public abstract fun nextInt(): R|kotlin/Int|
+
+    public constructor()
 
 }
 
@@ -105,6 +117,8 @@ public abstract class LongIterator : R|kotlin/collections/Iterator<kotlin/Long>|
     public final operator fun next(): R|kotlin/Long|
 
     public abstract fun nextLong(): R|kotlin/Long|
+
+    public constructor()
 
 }
 
@@ -243,6 +257,8 @@ public abstract class ShortIterator : R|kotlin/collections/Iterator<kotlin/Short
     public final operator fun next(): R|kotlin/Short|
 
     public abstract fun nextShort(): R|kotlin/Short|
+
+    public constructor()
 
 }
 

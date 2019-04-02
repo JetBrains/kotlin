@@ -1,6 +1,8 @@
 public final class StarProjection : R|kotlin/Any| {
     public final fun foo(): R|test/StarProjection.MyClass<*>|
 
+    public constructor()
+
     <T> public abstract interface MyClass : R|kotlin/Any| {
     }
 

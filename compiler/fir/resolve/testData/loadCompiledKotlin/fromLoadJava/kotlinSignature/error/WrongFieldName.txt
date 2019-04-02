@@ -1,2 +1,4 @@
 public open class WrongFieldName : R|kotlin/Any| {
+    public constructor()
+
 }

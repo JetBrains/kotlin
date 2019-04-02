@@ -1,8 +1,14 @@
 public final annotation class Anno : R|kotlin/Annotation| {
+    public constructor(value: R|kotlin/String|, x: R|kotlin/Int|)
+
 }
 
 public final annotation class Bnno : R|kotlin/Annotation| {
+    public constructor()
+
 }
 
 public final enum class Eee : R|kotlin/Enum<test/Eee>| {
+    private constructor()
+
 }

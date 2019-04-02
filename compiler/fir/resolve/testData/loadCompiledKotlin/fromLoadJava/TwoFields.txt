@@ -1,2 +1,4 @@
 public final class TwoFields : R|kotlin/Any| {
+    public constructor()
+
 }

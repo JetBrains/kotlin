@@ -11,4 +11,6 @@ public final class A : R|kotlin/Any| {
 
     public final fun c(): R|kotlin/Int|
 
+    public constructor()
+
 }

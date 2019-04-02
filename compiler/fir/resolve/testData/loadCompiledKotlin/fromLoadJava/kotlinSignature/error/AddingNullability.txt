@@ -1,4 +1,6 @@
 public open class AddingNullability : R|kotlin/Any| {
     public open fun foo(): R|kotlin/Int|
 
+    public constructor()
+
 }

@@ -3,13 +3,21 @@ public final fun bar(x: R|kotlin/Int|): R|kotlin/Unit|
 public final fun foo(x: R|kotlin/Int|, y: R|kotlin/Double|, z: R|kotlin/String|): R|kotlin/Unit|
 
 public final annotation class A : R|kotlin/Annotation| {
+    public constructor()
+
 }
 
 public final annotation class B : R|kotlin/Annotation| {
+    public constructor()
+
 }
 
 public final annotation class C : R|kotlin/Annotation| {
+    public constructor()
+
 }
 
 public final annotation class D : R|kotlin/Annotation| {
+    public constructor()
+
 }

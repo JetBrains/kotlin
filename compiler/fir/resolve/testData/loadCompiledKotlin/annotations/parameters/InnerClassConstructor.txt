@@ -1,11 +1,19 @@
 public final annotation class A : R|kotlin/Annotation| {
+    public constructor(s: R|kotlin/String|)
+
 }
 
 public final class Outer : R|kotlin/Any| {
+    public constructor()
+
     public final inner class Inner : R|kotlin/Any| {
+        public constructor(y: R|kotlin/String|)
+
     }
 
     public final class Nested : R|kotlin/Any| {
+        public constructor(x: R|kotlin/String|)
+
     }
 
 }

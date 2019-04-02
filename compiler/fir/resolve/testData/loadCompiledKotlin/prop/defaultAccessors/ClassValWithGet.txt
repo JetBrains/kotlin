@@ -1,2 +1,4 @@
 public final class ClassVal : R|kotlin/Any| {
+    public constructor()
+
 }

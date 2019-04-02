@@ -1,4 +1,6 @@
 public open class AnnotatedMethod : R|kotlin/Any| {
     public open fun f(): R|kotlin/Unit|
 
+    public constructor()
+
 }

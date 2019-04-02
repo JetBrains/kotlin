@@ -1,8 +1,14 @@
 public final annotation class A : R|kotlin/Annotation| {
+    public constructor()
+
 }
 
 public final annotation class B : R|kotlin/Annotation| {
+    public constructor()
+
 }
 
 public final class Class : R|kotlin/Any| {
+    public constructor(x: R|kotlin/Int|, y: R|kotlin/String|)
+
 }

@@ -1,4 +1,6 @@
 public open class ReturnTypeMissing : R|kotlin/Any| {
-    public open fun foo(p0: R|kotlin/String|): R|kotlin/Int|
+    public open fun foo(p0: R|kotlin/String|?): R|kotlin/Int|
+
+    public constructor()
 
 }

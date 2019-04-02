@@ -1,2 +1,4 @@
 public open class FieldOfArrayType : R|kotlin/Any| {
+    public constructor()
+
 }

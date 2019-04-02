@@ -1,2 +1,4 @@
 <P, Q> public final class OneTypeParameterErased : R|kotlin/Any| {
+    public constructor(q: R|Q|)
+
 }

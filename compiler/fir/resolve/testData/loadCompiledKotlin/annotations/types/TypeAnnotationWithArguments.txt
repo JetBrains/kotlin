@@ -1,7 +1,11 @@
 public final annotation class Ann : R|kotlin/Annotation| {
+    public constructor(x: R|kotlin/String|, y: R|kotlin/Double|)
+
 }
 
 public final class TypeAnnotationWithArguments : R|kotlin/Any| {
     public final fun foo(param: R|kotlin/ranges/IntRange|): R|kotlin/Unit|
+
+    public constructor()
 
 }
