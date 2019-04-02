@@ -273,12 +273,12 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         //hack to keep linenumber info, otherwise jdi will skip begin of linenumber chain
         adapter.visitInsn(Opcodes.NOP)
 
-        val result = inliner.doInline(adapter, remapper, true, LabelOwner.SKIP_ALL)
+        val result = inliner.doInline(adapter, remapper, true, ReturnLabelOwner.SKIP_ALL)
         result.reifiedTypeParametersUsages.mergeAll(reificationResult)
 
         val labels = sourceCompiler.getContextLabels()
 
-        val infos = MethodInliner.processReturns(adapter, LabelOwner { labels.contains(it) }, true, null)
+        val infos = MethodInliner.processReturns(adapter, ReturnLabelOwner { labels.contains(it) }, true, null)
         sourceCompiler.generateAndInsertFinallyBlocks(
             adapter, infos, (remapper.remap(parameters.argsSizeOnStack + 1).value as StackValue.Local).index
         )

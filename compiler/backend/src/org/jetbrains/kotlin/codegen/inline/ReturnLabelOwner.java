@@ -18,12 +18,12 @@ package org.jetbrains.kotlin.codegen.inline;
 
 import org.jetbrains.annotations.NotNull;
 
-public interface LabelOwner {
-    boolean isMyLabel(@NotNull String name);
+public interface ReturnLabelOwner {
+    boolean isReturnFromMe(@NotNull String labelName);
 
-    LabelOwner SKIP_ALL = name -> false;
+    ReturnLabelOwner SKIP_ALL = name -> false;
 
-    LabelOwner NOT_APPLICABLE = name -> {
+    ReturnLabelOwner NOT_APPLICABLE = name -> {
         throw new RuntimeException("This operation not applicable for current context");
     };
 }

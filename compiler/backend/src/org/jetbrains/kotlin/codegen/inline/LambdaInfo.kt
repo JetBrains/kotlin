@@ -37,7 +37,7 @@ import kotlin.properties.Delegates
 
 interface FunctionalArgument
 
-abstract class LambdaInfo(@JvmField val isCrossInline: Boolean) : FunctionalArgument, LabelOwner {
+abstract class LambdaInfo(@JvmField val isCrossInline: Boolean) : FunctionalArgument, ReturnLabelOwner {
 
     abstract val isBoundCallableReference: Boolean
 
@@ -102,7 +102,7 @@ class DefaultLambda(
     override lateinit var capturedVars: List<CapturedParamDesc>
         private set
 
-    override fun isMyLabel(name: String): Boolean = false
+    override fun isReturnFromMe(labelName: String): Boolean = false
 
     var originalBoundReceiverType: Type? = null
         private set
@@ -300,8 +300,8 @@ class PsiExpressionLambda(
         }
     }
 
-    override fun isMyLabel(name: String): Boolean {
-        return labels.contains(name)
+    override fun isReturnFromMe(labelName: String): Boolean {
+        return labels.contains(labelName)
     }
 
     val isPropertyReference: Boolean

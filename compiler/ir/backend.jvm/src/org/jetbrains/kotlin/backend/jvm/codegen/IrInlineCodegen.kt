@@ -114,7 +114,7 @@ class IrExpressionLambdaImpl(
     override val isExtensionLambda: Boolean
 ) : ExpressionLambda(typeMapper, isCrossInline), IrExpressionLambda {
 
-    override fun isMyLabel(name: String): Boolean {
+    override fun isReturnFromMe(labelName: String): Boolean {
         //TODO("not implemented")
         return false
     }

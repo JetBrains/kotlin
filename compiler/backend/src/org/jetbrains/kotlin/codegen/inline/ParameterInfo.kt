@@ -24,7 +24,7 @@ open class ParameterInfo(
     val isSkipped: Boolean, //for skipped parameter: e.g. inlined lambda
     val index: Int,
     var remapValue: StackValue?, //in case when parameter could be extracted from outer context (e.g. from local var)
-    val declarationIndex: Int = -1
+    val declarationIndex: Int
 ) {
 
     var isCaptured: Boolean = false
