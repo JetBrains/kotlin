@@ -179,7 +179,7 @@ class VariableFinder(private val context: ExecutionContext) {
         return when (parameter.kind) {
             Kind.ORDINARY -> findOrdinary(VariableKind.Ordinary(parameter.name, asmType, isDelegated = false))
             Kind.DELEGATED -> findOrdinary(VariableKind.Ordinary(parameter.name, asmType, isDelegated = true))
-            Kind.FAKE_JAVA_OUTER_CLASS -> frameProxy.thisObject()?.let { Result(it) }
+            Kind.FAKE_JAVA_OUTER_CLASS -> thisObject()?.let { Result(it) }
             Kind.EXTENSION_RECEIVER -> findExtensionThis(VariableKind.ExtensionThis(parameter.name, asmType))
             Kind.LOCAL_FUNCTION -> findLocalFunction(VariableKind.LocalFunction(parameter.name, asmType))
             Kind.DISPATCH_RECEIVER -> findDispatchThis(VariableKind.OuterClassThis(asmType))
@@ -199,12 +199,12 @@ class VariableFinder(private val context: ExecutionContext) {
         findCapturedVariableInReceiver(variables, kind)?.let { return it }
 
         // Recursive search in captured this
-        val containingThis = frameProxy.thisObject() ?: return null
+        val containingThis = thisObject() ?: return null
         return findCapturedVariable(kind, containingThis)
     }
 
     private fun findFieldVariable(kind: VariableKind.FieldVar): Result? {
-        val thisObject = frameProxy.thisObject()
+        val thisObject = thisObject()
         if (thisObject != null) {
             val field = thisObject.referenceType().fieldByName(kind.fieldName) ?: return null
             return Result(thisObject.getValue(field))
@@ -217,19 +217,19 @@ class VariableFinder(private val context: ExecutionContext) {
 
     private fun findLocalFunction(kind: VariableKind.LocalFunction): Result? {
         val variables = frameProxy.safeVisibleVariables()
-        
+
         // Local variables – direct search, new convention
         val newConventionName = AsmUtil.LOCAL_FUNCTION_VARIABLE_PREFIX + kind.name
         findLocalVariable(variables, kind, newConventionName)?.let { return it }
 
         // Local variables – direct search, old convention (before 1.3.30)
         findLocalVariable(variables, kind, kind.name + "$")?.let { return it }
-        
+
         // Recursive search in local receiver variables
         findCapturedVariableInReceiver(variables, kind)?.let { return it }
 
         // Recursive search in captured this
-        val containingThis = frameProxy.thisObject() ?: return null
+        val containingThis = thisObject() ?: return null
         return findCapturedVariable(kind, containingThis)
     }
 
@@ -244,7 +244,7 @@ class VariableFinder(private val context: ExecutionContext) {
         findCapturedVariableInReceiver(variables, kind)?.let { return it }
 
         // Recursive search in captured this
-        val containingThis = frameProxy.thisObject()
+        val containingThis = thisObject()
         if (containingThis != null) {
             findCapturedVariable(kind, containingThis)?.let { return it }
         }
@@ -259,7 +259,7 @@ class VariableFinder(private val context: ExecutionContext) {
     }
 
     private fun findDispatchThis(kind: VariableKind.OuterClassThis): Result? {
-        val containingThis = frameProxy.thisObject()
+        val containingThis = thisObject()
         if (containingThis != null) {
             findCapturedVariable(kind, containingThis)?.let { return it }
         }
@@ -307,7 +307,7 @@ class VariableFinder(private val context: ExecutionContext) {
         // Recursive search in local receiver variables
         findCapturedVariableInReceiver(variables, kind)?.let { return it }
 
-        val containingThis = frameProxy.thisObject() ?: return null
+        val containingThis = thisObject() ?: return null
         return findCapturedVariable(kind, containingThis)
     }
 
@@ -372,7 +372,7 @@ class VariableFinder(private val context: ExecutionContext) {
             return null
         }
 
-        val thisObject = frameProxy.thisObject() ?: return null
+        val thisObject = thisObject() ?: return null
         val thisType = thisObject.referenceType()
 
         if (SUSPEND_LAMBDA_CLASSES.none { thisType.isSubtype(it) }) {
@@ -502,5 +502,14 @@ class VariableFinder(private val context: ExecutionContext) {
 
     private fun List<LocalVariableProxyImpl>.namedEntitySequence(): Sequence<NamedEntity> {
         return asSequence().map { NamedEntity.of(it, frameProxy) }
+    }
+
+    private fun thisObject(): ObjectReference? {
+        val thisObjectFromEvaluation = context.evaluationContext.computeThisObject() as? ObjectReference
+        if (thisObjectFromEvaluation != null) {
+            return thisObjectFromEvaluation
+        }
+
+        return frameProxy.thisObject()
     }
 }
