@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberOrNullableType
@@ -49,12 +48,18 @@ class Equals(val operator: IElementType) : IntrinsicMethod(), ComparisonIntrinsi
     ): StackValue {
         val (leftType, rightType) = argumentTypes(expression, context)
         val opToken = expression.origin
-        return if (opToken === IrStatementOrigin.EQEQEQ || opToken === IrStatementOrigin.EXCLEQEQ) {
-            // TODO: always casting to the type of the left operand in case of primitives looks wrong
-            val operandType = if (isPrimitive(leftType)) leftType else OBJECT_TYPE
-            StackValue.cmp(operator, operandType, StackValue.onStack(leftType), StackValue.onStack(rightType))
-        } else {
-            genEqualsForExpressionsOnStack(operator, StackValue.onStack(leftType), StackValue.onStack(rightType))
+        return when {
+            leftType.isFloatingPoint && rightType.isFloatingPoint ->
+                genEqualsBoxedOnStack(operator)
+
+            opToken === IrStatementOrigin.EQEQEQ || opToken === IrStatementOrigin.EXCLEQEQ -> {
+                // TODO: always casting to the type of the left operand in case of primitives looks wrong
+                val operandType = if (isPrimitive(leftType)) leftType else OBJECT_TYPE
+                StackValue.cmp(operator, operandType, StackValue.onStack(leftType), StackValue.onStack(rightType))
+            }
+
+            else ->
+                genEqualsForExpressionsOnStack(operator, StackValue.onStack(leftType), StackValue.onStack(rightType))
         }
     }
 
@@ -63,7 +68,12 @@ class Equals(val operator: IElementType) : IntrinsicMethod(), ComparisonIntrinsi
         signature: JvmMethodSignature,
         context: JvmBackendContext
     ): IrIntrinsicFunction {
-        var (leftType, rightType) = argumentTypes(expression, context)
+        val (leftType, rightType) = argumentTypes(expression, context).let {
+            if (it.first.isFloatingPoint && it.second.isFloatingPoint)
+                Pair(OBJECT_TYPE, OBJECT_TYPE)
+            else
+                it
+        }
 
         return object : IrIntrinsicFunction(expression, signature, context, listOf(leftType, rightType)) {
             override fun genInvokeInstruction(v: InstructionAdapter) {
@@ -72,6 +82,9 @@ class Equals(val operator: IElementType) : IntrinsicMethod(), ComparisonIntrinsi
             }
         }
     }
+
+    private val Type.isFloatingPoint: Boolean
+        get() = this == Type.DOUBLE_TYPE || this == Type.FLOAT_TYPE
 }
 
 
@@ -127,24 +140,4 @@ class Ieee754Equals(val operandType: Type) : IntrinsicMethod() {
                 Ieee754AreEqual(boxedOperandType, boxedOperandType)
         }
     }
-}
-
-class TotalOrderEquals(operandType: Type) : IntrinsicMethod() {
-    private val boxedType = AsmUtil.boxType(operandType)
-
-    override fun toCallable(
-        expression: IrMemberAccessExpression,
-        signature: JvmMethodSignature,
-        context: JvmBackendContext
-    ): IrIntrinsicFunction =
-        object : IrIntrinsicFunction(expression, signature, context, listOf(boxedType, boxedType)) {
-            override fun genInvokeInstruction(v: InstructionAdapter) {
-                v.invokestatic(
-                    IntrinsicMethods.INTRINSICS_CLASS_NAME,
-                    "areEqual",
-                    Type.getMethodDescriptor(Type.BOOLEAN_TYPE, AsmTypes.OBJECT_TYPE, AsmTypes.OBJECT_TYPE),
-                    false
-                )
-            }
-        }
 }
