@@ -6528,6 +6528,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/convertPropertyToFunction/overrides.kt");
         }
 
+        @TestMetadata("overrides2.kt")
+        public void testOverrides2() throws Exception {
+            runTest("idea/testData/intentions/convertPropertyToFunction/overrides2.kt");
+        }
+
         @TestMetadata("propertyCallGroovy.kt")
         public void testPropertyCallGroovy() throws Exception {
             runTest("idea/testData/intentions/convertPropertyToFunction/propertyCallGroovy.kt");

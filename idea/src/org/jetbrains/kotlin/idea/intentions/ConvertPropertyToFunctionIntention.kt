@@ -39,11 +39,9 @@ import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
-import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.psi.KtSimpleNameExpression
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -106,6 +104,14 @@ class ConvertPropertyToFunctionIntention : SelfTargetingIntention<KtProperty>(Kt
                         if (!checkModifiable(callable)) {
                             val renderedCallable = RefactoringUIUtil.getDescription(callable, true).capitalize()
                             conflicts.putValue(callable, "Can't modify $renderedCallable")
+                        }
+
+                        if (callable is KtParameter) {
+                            conflicts.putValue(
+                                callable,
+                                if (callable.hasActualModifier()) "Property has an actual declaration in the class constructor"
+                                else "Property overloaded in child class constructor"
+                            )
                         }
 
                         if (callable is KtProperty) {
