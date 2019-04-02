@@ -63,7 +63,7 @@ public class CapturedParamInfo extends ParameterInfo {
     @NotNull
     public CapturedParamInfo cloneWithNewDeclarationIndex(int newDeclarationIndex) {
         CapturedParamInfo result = new CapturedParamInfo(
-                desc, newFieldName, isSkipped, getIndex(), getRemapValue(), skipInConstructor, newDeclarationIndex
+                desc, newFieldName, isSkipped(), getIndex(), getRemapValue(), skipInConstructor, newDeclarationIndex
         );
         result.setFunctionalArgument(getFunctionalArgument());
         result.setSynthetic(synthetic);

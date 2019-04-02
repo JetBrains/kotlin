@@ -35,11 +35,11 @@ class LocalVarRemapper(private val params: Parameters, private val additionalShi
             val shift = params.getDeclarationSlot(info)
             if (!info.isSkippedOrRemapped) {
                 remapValues[shift] = StackValue.local(realSize, AsmTypes.OBJECT_TYPE)
-                realSize += info.getType().size
+                realSize += info.type.size
             } else {
                 remapValues[shift] = if (info.isRemapped) info.remapValue else null
                 if (CapturedParamInfo.isSynthetic(info)) {
-                    realSize += info.getType().size
+                    realSize += info.type.size
                 }
             }
         }

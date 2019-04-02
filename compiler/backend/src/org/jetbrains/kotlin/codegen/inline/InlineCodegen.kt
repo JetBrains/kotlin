@@ -340,7 +340,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
             if (capturedParamIndex >= 0) {
                 val capturedParamInfoInLambda = activeLambda!!.capturedVars[capturedParamIndex]
                 info = invocationParamBuilder.addCapturedParam(capturedParamInfoInLambda, capturedParamInfoInLambda.fieldName, false)
-                info.setRemapValue(remappedValue)
+                info.remapValue = remappedValue
             } else {
                 info = invocationParamBuilder.addNextValueParameter(jvmType, false, remappedValue, parameterIndex)
                 if (kind == ValueKind.NON_INLINEABLE_CALLED_IN_SUSPEND) {
@@ -363,7 +363,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
     ): Function0<Unit>? {
         val index = IntArray(infos.size) { i ->
             if (!infos[i].isSkippedOrRemapped) {
-                codegen.frameMap.enterTemp(infos[i].getType())
+                codegen.frameMap.enterTemp(infos[i].type)
             } else -1
         }
 
@@ -377,7 +377,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
                         local.store(StackValue.onStack(type), codegen.v)
                     }
                     if (info is CapturedParamInfo) {
-                        info.setRemapValue(local)
+                        info.remapValue = local
                         info.isSynthetic = true
                     }
                 }

@@ -78,7 +78,7 @@ class RegeneratedLambdaFieldRemapper(
             if (field.isSkipped && field.functionalArgument is LambdaInfo)
                 Type.getObjectType(parent!!.parent!!.newLambdaInternalName)
             else
-                field.getType(),
+                field.type,
             Type.getObjectType(newLambdaInternalName), /*TODO owner type*/
             field.newFieldName, false,
             prefix ?: StackValue.LOCAL_0

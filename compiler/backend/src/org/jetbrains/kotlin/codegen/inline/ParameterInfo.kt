@@ -14,81 +14,33 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.codegen.inline;
+package org.jetbrains.kotlin.codegen.inline
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.codegen.StackValue;
-import org.jetbrains.org.objectweb.asm.Type;
+import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.org.objectweb.asm.Type
 
-public class ParameterInfo {
-    private final int index;
-    public final int declarationIndex;
-    public final Type type;
-    //for skipped parameter: e.g. inlined lambda
-    public final boolean isSkipped;
+open class ParameterInfo(
+    val type: Type,
+    val isSkipped: Boolean, //for skipped parameter: e.g. inlined lambda
+    val index: Int,
+    var remapValue: StackValue?, //in case when parameter could be extracted from outer context (e.g. from local var)
+    val declarationIndex: Int = -1
+) {
 
-    private boolean isCaptured;
-    private FunctionalArgument functionalArgument;
-    //in case when parameter could be extracted from outer context (e.g. from local var)
-    private StackValue remapValue;
+    var isCaptured: Boolean = false
+    var functionalArgument: FunctionalArgument? = null
 
-    public ParameterInfo(@NotNull Type type, boolean skipped, int index, int remapValue, int declarationIndex) {
-        this(type, skipped, index, remapValue == -1 ? null : StackValue.local(remapValue, type), declarationIndex);
-    }
+    val isSkippedOrRemapped: Boolean
+        get() = isSkipped || isRemapped
 
-    public ParameterInfo(@NotNull Type type, boolean skipped, int index, @Nullable StackValue remapValue, int declarationIndex) {
-        this.type = type;
-        this.isSkipped = skipped;
-        this.remapValue = remapValue;
-        this.index = index;
-        this.declarationIndex = declarationIndex;
-    }
+    val isRemapped: Boolean
+        get() = remapValue != null
 
-    public boolean isSkippedOrRemapped() {
-        return isSkipped || isRemapped();
-    }
-
-    public boolean isRemapped() {
-        return remapValue != null;
-    }
-
-    @Nullable
-    public StackValue getRemapValue() {
-        return remapValue;
-    }
-
-    public int getIndex() {
-        return index;
-    }
-
-    @NotNull
-    public Type getType() {
-        return type;
-    }
-
-    @Nullable
-    public FunctionalArgument getFunctionalArgument() {
-        return functionalArgument;
-    }
-
-    @NotNull
-    public ParameterInfo setFunctionalArgument(@Nullable FunctionalArgument functionalArgument) {
-        this.functionalArgument = functionalArgument;
-        return this;
-    }
-
-    @NotNull
-    public ParameterInfo setRemapValue(@Nullable StackValue remapValue) {
-        this.remapValue = remapValue;
-        return this;
-    }
-
-    public boolean isCaptured() {
-        return isCaptured;
-    }
-
-    public void setCaptured(boolean isCaptured) {
-        this.isCaptured = isCaptured;
-    }
+    constructor(type: Type, skipped: Boolean, index: Int, remapValue: Int, declarationIndex: Int) : this(
+        type,
+        skipped,
+        index,
+        if (remapValue == -1) null else StackValue.local(remapValue, type),
+        declarationIndex
+    )
 }

@@ -309,9 +309,9 @@ class AnonymousObjectTransformer(
                 }
 
                 if (size != 0) { //skip this
-                    descTypes.add(info.getType())
+                    descTypes.add(info.type)
                 }
-                size += info.getType().size
+                size += info.type.size
             }
         }
 
@@ -345,7 +345,7 @@ class AnonymousObjectTransformer(
             if (fake.functionalArgument is LambdaInfo) {
                 //set remap value to skip this fake (captured with lambda already skipped)
                 val composed = StackValue.field(
-                    fake.getType(),
+                    fake.type,
                     oldObjectType,
                     fake.newFieldName,
                     false,

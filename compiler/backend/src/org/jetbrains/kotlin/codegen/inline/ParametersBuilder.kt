@@ -69,7 +69,7 @@ class ParametersBuilder private constructor() {
 
     private fun <T : ParameterInfo> addParameter(info: T): T {
         params.add(info)
-        nextParameterOffset += info.getType().size
+        nextParameterOffset += info.type.size
         if (info !is CapturedParamInfo) {
             nextValueParameterIndex++
         }
