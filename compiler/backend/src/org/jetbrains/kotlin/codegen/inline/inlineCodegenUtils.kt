@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.ASSERTIONS_DISABLED_FIELD_NAME
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.BaseExpressionCodegen
+import org.jetbrains.kotlin.codegen.MemberCodegen
 import org.jetbrains.kotlin.codegen.SamWrapperCodegen.SAM_WRAPPER_SUFFIX
 import org.jetbrains.kotlin.codegen.`when`.WhenByEnumsMapping
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
@@ -530,5 +531,21 @@ class InlineOnlySmapSkipper(codegen: BaseExpressionCodegen) {
             mv.visitLabel(label)
             mv.visitLineNumber(callLineNumber, label)
         }
+    }
+}
+
+fun initDefaultSourceMappingIfNeeded(
+    context: CodegenContext<*>, codegen: MemberCodegen<*>, state: GenerationState
+) {
+    if (state.isInlineDisabled) return
+
+    var parentContext: CodegenContext<*>? = context.parentContext
+    while (parentContext != null) {
+        if (parentContext.isInlineMethodContext) {
+            //just init default one to one mapping
+            codegen.orCreateSourceMapper
+            break
+        }
+        parentContext = parentContext.parentContext
     }
 }
