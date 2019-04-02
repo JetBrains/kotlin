@@ -13,5 +13,5 @@ import org.jetbrains.kotlin.fir.expressions.FirOperatorCall
 class FirOperatorCallImpl(
     session: FirSession,
     psi: PsiElement?,
-    override val operation: FirOperation
-) : FirAbstractCall(session, psi), FirOperatorCall
+    operation: FirOperation
+) : FirAbstractOperationBasedCall(session, psi, operation), FirOperatorCall
