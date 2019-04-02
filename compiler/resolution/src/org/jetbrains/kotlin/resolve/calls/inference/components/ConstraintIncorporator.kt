@@ -122,15 +122,6 @@ class ConstraintIncorporator(
                     null,
                     CaptureStatus.FOR_INCORPORATION
                 )
-//                val newCapturedTypeConstructor = NewCapturedTypeConstructor(
-//                    TypeProjectionImpl(Variance.OUT_VARIANCE, otherConstraint.type),
-//                    listOf(otherConstraint.type)
-//                )
-//                val temporaryCapturedType = NewCapturedType(
-//                    CaptureStatus.FOR_INCORPORATION,
-//                    newCapturedTypeConstructor,
-//                    lowerType = null
-//                )
                 baseConstraintType.substitute(this, otherVariable, temporaryCapturedType)
             }
             ConstraintKind.LOWER -> {
@@ -141,15 +132,6 @@ class ConstraintIncorporator(
                     CaptureStatus.FOR_INCORPORATION
                 )
 
-//                val newCapturedTypeConstructor = NewCapturedTypeConstructor(
-//                    TypeProjectionImpl(Variance.IN_VARIANCE, otherConstraint.type),
-//                    emptyList()
-//                )
-//                val temporaryCapturedType = NewCapturedType(
-//                    CaptureStatus.FOR_INCORPORATION,
-//                    newCapturedTypeConstructor,
-//                    lowerType = otherConstraint.type
-//                )
                 baseConstraintType.substitute(this, otherVariable, temporaryCapturedType)
             }
         }

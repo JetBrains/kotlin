@@ -7,12 +7,9 @@ package org.jetbrains.kotlin.resolve.calls.inference.components
 
 import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
-import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
-import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
-import org.jetbrains.kotlin.types.typeUtil.contains
-import org.jetbrains.kotlin.types.typeUtil.isNothing
-import org.jetbrains.kotlin.types.typeUtil.isNullableNothing
+import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext
+import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContextDelegate
 
 class TrivialConstraintTypeInferenceOracle(context: TypeSystemInferenceExtensionContextDelegate) :
     TypeSystemInferenceExtensionContext by context {

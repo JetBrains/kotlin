@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode
-import org.jetbrains.kotlin.resolve.calls.inference.components.TrivialConstraintTypeInferenceOracle
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage.Empty.hasContradiction
 import org.jetbrains.kotlin.resolve.calls.inference.model.ExpectedTypeConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.model.*
@@ -18,11 +17,12 @@ import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext
+import org.jetbrains.kotlin.types.model.isIntegerLiteralTypeConstructor
+import org.jetbrains.kotlin.types.model.typeConstructor
 
 class KotlinCallCompleter(
     private val postponedArgumentsAnalyzer: PostponedArgumentsAnalyzer,
-    private val kotlinConstraintSystemCompleter: KotlinConstraintSystemCompleter,
-    private val trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle
+    private val kotlinConstraintSystemCompleter: KotlinConstraintSystemCompleter
 ) {
 
     fun runCompletion(
@@ -201,8 +201,8 @@ class KotlinCallCompleter(
         val variableWithConstraints = csBuilder.currentStorage().notFixedTypeVariables[constructor] ?: return false
         val constraints = variableWithConstraints.constraints
         return constraints.isNotEmpty() && constraints.all {
-                with(context) { !it.type.typeConstructor().isIntegerLiteralTypeConstructor() } &&
-                it.kind.isLower() && csBuilder.isProperType(it.type)
+            !it.type.typeConstructor(context).isIntegerLiteralTypeConstructor(context) &&
+                    it.kind.isLower() && csBuilder.isProperType(it.type)
         }
 
     }
