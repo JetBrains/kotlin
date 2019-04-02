@@ -105,6 +105,7 @@ val jvmPhases = namedIrFilePhase<JvmBackendContext>(
             objectClassPhase then
             makeInitializersPhase(JvmLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER, true) then
             syntheticAccessorPhase then
+            collectionStubMethodLowering then
             bridgePhase then
             jvmOverloadsAnnotationPhase then
             jvmStaticAnnotationPhase then

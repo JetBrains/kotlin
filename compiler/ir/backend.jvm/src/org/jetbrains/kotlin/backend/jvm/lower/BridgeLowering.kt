@@ -168,7 +168,7 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
             addBridge(
                 irClass, targetForCommonBridges, method, signaturesToSkip,
                 defaultValueGenerator = null,
-                isSpecial = false
+                isSpecial = targetForCommonBridges.isCollectionStub()
             )
         }
     }
@@ -214,7 +214,7 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
         isSpecial: Boolean,
         isSynthetic: Boolean
     ): IrSimpleFunction {
-        val modality = if (isSpecial) Modality.FINAL else Modality.OPEN
+        val modality = if (isSpecial && !target.isCollectionStub()) Modality.FINAL else Modality.OPEN
         val origin = if (isSynthetic) IrDeclarationOrigin.BRIDGE else IrDeclarationOrigin.BRIDGE_SPECIAL
 
         val visibility = if (signatureFunction.visibility === Visibilities.INTERNAL) Visibilities.PUBLIC else signatureFunction.visibility
@@ -428,6 +428,9 @@ private data class SignatureWithSource(val signature: Method, val source: IrSimp
 
 fun IrSimpleFunction.overriddenInClasses(): Sequence<IrSimpleFunction> =
     allOverridden().filter { !(it.parent.safeAs<IrClass>()?.isInterface ?: true) }
+
+fun IrSimpleFunction.isCollectionStub(): Boolean =
+    origin == IrDeclarationOrigin.IR_BUILTINS_STUB
 
 // TODO: At present, there is no reliable way to distinguish Java imports from Kotlin cross-module imports.
 val ORIGINS_FROM_JAVA = setOf(IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB, IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB)

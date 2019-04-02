@@ -119,3 +119,28 @@ fun IrType.substitute(substitutionMap: Map<IrTypeParameterSymbol, IrType>): IrTy
         newAnnotations
     )
 }
+
+private fun getImmediateSupertypes(irClass: IrClass): List<IrSimpleType> {
+    val originalSupertypes = irClass.superTypes
+    val args = irClass.defaultType.arguments.mapNotNull { (it as? IrTypeProjection)?.type }
+    return originalSupertypes
+        .filter { it.classOrNull != null }
+        .map { superType ->
+            superType.substitute(superType.classOrNull!!.owner.typeParameters, args) as IrSimpleType
+        }
+}
+
+private fun collectAllSupertypes(irClass: IrClass, result: MutableSet<IrSimpleType>) {
+    val immediateSupertypes = getImmediateSupertypes(irClass)
+    result.addAll(immediateSupertypes)
+    for (supertype in immediateSupertypes) {
+        supertype.classOrNull.let { collectAllSupertypes(it!!.owner, result) }
+    }
+}
+
+fun getAllSupertypes(irClass: IrClass): MutableSet<IrSimpleType> {
+    val result = HashSet<IrSimpleType>()
+
+    collectAllSupertypes(irClass, result)
+    return result
+}
