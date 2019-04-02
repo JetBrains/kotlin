@@ -74,7 +74,7 @@ class ScriptEngineV8 : ScriptEngine {
     }
 
     override fun loadFile(path: String) {
-        evalVoid(File(path).bufferedReader().use { it.readText() })
+        myRuntime.executeVoidScript(File(path).bufferedReader().use { it.readText() }, path, 0)
     }
 
     override fun release() {
