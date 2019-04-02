@@ -44,3 +44,8 @@ class FirImplicitAnnotationTypeRef(
     session: FirSession,
     psi: PsiElement?
 ) : FirImplicitBuiltinTypeRef(session, psi, KotlinBuiltIns.FQ_NAMES.annotation.toUnsafe())
+
+class FirImplicitBooleanTypeRef(
+    session: FirSession,
+    psi: PsiElement?
+) : FirImplicitBuiltinTypeRef(session, psi, KotlinBuiltIns.FQ_NAMES._boolean)

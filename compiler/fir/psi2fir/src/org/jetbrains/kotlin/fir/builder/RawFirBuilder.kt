@@ -989,42 +989,6 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
             }
         }
 
-        private fun KtWhenCondition.toFirWhenCondition(firSubjectExpression: FirExpression): FirExpression {
-            return when (this) {
-                is KtWhenConditionWithExpression -> {
-                    FirOperatorCallImpl(
-                        session,
-                        expression,
-                        FirOperation.EQ
-                    ).apply {
-                        arguments += firSubjectExpression
-                        arguments += expression.toFirExpression("No expression in condition with expression")
-                    }
-                }
-                is KtWhenConditionInRange -> {
-                    FirOperatorCallImpl(
-                        session,
-                        rangeExpression,
-                        if (isNegated) FirOperation.NOT_IN else FirOperation.IN
-                    ).apply {
-                        arguments += firSubjectExpression
-                        arguments += rangeExpression.toFirExpression("No range in condition with range")
-                    }
-                }
-                is KtWhenConditionIsPattern -> {
-                    FirTypeOperatorCallImpl(
-                        session, typeReference, if (isNegated) FirOperation.NOT_IS else FirOperation.IS,
-                        typeReference.toFirOrErrorType()
-                    ).apply {
-                        arguments += firSubjectExpression
-                    }
-                }
-                else -> {
-                    FirErrorExpressionImpl(session, this, "Unsupported when condition: ${this.javaClass}")
-                }
-            }
-        }
-
         override fun visitWhenExpression(expression: KtWhenExpression, data: Unit): FirElement {
             val subjectExpression = expression.subjectExpression
             val subject = when (subjectExpression) {
@@ -1050,25 +1014,13 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
                     val branch = entry.expression.toFirBlock()
                     branches += if (!entry.isElse) {
                         if (hasSubject) {
-                            var firCondition: FirExpression? = null
-                            for (condition in entry.conditions) {
-                                val firConditionElement = condition.toFirWhenCondition(
-                                    FirWhenSubjectExpression(this@RawFirBuilder.session, condition)
-                                )
-                                when {
-                                    firCondition == null -> firCondition = firConditionElement
-                                    firCondition is FirOperatorCallImpl && firCondition.operation == FirOperation.OR -> {
-                                        firCondition.arguments += firConditionElement
-                                    }
-                                    else -> {
-                                        firCondition = FirOperatorCallImpl(this@RawFirBuilder.session, entry, FirOperation.OR).apply {
-                                            arguments += firCondition!!
-                                            arguments += firConditionElement
-                                        }
-                                    }
-                                }
-                            }
-                            FirWhenBranchImpl(this@RawFirBuilder.session, entry, firCondition!!, branch)
+                            val firCondition = entry.conditions.toFirWhenCondition(
+                                this@RawFirBuilder.session,
+                                entry,
+                                { toFirExpression(it) },
+                                { toFirOrErrorType() }
+                            )
+                            FirWhenBranchImpl(this@RawFirBuilder.session, entry, firCondition, branch)
                         } else {
                             val condition = entry.conditions.first() as? KtWhenConditionWithExpression
                             val firCondition = condition?.expression.toFirExpression("No expression in condition with expression")
@@ -1194,12 +1146,6 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
             return FirContinueExpressionImpl(session, expression).bindLabel(expression)
         }
 
-        private fun KtBinaryExpression.elvisToWhen(): FirWhenExpression {
-            val rightArgument = right.toFirExpression("No right operand")
-            val leftArgument = left.toFirExpression("No left operand")
-            return leftArgument.generateNotNullOrOther(session, rightArgument, "elvis", this)
-        }
-
         private fun KtUnaryExpression.bangBangToWhen(): FirWhenExpression {
             return baseExpression.toFirExpression("No operand").generateNotNullOrOther(
                 session,
@@ -1213,11 +1159,15 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
 
         override fun visitBinaryExpression(expression: KtBinaryExpression, data: Unit): FirElement {
             val operationToken = expression.operationToken
+            val leftArgument = expression.left.toFirExpression("No left operand")
             val rightArgument = expression.right.toFirExpression("No right operand")
             if (operationToken == ELVIS) {
-                return expression.elvisToWhen()
+                return leftArgument.generateNotNullOrOther(session, rightArgument, "elvis", expression)
             }
             val conventionCallName = operationToken.toBinaryName()
+            if (operationToken == ANDAND || operationToken == OROR) {
+                return leftArgument.generateLazyLogicalOperation(session, rightArgument, operationToken == ANDAND, expression)
+            }
             return if (conventionCallName != null || operationToken == IDENTIFIER) {
                 FirFunctionCallImpl(
                     session, expression
@@ -1237,7 +1187,7 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
                     FirOperatorCallImpl(session, expression, firOperation)
                 }
             }.apply {
-                arguments += expression.left.toFirExpression("No left operand")
+                arguments += leftArgument
                 arguments += rightArgument
             }
         }

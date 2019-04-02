@@ -16,8 +16,6 @@ enum class FirOperation(val operator: String = "???") {
     GT(">"),
     LT_EQ("<="),
     GT_EQ(">="),
-    AND("&&"),
-    OR("||"),
     IN("in"),
     NOT_IN("!in"),
 

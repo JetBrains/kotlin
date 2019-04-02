@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.references.FirExplicitThisReference
 import org.jetbrains.kotlin.fir.references.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitBooleanTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -158,8 +159,6 @@ internal fun IElementType.toFirOperation(): FirOperation =
         KtTokens.EXCLEQ -> FirOperation.NOT_EQ
         KtTokens.EQEQEQ -> FirOperation.IDENTITY
         KtTokens.EXCLEQEQEQ -> FirOperation.NOT_IDENTITY
-        KtTokens.ANDAND -> FirOperation.AND
-        KtTokens.OROR -> FirOperation.OR
         KtTokens.IN_KEYWORD -> FirOperation.IN
         KtTokens.NOT_IN -> FirOperation.NOT_IN
         KtTokens.RANGE -> FirOperation.RANGE
@@ -199,6 +198,85 @@ internal fun FirExpression.generateNotNullOrOther(
             FirSingleExpressionBlock(session, generateAccessExpression(session, psi, subjectName))
         )
     }
+}
+
+internal fun FirExpression.generateLazyLogicalOperation(
+    session: FirSession, other: FirExpression, isAnd: Boolean, basePsi: KtElement
+): FirWhenExpression {
+    val terminalExpression = FirConstExpressionImpl(session, psi, IrConstKind.Boolean, !isAnd)
+    val terminalBlock = FirSingleExpressionBlock(session, terminalExpression)
+    val otherBlock = FirSingleExpressionBlock(session, other)
+    return FirWhenExpressionImpl(session, basePsi).apply {
+        branches += FirWhenBranchImpl(
+            session, psi, this@generateLazyLogicalOperation,
+            if (isAnd) otherBlock else terminalBlock
+        )
+        branches += FirWhenBranchImpl(
+            session, other.psi, FirElseIfTrueCondition(session, psi),
+            if (isAnd) terminalBlock else otherBlock
+        )
+        typeRef = FirImplicitBooleanTypeRef(session, basePsi)
+    }
+}
+
+internal fun KtWhenCondition.toFirWhenCondition(
+    session: FirSession,
+    convert: KtExpression?.(String) -> FirExpression,
+    toFirOrErrorTypeRef: KtTypeReference?.() -> FirTypeRef
+): FirExpression {
+    val firSubjectExpression = FirWhenSubjectExpression(session, this)
+    return when (this) {
+        is KtWhenConditionWithExpression -> {
+            FirOperatorCallImpl(
+                session,
+                expression,
+                FirOperation.EQ
+            ).apply {
+                arguments += firSubjectExpression
+                arguments += expression.convert("No expression in condition with expression")
+            }
+        }
+        is KtWhenConditionInRange -> {
+            FirOperatorCallImpl(
+                session,
+                rangeExpression,
+                if (isNegated) FirOperation.NOT_IN else FirOperation.IN
+            ).apply {
+                arguments += firSubjectExpression
+                arguments += rangeExpression.convert("No range in condition with range")
+            }
+        }
+        is KtWhenConditionIsPattern -> {
+            FirTypeOperatorCallImpl(
+                session, typeReference, if (isNegated) FirOperation.NOT_IS else FirOperation.IS,
+                typeReference.toFirOrErrorTypeRef()
+            ).apply {
+                arguments += firSubjectExpression
+            }
+        }
+        else -> {
+            FirErrorExpressionImpl(session, this, "Unsupported when condition: ${this.javaClass}")
+        }
+    }
+}
+
+internal fun Array<KtWhenCondition>.toFirWhenCondition(
+    session: FirSession,
+    basePsi: KtElement,
+    convert: KtExpression?.(String) -> FirExpression,
+    toFirOrErrorTypeRef: KtTypeReference?.() -> FirTypeRef
+): FirExpression {
+    var firCondition: FirExpression? = null
+    for (condition in this) {
+        val firConditionElement = condition.toFirWhenCondition(session, convert, toFirOrErrorTypeRef)
+        firCondition = when (firCondition) {
+            null -> firConditionElement
+            else -> firCondition.generateLazyLogicalOperation(
+                session, firConditionElement, false, basePsi
+            )
+        }
+    }
+    return firCondition!!
 }
 
 internal fun generateIncrementOrDecrementBlock(
