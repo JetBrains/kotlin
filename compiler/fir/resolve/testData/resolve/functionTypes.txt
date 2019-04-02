@@ -11,7 +11,7 @@ FILE: functionTypes.kt
     }
     <T, out R> public abstract interface KProperty1 : R|KProperty<R>|, R|kotlin/Function1| {
     }
-    <out R> public abstract interface KProperty {
+    <out R> public abstract interface KProperty : R|kotlin/Any| {
     }
-    <R> public abstract interface KMutableProperty {
+    <R> public abstract interface KMutableProperty : R|kotlin/Any| {
     }

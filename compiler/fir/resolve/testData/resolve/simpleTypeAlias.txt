@@ -1,8 +1,8 @@
 FILE: simpleTypeAlias.kt
-    public abstract interface B {
+    public abstract interface B : R|kotlin/Any| {
     }
     public final typealias C = R|B|
-    public final class D : R|C|, R|kotlin/Any| {
+    public final class D : R|C| {
         public constructor(): super<R|kotlin/Any|>()
 
     }

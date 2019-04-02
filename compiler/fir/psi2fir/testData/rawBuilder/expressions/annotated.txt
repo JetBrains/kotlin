@@ -1,6 +1,6 @@
 FILE: annotated.kt
-    @Target(AnnotationTarget#.EXPRESSION#) @Retention(AnnotationRetention#.SOURCE#) public? final? annotation class Ann : kotlin/Any {
-        public? constructor(): super<kotlin/Any>()
+    @Target(AnnotationTarget#.EXPRESSION#) @Retention(AnnotationRetention#.SOURCE#) public? final? annotation class Ann : kotlin/Annotation {
+        public? constructor(): super<kotlin/Annotation>()
 
     }
     public? final? fun foo(arg: Int): Int {

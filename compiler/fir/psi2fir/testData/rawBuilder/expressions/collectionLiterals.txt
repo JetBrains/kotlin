@@ -1,20 +1,20 @@
 FILE: collectionLiterals.kt
-    public? final? annotation class Ann1 : kotlin/Any {
-        public? constructor(arr: IntArray): super<kotlin/Any>()
+    public? final? annotation class Ann1 : kotlin/Annotation {
+        public? constructor(arr: IntArray): super<kotlin/Annotation>()
 
         public? final? val arr: IntArray = R|<local>/arr|
             public? get(): IntArray
 
     }
-    public? final? annotation class Ann2 : kotlin/Any {
-        public? constructor(arr: DoubleArray): super<kotlin/Any>()
+    public? final? annotation class Ann2 : kotlin/Annotation {
+        public? constructor(arr: DoubleArray): super<kotlin/Annotation>()
 
         public? final? val arr: DoubleArray = R|<local>/arr|
             public? get(): DoubleArray
 
     }
-    public? final? annotation class Ann3 : kotlin/Any {
-        public? constructor(arr: Array<String>): super<kotlin/Any>()
+    public? final? annotation class Ann3 : kotlin/Annotation {
+        public? constructor(arr: Array<String>): super<kotlin/Annotation>()
 
         public? final? val arr: Array<String> = R|<local>/arr|
             public? get(): Array<String>

@@ -1,11 +1,11 @@
 FILE: enums2.kt
-    public? final? interface Some {
+    public? final? interface Some : kotlin/Any {
     }
-    public? final? object O1 : Some, kotlin/Any {
+    public? final? object O1 : Some {
         public? constructor(): super<kotlin/Any>()
 
     }
-    public? final? object O2 : Some, kotlin/Any {
+    public? final? object O2 : Some {
         public? constructor(): super<kotlin/Any>()
 
     }

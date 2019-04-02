@@ -6,7 +6,7 @@ FILE: jvm.kt
         }
 
     }
-    public abstract interface Y {
+    public abstract interface Y : R|kotlin/Any| {
         public open fun baz(): R|kotlin/Unit| {
         }
 

@@ -1,12 +1,12 @@
 FILE: simpleClass.kt
-    public abstract interface SomeInterface {
+    public abstract interface SomeInterface : R|kotlin/Any| {
         public abstract fun foo(x: R|kotlin/Int|, y: R|kotlin/String|): R|kotlin/String|
 
         public abstract val bar: R|kotlin/Boolean|
             public get(): R|kotlin/Boolean|
 
     }
-    public final class SomeClass : R|SomeInterface|, R|kotlin/Any| {
+    public final class SomeClass : R|SomeInterface| {
         public constructor(): super<R|kotlin/Any|>()
 
         private final val baz: R|kotlin/Int| = Int(42)

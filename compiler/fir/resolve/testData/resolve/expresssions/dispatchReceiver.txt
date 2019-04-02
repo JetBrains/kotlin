@@ -1,5 +1,5 @@
 FILE: dispatchReceiver.kt
-    public abstract interface Base {
+    public abstract interface Base : R|kotlin/Any| {
         public abstract fun check(): R|kotlin/Unit|
 
     }

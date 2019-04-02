@@ -1,11 +1,11 @@
 FILE: enum.kt
-    public abstract interface Some {
+    public abstract interface Some : R|kotlin/Any| {
     }
-    public final object O1 : R|Some|, R|kotlin/Any| {
+    public final object O1 : R|Some| {
         public constructor(): super<R|kotlin/Any|>()
 
     }
-    public final object O2 : R|Some|, R|kotlin/Any| {
+    public final object O2 : R|Some| {
         public constructor(): super<R|kotlin/Any|>()
 
     }

@@ -1,5 +1,5 @@
 FILE: genericFunctions.kt
-    public? final? interface Any {
+    public? final? interface Any : kotlin/Any {
     }
     <reified T : Any> public? final? inline fun Any.safeAs(): T? {
         ^safeAs (this# as? T)

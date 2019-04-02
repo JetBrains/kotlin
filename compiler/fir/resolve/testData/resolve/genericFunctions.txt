@@ -1,5 +1,5 @@
 FILE: genericFunctions.kt
-    public abstract interface Any {
+    public abstract interface Any : R|kotlin/Any| {
     }
     <reified T : R|Any|> public final inline fun R|Any|.safeAs(): R|T|? {
         ^safeAs (this# as? R|T|)

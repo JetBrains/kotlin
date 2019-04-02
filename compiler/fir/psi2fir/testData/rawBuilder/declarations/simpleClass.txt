@@ -1,12 +1,12 @@
 FILE: simpleClass.kt
-    public? final? interface SomeInterface {
+    public? final? interface SomeInterface : kotlin/Any {
         public? final? fun foo(x: Int, y: String): String
 
         public? final? val bar: Boolean
             public? get(): Boolean
 
     }
-    public? final? class SomeClass : SomeInterface, kotlin/Any {
+    public? final? class SomeClass : SomeInterface {
         public? constructor(): super<kotlin/Any>()
 
         private final? val baz: <implicit> = Int(42)

@@ -39,3 +39,8 @@ class FirImplicitEnumTypeRef(
     session: FirSession,
     psi: PsiElement?
 ) : FirImplicitBuiltinTypeRef(session, psi, KotlinBuiltIns.FQ_NAMES._enum)
+
+class FirImplicitAnnotationTypeRef(
+    session: FirSession,
+    psi: PsiElement?
+) : FirImplicitBuiltinTypeRef(session, psi, KotlinBuiltIns.FQ_NAMES.annotation.toUnsafe())

@@ -3,10 +3,10 @@ FILE: typeAliasWithGeneric.kt
         public? constructor(): super<kotlin/Any>()
 
     }
-    <S, T : A> public? final? interface B {
+    <S, T : A> public? final? interface B : kotlin/Any {
     }
     <T> public? final typealias C = B<T, A>
-    public? final? class D : C<A>, kotlin/Any {
+    public? final? class D : C<A> {
         public? constructor(): super<kotlin/Any>()
 
     }

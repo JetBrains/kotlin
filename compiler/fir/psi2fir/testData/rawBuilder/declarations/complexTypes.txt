@@ -8,7 +8,7 @@ FILE: complexTypes.kt
         }
 
     }
-    public? final? interface Test {
+    public? final? interface Test : kotlin/Any {
         public? final? val x: a.b.C<out CharSequence, *>.D<in List<*>, *>
             public? get(): a.b.C<out CharSequence, *>.D<in List<*>, *>
 

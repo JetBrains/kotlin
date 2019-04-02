@@ -1,5 +1,5 @@
 FILE: Base.kt
-    public abstract interface First {
+    public abstract interface First : R|kotlin/Any| {
     }
     public open class Second : R|kotlin/Any| {
         public constructor(): super<R|kotlin/Any|>()

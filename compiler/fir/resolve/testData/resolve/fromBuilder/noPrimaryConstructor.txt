@@ -1,5 +1,5 @@
 FILE: noPrimaryConstructor.kt
-    public final class NoPrimary {
+    public final class NoPrimary : R|kotlin/Any| {
         public final val x: R|kotlin/String|
             public get(): R|kotlin/String|
 
