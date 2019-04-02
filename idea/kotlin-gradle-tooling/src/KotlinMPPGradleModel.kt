@@ -9,10 +9,20 @@ import org.jetbrains.plugins.gradle.model.ExternalDependency
 import org.jetbrains.plugins.gradle.model.ModelFactory
 import java.io.File
 import java.io.Serializable
+import java.util.*
 
 typealias KotlinDependency = ExternalDependency
 
-fun KotlinDependency.deepCopy(): KotlinDependency = ModelFactory.createCopy(this)
+fun KotlinDependency.deepCopy(cache: MutableMap<Any, Any>): KotlinDependency {
+    val cachedValue = cache[this] as? KotlinDependency
+    if (cachedValue != null) {
+        return cachedValue
+    } else {
+        val result = ModelFactory.createCopy(this)
+        cache[this] = result
+        return result
+    }
+}
 
 interface KotlinModule : Serializable {
     val name: String
