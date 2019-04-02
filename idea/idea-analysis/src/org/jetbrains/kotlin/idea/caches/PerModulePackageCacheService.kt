@@ -17,7 +17,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.rootManager
 import com.intellij.openapi.roots.ModuleRootEvent
 import com.intellij.openapi.roots.ModuleRootListener
-import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
@@ -219,10 +218,9 @@ class ImplicitPackagePrefixCache(private val project: Project) {
 class PerModulePackageCacheService(private val project: Project) {
 
     /*
-     * Disposal of entries handled by Module child Disposable registered in packageExists
-     * Actually an StrongMap<Module, SoftMap<ModuleSourceInfo, SoftMap<FqName, Boolean>>>
+     * Actually an WeakMap<Module, SoftMap<ModuleSourceInfo, SoftMap<FqName, Boolean>>>
      */
-    private val cache = ConcurrentHashMap<Module, ConcurrentMap<ModuleSourceInfo, ConcurrentMap<FqName, Boolean>>>()
+    private val cache = ContainerUtil.createConcurrentWeakMap<Module, ConcurrentMap<ModuleSourceInfo, ConcurrentMap<FqName, Boolean>>>()
     private val implicitPackagePrefixCache = ImplicitPackagePrefixCache(project)
 
     private val pendingVFileChanges: MutableSet<VFileEvent> = mutableSetOf()
@@ -323,7 +321,6 @@ class PerModulePackageCacheService(private val project: Project) {
         checkPendingChanges()
 
         val perSourceInfoCache = cache.getOrPut(module) {
-            Disposer.register(module, Disposable { cache.remove(module) })
             ContainerUtil.createConcurrentSoftMap()
         }
         val cacheForCurrentModuleInfo = perSourceInfoCache.getOrPut(moduleInfo) {
