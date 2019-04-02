@@ -42,7 +42,7 @@ internal class LlvmDeclarations(
     private val staticFields: Map<IrField, StaticFieldLlvmDeclarations>,
     private val unique: Map<UniqueKind, UniqueLlvmDeclarations>) {
     fun forFunction(function: IrFunction) = functions[function] ?:
-            error("${function.descriptor} in ${(function.parent as IrDeclaration).name}")
+            error("${function.descriptor} in ${function.parent.fqNameSafe}")
 
     fun forClass(irClass: IrClass) = classes[irClass] ?:
             error(irClass.descriptor.toString())

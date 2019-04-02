@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -157,7 +158,7 @@ private class RangeLoopTransformer(
         val compareTo = symbols.getBinaryOperator(OperatorNameConventions.COMPARE_TO,
                 forLoopHeader.bound.type.toKotlinType(),
                 minConst.type.toKotlinType())
-        return irCall(irBuiltIns.greaterFunByOperandType[irBuiltIns.int]?.symbol!!).apply {
+        return irCall(irBuiltIns.greaterFunByOperandType[irBuiltIns.int]!!).apply {
             val compareToCall = irCall(compareTo).apply {
                 dispatchReceiver = irGet(forLoopHeader.bound)
                 putValueArgument(0, minConst)
@@ -176,7 +177,7 @@ private class RangeLoopTransformer(
                 loopHeader.inductionVariable.type.toKotlinType(),
                 loopHeader.last.type.toKotlinType())
 
-        val check = irCall(comparingBuiltIn).apply {
+        val check = irCall(comparingBuiltIn as IrFunctionSymbol).apply {
             putValueArgument(0, irCallOp(compareTo.owner, irGet(loopHeader.inductionVariable), irGet(loopHeader.last)))
             putValueArgument(1, irInt(0))
         }

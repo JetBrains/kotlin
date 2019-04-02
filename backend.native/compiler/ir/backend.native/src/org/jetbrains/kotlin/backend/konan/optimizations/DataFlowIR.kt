@@ -582,7 +582,7 @@ internal object DataFlowIR {
             if (returnsNothing)
                 attributes = attributes or FunctionAttributes.RETURNS_NOTHING
             val symbol = when {
-                it.isExternal || (it.origin == IrDeclarationOrigin.IR_BUILTINS_STUB) -> {
+                it.isExternal || (it.symbol in context.irBuiltIns.irBuiltInsSymbols) -> {
                     val escapesAnnotation = it.descriptor.annotations.findAnnotation(FQ_NAME_ESCAPES)
                     val pointsToAnnotation = it.descriptor.annotations.findAnnotation(FQ_NAME_POINTS_TO)
                     @Suppress("UNCHECKED_CAST")

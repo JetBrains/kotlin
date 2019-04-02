@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.isInlined
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.types.SimpleType
 
@@ -218,7 +220,7 @@ internal tailrec fun IrDeclaration.findPackage(): IrPackageFragment {
             ?: (parent as IrDeclaration).findPackage()
 }
 
-fun IrFunction.isComparisonFunction(map: Map<SimpleType, IrSimpleFunction>): Boolean =
+fun IrFunctionSymbol.isComparisonFunction(map: Map<SimpleType, IrSimpleFunctionSymbol>): Boolean =
         this in map.values
 
 val IrDeclaration.isPropertyAccessor get() =

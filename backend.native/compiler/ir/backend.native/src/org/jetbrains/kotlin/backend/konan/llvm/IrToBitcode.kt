@@ -2000,7 +2000,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                                            else args
         return when {
             function.isTypedIntrinsic -> intrinsicGenerator.evaluateCall(callee, args)
-            function.origin == IrDeclarationOrigin.IR_BUILTINS_STUB -> evaluateOperatorCall(callee, argsWithContinuationIfNeeded)
+            function.symbol in context.irBuiltIns.irBuiltInsSymbols -> evaluateOperatorCall(callee, argsWithContinuationIfNeeded)
             function is IrConstructor -> evaluateConstructorCall(callee, argsWithContinuationIfNeeded)
             else -> evaluateSimpleFunctionCall(function, argsWithContinuationIfNeeded, resultLifetime, callee.superQualifierSymbol?.owner)
         }
@@ -2100,23 +2100,23 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         val ib = context.irModule!!.irBuiltins
 
         with(functionGenerationContext) {
+            val functionSymbol = function.symbol
             return when {
-                function == ib.eqeqeqFun -> icmpEq(args[0], args[1])
-                function.symbol == ib.booleanNotSymbol -> icmpNe(args[0], kTrue)
-
-                function.isComparisonFunction(ib.greaterFunByOperandType) -> {
+                functionSymbol == ib.eqeqeqSymbol -> icmpEq(args[0], args[1])
+                functionSymbol == ib.booleanNotSymbol -> icmpNe(args[0], kTrue)
+                functionSymbol.isComparisonFunction(ib.greaterFunByOperandType) -> {
                     if (args[0].type.isFloatingPoint()) fcmpGt(args[0], args[1])
                     else icmpGt(args[0], args[1])
                 }
-                function.isComparisonFunction(ib.greaterOrEqualFunByOperandType) -> {
+                functionSymbol.isComparisonFunction(ib.greaterOrEqualFunByOperandType) -> {
                     if (args[0].type.isFloatingPoint()) fcmpGe(args[0], args[1])
                     else icmpGe(args[0], args[1])
                 }
-                function.isComparisonFunction(ib.lessFunByOperandType) -> {
+                functionSymbol.isComparisonFunction(ib.lessFunByOperandType) -> {
                     if (args[0].type.isFloatingPoint()) fcmpLt(args[0], args[1])
                     else icmpLt(args[0], args[1])
                 }
-                function.isComparisonFunction(ib.lessOrEqualFunByOperandType) -> {
+                functionSymbol.isComparisonFunction(ib.lessOrEqualFunByOperandType) -> {
                     if (args[0].type.isFloatingPoint()) fcmpLe(args[0], args[1])
                     else icmpLe(args[0], args[1])
                 }

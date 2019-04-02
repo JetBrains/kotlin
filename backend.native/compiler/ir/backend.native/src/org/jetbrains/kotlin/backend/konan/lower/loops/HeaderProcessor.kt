@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.isSimpleTypeWithQuestionMark
@@ -49,9 +50,9 @@ internal class ProgressionLoopHeader(
     private val increasing = headerInfo.increasing
 
     fun comparingFunction(builtIns: IrBuiltIns) = if (increasing)
-        builtIns.lessOrEqualFunByOperandType[builtIns.int]?.symbol!!
+        builtIns.lessOrEqualFunByOperandType[builtIns.int]
     else
-        builtIns.greaterOrEqualFunByOperandType[builtIns.int]?.symbol!!
+        builtIns.greaterOrEqualFunByOperandType[builtIns.int]
 
     override fun initializeLoopVariable(symbols: KonanSymbols, builder: DeclarationIrBuilder) = with(builder) {
         irGet(inductionVariable)
@@ -99,8 +100,8 @@ internal class ArrayLoopHeader(
 
     override fun buildBody(builder: DeclarationIrBuilder, loop: IrLoop, newBody: IrExpression?): IrLoop = with (builder) {
         val builtIns = context.irBuiltIns
-        val callee = builtIns.lessOrEqualFunByOperandType[builtIns.int]?.symbol!!
-        val newCondition = irCall(callee).apply {
+        val callee = builtIns.lessOrEqualFunByOperandType[builtIns.int]
+        val newCondition = irCall(callee as IrFunctionSymbol).apply {
             putValueArgument(0, irGet(inductionVariable))
             putValueArgument(1, irGet(last))
         }

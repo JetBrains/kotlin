@@ -301,7 +301,7 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
                     putValueArgument(1, irNullPointer())
                 }
             }
-            is BinaryType.Reference -> irCall(context.irBuiltIns.eqeqeqFun).apply {
+            is BinaryType.Reference -> irCall(context.irBuiltIns.eqeqeqSymbol).apply {
                 putValueArgument(0, expression)
                 putValueArgument(1, irNull())
             }
