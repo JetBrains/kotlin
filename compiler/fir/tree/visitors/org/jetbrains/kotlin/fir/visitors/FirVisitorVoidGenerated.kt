@@ -212,16 +212,16 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitCall(arraySetCall, null)
     }
 
-    open fun visitComponentCall(componentCall: FirComponentCall) {
-        visitCall(componentCall, null)
-    }
-
     open fun visitDelegatedConstructorCall(delegatedConstructorCall: FirDelegatedConstructorCall) {
         visitCall(delegatedConstructorCall, null)
     }
 
     open fun visitFunctionCall(functionCall: FirFunctionCall) {
         visitCall(functionCall, null)
+    }
+
+    open fun visitComponentCall(componentCall: FirComponentCall) {
+        visitFunctionCall(componentCall, null)
     }
 
     open fun visitGetClassCall(getClassCall: FirGetClassCall) {

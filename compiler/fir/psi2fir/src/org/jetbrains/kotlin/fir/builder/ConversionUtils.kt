@@ -354,9 +354,7 @@ internal fun generateDestructuringBlock(
             statements += FirVariableImpl(
                 session, entry, entry.nameAsSafeName,
                 entry.typeReference.toFirOrImplicitTypeRef(), isVar,
-                FirComponentCallImpl(session, entry, index + 1).apply {
-                    arguments += generateAccessExpression(session, entry, container.name)
-                },
+                FirComponentCallImpl(session, entry, index + 1, generateAccessExpression(session, entry, container.name)),
                 FirVariableSymbol(entry.nameAsSafeName) // TODO?
             ).apply {
                 entry.extractAnnotationsTo(this)

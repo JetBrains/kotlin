@@ -28,6 +28,6 @@ FILE: annotated.kt
     }
     public? final? fun bar(two: Two): kotlin/Unit {
         lval <destruct>: <implicit> = two#
-        @Ann() lval x: <implicit> = component1(<destruct>#)
-        @Ann() lval y: <implicit> = component2(<destruct>#)
+        @Ann() lval x: <implicit> = <destruct>#.component1()
+        @Ann() lval y: <implicit> = <destruct>#.component2()
     }

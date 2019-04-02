@@ -39,8 +39,8 @@ FILE: for.kt
         lval <iterator>: <implicit> = <range>#.iterator#()
         while(<iterator>#.hasNext#()) {
             lval <destruct>: <implicit> = <iterator>#.next#()
-            lval x: <implicit> = component1(<destruct>#)
-            lval y: <implicit> = component2(<destruct>#)
+            lval x: <implicit> = <destruct>#.component1()
+            lval y: <implicit> = <destruct>#.component2()
             println#(plus#(String(x = ), x#, String( y = ), y#))
         }
 

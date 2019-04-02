@@ -868,8 +868,8 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
 
     override fun visitComponentCall(componentCall: FirComponentCall) {
         componentCall.annotations.renderAnnotations()
-        print("component${componentCall.componentIndex}")
-        visitCall(componentCall)
+        componentCall.explicitReceiver.accept(this)
+        print(".component${componentCall.componentIndex}()")
     }
 
     override fun visitGetClassCall(getClassCall: FirGetClassCall) {

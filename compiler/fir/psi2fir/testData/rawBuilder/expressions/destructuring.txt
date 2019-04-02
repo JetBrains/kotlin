@@ -14,9 +14,9 @@ FILE: destructuring.kt
     }
     public? final? fun foo(some: Some): kotlin/Unit {
         lval <destruct>: <implicit> = some#
-        lvar x: <implicit> = component1(<destruct>#)
-        lvar y: <implicit> = component2(<destruct>#)
-        lvar z: String = component3(<destruct>#)
+        lvar x: <implicit> = <destruct>#.component1()
+        lvar y: <implicit> = <destruct>#.component2()
+        lvar z: String = <destruct>#.component3()
         lval <unary>: <implicit> = x#
         x# = inc#(<unary>#)
         <unary>#
