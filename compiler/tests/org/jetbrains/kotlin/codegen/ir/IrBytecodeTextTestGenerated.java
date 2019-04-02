@@ -894,9 +894,19 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/conditions"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true);
         }
 
-        @TestMetadata("conjuction.kt")
-        public void testConjuction() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/conditions/conjuction.kt");
+        @TestMetadata("conjunction.kt")
+        public void testConjunction() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/conditions/conjunction.kt");
+        }
+
+        @TestMetadata("conjunctionInDoWhile.kt")
+        public void testConjunctionInDoWhile() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/conditions/conjunctionInDoWhile.kt");
+        }
+
+        @TestMetadata("conjunctionInWhile.kt")
+        public void testConjunctionInWhile() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/conditions/conjunctionInWhile.kt");
         }
 
         @TestMetadata("disjunction.kt")

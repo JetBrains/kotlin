@@ -181,6 +181,11 @@ public class LineNumberTestGenerated extends AbstractLineNumberTest {
             runTest("compiler/testData/lineNumber/custom/ifThenElse.kt");
         }
 
+        @TestMetadata("ifThenElseFalse.kt")
+        public void testIfThenElseFalse() throws Exception {
+            runTest("compiler/testData/lineNumber/custom/ifThenElseFalse.kt");
+        }
+
         @TestMetadata("inTheEndOfLambdaArgumentOfInlineCall.kt")
         public void testInTheEndOfLambdaArgumentOfInlineCall() throws Exception {
             runTest("compiler/testData/lineNumber/custom/inTheEndOfLambdaArgumentOfInlineCall.kt");

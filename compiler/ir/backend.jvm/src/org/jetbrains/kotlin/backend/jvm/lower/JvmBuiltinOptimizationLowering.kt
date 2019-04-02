@@ -15,13 +15,12 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
+import org.jetbrains.kotlin.ir.types.isBoolean
 import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.types.toKotlinType
-import org.jetbrains.kotlin.ir.util.coerceToUnitIfNeeded
-import org.jetbrains.kotlin.ir.util.isFalseConst
-import org.jetbrains.kotlin.ir.util.isNullConst
-import org.jetbrains.kotlin.ir.util.isTrueConst
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
@@ -101,6 +100,25 @@ class JvmBuiltinOptimizationLowering(val context: JvmBackendContext) : FileLower
                 // Remove all branches with constant false condition.
                 expression.branches.removeIf() {
                     it.condition.isFalseConst() && isCompilerGenerated
+                }
+                if (expression.origin == IrStatementOrigin.ANDAND) {
+                    assert(expression.type.isBoolean()
+                            && expression.branches.size == 2
+                            && expression.branches[1].condition.isTrueConst()
+                            && expression.branches[1].result.isFalseConst()) {
+                        "ANDAND condition should have an 'if true then false' body on its second branch. " +
+                                "Failing expression: ${expression.dump()}"
+                    }
+                    // Replace conjunction condition with intrinsic "and" function call
+                    return IrCallImpl(
+                        expression.startOffset,
+                        expression.endOffset,
+                        context.irBuiltIns.booleanType,
+                        context.irIntrinsics.andandSymbol
+                    ).apply {
+                        dispatchReceiver = expression.branches[0].condition
+                        putValueArgument(0, expression.branches[0].result)
+                    }
                 }
                 // If the only condition that is left has a constant true condition remove the
                 // when in favor of the result. If there are no conditions left, remove the when

@@ -3,11 +3,9 @@ val b = false
 val c = false
 
 fun main() {
-    if (!(a && b && c)) {
-        "then"
-    } else {
-        "else"
-    }
+    do {
+        "loop"
+    } while (a && b && c)
 }
 
 // 0 ICONST_0
@@ -15,4 +13,4 @@ fun main() {
 // 2 IFEQ
 // 1 IFNE
 // 3 IF
-// 1 GOTO
+// 0 GOTO
