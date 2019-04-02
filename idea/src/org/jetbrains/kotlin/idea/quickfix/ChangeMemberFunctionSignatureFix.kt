@@ -57,7 +57,7 @@ import java.util.*
  */
 class ChangeMemberFunctionSignatureFix private constructor(
     element: KtNamedFunction,
-    private val signatures: List<ChangeMemberFunctionSignatureFix.Signature>
+    private val signatures: List<Signature>
 ) : KotlinQuickFixAction<KtNamedFunction>(element) {
 
     init {
@@ -233,10 +233,8 @@ class ChangeMemberFunctionSignatureFix private constructor(
 
     override fun getText(): String {
         val single = signatures.singleOrNull()
-        return if (single != null)
-            "Change function signature to '${single.preview}'"
-        else
-            "Change function signature..."
+        return if (single != null) "Change function signature to '${single.preview}'"
+        else "Change function signature..."
     }
 
     override fun getFamilyName() = "Change function signature"
@@ -332,11 +330,14 @@ class ChangeMemberFunctionSignatureFix private constructor(
                     }
                 }
 
-                val newParameterList = function.valueParameterList!!.replace(patternFunction.valueParameterList!!) as KtParameterList
+                val newParameterList = patternFunction.valueParameterList?.let {
+                    function.valueParameterList?.replace(it)
+                } as KtParameterList
+                ShortenReferences.DEFAULT.process(newParameterList)
+
                 if (patternFunction.receiverTypeReference == null && function.receiverTypeReference != null) {
                     function.setReceiverTypeReference(null)
                 }
-                ShortenReferences.DEFAULT.process(newParameterList)
             }
         }
 
