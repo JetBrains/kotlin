@@ -6,23 +6,19 @@
 package org.jetbrains.kotlin.backend.common.lower.loops
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.matchers.SimpleCalleeMatcher
 import org.jetbrains.kotlin.backend.common.lower.matchers.createIrCallMatcher
 import org.jetbrains.kotlin.backend.common.lower.matchers.singleArgumentExtension
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.irCall
+import org.jetbrains.kotlin.ir.builders.irGet
+import org.jetbrains.kotlin.ir.builders.irInt
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrConst
-import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.toKotlinType
-import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.properties
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -80,78 +76,15 @@ internal class UntilHandler(private val context: CommonBackendContext, private v
 
     override fun build(call: IrCall, data: ProgressionType): HeaderInfo? =
         with(context.createIrBuilder(call.symbol, call.startOffset, call.endOffset)) {
-            val boundArg = call.getValueArgument(0)!!
-            val bound = ensureNotNullable(
-                boundArg.castIfNecessary(
-                    data.elementType(context.irBuiltIns),
-                    data.elementCastFunctionName
-                )
-            )
-            // `bound` may be needed for an additional condition to the emptiness check (see comments below). If so, store `bound` in a
-            // temporary variable as it may be an expression with side-effects and we should only evaluate it once.
-            val boundVar = if (needsMinValueCondition(data, boundArg)) scope.createTemporaryVariable(
-                bound,
-                nameHint = "bound",
-                origin = IrDeclarationOrigin.FOR_LOOP_IMPLICIT_VARIABLE
-            ) else null
-
-            // `last = bound - 1` for the loop `for (i in first until bound)`.
-            val decFun = data.decFun(context.irBuiltIns)
-            val last = irCallOp(decFun.symbol, bound.type, if (boundVar != null) irGet(boundVar) else bound)
-
-            // The default "not empty" check cannot be used for the corner case:
-            //
-            //   for (i in a until MIN_VALUE) {}
-            //
-            // ...which should always be considered an empty range. When the given bound is MIN_VALUE, and because `last = bound - 1`,
-            // "last" will underflow to MAX_VALUE, therefore the default "not empty" check:
-            //
-            //   if (inductionVar <= last) { /* loop */ }
-            //
-            // ...will always be true and won't consider the range as empty. Therefore, we need to add an additional condition to the
-            // "not empty" check so that it becomes:
-            //
-            //   if (inductionVar <= last && bound > MIN_VALUE) { /* loop */ }
             ProgressionHeaderInfo(
                 data,
                 first = call.extensionReceiver!!,
-                last = last,
+                last = call.getValueArgument(0)!!,
                 step = irInt(1),
-                canOverflow = false,
-                additionalVariables = listOfNotNull(boundVar),
-                additionalNotEmptyCondition = if (boundVar != null) buildMinValueCondition(data, irGet(boundVar)) else null
+                isLastInclusive = false,
+                canOverflow = false
             )
         }
-
-    /** Returns true (i.e., min value condition is needed) if `bound` is non-const OR is MIN_VALUE. */
-    private fun needsMinValueCondition(progressionType: ProgressionType, bound: IrExpression): Boolean {
-        val boundValue = (bound as? IrConst<*>)?.value
-        val boundValueAsLong = when (boundValue) {
-            is Number -> boundValue.toLong()
-            is Char -> boundValue.toLong()
-            else -> return true  // If "bound" is not a const Number or Char.
-        }
-        val minValueAsLong = when (progressionType) {
-            ProgressionType.INT_PROGRESSION -> Int.MIN_VALUE.toLong()
-            ProgressionType.CHAR_PROGRESSION -> Char.MIN_VALUE.toLong()
-            ProgressionType.LONG_PROGRESSION -> Long.MIN_VALUE
-        }
-        return minValueAsLong == boundValueAsLong
-    }
-
-    private fun DeclarationIrBuilder.buildMinValueCondition(progressionType: ProgressionType, bound: IrExpression): IrExpression {
-        val irBuiltIns = context.irBuiltIns
-        val minConst = when (progressionType) {
-            ProgressionType.INT_PROGRESSION -> irInt(Int.MIN_VALUE)
-            ProgressionType.CHAR_PROGRESSION -> irChar(Char.MIN_VALUE)
-            ProgressionType.LONG_PROGRESSION -> irLong(Long.MIN_VALUE)
-        }
-        val progressionKotlinType = progressionType.elementType(irBuiltIns).toKotlinType()
-        return irCall(irBuiltIns.greaterFunByOperandType[progressionKotlinType]!!).apply {
-            putValueArgument(0, bound)
-            putValueArgument(1, minConst)
-        }
-    }
 }
 
 /** Builds a [HeaderInfo] for progressions built using the `indices` extension property. */
@@ -167,18 +100,18 @@ internal class IndicesHandler(val context: CommonBackendContext) : ProgressionHa
 
     override fun build(call: IrCall, data: ProgressionType): HeaderInfo? =
         with(context.createIrBuilder(call.symbol, call.startOffset, call.endOffset)) {
-            // `last = array.size - 1` for the loop `for (i in array.indices)`.
+            // `last = array.size` for the loop `for (i in array.indices)`.
             val arraySizeProperty = call.extensionReceiver!!.type.getClass()!!.properties.first { it.name.asString() == "size" }
-            val decFun = data.decFun(context.irBuiltIns)
-            val last = irCallOp(decFun.symbol, data.elementType(context.irBuiltIns), irCall(arraySizeProperty.getter!!).apply {
+            val last = irCall(arraySizeProperty.getter!!).apply {
                 dispatchReceiver = call.extensionReceiver
-            })
+            }
 
             ProgressionHeaderInfo(
                 data,
                 first = irInt(0),
                 last = last,
                 step = irInt(1),
+                isLastInclusive = false,
                 canOverflow = false  // Cannot overflow because `last` is at most MAX_VALUE - 1
             )
         }
@@ -225,8 +158,6 @@ internal class DefaultProgressionHandler(private val context: CommonBackendConte
 /** Builds a [HeaderInfo] for arrays. */
 internal class ArrayIterationHandler(private val context: CommonBackendContext) : HeaderInfoHandler<Nothing?> {
 
-    private val intDecFun = ProgressionType.INT_PROGRESSION.decFun(context.irBuiltIns)
-
     override val matcher = createIrCallMatcher {
         origin { it == IrStatementOrigin.FOR_LOOP_ITERATOR }
         // TODO: Support rare cases like `T : IntArray`
@@ -255,11 +186,11 @@ internal class ArrayIterationHandler(private val context: CommonBackendContext) 
                 origin = IrDeclarationOrigin.FOR_LOOP_IMPLICIT_VARIABLE
             )
 
-            // `last = array.size - 1` for the loop `for (i in array.indices)`.
+            // `last = array.size` for the loop `for (i in array.indices)`.
             val arraySizeProperty = arrayReference.type.getClass()!!.properties.first { it.name.asString() == "size" }
-            val last = irCallOp(intDecFun.symbol, context.irBuiltIns.intType, irCall(arraySizeProperty.getter!!).apply {
+            val last = irCall(arraySizeProperty.getter!!).apply {
                 dispatchReceiver = irGet(arrayReference)
-            })
+            }
 
             ArrayHeaderInfo(
                 first = irInt(0),
@@ -268,14 +199,4 @@ internal class ArrayIterationHandler(private val context: CommonBackendContext) 
                 arrayVariable = arrayReference
             )
         }
-}
-
-private fun ProgressionType.decFun(builtIns: IrBuiltIns): IrFunction {
-    val symbol =
-        when (this) {
-            ProgressionType.INT_PROGRESSION -> builtIns.intClass
-            ProgressionType.LONG_PROGRESSION -> builtIns.longClass
-            ProgressionType.CHAR_PROGRESSION -> builtIns.charClass
-        }
-    return symbol.owner.functions.first { it.name.asString() == "dec" }
 }
