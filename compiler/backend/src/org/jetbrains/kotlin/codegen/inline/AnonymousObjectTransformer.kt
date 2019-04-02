@@ -134,7 +134,8 @@ class AnonymousObjectTransformer(
             inliningContext,
             classBuilder,
             methodsToTransform,
-            superClassName
+            superClassName,
+            additionalFakeParams
         )
         for (next in methodsToTransform) {
             val deferringVisitor =

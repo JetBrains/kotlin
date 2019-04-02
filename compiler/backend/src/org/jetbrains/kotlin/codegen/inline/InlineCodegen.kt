@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.codegen.inline
 import com.intellij.psi.PsiElement
 import com.intellij.util.ArrayUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.isSuspendFunctionTypeOrSubtype
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.getMethodAsmFlags
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
@@ -409,8 +410,11 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
                 info.remapValue = remappedValue
             } else {
                 info = invocationParamBuilder.addNextValueParameter(jvmType, false, remappedValue, parameterIndex)
-                if (kind == ValueKind.NON_INLINEABLE_CALLED_IN_SUSPEND) {
-                    info.functionalArgument = CrossinlineLambdaInSuspendContextAsNoInline
+                info.functionalArgument = when (kind) {
+                    ValueKind.NON_INLINEABLE_ARGUMENT_FOR_INLINE_PARAMETER_CALLED_IN_SUSPEND ->
+                        NonInlineableArgumentForInlineableParameterCalledInSuspend(kotlinType?.isSuspendFunctionTypeOrSubtype == true)
+                    ValueKind.NON_INLINEABLE_ARGUMENT_FOR_INLINE_SUSPEND_PARAMETER -> NonInlineableArgumentForInlineableSuspendParameter
+                    else -> null
                 }
             }
 
@@ -804,14 +808,17 @@ class PsiInlineCodegen(
             }
         } else {
             val value = codegen.gen(argumentExpression)
-            putValueIfNeeded(
-                parameterType,
-                value,
-                if (isCallSiteIsSuspend(valueParameterDescriptor)) ValueKind.NON_INLINEABLE_CALLED_IN_SUSPEND else ValueKind.GENERAL,
-                parameterIndex
-            )
+            val kind = when {
+                isCallSiteIsSuspend(valueParameterDescriptor) -> ValueKind.NON_INLINEABLE_ARGUMENT_FOR_INLINE_PARAMETER_CALLED_IN_SUSPEND
+                isInlineSuspendParameter(valueParameterDescriptor) -> ValueKind.NON_INLINEABLE_ARGUMENT_FOR_INLINE_SUSPEND_PARAMETER
+                else -> ValueKind.GENERAL
+            }
+            putValueIfNeeded(parameterType, value, kind, parameterIndex)
         }
     }
+
+    private fun isInlineSuspendParameter(descriptor: ValueParameterDescriptor): Boolean =
+        functionDescriptor.isInline && !descriptor.isNoinline && descriptor.type.isSuspendFunctionTypeOrSubtype
 
     private fun isCallSiteIsSuspend(descriptor: ValueParameterDescriptor): Boolean =
         state.bindingContext[CodegenBinding.CALL_SITE_IS_SUSPEND_FOR_CROSSINLINE_LAMBDA, descriptor] == true
