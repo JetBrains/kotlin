@@ -9,9 +9,13 @@ import org.jetbrains.kotlin.konan.library.KLIB_DIR_NAME
 import org.jetbrains.kotlin.konan.library.KLIB_MANIFEST_FILE_NAME
 import org.jetbrains.kotlin.konan.library.KLIB_PROPERTY_COMPILER_VERSION
 import org.jetbrains.kotlin.konan.library.KLIB_PROPERTY_UNIQUE_NAME
+import org.jetbrains.kotlin.konan.library.KONAN_COMMON_LIBS_DIR_NAME
+import org.jetbrains.kotlin.konan.library.KONAN_PLATFORM_LIBS_DIR_NAME
+import org.jetbrains.kotlin.konan.library.KONAN_SOURCES_DIR_NAME
+import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
+import java.io.File
 import java.io.IOException
 import java.nio.file.Files
-import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.*
 
@@ -37,32 +41,17 @@ class LiteKonanLibraryInfoProvider(customKonanHomeDir: String? = null) {
      * Returns either [LiteKonanLibrary], or null if there is no such library in
      * Kotlin/Native distribution.
      */
-    fun getDistributionLibraryInfo(libraryPath: Path): LiteKonanLibrary? {
+    fun getDistributionLibraryInfo(libraryPath: File): LiteKonanLibrary? {
         // check whether it under Kotlin/Native root
         if (!isUnderKonanRoot(libraryPath))
             return null
 
-        val manifestFile = libraryPath.resolve(KLIB_MANIFEST_FILE_NAME)
-        if (!Files.isRegularFile(manifestFile))
-            return null
-
-        val parentPath = libraryPath.parent ?: return null
-        val parentName = parentPath.toFile().name
-
-        val platform = when (parentName) {
-            "common" -> null
-            else -> {
-                val grandParentName = parentPath.parent?.toFile()?.name ?: return null
-                when (grandParentName) {
-                    "platform" -> parentName
-                    else -> return null
-                }
-            }
-        }
+        val manifestFile = libraryPath.resolve(KLIB_MANIFEST_FILE_NAME).takeIf { it.isFile } ?: return null
+        val (platform: String?, dataDir: File) = getPlatformAndDataDir(libraryPath) ?: return null
 
         val manifestProperties = Properties().apply {
             try {
-                Files.newInputStream(manifestFile).use { load(it) }
+                manifestFile.inputStream().use { load(it) }
             } catch (e: IOException) {
                 return null
             }
@@ -71,13 +60,45 @@ class LiteKonanLibraryInfoProvider(customKonanHomeDir: String? = null) {
         val name = manifestProperties[KLIB_PROPERTY_UNIQUE_NAME]?.toString() ?: return null
         val compilerVersion = manifestProperties[KLIB_PROPERTY_COMPILER_VERSION]?.toString() ?: return null
 
-        return LiteKonanLibrary(libraryPath, name, platform, compilerVersion)
+        val sourcePaths = if (name == KONAN_STDLIB_NAME) getStdlibSources(dataDir) else emptyList()
+
+        return LiteKonanLibrary(libraryPath, sourcePaths, name, platform, compilerVersion)
     }
 
-    private fun isUnderKonanRoot(libraryPath: Path): Boolean {
-        if (konanHomeDir != null && libraryPath.startsWith(konanHomeDir))
-            return true
+    private fun isUnderKonanRoot(libraryPath: File): Boolean {
+        with(libraryPath.toPath()) {
+            if (konanHomeDir != null && startsWith(konanHomeDir))
+                return true
 
-        return libraryPath.startsWith(konanDataDir)
+            return startsWith(konanDataDir)
+        }
+    }
+
+    private fun getPlatformAndDataDir(libraryPath: File): Pair<String?, File>? {
+        val parentDir = libraryPath.parentFile ?: return null
+        val parentDirName = parentDir.name
+
+        fun getDataDir(platformDir: File): File = platformDir.parentFile.parentFile
+
+        return when (parentDirName) {
+            KONAN_COMMON_LIBS_DIR_NAME -> null to getDataDir(parentDir)
+            else -> {
+                val grandParentDir = parentDir.parentFile ?: return null
+                when {
+                    grandParentDir.name == KONAN_PLATFORM_LIBS_DIR_NAME -> parentDirName to getDataDir(grandParentDir)
+                    else -> return null
+                }
+            }
+        }
+    }
+
+    private fun getStdlibSources(dataDir: File): Collection<File> {
+        val sourcesDir = dataDir.resolve(KONAN_SOURCES_DIR_NAME).takeIf { it.isDirectory } ?: return emptyList()
+
+        return sourcesDir.walkTopDown().maxDepth(1)
+            .filter { it.isFile }
+            .filter {
+                with(it.name) { endsWith(".zip") && (startsWith("kotlin-stdlib") || startsWith("kotlin-test")) }
+            }.toList()
     }
 }

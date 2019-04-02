@@ -13,7 +13,7 @@ class LiteKonanDistributionInfoProvider(private val konanHomeDir: String) {
 
     fun getDistributionInfo(): LiteKonanDistribution? {
         val stdlibInfo = LiteKonanLibraryInfoProvider(konanHomeDir).getDistributionLibraryInfo(
-            Paths.get(konanHomeDir).resolve(konanCommonLibraryPath(KONAN_STDLIB_NAME))
+            Paths.get(konanHomeDir).resolve(konanCommonLibraryPath(KONAN_STDLIB_NAME)).toFile()
         ) ?: return null
 
         val versionString = stdlibInfo.compilerVersion
