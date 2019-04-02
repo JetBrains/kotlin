@@ -155,6 +155,22 @@ abstract class Symbols<out T : CommonBackendContext>(val context: T, private val
 
     val arrays = primitiveArrays.values + unsignedArrays.values + array
 
+    val collection = symbolTable.referenceClass(builtIns.collection)
+    val set = symbolTable.referenceClass(builtIns.set)
+    val list = symbolTable.referenceClass(builtIns.list)
+    val map = symbolTable.referenceClass(builtIns.map)
+    val mapEntry = symbolTable.referenceClass(builtIns.mapEntry)
+    val iterable = symbolTable.referenceClass(builtIns.iterable)
+    val listIterator = symbolTable.referenceClass(builtIns.listIterator)
+    val mutableCollection = symbolTable.referenceClass(builtIns.mutableCollection)
+    val mutableSet = symbolTable.referenceClass(builtIns.mutableSet)
+    val mutableList = symbolTable.referenceClass(builtIns.mutableList)
+    val mutableMap = symbolTable.referenceClass(builtIns.mutableMap)
+    val mutableMapEntry = symbolTable.referenceClass(builtIns.mutableMapEntry)
+    val mutableIterable = symbolTable.referenceClass(builtIns.mutableIterable)
+    val mutableIterator = symbolTable.referenceClass(builtIns.mutableIterator)
+    val mutableListIterator = symbolTable.referenceClass(builtIns.mutableListIterator)
+
     abstract val copyRangeTo: Map<ClassDescriptor, IrSimpleFunctionSymbol>
 
     abstract val coroutineImpl: IrClassSymbol
