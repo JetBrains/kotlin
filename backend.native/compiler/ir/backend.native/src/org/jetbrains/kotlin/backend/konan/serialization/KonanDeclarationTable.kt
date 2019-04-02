@@ -15,3 +15,7 @@ class KonanDeclarationTable(builtIns: IrBuiltIns, descriptorTable: DescriptorTab
         loadKnownBuiltins()
     }
 }
+
+// This is what we pre-populate tables with.
+val IrBuiltIns.knownBuiltins
+    get() = irBuiltInsExternalPackageFragment.declarations

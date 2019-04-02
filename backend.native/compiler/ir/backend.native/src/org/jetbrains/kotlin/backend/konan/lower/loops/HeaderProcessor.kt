@@ -49,9 +49,9 @@ internal class ProgressionLoopHeader(
     private val increasing = headerInfo.increasing
 
     fun comparingFunction(builtIns: IrBuiltIns) = if (increasing)
-        builtIns.lessOrEqualFunByOperandType[builtIns.int]!!
+        builtIns.lessOrEqualFunByOperandType[builtIns.int]?.symbol!!
     else
-        builtIns.greaterOrEqualFunByOperandType[builtIns.int]!!
+        builtIns.greaterOrEqualFunByOperandType[builtIns.int]?.symbol!!
 
     override fun initializeLoopVariable(symbols: KonanSymbols, builder: DeclarationIrBuilder) = with(builder) {
         irGet(inductionVariable)
@@ -99,7 +99,7 @@ internal class ArrayLoopHeader(
 
     override fun buildBody(builder: DeclarationIrBuilder, loop: IrLoop, newBody: IrExpression?): IrLoop = with (builder) {
         val builtIns = context.irBuiltIns
-        val callee = builtIns.lessOrEqualFunByOperandType[builtIns.int]!!
+        val callee = builtIns.lessOrEqualFunByOperandType[builtIns.int]?.symbol!!
         val newCondition = irCall(callee).apply {
             putValueArgument(0, irGet(inductionVariable))
             putValueArgument(1, irGet(last))

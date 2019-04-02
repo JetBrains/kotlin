@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.backend.konan.descriptors.isIrBuiltIn
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -582,9 +581,8 @@ internal object DataFlowIR {
                 attributes = attributes or FunctionAttributes.RETURNS_UNIT
             if (returnsNothing)
                 attributes = attributes or FunctionAttributes.RETURNS_NOTHING
-
             val symbol = when {
-                it.isExternal || it.isIrBuiltIn() -> {
+                it.isExternal || (it.origin == IrDeclarationOrigin.IR_BUILTINS_STUB) -> {
                     val escapesAnnotation = it.descriptor.annotations.findAnnotation(FQ_NAME_ESCAPES)
                     val pointsToAnnotation = it.descriptor.annotations.findAnnotation(FQ_NAME_POINTS_TO)
                     @Suppress("UNCHECKED_CAST")

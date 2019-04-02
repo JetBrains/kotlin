@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.types.SimpleType
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 
 /**
  * List of all implemented interfaces (including those which implemented by a super class)
@@ -219,10 +218,8 @@ internal tailrec fun IrDeclaration.findPackage(): IrPackageFragment {
             ?: (parent as IrDeclaration).findPackage()
 }
 
-fun IrDeclaration.isIrBuiltIn() = this.findPackage().packageFragmentDescriptor is IrBuiltinsPackageFragmentDescriptor
-
-fun IrFunction.isComparisonFunction(map: Map<SimpleType, IrSimpleFunctionSymbol>) =
-        this.symbol in map.values
+fun IrFunction.isComparisonFunction(map: Map<SimpleType, IrSimpleFunction>): Boolean =
+        this in map.values
 
 val IrDeclaration.isPropertyAccessor get() =
     this is IrSimpleFunction && this.correspondingProperty != null

@@ -93,10 +93,10 @@ open class KonanInteropTask @Inject constructor(val workerExecutor: WorkerExecut
             linkerOpts.addAll(it.files.map { it.canonicalPath })
         }
         linkerOpts.forEach {
-            addArg("-linkerOpt", it)
+            addArg("-lopt", it)
         }
 
-        addArgs("-compilerOpt", includeDirs.allHeadersDirs.map { "-I${it.absolutePath}" })
+        addArgs("-copt", includeDirs.allHeadersDirs.map { "-I${it.absolutePath}" })
         addArgs("-headerFilterAdditionalSearchPrefix", includeDirs.headerFilterDirs.map { it.absolutePath })
 
         addArgs("-repo", libraries.repos.map { it.canonicalPath })

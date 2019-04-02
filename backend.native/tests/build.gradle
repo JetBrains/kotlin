@@ -2894,20 +2894,6 @@ task inline_defaultArgs_linkTest(type: LinkKonanTest) {
     lib = "codegen/inline/defaultArgs_linkTest_lib.kt"
 }
 
-def generateWithSpaceDefFile() {
-    def file = new File("${buildDir}/withSpaces.def")
-    file.write """
-headers = stdio.h "${projectDir}/interop/basics/custom headers/custom.h"
-linkerOpts = -map "${buildDir}/cutom map.map"
----
-
-int customCompare(const char* str1, const char* str2) {
-    return custom_strcmp(str1, str2);
-}
-"""
-    return file.absolutePath
-}
-
 kotlinNativeInterop {
     target project.testTarget ?: 'host'
     flavor 'native'
@@ -3062,24 +3048,6 @@ task interop_callbacksAndVarargs(type: RunInteropKonanTest) {
     disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
     source = "interop/basics/callbacksAndVarargs.kt"
     interop = 'ccallbacksAndVarargs'
-}
-
-task interop_withSpaces() {
-    dependsOn 'build'
-    konanArtifacts {
-        interop('withSpacesInterop') {
-            defFile generateWithSpaceDefFile()
-        }
-        program("withSpaces") {
-            srcDir "interop/basics/withSpaces.kt"
-            libraries {
-                artifact 'withSpacesInterop'
-            }
-        }
-    }
-    doLast {
-        assert file("${buildDir}/cutom map.map").exists()
-    }
 }
 
 task interop_echo_server(type: RunInteropKonanTest) {

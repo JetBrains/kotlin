@@ -70,7 +70,7 @@ internal class BuiltinOperatorLowering(val context: Context) : FileLoweringPass,
     }
 
     private fun ieee754EqualsDescriptors(): List<FunctionDescriptor> =
-            irBuiltins.ieee754equalsFunByOperandType.values.map { it.descriptor }
+            irBuiltins.ieee754equalsFunByOperandType.values.map(IrSimpleFunction::descriptor)
 
     private fun transformBuiltinOperator(expression: IrCall): IrExpression = when (expression.descriptor) {
         irBuiltins.eqeq, in ieee754EqualsDescriptors() -> lowerEqeq(expression)

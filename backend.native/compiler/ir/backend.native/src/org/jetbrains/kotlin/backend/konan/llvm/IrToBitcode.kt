@@ -2000,7 +2000,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                                            else args
         return when {
             function.isTypedIntrinsic -> intrinsicGenerator.evaluateCall(callee, args)
-            function.isIrBuiltIn() -> evaluateOperatorCall(callee, argsWithContinuationIfNeeded)
+            function.origin == IrDeclarationOrigin.IR_BUILTINS_STUB -> evaluateOperatorCall(callee, argsWithContinuationIfNeeded)
             function is IrConstructor -> evaluateConstructorCall(callee, argsWithContinuationIfNeeded)
             else -> evaluateSimpleFunctionCall(function, argsWithContinuationIfNeeded, resultLifetime, callee.superQualifierSymbol?.owner)
         }
@@ -2101,7 +2101,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
         with(functionGenerationContext) {
             return when {
-                function.symbol == ib.eqeqeqSymbol -> icmpEq(args[0], args[1])
+                function == ib.eqeqeqFun -> icmpEq(args[0], args[1])
                 function.symbol == ib.booleanNotSymbol -> icmpNe(args[0], kTrue)
 
                 function.isComparisonFunction(ib.greaterFunByOperandType) -> {

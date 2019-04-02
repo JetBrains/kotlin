@@ -122,9 +122,8 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
 
         addFileArgs("-native-library", nativeLibraries)
         addArg("-produce", produce.name.toLowerCase())
-        linkerOpts.forEach {
-            addArg("-linker-option", it)
-        }
+
+        addListArg("-linker-options", linkerOpts)
 
         addArgIfNotNull("-target", konanTarget.visibleName)
         addArgIfNotNull("-language-version", languageVersion)
