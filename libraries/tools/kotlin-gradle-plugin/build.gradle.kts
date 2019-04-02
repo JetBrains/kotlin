@@ -82,6 +82,10 @@ dependencies {
     testCompileOnly(project(":kotlin-annotation-processing-gradle"))
 }
 
+if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
+    configurations.compile.get().exclude("com.android.tools.external.com-intellij", "intellij-core")
+}
+
 runtimeJar(rewriteDepsToShadedCompiler(jar)) {
     dependsOn(jarContents)
 
