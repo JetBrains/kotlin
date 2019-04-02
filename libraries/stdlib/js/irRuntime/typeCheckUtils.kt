@@ -5,27 +5,31 @@
 
 package kotlin.js
 
-private fun isInterfaceImpl(ctor: dynamic, iface: dynamic): Boolean {
-    if (ctor === iface) return true;
+private external interface Metadata {
+    val interfaces: Array<Ctor>
+}
 
-    val self = ::isInterfaceImpl
-    return js(
-        """
-    var metadata = ctor.${"$"}metadata${"$"};
+private external interface Ctor {
+    val `$metadata$`: Metadata?
+    val prototype: Ctor?
+}
+
+private fun isInterfaceImpl(ctor: Ctor, iface: dynamic): Boolean {
+    if (ctor === iface) return true
+
+    val metadata = ctor.`$metadata$`
     if (metadata != null) {
-        var interfaces = metadata.interfaces;
-        for (var i = 0; i < interfaces.length; i++) {
-            if (self_0(interfaces[i], iface)) {
-                return true;
+        val interfaces = metadata.interfaces
+        for (i in interfaces) {
+            if (isInterfaceImpl(i, iface)) {
+                return true
             }
         }
     }
 
-    var superPrototype = ctor.prototype != null ? Object.getPrototypeOf(ctor.prototype) : null;
-    var superConstructor = superPrototype != null ? superPrototype.constructor : null;
-    return superConstructor != null && self_0(superConstructor, iface);
-    """
-    ).unsafeCast<Boolean>()
+    val superPrototype = if (ctor.prototype != null) js("Object").getPrototypeOf(ctor.prototype) else null
+    val superConstructor: Ctor? = if (superPrototype != null) superPrototype.constructor else null
+    return superConstructor != null && isInterfaceImpl(superConstructor, iface)
 }
 
 public fun isInterface(obj: dynamic, iface: dynamic): Boolean {
@@ -74,9 +78,9 @@ public fun isInterface(ctor: dynamic, IType: dynamic): Boolean {
 
 fun typeOf(obj: dynamic): String = js("typeof obj").unsafeCast<String>()
 
-fun jsTypeOf(a: Any?): String = js("typeof a").unsafeCast<String>()
+fun jsTypeOf(obj: Any?): String = js("typeof obj").unsafeCast<String>()
 
-fun instanceOf(obj: dynamic, jsClass: dynamic) = js("obj instanceof jsClass").unsafeCast<Boolean>()
+fun instanceOf(obj: dynamic, jsClass_local: dynamic) = js("obj instanceof jsClass_local").unsafeCast<Boolean>()
 
 fun isObject(obj: dynamic): Boolean {
     val objTypeOf = typeOf(obj)
@@ -118,7 +122,7 @@ public fun isLongArray(a: dynamic): Boolean = isJsArray(a) && a.`$type$` == "Lon
 
 
 internal fun jsIn(x: String, y: dynamic): Boolean = js("x in y")
-internal fun jsGetPrototypeOf(jsClass: dynamic) = js("Object.getPrototypeOf(jsClass)")
+internal fun jsGetPrototypeOf(jsClass: dynamic) = js("Object").getPrototypeOf(jsClass)
 
 public fun jsIsType(obj: dynamic, jsClass: dynamic): Boolean {
     if (jsClass === js("Object")) {

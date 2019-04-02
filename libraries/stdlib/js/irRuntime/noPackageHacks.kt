@@ -24,21 +24,21 @@ internal fun <T> arrayConcat(vararg args: T): T {
  */
 @PublishedApi
 internal fun <T> primitiveArrayConcat(vararg args: T): T {
-    var size = 0
+    var size_local = 0
     for (i in 0 .. (args.size - 1)) {
-        size += args[i].unsafeCast<Array<Any?>>().size
+        size_local += args[i].unsafeCast<Array<Any?>>().size
     }
     val a = args[0]
-    val result = js("new a.constructor(size)").unsafeCast<Array<Any?>>()
+    val result = js("new a.constructor(size_local)").unsafeCast<Array<Any?>>()
     if (a.asDynamic().`$type$` != null) {
         withType(a.asDynamic().`$type$`, result)
     }
 
-    size = 0
+    size_local = 0
     for (i in 0 .. (args.size - 1)) {
         val arr = args[i].unsafeCast<Array<Any?>>()
         for (j in 0 .. (arr.size - 1)) {
-            result[size++] = arr[j]
+            result[size_local++] = arr[j]
         }
     }
     return result.unsafeCast<T>()
