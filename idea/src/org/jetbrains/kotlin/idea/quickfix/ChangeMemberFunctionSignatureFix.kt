@@ -38,10 +38,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.NOT_NULL_ANNOTATIONS
 import org.jetbrains.kotlin.load.java.NULLABLE_ANNOTATIONS
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.psi.KtParameterList
-import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.typeRefHelpers.setReceiverTypeReference
 import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
@@ -338,6 +335,14 @@ class ChangeMemberFunctionSignatureFix private constructor(
                 if (patternFunction.receiverTypeReference == null && function.receiverTypeReference != null) {
                     function.setReceiverTypeReference(null)
                 }
+
+                val patternTypeParameterList = patternFunction.typeParameterList
+                if (patternTypeParameterList != null) {
+                    ShortenReferences.DEFAULT.process(
+                        (if (function.typeParameterList != null) function.typeParameterList?.replace(patternTypeParameterList)
+                        else function.addAfter(patternTypeParameterList, function.funKeyword)) as KtTypeParameterList
+                    )
+                } else function.typeParameterList?.delete()
             }
         }
 

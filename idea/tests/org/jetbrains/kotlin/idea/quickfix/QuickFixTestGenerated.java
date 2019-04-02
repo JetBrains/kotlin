@@ -9288,6 +9288,16 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 runTest("idea/testData/quickfix/override/nothingToOverride/addParameterTwoSupertypes.kt");
             }
 
+            @TestMetadata("addTypeParameter.kt")
+            public void testAddTypeParameter() throws Exception {
+                runTest("idea/testData/quickfix/override/nothingToOverride/addTypeParameter.kt");
+            }
+
+            @TestMetadata("addTypeParameter2.kt")
+            public void testAddTypeParameter2() throws Exception {
+                runTest("idea/testData/quickfix/override/nothingToOverride/addTypeParameter2.kt");
+            }
+
             public void testAllFilesPresentInNothingToOverride() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/override/nothingToOverride"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
             }
@@ -9337,6 +9347,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 runTest("idea/testData/quickfix/override/nothingToOverride/changeReturnType.kt");
             }
 
+            @TestMetadata("changeTypeParameter.kt")
+            public void testChangeTypeParameter() throws Exception {
+                runTest("idea/testData/quickfix/override/nothingToOverride/changeTypeParameter.kt");
+            }
+
             @TestMetadata("doNotLooseAnnotations.kt")
             public void testDoNotLooseAnnotations() throws Exception {
                 runTest("idea/testData/quickfix/override/nothingToOverride/doNotLooseAnnotations.kt");
@@ -9375,6 +9390,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @TestMetadata("removeParameterTwoTraits.kt")
             public void testRemoveParameterTwoTraits() throws Exception {
                 runTest("idea/testData/quickfix/override/nothingToOverride/removeParameterTwoTraits.kt");
+            }
+
+            @TestMetadata("removeTypeParameter.kt")
+            public void testRemoveTypeParameter() throws Exception {
+                runTest("idea/testData/quickfix/override/nothingToOverride/removeTypeParameter.kt");
             }
 
             @TestMetadata("swapParametersGenericClass.kt")
