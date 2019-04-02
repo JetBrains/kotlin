@@ -13,10 +13,7 @@ import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReferenceImpl
 import org.jetbrains.kotlin.fir.references.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.resolve.calls.CallInfo
-import org.jetbrains.kotlin.fir.resolve.calls.CallResolver
-import org.jetbrains.kotlin.fir.resolve.calls.createFunctionConsumer
-import org.jetbrains.kotlin.fir.resolve.calls.createVariableConsumer
+import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.addImportingScopes
 import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
@@ -34,6 +31,10 @@ import org.jetbrains.kotlin.fir.visitors.compose
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.SimpleTypeMarker
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
+import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContextDelegate
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOnly: Boolean) : FirTransformer<Any?>() {
@@ -153,7 +154,15 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
             }
     }
 
-    val inferenceComponents = InferenceComponents(object : ConeInferenceContext {
+    val inferenceComponents = InferenceComponents(object : ConeInferenceContext, TypeSystemInferenceExtensionContextDelegate {
+        override fun findCommonIntegerLiteralTypesSuperType(explicitSupertypes: List<SimpleTypeMarker>): SimpleTypeMarker? {
+            TODO("not implemented")
+        }
+
+        override fun TypeConstructorMarker.getApproximatedIntegerLiteralType(): KotlinTypeMarker {
+            TODO("not implemented")
+        }
+
         override val session: FirSession
             get() = this@FirBodyResolveTransformer.session
     })

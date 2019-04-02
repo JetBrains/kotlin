@@ -302,9 +302,9 @@ class ConeTypeVariable(name: String) : TypeVariableMarker {
     val defaultType = ConeTypeVariableType(ConeNullability.NOT_NULL, typeConstructor)
 }
 
-class InferenceComponents(val ctx: TypeSystemInferenceExtensionContext) {
+class InferenceComponents(val ctx: TypeSystemInferenceExtensionContextDelegate) {
     val approximator = object : AbstractTypeApproximator(ctx) {}
-    val incorporator = ConstraintIncorporator(approximator, TrivialConstraintTypeInferenceOracle())
+    val incorporator = ConstraintIncorporator(approximator, TrivialConstraintTypeInferenceOracle(ctx))
     val injector = ConstraintInjector(incorporator, approximator)
 
     fun createConstraintSystem(): NewConstraintSystemImpl {
