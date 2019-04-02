@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.CopyCommonSources
 import org.jetbrains.kotlin.konan.target.HostManager
 
 /*
@@ -112,10 +113,8 @@ configurations {
     kotlin_reflect_jar
     kotlin_script_runtime_jar
     kotlin_native_shared_jar
-    kotlin_common_stdlib_src
-    kotlin_test_common_src
-    kotlin_test_annotations_common_src
     trove4j_jar
+    kotlinCommonSources
 
     cli_bcRuntime {
         extendsFrom compilerRuntime
@@ -134,9 +133,10 @@ dependencies {
     kotlin_reflect_jar "$kotlinReflectModule@jar"
     kotlin_script_runtime_jar "$kotlinScriptRuntimeModule@jar"
     kotlin_native_shared_jar "$kotlinNativeSharedModule@jar"
-    kotlin_common_stdlib_src kotlinCommonStdlibModule
-    kotlin_test_common_src kotlinTestCommonModule
-    kotlin_test_annotations_common_src kotlinTestAnnotationsCommonModule
+
+    [kotlinCommonStdlibModule, kotlinTestCommonModule, kotlinTestAnnotationsCommonModule].each {
+        kotlinCommonSources(it) { transitive = false }
+    }
 
     compilerCompile "com.google.protobuf:protobuf-java:${protobufVersion}"
 
@@ -165,23 +165,9 @@ task stdlib(dependsOn: "${hostName}Stdlib")
 
 def commonSrc = file('build/stdlib')
 
-task unzipStdlibSources(type: Copy) {
-    dependsOn configurations.kotlin_common_stdlib_src
-    dependsOn configurations.kotlin_test_common_src
-    dependsOn configurations.kotlin_test_annotations_common_src
-
-    def jarFiles = configurations.kotlin_common_stdlib_src.files +
-            configurations.kotlin_test_common_src.files +
-            configurations.kotlin_test_annotations_common_src.files
-
-    jarFiles.forEach { jarFile ->
-        from(zipTree(jarFile)) {
-            include 'generated/**/*.kt'
-            include 'kotlin/**/*.kt'
-            include 'kotlin.test/*.kt'
-        }
-    }
-    destinationDir commonSrc
+task unzipStdlibSources(type: CopyCommonSources) {
+    outputDir commonSrc
+    sourcePaths configurations.kotlinCommonSources.files
 }
 
 final List<File> stdLibSrc = [
@@ -191,28 +177,6 @@ final List<File> stdLibSrc = [
         project(':runtime').file('src/main/kotlin'),
         project(':runtime').file('src/launcher/kotlin')
 ]
-
-task zipStdLibSources(type: Zip, dependsOn: unzipStdlibSources) {
-    from stdLibSrc, {
-        into "native"
-    }
-
-    from commonSrc, {
-        into "common"
-    }
-
-    archiveName 'kotlin-stdlib-native-sources.zip'
-    destinationDir buildDir
-}
-
-task teamcityPublishStdLibSources {
-    dependsOn zipStdLibSources
-    if (System.getenv("TEAMCITY_BUILD_PROPERTIES_FILE") != null) {
-        doLast {
-            println " ##teamcity[publishArtifacts '${tasks.zipStdLibSources.archivePath}'] "
-        }
-    }
-}
 
 // These files are built before the 'dist' is complete,
 // so we provide custom values for

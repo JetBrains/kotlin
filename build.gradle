@@ -13,11 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import groovy.io.FileType
 import org.jetbrains.kotlin.konan.target.*
-import org.jetbrains.kotlin.konan.properties.*
 import org.jetbrains.kotlin.konan.util.*
 import org.jetbrains.kotlin.CopySamples
+import org.jetbrains.kotlin.CopyCommonSources
 import org.jetbrains.kotlin.konan.*
 
 buildscript {
@@ -191,6 +190,18 @@ class PlatformInfo {
     }
 }
 
+configurations {
+    ftpAntTask
+    kotlinCommonSources
+}
+
+dependencies {
+    ftpAntTask 'org.apache.ant:ant-commons-net:1.9.9'
+    [kotlinCommonStdlibModule, kotlinTestCommonModule, kotlinTestAnnotationsCommonModule].each {
+        kotlinCommonSources(it) { transitive = false }
+    }
+}
+
 task versionJar {
     dependsOn gradle.includedBuild('kotlin-native-version').task(':jar')
 }
@@ -217,6 +228,32 @@ task cross_dist(dependsOn: "crossDist")
 task list_dist(dependsOn: "listDist")
 task build {
     dependsOn ':dist', ':distPlatformLibs'
+}
+
+task distCommonSources(type: CopyCommonSources) {
+    outputDir "$distDir/sources"
+    sourcePaths configurations.kotlinCommonSources.files
+    zipSources true
+}
+
+task distNativeSources(type: Zip) {
+    destinationDirectory = file("$distDir/sources")
+    archiveFileName = "kotlin-stdlib-native-sources.zip"
+
+    includeEmptyDirs = false
+    include('**/*.kt')
+
+    from(project(':runtime').file('src/main/kotlin'))
+    from(project(':Interop:Runtime').file('src/main/kotlin'))
+    from(project(':Interop:Runtime').file('src/native/kotlin'))
+    from(project(':Interop:JsRuntime').file('src/main/kotlin')) {
+        into('kotlinx/wasm/jsinterop')
+    }
+}
+
+task distSources {
+    dependsOn(distCommonSources)
+    dependsOn(distNativeSources)
 }
 
 task distCompiler(type: Copy) {
@@ -319,7 +356,6 @@ task listDist(type: Exec) {
 task distRuntime(type: Copy) {
     dependsOn "${hostName}CrossDistRuntime"
     dependsOn('commonDistRuntime')
-    dependsOn(':backend.native:teamcityPublishStdLibSources')
 }
 
 def stdlib = 'klib/common/stdlib'
@@ -393,17 +429,10 @@ task crossDist {
     dependsOn 'crossDistRuntime', 'distCompiler'
 }
 
-configurations {
-    ftpAntTask
-}
-
-dependencies {
-    ftpAntTask 'org.apache.ant:ant-commons-net:1.9.9'
-}
-
 task bundle(type: (isWindows()) ? Zip : Tar) {
     dependsOn('crossDistPlatformLibs')
     dependsOn('crossDist')
+    dependsOn('distSources')
     def simpleOsName = HostManager.simpleOsName()
     baseName = "kotlin-native-$simpleOsName-$konanVersionFull"
     from("$project.rootDir/dist") {
@@ -441,6 +470,7 @@ task bundle(type: (isWindows()) ? Zip : Tar) {
 task 'tc-dist'(type: (isWindows()) ? Zip : Tar) {
     dependsOn('distPlatformLibs')
     dependsOn('dist')
+    dependsOn('distSources')
     def simpleOsName = HostManager.simpleOsName()
     baseName = "kotlin-native-dist-$simpleOsName-$konanVersionFull"
     from("$project.rootDir/dist") {
