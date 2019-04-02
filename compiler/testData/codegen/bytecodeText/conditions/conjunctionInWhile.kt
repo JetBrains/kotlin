@@ -1,13 +1,10 @@
-// IGNORE_BACKEND: JVM_IR
 val a = false
 val b = false
 val c = false
 
 fun main() {
-    if (a && b && c) {
-        "then"
-    } else {
-        "else"
+    while (a && b && c) {
+        "loop"
     }
 }
 

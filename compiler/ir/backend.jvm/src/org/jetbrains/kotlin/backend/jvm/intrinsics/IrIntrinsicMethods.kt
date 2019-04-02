@@ -31,6 +31,10 @@ class IrIntrinsicMethods(irBuiltIns: IrBuiltIns) {
 
     val intrinsics = IntrinsicMethods()
 
+    val andandSymbol = irBuiltIns.run { defineOperator(OperatorNames.ANDAND, bool, listOf(bool, bool)) }
+
+    private val andand = andandSymbol.descriptor
+
     private val irMapping = hashMapOf<CallableMemberDescriptor, IntrinsicMethod>()
 
     private fun createPrimitiveComparisonIntrinsics(typeToIrFun: Map<SimpleType, IrSimpleFunctionSymbol>, operator: KtSingleValueToken) {
@@ -55,6 +59,8 @@ class IrIntrinsicMethods(irBuiltIns: IrBuiltIns) {
         irMapping[irBuiltIns.noWhenBranchMatchedException] = IrNoWhenBranchMatchedException()
         irMapping[irBuiltIns.illegalArgumentException] = IrIllegalArgumentException()
         irMapping[irBuiltIns.throwNpe] = ThrowNPE()
+
+        irMapping[andand] = AndAnd
     }
 
     fun getIntrinsic(descriptor: CallableMemberDescriptor): IntrinsicMethod? {
@@ -63,5 +69,9 @@ class IrIntrinsicMethods(irBuiltIns: IrBuiltIns) {
             return intrinsics.getIntrinsic(DescriptorUtils.unwrapFakeOverride(descriptor.correspondingProperty))
         }
         return irMapping[descriptor.original]
+    }
+
+    private object OperatorNames {
+        const val ANDAND = "ANDAND"
     }
 }
