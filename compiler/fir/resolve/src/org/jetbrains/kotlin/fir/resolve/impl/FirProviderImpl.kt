@@ -96,6 +96,20 @@ class FirProviderImpl(val session: FirSession) : FirProvider {
         val classifierContainerFileMap = mutableMapOf<ClassId, FirFile>()
         val callableMap = mutableMapOf<CallableId, List<ConeCallableSymbol>>()
         val callableContainerMap = mutableMapOf<ConeCallableSymbol, FirFile>()
+
+        fun setFrom(other: State) {
+            fileMap.clear()
+            classifierMap.clear()
+            classifierContainerFileMap.clear()
+            callableMap.clear()
+            callableContainerMap.clear()
+
+            fileMap.putAll(other.fileMap)
+            classifierMap.putAll(other.classifierMap)
+            classifierContainerFileMap.putAll(other.classifierContainerFileMap)
+            callableMap.putAll(other.callableMap)
+            callableContainerMap.putAll(other.callableContainerMap)
+        }
     }
 
     override fun getFirFilesByPackage(fqName: FqName): List<FirFile> {
@@ -111,25 +125,37 @@ class FirProviderImpl(val session: FirSession) : FirProvider {
         val newState = State()
         files.forEach { recordFile(it, newState) }
 
-        fun <K, V> checkMapDiff(a: Map<K, V>, b: Map<K, V>, equal: (old: V?, new: V?) -> Boolean = { old, new -> old === new }) {
+        val failures = mutableListOf<String>()
+
+        fun <K, V> checkMapDiff(
+            title: String,
+            a: Map<K, V>,
+            b: Map<K, V>,
+            equal: (old: V?, new: V?) -> Boolean = { old, new -> old === new }
+        ) {
+            var hasTitle = false
             val unionKeys = a.keys + b.keys
-            val failures = mutableListOf<String>()
+
             for ((key, aValue, bValue) in unionKeys.map { Triple(it, a[it], b[it]) }) {
                 if (!equal(aValue, bValue)) {
+                    if (!hasTitle) {
+                        failures += title
+                        hasTitle = true
+                    }
                     failures += "diff at key = '$key': was: '$aValue', become: '$bValue'"
                 }
             }
-
-            assert(failures.isEmpty()) {
-                failures.joinToString(separator = "\n")
-            }
         }
 
-        fun <K, V> checkMMapDiff(a: Map<K, List<V>>, b: Map<K, List<V>>) {
+        fun <K, V> checkMMapDiff(title: String, a: Map<K, List<V>>, b: Map<K, List<V>>) {
+            var hasTitle = false
             val unionKeys = a.keys + b.keys
-            val failures = mutableListOf<String>()
-            for ((key, aValue, bValue) in unionKeys.map { Triple(it, a[it], b[it])}) {
+            for ((key, aValue, bValue) in unionKeys.map { Triple(it, a[it], b[it]) }) {
                 if (aValue == null || bValue == null) {
+                    if (!hasTitle) {
+                        failures += title
+                        hasTitle = true
+                    }
                     failures += "diff at key = '$key': was: $aValue, become: $bValue"
                 } else {
                     val aSet = aValue.toSet()
@@ -147,16 +173,23 @@ class FirProviderImpl(val session: FirSession) : FirProvider {
                 }
             }
 
+        }
+
+        checkMMapDiff("fileMap", state.fileMap, newState.fileMap)
+        checkMapDiff("classifierMap", state.classifierMap, newState.classifierMap)
+        checkMapDiff("classifierContainerFileMap", state.classifierContainerFileMap, newState.classifierContainerFileMap)
+        checkMMapDiff("callableMap", state.callableMap, newState.callableMap)
+        checkMapDiff("callableContainerMap", state.callableContainerMap, newState.callableContainerMap)
+
+        if (!rebuildIndex) {
             assert(failures.isEmpty()) {
                 failures.joinToString(separator = "\n")
             }
+        } else {
+            state.setFrom(newState)
         }
-
-        checkMMapDiff(state.fileMap, newState.fileMap)
-        checkMapDiff(state.classifierMap, newState.classifierMap)
-        checkMapDiff(state.classifierContainerFileMap, newState.classifierContainerFileMap)
-        checkMMapDiff(state.callableMap, newState.callableMap)
-        checkMapDiff(state.callableContainerMap, newState.callableContainerMap)
     }
 
 }
+
+private const val rebuildIndex = true
