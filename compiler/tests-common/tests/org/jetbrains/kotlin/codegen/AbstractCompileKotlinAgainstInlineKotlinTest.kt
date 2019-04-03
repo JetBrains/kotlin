@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.codegen
 import java.io.File
 
 abstract class AbstractCompileKotlinAgainstInlineKotlinTest : AbstractCompileKotlinAgainstKotlinTest() {
-    override fun doMultiFileTest(wholeFile: File, files: List<TestFile>, javaFilesDir: File?) {
+    override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
         val (factory1, factory2) = doTwoFileTest(files.filter { it.name.endsWith(".kt") })
         try {
             val allGeneratedFiles = factory1.asList() + factory2.asList()

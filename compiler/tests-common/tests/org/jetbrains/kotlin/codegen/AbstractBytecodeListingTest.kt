@@ -14,9 +14,8 @@ import org.jetbrains.org.objectweb.asm.Opcodes.*
 import java.io.File
 
 abstract class AbstractBytecodeListingTest : CodegenTestCase() {
-    override fun doMultiFileTest(wholeFile: File, files: List<TestFile>, javaFilesDir: File?) {
-
-        compile(files, javaFilesDir)
+    override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
+        compile(files)
         val actualTxt = BytecodeListingTextCollectingVisitor.getText(classFileFactory, withSignatures = isWithSignatures(wholeFile))
 
         val prefixes =

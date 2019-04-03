@@ -16,12 +16,12 @@ import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 abstract class AbstractBytecodeTextTest : CodegenTestCase() {
-    override fun doMultiFileTest(wholeFile: File, files: List<TestFile>, javaFilesDir: File?) {
+    override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
         createEnvironmentWithMockJdkAndIdeaAnnotations(
             ConfigurationKind.ALL,
             files,
             TestJdkKind.MOCK_JDK,
-            *listOfNotNull(javaFilesDir).toTypedArray()
+            *listOfNotNull(writeJavaFiles(files)).toTypedArray()
         )
         loadMultiFiles(files)
 

@@ -41,14 +41,14 @@ import java.io.PrintWriter
 import java.util.*
 
 abstract class AbstractIrGeneratorTestCase : CodegenTestCase() {
-    override fun doMultiFileTest(wholeFile: File, files: List<TestFile>, javaFilesDir: File?) {
-        setupEnvironment(files, javaFilesDir)
+    override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
+        setupEnvironment(files)
 
         loadMultiFiles(files)
         doTest(wholeFile, files)
     }
 
-    private fun setupEnvironment(files: List<TestFile>, javaFilesDir: File?) {
+    private fun setupEnvironment(files: List<TestFile>) {
         val jdkKind = getJdkKind(files)
 
         val javacOptions = ArrayList<String>(0)
@@ -74,7 +74,7 @@ abstract class AbstractIrGeneratorTestCase : CodegenTestCase() {
         val configuration = createConfiguration(
             configurationKind, jdkKind,
             listOf<File>(getAnnotationsJar()),
-            arrayOf(javaFilesDir).filterNotNull(),
+            listOfNotNull(writeJavaFiles(files)),
             files
         )
 

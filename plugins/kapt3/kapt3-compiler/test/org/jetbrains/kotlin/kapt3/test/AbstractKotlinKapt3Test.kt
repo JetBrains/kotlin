@@ -107,10 +107,8 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
         myFiles = CodegenTestFiles.create(ktFiles)
     }
 
-    override fun doMultiFileTest(wholeFile: File, files: List<TestFile>, javaFilesDir: File?) {
-        val javaSources = javaFilesDir?.let { arrayOf(it) } ?: emptyArray()
-
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL, *javaSources)
+    override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL, *listOfNotNull(writeJavaFiles(files)).toTypedArray())
         addAnnotationProcessingRuntimeLibrary(myEnvironment)
 
         // Use light analysis mode in tests

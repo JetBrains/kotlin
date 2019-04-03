@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.codegen;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.TestDataFile;
 import kotlin.collections.ArraysKt;
@@ -636,18 +635,13 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
         }
     }
 
-    protected void compile(
-            @NotNull List<TestFile> files,
-            @Nullable File javaSourceDir
-    ) {
-        compile(files, javaSourceDir, true);
+    protected void compile(@NotNull List<TestFile> files) {
+        compile(files, true);
     }
 
-    protected void compile(
-            @NotNull List<TestFile> files,
-            @Nullable File javaSourceDir,
-            boolean reportProblems
-    ) {
+    protected void compile(@NotNull List<TestFile> files, boolean reportProblems) {
+        File javaSourceDir = writeJavaFiles(files);
+
         configurationKind = extractConfigurationKind(files);
         boolean loadAndroidAnnotations = files.stream().anyMatch(
                 it -> InTextDirectivesUtils.isDirectiveDefined(it.content, "ANDROID_ANNOTATIONS")
@@ -677,7 +671,7 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
 
         generateClassesInFile(reportProblems);
 
-        if (javaSourceDir != null) {
+        if (javaSourceDir != null && javaClassesOutputDirectory == null) {
             // If there are Java files, they should be compiled against the class files produced by Kotlin, so we dump them to the disk
             File kotlinOut;
             try {
@@ -771,16 +765,15 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
 
     protected void doTest(String filePath) throws Exception {
         File file = new File(filePath);
-        Ref<File> javaFilesDir = Ref.create();
 
         String expectedText = KotlinTestUtils.doLoadFile(file);
         if (!coroutinesPackage.isEmpty()) {
             expectedText = expectedText.replace("COROUTINES_PACKAGE", coroutinesPackage);
         }
 
-        List<TestFile> testFiles = createTestFiles(file, expectedText, javaFilesDir, coroutinesPackage);
+        List<TestFile> testFiles = createTestFiles(file, expectedText, coroutinesPackage);
 
-        doMultiFileTest(file, testFiles, javaFilesDir.get());
+        doMultiFileTest(file, testFiles);
     }
 
     protected void doTestWithCoroutinesPackageReplacement(String filePath, String packageName) throws Exception {
@@ -789,38 +782,41 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
     }
 
     @NotNull
-    private static List<TestFile> createTestFiles(File file, String expectedText, Ref<File> javaFilesDir, String coroutinesPackage) {
+    private static List<TestFile> createTestFiles(File file, String expectedText, String coroutinesPackage) {
         return KotlinTestUtils.createTestFiles(file.getName(), expectedText, new KotlinTestUtils.TestFileFactoryNoModules<TestFile>() {
             @NotNull
             @Override
             public TestFile create(@NotNull String fileName, @NotNull String text, @NotNull Map<String, String> directives) {
-                if (fileName.endsWith(".java")) {
-                    if (javaFilesDir.isNull()) {
-                        try {
-                            javaFilesDir.set(KotlinTestUtils.tmpDir("java-files"));
-                        }
-                        catch (IOException e) {
-                            throw ExceptionUtilsKt.rethrow(e);
-                        }
-                    }
-                    writeSourceFile(fileName, text, javaFilesDir.get());
-                }
-
                 return new TestFile(fileName, text);
-            }
-
-            private void writeSourceFile(@NotNull String fileName, @NotNull String content, @NotNull File targetDir) {
-                File file = new File(targetDir, fileName);
-                KotlinTestUtils.mkdirs(file.getParentFile());
-                FilesKt.writeText(file, content, Charsets.UTF_8);
             }
         }, coroutinesPackage);
     }
 
+    @Nullable
+    protected static File writeJavaFiles(@NotNull List<TestFile> files) {
+        List<TestFile> javaFiles = CollectionsKt.filter(files, file -> file.name.endsWith(".java"));
+        if (javaFiles.isEmpty()) return null;
+
+        File dir;
+        try {
+            dir = KotlinTestUtils.tmpDir("java-files");
+        }
+        catch (IOException e) {
+            throw ExceptionUtilsKt.rethrow(e);
+        }
+
+        for (TestFile testFile : javaFiles) {
+            File file = new File(dir, testFile.name);
+            KotlinTestUtils.mkdirs(file.getParentFile());
+            FilesKt.writeText(file, testFile.content, Charsets.UTF_8);
+        }
+
+        return dir;
+    }
+
     protected void doMultiFileTest(
             @NotNull File wholeFile,
-            @NotNull List<TestFile> files,
-            @Nullable File javaFilesDir
+            @NotNull List<TestFile> files
     ) throws Exception {
         throw new UnsupportedOperationException("Multi-file test cases are not supported in this test");
     }

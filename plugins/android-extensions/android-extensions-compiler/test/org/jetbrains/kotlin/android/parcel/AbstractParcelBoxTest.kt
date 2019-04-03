@@ -120,8 +120,8 @@ abstract class AbstractParcelBoxTest : CodegenTestCase() {
         return listOf(kotlinRuntimeJar) + layoutLibJars + robolectricJars + junitJar + androidExtensionsRuntimeJars
     }
 
-    override fun doMultiFileTest(wholeFile: File, files: List<TestFile>, javaFilesDir: File?) {
-        compile(files + TestFile(LIBRARY_KT.name, LIBRARY_KT.readText()), javaFilesDir)
+    override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
+        compile(files + TestFile(LIBRARY_KT.name, LIBRARY_KT.readText()))
 
         val javaBin = File(System.getProperty("java.home").takeIf { it.isNotEmpty() } ?: error("JAVA_HOME is not set"), "bin")
         val javaExe = File(javaBin, "java.exe").takeIf { it.exists() } ?: File(javaBin, "java")

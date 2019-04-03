@@ -32,14 +32,10 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
             Boolean.getBoolean("kotlin.suppress.expected.test.failures");
 
     @Override
-    protected void doMultiFileTest(
-            @NotNull File wholeFile,
-            @NotNull List<TestFile> files,
-            @Nullable File javaFilesDir
-    ) throws Exception {
+    protected void doMultiFileTest(@NotNull File wholeFile, @NotNull List<TestFile> files) throws Exception {
         boolean isIgnored = IGNORE_EXPECTED_FAILURES && InTextDirectivesUtils.isIgnoredTarget(getBackend(), wholeFile);
 
-        compile(files, javaFilesDir, !isIgnored);
+        compile(files, !isIgnored);
 
         try {
             blackBox(!isIgnored);

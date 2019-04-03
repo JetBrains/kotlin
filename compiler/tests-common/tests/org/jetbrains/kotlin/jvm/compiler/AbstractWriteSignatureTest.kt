@@ -14,10 +14,8 @@ import java.util.*
 import java.util.regex.MatchResult
 
 abstract class AbstractWriteSignatureTest : CodegenTestCase() {
-
-
-    override fun doMultiFileTest(wholeFile: File, files: MutableList<TestFile>, javaFilesDir: File?) {
-        compile(files, javaFilesDir)
+    override fun doMultiFileTest(wholeFile: File, files: MutableList<TestFile>) {
+        compile(files)
         try {
             parseExpectations(wholeFile).check()
         } catch (e: Throwable) {

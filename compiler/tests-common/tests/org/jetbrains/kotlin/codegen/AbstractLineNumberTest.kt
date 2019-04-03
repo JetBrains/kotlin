@@ -28,14 +28,12 @@ import kotlin.collections.ArrayList
 
 abstract class AbstractLineNumberTest : CodegenTestCase() {
 
-    override fun doMultiFileTest(
-        wholeFile: File, files: MutableList<TestFile>, javaFilesDir: File?
-    ) {
+    override fun doMultiFileTest(wholeFile: File, files: MutableList<TestFile>) {
         val isCustomTest = wholeFile.parentFile.name.equals("custom", ignoreCase = true)
         if (!isCustomTest) {
             files.add(createLineNumberDeclaration())
         }
-        compile(files, javaFilesDir)
+        compile(files)
 
         val psiFile = myFiles.psiFiles.single { file -> file.name == wholeFile.name }
 

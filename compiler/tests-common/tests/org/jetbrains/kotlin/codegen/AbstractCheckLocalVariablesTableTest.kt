@@ -20,7 +20,6 @@ import com.intellij.openapi.util.text.StringUtil
 import junit.framework.TestCase
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.utils.rethrow
 import org.jetbrains.org.objectweb.asm.*
 import java.io.File
 import java.util.*
@@ -29,11 +28,9 @@ import java.util.regex.Pattern
 /**
  * Test correctness of written local variables in class file for specified method
  */
-
 abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
-
-    override fun doMultiFileTest(wholeFile: File, files: List<CodegenTestCase.TestFile>, javaFilesDir: File?) {
-        compile(files, javaFilesDir)
+    override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
+        compile(files)
 
         try {
             val classAndMethod = parseClassAndMethodSignature(wholeFile)

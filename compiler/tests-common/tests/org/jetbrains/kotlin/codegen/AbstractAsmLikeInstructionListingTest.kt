@@ -23,9 +23,9 @@ abstract class AbstractAsmLikeInstructionListingTest : CodegenTestCase() {
         val LOCAL_VARIABLE_TABLE_DIRECTIVE = "// LOCAL_VARIABLE_TABLE"
     }
 
-    override fun doMultiFileTest(wholeFile: File, files: List<TestFile>, javaFilesDir: File?) {
+    override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
         val txtFile = File(wholeFile.parentFile, wholeFile.nameWithoutExtension + ".txt")
-        compile(files, javaFilesDir)
+        compile(files)
 
         val classes = classFileFactory
                 .getClassFiles()

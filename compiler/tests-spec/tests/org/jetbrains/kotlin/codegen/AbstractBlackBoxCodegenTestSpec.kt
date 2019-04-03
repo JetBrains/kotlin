@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.spec.utils.GeneralConfiguration.TESTDATA_PATH
 import org.jetbrains.kotlin.spec.validators.BlackBoxTestTypeValidator
 import org.jetbrains.kotlin.spec.validators.SpecTestValidationException
 import org.junit.Assert
-import java.io.*
+import java.io.File
 
 abstract class AbstractBlackBoxCodegenTestSpec : AbstractBlackBoxCodegenTest() {
     companion object {
@@ -43,7 +43,7 @@ abstract class AbstractBlackBoxCodegenTestSpec : AbstractBlackBoxCodegenTest() {
         }
     }
 
-    override fun doMultiFileTest(wholeFile: File, files: MutableList<TestFile>, javaFilesDir: File?) {
+    override fun doMultiFileTest(wholeFile: File, files: MutableList<TestFile>) {
         val (specTest, testLinkedType) = CommonParser.parseSpecTest(
             wholeFile.canonicalPath,
             mapOf("main.kt" to FileUtil.loadFile(wholeFile, true))
@@ -62,10 +62,10 @@ abstract class AbstractBlackBoxCodegenTestSpec : AbstractBlackBoxCodegenTest() {
         includeHelpers(wholeFile, files, specTest)
 
         if (specTest.exception == null) {
-            super.doMultiFileTest(wholeFile, files, javaFilesDir)
+            super.doMultiFileTest(wholeFile, files)
         } else {
             TestExceptionsComparator(wholeFile).run(specTest.exception) {
-                super.doMultiFileTest(wholeFile, files, javaFilesDir)
+                super.doMultiFileTest(wholeFile, files)
             }
         }
     }

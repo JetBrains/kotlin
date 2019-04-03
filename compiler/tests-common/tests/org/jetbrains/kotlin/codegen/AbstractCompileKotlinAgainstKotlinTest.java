@@ -11,7 +11,6 @@ import com.intellij.openapi.util.Disposer;
 import kotlin.Pair;
 import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
@@ -49,8 +48,7 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends CodegenTest
     }
 
     @Override
-    protected void doMultiFileTest(@NotNull File wholeFile, @NotNull List<TestFile> files, @Nullable File javaFilesDir) {
-        assert javaFilesDir == null : ".java files are not supported yet in this test";
+    protected void doMultiFileTest(@NotNull File wholeFile, @NotNull List<TestFile> files) {
         doTwoFileTest(files);
     }
 
