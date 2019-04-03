@@ -9,19 +9,19 @@ internal data class EditorCaretMovementOptions(val isMoveToNextWordCaretStopAtWo
                                                val isMoveToPreviousWordCaretStopAtWordStart: Boolean = false,
                                                val isMoveToPreviousWordCaretStopAtWordEnd: Boolean = false) {
 
-  private constructor(editorSettings: EditorSettingsExternalizable) : this(editorSettings.isMoveToWordCaretStopAtWordStart(true),
-                                                                           editorSettings.isMoveToWordCaretStopAtWordEnd(true),
-                                                                           editorSettings.isMoveToWordCaretStopAtWordStart(false),
-                                                                           editorSettings.isMoveToWordCaretStopAtWordEnd(false))
+  private constructor(editorSettings: EditorSettingsExternalizable) : this(editorSettings.isCaretStopAtWordStart(true),
+                                                                           editorSettings.isCaretStopAtWordEnd(true),
+                                                                           editorSettings.isCaretStopAtWordStart(false),
+                                                                           editorSettings.isCaretStopAtWordEnd(false))
 
   fun isModified(editorSettings: EditorSettingsExternalizable): Boolean =
     this != EditorCaretMovementOptions(editorSettings)
 
   fun apply(editorSettings: EditorSettingsExternalizable) {
-    editorSettings.setMoveToWordCaretStopAtWordStart(true, isMoveToNextWordCaretStopAtWordStart)
-    editorSettings.setMoveToWordCaretStopAtWordEnd(true, isMoveToNextWordCaretStopAtWordEnd)
-    editorSettings.setMoveToWordCaretStopAtWordStart(false, isMoveToPreviousWordCaretStopAtWordStart)
-    editorSettings.setMoveToWordCaretStopAtWordEnd(false, isMoveToPreviousWordCaretStopAtWordEnd)
+    editorSettings.setCaretStopAtWordStart(true, isMoveToNextWordCaretStopAtWordStart)
+    editorSettings.setCaretStopAtWordEnd(true, isMoveToNextWordCaretStopAtWordEnd)
+    editorSettings.setCaretStopAtWordStart(false, isMoveToPreviousWordCaretStopAtWordStart)
+    editorSettings.setCaretStopAtWordEnd(false, isMoveToPreviousWordCaretStopAtWordEnd)
   }
 
   internal enum class Item(val title: String,
