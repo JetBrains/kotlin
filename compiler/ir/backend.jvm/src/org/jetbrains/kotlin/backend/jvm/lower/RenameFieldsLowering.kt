@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.util.hasAnnotation
+import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -97,7 +98,9 @@ private class FieldRenamer(private val newNames: Map<IrField, Name>) : IrElement
         ).also {
             descriptor.bind(it)
             it.parent = declaration.parent
-            it.initializer = declaration.initializer?.transform(this, null)
+            it.initializer = declaration.initializer
+                ?.transform(this, null)
+                ?.patchDeclarationParents(it)
             it.metadata = declaration.metadata
 
             newSymbols[declaration] = symbol

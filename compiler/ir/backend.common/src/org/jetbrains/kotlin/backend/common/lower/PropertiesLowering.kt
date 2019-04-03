@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
+import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -80,7 +81,7 @@ class PropertiesLowering(
         ).apply {
             descriptor.bind(this)
 
-            extensionReceiverParameter = declaration.getter?.extensionReceiverParameter
+            extensionReceiverParameter = declaration.getter?.extensionReceiverParameter?.copyTo(this)
 
             body = IrBlockBodyImpl(-1, -1)
 

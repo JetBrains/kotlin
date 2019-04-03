@@ -153,7 +153,7 @@ private class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringP
                     }
                 })
 
-                body = enumConstructor.body // will be transformed later
+                body = enumConstructor.body?.patchDeclarationParents(this)
 
                 loweredEnumConstructors[enumConstructor.symbol] = this
                 metadata = enumConstructor.metadata
@@ -219,7 +219,9 @@ private class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringP
             context.declarationFactory.getFieldForEnumEntry(
                 enumEntry, (enumEntry.correspondingClass ?: enumEntry.parentAsClass).defaultType
             ).also {
-                it.initializer = IrExpressionBodyImpl(enumEntry.initializerExpression!!)
+                it.initializer = IrExpressionBodyImpl(
+                    enumEntry.initializerExpression!!.patchDeclarationParents(it)
+                )
                 it.annotations.addAll(enumEntry.annotations)
                 enumEntryFields.add(it)
                 enumEntriesByField[it] = enumEntry

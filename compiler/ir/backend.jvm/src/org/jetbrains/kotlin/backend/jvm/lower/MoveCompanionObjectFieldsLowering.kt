@@ -26,10 +26,7 @@ import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
-import org.jetbrains.kotlin.ir.util.hasAnnotation
-import org.jetbrains.kotlin.ir.util.isAnnotationClass
-import org.jetbrains.kotlin.ir.util.isInterface
-import org.jetbrains.kotlin.ir.util.isObject
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAbi.JVM_FIELD_ANNOTATION_FQ_NAME
@@ -188,11 +185,9 @@ private class MoveCompanionObjectFieldsLowering(val context: CommonBackendContex
         }
         val oldInitializer = oldField.initializer
         if (oldInitializer != null) {
-            field.initializer = oldInitializer.replaceThisByStaticReference(
-                context,
-                propertyParent,
-                propertyParent.thisReceiver!!
-            ) as IrExpressionBody
+            field.initializer = oldInitializer
+                .replaceThisByStaticReference(context, propertyParent, propertyParent.thisReceiver!!)
+                .patchDeclarationParents(field) as IrExpressionBody
         }
 
         return field
