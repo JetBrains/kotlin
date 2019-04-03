@@ -16,7 +16,7 @@ package kotlin.random
 public fun Random.nextUInt(): UInt = nextInt().toUInt()
 
 /**
- * Gets the next random [UInt] from the random number generator not less the specified [until] bound.
+ * Gets the next random [UInt] from the random number generator less than the specified [until] bound.
  *
  * Generates a [UInt] random value uniformly distributed between `0` (inclusive) and the specified [until] bound (exclusive).
  *
