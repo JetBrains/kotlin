@@ -12,3 +12,5 @@ fun Int.digitsUpto(end: Int): Int {
 // 0 getFirst
 // 0 getLast
 // 0 getStep
+// 2 IF_ICMP
+// 2 IF
