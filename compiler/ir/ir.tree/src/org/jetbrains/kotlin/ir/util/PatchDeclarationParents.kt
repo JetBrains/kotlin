@@ -54,10 +54,15 @@ class PatchDeclarationParentsVisitor() : IrElementVisitorVoid {
     }
 
     override fun visitProperty(declaration: IrProperty) {
-        declaration.getter?.let { it.correspondingProperty = declaration }
-        declaration.setter?.let { it.correspondingProperty = declaration }
-        declaration.backingField?.let { it.correspondingProperty = declaration }
-
+        declaration.getter?.let {
+            it.correspondingPropertySymbol = declaration.symbol
+        }
+        declaration.setter?.let {
+            it.correspondingPropertySymbol = declaration.symbol
+        }
+        declaration.backingField?.let {
+            it.correspondingPropertySymbol = declaration.symbol
+        }
         super.visitProperty(declaration)
     }
 

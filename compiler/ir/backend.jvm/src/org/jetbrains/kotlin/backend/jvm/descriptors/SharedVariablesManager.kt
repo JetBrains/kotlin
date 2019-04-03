@@ -193,6 +193,7 @@ class JvmSharedVariablesManager(
         ).apply {
             (descriptor as WrappedVariableDescriptor).bind(this)
             initializer = refConstructorCall
+            parent = originalDeclaration.parent
         }
     }
 
