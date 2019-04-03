@@ -3,6 +3,7 @@ package com.intellij.application.options.editor
 
 import com.intellij.openapi.application.ApplicationBundle
 import com.intellij.openapi.editor.ex.EditorSettingsExternalizable
+import com.intellij.openapi.util.SystemInfo
 
 internal data class EditorCaretStopOptions(val isNextCaretStopAtStart: Boolean = false,
                                            val isNextCaretStopAtEnd: Boolean = false,
@@ -56,8 +57,17 @@ internal data class EditorCaretStopOptions(val isNextCaretStopAtStart: Boolean =
   internal interface Item {
     val title: String
     val options: EditorCaretStopOptions
+    val isOsDefault: Boolean
+
+    val osDefaultHint: String get () = if (isOsDefault) " ($currentOsDefaultString)" else ""
 
     companion object {
+      val currentOsDefaultString: String = when {
+        SystemInfo.isWindows -> ApplicationBundle.message("combobox.item.hint.os.default.windows")
+        SystemInfo.isLinux -> ApplicationBundle.message("combobox.item.hint.os.default.linux")
+        SystemInfo.isMac -> ApplicationBundle.message("combobox.item.hint.os.default.mac")
+        else -> ApplicationBundle.message("combobox.item.hint.os.default.unix")
+      }
       internal inline fun <reified E> findMatchingItem(options: EditorCaretStopOptions): E?
         where E : Enum<E>,
               E : Item = enumValues<E>().find { it.options == options }
@@ -65,14 +75,17 @@ internal data class EditorCaretStopOptions(val isNextCaretStopAtStart: Boolean =
   }
 
   internal enum class WordBoundary(override val title: String,
-                                   override val options: EditorCaretStopOptions) : Item {
-    STICK_TO_WORD_BOUNDARIES(ApplicationBundle.message("combobox.item.stick.to.word.boundaries"), STICK_ON_CURRENT),
-    JUMP_TO_WORD_START(ApplicationBundle.message("combobox.item.jump.to.word.start"), JUMP_TO_NEIGHBORING),
+                                   override val options: EditorCaretStopOptions,
+                                   override val isOsDefault: Boolean = false) : Item {
+    STICK_TO_WORD_BOUNDARIES(ApplicationBundle.message("combobox.item.stick.to.word.boundaries"), STICK_ON_CURRENT,
+                             isOsDefault = SystemInfo.isUnix),
+    JUMP_TO_WORD_START(ApplicationBundle.message("combobox.item.jump.to.word.start"), JUMP_TO_NEIGHBORING,
+                       isOsDefault = SystemInfo.isWindows),
     JUMP_TO_WORD_END(ApplicationBundle.message("combobox.item.jump.to.word.end"), JUMP_TO_START),
     JUMP_TO_NEIGHBORING_WORD(ApplicationBundle.message("combobox.item.jump.to.neighboring.word"), JUMP_TO_END),
     STOP_AT_ALL_WORD_BOUNDARIES(ApplicationBundle.message("combobox.item.stop.at.all.word.boundaries"), STOP_AT_BOTH_BOUNDARIES);
 
-    override fun toString(): String = title
+    override fun toString(): String = title + osDefaultHint
 
     companion object {
       @JvmStatic
@@ -84,15 +97,18 @@ internal data class EditorCaretStopOptions(val isNextCaretStopAtStart: Boolean =
   }
 
   internal enum class LineBoundary(override val title: String,
-                                   override val options: EditorCaretStopOptions) : Item {
-    SKIP_LINE_BREAK(ApplicationBundle.message("combobox.item.proceed.to.word.boundary"), SKIP),
+                                   override val options: EditorCaretStopOptions,
+                                   override val isOsDefault: Boolean = false) : Item {
     STAY_ON_CURRENT_LINE(ApplicationBundle.message("combobox.item.stay.on.current.line"), STICK_ON_CURRENT),
     JUMP_TO_NEIGHBORING_LINE(ApplicationBundle.message("combobox.item.jump.to.neighboring.line"), JUMP_TO_NEIGHBORING),
     JUMP_TO_LINE_START(ApplicationBundle.message("combobox.item.stop.at.line.start"), JUMP_TO_START),
     JUMP_TO_LINE_END(ApplicationBundle.message("combobox.item.stop.at.line.end"), JUMP_TO_END),
-    STOP_AT_BOTH_LINE_BOUNDARIES(ApplicationBundle.message("combobox.item.stop.at.both.line.ends"), STOP_AT_BOTH_BOUNDARIES);
+    STOP_AT_BOTH_LINE_BOUNDARIES(ApplicationBundle.message("combobox.item.stop.at.both.line.ends"), STOP_AT_BOTH_BOUNDARIES,
+                                 isOsDefault = SystemInfo.isWindows),
+    SKIP_LINE_BREAK(ApplicationBundle.message("combobox.item.proceed.to.word.boundary"), SKIP,
+                    isOsDefault = SystemInfo.isUnix);
 
-    override fun toString(): String = title
+    override fun toString(): String = title + osDefaultHint
 
     companion object {
       @JvmStatic

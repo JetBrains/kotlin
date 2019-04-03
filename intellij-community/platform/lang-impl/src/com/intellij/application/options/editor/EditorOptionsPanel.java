@@ -141,11 +141,11 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
       RichCopySettings.ACTIVE_GLOBAL_SCHEME_MARKER.equals(value) ? ACTIVE_COLOR_SCHEME : value));
 
     for (EditorCaretStopOptions.WordBoundary item : EditorCaretStopOptions.WordBoundary.values()) {
-      myWordBoundaryCaretStopComboBox.addItem(item);
+      myWordBoundaryCaretStopComboBox.insertItemAt(item, item.isOsDefault() ? 0 : myWordBoundaryCaretStopComboBox.getItemCount());
     }
 
     for (EditorCaretStopOptions.LineBoundary item : EditorCaretStopOptions.LineBoundary.values()) {
-      myLineBoundaryCaretStopComboBox.addItem(item);
+      myLineBoundaryCaretStopComboBox.insertItemAt(item, item.isOsDefault() ? 0 : myLineBoundaryCaretStopComboBox.getItemCount());
     }
 
     initQuickDocProcessing();
