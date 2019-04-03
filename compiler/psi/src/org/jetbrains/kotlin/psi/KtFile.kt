@@ -174,6 +174,10 @@ open class KtFile(viewProvider: FileViewProvider, val isCompiled: Boolean) :
     fun findImportByAlias(name: String): KtImportDirective? =
         importDirectives.firstOrNull { name == it.aliasName }
 
+    fun findAliasByFqName(fqName: FqName): KtImportAlias? = importDirectives.firstOrNull {
+        fqName == it.importedFqName
+    }?.alias
+
     @Deprecated("") // getPackageFqName should be used instead
     override fun getPackageName(): String {
         return packageFqName.asString()

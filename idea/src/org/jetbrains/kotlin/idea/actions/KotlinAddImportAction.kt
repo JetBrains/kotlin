@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.idea.core.ImportableFqNameClassifier
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.references.resolveMainReferenceToDescriptors
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.name.FqName
@@ -195,7 +196,8 @@ class KotlinAddImportAction internal constructor(
     }
 
     private fun addImport(variant: AutoImportVariant) {
-        PsiDocumentManager.getInstance(project).commitAllDocuments()
+        val psiDocumentManager = PsiDocumentManager.getInstance(project)
+        psiDocumentManager.commitAllDocuments()
 
         project.executeWriteCommand(QuickFixBundle.message("add.import")) {
             if (!element.isValid) return@executeWriteCommand
@@ -207,15 +209,27 @@ class KotlinAddImportAction internal constructor(
                 StatisticsManager.getInstance().incUseCount(PsiProximityComparator.STATISTICS_KEY, it, location)
             }
 
-            for (descriptor in variant.descriptorsToImport) {
+            variant.descriptorsToImport.forEach { descriptor ->
                 // for class or package we use ShortenReferences because we not necessary insert an import but may want to
                 // insert partly qualified name
-                if (descriptor is ClassDescriptor || descriptor is PackageViewDescriptor) {
+
+                val importAlias = descriptor.importableFqName?.let { file.findAliasByFqName(it) }
+                if (importAlias != null || descriptor is ClassDescriptor || descriptor is PackageViewDescriptor) {
                     if (element is KtSimpleNameExpression) {
-                        element.mainReference.bindToFqName(
-                            descriptor.importableFqName!!,
-                            KtSimpleNameReference.ShorteningMode.FORCED_SHORTENING
-                        )
+                        if (importAlias != null) {
+                            importAlias.nameIdentifier?.copy()?.let { element.getIdentifier()?.replace(it) }
+                            val resultDescriptor = element.resolveMainReferenceToDescriptors().firstOrNull()
+                            if (resultDescriptor == descriptor) {
+                                return@forEach
+                            }
+                        }
+
+                        descriptor.importableFqName?.let {
+                            element.mainReference.bindToFqName(
+                                it,
+                                KtSimpleNameReference.ShorteningMode.FORCED_SHORTENING
+                            )
+                        }
                     }
                 } else {
                     ImportInsertHelper.getInstance(project).importDescriptor(file, descriptor)
@@ -289,8 +303,10 @@ internal interface AutoImportVariant {
         DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptorsToImport.first())
 }
 
-private class GroupedImportVariant(val autoImportDescription: String, val descriptors: Collection<DeclarationDescriptor>) :
-    AutoImportVariant {
+private class GroupedImportVariant(
+    val autoImportDescription: String,
+    val descriptors: Collection<DeclarationDescriptor>
+) : AutoImportVariant {
     override val excludeFqNameCheck: FqName = descriptors.first().importableFqName!!.parent()
     override val descriptorsToImport: Collection<DeclarationDescriptor> get() = descriptors
     override val hint: String get() = "$autoImportDescription from $excludeFqNameCheck"

@@ -1670,6 +1670,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/autoImports/excludedFromImport.kt");
         }
 
+        @TestMetadata("importAliasLetAlreadyExists.kt")
+        public void testImportAliasLetAlreadyExists() throws Exception {
+            runTest("idea/testData/quickfix/autoImports/importAliasLetAlreadyExists.kt");
+        }
+
         @TestMetadata("inPrimaryConstructor.kt")
         public void testInPrimaryConstructor() throws Exception {
             runTest("idea/testData/quickfix/autoImports/inPrimaryConstructor.kt");
