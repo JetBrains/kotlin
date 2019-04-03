@@ -18,30 +18,31 @@ package org.jetbrains.kotlin.resolve.calls.results
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.synthetic.SyntheticMemberDescriptor
 import org.jetbrains.kotlin.resolve.calls.components.hasDefaultValue
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.checker.captureFromExpression
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.TypeParameterMarker
+import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext
 
 interface SpecificityComparisonCallbacks {
-    fun isNonSubtypeNotLessSpecific(specific: KotlinType, general: KotlinType): Boolean
+    fun isNonSubtypeNotLessSpecific(specific: KotlinTypeMarker, general: KotlinTypeMarker): Boolean
 }
 
 interface TypeSpecificityComparator {
-    fun isDefinitelyLessSpecific(specific: KotlinType, general: KotlinType): Boolean
+    fun isDefinitelyLessSpecific(specific: KotlinTypeMarker, general: KotlinTypeMarker): Boolean
 
     object NONE : TypeSpecificityComparator {
-        override fun isDefinitelyLessSpecific(specific: KotlinType, general: KotlinType) = false
+        override fun isDefinitelyLessSpecific(specific: KotlinTypeMarker, general: KotlinTypeMarker) = false
     }
 }
 
-class FlatSignature<out T> private constructor(
+class FlatSignature<out T> constructor(
     val origin: T,
-    val typeParameters: Collection<TypeParameterDescriptor>,
-    val valueParameterTypes: List<KotlinType?>,
+    val typeParameters: Collection<TypeParameterMarker>,
+    val valueParameterTypes: List<KotlinTypeMarker?>,
     val hasExtensionReceiver: Boolean,
     val hasVarargs: Boolean,
     val numDefaults: Int,
@@ -113,12 +114,14 @@ class FlatSignature<out T> private constructor(
 
 
 interface SimpleConstraintSystem {
-    fun registerTypeVariables(typeParameters: Collection<TypeParameterDescriptor>): TypeSubstitutor
-    fun addSubtypeConstraint(subType: UnwrappedType, superType: UnwrappedType)
+    fun registerTypeVariables(typeParameters: Collection<TypeParameterMarker>): TypeSubstitutor
+    fun addSubtypeConstraint(subType: KotlinTypeMarker, superType: KotlinTypeMarker)
     fun hasContradiction(): Boolean
 
     // todo hack for migration
     val captureFromArgument get() = false
+
+    val context: TypeSystemInferenceExtensionContext
 }
 
 fun <T> SimpleConstraintSystem.isSignatureNotLessSpecific(
@@ -131,7 +134,6 @@ fun <T> SimpleConstraintSystem.isSignatureNotLessSpecific(
     if (specific.valueParameterTypes.size != general.valueParameterTypes.size) return false
 
     val typeParameters = general.typeParameters
-    val typeSubstitutor = registerTypeVariables(typeParameters)
 
     for ((specificType, generalType) in specific.valueParameterTypes.zip(general.valueParameterTypes)) {
         if (specificType == null || generalType == null) continue
@@ -140,13 +142,17 @@ fun <T> SimpleConstraintSystem.isSignatureNotLessSpecific(
             return false
         }
 
-        if (typeParameters.isEmpty() || !TypeUtils.dependsOnTypeParameters(generalType, typeParameters)) {
-            if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(specificType, generalType)) {
+        if (typeParameters.isEmpty() /*|| !TypeUtils.dependsOnTypeParameters(generalType, typeParameters)*/) {
+            if (!AbstractTypeChecker.isSubtypeOf(context, specificType, generalType)) {
                 if (!callbacks.isNonSubtypeNotLessSpecific(specificType, generalType)) {
                     return false
                 }
             }
         } else {
+            val typeSubstitutor = registerTypeVariables(typeParameters)
+            require(generalType is KotlinType) { TODO("not supported") }
+            require(specificType is KotlinType) { TODO("not supported") }
+
             val substitutedGeneralType = typeSubstitutor.safeSubstitute(generalType, Variance.INVARIANT)
 
             /**

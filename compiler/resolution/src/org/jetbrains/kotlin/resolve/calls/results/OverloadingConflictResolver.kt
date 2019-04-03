@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
 import org.jetbrains.kotlin.resolve.descriptorUtil.varargParameterPosition
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.checker.requireOrDescribe
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import java.util.*
 
 open class OverloadingConflictResolver<C : Any>(
@@ -284,7 +286,10 @@ open class OverloadingConflictResolver<C : Any>(
     }
 
     private val SpecificityComparisonWithNumerics = object : SpecificityComparisonCallbacks {
-        override fun isNonSubtypeNotLessSpecific(specific: KotlinType, general: KotlinType): Boolean {
+        override fun isNonSubtypeNotLessSpecific(specific: KotlinTypeMarker, general: KotlinTypeMarker): Boolean {
+            requireOrDescribe(specific is KotlinType, specific)
+            requireOrDescribe(general is KotlinType, general)
+
             val _double = builtIns.doubleType
             val _float = builtIns.floatType
 

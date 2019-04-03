@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.types.model.CaptureStatus
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.contains
 import kotlin.math.max
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext {
     override fun TypeConstructorMarker.isDenotable(): Boolean {
@@ -463,6 +465,11 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext {
         require(this is IntegerLiteralTypeConstructor, this::errorMessage)
         return this.getApproximatedType().unwrap()
     }
+
+    override fun SimpleTypeMarker.isPrimitiveType(): Boolean {
+        require(this is KotlinType, this::errorMessage)
+        return KotlinBuiltIns.isPrimitiveType(this)
+    }
 }
 
 private fun hasNoInferInternal(type: UnwrappedType): Boolean {
@@ -518,5 +525,20 @@ fun Variance.convertVariance(): TypeVariance {
         Variance.INVARIANT -> TypeVariance.INV
         Variance.IN_VARIANCE -> TypeVariance.IN
         Variance.OUT_VARIANCE -> TypeVariance.OUT
+    }
+}
+
+
+@Suppress("EXPERIMENTAL_IS_NOT_ENABLED")
+@UseExperimental(ExperimentalContracts::class)
+fun requireOrDescribe(condition: Boolean, value: Any?) {
+    contract {
+        returns() implies condition
+    }
+    require(condition) {
+        val typeInfo = if (value != null) {
+            ", type = '${value::class}'"
+        } else ""
+        "Unexpected: value = '$value'$typeInfo"
     }
 }

@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper.InternalNameMapper.de
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper.InternalNameMapper.getModuleNameSuffix
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper.InternalNameMapper.mangleInternalName
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.refactoring.Pass
 import org.jetbrains.kotlin.idea.refactoring.checkSuperMethods
@@ -96,10 +97,9 @@ class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
             result: MutableList<UsageInfo>
     ) {
         val declaration = element.unwrapped as? KtNamedFunction ?: return
-        val descriptor = declaration.unsafeResolveToDescriptor()
         checkConflictsAndReplaceUsageInfos(element, allRenames, result)
         result += SmartList<UsageInfo>().also { collisions ->
-            checkRedeclarations(descriptor, newName, collisions)
+            checkRedeclarations(declaration, newName, collisions)
             checkOriginalUsagesRetargeting(declaration, newName, result, collisions)
             checkNewNameUsagesRetargeting(declaration, newName, collisions)
         }

@@ -25,17 +25,23 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableFromCallab
 import org.jetbrains.kotlin.resolve.calls.inference.substitute
 import org.jetbrains.kotlin.resolve.calls.results.SimpleConstraintSystem
 import org.jetbrains.kotlin.types.TypeConstructorSubstitution
+import org.jetbrains.kotlin.types.checker.requireOrDescribe
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.UnwrappedType
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.TypeParameterMarker
+import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 
-
 class SimpleConstraintSystemImpl(constraintInjector: ConstraintInjector, builtIns: KotlinBuiltIns) : SimpleConstraintSystem {
+    val system = NewConstraintSystemImpl(constraintInjector, ClassicTypeSystemContextForCS(builtIns))
     val csBuilder: ConstraintSystemBuilder =
-        NewConstraintSystemImpl(constraintInjector, ClassicTypeSystemContextForCS(builtIns)).getBuilder()
+        system.getBuilder()
 
-    override fun registerTypeVariables(typeParameters: Collection<TypeParameterDescriptor>): TypeSubstitutor {
+    override fun registerTypeVariables(typeParameters: Collection<TypeParameterMarker>): TypeSubstitutor {
+
         val substitutionMap = typeParameters.associate {
+            requireOrDescribe(it is TypeParameterDescriptor, it)
             val variable = TypeVariableFromCallableDescriptor(it)
             csBuilder.registerVariable(variable)
 
@@ -43,6 +49,7 @@ class SimpleConstraintSystemImpl(constraintInjector: ConstraintInjector, builtIn
         }
         val substitutor = TypeConstructorSubstitution.createByConstructorsMap(substitutionMap).buildSubstitutor()
         for (typeParameter in typeParameters) {
+            requireOrDescribe(typeParameter is TypeParameterDescriptor, typeParameter)
             for (upperBound in typeParameter.upperBounds) {
                 addSubtypeConstraint(substitutor.substitute(typeParameter.defaultType), substitutor.substitute(upperBound.unwrap()))
             }
@@ -50,7 +57,9 @@ class SimpleConstraintSystemImpl(constraintInjector: ConstraintInjector, builtIn
         return substitutor
     }
 
-    override fun addSubtypeConstraint(subType: UnwrappedType, superType: UnwrappedType) {
+    override fun addSubtypeConstraint(subType: KotlinTypeMarker, superType: KotlinTypeMarker) {
+        require(subType is UnwrappedType)
+        require(superType is UnwrappedType)
         csBuilder.addSubtypeConstraint(
             subType,
             superType,
@@ -61,4 +70,7 @@ class SimpleConstraintSystemImpl(constraintInjector: ConstraintInjector, builtIn
 
     override fun hasContradiction() = csBuilder.hasContradiction
     override val captureFromArgument get() = true
+
+    override val context: TypeSystemInferenceExtensionContext
+        get() = system
 }

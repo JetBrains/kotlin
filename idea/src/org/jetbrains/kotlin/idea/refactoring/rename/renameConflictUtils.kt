@@ -24,6 +24,7 @@ import com.intellij.usageView.UsageViewUtil
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.refactoring.explicateAsText
 import org.jetbrains.kotlin.idea.refactoring.getThisLabelName
 import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.search.and
 import org.jetbrains.kotlin.idea.search.restrictToKotlinSources
 import org.jetbrains.kotlin.idea.util.*
@@ -53,6 +55,7 @@ import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getExplicitReceiverVa
 import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getImplicitReceiverValue
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.JvmTypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -88,9 +91,11 @@ internal fun PsiElement.representativeContainer(): PsiNamedElement? =
 internal fun DeclarationDescriptor.canonicalRender(): String = DescriptorRenderer.FQ_NAMES_IN_TYPES.render(this)
 
 internal fun checkRedeclarations(
-        descriptor: DeclarationDescriptor,
-        newName: String,
-        result: MutableList<UsageInfo>
+    declaration: KtNamedDeclaration,
+    newName: String,
+    result: MutableList<UsageInfo>,
+    resolutionFacade: ResolutionFacade = declaration.getResolutionFacade(),
+    descriptor: DeclarationDescriptor = declaration.unsafeResolveToDescriptor(resolutionFacade)
 ) {
     fun DeclarationDescriptor.isTopLevelPrivate(): Boolean {
         return this is DeclarationDescriptorWithVisibility
@@ -165,12 +170,7 @@ internal fun checkRedeclarations(
         is PropertyDescriptor,
         is FunctionDescriptor,
         is ClassifierDescriptor -> {
-            val psi = (descriptor as? DeclarationDescriptorWithSource)?.source?.getPsi() as? KtElement ?: return
-            val typeSpecificityComparator = when (TargetPlatformDetector.getPlatform(psi.containingKtFile)) {
-                is JvmPlatform -> JvmTypeSpecificityComparator
-                is JsPlatform -> JsTypeSpecificityComparator
-                else -> TypeSpecificityComparator.NONE
-            }
+            val typeSpecificityComparator = resolutionFacade.getFrontendService(descriptor.module, TypeSpecificityComparator::class.java)
             OverloadChecker(typeSpecificityComparator)
         }
         else -> null

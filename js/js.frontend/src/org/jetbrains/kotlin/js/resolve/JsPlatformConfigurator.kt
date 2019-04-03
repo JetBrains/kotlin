@@ -64,7 +64,7 @@ object JsPlatformConfigurator : PlatformConfiguratorBase(
         container.useImpl<JsCallChecker>()
         container.useInstance(SyntheticScopes.Empty)
         container.useInstance(SamConversionTransformer.Empty)
-        container.useInstance(JsTypeSpecificityComparator)
+        container.useImpl<JsTypeSpecificityComparator>()
         container.useImpl<JsNameClashChecker>()
         container.useImpl<JsNameCharsChecker>()
         container.useImpl<JsBuiltinNameClashChecker>()

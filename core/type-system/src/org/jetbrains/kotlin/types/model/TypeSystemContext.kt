@@ -199,6 +199,8 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     fun KotlinTypeMarker.lowerBoundIfFlexible(): SimpleTypeMarker = this.asFlexibleType()?.lowerBound() ?: this.asSimpleType()!!
     fun KotlinTypeMarker.upperBoundIfFlexible(): SimpleTypeMarker = this.asFlexibleType()?.upperBound() ?: this.asSimpleType()!!
 
+    fun KotlinTypeMarker.isFlexible(): Boolean = asFlexibleType() != null
+
     fun KotlinTypeMarker.isDynamic(): Boolean = asFlexibleType()?.asDynamicType() != null
     fun KotlinTypeMarker.isDefinitelyNotNullType(): Boolean = asSimpleType()?.asDefinitelyNotNullType() != null
 
@@ -261,6 +263,8 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     fun KotlinTypeMarker.isSimpleType() = asSimpleType() != null
 
     fun prepareType(type: KotlinTypeMarker): KotlinTypeMarker
+
+    fun SimpleTypeMarker.isPrimitiveType(): Boolean
 }
 
 enum class CaptureStatus {
