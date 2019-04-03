@@ -340,7 +340,7 @@ class NameSuggestion {
 
         private fun mangledId(forCalculateId: String): String {
             val absHashCode = Math.abs(forCalculateId.hashCode())
-            return if (absHashCode != 0) Integer.toString(absHashCode, Character.MAX_RADIX) else ""
+            return if (absHashCode != 0) absHashCode.toString(Character.MAX_RADIX) else ""
         }
 
         private val DeclarationDescriptorWithVisibility.ownEffectiveVisibility
