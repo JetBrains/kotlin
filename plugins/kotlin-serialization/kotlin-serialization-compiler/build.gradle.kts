@@ -8,12 +8,12 @@ plugins {
 dependencies {
     compileOnly(intellijCoreDep()) { includeJars("intellij-core", "asm-all", rootProject = rootProject) }
 
-    compile(project(":compiler:plugin-api"))
-    compile(project(":compiler:frontend"))
-    compile(project(":compiler:backend"))
-    compile(project(":compiler:ir.backend.common"))
-    compile(project(":js:js.frontend"))
-    compile(project(":js:js.translator"))
+    compileOnly(project(":compiler:plugin-api"))
+    compileOnly(project(":compiler:frontend"))
+    compileOnly(project(":compiler:backend"))
+    compileOnly(project(":compiler:ir.backend.common"))
+    compileOnly(project(":js:js.frontend"))
+    compileOnly(project(":js:js.translator"))
 
     runtime(kotlinStdlib())
 
@@ -41,3 +41,5 @@ testsJar()
 projectTest(parallel = true) {
     workingDir = rootDir
 }
+
+apply(from = "$rootDir/gradle/kotlinPluginPublication.gradle.kts")

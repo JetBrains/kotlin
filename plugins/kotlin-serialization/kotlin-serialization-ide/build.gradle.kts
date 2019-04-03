@@ -7,6 +7,8 @@ plugins {
 }
 
 dependencies {
+    compileOnly(project(":js:js.translator"))
+
     compile(project(":kotlinx-serialization-compiler-plugin"))
     compile(project(":idea"))
     compile(project(":idea:idea-gradle"))
