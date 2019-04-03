@@ -19,9 +19,9 @@ pluginManagement {
 include ":kotlin-build-common",
         ":compiler",
         ":compiler:util",
-        ":compiler:daemon-common",
-        ":compiler:daemon-common-new",
-        ":compiler:daemon",
+        ":daemon-common",
+        ":daemon-common-new",
+        ":kotlin-daemon",
         ":kotlin-daemon-client",
         ":kotlin-daemon-client-new",
         ":kotlin-preloader",
@@ -168,6 +168,7 @@ include ":kotlin-build-common",
         ":kotlin-annotation-processing-runtime",
         ":kotlin-annotation-processing-gradle",
         ":kotlin-annotation-processing-embeddable",
+        ":kotlin-daemon-embeddable",
         ":examples:kotlin-jsr223-local-example",
         ":examples:kotlin-jsr223-daemon-local-eval-example",
         ":kotlin-annotations-jvm",
@@ -294,8 +295,9 @@ project(':kotlin-build-common').projectDir = "$rootDir/build-common" as File
 project(':compiler:cli-common').projectDir = "$rootDir/compiler/cli/cli-common" as File
 project(':compiler:cli-js').projectDir = "$rootDir/compiler/cli/cli-js" as File
 project(':kotlin-runner').projectDir = "$rootDir/compiler/cli/cli-runner" as File
-project(':compiler:daemon-common').projectDir = "$rootDir/compiler/daemon/daemon-common" as File
-project(':compiler:daemon-common-new').projectDir = "$rootDir/compiler/daemon/daemon-common-new" as File
+project(':kotlin-daemon').projectDir = "$rootDir/compiler/daemon" as File
+project(':daemon-common').projectDir = "$rootDir/compiler/daemon/daemon-common" as File
+project(':daemon-common-new').projectDir = "$rootDir/compiler/daemon/daemon-common-new" as File
 project(':kotlin-daemon-client').projectDir = "$rootDir/compiler/daemon/daemon-client" as File
 project(':kotlin-daemon-client-new').projectDir = "$rootDir/compiler/daemon/daemon-client-new" as File
 project(':kotlin-compiler-runner').projectDir = "$rootDir/compiler/compiler-runner" as File
@@ -338,6 +340,7 @@ project(':examples:annotation-processor-example').projectDir = "$rootDir/librari
 project(':kotlin-script-util').projectDir = "$rootDir/libraries/tools/kotlin-script-util" as File
 project(':kotlin-annotation-processing-gradle').projectDir = "$rootDir/libraries/tools/kotlin-annotation-processing" as File
 project(':kotlin-annotation-processing-embeddable').projectDir = "$rootDir/prepare/kotlin-annotation-processing-embeddable" as File
+project(':kotlin-daemon-embeddable').projectDir = "$rootDir/prepare/kotlin-daemon-embeddable" as File
 project(':kotlin-annotation-processing').projectDir = "$rootDir/plugins/kapt3/kapt3-compiler" as File
 project(':kotlin-annotation-processing-cli').projectDir = "$rootDir/plugins/kapt3/kapt3-cli" as File
 project(':kotlin-annotation-processing-base').projectDir = "$rootDir/plugins/kapt3/kapt3-base" as File

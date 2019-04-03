@@ -42,7 +42,8 @@ import kotlin.concurrent.write
 
 abstract class KotlinJvmReplServiceBase(
     disposable: Disposable,
-    val compilerId: CompilerId,templateClasspath: List<File>,
+    val compilerId: CompilerId,
+    templateClasspath: List<File>,
     templateClassName: String,
     protected val messageCollector: MessageCollector
 ) : ReplCompileAction, ReplCheckAction, CreateReplStageStateAction {
@@ -59,27 +60,6 @@ abstract class KotlinJvmReplServiceBase(
         )
         configureScripting(compilerId)
     }
-
-    protected fun makeScriptDefinition(templateClasspath: List<File>, templateClassName: String): KotlinScriptDefinition? {
-        val classloader = URLClassLoader(templateClasspath.map { it.toURI().toURL() }.toTypedArray(), this::class.java.classLoader)
-
-        try {
-            val cls = classloader.loadClass(templateClassName)
-            val def = KotlinScriptDefinitionFromAnnotatedTemplate(cls.kotlin, emptyMap())
-            messageCollector.report(INFO, "New script definition $templateClassName: files pattern = \"${def.scriptFilePattern}\", " +
-                                          "resolver = ${def.dependencyResolver.javaClass.name}")
-            return def
-        }
-        catch (ex: ClassNotFoundException) {
-            messageCollector.report(ERROR, "Cannot find script definition template class $templateClassName")
-        }
-        catch (ex: Exception) {
-            messageCollector.report(ERROR, "Error processing script definition template $templateClassName: ${ex.message}")
-        }
-        return null
-    }
-
-    private val scriptDef = makeScriptDefinition(templateClasspath, templateClassName)
 
     protected val replCompiler: ReplCompiler? by lazy {
         try {
@@ -142,12 +122,13 @@ abstract class KotlinJvmReplServiceBase(
 open class KotlinJvmReplService(
     disposable: Disposable,
     val portForServers: Int,
+    compilerId: CompilerId,
     templateClasspath: List<File>,
     templateClassName: String,
     messageCollector: MessageCollector,
     @Deprecated("drop it")
     protected val operationsTracer: RemoteOperationsTracer?
-) : KotlinJvmReplServiceBase(disposable, templateClasspath, templateClassName, messageCollector) {
+) : KotlinJvmReplServiceBase(disposable, compilerId, templateClasspath, templateClassName, messageCollector) {
 
     override fun before(s: String) {
         operationsTracer?.before(s)

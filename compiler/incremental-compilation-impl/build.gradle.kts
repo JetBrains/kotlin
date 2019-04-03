@@ -14,7 +14,7 @@ dependencies {
     compile(project(":compiler:cli"))
     compile(project(":compiler:cli-js"))
     compile(project(":kotlin-build-common"))
-    compile(project(":compiler:daemon-common"))
+    compile(project(":daemon-common"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 
     testCompile(commonDep("junit:junit"))

@@ -93,22 +93,22 @@ inline fun usedMemory(withGC: Boolean): Long {
 }
 
 
-inline fun<R> beginWithMeasureWallTime(perfCounters: PerfCounters) = listOf(System.nanoTime())
+inline fun beginMeasureWallTime() = listOf(System.nanoTime())
 
-inline fun<R> endWithMeasureWallTime(perfCounters: PerfCounters, startState: List<Long>) {
+inline fun endMeasureWallTime(perfCounters: PerfCounters, startState: List<Long>) {
     val (startTime) = startState
     perfCounters.addMeasurement(time = System.nanoTime() - startTime) // TODO: add support for time wrapping
 }
 
 
-inline fun beginWithMeasureWallAndThreadTimes(perfCounters: PerfCounters, threadMXBean: ThreadMXBean): List<Long> {
+inline fun beginMeasureWallAndThreadTimes(perfCounters: PerfCounters, threadMXBean: ThreadMXBean): List<Long> {
     val startTime = System.nanoTime()
     val startThreadTime = threadMXBean.threadCpuTime()
     val startThreadUserTime = threadMXBean.threadUserTime()
     return listOf(startTime, startThreadTime, startThreadUserTime)
 }
 
-inline fun endWithMeasureWallAndThreadTimes(perfCounters: PerfCounters, threadMXBean: ThreadMXBean, startState: List<Long>) {
+inline fun endMeasureWallAndThreadTimes(perfCounters: PerfCounters, threadMXBean: ThreadMXBean, startState: List<Long>) {
     val (startTime, startThreadTime, startThreadUserTime) = startState
 
     // TODO: add support for time wrapping
@@ -117,12 +117,12 @@ inline fun endWithMeasureWallAndThreadTimes(perfCounters: PerfCounters, threadMX
                                 threadUser = threadMXBean.threadUserTime() - startThreadUserTime)
 }
 
-inline fun beginWithMeasureWallAndThreadTimes(perfCounters: PerfCounters) =
-    beginWithMeasureWallAndThreadTimes(perfCounters, ManagementFactory.getThreadMXBean())
-inline fun endWithMeasureWallAndThreadTimes(perfCounters: PerfCounters, startState: List<Long>) =
-    endWithMeasureWallAndThreadTimes(perfCounters, ManagementFactory.getThreadMXBean(), startState)
+inline fun beginMeasureWallAndThreadTimes(perfCounters: PerfCounters) =
+    beginMeasureWallAndThreadTimes(perfCounters, ManagementFactory.getThreadMXBean())
+inline fun endMeasureWallAndThreadTimes(perfCounters: PerfCounters, startState: List<Long>) =
+    endMeasureWallAndThreadTimes(perfCounters, ManagementFactory.getThreadMXBean(), startState)
 
-inline fun beginWithMeasureWallAndThreadTimesAndMemory(perfCounters: PerfCounters, withGC: Boolean = false, threadMXBean: ThreadMXBean): List<Long> {
+inline fun beginMeasureWallAndThreadTimesAndMemory(perfCounters: PerfCounters, withGC: Boolean = false, threadMXBean: ThreadMXBean): List<Long> {
     val startMem = usedMemory(withGC)
     val startTime = System.nanoTime()
     val startThreadTime = threadMXBean.threadCpuTime()
@@ -131,7 +131,7 @@ inline fun beginWithMeasureWallAndThreadTimesAndMemory(perfCounters: PerfCounter
     return listOf(startMem, startTime, startThreadTime, startThreadUserTime)
 }
 
-inline fun endWithMeasureWallAndThreadTimesAndMemory(perfCounters: PerfCounters, withGC: Boolean = false, threadMXBean: ThreadMXBean, startState: List<Long>){
+inline fun endMeasureWallAndThreadTimesAndMemory(perfCounters: PerfCounters, withGC: Boolean = false, threadMXBean: ThreadMXBean, startState: List<Long>){
     val (startMem, startTime, startThreadTime, startThreadUserTime) = startState
 
     // TODO: add support for time wrapping
@@ -141,11 +141,11 @@ inline fun endWithMeasureWallAndThreadTimesAndMemory(perfCounters: PerfCounters,
                                 memory = usedMemory(withGC) - startMem)
 }
 
-inline fun<R> beginWithMeasureWallAndThreadTimesAndMemory(perfCounters: PerfCounters, withGC: Boolean) =
-    beginWithMeasureWallAndThreadTimesAndMemory(perfCounters, withGC, ManagementFactory.getThreadMXBean())
+inline fun<R> beginMeasureWallAndThreadTimesAndMemory(perfCounters: PerfCounters, withGC: Boolean) =
+    beginMeasureWallAndThreadTimesAndMemory(perfCounters, withGC, ManagementFactory.getThreadMXBean())
 
-inline fun<R> endWithMeasureWallAndThreadTimesAndMemory(perfCounters: PerfCounters, withGC: Boolean, startState: List<Long>) =
-    endWithMeasureWallAndThreadTimesAndMemory(perfCounters, withGC, ManagementFactory.getThreadMXBean(), startState)
+inline fun<R> endMeasureWallAndThreadTimesAndMemory(perfCounters: PerfCounters, withGC: Boolean, startState: List<Long>) =
+    endMeasureWallAndThreadTimesAndMemory(perfCounters, withGC, ManagementFactory.getThreadMXBean(), startState)
 
 
 class DummyProfiler : Profiler {
@@ -166,27 +166,27 @@ abstract class TotalProfiler : Profiler {
 
 class WallTotalProfiler : TotalProfiler() {
     @Suppress("OVERRIDE_BY_INLINE")
-    override inline fun beginMeasure(obj: Any?) = beginWithMeasureWallTime(total)
+    override inline fun beginMeasure(obj: Any?) = beginMeasureWallTime()
     @Suppress("OVERRIDE_BY_INLINE")
-    override inline fun endMeasure(obj: Any?, startState: List<Long>) = endWithMeasureWallTime(total, startState)
+    override inline fun endMeasure(obj: Any?, startState: List<Long>) = endMeasureWallTime(total, startState)
 }
 
 
 class WallAndThreadTotalProfiler : TotalProfiler() {
     @Suppress("OVERRIDE_BY_INLINE")
-    override inline fun beginMeasure(obj: Any?) = beginWithMeasureWallAndThreadTimes(total, threadMXBean)
+    override inline fun beginMeasure(obj: Any?) = beginMeasureWallAndThreadTimes(total, threadMXBean)
     @Suppress("OVERRIDE_BY_INLINE")
-    override inline fun endMeasure(obj: Any?, startState: List<Long>) = endWithMeasureWallAndThreadTimes(total, threadMXBean, startState)
+    override inline fun endMeasure(obj: Any?, startState: List<Long>) = endMeasureWallAndThreadTimes(total, threadMXBean, startState)
 }
 
 
 class WallAndThreadAndMemoryTotalProfiler(val withGC: Boolean) : TotalProfiler() {
     @Suppress("OVERRIDE_BY_INLINE")
     override inline fun beginMeasure(obj: Any?) =
-        beginWithMeasureWallAndThreadTimesAndMemory(total, withGC, threadMXBean)
+        beginMeasureWallAndThreadTimesAndMemory(total, withGC, threadMXBean)
     @Suppress("OVERRIDE_BY_INLINE")
     override inline fun endMeasure(obj: Any?, startState: List<Long>) =
-        endWithMeasureWallAndThreadTimesAndMemory(total, withGC, threadMXBean, startState)
+        endMeasureWallAndThreadTimesAndMemory(total, withGC, threadMXBean, startState)
 }
 
 
@@ -198,8 +198,8 @@ class WallAndThreadByClassProfiler() : TotalProfiler() {
 
     @Suppress("OVERRIDE_BY_INLINE")
     override inline fun beginMeasure(obj: Any?) =
-        beginWithMeasureWallAndThreadTimes(counters.getOrPut(obj?.javaClass?.name, { SimplePerfCountersWithTotal(total) }), threadMXBean)
+        beginMeasureWallAndThreadTimes(counters.getOrPut(obj?.javaClass?.name, { SimplePerfCountersWithTotal(total) }), threadMXBean)
     @Suppress("OVERRIDE_BY_INLINE")
     override inline fun endMeasure(obj: Any?, startState: List<Long>) =
-        endWithMeasureWallAndThreadTimes(counters.getOrPut(obj?.javaClass?.name, { SimplePerfCountersWithTotal(total) }), threadMXBean, startState)
+        endMeasureWallAndThreadTimes(counters.getOrPut(obj?.javaClass?.name, { SimplePerfCountersWithTotal(total) }), threadMXBean, startState)
 }

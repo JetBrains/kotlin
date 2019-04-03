@@ -7,7 +7,7 @@
  of this license document, but changing it is not allowed.
 
 [This is the first released version of the Lesser GPL.  It also counts
- as the successor of the GNU Library Public License, Version 2, hence
+ as the successor of the GNU Library Public License, version 2, hence
  the version number 2.1.]
 
                             Preamble
@@ -227,7 +227,7 @@ the scope of this License.
   3. You may opt to apply the terms of the ordinary GNU General Public
 License instead of this License to a given copy of the Library.  To do
 this, you must alter all the notices that refer to this License, so
-that they refer to the ordinary GNU General Public License, Version 2,
+that they refer to the ordinary GNU General Public License, version 2,
 instead of to this License.  (If a newer version than version 2 of the
 ordinary GNU General Public License has appeared, then you can specify
 that version instead if you wish.)  Do not make any other change in

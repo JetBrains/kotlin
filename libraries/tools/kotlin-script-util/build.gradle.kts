@@ -16,7 +16,7 @@ dependencies {
     compile(project(":kotlin-scripting-jvm"))
     compile(commonDep("org.jetbrains.intellij.deps", "trove4j"))
     compileOnly(project(":compiler:cli"))
-    compileOnly(project(":compiler:daemon-common"))
+    compileOnly(project(":daemon-common"))
     compileOnly(project(":kotlin-scripting-compiler"))
     compile(projectRuntimeJar(":kotlin-daemon-client"))
     compileOnly("com.jcabi:jcabi-aether:1.0-SNAPSHOT")

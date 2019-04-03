@@ -10,7 +10,7 @@ import io.ktor.network.selector.SelectorManager
 import io.ktor.network.sockets.aSocket
 import kotlinx.coroutines.*
 import org.jetbrains.kotlin.daemon.common.experimental.CompilerServicesFacadeBaseClientSideImpl
-import org.jetbrains.kotlin.daemon.common.experimental.LoopbackNetworkInterface.selectorMgr
+import org.jetbrains.kotlin.daemon.common.experimental.LoopbackNetworkInterfaceKtor.selectorMgr
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.DefaultClient
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.ServerBase
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.openIO

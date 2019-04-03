@@ -40,7 +40,9 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
     private val compilerLibDir = getCompilerLib()
 
     val compilerClassPath = listOf(
-            File(compilerLibDir, "kotlin-compiler.jar"))
+            File(compilerLibDir, "kotlin-compiler.jar"),
+            File(compilerLibDir, "kotlin-daemon.jar")
+    )
     val compilerId by lazy(LazyThreadSafetyMode.NONE) { CompilerId.makeCompilerId(compilerClassPath) }
 
     private fun compileLocally(messageCollector: TestMessageCollector, vararg args: String): Pair<Int, Collection<OutputMessageUtil.Output>> {

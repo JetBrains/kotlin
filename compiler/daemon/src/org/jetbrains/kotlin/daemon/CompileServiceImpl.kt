@@ -41,10 +41,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.common.*
-import org.jetbrains.kotlin.daemon.report.CompileServicesFacadeMessageCollector
-import org.jetbrains.kotlin.daemon.report.DaemonMessageReporter
-import org.jetbrains.kotlin.daemon.report.DaemonMessageReporterPrintStreamAdapter
-import org.jetbrains.kotlin.daemon.report.getICReporter
+import org.jetbrains.kotlin.daemon.report.*
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -389,7 +386,6 @@ abstract class CompileServiceImplBase(
                 val exitCode = checkedCompile(daemonMessageReporter, rpcProfiler) {
                     body(eventManager, rpcProfiler).code
                 }
-                log.fine("got exitCode")
                 CompileService.CallResult.Good(exitCode)
             } finally {
                 eventManager.fireCompilationFinished()
@@ -413,7 +409,7 @@ abstract class CompileServiceImplBase(
 
             val endMem = if (daemonOptions.reportPerf) usedMemory(withGC = false) else 0L
 
-            log.info("Done with result " + res.toString())
+            log.info("Done with result $res")
 
             if (daemonOptions.reportPerf) {
                 val pc = profiler.getTotalCounters()
@@ -467,10 +463,13 @@ abstract class CompileServiceImplBase(
     //        )
     //    }
 
-    fun startDaemonLife() {
+    fun startDaemonElections() {
         timer.schedule(10) {
             exceptionLoggingTimerThread { initiateElections() }
         }
+    }
+
+    fun configurePeriodicActivities() {
         timer.schedule(delay = DAEMON_PERIODIC_CHECK_INTERVAL_MS, period = DAEMON_PERIODIC_CHECK_INTERVAL_MS) {
             exceptionLoggingTimerThread { periodicAndAfterSessionCheck() }
         }
@@ -516,21 +515,11 @@ abstract class CompileServiceImplBase(
         }
     }
 
-    protected inline fun <R, KotlinJvmReplServiceT> withValidReplImpl(
-        sessionId: Int,
-        body: KotlinJvmReplServiceT.() -> R
-    ): CompileService.CallResult<R> =
-        withValidClientOrSessionProxy(sessionId) { session ->
-            (session?.data as? KotlinJvmReplServiceT?)?.let {
-                CompileService.CallResult.Good(it.body())
-            } ?: CompileService.CallResult.Error("Not a REPL session $sessionId")
-        }
-
     protected fun execJsIncrementalCompiler(
         args: K2JSCompilerArguments,
         incrementalCompilationOptions: IncrementalCompilationOptions,
         compilerMessageCollector: MessageCollector,
-        reporter: ICReporter
+        reporter: RemoteICReporter
     ): ExitCode {
         val allKotlinFiles = arrayListOf<File>()
         val freeArgsWithoutKotlinFiles = arrayListOf<String>()
@@ -561,7 +550,7 @@ abstract class CompileServiceImplBase(
         return try {
             compiler.compile(allKotlinFiles, args, compilerMessageCollector, changedFiles)
         } finally {
-            (reporter as RemoteICReporter).flush()
+            reporter.flush()
         }
     }
 
@@ -569,18 +558,8 @@ abstract class CompileServiceImplBase(
         k2jvmArgs: K2JVMCompilerArguments,
         incrementalCompilationOptions: IncrementalCompilationOptions,
         compilerMessageCollector: MessageCollector,
-        reporter: ICReporter
+        reporter: RemoteICReporter
     ): ExitCode {
-        val moduleFile = k2jvmArgs.buildFile?.let(::File)
-        assert(moduleFile?.exists() ?: false) { "Module does not exist ${k2jvmArgs.buildFile}" }
-
-        // todo: pass javaSourceRoots and allKotlinFiles using IncrementalCompilationOptions
-        val parsedModule = run {
-            val bytesOut = ByteArrayOutputStream()
-            val printStream = PrintStream(bytesOut)
-            val mc = PrintingMessageCollector(printStream, MessageRenderer.PLAIN_FULL_PATHS, false)
-            val parsedModule = ModuleXmlParser.parseModuleScript(k2jvmArgs.buildFile!!, mc)
-            parsedModule
         val allKotlinExtensions = (DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS +
                 (incrementalCompilationOptions.kotlinScriptExtensions ?: emptyArray())).distinct()
         val dotExtensions = allKotlinExtensions.map { ".$it" }
@@ -614,27 +593,22 @@ abstract class CompileServiceImplBase(
             }
         }
 
-        val outputFiles = incrementalCompilationOptions.outputFiles.toMutableList()
-        incrementalCompilationOptions.classpathFqNamesHistory?.let { outputFiles.add(it) }
-
         val compiler = IncrementalJvmCompilerRunner(
             workingDir,
             reporter,
             buildHistoryFile = incrementalCompilationOptions.multiModuleICSettings.buildHistoryFile,
-            outputFiles = outputFiles,
+            outputFiles = incrementalCompilationOptions.outputFiles,
             usePreciseJavaTracking = incrementalCompilationOptions.usePreciseJavaTracking,
             modulesApiHistory = modulesApiHistory,
-            kotlinSourceFilesExtensions = allKotlinExtensions,
-            classpathFqNamesHistory = incrementalCompilationOptions.classpathFqNamesHistory
+            kotlinSourceFilesExtensions = allKotlinExtensions
         )
         return try {
             compiler.compile(allKotlinFiles, k2jvmArgs, compilerMessageCollector, changedFiles)
         } finally {
-            (reporter as RemoteICReporter).flush()
+            reporter.flush()
         }
     }
 
-    @JvmName("withValidReplImpl1")
     protected inline fun <R, KotlinJvmReplServiceT> withValidReplImpl(
         sessionId: Int,
         body: KotlinJvmReplServiceT.() -> CompileService.CallResult<R>
@@ -838,7 +812,7 @@ class CompileServiceImpl(
             )
             val messageCollector = KeepFirstErrorMessageCollector(compilerMessagesStream)
             val repl = KotlinJvmReplService(
-                disposable, port, templateClasspath, templateClassName,
+                disposable, port, compilerId, templateClasspath, templateClassName,
                 messageCollector, operationsTracer
             )
             val sessionId = state.sessions.leaseSession(ClientOrSessionProxy(aliveFlagPath, repl, disposable))
@@ -922,7 +896,7 @@ class CompileServiceImpl(
             val disposable = Disposer.newDisposable()
             val messageCollector = CompileServicesFacadeMessageCollector(servicesFacade, compilationOptions)
             val repl = KotlinJvmReplService(
-                disposable, port, templateClasspath, templateClassName,
+                disposable, port, compilerId, templateClasspath, templateClassName,
                 messageCollector, null
             )
             val sessionId = state.sessions.leaseSession(ClientOrSessionProxy(aliveFlagPath, repl, disposable))

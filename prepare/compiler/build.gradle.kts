@@ -26,13 +26,12 @@ val libraries by configurations.creating {
     extendsFrom(compile)
 }
 val trove4jJar by configurations.creating
+val ktorNetworkJar by configurations.creating
 
 val default by configurations
 default.extendsFrom(runtimeJar)
 
 val compilerBaseName = name
-
-val ktorExcludesForDaemon : List<Pair<String, String>> by rootProject.extra
 
 val outputJar = fileFrom(buildDir, "libs", "$compilerBaseName.jar")
 
@@ -58,11 +57,9 @@ dependencies {
     }
 
     trove4jJar(intellijDep()) { includeIntellijCoreJarDependencies(project) { it.startsWith("trove4j") } }
+    ktorNetworkJar(commonDep("io.ktor", "ktor-network"))
 
     fatJarContents(kotlinBuiltins())
-    fatJarContents(project(":kotlin-daemon-client-new")) {
-        isTransitive = false
-    }
     fatJarContents(commonDep("javax.inject"))
     fatJarContents(commonDep("org.jline", "jline"))
     fatJarContents(commonDep("org.fusesource.jansi", "jansi"))
@@ -70,11 +67,6 @@ dependencies {
     fatJarContents(commonDep("com.google.code.findbugs", "jsr305"))
     fatJarContents(commonDep("io.javaslang", "javaslang"))
     fatJarContents(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
-    fatJarContents(commonDep("io.ktor", "ktor-network")) {
-        ktorExcludesForDaemon.forEach { (group, module) ->
-            exclude(group = group, module = module)
-        }
-    }
 
     fatJarContents(intellijCoreDep()) { includeJars("intellij-core", "java-compatibility-1.0.1") }
     fatJarContents(intellijDep()) {
@@ -142,6 +134,7 @@ val pack = if (shrink) proguard else packCompiler
 
 dist(targetName = "$compilerBaseName.jar", fromTask = pack) {
     from(trove4jJar)
+    from(ktorNetworkJar)
 }
 
 runtimeJarArtifactBy(pack, pack.outputs.files.singleFile) {

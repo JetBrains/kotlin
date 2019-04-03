@@ -23,19 +23,19 @@ val nativePlatformVariants = listOf(
 dependencies {
     compileOnly(project(":compiler:util"))
     compileOnly(project(":compiler:cli-common"))
-    compileOnly(project(":compiler:daemon-common"))
+    compileOnly(project(":daemon-common"))
     compileOnly(project(":kotlin-reflect-api"))
     compileOnly(project(":js:js.frontend"))
     compileOnly(commonDep("net.rubygrapefruit", "native-platform"))
     compileOnly(intellijDep()) { includeIntellijCoreJarDependencies(project) }
 
-    embedded(project(":compiler:daemon-common")) { isTransitive = false }
+    embedded(project(":daemon-common")) { isTransitive = false }
     embedded(commonDep("net.rubygrapefruit", "native-platform"))
     nativePlatformVariants.forEach {
         embedded(commonDep("net.rubygrapefruit", "native-platform", "-$it"))
     }
     runtime(project(":kotlin-reflect"))
-    compile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-jdk8")) {
+    compile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) {
         isTransitive = false
     }
 }

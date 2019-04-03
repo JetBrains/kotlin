@@ -55,22 +55,21 @@ class LogStream(name: String) : OutputStream() {
     }
 }
 
-object KotlinCompileDaemon {
-
+abstract class KotlinCompileDaemonBase {
     init {
         val logTime: String = SimpleDateFormat("yyyy-MM-dd.HH-mm-ss-SSS").format(Date())
         val (logPath: String, fileIsGiven: Boolean) =
                 System.getProperty(COMPILE_DAEMON_LOG_PATH_PROPERTY)?.trimQuotes()?.let { Pair(it, File(it).isFile) } ?: Pair("%t", false)
         val cfg: String =
-                "handlers = java.util.logging.FileHandler\n" +
-                "java.util.logging.FileHandler.level     = ALL\n" +
-                "java.util.logging.FileHandler.formatter = java.util.logging.SimpleFormatter\n" +
-                "java.util.logging.FileHandler.encoding  = UTF-8\n" +
-                "java.util.logging.FileHandler.limit     = ${if (fileIsGiven) 0 else (1 shl 20)}\n" + // if file is provided - disabled, else - 1Mb
-                "java.util.logging.FileHandler.count     = ${if (fileIsGiven) 1 else 3}\n" +
-                "java.util.logging.FileHandler.append    = $fileIsGiven\n" +
-                "java.util.logging.FileHandler.pattern   = ${if (fileIsGiven) logPath else (logPath + File.separator + "$COMPILE_DAEMON_DEFAULT_FILES_PREFIX.$logTime.%u%g.log")}\n" +
-                "java.util.logging.SimpleFormatter.format = %1\$tF %1\$tT.%1\$tL [%3\$s] %4\$s: %5\$s%n\n"
+            "handlers = java.util.logging.FileHandler\n" +
+                    "java.util.logging.FileHandler.level     = ALL\n" +
+                    "java.util.logging.FileHandler.formatter = java.util.logging.SimpleFormatter\n" +
+                    "java.util.logging.FileHandler.encoding  = UTF-8\n" +
+                    "java.util.logging.FileHandler.limit     = ${if (fileIsGiven) 0 else (1 shl 20)}\n" + // if file is provided - disabled, else - 1Mb
+                    "java.util.logging.FileHandler.count     = ${if (fileIsGiven) 1 else 3}\n" +
+                    "java.util.logging.FileHandler.append    = $fileIsGiven\n" +
+                    "java.util.logging.FileHandler.pattern   = ${if (fileIsGiven) logPath else (logPath + File.separator + "$COMPILE_DAEMON_DEFAULT_FILES_PREFIX.$logTime.%u%g.log")}\n" +
+                    "java.util.logging.SimpleFormatter.format = %1\$tF %1\$tT.%1\$tL [%3\$s] %4\$s: %5\$s%n\n"
 
         LogManager.getLogManager().readConfiguration(cfg.byteInputStream())
     }
@@ -78,19 +77,32 @@ object KotlinCompileDaemon {
     val log by lazy { Logger.getLogger("daemon") }
 
     private fun loadVersionFromResource(): String? {
-        (KotlinCompileDaemon::class.java.classLoader as? URLClassLoader)
-                ?.findResource("META-INF/MANIFEST.MF")
-                ?.let {
-                    try {
-                        return Manifest(it.openStream()).mainAttributes.getValue("Implementation-Version") ?: null
-                    }
-                    catch (e: IOException) {}
+        (KotlinCompileDaemonBase::class.java.classLoader as? URLClassLoader)
+            ?.findResource("META-INF/MANIFEST.MF")
+            ?.let {
+                try {
+                    return Manifest(it.openStream()).mainAttributes.getValue("Implementation-Version") ?: null
                 }
+                catch (e: IOException) {}
+            }
         return null
     }
 
-    @JvmStatic
-    fun main(args: Array<String>) {
+    protected open fun <T> runSynchronized(block: () -> T) = block()
+
+    protected abstract fun getCompileServiceAndPort(
+        compilerSelector: CompilerSelector,
+        compilerId: CompilerId,
+        daemonOptions: DaemonOptions,
+        daemonJVMOptions: DaemonJVMOptions,
+        timer: Timer
+    ) : Pair<CompileServiceImplBase, Int>
+
+    protected open fun runCompileService(compileService: CompileServiceImplBase) : Any? = null
+
+    protected open fun awaitServerRun(serverRun: Any?) {}
+
+    protected fun mainImpl(args: Array<String>) {
         ensureServerHostnameIsSetUp()
 
         val jvmArguments = ManagementFactory.getRuntimeMXBean().inputArguments
@@ -103,84 +115,107 @@ object KotlinCompileDaemon {
 
         val compilerId = CompilerId()
         val daemonOptions = DaemonOptions()
+        runSynchronized {
+            var serverRun: Any?
+            try {
+                val daemonJVMOptions = configureDaemonJVMOptions(inheritMemoryLimits = true,
+                                                                 inheritOtherJvmOptions = true,
+                                                                 inheritAdditionalProperties = true)
 
-        try {
-            val daemonJVMOptions = configureDaemonJVMOptions(inheritMemoryLimits = true,
-                                                             inheritOtherJvmOptions = true,
-                                                             inheritAdditionalProperties = true)
+                val filteredArgs = args.asIterable().filterExtractProps(compilerId, daemonOptions, prefix = COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX)
 
-            val filteredArgs = args.asIterable().filterExtractProps(compilerId, daemonOptions, prefix = COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX)
-
-            if (filteredArgs.any()) {
-                val helpLine = "usage: <daemon> <compilerId options> <daemon options>"
-                log.info(helpLine)
-                println(helpLine)
-                throw IllegalArgumentException("Unknown arguments: " + filteredArgs.joinToString(" "))
-            }
-
-            log.info("starting daemon")
-
-            // TODO: find minimal set of permissions and restore security management
-            // note: may be not needed anymore since (hopefully) server is now loopback-only
-            //            if (System.getSecurityManager() == null)
-            //                System.setSecurityManager (RMISecurityManager())
-            //
-            //            setDaemonPermissions(daemonOptions.port)
-
-            val (registry, port) = findPortAndCreateRegistry(COMPILE_DAEMON_FIND_PORT_ATTEMPTS, COMPILE_DAEMON_PORTS_RANGE_START, COMPILE_DAEMON_PORTS_RANGE_END)
-
-            val compilerSelector = object : CompilerSelector {
-                private val jvm by lazy { K2JVMCompiler() }
-                private val js by lazy { K2JSCompiler() }
-                private val metadata by lazy { K2MetadataCompiler() }
-                override fun get(targetPlatform: CompileService.TargetPlatform): CLICompiler<*> = when (targetPlatform) {
-                    CompileService.TargetPlatform.JVM -> jvm
-                    CompileService.TargetPlatform.JS -> js
-                    CompileService.TargetPlatform.METADATA -> metadata
+                if (filteredArgs.any()) {
+                    val helpLine = "usage: <daemon> <compilerId options> <daemon options>"
+                    log.info(helpLine)
+                    println(helpLine)
+                    throw IllegalArgumentException("Unknown arguments: " + filteredArgs.joinToString(" "))
                 }
+
+                log.info("starting daemon")
+
+                // TODO: find minimal set of permissions and restore security management
+                // note: may be not needed anymore since (hopefully) server is now loopback-only
+                //            if (System.getSecurityManager() == null)
+                //                System.setSecurityManager (RMISecurityManager())
+                //
+                //            setDaemonPermissions(daemonOptions.port)
+
+                val compilerSelector = object : CompilerSelector {
+                    private val jvm by lazy { K2JVMCompiler() }
+                    private val js by lazy { K2JSCompiler() }
+                    private val metadata by lazy { K2MetadataCompiler() }
+                    override fun get(targetPlatform: CompileService.TargetPlatform): CLICompiler<*> = when (targetPlatform) {
+                        CompileService.TargetPlatform.JVM -> jvm
+                        CompileService.TargetPlatform.JS -> js
+                        CompileService.TargetPlatform.METADATA -> metadata
+                    }
+                }
+                // timer with a daemon thread, meaning it should not prevent JVM to exit normally
+                val timer = Timer(true)
+                val (compilerService, port) = getCompileServiceAndPort(compilerSelector, compilerId, daemonOptions, daemonJVMOptions, timer)
+                compilerService.startDaemonElections()
+                compilerService.configurePeriodicActivities()
+                serverRun = runCompileService(compilerService)
+
+                println(COMPILE_DAEMON_IS_READY_MESSAGE)
+                log.info("daemon is listening on port: $port")
+
+                // this supposed to stop redirected streams reader(s) on the client side and prevent some situations with hanging threads, but doesn't work reliably
+                // TODO: implement more reliable scheme
+                System.out.close()
+                System.err.close()
+
+                System.setErr(PrintStream(LogStream("stderr")))
+                System.setOut(PrintStream(LogStream("stdout")))
             }
-            // timer with a daemon thread, meaning it should not prevent JVM to exit normally
-            val timer = Timer(true)
-            val compilerService = CompileServiceImpl(registry = registry,
-                                                     compiler = compilerSelector,
-                                                     compilerId = compilerId,
-                                                     daemonOptions = daemonOptions,
-                                                     daemonJVMOptions = daemonJVMOptions,
-                                                     port = port,
-                                                     timer = timer,
-                                                     onShutdown = {
-                                                         if (daemonOptions.forceShutdownTimeoutMilliseconds != COMPILE_DAEMON_TIMEOUT_INFINITE_MS) {
-                                                             // running a watcher thread that ensures that if the daemon is not exited normally (may be due to RMI leftovers), it's forced to exit
-                                                             timer.schedule(daemonOptions.forceShutdownTimeoutMilliseconds) {
-                                                                 cancel()
-                                                                 log.info("force JVM shutdown")
-                                                                 exitProcess(0)
-                                                             }
-                                                         }
-                                                         else {
-                                                             timer.cancel()
-                                                         }
-                                                     })
-            compilerService.startDaemonLife()
-
-            println(COMPILE_DAEMON_IS_READY_MESSAGE)
-            log.info("daemon is listening on port: $port")
-
-            // this supposed to stop redirected streams reader(s) on the client side and prevent some situations with hanging threads, but doesn't work reliably
-            // TODO: implement more reliable scheme
-            System.out.close()
-            System.err.close()
-
-            System.setErr(PrintStream(LogStream("stderr")))
-            System.setOut(PrintStream(LogStream("stdout")))
+            catch (e: Exception) {
+                System.err.println("Exception: " + e.message)
+                e.printStackTrace(System.err)
+                // repeating it to log for the cases when stderr is not redirected yet
+                log.log(Level.INFO, "Exception: ", e)
+                // TODO consider exiting without throwing
+                throw e
+            }
+            awaitServerRun(serverRun)
         }
-        catch (e: Exception) {
-            System.err.println("Exception: " + e.message)
-            e.printStackTrace(System.err)
-            // repeating it to log for the cases when stderr is not redirected yet
-            log.log(Level.INFO, "Exception: ", e)
-            // TODO consider exiting without throwing
-            throw e
-        }
+    }
+}
+
+object KotlinCompileDaemon : KotlinCompileDaemonBase() {
+
+    @JvmStatic
+    fun main(args: Array<String>) {
+        mainImpl(args)
+    }
+
+    override fun getCompileServiceAndPort(
+        compilerSelector: CompilerSelector,
+        compilerId: CompilerId,
+        daemonOptions: DaemonOptions,
+        daemonJVMOptions: DaemonJVMOptions,
+        timer: Timer
+    ) = run {
+        val (registry, port) = findPortAndCreateRegistry(COMPILE_DAEMON_FIND_PORT_ATTEMPTS, COMPILE_DAEMON_PORTS_RANGE_START, COMPILE_DAEMON_PORTS_RANGE_END)
+        val compilerService = CompileServiceImpl(registry = registry,
+                                                 compiler = compilerSelector,
+                                                 compilerId = compilerId,
+                                                 daemonOptions = daemonOptions,
+                                                 daemonJVMOptions = daemonJVMOptions,
+                                                 port = port,
+                                                 timer = timer,
+                                                 onShutdown = {
+                                                     if (daemonOptions.forceShutdownTimeoutMilliseconds != COMPILE_DAEMON_TIMEOUT_INFINITE_MS) {
+                                                         // running a watcher thread that ensures that if the daemon is not exited normally (may be due to RMI leftovers), it's forced to exit
+                                                         timer.schedule(daemonOptions.forceShutdownTimeoutMilliseconds) {
+                                                             cancel()
+                                                             log.info("force JVM shutdown")
+                                                             exitProcess(0)
+                                                         }
+                                                     }
+                                                     else {
+                                                         timer.cancel()
+                                                     }
+                                                 })
+        Pair(compilerService, port)
     }
 }

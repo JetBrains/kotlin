@@ -34,7 +34,7 @@ dependencies {
     compile(project(":kotlin-gradle-plugin-model"))
     compileOnly(project(":compiler"))
     compileOnly(project(":compiler:incremental-compilation-impl"))
-    compileOnly(project(":compiler:daemon-common"))
+    compileOnly(project(":daemon-common"))
 
     compile(kotlinStdlib())
     compileOnly(project(":kotlin-reflect-api"))

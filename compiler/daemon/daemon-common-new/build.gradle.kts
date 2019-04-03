@@ -25,12 +25,12 @@ dependencies {
     compile(project(":core:descriptors.jvm"))
     compile(project(":compiler:util"))
     compile(project(":compiler:cli-common"))
-    compileOnly(project(":compiler:daemon-common"))
+    compileOnly(project(":daemon-common"))
     compile(kotlinStdlib())
     compileOnly(project(":js:js.frontend"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     compileOnly(intellijDep()) { includeIntellijCoreJarDependencies(project) }
-    compile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-jdk8")) {
+    compile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) {
         isTransitive = false
     }
     compile(commonDep("io.ktor", "ktor-network")) {

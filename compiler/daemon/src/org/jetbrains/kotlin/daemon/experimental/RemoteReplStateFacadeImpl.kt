@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.daemon.experimental
 
 import io.ktor.network.sockets.Socket
 import org.jetbrains.kotlin.cli.common.repl.ILineId
-import org.jetbrains.kotlin.cli.jvm.repl.GenericReplCompilerState
+import org.jetbrains.kotlin.cli.common.repl.IReplStageState
 import org.jetbrains.kotlin.daemon.common.COMPILE_DAEMON_FIND_PORT_ATTEMPTS
 import org.jetbrains.kotlin.daemon.common.experimental.*
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.*
@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.*
 @Suppress("UNCHECKED_CAST")
 class RemoteReplStateFacadeServerSide(
     val _id: Int,
-    val state: GenericReplCompilerState,
+    val state: IReplStageState<*>,
     override val serverSocketWithPort: ServerSocketWrapper = findPortForSocket(
         COMPILE_DAEMON_FIND_PORT_ATTEMPTS,
         REPL_SERVER_PORTS_RANGE_START,

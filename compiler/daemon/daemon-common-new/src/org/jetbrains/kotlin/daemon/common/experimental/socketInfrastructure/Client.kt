@@ -3,7 +3,8 @@ package org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure
 import io.ktor.network.sockets.Socket
 import kotlinx.coroutines.channels.*
 import kotlinx.coroutines.*
-import org.jetbrains.kotlin.daemon.common.experimental.LoopbackNetworkInterface
+import org.jetbrains.kotlin.daemon.common.LoopbackNetworkInterface
+import org.jetbrains.kotlin.daemon.common.experimental.LoopbackNetworkInterfaceKtor
 import sun.net.ConnectionResetException
 import java.beans.Transient
 import java.io.IOException
@@ -198,7 +199,7 @@ abstract class DefaultAuthorizableClient<ServerType : ServerBase>(
 
 
         try {
-            socket = LoopbackNetworkInterface.clientLoopbackSocketFactoryKtor.createSocket(
+            socket = LoopbackNetworkInterfaceKtor.clientLoopbackSocketFactoryKtor.createSocket(
                 serverHost,
                 serverPort
             )

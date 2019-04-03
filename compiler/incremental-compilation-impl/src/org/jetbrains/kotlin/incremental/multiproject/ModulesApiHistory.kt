@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.incremental.multiproject
 
-import org.jetbrains.kotlin.daemon.common.IncrementalModuleEntry
-import org.jetbrains.kotlin.daemon.common.IncrementalModuleInfo
+import org.jetbrains.kotlin.incremental.IncrementalModuleEntry
+import org.jetbrains.kotlin.incremental.IncrementalModuleInfo
 import org.jetbrains.kotlin.incremental.util.Either
 import java.io.File
 import java.nio.file.Path

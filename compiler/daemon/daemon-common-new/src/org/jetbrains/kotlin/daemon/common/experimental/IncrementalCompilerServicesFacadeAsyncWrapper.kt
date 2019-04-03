@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.daemon.common.experimental
 
 import org.jetbrains.kotlin.daemon.common.IncrementalCompilerServicesFacade
-import org.jetbrains.kotlin.daemon.common.SimpleDirtyData
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Client
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.DefaultClientRMIWrapper
 import java.io.File

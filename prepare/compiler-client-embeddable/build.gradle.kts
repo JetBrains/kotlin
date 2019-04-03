@@ -15,12 +15,12 @@ val archives by configurations
 
 dependencies {
     jarContents(project(":compiler:cli-common")) { isTransitive = false }
-    jarContents(project(":compiler:daemon-common")) { isTransitive = false }
-    jarContents(project(":compiler:daemon-common-new")) { isTransitive = false }
+    jarContents(project(":daemon-common")) { isTransitive = false }
+    jarContents(project(":daemon-common-new")) { isTransitive = false }
     jarContents(projectRuntimeJar(":kotlin-daemon-client"))
     testCompile(project(":compiler:cli-common"))
-    testCompile(project(":compiler:daemon-common"))
-    testCompile(project(":compiler:daemon-common-new"))
+    testCompile(project(":daemon-common"))
+    testCompile(project(":daemon-common-new"))
     testCompile(projectRuntimeJar(":kotlin-daemon-client"))
     testCompile(commonDep("junit:junit"))
     testCompile(project(":kotlin-test:kotlin-test-jvm"))

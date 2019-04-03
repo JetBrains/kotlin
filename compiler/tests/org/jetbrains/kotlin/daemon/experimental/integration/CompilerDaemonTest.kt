@@ -50,7 +50,7 @@ import kotlin.script.templates.ScriptTemplateDefinition
 import kotlin.test.fail
 import org.jetbrains.kotlin.daemon.client.experimental.*
 import org.jetbrains.kotlin.daemon.common.experimental.*
-import org.jetbrains.kotlin.daemon.common.experimental.LoopbackNetworkInterface
+import org.jetbrains.kotlin.utils.KotlinPaths
 
 val TIMEOUT_DAEMON_RUNNER_EXIT_MS = 10000L
 
@@ -84,9 +84,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
     data class CompilerResults(val resultCode: Int, val out: String)
 
-    val compilerClassPath = listOf(
-        File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-compiler.jar")
-    )
+    val compilerClassPath = getKotlinPaths().classPath(KotlinPaths.ClassPaths.Compiler)
 
     val scriptingCompilerClassPath = listOf(
         File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-scripting-compiler.jar"),
@@ -96,7 +94,8 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
     val daemonClientClassPath = listOf(
         File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-daemon-client-new.jar"),
-        File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-compiler.jar")
+        File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-compiler.jar"),
+        File(KotlinIntegrationTestBase.getCompilerLib(), "ktor-network-1.0.1.jar")
     )
 
     val compilerId by lazy(LazyThreadSafetyMode.NONE) { CompilerId.makeCompilerId(compilerClassPath) }
@@ -156,7 +155,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
     private fun run(logName: String, vararg args: String): Int = runJava(getTestBaseDir(), logName, *args)
 
-    fun makeTestDaemonOptions(testName: String, shutdownDelay: Int = 5) =
+    fun makeTestDaemonOptions(testName: String, shutdownDelay: Int = 5000) =
         DaemonOptions(
             runFilesPath = File(tmpdir, testName).absolutePath,
             shutdownDelayMilliseconds = shutdownDelay.toLong(),
@@ -1306,7 +1305,10 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
             port = serverPort,
             timer = timer,
             onShutdown = onShutdown
-        ).startDaemonLife()
+        ).let {
+            it.startDaemonElections()
+            it.configurePeriodicActivities()
+        }
         println("old daemon init: port = $serverPort")
     }
 }

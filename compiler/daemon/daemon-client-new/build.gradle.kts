@@ -32,20 +32,20 @@ val ktorExcludesForDaemon : List<Pair<String, String>> by rootProject.extra
 dependencies {
     compileOnly(project(":compiler:util"))
     compileOnly(project(":compiler:cli-common"))
-    compileOnly(project(":compiler:daemon-common-new"))
+    compileOnly(project(":daemon-common-new"))
     compileOnly(project(":kotlin-reflect-api"))
     compileOnly(project(":kotlin-daemon-client"))
-    embeddedComponents(project(":kotlin-daemon-client")) { isTransitive = false }
+    embedded(project(":kotlin-daemon-client")) { isTransitive = false }
     compileOnly(project(":js:js.frontend"))
     compileOnly(commonDep("net.rubygrapefruit", "native-platform"))
     compileOnly(intellijDep()) { includeIntellijCoreJarDependencies(project) }
 
-    embeddedComponents(project(":compiler:daemon-common")) { isTransitive = false }
-    embeddedComponents(commonDep("net.rubygrapefruit", "native-platform"))
+    embedded(project(":daemon-common")) { isTransitive = false }
+    embedded(commonDep("net.rubygrapefruit", "native-platform"))
     nativePlatformVariants.forEach {
-        embeddedComponents(commonDep("net.rubygrapefruit", "native-platform", "-$it"))
+        embedded(commonDep("net.rubygrapefruit", "native-platform", "-$it"))
     }
-    compile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-jdk8")) {
+    compile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) {
         isTransitive = false
     }
     compile(commonDep("io.ktor", "ktor-network")) {
@@ -66,7 +66,6 @@ noDefaultJar()
 
 runtimeJar(task<ShadowJar>("shadowJar")) {
     from(mainSourceSet.output)
-    fromEmbeddedComponents()
 }
 
 sourcesJar()
@@ -74,5 +73,3 @@ sourcesJar()
 javadocJar()
 
 dist()
-
-ideaPlugin()

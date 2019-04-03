@@ -26,8 +26,8 @@ dependencies {
     compile(project(":compiler:light-classes"))
     compile(project(":compiler:util"))
     compile(project(":kotlin-build-common"))
-    compile(project(":compiler:daemon-common"))
-    compile(project(":compiler:daemon-common-new"))
+    compile(project(":daemon-common"))
+    compile(project(":daemon-common-new"))
     compile(projectRuntimeJar(":kotlin-daemon-client"))
     compile(project(":kotlin-compiler-runner")) { isTransitive = false }
     compile(project(":compiler:plugin-api"))

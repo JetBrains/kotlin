@@ -39,6 +39,7 @@ private val KOTLIN_SCRIPT_ANNOTATION_EXPECTED_CLASS = "kotlin.script.experimenta
 private val KOTLIN_JVM_SCRIPT_COMPILER_EXPECTED_CLASS = "kotlin.script.experimental.jvm.JvmScriptCompiler"
 private val KOTLIN_REFLECT_EXPECTED_CLASS = "kotlin.reflect.full.KClasses"
 private val TROVE4J_EXPECTED_CLASS = "gnu.trove.THashMap"
+private val DAEMON_EXPECTED_CLASS = "org.jetbrains.kotlin.daemon.CompileServiceImpl"
 internal const val KOTLIN_MODULE_GROUP = "org.jetbrains.kotlin"
 private val KOTLIN_GRADLE_PLUGIN = "kotlin-gradle-plugin"
 internal const val KOTLIN_COMPILER_EMBEDDABLE = "kotlin-compiler-embeddable"
@@ -76,19 +77,22 @@ internal fun findKotlinCompilerClasspath(project: Project): List<File> {
     return findKotlinStdlibClasspath(project) +
             findKotlinScriptRuntimeClasspath(project) +
             findKotlinReflectClasspath(project) +
-            listOfNotNull(findTrove4j())
+            listOfNotNull(findTrove4j(), findDaemon())
 }
 
-internal fun findTrove4j(): File? {
+internal fun findJarByClass(classFqName: String): File? {
     val classLoader = Thread.currentThread().contextClassLoader
-    val classFromTrove4j = try {
-        classLoader.loadClass(TROVE4J_EXPECTED_CLASS)
+    val classFromJar = try {
+        classLoader.loadClass(classFqName)
     } catch (e: ClassNotFoundException) {
         null
     } ?: return null
 
-    return findJarByClass(classFromTrove4j)
+    return findJarByClass(classFromJar)
 }
+
+internal fun findTrove4j() = findJarByClass(TROVE4J_EXPECTED_CLASS)
+internal fun findDaemon() = findJarByClass(DAEMON_EXPECTED_CLASS)
 
 internal fun findKotlinStdlibClasspath(project: Project): List<File> =
     findKotlinModuleJar(project, KOTLIN_STDLIB_EXPECTED_CLASS, KOTLIN_STDLIB)

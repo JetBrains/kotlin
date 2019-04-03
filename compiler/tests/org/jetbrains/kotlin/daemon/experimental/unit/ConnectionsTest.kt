@@ -139,7 +139,8 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
                 onShutdown
             ).let {
                 log.info("service created")
-                it.startDaemonLife()
+                it.startDaemonElections()
+                it.configurePeriodicActivities()
                 it.runServer()
             }
         }
@@ -170,7 +171,10 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
             port = serverPort,
             timer = timer,
             onShutdown = onShutdown
-        ).startDaemonLife()
+        ).let {
+            it.startDaemonElections()
+            it.configurePeriodicActivities()
+        }
     }
 
     val comparator = compareByDescending<DaemonWithMetadataAsync, DaemonJVMOptions>(

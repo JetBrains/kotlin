@@ -36,6 +36,8 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.newTmpFile
 import org.jetbrains.kotlin.gradle.utils.relativeToRoot
+import org.jetbrains.kotlin.incremental.IncrementalModuleInfo
+import org.jetbrains.kotlin.incremental.IncrementalModuleEntry
 import org.jetbrains.kotlin.incremental.classpathAsList
 import org.jetbrains.kotlin.incremental.destinationAsFile
 import org.jetbrains.kotlin.incremental.makeModuleFile
@@ -183,7 +185,12 @@ internal open class GradleCompilerRunner(protected val task: Task) {
 
             for (project in gradle.rootProject.allprojects) {
               project.tasks.withType(AbstractKotlinCompile::class.java).toList().forEach { task ->
-                    val module = IncrementalModuleEntry(project.path, task.moduleName, project.buildDir, task.buildHistoryFile)
+                    val module = IncrementalModuleEntry(
+                        project.path,
+                        task.moduleName,
+                        project.buildDir,
+                        task.buildHistoryFile
+                    )
                     dirToModule[task.destinationDir] = module
                     task.javaOutputDir?.let { dirToModule[it] = module }
                     nameToModules.getOrPut(module.name) { HashSet() }.add(module)
@@ -201,7 +208,12 @@ internal open class GradleCompilerRunner(protected val task: Task) {
                     for (target in kotlinExt.targets) {
                         val mainCompilation = target.compilations.findByName(KotlinCompilation.MAIN_COMPILATION_NAME) ?: continue
                         val kotlinTask = mainCompilation.compileKotlinTask as? AbstractKotlinCompile<*> ?: continue
-                        val module = IncrementalModuleEntry(project.path, kotlinTask.moduleName, project.buildDir, kotlinTask.buildHistoryFile)
+                        val module = IncrementalModuleEntry(
+                            project.path,
+                            kotlinTask.moduleName,
+                            project.buildDir,
+                            kotlinTask.buildHistoryFile
+                        )
                         val jarTask = project.tasks.findByName(target.artifactsTaskName) as? AbstractArchiveTask ?: continue
                         jarToModule[jarTask.archivePath] = module
                     }

@@ -6,9 +6,6 @@
 package org.jetbrains.kotlin.daemon.common.experimental
 
 import org.jetbrains.kotlin.daemon.common.IncrementalCompilerServicesFacadeAsync
-import org.jetbrains.kotlin.daemon.common.SimpleDirtyData
-import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Server
-import java.io.File
 
 
 interface IncrementalCompilerServicesFacadeServerSide : IncrementalCompilerServicesFacadeAsync, CompilerServicesFacadeBaseServerSide

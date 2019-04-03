@@ -36,7 +36,7 @@ private val logFiles = arrayListOf<String>()
 class CompilerApiTest : KotlinIntegrationTestBase() {
 
     val kotlinCompilerClient = KotlinCompilerDaemonClient
-        .instantiate(DaemonProtocolVariant.RMI) // TODO(SOCKETS)
+        .instantiate(DaemonProtocolVariant.SOCKETS) // TODO(SOCKETS)
 
     private val compilerLibDir = getCompilerLib()
 
@@ -72,7 +72,9 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
     }
 
     val compilerClassPath = listOf(
-        File(compilerLibDir, "kotlin-compiler.jar")
+        File(compilerLibDir, "kotlin-compiler.jar"),
+        File(compilerLibDir, "kotlin-daemon.jar"),
+        File(compilerLibDir, "ktor-network-1.0.1.jar")
     )
     val scriptRuntimeClassPath = listOf(
         File(compilerLibDir, "kotlin-runtime.jar"),

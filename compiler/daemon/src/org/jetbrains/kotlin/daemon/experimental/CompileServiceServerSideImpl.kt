@@ -331,10 +331,12 @@ class CompileServiceServerSideImpl(
         compilationOptions,
         servicesFacade,
         compilationResults,
-        hasIncrementalCaches = CompilerCallbackServicesFacadeClientSide::hasIncrementalCaches,
+        hasIncrementalCaches = { hasIncrementalCaches() },
         createMessageCollector = ::CompileServicesFacadeMessageCollector,
         createReporter = ::DaemonMessageReporterAsync,
-        createServices = this::createCompileServices,
+        createServices = { facade: CompilerCallbackServicesFacadeClientSide, eventMgr, profiler ->
+            createCompileServices(facade, eventMgr, profiler)
+        },
         getICReporter = ::getICReporterAsync
     )
 
@@ -353,7 +355,7 @@ class CompileServiceServerSideImpl(
             val messageCollector =
                 CompileServicesFacadeMessageCollector(servicesFacade, compilationOptions)
             val repl = KotlinJvmReplServiceAsync(
-                disposable, serverSocketWithPort, templateClasspath, templateClassName,
+                disposable, serverSocketWithPort, compilerId, templateClasspath, templateClassName,
                 messageCollector
             )
             val sessionId = state.sessions.leaseSession(ClientOrSessionProxy(aliveFlagPath, repl, disposable))
@@ -407,7 +409,7 @@ class CompileServiceServerSideImpl(
         System.setProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, "true")
 
         // TODO UNCOMMENT THIS : this.toRMIServer(daemonOptions, compilerId) // also create RMI server in order to support old clients
-        rmiServer = this.toRMIServer(daemonOptions, compilerId)
+//        rmiServer = this.toRMIServer(daemonOptions, compilerId)
 
         KeepAliveServer.runServer()
     }

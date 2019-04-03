@@ -40,6 +40,7 @@ dependencies {
     
     testCompile(kotlinStdlib())
 
+    testCompile(project(":kotlin-daemon"))
     testCompile(commonDep("junit:junit"))
     testCompileOnly(project(":kotlin-test:kotlin-test-jvm"))
     testCompileOnly(project(":kotlin-test:kotlin-test-junit"))
@@ -54,7 +55,7 @@ dependencies {
     testCompile(project(":kotlin-script-util"))
     testCompileOnly(projectRuntimeJar(":kotlin-daemon-client-new"))
     testCompileOnly(project(":kotlin-reflect-api"))
-    testCompile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-jdk8")) { isTransitive = false }
+    testCompile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
     testCompile(commonDep("io.ktor", "ktor-network")) {
         ktorExcludesForDaemon.forEach { (group, module) ->
             exclude(group = group, module = module)
@@ -68,9 +69,9 @@ dependencies {
 
     testRuntime(project(":kotlin-reflect"))
     testRuntime(project(":kotlin-daemon-client-new"))
-    testRuntime(project(":compiler:daemon")) // +
-    testRuntime(project(":compiler:daemon-common-new")) // +
-    testRuntime(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-jdk8")) {
+    testRuntime(project(":kotlin-daemon")) // +
+    testRuntime(project(":daemon-common-new")) // +
+    testRuntime(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) {
         isTransitive = false
     }
     testRuntime(commonDep("io.ktor", "ktor-network")) {

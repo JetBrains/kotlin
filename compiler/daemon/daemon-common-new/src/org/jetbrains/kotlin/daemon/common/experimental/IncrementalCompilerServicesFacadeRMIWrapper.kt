@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.daemon.common.experimental
 
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.daemon.common.IncrementalCompilerServicesFacade
-import org.jetbrains.kotlin.daemon.common.SimpleDirtyData
-import java.io.File
 import java.io.Serializable
 
 class IncrementalCompilerServicesFacadeRMIWrapper(val clientSide: IncrementalCompilerServicesFacadeClientSide) :

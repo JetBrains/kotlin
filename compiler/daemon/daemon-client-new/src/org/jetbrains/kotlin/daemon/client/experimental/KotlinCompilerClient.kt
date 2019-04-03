@@ -45,7 +45,6 @@ class KotlinCompilerClient : KotlinCompilerDaemonClient {
     val verboseReporting = System.getProperty(COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY) != null
 
     private val log = Logger.getLogger("KotlinCompilerClient")
-    private fun String.info(msg: String) = {}()//log.info("[$this] : $msg")
 
     override fun getOrCreateClientFlagFile(daemonOptions: DaemonOptions): File =
     // for jps property is passed from IDEA to JPS in KotlinBuildProcessParametersProvider
@@ -64,7 +63,6 @@ class KotlinCompilerClient : KotlinCompilerDaemonClient {
         autostart: Boolean,
         checkId: Boolean
     ): CompileServiceAsync? {
-        log.info("in connectToCompileService")
         val flagFile = getOrCreateClientFlagFile(daemonOptions)
         return connectToCompileService(
             compilerId,
@@ -84,7 +82,6 @@ class KotlinCompilerClient : KotlinCompilerDaemonClient {
         reportingTargets: DaemonReportingTargets,
         autostart: Boolean
     ): CompileServiceAsync? {
-        log.info("connectToCompileService")
         return connectAndLease(
             compilerId,
             clientAliveFlagFile,
@@ -112,14 +109,9 @@ class KotlinCompilerClient : KotlinCompilerDaemonClient {
             reportingTargets,
             autostart
         ) { isLastAttempt ->
-
-            log.info("connectAndLease")
-
             fun CompileServiceAsync.leaseImpl(): Deferred<CompileServiceSessionAsync?> =
                 GlobalScope.async {
                     // the newJVMOptions could be checked here for additional parameters, if needed
-                    log.info("trying registerClient")
-                    println("trying registerClient")
                     try {
                         registerClient(clientAliveFlagFile.absolutePath)
                     } catch (e: Throwable) {
@@ -149,7 +141,6 @@ class KotlinCompilerClient : KotlinCompilerDaemonClient {
                 service.leaseImpl().await()
             } else {
                 if (!isLastAttempt && autostart) {
-                    log.info("starting daemon...")
                     if (startDaemon(compilerId, newJVMOptions, daemonOptions, reportingTargets)) {
                         reportingTargets.report(DaemonReportCategory.DEBUG, "new daemon started, trying to find it")
                     }
@@ -189,7 +180,6 @@ class KotlinCompilerClient : KotlinCompilerDaemonClient {
         port: Int,
         profiler: Profiler
     ): Int = profiler.withMeasure(this) {
-        log.info("Compile")
         val services = BasicCompilerServicesWithResultsFacadeServerServerSide(
             messageCollector,
             outputsCollector,
@@ -431,24 +421,13 @@ class KotlinCompilerClient : KotlinCompilerDaemonClient {
         daemonJVMOptions: DaemonJVMOptions,
         report: (DaemonReportCategory, String) -> Unit
     ): Deferred<Pair<CompileServiceAsync?, DaemonJVMOptions>> = GlobalScope.async {
-        log.info("tryFindSuitableDaemonOrNewOpts")
-
         registryDir.mkdirs()
         val timestampMarker = createTempFile("kotlin-daemon-client-tsmarker", directory = registryDir)
         val aliveWithMetadata = try {
-            log.info("walkDaemonsAsync... : ${registryDir.path}")
-            walkDaemonsAsync(registryDir, compilerId, timestampMarker, report = report).also {
-                log.info(
-                    "daemons (${it.size}): ${it.map { "daemon(params : " + it.jvmOptions.jvmParams.joinToString(", ") + ")" }.joinToString(
-                        ", ", "[", "]"
-                    )}"
-                )
-            }
+            walkDaemonsAsync(registryDir, compilerId, timestampMarker, report = report)
         } finally {
             timestampMarker.delete()
         }
-        log.info("daemons : ${aliveWithMetadata.map { it.daemon::class.java.name }}")
-        log.info("aliveWithMetadata: ${aliveWithMetadata.map { it.daemon::class.java.name }}")
         val comparator = compareBy<DaemonWithMetadataAsync, DaemonJVMOptions>(DaemonJVMOptionsMemoryComparator(), { it.jvmOptions })
             .thenBy {
                 when (it.daemon) {
@@ -475,17 +454,13 @@ class KotlinCompilerClient : KotlinCompilerDaemonClient {
         daemonOptions: DaemonOptions,
         reportingTargets: DaemonReportingTargets
     ): Boolean {
-        log.info("in startDaemon() - 0")
         val javaExecutable = File(File(System.getProperty("java.home"), "bin"), "java")
-        log.info("in startDaemon() - 0.1")
         val serverHostname = System.getProperty(JAVA_RMI_SERVER_HOSTNAME) ?: error("$JAVA_RMI_SERVER_HOSTNAME is not set!")
-        log.info("in startDaemon() - 0.2")
         val platformSpecificOptions = listOf(
             // hide daemon window
             "-Djava.awt.headless=true",
             "-D$JAVA_RMI_SERVER_HOSTNAME=$serverHostname"
         )
-        log.info("in startDaemon() - 0.3")
         val args = listOf(
             javaExecutable.absolutePath, "-cp", compilerId.compilerClasspath.joinToString(File.pathSeparator)
         ) +
@@ -494,13 +469,10 @@ class KotlinCompilerClient : KotlinCompilerDaemonClient {
                 COMPILER_DAEMON_CLASS_FQN_EXPERIMENTAL +
                 daemonOptions.mappers.flatMap { it.toArgs(COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX) } +
                 compilerId.mappers.flatMap { it.toArgs(COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX) }
-        log.info("in startDaemon() - 1")
         reportingTargets.report(DaemonReportCategory.DEBUG, "starting the daemon as: " + args.joinToString(" "))
         val processBuilder = ProcessBuilder(args)
-        log.info("in startDaemon() - 2")
         processBuilder.redirectErrorStream(true)
         // assuming daemon process is deaf and (mostly) silent, so do not handle streams
-        log.info("daemon = launchProcessWithFallback")
         val daemon =
             launchProcessWithFallback(processBuilder, reportingTargets, "daemon client")
 
@@ -548,12 +520,9 @@ class KotlinCompilerClient : KotlinCompilerDaemonClient {
                 }
             } ?: DAEMON_DEFAULT_STARTUP_TIMEOUT_MS
             if (daemonOptions.runFilesPath.isNotEmpty()) {
-                log.info("daemonOptions.runFilesPath.isNotEmpty")
                 val succeeded = isEchoRead.tryAcquire(daemonStartupTimeout, TimeUnit.MILLISECONDS)
-                log.info("succeeded : $succeeded")
                 return when {
                     !isProcessAlive(daemon) -> {
-                        log.info("!isProcessAlive(daemon)")
                         reportingTargets.report(
                             DaemonReportCategory.INFO,
                             "Daemon terminated unexpectedly with error code: ${daemon.exitValue()}"
@@ -561,14 +530,12 @@ class KotlinCompilerClient : KotlinCompilerDaemonClient {
                         false
                     }
                     !succeeded -> {
-                        log.info("isProcessAlive!")
                         reportingTargets.report(DaemonReportCategory.INFO, "Unable to get response from daemon in $daemonStartupTimeout ms")
                         false
                     }
                     else -> true
                 }
             } else
-                log.info("!daemonOptions.runFilesPath.isNotEmpty")
             // without startEcho defined waiting for max timeout
             Thread.sleep(daemonStartupTimeout)
             return true

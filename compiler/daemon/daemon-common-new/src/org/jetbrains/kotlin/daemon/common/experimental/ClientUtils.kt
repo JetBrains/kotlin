@@ -99,9 +99,9 @@ private inline fun tryConnectToDaemonByRMI(port: Int, report: (DaemonReportCateg
         val daemon = runBlocking {
             runWithTimeout(2 * DAEMON_PERIODIC_CHECK_INTERVAL_MS) {
                 LocateRegistry.getRegistry(
-                    LoopbackNetworkInterface.loopbackInetAddressName,
+                    org.jetbrains.kotlin.daemon.common.LoopbackNetworkInterface.loopbackInetAddressName,
                     port,
-                    LoopbackNetworkInterface.clientLoopbackSocketFactoryRMI
+                    org.jetbrains.kotlin.daemon.common.LoopbackNetworkInterface.clientLoopbackSocketFactory
                 )?.lookup(COMPILER_SERVICE_RMI_NAME)
             }
         }
@@ -134,7 +134,7 @@ private suspend fun tryConnectToDaemonBySockets(
             log.info("OK - daemon($port) connected to server!!!")
             daemon
         } catch (e: Throwable) {
-            report(DaemonReportCategory.INFO, "kcannot find or connect to socket")
+            report(DaemonReportCategory.INFO, "cannot find or connect to socket, exception:\n${e.javaClass.name}:${e.message}")
             daemon.close()
             null
         }

@@ -22,7 +22,7 @@ dependencies {
     testRuntime(project(":kotlin-reflect"))
     compileOnly(project(":compiler:cli-common")) // TODO: fix import (workaround for jps build)
     testCompileOnly(project(":core:util.runtime")) // TODO: fix import (workaround for jps build)
-    testCompileOnly(project(":compiler:daemon-common")) // TODO: fix import (workaround for jps build)
+    testCompileOnly(project(":daemon-common")) // TODO: fix import (workaround for jps build)
     testRuntime(project(":kotlin-scripting-compiler-embeddable"))
 }
 
