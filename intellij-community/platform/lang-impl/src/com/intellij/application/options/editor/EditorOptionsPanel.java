@@ -255,9 +255,7 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
     editorSettings.setSmoothScrolling(myCbSmoothScrolling.isSelected());
 
     // Caret Movement
-    final EditorCaretMovementOptions.WordBoundary caretMovementOptionsItem =
-      Objects.requireNonNull((EditorCaretMovementOptions.WordBoundary)myWordMoveBehaviorComboBox.getSelectedItem());
-    caretMovementOptionsItem.getOptions().apply(editorSettings);
+    getCaretMovementOptions(myWordMoveBehaviorComboBox).apply(editorSettings);
 
     // Brace Highlighting
 
@@ -432,10 +430,7 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
     boolean isModified = isModified(myCbSmoothScrolling, editorSettings.isSmoothScrolling());
 
     // Caret Movement
-    final EditorCaretMovementOptions.WordBoundary caretMovementOptionsItem =
-      Objects.requireNonNull((EditorCaretMovementOptions.WordBoundary)myWordMoveBehaviorComboBox.getSelectedItem());
-
-    isModified |= caretMovementOptionsItem.getOptions().isModified(editorSettings);
+    isModified |= getCaretMovementOptions(myWordMoveBehaviorComboBox).isModified(editorSettings);
 
     // Brace highlighting
     isModified |= isModified(myCbHighlightBraces, codeInsightSettings.HIGHLIGHT_BRACES);
@@ -491,6 +486,11 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
     isModified |= !Comparing.equal(settings.getSchemeName(), myRichCopyColorSchemeComboBox.getSelectedItem());
 
     return isModified;
+  }
+
+  @NotNull
+  protected static EditorCaretMovementOptions getCaretMovementOptions(@NotNull JComboBox<? extends EditorCaretMovementOptions.Item> comboBox) {
+    return Objects.requireNonNull((EditorCaretMovementOptions.Item)comboBox.getSelectedItem()).getOptions();
   }
 
   @NotNull
