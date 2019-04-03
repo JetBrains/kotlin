@@ -286,4 +286,3 @@ task debugCompiler(type: JavaExec) {
     enableAssertions = true
     args = findProperty("konan.debug.args").toString().tokenize() ?: []
 }
-
