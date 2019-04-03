@@ -143,7 +143,7 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
     myWordMoveBehaviorComboBox.addItem(EditorCaretMovementOptions.WordBoundary.JUMP_TO_WORD_START);
     myWordMoveBehaviorComboBox.addItem(EditorCaretMovementOptions.WordBoundary.JUMP_TO_WORD_END);
     myWordMoveBehaviorComboBox.addItem(EditorCaretMovementOptions.WordBoundary.JUMP_TO_NEIGHBORING_WORD);
-    myWordMoveBehaviorComboBox.addItem(EditorCaretMovementOptions.WordBoundary.STOP_AT_ALL_BOUNDARIES);
+    myWordMoveBehaviorComboBox.addItem(EditorCaretMovementOptions.WordBoundary.STOP_AT_ALL_WORD_BOUNDARIES);
 
     initQuickDocProcessing();
     initSoftWrapsSettingsProcessing();

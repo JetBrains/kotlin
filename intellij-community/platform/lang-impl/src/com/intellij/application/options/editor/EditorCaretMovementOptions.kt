@@ -20,6 +20,15 @@ internal data class EditorCaretMovementOptions(val isNextCaretStopAtStart: Boole
   }
 
   companion object {
+    val STICK_ON_CURRENT = EditorCaretMovementOptions(isNextCaretStopAtEnd = true, isPreviousCaretStopAtStart = true)
+    val JUMP_TO_NEIGHBORING = EditorCaretMovementOptions(isNextCaretStopAtStart = true, isPreviousCaretStopAtEnd = true)
+    val JUMP_TO_START = EditorCaretMovementOptions(isNextCaretStopAtStart = true, isPreviousCaretStopAtStart = true)
+    val JUMP_TO_END = EditorCaretMovementOptions(isNextCaretStopAtEnd = true, isPreviousCaretStopAtEnd = true)
+    val STOP_AT_BOTH_BOUNDARIES = EditorCaretMovementOptions(isNextCaretStopAtStart = true,
+                                                             isNextCaretStopAtEnd = true,
+                                                             isPreviousCaretStopAtStart = true,
+                                                             isPreviousCaretStopAtEnd = true)
+
     fun fromWordBoundarySettings(editorSettings: EditorSettingsExternalizable): EditorCaretMovementOptions =
       EditorCaretMovementOptions(editorSettings.isCaretStopAtWordStart(true),
                                  editorSettings.isCaretStopAtWordEnd(true),
@@ -30,39 +39,29 @@ internal data class EditorCaretMovementOptions(val isNextCaretStopAtStart: Boole
   internal interface Item {
     val title: String
     val options: EditorCaretMovementOptions
+
+    companion object {
+      internal inline fun <reified E> findMatchingItem(options: EditorCaretMovementOptions): E?
+        where E : Enum<E>,
+              E : Item = enumValues<E>().find { it.options == options }
+    }
   }
 
   internal enum class WordBoundary(override val title: String,
                                    override val options: EditorCaretMovementOptions) : Item {
-    STICK_TO_WORD_BOUNDARIES(ApplicationBundle.message("combobox.item.stick.to.word.boundaries"),
-                             EditorCaretMovementOptions(isNextCaretStopAtEnd = true,
-                                                        isPreviousCaretStopAtStart = true)),
-
-    JUMP_TO_WORD_START(ApplicationBundle.message("combobox.item.jump.to.word.start"),
-                       EditorCaretMovementOptions(isNextCaretStopAtStart = true,
-                                                  isPreviousCaretStopAtStart = true)),
-
-    JUMP_TO_WORD_END(ApplicationBundle.message("combobox.item.jump.to.word.end"),
-                     EditorCaretMovementOptions(isNextCaretStopAtEnd = true,
-                                                isPreviousCaretStopAtEnd = true)),
-
-    JUMP_TO_NEIGHBORING_WORD(ApplicationBundle.message("combobox.item.jump.to.neighboring.word"),
-                             EditorCaretMovementOptions(isNextCaretStopAtStart = true,
-                                                        isPreviousCaretStopAtEnd = true)),
-
-    STOP_AT_ALL_BOUNDARIES(ApplicationBundle.message("combobox.item.stop.at.all.word.boundaries"),
-                           EditorCaretMovementOptions(isNextCaretStopAtStart = true,
-                                                      isNextCaretStopAtEnd = true,
-                                                      isPreviousCaretStopAtStart = true,
-                                                      isPreviousCaretStopAtEnd = true));
+    STICK_TO_WORD_BOUNDARIES(ApplicationBundle.message("combobox.item.stick.to.word.boundaries"), STICK_ON_CURRENT),
+    JUMP_TO_WORD_START(ApplicationBundle.message("combobox.item.jump.to.word.start"), JUMP_TO_NEIGHBORING),
+    JUMP_TO_WORD_END(ApplicationBundle.message("combobox.item.jump.to.word.end"), JUMP_TO_START),
+    JUMP_TO_NEIGHBORING_WORD(ApplicationBundle.message("combobox.item.jump.to.neighboring.word"), JUMP_TO_END),
+    STOP_AT_ALL_WORD_BOUNDARIES(ApplicationBundle.message("combobox.item.stop.at.all.word.boundaries"), STOP_AT_BOTH_BOUNDARIES);
 
     override fun toString(): String = title
 
     companion object {
       @JvmStatic
-      fun forEditorSettings(editorSettings: EditorSettingsExternalizable) : Item {
+      fun forEditorSettings(editorSettings: EditorSettingsExternalizable): WordBoundary {
         val options = EditorCaretMovementOptions.fromWordBoundarySettings(editorSettings)
-        return WordBoundary.values().find { it.options == options } ?: STICK_TO_WORD_BOUNDARIES
+        return Item.findMatchingItem(options) ?: STICK_TO_WORD_BOUNDARIES
       }
     }
   }
