@@ -443,6 +443,11 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext {
         require(this is IntegerLiteralTypeConstructor, this::errorMessage)
         return this.getApproximatedType().unwrap()
     }
+
+    override fun SimpleTypeMarker.isPrimitiveType(): Boolean {
+        require(this is KotlinType, this::errorMessage)
+        return KotlinBuiltIns.isPrimitiveType(this)
+    }
 }
 
 private fun hasNoInferInternal(type: UnwrappedType): Boolean {

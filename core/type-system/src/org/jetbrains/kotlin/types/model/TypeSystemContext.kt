@@ -258,6 +258,8 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     fun KotlinTypeMarker.isSimpleType() = asSimpleType() != null
 
     fun prepareType(type: KotlinTypeMarker): KotlinTypeMarker
+
+    fun SimpleTypeMarker.isPrimitiveType(): Boolean
 }
 
 enum class CaptureStatus {
