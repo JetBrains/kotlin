@@ -78,9 +78,9 @@ import static org.jetbrains.kotlin.test.clientserver.TestProcessServerKt.getGene
 
 public abstract class CodegenTestCase extends KtUsefulTestCase {
     private static final String DEFAULT_TEST_FILE_NAME = "a_test";
-    private static final String DEFAULT_JVM_TARGET_FOR_TEST = "kotlin.test.default.jvm.target";
-    private static final String JAVA_COMPILATION_TARGET = "kotlin.test.java.compilation.target";
-    private static final String RUN_BOX_TEST_IN_SEPARATE_PROCESS_PORT = "kotlin.test.box.in.separate.process.port";
+    private static final String DEFAULT_JVM_TARGET = System.getProperty("kotlin.test.default.jvm.target");
+    public static final String BOX_IN_SEPARATE_PROCESS_PORT = System.getProperty("kotlin.test.box.in.separate.process.port");
+    private static final String JAVA_COMPILATION_TARGET = System.getProperty("kotlin.test.java.compilation.target");
 
     protected KotlinCoreEnvironment myEnvironment;
     protected CodegenTestFiles myFiles;
@@ -91,9 +91,6 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
     protected String coroutinesPackage = "";
 
     protected ConfigurationKind configurationKind = ConfigurationKind.JDK_ONLY;
-    private final String defaultJvmTarget = System.getProperty(DEFAULT_JVM_TARGET_FOR_TEST);
-    private final String boxInSeparateProcessPort = System.getProperty(RUN_BOX_TEST_IN_SEPARATE_PROCESS_PORT);
-    private final String javaCompilationTarget = System.getProperty(JAVA_COMPILATION_TARGET);
 
     protected final void createEnvironmentWithMockJdkAndIdeaAnnotations(
             @NotNull ConfigurationKind configurationKind,
@@ -626,11 +623,11 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
 
     }
 
-    private void setCustomDefaultJvmTarget(CompilerConfiguration configuration) {
+    private static void setCustomDefaultJvmTarget(CompilerConfiguration configuration) {
         JvmTarget target = configuration.get(JVMConfigurationKeys.JVM_TARGET);
-        if (target == null && defaultJvmTarget != null) {
-            JvmTarget value = JvmTarget.fromString(defaultJvmTarget);
-            assert value != null : "Can't construct JvmTarget for " + defaultJvmTarget;
+        if (target == null && DEFAULT_JVM_TARGET != null) {
+            JvmTarget value = JvmTarget.fromString(DEFAULT_JVM_TARGET);
+            assert value != null : "Can't construct JvmTarget for " + DEFAULT_JVM_TARGET;
             configuration.put(JVMConfigurationKeys.JVM_TARGET, value);
         }
     }
@@ -715,7 +712,7 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
     }
 
     @NotNull
-    protected List<String> extractJavacOptions(@NotNull List<TestFile> files) {
+    protected static List<String> extractJavacOptions(@NotNull List<TestFile> files) {
         List<String> javacOptions = new ArrayList<>(0);
         for (TestFile file : files) {
             javacOptions.addAll(InTextDirectivesUtils.findListWithPrefixes(file.content, "// JAVAC_OPTIONS:"));
@@ -724,12 +721,12 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
         return javacOptions;
     }
 
-    private void updateJavacOptions(List<String> javacOptions) {
-        if (javaCompilationTarget != null && !javacOptions.contains("-target")) {
+    private static void updateJavacOptions(@NotNull List<String> javacOptions) {
+        if (JAVA_COMPILATION_TARGET != null && !javacOptions.contains("-target")) {
             javacOptions.add("-source");
-            javacOptions.add(javaCompilationTarget);
+            javacOptions.add(JAVA_COMPILATION_TARGET);
             javacOptions.add("-target");
-            javacOptions.add(javaCompilationTarget);
+            javacOptions.add(JAVA_COMPILATION_TARGET);
         }
     }
 
@@ -832,7 +829,7 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
     protected void callBoxMethodAndCheckResult(URLClassLoader classLoader, Class<?> aClass, Method method)
             throws IOException, IllegalAccessException, InvocationTargetException {
         String result;
-        if (boxInSeparateProcessPort != null) {
+        if (BOX_IN_SEPARATE_PROCESS_PORT != null) {
             result = invokeBoxInSeparateProcess(classLoader, aClass);
         }
         else {
@@ -864,6 +861,6 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
             classPath.add(0, outDir.toURI().toURL());
         }
 
-        return new TestProxy(Integer.valueOf(boxInSeparateProcessPort), aClass.getCanonicalName(), classPath).runTest();
+        return new TestProxy(Integer.valueOf(BOX_IN_SEPARATE_PROCESS_PORT), aClass.getCanonicalName(), classPath).runTest();
     }
 }

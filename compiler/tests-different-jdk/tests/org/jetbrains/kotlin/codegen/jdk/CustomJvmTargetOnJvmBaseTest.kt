@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.codegen.jdk
 
 import org.jetbrains.kotlin.codegen.*
-import org.jetbrains.kotlin.codegen.CodegenTestCase.RUN_BOX_TEST_IN_SEPARATE_PROCESS_PORT
+import org.jetbrains.kotlin.codegen.CodegenTestCase.BOX_IN_SEPARATE_PROCESS_PORT
 import org.jetbrains.kotlin.test.RunOnlyJdk6Test
 import org.jetbrains.kotlin.test.SuiteRunnerForCustomJdk
 import org.junit.AfterClass
@@ -49,8 +49,7 @@ class JvmTarget6OnJvm6 : CustomJvmTargetOnJvmBaseTest() {
                 System.getProperty("kotlin.test.box.in.separate.process.server.classpath") ?: System.getProperty("java.class.path")
 
             println("Server classpath: $classpath")
-            val port = System.getProperty(RUN_BOX_TEST_IN_SEPARATE_PROCESS_PORT)
-                ?: error("$RUN_BOX_TEST_IN_SEPARATE_PROCESS_PORT is not specified")
+            val port = BOX_IN_SEPARATE_PROCESS_PORT ?: error("kotlin.test.box.in.separate.process.port is not specified")
             val builder = ProcessBuilder(executable, "-cp", classpath, main, port)
 
             builder.inheritIO()
