@@ -11,6 +11,7 @@ dependencies {
     compileOnly(project(":idea:idea-gradle"))
     compileOnly(project(":idea:idea-core"))
     compileOnly(intellijDep())
+    compileOnly(intellijDep("gradle"))
 }
 
 sourceSets {

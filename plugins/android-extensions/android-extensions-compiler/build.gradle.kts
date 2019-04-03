@@ -12,11 +12,11 @@ val androidExtensionsRuntimeForTests by configurations.creating
 dependencies {
     testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 
-    compile(project(":compiler:util"))
-    compile(project(":compiler:plugin-api"))
-    compile(project(":compiler:frontend"))
-    compile(project(":compiler:frontend.java"))
-    compile(project(":compiler:backend"))
+    compileOnly(project(":compiler:util"))
+    compileOnly(project(":compiler:plugin-api"))
+    compileOnly(project(":compiler:frontend"))
+    compileOnly(project(":compiler:frontend.java"))
+    compileOnly(project(":compiler:backend"))
     compileOnly(project(":kotlin-android-extensions-runtime"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     compileOnly(intellijDep()) { includeJars("asm-all", rootProject = rootProject) }
@@ -61,3 +61,5 @@ projectTest {
         systemProperty("robolectric.classpath", robolectricClasspath.asPath)
     }
 }
+
+apply(from = "$rootDir/gradle/kotlinPluginPublication.gradle.kts")
