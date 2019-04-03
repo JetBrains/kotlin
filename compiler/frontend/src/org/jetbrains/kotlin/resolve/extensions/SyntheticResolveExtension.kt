@@ -17,10 +17,7 @@
 package org.jetbrains.kotlin.resolve.extensions
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -113,6 +110,22 @@ interface SyntheticResolveExtension {
                             )
                         }
                     }
+
+                override fun generateSyntheticSecondaryConstructors(
+                    thisDescriptor: ClassDescriptor,
+                    bindingContext: BindingContext,
+                    result: MutableCollection<ClassConstructorDescriptor>
+                ) {
+                    instances.forEach {
+                        withLinkageErrorLogger(it) {
+                            generateSyntheticSecondaryConstructors(
+                                thisDescriptor,
+                                bindingContext,
+                                result
+                            )
+                        }
+                    }
+                }
             }
         }
     }
@@ -158,6 +171,13 @@ interface SyntheticResolveExtension {
         bindingContext: BindingContext,
         fromSupertypes: ArrayList<PropertyDescriptor>,
         result: MutableSet<PropertyDescriptor>
+    ) {
+    }
+
+    fun generateSyntheticSecondaryConstructors(
+        thisDescriptor: ClassDescriptor,
+        bindingContext: BindingContext,
+        result: MutableCollection<ClassConstructorDescriptor>
     ) {
     }
 }

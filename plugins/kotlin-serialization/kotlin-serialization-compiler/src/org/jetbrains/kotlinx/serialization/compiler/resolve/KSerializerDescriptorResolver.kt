@@ -18,8 +18,10 @@ package org.jetbrains.kotlinx.serialization.compiler.resolve
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.annotations.createDeprecatedAnnotation
 import org.jetbrains.kotlin.descriptors.impl.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.ClassId
@@ -46,6 +48,10 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotat
 import java.util.*
 
 object KSerializerDescriptorResolver {
+
+    private fun createDeprecatedHiddenAnnotation(module: ModuleDescriptor): AnnotationDescriptor {
+        return module.builtIns.createDeprecatedAnnotation("This synthesized declaration should not be used directly", level = "HIDDEN")
+    }
 
     fun isSerialInfoImpl(thisDescriptor: ClassDescriptor): Boolean {
         return thisDescriptor.name == IMPL_NAME
@@ -92,6 +98,7 @@ object KSerializerDescriptorResolver {
             scope,
             Modality.FINAL,
             Visibilities.PUBLIC,
+            Annotations.create(listOf(createDeprecatedHiddenAnnotation(interfaceDesc.module))),
             primaryCtorVisibility,
             ClassKind.CLASS,
             false
@@ -114,7 +121,9 @@ object KSerializerDescriptorResolver {
             thisDeclaration,
             thisDescriptor, SERIALIZER_CLASS_NAME, thisDescriptor.source,
             scope,
-            Modality.FINAL, Visibilities.PUBLIC, Visibilities.PRIVATE,
+            Modality.FINAL, Visibilities.PUBLIC,
+            Annotations.create(listOf(createDeprecatedHiddenAnnotation(thisDescriptor.module))),
+            Visibilities.PRIVATE,
             serializerKind, false
         )
         val typeParameters: List<TypeParameterDescriptor> =
@@ -276,9 +285,9 @@ object KSerializerDescriptorResolver {
 
         val functionDescriptor = ClassConstructorDescriptorImpl.createSynthesized(
             classDescriptor,
-            Annotations.EMPTY,
+            Annotations.create(listOf(createDeprecatedHiddenAnnotation(classDescriptor.module))),
             false,
-            classDescriptor.source
+            SourceElement.NO_SOURCE
         )
 
         val markerDesc = classDescriptor.getKSerializerConstructorMarker()
@@ -314,27 +323,11 @@ object KSerializerDescriptorResolver {
 
         functionDescriptor.initialize(
             consParams,
-            Visibilities.PUBLIC
+            Visibilities.INTERNAL
         )
 
         functionDescriptor.returnType = classDescriptor.defaultType
         return functionDescriptor
-    }
-
-    // finds constructor (KSerializer<T0>, KSerializer<T1>...) on a KSerializer<T<T0, T1...>>
-    fun findSerializerConstructorForTypeArgumentsSerializers(
-        serializerDescriptor: ClassDescriptor,
-        onlyIfSynthetic: Boolean = false
-    ): ClassConstructorDescriptor? {
-        val serializableImplementationTypeArguments = extractKSerializerArgumentFromImplementation(serializerDescriptor)?.arguments
-            ?: throw AssertionError("Serializer does not implement KSerializer??")
-
-        val typeParamsCount = serializableImplementationTypeArguments.size
-        if (typeParamsCount == 0) return null //don't need it
-        val ctor = serializerDescriptor.constructors.find { ctor ->
-            ctor.valueParameters.size == typeParamsCount && ctor.valueParameters.all { isKSerializer(it.type) }
-        }
-        return if (!onlyIfSynthetic) ctor else ctor?.takeIf { it.kind == CallableMemberDescriptor.Kind.SYNTHESIZED }
     }
 
     private fun createTypedSerializerConstructorDescriptor(
@@ -344,7 +337,7 @@ object KSerializerDescriptorResolver {
     ): ClassConstructorDescriptor {
         val constrDesc = ClassConstructorDescriptorImpl.createSynthesized(
             classDescriptor,
-            Annotations.EMPTY,
+            Annotations.create(listOf(createDeprecatedHiddenAnnotation(classDescriptor.module))),
             false,
             classDescriptor.source
         )
@@ -437,8 +430,8 @@ object KSerializerDescriptorResolver {
 
 
     private fun KotlinType.makeNullableIfNotPrimitive() =
-            if (KotlinBuiltIns.isPrimitiveType(this)) this
-            else this.makeNullable()
+        if (KotlinBuiltIns.isPrimitiveType(this)) this
+        else this.makeNullable()
 
     fun createWriteSelfFunctionDescriptor(thisClass: ClassDescriptor): FunctionDescriptor {
         val jvmStaticClass = thisClass.module.findClassAcrossModuleDependencies(

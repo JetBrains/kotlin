@@ -38,7 +38,7 @@ class SerializableIrGenerator(
         get() = _table
 
     override fun generateInternalConstructor(constructorDescriptor: ClassConstructorDescriptor) =
-        irClass.contributeConstructor(constructorDescriptor) { ctor ->
+        irClass.contributeConstructor(constructorDescriptor, fromStubs = true, overwriteValueParameters = true) { ctor ->
             val transformFieldInitializer = buildInitializersRemapping(irClass)
 
             // Missing field exception parts

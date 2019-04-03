@@ -44,6 +44,7 @@ class SyntheticClassOrObjectDescriptor(
     outerScope: LexicalScope,
     private val modality: Modality,
     private val visibility: Visibility,
+    override val annotations: Annotations,
     constructorVisibility: Visibility,
     private val kind: ClassKind,
     private val isCompanionObject: Boolean
@@ -70,8 +71,6 @@ class SyntheticClassOrObjectDescriptor(
     ) {
         this.typeParameters = typeParameters
     }
-
-    override val annotations: Annotations get() = Annotations.EMPTY
 
     override fun getModality() = modality
     override fun getVisibility() = visibility

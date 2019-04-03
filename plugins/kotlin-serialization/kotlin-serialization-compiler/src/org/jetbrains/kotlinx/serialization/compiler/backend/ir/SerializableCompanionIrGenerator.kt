@@ -58,7 +58,7 @@ class SerializableCompanionIrGenerator(
                 }
                 else -> {
                     val desc = requireNotNull(
-                        KSerializerDescriptorResolver.findSerializerConstructorForTypeArgumentsSerializers(serializer)
+                        findSerializerConstructorForTypeArgumentsSerializers(serializer)
                     ) { "Generated serializer does not have constructor with required number of arguments" }
                     val ctor = compilerContext.externalSymbols.referenceConstructor(desc)
                     val typeArgs = getter.typeParameters.map { it.defaultType }
