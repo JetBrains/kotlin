@@ -19,23 +19,23 @@ import org.jetbrains.kotlin.idea.intentions.getParentLambdaLabelName
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypes
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getTopmostParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.isNullable
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 class ReplaceNotNullAssertionWithElvisReturnInspection : AbstractKotlinInspection() {
-    override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) = postfixExpressionVisitor(fun(postfixExpression) {
-        if (postfixExpression.baseExpression == null) return
-        val operationReference = postfixExpression.operationReference
+    override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) = postfixExpressionVisitor(fun(postfix) {
+        if (postfix.baseExpression == null) return
+        val operationReference = postfix.operationReference
         if (operationReference.getReferencedNameElementType() != KtTokens.EXCLEXCL) return
 
-        if (postfixExpression.getStrictParentOfType<KtReturnExpression>() != null) return
+        if ((postfix.getTopmostParentOfType<KtParenthesizedExpression>() ?: postfix).parent is KtReturnExpression) return
 
-        val parent = postfixExpression.getParentOfTypes(true, KtLambdaExpression::class.java, KtNamedFunction::class.java)
+        val parent = postfix.getParentOfTypes(true, KtLambdaExpression::class.java, KtNamedFunction::class.java)
         if (parent !is KtNamedFunction && parent !is KtLambdaExpression) return
-        val context = postfixExpression.analyze(BodyResolveMode.PARTIAL_WITH_DIAGNOSTICS)
+        val context = postfix.analyze(BodyResolveMode.PARTIAL_WITH_DIAGNOSTICS)
         val (isNullable, returnLabelName) = when (parent) {
             is KtNamedFunction -> {
                 val returnType = parent.descriptor(context)?.returnType ?: return
@@ -54,18 +54,18 @@ class ReplaceNotNullAssertionWithElvisReturnInspection : AbstractKotlinInspectio
         }
 
         if (context.diagnostics.forElement(operationReference).any { it.factory == Errors.UNNECESSARY_NOT_NULL_ASSERTION }) return
-        
+
         holder.registerProblem(
-            postfixExpression.operationReference,
+            postfix.operationReference,
             "Replace '!!' with '?: return'",
             ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
             ReplaceWithElvisReturnFix(isNullable, returnLabelName)
         )
     })
-    
+
     private fun KtFunction.descriptor(context: BindingContext): FunctionDescriptor? {
         return context[BindingContext.DECLARATION_TO_DESCRIPTOR, this] as? FunctionDescriptor
-    } 
+    }
 
     private class ReplaceWithElvisReturnFix(
         private val returnNull: Boolean,
@@ -74,13 +74,13 @@ class ReplaceNotNullAssertionWithElvisReturnInspection : AbstractKotlinInspectio
         override fun getName() = "Replace with '?: return${if (returnNull) " null" else ""}'"
         override fun getFamilyName() = name
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-            val postfixExpression = descriptor.psiElement.parent as? KtPostfixExpression ?: return
-            val baseExpression = postfixExpression.baseExpression ?: return
-            val psiFactory = KtPsiFactory(postfixExpression)
-            postfixExpression.replaced(
+            val postfix = descriptor.psiElement.parent as? KtPostfixExpression ?: return
+            val base = postfix.baseExpression ?: return
+            val psiFactory = KtPsiFactory(postfix)
+            postfix.replaced(
                 psiFactory.createExpressionByPattern(
-                    "$0 ?: return$1$2", 
-                    baseExpression,
+                    "$0 ?: return$1$2",
+                    base,
                     returnLabelName?.let { "@$it" } ?: "",
                     if (returnNull) " null" else ""
                 )
