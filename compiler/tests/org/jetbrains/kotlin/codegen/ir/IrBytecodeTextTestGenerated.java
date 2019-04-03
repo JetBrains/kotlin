@@ -3274,6 +3274,16 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         public void testSamWrapperForNullableInitialization() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/sam/samWrapperForNullableInitialization.kt");
         }
+
+        @TestMetadata("samWrapperOfLambda.kt")
+        public void testSamWrapperOfLambda() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/sam/samWrapperOfLambda.kt");
+        }
+
+        @TestMetadata("samWrapperOfReference.kt")
+        public void testSamWrapperOfReference() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/sam/samWrapperOfReference.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/bytecodeText/statements")
