@@ -17,7 +17,7 @@ interface ScriptEvaluationConfigurationKeys
  * The container for script evaluation configuration
  * For usages see actual code examples
  */
-class ScriptEvaluationConfiguration(baseEvaluationConfigurations: Iterable<ScriptEvaluationConfiguration>, body: Builder.() -> Unit) :
+open class ScriptEvaluationConfiguration(baseEvaluationConfigurations: Iterable<ScriptEvaluationConfiguration>, body: Builder.() -> Unit) :
     PropertiesCollection(Builder(baseEvaluationConfigurations).apply(body).data) {
 
     constructor(body: Builder.() -> Unit = {}) : this(emptyList(), body)
@@ -30,6 +30,8 @@ class ScriptEvaluationConfiguration(baseEvaluationConfigurations: Iterable<Scrip
         PropertiesCollection.Builder(baseEvaluationConfigurations)
 
     companion object : ScriptEvaluationConfigurationKeys
+
+    object Default : ScriptEvaluationConfiguration()
 }
 
 /**
@@ -116,6 +118,6 @@ interface ScriptEvaluator {
      */
     suspend operator fun invoke(
         compiledScript: CompiledScript<*>,
-        scriptEvaluationConfiguration: ScriptEvaluationConfiguration?
+        scriptEvaluationConfiguration: ScriptEvaluationConfiguration = ScriptEvaluationConfiguration.Default
     ): ResultWithDiagnostics<EvaluationResult>
 }

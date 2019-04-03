@@ -9,6 +9,7 @@ package kotlin.script.experimental.annotations
 
 import kotlin.reflect.KClass
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
+import kotlin.script.experimental.api.ScriptEvaluationConfiguration
 
 /**
  * The annotation for declaring a script definition (template)
@@ -26,6 +27,8 @@ import kotlin.script.experimental.api.ScriptCompilationConfiguration
  *        default - "kts"
  * @param compilationConfiguration an object or a class with default constructor containing initial script compilation configuration
  *        default - {@link ScriptCompilationConfiguration#Default}
+ * @param evaluationConfiguration an object or a class with default constructor containing initial script evaluation configuration
+ *        default - {@link ScriptEvaluationConfiguration#Default}
  *
  * Simple usage example:
  * <pre>
@@ -44,6 +47,7 @@ import kotlin.script.experimental.api.ScriptCompilationConfiguration
 annotation class KotlinScript(
     val displayName: String = "Kotlin script",
     val fileExtension: String = "kts",
-    val compilationConfiguration: KClass<out ScriptCompilationConfiguration> = ScriptCompilationConfiguration.Default::class
+    val compilationConfiguration: KClass<out ScriptCompilationConfiguration> = ScriptCompilationConfiguration.Default::class,
+    val evaluationConfiguration: KClass<out ScriptEvaluationConfiguration> = ScriptEvaluationConfiguration.Default::class
 )
 

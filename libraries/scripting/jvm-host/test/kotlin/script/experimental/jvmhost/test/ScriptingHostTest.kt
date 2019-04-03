@@ -37,6 +37,11 @@ class ScriptingHostTest : TestCase() {
             evalScript("println(\"$greeting\")").throwOnFailure()
         }
         Assert.assertEquals(greeting, output)
+        // another API
+        val output2 = captureOut {
+            BasicJvmScriptingHost().evalWithTemplate<SimpleScriptTemplate>("println(\"$greeting\")".toScriptSource()).throwOnFailure()
+        }
+        Assert.assertEquals(greeting, output2)
     }
 
     @Test
@@ -276,7 +281,7 @@ class ScriptingHostTest : TestCase() {
             runBlocking {
                 compiler(script.toScriptSource(), scriptCompilationConfiguration).onSuccess {
                     compiledScript = it
-                    evaluator(it, null)
+                    evaluator(it)
                 }.throwOnFailure()
             }
         }.lines()
@@ -296,7 +301,7 @@ class ScriptingHostTest : TestCase() {
 
         val output2 = captureOut {
             runBlocking {
-                evaluator(cachedScript!!, null).throwOnFailure()
+                evaluator(cachedScript!!).throwOnFailure()
             }
         }.lines()
         Assert.assertEquals(output, output2)

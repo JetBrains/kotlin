@@ -20,7 +20,7 @@ open class BasicJvmScriptClassFilesGenerator(val outputDir: File) : ScriptEvalua
 
     override suspend operator fun invoke(
         compiledScript: CompiledScript<*>,
-        scriptEvaluationConfiguration: ScriptEvaluationConfiguration?
+        scriptEvaluationConfiguration: ScriptEvaluationConfiguration
     ): ResultWithDiagnostics<EvaluationResult> {
         try {
             if (compiledScript !is KJvmCompiledScript<*>)
@@ -48,7 +48,7 @@ open class BasicJvmScriptJarGenerator(val outputJar: File) : ScriptEvaluator {
 
     override suspend operator fun invoke(
         compiledScript: CompiledScript<*>,
-        scriptEvaluationConfiguration: ScriptEvaluationConfiguration?
+        scriptEvaluationConfiguration: ScriptEvaluationConfiguration
     ): ResultWithDiagnostics<EvaluationResult> {
         try {
             if (compiledScript !is KJvmCompiledScript<*>)

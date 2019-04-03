@@ -28,11 +28,10 @@ open class BasicJvmScriptEvaluator : ScriptEvaluator {
 
     override suspend operator fun invoke(
         compiledScript: CompiledScript<*>,
-        scriptEvaluationConfiguration: ScriptEvaluationConfiguration?
+        scriptEvaluationConfiguration: ScriptEvaluationConfiguration
     ): ResultWithDiagnostics<EvaluationResult> =
         try {
-            val actualEvalConfiguration = scriptEvaluationConfiguration ?: ScriptEvaluationConfiguration()
-            compiledScript.getClass(actualEvalConfiguration).onSuccess { scriptClass ->
+            compiledScript.getClass(scriptEvaluationConfiguration).onSuccess { scriptClass ->
                 // in the future, when (if) we'll stop to compile everything into constructor
                 // run as SAM
                 // return res
@@ -40,14 +39,14 @@ open class BasicJvmScriptEvaluator : ScriptEvaluator {
                 // for other scripts we need evaluation configuration with actualClassloader set,
                 // so they are loaded in the same classloader as the "main" script
                 val updatedEvalConfiguration =
-                    if (actualEvalConfiguration.containsKey(ScriptEvaluationConfiguration.jvm.actualClassLoader))
-                        actualEvalConfiguration
+                    if (scriptEvaluationConfiguration.containsKey(ScriptEvaluationConfiguration.jvm.actualClassLoader))
+                        scriptEvaluationConfiguration
                     else
-                        ScriptEvaluationConfiguration(actualEvalConfiguration) {
+                        ScriptEvaluationConfiguration(scriptEvaluationConfiguration) {
                             ScriptEvaluationConfiguration.jvm.actualClassLoader(scriptClass.java.classLoader)
                         }
 
-                val sharedScripts = actualEvalConfiguration[ScriptEvaluationConfiguration.scriptsInstancesSharingMap]
+                val sharedScripts = scriptEvaluationConfiguration[ScriptEvaluationConfiguration.scriptsInstancesSharingMap]
 
                 sharedScripts?.get(scriptClass)?.asSuccess()
                     ?: compiledScript.otherScripts.mapSuccess {
