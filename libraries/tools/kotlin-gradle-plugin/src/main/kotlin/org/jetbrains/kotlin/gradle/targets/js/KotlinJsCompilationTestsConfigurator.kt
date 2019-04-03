@@ -1,20 +1,17 @@
 package org.jetbrains.kotlin.gradle.targets.js
 
-import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
-import org.gradle.api.internal.plugins.DslObject
 import org.gradle.language.base.plugins.LifecycleBasePlugin
-import org.gradle.testing.base.plugins.TestingBasePlugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationToRunnableFiles
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsSetupTask
 import org.jetbrains.kotlin.gradle.targets.js.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
-import org.jetbrains.kotlin.gradle.tasks.KotlinTestTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.testing.configureConventions
+import org.jetbrains.kotlin.gradle.testing.registerTestTask
 import org.jetbrains.kotlin.utils.addIfNotNull
-import java.io.File
 
 internal class KotlinJsCompilationTestsConfigurator(
     val compilation: KotlinCompilationToRunnableFiles<*>
@@ -88,6 +85,7 @@ internal class KotlinJsCompilationTestsConfigurator(
 
             if (disambiguationClassifier != null) {
                 testJs.targetName = disambiguationClassifier
+                testJs.showTestTargetName = true
             }
 
             testJs.nodeJsProcessOptions.workingDir = project.projectDir
@@ -99,12 +97,11 @@ internal class KotlinJsCompilationTestsConfigurator(
             )
             testJs.nodeModulesToLoad = setOf(compileTestKotlin2Js.outputFile.name)
 
-            KotlinTestTask.configureConventions(testJs)
+            testJs.configureConventions()
+            registerTestTask(testJs)
         }
 
         project.afterEvaluate {
-            project.tasks.maybeCreate(LifecycleBasePlugin.CHECK_TASK_NAME).dependsOn(testTask.getTaskOrProvider())
-
             // defer nodeJs executable setup, as nodejs project settings may change during configuration
             testTask.configure {
                 val nodeJsSetupTask = projectWithNodeJsPlugin.tasks.findByName(NodeJsSetupTask.NAME)

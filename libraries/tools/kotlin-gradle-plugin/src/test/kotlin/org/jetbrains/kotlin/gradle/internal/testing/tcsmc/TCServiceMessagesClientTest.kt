@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory
 import kotlin.test.assertEquals
 
 open class TCServiceMessagesClientTest {
+    protected var rootNodeName: String = "root"
     protected var nameOfRootSuiteToAppend: String? = null
     protected var nameOfRootSuiteToReplace: String? = null
     protected var nameOfLeafTestToAppend: String? = null
@@ -34,11 +35,7 @@ open class TCServiceMessagesClientTest {
         return TCServiceMessagesClient(
             results,
             TCServiceMessagesClientSettings(
-                "root",
-                nameOfRootSuiteToAppend,
-                nameOfRootSuiteToReplace,
-                nameOfLeafTestToAppend,
-                skipRoots,
+                rootNodeName,
                 treatFailedTestOutputAsStacktrace
             ),
             LoggerFactory.getLogger("test")
