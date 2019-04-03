@@ -9,17 +9,28 @@ internal data class EditorCaretMovementOptions(val isNextCaretStopAtStart: Boole
                                                val isPreviousCaretStopAtStart: Boolean = false,
                                                val isPreviousCaretStopAtEnd: Boolean = false) {
 
-  fun isModified(editorSettings: EditorSettingsExternalizable): Boolean =
+  fun areWordBoundarySettingsModified(editorSettings: EditorSettingsExternalizable): Boolean =
     this != EditorCaretMovementOptions.fromWordBoundarySettings(editorSettings)
 
-  fun apply(editorSettings: EditorSettingsExternalizable) {
+  fun areLineBoundarySettingsModified(editorSettings: EditorSettingsExternalizable): Boolean =
+    this != EditorCaretMovementOptions.fromLineBoundarySettings(editorSettings)
+
+  fun applyWordBoundarySettings(editorSettings: EditorSettingsExternalizable) {
     editorSettings.setCaretStopAtWordStart(true, isNextCaretStopAtStart)
     editorSettings.setCaretStopAtWordEnd(true, isNextCaretStopAtEnd)
     editorSettings.setCaretStopAtWordStart(false, isPreviousCaretStopAtStart)
     editorSettings.setCaretStopAtWordEnd(false, isPreviousCaretStopAtEnd)
   }
 
+  fun applyLineBoundarySettings(editorSettings: EditorSettingsExternalizable) {
+    editorSettings.setCaretStopAtLineStart(true, isNextCaretStopAtStart)
+    editorSettings.setCaretStopAtLineEnd(true, isNextCaretStopAtEnd)
+    editorSettings.setCaretStopAtLineStart(false, isPreviousCaretStopAtStart)
+    editorSettings.setCaretStopAtLineEnd(false, isPreviousCaretStopAtEnd)
+  }
+
   companion object {
+    val SKIP = EditorCaretMovementOptions()
     val STICK_ON_CURRENT = EditorCaretMovementOptions(isNextCaretStopAtEnd = true, isPreviousCaretStopAtStart = true)
     val JUMP_TO_NEIGHBORING = EditorCaretMovementOptions(isNextCaretStopAtStart = true, isPreviousCaretStopAtEnd = true)
     val JUMP_TO_START = EditorCaretMovementOptions(isNextCaretStopAtStart = true, isPreviousCaretStopAtStart = true)
@@ -34,6 +45,12 @@ internal data class EditorCaretMovementOptions(val isNextCaretStopAtStart: Boole
                                  editorSettings.isCaretStopAtWordEnd(true),
                                  editorSettings.isCaretStopAtWordStart(false),
                                  editorSettings.isCaretStopAtWordEnd(false))
+
+    fun fromLineBoundarySettings(editorSettings: EditorSettingsExternalizable): EditorCaretMovementOptions =
+      EditorCaretMovementOptions(editorSettings.isCaretStopAtLineStart(true),
+                                 editorSettings.isCaretStopAtLineEnd(true),
+                                 editorSettings.isCaretStopAtLineStart(false),
+                                 editorSettings.isCaretStopAtLineEnd(false))
   }
 
   internal interface Item {
@@ -62,6 +79,26 @@ internal data class EditorCaretMovementOptions(val isNextCaretStopAtStart: Boole
       fun forEditorSettings(editorSettings: EditorSettingsExternalizable): WordBoundary {
         val options = EditorCaretMovementOptions.fromWordBoundarySettings(editorSettings)
         return Item.findMatchingItem(options) ?: STICK_TO_WORD_BOUNDARIES
+      }
+    }
+  }
+
+  internal enum class LineBoundary(override val title: String,
+                                   override val options: EditorCaretMovementOptions) : Item {
+    SKIP_LINE_BREAK(ApplicationBundle.message("combobox.item.proceed.to.word.boundary"), SKIP),
+    STAY_ON_CURRENT_LINE(ApplicationBundle.message("combobox.item.stay.on.current.line"), STICK_ON_CURRENT),
+    JUMP_TO_NEIGHBORING_LINE(ApplicationBundle.message("combobox.item.jump.to.neighboring.line"), JUMP_TO_NEIGHBORING),
+    JUMP_TO_LINE_START(ApplicationBundle.message("combobox.item.stop.at.line.start"), JUMP_TO_START),
+    JUMP_TO_LINE_END(ApplicationBundle.message("combobox.item.stop.at.line.end"), JUMP_TO_END),
+    STOP_AT_BOTH_LINE_BOUNDARIES(ApplicationBundle.message("combobox.item.stop.at.both.line.ends"), STOP_AT_BOTH_BOUNDARIES);
+
+    override fun toString(): String = title
+
+    companion object {
+      @JvmStatic
+      fun forEditorSettings(editorSettings: EditorSettingsExternalizable): LineBoundary {
+        val options = EditorCaretMovementOptions.fromLineBoundarySettings(editorSettings)
+        return Item.findMatchingItem(options) ?: STOP_AT_BOTH_LINE_BOUNDARIES
       }
     }
   }
