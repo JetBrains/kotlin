@@ -103,9 +103,7 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
   private JBTextField  mySoftWrapFileMasks;
   private JLabel       mySoftWrapFileMasksHint;
 
-  private JComboBox<EditorCaretMovementOptions.Item> myWordMoveBehaviorComboBox;
-  private JCheckBox myStopAtCurrentLineCheckBox;
-  private JCheckBox myStopAtNeighboringLineCheckBox;
+  private JComboBox<EditorCaretMovementOptions.WordBoundary> myWordMoveBehaviorComboBox;
 
   private static final String ACTIVE_COLOR_SCHEME = ApplicationBundle.message("combobox.richcopy.color.scheme.active");
   private static final UINumericRange RECENT_FILES_RANGE = new UINumericRange(50, 1, 500);
@@ -141,11 +139,11 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
     myRichCopyColorSchemeComboBox.setRenderer(SimpleListCellRenderer.create("", value ->
       RichCopySettings.ACTIVE_GLOBAL_SCHEME_MARKER.equals(value) ? ACTIVE_COLOR_SCHEME : value));
 
-    myWordMoveBehaviorComboBox.addItem(EditorCaretMovementOptions.Item.STICK_TO_WORD_BOUNDARIES);
-    myWordMoveBehaviorComboBox.addItem(EditorCaretMovementOptions.Item.JUMP_TO_WORD_START);
-    myWordMoveBehaviorComboBox.addItem(EditorCaretMovementOptions.Item.JUMP_TO_WORD_END);
-    myWordMoveBehaviorComboBox.addItem(EditorCaretMovementOptions.Item.JUMP_TO_NEIGHBORING_WORD);
-    myWordMoveBehaviorComboBox.addItem(EditorCaretMovementOptions.Item.STOP_AT_ALL_BOUNDARIES);
+    myWordMoveBehaviorComboBox.addItem(EditorCaretMovementOptions.WordBoundary.STICK_TO_WORD_BOUNDARIES);
+    myWordMoveBehaviorComboBox.addItem(EditorCaretMovementOptions.WordBoundary.JUMP_TO_WORD_START);
+    myWordMoveBehaviorComboBox.addItem(EditorCaretMovementOptions.WordBoundary.JUMP_TO_WORD_END);
+    myWordMoveBehaviorComboBox.addItem(EditorCaretMovementOptions.WordBoundary.JUMP_TO_NEIGHBORING_WORD);
+    myWordMoveBehaviorComboBox.addItem(EditorCaretMovementOptions.WordBoundary.STOP_AT_ALL_BOUNDARIES);
 
     initQuickDocProcessing();
     initSoftWrapsSettingsProcessing();
@@ -164,7 +162,7 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
     myCbSmoothScrolling.setSelected(editorSettings.isSmoothScrolling());
 
     // Caret Movement
-    myWordMoveBehaviorComboBox.setSelectedItem(EditorCaretMovementOptions.Item.forEditorSettings(editorSettings));
+    myWordMoveBehaviorComboBox.setSelectedItem(EditorCaretMovementOptions.WordBoundary.forEditorSettings(editorSettings));
 
     // Brace highlighting
 
@@ -257,8 +255,8 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
     editorSettings.setSmoothScrolling(myCbSmoothScrolling.isSelected());
 
     // Caret Movement
-    final EditorCaretMovementOptions.Item caretMovementOptionsItem =
-      Objects.requireNonNull((EditorCaretMovementOptions.Item)myWordMoveBehaviorComboBox.getSelectedItem());
+    final EditorCaretMovementOptions.WordBoundary caretMovementOptionsItem =
+      Objects.requireNonNull((EditorCaretMovementOptions.WordBoundary)myWordMoveBehaviorComboBox.getSelectedItem());
     caretMovementOptionsItem.getOptions().apply(editorSettings);
 
     // Brace Highlighting
@@ -434,8 +432,8 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
     boolean isModified = isModified(myCbSmoothScrolling, editorSettings.isSmoothScrolling());
 
     // Caret Movement
-    final EditorCaretMovementOptions.Item caretMovementOptionsItem =
-      Objects.requireNonNull((EditorCaretMovementOptions.Item)myWordMoveBehaviorComboBox.getSelectedItem());
+    final EditorCaretMovementOptions.WordBoundary caretMovementOptionsItem =
+      Objects.requireNonNull((EditorCaretMovementOptions.WordBoundary)myWordMoveBehaviorComboBox.getSelectedItem());
 
     isModified |= caretMovementOptionsItem.getOptions().isModified(editorSettings);
 
