@@ -9,6 +9,7 @@ import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.core.script.dependencies.ScriptAdditionalIdeaDependenciesProvider
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
@@ -31,5 +32,9 @@ class GradleScriptAdditionalIdeaDependenciesProvider : ScriptAdditionalIdeaDepen
                 ExternalSystemApiUtil.getExternalProjectPath(it) == path
             }
         }
+    }
+
+    override fun getRelatedLibraries(file: VirtualFile, project: Project): List<Library> {
+        return emptyList()
     }
 }
