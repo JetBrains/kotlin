@@ -12,4 +12,5 @@ fun test(a: Int, b: Int): Int {
 // 0 getFirst
 // 0 getLast
 // 0 getStep
-// 1 IF_ICMP
+// 1 IF_ICMPGE
+// 1 IF

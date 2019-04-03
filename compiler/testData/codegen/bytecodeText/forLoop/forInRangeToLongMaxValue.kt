@@ -1,8 +1,11 @@
 const val M = Long.MAX_VALUE
 
-fun f(a: Long) {
+fun f(a: Long): Int {
+    var n = 0
     for (i in a..M) {
+        n++
     }
+    return n
 }
 
 // 0 iterator
