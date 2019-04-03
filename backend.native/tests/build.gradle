@@ -2895,10 +2895,16 @@ task inline_defaultArgs_linkTest(type: LinkKonanTest) {
 }
 
 def generateWithSpaceDefFile() {
+    def mapOption = "--Map "
+    if (isAppleTarget(project)) {
+        mapOption = "-map "
+    } else if (isWindowsTarget(project)) {
+        mapOption = "-Wl,--Map,"
+    }
     def file = new File("${buildDir}/withSpaces.def")
     file.write """
 headers = stdio.h "${projectDir}/interop/basics/custom headers/custom.h"
-linkerOpts = -map "${buildDir}/cutom map.map"
+linkerOpts = $mapOption "${buildDir}/cutom map.map"
 ---
 
 int customCompare(const char* str1, const char* str2) {
