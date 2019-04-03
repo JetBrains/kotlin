@@ -271,6 +271,11 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
         assertEquals("-version -Xallow-kotlin-package -Xskip-metadata-version-check", settings.getCompilerSettings().getAdditionalArguments());
     }
 
+    public void testJvmProjectWithJvmTarget11() {
+        KotlinFacetSettings settings = KotlinFacetSettingsProvider.Companion.getInstance(myProject).getInitializedSettings(getModule());
+        assertEquals(new JvmIdePlatformKind.Platform(JvmTarget.JVM_11), settings.getPlatform());
+    }
+
     public void testImplementsDependency() {
         ModuleManager moduleManager = ModuleManager.getInstance(myProject);
 
