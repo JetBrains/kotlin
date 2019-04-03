@@ -22,3 +22,18 @@ FILE fqName:<root> fileName:/samConstructors.kt
       RETURN type=kotlin.Nothing from='public final fun test3 (): java.lang.Runnable declared in <root>'
         TYPE_OP type=java.lang.Runnable origin=SAM_CONVERSION typeOperand=java.lang.Runnable
           FUNCTION_REFERENCE 'public final fun foo (): kotlin.Unit declared in <root>' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null
+  FUN name:test4 visibility:public modality:FINAL <> () returnType:java.util.Comparator<kotlin.Int>
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun test4 (): java.util.Comparator<kotlin.Int> declared in <root>'
+        TYPE_OP type=java.util.Comparator<kotlin.Int> origin=SAM_CONVERSION typeOperand=java.util.Comparator<kotlin.Int>
+          TYPE_OP type=kotlin.Function2<T of java.util.Comparator?, T of java.util.Comparator?, kotlin.Int> origin=IMPLICIT_CAST typeOperand=kotlin.Function2<T of java.util.Comparator?, T of java.util.Comparator?, kotlin.Int>
+            BLOCK type=kotlin.Function2<kotlin.Int?, kotlin.Int?, kotlin.Int> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (a:kotlin.Int?, b:kotlin.Int?) returnType:kotlin.Int
+                VALUE_PARAMETER name:a index:0 type:kotlin.Int?
+                VALUE_PARAMETER name:b index:1 type:kotlin.Int?
+                BLOCK_BODY
+                  RETURN type=kotlin.Nothing from='local final fun <anonymous> (a: kotlin.Int?, b: kotlin.Int?): kotlin.Int declared in <root>.test4'
+                    CALL 'public final fun minus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=MINUS
+                      $this: GET_VAR 'a: kotlin.Int? declared in <root>.test4.<anonymous>' type=kotlin.Int? origin=null
+                      other: GET_VAR 'b: kotlin.Int? declared in <root>.test4.<anonymous>' type=kotlin.Int? origin=null
+              FUNCTION_REFERENCE 'local final fun <anonymous> (a: kotlin.Int?, b: kotlin.Int?): kotlin.Int declared in <root>.test4' type=kotlin.Function2<kotlin.Int?, kotlin.Int?, kotlin.Int> origin=LAMBDA
