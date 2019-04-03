@@ -13,11 +13,11 @@ import org.gradle.process.ProcessForkOptions
 import org.gradle.process.internal.DefaultProcessForkOptions
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
-import org.jetbrains.kotlin.gradle.tasks.KotlinTestTask
-import org.jetbrains.kotlin.gradle.testing.TestsGrouping
+import org.jetbrains.kotlin.gradle.targets.native.internal.parseKotlinNativeStackTraceAsJvm
+import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 import java.io.File
 
-open class KotlinNativeTestTask : KotlinTestTask() {
+open class KotlinNativeTest : KotlinTest() {
     @Suppress("LeakingThis")
     @Internal
     val processOptions: ProcessForkOptions = DefaultProcessForkOptions(fileResolver)
@@ -45,11 +45,13 @@ open class KotlinNativeTestTask : KotlinTestTask() {
         val extendedForkOptions = DefaultProcessForkOptions(fileResolver)
         processOptions.copyTo(extendedForkOptions)
 
-        val clientSettings = when (testsGrouping) {
-            TestsGrouping.none -> TCServiceMessagesClientSettings(rootNodeName = name)
-            TestsGrouping.root -> TCServiceMessagesClientSettings(rootNodeName = name, nameOfRootSuiteToAppend = targetName)
-            TestsGrouping.leaf -> TCServiceMessagesClientSettings(rootNodeName = name, nameOfLeafTestToAppend = targetName)
-        }.copy(treatFailedTestOutputAsStacktrace = true)
+        val clientSettings = TCServiceMessagesClientSettings(
+            name,
+            testNameSuffix = targetName,
+            prependSuiteName = targetName != null,
+            treatFailedTestOutputAsStacktrace = true,
+            stackTraceParser = ::parseKotlinNativeStackTraceAsJvm
+        )
 
         val cliArgs = CliArgs("TEAMCITY", includePatterns, excludePatterns)
 
