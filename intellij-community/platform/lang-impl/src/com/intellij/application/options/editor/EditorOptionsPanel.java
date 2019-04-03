@@ -103,8 +103,8 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
   private JBTextField  mySoftWrapFileMasks;
   private JLabel       mySoftWrapFileMasksHint;
 
-  private JComboBox<EditorCaretMovementOptions.WordBoundary> myWordBoundaryCaretStopComboBox;
-  private JComboBox<EditorCaretMovementOptions.LineBoundary> myLineBoundaryCaretStopComboBox;
+  private JComboBox<EditorCaretStopOptions.WordBoundary> myWordBoundaryCaretStopComboBox;
+  private JComboBox<EditorCaretStopOptions.LineBoundary> myLineBoundaryCaretStopComboBox;
 
   private static final String ACTIVE_COLOR_SCHEME = ApplicationBundle.message("combobox.richcopy.color.scheme.active");
   private static final UINumericRange RECENT_FILES_RANGE = new UINumericRange(50, 1, 500);
@@ -140,11 +140,11 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
     myRichCopyColorSchemeComboBox.setRenderer(SimpleListCellRenderer.create("", value ->
       RichCopySettings.ACTIVE_GLOBAL_SCHEME_MARKER.equals(value) ? ACTIVE_COLOR_SCHEME : value));
 
-    for (EditorCaretMovementOptions.WordBoundary item : EditorCaretMovementOptions.WordBoundary.values()) {
+    for (EditorCaretStopOptions.WordBoundary item : EditorCaretStopOptions.WordBoundary.values()) {
       myWordBoundaryCaretStopComboBox.addItem(item);
     }
 
-    for (EditorCaretMovementOptions.LineBoundary item : EditorCaretMovementOptions.LineBoundary.values()) {
+    for (EditorCaretStopOptions.LineBoundary item : EditorCaretStopOptions.LineBoundary.values()) {
       myLineBoundaryCaretStopComboBox.addItem(item);
     }
 
@@ -165,8 +165,8 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
     myCbSmoothScrolling.setSelected(editorSettings.isSmoothScrolling());
 
     // Caret Movement
-    myWordBoundaryCaretStopComboBox.setSelectedItem(EditorCaretMovementOptions.WordBoundary.forEditorSettings(editorSettings));
-    myLineBoundaryCaretStopComboBox.setSelectedItem(EditorCaretMovementOptions.LineBoundary.forEditorSettings(editorSettings));
+    myWordBoundaryCaretStopComboBox.setSelectedItem(EditorCaretStopOptions.WordBoundary.forEditorSettings(editorSettings));
+    myLineBoundaryCaretStopComboBox.setSelectedItem(EditorCaretStopOptions.LineBoundary.forEditorSettings(editorSettings));
 
     // Brace highlighting
 
@@ -495,8 +495,8 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
   }
 
   @NotNull
-  protected static EditorCaretMovementOptions getCaretMovementOptions(@NotNull JComboBox<? extends EditorCaretMovementOptions.Item> comboBox) {
-    return Objects.requireNonNull((EditorCaretMovementOptions.Item)comboBox.getSelectedItem()).getOptions();
+  protected static EditorCaretStopOptions getCaretMovementOptions(@NotNull JComboBox<? extends EditorCaretStopOptions.Item> comboBox) {
+    return Objects.requireNonNull((EditorCaretStopOptions.Item)comboBox.getSelectedItem()).getOptions();
   }
 
   @NotNull
