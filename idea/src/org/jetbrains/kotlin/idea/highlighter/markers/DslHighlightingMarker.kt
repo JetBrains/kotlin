@@ -13,11 +13,13 @@ import com.intellij.ide.DataManager
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.editor.markup.GutterIconRenderer
 import com.intellij.psi.PsiElement
+import com.intellij.ui.LayeredIcon
 import com.intellij.util.Function
 import com.intellij.util.ui.ColorsIcon
 import com.intellij.util.ui.JBUI
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.highlighter.dsl.DslHighlighterExtension
@@ -28,7 +30,7 @@ import javax.swing.JComponent
 
 private val navHandler = GutterIconNavigationHandler<PsiElement> { event, element ->
     val dataContext = (event.component as? JComponent)?.let { DataManager.getInstance().getDataContext(it) }
-            ?: return@GutterIconNavigationHandler
+        ?: return@GutterIconNavigationHandler
     val ktClass = element?.parent as? KtClass ?: return@GutterIconNavigationHandler
     val styleId = ktClass.styleIdForMarkerAnnotation() ?: return@GutterIconNavigationHandler
     ColorAndFontOptions.selectOrEditColor(dataContext, DslHighlighterExtension.styleOptionDisplayName(styleId), KotlinLanguage.NAME)
@@ -61,8 +63,16 @@ fun collectHighlightingColorsMarkers(
 private fun createIcon(styleId: Int): Icon {
     val globalScheme = EditorColorsManager.getInstance().globalScheme
     val markersColor = globalScheme.getAttributes(DslHighlighterExtension.styleById(styleId)).foregroundColor
-    val defaultColor = globalScheme.defaultForeground
-    return JBUI.scale(ColorsIcon(12, markersColor, defaultColor, defaultColor, markersColor))
+    val icon = LayeredIcon(2)
+    val defaultIcon = KotlinIcons.DSL_MARKER_ANNOTATION
+    icon.setIcon(defaultIcon, 0)
+    icon.setIcon(
+        ColorsIcon(defaultIcon.iconHeight / 2, markersColor).scale(JBUI.pixScale()),
+        1,
+        defaultIcon.iconHeight / 2,
+        defaultIcon.iconWidth / 2
+    )
+    return icon
 }
 
 private fun KtClass.styleIdForMarkerAnnotation(): Int? {
