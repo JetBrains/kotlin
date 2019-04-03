@@ -71,15 +71,15 @@ class SingleAbstractMethodLowering(val context: CommonBackendContext) : ClassLow
                     // Not an exhaustive check, but enough to cover the most common cases.
                     if (invokable is IrFunctionReference) {
                         // Runnable(::function)
-                        createFunctionProxyInstance(superType, invokable)
+                        +createFunctionProxyInstance(superType, invokable)
                     } else if (invokable is IrBlock && invokable.statements.last() is IrFunctionReference) {
                         // Runnable { lambda }
                         for (statement in invokable.statements.dropLast(1))
                             +statement
-                        createFunctionProxyInstance(superType, invokable.statements.last() as IrFunctionReference)
+                        +createFunctionProxyInstance(superType, invokable.statements.last() as IrFunctionReference)
                     } else {
                         // Fall back to materializing an invokable object.
-                        createObjectProxyInstance(superType, invokable)
+                        +createObjectProxyInstance(superType, invokable)
                     }
                 }
             }
@@ -166,16 +166,19 @@ class SingleAbstractMethodLowering(val context: CommonBackendContext) : ClassLow
                     }
                 }
 
-            private fun IrBlockBuilder.createObjectProxyInstance(superType: IrType, invokable: IrExpression) {
+            private fun IrBlockBuilder.createObjectProxyInstance(superType: IrType, invokable: IrExpression): IrExpression {
+                // Do not generate a wrapper class for null, it has no invoke() anyway.
+                if (invokable.isNullConst())
+                    return invokable
                 val implementation = cachedImplementations.getOrPut(superType.toKotlinType() to invokable.type.toKotlinType()) {
                     createObjectProxy(superType, invokable.type)
                 }
-                if (superType.isNullable() && invokable.type.isNullable()) {
+                return if (superType.isNullable() && invokable.type.isNullable()) {
                     val invokableVariable = irTemporary(invokable)
                     val instance = irCall(implementation.constructors.single()).apply { putValueArgument(0, irGet(invokableVariable)) }
-                    +irIfNull(superType, irGet(invokableVariable), irNull(), instance)
+                    irIfNull(superType, irGet(invokableVariable), irNull(), instance)
                 } else {
-                    +irCall(implementation.constructors.single()).apply { putValueArgument(0, invokable) }
+                    irCall(implementation.constructors.single()).apply { putValueArgument(0, invokable) }
                 }
             }
 
@@ -217,10 +220,10 @@ class SingleAbstractMethodLowering(val context: CommonBackendContext) : ClassLow
                     }
                 }
 
-            private fun IrBlockBuilder.createFunctionProxyInstance(superType: IrType, reference: IrFunctionReference) {
+            private fun IrBlockBuilder.createFunctionProxyInstance(superType: IrType, reference: IrFunctionReference): IrExpression {
                 val implementation = createFunctionProxy(superType, reference)
                 localImplementations += implementation
-                +irCall(implementation.constructors.single()).apply {
+                return irCall(implementation.constructors.single()).apply {
                     reference.arguments.filterNotNull().forEachIndexed(::putValueArgument)
                 }
             }
