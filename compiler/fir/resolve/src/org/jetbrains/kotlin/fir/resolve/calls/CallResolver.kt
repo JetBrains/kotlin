@@ -444,9 +444,9 @@ class CandidateCollector(val callInfo: CallInfo) {
     }
 
 
-    fun successCandidates(): List<ConeSymbol> {
+    fun successCandidates(): List<Candidate> {
         if (groupNumbers.isEmpty()) return emptyList()
-        val result = mutableListOf<ConeSymbol>()
+        val result = mutableListOf<Candidate>()
         var bestGroup = groupNumbers.first()
         for ((index, candidate) in candidates.withIndex()) {
             val group = groupNumbers[index]
@@ -455,7 +455,7 @@ class CandidateCollector(val callInfo: CallInfo) {
                 result.clear()
             }
             if (bestGroup == group) {
-                result.add(candidate.symbol)
+                result.add(candidate)
             }
         }
         return result

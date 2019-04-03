@@ -352,6 +352,10 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext {
             else -> type
         }
     }
+
+    override fun SimpleTypeMarker.isPrimitiveType(): Boolean {
+        return false //TODO
+    }
 }
 
 class ConeTypeCheckerContext(override val isErrorTypeEqualsToAnything: Boolean, override val session: FirSession) :

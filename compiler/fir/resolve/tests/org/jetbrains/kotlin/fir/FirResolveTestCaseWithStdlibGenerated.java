@@ -39,6 +39,11 @@ public class FirResolveTestCaseWithStdlibGenerated extends AbstractFirResolveTes
         runTest("compiler/fir/resolve/testData/resolve/stdlib/functionX.kt");
     }
 
+    @TestMetadata("helloWorld.kt")
+    public void testHelloWorld() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/stdlib/helloWorld.kt");
+    }
+
     @TestMetadata("reflectionClass.kt")
     public void testReflectionClass() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/stdlib/reflectionClass.kt");
