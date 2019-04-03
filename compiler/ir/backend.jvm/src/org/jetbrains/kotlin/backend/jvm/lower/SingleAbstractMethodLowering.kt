@@ -44,27 +44,11 @@ class SingleAbstractMethodLowering(val context: CommonBackendContext) : ClassLow
         val cachedImplementations = mutableMapOf<Pair<KotlinType, KotlinType>, IrClass>()
         val localImplementations = mutableListOf<IrClass>()
         irClass.transformChildrenVoid(object : IrElementTransformerVoidWithContext() {
-            override fun visitCall(expression: IrCall): IrExpression {
-                if (expression.symbol.owner.descriptor !is SamConstructorDescriptor)
-                    return super.visitCall(expression)
-                // Direct construction of an interface:
-                //    Runnable { print("Hello, World!") }
-                return createInstance(expression.type, expression.getValueArgument(0)!!.transform(this, null))
-            }
-
             override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression {
                 if (expression.operator != IrTypeOperator.SAM_CONVERSION)
                     return super.visitTypeOperator(expression)
-                // Implicit conversion to an interface:
-                //    // FILE: 1.java
-                //    class A { public static void f(Runnable r) { r.run() } }
-                //    // FILE: 2.kt
-                //    A.f { print("Hello, World!") }
-                return createInstance(expression.typeOperand, expression.argument.transform(this, null))
-            }
-
-            // Replace a SAM-conversion of a callable object with an instance of an appropriate implementation.
-            private fun createInstance(superType: IrType, invokable: IrExpression): IrExpression {
+                val superType = expression.typeOperand
+                val invokable = expression.argument.transform(this, null)
                 // Running in the class context, so empty scope means this is a field/anonymous initializer.
                 val scopeOwnerSymbol = currentScope?.scope?.scopeOwnerSymbol ?: irClass.symbol
                 return context.createIrBuilder(scopeOwnerSymbol).irBlock(invokable, null, superType) {
