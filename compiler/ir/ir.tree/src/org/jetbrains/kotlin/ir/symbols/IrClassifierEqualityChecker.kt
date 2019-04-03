@@ -17,7 +17,9 @@ interface IrClassifierEqualityChecker {
 object FqNameEqualityChecker : IrClassifierEqualityChecker {
     override fun areEqual(left: IrClassifierSymbol, right: IrClassifierSymbol): Boolean {
         if (left === right) return true
-        if (!left.isBound || !right.isBound) checkViaDescriptors(left.descriptor, right.descriptor)
+        if (!left.isBound || !right.isBound) {
+            return checkViaDescriptors(left.descriptor, right.descriptor)
+        }
         return checkViaDeclarations(left.owner, right.owner)
     }
 
