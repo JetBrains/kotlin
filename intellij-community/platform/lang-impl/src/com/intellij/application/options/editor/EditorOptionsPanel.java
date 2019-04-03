@@ -104,6 +104,8 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
   private JLabel       mySoftWrapFileMasksHint;
 
   private JComboBox<EditorCaretMovementOptions.Item> myWordMoveBehaviorComboBox;
+  private JCheckBox myStopAtCurrentLineCheckBox;
+  private JCheckBox myStopAtNeighboringLineCheckBox;
 
   private static final String ACTIVE_COLOR_SCHEME = ApplicationBundle.message("combobox.richcopy.color.scheme.active");
   private static final UINumericRange RECENT_FILES_RANGE = new UINumericRange(50, 1, 500);
