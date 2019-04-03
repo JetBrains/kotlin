@@ -11,16 +11,16 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 
-abstract class ScriptRelatedModulesProvider {
+abstract class ScriptAdditionalIdeaDependenciesProvider {
     abstract fun getRelatedModules(file: VirtualFile, project: Project): List<Module>
 
     companion object {
-        private val EP_NAME: ExtensionPointName<ScriptRelatedModulesProvider> =
-            ExtensionPointName.create<ScriptRelatedModulesProvider>("org.jetbrains.kotlin.scriptRelatedModulesProvider")
+        private val EP_NAME: ExtensionPointName<ScriptAdditionalIdeaDependenciesProvider> =
+            ExtensionPointName.create<ScriptAdditionalIdeaDependenciesProvider>("org.jetbrains.kotlin.scriptAdditionalIdeaDependenciesProvider")
 
         fun getRelatedModules(file: VirtualFile, project: Project): List<Module> {
             return Extensions.getArea(project).getExtensionPoint(EP_NAME).extensions
-                .filterIsInstance<ScriptRelatedModulesProvider>()
+                .filterIsInstance<ScriptAdditionalIdeaDependenciesProvider>()
                 .flatMap { it.getRelatedModules(file, project) }
         }
     }

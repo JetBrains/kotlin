@@ -10,10 +10,10 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.idea.core.script.dependencies.ScriptRelatedModulesProvider
+import org.jetbrains.kotlin.idea.core.script.dependencies.ScriptAdditionalIdeaDependenciesProvider
 import org.jetbrains.kotlin.idea.core.script.scriptRelatedModuleName
 
-class ScratchModuleDependencyProvider : ScriptRelatedModulesProvider() {
+class ScratchAdditionalIdeaDependenciesProvider : ScriptAdditionalIdeaDependenciesProvider() {
     override fun getRelatedModules(file: VirtualFile, project: Project): List<Module> {
         if (ScratchFileService.isInScratchRoot(file)) {
             val scratchModule = file.scriptRelatedModuleName?.let { ModuleManager.getInstance(project).findModuleByName(it) }

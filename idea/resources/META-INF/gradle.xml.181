@@ -87,7 +87,7 @@
         <gradleModelFacade implementation="org.jetbrains.kotlin.idea.inspections.gradle.DefaultGradleModelFacade"/>
 
         <scriptDefinitionContributor implementation="org.jetbrains.kotlin.idea.core.script.GradleScriptDefinitionsContributor" order="first"/>
-        <scriptRelatedModulesProvider implementation="org.jetbrains.kotlin.idea.core.script.GradleBuildSrcModuleDependencyProvider"/>
+        <scriptAdditionalIdeaDependenciesProvider implementation="org.jetbrains.kotlin.idea.core.script.GradleScriptAdditionalIdeaDependenciesProvider"/>
 
         <moduleBuilder implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleWebMultiplatformModuleBuilder"/>
 
