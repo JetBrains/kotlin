@@ -129,28 +129,3 @@ fun IrClassifierSymbol.typeWith(arguments: List<IrType>): IrSimpleType =
     )
 
 fun IrClass.typeWith(arguments: List<IrType>) = this.symbol.typeWith(arguments)
-
-fun KotlinType.toIrType(symbolTable: SymbolTable? = null): IrType? {
-    if (isDynamic()) return IrDynamicTypeImpl(null, listOf(), Variance.INVARIANT)
-
-    val symbol = constructor.declarationDescriptor?.getSymbol(symbolTable) ?: return null
-
-    val arguments = this.arguments.map { projection ->
-        when (projection) {
-            is TypeProjectionImpl -> IrTypeProjectionImpl(projection.type.toIrType(symbolTable)!!, projection.projectionKind)
-            is StarProjectionImpl -> IrStarProjectionImpl
-            else -> error(projection)
-        }
-    }
-
-    // TODO
-    val annotations = listOf()
-    return IrSimpleTypeImpl(null, symbol, isMarkedNullable, arguments, annotations)
-}
-
-// TODO: this function creates unbound symbol which is the great source of problems
-private fun ClassifierDescriptor.getSymbol(symbolTable: SymbolTable?): IrClassifierSymbol = when (this) {
-    is ClassDescriptor -> symbolTable?.referenceClass(this) ?: IrClassSymbolImpl(this)
-    is TypeParameterDescriptor -> symbolTable?.referenceTypeParameter(this) ?: IrTypeParameterSymbolImpl(this)
-    else -> TODO()
-}
