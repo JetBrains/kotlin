@@ -17960,6 +17960,16 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/strings/rawStringsWithManyQuotes.kt");
         }
 
+        @TestMetadata("simpleStringPlus.kt")
+        public void testSimpleStringPlus() throws Exception {
+            runTest("compiler/testData/codegen/box/strings/simpleStringPlus.kt");
+        }
+
+        @TestMetadata("singleConcatNullable.kt")
+        public void testSingleConcatNullable() throws Exception {
+            runTest("compiler/testData/codegen/box/strings/singleConcatNullable.kt");
+        }
+
         @TestMetadata("stringBuilderAppend.kt")
         public void testStringBuilderAppend() throws Exception {
             runTest("compiler/testData/codegen/box/strings/stringBuilderAppend.kt");
@@ -17968,6 +17978,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
         @TestMetadata("stringPlusOnlyWorksOnString.kt")
         public void testStringPlusOnlyWorksOnString() throws Exception {
             runTest("compiler/testData/codegen/box/strings/stringPlusOnlyWorksOnString.kt");
+        }
+
+        @TestMetadata("stringPlusOverride.kt")
+        public void testStringPlusOverride() throws Exception {
+            runTest("compiler/testData/codegen/box/strings/stringPlusOverride.kt");
         }
     }
 

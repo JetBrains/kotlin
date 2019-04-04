@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.common.descriptors.propertyIfAccessor
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.backend.jvm.intrinsics.JavaClassProperty
 import org.jetbrains.kotlin.backend.jvm.intrinsics.Not
 import org.jetbrains.kotlin.backend.jvm.lower.CrIrType
@@ -29,9 +30,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.isUnit
-import org.jetbrains.kotlin.ir.types.toKotlinType
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -774,12 +773,28 @@ class ExpressionCodegen(
 
     override fun visitStringConcatenation(expression: IrStringConcatenation, data: BlockInfo): PromisedValue {
         expression.markLineNumber(startOffset = true)
-        when (expression.arguments.size) {
-            0 -> mv.aconst("")
-            1 -> {
+        val arity = expression.arguments.size
+        when {
+            arity == 0 -> mv.aconst("")
+            arity == 1 -> {
                 // Convert single arg to string.
                 val type = expression.arguments[0].accept(this, data).materialized.type
-                AsmUtil.genToString(StackValue.onStack(type), type, null, typeMapper).put(expression.asmType, mv)
+                if (!expression.arguments[0].type.isString())
+                    AsmUtil.genToString(StackValue.onStack(type), type, null, typeMapper).put(expression.asmType, mv)
+            }
+            arity == 2 && expression.arguments[0].type.isStringClassType() -> {
+                // Call the stringPlus intrinsic
+                expression.arguments.forEach {
+                    val type = it.accept(this, data).materialized.type
+                    if (type.sort != Type.OBJECT)
+                        AsmUtil.genToString(StackValue.onStack(type), type, null, typeMapper).put(expression.asmType, mv)
+                }
+                mv.invokestatic(
+                    IntrinsicMethods.INTRINSICS_CLASS_NAME,
+                    "stringPlus",
+                    "(Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/String;",
+                    false
+                )
             }
             else -> {
                 // Use StringBuilder to concatenate.

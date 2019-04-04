@@ -3506,6 +3506,16 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         public void testPrimitivesAsStringTemplates() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/stringOperations/primitivesAsStringTemplates.kt");
         }
+
+        @TestMetadata("singleConcat.kt")
+        public void testSingleConcat() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/stringOperations/singleConcat.kt");
+        }
+
+        @TestMetadata("stringPlus.kt")
+        public void testStringPlus() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/stringOperations/stringPlus.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/bytecodeText/unsignedTypes")

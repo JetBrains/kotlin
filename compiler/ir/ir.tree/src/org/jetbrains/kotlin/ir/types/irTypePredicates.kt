@@ -16,9 +16,9 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils.getFqName
 private fun IrType.isNotNullClassType(fqName: FqNameUnsafe) = isClassType(fqName, hasQuestionMark = false)
 private fun IrType.isNullableClassType(fqName: FqNameUnsafe) = isClassType(fqName, hasQuestionMark = true)
 
-private fun IrType.isClassType(fqName: FqNameUnsafe, hasQuestionMark: Boolean): Boolean {
+private fun IrType.isClassType(fqName: FqNameUnsafe, hasQuestionMark: Boolean? = null): Boolean {
     if (this !is IrSimpleType) return false
-    if (this.hasQuestionMark != hasQuestionMark) return false
+    if (hasQuestionMark != null && this.hasQuestionMark != hasQuestionMark) return false
     val classSymbol = this.classifier as? IrClassSymbol ?: return false
     return classFqNameEquals(classSymbol, fqName)
 }
@@ -37,6 +37,7 @@ fun IrType.isNullableAny(): Boolean = isNullableClassType(KotlinBuiltIns.FQ_NAME
 
 fun IrType.isString(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES.string)
 fun IrType.isNullableString(): Boolean = isNullableClassType(KotlinBuiltIns.FQ_NAMES.string)
+fun IrType.isStringClassType(): Boolean = isClassType(KotlinBuiltIns.FQ_NAMES.string)
 fun IrType.isArray(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES.array)
 fun IrType.isNullableArray(): Boolean = isNullableClassType(KotlinBuiltIns.FQ_NAMES.array)
 fun IrType.isCollection(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES.collection.toUnsafe())
