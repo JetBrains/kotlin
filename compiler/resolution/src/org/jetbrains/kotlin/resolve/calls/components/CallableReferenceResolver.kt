@@ -74,6 +74,15 @@ class CallableReferenceResolver(
         val candidates = runRHSResolution(scopeTower, argument, expectedType) { checkCallableReference ->
             csBuilder.runTransaction { checkCallableReference(this); false }
         }
+
+        if (candidates.size > 1 && resolvedAtom is EagerCallableReferenceAtom) {
+            resolvedAtom.setAnalyzedResults(
+                candidate = null,
+                subResolvedAtoms = listOf(resolvedAtom.transformToPostponed())
+            )
+            return
+        }
+
         val chosenCandidate = candidates.singleOrNull()
         if (chosenCandidate != null) {
             val (toFreshSubstitutor, diagnostic) = with(chosenCandidate) {
