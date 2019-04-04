@@ -5,10 +5,10 @@ import com.intellij.openapi.application.ApplicationBundle
 import com.intellij.openapi.editor.ex.EditorSettingsExternalizable
 import com.intellij.openapi.util.SystemInfo
 
-internal data class EditorCaretStopOptions(val isNextCaretStopAtStart: Boolean = false,
-                                           val isNextCaretStopAtEnd: Boolean = false,
-                                           val isPreviousCaretStopAtStart: Boolean = false,
-                                           val isPreviousCaretStopAtEnd: Boolean = false) {
+internal data class EditorCaretStopOptions(val isForwardCaretStopAtStart: Boolean = false,
+                                           val isForwardCaretStopAtEnd: Boolean = false,
+                                           val isBackwardCaretStopAtStart: Boolean = false,
+                                           val isBackwardCaretStopAtEnd: Boolean = false) {
 
   fun areWordBoundarySettingsModified(editorSettings: EditorSettingsExternalizable): Boolean =
     this != EditorCaretStopOptions.fromWordBoundarySettings(editorSettings)
@@ -17,29 +17,29 @@ internal data class EditorCaretStopOptions(val isNextCaretStopAtStart: Boolean =
     this != EditorCaretStopOptions.fromLineBoundarySettings(editorSettings)
 
   fun applyWordBoundarySettings(editorSettings: EditorSettingsExternalizable) {
-    editorSettings.setCaretStopAtWordStart(true, isNextCaretStopAtStart)
-    editorSettings.setCaretStopAtWordEnd(true, isNextCaretStopAtEnd)
-    editorSettings.setCaretStopAtWordStart(false, isPreviousCaretStopAtStart)
-    editorSettings.setCaretStopAtWordEnd(false, isPreviousCaretStopAtEnd)
+    editorSettings.setCaretStopAtWordStart(true, isForwardCaretStopAtStart)
+    editorSettings.setCaretStopAtWordEnd(true, isForwardCaretStopAtEnd)
+    editorSettings.setCaretStopAtWordStart(false, isBackwardCaretStopAtStart)
+    editorSettings.setCaretStopAtWordEnd(false, isBackwardCaretStopAtEnd)
   }
 
   fun applyLineBoundarySettings(editorSettings: EditorSettingsExternalizable) {
-    editorSettings.setCaretStopAtLineStart(true, isNextCaretStopAtStart)
-    editorSettings.setCaretStopAtLineEnd(true, isNextCaretStopAtEnd)
-    editorSettings.setCaretStopAtLineStart(false, isPreviousCaretStopAtStart)
-    editorSettings.setCaretStopAtLineEnd(false, isPreviousCaretStopAtEnd)
+    editorSettings.setCaretStopAtLineStart(true, isForwardCaretStopAtStart)
+    editorSettings.setCaretStopAtLineEnd(true, isForwardCaretStopAtEnd)
+    editorSettings.setCaretStopAtLineStart(false, isBackwardCaretStopAtStart)
+    editorSettings.setCaretStopAtLineEnd(false, isBackwardCaretStopAtEnd)
   }
 
   companion object {
     val SKIP = EditorCaretStopOptions()
-    val STICK_ON_CURRENT = EditorCaretStopOptions(isNextCaretStopAtEnd = true, isPreviousCaretStopAtStart = true)
-    val JUMP_TO_NEIGHBORING = EditorCaretStopOptions(isNextCaretStopAtStart = true, isPreviousCaretStopAtEnd = true)
-    val JUMP_TO_START = EditorCaretStopOptions(isNextCaretStopAtStart = true, isPreviousCaretStopAtStart = true)
-    val JUMP_TO_END = EditorCaretStopOptions(isNextCaretStopAtEnd = true, isPreviousCaretStopAtEnd = true)
-    val STOP_AT_BOTH_BOUNDARIES = EditorCaretStopOptions(isNextCaretStopAtStart = true,
-                                                         isNextCaretStopAtEnd = true,
-                                                         isPreviousCaretStopAtStart = true,
-                                                         isPreviousCaretStopAtEnd = true)
+    val STICK_ON_CURRENT = EditorCaretStopOptions(isForwardCaretStopAtEnd = true, isBackwardCaretStopAtStart = true)
+    val JUMP_TO_NEIGHBORING = EditorCaretStopOptions(isForwardCaretStopAtStart = true, isBackwardCaretStopAtEnd = true)
+    val JUMP_TO_START = EditorCaretStopOptions(isForwardCaretStopAtStart = true, isBackwardCaretStopAtStart = true)
+    val JUMP_TO_END = EditorCaretStopOptions(isForwardCaretStopAtEnd = true, isBackwardCaretStopAtEnd = true)
+    val STOP_AT_BOTH_BOUNDARIES = EditorCaretStopOptions(isForwardCaretStopAtStart = true,
+                                                         isForwardCaretStopAtEnd = true,
+                                                         isBackwardCaretStopAtStart = true,
+                                                         isBackwardCaretStopAtEnd = true)
 
     fun fromWordBoundarySettings(editorSettings: EditorSettingsExternalizable): EditorCaretStopOptions =
       EditorCaretStopOptions(editorSettings.isCaretStopAtWordStart(true),
