@@ -12,6 +12,7 @@ import java.util.jar.JarOutputStream
 import java.util.jar.Manifest
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.jvm.JvmDependency
+import kotlin.script.experimental.jvmhost.impl.KJvmCompiledModuleInMemory
 import kotlin.script.experimental.jvmhost.impl.KJvmCompiledScript
 
 // TODO: generate execution code (main)
@@ -24,8 +25,9 @@ open class BasicJvmScriptClassFilesGenerator(val outputDir: File) : ScriptEvalua
     ): ResultWithDiagnostics<EvaluationResult> {
         try {
             if (compiledScript !is KJvmCompiledScript<*>)
-                return failure("Unsupported compiled script type ${compiledScript::class.qualifiedName}")
-            val module = compiledScript.compiledModule ?: return failure("Cannot generate classes: module is null")
+                return failure("Cannot generate classes: unsupported compiled script type $compiledScript")
+            val module = (compiledScript.compiledModule as? KJvmCompiledModuleInMemory)
+                ?: return failure("Cannot generate classes: unsupported module type ${compiledScript.compiledModule}")
             for ((path, bytes) in module.compilerOutputFiles) {
                 File(outputDir, path).apply {
                     if (!parentFile.isDirectory) {
@@ -37,7 +39,7 @@ open class BasicJvmScriptClassFilesGenerator(val outputDir: File) : ScriptEvalua
             return ResultWithDiagnostics.Success(EvaluationResult(ResultValue.Unit, scriptEvaluationConfiguration))
         } catch (e: Throwable) {
             return ResultWithDiagnostics.Failure(
-                e.asDiagnostics("Error saving compiled script classes", path = compiledScript.sourceLocationId)
+                e.asDiagnostics("Cannot generate script classes: ${e.message}", path = compiledScript.sourceLocationId)
             )
         }
     }
@@ -52,8 +54,9 @@ open class BasicJvmScriptJarGenerator(val outputJar: File) : ScriptEvaluator {
     ): ResultWithDiagnostics<EvaluationResult> {
         try {
             if (compiledScript !is KJvmCompiledScript<*>)
-                return failure("Unsupported compiled script type ${compiledScript::class.qualifiedName}")
-            val module = compiledScript.compiledModule ?: return failure("Cannot generate classes: module is null")
+                return failure("Cannot generate jar: unsupported compiled script type $compiledScript")
+            val module = (compiledScript.compiledModule as? KJvmCompiledModuleInMemory)
+                ?: return failure("Cannot generate jar: unsupported module type ${compiledScript.compiledModule}")
             val dependencies = compiledScript.compilationConfiguration[ScriptCompilationConfiguration.dependencies]
                 ?.filterIsInstance<JvmDependency>()
                 ?.flatMap { it.classpath }
@@ -78,7 +81,7 @@ open class BasicJvmScriptJarGenerator(val outputJar: File) : ScriptEvaluator {
             return ResultWithDiagnostics.Success(EvaluationResult(ResultValue.Unit, scriptEvaluationConfiguration))
         } catch (e: Throwable) {
             return ResultWithDiagnostics.Failure(
-                e.asDiagnostics("Error saving compiled script jar", path = compiledScript.sourceLocationId)
+                e.asDiagnostics("Cannot generate script jar: ${e.message}", path = compiledScript.sourceLocationId)
             )
         }
     }

@@ -351,6 +351,7 @@ class KJvmCompilerImpl(val hostConfiguration: ScriptingHostConfiguration) : KJvm
             sourceDependencies: List<ScriptsCompilationDependencies.SourceDependencies>,
             getScriptConfiguration: (KtFile) -> ScriptCompilationConfiguration
         ): KJvmCompiledScript<Any> {
+            val module = makeCompiledModule(generationState)
             val scriptDependenciesStack = ArrayDeque<KtScript>()
 
             fun makeOtherScripts(script: KtScript): List<KJvmCompiledScript<*>> {
@@ -368,7 +369,8 @@ class KJvmCompilerImpl(val hostConfiguration: ScriptingHostConfiguration) : KJvm
                                 containingKtFile.virtualFile?.path,
                                 getScriptConfiguration(sourceFile),
                                 it.fqName.asString(),
-                                makeOtherScripts(it)
+                                makeOtherScripts(it),
+                                module
                             )
                         }
                     } ?: emptyList()
@@ -382,7 +384,7 @@ class KJvmCompilerImpl(val hostConfiguration: ScriptingHostConfiguration) : KJvm
                 getScriptConfiguration(ktScript.containingKtFile),
                 ktScript.fqName.asString(),
                 makeOtherScripts(ktScript),
-                KJvmCompiledModule(generationState)
+                module
             )
         }
 
@@ -567,3 +569,8 @@ internal class ScriptLightVirtualFile(name: String, private val _path: String?, 
     override fun getPath(): String = _path ?: super.getPath()
     override fun getCanonicalPath(): String? = path
 }
+
+private fun makeCompiledModule(generationState: GenerationState) = KJvmCompiledModuleInMemory(
+    generationState.factory.asList()
+        .associateTo(sortedMapOf<String, ByteArray>()) { it.relativePath to it.asByteArray() }
+)

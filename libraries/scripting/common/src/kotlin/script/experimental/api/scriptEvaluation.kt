@@ -50,12 +50,15 @@ val ScriptEvaluationConfigurationKeys.providedProperties by PropertiesCollection
  */
 val ScriptEvaluationConfigurationKeys.constructorArgs by PropertiesCollection.key<List<Any?>>()
 
+@Deprecated("use scriptsInstancesSharing flag instead", level = DeprecationLevel.ERROR)
+val ScriptEvaluationConfigurationKeys.scriptsInstancesSharingMap by PropertiesCollection.key<MutableMap<KClass<*>, EvaluationResult>>()
+
 /**
- * A map that is used to store evaluated script instances; if provided - the evaluator will try to get imported script from the map and
- * only create/evaluate instances if not found, and evaluator will put newly created instances into the map
+ * If enabled - the evaluator will try to get imported script from a shared container
+ * only create/evaluate instances if not found, and evaluator will put newly created instances into the container
  * This allows to have a single instance of the script if it is imported several times via different import paths.
  */
-val ScriptEvaluationConfigurationKeys.scriptsInstancesSharingMap by PropertiesCollection.key<MutableMap<KClass<*>, EvaluationResult>>()
+val ScriptEvaluationConfigurationKeys.scriptsInstancesSharing by PropertiesCollection.key<Boolean>(false)
 
 /**
  * The callback that will be called on the script compilation immediately before starting the compilation
@@ -67,7 +70,7 @@ val ScriptEvaluationConfigurationKeys.refineConfigurationBeforeEvaluate by Prope
  */
 fun ScriptEvaluationConfiguration.Builder.enableScriptsInstancesSharing() {
     this {
-        scriptsInstancesSharingMap(HashMap())
+        scriptsInstancesSharing(true)
     }
 }
 

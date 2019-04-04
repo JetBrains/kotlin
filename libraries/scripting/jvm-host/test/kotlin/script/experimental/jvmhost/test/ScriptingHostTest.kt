@@ -293,8 +293,11 @@ class ScriptingHostTest : TestCase() {
         Assert.assertNotNull(cachedScript)
         Assert.assertEquals(1, cache.retrievedScripts)
 
-        val compiledScriptClass = runBlocking { compiledScript!!.getClass(null).resultOrNull() }
-        val cachedScriptClass = runBlocking { cachedScript!!.getClass(null).resultOrNull() }
+        val compiledScriptClassRes = runBlocking { compiledScript!!.getClass(null) }
+        val cachedScriptClassRes = runBlocking { cachedScript!!.getClass(null) }
+
+        val compiledScriptClass = compiledScriptClassRes.resultOrNull()
+        val cachedScriptClass = cachedScriptClassRes.resultOrNull()
 
         Assert.assertEquals(compiledScriptClass!!.qualifiedName, cachedScriptClass!!.qualifiedName)
         Assert.assertEquals(compiledScriptClass!!.supertypes, cachedScriptClass!!.supertypes)
@@ -416,10 +419,8 @@ private fun ScriptCompilationConfiguration.Builder.makeSimpleConfigurationWithTe
 
 private fun File.readCompiledScript(scriptCompilationConfiguration: ScriptCompilationConfiguration): CompiledScript<*> {
     return inputStream().use { fs ->
-        ObjectInputStream(fs).use { os ->
-            (os.readObject() as KJvmCompiledScript<*>).apply {
-                setCompilationConfiguration(scriptCompilationConfiguration)
-            }
+        ObjectInputStream(fs).use {
+            it.readObject() as KJvmCompiledScript<*>
         }
     }
 }
