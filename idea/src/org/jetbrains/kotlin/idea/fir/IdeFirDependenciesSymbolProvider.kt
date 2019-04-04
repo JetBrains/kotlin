@@ -64,6 +64,10 @@ class IdeFirDependenciesSymbolProvider(
         }
     }
 
+    override fun getClassUseSiteMemberScope(classId: ClassId, useSiteSession: FirSession): FirScope? {
+        TODO("not implemented")
+    }
+
     private fun tryKotlin(classId: ClassId): ConeClassLikeSymbol? {
         return classCache.lookupCacheOrCalculate(classId) {
             val index = KotlinFullClassNameIndex.getInstance()

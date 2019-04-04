@@ -19,11 +19,10 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirWhenSubjectExpression
 import org.jetbrains.kotlin.fir.references.FirPropertyFromParameterCallableReference
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.buildUseSiteScope
-import org.jetbrains.kotlin.fir.resolve.getCallableSymbols
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope
-import org.jetbrains.kotlin.fir.symbols.CallableId
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
@@ -393,10 +392,19 @@ internal class Fir2IrVisitor(
         val constructedIrType = constructedTypeRef.toIrType(this@Fir2IrVisitor.session, declarationStorage)
         // TODO: find delegated constructor correctly
         val classId = constructedClassSymbol.classId
-        val constructorId = CallableId(classId.packageFqName, classId.relativeClassName, classId.shortClassName)
-        val constructorSymbol = this@Fir2IrVisitor.session.service<FirSymbolProvider>().getCallableSymbols(constructorId).firstOrNull {
-            arguments.size <= ((it as FirFunctionSymbol).fir as FirFunction).valueParameters.size
-        } ?: return null
+        val provider = this@Fir2IrVisitor.session.service<FirSymbolProvider>()
+        var constructorSymbol: FirCallableSymbol? = null
+        provider.getClassUseSiteMemberScope(classId, this@Fir2IrVisitor.session)!!.processFunctionsByName(
+            classId.shortClassName
+        ) {
+            if (arguments.size <= ((it as FirFunctionSymbol).fir as FirFunction).valueParameters.size) {
+                constructorSymbol = it
+                ProcessorAction.STOP
+            } else {
+                ProcessorAction.NEXT
+            }
+        }
+        if (constructorSymbol == null) return null
         return convertWithOffsets { startOffset, endOffset ->
             IrDelegatingConstructorCallImpl(
                 startOffset, endOffset,

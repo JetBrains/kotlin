@@ -14,7 +14,9 @@ import org.jetbrains.kotlin.fir.java.declarations.FirJavaConstructor
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.resolve.AbstractFirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.buildUseSiteScope
 import org.jetbrains.kotlin.fir.resolve.constructType
+import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassDeclaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.CallableId
@@ -48,6 +50,11 @@ class JavaSymbolProvider(
     override fun getClassDeclaredMemberScope(classId: ClassId): FirScope? {
         val classSymbol = getClassLikeSymbolByFqName(classId) as? FirClassSymbol ?: return null
         return FirClassDeclaredMemberScope(classSymbol.fir)
+    }
+
+    override fun getClassUseSiteMemberScope(classId: ClassId, useSiteSession: FirSession): FirScope? {
+        val symbol = this.getClassLikeSymbolByFqName(classId) ?: return null
+        return symbol.firUnsafe<FirRegularClass>().buildUseSiteScope(useSiteSession)
     }
 
     override fun getClassLikeSymbolByFqName(classId: ClassId): ConeClassLikeSymbol? {
