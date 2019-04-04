@@ -1,4 +1,4 @@
-FILE fqName:<root> fileName:/dynamicWithImplicitCast.kt
+FILE fqName:<root> fileName:/dynamicWithSmartCast.kt
   FUN name:test1 visibility:public modality:FINAL <> (d:dynamic) returnType:kotlin.Int 
     VALUE_PARAMETER name:d index:0 type:dynamic 
     BLOCK_BODY
