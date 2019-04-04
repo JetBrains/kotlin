@@ -8,17 +8,29 @@ package org.jetbrains.kotlin.fir.types.impl
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.ClassId
 
 sealed class FirImplicitBuiltinTypeRef(
     override val session: FirSession,
     override val psi: PsiElement?,
     val id: ClassId
-) : FirImplicitTypeRef {
+) : FirImplicitTypeRef, FirResolvedTypeRef {
     override val annotations: List<FirAnnotationCall>
         get() = emptyList()
+
+    override val isMarkedNullable: Boolean
+        get() = false
+
+    override val type: ConeKotlinType = ConeClassTypeImpl(ConeClassLikeLookupTagImpl(id), emptyArray(), false)
+
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitImplicitTypeRef(this, data)
 }
 
 class FirImplicitUnitTypeRef(
