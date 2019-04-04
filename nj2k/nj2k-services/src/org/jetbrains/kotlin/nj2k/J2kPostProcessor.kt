@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.nj2k
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
-import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.editor.RangeMarker
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
@@ -29,7 +28,9 @@ import kotlinx.coroutines.withContext
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.conversion.copy.range
+import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.util.EDT
+import org.jetbrains.kotlin.idea.formatter.commitAndUnblockDocument
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
@@ -65,30 +66,41 @@ class NewJ2kPostProcessor(
         PROCESS
     }
 
-    private fun List<NewJ2kPostProcessing>.runProcessings(file: KtFile, rangeMarker: RangeMarker?): Boolean {
+    private suspend fun List<NewJ2kPostProcessing>.runProcessings(file: KtFile, rangeMarker: RangeMarker?): Boolean {
         var modificationStamp: Long? = file.modificationStamp
         val elementToActions = runReadAction {
             collectAvailableActions(this, file, rangeMarker)
         }
-
-        for ((element, action, _, writeActionNeeded) in elementToActions) {
-            if (element.isValid) {
-                if (writeActionNeeded) {
-                    runWriteAction {
-                        action()
+        withContext(EDT) {
+            for ((element, action, _, writeActionNeeded) in elementToActions) {
+                if (element.isValid) {
+                    if (writeActionNeeded) {
+                        runWriteAction {
+                            runAction(action, element)
+                        }
+                    } else {
+                        runAction(action, element)
                     }
                 } else {
-                    action()
+                    modificationStamp = null
                 }
-            } else {
-                modificationStamp = null
             }
         }
 
         return modificationStamp != file.modificationStamp && elementToActions.isNotEmpty()
     }
 
-    private fun Processing.runProcessings(file: KtFile, rangeMarker: RangeMarker?) {
+    private inline fun runAction(action: () -> Unit, element: PsiElement) {
+        try {
+            action()
+        } catch (e: IllegalStateException) {
+            element.containingFile.commitAndUnblockDocument()
+            action()
+        }
+    }
+
+
+    private suspend fun Processing.runProcessings(file: KtFile, rangeMarker: RangeMarker?) {
         when (this) {
             is SingleOneTimeProcessing -> listOf(processing).runProcessings(file, rangeMarker)
             is RepeatableProcessingGroup ->
@@ -102,30 +114,40 @@ class NewJ2kPostProcessor(
 
 
     override fun doAdditionalProcessing(file: KtFile, rangeMarker: RangeMarker?) {
-        CommandProcessor.getInstance().runUndoTransparentAction {
-            runBlocking(EDT.ModalityStateElement(ModalityState.defaultModalityState())) {
-                withContext(EDT) {
-                    NullabilityAnalysisFacade(
-                        getTypeElementNullability = ::nullabilityByUndefinedNullabilityComment,
-                        prepareTypeElement = ::prepareTypeElementByMakingAllTypesNullableConsideringNullabilityComment,
-                        debugPrint = false
-                    ).fixNullability(AnalysisScope(file))
-                }
-                withContext(EDT) {
-                    NewJ2KPostProcessingRegistrar.mainProcessings.runProcessings(file, rangeMarker)
-                }
-                withContext(EDT) {
-                    runWriteAction {
-                        val codeStyleManager = CodeStyleManager.getInstance(file.project)
-                        if (rangeMarker != null) {
-                            if (rangeMarker.isValid) {
-                                codeStyleManager.reformatRange(file, rangeMarker.startOffset, rangeMarker.endOffset)
-                            }
-                        } else {
-                            codeStyleManager.reformat(file)
-                        }
-                        Unit
+        runBlocking(EDT.ModalityStateElement(ModalityState.defaultModalityState())) {
+            withContext(EDT) {
+                NullabilityAnalysisFacade(
+                    getTypeElementNullability = ::nullabilityByUndefinedNullabilityComment,
+                    prepareTypeElement = ::prepareTypeElementByMakingAllTypesNullableConsideringNullabilityComment,
+                    debugPrint = false
+                ).fixNullability(AnalysisScope(file, rangeMarker))
+            }
+            withContext(EDT) {
+                runWriteAction {
+                    if (rangeMarker != null) {
+                        ShortenReferences.DEFAULT.process(file, rangeMarker.startOffset, rangeMarker.endOffset)
+                    } else {
+                        ShortenReferences.DEFAULT.process(file)
                     }
+                }
+            }
+            NewJ2KPostProcessingRegistrar.mainProcessings.runProcessings(file, rangeMarker)
+            withContext(EDT) {
+                runWriteAction {
+                    file.commitAndUnblockDocument()
+                }
+            }
+            withContext(EDT) {
+                runWriteAction {
+                    val codeStyleManager = CodeStyleManager.getInstance(file.project)
+                    if (rangeMarker != null) {
+                        if (rangeMarker.isValid) {
+                            codeStyleManager.reformatRange(file, rangeMarker.startOffset, rangeMarker.endOffset)
+                        }
+                    } else {
+                        codeStyleManager.reformat(file)
+                    }
+                    Unit
                 }
             }
         }
