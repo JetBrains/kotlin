@@ -72,6 +72,8 @@ val projectsToShadow by extra(listOf(
         ":plugins:uast-kotlin",
         ":plugins:uast-kotlin-idea",
         ":j2k",
+        ":nj2k",
+        ":nj2k:nj2k-services",
         ":kotlin-allopen-compiler-plugin",
         ":kotlin-noarg-compiler-plugin",
         ":kotlin-sam-with-receiver-compiler-plugin",
@@ -103,7 +105,7 @@ configurations.all {
     resolutionStrategy {
         preferProjectModules()
     }
-    
+
     exclude("org.jetbrains.intellij.deps", "trove4j") // Idea already has trove4j
 }
 

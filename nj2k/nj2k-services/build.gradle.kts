@@ -72,5 +72,3 @@ dependencies {
 sourceSets {
     "main" { projectDefault() }
 }
-
-ideaPlugin()

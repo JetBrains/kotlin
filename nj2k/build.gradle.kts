@@ -90,4 +90,3 @@ fun configureFreeCompilerArg(isEnabled: Boolean, compilerArgument: String) {
         }
     }
 }
-ideaPlugin()
