@@ -20,7 +20,8 @@ import org.jetbrains.kotlin.backend.konan.ir.*
 
 internal class CodeGenerator(override val context: Context) : ContextUtils {
 
-    fun llvmFunction(function: IrFunction): LLVMValueRef = function.llvmFunction
+    fun llvmFunction(function: IrFunction): LLVMValueRef = llvmFunctionOrNull(function) ?: error("no function ${function.name} in ${function.file}")
+    fun llvmFunctionOrNull(function: IrFunction): LLVMValueRef? = function.llvmFunctionOrNull
     val intPtrType = LLVMIntPtrType(llvmTargetData)!!
     internal val immOneIntPtrType = LLVMConstInt(intPtrType, 1, 1)!!
     // Keep in sync with OBJECT_TAG_MASK in C++.
@@ -83,9 +84,11 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
         return typeInfoValue(constructedClass)
     }
 
-    fun generateLocationInfo(locationInfo: LocationInfo): DILocationRef? {
-        return LLVMCreateLocation(LLVMGetModuleContext(context.llvmModule), locationInfo.line, locationInfo.column, locationInfo.scope)
-    }
+    fun generateLocationInfo(locationInfo: LocationInfo): DILocationRef? = if (locationInfo.inlinedAt != null)
+        LLVMCreateLocationInlinedAt(LLVMGetModuleContext(context.llvmModule), locationInfo.line, locationInfo.column,
+                locationInfo.scope, generateLocationInfo(locationInfo.inlinedAt))
+    else
+        LLVMCreateLocation(LLVMGetModuleContext(context.llvmModule), locationInfo.line, locationInfo.column, locationInfo.scope)
 
     val objCDataGenerator = when (context.config.target.family) {
         Family.IOS, Family.OSX -> ObjCDataGenerator(this)

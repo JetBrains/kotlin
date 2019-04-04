@@ -1615,6 +1615,15 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
         override fun returnableBlockScope(): CodeContext? = this
 
+        override fun location(line: Int, column: Int): LocationInfo? {
+            return if (returnableBlock.inlineFunctionSymbol != null) {
+                val diScope = returnableBlock.inlineFunctionSymbol?.owner?.scope() ?: return null
+                LocationInfo(diScope, line, column, outerContext.location(returnableBlock.startLine(), returnableBlock.endLine()))
+            } else {
+                outerContext.location(line, column)
+            }
+        }
+
 
         /**
          * Note: DILexicalBlocks aren't nested, they should be scoped with the parent function.
@@ -1829,24 +1838,39 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     private fun IrFunction.scope(startLine:Int): DIScopeOpaqueRef? {
         if (codegen.isExternal(this) || !context.shouldContainDebugInfo())
             return null
-        return context.debugInfo.subprograms.getOrPut(codegen.llvmFunction(this)) {
-            memScoped {
-                val subroutineType = subroutineType(context, codegen.llvmTargetData)
-                val functionLlvmValue = codegen.llvmFunction(this@scope)
-                diFunctionScope(name.asString(), functionLlvmValue.name!!, startLine, subroutineType, functionLlvmValue)
-            }
-        }  as DIScopeOpaqueRef
+        val functionLlvmValue = codegen.llvmFunctionOrNull(this)
+        return if (functionLlvmValue != null) {
+            context.debugInfo.subprograms.getOrPut(functionLlvmValue) {
+                memScoped {
+                    val subroutineType = subroutineType(context, codegen.llvmTargetData)
+                    val functionLlvmValue = codegen.llvmFunction(this@scope)
+                    diFunctionScope(name.asString(), functionLlvmValue.name!!, startLine, subroutineType).also {
+                        DIFunctionAddSubprogram(functionLlvmValue, it)
+                    }
+                }
+            } as DIScopeOpaqueRef
+        } else {
+            context.debugInfo.inlinedSubprograms.getOrPut(this) {
+                memScoped {
+                    val subroutineType = subroutineType(context, codegen.llvmTargetData)
+                    diFunctionScope(name.asString(), "<inlined-out:$name>", startLine, subroutineType)
+                }
+            } as DIScopeOpaqueRef
+        }
+
     }
 
     @Suppress("UNCHECKED_CAST")
     private fun LLVMValueRef.scope(startLine:Int, subroutineType: DISubroutineTypeRef): DIScopeOpaqueRef? {
         return context.debugInfo.subprograms.getOrPut(this) {
-            diFunctionScope(name!!, name!!, startLine, subroutineType, this)
+            diFunctionScope(name!!, name!!, startLine, subroutineType).also {
+                DIFunctionAddSubprogram(this@scope, it)
+            }
         }  as DIScopeOpaqueRef
     }
-    private fun diFunctionScope(name: String, linkageName: String, startLine: Int, subroutineType: DISubroutineTypeRef, functionLlvmValue: LLVMValueRef): DISubprogramRef {
-        @Suppress("UNCHECKED_CAST")
-        val diFunction = DICreateFunction(
+
+    @Suppress("UNCHECKED_CAST")
+    private fun diFunctionScope(name: String, linkageName: String, startLine: Int, subroutineType: DISubroutineTypeRef) = DICreateFunction(
                 builder = context.debugInfo.builder,
                 scope = (currentCodeContext.fileScope() as FileScope).file.file() as DIScopeOpaqueRef,
                 name = name,
@@ -1857,10 +1881,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                 //TODO: need more investigations.
                 isLocal = 0,
                 isDefinition = 1,
-                scopeLine = 0)
-        DIFunctionAddSubprogram(functionLlvmValue, diFunction)
-        return diFunction!!
-    }
+                scopeLine = 0)!!
 
     //-------------------------------------------------------------------------//
 
@@ -2353,9 +2374,12 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     }
 }
 
-internal data class LocationInfo(val scope: DIScopeOpaqueRef,
-                                 val line: Int,
-                                 val column: Int) {
+
+
+internal class LocationInfo(val scope: DIScopeOpaqueRef,
+                            val line: Int,
+                            val column: Int,
+                            val inlinedAt: LocationInfo? = null) {
     init {
         assert(line != 0)
     }

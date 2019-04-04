@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.descriptors.konan.CompiledKonanModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.CurrentKonanModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.DeserializedKonanModuleOrigin
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.util.file
+import org.jetbrains.kotlin.ir.util.fqNameSafe
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.library.resolver.TopologicalLibraryOrder
@@ -155,6 +157,9 @@ internal interface ContextUtils : RuntimeAware {
      * It may be declared as external function prototype.
      */
     val IrFunction.llvmFunction: LLVMValueRef
+    get() = llvmFunctionOrNull ?: error("$name in $file/${parent.fqNameSafe}")
+
+    val IrFunction.llvmFunctionOrNull: LLVMValueRef?
         get() {
             assert(this.isReal)
 
@@ -162,7 +167,7 @@ internal interface ContextUtils : RuntimeAware {
                 context.llvm.externalFunction(this.symbolName, getLlvmFunctionType(this),
                         origin = this.llvmSymbolOrigin)
             } else {
-                context.llvmDeclarations.forFunction(this).llvmFunction
+                context.llvmDeclarations.forFunctionOrNull(this)?.llvmFunction
             }
         }
 

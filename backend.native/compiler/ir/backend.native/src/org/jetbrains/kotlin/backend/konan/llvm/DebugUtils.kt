@@ -64,6 +64,8 @@ fun KonanConfig.debugInfoVersion():Int = configuration[KonanConfigKeys.DEBUG_INF
 internal class DebugInfo internal constructor(override val context: Context):ContextUtils {
     val files = mutableMapOf<String, DIFileRef>()
     val subprograms = mutableMapOf<LLVMValueRef, DISubprogramRef>()
+    /* Some functions are inlined on all callsites and body is eliminated by DCE, so there's no LLVM value */
+    val inlinedSubprograms = mutableMapOf<IrFunction, DISubprogramRef>()
     var builder: DIBuilderRef? = null
     var module: DIModuleRef? = null
     var types = mutableMapOf<KotlinType, DITypeOpaqueRef>()
