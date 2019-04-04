@@ -136,6 +136,16 @@ public class IrJsTextTestCaseGenerated extends AbstractIrJsTextTestCase {
             runTest("compiler/testData/ir/irJsText/dynamic/dynamicWithImplicitCast.kt");
         }
 
+        @TestMetadata("implicitCastFromDynamic.kt")
+        public void testImplicitCastFromDynamic() throws Exception {
+            runTest("compiler/testData/ir/irJsText/dynamic/implicitCastFromDynamic.kt");
+        }
+
+        @TestMetadata("implicitCastToDynamic.kt")
+        public void testImplicitCastToDynamic() throws Exception {
+            runTest("compiler/testData/ir/irJsText/dynamic/implicitCastToDynamic.kt");
+        }
+
         @TestMetadata("invokeOperator.kt")
         public void testInvokeOperator() throws Exception {
             runTest("compiler/testData/ir/irJsText/dynamic/invokeOperator.kt");
