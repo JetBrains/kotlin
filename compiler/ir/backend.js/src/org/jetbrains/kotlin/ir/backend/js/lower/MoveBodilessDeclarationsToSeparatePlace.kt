@@ -60,10 +60,14 @@ fun moveBodilessDeclarationsToSeparatePlace(context: JsIrBackendContext, module:
         FqName.ROOT
     )
 
+    context.externalPackageFragment = externalPackageFragment
+
     val bodilessBuiltInsPackageFragment = IrExternalPackageFragmentImpl(
         DescriptorlessExternalPackageFragmentSymbol(),
         FqName("kotlin")
     )
+
+    context.bodilessBuiltInsPackageFragment = bodilessBuiltInsPackageFragment
 
     fun isBuiltInClass(declaration: IrDeclaration): Boolean =
         declaration is IrClass && declaration.fqNameWhenAvailable in BODILESS_BUILTIN_CLASSES
@@ -92,7 +96,7 @@ fun moveBodilessDeclarationsToSeparatePlace(context: JsIrBackendContext, module:
         val it = irFile.declarations.iterator()
 
         while (it.hasNext()) {
-            val d = it.next()
+            val d = it.next() as? IrDeclarationWithName ?: continue
 
             if (isBuiltInClass(d)) {
                 it.remove()

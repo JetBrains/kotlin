@@ -8,15 +8,16 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
+import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.util.getInlineClassBackingField
 import org.jetbrains.kotlin.ir.util.getInlinedClass
+import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.js.backend.ast.*
 
 typealias IrCallTransformer = (IrCall, context: JsGenerationContext) -> JsExpression
@@ -78,8 +79,8 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
             prefixOp(intrinsics.jsTypeOf, JsUnaryOperator.TYPEOF)
 
             add(intrinsics.jsObjectCreate) { call, context ->
-                val classToCreate = call.getTypeArgument(0)!!
-                val className = context.getNameForSymbol(classToCreate.classifierOrFail)
+                val classToCreate = call.getTypeArgument(0)!!.classifierOrFail.owner as IrClass
+                val className = context.getNameForClass(classToCreate)
                 val prototype = prototypeOf(className.makeRef())
                 JsInvocation(Namer.JS_OBJECT_CREATE_FUNCTION, prototype)
             }
@@ -106,8 +107,16 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
             }
 
             add(intrinsics.jsClass) { call, context ->
-                val typeName = context.getNameForSymbol(call.getTypeArgument(0)!!.classifierOrFail)
-                typeName.makeRef()
+                val classifier: IrClassifierSymbol = call.getTypeArgument(0)!!.classifierOrFail
+                val owner = classifier.owner
+
+                when {
+                    owner is IrClass && owner.isEffectivelyExternal() ->
+                        context.getRefForExternalClass(owner)
+
+                    else ->
+                        context.getNameForStaticDeclaration(owner as IrDeclarationWithName).makeRef()
+                }
             }
 
             addIfNotNull(intrinsics.jsCode) { call, context ->
@@ -147,7 +156,7 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
 
             add(intrinsics.jsCoroutineContext) { _, context: JsGenerationContext ->
                 val contextGetter = backendContext.coroutineGetContext
-                val getterName = context.getNameForSymbol(contextGetter)
+                val getterName = context.getNameForStaticFunction(contextGetter.owner)
                 val continuation = context.continuation
                 JsInvocation(JsNameRef(getterName, continuation))
             }
@@ -193,14 +202,14 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
                 val arg = translateCallArguments(call, context).single()
                 val inlineClass = call.getTypeArgument(0)!!.getInlinedClass()!!
                 val constructor = inlineClass.declarations.filterIsInstance<IrConstructor>().single { it.isPrimary }
-                JsNew(context.getNameForSymbol(constructor.symbol).makeRef(), listOf(arg))
+                JsNew(context.getNameForConstructor(constructor).makeRef(), listOf(arg))
             }
 
             add(intrinsics.jsUnboxIntrinsic) { call: IrCall, context ->
                 val arg = translateCallArguments(call, context).single()
                 val inlineClass = call.getTypeArgument(1)!!.getInlinedClass()!!
                 val field = getInlineClassBackingField(inlineClass)
-                val fieldName = context.getNameForSymbol(field.symbol)
+                val fieldName = context.getNameForField(field)
                 JsNameRef(fieldName, arg)
             }
 
@@ -210,12 +219,16 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
                 val superClass = call.superQualifierSymbol!!
 
                 val jsReceiver = receiver.accept(IrElementToJsExpressionTransformer(), context)
-                val functionName = context.getNameForSymbol(reference.symbol)
-                val superName = context.getNameForSymbol(superClass).makeRef()
+                val functionName = context.getNameForMemberFunction(reference.symbol.owner as IrSimpleFunction)
+                val superName = context.getNameForClass(superClass.owner).makeRef()
                 val qPrototype = JsNameRef(functionName, prototypeOf(superName))
                 val bindRef = JsNameRef(Namer.BIND_FUNCTION, qPrototype)
 
                 JsInvocation(bindRef, jsReceiver)
+            }
+
+            add(intrinsics.unreachable) { _, _ ->
+                JsInvocation(JsNameRef(Namer.UNREACHABLE_NAME))
             }
         }
     }

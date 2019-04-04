@@ -39,7 +39,7 @@ fun prototypeOf(classNameRef: JsExpression) = JsNameRef(Namer.PROTOTYPE_NAME, cl
 fun translateFunction(declaration: IrFunction, name: JsName?, isObjectConstructor: Boolean, context: JsGenerationContext): JsFunction {
     val functionScope = JsFunctionScope(context.currentScope, "scope for ${name ?: "annon"}")
     val functionContext = context.newDeclaration(functionScope, declaration)
-    val functionParams = declaration.valueParameters.map { functionContext.getNameForSymbol(it.symbol) }
+    val functionParams = declaration.valueParameters.map { functionContext.getNameForValueDeclaration(it) }
     val body = declaration.body?.accept(IrElementToJsStatementTransformer(), functionContext) as? JsBlock ?: JsBlock()
 
     val functionBody = if (isObjectConstructor) {
@@ -56,7 +56,7 @@ fun translateFunction(declaration: IrFunction, name: JsName?, isObjectConstructo
         parameters.add(JsParameter(parameter))
     }
 
-    declaration.extensionReceiverParameter?.let { function.addParameter(functionContext.getNameForSymbol(it.symbol)) }
+    declaration.extensionReceiverParameter?.let { function.addParameter(functionContext.getNameForValueDeclaration(it)) }
     functionParams.forEach { function.addParameter(it) }
     if (declaration.descriptor.isSuspend) {
         function.addParameter(context.currentScope.declareName(Namer.CONTINUATION))
@@ -82,6 +82,7 @@ fun translateCallArguments(expression: IrMemberAccessExpression, context: JsGene
 
 fun JsStatement.asBlock() = this as? JsBlock ?: JsBlock(this)
 
+// TODO: Don't use implicit name conventions
 fun JsName.objectInstanceName() = "${ident}_instance"
 
 fun defineProperty(receiver: JsExpression, name: String, value: () -> JsExpression): JsInvocation {

@@ -26,10 +26,12 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 
 class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationContext) {
 
-    private val className = context.getNameForSymbol(irClass.symbol)
+    private val className = context.getNameForClass(irClass)
     private val classNameRef = className.makeRef()
-    private val baseClass = irClass.superTypes.firstOrNull { !it.classifierOrFail.isInterface }
-    private val baseClassName = baseClass?.let { context.getNameForType(it) }
+    private val baseClass: IrType? = irClass.superTypes.firstOrNull { !it.classifierOrFail.isInterface }
+    private val baseClassName = baseClass?.let {
+        context.getNameForClass(baseClass.classifierOrFail.owner as IrClass)
+    }
     private val classPrototypeRef = prototypeOf(classNameRef)
     private val classBlock = JsGlobalBlock()
     private val classModel = JsClassModel(className, baseClassName)
@@ -87,9 +89,9 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                     classBlock.statements += JsExpressionStatement(
                         defineProperty(
                             classPrototypeRef,
-                            context.getNameForDeclaration(property).ident,
-                            getter = property.getter?.let { context.getNameForDeclaration(it) }?.let { JsNameRef(it, classPrototypeRef) },
-                            setter = property.setter?.let { context.getNameForDeclaration(it) }?.let { JsNameRef(it, classPrototypeRef) }
+                            context.getNameForProperty(property).ident,
+                            getter = property.getter?.let { JsNameRef(context.getNameForMemberFunction(it), classPrototypeRef) },
+                            setter = property.setter?.let { JsNameRef(context.getNameForMemberFunction(it), classPrototypeRef) }
                         )
                     )
                 }
@@ -115,7 +117,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
     }
 
     private fun buildGetterFunction(delegate: IrSimpleFunction): JsFunction {
-        val getterName = context.getNameForSymbol(delegate.symbol)
+        val getterName = context.getNameForMemberFunction(delegate)
         val returnStatement = JsReturn(JsInvocation(JsNameRef(getterName, JsThisRef())))
 
         return JsFunction(JsFunctionScope(context.currentScope, ""), JsBlock(returnStatement), "")
@@ -128,7 +130,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
             return translatedFunction?.makeStmt()
         }
 
-        val memberName = context.getNameForSymbol(declaration.realOverrideTarget.symbol)
+        val memberName = context.getNameForMemberFunction(declaration.realOverrideTarget)
         val memberRef = JsNameRef(memberName, classPrototypeRef)
 
         translatedFunction?.let { return jsAssignment(memberRef, it.apply { name = null }).makeStmt() }
@@ -147,8 +149,8 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                 }
 
                 if (!implClassDeclaration.defaultType.isAny() && !it.isEffectivelyExternal()) {
-                    val implMethodName = context.getNameForSymbol(it.symbol)
-                    val implClassName = context.getNameForSymbol(implClassDeclaration.symbol)
+                    val implMethodName = context.getNameForMemberFunction(it)
+                    val implClassName = context.getNameForClass(implClassDeclaration)
 
                     val implClassPrototype = prototypeOf(implClassName.makeRef())
                     val implMemberRef = JsNameRef(implMethodName, implClassPrototype)
@@ -247,10 +249,10 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
             JsNameRef(Namer.METADATA_INTERFACES),
             JsArrayLiteral(
                 irClass.superTypes.mapNotNull {
-                    val symbol = it.classifierOrFail
+                    val symbol = it.classifierOrFail as IrClassSymbol
                     // TODO: make sure that there is a test which breaks when isExternal is used here instead of isEffectivelyExternal
                     if (symbol.isInterface && !functionTypeOrSubtype && !symbol.isEffectivelyExternal) {
-                        JsNameRef(context.getNameForSymbol(symbol))
+                        JsNameRef(context.getNameForClass(symbol.owner))
                     } else null
                 }
             )

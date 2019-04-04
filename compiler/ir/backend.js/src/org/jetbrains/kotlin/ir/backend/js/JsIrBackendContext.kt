@@ -55,9 +55,12 @@ class JsIrBackendContext(
 
     override var inVerbosePhase: Boolean = false
 
+    lateinit var externalPackageFragment: IrPackageFragment
+    lateinit var bodilessBuiltInsPackageFragment: IrPackageFragment
+
     val externalNestedClasses = mutableListOf<IrClass>()
     val packageLevelJsModules = mutableListOf<IrFile>()
-    val declarationLevelJsModules = mutableListOf<IrDeclaration>()
+    val declarationLevelJsModules = mutableListOf<IrDeclarationWithName>()
 
     val internalPackageFragmentDescriptor = EmptyPackageFragmentDescriptor(builtIns.builtInsModule, FqName("kotlin.js.internal"))
     val implicitDeclarationFile by lazy {
@@ -87,7 +90,7 @@ class JsIrBackendContext(
 
     val hasTests get() = testContainerField != null
 
-    val testContainer
+    val testContainer: IrSimpleFunction
         get() = testContainerField ?: JsIrBuilder.buildFunction("test fun", irBuiltIns.unitType, implicitDeclarationFile).apply {
             body = JsIrBuilder.buildBlockBody(emptyList())
             testContainerField = this
@@ -117,7 +120,7 @@ class JsIrBackendContext(
         private val COROUTINE_PACKAGE_FQNAME = COROUTINE_PACKAGE_FQNAME_13
         private val COROUTINE_INTRINSICS_PACKAGE_FQNAME = COROUTINE_PACKAGE_FQNAME.child(INTRINSICS_PACKAGE_NAME)
 
-        // TODO: due to name clash those weird suffix is required, remove it once `NameGenerator` is implemented
+        // TODO: due to name clash those weird suffix is required, remove it once `MemberNameGenerator` is implemented
         private val COROUTINE_SUSPEND_OR_RETURN_JS_NAME = "suspendCoroutineUninterceptedOrReturnJS"
         private val GET_COROUTINE_CONTEXT_NAME = "getCoroutineContext"
 
@@ -212,10 +215,10 @@ class JsIrBackendContext(
 
     val coroutineSuspendOrReturn = symbolTable.referenceSimpleFunction(getJsInternalFunction(COROUTINE_SUSPEND_OR_RETURN_JS_NAME))
     val coroutineSuspendGetter = ir.symbols.coroutineSuspendedGetter
-    val coroutineGetContext: IrFunctionSymbol
+    val coroutineGetContext: IrSimpleFunctionSymbol
         get() {
             val contextGetter =
-                continuationClass.owner.declarations.filterIsInstance<IrFunction>().atMostOne { it.name == CONTINUATION_CONTEXT_GETTER_NAME }
+                continuationClass.owner.declarations.filterIsInstance<IrSimpleFunction>().atMostOne { it.name == CONTINUATION_CONTEXT_GETTER_NAME }
                     ?: continuationClass.owner.declarations.filterIsInstance<IrProperty>().atMostOne { it.name == CONTINUATION_CONTEXT_PROPERTY_NAME }?.getter!!
             return contextGetter.symbol
         }

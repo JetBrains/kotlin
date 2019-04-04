@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
-import org.jetbrains.kotlin.ir.backend.js.utils.Namer
-import org.jetbrains.kotlin.ir.backend.js.utils.getJsName
-import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
+import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -64,26 +61,38 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
     }
 
     override fun visitGetField(expression: IrGetField, context: JsGenerationContext): JsExpression {
-        if (expression.symbol.isBound) {
-            val fieldParent = expression.symbol.owner.parent
-            if (fieldParent is IrClass && fieldParent.isInline) {
-                return expression.receiver!!.accept(this, context)
-            }
+        val symbol = expression.symbol
+        val field = symbol.owner
+
+        val fieldParent = field.parent
+
+        if (fieldParent is IrClass && field.isEffectivelyExternal()) {
+            // External fields are only allowed in external enums
+            assert(fieldParent.isEnumClass)
+            return JsNameRef(
+                field.getJsNameOrKotlinName().identifier,
+                context.getNameForClass(fieldParent).makeRef()
+            )
         }
-        val fieldName = context.getNameForSymbol(expression.symbol)
+
+        if (fieldParent is IrClass && fieldParent.isInline) {
+            return expression.receiver!!.accept(this, context)
+        }
+        val fieldName = context.getNameForField(field)
         return JsNameRef(fieldName, expression.receiver?.accept(this, context))
     }
 
     override fun visitGetValue(expression: IrGetValue, context: JsGenerationContext): JsExpression =
-        context.getNameForSymbol(expression.symbol).makeRef()
+        context.getNameForValueDeclaration(expression.symbol.owner).makeRef()
 
     override fun visitGetObjectValue(expression: IrGetObjectValue, context: JsGenerationContext) = when (expression.symbol.owner.kind) {
         ClassKind.OBJECT -> {
             val obj = expression.symbol.owner
-            val className = context.getNameForSymbol(expression.symbol)
             if (obj.isEffectivelyExternal()) {
-                className.makeRef()
+                context.getRefForExternalClass(obj)
             } else {
+                val className = context.getNameForClass(expression.symbol.owner)
+                // TODO: Don't use implicit naming
                 val getInstanceName = className.ident + "_getInstance"
                 JsInvocation(JsNameRef(getInstanceName))
             }
@@ -93,24 +102,24 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
 
 
     override fun visitSetField(expression: IrSetField, context: JsGenerationContext): JsExpression {
-        val fieldName = context.getNameForSymbol(expression.symbol)
+        val fieldName = context.getNameForField(expression.symbol.owner)
         val dest = JsNameRef(fieldName, expression.receiver?.accept(this, context))
         val source = expression.value.accept(this, context)
         return jsAssignment(dest, source)
     }
 
     override fun visitSetVariable(expression: IrSetVariable, context: JsGenerationContext): JsExpression {
-        val ref = JsNameRef(context.getNameForSymbol(expression.symbol))
+        val ref = JsNameRef(context.getNameForValueDeclaration(expression.symbol.owner))
         val value = expression.value.accept(this, context)
         return JsBinaryOperation(JsBinaryOperator.ASG, ref, value)
     }
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, context: JsGenerationContext): JsExpression {
-        val classNameRef = context.getNameForSymbol(expression.symbol).makeRef()
+        val classNameRef = context.getNameForConstructor(expression.symbol.owner).makeRef()
         val callFuncRef = JsNameRef(Namer.CALL_FUNCTION, classNameRef)
         val fromPrimary = context.currentFunction is IrConstructor
         val thisRef =
-            if (fromPrimary) JsThisRef() else context.getNameForSymbol(context.currentFunction!!.valueParameters.last().symbol).makeRef()
+            if (fromPrimary) JsThisRef() else context.getNameForValueDeclaration(context.currentFunction!!.valueParameters.last()).makeRef()
         val arguments = translateCallArguments(expression, context)
 
         val constructor = expression.symbol.owner
@@ -139,9 +148,9 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         // Transform external property accessor call
         // @JsName-annotated external property accessors are translated as function calls
         if (function is IrSimpleFunction && function.getJsName() == null) {
-            val property = function.correspondingProperty
+            val property = function.correspondingPropertySymbol?.owner
             if (property != null && property.isEffectivelyExternal()) {
-                val nameRef = JsNameRef(context.getNameForDeclaration(property), jsDispatchReceiver)
+                val nameRef = JsNameRef(context.getNameForProperty(property), jsDispatchReceiver)
                 return when (function) {
                     property.getter -> nameRef
                     property.setter -> jsAssignment(nameRef, arguments.single())
@@ -154,13 +163,18 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
             return JsInvocation(jsDispatchReceiver!!, arguments)
         }
 
-        expression.superQualifierSymbol?.let {
-            val (target, owner) = if (it.owner.isInterface) {
-                val impl = (symbol.owner as IrSimpleFunction).resolveFakeOverride()!!
+        expression.superQualifierSymbol?.let { superQualifier ->
+            require(function is IrSimpleFunction)
+
+            val (target, klass) = if (superQualifier.owner.isInterface) {
+                val impl = function.resolveFakeOverride()!!
                 Pair(impl, impl.parentAsClass)
-            } else Pair(symbol.owner, it.owner)
-            val qualifierName = context.getNameForSymbol(owner.symbol).makeRef()
-            val targetName = context.getNameForSymbol(target.symbol)
+            } else {
+                Pair(function, superQualifier.owner)
+            }
+
+            val qualifierName = context.getNameForClass(klass).makeRef()
+            val targetName = context.getNameForMemberFunction(target)
             val qPrototype = JsNameRef(targetName, prototypeOf(qualifierName))
             val callRef = JsNameRef(Namer.CALL_FUNCTION, qPrototype)
             return JsInvocation(callRef, jsDispatchReceiver?.let { receiver -> listOf(receiver) + arguments } ?: arguments)
@@ -169,26 +183,43 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         val varargParameterIndex = function.valueParameters.indexOfFirst { it.varargElementType != null }
         val isExternalVararg = function.isEffectivelyExternal() && varargParameterIndex != -1
 
-        val symbolName = context.getNameForSymbol(symbol)
-        val ref = if (function is IrSimpleFunction && jsDispatchReceiver != null) JsNameRef(symbolName, jsDispatchReceiver) else JsNameRef(
-            symbolName
-        )
 
-        return if (function is IrConstructor) {
+        if (function is IrConstructor) {
             // Inline class primary constructor takes a single value of to
             // initialize underlying property.
             // TODO: Support initialization block
             val klass = function.parentAsClass
-            if (klass.isInline) {
+            return if (klass.isInline) {
                 assert(function.isPrimary) {
                     "Inline class secondary constructors must be lowered into static methods"
                 }
                 // Argument value constructs unboxed inline class instance
                 arguments.single()
             } else {
+                val ref = when {
+                    klass.isEffectivelyExternal() ->
+                        context.getRefForExternalClass(klass)
+
+                    else ->
+                        context.getNameForClass(klass).makeRef()
+                }
                 JsNew(ref, arguments)
             }
-        } else if (isExternalVararg) {
+        }
+
+        require(function is IrSimpleFunction)
+
+        val symbolName = when (jsDispatchReceiver) {
+            null -> context.getNameForStaticFunction(function)
+            else -> context.getNameForMemberFunction(function)
+        }
+
+        val ref = when (jsDispatchReceiver) {
+            null -> JsNameRef(symbolName)
+            else -> JsNameRef(symbolName, jsDispatchReceiver)
+        }
+
+        return if (isExternalVararg) {
 
             // External vararg arguments should be represented in JS as multiple "plain" arguments (opposed to arrays in Kotlin)
             // We are using `Function.prototype.apply` function to pass all arguments as a single array.
@@ -213,7 +244,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
                 }
             )
 
-            if (function is IrSimpleFunction && jsDispatchReceiver != null) {
+            if (jsDispatchReceiver != null) {
                 // TODO: Do not create IIFE when receiver expression is simple or has no side effects
                 // TODO: Do not create IIFE at all? (Currently there is no reliable way to create temporary variable in current scope)
                 val receiverName = context.currentScope.declareFreshName("\$externalVarargReceiverTmp")

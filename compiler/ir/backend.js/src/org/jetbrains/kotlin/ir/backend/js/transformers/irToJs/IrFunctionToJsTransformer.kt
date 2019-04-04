@@ -12,15 +12,20 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.js.backend.ast.JsFunction
 
-open class IrFunctionToJsTransformer : BaseIrElementToJsNodeTransformer<JsFunction, JsGenerationContext> {
+@Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
+class IrFunctionToJsTransformer : BaseIrElementToJsNodeTransformer<JsFunction, JsGenerationContext> {
     override fun visitSimpleFunction(declaration: IrSimpleFunction, context: JsGenerationContext): JsFunction {
-        val funcName = context.getNameForSymbol(declaration.symbol)
+        val funcName = if (declaration.dispatchReceiverParameter == null) {
+            context.getNameForStaticFunction(declaration)
+        } else {
+            context.getNameForMemberFunction(declaration)
+        }
         return translateFunction(declaration, funcName, false, context)
     }
 
     override fun visitConstructor(declaration: IrConstructor, context: JsGenerationContext): JsFunction {
         assert(declaration.isPrimary)
-        val funcName = context.getNameForSymbol(declaration.symbol)
+        val funcName = context.getNameForConstructor(declaration)
         val constructedClass = declaration.parent as IrClass
         return translateFunction(declaration, funcName, constructedClass.isObject, context)
     }
