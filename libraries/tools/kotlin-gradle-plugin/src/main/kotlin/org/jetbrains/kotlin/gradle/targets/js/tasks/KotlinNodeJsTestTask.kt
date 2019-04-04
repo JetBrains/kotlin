@@ -13,9 +13,10 @@ import org.gradle.process.ProcessForkOptions
 import org.gradle.process.internal.DefaultProcessForkOptions
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
+import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTrace
+import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
 import org.jetbrains.kotlin.gradle.tasks.KotlinTestTask
 import org.jetbrains.kotlin.gradle.testing.IgnoredTestSuites
-import org.jetbrains.kotlin.gradle.testing.TestsGrouping
 import java.io.File
 
 open class KotlinNodeJsTestTask : KotlinTestTask() {
@@ -74,7 +75,8 @@ open class KotlinNodeJsTestTask : KotlinTestTask() {
         val clientSettings = TCServiceMessagesClientSettings(
             name,
             testNameSuffix = if (showTestTargetName) targetName else null,
-            prepandSuiteName = true
+            prepandSuiteName = true,
+            stackTraceParser = ::parseNodeJsStackTraceAsJvm
         )
 
         return TCServiceMessagesTestExecutionSpec(
