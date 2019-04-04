@@ -1,0 +1,6 @@
+// WITH_RUNTIME
+
+fun foo() {
+    var number = 5L
+    val numberString = number.toString(2)
+}

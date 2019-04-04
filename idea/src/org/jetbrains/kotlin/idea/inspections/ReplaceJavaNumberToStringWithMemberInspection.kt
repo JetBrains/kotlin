@@ -14,22 +14,22 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 
-class ReplaceJavaIntegerToStringWithMemberInspection : AbstractKotlinInspection() {
+class ReplaceJavaNumberToStringWithMemberInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return dotQualifiedExpressionVisitor { dotQualifiedExpression ->
-            if (dotQualifiedExpression.isToString()) {
+            if (dotQualifiedExpression.isToStringCall()) {
                 holder.registerProblem(
                     dotQualifiedExpression,
-                    "Could be replaced with `int.toString()`",
-                    ConvertIntegerToStringQuickFix()
+                    "Could be replaced with `number.toString()`",
+                    ConvertNumberToStringQuickFix()
                 )
             }
         }
     }
 }
 
-private class ConvertIntegerToStringQuickFix : LocalQuickFix {
-    override fun getName() = "Replace with 'int.toString()'"
+private class ConvertNumberToStringQuickFix : LocalQuickFix {
+    override fun getName() = "Replace with 'number.toString()'"
 
     override fun getFamilyName() = name
 
@@ -37,26 +37,40 @@ private class ConvertIntegerToStringQuickFix : LocalQuickFix {
         val dotQualifiedExpression = descriptor.psiElement as? KtDotQualifiedExpression ?: return
         val element = dotQualifiedExpression.selectorExpression as? KtCallExpression ?: return
         val arguments = element.valueArguments
-        val integerArg = arguments.getOrNull(0) ?: return
+        val numberArg = arguments.getOrNull(0) ?: return
         val radixArg = arguments.getOrNull(1)
 
         dotQualifiedExpression.replace(
             KtPsiFactory(element).createExpressionByPattern(
                 "$0.toString($1)",
-                integerArg.getArgumentExpression() ?: return,
+                numberArg.getArgumentExpression() ?: return,
                 radixArg?.getArgumentExpression() ?: ""
             )
         )
     }
 }
 
-private fun KtDotQualifiedExpression.isToString(): Boolean {
-    val calleeExpression = (selectorExpression as? KtCallExpression)?.calleeExpression ?: return false
+private val javaNumberTypesHasRadix = mapOf(
+    "java.lang.Integer.toString" to true,
+    "java.lang.Double.toString" to false,
+    "java.lang.Float.toString" to false,
+    "java.lang.Long.toString" to true,
+    "java.lang.Byte.toString" to false,
+    "java.lang.Short.toString" to false
+)
+
+private fun KtDotQualifiedExpression.isToStringCall(): Boolean {
+    val callExpression = selectorExpression as? KtCallExpression ?: return false
+    val calleeExpression = callExpression.calleeExpression ?: return false
     val nameReference = calleeExpression as? KtNameReferenceExpression ?: return false
     if (nameReference.getReferencedName() != "toString") return false
 
     val resolvedCall = this.resolveToCall() ?: return false
     if (!resolvedCall.status.isSuccess) return false
+
     val fqName = resolvedCall.resultingDescriptor.fqNameUnsafe.asString()
-    return fqName == "java.lang.Integer.toString"
+    val isValidWithRadix = javaNumberTypesHasRadix[fqName] ?: return false
+    val hasRadix = callExpression.valueArguments.size == 2
+    if (!isValidWithRadix && hasRadix) return false
+    return true
 }

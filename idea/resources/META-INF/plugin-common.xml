@@ -3346,8 +3346,8 @@
                      language="kotlin"
     />
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReplaceJavaIntegerToStringWithMemberInspection"
-                     displayName="Replace 'Integer.toString(int)' with 'int.toString()'"
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReplaceJavaNumberToStringWithMemberInspection"
+                     displayName="Replace static 'toString(number)' with 'number.toString()'"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"

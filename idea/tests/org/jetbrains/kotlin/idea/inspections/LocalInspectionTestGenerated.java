@@ -7046,41 +7046,61 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
-    @TestMetadata("idea/testData/inspectionsLocal/replaceJavaIntegerToStringWithMember")
+    @TestMetadata("idea/testData/inspectionsLocal/replaceJavaNumberToStringWithMember")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class ReplaceJavaIntegerToStringWithMember extends AbstractLocalInspectionTest {
+    public static class ReplaceJavaNumberToStringWithMember extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
 
-        public void testAllFilesPresentInReplaceJavaIntegerToStringWithMember() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/replaceJavaIntegerToStringWithMember"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        public void testAllFilesPresentInReplaceJavaNumberToStringWithMember() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/replaceJavaNumberToStringWithMember"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("incorrectDescriptor.kt")
         public void testIncorrectDescriptor() throws Exception {
-            runTest("idea/testData/inspectionsLocal/replaceJavaIntegerToStringWithMember/incorrectDescriptor.kt");
+            runTest("idea/testData/inspectionsLocal/replaceJavaNumberToStringWithMember/incorrectDescriptor.kt");
+        }
+
+        @TestMetadata("replaceDoubleToString.kt")
+        public void testReplaceDoubleToString() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceJavaNumberToStringWithMember/replaceDoubleToString.kt");
+        }
+
+        @TestMetadata("replaceDoubleToStringWithRadix.kt")
+        public void testReplaceDoubleToStringWithRadix() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceJavaNumberToStringWithMember/replaceDoubleToStringWithRadix.kt");
         }
 
         @TestMetadata("replaceIntToString.kt")
         public void testReplaceIntToString() throws Exception {
-            runTest("idea/testData/inspectionsLocal/replaceJavaIntegerToStringWithMember/replaceIntToString.kt");
+            runTest("idea/testData/inspectionsLocal/replaceJavaNumberToStringWithMember/replaceIntToString.kt");
+        }
+
+        @TestMetadata("replaceIntToStringBase.kt")
+        public void testReplaceIntToStringBase() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceJavaNumberToStringWithMember/replaceIntToStringBase.kt");
+        }
+
+        @TestMetadata("replaceIntToStringWithRadix.kt")
+        public void testReplaceIntToStringWithRadix() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceJavaNumberToStringWithMember/replaceIntToStringWithRadix.kt");
         }
 
         @TestMetadata("replaceListElementToString.kt")
         public void testReplaceListElementToString() throws Exception {
-            runTest("idea/testData/inspectionsLocal/replaceJavaIntegerToStringWithMember/replaceListElementToString.kt");
+            runTest("idea/testData/inspectionsLocal/replaceJavaNumberToStringWithMember/replaceListElementToString.kt");
         }
 
-        @TestMetadata("replaceToStringBase.kt")
-        public void testReplaceToStringBase() throws Exception {
-            runTest("idea/testData/inspectionsLocal/replaceJavaIntegerToStringWithMember/replaceToStringBase.kt");
+        @TestMetadata("replaceLongToString.kt")
+        public void testReplaceLongToString() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceJavaNumberToStringWithMember/replaceLongToString.kt");
         }
 
-        @TestMetadata("replaceToStringWithRadix.kt")
-        public void testReplaceToStringWithRadix() throws Exception {
-            runTest("idea/testData/inspectionsLocal/replaceJavaIntegerToStringWithMember/replaceToStringWithRadix.kt");
+        @TestMetadata("replaceLongToStringWithRadix.kt")
+        public void testReplaceLongToStringWithRadix() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceJavaNumberToStringWithMember/replaceLongToStringWithRadix.kt");
         }
     }
 
