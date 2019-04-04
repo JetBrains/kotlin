@@ -36,7 +36,7 @@ open class TCServiceMessagesClientTest {
             results,
             TCServiceMessagesClientSettings(
                 rootNodeName,
-                treatFailedTestOutputAsStacktrace
+                treatFailedTestOutputAsStacktrace = treatFailedTestOutputAsStacktrace
             ),
             LoggerFactory.getLogger("test")
         )

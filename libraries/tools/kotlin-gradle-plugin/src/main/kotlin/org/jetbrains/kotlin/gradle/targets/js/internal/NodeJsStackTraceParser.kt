@@ -46,7 +46,6 @@ fun parseNodeJsStackTrace(stackTrace: String): NodeJsStackTrace {
     var firstLines = true
     val stack = mutableListOf<NodeJsStackTraceElement>()
 
-    // see examples at NodeJsStackTraceParserKtTest
     stackTrace.lines().forEach {
         val srcLine = it.trim()
 
