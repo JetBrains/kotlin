@@ -126,6 +126,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext {
     override fun SimpleTypeMarker.typeConstructor(): TypeConstructorMarker {
         return when (this) {
             is ConeCapturedType -> constructor
+            is ConeTypeVariableType -> this.lookupTag as ConeTypeVariableTypeConstructor // TODO: WTF
             is ConeLookupTagBasedType -> this.lookupTag.toSymbol(session) ?: ErrorTypeConstructor("Unresolved: ${this.lookupTag}")
             else -> error("?: ${this}")
         }
@@ -201,7 +202,8 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext {
         if (this is ErrorTypeConstructor) return emptyList()
         //require(this is ConeSymbol)
         return when (this) {
-            is ConeTypeParameterSymbol, is ConeTypeVariableTypeConstructor -> emptyList()
+            is ConeTypeVariableTypeConstructor -> emptyList()
+            is FirTypeParameterSymbol -> fir.bounds.map { it.coneTypeUnsafe() }
             is FirClassSymbol -> fir.superConeTypes
             is FirTypeAliasSymbol -> listOfNotNull(fir.expandedConeType)
             is ConeCapturedTypeConstructor -> supertypes!!
@@ -328,6 +330,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext {
     override fun SimpleTypeMarker.isSingleClassifierType(): Boolean {
         if (isError()) return false
         if (this is ConeCapturedType) return true
+        if (this is ConeTypeVariableType) return false
         require(this is ConeLookupTagBasedType)
         val symbol = this.lookupTag.toSymbol(session)
         return symbol is FirClassSymbol ||

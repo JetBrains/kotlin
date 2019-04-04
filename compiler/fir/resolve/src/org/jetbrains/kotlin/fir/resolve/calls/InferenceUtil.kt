@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.service
 import org.jetbrains.kotlin.fir.symbols.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
 import org.jetbrains.kotlin.name.Name
@@ -302,8 +303,10 @@ class ConeTypeVariableTypeConstructor(val debugName: String) : ConeSymbol, ConeC
 
 }
 
+class TypeParameterBasedTypeVariable(val typeParameterSymbol: FirTypeParameterSymbol) :
+    ConeTypeVariable(typeParameterSymbol.name.identifier)
 
-class ConeTypeVariable(name: String) : TypeVariableMarker {
+open class ConeTypeVariable(name: String) : TypeVariableMarker {
     val typeConstructor = ConeTypeVariableTypeConstructor(name)
     val defaultType = ConeTypeVariableType(ConeNullability.NOT_NULL, typeConstructor)
 }

@@ -10,11 +10,11 @@ import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 
 
-sealed class ResolutionStage {
+abstract class ResolutionStage {
     abstract fun check(candidate: Candidate, sink: CheckerSink, callInfo: CallInfo)
 }
 
-sealed class CheckerStage : ResolutionStage()
+abstract class CheckerStage : ResolutionStage()
 
 internal object MapArguments : ResolutionStage() {
     override fun check(candidate: Candidate, sink: CheckerSink, callInfo: CallInfo) {
@@ -44,8 +44,8 @@ internal object CheckArguments : CheckerStage() {
 
 
 internal fun functionCallResolutionSequence() =
-    listOf<ResolutionStage>(MapArguments, CheckArguments)
+    listOf<ResolutionStage>(MapArguments, CreateFreshTypeVariableSubstitutorStage, CheckArguments)
 
 
 internal fun qualifiedAccessResolutionSequence() =
-    listOf<ResolutionStage>()
+    listOf<ResolutionStage>(CreateFreshTypeVariableSubstitutorStage)

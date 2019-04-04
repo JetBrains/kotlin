@@ -83,7 +83,8 @@ internal fun Candidate.resolveArgument(
 }
 
 private fun Candidate.prepareExpectedType(argument: FirExpression, parameter: FirValueParameter): ConeKotlinType {
-    return argument.getExpectedType(parameter/*, LanguageVersionSettings*/)
+    val expectedType = argument.getExpectedType(parameter/*, LanguageVersionSettings*/)
+    return this.substitutor.substituteOrSelf(expectedType)
 }
 
 internal fun FirExpression.getExpectedType(parameter: FirValueParameter/*, languageVersionSettings: LanguageVersionSettings*/) =

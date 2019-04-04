@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.scope
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.FirPosition
 import org.jetbrains.kotlin.fir.scopes.FirScope
@@ -35,6 +36,7 @@ class CallInfo(
     val explicitReceiver: FirExpression?,
 
     val arguments: List<FirExpression>,
+    val typeArguments: List<FirTypeProjection>,
 
     val typeProvider: (FirExpression) -> FirTypeRef?
 ) {
@@ -65,6 +67,7 @@ class Candidate(
         system.addOtherSystem(baseSystem)
         system
     }
+    lateinit var substitutor: ConeSubstitutor
 }
 
 sealed class CallKind {
@@ -444,7 +447,7 @@ class CandidateCollector(val callInfo: CallInfo) {
     }
 
 
-    fun successCandidates(): List<Candidate> {
+    fun bestCandidates(): List<Candidate> {
         if (groupNumbers.isEmpty()) return emptyList()
         val result = mutableListOf<Candidate>()
         var bestGroup = groupNumbers.first()

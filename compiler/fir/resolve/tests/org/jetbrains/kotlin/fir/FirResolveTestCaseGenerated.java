@@ -189,6 +189,16 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/this.kt");
         }
 
+        @TestMetadata("typeParameters.kt")
+        public void testTypeParameters() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/typeParameters.kt");
+        }
+
+        @TestMetadata("typeParameters2.kt")
+        public void testTypeParameters2() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/typeParameters2.kt");
+        }
+
         @TestMetadata("when.kt")
         public void testWhen() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/when.kt");
