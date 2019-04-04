@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.codegen.AsmUtil.*
 import org.jetbrains.kotlin.codegen.ExpressionCodegen.putReifiedOperationMarkerIfTypeIsReifiedParameter
 import org.jetbrains.kotlin.codegen.StackValue.*
 import org.jetbrains.kotlin.codegen.inline.*
+import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.OperationKind.AS
+import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.OperationKind.SAFE_AS
 import org.jetbrains.kotlin.codegen.intrinsics.JavaClassProperty
 import org.jetbrains.kotlin.codegen.pseudoInsns.fakeAlwaysFalseIfeq
 import org.jetbrains.kotlin.codegen.pseudoInsns.fakeAlwaysTrueIfeq
@@ -658,12 +660,14 @@ class ExpressionCodegen(
 
     fun newArrayInstruction(arrayType: KotlinType) {
         if (KotlinBuiltIns.isArray(arrayType)) {
-            val elementJetType = arrayType.arguments[0].type
-//            putReifiedOperationMarkerIfTypeIsReifiedParameter(
-//                    elementJetType,
-//                    ReifiedTypeInliner.OperationKind.NEW_ARRAY
-//            )
-            mv.newarray(boxType(elementJetType.asmType))
+            val elementKotlinType = arrayType.arguments[0].type
+            putReifiedOperationMarkerIfTypeIsReifiedParameter(
+                elementKotlinType,
+                ReifiedTypeInliner.OperationKind.NEW_ARRAY,
+                mv,
+                this
+            )
+            mv.newarray(boxType(elementKotlinType.asmType))
         } else {
             val type = typeMapper.mapType(arrayType)
             mv.newarray(correctElementType(type))
@@ -672,7 +676,11 @@ class ExpressionCodegen(
 
     override fun visitReturn(expression: IrReturn, data: BlockInfo): StackValue {
         val owner = expression.returnTargetSymbol.owner
-        val isNonLocalReturn = owner != irFunction
+        //TODO: should be owner != irFunction
+        val isNonLocalReturn = state.typeMapper.mapFunctionName(
+            owner.descriptor,
+            OwnerKind.IMPLEMENTATION
+        ) != state.typeMapper.mapFunctionName(irFunction.descriptor, OwnerKind.IMPLEMENTATION)
         if (isNonLocalReturn && state.isInlineDisabled) {
             //TODO: state.diagnostics.report(Errors.NON_LOCAL_RETURN_IN_DISABLED_INLINE.on(expression))
             genThrow(
@@ -829,7 +837,8 @@ class ExpressionCodegen(
     }
 
     override fun visitTypeOperator(expression: IrTypeOperatorCall, data: BlockInfo): StackValue {
-        val asmType = expression.typeOperand.toKotlinType().asmType
+        val kotlinType = expression.typeOperand.toKotlinType()
+        val asmType = kotlinType.asmType
         when (expression.operator) {
             IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> {
                 val result = expression.argument.accept(this, data)
@@ -848,17 +857,30 @@ class ExpressionCodegen(
                     StackValue.putUnitInstance(mv)
                 }
                 val boxedType = boxType(asmType)
-                generateAsCast(
-                    mv, expression.typeOperand.toKotlinType(), boxedType, expression.operator == IrTypeOperator.SAFE_CAST,
-                    state.languageVersionSettings.isReleaseCoroutines()
-                )
+
+                if (TypeUtils.isReifiedTypeParameter(kotlinType)) {
+                    putReifiedOperationMarkerIfTypeIsReifiedParameter(
+                        kotlinType, if (IrTypeOperator.SAFE_CAST == expression.operator) SAFE_AS else AS, mv, this
+                    )
+                    v.checkcast(boxedType)
+                } else {
+                    generateAsCast(
+                        mv, kotlinType, boxedType, expression.operator == IrTypeOperator.SAFE_CAST,
+                        state.languageVersionSettings.isReleaseCoroutines()
+                    )
+                }
                 return onStack(boxedType)
             }
 
             IrTypeOperator.INSTANCEOF, IrTypeOperator.NOT_INSTANCEOF -> {
                 gen(expression.argument, OBJECT_TYPE, data)
                 val type = boxType(asmType)
-                generateIsCheck(mv, expression.typeOperand.toKotlinType(), type, state.languageVersionSettings.isReleaseCoroutines())
+                if (TypeUtils.isReifiedTypeParameter(kotlinType)) {
+                    putReifiedOperationMarkerIfTypeIsReifiedParameter(kotlinType, ReifiedTypeInliner.OperationKind.IS, mv, this)
+                    v.instanceOf(type)
+                } else {
+                    generateIsCheck(mv, kotlinType, type, state.languageVersionSettings.isReleaseCoroutines())
+                }
                 if (IrTypeOperator.NOT_INSTANCEOF == expression.operator) {
                     StackValue.not(StackValue.onStack(Type.BOOLEAN_TYPE)).put(mv)
                 }
