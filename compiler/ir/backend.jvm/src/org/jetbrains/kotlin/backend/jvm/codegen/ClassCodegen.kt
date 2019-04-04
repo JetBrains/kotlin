@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.descriptors.JvmDescriptorWithExtraFlags
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.inline.DefaultSourceMapper
@@ -27,9 +26,7 @@ import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.util.getPackageFragment
-import org.jetbrains.kotlin.load.java.JavaVisibilities
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.SpecialNames
@@ -97,7 +94,7 @@ open class ClassCodegen protected constructor(
         visitor.defineClass(
             psiElement,
             state.classFileVersion,
-            descriptor.calculateClassFlags(),
+            irClass.flags,
             signature.name,
             signature.javaGenericSignature,
             signature.superclassName,
@@ -218,7 +215,7 @@ open class ClassCodegen protected constructor(
         val fieldSignature = typeMapper.mapFieldSignature(field.descriptor.type, field.descriptor)
         val fieldName = field.descriptor.name.asString()
         val fv = visitor.newField(
-            field.OtherOrigin, field.descriptor.calculateCommonFlags(), fieldName, fieldType.descriptor,
+            field.OtherOrigin, field.flags, fieldName, fieldType.descriptor,
             fieldSignature, null/*TODO support default values*/
         )
 
@@ -313,79 +310,33 @@ open class ClassCodegen protected constructor(
 
 }
 
-fun ClassDescriptor.calculateClassFlags(): Int {
-    var flags = 0
-    flags = flags or if (JvmCodegenUtil.isJvmInterface(this)) Opcodes.ACC_INTERFACE else Opcodes.ACC_SUPER
-    flags = flags or calcModalityFlag()
-    flags = flags or AsmUtil.getVisibilityAccessFlagForClass(this)
-    flags = flags or if (kind == ClassKind.ENUM_CLASS) Opcodes.ACC_ENUM else 0
-    flags = flags or if (kind == ClassKind.ANNOTATION_CLASS) Opcodes.ACC_ANNOTATION else 0
-    return flags
-}
-
-fun MemberDescriptor.calculateCommonFlags(): Int {
-    var flags = 0
-    if (Visibilities.isPrivate(visibility)) {
-        flags = flags.or(Opcodes.ACC_PRIVATE)
-    } else if (visibility == Visibilities.PUBLIC || visibility == Visibilities.INTERNAL) {
-        flags = flags.or(Opcodes.ACC_PUBLIC)
-    } else if (visibility == Visibilities.PROTECTED) {
-        flags = flags.or(Opcodes.ACC_PROTECTED)
-    } else if (visibility == JavaVisibilities.PACKAGE_VISIBILITY) {
-        // default visibility
-    } else {
-        throw RuntimeException("Unsupported visibility $visibility for descriptor $this")
+private val IrClass.flags: Int
+    get() = origin.flags or AsmUtil.getVisibilityAccessFlagForClass(descriptor) or when {
+        isAnnotationClass -> Opcodes.ACC_ANNOTATION or Opcodes.ACC_INTERFACE or Opcodes.ACC_ABSTRACT
+        isInterface -> Opcodes.ACC_INTERFACE or Opcodes.ACC_ABSTRACT
+        isEnumClass -> Opcodes.ACC_ENUM or Opcodes.ACC_SUPER or modality.flags
+        else -> Opcodes.ACC_SUPER or modality.flags
     }
 
-    flags = flags.or(calcModalityFlag())
+private val IrField.flags: Int
+    get() = origin.flags or visibility.flags or
+            (if (isFinal) Opcodes.ACC_FINAL else 0) or
+            (if (isStatic) Opcodes.ACC_STATIC else 0)
 
-    if (this is JvmDescriptorWithExtraFlags) {
-        flags = flags or extraFlags
+private val IrDeclarationOrigin.flags: Int
+    get() = (if (isSynthetic) Opcodes.ACC_SYNTHETIC else 0) or
+            (if (this == IrDeclarationOrigin.FIELD_FOR_ENUM_ENTRY) Opcodes.ACC_ENUM else 0)
+
+private val Modality.flags: Int
+    get() = when (this) {
+        Modality.ABSTRACT, Modality.SEALED -> Opcodes.ACC_ABSTRACT
+        Modality.FINAL -> Opcodes.ACC_FINAL
+        Modality.OPEN -> 0
+        else -> throw AssertionError("Unsupported modality $this")
     }
 
-    return flags
-}
-
-private fun MemberDescriptor.calcModalityFlag(): Int {
-    var flags = 0
-    if (this is PropertyDescriptor) {
-        // Modality for a field: set FINAL for vals
-        if (!isVar && !isLateInit) {
-            flags = flags.or(Opcodes.ACC_FINAL)
-        }
-    } else when (effectiveModality) {
-        Modality.ABSTRACT -> {
-            flags = flags.or(Opcodes.ACC_ABSTRACT)
-        }
-        Modality.FINAL -> {
-            if (this !is ConstructorDescriptor && !DescriptorUtils.isEnumClass(this)) {
-                flags = flags.or(Opcodes.ACC_FINAL)
-            }
-        }
-        Modality.OPEN -> {
-            assert(!Visibilities.isPrivate(visibility))
-        }
-        else -> throw RuntimeException("Unsupported modality $modality for descriptor ${this}")
-    }
-
-    if (this is CallableMemberDescriptor) {
-        if (this !is ConstructorDescriptor && dispatchReceiverParameter == null) {
-            flags = flags or Opcodes.ACC_STATIC
-        }
-    }
-    return flags
-}
-
-private val MemberDescriptor.effectiveModality: Modality
-    get() {
-        if (DescriptorUtils.isSealedClass(this) ||
-            DescriptorUtils.isAnnotationClass(this)
-        ) {
-            return Modality.ABSTRACT
-        }
-
-        return modality
-    }
+private val Visibility.flags: Int
+    get() = AsmUtil.getVisibilityAccessFlag(this) ?: throw AssertionError("Unsupported visibility $this")
 
 private val IrField.OtherOrigin: JvmDeclarationOrigin
     get() = OtherOrigin(descriptor.psiElement, this.descriptor)

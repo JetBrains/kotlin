@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
-import org.jetbrains.kotlin.backend.jvm.descriptors.JvmDescriptorWithExtraFlags
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.FunctionCodegen
@@ -95,8 +94,7 @@ open class FunctionCodegen(
                 deprecation or
                 nativeFlag or
                 bridgeFlag or
-                syntheticFlag or
-                (if (descriptor is JvmDescriptorWithExtraFlags) descriptor.extraFlags else 0)
+                syntheticFlag
     }
 
     protected open fun createMethod(flags: Int, signature: JvmMethodGenericSignature): MethodVisitor {
