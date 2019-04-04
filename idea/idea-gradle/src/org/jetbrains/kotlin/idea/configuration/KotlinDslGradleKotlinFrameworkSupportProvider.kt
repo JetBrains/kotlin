@@ -144,21 +144,8 @@ class KotlinDslGradleKotlinJSFrameworkSupportProvider :
     KotlinDslGradleKotlinFrameworkSupportProvider("KOTLIN_JS", "Kotlin/JS", KotlinIcons.JS) {
 
     override fun getOldSyntaxPluginDefinition(): String = "plugin(\"${KotlinJsGradleModuleConfigurator.KOTLIN_JS}\")"
-    override fun getPluginDefinition(): String = "id(\"kotlin2js\")"
+    override fun getPluginDefinition(): String = "id(\"org.jetbrains.kotlin.js\")"
 
     override fun getRuntimeLibrary(rootModel: ModifiableRootModel, version: String?) =
         "implementation(${getKotlinModuleDependencySnippet(MAVEN_JS_STDLIB_ID.removePrefix("kotlin-"), version)})"
-
-    override fun addSupport(
-        projectId: ProjectId,
-        module: Module,
-        rootModel: ModifiableRootModel,
-        modifiableModelsProvider: ModifiableModelsProvider,
-        buildScriptData: BuildScriptDataBuilder
-    ) {
-        super.addSupport(projectId, module, rootModel, modifiableModelsProvider, buildScriptData)
-        updateSettingsScript(module) {
-            it.addResolutionStrategy("kotlin2js")
-        }
-    }
 }

@@ -190,17 +190,17 @@ open class GradleKotlinJSFrameworkSupportProvider(
 ) : GradleKotlinFrameworkSupportProvider(frameworkTypeId, displayName, KotlinIcons.JS) {
 
     override fun getPluginId() = KotlinJsGradleModuleConfigurator.KOTLIN_JS
-    override fun getPluginExpression() = "id 'kotlin2js'"
+    override fun getPluginExpression() = "id 'org.jetbrains.kotlin.js'"
 
     override fun getDependencies(sdk: Sdk?) = listOf(MAVEN_JS_STDLIB_ID)
 
     override fun getTestDependencies() = listOf(MAVEN_JS_TEST_ID)
 
-    override fun updateSettingsScript(settingsBuilder: SettingsScriptBuilder, specifyPluginVersionIfNeeded: Boolean) {
-        if (specifyPluginVersionIfNeeded) {
-            settingsBuilder.addResolutionStrategy("kotlin2js")
-        }
-    }
+//    override fun updateSettingsScript(settingsBuilder: SettingsScriptBuilder, specifyPluginVersionIfNeeded: Boolean) {
+//        if (specifyPluginVersionIfNeeded) {
+//            settingsBuilder.addResolutionStrategy("kotlin2js")
+//        }
+//    }
 
     override fun getDescription() = "A Kotlin library or application targeting JavaScript"
 }
@@ -208,17 +208,11 @@ open class GradleKotlinJSFrameworkSupportProvider(
 class GradleKotlinMPPFrameworkSupportProvider : GradleKotlinFrameworkSupportProvider(
     "KOTLIN_MPP", "Kotlin (Multiplatform - Experimental)", KotlinIcons.MPP
 ) {
-    override fun getPluginId() = "kotlin-multiplatform"
-    override fun getPluginExpression() = "id 'kotlin-multiplatform'"
+    override fun getPluginId() = "org.jetbrains.kotlin.multiplatform"
+    override fun getPluginExpression() = "id 'org.jetbrains.kotlin.multiplatform'"
 
     override fun getDependencies(sdk: Sdk?): List<String> = listOf()
     override fun getTestDependencies(): List<String> = listOf()
-
-    override fun updateSettingsScript(settingsBuilder: SettingsScriptBuilder, specifyPluginVersionIfNeeded: Boolean) {
-        if (specifyPluginVersionIfNeeded) {
-            settingsBuilder.addResolutionStrategy("kotlin-multiplatform")
-        }
-    }
 
     override fun getDescription() = "Kotlin multiplatform code"
 }
