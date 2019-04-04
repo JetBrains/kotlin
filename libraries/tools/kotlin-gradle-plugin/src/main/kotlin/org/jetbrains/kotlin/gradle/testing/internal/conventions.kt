@@ -3,7 +3,7 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.testing
+package org.jetbrains.kotlin.gradle.testing.internal
 
 import org.gradle.api.Project
 import org.gradle.api.internal.plugins.DslObject
