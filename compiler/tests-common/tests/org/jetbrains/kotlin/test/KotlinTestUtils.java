@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -807,12 +807,15 @@ public class KotlinTestUtils {
                     !isDirectiveDefined(expectedText, "!LANGUAGE: -ReleaseCoroutines");
 
             boolean checkStateMachine = isDirectiveDefined(expectedText, "CHECK_STATE_MACHINE");
+            boolean checkTailCallOptimization = isDirectiveDefined(expectedText, "CHECK_TAIL_CALL_OPTIMIZATION");
 
-            testFiles.add(factory.createFile(supportModule,
-                                             "CoroutineUtil.kt",
-                                             CoroutineTestUtilKt.createTextForHelpers(isReleaseCoroutines, checkStateMachine),
-                                             directives
-            ));
+            testFiles.add(
+                    factory.createFile(
+                            supportModule,
+                            "CoroutineUtil.kt",
+                            CoroutineTestUtilKt.createTextForHelpers(isReleaseCoroutines, checkStateMachine, checkTailCallOptimization),
+                            directives
+                    ));
         }
 
         return testFiles;
