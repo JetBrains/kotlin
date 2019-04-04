@@ -14,10 +14,11 @@ import org.gradle.process.internal.DefaultProcessForkOptions
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.targets.native.internal.parseKotlinNativeStackTraceAsJvm
-import org.jetbrains.kotlin.gradle.tasks.KotlinTest
+import org.jetbrains.kotlin.gradle.tasks.KotlinTestTask
+import org.jetbrains.kotlin.gradle.testing.TestsGrouping
 import java.io.File
 
-open class KotlinNativeTest : KotlinTest() {
+open class KotlinNativeTestTask : KotlinTestTask() {
     @Suppress("LeakingThis")
     @Internal
     val processOptions: ProcessForkOptions = DefaultProcessForkOptions(fileResolver)
@@ -47,8 +48,8 @@ open class KotlinNativeTest : KotlinTest() {
 
         val clientSettings = TCServiceMessagesClientSettings(
             name,
-            testNameSuffix = targetName,
-            prependSuiteName = targetName != null,
+            testNameSuffix = if (showTestTargetName) targetName else null,
+            prepandSuiteName = showTestTargetName,
             treatFailedTestOutputAsStacktrace = true,
             stackTraceParser = ::parseKotlinNativeStackTraceAsJvm
         )
