@@ -25,8 +25,8 @@ public class NullabilityAnalysisTestGenerated extends AbstractNullabilityAnalysi
         KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
     }
 
-    public void testAllFilesPresentInFileOrElement() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/fileOrElement"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+    public void testAllFilesPresentInNullabilityAnalysis() throws Exception {
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/nullabilityAnalysis"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("compareWithNull.kt")
