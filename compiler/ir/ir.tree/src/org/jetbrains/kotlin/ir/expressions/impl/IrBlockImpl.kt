@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
@@ -71,7 +70,6 @@ class IrReturnableBlockImpl(
         type: IrType,
         override val symbol: IrReturnableBlockSymbol,
         origin: IrStatementOrigin? = null,
-        override val sourceFileSymbol: IrFileSymbol? = null,
         override val inlineFunctionSymbol: IrFunctionSymbol? = null
 ) :
     IrContainerExpressionBase(startOffset, endOffset, type, origin),
@@ -86,38 +84,14 @@ class IrReturnableBlockImpl(
         symbol: IrReturnableBlockSymbol,
         origin: IrStatementOrigin?,
         statements: List<IrStatement>,
-        sourceFileSymbol: IrFileSymbol? = null,
         inlineFunctionSymbol: IrFunctionSymbol? = null
-    ) : this(startOffset, endOffset, type, symbol, origin, sourceFileSymbol, inlineFunctionSymbol) {
-        this.statements.addAll(statements)
-    }
-
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        type: IrType,
-        descriptor: FunctionDescriptor,
-        origin: IrStatementOrigin? = null,
-        sourceFileSymbol: IrFileSymbol? = null
-    ) : this(startOffset, endOffset, type, IrReturnableBlockSymbolImpl(descriptor), origin, sourceFileSymbol)
-
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        type: IrType,
-        descriptor: FunctionDescriptor,
-        origin: IrStatementOrigin?,
-        statements: List<IrStatement>,
-        sourceFileSymbol: IrFileSymbol? = null
-    ) : this(startOffset, endOffset, type, descriptor, origin, sourceFileSymbol) {
+    ) : this(startOffset, endOffset, type, symbol, origin, inlineFunctionSymbol) {
         this.statements.addAll(statements)
     }
 
     init {
         symbol.bind(this)
     }
-
-    override val sourceFileName: String = sourceFileSymbol?.owner?.fileEntry?.name ?: "no source file"
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitBlock(this, data)

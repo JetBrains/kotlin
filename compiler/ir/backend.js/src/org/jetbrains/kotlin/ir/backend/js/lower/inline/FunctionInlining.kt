@@ -194,7 +194,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
                 symbol = irReturnableBlockSymbol,
                 origin = if (isCoroutineIntrinsicCall) CoroutineIntrinsicLambdaOrigin else null,
                 statements = statements,
-                sourceFileSymbol = sourceFile.symbol
+                inlineFunctionSymbol = callee.symbol
             ).apply {
                 transformChildrenVoid(object : IrElementTransformerVoid() {
                     override fun visitReturn(expression: IrReturn): IrExpression {
