@@ -19,8 +19,10 @@ import org.gradle.internal.serialize.PlaceholderException
 class KotlinTestFailure(
     className: String,
     message: String?,
-    private val stackTraceString: String?,
-    private val stackTrace: List<StackTraceElement>? = null
+    val stackTraceString: String?,
+    private val stackTrace: List<StackTraceElement>? = null,
+    val expected: String? = null,
+    val actual: String? = null
 ) : PlaceholderException(
     className,
     message,
