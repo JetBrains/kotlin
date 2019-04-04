@@ -170,73 +170,73 @@ fun case_8(x: ClassWithThreeTypeParameters<out Int?, out Short?, ClassWithThreeT
         <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithThreeTypeParameters<out kotlin.Int?, out kotlin.Short?, ClassWithThreeTypeParameters<out kotlin.Int?, out kotlin.Short?, out kotlin.String?>?> & ClassWithThreeTypeParameters<out kotlin.Int?, out kotlin.Short?, ClassWithThreeTypeParameters<out kotlin.Int?, out kotlin.Short?, out kotlin.String?>?>?")!>x<!>.funNullableT()
         <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithThreeTypeParameters<out kotlin.Int?, out kotlin.Short?, ClassWithThreeTypeParameters<out kotlin.Int?, out kotlin.Short?, out kotlin.String?>?> & ClassWithThreeTypeParameters<out kotlin.Int?, out kotlin.Short?, ClassWithThreeTypeParameters<out kotlin.Int?, out kotlin.Short?, out kotlin.String?>?>?")!>x<!>.funNullableAny()
         if (x.x != null) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x.x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x.x<!><!UNSAFE_CALL!>.<!>equals(null)
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x.x<!>.propT
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x.x<!><!UNSAFE_CALL!>.<!>propAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x.x<!>.propNullableT
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x.x<!>.propNullableAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x.x<!>.funT()
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x.x<!><!UNSAFE_CALL!>.<!>funAny()
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x.x<!>.funNullableT()
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x.x<!>.funNullableAny()
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?")!>x.x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int"), DEBUG_INFO_SMARTCAST!>x.x<!>.equals(null)
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int"), DEBUG_INFO_SMARTCAST!>x.x<!>.propT
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int"), DEBUG_INFO_SMARTCAST!>x.x<!>.propAny
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?")!>x.x<!>.propNullableT
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?")!>x.x<!>.propNullableAny
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int"), DEBUG_INFO_SMARTCAST!>x.x<!>.funT()
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int"), DEBUG_INFO_SMARTCAST!>x.x<!>.funAny()
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?")!>x.x<!>.funNullableT()
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?")!>x.x<!>.funNullableAny()
         }
         if (x.y != null) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Short?")!>x.y<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Short?")!>x.y<!><!UNSAFE_CALL!>.<!>equals(null)
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Short?")!>x.y<!>.propT
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Short?")!>x.y<!><!UNSAFE_CALL!>.<!>propAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Short?")!>x.y<!>.propNullableT
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Short?")!>x.y<!>.propNullableAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Short?")!>x.y<!>.funT()
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Short?")!>x.y<!><!UNSAFE_CALL!>.<!>funAny()
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Short?")!>x.y<!>.funNullableT()
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Short?")!>x.y<!>.funNullableAny()
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Short & kotlin.Short?")!>x.y<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Short"), DEBUG_INFO_SMARTCAST!>x.y<!>.equals(null)
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Short"), DEBUG_INFO_SMARTCAST!>x.y<!>.propT
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Short"), DEBUG_INFO_SMARTCAST!>x.y<!>.propAny
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Short & kotlin.Short?")!>x.y<!>.propNullableT
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Short & kotlin.Short?")!>x.y<!>.propNullableAny
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Short"), DEBUG_INFO_SMARTCAST!>x.y<!>.funT()
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Short"), DEBUG_INFO_SMARTCAST!>x.y<!>.funAny()
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Short & kotlin.Short?")!>x.y<!>.funNullableT()
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Short & kotlin.Short?")!>x.y<!>.funNullableAny()
         }
         if (x.z != null) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithThreeTypeParameters<out kotlin.Int?, out kotlin.Short?, out kotlin.String?>?")!>x.z<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithThreeTypeParameters<out kotlin.Int?, out kotlin.Short?, out kotlin.String?>?")!>x.z<!><!UNSAFE_CALL!>.<!>equals(null)
-            <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithThreeTypeParameters<out kotlin.Int?, out kotlin.Short?, out kotlin.String?>?")!>x.z<!>.propT
-            <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithThreeTypeParameters<out kotlin.Int?, out kotlin.Short?, out kotlin.String?>?")!>x.z<!><!UNSAFE_CALL!>.<!>propAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithThreeTypeParameters<out kotlin.Int?, out kotlin.Short?, out kotlin.String?>?")!>x.z<!>.propNullableT
-            <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithThreeTypeParameters<out kotlin.Int?, out kotlin.Short?, out kotlin.String?>?")!>x.z<!>.propNullableAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithThreeTypeParameters<out kotlin.Int?, out kotlin.Short?, out kotlin.String?>?")!>x.z<!>.funT()
-            <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithThreeTypeParameters<out kotlin.Int?, out kotlin.Short?, out kotlin.String?>?")!>x.z<!><!UNSAFE_CALL!>.<!>funAny()
-            <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithThreeTypeParameters<out kotlin.Int?, out kotlin.Short?, out kotlin.String?>?")!>x.z<!>.funNullableT()
-            <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithThreeTypeParameters<out kotlin.Int?, out kotlin.Short?, out kotlin.String?>?")!>x.z<!>.funNullableAny()
-            if (x.z<!UNSAFE_CALL!>.<!>x != null) {
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x.z<!UNSAFE_CALL!>.<!>x<!>
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x.z<!UNSAFE_CALL!>.<!>x<!><!UNSAFE_CALL!>.<!>equals(null)
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x.z<!UNSAFE_CALL!>.<!>x<!>.propT
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x.z<!UNSAFE_CALL!>.<!>x<!><!UNSAFE_CALL!>.<!>propAny
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x.z<!UNSAFE_CALL!>.<!>x<!>.propNullableT
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x.z<!UNSAFE_CALL!>.<!>x<!>.propNullableAny
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x.z<!UNSAFE_CALL!>.<!>x<!>.funT()
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x.z<!UNSAFE_CALL!>.<!>x<!><!UNSAFE_CALL!>.<!>funAny()
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x.z<!UNSAFE_CALL!>.<!>x<!>.funNullableT()
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x.z<!UNSAFE_CALL!>.<!>x<!>.funNullableAny()
+            <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithThreeTypeParameters<out kotlin.Int?, out kotlin.Short?, out kotlin.String?> & ClassWithThreeTypeParameters<out kotlin.Int?, out kotlin.Short?, out kotlin.String?>?")!>x.z<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithThreeTypeParameters<out kotlin.Int?, out kotlin.Short?, out kotlin.String?> & ClassWithThreeTypeParameters<out kotlin.Int?, out kotlin.Short?, out kotlin.String?>?")!>x.z<!>.equals(null)
+            <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithThreeTypeParameters<out kotlin.Int?, out kotlin.Short?, out kotlin.String?> & ClassWithThreeTypeParameters<out kotlin.Int?, out kotlin.Short?, out kotlin.String?>?")!>x.z<!>.propT
+            <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithThreeTypeParameters<out kotlin.Int?, out kotlin.Short?, out kotlin.String?> & ClassWithThreeTypeParameters<out kotlin.Int?, out kotlin.Short?, out kotlin.String?>?")!>x.z<!>.propAny
+            <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithThreeTypeParameters<out kotlin.Int?, out kotlin.Short?, out kotlin.String?> & ClassWithThreeTypeParameters<out kotlin.Int?, out kotlin.Short?, out kotlin.String?>?")!>x.z<!>.propNullableT
+            <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithThreeTypeParameters<out kotlin.Int?, out kotlin.Short?, out kotlin.String?> & ClassWithThreeTypeParameters<out kotlin.Int?, out kotlin.Short?, out kotlin.String?>?")!>x.z<!>.propNullableAny
+            <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithThreeTypeParameters<out kotlin.Int?, out kotlin.Short?, out kotlin.String?> & ClassWithThreeTypeParameters<out kotlin.Int?, out kotlin.Short?, out kotlin.String?>?")!>x.z<!>.funT()
+            <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithThreeTypeParameters<out kotlin.Int?, out kotlin.Short?, out kotlin.String?> & ClassWithThreeTypeParameters<out kotlin.Int?, out kotlin.Short?, out kotlin.String?>?")!>x.z<!>.funAny()
+            <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithThreeTypeParameters<out kotlin.Int?, out kotlin.Short?, out kotlin.String?> & ClassWithThreeTypeParameters<out kotlin.Int?, out kotlin.Short?, out kotlin.String?>?")!>x.z<!>.funNullableT()
+            <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithThreeTypeParameters<out kotlin.Int?, out kotlin.Short?, out kotlin.String?> & ClassWithThreeTypeParameters<out kotlin.Int?, out kotlin.Short?, out kotlin.String?>?")!>x.z<!>.funNullableAny()
+            if (x.z.x != null) {
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?")!>x.z.x<!>
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int"), DEBUG_INFO_SMARTCAST!>x.z.x<!>.equals(null)
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int"), DEBUG_INFO_SMARTCAST!>x.z.x<!>.propT
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int"), DEBUG_INFO_SMARTCAST!>x.z.x<!>.propAny
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?")!>x.z.x<!>.propNullableT
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?")!>x.z.x<!>.propNullableAny
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int"), DEBUG_INFO_SMARTCAST!>x.z.x<!>.funT()
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int"), DEBUG_INFO_SMARTCAST!>x.z.x<!>.funAny()
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?")!>x.z.x<!>.funNullableT()
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?")!>x.z.x<!>.funNullableAny()
             }
-            if (x.z<!UNSAFE_CALL!>.<!>y != null && x.z<!UNSAFE_CALL!>.<!>z != null) {
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Short?")!>x.z<!UNSAFE_CALL!>.<!>y<!>
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x.z<!UNSAFE_CALL!>.<!>z<!>
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Short?")!>x.z<!UNSAFE_CALL!>.<!>y<!><!UNSAFE_CALL!>.<!>equals(null)
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Short?")!>x.z<!UNSAFE_CALL!>.<!>y<!>.propT
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Short?")!>x.z<!UNSAFE_CALL!>.<!>y<!><!UNSAFE_CALL!>.<!>propAny
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Short?")!>x.z<!UNSAFE_CALL!>.<!>y<!>.propNullableT
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Short?")!>x.z<!UNSAFE_CALL!>.<!>y<!>.propNullableAny
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Short?")!>x.z<!UNSAFE_CALL!>.<!>y<!>.funT()
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Short?")!>x.z<!UNSAFE_CALL!>.<!>y<!><!UNSAFE_CALL!>.<!>funAny()
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Short?")!>x.z<!UNSAFE_CALL!>.<!>y<!>.funNullableT()
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Short?")!>x.z<!UNSAFE_CALL!>.<!>y<!>.funNullableAny()
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x.z<!UNSAFE_CALL!>.<!>z<!>.equals(null)
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x.z<!UNSAFE_CALL!>.<!>z<!>.propT
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x.z<!UNSAFE_CALL!>.<!>z<!><!UNSAFE_CALL!>.<!>propAny
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x.z<!UNSAFE_CALL!>.<!>z<!>.propNullableT
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x.z<!UNSAFE_CALL!>.<!>z<!>.propNullableAny
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x.z<!UNSAFE_CALL!>.<!>z<!>.funT()
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x.z<!UNSAFE_CALL!>.<!>z<!><!UNSAFE_CALL!>.<!>funAny()
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x.z<!UNSAFE_CALL!>.<!>z<!>.funNullableT()
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x.z<!UNSAFE_CALL!>.<!>z<!>.funNullableAny()
+            if (x.z.y != null && x.z.z != null) {
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Short & kotlin.Short?")!>x.z.y<!>
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String?")!>x.z.z<!>
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Short"), DEBUG_INFO_SMARTCAST!>x.z.y<!>.equals(null)
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Short"), DEBUG_INFO_SMARTCAST!>x.z.y<!>.propT
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Short"), DEBUG_INFO_SMARTCAST!>x.z.y<!>.propAny
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Short & kotlin.Short?")!>x.z.y<!>.propNullableT
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Short & kotlin.Short?")!>x.z.y<!>.propNullableAny
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Short"), DEBUG_INFO_SMARTCAST!>x.z.y<!>.funT()
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Short"), DEBUG_INFO_SMARTCAST!>x.z.y<!>.funAny()
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Short & kotlin.Short?")!>x.z.y<!>.funNullableT()
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Short & kotlin.Short?")!>x.z.y<!>.funNullableAny()
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String"), DEBUG_INFO_SMARTCAST!>x.z.z<!>.equals(null)
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String"), DEBUG_INFO_SMARTCAST!>x.z.z<!>.propT
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String"), DEBUG_INFO_SMARTCAST!>x.z.z<!>.propAny
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String?")!>x.z.z<!>.propNullableT
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String?")!>x.z.z<!>.propNullableAny
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String"), DEBUG_INFO_SMARTCAST!>x.z.z<!>.funT()
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String"), DEBUG_INFO_SMARTCAST!>x.z.z<!>.funAny()
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String?")!>x.z.z<!>.funNullableT()
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String?")!>x.z.z<!>.funNullableAny()
             }
         }
     }
@@ -428,16 +428,16 @@ fun case_17(a: Inv<out Out<Out<Out<Out<Out<Int?>?>?>?>?>?>?) {
  */
 fun case_18(a: Inv<out Int?>) {
     if (a.x != null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>a.x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>a.x<!><!UNSAFE_CALL!>.<!>equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>a.x<!>.propT
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>a.x<!><!UNSAFE_CALL!>.<!>propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>a.x<!>.propNullableT
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>a.x<!>.propNullableAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>a.x<!>.funT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>a.x<!><!UNSAFE_CALL!>.<!>funAny()
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>a.x<!>.funNullableT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>a.x<!>.funNullableAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?")!>a.x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int"), DEBUG_INFO_SMARTCAST!>a.x<!>.equals(null)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int"), DEBUG_INFO_SMARTCAST!>a.x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int"), DEBUG_INFO_SMARTCAST!>a.x<!>.propAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?")!>a.x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?")!>a.x<!>.propNullableAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int"), DEBUG_INFO_SMARTCAST!>a.x<!>.funT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int"), DEBUG_INFO_SMARTCAST!>a.x<!>.funAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?")!>a.x<!>.funNullableT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?")!>a.x<!>.funNullableAny()
     }
 }
 
@@ -460,16 +460,16 @@ fun case_19(a: Inv<out Nothing?>) {
  */
 fun case_20(a: Inv<out Any?>) {
     if (a.x != null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a.x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a.x<!><!UNSAFE_CALL!>.<!>equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a.x<!>.propT
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a.x<!><!UNSAFE_CALL!>.<!>propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a.x<!>.propNullableT
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a.x<!>.propNullableAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a.x<!>.funT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a.x<!><!UNSAFE_CALL!>.<!>funAny()
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a.x<!>.funNullableT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a.x<!>.funNullableAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>a.x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any"), DEBUG_INFO_SMARTCAST!>a.x<!>.equals(null)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any"), DEBUG_INFO_SMARTCAST!>a.x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any"), DEBUG_INFO_SMARTCAST!>a.x<!>.propAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>a.x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>a.x<!>.propNullableAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any"), DEBUG_INFO_SMARTCAST!>a.x<!>.funT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any"), DEBUG_INFO_SMARTCAST!>a.x<!>.funAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>a.x<!>.funNullableT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>a.x<!>.funNullableAny()
     }
 }
 
@@ -480,16 +480,16 @@ fun case_20(a: Inv<out Any?>) {
  */
 fun case_21(a: Out<<!REDUNDANT_PROJECTION!>out<!> Int?>) {
     if (a.x != null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>a.x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>a.x<!><!UNSAFE_CALL!>.<!>equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>a.x<!>.propT
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>a.x<!><!UNSAFE_CALL!>.<!>propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>a.x<!>.propNullableT
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>a.x<!>.propNullableAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>a.x<!>.funT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>a.x<!><!UNSAFE_CALL!>.<!>funAny()
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>a.x<!>.funNullableT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>a.x<!>.funNullableAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?")!>a.x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int"), DEBUG_INFO_SMARTCAST!>a.x<!>.equals(null)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int"), DEBUG_INFO_SMARTCAST!>a.x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int"), DEBUG_INFO_SMARTCAST!>a.x<!>.propAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?")!>a.x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?")!>a.x<!>.propNullableAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int"), DEBUG_INFO_SMARTCAST!>a.x<!>.funT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int"), DEBUG_INFO_SMARTCAST!>a.x<!>.funAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?")!>a.x<!>.funNullableT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?")!>a.x<!>.funNullableAny()
     }
 }
 
@@ -512,16 +512,16 @@ fun case_22(a: Out<<!REDUNDANT_PROJECTION!>out<!> Nothing?>) {
  */
 fun case_23(a: Out<<!REDUNDANT_PROJECTION!>out<!> Any?>) {
     if (a.x != null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a.x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a.x<!><!UNSAFE_CALL!>.<!>equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a.x<!>.propT
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a.x<!><!UNSAFE_CALL!>.<!>propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a.x<!>.propNullableT
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a.x<!>.propNullableAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a.x<!>.funT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a.x<!><!UNSAFE_CALL!>.<!>funAny()
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a.x<!>.funNullableT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a.x<!>.funNullableAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>a.x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any"), DEBUG_INFO_SMARTCAST!>a.x<!>.equals(null)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any"), DEBUG_INFO_SMARTCAST!>a.x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any"), DEBUG_INFO_SMARTCAST!>a.x<!>.propAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>a.x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>a.x<!>.propNullableAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any"), DEBUG_INFO_SMARTCAST!>a.x<!>.funT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any"), DEBUG_INFO_SMARTCAST!>a.x<!>.funAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>a.x<!>.funNullableT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>a.x<!>.funNullableAny()
     }
 }
 
@@ -572,16 +572,16 @@ fun case_26(a: Out<Any?>) {
  */
 fun case_27(a: Inv<in Any>) {
     if (a.x != null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a.x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a.x<!><!UNSAFE_CALL!>.<!>equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a.x<!>.propT
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a.x<!><!UNSAFE_CALL!>.<!>propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a.x<!>.propNullableT
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a.x<!>.propNullableAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a.x<!>.funT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a.x<!><!UNSAFE_CALL!>.<!>funAny()
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a.x<!>.funNullableT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a.x<!>.funNullableAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>a.x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any"), DEBUG_INFO_SMARTCAST!>a.x<!>.equals(null)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any"), DEBUG_INFO_SMARTCAST!>a.x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any"), DEBUG_INFO_SMARTCAST!>a.x<!>.propAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>a.x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>a.x<!>.propNullableAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any"), DEBUG_INFO_SMARTCAST!>a.x<!>.funT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any"), DEBUG_INFO_SMARTCAST!>a.x<!>.funAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>a.x<!>.funNullableT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>a.x<!>.funNullableAny()
     }
 }
 
@@ -592,16 +592,16 @@ fun case_27(a: Inv<in Any>) {
  */
 fun case_28(a: Inv<in Float>) {
     if (a.x != null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a.x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a.x<!><!UNSAFE_CALL!>.<!>equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a.x<!>.propT
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a.x<!><!UNSAFE_CALL!>.<!>propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a.x<!>.propNullableT
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a.x<!>.propNullableAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a.x<!>.funT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a.x<!><!UNSAFE_CALL!>.<!>funAny()
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a.x<!>.funNullableT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a.x<!>.funNullableAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>a.x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any"), DEBUG_INFO_SMARTCAST!>a.x<!>.equals(null)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any"), DEBUG_INFO_SMARTCAST!>a.x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any"), DEBUG_INFO_SMARTCAST!>a.x<!>.propAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>a.x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>a.x<!>.propNullableAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any"), DEBUG_INFO_SMARTCAST!>a.x<!>.funT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any"), DEBUG_INFO_SMARTCAST!>a.x<!>.funAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>a.x<!>.funNullableT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>a.x<!>.funNullableAny()
     }
 }
 
@@ -612,16 +612,16 @@ fun case_28(a: Inv<in Float>) {
  */
 fun case_29(a: Inv<in Nothing>) {
     if (a.x != null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a.x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a.x<!><!UNSAFE_CALL!>.<!>equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a.x<!>.propT
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a.x<!><!UNSAFE_CALL!>.<!>propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a.x<!>.propNullableT
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a.x<!>.propNullableAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a.x<!>.funT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a.x<!><!UNSAFE_CALL!>.<!>funAny()
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a.x<!>.funNullableT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a.x<!>.funNullableAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>a.x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any"), DEBUG_INFO_SMARTCAST!>a.x<!>.equals(null)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any"), DEBUG_INFO_SMARTCAST!>a.x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any"), DEBUG_INFO_SMARTCAST!>a.x<!>.propAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>a.x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>a.x<!>.propNullableAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any"), DEBUG_INFO_SMARTCAST!>a.x<!>.funT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any"), DEBUG_INFO_SMARTCAST!>a.x<!>.funAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>a.x<!>.funNullableT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>a.x<!>.funNullableAny()
     }
 }
 
