@@ -29,15 +29,24 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 fun resolveKtPrimitive(
     csBuilder: ConstraintSystemBuilder,
+    callableReferenceResolver: CallableReferenceResolver,
     argument: KotlinCallArgument,
     expectedType: UnwrappedType?,
     diagnosticsHolder: KotlinDiagnosticsHolder,
     isReceiver: Boolean
 ): ResolvedAtom = when (argument) {
-    is SimpleKotlinCallArgument -> checkSimpleArgument(csBuilder, argument, expectedType, diagnosticsHolder, isReceiver)
-    is LambdaKotlinCallArgument -> preprocessLambdaArgument(csBuilder, argument, expectedType)
-    is CallableReferenceKotlinCallArgument -> preprocessCallableReference(csBuilder, argument, expectedType, diagnosticsHolder)
-    is CollectionLiteralKotlinCallArgument -> preprocessCollectionLiteralArgument(argument, expectedType)
+    is SimpleKotlinCallArgument ->
+        checkSimpleArgument(csBuilder, argument, expectedType, diagnosticsHolder, isReceiver)
+
+    is LambdaKotlinCallArgument ->
+        preprocessLambdaArgument(csBuilder, argument, expectedType)
+
+    is CallableReferenceKotlinCallArgument ->
+        preprocessCallableReference(csBuilder, callableReferenceResolver, argument, expectedType, diagnosticsHolder)
+
+    is CollectionLiteralKotlinCallArgument ->
+        preprocessCollectionLiteralArgument(argument, expectedType)
+
     else -> unexpectedArgument(argument)
 }
 
@@ -133,11 +142,14 @@ fun LambdaWithTypeVariableAsExpectedTypeAtom.transformToResolvedLambda(csBuilder
 
 private fun preprocessCallableReference(
     csBuilder: ConstraintSystemBuilder,
+    callableReferenceResolver: CallableReferenceResolver,
     argument: CallableReferenceKotlinCallArgument,
     expectedType: UnwrappedType?,
     diagnosticsHolder: KotlinDiagnosticsHolder
 ): ResolvedAtom {
     val result = EagerCallableReferenceAtom(argument, expectedType)
+    callableReferenceResolver.processCallableReferenceArgument(csBuilder, result, diagnosticsHolder)
+
     if (expectedType == null) return result
 
     val notCallableTypeConstructor =

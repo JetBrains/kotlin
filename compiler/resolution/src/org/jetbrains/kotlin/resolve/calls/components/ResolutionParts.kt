@@ -275,7 +275,9 @@ private fun KotlinResolutionCandidate.resolveKotlinArgument(
     isReceiver: Boolean
 ) {
     val expectedType = candidateParameter?.let { prepareExpectedType(argument, candidateParameter) }
-    addResolvedKtPrimitive(resolveKtPrimitive(csBuilder, argument, expectedType, this, isReceiver))
+    addResolvedKtPrimitive(
+        resolveKtPrimitive(csBuilder, callableReferenceResolver, argument, expectedType, this, isReceiver)
+    )
 }
 
 private fun KotlinResolutionCandidate.prepareExpectedType(
