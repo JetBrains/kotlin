@@ -28,10 +28,7 @@ import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
-import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
-import org.jetbrains.org.objectweb.asm.tree.LabelNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
-import java.util.*
 import kotlin.properties.Delegates
 
 interface SourceCompilerForInline {
@@ -64,11 +61,14 @@ interface SourceCompilerForInline {
         asmMethod: Method
     ): SMAPAndMethodNode
 
-    fun generateAndInsertFinallyBlocks(
-        intoNode: MethodNode,
-        insertPoints: List<MethodInliner.PointForExternalFinallyBlocks>,
-        offsetForFinallyLocalVar: Int
-    )
+    fun hasFinallyBlocks(): Boolean
+
+    fun createCodegenForExternalFinallyBlockGenerationOnNonLocalReturn(
+        finallyNode: MethodNode,
+        curFinallyDepth: Int
+    ): BaseExpressionCodegen
+
+    fun generateFinallyBlocksIfNeeded(finallyCodegen: BaseExpressionCodegen, returnType: Type, afterReturnLabel: Label)
 
     fun isCallInsideSameModuleAsDeclared(functionDescriptor: FunctionDescriptor): Boolean
 
@@ -84,7 +84,8 @@ interface SourceCompilerForInline {
 }
 
 
-class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, override val callElement: KtElement) : SourceCompilerForInline {
+class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, override val callElement: KtElement) :
+    SourceCompilerForInline {
 
     override val state = codegen.state
 
@@ -314,73 +315,20 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
         return SMAPAndMethodNode(node, smap)
     }
 
-    override fun generateAndInsertFinallyBlocks(
-        intoNode: MethodNode,
-        insertPoints: List<MethodInliner.PointForExternalFinallyBlocks>,
-        offsetForFinallyLocalVar: Int
-    ) {
-        if (!codegen.hasFinallyBlocks()) return
+    override fun hasFinallyBlocks() = codegen.hasFinallyBlocks()
 
-        val extensionPoints = HashMap<AbstractInsnNode, MethodInliner.PointForExternalFinallyBlocks>()
-        for (insertPoint in insertPoints) {
-            extensionPoints.put(insertPoint.beforeIns, insertPoint)
-        }
-
-        val processor = DefaultProcessor(intoNode, offsetForFinallyLocalVar)
-
-        var curFinallyDepth = 0
-        var curInstr: AbstractInsnNode? = intoNode.instructions.first
-        while (curInstr != null) {
-            processor.processInstruction(curInstr, true)
-            if (isFinallyStart(curInstr)) {
-                //TODO depth index calc could be more precise
-                curFinallyDepth = getConstant(curInstr.previous)
-            }
-
-            val extension = extensionPoints[curInstr]
-            if (extension != null) {
-                val start = Label()
-
-                val finallyNode = createEmptyMethodNode()
-                finallyNode.visitLabel(start)
-
-                val finallyCodegen = ExpressionCodegen(
-                    finallyNode, codegen.frameMap, codegen.returnType,
-                    codegen.getContext(), codegen.state, codegen.parentCodegen
-                )
-                finallyCodegen.addBlockStackElementsForNonLocalReturns(codegen.blockStackElements, curFinallyDepth)
-
-                val frameMap = finallyCodegen.frameMap
-                val mark = frameMap.mark()
-                var marker = -1
-                val intervals = processor.localVarsMetaInfo.currentIntervals
-                for (interval in intervals) {
-                    marker = Math.max(interval.node.index + 1, marker)
-                }
-                while (frameMap.currentSize < Math.max(processor.nextFreeLocalIndex, offsetForFinallyLocalVar + marker)) {
-                    frameMap.enterTemp(Type.INT_TYPE)
-                }
-
-                finallyCodegen.generateFinallyBlocksIfNeeded(extension.returnType, null, extension.finallyIntervalEnd.label)
-
-                //Exception table for external try/catch/finally blocks will be generated in original codegen after exiting this method
-                insertNodeBefore(finallyNode, intoNode, curInstr)
-
-                val splitBy = SimpleInterval(start.info as LabelNode, extension.finallyIntervalEnd)
-                processor.tryBlocksMetaInfo.splitAndRemoveCurrentIntervals(splitBy, true)
-
-                //processor.getLocalVarsMetaInfo().splitAndRemoveIntervalsFromCurrents(splitBy);
-
-                mark.dropTo()
-            }
-
-            curInstr = curInstr.next
-        }
-
-        processor.substituteTryBlockNodes(intoNode)
-
-        //processor.substituteLocalVarTable(intoNode);
+    override fun generateFinallyBlocksIfNeeded(finallyCodegen: BaseExpressionCodegen, returnType: Type, afterReturnLabel: Label) {
+        require(finallyCodegen is ExpressionCodegen)
+        finallyCodegen.generateFinallyBlocksIfNeeded(returnType, null, afterReturnLabel)
     }
+
+    override fun createCodegenForExternalFinallyBlockGenerationOnNonLocalReturn(finallyNode: MethodNode, curFinallyDepth: Int) =
+        ExpressionCodegen(
+            finallyNode, codegen.frameMap, codegen.returnType,
+            codegen.getContext(), codegen.state, codegen.parentCodegen
+        ).also {
+            it.addBlockStackElementsForNonLocalReturns(codegen.blockStackElements, curFinallyDepth)
+        }
 
     override fun isCallInsideSameModuleAsDeclared(functionDescriptor: FunctionDescriptor): Boolean {
         return JvmCodegenUtil.isCallInsideSameModuleAsDeclared(functionDescriptor, codegen.getContext(), codegen.state.outDirectory)

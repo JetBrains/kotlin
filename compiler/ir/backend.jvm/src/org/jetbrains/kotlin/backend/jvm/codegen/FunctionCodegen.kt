@@ -27,7 +27,11 @@ import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-open class FunctionCodegen(private val irFunction: IrFunction, private val classCodegen: ClassCodegen) {
+open class FunctionCodegen(
+    private val irFunction: IrFunction,
+    private val classCodegen: ClassCodegen,
+    private val isInlineLambda: Boolean = false
+) {
 
     val state = classCodegen.state
 
@@ -56,7 +60,7 @@ open class FunctionCodegen(private val irFunction: IrFunction, private val class
             methodVisitor.visitEnd()
         } else {
             val frameMap = createFrameMapWithReceivers(classCodegen.state, irFunction, signature)
-            ExpressionCodegen(irFunction, frameMap, InstructionAdapter(methodVisitor), classCodegen).generate()
+            ExpressionCodegen(irFunction, frameMap, InstructionAdapter(methodVisitor), classCodegen, isInlineLambda).generate()
         }
 
         return signature

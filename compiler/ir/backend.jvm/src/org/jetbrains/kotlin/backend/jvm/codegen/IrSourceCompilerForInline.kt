@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.codegen.BaseExpressionCodegen
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.OwnerKind
 import org.jetbrains.kotlin.codegen.inline.*
@@ -37,13 +38,15 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.*
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.commons.Method
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
 class IrSourceCompilerForInline(
     override val state: GenerationState,
     override val callElement: IrMemberAccessExpression,
-    private val codegen: ExpressionCodegen
+    private val codegen: ExpressionCodegen,
+    private val data: BlockInfo
 ) : SourceCompilerForInline {
 
 
@@ -71,7 +74,7 @@ class IrSourceCompilerForInline(
     override fun generateLambdaBody(adapter: MethodVisitor, jvmMethodSignature: JvmMethodSignature, lambdaInfo: ExpressionLambda): SMAP {
         lambdaInfo as? IrExpressionLambdaImpl ?: error("Expecting ir lambda, but $lambdaInfo")
 
-        val functionCodegen = object : FunctionCodegen(lambdaInfo.function, codegen.classCodegen) {
+        val functionCodegen = object : FunctionCodegen(lambdaInfo.function, codegen.classCodegen, true) {
             override fun createMethod(flags: Int, signature: JvmMethodGenericSignature): MethodVisitor {
                 return adapter
             }
@@ -135,13 +138,19 @@ class IrSourceCompilerForInline(
         return SMAPAndMethodNode(node!!, SMAP(fakeClassCodegen.getOrCreateSourceMapper().resultMappings))
     }
 
-    override fun generateAndInsertFinallyBlocks(
-        intoNode: MethodNode,
-        insertPoints: List<MethodInliner.PointForExternalFinallyBlocks>,
-        offsetForFinallyLocalVar: Int
-    ) {
-        //TODO("not implemented")
+    override fun hasFinallyBlocks() = data.hasFinallyBlocks()
+
+    override fun generateFinallyBlocksIfNeeded(finallyCodegen: BaseExpressionCodegen, returnType: Type, afterReturnLabel: Label) {
+        require(finallyCodegen is ExpressionCodegen)
+        finallyCodegen.generateFinallyBlocksIfNeeded(returnType, afterReturnLabel, data)
     }
+
+    override fun createCodegenForExternalFinallyBlockGenerationOnNonLocalReturn(finallyNode: MethodNode, curFinallyDepth: Int) =
+        ExpressionCodegen(
+            codegen.irFunction, codegen.frame, InstructionAdapter(finallyNode), codegen.classCodegen, codegen.isInlineLambda
+        ).also {
+            it.finallyDepth = curFinallyDepth
+        }
 
     override fun isCallInsideSameModuleAsDeclared(functionDescriptor: FunctionDescriptor): Boolean {
         //TODO("not implemented")
@@ -149,8 +158,7 @@ class IrSourceCompilerForInline(
     }
 
     override fun isFinallyMarkerRequired(): Boolean {
-        //TODO("not implemented")
-        return false
+        return codegen.isFinallyMarkerRequired()
     }
 
     override val compilationContextDescriptor: DeclarationDescriptor

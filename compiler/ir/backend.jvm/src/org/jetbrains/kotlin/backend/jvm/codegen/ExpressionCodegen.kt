@@ -109,8 +109,11 @@ class ExpressionCodegen(
     val irFunction: IrFunction,
     val frame: IrFrameMap,
     val mv: InstructionAdapter,
-    val classCodegen: ClassCodegen
+    val classCodegen: ClassCodegen,
+    val isInlineLambda: Boolean = false
 ) : IrElementVisitor<StackValue, BlockInfo>, BaseExpressionCodegen {
+
+    var finallyDepth = 0
 
     /*TODO*/
     val intrinsics = IrIntrinsicMethods(classCodegen.context.irBuiltIns)
@@ -331,7 +334,7 @@ class ExpressionCodegen(
     }
 
     fun generateCall(expression: IrMemberAccessExpression, callable: Callable, data: BlockInfo, isSuperCall: Boolean = false): StackValue {
-        val callGenerator = getOrCreateCallGenerator(expression, expression.descriptor)
+        val callGenerator = getOrCreateCallGenerator(expression, expression.descriptor, data)
 
         val receiver = expression.dispatchReceiver
         receiver?.apply {
@@ -1123,7 +1126,17 @@ class ExpressionCodegen(
     private fun genFinallyBlock(tryInfo: TryInfo, tryCatchBlockEnd: Label?, afterJumpLabel: Label?, data: BlockInfo) {
         assert(tryInfo.gaps.size % 2 == 0) { "Finally block gaps are inconsistent" }
         tryInfo.gaps.add(markNewLabel())
+        finallyDepth++
+        if (isFinallyMarkerRequired()) {
+            generateFinallyMarker(mv, finallyDepth, true)
+        }
         gen(tryInfo.tryBlock.finallyExpression!!, data).discard()
+
+        if (isFinallyMarkerRequired()) {
+            generateFinallyMarker(mv, finallyDepth, false)
+        }
+        finallyDepth--
+
         if (tryCatchBlockEnd != null) {
             tryInfo.tryBlock.finallyExpression!!.markLineNumber(startOffset = false)
             mv.goTo(tryCatchBlockEnd)
@@ -1131,7 +1144,7 @@ class ExpressionCodegen(
         tryInfo.gaps.add(afterJumpLabel ?: markNewLabel())
     }
 
-    private fun generateFinallyBlocksIfNeeded(returnType: Type, afterReturnLabel: Label, data: BlockInfo) {
+    fun generateFinallyBlocksIfNeeded(returnType: Type, afterReturnLabel: Label, data: BlockInfo) {
         if (data.hasFinallyBlocks()) {
             if (Type.VOID_TYPE != returnType) {
                 val returnValIndex = frame.enterTemp(returnType)
@@ -1226,7 +1239,8 @@ class ExpressionCodegen(
         descriptor: CallableDescriptor,
         element: IrMemberAccessExpression?,
         typeParameterMappings: TypeParameterMappings?,
-        isDefaultCompilation: Boolean
+        isDefaultCompilation: Boolean,
+        data: BlockInfo
     ): IrCallGenerator {
         if (element == null) return IrCallGenerator.DefaultCallGenerator
 
@@ -1240,13 +1254,14 @@ class ExpressionCodegen(
         return if (isDefaultCompilation) {
             TODO()
         } else {
-            IrInlineCodegen(this, state, original, typeParameterMappings!!, IrSourceCompilerForInline(state, element, this))
+            IrInlineCodegen(this, state, original, typeParameterMappings!!, IrSourceCompilerForInline(state, element, this, data))
         }
     }
 
     internal fun getOrCreateCallGenerator(
         memberAccessExpression: IrMemberAccessExpression,
-        descriptor: CallableDescriptor
+        descriptor: CallableDescriptor,
+        data: BlockInfo
     ): IrCallGenerator {
         val typeArguments =
             if (memberAccessExpression.typeArgumentsCount == 0) {
@@ -1280,7 +1295,7 @@ class ExpressionCodegen(
             }
         }
 
-        return getOrCreateCallGenerator(descriptor, memberAccessExpression, mappings, false)
+        return getOrCreateCallGenerator(descriptor, memberAccessExpression, mappings, false, data)
     }
 
     override val frameMap: IrFrameMap
@@ -1310,6 +1325,10 @@ class ExpressionCodegen(
 
     override fun markLineNumberAfterInlineIfNeeded() {
         //TODO
+    }
+
+    fun isFinallyMarkerRequired(): Boolean {
+        return irFunction.isInline || isInlineLambda
     }
 }
 

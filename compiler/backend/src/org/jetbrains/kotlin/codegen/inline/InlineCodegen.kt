@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionLiteral
 import org.jetbrains.kotlin.types.expressions.LabelResolver
+import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
@@ -279,7 +280,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         val labels = sourceCompiler.getContextLabels()
 
         val infos = MethodInliner.processReturns(adapter, ReturnLabelOwner { labels.contains(it) }, true, null)
-        sourceCompiler.generateAndInsertFinallyBlocks(
+        generateAndInsertFinallyBlocks(
             adapter, infos, (remapper.remap(parameters.argsSizeOnStack + 1).value as StackValue.Local).index
         )
         if (!sourceCompiler.isFinallyMarkerRequired()) {
@@ -297,6 +298,71 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         generateAssertFieldIfNeeded(info)
 
         return result
+    }
+
+    fun generateAndInsertFinallyBlocks(
+        intoNode: MethodNode,
+        insertPoints: List<MethodInliner.PointForExternalFinallyBlocks>,
+        offsetForFinallyLocalVar: Int
+    ) {
+        if (!sourceCompiler.hasFinallyBlocks()) return
+
+        val extensionPoints = HashMap<AbstractInsnNode, MethodInliner.PointForExternalFinallyBlocks>()
+        for (insertPoint in insertPoints) {
+            extensionPoints.put(insertPoint.beforeIns, insertPoint)
+        }
+
+        val processor = DefaultProcessor(intoNode, offsetForFinallyLocalVar)
+
+        var curFinallyDepth = 0
+        var curInstr: AbstractInsnNode? = intoNode.instructions.first
+        while (curInstr != null) {
+            processor.processInstruction(curInstr, true)
+            if (isFinallyStart(curInstr)) {
+                //TODO depth index calc could be more precise
+                curFinallyDepth = getConstant(curInstr.previous)
+            }
+
+            val extension = extensionPoints[curInstr]
+            if (extension != null) {
+                val start = Label()
+
+                val finallyNode = createEmptyMethodNode()
+                finallyNode.visitLabel(start)
+
+                val finallyCodegen =
+                    sourceCompiler.createCodegenForExternalFinallyBlockGenerationOnNonLocalReturn(finallyNode, curFinallyDepth)
+
+                val frameMap = finallyCodegen.frameMap
+                val mark = frameMap.mark()
+                var marker = -1
+                val intervals = processor.localVarsMetaInfo.currentIntervals
+                for (interval in intervals) {
+                    marker = Math.max(interval.node.index + 1, marker)
+                }
+                while (frameMap.currentSize < Math.max(processor.nextFreeLocalIndex, offsetForFinallyLocalVar + marker)) {
+                    frameMap.enterTemp(Type.INT_TYPE)
+                }
+
+                sourceCompiler.generateFinallyBlocksIfNeeded(finallyCodegen, extension.returnType, extension.finallyIntervalEnd.label)
+
+                //Exception table for external try/catch/finally blocks will be generated in original codegen after exiting this method
+                insertNodeBefore(finallyNode, intoNode, curInstr)
+
+                val splitBy = SimpleInterval(start.info as LabelNode, extension.finallyIntervalEnd)
+                processor.tryBlocksMetaInfo.splitAndRemoveCurrentIntervals(splitBy, true)
+
+                //processor.getLocalVarsMetaInfo().splitAndRemoveIntervalsFromCurrents(splitBy);
+
+                mark.dropTo()
+            }
+
+            curInstr = curInstr.next
+        }
+
+        processor.substituteTryBlockNodes(intoNode)
+
+        //processor.substituteLocalVarTable(intoNode);
     }
 
     protected abstract fun generateAssertFieldIfNeeded(info: RootInliningContext)

@@ -283,7 +283,7 @@ internal fun getReturnType(opcode: Int): Type {
     }
 }
 
-internal fun insertNodeBefore(from: MethodNode, to: MethodNode, beforeNode: AbstractInsnNode) {
+fun insertNodeBefore(from: MethodNode, to: MethodNode, beforeNode: AbstractInsnNode) {
     val iterator = from.instructions.iterator()
     while (iterator.hasNext()) {
         val next = iterator.next()
@@ -291,7 +291,7 @@ internal fun insertNodeBefore(from: MethodNode, to: MethodNode, beforeNode: Abst
     }
 }
 
-internal fun createEmptyMethodNode() = MethodNode(Opcodes.API_VERSION, 0, "fake", "()V", null, null)
+fun createEmptyMethodNode() = MethodNode(Opcodes.API_VERSION, 0, "fake", "()V", null, null)
 
 internal fun createFakeContinuationMethodNodeForInline(): MethodNode {
     val methodNode = createEmptyMethodNode()
@@ -347,16 +347,16 @@ internal fun buildClassReaderByInternalName(state: GenerationState, internalName
     return ClassReader(file.contentsToByteArray())
 }
 
-internal fun generateFinallyMarker(v: InstructionAdapter, depth: Int, start: Boolean) {
+fun generateFinallyMarker(v: InstructionAdapter, depth: Int, start: Boolean) {
     v.iconst(depth)
     v.invokestatic(INLINE_MARKER_CLASS_NAME, if (start) INLINE_MARKER_FINALLY_START else INLINE_MARKER_FINALLY_END, "(I)V", false)
 }
 
-internal fun isFinallyEnd(node: AbstractInsnNode) = isFinallyMarker(node, INLINE_MARKER_FINALLY_END)
+fun isFinallyEnd(node: AbstractInsnNode) = isFinallyMarker(node, INLINE_MARKER_FINALLY_END)
 
-internal fun isFinallyStart(node: AbstractInsnNode) = isFinallyMarker(node, INLINE_MARKER_FINALLY_START)
+fun isFinallyStart(node: AbstractInsnNode) = isFinallyMarker(node, INLINE_MARKER_FINALLY_START)
 
-internal fun isFinallyMarker(node: AbstractInsnNode?): Boolean = node != null && (isFinallyStart(node) || isFinallyEnd(node))
+fun isFinallyMarker(node: AbstractInsnNode?): Boolean = node != null && (isFinallyStart(node) || isFinallyEnd(node))
 
 private fun isFinallyMarker(node: AbstractInsnNode, name: String): Boolean {
     if (node !is MethodInsnNode) return false
@@ -365,7 +365,7 @@ private fun isFinallyMarker(node: AbstractInsnNode, name: String): Boolean {
 
 internal fun isFinallyMarkerRequired(context: MethodContext) = context.isInlineMethodContext || context is InlineLambdaContext
 
-internal fun getConstant(ins: AbstractInsnNode): Int {
+fun getConstant(ins: AbstractInsnNode): Int {
     val opcode = ins.opcode
     return when (opcode) {
         in Opcodes.ICONST_0..Opcodes.ICONST_5 -> opcode - Opcodes.ICONST_0
