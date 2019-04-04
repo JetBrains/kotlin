@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsSetupTask
 import org.jetbrains.kotlin.gradle.targets.js.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.tasks.registerTask
-import org.jetbrains.kotlin.gradle.testing.configureConventions
-import org.jetbrains.kotlin.gradle.testing.registerTestTask
+import org.jetbrains.kotlin.gradle.testing.internal.configureConventions
+import org.jetbrains.kotlin.gradle.testing.internal.registerTestTask
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 internal class KotlinJsCompilationTestsConfigurator(

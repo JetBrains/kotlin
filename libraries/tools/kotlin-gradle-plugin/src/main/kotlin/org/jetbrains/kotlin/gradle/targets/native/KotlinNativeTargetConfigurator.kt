@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.TEST_COMPI
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTestTask
 import org.jetbrains.kotlin.gradle.tasks.*
-import org.jetbrains.kotlin.gradle.testing.configureConventions
-import org.jetbrains.kotlin.gradle.testing.registerTestTask
+import org.jetbrains.kotlin.gradle.testing.internal.configureConventions
+import org.jetbrains.kotlin.gradle.testing.internal.registerTestTask
 import java.io.File
 import java.util.*
 

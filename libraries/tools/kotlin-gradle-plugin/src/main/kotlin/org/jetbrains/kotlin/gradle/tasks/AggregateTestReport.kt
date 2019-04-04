@@ -89,23 +89,6 @@ open class AggregateTestReport : DefaultTask() {
         }
     }
 
-    private val intellijReporterListener = object : TestListener {
-        override fun beforeTest(testDescriptor: TestDescriptor) {
-        }
-
-        override fun afterSuite(suite: TestDescriptor, result: TestResult) {
-        }
-
-        override fun beforeSuite(suite: TestDescriptor) {
-        }
-
-        override fun afterTest(testDescriptor: TestDescriptor, result: TestResult) {
-            if (result.failedTestCount > 0) {
-                hasFailedTests = true
-            }
-        }
-    }
-
     internal var checkFailedTests: Boolean = false
 
     fun registerTestTask(task: AbstractTestTask) {
