@@ -110,6 +110,8 @@ val jvmPhases = namedIrFilePhase(
             jvmBuiltinOptimizationLoweringPhase then
             additionalClassAnnotationPhase then
 
+            // should be last transformation
+            removeDeclarationsThatWouldBeInlined then
             makePatchParentsPhase(3)
 )
 
