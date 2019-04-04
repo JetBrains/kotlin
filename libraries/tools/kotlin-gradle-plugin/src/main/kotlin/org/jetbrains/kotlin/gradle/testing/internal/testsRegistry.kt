@@ -13,27 +13,36 @@ import org.jetbrains.kotlin.gradle.plugin.TaskHolder
 import org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmTestTask
 import org.jetbrains.kotlin.gradle.tasks.AggregateTestReport
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeFirstWord
 
-internal val Project.allTestsTask: TaskHolder<AggregateTestReport>
+private val Project.allTestsTask: TaskHolder<AggregateTestReport>
     get() = locateOrRegisterTask("allTests") { aggregate ->
         tasks.maybeCreate(LifecycleBasePlugin.CHECK_TASK_NAME).dependsOn(aggregate)
 
-        description = "Runs the tests for all targets and create aggregated report"
-        group = JavaBasePlugin.VERIFICATION_GROUP
+        aggregate.description = "Runs the tests for all targets and create aggregated report"
+        aggregate.group = JavaBasePlugin.VERIFICATION_GROUP
 
         aggregate.reports.configureConventions(project, "all")
 
         aggregate.onlyIf {
             aggregate.testTasks.size > 1
         }
+
+        if (System.getProperty("idea.active") != null) {
+            aggregate.extensions.extraProperties.set("idea.internal.test", true)
+        }
     }
+
+private fun cleanTaskName(taskName: String) = "clean" + taskName.capitalize()
 
 @Suppress("UnstableApiUsage")
 internal fun registerTestTask(task: AbstractTestTask) {
     val project = task.project
-    project.tasks.maybeCreate(LifecycleBasePlugin.CHECK_TASK_NAME).dependsOn(task)
-
     val allTests = project.allTestsTask.doGetTask()
+
+    project.tasks.maybeCreate(LifecycleBasePlugin.CHECK_TASK_NAME).dependsOn(task)
+    project.tasks.maybeCreate(cleanTaskName(allTests.name)).dependsOn(cleanTaskName(task.name))
+
     allTests.dependsOn(task)
     allTests.registerTestTask(task)
 
