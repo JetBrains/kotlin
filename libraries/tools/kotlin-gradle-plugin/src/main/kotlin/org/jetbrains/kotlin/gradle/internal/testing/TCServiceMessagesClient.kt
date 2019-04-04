@@ -22,10 +22,9 @@ import java.lang.System.currentTimeMillis as currentTimeMillis1
 data class TCServiceMessagesClientSettings(
     val rootNodeName: String,
     val testNameSuffix: String? = null,
-    val prependSuiteName: Boolean = false,
+    val prepandSuiteName: Boolean = false,
     val treatFailedTestOutputAsStacktrace: Boolean = false,
-    val stackTraceParser: (String) -> ParsedStackTrace? = { null },
-    val ignoreOutOfRootNodes: Boolean = false
+    val stackTraceParser: (String) -> ParsedStackTrace? = { null }
 )
 
 internal class TCServiceMessagesClient(
@@ -33,11 +32,7 @@ internal class TCServiceMessagesClient(
     val settings: TCServiceMessagesClientSettings,
     val log: Logger
 ) : ServiceMessageParserCallback {
-    lateinit var rootOperationId: Any
-
     inline fun root(operation: OperationIdentifier, actions: () -> Unit) {
-        rootOperationId = operation.id
-
         RootNode(operation.id).open {
             actions()
         }
@@ -88,7 +83,7 @@ internal class TCServiceMessagesClient(
         parent.requireReportingNode()
 
         val finalTestName = testName.let {
-            if (settings.prependSuiteName) "${parent.fullNameWithoutRoot}.$it"
+            if (settings.prepandSuiteName) "${parent.fullNameWithoutRoot}.$it"
             else it
         }
 
@@ -131,13 +126,10 @@ internal class TCServiceMessagesClient(
         results.failure(
             descriptor.id,
             KotlinTestFailure(
-                (parsedStackTrace?.message ?: message.failureMessage)?.let { extractExceptionClassName(it) }
-                    ?: "Unknown",
+                extractExceptionClassName(parsedStackTrace?.message ?: message.failureMessage),
                 message.failureMessage,
                 stacktrace,
-                patchStackTrace(this, parsedStackTrace?.stackTrace),
-                message.expected,
-                message.actual
+                patchStackTrace(this, parsedStackTrace?.stackTrace)
             )
         )
     }
@@ -166,9 +158,9 @@ internal class TCServiceMessagesClient(
     ) {
         if (settings.treatFailedTestOutputAsStacktrace) {
             output.append(text)
-        } else {
-            results.output(descriptor.id, DefaultTestOutputEvent(destination, text))
         }
+
+        results.output(descriptor.id, DefaultTestOutputEvent(destination, text))
     }
 
     private inline fun <NodeType : Node> NodeType.open(contents: (NodeType) -> Unit) = open(System.currentTimeMillis()) {
@@ -191,13 +183,8 @@ internal class TCServiceMessagesClient(
 
     private fun close(ts: Long, assertLocalId: String?) = pop().also {
         if (assertLocalId != null) {
-            if (it.localId != assertLocalId && settings.ignoreOutOfRootNodes && it.parent == null) {
-                push(it)
-                return it
-            }
-
             check(it.localId == assertLocalId) {
-                "Bad TCSM: unexpected node to close `$assertLocalId`, expected `${it.localId}`, stack: ${
+                "Bad TCSM: unexpected node to close: ${it.localId}, stack: ${
                 leaf.collectParents().joinToString("") { item -> "\n - ${item.localId}" }
                 }\n"
             }
@@ -346,7 +333,6 @@ internal class TCServiceMessagesClient(
     inner class RootNode(val ownerBuildOperationId: Any) : GroupNode(null, settings.rootNodeName) {
         override val descriptor: TestDescriptorInternal = object : DefaultTestSuiteDescriptor(settings.rootNodeName, localId) {
             override fun getOwnerBuildOperationId(): Any? = this@RootNode.ownerBuildOperationId
-            override fun getParent(): TestDescriptorInternal? = null
         }
 
         override fun requireReportingNode(): TestDescriptorInternal = descriptor
@@ -390,9 +376,7 @@ internal class TCServiceMessagesClient(
             this.reportingParent = reportingParent
 
             descriptor = object : DefaultTestSuiteDescriptor(id, fullName) {
-                override fun getDisplayName(): String = fullNameWithoutRoot
-                override fun getOwnerBuildOperationId(): Any? = rootOperationId
-                override fun getParent(): TestDescriptorInternal = reportingParent.descriptor
+                override fun getParent(): TestDescriptorInternal? = reportingParent.descriptor
             }
 
             shouldReportComplete = true
@@ -429,12 +413,9 @@ internal class TCServiceMessagesClient(
     ) : Node(parent, localId) {
         val output by lazy { StringBuilder() }
 
-        private val parentDescriptor = (this@TestNode.parent as GroupNode).requireReportingNode()
-
         override val descriptor: TestDescriptorInternal =
             object : DefaultTestDescriptor(id, className, methodName, classDisplayName, displayName) {
-                override fun getOwnerBuildOperationId(): Any? = rootOperationId
-                override fun getParent(): TestDescriptorInternal = parentDescriptor
+                override fun getParent(): TestDescriptorInternal? = (this@TestNode.parent as GroupNode).requireReportingNode()
             }
 
         override fun markStarted(ts: Long) {
