@@ -62,5 +62,6 @@ enum class ProcessorAction {
         }
     }
 
+    fun stop() = this == STOP
     fun next() = this == NEXT
 }
