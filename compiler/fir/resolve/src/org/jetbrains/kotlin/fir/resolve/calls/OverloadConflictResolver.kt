@@ -17,9 +17,9 @@ import org.jetbrains.kotlin.resolve.calls.results.FlatSignature
 import org.jetbrains.kotlin.resolve.calls.results.SimpleConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.calls.results.isSignatureNotLessSpecific
-import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
+import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
 import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext
 
 class ConeOverloadConflictResolver(
@@ -196,10 +196,11 @@ class ConeOverloadConflictResolver(
 
 }
 
-class ConeSimpleConstraintSystemImpl(val system: NewConstraintSystemImpl): SimpleConstraintSystem {
-    override fun registerTypeVariables(typeParameters: Collection<TypeParameterMarker>): TypeSubstitutor {
-        //system.registerVariable()
-        TODO("")
+object NoSubstitutor : TypeSubstitutorMarker
+
+class ConeSimpleConstraintSystemImpl(val system: NewConstraintSystemImpl) : SimpleConstraintSystem {
+    override fun registerTypeVariables(typeParameters: Collection<TypeParameterMarker>): TypeSubstitutorMarker {
+        return NoSubstitutor
     }
 
     override fun addSubtypeConstraint(subType: KotlinTypeMarker, superType: KotlinTypeMarker) {

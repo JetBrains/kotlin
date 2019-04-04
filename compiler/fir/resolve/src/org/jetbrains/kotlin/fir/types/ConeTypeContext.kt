@@ -356,6 +356,10 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext {
     override fun SimpleTypeMarker.isPrimitiveType(): Boolean {
         return false //TODO
     }
+
+    override fun captureFromExpression(type: KotlinTypeMarker): KotlinTypeMarker? {
+        TODO("!")
+    }
 }
 
 class ConeTypeCheckerContext(override val isErrorTypeEqualsToAnything: Boolean, override val session: FirSession) :

@@ -259,16 +259,22 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
     }
 
     override fun typeSubstitutorByTypeConstructor(map: Map<TypeConstructorMarker, KotlinTypeMarker>): TypeSubstitutorMarker {
-        TODO("not implemented")
+        return NoSubstitutor
+        //TODO("not implemented")
     }
 
     override fun TypeSubstitutorMarker.safeSubstitute(type: KotlinTypeMarker): KotlinTypeMarker {
-        TODO("not implemented")
+        if (this === NoSubstitutor) return type
+        TODO("Not implemented")
     }
 
     override fun TypeVariableMarker.defaultType(): SimpleTypeMarker {
         require(this is ConeTypeVariable)
         return this.defaultType
+    }
+
+    override fun captureFromExpression(type: KotlinTypeMarker): KotlinTypeMarker? {
+        return type
     }
 
 
