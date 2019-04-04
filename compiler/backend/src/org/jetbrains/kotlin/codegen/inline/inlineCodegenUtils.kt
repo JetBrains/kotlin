@@ -268,7 +268,7 @@ internal fun getMarkedReturnLabelOrNull(returnInsn: AbstractInsnNode): String? {
     return null
 }
 
-internal fun generateGlobalReturnFlag(iv: InstructionAdapter, labelName: String) {
+fun generateGlobalReturnFlag(iv: InstructionAdapter, labelName: String) {
     iv.invokestatic(NON_LOCAL_RETURN, labelName, "()V", false)
 }
 

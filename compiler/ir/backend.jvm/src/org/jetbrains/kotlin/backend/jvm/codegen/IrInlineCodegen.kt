@@ -115,8 +115,7 @@ class IrExpressionLambdaImpl(
 ) : ExpressionLambda(typeMapper, isCrossInline), IrExpressionLambda {
 
     override fun isReturnFromMe(labelName: String): Boolean {
-        //TODO("not implemented")
-        return false
+        return false //always false
     }
 
     override val lambdaClassType: Type = Type.getObjectType("test123")

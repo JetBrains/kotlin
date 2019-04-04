@@ -88,7 +88,7 @@ class IrSourceCompilerForInline(
         asmMethod: Method
     ): SMAPAndMethodNode {
         assert(callableDescriptor == callElement.descriptor.original)
-        val irFunction = ((callElement as IrCall).symbol.owner as IrFunction).let { irFunction ->
+        val irFunction = (callElement as IrCall).symbol.owner.let { irFunction ->
             if (!callDefault) irFunction
             else {
                 /*TODO: get rid of hack*/
@@ -160,8 +160,7 @@ class IrSourceCompilerForInline(
         get() = callElement.descriptor as FunctionDescriptor
 
     override fun getContextLabels(): Set<String> {
-        //TODO
-        return emptySet()
+        return setOf(codegen.irFunction.name.asString())
     }
 
     override fun initializeInlineFunctionContext(functionDescriptor: FunctionDescriptor) {

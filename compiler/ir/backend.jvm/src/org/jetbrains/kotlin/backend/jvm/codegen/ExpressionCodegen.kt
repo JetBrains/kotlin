@@ -16,10 +16,7 @@ import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.*
 import org.jetbrains.kotlin.codegen.ExpressionCodegen.putReifiedOperationMarkerIfTypeIsReifiedParameter
 import org.jetbrains.kotlin.codegen.StackValue.*
-import org.jetbrains.kotlin.codegen.inline.NameGenerator
-import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner
-import org.jetbrains.kotlin.codegen.inline.ReifiedTypeParametersUsages
-import org.jetbrains.kotlin.codegen.inline.TypeParameterMappings
+import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.intrinsics.JavaClassProperty
 import org.jetbrains.kotlin.codegen.pseudoInsns.fakeAlwaysFalseIfeq
 import org.jetbrains.kotlin.codegen.pseudoInsns.fakeAlwaysTrueIfeq
@@ -674,15 +671,40 @@ class ExpressionCodegen(
     }
 
     override fun visitReturn(expression: IrReturn, data: BlockInfo): StackValue {
-        val value = expression.value.apply {
-            gen(this, returnType, data)
+        val owner = expression.returnTargetSymbol.owner
+        val isNonLocalReturn = owner != irFunction
+        if (isNonLocalReturn && state.isInlineDisabled) {
+            //TODO: state.diagnostics.report(Errors.NON_LOCAL_RETURN_IN_DISABLED_INLINE.on(expression))
+            genThrow(
+                mv, "java/lang/UnsupportedOperationException",
+                "Non-local returns are not allowed with inlining disabled"
+            )
+            return none()
+        }
+
+        val actualReturn =
+            if (isNonLocalReturn) {
+                typeMapper.mapReturnType(owner.descriptor)
+            } else {
+                returnType
+            }
+
+        expression.value.apply {
+            gen(this, actualReturn, data)
         }
 
         val afterReturnLabel = Label()
-        generateFinallyBlocksIfNeeded(returnType, afterReturnLabel, data)
+        generateFinallyBlocksIfNeeded(actualReturn, afterReturnLabel, data)
 
         expression.markLineNumber(startOffset = true)
-        mv.areturn(returnType)
+        if (isNonLocalReturn) {
+            val nonLocalReturnType = typeMapper.mapReturnType(owner.descriptor)
+            val labelName = (owner as IrFunction).name.asString()
+            generateGlobalReturnFlag(mv, labelName)
+            mv.areturn(nonLocalReturnType)
+        } else {
+            mv.areturn(actualReturn)
+        }
         mv.mark(afterReturnLabel)
         mv.nop()/*TODO check RESTORE_STACK_IN_TRY_CATCH processor*/
         return expression.onStack
