@@ -12,3 +12,14 @@ fun TypeSubstitutorMarker.safeSubstitute(
 ) = with(c) { safeSubstitute(type) }
 
 fun TypeVariableMarker.defaultType(c: TypeSystemInferenceExtensionContext) = with(c) { defaultType() }
+
+fun KotlinTypeMarker.dependsOnTypeConstructor(c: TypeSystemInferenceExtensionContext, typeConstructors: Set<TypeConstructorMarker>) =
+    with(c) {
+        contains { it.typeConstructor() in typeConstructors }
+    }
+
+fun KotlinTypeMarker.dependsOnTypeParameters(c: TypeSystemInferenceExtensionContext, typeParameters: Collection<TypeParameterMarker>) =
+    with(c) {
+        val typeConstructors = typeParameters.mapTo(mutableSetOf()) { it.getTypeConstructor() }
+        dependsOnTypeConstructor(c, typeConstructors)
+    }

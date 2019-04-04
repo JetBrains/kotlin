@@ -22,10 +22,7 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.synthetic.SyntheticMemberDescriptor
 import org.jetbrains.kotlin.resolve.calls.components.hasDefaultValue
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.checker.captureFromExpression
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker
-import org.jetbrains.kotlin.types.model.TypeParameterMarker
-import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext
+import org.jetbrains.kotlin.types.model.*
 
 interface SpecificityComparisonCallbacks {
     fun isNonSubtypeNotLessSpecific(specific: KotlinTypeMarker, general: KotlinTypeMarker): Boolean
@@ -114,7 +111,7 @@ class FlatSignature<out T> constructor(
 
 
 interface SimpleConstraintSystem {
-    fun registerTypeVariables(typeParameters: Collection<TypeParameterMarker>): TypeSubstitutor
+    fun registerTypeVariables(typeParameters: Collection<TypeParameterMarker>): TypeSubstitutorMarker
     fun addSubtypeConstraint(subType: KotlinTypeMarker, superType: KotlinTypeMarker)
     fun hasContradiction(): Boolean
 
@@ -134,6 +131,7 @@ fun <T> SimpleConstraintSystem.isSignatureNotLessSpecific(
     if (specific.valueParameterTypes.size != general.valueParameterTypes.size) return false
 
     val typeParameters = general.typeParameters
+    val typeSubstitutor = registerTypeVariables(typeParameters)
 
     for ((specificType, generalType) in specific.valueParameterTypes.zip(general.valueParameterTypes)) {
         if (specificType == null || generalType == null) continue
@@ -142,18 +140,14 @@ fun <T> SimpleConstraintSystem.isSignatureNotLessSpecific(
             return false
         }
 
-        if (typeParameters.isEmpty() /*|| !TypeUtils.dependsOnTypeParameters(generalType, typeParameters)*/) {
+        if (typeParameters.isEmpty() || !generalType.dependsOnTypeParameters(context, typeParameters)) {
             if (!AbstractTypeChecker.isSubtypeOf(context, specificType, generalType)) {
                 if (!callbacks.isNonSubtypeNotLessSpecific(specificType, generalType)) {
                     return false
                 }
             }
         } else {
-            val typeSubstitutor = registerTypeVariables(typeParameters)
-            require(generalType is KotlinType) { TODO("not supported") }
-            require(specificType is KotlinType) { TODO("not supported") }
-
-            val substitutedGeneralType = typeSubstitutor.safeSubstitute(generalType, Variance.INVARIANT)
+            val substitutedGeneralType = typeSubstitutor.safeSubstitute(context, generalType)
 
             /**
              * Example:
@@ -162,8 +156,9 @@ fun <T> SimpleConstraintSystem.isSignatureNotLessSpecific(
              * Here, when we try solve this CS(Y is variables) then Array<out X> <: Array<out Y> and this system impossible to solve,
              * so we capture types from receiver and value parameters.
              */
-            val specificCapturedType = specificType.unwrap().let { if (captureFromArgument) captureFromExpression(it) ?: it else it }
-            addSubtypeConstraint(specificCapturedType, substitutedGeneralType.unwrap())
+            val specificCapturedType =
+                context.prepareType(specificType).let { if (captureFromArgument) context.captureFromExpression(it) ?: it else it }
+            addSubtypeConstraint(specificCapturedType, substitutedGeneralType)
         }
     }
 
