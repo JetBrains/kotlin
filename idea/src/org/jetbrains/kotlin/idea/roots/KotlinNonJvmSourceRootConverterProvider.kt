@@ -45,10 +45,10 @@ import org.jetbrains.kotlin.utils.PathUtil
 class KotlinNonJvmSourceRootConverterProvider : ConverterProvider("kotlin-non-jvm-source-roots") {
     companion object {
         private val rootTypesToMigrate: List<JpsModuleSourceRootType<*>> = listOf(
-                JavaSourceRootType.SOURCE,
-                JavaSourceRootType.TEST_SOURCE,
-                JavaResourceRootType.RESOURCE,
-                JavaResourceRootType.TEST_RESOURCE
+            JavaSourceRootType.SOURCE,
+            JavaSourceRootType.TEST_SOURCE,
+            JavaResourceRootType.RESOURCE,
+            JavaResourceRootType.TEST_RESOURCE
         )
 
         private val TargetPlatform.stdlibDetector: ((Array<VirtualFile>) -> Boolean)?
@@ -166,8 +166,8 @@ class KotlinNonJvmSourceRootConverterProvider : ConverterProvider("kotlin-non-jv
 
                 private fun ModuleSettings.detectPlatform(): TargetPlatform {
                     return detectPlatformByFacet()
-                            ?: detectPlatformByDependencies()
-                            ?: JvmPlatform
+                        ?: detectPlatformByDependencies()
+                        ?: JvmPlatform
                 }
 
                 private fun ModuleSettings.getSourceFolderElements(): List<Element> {
@@ -188,12 +188,15 @@ class KotlinNonJvmSourceRootConverterProvider : ConverterProvider("kotlin-non-jv
                 override fun isConversionNeeded(settings: ModuleSettings): Boolean {
                     if (settings.isExternalModule()) return false
 
-                    val targetPlatform = settings.detectPlatform()
-                    if (targetPlatform == JvmPlatform) return false
-
-                    return settings.getSourceFolderElements().any {
+                    val hasMigrationRoots = settings.getSourceFolderElements().any {
                         JpsModuleRootModelSerializer.loadSourceRoot(it).rootType in rootTypesToMigrate
                     }
+                    if (!hasMigrationRoots) {
+                        return false
+                    }
+
+                    val targetPlatform = settings.detectPlatform()
+                    return (targetPlatform != JvmPlatform)
                 }
 
                 override fun process(settings: ModuleSettings) {
