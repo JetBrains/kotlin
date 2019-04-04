@@ -92,7 +92,7 @@ open class IrIntrinsicFunction(
         }
     }
 
-    open fun genArg(expression: IrExpression, codegen: ExpressionCodegen, index: Int, data: BlockInfo) {
+    private fun genArg(expression: IrExpression, codegen: ExpressionCodegen, index: Int, data: BlockInfo) {
         codegen.gen(expression, argsTypes[index], data)
     }
 

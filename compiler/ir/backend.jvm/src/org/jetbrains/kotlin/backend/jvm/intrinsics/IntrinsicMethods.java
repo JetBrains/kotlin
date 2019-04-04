@@ -55,7 +55,6 @@ public class IntrinsicMethods {
     private static final IteratorNext ITERATOR_NEXT = new IteratorNext();
     private static final ArraySet ARRAY_SET = new ArraySet();
     private static final ArrayGet ARRAY_GET = new ArrayGet();
-    private static final StringPlus STRING_PLUS = new StringPlus();
     private static final ToString TO_STRING = new ToString();
     private static final Clone CLONE = new Clone();
 
@@ -119,13 +118,11 @@ public class IntrinsicMethods {
 
         declareIntrinsicFunction(FQ_NAMES._boolean, "not", 0, new Not());
 
-        declareIntrinsicFunction(FQ_NAMES.string, "plus", 1, new Concat());
         declareIntrinsicFunction(FQ_NAMES.string, "get", 1, new StringGetChar());
 
         declareIntrinsicFunction(FQ_NAMES.cloneable, "clone", 0, CLONE);
 
         intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, KotlinBuiltIns.FQ_NAMES.any, "toString", 0, TO_STRING);
-        intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, KotlinBuiltIns.FQ_NAMES.string, "plus", 1, STRING_PLUS);
         intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, null, "arrayOfNulls", 1, new NewArray());
 
         for (PrimitiveType type : PrimitiveType.values()) {

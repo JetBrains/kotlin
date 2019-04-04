@@ -8,13 +8,15 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStringConcatenation
 import org.jetbrains.kotlin.ir.expressions.impl.IrStringConcatenationImpl
-import org.jetbrains.kotlin.ir.types.isString
+import org.jetbrains.kotlin.ir.types.isStringClassType
+import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -73,11 +75,13 @@ class FlattenStringConcatenationLowering(val context: CommonBackendContext) : Fi
             return when (expression) {
                 is IrStringConcatenation -> true
                 is IrCall -> {
-                    val dispatchReceiver = expression.dispatchReceiver
-                    dispatchReceiver != null &&
-                            dispatchReceiver.type.isString() &&
-                            expression.symbol.owner.name == PLUS_NAME &&
-                            expression.type.isString() &&
+                    val function = expression.symbol.owner
+                    val receiver = expression.dispatchReceiver ?: expression.extensionReceiver
+                    receiver != null &&
+                            receiver.type.isStringClassType() &&
+                            function.getPackageFragment()?.fqName == KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME &&
+                            function.name == PLUS_NAME &&
+                            expression.type.isStringClassType() &&
                             expression.valueArgumentsCount == 1
                 }
                 else -> false
