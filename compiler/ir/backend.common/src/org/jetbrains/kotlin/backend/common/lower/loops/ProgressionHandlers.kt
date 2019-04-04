@@ -29,7 +29,7 @@ internal class RangeToHandler(private val context: CommonBackendContext, private
     ProgressionHandler {
     override val matcher = SimpleCalleeMatcher {
         dispatchReceiver { it != null && it.type.toKotlinType() in progressionElementTypes }
-        fqName { it.pathSegments().last() == Name.identifier("rangeTo") }
+        fqName { it?.pathSegments()?.last() == Name.identifier("rangeTo") }
         parameterCount { it == 1 }
         parameter(0) { it.type.toKotlinType() in progressionElementTypes }
     }

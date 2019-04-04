@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.backend.common.lower.matchers
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.types.toKotlinType
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.SimpleType
 
 internal interface IrFunctionMatcher : (IrFunction) -> Boolean
@@ -53,11 +53,11 @@ internal class ParameterCountMatcher(
 }
 
 internal class FqNameMatcher(
-    val restriction: (FqName) -> Boolean
+    val restriction: (FqName?) -> Boolean
 ) : IrFunctionMatcher {
 
     override fun invoke(function: IrFunction): Boolean {
-        return restriction(function.descriptor.fqNameSafe)
+        return restriction(function.fqNameWhenAvailable)
     }
 }
 
@@ -68,7 +68,7 @@ internal open class IrFunctionMatcherContainer : IrFunctionMatcher {
         restrictions += restriction
     }
 
-    fun fqName(restriction: (FqName) -> Boolean) =
+    fun fqName(restriction: (FqName?) -> Boolean) =
         add(FqNameMatcher(restriction))
 
     fun parameterCount(restriction: (Int) -> Boolean) =
