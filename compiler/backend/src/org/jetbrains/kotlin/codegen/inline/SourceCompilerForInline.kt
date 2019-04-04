@@ -429,7 +429,7 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
             }
 
             val container = descriptor.containingDeclaration ?: error("No container for descriptor: $descriptor")
-            val parent = getContext(
+            val containerContext = getContext(
                 container,
                 descriptor,
                 state,
@@ -440,7 +440,7 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
             return when (descriptor) {
                 is ScriptDescriptor -> {
                     val earlierScripts = state.replSpecific.earlierScriptsForReplInterpreter
-                    parent.intoScript(
+                    containerContext.intoScript(
                         descriptor,
                         earlierScripts ?: emptyList(),
                         descriptor as ClassDescriptor, state.typeMapper
@@ -449,21 +449,27 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
                 is ClassDescriptor -> {
                     val kind =
                         when {
-                            DescriptorUtils.isInterface(descriptor) && innerDescriptor !is ClassDescriptor &&
-                                    !innerDescriptor.isCallableMemberWithJvmDefaultAnnotation() -> OwnerKind.DEFAULT_IMPLS
-
-                            descriptor.isInlineClass() -> OwnerKind.ERASED_INLINE_CLASS
-
-                            else -> OwnerKind.IMPLEMENTATION
+                            DescriptorUtils.isInterface(descriptor) &&
+                                    innerDescriptor !is ClassDescriptor &&
+                                    !innerDescriptor.isCallableMemberWithJvmDefaultAnnotation() ->
+                                OwnerKind.DEFAULT_IMPLS
+                            else ->
+                                OwnerKind.IMPLEMENTATION
                         }
 
                     additionalInners.addIfNotNull(
                         InnerClassConsumer.classForInnerClassRecord(descriptor, kind == OwnerKind.DEFAULT_IMPLS)
                     )
-                    parent.intoClass(descriptor, kind, state)
+
+                    if (descriptor.isInlineClass()) {
+                        containerContext.intoClass(descriptor, OwnerKind.IMPLEMENTATION, state)
+                            .intoClass(descriptor, OwnerKind.ERASED_INLINE_CLASS, state)
+                    } else {
+                        containerContext.intoClass(descriptor, kind, state)
+                    }
                 }
                 is FunctionDescriptor -> {
-                    parent.intoFunction(descriptor)
+                    containerContext.intoFunction(descriptor)
                 }
                 else -> {
                     throw IllegalStateException("Couldn't build context for $descriptor")
