@@ -155,7 +155,7 @@ class KotlinResolutionCallbacksImpl(
             .replaceBindingTrace(trace)
             .replaceContextDependency(lambdaInfo.contextDependency)
             .replaceExpectedType(approximatesExpectedType)
-            .replaceDataFlowInfo(psiCallArgument.lambdaInitialDataFlowInfo).let {
+            .replaceDataFlowInfo(psiCallArgument.dataFlowInfoBeforeThisArgument).let {
                 if (coroutineSession != null) it.replaceInferenceSession(coroutineSession) else it
             }
 
