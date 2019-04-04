@@ -1,37 +1,48 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.time
 
-public actual enum class DurationUnit {
+
+public actual enum class DurationUnit(internal val scale: Double) {
     /**
      * Time unit representing one nanosecond, which is 1/1000 of a microsecond.
      */
-    NANOSECONDS,
+    NANOSECONDS(1e0),
     /**
      * Time unit representing one microsecond, which is 1/1000 of a millisecond.
      */
-    MICROSECONDS,
+    MICROSECONDS(1e3),
     /**
      * Time unit representing one millisecond, which is 1/1000 of a second.
      */
-    MILLISECONDS,
+    MILLISECONDS(1e6),
     /**
      * Time unit representing one second.
      */
-    SECONDS,
+    SECONDS(1e9),
     /**
      * Time unit representing one minute.
      */
-    MINUTES,
+    MINUTES(60e9),
     /**
      * Time unit representing one hour.
      */
-    HOURS,
+    HOURS(3600e9),
     /**
-     * Time unit representing one day, which always equals 24 hours.
+     * Time unit representing one day, which is always equal to 24 hours.
      */
-    DAYS;
+    DAYS(86400e9);
 }
+
+public actual fun convertDurationUnit(value: Double, sourceUnit: DurationUnit, targetUnit: DurationUnit): Double {
+    val sourceCompareTarget = sourceUnit.scale.compareTo(targetUnit.scale)
+    return when {
+        sourceCompareTarget > 0 -> value * (sourceUnit.scale / targetUnit.scale)
+        sourceCompareTarget < 0 -> value / (targetUnit.scale / sourceUnit.scale)
+        else -> value
+    }
+}
+
