@@ -6,16 +6,14 @@
 package org.jetbrains.kotlin.idea.folding
 
 import com.intellij.codeInsight.folding.CodeFoldingManager
-import com.intellij.openapi.command.CommandProcessor
-import com.intellij.openapi.command.UndoConfirmationPolicy
 import com.intellij.openapi.editor.FoldRegion
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import java.io.File
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
-import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.idea.folding.AbstractKotlinFoldingTest.doTestWithSettings
 import org.jetbrains.kotlin.idea.imports.KotlinImportOptimizer
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import java.io.File
 
 class FoldingAfterOptimizeImportsTest : AbstractKotlinFoldingTest() {
     private val fixture: JavaCodeInsightTestFixture
@@ -41,11 +39,12 @@ class FoldingAfterOptimizeImportsTest : AbstractKotlinFoldingTest() {
             CodeFoldingManager.getInstance(fixture.project)!!.buildInitialFoldings(editor)
             getFoldingRegion(0).checkRegion(false, findStringWithPrefixes("// REGION BEFORE: "))
 
-            CommandProcessor.getInstance()?.executeCommand(fixture.project,
-                                                           KotlinImportOptimizer().processFile(fixture.file),
-                                                           "Optimize Imports", null,
-                                                           UndoConfirmationPolicy.DO_NOT_REQUEST_CONFIRMATION)
+            fixture.project.executeWriteCommand(
+                "Optimize import in tests"
+            ) { KotlinImportOptimizer().processFile(fixture.file).run() }
+
             getFoldingRegion(0).checkRegion(false, findStringWithPrefixes("// REGION AFTER: "))
+
             null
         }
     }
