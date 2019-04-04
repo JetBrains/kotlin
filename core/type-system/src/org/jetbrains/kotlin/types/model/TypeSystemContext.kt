@@ -223,6 +223,8 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
         status: CaptureStatus
     ): SimpleTypeMarker?
 
+    fun captureFromExpression(type: KotlinTypeMarker): KotlinTypeMarker?
+
     fun SimpleTypeMarker.asArgumentList(): TypeArgumentListMarker
 
     operator fun TypeArgumentListMarker.get(index: Int): TypeArgumentMarker {

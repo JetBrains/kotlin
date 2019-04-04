@@ -26,10 +26,9 @@ import org.jetbrains.kotlin.resolve.calls.inference.substitute
 import org.jetbrains.kotlin.resolve.calls.results.SimpleConstraintSystem
 import org.jetbrains.kotlin.types.TypeConstructorSubstitution
 import org.jetbrains.kotlin.types.checker.requireOrDescribe
-import org.jetbrains.kotlin.types.TypeSubstitutor
-import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
+import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
 import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 
@@ -38,7 +37,7 @@ class SimpleConstraintSystemImpl(constraintInjector: ConstraintInjector, builtIn
     val csBuilder: ConstraintSystemBuilder =
         system.getBuilder()
 
-    override fun registerTypeVariables(typeParameters: Collection<TypeParameterMarker>): TypeSubstitutor {
+    override fun registerTypeVariables(typeParameters: Collection<TypeParameterMarker>): TypeSubstitutorMarker {
 
         val substitutionMap = typeParameters.associate {
             requireOrDescribe(it is TypeParameterDescriptor, it)
@@ -58,8 +57,6 @@ class SimpleConstraintSystemImpl(constraintInjector: ConstraintInjector, builtIn
     }
 
     override fun addSubtypeConstraint(subType: KotlinTypeMarker, superType: KotlinTypeMarker) {
-        require(subType is UnwrappedType)
-        require(superType is UnwrappedType)
         csBuilder.addSubtypeConstraint(
             subType,
             superType,
