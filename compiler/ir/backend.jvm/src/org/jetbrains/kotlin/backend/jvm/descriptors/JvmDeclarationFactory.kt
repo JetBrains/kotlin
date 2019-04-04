@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.builders.declarations.buildField
+import org.jetbrains.kotlin.ir.builders.setSourceRange
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
@@ -50,33 +52,31 @@ class JvmDeclarationFactory(
     private val defaultImplsMethods = HashMap<IrSimpleFunction, IrSimpleFunction>()
     private val defaultImplsClasses = HashMap<IrClass, IrClass>()
 
-    override fun getFieldForEnumEntry(enumEntry: IrEnumEntry, type: IrType): IrField =
+    override fun getFieldForEnumEntry(enumEntry: IrEnumEntry, entryType: IrType): IrField =
         singletonFieldDeclarations.getOrPut(enumEntry) {
-            val symbol = IrFieldSymbolImpl(createEnumEntryFieldDescriptor(enumEntry.descriptor))
-            IrFieldImpl(
-                enumEntry.startOffset,
-                enumEntry.endOffset,
-                IrDeclarationOrigin.FIELD_FOR_ENUM_ENTRY,
-                symbol,
-                type
-            )
+            buildField {
+                setSourceRange(enumEntry)
+                name = enumEntry.name
+                type = enumEntry.parentAsClass.defaultType
+                origin = IrDeclarationOrigin.FIELD_FOR_ENUM_ENTRY
+                isFinal = true
+                isStatic = true
+            }.apply {
+                parent = enumEntry.parent
+            }
         }
 
     override fun getOuterThisField(innerClass: IrClass): IrField =
-        if (!innerClass.isInner) throw AssertionError("Class is not inner: ${innerClass.dump()}")
-        else outerThisDeclarations.getOrPut(innerClass) {
-            val outerClass = innerClass.parent as? IrClass
-                ?: throw AssertionError("No containing class for inner class ${innerClass.dump()}")
-
-            val symbol = IrFieldSymbolImpl(
-                JvmPropertyDescriptorImpl.createFinalField(
-                    Name.identifier("this$0"), outerClass.defaultType.toKotlinType(), innerClass.descriptor,
-                    Annotations.EMPTY, JavaVisibilities.PACKAGE_VISIBILITY, Opcodes.ACC_SYNTHETIC, SourceElement.NO_SOURCE
-                )
-            )
-
-            IrFieldImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, DeclarationFactory.FIELD_FOR_OUTER_THIS, symbol, outerClass.defaultType).also {
-                it.parent = innerClass
+        outerThisDeclarations.getOrPut(innerClass) {
+            assert(innerClass.isInner) { "Class is not inner: ${innerClass.dump()}" }
+            buildField {
+                name = Name.identifier("this$0")
+                type = innerClass.parentAsClass.defaultType
+                origin = DeclarationFactory.FIELD_FOR_OUTER_THIS
+                visibility = JavaVisibilities.PACKAGE_VISIBILITY
+                isFinal = true
+            }.apply {
+                parent = innerClass
             }
         }
 
@@ -124,51 +124,19 @@ class JvmDeclarationFactory(
         }
     }
 
-
-    private fun createEnumEntryFieldDescriptor(enumEntryDescriptor: ClassDescriptor): PropertyDescriptor {
-        assert(enumEntryDescriptor.kind == ClassKind.ENUM_ENTRY) { "Should be enum entry: $enumEntryDescriptor" }
-
-        val enumClassDescriptor = enumEntryDescriptor.containingDeclaration as ClassDescriptor
-        assert(enumClassDescriptor.kind == ClassKind.ENUM_CLASS) { "Should be enum class: $enumClassDescriptor" }
-
-        return JvmPropertyDescriptorImpl.createStaticVal(
-            enumEntryDescriptor.name,
-            enumClassDescriptor.defaultType,
-            enumClassDescriptor,
-            enumEntryDescriptor.annotations,
-            Modality.FINAL,
-            Visibilities.PUBLIC,
-            Opcodes.ACC_ENUM,
-            enumEntryDescriptor.source
-        )
-    }
-
     override fun getFieldForObjectInstance(singleton: IrClass): IrField =
         singletonFieldDeclarations.getOrPut(singleton) {
-            val symbol = IrFieldSymbolImpl(createObjectInstanceFieldDescriptor(singleton.descriptor))
-            return IrFieldImpl(
-                UNDEFINED_OFFSET,
-                UNDEFINED_OFFSET,
-                IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE,
-                symbol,
-                singleton.defaultType
-            )
+            val isNotMappedCompanion = singleton.isCompanion && !isMappedIntrinsicCompanionObject(singleton.descriptor)
+            buildField {
+                name = if (isNotMappedCompanion) singleton.name else Name.identifier(JvmAbi.INSTANCE_FIELD)
+                type = singleton.defaultType
+                origin = IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE
+                isFinal = true
+                isStatic = true
+            }.apply {
+                parent = if (isNotMappedCompanion) singleton.parent else singleton
+            }
         }
-
-    private fun createObjectInstanceFieldDescriptor(objectDescriptor: ClassDescriptor): PropertyDescriptor {
-        assert(objectDescriptor.kind == ClassKind.OBJECT) { "Should be an object: $objectDescriptor" }
-
-        val isNotMappedCompanion = objectDescriptor.isCompanionObject && !isMappedIntrinsicCompanionObject(objectDescriptor)
-        val name = if (isNotMappedCompanion) objectDescriptor.name else Name.identifier("INSTANCE")
-        val containingDeclaration = if (isNotMappedCompanion) objectDescriptor.containingDeclaration else objectDescriptor
-        return PropertyDescriptorImpl.create(
-            containingDeclaration,
-            Annotations.EMPTY, Modality.FINAL, Visibilities.PUBLIC, false,
-            name,
-            CallableMemberDescriptor.Kind.SYNTHESIZED, SourceElement.NO_SOURCE, /* lateInit = */ false, /* isConst = */ false,
-            /* isExpect = */ false, /* isActual = */ false, /* isExternal = */ false, /* isDelegated = */ false
-        ).initialize(objectDescriptor.defaultType)
-    }
 
     fun getDefaultImplsFunction(interfaceFun: IrSimpleFunction): IrSimpleFunction {
         val parent = interfaceFun.parentAsClass
