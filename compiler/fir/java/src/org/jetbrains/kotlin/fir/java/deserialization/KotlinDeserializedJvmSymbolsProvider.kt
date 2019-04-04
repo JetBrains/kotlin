@@ -13,7 +13,10 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.deserialization.FirDeserializationContext
 import org.jetbrains.kotlin.fir.deserialization.deserializeClassToSymbol
 import org.jetbrains.kotlin.fir.resolve.AbstractFirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.buildUseSiteScope
 import org.jetbrains.kotlin.fir.resolve.getOrPut
+import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
+import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassDeclaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
@@ -55,6 +58,11 @@ class KotlinDeserializedJvmSymbolsProvider(
 
             packageProto to FirDeserializationContext.createForPackage(packageFqName, packageProto, nameResolver, session)
         }
+    }
+
+    override fun getClassUseSiteMemberScope(classId: ClassId, useSiteSession: FirSession): FirScope? {
+        val symbol = this.getClassLikeSymbolByFqName(classId) ?: return null
+        return symbol.firUnsafe<FirRegularClass>().buildUseSiteScope(session)
     }
 
     override fun getClassLikeSymbolByFqName(classId: ClassId): ConeClassLikeSymbol? {

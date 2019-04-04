@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.fir.resolve.impl
 
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
+import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
 import org.jetbrains.kotlin.name.ClassId
@@ -14,6 +16,10 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 class FirCompositeSymbolProvider(val providers: List<FirSymbolProvider>) : FirSymbolProvider {
+    override fun getClassUseSiteMemberScope(classId: ClassId, useSiteSession: FirSession): FirScope? {
+        return providers.firstNotNullResult { it.getClassUseSiteMemberScope(classId, useSiteSession) }
+    }
+
     override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<ConeCallableSymbol> {
         return providers.flatMap { it.getTopLevelCallableSymbols(packageFqName, name) }
     }

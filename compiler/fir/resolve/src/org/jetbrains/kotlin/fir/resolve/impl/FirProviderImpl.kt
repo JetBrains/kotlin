@@ -10,6 +10,9 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.FirProvider
+import org.jetbrains.kotlin.fir.resolve.buildUseSiteScope
+import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
+import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassDeclaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
@@ -188,6 +191,11 @@ class FirProviderImpl(val session: FirSession) : FirProvider {
         } else {
             state.setFrom(newState)
         }
+    }
+
+    override fun getClassUseSiteMemberScope(classId: ClassId, useSiteSession: FirSession): FirScope? {
+        val symbol = this.getClassLikeSymbolByFqName(classId) ?: return null
+        return symbol.firUnsafe<FirRegularClass>().buildUseSiteScope(useSiteSession)
     }
 
 }
