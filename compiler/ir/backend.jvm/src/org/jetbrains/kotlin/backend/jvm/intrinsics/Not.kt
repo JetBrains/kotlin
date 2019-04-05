@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.org.objectweb.asm.Label
 
 class Not : IntrinsicMethod() {
-    class BooleanNegation(val value: BooleanValue) : BooleanValue(value.codegen) {
+    class BooleanNegation(val value: BooleanValue) : BooleanValue(value.mv) {
         override fun jumpIfFalse(target: Label) = value.jumpIfTrue(target)
         override fun jumpIfTrue(target: Label) = value.jumpIfFalse(target)
     }

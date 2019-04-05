@@ -30,10 +30,10 @@ object JavaClassProperty : IntrinsicMethod() {
         }
         if (isPrimitive(value.type)) {
             value.discard()
-            value.codegen.mv.getstatic(boxType(value.type).internalName, "TYPE", "Ljava/lang/Class;")
+            value.mv.getstatic(boxType(value.type).internalName, "TYPE", "Ljava/lang/Class;")
         } else {
             value.materialize()
-            value.codegen.mv.invokevirtual("java/lang/Object", "getClass", "()Ljava/lang/Class;", false)
+            value.mv.invokevirtual("java/lang/Object", "getClass", "()Ljava/lang/Class;", false)
         }
     }
 
