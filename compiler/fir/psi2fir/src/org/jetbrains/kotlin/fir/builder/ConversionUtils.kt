@@ -162,7 +162,6 @@ internal fun IElementType.toFirOperation(): FirOperation =
         KtTokens.EXCLEQEQEQ -> FirOperation.NOT_IDENTITY
         KtTokens.IN_KEYWORD -> FirOperation.IN
         KtTokens.NOT_IN -> FirOperation.NOT_IN
-        KtTokens.RANGE -> FirOperation.RANGE
 
         KtTokens.EQ -> FirOperation.ASSIGN
         KtTokens.PLUSEQ -> FirOperation.PLUS_ASSIGN

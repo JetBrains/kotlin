@@ -9,7 +9,6 @@ import java.util.*
 
 enum class FirOperation(val operator: String = "???") {
     // Binary
-    RANGE(".."),
     EQ("=="),
     NOT_EQ("!="),
     IDENTITY("==="),
