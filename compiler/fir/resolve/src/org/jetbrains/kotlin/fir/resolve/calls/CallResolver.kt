@@ -230,7 +230,7 @@ fun createSimpleConsumer(
     callInfo: CallInfo,
     inferenceComponents: InferenceComponents
 ): TowerDataConsumer {
-    val factory = CandidateFactory(inferenceComponents)
+    val factory = CandidateFactory(inferenceComponents, callInfo)
     return if (callInfo.explicitReceiver != null) {
         ExplicitReceiverTowerDataConsumer(
             session,
@@ -245,26 +245,6 @@ fun createSimpleConsumer(
         )
     } else {
         NoExplicitReceiverTowerDataConsumer(session, name, token, factory)
-    }
-}
-
-class CandidateFactory(
-    val inferenceComponents: InferenceComponents
-) {
-
-    val baseSystem: ConstraintStorage
-
-    init {
-        val system = inferenceComponents.createConstraintSystem()
-        baseSystem = system.asReadOnlyStorage()
-    }
-
-    fun createCandidate(
-        symbol: ConeSymbol,
-        boundDispatchReceiver: ReceiverValueWithPossibleTypes?,
-        explicitReceiverKind: ExplicitReceiverKind
-    ): Candidate {
-        return Candidate(symbol, explicitReceiverKind, inferenceComponents, baseSystem)
     }
 }
 

@@ -27,6 +27,10 @@ interface ConeSubstitutor {
     }
 }
 
+fun ConeSubstitutor.substituteOrNull(type: ConeKotlinType?): ConeKotlinType? {
+    return type?.let { substituteOrNull(it) }
+}
+
 abstract class AbstractConeSubstitutor : ConeSubstitutor {
     private fun wrapProjection(old: ConeKotlinTypeProjection, newType: ConeKotlinType): ConeKotlinTypeProjection {
         return when (old) {
