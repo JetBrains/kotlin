@@ -246,6 +246,12 @@ message IrFunctionReference {
   required MemberAccessCommon member_access = 3;
 }
 
+message IrLocalDelegatedPropertyReference {
+  required IrSymbol delegate = 1;
+  optional IrSymbol getter = 2;
+  optional IrSymbol setter = 3;
+  required IrSymbol symbol = 4;
+}
 
 message IrPropertyReference {
   optional IrSymbol field = 1;
@@ -478,6 +484,7 @@ message IrOperation {
     IrWhile while = 28;
     IrDynamicMemberExpression dynamic_member = 29;
     IrDynamicOperatorExpression dynamic_operator = 30;
+    IrLocalDelegatedPropertyReference local_delegated_property_reference = 31;
   }
 }
 
@@ -549,6 +556,16 @@ message IrField {
   required bool is_external = 6;
   required bool is_static = 7;
   required IrTypeIndex type = 8;
+}
+
+message IrLocalDelegatedProperty {
+  required String name = 1;
+  required IrTypeIndex type = 2;
+  required bool is_var = 3;
+  required IrVariable delegate = 4;
+  optional IrFunction getter = 5;
+  optional IrFunction setter = 6;
+  required IrSymbol symbol = 7;
 }
 
 message IrProperty {
@@ -661,6 +678,7 @@ message IrDeclarator {
     IrTypeParameter ir_type_parameter = 9;
     IrVariable ir_variable = 10;
     IrValueParameter ir_value_parameter = 11;
+    IrLocalDelegatedProperty ir_local_delegated_property = 12;
   }
 }
 
