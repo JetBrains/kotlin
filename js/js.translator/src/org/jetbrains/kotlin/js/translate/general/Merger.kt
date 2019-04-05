@@ -190,7 +190,7 @@ class Merger(
         return rootNode
     }
 
-    private val importedFunctionWrappers = mutableMapOf<String, JsGlobalBlock>()
+    private val additionalFakeOverrides = mutableListOf<JsStatement>()
 
     private fun mergeNames() {
         for (fragment in fragments) {
@@ -204,15 +204,23 @@ class Merger(
                 }
             }
 
+            fragment.inlinedLocalDeclarations.forEach { (_, imports) ->
+                imports.statements.forEach { s ->
+                    if (s.isFakeOverrideAssignment()) {
+                        additionalFakeOverrides += s
+                    } else {
+                        declarationBlock.statements += s
+                    }
+                }
+            }
+
             declarationBlock.statements += fragment.declarationBlock
             initializerBlock.statements += fragment.initializerBlock
             fragment.tryUpdateTests()
             fragment.tryUpdateMain()
             addExportStatements(fragment)
 
-            fragment.inlinedLocalDeclarations.forEach { (tag, imports) ->
-                importedFunctionWrappers.putIfAbsent(tag, imports)
-            }
+
 
             classes += fragment.classes
         }
@@ -240,18 +248,6 @@ class Merger(
             addImportForInlineDeclarationIfNecessary()
             this += importBlock.statements
             addClassPrototypes(this)
-
-            // TODO better placing?
-            val additionalFakeOverrides = mutableListOf<JsStatement>()
-            importedFunctionWrappers.values.forEach { block ->
-                block.statements.forEach { s ->
-                    if (s.isFakeOverrideAssignment()) {
-                        additionalFakeOverrides += s
-                    } else {
-                        this += s
-                    }
-                }
-            }
 
             this += declarationBlock.statements
             this += exportBlock.statements
