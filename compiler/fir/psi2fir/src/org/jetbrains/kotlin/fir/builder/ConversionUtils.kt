@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.constants.evaluate.*
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal fun String.parseCharacter(): Char? {
     // Strip the quotes
@@ -277,6 +278,48 @@ internal fun Array<KtWhenCondition>.toFirWhenCondition(
         }
     }
     return firCondition!!
+}
+
+internal fun Array<KtStringTemplateEntry>.toInterpolatingCall(
+    session: FirSession,
+    base: KtStringTemplateExpression,
+    convert: KtExpression?.(String) -> FirExpression
+): FirExpression {
+    val sb = StringBuilder()
+    var hasExpressions = false
+    var result: FirExpression? = null
+    for (entry in this) {
+        val nextArgument = when (entry) {
+            is KtLiteralStringTemplateEntry -> {
+                sb.append(entry.text)
+                FirConstExpressionImpl(session, entry, IrConstKind.String, entry.text)
+            }
+            is KtEscapeStringTemplateEntry -> {
+                sb.append(entry.unescapedValue)
+                FirConstExpressionImpl(session, entry, IrConstKind.String, entry.unescapedValue)
+            }
+            is KtStringTemplateEntryWithExpression -> {
+                val innerExpression = entry.expression
+                hasExpressions = true
+                innerExpression.convert("Incorrect template argument")
+            }
+            else -> {
+                hasExpressions = true
+                FirErrorExpressionImpl(
+                    session, entry, "Incorrect template entry: ${entry.text}"
+                )
+            }
+        }
+        result = when (result) {
+            null -> nextArgument
+            else -> FirFunctionCallImpl(session, base).apply {
+                calleeReference = FirSimpleNamedReference(session, base, OperatorNameConventions.PLUS)
+                explicitReceiver = result
+                arguments += nextArgument
+            }
+        }
+    }
+    return if (hasExpressions) result!! else FirConstExpressionImpl(session, base, IrConstKind.String, sb.toString())
 }
 
 internal fun generateIncrementOrDecrementBlock(

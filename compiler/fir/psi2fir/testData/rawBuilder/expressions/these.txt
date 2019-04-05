@@ -16,7 +16,7 @@ FILE: these.kt
             }
 
         public? final? fun String.extension(): Int {
-            ^extension plus#(this@Some.bar#(), this#.length#)
+            ^extension this@Some.bar#().plus#(this#.length#)
         }
 
     }
@@ -26,7 +26,7 @@ FILE: these.kt
     public? final? fun test(some: Some): Int {
         ^test with#(some#, with@fun <implicit>.<anonymous>(): <implicit> {
             ^  {
-                plus#(this#.foo#(), this@with.extension#())
+                this#.foo#().plus#(this@with.extension#())
             }
 
         }

@@ -1,9 +1,9 @@
 FILE: calls.kt
     public? final? infix fun distance(x: Int, y: Int): <implicit> {
-        ^distance plus#(x#, y#)
+        ^distance x#.plus#(y#)
     }
     public? final? fun test(): Int {
-        ^test distance#(Int(3), Int(4))
+        ^test Int(3).distance#(Int(4))
     }
     public? final? fun testRegular(): Int {
         ^testRegular distance#(Int(3), Int(4))

@@ -1,6 +1,6 @@
 FILE: for.kt
     public? final? fun foo(): kotlin/Unit {
-        lval <range>: <implicit> = rangeTo#(Int(1), Int(10))
+        lval <range>: <implicit> = Int(1).rangeTo#(Int(10))
         lval <iterator>: <implicit> = <range>#.iterator#()
         while(<iterator>#.hasNext#()) {
             lval i: <implicit> = <iterator>#.next#()
@@ -41,7 +41,7 @@ FILE: for.kt
             lval <destruct>: <implicit> = <iterator>#.next#()
             lval x: <implicit> = <destruct>#.component1()
             lval y: <implicit> = <destruct>#.component2()
-            println#(plus#(String(x = ), x#, String( y = ), y#))
+            println#(String(x = ).plus#(x#).plus#(String( y = )).plus#(y#))
         }
 
     }

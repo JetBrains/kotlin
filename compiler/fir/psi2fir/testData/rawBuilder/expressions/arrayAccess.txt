@@ -12,5 +12,5 @@ FILE: arrayAccess.kt
 
     }
     public? final? fun test(a: IntArray, w: Wrapper): <implicit> {
-        ^test plus#(plus#(plus#(a#[Int(0)], a#[p#]), a#[foo#()]), w#.v#[Int(0)])
+        ^test a#[Int(0)].plus#(a#[p#]).plus#(a#[foo#()]).plus#(w#.v#[Int(0)])
     }

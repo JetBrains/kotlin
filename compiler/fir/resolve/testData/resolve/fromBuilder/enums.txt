@@ -54,7 +54,7 @@ FILE: enums.kt
 
         }
 
-        public final val g: R|kotlin/Double| = <Unresolved name: div>#(<Unresolved name: times>#(<Unresolved name: G>#, R|/Planet.m|), <Unresolved name: times>#(R|/Planet.r|, R|/Planet.r|))
+        public final val g: R|kotlin/Double| = <Unresolved name: G>#.<Unresolved name: times>#(R|/Planet.m|).<Unresolved name: div>#(R|/Planet.r|.<Ambiguity: times, [kotlin/Double.times, kotlin/Double.times, kotlin/Double.times, kotlin/Double.times, kotlin/Double.times, kotlin/Double.times]>#(R|/Planet.r|))
             public get(): R|kotlin/Double|
 
         public abstract fun sayHello(): R|kotlin/Unit|

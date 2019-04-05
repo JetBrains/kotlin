@@ -251,6 +251,7 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
                         it is KtLambdaExpression ||
                         it is KtTypeConstraintList ||
                         it is KtTypeConstraint ||
+                        it is KtStringTemplateExpression && it.entries.size <= 1 ||
                         it is KtDestructuringDeclaration && it.parent is KtParameter ||
                         it is KtArrayAccessExpression && it.parent is KtBinaryExpression ||
                         it is KtNameReferenceExpression &&

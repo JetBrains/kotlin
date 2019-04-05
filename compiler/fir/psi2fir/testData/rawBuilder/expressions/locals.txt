@@ -7,14 +7,14 @@ FILE: locals.kt
                 public? get(): Int
 
             public? final? fun diff(): <implicit> {
-                ^diff minus#(pp#, p#)
+                ^diff pp#.minus#(p#)
             }
 
         }
 
         lval x: <implicit> = Local#(Int(42)).diff#()
         local final? fun sum(y: Int, z: Int, f: ( (Int, Int) -> Int )): Int {
-            ^sum plus#(x#, f#(plus#(y#, z#)))
+            ^sum x#.plus#(f#(y#.plus#(z#)))
         }
 
         lval code: <implicit> = object : Any {
@@ -27,7 +27,7 @@ FILE: locals.kt
         }
         .foo#()
         ^withLocals sum#(code#, Local#(Int(1)).diff#(), fun <anonymous>(x: Int, y: Int): <implicit> {
-            ^ plus#(x#, y#)
+            ^ x#.plus#(y#)
         }
         )
     }

@@ -17,7 +17,7 @@ FILE: lambda.kt
             ^  {
                 lval x: <implicit> = t#.x#
                 lval y: <implicit> = t#.y#
-                plus#(x#, y#)
+                x#.plus#(y#)
             }
 
         }
@@ -26,7 +26,7 @@ FILE: lambda.kt
             ^  {
                 lval x: <implicit> = <destruct>#.component1()
                 lval y: <implicit> = <destruct>#.component2()
-                plus#(x#, y#)
+                x#.plus#(y#)
             }
 
         }

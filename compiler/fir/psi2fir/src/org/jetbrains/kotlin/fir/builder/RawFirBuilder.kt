@@ -923,41 +923,7 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
             generateConstantExpressionByLiteral(session, expression)
 
         override fun visitStringTemplateExpression(expression: KtStringTemplateExpression, data: Unit): FirElement {
-            val sb = StringBuilder()
-            var hasExpressions = false
-            val interpolatingCall = FirFunctionCallImpl(session, expression).apply {
-                calleeReference = FirSimpleNamedReference(this@RawFirBuilder.session, expression, OperatorNameConventions.PLUS)
-                for (entry in expression.entries) {
-                    when (entry) {
-                        is KtLiteralStringTemplateEntry -> {
-                            sb.append(entry.text)
-                            arguments += FirConstExpressionImpl(this@RawFirBuilder.session, entry, IrConstKind.String, entry.text)
-                        }
-                        is KtEscapeStringTemplateEntry -> {
-                            sb.append(entry.unescapedValue)
-                            arguments += FirConstExpressionImpl(this@RawFirBuilder.session, entry, IrConstKind.String, entry.unescapedValue)
-                        }
-                        is KtStringTemplateEntryWithExpression -> {
-                            val innerExpression = entry.expression
-                            if (innerExpression != null) {
-                                arguments += innerExpression.toFirExpression("Incorrect template argument")
-                                hasExpressions = true
-                            }
-                        }
-                        else -> {
-                            arguments += FirErrorExpressionImpl(
-                                this@RawFirBuilder.session, expression, "Incorrect template entry: ${entry.text}"
-                            )
-                            hasExpressions = true
-                        }
-                    }
-                }
-            }
-            return if (hasExpressions) {
-                interpolatingCall
-            } else {
-                FirConstExpressionImpl(session, expression, IrConstKind.String, sb.toString())
-            }
+            return expression.entries.toInterpolatingCall(session, expression) { toFirExpression(it) }
         }
 
         override fun visitReturnExpression(expression: KtReturnExpression, data: Unit): FirElement {
@@ -1166,13 +1132,13 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
             val operationToken = expression.operationToken
             val leftArgument = expression.left.toFirExpression("No left operand")
             val rightArgument = expression.right.toFirExpression("No right operand")
-            if (operationToken == ELVIS) {
-                return leftArgument.generateNotNullOrOther(session, rightArgument, "elvis", expression)
+            when (operationToken) {
+                ELVIS ->
+                    return leftArgument.generateNotNullOrOther(session, rightArgument, "elvis", expression)
+                ANDAND, OROR ->
+                    return leftArgument.generateLazyLogicalOperation(session, rightArgument, operationToken == ANDAND, expression)
             }
             val conventionCallName = operationToken.toBinaryName()
-            if (operationToken == ANDAND || operationToken == OROR) {
-                return leftArgument.generateLazyLogicalOperation(session, rightArgument, operationToken == ANDAND, expression)
-            }
             return if (conventionCallName != null || operationToken == IDENTIFIER) {
                 FirFunctionCallImpl(
                     session, expression
@@ -1181,6 +1147,8 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
                         this@RawFirBuilder.session, expression.operationReference,
                         conventionCallName ?: expression.operationReference.getReferencedNameAsName()
                     )
+                    explicitReceiver = leftArgument
+                    arguments += rightArgument
                 }
             } else {
                 val firOperation = operationToken.toFirOperation()
@@ -1189,11 +1157,11 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
                         toFirExpression("Incorrect expression in assignment: ${expression.text}")
                     }
                 } else {
-                    FirOperatorCallImpl(session, expression, firOperation)
+                    FirOperatorCallImpl(session, expression, firOperation).apply {
+                        arguments += leftArgument
+                        arguments += rightArgument
+                    }
                 }
-            }.apply {
-                arguments += leftArgument
-                arguments += rightArgument
             }
         }
 
