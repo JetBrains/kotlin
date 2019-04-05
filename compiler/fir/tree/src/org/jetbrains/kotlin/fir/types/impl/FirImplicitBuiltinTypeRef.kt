@@ -57,3 +57,9 @@ class FirImplicitBooleanTypeRef(
     session: FirSession,
     psi: PsiElement?
 ) : FirImplicitBuiltinTypeRef(session, psi, StandardClassIds.Boolean)
+
+class FirImplicitNothingTypeRef(
+    session: FirSession,
+    psi: PsiElement?
+) : FirImplicitBuiltinTypeRef(session, psi, StandardClassIds.Nothing)
+

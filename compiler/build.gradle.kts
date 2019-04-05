@@ -47,6 +47,7 @@ dependencies {
     testCompileOnly(project(":kotlin-test:kotlin-test-junit"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(projectTests(":compiler:fir:psi2fir"))
+    testCompile(projectTests(":compiler:fir:fir2ir"))
     testCompile(projectTests(":compiler:fir:resolve"))
     testCompile(projectTests(":generators:test-generator"))
     testCompile(project(":compiler:ir.ir2cfg"))

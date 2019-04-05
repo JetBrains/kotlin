@@ -1,0 +1,68 @@
+FILE fqName:<root> fileName:/implicitCastToNonNull.kt
+  FUN name:test1 visibility:public modality:FINAL <> (x:kotlin.String?) returnType:kotlin.Int
+    VALUE_PARAMETER name:x index:0 type:kotlin.String?
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun test1 (x: kotlin.String?): kotlin.Int declared in <root>'
+        WHEN type=kotlin.Int origin=IF
+          BRANCH
+            if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+              arg0: GET_VAR 'x: kotlin.String? declared in <root>.test1' type=kotlin.String? origin=null
+              arg1: CONST Null type=kotlin.Nothing? value=null
+            then: CONST Int type=kotlin.Int value=0
+          BRANCH
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: ERROR_CALL 'Unresolved reference: <Unresolved name: length>#' type=IrErrorType
+  FUN name:test2 visibility:public modality:FINAL <T> (x:T of <root>.test2) returnType:kotlin.Int
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[]
+    VALUE_PARAMETER name:x index:0 type:T of <root>.test2
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun test2 <T> (x: T of <root>.test2): kotlin.Int declared in <root>'
+        WHEN type=kotlin.Int origin=IF
+          BRANCH
+            if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+              arg0: GET_VAR 'x: T of <root>.test2 declared in <root>.test2' type=T of <root>.test2 origin=null
+              arg1: CONST Null type=kotlin.Nothing? value=null
+            then: CONST Int type=kotlin.Int value=0
+          BRANCH
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: ERROR_CALL 'Unresolved reference: <Unresolved name: length>#' type=IrErrorType
+  FUN name:test3 visibility:public modality:FINAL <T> (x:kotlin.Any) returnType:kotlin.Int [inline]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[]
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun test3 <T> (x: kotlin.Any): kotlin.Int [inline] declared in <root>'
+        WHEN type=kotlin.Int origin=IF
+          BRANCH
+            if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=T of <root>.test3
+              GET_VAR 'x: kotlin.Any declared in <root>.test3' type=kotlin.Any origin=null
+            then: CONST Int type=kotlin.Int value=0
+          BRANCH
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: ERROR_CALL 'Unresolved reference: <Unresolved name: length>#' type=IrErrorType
+  FUN name:test4 visibility:public modality:FINAL <T> (x:kotlin.Any?) returnType:kotlin.Int [inline]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[]
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any?
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun test4 <T> (x: kotlin.Any?): kotlin.Int [inline] declared in <root>'
+        WHEN type=kotlin.Int origin=IF
+          BRANCH
+            if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=T of <root>.test4
+              GET_VAR 'x: kotlin.Any? declared in <root>.test4' type=kotlin.Any? origin=null
+            then: CONST Int type=kotlin.Int value=0
+          BRANCH
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: ERROR_CALL 'Unresolved reference: <Unresolved name: length>#' type=IrErrorType
+  FUN name:test5 visibility:public modality:FINAL <T, S> (x:T of <root>.test5, fn:kotlin.Function1) returnType:kotlin.Unit
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[]
+    TYPE_PARAMETER name:S index:1 variance: superTypes:[]
+    VALUE_PARAMETER name:x index:0 type:T of <root>.test5
+    VALUE_PARAMETER name:fn index:1 type:kotlin.Function1
+    BLOCK_BODY
+      WHEN type=kotlin.Unit origin=IF
+        BRANCH
+          if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+            $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+              arg0: GET_VAR 'x: T of <root>.test5 declared in <root>.test5' type=T of <root>.test5 origin=null
+              arg1: CONST Null type=kotlin.Nothing? value=null
+          then: ERROR_CALL 'Unresolved reference: <Unresolved name: fn>#' type=IrErrorType
+            GET_VAR 'x: T of <root>.test5 declared in <root>.test5' type=T of <root>.test5 origin=null

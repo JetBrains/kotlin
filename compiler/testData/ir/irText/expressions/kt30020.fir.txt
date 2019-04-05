@@ -1,0 +1,245 @@
+FILE fqName:<root> fileName:/kt30020.kt
+  CLASS INTERFACE name:X modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.X
+    PROPERTY name:xs visibility:public modality:ABSTRACT [val]
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-xs> visibility:public modality:ABSTRACT <> ($this:<root>.X) returnType:kotlin.collections.MutableList<kotlin.Any>
+        correspondingProperty: PROPERTY name:xs visibility:public modality:ABSTRACT [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.X
+    FUN name:f visibility:public modality:ABSTRACT <> ($this:<root>.X) returnType:kotlin.collections.MutableList<kotlin.Any>
+      $this: VALUE_PARAMETER name:<this> type:<root>.X
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  FUN name:test visibility:public modality:FINAL <> (x:<root>.X, nx:<root>.X?) returnType:kotlin.Unit
+    VALUE_PARAMETER name:x index:0 type:<root>.X
+    VALUE_PARAMETER name:nx index:1 type:<root>.X?
+    BLOCK_BODY
+      ERROR_CALL 'Unresolved reference: R|/X.xs|' type=IrErrorType
+      VAR name:<complex-set> type:kotlin.collections.MutableList<kotlin.Any> [val]
+        CALL 'public abstract fun f (): kotlin.collections.MutableList<kotlin.Any> declared in <root>.X' type=kotlin.collections.MutableList<kotlin.Any> origin=null
+      ERROR_CALL 'Unresolved reference: R|<local>/<complex-set>|' type=IrErrorType
+      VAR name:<complex-set> type:kotlin.collections.MutableList<kotlin.Int> [val]
+        TYPE_OP type=kotlin.collections.MutableList<kotlin.Int> origin=CAST typeOperand=kotlin.collections.MutableList<kotlin.Int>
+          CALL 'public abstract fun <get-xs> (): kotlin.collections.MutableList<kotlin.Any> declared in <root>.X' type=kotlin.collections.MutableList<kotlin.Any> origin=null
+      ERROR_CALL 'Unresolved reference: R|<local>/<complex-set>|' type=IrErrorType
+      VAR name:<complex-set> type:kotlin.collections.MutableList<kotlin.Int> [val]
+        TYPE_OP type=kotlin.collections.MutableList<kotlin.Int> origin=CAST typeOperand=kotlin.collections.MutableList<kotlin.Int>
+          CALL 'public abstract fun f (): kotlin.collections.MutableList<kotlin.Any> declared in <root>.X' type=kotlin.collections.MutableList<kotlin.Any> origin=null
+      ERROR_CALL 'Unresolved reference: R|<local>/<complex-set>|' type=IrErrorType
+      VAR name:<complex-set> type:IrErrorType [val]
+        BLOCK type=IrErrorType origin=EXCLEXCL
+          VAR name:<bangbang> type:kotlin.collections.MutableList<kotlin.Any> [val]
+            CALL 'public abstract fun <get-xs> (): kotlin.collections.MutableList<kotlin.Any> declared in <root>.X' type=kotlin.collections.MutableList<kotlin.Any> origin=null
+          WHEN type=IrErrorType origin=EXCLEXCL
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                arg0: GET_VAR 'val <bangbang>: kotlin.collections.MutableList<kotlin.Any> [val] declared in <root>.test' type=kotlin.collections.MutableList<kotlin.Any> origin=null
+                arg1: CONST Null type=kotlin.Nothing? value=null
+              then: THROW type=kotlin.Nothing
+                ERROR_CALL 'Unresolved reference: <Unresolved name: KotlinNullPointerException>#' type=IrErrorType
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: GET_VAR 'val <bangbang>: kotlin.collections.MutableList<kotlin.Any> [val] declared in <root>.test' type=kotlin.collections.MutableList<kotlin.Any> origin=null
+      ERROR_CALL 'Unresolved reference: R|<local>/<complex-set>|' type=IrErrorType
+      VAR name:<complex-set> type:IrErrorType [val]
+        BLOCK type=IrErrorType origin=EXCLEXCL
+          VAR name:<bangbang> type:kotlin.collections.MutableList<kotlin.Any> [val]
+            CALL 'public abstract fun f (): kotlin.collections.MutableList<kotlin.Any> declared in <root>.X' type=kotlin.collections.MutableList<kotlin.Any> origin=null
+          WHEN type=IrErrorType origin=EXCLEXCL
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                arg0: GET_VAR 'val <bangbang>: kotlin.collections.MutableList<kotlin.Any> [val] declared in <root>.test' type=kotlin.collections.MutableList<kotlin.Any> origin=null
+                arg1: CONST Null type=kotlin.Nothing? value=null
+              then: THROW type=kotlin.Nothing
+                ERROR_CALL 'Unresolved reference: <Unresolved name: KotlinNullPointerException>#' type=IrErrorType
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: GET_VAR 'val <bangbang>: kotlin.collections.MutableList<kotlin.Any> [val] declared in <root>.test' type=kotlin.collections.MutableList<kotlin.Any> origin=null
+      ERROR_CALL 'Unresolved reference: R|<local>/<complex-set>|' type=IrErrorType
+  FUN name:testExtensionReceiver visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    BLOCK_BODY
+      ERROR_CALL 'Unresolved reference: this#' type=IrErrorType
+  CLASS CLASS name:AML modality:ABSTRACT visibility:public superTypes:[kotlin.collections.MutableList<kotlin.Int>]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.AML
+    CONSTRUCTOR visibility:public <> () returnType:<root>.AML [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:AML modality:ABSTRACT visibility:public superTypes:[kotlin.collections.MutableList<kotlin.Int>]'
+    FUN name:testExplicitThis visibility:public modality:FINAL <> ($this:<root>.AML) returnType:kotlin.Unit
+      $this: VALUE_PARAMETER name:<this> type:<root>.AML
+      BLOCK_BODY
+        ERROR_CALL 'Unresolved reference: this#' type=IrErrorType
+    CLASS CLASS name:Inner modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.AML.Inner
+      CONSTRUCTOR visibility:public <> () returnType:<root>.AML.Inner [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Inner modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]'
+      FUN name:testOuterThis visibility:public modality:FINAL <> ($this:<root>.AML.Inner) returnType:kotlin.Unit
+        $this: VALUE_PARAMETER name:<this> type:<root>.AML.Inner
+        BLOCK_BODY
+          ERROR_CALL 'Unresolved reference: this@AML' type=IrErrorType
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
+        overridden:
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+        VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int
+        overridden:
+          public open fun hashCode (): kotlin.Int declared in kotlin.Any
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String
+        overridden:
+          public open fun toString (): kotlin.String declared in kotlin.Any
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:add visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableList, element:E of <uninitialized parent>) returnType:kotlin.Boolean
+      overridden:
+        public abstract fun add (element: E of <uninitialized parent>): kotlin.Boolean declared in kotlin.collections.MutableList
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableList
+      VALUE_PARAMETER name:element index:0 type:E of <uninitialized parent>
+    FUN FAKE_OVERRIDE name:addAll visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableList, index:kotlin.Int, elements:kotlin.collections.Collection<E of <uninitialized parent>>) returnType:kotlin.Boolean
+      overridden:
+        public abstract fun addAll (index: kotlin.Int, elements: kotlin.collections.Collection<E of <uninitialized parent>>): kotlin.Boolean declared in kotlin.collections.MutableList
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableList
+      VALUE_PARAMETER name:index index:0 type:kotlin.Int
+      VALUE_PARAMETER name:elements index:1 type:kotlin.collections.Collection<E of <uninitialized parent>>
+    FUN FAKE_OVERRIDE name:clear visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableList) returnType:kotlin.Unit
+      overridden:
+        public abstract fun clear (): kotlin.Unit declared in kotlin.collections.MutableList
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableList
+    FUN FAKE_OVERRIDE name:listIterator visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableList) returnType:kotlin.collections.MutableListIterator<E of <uninitialized parent>>
+      overridden:
+        public abstract fun listIterator (): kotlin.collections.MutableListIterator<E of <uninitialized parent>> declared in kotlin.collections.MutableList
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableList
+    FUN FAKE_OVERRIDE name:remove visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableList, element:E of <uninitialized parent>) returnType:kotlin.Boolean
+      overridden:
+        public abstract fun remove (element: E of <uninitialized parent>): kotlin.Boolean declared in kotlin.collections.MutableList
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableList
+      VALUE_PARAMETER name:element index:0 type:E of <uninitialized parent>
+    FUN FAKE_OVERRIDE name:removeAll visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableList, elements:kotlin.collections.Collection<E of <uninitialized parent>>) returnType:kotlin.Boolean
+      overridden:
+        public abstract fun removeAll (elements: kotlin.collections.Collection<E of <uninitialized parent>>): kotlin.Boolean declared in kotlin.collections.MutableList
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableList
+      VALUE_PARAMETER name:elements index:0 type:kotlin.collections.Collection<E of <uninitialized parent>>
+    FUN FAKE_OVERRIDE name:removeAt visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableList, index:kotlin.Int) returnType:E of <uninitialized parent>
+      overridden:
+        public abstract fun removeAt (index: kotlin.Int): E of <uninitialized parent> declared in kotlin.collections.MutableList
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableList
+      VALUE_PARAMETER name:index index:0 type:kotlin.Int
+    FUN FAKE_OVERRIDE name:retainAll visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableList, elements:kotlin.collections.Collection<E of <uninitialized parent>>) returnType:kotlin.Boolean
+      overridden:
+        public abstract fun retainAll (elements: kotlin.collections.Collection<E of <uninitialized parent>>): kotlin.Boolean declared in kotlin.collections.MutableList
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableList
+      VALUE_PARAMETER name:elements index:0 type:kotlin.collections.Collection<E of <uninitialized parent>>
+    FUN FAKE_OVERRIDE name:set visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableList, index:kotlin.Int, element:E of <uninitialized parent>) returnType:E of <uninitialized parent>
+      overridden:
+        public abstract fun set (index: kotlin.Int, element: E of <uninitialized parent>): E of <uninitialized parent> declared in kotlin.collections.MutableList
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableList
+      VALUE_PARAMETER name:index index:0 type:kotlin.Int
+      VALUE_PARAMETER name:element index:1 type:E of <uninitialized parent>
+    FUN FAKE_OVERRIDE name:subList visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableList, fromIndex:kotlin.Int, toIndex:kotlin.Int) returnType:kotlin.collections.MutableList<E of <uninitialized parent>>
+      overridden:
+        public abstract fun subList (fromIndex: kotlin.Int, toIndex: kotlin.Int): kotlin.collections.MutableList<E of <uninitialized parent>> declared in kotlin.collections.MutableList
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableList
+      VALUE_PARAMETER name:fromIndex index:0 type:kotlin.Int
+      VALUE_PARAMETER name:toIndex index:1 type:kotlin.Int
+    FUN FAKE_OVERRIDE name:contains visibility:public modality:ABSTRACT <> ($this:<uninitialized parent>.List, element:E of <uninitialized parent>) returnType:kotlin.Boolean
+      overridden:
+        public abstract fun contains (element: E of <uninitialized parent>): kotlin.Boolean declared in <no parent>.List
+      $this: VALUE_PARAMETER name:<this> type:<uninitialized parent>.List
+      VALUE_PARAMETER name:element index:0 type:E of <uninitialized parent>
+    FUN FAKE_OVERRIDE name:contains visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Collection, element:E of <uninitialized parent>) returnType:kotlin.Boolean
+      overridden:
+        public abstract fun contains (element: E of <uninitialized parent>): kotlin.Boolean declared in kotlin.collections.Collection
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Collection
+      VALUE_PARAMETER name:element index:0 type:E of <uninitialized parent>
+    FUN FAKE_OVERRIDE name:containsAll visibility:public modality:ABSTRACT <> ($this:<uninitialized parent>.List, elements:kotlin.collections.Collection<E of <uninitialized parent>>) returnType:kotlin.Boolean
+      overridden:
+        public abstract fun containsAll (elements: kotlin.collections.Collection<E of <uninitialized parent>>): kotlin.Boolean declared in <no parent>.List
+      $this: VALUE_PARAMETER name:<this> type:<uninitialized parent>.List
+      VALUE_PARAMETER name:elements index:0 type:kotlin.collections.Collection<E of <uninitialized parent>>
+    FUN FAKE_OVERRIDE name:containsAll visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Collection, elements:kotlin.collections.Collection<E of <uninitialized parent>>) returnType:kotlin.Boolean
+      overridden:
+        public abstract fun containsAll (elements: kotlin.collections.Collection<E of <uninitialized parent>>): kotlin.Boolean declared in kotlin.collections.Collection
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Collection
+      VALUE_PARAMETER name:elements index:0 type:kotlin.collections.Collection<E of <uninitialized parent>>
+    FUN FAKE_OVERRIDE name:get visibility:public modality:ABSTRACT <> ($this:<uninitialized parent>.List, index:kotlin.Int) returnType:E of <uninitialized parent>
+      overridden:
+        public abstract fun get (index: kotlin.Int): E of <uninitialized parent> declared in <no parent>.List
+      $this: VALUE_PARAMETER name:<this> type:<uninitialized parent>.List
+      VALUE_PARAMETER name:index index:0 type:kotlin.Int
+    FUN FAKE_OVERRIDE name:indexOf visibility:public modality:ABSTRACT <> ($this:<uninitialized parent>.List, element:E of <uninitialized parent>) returnType:kotlin.Int
+      overridden:
+        public abstract fun indexOf (element: E of <uninitialized parent>): kotlin.Int declared in <no parent>.List
+      $this: VALUE_PARAMETER name:<this> type:<uninitialized parent>.List
+      VALUE_PARAMETER name:element index:0 type:E of <uninitialized parent>
+    FUN FAKE_OVERRIDE name:isEmpty visibility:public modality:ABSTRACT <> ($this:<uninitialized parent>.List) returnType:kotlin.Boolean
+      overridden:
+        public abstract fun isEmpty (): kotlin.Boolean declared in <no parent>.List
+      $this: VALUE_PARAMETER name:<this> type:<uninitialized parent>.List
+    FUN FAKE_OVERRIDE name:isEmpty visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Collection) returnType:kotlin.Boolean
+      overridden:
+        public abstract fun isEmpty (): kotlin.Boolean declared in kotlin.collections.Collection
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Collection
+    FUN FAKE_OVERRIDE name:iterator visibility:public modality:ABSTRACT <> ($this:<uninitialized parent>.List) returnType:kotlin.collections.Iterator<E of <uninitialized parent>>
+      overridden:
+        public abstract fun iterator (): kotlin.collections.Iterator<E of <uninitialized parent>> declared in <no parent>.List
+      $this: VALUE_PARAMETER name:<this> type:<uninitialized parent>.List
+    FUN FAKE_OVERRIDE name:iterator visibility:public modality:ABSTRACT <> ($this:<uninitialized parent>.MutableCollection) returnType:kotlin.collections.MutableIterator<E of <uninitialized parent>>
+      overridden:
+        public abstract fun iterator (): kotlin.collections.MutableIterator<E of <uninitialized parent>> declared in <no parent>.MutableCollection
+      $this: VALUE_PARAMETER name:<this> type:<uninitialized parent>.MutableCollection
+    FUN FAKE_OVERRIDE name:lastIndexOf visibility:public modality:ABSTRACT <> ($this:<uninitialized parent>.List, element:E of <uninitialized parent>) returnType:kotlin.Int
+      overridden:
+        public abstract fun lastIndexOf (element: E of <uninitialized parent>): kotlin.Int declared in <no parent>.List
+      $this: VALUE_PARAMETER name:<this> type:<uninitialized parent>.List
+      VALUE_PARAMETER name:element index:0 type:E of <uninitialized parent>
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any

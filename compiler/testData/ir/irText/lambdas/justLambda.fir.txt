@@ -1,0 +1,29 @@
+FILE fqName:<root> fileName:/justLambda.kt
+  PROPERTY name:test1 visibility:public modality:FINAL [val]
+    FIELD PROPERTY_BACKING_FIELD name:test1 type:IrErrorType visibility:public [final,static]
+      EXPRESSION_BODY
+        BLOCK type=IrErrorType origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:IrErrorType
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='local final fun <anonymous> (): IrErrorType declared in <root>.test1'
+                CONST Int type=IrErrorType value=42
+          FUNCTION_REFERENCE 'local final fun <anonymous> (): IrErrorType declared in <root>.test1' type=IrErrorType origin=LAMBDA
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:IrErrorType
+      correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-test1> (): IrErrorType declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test1 type:IrErrorType visibility:public [final,static] ' type=IrErrorType origin=null
+  PROPERTY name:test2 visibility:public modality:FINAL [val]
+    FIELD PROPERTY_BACKING_FIELD name:test2 type:IrErrorType visibility:public [final,static]
+      EXPRESSION_BODY
+        BLOCK type=IrErrorType origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:IrErrorType
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='local final fun <anonymous> (): IrErrorType declared in <root>.test2'
+                GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+          FUNCTION_REFERENCE 'local final fun <anonymous> (): IrErrorType declared in <root>.test2' type=IrErrorType origin=LAMBDA
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:IrErrorType
+      correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-test2> (): IrErrorType declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test2 type:IrErrorType visibility:public [final,static] ' type=IrErrorType origin=null

@@ -1,0 +1,6 @@
+FILE fqName:<root> fileName:/implicitCastOnPlatformType.kt
+  FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.String
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun test (): kotlin.String declared in <root>'
+        ERROR_CALL 'Unresolved reference: <Unresolved name: getProperty>#' type=IrErrorType
+          CONST String type=kotlin.String value="test"

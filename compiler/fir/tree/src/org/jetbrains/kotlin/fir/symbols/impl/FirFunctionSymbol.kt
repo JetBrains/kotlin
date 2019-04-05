@@ -11,7 +11,9 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 
 class FirFunctionSymbol(
     override val callableId: CallableId,
-    val isFakeOverride: Boolean = false
+    val isFakeOverride: Boolean = false,
+    // Actual for fake override only
+    val overriddenSymbol: FirFunctionSymbol? = null
 ) : ConeFunctionSymbol, FirCallableSymbol() {
     override val parameters: List<ConeKotlinType>
         get() = emptyList()

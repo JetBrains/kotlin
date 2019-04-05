@@ -1,0 +1,57 @@
+FILE fqName:<root> fileName:/kt24114.kt
+  FUN name:one visibility:public modality:FINAL <> () returnType:kotlin.Int
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun one (): kotlin.Int declared in <root>'
+        CONST Int type=kotlin.Int value=1
+  FUN name:two visibility:public modality:FINAL <> () returnType:kotlin.Int
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun two (): kotlin.Int declared in <root>'
+        CONST Int type=kotlin.Int value=2
+  FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Int
+    BLOCK_BODY
+      WHILE label=null origin=WHILE_LOOP
+        condition: CONST Boolean type=kotlin.Boolean value=true
+        body: BLOCK type=kotlin.Int origin=WHEN
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:kotlin.Int [val]
+          WHEN type=kotlin.Int origin=WHEN
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                arg0: GET_VAR 'val tmp0_subject: kotlin.Int [val] declared in <root>.test1' type=kotlin.Int origin=null
+                arg1: CONST Int type=kotlin.Int value=1
+              then: BLOCK type=kotlin.Int origin=WHEN
+                VAR IR_TEMPORARY_VARIABLE name:tmp1_subject type:kotlin.Int [val]
+                WHEN type=kotlin.Int origin=WHEN
+                  BRANCH
+                    if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                      arg0: GET_VAR 'val tmp1_subject: kotlin.Int [val] declared in <root>.test1' type=kotlin.Int origin=null
+                      arg1: CONST Int type=kotlin.Int value=2
+                    then: RETURN type=kotlin.Nothing from='public final fun test1 (): kotlin.Int declared in <root>'
+                      CONST Int type=kotlin.Int value=2
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: RETURN type=kotlin.Nothing from='public final fun test1 (): kotlin.Int declared in <root>'
+                CONST Int type=kotlin.Int value=3
+  FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Int
+    BLOCK_BODY
+      WHILE label=null origin=WHILE_LOOP
+        condition: CONST Boolean type=kotlin.Boolean value=true
+        body: BLOCK type=kotlin.Int origin=WHEN
+          VAR IR_TEMPORARY_VARIABLE name:tmp2_subject type:kotlin.Int [val]
+          WHEN type=kotlin.Int origin=WHEN
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                arg0: GET_VAR 'val tmp2_subject: kotlin.Int [val] declared in <root>.test2' type=kotlin.Int origin=null
+                arg1: CONST Int type=kotlin.Int value=1
+              then: BLOCK type=kotlin.Int origin=WHEN
+                VAR IR_TEMPORARY_VARIABLE name:tmp3_subject type:kotlin.Int [val]
+                WHEN type=kotlin.Int origin=WHEN
+                  BRANCH
+                    if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                      arg0: GET_VAR 'val tmp3_subject: kotlin.Int [val] declared in <root>.test2' type=kotlin.Int origin=null
+                      arg1: CONST Int type=kotlin.Int value=2
+                    then: RETURN type=kotlin.Nothing from='public final fun test2 (): kotlin.Int declared in <root>'
+                      CONST Int type=kotlin.Int value=2
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: RETURN type=kotlin.Nothing from='public final fun test2 (): kotlin.Int declared in <root>'
+                CONST Int type=kotlin.Int value=3

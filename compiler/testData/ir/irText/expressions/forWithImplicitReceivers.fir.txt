@@ -1,0 +1,109 @@
+FILE fqName:<root> fileName:/forWithImplicitReceivers.kt
+  CLASS OBJECT name:FiveTimes modality:FINAL visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FiveTimes
+    CONSTRUCTOR visibility:private <> () returnType:<root>.FiveTimes [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:FiveTimes modality:FINAL visibility:public superTypes:[kotlin.Any]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS CLASS name:IntCell modality:FINAL visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IntCell
+    CONSTRUCTOR visibility:public <> (value:kotlin.Int) returnType:<root>.IntCell [primary]
+      VALUE_PARAMETER name:value index:0 type:kotlin.Int
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:IntCell modality:FINAL visibility:public superTypes:[kotlin.Any]'
+    PROPERTY name:value visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Int visibility:public
+        EXPRESSION_BODY
+          GET_VAR 'value: kotlin.Int declared in <root>.IntCell.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:FINAL <> ($this:<root>.IntCell) returnType:kotlin.Int
+        correspondingProperty: PROPERTY name:value visibility:public modality:FINAL [var]
+        $this: VALUE_PARAMETER name:<this> type:<root>.IntCell
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-value> (): kotlin.Int declared in <root>.IntCell'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Int visibility:public ' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.IntCell declared in <root>.IntCell.<get-value>' type=<root>.IntCell origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-value> visibility:public modality:FINAL <> ($this:<root>.IntCell, <set-?>:kotlin.Int) returnType:kotlin.Unit
+        correspondingProperty: PROPERTY name:value visibility:public modality:FINAL [var]
+        $this: VALUE_PARAMETER name:<this> type:<root>.IntCell
+        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Int visibility:public ' type=kotlin.Unit origin=null
+            receiver: GET_VAR '<this>: <root>.IntCell declared in <root>.IntCell.<set-value>' type=<root>.IntCell origin=null
+            value: GET_VAR '<set-?>: kotlin.Int declared in <root>.IntCell.<set-value>' type=kotlin.Int origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS INTERFACE name:IReceiver modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IReceiver
+    FUN name:iterator visibility:public modality:OPEN <> ($this:<root>.IReceiver) returnType:<root>.IntCell
+      $this: VALUE_PARAMETER name:<this> type:<root>.IReceiver
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun iterator (): <root>.IntCell declared in <root>.IReceiver'
+          CALL 'public constructor <init> (value: kotlin.Int) [primary] declared in <root>.IntCell' type=<root>.IntCell origin=null
+            value: CONST Int type=kotlin.Int value=5
+    FUN name:hasNext visibility:public modality:OPEN <> ($this:<root>.IReceiver) returnType:kotlin.Boolean
+      $this: VALUE_PARAMETER name:<this> type:<root>.IReceiver
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun hasNext (): kotlin.Boolean declared in <root>.IReceiver'
+          ERROR_CALL 'Comparison of arguments with different types: kotlin/Int, kotlin/Boolean' type=kotlin.Boolean
+    FUN name:next visibility:public modality:OPEN <> ($this:<root>.IReceiver) returnType:kotlin.Int
+      $this: VALUE_PARAMETER name:<this> type:<root>.IReceiver
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun next (): kotlin.Int declared in <root>.IReceiver'
+          BLOCK type=kotlin.Int origin=null
+            VAR name:<unary> type:kotlin.Int [val]
+              CALL 'public final fun <get-value> (): kotlin.Int declared in <root>.IntCell' type=kotlin.Int origin=null
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Int visibility:public ' type=kotlin.Int origin=null
+              value: ERROR_CALL 'Unresolved reference: <Ambiguity: dec, [kotlin/dec, kotlin/dec]>#' type=IrErrorType
+                GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.IReceiver.next' type=kotlin.Int origin=null
+            GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.IReceiver.next' type=kotlin.Int origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    BLOCK_BODY
+      VAR name:<range> type:IrErrorType [val]
+        ERROR_CALL 'Unresolved reference: <Unresolved name: FiveTimes>#' type=IrErrorType
+      VAR name:<iterator> type:<root>.IntCell [val]
+        CALL 'public open fun iterator (): <root>.IntCell declared in <root>.IReceiver' type=<root>.IntCell origin=null
+      WHILE label=null origin=FOR_LOOP_INNER_WHILE
+        condition: CALL 'public open fun hasNext (): kotlin.Boolean declared in <root>.IReceiver' type=kotlin.Boolean origin=null
+        body: BLOCK type=IrErrorType origin=null
+          VAR name:i type:kotlin.Int [val]
+            CALL 'public open fun next (): kotlin.Int declared in <root>.IReceiver' type=kotlin.Int origin=null
+          ERROR_CALL 'Unresolved reference: <Ambiguity: println, [kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println]>#' type=IrErrorType
+            GET_VAR 'val i: kotlin.Int [val] declared in <root>.test' type=kotlin.Int origin=null

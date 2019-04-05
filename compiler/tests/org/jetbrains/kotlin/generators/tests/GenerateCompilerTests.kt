@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.codegen.flags.AbstractWriteFlagsTest
 import org.jetbrains.kotlin.codegen.ir.*
 import org.jetbrains.kotlin.fir.AbstractFirDiagnosticsSmokeTest
 import org.jetbrains.kotlin.fir.AbstractFirLoadCompiledKotlin
+import org.jetbrains.kotlin.fir.AbstractFir2IrTextTest
 import org.jetbrains.kotlin.fir.AbstractFirResolveTestCase
 import org.jetbrains.kotlin.fir.AbstractFirResolveTestCaseWithStdlib
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase
@@ -419,11 +420,17 @@ fun main(args: Array<String>) {
         }
     }
 
-
     testGroup("compiler/fir/resolve/tests", "compiler/testData") {
 
         testClass<AbstractFirDiagnosticsSmokeTest> {
             model("diagnostics/tests")
         }
     }
+
+    testGroup("compiler/fir/fir2ir/tests", "compiler/testData") {
+        testClass<AbstractFir2IrTextTest> {
+            model("ir/irText")
+        }
+    }
+
 }

@@ -195,7 +195,8 @@ extra["compilerModules"] = arrayOf(
                 ":compiler:fir:cones",
                 ":compiler:fir:resolve",
                 ":compiler:fir:tree",
-                ":compiler:fir:psi2fir"
+                ":compiler:fir:psi2fir",
+                ":compiler:fir:fir2ir"
             )
         } else {
             emptyArray()
@@ -485,6 +486,7 @@ tasks {
     create("firCompilerTest") {
         dependsOn(":compiler:fir:psi2fir:test")
         dependsOn(":compiler:fir:resolve:test")
+        dependsOn(":compiler:fir:fir2ir:test")
     }
 
     create("scriptingTest") {

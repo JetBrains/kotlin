@@ -285,6 +285,29 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
 
     internal class IrTreeFileLabel(val expectedTextFile: File, val lineNumber: Int)
 
+    protected open fun getExpectedTextFileName(testFile: TestFile, name: String = testFile.name): String = name.replace(".kt", ".txt")
+
+    private fun parseExpectations(dir: File, testFile: TestFile): Expectations {
+        val regexps =
+            testFile.content.matchLinesWith(EXPECTED_OCCURRENCES_PATTERN) {
+                RegexpInText(it.groupValues[1], it.groupValues[2].trim())
+            }
+
+        var treeFiles =
+            testFile.content.matchLinesWith(IR_FILE_TXT_PATTERN) {
+                val fileName = it.groupValues[1].trim()
+                val file = createExpectedTextFile(testFile, dir, getExpectedTextFileName(testFile, fileName))
+                IrTreeFileLabel(file, 0)
+            }
+
+        if (treeFiles.isEmpty()) {
+            val file = createExpectedTextFile(testFile, dir, getExpectedTextFileName(testFile))
+            treeFiles = listOf(IrTreeFileLabel(file, 0))
+        }
+
+        return Expectations(regexps, treeFiles)
+    }
+
     companion object {
         private val EXPECTED_OCCURRENCES_PATTERN = Regex("""^\s*//\s*(\d+)\s*(.*)$""")
         private val IR_FILE_TXT_PATTERN = Regex("""// IR_FILE: (.*)$""")
@@ -301,27 +324,6 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
 
         internal fun TestFile.isExternalFile() =
             EXTERNAL_FILE_PATTERN.containsMatchIn(content)
-
-        internal fun parseExpectations(dir: File, testFile: TestFile): Expectations {
-            val regexps =
-                testFile.content.matchLinesWith(EXPECTED_OCCURRENCES_PATTERN) {
-                    RegexpInText(it.groupValues[1], it.groupValues[2].trim())
-                }
-
-            var treeFiles =
-                testFile.content.matchLinesWith(IR_FILE_TXT_PATTERN) {
-                    val fileName = it.groupValues[1].trim()
-                    val file = createExpectedTextFile(testFile, dir, fileName)
-                    IrTreeFileLabel(file, 0)
-                }
-
-            if (treeFiles.isEmpty()) {
-                val file = createExpectedTextFile(testFile, dir, testFile.name.replace(".kt", ".txt"))
-                treeFiles = listOf(IrTreeFileLabel(file, 0))
-            }
-
-            return Expectations(regexps, treeFiles)
-        }
     }
 
 }

@@ -1,0 +1,58 @@
+FILE fqName:<root> fileName:/smartCasts.kt
+  FUN name:expectsString visibility:public modality:FINAL <> (s:kotlin.String) returnType:kotlin.Unit
+    VALUE_PARAMETER name:s index:0 type:kotlin.String
+    BLOCK_BODY
+  FUN name:expectsInt visibility:public modality:FINAL <> (i:kotlin.Int) returnType:kotlin.Unit
+    VALUE_PARAMETER name:i index:0 type:kotlin.Int
+    BLOCK_BODY
+  FUN name:overloaded visibility:public modality:FINAL <> (s:kotlin.String) returnType:kotlin.String
+    VALUE_PARAMETER name:s index:0 type:kotlin.String
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun overloaded (s: kotlin.String): kotlin.String declared in <root>'
+        GET_VAR 's: kotlin.String declared in <root>.overloaded' type=kotlin.String origin=null
+  FUN name:overloaded visibility:public modality:FINAL <> (x:kotlin.Any) returnType:kotlin.Any
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun overloaded (x: kotlin.Any): kotlin.Any declared in <root>'
+        GET_VAR 'x: kotlin.Any declared in <root>.overloaded' type=kotlin.Any origin=null
+  FUN name:test1 visibility:public modality:FINAL <> (x:kotlin.Any) returnType:kotlin.Unit
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any
+    BLOCK_BODY
+      WHEN type=kotlin.Unit origin=IF
+        BRANCH
+          if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.String
+            GET_VAR 'x: kotlin.Any declared in <root>.test1' type=kotlin.Any origin=null
+          then: RETURN type=kotlin.Nothing from='public final fun test1 (x: kotlin.Any): kotlin.Unit declared in <root>'
+            GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+      ERROR_CALL 'Unresolved reference: <Ambiguity: println, [kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println]>#' type=IrErrorType
+        ERROR_CALL 'Unresolved reference: <Unresolved name: length>#' type=IrErrorType
+      CALL 'public final fun expectsString (s: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        s: GET_VAR 'x: kotlin.Any declared in <root>.test1' type=kotlin.Any origin=null
+      CALL 'public final fun expectsInt (i: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        i: ERROR_CALL 'Unresolved reference: <Unresolved name: length>#' type=IrErrorType
+      CALL 'public final fun expectsString (s: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        s: ERROR_CALL 'Unresolved reference: <Ambiguity: overloaded, [/overloaded, /overloaded]>#' type=IrErrorType
+          GET_VAR 'x: kotlin.Any declared in <root>.test1' type=kotlin.Any origin=null
+  FUN name:test2 visibility:public modality:FINAL <> (x:kotlin.Any) returnType:kotlin.String
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any
+    BLOCK_BODY
+      WHEN type=kotlin.String origin=IF
+        BRANCH
+          if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.String
+            GET_VAR 'x: kotlin.Any declared in <root>.test2' type=kotlin.Any origin=null
+          then: RETURN type=kotlin.Nothing from='public final fun test2 (x: kotlin.Any): kotlin.String declared in <root>'
+            CONST String type=kotlin.String value=""
+      RETURN type=kotlin.Nothing from='public final fun test2 (x: kotlin.Any): kotlin.String declared in <root>'
+        ERROR_CALL 'Unresolved reference: <Ambiguity: overloaded, [/overloaded, /overloaded]>#' type=IrErrorType
+          GET_VAR 'x: kotlin.Any declared in <root>.test2' type=kotlin.Any origin=null
+  FUN name:test3 visibility:public modality:FINAL <> (x:kotlin.Any) returnType:kotlin.String
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any
+    BLOCK_BODY
+      WHEN type=kotlin.String origin=IF
+        BRANCH
+          if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.String
+            GET_VAR 'x: kotlin.Any declared in <root>.test3' type=kotlin.Any origin=null
+          then: RETURN type=kotlin.Nothing from='public final fun test3 (x: kotlin.Any): kotlin.String declared in <root>'
+            CONST String type=kotlin.String value=""
+      RETURN type=kotlin.Nothing from='public final fun test3 (x: kotlin.Any): kotlin.String declared in <root>'
+        GET_VAR 'x: kotlin.Any declared in <root>.test3' type=kotlin.Any origin=null

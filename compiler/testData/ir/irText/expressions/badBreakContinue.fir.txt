@@ -1,0 +1,34 @@
+FILE fqName:<root> fileName:/badBreakContinue.kt
+  FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    BLOCK_BODY
+      ERROR_EXPR 'Unbound loop: break@@@[ERROR_EXPR(Cannot bind unlabeled jump to a loop)] ' type=kotlin.Nothing
+      ERROR_EXPR 'Unbound loop: continue@@@[ERROR_EXPR(Cannot bind unlabeled jump to a loop)] ' type=kotlin.Nothing
+  FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    BLOCK_BODY
+      WHILE label=L1 origin=WHILE_LOOP
+        condition: CONST Boolean type=kotlin.Boolean value=true
+        body: BLOCK type=IrErrorType origin=null
+          ERROR_EXPR 'Unbound loop: break@@@[ERROR_EXPR(Cannot bind label ERROR to a loop)] ' type=kotlin.Nothing
+          ERROR_EXPR 'Unbound loop: continue@@@[ERROR_EXPR(Cannot bind label ERROR to a loop)] ' type=kotlin.Nothing
+  FUN name:test3 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    BLOCK_BODY
+      WHILE label=L1 origin=WHILE_LOOP
+        condition: CONST Boolean type=kotlin.Boolean value=true
+        body: BLOCK type=kotlin.Unit origin=null
+          VAR name:lambda type:IrErrorType [val]
+            BLOCK type=IrErrorType origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:IrErrorType
+                BLOCK_BODY
+                  RETURN type=kotlin.Nothing from='local final fun <anonymous> (): IrErrorType declared in <root>.test3'
+                    BLOCK type=IrErrorType origin=null
+                      BREAK label=L1 loop.label=L1
+                      CONTINUE label=L1 loop.label=L1
+              FUNCTION_REFERENCE 'local final fun <anonymous> (): IrErrorType declared in <root>.test3' type=IrErrorType origin=LAMBDA
+  FUN name:test4 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    BLOCK_BODY
+      WHILE label=null origin=WHILE_LOOP
+        condition: ERROR_EXPR 'Unbound loop: break@@@[ERROR_EXPR(Cannot bind unlabeled jump to a loop)] ' type=kotlin.Nothing
+        body: BLOCK type=kotlin.Unit origin=null
+      WHILE label=null origin=WHILE_LOOP
+        condition: ERROR_EXPR 'Unbound loop: continue@@@[ERROR_EXPR(Cannot bind unlabeled jump to a loop)] ' type=kotlin.Nothing
+        body: BLOCK type=kotlin.Unit origin=null

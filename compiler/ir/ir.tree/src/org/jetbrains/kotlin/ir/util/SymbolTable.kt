@@ -413,12 +413,15 @@ open class SymbolTable : ReferenceSymbolTable {
         origin: IrDeclarationOrigin,
         descriptor: ParameterDescriptor,
         type: IrType,
-        varargElementType: IrType? = null
+        varargElementType: IrType? = null,
+        valueParameterFactory: (IrValueParameterSymbol) -> IrValueParameter = {
+            IrValueParameterImpl(startOffset, endOffset, origin, it, type, varargElementType)
+        }
     ): IrValueParameter =
         valueParameterSymbolTable.declareLocal(
             descriptor,
             { IrValueParameterSymbolImpl(descriptor) },
-            { IrValueParameterImpl(startOffset, endOffset, origin, it, type, varargElementType) }
+            valueParameterFactory
         )
 
     fun introduceValueParameter(irValueParameter: IrValueParameter) {
@@ -442,12 +445,16 @@ open class SymbolTable : ReferenceSymbolTable {
         endOffset: Int,
         origin: IrDeclarationOrigin,
         descriptor: VariableDescriptor,
-        type: IrType
+        type: IrType,
+        variableFactory: (IrVariableSymbol) -> IrVariable = {
+            IrVariableImpl(startOffset, endOffset, origin, it, type)
+        }
+
     ): IrVariable =
         variableSymbolTable.declareLocal(
             descriptor,
             { IrVariableSymbolImpl(descriptor) },
-            { IrVariableImpl(startOffset, endOffset, origin, it, type) }
+            variableFactory
         )
 
     fun declareVariable(

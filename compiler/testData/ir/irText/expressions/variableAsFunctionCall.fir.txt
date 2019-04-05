@@ -1,0 +1,30 @@
+FILE fqName:<root> fileName:/variableAsFunctionCall.kt
+  FUN name:k visibility:public modality:FINAL <> () returnType:kotlin.Function0
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun k (): kotlin.Function0 declared in <root>'
+        BLOCK type=kotlin.Function0 origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Function0
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Function0 declared in <root>.k'
+                ERROR_CALL 'Unresolved reference: this#' type=kotlin.String
+          FUNCTION_REFERENCE 'local final fun <anonymous> (): kotlin.Function0 declared in <root>.k' type=kotlin.Function0 origin=LAMBDA
+  FUN name:test1 visibility:public modality:FINAL <> (f:kotlin.Function0) returnType:IrErrorType
+    VALUE_PARAMETER name:f index:0 type:kotlin.Function0
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun test1 (f: kotlin.Function0): IrErrorType declared in <root>'
+        ERROR_CALL 'Unresolved reference: <Unresolved name: f>#' type=IrErrorType
+  FUN name:test2 visibility:public modality:FINAL <> (f:kotlin.Function1) returnType:IrErrorType
+    VALUE_PARAMETER name:f index:0 type:kotlin.Function1
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun test2 (f: kotlin.Function1): IrErrorType declared in <root>'
+        ERROR_CALL 'Unresolved reference: <Unresolved name: f>#' type=IrErrorType
+  FUN name:test3 visibility:public modality:FINAL <> () returnType:IrErrorType
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun test3 (): IrErrorType declared in <root>'
+        ERROR_CALL 'Unresolved reference: <Unresolved name: invoke>#' type=IrErrorType
+          CALL 'public final fun k (): kotlin.Function0 declared in <root>' type=kotlin.Function0 origin=null
+  FUN name:test4 visibility:public modality:FINAL <> (ns:kotlin.String?) returnType:IrErrorType
+    VALUE_PARAMETER name:ns index:0 type:kotlin.String?
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun test4 (ns: kotlin.String?): IrErrorType declared in <root>'
+        ERROR_CALL 'Unresolved reference: <Unresolved name: invoke>#' type=IrErrorType

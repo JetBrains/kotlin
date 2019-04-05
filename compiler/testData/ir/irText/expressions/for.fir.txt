@@ -1,0 +1,47 @@
+FILE fqName:<root> fileName:/for.kt
+  FUN name:testEmpty visibility:public modality:FINAL <> (ss:kotlin.collections.List<kotlin.String>) returnType:kotlin.Unit
+    VALUE_PARAMETER name:ss index:0 type:kotlin.collections.List<kotlin.String>
+    BLOCK_BODY
+      VAR name:<range> type:kotlin.collections.List<kotlin.String> [val]
+        GET_VAR 'ss: kotlin.collections.List<kotlin.String> declared in <root>.testEmpty' type=kotlin.collections.List<kotlin.String> origin=null
+      VAR name:<iterator> type:kotlin.collections.Iterator<E of <uninitialized parent>> [val]
+        CALL 'public abstract fun iterator (): kotlin.collections.Iterator<E of <uninitialized parent>> declared in kotlin.collections.List' type=kotlin.collections.Iterator<E of <uninitialized parent>> origin=null
+      WHILE label=null origin=FOR_LOOP_INNER_WHILE
+        condition: CALL 'public abstract fun hasNext (): kotlin.Boolean declared in kotlin.collections.Iterator' type=kotlin.Boolean origin=null
+        body: BLOCK type=kotlin.Unit origin=null
+          VAR name:s type:T of <uninitialized parent> [val]
+            CALL 'public abstract fun next (): T of <uninitialized parent> declared in kotlin.collections.Iterator' type=T of <uninitialized parent> origin=null
+  FUN name:testIterable visibility:public modality:FINAL <> (ss:kotlin.collections.List<kotlin.String>) returnType:kotlin.Unit
+    VALUE_PARAMETER name:ss index:0 type:kotlin.collections.List<kotlin.String>
+    BLOCK_BODY
+      VAR name:<range> type:kotlin.collections.List<kotlin.String> [val]
+        GET_VAR 'ss: kotlin.collections.List<kotlin.String> declared in <root>.testIterable' type=kotlin.collections.List<kotlin.String> origin=null
+      VAR name:<iterator> type:kotlin.collections.Iterator<E of <uninitialized parent>> [val]
+        CALL 'public abstract fun iterator (): kotlin.collections.Iterator<E of <uninitialized parent>> declared in kotlin.collections.List' type=kotlin.collections.Iterator<E of <uninitialized parent>> origin=null
+      WHILE label=null origin=FOR_LOOP_INNER_WHILE
+        condition: CALL 'public abstract fun hasNext (): kotlin.Boolean declared in kotlin.collections.Iterator' type=kotlin.Boolean origin=null
+        body: BLOCK type=IrErrorType origin=null
+          VAR name:s type:T of <uninitialized parent> [val]
+            CALL 'public abstract fun next (): T of <uninitialized parent> declared in kotlin.collections.Iterator' type=T of <uninitialized parent> origin=null
+          ERROR_CALL 'Unresolved reference: <Ambiguity: println, [kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println]>#' type=IrErrorType
+            GET_VAR 'val s: T of <uninitialized parent> [val] declared in <root>.testIterable' type=T of <uninitialized parent> origin=null
+  FUN name:testDestructuring visibility:public modality:FINAL <> (pp:kotlin.collections.List<kotlin.Pair<kotlin.Int, kotlin.String>>) returnType:kotlin.Unit
+    VALUE_PARAMETER name:pp index:0 type:kotlin.collections.List<kotlin.Pair<kotlin.Int, kotlin.String>>
+    BLOCK_BODY
+      VAR name:<range> type:kotlin.collections.List<kotlin.Pair<kotlin.Int, kotlin.String>> [val]
+        GET_VAR 'pp: kotlin.collections.List<kotlin.Pair<kotlin.Int, kotlin.String>> declared in <root>.testDestructuring' type=kotlin.collections.List<kotlin.Pair<kotlin.Int, kotlin.String>> origin=null
+      VAR name:<iterator> type:kotlin.collections.Iterator<E of <uninitialized parent>> [val]
+        CALL 'public abstract fun iterator (): kotlin.collections.Iterator<E of <uninitialized parent>> declared in kotlin.collections.List' type=kotlin.collections.Iterator<E of <uninitialized parent>> origin=null
+      WHILE label=null origin=FOR_LOOP_INNER_WHILE
+        condition: CALL 'public abstract fun hasNext (): kotlin.Boolean declared in kotlin.collections.Iterator' type=kotlin.Boolean origin=null
+        body: BLOCK type=IrErrorType origin=null
+          VAR name:<destruct> type:T of <uninitialized parent> [val]
+            CALL 'public abstract fun next (): T of <uninitialized parent> declared in kotlin.collections.Iterator' type=T of <uninitialized parent> origin=null
+          VAR name:i type:IrErrorType [val]
+            ERROR_CALL 'Unresolved reference: <Ambiguity: component1, [kotlin/collections/component1, kotlin/collections/component1, kotlin/collections/component1, kotlin/collections/component1, kotlin/collections/component1, kotlin/collections/component1, kotlin/collections/component1, kotlin/collections/component1, kotlin/collections/component1, kotlin/collections/component1, kotlin/collections/component1, kotlin/collections/component1, kotlin/collections/component1, kotlin/collections/component1, kotlin/collections/component1]>#' type=IrErrorType
+          VAR name:s type:IrErrorType [val]
+            ERROR_CALL 'Unresolved reference: <Ambiguity: component2, [kotlin/collections/component2, kotlin/collections/component2, kotlin/collections/component2, kotlin/collections/component2, kotlin/collections/component2, kotlin/collections/component2, kotlin/collections/component2, kotlin/collections/component2, kotlin/collections/component2, kotlin/collections/component2, kotlin/collections/component2, kotlin/collections/component2, kotlin/collections/component2, kotlin/collections/component2, kotlin/collections/component2]>#' type=IrErrorType
+          ERROR_CALL 'Unresolved reference: <Ambiguity: println, [kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println]>#' type=IrErrorType
+            GET_VAR 'val i: IrErrorType [val] declared in <root>.testDestructuring' type=IrErrorType origin=null
+          ERROR_CALL 'Unresolved reference: <Ambiguity: println, [kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println]>#' type=IrErrorType
+            GET_VAR 'val s: IrErrorType [val] declared in <root>.testDestructuring' type=IrErrorType origin=null

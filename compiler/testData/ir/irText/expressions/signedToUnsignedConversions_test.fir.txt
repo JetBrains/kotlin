@@ -1,0 +1,105 @@
+FILE fqName:<root> fileName:/signedToUnsignedConversions_test.kt
+  PROPERTY name:IMPLICIT_INT visibility:public modality:FINAL [const,val]
+    annotations:
+      CALL 'public constructor <init> () [primary] declared in kotlin.internal.ImplicitIntegerCoercion' type=kotlin.internal.ImplicitIntegerCoercion origin=null
+    FIELD PROPERTY_BACKING_FIELD name:IMPLICIT_INT type:kotlin.Int visibility:public [final,static]
+      EXPRESSION_BODY
+        CONST Int type=kotlin.Int value=255
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-IMPLICIT_INT> visibility:public modality:FINAL <> () returnType:kotlin.Int
+      correspondingProperty: PROPERTY name:IMPLICIT_INT visibility:public modality:FINAL [const,val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-IMPLICIT_INT> (): kotlin.Int declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:IMPLICIT_INT type:kotlin.Int visibility:public [final,static] ' type=kotlin.Int origin=null
+  PROPERTY name:EXPLICIT_INT visibility:public modality:FINAL [const,val]
+    annotations:
+      CALL 'public constructor <init> () [primary] declared in kotlin.internal.ImplicitIntegerCoercion' type=kotlin.internal.ImplicitIntegerCoercion origin=null
+    FIELD PROPERTY_BACKING_FIELD name:EXPLICIT_INT type:kotlin.Int visibility:public [final,static]
+      EXPRESSION_BODY
+        CONST Int type=kotlin.Int value=255
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-EXPLICIT_INT> visibility:public modality:FINAL <> () returnType:kotlin.Int
+      correspondingProperty: PROPERTY name:EXPLICIT_INT visibility:public modality:FINAL [const,val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-EXPLICIT_INT> (): kotlin.Int declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:EXPLICIT_INT type:kotlin.Int visibility:public [final,static] ' type=kotlin.Int origin=null
+  PROPERTY name:LONG_CONST visibility:public modality:FINAL [const,val]
+    annotations:
+      CALL 'public constructor <init> () [primary] declared in kotlin.internal.ImplicitIntegerCoercion' type=kotlin.internal.ImplicitIntegerCoercion origin=null
+    FIELD PROPERTY_BACKING_FIELD name:LONG_CONST type:kotlin.Long visibility:public [final,static]
+      EXPRESSION_BODY
+        CONST Long type=kotlin.Long value=255
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-LONG_CONST> visibility:public modality:FINAL <> () returnType:kotlin.Long
+      correspondingProperty: PROPERTY name:LONG_CONST visibility:public modality:FINAL [const,val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-LONG_CONST> (): kotlin.Long declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:LONG_CONST type:kotlin.Long visibility:public [final,static] ' type=kotlin.Long origin=null
+  PROPERTY name:NON_CONST visibility:public modality:FINAL [val]
+    annotations:
+      CALL 'public constructor <init> () [primary] declared in kotlin.internal.ImplicitIntegerCoercion' type=kotlin.internal.ImplicitIntegerCoercion origin=null
+    FIELD PROPERTY_BACKING_FIELD name:NON_CONST type:kotlin.Int visibility:public [final,static]
+      EXPRESSION_BODY
+        CONST Int type=kotlin.Int value=255
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-NON_CONST> visibility:public modality:FINAL <> () returnType:kotlin.Int
+      correspondingProperty: PROPERTY name:NON_CONST visibility:public modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-NON_CONST> (): kotlin.Int declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:NON_CONST type:kotlin.Int visibility:public [final,static] ' type=kotlin.Int origin=null
+  PROPERTY name:BIGGER_THAN_UBYTE visibility:public modality:FINAL [const,val]
+    annotations:
+      CALL 'public constructor <init> () [primary] declared in kotlin.internal.ImplicitIntegerCoercion' type=kotlin.internal.ImplicitIntegerCoercion origin=null
+    FIELD PROPERTY_BACKING_FIELD name:BIGGER_THAN_UBYTE type:kotlin.Int visibility:public [final,static]
+      EXPRESSION_BODY
+        CONST Int type=kotlin.Int value=256
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-BIGGER_THAN_UBYTE> visibility:public modality:FINAL <> () returnType:kotlin.Int
+      correspondingProperty: PROPERTY name:BIGGER_THAN_UBYTE visibility:public modality:FINAL [const,val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-BIGGER_THAN_UBYTE> (): kotlin.Int declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:BIGGER_THAN_UBYTE type:kotlin.Int visibility:public [final,static] ' type=kotlin.Int origin=null
+  PROPERTY name:UINT_CONST visibility:public modality:FINAL [const,val]
+    annotations:
+      CALL 'public constructor <init> () [primary] declared in kotlin.internal.ImplicitIntegerCoercion' type=kotlin.internal.ImplicitIntegerCoercion origin=null
+    FIELD PROPERTY_BACKING_FIELD name:UINT_CONST type:kotlin.Long visibility:public [final,static]
+      EXPRESSION_BODY
+        CONST Long type=kotlin.Long value=42
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-UINT_CONST> visibility:public modality:FINAL <> () returnType:kotlin.Long
+      correspondingProperty: PROPERTY name:UINT_CONST visibility:public modality:FINAL [const,val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-UINT_CONST> (): kotlin.Long declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:UINT_CONST type:kotlin.Long visibility:public [final,static] ' type=kotlin.Long origin=null
+  FUN name:takeUByte visibility:public modality:FINAL <> (u:kotlin.UByte) returnType:kotlin.Unit
+    VALUE_PARAMETER name:u index:0 type:kotlin.UByte
+    BLOCK_BODY
+  FUN name:takeUShort visibility:public modality:FINAL <> (u:kotlin.UShort) returnType:kotlin.Unit
+    VALUE_PARAMETER name:u index:0 type:kotlin.UShort
+    BLOCK_BODY
+  FUN name:takeUInt visibility:public modality:FINAL <> (u:kotlin.UInt) returnType:kotlin.Unit
+    VALUE_PARAMETER name:u index:0 type:kotlin.UInt
+    BLOCK_BODY
+  FUN name:takeULong visibility:public modality:FINAL <> (u:kotlin.ULong) returnType:kotlin.Unit
+    VALUE_PARAMETER name:u index:0 type:kotlin.ULong
+    BLOCK_BODY
+  FUN name:takeUBytes visibility:public modality:FINAL <> (u:kotlin.UByte) returnType:kotlin.Unit
+    VALUE_PARAMETER name:u index:0 type:kotlin.UByte
+    BLOCK_BODY
+  FUN name:takeLong visibility:public modality:FINAL <> (l:kotlin.Long) returnType:kotlin.Unit
+    VALUE_PARAMETER name:l index:0 type:kotlin.Long
+    BLOCK_BODY
+  FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    BLOCK_BODY
+      CALL 'public final fun takeUByte (u: kotlin.UByte): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        u: CALL 'public final fun <get-IMPLICIT_INT> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+      CALL 'public final fun takeUByte (u: kotlin.UByte): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        u: CALL 'public final fun <get-EXPLICIT_INT> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+      CALL 'public final fun takeUShort (u: kotlin.UShort): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        u: CALL 'public final fun <get-IMPLICIT_INT> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+      CALL 'public final fun takeUShort (u: kotlin.UShort): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        u: CALL 'public final fun <get-BIGGER_THAN_UBYTE> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+      CALL 'public final fun takeUInt (u: kotlin.UInt): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        u: CALL 'public final fun <get-IMPLICIT_INT> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+      CALL 'public final fun takeULong (u: kotlin.ULong): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        u: CALL 'public final fun <get-IMPLICIT_INT> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+      ERROR_CALL 'Cannot bind 3 arguments to takeUBytes call with 1 parameters' type=kotlin.Unit
+        CALL 'public final fun <get-IMPLICIT_INT> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+        CALL 'public final fun <get-EXPLICIT_INT> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+        CONST Long type=kotlin.Long value=42
+      CALL 'public final fun takeLong (l: kotlin.Long): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        l: CALL 'public final fun <get-IMPLICIT_INT> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null

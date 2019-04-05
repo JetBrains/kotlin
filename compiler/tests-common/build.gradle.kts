@@ -12,6 +12,7 @@ dependencies {
     testCompile(project(":compiler:backend"))
     testCompile(project(":compiler:fir:tree"))
     testCompile(project(":compiler:fir:psi2fir"))
+    testCompile(project(":compiler:fir:fir2ir"))
     testCompile(project(":compiler:fir:cones"))
     testCompile(project(":compiler:fir:resolve"))
     testCompile(project(":compiler:fir:java"))

@@ -38,6 +38,7 @@ val projectsToShadow by extra(listOf(
                 ":compiler:fir:tree",
                 ":compiler:fir:java",
                 ":compiler:fir:psi2fir",
+                ":compiler:fir:fir2ir",
                 ":idea:fir-view"
             )
         } else {
