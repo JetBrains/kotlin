@@ -3,25 +3,13 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package kotlin.script.experimental.jvmhost.impl
+package kotlin.script.experimental.jvm.impl
 
 import java.io.File
-import java.io.Serializable
 import java.net.URLClassLoader
 
 interface KJvmCompiledModule {
     fun createClassLoader(baseClassLoader: ClassLoader?): ClassLoader
-}
-
-class KJvmCompiledModuleInMemory(val compilerOutputFiles: Map<String, ByteArray>) : KJvmCompiledModule, Serializable {
-
-    override fun createClassLoader(baseClassLoader: ClassLoader?): ClassLoader =
-        CompiledScriptClassLoader(baseClassLoader, compilerOutputFiles)
-
-    companion object {
-        @JvmStatic
-        private val serialVersionUID = 0L
-    }
 }
 
 class KJvmCompiledModuleFromClassPath(val classpath: Collection<File>) : KJvmCompiledModule {

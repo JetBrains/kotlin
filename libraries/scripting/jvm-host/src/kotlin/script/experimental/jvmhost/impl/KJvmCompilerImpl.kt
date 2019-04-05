@@ -62,6 +62,7 @@ import kotlin.script.experimental.host.getMergedScriptText
 import kotlin.script.experimental.host.getScriptingClass
 import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.impl.BridgeDependenciesResolver
+import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
 import kotlin.script.experimental.jvm.jdkHome
 import kotlin.script.experimental.jvm.jvm
 import kotlin.script.experimental.jvm.util.KotlinJars

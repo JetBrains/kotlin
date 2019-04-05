@@ -13,7 +13,7 @@ import java.util.jar.Manifest
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvmhost.impl.KJvmCompiledModuleInMemory
-import kotlin.script.experimental.jvmhost.impl.KJvmCompiledScript
+import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
 
 // TODO: generate execution code (main)
 

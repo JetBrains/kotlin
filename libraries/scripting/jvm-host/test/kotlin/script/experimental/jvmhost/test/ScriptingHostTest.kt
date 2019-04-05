@@ -18,10 +18,11 @@ import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.BasicScriptingHost
 import kotlin.script.experimental.host.FileScriptSource
 import kotlin.script.experimental.host.toScriptSource
+import kotlin.script.experimental.jvm.BasicJvmScriptEvaluator
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvmhost.*
 import kotlin.script.experimental.jvmhost.impl.CompiledScriptClassLoader
-import kotlin.script.experimental.jvmhost.impl.KJvmCompiledScript
+import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
 import kotlin.script.templates.standard.SimpleScriptTemplate
 
 class ScriptingHostTest : TestCase() {
