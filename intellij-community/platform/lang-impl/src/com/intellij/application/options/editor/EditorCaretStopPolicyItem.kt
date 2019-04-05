@@ -2,8 +2,8 @@
 package com.intellij.application.options.editor
 
 import com.intellij.openapi.application.ApplicationBundle
-import com.intellij.openapi.editor.ex.CaretStopOptions
-import com.intellij.openapi.editor.ex.CaretStopPolicy
+import com.intellij.openapi.editor.actions.CaretStopOptions
+import com.intellij.openapi.editor.actions.CaretStopPolicy
 import com.intellij.openapi.util.SystemInfo
 
 internal interface EditorCaretStopPolicyItem {
