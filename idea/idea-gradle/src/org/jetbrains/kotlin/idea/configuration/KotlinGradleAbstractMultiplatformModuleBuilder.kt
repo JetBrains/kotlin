@@ -26,6 +26,8 @@ import org.jetbrains.plugins.gradle.service.project.wizard.GradleModuleBuilder
 import org.jetbrains.plugins.gradle.service.settings.GradleProjectSettingsControl
 import org.jetbrains.plugins.gradle.settings.DistributionType
 import com.intellij.openapi.externalSystem.model.project.ProjectData
+import org.jetbrains.kotlin.idea.statistics.KotlinEventTrigger
+import org.jetbrains.kotlin.idea.statistics.KotlinStatisticsTrigger
 import javax.swing.Icon
 
 abstract class KotlinGradleAbstractMultiplatformModuleBuilder(
@@ -75,6 +77,7 @@ abstract class KotlinGradleAbstractMultiplatformModuleBuilder(
 
     override fun setupModule(module: Module) {
         try {
+            KotlinStatisticsTrigger.trigger(KotlinEventTrigger.KotlinIdeWizardsTrigger, this.javaClass.simpleName)
             module.gradleModuleBuilder = this
             super.setupModule(module)
 

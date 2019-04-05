@@ -24,6 +24,8 @@ import com.intellij.openapi.projectRoots.SdkTypeId
 import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider
 import org.jetbrains.kotlin.idea.roots.migrateNonJvmSourceFolders
+import org.jetbrains.kotlin.idea.statistics.KotlinEventTrigger
+import org.jetbrains.kotlin.idea.statistics.KotlinStatisticsTrigger
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import javax.swing.Icon
@@ -55,6 +57,7 @@ class KotlinModuleBuilder(
     }
 
     override fun setupRootModel(rootModel: ModifiableRootModel) {
+        KotlinStatisticsTrigger.trigger(KotlinEventTrigger.KotlinIdeWizardsTrigger, this.javaClass.simpleName + ": ${this.targetPlatform}")
         super.setupRootModel(rootModel)
         if (targetPlatform !is JvmPlatform) {
             migrateNonJvmSourceFolders(rootModel)
