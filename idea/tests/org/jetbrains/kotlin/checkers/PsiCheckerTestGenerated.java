@@ -126,6 +126,11 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
             runTest("idea/testData/checker/ForRangeConventions.kt");
         }
 
+        @TestMetadata("FunctionOnlyOneTypeParametersList.kt")
+        public void testFunctionOnlyOneTypeParametersList() throws Exception {
+            runTest("idea/testData/checker/FunctionOnlyOneTypeParametersList.kt");
+        }
+
         @TestMetadata("FunctionReturnTypes.kt")
         public void testFunctionReturnTypes() throws Exception {
             runTest("idea/testData/checker/FunctionReturnTypes.kt");

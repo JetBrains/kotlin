@@ -1576,10 +1576,10 @@ public class KotlinParsing extends AbstractKotlinParsing {
             PsiBuilder.Marker error = mark();
             parseTypeParameterList(TokenSet.orSet(TokenSet.create(LPAR), valueParametersFollow));
             if (typeParameterListOccurred) {
-                int offset = myBuilder.getCurrentOffset();
+                int finishIndex = myBuilder.rawTokenIndex();
                 error.rollbackTo();
                 error = mark();
-                advance(offset - myBuilder.getCurrentOffset());
+                advance(finishIndex - myBuilder.rawTokenIndex());
                 error.error("Only one type parameter list is allowed for a function");
             }
             else {
