@@ -407,6 +407,18 @@ open class IrModuleSerializer(
         return proto.build()
     }
 
+    private fun serializeIrLocalDelegatedPropertyReference(
+        callable: IrLocalDelegatedPropertyReference
+    ): KotlinIr.IrLocalDelegatedPropertyReference {
+        val proto = KotlinIr.IrLocalDelegatedPropertyReference.newBuilder()
+            .setDelegate(serializeIrSymbol(callable.delegate))
+            .setGetter(serializeIrSymbol(callable.getter))
+            .setSymbol(serializeIrSymbol(callable.symbol))
+
+        callable.setter?.let { proto.setSetter(serializeIrSymbol(it)) }
+
+        return proto.build()
+    }
 
     private fun serializePropertyReference(callable: IrPropertyReference): KotlinIr.IrPropertyReference {
         val proto = KotlinIr.IrPropertyReference.newBuilder()
@@ -780,6 +792,8 @@ open class IrModuleSerializer(
             -> operationProto.getObject = serializeGetObject(expression)
             is IrInstanceInitializerCall
             -> operationProto.instanceInitializerCall = serializeInstanceInitializerCall(expression)
+            is IrLocalDelegatedPropertyReference
+            -> operationProto.localDelegatedPropertyReference = serializeIrLocalDelegatedPropertyReference(expression)
             is IrPropertyReference
             -> operationProto.propertyReference = serializePropertyReference(expression)
             is IrReturn -> operationProto.`return` = serializeReturn(expression)
@@ -937,6 +951,21 @@ open class IrModuleSerializer(
         .setBody(serializeStatement(declaration.body))
         .build()
 
+    private fun serializeIrLocalDelegatedProperty(variable: IrLocalDelegatedProperty): KotlinIr.IrLocalDelegatedProperty {
+
+        val proto = KotlinIr.IrLocalDelegatedProperty.newBuilder()
+            .setName(serializeString(variable.name.toString()))
+            .setIsVar(variable.isVar)
+            .setType(serializeIrType(variable.type))
+            .setDelegate(serializeIrVariable(variable.delegate))
+            .setGetter(serializeIrFunction(variable.getter as IrSimpleFunction)) // TODO: can it be non simple?
+            .setSymbol(serializeIrSymbol(variable.symbol))
+
+        variable.setter?.let { proto.setSetter(serializeIrFunction(it as IrSimpleFunction)) } // TODO: ditto.
+
+        return proto.build()
+    }
+
     private fun serializeIrProperty(property: IrProperty): KotlinIr.IrProperty {
         val index = declarationTable.uniqIdByDeclaration(property)
 
@@ -1074,6 +1103,8 @@ open class IrModuleSerializer(
                 declarator.irEnumEntry = serializeIrEnumEntry(declaration)
             is IrProperty ->
                 declarator.irProperty = serializeIrProperty(declaration)
+            is IrLocalDelegatedProperty ->
+                declarator.irLocalDelegatedProperty = serializeIrLocalDelegatedProperty(declaration)
             else
             -> TODO("Declaration serialization not supported yet: $declaration")
         }

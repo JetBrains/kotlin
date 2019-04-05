@@ -9,6 +9,14 @@ import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.descriptors.*
 import org.jetbrains.kotlin.backend.common.ir.DeclarationFactory
 import org.jetbrains.kotlin.backend.common.ir.ir2string
+import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrConst.ValueCase.*
+import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrDeclarator.DeclaratorCase.*
+import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrOperation.OperationCase.*
+import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatement.StatementCase
+import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrType.KindCase.*
+import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrTypeArgument.KindCase.STAR
+import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrTypeArgument.KindCase.TYPE
+import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrVarargElement.VarargElementCase
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -23,13 +31,6 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatement.*
-import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrOperation.OperationCase.*
-import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrConst.ValueCase.*
-import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrDeclarator.DeclaratorCase.*
-import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrType.KindCase.*
-import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrVarargElement.VarargElementCase
-import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrTypeArgument.KindCase.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 
@@ -383,6 +384,26 @@ abstract class IrModuleDeserializer(
         return IrInstanceInitializerCallImpl(start, end, symbol, builtIns.unitType)
     }
 
+    private fun deserializeIrLocalDelegatedPropertyReference(
+        proto: KotlinIr.IrLocalDelegatedPropertyReference,
+        start: Int,
+        end: Int,
+        type: IrType
+    ): IrLocalDelegatedPropertyReference {
+
+        val delegate = deserializeIrSymbol(proto.delegate) as IrVariableSymbol
+        val getter = deserializeIrSymbol(proto.getter) as IrSimpleFunctionSymbol
+        val setter = if (proto.hasSetter()) deserializeIrSymbol(proto.setter) as IrSimpleFunctionSymbol else null
+        val symbol = deserializeIrSymbol(proto.symbol) as IrLocalDelegatedPropertySymbol
+        return IrLocalDelegatedPropertyReferenceImpl(
+            start, end, type,
+            symbol,
+            delegate,
+            getter,
+            setter
+        )
+    }
+
     private val getterToPropertyDescriptorMap = mutableMapOf<IrSimpleFunctionSymbol, WrappedPropertyDescriptor>()
 
     private fun deserializePropertyReference(
@@ -690,6 +711,8 @@ abstract class IrModuleDeserializer(
             -> deserializeGetObject(proto.getObject, start, end, type)
             GET_VALUE
             -> deserializeGetValue(proto.getValue, start, end, type)
+            LOCAL_DELEGATED_PROPERTY_REFERENCE
+            -> deserializeIrLocalDelegatedPropertyReference(proto.localDelegatedPropertyReference, start, end, type)
             INSTANCE_INITIALIZER_CALL
             -> deserializeInstanceInitializerCall(proto.instanceInitializerCall, start, end)
             PROPERTY_REFERENCE
@@ -1039,6 +1062,36 @@ abstract class IrModuleDeserializer(
         KotlinIr.ModalityKind.ABSTRACT_MODALITY -> Modality.ABSTRACT
     }
 
+    private fun deserializeIrLocalDelegatedProperty(
+        proto: KotlinIr.IrLocalDelegatedProperty,
+        start: Int,
+        end: Int,
+        origin: IrDeclarationOrigin
+    ): IrLocalDelegatedProperty {
+
+        val delegate = deserializeIrVariable(proto.delegate, start, end, origin)
+        val getter = deserializeIrFunction(proto.getter, start, end, origin)
+        val setter = if (proto.hasSetter()) deserializeIrFunction(proto.setter, start, end, origin) else null
+
+        delegate.let { (it.descriptor as? WrappedVariableDescriptor)?.bind(it) }
+        getter.let { (it.descriptor as? WrappedSimpleFunctionDescriptor)?.bind(it) }
+        setter?.let { (it.descriptor as? WrappedSimpleFunctionDescriptor)?.bind(it) }
+
+        val symbol = deserializeIrSymbol(proto.symbol) as IrLocalDelegatedPropertySymbol
+
+        return IrLocalDelegatedPropertyImpl(
+            start, end, origin,
+            symbol,
+            deserializeName(proto.name),
+            deserializeIrType(proto.type),
+            proto.isVar
+        ).also {
+            it.delegate = delegate
+            it.getter = getter
+            it.setter = setter
+        }
+    }
+
     private fun deserializeIrProperty(
         proto: KotlinIr.IrProperty,
         start: Int,
@@ -1132,6 +1185,8 @@ abstract class IrModuleDeserializer(
             -> deserializeIrValueParameter(declarator.irValueParameter, start, end, origin)
             IR_ENUM_ENTRY
             -> deserializeIrEnumEntry(declarator.irEnumEntry, start, end, origin)
+            IR_LOCAL_DELEGATED_PROPERTY
+            -> deserializeIrLocalDelegatedProperty(declarator.irLocalDelegatedProperty, start, end, origin)
             DECLARATOR_NOT_SET
             -> error("Declaration deserialization not implemented: ${declarator.declaratorCase}")
         }

@@ -1020,7 +1020,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -2344,7 +2344,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -2790,7 +2790,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -3227,7 +3227,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -3631,7 +3631,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -4044,7 +4044,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -4587,7 +4587,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -5088,7 +5088,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -5680,7 +5680,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -6783,7 +6783,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -7750,7 +7750,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -8120,7 +8120,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -8600,7 +8600,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -9446,7 +9446,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -9811,7 +9811,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -10304,7 +10304,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -10797,7 +10797,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -11285,7 +11285,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -11646,7 +11646,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -12146,7 +12146,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -12742,7 +12742,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -13552,7 +13552,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -13956,7 +13956,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -14378,7 +14378,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -15081,7 +15081,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -15569,7 +15569,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -15938,7 +15938,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -16429,7 +16429,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -17029,7 +17029,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -17902,7 +17902,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -18714,7 +18714,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -19309,6 +19309,792 @@ public final class KotlinIr {
     // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.backend.common.serialization.IrFunctionReference)
   }
 
+  public interface IrLocalDelegatedPropertyReferenceOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.backend.common.serialization.IrLocalDelegatedPropertyReference)
+      org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+
+    /**
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrSymbol delegate = 1;</code>
+     */
+    boolean hasDelegate();
+    /**
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrSymbol delegate = 1;</code>
+     */
+    org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol getDelegate();
+
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrSymbol getter = 2;</code>
+     */
+    boolean hasGetter();
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrSymbol getter = 2;</code>
+     */
+    org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol getGetter();
+
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrSymbol setter = 3;</code>
+     */
+    boolean hasSetter();
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrSymbol setter = 3;</code>
+     */
+    org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol getSetter();
+
+    /**
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrSymbol symbol = 4;</code>
+     */
+    boolean hasSymbol();
+    /**
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrSymbol symbol = 4;</code>
+     */
+    org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol getSymbol();
+  }
+  /**
+   * Protobuf type {@code org.jetbrains.kotlin.backend.common.serialization.IrLocalDelegatedPropertyReference}
+   */
+  public static final class IrLocalDelegatedPropertyReference extends
+      org.jetbrains.kotlin.protobuf.GeneratedMessageLite implements
+      // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.backend.common.serialization.IrLocalDelegatedPropertyReference)
+      IrLocalDelegatedPropertyReferenceOrBuilder {
+    // Use IrLocalDelegatedPropertyReference.newBuilder() to construct.
+    private IrLocalDelegatedPropertyReference(org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder builder) {
+      super(builder);
+      this.unknownFields = builder.getUnknownFields();
+    }
+    private IrLocalDelegatedPropertyReference(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.ByteString.EMPTY;}
+
+    private static final IrLocalDelegatedPropertyReference defaultInstance;
+    public static IrLocalDelegatedPropertyReference getDefaultInstance() {
+      return defaultInstance;
+    }
+
+    public IrLocalDelegatedPropertyReference getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+
+    private final org.jetbrains.kotlin.protobuf.ByteString unknownFields;
+    private IrLocalDelegatedPropertyReference(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      initFields();
+      int mutable_bitField0_ = 0;
+      org.jetbrains.kotlin.protobuf.ByteString.Output unknownFieldsOutput =
+          org.jetbrains.kotlin.protobuf.ByteString.newOutput();
+      org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
+          org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
+              unknownFieldsOutput);
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownField(input, unknownFieldsCodedOutput,
+                                     extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 10: {
+              org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000001) == 0x00000001)) {
+                subBuilder = delegate_.toBuilder();
+              }
+              delegate_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(delegate_);
+                delegate_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000001;
+              break;
+            }
+            case 18: {
+              org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000002) == 0x00000002)) {
+                subBuilder = getter_.toBuilder();
+              }
+              getter_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(getter_);
+                getter_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000002;
+              break;
+            }
+            case 26: {
+              org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000004) == 0x00000004)) {
+                subBuilder = setter_.toBuilder();
+              }
+              setter_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(setter_);
+                setter_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000004;
+              break;
+            }
+            case 34: {
+              org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000008) == 0x00000008)) {
+                subBuilder = symbol_.toBuilder();
+              }
+              symbol_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(symbol_);
+                symbol_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000008;
+              break;
+            }
+          }
+        }
+      } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
+            e.getMessage()).setUnfinishedMessage(this);
+      } finally {
+        try {
+          unknownFieldsCodedOutput.flush();
+        } catch (java.io.IOException e) {
+        // Should not happen
+        } finally {
+          unknownFields = unknownFieldsOutput.toByteString();
+        }
+        makeExtensionsImmutable();
+      }
+    }
+    public static org.jetbrains.kotlin.protobuf.Parser<IrLocalDelegatedPropertyReference> PARSER =
+        new org.jetbrains.kotlin.protobuf.AbstractParser<IrLocalDelegatedPropertyReference>() {
+      public IrLocalDelegatedPropertyReference parsePartialFrom(
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+        return new IrLocalDelegatedPropertyReference(input, extensionRegistry);
+      }
+    };
+
+    @java.lang.Override
+    public org.jetbrains.kotlin.protobuf.Parser<IrLocalDelegatedPropertyReference> getParserForType() {
+      return PARSER;
+    }
+
+    private int bitField0_;
+    public static final int DELEGATE_FIELD_NUMBER = 1;
+    private org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol delegate_;
+    /**
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrSymbol delegate = 1;</code>
+     */
+    public boolean hasDelegate() {
+      return ((bitField0_ & 0x00000001) == 0x00000001);
+    }
+    /**
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrSymbol delegate = 1;</code>
+     */
+    public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol getDelegate() {
+      return delegate_;
+    }
+
+    public static final int GETTER_FIELD_NUMBER = 2;
+    private org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol getter_;
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrSymbol getter = 2;</code>
+     */
+    public boolean hasGetter() {
+      return ((bitField0_ & 0x00000002) == 0x00000002);
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrSymbol getter = 2;</code>
+     */
+    public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol getGetter() {
+      return getter_;
+    }
+
+    public static final int SETTER_FIELD_NUMBER = 3;
+    private org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol setter_;
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrSymbol setter = 3;</code>
+     */
+    public boolean hasSetter() {
+      return ((bitField0_ & 0x00000004) == 0x00000004);
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrSymbol setter = 3;</code>
+     */
+    public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol getSetter() {
+      return setter_;
+    }
+
+    public static final int SYMBOL_FIELD_NUMBER = 4;
+    private org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol symbol_;
+    /**
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrSymbol symbol = 4;</code>
+     */
+    public boolean hasSymbol() {
+      return ((bitField0_ & 0x00000008) == 0x00000008);
+    }
+    /**
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrSymbol symbol = 4;</code>
+     */
+    public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol getSymbol() {
+      return symbol_;
+    }
+
+    private void initFields() {
+      delegate_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol.getDefaultInstance();
+      getter_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol.getDefaultInstance();
+      setter_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol.getDefaultInstance();
+      symbol_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol.getDefaultInstance();
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      if (!hasDelegate()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!hasSymbol()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!getDelegate().isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (hasGetter()) {
+        if (!getGetter().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      if (hasSetter()) {
+        if (!getSetter().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      if (!getSymbol().isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        output.writeMessage(1, delegate_);
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        output.writeMessage(2, getter_);
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        output.writeMessage(3, setter_);
+      }
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        output.writeMessage(4, symbol_);
+      }
+      output.writeRawBytes(unknownFields);
+    }
+
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(1, delegate_);
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(2, getter_);
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(3, setter_);
+      }
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(4, symbol_);
+      }
+      size += unknownFields.size();
+      memoizedSerializedSize = size;
+      return size;
+    }
+
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+
+    public static org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedPropertyReference parseFrom(
+        org.jetbrains.kotlin.protobuf.ByteString data)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedPropertyReference parseFrom(
+        org.jetbrains.kotlin.protobuf.ByteString data,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedPropertyReference parseFrom(byte[] data)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedPropertyReference parseFrom(
+        byte[] data,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedPropertyReference parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedPropertyReference parseFrom(
+        java.io.InputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedPropertyReference parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input);
+    }
+    public static org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedPropertyReference parseDelimitedFrom(
+        java.io.InputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedPropertyReference parseFrom(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedPropertyReference parseFrom(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedPropertyReference prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+
+    /**
+     * Protobuf type {@code org.jetbrains.kotlin.backend.common.serialization.IrLocalDelegatedPropertyReference}
+     */
+    public static final class Builder extends
+        org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder<
+          org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedPropertyReference, Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.backend.common.serialization.IrLocalDelegatedPropertyReference)
+        org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedPropertyReferenceOrBuilder {
+      // Construct using org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedPropertyReference.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+
+      public Builder clear() {
+        super.clear();
+        delegate_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol.getDefaultInstance();
+        bitField0_ = (bitField0_ & ~0x00000001);
+        getter_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol.getDefaultInstance();
+        bitField0_ = (bitField0_ & ~0x00000002);
+        setter_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol.getDefaultInstance();
+        bitField0_ = (bitField0_ & ~0x00000004);
+        symbol_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol.getDefaultInstance();
+        bitField0_ = (bitField0_ & ~0x00000008);
+        return this;
+      }
+
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+
+      public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedPropertyReference getDefaultInstanceForType() {
+        return org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedPropertyReference.getDefaultInstance();
+      }
+
+      public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedPropertyReference build() {
+        org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedPropertyReference result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedPropertyReference buildPartial() {
+        org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedPropertyReference result = new org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedPropertyReference(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+          to_bitField0_ |= 0x00000001;
+        }
+        result.delegate_ = delegate_;
+        if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
+          to_bitField0_ |= 0x00000002;
+        }
+        result.getter_ = getter_;
+        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
+          to_bitField0_ |= 0x00000004;
+        }
+        result.setter_ = setter_;
+        if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
+          to_bitField0_ |= 0x00000008;
+        }
+        result.symbol_ = symbol_;
+        result.bitField0_ = to_bitField0_;
+        return result;
+      }
+
+      public Builder mergeFrom(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedPropertyReference other) {
+        if (other == org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedPropertyReference.getDefaultInstance()) return this;
+        if (other.hasDelegate()) {
+          mergeDelegate(other.getDelegate());
+        }
+        if (other.hasGetter()) {
+          mergeGetter(other.getGetter());
+        }
+        if (other.hasSetter()) {
+          mergeSetter(other.getSetter());
+        }
+        if (other.hasSymbol()) {
+          mergeSymbol(other.getSymbol());
+        }
+        setUnknownFields(
+            getUnknownFields().concat(other.unknownFields));
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        if (!hasDelegate()) {
+          
+          return false;
+        }
+        if (!hasSymbol()) {
+          
+          return false;
+        }
+        if (!getDelegate().isInitialized()) {
+          
+          return false;
+        }
+        if (hasGetter()) {
+          if (!getGetter().isInitialized()) {
+            
+            return false;
+          }
+        }
+        if (hasSetter()) {
+          if (!getSetter().isInitialized()) {
+            
+            return false;
+          }
+        }
+        if (!getSymbol().isInitialized()) {
+          
+          return false;
+        }
+        return true;
+      }
+
+      public Builder mergeFrom(
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedPropertyReference parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedPropertyReference) e.getUnfinishedMessage();
+          throw e;
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      private org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol delegate_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol.getDefaultInstance();
+      /**
+       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrSymbol delegate = 1;</code>
+       */
+      public boolean hasDelegate() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrSymbol delegate = 1;</code>
+       */
+      public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol getDelegate() {
+        return delegate_;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrSymbol delegate = 1;</code>
+       */
+      public Builder setDelegate(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        delegate_ = value;
+
+        bitField0_ |= 0x00000001;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrSymbol delegate = 1;</code>
+       */
+      public Builder setDelegate(
+          org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol.Builder builderForValue) {
+        delegate_ = builderForValue.build();
+
+        bitField0_ |= 0x00000001;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrSymbol delegate = 1;</code>
+       */
+      public Builder mergeDelegate(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol value) {
+        if (((bitField0_ & 0x00000001) == 0x00000001) &&
+            delegate_ != org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol.getDefaultInstance()) {
+          delegate_ =
+            org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol.newBuilder(delegate_).mergeFrom(value).buildPartial();
+        } else {
+          delegate_ = value;
+        }
+
+        bitField0_ |= 0x00000001;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrSymbol delegate = 1;</code>
+       */
+      public Builder clearDelegate() {
+        delegate_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol.getDefaultInstance();
+
+        bitField0_ = (bitField0_ & ~0x00000001);
+        return this;
+      }
+
+      private org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol getter_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol.getDefaultInstance();
+      /**
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrSymbol getter = 2;</code>
+       */
+      public boolean hasGetter() {
+        return ((bitField0_ & 0x00000002) == 0x00000002);
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrSymbol getter = 2;</code>
+       */
+      public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol getGetter() {
+        return getter_;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrSymbol getter = 2;</code>
+       */
+      public Builder setGetter(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        getter_ = value;
+
+        bitField0_ |= 0x00000002;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrSymbol getter = 2;</code>
+       */
+      public Builder setGetter(
+          org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol.Builder builderForValue) {
+        getter_ = builderForValue.build();
+
+        bitField0_ |= 0x00000002;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrSymbol getter = 2;</code>
+       */
+      public Builder mergeGetter(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol value) {
+        if (((bitField0_ & 0x00000002) == 0x00000002) &&
+            getter_ != org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol.getDefaultInstance()) {
+          getter_ =
+            org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol.newBuilder(getter_).mergeFrom(value).buildPartial();
+        } else {
+          getter_ = value;
+        }
+
+        bitField0_ |= 0x00000002;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrSymbol getter = 2;</code>
+       */
+      public Builder clearGetter() {
+        getter_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol.getDefaultInstance();
+
+        bitField0_ = (bitField0_ & ~0x00000002);
+        return this;
+      }
+
+      private org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol setter_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol.getDefaultInstance();
+      /**
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrSymbol setter = 3;</code>
+       */
+      public boolean hasSetter() {
+        return ((bitField0_ & 0x00000004) == 0x00000004);
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrSymbol setter = 3;</code>
+       */
+      public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol getSetter() {
+        return setter_;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrSymbol setter = 3;</code>
+       */
+      public Builder setSetter(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        setter_ = value;
+
+        bitField0_ |= 0x00000004;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrSymbol setter = 3;</code>
+       */
+      public Builder setSetter(
+          org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol.Builder builderForValue) {
+        setter_ = builderForValue.build();
+
+        bitField0_ |= 0x00000004;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrSymbol setter = 3;</code>
+       */
+      public Builder mergeSetter(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol value) {
+        if (((bitField0_ & 0x00000004) == 0x00000004) &&
+            setter_ != org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol.getDefaultInstance()) {
+          setter_ =
+            org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol.newBuilder(setter_).mergeFrom(value).buildPartial();
+        } else {
+          setter_ = value;
+        }
+
+        bitField0_ |= 0x00000004;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrSymbol setter = 3;</code>
+       */
+      public Builder clearSetter() {
+        setter_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol.getDefaultInstance();
+
+        bitField0_ = (bitField0_ & ~0x00000004);
+        return this;
+      }
+
+      private org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol symbol_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol.getDefaultInstance();
+      /**
+       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrSymbol symbol = 4;</code>
+       */
+      public boolean hasSymbol() {
+        return ((bitField0_ & 0x00000008) == 0x00000008);
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrSymbol symbol = 4;</code>
+       */
+      public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol getSymbol() {
+        return symbol_;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrSymbol symbol = 4;</code>
+       */
+      public Builder setSymbol(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        symbol_ = value;
+
+        bitField0_ |= 0x00000008;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrSymbol symbol = 4;</code>
+       */
+      public Builder setSymbol(
+          org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol.Builder builderForValue) {
+        symbol_ = builderForValue.build();
+
+        bitField0_ |= 0x00000008;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrSymbol symbol = 4;</code>
+       */
+      public Builder mergeSymbol(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol value) {
+        if (((bitField0_ & 0x00000008) == 0x00000008) &&
+            symbol_ != org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol.getDefaultInstance()) {
+          symbol_ =
+            org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol.newBuilder(symbol_).mergeFrom(value).buildPartial();
+        } else {
+          symbol_ = value;
+        }
+
+        bitField0_ |= 0x00000008;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrSymbol symbol = 4;</code>
+       */
+      public Builder clearSymbol() {
+        symbol_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol.getDefaultInstance();
+
+        bitField0_ = (bitField0_ & ~0x00000008);
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.backend.common.serialization.IrLocalDelegatedPropertyReference)
+    }
+
+    static {
+      defaultInstance = new IrLocalDelegatedPropertyReference(true);
+      defaultInstance.initFields();
+    }
+
+    // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.backend.common.serialization.IrLocalDelegatedPropertyReference)
+  }
+
   public interface IrPropertyReferenceOrBuilder extends
       // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.backend.common.serialization.IrPropertyReference)
       org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
@@ -19409,7 +20195,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -20435,7 +21221,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -20932,7 +21718,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -21538,7 +22324,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -22685,7 +23471,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -23171,7 +23957,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -23696,7 +24482,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -24109,7 +24895,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -24634,7 +25420,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -25038,7 +25824,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -25460,7 +26246,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -26098,7 +26884,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -26502,7 +27288,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -26906,7 +27692,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -27310,7 +28096,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -27741,7 +28527,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -28465,7 +29251,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -28999,7 +29785,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -29533,7 +30319,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -30067,7 +30853,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -30597,7 +31383,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -31085,7 +31871,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -31512,7 +32298,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -32259,7 +33045,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -32885,7 +33671,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -33506,7 +34292,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -34087,7 +34873,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -34575,7 +35361,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -34988,7 +35774,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -35536,7 +36322,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -36769,6 +37555,15 @@ public final class KotlinIr {
      * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrDynamicOperatorExpression dynamic_operator = 30;</code>
      */
     org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrDynamicOperatorExpression getDynamicOperator();
+
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrLocalDelegatedPropertyReference local_delegated_property_reference = 31;</code>
+     */
+    boolean hasLocalDelegatedPropertyReference();
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrLocalDelegatedPropertyReference local_delegated_property_reference = 31;</code>
+     */
+    org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedPropertyReference getLocalDelegatedPropertyReference();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.backend.common.serialization.IrOperation}
@@ -36809,7 +37604,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -37215,6 +38010,19 @@ public final class KotlinIr {
               operationCase_ = 30;
               break;
             }
+            case 250: {
+              org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedPropertyReference.Builder subBuilder = null;
+              if (operationCase_ == 31) {
+                subBuilder = ((org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedPropertyReference) operation_).toBuilder();
+              }
+              operation_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedPropertyReference.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom((org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedPropertyReference) operation_);
+                operation_ = subBuilder.buildPartial();
+              }
+              operationCase_ = 31;
+              break;
+            }
           }
         }
       } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -37283,6 +38091,7 @@ public final class KotlinIr {
       WHILE(28),
       DYNAMIC_MEMBER(29),
       DYNAMIC_OPERATOR(30),
+      LOCAL_DELEGATED_PROPERTY_REFERENCE(31),
       OPERATION_NOT_SET(0);
       private int value = 0;
       private OperationCase(int value) {
@@ -37320,6 +38129,7 @@ public final class KotlinIr {
           case 28: return WHILE;
           case 29: return DYNAMIC_MEMBER;
           case 30: return DYNAMIC_OPERATOR;
+          case 31: return LOCAL_DELEGATED_PROPERTY_REFERENCE;
           case 0: return OPERATION_NOT_SET;
           default: throw new java.lang.IllegalArgumentException(
             "Value is undefined for this oneof enum.");
@@ -37846,6 +38656,23 @@ public final class KotlinIr {
       return org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrDynamicOperatorExpression.getDefaultInstance();
     }
 
+    public static final int LOCAL_DELEGATED_PROPERTY_REFERENCE_FIELD_NUMBER = 31;
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrLocalDelegatedPropertyReference local_delegated_property_reference = 31;</code>
+     */
+    public boolean hasLocalDelegatedPropertyReference() {
+      return operationCase_ == 31;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrLocalDelegatedPropertyReference local_delegated_property_reference = 31;</code>
+     */
+    public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedPropertyReference getLocalDelegatedPropertyReference() {
+      if (operationCase_ == 31) {
+         return (org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedPropertyReference) operation_;
+      }
+      return org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedPropertyReference.getDefaultInstance();
+    }
+
     private void initFields() {
     }
     private byte memoizedIsInitialized = -1;
@@ -38034,6 +38861,12 @@ public final class KotlinIr {
           return false;
         }
       }
+      if (hasLocalDelegatedPropertyReference()) {
+        if (!getLocalDelegatedPropertyReference().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
       memoizedIsInitialized = 1;
       return true;
     }
@@ -38130,6 +38963,9 @@ public final class KotlinIr {
       }
       if (operationCase_ == 30) {
         output.writeMessage(30, (org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrDynamicOperatorExpression) operation_);
+      }
+      if (operationCase_ == 31) {
+        output.writeMessage(31, (org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedPropertyReference) operation_);
       }
       output.writeRawBytes(unknownFields);
     }
@@ -38259,6 +39095,10 @@ public final class KotlinIr {
       if (operationCase_ == 30) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(30, (org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrDynamicOperatorExpression) operation_);
+      }
+      if (operationCase_ == 31) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(31, (org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedPropertyReference) operation_);
       }
       size += unknownFields.size();
       memoizedSerializedSize = size;
@@ -38474,6 +39314,9 @@ public final class KotlinIr {
         if (operationCase_ == 30) {
           result.operation_ = operation_;
         }
+        if (operationCase_ == 31) {
+          result.operation_ = operation_;
+        }
         result.bitField0_ = to_bitField0_;
         result.operationCase_ = operationCase_;
         return result;
@@ -38600,6 +39443,10 @@ public final class KotlinIr {
           }
           case DYNAMIC_OPERATOR: {
             mergeDynamicOperator(other.getDynamicOperator());
+            break;
+          }
+          case LOCAL_DELEGATED_PROPERTY_REFERENCE: {
+            mergeLocalDelegatedPropertyReference(other.getLocalDelegatedPropertyReference());
             break;
           }
           case OPERATION_NOT_SET: {
@@ -38788,6 +39635,12 @@ public final class KotlinIr {
         }
         if (hasDynamicOperator()) {
           if (!getDynamicOperator().isInitialized()) {
+            
+            return false;
+          }
+        }
+        if (hasLocalDelegatedPropertyReference()) {
+          if (!getLocalDelegatedPropertyReference().isInitialized()) {
             
             return false;
           }
@@ -40748,6 +41601,70 @@ public final class KotlinIr {
         return this;
       }
 
+      /**
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrLocalDelegatedPropertyReference local_delegated_property_reference = 31;</code>
+       */
+      public boolean hasLocalDelegatedPropertyReference() {
+        return operationCase_ == 31;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrLocalDelegatedPropertyReference local_delegated_property_reference = 31;</code>
+       */
+      public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedPropertyReference getLocalDelegatedPropertyReference() {
+        if (operationCase_ == 31) {
+          return (org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedPropertyReference) operation_;
+        }
+        return org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedPropertyReference.getDefaultInstance();
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrLocalDelegatedPropertyReference local_delegated_property_reference = 31;</code>
+       */
+      public Builder setLocalDelegatedPropertyReference(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedPropertyReference value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        operation_ = value;
+
+        operationCase_ = 31;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrLocalDelegatedPropertyReference local_delegated_property_reference = 31;</code>
+       */
+      public Builder setLocalDelegatedPropertyReference(
+          org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedPropertyReference.Builder builderForValue) {
+        operation_ = builderForValue.build();
+
+        operationCase_ = 31;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrLocalDelegatedPropertyReference local_delegated_property_reference = 31;</code>
+       */
+      public Builder mergeLocalDelegatedPropertyReference(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedPropertyReference value) {
+        if (operationCase_ == 31 &&
+            operation_ != org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedPropertyReference.getDefaultInstance()) {
+          operation_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedPropertyReference.newBuilder((org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedPropertyReference) operation_)
+              .mergeFrom(value).buildPartial();
+        } else {
+          operation_ = value;
+        }
+
+        operationCase_ = 31;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrLocalDelegatedPropertyReference local_delegated_property_reference = 31;</code>
+       */
+      public Builder clearLocalDelegatedPropertyReference() {
+        if (operationCase_ == 31) {
+          operationCase_ = 0;
+          operation_ = null;
+          
+        }
+        return this;
+      }
+
       // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.backend.common.serialization.IrOperation)
     }
 
@@ -40824,7 +41741,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -41470,7 +42387,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -41864,7 +42781,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -42208,7 +43125,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -43336,7 +44253,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -44834,7 +45751,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -45499,7 +46416,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -46567,6 +47484,1138 @@ public final class KotlinIr {
     // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.backend.common.serialization.IrField)
   }
 
+  public interface IrLocalDelegatedPropertyOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.backend.common.serialization.IrLocalDelegatedProperty)
+      org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+
+    /**
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.String name = 1;</code>
+     */
+    boolean hasName();
+    /**
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.String name = 1;</code>
+     */
+    org.jetbrains.kotlin.backend.common.serialization.KotlinIr.String getName();
+
+    /**
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrTypeIndex type = 2;</code>
+     */
+    boolean hasType();
+    /**
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrTypeIndex type = 2;</code>
+     */
+    org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrTypeIndex getType();
+
+    /**
+     * <code>required bool is_var = 3;</code>
+     */
+    boolean hasIsVar();
+    /**
+     * <code>required bool is_var = 3;</code>
+     */
+    boolean getIsVar();
+
+    /**
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrVariable delegate = 4;</code>
+     */
+    boolean hasDelegate();
+    /**
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrVariable delegate = 4;</code>
+     */
+    org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrVariable getDelegate();
+
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrFunction getter = 5;</code>
+     */
+    boolean hasGetter();
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrFunction getter = 5;</code>
+     */
+    org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrFunction getGetter();
+
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrFunction setter = 6;</code>
+     */
+    boolean hasSetter();
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrFunction setter = 6;</code>
+     */
+    org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrFunction getSetter();
+
+    /**
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrSymbol symbol = 7;</code>
+     */
+    boolean hasSymbol();
+    /**
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrSymbol symbol = 7;</code>
+     */
+    org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol getSymbol();
+  }
+  /**
+   * Protobuf type {@code org.jetbrains.kotlin.backend.common.serialization.IrLocalDelegatedProperty}
+   */
+  public static final class IrLocalDelegatedProperty extends
+      org.jetbrains.kotlin.protobuf.GeneratedMessageLite implements
+      // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.backend.common.serialization.IrLocalDelegatedProperty)
+      IrLocalDelegatedPropertyOrBuilder {
+    // Use IrLocalDelegatedProperty.newBuilder() to construct.
+    private IrLocalDelegatedProperty(org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder builder) {
+      super(builder);
+      this.unknownFields = builder.getUnknownFields();
+    }
+    private IrLocalDelegatedProperty(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.ByteString.EMPTY;}
+
+    private static final IrLocalDelegatedProperty defaultInstance;
+    public static IrLocalDelegatedProperty getDefaultInstance() {
+      return defaultInstance;
+    }
+
+    public IrLocalDelegatedProperty getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+
+    private final org.jetbrains.kotlin.protobuf.ByteString unknownFields;
+    private IrLocalDelegatedProperty(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      initFields();
+      int mutable_bitField0_ = 0;
+      org.jetbrains.kotlin.protobuf.ByteString.Output unknownFieldsOutput =
+          org.jetbrains.kotlin.protobuf.ByteString.newOutput();
+      org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
+          org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
+              unknownFieldsOutput);
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownField(input, unknownFieldsCodedOutput,
+                                     extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 10: {
+              org.jetbrains.kotlin.backend.common.serialization.KotlinIr.String.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000001) == 0x00000001)) {
+                subBuilder = name_.toBuilder();
+              }
+              name_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.String.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(name_);
+                name_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000001;
+              break;
+            }
+            case 18: {
+              org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrTypeIndex.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000002) == 0x00000002)) {
+                subBuilder = type_.toBuilder();
+              }
+              type_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrTypeIndex.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(type_);
+                type_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000002;
+              break;
+            }
+            case 24: {
+              bitField0_ |= 0x00000004;
+              isVar_ = input.readBool();
+              break;
+            }
+            case 34: {
+              org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrVariable.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000008) == 0x00000008)) {
+                subBuilder = delegate_.toBuilder();
+              }
+              delegate_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrVariable.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(delegate_);
+                delegate_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000008;
+              break;
+            }
+            case 42: {
+              org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrFunction.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000010) == 0x00000010)) {
+                subBuilder = getter_.toBuilder();
+              }
+              getter_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrFunction.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(getter_);
+                getter_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000010;
+              break;
+            }
+            case 50: {
+              org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrFunction.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000020) == 0x00000020)) {
+                subBuilder = setter_.toBuilder();
+              }
+              setter_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrFunction.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(setter_);
+                setter_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000020;
+              break;
+            }
+            case 58: {
+              org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000040) == 0x00000040)) {
+                subBuilder = symbol_.toBuilder();
+              }
+              symbol_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(symbol_);
+                symbol_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000040;
+              break;
+            }
+          }
+        }
+      } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
+            e.getMessage()).setUnfinishedMessage(this);
+      } finally {
+        try {
+          unknownFieldsCodedOutput.flush();
+        } catch (java.io.IOException e) {
+        // Should not happen
+        } finally {
+          unknownFields = unknownFieldsOutput.toByteString();
+        }
+        makeExtensionsImmutable();
+      }
+    }
+    public static org.jetbrains.kotlin.protobuf.Parser<IrLocalDelegatedProperty> PARSER =
+        new org.jetbrains.kotlin.protobuf.AbstractParser<IrLocalDelegatedProperty>() {
+      public IrLocalDelegatedProperty parsePartialFrom(
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+        return new IrLocalDelegatedProperty(input, extensionRegistry);
+      }
+    };
+
+    @java.lang.Override
+    public org.jetbrains.kotlin.protobuf.Parser<IrLocalDelegatedProperty> getParserForType() {
+      return PARSER;
+    }
+
+    private int bitField0_;
+    public static final int NAME_FIELD_NUMBER = 1;
+    private org.jetbrains.kotlin.backend.common.serialization.KotlinIr.String name_;
+    /**
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.String name = 1;</code>
+     */
+    public boolean hasName() {
+      return ((bitField0_ & 0x00000001) == 0x00000001);
+    }
+    /**
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.String name = 1;</code>
+     */
+    public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.String getName() {
+      return name_;
+    }
+
+    public static final int TYPE_FIELD_NUMBER = 2;
+    private org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrTypeIndex type_;
+    /**
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrTypeIndex type = 2;</code>
+     */
+    public boolean hasType() {
+      return ((bitField0_ & 0x00000002) == 0x00000002);
+    }
+    /**
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrTypeIndex type = 2;</code>
+     */
+    public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrTypeIndex getType() {
+      return type_;
+    }
+
+    public static final int IS_VAR_FIELD_NUMBER = 3;
+    private boolean isVar_;
+    /**
+     * <code>required bool is_var = 3;</code>
+     */
+    public boolean hasIsVar() {
+      return ((bitField0_ & 0x00000004) == 0x00000004);
+    }
+    /**
+     * <code>required bool is_var = 3;</code>
+     */
+    public boolean getIsVar() {
+      return isVar_;
+    }
+
+    public static final int DELEGATE_FIELD_NUMBER = 4;
+    private org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrVariable delegate_;
+    /**
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrVariable delegate = 4;</code>
+     */
+    public boolean hasDelegate() {
+      return ((bitField0_ & 0x00000008) == 0x00000008);
+    }
+    /**
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrVariable delegate = 4;</code>
+     */
+    public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrVariable getDelegate() {
+      return delegate_;
+    }
+
+    public static final int GETTER_FIELD_NUMBER = 5;
+    private org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrFunction getter_;
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrFunction getter = 5;</code>
+     */
+    public boolean hasGetter() {
+      return ((bitField0_ & 0x00000010) == 0x00000010);
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrFunction getter = 5;</code>
+     */
+    public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrFunction getGetter() {
+      return getter_;
+    }
+
+    public static final int SETTER_FIELD_NUMBER = 6;
+    private org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrFunction setter_;
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrFunction setter = 6;</code>
+     */
+    public boolean hasSetter() {
+      return ((bitField0_ & 0x00000020) == 0x00000020);
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrFunction setter = 6;</code>
+     */
+    public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrFunction getSetter() {
+      return setter_;
+    }
+
+    public static final int SYMBOL_FIELD_NUMBER = 7;
+    private org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol symbol_;
+    /**
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrSymbol symbol = 7;</code>
+     */
+    public boolean hasSymbol() {
+      return ((bitField0_ & 0x00000040) == 0x00000040);
+    }
+    /**
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrSymbol symbol = 7;</code>
+     */
+    public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol getSymbol() {
+      return symbol_;
+    }
+
+    private void initFields() {
+      name_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.String.getDefaultInstance();
+      type_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrTypeIndex.getDefaultInstance();
+      isVar_ = false;
+      delegate_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrVariable.getDefaultInstance();
+      getter_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrFunction.getDefaultInstance();
+      setter_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrFunction.getDefaultInstance();
+      symbol_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol.getDefaultInstance();
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      if (!hasName()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!hasType()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!hasIsVar()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!hasDelegate()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!hasSymbol()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!getName().isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!getType().isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!getDelegate().isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (hasGetter()) {
+        if (!getGetter().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      if (hasSetter()) {
+        if (!getSetter().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      if (!getSymbol().isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        output.writeMessage(1, name_);
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        output.writeMessage(2, type_);
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        output.writeBool(3, isVar_);
+      }
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        output.writeMessage(4, delegate_);
+      }
+      if (((bitField0_ & 0x00000010) == 0x00000010)) {
+        output.writeMessage(5, getter_);
+      }
+      if (((bitField0_ & 0x00000020) == 0x00000020)) {
+        output.writeMessage(6, setter_);
+      }
+      if (((bitField0_ & 0x00000040) == 0x00000040)) {
+        output.writeMessage(7, symbol_);
+      }
+      output.writeRawBytes(unknownFields);
+    }
+
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(1, name_);
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(2, type_);
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeBoolSize(3, isVar_);
+      }
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(4, delegate_);
+      }
+      if (((bitField0_ & 0x00000010) == 0x00000010)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(5, getter_);
+      }
+      if (((bitField0_ & 0x00000020) == 0x00000020)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(6, setter_);
+      }
+      if (((bitField0_ & 0x00000040) == 0x00000040)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(7, symbol_);
+      }
+      size += unknownFields.size();
+      memoizedSerializedSize = size;
+      return size;
+    }
+
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+
+    public static org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedProperty parseFrom(
+        org.jetbrains.kotlin.protobuf.ByteString data)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedProperty parseFrom(
+        org.jetbrains.kotlin.protobuf.ByteString data,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedProperty parseFrom(byte[] data)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedProperty parseFrom(
+        byte[] data,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedProperty parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedProperty parseFrom(
+        java.io.InputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedProperty parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input);
+    }
+    public static org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedProperty parseDelimitedFrom(
+        java.io.InputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedProperty parseFrom(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedProperty parseFrom(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedProperty prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+
+    /**
+     * Protobuf type {@code org.jetbrains.kotlin.backend.common.serialization.IrLocalDelegatedProperty}
+     */
+    public static final class Builder extends
+        org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder<
+          org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedProperty, Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.backend.common.serialization.IrLocalDelegatedProperty)
+        org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedPropertyOrBuilder {
+      // Construct using org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedProperty.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+
+      public Builder clear() {
+        super.clear();
+        name_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.String.getDefaultInstance();
+        bitField0_ = (bitField0_ & ~0x00000001);
+        type_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrTypeIndex.getDefaultInstance();
+        bitField0_ = (bitField0_ & ~0x00000002);
+        isVar_ = false;
+        bitField0_ = (bitField0_ & ~0x00000004);
+        delegate_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrVariable.getDefaultInstance();
+        bitField0_ = (bitField0_ & ~0x00000008);
+        getter_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrFunction.getDefaultInstance();
+        bitField0_ = (bitField0_ & ~0x00000010);
+        setter_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrFunction.getDefaultInstance();
+        bitField0_ = (bitField0_ & ~0x00000020);
+        symbol_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol.getDefaultInstance();
+        bitField0_ = (bitField0_ & ~0x00000040);
+        return this;
+      }
+
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+
+      public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedProperty getDefaultInstanceForType() {
+        return org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedProperty.getDefaultInstance();
+      }
+
+      public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedProperty build() {
+        org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedProperty result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedProperty buildPartial() {
+        org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedProperty result = new org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedProperty(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+          to_bitField0_ |= 0x00000001;
+        }
+        result.name_ = name_;
+        if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
+          to_bitField0_ |= 0x00000002;
+        }
+        result.type_ = type_;
+        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
+          to_bitField0_ |= 0x00000004;
+        }
+        result.isVar_ = isVar_;
+        if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
+          to_bitField0_ |= 0x00000008;
+        }
+        result.delegate_ = delegate_;
+        if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
+          to_bitField0_ |= 0x00000010;
+        }
+        result.getter_ = getter_;
+        if (((from_bitField0_ & 0x00000020) == 0x00000020)) {
+          to_bitField0_ |= 0x00000020;
+        }
+        result.setter_ = setter_;
+        if (((from_bitField0_ & 0x00000040) == 0x00000040)) {
+          to_bitField0_ |= 0x00000040;
+        }
+        result.symbol_ = symbol_;
+        result.bitField0_ = to_bitField0_;
+        return result;
+      }
+
+      public Builder mergeFrom(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedProperty other) {
+        if (other == org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedProperty.getDefaultInstance()) return this;
+        if (other.hasName()) {
+          mergeName(other.getName());
+        }
+        if (other.hasType()) {
+          mergeType(other.getType());
+        }
+        if (other.hasIsVar()) {
+          setIsVar(other.getIsVar());
+        }
+        if (other.hasDelegate()) {
+          mergeDelegate(other.getDelegate());
+        }
+        if (other.hasGetter()) {
+          mergeGetter(other.getGetter());
+        }
+        if (other.hasSetter()) {
+          mergeSetter(other.getSetter());
+        }
+        if (other.hasSymbol()) {
+          mergeSymbol(other.getSymbol());
+        }
+        setUnknownFields(
+            getUnknownFields().concat(other.unknownFields));
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        if (!hasName()) {
+          
+          return false;
+        }
+        if (!hasType()) {
+          
+          return false;
+        }
+        if (!hasIsVar()) {
+          
+          return false;
+        }
+        if (!hasDelegate()) {
+          
+          return false;
+        }
+        if (!hasSymbol()) {
+          
+          return false;
+        }
+        if (!getName().isInitialized()) {
+          
+          return false;
+        }
+        if (!getType().isInitialized()) {
+          
+          return false;
+        }
+        if (!getDelegate().isInitialized()) {
+          
+          return false;
+        }
+        if (hasGetter()) {
+          if (!getGetter().isInitialized()) {
+            
+            return false;
+          }
+        }
+        if (hasSetter()) {
+          if (!getSetter().isInitialized()) {
+            
+            return false;
+          }
+        }
+        if (!getSymbol().isInitialized()) {
+          
+          return false;
+        }
+        return true;
+      }
+
+      public Builder mergeFrom(
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedProperty parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedProperty) e.getUnfinishedMessage();
+          throw e;
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      private org.jetbrains.kotlin.backend.common.serialization.KotlinIr.String name_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.String.getDefaultInstance();
+      /**
+       * <code>required .org.jetbrains.kotlin.backend.common.serialization.String name = 1;</code>
+       */
+      public boolean hasName() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.backend.common.serialization.String name = 1;</code>
+       */
+      public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.String getName() {
+        return name_;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.backend.common.serialization.String name = 1;</code>
+       */
+      public Builder setName(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        name_ = value;
+
+        bitField0_ |= 0x00000001;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.backend.common.serialization.String name = 1;</code>
+       */
+      public Builder setName(
+          org.jetbrains.kotlin.backend.common.serialization.KotlinIr.String.Builder builderForValue) {
+        name_ = builderForValue.build();
+
+        bitField0_ |= 0x00000001;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.backend.common.serialization.String name = 1;</code>
+       */
+      public Builder mergeName(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.String value) {
+        if (((bitField0_ & 0x00000001) == 0x00000001) &&
+            name_ != org.jetbrains.kotlin.backend.common.serialization.KotlinIr.String.getDefaultInstance()) {
+          name_ =
+            org.jetbrains.kotlin.backend.common.serialization.KotlinIr.String.newBuilder(name_).mergeFrom(value).buildPartial();
+        } else {
+          name_ = value;
+        }
+
+        bitField0_ |= 0x00000001;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.backend.common.serialization.String name = 1;</code>
+       */
+      public Builder clearName() {
+        name_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.String.getDefaultInstance();
+
+        bitField0_ = (bitField0_ & ~0x00000001);
+        return this;
+      }
+
+      private org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrTypeIndex type_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrTypeIndex.getDefaultInstance();
+      /**
+       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrTypeIndex type = 2;</code>
+       */
+      public boolean hasType() {
+        return ((bitField0_ & 0x00000002) == 0x00000002);
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrTypeIndex type = 2;</code>
+       */
+      public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrTypeIndex getType() {
+        return type_;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrTypeIndex type = 2;</code>
+       */
+      public Builder setType(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrTypeIndex value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        type_ = value;
+
+        bitField0_ |= 0x00000002;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrTypeIndex type = 2;</code>
+       */
+      public Builder setType(
+          org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrTypeIndex.Builder builderForValue) {
+        type_ = builderForValue.build();
+
+        bitField0_ |= 0x00000002;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrTypeIndex type = 2;</code>
+       */
+      public Builder mergeType(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrTypeIndex value) {
+        if (((bitField0_ & 0x00000002) == 0x00000002) &&
+            type_ != org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrTypeIndex.getDefaultInstance()) {
+          type_ =
+            org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrTypeIndex.newBuilder(type_).mergeFrom(value).buildPartial();
+        } else {
+          type_ = value;
+        }
+
+        bitField0_ |= 0x00000002;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrTypeIndex type = 2;</code>
+       */
+      public Builder clearType() {
+        type_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrTypeIndex.getDefaultInstance();
+
+        bitField0_ = (bitField0_ & ~0x00000002);
+        return this;
+      }
+
+      private boolean isVar_ ;
+      /**
+       * <code>required bool is_var = 3;</code>
+       */
+      public boolean hasIsVar() {
+        return ((bitField0_ & 0x00000004) == 0x00000004);
+      }
+      /**
+       * <code>required bool is_var = 3;</code>
+       */
+      public boolean getIsVar() {
+        return isVar_;
+      }
+      /**
+       * <code>required bool is_var = 3;</code>
+       */
+      public Builder setIsVar(boolean value) {
+        bitField0_ |= 0x00000004;
+        isVar_ = value;
+        
+        return this;
+      }
+      /**
+       * <code>required bool is_var = 3;</code>
+       */
+      public Builder clearIsVar() {
+        bitField0_ = (bitField0_ & ~0x00000004);
+        isVar_ = false;
+        
+        return this;
+      }
+
+      private org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrVariable delegate_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrVariable.getDefaultInstance();
+      /**
+       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrVariable delegate = 4;</code>
+       */
+      public boolean hasDelegate() {
+        return ((bitField0_ & 0x00000008) == 0x00000008);
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrVariable delegate = 4;</code>
+       */
+      public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrVariable getDelegate() {
+        return delegate_;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrVariable delegate = 4;</code>
+       */
+      public Builder setDelegate(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrVariable value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        delegate_ = value;
+
+        bitField0_ |= 0x00000008;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrVariable delegate = 4;</code>
+       */
+      public Builder setDelegate(
+          org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrVariable.Builder builderForValue) {
+        delegate_ = builderForValue.build();
+
+        bitField0_ |= 0x00000008;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrVariable delegate = 4;</code>
+       */
+      public Builder mergeDelegate(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrVariable value) {
+        if (((bitField0_ & 0x00000008) == 0x00000008) &&
+            delegate_ != org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrVariable.getDefaultInstance()) {
+          delegate_ =
+            org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrVariable.newBuilder(delegate_).mergeFrom(value).buildPartial();
+        } else {
+          delegate_ = value;
+        }
+
+        bitField0_ |= 0x00000008;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrVariable delegate = 4;</code>
+       */
+      public Builder clearDelegate() {
+        delegate_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrVariable.getDefaultInstance();
+
+        bitField0_ = (bitField0_ & ~0x00000008);
+        return this;
+      }
+
+      private org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrFunction getter_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrFunction.getDefaultInstance();
+      /**
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrFunction getter = 5;</code>
+       */
+      public boolean hasGetter() {
+        return ((bitField0_ & 0x00000010) == 0x00000010);
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrFunction getter = 5;</code>
+       */
+      public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrFunction getGetter() {
+        return getter_;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrFunction getter = 5;</code>
+       */
+      public Builder setGetter(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrFunction value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        getter_ = value;
+
+        bitField0_ |= 0x00000010;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrFunction getter = 5;</code>
+       */
+      public Builder setGetter(
+          org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrFunction.Builder builderForValue) {
+        getter_ = builderForValue.build();
+
+        bitField0_ |= 0x00000010;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrFunction getter = 5;</code>
+       */
+      public Builder mergeGetter(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrFunction value) {
+        if (((bitField0_ & 0x00000010) == 0x00000010) &&
+            getter_ != org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrFunction.getDefaultInstance()) {
+          getter_ =
+            org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrFunction.newBuilder(getter_).mergeFrom(value).buildPartial();
+        } else {
+          getter_ = value;
+        }
+
+        bitField0_ |= 0x00000010;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrFunction getter = 5;</code>
+       */
+      public Builder clearGetter() {
+        getter_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrFunction.getDefaultInstance();
+
+        bitField0_ = (bitField0_ & ~0x00000010);
+        return this;
+      }
+
+      private org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrFunction setter_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrFunction.getDefaultInstance();
+      /**
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrFunction setter = 6;</code>
+       */
+      public boolean hasSetter() {
+        return ((bitField0_ & 0x00000020) == 0x00000020);
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrFunction setter = 6;</code>
+       */
+      public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrFunction getSetter() {
+        return setter_;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrFunction setter = 6;</code>
+       */
+      public Builder setSetter(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrFunction value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        setter_ = value;
+
+        bitField0_ |= 0x00000020;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrFunction setter = 6;</code>
+       */
+      public Builder setSetter(
+          org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrFunction.Builder builderForValue) {
+        setter_ = builderForValue.build();
+
+        bitField0_ |= 0x00000020;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrFunction setter = 6;</code>
+       */
+      public Builder mergeSetter(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrFunction value) {
+        if (((bitField0_ & 0x00000020) == 0x00000020) &&
+            setter_ != org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrFunction.getDefaultInstance()) {
+          setter_ =
+            org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrFunction.newBuilder(setter_).mergeFrom(value).buildPartial();
+        } else {
+          setter_ = value;
+        }
+
+        bitField0_ |= 0x00000020;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrFunction setter = 6;</code>
+       */
+      public Builder clearSetter() {
+        setter_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrFunction.getDefaultInstance();
+
+        bitField0_ = (bitField0_ & ~0x00000020);
+        return this;
+      }
+
+      private org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol symbol_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol.getDefaultInstance();
+      /**
+       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrSymbol symbol = 7;</code>
+       */
+      public boolean hasSymbol() {
+        return ((bitField0_ & 0x00000040) == 0x00000040);
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrSymbol symbol = 7;</code>
+       */
+      public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol getSymbol() {
+        return symbol_;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrSymbol symbol = 7;</code>
+       */
+      public Builder setSymbol(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        symbol_ = value;
+
+        bitField0_ |= 0x00000040;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrSymbol symbol = 7;</code>
+       */
+      public Builder setSymbol(
+          org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol.Builder builderForValue) {
+        symbol_ = builderForValue.build();
+
+        bitField0_ |= 0x00000040;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrSymbol symbol = 7;</code>
+       */
+      public Builder mergeSymbol(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol value) {
+        if (((bitField0_ & 0x00000040) == 0x00000040) &&
+            symbol_ != org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol.getDefaultInstance()) {
+          symbol_ =
+            org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol.newBuilder(symbol_).mergeFrom(value).buildPartial();
+        } else {
+          symbol_ = value;
+        }
+
+        bitField0_ |= 0x00000040;
+        return this;
+      }
+      /**
+       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrSymbol symbol = 7;</code>
+       */
+      public Builder clearSymbol() {
+        symbol_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbol.getDefaultInstance();
+
+        bitField0_ = (bitField0_ & ~0x00000040);
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.backend.common.serialization.IrLocalDelegatedProperty)
+    }
+
+    static {
+      defaultInstance = new IrLocalDelegatedProperty(true);
+      defaultInstance.initFields();
+    }
+
+    // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.backend.common.serialization.IrLocalDelegatedProperty)
+  }
+
   public interface IrPropertyOrBuilder extends
       // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.backend.common.serialization.IrProperty)
       org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
@@ -46721,7 +48770,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -48272,7 +50321,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -49329,7 +51378,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -50490,7 +52539,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -51469,7 +53518,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -52087,7 +54136,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -53910,7 +55959,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -54678,7 +56727,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -55258,6 +57307,15 @@ public final class KotlinIr {
      * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrValueParameter ir_value_parameter = 11;</code>
      */
     org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrValueParameter getIrValueParameter();
+
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrLocalDelegatedProperty ir_local_delegated_property = 12;</code>
+     */
+    boolean hasIrLocalDelegatedProperty();
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrLocalDelegatedProperty ir_local_delegated_property = 12;</code>
+     */
+    org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedProperty getIrLocalDelegatedProperty();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.backend.common.serialization.IrDeclarator}
@@ -55298,7 +57356,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -55457,6 +57515,19 @@ public final class KotlinIr {
               declaratorCase_ = 11;
               break;
             }
+            case 98: {
+              org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedProperty.Builder subBuilder = null;
+              if (declaratorCase_ == 12) {
+                subBuilder = ((org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedProperty) declarator_).toBuilder();
+              }
+              declarator_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedProperty.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom((org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedProperty) declarator_);
+                declarator_ = subBuilder.buildPartial();
+              }
+              declaratorCase_ = 12;
+              break;
+            }
           }
         }
       } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -55506,6 +57577,7 @@ public final class KotlinIr {
       IR_TYPE_PARAMETER(9),
       IR_VARIABLE(10),
       IR_VALUE_PARAMETER(11),
+      IR_LOCAL_DELEGATED_PROPERTY(12),
       DECLARATOR_NOT_SET(0);
       private int value = 0;
       private DeclaratorCase(int value) {
@@ -55524,6 +57596,7 @@ public final class KotlinIr {
           case 9: return IR_TYPE_PARAMETER;
           case 10: return IR_VARIABLE;
           case 11: return IR_VALUE_PARAMETER;
+          case 12: return IR_LOCAL_DELEGATED_PROPERTY;
           case 0: return DECLARATOR_NOT_SET;
           default: throw new java.lang.IllegalArgumentException(
             "Value is undefined for this oneof enum.");
@@ -55727,6 +57800,23 @@ public final class KotlinIr {
       return org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrValueParameter.getDefaultInstance();
     }
 
+    public static final int IR_LOCAL_DELEGATED_PROPERTY_FIELD_NUMBER = 12;
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrLocalDelegatedProperty ir_local_delegated_property = 12;</code>
+     */
+    public boolean hasIrLocalDelegatedProperty() {
+      return declaratorCase_ == 12;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrLocalDelegatedProperty ir_local_delegated_property = 12;</code>
+     */
+    public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedProperty getIrLocalDelegatedProperty() {
+      if (declaratorCase_ == 12) {
+         return (org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedProperty) declarator_;
+      }
+      return org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedProperty.getDefaultInstance();
+    }
+
     private void initFields() {
     }
     private byte memoizedIsInitialized = -1;
@@ -55795,6 +57885,12 @@ public final class KotlinIr {
           return false;
         }
       }
+      if (hasIrLocalDelegatedProperty()) {
+        if (!getIrLocalDelegatedProperty().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
       memoizedIsInitialized = 1;
       return true;
     }
@@ -55834,6 +57930,9 @@ public final class KotlinIr {
       }
       if (declaratorCase_ == 11) {
         output.writeMessage(11, (org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrValueParameter) declarator_);
+      }
+      if (declaratorCase_ == 12) {
+        output.writeMessage(12, (org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedProperty) declarator_);
       }
       output.writeRawBytes(unknownFields);
     }
@@ -55887,6 +57986,10 @@ public final class KotlinIr {
       if (declaratorCase_ == 11) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(11, (org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrValueParameter) declarator_);
+      }
+      if (declaratorCase_ == 12) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(12, (org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedProperty) declarator_);
       }
       size += unknownFields.size();
       memoizedSerializedSize = size;
@@ -56045,6 +58148,9 @@ public final class KotlinIr {
         if (declaratorCase_ == 11) {
           result.declarator_ = declarator_;
         }
+        if (declaratorCase_ == 12) {
+          result.declarator_ = declarator_;
+        }
         result.bitField0_ = to_bitField0_;
         result.declaratorCase_ = declaratorCase_;
         return result;
@@ -56095,6 +58201,10 @@ public final class KotlinIr {
           }
           case IR_VALUE_PARAMETER: {
             mergeIrValueParameter(other.getIrValueParameter());
+            break;
+          }
+          case IR_LOCAL_DELEGATED_PROPERTY: {
+            mergeIrLocalDelegatedProperty(other.getIrLocalDelegatedProperty());
             break;
           }
           case DECLARATOR_NOT_SET: {
@@ -56163,6 +58273,12 @@ public final class KotlinIr {
         }
         if (hasIrValueParameter()) {
           if (!getIrValueParameter().isInitialized()) {
+            
+            return false;
+          }
+        }
+        if (hasIrLocalDelegatedProperty()) {
+          if (!getIrLocalDelegatedProperty().isInitialized()) {
             
             return false;
           }
@@ -56907,6 +59023,70 @@ public final class KotlinIr {
         return this;
       }
 
+      /**
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrLocalDelegatedProperty ir_local_delegated_property = 12;</code>
+       */
+      public boolean hasIrLocalDelegatedProperty() {
+        return declaratorCase_ == 12;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrLocalDelegatedProperty ir_local_delegated_property = 12;</code>
+       */
+      public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedProperty getIrLocalDelegatedProperty() {
+        if (declaratorCase_ == 12) {
+          return (org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedProperty) declarator_;
+        }
+        return org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedProperty.getDefaultInstance();
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrLocalDelegatedProperty ir_local_delegated_property = 12;</code>
+       */
+      public Builder setIrLocalDelegatedProperty(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedProperty value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        declarator_ = value;
+
+        declaratorCase_ = 12;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrLocalDelegatedProperty ir_local_delegated_property = 12;</code>
+       */
+      public Builder setIrLocalDelegatedProperty(
+          org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedProperty.Builder builderForValue) {
+        declarator_ = builderForValue.build();
+
+        declaratorCase_ = 12;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrLocalDelegatedProperty ir_local_delegated_property = 12;</code>
+       */
+      public Builder mergeIrLocalDelegatedProperty(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedProperty value) {
+        if (declaratorCase_ == 12 &&
+            declarator_ != org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedProperty.getDefaultInstance()) {
+          declarator_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedProperty.newBuilder((org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrLocalDelegatedProperty) declarator_)
+              .mergeFrom(value).buildPartial();
+        } else {
+          declarator_ = value;
+        }
+
+        declaratorCase_ = 12;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.backend.common.serialization.IrLocalDelegatedProperty ir_local_delegated_property = 12;</code>
+       */
+      public Builder clearIrLocalDelegatedProperty() {
+        if (declaratorCase_ == 12) {
+          declaratorCase_ = 0;
+          declarator_ = null;
+          
+        }
+        return this;
+      }
+
       // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.backend.common.serialization.IrDeclarator)
     }
 
@@ -56992,7 +59172,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -57768,7 +59948,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -58298,7 +60478,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -58795,7 +60975,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -59320,7 +61500,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
@@ -59748,7 +61928,7 @@ public final class KotlinIr {
           org.jetbrains.kotlin.protobuf.ByteString.newOutput();
       org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
           org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput, 1);
+              unknownFieldsOutput);
       try {
         boolean done = false;
         while (!done) {
