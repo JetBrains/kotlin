@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext
 
 class ResultTypeResolver(
-    val typeApproximator: TypeApproximator,
+    val typeApproximator: AbstractTypeApproximator,
     val trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle
 ) {
     interface Context : TypeSystemInferenceExtensionContext {
@@ -77,7 +77,7 @@ class ResultTypeResolver(
     private fun Context.isSuitableType(resultType: KotlinTypeMarker, variableWithConstraints: VariableWithConstraints): Boolean {
         for (constraint in variableWithConstraints.constraints) {
             if (!isProperType(constraint.type)) continue
-            if (!checkConstraint(constraint.type, constraint.kind, resultType)) return false
+            if (!checkConstraint(this, constraint.type, constraint.kind, resultType)) return false
         }
 
         if (!trivialConstraintTypeInferenceOracle.isSuitableResultedType(resultType)) return false

@@ -116,7 +116,7 @@ class CoroutineInferenceSession(
         *
         * while substitutor from parameter map non-fixed types to the original type variable
         * */
-        val callSubstitutor = storage.buildResultingSubstitutor() // substitutor only for fixed variables
+        val callSubstitutor = storage.buildResultingSubstitutor(commonSystem) as NewTypeSubstitutor // substitutor only for fixed variables
 
         for (initialConstraint in storage.initialConstraints) {
             val lower = nonFixedToVariablesSubstitutor.safeSubstitute(callSubstitutor.safeSubstitute(initialConstraint.a as UnwrappedType)) // TODO: SUB
