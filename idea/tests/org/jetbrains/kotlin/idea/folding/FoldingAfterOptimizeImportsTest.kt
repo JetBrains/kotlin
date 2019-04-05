@@ -44,27 +44,28 @@ class FoldingAfterOptimizeImportsTest : AbstractKotlinFoldingTest() {
             ) { KotlinImportOptimizer().processFile(fixture.file).run() }
 
             getFoldingRegion(0).checkRegion(false, findStringWithPrefixes("// REGION AFTER: "))
-
-            null
         }
     }
 
-    private fun getFoldingRegion(number: Int): FoldRegion {
+    private fun getFoldingRegion(@Suppress("SameParameterValue") number: Int): FoldRegion {
         fixture.doHighlighting()
         val model = editor.foldingModel
         val foldingRegions = model.allFoldRegions
-        assert(foldingRegions.size >= number) { "There is no enough folding regions in file: in file - ${foldingRegions.size} , expected = ${number}" }
+        assert(foldingRegions.size >= number) {
+            "There is no enough folding regions in file: in file - ${foldingRegions.size} , expected = $number"
+        }
         return foldingRegions[number]
     }
 
     override fun getTestDataPath() = File(PluginTestCaseBase.getTestDataPathBase(), "/folding/afterOptimizeImports/").path + File.separator
 
-    private fun findStringWithPrefixes(prefix: String) = InTextDirectivesUtils.findStringWithPrefixes(fileText, prefix)
-                                                            ?: throw AssertionError("Couldn't find line with prefix $prefix")
+    private fun findStringWithPrefixes(prefix: String) =
+        InTextDirectivesUtils.findStringWithPrefixes(fileText, prefix)
+            ?: throw AssertionError("Couldn't find line with prefix $prefix")
 
-    private fun FoldRegion.getPosition() = "${startOffset}:${endOffset}"
+    private fun FoldRegion.getPosition() = "$startOffset:$endOffset"
 
-    private fun FoldRegion.checkRegion(isExpanded: Boolean, position: String): Unit {
+    private fun FoldRegion.checkRegion(isExpanded: Boolean, position: String) {
         assert(isValid) { "Region should be valid: $this" }
         assert(isExpanded == isExpanded()) { "isExpanded should be $isExpanded. Actual = ${isExpanded()}" }
         assert(position == getPosition()) { "Region position is wrong: expected = $position, actual = ${getPosition()}" }
