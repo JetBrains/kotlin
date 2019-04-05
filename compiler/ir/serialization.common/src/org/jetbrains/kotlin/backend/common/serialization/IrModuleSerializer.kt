@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrNullaryPrimitiveImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.findTopLevelDeclaration
+import org.jetbrains.kotlin.ir.util.isSerializableExpectClass
 import org.jetbrains.kotlin.ir.util.lineStartOffsets
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
