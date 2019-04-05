@@ -476,6 +476,11 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext {
     override fun captureFromExpression(type: KotlinTypeMarker): KotlinTypeMarker? {
         return captureFromExpressionInternal(type as UnwrappedType)
     }
+
+    override fun createErrorTypeWithCustomConstructor(debugName: String, constructor: TypeConstructorMarker): KotlinTypeMarker {
+        require(constructor is TypeConstructor, constructor::errorMessage)
+        return ErrorUtils.createErrorTypeWithCustomConstructor(debugName, constructor)
+    }
 }
 
 private fun captureFromExpressionInternal(type: UnwrappedType) = captureFromExpression(type)
