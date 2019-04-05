@@ -9,6 +9,7 @@ import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 
 class ConvertCollectionConstructorToFunction : SelfTargetingIntention<KtCallExpression>(
@@ -19,13 +20,13 @@ class ConvertCollectionConstructorToFunction : SelfTargetingIntention<KtCallExpr
         "java.util.ArrayList.<init>" to "arrayListOf",
         "kotlin.collections.ArrayList.<init>" to "arrayListOf",
         "java.util.HashMap.<init>" to "hashMapOf",
-        "kotlin.collections.HashMap.<init>" to "arrayListOf",
+        "kotlin.collections.HashMap.<init>" to "hashMapOf",
         "java.util.HashSet.<init>" to "hashSetOf",
-        "kotlin.collections.HashSet.<init>" to "arrayListOf",
+        "kotlin.collections.HashSet.<init>" to "hashSetOf",
         "java.util.LinkedHashMap.<init>" to "linkedMapOf",
-        "kotlin.collections.LinkedHashMap.<init>" to "arrayListOf",
+        "kotlin.collections.LinkedHashMap.<init>" to "linkedMapOf",
         "java.util.LinkedHashSet.<init>" to "linkedSetOf",
-        "kotlin.collections.LinkedHashSet.<init>" to "arrayListOf"
+        "kotlin.collections.LinkedHashSet.<init>" to "linkedSetOf"
     )
 
     override fun isApplicableTo(element: KtCallExpression, caretOffset: Int): Boolean {
@@ -36,7 +37,8 @@ class ConvertCollectionConstructorToFunction : SelfTargetingIntention<KtCallExpr
     override fun applyTo(element: KtCallExpression, editor: Editor?) {
         val fq = element.resolveToCall()?.resultingDescriptor?.fqNameSafe?.asString() ?: return
         val toCall = functionMap[fq] ?: return
-        val convertedCall = KtPsiFactory(element).createIdentifier(toCall)
-        element.calleeExpression?.replace(convertedCall)
+        val callee = element.calleeExpression ?: return
+        callee.replace(KtPsiFactory(element).createIdentifier(toCall))
+        element.getQualifiedExpressionForSelector()?.replace(element)
     }
 }
