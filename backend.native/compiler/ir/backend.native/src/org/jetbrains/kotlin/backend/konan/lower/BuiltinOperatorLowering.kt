@@ -13,12 +13,9 @@ import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.ir.containsNull
 import org.jetbrains.kotlin.backend.konan.ir.isSubtypeOf
-import org.jetbrains.kotlin.backend.konan.ir.overrides
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltinOperatorDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -26,16 +23,13 @@ import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.makeNullable
-import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.types.toKotlinType
-import org.jetbrains.kotlin.ir.util.defaultOrNullableType
-import org.jetbrains.kotlin.ir.util.isNullConst
-import org.jetbrains.kotlin.ir.util.simpleFunctions
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 /**
@@ -93,7 +87,7 @@ internal class BuiltinOperatorLowering(val context: Context) : FileLoweringPass,
         val lhs = expression.getValueArgument(0)!!
         val rhs = expression.getValueArgument(1)!!
 
-        return if (lhs.type.isInlined() && rhs.type.isInlined()) {
+        return if (lhs.type.isInlinedNative() && rhs.type.isInlinedNative()) {
             // Achieve the same behavior as with JVM BE: if both sides of `===` are values, then compare by value:
             lowerEqeq(expression)
             // Note: such comparisons are deprecated.
@@ -128,8 +122,8 @@ internal class BuiltinOperatorLowering(val context: Context) : FileLoweringPass,
             }
 
             if (expression.symbol == irBuiltins.eqeqSymbol) {
-                lhs.type.getInlinedClass()?.let {
-                    if (it == rhs.type.getInlinedClass() && inlinedClassHasDefaultEquals(it)) {
+                lhs.type.getInlinedClassNative()?.let {
+                    if (it == rhs.type.getInlinedClassNative() && inlinedClassHasDefaultEquals(it)) {
                         return genInlineClassEquals(expression.symbol, rhs, lhs)
                     }
                 }

@@ -17,31 +17,11 @@ import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.isMarkedNullable
-import org.jetbrains.kotlin.ir.util.explicitParameters
-import org.jetbrains.kotlin.ir.util.isFunction
-import org.jetbrains.kotlin.ir.util.isSuspendFunction
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-val IrConstructor.constructedClass get() = this.parent as IrClass
-
-val IrDeclarationParent.fqNameSafe: FqName get() = when (this) {
-    is IrPackageFragment -> this.fqName
-    is IrDeclaration -> this.parent.fqNameSafe.child(this.name)
-
-    else -> error(this)
-}
-
-val IrClass.classId: ClassId?
-    get() {
-        val parent = this.parent
-        return when (parent) {
-            is IrClass -> parent.classId?.createNestedClassId(this.name)
-            is IrPackageFragment -> ClassId.topLevel(parent.fqName.child(this.name))
-            else -> null
-        }
-    }
 
 val IrDeclaration.name: Name
     get() = when (this) {
@@ -72,10 +52,6 @@ val IrFunction.allParameters: List<IrValueParameter>
     } else {
         explicitParameters
     }
-
-val IrValueParameter.isVararg get() = this.varargElementType != null
-
-val IrFunction.isSuspend get() = this is IrSimpleFunction && this.isSuspend
 
 fun IrClass.isUnit() = this.fqNameSafe == KotlinBuiltIns.FQ_NAMES.unit.toSafe()
 
@@ -114,28 +90,10 @@ val IrFunction.isOverridableOrOverrides
 val IrClass.isFinalClass: Boolean
     get() = modality == Modality.FINAL
 
-fun IrSimpleFunction.overrides(other: IrSimpleFunction): Boolean {
-    if (this == other) return true
-
-    this.overriddenSymbols.forEach {
-        if (it.owner.overrides(other)) {
-            return true
-        }
-    }
-
-    return false
-}
-
 fun IrClass.isSpecialClassWithNoSupertypes() = this.isAny() || this.isNothing()
 
 private val IrCall.annotationClass
     get() = (this.symbol.owner as IrConstructor).constructedClass
-
-fun List<IrCall>.hasAnnotation(fqName: FqName): Boolean =
-        this.any { it.annotationClass.fqNameSafe == fqName }
-
-fun IrAnnotationContainer.hasAnnotation(fqName: FqName) =
-        this.annotations.hasAnnotation(fqName)
 
 fun List<IrCall>.findAnnotation(fqName: FqName): IrCall? = this.firstOrNull {
     it.annotationClass.fqNameSafe == fqName

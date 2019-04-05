@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.classifierOrNull
+import org.jetbrains.kotlin.ir.util.fqNameSafe
 import org.jetbrains.kotlin.name.FqName
 
 internal interface IrFunctionMatcher : (IrFunction) -> Boolean

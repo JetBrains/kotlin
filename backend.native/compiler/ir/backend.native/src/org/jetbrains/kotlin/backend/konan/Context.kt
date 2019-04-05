@@ -60,7 +60,6 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
 /**
  * Offset for synthetic elements created by lowerings and not attributable to other places in the source code.
  */
-internal const val SYNTHETIC_OFFSET = -2
 
 internal class SpecialDeclarationsFactory(val context: Context) : KotlinMangler by KonanMangler {
     private val enumSpecialDeclarationsFactory by lazy { EnumSpecialDeclarationsFactory(context) }

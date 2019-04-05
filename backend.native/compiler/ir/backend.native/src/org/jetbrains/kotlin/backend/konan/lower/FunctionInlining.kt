@@ -23,10 +23,7 @@ import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrReturnableBlockImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
 import org.jetbrains.kotlin.ir.util.*
@@ -165,13 +162,13 @@ internal class FunctionInlining(val context: Context) : IrElementTransformerVoid
                     context.config.configuration.languageVersionSettings)
 
             return IrReturnableBlockImpl(
-                    startOffset = startOffset,
-                    endOffset = endOffset,
+                    startOffset = callSite.startOffset,
+                    endOffset = callSite.endOffset,
                     type = callSite.type,
                     symbol = irReturnableBlockSymbol,
                     origin = if (isCoroutineIntrinsicCall) CoroutineIntrinsicLambdaOrigin else null,
                     statements = statements,
-                    sourceFileSymbol = sourceFile.symbol
+                    inlineFunctionSymbol = callee.symbol
             ).apply {
                 transformChildrenVoid(object : IrElementTransformerVoid() {
                     override fun visitReturn(expression: IrReturn): IrExpression {

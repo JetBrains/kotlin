@@ -24,9 +24,17 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isNullable
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
-fun IrType.getInlinedClass(): IrClass? = IrTypeInlineClassesSupport.getInlinedClass(this)
+/**
+ * TODO: there is [IrType::getInlinedClass] in [org.jetbrains.kotlin.ir.util] which isn't compatible with
+ * Native's implementation. Please take a look while commonization.
+ */
+fun IrType.getInlinedClassNative(): IrClass? = IrTypeInlineClassesSupport.getInlinedClass(this)
 
-fun IrType.isInlined(): Boolean = IrTypeInlineClassesSupport.isInlined(this)
+/**
+ * TODO: there is [IrType::isInlined] in [org.jetbrains.kotlin.ir.util] which isn't compatible with
+ * Native's implementation. Please take a look while commonization.
+ */
+fun IrType.isInlinedNative(): Boolean = IrTypeInlineClassesSupport.isInlined(this)
 fun IrClass.isInlined(): Boolean = IrTypeInlineClassesSupport.isInlined(this)
 
 fun KotlinType.getInlinedClass(): ClassDescriptor? = KotlinTypeInlineClassesSupport.getInlinedClass(this)
@@ -55,7 +63,7 @@ fun IrType.computePrimitiveBinaryTypeOrNull(): PrimitiveBinaryType? =
 
 fun IrType.computeBinaryType(): BinaryType<IrClass> = IrTypeInlineClassesSupport.computeBinaryType(this)
 
-fun IrClass.inlinedClassIsNullable(): Boolean = this.defaultType.makeNullable().getInlinedClass() == this // TODO: optimize
+fun IrClass.inlinedClassIsNullable(): Boolean = this.defaultType.makeNullable().getInlinedClassNative() == this // TODO: optimize
 fun IrClass.isUsedAsBoxClass(): Boolean = IrTypeInlineClassesSupport.isUsedAsBoxClass(this)
 
 /**

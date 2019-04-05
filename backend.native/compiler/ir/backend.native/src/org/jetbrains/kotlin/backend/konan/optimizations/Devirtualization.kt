@@ -13,9 +13,7 @@ import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.getInlinedClass
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
-import org.jetbrains.kotlin.backend.konan.ir.isSuspend
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*
@@ -1389,8 +1387,7 @@ internal object Devirtualization {
                                                 type             = coercion.type,
                                                 symbol           = newSymbol,
                                                 origin           = origin,
-                                                statements       = statements,
-                                                sourceFileSymbol = sourceFileSymbol)
+                                                statements       = statements)
                                     }
                                     transformedReturnableBlock.transformChildrenVoid(object: IrElementTransformerVoid() {
                                         override fun visitExpression(expression: IrExpression): IrExpression {
@@ -1469,7 +1466,7 @@ internal object Devirtualization {
                                 && expression.operator != IrTypeOperator.SAFE_CAST)
                             PossiblyFoldedExpression(expression.transformIfAsked(), false)
                         else {
-                            if (expression.typeOperand.getInlinedClass() != coercionDeclaringClass)
+                            if (expression.typeOperand.getInlinedClassNative() != coercionDeclaringClass)
                                 PossiblyFoldedExpression(expression.transformIfAsked(), false)
                             else {
                                 val foldedArgument = fold(expression.argument, coercion, expression, transformRecursively)
