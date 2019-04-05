@@ -218,7 +218,8 @@ fun <T : KtDeclaration> insertMembersAfter(
     editor: Editor?,
     classOrObject: KtClassOrObject,
     members: Collection<T>,
-    anchor: PsiElement? = null
+    anchor: PsiElement? = null,
+    getAnchor: (KtDeclaration) -> PsiElement? = { null }
 ): List<T> {
     members.ifEmpty { return emptyList() }
 
@@ -239,6 +240,8 @@ fun <T : KtDeclaration> insertMembersAfter(
 
             var afterAnchor = anchor ?: findInsertAfterAnchor(editor, body) ?: return@runWriteAction emptyList<T>()
             otherMembers.mapTo(insertedMembers) {
+                afterAnchor = getAnchor(it) ?: afterAnchor
+
                 if (classOrObject is KtClass && classOrObject.isEnum()) {
                     val enumEntries = classOrObject.declarations.filterIsInstance<KtEnumEntry>()
                     val bound = (enumEntries.lastOrNull() ?: classOrObject.allChildren.firstOrNull { element ->
