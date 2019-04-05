@@ -14,7 +14,7 @@ import com.intellij.openapi.editor.event.EditorFactoryEvent
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.util.containers.ContainerUtil
-import org.jetbrains.kotlin.idea.conversion.copy.range
+import org.jetbrains.kotlin.idea.core.util.range
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.compat.EditorFactoryListenerWrapper
 import org.jetbrains.kotlin.psi.psiUtil.endOffset

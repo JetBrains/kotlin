@@ -7,6 +7,7 @@ plugins {
 dependencies {
     compile(kotlinStdlib())
     compileOnly(project(":kotlin-reflect-api"))
+    compile(project(":compiler:psi"))
     compile(project(":core:descriptors"))
     compile(project(":core:descriptors.jvm"))
     compile(project(":compiler:frontend"))

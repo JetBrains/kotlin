@@ -135,7 +135,7 @@
         <externalSystemTaskNotificationListener implementation="org.jetbrains.kotlin.idea.configuration.KotlinExternalSystemSyncListener"/>
 
         <lang.surroundDescriptor language="kotlin"
-                                 implementationClass="org.jetbrains.kotlin.idea.debugger.surroundWith.KotlinDebuggerExpressionSurroundDescriptor"/>
+                                 implementationClass="org.jetbrains.kotlin.idea.debugger.evaluate.surroundWith.KotlinDebuggerExpressionSurroundDescriptor"/>
 
         <editorNotificationProvider implementation="org.jetbrains.kotlin.idea.versions.UnsupportedAbiVersionNotificationPanelProvider"/>
 
@@ -156,6 +156,10 @@
         <applicationService
             serviceInterface="org.jetbrains.kotlin.platform.DefaultIdeTargetPlatformKindProvider"
             serviceImplementation="org.jetbrains.kotlin.platform.impl.IdeaDefaultIdeTargetPlatformKindProvider"/>
+
+        <applicationService
+            serviceInterface="org.jetbrains.kotlin.idea.j2k.J2KPostProcessingRegistrar"
+            serviceImplementation="org.jetbrains.kotlin.idea.j2k.J2KPostProcessingRegistrarImpl"/>
 
       <registryKey key="kotlin.use.ultra.light.classes"
                    description="Whether to use an experimental implementation of Kotlin-as-Java classes"

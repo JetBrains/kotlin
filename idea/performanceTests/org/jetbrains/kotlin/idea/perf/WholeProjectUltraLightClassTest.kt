@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.idea.perf
 
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.idea.refactoring.toPsiFile
+import org.jetbrains.kotlin.idea.core.util.toPsiFile
 import org.jetbrains.kotlin.psi.KtFile
 import kotlin.system.measureNanoTime
 

@@ -23,6 +23,7 @@ import com.intellij.openapi.util.TextRange;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinBundle;
+import org.jetbrains.kotlin.idea.core.surroundWith.KotlinExpressionSurrounder;
 import org.jetbrains.kotlin.psi.*;
 
 public class KotlinStringTemplateSurrounder extends KotlinExpressionSurrounder {

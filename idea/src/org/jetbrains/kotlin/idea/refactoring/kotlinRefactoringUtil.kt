@@ -125,21 +125,6 @@ fun createKotlinFile(
     return targetDir.add(file) as KtFile
 }
 
-fun File.toVirtualFile(): VirtualFile? = LocalFileSystem.getInstance().findFileByIoFile(this)
-
-fun File.toPsiFile(project: Project): PsiFile? = toVirtualFile()?.toPsiFile(project)
-
-fun File.toPsiDirectory(project: Project): PsiDirectory? {
-    return toVirtualFile()?.let { vfile -> PsiManager.getInstance(project).findDirectory(vfile) }
-}
-
-fun VirtualFile.toPsiFile(project: Project): PsiFile? = PsiManager.getInstance(project).findFile(this)
-
-fun VirtualFile.toPsiDirectory(project: Project): PsiDirectory? = PsiManager.getInstance(project).findDirectory(this)
-
-fun VirtualFile.toPsiFileOrDirectory(project: Project): PsiFileSystemItem? =
-    if (isDirectory) toPsiDirectory(project) else toPsiFile(project)
-
 fun PsiElement.getUsageContext(): PsiElement {
     return when (this) {
         is KtElement -> PsiTreeUtil.getParentOfType(
@@ -324,48 +309,10 @@ class SelectionAwareScopeHighlighter(val editor: Editor) {
     }
 }
 
-fun PsiFile.getLineStartOffset(line: Int): Int? {
-    val doc = viewProvider.document ?: PsiDocumentManager.getInstance(project).getDocument(this)
-    if (doc != null && line >= 0 && line < doc.lineCount) {
-        val startOffset = doc.getLineStartOffset(line)
-        val element = findElementAt(startOffset) ?: return startOffset
-
-        if (element is PsiWhiteSpace || element is PsiComment) {
-            return PsiTreeUtil.skipSiblingsForward(element, PsiWhiteSpace::class.java, PsiComment::class.java)?.startOffset ?: startOffset
-        }
-        return startOffset
-    }
-
-    return null
-}
-
-fun PsiFile.getLineEndOffset(line: Int): Int? {
-    val document = viewProvider.document ?: PsiDocumentManager.getInstance(project).getDocument(this)
-    return document?.getLineEndOffset(line)
-}
-
 fun PsiElement.getLineNumber(start: Boolean = true): Int {
     val document = containingFile.viewProvider.document ?: PsiDocumentManager.getInstance(project).getDocument(containingFile)
     return document?.getLineNumber(if (start) this.startOffset else this.endOffset) ?: 0
 }
-
-fun PsiElement.getLineCount(): Int {
-    val doc = containingFile?.let { file -> PsiDocumentManager.getInstance(project).getDocument(file) }
-    if (doc != null) {
-        val spaceRange = textRange ?: TextRange.EMPTY_RANGE
-
-        if (spaceRange.endOffset <= doc.textLength) {
-            val startLine = doc.getLineNumber(spaceRange.startOffset)
-            val endLine = doc.getLineNumber(spaceRange.endOffset)
-
-            return endLine - startLine
-        }
-    }
-
-    return (text ?: "").count { it == '\n' } + 1
-}
-
-fun PsiElement.isMultiLine(): Boolean = getLineCount() > 1
 
 class SeparateFileWrapper(manager: PsiManager) : LightElement(manager, KotlinLanguage.INSTANCE) {
     override fun toString() = ""
@@ -640,31 +587,6 @@ fun createJavaClass(klass: KtClass, targetClass: PsiClass?, forcePlainClass: Boo
     }
 
     return javaClass
-}
-
-fun PsiElement.j2kText(): String? =
-    convertToKotlin()?.results?.single()?.text //TODO: insert imports
-
-fun PsiElement.convertToKotlin(): org.jetbrains.kotlin.j2k.Result? {
-    if (language != JavaLanguage.INSTANCE) return null
-
-    val j2kConverter =
-        JavaToKotlinConverterFactory.createJavaToKotlinConverter(
-            project,
-            ConverterSettings.defaultSettings,
-            IdeaJavaToKotlinServices
-        )
-    return j2kConverter.elementsToKotlin(listOf(this))
-}
-
-fun PsiExpression.j2k(): KtExpression? {
-    val text = j2kText() ?: return null
-    return KtPsiFactory(project).createExpression(text)
-}
-
-fun PsiMember.j2k(): KtNamedDeclaration? {
-    val text = j2kText() ?: return null
-    return KtPsiFactory(project).createDeclaration(text)
 }
 
 internal fun broadcastRefactoringExit(project: Project, refactoringId: String) {

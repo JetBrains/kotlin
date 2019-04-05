@@ -31,8 +31,12 @@ dependencies {
     compile(projectRuntimeJar(":kotlin-daemon-client"))
     compile(project(":kotlin-compiler-runner")) { isTransitive = false }
     compile(project(":compiler:plugin-api"))
-    compile(project(":idea:eval4j"))
+    compile(project(":idea:jvm-debugger:jvm-debugger-util"))
+    compile(project(":idea:jvm-debugger:jvm-debugger-core"))
+    compile(project(":idea:jvm-debugger:jvm-debugger-evaluation"))
+    compile(project(":idea:jvm-debugger:jvm-debugger-sequence"))
     compile(project(":j2k"))
+    compile(project(":idea:idea-j2k"))
     compile(project(":idea:formatter"))
     compile(project(":idea:fir-view"))
     compile(project(":compiler:fir:fir2ir"))

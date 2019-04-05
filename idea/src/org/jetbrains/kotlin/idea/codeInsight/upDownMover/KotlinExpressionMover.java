@@ -26,7 +26,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringUtilKt;
+import org.jetbrains.kotlin.idea.core.util.PsiLinesUtilsKt;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
@@ -481,7 +481,7 @@ public class KotlinExpressionMover extends AbstractKotlinUpDownMover {
         }
 
         if (whiteSpaceTestSubject instanceof PsiWhiteSpace) {
-            if (KotlinRefactoringUtilKt.isMultiLine(whiteSpaceTestSubject)) {
+            if (PsiLinesUtilsKt.isMultiLine(whiteSpaceTestSubject)) {
                 int nearLine = down ? sourceRange.endLine : sourceRange.startLine - 1;
 
                 info.toMove = sourceRange;

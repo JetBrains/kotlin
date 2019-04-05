@@ -26,8 +26,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.refactoring.RefactoringActionHandler
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils.ElementKind.TYPE_CONSTRUCTOR
-import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils.ElementKind.TYPE_ELEMENT
+import org.jetbrains.kotlin.idea.core.util.CodeInsightUtils.ElementKind.TYPE_CONSTRUCTOR
+import org.jetbrains.kotlin.idea.core.util.CodeInsightUtils.ElementKind.TYPE_ELEMENT
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringSupportProvider
 import org.jetbrains.kotlin.idea.refactoring.checkConflictsInteractively

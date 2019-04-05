@@ -191,14 +191,6 @@ fun showRuntimeJarNotFoundDialog(project: Project, jarName: String) {
     )
 }
 
-fun getKotlinJvmRuntimeMarkerClass(project: Project, scope: GlobalSearchScope): PsiClass? {
-    return runReadAction {
-        project.runWithAlternativeResolveEnabled {
-            JavaPsiFacade.getInstance(project).findClass(KotlinBuiltIns.FQ_NAMES.unit.asString(), scope)
-        }
-    }
-}
-
 private val KOTLIN_JS_FQ_NAME = FqName("kotlin.js")
 
 fun hasKotlinJsKjsmFile(project: Project, scope: GlobalSearchScope): Boolean {

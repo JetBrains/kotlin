@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.idea
 
 import com.intellij.testFramework.LightCodeInsightTestCase
-import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
+import org.jetbrains.kotlin.idea.core.util.CodeInsightUtils
 import org.jetbrains.kotlin.idea.refactoring.getExpressionShortText
 import org.jetbrains.kotlin.idea.refactoring.getSmartSelectSuggestions
 import org.jetbrains.kotlin.psi.KtFile

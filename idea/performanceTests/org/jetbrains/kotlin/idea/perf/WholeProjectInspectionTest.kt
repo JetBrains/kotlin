@@ -14,7 +14,7 @@ import com.intellij.codeInspection.ex.Tools
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.profile.codeInspection.ProjectInspectionProfileManager
 import com.intellij.psi.PsiFile
-import org.jetbrains.kotlin.idea.refactoring.toPsiFile
+import org.jetbrains.kotlin.idea.core.util.toPsiFile
 import kotlin.system.measureNanoTime
 
 abstract class WholeProjectInspectionTest : WholeProjectPerformanceTest() {

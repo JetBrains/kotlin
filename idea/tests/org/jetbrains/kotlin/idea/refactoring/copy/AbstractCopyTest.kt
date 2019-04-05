@@ -13,12 +13,12 @@ import com.intellij.psi.PsiFile
 import com.intellij.refactoring.PackageWrapper
 import com.intellij.refactoring.copy.CopyHandler
 import com.intellij.refactoring.move.moveClassesOrPackages.MultipleRootsMoveDestination
+import org.jetbrains.kotlin.idea.core.util.toPsiDirectory
 import org.jetbrains.kotlin.idea.jsonUtils.getNullableString
 import org.jetbrains.kotlin.idea.jsonUtils.getString
 import org.jetbrains.kotlin.idea.refactoring.AbstractMultifileRefactoringTest
 import org.jetbrains.kotlin.idea.refactoring.copy.CopyKotlinDeclarationsHandler.Companion.newName
 import org.jetbrains.kotlin.idea.refactoring.runRefactoringTest
-import org.jetbrains.kotlin.idea.refactoring.toPsiDirectory
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.utils.ifEmpty
 

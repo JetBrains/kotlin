@@ -596,7 +596,10 @@ tasks {
             ":idea:idea-maven:test",
             ":j2k:test",
             ":nj2k:test",
-            ":idea:eval4j:test"
+            ":idea:jvm-debugger:jvm-debugger-core:test",
+            ":idea:jvm-debugger:jvm-debugger-evaluation:test",
+            ":idea:jvm-debugger:jvm-debugger-sequence:test",
+            ":idea:jvm-debugger:eval4j:test"
         )
     }
 

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.completion.test.AbstractJvmBasicCompletionTest
 import org.jetbrains.kotlin.idea.completion.test.ExpectedCompletionUtils
 import org.jetbrains.kotlin.idea.completion.test.handlers.AbstractCompletionHandlerTest
+import org.jetbrains.kotlin.idea.debugger.getContextElement
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
@@ -130,13 +131,7 @@ private fun createCodeFragment(filePath: String, contextElement: PsiElement): Kt
     val codeFragmentText = FileUtil.loadFile(fileForFragment, true).trim()
     val psiFactory = KtPsiFactory(contextElement.project)
     if (fileForFragment.readLines().size == 1) {
-        return psiFactory.createExpressionCodeFragment(
-                codeFragmentText,
-                KotlinCodeFragmentFactory.getContextElement(contextElement)
-        )
+        return psiFactory.createExpressionCodeFragment(codeFragmentText, getContextElement(contextElement))
     }
-    return psiFactory.createBlockCodeFragment(
-            codeFragmentText,
-            KotlinCodeFragmentFactory.getContextElement(contextElement)
-    )
+    return psiFactory.createBlockCodeFragment(codeFragmentText, getContextElement(contextElement))
 }
