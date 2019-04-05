@@ -69,13 +69,13 @@ fun <T : Any> separateValues(values: String, valuesContainer: MutableMap<String,
     }
 }
 
-fun getChartData(labels: List<String>, valuesList: Collection<List<*>>, className: String? = null): dynamic {
+fun getChartData(labels: List<String>, valuesList: Collection<List<*>>, classNames: Array<String>? = null): dynamic {
     val chartData: dynamic = object{}
     chartData["labels"] = labels.toTypedArray()
-    chartData["series"] = valuesList.map {
+    chartData["series"] = valuesList.mapIndexed { index, it ->
         val series: dynamic = object{}
         series["data"] = it.toTypedArray()
-        className?.let { series["className"] = className }
+        classNames?.let { series["className"] = classNames[index] }
         series
     }.toTypedArray()
     return chartData
@@ -142,7 +142,7 @@ fun customizeChart(chart: dynamic, chartContainer: String, jquerySelector: dynam
                         "L", data.x + pointSize, data.y + pointSize/2, "z").joinToString(" ")
                 svgParameters["style"] = "fill:rgb(255,0,0);stroke-width:0"
                 val triangle = Chartist.Svg("path", svgParameters, chartContainer)
-                element = data.element._node.replace(triangle)
+                element = data.element.replace(triangle)
             } else if (currentBuild.buildNumber == parameters["build"]) {
                 // Higlight choosen build.
                 val svgParameters: dynamic = object{}
@@ -228,7 +228,7 @@ fun main(args: Array<String>) {
     val branchesUrl = "$serverUrl/branches/${parameters["target"]}"
 
     val branches: Array<String> = JSON.parse(sendGetRequest(branchesUrl))
-    val releaseBranches = branches.filter { "v\\d+\\.\\d+\\.\\d+-fixes".toRegex().find(it) != null }
+    val releaseBranches = branches.filter { "^v\\d+\\.\\d+\\.\\d+-fixes$".toRegex().find(it) != null }
 
     // Fill autocomplete list.
     val buildsNumbersUrl = "$serverUrl/buildsNumbers/${parameters["target"]}"
@@ -312,17 +312,17 @@ fun main(args: Array<String>) {
         bundleSize.add(it.bundleSize?.toInt()?. let { it / 1024 / 1024 })
     }
 
-    val sizeClassName = "ct-series-c"
+    val sizeClassNames = arrayOf("ct-series-d", "ct-series-e")
 
     // Draw charts.
     val execChart = Chartist.Line("#exec_chart", getChartData(labels, executionTime.values),
             getChartOptions(executionTime.keys.toTypedArray(), "Normalized time"))
     val compileChart = Chartist.Line("#compile_chart", getChartData(labels, compileTime.values),
             getChartOptions(compileTime.keys.toTypedArray(), "Time, milliseconds"))
-    val codeSizeChart = Chartist.Line("#codesize_chart", getChartData(labels, codeSize.values, sizeClassName),
-            getChartOptions(codeSize.keys.toTypedArray(), "Normalized size", arrayOf("ct-series-2")))
-    val bundleSizeChart = Chartist.Line("#bundlesize_chart", getChartData(labels, listOf(bundleSize), sizeClassName),
-            getChartOptions(arrayOf("Bundle size"), "Size, MB", arrayOf("ct-series-2")))
+    val codeSizeChart = Chartist.Line("#codesize_chart", getChartData(labels, codeSize.values, sizeClassNames),
+            getChartOptions(codeSize.keys.toTypedArray(), "Normalized size", arrayOf("ct-series-3", "ct-series-4")))
+    val bundleSizeChart = Chartist.Line("#bundlesize_chart", getChartData(labels, listOf(bundleSize), sizeClassNames),
+            getChartOptions(arrayOf("Bundle size"), "Size, MB", arrayOf("ct-series-3")))
 
     // Tooltips and higlights.
     customizeChart(execChart, "exec_chart", js("$(\"#exec_chart\")"), builds, parameters)

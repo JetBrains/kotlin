@@ -117,7 +117,7 @@ fun mergeReports(reports: List<File>): String {
         BenchmarksReport.create(reportElement)
 
     }
-    return reportsToMerge.reduce { result, it -> result + it }.toJson()
+    return if (reportsToMerge.isEmpty()) "" else reportsToMerge.reduce { result, it -> result + it }.toJson()
 }
 
 // Find file with set name in directory.
@@ -172,8 +172,10 @@ fun createRunTask(
 fun getJvmCompileTime(programName: String): BenchmarkResult =
         TaskTimerListener.getBenchmarkResult(programName, listOf("compileKotlinMetadata", "jvmJar"))
 
-fun getNativeCompileTime(programName: String): BenchmarkResult =
-        TaskTimerListener.getBenchmarkResult(programName, listOf("compileKotlinNative", "linkMainReleaseExecutableNative"))
+@JvmOverloads
+fun getNativeCompileTime(programName: String,
+                         tasks: List<String> = listOf("compileKotlinNative", "linkMainReleaseExecutableNative")): BenchmarkResult =
+        TaskTimerListener.getBenchmarkResult(programName, tasks)
 
 fun getCompileBenchmarkTime(programName: String, tasksNames: Iterable<String>, repeats: Int, exitCodes: Map<String, Int>) =
     (1..repeats).map { number ->

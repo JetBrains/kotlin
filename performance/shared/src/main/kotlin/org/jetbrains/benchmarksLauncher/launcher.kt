@@ -72,8 +72,8 @@ abstract class Launcher(val numWarmIterations: Int, val numberOfAttempts: Int, v
 object BenchmarksRunner {
     fun parse(args: Array<String>): ArgParser {
         val options = listOf(
-                OptionDescriptor(ArgType.Int(), "warmup", "w", "Number of warm up iterations", "0"),
-                OptionDescriptor(ArgType.Int(), "repeat", "r", "Number of each becnhmark run", "10"),
+                OptionDescriptor(ArgType.Int(), "warmup", "w", "Number of warm up iterations", "20"),
+                OptionDescriptor(ArgType.Int(), "repeat", "r", "Number of each becnhmark run", "60"),
                 OptionDescriptor(ArgType.String(), "prefix", "p", "Prefix added to benchmark name", ""),
                 OptionDescriptor(ArgType.String(), "output", "o", "Output file"),
                 OptionDescriptor(ArgType.String(), "filter", "f", "Benchmark to run", isMultiple = true)

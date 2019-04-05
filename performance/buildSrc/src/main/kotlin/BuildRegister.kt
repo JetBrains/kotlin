@@ -46,7 +46,8 @@ open class BuildRegister : DefaultTask() {
 
     var bundleSize: Int? = null
 
-    val buildInfoToken: Int = 4
+    val buildInfoTokens: Int = 4
+    val frameworkInfoTokens: Int = 3
     val compileTimeSamplesNumber: Int = 2
     val buildNumberTokens: Int = 3
     val performanceServer = "https://kotlin-native-perf-summary.labs.jb.gg"
@@ -96,30 +97,50 @@ open class BuildRegister : DefaultTask() {
         val currentBuild = getBuild("id:$buildId", teamCityUser, teamCityPassword)
         val branch = getBuildProperty(currentBuild,"branchName")
 
+        val target = System.getProperty("os.name").replace("\\s".toRegex(), "")
+
         // Get summary information.
         val output = arrayOf("$analyzer", "summary", "-exec-samples", "all", "-compile", "samples",
                 "-compile-samples", "HelloWorld,Videoplayer", "-codesize-samples", "all",
                 "-exec-normalize", "bintray:goldenResults.csv",
                 "-codesize-normalize", "bintray:goldenResults.csv", "$currentBenchmarksReportFile")
                 .runCommand()
+
         // Postprocess information.
         val buildInfoParts = output.split(',')
-        if (buildInfoParts.size != buildInfoToken) {
-            error("Problems with getting summary information using $analyzer and $currentBenchmarksReportFile.")
+        if (buildInfoParts.size != buildInfoTokens) {
+            error("Problems with getting summary information using $analyzer and $currentBenchmarksReportFile. $output")
         }
 
         val (failures, executionTime, compileTime, codeSize) = buildInfoParts.map { it.trim() }
         // Add legends.
         val geometricMean = "Geometric Mean-"
         val executionTimeInfo = "$geometricMean$executionTime"
-        val codeSizeInfo = "$geometricMean$codeSize"
+        var codeSizeInfo = "$geometricMean$codeSize"
         val compileTimeSamples = compileTime.split(';')
         if (compileTimeSamples.size != compileTimeSamplesNumber) {
             error("Problems with getting compile time samples value. Expected at least $compileTimeSamplesNumber samples, got ${compileTimeSamples.size}")
         }
         val (helloWorldCompile, videoplayerCompile) = compileTimeSamples
-        val compileTimeInfo = "HelloWorld-$helloWorldCompile;Videoplayer-$videoplayerCompile"
-        val target = System.getProperty("os.name").replace("\\s".toRegex(), "")
+        var compileTimeInfo = "HelloWorld-$helloWorldCompile;Videoplayer-$videoplayerCompile"
+
+        // Collect framework run details.
+        if (target == "MacOSX") {
+
+            val frameworkOutput = arrayOf("$analyzer", "summary", "-compile", "samples",
+                    "-compile-samples", "FrameworkBenchmarksAnalyzer", "-codesize-samples", "FrameworkBenchmarksAnalyzer",
+                    "-codesize-normalize", "bintray:goldenResults.csv", "$currentBenchmarksReportFile")
+                    .runCommand()
+
+            val buildInfoPartsFramework = frameworkOutput.split(',')
+            if (buildInfoPartsFramework.size != frameworkInfoTokens) {
+                error("Problems with getting summary information using $analyzer and $currentBenchmarksReportFile. $frameworkOutput")
+            }
+            val (_, frameworkCompileTime, frameworkCodeSize) = buildInfoPartsFramework.map { it.trim() }
+            codeSizeInfo += ";FrameworkBenchmarksAnalyzer-$frameworkCodeSize"
+            compileTimeInfo += ";FrameworkBenchmarksAnalyzer-$frameworkCompileTime"
+        }
+
         val buildNumberParts = buildNumber.split("-")
         if (buildNumberParts.size != buildNumberTokens) {
             error("Wrong format of build number $buildNumber.")
