@@ -17,8 +17,6 @@ enum class FirOperation(val operator: String = "???") {
     GT(">"),
     LT_EQ("<="),
     GT_EQ(">="),
-    IN("in"),
-    NOT_IN("!in"),
 
     ASSIGN("="),
     PLUS_ASSIGN("+="),
@@ -41,7 +39,7 @@ enum class FirOperation(val operator: String = "???") {
         val ASSIGNMENTS: Set<FirOperation> = EnumSet.of(ASSIGN, PLUS_ASSIGN, MINUS_ASSIGN, TIMES_ASSIGN, DIV_ASSIGN, REM_ASSIGN)
 
         val BOOLEANS: Set<FirOperation> = EnumSet.of(
-            EQ, NOT_EQ, IDENTITY, NOT_IDENTITY, LT, GT, LT_EQ, GT_EQ, IN, NOT_IN, IS, NOT_IS
+            EQ, NOT_EQ, IDENTITY, NOT_IDENTITY, LT, GT, LT_EQ, GT_EQ, IS, NOT_IS
         )
     }
 }

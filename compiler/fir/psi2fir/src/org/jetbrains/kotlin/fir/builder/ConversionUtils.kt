@@ -160,8 +160,6 @@ internal fun IElementType.toFirOperation(): FirOperation =
         KtTokens.EXCLEQ -> FirOperation.NOT_EQ
         KtTokens.EQEQEQ -> FirOperation.IDENTITY
         KtTokens.EXCLEQEQEQ -> FirOperation.NOT_IDENTITY
-        KtTokens.IN_KEYWORD -> FirOperation.IN
-        KtTokens.NOT_IN -> FirOperation.NOT_IN
 
         KtTokens.EQ -> FirOperation.ASSIGN
         KtTokens.PLUSEQ -> FirOperation.PLUS_ASSIGN
@@ -237,14 +235,8 @@ internal fun KtWhenCondition.toFirWhenCondition(
             }
         }
         is KtWhenConditionInRange -> {
-            FirOperatorCallImpl(
-                session,
-                rangeExpression,
-                if (isNegated) FirOperation.NOT_IN else FirOperation.IN
-            ).apply {
-                arguments += firSubjectExpression
-                arguments += rangeExpression.convert("No range in condition with range")
-            }
+            val firRange = rangeExpression.convert("No range in condition with range")
+            firRange.generateContainsOperation(session, firSubjectExpression, isNegated, rangeExpression, operationReference)
         }
         is KtWhenConditionIsPattern -> {
             FirTypeOperatorCallImpl(
@@ -319,6 +311,25 @@ internal fun Array<KtStringTemplateEntry>.toInterpolatingCall(
         }
     }
     return if (hasExpressions) result!! else FirConstExpressionImpl(session, base, IrConstKind.String, sb.toString())
+}
+
+internal fun FirExpression.generateContainsOperation(
+    session: FirSession,
+    argument: FirExpression,
+    inverted: Boolean,
+    base: KtExpression?,
+    operationReference: KtOperationReferenceExpression
+): FirFunctionCall {
+    val containsCall = FirFunctionCallImpl(session, base).apply {
+        calleeReference = FirSimpleNamedReference(session, operationReference, OperatorNameConventions.CONTAINS)
+        explicitReceiver = this@generateContainsOperation
+        arguments += argument
+    }
+    if (!inverted) return containsCall
+    return FirFunctionCallImpl(session, base).apply {
+        calleeReference = FirSimpleNamedReference(session, operationReference, OperatorNameConventions.NOT)
+        explicitReceiver = containsCall
+    }
 }
 
 internal fun generateIncrementOrDecrementBlock(

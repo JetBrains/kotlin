@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.impl.*
-import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -1137,6 +1136,10 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
                     return leftArgument.generateNotNullOrOther(session, rightArgument, "elvis", expression)
                 ANDAND, OROR ->
                     return leftArgument.generateLazyLogicalOperation(session, rightArgument, operationToken == ANDAND, expression)
+                in OperatorConventions.IN_OPERATIONS ->
+                    return rightArgument.generateContainsOperation(
+                        session, leftArgument, operationToken == NOT_IN, expression, expression.operationReference
+                    )
             }
             val conventionCallName = operationToken.toBinaryName()
             return if (conventionCallName != null || operationToken == IDENTIFIER) {

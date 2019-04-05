@@ -57,7 +57,7 @@ FILE: branches.kt
             ==($subj$, Int(3)) ->  {
                 String(Mediocre)
             }
-            in($subj$, Int(1).rangeTo#(Int(2))) ->  {
+            Int(1).rangeTo#(Int(2)).contains#($subj$) ->  {
                 String(Fail)
             }
             ($subj$ is Number) ->  {
