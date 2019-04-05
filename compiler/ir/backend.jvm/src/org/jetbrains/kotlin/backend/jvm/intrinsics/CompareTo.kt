@@ -65,22 +65,22 @@ class CompareTo : IntrinsicMethod() {
     }
 }
 
-class BooleanComparison(val op: IElementType, val a: MaterialValue, val b: MaterialValue) : BooleanValue(a.codegen) {
+class BooleanComparison(val op: IElementType, val a: MaterialValue, val b: MaterialValue) : BooleanValue(a.mv) {
     override fun jumpIfFalse(target: Label) {
         // TODO 1. get rid of the dependency; 2. take `b.type` into account.
         val opcode = if (a.type.sort == Type.OBJECT)
             ObjectCompare.getObjectCompareOpcode(op)
         else
-            NumberCompare.patchOpcode(NumberCompare.getNumberCompareOpcode(op), codegen.mv, op, a.type)
-        codegen.mv.visitJumpInsn(opcode, target)
+            NumberCompare.patchOpcode(NumberCompare.getNumberCompareOpcode(op), mv, op, a.type)
+        mv.visitJumpInsn(opcode, target)
     }
 
     override fun jumpIfTrue(target: Label) {
         val opcode = if (a.type.sort == Type.OBJECT)
             BranchedValue.negatedOperations[ObjectCompare.getObjectCompareOpcode(op)]!!
         else
-            NumberCompare.patchOpcode(BranchedValue.negatedOperations[NumberCompare.getNumberCompareOpcode(op)]!!, codegen.mv, op, a.type)
-        codegen.mv.visitJumpInsn(opcode, target)
+            NumberCompare.patchOpcode(BranchedValue.negatedOperations[NumberCompare.getNumberCompareOpcode(op)]!!, mv, op, a.type)
+        mv.visitJumpInsn(opcode, target)
     }
 }
 

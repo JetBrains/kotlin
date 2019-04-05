@@ -27,9 +27,9 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 class Equals(val operator: IElementType) : IntrinsicMethod() {
-    private class BooleanNullCheck(val value: PromisedValue) : BooleanValue(value.codegen) {
-        override fun jumpIfFalse(target: Label) = value.materialize().also { codegen.mv.ifnonnull(target) }
-        override fun jumpIfTrue(target: Label) = value.materialize().also { codegen.mv.ifnull(target) }
+    private class BooleanNullCheck(val value: PromisedValue) : BooleanValue(value.mv) {
+        override fun jumpIfFalse(target: Label) = value.materialize().also { mv.ifnonnull(target) }
+        override fun jumpIfTrue(target: Label) = value.materialize().also { mv.ifnull(target) }
     }
 
     override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? {
@@ -50,7 +50,7 @@ class Equals(val operator: IElementType) : IntrinsicMethod() {
         val bValue = b.accept(codegen, data).coerce(operandType).materialized
         if (useEquals) {
             AsmUtil.genAreEqualCall(codegen.mv)
-            return MaterialValue(codegen, Type.BOOLEAN_TYPE)
+            return MaterialValue(codegen.mv, Type.BOOLEAN_TYPE)
         }
         return BooleanComparison(operator, aValue, bValue)
     }

@@ -143,7 +143,7 @@ class ExpressionCodegen(
     // Assume this expression's result has already been materialized on the stack
     // with the correct type.
     val IrExpression.onStack: MaterialValue
-        get() = MaterialValue(this@ExpressionCodegen, asmType)
+        get() = MaterialValue(mv, asmType)
 
     private fun markNewLabel() = Label().apply { mv.visitLabel(this) }
 
@@ -392,9 +392,9 @@ class ExpressionCodegen(
             return voidValue
         } else if (expression.type.isUnit()) {
             // NewInference allows casting `() -> T` to `() -> Unit`. A CHECKCAST here will fail.
-            return MaterialValue(this, callable.returnType).discard().coerce(expression.asmType)
+            return MaterialValue(mv, callable.returnType).discard().coerce(expression.asmType)
         }
-        return MaterialValue(this, callable.returnType).coerce(expression.asmType)
+        return MaterialValue(mv, callable.returnType).coerce(expression.asmType)
     }
 
     override fun visitVariable(declaration: IrVariable, data: BlockInfo): PromisedValue {
@@ -442,7 +442,7 @@ class ExpressionCodegen(
                 isStatic -> mv.getstatic(ownerType, fieldName, fieldType.descriptor)
                 else -> mv.getfield(ownerType, fieldName, fieldType.descriptor)
             }
-            MaterialValue(this, fieldType).coerce(expression.asmType)
+            MaterialValue(mv, fieldType).coerce(expression.asmType)
         }
     }
 
@@ -495,10 +495,10 @@ class ExpressionCodegen(
     override fun <T> visitConst(expression: IrConst<T>, data: BlockInfo): PromisedValue {
         expression.markLineNumber(startOffset = true)
         when (val value = expression.value) {
-            is Boolean -> return object : BooleanValue(this) {
-                override fun jumpIfFalse(target: Label) = if (value) Unit else codegen.mv.goTo(target)
-                override fun jumpIfTrue(target: Label) = if (value) codegen.mv.goTo(target) else Unit
-                override fun materialize() = codegen.mv.iconst(if (value) 1 else 0)
+            is Boolean -> return object : BooleanValue(mv) {
+                override fun jumpIfFalse(target: Label) = if (value) Unit else mv.goTo(target)
+                override fun jumpIfTrue(target: Label) = if (value) mv.goTo(target) else Unit
+                override fun materialize() = mv.iconst(if (value) 1 else 0)
             }
             is Char -> mv.iconst(value.toInt())
             is Long -> mv.lconst(value)
@@ -715,7 +715,7 @@ class ExpressionCodegen(
                         state.languageVersionSettings.isReleaseCoroutines()
                     )
                 }
-                MaterialValue(this, boxedType).coerce(expression.asmType)
+                MaterialValue(mv, boxedType).coerce(expression.asmType)
             }
 
             IrTypeOperator.INSTANCEOF, IrTypeOperator.NOT_INSTANCEOF -> {
