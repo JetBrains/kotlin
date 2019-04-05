@@ -27,9 +27,11 @@ object RestrictedRetentionForExpressionAnnotationFactory : KotlinIntentionAction
         val annotationEntry = diagnostic.psiElement as? KtAnnotationEntry ?: return emptyList()
         val containingClass = annotationEntry.containingClass() ?: return emptyList()
         val retentionAnnotation = containingClass.annotation(KotlinBuiltIns.FQ_NAMES.retention)
-        return listOf(
-            RemoveExpressionTargetFix(containingClass),
-            if (retentionAnnotation == null) AddSourceRetentionFix(containingClass) else ChangeRetentionToSourceFix(containingClass)
+        val targetAnnotation = containingClass.annotation(KotlinBuiltIns.FQ_NAMES.target)
+
+        return listOfNotNull(
+            if (targetAnnotation != null) RemoveExpressionTargetFix(targetAnnotation) else null,
+            if (retentionAnnotation == null) AddSourceRetentionFix(containingClass) else ChangeRetentionToSourceFix(retentionAnnotation)
         )
     }
 
@@ -52,13 +54,15 @@ object RestrictedRetentionForExpressionAnnotationFactory : KotlinIntentionAction
         }
     }
 
-    private class ChangeRetentionToSourceFix(element: KtClass) : KotlinQuickFixAction<KtClass>(element) {
+    private class ChangeRetentionToSourceFix(retentionAnnotation: KtAnnotationEntry) :
+        KotlinQuickFixAction<KtAnnotationEntry>(retentionAnnotation) {
+
         override fun getText() = "Change existent retention to SOURCE"
 
         override fun getFamilyName() = text
 
         override fun invoke(project: Project, editor: Editor?, file: KtFile) {
-            val retentionAnnotation = element?.annotation(KotlinBuiltIns.FQ_NAMES.retention) ?: return
+            val retentionAnnotation = element ?: return
             val psiFactory = KtPsiFactory(retentionAnnotation)
             val added = if (retentionAnnotation.valueArgumentList == null) {
                 retentionAnnotation.add(psiFactory.createCallArguments("($sourceRetention)")) as KtValueArgumentList
@@ -74,13 +78,16 @@ object RestrictedRetentionForExpressionAnnotationFactory : KotlinIntentionAction
         }
     }
 
-    private class RemoveExpressionTargetFix(element: KtClass) : KotlinQuickFixAction<KtClass>(element) {
+    private class RemoveExpressionTargetFix(targetAnnotation: KtAnnotationEntry) :
+        KotlinQuickFixAction<KtAnnotationEntry>(targetAnnotation) {
+
         override fun getText() = "Remove EXPRESSION target"
 
         override fun getFamilyName() = text
 
         override fun invoke(project: Project, editor: Editor?, file: KtFile) {
-            element?.annotation(KotlinBuiltIns.FQ_NAMES.target)?.delete()
+            val targetAnnotation = element ?: return
+            targetAnnotation.delete()
         }
     }
 }
