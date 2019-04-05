@@ -892,6 +892,9 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
             if (projectionKind == KtProjectionKind.STAR) {
                 return FirStarProjectionImpl(session, typeProjection)
             }
+            if (projectionKind == KtProjectionKind.NONE && typeProjection.text == "_") {
+                return FirTypePlaceholderProjection
+            }
             val typeReference = typeProjection.typeReference
             val firType = typeReference.toFirOrErrorType()
             return FirTypeProjectionWithVarianceImpl(
