@@ -9,6 +9,6 @@ class Outer {
 
 class Test() {
     fun test() {
-        val i = Middle1.Inner()
+        val i = Middle<caret>1.Inner()
     }
 }

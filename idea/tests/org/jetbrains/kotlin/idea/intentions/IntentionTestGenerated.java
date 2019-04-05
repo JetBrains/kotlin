@@ -10143,6 +10143,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/introduceImportAlias/function.kt");
         }
 
+        @TestMetadata("inImport.kt")
+        public void testInImport() throws Exception {
+            runTest("idea/testData/intentions/introduceImportAlias/inImport.kt");
+        }
+
         @TestMetadata("middleImport.kt")
         public void testMiddleImport() throws Exception {
             runTest("idea/testData/intentions/introduceImportAlias/middleImport.kt");

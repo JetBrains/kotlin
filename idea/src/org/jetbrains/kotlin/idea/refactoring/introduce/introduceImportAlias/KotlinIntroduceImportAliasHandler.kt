@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
+import org.jetbrains.kotlin.idea.core.moveCaret
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.refactoring.selectElement
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
@@ -44,9 +45,7 @@ import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.kotlin.psi.KtUserType
-import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElement
-import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
-import org.jetbrains.kotlin.psi.psiUtil.siblings
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.PropertyImportedFromObject
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -74,6 +73,8 @@ object KotlinIntroduceImportAliasHandler : RefactoringActionHandler {
             }
         }
 
+        val elementInImportDirective = element.isInImportDirective()
+
         val oldName = element.mainReference.value
         val scopes = usages.mapNotNull {
             val expression = it.reference.element
@@ -98,6 +99,8 @@ object KotlinIntroduceImportAliasHandler : RefactoringActionHandler {
 
         replaceUsages(usages, newName)
         cleanImport(file, fqName)
+
+        if (elementInImportDirective) editor.moveCaret(newDirective.alias?.nameIdentifier?.textOffset ?: newDirective.endOffset)
 
         if (!ApplicationManager.getApplication().isUnitTestMode) {
             invokeRename(project, editor, newDirective.alias, suggestionsName)
