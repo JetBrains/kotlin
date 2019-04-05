@@ -95,6 +95,8 @@ class KotlinResolutionCandidate(
         currentApplicability = maxOf(diagnostic.candidateApplicability, currentApplicability)
     }
 
+    fun getSubResolvedAtoms(): List<ResolvedAtom> = subResolvedAtoms
+
     fun addResolvedKtPrimitive(resolvedAtom: ResolvedAtom) {
         subResolvedAtoms.add(resolvedAtom)
     }

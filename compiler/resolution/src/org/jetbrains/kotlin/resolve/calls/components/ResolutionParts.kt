@@ -5,15 +5,18 @@
 
 package org.jetbrains.kotlin.resolve.calls.components
 
-import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.builtins.getFunctionalClassKind
+import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.resolve.calls.components.TypeArgumentsToParametersMapper.TypeArgumentsMapping.NoExplicitArguments
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.components.FreshVariableNewTypeSubstitutor
-import org.jetbrains.kotlin.resolve.calls.inference.model.*
+import org.jetbrains.kotlin.resolve.calls.inference.model.DeclaredUpperBoundConstraintPosition
+import org.jetbrains.kotlin.resolve.calls.inference.model.ExplicitTypeParameterConstraintPosition
+import org.jetbrains.kotlin.resolve.calls.inference.model.KnownTypeParameterConstraintPosition
+import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableFromCallableDescriptor
 import org.jetbrains.kotlin.resolve.calls.inference.substitute
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.getReceiverValueWithSmartCast
@@ -23,9 +26,9 @@ import org.jetbrains.kotlin.resolve.calls.tower.InvokeConventionCallNoOperatorMo
 import org.jetbrains.kotlin.resolve.calls.tower.VisibilityError
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.checker.anySuperTypeConstructor
+import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal object CheckInstantiationOfAbstractClass : ResolutionPart() {
@@ -275,9 +278,7 @@ private fun KotlinResolutionCandidate.resolveKotlinArgument(
     isReceiver: Boolean
 ) {
     val expectedType = candidateParameter?.let { prepareExpectedType(argument, candidateParameter) }
-    addResolvedKtPrimitive(
-        resolveKtPrimitive(csBuilder, callableReferenceResolver, argument, expectedType, this, isReceiver)
-    )
+    addResolvedKtPrimitive(resolveKtPrimitive(csBuilder, argument, expectedType, this, isReceiver))
 }
 
 private fun KotlinResolutionCandidate.prepareExpectedType(
@@ -365,6 +366,16 @@ internal object CheckExternalArgument : ResolutionPart() {
         val argument = kotlinCall.externalArgument ?: return
 
         resolveKotlinArgument(argument, resolvedCall.argumentToCandidateParameter[argument], isReceiver = false)
+    }
+}
+
+internal object EagerResolveOfCallableReferences : ResolutionPart() {
+    override fun KotlinResolutionCandidate.process(workIndex: Int) {
+        getSubResolvedAtoms()
+            .filterIsInstance<EagerCallableReferenceAtom>()
+            .forEach {
+                callableReferenceResolver.processCallableReferenceArgument(csBuilder, it, this)
+            }
     }
 }
 

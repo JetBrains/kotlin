@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 fun resolveKtPrimitive(
     csBuilder: ConstraintSystemBuilder,
-    callableReferenceResolver: CallableReferenceResolver,
     argument: KotlinCallArgument,
     expectedType: UnwrappedType?,
     diagnosticsHolder: KotlinDiagnosticsHolder,
@@ -42,7 +41,7 @@ fun resolveKtPrimitive(
         preprocessLambdaArgument(csBuilder, argument, expectedType)
 
     is CallableReferenceKotlinCallArgument ->
-        preprocessCallableReference(csBuilder, callableReferenceResolver, argument, expectedType, diagnosticsHolder)
+        preprocessCallableReference(csBuilder, argument, expectedType, diagnosticsHolder)
 
     is CollectionLiteralKotlinCallArgument ->
         preprocessCollectionLiteralArgument(argument, expectedType)
@@ -142,13 +141,11 @@ fun LambdaWithTypeVariableAsExpectedTypeAtom.transformToResolvedLambda(csBuilder
 
 private fun preprocessCallableReference(
     csBuilder: ConstraintSystemBuilder,
-    callableReferenceResolver: CallableReferenceResolver,
     argument: CallableReferenceKotlinCallArgument,
     expectedType: UnwrappedType?,
     diagnosticsHolder: KotlinDiagnosticsHolder
 ): ResolvedAtom {
     val result = EagerCallableReferenceAtom(argument, expectedType)
-    callableReferenceResolver.processCallableReferenceArgument(csBuilder, result, diagnosticsHolder)
 
     if (expectedType == null) return result
 
