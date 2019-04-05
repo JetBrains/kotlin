@@ -471,9 +471,21 @@ internal fun KtExpression?.generateAssignment(
     }
     if (this is KtArrayAccessExpression) {
         val arrayExpression = this.arrayExpression
-        val arraySet = FirArraySetCallImpl(session, psi, value, operation).apply {
-            for (indexExpression in indexExpressions) {
-                indexes += indexExpression.convert()
+        val firArrayExpression = arrayExpression?.convert() ?: FirErrorExpressionImpl(session, arrayExpression, "No array expression")
+        val arraySet = if (operation != FirOperation.ASSIGN) {
+            FirArraySetCallImpl(session, psi, value, operation).apply {
+                for (indexExpression in indexExpressions) {
+                    indexes += indexExpression.convert()
+                }
+            }
+        } else {
+            return FirFunctionCallImpl(session, psi).apply {
+                calleeReference = FirSimpleNamedReference(session, psi, OperatorNameConventions.SET)
+                explicitReceiver = firArrayExpression
+                for (indexExpression in indexExpressions) {
+                    arguments += indexExpression.convert()
+                }
+                arguments += value
             }
         }
         if (arrayExpression is KtSimpleNameExpression) {
@@ -483,10 +495,7 @@ internal fun KtExpression?.generateAssignment(
         }
         return FirBlockImpl(session, arrayExpression).apply {
             val name = Name.special("<array-set>")
-            statements += generateTemporaryVariable(
-                session, this@generateAssignment, name,
-                arrayExpression?.convert() ?: FirErrorExpressionImpl(session, arrayExpression, "No array expression")
-            )
+            statements += generateTemporaryVariable(session, this@generateAssignment, name, firArrayExpression)
             statements += arraySet.apply { lValue = FirSimpleNamedReference(session, arrayExpression, name) }
         }
     }

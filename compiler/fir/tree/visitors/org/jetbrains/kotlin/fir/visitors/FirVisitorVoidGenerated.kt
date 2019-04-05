@@ -200,10 +200,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitCall(annotationCall, null)
     }
 
-    open fun visitArrayGetCall(arrayGetCall: FirArrayGetCall) {
-        visitCall(arrayGetCall, null)
-    }
-
     open fun visitArrayOfCall(arrayOfCall: FirArrayOfCall) {
         visitCall(arrayOfCall, null)
     }
@@ -394,10 +390,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitAnonymousObject(anonymousObject: FirAnonymousObject, data: Nothing?) {
         visitAnonymousObject(anonymousObject)
-    }
-
-    final override fun visitArrayGetCall(arrayGetCall: FirArrayGetCall, data: Nothing?) {
-        visitArrayGetCall(arrayGetCall)
     }
 
     final override fun visitArrayOfCall(arrayOfCall: FirArrayOfCall, data: Nothing?) {

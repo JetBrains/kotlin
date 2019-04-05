@@ -58,15 +58,15 @@ FILE: unary.kt
     }
     public? final? fun test3(arr: Array<Int>): kotlin/Unit {
         lval x1: <implicit> =  {
-            lval <unary>: <implicit> = arr#[Int(0)]
-            arr#[Int(0)] = inc#(<unary>#)
+            lval <unary>: <implicit> = arr#.get#(Int(0))
+            arr#.set#(Int(0), inc#(<unary>#))
             <unary>#
         }
 
         lval x2: <implicit> =  {
-            lval <unary>: <implicit> = arr#[Int(1)]
+            lval <unary>: <implicit> = arr#.get#(Int(1))
             lval <unary-result>: <implicit> = inc#(<unary>#)
-            arr#[Int(1)] = <unary-result>#
+            arr#.set#(Int(1), <unary-result>#)
             <unary-result>#
         }
 
@@ -80,17 +80,15 @@ FILE: unary.kt
     }
     public? final? fun test4(y: Y): kotlin/Unit {
         lval x1: <implicit> =  {
-            lval <unary>: <implicit> = y#.arr#[Int(0)]
-            lval <array-set>: <implicit> = y#.arr#
-            <array-set>#[Int(0)] = inc#(<unary>#)
+            lval <unary>: <implicit> = y#.arr#.get#(Int(0))
+            y#.arr#.set#(Int(0), inc#(<unary>#))
             <unary>#
         }
 
         lval x2: <implicit> =  {
-            lval <unary>: <implicit> = y#.arr#[Int(1)]
+            lval <unary>: <implicit> = y#.arr#.get#(Int(1))
             lval <unary-result>: <implicit> = inc#(<unary>#)
-            lval <array-set>: <implicit> = y#.arr#
-            <array-set>#[Int(1)] = <unary-result>#
+            y#.arr#.set#(Int(1), <unary-result>#)
             <unary-result>#
         }
 
