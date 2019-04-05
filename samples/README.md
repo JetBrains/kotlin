@@ -6,6 +6,7 @@ the building process.
 
   * `androidNativeActivity` - Android Native Activity rendering 3D graphics using OpenGLES
   * `calculator` - iOS Swift application, using Kotlin/Native code compiled into the framework
+  * `cocoapods` - A Kotlin/Native application using the `AFNetworking` library from CocoaPods.
   * `csvparser` - simple CSV file parser and analyzer
   * `echoServer` - TCP/IP echo server
   * `gitchurn` - program interoperating with `libgit2` for GIT repository analysis
@@ -25,9 +26,12 @@ the building process.
 
 
 **Note**: If the samples are built from a source tree (not from a distribution archive) the compiler built from
-the sources is used. So one must build the compiler and the necessary platform libraries by running
+the sources is used. So you must build the compiler and the necessary platform libraries by running
 `./gradlew bundle` from the Kotlin/Native root directory before building samples (see
 [README.md](https://github.com/JetBrains/kotlin-native/blob/master/README.md) for details).
+
+Alternatively you may remove a line `org.jetbrains.kotlin.native.home=<...>` from all `gradle.properties` files.
+In this case the Gradle plugin downloads and uses a default compiler for this plugin version.
 
 One may also build all the samples with one command. To build them using Gradle run:
 
