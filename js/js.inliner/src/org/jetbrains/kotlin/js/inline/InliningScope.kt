@@ -29,8 +29,6 @@ sealed class InliningScope {
 
     protected abstract fun addImport(tag: String, vars: JsVars)
 
-    protected open fun addLocalDeclarationBinding(inlineFunctionTag: String, name: JsName, index: Int) {}
-
     protected open fun preprocess(statement: JsStatement) {}
 
     private val publicFunctionCache = mutableMapOf<String, JsFunction>()
@@ -82,25 +80,15 @@ sealed class InliningScope {
                     }
             }
 
-            val localDeclarations = mutableListOf<JsName>()
-
             copiedStatements.asSequence()
                 .flatMap { node -> collectDefinedNamesInAllScopes(node).asSequence() }
                 .filter { name -> !newReplacements.containsKey(name) }
                 .forEach { name ->
                     val alias = JsScope.declareTemporaryName(name.ident)
                     alias.copyMetadataFrom(name)
-                    localDeclarations += alias
                     val replacement = JsAstUtils.pureFqn(alias, null)
                     newReplacements[name] = replacement
                 }
-
-            // Add local declarations to the name bindings in order to correctly rename usages of the same imported local declaraions
-            definition.tag?.let { tag ->
-                localDeclarations.forEachIndexed { index, name ->
-                    addLocalDeclarationBinding(tag, name, index)
-                }
-            }
 
             // Apply renaming and restore the static ref links
             JsBlock(copiedStatements).let {
@@ -187,10 +175,6 @@ class ImportIntoFragmentInliningScope private constructor(
         val expr = vars.vars[0].initExpression
         fragment.imports[tag] = expr
         addNameBinding(name, tag)
-    }
-
-    override fun addLocalDeclarationBinding(inlineFunctionTag: String, name: JsName, index: Int) {
-        addNameBinding(name, "\$local:$inlineFunctionTag:$index")
     }
 
     override fun addInlinedDeclaration(tag: String?, declaration: JsStatement) {
