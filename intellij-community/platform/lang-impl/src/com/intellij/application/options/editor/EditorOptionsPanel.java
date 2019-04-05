@@ -15,8 +15,9 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.EditorFactory;
+import com.intellij.openapi.editor.actions.CaretStopBoundary;
 import com.intellij.openapi.editor.actions.CaretStopOptions;
-import com.intellij.openapi.editor.actions.CaretStopPolicy;
+import com.intellij.openapi.editor.actions.CaretStopOptionsTransposed;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.ex.EditorSettingsExternalizable;
@@ -497,13 +498,13 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
 
   @NotNull
   protected CaretStopOptions getCaretStopOptions() {
-    return new CaretStopOptions(getCaretStopPolicy(myWordBoundaryCaretStopComboBox),
-                                getCaretStopPolicy(myLineBoundaryCaretStopComboBox));
+    return new CaretStopOptionsTransposed(getCaretStopPolicy(myWordBoundaryCaretStopComboBox),
+                                          getCaretStopPolicy(myLineBoundaryCaretStopComboBox)).toCaretStopOptions();
   }
 
   @NotNull
-  protected static CaretStopPolicy getCaretStopPolicy(@NotNull JComboBox<? extends EditorCaretStopPolicyItem> comboBox) {
-    return Objects.requireNonNull((EditorCaretStopPolicyItem)comboBox.getSelectedItem()).getCaretStopPolicy();
+  protected static CaretStopBoundary getCaretStopPolicy(@NotNull JComboBox<? extends EditorCaretStopPolicyItem> comboBox) {
+    return Objects.requireNonNull((EditorCaretStopPolicyItem)comboBox.getSelectedItem()).getCaretStopBoundary();
   }
 
   @NotNull
