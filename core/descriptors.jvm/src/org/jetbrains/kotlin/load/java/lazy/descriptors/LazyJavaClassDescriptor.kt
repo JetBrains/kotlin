@@ -72,7 +72,7 @@ class LazyJavaClassDescriptor(
     }
 
     private val modality =
-        if (jClass.isAnnotationType) Modality.FINAL
+        if (jClass.isAnnotationType || jClass.isEnum) Modality.FINAL
         else Modality.convertFromFlags(jClass.isAbstract || jClass.isInterface, !jClass.isFinal)
 
     private val visibility = jClass.visibility
