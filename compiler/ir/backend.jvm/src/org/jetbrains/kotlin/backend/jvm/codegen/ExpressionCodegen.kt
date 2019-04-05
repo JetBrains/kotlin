@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.isMarkedNullable
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -1033,6 +1032,14 @@ class ExpressionCodegen(
         val tryBlockStart = markNewLabel()
         mv.nop()
         gen(aTry.tryResult, aTry.asmType, data)
+
+        val isExpression = true //TODO: more wise check is required
+        var savedValue: Local? = null
+        if (isExpression) {
+            savedValue = local(frame.enterTemp(aTry.asmType), aTry.asmType)
+            savedValue.store(onStack(aTry.asmType), mv)
+        }
+
         val tryBlockEnd = markNewLabel()
 
         val tryRegions = getCurrentTryIntervals(tryInfo, tryBlockStart, tryBlockEnd)
@@ -1055,6 +1062,10 @@ class ExpressionCodegen(
             val catchBody = clause.result
             catchBody.markLineNumber(true)
             gen(catchBody, catchBody.asmType, data)
+
+            savedValue?.let {
+                savedValue.store(onStack(aTry.asmType), mv)
+            }
 
             frame.leave(clause.catchParameter)
 
@@ -1096,6 +1107,11 @@ class ExpressionCodegen(
         }
 
         mv.mark(tryCatchBlockEnd)
+
+        savedValue?.let {
+            savedValue.put(mv)
+            frame.leaveTemp(aTry.asmType)
+        }
         return aTry.onStack
     }
 
