@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 /*
  * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
@@ -44,3 +46,11 @@ projectTest {
 }
 
 testsJar()
+
+val compileKotlin: KotlinCompile by tasks
+
+compileKotlin.kotlinOptions {
+    freeCompilerArgs = freeCompilerArgs + listOf(
+        "-Xuse-experimental=kotlin.Experimental",
+        "-Xuse-experimental=org.jetbrains.kotlin.ir.DescriptorInIrDeclaration")
+}

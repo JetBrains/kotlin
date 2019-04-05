@@ -448,7 +448,7 @@ class Fir2IrDeclarationStorage(
 
     fun getIrPropertySymbol(firPropertySymbol: FirPropertySymbol): IrPropertySymbol {
         val irProperty = getIrProperty(firPropertySymbol.fir as FirProperty)
-        return irSymbolTable.referenceProperty(irProperty.descriptor)
+        return irSymbolTable.referenceProperty(irProperty.symbol.descriptor)
     }
 
     private fun getIrVariableSymbol(firVariable: FirVariable): IrVariableSymbol {
