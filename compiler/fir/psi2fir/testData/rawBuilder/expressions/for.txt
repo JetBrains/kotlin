@@ -41,7 +41,7 @@ FILE: for.kt
             lval <destruct>: <implicit> = <iterator>#.next#()
             lval x: <implicit> = <destruct>#.component1()
             lval y: <implicit> = <destruct>#.component2()
-            println#(String(x = ).plus#(x#).plus#(String( y = )).plus#(y#))
+            println#(String(x = ).plus#(x#, String( y = ), y#))
         }
 
     }

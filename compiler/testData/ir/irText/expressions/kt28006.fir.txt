@@ -38,8 +38,9 @@ FILE fqName:<root> fileName:/kt28006.kt
   PROPERTY name:testConst3 visibility:public modality:FINAL [const,val]
     FIELD PROPERTY_BACKING_FIELD name:testConst3 type:kotlin.String visibility:public [final,static]
       EXPRESSION_BODY
-        CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=null
-          other: CALL 'public final fun <get-testConst2> (): kotlin.String declared in <root>' type=kotlin.String origin=null
+        ERROR_CALL 'Cannot bind 2 arguments to plus call with 1 parameters' type=kotlin.String
+          CONST String type=kotlin.String value="\uDD17"
+          CALL 'public final fun <get-testConst2> (): kotlin.String declared in <root>' type=kotlin.String origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testConst3> visibility:public modality:FINAL <> () returnType:kotlin.String
       correspondingProperty: PROPERTY name:testConst3 visibility:public modality:FINAL [const,val]
       BLOCK_BODY
@@ -59,17 +60,21 @@ FILE fqName:<root> fileName:/kt28006.kt
     VALUE_PARAMETER name:x index:0 type:kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test1 (x: kotlin.Int): kotlin.String declared in <root>'
-        CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=null
-          other: GET_VAR 'x: kotlin.Int declared in <root>.test1' type=kotlin.Int origin=null
-  FUN name:test2 visibility:public modality:FINAL <> (x:kotlin.Int) returnType:kotlin.String
+        ERROR_CALL 'Cannot bind 2 arguments to plus call with 1 parameters' type=kotlin.String
+          CONST String type=kotlin.String value="\uDD17"
+          GET_VAR 'x: kotlin.Int declared in <root>.test1' type=kotlin.Int origin=null
+  FUN name:test2 visibility:public modality:FINAL <> (x:kotlin.Int) returnType:IrErrorType
     VALUE_PARAMETER name:x index:0 type:kotlin.Int
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test2 (x: kotlin.Int): kotlin.String declared in <root>'
-        CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin' type=kotlin.String origin=null
-          other: CONST String type=kotlin.String value="\uDD17"
-  FUN name:test3 visibility:public modality:FINAL <> (x:kotlin.Int) returnType:kotlin.String
+      RETURN type=kotlin.Nothing from='public final fun test2 (x: kotlin.Int): IrErrorType declared in <root>'
+        ERROR_CALL 'Unresolved reference: <Ambiguity: plus, [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]>#' type=IrErrorType
+          CONST String type=kotlin.String value="\uD83E"
+          CONST String type=kotlin.String value="\uDD17"
+  FUN name:test3 visibility:public modality:FINAL <> (x:kotlin.Int) returnType:IrErrorType
     VALUE_PARAMETER name:x index:0 type:kotlin.Int
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test3 (x: kotlin.Int): kotlin.String declared in <root>'
-        CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=null
-          other: GET_VAR 'x: kotlin.Int declared in <root>.test3' type=kotlin.Int origin=null
+      RETURN type=kotlin.Nothing from='public final fun test3 (x: kotlin.Int): IrErrorType declared in <root>'
+        ERROR_CALL 'Unresolved reference: <Ambiguity: plus, [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]>#' type=IrErrorType
+          CONST String type=kotlin.String value="\uD83E"
+          CONST String type=kotlin.String value="\uDD17"
+          GET_VAR 'x: kotlin.Int declared in <root>.test3' type=kotlin.Int origin=null
