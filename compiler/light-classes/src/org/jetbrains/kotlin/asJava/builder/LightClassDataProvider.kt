@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.classes.getOutermostClassOrObject
 import org.jetbrains.kotlin.codegen.CompilationErrorHandler
+import org.jetbrains.kotlin.codegen.MemberCodegen
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.name.FqName
@@ -48,7 +49,7 @@ class LightClassDataProviderForClassOrObject(
                 val packageCodegen = state.factory.forPackage(packageFqName, files)
                 val packagePartType = Type.getObjectType(JvmFileClassUtil.getFileClassInternalName(file))
                 val context = state.rootContext.intoPackagePart(packageCodegen.packageFragment, packagePartType, file)
-                packageCodegen.generateClassOrObject(getOutermostClassOrObject(classOrObject), context)
+                MemberCodegen.genClassOrObject(context, getOutermostClassOrObject(classOrObject), state, null)
                 state.factory.done()
             }
         }

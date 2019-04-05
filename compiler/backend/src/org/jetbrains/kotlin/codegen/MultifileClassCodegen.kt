@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.psi.KtTypeAlias
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.MemberComparator
@@ -199,7 +198,7 @@ class MultifileClassCodegenImpl(
         val partType = Type.getObjectType(JvmFileClassUtil.getFileClassInternalName(file))
         val partContext = state.rootContext.intoMultifileClassPart(packageFragment, facadeClassType, partType, file)
 
-        generateNonPartClassDeclarations(file, partContext)
+        PackageCodegenImpl.generateClassesAndObjectsInFile(file, partContext, state)
 
         if (!state.generateDeclaredClassFilter.shouldGeneratePackagePart(file) || !file.hasDeclarationsForPartClass()) return
 
@@ -212,21 +211,6 @@ class MultifileClassCodegenImpl(
         ).generate()
 
         addDelegateGenerationTasksForDeclarationsInFile(file, packageFragment, partType)
-    }
-
-    private fun generateNonPartClassDeclarations(file: KtFile, partContext: FieldOwnerContext<PackageFragmentDescriptor>) {
-        for (declaration in file.declarations) {
-            when (declaration) {
-                is KtClassOrObject ->
-                    if (state.generateDeclaredClassFilter.shouldGenerateClass(declaration)) {
-                        generateClassOrObject(declaration, partContext)
-                    }
-                is KtScript ->
-                    if (state.generateDeclaredClassFilter.shouldGenerateScript(declaration)) {
-                        ScriptCodegen.createScriptCodegen(declaration, state, partContext).generate()
-                    }
-            }
-        }
     }
 
     private fun addDelegateGenerationTasksForDeclarationsInFile(file: KtFile, packageFragment: PackageFragmentDescriptor, partType: Type) {

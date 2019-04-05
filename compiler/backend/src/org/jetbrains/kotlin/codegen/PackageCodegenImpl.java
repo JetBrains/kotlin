@@ -23,6 +23,7 @@ import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
+import org.jetbrains.kotlin.codegen.context.CodegenContext;
 import org.jetbrains.kotlin.codegen.context.PackageContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
@@ -82,9 +83,39 @@ public class PackageCodegenImpl implements PackageCodegen {
         }
     }
 
-    private void generateClassesAndObjectsInFile(@NotNull List<KtClassOrObject> classOrObjects, @NotNull PackageContext packagePartContext) {
-        for (KtClassOrObject classOrObject : CodegenUtilKt.sortTopLevelClassesAndPrepareContextForSealedClasses(classOrObjects, packagePartContext, state)) {
-            generateClassOrObject(classOrObject, packagePartContext);
+    public static void generateClassesAndObjectsInFile(
+            @NotNull KtFile file,
+            @NotNull CodegenContext<?> context,
+            @NotNull GenerationState state
+    ) {
+        List<KtClassOrObject> classOrObjects = new ArrayList<>();
+
+        for (KtDeclaration declaration : file.getDeclarations()) {
+            if (declaration instanceof KtClassOrObject) {
+                ClassDescriptor descriptor = state.getBindingContext().get(BindingContext.CLASS, declaration);
+                if (PsiUtilsKt.hasExpectModifier(declaration) &&
+                    (descriptor == null || !ExpectedActualDeclarationChecker.shouldGenerateExpectClass(descriptor))) {
+                    continue;
+                }
+
+                KtClassOrObject classOrObject = (KtClassOrObject) declaration;
+                if (state.getGenerateDeclaredClassFilter().shouldGenerateClass(classOrObject)) {
+                    classOrObjects.add(classOrObject);
+                }
+            }
+            else if (declaration instanceof KtScript) {
+                KtScript script = (KtScript) declaration;
+
+                if (state.getGenerateDeclaredClassFilter().shouldGenerateScript(script)) {
+                    ScriptCodegen.createScriptCodegen(script, state, context).generate();
+                }
+            }
+        }
+
+        List<KtClassOrObject> sortedClasses =
+                CodegenUtilKt.sortTopLevelClassesAndPrepareContextForSealedClasses(classOrObjects, context, state);
+        for (KtClassOrObject classOrObject : sortedClasses) {
+            MemberCodegen.genClassOrObject(context, classOrObject, state, null);
         }
     }
 
@@ -103,31 +134,7 @@ public class PackageCodegenImpl implements PackageCodegen {
                 CodeFragmentCodegen.createCodegen((KtCodeFragment) file, state, packagePartContext).generate();
             }
         } else {
-            List<KtClassOrObject> classOrObjects = new ArrayList<>();
-
-            for (KtDeclaration declaration : file.getDeclarations()) {
-                if (declaration instanceof KtClassOrObject) {
-                    ClassDescriptor descriptor = state.getBindingContext().get(BindingContext.CLASS, declaration);
-                    if (PsiUtilsKt.hasExpectModifier(declaration) &&
-                        (descriptor == null || !ExpectedActualDeclarationChecker.shouldGenerateExpectClass(descriptor))) {
-                        continue;
-                    }
-
-                    KtClassOrObject classOrObject = (KtClassOrObject) declaration;
-                    if (state.getGenerateDeclaredClassFilter().shouldGenerateClass(classOrObject)) {
-                        classOrObjects.add(classOrObject);
-                    }
-                }
-                else if (declaration instanceof KtScript) {
-                    KtScript script = (KtScript) declaration;
-
-                    if (state.getGenerateDeclaredClassFilter().shouldGenerateScript(script)) {
-                        ScriptCodegen.createScriptCodegen(script, state, packagePartContext).generate();
-                    }
-                }
-            }
-
-            generateClassesAndObjectsInFile(classOrObjects, packagePartContext);
+            generateClassesAndObjectsInFile(file, packagePartContext, state);
         }
 
         if (!state.getGenerateDeclaredClassFilter().shouldGeneratePackagePart(file)) return;
@@ -164,11 +171,6 @@ public class PackageCodegenImpl implements PackageCodegen {
             return null;
         }
         return fragments.get(0);
-    }
-
-    @Override
-    public void generateClassOrObject(@NotNull KtClassOrObject classOrObject, @NotNull PackageContext packagePartContext) {
-        MemberCodegen.genClassOrObject(packagePartContext, classOrObject, state, null);
     }
 
     @Override

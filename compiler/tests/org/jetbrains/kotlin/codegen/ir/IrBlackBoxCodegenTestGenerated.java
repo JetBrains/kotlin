@@ -15827,6 +15827,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             runTest("compiler/testData/codegen/box/multifileClasses/samePartNameDifferentFacades.kt");
         }
 
+        @TestMetadata("sealedClassHierarchy.kt")
+        public void testSealedClassHierarchy() throws Exception {
+            runTest("compiler/testData/codegen/box/multifileClasses/sealedClassHierarchy.kt");
+        }
+
         @TestMetadata("compiler/testData/codegen/box/multifileClasses/optimized")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -15881,6 +15886,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
 
         public void testAllFilesPresentInMultiplatform() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/multiplatform"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true);
+        }
+
+        @TestMetadata("expectClassInJvmMultifileFacade.kt")
+        public void testExpectClassInJvmMultifileFacade() throws Exception {
+            runTest("compiler/testData/codegen/box/multiplatform/expectClassInJvmMultifileFacade.kt");
         }
 
         @TestMetadata("noArgActualConstructor.kt")
