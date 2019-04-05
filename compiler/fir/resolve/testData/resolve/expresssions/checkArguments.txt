@@ -1,13 +1,13 @@
 FILE: checkArguments.kt
-    public final class A {
+    public final class A : R|kotlin/Any| {
         public constructor(): super<R|kotlin/Any|>()
 
     }
-    public open class B {
+    public open class B : R|kotlin/Any| {
         public constructor(): super<R|kotlin/Any|>()
 
     }
-    public final class C : R|B| {
+    public final class C : R|B|, R|kotlin/Any| {
         public constructor(): super<R|kotlin/Any|>()
 
     }
