@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.DescriptorInIrDeclaration
 import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.SourceRangeInfo
@@ -124,12 +123,12 @@ fun IrDeclaration.findTopLevelDeclaration(): IrDeclaration = when {
 }
 
 @UseExperimental(DescriptorInIrDeclaration::class)
-internal val IrDeclaration.isAnonymousObject get() = DescriptorUtils.isAnonymousObject(this.descriptor)
+val IrDeclaration.isAnonymousObject get() = DescriptorUtils.isAnonymousObject(this.descriptor)
 
 @UseExperimental(DescriptorInIrDeclaration::class)
-internal val IrDeclaration.module get() = this.descriptor.module
+val IrDeclaration.module get() = this.descriptor.module
 
-internal val IrDeclaration.isSerializableExpectClass: Boolean
+val IrDeclaration.isSerializableExpectClass: Boolean
     get() {
         @UseExperimental(DescriptorInIrDeclaration::class)
         val d = descriptor

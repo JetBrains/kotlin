@@ -6,11 +6,13 @@
 package org.jetbrains.kotlin.fir.backend
 
 import com.intellij.psi.PsiFile
-import org.jetbrains.kotlin.backend.common.descriptors.*
+import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
+import org.jetbrains.kotlin.backend.common.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.impl.*
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
@@ -30,13 +32,18 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.impl.*
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitBooleanTypeRef
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitNothingTypeRef
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.primitiveOp1
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
@@ -494,7 +501,7 @@ internal class Fir2IrVisitor(
 
     override fun visitProperty(property: FirProperty, data: Any?): IrProperty {
         val irProperty = declarationStorage.getIrProperty(property, setParent = false)
-        return irProperty.setParentByParentStack().withProperty { setPropertyContent(irProperty.descriptor, property) }
+        return irProperty.setParentByParentStack().withProperty { setPropertyContent(irProperty.symbol.descriptor, property) }
     }
 
     private fun IrFieldAccessExpression.setReceiver(declaration: IrDeclaration): IrFieldAccessExpression {
@@ -541,7 +548,8 @@ internal class Fir2IrVisitor(
                     declareParameters(propertyAccessor)
                 }
                 setFunctionContent(descriptor, propertyAccessor).apply {
-                    correspondingPropertySymbol = symbolTable.referenceProperty(correspondingProperty.descriptor)
+                    val propertyDescriptor = correspondingProperty.symbol.descriptor
+                    correspondingPropertySymbol = symbolTable.referenceProperty(propertyDescriptor)
                     if (isDefault) {
                         withParent {
                             declarationStorage.enterScope(descriptor)
@@ -558,7 +566,7 @@ internal class Fir2IrVisitor(
                                     ).setParentByParentStack()
                                 }
                             }
-                            val fieldSymbol = symbolTable.referenceField(correspondingProperty.descriptor)
+                            val fieldSymbol = symbolTable.referenceField(propertyDescriptor)
                             val declaration = this
                             if (backingField != null) {
                                 body = IrBlockBodyImpl(
