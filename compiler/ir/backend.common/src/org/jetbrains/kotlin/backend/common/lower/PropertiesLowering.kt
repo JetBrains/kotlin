@@ -30,6 +30,7 @@ class PropertiesLowering(
     private val context: BackendContext,
     private val originOfSyntheticMethodForAnnotations: IrDeclarationOrigin? = null,
     private val skipExternalProperties: Boolean = false,
+    private val generateAnnotationFields: Boolean = false,
     private val computeSyntheticMethodName: ((Name) -> String)? = null
 ) : IrElementTransformerVoid(), FileLoweringPass {
     override fun lower(irFile: IrFile) {
@@ -53,7 +54,7 @@ class PropertiesLowering(
             if (skipExternalProperties && declaration.isEffectivelyExternal()) listOf(declaration) else {
                 ArrayList<IrDeclaration>(4).apply {
                     // JvmFields in a companion object refer to companion's owners and should not be generated within companion.
-                    if (kind != ClassKind.ANNOTATION_CLASS && declaration.backingField?.parent == declaration.parent) {
+                    if (generateAnnotationFields || (kind != ClassKind.ANNOTATION_CLASS && declaration.backingField?.parent == declaration.parent)) {
                         addIfNotNull(declaration.backingField)
                     }
                     addIfNotNull(declaration.getter)
