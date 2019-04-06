@@ -272,4 +272,40 @@ class DurationTest {
         // infinite
         assertEquals("PT2147483647H", Duration.INFINITE.toIsoString())
     }
+
+    @Test
+    fun toStringInUnits() {
+        var d = 1.days + 15.hours + 31.minutes + 45.seconds + 678.milliseconds + 920.microseconds + 516.34.nanoseconds
+
+        fun test(unit: DurationUnit, vararg representations: String) {
+            assertFails { d.toString(unit, -1) }
+            assertEquals(representations.toList(), representations.indices.map { d.toString(unit, it) })
+        }
+
+        test(DurationUnit.DAYS, "2d", "1.6d", "1.65d", "1.647d")
+        test(DurationUnit.HOURS, "40h", "39.5h", "39.53h")
+        test(DurationUnit.MINUTES, "2372m", "2371.8m", "2371.76m")
+        d -= 39.hours
+        test(DurationUnit.SECONDS, "1906s", "1905.7s", "1905.68s", "1905.679s")
+        d -= 1904.seconds
+        test(DurationUnit.MILLISECONDS, "1679ms", "1678.9ms", "1678.92ms", "1678.921ms")
+        d -= 1678.milliseconds
+        test(DurationUnit.MICROSECONDS, "921us", "920.5us", "920.52us", "920.516us")
+        d -= 920.microseconds
+        // sub-nanosecond precision errors
+        test(DurationUnit.NANOSECONDS, "516ns", "516.3ns", "516.34ns", "516.344ns", "516.3438ns")
+        d = (d - 516.nanoseconds) / 17
+        test(DurationUnit.NANOSECONDS, "0ns", "0.0ns", "0.02ns", "0.020ns", "0.0202ns")
+
+        d = Duration.MAX_VALUE
+        // are such long representations ok?
+        test(DurationUnit.DAYS, "20806633505350875${"0".repeat(278)}d")
+        test(DurationUnit.NANOSECONDS, "17976931348623157${"0".repeat(292)}ns")
+
+        d = Duration.INFINITE
+        test(DurationUnit.DAYS, "Infinity", "Infinity")
+        d = -Duration.INFINITE
+        test(DurationUnit.NANOSECONDS, "-Infinity", "-Infinity")
+    }
+
 }

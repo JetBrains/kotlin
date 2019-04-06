@@ -146,7 +146,9 @@ public inline class Duration internal constructor(internal val _value: Double) :
     }
 
     fun toString(unit: DurationUnit, decimals: Int = 0): String {
+        require(decimals >= 0) { "decimals must be not negative, but was $decimals" }
 //        if (decimals == 0) return toString(unit)
+        if (isInfinite()) return _value.toString()
         return formatToDecimals(inUnits(unit), decimals, unit.shortName())
     }
 
