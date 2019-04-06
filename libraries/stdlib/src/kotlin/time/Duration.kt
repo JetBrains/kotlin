@@ -5,7 +5,7 @@
 
 package kotlin.time
 
-private val storageUnit = DurationUnit.MICROSECONDS
+private val storageUnit = DurationUnit.NANOSECONDS
 
 @Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
 public inline class Duration internal constructor(internal val _value: Double) : Comparable<Duration> {
@@ -91,18 +91,20 @@ public inline class Duration internal constructor(internal val _value: Double) :
     // perhaps better name would be 'letComponents'
 
     inline fun <T> withComponents(action: (hours: Int, minutes: Int, seconds: Int, nanoseconds: Int) -> T): T =
-        action(inHours.toInt(), minutesComponent.toInt(), secondsComponent.toInt(), (inNanoseconds % 1e9).toInt())
+        action(inHours.toInt(), minutesComponent, secondsComponent, nanosecondsComponent)
 
     inline fun <T> withComponents(action: (days: Int, hours: Int, minutes: Int, seconds: Int, nanoseconds: Int) -> T): T =
-        action(inDays.toInt(), hoursComponent.toInt(), minutesComponent.toInt(), secondsComponent.toInt(), (inNanoseconds % 1e9).toInt())
+        action(inDays.toInt(), hoursComponent, minutesComponent, secondsComponent, nanosecondsComponent)
 
 
     @PublishedApi
-    internal val hoursComponent: Double get() = inHours % 24
+    internal val hoursComponent: Int get() = (inHours % 24).toInt()
     @PublishedApi
-    internal val minutesComponent: Double get() = inMinutes % 60
+    internal val minutesComponent: Int get() = (inMinutes % 60).toInt()
     @PublishedApi
-    internal val secondsComponent: Double get() = inSeconds % 60
+    internal val secondsComponent: Int get() = (inSeconds % 60).toInt()
+    @PublishedApi
+    internal val nanosecondsComponent: Int get() = (inNanoseconds % 1e9).toInt()
 
 
     // conversion to units

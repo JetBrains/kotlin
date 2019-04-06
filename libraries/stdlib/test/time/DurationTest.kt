@@ -6,12 +6,11 @@
 package test.time
 
 import test.numbers.assertAlmostEquals
-import kotlin.math.*
 import kotlin.test.*
 import kotlin.time.*
 import kotlin.random.*
 
-private val expectStorageUnit = DurationUnit.MICROSECONDS
+private val expectStorageUnit = DurationUnit.NANOSECONDS
 private val units = DurationUnit.values()
 
 class DurationTest {
@@ -134,14 +133,14 @@ class DurationTest {
                     assertEquals(h, hours)
                     assertEquals(m, minutes)
                     assertEquals(s, seconds)
-                    assertTrue(abs(ns - nanoseconds) < 2, "ns component of duration ${this.toIsoString()} differs too much, expected: $ns, actual: $nanoseconds")
+                    assertEquals(ns, nanoseconds, "ns component of duration ${this.toIsoString()} differs too much, expected: $ns, actual: $nanoseconds")
                 }
                 withComponents { days, hours, minutes, seconds, nanoseconds ->
                     assertEquals(0, days)
                     assertEquals(h, hours)
                     assertEquals(m, minutes)
                     assertEquals(s, seconds)
-                    assertTrue(abs(ns - nanoseconds) < 2)
+                    assertEquals(ns, nanoseconds)
                 }
             }
         }
