@@ -81,6 +81,7 @@ val jvmPhases = namedIrFilePhase(
 
             makePatchParentsPhase(1) then
 
+            singletonReferencesPhase then
             jvmLocalDeclarationsPhase then
             singleAbstractMethodPhase then
             callableReferencePhase then
@@ -95,7 +96,6 @@ val jvmPhases = namedIrFilePhase(
             enumClassPhase then
             objectClassPhase then
             makeInitializersPhase(JvmLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER, true) then
-            singletonReferencesPhase then
             syntheticAccessorPhase then
             bridgePhase then
             jvmOverloadsAnnotationPhase then
