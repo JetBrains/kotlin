@@ -243,3 +243,12 @@ val TypeParameterDescriptor.representativeUpperBound: KotlinType
         } ?: upperBounds.first()
     }
 
+fun KotlinType.expandIntersectionTypeIfNecessary(): Collection<KotlinType> {
+    if (constructor !is IntersectionTypeConstructor) return listOf(this)
+    val types = constructor.supertypes
+    return if (isMarkedNullable) {
+        types.map { it.makeNullable() }
+    } else {
+        types
+    }
+}

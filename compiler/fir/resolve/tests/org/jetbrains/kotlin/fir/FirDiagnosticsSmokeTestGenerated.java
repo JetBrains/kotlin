@@ -19529,6 +19529,11 @@ public class FirDiagnosticsSmokeTestGenerated extends AbstractFirDiagnosticsSmok
             runTest("compiler/testData/diagnostics/tests/smartCasts/kt2865.kt");
         }
 
+        @TestMetadata("kt30826.kt")
+        public void testKt30826() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/smartCasts/kt30826.kt");
+        }
+
         @TestMetadata("kt3224.kt")
         public void testKt3224() throws Exception {
             runTest("compiler/testData/diagnostics/tests/smartCasts/kt3224.kt");

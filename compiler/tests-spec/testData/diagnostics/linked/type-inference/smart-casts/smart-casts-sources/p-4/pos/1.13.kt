@@ -65,7 +65,7 @@ fun <T> case_5(x: T?) {
 
             <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & T?"), DEBUG_INFO_SMARTCAST!>x<!>.equals(x)
             <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & T?"), DEBUG_INFO_SMARTCAST!>x<!>.itest()
-            x.apply {
+            <!DEBUG_INFO_SMARTCAST!>x<!>.apply {
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}"), DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>this<!>
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}"), DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>this<!>
                 equals(this)
@@ -73,7 +73,7 @@ fun <T> case_5(x: T?) {
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}"), DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>this<!>.equals(x)
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}"), DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>this<!>.itest()
             }
-            x.also {
+            <!DEBUG_INFO_SMARTCAST!>x<!>.also {
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>it<!>
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>it<!>
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>it<!>.itest()
@@ -93,14 +93,14 @@ fun <T> case_6(x: T?) {
 
             <!DEBUG_INFO_SMARTCAST!>x<!>.equals(x)
             <!DEBUG_INFO_SMARTCAST!>x<!>.itest()
-            x.apply {
+            <!DEBUG_INFO_SMARTCAST!>x<!>.apply {
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}"), DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>this<!>
                 equals(this)
                 itest()
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}"), DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>this<!>.equals(x)
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}"), DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>this<!>.itest()
             }
-            x.also {
+            <!DEBUG_INFO_SMARTCAST!>x<!>.also {
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>it<!>
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>it<!>.itest()
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>it<!>.equals(it)
@@ -118,14 +118,14 @@ fun <T> case_7(y: T) {
             <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & T"), DEBUG_INFO_SMARTCAST!>x<!>.equals(x)
             <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & T"), DEBUG_INFO_SMARTCAST!>x<!>.itest()
 
-            x.apply {
+            <!DEBUG_INFO_SMARTCAST!>x<!>.apply {
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T!!}"), DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T!!}")!>this<!>
                 equals(this)
                 itest()
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T!!}"), DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T!!}")!>this<!>.equals(x)
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T!!}"), DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T!!}")!>this<!>.itest()
             }
-            x.also {
+            <!DEBUG_INFO_SMARTCAST!>x<!>.also {
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T!!}")!>it<!>
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T!!}")!>it<!>.itest()
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T!!}")!>it<!>.equals(it)
@@ -144,14 +144,14 @@ fun <T> case_8(x: T) {
 
             <!DEBUG_INFO_SMARTCAST!>x<!>.equals(x)
             <!DEBUG_INFO_SMARTCAST!>x<!>.itest()
-            x.apply {
+            <!DEBUG_INFO_SMARTCAST!>x<!>.apply {
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T!!}"), DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T!!}")!>this<!>
                 equals(this)
                 itest()
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T!!}"), DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T!!}")!>this<!>.equals(x)
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T!!}"), DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T!!}")!>this<!>.itest()
             }
-            x.also {
+            <!DEBUG_INFO_SMARTCAST!>x<!>.also {
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T!!}")!>it<!>
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T!!}")!>it<!>.itest()
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T!!}")!>it<!>.equals(it)
@@ -218,14 +218,14 @@ fun <T : Number> case_11(x: T?) {
 
             <!DEBUG_INFO_SMARTCAST!>x<!>.equals(x)
             <!DEBUG_INFO_SMARTCAST!>x<!>.itest()
-            x.apply {
+            <!DEBUG_INFO_SMARTCAST!>x<!>.apply {
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}"), DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>this<!>
                 equals(this)
                 itest()
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}"), DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>this<!>.equals(x)
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}"), DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>this<!>.itest()
             }
-            x.also {
+            <!DEBUG_INFO_SMARTCAST!>x<!>.also {
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>it<!>
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>it<!>.itest()
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>it<!>.equals(it)

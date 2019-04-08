@@ -61,7 +61,7 @@ fun <T> T?.case_5() {
 
             <!DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>equals<!>(this)
             <!DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>itest1<!>()
-            apply {
+            <!DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>apply<!> {
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}"), DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>this<!>
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}"), DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>this<!>
                 equals(this)
@@ -69,7 +69,7 @@ fun <T> T?.case_5() {
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}"), DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>this<!>.equals(this)
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}"), DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>this<!>.itest1()
             }
-            also {
+            <!DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>also<!> {
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>it<!>
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>it<!>
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>it<!>.itest1()
@@ -89,14 +89,14 @@ fun <T> T?.case_6() {
 
             <!DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>equals<!>(this)
             <!DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>itest1<!>()
-            apply {
+            <!DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>apply<!> {
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}"), DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>this<!>
                 equals(this)
                 itest1()
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}"), DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>this<!>.equals(this)
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}"), DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>this<!>.itest1()
             }
-            also {
+            <!DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>also<!> {
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>it<!>
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>it<!>.itest1()
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>it<!>.equals(it)
@@ -114,14 +114,14 @@ fun <T> T.case_7() {
             <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & T"), DEBUG_INFO_SMARTCAST!>x<!>.equals(this)
             <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & T"), DEBUG_INFO_SMARTCAST!>x<!>.itest1()
 
-            x.apply {
+            <!DEBUG_INFO_SMARTCAST!>x<!>.apply {
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T!!}"), DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T!!}")!>this<!>
                 equals(this)
                 itest1()
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T!!}"), DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T!!}")!>this<!>.equals(this)
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T!!}"), DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T!!}")!>this<!>.itest1()
             }
-            x.also {
+            <!DEBUG_INFO_SMARTCAST!>x<!>.also {
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T!!}")!>it<!>
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T!!}")!>it<!>.itest1()
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T!!}")!>it<!>.equals(it)
@@ -140,14 +140,14 @@ fun <T> T.case_8() {
 
             <!DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>equals<!>(this)
             <!DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>itest1<!>()
-            apply {
+            <!DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>apply<!> {
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T!!}"), DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T!!}")!>this<!>
                 equals(this)
                 itest1()
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T!!}"), DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T!!}")!>this<!>.equals(this)
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T!!}"), DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T!!}")!>this<!>.itest1()
             }
-            also {
+            <!DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>also<!> {
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T!!}")!>it<!>
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T!!}")!>it<!>.itest1()
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T!!}")!>it<!>.equals(it)
@@ -214,14 +214,14 @@ fun <T : Number> T?.case_11() {
 
             <!DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>equals<!>(this)
             <!DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>itest1<!>()
-            apply {
+            <!DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>apply<!> {
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}"), DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>this<!>
                 equals(this)
                 itest1()
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}"), DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>this<!>.equals(this)
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}"), DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>this<!>.itest1()
             }
-            also {
+            <!DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>also<!> {
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>it<!>
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>it<!>.itest1()
                 <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>it<!>.equals(it)
@@ -1706,11 +1706,11 @@ fun <T> T.case_65() {
             if (this != null) {
                 <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & Interface2 & T & T!!"), DEBUG_INFO_EXPRESSION_TYPE("T")!>this<!>
                 <!DEBUG_INFO_EXPRESSION_TYPE("Interface1"), DEBUG_INFO_EXPRESSION_TYPE("T"), DEBUG_INFO_SMARTCAST!>this<!>.equals(<!UNRESOLVED_REFERENCE!>x<!>)
-                apply {
+                <!DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>apply<!> {
                     <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & Interface2 & T!!}"), DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & Interface2 & T!!}")!>this<!>
                     <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & Interface2 & T!!}"), DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & Interface2 & T!!}")!>this<!>.equals(this)
                 }
-                also {
+                <!DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>also<!> {
                     <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & Interface2 & T!!}")!>it<!>
                     <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & Interface2 & T!!}")!>it<!>.equals(it)
                 }

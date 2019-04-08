@@ -24,7 +24,7 @@ fun <T : CharSequence?> foo(x: T) {
         y1 = <!DEBUG_INFO_SMARTCAST!>x<!>
         y2 = <!DEBUG_INFO_SMARTCAST!>x<!>
 
-        bar1(<!OI;DEBUG_INFO_SMARTCAST!>x<!>)
+        bar1(<!DEBUG_INFO_SMARTCAST!>x<!>)
         bar2(<!DEBUG_INFO_SMARTCAST!>x<!>)
         bar3(<!DEBUG_INFO_SMARTCAST!>x<!>)
     }
