@@ -53,7 +53,7 @@ class ImplicitInitializerConversion(private val context: ConversionContext) : Re
             .toMap()
 
         fun JKMethodSymbol.parentConstructor(): JKMethodSymbol? =
-            (symbolToConstructor[this]!!.delegationCall as? JKDelegationConstructorCall)
+            (symbolToConstructor[this]?.delegationCall as? JKDelegationConstructorCall)
                 ?.identifier
 
         val constructors = containingClass.declarationList
