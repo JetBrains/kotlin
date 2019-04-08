@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstituto
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.checker.ClassicTypeSystemContext
 import org.jetbrains.kotlin.types.model.StubTypeMarker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
@@ -29,24 +30,26 @@ import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 fun ConstraintStorage.buildCurrentSubstitutor(additionalBindings: Map<TypeConstructorMarker, StubTypeMarker>): NewTypeSubstitutorByConstructorMap =
-    NewTypeSubstitutorByConstructorMap( (fixedTypeVariables.entries.associate { it.key to it.value } + additionalBindings).cast() ) // TODO: SUB
+    NewTypeSubstitutorByConstructorMap((fixedTypeVariables.entries.associate { it.key to it.value } + additionalBindings).cast()) // TODO: SUB
 
-fun ConstraintStorage.buildResultingSubstitutor(context: TypeSystemInferenceExtensionContext): TypeSubstitutorMarker = with(context) {
-    val currentSubstitutorMap = fixedTypeVariables.entries.associate {
-        it.key to it.value
-    }
-    val uninferredSubstitutorMap = notFixedTypeVariables.entries.associate { (freshTypeConstructor, typeVariable) ->
-        freshTypeConstructor to context.createErrorTypeWithCustomConstructor(
-            "Uninferred type",
-            (typeVariable.typeVariable).freshTypeConstructor()
-        )
+fun ConstraintStorage.buildAbstractResultingSubstitutor(context: TypeSystemInferenceExtensionContext): TypeSubstitutorMarker =
+    with(context) {
+        val currentSubstitutorMap = fixedTypeVariables.entries.associate {
+            it.key to it.value
+        }
+        val uninferredSubstitutorMap = notFixedTypeVariables.entries.associate { (freshTypeConstructor, typeVariable) ->
+            freshTypeConstructor to context.createErrorTypeWithCustomConstructor(
+                "Uninferred type",
+                (typeVariable.typeVariable).freshTypeConstructor()
+            )
+        }
+
+        return context.typeSubstitutorByTypeConstructor(currentSubstitutorMap + uninferredSubstitutorMap)
     }
 
-    return context.typeSubstitutorByTypeConstructor(currentSubstitutorMap + uninferredSubstitutorMap)
+fun ConstraintStorage.buildResultingSubstitutor(context: TypeSystemInferenceExtensionContext): NewTypeSubstitutor {
+    return buildAbstractResultingSubstitutor(context) as NewTypeSubstitutor
 }
-
-fun ConstraintStorage.buildResultingSubstitutor(): NewTypeSubstitutor =
-    buildResultingSubstitutor(this as TypeSystemInferenceExtensionContext) as NewTypeSubstitutor
 
 val CallableDescriptor.returnTypeOrNothing: UnwrappedType
     get() {
@@ -72,7 +75,7 @@ fun CallableDescriptor.substituteAndApproximateCapturedTypes(substitutor: NewTyp
         override fun prepareTopLevelType(topLevelType: KotlinType, position: Variance) =
             substitutor.safeSubstitute(topLevelType.unwrap()).let { substitutedType ->
                 TypeApproximator(builtIns).approximateToSuperType(substitutedType, TypeApproximatorConfiguration.CapturedAndIntegerLiteralsTypesApproximation)
-                        ?: substitutedType
+                    ?: substitutedType
             }
     }
 

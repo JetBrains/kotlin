@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.types.expressions.DataFlowAnalyzer
 import org.jetbrains.kotlin.types.expressions.DoubleColonExpressionResolver
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
+import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContextDelegate
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -66,7 +67,8 @@ class KotlinToResolvedCallTransformer(
     private val additionalDiagnosticReporter: AdditionalDiagnosticReporter,
     private val moduleDescriptor: ModuleDescriptor,
     private val dataFlowValueFactory: DataFlowValueFactory,
-    private val builtIns: KotlinBuiltIns
+    private val builtIns: KotlinBuiltIns,
+    private val typeSystemContext: TypeSystemInferenceExtensionContextDelegate
 ) {
     companion object {
         private val REPORT_MISSING_NEW_INFERENCE_DIAGNOSTIC
@@ -106,7 +108,7 @@ class KotlinToResolvedCallTransformer(
             is CompletedCallResolutionResult, is ErrorCallResolutionResult -> {
                 val candidate = (baseResolvedCall as SingleCallResolutionResult).resultCallAtom
 
-                val resultSubstitutor = baseResolvedCall.constraintSystem.buildResultingSubstitutor()
+                val resultSubstitutor = baseResolvedCall.constraintSystem.buildResultingSubstitutor(typeSystemContext)
                 if (context.inferenceSession.writeOnlyStubs()) {
                     val stub = createStubResolvedCallAndWriteItToTrace<CallableDescriptor>(
                         candidate,
