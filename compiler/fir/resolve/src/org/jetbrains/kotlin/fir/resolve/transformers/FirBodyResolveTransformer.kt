@@ -194,11 +194,7 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
         }
         val callee = qualifiedAccessExpression.calleeReference as? FirSimpleNamedReference ?: return qualifiedAccessExpression.compose()
 
-        qualifiedAccessExpression.explicitReceiver?.visitNoTransform(this, null)
-
-        val receiver = qualifiedAccessExpression.explicitReceiver
-
-        //val checkers = listOf(VariableApplicabilityChecker(callee.name))
+        val receiver = qualifiedAccessExpression.explicitReceiver?.transformSingle(this, null)
 
         val info = CallInfo(CallKind.VariableAccess, receiver, emptyList(), emptyList()) { it.resultType }
         val resolver = CallResolver(jump, session)
@@ -228,8 +224,6 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
 
         val functionCall = functionCall.transformChildren(this, null) as FirFunctionCall
 
-        if (functionCall.calleeReference !is FirSimpleNamedReference) return functionCall
-
         val name = functionCall.calleeReference.name
 
         val receiver = functionCall.explicitReceiver
@@ -241,7 +235,6 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
         val resolver = CallResolver(jump, session)
         resolver.callInfo = info
         resolver.scopes = (scopes + localScopes).asReversed()
-
 
         val consumer = createFunctionConsumer(session, name, info, inferenceComponents)
         val result = resolver.runTowerResolver(consumer)
@@ -285,18 +278,22 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
         )
 
         val resultExpression = functionCall.transformCalleeReference(StoreNameReference, nameReference) as FirFunctionCall
-        if (functionCall.calleeReference !is FirResolvedCallableReference) {
-            functionCall.resultType = typeFromCallee(functionCall)
+        val typeRef = typeFromCallee(functionCall)
+        if (typeRef.type is ConeKotlinErrorType) {
+            functionCall.resultType = typeRef
         }
         return resultExpression
     }
 
     private fun completeTypeInference(functionCall: FirFunctionCall, expectedTypeRef: FirTypeRef?): FirFunctionCall {
-
+        val typeRef = typeFromCallee(functionCall)
+        if (typeRef.type is ConeKotlinErrorType) {
+            functionCall.resultType = typeRef
+            return functionCall
+        }
         val candidate = functionCall.candidate() ?: return functionCall
         val initialSubstitutor = candidate.substitutor
 
-        val typeRef = typeFromCallee(functionCall)
         val initialType = initialSubstitutor.substituteOrSelf(typeRef.type)
 
         val completionMode = candidate.computeCompletionMode(inferenceComponents, expectedTypeRef, initialType)
@@ -316,10 +313,15 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
     }
 
     override fun transformFunctionCall(functionCall: FirFunctionCall, data: Any?): CompositeTransformResult<FirStatement> {
+        if (functionCall.calleeReference !is FirSimpleNamedReference) return functionCall.compose()
         val expectedTypeRef = data as FirTypeRef?
-        val resultExpression =
-            resolveCallAndSelectCandidate(functionCall, expectedTypeRef)
-        val completeInference = completeTypeInference(resultExpression, expectedTypeRef)
+        val completeInference =
+            try {
+                val resultExpression = resolveCallAndSelectCandidate(functionCall, expectedTypeRef)
+                completeTypeInference(resultExpression, expectedTypeRef)
+            } catch (e: Throwable) {
+                throw RuntimeException("While resolving call ${functionCall.render()}", e)
+            }
 
 
         return completeInference.compose()
