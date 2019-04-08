@@ -21,6 +21,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.codegen.CodegenTestCase;
+import org.jetbrains.kotlin.test.InTextDirectivesUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.org.objectweb.asm.*;
 
 import java.io.File;
@@ -50,11 +52,20 @@ import static org.jetbrains.kotlin.test.InTextDirectivesUtils.findStringWithPref
  */
 public abstract class AbstractWriteFlagsTest extends CodegenTestCase {
 
+    private static final boolean IGNORE_EXPECTED_FAILURES =
+            Boolean.getBoolean("kotlin.suppress.expected.test.failures");
+
+    protected TargetBackend getBackend() {
+        return TargetBackend.JVM;
+    }
+
     @Override
     protected void doMultiFileTest(
             @NotNull File wholeFile, @NotNull List<TestFile> files, @Nullable File javaFilesDir
     ) throws Exception {
-        compile(files, null);
+        boolean isIgnored = IGNORE_EXPECTED_FAILURES && InTextDirectivesUtils.isIgnoredTarget(getBackend(), wholeFile);
+
+        compile(files, null, !isIgnored);
 
         String fileText = FileUtil.loadFile(wholeFile, true);
 

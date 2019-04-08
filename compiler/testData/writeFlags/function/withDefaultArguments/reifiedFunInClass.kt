@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 class MyClass() {
     inline fun <reified T> test(s: String = "") {}
 }

@@ -221,7 +221,7 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractWriteFlagsTest> {
-            model("writeFlags")
+            model("writeFlags", targetBackend = TargetBackend.JVM)
         }
 
         testClass<AbstractDefaultArgumentsReflectionTest> {
@@ -371,6 +371,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractIrCheckLocalVariablesTableTest> {
             model("checkLocalVariablesTable", targetBackend = TargetBackend.JVM_IR)
+        }
+
+        testClass<AbstractIrWriteFlagsTest> {
+            model("writeFlags", targetBackend = TargetBackend.JVM_IR)
         }
 
         testClass<AbstractIrLineNumberTest> {
