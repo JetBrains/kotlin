@@ -26,11 +26,9 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
-import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal val singleAbstractMethodPhase = makeIrFilePhase(
@@ -41,9 +39,7 @@ internal val singleAbstractMethodPhase = makeIrFilePhase(
 
 class SingleAbstractMethodLowering(val context: CommonBackendContext) : ClassLoweringPass {
     override fun lower(irClass: IrClass) {
-        // TODO use `IrType`s; unfortunately, they are currently not comparable.
-        //      (Can't use class symbols here, we want type parameters as well.)
-        val cachedImplementations = mutableMapOf<Pair<KotlinType, KotlinType>, IrClass>()
+        val cachedImplementations = mutableMapOf<Pair<IrType, IrType>, IrClass>()
         val localImplementations = mutableListOf<IrClass>()
         irClass.transformChildrenVoid(object : IrElementTransformerVoidWithContext() {
             override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression {
@@ -156,7 +152,7 @@ class SingleAbstractMethodLowering(val context: CommonBackendContext) : ClassLow
                 // Do not generate a wrapper class for null, it has no invoke() anyway.
                 if (invokable.isNullConst())
                     return invokable
-                val implementation = cachedImplementations.getOrPut(superType.toKotlinType() to invokable.type.toKotlinType()) {
+                val implementation = cachedImplementations.getOrPut(superType to invokable.type) {
                     createObjectProxy(superType, invokable.type)
                 }
                 return if (superType.isNullable() && invokable.type.isNullable()) {
