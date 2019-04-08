@@ -225,7 +225,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext,
 
     override fun SimpleTypeMarker.replaceArguments(newArguments: List<TypeArgumentMarker>): SimpleTypeMarker {
         require(this is ConeKotlinType)
-        return this.withArguments(newArguments.toTypedArray().cast())
+        return this.withArguments(newArguments.cast<List<ConeKotlinTypeProjection>>().toTypedArray())
     }
 
     override fun KotlinTypeMarker.hasExactAnnotation(): Boolean {
