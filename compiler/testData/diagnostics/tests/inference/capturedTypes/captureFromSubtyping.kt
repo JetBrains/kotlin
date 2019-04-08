@@ -1,3 +1,5 @@
+// IGNORE_FIR
+
 fun <V, R, M : MutableMap<in R, out V>> mapKeysTo(destination: M): Inv3<R, V, M> {
     val foo = associateByTo(destination)
 

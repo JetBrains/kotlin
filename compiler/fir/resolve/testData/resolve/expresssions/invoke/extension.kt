@@ -1,4 +1,4 @@
-
+// IGNORE
 
 fun x() {}
 

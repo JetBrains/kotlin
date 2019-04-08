@@ -1,3 +1,4 @@
+// IGNORE_FIR
 // FILE: 1.kt
 package bar
 

@@ -1,5 +1,6 @@
 // !LANGUAGE: +NewInference
 // !DIAGNOSTICS: -UNUSED_PARAMETER
+// IGNORE_FIR
 
 fun <K> select2(x: K, y: K): K = TODO()
 fun <K> select3(x: K, y: K, z: K): K = TODO()

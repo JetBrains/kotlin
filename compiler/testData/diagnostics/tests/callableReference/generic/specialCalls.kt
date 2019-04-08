@@ -1,4 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER, -UNUSED_VARIABLE
+// IGNORE_FIR
 
 fun baz(i: Int) = i
 fun <T> bar(x: T): T = TODO()

@@ -1,3 +1,5 @@
+// IGNORE_FIR
+
 fun <T> getT() {}
 fun <A, B> getTT() {}
 fun <A, B, C> getTTT(<!UNUSED_PARAMETER!>x<!> : Any) {}

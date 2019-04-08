@@ -1,4 +1,4 @@
-
+// IGNORE
 
 class Bar {
     fun FooBar.invoke(): Bar = this

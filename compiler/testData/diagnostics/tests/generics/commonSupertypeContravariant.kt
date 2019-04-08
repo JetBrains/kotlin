@@ -1,4 +1,5 @@
 // NI_EXPECTED_FILE
+// IGNORE_FIR
 
 interface In<in E>
 

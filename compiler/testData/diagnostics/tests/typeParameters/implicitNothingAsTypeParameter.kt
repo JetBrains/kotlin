@@ -1,6 +1,7 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNCHECKED_CAST
 // !WITH_NEW_INFERENCE
 // SKIP_TXT
+// IGNORE_FIR
 // Issue: KT-20849
 
 fun <T>test_1(x: T): T = null as T

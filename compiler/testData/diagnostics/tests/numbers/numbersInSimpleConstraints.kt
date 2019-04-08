@@ -1,5 +1,7 @@
 // !WITH_NEW_INFERENCE
 // !CHECK_TYPE
+// IGNORE_FIR
+
 package a
 
 fun <T> id(t: T): T = t

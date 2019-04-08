@@ -1,3 +1,5 @@
+// IGNORE
+
 open class Base<T>(val x: T)
 
 class Derived<T : Any>(x: T) : Base<T>(x)

@@ -1,3 +1,4 @@
+// IGNORE
 
 class Bar {
     operator fun invoke(): Foo { return this }
