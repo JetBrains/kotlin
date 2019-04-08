@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.ir.backend.js.lower.*
 import org.jetbrains.kotlin.ir.backend.js.lower.calls.CallsLowering
-import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.SuspendFunctionsLowering
+import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.FunctionInlining
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.RemoveInlineFunctionsWithReifiedTypeParametersLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.ReturnableBlockLowering
@@ -179,7 +179,7 @@ private val innerClassConstructorCallsLoweringPhase = makeJsModulePhase(
 )
 
 private val suspendFunctionsLoweringPhase = makeJsModulePhase(
-    ::SuspendFunctionsLowering,
+    ::JsSuspendFunctionsLowering,
     name = "SuspendFunctionsLowering",
     description = "Transform suspend functions into CoroutineImpl instance and build state machine",
     prerequisite = setOf(unitMaterializationLoweringPhase)

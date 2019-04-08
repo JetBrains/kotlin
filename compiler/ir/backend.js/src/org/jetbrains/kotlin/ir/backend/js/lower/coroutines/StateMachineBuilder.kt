@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower.coroutines
 
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.ir.isElseBranch
 import org.jetbrains.kotlin.backend.common.ir.isSuspend
 import org.jetbrains.kotlin.backend.common.peek
@@ -13,7 +14,6 @@ import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
@@ -61,7 +61,7 @@ class DispatchPointTransformer(val action: (SuspendState) -> IrExpression) : IrE
 
 class StateMachineBuilder(
     private val suspendableNodes: MutableSet<IrElement>,
-    val context: JsIrBackendContext,
+    val context: CommonBackendContext,
     val function: IrFunctionSymbol,
     private val rootLoop: IrLoop,
     private val exceptionSymbolGetter: IrSimpleFunction,
@@ -90,10 +90,6 @@ class StateMachineBuilder(
     lateinit var globalCatch: IrCatch
 
     fun finalizeStateMachine() {
-        val unitValue = JsIrBuilder.buildGetObjectValue(
-            unit,
-            context.symbolTable.referenceClass(context.builtIns.unit)
-        )
         globalCatch = buildGlobalCatch()
         if (currentBlock.statements.lastOrNull() !is IrReturn) {
             addStatement(JsIrBuilder.buildReturn(function, unitValue, nothing))
@@ -537,10 +533,7 @@ class StateMachineBuilder(
         })
     }
 
-    private val unitValue = JsIrBuilder.buildGetObjectValue(
-        unit,
-        context.symbolTable.referenceClass(context.builtIns.unit)
-    )
+    private val unitValue get() = JsIrBuilder.buildGetObjectValue(unit, context.irBuiltIns.unitClass)
 
     override fun visitReturn(expression: IrReturn) {
         expression.acceptChildrenVoid(this)

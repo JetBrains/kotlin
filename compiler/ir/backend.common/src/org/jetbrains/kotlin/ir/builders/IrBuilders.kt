@@ -74,8 +74,8 @@ fun Scope.createTmpVariable(
         Name.identifier(nameHint ?: "tmp"),
         varType,
         isMutable,
-        false,
-        false
+        isConst = false,
+        isLateinit = false
     ).apply {
         initializer = irExpression
         parent = getLocalDeclarationParent()

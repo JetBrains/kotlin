@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower.coroutines
 
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.ir.isSuspend
 import org.jetbrains.kotlin.backend.common.lower.FinallyBlocksLowering
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.*
-
 
 object COROUTINE_ROOT_LOOP : IrStatementOriginImpl("COROUTINE_ROOT_LOOP")
 object COROUTINE_SWITCH : IrStatementOriginImpl("COROUTINE_SWITCH")
@@ -55,8 +54,9 @@ open class SuspendableNodesCollector(protected val suspendableNodes: MutableSet<
 fun collectSuspendableNodes(
     body: IrBlock,
     suspendableNodes: MutableSet<IrElement>,
-    context: JsIrBackendContext,
-    function: IrFunction
+    context: CommonBackendContext,
+    function: IrFunction,
+    throwableType: IrType
 ): IrBlock {
 
     // 1st: mark suspendable loops and tries
@@ -66,7 +66,7 @@ fun collectSuspendableNodes(
     body.acceptVoid(terminatorsCollector)
 
     if (terminatorsCollector.shouldFinalliesBeLowered) {
-        val finallyLower = FinallyBlocksLowering(context, context.dynamicType)
+        val finallyLower = FinallyBlocksLowering(context, throwableType)
 
         function.body = IrBlockBodyImpl(body.startOffset, body.endOffset, body.statements)
         function.transform(finallyLower, null)
@@ -76,7 +76,7 @@ fun collectSuspendableNodes(
         suspendableNodes.clear()
         val newBlock = JsIrBuilder.buildBlock(body.type, newBody.statements)
 
-        return collectSuspendableNodes(newBlock, suspendableNodes, context, function)
+        return collectSuspendableNodes(newBlock, suspendableNodes, context, function, throwableType)
     }
 
     return body
