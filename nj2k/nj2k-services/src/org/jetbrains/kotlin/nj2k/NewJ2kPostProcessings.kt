@@ -78,6 +78,29 @@ data class OneTimeProcessingGroup(val processings: List<Processing>) : Processin
     constructor(vararg processings: Processing) : this(processings.toList())
 }
 
+private abstract class CheckableProcessing<E : PsiElement>(private val classTag: KClass<E>) : NewJ2kPostProcessing {
+    protected open fun check(element: E): Boolean =
+        check(element, null)
+
+    protected open fun check(element: E, settings: ConverterSettings?): Boolean =
+        check(element)
+
+    protected abstract fun action(element: E)
+
+    override fun createAction(element: PsiElement, diagnostics: Diagnostics, settings: ConverterSettings?): (() -> Unit)? {
+        if (!element::class.isSubclassOf(classTag)) return null
+        @Suppress("UNCHECKED_CAST")
+        if (!check(element as E, settings)) return null
+        return {
+            if (element.isValid && check(element, settings)) {
+                action(element)
+            }
+        }
+    }
+
+    override val writeActionNeeded: Boolean = true
+}
+
 object NewJ2KPostProcessingRegistrar {
 
     private fun Processing.processings(): Sequence<NewJ2kPostProcessing> =
@@ -308,7 +331,8 @@ object NewJ2KPostProcessingRegistrar {
                 if (context.diagnostics.forElement(element).any { it.factory == Errors.UNNECESSARY_NOT_NULL_ASSERTION }) {
                     exclExclExpr.replace(baseExpression)
                 }
-            }
+            },
+            RemoveForExpressionLoopParameterTypeProcessing()
         )
     )
 
@@ -788,6 +812,17 @@ object NewJ2KPostProcessingRegistrar {
         }
 
         override val writeActionNeeded: Boolean = true
+    }
+
+    private class RemoveForExpressionLoopParameterTypeProcessing : CheckableProcessing<KtForExpression>(KtForExpression::class) {
+        override fun check(element: KtForExpression, settings: ConverterSettings?): Boolean =
+            element.loopParameter?.typeReference?.typeElement != null
+                    && settings?.specifyLocalVariableTypeByDefault != true
+
+        override fun action(element: KtForExpression) {
+            element.loopParameter?.typeReference = null
+        }
+
     }
 
     private class RemoveRedundantExpressionQualifierProcessing : NewJ2kPostProcessing {

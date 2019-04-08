@@ -17,9 +17,7 @@
 package org.jetbrains.kotlin.nj2k
 
 import org.jetbrains.kotlin.nj2k.conversions.*
-import org.jetbrains.kotlin.nj2k.tree.JKTreeElement
 import org.jetbrains.kotlin.nj2k.tree.JKTreeRoot
-import org.jetbrains.kotlin.nj2k.tree.impl.JKTreeRootImpl
 
 object ConversionsRunner {
 
@@ -68,7 +66,6 @@ object ConversionsRunner {
             +LiteralConversion()
             +ForConversion(context)
             +LabeledStatementConversion()
-            +ForInConversion(context)
             +TypeParametersNullabilityConversion()
             +ArrayOperationsConversion(context)
             +BuiltinMembersConversion(context)

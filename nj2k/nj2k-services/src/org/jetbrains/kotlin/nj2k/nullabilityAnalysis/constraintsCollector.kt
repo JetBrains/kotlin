@@ -19,8 +19,11 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.asAssignment
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getTargetFunction
+import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.calls.components.isVararg
 import org.jetbrains.kotlin.resolve.descriptorUtil.firstOverridden
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal class ConstraintsCollector(
@@ -97,10 +100,6 @@ internal class ConstraintsCollector(
                 expression.condition?.addEqualsNullabilityConstraint(Nullability.NOT_NULL, ConstraintCameFrom.INITIALIZER)
             }
 
-            expression is KtForExpression -> {
-                expression.loopRange?.addEqualsNullabilityConstraint(Nullability.NOT_NULL, ConstraintCameFrom.INITIALIZER)
-            }
-
             expression is KtCallExpression -> {
                 collectConstraintsForCallExpression(
                     expression,
@@ -122,6 +121,40 @@ internal class ConstraintsCollector(
 
             expression is KtNamedFunction -> {
                 collectSuperDeclarationConstraintsForFunction(expression)
+            }
+
+            expression is KtForExpression -> {
+                expression.loopRange?.addEqualsNullabilityConstraint(Nullability.NOT_NULL, ConstraintCameFrom.INITIALIZER)
+
+                val loopParameterTypeVariable =
+                    expression.loopParameter?.typeReference?.typeElement?.let { typeElement ->
+                        analysisContext.typeElementToTypeVariable[typeElement]
+                    }
+                if (loopParameterTypeVariable != null) {
+                    val loopRangeBoundType = boundTypeStorage.boundTypeFor(expression.loopRange!!)
+                    val loopRangeType = expression.loopRange?.getType(expression.analyze()) ?: return
+                    val loopRangeItemType = loopRangeType
+                        .constructor
+                        .declarationDescriptor
+                        ?.safeAs<ClassDescriptor>()
+                        ?.getMemberScope(loopRangeType.arguments)
+                        ?.getDescriptorsFiltered(DescriptorKindFilter.FUNCTIONS) {
+                            it.asString() == "iterator"
+                        }?.filterIsInstance<FunctionDescriptor>()
+                        ?.firstOrNull { it.valueParameters.isEmpty() }
+                        ?.original
+                        ?.returnType
+                        ?: return
+                    val boundType = boundTypeStorage.boundTypeForType(
+                        loopRangeItemType,
+                        loopRangeBoundType,
+                        emptyMap()
+                    ) ?: return
+                    loopParameterTypeVariable.addEqualsNullabilityConstraint(
+                        boundType.typeParameters.firstOrNull()?.boundType ?: return,
+                        ConstraintCameFrom.ASSIGNMENT_TARGET
+                    )
+                }
             }
         }
         Unit
