@@ -8,12 +8,16 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.codegen.isInlineCall
+import org.jetbrains.kotlin.backend.jvm.codegen.isInlineFunctionCall
+import org.jetbrains.kotlin.backend.jvm.codegen.isInlineIrExpression
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.util.isFunction
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -32,12 +36,12 @@ private class RemoveDeclarationsThatWouldBeInlinedLowering(val context: JvmBacke
         irFile.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitCall(expression: IrCall): IrExpression {
                 val owner = expression.symbol.owner
-                if (expression.descriptor.isInlineCall(context.state)) {
+                if (expression.symbol.owner.isInlineFunctionCall(context)) {
                     owner.valueParameters.filter {
                         !it.isNoinline && it.type.isFunction() && !it.type.isNullable()
                     }.forEach {
                         val valueArgument = expression.getValueArgument(it.index) as? IrContainerExpression ?: return@forEach
-                        if (valueArgument.origin == IrStatementOrigin.LAMBDA) {
+                        if (isInlineIrExpression(valueArgument)) {
                             val reference =
                                 valueArgument.statements.firstIsInstanceOrNull<IrFunctionReference>() ?: return@forEach
                             loweredLambdasToDelete.add(reference.symbol.owner)

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
+import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.inline.*
@@ -12,9 +13,11 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.util.getArguments
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.resolve.inline.InlineUtil.isInlineParameter
 import org.jetbrains.kotlin.utils.keysToMap
 import org.jetbrains.org.objectweb.asm.Type
@@ -150,4 +153,20 @@ class IrExpressionLambdaImpl(
 }
 
 fun isInlineIrExpression(argumentExpression: IrExpression) =
-    argumentExpression is IrBlock && argumentExpression.origin == IrStatementOrigin.LAMBDA
+    argumentExpression is IrBlock &&
+            (argumentExpression.origin == IrStatementOrigin.LAMBDA || argumentExpression.origin == IrStatementOrigin.ANONYMOUS_FUNCTION)
+
+fun IrFunction.isInlineFunctionCall(context: JvmBackendContext) =
+    (!context.state.isInlineDisabled || typeParameters.any { it.isReified }) &&
+            (isInline || isArrayConstructorWithLambda())
+
+private fun IrFunction.isArrayConstructorWithLambda() =
+    valueParameters.size == 2 &&
+            this is IrConstructor &&
+            parentAsClass.let {
+                it.getPackageFragment()?.fqName?.asString() == "kotlin" &&
+                        it.name.asString().endsWith("Array")
+            }
+
+fun IrValueParameter.isInlineParameter() =
+    !isNoinline && !type.isNullable() && type.isFunctionOrKFunction()
