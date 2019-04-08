@@ -240,7 +240,12 @@ internal class ConstraintsCollector(
 
 
         for (argumentIndex in callExpression.valueArguments.indices) {
-            val argument = callExpression.valueArguments[argumentIndex].getArgumentExpression() ?: continue
+            val valueArgument = callExpression.valueArguments[argumentIndex]
+            val argument = valueArgument.getArgumentExpression() ?: continue
+
+            if (valueArgument.isSpread) {
+                argument.addEqualsNullabilityConstraint(Nullability.NOT_NULL, ConstraintCameFrom.USED_AS_RECEIVER)
+            }
 
             argument.addSubtypeNullabilityConstraint(
                 parameterBoundTypeIndex(argumentIndex) ?: continue,

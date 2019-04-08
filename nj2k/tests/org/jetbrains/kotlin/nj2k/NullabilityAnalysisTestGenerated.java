@@ -64,6 +64,11 @@ public class NullabilityAnalysisTestGenerated extends AbstractNullabilityAnalysi
         runTest("nj2k/testData/nullabilityAnalysis/smartCast.kt");
     }
 
+    @TestMetadata("spreadExpression.kt")
+    public void testSpreadExpression() throws Exception {
+        runTest("nj2k/testData/nullabilityAnalysis/spreadExpression.kt");
+    }
+
     @TestMetadata("superMethod.kt")
     public void testSuperMethod() throws Exception {
         runTest("nj2k/testData/nullabilityAnalysis/superMethod.kt");
