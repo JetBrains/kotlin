@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeAbbreviatedTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
-import org.jetbrains.kotlin.fir.types.impl.ConeFunctionTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -113,7 +112,6 @@ fun <T : ConeKotlinType> T.withNullability(nullability: ConeNullability): T {
             typeArguments,
             nullability.isNullable
         ) as T
-        is ConeFunctionTypeImpl -> ConeFunctionTypeImpl(receiverType, parameterTypes, returnType, lookupTag, nullability.isNullable) as T
         is ConeTypeParameterTypeImpl -> ConeTypeParameterTypeImpl(lookupTag, nullability.isNullable) as T
         is ConeFlexibleType -> ConeFlexibleType(lowerBound.withNullability(nullability), upperBound.withNullability(nullability)) as T
         is ConeTypeVariableType -> ConeTypeVariableType(nullability, lookupTag) as T
@@ -135,7 +133,6 @@ fun <T : ConeKotlinType> T.withArguments(arguments: Array<ConeKotlinTypeProjecti
             arguments,
             nullability.isNullable
         ) as T
-        //is ConeFunctionTypeImpl -> ConeFunctionTypeImpl(receiverType, parameterTypes, returnType, lookupTag, nullability.isNullable) as T
         else -> error("Not supported: $this: ${this.render()}")
     }
 }

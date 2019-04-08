@@ -57,18 +57,6 @@ fun ConeKotlinType.render(): String {
         is ConeTypeParameterType -> {
             lookupTag.name.asString()
         }
-        is ConeFunctionType -> {
-            buildString {
-                receiverType?.let {
-                    append(it.render())
-                    append(".")
-                }
-                append("(")
-                parameterTypes.joinTo(this) { it.render() }
-                append(") -> ")
-                append(returnType.render())
-            }
-        }
         is ConeFlexibleType -> {
             buildString {
                 append("ft<")

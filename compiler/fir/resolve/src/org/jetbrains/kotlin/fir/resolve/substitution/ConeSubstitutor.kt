@@ -58,11 +58,10 @@ abstract class AbstractConeSubstitutor : ConeSubstitutor {
             is ConeClassErrorType -> return null
             is ConeClassType -> this.substituteArguments()
             is ConeAbbreviatedType -> this.substituteArguments()
-            is ConeFunctionType -> TODO()
             is ConeTypeParameterType -> return null
             is ConeTypeVariableType -> return null
             is ConeFlexibleType -> this.substituteBounds()
-            is ConeCapturedType -> TODO()
+            is ConeCapturedType -> return null
             is ConeDefinitelyNotNullType -> this.substituteOriginal()
         }
     }
