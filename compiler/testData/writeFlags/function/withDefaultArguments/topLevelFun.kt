@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 fun test(s: String = "") {}
 
 // TESTED_OBJECT_KIND: function

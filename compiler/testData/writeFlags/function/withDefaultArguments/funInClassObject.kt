@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 class MyClass() {
     companion object {
         fun test(s: String, x:Int = 10) {}

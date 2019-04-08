@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 class Test(val prop: String) {
 
   companion object {
