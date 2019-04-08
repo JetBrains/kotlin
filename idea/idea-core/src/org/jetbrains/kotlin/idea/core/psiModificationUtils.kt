@@ -114,7 +114,7 @@ fun KtLambdaExpression.moveFunctionLiteralOutsideParenthesesIfPossible() {
 
 private fun shouldLambdaParameterBeNamed(args: List<ValueArgument>, callExpr: KtCallExpression): Boolean {
     if (args.any { it.isNamed() }) return true
-    val callee = (callExpr.calleeExpression?.mainReference?.resolve() as? KtFunction) ?: return true
+    val callee = (callExpr.calleeExpression?.mainReference?.resolve() as? KtFunction) ?: return false
     return if (callee.valueParameters.any { it.isVarArg }) true else callee.valueParameters.size - 1 > args.size
 }
 
