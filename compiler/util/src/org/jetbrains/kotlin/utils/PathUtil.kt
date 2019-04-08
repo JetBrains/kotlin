@@ -31,7 +31,7 @@ object PathUtil {
     const val ALLOPEN_PLUGIN_JAR_NAME = "$ALLOPEN_PLUGIN_NAME.jar"
     const val NOARG_PLUGIN_NAME = "noarg-compiler-plugin"
     const val NOARG_PLUGIN_JAR_NAME = "$NOARG_PLUGIN_NAME.jar"
-    const val SAM_WITH_RECEIVER_PLUGIN_NAME = ".jar"
+    const val SAM_WITH_RECEIVER_PLUGIN_NAME = "sam-with-receiver-compiler-plugin"
     const val SAM_WITH_RECEIVER_PLUGIN_JAR_NAME = "$SAM_WITH_RECEIVER_PLUGIN_NAME.jar"
     const val JS_LIB_SRC_JAR_NAME = "kotlin-stdlib-js-sources.jar"
 
