@@ -326,7 +326,7 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
         private val EXTERNAL_FILE_PATTERN = Regex("""// EXTERNAL_FILE""")
 
         private inline fun <T> String.matchLinesWith(regex: Regex, ifMatched: (MatchResult) -> T): List<T> =
-            split("\n").mapNotNull { regex.matchEntire(it)?.let(ifMatched) }
+            lines().mapNotNull { regex.matchEntire(it)?.let(ifMatched) }
 
         internal fun parseDumpExternalClasses(text: String) =
             text.matchLinesWith(DUMP_EXTERNAL_CLASS) { it.groupValues[1] }
