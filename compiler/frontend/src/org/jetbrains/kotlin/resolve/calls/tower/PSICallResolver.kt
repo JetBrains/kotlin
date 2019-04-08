@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.expressions.*
+import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import java.util.*
@@ -193,7 +194,9 @@ class PSICallResolver(
     ): OverloadResolutionResults<D> {
         if (result is AllCandidatesResolutionResult) {
             val resolvedCalls = result.allCandidates.map {
-                val resultingSubstitutor = it.getSystem().asReadOnlyStorage().buildResultingSubstitutor()
+                val system = it.getSystem()
+                val resultingSubstitutor =
+                    system.asReadOnlyStorage().buildResultingSubstitutor(system as TypeSystemInferenceExtensionContext)
                 kotlinToResolvedCallTransformer.transformToResolvedCall<D>(it.resolvedCall, null, resultingSubstitutor, result.diagnostics)
             }
 

@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.resolve.calls.context.CallPosition
 import org.jetbrains.kotlin.resolve.calls.inference.buildResultingSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.FreshVariableNewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
-import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutorByConstructorMap
 import org.jetbrains.kotlin.resolve.calls.inference.substitute
 import org.jetbrains.kotlin.resolve.calls.inference.substituteAndApproximateCapturedTypes
 import org.jetbrains.kotlin.resolve.calls.model.*
@@ -49,6 +48,7 @@ import org.jetbrains.kotlin.types.expressions.DataFlowAnalyzer
 import org.jetbrains.kotlin.types.expressions.DoubleColonExpressionResolver
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
+import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContextDelegate
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -66,7 +66,8 @@ class KotlinToResolvedCallTransformer(
     private val additionalDiagnosticReporter: AdditionalDiagnosticReporter,
     private val moduleDescriptor: ModuleDescriptor,
     private val dataFlowValueFactory: DataFlowValueFactory,
-    private val builtIns: KotlinBuiltIns
+    private val builtIns: KotlinBuiltIns,
+    private val typeSystemContext: TypeSystemInferenceExtensionContextDelegate
 ) {
     companion object {
         private val REPORT_MISSING_NEW_INFERENCE_DIAGNOSTIC
@@ -106,7 +107,7 @@ class KotlinToResolvedCallTransformer(
             is CompletedCallResolutionResult, is ErrorCallResolutionResult -> {
                 val candidate = (baseResolvedCall as SingleCallResolutionResult).resultCallAtom
 
-                val resultSubstitutor = baseResolvedCall.constraintSystem.buildResultingSubstitutor()
+                val resultSubstitutor = baseResolvedCall.constraintSystem.buildResultingSubstitutor(typeSystemContext)
                 if (context.inferenceSession.writeOnlyStubs()) {
                     val stub = createStubResolvedCallAndWriteItToTrace(
                         candidate,
