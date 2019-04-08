@@ -254,11 +254,3 @@ object JsIrBuilder {
     fun buildTry(type: IrType) = IrTryImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type)
     fun buildCatch(ex: IrVariable, block: IrBlockImpl) = IrCatchImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, ex, block)
 }
-
-fun IrClass.simpleFunctions(): List<IrSimpleFunction> = this.declarations.flatMap {
-    when (it) {
-        is IrSimpleFunction -> listOf(it)
-        is IrProperty -> listOfNotNull(it.getter, it.setter)
-        else -> emptyList()
-    }
-}
