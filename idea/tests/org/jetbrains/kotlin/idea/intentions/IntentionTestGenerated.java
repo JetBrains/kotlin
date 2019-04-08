@@ -721,6 +721,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/addBraces/addBracesForSingleLineIfWithCommentBeneath3.kt");
         }
 
+        @TestMetadata("addBracesForSingleStatementElseWithCommentBeneath.kt")
+        public void testAddBracesForSingleStatementElseWithCommentBeneath() throws Exception {
+            runTest("idea/testData/intentions/addBraces/addBracesForSingleStatementElseWithCommentBeneath.kt");
+        }
+
         @TestMetadata("addBracesForSingleStatementIfWithCommentBeneath.kt")
         public void testAddBracesForSingleStatementIfWithCommentBeneath() throws Exception {
             runTest("idea/testData/intentions/addBraces/addBracesForSingleStatementIfWithCommentBeneath.kt");
