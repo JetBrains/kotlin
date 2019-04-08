@@ -459,6 +459,15 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext {
         require(constructor is TypeConstructor, constructor::errorMessage)
         return ErrorUtils.createErrorTypeWithCustomConstructor(debugName, constructor)
     }
+
+    override fun TypeConstructorMarker.isCapturedTypeConstructor(): Boolean {
+        return this is NewCapturedTypeConstructor
+    }
+
+    override fun CapturedTypeMarker.captureStatus(): CaptureStatus {
+        require(this is NewCapturedType)
+        return this.captureStatus
+    }
 }
 
 private fun captureFromExpressionInternal(type: UnwrappedType) = captureFromExpression(type)

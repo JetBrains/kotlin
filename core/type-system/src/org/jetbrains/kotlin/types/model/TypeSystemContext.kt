@@ -24,6 +24,7 @@ interface StubTypeMarker : SimpleTypeMarker
 interface TypeArgumentListMarker
 
 interface TypeVariableMarker
+interface TypeVariableTypeConstructorMarker : TypeConstructorMarker
 
 interface TypeSubstitutorMarker
 
@@ -87,6 +88,9 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
     fun TypeConstructorMarker.isUnitTypeConstructor(): Boolean
 
     fun TypeConstructorMarker.getApproximatedIntegerLiteralType(): KotlinTypeMarker
+
+    fun CapturedTypeMarker.captureStatus(): CaptureStatus
+    fun TypeConstructorMarker.isCapturedTypeConstructor(): Boolean
 
     fun Collection<KotlinTypeMarker>.singleBestRepresentative(): KotlinTypeMarker?
 
