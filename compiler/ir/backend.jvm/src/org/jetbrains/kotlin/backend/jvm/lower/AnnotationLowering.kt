@@ -153,12 +153,8 @@ private class AnnotationLowering(private val context: JvmBackendContext) : FileL
         return context.irBuiltIns.arrayClass.createType(false, listOf(argument))
     }
 
-    private val intrinsics = IrIntrinsicMethods(context.irBuiltIns)
-
-    private fun IrCall.isGetJava(): Boolean {
-        val intrinsic = intrinsics.getIntrinsic(descriptor.original)
-        return intrinsic is KClassJavaProperty
-    }
+    private fun IrCall.isGetJava(): Boolean =
+        context.irIntrinsics.getIntrinsic(descriptor.original) is KClassJavaProperty
 }
 
 private fun IrClassSymbol.getFunctionByName(name: String, numParams: Int): IrSimpleFunctionSymbol =

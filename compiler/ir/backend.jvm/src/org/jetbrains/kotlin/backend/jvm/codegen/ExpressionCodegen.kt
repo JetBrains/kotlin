@@ -115,9 +115,6 @@ class ExpressionCodegen(
 
     var finallyDepth = 0
 
-    /*TODO*/
-    val intrinsics = IrIntrinsicMethods(classCodegen.context.irBuiltIns)
-
     val typeMapper = classCodegen.typeMapper
 
     val returnType = typeMapper.mapReturnType(irFunction.descriptor)
@@ -801,7 +798,7 @@ class ExpressionCodegen(
         // For comparison intrinsics, branch directly based on the comparison instead of
         // materializing a boolean and performing and extra jump.
         if (condition is IrCall) {
-            val intrinsic = intrinsics.getIntrinsic(condition.descriptor.original as CallableMemberDescriptor)
+            val intrinsic = classCodegen.context.irIntrinsics.getIntrinsic(condition.descriptor.original as CallableMemberDescriptor)
             if (intrinsic is ComparisonIntrinsic) {
                 val callable = resolveToCallable(condition, false)
                 (callable as IrIntrinsicFunction).loadArguments(this, data)
@@ -1224,7 +1221,7 @@ class ExpressionCodegen(
     }
 
     private fun resolveToCallable(irCall: IrMemberAccessExpression, isSuper: Boolean): Callable {
-        val intrinsic = intrinsics.getIntrinsic(irCall.descriptor.original as CallableMemberDescriptor)
+        val intrinsic = classCodegen.context.irIntrinsics.getIntrinsic(irCall.descriptor.original as CallableMemberDescriptor)
         if (intrinsic != null) {
             return intrinsic.toCallable(
                 irCall,
