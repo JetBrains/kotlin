@@ -426,20 +426,22 @@ private fun isSpecialException(th: Throwable): Boolean {
 }
 
 private fun reportError(codeFragment: KtCodeFragment, position: SourcePosition?, message: String, throwable: Throwable? = null) {
-    val contextFile = codeFragment.context?.containingFile
+    runReadAction {
+        val contextFile = codeFragment.context?.containingFile
 
-    val attachments = arrayOf(
-        attachmentByPsiFile(contextFile),
-        attachmentByPsiFile(codeFragment),
-        Attachment("breakpoint.info", "Position: " + position?.run { "${file.name}:$line" }),
-        Attachment("context.info", runReadAction { codeFragment.context?.text ?: "null" })
-    )
+        val attachments = arrayOf(
+            attachmentByPsiFile(contextFile),
+            attachmentByPsiFile(codeFragment),
+            Attachment("breakpoint.info", "Position: " + position?.run { "${file.name}:$line" }),
+            Attachment("context.info", runReadAction { codeFragment.context?.text ?: "null" })
+        )
 
-    LOG.error(
-        "Cannot evaluate a code fragment of type " + codeFragment::class.java + ": " + message.decapitalize(),
-        throwable,
-        mergeAttachments(*attachments)
-    )
+        LOG.error(
+            "Cannot evaluate a code fragment of type " + codeFragment::class.java + ": " + message.decapitalize(),
+            throwable,
+            mergeAttachments(*attachments)
+        )
+    }
 }
 
 private fun evaluationException(msg: String): Nothing = throw EvaluateExceptionUtil.createEvaluateException(msg)
