@@ -130,7 +130,8 @@ internal class TCServiceMessagesClient(
         results.failure(
             descriptor.id,
             KotlinTestFailure(
-                extractExceptionClassName(parsedStackTrace?.message ?: message.failureMessage),
+                (parsedStackTrace?.message ?: message.failureMessage)?.let { extractExceptionClassName(it) }
+                    ?: "Unknown",
                 message.failureMessage,
                 stacktrace,
                 patchStackTrace(this, parsedStackTrace?.stackTrace),

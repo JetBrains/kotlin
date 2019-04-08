@@ -11,8 +11,8 @@ class TestNameParsing: TCServiceMessagesClientTest() {
     fun testFqn() {
         assertEvents("""
 STARTED SUITE root // root
-  STARTED TEST displayName: myMethod, classDisplayName: MyTest, className: my.company.product.MyTest, name: myMethod // root.my.company.product.MyTest.myMethod
-  COMPLETED SUCCESS // root.my.company.product.MyTest.myMethod
+  STARTED TEST displayName: myMethod, classDisplayName: MyTest, className: my.company.product.MyTest, name: myMethod // root/my.company.product.MyTest.myMethod
+  COMPLETED SUCCESS // root/my.company.product.MyTest.myMethod
 COMPLETED SUCCESS // root
     """) {
             serviceMessage(TestStarted("my.company.product.MyTest.myMethod", false, null))
@@ -24,8 +24,8 @@ COMPLETED SUCCESS // root
     fun testSimpleClassName() {
         assertEvents("""
 STARTED SUITE root // root
-  STARTED TEST displayName: myMethod, classDisplayName: MyTest, className: MyTest, name: myMethod // root.MyTest.myMethod
-  COMPLETED SUCCESS // root.MyTest.myMethod
+  STARTED TEST displayName: myMethod, classDisplayName: MyTest, className: MyTest, name: myMethod // root/MyTest.myMethod
+  COMPLETED SUCCESS // root/MyTest.myMethod
 COMPLETED SUCCESS // root
     """) {
             serviceMessage(TestStarted("MyTest.myMethod", false, null))
@@ -37,10 +37,10 @@ COMPLETED SUCCESS // root
     fun testParentSuite() {
         assertEvents("""
 STARTED SUITE root // root
-  STARTED SUITE MyTest // root.MyTest
-    STARTED TEST displayName: myMethod, classDisplayName: MyTest, className: MyTest, name: myMethod // root.MyTest.myMethod
-    COMPLETED SUCCESS // root.MyTest.myMethod
-  COMPLETED SUCCESS // root.MyTest
+  STARTED SUITE MyTest // root/MyTest
+    STARTED TEST displayName: myMethod, classDisplayName: MyTest, className: MyTest, name: myMethod // root/MyTest/myMethod
+    COMPLETED SUCCESS // root/MyTest/myMethod
+  COMPLETED SUCCESS // root/MyTest
 COMPLETED SUCCESS // root
     """) {
             serviceMessage(TestSuiteStarted("MyTest"))
@@ -54,8 +54,8 @@ COMPLETED SUCCESS // root
     fun testAlone() {
         assertEvents("""
 STARTED SUITE root // root
-  STARTED TEST displayName: myMethod, classDisplayName: root, className: root, name: myMethod // root.myMethod
-  COMPLETED SUCCESS // root.myMethod
+  STARTED TEST displayName: myMethod, classDisplayName: root, className: root, name: myMethod // root/myMethod
+  COMPLETED SUCCESS // root/myMethod
 COMPLETED SUCCESS // root
     """) {
             serviceMessage(TestStarted("myMethod", false, null))

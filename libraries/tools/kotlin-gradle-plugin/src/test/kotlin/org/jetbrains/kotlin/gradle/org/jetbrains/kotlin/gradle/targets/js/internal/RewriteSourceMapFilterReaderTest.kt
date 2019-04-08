@@ -33,7 +33,7 @@ class RewriteSourceMapFilterReaderTest {
 
     private fun sample(mappings: String, addToProlog: String): String {
         //language=JSON
-        return """{"version":3,"file":"single-platform${addToProlog}.js","sources":["../../../../src/main/kotlin/main.kt"],"sourcesContent":[null],"names":[],"mappings":"$mappings"}"""
+        return """{"version":3,"file":"single-platform${addToProlog}.js","sources":["SOURCE"],"sourcesContent":[null],"names":[],"mappings":"$mappings"}"""
     }
 
     private fun doTest(repeatMappings: Int, addToProlog: String = "") {
@@ -43,15 +43,11 @@ class RewriteSourceMapFilterReaderTest {
                     "QACqC,KAAb,WAAhB,oBAAgB,CAAa,UAAK,WAAL,CADrC,C;EAWJ,C;;;;;;;;;"
         val mappings = mappings0.repeat(repeatMappings)
 
-        val filter = RewriteSourceMapFilterReader(
-            StringReader(sample(mappings, addToProlog)),
-            "/root/build/classes/kotlin/test/",
-            "/root/build/test_node_modules/"
-        )
+        val filter = RewriteSourceMapFilterReaderMock(StringReader(sample(mappings, addToProlog)), "", "")
 
         assertEquals(
             //language=JSON
-            """{"version":3,"file":"single-platform${addToProlog}.js","sources":["../../src/main/kotlin/main.kt"],"sourcesContent":[null],"names":[],"mappings":"$mappings"}""",
+            """{"version":3,"file":"single-platform${addToProlog}.js","sources":["TRANSFORMED(SOURCE)"],"sourcesContent":[null],"names":[],"mappings":"$mappings"}""",
             filter.readText()
         )
     }
@@ -151,15 +147,11 @@ class RewriteSourceMapFilterReaderTest {
         override fun warnUnsupported(reason: String) {
             warning = reason
         }
-    }
-}
 
-private fun RewriteSourceMapFilterReader(
-    input: Reader,
-    srcSourceRoot: String,
-    targetSourceRoot: String
-) = RewriteSourceMapFilterReader(input).also {
-    setProperties(it, srcSourceRoot, targetSourceRoot)
+        override fun transformString(value: String): String {
+            return "TRANSFORMED($value)"
+        }
+    }
 }
 
 private fun setProperties(
