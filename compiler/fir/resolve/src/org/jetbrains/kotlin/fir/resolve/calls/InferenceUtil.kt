@@ -32,10 +32,8 @@ fun ConeInferenceContext.hasNullableSuperType(type: ConeKotlinType): Boolean {
     return false
 }
 
-class ConeTypeVariableTypeConstructor(val debugName: String) : ConeSymbol, ConeClassifierLookupTag {
+class ConeTypeVariableTypeConstructor(val debugName: String) : ConeSymbol, ConeClassifierLookupTag, TypeVariableTypeConstructorMarker {
     override val name: Name get() = Name.identifier(debugName)
-
-
 }
 
 class TypeParameterBasedTypeVariable(val typeParameterSymbol: FirTypeParameterSymbol) :

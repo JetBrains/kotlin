@@ -296,4 +296,13 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext,
     override fun createErrorTypeWithCustomConstructor(debugName: String, constructor: TypeConstructorMarker): KotlinTypeMarker {
         return ConeKotlinErrorType("$debugName c: $constructor")
     }
+
+    override fun CapturedTypeMarker.captureStatus(): CaptureStatus {
+        require(this is ConeCapturedType)
+        return this.captureStatus
+    }
+
+    override fun TypeConstructorMarker.isCapturedTypeConstructor(): Boolean {
+        return this is ConeCapturedTypeConstructor
+    }
 }
