@@ -19,15 +19,19 @@ class ArrayInitializerConversion(private val context: ConversionContext) : Recur
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         var newElement = element
         if (element is JKJavaNewArray) {
-            val arrayType = element.type.type as? JKJavaPrimitiveType
+            val primitiveArrayType = element.type.type as? JKJavaPrimitiveType
             val arrayConstructorName =
-                if (arrayType != null)
-                    CollectionLiteralResolver.PRIMITIVE_TYPE_TO_ARRAY[PrimitiveType.valueOf(arrayType.jvmPrimitiveType.name)]!!.asString()
+                if (primitiveArrayType != null)
+                    CollectionLiteralResolver.PRIMITIVE_TYPE_TO_ARRAY[PrimitiveType.valueOf(primitiveArrayType.jvmPrimitiveType.name)]!!.asString()
                 else
                     CollectionLiteralResolver.ARRAY_OF_FUNCTION.asString()
+            val typeArguments =
+                if (primitiveArrayType == null) JKTypeArgumentListImpl(listOf(element::type.detached()))
+                else JKTypeArgumentListImpl()
             newElement = JKJavaMethodCallExpressionImpl(
                 context.symbolProvider.provideByFqName("kotlin.$arrayConstructorName"),
-                element.initializer.also { element.initializer = emptyList() }.toArgumentList()
+                element.initializer.also { element.initializer = emptyList() }.toArgumentList(),
+                typeArguments
             )
         } else if (element is JKJavaNewEmptyArray) {
             newElement = buildArrayInitializer(
