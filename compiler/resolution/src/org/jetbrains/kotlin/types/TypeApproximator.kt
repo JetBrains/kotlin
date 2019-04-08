@@ -46,8 +46,9 @@ open class TypeApproximatorConfiguration {
     open val definitelyNotNullType get() = true
     open val intersection: IntersectionStrategy = TO_COMMON_SUPERTYPE
 
-    open val typeVariable: (TypeVariableTypeConstructor) -> Boolean = { false }
-    open val capturedType: (NewCapturedType) -> Boolean = { false } // true means that this type we can leave as is
+    open val typeVariable: (TypeVariableTypeConstructorMarker) -> Boolean = { false }
+    open fun capturedType(ctx: TypeSystemInferenceExtensionContext, type: CapturedTypeMarker): Boolean =
+        false  // true means that this type we can leave as is
 
     abstract class AllFlexibleSameValue : TypeApproximatorConfiguration() {
         abstract val allFlexible: Boolean
@@ -77,9 +78,11 @@ open class TypeApproximatorConfiguration {
         override val errorType get() = true
 
         // i.e. will be approximated only approximatedCapturedStatus captured types
-        override val capturedType get() = { it: NewCapturedType -> it.captureStatus != approximatedCapturedStatus }
+        override fun capturedType(ctx: TypeSystemInferenceExtensionContext, type: CapturedTypeMarker): Boolean =
+            type.captureStatus(ctx) != approximatedCapturedStatus
+
         override val intersection get() = IntersectionStrategy.ALLOWED
-        override val typeVariable: (TypeVariableTypeConstructor) -> Boolean get() = { true }
+        override val typeVariable: (TypeVariableTypeConstructorMarker) -> Boolean get() = { true }
     }
 
     object IncorporationConfiguration : TypeApproximatorConfiguration.AbstractCapturedTypesApproximation(FOR_INCORPORATION)
@@ -242,14 +245,14 @@ abstract class AbstractTypeApproximator(val ctx: TypeSystemInferenceExtensionCon
     }
 
     private fun approximateCapturedType(
-        type: NewCapturedType,
+        type: CapturedTypeMarker,
         conf: TypeApproximatorConfiguration,
         toSuper: Boolean,
         depth: Int
     ): KotlinTypeMarker? {
         val supertypes = type.typeConstructor().supertypes()
         val baseSuperType = when (supertypes.size) {
-            0 -> type.builtIns.nullableAnyType // Let C = in Int, then superType for C and C? is Any?
+            0 -> nullableAnyType() // Let C = in Int, then superType for C and C? is Any?
             1 -> supertypes.single()
 
             // Consider the following example:
@@ -271,9 +274,9 @@ abstract class AbstractTypeApproximator(val ctx: TypeSystemInferenceExtensionCon
 
             else -> type.typeConstructorProjection().getType()//.unwrap()
         }
-        val baseSubType = type.lowerType ?: type.builtIns.nothingType
+        val baseSubType = type.lowerType() ?: nothingType()
 
-        if (conf.capturedType(type)) {
+        if (conf.capturedType(ctx, type)) {
             /**
              * Here everything is ok if bounds for this captured type should not be approximated.
              * But. If such bounds contains some unauthorized types, then we cannot leave this captured type "as is".
@@ -294,7 +297,7 @@ abstract class AbstractTypeApproximator(val ctx: TypeSystemInferenceExtensionCon
 
         // C = in Int, Int <: C => Int? <: C?
         // C = out Number, C <: Number => C? <: Number?
-        return if (type.isMarkedNullable) baseResult.withNullability(true) else baseResult
+        return if (type.isMarkedNullable()) baseResult.withNullability(true) else baseResult
     }
 
     private fun approximateSimpleToSuperType(type: SimpleTypeMarker, conf: TypeApproximatorConfiguration, depth: Int) =
@@ -327,20 +330,21 @@ abstract class AbstractTypeApproximator(val ctx: TypeSystemInferenceExtensionCon
 
         val typeConstructor = type.typeConstructor()
 
-        if (typeConstructor is NewCapturedTypeConstructor) {
-            assert(type is NewCapturedType) {
+        if (typeConstructor.isCapturedTypeConstructor()) {
+            val capturedType = type.asCapturedType()
+            require(capturedType != null) {
                 // KT-16147
                 "Type is inconsistent -- somewhere we create type with typeConstructor = $typeConstructor " +
                         "and class: ${type::class.java.canonicalName}. type.toString() = $type"
             }
-            return approximateCapturedType(type as NewCapturedType, conf, toSuper, depth)
+            return approximateCapturedType(capturedType, conf, toSuper, depth)
         }
 
         if (typeConstructor.isIntersection()) {
             return approximateIntersectionType(type, conf, toSuper, depth)
         }
 
-        if (typeConstructor is TypeVariableTypeConstructor) {
+        if (typeConstructor is TypeVariableTypeConstructorMarker) {
             return if (conf.typeVariable(typeConstructor)) null else type.defaultResult(toSuper)
         }
 

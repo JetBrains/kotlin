@@ -23,3 +23,8 @@ fun KotlinTypeMarker.dependsOnTypeParameters(c: TypeSystemInferenceExtensionCont
         val typeConstructors = typeParameters.mapTo(mutableSetOf()) { it.getTypeConstructor() }
         dependsOnTypeConstructor(c, typeConstructors)
     }
+
+fun CapturedTypeMarker.captureStatus(c: TypeSystemInferenceExtensionContext) =
+    with(c) {
+        captureStatus()
+    }
