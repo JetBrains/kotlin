@@ -86,7 +86,7 @@ class SimplifyCallChainFix(
 
         val project = qualifiedExpression.project
         val file = qualifiedExpression.containingKtFile
-        val result = qualifiedExpression.replaced(newQualifiedOrCallExpression)
+        var result = qualifiedExpression.replaced(newQualifiedOrCallExpression)
 
         if (!firstCallHasArguments && !secondCallHasArguments) {
             commentSaver.restore(result)
@@ -98,6 +98,9 @@ class SimplifyCallChainFix(
                 else -> null
             }
             callExpression?.moveFunctionLiteralOutsideParentheses()
+        }
+        if (conversion.withNotNullAssertion) {
+            result = result.replaced(factory.createExpressionByPattern("$0!!", result))
         }
 
         result.containingKtFile.commitAndUnblockDocument()
