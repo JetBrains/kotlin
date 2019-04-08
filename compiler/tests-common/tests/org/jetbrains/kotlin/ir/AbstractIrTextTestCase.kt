@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.utils.rethrow
 import java.io.File
 import java.util.regex.Pattern
@@ -59,11 +60,19 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
             myEnvironment.configuration.languageVersionSettings
         )
 
+        val path = wholeFile.path
+        val replacedPath = path.replace(".kt", "__")
+        val externalFilePaths = wholeFile.parentFile.listFiles().mapNotNullTo(mutableListOf()) {
+            if (it.path.startsWith(replacedPath)) it.path else null
+        }
         for (externalClassFqn in parseDumpExternalClasses(wholeText)) {
             val classDump = stubGenerator.generateExternalClass(irModule.descriptor, externalClassFqn).dump()
-            val expectedFile = File(wholeFile.path.replace(".kt", "__$externalClassFqn.txt"))
+            val expectedFilePath = path.replace(".kt", "__$externalClassFqn.txt")
+            val expectedFile = File(expectedFilePath)
+            externalFilePaths -= expectedFilePath
             KotlinTestUtils.assertEqualsToFile(expectedFile, classDump)
         }
+        KtUsefulTestCase.assertEmpty("The following external dump files were not built: $externalFilePaths", externalFilePaths)
     }
 
     private fun DeclarationStubGenerator.generateExternalClass(descriptor: ModuleDescriptor, externalClassFqn: String): IrClass {
