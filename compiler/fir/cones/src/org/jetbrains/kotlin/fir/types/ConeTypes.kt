@@ -106,13 +106,6 @@ abstract class ConeTypeParameterType : ConeLookupTagBasedType() {
 }
 
 
-abstract class ConeFunctionType : ConeClassLikeType() {
-
-    abstract override val lookupTag: ConeClassLikeLookupTag
-    abstract val receiverType: ConeKotlinType?
-    abstract val parameterTypes: List<ConeKotlinType>
-    abstract val returnType: ConeKotlinType
-}
 
 class ConeFlexibleType(val lowerBound: ConeLookupTagBasedType, val upperBound: ConeLookupTagBasedType) : ConeKotlinType(),
     FlexibleTypeMarker {

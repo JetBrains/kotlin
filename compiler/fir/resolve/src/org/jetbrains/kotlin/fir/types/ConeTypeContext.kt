@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.impl.ConeAbbreviatedTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
-import org.jetbrains.kotlin.fir.types.impl.ConeFunctionTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
 import org.jetbrains.kotlin.types.checker.convertVariance
@@ -110,13 +109,6 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext {
             is ConeAbbreviatedType -> ConeAbbreviatedTypeImpl(
                 lookupTag,
                 typeArguments,
-                nullable
-            )
-            is ConeFunctionType -> ConeFunctionTypeImpl(
-                receiverType,
-                parameterTypes,
-                returnType,
-                lookupTag,
                 nullable
             )
             else -> error("!")
