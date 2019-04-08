@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.nj2k.conversions
 
+import org.jetbrains.kotlin.nj2k.parenthesizeIfBinaryExpression
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.JKBinaryExpressionImpl
 import org.jetbrains.kotlin.nj2k.tree.impl.JKParenthesizedExpressionImpl
@@ -14,7 +15,8 @@ class PolyadicExpressionConversion : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKJavaPolyadicExpression) return recurse(element)
         val needParenthesis = element.operands.any { it.containsNewLine() }
-        val polyadic = convertPolyadic(element.operands.also { element.operands = emptyList() }, element.tokens)
+        val parenthesisedOperands = element::operands.detached().map { it.parenthesizeIfBinaryExpression() }
+        val polyadic = convertPolyadic(parenthesisedOperands, element.tokens)
 
         return recurse(
             if (needParenthesis) JKParenthesizedExpressionImpl(polyadic)
