@@ -141,7 +141,7 @@ open class RewriteSourceMapFilterReader(
         log.warn("Cannot rewrite paths in JavaScript source maps: $reason")
     }
 
-    private fun transformString(value: String): String =
+    protected open fun transformString(value: String): String =
         File(srcSourceRoot).resolve(value).canonicalFile.relativeToOrSelf(File(targetSourceRoot)).path
 
     override fun read(): Int {
