@@ -26,6 +26,8 @@ import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.checkers.COROUTINE_CONTEXT_1_3_FQ_NAME
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
@@ -87,10 +89,15 @@ class CodeFragmentParameterAnalyzer(
         codeFragment.accept(object : KtTreeVisitor<Unit>() {
             override fun visitSimpleNameExpression(expression: KtSimpleNameExpression, data: Unit?): Void? {
                 val resolvedCall = expression.getResolvedCall(bindingContext) ?: return null
+                processResolvedCall(resolvedCall, expression)
 
+                return null
+            }
+
+            private fun processResolvedCall(resolvedCall: ResolvedCall<*>, expression: KtSimpleNameExpression) {
                 // Capture dispatch receiver for the extension callable
                 run {
-                    val descriptor = resolvedCall.resultingDescriptor as? CallableDescriptor
+                    val descriptor = resolvedCall.resultingDescriptor
                     val containingClass = descriptor?.containingDeclaration as? ClassDescriptor
                     val extensionParameter = descriptor?.extensionReceiverParameter
                     if (descriptor != null && descriptor !is DebuggerFieldPropertyDescriptor
@@ -104,12 +111,12 @@ class CodeFragmentParameterAnalyzer(
 
                 if (runReadAction { expression.isDotSelector() }) {
                     // The receiver expression is already captured for this reference
-                    return null
+                    return
                 }
 
                 if (isCodeFragmentDeclaration(resolvedCall.resultingDescriptor)) {
                     // The reference is from the code fragment we analyze, no need to capture
-                    return null
+                    return
                 }
 
                 var processed = false
@@ -143,14 +150,20 @@ class CodeFragmentParameterAnalyzer(
 
                 // If a reference has receivers, we can calculate its value using them, no need to capture
                 if (!processed) {
-                    val descriptor = resolvedCall.resultingDescriptor
-                    val parameter = processDebugLabel(descriptor)
-                        ?: processCoroutineContextCall(descriptor)
-                        ?: processSimpleNameExpression(descriptor)
-                    checkBounds(descriptor, expression, parameter)
+                    if (resolvedCall is VariableAsFunctionResolvedCall) {
+                        processResolvedCall(resolvedCall.functionCall, expression)
+                        processResolvedCall(resolvedCall.variableCall, expression)
+                    } else {
+                        processDescriptor(resolvedCall.resultingDescriptor, expression)
+                    }
                 }
+            }
 
-                return null
+            private fun processDescriptor(descriptor: DeclarationDescriptor, expression: KtSimpleNameExpression) {
+                val parameter = processDebugLabel(descriptor)
+                    ?: processCoroutineContextCall(descriptor)
+                    ?: processSimpleNameExpression(descriptor)
+                checkBounds(descriptor, expression, parameter)
             }
 
             override fun visitThisExpression(expression: KtThisExpression, data: Unit?): Void? {
@@ -257,6 +270,10 @@ class CodeFragmentParameterAnalyzer(
     }
 
     private fun processSimpleNameExpression(target: DeclarationDescriptor): Smart? {
+        if (target is ValueParameterDescriptor && target.isCrossinline) {
+            throw EvaluateExceptionUtil.createEvaluateException("Evaluation of 'crossinline' lambdas is not supported")
+        }
+
         val isLocalTarget = (target as? DeclarationDescriptorWithVisibility)?.visibility == Visibilities.LOCAL
 
         val isPrimaryConstructorParameter = !isLocalTarget
