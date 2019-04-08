@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.intentions.addUseSiteTarget
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
+import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.nj2k.NewJ2kPostProcessing
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.addRemoveModifier.setModifierList
@@ -73,6 +74,7 @@ class ConvertDataClass : NewJ2kPostProcessing {
                 constructorParameter.addBefore(property.valOrVarKeyword, constructorParameter.nameIdentifier!!)
                 constructorParameter.addAfter(factory.createWhiteSpace(), constructorParameter.valOrVarKeyword!!)
                 constructorParameter.rename(property.name!!)
+                val propertyCommentSaver = CommentSaver(property, saveLineBreaks = true)
                 if (property.modifierList != null) {
                     val annotationEntries = constructorParameter.annotationEntries.map { it.copied() }
                     constructorParameter.setModifierList(property.modifierList!!)
@@ -93,6 +95,7 @@ class ConvertDataClass : NewJ2kPostProcessing {
                 }
                 property.delete()
                 statement.delete()
+                propertyCommentSaver.restore(constructorParameter, forceAdjustIndent = true)
             }
             for (initBlock in element.getAnonymousInitializers()) {
                 if ((initBlock.body as KtBlockExpression).statements.isEmpty()) {
