@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.nj2k.conversions
 
 import org.jetbrains.kotlin.nj2k.ConversionContext
+import org.jetbrains.kotlin.nj2k.copyTreeAndDetach
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.JKAnnotationParameterImpl
 import org.jetbrains.kotlin.nj2k.tree.impl.JKFieldAccessExpressionImpl
@@ -14,15 +15,30 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class JavaAnnotationsConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
-        if (element !is JKAnnotation) return recurse(element)
-        if (element.classSymbol.name == "Deprecated" && element.arguments.isEmpty()) {
-            element.arguments +=
-                    JKAnnotationParameterImpl(JKKtLiteralExpressionImpl("\"\"", JKLiteralExpression.LiteralType.STRING))
+        if (element is JKAnnotationList) {
+            for (annotation in element.annotations) {
+                if (annotation.classSymbol.fqName == "java.lang.SuppressWarnings") {
+                    element.annotations -= annotation
+                } else {
+                    processAnnotation(annotation)
+                }
+            }
         }
-        if (element.classSymbol.fqName == "java.lang.annotation.Target") {
-            element.classSymbol = context.symbolProvider.provideByFqName("kotlin.annotation.Target")
+        return recurse(element)
+    }
 
-            val arguments = element.arguments.singleOrNull()?.let { parameter ->
+    private fun processAnnotation(annotation: JKAnnotation) {
+        if (annotation.classSymbol.fqName == "java.lang.Deprecated") {
+            annotation.classSymbol = context.symbolProvider.provideByFqName("kotlin.Deprecated")
+            if (annotation.arguments.isEmpty()) {
+                annotation.arguments +=
+                    JKAnnotationParameterImpl(JKKtLiteralExpressionImpl("\"\"", JKLiteralExpression.LiteralType.STRING))
+            }
+        }
+        if (annotation.classSymbol.fqName == "java.lang.annotation.Target") {
+            annotation.classSymbol = context.symbolProvider.provideByFqName("kotlin.annotation.Target")
+
+            val arguments = annotation.arguments.singleOrNull()?.let { parameter ->
                 val value = parameter.value
                 when (value) {
                     is JKKtAnnotationArrayInitializerExpression -> value.initializers
@@ -36,14 +52,11 @@ class JavaAnnotationsConversion(private val context: ConversionContext) : Recurs
                             ?.let { targetMappings[it] }
                             ?.map { fqName ->
                                 JKFieldAccessExpressionImpl(context.symbolProvider.provideByFqName(fqName))
-                            } ?: listOf(value)
+                            } ?: listOf(value.copyTreeAndDetach())
                     }
-
-                element.arguments = newArguments.map { JKAnnotationParameterImpl(it) }
+                annotation.arguments = newArguments.map { JKAnnotationParameterImpl(it) }
             }
         }
-
-        return recurse(element)
     }
 
     private fun JKAnnotationMemberValue.fieldAccessFqName(): String? =
