@@ -82,10 +82,11 @@ class NullabilityAnalysisFacade(
             runWriteAction {
                 analysisScope.prepareTypeElements(prepareTypeElement)
                 val context = ContextCreator(getTypeElementNullability).createContext(analysisScope)
-                if (debugPrint)
+                if (debugPrint) {
                     with(Printer(context)) {
-                        analysisScope.single().addTypeVariablesNames()
+                        analysisScope.forEach { it.addTypeVariablesNames() }
                     }
+                }
 
                 val constraints = ConstraintsCollector(context, debugPrint).collectConstraints(analysisScope)
                 Solver(context, debugPrint).solveConstraints(constraints)
@@ -97,8 +98,9 @@ class NullabilityAnalysisFacade(
 }
 
 private fun AnalysisScope.prepareTypeElements(prepareTypeElement: (KtTypeElement) -> Unit) {
-    val typeElements = flatMap { it.collectDescendantsOfType<KtTypeElement>() }
-    typeElements.forEach { typeElement ->
+    val typeElements = flatMap { it.collectDescendantsOfType<KtTypeReference>() }
+    typeElements.forEach { typeReference ->
+        val typeElement = typeReference.typeElement ?: return@forEach
         if (typeElement.parentOfType<KtSuperTypeCallEntry>() == null) {
             prepareTypeElement(typeElement)
         }

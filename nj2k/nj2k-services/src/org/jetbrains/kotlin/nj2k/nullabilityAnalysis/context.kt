@@ -5,9 +5,13 @@
 
 package org.jetbrains.kotlin.nj2k.nullabilityAnalysis
 
+import com.intellij.openapi.editor.RangeMarker
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiComment
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
+import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal class ContextCreator(private val getNullability: (KtTypeElement) -> Nullability) {
