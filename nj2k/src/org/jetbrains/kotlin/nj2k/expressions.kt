@@ -305,7 +305,7 @@ fun kotlinAssert(assertion: JKExpression, message: JKExpression?, symbolProvider
 
 fun jvmAnnotation(name: String, symbolProvider: JKSymbolProvider) =
     JKAnnotationImpl(
-        symbolProvider.provideByFqName("kotlin.annotation.AnnotationTarget.$name")
+        symbolProvider.provideByFqName("kotlin.jvm.$name")
     )
 
 fun throwAnnotation(throws: List<JKType>, symbolProvider: JKSymbolProvider) =
