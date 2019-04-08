@@ -52,6 +52,14 @@ class AnnotationClassConversion(private val context: ConversionContext) : Recurs
             ) {
                 JKKtAnnotationArrayInitializerExpressionImpl(initializer)
             } else initializer
-        )
+        ).also { parameter ->
+            if (leftNonCodeElements.any { it is JKCommentElement }) {
+                parameter.leftNonCodeElements = leftNonCodeElements
+            }
+            if (rightNonCodeElements.any { it is JKCommentElement }) {
+                parameter.rightNonCodeElements = rightNonCodeElements
+            }
+
+        }
     }
 }
