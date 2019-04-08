@@ -39,6 +39,11 @@ import java.util.regex.Pattern
 
 abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
     override fun doTest(wholeFile: File, testFiles: List<TestFile>) {
+        val irModule = buildFragmentAndTestIt(wholeFile, testFiles)
+        doTestIrModuleDependencies(wholeFile, irModule)
+    }
+
+    protected fun buildFragmentAndTestIt(wholeFile: File, testFiles: List<TestFile>): IrModuleFragment {
         val dir = wholeFile.parentFile
         val ignoreErrors = shouldIgnoreErrors(wholeFile)
         val irModule = generateIrModule(ignoreErrors)
@@ -48,7 +53,7 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
             doTestIrFileAgainstExpectations(dir, testFile, irFile)
         }
 
-        doTestIrModuleDependencies(wholeFile, irModule)
+        return irModule
     }
 
     private fun doTestIrModuleDependencies(wholeFile: File, irModule: IrModuleFragment) {

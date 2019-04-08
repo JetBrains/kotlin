@@ -30,6 +30,10 @@ abstract class AbstractFir2IrTextTest : AbstractIrTextTestCase() {
             .unregisterExtension(JavaElementFinder::class.java)
     }
 
+    override fun doTest(wholeFile: File, testFiles: List<TestFile>) {
+        buildFragmentAndTestIt(wholeFile, testFiles)
+    }
+
     override fun doTest(filePath: String?) {
         if (filePath != null) {
             val originalTextPath = filePath.replace(".kt", ".txt")
