@@ -90,6 +90,8 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.intellij.openapi.application.PathManager.PROPERTY_CONFIG_PATH;
+import static com.intellij.openapi.application.PathManager.PROPERTY_SYSTEM_PATH;
 import static org.jetbrains.kotlin.test.InTextDirectivesUtils.*;
 
 public class KotlinTestUtils {
@@ -111,6 +113,19 @@ public class KotlinTestUtils {
     private static final boolean AUTOMATICALLY_MUTE_FAILED_TESTS = false;
 
     private static final List<File> filesToDelete = new ArrayList<>();
+
+    // It's important that this is not created per test, but rather per process.
+    public static final String IDEA_SYSTEM_PATH;
+
+    static {
+        try {
+            IDEA_SYSTEM_PATH = tmpDirForReusableLibrary("idea-system").getPath();
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     /**
      * Syntax:
@@ -1293,5 +1308,10 @@ public class KotlinTestUtils {
         }
         // Several extension if name contains another dot
         return name.indexOf('.', firstDotIndex + 1) != -1;
+    }
+
+    public static void setIdeaSystemPathProperties() {
+        System.setProperty(PROPERTY_SYSTEM_PATH, IDEA_SYSTEM_PATH);
+        System.setProperty(PROPERTY_CONFIG_PATH, IDEA_SYSTEM_PATH + "/config");
     }
 }
