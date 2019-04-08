@@ -65,18 +65,21 @@ class BaseTestCase : KtParsingTestCase(
 
         val parserDefinition = KotlinParserDefinition()
         val lexer = parserDefinition.createLexer(myProject)
+        val psiBuilder = PsiBuilderFactoryImpl()
 
+        println("light test")
         println("BASE PATH: $path")
         for (file in root.walkTopDown()) {
             if (file.isDirectory) continue
             if (file.path.contains("testData") || file.path.contains("resources")) continue
             if (file.extension != "kt") continue
 
+            val text = FileUtil.loadFile(file, CharsetToolkit.UTF8, true).trim()
             time += measureNanoTime {
-                val text = FileUtil.loadFile(file, CharsetToolkit.UTF8, true).trim()
-                val builder = PsiBuilderFactoryImpl().createBuilder(parserDefinition, lexer, text)
+                val builder = psiBuilder.createBuilder(parserDefinition, lexer, text)
                 MyKotlinParser.parse(builder)
 
+                //builder.lightTree.hashCode()
                 DebugUtil.lightTreeToString(builder.lightTree, false)
             }
 
@@ -93,16 +96,18 @@ class BaseTestCase : KtParsingTestCase(
         var counter = 0
         var time = 0L
 
+        println("psi test")
         println("BASE PATH: $path")
         for (file in root.walkTopDown()) {
             if (file.isDirectory) continue
             if (file.path.contains("testData") || file.path.contains("resources")) continue
             if (file.extension != "kt") continue
 
+            val text = FileUtil.loadFile(file, CharsetToolkit.UTF8, true).trim()
             time += measureNanoTime {
-                val text = FileUtil.loadFile(file, CharsetToolkit.UTF8, true).trim()
                 val ktFile = createPsiFile(FileUtil.getNameWithoutExtension(PathUtil.getFileName(file.path)), text) as KtFile
-                ktFile.toString()
+                //ktFile.hashCode()
+                DebugUtil.psiTreeToString(ktFile, false)
             }
 
             counter++
