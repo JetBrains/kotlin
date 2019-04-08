@@ -1,25 +1,6 @@
 package org.jetbrains.dokka
 
-import kotlinx.serialization.*
-import kotlinx.serialization.internal.StringDescriptor
 import java.net.URL
-
-
-@Serializer(forClass = URL::class)
-object UrlSerializer: KSerializer<URL> {
-
-    override val descriptor: SerialDescriptor =
-        StringDescriptor.withName("WithCustomDefault")
-
-    override fun deserialize(decoder: Decoder): URL {
-        return URL(decoder.decodeString())
-    }
-
-    override fun serialize(encoder: Encoder, obj: URL) {
-        encoder.encodeString(obj.toExternalForm())
-    }
-}
-
 
 enum class Platform(val key: String) {
     jvm("jvm"),
@@ -97,8 +78,8 @@ interface DokkaConfiguration {
     }
 
     interface ExternalDocumentationLink {
-        @Serializable(with = UrlSerializer::class) val url: URL
-        @Serializable(with = UrlSerializer::class) val packageListUrl: URL
+        val url: URL
+        val packageListUrl: URL
 
         open class Builder(open var url: URL? = null,
                            open var packageListUrl: URL? = null) {
