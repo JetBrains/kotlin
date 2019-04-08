@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.nj2k.nullabilityAnalysis
 
-import org.jetbrains.kotlin.psi.KtElement
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtTypeElement
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
@@ -55,7 +55,7 @@ internal class Printer(private val analysisContext: AnalysisContext) {
         }
 
 
-    internal fun KtElement.addTypeVariablesNames() {
+    internal fun PsiElement.addTypeVariablesNames() {
         val factory = KtPsiFactory(this)
         for (typeElement in collectDescendantsOfType<KtTypeElement>()) {
             val typeVariableName = this@Printer.analysisContext.typeElementToTypeVariable[typeElement]?.name ?: continue

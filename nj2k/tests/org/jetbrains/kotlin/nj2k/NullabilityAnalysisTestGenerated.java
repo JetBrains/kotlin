@@ -34,6 +34,11 @@ public class NullabilityAnalysisTestGenerated extends AbstractNullabilityAnalysi
         runTest("nj2k/testData/nullabilityAnalysis/compareWithNull.kt");
     }
 
+    @TestMetadata("forcedNullability.kt")
+    public void testForcedNullability() throws Exception {
+        runTest("nj2k/testData/nullabilityAnalysis/forcedNullability.kt");
+    }
+
     @TestMetadata("functionTypeParameterNullability.kt")
     public void testFunctionTypeParameterNullability() throws Exception {
         runTest("nj2k/testData/nullabilityAnalysis/functionTypeParameterNullability.kt");

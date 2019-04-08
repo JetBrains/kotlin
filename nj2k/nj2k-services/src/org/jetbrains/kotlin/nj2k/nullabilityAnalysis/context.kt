@@ -113,6 +113,10 @@ internal data class AnalysisContext(
     val declarationToTypeVariable: Map<KtCallableDeclaration, TypeVariable>
 )
 
-data class AnalysisScope(val elements: List<KtElement>) : Iterable<KtElement> by elements {
+data class AnalysisScope(val elements: List<PsiElement>) : Iterable<PsiElement> by elements {
     constructor(vararg elements: KtElement) : this(elements.toList())
+    constructor(file: KtFile, rangeMarker: RangeMarker?) :
+            this(rangeMarker?.let { marker ->
+                file.elementsInRange(TextRange(marker.startOffset, marker.endOffset))
+            } ?: listOf(file))
 }

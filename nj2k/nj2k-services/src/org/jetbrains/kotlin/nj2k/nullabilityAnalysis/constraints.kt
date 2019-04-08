@@ -130,7 +130,7 @@ internal inline val BoundType.bound
         }
 
 internal inline fun <reified T : BoundType> T.withForcedNullability(nullability: Nullability?): T =
-    if (forcedNullabilityTo == nullability) this
+    if (forcedNullabilityTo == nullability || nullability == null) this
     else when (this) {
         is GenericBoundType ->
             GenericBoundType(
