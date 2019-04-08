@@ -828,8 +828,13 @@ class JavaToJKTreeBuilder constructor(
                                         emptyList()
                                     ).withAssignedNonCodeElements(statement)
                             else ->
-                                //TODO Handle case then there is no last case
                                 cases.lastOrNull()?.also { it.statements = it.statements + statement.toJK() }
+                                    ?: run {
+                                        cases += JKJavaLabelSwitchCaseImpl(
+                                            JKStubExpressionImpl(),
+                                            listOf(statement.toJK())
+                                        )
+                                    }
                         }
                     }
                     JKJavaSwitchStatementImpl(with(expressionTreeMapper) { expression.toJK() }, cases)
