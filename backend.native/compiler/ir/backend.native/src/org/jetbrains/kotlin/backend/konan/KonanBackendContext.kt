@@ -20,12 +20,11 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
-import org.jetbrains.kotlin.ir.builders.IrBuilder
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.name.Name
 
-abstract internal class KonanBackendContext(val config: KonanConfig) : CommonBackendContext {
+internal abstract class KonanBackendContext(val config: KonanConfig) : CommonBackendContext {
     abstract override val builtIns: KonanBuiltIns
 
     abstract override val ir: KonanIr
@@ -52,6 +51,8 @@ abstract internal class KonanBackendContext(val config: KonanConfig) : CommonBac
                 message, location
         )
     }
+
+    override val internalPackageFqn = KonanFqNames.internalPackageName
 
 }
 
