@@ -17,8 +17,8 @@ class TestFailureTest : TCServiceMessagesClientTest() {
         assertEvents(
             """
 STARTED SUITE root // root
-  STARTED SUITE  // root.
-    STARTED TEST displayName: Test, classDisplayName: , className: , name: Test // root..Test
+  STARTED SUITE  // root/
+    STARTED TEST displayName: Test, classDisplayName: , className: , name: Test // root//Test
       FAILURE AssertionError: Expected value to be true.
     at AssertionError_init_0 (mpplib2/build/tmp/expandedArchives/kotlin-stdlib-js-1.3-SNAPSHOT.jar_730a1b227513cf16a9b639e009a985fc/kotlin/exceptions.kt:102:37)
     at DefaultJsAsserter.failWithMessage_0 (mpplib2/build/tmp/expandedArchives/kotlin-test-js-1.3-SNAPSHOT.jar_d60f1e6d0dd94843a03bf98a569bbb73/src/main/kotlin/kotlin/test/DefaultJsAsserter.kt:80:19)
@@ -29,9 +29,9 @@ STARTED SUITE root // root
     at mpplib2/build/js_test_node_modules/mpplib2_test.js:59:38
     at Object.fn [as test] (mpplib2/build/tmp/expandedArchives/src/KotlinTestRunner.ts:12:25)
     at Object.test (mpplib2/build/tmp/expandedArchives/src/KotlinTestTeamCityReporter.ts:80:28)
-    at test (mpplib2/build/tmp/expandedArchives/kotlin-test-js-1.3-SNAPSHOT.jar_d60f1e6d0dd94843a03bf98a569bbb73/src/main/kotlin/kotlin/test/TestApi.kt:57:15) // root..Test
-    COMPLETED FAILURE // root..Test
-  COMPLETED FAILURE // root.
+    at test (mpplib2/build/tmp/expandedArchives/kotlin-test-js-1.3-SNAPSHOT.jar_d60f1e6d0dd94843a03bf98a569bbb73/src/main/kotlin/kotlin/test/TestApi.kt:57:15) // root//Test
+    COMPLETED FAILURE // root//Test
+  COMPLETED FAILURE // root/
 COMPLETED FAILURE // root
         """
         ) {
@@ -67,22 +67,10 @@ COMPLETED FAILURE // root
         assertEvents(
             """
 STARTED SUITE root // root
-  STARTED SUITE  // root.
-    STARTED TEST displayName: Test, classDisplayName: , className: , name: Test // root..Test
-      StdOut[AssertionError: Expected value to be true.
-    at AssertionError_init_0 (mpplib2/build/tmp/expandedArchives/kotlin-stdlib-js-1.3-SNAPSHOT.jar_730a1b227513cf16a9b639e009a985fc/kotlin/exceptions.kt:102:37)
-    at DefaultJsAsserter.failWithMessage_0 (mpplib2/build/tmp/expandedArchives/kotlin-test-js-1.3-SNAPSHOT.jar_d60f1e6d0dd94843a03bf98a569bbb73/src/main/kotlin/kotlin/test/DefaultJsAsserter.kt:80:19)
-    at DefaultJsAsserter.assertTrue_o10pc4${'$'} (mpplib2/build/tmp/expandedArchives/kotlin-test-js-1.3-SNAPSHOT.jar_d60f1e6d0dd94843a03bf98a569bbb73/src/main/kotlin/kotlin/test/DefaultJsAsserter.kt:60:13)
-    at DefaultJsAsserter.assertTrue_4mavae${'$'} (mpplib2/build/tmp/expandedArchives/kotlin-test-js-1.3-SNAPSHOT.jar_d60f1e6d0dd94843a03bf98a569bbb73/src/main/kotlin/kotlin/test/DefaultJsAsserter.kt:67:9)
-    at assertTrue_0 (mpplib2/build/tmp/expandedArchives/kotlin-test-js-1.3-SNAPSHOT.jar_d60f1e6d0dd94843a03bf98a569bbb73/Assertions.kt:36:21)
-    at SampleTestsJS.testHello (mpplib2/src/jsTest/kotlin/sample/SampleTestsJS.kt:9:9)
-    at mpplib2/build/js_test_node_modules/mpplib2_test.js:59:38
-    at Object.fn [as test] (mpplib2/build/tmp/expandedArchives/src/KotlinTestRunner.ts:12:25)
-    at Object.test (mpplib2/build/tmp/expandedArchives/src/KotlinTestTeamCityReporter.ts:80:28)
-    at test (mpplib2/build/tmp/expandedArchives/kotlin-test-js-1.3-SNAPSHOT.jar_d60f1e6d0dd94843a03bf98a569bbb73/src/main/kotlin/kotlin/test/TestApi.kt:57:15)
-] // root..Test
+  STARTED SUITE  // root/
+    STARTED TEST displayName: Test, classDisplayName: , className: , name: Test // root//Test
       FAILURE Expected <7>, actual <42>
-nullAssertionError: Expected value to be true.
+AssertionError: Expected value to be true.
     at AssertionError_init_0 (mpplib2/build/tmp/expandedArchives/kotlin-stdlib-js-1.3-SNAPSHOT.jar_730a1b227513cf16a9b639e009a985fc/kotlin/exceptions.kt:102:37)
     at DefaultJsAsserter.failWithMessage_0 (mpplib2/build/tmp/expandedArchives/kotlin-test-js-1.3-SNAPSHOT.jar_d60f1e6d0dd94843a03bf98a569bbb73/src/main/kotlin/kotlin/test/DefaultJsAsserter.kt:80:19)
     at DefaultJsAsserter.assertTrue_o10pc4${'$'} (mpplib2/build/tmp/expandedArchives/kotlin-test-js-1.3-SNAPSHOT.jar_d60f1e6d0dd94843a03bf98a569bbb73/src/main/kotlin/kotlin/test/DefaultJsAsserter.kt:60:13)
@@ -93,9 +81,9 @@ nullAssertionError: Expected value to be true.
     at Object.fn [as test] (mpplib2/build/tmp/expandedArchives/src/KotlinTestRunner.ts:12:25)
     at Object.test (mpplib2/build/tmp/expandedArchives/src/KotlinTestTeamCityReporter.ts:80:28)
     at test (mpplib2/build/tmp/expandedArchives/kotlin-test-js-1.3-SNAPSHOT.jar_d60f1e6d0dd94843a03bf98a569bbb73/src/main/kotlin/kotlin/test/TestApi.kt:57:15)
- // root..Test
-    COMPLETED FAILURE // root..Test
-  COMPLETED FAILURE // root.
+ // root//Test
+    COMPLETED FAILURE // root//Test
+  COMPLETED FAILURE // root/
 COMPLETED FAILURE // root
         """
         ) {
