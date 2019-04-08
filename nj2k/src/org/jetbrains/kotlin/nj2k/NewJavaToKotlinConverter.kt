@@ -16,34 +16,76 @@
 
 package org.jetbrains.kotlin.nj2k
 
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.ModalityState
+import com.intellij.openapi.command.CommandProcessor
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.progress.ProcessCanceledException
+import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Computable
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiExpression
+import com.intellij.psi.PsiJavaFile
 import com.intellij.psi.PsiStatement
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
+import org.jetbrains.kotlin.idea.core.util.EDT
 import org.jetbrains.kotlin.j2k.*
-import org.jetbrains.kotlin.nj2k.tree.JKTreeElement
-import org.jetbrains.kotlin.nj2k.tree.prettyDebugPrintTree
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
 
 class NewJavaToKotlinConverter(
     val project: Project,
     val settings: ConverterSettings,
     val oldConverterServices: JavaToKotlinConverterServices
-) : JavaToKotlinConverter(project) {
+) : JavaToKotlinConverter() {
     val converterServices = object : NewJavaToKotlinServices {
         override val oldServices = oldConverterServices
     }
 
-    override fun createDummyKtFile(text: String, project: Project, context: PsiElement): KtFile =
-        KtPsiFactory(project).createFileWithLightClassSupport("dummy.kt", text, context)
+    private val LOG = Logger.getInstance("#org.jetbrains.kotlin.j2k.JavaToKotlinConverter")
 
-    private fun List<JKTreeElement>.prettyPrintTrees() = buildString {
-        for (tree in this@prettyPrintTrees) {
-            appendln()
-            appendln(tree.prettyDebugPrintTree())
-            appendln()
+    override fun filesToKotlin(
+        files: List<PsiJavaFile>,
+        postProcessor: PostProcessor,
+        progress: ProgressIndicator
+    ): FilesResult {
+        val withProgressProcessor = WithProgressProcessor(progress, files)
+        val (results, externalCodeProcessing) = ApplicationManager.getApplication().runReadAction(Computable {
+            elementsToKotlin(files, withProgressProcessor)
+        })
+
+        val texts = withProgressProcessor.processItems(0.5, results.withIndex()) { pair ->
+            val (i, result) = pair
+            try {
+                val kotlinFile = ApplicationManager.getApplication().runReadAction(Computable {
+                    KtPsiFactory(project).createFileWithLightClassSupport("dummy.kt", result!!.text, files[i])
+                })
+
+                runBlocking(EDT.ModalityStateElement(ModalityState.defaultModalityState())) {
+                    withContext(EDT) {
+                        CommandProcessor.getInstance().runUndoTransparentAction {
+                            result!!.importsToAdd.forEach {
+                                postProcessor.insertImport(kotlinFile, it)
+                            }
+                        }
+                    }
+                }
+
+                CommandProcessor.getInstance().runUndoTransparentAction {
+                    AfterConversionPass(project, postProcessor).run(kotlinFile, range = null)
+                }
+
+                kotlinFile.text
+            } catch (e: ProcessCanceledException) {
+                throw e
+            } catch (t: Throwable) {
+                LOG.error(t)
+                result!!.text
+            }
         }
+
+        return FilesResult(texts, externalCodeProcessing)
     }
 
     override fun elementsToKotlin(inputElements: List<PsiElement>, processor: WithProgressProcessor): Result {
