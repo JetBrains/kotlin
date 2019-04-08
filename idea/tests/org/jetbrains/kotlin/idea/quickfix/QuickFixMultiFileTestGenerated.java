@@ -4424,6 +4424,19 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             }
         }
 
+        @TestMetadata("idea/testData/quickfix/typeMismatch/roundNumber")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class RoundNumber extends AbstractQuickFixMultiFileTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTestWithExtraFile, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInRoundNumber() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeMismatch/roundNumber"), Pattern.compile("^(\\w+)\\.((before\\.Main\\.\\w+)|(test))$"), TargetBackend.ANY, true);
+            }
+        }
+
         @TestMetadata("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

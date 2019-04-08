@@ -13294,6 +13294,49 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @TestMetadata("idea/testData/quickfix/typeMismatch/roundNumber")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class RoundNumber extends AbstractQuickFixTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInRoundNumber() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeMismatch/roundNumber"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("notApplicable.kt")
+            public void testNotApplicable() throws Exception {
+                runTest("idea/testData/quickfix/typeMismatch/roundNumber/notApplicable.kt");
+            }
+
+            @TestMetadata("notApplicable2.kt")
+            public void testNotApplicable2() throws Exception {
+                runTest("idea/testData/quickfix/typeMismatch/roundNumber/notApplicable2.kt");
+            }
+
+            @TestMetadata("roundDoubleToInt.kt")
+            public void testRoundDoubleToInt() throws Exception {
+                runTest("idea/testData/quickfix/typeMismatch/roundNumber/roundDoubleToInt.kt");
+            }
+
+            @TestMetadata("roundDoubleToLong.kt")
+            public void testRoundDoubleToLong() throws Exception {
+                runTest("idea/testData/quickfix/typeMismatch/roundNumber/roundDoubleToLong.kt");
+            }
+
+            @TestMetadata("roundFloatToInt.kt")
+            public void testRoundFloatToInt() throws Exception {
+                runTest("idea/testData/quickfix/typeMismatch/roundNumber/roundFloatToInt.kt");
+            }
+
+            @TestMetadata("roundFloatToLong.kt")
+            public void testRoundFloatToLong() throws Exception {
+                runTest("idea/testData/quickfix/typeMismatch/roundNumber/roundFloatToLong.kt");
+            }
+        }
+
         @TestMetadata("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
