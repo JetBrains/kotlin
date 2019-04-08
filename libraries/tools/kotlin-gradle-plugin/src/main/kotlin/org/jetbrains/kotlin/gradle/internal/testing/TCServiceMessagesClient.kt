@@ -164,9 +164,9 @@ internal class TCServiceMessagesClient(
     ) {
         if (settings.treatFailedTestOutputAsStacktrace) {
             output.append(text)
+        } else {
+            results.output(descriptor.id, DefaultTestOutputEvent(destination, text))
         }
-
-        results.output(descriptor.id, DefaultTestOutputEvent(destination, text))
     }
 
     private inline fun <NodeType : Node> NodeType.open(contents: (NodeType) -> Unit) = open(System.currentTimeMillis()) {
