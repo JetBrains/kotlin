@@ -207,7 +207,7 @@ private class CallsiteRedirectionTransformer(context: JsIrBackendContext) : IrEl
             val ctor = oldCtorToNewMap.getOrPut(constructor) {
                 buildConstructorStubDeclarations(constructor, constructor.parentAsClass)
             }
-            replaceSecondaryConstructorWithFactoryFunction(expression, ctor.stub.symbol, data)
+            replaceSecondaryConstructorWithFactoryFunction(expression, ctor.stub.symbol)
         } else expression
     }
 
@@ -219,7 +219,7 @@ private class CallsiteRedirectionTransformer(context: JsIrBackendContext) : IrEl
         return if (target.isSecondaryConstructorCall) {
             val klass = target.parentAsClass
             val ctor = oldCtorToNewMap.getOrPut(target) { buildConstructorStubDeclarations(target, klass) }
-            val newCall = replaceSecondaryConstructorWithFactoryFunction(expression, ctor.delegate.symbol, data)
+            val newCall = replaceSecondaryConstructorWithFactoryFunction(expression, ctor.delegate.symbol)
 
             val readThis = expression.run {
                 if (data!! is IrConstructor) {
@@ -235,22 +235,10 @@ private class CallsiteRedirectionTransformer(context: JsIrBackendContext) : IrEl
 
     private fun replaceSecondaryConstructorWithFactoryFunction(
         call: IrFunctionAccessExpression,
-        newTarget: IrSimpleFunctionSymbol,
-        enclosing: IrFunction?
-    ) = IrCallImpl(call.startOffset, call.endOffset, call.type, newTarget).apply {
+        newTarget: IrSimpleFunctionSymbol
+    ) = IrCallImpl(call.startOffset, call.endOffset, call.type, newTarget, newTarget.descriptor, call.typeArgumentsCount).apply {
 
-        // There are 3 possible cases how Type Parameters should be passed
-        if (call is IrCall) {
-            // if it was just a normal constructor cal via `IrCall` just copy arguments as is
-            copyTypeArgumentsFrom(call)
-        } else {
-            // if it is `IrDelegatingConstructorCall` figure out from constructor is called and extract parameters from here
-            // Since `IrConstructor` doesn't have TypeParameters we take them from its class
-            val typeParameters = enclosing?.let { if (it is IrConstructor) it.parentAsClass.typeParameters else it.typeParameters }!!
-            for (i in 0 until typeParameters.size) {
-                putTypeArgument(i, typeParameters[i].toIrType())
-            }
-        }
+        copyTypeArgumentsFrom(call)
 
         for (i in 0 until call.valueArgumentsCount) {
             putValueArgument(i, call.getValueArgument(i))
