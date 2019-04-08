@@ -48,14 +48,14 @@ class FileTreeWalkTest {
             }
             assertEquals(referenceNames, namesBottomUp)
             val namesTopDownWithBfs = HashSet<String>()
-            for (file in basedir.walkTopDownWithAlgorithm(WalkAlgorithm.BFS)) {
+            for (file in basedir.walkTopDownWithAlgorithm(WalkAlgorithm.BREADTH_FIRST)) {
                 val name = file.relativeToOrSelf(basedir).invariantSeparatorsPath
                 assertFalse(namesTopDownWithBfs.contains(name), "$name is visited twice")
                 namesTopDownWithBfs.add(name)
             }
             assertEquals(referenceNames, namesTopDownWithBfs)
             val namesBottomUpWithBfs = HashSet<String>()
-            for (file in basedir.walkBottomUpWithAlgorithm(WalkAlgorithm.BFS)) {
+            for (file in basedir.walkBottomUpWithAlgorithm(WalkAlgorithm.BREADTH_FIRST)) {
                 val name = file.relativeToOrSelf(basedir).invariantSeparatorsPath
                 assertFalse(namesBottomUpWithBfs.contains(name), "$name is visited twice")
                 namesBottomUpWithBfs.add(name)
@@ -479,7 +479,7 @@ class FileTreeWalkTest {
         try {
             val referenceNames = setOf("") + setOf("1", "6", "8", "7.txt", "1/3", "1/2", "8/9.txt", "1/3/5.txt", "1/3/4.txt")
             val namesTopDownWithBfs = LinkedHashSet<String>()
-            for (file in basedir.walkTopDownWithAlgorithm(WalkAlgorithm.BFS)) {
+            for (file in basedir.walkTopDownWithAlgorithm(WalkAlgorithm.BREADTH_FIRST)) {
                 val name = file.relativeToOrSelf(basedir).invariantSeparatorsPath
                 assertFalse(namesTopDownWithBfs.contains(name), "$name is visited twice")
                 namesTopDownWithBfs.add(name)
@@ -562,6 +562,87 @@ class FileTreeWalkTest {
                     files.clear()
                     dirs.clear()
                     basedir.walkTopDownWithAlgorithm(WalkAlgorithm.BFS)
+                        .onEnter(::beforeVisitDirectory)
+                        .onLeave(::afterVisitDirectory)
+                        .onFail(::visitDirectoryFailed)
+                        .forEach { if (!it.isDirectory) visitFile(it) }
+                    assertTrue(stack.isEmpty())
+                    assertEquals(setOf("1"), failed)
+                    assertEquals(listOf("", "1", "6", "8").map { File(it) }.toSet(), dirs)
+                    assertEquals(listOf("7.txt", "8/9.txt").map { File(it) }.toSet(), files)
+                } finally {
+                    File(basedir, "1").setReadable(true)
+                }
+            } else {
+                System.err.println("cannot restrict access")
+            }
+        } finally {
+            basedir.deleteRecursively()
+        }
+    }
+
+    @Test
+    fun testBfsVisitorAndDepth() {
+        val basedir = createTestFiles()
+        try {
+            val files = HashSet<File>()
+            val dirs = HashSet<File>()
+            val failed = HashSet<String>()
+            val stack = ArrayList<File>()
+            fun beforeVisitDirectory(dir: File): Boolean {
+                stack.add(dir)
+                dirs.add(dir.relativeToOrSelf(basedir))
+                return true
+            }
+
+            fun afterVisitDirectory(dir: File) {
+                assertEquals(stack.last(), dir)
+                stack.removeAt(stack.lastIndex)
+            }
+
+            fun visitFile(file: File) {
+                assertTrue(stack.last().listFiles().contains(file), file.toString())
+                files.add(file.relativeToOrSelf(basedir))
+            }
+
+            fun visitDirectoryFailed(dir: File, @Suppress("UNUSED_PARAMETER") e: IOException) {
+                assertEquals(stack.last(), dir)
+                failed.add(dir.name)
+            }
+            basedir
+                .walkTopDownWithAlgorithm(WalkAlgorithm.BREADTH_FIRST)
+                .onEnter(::beforeVisitDirectory)
+                .onLeave(::afterVisitDirectory)
+                .onFail(::visitDirectoryFailed)
+                .forEach { if (!it.isDirectory) visitFile(it) }
+            assertTrue(stack.isEmpty())
+            for (fileName in arrayOf("", "1", "1/2", "1/3", "6", "8")) {
+                assertTrue(dirs.contains(File(fileName)), fileName)
+            }
+            for (fileName in arrayOf("1/3/4.txt", "1/3/4.txt", "7.txt", "8/9.txt")) {
+                assertTrue(files.contains(File(fileName)), fileName)
+            }
+
+            //limit maxDepth
+            files.clear()
+            dirs.clear()
+            basedir.walkTopDownWithAlgorithm(WalkAlgorithm.BREADTH_FIRST)
+                .onEnter(::beforeVisitDirectory)
+                .onLeave(::afterVisitDirectory)
+                .maxDepth(1)
+                .forEach { if (it != basedir) visitFile(it) }
+            assertTrue(stack.isEmpty())
+            assertEquals(setOf(File("")), dirs)
+            for (file in arrayOf("1", "6", "7.txt", "8")) {
+                assertTrue(files.contains(File(file)), file)
+            }
+
+            //restrict access
+            if (File(basedir, "1").setReadable(false)) {
+                try {
+                    files.clear()
+                    dirs.clear()
+                    basedir.walkTopDownWithAlgorithm(WalkAlgorithm.BREADTH_FIRST)
                         .onEnter(::beforeVisitDirectory)
                         .onLeave(::afterVisitDirectory)
                         .onFail(::visitDirectoryFailed)

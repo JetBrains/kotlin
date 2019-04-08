@@ -3019,6 +3019,13 @@ public final class kotlin/io/WalkAlgorithm : java/lang/Enum {
 	public static fun values ()[Lkotlin/io/WalkAlgorithm;
 }
 
+public final class kotlin/io/WalkAlgorithm : java/lang/Enum {
+	public static final field BREADTH_FIRST Lkotlin/io/WalkAlgorithm;
+	public static final field DEPTH_FIRST Lkotlin/io/WalkAlgorithm;
+	public static fun valueOf (Ljava/lang/String;)Lkotlin/io/WalkAlgorithm;
+	public static fun values ()[Lkotlin/io/WalkAlgorithm;
+}
+
 public final class kotlin/jvm/JvmClassMappingKt {
 	public static final fun getAnnotationClass (Ljava/lang/annotation/Annotation;)Lkotlin/reflect/KClass;
 	public static final fun getJavaClass (Ljava/lang/Object;)Ljava/lang/Class;
