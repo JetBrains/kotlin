@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.fir.visitors.compose
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.calls.inference.buildResultingSubstitutor
+import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.types.model.*
@@ -306,7 +306,7 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
 
         if (completionMode == KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode.FULL) {
             val finalSubstitutor =
-                candidate.system.asReadOnlyStorage().buildResultingSubstitutor(inferenceComponents.ctx) as ConeSubstitutor
+                candidate.system.asReadOnlyStorage().buildAbstractResultingSubstitutor(inferenceComponents.ctx) as ConeSubstitutor
             return functionCall.transformSingle(
                 FirCallCompleterTransformer(session, finalSubstitutor, jump),
                 null
