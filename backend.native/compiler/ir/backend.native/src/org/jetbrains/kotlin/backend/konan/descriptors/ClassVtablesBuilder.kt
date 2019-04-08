@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.descriptors
 
+import org.jetbrains.kotlin.backend.common.ir.simpleFunctions
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.llvm.functionName
@@ -16,7 +17,6 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.overrides
-import org.jetbrains.kotlin.ir.util.simpleFunctions
 
 internal class OverriddenFunctionInfo(
         val function: IrSimpleFunction,
