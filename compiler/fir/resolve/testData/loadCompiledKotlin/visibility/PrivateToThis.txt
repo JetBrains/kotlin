@@ -1,4 +1,4 @@
-public final class A<I> : R|kotlin/Any| {
+public final class A<in I> : R|kotlin/Any| {
     private/*private to this*/ final fun bas(): R|I|
 
     public constructor(): R|test/A<I>|

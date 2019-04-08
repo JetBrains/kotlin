@@ -3,7 +3,7 @@ public final annotation class A : R|kotlin/Annotation| {
 
 }
 
-public abstract interface Foo<T> : R|java/io/Serializable| {
-    public abstract fun <E, F> bar(): R|kotlin/Unit|
+public abstract interface Foo<T : R|kotlin/Number|> : R|java/io/Serializable| {
+    public abstract fun <E, F : R|E|> bar(): R|kotlin/Unit|
 
 }

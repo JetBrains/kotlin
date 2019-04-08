@@ -44,8 +44,8 @@ FILE fqName:<root> fileName:/when.kt
                 GET_VAR 'val tmp0_subject: kotlin.Any? [val] declared in <root>.testWithSubject' type=kotlin.Any? origin=null
               then: CONST String type=kotlin.String value="!Number"
             BRANCH
-              if: ERROR_CALL 'Unresolved reference: <Ambiguity: contains, [kotlin/collections/Set.contains, kotlin/collections/Collection.contains]>#' type=IrErrorType
-                GET_VAR 'val tmp0_subject: kotlin.Any? [val] declared in <root>.testWithSubject' type=kotlin.Any? origin=null
+              if: CALL 'public abstract fun contains (element: E of <uninitialized parent>): kotlin.Boolean declared in kotlin.collections.Set' type=kotlin.Boolean origin=null
+                element: GET_VAR 'val tmp0_subject: kotlin.Any? [val] declared in <root>.testWithSubject' type=kotlin.Any? origin=null
               then: CONST String type=kotlin.String value="nothingness?"
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
@@ -74,8 +74,8 @@ FILE fqName:<root> fileName:/when.kt
               GET_VAR 'x: kotlin.Any? declared in <root>.test' type=kotlin.Any? origin=null
             then: CONST String type=kotlin.String value="!Number"
           BRANCH
-            if: ERROR_CALL 'Unresolved reference: <Ambiguity: contains, [kotlin/collections/Set.contains, kotlin/collections/Collection.contains]>#' type=IrErrorType
-              GET_VAR 'x: kotlin.Any? declared in <root>.test' type=kotlin.Any? origin=null
+            if: CALL 'public abstract fun contains (element: E of <uninitialized parent>): kotlin.Boolean declared in kotlin.collections.Set' type=kotlin.Boolean origin=null
+              element: GET_VAR 'x: kotlin.Any? declared in <root>.test' type=kotlin.Any? origin=null
             then: CONST String type=kotlin.String value="nothingness?"
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true

@@ -1,4 +1,4 @@
-public final class ClassParamReferencesParam<A, B> : R|kotlin/Any| {
+public final class ClassParamReferencesParam<A, in B : R|A|> : R|kotlin/Any| {
     public constructor(): R|test/ClassParamReferencesParam<A, B>|
 
 }

@@ -2,7 +2,7 @@ public final class MembersReferenceOuterTP<P> : R|kotlin/Any| {
     public constructor(): R|test/MembersReferenceOuterTP<P>|
 
     public final inner class Inner : R|kotlin/Any| {
-        public final fun <Q> f(): R|kotlin/Unit|
+        public final fun <Q : R|P|> f(): R|kotlin/Unit|
 
         public final fun g(p: R|P|): R|P|
 

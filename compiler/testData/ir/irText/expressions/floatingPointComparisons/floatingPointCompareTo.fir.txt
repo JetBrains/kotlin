@@ -4,7 +4,7 @@ FILE fqName:<root> fileName:/floatingPointCompareTo.kt
     VALUE_PARAMETER name:y index:1 type:kotlin.Double
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test1d (x: kotlin.Double, y: kotlin.Double): IrErrorType declared in <root>'
-        ERROR_CALL 'Unresolved reference: <Ambiguity: compareTo, [kotlin/Double.compareTo, kotlin/Double.compareTo, kotlin/Double.compareTo, kotlin/Double.compareTo, kotlin/Double.compareTo, kotlin/Double.compareTo, kotlin/Comparable.compareTo]>#' type=IrErrorType
+        ERROR_CALL 'Unresolved reference: <Ambiguity: compareTo, [kotlin/Double.compareTo, kotlin/Double.compareTo, kotlin/Double.compareTo, kotlin/Double.compareTo, kotlin/Double.compareTo, kotlin/Double.compareTo]>#' type=IrErrorType
           GET_VAR 'y: kotlin.Double declared in <root>.test1d' type=kotlin.Double origin=null
   FUN name:test2d visibility:public modality:FINAL <> (x:kotlin.Double, y:kotlin.Any) returnType:kotlin.Boolean
     VALUE_PARAMETER name:x index:0 type:kotlin.Double
@@ -16,7 +16,7 @@ FILE fqName:<root> fileName:/floatingPointCompareTo.kt
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Double
               GET_VAR 'y: kotlin.Any declared in <root>.test2d' type=kotlin.Any origin=null
             then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-              arg0: ERROR_CALL 'Unresolved reference: <Ambiguity: compareTo, [kotlin/Double.compareTo, kotlin/Double.compareTo, kotlin/Double.compareTo, kotlin/Double.compareTo, kotlin/Double.compareTo, kotlin/Double.compareTo, kotlin/Comparable.compareTo]>#' type=IrErrorType
+              arg0: ERROR_CALL 'Unresolved reference: <Ambiguity: compareTo, [kotlin/Double.compareTo, kotlin/Double.compareTo, kotlin/Double.compareTo, kotlin/Double.compareTo, kotlin/Double.compareTo, kotlin/Double.compareTo]>#' type=IrErrorType
                 GET_VAR 'y: kotlin.Any declared in <root>.test2d' type=kotlin.Any origin=null
               arg1: CONST Int type=kotlin.Boolean value=0
           BRANCH
@@ -50,7 +50,7 @@ FILE fqName:<root> fileName:/floatingPointCompareTo.kt
     VALUE_PARAMETER name:y index:1 type:kotlin.Float
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test1f (x: kotlin.Float, y: kotlin.Float): IrErrorType declared in <root>'
-        ERROR_CALL 'Unresolved reference: <Ambiguity: compareTo, [kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Comparable.compareTo]>#' type=IrErrorType
+        ERROR_CALL 'Unresolved reference: <Ambiguity: compareTo, [kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo]>#' type=IrErrorType
           GET_VAR 'y: kotlin.Float declared in <root>.test1f' type=kotlin.Float origin=null
   FUN name:test2f visibility:public modality:FINAL <> (x:kotlin.Float, y:kotlin.Any) returnType:kotlin.Boolean
     VALUE_PARAMETER name:x index:0 type:kotlin.Float
@@ -62,7 +62,7 @@ FILE fqName:<root> fileName:/floatingPointCompareTo.kt
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Float
               GET_VAR 'y: kotlin.Any declared in <root>.test2f' type=kotlin.Any origin=null
             then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-              arg0: ERROR_CALL 'Unresolved reference: <Ambiguity: compareTo, [kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Comparable.compareTo]>#' type=IrErrorType
+              arg0: ERROR_CALL 'Unresolved reference: <Ambiguity: compareTo, [kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo]>#' type=IrErrorType
                 GET_VAR 'y: kotlin.Any declared in <root>.test2f' type=kotlin.Any origin=null
               arg1: CONST Int type=kotlin.Boolean value=0
           BRANCH
@@ -141,7 +141,7 @@ FILE fqName:<root> fileName:/floatingPointCompareTo.kt
     VALUE_PARAMETER name:x index:0 type:kotlin.Float
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test1fr (x: kotlin.Float): IrErrorType declared in <root>'
-        ERROR_CALL 'Unresolved reference: <Ambiguity: compareTo, [kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Comparable.compareTo]>#' type=IrErrorType
+        ERROR_CALL 'Unresolved reference: <Ambiguity: compareTo, [kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo]>#' type=IrErrorType
           GET_VAR 'x: kotlin.Float declared in <root>.test1fr' type=kotlin.Float origin=null
   FUN name:test2fr visibility:public modality:FINAL <> (x:kotlin.Any) returnType:kotlin.Boolean
     VALUE_PARAMETER name:x index:0 type:kotlin.Any
@@ -152,7 +152,7 @@ FILE fqName:<root> fileName:/floatingPointCompareTo.kt
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Float
               GET_VAR 'x: kotlin.Any declared in <root>.test2fr' type=kotlin.Any origin=null
             then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-              arg0: ERROR_CALL 'Unresolved reference: <Ambiguity: compareTo, [kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Comparable.compareTo]>#' type=IrErrorType
+              arg0: ERROR_CALL 'Unresolved reference: <Ambiguity: compareTo, [kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo]>#' type=IrErrorType
                 GET_VAR 'x: kotlin.Any declared in <root>.test2fr' type=kotlin.Any origin=null
               arg1: CONST Int type=kotlin.Boolean value=0
           BRANCH
@@ -167,7 +167,7 @@ FILE fqName:<root> fileName:/floatingPointCompareTo.kt
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Double
               GET_VAR 'x: kotlin.Any declared in <root>.test3fr' type=kotlin.Any origin=null
             then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-              arg0: ERROR_CALL 'Unresolved reference: <Ambiguity: compareTo, [kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Comparable.compareTo]>#' type=IrErrorType
+              arg0: ERROR_CALL 'Unresolved reference: <Ambiguity: compareTo, [kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo]>#' type=IrErrorType
                 GET_VAR 'x: kotlin.Any declared in <root>.test3fr' type=kotlin.Any origin=null
               arg1: CONST Int type=kotlin.Boolean value=0
           BRANCH

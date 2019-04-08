@@ -25,7 +25,7 @@ public abstract class CharIterator : R|kotlin/collections/Iterator<kotlin/Char>|
 
 }
 
-public abstract interface Collection<E> : R|kotlin/collections/Iterable<E>| {
+public abstract interface Collection<out E> : R|kotlin/collections/Iterable<E>| {
     public abstract operator fun contains(element: R|E|): R|kotlin/Boolean|
 
     public abstract fun containsAll(elements: R|kotlin/collections/Collection<E>|): R|kotlin/Boolean|
@@ -63,19 +63,19 @@ public abstract class IntIterator : R|kotlin/collections/Iterator<kotlin/Int>| {
 
 }
 
-public abstract interface Iterable<T> : R|kotlin/Any| {
+public abstract interface Iterable<out T> : R|kotlin/Any| {
     public abstract operator fun iterator(): R|kotlin/collections/Iterator<T>|
 
 }
 
-public abstract interface Iterator<T> : R|kotlin/Any| {
+public abstract interface Iterator<out T> : R|kotlin/Any| {
     public abstract operator fun hasNext(): R|kotlin/Boolean|
 
     public abstract operator fun next(): R|T|
 
 }
 
-public abstract interface List<E> : R|kotlin/collections/Collection<E>| {
+public abstract interface List<out E> : R|kotlin/collections/Collection<E>| {
     public abstract operator fun contains(element: R|E|): R|kotlin/Boolean|
 
     public abstract fun containsAll(elements: R|kotlin/collections/Collection<E>|): R|kotlin/Boolean|
@@ -98,7 +98,7 @@ public abstract interface List<E> : R|kotlin/collections/Collection<E>| {
 
 }
 
-public abstract interface ListIterator<T> : R|kotlin/collections/Iterator<T>| {
+public abstract interface ListIterator<out T> : R|kotlin/collections/Iterator<T>| {
     public abstract operator fun hasNext(): R|kotlin/Boolean|
 
     public abstract fun hasPrevious(): R|kotlin/Boolean|
@@ -122,7 +122,7 @@ public abstract class LongIterator : R|kotlin/collections/Iterator<kotlin/Long>|
 
 }
 
-public abstract interface Map<K, V> : R|kotlin/Any| {
+public abstract interface Map<K, out V> : R|kotlin/Any| {
     public abstract fun containsKey(key: R|K|): R|kotlin/Boolean|
 
     public abstract fun containsValue(value: R|V|): R|kotlin/Boolean|
@@ -133,7 +133,7 @@ public abstract interface Map<K, V> : R|kotlin/Any| {
 
     public abstract fun isEmpty(): R|kotlin/Boolean|
 
-    public abstract interface Entry<K, V> : R|kotlin/Any| {
+    public abstract interface Entry<out K, out V> : R|kotlin/Any| {
     }
 
 }
@@ -155,12 +155,12 @@ public abstract interface MutableCollection<E> : R|kotlin/collections/Collection
 
 }
 
-public abstract interface MutableIterable<T> : R|kotlin/collections/Iterable<T>| {
+public abstract interface MutableIterable<out T> : R|kotlin/collections/Iterable<T>| {
     public abstract operator fun iterator(): R|kotlin/collections/MutableIterator<T>|
 
 }
 
-public abstract interface MutableIterator<T> : R|kotlin/collections/Iterator<T>| {
+public abstract interface MutableIterator<out T> : R|kotlin/collections/Iterator<T>| {
     public abstract fun remove(): R|kotlin/Unit|
 
 }
@@ -242,7 +242,7 @@ public abstract interface MutableSet<E> : R|kotlin/collections/Set<E>|, R|kotlin
 
 }
 
-public abstract interface Set<E> : R|kotlin/collections/Collection<E>| {
+public abstract interface Set<out E> : R|kotlin/collections/Collection<E>| {
     public abstract operator fun contains(element: R|E|): R|kotlin/Boolean|
 
     public abstract fun containsAll(elements: R|kotlin/collections/Collection<E>|): R|kotlin/Boolean|

@@ -1,1 +1,2 @@
-public final fun <A> uno(): R|kotlin/Int|
+public final fun <A : R|java/lang/Number|> uno(): R|kotlin/Int|
+

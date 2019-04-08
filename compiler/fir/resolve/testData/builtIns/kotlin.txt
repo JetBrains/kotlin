@@ -1,6 +1,6 @@
-public final inline fun <T> arrayOf(vararg elements: R|kotlin/Array<out T>|): R|kotlin/Array<T>|
+public final inline fun <reified T> arrayOf(vararg elements: R|kotlin/Array<out T>|): R|kotlin/Array<T>|
 
-public final fun <T> arrayOfNulls(size: R|kotlin/Int|): R|kotlin/Array<T>|
+public final fun <reified T> arrayOfNulls(size: R|kotlin/Int|): R|kotlin/Array<T>|
 
 public final fun booleanArrayOf(vararg elements: R|kotlin/BooleanArray|): R|kotlin/BooleanArray|
 
@@ -10,11 +10,11 @@ public final fun charArrayOf(vararg elements: R|kotlin/CharArray|): R|kotlin/Cha
 
 public final fun doubleArrayOf(vararg elements: R|kotlin/DoubleArray|): R|kotlin/DoubleArray|
 
-public final inline fun <T> emptyArray(): R|kotlin/Array<T>|
+public final inline fun <reified T> emptyArray(): R|kotlin/Array<T>|
 
-public final inline fun <T> enumValueOf(name: R|kotlin/String|): R|T|
+public final inline fun <reified T> enumValueOf(name: R|kotlin/String|): R|T|
 
-public final inline fun <T> enumValues(): R|kotlin/Array<T>|
+public final inline fun <reified T> enumValues(): R|kotlin/Array<T>|
 
 public final fun floatArrayOf(vararg elements: R|kotlin/FloatArray|): R|kotlin/FloatArray|
 
@@ -286,7 +286,7 @@ public abstract interface Cloneable : R|kotlin/Any| {
 
 }
 
-public abstract interface Comparable<T> : R|kotlin/Any| {
+public abstract interface Comparable<in T> : R|kotlin/Any| {
     public abstract operator fun compareTo(other: R|T|): R|kotlin/Int|
 
 }
@@ -589,7 +589,7 @@ public final class FloatArray : R|kotlin/Any| {
 
 }
 
-public abstract interface Function<R> : R|kotlin/Any| {
+public abstract interface Function<out R> : R|kotlin/Any| {
 }
 
 public final class Int : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Int>| {

@@ -47,7 +47,7 @@ class FirDeserializationContext(
     ): FirDeserializationContext = FirDeserializationContext(
         nameResolver, typeTable, versionRequirementTable, session, packageFqName, relativeClassName,
         FirTypeDeserializer(
-            nameResolver, typeTable, typeParameterProtos, typeDeserializer
+            session, nameResolver, typeTable, typeParameterProtos, typeDeserializer
         ),
         components
     )
@@ -98,6 +98,7 @@ class FirDeserializationContext(
                 packageFqName,
                 relativeClassName,
                 FirTypeDeserializer(
+                    session,
                     nameResolver,
                     typeTable,
                     typeParameterProtos,

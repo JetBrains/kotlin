@@ -1,4 +1,4 @@
-public final class Clock<A> : R|kotlin/Any| {
+public final class Clock<A : R|java/lang/Number|, R|java/io/Serializable|> : R|kotlin/Any| {
     public constructor(): R|test/Clock<A>|
 
 }

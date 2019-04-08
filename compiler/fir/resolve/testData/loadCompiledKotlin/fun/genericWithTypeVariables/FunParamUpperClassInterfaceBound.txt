@@ -1,1 +1,2 @@
-public final fun <A> tres(): R|kotlin/Int|
+public final fun <A : R|java/lang/Number|, R|java/io/Serializable|> tres(): R|kotlin/Int|
+
