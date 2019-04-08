@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.nj2k.conversions.parentOfType
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 interface JKSymbol {
     val target: Any
@@ -52,6 +53,12 @@ abstract class JKUniverseSymbol<T : JKTreeElement> : JKNamedSymbol {
         }
 }
 
+fun JKSymbol.getDisplayName(): String {
+    if (this !is JKUniverseSymbol<*>) return fqName
+    return generateSequence(declaredIn as? JKUniverseClassSymbol) { symbol ->
+        symbol.declaredIn.safeAs<JKUniverseClassSymbol>()?.takeIf { !it.target.hasExtraModifier(ExtraModifier.INNER) }
+    }.fold(name) { acc, symbol -> "${symbol.name}.$acc" }
+}
 
 fun JKSymbol.fqNameToImport(): String? =
     when {
@@ -113,23 +120,6 @@ class JKMultiverseKtClassSymbol(
     override val fqName: String
         get() = target.fqName?.asString() ?: name
 }
-
-fun JKClassSymbol.displayName() =
-    when (this) {
-        is JKUniverseClassSymbol ->
-            target.psi<PsiClass>()
-                ?.nameWithOuterClasses()
-                ?: name
-        is JKMultiverseClassSymbol -> target.nameWithOuterClasses()
-        else -> name
-    }
-
-fun PsiClass.nameWithOuterClasses() =
-    generateSequence(this) { it.containingClass }
-        .toList()
-        .reversed()
-        .joinToString(separator = ".") { it.name!! }
-
 
 class JKUniverseMethodSymbol(override val symbolProvider: JKSymbolProvider) : JKMethodSymbol, JKUniverseSymbol<JKMethod>() {
     override val receiverType: JKType?

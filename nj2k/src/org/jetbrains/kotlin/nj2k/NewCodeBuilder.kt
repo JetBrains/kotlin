@@ -165,7 +165,7 @@ class NewCodeBuilder {
         }
 
         override fun visitClassAccessExpressionRaw(classAccessExpression: JKClassAccessExpression) {
-            printer.printWithNoIndent(classAccessExpression.identifier.displayName().escaped())
+            renderClassSymbol(classAccessExpression.identifier, classAccessExpression)
         }
 
         override fun visitFileRaw(file: JKFile) {
@@ -260,10 +260,10 @@ class NewCodeBuilder {
             val extendTypes = inheritanceInfo.extends.map { it.type.updateNullability(Nullability.NotNull) }
             val implementTypes = inheritanceInfo.implements.map { it.type.updateNullability(Nullability.NotNull) }
             if (isInInterface) {
-                renderList(extendTypes) { renderType(it) }
+                renderList(extendTypes) { renderType(it, null) }
             } else {
                 extendTypes.singleOrNull()?.also { superType ->
-                    renderType(superType)
+                    renderType(superType, null)
                     val primaryConstructor = parentClass.primaryConstructor()
                     val delegationCall =
                         primaryConstructor
@@ -271,7 +271,7 @@ class NewCodeBuilder {
                             ?.let { it as? JKDelegationConstructorCall }
                     if (delegationCall != null) {
                         printer.par { delegationCall.arguments.accept(this) }
-                    } else if (!superType.isInterface()) {
+                    } else if (!superType.isInterface() && primaryConstructor != null) {
                         printer.printWithNoIndent("()")
                     }
                 }
@@ -280,7 +280,7 @@ class NewCodeBuilder {
             if (implementTypes.isNotEmpty() && extendTypes.size == 1) {
                 printer.printWithNoIndent(", ")
             }
-            renderList(implementTypes) { renderType(it) }
+            renderList(implementTypes) { renderType(it, null) }
         }
 
 
@@ -647,13 +647,18 @@ class NewCodeBuilder {
             ktConvertedFromForLoopSyntheticWhileStatement.whileStatement.accept(this)
         }
 
-        private fun renderType(type: JKType) {
+        private fun JKClassSymbol.needFqName(): Boolean =
+            fqName !in mappedToKotlinFqNames
+
+        private fun renderType(type: JKType, owner: JKTreeElement?) {
             if (type is JKNoTypeImpl) return
             if (type.nullability == Nullability.Default) {
                 printer.print("/*UNDEFINED*/")
             }
             when (type) {
-                is JKClassType -> printer.printWithNoIndent(type.classReference.displayName().escapedAsQualifiedName())
+                is JKClassType -> {
+                    renderClassSymbol(type.classReference, owner)
+                }
                 is JKContextType -> return
                 is JKStarProjectionType ->
                     printer.printWithNoIndent("*")
@@ -664,13 +669,13 @@ class NewCodeBuilder {
                         JKVarianceTypeParameterType.Variance.IN -> printer.printWithNoIndent("in ")
                         JKVarianceTypeParameterType.Variance.OUT -> printer.printWithNoIndent("out ")
                     }
-                    renderType(type.boundType)
+                    renderType(type.boundType, null)
                 }
                 else -> printer.printWithNoIndent("Unit /* TODO: ${type::class} */")
             }
             if (type is JKParametrizedType && type.parameters.isNotEmpty()) {
                 printer.par(ANGLE) {
-                    renderList(type.parameters, renderElement = { renderType(it) })
+                    renderList(type.parameters, renderElement = { renderType(it, null) })
                 }
             }
             if (type.nullability == Nullability.Nullable) {
@@ -678,11 +683,20 @@ class NewCodeBuilder {
             }
         }
 
+        private fun renderClassSymbol(classSymbol: JKClassSymbol, owner: JKTreeElement?) {
+            val needFqName = classSymbol.needFqName() && owner?.isSelectorOfQualifiedExpression() != true
+            val displayName = if (needFqName) classSymbol.getDisplayName() else classSymbol.name
+            printer.printWithNoIndent(displayName.escapedAsQualifiedName())
+        }
+
+        private fun JKTreeElement.isSelectorOfQualifiedExpression() =
+            parent?.safeAs<JKQualifiedExpression>()?.selector == this
+
         override fun visitJavaNewExpressionRaw(javaNewExpression: JKJavaNewExpression) {
             if (javaNewExpression.isAnonymousClass()) {
                 printer.printWithNoIndent("object : ")
             }
-            printer.printWithNoIndent(javaNewExpression.classSymbol.displayName().escapedAsQualifiedName())
+            renderClassSymbol(javaNewExpression.classSymbol, javaNewExpression)
             javaNewExpression.typeArgumentList.accept(this)
             if (!javaNewExpression.classSymbol.isInterface()) {
                 printer.par(ROUND) {
@@ -716,7 +730,7 @@ class NewCodeBuilder {
         override fun visitEmptyClassBodyRaw(emptyClassBody: JKEmptyClassBody) {}
 
         override fun visitTypeElementRaw(typeElement: JKTypeElement) {
-            renderType(typeElement.type)
+            renderType(typeElement.type, typeElement)
         }
 
         override fun visitBlockRaw(block: JKBlock) {
@@ -872,7 +886,7 @@ class NewCodeBuilder {
 
         override fun visitAnnotationRaw(annotation: JKAnnotation) {
             printer.printWithNoIndent("@")
-            printer.printWithNoIndent(annotation.classSymbol.displayName().escapedAsQualifiedName())
+            printer.printWithNoIndent(annotation.classSymbol.fqName.escapedAsQualifiedName())
             if (annotation.arguments.isNotEmpty()) {
                 printer.par {
                     renderList(annotation.arguments) { it.accept(this) }
@@ -894,7 +908,7 @@ class NewCodeBuilder {
             if (classLiteralExpression.literalType == JKClassLiteralExpression.LiteralType.JAVA_VOID_TYPE) {
                 printer.printWithNoIndent("Void.TYPE")
             } else {
-                renderType(classLiteralExpression.classType.type)
+                renderType(classLiteralExpression.classType.type, classLiteralExpression)
                 printer.printWithNoIndent("::")
                 when (classLiteralExpression.literalType) {
                     JKClassLiteralExpression.LiteralType.KOTLIN_CLASS -> printer.printWithNoIndent("class")
@@ -954,3 +968,13 @@ private val KEYWORDS = KtTokens.KEYWORDS.types.map { (it as KtKeywordToken).valu
 private fun String.escaped() =
     if (this in KEYWORDS || '$' in this) "`$this`"
     else this
+
+
+private val mappedToKotlinFqNames =
+    setOf(
+        "java.util.ArrayList",
+        "java.util.LinkedHashMap",
+        "java.util.HashMap",
+        "java.util.LinkedHashSet",
+        "java.util.HashSet"
+    )
