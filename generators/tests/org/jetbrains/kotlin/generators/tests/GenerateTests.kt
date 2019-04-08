@@ -673,6 +673,11 @@ fun main(args: Array<String>) {
             model("multiModuleHighlighting/hierarchicalExpectActualMatching/", recursive = false, extension = null)
         }
 
+        testClass<AbstractMultiplatformAnalysisTest> {
+            model("multiplatform", recursive = false, extension = null)
+            model("multiplatformTypeRefinement", recursive = false, extension = null)
+        }
+
         testClass<AbstractQuickFixMultiModuleTest> {
             model("multiModuleQuickFix", recursive = false, extension = null)
         }
