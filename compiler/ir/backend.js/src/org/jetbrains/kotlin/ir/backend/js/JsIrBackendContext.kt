@@ -135,12 +135,9 @@ class JsIrBackendContext(
 
     val intrinsics = JsIntrinsics(irBuiltIns, this)
 
+    override val internalPackageFqn = JS_PACKAGE_FQNAME
+
     private val operatorMap = referenceOperators()
-
-    // TODO: get rid of this
-
-    fun functionN(n: Int) = symbolTable.lazyWrapper.referenceClass(builtIns.getFunction(n))
-    fun suspendFunctionN(n: Int) = symbolTable.lazyWrapper.referenceClass(builtIns.getSuspendFunction(n))
 
     private fun primitivesWithImplicitCompanionObject(): List<Name> {
         val numbers = PrimitiveType.NUMBER_TYPES
@@ -184,6 +181,8 @@ class JsIrBackendContext(
                         NoLookupLocation.FROM_BACKEND
                     ).filterNot { it.isExpect }.single().getter!!
                 )
+
+            override val getContinuation = symbolTable.referenceSimpleFunction(getJsInternalFunction("getContinuation"))
         }
 
         override fun shouldGenerateHandlerParameterForDefaultBodyFun() = true

@@ -210,7 +210,7 @@ class CallableReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
         val additionalDeclarations = generateFactoryBodyWithGuard(factoryFunction) {
             val statements = mutableListOf<IrStatement>(getterFunction)
 
-            val getterFunctionTypeSymbol = context.functionN(getterFunction.valueParameters.size + 1)
+            val getterFunctionTypeSymbol = context.ir.symbols.functionN(getterFunction.valueParameters.size + 1)
 
             val getterFunctionIrType = IrSimpleTypeImpl(getterFunctionTypeSymbol, false, emptyList(), emptyList())
             val irGetReference = JsIrBuilder.buildFunctionReference(getterFunctionIrType, getterFunction.symbol)
@@ -226,7 +226,7 @@ class CallableReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
 
             if (setterFunction != null) {
                 statements += setterFunction
-                val setterFunctionTypeSymbol = context.functionN(setterFunction.valueParameters.size + 1)
+                val setterFunctionTypeSymbol = context.ir.symbols.functionN(setterFunction.valueParameters.size + 1)
                 val setterFunctionIrType = IrSimpleTypeImpl(setterFunctionTypeSymbol, false, emptyList(), emptyList())
                 val irSetReference = JsIrBuilder.buildFunctionReference(setterFunctionIrType, setterFunction.symbol)
                 statements += JsIrBuilder.buildCall(context.intrinsics.jsSetJSField.symbol).apply {
@@ -280,7 +280,7 @@ class CallableReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
         val additionalDeclarations = generateFactoryBodyWithGuard(factoryFunction) {
             val statements = mutableListOf<IrStatement>(closureFunction)
 
-            val getterFunctionTypeSymbol = context.functionN(closureFunction.valueParameters.size + 1)
+            val getterFunctionTypeSymbol = context.ir.symbols.functionN(closureFunction.valueParameters.size + 1)
             val getterFunctionIrType = IrSimpleTypeImpl(getterFunctionTypeSymbol, false, emptyList(), emptyList())
             val irGetReference = JsIrBuilder.buildFunctionReference(getterFunctionIrType, closureFunction.symbol)
             val irVar = JsIrBuilder.buildVar(getterFunctionIrType, factoryFunction, initializer = irGetReference)

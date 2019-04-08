@@ -90,6 +90,9 @@ class JvmSymbols(
     override val coroutineSuspendedGetter: IrSimpleFunctionSymbol
         get() = TODO("not implemented")
 
+    override val getContinuation: IrSimpleFunctionSymbol
+        get() = TODO("not implemented")
+
     val javaLangClass: IrClassSymbol =
         context.getTopLevelClass(FqName("java.lang.Class"))
 

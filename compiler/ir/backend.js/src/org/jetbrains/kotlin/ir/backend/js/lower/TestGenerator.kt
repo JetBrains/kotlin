@@ -61,7 +61,7 @@ class TestGenerator(val context: JsIrBackendContext) : FileLoweringPass {
             putValueArgument(0, JsIrBuilder.buildString(context.irBuiltIns.stringType, name))
             putValueArgument(1, JsIrBuilder.buildBoolean(context.irBuiltIns.booleanType, ignored))
 
-            val refType = IrSimpleTypeImpl(context.functionN(0), false, emptyList(), emptyList())
+            val refType = IrSimpleTypeImpl(context.ir.symbols.functionN(0), false, emptyList(), emptyList())
             putValueArgument(2, JsIrBuilder.buildFunctionReference(refType, function.symbol))
         }
 

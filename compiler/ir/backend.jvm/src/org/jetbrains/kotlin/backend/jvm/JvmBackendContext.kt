@@ -45,6 +45,8 @@ class JvmBackendContext(
 
     override val configuration get() = state.configuration
 
+    override val internalPackageFqn = FqName("kotlin.jvm")
+
     internal fun getTopLevelClass(fqName: FqName): IrClassSymbol {
         val descriptor = state.module.getPackage(fqName.parent()).memberScope.getContributedClassifier(
             fqName.shortName(), NoLookupLocation.FROM_BACKEND

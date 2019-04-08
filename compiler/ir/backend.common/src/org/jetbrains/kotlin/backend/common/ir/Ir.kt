@@ -19,10 +19,7 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
-import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
-import org.jetbrains.kotlin.ir.util.getPackageFragment
-import org.jetbrains.kotlin.ir.util.referenceFunction
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.components.isVararg
@@ -153,6 +150,8 @@ abstract class Symbols<out T : CommonBackendContext>(val context: T, private val
 
     abstract val coroutineSuspendedGetter: IrSimpleFunctionSymbol
 
+    abstract val getContinuation: IrSimpleFunctionSymbol
+
     private val binaryOperatorCache = mutableMapOf<Triple<Name, KotlinType, KotlinType>, IrFunctionSymbol>()
 
     fun getBinaryOperator(name: Name, lhsType: KotlinType, rhsType: KotlinType): IrFunctionSymbol {
@@ -183,6 +182,9 @@ abstract class Symbols<out T : CommonBackendContext>(val context: T, private val
 
     val intAnd = getBinaryOperator(OperatorNameConventions.AND, builtIns.intType, builtIns.intType)
     val intPlusInt = getBinaryOperator(OperatorNameConventions.PLUS, builtIns.intType, builtIns.intType)
+
+    fun functionN(n: Int): IrClassSymbol = symbolTable.referenceClass(builtIns.getFunction(n))
+    fun suspendFunctionN(n: Int): IrClassSymbol = symbolTable.referenceClass(builtIns.getSuspendFunction(n))
 
     companion object {
         fun isLateinitIsInitializedPropertyGetter(symbol: IrFunctionSymbol): Boolean =
