@@ -1,10 +1,8 @@
 package org.jetbrains.dokka
 
-import kotlinx.serialization.Serializable
 import java.io.File
 import java.net.URL
 
-@Serializable
 data class DokkaConfigurationImpl(
     override val outputDir: String,
     override val format: String,
@@ -14,7 +12,6 @@ data class DokkaConfigurationImpl(
     override val passesConfigurations: List<PassConfigurationImpl>
 ) : DokkaConfiguration
 
-@Serializable
 data class PassConfigurationImpl (
     override val moduleName: String,
     override val classpath: List<String>,
@@ -41,12 +38,11 @@ data class PassConfigurationImpl (
     override val sinceKotlin: String
 ) : DokkaConfiguration.PassConfiguration
 
-@Serializable
+
 data class SourceRootImpl(
     override val path: String
 ): DokkaConfiguration.SourceRoot
 
-@Serializable
 data class SourceLinkDefinitionImpl(
     override val path: String,
     override val url: String,
@@ -63,7 +59,6 @@ data class SourceLinkDefinitionImpl(
     }
 }
 
-@Serializable
 data class PackageOptionsImpl(
     override val prefix: String,
     override val includeNonPublic: Boolean,
@@ -73,7 +68,6 @@ data class PackageOptionsImpl(
 ): DokkaConfiguration.PackageOptions
 
 
-@Serializable
-data class ExternalDocumentationLinkImpl(@Serializable(with = UrlSerializer::class) override val url: URL,
-                                         @Serializable(with = UrlSerializer::class) override val packageListUrl: URL
+data class ExternalDocumentationLinkImpl(override val url: URL,
+                                         override val packageListUrl: URL
 ) : DokkaConfiguration.ExternalDocumentationLink
