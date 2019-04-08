@@ -13174,6 +13174,16 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeMismatch/roundNumber"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("notApplicable.kt")
+            public void testNotApplicable() throws Exception {
+                runTest("idea/testData/quickfix/typeMismatch/roundNumber/notApplicable.kt");
+            }
+
+            @TestMetadata("notApplicable2.kt")
+            public void testNotApplicable2() throws Exception {
+                runTest("idea/testData/quickfix/typeMismatch/roundNumber/notApplicable2.kt");
+            }
+
             @TestMetadata("roundDoubleToInt.kt")
             public void testRoundDoubleToInt() throws Exception {
                 runTest("idea/testData/quickfix/typeMismatch/roundNumber/roundDoubleToInt.kt");
