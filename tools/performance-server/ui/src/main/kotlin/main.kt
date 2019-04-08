@@ -277,12 +277,13 @@ fun main(args: Array<String>) {
     autocompleteParameters["onSelect"] = { suggestion ->
         if (suggestion.value != parameters["build"]) {
             val newLink = "http://${window.location.host}/?target=${parameters["target"]}&type=${parameters["type"]}" +
-                    "${if (suggestion.value.isEmpty()) "" else "&build=${suggestion.value}"}"
+                    "${if ((suggestion.value as String).isEmpty()) "" else "&build=${suggestion.value}"}"
             window.location.href = newLink
         }
     }
     js("$( \"#highligted_build\" )").autocomplete(autocompleteParameters)
-    js("$('#highligted_build')").change({
+    js("$('#highligted_build')").change({ value ->
+        println(value)
         val newValue = js("$(this).val()").toString()
         if (newValue.isEmpty() || newValue in builds.map {it.buildNumber}) {
             val newLink = "http://${window.location.host}/?target=${parameters["target"]}&type=${parameters["type"]}" +

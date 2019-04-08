@@ -116,7 +116,6 @@ open class RegressionsReporter : DefaultTask() {
 
         // Get previous build on branch.
         val builds = getBuild(previousBuildLocator(buildTypeId,branch), user, password)
-        val previousBuildsExist = (JsonTreeParser.parse(builds) as JsonObject).getPrimitive("count").int != 0
 
         // Get changes description.
         val changesList = getCommits("id:$buildId", user, password)
@@ -126,16 +125,11 @@ open class RegressionsReporter : DefaultTask() {
             }
         }
 
-        println("defaul Branch: $defaultBranch")
-
-        // If branch differs from default and it's first build compare to master, otherwise compare to previous build on branch.
-        val compareToBranch = if (previousBuildsExist) branch else defaultBranch
-
         // File name on bintray is the same as current.
         val bintrayFileName = currentBenchmarksReportFile.substringAfterLast("/")
 
         // Get compare to build.
-        val compareToBuild = getBuild(previousBuildLocator(buildTypeId, compareToBranch), user, password)
+        val compareToBuild = getBuild(previousBuildLocator(buildTypeId, defaultBranch), user, password)
         val compareToBuildLink = getBuildProperty(compareToBuild,"webUrl")
         val compareToBuildNumber = getBuildProperty(compareToBuild,"number")
         val target = System.getProperty("os.name").replace("\\s".toRegex(), "")
