@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmDeclarationFactory
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmSharedVariablesManager
+import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -37,6 +38,8 @@ class JvmBackendContext(
 
     private val symbolTable = symbolTable.lazyWrapper
     override val ir = JvmIr(irModuleFragment, this.symbolTable)
+
+    val irIntrinsics = IrIntrinsicMethods(irBuiltIns)
 
     override var inVerbosePhase: Boolean = false
 
