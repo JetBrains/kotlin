@@ -41,7 +41,9 @@ class InternalDeclarationConversion(private val context: ConversionContext) : Re
             element.visibility = Visibility.PUBLIC
         }
 
-        if (containingClassKind == JKClass.ClassKind.INTERFACE) {
+        if (containingClassKind == JKClass.ClassKind.INTERFACE
+            || containingClassKind == JKClass.ClassKind.ANNOTATION
+        ) {
             element.visibility = Visibility.PUBLIC
         }
 
