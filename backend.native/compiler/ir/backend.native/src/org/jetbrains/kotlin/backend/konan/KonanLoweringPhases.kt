@@ -260,7 +260,7 @@ internal val compileTimeEvaluatePhase = makeKonanFileLoweringPhase(
 )
 
 internal val coroutinesPhase = makeKonanFileLoweringPhase(
-        ::SuspendFunctionsLowering,
+        ::NativeSuspendFunctionsLowering,
         name = "Coroutines",
         description = "Coroutines lowering",
         prerequisite = setOf(localFunctionsPhase, finallyBlocksPhase)
