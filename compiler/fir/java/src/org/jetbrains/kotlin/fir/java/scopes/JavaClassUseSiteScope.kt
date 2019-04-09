@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.java.toNotNullConeKotlinType
+import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractProviderBasedScope
@@ -54,7 +54,7 @@ class JavaClassUseSiteScope(
     private fun isEqualTypes(a: FirTypeRef, b: FirTypeRef) =
         isEqualTypes(a.toNotNullConeKotlinType(session), b.toNotNullConeKotlinType(session))
 
-    private fun isOverriddenFunCheck(overriddenInJava: FirJavaMethod, base: FirNamedFunction): Boolean {
+    private fun isOverriddenFunCheck(overriddenInJava: FirNamedFunction, base: FirNamedFunction): Boolean {
         val receiverTypeRef = base.receiverTypeRef
         if (receiverTypeRef == null) {
             return overriddenInJava.valueParameters.size == base.valueParameters.size &&
@@ -76,7 +76,7 @@ class JavaClassUseSiteScope(
 
         val self = (this as FirFunctionSymbol).fir as FirNamedFunction
         val overriding = candidates.firstOrNull {
-            val member = (it as FirFunctionSymbol).fir as FirJavaMethod
+            val member = (it as FirFunctionSymbol).firUnsafe<FirNamedFunction>()
             self.modality != Modality.FINAL && isOverriddenFunCheck(member, self)
         } // TODO: two or more overrides for one fun?
         overriddenByBase[this] = overriding
