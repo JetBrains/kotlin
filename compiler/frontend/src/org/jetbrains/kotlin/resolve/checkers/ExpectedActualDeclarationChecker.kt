@@ -81,10 +81,7 @@ open class ExpectedActualDeclarationChecker(val argumentExtractors: List<ActualA
 
         val shouldReportError =
             compatibility.allStrongIncompatibilities() ||
-                    Compatible !in compatibility && compatibility.values.flatMapTo(hashSetOf()) { it }.all { actual ->
-                val expectedOnes = ExpectedActualResolver.findExpectedForActual(actual, descriptor.module)
-                expectedOnes != null && Compatible in expectedOnes.keys
-            }
+                    Compatible !in compatibility && descriptor.hasNoActualWithDiagnostic(compatibility)
 
         if (shouldReportError) {
             assert(compatibility.keys.all { it is Incompatible })
@@ -98,6 +95,15 @@ open class ExpectedActualDeclarationChecker(val argumentExtractors: List<ActualA
                 }.flatMap { it.value.asSequence() }
 
             expectActualTracker.reportExpectActual(expected = descriptor, actualMembers = actualMembers)
+        }
+    }
+
+    private fun MemberDescriptor.hasNoActualWithDiagnostic(
+        compatibility: Map<Compatibility, List<MemberDescriptor>>
+    ): Boolean {
+        return compatibility.values.flatMapTo(hashSetOf()) { it }.all { actual ->
+            val expectedOnes = ExpectedActualResolver.findExpectedForActual(actual, module)
+            expectedOnes != null && Compatible in expectedOnes.keys
         }
     }
 
