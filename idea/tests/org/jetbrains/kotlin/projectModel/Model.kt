@@ -166,6 +166,6 @@ open class ResolveDependency(val to: ResolveModule, val kind: Kind) {
 
     enum class Kind {
         EXPECTED_BY,
-        INCLUDE,
+        DEPENDENCY,
     }
 }
