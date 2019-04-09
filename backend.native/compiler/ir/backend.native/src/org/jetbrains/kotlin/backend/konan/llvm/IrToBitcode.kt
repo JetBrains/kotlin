@@ -562,11 +562,9 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             if (function != null) {
                 parameters.forEach{
                     val parameter = it.key
-
-                    val local = functionGenerationContext.vars.createParameter(parameter,
-                            debugInfoIfNeeded(function, parameter))
+                    val local = functionGenerationContext.vars.createParameter(
+                            parameter, debugInfoIfNeeded(function, parameter))
                     functionGenerationContext.mapParameterForDebug(local, it.value)
-
                 }
             }
         }
@@ -586,7 +584,6 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
      */
     private inner class FunctionScope(val declaration: IrFunction?, val functionGenerationContext: FunctionGenerationContext) : InnerScopeImpl() {
 
-
         constructor(llvmFunction:LLVMValueRef, name:String, functionGenerationContext: FunctionGenerationContext):
                 this(null, functionGenerationContext) {
             this.llvmFunction = llvmFunction
@@ -596,7 +593,6 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         var llvmFunction: LLVMValueRef? = declaration?.let{
             codegen.llvmFunction(it)
         }
-
 
         val coverageInstrumentation: LLVMCoverageInstrumentation? =
                 context.coverage.tryGetInstrumentation(declaration) { function, args -> functionGenerationContext.call(function, args) }
