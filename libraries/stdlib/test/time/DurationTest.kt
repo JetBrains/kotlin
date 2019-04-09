@@ -6,6 +6,7 @@
 package test.time
 
 import test.numbers.assertAlmostEquals
+import test.*
 import kotlin.test.*
 import kotlin.time.*
 import kotlin.random.*
@@ -298,14 +299,84 @@ class DurationTest {
         test(DurationUnit.NANOSECONDS, "0ns", "0.0ns", "0.02ns", "0.020ns", "0.0202ns")
 
         d = Duration.MAX_VALUE
-        // are such long representations ok?
-        test(DurationUnit.DAYS, "20806633505350875${"0".repeat(278)}d")
-        test(DurationUnit.NANOSECONDS, "17976931348623157${"0".repeat(292)}ns")
+        testOnJvm {
+            // are such long representations ok?
+            test(DurationUnit.DAYS, "20806633505350875${"0".repeat(278)}d")
+            test(DurationUnit.NANOSECONDS, "17976931348623157${"0".repeat(292)}ns")
+        }
 
         d = Duration.INFINITE
         test(DurationUnit.DAYS, "Infinity", "Infinity")
         d = -Duration.INFINITE
         test(DurationUnit.NANOSECONDS, "-Infinity", "-Infinity")
+    }
+
+
+    @Test
+    fun toStringDefault() {
+        fun test(duration: Duration, vararg expectedOptions: String) {
+            val actual = duration.toString()
+
+            if (!expectedOptions.contains(actual)) {
+                assertEquals<Any>(expectedOptions.toList(), duration.toString())
+            }
+            if (duration > Duration.ZERO)
+                assertEquals("-$actual", (-duration).toString())
+        }
+
+        test(101.days, "101d")
+        test(45.3.days, "45.3d")
+        test(45.days, "45.0d")
+
+        test(40.5.days, "972h")
+        test(40.hours + 15.minutes, "40.3h", "40.2h")
+        test(40.hours, "40.0h")
+
+        test(12.5.hours, "750m")
+        test(30.minutes, "30.0m")
+        test(17.5.minutes, "17.5m")
+
+        test(16.5.minutes, "990s")
+        test(90.36.seconds, "90.4s")
+        test(50.seconds, "50.0s")
+        test(1.3.seconds, "1.30s")
+        test(1.seconds, "1.00s")
+
+        test(0.5.seconds, "500ms")
+        test(40.2.milliseconds, "40.2ms")
+        test(4.225.milliseconds, "4.23ms", "4.22ms")
+        test(4.245.milliseconds, "4.25ms")
+        test(1.milliseconds, "1.00ms")
+
+        test(0.75.milliseconds, "750us")
+        test(75.35.microseconds, "75.4us", "75.3us")
+        test(7.25.microseconds, "7.25us")
+        test(1.035.microseconds, "1.04us", "1.03us")
+        test(1.005.microseconds, "1.01us", "1.00us")
+
+        test(950.5.nanoseconds, "951ns", "950ns")
+        test(85.23.nanoseconds, "85.2ns")
+        test(8.235.nanoseconds, "8.24ns", "8.23ns")
+        test(1.3.nanoseconds, "1.30ns")
+
+        test(0.75.nanoseconds, "0.75ns")
+        test(0.7512.nanoseconds, "0.7512ns")
+        test(0.023.nanoseconds, "0.023ns")
+        test(0.0034.nanoseconds, "0.0034ns")
+        test(0.0000035.nanoseconds, "0.0000035ns")
+
+        test(Duration.ZERO, "0s")
+        test(365.days * 10000, "3650000d")
+        test(300.days * 100000, "3e7d", "3.00e7d")
+        test(365.days * 100000, "3.65e7d")
+
+        val universeAge = 365.25.days * 13.799e9
+        val planckTime = 5.4e-44.seconds
+
+        test(universeAge, "5.04e12d")
+        test(planckTime, "5.4e-44s", "5.40e-44s")
+        test(Duration.MAX_VALUE, "2.08e294d")
+        test(Duration.INFINITE, "Infinity")
     }
 
 }

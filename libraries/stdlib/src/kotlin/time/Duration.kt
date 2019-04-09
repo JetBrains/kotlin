@@ -5,6 +5,8 @@
 
 package kotlin.time
 
+import kotlin.math.abs
+
 private val storageUnit = DurationUnit.NANOSECONDS
 
 @Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
@@ -136,20 +138,44 @@ public inline class Duration internal constructor(internal val _value: Double) :
 
     override fun toString(): String = buildString {
         if (isInfinite()) {
-            if (isNegative()) append('-')
-            append("INFINITY")
-        } else {
-            // TODO: Find the most appropriate representation
             append(_value)
-            append(storageUnit.shortName())
+        } else {
+            val absNs = absoluteValue().inNanoseconds
+            var scientific = false
+            var maxDecimals = 0
+            val unit = when {
+                absNs == 0.0 -> return "0s"
+                absNs < 1e-6 -> DurationUnit.SECONDS.also { scientific = true }
+                absNs < 1 -> DurationUnit.NANOSECONDS.also { maxDecimals = 7 }
+                absNs < 1e3 -> DurationUnit.NANOSECONDS
+                absNs < 1e6 -> DurationUnit.MICROSECONDS
+                absNs < 1e9 -> DurationUnit.MILLISECONDS
+                absNs < 1000e9 -> DurationUnit.SECONDS
+                absNs < 60_000e9 -> DurationUnit.MINUTES
+                absNs < 3600_000e9 -> DurationUnit.HOURS
+                absNs < 86400e9 * 1e7 -> DurationUnit.DAYS
+                else -> DurationUnit.DAYS.also { scientific = true }
+            }
+            val value = inUnits(unit)
+            return when {
+                scientific -> formatScientific(value)
+                maxDecimals > 0 -> formatUpToDecimals(value, maxDecimals)
+                else -> formatToExactDecimals(value, precision(abs(value)))
+            } + unit.shortName()
         }
+    }
+
+    private fun precision(value: Double): Int = when {
+        value < 1 -> 3
+        value < 10 -> 2
+        value < 100 -> 1
+        else -> 0
     }
 
     fun toString(unit: DurationUnit, decimals: Int = 0): String {
         require(decimals >= 0) { "decimals must be not negative, but was $decimals" }
-//        if (decimals == 0) return toString(unit)
         if (isInfinite()) return _value.toString()
-        return formatToDecimals(inUnits(unit), decimals, unit.shortName())
+        return formatToExactDecimals(inUnits(unit), decimals) + unit.shortName()
     }
 
 
@@ -226,4 +252,6 @@ val Double.days get() = Duration(this, DurationUnit.DAYS)
 
 
 
-internal expect fun formatToDecimals(value: Double, decimals: Int, unitName: String): String
+internal expect fun formatToExactDecimals(value: Double, decimals: Int): String
+internal expect fun formatUpToDecimals(value: Double, decimals: Int): String
+internal expect fun formatScientific(value: Double): String
