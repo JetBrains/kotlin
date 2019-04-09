@@ -156,7 +156,7 @@ object LightClassUtil {
             return findFileFacade(parent)
         }
         else if (parent is KtClassBody) {
-            assert(parent.parent is KtClassOrObject)
+            assert(parent.parent is KtClassOrObject) { "Bad parent: ${parent.parent?.javaClass}" }
             return (parent.parent as KtClassOrObject).toLightClass()
         }
 
