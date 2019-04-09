@@ -9,6 +9,7 @@ import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerImpl
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.codeInsight.AbstractLineMarkersTest
 import org.jetbrains.kotlin.idea.multiplatform.setupMppProjectFromDirStructure
+import org.jetbrains.kotlin.idea.multiplatform.setupMppProjectFromTextFile
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiHighlightingTest
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.allJavaFiles
@@ -41,7 +42,12 @@ abstract class AbstractMultiModuleHighlightingTest : AbstractMultiHighlightingTe
 abstract class AbstractMultiPlatformHighlightingTest : AbstractMultiModuleHighlightingTest() {
 
     protected open fun doTest(path: String) {
-        setupMppProjectFromDirStructure(File(path))
+        val testRoot = File(path)
+        if (File(testRoot, "dependencies.txt").exists())
+            setupMppProjectFromTextFile(testRoot)
+        else
+            setupMppProjectFromDirStructure(testRoot)
+
         checkHighlightingInProject {
             (project.allKotlinFiles() + project.allJavaFiles()).excludeByDirective()
         }
