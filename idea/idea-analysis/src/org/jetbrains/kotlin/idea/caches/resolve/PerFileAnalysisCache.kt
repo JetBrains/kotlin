@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.frontend.di.createContainerForLazyBodyResolve
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
-import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.project.findCompilerServices
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.psi.*
@@ -188,7 +187,7 @@ private object KotlinResolveDataProvider {
             val moduleInfo = analyzableElement.containingKtFile.getModuleInfo()
 
             // TODO: should return proper platform!
-            val targetPlatform = moduleInfo.platform ?: TargetPlatformDetector.getPlatform(analyzableElement.containingKtFile)
+            val targetPlatform = moduleInfo.platform
 
             val lazyTopDownAnalyzer = createContainerForLazyBodyResolve(
                 //TODO: should get ModuleContext
