@@ -8,4 +8,4 @@ MODULE b {
     root=b
 }
 
-b -> a { kind=EXPECTED_BY }
+b -> a { kind=DEPENDENCY }
