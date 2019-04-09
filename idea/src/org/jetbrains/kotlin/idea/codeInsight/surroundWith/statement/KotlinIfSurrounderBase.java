@@ -62,6 +62,9 @@ public abstract class KotlinIfSurrounderBase extends KotlinStatementsSurrounder 
         container.deleteChildRange(statements[0], statements[statements.length - 1]);
 
         ifExpression = CodeInsightUtilBase.forcePsiPostprocessAndRestoreElement(ifExpression);
+        if (ifExpression == null) {
+            return null;
+        }
 
         return getRange(editor, ifExpression);
     }
