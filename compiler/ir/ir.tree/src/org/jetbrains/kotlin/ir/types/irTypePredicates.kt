@@ -47,6 +47,12 @@ fun IrType.isPrimitiveType(): Boolean = KotlinBuiltIns.FQ_NAMES.fqNameToPrimitiv
 fun IrType.isNullablePrimitiveType(): Boolean = KotlinBuiltIns.FQ_NAMES.fqNameToPrimitiveType.keys.any { isNullableClassType(it) }
 
 fun IrType.isMarkedNullable() = (this as? IrSimpleType)?.hasQuestionMark ?: false
+fun IrType.containsNull(): Boolean = when {
+    this is IrDynamicType -> true
+    this is IrStarProjection -> true
+    this is IrSimpleType -> hasQuestionMark || classifier.superTypes().any { it.containsNull() }
+    else -> false
+}
 
 fun IrType.isUnit() = isNotNullClassType(KotlinBuiltIns.FQ_NAMES.unit)
 fun IrType.isNullableUnit() = isNullableClassType(KotlinBuiltIns.FQ_NAMES.unit)
@@ -58,6 +64,10 @@ fun IrType.isByte(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES._byte)
 fun IrType.isShort(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES._short)
 fun IrType.isInt(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES._int)
 fun IrType.isLong(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES._long)
+fun IrType.isUByte(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES.uByteFqName.toUnsafe())
+fun IrType.isUShort(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES.uShortFqName.toUnsafe())
+fun IrType.isUInt(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES.uIntFqName.toUnsafe())
+fun IrType.isULong(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES.uLongFqName.toUnsafe())
 fun IrType.isFloat(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES._float)
 fun IrType.isDouble(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES._double)
 fun IrType.isNumber(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES.number)

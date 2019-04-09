@@ -6,31 +6,53 @@
 package org.jetbrains.kotlin.ir.types
 
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
-import org.jetbrains.kotlin.ir.types.impl.makeTypeIntersection
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
-import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 
 class IrTypeCheckerContext(override val irBuiltIns: IrBuiltIns) : IrTypeSystemContext, AbstractTypeCheckerContext() {
-
     override fun substitutionSupertypePolicy(type: SimpleTypeMarker): SupertypesPolicy.DoCustomTransform {
+        require(type is IrSimpleType)
+        val parameters = extractTypeParameters((type.classifier as IrClassSymbol).owner).map { it.symbol }
+        val substitution = parameters.zip(type.arguments).toMap()
         return object : SupertypesPolicy.DoCustomTransform() {
             override fun transformType(context: AbstractTypeCheckerContext, type: KotlinTypeMarker): SimpleTypeMarker {
-                return makeTypeProjection(type as IrType, Variance.INVARIANT) as SimpleTypeMarker
+                require(type is IrSimpleType)
+
+                return substituteArguments(type)
+            }
+
+            private fun substituteArguments(type: IrSimpleType): IrSimpleType {
+                val realArguments = type.arguments.map {
+                    substitute(it)
+                }.toList()
+
+                return IrSimpleTypeImpl(type.classifier, type.hasQuestionMark, realArguments, type.annotations)
+            }
+
+            private fun substitute(type: IrTypeArgument): IrTypeArgument {
+                if (type is IrStarProjection) return type
+
+                val actualType = (type as IrTypeProjection).type as IrSimpleType
+                substitution[actualType.classifier]?.let { return it }
+                return makeTypeProjection(substituteArguments(actualType), type.variance)
             }
         }
     }
 
     override fun areEqualTypeConstructors(a: TypeConstructorMarker, b: TypeConstructorMarker) = super.isEqualTypeConstructors(a, b)
 
-    @Suppress("UNCHECKED_CAST")
-    override fun intersectTypes(types: List<KotlinTypeMarker>) = makeTypeIntersection(types as List<IrType>)
 
     override val isErrorTypeEqualsToAnything = false
     override val KotlinTypeMarker.isAllowedTypeVariable: Boolean
         get() = false
 
+
+    override fun newBaseTypeCheckerContext(errorTypesEqualToAnything: Boolean): AbstractTypeCheckerContext {
+        return IrTypeCheckerContext(irBuiltIns)
+    }
 }

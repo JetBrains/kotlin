@@ -99,6 +99,8 @@ fun makeTypeProjection(type: IrType, variance: Variance): IrTypeProjection =
     }
 
 
-fun makeTypeIntersection(types: List<IrType>) =
-    if (types.size == 1) types[1]
-    else TODO("Not implemented")
+fun makeTypeIntersection(types: List<IrType>): IrType =
+    with(types.map { makeTypeProjection(it, Variance.INVARIANT).type }.distinct()) {
+        if (size == 1) return single()
+        else first { !(it.isAny() || it.isNullableAny()) }
+    }
