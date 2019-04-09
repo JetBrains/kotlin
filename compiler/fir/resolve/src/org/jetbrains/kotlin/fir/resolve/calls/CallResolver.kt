@@ -187,24 +187,35 @@ abstract class TowerDataConsumer {
         kind: TowerDataKind,
         implicitReceiverType: ConeKotlinType?,
         towerScopeLevel: TowerScopeLevel,
-        resultCollector: CandidateCollector
+        resultCollector: CandidateCollector,
+        group: Int
     ): ProcessorAction
 }
 
 
-fun createVariableConsumer(
+fun createVariableAndObjectConsumer(
     session: FirSession,
     name: Name,
     callInfo: CallInfo,
     inferenceComponents: InferenceComponents
 ): TowerDataConsumer {
-    return createSimpleConsumer(
-        session,
-        name,
-        TowerScopeLevel.Token.Properties,
-        callInfo,
-        inferenceComponents
+    return PrioritizedTowerDataConsumer(
+        createSimpleConsumer(
+            session,
+            name,
+            TowerScopeLevel.Token.Properties,
+            callInfo,
+            inferenceComponents
+        ),
+        createSimpleConsumer(
+            session,
+            name,
+            TowerScopeLevel.Token.Objects,
+            callInfo,
+            inferenceComponents
+        )
     )
+
 }
 
 fun createFunctionConsumer(
@@ -248,6 +259,28 @@ fun createSimpleConsumer(
     }
 }
 
+
+class PrioritizedTowerDataConsumer(
+    vararg val consumers: TowerDataConsumer
+) : TowerDataConsumer() {
+
+    override fun consume(
+        kind: TowerDataKind,
+        implicitReceiverType: ConeKotlinType?,
+        towerScopeLevel: TowerScopeLevel,
+        resultCollector: CandidateCollector,
+        group: Int
+    ): ProcessorAction {
+        for ((index, consumer) in consumers.withIndex()) {
+            val action = consumer.consume(kind, implicitReceiverType, towerScopeLevel, resultCollector, group * consumers.size + index)
+            if (action.stop()) {
+                return ProcessorAction.STOP
+            }
+        }
+        return ProcessorAction.NEXT
+    }
+}
+
 class ExplicitReceiverTowerDataConsumer<T : ConeSymbol>(
     val session: FirSession,
     val name: Name,
@@ -256,15 +289,14 @@ class ExplicitReceiverTowerDataConsumer<T : ConeSymbol>(
     val candidateFactory: CandidateFactory
 ) : TowerDataConsumer() {
 
-    var groupId = 0
 
     override fun consume(
         kind: TowerDataKind,
         implicitReceiverType: ConeKotlinType?,
         towerScopeLevel: TowerScopeLevel,
-        resultCollector: CandidateCollector
+        resultCollector: CandidateCollector,
+        group: Int
     ): ProcessorAction {
-        groupId++
         return when (kind) {
             TowerDataKind.EMPTY ->
                 MemberScopeTowerLevel(session, explicitReceiver).processElementsByName(
@@ -274,7 +306,7 @@ class ExplicitReceiverTowerDataConsumer<T : ConeSymbol>(
                     object : TowerScopeLevel.TowerScopeLevelProcessor<T> {
                         override fun consumeCandidate(symbol: T, boundDispatchReceiver: ReceiverValueWithPossibleTypes?): ProcessorAction {
                             resultCollector.consumeCandidate(
-                                groupId,
+                                group,
                                 candidateFactory.createCandidate(
                                     symbol,
                                     boundDispatchReceiver,
@@ -293,7 +325,7 @@ class ExplicitReceiverTowerDataConsumer<T : ConeSymbol>(
                     object : TowerScopeLevel.TowerScopeLevelProcessor<T> {
                         override fun consumeCandidate(symbol: T, boundDispatchReceiver: ReceiverValueWithPossibleTypes?): ProcessorAction {
                             resultCollector.consumeCandidate(
-                                groupId,
+                                group,
                                 candidateFactory.createCandidate(
                                     symbol,
                                     boundDispatchReceiver,
@@ -315,16 +347,15 @@ class NoExplicitReceiverTowerDataConsumer<T : ConeSymbol>(
     val token: TowerScopeLevel.Token<T>,
     val candidateFactory: CandidateFactory
 ) : TowerDataConsumer() {
-    var groupId = 0
 
 
     override fun consume(
         kind: TowerDataKind,
         implicitReceiverType: ConeKotlinType?,
         towerScopeLevel: TowerScopeLevel,
-        resultCollector: CandidateCollector
+        resultCollector: CandidateCollector,
+        group: Int
     ): ProcessorAction {
-        groupId++
         return when (kind) {
 
             TowerDataKind.TOWER_LEVEL -> {
@@ -335,7 +366,7 @@ class NoExplicitReceiverTowerDataConsumer<T : ConeSymbol>(
                     object : TowerScopeLevel.TowerScopeLevelProcessor<T> {
                         override fun consumeCandidate(symbol: T, boundDispatchReceiver: ReceiverValueWithPossibleTypes?): ProcessorAction {
                             resultCollector.consumeCandidate(
-                                groupId,
+                                group,
                                 candidateFactory.createCandidate(symbol, boundDispatchReceiver, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER)
                             )
                             return ProcessorAction.NEXT
@@ -358,10 +389,12 @@ class CallResolver(val typeCalculator: ReturnTypeCalculator, val session: FirSes
     fun runTowerResolver(towerDataConsumer: TowerDataConsumer): CandidateCollector {
         val collector = CandidateCollector(callInfo!!)
 
-        towerDataConsumer.consume(TowerDataKind.EMPTY, null, TowerScopeLevel.Empty, collector)
+        var group = 0
+
+        towerDataConsumer.consume(TowerDataKind.EMPTY, null, TowerScopeLevel.Empty, collector, group++)
 
         for (scope in scopes!!) {
-            towerDataConsumer.consume(TowerDataKind.TOWER_LEVEL, null, ScopeTowerLevel(session, scope), collector)
+            towerDataConsumer.consume(TowerDataKind.TOWER_LEVEL, null, ScopeTowerLevel(session, scope), collector, group++)
         }
 
         return collector

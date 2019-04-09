@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.fir
 
-import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.ConeSymbol
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 interface FirResolvedCallableReference : FirNamedReference {
-    val callableSymbol: ConeCallableSymbol
+    val coneSymbol: ConeSymbol
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitResolvedCallableReference(this, data)

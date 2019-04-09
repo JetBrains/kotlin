@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirWhenSubjectExpression
+import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -753,13 +755,16 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
 
     override fun visitResolvedCallableReference(resolvedCallableReference: FirResolvedCallableReference) {
         print("R|")
-        val isFakeOverride = (resolvedCallableReference.callableSymbol as? FirFunctionSymbol)?.isFakeOverride == true
+        val isFakeOverride = (resolvedCallableReference.coneSymbol as? FirFunctionSymbol)?.isFakeOverride == true
 
         if (isFakeOverride) {
             print("FakeOverride<")
         }
-        val symbol = resolvedCallableReference.callableSymbol
-        print(symbol.callableId)
+        val symbol = resolvedCallableReference.coneSymbol
+        if (symbol is ConeCallableSymbol)
+            print(symbol.callableId)
+        else if (symbol is ConeClassLikeSymbol)
+            print(symbol.classId)
         if (isFakeOverride) {
             when (symbol) {
                 is FirFunctionSymbol -> {
