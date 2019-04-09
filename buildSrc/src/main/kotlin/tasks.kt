@@ -28,7 +28,7 @@ import org.gradle.kotlin.dsl.task
 import java.lang.Character.isLowerCase
 import java.lang.Character.isUpperCase
 
-fun Project.projectTest(taskName: String = "test", body: Test.() -> Unit = {}): Test = getOrCreateTask(taskName) {
+fun Project.projectTest(taskName: String = "test", parallel: Boolean = true, body: Test.() -> Unit = {}): Test = getOrCreateTask(taskName) {
     doFirst {
         val commandLineIncludePatterns = (filter as? DefaultTestFilter)?.commandLineIncludePatterns ?: emptySet()
         val patterns = filter.includePatterns + commandLineIncludePatterns
@@ -105,6 +105,9 @@ fun Project.projectTest(taskName: String = "test", body: Test.() -> Unit = {}): 
         systemProperty("java.io.tmpdir", it)
     }
 
+    if (parallel) {
+        maxParallelForks = Math.max(Runtime.getRuntime().availableProcessors() / 2, 1)
+    }
     body()
 }
 

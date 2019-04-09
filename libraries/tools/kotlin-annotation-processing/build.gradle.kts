@@ -16,7 +16,7 @@ dependencies {
     runtime(projectRuntimeJar(":kotlin-compiler-embeddable"))
 }
 
-projectTest {
+projectTest(parallel = true) {
     workingDir = projectDir
 }
 

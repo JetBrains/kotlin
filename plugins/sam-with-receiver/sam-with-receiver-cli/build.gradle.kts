@@ -34,7 +34,7 @@ dist {
     rename("kotlin-", "")
 }
 
-projectTest {
+projectTest(parallel = true) {
     dependsOn(":kotlin-stdlib:jvm-minimal-for-test:dist")
     workingDir = rootDir
 }

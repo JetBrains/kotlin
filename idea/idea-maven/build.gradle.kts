@@ -72,7 +72,7 @@ if (Ide.IJ()) {
 
 testsJar()
 
-projectTest {
+projectTest(parallel = true) {
     workingDir = rootDir
 }
 

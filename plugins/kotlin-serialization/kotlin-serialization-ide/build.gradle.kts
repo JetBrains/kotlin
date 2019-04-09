@@ -23,3 +23,7 @@ sourceSets {
 }
 
 runtimeJar()
+
+projectTest(parallel = true) {
+    
+}

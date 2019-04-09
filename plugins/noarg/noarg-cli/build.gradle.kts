@@ -36,6 +36,6 @@ testsJar()
 
 dist(targetName = the<BasePluginConvention>().archivesBaseName.removePrefix("kotlin-") + ".jar")
 
-projectTest {
+projectTest(parallel = true) {
     workingDir = rootDir
 }
