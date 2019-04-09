@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.utils.sure
 import java.util.*
 
-class IDEKotlinAsJavaSupport(private val project: Project): KotlinAsJavaSupport() {
+class IDEKotlinAsJavaSupport(private val project: Project) : KotlinAsJavaSupport() {
     private val psiManager: PsiManager = PsiManager.getInstance(project)
 
     override fun getFacadeNames(packageFqName: FqName, scope: GlobalSearchScope): Collection<String> {
@@ -180,7 +180,7 @@ class IDEKotlinAsJavaSupport(private val project: Project): KotlinAsJavaSupport(
     private fun findPackageParts(fqName: FqName, scope: GlobalSearchScope): List<KtLightClassForDecompiledDeclaration> {
         val facadeKtFiles = StaticFacadeIndexUtil.getMultifileClassForPart(fqName, scope, project)
         val partShortName = fqName.shortName().asString()
-        val partClassFileShortName = partShortName + ".class"
+        val partClassFileShortName = "$partShortName.class"
 
         return facadeKtFiles.mapNotNull { facadeKtFile ->
             if (facadeKtFile is KtClsFile) {
@@ -259,12 +259,17 @@ class IDEKotlinAsJavaSupport(private val project: Project): KotlinAsJavaSupport(
         val relativeFqName = getClassRelativeName(decompiledClassOrObject)
         val iterator = relativeFqName.pathSegments().iterator()
         val base = iterator.next()
-        assert(rootLightClassForDecompiledFile.name == base.asString()) { "Light class for file:\n" + decompiledClassOrObject.containingKtFile.virtualFile.canonicalPath + "\nwas expected to have name: " + base.asString() + "\n Actual: " + rootLightClassForDecompiledFile.name }
+        assert(rootLightClassForDecompiledFile.name == base.asString()) {
+            "Light class for file:\n" + decompiledClassOrObject.containingKtFile.virtualFile.canonicalPath +
+                    "\nwas expected to have name: " + base.asString() +
+                    "\n Actual: " + rootLightClassForDecompiledFile.name
+        }
         var current: KtLightClassForDecompiledDeclaration = rootLightClassForDecompiledFile
         while (iterator.hasNext()) {
             val name = iterator.next()
             val innerClass = current.findInnerClassByName(name.asString(), false).sure {
-                "Could not find corresponding inner/nested class " + relativeFqName + " in class " + decompiledClassOrObject.fqName + "\n" + "File: " + decompiledClassOrObject.containingKtFile.virtualFile.name
+                "Could not find corresponding inner/nested class " + relativeFqName + " in class " + decompiledClassOrObject.fqName + "\n" +
+                        "File: " + decompiledClassOrObject.containingKtFile.virtualFile.name
             }
             current = innerClass as KtLightClassForDecompiledDeclaration
         }
