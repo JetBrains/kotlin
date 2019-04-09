@@ -4,7 +4,7 @@ public abstract interface TypeParamOfClassSubstituted : R|kotlin/Any| {
 
     }
 
-    <T> public abstract interface Super : R|kotlin/Any| {
+    public abstract interface Super<T> : R|kotlin/Any| {
         public abstract fun dummy(): R|kotlin/Unit|
 
         public abstract fun foo(): R|T|

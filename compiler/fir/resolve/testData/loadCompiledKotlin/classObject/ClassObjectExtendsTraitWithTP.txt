@@ -1,4 +1,4 @@
-<P> public abstract interface Bbb : R|kotlin/Any| {
+public abstract interface Bbb<P> : R|kotlin/Any| {
 }
 
 public final class ClassObjectExtendsTraitWithTP : R|kotlin/Any| {

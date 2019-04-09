@@ -14,11 +14,8 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirWhenSubjectExpression
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
@@ -31,6 +28,7 @@ fun FirElement.renderWithType(): String = buildString {
     append(": ")
     this@renderWithType.accept(FirRenderer(this))
 }
+
 fun FirElement.render(): String = buildString { this@render.accept(FirRenderer(this)) }
 
 
@@ -206,10 +204,6 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
 
     override fun visitMemberDeclaration(memberDeclaration: FirMemberDeclaration) {
         memberDeclaration.annotations.renderAnnotations()
-        memberDeclaration.typeParameters.renderTypeParameters()
-        if (memberDeclaration.typeParameters.isNotEmpty()) {
-            print(" ")
-        }
         print(memberDeclaration.visibility.asString() + " " + memberDeclaration.modalityAsString() + " ")
         if (memberDeclaration.isExpect) {
             print("expect ")
@@ -273,6 +267,14 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         visitDeclaration(namedDeclaration)
         if (namedDeclaration !is FirCallableDeclaration) { // Handled by visitCallableDeclaration
             print(" " + namedDeclaration.name)
+            if (namedDeclaration is FirClassLikeDeclaration) {
+                namedDeclaration.typeParameters.renderTypeParameters()
+            }
+        } else if (namedDeclaration is FirMemberDeclaration) {
+            if (namedDeclaration.typeParameters.isNotEmpty()) {
+                print(" ")
+                namedDeclaration.typeParameters.renderTypeParameters()
+            }
         }
     }
 
@@ -714,15 +716,6 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         print(" )")
         visitTypeRefWithNullability(functionTypeRef)
     }
-
-    private fun ConeClassifierSymbol.asString(): String {
-        return when (this) {
-            is ConeClassLikeSymbol -> classId.asString()
-            is FirTypeParameterSymbol -> fir.name.asString()
-            else -> "Unsupported: ${this::class}"
-        }
-    }
-
 
     override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef) {
         resolvedTypeRef.annotations.renderAnnotations()

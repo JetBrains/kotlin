@@ -1,4 +1,4 @@
-<test> public final class ConstructorTypeParamClassObjectConflict : R|kotlin/Any| {
+public final class ConstructorTypeParamClassObjectConflict<test> : R|kotlin/Any| {
     public constructor(): R|test/ConstructorTypeParamClassObjectConflict<test>|
 
     public final companion object Companion : R|kotlin/Any| {
@@ -8,7 +8,7 @@
 
 }
 
-<test> public final class ConstructorTypeParamClassObjectTypeConflict : R|kotlin/Any| {
+public final class ConstructorTypeParamClassObjectTypeConflict<test> : R|kotlin/Any| {
     public constructor(): R|test/ConstructorTypeParamClassObjectTypeConflict<test>|
 
     public final companion object Companion : R|kotlin/Any| {

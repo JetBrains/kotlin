@@ -1,2 +1,2 @@
-<T> public abstract interface RawUpperBound : R|java/lang/Object| {
+public abstract interface RawUpperBound<T> : R|java/lang/Object| {
 }

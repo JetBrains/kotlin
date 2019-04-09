@@ -1,4 +1,4 @@
-<T> public abstract interface LoadIterableWithNullability : R|java/lang/Object| {
+public abstract interface LoadIterableWithNullability<T> : R|java/lang/Object| {
     @R|org/jetbrains/annotations/NotNull|() @R|kotlin/annotations/jvm/Mutable|() public abstract operator fun getIterable(): R|ft<kotlin/collections/MutableIterable<ft<T, T?>>, kotlin/collections/MutableIterable<ft<T, T?>>>|
 
     public abstract operator fun setIterable(@R|kotlin/annotations/jvm/Mutable|() @R|org/jetbrains/annotations/NotNull|() Iterable: R|ft<kotlin/collections/MutableIterable<ft<T, T?>>, kotlin/collections/MutableIterable<ft<T, T?>>>|): R|kotlin/Unit|

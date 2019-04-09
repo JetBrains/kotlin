@@ -1,6 +1,6 @@
-<T> public final inline fun arrayOf(vararg elements: R|kotlin/Array<out T>|): R|kotlin/Array<T>|
+public final inline fun <T> arrayOf(vararg elements: R|kotlin/Array<out T>|): R|kotlin/Array<T>|
 
-<T> public final fun arrayOfNulls(size: R|kotlin/Int|): R|kotlin/Array<T>|
+public final fun <T> arrayOfNulls(size: R|kotlin/Int|): R|kotlin/Array<T>|
 
 public final fun booleanArrayOf(vararg elements: R|kotlin/BooleanArray|): R|kotlin/BooleanArray|
 
@@ -10,11 +10,11 @@ public final fun charArrayOf(vararg elements: R|kotlin/CharArray|): R|kotlin/Cha
 
 public final fun doubleArrayOf(vararg elements: R|kotlin/DoubleArray|): R|kotlin/DoubleArray|
 
-<T> public final inline fun emptyArray(): R|kotlin/Array<T>|
+public final inline fun <T> emptyArray(): R|kotlin/Array<T>|
 
-<T> public final inline fun enumValueOf(name: R|kotlin/String|): R|T|
+public final inline fun <T> enumValueOf(name: R|kotlin/String|): R|T|
 
-<T> public final inline fun enumValues(): R|kotlin/Array<T>|
+public final inline fun <T> enumValues(): R|kotlin/Array<T>|
 
 public final fun floatArrayOf(vararg elements: R|kotlin/FloatArray|): R|kotlin/FloatArray|
 
@@ -42,7 +42,7 @@ public open class Any {
 
 }
 
-<T> public final class Array : R|kotlin/Any| {
+public final class Array<T> : R|kotlin/Any| {
     public final operator fun get(index: R|kotlin/Int|): R|T|
 
     public final operator fun iterator(): R|kotlin/collections/Iterator<T>|
@@ -286,7 +286,7 @@ public abstract interface Cloneable : R|kotlin/Any| {
 
 }
 
-<T> public abstract interface Comparable : R|kotlin/Any| {
+public abstract interface Comparable<T> : R|kotlin/Any| {
     public abstract operator fun compareTo(other: R|T|): R|kotlin/Int|
 
 }
@@ -435,7 +435,7 @@ public final annotation class DslMarker : R|kotlin/Annotation| {
 
 }
 
-<E> public abstract class Enum : R|kotlin/Comparable<E>| {
+public abstract class Enum<E> : R|kotlin/Comparable<E>| {
     protected final fun clone(): R|kotlin/Any|
 
     public final operator fun compareTo(other: R|E|): R|kotlin/Int|
@@ -589,7 +589,7 @@ public final class FloatArray : R|kotlin/Any| {
 
 }
 
-<R> public abstract interface Function : R|kotlin/Any| {
+public abstract interface Function<R> : R|kotlin/Any| {
 }
 
 public final class Int : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Int>| {

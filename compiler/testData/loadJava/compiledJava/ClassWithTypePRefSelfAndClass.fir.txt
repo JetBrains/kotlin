@@ -1,2 +1,2 @@
-<P> public final class ClassWithTypePRefSelfAndClass : R|java/lang/Object| {
+public final class ClassWithTypePRefSelfAndClass<P> : R|java/lang/Object| {
 }

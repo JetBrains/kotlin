@@ -1,2 +1,2 @@
-<T> public abstract interface RecursiveRawUpperBound : R|java/lang/Object| {
+public abstract interface RecursiveRawUpperBound<T> : R|java/lang/Object| {
 }

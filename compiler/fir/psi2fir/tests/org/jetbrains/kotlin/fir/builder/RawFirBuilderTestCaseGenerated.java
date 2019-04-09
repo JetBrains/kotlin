@@ -81,6 +81,11 @@ public class RawFirBuilderTestCaseGenerated extends AbstractRawFirBuilderTestCas
             runTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/genericFunctions.kt");
         }
 
+        @TestMetadata("genericProperty.kt")
+        public void testGenericProperty() throws Exception {
+            runTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/genericProperty.kt");
+        }
+
         @TestMetadata("nestedClass.kt")
         public void testNestedClass() throws Exception {
             runTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/nestedClass.kt");

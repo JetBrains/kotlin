@@ -1,5 +1,5 @@
 FILE: genericCalls.kt
-    <T> public? final? fun nullableValue(): T? {
+    public? final? fun <T> nullableValue(): T? {
         ^nullableValue Null(null)
     }
     public? final? fun test(): kotlin/Unit {

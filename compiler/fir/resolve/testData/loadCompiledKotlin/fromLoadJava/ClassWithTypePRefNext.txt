@@ -1,4 +1,4 @@
-<R, P> public open class ClassWithTypePRefNext : R|kotlin/Any| {
+public open class ClassWithTypePRefNext<R, P> : R|kotlin/Any| {
     public constructor(): R|test/ClassWithTypePRefNext<R, P>|
 
 }

@@ -1,0 +1,8 @@
+FILE: genericProperty.kt
+    public? final? fun <T> genericFoo(): T {
+        ^genericFoo TODO#()
+    }
+    public? final? val <T> T.generic: T
+        public? get(): T {
+            ^ genericFoo#()
+        }

@@ -1,1 +1,1 @@
-<P, Q> public final fun funParamReferencesParam(): R|kotlin/Int|
+public final fun <P, Q> funParamReferencesParam(): R|kotlin/Int|

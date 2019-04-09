@@ -1,5 +1,5 @@
 FILE: Strange.kt
-    <out T> public abstract interface Strange : R|kotlin/Any| {
+    public abstract interface Strange<out T> : R|kotlin/Any| {
         public abstract fun foo(): R|T|
 
     }

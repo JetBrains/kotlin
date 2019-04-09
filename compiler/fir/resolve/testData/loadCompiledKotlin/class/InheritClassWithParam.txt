@@ -1,4 +1,4 @@
-<P> public abstract class Aaa : R|kotlin/Any| {
+public abstract class Aaa<P> : R|kotlin/Any| {
     public constructor(): R|test/Aaa<P>|
 
 }

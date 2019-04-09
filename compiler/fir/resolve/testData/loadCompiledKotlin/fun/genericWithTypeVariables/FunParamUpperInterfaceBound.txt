@@ -1,1 +1,1 @@
-<A> public final fun dos(): R|kotlin/Int|
+public final fun <A> dos(): R|kotlin/Int|

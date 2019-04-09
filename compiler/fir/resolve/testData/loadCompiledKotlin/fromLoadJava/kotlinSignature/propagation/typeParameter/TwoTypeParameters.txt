@@ -1,11 +1,11 @@
 public abstract interface TwoTypeParameters : R|kotlin/Any| {
     public abstract interface Sub : R|test/TwoTypeParameters.Super| {
-        <B, A> public abstract fun foo(a: R|B|, b: R|A|): R|kotlin/Unit|
+        public abstract fun <B, A> foo(a: R|B|, b: R|A|): R|kotlin/Unit|
 
     }
 
     public abstract interface Super : R|kotlin/Any| {
-        <A, B> public abstract fun foo(a: R|A|, b: R|B|): R|kotlin/Unit|
+        public abstract fun <A, B> foo(a: R|A|, b: R|B|): R|kotlin/Unit|
 
     }
 

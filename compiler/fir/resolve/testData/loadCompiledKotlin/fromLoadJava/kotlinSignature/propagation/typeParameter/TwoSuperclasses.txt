@@ -1,16 +1,16 @@
 public abstract interface TwoSuperclasses : R|kotlin/Any| {
     public abstract interface Sub : R|test/TwoSuperclasses.Super1|, R|test/TwoSuperclasses.Super2| {
-        <C> public abstract fun foo(a: R|C|): R|kotlin/Unit|
+        public abstract fun <C> foo(a: R|C|): R|kotlin/Unit|
 
     }
 
     public abstract interface Super1 : R|kotlin/Any| {
-        <A> public abstract fun foo(a: R|A|): R|kotlin/Unit|
+        public abstract fun <A> foo(a: R|A|): R|kotlin/Unit|
 
     }
 
     public abstract interface Super2 : R|kotlin/Any| {
-        <B> public abstract fun foo(a: R|B|): R|kotlin/Unit|
+        public abstract fun <B> foo(a: R|B|): R|kotlin/Unit|
 
     }
 

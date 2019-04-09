@@ -49,7 +49,7 @@ public final class CharRange : R|kotlin/ranges/CharProgression|, R|kotlin/ranges
 
 }
 
-<T> public abstract interface ClosedRange : R|kotlin/Any| {
+public abstract interface ClosedRange<T> : R|kotlin/Any| {
     public open operator fun contains(value: R|T|): R|kotlin/Boolean|
 
     public open fun isEmpty(): R|kotlin/Boolean|

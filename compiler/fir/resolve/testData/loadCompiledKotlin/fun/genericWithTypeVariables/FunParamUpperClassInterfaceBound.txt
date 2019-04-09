@@ -1,1 +1,1 @@
-<A> public final fun tres(): R|kotlin/Int|
+public final fun <A> tres(): R|kotlin/Int|

@@ -1,17 +1,17 @@
 FILE: functionTypes.kt
-    <T> public final fun simpleRun(f: R|kotlin/Function1|): R|kotlin/Unit| {
+    public final fun <T> simpleRun(f: R|kotlin/Function1|): R|kotlin/Unit| {
         ^simpleRun <Unresolved name: f>#()
     }
-    <T, R> public final fun R|kotlin/collections/List<T>|.simpleMap(f: R|kotlin/Function1|): R|R| {
+    public final fun <T, R> R|kotlin/collections/List<T>|.simpleMap(f: R|kotlin/Function1|): R|R| {
     }
-    <T> public final fun simpleWith(t: R|T|, f: R|kotlin/Function1|): R|kotlin/Unit| {
+    public final fun <T> simpleWith(t: R|T|, f: R|kotlin/Function1|): R|kotlin/Unit| {
         ^simpleWith R|<local>/t|.<Unresolved name: f>#()
     }
-    <T, R> public abstract interface KMutableProperty1 : R|KProperty1<T, R>|, R|KMutableProperty<R>| {
+    public abstract interface KMutableProperty1<T, R> : R|KProperty1<T, R>|, R|KMutableProperty<R>| {
     }
-    <T, out R> public abstract interface KProperty1 : R|KProperty<R>|, R|kotlin/Function1| {
+    public abstract interface KProperty1<T, out R> : R|KProperty<R>|, R|kotlin/Function1| {
     }
-    <out R> public abstract interface KProperty : R|kotlin/Any| {
+    public abstract interface KProperty<out R> : R|kotlin/Any| {
     }
-    <R> public abstract interface KMutableProperty : R|kotlin/Any| {
+    public abstract interface KMutableProperty<R> : R|kotlin/Any| {
     }

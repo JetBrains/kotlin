@@ -1,2 +1,2 @@
-<P> public abstract class ClassWithTypePExtendsIterableP : R|java/lang/Object|, R|java/lang/Iterable<P>| {
+public abstract class ClassWithTypePExtendsIterableP<P> : R|java/lang/Object|, R|java/lang/Iterable<P>| {
 }

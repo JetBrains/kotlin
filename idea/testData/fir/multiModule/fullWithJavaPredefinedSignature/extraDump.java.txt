@@ -1,2 +1,2 @@
-<T> public abstract interface MyIterable : R|java/lang/Iterable<T>| {
+public abstract interface MyIterable<T> : R|java/lang/Iterable<T>| {
 }

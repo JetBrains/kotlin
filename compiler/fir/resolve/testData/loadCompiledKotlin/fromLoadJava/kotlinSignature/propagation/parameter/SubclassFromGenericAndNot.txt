@@ -1,5 +1,5 @@
 public abstract interface SubclassFromGenericAndNot : R|kotlin/Any| {
-    <T> public abstract interface Generic : R|kotlin/Any| {
+    public abstract interface Generic<T> : R|kotlin/Any| {
         public abstract fun dummy(): R|kotlin/Unit|
 
         public abstract fun foo(key: R|T|): R|kotlin/Unit|

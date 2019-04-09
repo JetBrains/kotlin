@@ -1,2 +1,2 @@
-<P> public final class ClassWithTypeP : R|java/lang/Object| {
+public final class ClassWithTypeP<P> : R|java/lang/Object| {
 }

@@ -3,7 +3,7 @@ public final class StarProjection : R|kotlin/Any| {
 
     public constructor(): R|test/StarProjection|
 
-    <T> public abstract interface MyClass : R|kotlin/Any| {
+    public abstract interface MyClass<T> : R|kotlin/Any| {
     }
 
 }

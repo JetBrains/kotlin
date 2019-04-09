@@ -1,1 +1,1 @@
-<T> public final fun foo(t: R|T|): R|T|
+public final fun <T> foo(t: R|T|): R|T|

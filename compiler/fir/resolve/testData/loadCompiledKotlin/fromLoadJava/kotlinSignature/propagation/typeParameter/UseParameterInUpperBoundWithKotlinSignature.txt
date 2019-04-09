@@ -1,11 +1,11 @@
 public abstract interface UseParameterInUpperBoundWithKotlinSignature : R|kotlin/Any| {
     public abstract interface Sub : R|test/UseParameterInUpperBoundWithKotlinSignature.Super| {
-        <B, A> public abstract fun foo(b: R|B|, a: R|A|): R|kotlin/Unit|
+        public abstract fun <B, A> foo(b: R|B|, a: R|A|): R|kotlin/Unit|
 
     }
 
     public abstract interface Super : R|kotlin/Any| {
-        <A, B> public abstract fun foo(a: R|A|, b: R|B|): R|kotlin/Unit|
+        public abstract fun <A, B> foo(a: R|A|, b: R|B|): R|kotlin/Unit|
 
     }
 

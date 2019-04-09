@@ -1,5 +1,5 @@
 FILE: common.kt
-    <T> public open expect class A : R|kotlin/Any| {
+    public open expect class A<T> : R|kotlin/Any| {
         public constructor<T>(): R|A<T>| {
             super<R|kotlin/Any|>()
         }

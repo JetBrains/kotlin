@@ -3,7 +3,7 @@ FILE: where.kt
     }
     public? final? interface B : kotlin/Any {
     }
-    <T : A, B> public? final? class C : kotlin/Any {
+    public? final? class C<T : A, B> : kotlin/Any {
         public? constructor<T : A, B>(): R|C<T>| {
             super<kotlin/Any>()
         }

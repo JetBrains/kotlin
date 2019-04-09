@@ -1,4 +1,4 @@
-<R, T> public abstract interface Rec : R|kotlin/Any| {
+public abstract interface Rec<R, T> : R|kotlin/Any| {
     public abstract fun t(): R|T|
 
 }

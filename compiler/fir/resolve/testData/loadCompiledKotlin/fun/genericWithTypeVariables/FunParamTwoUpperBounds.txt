@@ -1,4 +1,4 @@
-<T> public final fun foo(): R|kotlin/Unit|
+public final fun <T> foo(): R|kotlin/Unit|
 
 public abstract interface Bar : R|kotlin/Any| {
 }

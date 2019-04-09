@@ -1,1 +1,1 @@
-<P> public final fun funParamParam(a: R|kotlin/Int|, b: R|P|): R|kotlin/Int|
+public final fun <P> funParamParam(a: R|kotlin/Int|, b: R|P|): R|kotlin/Int|

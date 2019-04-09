@@ -1,1 +1,1 @@
-<T> public final fun nothing(): R|kotlin/Array<out T>|
+public final fun <T> nothing(): R|kotlin/Array<out T>|

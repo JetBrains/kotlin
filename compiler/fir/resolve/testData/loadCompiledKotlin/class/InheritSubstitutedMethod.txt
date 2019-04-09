@@ -1,4 +1,4 @@
-<T> public abstract interface A : R|kotlin/Any| {
+public abstract interface A<T> : R|kotlin/Any| {
     public abstract fun bar(): R|T|
 
     public open fun foo(): R|T|

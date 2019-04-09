@@ -1,7 +1,7 @@
 FILE: typeParameterVsNested.kt
     public abstract interface Some : R|kotlin/Any| {
     }
-    <T : R|test/Some|> public abstract class My : R|kotlin/Any| {
+    public abstract class My<T : R|test/Some|> : R|kotlin/Any| {
         public constructor<T : R|test/My.Some|>(): R|test/My<T>| {
             super<R|kotlin/Any|>()
         }
