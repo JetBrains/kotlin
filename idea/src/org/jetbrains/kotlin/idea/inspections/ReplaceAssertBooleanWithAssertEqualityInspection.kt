@@ -9,16 +9,23 @@ import com.intellij.codeInsight.actions.OptimizeImportsProcessor
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.replaced
-import org.jetbrains.kotlin.idea.intentions.getCallableDescriptor
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
-class ReplaceAssertBooleanWithAssertEqualityInspection : AbstractApplicabilityBasedInspection<KtCallExpression>(KtCallExpression::class.java) {
-
+class ReplaceAssertBooleanWithAssertEqualityInspection : AbstractApplicabilityBasedInspection<KtCallExpression>(
+    KtCallExpression::class.java
+) {
     override fun inspectionText(element: KtCallExpression) = "Replace assert boolean with assert equality"
 
     override val defaultFixText = "Replace assert boolean with assert equality"
@@ -58,15 +65,27 @@ class ReplaceAssertBooleanWithAssertEqualityInspection : AbstractApplicabilityBa
             return null
         }
 
-        if (getCallableDescriptor()?.containingDeclaration?.fqNameSafe != FqName(kotlinTestPackage)) {
+        val context = analyze(BodyResolveMode.PARTIAL)
+        if (descriptor(context)?.containingDeclaration?.fqNameSafe != FqName(kotlinTestPackage)) {
             return null
         }
 
         if (valueArguments.size != 1 && valueArguments.size != 2) return null
         val binaryExpression = valueArguments.first().getArgumentExpression() as? KtBinaryExpression ?: return null
+        val leftType = binaryExpression.left?.type(context) ?: return null
+        val rightType = binaryExpression.right?.type(context) ?: return null
+        if (!leftType.isSubtypeOf(rightType) && !rightType.isSubtypeOf(leftType)) return null
         val operationToken = binaryExpression.operationToken
 
         return assertionMap[Pair(referencedName, operationToken)]
+    }
+    
+    private fun KtExpression.descriptor(context: BindingContext): CallableDescriptor? {
+        return getResolvedCall(context)?.resultingDescriptor
+    }
+    
+    private fun KtExpression.type(context: BindingContext): KotlinType? {
+        return descriptor(context)?.returnType
     }
 
     companion object {
