@@ -304,7 +304,6 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext {
     }
 
     override fun TypeConstructorMarker.isAnyConstructor(): Boolean {
-        assert(this is ConeSymbol)
         return this is ConeClassLikeSymbol && classId.asString() == "kotlin/Any"
     }
 
