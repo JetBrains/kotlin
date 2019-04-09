@@ -30,6 +30,8 @@ import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolverImpl
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.platform.IdePlatformKind
+import org.jetbrains.kotlin.platform.idePlatformKind
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
@@ -105,7 +107,7 @@ class CompositeResolverForModuleFactory(
             yieldAll(getCommonProvidersIfAny(container))
             yieldAll(getJsProvidersIfAny(moduleInfo, moduleContext, moduleDescriptor, container))
             yieldAll(getJvmProvidersIfAny(container))
-            // TODO: Konan
+            yieldAll(getKonanProvidersIfAny(moduleInfo, container))
         }.toList()
 
         return ResolverForModule(CompositePackageFragmentProvider(packageFragmentProviders), container)
@@ -116,6 +118,20 @@ class CompositeResolverForModuleFactory(
 
     private fun getJvmProvidersIfAny(container: StorageComponentContainer): List<PackageFragmentProvider> =
         if (targetPlatform.has<JvmPlatform>()) listOf(container.get<JavaDescriptorResolver>().packageFragmentProvider) else emptyList()
+
+    private fun getKonanProvidersIfAny(moduleInfo: ModuleInfo, container: StorageComponentContainer): List<PackageFragmentProvider> {
+        if (!targetPlatform.has<KonanPlatform>()) return emptyList()
+        val resolution = DefaultBuiltInPlatforms.konanPlatform.idePlatformKind.resolution
+
+        val konanProvider = resolution.createPlatformSpecificPackageFragmentProvider(
+            moduleInfo,
+            container.get<StorageManager>(),
+            container.get<LanguageVersionSettings>(),
+            container.get<ModuleDescriptor>()
+        ) ?: return emptyList()
+
+        return listOf(konanProvider)
+    }
 
     private fun getJsProvidersIfAny(
         moduleInfo: ModuleInfo,
