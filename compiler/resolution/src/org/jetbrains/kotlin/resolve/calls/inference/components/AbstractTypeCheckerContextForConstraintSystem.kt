@@ -88,6 +88,7 @@ abstract class AbstractTypeCheckerContextForConstraintSystem : AbstractTypeCheck
         val typeMarker = type.asSimpleType()?.asCapturedType() ?: return null
 
         val projection = typeMarker.typeConstructorProjection()
+        if (projection.isStarProjection()) return null
         return if (projection.getVariance() == TypeVariance.OUT)
             projection.getType().takeIf { it is SimpleTypeMarker && isMyTypeVariable(it) }?.asSimpleType()
         else
