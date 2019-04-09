@@ -59,11 +59,11 @@ open class BasicJvmScriptEvaluator : ScriptEvaluator {
                     updatedEvalConfiguration[ScriptEvaluationConfiguration.constructorArgs]?.let {
                         args.addAll(it)
                     }
-                    actualEvaluationConfiguration[ScriptEvaluationConfiguration.providedProperties]?.forEach {
-                        args.add(it.value)
-                    }
                     actualEvaluationConfiguration[ScriptEvaluationConfiguration.implicitReceivers]?.let {
                         args.addAll(it)
+                    }
+                    actualEvaluationConfiguration[ScriptEvaluationConfiguration.providedProperties]?.forEach {
+                        args.add(it.value)
                     }
 
                     compiledScript.otherScripts.mapSuccess {
