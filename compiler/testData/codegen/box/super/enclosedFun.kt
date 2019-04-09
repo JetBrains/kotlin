@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 interface BK {
     fun x() : Int = 50
 }
