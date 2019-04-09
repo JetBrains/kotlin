@@ -63,6 +63,17 @@ class Maps {
             assertPrints(map, "{1=x, 2=1.05}")
         }
 
+        @Sample
+        fun emptyHashMap() {
+            val map = hashMapOf<Int, Any?>()
+            assertTrue(map.isEmpty())
+
+            map[1] = "x"
+            map[2] = 1.05
+            // Now map contains something:
+            assertPrints(map, "{1=x, 2=1.05}")
+        }
+
     }
 
 
