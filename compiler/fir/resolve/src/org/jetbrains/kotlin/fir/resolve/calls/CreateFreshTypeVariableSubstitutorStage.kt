@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
-import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
@@ -18,12 +18,12 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystem
 
 internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
     override fun check(candidate: Candidate, sink: CheckerSink, callInfo: CallInfo) {
-        val csBuilder = candidate.system.getBuilder()
-        val declaration = candidate.symbol.firUnsafe<FirCallableDeclaration>()
+        val declaration = candidate.symbol.firUnsafe<FirDeclaration>()
         if (declaration !is FirCallableMemberDeclaration || declaration.typeParameters.isEmpty()) {
             candidate.substitutor = ConeSubstitutor.Empty
             return
         }
+        val csBuilder = candidate.system.getBuilder()
         val (substitutor, freshVariables) = createToFreshVariableSubstitutorAndAddInitialConstraints(declaration, candidate, csBuilder)
         candidate.substitutor = substitutor
 

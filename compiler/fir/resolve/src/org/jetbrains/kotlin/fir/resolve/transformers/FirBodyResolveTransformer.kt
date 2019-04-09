@@ -111,10 +111,10 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
             }
             FirOperation.SAFE_AS -> {
                 resolved.resultType =
-                    resolved.conversionTypeRef.withReplacedConeType(
-                        session,
-                        resolved.conversionTypeRef.coneTypeUnsafe().withNullability(ConeNullability.NULLABLE)
-                    )
+                        resolved.conversionTypeRef.withReplacedConeType(
+                            session,
+                            resolved.conversionTypeRef.coneTypeUnsafe().withNullability(ConeNullability.NULLABLE)
+                        )
             }
             else -> error("Unknown type operator")
         }
@@ -148,8 +148,19 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
         return when (val newCallee = access.calleeReference) {
             is FirErrorNamedReference ->
                 FirErrorTypeRefImpl(session, access.psi, newCallee.errorReason)
-            is FirResolvedCallableReference ->
-                jump.tryCalculateReturnType(newCallee.callableSymbol.firUnsafe())
+            is FirResolvedCallableReference -> {
+                val symbol = newCallee.coneSymbol
+                if (symbol is ConeCallableSymbol) {
+                    jump.tryCalculateReturnType(symbol.firUnsafe())
+                } else if (symbol is ConeClassifierSymbol) {
+                    FirResolvedTypeRefImpl(
+                        session, null, symbol.constructType(emptyArray(), isNullable = false),
+                        isMarkedNullable = false, annotations = emptyList()
+                    )
+                } else {
+                    error("WTF ! $symbol")
+                }
+            }
             else -> error("Failed to extract type from: $newCallee")
         }
     }
@@ -186,13 +197,13 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
             }
             is FirSuperReference -> {
                 qualifiedAccessExpression.resultType =
-                    FirErrorTypeRefImpl(session, qualifiedAccessExpression.psi, "Unsupported: super type") //TODO
+                        FirErrorTypeRefImpl(session, qualifiedAccessExpression.psi, "Unsupported: super type") //TODO
 
             }
             is FirResolvedCallableReference -> {
                 if (qualifiedAccessExpression.typeRef !is FirResolvedTypeRef) {
                     qualifiedAccessExpression.resultType =
-                        jump.tryCalculateReturnType(callee.callableSymbol.firUnsafe<FirCallableDeclaration>())
+                            jump.tryCalculateReturnType(callee.coneSymbol.firUnsafe<FirCallableDeclaration>())
                 }
             }
         }
@@ -205,7 +216,7 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
         resolver.callInfo = info
         resolver.scopes = (scopes + localScopes).asReversed()
 
-        val consumer = createVariableConsumer(
+        val consumer = createVariableAndObjectConsumer(
             session,
             callee.name,
             info, inferenceComponents

@@ -28,6 +28,7 @@ fun FirExpression.toResolvedCallableReference(): FirResolvedCallableReference? {
     return (this as? FirQualifiedAccess)?.calleeReference as? FirResolvedCallableReference
 }
 
+
 fun FirExpression.toResolvedCallableSymbol(): ConeCallableSymbol? {
-    return toResolvedCallableReference()?.callableSymbol
+    return toResolvedCallableReference()?.coneSymbol as ConeCallableSymbol?
 }

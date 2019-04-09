@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substituteOrNull
 import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
-import org.jetbrains.kotlin.fir.symbols.ConeSymbol
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
@@ -77,7 +76,7 @@ class FirCallCompleterTransformer(
                 calleeReference.session,
                 calleeReference.psi,
                 calleeReference.name,
-                calleeReference.callableSymbol
+                calleeReference.coneSymbol
             )
         ).compose()
 
