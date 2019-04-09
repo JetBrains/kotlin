@@ -1,9 +1,12 @@
 package org.jetbrains.kotlin.gradle.targets.js
 
+import org.gradle.api.file.FileCollection
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationToRunnableFiles
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
-import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsSetupTask
+import org.jetbrains.kotlin.gradle.targets.js.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.testing.internal.configureConventions
@@ -33,28 +36,60 @@ internal class KotlinJsCompilationTestsConfigurator(
         return components.first() + components.drop(1).joinToString("") { it.capitalize() }
     }
 
+    @Suppress("SameParameterValue")
+    private fun disambiguateUnderscored(name: String, includeCompilation: Boolean) =
+        disambiguate(name, includeCompilation).joinToString("_")
+
     private val testTaskName: String
         get() = disambiguateCamelCased("test", false)
 
-    fun configure() {
-        // apply plugin (cannot do it lazy)
-        val nodeJs = NodeJsPlugin.apply(target.project)
+    private val Kotlin2JsCompile.jsRuntimeClasspath: FileCollection
+        get() = classpath.plus(project.files(destinationDir))
 
-        registerTask(project, testTaskName, KotlinJsTest::class.java) { testJs ->
+    fun configure() {
+        compilation.dependencies {
+            implementation(kotlin("test-nodejs-runner"))
+        }
+
+        val projectWithNodeJsPlugin = NodeJsPlugin.ensureAppliedInHierarchy(target.project)
+
+        val testTask = registerTask(project, testTaskName, KotlinNodeJsTestTask::class.java) { testJs ->
             testJs.group = LifecycleBasePlugin.VERIFICATION_GROUP
 
-            testJs.dependsOn(compileTestKotlin2Js, nodeJs.nodeJsSetupTask)
+            testJs.dependsOn(compileTestKotlin2Js)
 
             testJs.onlyIf {
                 compileTestKotlin2Js.outputFile.exists()
             }
 
-            testJs.runtimeDependencyHandler = compilation
-            testJs.targetName = disambiguationClassifier
-            testJs.nodeModulesToLoad.add(compileTestKotlin2Js.outputFile.name)
+            if (disambiguationClassifier != null) {
+                testJs.targetName = disambiguationClassifier
+                testJs.showTestTargetName = true
+            }
+
+            testJs.nodeJsProcessOptions.workingDir = project.projectDir
+
+            testJs.nodeModulesDir = project.rootDir.resolve("node_modules")
+            testJs.testRuntimeNodeModules = listOf(
+                "kotlin-test-nodejs-runner.js",
+                "kotlin-nodejs-source-map-support.js"
+            )
+            testJs.nodeModulesToLoad = setOf(compileTestKotlin2Js.outputFile.name)
 
             testJs.configureConventions()
             registerTestTask(testJs)
+        }
+
+        project.afterEvaluate {
+            // defer nodeJs executable setup, as nodejs project settings may change during configuration
+            testTask.configure {
+                val nodeJsSetupTask = projectWithNodeJsPlugin.tasks.findByName(NodeJsSetupTask.NAME)
+                it.dependsOn(nodeJsSetupTask)
+
+                if (it.nodeJsProcessOptions.executable == null) {
+                    it.nodeJsProcessOptions.executable = NodeJsExtension[projectWithNodeJsPlugin].buildEnv().nodeExec
+                }
+            }
         }
     }
 }
