@@ -1,0 +1,11 @@
+MODULE a {
+    platform=[JVM, JS, Native];
+    root=a
+}
+
+MODULE b {
+    platform=[JVM];
+    root=b
+}
+
+b -> a { kind=EXPECTED_BY }
