@@ -13,7 +13,7 @@ import java.io.File
 
 class PillConfigurablePlugin : Plugin<Project> {
     override fun apply(project: Project) {
-        project.configurations.create(EmbeddedComponents.CONFIGURATION_NAME)
+        project.configurations.maybeCreate(EmbeddedComponents.CONFIGURATION_NAME)
         project.extensions.create("pill", PillExtension::class.java)
     }
 }

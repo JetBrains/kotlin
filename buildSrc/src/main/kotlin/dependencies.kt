@@ -135,7 +135,7 @@ val compilerManifestClassPath
     get() = "annotations-13.0.jar kotlin-stdlib.jar kotlin-reflect.jar kotlin-script-runtime.jar trove4j.jar"
 
 object EmbeddedComponents {
-    val CONFIGURATION_NAME = "embeddedComponents"
+    val CONFIGURATION_NAME = "embedded"
 }
 
 fun AbstractCopyTask.fromEmbeddedComponents() {

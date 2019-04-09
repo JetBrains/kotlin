@@ -97,7 +97,6 @@ val projectsToShadow by extra(listOf(
             emptyArray<String>()
 ))
 
-val embedded by configurations.creating // PILL: used in pill importer
 val libraries by configurations.creating
 val jpsPlugin by configurations.creating
 
@@ -137,12 +136,7 @@ dependencies {
 }
 
 val jar = runtimeJar {
-    dependsOn(embedded)
     from("$rootDir/resources/kotlinManifest.properties")
-    from {
-        embedded.files.map(::zipTree)
-    }
-
     archiveName = "kotlin-plugin.jar"
 }
 

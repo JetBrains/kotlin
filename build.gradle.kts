@@ -292,6 +292,8 @@ val ignoreTestFailures by extra(project.findProperty("ignoreTestFailures")?.toSt
 
 allprojects {
 
+    configurations.maybeCreate("embedded")
+    
     jvmTarget = defaultJvmTarget
     if (defaultJavaHome != null) {
         javaHome = defaultJavaHome
