@@ -6230,6 +6230,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/removeRedundantQualifierName"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("asReceiver.kt")
+        public void testAsReceiver() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/asReceiver.kt");
+        }
+
         @TestMetadata("companionCollision.kt")
         public void testCompanionCollision() throws Exception {
             runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/companionCollision.kt");
@@ -6348,6 +6353,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         @TestMetadata("localFun2.kt")
         public void testLocalFun2() throws Exception {
             runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/localFun2.kt");
+        }
+
+        @TestMetadata("notApplicableAsReceiver.kt")
+        public void testNotApplicableAsReceiver() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/notApplicableAsReceiver.kt");
         }
 
         @TestMetadata("notApplicableCollisionTopLevelClass.kt")
