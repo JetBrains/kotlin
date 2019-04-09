@@ -354,12 +354,10 @@ fun KtDeclaration.isOverridable(): Boolean {
     }
 }
 
-fun KtDeclaration.getModalityFromDescriptor(): KtModifierKeywordToken? {
-    val descriptor = this.resolveToDescriptorIfAny()
+fun KtDeclaration.getModalityFromDescriptor(descriptor: DeclarationDescriptor? = resolveToDescriptorIfAny()): KtModifierKeywordToken? {
     if (descriptor is MemberDescriptor) {
         return mapModality(descriptor.modality)
     }
-
     return null
 }
 

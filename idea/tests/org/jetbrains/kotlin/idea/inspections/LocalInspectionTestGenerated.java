@@ -3271,7 +3271,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
-    @TestMetadata("idea/testData/inspectionsLocal/ImplicitNullableNothingType")
+    @TestMetadata("idea/testData/inspectionsLocal/implicitNullableNothingType")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ImplicitNullableNothingType extends AbstractLocalInspectionTest {
@@ -3280,32 +3280,52 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
 
         public void testAllFilesPresentInImplicitNullableNothingType() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/ImplicitNullableNothingType"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/implicitNullableNothingType"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("final.kt")
         public void testFinal() throws Exception {
-            runTest("idea/testData/inspectionsLocal/ImplicitNullableNothingType/final.kt");
+            runTest("idea/testData/inspectionsLocal/implicitNullableNothingType/final.kt");
         }
 
         @TestMetadata("function.kt")
         public void testFunction() throws Exception {
-            runTest("idea/testData/inspectionsLocal/ImplicitNullableNothingType/function.kt");
+            runTest("idea/testData/inspectionsLocal/implicitNullableNothingType/function.kt");
+        }
+
+        @TestMetadata("overrideFunction.kt")
+        public void testOverrideFunction() throws Exception {
+            runTest("idea/testData/inspectionsLocal/implicitNullableNothingType/overrideFunction.kt");
+        }
+
+        @TestMetadata("overrideNullableNothingFunction.kt")
+        public void testOverrideNullableNothingFunction() throws Exception {
+            runTest("idea/testData/inspectionsLocal/implicitNullableNothingType/overrideNullableNothingFunction.kt");
+        }
+
+        @TestMetadata("overrideNullableNothingProperty.kt")
+        public void testOverrideNullableNothingProperty() throws Exception {
+            runTest("idea/testData/inspectionsLocal/implicitNullableNothingType/overrideNullableNothingProperty.kt");
+        }
+
+        @TestMetadata("overrideProperty.kt")
+        public void testOverrideProperty() throws Exception {
+            runTest("idea/testData/inspectionsLocal/implicitNullableNothingType/overrideProperty.kt");
         }
 
         @TestMetadata("top.kt")
         public void testTop() throws Exception {
-            runTest("idea/testData/inspectionsLocal/ImplicitNullableNothingType/top.kt");
+            runTest("idea/testData/inspectionsLocal/implicitNullableNothingType/top.kt");
         }
 
         @TestMetadata("val.kt")
         public void testVal() throws Exception {
-            runTest("idea/testData/inspectionsLocal/ImplicitNullableNothingType/val.kt");
+            runTest("idea/testData/inspectionsLocal/implicitNullableNothingType/val.kt");
         }
 
         @TestMetadata("variable.kt")
         public void testVariable() throws Exception {
-            runTest("idea/testData/inspectionsLocal/ImplicitNullableNothingType/variable.kt");
+            runTest("idea/testData/inspectionsLocal/implicitNullableNothingType/variable.kt");
         }
     }
 
