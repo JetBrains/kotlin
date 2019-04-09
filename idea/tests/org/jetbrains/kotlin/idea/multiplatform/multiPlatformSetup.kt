@@ -11,6 +11,7 @@ import com.intellij.openapi.module.StdModuleTypes
 import com.intellij.openapi.roots.CompilerModuleExtension
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.util.text.trimMiddle
 import junit.framework.TestCase
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
@@ -19,9 +20,13 @@ import org.jetbrains.kotlin.idea.stubs.AbstractMultiModuleTest
 import org.jetbrains.kotlin.idea.stubs.createFacet
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.projectModel.*
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.test.TestJdkKind
 import java.io.File
+import kotlin.reflect.KMutableProperty1
+import kotlin.reflect.full.findAnnotation
+import kotlin.reflect.full.memberProperties
 
 // allows to configure a test mpp project
 // testRoot is supposed to contain several directories which contain module sources roots
@@ -30,6 +35,54 @@ fun AbstractMultiModuleTest.setupMppProjectFromDirStructure(testRoot: File) {
     assert(testRoot.isDirectory) { testRoot.absolutePath + " must be a directory" }
     val dirs = testRoot.listFiles().filter { it.isDirectory }
     val rootInfos = dirs.map { parseDirName(it) }
+    doSetupProject(rootInfos)
+}
+
+fun AbstractMultiModuleTest.setupMppProjectFromTextFile(testRoot: File) {
+    assert(testRoot.isDirectory) { testRoot.absolutePath + " must be a directory" }
+    val dependeciesTxt = File(testRoot, "dependencies.txt")
+    val projectModel = ProjectStructureParser(testRoot).parse(dependeciesTxt.readText())
+
+    doSetup(projectModel)
+}
+
+fun AbstractMultiModuleTest.doSetup(projectModel: ProjectResolveModel) {
+    val resolveModulesToIdeaModules = projectModel.modules.map { resolveModule ->
+        val ideaModule = createModule(resolveModule.name)
+        addRoot(ideaModule, resolveModule.root, false)
+        resolveModule to ideaModule
+    }.toMap()
+
+    for ((resolveModule, ideaModule) in resolveModulesToIdeaModules.entries) {
+        resolveModule.dependencies.forEach {
+            when (val to = it.to) {
+                FullJdk -> ConfigLibraryUtil.configureSdk(module, PluginTestCaseBase.addJdk(testRootDisposable) {
+                    PluginTestCaseBase.jdk(TestJdkKind.FULL_JDK)
+                })
+
+                is ResolveLibrary -> ideaModule.addLibrary(to.root, to.name, to.kind)
+
+                else -> ideaModule.addDependency(resolveModulesToIdeaModules[to]!!)
+            }
+        }
+    }
+
+    for ((resolveModule, ideaModule) in resolveModulesToIdeaModules.entries) {
+        val platform = resolveModule.platform
+        when {
+            platform.isCommon() -> ideaModule.createFacet(platform, useProjectSettings = false)
+            else -> {
+                ideaModule.createFacet(
+                    platform,
+                    implementedModuleName = resolveModule.dependencies.singleOrNull { it.kind == ResolveDependency.Kind.EXPECTED_BY }?.to?.name
+                )
+                ideaModule.enableMultiPlatform()
+            }
+        }
+    }
+}
+
+private fun AbstractMultiModuleTest.doSetupProject(rootInfos: List<RootInfo>) {
     val infosByModuleId = rootInfos.groupBy { it.moduleId }
     val modulesById = infosByModuleId.mapValues { (moduleId, infos) ->
         createModuleWithRoots(moduleId, infos)
