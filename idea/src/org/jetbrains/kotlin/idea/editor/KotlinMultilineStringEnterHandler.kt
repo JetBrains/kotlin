@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.editor
 
 import com.intellij.codeInsight.CodeInsightSettings
-import com.intellij.codeInsight.editorActions.enter.EnterHandlerDelegate
 import com.intellij.codeInsight.editorActions.enter.EnterHandlerDelegate.Result
 import com.intellij.codeInsight.editorActions.enter.EnterHandlerDelegateAdapter
 import com.intellij.injected.editor.EditorWindow
@@ -55,7 +54,7 @@ class KotlinMultilineStringEnterHandler : EnterHandlerDelegateAdapter() {
     override fun preprocessEnter(
         file: PsiFile, editor: Editor, caretOffset: Ref<Int>, caretAdvance: Ref<Int>, dataContext: DataContext,
         originalHandler: EditorActionHandler?
-    ): EnterHandlerDelegate.Result {
+    ): Result {
         val offset = caretOffset.get().toInt()
         if (editor !is EditorWindow) {
             return preprocessEnter(file, editor, offset, originalHandler, dataContext)
@@ -194,7 +193,7 @@ class KotlinMultilineStringEnterHandler : EnterHandlerDelegateAdapter() {
 
                 val marginCharToInsert = if (marginChar != null &&
                     !prefixStripped.startsWith(marginChar) &&
-                    !nonBlankNotFirstLines.isEmpty() &&
+                    nonBlankNotFirstLines.isNotEmpty() &&
                     nonBlankNotFirstLines.none { it.trimStart().startsWith(marginChar) }
                 ) {
 
@@ -242,11 +241,11 @@ class KotlinMultilineStringEnterHandler : EnterHandlerDelegateAdapter() {
     }
 
     companion object {
-        val DEFAULT_TRIM_MARGIN_CHAR = '|'
-        val TRIM_INDENT_CALL = "trimIndent"
-        val TRIM_MARGIN_CALL = "trimMargin"
+        const val DEFAULT_TRIM_MARGIN_CHAR = '|'
+        const val TRIM_INDENT_CALL = "trimIndent"
+        const val TRIM_MARGIN_CALL = "trimMargin"
 
-        val MULTILINE_QUOTE = "\"\"\""
+        const val MULTILINE_QUOTE = "\"\"\""
 
         class MultilineSettings(project: Project) {
             private val kotlinIndentOptions =
@@ -286,7 +285,7 @@ class KotlinMultilineStringEnterHandler : EnterHandlerDelegateAdapter() {
                 else -> return null
             }
 
-            return element.parents.firstIsInstanceOrNull<KtStringTemplateExpression>()
+            return element.parents.firstIsInstanceOrNull()
         }
 
         fun inMultilineString(element: PsiElement?, offset: Int) =

@@ -88,7 +88,7 @@ class ReformatInspection : LocalInspectionTool() {
     }
 
     private fun isEmptyLineReformat(whitespace: PsiWhiteSpace, change: FormattingChange): Boolean {
-        if (change !is FormattingChange.ReplaceWhiteSpace) return false
+        if (change !is ReplaceWhiteSpace) return false
 
         val beforeText = whitespace.text
         val afterText = change.whiteSpace

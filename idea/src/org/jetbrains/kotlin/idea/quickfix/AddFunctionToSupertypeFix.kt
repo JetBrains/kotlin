@@ -31,12 +31,12 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.TemplateKind
 import org.jetbrains.kotlin.idea.core.getFunctionBodyTextFromTemplate
 import org.jetbrains.kotlin.idea.core.implicitModality
 import org.jetbrains.kotlin.idea.imports.importableFqName
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.psi.*
@@ -48,7 +48,7 @@ import org.jetbrains.kotlin.types.typeUtil.supertypes
 
 class AddFunctionToSupertypeFix private constructor(
     element: KtNamedFunction,
-    private val functions: List<AddFunctionToSupertypeFix.FunctionData>
+    private val functions: List<FunctionData>
 ) : KotlinQuickFixAction<KtNamedFunction>(element), LowPriorityAction {
 
     init {
@@ -90,7 +90,7 @@ class AddFunctionToSupertypeFix private constructor(
 
             ShortenReferences.DEFAULT.process(insertedFunctionElement)
             val modifierToken = insertedFunctionElement.modalityModifier()?.node?.elementType as? KtModifierKeywordToken
-                    ?: return@executeWriteCommand
+                ?: return@executeWriteCommand
             if (insertedFunctionElement.implicitModality() == modifierToken) {
                 RemoveModifierFix(insertedFunctionElement, modifierToken, true).invoke()
             }

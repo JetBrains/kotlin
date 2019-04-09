@@ -67,7 +67,6 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
-import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.DFS.*
 import java.util.*
 
@@ -407,7 +406,7 @@ internal fun ExtractionData.createTemporaryCodeBlock(): KtBlockExpression {
 
 private fun KotlinType.collectReferencedTypes(processTypeArguments: Boolean): List<KotlinType> {
     if (!processTypeArguments) return Collections.singletonList(this)
-    return DFS.dfsFromNode(
+    return dfsFromNode(
         this,
         Neighbors<KotlinType> { current -> current.arguments.map { it.type } },
         VisitedWithSet(),

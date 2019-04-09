@@ -118,7 +118,7 @@ enum class HintType(val desc: String, defaultEnabled: Boolean) {
 
     companion object {
         fun resolve(elem: PsiElement): HintType? {
-            val applicableTypes = HintType.values().filter { it.isApplicable(elem) }
+            val applicableTypes = values().filter { it.isApplicable(elem) }
             return applicableTypes.firstOrNull()
         }
 
@@ -153,8 +153,7 @@ class KotlinInlayParameterHintsProvider : InlayParameterHintsProvider {
         )
 
     override fun getHintInfo(element: PsiElement): HintInfo? {
-        val hintType = HintType.resolve(element) ?: return null
-        return when (hintType) {
+        return when (val hintType = HintType.resolve(element) ?: return null) {
             HintType.PARAMETER_HINT -> {
                 val parent = (element as? KtValueArgumentList)?.parent
                 (parent as? KtCallElement)?.let { getMethodInfo(it) }

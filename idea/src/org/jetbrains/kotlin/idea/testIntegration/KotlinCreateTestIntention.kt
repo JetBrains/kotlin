@@ -63,8 +63,8 @@ class KotlinCreateTestIntention : SelfTargetingRangeIntention<KtNamedDeclaration
             if (element.resolveToDescriptorIfAny() == null) return null
 
             return TextRange(
-                    element.startOffset,
-                    element.getSuperTypeList()?.startOffset ?: element.getBody()?.startOffset ?: element.endOffset
+                element.startOffset,
+                element.getSuperTypeList()?.startOffset ?: element.body?.startOffset ?: element.endOffset
             )
         }
 
@@ -105,8 +105,8 @@ class KotlinCreateTestIntention : SelfTargetingRangeIntention<KtNamedDeclaration
                 val baseName = kotlinFile.nameWithoutExtension
                 val psiDir = kotlinFile.parent!!.toPsiDirectory(project)!!
                 return generateSequence(0) { it + 1 }
-                        .map { "$baseName$it" }
-                        .first { psiDir.findFile("$it.java") == null && findTestClass(psiDir, it) == null }
+                    .map { "$baseName$it" }
+                    .first { psiDir.findFile("$it.java") == null && findTestClass(psiDir, it) == null }
             }
 
             // Based on the com.intellij.testIntegration.createTest.CreateTestAction.CreateTestAction.invoke()
@@ -114,18 +114,20 @@ class KotlinCreateTestIntention : SelfTargetingRangeIntention<KtNamedDeclaration
                 val srcModule = ModuleUtilCore.findModuleForPsiElement(element) ?: return
                 val propertiesComponent = PropertiesComponent.getInstance()
                 val testFolders = HashSet<VirtualFile>()
-                CreateTestAction.checkForTestRoots(srcModule, testFolders)
+                checkForTestRoots(srcModule, testFolders)
                 if (testFolders.isEmpty() && !propertiesComponent.getBoolean("create.test.in.the.same.root")) {
                     if (Messages.showOkCancelDialog(
                             project,
                             "Create test in the same source root?",
                             "No Test Roots Found",
-                            Messages.getQuestionIcon()) != Messages.OK) return
+                            Messages.getQuestionIcon()
+                        ) != Messages.OK
+                    ) return
 
                     propertiesComponent.setValue("create.test.in.the.same.root", true)
                 }
 
-                val srcClass = CreateTestAction.getContainingClass(element) ?: return
+                val srcClass = getContainingClass(element) ?: return
 
                 val srcDir = element.containingFile.containingDirectory
                 val srcPackage = JavaDirectoryService.getInstance().getPackage(srcDir)
@@ -137,12 +139,12 @@ class KotlinCreateTestIntention : SelfTargetingRangeIntention<KtNamedDeclaration
                 if (existingClass != null) {
                     // TODO: Override dialog method when it becomes protected
                     val answer = Messages.showYesNoDialog(
-                            project,
-                            "Kotlin class '${existingClass.name}' already exists. Do you want to update it?",
-                            CommonBundle.getErrorTitle(),
-                            "Rewrite",
-                            "Cancel",
-                            Messages.getErrorIcon()
+                        project,
+                        "Kotlin class '${existingClass.name}' already exists. Do you want to update it?",
+                        CommonBundle.getErrorTitle(),
+                        "Rewrite",
+                        "Cancel",
+                        Messages.getErrorIcon()
                     )
                     if (answer == Messages.NO) return
                 }
@@ -163,7 +165,7 @@ class KotlinCreateTestIntention : SelfTargetingRangeIntention<KtNamedDeclaration
                     if (generatedClass.language == JavaLanguage.INSTANCE) {
                         project.executeCommand("Convert class '${generatedClass.name}' to Kotlin", this) {
                             runWriteAction {
-                                generatedClass.methods.forEach { it.throwsList.referenceElements.forEach { it.delete() } }
+                                generatedClass.methods.forEach { it.throwsList.referenceElements.forEach { referenceElement -> referenceElement.delete() } }
                             }
 
                             if (existingClass != null) {
@@ -172,16 +174,15 @@ class KotlinCreateTestIntention : SelfTargetingRangeIntention<KtNamedDeclaration
                                         .declarations
                                         .asSequence()
                                         .filterIsInstance<KtNamedFunction>()
-                                            .mapTo(HashSet()) { it.name }
+                                        .mapTo(HashSet()) { it.name }
                                     generatedClass
-                                            .methods
-                                            .filter { it.name !in existingMethodNames }
-                                            .forEach { it.j2k()?.let { existingClass.addDeclaration(it) } }
+                                        .methods
+                                        .filter { it.name !in existingMethodNames }
+                                        .forEach { it.j2k()?.let { declaration -> existingClass.addDeclaration(declaration) } }
                                     generatedClass.delete()
                                 }
                                 NavigationUtil.activateFileWithPsiElement(existingClass)
-                            }
-                            else {
+                            } else {
                                 with(PsiDocumentManager.getInstance(project)) {
                                     getDocument(generatedFile)?.let { doPostponedOperationsAndUnblockDocument(it) }
                                 }

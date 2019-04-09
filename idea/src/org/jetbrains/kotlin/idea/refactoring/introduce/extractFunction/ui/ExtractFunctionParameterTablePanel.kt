@@ -29,12 +29,12 @@ import javax.swing.table.DefaultTableCellRenderer
 
 open class ExtractFunctionParameterTablePanel : AbstractParameterTablePanel<Parameter, ExtractFunctionParameterTablePanel.ParameterInfo>() {
     companion object {
-        val PARAMETER_TYPE_COLUMN = 2
+        const val PARAMETER_TYPE_COLUMN = 2
     }
 
     class ParameterInfo(
-            originalParameter: Parameter,
-            val isReceiver: Boolean
+        originalParameter: Parameter,
+        val isReceiver: Boolean
     ) : AbstractParameterTablePanel.AbstractParameterInfo<Parameter>(originalParameter) {
         var type = originalParameter.parameterType
 
@@ -45,7 +45,7 @@ open class ExtractFunctionParameterTablePanel : AbstractParameterTablePanel<Para
         override fun toParameter() = originalParameter.copy(name, type)
     }
 
-    override fun createTableModel(): AbstractParameterTablePanel<Parameter, ParameterInfo>.TableModelBase = MyTableModel()
+    override fun createTableModel(): TableModelBase = MyTableModel()
 
     override fun createAdditionalColumns() {
         with(table.columnModel.getColumn(PARAMETER_TYPE_COLUMN)) {
@@ -54,27 +54,27 @@ open class ExtractFunctionParameterTablePanel : AbstractParameterTablePanel<Para
                 private val myLabel = JBComboBoxLabel()
 
                 override fun getTableCellRendererComponent(
-                        table: JTable, value: Any, isSelected: Boolean, hasFocus: Boolean, row: Int, column: Int
+                    table: JTable, value: Any, isSelected: Boolean, hasFocus: Boolean, row: Int, column: Int
                 ): Component {
                     myLabel.text = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(value as KotlinType)
                     myLabel.background = if (isSelected) table.selectionBackground else table.background
                     myLabel.foreground = if (isSelected) table.selectionForeground else table.foreground
                     if (isSelected) {
                         myLabel.setSelectionIcon()
-                    }
-                    else {
+                    } else {
                         myLabel.setRegularIcon()
                     }
                     return myLabel
                 }
             }
             cellEditor = object : AbstractTableCellEditor() {
-                internal val myEditorComponent = JBComboBoxTableCellEditorComponent()
+                val myEditorComponent = JBComboBoxTableCellEditorComponent()
 
                 override fun getCellEditorValue() = myEditorComponent.editorValue
 
                 override fun getTableCellEditorComponent(
-                        table: JTable, value: Any, isSelected: Boolean, row: Int, column: Int): Component {
+                    table: JTable, value: Any, isSelected: Boolean, row: Int, column: Int
+                ): Component {
                     val info = parameterInfos[row]
 
                     myEditorComponent.setCell(table, row, column)
@@ -90,13 +90,13 @@ open class ExtractFunctionParameterTablePanel : AbstractParameterTablePanel<Para
 
     fun init(receiver: Parameter?, parameters: List<Parameter>) {
         parameterInfos = parameters.mapTo(
-                if (receiver != null) arrayListOf(ParameterInfo(receiver, true)) else arrayListOf()
+            if (receiver != null) arrayListOf(ParameterInfo(receiver, true)) else arrayListOf()
         ) { ParameterInfo(it, false) }
 
         super.init()
     }
 
-    private inner class MyTableModel : AbstractParameterTablePanel<Parameter, ParameterInfo>.TableModelBase() {
+    private inner class MyTableModel : TableModelBase() {
         override fun getColumnCount() = 3
 
         override fun getValueAt(rowIndex: Int, columnIndex: Int): Any? {
@@ -117,7 +117,7 @@ open class ExtractFunctionParameterTablePanel : AbstractParameterTablePanel<Para
         override fun isCellEditable(rowIndex: Int, columnIndex: Int): Boolean {
             val info = parameterInfos[rowIndex]
             return when (columnIndex) {
-                AbstractParameterTablePanel.PARAMETER_NAME_COLUMN -> super.isCellEditable(rowIndex, columnIndex) && !info.isReceiver
+                PARAMETER_NAME_COLUMN -> super.isCellEditable(rowIndex, columnIndex) && !info.isReceiver
                 PARAMETER_TYPE_COLUMN -> isEnabled && info.isEnabled && info.originalParameter.getParameterTypeCandidates().size > 1
                 else -> super.isCellEditable(rowIndex, columnIndex)
             }

@@ -18,8 +18,8 @@ import kotlin.reflect.KProperty
 class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvider() {
     override fun getLanguage() = KotlinLanguage.INSTANCE
 
-    override fun getCodeSample(settingsType: LanguageCodeStyleSettingsProvider.SettingsType): String = when (settingsType) {
-        LanguageCodeStyleSettingsProvider.SettingsType.WRAPPING_AND_BRACES_SETTINGS ->
+    override fun getCodeSample(settingsType: SettingsType): String = when (settingsType) {
+        SettingsType.WRAPPING_AND_BRACES_SETTINGS ->
             """
                @Deprecated("Foo") public class ThisIsASampleClass : Comparable<*>, Appendable {
                    val test =
@@ -71,7 +71,7 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                fun veryLongExpressionBodyMethod() = "abc"
             """.trimIndent()
 
-        LanguageCodeStyleSettingsProvider.SettingsType.BLANK_LINES_SETTINGS ->
+        SettingsType.BLANK_LINES_SETTINGS ->
             """
                 class Foo {
                    private var field1: Int = 1
@@ -169,13 +169,13 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
 
     override fun getLanguageName(): String = KotlinLanguage.NAME
 
-    override fun customizeSettings(consumer: CodeStyleSettingsCustomizable, settingsType: LanguageCodeStyleSettingsProvider.SettingsType) {
+    override fun customizeSettings(consumer: CodeStyleSettingsCustomizable, settingsType: SettingsType) {
         fun showCustomOption(field: KProperty<*>, title: String, groupName: String? = null, vararg options: Any) {
             consumer.showCustomOption(KotlinCodeStyleSettings::class.java, field.name, title, groupName, *options)
         }
 
         when (settingsType) {
-            LanguageCodeStyleSettingsProvider.SettingsType.SPACING_SETTINGS -> {
+            SettingsType.SPACING_SETTINGS -> {
                 consumer.showStandardOptions(
                     "SPACE_AROUND_ASSIGNMENT_OPERATORS",
                     "SPACE_AROUND_LOGICAL_OPERATORS",
@@ -190,7 +190,7 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                     "SPACE_BEFORE_WHILE_PARENTHESES",
                     "SPACE_BEFORE_FOR_PARENTHESES",
                     "SPACE_BEFORE_CATCH_PARENTHESES"
-                );
+                )
 
                 showCustomOption(
                     KotlinCodeStyleSettings::SPACE_AROUND_RANGE,
@@ -252,7 +252,7 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                     CodeStyleSettingsCustomizable.SPACES_BEFORE_PARENTHESES
                 )
             }
-            LanguageCodeStyleSettingsProvider.SettingsType.WRAPPING_AND_BRACES_SETTINGS -> {
+            SettingsType.WRAPPING_AND_BRACES_SETTINGS -> {
                 consumer.showStandardOptions(
                     // "ALIGN_MULTILINE_CHAINED_METHODS",
                     "RIGHT_MARGIN",
@@ -364,7 +364,7 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                     CodeStyleSettingsCustomizable.WRAPPING_IF_STATEMENT
                 )
             }
-            LanguageCodeStyleSettingsProvider.SettingsType.BLANK_LINES_SETTINGS -> {
+            SettingsType.BLANK_LINES_SETTINGS -> {
                 consumer.showStandardOptions(
                     "KEEP_BLANK_LINES_IN_CODE",
                     "KEEP_BLANK_LINES_IN_DECLARATIONS",
@@ -377,8 +377,8 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                     CodeStyleSettingsCustomizable.BLANK_LINES
                 )
             }
-            LanguageCodeStyleSettingsProvider.SettingsType.COMMENTER_SETTINGS -> {
-                consumer.showAllStandardOptions();
+            SettingsType.COMMENTER_SETTINGS -> {
+                consumer.showAllStandardOptions()
             }
             else -> consumer.showStandardOptions()
         }

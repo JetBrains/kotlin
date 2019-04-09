@@ -65,10 +65,10 @@ import java.util.*
 import javax.swing.*
 
 class KotlinChangeSignatureDialog(
-        project: Project,
-        methodDescriptor: KotlinMethodDescriptor,
-        context: PsiElement,
-        private val commandName: String?
+    project: Project,
+    methodDescriptor: KotlinMethodDescriptor,
+    context: PsiElement,
+    private val commandName: String?
 ) : ChangeSignatureDialogBase<
         KotlinParameterInfo,
         PsiElement,
@@ -76,15 +76,20 @@ class KotlinChangeSignatureDialog(
         KotlinMethodDescriptor,
         ParameterTableModelItemBase<KotlinParameterInfo>,
         KotlinCallableParameterTableModel>(project, methodDescriptor, false, context) {
-    override fun getFileType() = KotlinFileType.INSTANCE
+    override fun getFileType(): KotlinFileType = KotlinFileType.INSTANCE
 
-    override fun createParametersInfoModel(descriptor: KotlinMethodDescriptor) = createParametersInfoModel(descriptor, myDefaultValueContext)
+    override fun createParametersInfoModel(descriptor: KotlinMethodDescriptor) =
+        createParametersInfoModel(descriptor, myDefaultValueContext)
 
     override fun createReturnTypeCodeFragment() = createReturnTypeCodeFragment(myProject, myMethod)
 
     private val parametersTableModel: KotlinCallableParameterTableModel get() = super.myParametersTableModel
-    
-    override fun getRowPresentation(item: ParameterTableModelItemBase<KotlinParameterInfo>, selected: Boolean, focused: Boolean): JComponent? {
+
+    override fun getRowPresentation(
+        item: ParameterTableModelItemBase<KotlinParameterInfo>,
+        selected: Boolean,
+        focused: Boolean
+    ): JComponent? {
         val panel = JPanel(BorderLayout())
 
         val valOrVar = if (myMethod.kind === Kind.PRIMARY_CONSTRUCTOR) {
@@ -93,8 +98,7 @@ class KotlinChangeSignatureDialog(
                 KotlinValVar.Val -> "val "
                 KotlinValVar.Var -> "var "
             }
-        }
-        else {
+        } else {
             ""
         }
 
@@ -112,14 +116,13 @@ class KotlinChangeSignatureDialog(
             override fun shouldHaveBorder() = false
         }
 
-        val plainFont  = EditorColorsManager.getInstance().globalScheme.getFont(EditorFontType.PLAIN)
+        val plainFont = EditorColorsManager.getInstance().globalScheme.getFont(EditorFontType.PLAIN)
         field.font = Font(plainFont.fontName, plainFont.style, 12)
 
         if (selected && focused) {
             panel.background = UIUtil.getTableSelectionBackground()
             field.setAsRendererWithSelection(UIUtil.getTableSelectionBackground(), UIUtil.getTableSelectionForeground())
-        }
-        else {
+        } else {
             panel.background = UIUtil.getTableBackground()
             if (selected && !focused) {
                 panel.border = DottedBorder(UIUtil.getTableForeground())
@@ -136,7 +139,7 @@ class KotlinChangeSignatureDialog(
     }
 
     private fun getColumnTextMaxLength(nameFunction: Function1<ParameterTableModelItemBase<KotlinParameterInfo>, String?>) =
-            parametersTableModel.items.asSequence().map { nameFunction(it)?.length ?: 0 }.max() ?: 0
+        parametersTableModel.items.asSequence().map { nameFunction(it)?.length ?: 0 }.max() ?: 0
 
     private fun getParamNamesMaxLength() = getColumnTextMaxLength { getPresentationName(it) }
 
@@ -147,17 +150,17 @@ class KotlinChangeSignatureDialog(
     override fun isListTableViewSupported() = true
 
     override fun isEmptyRow(row: ParameterTableModelItemBase<KotlinParameterInfo>): Boolean {
-        if (!row.parameter.name.isEmpty()) return false
-        if (!row.parameter.typeText.isEmpty()) return false
+        if (row.parameter.name.isNotEmpty()) return false
+        if (row.parameter.typeText.isNotEmpty()) return false
         return true
     }
 
     override fun createCallerChooser(title: String, treeToReuse: Tree?, callback: Consumer<Set<PsiElement>>) =
-            KotlinCallerChooser(myMethod.method, myProject, title, treeToReuse, callback)
+        KotlinCallerChooser(myMethod.method, myProject, title, treeToReuse, callback)
 
     // Forbid receiver propagation
     override fun mayPropagateParameters() =
-            parameters.any { it.isNewParameter && it != parametersTableModel.receiver }
+        parameters.any { it.isNewParameter && it != parametersTableModel.receiver }
 
     override fun getTableEditor(table: JTable, item: ParameterTableModelItemBase<KotlinParameterInfo>): JBTableRowEditor? {
         return object : JBTableRowEditor() {
@@ -169,7 +172,7 @@ class KotlinChangeSignatureDialog(
             }
 
             private fun isDefaultColumnEnabled() =
-                    item.parameter.isNewParameter && item.parameter != myMethod.receiver
+                item.parameter.isNewParameter && item.parameter != myMethod.receiver
 
             override fun prepareEditor(table: JTable, row: Int) {
                 layout = BoxLayout(this, BoxLayout.X_AXIS)
@@ -185,18 +188,15 @@ class KotlinChangeSignatureDialog(
                         val document = PsiDocumentManager.getInstance(project).getDocument(item.typeCodeFragment)
                         editor = EditorTextField(document, project, fileType)
                         component = editor
-                    }
-                    else if (KotlinCallableParameterTableModel.isNameColumn(columnInfo)) {
+                    } else if (KotlinCallableParameterTableModel.isNameColumn(columnInfo)) {
                         editor = nameEditor
                         component = editor
                         updateNameEditor()
-                    }
-                    else if (KotlinCallableParameterTableModel.isDefaultValueColumn(columnInfo) && isDefaultColumnEnabled()) {
+                    } else if (KotlinCallableParameterTableModel.isDefaultValueColumn(columnInfo) && isDefaultColumnEnabled()) {
                         val document = PsiDocumentManager.getInstance(project).getDocument(item.defaultValueCodeFragment)
                         editor = EditorTextField(document, project, fileType)
                         component = editor
-                    }
-                    else if (KotlinPrimaryConstructorParameterTableModel.isValVarColumn(columnInfo)) {
+                    } else if (KotlinPrimaryConstructorParameterTableModel.isValVarColumn(columnInfo)) {
                         val comboBox = JComboBox(KotlinValVar.values())
                         comboBox.selectedItem = item.parameter.valOrVar
                         comboBox.addItemListener {
@@ -205,8 +205,7 @@ class KotlinChangeSignatureDialog(
                         }
                         component = comboBox
                         editor = null
-                    }
-                    else if (KotlinFunctionParameterTableModel.isReceiverColumn(columnInfo)) {
+                    } else if (KotlinFunctionParameterTableModel.isReceiverColumn(columnInfo)) {
                         val checkBox = JCheckBox()
                         checkBox.isSelected = parametersTableModel.receiver == item.parameter
                         checkBox.addItemListener {
@@ -217,8 +216,7 @@ class KotlinChangeSignatureDialog(
                         }
                         component = checkBox
                         editor = null
-                    }
-                    else
+                    } else
                         continue
 
                     val label = JBLabel(columnInfo.name, UIUtil.ComponentStyle.SMALL)
@@ -226,11 +224,11 @@ class KotlinChangeSignatureDialog(
 
                     if (editor != null) {
                         editor.addDocumentListener(
-                                object : DocumentListener {
-                                    override fun documentChanged(e: DocumentEvent) {
-                                        fireDocumentChanged(e, columnFinal)
-                                    }
+                            object : DocumentListener {
+                                override fun documentChanged(e: DocumentEvent) {
+                                    fireDocumentChanged(e, columnFinal)
                                 }
+                            }
                         )
                         editor.setPreferredWidth(table.width / parametersTableModel.columnCount)
                     }
@@ -277,7 +275,7 @@ class KotlinChangeSignatureDialog(
                     intArrayOf(4, getParamNamesMaxLength(), getTypesMaxLength())
 
                 var columnIndex = 0
-                for (i in (if (myMethod.kind === Kind.PRIMARY_CONSTRUCTOR) 0 else 1)..columnLetters.size - 1) {
+                for (i in (if (myMethod.kind === Kind.PRIMARY_CONSTRUCTOR) 0 else 1) until columnLetters.size) {
                     val width = getColumnWidth(columnLetters[i])
 
                     if (x <= width)
@@ -311,18 +309,20 @@ class KotlinChangeSignatureDialog(
     }
 
     override fun calculateSignature(): String {
-        val changeInfo = evaluateChangeInfo(parametersTableModel,
-                                            myReturnTypeCodeFragment,
-                                            getMethodDescriptor(),
-                                            visibility,
-                                            methodName,
-                                            myDefaultValueContext,
-                                            true)
+        val changeInfo = evaluateChangeInfo(
+            parametersTableModel,
+            myReturnTypeCodeFragment,
+            getMethodDescriptor(),
+            visibility,
+            methodName,
+            myDefaultValueContext,
+            true
+        )
         return changeInfo.getNewSignature(getMethodDescriptor().originalPrimaryCallable)
     }
 
     override fun createVisibilityControl() = ComboBoxVisibilityPanel(
-            arrayOf(Visibilities.INTERNAL, Visibilities.PRIVATE, Visibilities.PROTECTED, Visibilities.PUBLIC)
+        arrayOf(Visibilities.INTERNAL, Visibilities.PRIVATE, Visibilities.PROTECTED, Visibilities.PUBLIC)
     )
 
     override fun updateSignatureAlarmFired() {
@@ -332,27 +332,30 @@ class KotlinChangeSignatureDialog(
 
     override fun validateAndCommitData(): String? {
         if (myMethod.canChangeReturnType() == MethodDescriptor.ReadWriteOption.ReadWrite &&
-            myReturnTypeCodeFragment.getTypeInfo(true, false).type == null) {
+            myReturnTypeCodeFragment.getTypeInfo(isCovariant = true, forPreview = false).type == null
+        ) {
             if (Messages.showOkCancelDialog(
                     myProject,
                     "Return type '${myReturnTypeCodeFragment!!.text}' cannot be resolved.\nContinue?",
                     RefactoringBundle.message("changeSignature.refactoring.name"),
                     Messages.getWarningIcon()
-            ) != Messages.OK) {
-                return ChangeSignatureDialogBase.EXIT_SILENTLY
+                ) != Messages.OK
+            ) {
+                return EXIT_SILENTLY
             }
         }
 
         for (item in parametersTableModel.items) {
-            if (item.typeCodeFragment.getTypeInfo(true, false).type == null) {
+            if (item.typeCodeFragment.getTypeInfo(isCovariant = true, forPreview = false).type == null) {
                 val paramText = if (item.parameter != parametersTableModel.receiver) "parameter '${item.parameter.name}'" else "receiver"
                 if (Messages.showOkCancelDialog(
                         myProject,
                         "Type '${item.typeCodeFragment.text}' for $paramText cannot be resolved.\nContinue?",
                         RefactoringBundle.message("changeSignature.refactoring.name"),
                         Messages.getWarningIcon()
-                ) != Messages.OK) {
-                    return ChangeSignatureDialogBase.EXIT_SILENTLY
+                    ) != Messages.OK
+                ) {
+                    return EXIT_SILENTLY
                 }
             }
         }
@@ -366,7 +369,7 @@ class KotlinChangeSignatureDialog(
 
         if (myMethod.canChangeReturnType() === MethodDescriptor.ReadWriteOption.ReadWrite) {
             (myReturnTypeCodeFragment as? KtTypeCodeFragment)
-                    ?.validateElement(KotlinRefactoringBundle.message("return.type.is.invalid"))
+                ?.validateElement(KotlinRefactoringBundle.message("return.type.is.invalid"))
         }
 
         for (item in parametersTableModel.items) {
@@ -377,18 +380,20 @@ class KotlinChangeSignatureDialog(
             }
 
             (item.typeCodeFragment as? KtTypeCodeFragment)
-                    ?.validateElement(KotlinRefactoringBundle.message("parameter.type.is.invalid", item.typeCodeFragment.text))
+                ?.validateElement(KotlinRefactoringBundle.message("parameter.type.is.invalid", item.typeCodeFragment.text))
         }
     }
 
     override fun createRefactoringProcessor(): BaseRefactoringProcessor {
-        val changeInfo = evaluateChangeInfo(parametersTableModel,
-                                            myReturnTypeCodeFragment,
-                                            getMethodDescriptor(),
-                                            visibility,
-                                            methodName,
-                                            myDefaultValueContext,
-                                            false)
+        val changeInfo = evaluateChangeInfo(
+            parametersTableModel,
+            myReturnTypeCodeFragment,
+            getMethodDescriptor(),
+            visibility,
+            methodName,
+            myDefaultValueContext,
+            false
+        )
         changeInfo.primaryPropagationTargets = myMethodsToPropagateParameters ?: emptyList()
         return KotlinChangeSignatureProcessor(myProject, changeInfo, commandName ?: title)
     }
@@ -397,16 +402,19 @@ class KotlinChangeSignatureDialog(
 
     override fun getSelectedIdx(): Int {
         return myMethod.parameters.withIndex().firstOrNull { it.value.isNewParameter }?.index
-               ?: super.getSelectedIdx()
+            ?: super.getSelectedIdx()
     }
 
     companion object {
-        private fun createParametersInfoModel(descriptor: KotlinMethodDescriptor, defaultValueContext: PsiElement): KotlinCallableParameterTableModel {
+        private fun createParametersInfoModel(
+            descriptor: KotlinMethodDescriptor,
+            defaultValueContext: PsiElement
+        ): KotlinCallableParameterTableModel {
             val typeContext = getTypeCodeFragmentContext(descriptor.baseDeclaration)
             return when (descriptor.kind) {
-                KotlinMethodDescriptor.Kind.FUNCTION -> KotlinFunctionParameterTableModel(descriptor, typeContext, defaultValueContext)
-                KotlinMethodDescriptor.Kind.PRIMARY_CONSTRUCTOR -> KotlinPrimaryConstructorParameterTableModel(descriptor, typeContext, defaultValueContext)
-                KotlinMethodDescriptor.Kind.SECONDARY_CONSTRUCTOR -> KotlinSecondaryConstructorParameterTableModel(descriptor, typeContext, defaultValueContext)
+                Kind.FUNCTION -> KotlinFunctionParameterTableModel(descriptor, typeContext, defaultValueContext)
+                Kind.PRIMARY_CONSTRUCTOR -> KotlinPrimaryConstructorParameterTableModel(descriptor, typeContext, defaultValueContext)
+                Kind.SECONDARY_CONSTRUCTOR -> KotlinSecondaryConstructorParameterTableModel(descriptor, typeContext, defaultValueContext)
             }
         }
 
@@ -425,21 +433,25 @@ class KotlinChangeSignatureDialog(
         }
 
         private fun createReturnTypeCodeFragment(project: Project, method: KotlinMethodDescriptor) =
-                KtPsiFactory(project).createTypeCodeFragment(method.returnTypeInfo.render(), getTypeCodeFragmentContext(method.baseDeclaration))
+            KtPsiFactory(project).createTypeCodeFragment(method.returnTypeInfo.render(), getTypeCodeFragmentContext(method.baseDeclaration))
 
-        fun createRefactoringProcessorForSilentChangeSignature(project: Project,
-                                                                      commandName: String,
-                                                                      method: KotlinMethodDescriptor,
-                                                                      defaultValueContext: PsiElement): BaseRefactoringProcessor {
+        fun createRefactoringProcessorForSilentChangeSignature(
+            project: Project,
+            commandName: String,
+            method: KotlinMethodDescriptor,
+            defaultValueContext: PsiElement
+        ): BaseRefactoringProcessor {
             val parameterTableModel = createParametersInfoModel(method, defaultValueContext)
             parameterTableModel.setParameterInfos(method.parameters)
-            val changeInfo = evaluateChangeInfo(parameterTableModel,
-                                                createReturnTypeCodeFragment(project, method),
-                                                method,
-                                                method.visibility,
-                                                method.name,
-                                                defaultValueContext,
-                                                false)
+            val changeInfo = evaluateChangeInfo(
+                parameterTableModel,
+                createReturnTypeCodeFragment(project, method),
+                method,
+                method.visibility,
+                method.name,
+                defaultValueContext,
+                false
+            )
             return KotlinChangeSignatureProcessor(project, changeInfo, commandName)
         }
 
@@ -455,13 +467,15 @@ class KotlinChangeSignatureDialog(
             }
         }
 
-        private fun evaluateChangeInfo(parametersModel: KotlinCallableParameterTableModel,
-                                       returnTypeCodeFragment: PsiCodeFragment?,
-                                       methodDescriptor: KotlinMethodDescriptor,
-                                       visibility: Visibility?,
-                                       methodName: String,
-                                       defaultValueContext: PsiElement,
-                                       forPreview: Boolean): KotlinChangeInfo {
+        private fun evaluateChangeInfo(
+            parametersModel: KotlinCallableParameterTableModel,
+            returnTypeCodeFragment: PsiCodeFragment?,
+            methodDescriptor: KotlinMethodDescriptor,
+            visibility: Visibility?,
+            methodName: String,
+            defaultValueContext: PsiElement,
+            forPreview: Boolean
+        ): KotlinChangeInfo {
             val parameters = parametersModel.items.map { parameter ->
                 val parameterInfo = parameter.parameter
 
@@ -476,13 +490,15 @@ class KotlinChangeSignatureDialog(
                 parameterInfo
             }
 
-            return KotlinChangeInfo(methodDescriptor.original,
-                                    methodName,
-                                    returnTypeCodeFragment.getTypeInfo(true, forPreview),
-                                    visibility ?: Visibilities.DEFAULT_VISIBILITY,
-                                    parameters,
-                                    parametersModel.receiver,
-                                    defaultValueContext)
+            return KotlinChangeInfo(
+                methodDescriptor.original,
+                methodName,
+                returnTypeCodeFragment.getTypeInfo(true, forPreview),
+                visibility ?: Visibilities.DEFAULT_VISIBILITY,
+                parameters,
+                parametersModel.receiver,
+                defaultValueContext
+            )
         }
     }
 }

@@ -18,11 +18,11 @@ interface Template<in TOuter> {
  * A placeholder that is inserted inside [TOuter]
  */
 open class Placeholder<TOuter> {
-    private var contentStack = mutableListOf<(TOuter.(Placeholder<TOuter>.Exec) -> Unit)>()
+    private var contentStack = mutableListOf<(TOuter.(Exec) -> Unit)>()
 
     var meta: String = ""
 
-    operator fun invoke(meta: String = "", content: TOuter.(Placeholder<TOuter>.Exec) -> Unit) {
+    operator fun invoke(meta: String = "", content: TOuter.(Exec) -> Unit) {
         this.contentStack.add(content)
         this.meta = meta
     }
@@ -48,10 +48,10 @@ open class Placeholder<TOuter> {
 /**
  * Placeholder that can appear multiple times
  */
-open class PlaceholderList<TOuter, TInner>() {
+open class PlaceholderList<TOuter, TInner> {
     private var items = ArrayList<PlaceholderItem<TInner>>()
     operator fun invoke(meta: String = "", content: TInner.(Placeholder<TInner>.Exec) -> Unit = {}) {
-        val placeholder = PlaceholderItem<TInner>(items.size, items)
+        val placeholder = PlaceholderItem(items.size, items)
         placeholder(meta, content)
         items.add(placeholder)
     }
@@ -76,7 +76,7 @@ class PlaceholderItem<TOuter>(val index: Int, val collection: List<PlaceholderIt
 /**
  * Inserts every element of placeholder list
  */
-fun <TOuter, TInner> TOuter.each(items: PlaceholderList<TOuter, TInner>, itemTemplate: TOuter.(PlaceholderItem<TInner>) -> Unit): Unit {
+fun <TOuter, TInner> TOuter.each(items: PlaceholderList<TOuter, TInner>, itemTemplate: TOuter.(PlaceholderItem<TInner>) -> Unit) {
     items.apply(this, itemTemplate)
 }
 
@@ -101,10 +101,10 @@ open class TemplatePlaceholder<TTemplate> {
 
 fun <TTemplate : Template<TOuter>, TOuter> TOuter.insert(template: TTemplate, placeholder: TemplatePlaceholder<TTemplate>) {
     placeholder.apply(template)
-    with (template) { apply() }
+    with(template) { apply() }
 }
 
 fun <TOuter, TTemplate : Template<TOuter>> TOuter.insert(template: TTemplate, build: TTemplate.() -> Unit) {
     template.build()
-    with (template) { apply() }
+    with(template) { apply() }
 }
