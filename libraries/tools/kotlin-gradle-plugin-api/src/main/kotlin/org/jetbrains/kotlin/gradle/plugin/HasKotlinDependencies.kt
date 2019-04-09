@@ -43,6 +43,9 @@ interface KotlinDependencyHandler {
         project(listOf("path", "configuration").zip(listOfNotNull(path, configuration)).toMap())
 
     fun project(notation: Map<String, Any?>): ProjectDependency
+
+    fun npm(packageName: String, version: String = "*"): Dependency?
+    fun npm(org: String, packageName: String, version: String = "*"): Dependency?
 }
 
 interface HasKotlinDependencies {
