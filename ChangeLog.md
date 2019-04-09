@@ -88,6 +88,9 @@
 - [`KT-29884`](https://youtrack.jetbrains.com/issue/KT-29884) Report warning on @Synchronized on inline method
 - [`KT-30073`](https://youtrack.jetbrains.com/issue/KT-30073) ClassCastException on coroutine start with crossinline lambda
 - [`KT-30597`](https://youtrack.jetbrains.com/issue/KT-30597) "Extend selection" throws exception in empty class body case
+- [`KT-29492`](https://youtrack.jetbrains.com/issue/KT-29492) Double cross-inline of suspending functions produces incorrect code
+- [`KT-30508`](https://youtrack.jetbrains.com/issue/KT-30508) Wrong file name in metadata of suspend function capturing crossinline lambda
+- [`KT-30679`](https://youtrack.jetbrains.com/issue/KT-30679) "KotlinFrontEndException: Front-end Internal error: Failed to analyze declaration" exception during a compilation of a multiplatform project containing Kotlin Script File
 
 ### IDE
 
@@ -123,6 +126,7 @@
 - [`KT-30524`](https://youtrack.jetbrains.com/issue/KT-30524) "java.lang.IllegalStateException: This method shouldn't be invoked for LOCAL visibility" on add import
 - [`KT-30534`](https://youtrack.jetbrains.com/issue/KT-30534) KotlinUObjectLiteralExpression returns classReference whose referenceNameElement is null
 - [`KT-30546`](https://youtrack.jetbrains.com/issue/KT-30546) Kotlin UImportStatement's children references always resolve to null
+- [`KT-5435`](https://youtrack.jetbrains.com/issue/KT-5435) Surround with try/catch should generate more Kotlin-style code
 
 ### IDE. Android
 
@@ -133,6 +137,7 @@
 - [`KT-23295`](https://youtrack.jetbrains.com/issue/KT-23295) One-line comment indentation in functions with expression body 
 - [`KT-28905`](https://youtrack.jetbrains.com/issue/KT-28905) When is "... if long" hitting?
 - [`KT-29304`](https://youtrack.jetbrains.com/issue/KT-29304) Settings / Code Style / Kotlin mentions "methods" instead of functions
+- [`KT-26954`](https://youtrack.jetbrains.com/issue/KT-26954) Bad indentation for single function with expression body in new code style
 
 ### IDE. Completion
 
@@ -164,6 +169,8 @@
 - [`KT-29423`](https://youtrack.jetbrains.com/issue/KT-29423) Unable to evaluate lambdas on jdk 9-11
 - [`KT-30220`](https://youtrack.jetbrains.com/issue/KT-30220) Empty variables view when breakpoint inside an lambda inside class
 - [`KT-30318`](https://youtrack.jetbrains.com/issue/KT-30318) KotlinCoroutinesAsyncStackTraceProvider slows down java debugging
+- [`KT-17811`](https://youtrack.jetbrains.com/issue/KT-17811) Couldn't inline method error for inline method with anonymous object initialization and reified type parameter
+- [`KT-30611`](https://youtrack.jetbrains.com/issue/KT-30611) Debugger: in projects with stdlib of 1.2.n version Frames view can't complete loading, EvaluateException: "Method threw 'java.lang.ClassNotFoundException' exception." at EvaluateExceptionUtil.createEvaluateException()
 
 ### IDE. Decompiler
 
@@ -185,6 +192,8 @@
 - [`KT-29707`](https://youtrack.jetbrains.com/issue/KT-29707) "Navigate declaration" navigates to compiled class in gradle cache folder instead of classes defined in gradle buildSrc folder
 - [`KT-29832`](https://youtrack.jetbrains.com/issue/KT-29832) Multiple Script Definitions for settings.gradle.kts
 - [`KT-30623`](https://youtrack.jetbrains.com/issue/KT-30623) Errors in build.gradle.kts after applying new script dependencies
+- [`KT-29474`](https://youtrack.jetbrains.com/issue/KT-29474) Regression in 1.3.20: Kotlin IDE plugin parses all *.gradle.kts files when any class in buildSrc is opened
+- [`KT-30130`](https://youtrack.jetbrains.com/issue/KT-30130) “Access is allowed from event dispatch thread only.” from ScriptNewDependenciesNotificationKt.removeScriptDependenciesNotificationPanel() on creating foo.gradle.kts files in IJ from master
 
 ### IDE. Hints
 
@@ -283,6 +292,9 @@
 - [`KT-30426`](https://youtrack.jetbrains.com/issue/KT-30426) Don't preserve extra line when adding remaining branches for when
 - [`KT-30433`](https://youtrack.jetbrains.com/issue/KT-30433) "Convert member to extension" doesn't update external Kotlin calls
 - [`KT-30117`](https://youtrack.jetbrains.com/issue/KT-30117) Kotlin unused import analysis accesses file editor manager model outside UI thread
+- [`KT-29143`](https://youtrack.jetbrains.com/issue/KT-29143) Unnecessary primary `constructor` keyword inspection
+- [`KT-29444`](https://youtrack.jetbrains.com/issue/KT-29444) "Make public" intention does not remove additional white-space to conform to proper style
+- [`KT-30337`](https://youtrack.jetbrains.com/issue/KT-30337) Do not propose to move variable declaration into "when" if it's not used inside the when-expression
 
 ### IDE. Multiplatform
 
@@ -337,6 +349,7 @@
 - [`KT-30035`](https://youtrack.jetbrains.com/issue/KT-30035) add max/maxOf/min/minOf for unsigned types
 - [`KT-30051`](https://youtrack.jetbrains.com/issue/KT-30051) elementAt extension function of Array/PrimitiveAray/UnsignedArray does not throw IndexOutOfBoundException on incorrect index (JS only)
 - [`KT-30141`](https://youtrack.jetbrains.com/issue/KT-30141) JS: document Array.get behavior
+- [`KT-30704`](https://youtrack.jetbrains.com/issue/KT-30704) Documentation of Random function not quite correct
 
 ### Tools. CLI
 
