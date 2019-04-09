@@ -32,11 +32,15 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.frontend.di.createContainerForLazyBodyResolve
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
+import org.jetbrains.kotlin.idea.caches.project.implementingDescriptors
+import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.project.findCompilerServices
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
+import org.jetbrains.kotlin.resolve.jvm.multiplatform.JavaActualAnnotationArgumentExtractor
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import java.util.*
@@ -197,7 +201,8 @@ private object KotlinResolveDataProvider {
                 targetPlatform,
                 bodyResolveCache,
                 targetPlatform.findCompilerServices,
-                analyzableElement.languageVersionSettings
+                analyzableElement.languageVersionSettings,
+                if (moduleDescriptor.implementingDescriptors.isEmpty()) ExpectedActualDeclarationChecker(listOf(JavaActualAnnotationArgumentExtractor())) else null
             ).get<LazyTopDownAnalyzer>()
 
             lazyTopDownAnalyzer.analyzeDeclarations(TopDownAnalysisMode.TopLevelDeclarations, listOf(analyzableElement))

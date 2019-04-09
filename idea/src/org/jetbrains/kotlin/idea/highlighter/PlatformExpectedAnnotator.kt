@@ -21,6 +21,7 @@ import com.intellij.lang.annotation.Annotator
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.project.implementingDescriptors
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.core.toDescriptor
@@ -37,12 +38,14 @@ import org.jetbrains.kotlin.resolve.diagnostics.SimpleDiagnostics
 import org.jetbrains.kotlin.resolve.isCommon
 import org.jetbrains.kotlin.resolve.jvm.multiplatform.JavaActualAnnotationArgumentExtractor
 
+private fun ModuleDescriptor.isLeafModule(): Boolean = expectedByModules.isEmpty()
+
 class PlatformExpectedAnnotator : Annotator {
     override fun annotate(element: PsiElement, holder: AnnotationHolder) {
         val declaration = element as? KtNamedDeclaration ?: return
         if (!isExpectedDeclaration(declaration)) return
 
-        if (!TargetPlatformDetector.getPlatform(declaration.containingKtFile).isCommon()) return
+//        if (!TargetPlatformDetector.getPlatform(declaration.containingKtFile).isL()) return
 
         val implementingModules = declaration.findModuleDescriptor().implementingDescriptors
         if (implementingModules.isEmpty()) return

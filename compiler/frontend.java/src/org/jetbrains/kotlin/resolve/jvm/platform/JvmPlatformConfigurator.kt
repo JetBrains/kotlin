@@ -35,7 +35,6 @@ object JvmPlatformConfigurator : PlatformConfiguratorBase(
         TypeParameterBoundIsNotArrayChecker(),
         JvmSyntheticApplicabilityChecker(),
         StrictfpApplicabilityChecker(),
-        ExpectedActualDeclarationChecker(listOf(JavaActualAnnotationArgumentExtractor())),
         JvmAnnotationsTargetNonExistentAccessorChecker(),
         BadInheritedJavaSignaturesChecker,
         JvmMultifileClassStateChecker,

@@ -41,8 +41,7 @@ object JsPlatformConfigurator : PlatformConfiguratorBase(
                 JsNameChecker, JsModuleChecker, JsExternalFileChecker,
                 JsExternalChecker, JsInheritanceChecker, JsMultipleInheritanceChecker,
                 JsRuntimeAnnotationChecker,
-                JsDynamicDeclarationChecker,
-                ExpectedActualDeclarationChecker()
+                JsDynamicDeclarationChecker
         ),
         additionalCallCheckers = listOf(
                 JsModuleCallChecker,
