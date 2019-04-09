@@ -88,6 +88,8 @@ public fun <K, V> mutableMapOf(vararg pairs: Pair<K, V>): MutableMap<K, V> =
 
 /**
  * Returns an empty new [HashMap].
+ *
+ * @sample samples.collections.Maps.Instantiation.emptyHashMap
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
