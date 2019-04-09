@@ -16,9 +16,11 @@ int main(void) {
     T_(I) casted_impl2 = { .pinned = impl2.pinned };
     T_(Enum) enum1 = __ kotlin.root.Enum.HUNDRED.get();
     T_(Codeable) object1 = __ kotlin.root.get_an_object();
+    T_(Data) data = __ kotlin.root.getMutable();
 
     const char* string1 = __ kotlin.root.getString();
     const char* string2 = __ kotlin.root.Singleton.toString(singleton);
+    const char* string3 = __ kotlin.root.Data.get_string(data);
 
     __ kotlin.root.hello();
     __ kotlin.root.Base.foo(base);
@@ -40,6 +42,8 @@ int main(void) {
 
     printf("singleton = %s\n",  string2);
 
+    printf("mutable = %s\n",  string3);
+
     topLevelFunctionVoidFromC(42, 0);
     __ kotlin.root.topLevelFunctionVoid(42, 0);
     printf("topLevel = %d %d\n", topLevelFunctionFromC(780, 3), __ kotlin.root.topLevelFunctionFromCShort(5, 2));
@@ -49,6 +53,7 @@ int main(void) {
     __ DisposeStablePointer(singleton.pinned);
     __ DisposeString(string1);
     __ DisposeString(string2);
+    __ DisposeString(string3);
     __ DisposeStablePointer(base.pinned);
     __ DisposeStablePointer(child.pinned);
     __ DisposeStablePointer(impl1.pinned);

@@ -2065,7 +2065,7 @@ task extend_exception(type: RunKonanTest) {
 }
 
 task check_stacktrace_format(type: RunStandaloneKonanTest) {
-    disabled = !isAppleTarget(project)
+    disabled = true // !isAppleTarget(project)
     flags = ['-g']
     source = "runtime/exceptions/check_stacktrace_format.kt"
 }
@@ -3184,6 +3184,7 @@ task produce_dynamic(type: DynamicKonanTest) {
                 "enum100 = 100\n" +
                 "object = 42\n" +
                 "singleton = I am single\n" +
+                "mutable = foo\n" +
                 "topLevel = 777 3\n"
 }
 

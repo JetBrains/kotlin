@@ -13,7 +13,6 @@ data class Data(val s: String)
 fun localWeak(): WeakReference<Data>  {
     val x = Data("Hello")
     val weak = WeakReference(x)
-
     println(weak.get())
     return weak
 }
@@ -29,10 +28,14 @@ fun multiWeak(): Array<WeakReference<Data>>  {
 
 @Test fun runTest() {
     val weak = localWeak()
+    kotlin.native.internal.GC.collect()
     val value = weak.get()
     println(value?.toString())
 
     val weaks = multiWeak()
+
+    kotlin.native.internal.GC.collect()
+
     weaks.forEach {
         it -> if (it.get()?.s != null) throw Error("not null")
     }

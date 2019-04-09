@@ -850,11 +850,14 @@ internal class CAdapterGenerator(
         |
         |extern "C" {
         |void UpdateHeapRef(KObjHeader**, const KObjHeader*) RUNTIME_NOTHROW;
+        |void UpdateStackRef(KObjHeader**, const KObjHeader*) RUNTIME_NOTHROW;
         |KObjHeader* AllocInstance(const KTypeInfo*, KObjHeader**) RUNTIME_NOTHROW;
         |KObjHeader* DerefStablePointer(void*, KObjHeader**) RUNTIME_NOTHROW;
         |void* CreateStablePointer(KObjHeader*) RUNTIME_NOTHROW;
         |void DisposeStablePointer(void*) RUNTIME_NOTHROW;
         |int IsInstance(const KObjHeader*, const KTypeInfo*) RUNTIME_NOTHROW;
+        |void EnterFrame(KObjHeader** start, int parameters, int count) RUNTIME_NOTHROW;
+        |void LeaveFrame(KObjHeader** start, int parameters, int count) RUNTIME_NOTHROW;
         |void Kotlin_initRuntimeIfNeeded();
         |
         |KObjHeader* CreateStringFromCString(const char*, KObjHeader**);
@@ -862,19 +865,32 @@ internal class CAdapterGenerator(
         |void DisposeCString(char* cstring);
         |}  // extern "C"
         |
+        |struct ${prefix}_FrameOverlay {
+        |  void* arena;
+        |  ${prefix}_FrameOverlay* previous;
+        |  ${prefix}_KInt parameters;
+        |  ${prefix}_KInt count;
+        |};
+        |
         |class KObjHolder {
         |public:
-        |  KObjHolder() : obj_(nullptr) {}
+        |  KObjHolder() : obj_(nullptr) {
+        |    EnterFrame(frame(), 0, sizeof(*this)/sizeof(void*));
+        |  }
         |  explicit KObjHolder(const KObjHeader* obj) : obj_(nullptr) {
-        |    UpdateHeapRef(&obj_, obj);
+        |    EnterFrame(frame(), 0, sizeof(*this)/sizeof(void*));
+        |    UpdateStackRef(&obj_, obj);
         |  }
         |  ~KObjHolder() {
-        |    UpdateHeapRef(&obj_, nullptr);
+        |    LeaveFrame(frame(), 0, sizeof(*this)/sizeof(void*));
         |  }
         |  KObjHeader* obj() { return obj_; }
         |  KObjHeader** slot() { return &obj_; }
         | private:
+        |  ${prefix}_FrameOverlay frame_;
         |  KObjHeader* obj_;
+        |
+        |  KObjHeader** frame() { return reinterpret_cast<KObjHeader**>(&frame_); }
         |};
         |static void DisposeStablePointerImpl(${prefix}_KNativePtr ptr) {
         |  DisposeStablePointer(ptr);

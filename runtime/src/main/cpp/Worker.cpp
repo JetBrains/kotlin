@@ -61,18 +61,14 @@ enum {
 
 THREAD_LOCAL_VARIABLE KInt g_currentWorkerId = 0;
 
-KNativePtr transfer(KRef object, KInt mode) {
-  switch (mode) {
-    case CHECKED:
-    case UNCHECKED:
-      if (!ClearSubgraphReferences(object, mode == CHECKED)) {
-        // Release reference to the object, as it is not being managed by ObjHolder.
-        ZeroHeapRef(&object);
-        ThrowWorkerInvalidState();
-      }
-      return object;
+KNativePtr transfer(ObjHolder* holder, KInt mode) {
+  void* result = CreateStablePointer(holder->obj());
+  if (!ClearSubgraphReferences(holder->obj(), mode == CHECKED)) {
+    DisposeStablePointer(result);
+    ThrowWorkerInvalidState();
   }
-  return nullptr;
+  holder->clear();
+  return result;
 }
 
 class Locker {
@@ -373,34 +369,33 @@ void* workerRoutine(void* argument) {
   g_currentWorkerId = worker->id();
   Kotlin_initRuntimeIfNeeded();
 
-  while (true) {
-    Job job = worker->getJob();
-    if (job.function == nullptr) {
-       // Termination request, notify the future.
-      job.future->storeResultUnlocked(nullptr, true);
-      theState()->removeWorkerUnlocked(worker->id());
-      break;
-    }
+  {
     ObjHolder argumentHolder;
-    KRef argument = AdoptStablePointer(job.argument, argumentHolder.slot());
-    // Note that this is a bit hacky, as we must not auto-release resultRef,
-    // so we don't use ObjHolder.
-    // It is so, as ownership is transferred.
-    KRef resultRef = nullptr;
-    KNativePtr result = nullptr;
-    bool ok = true;
-    try {
-        job.function(argument, &resultRef);
+    ObjHolder resultHolder;
+    while (true) {
+      Job job = worker->getJob();
+      if (job.function == nullptr) {
+        // Termination request, notify the future.
+        job.future->storeResultUnlocked(nullptr, true);
+        theState()->removeWorkerUnlocked(worker->id());
+        break;
+      }
+      KRef argument = AdoptStablePointer(job.argument, argumentHolder.slot());
+      KNativePtr result = nullptr;
+      bool ok = true;
+      try {
+        job.function(argument, resultHolder.slot());
         argumentHolder.clear();
         // Transfer the result.
-        result = transfer(resultRef, job.transferMode);
-    } catch (ObjHolder& e) {
+        result = transfer(&resultHolder, job.transferMode);
+      } catch (ExceptionObjHolder& e) {
         ok = false;
         if (worker->errorReporting())
-            ReportUnhandledException(e.obj());
+          ReportUnhandledException(e.obj());
+      }
+      // Notify the future.
+      job.future->storeResultUnlocked(result, ok);
     }
-    // Notify the future.
-    job.future->storeResultUnlocked(result, ok);
   }
 
   Kotlin_deinitRuntimeIfNeeded();
@@ -424,11 +419,9 @@ KInt currentWorker() {
 
 KInt schedule(KInt id, KInt transferMode, KRef producer, KNativePtr jobFunction) {
   Job job;
-  // Note that this is a bit hacky, as we must not auto-release jobArgumentRef,
-  // so we don't use ObjHolder.
-  KRef jobArgumentRef = nullptr;
-  WorkerLaunchpad(producer, &jobArgumentRef);
-  KNativePtr jobArgument = transfer(jobArgumentRef, transferMode);
+  ObjHolder holder;
+  WorkerLaunchpad(producer, holder.slot());
+  KNativePtr jobArgument = transfer(&holder, transferMode);
   Future* future = theState()->addJobToWorkerUnlocked(id, jobFunction, jobArgument, false, transferMode);
   if (future == nullptr) ThrowWorkerInvalidState();
   return future->id();
@@ -462,12 +455,13 @@ OBJ_GETTER(attachObjectGraphInternal, KNativePtr stable) {
 }
 
 KNativePtr detachObjectGraphInternal(KInt transferMode, KRef producer) {
-   KRef ref = nullptr;
-   WorkerLaunchpad(producer, &ref);
-   if (ref != nullptr) {
-     return transfer(ref, transferMode);
-   } else
+   ObjHolder result;
+   WorkerLaunchpad(producer, result.slot());
+   if (result.obj() != nullptr) {
+     return transfer(&result, transferMode);
+   } else {
      return nullptr;
+   }
 }
 
 #else

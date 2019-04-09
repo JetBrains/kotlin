@@ -5,13 +5,18 @@
 
 package org.jetbrains.kotlin.backend.konan.llvm
 
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.*
+import org.jetbrains.kotlin.backend.konan.descriptors.getStringValueOrNull
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.name.FqName
 
-private val annotationName = FqName("kotlin.native.Retain")
+private val retainAnnotationName = FqName("kotlin.native.Retain")
+private val retainForTargetAnnotationName = FqName("kotlin.native.RetainForTarget")
 
-internal val FunctionDescriptor.retainAnnotation: Boolean
-    get() {
-        return (this.annotations.findAnnotation(annotationName) != null)
-    }
+
+internal fun FunctionDescriptor.retainAnnotation(target: KonanTarget): Boolean {
+    if (this.annotations.findAnnotation(retainAnnotationName) != null) return true
+    val forTarget = this.annotations.findAnnotation(retainForTargetAnnotationName)
+    if (forTarget != null && forTarget.getStringValueOrNull("target") == target.name) return true
+    return false
+}

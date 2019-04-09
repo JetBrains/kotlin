@@ -24,6 +24,7 @@
 #define RUNTIME_USED __attribute__((used))
 
 #define ALWAYS_INLINE __attribute__((always_inline))
+#define NO_INLINE __attribute__((noinline))
 
 #if KONAN_NO_THREADS
 #define THREAD_LOCAL_VARIABLE

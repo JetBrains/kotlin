@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.llvm.coverage.*
+import org.jetbrains.kotlin.backend.konan.llvm.objcexport.is64Bit
 import org.jetbrains.kotlin.backend.konan.optimizations.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.UnsignedType
@@ -681,7 +682,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         }
 
 
-        if (declaration.descriptor.retainAnnotation) {
+        if (declaration.descriptor.retainAnnotation(context.config.target)) {
             context.llvm.usedFunctions.add(codegen.llvmFunction(declaration))
         }
 
@@ -2190,7 +2191,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         val constructedClass = functionGenerationContext.constructedClass!!
         val thisPtr = currentCodeContext.genGetValue(constructedClass.thisReceiver!!)
 
-        if (constructor.constructedClass.isExternalObjCClass()) {
+        if (constructor.constructedClass.isExternalObjCClass() || constructor.constructedClass.isAny()) {
             assert(args.isEmpty())
             return codegen.theUnitInstanceRef.llvm
         }

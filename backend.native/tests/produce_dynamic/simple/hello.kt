@@ -14,6 +14,10 @@ fun hello() {
 
 fun getString() = "Kotlin/Native"
 
+data class Data(var string: String)
+
+fun getMutable() = Data("foo")
+
 // Class with inheritance.
 open class Base {
     open fun foo() = println("Base.foo")

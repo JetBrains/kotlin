@@ -208,7 +208,7 @@ OBJ_GETTER(Kotlin_AtomicReference_get, KRef thiz) {
     // rescheduled unluckily, between the moment value is read from the field and RC is incremented,
     // object may go away.
     AtomicReferenceLayout* ref = asAtomicReference(thiz);
-    RETURN_RESULT_OF(ReadRefLocked, &ref->value_, &ref->lock_);
+    RETURN_RESULT_OF(ReadHeapRefLocked, &ref->value_, &ref->lock_);
 }
 
 }  // extern "C"

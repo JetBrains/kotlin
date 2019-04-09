@@ -156,7 +156,9 @@ OBJ_GETTER0(GetCurrentStackTrace) {
 OBJ_GETTER(GetStackTraceStrings, KConstRef stackTrace) {
 #if OMIT_BACKTRACE
   ObjHeader* result = AllocArrayInstance(theArrayTypeInfo, 1, OBJ_RESULT);
-  CreateStringFromCString("<UNIMPLEMENTED>", ArrayAddressOfElementAt(result->array(), 0));
+  ObjHolder holder;
+  CreateStringFromCString("<UNIMPLEMENTED>", holder.slot());
+  UpdateHeapRef(ArrayAddressOfElementAt(result->array(), 0), holder.obj());
   return result;
 #else
   uint32_t size = stackTrace->array()->count_;
@@ -172,7 +174,9 @@ OBJ_GETTER(GetStackTraceStrings, KConstRef stackTrace) {
     }
     char line[512];
     konan::snprintf(line, sizeof(line) - 1, "%s (%p)", symbol, (void*)(intptr_t)address);
-    CreateStringFromCString(line, ArrayAddressOfElementAt(strings->array(), index));
+    ObjHolder holder;
+    CreateStringFromCString(line, holder.slot());
+    UpdateHeapRef(ArrayAddressOfElementAt(strings->array(), index), holder.obj());
   }
 #else
   if (size > 0) {
@@ -195,7 +199,9 @@ OBJ_GETTER(GetStackTraceStrings, KConstRef stackTrace) {
       } else {
         result = symbol;
       }
-      CreateStringFromCString(result, ArrayAddressOfElementAt(strings->array(), index));
+      ObjHolder holder;
+      CreateStringFromCString(result, holder.slot());
+      UpdateHeapRef(ArrayAddressOfElementAt(strings->array(), index), holder.obj());
     }
   }
 #endif
@@ -210,7 +216,7 @@ void ThrowException(KRef exception) {
   PrintThrowable(exception);
   RuntimeCheck(false, "Exceptions unsupported");
 #else
-  throw ObjHolder(exception);
+  throw ExceptionObjHolder(exception);
 #endif
 }
 
@@ -276,7 +282,7 @@ static void KonanTerminateHandler() {
   } else {
     try {
       std::rethrow_exception(currentException);
-    } catch (ObjHolder& e) {
+    } catch (ExceptionObjHolder& e) {
       TerminateWithUnhandledException(e.obj());
     } catch (...) {
       // Not a Kotlin exception.

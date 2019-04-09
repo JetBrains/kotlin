@@ -182,6 +182,8 @@ fun testWeakReference(block: () -> NSObject) {
         createAndTestWeakReference(block)
     }
 
+    kotlin.native.internal.GC.collect()
+
     assertNull(ref.get())
 }
 

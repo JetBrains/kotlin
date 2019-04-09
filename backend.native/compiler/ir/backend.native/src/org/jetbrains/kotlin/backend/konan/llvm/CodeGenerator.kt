@@ -996,7 +996,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
 
     private val kotlinExceptionRtti: ConstPointer
         get() = constPointer(importGlobal(
-                "_ZTI9ObjHolder", // typeinfo for ObjHolder
+                "_ZTI18ExceptionObjHolder", // typeinfo for ObjHolder
                 int8TypePtr,
                 origin = context.stdlibModule.llvmSymbolOrigin
         )).bitcast(int8TypePtr)

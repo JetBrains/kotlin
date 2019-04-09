@@ -29,8 +29,9 @@ OBJ_GETTER(setupArgs, int argc, const char** argv) {
   ObjHeader* result = AllocArrayInstance(theArrayTypeInfo, argc - 1, OBJ_RESULT);
   ArrayHeader* array = result->array();
   for (int index = 1; index < argc; index++) {
-    CreateStringFromCString(
-      argv[index], ArrayAddressOfElementAt(array, index - 1));
+    ObjHolder result;
+    CreateStringFromCString(argv[index], result.slot());
+    UpdateHeapRef(ArrayAddressOfElementAt(array, index - 1), result.obj());
   }
   return result;
 }
