@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,3 +17,7 @@ internal actual inline fun String.removeLeadingPlusOnJava6(): String = this
 internal actual inline fun testOnNonJvm6And7(f: () -> Unit) {
     f()
 }
+
+
+public actual fun testOnJvm(action: () -> Unit) { }
+public actual fun testOnJs(action: () -> Unit) = action()
