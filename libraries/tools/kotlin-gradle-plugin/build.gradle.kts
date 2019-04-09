@@ -46,6 +46,7 @@ dependencies {
     compileOnly(project(":kotlin-scripting-compiler-impl"))
 
     compile("com.google.code.gson:gson:${rootProject.extra["versions.jar.gson"]}")
+    compile("de.undercouch:gradle-download-task:3.4.3")
     
     compileOnly("com.android.tools.build:gradle:2.0.0")
     compileOnly("com.android.tools.build:gradle-core:2.0.0")

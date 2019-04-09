@@ -52,12 +52,12 @@ open class KotlinJsNodeModulesTask : DefaultTask() {
     }
 }
 
-private val File.isZip
+internal val File.isZip
     get() = isFile && (name.endsWith(".jar") || name.endsWith(".zip"))
 
 internal fun isKotlinJsRuntimeFile(file: File): Boolean {
     if (!file.isFile) return false
     val name = file.name
     return (name.endsWith(".js") && !name.endsWith(".meta.js"))
-        || name.endsWith(".js.map")
+            || name.endsWith(".js.map")
 }

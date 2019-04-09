@@ -11,30 +11,33 @@ import java.io.File
 import java.net.URI
 
 open class NodeJsSetupTask : DefaultTask() {
-    private val settings = NodeJsExtension[project]
-    private val env by lazy { settings.buildEnv() }
+    private val settings = project.nodeJs.root
+    private val env by lazy { settings.environment }
 
     init {
-        group = NodeJsExtension.NODE_JS
+        group = NodeJsRootExtension.NODE_JS
         description = "Download and install a local node/npm version."
     }
 
-    val input: Set<String>
-        @Input get() = setOf(settings.download.toString(), env.ivyDependency)
+    val ivyDependency: String
+        @Input get() = env.ivyDependency
 
     val destination: File
         @OutputDirectory get() = env.nodeDir
 
+    init {
+        onlyIf {
+            settings.download && !env.nodeBinDir.isDirectory
+        }
+    }
+
     @Suppress("unused")
     @TaskAction
     fun exec() {
-        if (!settings.download)
-            return
-
         @Suppress("UnstableApiUsage", "DEPRECATION")
         val repo = project.repositories.ivy { repo ->
-            repo.name = "Node Distributions at ${settings.distBaseUrl}"
-            repo.url = URI(settings.distBaseUrl)
+            repo.name = "Node Distributions at ${settings.nodeDownloadBaseUrl}"
+            repo.url = URI(settings.nodeDownloadBaseUrl)
 
             if (isGradleVersionAtLeast(5, 0)) {
                 repo.patternLayout { layout ->
@@ -52,7 +55,7 @@ open class NodeJsSetupTask : DefaultTask() {
             }
         }
 
-        val dep = this.project.dependencies.create(env.ivyDependency)
+        val dep = this.project.dependencies.create(ivyDependency)
         val conf = this.project.configurations.detachedConfiguration(dep)
         conf.isTransitive = false
         val result = conf.resolve().single()
@@ -63,7 +66,7 @@ open class NodeJsSetupTask : DefaultTask() {
         unpackNodeArchive(result, destination.parentFile) // parent because archive contains name already
 
         if (!env.isWindows) {
-            File(env.nodeExec).setExecutable(true)
+            File(env.nodeExecutable).setExecutable(true)
         }
     }
 
