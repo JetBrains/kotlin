@@ -152,7 +152,7 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
     }
 
     project(":prepare:idea-plugin").afterEvaluate {
-        val embedded by configurations
+        val ideaPluginProject = this
         val libraries by configurations
         val jpsPlugin by configurations
 
@@ -166,7 +166,7 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
                                     file("$buildDir/tmp/jar/MANIFEST.MF")
                                 }
 
-                                jarFromConfiguration(embedded)
+                                jarFromEmbedded(ideaPluginProject)
                             }
                         }
 
@@ -206,8 +206,10 @@ val jarArtifactProjects = listOf(
 
 fun moduleName(projectPath: String) = rootProject.name + projectPath.replace(':', '.') + ".main"
 
-fun RecursiveArtifact.jarFromConfiguration(configuration: Configuration) {
-    val resolvedArtifacts = configuration
+fun RecursiveArtifact.jarFromEmbedded(project: Project) {
+    val embedded = project.configurations.findByName("embedded") ?: return
+
+    val resolvedArtifacts = embedded
         .resolvedConfiguration
         .resolvedArtifacts
 
@@ -220,6 +222,7 @@ fun RecursiveArtifact.jarFromConfiguration(configuration: Configuration) {
         .filterIsInstance<ProjectComponentIdentifier>()
         .forEach {
             moduleOutput(moduleName(it.projectPath))
+            jarFromEmbedded(project(it.projectPath))
         }
 }
 
