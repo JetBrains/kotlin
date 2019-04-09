@@ -219,7 +219,7 @@ class KotlinAddImportAction internal constructor(
                         if (importAlias != null) {
                             importAlias.nameIdentifier?.copy()?.let { element.getIdentifier()?.replace(it) }
                             val resultDescriptor = element.resolveMainReferenceToDescriptors().firstOrNull()
-                            if (resultDescriptor == descriptor) {
+                            if (descriptor.importableFqName == resultDescriptor?.importableFqName) {
                                 return@forEach
                             }
                         }
