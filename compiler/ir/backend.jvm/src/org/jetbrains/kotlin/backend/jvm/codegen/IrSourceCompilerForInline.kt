@@ -147,7 +147,7 @@ class IrSourceCompilerForInline(
 
     override fun createCodegenForExternalFinallyBlockGenerationOnNonLocalReturn(finallyNode: MethodNode, curFinallyDepth: Int) =
         ExpressionCodegen(
-            codegen.irFunction, codegen.frame, InstructionAdapter(finallyNode), codegen.classCodegen, codegen.isInlineLambda
+            codegen.irFunction, codegen.frameMap, InstructionAdapter(finallyNode), codegen.classCodegen, codegen.isInlineLambda
         ).also {
             it.finallyDepth = curFinallyDepth
         }

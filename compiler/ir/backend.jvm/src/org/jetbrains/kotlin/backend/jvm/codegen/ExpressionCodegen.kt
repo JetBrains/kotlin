@@ -102,7 +102,7 @@ class VariableInfo(val declaration: IrVariable, val index: Int, val type: Type, 
 
 class ExpressionCodegen(
     val irFunction: IrFunction,
-    val frame: IrFrameMap,
+    override val frameMap: IrFrameMap,
     val mv: InstructionAdapter,
     val classCodegen: ClassCodegen,
     val isInlineLambda: Boolean = false
@@ -117,9 +117,6 @@ class ExpressionCodegen(
     private val state = classCodegen.state
 
     private val fileEntry = classCodegen.context.psiSourceManager.getFileEntry(irFunction.fileParent)
-
-    override val frameMap: IrFrameMap
-        get() = frame
 
     override val visitor: InstructionAdapter
         get() = mv
@@ -246,7 +243,7 @@ class ExpressionCodegen(
         }
 
         info.variables.reversed().forEach {
-            frame.leave(it.declaration.symbol)
+            frameMap.leave(it.declaration.symbol)
         }
     }
 
@@ -399,7 +396,7 @@ class ExpressionCodegen(
 
     override fun visitVariable(declaration: IrVariable, data: BlockInfo): PromisedValue {
         val varType = typeMapper.mapType(declaration.descriptor)
-        val index = frame.enter(declaration.symbol, varType)
+        val index = frameMap.enter(declaration.symbol, varType)
 
         declaration.markLineNumber(startOffset = true)
 
@@ -473,7 +470,7 @@ class ExpressionCodegen(
         }
 
     private fun findLocalIndex(irSymbol: IrSymbol): Int {
-        val index = frame.getIndex(irSymbol)
+        val index = frameMap.getIndex(irSymbol)
         if (index >= 0) {
             return index
         }
@@ -853,7 +850,7 @@ class ExpressionCodegen(
         var savedValue: Int? = null
         if (isExpression) {
             tryResult.coerce(tryAsmType).materialize()
-            savedValue = frame.enterTemp(tryAsmType)
+            savedValue = frameMap.enterTemp(tryAsmType)
             mv.store(savedValue, tryAsmType)
         } else {
             tryResult.discard()
@@ -873,7 +870,7 @@ class ExpressionCodegen(
             val clauseStart = markNewLabel()
             val descriptor = clause.parameter
             val descriptorType = descriptor.asmType
-            val index = frame.enter(clause.catchParameter, descriptorType)
+            val index = frameMap.enter(clause.catchParameter, descriptorType)
             mv.store(index, descriptorType)
 
             val catchBody = clause.result
@@ -886,7 +883,7 @@ class ExpressionCodegen(
                 catchResult.discard()
             }
 
-            frame.leave(clause.catchParameter)
+            frameMap.leave(clause.catchParameter)
 
             val clauseEnd = markNewLabel()
 
@@ -910,14 +907,14 @@ class ExpressionCodegen(
             val defaultCatchStart = markNewLabel()
             // While keeping this value on the stack should be enough, the bytecode validator will
             // complain if a catch block does not start with ASTORE.
-            val savedException = frame.enterTemp(AsmTypes.JAVA_THROWABLE_TYPE)
+            val savedException = frameMap.enterTemp(AsmTypes.JAVA_THROWABLE_TYPE)
             mv.store(savedException, AsmTypes.JAVA_THROWABLE_TYPE)
 
             val finallyStart = markNewLabel()
             val finallyGaps = tryInfo.gaps.toList()
             data.handleBlock { genFinallyBlock(tryInfo, null, null, data) }
             mv.load(savedException, AsmTypes.JAVA_THROWABLE_TYPE)
-            frame.leaveTemp(AsmTypes.JAVA_THROWABLE_TYPE)
+            frameMap.leaveTemp(AsmTypes.JAVA_THROWABLE_TYPE)
             mv.athrow()
 
             // Include the ASTORE into the covered region. This is used by the inliner to detect try-finally.
@@ -929,7 +926,7 @@ class ExpressionCodegen(
         // TODO: generate a common `finally` for try & catch blocks here? Right now this breaks the inliner.
         if (savedValue != null) {
             mv.load(savedValue, tryAsmType)
-            frame.leaveTemp(tryAsmType)
+            frameMap.leaveTemp(tryAsmType)
             return aTry.onStack
         }
         return voidValue
@@ -964,11 +961,11 @@ class ExpressionCodegen(
     fun generateFinallyBlocksIfNeeded(returnType: Type, afterReturnLabel: Label, data: BlockInfo) {
         if (data.hasFinallyBlocks()) {
             if (Type.VOID_TYPE != returnType) {
-                val returnValIndex = frame.enterTemp(returnType)
+                val returnValIndex = frameMap.enterTemp(returnType)
                 mv.store(returnValIndex, returnType)
                 unwindBlockStack(afterReturnLabel, data, null)
                 mv.load(returnValIndex, returnType)
-                frame.leaveTemp(returnType)
+                frameMap.leaveTemp(returnType)
             } else {
                 unwindBlockStack(afterReturnLabel, data, null)
             }
