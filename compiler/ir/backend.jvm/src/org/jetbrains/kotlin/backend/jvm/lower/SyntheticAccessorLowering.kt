@@ -29,7 +29,9 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
+import org.jetbrains.kotlin.ir.types.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -62,8 +64,18 @@ private class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElem
         if (expression.usesDefaultArguments()) {
             return super.visitFunctionAccess(expression)
         }
+        fun makeFunctionAccessorSymbolWithSuper(functionSymbol: IrFunctionSymbol): IrFunctionSymbol =
+            makeFunctionAccessorSymbol(functionSymbol, (expression as? IrCall)?.superQualifierSymbol)
         return super.visitExpression(
-            handleAccess(expression, expression.symbol, functionMap, ::makeFunctionAccessorSymbol, ::modifyFunctionAccessExpression)
+            handleAccess(
+                expression,
+                expression.symbol,
+                functionMap,
+                ::makeFunctionAccessorSymbolWithSuper,
+                ::modifyFunctionAccessExpression,
+                (expression as? IrCall)?.superQualifierSymbol,
+                (expression as? IrCall)?.dispatchReceiver?.type?.classifierOrNull as? IrClassSymbol
+            )
         )
     }
 
@@ -80,20 +92,23 @@ private class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElem
         symbol: FromSyT,
         accumMap: MutableMap<FromSyT, ToSyT>,
         symbolConverter: (FromSyT) -> ToSyT,
-        exprConverter: (ExprT, ToSyT) -> IrDeclarationReference
+        exprConverter: (ExprT, ToSyT) -> IrDeclarationReference,
+        superQualifierSymbol: IrClassSymbol? = null,
+        thisSymbol: IrClassSymbol? = null
     ): IrExpression =
-        if (!symbol.isAccessible()) {
+        if (!symbol.isAccessible(superQualifierSymbol != null, thisSymbol)) {
             val accessorSymbol = accumMap.getOrPut(symbol) { symbolConverter(symbol) }
             exprConverter(expression, accessorSymbol)
         } else {
             expression
         }
 
-    private fun makeFunctionAccessorSymbol(functionSymbol: IrFunctionSymbol): IrFunctionSymbol = when (functionSymbol) {
-        is IrConstructorSymbol -> functionSymbol.owner.makeConstructorAccessor().symbol
-        is IrSimpleFunctionSymbol -> functionSymbol.owner.makeSimpleFunctionAccessor().symbol
-        else -> error("Unknown subclass of IrFunctionSymbol")
-    }
+    private fun makeFunctionAccessorSymbol(functionSymbol: IrFunctionSymbol, superQualifierSymbol: IrClassSymbol?): IrFunctionSymbol =
+        when (functionSymbol) {
+            is IrConstructorSymbol -> functionSymbol.owner.makeConstructorAccessor().symbol
+            is IrSimpleFunctionSymbol -> functionSymbol.owner.makeSimpleFunctionAccessor(superQualifierSymbol).symbol
+            else -> error("Unknown subclass of IrFunctionSymbol")
+        }
 
     private fun IrConstructor.makeConstructorAccessor(): IrConstructor {
         val source = this
@@ -132,7 +147,7 @@ private class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElem
             copyAllParamsToArgs(it, accessor)
         }
 
-    private fun IrSimpleFunction.makeSimpleFunctionAccessor(): IrSimpleFunction {
+    private fun IrSimpleFunction.makeSimpleFunctionAccessor(superQualifierSymbol: IrClassSymbol?): IrSimpleFunction {
         val source = this
         return buildFun {
             origin = JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
@@ -140,26 +155,41 @@ private class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElem
             visibility = Visibilities.PUBLIC
             isSuspend = source.isSuspend
         }.also { accessor ->
-            accessor.parent = source.parent
+            accessor.parent = if ((source.parent as? IrClass)?.isInterface == true) {
+                // Accessors for interfaces are only for private methods. They should always be placed in DefaultImpls. The only exception
+                // is private methods annotated with @JvmDefault; Only in such cases JVM default method is generated.
+                // TODO: Handle the exception after targeting Java 8 or newer, where JVM default methods are available.
+                context.declarationFactory.getDefaultImplsClass(source.parent as IrClass)
+            } else {
+                source.parent
+            }
             pendingTransformations.add { (accessor.parent as IrDeclarationContainer).declarations.add(accessor) }
 
             accessor.copyTypeParametersFrom(source, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR)
-            accessor.copyValueParametersToStatic(source, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR)
+            // When a method is defined in class C1 but called on C1's subclass C2, source.dispatchReceiverParameter.type can be resolved
+            // to C1, while the method symbol still bound to C2, which expects a receiver of type C2. Therefore, we need to specify
+            // dispatchReceiver's type using super qualifier's type explicitly.
+            accessor.copyValueParametersToStatic(
+                source,
+                JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR,
+                superQualifierSymbol?.owner?.defaultType ?: source.dispatchReceiverParameter?.type
+            )
             accessor.returnType = source.returnType.remapTypeParameters(source, accessor)
 
             accessor.body = IrExpressionBodyImpl(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                createSimpleFunctionCall(accessor, source.symbol)
+                createSimpleFunctionCall(accessor, source.symbol, superQualifierSymbol)
             )
         }
     }
 
-    private fun createSimpleFunctionCall(accessor: IrFunction, targetSymbol: IrFunctionSymbol) =
+    private fun createSimpleFunctionCall(accessor: IrFunction, targetSymbol: IrFunctionSymbol, superQualifierSymbol: IrClassSymbol?) =
         IrCallImpl(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET,
             accessor.returnType,
             targetSymbol, targetSymbol.descriptor,
-            targetSymbol.owner.typeParameters.size
+            targetSymbol.owner.typeParameters.size,
+            superQualifierSymbol = superQualifierSymbol
         ).also {
             copyAllParamsToArgs(it, accessor)
         }
@@ -253,8 +283,7 @@ private class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElem
                 oldExpression.type,
                 accessorSymbol, accessorSymbol.descriptor,
                 oldExpression.typeArgumentsCount,
-                oldExpression.origin,
-                oldExpression.superQualifierSymbol
+                oldExpression.origin
             )
             is IrDelegatingConstructorCall -> IrDelegatingConstructorCallImpl(
                 oldExpression.startOffset, oldExpression.endOffset,
@@ -377,7 +406,7 @@ private class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElem
         return Name.identifier("access\$prop\$$setterName")
     }
 
-    private fun IrSymbol.isAccessible(): Boolean {
+    private fun IrSymbol.isAccessible(withSuper: Boolean, thisObjReference: IrClassSymbol?): Boolean {
         /// We assume that IR code that reaches us has been checked for correctness at the frontend.
         /// This function needs to single out those cases where Java accessibility rules differ from Kotlin's.
 
@@ -390,7 +419,7 @@ private class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElem
         if (declaration is IrFunction && declaration.isInline) return true
 
         // The only two visibilities where Kotlin rules differ from JVM rules.
-        if (!Visibilities.isPrivate(declaration.visibility) && declaration.visibility != Visibilities.PROTECTED) return true
+        if (!withSuper && !Visibilities.isPrivate(declaration.visibility) && declaration.visibility != Visibilities.PROTECTED) return true
 
         // If local variables are accessible by Kotlin rules, they also are by Java rules.
         val symbolDeclarationContainer = (declaration.parent as? IrDeclarationContainer) as? IrElement ?: return true
@@ -407,6 +436,12 @@ private class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElem
             (declaration.visibility == Visibilities.PROTECTED && !samePackage &&
                     !(symbolDeclarationContainer is IrClass && contextDeclarationContainer is IrClass &&
                             contextDeclarationContainer.isSubclassOf(symbolDeclarationContainer))) -> false
+            // Invoking with super qualifier is implemented by invokespecial, which requires
+            // 1. `this` to be assign compatible with current class.
+            // 2. the method is a member of a superclass of current class.
+            (withSuper && contextDeclarationContainer is IrClass && symbolDeclarationContainer is IrClass &&
+                    ((thisObjReference != null && !contextDeclarationContainer.symbol.isSubtypeOfClass(thisObjReference)) ||
+                            !(contextDeclarationContainer.isSubclassOf(symbolDeclarationContainer)))) -> false
             else -> true
         }
     }
