@@ -2,28 +2,46 @@ package org.jetbrains.kotlin.gradle.targets.js.nodejs
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExtension.Companion.NODE_JS
+import org.gradle.api.plugins.BasePlugin
+import org.gradle.api.tasks.Delete
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension.Companion.NODE_JS
 
 open class NodeJsPlugin : Plugin<Project> {
     override fun apply(project: Project): Unit = project.run {
-        this.extensions.create(NODE_JS, NodeJsExtension::class.java, this)
+        check(project == project.rootProject) {
+            "NodeJsPlugin can be applied only to root project"
+        }
+
+        this.extensions.create(NODE_JS, NodeJsRootExtension::class.java, this)
         tasks.create(NodeJsSetupTask.NAME, NodeJsSetupTask::class.java)
+
+        setupCleanNodeModulesTask(project)
+
+        allprojects {
+            if (it != project) {
+                it.extensions.create(NODE_JS, NodeJsExtension::class.java, this)
+            }
+        }
+    }
+
+    private fun setupCleanNodeModulesTask(project: Project) {
+        project.tasks.create("cleanNodeModules", Delete::class.java) {
+            it.description = "Deletes node_modules and package.json file"
+            it.group = BasePlugin.BUILD_GROUP
+
+            it.doLast {
+                project.nodeJs.root.packageManager.cleanProject(project)
+            }
+
+            project.tasks.maybeCreate(BasePlugin.CLEAN_TASK_NAME).dependsOn(it)
+        }
     }
 
     companion object {
-        fun ensureAppliedInHierarchy(myProject: Project): Project =
-                findInHeirarchy(myProject) ?: myProject.also {
-                    it.pluginManager.apply(NodeJsPlugin::class.java)
-                }
-
-        fun findInHeirarchy(myProject: Project): Project? {
-            var project: Project? = myProject
-            while (project != null) {
-                if (myProject.plugins.hasPlugin(NodeJsPlugin::class.java)) return project
-                project = project.parent
-            }
-
-            return null
+        fun apply(project: Project): NodeJsRootExtension {
+            val rootProject = project.rootProject
+            rootProject.plugins.apply(NodeJsPlugin::class.java)
+            return rootProject.extensions.getByName(NODE_JS) as NodeJsRootExtension
         }
     }
 }

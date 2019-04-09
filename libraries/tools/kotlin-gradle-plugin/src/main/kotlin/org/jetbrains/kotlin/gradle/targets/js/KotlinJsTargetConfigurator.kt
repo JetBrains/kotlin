@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.gradle.targets.js
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 
 class KotlinJsTargetConfigurator(kotlinPluginVersion: String) :
@@ -23,9 +25,22 @@ class KotlinJsTargetConfigurator(kotlinPluginVersion: String) :
 
         platformTarget.compilations.all {
             it.compileKotlinTask.kotlinOptions {
-                moduleKind = "umd"
+                moduleKind = "commonjs"
                 sourceMap = true
                 sourceMapEmbedSources = null
+            }
+        }
+    }
+
+    override fun configureTest(target: KotlinOnlyTarget<KotlinJsCompilation>) {
+        val project = target.project
+        val npmProject = NpmProject[project]
+
+        target.compilations.all { compilation ->
+            if (isTestCompilation(compilation)) {
+                KotlinJsCompilationTestsConfigurator(compilation).configure()
+            } else {
+                KotlinWebpack.configure(compilation)
             }
         }
     }
