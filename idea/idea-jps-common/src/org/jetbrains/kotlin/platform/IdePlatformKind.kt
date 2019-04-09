@@ -4,6 +4,7 @@
  */
 
 @file:JvmName("IdePlatformKindUtil")
+
 package org.jetbrains.kotlin.platform
 
 import org.jetbrains.kotlin.extensions.ApplicationExtensionDescriptor
@@ -13,6 +14,10 @@ import org.jetbrains.kotlin.platform.impl.CommonIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.JsIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.NativeIdePlatformKind
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.js.JsPlatform
+import org.jetbrains.kotlin.platform.jvm.JvmPlatform
+import org.jetbrains.kotlin.platform.konan.KonanPlatform
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 abstract class IdePlatformKind<Kind : IdePlatformKind<Kind>> {
@@ -64,12 +69,6 @@ abstract class IdePlatformKind<Kind : IdePlatformKind<Kind>> {
 
         val All_PLATFORMS by lazy { ALL_KINDS.flatMap { it.platforms } }
 
-        val IDE_PLATFORMS_BY_COMPILER_PLATFORMS by lazy {
-            ALL_KINDS.flatMap { idePlatformKind ->
-                idePlatformKind.platforms.map { compilerPlatform -> compilerPlatform to idePlatformKind }
-            }.toMap()
-        }
-
         fun <Args : CommonCompilerArguments> platformByCompilerArguments(arguments: Args): TargetPlatform? =
             ALL_KINDS.firstNotNullResult { it.platformByCompilerArguments(arguments) }
 
@@ -77,4 +76,10 @@ abstract class IdePlatformKind<Kind : IdePlatformKind<Kind>> {
 }
 
 val TargetPlatform.idePlatformKind: IdePlatformKind<*>
-        get() = IdePlatformKind.IDE_PLATFORMS_BY_COMPILER_PLATFORMS[this] ?: error("Unknown platform $this")
+    get() = when (val single = singleOrNull()) {
+        null -> CommonIdePlatformKind
+        is JvmPlatform -> JvmIdePlatformKind
+        is JsPlatform -> JsIdePlatformKind
+        is KonanPlatform -> NativeIdePlatformKind
+        else -> error("Unknown platform $single")
+    }
