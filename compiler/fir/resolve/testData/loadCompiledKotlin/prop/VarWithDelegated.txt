@@ -1,5 +1,5 @@
 public final class A : R|kotlin/Any| {
-    public constructor()
+    public constructor(): R|test/A|
 
 }
 
@@ -8,6 +8,6 @@ public final class A : R|kotlin/Any| {
 
     public final operator fun setValue(t: R|T|, p: R|kotlin/reflect/KProperty<*>|, i: R|kotlin/Int|): R|kotlin/Unit|
 
-    public constructor()
+    public constructor(): R|test/MyProperty<T>|
 
 }

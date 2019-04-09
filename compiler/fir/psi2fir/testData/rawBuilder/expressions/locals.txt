@@ -1,7 +1,9 @@
 FILE: locals.kt
     public? final? fun withLocals(p: Int): Int {
         local final? class Local : kotlin/Any {
-            public? constructor(pp: Int): super<kotlin/Any>()
+            public? constructor(pp: Int): R|Local| {
+                super<kotlin/Any>()
+            }
 
             public? final? val pp: Int = R|<local>/pp|
                 public? get(): Int
@@ -18,7 +20,9 @@ FILE: locals.kt
         }
 
         lval code: <implicit> = object : Any {
-            private constructor(): super<Any>()
+            private constructor(): <no name provided> {
+                super<Any>()
+            }
 
             public? final? fun foo(): <implicit> {
                 ^foo hashCode#()

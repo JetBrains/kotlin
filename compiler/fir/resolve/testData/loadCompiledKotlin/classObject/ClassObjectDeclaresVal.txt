@@ -1,8 +1,8 @@
 public final class ClassObjectDeclaresProperty : R|kotlin/Any| {
-    public constructor()
+    public constructor(): R|test/ClassObjectDeclaresProperty|
 
     public final companion object Companion : R|kotlin/Any| {
-        private constructor()
+        private constructor(): R|test/ClassObjectDeclaresProperty.Companion|
 
     }
 

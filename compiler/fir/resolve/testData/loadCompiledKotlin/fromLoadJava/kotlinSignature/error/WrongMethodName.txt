@@ -1,6 +1,6 @@
 public open class WrongMethodName : R|kotlin/Any| {
     public open fun foo(): R|kotlin/String|?
 
-    public constructor()
+    public constructor(): R|test/WrongMethodName|
 
 }

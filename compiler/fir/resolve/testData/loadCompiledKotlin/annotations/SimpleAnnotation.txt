@@ -1,4 +1,4 @@
 public final annotation class SimpleAnnotation : R|kotlin/Annotation| {
-    public constructor()
+    public constructor(): R|test/SimpleAnnotation|
 
 }

@@ -1,9 +1,9 @@
 public open class Base : R|kotlin/Any| {
-    public constructor()
+    public constructor(): R|test/Base|
 
 }
 
 public final class Child : R|test/Base| {
-    public constructor(prot: R|kotlin/Int|, int: R|kotlin/Int|, pub: R|kotlin/Int|)
+    public constructor(prot: R|kotlin/Int|, int: R|kotlin/Int|, pub: R|kotlin/Int|): R|test/Child|
 
 }

@@ -1,6 +1,8 @@
 FILE: simpleImport.kt
     public final class YourClass : R|b/MyClass| {
-        public constructor(): super<R|b/MyClass|>()
+        public constructor(): R|a/YourClass| {
+            super<R|b/MyClass|>()
+        }
 
     }
     public final fun bar(): R|kotlin/Unit| {

@@ -1,12 +1,12 @@
 public final class A : R|test/T| {
     public open fun foo(): R|kotlin/Int|
 
-    public constructor()
+    public constructor(): R|test/A|
 
     public final companion object Companion : R|test/T| {
         public open fun foo(): R|kotlin/Int|
 
-        private constructor()
+        private constructor(): R|test/A.Companion|
 
     }
 

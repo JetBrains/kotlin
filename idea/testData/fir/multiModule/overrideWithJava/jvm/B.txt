@@ -1,6 +1,8 @@
 FILE: B.kt
     public final class B : R|A| {
-        public constructor(): super<R|A|>()
+        public constructor(): R|B| {
+            super<R|A|>()
+        }
 
         public final override fun foo(): R|B| {
             ^foo this#

@@ -13,7 +13,9 @@ FILE: super.kt
 
     }
     public? final? class C : A, B {
-        public? constructor(): super<kotlin/Any>()
+        public? constructor(): R|C| {
+            super<kotlin/Any>()
+        }
 
         public? open? override fun bar(): kotlin/Unit {
             super<<implicit>>.bar#()

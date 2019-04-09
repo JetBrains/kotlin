@@ -1,4 +1,4 @@
 public open class NotNullField : R|kotlin/Any| {
-    public constructor()
+    public constructor(): R|test/NotNullField|
 
 }

@@ -1,6 +1,6 @@
 public final fun function(): R|kotlin/Unit|
 
 public final annotation class Anno : R|kotlin/Annotation| {
-    public constructor()
+    public constructor(): R|test/Anno|
 
 }

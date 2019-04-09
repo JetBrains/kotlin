@@ -1,6 +1,6 @@
 public final class ClassFunGetFoo : R|kotlin/Any| {
     public final fun getFoo(): R|kotlin/Int|
 
-    public constructor()
+    public constructor(): R|test/ClassFunGetFoo|
 
 }

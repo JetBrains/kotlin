@@ -1,5 +1,5 @@
 public open class Subclass : R|test/Trait| {
-    public constructor()
+    public constructor(): R|test/Subclass|
 
 }
 

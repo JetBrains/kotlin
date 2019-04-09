@@ -1,5 +1,5 @@
 <A> public final class ClassParamReferencesSelf : R|kotlin/Any| {
-    public constructor()
+    public constructor(): R|test/ClassParamReferencesSelf<A>|
 
 }
 

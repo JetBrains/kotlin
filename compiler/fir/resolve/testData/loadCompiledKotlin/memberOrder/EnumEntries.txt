@@ -1,4 +1,4 @@
 public final enum class E : R|kotlin/Enum<test/E>| {
-    private constructor()
+    private constructor(): R|test/E|
 
 }

@@ -1,8 +1,8 @@
 public final class A : R|kotlin/Any| {
-    public constructor()
+    public constructor(): R|test/A|
 
     public final class TestConstructor : R|kotlin/Any| {
-        public constructor(p: R|kotlin/Int|)
+        public constructor(p: R|kotlin/Int|): R|test/A.TestConstructor|
 
     }
 

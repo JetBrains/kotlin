@@ -1,6 +1,8 @@
 FILE: access.kt
     public final class Foo : R|kotlin/Any| {
-        public constructor(): super<R|kotlin/Any|>()
+        public constructor(): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
 
         public final val x: R|kotlin/Int| = Int(1)
             public get(): R|kotlin/Int|
@@ -15,7 +17,9 @@ FILE: access.kt
 
     }
     public final class Bar : R|kotlin/Any| {
-        public constructor(): super<R|kotlin/Any|>()
+        public constructor(): R|Bar| {
+            super<R|kotlin/Any|>()
+        }
 
         public final val x: R|kotlin/String| = String()
             public get(): R|kotlin/String|

@@ -1,10 +1,10 @@
 public final class Test : R|kotlin/Any| {
-    public constructor()
+    public constructor(): R|test/Test|
 
     public final companion object Companion : R|kotlin/Any| {
         public final fun incProp4(): R|kotlin/Unit|
 
-        private constructor()
+        private constructor(): R|test/Test.Companion|
 
     }
 

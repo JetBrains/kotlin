@@ -5,7 +5,9 @@ FILE: genericFunctions.kt
         ^safeAs (this# as? R|T|)
     }
     public abstract class Summator : R|kotlin/Any| {
-        public constructor(): super<R|kotlin/Any|>()
+        public constructor(): R|Summator| {
+            super<R|kotlin/Any|>()
+        }
 
         <T> public abstract fun plus(first: R|T|, second: R|T|): R|T|
 

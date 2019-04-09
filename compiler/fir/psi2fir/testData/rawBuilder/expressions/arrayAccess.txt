@@ -5,7 +5,9 @@ FILE: arrayAccess.kt
         ^foo Int(1)
     }
     public? final? class Wrapper : kotlin/Any {
-        public? constructor(v: IntArray): super<kotlin/Any>()
+        public? constructor(v: IntArray): R|Wrapper| {
+            super<kotlin/Any>()
+        }
 
         public? final? val v: IntArray = R|<local>/v|
             public? get(): IntArray

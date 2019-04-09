@@ -1,6 +1,8 @@
 FILE: these.kt
     public? final? class Some : kotlin/Any {
-        public? constructor(): super<kotlin/Any>()
+        public? constructor(): R|Some| {
+            super<kotlin/Any>()
+        }
 
         public? final? fun foo(): Int {
             ^foo Int(1)

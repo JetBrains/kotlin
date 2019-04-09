@@ -1,4 +1,4 @@
 public final class ClassWithConstVal : R|kotlin/Any| {
-    public constructor()
+    public constructor(): R|test/ClassWithConstVal|
 
 }

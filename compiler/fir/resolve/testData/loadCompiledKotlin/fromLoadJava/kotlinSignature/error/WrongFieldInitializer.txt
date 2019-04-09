@@ -1,4 +1,4 @@
 public open class WrongFieldInitializer : R|kotlin/Any| {
-    public constructor()
+    public constructor(): R|test/WrongFieldInitializer|
 
 }

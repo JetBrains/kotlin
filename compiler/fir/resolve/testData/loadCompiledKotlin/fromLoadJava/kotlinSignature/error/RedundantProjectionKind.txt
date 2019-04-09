@@ -1,6 +1,6 @@
 public open class RedundantProjectionKind : R|kotlin/Any| {
     public open fun foo(list: R|kotlin/collections/List<kotlin/Number>|): R|kotlin/Unit|
 
-    public constructor()
+    public constructor(): R|test/RedundantProjectionKind|
 
 }

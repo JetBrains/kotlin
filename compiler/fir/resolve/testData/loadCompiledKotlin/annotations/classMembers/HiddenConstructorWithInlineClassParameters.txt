@@ -1,24 +1,24 @@
 public final annotation class Ann : R|kotlin/Annotation| {
-    public constructor()
+    public constructor(): R|test/Ann|
 
 }
 
 public sealed class Sealed : R|kotlin/Any| {
-    private constructor(z: R|test/Z|)
+    private constructor(z: R|test/Z|): R|test/Sealed|
 
     public final class Derived : R|test/Sealed| {
-        public constructor(z: R|test/Z|)
+        public constructor(z: R|test/Z|): R|test/Sealed.Derived|
 
     }
 
 }
 
 public final class Test : R|kotlin/Any| {
-    public constructor(z: R|test/Z|, a: R|kotlin/Int|)
+    public constructor(z: R|test/Z|, a: R|kotlin/Int|): R|test/Test|
 
-    private constructor(z: R|test/Z|, s: R|kotlin/String|)
+    private constructor(z: R|test/Z|, s: R|kotlin/String|): R|test/Test|
 
-    public constructor(z: R|test/Z|)
+    public constructor(z: R|test/Z|): R|test/Test|
 
 }
 
@@ -29,6 +29,6 @@ public final inline class Z : R|kotlin/Any| {
 
     public open fun toString(): R|kotlin/String|
 
-    public constructor(x: R|kotlin/Int|)
+    public constructor(x: R|kotlin/Int|): R|test/Z|
 
 }

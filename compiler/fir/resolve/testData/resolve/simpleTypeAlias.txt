@@ -3,6 +3,8 @@ FILE: simpleTypeAlias.kt
     }
     public final typealias C = R|B|
     public final class D : R|C| {
-        public constructor(): super<R|kotlin/Any|>()
+        public constructor(): R|D| {
+            super<R|kotlin/Any|>()
+        }
 
     }

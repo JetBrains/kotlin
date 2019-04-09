@@ -1,7 +1,7 @@
 public final class B : R|test/X|, R|test/Y| {
     public open fun foo(): R|kotlin/Unit|
 
-    public constructor(a: R|test/X|)
+    public constructor(a: R|test/X|): R|test/B|
 
 }
 

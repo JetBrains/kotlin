@@ -1,6 +1,6 @@
 public open class NotNullParameter : R|kotlin/Any| {
     public open fun hi(p0: R|kotlin/String|): R|kotlin/Unit|
 
-    public constructor()
+    public constructor(): R|test/NotNullParameter|
 
 }

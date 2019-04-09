@@ -1,12 +1,16 @@
 FILE: common.kt
     public final expect class MyList : R|kotlin/Any| {
-        public constructor(): super<R|kotlin/Any|>()
+        public constructor(): R|MyList| {
+            super<R|kotlin/Any|>()
+        }
 
         public final fun get(i: R|kotlin/Int|): R|kotlin/Int|
 
     }
     public open class Wrapper : R|kotlin/Any| {
-        public constructor(list: R|MyList|): super<R|kotlin/Any|>()
+        public constructor(list: R|MyList|): R|Wrapper| {
+            super<R|kotlin/Any|>()
+        }
 
         public final val list: R|MyList| = R|<local>/list|
             public get(): R|MyList|

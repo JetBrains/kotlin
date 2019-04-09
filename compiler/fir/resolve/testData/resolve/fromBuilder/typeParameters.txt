@@ -8,11 +8,15 @@ FILE: typeParameters.kt
     public final typealias StringList = R|List<out kotlin/String>|
     public final typealias AnyList = R|List<*>|
     <out T : R|kotlin/Any|> public abstract class AbstractList : R|List<T>| {
-        public constructor(): super<R|kotlin/Any|>()
+        public constructor<out T : R|kotlin/Any|>(): R|AbstractList<T>| {
+            super<R|kotlin/Any|>()
+        }
 
     }
     public final class SomeList : R|AbstractList<kotlin/Int>| {
-        public constructor(): super<R|AbstractList<kotlin/Int>|>()
+        public constructor(): R|SomeList| {
+            super<R|AbstractList<kotlin/Int>|>()
+        }
 
         public final override fun get(index: R|kotlin/Int|): R|kotlin/Int| {
             ^get Int(42)

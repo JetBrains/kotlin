@@ -7,7 +7,9 @@ FILE: simpleClass.kt
 
     }
     public? final? class SomeClass : SomeInterface {
-        public? constructor(): super<kotlin/Any>()
+        public? constructor(): R|SomeClass| {
+            super<kotlin/Any>()
+        }
 
         private final? val baz: <implicit> = Int(42)
             private get(): <implicit>
@@ -29,6 +31,8 @@ FILE: simpleClass.kt
 
     }
     public? final? inline class InlineClass : kotlin/Any {
-        public? constructor(): super<kotlin/Any>()
+        public? constructor(): R|InlineClass| {
+            super<kotlin/Any>()
+        }
 
     }

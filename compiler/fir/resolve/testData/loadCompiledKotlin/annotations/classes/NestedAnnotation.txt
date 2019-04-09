@@ -1,8 +1,8 @@
 public final class A : R|kotlin/Any| {
-    public constructor()
+    public constructor(): R|test/A|
 
     public final annotation class Anno : R|kotlin/Annotation| {
-        public constructor()
+        public constructor(): R|test/A.Anno|
 
     }
 
@@ -11,6 +11,6 @@ public final class A : R|kotlin/Any| {
 public final class B : R|kotlin/Any| {
     public final fun f(): R|kotlin/Unit|
 
-    public constructor()
+    public constructor(): R|test/B|
 
 }

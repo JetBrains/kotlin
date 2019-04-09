@@ -1,5 +1,5 @@
 public final class InheritMethodsDifferentReturnTypes : R|kotlin/Any| {
-    public constructor()
+    public constructor(): R|test/InheritMethodsDifferentReturnTypes|
 
     public abstract interface Sub : R|test/InheritMethodsDifferentReturnTypes.Super1|, R|test/InheritMethodsDifferentReturnTypes.Super2| {
     }

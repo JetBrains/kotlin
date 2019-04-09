@@ -1,11 +1,11 @@
 public final annotation class A : R|kotlin/Annotation| {
-    public constructor(x: R|kotlin/String|, y: R|kotlin/Double|)
+    public constructor(x: R|kotlin/String|, y: R|kotlin/Double|): R|test/A|
 
 }
 
 public final class SimpleTypeParameterAnnotation : R|kotlin/Any| {
     <T> public final fun foo(x: R|T|): R|kotlin/Unit|
 
-    public constructor()
+    public constructor(): R|test/SimpleTypeParameterAnnotation|
 
 }

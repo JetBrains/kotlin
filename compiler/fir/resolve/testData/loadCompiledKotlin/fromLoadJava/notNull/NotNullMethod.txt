@@ -1,6 +1,6 @@
 public open class NotNullMethod : R|kotlin/Any| {
     public open fun hi(): R|kotlin/String|
 
-    public constructor()
+    public constructor(): R|test/NotNullMethod|
 
 }

@@ -1,9 +1,9 @@
 public final annotation class Anno : R|kotlin/Annotation| {
-    public constructor(bytes: R|kotlin/ByteArray|, shorts: R|kotlin/ShortArray|, ints: R|kotlin/IntArray|, longs: R|kotlin/LongArray|, chars: R|kotlin/CharArray|, floats: R|kotlin/FloatArray|, doubles: R|kotlin/DoubleArray|, booleans: R|kotlin/BooleanArray|)
+    public constructor(bytes: R|kotlin/ByteArray|, shorts: R|kotlin/ShortArray|, ints: R|kotlin/IntArray|, longs: R|kotlin/LongArray|, chars: R|kotlin/CharArray|, floats: R|kotlin/FloatArray|, doubles: R|kotlin/DoubleArray|, booleans: R|kotlin/BooleanArray|): R|test/Anno|
 
 }
 
 public final class Klass : R|kotlin/Any| {
-    public constructor()
+    public constructor(): R|test/Klass|
 
 }

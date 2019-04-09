@@ -9,7 +9,9 @@ FILE: calls.kt
         ^testRegular distance#(Int(3), Int(4))
     }
     public? final? class My : kotlin/Any {
-        public? constructor(x: Int): super<kotlin/Any>()
+        public? constructor(x: Int): R|My| {
+            super<kotlin/Any>()
+        }
 
         public? final? var x: Int = R|<local>/x|
             public? get(): Int

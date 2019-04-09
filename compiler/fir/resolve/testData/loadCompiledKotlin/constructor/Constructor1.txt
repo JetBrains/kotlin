@@ -1,4 +1,4 @@
 public final class ClassWithConstructor1 : R|kotlin/Any| {
-    public constructor(p: R|kotlin/Int|)
+    public constructor(p: R|kotlin/Int|): R|test/ClassWithConstructor1|
 
 }

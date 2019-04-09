@@ -1,4 +1,4 @@
 public final class FieldAsVar : R|kotlin/Any| {
-    public constructor()
+    public constructor(): R|test/FieldAsVar|
 
 }

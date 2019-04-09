@@ -9,12 +9,12 @@ public open class CharProgression : R|kotlin/collections/Iterable<kotlin/Char>| 
 
     public open fun toString(): R|kotlin/String|
 
-    internal constructor(start: R|kotlin/Char|, endInclusive: R|kotlin/Char|, step: R|kotlin/Int|)
+    internal constructor(start: R|kotlin/Char|, endInclusive: R|kotlin/Char|, step: R|kotlin/Int|): R|kotlin/ranges/CharProgression|
 
     public final companion object Companion : R|kotlin/Any| {
         public final fun fromClosedRange(rangeStart: R|kotlin/Char|, rangeEnd: R|kotlin/Char|, step: R|kotlin/Int|): R|kotlin/ranges/CharProgression|
 
-        private constructor()
+        private constructor(): R|kotlin/ranges/CharProgression.Companion|
 
     }
 
@@ -25,7 +25,7 @@ internal final class CharProgressionIterator : R|kotlin/collections/CharIterator
 
     public open fun nextChar(): R|kotlin/Char|
 
-    public constructor(first: R|kotlin/Char|, last: R|kotlin/Char|, step: R|kotlin/Int|)
+    public constructor(first: R|kotlin/Char|, last: R|kotlin/Char|, step: R|kotlin/Int|): R|kotlin/ranges/CharProgressionIterator|
 
 }
 
@@ -40,10 +40,10 @@ public final class CharRange : R|kotlin/ranges/CharProgression|, R|kotlin/ranges
 
     public open fun toString(): R|kotlin/String|
 
-    public constructor(start: R|kotlin/Char|, endInclusive: R|kotlin/Char|)
+    public constructor(start: R|kotlin/Char|, endInclusive: R|kotlin/Char|): R|kotlin/ranges/CharRange|
 
     public final companion object Companion : R|kotlin/Any| {
-        private constructor()
+        private constructor(): R|kotlin/ranges/CharRange.Companion|
 
     }
 
@@ -67,12 +67,12 @@ public open class IntProgression : R|kotlin/collections/Iterable<kotlin/Int>| {
 
     public open fun toString(): R|kotlin/String|
 
-    internal constructor(start: R|kotlin/Int|, endInclusive: R|kotlin/Int|, step: R|kotlin/Int|)
+    internal constructor(start: R|kotlin/Int|, endInclusive: R|kotlin/Int|, step: R|kotlin/Int|): R|kotlin/ranges/IntProgression|
 
     public final companion object Companion : R|kotlin/Any| {
         public final fun fromClosedRange(rangeStart: R|kotlin/Int|, rangeEnd: R|kotlin/Int|, step: R|kotlin/Int|): R|kotlin/ranges/IntProgression|
 
-        private constructor()
+        private constructor(): R|kotlin/ranges/IntProgression.Companion|
 
     }
 
@@ -83,7 +83,7 @@ internal final class IntProgressionIterator : R|kotlin/collections/IntIterator| 
 
     public open fun nextInt(): R|kotlin/Int|
 
-    public constructor(first: R|kotlin/Int|, last: R|kotlin/Int|, step: R|kotlin/Int|)
+    public constructor(first: R|kotlin/Int|, last: R|kotlin/Int|, step: R|kotlin/Int|): R|kotlin/ranges/IntProgressionIterator|
 
 }
 
@@ -98,10 +98,10 @@ public final class IntRange : R|kotlin/ranges/IntProgression|, R|kotlin/ranges/C
 
     public open fun toString(): R|kotlin/String|
 
-    public constructor(start: R|kotlin/Int|, endInclusive: R|kotlin/Int|)
+    public constructor(start: R|kotlin/Int|, endInclusive: R|kotlin/Int|): R|kotlin/ranges/IntRange|
 
     public final companion object Companion : R|kotlin/Any| {
-        private constructor()
+        private constructor(): R|kotlin/ranges/IntRange.Companion|
 
     }
 
@@ -118,12 +118,12 @@ public open class LongProgression : R|kotlin/collections/Iterable<kotlin/Long>| 
 
     public open fun toString(): R|kotlin/String|
 
-    internal constructor(start: R|kotlin/Long|, endInclusive: R|kotlin/Long|, step: R|kotlin/Long|)
+    internal constructor(start: R|kotlin/Long|, endInclusive: R|kotlin/Long|, step: R|kotlin/Long|): R|kotlin/ranges/LongProgression|
 
     public final companion object Companion : R|kotlin/Any| {
         public final fun fromClosedRange(rangeStart: R|kotlin/Long|, rangeEnd: R|kotlin/Long|, step: R|kotlin/Long|): R|kotlin/ranges/LongProgression|
 
-        private constructor()
+        private constructor(): R|kotlin/ranges/LongProgression.Companion|
 
     }
 
@@ -134,7 +134,7 @@ internal final class LongProgressionIterator : R|kotlin/collections/LongIterator
 
     public open fun nextLong(): R|kotlin/Long|
 
-    public constructor(first: R|kotlin/Long|, last: R|kotlin/Long|, step: R|kotlin/Long|)
+    public constructor(first: R|kotlin/Long|, last: R|kotlin/Long|, step: R|kotlin/Long|): R|kotlin/ranges/LongProgressionIterator|
 
 }
 
@@ -149,12 +149,11 @@ public final class LongRange : R|kotlin/ranges/LongProgression|, R|kotlin/ranges
 
     public open fun toString(): R|kotlin/String|
 
-    public constructor(start: R|kotlin/Long|, endInclusive: R|kotlin/Long|)
+    public constructor(start: R|kotlin/Long|, endInclusive: R|kotlin/Long|): R|kotlin/ranges/LongRange|
 
     public final companion object Companion : R|kotlin/Any| {
-        private constructor()
+        private constructor(): R|kotlin/ranges/LongRange.Companion|
 
     }
 
 }
-

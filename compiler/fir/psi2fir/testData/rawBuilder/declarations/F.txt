@@ -1,9 +1,13 @@
 FILE: F.kt
     public? open class A : kotlin/Any {
-        public? constructor(): super<kotlin/Any>()
+        public? constructor(): R|A| {
+            super<kotlin/Any>()
+        }
 
     }
     public? final? class B : A {
-        public? constructor(): super<kotlin/Any>()
+        public? constructor(): R|B| {
+            super<kotlin/Any>()
+        }
 
     }

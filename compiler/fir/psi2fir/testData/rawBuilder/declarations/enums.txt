@@ -1,25 +1,35 @@
 FILE: enums.kt
     public? final? enum class Order : kotlin/Enum {
-        private constructor(): super<kotlin/Enum>()
+        private constructor(): R|Order| {
+            super<kotlin/Enum>()
+        }
 
         public? final enum entry FIRST : kotlin/Any {
-            public? constructor(): super<kotlin/Any>()
+            public? constructor(): R|Order.FIRST| {
+                super<kotlin/Any>()
+            }
 
         }
 
         public? final enum entry SECOND : kotlin/Any {
-            public? constructor(): super<kotlin/Any>()
+            public? constructor(): R|Order.SECOND| {
+                super<kotlin/Any>()
+            }
 
         }
 
         public? final enum entry THIRD : kotlin/Any {
-            public? constructor(): super<kotlin/Any>()
+            public? constructor(): R|Order.THIRD| {
+                super<kotlin/Any>()
+            }
 
         }
 
     }
     public? final? enum class Planet : kotlin/Enum {
-        public? constructor(m: Double, r: Double): super<kotlin/Enum>()
+        public? constructor(m: Double, r: Double): R|Planet| {
+            super<kotlin/Enum>()
+        }
 
         public? final? val m: Double = R|<local>/m|
             public? get(): Double
@@ -28,7 +38,9 @@ FILE: enums.kt
             internal get(): Double
 
         public? final enum entry MERCURY : Planet {
-            public? constructor(): super<Planet>(Double(1.0), Double(2.0))
+            public? constructor(): R|Planet.MERCURY| {
+                super<Planet>(Double(1.0), Double(2.0))
+            }
 
             public? open? override fun sayHello(): kotlin/Unit {
                 println#(String(Hello!!!))
@@ -37,7 +49,9 @@ FILE: enums.kt
         }
 
         public? final enum entry VENERA : Planet {
-            public? constructor(): super<Planet>(Double(3.0), Double(4.0))
+            public? constructor(): R|Planet.VENERA| {
+                super<Planet>(Double(3.0), Double(4.0))
+            }
 
             public? open? override fun sayHello(): kotlin/Unit {
                 println#(String(Ola!!!))
@@ -46,7 +60,9 @@ FILE: enums.kt
         }
 
         public? final enum entry EARTH : Planet {
-            public? constructor(): super<Planet>(Double(5.0), Double(6.0))
+            public? constructor(): R|Planet.EARTH| {
+                super<Planet>(Double(5.0), Double(6.0))
+            }
 
             public? open? override fun sayHello(): kotlin/Unit {
                 println#(String(Privet!!!))
@@ -60,7 +76,9 @@ FILE: enums.kt
         public? abstract fun sayHello(): kotlin/Unit
 
         public? final? companion object Companion : kotlin/Any {
-            private constructor(): super<kotlin/Any>()
+            private constructor(): R|Planet.Companion| {
+                super<kotlin/Any>()
+            }
 
             public? final? const val G: <implicit> = Double(6.67E-11)
                 public? get(): <implicit>

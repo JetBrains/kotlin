@@ -1,13 +1,17 @@
 FILE: base.kt
     public final class Hello : R|kotlin/Any| {
-        public constructor(msg: R|kotlin/String|): super<R|kotlin/Any|>()
+        public constructor(msg: R|kotlin/String|): R|hello/Hello| {
+            super<R|kotlin/Any|>()
+        }
 
         public final val msg: R|kotlin/String| = R|<local>/msg|
             public get(): R|kotlin/String|
 
     }
     public final class Test : R|kotlin/Any| {
-        public constructor(set: R|java/util/Set<*>|): super<R|kotlin/Any|>()
+        public constructor(set: R|java/util/Set<*>|): R|hello/Test| {
+            super<R|kotlin/Any|>()
+        }
 
         public final val set: R|java/util/Set<*>| = R|<local>/set|
             public get(): R|java/util/Set<*>|

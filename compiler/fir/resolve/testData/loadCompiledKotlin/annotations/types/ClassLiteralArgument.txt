@@ -7,31 +7,31 @@ public final class A : R|kotlin/Any| {
 
     public final fun simple(s: R|kotlin/String|): R|kotlin/Unit|
 
-    public constructor()
+    public constructor(): R|test/A|
 
 }
 
 public final annotation class Ann : R|kotlin/Annotation| {
-    public constructor(klass: R|kotlin/reflect/KClass<*>|)
+    public constructor(klass: R|kotlin/reflect/KClass<*>|): R|test/Ann|
 
 }
 
 <T> public final class Generic : R|kotlin/Any| {
-    public constructor()
+    public constructor(): R|test/Generic<T>|
 
 }
 
 <A, B> public final class InnerGeneric : R|kotlin/Any| {
-    public constructor()
+    public constructor(): R|test/InnerGeneric<A, B>|
 
     <C, D> public final inner class Inner : R|kotlin/Any| {
-        public constructor()
+        public constructor(): R|test/InnerGeneric.Inner<C, D>|
 
     }
 
 }
 
 public final class Simple : R|kotlin/Any| {
-    public constructor()
+    public constructor(): R|test/Simple|
 
 }

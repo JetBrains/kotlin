@@ -4,7 +4,9 @@ FILE: dispatchReceiver.kt
 
     }
     public final class My : R|kotlin/Any| {
-        public constructor(): super<R|kotlin/Any|>()
+        public constructor(): R|My| {
+            super<R|kotlin/Any|>()
+        }
 
         public final lateinit var delegate: R|Base|
             public get(): R|Base|

@@ -1,19 +1,19 @@
 public final class Class : R|kotlin/Any| {
-    public constructor()
+    public constructor(): R|test/Class|
 
 }
 
 public final annotation class DoubleAnno : R|kotlin/Annotation| {
-    public constructor()
+    public constructor(): R|test/DoubleAnno|
 
 }
 
 public final annotation class IntAnno : R|kotlin/Annotation| {
-    public constructor()
+    public constructor(): R|test/IntAnno|
 
 }
 
 public final annotation class StringAnno : R|kotlin/Annotation| {
-    public constructor()
+    public constructor(): R|test/StringAnno|
 
 }

@@ -1,4 +1,4 @@
 public abstract class ClassDoesNotOverrideMethod : R|java/util/Date| {
-    public constructor()
+    public constructor(): R|test/ClassDoesNotOverrideMethod|
 
 }

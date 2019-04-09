@@ -104,12 +104,13 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
             convert()
 
         private fun KtDeclaration.toFirDeclaration(
-            delegatedSuperType: FirTypeRef?, delegatedSelfType: FirTypeRef, hasPrimaryConstructor: Boolean
+            delegatedSuperType: FirTypeRef?, delegatedSelfType: FirTypeRef, owner: KtClassOrObject, hasPrimaryConstructor: Boolean
         ): FirDeclaration {
             return when (this) {
                 is KtSecondaryConstructor -> toFirConstructor(
                     delegatedSuperType,
                     delegatedSelfType,
+                    owner,
                     hasPrimaryConstructor
                 )
                 else -> convert<FirDeclaration>()
@@ -402,6 +403,7 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
                 firDelegatedCall
             )
             this?.extractAnnotationsTo(firConstructor)
+            owner.extractTypeParametersTo(firConstructor)
             this?.extractValueParametersTo(firConstructor)
             return firConstructor
         }
@@ -464,7 +466,7 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
                 val delegatedSuperType = enumEntry.extractSuperTypeListEntriesTo(firEnumEntry, delegatedSelfType)
                 for (declaration in enumEntry.declarations) {
                     firEnumEntry.declarations += declaration.toFirDeclaration(
-                        delegatedSuperType, delegatedSelfType, hasPrimaryConstructor = true
+                        delegatedSuperType, delegatedSelfType, enumEntry, hasPrimaryConstructor = true
                     )
                 }
                 firEnumEntry
@@ -537,7 +539,7 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
 
                 for (declaration in classOrObject.declarations) {
                     firClass.declarations += declaration.toFirDeclaration(
-                        delegatedSuperType, delegatedSelfType, hasPrimaryConstructor = primaryConstructor != null
+                        delegatedSuperType, delegatedSelfType, classOrObject, hasPrimaryConstructor = primaryConstructor != null
                     )
                 }
 
@@ -554,7 +556,8 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
 
                 for (declaration in objectDeclaration.declarations) {
                     declarations += declaration.toFirDeclaration(
-                        delegatedSuperType = null, delegatedSelfType = delegatedSelfType, hasPrimaryConstructor = false
+                        delegatedSuperType = null, delegatedSelfType = delegatedSelfType,
+                        owner = objectDeclaration, hasPrimaryConstructor = false
                     )
                 }
             }
@@ -687,6 +690,7 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
         private fun KtSecondaryConstructor.toFirConstructor(
             delegatedSuperTypeRef: FirTypeRef?,
             delegatedSelfTypeRef: FirTypeRef,
+            owner: KtClassOrObject,
             hasPrimaryConstructor: Boolean
         ): FirConstructor {
             val firConstructor = FirConstructorImpl(
@@ -701,6 +705,7 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
             )
             firFunctions += firConstructor
             extractAnnotationsTo(firConstructor)
+            owner.extractTypeParametersTo(firConstructor)
             extractValueParametersTo(firConstructor)
             firConstructor.body = buildFirBody()
             firFunctions.removeLast()

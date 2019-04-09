@@ -5,7 +5,9 @@ FILE: farInvokeExtension.kt
         ^invoke this@Foo
     }
     public final class Foo : R|kotlin/Any| {
-        public constructor(): super<R|kotlin/Any|>()
+        public constructor(): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
 
         public final val x: R|kotlin/Int| = Int(0)
             public get(): R|kotlin/Int|

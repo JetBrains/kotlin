@@ -1,6 +1,8 @@
 FILE: lambda.kt
     public? final? data class Tuple : kotlin/Any {
-        public? constructor(x: Int, y: Int): super<kotlin/Any>()
+        public? constructor(x: Int, y: Int): R|Tuple| {
+            super<kotlin/Any>()
+        }
 
         public? final? val x: Int = R|<local>/x|
             public? get(): Int

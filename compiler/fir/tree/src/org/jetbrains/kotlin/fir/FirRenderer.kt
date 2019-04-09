@@ -196,12 +196,19 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         }
     }
 
+    private fun List<FirTypeParameter>.renderTypeParameters() {
+        if (isNotEmpty()) {
+            print("<")
+            renderSeparated()
+            print(">")
+        }
+    }
+
     override fun visitMemberDeclaration(memberDeclaration: FirMemberDeclaration) {
         memberDeclaration.annotations.renderAnnotations()
+        memberDeclaration.typeParameters.renderTypeParameters()
         if (memberDeclaration.typeParameters.isNotEmpty()) {
-            print("<")
-            memberDeclaration.typeParameters.renderSeparated()
-            print("> ")
+            print(" ")
         }
         print(memberDeclaration.visibility.asString() + " " + memberDeclaration.modalityAsString() + " ")
         if (memberDeclaration.isExpect) {
@@ -354,7 +361,7 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
 
     override fun visitNamedFunction(namedFunction: FirNamedFunction) {
         visitCallableDeclaration(namedFunction)
-        namedFunction.body?.accept(this)
+        namedFunction.body?.renderBody()
         if (namedFunction.body == null) {
             println()
         }
@@ -363,12 +370,23 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
     override fun visitConstructor(constructor: FirConstructor) {
         constructor.annotations.renderAnnotations()
         print(constructor.visibility.asString() + " constructor")
+        constructor.typeParameters.renderTypeParameters()
         constructor.valueParameters.renderParameters()
-        constructor.delegatedConstructor?.accept(this)
-        constructor.body?.accept(this)
-        if (constructor.body == null) {
-            println()
+        print(": ")
+        constructor.returnTypeRef.accept(this)
+        val body = constructor.body
+        val delegatedConstructor = constructor.delegatedConstructor
+        if (body == null) {
+            if (delegatedConstructor != null) {
+                renderInBraces {
+                    delegatedConstructor.accept(this)
+                    println()
+                }
+            } else {
+                println()
+            }
         }
+        body?.renderBody(listOfNotNull(delegatedConstructor))
     }
 
     override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor) {
@@ -378,7 +396,7 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         propertyAccessor.valueParameters.renderParameters()
         print(": ")
         propertyAccessor.returnTypeRef.accept(this)
-        propertyAccessor.body?.accept(this)
+        propertyAccessor.body?.renderBody()
     }
 
     override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction) {
@@ -397,7 +415,7 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         anonymousFunction.valueParameters.renderParameters()
         print(": ")
         anonymousFunction.returnTypeRef.accept(this)
-        anonymousFunction.body?.accept(this)
+        anonymousFunction.body?.renderBody()
     }
 
     override fun visitFunction(function: FirFunction) {
@@ -407,21 +425,25 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
 
     override fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer) {
         print("init")
-        anonymousInitializer.body?.accept(this)
+        anonymousInitializer.body?.renderBody()
     }
 
     override fun visitDeclarationWithBody(declarationWithBody: FirDeclarationWithBody) {
         visitDeclaration(declarationWithBody)
-        declarationWithBody.body?.accept(this)
+        declarationWithBody.body?.renderBody()
     }
 
-    override fun visitBlock(block: FirBlock) {
+    private fun FirBlock.renderBody(additionalStatements: List<FirStatement> = emptyList()) {
         renderInBraces {
-            for (statement in block.statements) {
-                statement.accept(this)
+            for (statement in additionalStatements + statements) {
+                statement.accept(this@FirRenderer)
                 println()
             }
         }
+    }
+
+    override fun visitBlock(block: FirBlock) {
+        block.renderBody()
     }
 
     override fun visitTypeAlias(typeAlias: FirTypeAlias) {
@@ -639,9 +661,9 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
 
     override fun visitDelegatedConstructorCall(delegatedConstructorCall: FirDelegatedConstructorCall) {
         if (delegatedConstructorCall.isSuper) {
-            print(": super<")
+            print("super<")
         } else if (delegatedConstructorCall.isThis) {
-            print(": this<")
+            print("this<")
         }
         delegatedConstructorCall.constructedTypeRef.accept(this)
         print(">")

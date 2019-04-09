@@ -1,4 +1,4 @@
 <P> public final class ClassWithTypePRefSelf : R|kotlin/Any| {
-    public constructor()
+    public constructor(): R|test/ClassWithTypePRefSelf<P>|
 
 }

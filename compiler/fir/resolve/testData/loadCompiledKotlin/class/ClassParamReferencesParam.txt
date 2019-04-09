@@ -1,4 +1,4 @@
 <A, B> public final class ClassParamReferencesParam : R|kotlin/Any| {
-    public constructor()
+    public constructor(): R|test/ClassParamReferencesParam<A, B>|
 
 }

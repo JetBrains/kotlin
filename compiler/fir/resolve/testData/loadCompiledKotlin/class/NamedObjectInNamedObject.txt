@@ -1,10 +1,10 @@
 public final object Outer : R|kotlin/Any| {
-    private constructor()
+    private constructor(): R|test/Outer|
 
     public final object Obj : R|kotlin/Any| {
         public final fun f(): R|kotlin/String|
 
-        private constructor()
+        private constructor(): R|test/Outer.Obj|
 
     }
 

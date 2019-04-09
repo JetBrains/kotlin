@@ -1,4 +1,4 @@
 public open class ExplicitFieldGettersAndSetters : R|kotlin/Any| {
-    public constructor()
+    public constructor(): R|test/ExplicitFieldGettersAndSetters|
 
 }

@@ -1,11 +1,11 @@
 public final annotation class Anno : R|kotlin/Annotation| {
-    public constructor()
+    public constructor(): R|test/Anno|
 
 }
 
 public final class Class : R|kotlin/Any| {
     public final fun R|kotlin/String|.foo(x: R|kotlin/Int|): R|kotlin/Int|
 
-    public constructor()
+    public constructor(): R|test/Class|
 
 }

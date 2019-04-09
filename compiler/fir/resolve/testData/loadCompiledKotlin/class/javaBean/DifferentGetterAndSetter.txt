@@ -3,6 +3,6 @@ public open class DifferentGetterAndSetter : R|kotlin/Any| {
 
     public open fun setSomething(p0: R|kotlin/String|?): R|kotlin/Unit|
 
-    public constructor()
+    public constructor(): R|test/DifferentGetterAndSetter|
 
 }

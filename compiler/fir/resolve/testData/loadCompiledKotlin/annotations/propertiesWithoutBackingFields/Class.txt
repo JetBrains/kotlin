@@ -1,9 +1,9 @@
 public final annotation class Anno : R|kotlin/Annotation| {
-    public constructor()
+    public constructor(): R|test/Anno|
 
 }
 
 public final class Class : R|kotlin/Any| {
-    public constructor()
+    public constructor(): R|test/Class|
 
 }

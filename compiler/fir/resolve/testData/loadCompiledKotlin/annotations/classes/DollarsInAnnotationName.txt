@@ -1,19 +1,19 @@
 public final annotation class $$$$$$ : R|kotlin/Annotation| {
-    public constructor()
+    public constructor(): R|test/$$$$$$|
 
 }
 
 public final class A : R|kotlin/Any| {
-    public constructor()
+    public constructor(): R|test/A|
 
 }
 
 public final annotation class Anno$tation : R|kotlin/Annotation| {
-    public constructor()
+    public constructor(): R|test/Anno$tation|
 
 }
 
 public final class Cla$s : R|kotlin/Any| {
-    public constructor()
+    public constructor(): R|test/Cla$s|
 
 }

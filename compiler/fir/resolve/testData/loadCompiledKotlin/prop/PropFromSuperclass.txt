@@ -1,9 +1,9 @@
 public open class BaseClass : R|kotlin/Any| {
-    public constructor()
+    public constructor(): R|test/BaseClass|
 
 }
 
 public final class Subclass : R|test/BaseClass| {
-    public constructor()
+    public constructor(): R|test/Subclass|
 
 }

@@ -1,8 +1,8 @@
 public open class InnerClass : R|kotlin/Any| {
-    public constructor()
+    public constructor(): R|test/InnerClass|
 
     public open inner class Inner : R|kotlin/Any| {
-        public constructor()
+        public constructor(): R|test/InnerClass.Inner|
 
     }
 

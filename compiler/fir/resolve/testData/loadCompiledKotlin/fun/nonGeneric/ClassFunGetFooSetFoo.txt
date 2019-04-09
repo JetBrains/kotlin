@@ -3,6 +3,6 @@ public final class ClassFunGetFoo : R|kotlin/Any| {
 
     public final fun setFoo(p: R|kotlin/Int|): R|kotlin/Unit|
 
-    public constructor()
+    public constructor(): R|test/ClassFunGetFoo|
 
 }

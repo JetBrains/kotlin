@@ -1,6 +1,8 @@
 FILE: jvm.kt
     public final class User : R|AnnotatedDerived| {
-        public constructor(): super<R|AnnotatedDerived|>()
+        public constructor(): R|User| {
+            super<R|AnnotatedDerived|>()
+        }
 
         public final fun test(): R|kotlin/Unit| {
             lval x: R|kotlin/String| = R|/AnnotatedDerived.foo|(String(123))

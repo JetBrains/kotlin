@@ -1,6 +1,6 @@
 public abstract interface TheTrait : R|kotlin/Any| {
     public final companion object Companion : R|kotlin/Any| {
-        private constructor()
+        private constructor(): R|test/TheTrait.Companion|
 
     }
 

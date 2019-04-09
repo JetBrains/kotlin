@@ -1,4 +1,4 @@
 public open class WrongFieldName : R|kotlin/Any| {
-    public constructor()
+    public constructor(): R|test/WrongFieldName|
 
 }
