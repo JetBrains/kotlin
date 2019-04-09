@@ -29,6 +29,11 @@ val JvmScriptEvaluationConfigurationKeys.baseClassLoader by PropertiesCollection
  */
 val JvmScriptEvaluationConfigurationKeys.loadDependencies by PropertiesCollection.key<Boolean>(true)
 
+/**
+ * Arguments of the main call, if script is executed via its main method
+ */
+val JvmScriptEvaluationConfigurationKeys.mainArguments by PropertiesCollection.key<Array<out String>>()
+
 internal val JvmScriptEvaluationConfigurationKeys.actualClassLoader by PropertiesCollection.key<ClassLoader?>()
 
 internal val JvmScriptEvaluationConfigurationKeys.scriptsInstancesSharingMap by PropertiesCollection.key<MutableMap<KClass<*>, EvaluationResult>>()

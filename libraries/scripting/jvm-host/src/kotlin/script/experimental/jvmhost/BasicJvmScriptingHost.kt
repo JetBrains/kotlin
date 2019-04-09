@@ -48,6 +48,6 @@ inline fun <reified T : Any> createJvmEvaluationConfigurationFromTemplate(
 ): ScriptEvaluationConfiguration = createEvaluationConfigurationFromTemplate(
     KotlinType(T::class),
     hostConfiguration,
-    ScriptCompilationConfiguration::class,
+    ScriptEvaluationConfiguration::class,
     body
 )

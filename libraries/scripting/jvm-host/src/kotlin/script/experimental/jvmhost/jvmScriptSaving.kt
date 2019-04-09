@@ -5,15 +5,16 @@
 
 package kotlin.script.experimental.jvmhost
 
-import java.io.File
-import java.io.FileOutputStream
+import org.jetbrains.kotlin.utils.KotlinPaths
+import java.io.*
 import java.util.jar.JarEntry
 import java.util.jar.JarOutputStream
 import java.util.jar.Manifest
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.jvm.JvmDependency
+import kotlin.script.experimental.jvm.impl.*
+import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContext
 import kotlin.script.experimental.jvmhost.impl.KJvmCompiledModuleInMemory
-import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
 
 // TODO: generate execution code (main)
 
@@ -45,6 +46,41 @@ open class BasicJvmScriptClassFilesGenerator(val outputDir: File) : ScriptEvalua
     }
 }
 
+fun KJvmCompiledScript<*>.saveToJar(outputJar: File) {
+    val module = (compiledModule as? KJvmCompiledModuleInMemory)
+        ?: throw IllegalArgumentException("Unsupported module type $compiledModule")
+    val dependenciesFromScript = compilationConfiguration[ScriptCompilationConfiguration.dependencies]
+        ?.filterIsInstance<JvmDependency>()
+        ?.flatMap { it.classpath }
+        .orEmpty()
+    val dependenciesForMain = scriptCompilationClasspathFromContext(
+        KotlinPaths.Jar.ScriptingLib.baseName, KotlinPaths.Jar.ScriptingJvmLib.baseName, KotlinPaths.Jar.CoroutinesCore.baseName,
+        classLoader = this::class.java.classLoader,
+        wholeClasspath = false
+    )
+    val dependencies = (dependenciesFromScript + dependenciesForMain).distinct()
+    FileOutputStream(outputJar).use { fileStream ->
+        val manifest = Manifest()
+        manifest.mainAttributes.apply {
+            putValue("Manifest-Version", "1.0")
+            putValue("Created-By", "JetBrains Kotlin")
+            if (dependencies.isNotEmpty()) {
+                // TODO: implement options for various cases - paths as is (now), absolute paths (local execution only), names only (most likely as a hint only), fat jar
+                putValue("Class-Path", dependencies.joinToString(" "))
+            }
+            putValue("Main-Class", scriptClassFQName)
+        }
+        // TODO: fat jar/dependencies
+        val jarStream = JarOutputStream(fileStream, manifest)
+        jarStream.putNextEntry(JarEntry(scriptMetadataPath(scriptClassFQName)))
+        jarStream.write(copyWithoutModule().toBytes())
+        for ((path, bytes) in module.compilerOutputFiles) {
+            jarStream.putNextEntry(JarEntry(path))
+            jarStream.write(bytes)
+        }
+        jarStream.finish()
+    }
+}
 
 open class BasicJvmScriptJarGenerator(val outputJar: File) : ScriptEvaluator {
 
@@ -55,29 +91,7 @@ open class BasicJvmScriptJarGenerator(val outputJar: File) : ScriptEvaluator {
         try {
             if (compiledScript !is KJvmCompiledScript<*>)
                 return failure("Cannot generate jar: unsupported compiled script type $compiledScript")
-            val module = (compiledScript.compiledModule as? KJvmCompiledModuleInMemory)
-                ?: return failure("Cannot generate jar: unsupported module type ${compiledScript.compiledModule}")
-            val dependencies = compiledScript.compilationConfiguration[ScriptCompilationConfiguration.dependencies]
-                ?.filterIsInstance<JvmDependency>()
-                ?.flatMap { it.classpath }
-                .orEmpty()
-            FileOutputStream(outputJar).use { fileStream ->
-                val manifest = Manifest()
-                manifest.mainAttributes.apply {
-                    putValue("Manifest-Version", "1.0")
-                    putValue("Created-By", "JetBrains Kotlin")
-                    if (dependencies.isNotEmpty()) {
-                        putValue("Class-Path", dependencies.joinToString(" ") { it.name })
-                    }
-                }
-                // TODO: fat jar/dependencies
-                val jarStream = JarOutputStream(fileStream, manifest)
-                for ((path, bytes) in module.compilerOutputFiles) {
-                    jarStream.putNextEntry(JarEntry(path))
-                    jarStream.write(bytes)
-                }
-                jarStream.finish()
-            }
+            compiledScript.saveToJar(outputJar)
             return ResultWithDiagnostics.Success(EvaluationResult(ResultValue.Unit, scriptEvaluationConfiguration))
         } catch (e: Throwable) {
             return ResultWithDiagnostics.Failure(

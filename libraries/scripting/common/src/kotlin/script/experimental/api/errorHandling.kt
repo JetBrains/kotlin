@@ -7,6 +7,8 @@
 
 package kotlin.script.experimental.api
 
+import java.io.File
+
 /**
  * The single script diagnostic report
  * @param message diagnostic message
@@ -25,6 +27,27 @@ data class ScriptDiagnostic(
      * The diagnostic severity
      */
     enum class Severity { FATAL, ERROR, WARNING, INFO, DEBUG }
+
+    override fun toString(): String = buildString {
+        append(severity.name)
+        append(' ')
+        append(message)
+        if (sourcePath != null || location != null) {
+            append(" (")
+            sourcePath?.let { append(it.substringAfterLast(File.separatorChar)) }
+            location?.let {
+                append(':')
+                append(it.start.line)
+                append(':')
+                append(it.start.col)
+            }
+            append(')')
+        }
+        if (exception != null) {
+            append(": ")
+            append(exception)
+        }
+    }
 }
 
 /**

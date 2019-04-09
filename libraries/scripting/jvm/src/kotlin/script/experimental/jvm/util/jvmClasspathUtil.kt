@@ -119,8 +119,8 @@ internal fun List<File>.filterIfContainsAll(vararg keyNames: String): List<File>
     val res = hashMapOf<String, File>()
     for (cpentry in this) {
         for (prefix in keyNames) {
-            if (cpentry.matchMaybeVersionedFile(prefix) ||
-                (cpentry.isDirectory && cpentry.hasParentNamed(prefix))
+            if (!res.containsKey(prefix) &&
+                (cpentry.matchMaybeVersionedFile(prefix) || (cpentry.isDirectory && cpentry.hasParentNamed(prefix)))
             ) {
                 res[prefix] = cpentry
                 break

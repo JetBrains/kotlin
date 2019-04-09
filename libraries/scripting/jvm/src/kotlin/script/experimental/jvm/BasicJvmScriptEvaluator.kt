@@ -8,7 +8,6 @@ package kotlin.script.experimental.jvm
 import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.jvm.impl.getConfigurationWithClassloader
-import kotlin.script.experimental.jvm.impl.sharedScripts
 
 open class BasicJvmScriptEvaluator : ScriptEvaluator {
 
@@ -23,7 +22,7 @@ open class BasicJvmScriptEvaluator : ScriptEvaluator {
             // run as SAM
             // return res
 
-            val sharedScripts = configuration.sharedScripts
+            val sharedScripts = configuration[ScriptEvaluationConfiguration.jvm.scriptsInstancesSharingMap]
 
             sharedScripts?.get(scriptClass)?.asSuccess()
                 ?: compiledScript.otherScripts.mapSuccess {

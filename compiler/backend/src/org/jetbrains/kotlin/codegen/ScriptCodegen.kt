@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperInterfaces
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.Companion.NO_ORIGIN
@@ -222,18 +223,42 @@ class ScriptCodegen private constructor(
     }
 
     private fun genMembers() {
+        var hasMain = false
         for (declaration in scriptDeclaration.declarations) {
-            if (declaration is KtProperty || declaration is KtNamedFunction || declaration is KtTypeAlias) {
-                genSimpleMember(declaration)
-            }
-            else if (declaration is KtClassOrObject) {
-                genClassOrObject(declaration)
-            }
-            else if (declaration is KtDestructuringDeclaration) {
-                for (entry in declaration.entries) {
+            when (declaration) {
+                is KtNamedFunction -> {
+                    genSimpleMember(declaration)
+                    // temporary way to avoid name clashes
+                    // TODO: remove as soon as main generation become an explicit configuration option
+                    if (declaration.name == "main") {
+                        hasMain = true
+                    }
+                }
+                is KtProperty, is KtNamedFunction, is KtTypeAlias -> genSimpleMember(declaration)
+                is KtClassOrObject -> genClassOrObject(declaration)
+                is KtDestructuringDeclaration -> for (entry in declaration.entries) {
                     genSimpleMember(entry)
                 }
             }
+        }
+        if (!hasMain) {
+            genMain()
+        }
+    }
+
+    private fun genMain() {
+        val mainMethodArgsType = AsmUtil.getArrayType(AsmTypes.JAVA_STRING_TYPE)
+        val mainMethodDescriptor = Type.getMethodDescriptor(Type.VOID_TYPE, mainMethodArgsType)
+        val runMethodDescriptor = Type.getMethodDescriptor(Type.VOID_TYPE, AsmTypes.JAVA_CLASS_TYPE, mainMethodArgsType)
+        InstructionAdapter(
+            v.newMethod(NO_ORIGIN, ACC_STATIC or ACC_FINAL or ACC_PUBLIC, "main", mainMethodDescriptor, null, null)
+        ).apply {
+            visitCode()
+            visitLdcInsn(classAsmType)
+            load(0, mainMethodArgsType)
+            visitMethodInsn(INVOKESTATIC, "kotlin/script/experimental/jvm/RunnerKt", "runCompiledScript", runMethodDescriptor, false)
+            areturn(Type.VOID_TYPE)
+            visitEnd()
         }
     }
 

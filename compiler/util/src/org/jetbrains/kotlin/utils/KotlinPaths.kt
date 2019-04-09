@@ -96,6 +96,7 @@ interface KotlinPaths {
         ScriptingImpl(PathUtil.KOTLIN_SCRIPTING_IMPL_NAME),
         ScriptingLib(PathUtil.KOTLIN_SCRIPTING_COMMON_NAME),
         ScriptingJvmLib(PathUtil.KOTLIN_SCRIPTING_JVM_NAME),
+        CoroutinesCore(PathUtil.KOTLINX_COROUTINES_CORE_NAME),
     }
 
     enum class ClassPaths(val contents: List<Jar> = emptyList()) {

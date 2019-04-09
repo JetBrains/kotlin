@@ -352,7 +352,6 @@ class KJvmCompilerImpl(val hostConfiguration: ScriptingHostConfiguration) : KJvm
             sourceDependencies: List<ScriptsCompilationDependencies.SourceDependencies>,
             getScriptConfiguration: (KtFile) -> ScriptCompilationConfiguration
         ): KJvmCompiledScript<Any> {
-            val module = makeCompiledModule(generationState)
             val scriptDependenciesStack = ArrayDeque<KtScript>()
 
             fun makeOtherScripts(script: KtScript): List<KJvmCompiledScript<*>> {
@@ -371,7 +370,7 @@ class KJvmCompilerImpl(val hostConfiguration: ScriptingHostConfiguration) : KJvm
                                 getScriptConfiguration(sourceFile),
                                 it.fqName.asString(),
                                 makeOtherScripts(it),
-                                module
+                                null
                             )
                         }
                     } ?: emptyList()
@@ -380,6 +379,7 @@ class KJvmCompilerImpl(val hostConfiguration: ScriptingHostConfiguration) : KJvm
                 return otherScripts
             }
 
+            val module = makeCompiledModule(generationState)
             return KJvmCompiledScript(
                 script.locationId,
                 getScriptConfiguration(ktScript.containingKtFile),

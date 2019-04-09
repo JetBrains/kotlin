@@ -13,6 +13,8 @@ import java.io.*
 import java.net.URLClassLoader
 import java.nio.file.Files
 import java.security.MessageDigest
+import java.util.concurrent.TimeUnit
+import java.util.jar.JarFile
 import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.BasicScriptingHost
@@ -73,6 +75,60 @@ class ScriptingHostTest : TestCase() {
             scriptClass.newInstance()
         }
         Assert.assertEquals(greeting, output)
+    }
+
+    @Test
+    fun testSaveToRunnableJar() {
+        val greeting = "Hello from script jar!"
+        val outJar = Files.createTempFile("saveToRunnableJar", ".jar").toFile()
+        val compilationConfiguration = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate>()
+        val compiler = JvmScriptCompiler(defaultJvmScriptingHostConfiguration)
+        val scriptName = "SavedRunnableScript"
+        val compiledScript = runBlocking {
+            compiler("println(\"$greeting\")".toScriptSource(name = "$scriptName.kts"), compilationConfiguration).throwOnFailure()
+                .resultOrNull()!!
+        }
+        val saver = BasicJvmScriptJarGenerator(outJar)
+        runBlocking {
+            saver(compiledScript, ScriptEvaluationConfiguration.Default).throwOnFailure()
+        }
+
+        val classpathFromJar = run {
+            val manifest = JarFile(outJar).manifest
+            manifest.mainAttributes.getValue("Class-Path").split(" ") // TODO: quoted paths
+                .map { File(it).toURI().toURL() }
+        } + outJar.toURI().toURL()
+
+        fun checkInvokeMain(baseClassLoader: ClassLoader?) {
+            val classloader = URLClassLoader(classpathFromJar.toTypedArray(), baseClassLoader)
+            val scriptClass = classloader.loadClass(scriptName)
+            val mainMethod = scriptClass.methods.find { it.name == "main" }
+            Assert.assertNotNull(mainMethod)
+            val output = captureOutAndErr {
+                mainMethod!!.invoke(null, emptyArray<String>())
+            }.toList().filterNot(String::isEmpty).joinToString("\n")
+            Assert.assertEquals(greeting, output)
+        }
+
+        checkInvokeMain(null) // isolated
+        checkInvokeMain(Thread.currentThread().contextClassLoader)
+
+        val javaExecutable = File(File(System.getProperty("java.home"), "bin"), "java")
+        val args = listOf(javaExecutable.absolutePath, "-jar", outJar.path)
+        val processBuilder = ProcessBuilder(args)
+        processBuilder.redirectErrorStream(true)
+        val outputFromProcess = run {
+            val process = processBuilder.start()
+            process.waitFor(10, TimeUnit.SECONDS)
+            val out = process.inputStream.reader().readText()
+            if (process.isAlive) {
+                process.destroyForcibly()
+                "Error: timeout, killing script process\n$out"
+            } else {
+                out
+            }
+        }.trim()
+        Assert.assertEquals(greeting, outputFromProcess)
     }
 
     @Test
@@ -348,7 +404,7 @@ class ScriptingHostTest : TestCase() {
     }
 }
 
-fun ResultWithDiagnostics<*>.throwOnFailure(): ResultWithDiagnostics<*> = apply {
+fun <T> ResultWithDiagnostics<T>.throwOnFailure(): ResultWithDiagnostics<T> = apply {
     if (this is ResultWithDiagnostics.Failure) {
         val firstExceptionFromReports = reports.find { it.exception != null }?.exception
         throw Exception(
@@ -470,15 +526,23 @@ private class FileBasedScriptCache(val baseDir: File) : ScriptingCacheWithCounte
         get() = _retrievedScripts
 }
 
-private fun captureOut(body: () -> Unit): String {
+private fun captureOut(body: () -> Unit): String = captureOutAndErr(body).first
+
+private fun captureOutAndErr(body: () -> Unit): Pair<String, String> {
     val outStream = ByteArrayOutputStream()
+    val errStream = ByteArrayOutputStream()
     val prevOut = System.out
+    val prevErr = System.err
     System.setOut(PrintStream(outStream))
+    System.setErr(PrintStream(errStream))
     try {
         body()
     } finally {
         System.out.flush()
+        System.err.flush()
         System.setOut(prevOut)
+        System.setErr(prevErr)
     }
-    return outStream.toString().trim()
+    return outStream.toString().trim() to errStream.toString().trim()
 }
+
