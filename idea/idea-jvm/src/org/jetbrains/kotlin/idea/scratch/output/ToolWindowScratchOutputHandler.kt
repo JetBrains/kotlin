@@ -130,7 +130,7 @@ private object ToolWindowScratchOutputHandler : ScratchOutputHandlerAdapter() {
     private fun createToolWindow(file: ScratchFile): ToolWindow {
         val project = file.project
         val toolWindowManager = ToolWindowManager.getInstance(project)
-        toolWindowManager.registerToolWindow(ScratchToolWindowFactory.ID, true, ToolWindowAnchor.BOTTOM)
+        toolWindowManager.registerToolWindow(ScratchToolWindowFactory.ID, false, ToolWindowAnchor.BOTTOM)
         val window = toolWindowManager.getToolWindow(ScratchToolWindowFactory.ID)
         ScratchToolWindowFactory().createToolWindowContent(project, window)
 
