@@ -124,7 +124,7 @@ class RemoveRedundantQualifierNameQuickFix : LocalQuickFix {
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         val file = descriptor.psiElement.containingFile as KtFile
         val range = when (val element = descriptor.psiElement) {
-            is KtUserType -> IntRange(element.startOffset, element.referenceExpression?.endOffset ?: return)
+            is KtUserType -> IntRange(element.startOffset, element.endOffset)
             is KtDotQualifiedExpression -> IntRange(
                 element.startOffset,
                 element.getLastParentOfTypeInRowWithSelf<KtDotQualifiedExpression>()?.getQualifiedElementSelector()?.endOffset ?: return
