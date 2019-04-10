@@ -209,14 +209,14 @@ class JavaToKotlinAction : AnAction() {
     }
 
     override fun update(e: AnActionEvent) {
-        if (isRunningInCidrIde) {
-            e.presentation.isEnabledAndVisible = false
-        } else {
-            val virtualFiles = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY) ?: return
-            val project = e.project ?: return
+        e.presentation.isEnabledAndVisible = isEnabled(e)
+    }
 
-            e.presentation.isEnabled = isAnyJavaFileSelected(project, virtualFiles)
-        }
+    private fun isEnabled(e: AnActionEvent): Boolean {
+        if (isRunningInCidrIde) return false
+        val virtualFiles = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY) ?: return false
+        val project = e.project ?: return false
+        return isAnyJavaFileSelected(project, virtualFiles)
     }
 
     private fun isAnyJavaFileSelected(project: Project, files: Array<VirtualFile>): Boolean {
