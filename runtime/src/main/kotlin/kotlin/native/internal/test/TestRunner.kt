@@ -15,6 +15,7 @@ internal class TestRunner(val suites: List<TestSuite>, args: Array<String>) {
     private val listeners = mutableSetOf<TestListener>()
     private var logger: TestLogger = GTestLogger()
     private var runTests = true
+    private var useExitCode = true
     var iterations = 1
         private set
     var exitCode = 0
@@ -35,6 +36,7 @@ internal class TestRunner(val suites: List<TestSuite>, args: Array<String>) {
                     "--help" -> {
                         logger.log(help); runTests = false
                     }
+                    "--ktest_no_exit_code" -> useExitCode = false
                     else -> throw IllegalArgumentException("Unknown option: $it\n$help")
                 }
                 2 -> {
@@ -50,9 +52,7 @@ internal class TestRunner(val suites: List<TestSuite>, args: Array<String>) {
                         "--ktest_negative_gradle_filter" -> setGradleFilterFromArg(value, false)
                         "--ktest_repeat",
                         "--gtest_repeat" -> iterations = value.toIntOrNull() ?: throw IllegalArgumentException("Cannot parse number: $value")
-                        else -> if (key.startsWith("--ktest_")) {
-                            throw IllegalArgumentException("Unknown option: $it\n$help")
-                        }
+                        else -> throw IllegalArgumentException("Unknown option: $it\n$help")
                     }
                 }
                 else -> throw IllegalArgumentException("Unknown option: $it\n$help")
@@ -101,6 +101,8 @@ internal class TestRunner(val suites: List<TestSuite>, args: Array<String>) {
      *                                                        Use a negative count to repeat forever.
      *
      *  --ktest_logger=GTEST|TEAMCITY|SIMPLE|SILENT         - Use the specified output format. The default one is GTEST.
+     *
+     *  --ktest_no_exit_code                                - Don't return a non-zero exit code if there are failing tests.
      */
 
     private fun String.substringEscaped(range: IntRange) =
@@ -213,6 +215,8 @@ internal class TestRunner(val suites: List<TestSuite>, args: Array<String>) {
             |                                                      Use a negative count to repeat forever.
             |
             |--ktest_logger=GTEST|TEAMCITY|SIMPLE|SILENT         - Use the specified output format. The default one is GTEST.
+            |
+            |--ktest_no_exit_code                                - Don't return a non-zero exit code if there are failing tests.
         """.trimMargin()
 
     private inline fun sendToListeners(event: TestListener.() -> Unit) {
@@ -233,7 +237,9 @@ internal class TestRunner(val suites: List<TestSuite>, args: Array<String>) {
                     sendToListeners { pass(testCase, getTimeMillis() - startTime) }
                 } catch (e: Throwable) {
                     sendToListeners { fail(testCase, e, getTimeMillis() - startTime) }
-                    exitCode = 1
+                    if (useExitCode) {
+                        exitCode = 1
+                    }
                 }
             }
         }
@@ -270,6 +276,5 @@ internal class TestRunner(val suites: List<TestSuite>, args: Array<String>) {
         }
         sendToListeners { finishTesting(this@TestRunner, totalTime) }
         return exitCode
-
     }
 }
