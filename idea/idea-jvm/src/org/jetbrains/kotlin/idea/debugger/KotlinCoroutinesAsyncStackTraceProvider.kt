@@ -54,12 +54,8 @@ class KotlinCoroutinesAsyncStackTraceProvider : KotlinCoroutinesAsyncStackTraceP
         val evaluationContext = EvaluationContextImpl(suspendContext, frameProxy)
         val context = ExecutionContext(evaluationContext, frameProxy)
 
-        val debugMetadataKtType = try {
-            context.findClass(DEBUG_METADATA_KT) as? ClassType
-        } catch (e: Throwable) {
-            // DebugMetadataKt not found, probably old kotlin-stdlib version
-            return null
-        } ?: return null
+        // DebugMetadataKt not found, probably old kotlin-stdlib version
+        val debugMetadataKtType = context.findClassSafe(DEBUG_METADATA_KT) ?: return null
 
         val asyncContext = AsyncStackTraceContext(context, method, debugMetadataKtType)
         return asyncContext.getAsyncStackTraceForSuspendLambda() ?: asyncContext.getAsyncStackTraceForSuspendFunction()
@@ -137,7 +133,7 @@ class KotlinCoroutinesAsyncStackTraceProvider : KotlinCoroutinesAsyncStackTraceP
         val methodName = (getValue("getMethodName", "()Ljava/lang/String;") as? StringReference)?.value() ?: return null
         val lineNumber = (getValue("getLineNumber", "()I") as? IntegerValue)?.value()?.takeIf { it >= 0 } ?: return null
 
-        val locationClass = context.findClass(className) ?: return null
+        val locationClass = context.findClassSafe(className) ?: return null
         return GeneratedLocation(context.debugProcess, locationClass, methodName, lineNumber)
     }
 
@@ -177,6 +173,14 @@ class KotlinCoroutinesAsyncStackTraceProvider : KotlinCoroutinesAsyncStackTraceP
         }
 
         return spilledVariables
+    }
+
+    private fun ExecutionContext.findClassSafe(className: String): ClassType? {
+        return try {
+            findClass(className) as? ClassType
+        } catch (e: Throwable) {
+            null
+        }
     }
 
     private class AsyncStackTraceContext(
