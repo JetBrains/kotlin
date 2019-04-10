@@ -7320,6 +7320,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             public void testPrintln_2() throws Exception {
                 runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/system/println_2.kt");
             }
+
+            @TestMetadata("println_3.kt")
+            public void testPrintln_3() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/system/println_3.kt");
+            }
         }
     }
 

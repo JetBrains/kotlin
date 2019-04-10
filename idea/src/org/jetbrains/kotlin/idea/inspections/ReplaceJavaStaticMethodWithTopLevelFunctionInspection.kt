@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.callExpressionVisitor
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.psi.psiUtil.getTopmostParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -30,10 +30,9 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 class ReplaceJavaStaticMethodWithTopLevelFunctionInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) = callExpressionVisitor(fun(call) {
         val callee = call.calleeExpression ?: return
-        val dotQualified = call.getTopmostParentOfType<KtDotQualifiedExpression>() ?: return
+        val dotQualified = call.getStrictParentOfType<KtDotQualifiedExpression>() ?: return
         val calleeText = callee.text
-        val replacement = replacements
-            .firstOrNull { it.javaMethodShortName == calleeText }
+        val replacement = replacements[calleeText]
             ?.takeIf { call.getResolvedCall(call.analyze(BodyResolveMode.PARTIAL))?.isCalling(FqName(it.javaMethodFqName)) == true }
             ?: return
         if (replacement.toExtensionFunction && call.valueArguments.isEmpty()) return
@@ -60,7 +59,7 @@ class ReplaceJavaStaticMethodWithTopLevelFunctionInspection : AbstractKotlinInsp
                 val receiverText = valueArguments.first().text
                 val argumentsText = valueArguments.drop(1).joinToString(separator = ", ") { it.text }
                 dotQualified.replaced(psiFactory.createExpression("$receiverText.${replacement.kotlinFunctionShortName}($argumentsText)"))
-                file.resolveImportReference(FqName(replacement.kotlinFunctionFqName)).firstOrNull()?.also {
+                file.resolveImportReference(FqName(replacement.kotlinFunctionFqName)).firstOrNull()?.let {
                     ImportInsertHelper.getInstance(project).importDescriptor(file, it)
                 }
             } else {
@@ -116,6 +115,6 @@ class ReplaceJavaStaticMethodWithTopLevelFunctionInspection : AbstractKotlinInsp
             Replacement("java.lang.Math.sqrt", "kotlin.math.sqrt"),
             Replacement("java.lang.Math.tan", "kotlin.math.tan"),
             Replacement("java.lang.Math.tanh", "kotlin.math.tanh")
-        )
+        ).associateBy { it.javaMethodShortName }
     }
 }
