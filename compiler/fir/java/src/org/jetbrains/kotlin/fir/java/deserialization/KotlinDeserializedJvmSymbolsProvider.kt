@@ -65,18 +65,21 @@ class KotlinDeserializedJvmSymbolsProvider(
         classId: ClassId,
         parentContext: FirDeserializationContext? = null
     ): FirClassSymbol? {
-        val kotlinJvmBinaryClass = kotlinClassFinder.findKotlinClass(classId) ?: return null
-        if (kotlinJvmBinaryClass.classHeader.kind != KotlinClassHeader.Kind.CLASS) return null
+        return classesCache.getOrPut(classId) {
+            //return null
+            val kotlinJvmBinaryClass = kotlinClassFinder.findKotlinClass(classId) ?: return null
+            if (kotlinJvmBinaryClass.classHeader.kind != KotlinClassHeader.Kind.CLASS) return null
 
-        val data = kotlinJvmBinaryClass.classHeader.data ?: return null
-        val strings = kotlinJvmBinaryClass.classHeader.strings ?: return null
-        val (nameResolver, classProto) = JvmProtoBufUtil.readClassDataFrom(data, strings)
+            val data = kotlinJvmBinaryClass.classHeader.data ?: return null
+            val strings = kotlinJvmBinaryClass.classHeader.strings ?: return null
+            val (nameResolver, classProto) = JvmProtoBufUtil.readClassDataFrom(data, strings)
 
-        return classesCache.getOrPut(classId, { FirClassSymbol(classId) }) { symbol ->
+            val symbol = FirClassSymbol(classId)
             deserializeClassToSymbol(
                 classId, classProto, symbol, nameResolver, session, parentContext,
                 this::findAndDeserializeClass
             )
+            symbol
         }
     }
 
