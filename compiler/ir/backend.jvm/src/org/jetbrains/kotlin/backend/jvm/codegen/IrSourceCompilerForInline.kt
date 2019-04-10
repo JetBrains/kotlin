@@ -63,7 +63,7 @@ class IrSourceCompilerForInline(
         get() = OwnerKind.getMemberOwnerKind(callElement.descriptor.containingDeclaration)
 
     override val inlineCallSiteInfo: InlineCallSiteInfo
-        get() = InlineCallSiteInfo("TODO", null, null, false)
+        get() = InlineCallSiteInfo("TODO", null, null)
 
     override val lazySourceMapper: DefaultSourceMapper
         get() = codegen.classCodegen.getOrCreateSourceMapper()
