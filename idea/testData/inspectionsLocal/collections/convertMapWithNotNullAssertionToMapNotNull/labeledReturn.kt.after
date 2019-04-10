@@ -1,0 +1,10 @@
+// WITH_RUNTIME
+
+fun test(list: List<Int?>) {
+    list.mapNotNull {
+        foo()
+        return@mapNotNull it
+    }
+}
+
+fun foo(): Int = 1

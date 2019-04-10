@@ -1,0 +1,11 @@
+<html>
+<body>
+This inspection reports <b>map</b> with not-null assertion (<b>!!</b>) that should be simplified to <b>mapNotNull</b>. For example:
+<br /><br />
+<pre>
+fun foo(list: List&lt;String?&gt;) {
+    list.map { it!! } // 'map' with not-null assertion should be simplified to 'mapNotNull' 
+}  
+</pre>
+</body>
+</html>

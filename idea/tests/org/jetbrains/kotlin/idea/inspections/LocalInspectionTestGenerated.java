@@ -1189,6 +1189,64 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             }
         }
 
+        @TestMetadata("idea/testData/inspectionsLocal/collections/convertMapWithNotNullAssertionToMapNotNull")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ConvertMapWithNotNullAssertionToMapNotNull extends AbstractLocalInspectionTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInConvertMapWithNotNullAssertionToMapNotNull() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/collections/convertMapWithNotNullAssertionToMapNotNull"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("anonymousFunction.kt")
+            public void testAnonymousFunction() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/convertMapWithNotNullAssertionToMapNotNull/anonymousFunction.kt");
+            }
+
+            @TestMetadata("basic.kt")
+            public void testBasic() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/convertMapWithNotNullAssertionToMapNotNull/basic.kt");
+            }
+
+            @TestMetadata("basic2.kt")
+            public void testBasic2() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/convertMapWithNotNullAssertionToMapNotNull/basic2.kt");
+            }
+
+            @TestMetadata("basic3.kt")
+            public void testBasic3() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/convertMapWithNotNullAssertionToMapNotNull/basic3.kt");
+            }
+
+            @TestMetadata("labeledReturn.kt")
+            public void testLabeledReturn() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/convertMapWithNotNullAssertionToMapNotNull/labeledReturn.kt");
+            }
+
+            @TestMetadata("labeledReturn2.kt")
+            public void testLabeledReturn2() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/convertMapWithNotNullAssertionToMapNotNull/labeledReturn2.kt");
+            }
+
+            @TestMetadata("labeledReturn3.kt")
+            public void testLabeledReturn3() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/convertMapWithNotNullAssertionToMapNotNull/labeledReturn3.kt");
+            }
+
+            @TestMetadata("mapNotNull.kt")
+            public void testMapNotNull() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/convertMapWithNotNullAssertionToMapNotNull/mapNotNull.kt");
+            }
+
+            @TestMetadata("notLast.kt")
+            public void testNotLast() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/convertMapWithNotNullAssertionToMapNotNull/notLast.kt");
+            }
+        }
+
         @TestMetadata("idea/testData/inspectionsLocal/collections/simplifiableCallChain")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
