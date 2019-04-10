@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.descriptors.konan.CompiledKonanModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.CurrentKonanModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.DeserializedKonanModuleOrigin
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.library.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -141,6 +142,10 @@ internal interface ContextUtils : RuntimeAware {
     val staticData: StaticData
         get() = context.llvm.staticData
 
+    /**
+     * TODO: maybe it'd be better to replace with [IrDeclaration::isEffectivelyExternal()],
+     * or just drop all [else] branches of corresponding conditionals.
+     */
     fun isExternal(declaration: IrDeclaration): Boolean {
         return false
     }
