@@ -33,24 +33,33 @@ public open class Throwable(open val message: String?, open val cause: Throwable
 
     public fun getStackTrace(): Array<String> = stackTraceStrings
 
-    public fun printStackTrace() {
-        println(this.toString())
+    public fun printStackTrace(): Unit = dumpStackTrace { println(it) }
 
-        for (element in stackTraceStrings) {
-            println("        at $element")
+    internal fun dumpStackTrace(): String = buildString {
+        dumpStackTrace { appendln(it) }
+    }
+
+    private inline fun writeStackTraceElements(throwable: Throwable, writeln: (String) -> Unit) {
+        for (element in throwable.stackTraceStrings) {
+            writeln("        at $element")
         }
-
-        this.cause?.printEnclosedStackTrace(this)
     }
 
-    @Suppress("UNUSED_PARAMETER")
-    private fun printEnclosedStackTrace(enclosing: Throwable) {
-        // TODO: should skip common stack frames
-        print("Caused by: ")
-        this.printStackTrace()
+    private inline fun dumpStackTrace(crossinline writeln: (String) -> Unit) {
+        writeln(this@Throwable.toString())
+
+        writeStackTraceElements(this, writeln)
+
+        var cause = this.cause
+        while (cause != null) {
+            // TODO: should skip common stack frames
+            writeln("Caused by: $cause")
+            writeStackTraceElements(cause, writeln)
+            cause = cause.cause
+        }
     }
 
-    override public fun toString(): String {
+    public override fun toString(): String {
         val kClass = this::class
         val s = kClass.qualifiedName ?: kClass.simpleName ?: "Throwable"
         return if (message != null) s + ": " + message.toString() else s

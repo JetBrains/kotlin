@@ -51,9 +51,9 @@ internal class TeamCityLogger : BaseTestLogger() {
 
     override fun pass(testCase: TestCase, timeMillis: Long) = finish(testCase, timeMillis)
     override fun fail(testCase: TestCase, e: Throwable, timeMillis: Long) {
-        // TODO: Add 'details=...' command with the stack trace (need to implement stacktrace dumping as a string)
-        e.printStackTrace()
-        report("testFailed name='${testCase.tcName}' message='${e.message?.escapeForTC()}'")
+        val stackTrace = e.dumpStackTrace().escapeForTC()
+        val message = e.message?.escapeForTC()
+        report("testFailed name='${testCase.tcName}' message='$message' details='$stackTrace'")
         finish(testCase, timeMillis)
     }
 
