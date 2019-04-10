@@ -27,7 +27,7 @@ import java.util.*;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.getVisibilityAccessFlag;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isNonDefaultInterfaceMember;
-import static org.jetbrains.kotlin.resolve.inline.InlineOnlyKt.isEffectivelyInlineOnly;
+import static org.jetbrains.kotlin.resolve.inline.InlineOnlyKt.isInlineOnlyPrivateInBytecode;
 import static org.jetbrains.kotlin.resolve.jvm.annotations.JvmAnnotationUtilKt.hasJvmDefaultAnnotation;
 import static org.jetbrains.kotlin.resolve.jvm.annotations.JvmAnnotationUtilKt.isCallableMemberWithJvmDefaultAnnotation;
 import static org.jetbrains.org.objectweb.asm.Opcodes.ACC_PRIVATE;
@@ -693,7 +693,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             boolean withinInline,
             boolean isSuperCall
     ) {
-        if (isEffectivelyInlineOnly(unwrappedDescriptor)) return false;
+        if (isInlineOnlyPrivateInBytecode(unwrappedDescriptor)) return false;
 
         return isSuperCall && withinInline ||
                (accessFlag & ACC_PRIVATE) != 0 ||

@@ -635,6 +635,11 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/inline"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
         }
 
+        @TestMetadata("inlineOnly.kt")
+        public void testInlineOnly() throws Exception {
+            runTest("compiler/testData/writeFlags/inline/inlineOnly.kt");
+        }
+
         @TestMetadata("lostInnerClass.kt")
         public void testLostInnerClass() throws Exception {
             runTest("compiler/testData/writeFlags/inline/lostInnerClass.kt");
