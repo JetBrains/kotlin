@@ -37,7 +37,7 @@ FILE: simple.kt
         public final fun test(): R|kotlin/Unit| {
             R|/B.foo|()
             R|/B.bar|()
-            <Ambiguity: buz, [/B.buz, /A.buz]>#()
+            <Inapplicable(PARAMETER_MAPPING_ERROR): [/B.buz, /A.buz]>#()
         }
 
     }

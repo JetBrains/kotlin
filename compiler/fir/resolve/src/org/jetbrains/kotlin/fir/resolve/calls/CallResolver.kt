@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
@@ -41,7 +42,7 @@ class CallInfo(
 
     val typeProvider: (FirExpression) -> FirTypeRef?
 ) {
-
+    val argumentCount get() = arguments.size
 }
 
 interface CheckerSink {
@@ -69,6 +70,8 @@ class Candidate(
         system
     }
     lateinit var substitutor: ConeSubstitutor
+
+    var argumentMapping: Map<FirExpression, FirValueParameter>? = null
 }
 
 sealed class CallKind {
