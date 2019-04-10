@@ -51,7 +51,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static org.jetbrains.kotlin.test.testFramework.EdtTestUtil.runInEdtAndWait;
+import static com.intellij.testFramework.EdtTestUtilKt.runInEdtAndWait;
 
 // part of com.intellij.openapi.externalSystem.test.ExternalSystemTestCase
 public abstract class ExternalSystemTestCase extends UsefulTestCase {
@@ -204,7 +204,10 @@ public abstract class ExternalSystemTestCase extends UsefulTestCase {
 
     @Override
     protected void invokeTestRunnable(@NotNull Runnable runnable) throws Exception {
-        runInEdtAndWait(runnable);
+        runInEdtAndWait(() -> {
+            runnable.run();
+            return null;
+        });
     }
 
     protected static String getRoot() {

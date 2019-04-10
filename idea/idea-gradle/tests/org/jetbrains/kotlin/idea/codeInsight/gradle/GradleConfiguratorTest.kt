@@ -9,11 +9,11 @@ import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.roots.DependencyScope
 import com.intellij.openapi.roots.ExternalLibraryDescriptor
+import com.intellij.testFramework.runInEdtAndWait
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.idea.configuration.*
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.runReadAction
-import org.jetbrains.kotlin.test.testFramework.runInEdtAndWait
 import org.jetbrains.kotlin.test.testFramework.runWriteAction
 import org.jetbrains.plugins.gradle.execution.test.runner.GradleTestRunConfigurationProducer
 import org.jetbrains.plugins.gradle.tooling.annotation.TargetVersions

@@ -9,13 +9,13 @@ import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiManager
+import com.intellij.testFramework.runInEdtAndWait
 import com.intellij.util.concurrency.FutureResult
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.idea.configuration.KotlinMigrationProjectComponent
 import org.jetbrains.kotlin.idea.configuration.KotlinMigrationProjectComponent.MigrationTestState
 import org.jetbrains.kotlin.idea.configuration.MigrationInfo
-import org.jetbrains.kotlin.test.testFramework.runInEdtAndWait
 import org.jetbrains.plugins.gradle.tooling.annotation.TargetVersions
 import org.junit.Assert
 import org.junit.Test

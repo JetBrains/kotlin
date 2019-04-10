@@ -16,8 +16,8 @@ import com.intellij.openapi.fileEditor.OpenFileDescriptor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDocumentManager
+import com.intellij.testFramework.runInEdtAndWait
 import org.jetbrains.kotlin.idea.codeInsight.gradle.GradleImportingTestCase
-import org.jetbrains.kotlin.test.testFramework.runInEdtAndWait
 import org.jetbrains.plugins.gradle.tooling.annotation.TargetVersions
 import org.junit.Assert
 import org.junit.Test

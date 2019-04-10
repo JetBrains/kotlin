@@ -23,8 +23,8 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.rt.execution.junit.FileComparisonFailure
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory
+import com.intellij.testFramework.runInEdtAndWait
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.jetbrains.kotlin.test.testFramework.runInEdtAndWait
 import org.junit.Test
 import java.io.File
 import kotlin.reflect.KMutableProperty0
