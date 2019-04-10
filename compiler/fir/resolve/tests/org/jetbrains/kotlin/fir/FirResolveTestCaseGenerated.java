@@ -179,6 +179,11 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/localImplicitBodies.kt");
         }
 
+        @TestMetadata("objectVsProperty.kt")
+        public void testObjectVsProperty() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/objectVsProperty.kt");
+        }
+
         @TestMetadata("objects.kt")
         public void testObjects() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/objects.kt");
