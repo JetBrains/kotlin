@@ -10,21 +10,23 @@ import com.google.gson.GsonBuilder
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinSingleTargetExtension
-import org.jetbrains.kotlin.gradle.dsl.kotlinExtensionOrNull
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.nodeJs
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolver.ResolutionCallResult.*
 
 /**
- * Generates `package.json` file for projects with npm or js dependencies and
- * runs selected [NodeJsRootExtension.packageManager] to download and install it.
+ * [NpmResolver] runs selected [NodeJsRootExtension.packageManager] on root project
+ * with configured `package.json` files in all projects.
  *
- * All [NpmDependency] for configurations related to kotlin/js will be added to `package.json`.
- * For external gradle modules, fake npm packages will be created and added to `package.json`
- * as path to directory.
+ * `package.json`
+ *
+ * - compile(npm(...)) dependencies
+ * - compile(npm(...)) dependencies from external modules
+ * - compile(non npm(...)) dependencies transitively
  */
 internal class NpmResolver private constructor(val rootProject: Project) {
     companion object {
@@ -38,11 +40,7 @@ internal class NpmResolver private constructor(val rootProject: Project) {
             val resolved = process?.resolved
 
             return if (resolved != null) AlreadyResolved(resolved)
-            else {
-                val resolver = NpmResolver(rootProject)
-                check(resolver.resolve(rootProject, null))
-                ResolvedNow(ResolvedProject(resolver.npmPackages))
-            }
+            else ResolvedNow(NpmResolver(rootProject).resolve(rootProject, null)!!)
         }
     }
 
@@ -52,10 +50,9 @@ internal class NpmResolver private constructor(val rootProject: Project) {
         class ResolvedNow(val resolution: ResolvedProject) : ResolutionCallResult()
     }
 
-    private val nodeJs = NodeJsPlugin.apply(rootProject).root
-    private val npmProject = rootProject.npmProject
+    private val nodeJs = NodeJsPlugin[rootProject]
     private val packageManager = nodeJs.packageManager
-    private val hoistGradleNodeModules = npmProject.hoistGradleNodeModules
+    private val hoistGradleNodeModules = packageManager.hoistGradleNodeModules
     private val npmPackages = mutableListOf<NpmPackage>()
     private val gson = GsonBuilder()
         .setPrettyPrinting()
@@ -69,11 +66,7 @@ internal class NpmResolver private constructor(val rootProject: Project) {
         }
     }
 
-    class ResolvedProject(val npmPackages: Collection<NpmPackage>) {
-        val dependencies by lazy {
-            npmPackages.flatMapTo(mutableSetOf()) { it.npmDependencies }
-        }
-    }
+    class ResolvedProject(val dependencies: Set<NpmDependency>)
 
     class NpmPackage(
         val project: Project,
@@ -81,7 +74,7 @@ internal class NpmResolver private constructor(val rootProject: Project) {
         val npmDependencies: Set<NpmDependency>
     ) {
         fun savePackageJson(gson: Gson) {
-            NpmProject[project].packageJsonFile.writer().use {
+            NpmProjectLayout[project].packageJsonFile.writer().use {
                 gson.toJson(packageJson, it)
             }
         }
@@ -97,29 +90,29 @@ internal class NpmResolver private constructor(val rootProject: Project) {
 
     private fun resolve(
         project: Project,
-        parentGradleModules: GradleNodeModules?
-    ): Boolean {
+        parentGradleNodeModules: GradleNodeModulesSync?
+    ): ResolvedProject? {
         val existedProcess = ProjectData[project]
-        if (existedProcess != null) {
+        val process = if (existedProcess != null) {
             if (existedProcess.resolved != null) error("yarn dependencies for $project already resolved")
             else {
                 // called inside resolution of classpath (from visitTarget)
                 // we should return as we are already in progress
-                return false
+                return null
             }
         } else ProjectData().also {
             ProjectData[project] = it
         }
 
-        val gradleModules =
-            if (hoistGradleNodeModules && parentGradleModules != null) parentGradleModules
-            else GradleNodeModules(project)
+        val gradleNodeModules =
+            if (hoistGradleNodeModules && parentGradleNodeModules != null) parentGradleNodeModules
+            else newGradleNodeModulesSync(project)
 
         project.subprojects.forEach {
-            resolve(it, gradleModules)
+            resolve(it, gradleNodeModules)
         }
 
-        val npmPackage = extractNpmPackage(project, gradleModules)
+        val npmPackage = extractNpmPackage(project, gradleNodeModules)
         if (npmPackage != null) {
             npmPackage.savePackageJson(gson)
 
@@ -136,60 +129,61 @@ internal class NpmResolver private constructor(val rootProject: Project) {
             }
         }
 
-        if (gradleModules != parentGradleModules) {
-            gradleModules.close()
+        if (gradleNodeModules != parentGradleNodeModules) {
+            gradleNodeModules.sync()
         }
 
-        return true
+        val npmDependencies = npmPackage?.npmDependencies ?: setOf()
+        return ResolvedProject(npmDependencies).also {
+            process.resolved = it
+        }
+    }
+
+    private fun newGradleNodeModulesSync(project: Project): GradleNodeModulesSync {
+        return GradleNodeModulesSync(project).also {
+            it.loadOldState()
+        }
     }
 
     private fun extractNpmPackage(
         project: Project,
-        gradleComponents: GradleNodeModules
+        gradleComponentsSync: GradleNodeModulesSync
     ): NpmPackage? {
         val packageJson = PackageJson(project.name, project.version.toString())
+        val transitiveDependencies = mutableListOf<GradleNodeModulesSync.TransitiveNpmDependency>()
+
+        val kotlin = project.kotlinExtension
         val npmDependencies = mutableSetOf<NpmDependency>()
-
-        visitNpmDependencies(project, npmDependencies, gradleComponents, packageJson)
-
-        if (!hoistGradleNodeModules || project == project.rootProject) {
-            gradleComponents.modules.forEach {
-                val relativePath = it.path.relativeTo(NpmProject[project].nodeWorkDir)
-                packageJson.dependencies[it.name] = "file:$relativePath"
+        when (kotlin) {
+            is KotlinSingleTargetExtension -> visitTarget(
+                kotlin.target,
+                project,
+                npmDependencies,
+                gradleComponentsSync,
+                transitiveDependencies
+            )
+            is KotlinMultiplatformExtension -> kotlin.targets.forEach {
+                visitTarget(it, project, npmDependencies, gradleComponentsSync, transitiveDependencies)
             }
         }
 
-        project.nodeJs.packageJsonHandlers.forEach {
+        npmDependencies.forEach {
+            packageJson.dependencies[it.key] = chooseVersion(packageJson.dependencies[it.key], it.version)
+        }
+
+        transitiveDependencies.forEach {
+            packageJson.dependencies[it.key] = chooseVersion(packageJson.dependencies[it.key], it.version)
+        }
+
+        NodeJsExtension[project].packageJsonHandlers.forEach {
             it(packageJson)
         }
 
-        val packageJsonRequired = if (project == rootProject) {
+        if (project == rootProject) {
             packageManager.hookRootPackage(rootProject, packageJson, npmPackages)
-        } else false
-
-        return if (packageJsonRequired || !packageJson.empty) NpmPackage(project, packageJson, npmDependencies) else null
-    }
-
-    private fun visitNpmDependencies(
-        project: Project,
-        npmDependencies: MutableSet<NpmDependency>,
-        gradleComponents: GradleNodeModules,
-        packageJson: PackageJson
-    ) {
-        val kotlin = project.kotlinExtensionOrNull
-
-        if (kotlin != null) {
-            when (kotlin) {
-                is KotlinSingleTargetExtension -> visitTarget(kotlin.target, project, npmDependencies, gradleComponents)
-                is KotlinMultiplatformExtension -> kotlin.targets.forEach {
-                    visitTarget(it, project, npmDependencies, gradleComponents)
-                }
-            }
-
-            npmDependencies.forEach {
-                packageJson.dependencies[it.key] = chooseVersion(packageJson.dependencies[it.key], it.version)
-            }
         }
+
+        return if (!packageJson.empty) NpmPackage(project, packageJson, npmDependencies) else null
     }
 
     private fun chooseVersion(oldVersion: String?, newVersion: String): String =
@@ -199,7 +193,8 @@ internal class NpmResolver private constructor(val rootProject: Project) {
         target: KotlinTarget,
         project: Project,
         npmDependencies: MutableSet<NpmDependency>,
-        gradleComponents: GradleNodeModules
+        gradleComponentsSync: GradleNodeModulesSync,
+        transitiveDependencies: MutableList<GradleNodeModulesSync.TransitiveNpmDependency>
     ) {
         if (target.platformType == KotlinPlatformType.js) {
             target.compilations.toList().forEach { compilation ->
@@ -211,7 +206,7 @@ internal class NpmResolver private constructor(val rootProject: Project) {
                     }
                 }
 
-                gradleComponents.visitCompilation(compilation)
+                gradleComponentsSync.visitCompilation(compilation, project, transitiveDependencies)
             }
         }
     }

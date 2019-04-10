@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.yarn
 
+import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.nodeJs
 
 open class YarnRootExtension(val project: Project) {
     private val gradleHome = project.gradle.gradleUserHomeDir.also {
@@ -23,36 +23,43 @@ open class YarnRootExtension(val project: Project) {
     val yarnSetupTask: YarnSetupTask
         get() = project.tasks.getByName(YarnSetupTask.NAME) as YarnSetupTask
 
-    var disableWorkspaces: Boolean = false
+    var useWorkspaces: Boolean = false
 
-    val useWorkspaces: Boolean
-        get() = project.nodeJs.root.manageNodeModules && !disableWorkspaces
+    internal fun checkUseWorkspace(): Boolean = if (useWorkspaces) {
+        check(NodeJsPlugin[project].manageNodeModules) {
+            "Yarn workspace can be used only with `manageNodeModules`: (add `nodeJs { manageNodeModules = true }` to your root project)"
+        }
+
+        true
+    } else false
 
     internal fun executeSetup() {
-        NodeJsPlugin.apply(project).executeSetup()
+        NodeJsPlugin[project].executeSetup()
 
-        val env = environment
+        val env = buildEnv()
         if (!env.home.isDirectory) {
             yarnSetupTask.setup()
         }
     }
 
-    internal val environment
-        get() = YarnEnv(
-            downloadUrl = "$downloadBaseUrl/v$version/yarn-v$version.tar.gz",
-            home = installationDir.resolve("yarn-v$version")
-        )
+    internal fun buildEnv() = YarnEnv(
+        downloadUrl = "$downloadBaseUrl/v$version/yarn-v$version.tar.gz",
+        home = installationDir.resolve("yarn-v$version")
+    )
 
     companion object {
         const val YARN: String = "yarn"
 
         operator fun get(project: Project): YarnRootExtension {
-            val rootProject = project.rootProject
-            rootProject.plugins.apply(YarnPlugin::class.java)
-            return rootProject.extensions.getByName(YARN) as YarnRootExtension
+            val extension = project.extensions.findByType(YarnRootExtension::class.java)
+            if (extension != null)
+                return extension
+
+            val parentProject = project.parent
+            if (parentProject != null)
+                return get(parentProject)
+
+            throw GradleException("YarnRootExtension is not installed")
         }
     }
 }
-
-val Project.yarn: YarnRootExtension
-    get() = YarnRootExtension[this]
