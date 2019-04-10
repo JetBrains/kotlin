@@ -3388,6 +3388,7 @@
                      language="kotlin"
     />
 
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.AddOperatorModifierInspection"
                      displayName="Function should have 'operator' modifier"
                      groupPath="Kotlin"
@@ -3422,6 +3423,15 @@
                      groupName="Probable bugs"
                      enabledByDefault="true"
                      level="WARNING"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReplaceGuardClauseWithFunctionCallInspection"
+                     displayName="Replace guard clause with kotlin's function call"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
                      language="kotlin"
     />
 
