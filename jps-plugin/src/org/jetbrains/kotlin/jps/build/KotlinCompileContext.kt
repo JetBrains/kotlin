@@ -12,6 +12,7 @@ import org.jetbrains.jps.incremental.GlobalContextKey
 import org.jetbrains.jps.incremental.fs.CompilationRound
 import org.jetbrains.jps.incremental.messages.BuildMessage
 import org.jetbrains.jps.incremental.messages.CompilerMessage
+import org.jetbrains.jps.model.serialization.JpsModelSerializationDataService
 import org.jetbrains.kotlin.config.CompilerRunnerConstants
 import org.jetbrains.kotlin.incremental.LookupSymbol
 import org.jetbrains.kotlin.incremental.storage.SourceFileToCanonicalPathConverter
@@ -68,7 +69,8 @@ class KotlinCompileContext(val jpsContext: CompileContext) {
 
     val hasKotlinMarker = HasKotlinMarker(dataManager)
 
-    val sourceFileToPathConverter: SourceFileToPathConverter = SourceFileToCanonicalPathConverter
+    val sourceFileToPathConverter: SourceFileToPathConverter =
+        JpsSourceFileToPathConverter(jpsContext.projectDescriptor.project)
 
     val lookupStorageManager = JpsLookupStorageManager(dataManager, sourceFileToPathConverter)
 
