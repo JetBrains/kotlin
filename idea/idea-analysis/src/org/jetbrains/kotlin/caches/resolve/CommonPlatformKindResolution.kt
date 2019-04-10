@@ -28,7 +28,7 @@ class CommonPlatformKindResolution : IdePlatformKindResolution {
     override val kind get() = CommonIdePlatformKind
 
     override val resolverForModuleFactory: ResolverForModuleFactory
-        get() = CommonResolverForModuleFactory
+        get() = CommonResolverForModuleFactory(shouldCheckExpectActual = true)
 
     override fun createBuiltIns(settings: PlatformAnalysisSettings, projectContext: ProjectContext): KotlinBuiltIns {
         return DefaultBuiltIns.Instance

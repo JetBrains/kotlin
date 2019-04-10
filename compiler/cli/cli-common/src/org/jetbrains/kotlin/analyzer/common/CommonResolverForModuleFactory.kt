@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
@@ -54,67 +55,7 @@ class CommonAnalysisParameters(
  * A facade that is used to analyze common (platform-independent) modules in multi-platform projects.
  * See [CommonPlatform]
  */
-object CommonResolverForModuleFactory : ResolverForModuleFactory() {
-    private class SourceModuleInfo(
-        override val name: Name,
-        override val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>,
-        private val dependOnOldBuiltIns: Boolean
-    ) : ModuleInfo {
-        override fun dependencies() = listOf(this)
-
-        override fun dependencyOnBuiltIns(): ModuleInfo.DependencyOnBuiltIns =
-            if (dependOnOldBuiltIns) ModuleInfo.DependencyOnBuiltIns.LAST else ModuleInfo.DependencyOnBuiltIns.NONE
-
-        override val platform: TargetPlatform
-            get() = CommonPlatforms.defaultCommonPlatform
-
-        override val analyzerServices: PlatformDependentAnalyzerServices
-            get() = CommonPlatformAnalyzerServices
-    }
-
-    fun analyzeFiles(
-        files: Collection<KtFile>, moduleName: Name, dependOnBuiltIns: Boolean, languageVersionSettings: LanguageVersionSettings,
-        capabilities: Map<ModuleDescriptor.Capability<*>, Any?> = emptyMap(),
-        metadataPartProviderFactory: (ModuleContent<ModuleInfo>) -> MetadataPartProvider
-    ): AnalysisResult {
-        val moduleInfo = SourceModuleInfo(moduleName, capabilities, dependOnBuiltIns)
-        val project = files.firstOrNull()?.project ?: throw AssertionError("No files to analyze")
-
-        val multiplatformLanguageSettings = object : LanguageVersionSettings by languageVersionSettings {
-            override fun getFeatureSupport(feature: LanguageFeature): LanguageFeature.State =
-                if (feature == LanguageFeature.MultiPlatformProjects) LanguageFeature.State.ENABLED
-                else languageVersionSettings.getFeatureSupport(feature)
-        }
-
-        @Suppress("NAME_SHADOWING")
-        val resolver = ResolverForProjectImpl(
-            "sources for metadata serializer",
-            ProjectContext(project, "metadata serializer"),
-            listOf(moduleInfo),
-            modulesContent = { ModuleContent(it, files, GlobalSearchScope.allScope(project)) },
-            moduleLanguageSettingsProvider = object : LanguageSettingsProvider {
-                override fun getLanguageVersionSettings(
-                    moduleInfo: ModuleInfo,
-                    project: Project,
-                    isReleaseCoroutines: Boolean?
-                ) = multiplatformLanguageSettings
-
-                override fun getTargetPlatform(
-                    moduleInfo: ModuleInfo,
-                    project: Project
-                ) = TargetPlatformVersion.NoVersion
-            },
-            resolverForModuleFactoryByPlatform = { CommonResolverForModuleFactory },
-            platformParameters = { _ -> CommonAnalysisParameters(metadataPartProviderFactory) }
-        )
-
-        val moduleDescriptor = resolver.descriptorForModule(moduleInfo)
-        val container = resolver.resolverForModule(moduleInfo).componentProvider
-
-        container.get<LazyTopDownAnalyzer>().analyzeDeclarations(TopDownAnalysisMode.TopLevelDeclarations, files)
-
-        return AnalysisResult.success(container.get<BindingTrace>().bindingContext, moduleDescriptor)
-    }
+class CommonResolverForModuleFactory(private val shouldCheckExpectActual: Boolean) : ResolverForModuleFactory() {
 
     override fun <M : ModuleInfo> createResolverForModule(
         moduleDescriptor: ModuleDescriptorImpl,
@@ -137,7 +78,7 @@ object CommonResolverForModuleFactory : ResolverForModuleFactory() {
         val trace = CodeAnalyzerInitializer.getInstance(project).createTrace()
         val container = createContainerToResolveCommonCode(
             moduleContext, trace, declarationProviderFactory, moduleContentScope, targetEnvironment, metadataPartProvider,
-            languageVersionSettings, CommonPlatforms.defaultCommonPlatform, CommonPlatformAnalyzerServices
+            languageVersionSettings, CommonPlatforms.defaultCommonPlatform, CommonPlatformAnalyzerServices, shouldCheckExpectActual
         )
 
         val packageFragmentProviders = listOf(
@@ -146,6 +87,70 @@ object CommonResolverForModuleFactory : ResolverForModuleFactory() {
         )
 
         return ResolverForModule(CompositePackageFragmentProvider(packageFragmentProviders), container)
+    }
+
+    companion object {
+        private class SourceModuleInfo(
+            override val name: Name,
+            override val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>,
+            private val dependOnOldBuiltIns: Boolean
+        ) : ModuleInfo {
+            override fun dependencies() = listOf(this)
+
+            override fun dependencyOnBuiltIns(): ModuleInfo.DependencyOnBuiltIns =
+                if (dependOnOldBuiltIns) ModuleInfo.DependencyOnBuiltIns.LAST else ModuleInfo.DependencyOnBuiltIns.NONE
+
+            override val platform: TargetPlatform
+                get() = CommonPlatforms.defaultCommonPlatform
+
+            override val analyzerServices: PlatformDependentAnalyzerServices
+                get() = CommonPlatformAnalyzerServices
+        }
+
+        fun analyzeFiles(
+            files: Collection<KtFile>, moduleName: Name, dependOnBuiltIns: Boolean, languageVersionSettings: LanguageVersionSettings,
+            capabilities: Map<ModuleDescriptor.Capability<*>, Any?> = emptyMap(),
+            shouldCheckExpectActual: Boolean = false,
+            metadataPartProviderFactory: (ModuleContent<ModuleInfo>) -> MetadataPartProvider
+        ): AnalysisResult {
+            val moduleInfo = SourceModuleInfo(moduleName, capabilities, dependOnBuiltIns)
+            val project = files.firstOrNull()?.project ?: throw AssertionError("No files to analyze")
+
+            val multiplatformLanguageSettings = object : LanguageVersionSettings by languageVersionSettings {
+                override fun getFeatureSupport(feature: LanguageFeature): LanguageFeature.State =
+                    if (feature == LanguageFeature.MultiPlatformProjects) LanguageFeature.State.ENABLED
+                    else languageVersionSettings.getFeatureSupport(feature)
+            }
+
+            @Suppress("NAME_SHADOWING")
+            val resolver = ResolverForProjectImpl(
+                "sources for metadata serializer",
+                ProjectContext(project, "metadata serializer"),
+                listOf(moduleInfo),
+                modulesContent = { ModuleContent(it, files, GlobalSearchScope.allScope(project)) },
+                moduleLanguageSettingsProvider = object : LanguageSettingsProvider {
+                    override fun getLanguageVersionSettings(
+                        moduleInfo: ModuleInfo,
+                        project: Project,
+                        isReleaseCoroutines: Boolean?
+                    ) = multiplatformLanguageSettings
+
+                    override fun getTargetPlatform(
+                        moduleInfo: ModuleInfo,
+                        project: Project
+                    ) = TargetPlatformVersion.NoVersion
+                },
+                resolverForModuleFactoryByPlatform = { CommonResolverForModuleFactory(shouldCheckExpectActual) },
+                platformParameters = { _ -> CommonAnalysisParameters(metadataPartProviderFactory) }
+            )
+
+            val moduleDescriptor = resolver.descriptorForModule(moduleInfo)
+            val container = resolver.resolverForModule(moduleInfo).componentProvider
+
+            container.get<LazyTopDownAnalyzer>().analyzeDeclarations(TopDownAnalysisMode.TopLevelDeclarations, files)
+
+            return AnalysisResult.success(container.get<BindingTrace>().bindingContext, moduleDescriptor)
+        }
     }
 }
 
@@ -158,7 +163,8 @@ private fun createContainerToResolveCommonCode(
     metadataPartProvider: MetadataPartProvider,
     languageVersionSettings: LanguageVersionSettings,
     platform: TargetPlatform,
-    analyzerServices: PlatformDependentAnalyzerServices
+    analyzerServices: PlatformDependentAnalyzerServices,
+    shouldCheckExpectActual: Boolean
 ): StorageComponentContainer =
     createContainer("ResolveCommonCode", analyzerServices) {
         configureModule(moduleContext, platform, analyzerServices, bindingTrace, languageVersionSettings)
@@ -179,6 +185,10 @@ private fun createContainerToResolveCommonCode(
         useInstance(metadataFinderFactory.create(moduleContentScope))
 
         targetEnvironment.configure(this)
+
+        if (shouldCheckExpectActual) {
+            useImpl<ExpectedActualDeclarationChecker>()
+        }
     }
 
 fun StorageComponentContainer.configureCommonSpecificComponents() {
