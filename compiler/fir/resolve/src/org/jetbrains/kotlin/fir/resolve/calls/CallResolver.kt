@@ -327,7 +327,8 @@ class ExplicitReceiverTowerDataConsumer<T : ConeSymbol>(
                         }
                     }
                 )
-            TowerDataKind.TOWER_LEVEL ->
+            TowerDataKind.TOWER_LEVEL -> {
+                if (token == TowerScopeLevel.Token.Objects) return ProcessorAction.NEXT
                 towerScopeLevel.processElementsByName(
                     token,
                     name,
@@ -346,6 +347,7 @@ class ExplicitReceiverTowerDataConsumer<T : ConeSymbol>(
                         }
                     }
                 )
+            }
         }
     }
 
