@@ -44,6 +44,18 @@ fun ConeClassifierLookupTag.toSymbol(useSiteSession: FirSession): ConeClassifier
         else -> error("sealed ${this::class}")
     }
 
+fun ConeClassLikeLookupTag.constructClassType(typeArguments: Array<ConeKotlinTypeProjection>, isNullable: Boolean): ConeLookupTagBasedType {
+    return ConeClassTypeImpl(this, typeArguments, isNullable)
+}
+
+fun ConeClassifierLookupTag.constructType(typeArguments: Array<ConeKotlinTypeProjection>, isNullable: Boolean): ConeLookupTagBasedType {
+    return when (this) {
+        is ConeTypeParameterLookupTag -> ConeTypeParameterTypeImpl(this, isNullable)
+        is ConeClassLikeLookupTag -> this.constructClassType(typeArguments, isNullable)
+        else -> error("! ${this::class}")
+    }
+}
+
 fun ConeClassifierSymbol.constructType(typeArguments: Array<ConeKotlinTypeProjection>, isNullable: Boolean): ConeLookupTagBasedType {
     return when (this) {
         is ConeTypeParameterSymbol -> {
