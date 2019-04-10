@@ -75,15 +75,10 @@ open class KaptWithKotlincTask : KaptTask(), CompilerArgumentAwareWithInput<K2JV
         checkAnnotationProcessorClasspath()
 
         val incrementalChanges = getIncrementalChanges(inputs)
-        when (incrementalChanges) {
-            is KaptIncrementalChanges.Known -> {
-                changedFiles = incrementalChanges.changedSources.toList()
-                classpathChanges = incrementalChanges.changedClasspathJvmNames.toList()
-                processIncrementally = true
-            }
-            else -> {
-                // do nothing
-            }
+        if (incrementalChanges is KaptIncrementalChanges.Known) {
+            changedFiles = incrementalChanges.changedSources.toList()
+            classpathChanges = incrementalChanges.changedClasspathJvmNames.toList()
+            processIncrementally = true
         }
 
         val args = prepareCompilerArguments()
