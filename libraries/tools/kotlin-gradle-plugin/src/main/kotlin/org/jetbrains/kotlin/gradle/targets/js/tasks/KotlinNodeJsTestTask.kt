@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSetti
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTrace
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectLayout
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolver
 import org.jetbrains.kotlin.gradle.tasks.KotlinTestTask
 import org.jetbrains.kotlin.gradle.testing.IgnoredTestSuites
 import java.io.File
@@ -23,9 +25,6 @@ open class KotlinNodeJsTestTask : KotlinTestTask() {
     @Input
     var ignoredTestSuites: IgnoredTestSuites =
         IgnoredTestSuites.showWithContents
-
-    @InputDirectory
-    lateinit var nodeModulesDir: File
 
     @Input
     @SkipWhenEmpty
@@ -53,11 +52,19 @@ open class KotlinNodeJsTestTask : KotlinTestTask() {
         options(nodeJsProcessOptions)
     }
 
+    override fun executeTests() {
+        NpmResolver.resolve(project)
+        super.executeTests()
+    }
+
     override fun createTestExecutionSpec(): TCServiceMessagesTestExecutionSpec {
         val extendedForkOptions = DefaultProcessForkOptions(fileResolver)
         nodeJsProcessOptions.copyTo(extendedForkOptions)
 
-        extendedForkOptions.environment.addPath("NODE_PATH", nodeModulesDir.canonicalPath)
+        NpmResolver.resolve(project)
+
+        val npmProjectLayout = NpmProjectLayout[project]
+        extendedForkOptions.workingDir = npmProjectLayout.nodeWorkDir
 
         val nodeJsArgs = mutableListOf<String>()
 
@@ -83,7 +90,7 @@ open class KotlinNodeJsTestTask : KotlinTestTask() {
             extendedForkOptions,
             nodeJsArgs +
                     testRuntimeNodeModules
-                        .map { nodeModulesDir.resolve(it) }
+                        .map { npmProjectLayout.nodeModulesDir.resolve(it) }
                         .filter { it.exists() }
                         .map { it.absolutePath } +
                     cliArgs.toList(),
@@ -122,10 +129,4 @@ data class KotlinNodeJsTestRunnerCliArgs(
     enum class IgnoredTestSuitesReporting {
         skip, reportAsIgnoredTest, reportAllInnerTestsAsIgnored
     }
-}
-
-private fun MutableMap<String, Any>.addPath(key: String, path: String) {
-    val prev = get(key)
-    if (prev == null) set(key, path)
-    else set(key, prev as String + File.pathSeparator + path)
 }

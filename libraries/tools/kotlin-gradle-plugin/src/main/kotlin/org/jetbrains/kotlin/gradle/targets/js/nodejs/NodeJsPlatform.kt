@@ -2,7 +2,7 @@ package org.jetbrains.kotlin.gradle.targets.js.nodejs
 
 /**
  * Provides platform and architecture names that is used to download NodeJs.
- * See [NodeJsEnv.ivyDependency] that is filled in [NodeJsRootExtension.environment].
+ * See [NodeJsEnv.ivyDependency] that is filled in [NodeJsRootExtension.buildEnv].
  */
 internal object NodeJsPlatform {
     private val props = System.getProperties()

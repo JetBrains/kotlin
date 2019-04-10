@@ -3,10 +3,9 @@ package org.jetbrains.kotlin.gradle.targets.js
 import org.gradle.api.file.FileCollection
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationToRunnableFiles
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsSetupTask
-import org.jetbrains.kotlin.gradle.targets.js.tasks.*
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectLayout
+import org.jetbrains.kotlin.gradle.targets.js.tasks.KotlinNodeJsTestTask
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.testing.internal.configureConventions
@@ -51,7 +50,7 @@ internal class KotlinJsCompilationTestsConfigurator(
             implementation(kotlin("test-nodejs-runner"))
         }
 
-        val projectWithNodeJsPlugin = NodeJsPlugin.ensureAppliedInHierarchy(target.project)
+        val nodeJs = NodeJsPlugin[target.project]
 
         val testTask = registerTask(project, testTaskName, KotlinNodeJsTestTask::class.java) { testJs ->
             testJs.group = LifecycleBasePlugin.VERIFICATION_GROUP
@@ -68,8 +67,6 @@ internal class KotlinJsCompilationTestsConfigurator(
             }
 
             testJs.nodeJsProcessOptions.workingDir = project.projectDir
-
-            testJs.nodeModulesDir = project.rootDir.resolve("node_modules")
             testJs.testRuntimeNodeModules = listOf(
                 "kotlin-test-nodejs-runner.js",
                 "kotlin-nodejs-source-map-support.js"
@@ -83,11 +80,11 @@ internal class KotlinJsCompilationTestsConfigurator(
         project.afterEvaluate {
             // defer nodeJs executable setup, as nodejs project settings may change during configuration
             testTask.configure {
-                val nodeJsSetupTask = projectWithNodeJsPlugin.tasks.findByName(NodeJsSetupTask.NAME)
+                val nodeJsSetupTask = nodeJs.nodeJsSetupTask
                 it.dependsOn(nodeJsSetupTask)
 
                 if (it.nodeJsProcessOptions.executable == null) {
-                    it.nodeJsProcessOptions.executable = NodeJsExtension[projectWithNodeJsPlugin].buildEnv().nodeExec
+                    it.nodeJsProcessOptions.executable = nodeJs.buildEnv().nodeExec
                 }
             }
         }
