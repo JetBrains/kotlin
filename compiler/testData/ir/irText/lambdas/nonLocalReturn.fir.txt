@@ -54,7 +54,7 @@ FILE fqName:<root> fileName:/nonLocalReturn.kt
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='local final fun <anonymous> (): IrErrorType declared in <root>.testLrmFoo1'
                 BLOCK type=IrErrorType origin=null
-                  WHEN type=IrErrorType origin=IF
+                  WHEN type=kotlin.Unit origin=IF
                     BRANCH
                       if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                         arg0: ERROR_CALL 'Unresolved reference: <Unresolved name: it>#' type=IrErrorType
@@ -73,7 +73,7 @@ FILE fqName:<root> fileName:/nonLocalReturn.kt
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='local final fun <anonymous> (): IrErrorType declared in <root>.testLrmFoo2'
                 BLOCK type=IrErrorType origin=null
-                  WHEN type=IrErrorType origin=IF
+                  WHEN type=kotlin.Unit origin=IF
                     BRANCH
                       if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                         arg0: ERROR_CALL 'Unresolved reference: <Unresolved name: it>#' type=IrErrorType

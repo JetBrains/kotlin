@@ -6,12 +6,15 @@
 package org.jetbrains.kotlin.fir.expressions.impl
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirAbstractElement
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef
 
 // Representation of "dummy" condition at else branch
 class FirElseIfTrueCondition(
     session: FirSession,
     psi: PsiElement?
-): FirAbstractExpression(session, psi)
+) : FirAbstractExpression(session, psi) {
+
+    override var typeRef: FirTypeRef = FirImplicitUnitTypeRef(session, psi)
+}

@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirThrowExpression
 import org.jetbrains.kotlin.fir.transformSingle
+import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitNothingTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
 class FirThrowExpressionImpl(
@@ -23,4 +25,6 @@ class FirThrowExpressionImpl(
         exception = exception.transformSingle(transformer, data)
         return super<FirAbstractExpression>.transformChildren(transformer, data)
     }
+
+    override var typeRef: FirTypeRef = FirImplicitNothingTypeRef(session, psi)
 }
