@@ -2495,7 +2495,7 @@ compileTestKotlin {
         val module = getModule(projectName)
         val moduleInfo = if (isProduction) module.productionSourceInfo() else module.testSourceInfo()
 
-        val resolutionFacade = KotlinCacheService.getInstance(myProject).getResolutionFacadeByModuleInfo(moduleInfo!!, platform)!!
+        val resolutionFacade = KotlinCacheService.getInstance(myProject).getResolutionFacadeByModuleInfo(moduleInfo!!)!!
         val moduleDescriptor = resolutionFacade.moduleDescriptor
 
         Assert.assertEquals("<$expectedName>", moduleDescriptor.stableName?.asString())
