@@ -1,0 +1,4 @@
+package foo
+
+actual class ExplicitlyDuplicatedByMiddleAndJvm
+class ImplicitlyDuplicatedByMiddleAndJvm

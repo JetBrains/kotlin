@@ -1,0 +1,9 @@
+package foo
+
+actual class ExpectInCommonActualInJvm
+actual class ExpectInMiddleActualInJs
+
+expect class ExpectInJvmWithoutActual
+
+expect class ExpectInJvmActualInJvm
+actual class ExpectInJvmActualInJvm

@@ -1,0 +1,7 @@
+package foo
+
+actual class ExplicitlyDuplicatedByMiddleAndJs
+class ImplicitlyDuplicatedByMiddleAndJs
+
+actual class ExplicitlyDuplicatedByMiddleAndJvm
+actual class ImplicitlyDuplicatedByMiddleAndJvm

@@ -675,6 +675,7 @@ fun main(args: Array<String>) {
 
         testClass<AbstractMultiPlatformHighlightingTest> {
             model("multiModuleHighlighting/multiplatform/", recursive = false, extension = null)
+            model("multiModuleHighlighting/hierarchicalExpectActualMatching/", recursive = false, extension = null)
         }
 
         testClass<AbstractQuickFixMultiModuleTest> {
