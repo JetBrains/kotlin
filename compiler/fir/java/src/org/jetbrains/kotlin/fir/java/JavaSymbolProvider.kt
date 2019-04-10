@@ -58,6 +58,7 @@ class JavaSymbolProvider(
     }
 
     override fun getClassLikeSymbolByFqName(classId: ClassId): ConeClassLikeSymbol? {
+        if (!hasTopLevelClassOf(classId)) return null
         return classCache.lookupCacheOrCalculateWithPostCompute(classId, {
             val foundClass = findClass(classId)
             if (foundClass == null || foundClass.annotations.any { it.classId?.asSingleFqName() == JvmAnnotationNames.METADATA_FQ_NAME }) {
@@ -159,5 +160,18 @@ class JavaSymbolProvider(
             .filter { it.classId.relativeClassName.parent().isRoot }
             .map { it.fir }
     }
+
+    private val knownClassNamesInPackage = mutableMapOf<FqName, Set<String>?>()
+
+    private fun hasTopLevelClassOf(classId: ClassId): Boolean {
+        val knownNames = knownClassNamesInPackage.getOrPut(classId.packageFqName) {
+            facade.knownClassNamesInPackage(classId.packageFqName)
+        } ?: return false
+        return classId.relativeClassName.topLevelName() in knownNames
+    }
 }
+
+fun FqName.topLevelName() =
+    asString().substringBefore(".")
+
 
