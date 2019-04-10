@@ -7258,6 +7258,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/math/ceil.kt");
             }
 
+            @TestMetadata("copySign.kt")
+            public void testCopySign() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/math/copySign.kt");
+            }
+
             @TestMetadata("cos.kt")
             public void testCos() throws Exception {
                 runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/math/cos.kt");
@@ -7293,9 +7298,19 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/math/IEEEremainder.kt");
             }
 
+            @TestMetadata("log.kt")
+            public void testLog() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/math/log.kt");
+            }
+
             @TestMetadata("log10.kt")
             public void testLog10() throws Exception {
                 runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/math/log10.kt");
+            }
+
+            @TestMetadata("log1p.kt")
+            public void testLog1p() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithTopLevelFunction/math/log1p.kt");
             }
 
             @TestMetadata("max.kt")

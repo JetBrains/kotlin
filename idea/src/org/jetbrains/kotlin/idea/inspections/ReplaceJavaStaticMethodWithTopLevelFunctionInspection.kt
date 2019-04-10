@@ -8,8 +8,14 @@ package org.jetbrains.kotlin.idea.inspections
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.popup.JBPopupFactory
+import com.intellij.openapi.ui.popup.PopupStep
+import com.intellij.openapi.ui.popup.util.BaseListPopupStep
 import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.core.ShortenReferences
@@ -17,6 +23,7 @@ import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.collections.isCalling
 import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
+import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -32,25 +39,50 @@ class ReplaceJavaStaticMethodWithTopLevelFunctionInspection : AbstractKotlinInsp
         val callee = call.calleeExpression ?: return
         val dotQualified = call.getStrictParentOfType<KtDotQualifiedExpression>() ?: return
         val calleeText = callee.text
-        val replacement = replacements[calleeText]
-            ?.takeIf { call.getResolvedCall(call.analyze(BodyResolveMode.PARTIAL))?.isCalling(FqName(it.javaMethodFqName)) == true }
-            ?: return
+        val replacements = replacements[calleeText] ?: return
+        val replacement = replacements.first()
+
+        if (call.getResolvedCall(call.analyze(BodyResolveMode.PARTIAL))?.isCalling(FqName(replacement.javaMethodFqName)) != true) return
         if (replacement.toExtensionFunction && call.valueArguments.isEmpty()) return
         holder.registerProblem(
             dotQualified,
             TextRange(0, callee.endOffset - dotQualified.startOffset),
             "Should be replaced with '${replacement.kotlinFunctionShortName}()'",
-            ReplaceWithTopLevelFunction(replacement)
+            ReplaceWithTopLevelFunction(replacements)
         )
     })
 
-    private class ReplaceWithTopLevelFunction(private val replacement: Replacement) : LocalQuickFix {
-        override fun getName() = "Replace with '${replacement.kotlinFunctionShortName}()'"
+    private class ReplaceWithTopLevelFunction(private val replacements: List<Replacement>) : LocalQuickFix {
+        override fun getName() = "Replace with '${replacements.first().kotlinFunctionShortName}()'"
 
         override fun getFamilyName() = name
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-            val dotQualified = descriptor.psiElement as? KtDotQualifiedExpression ?: return
+            val element = descriptor.psiElement ?: return
+            val editor = element.findExistingEditor()
+            if (editor != null && replacements.size > 1 && !ApplicationManager.getApplication().isUnitTestMode) {
+                chooseAndApplyFix(editor, project, element)
+            } else {
+                applyFix(replacements.first(), project, element)
+            }
+        }
+
+        private fun chooseAndApplyFix(editor: Editor, project: Project, element: PsiElement) {
+            JBPopupFactory.getInstance().createListPopup(object : BaseListPopupStep<Replacement>("Choose function", replacements) {
+                override fun onChosen(selectedValue: Replacement?, finalChoice: Boolean): PopupStep<String>? {
+                    if (selectedValue == null || project.isDisposed) return null
+                    project.executeWriteCommand(name) {
+                        applyFix(selectedValue, project, element)
+                    }
+                    return null
+                }
+
+                override fun getTextFor(value: Replacement) = value.kotlinFunctionFqName
+            }).showInBestPositionFor(editor)
+        }
+
+        private fun applyFix(replacement: Replacement, project: Project, element: PsiElement) {
+            val dotQualified = element as? KtDotQualifiedExpression ?: return
             val call = dotQualified.callExpression ?: return
             val file = dotQualified.containingKtFile
             val psiFactory = KtPsiFactory(call)
@@ -71,7 +103,7 @@ class ReplaceJavaStaticMethodWithTopLevelFunctionInspection : AbstractKotlinInsp
     }
 
     private data class Replacement(
-        val javaMethodFqName: String, 
+        val javaMethodFqName: String,
         val kotlinFunctionFqName: String,
         val toExtensionFunction: Boolean = false
     ) {
@@ -80,6 +112,8 @@ class ReplaceJavaStaticMethodWithTopLevelFunctionInspection : AbstractKotlinInsp
         val javaMethodShortName = javaMethodFqName.shortName()
 
         val kotlinFunctionShortName = kotlinFunctionFqName.shortName()
+
+        override fun toString(): String = kotlinFunctionFqName
     }
 
     companion object {
@@ -100,6 +134,8 @@ class ReplaceJavaStaticMethodWithTopLevelFunctionInspection : AbstractKotlinInsp
             Replacement("java.lang.Math.floor", "kotlin.math.floor"),
             Replacement("java.lang.Math.hypot", "kotlin.math.hypot"),
             Replacement("java.lang.Math.IEEEremainder", "kotlin.math.IEEErem", toExtensionFunction = true),
+            Replacement("java.lang.Math.log", "kotlin.math.ln"),
+            Replacement("java.lang.Math.log1p", "kotlin.math.ln1p"),
             Replacement("java.lang.Math.log10", "kotlin.math.log10"),
             Replacement("java.lang.Math.max", "kotlin.math.max"),
             Replacement("java.lang.Math.min", "kotlin.math.min"),
@@ -109,12 +145,14 @@ class ReplaceJavaStaticMethodWithTopLevelFunctionInspection : AbstractKotlinInsp
             Replacement("java.lang.Math.pow", "kotlin.math.pow", toExtensionFunction = true),
             Replacement("java.lang.Math.rint", "kotlin.math.round"),
             Replacement("java.lang.Math.round", "kotlin.math.roundToLong", toExtensionFunction = true),
+            Replacement("java.lang.Math.round", "kotlin.math.roundToInt", toExtensionFunction = true),
             Replacement("java.lang.Math.signum", "kotlin.math.sign"),
             Replacement("java.lang.Math.sin", "kotlin.math.sin"),
             Replacement("java.lang.Math.sinh", "kotlin.math.sinh"),
             Replacement("java.lang.Math.sqrt", "kotlin.math.sqrt"),
             Replacement("java.lang.Math.tan", "kotlin.math.tan"),
-            Replacement("java.lang.Math.tanh", "kotlin.math.tanh")
-        ).associateBy { it.javaMethodShortName }
+            Replacement("java.lang.Math.tanh", "kotlin.math.tanh"),
+            Replacement("java.lang.Math.copySign", "kotlin.math.withSign", toExtensionFunction = true)
+        ).groupBy { it.javaMethodShortName }
     }
 }
