@@ -83,8 +83,8 @@ open class ProjectStructureParser(private val projectRoot: File) {
             "Malformed declaration: '$fromName $arrow ...' \n$HELP_TEXT"
         }
 
-        val dependencies = consumeUntilFirst { it == '{' }.trim().split(",").map {
-            val toBuilder = getDeclaredBuilder(it)
+        val dependencies = consumeUntilFirst { it == '{' }.split(",").map {
+            val toBuilder = getDeclaredBuilder(it.trim())
             ResolveDependency.Builder().apply {
                 to = toBuilder
             }
