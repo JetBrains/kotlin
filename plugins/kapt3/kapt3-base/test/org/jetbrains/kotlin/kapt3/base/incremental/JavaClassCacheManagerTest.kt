@@ -136,24 +136,31 @@ class JavaClassCacheManagerTest {
     }
 
     @Test
-    fun testDefinesConstant() {
+    fun testReferencedConstant() {
         SourceFileStructure(File("Constants.java").toURI()).also {
             it.addDeclaredType("test.Constants")
-            it.addDefinedConstant("CONST", 123)
             cache.javaCache.addSourceStructure(it)
         }
-        SourceFileStructure(File("Unrelated1.java").toURI()).also {
-            it.addDeclaredType("test.Unrelated1")
+        SourceFileStructure(File("MentionsConst.java").toURI()).also {
+            it.addDeclaredType("test.MentionsConst")
+            it.addMentionedConstant("test.Constants", "CONST")
             cache.javaCache.addSourceStructure(it)
         }
-        SourceFileStructure(File("Unrelated2.java").toURI()).also {
-            it.addDeclaredType("test.Unrelated2")
+        SourceFileStructure(File("MentionsOtherConst.java").toURI()).also {
+            it.addDeclaredType("test.MentionsOtherConst")
+            it.addMentionedConstant("test.OtherConstants", "CONST")
             cache.javaCache.addSourceStructure(it)
         }
         prepareForIncremental()
 
-        val dirtyFiles = cache.invalidateAndGetDirtyFiles(listOf(File("Constants.java")), emptyList())
-        assertEquals(SourcesToReprocess.FullRebuild, dirtyFiles)
+        val dirtyFiles =
+            cache.invalidateAndGetDirtyFiles(
+                listOf(File("Constants.java")), emptyList()
+            ) as SourcesToReprocess.Incremental
+        assertEquals(
+            listOf(File("Constants.java").absoluteFile, File("MentionsConst.java").absoluteFile),
+            dirtyFiles.toReprocess
+        )
     }
 
     @Test
