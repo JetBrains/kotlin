@@ -6,4 +6,4 @@ internal open class Base(nested: Nested?) {
     }
 }
 
-internal class Derived : Base(Base.Nested(Base.Nested.FIELD))
+internal class Derived : Base(Nested(Nested.FIELD))

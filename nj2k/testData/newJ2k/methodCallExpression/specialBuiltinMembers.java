@@ -34,9 +34,10 @@ class A {
         }
 
         for (Map.Entry<String, Integer> entry : map.entrySet()) {
-            String key = entry.getKey();
             Integer value = entry.getValue();
-            entry.setValue(value + 1);
+            if (entry.getKey() != null) {
+                println(value + 1)
+            }
         }
     }
 }

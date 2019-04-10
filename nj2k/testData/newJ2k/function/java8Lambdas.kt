@@ -7,7 +7,7 @@
 class Java8Class {
     fun foo0(r: Function0<String>) {}
 
-    fun foo1(r: Function1<Int, String>) {}
+    fun foo1(r: Function1<Int, String?>) {}
 
     fun foo2(r: Function2<Int, Int, String>) {}
 

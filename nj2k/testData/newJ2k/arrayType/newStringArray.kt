@@ -1,1 +1,1 @@
-val a: Array<String?> = arrayOf("abc")
+val a = arrayOf("abc")

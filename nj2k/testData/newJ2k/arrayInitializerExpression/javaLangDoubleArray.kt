@@ -1,1 +1,1 @@
-val a: Array<Double?> = arrayOf(1.0, 2.0, 3.0)
+val a = arrayOf(1.0, 2.0, 3.0)

@@ -28,7 +28,7 @@ public class Java8Class {
         foo1((Integer i) -> {
             helper();
             if (i > 1) {
-                return "42";
+                return null;
             }
 
             return "43";

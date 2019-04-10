@@ -3,12 +3,10 @@ package com.voltvoodoo.saplo4j.model
 import java.io.Serializable
 
 class Language(protected var code: String) : Serializable {
-
     override fun toString(): String {
-        return this.code
+        return code
     }
 }
-
 
 internal open class Base {
     internal open fun test() {}

@@ -1,9 +1,13 @@
 import kotlinApi.KotlinClass
+import kotlinApi.KotlinClass.Companion
+import kotlinApi.KotlinClass.Companion.staticFun
+import kotlinApi.KotlinClass.Companion.staticProperty
+import kotlinApi.KotlinClass.Companion.staticVar
 
 internal class C {
     fun foo(): Int {
-        KotlinClass.staticVar = KotlinClass.staticVar * 2
-        KotlinClass.staticProperty = KotlinClass.staticVar + KotlinClass.staticProperty
-        return KotlinClass.staticFun(1)
+        staticVar = staticVar * 2
+        staticProperty = staticVar + staticProperty
+        return staticFun(1)
     }
 }

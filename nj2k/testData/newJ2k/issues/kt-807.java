@@ -1,10 +1,9 @@
 import java.io.*;
-import java.io.*;
 
 class FileRead {
     public static void main(String args[]) {
         try {
-            FileInputStream fstream = new FileInputStream();
+            FileInputStream fstream = new FileInputStream(new File("file.txt"));
             DataInputStream in = new DataInputStream(fstream);
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
             String strLine;

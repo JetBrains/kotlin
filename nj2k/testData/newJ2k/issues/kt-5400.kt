@@ -3,5 +3,5 @@ internal open class Base {
 }
 
 internal class Derived : Base() {
-    var field: Base.Nested? = null
+    var field: Nested? = null
 }

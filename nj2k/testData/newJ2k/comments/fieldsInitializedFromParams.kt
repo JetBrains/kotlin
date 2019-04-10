@@ -1,5 +1,5 @@
-internal class C(private val p1: Int /* parameter p1 */ // field p1
-                 ,
+internal class C(private val p1 // field p1
+                 : Int /* parameter p1 */,
                  /**
                   * Field myP2
                   */

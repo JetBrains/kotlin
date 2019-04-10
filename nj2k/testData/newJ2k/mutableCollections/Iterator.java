@@ -1,6 +1,6 @@
 import java.util.*;
 
-class Iterator {
+class IteratorTest {
 
     Map<String, String> mutableMap1 = new HashMap<>();
     Map<String, String> mutableMap2 = new HashMap<>();
