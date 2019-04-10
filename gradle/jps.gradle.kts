@@ -160,16 +160,6 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
             project {
                 settings {
                     ideArtifacts {
-                        create("kotlin-plugin.jar") {
-                            archive("kotlin-plugin.jar") {
-                                directory("META-INF") {
-                                    file("$buildDir/tmp/jar/MANIFEST.MF")
-                                }
-
-                                jarFromEmbedded(ideaPluginProject)
-                            }
-                        }
-
                         create("ideaPlugin") {
                             directory("Kotlin") {
                                 directory("kotlinc") {
@@ -177,7 +167,13 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
                                 }
 
                                 directory("lib") {
-                                    artifact("kotlin-plugin.jar")
+                                    archive("kotlin-plugin.jar") {
+                                        directory("META-INF") {
+                                            file("$buildDir/tmp/jar/MANIFEST.MF")
+                                        }
+
+                                        jarFromEmbedded(ideaPluginProject)
+                                    }
                                     
                                     directoryFromConfiguration(libraries)
 
