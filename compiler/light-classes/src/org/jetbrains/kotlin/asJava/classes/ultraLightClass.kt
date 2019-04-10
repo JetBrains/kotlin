@@ -431,8 +431,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
         forceStatic: Boolean,
         forcePrivate: Boolean = false
     ): Collection<KtLightMethod> {
-
-        if (ktFunction.hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME)) return emptyList()
+        if (ktFunction.hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME) || ktFunction.hasReifiedParameters()) return emptyList()
 
         val basicMethod = asJavaMethod(ktFunction, forceStatic, forcePrivate)
 
@@ -562,7 +561,6 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
 
                 private fun KtDeclaration.isInlineOnly(): Boolean {
                     if (this !is KtCallableDeclaration || !hasModifier(INLINE_KEYWORD)) return false
-                    if (typeParameters.any { it.hasModifier(REIFIED_KEYWORD) }) return true
                     if (annotationEntries.isEmpty()) return false
 
                     val descriptor = resolve() as? CallableMemberDescriptor ?: return false
@@ -638,7 +636,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
     ): List<KtLightMethod> {
 
         val propertyName = declaration.name ?: return emptyList()
-        if (declaration.isConstOrJvmField()) return emptyList()
+        if (declaration.isConstOrJvmField() || declaration.hasReifiedParameters()) return emptyList()
 
         val ktGetter = (declaration as? KtProperty)?.getter
         val ktSetter = (declaration as? KtProperty)?.setter
@@ -703,6 +701,9 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
                 !declaration.hasModifier(OVERRIDE_KEYWORD) &&
                 !declaration.hasModifier(ABSTRACT_KEYWORD)
     }
+
+    private fun KtCallableDeclaration.hasReifiedParameters(): Boolean =
+        typeParameters.any { it.hasModifier(REIFIED_KEYWORD) }
 
     override fun getInitializers(): Array<PsiClassInitializer> = emptyArray()
 

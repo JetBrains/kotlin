@@ -99,6 +99,11 @@ public class UltraLightClassSanityTestGenerated extends AbstractUltraLightClassS
         runTest("compiler/testData/asJava/lightClasses/InheritingInterfaceDefaultImpls.kt");
     }
 
+    @TestMetadata("InlineReified.kt")
+    public void testInlineReified() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/InlineReified.kt");
+    }
+
     @TestMetadata("JvmNameOnMember.kt")
     public void testJvmNameOnMember() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/JvmNameOnMember.kt");

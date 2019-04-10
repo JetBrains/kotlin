@@ -1,10 +1,11 @@
 @kotlin.Metadata
 public final class test/Foo {
     public final static method foo(): void
+    public synthetic final static method inlineReified(): void
 }
 
 @kotlin.Metadata
 synthetic final class test/Foo__InlineReifiedMultifileKt {
     public final static method foo(): void
-    private final static method inlineReified(): void
+    public synthetic final static method inlineReified(): void
 }

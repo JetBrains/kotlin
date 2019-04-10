@@ -14,8 +14,17 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 private val INLINE_ONLY_ANNOTATION_FQ_NAME = FqName("kotlin.internal.InlineOnly")
 
+/**
+ * @return true if it's impossible to observe a call instruction referencing this member in the bytecode.
+ */
 fun MemberDescriptor.isEffectivelyInlineOnly(): Boolean =
-    isInlineWithReified() || isInlineOnly() || isPrivateInlineSuspend()
+    isInlineWithReified() || isInlineOnlyPrivateInBytecode()
+
+/**
+ * @return true if this member should be private in bytecode because it's effectively inline-only.
+ */
+fun MemberDescriptor.isInlineOnlyPrivateInBytecode(): Boolean =
+    isInlineOnly() || isPrivateInlineSuspend()
 
 fun MemberDescriptor.isInlineOnly(): Boolean =
     this is FunctionDescriptor && isInline &&
