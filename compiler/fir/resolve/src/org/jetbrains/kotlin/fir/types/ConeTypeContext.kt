@@ -253,7 +253,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext {
     }
 
     override fun captureFromArguments(type: SimpleTypeMarker, status: CaptureStatus): SimpleTypeMarker? {
-        require(type is ConeLookupTagBasedType) { ":( $type" }
+        require(type is ConeKotlinType)
         val typeConstructor = type.typeConstructor()
         if (type.argumentsCount() != typeConstructor.parametersCount()) return null
         if (type.asArgumentList().all(this) { !it.isStarProjection() && it.getVariance() == TypeVariance.INV }) return null
