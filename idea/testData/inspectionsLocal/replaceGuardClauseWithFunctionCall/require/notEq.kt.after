@@ -1,0 +1,5 @@
+// FIX: Replace with 'require()' call
+// WITH_RUNTIME
+fun test(foo: Int) {
+    require(foo == 0) { "test" }
+}

@@ -107,6 +107,7 @@ object J2KPostProcessingRegistrarImpl : J2KPostProcessingRegistrar {
         registerInspectionBasedProcessing(SimplifyAssertNotNullInspection())
         registerIntentionBasedProcessing(RemoveRedundantCallsOfConversionMethodsIntention())
         registerInspectionBasedProcessing(JavaMapForEachInspection())
+        registerInspectionBasedProcessing(ReplaceGuardClauseWithFunctionCallInspection())
 
 
         registerDiagnosticBasedProcessing<KtBinaryExpressionWithTypeRHS>(Errors.USELESS_CAST) { element, _ ->

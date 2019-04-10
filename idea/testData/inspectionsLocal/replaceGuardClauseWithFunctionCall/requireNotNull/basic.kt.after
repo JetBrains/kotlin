@@ -1,0 +1,5 @@
+// FIX: Replace with 'requireNotNull()' call
+// WITH_RUNTIME
+fun test(foo: Int?) {
+    requireNotNull(foo) { "test" }
+}

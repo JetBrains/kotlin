@@ -8902,6 +8902,121 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/replaceGuardClauseWithFunctionCall")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ReplaceGuardClauseWithFunctionCall extends AbstractLocalInspectionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInReplaceGuardClauseWithFunctionCall() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/replaceGuardClauseWithFunctionCall"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("notTargetException.kt")
+        public void testNotTargetException() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceGuardClauseWithFunctionCall/notTargetException.kt");
+        }
+
+        @TestMetadata("idea/testData/inspectionsLocal/replaceGuardClauseWithFunctionCall/check")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Check extends AbstractLocalInspectionTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInCheck() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/replaceGuardClauseWithFunctionCall/check"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("basic.kt")
+            public void testBasic() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceGuardClauseWithFunctionCall/check/basic.kt");
+            }
+        }
+
+        @TestMetadata("idea/testData/inspectionsLocal/replaceGuardClauseWithFunctionCall/checkNotNull")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class CheckNotNull extends AbstractLocalInspectionTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInCheckNotNull() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/replaceGuardClauseWithFunctionCall/checkNotNull"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("basic.kt")
+            public void testBasic() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceGuardClauseWithFunctionCall/checkNotNull/basic.kt");
+            }
+        }
+
+        @TestMetadata("idea/testData/inspectionsLocal/replaceGuardClauseWithFunctionCall/require")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Require extends AbstractLocalInspectionTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInRequire() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/replaceGuardClauseWithFunctionCall/require"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("basic.kt")
+            public void testBasic() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceGuardClauseWithFunctionCall/require/basic.kt");
+            }
+
+            @TestMetadata("basic2.kt")
+            public void testBasic2() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceGuardClauseWithFunctionCall/require/basic2.kt");
+            }
+
+            @TestMetadata("comment.kt")
+            public void testComment() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceGuardClauseWithFunctionCall/require/comment.kt");
+            }
+
+            @TestMetadata("comment2.kt")
+            public void testComment2() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceGuardClauseWithFunctionCall/require/comment2.kt");
+            }
+
+            @TestMetadata("not.kt")
+            public void testNot() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceGuardClauseWithFunctionCall/require/not.kt");
+            }
+
+            @TestMetadata("notEq.kt")
+            public void testNotEq() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceGuardClauseWithFunctionCall/require/notEq.kt");
+            }
+        }
+
+        @TestMetadata("idea/testData/inspectionsLocal/replaceGuardClauseWithFunctionCall/requireNotNull")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class RequireNotNull extends AbstractLocalInspectionTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInRequireNotNull() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/replaceGuardClauseWithFunctionCall/requireNotNull"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("basic.kt")
+            public void testBasic() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceGuardClauseWithFunctionCall/requireNotNull/basic.kt");
+            }
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
