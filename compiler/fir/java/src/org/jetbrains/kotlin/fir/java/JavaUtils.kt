@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.java.types.FirJavaTypeRef
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.constructType
+import org.jetbrains.kotlin.fir.resolve.constructClassType
 import org.jetbrains.kotlin.fir.resolve.getClassDeclaredCallableSymbols
 import org.jetbrains.kotlin.fir.service
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTagImpl
@@ -133,12 +133,15 @@ internal fun JavaClassifierType.toConeKotlinTypeWithNullability(session: FirSess
     return when (val classifier = classifier) {
         is JavaClass -> {
             val classId = classifier.classId!!
-            val symbol = session.service<FirSymbolProvider>().getClassLikeSymbolByFqName(classId) as? FirClassSymbol
-            symbol?.constructType(
+            val lookupTag = ConeClassLikeLookupTagImpl(classId)
+            lookupTag.constructClassType(
                 typeArguments.mapIndexed { index, argument ->
-                    argument.toConeProjection(session, symbol.fir.typeParameters.getOrNull(index))
+                    argument.toConeProjection(
+                        session, null
+                        //symbol.fir.typeParameters.getOrNull(index)
+                    )
                 }.toTypedArray(), isNullable
-            ) ?: ConeClassErrorType("Symbol not found, for `$classId`")
+            )
         }
         is JavaTypeParameter -> {
             // TODO: it's unclear how to identify type parameter by the symbol
