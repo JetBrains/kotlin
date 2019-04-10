@@ -426,6 +426,63 @@ class ModelClass() {
     }
 
     @Test
+    fun testAmbientNesting(): Unit = ensureSetup {
+        val tvId1 = 345
+        val tvId2 = 456
+
+        compose(
+            """
+            val A1 = Ambient("one") { 0 }
+            val A2 = Ambient("two") { 0 }
+            var changing = 0
+
+            @Composable
+            fun Foo() {
+                <A1.Provider value=2>
+                    <ConsumeBoth id=$tvId1 />
+                </A1.Provider>
+            }
+
+            @Composable
+            fun Bar() {
+                <ConsumeBoth id=$tvId2 />
+            }
+
+            @Composable
+            fun ConsumeBoth(id: Int) {
+                <A2.Consumer> notUsed ->
+                    <A1.Consumer> value ->
+                        <TextView id=id text=("" + value) />
+                    </A1.Consumer>
+                </A2.Consumer>
+            }
+
+            """,
+            { mapOf("text" to "") },
+            """
+            <A1.Provider value=1>
+                <A2.Provider value=changing++>
+                    <Foo />
+                    <Bar />
+                </A2.Provider>
+            </A1.Provider>
+            """
+        ).then { activity ->
+            val tv1 = activity.findViewById(tvId1) as TextView
+            val tv2 = activity.findViewById(tvId2) as TextView
+
+            assertEquals("2", tv1.text)
+            assertEquals("1", tv2.text)
+        }.then { activity ->
+            val tv1 = activity.findViewById(tvId1) as TextView
+            val tv2 = activity.findViewById(tvId2) as TextView
+
+            assertEquals("2", tv1.text)
+            assertEquals("1", tv2.text)
+        }
+    }
+
+    @Test
     fun testAmbientPortal1(): Unit = ensureSetup {
         val llId = 123
         val tvId = 345
