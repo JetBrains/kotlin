@@ -9,23 +9,16 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
 
 open class NodeJsExtension(val project: Project) {
-    val root: NodeJsRootExtension
-        get() = this as? NodeJsRootExtension ?: NodeJsRootExtension[project]
-
     internal val packageJsonHandlers = mutableListOf<PackageJson.() -> Unit>()
 
-    @Suppress("unused")
     fun packageJson(handler: PackageJson.() -> Unit) {
         packageJsonHandlers.add(handler)
     }
 
     companion object {
         operator fun get(project: Project): NodeJsExtension {
-            NodeJsPlugin.apply(project.rootProject)
+            NodeJsPlugin[project.rootProject]
             return project.extensions.getByName(NodeJsRootExtension.NODE_JS) as NodeJsExtension
         }
     }
 }
-
-val Project.nodeJs: NodeJsExtension
-    get() = NodeJsExtension[this]

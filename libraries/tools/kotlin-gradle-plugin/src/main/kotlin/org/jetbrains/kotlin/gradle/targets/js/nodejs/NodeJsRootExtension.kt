@@ -19,43 +19,46 @@ open class NodeJsRootExtension(project: Project) : NodeJsExtension(project) {
 
     var nodeCommand = "node"
 
+    var npmCustomVersion: String? = null
+    var npmCommand = "npm"
+
     var manageNodeModules: Boolean = false
     var packageManager: NpmApi = Yarn
 
     val nodeJsSetupTask: NodeJsSetupTask
         get() = project.tasks.getByName(NodeJsSetupTask.NAME) as NodeJsSetupTask
 
-    internal val environment: NodeJsEnv
-        get() {
-            val platform = NodeJsPlatform.name
-            val architecture = NodeJsPlatform.architecture
+    internal fun buildEnv(): NodeJsEnv {
+        val platform = NodeJsPlatform.name
+        val architecture = NodeJsPlatform.architecture
 
-            val nodeDir = installationDir.resolve("node-v$nodeVersion-$platform-$architecture")
-            val isWindows = NodeJsPlatform.name == NodeJsPlatform.WIN
-            val nodeBinDir = if (isWindows) nodeDir else nodeDir.resolve("bin")
+        val nodeDir = installationDir.resolve("node-v$nodeVersion-$platform-$architecture")
+        val isWindows = NodeJsPlatform.name == NodeJsPlatform.WIN
+        val nodeBinDir = if (isWindows) nodeDir else nodeDir.resolve("bin")
 
-            fun getExecutable(command: String, customCommand: String, windowsExtension: String): String {
-                val finalCommand = if (isWindows && customCommand == command) "$command.$windowsExtension" else customCommand
-                return if (download) File(nodeBinDir, finalCommand).absolutePath else finalCommand
-            }
-
-            fun getIvyDependency(): String {
-                val type = if (isWindows) "zip" else "tar.gz"
-                return "org.nodejs:node:$nodeVersion:$platform-$architecture@$type"
-            }
-
-            return NodeJsEnv(
-                nodeDir = nodeDir,
-                nodeBinDir = nodeBinDir,
-                nodeExecutable = getExecutable("node", nodeCommand, "exe"),
-                platformName = platform,
-                architectureName = architecture,
-                ivyDependency = getIvyDependency()
-            )
+        fun getExecutable(command: String, customCommand: String, windowsExtension: String): String {
+            val finalCommand = if (isWindows && customCommand == command) "$command.$windowsExtension" else customCommand
+            return if (download) File(nodeBinDir, finalCommand).absolutePath else finalCommand
         }
 
+        fun getIvyDependency(): String {
+            val type = if (isWindows) "zip" else "tar.gz"
+            return "org.nodejs:node:$nodeVersion:$platform-$architecture@$type"
+        }
+
+        return NodeJsEnv(
+            nodeDir = nodeDir,
+            nodeBinDir = nodeBinDir,
+            nodeExec = getExecutable("node", nodeCommand, "exe"),
+            npmExec = getExecutable("npm", npmCommand, "cmd"),
+            platformName = platform,
+            architectureName = architecture,
+            ivyDependency = getIvyDependency()
+        )
+    }
+
     internal fun executeSetup() {
-        val nodeJsEnv = environment
+        val nodeJsEnv = buildEnv()
         if (download) {
             if (!nodeJsEnv.nodeBinDir.isDirectory) {
                 nodeJsSetupTask.exec()
@@ -66,6 +69,6 @@ open class NodeJsRootExtension(project: Project) : NodeJsExtension(project) {
     companion object {
         const val NODE_JS: String = "nodeJs"
 
-        operator fun get(project: Project) = NodeJsPlugin.apply(project)
+        operator fun get(project: Project): NodeJsRootExtension = NodeJsPlugin[project]
     }
 }

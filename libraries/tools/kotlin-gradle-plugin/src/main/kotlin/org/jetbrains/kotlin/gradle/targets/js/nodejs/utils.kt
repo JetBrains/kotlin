@@ -6,14 +6,3 @@
 package org.jetbrains.kotlin.gradle.targets.js.nodejs
 
 import org.gradle.api.Project
-
-internal fun nodeJsSetupWithoutTasks(project: Project) {
-    val nodeJsProject = NodeJsPlugin.ensureAppliedInHierarchy(project)
-    val nodeJs = NodeJsExtension[nodeJsProject]
-    val nodeJsEnv = nodeJs.buildEnv()
-    if (nodeJs.download) {
-        if (!nodeJsEnv.nodeBinDir.isDirectory) {
-            (nodeJsProject.tasks.findByName(NodeJsSetupTask.NAME) as NodeJsSetupTask).exec()
-        }
-    }
-}

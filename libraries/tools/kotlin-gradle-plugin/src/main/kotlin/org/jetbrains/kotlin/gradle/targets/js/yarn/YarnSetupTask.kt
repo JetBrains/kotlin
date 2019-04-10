@@ -14,8 +14,8 @@ import java.io.File
 import javax.xml.ws.Action
 
 open class YarnSetupTask : DefaultTask() {
-    private val settings = project.yarn
-    private val env by lazy { settings.environment }
+    private val settings = YarnRootExtension[project]
+    private val env by lazy { settings.buildEnv() }
 
     @Suppress("MemberVisibilityCanBePrivate")
     val downloadUrl
