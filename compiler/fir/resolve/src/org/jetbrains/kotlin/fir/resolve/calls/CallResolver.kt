@@ -190,6 +190,14 @@ abstract class TowerDataConsumer {
         resultCollector: CandidateCollector,
         group: Int
     ): ProcessorAction
+
+    private var stopGroup = Int.MAX_VALUE
+    fun checkSkip(group: Int, resultCollector: CandidateCollector): Boolean {
+        if (resultCollector.isSuccess() && stopGroup == Int.MAX_VALUE) {
+            stopGroup = group
+        }
+        return group > stopGroup
+    }
 }
 
 
@@ -271,6 +279,7 @@ class PrioritizedTowerDataConsumer(
         resultCollector: CandidateCollector,
         group: Int
     ): ProcessorAction {
+        if (checkSkip(group, resultCollector)) return ProcessorAction.NEXT
         for ((index, consumer) in consumers.withIndex()) {
             val action = consumer.consume(kind, implicitReceiverType, towerScopeLevel, resultCollector, group * consumers.size + index)
             if (action.stop()) {
@@ -297,6 +306,7 @@ class ExplicitReceiverTowerDataConsumer<T : ConeSymbol>(
         resultCollector: CandidateCollector,
         group: Int
     ): ProcessorAction {
+        if (checkSkip(group, resultCollector)) return ProcessorAction.NEXT
         return when (kind) {
             TowerDataKind.EMPTY ->
                 MemberScopeTowerLevel(session, explicitReceiver).processElementsByName(
@@ -358,6 +368,7 @@ class NoExplicitReceiverTowerDataConsumer<T : ConeSymbol>(
         resultCollector: CandidateCollector,
         group: Int
     ): ProcessorAction {
+        if (checkSkip(group, resultCollector)) return ProcessorAction.NEXT
         return when (kind) {
 
             TowerDataKind.TOWER_LEVEL -> {
@@ -477,6 +488,10 @@ class CandidateCollector(val callInfo: CallInfo) {
             }
         }
         return result
+    }
+
+    fun isSuccess(): Boolean {
+        return currentApplicability == CandidateApplicability.RESOLVED
     }
 }
 
