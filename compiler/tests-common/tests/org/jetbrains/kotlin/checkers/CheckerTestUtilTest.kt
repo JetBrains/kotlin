@@ -112,12 +112,7 @@ class CheckerTestUtilTest : KotlinTestWithEnvironment() {
 
     private fun getTestDataPath() = KotlinTestUtils.getTestDataPathBase() + "/diagnostics/checkerTestUtil"
 
-    override fun createEnvironment(): KotlinCoreEnvironment {
-        println(System.getProperty("user.home"))
-        System.setProperty("user.dir", "/Users/victor.petukhov/IdeaProjects/kotlin")
-        println(System.getProperty("user.dir"))
-        return createEnvironmentWithMockJdk(ConfigurationKind.ALL)
-    }
+    override fun createEnvironment() = createEnvironmentWithMockJdk(ConfigurationKind.ALL)
 
     private fun doTest(test: Test) = test.test(
         TestCheckerUtil.createCheckAndReturnPsiFile(
