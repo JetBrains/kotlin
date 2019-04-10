@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.types.DynamicTypesSettings
 
 object KonanPlatformConfigurator : PlatformConfiguratorBase(
     DynamicTypesSettings(),
-    additionalDeclarationCheckers = listOf(),
+    additionalDeclarationCheckers = listOf(ExpectedActualDeclarationChecker()),
     additionalCallCheckers = listOf(SuperCallWithDefaultArgumentsChecker()),
     additionalTypeCheckers = listOf(),
     additionalClassifierUsageCheckers = listOf(),

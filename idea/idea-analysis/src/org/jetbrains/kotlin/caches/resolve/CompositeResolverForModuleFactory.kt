@@ -11,12 +11,10 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.*
 import org.jetbrains.kotlin.analyzer.common.CommonAnalysisParameters
 import org.jetbrains.kotlin.analyzer.common.CommonPlatformCompilerServices
-import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.*
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
@@ -25,7 +23,6 @@ import org.jetbrains.kotlin.frontend.di.configureModule
 import org.jetbrains.kotlin.frontend.di.configureStandardResolveComponents
 import org.jetbrains.kotlin.frontend.java.di.configureJavaSpecificComponents
 import org.jetbrains.kotlin.frontend.java.di.initializeJavaSpecificComponents
-import org.jetbrains.kotlin.idea.caches.project.implementingDescriptors
 import org.jetbrains.kotlin.idea.project.IdeaEnvironment
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolver
@@ -42,7 +39,6 @@ import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.ExperimentalMarkerDeclarationAnnotationChecker
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
-import org.jetbrains.kotlin.resolve.jvm.multiplatform.JavaActualAnnotationArgumentExtractor
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
@@ -177,10 +173,6 @@ class CompositeResolverForModuleFactory(
         // Specific for each PlatformConfigurator
         for (configurator in compilerServices.services.map { it.platformConfigurator as PlatformConfiguratorBase }) {
             configurator.configureExtensionsAndCheckers(this)
-        }
-
-        if (moduleContext.module.implementingDescriptors.isEmpty()) {
-            useInstance(ExpectedActualDeclarationChecker(listOf(JavaActualAnnotationArgumentExtractor())))
         }
 
         // Called by all normal containers set-ups

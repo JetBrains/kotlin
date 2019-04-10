@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactoryImpl
 import org.jetbrains.kotlin.resolve.calls.tower.KotlinResolutionStatelessCallbacksImpl
-import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.ExperimentalUsageChecker
 import org.jetbrains.kotlin.resolve.lazy.*
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
@@ -128,8 +127,7 @@ fun createContainerForLazyBodyResolve(
     platform: TargetPlatform,
     bodyResolveCache: BodyResolveCache,
     compilerServices: PlatformDependentCompilerServices,
-    languageVersionSettings: LanguageVersionSettings,
-    expectedActualDeclarationChecker: ExpectedActualDeclarationChecker? = null
+    languageVersionSettings: LanguageVersionSettings
 ): StorageComponentContainer = createContainer("LazyBodyResolve", compilerServices) {
     configureModule(moduleContext, platform, compilerServices, bindingTrace, languageVersionSettings)
 
@@ -139,8 +137,6 @@ fun createContainerForLazyBodyResolve(
     useImpl<AnnotationResolverImpl>()
     useImpl<LazyTopDownAnalyzer>()
     useImpl<BasicAbsentDescriptorHandler>()
-
-    expectedActualDeclarationChecker?.let { useInstance(it) }
 }
 
 fun createContainerForLazyLocalClassifierAnalyzer(
