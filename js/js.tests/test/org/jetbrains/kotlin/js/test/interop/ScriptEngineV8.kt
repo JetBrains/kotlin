@@ -15,7 +15,7 @@ import java.io.File
 class ScriptEngineV8 : ScriptEngine {
     companion object {
         // It's important that this is not created per test, but rather per process.
-        val LIBRARY_PATH_BASE = KotlinTestUtils.tmpDirForReusableLibrary("j2v8_library_path").path
+        val LIBRARY_PATH_BASE = KotlinTestUtils.tmpDirForReusableFolder("j2v8_library_path").path
     }
 
     override fun <T> releaseObject(t: T) {

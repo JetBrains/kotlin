@@ -52,7 +52,7 @@ object MockLibraryUtil {
             useJava9: Boolean = false
     ): File {
         return compileLibraryToJar(
-            sourcesPath, KotlinTestUtils.tmpDirForReusableLibrary("testLibrary-" + jarName), jarName, addSources, allowKotlinSources, extraOptions, extraClasspath
+            sourcesPath, KotlinTestUtils.tmpDirForReusableFolder("testLibrary-" + jarName), jarName, addSources, allowKotlinSources, extraOptions, extraClasspath
             , useJava9)}
 
     @JvmStatic
@@ -127,7 +127,7 @@ object MockLibraryUtil {
 
     @JvmStatic
     fun compileJsLibraryToJar(sourcesPath: String, jarName: String, addSources: Boolean, extraOptions: List<String> = emptyList()): File {
-        val contentDir = KotlinTestUtils.tmpDirForReusableLibrary("testLibrary-" + jarName)
+        val contentDir = KotlinTestUtils.tmpDirForReusableFolder("testLibrary-" + jarName)
 
         val outDir = File(contentDir, "out")
         val outputFile = File(outDir, jarName + ".js")

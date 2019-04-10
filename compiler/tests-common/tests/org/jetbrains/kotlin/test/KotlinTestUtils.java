@@ -119,7 +119,7 @@ public class KotlinTestUtils {
 
     static {
         try {
-            IDEA_SYSTEM_PATH = tmpDirForReusableLibrary("idea-system").getPath();
+            IDEA_SYSTEM_PATH = tmpDirForReusableFolder("idea-system").getPath();
         }
         catch (IOException e) {
             throw new RuntimeException(e);
@@ -442,7 +442,7 @@ public class KotlinTestUtils {
     }
 
     @NotNull
-    public static File tmpDirForReusableLibrary(String name) throws IOException {
+    public static File tmpDirForReusableFolder(String name) throws IOException {
         return normalizeFile(FileUtil.createTempDirectory(new File(System.getProperty("java.io.tmpdir")), name, "", true));
     }
 
