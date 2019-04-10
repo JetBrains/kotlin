@@ -211,9 +211,7 @@ class SourceFileStructure(
 
     fun addMentionedConstant(containingClass: String, name: String) {
         if (!declaredTypes.contains(containingClass)) {
-            val names = mentionedConstants[containingClass] ?: HashSet()
-            names.add(name)
-            mentionedConstants[containingClass] = names
+            mentionedConstants.getOrPut(containingClass) { HashSet() }.add(name)
         }
     }
 }

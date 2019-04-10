@@ -65,6 +65,7 @@ open class KaptWithoutKotlincTask @Inject constructor(private val workerExecutor
             if (isVerbose) add("VERBOSE")
             if (mapDiagnosticLocations) add("MAP_DIAGNOSTIC_LOCATIONS")
             if (includeCompileClasspath) add("INCLUDE_COMPILE_CLASSPATH")
+            if (incrementalChanges is KaptIncrementalChanges.Known) add("INCREMENTAL_APT")
         }
 
         val optionsForWorker = KaptOptionsForWorker(
@@ -76,7 +77,6 @@ open class KaptWithoutKotlincTask @Inject constructor(private val workerExecutor
             getCompiledSources(),
             incAptCache,
             classpathChanges.toList(),
-            incrementalChanges is KaptIncrementalChanges.Known,
 
             destinationDir,
             classesDir,
@@ -171,7 +171,6 @@ private class KaptExecution @Inject constructor(
             compiledSources,
             incAptCache,
             classpathChanges,
-            processIncrementally,
 
             sourcesOutputDir,
             classesOutputDir,
@@ -208,7 +207,6 @@ private data class KaptOptionsForWorker(
     val compiledSources: List<File>,
     val incAptCache: File?,
     val classpathChanges: List<String>,
-    val processIncrementally: Boolean,
 
     val sourcesOutputDir: File,
     val classesOutputDir: File,

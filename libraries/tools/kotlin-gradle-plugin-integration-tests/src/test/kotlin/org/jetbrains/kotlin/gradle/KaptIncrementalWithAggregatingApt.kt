@@ -45,10 +45,10 @@ class KaptIncrementalWithAggregatingApt : KaptIncrementalIT() {
 
             assertEquals(
                 setOf(
-                    fileInWorkingDir("build/tmp/kapt3/stubs/main/bar/UseBKt.java").absolutePath,
-                    fileInWorkingDir("build/tmp/kapt3/stubs/main/bar/B.java").absolutePath,
-                    fileInWorkingDir("build/tmp/kapt3/stubs/main/baz/UtilKt.java").absolutePath,
-                    fileInWorkingDir("build/tmp/kapt3/stubs/main/foo/A.java").absolutePath
+                    fileInWorkingDir("build/tmp/kapt3/stubs/main/bar/UseBKt.java").canonicalPath,
+                    fileInWorkingDir("build/tmp/kapt3/stubs/main/bar/B.java").canonicalPath,
+                    fileInWorkingDir("build/tmp/kapt3/stubs/main/baz/UtilKt.java").canonicalPath,
+                    fileInWorkingDir("build/tmp/kapt3/stubs/main/foo/A.java").canonicalPath
                 ), getProcessedSources(output)
             )
         }
@@ -61,11 +61,11 @@ class KaptIncrementalWithAggregatingApt : KaptIncrementalIT() {
             assertSuccessful()
             assertEquals(
                 setOf(
-                    project.projectFile("JavaClass.java").absolutePath,
-                    fileInWorkingDir("build/tmp/kapt3/stubs/main/bar/UseBKt.java").absolutePath,
-                    fileInWorkingDir("build/tmp/kapt3/stubs/main/bar/B.java").absolutePath,
-                    fileInWorkingDir("build/tmp/kapt3/stubs/main/baz/UtilKt.java").absolutePath,
-                    fileInWorkingDir("build/tmp/kapt3/stubs/main/foo/A.java").absolutePath
+                    project.projectFile("JavaClass.java").canonicalPath,
+                    fileInWorkingDir("build/tmp/kapt3/stubs/main/bar/UseBKt.java").canonicalPath,
+                    fileInWorkingDir("build/tmp/kapt3/stubs/main/bar/B.java").canonicalPath,
+                    fileInWorkingDir("build/tmp/kapt3/stubs/main/baz/UtilKt.java").canonicalPath,
+                    fileInWorkingDir("build/tmp/kapt3/stubs/main/foo/A.java").canonicalPath
                 ),
                 getProcessedSources(output)
             )
@@ -115,13 +115,13 @@ class KaptIncrementalWithAggregatingApt : KaptIncrementalIT() {
 
             assertEquals(
                 setOf(
-                    fileInWorkingDir("app/build/tmp/kapt3/stubs/main/foo/AA.java").absolutePath,
-                    fileInWorkingDir("app/build/tmp/kapt3/stubs/main/foo/AAA.java").absolutePath,
-                    fileInWorkingDir("app/build/tmp/kapt3/stubs/main/foo/BB.java").absolutePath,
-                    fileInWorkingDir("app/build/tmp/kapt3/stubs/main/foo/FooUseAKt.java").absolutePath,
-                    fileInWorkingDir("app/build/tmp/kapt3/stubs/main/foo/FooUseBKt.java").absolutePath,
-                    fileInWorkingDir("app/build/tmp/kapt3/stubs/main/foo/FooUseAAKt.java").absolutePath,
-                    fileInWorkingDir("app/build/tmp/kapt3/stubs/main/foo/FooUseBBKt.java").absolutePath
+                    fileInWorkingDir("app/build/tmp/kapt3/stubs/main/foo/AA.java").canonicalPath,
+                    fileInWorkingDir("app/build/tmp/kapt3/stubs/main/foo/AAA.java").canonicalPath,
+                    fileInWorkingDir("app/build/tmp/kapt3/stubs/main/foo/BB.java").canonicalPath,
+                    fileInWorkingDir("app/build/tmp/kapt3/stubs/main/foo/FooUseAKt.java").canonicalPath,
+                    fileInWorkingDir("app/build/tmp/kapt3/stubs/main/foo/FooUseBKt.java").canonicalPath,
+                    fileInWorkingDir("app/build/tmp/kapt3/stubs/main/foo/FooUseAAKt.java").canonicalPath,
+                    fileInWorkingDir("app/build/tmp/kapt3/stubs/main/foo/FooUseBBKt.java").canonicalPath
 
                 ), getProcessedSources(output)
             )
