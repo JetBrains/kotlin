@@ -62,6 +62,5 @@ class TestInheritedAnnotation {
                 "test.BaseClass"
             ), shouldInheritAnnotation.getMentionedTypes()
         )
-        assertEquals(emptyMap<String, String>(), shouldInheritAnnotation.getDefinedConstants())
     }
 }
