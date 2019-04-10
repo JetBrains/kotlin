@@ -56,9 +56,12 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
     private val IrMemberAccessExpression.field: IrFieldSymbol?
         get() = (this as? IrPropertyReference)?.field
 
+    private val IrSimpleFunction.signature: String
+        get() = context.state.typeMapper.mapSignatureSkipGeneric(collectRealOverrides().first().descriptor).toString()
+
     private val IrMemberAccessExpression.signature: String
         get() = localPropertyIndices[getter]?.let { "<v#$it>" }
-            ?: getter?.owner?.let { context.state.typeMapper.mapSignatureSkipGeneric(it.descriptor).toString() }
+            ?: (getter?.owner as? IrSimpleFunction)?.signature
             // Plain Java fields do not have a getter, but can be referenced nonetheless. The signature should be
             // the one that a getter would have, if it existed.
             ?: TODO("plain Java field signature")
