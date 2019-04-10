@@ -98,16 +98,6 @@ class JavaClassCache() : Serializable {
 
         val allDirtyTypes = mutableSetOf<String>()
 
-        // check for constants first because they cause full rebuilt
-        for (sourceChange in currentDirtyFiles) {
-            val structure = sourceCache[sourceChange] ?: continue
-            if (structure.getDefinedConstants().isNotEmpty()) {
-                // TODO(gavra): compare constant values, and only full rebuild if the value changes
-                invalidateAll()
-                return SourcesToReprocess.FullRebuild
-            }
-        }
-
         while (currentDirtyFiles.isNotEmpty()) {
 
             val nextRound = mutableSetOf<URI>()
@@ -176,14 +166,12 @@ class SourceFileStructure(
     private val mentionedTypes: MutableSet<String> = mutableSetOf()
     private val privateTypes: MutableSet<String> = mutableSetOf()
 
-    private val definedConstants: MutableMap<String, Any> = mutableMapOf()
     private val mentionedAnnotations: MutableSet<String> = mutableSetOf()
     private val mentionedConstants: MutableMap<String, MutableSet<String>> = mutableMapOf()
 
     fun getDeclaredTypes(): Set<String> = declaredTypes
     fun getMentionedTypes(): Set<String> = mentionedTypes
     fun getPrivateTypes(): Set<String> = privateTypes
-    fun getDefinedConstants(): Map<String, Any> = definedConstants
     fun getMentionedAnnotations(): Set<String> = mentionedAnnotations
     fun getMentionedConstants(): Map<String, Set<String>> = mentionedConstants
 
@@ -195,10 +183,6 @@ class SourceFileStructure(
         mentionedType.takeUnless(IGNORE_TYPES)?.let {
             mentionedTypes.add(it)
         }
-    }
-
-    fun addDefinedConstant(name: String, value: Any) {
-        definedConstants[name] = value
     }
 
     fun addMentionedAnnotations(name: String) {

@@ -114,13 +114,6 @@ private class TypeTreeVisitor(val elementUtils: Elements, val trees: Trees, val 
 
             node.sym.constValue?.let { constValue ->
                 constantTreeVisitor.scan(trees.getPath(compilationUnit, node.init), null)
-
-                if (flags.contains(Modifier.FINAL)
-                    && flags.contains(Modifier.STATIC)
-                    && !flags.contains(Modifier.PRIVATE)
-                ) {
-                    sourceStructure.addDefinedConstant(node.sym.simpleName.toString(), constValue)
-                }
             }
             if (flags.contains(Modifier.PRIVATE)) Visibility.NON_ABI else Visibility.ABI
         } else {
