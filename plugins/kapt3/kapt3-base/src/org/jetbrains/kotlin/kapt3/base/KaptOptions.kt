@@ -18,7 +18,6 @@ class KaptOptions(
     val compiledSources: List<File>,
     val incrementalCache: File?,
     val classpathChanges: List<String>,
-    val processIncrementally: Boolean,
 
     val sourcesOutputDir: File,
     val classesOutputDir: File,
@@ -52,7 +51,6 @@ class KaptOptions(
         var classesOutputDir: File? = null
         var stubsOutputDir: File? = null
         var incrementalDataOutputDir: File? = null
-        var processIncrementally: Boolean = false
 
         val processingClasspath: MutableList<File> = mutableListOf()
         val processors: MutableList<String> = mutableListOf()
@@ -75,7 +73,7 @@ class KaptOptions(
 
             return KaptOptions(
                 projectBaseDir, compileClasspath, javaSourceRoots,
-                changedFiles, compiledSources, incrementalCache, classpathChanges, processIncrementally,
+                changedFiles, compiledSources, incrementalCache, classpathChanges,
                 sourcesOutputDir, classesOutputDir, stubsOutputDir, incrementalDataOutputDir,
                 processingClasspath, processors, processingOptions, javacOptions, KaptFlags.fromSet(flags),
                 mode, detectMemoryLeaks
@@ -106,7 +104,9 @@ enum class KaptFlag(val description: String) {
     CORRECT_ERROR_TYPES("Correct error types"),
     MAP_DIAGNOSTIC_LOCATIONS("Map diagnostic locations"),
     STRICT("Strict mode"),
-    INCLUDE_COMPILE_CLASSPATH("Detect annotation processors in compile classpath");
+    INCLUDE_COMPILE_CLASSPATH("Detect annotation processors in compile classpath"),
+    INCREMENTAL_APT("Incremental annotation processing (apt mode)"),
+    ;
 }
 
 interface KaptSelector {
@@ -172,5 +172,4 @@ fun KaptOptions.logString(additionalInfo: String = "") = buildString {
     appendln("[incremental apt] Compiled sources directories: ${compiledSources.joinToString()}")
     appendln("[incremental apt] Cache directory for incremental compilation: $incrementalCache")
     appendln("[incremental apt] Changed classpath names: ${classpathChanges.joinToString()}")
-    appendln("[incremental apt] If processing incrementally: $processIncrementally")
 }

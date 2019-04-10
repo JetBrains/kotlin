@@ -47,7 +47,7 @@ class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
         project.build("build") {
             assertSuccessful()
 
-            assertEquals(setOf(fileInWorkingDir("build/tmp/kapt3/stubs/main/bar/UseBKt.java").absolutePath), getProcessedSources(output))
+            assertEquals(setOf(fileInWorkingDir("build/tmp/kapt3/stubs/main/bar/UseBKt.java").canonicalPath), getProcessedSources(output))
         }
 
         project.projectFile("B.kt").modify { current ->
@@ -58,8 +58,8 @@ class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
             assertSuccessful()
             assertEquals(
                 setOf(
-                    fileInWorkingDir("build/tmp/kapt3/stubs/main/bar/B.java").absolutePath,
-                    fileInWorkingDir("build/tmp/kapt3/stubs/main/bar/UseBKt.java").absolutePath
+                    fileInWorkingDir("build/tmp/kapt3/stubs/main/bar/B.java").canonicalPath,
+                    fileInWorkingDir("build/tmp/kapt3/stubs/main/bar/UseBKt.java").canonicalPath
                 ),
                 getProcessedSources(output)
             )

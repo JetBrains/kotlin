@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.kapt.base.test.org.jetbrains.kotlin.kapt3.base.incremental
 
+import org.jetbrains.kotlin.base.kapt3.KaptFlag
 import org.jetbrains.kotlin.base.kapt3.KaptOptions
 import org.jetbrains.kotlin.base.kapt3.collectJavaSourceFiles
 import org.jetbrains.kotlin.kapt3.base.KaptContext
@@ -70,7 +71,7 @@ class IncrementalKaptTest {
             incrementalCache = incrementalCacheDir
             compiledSources.add(classesOutput)
             changedFiles.add(sourcesDir.resolve("User.java"))
-            processIncrementally = true
+            flags.add(KaptFlag.INCREMENTAL_APT)
         }.build()
 
         KaptContext(optionsForSecondRun, true, logger).use {
@@ -144,7 +145,7 @@ class IncrementalKaptTest {
             incrementalCache = incrementalCacheDir
             compiledSources.add(classesOutput)
             changedFiles.add(sourcesDir.resolve("User.java"))
-            processIncrementally = true
+            flags.add(KaptFlag.INCREMENTAL_APT)
         }.build()
 
         KaptContext(optionsForSecondRun, true, logger).use {

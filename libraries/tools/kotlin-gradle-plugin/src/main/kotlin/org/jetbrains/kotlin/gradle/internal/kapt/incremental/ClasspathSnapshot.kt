@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.internal.kapt.incremental
 
 import java.io.*
 import java.util.*
-
 open class ClasspathSnapshot protected constructor(
     private val cacheDir: File,
     private val classpath: Iterable<File>,
@@ -20,7 +19,7 @@ open class ClasspathSnapshot protected constructor(
             val computedData = dataForFiles(missingFiles)
             computedClasspathData.putAll(computedData)
         }
-        computedClasspathData.filter { files.contains(it.key) }
+        computedClasspathData
     }
     private val computedClasspathData: MutableMap<File, ClasspathEntryData> = mutableMapOf()
 
@@ -95,10 +94,11 @@ open class ClasspathSnapshot protected constructor(
             }
         }
 
-        // We do not compute structural data for unchanged files of the current snapshot for performance reasons. That is why we
-        // update the previous snapshot as that one contains all entries.
-        computedClasspathData.putAll(previousData)
-        computedClasspathData.putAll(currentData)
+        // We do not compute structural data for unchanged files of the current snapshot for performance reasons.
+        // That is why we reuse the previous snapshot as that one contains all unchanged entries.
+        previousData.filter { !computedClasspathData.containsKey(it.key) }.forEach {
+            computedClasspathData[it.key] = it.value
+        }
 
         val allImpactedClasses = findAllImpacted(changedClasses)
 
