@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
+import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorWithJump
 import org.jetbrains.kotlin.fir.scopes.FirPosition
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
@@ -138,7 +139,10 @@ class MemberScopeTowerLevel(
         output: TowerScopeLevel.TowerScopeLevelProcessor<T>,
         takeMembers: FirScope.(processor: (T) -> ProcessorAction) -> ProcessorAction
     ): ProcessorAction {
-        return dispatchReceiver.type.scope(session)?.takeMembers { output.consumeCandidate(it, dispatchReceiver) } ?: ProcessorAction.NEXT
+        val scope = dispatchReceiver.type.scope(session) ?: return ProcessorAction.NEXT
+        if (scope.takeMembers { output.consumeCandidate(it, dispatchReceiver) }.stop()) return ProcessorAction.STOP
+        val withSynthetic = FirSyntheticPropertiesScope(session, scope, ReturnTypeCalculatorWithJump(session))
+        return withSynthetic.takeMembers { output.consumeCandidate(it, dispatchReceiver) }
     }
 
     override fun <T : ConeSymbol> processElementsByName(
