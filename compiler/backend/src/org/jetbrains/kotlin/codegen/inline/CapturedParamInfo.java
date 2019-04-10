@@ -65,7 +65,7 @@ public class CapturedParamInfo extends ParameterInfo {
         CapturedParamInfo result = new CapturedParamInfo(
                 desc, newFieldName, isSkipped, getIndex(), getRemapValue(), skipInConstructor, newDeclarationIndex
         );
-        result.setFunctionalArgument(getFunctionalArgument());
+        result.setLambda(getLambda());
         result.setSynthetic(synthetic);
         return result;
     }

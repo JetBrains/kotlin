@@ -1,6 +1,17 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2016 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.jetbrains.kotlin.codegen.inline
@@ -15,39 +26,37 @@ import org.jetbrains.org.objectweb.asm.tree.*
 import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 import org.jetbrains.org.objectweb.asm.tree.analysis.SourceValue
 
-fun MethodInliner.getFunctionalArgumentIfExistsAndMarkInstructions(
+fun MethodInliner.getLambdaIfExistsAndMarkInstructions(
     sourceValue: SourceValue,
     processSwap: Boolean,
     insnList: InsnList,
     frames: Array<Frame<SourceValue>?>,
     toDelete: MutableSet<AbstractInsnNode>
-): FunctionalArgument? {
+): LambdaInfo? {
     val toDeleteInner = SmartSet.create<AbstractInsnNode>()
 
-    val functionalArgumentSet = SmartSet.create<FunctionalArgument?>()
-    sourceValue.insns.mapTo(functionalArgumentSet) {
-        getFunctionalArgumentIfExistsAndMarkInstructions(it, processSwap, insnList, frames, toDeleteInner)
+    val lambdaSet = SmartSet.create<LambdaInfo?>()
+    sourceValue.insns.mapTo(lambdaSet) {
+        getLambdaIfExistsAndMarkInstructions(it, processSwap, insnList, frames, toDeleteInner)
     }
 
-    return functionalArgumentSet.singleOrNull()?.also {
-        if (it is LambdaInfo) {
-            toDelete.addAll(toDeleteInner)
-        }
+    return lambdaSet.singleOrNull()?.also {
+        toDelete.addAll(toDeleteInner)
     }
 }
 
 private fun SourceValue.singleOrNullInsn() = insns.singleOrNull()
 
-private fun MethodInliner.getFunctionalArgumentIfExistsAndMarkInstructions(
+private fun MethodInliner.getLambdaIfExistsAndMarkInstructions(
     insnNode: AbstractInsnNode?,
     processSwap: Boolean,
     insnList: InsnList,
     frames: Array<Frame<SourceValue>?>,
     toDelete: MutableSet<AbstractInsnNode>
-): FunctionalArgument? {
+): LambdaInfo? {
     if (insnNode == null) return null
 
-    getFunctionalArgumentIfExists(insnNode)?.let {
+    getLambdaIfExists(insnNode)?.let {
         //delete lambda aload instruction
         toDelete.add(insnNode)
         return it
@@ -60,7 +69,7 @@ private fun MethodInliner.getFunctionalArgumentIfExistsAndMarkInstructions(
         if (storeIns is VarInsnNode && storeIns.getOpcode() == Opcodes.ASTORE) {
             val frame = frames[insnList.indexOf(storeIns)] ?: return null
             val topOfStack = frame.top()!!
-            getFunctionalArgumentIfExistsAndMarkInstructions(topOfStack, processSwap, insnList, frames, toDelete)?.let {
+            getLambdaIfExistsAndMarkInstructions(topOfStack, processSwap, insnList, frames, toDelete)?.let {
                 //remove intermediate lambda astore, aload instruction: see 'complexStack/simple.1.kt' test
                 toDelete.add(storeIns)
                 toDelete.add(insnNode)
@@ -70,7 +79,7 @@ private fun MethodInliner.getFunctionalArgumentIfExistsAndMarkInstructions(
     } else if (processSwap && insnNode.opcode == Opcodes.SWAP) {
         val swapFrame = frames[insnList.indexOf(insnNode)] ?: return null
         val dispatchReceiver = swapFrame.top()!!
-        getFunctionalArgumentIfExistsAndMarkInstructions(dispatchReceiver, false, insnList, frames, toDelete)?.let {
+        getLambdaIfExistsAndMarkInstructions(dispatchReceiver, false, insnList, frames, toDelete)?.let {
             //remove swap instruction (dispatch receiver would be deleted on recursion call): see 'complexStack/simpleExtension.1.kt' test
             toDelete.add(insnNode)
             return it

@@ -29,7 +29,7 @@ public class ParameterInfo {
     public final boolean isSkipped;
 
     private boolean isCaptured;
-    private FunctionalArgument functionalArgument;
+    private LambdaInfo lambda;
     //in case when parameter could be extracted from outer context (e.g. from local var)
     private StackValue remapValue;
 
@@ -68,13 +68,13 @@ public class ParameterInfo {
     }
 
     @Nullable
-    public FunctionalArgument getFunctionalArgument() {
-        return functionalArgument;
+    public LambdaInfo getLambda() {
+        return lambda;
     }
 
     @NotNull
-    public ParameterInfo setFunctionalArgument(@Nullable FunctionalArgument functionalArgument) {
-        this.functionalArgument = functionalArgument;
+    public ParameterInfo setLambda(@Nullable LambdaInfo lambda) {
+        this.lambda = lambda;
         return this;
     }
 

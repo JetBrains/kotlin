@@ -342,7 +342,7 @@ class AnonymousObjectTransformer(
         for (info in constructorAdditionalFakeParams) {
             val fake = constructorInlineBuilder.addCapturedParamCopy(info)
 
-            if (fake.functionalArgument is LambdaInfo) {
+            if (fake.lambda != null) {
                 //set remap value to skip this fake (captured with lambda already skipped)
                 val composed = StackValue.field(
                     fake.getType(),
@@ -414,7 +414,7 @@ class AnonymousObjectTransformer(
     ): List<CapturedParamInfo> {
         val capturedLambdas = LinkedHashSet<LambdaInfo>() //captured var of inlined parameter
         val constructorAdditionalFakeParams = ArrayList<CapturedParamInfo>()
-        val indexToFunctionalArgument = transformationInfo.functionalArguments
+        val indexToLambda = transformationInfo.lambdasToInline
         val capturedParams = HashSet<Int>()
 
         //load captured parameters and patch instruction list
@@ -424,18 +424,18 @@ class AnonymousObjectTransformer(
             val fieldName = fieldNode.name
             val parameterAload = fieldNode.previous as VarInsnNode
             val varIndex = parameterAload.`var`
-            val functionalArgument = indexToFunctionalArgument[varIndex]
-            val newFieldName = if (isThis0(fieldName) && shouldRenameThis0(parentFieldRemapper, indexToFunctionalArgument.values))
+            val lambdaInfo = indexToLambda[varIndex]
+            val newFieldName = if (isThis0(fieldName) && shouldRenameThis0(parentFieldRemapper, indexToLambda.values))
                 getNewFieldName(fieldName, true)
             else
                 fieldName
             val info = capturedParamBuilder.addCapturedParam(
                 Type.getObjectType(transformationInfo.oldClassName), fieldName, newFieldName,
-                Type.getType(fieldNode.desc), functionalArgument is LambdaInfo, null
+                Type.getType(fieldNode.desc), lambdaInfo != null, null
             )
-            info.functionalArgument = functionalArgument
-            if (functionalArgument is LambdaInfo) {
-                capturedLambdas.add(functionalArgument)
+            if (lambdaInfo != null) {
+                info.lambda = lambdaInfo
+                capturedLambdas.add(lambdaInfo)
             }
             constructorAdditionalFakeParams.add(info)
             capturedParams.add(varIndex)
@@ -450,9 +450,9 @@ class AnonymousObjectTransformer(
 
         val paramTypes = transformationInfo.constructorDesc?.let { Type.getArgumentTypes(it) } ?: emptyArray()
         for (type in paramTypes) {
-            val info = indexToFunctionalArgument[constructorParamBuilder.nextParameterOffset]
-            val parameterInfo = constructorParamBuilder.addNextParameter(type, info is LambdaInfo)
-            parameterInfo.functionalArgument = info
+            val info = indexToLambda[constructorParamBuilder.nextParameterOffset]
+            val parameterInfo = constructorParamBuilder.addNextParameter(type, info != null)
+            parameterInfo.lambda = info
             if (capturedParams.contains(parameterInfo.index)) {
                 parameterInfo.isCaptured = true
             } else {
@@ -518,9 +518,9 @@ class AnonymousObjectTransformer(
         return constructorAdditionalFakeParams
     }
 
-    private fun shouldRenameThis0(parentFieldRemapper: FieldRemapper, values: Collection<FunctionalArgument>): Boolean {
+    private fun shouldRenameThis0(parentFieldRemapper: FieldRemapper, values: Collection<LambdaInfo>): Boolean {
         return if (isFirstDeclSiteLambdaFieldRemapper(parentFieldRemapper)) {
-            values.any { it is LambdaInfo && it.capturedVars.any { isThis0(it.fieldName) } }
+            values.any { it.capturedVars.any { isThis0(it.fieldName) } }
         } else false
     }
 
