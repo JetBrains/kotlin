@@ -141,7 +141,9 @@ class JpsCompatiblePlugin : Plugin<Project> {
         }
 
         val projectLibraries = getProjectLibraries(rootProject)
-        val parserContext = ParserContext(getDependencyMappers(projectLibraries), variant)
+        val dependencyMappers = getDependencyMappers(projectLibraries)
+
+        val parserContext = ParserContext(dependencyMappers, variant)
 
         val jpsProject = parse(rootProject, projectLibraries, parserContext)
             .mapLibraries(this::attachPlatformSources, this::attachAsmSources)
@@ -152,7 +154,7 @@ class JpsCompatiblePlugin : Plugin<Project> {
         removeJpsAndPillRunConfigurations()
         removeAllArtifactConfigurations()
 
-        generateKotlinPluginArtifactFile(rootProject).write()
+        generateKotlinPluginArtifactFile(rootProject, dependencyMappers).write()
 
         copyRunConfigurations()
         setOptionsForDefaultJunitRunConfiguration(rootProject)

@@ -5,11 +5,13 @@ package org.jetbrains.kotlin.pill
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.internal.file.copy.SingleParentCopySpec
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.tasks.Copy
 import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.extra
+import org.jetbrains.kotlin.pill.DependencyInfo.ResolvedDependencyInfo
 import org.jetbrains.kotlin.pill.ArtifactElement.*
 import org.jetbrains.kotlin.pill.POrderRoot.*
 import java.io.File
@@ -32,6 +34,10 @@ sealed class ArtifactElement {
 
     fun add(child: ArtifactElement) {
         myChildren += child
+    }
+
+    fun add(children: List<ArtifactElement>) {
+        myChildren += children
     }
 
     abstract fun render(context: PathContext): xml
@@ -102,99 +108,37 @@ sealed class ArtifactElement {
     }
 }
 
-fun generateKotlinPluginArtifactFile(rootProject: Project): PFile {
-    val mainIdeaPluginTask = rootProject.tasks.getByName("ideaPlugin")
-    val gradleArtifactDir = File(rootProject.extra["ideaPluginDir"] as File, "lib")
-
-    val ideaPluginTasks = mainIdeaPluginTask.taskDependencies
-        .getDependencies(mainIdeaPluginTask)
-        .filter { it.name == "ideaPlugin" }
-        .filterIsInstance<Copy>()
-
+fun generateKotlinPluginArtifactFile(rootProject: Project, dependencyMappers: List<DependencyMapper>): PFile {
     val root = Root()
 
-    // Copy kotlinc directory
+    fun Project.getProject(name: String) = findProject(name) ?: error("Cannot find project $name")
+
+    val prepareIdeaPluginProject = rootProject.getProject(":prepare:idea-plugin")
+    val prepareJpsPluginProject = rootProject.getProject(":kotlin-jps-plugin")
+
     root.add(Directory("kotlinc").apply {
         val kotlincDirectory = rootProject.extra["distKotlinHomeDir"].toString()
         add(DirectoryCopy(File(kotlincDirectory)))
     })
 
-    for (task in ideaPluginTasks) {
-        val spec = task.rootSpec.children.filterIsInstance<SingleParentCopySpec>().singleOrNull()
-                ?: error("Copy spec is not unique in ${rootProject.name}. Available specs: ${task.rootSpec.children}")
+    root.add(Directory("lib").apply {
+        val librariesConfiguration = prepareIdeaPluginProject.configurations.getByName("libraries")
+        add(getArtifactElements(librariesConfiguration, dependencyMappers, false))
 
-        val sourcePaths = spec.sourcePaths
-        for (sourcePath in sourcePaths) {
-            if (sourcePath is ShadowJar) {
-                if (sourcePath.project.path == ":prepare:idea-plugin") {
-                    val kotlinPluginJar = Archive(sourcePath.archiveName).also { root.getDirectory("lib").add(it) }
+        add(Directory("jps").apply {
+            add(Archive(prepareJpsPluginProject.name).apply {
+                val embeddedConfiguration = prepareJpsPluginProject.configurations.getByName(EmbeddedComponents.CONFIGURATION_NAME)
+                add(getArtifactElements(embeddedConfiguration, dependencyMappers, true))
+            })
+        })
 
-                    kotlinPluginJar.add(FileCopy(File(rootProject.projectDir, "resources/kotlinManifest.properties")))
+        add(Archive(prepareIdeaPluginProject.name + ".jar").apply {
+            add(FileCopy(File(rootProject.projectDir, "resources/kotlinManifest.properties")))
 
-                    for (jarFile in sourcePath.project.configurations.getByName(EmbeddedComponents.CONFIGURATION_NAME).resolve()) {
-                        kotlinPluginJar.add(ExtractedDirectory(jarFile))
-                    }
-
-                    @Suppress("UNCHECKED_CAST")
-                    for (projectPath in sourcePath.project.extra["projectsToShadow"] as List<String>) {
-                        val jpsModuleName = rootProject.findProject(projectPath)!!.name + ".src"
-                        kotlinPluginJar.add(ModuleOutput(jpsModuleName))
-                    }
-
-                    continue
-                }
-            }
-
-            fun fileCopySnapshotAware(file: File): FileCopy {
-                val SHAPSHOT_JAR_SUFFIX = "-SNAPSHOT.jar"
-                if (file.name.endsWith(SHAPSHOT_JAR_SUFFIX)) {
-                    return FileCopy(file, file.name.dropLast(SHAPSHOT_JAR_SUFFIX.length).substringBeforeLast("-") + ".jar")
-                }
-
-                return FileCopy(file)
-            }
-
-            when (sourcePath) {
-                is Jar -> {
-                    val targetDir = ("lib/" + task.destinationDir.toRelativeString(gradleArtifactDir)).withoutSlash()
-
-                    val archiveForJar = Archive(sourcePath.project.name + ".jar").apply {
-                        if (task.project.plugins.hasPlugin(JavaPlugin::class.java)) {
-                            add(ModuleOutput(sourcePath.project.name + ".src"))
-                        }
-                        root.getDirectory(targetDir).add(this)
-                    }
-
-                    val embeddedComponents = sourcePath.project.configurations
-                        .findByName(EmbeddedComponents.CONFIGURATION_NAME)?.resolvedConfiguration
-
-                    if (embeddedComponents != null) {
-                        val configuration = CollectedConfiguration(embeddedComponents, Scope.COMPILE)
-                        for (dependencyInfo in listOf(configuration).collectDependencies()) {
-                            val dependency = (dependencyInfo as? DependencyInfo.ResolvedDependencyInfo)?.dependency ?: continue
-
-                            if (dependency.isModuleDependency) {
-                                archiveForJar.add(ModuleOutput(dependency.moduleName + ".src"))
-                            } else if (dependency.configuration == "tests-jar" || dependency.configuration == "jpsTest") {
-                                error("Test configurations are not allowed here")
-                            } else {
-                                for (file in dependency.moduleArtifacts.map { it.file }) {
-                                    archiveForJar.add(ExtractedDirectory(file))
-                                }
-                            }
-                        }
-                    }
-                }
-                is Configuration -> {
-                    require(sourcePath.name == "sideJars") { "Configurations other than 'sideJars' are not supported" }
-                    for (file in sourcePath.resolve()) {
-                        root.getDirectory("lib").add(fileCopySnapshotAware(file))
-                    }
-                }
-                else -> error("${task.name} Unexpected task type ${task.javaClass.name}")
-            }
-        }
-    }
+            val embeddedConfiguration = prepareIdeaPluginProject.configurations.getByName(EmbeddedComponents.CONFIGURATION_NAME)
+            add(getArtifactElements(embeddedConfiguration, dependencyMappers, true))
+        })
+    })
 
     val artifact = PArtifact("KotlinPlugin", File(rootProject.projectDir, "out/artifacts/Kotlin"), root)
     return PFile(
@@ -203,3 +147,50 @@ fun generateKotlinPluginArtifactFile(rootProject: Project): PFile {
     )
 }
 
+private fun getArtifactElements(
+    configuration: Configuration,
+    dependencyMappers: List<DependencyMapper>,
+    extractDependencies: Boolean
+): List<ArtifactElement> {
+    val resolved = configuration.resolvedConfiguration
+    val collected = CollectedConfiguration(resolved, Scope.COMPILE)
+    val dependencies = listOf(collected).collectDependencies()
+
+    val mainRoots = mutableListOf<POrderRoot>()
+    val deferredRoots = mutableListOf<POrderRoot>()
+
+    dependencies.forEach { it.processResolvedDependency(mainRoots, deferredRoots, dependencyMappers) }
+
+    val artifacts = mutableListOf<ArtifactElement>()
+
+    for (dependency in configuration.allDependencies) {
+        if (dependency !is ProjectDependency) continue
+
+        val project = dependency.dependencyProject
+        val moduleOutput = ModuleOutput(project.name + ".src")
+
+        if (extractDependencies) {
+            artifacts += moduleOutput
+        } else {
+            artifacts += Archive(project.name + ".jar").apply {
+                add(moduleOutput)
+            }
+        }
+
+        val embeddedConfiguration = project.configurations.findByName(EmbeddedComponents.CONFIGURATION_NAME) ?: continue
+        artifacts += getArtifactElements(embeddedConfiguration, dependencyMappers, extractDependencies)
+    }
+
+    for (orderRoot in listOf(mainRoots, deferredRoots).flatten()) {
+        when (val dependency = orderRoot.dependency) {
+            is PDependency.Module -> {} // already added above
+            is PDependency.Library -> artifacts += ProjectLibrary(dependency.name)
+            is PDependency.ModuleLibrary -> {
+                val files = dependency.library.classes
+                artifacts += files.map(if (extractDependencies) ::ExtractedDirectory else ::FileCopy)
+            }
+        }
+    }
+
+    return artifacts
+}
