@@ -23,12 +23,6 @@ import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import java.io.File
 import kotlin.script.experimental.dependencies.ScriptDependencies
 
-class ScriptModuleSearchScope(val scriptFile: VirtualFile, baseScope: GlobalSearchScope) : DelegatingGlobalSearchScope(baseScope) {
-    override fun equals(other: Any?) = other is ScriptModuleSearchScope && scriptFile == other.scriptFile && super.equals(other)
-
-    override fun hashCode() = scriptFile.hashCode() * 73 * super.hashCode()
-}
-
 data class ScriptModuleInfo(
     val project: Project,
     val scriptFile: VirtualFile,
