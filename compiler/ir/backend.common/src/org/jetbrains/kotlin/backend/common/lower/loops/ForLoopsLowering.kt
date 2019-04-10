@@ -9,21 +9,13 @@ import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.builders.irCallOp
-import org.jetbrains.kotlin.ir.builders.irGet
-import org.jetbrains.kotlin.ir.builders.irSetVar
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
-import org.jetbrains.kotlin.ir.types.getClass
-import org.jetbrains.kotlin.ir.types.toKotlinType
-import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
@@ -99,11 +91,9 @@ val forLoopsPhase = makeIrFilePhase(
  */
 internal class ForLoopsLowering(val context: CommonBackendContext) : FileLoweringPass {
 
-    private val headerInfoBuilder = HeaderInfoBuilder(context)
-
     override fun lower(irFile: IrFile) {
         val oldLoopToNewLoop = mutableMapOf<IrLoop, IrLoop>()
-        val transformer = RangeLoopTransformer(context, oldLoopToNewLoop, headerInfoBuilder)
+        val transformer = RangeLoopTransformer(context, oldLoopToNewLoop)
         irFile.transformChildrenVoid(transformer)
 
         // Update references in break/continue.
@@ -118,12 +108,12 @@ internal class ForLoopsLowering(val context: CommonBackendContext) : FileLowerin
 
 private class RangeLoopTransformer(
     val context: CommonBackendContext,
-    val oldLoopToNewLoop: MutableMap<IrLoop, IrLoop>,
-    headerInfoBuilder: HeaderInfoBuilder
+    val oldLoopToNewLoop: MutableMap<IrLoop, IrLoop>
 ) : IrElementTransformerVoidWithContext() {
 
     private val symbols = context.ir.symbols
     private val iteratorToLoopHeader = mutableMapOf<IrVariableSymbol, ForLoopHeader>()
+    private val headerInfoBuilder = HeaderInfoBuilder(context, this::getScopeOwnerSymbol)
     private val headerProcessor = HeaderProcessor(context, headerInfoBuilder, this::getScopeOwnerSymbol)
 
     fun getScopeOwnerSymbol() = currentScope!!.scope.scopeOwnerSymbol
@@ -185,13 +175,12 @@ private class RangeLoopTransformer(
 
             val loopHeader = getLoopHeader(loop.condition)
                 ?: return super.visitWhileLoop(loop)  // If the for-loop cannot be lowered.
-            val newLoop = loopHeader.buildInnerLoop(this, loop, newBody)
+            val (newLoop, replacementExpression) = loopHeader.buildLoop(this, loop, newBody)
 
             // Update mapping from old to new loop so we can later update references in break/continue.
             oldLoopToNewLoop[loop] = newLoop
 
-            // Surround the new loop with a check for an empty loop, if necessary.
-            return loopHeader.buildNotEmptyConditionIfNecessary(this@with)?.let { irIfThen(it, newLoop) } ?: newLoop
+            return replacementExpression
         }
     }
 
@@ -232,18 +221,7 @@ private class RangeLoopTransformer(
         //   inductionVariable = inductionVariable + step
         return with(context.createIrBuilder(getScopeOwnerSymbol(), initializer.startOffset, initializer.endOffset)) {
             variable.initializer = forLoopInfo.initializeLoopVariable(symbols, this)
-            val plusFun = forLoopInfo.inductionVariable.type.getClass()!!.functions.first {
-                it.name.asString() == "plus" &&
-                        it.valueParameters.size == 1 &&
-                        it.valueParameters[0].type.toKotlinType() == forLoopInfo.step.type.toKotlinType()
-            }
-            val increment = irSetVar(
-                forLoopInfo.inductionVariable.symbol, irCallOp(
-                    plusFun.symbol, plusFun.returnType,
-                    irGet(forLoopInfo.inductionVariable),
-                    irGet(forLoopInfo.step)
-                )
-            )
+            val increment = forLoopInfo.buildIncrementInductionVariableExpression(this)
             IrCompositeImpl(
                 variable.startOffset,
                 variable.endOffset,
