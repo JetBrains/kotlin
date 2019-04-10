@@ -109,6 +109,31 @@ public expect fun String(chars: CharArray): String
 @SinceKotlin("1.2")
 public expect fun String(chars: CharArray, offset: Int, length: Int): String
 
+/**
+ * Concatenates characters in this [CharArray] or its subrange into a String.
+ *
+ * @param startIndex the beginning (inclusive) of the subrange of characters, 0 by default.
+ * @param endIndex the end (exclusive) of the subrange of characters, size of this array by default.
+ *
+ * @throws IndexOutOfBoundsException if [startIndex] is less than zero or [endIndex] is greater than the size of this array.
+ * @throws IllegalArgumentException if [startIndex] is greater than [endIndex].
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public expect fun CharArray.concatToString(startIndex: Int = 0, endIndex: Int = this.size): String
+
+/**
+ * Returns a [CharArray] containing characters of this string or its substring.
+ *
+ * @param startIndex the beginning (inclusive) of the substring, 0 by default.
+ * @param endIndex the end (exclusive) of the substring, length of this string by default.
+ *
+ * @throws IndexOutOfBoundsException if [startIndex] is less than zero or [endIndex] is greater than the length of this string.
+ * @throws IllegalArgumentException if [startIndex] is greater than [endIndex].
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public expect fun String.toCharArray(startIndex: Int = 0, endIndex: Int = this.length): CharArray
 
 internal expect fun String.nativeIndexOf(str: String, fromIndex: Int): Int
 internal expect fun String.nativeLastIndexOf(str: String, fromIndex: Int): Int

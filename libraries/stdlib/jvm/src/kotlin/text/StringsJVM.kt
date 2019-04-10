@@ -10,7 +10,7 @@
 package kotlin.text
 
 import java.nio.charset.Charset
-import java.util.*
+import java.util.Locale
 import java.util.regex.Pattern
 
 
@@ -107,6 +107,40 @@ public actual inline fun String.toUpperCase(): String = (this as java.lang.Strin
  */
 @kotlin.internal.InlineOnly
 public actual inline fun String.toLowerCase(): String = (this as java.lang.String).toLowerCase()
+
+/**
+ * Concatenates characters in this [CharArray] or its subrange into a String.
+ *
+ * @param startIndex the beginning (inclusive) of the subrange of characters, 0 by default.
+ * @param endIndex the end (exclusive) of the subrange of characters, size of this array by default.
+ *
+ * @throws IndexOutOfBoundsException if [startIndex] is less than zero or [endIndex] is greater than the size of this array.
+ * @throws IllegalArgumentException if [startIndex] is greater than [endIndex].
+ */
+@SinceKotlin("1.3")
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+@ExperimentalStdlibApi
+public actual fun CharArray.concatToString(startIndex: Int = 0, endIndex: Int = this.size): String {
+    AbstractList.checkBoundsIndexes(startIndex, endIndex, this.size)
+    return String(this, startIndex, endIndex - startIndex)
+}
+
+/**
+ * Returns a [CharArray] containing characters of this string or its substring.
+ *
+ * @param startIndex the beginning (inclusive) of the substring, 0 by default.
+ * @param endIndex the end (exclusive) of the substring, length of this string by default.
+ *
+ * @throws IndexOutOfBoundsException if [startIndex] is less than zero or [endIndex] is greater than the length of this string.
+ * @throws IllegalArgumentException if [startIndex] is greater than [endIndex].
+ */
+@SinceKotlin("1.3")
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+@ExperimentalStdlibApi
+public actual fun String.toCharArray(startIndex: Int = 0, endIndex: Int = this.length): CharArray {
+    AbstractList.checkBoundsIndexes(startIndex, endIndex, length)
+    return toCharArray(CharArray(endIndex - startIndex), 0, startIndex, endIndex)
+}
 
 /**
  * Returns a new character array containing the characters from this string.
