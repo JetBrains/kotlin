@@ -24,7 +24,10 @@ import org.jetbrains.kotlin.codegen.inline.DefaultSourceMapper
 import org.jetbrains.kotlin.codegen.inline.SourceMapper
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -155,6 +158,7 @@ open class ClassCodegen protected constructor(
 
     private fun done() {
         writeInnerClasses()
+        writeOuterClassAndEnclosingMethod()
 
         sourceMapper?.let {
             SourceMapper.flushToClassBuilder(it, visitor)
@@ -300,6 +304,27 @@ open class ClassCodegen protected constructor(
         }
     }
 
+    private fun writeOuterClassAndEnclosingMethod() {
+        // JVMS7 (4.7.7): A class must have an EnclosingMethod attribute if and only if
+        // it is a local class or an anonymous class.
+        //
+        // The attribute contains the innermost class that encloses the declaration of
+        // the current class. If the current class is immediately enclosed by a method
+        // or constructor, the name and type of the function is recorded as well.
+        if (parentClassCodegen != null) {
+            val outerClassName = parentClassCodegen.type.internalName
+            // TODO: Since the class could have been reparented in lowerings, this could
+            // be a class instead of the actual function that the class is nested inside
+            // in the source.
+            val containingDeclaration = irClass.symbol.owner.parent
+            if (containingDeclaration is IrFunction) {
+                val method = typeMapper.mapAsmMethod(containingDeclaration.descriptor)
+                visitor.visitOuterClass(outerClassName, method.name, method.descriptor)
+            } else {
+                visitor.visitOuterClass(outerClassName, null, null)
+            }
+        }
+    }
 
     fun getOrCreateSourceMapper(): DefaultSourceMapper {
         if (sourceMapper == null) {
@@ -307,7 +332,6 @@ open class ClassCodegen protected constructor(
         }
         return sourceMapper!!
     }
-
 }
 
 private val IrClass.flags: Int
