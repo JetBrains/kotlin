@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.actions
 
 import com.intellij.codeInsight.navigation.NavigationUtil
+import com.intellij.ide.highlighter.ArchiveFileType
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.ide.scratch.ScratchFileService
 import com.intellij.ide.scratch.ScratchRootType
@@ -220,10 +221,13 @@ class JavaToKotlinAction : AnAction() {
     }
 
     private fun isAnyJavaFileSelected(project: Project, files: Array<VirtualFile>): Boolean {
-        if (files.any { it.isDirectory }) return true // Giving up on directories
+        if (files.any { it.isSuitableDirectory() }) return true // Giving up on directories
         val manager = PsiManager.getInstance(project)
         return files.any { it.extension == JavaFileType.DEFAULT_EXTENSION && manager.findFile(it) is PsiJavaFile && it.isWritable }
     }
+
+    private fun VirtualFile.isSuitableDirectory(): Boolean =
+        isDirectory && fileType !is ArchiveFileType && isWritable
 
     private fun selectedJavaFiles(e: AnActionEvent): Sequence<PsiJavaFile> {
         val virtualFiles = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY) ?: return sequenceOf()
