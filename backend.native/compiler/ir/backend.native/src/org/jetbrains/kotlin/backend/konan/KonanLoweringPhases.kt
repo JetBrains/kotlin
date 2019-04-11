@@ -3,7 +3,6 @@ package org.jetbrains.kotlin.backend.konan
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.phaser.*
-import org.jetbrains.kotlin.backend.konan.ir.ModuleIndex
 import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.backend.konan.lower.ExpectDeclarationsRemoving
 import org.jetbrains.kotlin.backend.konan.lower.FinallyBlocksLowering
@@ -116,12 +115,6 @@ internal val validateIrModulePhase = makeKonanModuleOpPhase(
         { context, irModule -> validateIrModule(context, irModule) },
         name = "ValidateIrModule",
         description = "Validate generated module"
-)
-
-internal val moduleIndexForCodegenPhase = makeKonanModuleOpPhase(
-        { context, irModule -> context.ir.moduleIndexForCodegen = ModuleIndex(irModule) },
-        name = "ModuleIndexForCodeGen",
-        description = "Generate module index for codegen"
 )
 
 /* IrFile phases */

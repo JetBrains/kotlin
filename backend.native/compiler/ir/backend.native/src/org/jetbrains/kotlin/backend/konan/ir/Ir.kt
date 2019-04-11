@@ -19,20 +19,11 @@ import org.jetbrains.kotlin.config.coroutinesPackageFqName
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
-import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
-import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
-import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
-import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.ClassId
@@ -46,83 +37,12 @@ import kotlin.properties.Delegates
 internal class KonanIr(context: Context, irModule: IrModuleFragment): Ir<Context>(context, irModule) {
 
     val propertiesWithBackingFields = mutableSetOf<PropertyDescriptor>()
-    val classesDelegatedBackingFields = mutableMapOf<ClassDescriptor, MutableList<PropertyDescriptor>>()
-
-    val originalModuleIndex = ModuleIndex(irModule)
-
-    lateinit var moduleIndexForCodegen: ModuleIndex
 
     override var symbols: KonanSymbols by Delegates.notNull()
 
-    fun get(descriptor: FunctionDescriptor): IrFunction {
-        return moduleIndexForCodegen.functions[descriptor]
-                ?: symbols.lazySymbolTable.referenceFunction(descriptor).owner
-    }
-
-    fun get(descriptor: ClassDescriptor): IrClass {
-        return moduleIndexForCodegen.classes[descriptor]
-                ?: symbols.lazySymbolTable.referenceClass(descriptor)
-                        .also {
-                            if (!it.isBound)
-                                error(descriptor)
-                        }
-                        .owner
-    }
-
-    fun getFromCurrentModule(descriptor: ClassDescriptor): IrClass = moduleIndexForCodegen.classes[descriptor]!!
-
-    fun getFromCurrentModule(descriptor: FunctionDescriptor): IrFunction = moduleIndexForCodegen.functions[descriptor]!!
-
-    fun getEnumEntryFromCurrentModule(descriptor: ClassDescriptor): IrEnumEntry =
-            originalModuleIndex.enumEntries[descriptor] ?: error(descriptor)
-
-    fun getEnumEntry(descriptor: ClassDescriptor): IrEnumEntry {
-        assert(descriptor.kind == ClassKind.ENUM_ENTRY)
-
-        return originalModuleIndex.enumEntries[descriptor]
-                ?: symbols.lazySymbolTable.referenceEnumEntry(descriptor).owner
-    }
-
-    fun translateErased(type: KotlinType): IrSimpleType = symbols.symbolTable.translateErased(type)
-
-    fun translateBroken(type: KotlinType): IrType {
-        val declarationDescriptor = type.constructor.declarationDescriptor
-        return when (declarationDescriptor) {
-            is ClassDescriptor -> {
-                val classifier = IrClassSymbolImpl(declarationDescriptor)
-                val typeArguments = type.arguments.map {
-                    if (it.isStarProjection) {
-                        IrStarProjectionImpl
-                    } else {
-                        makeTypeProjection(translateBroken(it.type), it.projectionKind)
-                    }
-                }
-                IrSimpleTypeImpl(
-                        classifier,
-                        type.isMarkedNullable,
-                        typeArguments,
-                        emptyList()
-                )
-            }
-            is TypeParameterDescriptor -> IrSimpleTypeImpl(
-                    IrTypeParameterSymbolImpl(declarationDescriptor),
-                    type.isMarkedNullable,
-                    emptyList(),
-                    emptyList()
-            )
-            else -> error(declarationDescriptor ?: "null")
-        }
-    }
 }
 
-internal class KonanSymbols(context: Context, val symbolTable: SymbolTable, val lazySymbolTable: ReferenceSymbolTable): Symbols<Context>(context, lazySymbolTable) {
-
-    private val isInitializedPropertyDescriptor = builtInsPackage("kotlin")
-            .getContributedVariables(Name.identifier("isInitialized"), NoLookupLocation.FROM_BACKEND).single {
-                it.extensionReceiverParameter.let {
-                    it != null && TypeUtils.getClassDescriptor(it.type) == context.reflectionTypes.kProperty0
-                } && !it.isExpect
-            }
+internal class KonanSymbols(context: Context, private val symbolTable: SymbolTable, lazySymbolTable: ReferenceSymbolTable): Symbols<Context>(context, lazySymbolTable) {
 
     val entryPoint = findMainEntryPoint(context)?.let { symbolTable.referenceSimpleFunction(it) }
 

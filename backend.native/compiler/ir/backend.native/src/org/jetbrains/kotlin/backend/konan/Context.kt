@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -270,9 +269,6 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     // to dump this information into generated file.
     var serializedLinkData: LinkData? = null
     var dataFlowGraph: ByteArray? = null
-
-    @Deprecated("")
-    lateinit var psi2IrGeneratorContext: GeneratorContext
 
     val librariesWithDependencies by lazy {
         config.librariesWithDependencies(moduleDescriptor)

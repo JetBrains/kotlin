@@ -95,8 +95,6 @@ internal val psiToIrPhase = konanUnitPhase(
             val translator = Psi2IrTranslator(config.configuration.languageVersionSettings,
                     Psi2IrConfiguration(false))
             val generatorContext = translator.createGeneratorContext(moduleDescriptor, bindingContext, symbolTable)
-            @Suppress("DEPRECATION")
-            psi2IrGeneratorContext = generatorContext
 
             val forwardDeclarationsModuleDescriptor = moduleDescriptor.allDependencyModules.firstOrNull { it.isForwardDeclarationModule }
 
@@ -331,7 +329,6 @@ val toplevelPhase: CompilerPhase<*, Unit, Unit> = namedUnitPhase(
                                 allLoweringsPhase then // Lower current module first.
                                 dependenciesLowerPhase then // Then lower all libraries in topological order.
                                                             // With that we guarantee that inline functions are unlowered while being inlined.
-                                moduleIndexForCodegenPhase then
                                 bitcodePhase then
                                 produceOutputPhase then
                                 verifyBitcodePhase then
